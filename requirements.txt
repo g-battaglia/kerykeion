@@ -1,0 +1,2 @@
+pyswisseph==2.0.0.post2
+pytz==2020.1

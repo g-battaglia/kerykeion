@@ -36,4 +36,8 @@
 ehthumbs.db
 Thumbs.db
 
+# Folders #
+###########
+
+__pycache__
 venv
