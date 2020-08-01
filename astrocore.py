@@ -69,51 +69,63 @@ class Calculator(AstroData):
         the houses or the planets list."""
         if degree < 30:
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-             "Fire", "sign" : "Ari", "pos": degree, "abs_pos" : degree}
+             "Fire", "sign" : "Ari", "pos": degree, "abs_pos" : degree,
+              "emoji": "♈️"}
         elif degree < 60:
             result = degree - 30
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-             "Earth", "sign" : "Tau", "pos": result, "abs_pos" : degree}
+             "Earth", "sign" : "Tau", "pos": result, "abs_pos" : degree,
+              "emoji": "♉️"}
         elif degree < 90:
             result = degree - 60
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-             "Air", "sign" : "Gem", "pos": result, "abs_pos" : degree}
+             "Air", "sign" : "Gem", "pos": result, "abs_pos" : degree,
+              "emoji": "♊️"}
         elif degree < 120:
             result = degree - 90
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-             "Water", "sign" : "Can", "pos": result, "abs_pos" : degree}
+             "Water", "sign" : "Can", "pos": result, "abs_pos" : degree,
+              "emoji": "♋️"}
         elif degree < 150:
             result = degree - 120
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-             "Fire", "sign" : "Leo", "pos": result, "abs_pos" : degree}
+             "Fire", "sign" : "Leo", "pos": result, "abs_pos" : degree,
+              "emoji": "♌️"}
         elif degree < 180:
             result = degree - 150
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-             "Earth", "sign" : "Vir", "pos": result, "abs_pos" : degree}
+             "Earth", "sign" : "Vir", "pos": result, "abs_pos" : degree,
+              "emoji": "♍️"}
         elif degree < 210:
             result = degree - 180
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-             "Air", "sign" : "Lib", "pos": result, "abs_pos" : degree}
+             "Air", "sign" : "Lib", "pos": result, "abs_pos" : degree,
+              "emoji": "♎️"}
         elif degree < 240:
             result = degree - 210
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-             "Water", "sign" : "Sco", "pos": result, "abs_pos" : degree}
+             "Water", "sign" : "Sco", "pos": result, "abs_pos" : degree,
+              "emoji": "♏️"}
         elif degree < 270:
             result = degree - 240
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-             "Fire", "sign" : "Sag", "pos": result, "abs_pos" : degree}
+             "Fire", "sign" : "Sag", "pos": result, "abs_pos" : degree,
+              "emoji": "♐️"}
         elif degree < 300:
             result = degree - 270
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-             "Earth", "sign" : "Cap", "pos": result, "abs_pos" : degree}
+             "Earth", "sign" : "Cap", "pos": result, "abs_pos" : degree,
+              "emoji": "♑️"}
         elif degree < 330:
             result = degree - 300
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-             "Air", "sign" : "Aqu", "pos": result, "abs_pos" : degree}
+             "Air", "sign" : "Aqu", "pos": result, "abs_pos" : degree,
+              "emoji": "♒️"}
         elif degree < 360:
             result = degree - 330
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-             "Water", "sign" : "Pis", "pos": result, "abs_pos" : degree}
+             "Water", "sign" : "Pis", "pos": result, "abs_pos" : degree,
+              "emoji": "♓️"}
         else:
             hou_dic = {label: "pos_calc error", "sign" : "pos_calc error",
              "pos": "pos_calc error"}
