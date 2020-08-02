@@ -10,6 +10,34 @@ Kerykeion is a python library for Astrology.
 
 >>> kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
 >>> print(output(kanye))
+-----------------------------------------------------
+NAME: Kanye
+PLANET     POSITION
+                      
+Sun:       Gem 17.599 in 12th House
+Moon:      Pis 16.425 in 9th House
+Mercury:   Tau 26.286 in 11th House
+Venus:     Tau 2.032 in 10th House
+Mars:      Tau 1.79 in 10th House
+Jupiter:   Gem 14.607 in 11th House
+Saturn:    Leo 12.799 in 2nd House
+Uranus:    Sco 8.273 in 4th House
+Neptune:   Sag 14.693 in 5th House
+Pluto:     Lib 11.446 in 4th House
+
+PLACIDUS HAUSES
+House Cusp 1:     Can  17.996
+House Cusp 2:     Leo  9.506
+House Cusp 3:     Vir  4.022
+House Cusp 4:     Lib  3.977
+House Cusp 5:     Sco  9.393
+House Cusp 6:     Sag  15.681
+House Cusp 7:     Cap  17.996
+House Cusp 8:     Aqu  9.506
+House Cusp 9:     Pis  4.022
+House Cusp 10:    Ari  3.977
+House Cusp 11:    Tau  9.393
+House Cusp 12:    Gem  15.681
 
 ```
 
