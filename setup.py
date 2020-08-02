@@ -11,7 +11,7 @@ setuptools.setup(
     description="A astrology lybrary.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/g-battaglia/mercuriusastro",
+    url="https://github.com/g-battaglia/kerykeion",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
