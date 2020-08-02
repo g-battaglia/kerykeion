@@ -149,5 +149,5 @@ class Synastry():
                     print("ERROR")
         print(points)
 
-
-Synastry(bergman, rossellini).synastry_result()
+if __name__ == "__main__":
+    Synastry(bergman, rossellini).synastry_result()
