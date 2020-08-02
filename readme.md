@@ -39,6 +39,12 @@ House Cusp 10:    Ari  3.977
 House Cusp 11:    Tau  9.393
 House Cusp 12:    Gem  15.681
 
+
+>>> print(kanye.houses()[3])
+{'name': '4', 'quality': 'Cardinal', 'element': 'Air', 'sign': 'Lib', 'pos': 3.9766709280539203, 'abs_pos': 183.97667092805392, 'emoji': '♎️'}
+
+
+
 ```
 
 ## Documentation
