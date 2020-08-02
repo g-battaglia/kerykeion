@@ -1,5 +1,9 @@
+"""
+    This is part of Kerykeion (C) 2020 Giacomo Battaglia
+"""
+
 import swisseph as swe
-from geoname import search
+from kerykeion.geoname import search
 import pytz, datetime, math
 
 swe.set_ephe_path("/")
