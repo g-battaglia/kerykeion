@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from astrocore import AstroData, Calculator
+from kerykeion.astrocore import AstroData, Calculator
 
 def output(user):
     p = user.planets_house()
