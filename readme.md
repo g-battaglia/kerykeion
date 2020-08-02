@@ -15,7 +15,7 @@ Kerykeion is a python library for Astrology.
 
 ## Documentation
 
-Soon will be availabl.
+Soon will be available.
 
 
 ## Installation
