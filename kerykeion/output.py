@@ -1,3 +1,7 @@
+"""
+    This is part of Kerykeion (C) 2020 Giacomo Battaglia
+"""
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 

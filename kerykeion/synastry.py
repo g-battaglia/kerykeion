@@ -1,7 +1,11 @@
+"""
+    This is part of Kerykeion (C) 2020 Giacomo Battaglia
+"""
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from astrocore import AstroData, Calculator
+from kerykeion.astrocore import AstroData, Calculator
 import swisseph as swe
 
 bergman = Calculator("Ingrid_Bergman", 15, 8, 29, 3, 30, "Stockholm")

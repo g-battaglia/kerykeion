@@ -1,3 +1,7 @@
+"""
+    This is part of Kerykeion (C) 2020 Giacomo Battaglia
+"""
+
 import setuptools
 
 with open("README.md", "r") as fh:
