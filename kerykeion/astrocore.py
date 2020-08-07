@@ -320,39 +320,50 @@ class Calculator(AstroData):
         distance = abs(swe.difdeg2n(point_one, point_two))
         if int(distance) <= 10:
             aspect = "Conjuction"
-            return True, aspect, distance
+            aid = 0
+            return True, aspect, distance, aid
         elif 172 <= int(distance) <= 188:
             aspect = "Oposition"
-            return True, aspect, distance - 180
+            aid = 180
+            return True, aspect, distance - 180, aid
         elif 85 <= int(distance) <= 95:
             aspect = "Square"
-            return True, aspect, distance - 90
+            aid = 90
+            return True, aspect, distance - 90, aid
         elif 113 <= int(distance) <= 127:
             aspect = "Trigon"
-            return True, aspect, distance - 120
+            aid = 120
+            return True, aspect, distance - 120, aid
         elif 57 <= int(distance) <= 63:
             aspect = "Sextil"
-            return True, aspect, distance - 60
+            aid = 60
+            return True, aspect, distance - 60, aid
         elif 28 <= int(distance) <= 32:
             aspect = "Semisextil"
-            return True, aspect, distance - 30
+            aid = 30
+            return True, aspect, distance - 30, aid
         elif 43 <= int(distance) <= 47:
             aspect = "Semisquare"
-            return True, aspect, distance - 45
+            aid = 45
+            return True, aspect, distance - 45, aid
         elif 133 <= int(distance) <= 137:
             aspect = "Sesquiquadrate"
-            return True, aspect, distance - 135
+            aid = 135
+            return True, aspect, distance - 135, aid
         elif 149 <= int(distance) <= 151:
             aspect = "Quincunx"
-            return True, aspect, distance - 150
+            aid = 150
+            return True, aspect, distance - 150, aid
         elif 71.5 <= int(distance) <= 72.5:
             aspect = "Quintile"
-            return True, aspect, distance - 72
+            aid = 72
+            return True, aspect, distance - 72, aid
         elif 143.5 <= int(distance) <= 144.5:
             aspect = "BiQuintile"
-            return True, aspect, distance - 144
+            aid = 144
+            return True, aspect, distance - 144, aid
         else:
-            return False, None, None
+            return False, None, None, None
     
     def aspects(self):
         """
@@ -360,23 +371,25 @@ class Calculator(AstroData):
         first all the individual aspects of each planet, second the aspects
         whitout repetitions.
         """
+        
         self.planets_house()
         self.point_list = self.planets_list_temp + self.house_list
 
         all_aspects = {}
         once_aspects = {}
         #both_aspects = {}
-
+        """
         for first in range(len(self.point_list)):
             all_aspects[self.point_list[first]["name"]] = []
             #Generates all aspects list
             for second in range(len(self.point_list)):
-                verdict, aspect, orbit = self.asp_calc(self.point_list[first]["abs_pos"],
+                verdict, aspect, orbit, aid = self.asp_calc(self.point_list[first]["abs_pos"],
                 self.point_list[second]["abs_pos"])
                 
                 if verdict == True and self.point_list[first] != self.point_list[second]:
-                    all_aspects[self.point_list[first]["name"]].append(f"{aspect, self.point_list[second]['name'], orbit}")
+                    all_aspects[self.point_list[first]["name"]].append(f"{aspect, self.point_list[second]['name'], orbit, aid}")
                     pass
+        """
 
 
         for first in range(len(self.point_list)):
@@ -384,17 +397,21 @@ class Calculator(AstroData):
             once_aspects[self.point_list[first]["name"]] = []
             for second in range(first + 1, len(self.point_list)):
                 
-                verdict, aspect, orbit = self.asp_calc(self.point_list[first]["abs_pos"],
+                verdict, aspect, orbit, aid = self.asp_calc(self.point_list[first]["abs_pos"],
                 self.point_list[second]["abs_pos"])
                 
                 if verdict == True:
-                    once_aspects[self.point_list[first]["name"]].append(f"{aspect, self.point_list[second]['name'], orbit}")
+                    d_asp = {"Name": self.point_list[second]['name'],
+                     "Aspect": aspect, "Orbit": orbit, "aid": aid}
+                    once_aspects[self.point_list[first]["name"]].append(d_asp)
 
-        both_aspects = {"all": all_aspects, "once": once_aspects}
-        return both_aspects
+        #self.both_aspects = {"all": all_aspects, "once": once_aspects}
+        self.aspects_list = once_aspects
+        #return self.both_aspects
 
     def retrograde(self):
         """ Verify if a planet is retrograde"""
+
         self.planets_house()
         planets_ret = []
         for plan in self.planets_list_temp:
@@ -416,6 +433,7 @@ class Calculator(AstroData):
 
 if __name__ == "__main__":
     kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
-    kanye.planets_house()
     kanye.result()
-    print(kanye.planets_list[0])
+
+    #print(kanye.planets_list[0])
+    print(kanye.aspects_list["Moon"])
