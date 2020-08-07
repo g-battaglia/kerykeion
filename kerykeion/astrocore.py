@@ -26,6 +26,8 @@ class AstroData():
         self.city = city
         self.nation = nat
 
+
+
     def get_tz(self):
         """Gets the nerest time zone for the calculation"""
         city_data = search(self.city, self.nation)[0]
@@ -67,68 +69,71 @@ class Calculator(AstroData):
     def __init__(self, name, year, month, day, hours, minuts, city, nat=""):
         super().__init__(name, year, month, day, hours, minuts, city, nat)
         self.j_day = self.get_jd()
+
+        self.zodiactype = "Tropic"
+
     
     def pos_calc(self, degree, number_name, label):
-        """A function to be used in others tu create a dictionary deviding 
+        """A function to be used in others to create a dictionary deviding 
         the houses or the planets list."""
         if degree < 30:
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-             "Fire", "sign" : "Ari", "pos": degree, "abs_pos" : degree,
+             "Fire", "sign" : "Ari", "sign_num": 1, "pos": degree, "abs_pos" : degree,
               "emoji": "♈️"}
         elif degree < 60:
             result = degree - 30
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-             "Earth", "sign" : "Tau", "pos": result, "abs_pos" : degree,
+             "Earth", "sign" : "Tau", "sign_num": 2, "pos": result, "abs_pos" : degree,
               "emoji": "♉️"}
         elif degree < 90:
             result = degree - 60
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-             "Air", "sign" : "Gem", "pos": result, "abs_pos" : degree,
+             "Air", "sign" : "Gem", "sign_num": 3, "pos": result, "abs_pos" : degree,
               "emoji": "♊️"}
         elif degree < 120:
             result = degree - 90
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-             "Water", "sign" : "Can", "pos": result, "abs_pos" : degree,
+             "Water", "sign" : "Can", "sign_num": 4, "pos": result, "abs_pos" : degree,
               "emoji": "♋️"}
         elif degree < 150:
             result = degree - 120
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-             "Fire", "sign" : "Leo", "pos": result, "abs_pos" : degree,
+             "Fire", "sign" : "Leo", "sign_num": 5, "pos": result, "abs_pos" : degree,
               "emoji": "♌️"}
         elif degree < 180:
             result = degree - 150
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-             "Earth", "sign" : "Vir", "pos": result, "abs_pos" : degree,
+             "Earth", "sign" : "Vir", "sign_num": 6, "pos": result, "abs_pos" : degree,
               "emoji": "♍️"}
         elif degree < 210:
             result = degree - 180
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-             "Air", "sign" : "Lib", "pos": result, "abs_pos" : degree,
+             "Air", "sign" : "Lib", "sign_num": 7, "pos": result, "abs_pos" : degree,
               "emoji": "♎️"}
         elif degree < 240:
             result = degree - 210
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-             "Water", "sign" : "Sco", "pos": result, "abs_pos" : degree,
+             "Water", "sign" : "Sco", "sign_num": 8, "pos": result, "abs_pos" : degree,
               "emoji": "♏️"}
         elif degree < 270:
             result = degree - 240
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-             "Fire", "sign" : "Sag", "pos": result, "abs_pos" : degree,
+             "Fire", "sign" : "Sag", "sign_num": 9, "pos": result, "abs_pos" : degree,
               "emoji": "♐️"}
         elif degree < 300:
             result = degree - 270
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-             "Earth", "sign" : "Cap", "pos": result, "abs_pos" : degree,
+             "Earth", "sign" : "Cap", "sign_num": 10, "pos": result, "abs_pos" : degree,
               "emoji": "♑️"}
         elif degree < 330:
             result = degree - 300
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-             "Air", "sign" : "Aqu", "pos": result, "abs_pos" : degree,
+             "Air", "sign" : "Aqu", "sign_num": 11, "pos": result, "abs_pos" : degree,
               "emoji": "♒️"}
         elif degree < 360:
             result = degree - 330
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-             "Water", "sign" : "Pis", "pos": result, "abs_pos" : degree,
+             "Water", "sign" : "Pis", "sign_num": 12, "pos": result, "abs_pos" : degree,
               "emoji": "♓️"}
         else:
             hou_dic = {label: "pos_calc error", "sign" : "pos_calc error",
@@ -140,42 +145,61 @@ class Calculator(AstroData):
         """Calculatetype positions and store them in dictionaries""" 
         
         #creates the list of the house in 360°
-        self.hou_degs = swe.houses(self.j_day, self.city_lat,
+        self.houses_degree_ut = swe.houses(self.j_day, self.city_lat,
          self.city_long)[0]
         #stores the house in signulare dictionaries.
-        self.fir_house = self.pos_calc(self.hou_degs[0], "1", "name")
-        self.sec_house = self.pos_calc(self.hou_degs[1], "2", "name")
-        self.thr_house = self.pos_calc(self.hou_degs[2], "3", "name")
-        self.for_house = self.pos_calc(self.hou_degs[3], "4", "name")
-        self.fif_house = self.pos_calc(self.hou_degs[4], "5", "name")
-        self.six_house = self.pos_calc(self.hou_degs[5], "6", "name")
-        self.sev_house = self.pos_calc(self.hou_degs[6], "7", "name")
-        self.eig_house = self.pos_calc(self.hou_degs[7], "8", "name")
-        self.nin_house = self.pos_calc(self.hou_degs[8], "9", "name")
-        self.ten_house = self.pos_calc(self.hou_degs[9], "10", "name")
-        self.ele_house = self.pos_calc(self.hou_degs[10], "11", "name")
-        self.twe_house = self.pos_calc(self.hou_degs[11], "12", "name")
+        self.fir_house = self.pos_calc(self.houses_degree_ut[0], "1", "name")
+        self.sec_house = self.pos_calc(self.houses_degree_ut[1], "2", "name")
+        self.thr_house = self.pos_calc(self.houses_degree_ut[2], "3", "name")
+        self.for_house = self.pos_calc(self.houses_degree_ut[3], "4", "name")
+        self.fif_house = self.pos_calc(self.houses_degree_ut[4], "5", "name")
+        self.six_house = self.pos_calc(self.houses_degree_ut[5], "6", "name")
+        self.sev_house = self.pos_calc(self.houses_degree_ut[6], "7", "name")
+        self.eig_house = self.pos_calc(self.houses_degree_ut[7], "8", "name")
+        self.nin_house = self.pos_calc(self.houses_degree_ut[8], "9", "name")
+        self.ten_house = self.pos_calc(self.houses_degree_ut[9], "10", "name")
+        self.ele_house = self.pos_calc(self.houses_degree_ut[10], "11", "name")
+        self.twe_house = self.pos_calc(self.houses_degree_ut[11], "12", "name")
         #creates a list of all the dictionaries of thetype.
         self.house_list = [self.fir_house, self.sec_house, self.thr_house,
          self.for_house, self.fif_house, self.six_house, self.sev_house,
          self.eig_house, self.nin_house, self.ten_house, self.ele_house,
          self.twe_house]
+        
+        self.houses_degree = [self.house_list[0]["pos"], self.house_list[1]["pos"],
+        self.house_list[2]["pos"], self.house_list[3]["pos"], self.house_list[4]["pos"],
+        self.house_list[5]["pos"], self.house_list[6]["pos"], self.house_list[7]["pos"],
+        self.house_list[8]["pos"], self.house_list[9]["pos"], self.house_list[10]["pos"],
+        self.house_list[11]["pos"]]
 
         return self.house_list
 
     def planets_lister(self):
+        
+        """Sidereal or tropic mode."""
+        self.iflag = swe.FLG_SWIEPH+swe.FLG_SPEED
+        
+        if self.zodiactype == "sidereal":
+            self.iflag += swe.FLG_SIDEREAL
+            mode = "SIDM_FAGAN_BRADLEY"
+            swe.set_sid_mode(getattr(swe,mode))
+        
+        
+
+
         """Calculates the position of the planets and stores it in a list."""
-        self.sun_deg = swe.calc(self.j_day, 0)[0]
-        self.moon_deg = swe.calc(self.j_day, 1)[0]
-        self.mercury_deg = swe.calc(self.j_day, 2)[0]
-        self.venus_deg = swe.calc(self.j_day, 3)[0]
-        self.mars_deg = swe.calc(self.j_day, 4)[0]
-        self.jupiter_deg = swe.calc(self.j_day, 5)[0]
-        self.saturn_deg = swe.calc(self.j_day, 6)[0]
-        self.uranus_deg = swe.calc(self.j_day, 7)[0]
-        self.neptune_deg = swe.calc(self.j_day, 8)[0]
-        self.pluto_deg = swe.calc(self.j_day, 9)[0]
-        self.juno_deg = swe.calc(self.j_day, 0)[0]
+        self.sun_deg = swe.calc(self.j_day, 0, self.iflag)[0]
+        self.moon_deg = swe.calc(self.j_day, 1, self.iflag)[0]
+        self.mercury_deg = swe.calc(self.j_day, 2, self.iflag)[0]
+        self.venus_deg = swe.calc(self.j_day, 3, self.iflag)[0]
+        self.mars_deg = swe.calc(self.j_day, 4, self.iflag)[0]
+        self.jupiter_deg = swe.calc(self.j_day, 5, self.iflag)[0]
+        self.saturn_deg = swe.calc(self.j_day, 6, self.iflag)[0]
+        self.uranus_deg = swe.calc(self.j_day, 7, self.iflag)[0]
+        self.neptune_deg = swe.calc(self.j_day, 8, self.iflag)[0]
+        self.pluto_deg = swe.calc(self.j_day, 9, self.iflag)[0]
+        self.juno_deg = swe.calc(self.j_day, 0, self.iflag)[0]
+        #print(swe.calc(self.j_day, 7, self.iflag)[3])
 
         self.planets_degs = [self.sun_deg, self.moon_deg, self.mercury_deg,
          self.venus_deg, self.mars_deg, self.jupiter_deg, self.saturn_deg,
@@ -200,11 +224,11 @@ class Calculator(AstroData):
         self.pluto = self.pos_calc(self.planets_degs[9], "Pluto", "name")
         self.juno = self.pos_calc(self.planets_degs[10], "Juno", "name")
 
-        self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
+        self.planets_list_temp = [self.sun, self.moon, self.mercury, self.venus,
          self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
           self.pluto, self.juno]
 
-        return self.planets_list
+        return self.planets_list_temp
 
     def planets_house(self):
         """Calculates the house of the planet and updates 
@@ -227,40 +251,40 @@ class Calculator(AstroData):
                 else:
                     return False
 
-            if point_between(self.hou_degs[0], self.hou_degs[1],
+            if point_between(self.houses_degree_ut[0], self.houses_degree_ut[1],
              deg_planet) == True:
                 planet["house"] = "1st House"
-            elif point_between(self.hou_degs[1], self.hou_degs[2],
+            elif point_between(self.houses_degree_ut[1], self.houses_degree_ut[2],
              deg_planet) == True:
                 planet["house"] = "2nd House"
-            elif point_between(self.hou_degs[2], self.hou_degs[3],
+            elif point_between(self.houses_degree_ut[2], self.houses_degree_ut[3],
              deg_planet) == True:
                 planet["house"] = "3rd House"
-            elif point_between(self.hou_degs[3], self.hou_degs[4],
+            elif point_between(self.houses_degree_ut[3], self.houses_degree_ut[4],
              deg_planet) == True:
                 planet["house"] = "4th House"
-            elif point_between(self.hou_degs[4], self.hou_degs[5],
+            elif point_between(self.houses_degree_ut[4], self.houses_degree_ut[5],
              deg_planet) == True:
                 planet["house"] = "5th House"
-            elif point_between(self.hou_degs[5], self.hou_degs[6],
+            elif point_between(self.houses_degree_ut[5], self.houses_degree_ut[6],
              deg_planet) == True:
                 planet["house"] = "6th House"
-            elif point_between(self.hou_degs[6], self.hou_degs[7],
+            elif point_between(self.houses_degree_ut[6], self.houses_degree_ut[7],
              deg_planet) == True:
                 planet["house"] = "7th House"
-            elif point_between(self.hou_degs[7], self.hou_degs[8],
+            elif point_between(self.houses_degree_ut[7], self.houses_degree_ut[8],
              deg_planet) == True:
                 planet["house"] = "8th House"
-            elif point_between(self.hou_degs[8], self.hou_degs[9],
+            elif point_between(self.houses_degree_ut[8], self.houses_degree_ut[9],
              deg_planet) == True:
                 planet["house"] = "9th House"
-            elif point_between(self.hou_degs[9], self.hou_degs[10],
+            elif point_between(self.houses_degree_ut[9], self.houses_degree_ut[10],
              deg_planet) == True:
                 planet["house"] = "10th House"
-            elif point_between(self.hou_degs[10], self.hou_degs[11],
+            elif point_between(self.houses_degree_ut[10], self.houses_degree_ut[11],
              deg_planet) == True:
                 planet["house"] = "11th House"
-            elif point_between(self.hou_degs[11], self.hou_degs[0],
+            elif point_between(self.houses_degree_ut[11], self.houses_degree_ut[0],
              deg_planet) == True:
                 planet["house"] = "12th House"
             else:
@@ -281,11 +305,11 @@ class Calculator(AstroData):
         self.pluto = for_every_planet(self.pluto, self.pluto_deg)
         self.juno = for_every_planet(self.juno, self.juno_deg)
 
-        self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
+        self.planets_list_temp = [self.sun, self.moon, self.mercury, self.venus,
          self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
           self.pluto, self.juno]
 
-        return self.planets_list
+        return self.planets_list_temp
     
     def asp_calc(self, point_one, point_two):
         """ 
@@ -337,7 +361,7 @@ class Calculator(AstroData):
         whitout repetitions.
         """
         self.planets_house()
-        self.point_list = self.planets_list + self.house_list
+        self.point_list = self.planets_list_temp + self.house_list
 
         all_aspects = {}
         once_aspects = {}
@@ -368,8 +392,30 @@ class Calculator(AstroData):
 
         both_aspects = {"all": all_aspects, "once": once_aspects}
         return both_aspects
-                    
+
+    def retrograde(self):
+        """ Verify if a planet is retrograde"""
+        self.planets_house()
+        planets_ret = []
+        for plan in self.planets_list_temp:
+            for i in range(15):
+                if plan["name"] == swe.get_planet_name(i):
+                    if swe.calc(self.j_day, i, self.iflag)[3] < 0:
+                        plan.update({'retrograde' : 1})
+                    else:
+                        plan.update({'retrograde' : 0})
+                planets_ret.append(plan)
+            
+        self.planets_list = planets_ret
+        
+
+    def result(self):
+        self.retrograde()
+        self.aspects()       
+
 
 if __name__ == "__main__":
     kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
-    print(kanye.aspects()["all"]["Sun"])
+    kanye.planets_house()
+    kanye.result()
+    print(kanye.planets_list[0])
