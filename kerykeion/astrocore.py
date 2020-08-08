@@ -72,6 +72,9 @@ class Calculator(AstroData):
 
         self.zodiactype = "Tropic"
 
+    def __str__(self):
+        return f"Astrological data for: {self.name}, {self.utc} UTC"
+
     def get_number(self, name):
         """Internal function, gets number id from the name."""
         name = name.lower()
@@ -479,3 +482,4 @@ if __name__ == "__main__":
     #print(name)
     #print(kanye.planets_list[0])
     print(kanye.aspects_list[0]["orbit"])
+    print(kanye)
