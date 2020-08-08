@@ -400,7 +400,7 @@ class Calculator(AstroData):
         self.point_list = self.planets_list_temp + self.house_list
 
         #all_aspects = {}
-        once_aspects = {}
+        once_aspects = []
         #both_aspects = {}
         """
         for first in range(len(self.point_list)):
@@ -418,16 +418,16 @@ class Calculator(AstroData):
 
         for first in range(len(self.point_list)):
         #Generates the aspects list whitout repetitions
-            once_aspects[self.point_list[first]["name"]] = []
             for second in range(first + 1, len(self.point_list)):
                 
                 verdict, aspect, orbit, aid = self.asp_calc(self.point_list[first]["abs_pos"],
                 self.point_list[second]["abs_pos"])
                 
                 if verdict == True:
-                    d_asp = {"Name": self.point_list[second]['name'],
+                    d_asp = {"p1": self.point_list[first]['name'], "p1_abs_pos": self.point_list[first]['abs_pos'], "p2": self.point_list[second]['name'], "p2_abs_pos": self.point_list[second]['abs_pos'],
                      "Aspect": aspect, "Orbit": orbit, "aid": aid}
-                    once_aspects[self.point_list[first]["name"]].append(d_asp)
+
+                    once_aspects.append(d_asp)
 
         #self.both_aspects = {"all": all_aspects, "once": once_aspects}
         self.aspects_list = once_aspects
@@ -460,6 +460,6 @@ if __name__ == "__main__":
     kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
     kanye.result()
     name = kanye.planets_list[0]
-    print(name)
+    #print(name)
     #print(kanye.planets_list[0])
-    print(kanye.planets_)
+    print(kanye.aspects_list[0])
