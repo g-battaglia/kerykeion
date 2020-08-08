@@ -431,6 +431,7 @@ class Calculator(AstroData):
 
         #self.both_aspects = {"all": all_aspects, "once": once_aspects}
         self.aspects_list = once_aspects
+        return self.aspects_list
         #return self.both_aspects
 
     def retrograde(self):
@@ -461,5 +462,4 @@ if __name__ == "__main__":
     name = kanye.planets_list[0]
     print(name)
     #print(kanye.planets_list[0])
-    print(kanye.aspects_list)
-    print(kanye.get_number("Mercury"))
+    print(kanye.planets_)
