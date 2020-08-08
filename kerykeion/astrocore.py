@@ -470,14 +470,14 @@ class Calculator(AstroData):
         self.planets_list = planets_ret
         
 
-    def result(self):
+    def get_all(self):
         self.retrograde()
         self.aspects()       
 
 
 if __name__ == "__main__":
     kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
-    kanye.result()
+    kanye.get_all()
     name = kanye.planets_list[0]
     #print(name)
     #print(kanye.planets_list[0])
