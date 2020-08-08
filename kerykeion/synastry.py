@@ -20,8 +20,8 @@ class Synastry():
     def __init__(self, user1, user2):
         self.user1 = user1
         self.user2 = user2
-        user1.planets_house()
-        user2.planets_house()
+        user1.get_all()
+        user2.get_all()
         self.pl_ho_info1 = user1.planets_list[:7] + [user1.house_list[0],
          user1.house_list[9]]
         self.pl_ho_info2 = user2.planets_list[:7] + [user2.house_list[0],
