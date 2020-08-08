@@ -74,27 +74,32 @@ class Calculator(AstroData):
 
     def get_number(self, name):
         """Internal function, gets number id from the name."""
+        name = name.lower()
 
-        if name == "Sun":
+        if name == "sun":
             return 0
-        elif name == "Moon":
+        elif name == "moon":
             return 1
-        elif name == "Mercury":
+        elif name == "mercury":
             return 2
-        elif name == "Venus":
+        elif name == "venus":
             return 3
-        elif name == "Mars":
+        elif name == "mars":
             return 4
-        elif name == "Jupiter":
+        elif name == "jupiter":
             return 5
-        elif name == "Saturn":
+        elif name == "saturn":
             return 6
-        elif name == "Uranus":
+        elif name == "uranus":
             return 7
-        elif name == "Neptune":
+        elif name == "neptune":
             return 8
-        elif name == "Pluto":
+        elif name == "pluto":
             return 9
+        elif name == "juno":
+            return 19
+        else:
+            return int(name)
 
 
     def pos_calc(self, degree, number_name, label):
@@ -345,49 +350,60 @@ class Calculator(AstroData):
         if int(distance) <= 10:
             aspect = "Conjuction"
             aid = 0
-            return True, aspect, distance, aid
+            color = "#7FFF00"
+            return True, aspect, distance, aid, color
         elif 172 <= int(distance) <= 188:
             aspect = "Oposition"
             aid = 180
-            return True, aspect, distance - 180, aid
+            color = "#ff0000"
+            return True, aspect, distance - 180, aid, color
         elif 85 <= int(distance) <= 95:
             aspect = "Square"
             aid = 90
-            return True, aspect, distance - 90, aid
+            color = "#ff0000"
+            return True, aspect, distance - 90, aid, color
         elif 113 <= int(distance) <= 127:
             aspect = "Trigon"
             aid = 120
-            return True, aspect, distance - 120, aid
+            color = "#7FFF00"
+            return True, aspect, distance - 120, aid, color
         elif 57 <= int(distance) <= 63:
             aspect = "Sextil"
             aid = 60
-            return True, aspect, distance - 60, aid
+            color = "#7FFF00"
+            return True, aspect, distance - 60, aid, color
         elif 28 <= int(distance) <= 32:
             aspect = "Semisextil"
             aid = 30
-            return True, aspect, distance - 30, aid
+            color = "#7FFF00"
+            return True, aspect, distance - 30, aid, color
         elif 43 <= int(distance) <= 47:
             aspect = "Semisquare"
             aid = 45
-            return True, aspect, distance - 45, aid
+            color = "#ff0000"
+            return True, aspect, distance - 45, aid, color
         elif 133 <= int(distance) <= 137:
             aspect = "Sesquiquadrate"
             aid = 135
-            return True, aspect, distance - 135, aid
+            color = "#ff0000"
+            return True, aspect, distance - 135, aid, color
         elif 149 <= int(distance) <= 151:
             aspect = "Quincunx"
             aid = 150
-            return True, aspect, distance - 150, aid
+            color = "#505050"
+            return True, aspect, distance - 150, aid, color
         elif 71.5 <= int(distance) <= 72.5:
             aspect = "Quintile"
             aid = 72
-            return True, aspect, distance - 72, aid
+            color = "#505050"
+            return True, aspect, distance - 72, aid, color
         elif 143.5 <= int(distance) <= 144.5:
             aspect = "BiQuintile"
             aid = 144
-            return True, aspect, distance - 144, aid
+            color = "#505050"
+            return True, aspect, distance - 144, aid, color
         else:
-            return False, None, None, None
+            return False, None, None, None, None
     
     def aspects(self):
         """
@@ -420,12 +436,12 @@ class Calculator(AstroData):
         #Generates the aspects list whitout repetitions
             for second in range(first + 1, len(self.point_list)):
                 
-                verdict, aspect, orbit, aid = self.asp_calc(self.point_list[first]["abs_pos"],
+                verdict, aspect, orbit, aid, color = self.asp_calc(self.point_list[first]["abs_pos"],
                 self.point_list[second]["abs_pos"])
                 
                 if verdict == True:
                     d_asp = {"p1": self.point_list[first]['name'], "p1_abs_pos": self.point_list[first]['abs_pos'], "p2": self.point_list[second]['name'], "p2_abs_pos": self.point_list[second]['abs_pos'],
-                     "Aspect": aspect, "Orbit": orbit, "aid": aid}
+                     "aspect": aspect, "orbit": orbit, "aid": aid, "color": color}
 
                     once_aspects.append(d_asp)
 
@@ -462,4 +478,4 @@ if __name__ == "__main__":
     name = kanye.planets_list[0]
     #print(name)
     #print(kanye.planets_list[0])
-    print(kanye.aspects_list[0])
+    print(kanye.aspects_list[0]["orbit"])
