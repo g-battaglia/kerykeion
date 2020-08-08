@@ -72,7 +72,31 @@ class Calculator(AstroData):
 
         self.zodiactype = "Tropic"
 
-    
+    def get_number(self, name):
+        """Internal function, gets number id from the name."""
+
+        if name == "Sun":
+            return 0
+        elif name == "Moon":
+            return 1
+        elif name == "Mercury":
+            return 2
+        elif name == "Venus":
+            return 3
+        elif name == "Mars":
+            return 4
+        elif name == "Jupiter":
+            return 5
+        elif name == "Saturn":
+            return 6
+        elif name == "Uranus":
+            return 7
+        elif name == "Neptune":
+            return 8
+        elif name == "Pluto":
+            return 9
+
+
     def pos_calc(self, degree, number_name, label):
         """A function to be used in others to create a dictionary deviding 
         the houses or the planets list."""
@@ -375,7 +399,7 @@ class Calculator(AstroData):
         self.planets_house()
         self.point_list = self.planets_list_temp + self.house_list
 
-        all_aspects = {}
+        #all_aspects = {}
         once_aspects = {}
         #both_aspects = {}
         """
@@ -434,6 +458,8 @@ class Calculator(AstroData):
 if __name__ == "__main__":
     kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
     kanye.result()
-
+    name = kanye.planets_list[0]
+    print(name)
     #print(kanye.planets_list[0])
-    print(kanye.aspects_list["Moon"])
+    print(kanye.aspects_list)
+    print(kanye.get_number("Mercury"))
