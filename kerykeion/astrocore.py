@@ -220,17 +220,17 @@ class Calculator(AstroData):
 
 
         """Calculates the position of the planets and stores it in a list."""
-        self.sun_deg = swe.calc(self.j_day, 0, self.iflag)[0]
-        self.moon_deg = swe.calc(self.j_day, 1, self.iflag)[0]
-        self.mercury_deg = swe.calc(self.j_day, 2, self.iflag)[0]
-        self.venus_deg = swe.calc(self.j_day, 3, self.iflag)[0]
-        self.mars_deg = swe.calc(self.j_day, 4, self.iflag)[0]
-        self.jupiter_deg = swe.calc(self.j_day, 5, self.iflag)[0]
-        self.saturn_deg = swe.calc(self.j_day, 6, self.iflag)[0]
-        self.uranus_deg = swe.calc(self.j_day, 7, self.iflag)[0]
-        self.neptune_deg = swe.calc(self.j_day, 8, self.iflag)[0]
-        self.pluto_deg = swe.calc(self.j_day, 9, self.iflag)[0]
-        self.juno_deg = swe.calc(self.j_day, 0, self.iflag)[0]
+        self.sun_deg = swe.calc(self.j_day, 0, self.iflag)[0][0]
+        self.moon_deg = swe.calc(self.j_day, 1, self.iflag)[0][0]
+        self.mercury_deg = swe.calc(self.j_day, 2, self.iflag)[0][0]
+        self.venus_deg = swe.calc(self.j_day, 3, self.iflag)[0][0]
+        self.mars_deg = swe.calc(self.j_day, 4, self.iflag)[0][0]
+        self.jupiter_deg = swe.calc(self.j_day, 5, self.iflag)[0][0]
+        self.saturn_deg = swe.calc(self.j_day, 6, self.iflag)[0][0]
+        self.uranus_deg = swe.calc(self.j_day, 7, self.iflag)[0][0]
+        self.neptune_deg = swe.calc(self.j_day, 8, self.iflag)[0][0]
+        self.pluto_deg = swe.calc(self.j_day, 9, self.iflag)[0][0]
+        self.juno_deg = swe.calc(self.j_day, 0, self.iflag)[0][0]
         #print(swe.calc(self.j_day, 7, self.iflag)[3])
 
         self.planets_degs = [self.sun_deg, self.moon_deg, self.mercury_deg,
@@ -461,7 +461,7 @@ class Calculator(AstroData):
         for plan in self.planets_list_temp:
             for i in range(15):
                 if plan["name"] == swe.get_planet_name(i):
-                    if swe.calc(self.j_day, i, self.iflag)[3] < 0:
+                    if swe.calc(self.j_day, i, self.iflag)[0][3] < 0:
                         plan.update({'retrograde' : 1})
                     else:
                         plan.update({'retrograde' : 0})
