@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="kerykeion", # Replace with your own username
-    version="0.0.1.2",
+    version="0.0.2.0",
     author="Giacomo Battaglia",
     author_email="battaglia.giacomo@yahoo.it",
     description="A astrology library.",
@@ -23,5 +23,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    install_requires = ['pyswisseph==2.00.00-2', 'pytz'],
+    install_requires = ['pyswisseph', 'pytz'],
 )
