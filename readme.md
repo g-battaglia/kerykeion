@@ -55,7 +55,7 @@ House Cusp 12:    Gem  15.681
 
 ## Documentation
 
-Soon will be available.
+Soon available.
 
 
 ## Installation
