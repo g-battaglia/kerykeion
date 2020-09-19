@@ -30,12 +30,14 @@ class AstroData():
 
     def get_tz(self):
         """Gets the nerest time zone for the calculation"""
-        city_data = search(self.city, self.nation)[0]
-        #z_conv = zt.n_tz(float(city_data["lat"]), float(city_data["lng"]),
+        
+        self.city_data = search(self.city, self.nation)[0]
+        #z_conv = zt.n_tz(float(self.city_data["lat"]), float(self.city_data["lng"]),
         # zt.timezones())[2]
-        self.city_long = float(city_data["lng"])
-        self.city_lat = float(city_data["lat"])
-        self.city_tz = city_data["timezonestr"]
+        self.city_long = float(self.city_data["lng"])
+        self.city_lat = float(self.city_data["lat"])
+        self.city_tz = self.city_data["timezonestr"]
+        self.country_code = self.city_data["countryCode"]
         return self.city_tz    
 
     def get_utc(self):
@@ -468,7 +470,9 @@ class Calculator(AstroData):
                 planets_ret.append(plan)
             
         self.planets_list = planets_ret
-        
+    
+    def graph(self):
+        pass
 
     def get_all(self):
         self.retrograde()
@@ -482,4 +486,4 @@ if __name__ == "__main__":
     #print(name)
     #print(kanye.planets_list[0])
     print(kanye.aspects_list[0]["orbit"])
-    print(kanye)
+    print(kanye.country_code)
