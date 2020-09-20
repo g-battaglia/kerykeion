@@ -6,7 +6,7 @@ import swisseph as swe
 from kerykeion.geoname import search
 import pytz, datetime, math
 
-swe.set_ephe_path("/")
+#swe.set_ephe_path("/")
 
 class AstroData():
     """ 
@@ -32,12 +32,22 @@ class AstroData():
         """Gets the nerest time zone for the calculation"""
         
         self.city_data = search(self.city, self.nation)[0]
+
         #z_conv = zt.n_tz(float(self.city_data["lat"]), float(self.city_data["lng"]),
         # zt.timezones())[2]
         self.city_long = float(self.city_data["lng"])
         self.city_lat = float(self.city_data["lat"])
         self.city_tz = self.city_data["timezonestr"]
         self.country_code = self.city_data["countryCode"]
+        
+        if self.city_lat > 66.0:
+            self.city_lat = 66.0
+            print("polar circle override for houses, using 66 degrees")
+
+        elif self.city_lat < -66.0:
+            self.city_lat = -66.0
+            print("polar circle override for houses, using -66 degrees")
+
         return self.city_tz    
 
     def get_utc(self):
@@ -102,7 +112,7 @@ class Calculator(AstroData):
         elif name == "pluto":
             return 9
         elif name == "juno":
-            return 19
+            return 0 #change!
         else:
             return int(name)
 
@@ -112,62 +122,62 @@ class Calculator(AstroData):
         the houses or the planets list."""
         if degree < 30:
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-             "Fire", "sign" : "Ari", "sign_num": 1, "pos": degree, "abs_pos" : degree,
+             "Fire", "sign" : "Ari", "sign_num": 0, "pos": degree, "abs_pos" : degree,
               "emoji": "♈️"}
         elif degree < 60:
             result = degree - 30
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-             "Earth", "sign" : "Tau", "sign_num": 2, "pos": result, "abs_pos" : degree,
+             "Earth", "sign" : "Tau", "sign_num": 1, "pos": result, "abs_pos" : degree,
               "emoji": "♉️"}
         elif degree < 90:
             result = degree - 60
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-             "Air", "sign" : "Gem", "sign_num": 3, "pos": result, "abs_pos" : degree,
+             "Air", "sign" : "Gem", "sign_num": 2, "pos": result, "abs_pos" : degree,
               "emoji": "♊️"}
         elif degree < 120:
             result = degree - 90
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-             "Water", "sign" : "Can", "sign_num": 4, "pos": result, "abs_pos" : degree,
+             "Water", "sign" : "Can", "sign_num": 3, "pos": result, "abs_pos" : degree,
               "emoji": "♋️"}
         elif degree < 150:
             result = degree - 120
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-             "Fire", "sign" : "Leo", "sign_num": 5, "pos": result, "abs_pos" : degree,
+             "Fire", "sign" : "Leo", "sign_num": 4, "pos": result, "abs_pos" : degree,
               "emoji": "♌️"}
         elif degree < 180:
             result = degree - 150
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-             "Earth", "sign" : "Vir", "sign_num": 6, "pos": result, "abs_pos" : degree,
+             "Earth", "sign" : "Vir", "sign_num": 5, "pos": result, "abs_pos" : degree,
               "emoji": "♍️"}
         elif degree < 210:
             result = degree - 180
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-             "Air", "sign" : "Lib", "sign_num": 7, "pos": result, "abs_pos" : degree,
+             "Air", "sign" : "Lib", "sign_num": 6, "pos": result, "abs_pos" : degree,
               "emoji": "♎️"}
         elif degree < 240:
             result = degree - 210
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-             "Water", "sign" : "Sco", "sign_num": 8, "pos": result, "abs_pos" : degree,
+             "Water", "sign" : "Sco", "sign_num": 7, "pos": result, "abs_pos" : degree,
               "emoji": "♏️"}
         elif degree < 270:
             result = degree - 240
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-             "Fire", "sign" : "Sag", "sign_num": 9, "pos": result, "abs_pos" : degree,
+             "Fire", "sign" : "Sag", "sign_num": 8, "pos": result, "abs_pos" : degree,
               "emoji": "♐️"}
         elif degree < 300:
             result = degree - 270
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-             "Earth", "sign" : "Cap", "sign_num": 10, "pos": result, "abs_pos" : degree,
+             "Earth", "sign" : "Cap", "sign_num": 9, "pos": result, "abs_pos" : degree,
               "emoji": "♑️"}
         elif degree < 330:
             result = degree - 300
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-             "Air", "sign" : "Aqu", "sign_num": 11, "pos": result, "abs_pos" : degree,
+             "Air", "sign" : "Aqu", "sign_num": 10, "pos": result, "abs_pos" : degree,
               "emoji": "♒️"}
         elif degree < 360:
             result = degree - 330
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-             "Water", "sign" : "Pis", "sign_num": 12, "pos": result, "abs_pos" : degree,
+             "Water", "sign" : "Pis", "sign_num": 11, "pos": result, "abs_pos" : degree,
               "emoji": "♓️"}
         else:
             hou_dic = {label: "pos_calc error", "sign" : "pos_calc error",
@@ -456,34 +466,81 @@ class Calculator(AstroData):
         #return self.both_aspects
 
     def retrograde(self):
-        """ Verify if a planet is retrograde"""
+        """ Verify if a planet is retrograde. """
 
         self.planets_house()
         planets_ret = []
         for plan in self.planets_list_temp:
-            for i in range(15):
-                if plan["name"] == swe.get_planet_name(i):
-                    if swe.calc(self.j_day, i, self.iflag)[0][3] < 0:
-                        plan.update({'retrograde' : 1})
-                    else:
-                        plan.update({'retrograde' : 0})
-                planets_ret.append(plan)
+            planet_number = self.get_number(plan["name"])
+            if swe.calc(self.j_day, planet_number, self.iflag)[0][3] < 0:
+                plan.update({'retrograde' : "True"})
+            else:
+                plan.update({'retrograde' : "False"})
+            planets_ret.append(plan)
             
         self.planets_list = planets_ret
-    
-    def graph(self):
-        pass
 
+
+    def lunar_phase_calc(self):
+        """ Function to calculate the lunar phase"""
+        
+        # anti-clockwise degrees between sun and moon
+        moon, sun = self.planets_degs[1], self.planets_degs[0]
+        degrees_between = moon - sun
+        
+        if degrees_between < 0:
+            degrees_between += 360.0
+
+        step = 360.0 / 28.0
+        
+        print(moon, sun, degrees_between)
+
+        for x in range(28):
+            low = x * step
+            high = (x + 1) * step
+            if degrees_between >= low and degrees_between < high:
+                mphase = x  + 1
+
+        sunstep = [0, 30, 40,  50, 60, 70, 80, 90, 120, 130, 140, 150, 160, 170, 180,
+         210, 220, 230, 240, 250, 260, 270, 300, 310, 320, 330, 340, 350]
+        
+        for x in range(len(sunstep)):
+            low = sunstep[x]
+            if x == 27:
+                high=360
+            else:
+                high = sunstep[x+1]
+            if degrees_between >= low and degrees_between < high:
+                sphase = x + 1
+
+        self.lunar_phase = {
+                    "degrees_between_s_m":degrees_between,
+                    "moon_phase":mphase,
+                    "sun_phase":sphase
+        }
+        return self.lunar_phase
+
+
+               
     def get_all(self):
+        self.aspects()
         self.retrograde()
-        self.aspects()       
+        self.lunar_phase_calc()       
 
 
 if __name__ == "__main__":
-    kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+    kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Ny-Ålesund")
     kanye.get_all()
-    name = kanye.planets_list[0]
+    #name = kanye.planets_list[0]
     #print(name)
     #print(kanye.planets_list[0])
-    print(kanye.aspects_list[0]["orbit"])
+    
+    """    print(kanye.aspects_list[0]["orbit"])
     print(kanye.country_code)
+    print(kanye.utc.hour + kanye.utc.minute/10)
+    print(kanye.city_data)
+    print(kanye.houses_degree)
+    print(kanye.lunar_phase)"""
+    print(kanye.planets_list)
+    
+
