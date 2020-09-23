@@ -111,8 +111,10 @@ class Calculator(AstroData):
             return 8
         elif name == "pluto":
             return 9
-        elif name == "juno":
-            return 0 #change!
+        elif name == "mean_node":
+            return 10 #change!
+        elif name == "true_node":
+            return 11
         else:
             return int(name)
 
@@ -232,6 +234,7 @@ class Calculator(AstroData):
 
 
         """Calculates the position of the planets and stores it in a list."""
+
         self.sun_deg = swe.calc(self.j_day, 0, self.iflag)[0][0]
         self.moon_deg = swe.calc(self.j_day, 1, self.iflag)[0][0]
         self.mercury_deg = swe.calc(self.j_day, 2, self.iflag)[0][0]
@@ -242,12 +245,16 @@ class Calculator(AstroData):
         self.uranus_deg = swe.calc(self.j_day, 7, self.iflag)[0][0]
         self.neptune_deg = swe.calc(self.j_day, 8, self.iflag)[0][0]
         self.pluto_deg = swe.calc(self.j_day, 9, self.iflag)[0][0]
-        self.juno_deg = swe.calc(self.j_day, 0, self.iflag)[0][0]
+        self.mean_node_deg  = swe.calc(self.j_day, 10, self.iflag)[0][0]
+        self.true_node_deg  = swe.calc(self.j_day, 11, self.iflag)[0][0]
+
+
         #print(swe.calc(self.j_day, 7, self.iflag)[3])
 
         self.planets_degs = [self.sun_deg, self.moon_deg, self.mercury_deg,
          self.venus_deg, self.mars_deg, self.jupiter_deg, self.saturn_deg,
-         self.uranus_deg, self.neptune_deg, self.pluto_deg, self.juno_deg]
+         self.uranus_deg, self.neptune_deg, self.pluto_deg, self.mean_node_deg,
+         self.true_node_deg]
 
         return self.planets_degs
 
@@ -266,11 +273,13 @@ class Calculator(AstroData):
         self.uranus = self.pos_calc(self.planets_degs[7], "Uranus", "name")
         self.neptune = self.pos_calc(self.planets_degs[8], "Neptune", "name")
         self.pluto = self.pos_calc(self.planets_degs[9], "Pluto", "name")
-        self.juno = self.pos_calc(self.planets_degs[10], "Juno", "name")
+        self.mean_node = self.pos_calc(self.planets_degs[10], "Mean_Node", "name")
+        self.true_node = self.pos_calc(self.planets_degs[11], "True_Node", "name")
+
 
         self.planets_list_temp = [self.sun, self.moon, self.mercury, self.venus,
          self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
-          self.pluto, self.juno]
+          self.pluto, self.mean_node, self.true_node]
 
         return self.planets_list_temp
 
@@ -347,11 +356,12 @@ class Calculator(AstroData):
         self.uranus = for_every_planet(self.uranus, self.uranus_deg)
         self.neptune = for_every_planet(self.neptune, self.neptune_deg)
         self.pluto = for_every_planet(self.pluto, self.pluto_deg)
-        self.juno = for_every_planet(self.juno, self.juno_deg)
+        self.mean_node = for_every_planet(self.mean_node, self.mean_node_deg)
+        self.mean_node = for_every_planet(self.true_node, self.true_node_deg)
 
         self.planets_list_temp = [self.sun, self.moon, self.mercury, self.venus,
          self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
-          self.pluto, self.juno]
+          self.pluto, self.mean_node, self.true_node]
 
         return self.planets_list_temp
     
@@ -541,6 +551,8 @@ if __name__ == "__main__":
     print(kanye.city_data)
     print(kanye.houses_degree)
     print(kanye.lunar_phase)"""
-    print(kanye.planets_list)
+    
+    #print(kanye.planets_list)
+    print(kanye.true_node)
     
 
