@@ -365,6 +365,57 @@ class Calculator(AstroData):
 
         return self.planets_list_temp
     
+    def retrograde(self):
+        """ Verify if a planet is retrograde. """
+
+        self.planets_house()
+        planets_ret = []
+        for plan in self.planets_list_temp:
+            planet_number = self.get_number(plan["name"])
+            if swe.calc(self.j_day, planet_number, self.iflag)[0][3] < 0:
+                plan.update({'retrograde' : True})
+            else:
+                plan.update({'retrograde' : False})
+            planets_ret.append(plan)
+            
+        self.planets_list = planets_ret
+
+    def lunar_phase_calc(self):
+        """ Function to calculate the lunar phase"""
+        
+        # anti-clockwise degrees between sun and moon
+        moon, sun = self.planets_degs[1], self.planets_degs[0]
+        degrees_between = moon - sun
+        
+        if degrees_between < 0:
+            degrees_between += 360.0
+
+        step = 360.0 / 28.0
+        
+        for x in range(28):
+            low = x * step
+            high = (x + 1) * step
+            if degrees_between >= low and degrees_between < high:
+                mphase = x  + 1
+
+        sunstep = [0, 30, 40,  50, 60, 70, 80, 90, 120, 130, 140, 150, 160, 170, 180,
+         210, 220, 230, 240, 250, 260, 270, 300, 310, 320, 330, 340, 350]
+        
+        for x in range(len(sunstep)):
+            low = sunstep[x]
+            if x == 27:
+                high=360
+            else:
+                high = sunstep[x+1]
+            if degrees_between >= low and degrees_between < high:
+                sphase = x + 1
+
+        self.lunar_phase = {
+                    "degrees_between_s_m":degrees_between,
+                    "moon_phase":mphase,
+                    "sun_phase":sphase
+        }
+
     def asp_calc(self, point_one, point_two):
         """ 
         Calculates the aspects between the 2 points.
@@ -430,7 +481,7 @@ class Calculator(AstroData):
         else:
             return False, None, None, None, None
     
-    def aspects(self):
+    def aspects_lister(self):
         """
         Return all the aspects of the points in the natal chart in a dictionary,
         first all the individual aspects of each planet, second the aspects
@@ -440,22 +491,7 @@ class Calculator(AstroData):
         self.planets_house()
         self.point_list = self.planets_list_temp + self.house_list
 
-        #all_aspects = {}
-        once_aspects = []
-        #both_aspects = {}
-        """
-        for first in range(len(self.point_list)):
-            all_aspects[self.point_list[first]["name"]] = []
-            #Generates all aspects list
-            for second in range(len(self.point_list)):
-                verdict, aspect, orbit, aid = self.asp_calc(self.point_list[first]["abs_pos"],
-                self.point_list[second]["abs_pos"])
-                
-                if verdict == True and self.point_list[first] != self.point_list[second]:
-                    all_aspects[self.point_list[first]["name"]].append(f"{aspect, self.point_list[second]['name'], orbit, aid}")
-                    pass
-        """
-
+        self.aspects_list = []
 
         for first in range(len(self.point_list)):
         #Generates the aspects list whitout repetitions
@@ -468,74 +504,32 @@ class Calculator(AstroData):
                     d_asp = {"p1": self.point_list[first]['name'], "p1_abs_pos": self.point_list[first]['abs_pos'], "p2": self.point_list[second]['name'], "p2_abs_pos": self.point_list[second]['abs_pos'],
                      "aspect": aspect, "orbit": orbit, "aid": aid, "color": color}
 
-                    once_aspects.append(d_asp)
+                    self.aspects_list.append(d_asp)
 
-        #self.both_aspects = {"all": all_aspects, "once": once_aspects}
-        self.aspects_list = once_aspects
         return self.aspects_list
-        #return self.both_aspects
 
-    def retrograde(self):
-        """ Verify if a planet is retrograde. """
-
-        self.planets_house()
-        planets_ret = []
-        for plan in self.planets_list_temp:
-            planet_number = self.get_number(plan["name"])
-            if swe.calc(self.j_day, planet_number, self.iflag)[0][3] < 0:
-                plan.update({'retrograde' : "True"})
-            else:
-                plan.update({'retrograde' : "False"})
-            planets_ret.append(plan)
+    def aspects_filter(self):
             
-        self.planets_list = planets_ret
+        self.aspects_lister()
+
+        #list of desired points
+        points = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", 1, 10]
+
+        self.aspects = []
+        for aspect in self.aspects_list:
+            if aspect["p1"] and aspect["p2"] in points:
+                self.aspects.append(aspect)  
 
 
-    def lunar_phase_calc(self):
-        """ Function to calculate the lunar phase"""
-        
-        # anti-clockwise degrees between sun and moon
-        moon, sun = self.planets_degs[1], self.planets_degs[0]
-        degrees_between = moon - sun
-        
-        if degrees_between < 0:
-            degrees_between += 360.0
+        return self.aspects
 
-        step = 360.0 / 28.0
-        
-        print(moon, sun, degrees_between)
-
-        for x in range(28):
-            low = x * step
-            high = (x + 1) * step
-            if degrees_between >= low and degrees_between < high:
-                mphase = x  + 1
-
-        sunstep = [0, 30, 40,  50, 60, 70, 80, 90, 120, 130, 140, 150, 160, 170, 180,
-         210, 220, 230, 240, 250, 260, 270, 300, 310, 320, 330, 340, 350]
-        
-        for x in range(len(sunstep)):
-            low = sunstep[x]
-            if x == 27:
-                high=360
-            else:
-                high = sunstep[x+1]
-            if degrees_between >= low and degrees_between < high:
-                sphase = x + 1
-
-        self.lunar_phase = {
-                    "degrees_between_s_m":degrees_between,
-                    "moon_phase":mphase,
-                    "sun_phase":sphase
-        }
-        return self.lunar_phase
-
-
-               
+                   
     def get_all(self):
-        self.aspects()
+        self.planets_house()
         self.retrograde()
         self.lunar_phase_calc()       
+
+
 
 
 if __name__ == "__main__":
@@ -553,6 +547,6 @@ if __name__ == "__main__":
     print(kanye.lunar_phase)"""
     
     #print(kanye.planets_list)
-    print(kanye.true_node)
-    
+    #print(kanye.true_node)
+    print(kanye.aspects_filter())
 
