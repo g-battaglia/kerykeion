@@ -509,15 +509,21 @@ class Calculator(AstroData):
         return self.aspects_list
 
     def aspects_filter(self):
+        """ 
+        Filters the aspects list with the desired points, in this case
+        the most important are hardcoded.
+        Set the list with set_points and creating a list with the names
+        or the numbers of the houses.
+        """
             
         self.aspects_lister()
 
         #list of desired points
-        points = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", 1, 10]
+        self.set_points = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", 1, 10]
 
         self.aspects = []
         for aspect in self.aspects_list:
-            if aspect["p1"] and aspect["p2"] in points:
+            if aspect["p1"] and aspect["p2"] in self.set_points:
                 self.aspects.append(aspect)  
 
 
@@ -533,7 +539,7 @@ class Calculator(AstroData):
 
 
 if __name__ == "__main__":
-    kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Ny-Ålesund")
+    kanye = Calculator("Atlanta", 1977, 6, 8, 8, 45, "Ny-Ålesund")
     kanye.get_all()
     #name = kanye.planets_list[0]
     #print(name)
@@ -548,5 +554,8 @@ if __name__ == "__main__":
     
     #print(kanye.planets_list)
     #print(kanye.true_node)
-    print(kanye.aspects_filter())
+    filtered_aspects = kanye.aspects_filter()
+    t = kanye.lunar_phase
 
+    #############################    
+    print(t)
