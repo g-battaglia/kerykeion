@@ -2,6 +2,8 @@
     This is part of Kerykeion (C) 2020 Giacomo Battaglia
 """
 
+import jsonpickle
+import os.path
 import swisseph as swe
 from kerykeion.geoname import search
 import pytz, datetime, math
@@ -32,6 +34,7 @@ class AstroData():
         """Gets the nerest time zone for the calculation"""
         
         self.city_data = search(self.city, self.nation)[0]
+        self.nation = self.city_data["countryCode"]
 
         #z_conv = zt.n_tz(float(self.city_data["lat"]), float(self.city_data["lng"]),
         # zt.timezones())[2]
@@ -531,15 +534,31 @@ class Calculator(AstroData):
 
                    
     def get_all(self):
+        """ Gets all data from all the functions """
+
         self.planets_house()
         self.retrograde()
         self.lunar_phase_calc()       
 
+    def json_dump(self):
+        """
+        Dumps the Kerykeion object to a json file located in the home folder.
+        """
+        
+        try:
+            self.sun
+        except:
+            self.get_all()
 
-
+        self.json_path = os.path.join(os.path.expanduser("~"), f'{self.name}_kerykeion.json')
+        self.json_string = jsonpickle.encode(self)
+        
+        with open(self.json_path, "w") as file:
+            file.write(self.json_string)
+        
 
 if __name__ == "__main__":
-    kanye = Calculator("Atlanta", 1977, 6, 8, 8, 45, "Ny-Ålesund")
+    kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
     kanye.get_all()
     #name = kanye.planets_list[0]
     #print(name)
@@ -554,8 +573,11 @@ if __name__ == "__main__":
     
     #print(kanye.planets_list)
     #print(kanye.true_node)
-    filtered_aspects = kanye.aspects_filter()
-    t = kanye.lunar_phase
+    #filtered_aspects = kanye.aspects_filter()
+    #t = kanye.lunar_phase
+    #t = kanye.json_dump()
 
-    #############################    
-    print(t)
+
+    #############################  
+    kanye.json_dump()  
+    print(kanye.city)
