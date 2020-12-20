@@ -553,8 +553,9 @@ class Calculator(AstroData):
 
         self.json_path = os.path.join(self.json_dir, f"{self.name}_kerykeion.json")
         self.json_string = jsonpickle.encode(self)
-        hiden_values = [' "json_dir": "/Users/giacomobattaglia",',
-        ', "json_path": "/Users/giacomobattaglia/Kanye_kerykeion.json"'
+
+        hiden_values = [f' "json_dir": "{self.json_dir}",'
+        , f', "json_path": "{self.json_path}"'
         ]
         
         for string in hiden_values:
@@ -574,7 +575,7 @@ if __name__ == "__main__":
     kanye.get_all()
 
     #############################  
-    
-    f = kanye.json_dump(dump=False)  
+
+    f = kanye.json_dump(dump=True)  
     print(kanye.city)
     print(f)
