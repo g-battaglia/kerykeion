@@ -572,25 +572,9 @@ class Calculator(AstroData):
 if __name__ == "__main__":
     kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
     kanye.get_all()
-    #name = kanye.planets_list[0]
-    #print(name)
-    #print(kanye.planets_list[0])
-    
-    """    print(kanye.aspects_list[0]["orbit"])
-    print(kanye.country_code)
-    print(kanye.utc.hour + kanye.utc.minute/10)
-    print(kanye.city_data)
-    print(kanye.houses_degree)
-    print(kanye.lunar_phase)"""
-    
-    #print(kanye.planets_list)
-    #print(kanye.true_node)
-    #filtered_aspects = kanye.aspects_filter()
-    #t = kanye.lunar_phase
-    #t = kanye.json_dump()
-
 
     #############################  
+    
     f = kanye.json_dump(dump=False)  
     print(kanye.city)
     print(f)
