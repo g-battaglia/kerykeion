@@ -23,5 +23,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    install_requires = ['pyswisseph', 'pytz'],
+    install_requires = ['pyswisseph', 'pytz', 'jsonpickle'],
 )
