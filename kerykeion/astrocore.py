@@ -541,7 +541,7 @@ class Calculator(AstroData):
         self.retrograde()
         self.lunar_phase_calc()       
 
-    def json_dump(self):
+    def json_dump(self, dump=True):
         """
         Dumps the Kerykeion object to a json file located in the home folder.
         """
@@ -559,10 +559,14 @@ class Calculator(AstroData):
         
         for string in hiden_values:
             self.json_string = self.json_string.replace(string, "")
-        
-        with open(self.json_path, "w") as file:
-            file.write(self.json_string)
-            print("JSON file dumped.")
+
+        if dump:
+            with open(self.json_path, "w") as file:
+                file.write(self.json_string)
+                print("JSON file dumped.")
+        else:
+            pass
+        return self.json_string
         
 
 if __name__ == "__main__":
@@ -587,5 +591,6 @@ if __name__ == "__main__":
 
 
     #############################  
-    kanye.json_dump()  
+    f = kanye.json_dump(dump=False)  
     print(kanye.city)
+    print(f)
