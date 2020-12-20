@@ -27,6 +27,7 @@ class AstroData():
         self.minuts = minuts
         self.city = city
         self.nation = nat
+        self.json_dir = os.path.expanduser("~")
 
 
 
@@ -550,7 +551,7 @@ class Calculator(AstroData):
         except:
             self.get_all()
 
-        self.json_path = os.path.join(os.path.expanduser("~"), f'{self.name}_kerykeion.json')
+        self.json_path = os.path.join(self.json_dir, f'{self.name}_kerykeion.json')
         self.json_string = jsonpickle.encode(self)
         
         with open(self.json_path, "w") as file:
