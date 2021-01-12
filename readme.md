@@ -6,7 +6,7 @@ Kerykeion is a python utility library for Astrology.
 ```python
 
 # Import the main class for creating a kerykeion instance:
->>> from kerykeion.astrocore import Calculator
+>>> from kerykeion import Calculator
 
 # Create a kerykeion instance:
 >>> kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
@@ -27,7 +27,7 @@ Kerykeion is a python utility library for Astrology.
 
 # Example of a possible text output with information:
 
->>> from kerykeion.output import output
+>>> from kerykeion import output
 
 >>> print(output(kanye))
 -----------------------------------------------------
