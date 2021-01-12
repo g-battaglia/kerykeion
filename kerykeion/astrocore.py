@@ -198,23 +198,23 @@ class Calculator(AstroData):
         self.houses_degree_ut = swe.houses(self.j_day, self.city_lat,
          self.city_long)[0]
         #stores the house in signulare dictionaries.
-        self.fir_house = self.pos_calc(self.houses_degree_ut[0], "1", "name")
-        self.sec_house = self.pos_calc(self.houses_degree_ut[1], "2", "name")
-        self.thr_house = self.pos_calc(self.houses_degree_ut[2], "3", "name")
-        self.for_house = self.pos_calc(self.houses_degree_ut[3], "4", "name")
-        self.fif_house = self.pos_calc(self.houses_degree_ut[4], "5", "name")
-        self.six_house = self.pos_calc(self.houses_degree_ut[5], "6", "name")
-        self.sev_house = self.pos_calc(self.houses_degree_ut[6], "7", "name")
-        self.eig_house = self.pos_calc(self.houses_degree_ut[7], "8", "name")
-        self.nin_house = self.pos_calc(self.houses_degree_ut[8], "9", "name")
-        self.ten_house = self.pos_calc(self.houses_degree_ut[9], "10", "name")
-        self.ele_house = self.pos_calc(self.houses_degree_ut[10], "11", "name")
-        self.twe_house = self.pos_calc(self.houses_degree_ut[11], "12", "name")
+        self.first_house = self.pos_calc(self.houses_degree_ut[0], "1", "name")
+        self.second_house = self.pos_calc(self.houses_degree_ut[1], "2", "name")
+        self.third_house = self.pos_calc(self.houses_degree_ut[2], "3", "name")
+        self.fourth_house = self.pos_calc(self.houses_degree_ut[3], "4", "name")
+        self.fifth_house = self.pos_calc(self.houses_degree_ut[4], "5", "name")
+        self.sixth_house = self.pos_calc(self.houses_degree_ut[5], "6", "name")
+        self.seventh_house = self.pos_calc(self.houses_degree_ut[6], "7", "name")
+        self.eighth_house = self.pos_calc(self.houses_degree_ut[7], "8", "name")
+        self.ninth_house = self.pos_calc(self.houses_degree_ut[8], "9", "name")
+        self.tenth_house = self.pos_calc(self.houses_degree_ut[9], "10", "name")
+        self.eleventh_house = self.pos_calc(self.houses_degree_ut[10], "11", "name")
+        self.twelfth_house = self.pos_calc(self.houses_degree_ut[11], "12", "name")
         #creates a list of all the dictionaries of thetype.
-        self.house_list = [self.fir_house, self.sec_house, self.thr_house,
-         self.for_house, self.fif_house, self.six_house, self.sev_house,
-         self.eig_house, self.nin_house, self.ten_house, self.ele_house,
-         self.twe_house]
+        self.house_list = [self.first_house, self.second_house, self.third_house,
+         self.fourth_house, self.fifth_house, self.sixth_house, self.seventh_house,
+         self.eighth_house, self.ninth_house, self.tenth_house, self.eleventh_house,
+         self.twelfth_house]
         
         self.houses_degree = [self.house_list[0]["pos"], self.house_list[1]["pos"],
         self.house_list[2]["pos"], self.house_list[3]["pos"], self.house_list[4]["pos"],
@@ -293,7 +293,7 @@ class Calculator(AstroData):
         self.planets()
         self.houses()
 
-        def for_every_planet(planet, deg_planet):
+        def fourth_every_planet(planet, deg_planet):
             """Functio to do the calculation.
             Args: planet dictionary, planet degree"""
             
@@ -350,18 +350,18 @@ class Calculator(AstroData):
             return planet
             
 
-        self.sun = for_every_planet(self.sun, self.sun_deg)
-        self.moon = for_every_planet(self.moon, self.moon_deg)
-        self.mercury = for_every_planet(self.mercury, self.mercury_deg)
-        self.venus = for_every_planet(self.venus, self.venus_deg)
-        self.mars = for_every_planet(self.mars, self.mars_deg)
-        self.jupiter = for_every_planet(self.jupiter, self.jupiter_deg)
-        self.saturn = for_every_planet(self.saturn, self.saturn_deg)
-        self.uranus = for_every_planet(self.uranus, self.uranus_deg)
-        self.neptune = for_every_planet(self.neptune, self.neptune_deg)
-        self.pluto = for_every_planet(self.pluto, self.pluto_deg)
-        self.mean_node = for_every_planet(self.mean_node, self.mean_node_deg)
-        self.mean_node = for_every_planet(self.true_node, self.true_node_deg)
+        self.sun = fourth_every_planet(self.sun, self.sun_deg)
+        self.moon = fourth_every_planet(self.moon, self.moon_deg)
+        self.mercury = fourth_every_planet(self.mercury, self.mercury_deg)
+        self.venus = fourth_every_planet(self.venus, self.venus_deg)
+        self.mars = fourth_every_planet(self.mars, self.mars_deg)
+        self.jupiter = fourth_every_planet(self.jupiter, self.jupiter_deg)
+        self.saturn = fourth_every_planet(self.saturn, self.saturn_deg)
+        self.uranus = fourth_every_planet(self.uranus, self.uranus_deg)
+        self.neptune = fourth_every_planet(self.neptune, self.neptune_deg)
+        self.pluto = fourth_every_planet(self.pluto, self.pluto_deg)
+        self.mean_node = fourth_every_planet(self.mean_node, self.mean_node_deg)
+        self.mean_node = fourth_every_planet(self.true_node, self.true_node_deg)
 
         self.planets_list_temp = [self.sun, self.moon, self.mercury, self.venus,
          self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
@@ -406,18 +406,41 @@ class Calculator(AstroData):
          210, 220, 230, 240, 250, 260, 270, 300, 310, 320, 330, 340, 350]
         
         for x in range(len(sunstep)):
+
             low = sunstep[x]
+
             if x == 27:
                 high=360
             else:
                 high = sunstep[x+1]
             if degrees_between >= low and degrees_between < high:
                 sphase = x + 1
+        
+        def moon_emoji(phase):
+                if phase == 0:
+                    result = "🌑"
+                elif phase == 14:
+                    result = "🌕"
+                elif 7 <= phase <= 9:
+                    result = "🌓"
+                elif 20 <= phase <= 22:
+                    result = "🌗"
+                elif phase < 7 :
+                    result = "🌒"
+                elif phase < 14:
+                    result = "🌔"
+                elif phase <= 28:
+                    result = "🌘"
+                else:
+                    result = phase
+                
+                return result
 
         self.lunar_phase = {
-                    "degrees_between_s_m":degrees_between,
-                    "moon_phase":mphase,
-                    "sun_phase":sphase
+                    "degrees_between_s_m" : degrees_between,
+                    "moon_phase" : mphase,
+                    "sun_phase" : sphase,
+                    "moon_emoji" : moon_emoji(mphase)
         }
 
     def asp_calc(self, point_one, point_two):
@@ -579,3 +602,4 @@ if __name__ == "__main__":
     f = kanye.json_dump(dump=True)  
     print(kanye.city)
     print(f)
+    print(kanye.lunar_phase)
