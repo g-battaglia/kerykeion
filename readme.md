@@ -20,7 +20,7 @@ Kerykeion is a python utility library for Astrology.
 {'name': 'Sun', 'quality': 'Mutable', 'element': 'Air', 'sign': 'Gem', 'sign_num': 2, 'pos': 17.598992059774275, 'abs_pos': 77.59899205977428, 'emoji': '♊️', 'house': '12th House', 'retrograde': False}
 
 # Get informations about the first house:
->>> kanye.fir_house
+>>> kanye.first_house
 {'name': '1', 'quality': 'Cardinal', 'element': 'Water', 'sign': 'Can', 'sign_num': 3, 'pos': 17.995779673209114, 'abs_pos': 107.99577967320911, 'emoji': '♋️'}
 
 
