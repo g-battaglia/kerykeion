@@ -417,7 +417,7 @@ class Calculator(AstroData):
                 sphase = x + 1
         
         def moon_emoji(phase):
-                if phase == 0:
+                if phase == 1:
                     result = "🌑"
                 elif phase == 14:
                     result = "🌕"
