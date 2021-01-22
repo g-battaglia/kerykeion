@@ -5,15 +5,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from kerykeion.astrocore import AstroData, Calculator
+from kerykeion.astrocore import Calculator
 import swisseph as swe
 
-bergman = Calculator("Ingrid_Bergman", 15, 8, 29, 3, 30, "Stockholm")
-rossellini = Calculator("Rossellini", 1906, 5, 8, 12, 50, "Roma")
+DEBUG = False
+def dprint(*str):
+    if DEBUG:
+        print(str)
+
+bergman = Calculator("Ingrid_Bergman", 1993, 6, 20, 12, 15, "Stockholm")
+rossellini = Calculator("Rossellini", 1994, 6, 1, 19, 50, "Roma")
 
 class Synastry():
     """
-    Calculates the synastry using the Ciro Discepolo way.
+    Calculates the synastry using Ciro Discepolo's algorithm.
     Args: first user object, second user object
     """
 
@@ -22,10 +27,11 @@ class Synastry():
         self.user2 = user2
         user1.get_all()
         user2.get_all()
-        self.pl_ho_info1 = user1.planets_list[:7] + [user1.house_list[0],
+        self.first_points_list = user1.planets_list[:7] + [user1.house_list[0],
          user1.house_list[9]]
-        self.pl_ho_info2 = user2.planets_list[:7] + [user2.house_list[0],
+        self.second_points_list = user2.planets_list[:7] + [user2.house_list[0],
          user2.house_list[9]]
+
 
     def synastry_aspect(self, user1, pl_us1, user2, pl_us2):
         """ 
@@ -34,8 +40,8 @@ class Synastry():
         second user objcet, second list of planets and houses. 
         """
 
-        distance = abs(swe.difdeg2n(self.pl_ho_info1[pl_us1]["abs_pos"],
-        self.pl_ho_info2[pl_us2]["abs_pos"]))
+        distance = abs(swe.difdeg2n(self.first_points_list[pl_us1]["abs_pos"],
+        self.second_points_list[pl_us2]["abs_pos"]))
         if int(distance) <= 10:
             aspect = "Conjuction"
             return True, aspect, distance
@@ -69,85 +75,121 @@ class Synastry():
         elif 143.5 <= int(distance) <= 144.5:
             aspect = "BiQuintile"
             return True, aspect, distance - 144
-        elif (self.pl_ho_info1[pl_us1]["name"] == "Sun" and
-         self.pl_ho_info2[pl_us2]["name"] == "Sun" and
-         self.pl_ho_info1[pl_us1]["quality"] ==
-         self.pl_ho_info2[pl_us2]["quality"]):
+        elif (self.first_points_list[pl_us1]["name"] == "Sun" and
+         self.second_points_list[pl_us2]["name"] == "Sun" and
+         self.first_points_list[pl_us1]["quality"] ==
+         self.second_points_list[pl_us2]["quality"]):
             aspect = "DESTINO"
             return False, aspect, distance
         else:
             return False, None, None
 
-    def synastry_result(self):
+    def get_synastry(self):
         """
         Asingns points to the aspects and prints them.
         """
-        lenght = len(self.pl_ho_info1)
+        lenght = len(self.first_points_list)
         counter = 0
         points = 0
+        aspects = []
+        value = 0
         for i in range(lenght):
             for b in range(lenght):
                 verdict, aspect, orbit = self.synastry_aspect(self.user1, i,
                  self.user2, b)
                 if verdict == True:
-                    if aspect == "Conjuction" and ((self.pl_ho_info1[i]
+                    if aspect == "Conjuction" and ((self.first_points_list[i]
                     ["name"] 
-                    == "Sun" and self.pl_ho_info2[b]["name"] 
-                    == "Moon") or (self.pl_ho_info1[i]["name"] 
-                    == "Moon" and self.pl_ho_info2[b]["name"]
+                    == "Sun" and self.second_points_list[b]["name"] 
+                    == "Moon") or (self.first_points_list[i]["name"] 
+                    == "Moon" and self.second_points_list[b]["name"]
                     == "Sun")):
-                        points += 8
+                        value = 8
                         if abs(int(orbit)) <= 2:
-                            points += 3
-                    elif (self.pl_ho_info1[b]["name"] 
-                    == "Sun" and self.pl_ho_info2[i]["name"]
-                    == "Sun") or (self.pl_ho_info1[b]["name"] 
-                    == "Sun" and self.pl_ho_info2[i]["name"]
-                    == "Moon") or (self.pl_ho_info1[b]["name"] 
-                    == "Moon" and self.pl_ho_info2[i]["name"]
-                    == "Sun") or (self.pl_ho_info1[b]["name"] 
-                    == "Moon" and self.pl_ho_info2[i]["name"]
-                    == "Moon") or (self.pl_ho_info1[b]["name"] 
-                    == 1 and self.pl_ho_info2[i]["name"]
-                    == 1) or (self.pl_ho_info1[b]["name"] 
-                    == "Sun" and self.pl_ho_info2[i]["name"]
-                    == 1) or (self.pl_ho_info1[b]["name"] 
-                    == 1 and self.pl_ho_info2[i]["name"]
-                    == "Sun") or (self.pl_ho_info1[b]["name"] 
-                    == "Moon" and self.pl_ho_info2[i]["name"]
-                    == 1) or (self.pl_ho_info1[b]["name"] 
-                    == 1 and self.pl_ho_info2[i]["name"]
+                            value += 3
+                            points += value
+                        else:
+                            points += value
+
+                    elif (self.first_points_list[b]["name"] 
+                    == "Sun" and self.second_points_list[i]["name"]
+                    == "Sun") or (self.first_points_list[b]["name"] 
+                    == "Sun" and self.second_points_list[i]["name"]
+                    == "Moon") or (self.first_points_list[b]["name"] 
+                    == "Moon" and self.second_points_list[i]["name"]
+                    == "Sun") or (self.first_points_list[b]["name"] 
+                    == "Moon" and self.second_points_list[i]["name"]
+                    == "Moon") or (self.first_points_list[b]["name"] 
+                    == 1 and self.second_points_list[i]["name"]
+                    == 1) or (self.first_points_list[b]["name"] 
+                    == "Sun" and self.second_points_list[i]["name"]
+                    == 1) or (self.first_points_list[b]["name"] 
+                    == 1 and self.second_points_list[i]["name"]
+                    == "Sun") or (self.first_points_list[b]["name"] 
+                    == "Moon" and self.second_points_list[i]["name"]
+                    == 1) or (self.first_points_list[b]["name"] 
+                    == 1 and self.second_points_list[i]["name"]
                     == "Moon"):
-                        points += 4
-                        if (self.pl_ho_info1[i]["name"] 
-                        == "Sun" and self.pl_ho_info2[b]["name"] 
-                        == "Sun" and self.pl_ho_info1[i]["sign"] 
-                        == self.pl_ho_info2[b]["sign"]):
-                            points += 5
-                    elif (self.pl_ho_info1[i]["name"] 
-                    == "Venus" and self.pl_ho_info2[b]["name"] 
-                    == "Mars") or (self.pl_ho_info1[i]["name"] 
-                    == "Mars" and self.pl_ho_info2[b]["name"] 
+                        value = 4
+                        if (self.first_points_list[i]["name"] 
+                        == "Sun" and self.second_points_list[b]["name"] 
+                        == "Sun" and self.first_points_list[i]["sign"] 
+                        == self.second_points_list[b]["sign"]):
+                            value += 5
+                            points += value
+                        else:
+                            points += value
+
+                    elif (self.first_points_list[i]["name"] 
+                    == "Venus" and self.second_points_list[b]["name"] 
+                    == "Mars") or (self.first_points_list[i]["name"] 
+                    == "Mars" and self.second_points_list[b]["name"] 
                     == "Venus"):
-                        points += 4
+                        value = 4
+                        points += value
+                    else:
+                        value = 0
                     counter += 1
-                    print("-----------------------------\n",
-                     self.user1.name, self.pl_ho_info1[i]["name"],
-                      aspect, self.user2.name, self.pl_ho_info2[b]["name"],
-                       "orbit:", round(orbit, 3), "Points:", points,
-                        "\n-----------------------------", counter)
+                    orbit = round(orbit, 3)
+                    aspect = {"user1_name":     self.user1.name,
+                              "user1_object":   self.first_points_list[i]["name"],
+                              "aspect":         aspect,
+                              "user2_name":     self.user2.name,
+                              "user2_objcet":   self.second_points_list[b]["name"],
+                              "orbit":          orbit,
+                              "Value":          value,
+                              "counter":        counter}
+                    aspects.append(aspect)
                 elif verdict == False and aspect == "DESTINO":
+                    
                     counter += 1
-                    points += 5
-                    print("-----------------------------\n",
-                    "destino", points, orbit)
+                    value = 5
+                    points += value
+
+                    aspect = {'user1_name':    self.user1.name,
+                              'user1_object':  'Sun',
+                              'aspect':        'DESTINY',
+                              'user2_name':    self.user2.name,
+                              'user2_objcet':  'Sun',
+                              'orbit':         orbit,
+                              'Value':         value,
+                              'counter':       counter
+                            }
+
+                    aspects.append(aspect) 
                 elif verdict == False:
-                    #print(self.user1.name, self.pl_ho_info1[i]["name"], aspect,
-                     #self.user2.name, self.pl_ho_info2[b]["name"], orbit, counter)
+                    #aspect = (self.user1.name, self.first_points_list[i]["name"], aspect,
+                     #self.user2.name, self.second_points_list[b]["name"], orbit, counter)
                      None
                 else:
-                    print("ERROR")
-        print(points)
+                    aspect = ("ERROR")
+                    aspects.append(aspect)
+
+        self.counter = counter
+        self.score   = points
+        self.aspects = aspects
 
 if __name__ == "__main__":
-    Synastry(bergman, rossellini).synastry_result()
+    sn = Synastry(bergman, rossellini)
+    sn.get_synastry()
+    print(sn.score)
