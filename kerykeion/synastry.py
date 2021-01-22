@@ -8,13 +8,17 @@
 from kerykeion.astrocore import Calculator
 import swisseph as swe
 
-DEBUG = False
-def dprint(*str):
-    if DEBUG:
-        print(str)
+# General Costants
+ORBIT_ROUND = 1
 
-bergman = Calculator("Ingrid_Bergman", 1993, 6, 20, 12, 15, "Stockholm")
-rossellini = Calculator("Rossellini", 1994, 6, 1, 19, 50, "Roma")
+CONJUCTION_VALUE = 10
+OPPOSITION_VALUE = 8
+SQUARE_VALUE = 5
+TRIGON_VALUE = 7
+
+
+
+
 
 class Synastry():
     """
@@ -22,18 +26,18 @@ class Synastry():
     Args: first user object, second user object
     """
 
-    def __init__(self, user1, user2):
-        self.user1 = user1
-        self.user2 = user2
-        user1.get_all()
-        user2.get_all()
-        self.first_points_list = user1.planets_list[:7] + [user1.house_list[0],
-         user1.house_list[9]]
-        self.second_points_list = user2.planets_list[:7] + [user2.house_list[0],
-         user2.house_list[9]]
+    def __init__(self, user_a, user_b):
+        self.user_a = user_a
+        self.user_b = user_b
+        user_a.get_all()
+        user_b.get_all()
+        self.first_points_list = user_a.planets_list[:7] + [user_a.house_list[0],
+         user_a.house_list[9]]
+        self.second_points_list = user_b.planets_list[:7] + [user_b.house_list[0],
+         user_b.house_list[9]]
 
 
-    def synastry_aspect(self, user1, pl_us1, user2, pl_us2):
+    def synastry_aspect(self, user_a, pl_us1, user_b, pl_us2):
         """ 
         Calculates the aspects between the 2 users.
         Args: first user object, first list of planets and houses,
@@ -42,16 +46,22 @@ class Synastry():
 
         distance = abs(swe.difdeg2n(self.first_points_list[pl_us1]["abs_pos"],
         self.second_points_list[pl_us2]["abs_pos"]))
-        if int(distance) <= 10:
+        if ( int(distance) <= 15 ) and ( (self.first_points_list[pl_us1]["name"] == "Sun" and self.first_points_list[pl_us2]["name"] == "Sun")
+         or (self.first_points_list[pl_us1]["name"] == "Moon" and self.first_points_list[pl_us2]["name"] == "Moon") 
+         or (self.first_points_list[pl_us1]["name"] == "Moon" and self.first_points_list[pl_us2]["name"] == "Sun") 
+         or (self.first_points_list[pl_us1]["name"] == "Sun" and self.first_points_list[pl_us2]["name"] == "Moon") ):
             aspect = "Conjuction"
             return True, aspect, distance
-        elif 172 <= int(distance) <= 188:
+        if int(distance) <= CONJUCTION_VALUE:
+            aspect = "Conjuction"
+            return True, aspect, distance
+        elif (180 - OPPOSITION_VALUE) <= int(distance) <= (180 + OPPOSITION_VALUE):
             aspect = "Oposition"
             return True, aspect, distance - 180
-        elif 85 <= int(distance) <= 95:
+        elif (90 - SQUARE_VALUE) <= int(distance) <= (90 + SQUARE_VALUE):
             aspect = "Square"
             return True, aspect, distance - 90
-        elif 113 <= int(distance) <= 127:
+        elif (120 - TRIGON_VALUE) <= int(distance) <= (120 + TRIGON_VALUE):
             aspect = "Trigon"
             return True, aspect, distance - 120
         elif 57 <= int(distance) <= 63:
@@ -95,8 +105,8 @@ class Synastry():
         value = 0
         for i in range(lenght):
             for b in range(lenght):
-                verdict, aspect, orbit = self.synastry_aspect(self.user1, i,
-                 self.user2, b)
+                verdict, aspect, orbit = self.synastry_aspect(self.user_a, i,
+                 self.user_b, b)
                 if verdict == True:
                     if aspect == "Conjuction" and ((self.first_points_list[i]
                     ["name"] 
@@ -120,15 +130,15 @@ class Synastry():
                     == "Sun") or (self.first_points_list[b]["name"] 
                     == "Moon" and self.second_points_list[i]["name"]
                     == "Moon") or (self.first_points_list[b]["name"] 
-                    == 1 and self.second_points_list[i]["name"]
-                    == 1) or (self.first_points_list[b]["name"] 
+                    == "1" and self.second_points_list[i]["name"]
+                    == "1") or (self.first_points_list[b]["name"] 
                     == "Sun" and self.second_points_list[i]["name"]
-                    == 1) or (self.first_points_list[b]["name"] 
-                    == 1 and self.second_points_list[i]["name"]
+                    == "1") or (self.first_points_list[b]["name"] 
+                    == "1" and self.second_points_list[i]["name"]
                     == "Sun") or (self.first_points_list[b]["name"] 
                     == "Moon" and self.second_points_list[i]["name"]
-                    == 1) or (self.first_points_list[b]["name"] 
-                    == 1 and self.second_points_list[i]["name"]
+                    == "1") or (self.first_points_list[b]["name"] 
+                    == "1" and self.second_points_list[i]["name"]
                     == "Moon"):
                         value = 4
                         if (self.first_points_list[i]["name"] 
@@ -149,28 +159,32 @@ class Synastry():
                         points += value
                     else:
                         value = 0
+                    
                     counter += 1
-                    orbit = round(orbit, 3)
-                    aspect = {"user1_name":     self.user1.name,
-                              "user1_object":   self.first_points_list[i]["name"],
+                    orbit = round(orbit, ORBIT_ROUND)
+                    aspect = {"user_a_name":     self.user_a.name,
+                              "user_a_object":   self.first_points_list[i]["name"],
                               "aspect":         aspect,
-                              "user2_name":     self.user2.name,
-                              "user2_objcet":   self.second_points_list[b]["name"],
+                              "user_b_name":     self.user_b.name,
+                              "user_b_objcet":   self.second_points_list[b]["name"],
                               "orbit":          orbit,
                               "Value":          value,
-                              "counter":        counter}
+                              "counter":        counter
+                            }
                     aspects.append(aspect)
+
                 elif verdict == False and aspect == "DESTINO":
                     
                     counter += 1
-                    value = 5
-                    points += value
+                    value    = 5
+                    points  += value
+                    orbit    = round(orbit, ORBIT_ROUND)
 
-                    aspect = {'user1_name':    self.user1.name,
-                              'user1_object':  'Sun',
+                    aspect = {'user_a_name':    self.user_a.name,
+                              'user_a_object':  'Sun',
                               'aspect':        'DESTINY',
-                              'user2_name':    self.user2.name,
-                              'user2_objcet':  'Sun',
+                              'user_b_name':    self.user_b.name,
+                              'user_b_objcet':  'Sun',
                               'orbit':         orbit,
                               'Value':         value,
                               'counter':       counter
@@ -178,8 +192,8 @@ class Synastry():
 
                     aspects.append(aspect) 
                 elif verdict == False:
-                    #aspect = (self.user1.name, self.first_points_list[i]["name"], aspect,
-                     #self.user2.name, self.second_points_list[b]["name"], orbit, counter)
+                    #aspect = (self.user_a.name, self.first_points_list[i]["name"], aspect,
+                     #self.user_b.name, self.second_points_list[b]["name"], orbit, counter)
                      None
                 else:
                     aspect = ("ERROR")
@@ -190,6 +204,23 @@ class Synastry():
         self.aspects = aspects
 
 if __name__ == "__main__":
-    sn = Synastry(bergman, rossellini)
+
+    #lui= Calculator("Fo'", 1926, 3, 24, 12, 25, "Sangiano", "IT")
+    #lei = Calculator("Rame", 1929, 7, 18, 12, 25, "Parabiago", "IT")
+
+    #lui= Calculator("Fo'", 1993, 6, 10, 12, 15, "Montichiari", "IT")
+    #lei = Calculator("Rame", 1994, 6, 9, 19, 50, "Cremona", "IT")
+
+
+    lui = Calculator("Windsor", 1894, 6, 23, 21, 55, "London")
+    lei = Calculator("Simpson", 1896, 6, 19, 22, 30,"Blue Ridge Summit")
+
+    sn = Synastry(lei, lui)
     sn.get_synastry()
+    print(lei.sun)
+    print(lui.sun)
+
+    for a in sn.aspects:
+        print(a)
+
     print(sn.score)

@@ -8,8 +8,8 @@
 from kerykeion.astrocore import AstroData, Calculator
 import swisseph as swe
 
-bergman = Calculator("Ingrid_Bergman", 15, 8, 29, 3, 30, "Stockholm")
-rossellini = Calculator("Rossellini", 1906, 5, 8, 12, 50, "Roma")
+bergman = Calculator("Dario Fo'", 1926, 3, 24, 12, 25, "Sangiano")
+rossellini = Calculator("Franca Rame", 1929, 7, 18, 12, 25, "Parabiago")
 
 class Synastry():
     """
