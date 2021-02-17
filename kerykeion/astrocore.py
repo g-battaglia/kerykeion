@@ -603,3 +603,8 @@ if __name__ == "__main__":
     print(kanye.city)
     print(f)
     print(kanye.lunar_phase)
+
+    from chart_svg import SvgInstance
+
+    svg = SvgInstance(kanye)
+    svg.makeSVG()
