@@ -2,7 +2,6 @@
 
 Kerykeion is a python utility library for Astrology.
 
-
 ```python
 
 # Import the main class for creating a kerykeion instance:
@@ -36,7 +35,7 @@ Kerykeion is a python utility library for Astrology.
 -----------------------------------------------------
 NAME: Kanye
 PLANET     POSITION
-                      
+
 Sun:       Gem 17.599 in 12th House
 Moon:      Pis 16.425 in 9th House
 Mercury:   Tau 26.286 in 11th House
@@ -74,27 +73,34 @@ House Cusp 12:    Gem  15.681
 ["('Square', 'Moon', 1.1735227310748542)", "('Semisquare', 'Venus', 0.5668097396966303)", "('Semisquare', 'Mars', 0.8092756679079827)", "('Conjuction', 'Jupiter', 2.992099853982751)", "('Oposition', 'Neptune', -2.906233250740513)", "('Trigon', 'Pluto', -6.153155598911468)", "('Conjuction', 'Juno', 0.0)", "('Semisextil', '1', 0.39678949800406826)", "('Oposition', '6', -1.917784119528534)", "('Quincunx', '7', -0.39678949800406826)", "('Conjuction', '12', 1.917784119528534)"]
 
 
-```
+
 
 
 # Generate a SVG of the birthchart:
 
 from kerykeion import SvgInstance
 
->>> svg = SvgInstance(kanye) # Make an instance of the SvgInstance class.
->>> svg.set_dir = "/"        # Set the output directory, default path is in the home direcotry.
->>> svg.makeSVG()            # Generate the .svg file.
+# Make an instance of the SvgInstance class.
+>>> svg = SvgInstance(kanye)
+
+# Set the output directory, default path is in the home direcotry.
+>>> svg.set_dir = "/"
+
+# Generate the .svg file.
+>>> svg.makeSVG()
+
+```
+
+![alt text](https://raw.githubusercontent.com/g-battaglia/birthchartSVG/master/birthchartSVG/data/template/sample.svg)
 
 ## Documentation
 
 Soon available.
 
-
 ## Installation
 
-Kerykeion is a Python 3 package, make sure you have Python 3 installed on your system. 
-
+Kerykeion is a Python 3 package, make sure you have Python 3 installed on your system.
 
 ## Development
 
-You can clone this repository or download a zip file using the right side buttons. 
+You can clone this repository or download a zip file using the right side buttons.
