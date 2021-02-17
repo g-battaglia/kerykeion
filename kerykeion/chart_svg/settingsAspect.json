@@ -1,0 +1,112 @@
+[
+  {
+    "degree": 0,
+    "name": "conjunction",
+    "color": "#5757e2",
+    "visible": 1,
+    "visible_grid": 1,
+    "is_major": 1,
+    "is_minor": 0,
+    "orb": "10"
+  },
+  {
+    "degree": 30,
+    "name": "semi-sextile",
+    "color": "#810757",
+    "visible": 0,
+    "visible_grid": 0,
+    "is_major": 0,
+    "is_minor": 1,
+    "orb": "3"
+  },
+  {
+    "degree": 45,
+    "name": "semi-square",
+    "color": "#b14e58",
+    "visible": 0,
+    "visible_grid": 0,
+    "is_major": 0,
+    "is_minor": 1,
+    "orb": "3"
+  },
+  {
+    "degree": 60,
+    "name": "sextile",
+    "color": "#d59e28",
+    "visible": 1,
+    "visible_grid": 1,
+    "is_major": 1,
+    "is_minor": 0,
+    "orb": "6"
+  },
+  {
+    "degree": 72,
+    "name": "quintile",
+    "color": "#1f99b3",
+    "visible": 1,
+    "visible_grid": 1,
+    "is_major": 0,
+    "is_minor": 1,
+    "orb": "2"
+  },
+  {
+    "degree": 90,
+    "name": "square",
+    "color": "#dc0000",
+    "visible": 1,
+    "visible_grid": 1,
+    "is_major": 1,
+    "is_minor": 0,
+    "orb": "5"
+  },
+  {
+    "degree": 120,
+    "name": "trine",
+    "color": "#36d100",
+    "visible": 1,
+    "visible_grid": 1,
+    "is_major": 1,
+    "is_minor": 0,
+    "orb": "8"
+  },
+  {
+    "degree": 135,
+    "name": "sesquiquadrate",
+    "color": "#985a10",
+    "visible": 0,
+    "visible_grid": 0,
+    "is_major": 0,
+    "is_minor": 1,
+    "orb": "3"
+  },
+  {
+    "degree": 144,
+    "name": "biquintile",
+    "color": "#7a9810",
+    "visible": 1,
+    "visible_grid": 1,
+    "is_major": 0,
+    "is_minor": 1,
+    "orb": "2"
+  },
+  {
+    "degree": 150,
+    "name": "quincunx",
+    "color": "#fff600",
+    "visible": 1,
+    "visible_grid": 1,
+    "is_major": 0,
+    "is_minor": 0,
+    "orb": "3"
+  },
+  {
+    "degree": 180,
+    "name": "opposition",
+    "color": "#510060",
+    "visible": 1,
+    "visible_grid": 1,
+    "is_major": 1,
+    "is_minor": 0,
+    "orb": "10"
+  }
+]

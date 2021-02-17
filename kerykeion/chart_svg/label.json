@@ -1,0 +1,17 @@
+{
+    "cusp": "Cusp",
+    "longitude": "Longitude",
+    "latitude": "Latitude",
+    "north": "North",
+    "east": "East",
+    "south": "South",
+    "west": "West",
+    "apparent_geocentric": "Apparent Geocentric",
+    "true_geocentric": "True Geocentric",
+    "topocentric": "Topocentric",
+    "heliocentric": "Heliocentric",
+    "fire": "Fire",
+    "earth": "Earth",
+    "air": "Air",
+    "water": "Water"
+  }

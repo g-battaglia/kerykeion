@@ -1,0 +1,162 @@
+[
+  {
+    "id": 0,
+    "name": "sun",
+    "color": "#984b00",
+    "visible": 1,
+    "element_points": 40,
+    "zodiac_relation": "4",
+    "label": "Sun",
+    "label_short": "sun"
+  },
+  {
+    "id": 1,
+    "name": "moon",
+    "color": "#150052",
+    "visible": 1,
+    "element_points": 40,
+    "zodiac_relation": "3",
+    "label": "Moon",
+    "label_short": "moon"
+  },
+  {
+    "id": 2,
+    "name": "mercury",
+    "color": "#520800",
+    "visible": 1,
+    "element_points": 15,
+    "zodiac_relation": "2,5",
+    "label": "Mercury",
+    "label_short": "mercury"
+  },
+  {
+    "id": 3,
+    "name": "venus",
+    "color": "#400052",
+    "visible": 1,
+    "element_points": 15,
+    "zodiac_relation": "1,6",
+    "label": "Venus",
+    "label_short": "venus"
+  },
+  {
+    "id": 4,
+    "name": "mars",
+    "color": "#540000",
+    "visible": 1,
+    "element_points": 15,
+    "zodiac_relation": "0",
+    "label": "Mars",
+    "label_short": "mars"
+  },
+  {
+    "id": 5,
+    "name": "jupiter",
+    "color": "#47133d",
+    "visible": 1,
+    "element_points": 10,
+    "zodiac_relation": "8",
+    "label": "Jupiter",
+    "label_short": "jupiter"
+  },
+  {
+    "id": 6,
+    "name": "saturn",
+    "color": "#124500",
+    "visible": 1,
+    "element_points": 10,
+    "zodiac_relation": "9",
+    "label": "Saturn",
+    "label_short": "saturn"
+  },
+  {
+    "id": 7,
+    "name": "uranus",
+    "color": "#6f0766",
+    "visible": 1,
+    "element_points": 10,
+    "zodiac_relation": "10",
+    "label": "Uranus",
+    "label_short": "uranus"
+  },
+  {
+    "id": 8,
+    "name": "neptune",
+    "color": "#06537f",
+    "visible": 1,
+    "element_points": 10,
+    "zodiac_relation": "11",
+    "label": "Neptune",
+    "label_short": "neptune"
+  },
+  {
+    "id": 9,
+    "name": "pluto",
+    "color": "#713f04",
+    "visible": 0,
+    "element_points": 10,
+    "zodiac_relation": "7",
+    "label": "Pluto",
+    "label_short": "pluto"
+  },
+  {
+    "id": 10,
+    "name": "mean node",
+    "color": "#4c1541",
+    "visible": 0,
+    "element_points": 20,
+    "zodiac_relation": "-1",
+    "label": "North Node",
+    "label_short": "Node"
+  },
+  {
+    "id": 11,
+    "name": "true node",
+    "color": "#4c1541",
+    "visible": 0,
+    "element_points": 0,
+    "zodiac_relation": "-1",
+    "label": "?",
+    "label_short": "?"
+  },
+  {
+    "id": 12,
+    "name": "Asc",
+    "color": "orange",
+    "visible": 1,
+    "element_points": 40,
+    "zodiac_relation": "-1",
+    "label": "Asc",
+    "label_short": "Asc"
+  },
+  {
+    "id": 13,
+    "name": "Mc",
+    "color": "#FF0000",
+    "visible": 1,
+    "element_points": 20,
+    "zodiac_relation": "-1",
+    "label": "Mc",
+    "label_short": "Mc"
+  },
+  {
+    "id": 14,
+    "name": "Dsc",
+    "color": "#0000FF",
+    "visible": 0,
+    "element_points": 0,
+    "zodiac_relation": "-1",
+    "label": "Dsc",
+    "label_short": "Dsc"
+  },
+  {
+    "id": 15,
+    "name": "Ic",
+    "color": "#000000",
+    "visible": 0,
+    "element_points": 0,
+    "zodiac_relation": "-1",
+    "label": "Ic",
+    "label_short": "Ic"
+  }
+]
