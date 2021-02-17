@@ -85,6 +85,8 @@ from kerykeion import SvgInstance
 >>> svg.set_dir = "/"        # Set the output directory, default path is in the home direcotry.
 >>> svg.makeSVG()            # Generate the .svg file.
 
+![alt text](https://raw.githubusercontent.com/g-battaglia/birthchartSVG/master/birthchartSVG/data/template/sample.svg)
+
 ## Documentation
 
 Soon available.
