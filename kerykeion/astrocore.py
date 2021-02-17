@@ -67,10 +67,10 @@ class AstroData():
     def get_jd(self):
         """ Calculates julian day from the utc time."""
         utc = self.get_utc()
-        time_utc = utc.hour + utc.minute/60
+        self.time_utc = utc.hour + utc.minute/60
         self.time = self.hours + self.minuts/60
         self.j_day = float(swe.julday(utc.year, utc.month, utc.day,
-         time_utc))
+         self.time_utc))
         
         return self.j_day
 
