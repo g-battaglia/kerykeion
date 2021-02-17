@@ -97,7 +97,6 @@ from kerykeion import SvgInstance
 
 # Generate the .svg file.      
 >>> svg.makeSVG()            
->>>>>>> 74a289d03fc8030fd0e3dae086929c304a306649
 
 ```
 
