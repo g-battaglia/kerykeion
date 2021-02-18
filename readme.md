@@ -81,15 +81,12 @@ House Cusp 12:    Gem  15.681
 from kerykeion import SvgInstance
 
 # Make an instance of the SvgInstance class.
-<<<<<<< HEAD
 >>> svg = SvgInstance(kanye)
 
 # Set the output directory, default path is in the home direcotry.
 >>> svg.set_dir = "/"
 
 # Generate the .svg file.
->>> svg.makeSVG()
-=======
 >>> svg = SvgInstance(kanye) 
 
 # Set the output directory, default path is in the home direcotry.
