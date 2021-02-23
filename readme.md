@@ -97,7 +97,7 @@ from kerykeion import SvgInstance
 
 ```
 
-![alt text](https://raw.githubusercontent.com/g-battaglia/birthchartSVG/master/birthchartSVG/data/template/sample.svg)
+![alt text](https://raw.githubusercontent.com/g-battaglia/birthchartSVG/master/birthchartSVG/template/sample.svg)
 
 ## Documentation
 
