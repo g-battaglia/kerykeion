@@ -78,26 +78,7 @@ House Cusp 12:    Gem  15.681
 
 # Generate a SVG of the birthchart:
 
-from kerykeion import SvgInstance
-
-# Make an instance of the SvgInstance class.
->>> svg = SvgInstance(kanye)
-
-# Set the output directory, default path is in the home direcotry.
->>> svg.set_dir = "/"
-
-# Generate the .svg file.
->>> svg = SvgInstance(kanye) 
-
-# Set the output directory, default path is in the home direcotry.
->>> svg.set_dir = "/"  
-
-# Generate the .svg file.      
->>> svg.makeSVG()            
-
 ```
-
-![alt text](https://raw.githubusercontent.com/g-battaglia/birthchartSVG/master/birthchartSVG/template/sample.svg)
 
 ## Documentation
 
