@@ -1,3 +1,2 @@
 include README.md
 include LICENSE.txt
-recursive-include kerykeion/chart_svg *.json *.xml

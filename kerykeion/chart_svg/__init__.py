@@ -1,1 +1,0 @@
-from .chart_svg import SvgInstance
