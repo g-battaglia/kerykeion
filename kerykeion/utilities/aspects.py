@@ -116,11 +116,15 @@ class NatalAspects():
         return verdict, name, distance - aspect_degrees, aspect_degrees, color, aid, diff
     
     def p_id_decoder(self, name):
+
+        """ 
+        Check if the name of the planet is the same in the settings and return
+        the correct id for the planet.
+        """
         str_name = str(name).lower()
         for a in planets:
             if a['name'] == str_name:
                 result = a['id']
-                print("-------ok")
                 return result
                 
     def get_aspects(self):
