@@ -281,11 +281,11 @@ class Calculator(AstroData):
         self.true_node = self.pos_calc(self.planets_degs[11], "True_Node", "name")
 
 
-        self.planets_list_temp = [self.sun, self.moon, self.mercury, self.venus,
+        self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
          self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
           self.pluto, self.mean_node, self.true_node]
 
-        return self.planets_list_temp
+        return self.planets_list
 
     def planets_house(self):
         """Calculates the house of the planet and updates 
@@ -363,18 +363,18 @@ class Calculator(AstroData):
         self.mean_node = fourth_every_planet(self.mean_node, self.mean_node_deg)
         self.mean_node = fourth_every_planet(self.true_node, self.true_node_deg)
 
-        self.planets_list_temp = [self.sun, self.moon, self.mercury, self.venus,
+        self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
          self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
           self.pluto, self.mean_node, self.true_node]
 
-        return self.planets_list_temp
+        return self.planets_list
     
     def retrograde(self):
         """ Verify if a planet is retrograde. """
 
         self.planets_house()
         planets_ret = []
-        for plan in self.planets_list_temp:
+        for plan in self.planets_list:
             planet_number = self.get_number(plan["name"])
             if swe.calc(self.j_day, planet_number, self.iflag)[0][3] < 0:
                 plan.update({'retrograde' : True})
@@ -443,118 +443,118 @@ class Calculator(AstroData):
                     "moon_emoji" : moon_emoji(mphase)
         }
 
-    def asp_calc(self, point_one, point_two):
-        """ 
-        Calculates the aspects between the 2 points.
-        Args: first point, second point. 
-        """
+    # def asp_calc(self, point_one, point_two):
+    #     """ 
+    #     Calculates the aspects between the 2 points.
+    #     Args: first point, second point. 
+    #     """
 
-        distance = abs(swe.difdeg2n(point_one, point_two))
-        if int(distance) <= 10:
-            aspect = "Conjuction"
-            aid = 0
-            color = "#7FFF00"
-            return True, aspect, distance, aid, color
-        elif 172 <= int(distance) <= 188:
-            aspect = "Oposition"
-            aid = 180
-            color = "#ff0000"
-            return True, aspect, distance - 180, aid, color
-        elif 85 <= int(distance) <= 95:
-            aspect = "Square"
-            aid = 90
-            color = "#ff0000"
-            return True, aspect, distance - 90, aid, color
-        elif 113 <= int(distance) <= 127:
-            aspect = "Trigon"
-            aid = 120
-            color = "#7FFF00"
-            return True, aspect, distance - 120, aid, color
-        elif 57 <= int(distance) <= 63:
-            aspect = "Sextil"
-            aid = 60
-            color = "#7FFF00"
-            return True, aspect, distance - 60, aid, color
-        elif 28 <= int(distance) <= 32:
-            aspect = "Semisextil"
-            aid = 30
-            color = "#7FFF00"
-            return True, aspect, distance - 30, aid, color
-        elif 43 <= int(distance) <= 47:
-            aspect = "Semisquare"
-            aid = 45
-            color = "#ff0000"
-            return True, aspect, distance - 45, aid, color
-        elif 133 <= int(distance) <= 137:
-            aspect = "Sesquiquadrate"
-            aid = 135
-            color = "#ff0000"
-            return True, aspect, distance - 135, aid, color
-        elif 149 <= int(distance) <= 151:
-            aspect = "Quincunx"
-            aid = 150
-            color = "#505050"
-            return True, aspect, distance - 150, aid, color
-        elif 71.5 <= int(distance) <= 72.5:
-            aspect = "Quintile"
-            aid = 72
-            color = "#505050"
-            return True, aspect, distance - 72, aid, color
-        elif 143.5 <= int(distance) <= 144.5:
-            aspect = "BiQuintile"
-            aid = 144
-            color = "#505050"
-            return True, aspect, distance - 144, aid, color
-        else:
-            return False, None, None, None, None
+    #     distance = abs(swe.difdeg2n(point_one, point_two))
+    #     if int(distance) <= 10:
+    #         aspect = "Conjuction"
+    #         aid = 0
+    #         color = "#7FFF00"
+    #         return True, aspect, distance, aid, color
+    #     elif 172 <= int(distance) <= 188:
+    #         aspect = "Oposition"
+    #         aid = 180
+    #         color = "#ff0000"
+    #         return True, aspect, distance - 180, aid, color
+    #     elif 85 <= int(distance) <= 95:
+    #         aspect = "Square"
+    #         aid = 90
+    #         color = "#ff0000"
+    #         return True, aspect, distance - 90, aid, color
+    #     elif 113 <= int(distance) <= 127:
+    #         aspect = "Trigon"
+    #         aid = 120
+    #         color = "#7FFF00"
+    #         return True, aspect, distance - 120, aid, color
+    #     elif 57 <= int(distance) <= 63:
+    #         aspect = "Sextil"
+    #         aid = 60
+    #         color = "#7FFF00"
+    #         return True, aspect, distance - 60, aid, color
+    #     elif 28 <= int(distance) <= 32:
+    #         aspect = "Semisextil"
+    #         aid = 30
+    #         color = "#7FFF00"
+    #         return True, aspect, distance - 30, aid, color
+    #     elif 43 <= int(distance) <= 47:
+    #         aspect = "Semisquare"
+    #         aid = 45
+    #         color = "#ff0000"
+    #         return True, aspect, distance - 45, aid, color
+    #     elif 133 <= int(distance) <= 137:
+    #         aspect = "Sesquiquadrate"
+    #         aid = 135
+    #         color = "#ff0000"
+    #         return True, aspect, distance - 135, aid, color
+    #     elif 149 <= int(distance) <= 151:
+    #         aspect = "Quincunx"
+    #         aid = 150
+    #         color = "#505050"
+    #         return True, aspect, distance - 150, aid, color
+    #     elif 71.5 <= int(distance) <= 72.5:
+    #         aspect = "Quintile"
+    #         aid = 72
+    #         color = "#505050"
+    #         return True, aspect, distance - 72, aid, color
+    #     elif 143.5 <= int(distance) <= 144.5:
+    #         aspect = "BiQuintile"
+    #         aid = 144
+    #         color = "#505050"
+    #         return True, aspect, distance - 144, aid, color
+    #     else:
+    #         return False, None, None, None, None
     
-    def aspects_lister(self):
-        """
-        Return all the aspects of the points in the natal chart in a dictionary,
-        first all the individual aspects of each planet, second the aspects
-        whitout repetitions.
-        """
+    # def get_aspects(self):
+    #     """
+    #     Return all the aspects of the points in the natal chart in a dictionary,
+    #     first all the individual aspects of each planet, second the aspects
+    #     whitout repetitions.
+    #     """
         
-        self.planets_house()
-        self.point_list = self.planets_list_temp + self.house_list
+    #     self.planets_house()
+    #     self.point_list = self.planets_list_temp + self.house_list
 
-        self.aspects_list = []
+    #     self.aspects_list = []
 
-        for first in range(len(self.point_list)):
-        #Generates the aspects list whitout repetitions
-            for second in range(first + 1, len(self.point_list)):
+    #     for first in range(len(self.point_list)):
+    #     #Generates the aspects list whitout repetitions
+    #         for second in range(first + 1, len(self.point_list)):
                 
-                verdict, aspect, orbit, aid, color = self.asp_calc(self.point_list[first]["abs_pos"],
-                self.point_list[second]["abs_pos"])
+    #             verdict, aspect, orbit, aid, color = self.asp_calc(self.point_list[first]["abs_pos"],
+    #             self.point_list[second]["abs_pos"])
                 
-                if verdict == True:
-                    d_asp = {"p1": self.point_list[first]['name'], "p1_abs_pos": self.point_list[first]['abs_pos'], "p2": self.point_list[second]['name'], "p2_abs_pos": self.point_list[second]['abs_pos'],
-                     "aspect": aspect, "orbit": orbit, "aid": aid, "color": color}
+    #             if verdict == True:
+    #                 d_asp = {"p1": self.point_list[first]['name'], "p1_abs_pos": self.point_list[first]['abs_pos'], "p2": self.point_list[second]['name'], "p2_abs_pos": self.point_list[second]['abs_pos'],
+    #                  "aspect": aspect, "orbit": orbit, "aid": aid, "color": color}
 
-                    self.aspects_list.append(d_asp)
+    #                 self.aspects_list.append(d_asp)
 
-        return self.aspects_list
+    #     return self.aspects_list
 
-    def aspects_filter(self):
-        """ 
-        Filters the aspects list with the desired points, in this case
-        the most important are hardcoded.
-        Set the list with set_points and creating a list with the names
-        or the numbers of the houses.
-        """
+    # def aspects_filter(self):
+    #     """ 
+    #     Filters the aspects list with the desired points, in this case
+    #     the most important are hardcoded.
+    #     Set the list with set_points and creating a list with the names
+    #     or the numbers of the houses.
+    #     """
             
-        self.aspects_lister()
+    #     self.get_aspects()
 
-        #list of desired points
-        self.set_points = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", 1, 10]
+    #     #list of desired points
+    #     self.set_points = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", 1, 10]
 
-        self.aspects = []
-        for aspect in self.aspects_list:
-            if aspect["p1"] and aspect["p2"] in self.set_points:
-                self.aspects.append(aspect)  
+    #     self.aspects = []
+    #     for aspect in self.aspects_list:
+    #         if aspect["p1"] and aspect["p2"] in self.set_points:
+    #             self.aspects.append(aspect)  
 
 
-        return self.aspects
+    #     return self.aspects
 
                    
     def get_all(self):
@@ -603,8 +603,4 @@ if __name__ == "__main__":
     print(kanye.city)
     print(f)
     print(kanye.lunar_phase)
-
-    from chart_svg import SvgInstance
-
-    svg = SvgInstance(kanye)
-    svg.makeSVG()
+    print(kanye.planets_list)
