@@ -1,5 +1,5 @@
 from kerykeion.astrocore import Calculator
-from kerykeion.kr_settings import aspects, colors, planets
+from kerykeion.settings import aspects, colors, planets
 from swisseph import difdeg2n
 
 
