@@ -199,7 +199,7 @@ class NatalAspects():
 
         axes = ["1", "10", "7", "4"]
         for aspect in self.aspects:
-            if ( aspect['p1_name'] in axes or aspect['p2_name'] in axes ) and (aspect['orbit'] >= axes_orbit):
+            if ( aspect['p1_name'] in axes or aspect['p2_name'] in axes ) and ( abs(aspect['orbit']) >= axes_orbit ):
                 self.aspects.remove(aspect)
         
 
