@@ -462,22 +462,22 @@ class Calculator(AstroData):
             self.get_all()
 
         self.json_path = os.path.join(self.json_dir, f"{self.name}_kerykeion.json")
-        self.json_string = jsonpickle.encode(self)
+        json_string = jsonpickle.encode(self)
 
         hiden_values = [f' "json_dir": "{self.json_dir}",'
         , f', "json_path": "{self.json_path}"'
         ]
         
         for string in hiden_values:
-            self.json_string = self.json_string.replace(string, "")
+            json_string = json_string.replace(string, "")
 
         if dump:
             with open(self.json_path, "w") as file:
-                file.write(self.json_string)
+                file.write(json_string)
                 print("JSON file dumped.")
         else:
             pass
-        return self.json_string
+        return json_string
         
 
 if __name__ == "__main__":
