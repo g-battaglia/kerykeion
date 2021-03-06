@@ -14,11 +14,15 @@ class NatalAspects():
         if not hasattr(self.user, "sun"):
             print(f"Generating kerykeion object for {self.user.name}...")
             self.user.get_all()
+        
+        self.init_point_list = self.user.planets_list + self.user.house_list
+
     
 
     def asp_calc(self, point_one, point_two):
         """ 
-        Calculates the aspects between the 2 points.
+        Utility function.
+        It calculates the aspects between the 2 points.
         Args: first point, second point. 
         """
 
@@ -126,52 +130,57 @@ class NatalAspects():
             if a['name'] == str_name:
                 result = a['id']
                 return result
-                
+
+    def filter_by_settings(self, init_point_list):
+        """
+        Creates a list of all the desired
+        points filtering by the settings.
+        """
+
+        set_points_name = []
+        for p in planets:
+            if p['visible']:
+                set_points_name.append(p['name'])
+        
+        point_list = []
+        for l in init_point_list:
+            if l['name'] in set_points_name:
+                point_list.append(l)
+        
+        return point_list 
+        
+
     def get_all_aspects(self):
         """
         Return all the aspects of the points in the natal chart in a dictionary,
         first all the individual aspects of each planet, second the aspects
         whitout repetitions.
         """
-        
 
-        point_list_tmp = self.user.planets_list + self.user.house_list
-
-
-        #list of desired points names
-        set_points_name = []
-        for p in planets:
-            if p['visible']:
-                set_points_name.append(p['name'])
-        
-        self.point_list = []
-        for l in point_list_tmp:
-            if l['name'] in set_points_name:
-                self.point_list.append(l)
-
+        point_list = self.filter_by_settings(self.init_point_list)
         
         self.all_aspects_list = []
 
-        for first in range(len(self.point_list)):
+        for first in range(len(point_list)):
         #Generates the aspects list whitout repetitions
-            for second in range(first + 1, len(self.point_list)):
+            for second in range(first + 1, len(point_list)):
                 
-                verdict, name, orbit, aspect_degrees, color, aid, diff = self.asp_calc(self.point_list[first]["abs_pos"],
-                self.point_list[second]["abs_pos"])
+                verdict, name, orbit, aspect_degrees, color, aid, diff = self.asp_calc(point_list[first]["abs_pos"],
+                point_list[second]["abs_pos"])
                 
                 if verdict == True:
-                    d_asp = { "p1_name": self.point_list[first]['name'],
-                              "p1_abs_pos": self.point_list[first]['abs_pos'],
-                              "p2_name": self.point_list[second]['name'],
-                              "p2_abs_pos": self.point_list[second]['abs_pos'],
+                    d_asp = { "p1_name": point_list[first]['name'],
+                              "p1_abs_pos": point_list[first]['abs_pos'],
+                              "p2_name": point_list[second]['name'],
+                              "p2_abs_pos": point_list[second]['abs_pos'],
                               "aspect": name,
                               "orbit": orbit,
                               "aspect_degrees": aspect_degrees,
                               "color": color,
                               "aid": aid,
                               "diff": diff,
-                              "p1": self.p_id_decoder(self.point_list[first]['name']),
-                              "p2": self.p_id_decoder(self.point_list[second]['name'],)
+                              "p1": self.p_id_decoder(point_list[first]['name']),
+                              "p2": self.p_id_decoder(point_list[second]['name'],)
                      }
 
                     self.all_aspects_list.append(d_asp)
@@ -182,6 +191,7 @@ class NatalAspects():
    
 
     def get_aspects(self):
+
         """ 
         Filters the aspects list with the desired points, in this case
         the most important are hardcoded.
@@ -219,17 +229,43 @@ class NatalAspects():
         self.aspects = [item for item in aspects_filtered if item not in aspects_list_subtract]
 
 
-
-
         return self.aspects
+
+class CompositeAspects(NatalAspects):
+
+    def __init__(self, kr_object_one, kr_object_two):
+
+        self.first_user = kr_object_one
+        self.second_user = kr_object_two
+
+        
+        if not hasattr(self.first_user, "sun"):
+            print(f"Generating kerykeion object for {self.first_user.name}...")
+            self.first_user.get_all()
+        
+        if not hasattr(self.second_user, "sun"):
+            print(f"Generating kerykeion object for {self.second_user.name}...")
+            self.second_user.get_all()
+        
+
+        
+        first_init_point_list = self.first_user.planets_list + self.first_user.house_list
+        second_init_point_list = self.second_user.planets_list + self.second_user.house_list
+        self.init_point_list = first_init_point_list + second_init_point_list
+    
 
 if __name__ == "__main__":
     kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
-    kanye = Calculator("Jack", 1990, 6, 15, 13, 00, "Montichiari")
-    kanye.get_all()
-    natal = NatalAspects(kanye)
-    natal.get_aspects()
-    for a in natal.aspects:
+    jack = Calculator("Jack", 1990, 6, 15, 13, 00, "Montichiari")
+    # kanye.get_all()
+    # natal = NatalAspects(kanye)
+    # natal.get_aspects()
+    # for a in natal.aspects:
+    #     print(a['p1_name'], a['p2_name'], a['orbit'])
+    cm = CompositeAspects(kanye, jack)
+    res = cm.get_aspects()
+    # print(res)
+    for a in res:
         print(a['p1_name'], a['p2_name'], a['orbit'])
     
     
