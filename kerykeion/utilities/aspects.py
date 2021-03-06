@@ -200,7 +200,7 @@ class NatalAspects():
         self.aspects = aspects_tmp
         axes = ["1", "10", "7", "4"]
         for aspect in aspects_tmp:
-            if ( aspect['p1_name'] in axes or aspect['p2_name'] in axes ) and (aspect['orbit'] <= axes_orbit:
+            if ( aspect['p1_name'] in axes or aspect['p2_name'] in axes ) and (aspect['orbit'] <= axes_orbit):
                 print(aspect)
 
 
