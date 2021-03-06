@@ -200,7 +200,7 @@ aspects = [
 planets = [
   {
     "id": 0,
-    "name": "sun",
+    "name": "Sun",
     "color": "#984b00",
     "visible": 1,
     "element_points": 40,
@@ -210,7 +210,7 @@ planets = [
   },
   {
     "id": 1,
-    "name": "moon",
+    "name": "Moon",
     "color": "#150052",
     "visible": 1,
     "element_points": 40,
@@ -220,7 +220,7 @@ planets = [
   },
   {
     "id": 2,
-    "name": "mercury",
+    "name": "Mercury",
     "color": "#520800",
     "visible": 1,
     "element_points": 15,
@@ -230,7 +230,7 @@ planets = [
   },
   {
     "id": 3,
-    "name": "venus",
+    "name": "Venus",
     "color": "#400052",
     "visible": 1,
     "element_points": 15,
@@ -240,7 +240,7 @@ planets = [
   },
   {
     "id": 4,
-    "name": "mars",
+    "name": "Mars",
     "color": "#540000",
     "visible": 1,
     "element_points": 15,
@@ -250,7 +250,7 @@ planets = [
   },
   {
     "id": 5,
-    "name": "jupiter",
+    "name": "Jupiter",
     "color": "#47133d",
     "visible": 1,
     "element_points": 10,
@@ -260,7 +260,7 @@ planets = [
   },
   {
     "id": 6,
-    "name": "saturn",
+    "name": "Saturn",
     "color": "#124500",
     "visible": 1,
     "element_points": 10,
@@ -270,7 +270,7 @@ planets = [
   },
   {
     "id": 7,
-    "name": "uranus",
+    "name": "Uranus",
     "color": "#6f0766",
     "visible": 1,
     "element_points": 10,
@@ -280,7 +280,7 @@ planets = [
   },
   {
     "id": 8,
-    "name": "neptune",
+    "name": "Neptune",
     "color": "#06537f",
     "visible": 1,
     "element_points": 10,
@@ -290,7 +290,7 @@ planets = [
   },
   {
     "id": 9,
-    "name": "pluto",
+    "name": "Pluto",
     "color": "#713f04",
     "visible": 0,
     "element_points": 10,
@@ -300,7 +300,7 @@ planets = [
   },
   {
     "id": 10,
-    "name": "mean node",
+    "name": "Mean_Node",
     "color": "#4c1541",
     "visible": 0,
     "element_points": 20,
@@ -310,17 +310,17 @@ planets = [
   },
   {
     "id": 11,
-    "name": "true node",
+    "name": "True_Node",
     "color": "#4c1541",
     "visible": 0,
     "element_points": 0,
     "zodiac_relation": "-1",
-    "label": "?",
-    "label_short": "?"
+    "label": "True_Node",
+    "label_short": "True_Node"
   },
   {
     "id": 12,
-    "name": "Asc",
+    "name": "1",
     "color": "orange",
     "visible": 1,
     "element_points": 40,
@@ -330,7 +330,7 @@ planets = [
   },
   {
     "id": 13,
-    "name": "Mc",
+    "name": "10",
     "color": "#FF0000",
     "visible": 1,
     "element_points": 20,
@@ -340,7 +340,7 @@ planets = [
   },
   {
     "id": 14,
-    "name": "Dsc",
+    "name": "7",
     "color": "#0000FF",
     "visible": 0,
     "element_points": 0,
@@ -350,7 +350,7 @@ planets = [
   },
   {
     "id": 15,
-    "name": "Ic",
+    "name": "4",
     "color": "#000000",
     "visible": 0,
     "element_points": 0,

@@ -121,7 +121,7 @@ class NatalAspects():
         Check if the name of the planet is the same in the settings and return
         the correct id for the planet.
         """
-        str_name = str(name).lower()
+        str_name = str(name)
         for a in planets:
             if a['name'] == str_name:
                 result = a['id']
@@ -135,8 +135,21 @@ class NatalAspects():
         """
         
 
-        self.point_list = self.user.planets_list + self.user.house_list
+        point_list_tmp = self.user.planets_list + self.user.house_list
 
+
+        #list of desired points names
+        set_points_name = []
+        for p in planets:
+            if p['visible']:
+                set_points_name.append(p['name'])
+        
+        self.point_list = []
+        for l in point_list_tmp:
+            if l['name'] in set_points_name:
+                self.point_list.append(l)
+
+        
         self.aspects_list = []
 
         for first in range(len(self.point_list)):
@@ -166,7 +179,7 @@ class NatalAspects():
         return self.aspects_list
 
 
-
+   
 
     def filter_aspects(self):
         """ 
@@ -178,12 +191,10 @@ class NatalAspects():
             
         self.get_aspects()
 
-        #list of desired points
-        self.set_points = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", 1, 10]
 
         self.aspects = []
         for aspect in self.aspects_list:
-            if (aspect["p1_name"] and aspect["p2_name"] in self.set_points) and aspects[aspect["aid"]]["visible"] == True:
+            if aspects[aspect["aid"]]["visible"] == True:
                 self.aspects.append(aspect)  
 
 
