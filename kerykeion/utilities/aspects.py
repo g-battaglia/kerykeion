@@ -127,7 +127,7 @@ class NatalAspects():
                 result = a['id']
                 return result
                 
-    def get_aspects(self):
+    def get_all_aspects(self):
         """
         Return all the aspects of the points in the natal chart in a dictionary,
         first all the individual aspects of each planet, second the aspects
@@ -150,7 +150,7 @@ class NatalAspects():
                 self.point_list.append(l)
 
         
-        self.aspects_list = []
+        self.all_aspects_list = []
 
         for first in range(len(self.point_list)):
         #Generates the aspects list whitout repetitions
@@ -174,14 +174,14 @@ class NatalAspects():
                               "p2": self.p_id_decoder(self.point_list[second]['name'],)
                      }
 
-                    self.aspects_list.append(d_asp)
+                    self.all_aspects_list.append(d_asp)
 
-        return self.aspects_list
+        return self.all_aspects_list
 
 
    
 
-    def filter_aspects(self):
+    def get_aspects(self):
         """ 
         Filters the aspects list with the desired points, in this case
         the most important are hardcoded.
@@ -189,19 +189,35 @@ class NatalAspects():
         or the numbers of the houses.
         """
             
-        self.get_aspects()
+        self.get_all_aspects()
+
+        aspects_filtered = []
+        for a in self.all_aspects_list:
+            if aspects[a["aid"]]["visible"] == True:
+                aspects_filtered.append(a)  
 
 
-        self.aspects = []
-        for aspect in self.aspects_list:
-            if aspects[aspect["aid"]]["visible"] == True:
-                self.aspects.append(aspect)  
 
-        axes = ["1", "10", "7", "4"]
-        for aspect in self.aspects:
-            if ( aspect['p1_name'] in axes or aspect['p2_name'] in axes ) and ( abs(aspect['orbit']) >= axes_orbit ):
-                self.aspects.remove(aspect)
-        
+        axes_list = ["1", "10", "7", "4"]
+        counter = 0
+
+        aspects_list_subtract = []
+        for a in aspects_filtered:
+            counter += 1
+            name_p1 = str(a['p1_name'])
+            name_p2 = str(a['p2_name'])
+            
+            if name_p1 in axes_list:
+                if abs(a['orbit']) >= axes_orbit:
+                    aspects_filtered.remove(a)
+
+            elif name_p2 in axes_list:
+                if abs(a['orbit']) >= axes_orbit:
+                    aspects_list_subtract.append(a)
+
+
+        self.aspects = [item for item in aspects_filtered if item not in aspects_list_subtract]
+
 
 
 
@@ -209,12 +225,12 @@ class NatalAspects():
 
 if __name__ == "__main__":
     kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+    kanye = Calculator("Jack", 1990, 6, 15, 13, 00, "Montichiari")
     kanye.get_all()
     natal = NatalAspects(kanye)
-    asp_list = natal.filter_aspects()
+    natal.get_aspects()
+    for a in natal.aspects:
+        print(a['p1_name'], a['p2_name'], a['orbit'])
     
-    for asp in asp_list:
-        
-        print(asp)
     
         
