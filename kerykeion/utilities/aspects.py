@@ -213,7 +213,7 @@ if __name__ == "__main__":
     natal = NatalAspects(kanye)
     asp_list = natal.filter_aspects()
     
-    # for asp in asp_list:
-    #     print(asp)
+    for asp in asp_list:
+        print(asp)
     
         
