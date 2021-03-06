@@ -219,7 +219,7 @@ class NatalAspects():
             
             if name_p1 in axes_list:
                 if abs(a['orbit']) >= axes_orbit:
-                    aspects_filtered.remove(a)
+                    aspects_list_subtract.append(a)
 
             elif name_p2 in axes_list:
                 if abs(a['orbit']) >= axes_orbit:
@@ -249,9 +249,49 @@ class CompositeAspects(NatalAspects):
         
 
         
-        first_init_point_list = self.first_user.planets_list + self.first_user.house_list
-        second_init_point_list = self.second_user.planets_list + self.second_user.house_list
-        self.init_point_list = first_init_point_list + second_init_point_list
+        self.first_init_point_list = self.first_user.planets_list + self.first_user.house_list
+        self.second_init_point_list = self.second_user.planets_list + self.second_user.house_list
+        
+
+    
+    
+    def get_all_aspects(self):
+        """
+        Return all the aspects of the points in the natal chart in a dictionary,
+        first all the individual aspects of each planet, second the aspects
+        whitout repetitions.
+        """
+
+        f_1 = self.filter_by_settings(self.first_init_point_list)
+        f_2 = self.filter_by_settings(self.second_init_point_list)
+        
+        self.all_aspects_list = []
+
+        for first in range(len(f_1)):
+        #Generates the aspects list whitout repetitions
+            for second in range(len(f_2)):
+                
+                verdict, name, orbit, aspect_degrees, color, aid, diff = self.asp_calc(f_1[first]["abs_pos"],
+                f_2[second]["abs_pos"])
+                
+                if verdict == True:
+                    d_asp = { "p1_name": f_1[first]['name'],
+                              "p1_abs_pos": f_1[first]['abs_pos'],
+                              "p2_name": f_2[second]['name'],
+                              "p2_abs_pos": f_2[second]['abs_pos'],
+                              "aspect": name,
+                              "orbit": orbit,
+                              "aspect_degrees": aspect_degrees,
+                              "color": color,
+                              "aid": aid,
+                              "diff": diff,
+                              "p1": self.p_id_decoder(f_1[first]['name']),
+                              "p2": self.p_id_decoder(f_2[second]['name'],)
+                     }
+
+                    self.all_aspects_list.append(d_asp)
+
+        return self.all_aspects_list
     
 
 if __name__ == "__main__":
@@ -264,10 +304,11 @@ if __name__ == "__main__":
     #     print(a['p1_name'], a['p2_name'], a['orbit'])
     cm = CompositeAspects(kanye, jack)
     res = cm.get_aspects()
-    # print(res)
     for a in res:
-        print(a['p1_name'], a['p2_name'], a['orbit'])
+        print(a['p1_name'], a['p2_name'], a['orbit'], a['aspect'])
     print(len(res))
+
+    
     
     
         
