@@ -192,16 +192,16 @@ class NatalAspects():
         self.get_aspects()
 
 
-        aspects_tmp = []
+        self.aspects = []
         for aspect in self.aspects_list:
             if aspects[aspect["aid"]]["visible"] == True:
-                aspects_tmp.append(aspect)  
+                self.aspects.append(aspect)  
 
-        self.aspects = aspects_tmp
         axes = ["1", "10", "7", "4"]
-        for aspect in aspects_tmp:
-            if ( aspect['p1_name'] in axes or aspect['p2_name'] in axes ) and (aspect['orbit'] <= axes_orbit):
-                print(aspect)
+        for aspect in self.aspects:
+            if ( aspect['p1_name'] in axes or aspect['p2_name'] in axes ) and (aspect['orbit'] >= axes_orbit):
+                self.aspects.remove(aspect)
+        
 
 
 
