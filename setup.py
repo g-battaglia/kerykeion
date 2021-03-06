@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="kerykeion", # Replace with your own username
-    version="1.2.1",
+    version="1.2.2",
     author="Giacomo Battaglia",
     author_email="battaglia.giacomo@yahoo.it",
     description="A astrology library.",
