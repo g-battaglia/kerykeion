@@ -218,11 +218,11 @@ class NatalAspects():
             name_p2 = str(a['p2_name'])
             
             if name_p1 in axes_list:
-                if abs(a['orbit']) >= axes_orbit:
+                if abs(a['orbit']) > axes_orbit:
                     aspects_list_subtract.append(a)
 
             elif name_p2 in axes_list:
-                if abs(a['orbit']) >= axes_orbit:
+                if abs(a['orbit']) > axes_orbit:
                     aspects_list_subtract.append(a)
 
 
