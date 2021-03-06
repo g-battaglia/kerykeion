@@ -214,6 +214,7 @@ if __name__ == "__main__":
     asp_list = natal.filter_aspects()
     
     for asp in asp_list:
+        
         print(asp)
     
         
