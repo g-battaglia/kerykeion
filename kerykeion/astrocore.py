@@ -603,5 +603,6 @@ if __name__ == "__main__":
     print(kanye.city)
     print(f)
     print(kanye.lunar_phase)
+    
     for p in kanye.planets_list:
         print(p)
