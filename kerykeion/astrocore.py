@@ -361,7 +361,7 @@ class Calculator(AstroData):
         self.neptune = fourth_every_planet(self.neptune, self.neptune_deg)
         self.pluto = fourth_every_planet(self.pluto, self.pluto_deg)
         self.mean_node = fourth_every_planet(self.mean_node, self.mean_node_deg)
-        self.mean_node = fourth_every_planet(self.true_node, self.true_node_deg)
+        self.true_node = fourth_every_planet(self.true_node, self.true_node_deg)
 
         self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
          self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
@@ -603,4 +603,5 @@ if __name__ == "__main__":
     print(kanye.city)
     print(f)
     print(kanye.lunar_phase)
-    print(kanye.planets_list)
+    for p in kanye.planets_list:
+        print(p)
