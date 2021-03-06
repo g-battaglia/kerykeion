@@ -267,6 +267,7 @@ if __name__ == "__main__":
     # print(res)
     for a in res:
         print(a['p1_name'], a['p2_name'], a['orbit'])
+    print(len(res))
     
     
         
