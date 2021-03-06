@@ -110,7 +110,7 @@ aspects = [
     "visible_grid": 0,
     "is_major": 0,
     "is_minor": 1,
-    "orb": 3
+    "orb": 1
   },
   {
     "degree": 45,
@@ -119,7 +119,7 @@ aspects = [
     "visible_grid": 0,
     "is_major": 0,
     "is_minor": 1,
-    "orb": 3
+    "orb": 1
   },
   {
     "degree": 60,
@@ -137,7 +137,7 @@ aspects = [
     "visible_grid": 1,
     "is_major": 0,
     "is_minor": 1,
-    "orb": 2
+    "orb": 1
   },
   {
     "degree": 90,
@@ -164,7 +164,7 @@ aspects = [
     "visible_grid": 0,
     "is_major": 0,
     "is_minor": 1,
-    "orb": 3
+    "orb": 1
   },
   {
     "degree": 144,
@@ -173,7 +173,7 @@ aspects = [
     "visible_grid": 1,
     "is_major": 0,
     "is_minor": 1,
-    "orb": 2
+    "orb": 1
   },
   {
     "degree": 150,
@@ -182,7 +182,7 @@ aspects = [
     "visible_grid": 1,
     "is_major": 0,
     "is_minor": 0,
-    "orb": 3
+    "orb": 1
   },
   {
     "degree": 180,
