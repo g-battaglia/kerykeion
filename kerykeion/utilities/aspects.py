@@ -1,5 +1,5 @@
 from kerykeion.astrocore import Calculator
-from kerykeion.utilities.kr_settings import aspects, colors, planets
+from kerykeion.utilities.kr_settings import aspects, colors, planets, axes_orbit
 from swisseph import difdeg2n
 
 
@@ -192,10 +192,17 @@ class NatalAspects():
         self.get_aspects()
 
 
-        self.aspects = []
+        aspects_tmp = []
         for aspect in self.aspects_list:
             if aspects[aspect["aid"]]["visible"] == True:
-                self.aspects.append(aspect)  
+                aspects_tmp.append(aspect)  
+
+        self.aspects = aspects_tmp
+        axes = ["1", "10", "7", "4"]
+        for aspect in aspects_tmp:
+            if ( aspect['p1_name'] in axes or aspect['p2_name'] in axes ) and (aspect['orbit'] <= axes_orbit:
+                print(aspect)
+
 
 
         return self.aspects
@@ -206,7 +213,7 @@ if __name__ == "__main__":
     natal = NatalAspects(kanye)
     asp_list = natal.filter_aspects()
     
-    for asp in asp_list:
-        print(asp)
+    # for asp in asp_list:
+    #     print(asp)
     
         

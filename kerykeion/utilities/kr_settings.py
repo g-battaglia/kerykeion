@@ -359,3 +359,7 @@ planets = [
     "label_short": "Ic"
   }
 ]
+
+# Axes:
+
+axes_orbit = 1
