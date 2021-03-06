@@ -293,7 +293,7 @@ class Calculator(AstroData):
         self.planets()
         self.houses()
 
-        def fourth_every_planet(planet, deg_planet):
+        def for_every_planet(planet, deg_planet):
             """Functio to do the calculation.
             Args: planet dictionary, planet degree"""
             
@@ -350,18 +350,18 @@ class Calculator(AstroData):
             return planet
             
 
-        self.sun = fourth_every_planet(self.sun, self.sun_deg)
-        self.moon = fourth_every_planet(self.moon, self.moon_deg)
-        self.mercury = fourth_every_planet(self.mercury, self.mercury_deg)
-        self.venus = fourth_every_planet(self.venus, self.venus_deg)
-        self.mars = fourth_every_planet(self.mars, self.mars_deg)
-        self.jupiter = fourth_every_planet(self.jupiter, self.jupiter_deg)
-        self.saturn = fourth_every_planet(self.saturn, self.saturn_deg)
-        self.uranus = fourth_every_planet(self.uranus, self.uranus_deg)
-        self.neptune = fourth_every_planet(self.neptune, self.neptune_deg)
-        self.pluto = fourth_every_planet(self.pluto, self.pluto_deg)
-        self.mean_node = fourth_every_planet(self.mean_node, self.mean_node_deg)
-        self.true_node = fourth_every_planet(self.true_node, self.true_node_deg)
+        self.sun = for_every_planet(self.sun, self.sun_deg)
+        self.moon = for_every_planet(self.moon, self.moon_deg)
+        self.mercury = for_every_planet(self.mercury, self.mercury_deg)
+        self.venus = for_every_planet(self.venus, self.venus_deg)
+        self.mars = for_every_planet(self.mars, self.mars_deg)
+        self.jupiter = for_every_planet(self.jupiter, self.jupiter_deg)
+        self.saturn = for_every_planet(self.saturn, self.saturn_deg)
+        self.uranus = for_every_planet(self.uranus, self.uranus_deg)
+        self.neptune = for_every_planet(self.neptune, self.neptune_deg)
+        self.pluto = for_every_planet(self.pluto, self.pluto_deg)
+        self.mean_node = for_every_planet(self.mean_node, self.mean_node_deg)
+        self.true_node = for_every_planet(self.true_node, self.true_node_deg)
 
         self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
          self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
@@ -490,6 +490,7 @@ if __name__ == "__main__":
     print(kanye.city)
     print(f)
     print(kanye.lunar_phase)
+    kanye.json_dump()
     
     for p in kanye.planets_list:
         print(p)
