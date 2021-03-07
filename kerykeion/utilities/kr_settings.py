@@ -15,7 +15,7 @@ english = {
     "&" : "and",
     "transits" : "Transits for",
     "type" : "Type",
-    "aspects" : "Couple aspects"
+    "aspects" : "Couple aspects",
     "planets_and_house" : "Planets and houses for"
 
   }
