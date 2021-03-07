@@ -16,12 +16,13 @@ english = {
     "transits" : "Transits for",
     "type" : "Type",
     "aspects" : "Couple aspects",
-    "planets_and_house" : "Planets and houses for"
+    "planets_and_house" : "Planets and houses for",
+    "transit_name" : "Here and now"
 
   }
 
 
-# Colr settings:
+# Color settings:
 
 colors = {
   "paper_0": "#000000",
