@@ -116,7 +116,7 @@ SVG Generated Correctly
 
 ```
 
-![alt text]http://centuryboy.altervista.org/JackComposite_Chart.svg)
+![alt text](http://centuryboy.altervista.org/JackComposite_Chart.svg)
 
 
 ## Documentation
