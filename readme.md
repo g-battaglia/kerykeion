@@ -72,13 +72,43 @@ House Cusp 12:    Gem  15.681
 >>> print(kanye.aspects()['all']['Sun']) # Print aspects for the planet.
 ["('Square', 'Moon', 1.1735227310748542)", "('Semisquare', 'Venus', 0.5668097396966303)", "('Semisquare', 'Mars', 0.8092756679079827)", "('Conjuction', 'Jupiter', 2.992099853982751)", "('Oposition', 'Neptune', -2.906233250740513)", "('Trigon', 'Pluto', -6.153155598911468)", "('Conjuction', 'Juno', 0.0)", "('Semisextil', '1', 0.39678949800406826)", "('Oposition', '6', -1.917784119528534)", "('Quincunx', '7', -0.39678949800406826)", "('Conjuction', '12', 1.917784119528534)"]
 
+# Get all aspects between two persons:
 
+>>> import kerykeion as kr
+>>> from kerykeion.utilities import CompositeAspects
+>>> first = kr.Calculator("Jack", 1990, 6, 15, 15, 15, "Roma")
+>>> second = kr.Calculator("Jane", 1991, 10, 25, 21, 00, "Roma")
+
+>>> name = CompositeAspects(first, second)
+>>> aspect_list = name.get_aspects()
+>>> print(aspect_list[0])
+
+Generating kerykeion object for Jack...
+Generating kerykeion object for Jane...
+{'p1_name': 'Sun', 'p1_abs_pos': 84.17867971515636, 'p2_name': 'Sun', 'p2_abs_pos': 211.90472999502984, 'aspect': 'trine', 'orbit': 7.726050279873476, 'aspect_degrees': 120, 'color': '#36d100', 'aid': 6, 'diff': 127.72605027987348, 'p1': 0, 'p2': 0}
 
 
 
 # Generate a SVG of the birthchart:
 
+>>> import kerykeion as kr
+>>> from kerykeion.utilities.charts import MakeSvgInstance
+
+>>> first = kr.Calculator("Jack", 1990, 6, 15, 15, 15, "Roma")
+>>> second = kr.Calculator("Jane", 1991, 10, 25, 21, 00, "Roma")
+
+>>> name = MakeSvgInstance(first, chart_type="Composite", second_obj=second)
+>>> name.makeSVG()
+>>> print(len(name.aspects_list))
+>>> Generating kerykeion object for Jack...
+Generating kerykeion object for Jane...
+Jack birth location: Roma, 41.89193, 12.51133
+SVG Generated Correctly
+38
+
 ```
+![alt text](http://centuryboy.altervista.org/JackCompositeChart.svg)
+
 
 ## Documentation
 
