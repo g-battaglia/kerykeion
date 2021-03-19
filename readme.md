@@ -115,6 +115,7 @@ SVG Generated Correctly
 38
 
 ```
+
 ![alt text](http://centuryboy.altervista.org/JackCompositeChart.svg)
 
 
