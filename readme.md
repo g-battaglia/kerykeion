@@ -87,15 +87,18 @@ Generating kerykeion object for Jack...
 Generating kerykeion object for Jane...
 {'p1_name': 'Sun', 'p1_abs_pos': 84.17867971515636, 'p2_name': 'Sun', 'p2_abs_pos': 211.90472999502984, 'aspect': 'trine', 'orbit': 7.726050279873476, 'aspect_degrees': 120, 'color': '#36d100', 'aid': 6, 'diff': 127.72605027987348, 'p1': 0, 'p2': 0}
 
+```
 
+## Generate a SVG of the birthchart:
 
-# Generate a SVG of the birthchart:
-
+```
 >>> import kerykeion as kr
 >>> from kerykeion.utilities.charts import MakeSvgInstance
 
 >>> first = kr.Calculator("Jack", 1990, 6, 15, 15, 15, "Roma")
 >>> second = kr.Calculator("Jane", 1991, 10, 25, 21, 00, "Roma")
+
+# Set the type, it can be Natal, Composite or Transit
 
 >>> name = MakeSvgInstance(first, chart_type="Composite", second_obj=second)
 >>> name.makeSVG()
