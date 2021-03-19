@@ -3,7 +3,7 @@
 Kerykeion is a python utility library for Astrology. It can calculate all the planet and house position,
 also it can calculate the aspects of a single persone or between two, you can set how many planets you
 need in the settings in the utility module.
-It also can generrate an SVG of a birthchart, a natal chart or a transit chart.
+It also can generrate an SVG of a birthchart, a composite chart or a transit chart.
 
 Here some exemples:
 
