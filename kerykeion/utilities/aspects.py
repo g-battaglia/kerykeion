@@ -7,6 +7,10 @@ from swisseph import difdeg2n
 
 
 class NatalAspects():
+
+    """
+    Generates an object with all the aspects of a birthcart.
+    """
     
     def __init__(self, kr_object):
         self.user = kr_object
@@ -232,6 +236,9 @@ class NatalAspects():
         return self.aspects
 
 class CompositeAspects(NatalAspects):
+    """
+    Generates an object with all the aspects between two persons.
+    """
 
     def __init__(self, kr_object_one, kr_object_two):
 
