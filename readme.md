@@ -31,8 +31,34 @@ Here some exemples:
 >>> kanye.moon.get("element")
 'Water'
 
+```
+## Generate a SVG of the birthchart:
+
+```
+>>> import kerykeion as kr
+>>> from kerykeion.utilities.charts import MakeSvgInstance
+
+>>> first = kr.Calculator("Jack", 1990, 6, 15, 15, 15, "Roma")
+>>> second = kr.Calculator("Jane", 1991, 10, 25, 21, 00, "Roma")
+
+# Set the type, it can be Natal, Composite or Transit
+
+>>> name = MakeSvgInstance(first, chart_type="Composite", second_obj=second)
+>>> name.makeSVG()
+>>> print(len(name.aspects_list))
+>>> Generating kerykeion object for Jack...
+Generating kerykeion object for Jane...
+Jack birth location: Roma, 41.89193, 12.51133
+SVG Generated Correctly
+38
+
+```
+
+![alt text](http://centuryboy.altervista.org/JackComposite_Chart.svg)
 
 # Example of a possible text output with information:
+```
+
 
 >>> from kerykeion import output
 
@@ -66,6 +92,12 @@ House Cusp 10:    Ari  3.977
 House Cusp 11:    Tau  9.393
 House Cusp 12:    Gem  15.681
 
+```
+
+## Other exeples of possibles usecase
+
+```
+
 
 >>> print(kanye.houses()[3]) # Print the house information.
 {'name': '4', 'quality': 'Cardinal', 'element': 'Air', 'sign': 'Lib', 'pos': 3.9766709280539203, 'abs_pos': 183.97667092805392, 'emoji': '♎️'}
@@ -94,29 +126,6 @@ Generating kerykeion object for Jane...
 
 ```
 
-## Generate a SVG of the birthchart:
-
-```
->>> import kerykeion as kr
->>> from kerykeion.utilities.charts import MakeSvgInstance
-
->>> first = kr.Calculator("Jack", 1990, 6, 15, 15, 15, "Roma")
->>> second = kr.Calculator("Jane", 1991, 10, 25, 21, 00, "Roma")
-
-# Set the type, it can be Natal, Composite or Transit
-
->>> name = MakeSvgInstance(first, chart_type="Composite", second_obj=second)
->>> name.makeSVG()
->>> print(len(name.aspects_list))
->>> Generating kerykeion object for Jack...
-Generating kerykeion object for Jane...
-Jack birth location: Roma, 41.89193, 12.51133
-SVG Generated Correctly
-38
-
-```
-
-![alt text](http://centuryboy.altervista.org/JackComposite_Chart.svg)
 
 
 ## Documentation
