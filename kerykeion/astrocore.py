@@ -14,11 +14,28 @@ class AstroData():
     """ 
     Colects all data from users and calculates the coordinates,
     it's utc and julian day.
-    Args: name, year, month, day, hours, minuts, city, initial of the nation
-    (ex: IT) 
+    Args: name, year, month, day, hours, minuts, city,
+    initial of the nation (Ex: "IT"),
+    longitude, latitude and the timezone string are set to false so they will
+    be calulated, if you want you can set them.
+    Default values are set for now at greenwich time.
     """
 
-    def __init__(self, name, year, month, day, hours, minuts, city, nat=""):
+    def __init__(
+        self,
+        name,
+        year,
+        month,
+        day,
+        hours,
+        minuts,
+        city,
+        nat="",
+        lon=False,
+        lat=False, 
+        tz_str=False
+        ):
+
         self.name = name
         self.year = year
         self.month = month
@@ -27,6 +44,10 @@ class AstroData():
         self.minuts = minuts
         self.city = city
         self.nation = nat
+        self.city_long = lon
+        self.city_lat = lat
+        self.city_tz = tz_str
+
         self.json_dir = os.path.expanduser("~")
 
 
@@ -37,12 +58,11 @@ class AstroData():
         self.city_data = search(self.city, self.nation)[0]
         self.nation = self.city_data["countryCode"]
 
-        #z_conv = zt.n_tz(float(self.city_data["lat"]), float(self.city_data["lng"]),
-        # zt.timezones())[2]
         self.city_long = float(self.city_data["lng"])
         self.city_lat = float(self.city_data["lat"])
         self.city_tz = self.city_data["timezonestr"]
-        self.country_code = self.city_data["countryCode"]
+
+        # self.country_code = self.city_data["countryCode"]
         
         if self.city_lat > 66.0:
             self.city_lat = 66.0
@@ -56,7 +76,13 @@ class AstroData():
 
     def get_utc(self):
         """Converts local time to utc time. """
-        local_time = pytz.timezone(self.get_tz())
+
+        if not self.city_long or not self.city_lat or not self.city_tz:
+            local_time = pytz.timezone(self.get_tz())
+        else:
+            local_time = pytz.timezone(self.city_tz)
+
+
         naive_datetime = datetime.datetime(self.year, self.month,
          self.day, self.hours, self.minuts, 0)
         local_datetime = local_time.localize(naive_datetime, is_dst=None)
@@ -78,14 +104,33 @@ class AstroData():
 class Calculator(AstroData):
     """
     Calculates all the astrological informations.
-    Args: name, year, month, day, hours, minuts, city, initial of the nation
-    (ex: IT)
+    Args: name, year, month, day, hours, minuts, city,
+    initial of the nation (Ex: "IT"),
+    longitude, latitude and the timezone string are set to false so they will
+    be calulated, if you want you can set them.
+    Default values are set for now at greenwich time.
+
     """
+    now = datetime.datetime.now()
 
-    def __init__(self, name, year, month, day, hours, minuts, city, nat=""):
-        super().__init__(name, year, month, day, hours, minuts, city, nat)
+    def __init__(
+        self,
+        name="Now",
+        year=now.year,
+        month=now.month,
+        day=now.day,
+        hours=now.hour,
+        minuts=now.minute,
+        city="Greenwich",
+        nat="",
+        lon=False,
+        lat=False, 
+        tz_str=False
+        ):
+
+        super().__init__(name, year, month, day, hours, minuts, city, nat, lon, lat, tz_str)
+        
         self.j_day = self.get_jd()
-
         self.zodiactype = "Tropic"
 
     def __str__(self):
@@ -481,16 +526,21 @@ class Calculator(AstroData):
         
 
 if __name__ == "__main__":
+    kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta", lon=50, lat=50, tz_str="Europe/Rome")
     kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
     kanye.get_all()
+    print(kanye.city_tz)
+    print(kanye.fifth_house["pos"])
+    print(Calculator().city)
+    print(Calculator())
 
     #############################  
 
-    f = kanye.json_dump(dump=True)  
-    print(kanye.city)
-    print(f)
-    print(kanye.lunar_phase)
-    kanye.json_dump()
+    # f = kanye.json_dump(dump=True)  
+    # print(kanye.city)
+    # print(f)
+    # print(kanye.lunar_phase)
+    # kanye.json_dump()
     
-    for p in kanye.planets_list:
-        print(p)
+    # for p in kanye.planets_list:
+    #     print(p)
