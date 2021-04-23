@@ -166,7 +166,7 @@ class MakeSvgInstance:
         self.home_location    = self.user.city
         self.home_geolat      = self.user.city_lat
         self.home_geolon      = self.user.city_long
-        self.home_countrycode =  self.user.country_code
+        self.home_countrycode =  self.user.nation
         self.home_timezonestr = self.user.city_tz
 
         print(f'{self.user.name} birth location: {self.home_location}, {self.home_geolat}, {self.home_geolon}')
