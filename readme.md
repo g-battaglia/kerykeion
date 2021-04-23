@@ -14,6 +14,7 @@ Here some exemples:
 >>> from kerykeion import Calculator
 
 # Create a kerykeion instance:
+# Args: Name, year, month, day, hour, minuts, city, nation(optional)
 >>> kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
 
 # Get all the data:
