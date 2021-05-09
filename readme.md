@@ -1,6 +1,6 @@
 # Kerykeion
 
-Kerykeion is a set of python tools for Astrology. 
+Kerykeion is a python library for Astrology. 
 It can calculate all the planet and house position,
 also it can calculate the aspects of a single persone or between two, you can set how many planets you
 need in the settings in the utility module.
