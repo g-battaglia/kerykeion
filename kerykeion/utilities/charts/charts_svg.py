@@ -41,6 +41,10 @@ class MakeSvgInstance:
         #basic template
         self.xml_svg     = os.path.join(DATADIR, 'template.xml')
 
+        # SVG Width
+        self.natal_width = 800
+        self.full_widht  = 1200
+
         # Settings file
 
         self.label       = chart_settings.english
@@ -306,29 +310,31 @@ class MakeSvgInstance:
         if self.type == "Transit" or self.type == "Composite":
             td['transitRing']=self.transitRing( r )
             td['degreeRing']=self.degreeTransitRing( r )
-            #circles
-            td['c1'] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r-36) + '"'
-            td['c1style'] = 'fill: none; stroke: %s; stroke-width: 1px; stroke-opacity:.4;'%(self.colors['zodiac_transit_ring_2'])
-            td['c2'] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r-72) + '"'
-            td['c2style'] = 'fill: %s; fill-opacity:.4; stroke: %s; stroke-opacity:.4; stroke-width: 1px'%(self.colors['paper_1'],self.colors['zodiac_transit_ring_1'])
-            td['c3'] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r-160) + '"'
-            td['c3style'] = 'fill: %s; fill-opacity:.8; stroke: %s; stroke-width: 1px'%(self.colors['paper_1'],self.colors['zodiac_transit_ring_0'])
-            td['makeAspects'] = self.makeAspectsTransit( r , (r-160))
+            #circles  
+            td['c1']             = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r-36) + '"'
+            td['c1style']        = 'fill: none; stroke: %s; stroke-width: 1px; stroke-opacity:.4;'%(self.colors['zodiac_transit_ring_2'])
+            td['c2']             = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r-72) + '"'
+            td['c2style']        = 'fill: %s; fill-opacity:.4; stroke: %s; stroke-opacity:.4; stroke-width: 1px'%(self.colors['paper_1'],self.colors['zodiac_transit_ring_1'])
+            td['c3']             = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r-160) + '"'
+            td['c3style']        = 'fill: %s; fill-opacity:.8; stroke: %s; stroke-width: 1px'%(self.colors['paper_1'],self.colors['zodiac_transit_ring_0'])
+            td['makeAspects']    = self.makeAspectsTransit( r , (r-160))
             td['makeAspectGrid'] = self.makeAspectTransitGrid( r )
-            td['makePatterns'] = ''
+            td['makePatterns']   = ''
+            td['chart_widht']       = self.full_widht
         else:
-            td['transitRing']=""
-            td['degreeRing']=self.degreeRing( r )
+            td['transitRing']    =  ""
+            td['degreeRing']     =self.degreeRing( r )
             #circles
-            td['c1'] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r-self.c1) + '"'
-            td['c1style'] = 'fill: none; stroke: %s; stroke-width: 1px; '%(self.colors['zodiac_radix_ring_2'])
-            td['c2'] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r-self.c2) + '"'
-            td['c2style'] = 'fill: %s; fill-opacity:.2; stroke: %s; stroke-opacity:.4; stroke-width: 1px'%(self.colors['paper_1'],self.colors['zodiac_radix_ring_1'])
-            td['c3'] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r-self.c3) + '"'
-            td['c3style'] = 'fill: %s; fill-opacity:.8; stroke: %s; stroke-width: 1px'%(self.colors['paper_1'],self.colors['zodiac_radix_ring_0'])
-            td['makeAspects'] = self.makeAspects( r , (r-self.c3))
+            td['c1']             = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r-self.c1) + '"'
+            td['c1style']        = 'fill: none; stroke: %s; stroke-width: 1px; '%(self.colors['zodiac_radix_ring_2'])
+            td['c2']             = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r-self.c2) + '"'
+            td['c2style']        = 'fill: %s; fill-opacity:.2; stroke: %s; stroke-opacity:.4; stroke-width: 1px'%(self.colors['paper_1'],self.colors['zodiac_radix_ring_1'])
+            td['c3']             = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r-self.c3) + '"'
+            td['c3style']        = 'fill: %s; fill-opacity:.8; stroke: %s; stroke-width: 1px'%(self.colors['paper_1'],self.colors['zodiac_radix_ring_0'])
+            td['makeAspects']    = self.makeAspects( r , (r-self.c3))
             td['makeAspectGrid'] = self.makeAspectGrid( r )
-            td['makePatterns'] = self.makePatterns()
+            td['makePatterns']   = self.makePatterns()
+            td['chart_widht']      = self.natal_width
 
         td['circleX'] = str(0)
         td['circleY'] = str(0)
