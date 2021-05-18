@@ -5,11 +5,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from kerykeion.astrocore import AstroData, Calculator
+from kerykeion.main import MakeInstance
 import swisseph as swe
 
-bergman = Calculator("Dario Fo'", 1926, 3, 24, 12, 25, "Sangiano")
-rossellini = Calculator("Franca Rame", 1929, 7, 18, 12, 25, "Parabiago")
+bergman = MakeInstance("Dario Fo'", 1926, 3, 24, 12, 25, "Sangiano")
+rossellini = MakeInstance("Franca Rame", 1929, 7, 18, 12, 25, "Parabiago")
 
 class Synastry():
     """

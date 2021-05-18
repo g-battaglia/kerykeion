@@ -5,7 +5,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from kerykeion.astrocore import Calculator
+from kerykeion.main import MakeInstance
 import swisseph as swe
 
 # General Costants
@@ -205,15 +205,15 @@ class Synastry():
 
 if __name__ == "__main__":
 
-    #lui= Calculator("Fo'", 1926, 3, 24, 12, 25, "Sangiano", "IT")
-    #lei = Calculator("Rame", 1929, 7, 18, 12, 25, "Parabiago", "IT")
+    #lui= MakeInstance("Fo'", 1926, 3, 24, 12, 25, "Sangiano", "IT")
+    #lei = MakeInstance("Rame", 1929, 7, 18, 12, 25, "Parabiago", "IT")
 
-    #lui= Calculator("Fo'", 1993, 6, 10, 12, 15, "Montichiari", "IT")
-    #lei = Calculator("Rame", 1994, 6, 9, 19, 50, "Cremona", "IT")
+    #lui= MakeInstance("Fo'", 1993, 6, 10, 12, 15, "Montichiari", "IT")
+    #lei = MakeInstance("Rame", 1994, 6, 9, 19, 50, "Cremona", "IT")
 
 
-    lui = Calculator("Windsor", 1894, 6, 23, 21, 55, "London")
-    lei = Calculator("Simpson", 1896, 6, 19, 22, 30,"Blue Ridge Summit")
+    lui = MakeInstance("Windsor", 1894, 6, 23, 21, 55, "London")
+    lei = MakeInstance("Simpson", 1896, 6, 19, 22, 30,"Blue Ridge Summit")
 
     sn = Synastry(lei, lui)
     sn.get_synastry()
