@@ -63,7 +63,7 @@ class MakeSvgInstance:
 
         # Make a list for the absolute degrees of the points of the graphic.
         
-        self.points_deg_ut = self.user.planets_degs + [self.user.houses_degree_ut[0],
+        self.points_deg_ut = self.user.planets_degrees + [self.user.houses_degree_ut[0],
          self.user.houses_degree_ut[9], self.user.houses_degree_ut[6],
           self.user.houses_degree_ut[3]]
         
@@ -120,7 +120,7 @@ class MakeSvgInstance:
 
             # Make a list for the absolute degrees of the points of the graphic.
             
-            self.t_points_deg_ut = self.t_user.planets_degs + [self.t_user.houses_degree_ut[0],
+            self.t_points_deg_ut = self.t_user.planets_degrees + [self.t_user.houses_degree_ut[0],
             self.t_user.houses_degree_ut[9], self.t_user.houses_degree_ut[6],
             self.t_user.houses_degree_ut[3]]
             
