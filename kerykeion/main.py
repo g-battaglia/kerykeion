@@ -72,8 +72,8 @@ class MakeInstance():
         debug_print("Conneting to Geonames...")
         self.city_data = search(self.city, self.nation)[0]
         debug_print("Geonames done!")
+        
         self.nation = self.city_data["countryCode"]
-
         self.city_long = float(self.city_data["lng"])
         self.city_lat = float(self.city_data["lat"])
         self.city_tz = self.city_data["timezonestr"]
