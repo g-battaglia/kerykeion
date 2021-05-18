@@ -521,16 +521,16 @@ class MakeInstance():
         if not self.sun:
             self.get_all()
 
-        obj_dict = self.__dict__
-        keys_to_remove = ["utc", "iflag", "json_dir", "planets_list", "houses_list"]
+        obj_dict = self.__dict__.copy()
+        keys_to_remove = ["utc", "iflag", "json_dir", "planets_list",
+            "houses_list", "planets_degrees", "houses_degree_ut"]
         for key in keys_to_remove:
-            del obj_dict[key]
+            obj_dict.pop(key)
 
         json_obj = dumps(obj_dict)
 
         if dump:
-            json_path = os.path.join(
-                self.json_dir, f"{self.name}_kerykeion.json")
+            json_path = os.path.join(self.json_dir, f"{self.name}_kerykeion.json")
             with open(json_path, "w") as file:
                     file.write(json_obj)
                     print(f"JSON file dumped in {json_path}.")
@@ -549,8 +549,8 @@ if __name__ == "__main__":
     #############################
 
     #f = kanye.json_dump(dump=True)
-    api_json =kanye.json_for_api()
-    print(api_json)
+    api_json = kanye.json_for_api()
+    #print(api_json)
 
     # print(kanye.city)
     # print(f)
