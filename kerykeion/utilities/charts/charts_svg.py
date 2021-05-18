@@ -1449,8 +1449,8 @@ class MakeSvgInstance:
 
 if __name__ == "__main__":
     
-    first = kr.Calculator("Jack", 1990, 6, 15, 15, 15, "Roma")
-    second = kr.Calculator("Jane", 1991, 10, 25, 21, 00, "Roma")
+    first = kr.MakeInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
+    second = kr.MakeInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
 
     name = MakeSvgInstance(first, chart_type="Composite", second_obj=second)
     name.output_directory = os.path.expanduser("~")

@@ -5,7 +5,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from kerykeion.astrocore import AstroData, Calculator
+from kerykeion.main import MakeInstance
 
 def output(user):
     p = user.planets_house()
@@ -41,7 +41,7 @@ def output(user):
     finale += ("\n")
     return finale
 
-user = Calculator("Brigitte Bardot", 1934, 9, 28, 13, 15, "Paris", "FR")
+user = MakeInstance("Brigitte Bardot", 1934, 9, 28, 13, 15, "Paris", "FR")
 
 
 if __name__ == "__main__":
