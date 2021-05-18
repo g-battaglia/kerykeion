@@ -5,7 +5,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from kerykeion.main import MakeInstance
+from kerykeion.main import KrInstance
 
 def output(user):
     p = user.planets_house()
@@ -41,7 +41,7 @@ def output(user):
     finale += ("\n")
     return finale
 
-user = MakeInstance("Brigitte Bardot", 1934, 9, 28, 13, 15, "Paris", "FR")
+user = KrInstance("Brigitte Bardot", 1934, 9, 28, 13, 15, "Paris", "FR")
 
 
 if __name__ == "__main__":

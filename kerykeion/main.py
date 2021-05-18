@@ -19,7 +19,7 @@ def debug_print(str):
         print('%s' % str)
 
 
-class MakeInstance():
+class KrInstance():
     """
     Calculates all the astrological informations, the coordinates,
     it's utc and julian day and returns an object with all that data.
@@ -538,13 +538,13 @@ class MakeInstance():
         return json_obj
 
 if __name__ == "__main__":
-    # kanye = MakeInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta", lon=50, lat=50, tz_str="Europe/Rome")
-    kanye = MakeInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+    # kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta", lon=50, lat=50, tz_str="Europe/Rome")
+    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
     kanye.get_all()
     # print(kanye.city_tz)
     # print(kanye.fifth_house["position"])
-    # print(MakeInstance().city)
-    # print(MakeInstance())
+    # print(KrInstance().city)
+    # print(KrInstance())
 
     #############################
 
