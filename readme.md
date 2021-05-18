@@ -11,11 +11,11 @@ Here some exemples:
 ```python
 
 # Import the main class for creating a kerykeion instance:
->>> from kerykeion import Calculator
+>>> from kerykeion import MakeInstance
 
 # Create a kerykeion instance:
 # Args: Name, year, month, day, hour, minuts, city, nation(optional)
->>> kanye = Calculator("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+>>> kanye = MakeInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
 
 # Get all the data:
 >>> kanye.get_all()
@@ -40,8 +40,8 @@ Here some exemples:
 >>> import kerykeion as kr
 >>> from kerykeion.utilities.charts import MakeSvgInstance
 
->>> first = kr.Calculator("Jack", 1990, 6, 15, 15, 15, "Roma")
->>> second = kr.Calculator("Jane", 1991, 10, 25, 21, 00, "Roma")
+>>> first = kr.MakeInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
+>>> second = kr.MakeInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
 
 # Set the type, it can be Natal, Composite or Transit
 
@@ -115,8 +115,8 @@ House Cusp 12:    Gem  15.681
 
 >>> import kerykeion as kr
 >>> from kerykeion.utilities import CompositeAspects
->>> first = kr.Calculator("Jack", 1990, 6, 15, 15, 15, "Roma")
->>> second = kr.Calculator("Jane", 1991, 10, 25, 21, 00, "Roma")
+>>> first = kr.MakeInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
+>>> second = kr.MakeInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
 
 >>> name = CompositeAspects(first, second)
 >>> aspect_list = name.get_aspects()
