@@ -283,10 +283,10 @@ class MakeInstance():
 
         #print(swe.calc(self.julian_day, 7, self.iflag)[3])
 
-        self.planets_degrees = {"Sun": sun_deg, "Moon": moon_deg, "Mercury": mercury_deg,
-                                "Venus": venus_deg, "Mars": mars_deg, "Jupiter": jupiter_deg, "Saturn": saturn_deg,
-                                "Uranus": uranus_deg, "Neptune": neptune_deg, "Pluto": pluto_deg, "Mean_Node": mean_node_deg,
-                                "True_Node": true_node_deg}
+        self.planets_degrees = [sun_deg, moon_deg, mercury_deg,
+         venus_deg, mars_deg, jupiter_deg, saturn_deg,
+         uranus_deg, neptune_deg, pluto_deg, mean_node_deg,
+         true_node_deg]
 
         return self.planets_degrees
 
@@ -295,27 +295,18 @@ class MakeInstance():
          stores them in dictionaries"""
         self.planets_degrees = self.planets_lister()
         # stores the planets in signulare dictionaries.
-        self.sun = self.pos_calc(self.planets_degrees["Sun"], "Sun", "name")
-        self.moon = self.pos_calc(self.planets_degrees["Moon"], "Moon", "name")
-        self.mercury = self.pos_calc(
-            self.planets_degrees["Mercury"], "Mercury", "name")
-        self.venus = self.pos_calc(
-            self.planets_degrees["Venus"], "Venus", "name")
-        self.mars = self.pos_calc(self.planets_degrees["Mars"], "Mars", "name")
-        self.jupiter = self.pos_calc(
-            self.planets_degrees["Jupiter"], "Jupiter", "name")
-        self.saturn = self.pos_calc(
-            self.planets_degrees["Saturn"], "Saturn", "name")
-        self.uranus = self.pos_calc(
-            self.planets_degrees["Uranus"], "Uranus", "name")
-        self.neptune = self.pos_calc(
-            self.planets_degrees["Neptune"], "Neptune", "name")
-        self.pluto = self.pos_calc(
-            self.planets_degrees["Pluto"], "Pluto", "name")
-        self.mean_node = self.pos_calc(
-            self.planets_degrees["Mean_Node"], "Mean_Node", "name")
-        self.true_node = self.pos_calc(
-            self.planets_degrees["True_Node"], "True_Node", "name")
+        self.sun = self.pos_calc(self.planets_degrees[0], "Sun", "name")
+        self.moon = self.pos_calc(self.planets_degrees[1], "Moon", "name")
+        self.mercury = self.pos_calc(self.planets_degrees[2], "Mercury", "name")
+        self.venus = self.pos_calc(self.planets_degrees[3], "Venus", "name")
+        self.mars = self.pos_calc(self.planets_degrees[4], "Mars", "name")
+        self.jupiter = self.pos_calc(self.planets_degrees[5], "Jupiter", "name")
+        self.saturn = self.pos_calc(self.planets_degrees[6], "Saturn", "name")
+        self.uranus = self.pos_calc(self.planets_degrees[7], "Uranus", "name")
+        self.neptune = self.pos_calc(self.planets_degrees[8], "Neptune", "name")
+        self.pluto = self.pos_calc(self.planets_degrees[9], "Pluto", "name")
+        self.mean_node = self.pos_calc(self.planets_degrees[10], "Mean_Node", "name")
+        self.true_node = self.pos_calc(self.planets_degrees[11], "True_Node", "name")
 
         # self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
         #  self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
@@ -384,27 +375,27 @@ class MakeInstance():
 
             return planet
 
-        self.sun = for_every_planet(self.sun, self.planets_degrees['Sun'])
-        self.moon = for_every_planet(self.moon, self.planets_degrees['Moon'])
+        self.sun = for_every_planet(self.sun, self.planets_degrees[0])
+        self.moon = for_every_planet(self.moon, self.planets_degrees[1])
         self.mercury = for_every_planet(
-            self.mercury, self.planets_degrees['Mercury'])
+            self.mercury, self.planets_degrees[2])
         self.venus = for_every_planet(
-            self.venus, self.planets_degrees['Venus'])
-        self.mars = for_every_planet(self.mars, self.planets_degrees['Mars'])
+            self.venus, self.planets_degrees[3])
+        self.mars = for_every_planet(self.mars, self.planets_degrees[4])
         self.jupiter = for_every_planet(
-            self.jupiter, self.planets_degrees['Jupiter'])
+            self.jupiter, self.planets_degrees[5])
         self.saturn = for_every_planet(
-            self.saturn, self.planets_degrees['Saturn'])
+            self.saturn, self.planets_degrees[6])
         self.uranus = for_every_planet(
-            self.uranus, self.planets_degrees['Uranus'])
+            self.uranus, self.planets_degrees[7])
         self.neptune = for_every_planet(
-            self.neptune, self.planets_degrees['Neptune'])
+            self.neptune, self.planets_degrees[8])
         self.pluto = for_every_planet(
-            self.pluto, self.planets_degrees['Pluto'])
+            self.pluto, self.planets_degrees[9])
         self.mean_node = for_every_planet(
-            self.mean_node, self.planets_degrees['Mean_Node'])
+            self.mean_node, self.planets_degrees[10])
         self.true_node = for_every_planet(
-            self.true_node, self.planets_degrees['True_Node'])
+            self.true_node, self.planets_degrees[11])
 
         planets_list = [self.sun, self.moon, self.mercury, self.venus,
                         self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
@@ -444,7 +435,7 @@ class MakeInstance():
         """ Function to calculate the lunar phase"""
 
         # anti-clockwise degrees between sun and moon
-        moon, sun = self.planets_degrees["Sun"], self.planets_degrees["Moon"]
+        moon, sun = self.planets_degrees[1], self.planets_degrees[0]
         degrees_between = moon - sun
 
         if degrees_between < 0:
