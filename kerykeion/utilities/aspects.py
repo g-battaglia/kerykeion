@@ -1,4 +1,4 @@
-from kerykeion.main import MakeInstance
+from kerykeion.main import KrInstance
 from kerykeion.utilities.kr_settings import aspects, colors, planets, axes_orbit
 from swisseph import difdeg2n
 
@@ -302,8 +302,8 @@ class CompositeAspects(NatalAspects):
     
 
 if __name__ == "__main__":
-    kanye = MakeInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
-    jack = MakeInstance("Jack", 1990, 6, 15, 13, 00, "Montichiari")
+    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+    jack = KrInstance("Jack", 1990, 6, 15, 13, 00, "Montichiari")
     # kanye.get_all()
     # natal = NatalAspects(kanye)
     # natal.get_aspects()

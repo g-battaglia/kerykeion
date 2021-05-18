@@ -5,11 +5,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from kerykeion.main import MakeInstance
+from kerykeion.main import KrInstance
 import swisseph as swe
 
-bergman = MakeInstance("Dario Fo'", 1926, 3, 24, 12, 25, "Sangiano")
-rossellini = MakeInstance("Franca Rame", 1929, 7, 18, 12, 25, "Parabiago")
+bergman = KrInstance("Dario Fo'", 1926, 3, 24, 12, 25, "Sangiano")
+rossellini = KrInstance("Franca Rame", 1929, 7, 18, 12, 25, "Parabiago")
 
 class Synastry():
     """
