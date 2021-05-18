@@ -72,7 +72,7 @@ class MakeInstance():
         debug_print("Conneting to Geonames...")
         self.city_data = search(self.city, self.nation)[0]
         debug_print("Geonames done!")
-        
+
         self.nation = self.city_data["countryCode"]
         self.city_long = float(self.city_data["lng"])
         self.city_lat = float(self.city_data["lat"])
@@ -515,7 +515,7 @@ class MakeInstance():
             pass
         return json_string
 
-    def json_for_api(self, dump=False):
+    def json_api(self, dump=False):
         from json import dumps
 
         if not self.sun:
@@ -549,7 +549,7 @@ if __name__ == "__main__":
     #############################
 
     #f = kanye.json_dump(dump=True)
-    api_json = kanye.json_for_api()
+    api_json = kanye.json_api()
     #print(api_json)
 
     # print(kanye.city)
