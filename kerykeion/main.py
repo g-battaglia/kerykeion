@@ -2,7 +2,6 @@
     This is part of Kerykeion (C) 2020 Giacomo Battaglia
 """
 
-import jsonpickle
 import os.path
 import swisseph as swe
 from kerykeion.geoname import search
@@ -12,7 +11,7 @@ import math
 
 # swe.set_ephe_path("/")
 
-DEBUG = True
+DEBUG = False
 
 
 def debug_print(str):
@@ -147,71 +146,71 @@ class MakeInstance():
         else:
             return int(name)
 
-    def pos_calc(self, degree, number_name, label):
+    def position_calc(self, degree, number_name, label):
         """A function to be used in others to create a dictionary deviding 
         the houses or the planets list."""
         if degree < 30:
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-                       "Fire", "sign": "Ari", "sign_num": 0, "pos": degree, "abs_pos": degree,
+                       "Fire", "sign": "Ari", "sign_num": 0, "position": degree, "abs_pos": degree,
                        "emoji": "♈️"}
         elif degree < 60:
             result = degree - 30
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-                       "Earth", "sign": "Tau", "sign_num": 1, "pos": result, "abs_pos": degree,
+                       "Earth", "sign": "Tau", "sign_num": 1, "position": result, "abs_pos": degree,
                        "emoji": "♉️"}
         elif degree < 90:
             result = degree - 60
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-                       "Air", "sign": "Gem", "sign_num": 2, "pos": result, "abs_pos": degree,
+                       "Air", "sign": "Gem", "sign_num": 2, "position": result, "abs_pos": degree,
                        "emoji": "♊️"}
         elif degree < 120:
             result = degree - 90
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-                       "Water", "sign": "Can", "sign_num": 3, "pos": result, "abs_pos": degree,
+                       "Water", "sign": "Can", "sign_num": 3, "position": result, "abs_pos": degree,
                        "emoji": "♋️"}
         elif degree < 150:
             result = degree - 120
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-                       "Fire", "sign": "Leo", "sign_num": 4, "pos": result, "abs_pos": degree,
+                       "Fire", "sign": "Leo", "sign_num": 4, "position": result, "abs_pos": degree,
                        "emoji": "♌️"}
         elif degree < 180:
             result = degree - 150
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-                       "Earth", "sign": "Vir", "sign_num": 5, "pos": result, "abs_pos": degree,
+                       "Earth", "sign": "Vir", "sign_num": 5, "position": result, "abs_pos": degree,
                        "emoji": "♍️"}
         elif degree < 210:
             result = degree - 180
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-                       "Air", "sign": "Lib", "sign_num": 6, "pos": result, "abs_pos": degree,
+                       "Air", "sign": "Lib", "sign_num": 6, "position": result, "abs_pos": degree,
                        "emoji": "♎️"}
         elif degree < 240:
             result = degree - 210
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-                       "Water", "sign": "Sco", "sign_num": 7, "pos": result, "abs_pos": degree,
+                       "Water", "sign": "Sco", "sign_num": 7, "position": result, "abs_pos": degree,
                        "emoji": "♏️"}
         elif degree < 270:
             result = degree - 240
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-                       "Fire", "sign": "Sag", "sign_num": 8, "pos": result, "abs_pos": degree,
+                       "Fire", "sign": "Sag", "sign_num": 8, "position": result, "abs_pos": degree,
                        "emoji": "♐️"}
         elif degree < 300:
             result = degree - 270
             hou_dic = {label: number_name, "quality": "Cardinal", "element":
-                       "Earth", "sign": "Cap", "sign_num": 9, "pos": result, "abs_pos": degree,
+                       "Earth", "sign": "Cap", "sign_num": 9, "position": result, "abs_pos": degree,
                        "emoji": "♑️"}
         elif degree < 330:
             result = degree - 300
             hou_dic = {label: number_name, "quality": "Fixed", "element":
-                       "Air", "sign": "Aqu", "sign_num": 10, "pos": result, "abs_pos": degree,
+                       "Air", "sign": "Aqu", "sign_num": 10, "position": result, "abs_pos": degree,
                        "emoji": "♒️"}
         elif degree < 360:
             result = degree - 330
             hou_dic = {label: number_name, "quality": "Mutable", "element":
-                       "Water", "sign": "Pis", "sign_num": 11, "pos": result, "abs_pos": degree,
+                       "Water", "sign": "Pis", "sign_num": 11, "position": result, "abs_pos": degree,
                        "emoji": "♓️"}
         else:
-            hou_dic = {label: "pos_calc error", "sign": "pos_calc error",
-                       "pos": "pos_calc error"}
+            hou_dic = {label: "position_calc error", "sign": "position_calc error",
+                       "position": "position_calc error"}
 
         return hou_dic
 
@@ -222,42 +221,39 @@ class MakeInstance():
         self.houses_degree_ut = swe.houses(self.julian_day, self.city_lat,
                                            self.city_long)[0]
         # stores the house in signulare dictionaries.
-        self.first_house = self.pos_calc(self.houses_degree_ut[0], "1", "name")
-        self.second_house = self.pos_calc(
+        self.first_house = self.position_calc(self.houses_degree_ut[0], "1", "name")
+        self.second_house = self.position_calc(
             self.houses_degree_ut[1], "2", "name")
-        self.third_house = self.pos_calc(self.houses_degree_ut[2], "3", "name")
-        self.fourth_house = self.pos_calc(
+        self.third_house = self.position_calc(self.houses_degree_ut[2], "3", "name")
+        self.fourth_house = self.position_calc(
             self.houses_degree_ut[3], "4", "name")
-        self.fifth_house = self.pos_calc(self.houses_degree_ut[4], "5", "name")
-        self.sixth_house = self.pos_calc(self.houses_degree_ut[5], "6", "name")
-        self.seventh_house = self.pos_calc(
+        self.fifth_house = self.position_calc(self.houses_degree_ut[4], "5", "name")
+        self.sixth_house = self.position_calc(self.houses_degree_ut[5], "6", "name")
+        self.seventh_house = self.position_calc(
             self.houses_degree_ut[6], "7", "name")
-        self.eighth_house = self.pos_calc(
+        self.eighth_house = self.position_calc(
             self.houses_degree_ut[7], "8", "name")
-        self.ninth_house = self.pos_calc(self.houses_degree_ut[8], "9", "name")
-        self.tenth_house = self.pos_calc(
+        self.ninth_house = self.position_calc(self.houses_degree_ut[8], "9", "name")
+        self.tenth_house = self.position_calc(
             self.houses_degree_ut[9], "10", "name")
-        self.eleventh_house = self.pos_calc(
+        self.eleventh_house = self.position_calc(
             self.houses_degree_ut[10], "11", "name")
-        self.twelfth_house = self.pos_calc(
+        self.twelfth_house = self.position_calc(
             self.houses_degree_ut[11], "12", "name")
 
         # creates a list of all the dictionaries of thetype.
-        # self.house_list = [self.first_house, self.second_house, self.third_house,
-        #  self.fourth_house, self.fifth_house, self.sixth_house, self.seventh_house,
-        #  self.eighth_house, self.ninth_house, self.tenth_house, self.eleventh_house,
-        #  self.twelfth_house]
 
-        houses_degree = [self.first_house["pos"], self.second_house["pos"],
-                         self.third_house["pos"], self.fourth_house["pos"], self.fifth_house["pos"],
-                         self.sixth_house["pos"], self.seventh_house, self.eighth_house["pos"],
-                         self.ninth_house["pos"], self.tenth_house["pos"], self.eleventh_house["pos"],
-                         self.twelfth_house["pos"]]
 
-        # return self.house_list
+        houses_degree = [self.first_house["position"], self.second_house["position"],
+                         self.third_house["position"], self.fourth_house["position"], self.fifth_house["position"],
+                         self.sixth_house["position"], self.seventh_house, self.eighth_house["position"],
+                         self.ninth_house["position"], self.tenth_house["position"], self.eleventh_house["position"],
+                         self.twelfth_house["position"]]
+
+        # return self.houses_list
         return houses_degree
 
-    def planets_lister(self):
+    def planets_deegrees_lister(self):
         """Sidereal or tropic mode."""
         self.iflag = swe.FLG_SWIEPH+swe.FLG_SPEED
 
@@ -293,26 +289,22 @@ class MakeInstance():
     def planets(self):
         """ Defines body positon in signs and informations and
          stores them in dictionaries"""
-        self.planets_degrees = self.planets_lister()
+        self.planets_degrees = self.planets_deegrees_lister()
         # stores the planets in signulare dictionaries.
-        self.sun = self.pos_calc(self.planets_degrees[0], "Sun", "name")
-        self.moon = self.pos_calc(self.planets_degrees[1], "Moon", "name")
-        self.mercury = self.pos_calc(self.planets_degrees[2], "Mercury", "name")
-        self.venus = self.pos_calc(self.planets_degrees[3], "Venus", "name")
-        self.mars = self.pos_calc(self.planets_degrees[4], "Mars", "name")
-        self.jupiter = self.pos_calc(self.planets_degrees[5], "Jupiter", "name")
-        self.saturn = self.pos_calc(self.planets_degrees[6], "Saturn", "name")
-        self.uranus = self.pos_calc(self.planets_degrees[7], "Uranus", "name")
-        self.neptune = self.pos_calc(self.planets_degrees[8], "Neptune", "name")
-        self.pluto = self.pos_calc(self.planets_degrees[9], "Pluto", "name")
-        self.mean_node = self.pos_calc(self.planets_degrees[10], "Mean_Node", "name")
-        self.true_node = self.pos_calc(self.planets_degrees[11], "True_Node", "name")
+        self.sun = self.position_calc(self.planets_degrees[0], "Sun", "name")
+        self.moon = self.position_calc(self.planets_degrees[1], "Moon", "name")
+        self.mercury = self.position_calc(self.planets_degrees[2], "Mercury", "name")
+        self.venus = self.position_calc(self.planets_degrees[3], "Venus", "name")
+        self.mars = self.position_calc(self.planets_degrees[4], "Mars", "name")
+        self.jupiter = self.position_calc(self.planets_degrees[5], "Jupiter", "name")
+        self.saturn = self.position_calc(self.planets_degrees[6], "Saturn", "name")
+        self.uranus = self.position_calc(self.planets_degrees[7], "Uranus", "name")
+        self.neptune = self.position_calc(self.planets_degrees[8], "Neptune", "name")
+        self.pluto = self.position_calc(self.planets_degrees[9], "Pluto", "name")
+        self.mean_node = self.position_calc(self.planets_degrees[10], "Mean_Node", "name")
+        self.true_node = self.position_calc(self.planets_degrees[11], "True_Node", "name")
 
-        # self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
-        #  self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
-        #   self.pluto, self.mean_node, self.true_node]
 
-        # return self.planets_list
 
     def planets_in_houses(self):
         """Calculates the house of the planet and updates 
@@ -412,24 +404,6 @@ class MakeInstance():
                 plan.update({'retrograde': False})
             planets_ret.append(plan)
 
-        # # self.planets_list = planets_ret
-
-        # return self.planets_list
-
-    # def retrograde(self):
-    #     """ Verify if a planet is retrograde. """
-
-    #     self.planets_in_houses()
-    #     planets_ret = []
-    #     for plan in self.planets_list:
-    #         planet_number = self.get_number(plan["name"])
-    #         if swe.calc(self.julian_day, planet_number, self.iflag)[0][3] < 0:
-    #             plan.update({'retrograde' : True})
-    #         else:
-    #             plan.update({'retrograde' : False})
-    #         planets_ret.append(plan)
-
-    #     self.planets_list = planets_ret
 
     def lunar_phase_calc(self):
         """ Function to calculate the lunar phase"""
@@ -490,16 +464,32 @@ class MakeInstance():
             "moon_emoji": moon_emoji(mphase)
         }
 
+    def make_lists(self):
+        self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
+         self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
+          self.pluto, self.mean_node, self.true_node]
+        
+        self.houses_list = [self.first_house, self.second_house, self.third_house,
+         self.fourth_house, self.fifth_house, self.sixth_house, self.seventh_house,
+         self.eighth_house, self.ninth_house, self.tenth_house, self.eleventh_house,
+         self.twelfth_house]
+
     def get_all(self):
         """ Gets all data from all the functions """
 
         self.planets_in_houses()
         # self.retrograde()
         self.lunar_phase_calc()
+        self.make_lists()
+
+    # Utility Functions:
 
     def json_dump(self, dump=True):
+        import jsonpickle
+
         """
         Dumps the Kerykeion object to a json file located in the home folder.
+        This json file allows the object to be recreated with jsonpickle
         """
 
         try:
@@ -520,24 +510,48 @@ class MakeInstance():
         if dump:
             with open(self.json_path, "w") as file:
                 file.write(json_string)
-                debug_print(f"JSON file dumped in {self.json_path}.")
+                print(f"JSON file dumped in {self.json_path}.")
         else:
             pass
         return json_string
 
+    def json_for_api(self, dump=False):
+        from json import dumps
+
+        if not self.sun:
+            self.get_all()
+
+        obj_dict = self.__dict__
+        keys_to_remove = ["utc", "iflag", "json_dir", "planets_list", "houses_list"]
+        for key in keys_to_remove:
+            del obj_dict[key]
+
+        json_obj = dumps(obj_dict)
+
+        if dump:
+            json_path = os.path.join(
+                self.json_dir, f"{self.name}_kerykeion.json")
+            with open(json_path, "w") as file:
+                    file.write(json_obj)
+                    print(f"JSON file dumped in {json_path}.")
+
+        return json_obj
 
 if __name__ == "__main__":
     # kanye = MakeInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta", lon=50, lat=50, tz_str="Europe/Rome")
     kanye = MakeInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
     kanye.get_all()
     # print(kanye.city_tz)
-    # print(kanye.fifth_house["pos"])
+    # print(kanye.fifth_house["position"])
     # print(MakeInstance().city)
     # print(MakeInstance())
 
     #############################
 
-    f = kanye.json_dump(dump=True)
+    #f = kanye.json_dump(dump=True)
+    api_json =kanye.json_for_api()
+    print(api_json)
+
     # print(kanye.city)
     # print(f)
     # print(kanye.lunar_phase)

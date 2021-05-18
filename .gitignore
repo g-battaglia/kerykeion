@@ -44,3 +44,5 @@ venv
 .vscode
 mecuriusastro.egg-info
 kerykeion.egg-info
+build/
+dist/

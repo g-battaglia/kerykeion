@@ -71,11 +71,11 @@ class MakeSvgInstance:
         
         self.points_deg = []
         for planet in self.user.planets_list:
-            self.points_deg.append(planet["pos"])
+            self.points_deg.append(planet["position"])
         
-        self.points_deg = self.points_deg + [self.user.house_list[0]["pos"],
-         self.user.house_list[9]["pos"], self.user.house_list[6]["pos"],
-         self.user.house_list[3]["pos"]]
+        self.points_deg = self.points_deg + [self.user.houses_list[0]["position"],
+         self.user.houses_list[9]["position"], self.user.houses_list[6]["position"],
+         self.user.houses_list[3]["position"]]
 
         # Make list of the poits sign.
 
@@ -84,9 +84,9 @@ class MakeSvgInstance:
         for planet in self.user.planets_list:
             self.points_sign.append(planet["sign_num"])
         
-        self.points_sign = self.points_sign + [self.user.house_list[0]["sign_num"],
-         self.user.house_list[9]["sign_num"], self.user.house_list[6]["sign_num"],
-         self.user.house_list[3]["sign_num"]]
+        self.points_sign = self.points_sign + [self.user.houses_list[0]["sign_num"],
+         self.user.houses_list[9]["sign_num"], self.user.houses_list[6]["sign_num"],
+         self.user.houses_list[3]["sign_num"]]
 
         # Make a list of poits if they are retrograde or not.
 
@@ -101,7 +101,7 @@ class MakeSvgInstance:
         # Makes the sign number list.
 
         self.houses_sign_graph = []
-        for h in self.user.house_list:
+        for h in self.user.houses_list:
             self.houses_sign_graph.append(h['sign_num'])
 
         if self.type == "Natal":
@@ -128,11 +128,11 @@ class MakeSvgInstance:
             
             self.t_points_deg = []
             for planet in self.t_user.planets_list:
-                self.t_points_deg.append(planet["pos"])
+                self.t_points_deg.append(planet["position"])
             
-            self.t_points_deg = self.t_points_deg + [self.t_user.house_list[0]["pos"],
-            self.t_user.house_list[9]["pos"], self.t_user.house_list[6]["pos"],
-            self.t_user.house_list[3]["pos"]]
+            self.t_points_deg = self.t_points_deg + [self.t_user.houses_list[0]["position"],
+            self.t_user.houses_list[9]["position"], self.t_user.houses_list[6]["position"],
+            self.t_user.houses_list[3]["position"]]
 
             # Make list of the poits sign.
 
@@ -141,9 +141,9 @@ class MakeSvgInstance:
             for planet in self.t_user.planets_list:
                 self.t_points_sign.append(planet["sign_num"])
             
-            self.t_points_sign = self.t_points_sign + [self.t_user.house_list[0]["sign_num"],
-            self.t_user.house_list[9]["sign_num"], self.t_user.house_list[6]["sign_num"],
-            self.t_user.house_list[3]["sign_num"]]
+            self.t_points_sign = self.t_points_sign + [self.t_user.houses_list[0]["sign_num"],
+            self.t_user.houses_list[9]["sign_num"], self.t_user.houses_list[6]["sign_num"],
+            self.t_user.houses_list[3]["sign_num"]]
 
             # Make a list of poits if they are retrograde or not.
 
@@ -156,7 +156,7 @@ class MakeSvgInstance:
             False, False, False]
 
             self.t_houses_sign_graph = []
-            for h in self.t_user.house_list:
+            for h in self.t_user.houses_list:
                 self.t_houses_sign_graph.append(h['sign_num'])
 
         
@@ -255,7 +255,7 @@ class MakeSvgInstance:
             self.t_planets_degree     = self.t_points_deg
             self.t_planets_degree_ut  = self.t_points_deg_ut 
             self.t_planets_retrograde = self.t_points_retrograde 
-            self.t_houses_degree      = self.t_user.houses_degree
+            self.t_houses_list       = self.t_user.houses_list  
             self.t_houses_sign        = self.t_houses_sign_graph   
             self.t_houses_degree_ut   = self.t_user.houses_degree_ut   
             
@@ -264,7 +264,7 @@ class MakeSvgInstance:
         self.planets_degree     = self.points_deg                           
         self.planets_degree_ut  = self.points_deg_ut                     
         self.planets_retrograde = self.points_retrograde                
-        self.houses_degree      = self.user.houses_degree                    
+        self.houses_list      = self.user.houses_list                 
         self.houses_sign        = self.houses_sign_graph                       
         self.houses_degree_ut   = self.user.houses_degree_ut              
         self.lunar_phase        = self.user.lunar_phase                        
@@ -471,7 +471,7 @@ class MakeSvgInstance:
 
         #return filename
         
-        return print("SVG Generated Correctly")
+        return print(f"SVG Generated Correctly in: {self.output_directory}")
 
     #draw transit ring
     def transitRing(self, r ):
@@ -1406,7 +1406,7 @@ class MakeSvgInstance:
             out += '<g transform="translate(0,'+str(li)+')">'
             out += '<text text-anchor="end" x="40" style="fill:%s; font-size: 10px;">%s %s:</text>' % (self.colors['paper_0'],self.label['cusp'],cusp)            
             out += '<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#'+self.zodiac[self.houses_sign[i]]+'" /></g>'
-            out += '<text x="53" style="fill:%s; font-size: 10px;"> %s</text>' % (self.colors['paper_0'],self.dec2deg(self.houses_degree[i]))
+            out += '<text x="53" style="fill:%s; font-size: 10px;"> %s</text>' % (self.colors['paper_0'],self.dec2deg(self.houses_list[i]["position"]))
             out += '</g>\n'
             li = li + 14
         out += '</g>\n'
@@ -1424,7 +1424,7 @@ class MakeSvgInstance:
                 out += '<g transform="translate(0,'+str(li)+')">'
                 out += '<text text-anchor="end" x="40" style="fill:%s; font-size: 10px;">%s %s:</text>' % (self.colors['paper_0'],self.label['cusp'],cusp)            
                 out += '<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#'+self.zodiac[self.t_houses_sign[i]]+'" /></g>'
-                out += '<text x="53" style="fill:%s; font-size: 10px;"> %s</text>' % (self.colors['paper_0'],self.dec2deg(self.t_houses_degree[i]))
+                out += '<text x="53" style="fill:%s; font-size: 10px;"> %s</text>' % (self.colors['paper_0'],self.dec2deg(self.t_houses_list[i]["position"]))
                 out += '</g>\n'
                 li = li + 14
             out += '</g>\n'
@@ -1455,7 +1455,7 @@ if __name__ == "__main__":
     name = MakeSvgInstance(first, chart_type="Composite", second_obj=second)
     name.output_directory = os.path.expanduser("~")
     name.makeSVG()
-    print(len(name.aspects_list))
+    #print(len(name.aspects_list))
     kr.print_settings_path()
 
 

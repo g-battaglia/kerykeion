@@ -19,7 +19,7 @@ class NatalAspects():
             print(f"Generating kerykeion object for {self.user.name}...")
             self.user.get_all()
         
-        self.init_point_list = self.user.planets_list + self.user.house_list
+        self.init_point_list = self.user.planets_list + self.user.houses_list
 
     
 
@@ -256,8 +256,8 @@ class CompositeAspects(NatalAspects):
         
 
         
-        self.first_init_point_list = self.first_user.planets_list + self.first_user.house_list
-        self.second_init_point_list = self.second_user.planets_list + self.second_user.house_list
+        self.first_init_point_list = self.first_user.planets_list + self.first_user.houses_list
+        self.second_init_point_list = self.second_user.planets_list + self.second_user.houses_list
         
 
     
