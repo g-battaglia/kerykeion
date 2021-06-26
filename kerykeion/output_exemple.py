@@ -41,8 +41,9 @@ def output(user):
     finale += ("\n")
     return finale
 
-user = KrInstance("Brigitte Bardot", 1934, 9, 28, 13, 15, "Paris", "FR")
+
 
 
 if __name__ == "__main__":
+    user = KrInstance("Brigitte Bardot", 1934, 9, 28, 13, 15, "Paris", "FR")
     print(output(user))
