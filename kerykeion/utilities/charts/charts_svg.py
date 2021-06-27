@@ -41,13 +41,10 @@ class MakeSvgInstance:
 
         # basic template
 
-        if chart_type == "Natal":
-            self.xml_svg = os.path.join(DATADIR, 'birth_template.xml')
-        else:
-            self.xml_svg = os.path.join(DATADIR, 'template.xml')
+        self.xml_svg = os.path.join(DATADIR, 'template.xml')
 
         # SVG Width
-        self.natal_width = 800
+        self.natal_width = 772.2
         self.full_widht = 1200
 
         # Settings file
@@ -167,7 +164,7 @@ class MakeSvgInstance:
             self.screen_width = 772.2
         else:
             self.screen_width = 1200
-        self.screen_height = 800
+        self.screen_height = 772.2
 
         # check for home
         self.home_location = self.user.city
@@ -280,8 +277,8 @@ class MakeSvgInstance:
             wm_off = 100
 
         # Viewbox and sizing
-        svgHeight = self.screen_height-wm_off
-        svgWidth = self.screen_width-5.0
+        svgHeight = "auto"  # self.screen_height-wm_off
+        svgWidth = "auto"  #  self.screen_width-5.0
         # svgHeight=self.screen_height-wm_off
         # svgWidth=(770.0*svgHeight)/540.0
         # svgWidth=float(self.screen_width)-25.0
