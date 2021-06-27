@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="kerykeion",
-    version="2.0.0",
+    version="2.1.0",
     author="Giacomo Battaglia",
     author_email="battaglia.giacomo@yahoo.it",
     description="An astrology library.",
@@ -24,5 +24,5 @@ setuptools.setup(
     ],
     include_package_data=True,
     python_requires='>=3.6',
-    install_requires = ['pyswisseph', 'pytz', 'jsonpickle'],
+    install_requires=['pyswisseph', 'pytz', 'jsonpickle'],
 )
