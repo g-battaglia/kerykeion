@@ -40,7 +40,11 @@ class MakeSvgInstance:
         self.template = False
 
         # basic template
-        self.xml_svg = os.path.join(DATADIR, 'template.xml')
+
+        if chart_type == "Natal":
+            self.xml_svg = os.path.join(DATADIR, 'birth_template.xml')
+        else:
+            self.xml_svg = os.path.join(DATADIR, 'template.xml')
 
         # SVG Width
         self.natal_width = 800
@@ -1549,7 +1553,7 @@ if __name__ == "__main__":
     first = kr.KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
     second = kr.KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
 
-    name = MakeSvgInstance(first, chart_type="Composite", second_obj=second)
+    name = MakeSvgInstance(first, chart_type="Natal", second_obj=second)
     name.output_directory = os.path.expanduser("~")
     template = name.makeTemplate()
     name.makeSVG()
