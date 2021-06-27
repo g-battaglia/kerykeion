@@ -163,7 +163,10 @@ class MakeSvgInstance:
                 self.t_houses_sign_graph.append(h['sign_num'])
 
         # screen size
-        self.screen_width = 1200
+        if self.type == "Natal":
+            self.screen_width = 772.2
+        else:
+            self.screen_width = 1200
         self.screen_height = 800
 
         # check for home
@@ -276,26 +279,20 @@ class MakeSvgInstance:
         else:  # 1024x768, 800x600, 1280x800, 1680x1050
             wm_off = 100
 
-        # check for printer
-        if printing == None:
-            svgHeight = self.screen_height-wm_off
-            svgWidth = self.screen_width-5.0
-            # svgHeight=self.screen_height-wm_off
-            # svgWidth=(770.0*svgHeight)/540.0
-            # svgWidth=float(self.screen_width)-25.0
-            rotate = "0"
-            translate = "0"
-            # Defoult:
-            # viewbox = '0 0 772.2 546.0' #297mm * 2.6 + 210mm * 2.6
-            viewbox = '0 0 1000 546.0'
+        # Viewbox and sizing
+        svgHeight = self.screen_height-wm_off
+        svgWidth = self.screen_width-5.0
+        # svgHeight=self.screen_height-wm_off
+        # svgWidth=(770.0*svgHeight)/540.0
+        # svgWidth=float(self.screen_width)-25.0
+        rotate = "0"
+        translate = "0"
+        # Defoult:
+        # viewbox = '0 0 772.2 546.0' #297mm * 2.6 + 210mm * 2.6
+        if self.type == "Natal":
+            viewbox = '0 0 772.2 546.0'  # 297mm * 2.6 + 210mm * 2.6
         else:
-            sizeX = 546.0
-            sizeY = 772.2
-            svgWidth = printing['width']
-            svgHeight = printing['height']
-            rotate = "0"
-            viewbox = '0 0 772.2 546.0'
-            translate = "0"
+            viewbox = '0 0 1000 546.0'
 
         # template dictionary
         td = dict()
