@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# * TODO: Change the label for language in 2 objects, one for IT and one for ENG.
+# * Then change the label for planets like this: planet["label"] => planet[language]
 
 # basics
 # import settings as chart_settings
