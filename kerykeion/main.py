@@ -40,8 +40,8 @@ class KrInstance():
         day=now.day,
         hours=now.hour,
         minuts=now.minute,
-        city="Greenwich",
-        nat="",
+        city="London",
+        nat="UK",
         lon=False,
         lat=False,
         tz_str=False
