@@ -41,7 +41,7 @@ class KrInstance():
         hours=now.hour,
         minuts=now.minute,
         city="London",
-        nat="UK",
+        nat="",
         lon=False,
         lat=False,
         tz_str=False
