@@ -108,7 +108,7 @@ class MakeSvgInstance:
 
         if self.type == "Natal":
             natal_aspects_instance = kr.utilities.NatalAspects(self.user)
-            self.aspects_settings_list = natal_aspects_instance.get_aspects()
+            self.aspects_list = natal_aspects_instance.get_aspects()
 
         if self.type == "Transit" or self.type == "Composite":
 
@@ -1268,7 +1268,7 @@ class MakeSvgInstance:
 
     def makeAspects(self, r, ar):
         out = ""
-        for element in self.aspects_settings_list:
+        for element in self.aspects_list:
             out = out + self.drawAspect(r, ar, element['p1_abs_pos'], element['p2_abs_pos'],
                                         self.colors_settings[f"aspect_{element['aspect_degrees']}"])
 
@@ -1303,7 +1303,7 @@ class MakeSvgInstance:
                         out = out + '<rect x="'+str(xorb)+'" y="'+str(yorb)+'" width="'+str(
                             box)+'" height="'+str(box)+'" style="'+style+'"/>\n'
                         xorb = xorb+box
-                        for element in self.aspects_settings_list:
+                        for element in self.aspects_list:
                             if (element['p1'] == a and element['p2'] == b) or (element['p1'] == b and element['p2'] == a):
                                 out = out + '<use  x="'+str(xorb-box+1)+'" y="'+str(
                                     yorb+1)+'" xlink:href="#orb'+str(element['aspect_degrees'])+'" />\n'
@@ -1315,9 +1315,9 @@ class MakeSvgInstance:
     def makeAspectsTransit(self, r, ar):
         out = ""
 
-        self.aspects_settings_list = kr.utilities.CompositeAspects(
+        self.aspects_list = kr.utilities.CompositeAspects(
             self.user, self.t_user).get_aspects()
-        for element in self.aspects_settings_list:
+        for element in self.aspects_list:
             out = out + self.drawAspect(r, ar, element['p1_abs_pos'], element['p2_abs_pos'],
                                         self.colors_settings[f"aspect_{element['aspect_degrees']}"])
 
@@ -1329,11 +1329,11 @@ class MakeSvgInstance:
             self.colors_settings['paper_0'], (f"{self.language_settings['aspects']}:"))
         line = 0
         nl = 0
-        for i in range(len(self.aspects_settings_list)):
+        for i in range(len(self.aspects_list)):
             if i == 12:
                 nl = 100
-                # if len(self.aspects_settings_list) > 24:
-                #     line = -1 * ( len(self.aspects_settings_list) - 24) * 14
+                # if len(self.aspects_list) > 24:
+                #     line = -1 * ( len(self.aspects_list) - 24) * 14
                 # else:
                 #     line = 0
 
@@ -1342,34 +1342,34 @@ class MakeSvgInstance:
 
             if i == 24:
                 nl = 200
-                # if len(self.aspects_settings_list) > 36:
-                #     line = -1 * ( len(self.aspects_settings_list) - 36) * 14
+                # if len(self.aspects_list) > 36:
+                #     line = -1 * ( len(self.aspects_list) - 36) * 14
                 # else:
                 #     line = 0
                 line = 0
 
             if i == 36:
                 nl = 300
-                if len(self.aspects_settings_list) > 48:
-                    line = -1 * (len(self.aspects_settings_list) - 48) * 14
+                if len(self.aspects_list) > 48:
+                    line = -1 * (len(self.aspects_list) - 48) * 14
                 else:
                     line = 0
             out += '<g transform="translate(%s,%s)">' % (nl, line)
             # first planet symbol
             out += '<use transform="scale(0.4)" x="0" y="3" xlink:href="#%s" />\n' % (
-                self.planets_settings[self.aspects_settings_list[i]['p1']]['name'])
+                self.planets_settings[self.aspects_list[i]['p1']]['name'])
             # aspect symbol
             out += '<use  x="15" y="0" xlink:href="#orb%s" />\n' % (
-                self.aspects_settings[self.aspects_settings_list[i]['aid']]['degree'])
+                self.aspects_settings[self.aspects_list[i]['aid']]['degree'])
             # second planet symbol
             out += '<g transform="translate(30,0)">'
             out += '<use transform="scale(0.4)" x="0" y="3" xlink:href="#%s" />\n' % (
-                self.planets_settings[self.aspects_settings_list[i]['p2']]['name'])
+                self.planets_settings[self.aspects_list[i]['p2']]['name'])
             out += '</g>'
             # difference in degrees
             out += '<text y="8" x="45" style="fill:%s; font-size: 10px;">%s</text>' % (
                 self.colors_settings['paper_0'],
-                self.dec2deg(self.aspects_settings_list[i]['orbit']))
+                self.dec2deg(self.aspects_list[i]['orbit']))
             # line
             out += '</g>'
             line = line + 14
