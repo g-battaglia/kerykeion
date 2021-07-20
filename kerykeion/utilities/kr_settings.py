@@ -172,7 +172,7 @@ aspects = [
         "degree": 144,
         "name": "biquintile",
         "visible": 0,
-        "visible_grid": 1,
+        "visible_grid": 0,
         "is_major": 0,
         "is_minor": 1,
         "orb": 1
@@ -180,8 +180,8 @@ aspects = [
     {
         "degree": 150,
         "name": "quincunx",
-        "visible": 1,
-        "visible_grid": 1,
+        "visible": 0,
+        "visible_grid": 0,
         "is_major": 0,
         "is_minor": 0,
         "orb": 1
