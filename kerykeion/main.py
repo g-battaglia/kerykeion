@@ -3,6 +3,7 @@
 """
 
 import os.path
+from typing import Union
 import swisseph as swe
 from kerykeion.geoname import search
 import pytz
@@ -34,17 +35,17 @@ class KrInstance():
 
     def __init__(
         self,
-        name="Now",
-        year=now.year,
-        month=now.month,
-        day=now.day,
-        hours=now.hour,
-        minuts=now.minute,
-        city="London",
-        nat="",
-        lon=False,
-        lat=False,
-        tz_str=False
+        name: str = "Now",
+        year: int = now.year,
+        month: int = now.month,
+        day: int = now.day,
+        hours: int = now.hour,
+        minuts: int = now.minute,
+        city: str = "London",
+        nat: str = "",
+        lon: Union[int, float] = False,
+        lat: Union[int, float] = False,
+        tz_str: str = False
     ):
 
         self.name = name
@@ -221,19 +222,24 @@ class KrInstance():
         self.houses_degree_ut = swe.houses(self.julian_day, self.city_lat,
                                            self.city_long)[0]
         # stores the house in signulare dictionaries.
-        self.first_house = self.position_calc(self.houses_degree_ut[0], "1", "name")
+        self.first_house = self.position_calc(
+            self.houses_degree_ut[0], "1", "name")
         self.second_house = self.position_calc(
             self.houses_degree_ut[1], "2", "name")
-        self.third_house = self.position_calc(self.houses_degree_ut[2], "3", "name")
+        self.third_house = self.position_calc(
+            self.houses_degree_ut[2], "3", "name")
         self.fourth_house = self.position_calc(
             self.houses_degree_ut[3], "4", "name")
-        self.fifth_house = self.position_calc(self.houses_degree_ut[4], "5", "name")
-        self.sixth_house = self.position_calc(self.houses_degree_ut[5], "6", "name")
+        self.fifth_house = self.position_calc(
+            self.houses_degree_ut[4], "5", "name")
+        self.sixth_house = self.position_calc(
+            self.houses_degree_ut[5], "6", "name")
         self.seventh_house = self.position_calc(
             self.houses_degree_ut[6], "7", "name")
         self.eighth_house = self.position_calc(
             self.houses_degree_ut[7], "8", "name")
-        self.ninth_house = self.position_calc(self.houses_degree_ut[8], "9", "name")
+        self.ninth_house = self.position_calc(
+            self.houses_degree_ut[8], "9", "name")
         self.tenth_house = self.position_calc(
             self.houses_degree_ut[9], "10", "name")
         self.eleventh_house = self.position_calc(
@@ -242,7 +248,6 @@ class KrInstance():
             self.houses_degree_ut[11], "12", "name")
 
         # creates a list of all the dictionaries of thetype.
-
 
         houses_degree = [self.first_house["position"], self.second_house["position"],
                          self.third_house["position"], self.fourth_house["position"], self.fifth_house["position"],
@@ -280,9 +285,9 @@ class KrInstance():
         #print(swe.calc(self.julian_day, 7, self.iflag)[3])
 
         self.planets_degrees = [sun_deg, moon_deg, mercury_deg,
-         venus_deg, mars_deg, jupiter_deg, saturn_deg,
-         uranus_deg, neptune_deg, pluto_deg, mean_node_deg,
-         true_node_deg]
+                                venus_deg, mars_deg, jupiter_deg, saturn_deg,
+                                uranus_deg, neptune_deg, pluto_deg, mean_node_deg,
+                                true_node_deg]
 
         return self.planets_degrees
 
@@ -293,18 +298,25 @@ class KrInstance():
         # stores the planets in signulare dictionaries.
         self.sun = self.position_calc(self.planets_degrees[0], "Sun", "name")
         self.moon = self.position_calc(self.planets_degrees[1], "Moon", "name")
-        self.mercury = self.position_calc(self.planets_degrees[2], "Mercury", "name")
-        self.venus = self.position_calc(self.planets_degrees[3], "Venus", "name")
+        self.mercury = self.position_calc(
+            self.planets_degrees[2], "Mercury", "name")
+        self.venus = self.position_calc(
+            self.planets_degrees[3], "Venus", "name")
         self.mars = self.position_calc(self.planets_degrees[4], "Mars", "name")
-        self.jupiter = self.position_calc(self.planets_degrees[5], "Jupiter", "name")
-        self.saturn = self.position_calc(self.planets_degrees[6], "Saturn", "name")
-        self.uranus = self.position_calc(self.planets_degrees[7], "Uranus", "name")
-        self.neptune = self.position_calc(self.planets_degrees[8], "Neptune", "name")
-        self.pluto = self.position_calc(self.planets_degrees[9], "Pluto", "name")
-        self.mean_node = self.position_calc(self.planets_degrees[10], "Mean_Node", "name")
-        self.true_node = self.position_calc(self.planets_degrees[11], "True_Node", "name")
-
-
+        self.jupiter = self.position_calc(
+            self.planets_degrees[5], "Jupiter", "name")
+        self.saturn = self.position_calc(
+            self.planets_degrees[6], "Saturn", "name")
+        self.uranus = self.position_calc(
+            self.planets_degrees[7], "Uranus", "name")
+        self.neptune = self.position_calc(
+            self.planets_degrees[8], "Neptune", "name")
+        self.pluto = self.position_calc(
+            self.planets_degrees[9], "Pluto", "name")
+        self.mean_node = self.position_calc(
+            self.planets_degrees[10], "Mean_Node", "name")
+        self.true_node = self.position_calc(
+            self.planets_degrees[11], "True_Node", "name")
 
     def planets_in_houses(self):
         """Calculates the house of the planet and updates 
@@ -404,7 +416,6 @@ class KrInstance():
                 plan.update({'retrograde': False})
             planets_ret.append(plan)
 
-
     def lunar_phase_calc(self):
         """ Function to calculate the lunar phase"""
 
@@ -440,16 +451,18 @@ class KrInstance():
         def moon_emoji(phase):
             if phase == 1:
                 result = "🌑"
-            elif phase == 14:
-                result = "🌕"
-            elif 7 <= phase <= 9:
-                result = "🌓"
-            elif 20 <= phase <= 22:
-                result = "🌗"
             elif phase < 7:
                 result = "🌒"
+            elif 7 <= phase <= 9:
+                result = "🌓"
             elif phase < 14:
                 result = "🌔"
+            elif phase == 14:
+                result = "🌕"
+            elif phase < 20:
+                result = "🌖"
+            elif 20 <= phase <= 22:
+                result = "🌗"
             elif phase <= 28:
                 result = "🌘"
             else:
@@ -466,13 +479,13 @@ class KrInstance():
 
     def make_lists(self):
         self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
-         self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
-          self.pluto, self.mean_node, self.true_node]
-        
+                             self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
+                             self.pluto, self.mean_node, self.true_node]
+
         self.houses_list = [self.first_house, self.second_house, self.third_house,
-         self.fourth_house, self.fifth_house, self.sixth_house, self.seventh_house,
-         self.eighth_house, self.ninth_house, self.tenth_house, self.eleventh_house,
-         self.twelfth_house]
+                            self.fourth_house, self.fifth_house, self.sixth_house, self.seventh_house,
+                            self.eighth_house, self.ninth_house, self.tenth_house, self.eleventh_house,
+                            self.twelfth_house]
 
     def get_all(self):
         """ Gets all data from all the functions """
@@ -523,24 +536,26 @@ class KrInstance():
 
         obj_dict = self.__dict__.copy()
         keys_to_remove = ["utc", "iflag", "json_dir", "planets_list",
-            "houses_list", "planets_degrees", "houses_degree_ut"]
+                          "houses_list", "planets_degrees", "houses_degree_ut"]
         for key in keys_to_remove:
             obj_dict.pop(key)
 
         json_obj = dumps(obj_dict)
 
         if dump:
-            json_path = os.path.join(self.json_dir, f"{self.name}_kerykeion.json")
+            json_path = os.path.join(
+                self.json_dir, f"{self.name}_kerykeion.json")
             with open(json_path, "w") as file:
-                    file.write(json_obj)
-                    print(f"JSON file dumped in {json_path}.")
+                file.write(json_obj)
+                print(f"JSON file dumped in {json_path}.")
 
         return json_obj
 
+
 if __name__ == "__main__":
     # kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta", lon=50, lat=50, tz_str="Europe/Rome")
-    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
-    kanye.get_all()
+    #kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+    # kanye.get_all()
     # print(kanye.city_tz)
     # print(kanye.fifth_house["position"])
     # print(KrInstance().city)
@@ -549,8 +564,8 @@ if __name__ == "__main__":
     #############################
 
     #f = kanye.json_dump(dump=True)
-    api_json = kanye.json_api()
-    #print(api_json)
+    #api_json = kanye.json_api()
+    # print(api_json)
 
     # print(kanye.city)
     # print(f)
@@ -559,3 +574,7 @@ if __name__ == "__main__":
 
     # for p in kanye.planets_list:
     #     print(p)
+    ###############################
+    now = KrInstance()
+    now.get_all()
+    print(now.lunar_phase)
