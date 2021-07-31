@@ -11,10 +11,10 @@ import swisseph as swe
 # General Costants
 ORBIT_ROUND = 1
 
-CONJUCTION_VALUE = 9
-OPPOSITION_VALUE = 7
-SQUARE_VALUE = 4
-TRIGON_VALUE = 6
+CONJUCTION_VALUE = 10
+OPPOSITION_VALUE = 8
+SQUARE_VALUE = 5
+TRIGON_VALUE = 7
 
 
 class DiscepoloNumber():
