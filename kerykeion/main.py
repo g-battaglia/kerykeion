@@ -9,10 +9,14 @@ from kerykeion.geoname import search
 import pytz
 import datetime
 import math
+import logging
 
 # swe.set_ephe_path("/")
 
 DEBUG = False
+
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 
 def debug_print(str):
@@ -45,9 +49,9 @@ class KrInstance():
         nat: str = "",
         lon: Union[int, float] = False,
         lat: Union[int, float] = False,
-        tz_str: str = False
+        tz_str: Union[str, bool] = False
     ):
-
+        logging.info('Starting Kerykeion')
         self.name = name
         self.year = year
         self.month = month
@@ -70,9 +74,10 @@ class KrInstance():
 
     def get_tz(self):
         """Gets the nerest time zone for the calculation"""
-        debug_print("Conneting to Geonames...")
+        logging.info("Conneting to Geonames...")
         self.city_data = search(self.city, self.nation)[0]
-        debug_print("Geonames done!")
+
+        logging.info("Geonames done!")
 
         self.nation = self.city_data["countryCode"]
         self.city_long = float(self.city_data["lng"])
@@ -115,9 +120,9 @@ class KrInstance():
                                            self.time_utc))
 
         return self.julian_day
-    
-    # TODO Static!
-    def get_number(self, name):
+
+    @staticmethod
+    def get_number(name):
         """Internal function, gets number id from the name."""
         name = name.lower()
 
@@ -147,75 +152,75 @@ class KrInstance():
             return 11
         else:
             return int(name)
-        
-    # TODO Static!
-    def position_calc(self, degree, number_name, label):
-        """A function to be used in others to create a dictionary deviding 
+
+    @staticmethod
+    def position_calc(degree, number_name, label):
+        """A function to be used in others to create a dictionary deviding
         the houses or the planets list."""
         if degree < 30:
-            hou_dic = {label: number_name, "quality": "Cardinal", "element":
-                       "Fire", "sign": "Ari", "sign_num": 0, "position": degree, "abs_pos": degree,
-                       "emoji": "♈️"}
+            dictionary = {label: number_name, "quality": "Cardinal", "element":
+                          "Fire", "sign": "Ari", "sign_num": 0, "position": degree, "abs_pos": degree,
+                          "emoji": "♈️"}
         elif degree < 60:
             result = degree - 30
-            hou_dic = {label: number_name, "quality": "Fixed", "element":
-                       "Earth", "sign": "Tau", "sign_num": 1, "position": result, "abs_pos": degree,
-                       "emoji": "♉️"}
+            dictionary = {label: number_name, "quality": "Fixed", "element":
+                          "Earth", "sign": "Tau", "sign_num": 1, "position": result, "abs_pos": degree,
+                          "emoji": "♉️"}
         elif degree < 90:
             result = degree - 60
-            hou_dic = {label: number_name, "quality": "Mutable", "element":
-                       "Air", "sign": "Gem", "sign_num": 2, "position": result, "abs_pos": degree,
-                       "emoji": "♊️"}
+            dictionary = {label: number_name, "quality": "Mutable", "element":
+                          "Air", "sign": "Gem", "sign_num": 2, "position": result, "abs_pos": degree,
+                          "emoji": "♊️"}
         elif degree < 120:
             result = degree - 90
-            hou_dic = {label: number_name, "quality": "Cardinal", "element":
-                       "Water", "sign": "Can", "sign_num": 3, "position": result, "abs_pos": degree,
-                       "emoji": "♋️"}
+            dictionary = {label: number_name, "quality": "Cardinal", "element":
+                          "Water", "sign": "Can", "sign_num": 3, "position": result, "abs_pos": degree,
+                          "emoji": "♋️"}
         elif degree < 150:
             result = degree - 120
-            hou_dic = {label: number_name, "quality": "Fixed", "element":
-                       "Fire", "sign": "Leo", "sign_num": 4, "position": result, "abs_pos": degree,
-                       "emoji": "♌️"}
+            dictionary = {label: number_name, "quality": "Fixed", "element":
+                          "Fire", "sign": "Leo", "sign_num": 4, "position": result, "abs_pos": degree,
+                          "emoji": "♌️"}
         elif degree < 180:
             result = degree - 150
-            hou_dic = {label: number_name, "quality": "Mutable", "element":
-                       "Earth", "sign": "Vir", "sign_num": 5, "position": result, "abs_pos": degree,
-                       "emoji": "♍️"}
+            dictionary = {label: number_name, "quality": "Mutable", "element":
+                          "Earth", "sign": "Vir", "sign_num": 5, "position": result, "abs_pos": degree,
+                          "emoji": "♍️"}
         elif degree < 210:
             result = degree - 180
-            hou_dic = {label: number_name, "quality": "Cardinal", "element":
-                       "Air", "sign": "Lib", "sign_num": 6, "position": result, "abs_pos": degree,
-                       "emoji": "♎️"}
+            dictionary = {label: number_name, "quality": "Cardinal", "element":
+                          "Air", "sign": "Lib", "sign_num": 6, "position": result, "abs_pos": degree,
+                          "emoji": "♎️"}
         elif degree < 240:
             result = degree - 210
-            hou_dic = {label: number_name, "quality": "Fixed", "element":
-                       "Water", "sign": "Sco", "sign_num": 7, "position": result, "abs_pos": degree,
-                       "emoji": "♏️"}
+            dictionary = {label: number_name, "quality": "Fixed", "element":
+                          "Water", "sign": "Sco", "sign_num": 7, "position": result, "abs_pos": degree,
+                          "emoji": "♏️"}
         elif degree < 270:
             result = degree - 240
-            hou_dic = {label: number_name, "quality": "Mutable", "element":
-                       "Fire", "sign": "Sag", "sign_num": 8, "position": result, "abs_pos": degree,
-                       "emoji": "♐️"}
+            dictionary = {label: number_name, "quality": "Mutable", "element":
+                          "Fire", "sign": "Sag", "sign_num": 8, "position": result, "abs_pos": degree,
+                          "emoji": "♐️"}
         elif degree < 300:
             result = degree - 270
-            hou_dic = {label: number_name, "quality": "Cardinal", "element":
-                       "Earth", "sign": "Cap", "sign_num": 9, "position": result, "abs_pos": degree,
-                       "emoji": "♑️"}
+            dictionary = {label: number_name, "quality": "Cardinal", "element":
+                          "Earth", "sign": "Cap", "sign_num": 9, "position": result, "abs_pos": degree,
+                          "emoji": "♑️"}
         elif degree < 330:
             result = degree - 300
-            hou_dic = {label: number_name, "quality": "Fixed", "element":
-                       "Air", "sign": "Aqu", "sign_num": 10, "position": result, "abs_pos": degree,
-                       "emoji": "♒️"}
+            dictionary = {label: number_name, "quality": "Fixed", "element":
+                          "Air", "sign": "Aqu", "sign_num": 10, "position": result, "abs_pos": degree,
+                          "emoji": "♒️"}
         elif degree < 360:
             result = degree - 330
-            hou_dic = {label: number_name, "quality": "Mutable", "element":
-                       "Water", "sign": "Pis", "sign_num": 11, "position": result, "abs_pos": degree,
-                       "emoji": "♓️"}
+            dictionary = {label: number_name, "quality": "Mutable", "element":
+                          "Water", "sign": "Pis", "sign_num": 11, "position": result, "abs_pos": degree,
+                          "emoji": "♓️"}
         else:
-            hou_dic = {label: "position_calc error", "sign": "position_calc error",
-                       "position": "position_calc error"}
+            dictionary = {label: "position_calc error", "sign": "position_calc error",
+                          "position": "position_calc error"}
 
-        return hou_dic
+        return dictionary
 
     def houses(self):
         """Calculatetype positions and store them in dictionaries"""
@@ -284,7 +289,7 @@ class KrInstance():
         mean_node_deg = swe.calc(self.julian_day, 10, self.iflag)[0][0]
         true_node_deg = swe.calc(self.julian_day, 11, self.iflag)[0][0]
 
-        #print(swe.calc(self.julian_day, 7, self.iflag)[3])
+        # print(swe.calc(self.julian_day, 7, self.iflag)[3])
 
         self.planets_degrees = [sun_deg, moon_deg, mercury_deg,
                                 venus_deg, mars_deg, jupiter_deg, saturn_deg,
@@ -321,7 +326,7 @@ class KrInstance():
             self.planets_degrees[11], "True_Node", "name")
 
     def planets_in_houses(self):
-        """Calculates the house of the planet and updates 
+        """Calculates the house of the planet and updates
         the planets dictionary."""
         self.planets()
         self.houses()
@@ -555,9 +560,11 @@ class KrInstance():
 
 
 if __name__ == "__main__":
-    # kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta", lon=50, lat=50, tz_str="Europe/Rome")
-    #kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+    # kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta",
+    #                   lon = 50, lat = 50, tz_str = "Europe/Rome")
+    # kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
     # kanye.get_all()
+    # print(kanye.sun)
     # print(kanye.city_tz)
     # print(kanye.fifth_house["position"])
     # print(KrInstance().city)
@@ -565,8 +572,8 @@ if __name__ == "__main__":
 
     #############################
 
-    #f = kanye.json_dump(dump=True)
-    #api_json = kanye.json_api()
+    # f = kanye.json_dump(dump=True)
+    # api_json = kanye.json_api()
     # print(api_json)
 
     # print(kanye.city)
@@ -577,6 +584,7 @@ if __name__ == "__main__":
     # for p in kanye.planets_list:
     #     print(p)
     ###############################
-    now = KrInstance()
+    now = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta",
+                     lon=50, lat=50, tz_str="Europe/Rome")
     now.get_all()
     print(now.lunar_phase)
