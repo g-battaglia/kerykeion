@@ -115,7 +115,8 @@ class KrInstance():
                                            self.time_utc))
 
         return self.julian_day
-
+    
+    # TODO Static!
     def get_number(self, name):
         """Internal function, gets number id from the name."""
         name = name.lower()
@@ -146,7 +147,8 @@ class KrInstance():
             return 11
         else:
             return int(name)
-
+        
+    # TODO Static!
     def position_calc(self, degree, number_name, label):
         """A function to be used in others to create a dictionary deviding 
         the houses or the planets list."""
