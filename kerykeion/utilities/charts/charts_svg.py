@@ -33,15 +33,17 @@ class MakeSvgInstance:
 
     """
 
-    def __init__(self, first_obj, chart_type="Natal", second_obj=None, Cdir=None):
+    def __init__(self, first_obj, chart_type="Natal", second_obj=None, new_output_directory=None):
     
         # Directories:
         DATADIR = os.path.dirname(__file__)
         self.homedir = os.path.expanduser("~")
-        if Cdir:
-            self.output_directory = Cdir
+        
+        if new_output_directory:
+            self.output_directory = new_output_directory
         else:
             self.output_directory = self.homedir
+            
         self.template = False
         
         # basic template
