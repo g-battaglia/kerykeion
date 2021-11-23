@@ -33,16 +33,18 @@ class MakeSvgInstance:
 
     """
 
-    def __init__(self, first_obj, chart_type="Natal", second_obj=None):
-
+    def __init__(self, first_obj, chart_type="Natal", second_obj=None, Cdir=None):
+    
         # Directories:
         DATADIR = os.path.dirname(__file__)
         self.homedir = os.path.expanduser("~")
-        self.output_directory = self.homedir
+        if Cdir:
+            self.output_directory = Cdir
+        else:
+            self.output_directory = self.homedir
         self.template = False
-
+        
         # basic template
-
         self.xml_svg = os.path.join(DATADIR, 'template.xml')
 
         # SVG Width
