@@ -38,8 +38,10 @@ class MakeSvgInstance:
         # Directories:
         DATADIR = os.path.dirname(__file__)
         self.homedir = os.path.expanduser("~")
-        self.output_directory = self.homedir
         self.template = False
+        
+        # Set output direcotry:
+        self.output_directory = self.homedir
 
         # basic template
 
