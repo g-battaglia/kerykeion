@@ -505,7 +505,7 @@ class KrInstance():
     # Utility Functions:
 
     def json_dump(self, dump=True, new_output_directory=None):
-        import jsonpickle
+        import jsonpickle, json
 
         """
         Dumps the Kerykeion object to a json file located in the home folder.
@@ -533,8 +533,9 @@ class KrInstance():
             json_string = json_string.replace(string, "")
 
         if dump:
+            json_string = json.loads(json_string.replace("'",'"'))
             with open(self.json_path, "w") as file:
-                file.write(json_string)
+                json.dump(json_string, file,  indent=4,sort_keys=True)
                 print(f"JSON file dumped in {self.json_path}.")
         else:
             pass
