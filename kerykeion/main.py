@@ -504,7 +504,7 @@ class KrInstance():
 
     # Utility Functions:
 
-    def json_dump(self, dump=True):
+    def json_dump(self, dump=True, new_output_directory=None):
         import jsonpickle
 
         """
@@ -517,10 +517,15 @@ class KrInstance():
         except:
             self.get_all()
 
-        self.json_path = os.path.join(
-            self.json_dir, f"{self.name}_kerykeion.json")
-        json_string = jsonpickle.encode(self)
+        if new_output_directory:
+            self.json_path = os.path.join(
+                new_output_directory, f"{self.name}_kerykeion.json")
+        else:
+            self.json_path = os.path.join(
+                self.json_dir, f"{self.name}_kerykeion.json")
 
+        json_string = jsonpickle.encode(self)
+        
         hiden_values = [f' "json_dir": "{self.json_dir}",', f', "json_path": "{self.json_path}"'
                         ]
 
