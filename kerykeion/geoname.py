@@ -13,16 +13,16 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenAstro.org.  If not, see <http://www.gnu.org/licenses/>.
+    along with OpenAstro.org.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 """
 docs at:
-	http://www.geonames.org/export/geonames-search.html
+    https://www.geonames.org/export/geonames-search.html
 
 preset vars:
-	featureClass=P (populated place)
-	maxRows=1
+    featureClass=P (populated place)
+    maxRows=1
 """
 
 
