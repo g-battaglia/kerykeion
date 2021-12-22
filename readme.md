@@ -64,6 +64,8 @@ SVG Generated Correctly
 
 >>> from kerykeion import output_exemple
 
+>>> kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+
 >>> print(output(kanye))
 -----------------------------------------------------
 NAME: Kanye
