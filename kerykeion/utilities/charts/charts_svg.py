@@ -55,7 +55,7 @@ class MakeSvgInstance:
         if template_type == "basic":
             self.xml_svg = os.path.join(DATADIR, 'templates/basic.xml')
         else:
-            self.xml_svg == os.path.join(DATADIR, 'templates/extended.xml')
+            self.xml_svg = os.path.join(DATADIR, 'templates/extended.xml')
 
         # SVG Width
         self.natal_width = 772.2
