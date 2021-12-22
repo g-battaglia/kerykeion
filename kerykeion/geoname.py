@@ -52,7 +52,7 @@ def _getText(nodelist):
 
 def geonames_proxy(operation: str, params: str):
     # directory to store cache files in
-    cache_directory = '.kerykeion'
+    cache_directory = '.geonames_cache'
 
     # supported API calls and their corresponding file cache names
     cache_file_name = {
