@@ -62,7 +62,7 @@ SVG Generated Correctly
 ```
 
 
->>> from kerykeion import output
+>>> from kerykeion import output_exemple
 
 >>> print(output(kanye))
 -----------------------------------------------------
@@ -132,7 +132,8 @@ Generating kerykeion object for Jane...
 
 ## Documentation
 
-Soon available.
+Monst of the functions and the classes are self documented by the types and have docstrings.
+Soon available I'll try to write an extensive documentation.
 
 ## Installation
 
@@ -141,3 +142,7 @@ Kerykeion is a Python 3 package, make sure you have Python 3 installed on your s
 ## Development
 
 You can clone this repository or download a zip file using the right side buttons.
+
+## Contributing
+
+Feel free to contribute to the code!
