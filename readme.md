@@ -135,7 +135,8 @@ Generating kerykeion object for Jane...
 ## Documentation
 
 Monst of the functions and the classes are self documented by the types and have docstrings.
-Soon available I'll try to write an extensive documentation.
+An auto-generated documentation is available in the docs folder.
+Sooner or later I'll try to write an extensive documentation.
 
 ## Installation
 
