@@ -17,9 +17,6 @@ Here some exemples:
 # Args: Name, year, month, day, hour, minuts, city, nation(optional)
 >>> kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
 
-# Get all the data:
->>> kanye.get_all()
-
 # Get the information about the sun in the chart:
 # (The position of the planets always starts at 0)
 >>> kanye.sun
