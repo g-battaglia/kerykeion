@@ -91,7 +91,7 @@ def geonames_proxy(operation: str, params: str):
             try:
                 # this can fail if json file is corrupted
                 cache_dict = json.load(cache_file)
-                logging.info(f'Loaded proxy cache file: "{cache_file_path}" and parsed as JSON.')
+                logging.debug(f'Loaded proxy cache file: "{cache_file_path}" and parsed as JSON.')
 
             except:
                 logging.error(f'Failed to parse JSON file: "{cache_file_path}"!')
@@ -104,7 +104,7 @@ def geonames_proxy(operation: str, params: str):
             cache_file = open(cache_file_path, 'w+', encoding='utf-8')
 
     except:
-        logging.error(f'Failed to access: {cache_file_path}')
+        logging.debug(f'Failed to access: {cache_file_path}')
         raise Exception('Error: failed to access Geonames cache file.')
 
     if params not in cache_dict or cache_dict[params] == "":
@@ -115,10 +115,10 @@ def geonames_proxy(operation: str, params: str):
         if params in cache_dict and cache_dict[params] == "":
             logging.warning(f'Proxy cache file has an empty value for key:"{params}".')
         elif params not in cache_dict:
-            logging.info(f'Params: "{params}" not found in proxy cache file.')
+            logging.debug(f'Params: "{params}" not found in proxy cache file.')
         try:
             # try to query geonames
-            logging.info(f'Calling Geonames API endpoint: "{api_endpoint}" with params: "{params}".')
+            logging.debug(f'Calling Geonames API endpoint: "{api_endpoint}" with params: "{params}".')
             http_response = urlopen(api_endpoint % params, timeout=20)
 
         except (HTTPError, URLError) as error:
@@ -140,7 +140,7 @@ def geonames_proxy(operation: str, params: str):
         # dump the dict in JSON format into the file
         json.dump(cache_dict, cache_file)
         cache_file.close()
-        logging.info('Saved new proxy cache file.')
+        logging.debug('Saved new proxy cache file.')
 
     return cache_dict[params], cache_file_path
 
