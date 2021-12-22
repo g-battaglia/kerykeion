@@ -27,13 +27,18 @@ class MakeSvgInstance:
     """
     Creates the instance that can genearte the chart with the
     function makeSVG().
+
+    There are 2 templates, the extended (default) which has all the
+    information and the basic, which has just the chart.
+
     Args: First kerykeion object,
     Chart type (Natal, Transit, Composite, Default: Type="Natal"),
     second kerykeion object (Not required if type is Natal)
 
+
     """
 
-    def __init__(self, first_obj, chart_type="Natal", second_obj=None, new_output_directory=None):
+    def __init__(self, first_obj, chart_type="Natal", second_obj=None, new_output_directory=None, template_type="extended"):
     
         # Directories:
         DATADIR = os.path.dirname(__file__)
@@ -46,12 +51,15 @@ class MakeSvgInstance:
             
         self.template = False
         
-        # basic template
-        self.xml_svg = os.path.join(DATADIR, 'template.xml')
+        # Template types:
+        if template_type == "basic":
+            self.xml_svg = os.path.join(DATADIR, 'templates/basic.xml')
+        else:
+            self.xml_svg == os.path.join(DATADIR, 'templates/extended.xml')
 
         # SVG Width
         self.natal_width = 772.2
-        self.full_widht = 1200
+        self.full_width = 1200
 
         # Settings file
 
@@ -324,7 +332,7 @@ class MakeSvgInstance:
             td['makeAspects'] = self.makeAspectsTransit(r, (r-160))
             td['makeAspectGrid'] = self.makeAspectTransitGrid(r)
             td['makePatterns'] = ''
-            td['chart_widht'] = self.full_widht
+            td['chart_width'] = self.full_width
         else:
             td['transitRing'] = ""
             td['degreeRing'] = self.degreeRing(r)
@@ -344,7 +352,7 @@ class MakeSvgInstance:
             td['makeAspects'] = self.makeAspects(r, (r-self.c3))
             td['makeAspectGrid'] = self.makeAspectGrid(r)
             td['makePatterns'] = self.makePatterns()
-            td['chart_widht'] = self.natal_width
+            td['chart_width'] = self.natal_width
 
         td['circleX'] = str(0)
         td['circleY'] = str(0)
