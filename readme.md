@@ -62,7 +62,7 @@ SVG Generated Correctly
 ```
 
 
->>> from kerykeion import output_exemple
+>>> from kerykeion import output_exemple, KrInstance
 
 >>> kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
 
