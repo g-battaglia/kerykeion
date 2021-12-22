@@ -46,3 +46,5 @@ mecuriusastro.egg-info
 kerykeion.egg-info
 build/
 dist/
+.geonames_cache
+.kerykeion
