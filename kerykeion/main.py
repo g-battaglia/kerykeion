@@ -76,6 +76,9 @@ class KrInstance():
     def __str__(self):
         return f"Astrological data for: {self.name}, {self.utc} UTC"
 
+    def __repr__(self) -> str:
+        return f"Astrological data for: {self.name}, {self.utc} UTC"
+
     def get_tz(self):
         """Gets the nerest time zone for the calculation"""
         logging.debug("Conneting to Geonames...")
