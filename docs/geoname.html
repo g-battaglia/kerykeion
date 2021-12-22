@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>kerykeion.geoname API documentation</title>
+<meta name="description" content="This file is part of openastro.org …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>kerykeion.geoname</code></h1>
+</header>
+<section id="section-intro">
+<p>This file is part of openastro.org.</p>
+<p>OpenAstro.org is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.</p>
+<p>OpenAstro.org is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the
+GNU General Public License for more details.</p>
+<p>You should have received a copy of the GNU General Public License
+along with OpenAstro.org.
+If not, see <a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># -*- coding: utf-8 -*-
+&#34;&#34;&#34;
+    This file is part of openastro.org.
+
+    OpenAstro.org is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    OpenAstro.org is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with OpenAstro.org.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
+&#34;&#34;&#34;
+
+&#34;&#34;&#34;
+docs at:
+    https://www.geonames.org/export/geonames-search.html
+
+preset vars:
+    featureClass=P (populated place)
+    maxRows=1
+&#34;&#34;&#34;
+
+from urllib.request import urlopen
+from urllib.parse import urlencode
+from xml.dom.minidom import parseString
+from socket import timeout
+from urllib.error import HTTPError, URLError
+from os import mkdir, path, getcwd, remove
+import json
+import logging
+
+
+logging.basicConfig(
+    format=&#39;%(asctime)s - %(name)s - %(levelname)s - %(message)s&#39;, level=logging.INFO)
+
+
+def _getText(nodelist):
+    &#34;&#34;&#34;&#34;
+    Internal function to return text from nodes
+    &#34;&#34;&#34;
+    rc = &#34;&#34;
+    for node in nodelist:
+        if node.nodeType == node.TEXT_NODE:
+            rc = rc + node.data
+    return rc
+
+
+def geonames_proxy(operation: str, params: str):
+    # directory to store cache files in
+    cache_directory = &#39;.geonames_cache&#39;
+
+    # supported API calls and their corresponding file cache names
+    cache_file_name = {
+        &#39;search&#39;: &#39;geonames_search_cache.json&#39;,
+        &#39;timezone&#39;: &#39;geonames_timezone_cache.json&#39;
+    }
+    # supported API calls and their corresponding API endpoints
+    api_endpoints = {
+        &#39;search&#39;: &#34;http://api.geonames.org/search?%s&#34;,
+        &#39;timezone&#39;: &#34;http://api.geonames.org/timezone?%s&#34;
+    }
+    cache_file_name = cache_file_name[operation]
+    cache_file_path = path.join(cache_directory, cache_file_name)
+    api_endpoint = api_endpoints[operation]
+
+    try:
+        # try to create a directory to store the cache in
+        # might fail under wrong permission settings
+        if not path.exists(cache_directory):
+            # mkdir if it doesn&#39;t already exist
+            mkdir(cache_directory)
+    except:
+        logging.error(f&#39;Failed to create directory: {cache_directory}&#39;)
+        logging.error(f&#39;Maybe check permissions in: &#34;{getcwd()}&#34;?&#39;)
+        raise Exception(f&#39;Error: failed to create {cache_directory} directory.&#39;)
+
+    # dict to store the cache data in the program
+    cache_dict = dict()
+    try:
+        # check if file exists
+        if path.exists(cache_file_path) and path.getsize(cache_file_path) &gt; 0:
+            # then open it for reading with ability to write
+            # an empty file is definitely not useful to json.load() so we&#39;ll just skip that and create a new one
+            cache_file = open(cache_file_path, &#39;r+&#39;, encoding=&#39;utf-8&#39;)
+            # then load data from it
+            try:
+                # this can fail if json file is corrupted
+                cache_dict = json.load(cache_file)
+                logging.info(f&#39;Loaded proxy cache file: &#34;{cache_file_path}&#34; and parsed as JSON.&#39;)
+
+            except:
+                logging.error(f&#39;Failed to parse JSON file: &#34;{cache_file_path}&#34;!&#39;)
+                cache_file.seek(0)
+                logging.error(f&#39;Contents: {cache_file.read()}&#39;)
+                logging.error(f&#39;Try removing: {path.join(getcwd(),cache_directory)}&#39;)
+                raise Exception(&#39;Error: Failed to parse JSON file!&#39;)
+        else:
+            # if file doesn&#39;t exist or is empty create it for writing with ability to read
+            cache_file = open(cache_file_path, &#39;w+&#39;, encoding=&#39;utf-8&#39;)
+
+    except:
+        logging.error(f&#39;Failed to access: {cache_file_path}&#39;)
+        raise Exception(&#39;Error: failed to access Geonames cache file.&#39;)
+
+    if params not in cache_dict or cache_dict[params] == &#34;&#34;:
+        # if the file does not contain the key with the parameters proceed into the branch
+        # if the file does contain the key with the param but it&#39;s empty then we&#39;ll replace it
+        # if the file does already contain the API response then this branch is skipped and data from the file is
+        # returned instead
+        if params in cache_dict and cache_dict[params] == &#34;&#34;:
+            logging.warning(f&#39;Proxy cache file has an empty value for key:&#34;{params}&#34;.&#39;)
+        elif params not in cache_dict:
+            logging.info(f&#39;Params: &#34;{params}&#34; not found in proxy cache file.&#39;)
+        try:
+            # try to query geonames
+            logging.info(f&#39;Calling Geonames API endpoint: &#34;{api_endpoint}&#34; with params: &#34;{params}&#34;.&#39;)
+            http_response = urlopen(api_endpoint % params, timeout=20)
+
+        except (HTTPError, URLError) as error:
+            logging.error(f&#39;Not retrieved because {error}\nURL: {cache_dict[params]}&#39;)
+            raise Exception(&#39;Error: failed to access Geonames service.&#39;)
+
+        except timeout:
+            logging.error(&#39;Timeout on search in Geonames API!&#39;)
+            raise Exception(&#39;Error: Timeout on connection with Geonames.&#39;)
+
+        # store the response in the dict
+        data = http_response.read()
+        cache_dict[params] = data.decode(&#39;UTF-8&#39;)
+
+        # empty the file. Without this json.dump() will append to the existing data
+        cache_file.close()
+        cache_file = open(cache_file_path, &#39;w&#39;, encoding=&#39;utf-8&#39;)
+
+        # dump the dict in JSON format into the file
+        json.dump(cache_dict, cache_file)
+        cache_file.close()
+        logging.info(&#39;Saved new proxy cache file.&#39;)
+
+    return cache_dict[params], cache_file_path
+
+
+def search(name=&#39;&#39;, country=&#39;&#39;):
+    &#34;&#34;&#34;Search function for geonames.org api
+            name must be supplied
+            country is optional, 2 character country code
+    &#34;&#34;&#34;
+    # check name
+    if name == &#39;&#39;:
+        logging.error(&#39;No name specified for Geonames search!&#39;)
+        return None
+
+    # open connection and read xml
+    params = urlencode({&#39;q&#39;: name, &#39;country&#39;: country, &#39;maxRows&#39;: 1,
+                        &#39;featureClass&#39;: &#39;P&#39;, &#39;username&#39;: &#39;century.boy&#39;})
+
+    try:
+        data, cache_file_path = geonames_proxy(&#39;search&#39;, params)
+        dom = parseString(data)
+    except Exception:
+        return None
+
+    # totalResultsCount
+    try:
+        totalResultsCount = _getText(
+            dom.getElementsByTagName(&#34;totalResultsCount&#34;)[0].childNodes)
+    except:
+        logging.error(&#34;Geonames API response could not be parsed! Maybe you exceeded API hourly limit?&#34;)
+        logging.error(f&#34;String that failed to parse: {data}&#34;)
+        # remove the cache_file since it now contains the hourly limit error message
+        remove(cache_file_path)
+        return None
+
+
+    # geoname
+    geoname = []
+    for i in dom.getElementsByTagName(&#34;geoname&#34;):
+        geoname.append({})
+        geoname[-1][&#39;name&#39;] = _getText(
+            i.getElementsByTagName(&#34;name&#34;)[0].childNodes)
+        geoname[-1][&#39;lat&#39;] = _getText(i.getElementsByTagName(&#34;lat&#34;)
+                                      [0].childNodes)
+        geoname[-1][&#39;lng&#39;] = _getText(i.getElementsByTagName(&#34;lng&#34;)
+                                      [0].childNodes)
+        geoname[-1][&#39;geonameId&#39;] = _getText(
+            i.getElementsByTagName(&#34;geonameId&#34;)[0].childNodes)
+        geoname[-1][&#39;countryCode&#39;] = _getText(
+            i.getElementsByTagName(&#34;countryCode&#34;)[0].childNodes)
+        geoname[-1][&#39;countryName&#39;] = _getText(
+            i.getElementsByTagName(&#34;countryName&#34;)[0].childNodes)
+        geoname[-1][&#39;fcl&#39;] = _getText(i.getElementsByTagName(&#34;fcl&#34;)
+                                      [0].childNodes)
+        geoname[-1][&#39;fcode&#39;] = _getText(
+            i.getElementsByTagName(&#34;fcode&#34;)[0].childNodes)
+        # get timezone
+        tparams = urlencode(
+            {&#39;lat&#39;: geoname[-1][&#39;lat&#39;], &#39;lng&#39;: geoname[-1][&#39;lng&#39;], &#39;username&#39;: &#39;century.boy&#39;})
+        try:
+            data, cache_file_path = geonames_proxy(&#39;timezone&#39;, tparams)
+        except Exception:
+            return None
+
+        tdom = parseString(data)
+
+        try:
+            geoname[-1][&#39;timezonestr&#39;] = _getText(tdom.getElementsByTagName(&#34;timezoneId&#34;)[0].childNodes)
+        except:
+            logging.error(&#34;Geonames API response could not be parsed! Maybe you exceeded API hourly limit?&#34;)
+            logging.error(f&#34;String that failed to parse: {data}&#34;)
+            # remove the cache_file since it now contains the hourly limit error message
+            remove(cache_file_path)
+            return None
+
+        tdom.unlink()
+        break
+    # close dom
+    dom.unlink()
+
+    # return results
+    if totalResultsCount == &#34;0&#34;:
+        logging.error(&#34;No results found using Geonames API!&#34;)
+        return None
+    else:
+        return geoname</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="kerykeion.geoname.geonames_proxy"><code class="name flex">
+<span>def <span class="ident">geonames_proxy</span></span>(<span>operation: str, params: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def geonames_proxy(operation: str, params: str):
+    # directory to store cache files in
+    cache_directory = &#39;.geonames_cache&#39;
+
+    # supported API calls and their corresponding file cache names
+    cache_file_name = {
+        &#39;search&#39;: &#39;geonames_search_cache.json&#39;,
+        &#39;timezone&#39;: &#39;geonames_timezone_cache.json&#39;
+    }
+    # supported API calls and their corresponding API endpoints
+    api_endpoints = {
+        &#39;search&#39;: &#34;http://api.geonames.org/search?%s&#34;,
+        &#39;timezone&#39;: &#34;http://api.geonames.org/timezone?%s&#34;
+    }
+    cache_file_name = cache_file_name[operation]
+    cache_file_path = path.join(cache_directory, cache_file_name)
+    api_endpoint = api_endpoints[operation]
+
+    try:
+        # try to create a directory to store the cache in
+        # might fail under wrong permission settings
+        if not path.exists(cache_directory):
+            # mkdir if it doesn&#39;t already exist
+            mkdir(cache_directory)
+    except:
+        logging.error(f&#39;Failed to create directory: {cache_directory}&#39;)
+        logging.error(f&#39;Maybe check permissions in: &#34;{getcwd()}&#34;?&#39;)
+        raise Exception(f&#39;Error: failed to create {cache_directory} directory.&#39;)
+
+    # dict to store the cache data in the program
+    cache_dict = dict()
+    try:
+        # check if file exists
+        if path.exists(cache_file_path) and path.getsize(cache_file_path) &gt; 0:
+            # then open it for reading with ability to write
+            # an empty file is definitely not useful to json.load() so we&#39;ll just skip that and create a new one
+            cache_file = open(cache_file_path, &#39;r+&#39;, encoding=&#39;utf-8&#39;)
+            # then load data from it
+            try:
+                # this can fail if json file is corrupted
+                cache_dict = json.load(cache_file)
+                logging.info(f&#39;Loaded proxy cache file: &#34;{cache_file_path}&#34; and parsed as JSON.&#39;)
+
+            except:
+                logging.error(f&#39;Failed to parse JSON file: &#34;{cache_file_path}&#34;!&#39;)
+                cache_file.seek(0)
+                logging.error(f&#39;Contents: {cache_file.read()}&#39;)
+                logging.error(f&#39;Try removing: {path.join(getcwd(),cache_directory)}&#39;)
+                raise Exception(&#39;Error: Failed to parse JSON file!&#39;)
+        else:
+            # if file doesn&#39;t exist or is empty create it for writing with ability to read
+            cache_file = open(cache_file_path, &#39;w+&#39;, encoding=&#39;utf-8&#39;)
+
+    except:
+        logging.error(f&#39;Failed to access: {cache_file_path}&#39;)
+        raise Exception(&#39;Error: failed to access Geonames cache file.&#39;)
+
+    if params not in cache_dict or cache_dict[params] == &#34;&#34;:
+        # if the file does not contain the key with the parameters proceed into the branch
+        # if the file does contain the key with the param but it&#39;s empty then we&#39;ll replace it
+        # if the file does already contain the API response then this branch is skipped and data from the file is
+        # returned instead
+        if params in cache_dict and cache_dict[params] == &#34;&#34;:
+            logging.warning(f&#39;Proxy cache file has an empty value for key:&#34;{params}&#34;.&#39;)
+        elif params not in cache_dict:
+            logging.info(f&#39;Params: &#34;{params}&#34; not found in proxy cache file.&#39;)
+        try:
+            # try to query geonames
+            logging.info(f&#39;Calling Geonames API endpoint: &#34;{api_endpoint}&#34; with params: &#34;{params}&#34;.&#39;)
+            http_response = urlopen(api_endpoint % params, timeout=20)
+
+        except (HTTPError, URLError) as error:
+            logging.error(f&#39;Not retrieved because {error}\nURL: {cache_dict[params]}&#39;)
+            raise Exception(&#39;Error: failed to access Geonames service.&#39;)
+
+        except timeout:
+            logging.error(&#39;Timeout on search in Geonames API!&#39;)
+            raise Exception(&#39;Error: Timeout on connection with Geonames.&#39;)
+
+        # store the response in the dict
+        data = http_response.read()
+        cache_dict[params] = data.decode(&#39;UTF-8&#39;)
+
+        # empty the file. Without this json.dump() will append to the existing data
+        cache_file.close()
+        cache_file = open(cache_file_path, &#39;w&#39;, encoding=&#39;utf-8&#39;)
+
+        # dump the dict in JSON format into the file
+        json.dump(cache_dict, cache_file)
+        cache_file.close()
+        logging.info(&#39;Saved new proxy cache file.&#39;)
+
+    return cache_dict[params], cache_file_path</code></pre>
+</details>
+</dd>
+<dt id="kerykeion.geoname.search"><code class="name flex">
+<span>def <span class="ident">search</span></span>(<span>name='', country='')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Search function for geonames.org api
+name must be supplied
+country is optional, 2 character country code</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def search(name=&#39;&#39;, country=&#39;&#39;):
+    &#34;&#34;&#34;Search function for geonames.org api
+            name must be supplied
+            country is optional, 2 character country code
+    &#34;&#34;&#34;
+    # check name
+    if name == &#39;&#39;:
+        logging.error(&#39;No name specified for Geonames search!&#39;)
+        return None
+
+    # open connection and read xml
+    params = urlencode({&#39;q&#39;: name, &#39;country&#39;: country, &#39;maxRows&#39;: 1,
+                        &#39;featureClass&#39;: &#39;P&#39;, &#39;username&#39;: &#39;century.boy&#39;})
+
+    try:
+        data, cache_file_path = geonames_proxy(&#39;search&#39;, params)
+        dom = parseString(data)
+    except Exception:
+        return None
+
+    # totalResultsCount
+    try:
+        totalResultsCount = _getText(
+            dom.getElementsByTagName(&#34;totalResultsCount&#34;)[0].childNodes)
+    except:
+        logging.error(&#34;Geonames API response could not be parsed! Maybe you exceeded API hourly limit?&#34;)
+        logging.error(f&#34;String that failed to parse: {data}&#34;)
+        # remove the cache_file since it now contains the hourly limit error message
+        remove(cache_file_path)
+        return None
+
+
+    # geoname
+    geoname = []
+    for i in dom.getElementsByTagName(&#34;geoname&#34;):
+        geoname.append({})
+        geoname[-1][&#39;name&#39;] = _getText(
+            i.getElementsByTagName(&#34;name&#34;)[0].childNodes)
+        geoname[-1][&#39;lat&#39;] = _getText(i.getElementsByTagName(&#34;lat&#34;)
+                                      [0].childNodes)
+        geoname[-1][&#39;lng&#39;] = _getText(i.getElementsByTagName(&#34;lng&#34;)
+                                      [0].childNodes)
+        geoname[-1][&#39;geonameId&#39;] = _getText(
+            i.getElementsByTagName(&#34;geonameId&#34;)[0].childNodes)
+        geoname[-1][&#39;countryCode&#39;] = _getText(
+            i.getElementsByTagName(&#34;countryCode&#34;)[0].childNodes)
+        geoname[-1][&#39;countryName&#39;] = _getText(
+            i.getElementsByTagName(&#34;countryName&#34;)[0].childNodes)
+        geoname[-1][&#39;fcl&#39;] = _getText(i.getElementsByTagName(&#34;fcl&#34;)
+                                      [0].childNodes)
+        geoname[-1][&#39;fcode&#39;] = _getText(
+            i.getElementsByTagName(&#34;fcode&#34;)[0].childNodes)
+        # get timezone
+        tparams = urlencode(
+            {&#39;lat&#39;: geoname[-1][&#39;lat&#39;], &#39;lng&#39;: geoname[-1][&#39;lng&#39;], &#39;username&#39;: &#39;century.boy&#39;})
+        try:
+            data, cache_file_path = geonames_proxy(&#39;timezone&#39;, tparams)
+        except Exception:
+            return None
+
+        tdom = parseString(data)
+
+        try:
+            geoname[-1][&#39;timezonestr&#39;] = _getText(tdom.getElementsByTagName(&#34;timezoneId&#34;)[0].childNodes)
+        except:
+            logging.error(&#34;Geonames API response could not be parsed! Maybe you exceeded API hourly limit?&#34;)
+            logging.error(f&#34;String that failed to parse: {data}&#34;)
+            # remove the cache_file since it now contains the hourly limit error message
+            remove(cache_file_path)
+            return None
+
+        tdom.unlink()
+        break
+    # close dom
+    dom.unlink()
+
+    # return results
+    if totalResultsCount == &#34;0&#34;:
+        logging.error(&#34;No results found using Geonames API!&#34;)
+        return None
+    else:
+        return geoname</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="kerykeion" href="index.html">kerykeion</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="kerykeion.geoname.geonames_proxy" href="#kerykeion.geoname.geonames_proxy">geonames_proxy</a></code></li>
+<li><code><a title="kerykeion.geoname.search" href="#kerykeion.geoname.search">search</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

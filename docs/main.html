@@ -1,0 +1,1907 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>kerykeion.main API documentation</title>
+<meta name="description" content="This is part of Kerykeion (C) 2020 Giacomo Battaglia" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>kerykeion.main</code></h1>
+</header>
+<section id="section-intro">
+<p>This is part of Kerykeion (C) 2020 Giacomo Battaglia</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+    This is part of Kerykeion (C) 2020 Giacomo Battaglia
+&#34;&#34;&#34;
+
+import os.path
+from typing import Union
+import swisseph as swe
+from kerykeion.geoname import search
+import pytz
+import datetime
+import math
+import logging
+
+# swe.set_ephe_path(&#34;/&#34;)
+
+DEBUG = False
+
+logging.basicConfig(
+    format=&#39;%(asctime)s - %(name)s - %(levelname)s - %(message)s&#39;, level=logging.INFO)
+
+
+def debug_print(str):
+    if DEBUG:
+        print(&#39;%s&#39; % str)
+
+
+class KrInstance():
+    &#34;&#34;&#34;
+    Calculates all the astrological informations, the coordinates,
+    it&#39;s utc and julian day and returns an object with all that data.
+    Args: name, year, month, day, hours, minuts, city,
+    initial of the nation (Ex: &#34;IT&#34;),
+    longitude, latitude and the timezone string are set to false so they will
+    be calulated, if you want you can set them.
+    Default values are set for now at greenwich time.
+
+    &#34;&#34;&#34;
+    now = datetime.datetime.now()
+
+    def __init__(
+        self,
+        name: str = &#34;Now&#34;,
+        year: int = now.year,
+        month: int = now.month,
+        day: int = now.day,
+        hours: int = now.hour,
+        minuts: int = now.minute,
+        city: str = &#34;London&#34;,
+        nat: str = &#34;&#34;,
+        lon: Union[int, float] = False,
+        lat: Union[int, float] = False,
+        tz_str: Union[str, bool] = False
+    ):
+        logging.info(&#39;Starting Kerykeion&#39;)
+        self.name = name
+        self.year = year
+        self.month = month
+        self.day = day
+        self.hours = hours
+        self.minuts = minuts
+        self.city = city
+        self.nation = nat
+        self.city_long = lon
+        self.city_lat = lat
+        self.city_tz = tz_str
+
+        self.json_dir = os.path.expanduser(&#34;~&#34;)
+
+        self.julian_day = self.get_jd()
+        self.zodiactype = &#34;Tropic&#34;
+
+    def __str__(self):
+        return f&#34;Astrological data for: {self.name}, {self.utc} UTC&#34;
+
+    def get_tz(self):
+        &#34;&#34;&#34;Gets the nerest time zone for the calculation&#34;&#34;&#34;
+        logging.info(&#34;Conneting to Geonames...&#34;)
+        self.city_data = search(self.city, self.nation)[0]
+
+        logging.info(&#34;Geonames done!&#34;)
+
+        self.nation = self.city_data[&#34;countryCode&#34;]
+        self.city_long = float(self.city_data[&#34;lng&#34;])
+        self.city_lat = float(self.city_data[&#34;lat&#34;])
+        self.city_tz = self.city_data[&#34;timezonestr&#34;]
+
+        # self.country_code = self.city_data[&#34;countryCode&#34;]
+
+        if self.city_lat &gt; 66.0:
+            self.city_lat = 66.0
+            print(&#34;polar circle override for houses, using 66 degrees&#34;)
+
+        elif self.city_lat &lt; -66.0:
+            self.city_lat = -66.0
+            print(&#34;polar circle override for houses, using -66 degrees&#34;)
+
+        return self.city_tz
+
+    def get_utc(self):
+        &#34;&#34;&#34;Converts local time to utc time. &#34;&#34;&#34;
+
+        if not self.city_long or not self.city_lat or not self.city_tz:
+            local_time = pytz.timezone(self.get_tz())
+        else:
+            local_time = pytz.timezone(self.city_tz)
+
+        naive_datetime = datetime.datetime(self.year, self.month,
+                                           self.day, self.hours, self.minuts, 0)
+        local_datetime = local_time.localize(naive_datetime, is_dst=None)
+        utc_datetime = local_datetime.astimezone(pytz.utc)
+        self.utc = utc_datetime
+        return self.utc
+
+    def get_jd(self):
+        &#34;&#34;&#34; Calculates julian day from the utc time.&#34;&#34;&#34;
+        utc = self.get_utc()
+        self.time_utc = utc.hour + utc.minute/60
+        self.time = self.hours + self.minuts/60
+        self.julian_day = float(swe.julday(utc.year, utc.month, utc.day,
+                                           self.time_utc))
+
+        return self.julian_day
+
+    @staticmethod
+    def get_number(name):
+        &#34;&#34;&#34;Internal function, gets number id from the name.&#34;&#34;&#34;
+        name = name.lower()
+
+        if name == &#34;sun&#34;:
+            return 0
+        elif name == &#34;moon&#34;:
+            return 1
+        elif name == &#34;mercury&#34;:
+            return 2
+        elif name == &#34;venus&#34;:
+            return 3
+        elif name == &#34;mars&#34;:
+            return 4
+        elif name == &#34;jupiter&#34;:
+            return 5
+        elif name == &#34;saturn&#34;:
+            return 6
+        elif name == &#34;uranus&#34;:
+            return 7
+        elif name == &#34;neptune&#34;:
+            return 8
+        elif name == &#34;pluto&#34;:
+            return 9
+        elif name == &#34;mean_node&#34;:
+            return 10  # change!
+        elif name == &#34;true_node&#34;:
+            return 11
+        else:
+            return int(name)
+
+    @staticmethod
+    def position_calc(degree, number_name, label):
+        &#34;&#34;&#34;A function to be used in others to create a dictionary deviding
+        the houses or the planets list.&#34;&#34;&#34;
+        if degree &lt; 30:
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Cardinal&#34;, &#34;element&#34;:
+                          &#34;Fire&#34;, &#34;sign&#34;: &#34;Ari&#34;, &#34;sign_num&#34;: 0, &#34;position&#34;: degree, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♈️&#34;}
+        elif degree &lt; 60:
+            result = degree - 30
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Fixed&#34;, &#34;element&#34;:
+                          &#34;Earth&#34;, &#34;sign&#34;: &#34;Tau&#34;, &#34;sign_num&#34;: 1, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♉️&#34;}
+        elif degree &lt; 90:
+            result = degree - 60
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Mutable&#34;, &#34;element&#34;:
+                          &#34;Air&#34;, &#34;sign&#34;: &#34;Gem&#34;, &#34;sign_num&#34;: 2, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♊️&#34;}
+        elif degree &lt; 120:
+            result = degree - 90
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Cardinal&#34;, &#34;element&#34;:
+                          &#34;Water&#34;, &#34;sign&#34;: &#34;Can&#34;, &#34;sign_num&#34;: 3, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♋️&#34;}
+        elif degree &lt; 150:
+            result = degree - 120
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Fixed&#34;, &#34;element&#34;:
+                          &#34;Fire&#34;, &#34;sign&#34;: &#34;Leo&#34;, &#34;sign_num&#34;: 4, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♌️&#34;}
+        elif degree &lt; 180:
+            result = degree - 150
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Mutable&#34;, &#34;element&#34;:
+                          &#34;Earth&#34;, &#34;sign&#34;: &#34;Vir&#34;, &#34;sign_num&#34;: 5, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♍️&#34;}
+        elif degree &lt; 210:
+            result = degree - 180
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Cardinal&#34;, &#34;element&#34;:
+                          &#34;Air&#34;, &#34;sign&#34;: &#34;Lib&#34;, &#34;sign_num&#34;: 6, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♎️&#34;}
+        elif degree &lt; 240:
+            result = degree - 210
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Fixed&#34;, &#34;element&#34;:
+                          &#34;Water&#34;, &#34;sign&#34;: &#34;Sco&#34;, &#34;sign_num&#34;: 7, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♏️&#34;}
+        elif degree &lt; 270:
+            result = degree - 240
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Mutable&#34;, &#34;element&#34;:
+                          &#34;Fire&#34;, &#34;sign&#34;: &#34;Sag&#34;, &#34;sign_num&#34;: 8, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♐️&#34;}
+        elif degree &lt; 300:
+            result = degree - 270
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Cardinal&#34;, &#34;element&#34;:
+                          &#34;Earth&#34;, &#34;sign&#34;: &#34;Cap&#34;, &#34;sign_num&#34;: 9, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♑️&#34;}
+        elif degree &lt; 330:
+            result = degree - 300
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Fixed&#34;, &#34;element&#34;:
+                          &#34;Air&#34;, &#34;sign&#34;: &#34;Aqu&#34;, &#34;sign_num&#34;: 10, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♒️&#34;}
+        elif degree &lt; 360:
+            result = degree - 330
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Mutable&#34;, &#34;element&#34;:
+                          &#34;Water&#34;, &#34;sign&#34;: &#34;Pis&#34;, &#34;sign_num&#34;: 11, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♓️&#34;}
+        else:
+            dictionary = {label: &#34;position_calc error&#34;, &#34;sign&#34;: &#34;position_calc error&#34;,
+                          &#34;position&#34;: &#34;position_calc error&#34;}
+
+        return dictionary
+
+    def houses(self):
+        &#34;&#34;&#34;Calculatetype positions and store them in dictionaries&#34;&#34;&#34;
+
+        # creates the list of the house in 360°
+        self.houses_degree_ut = swe.houses(self.julian_day, self.city_lat,
+                                           self.city_long)[0]
+        # stores the house in signulare dictionaries.
+        self.first_house = self.position_calc(
+            self.houses_degree_ut[0], &#34;1&#34;, &#34;name&#34;)
+        self.second_house = self.position_calc(
+            self.houses_degree_ut[1], &#34;2&#34;, &#34;name&#34;)
+        self.third_house = self.position_calc(
+            self.houses_degree_ut[2], &#34;3&#34;, &#34;name&#34;)
+        self.fourth_house = self.position_calc(
+            self.houses_degree_ut[3], &#34;4&#34;, &#34;name&#34;)
+        self.fifth_house = self.position_calc(
+            self.houses_degree_ut[4], &#34;5&#34;, &#34;name&#34;)
+        self.sixth_house = self.position_calc(
+            self.houses_degree_ut[5], &#34;6&#34;, &#34;name&#34;)
+        self.seventh_house = self.position_calc(
+            self.houses_degree_ut[6], &#34;7&#34;, &#34;name&#34;)
+        self.eighth_house = self.position_calc(
+            self.houses_degree_ut[7], &#34;8&#34;, &#34;name&#34;)
+        self.ninth_house = self.position_calc(
+            self.houses_degree_ut[8], &#34;9&#34;, &#34;name&#34;)
+        self.tenth_house = self.position_calc(
+            self.houses_degree_ut[9], &#34;10&#34;, &#34;name&#34;)
+        self.eleventh_house = self.position_calc(
+            self.houses_degree_ut[10], &#34;11&#34;, &#34;name&#34;)
+        self.twelfth_house = self.position_calc(
+            self.houses_degree_ut[11], &#34;12&#34;, &#34;name&#34;)
+
+        # creates a list of all the dictionaries of thetype.
+
+        houses_degree = [self.first_house[&#34;position&#34;], self.second_house[&#34;position&#34;],
+                         self.third_house[&#34;position&#34;], self.fourth_house[&#34;position&#34;], self.fifth_house[&#34;position&#34;],
+                         self.sixth_house[&#34;position&#34;], self.seventh_house, self.eighth_house[&#34;position&#34;],
+                         self.ninth_house[&#34;position&#34;], self.tenth_house[&#34;position&#34;], self.eleventh_house[&#34;position&#34;],
+                         self.twelfth_house[&#34;position&#34;]]
+
+        # return self.houses_list
+        return houses_degree
+
+    def planets_deegrees_lister(self):
+        &#34;&#34;&#34;Sidereal or tropic mode.&#34;&#34;&#34;
+        self.iflag = swe.FLG_SWIEPH+swe.FLG_SPEED
+
+        if self.zodiactype == &#34;sidereal&#34;:
+            self.iflag += swe.FLG_SIDEREAL
+            mode = &#34;SIDM_FAGAN_BRADLEY&#34;
+            swe.set_sid_mode(getattr(swe, mode))
+
+        &#34;&#34;&#34;Calculates the position of the planets and stores it in a list.&#34;&#34;&#34;
+
+        sun_deg = swe.calc(self.julian_day, 0, self.iflag)[0][0]
+        moon_deg = swe.calc(self.julian_day, 1, self.iflag)[0][0]
+        mercury_deg = swe.calc(self.julian_day, 2, self.iflag)[0][0]
+        venus_deg = swe.calc(self.julian_day, 3, self.iflag)[0][0]
+        mars_deg = swe.calc(self.julian_day, 4, self.iflag)[0][0]
+        jupiter_deg = swe.calc(self.julian_day, 5, self.iflag)[0][0]
+        saturn_deg = swe.calc(self.julian_day, 6, self.iflag)[0][0]
+        uranus_deg = swe.calc(self.julian_day, 7, self.iflag)[0][0]
+        neptune_deg = swe.calc(self.julian_day, 8, self.iflag)[0][0]
+        pluto_deg = swe.calc(self.julian_day, 9, self.iflag)[0][0]
+        mean_node_deg = swe.calc(self.julian_day, 10, self.iflag)[0][0]
+        true_node_deg = swe.calc(self.julian_day, 11, self.iflag)[0][0]
+
+        # print(swe.calc(self.julian_day, 7, self.iflag)[3])
+
+        self.planets_degrees = [sun_deg, moon_deg, mercury_deg,
+                                venus_deg, mars_deg, jupiter_deg, saturn_deg,
+                                uranus_deg, neptune_deg, pluto_deg, mean_node_deg,
+                                true_node_deg]
+
+        return self.planets_degrees
+
+    def planets(self):
+        &#34;&#34;&#34; Defines body positon in signs and informations and
+         stores them in dictionaries&#34;&#34;&#34;
+        self.planets_degrees = self.planets_deegrees_lister()
+        # stores the planets in signulare dictionaries.
+        self.sun = self.position_calc(self.planets_degrees[0], &#34;Sun&#34;, &#34;name&#34;)
+        self.moon = self.position_calc(self.planets_degrees[1], &#34;Moon&#34;, &#34;name&#34;)
+        self.mercury = self.position_calc(
+            self.planets_degrees[2], &#34;Mercury&#34;, &#34;name&#34;)
+        self.venus = self.position_calc(
+            self.planets_degrees[3], &#34;Venus&#34;, &#34;name&#34;)
+        self.mars = self.position_calc(self.planets_degrees[4], &#34;Mars&#34;, &#34;name&#34;)
+        self.jupiter = self.position_calc(
+            self.planets_degrees[5], &#34;Jupiter&#34;, &#34;name&#34;)
+        self.saturn = self.position_calc(
+            self.planets_degrees[6], &#34;Saturn&#34;, &#34;name&#34;)
+        self.uranus = self.position_calc(
+            self.planets_degrees[7], &#34;Uranus&#34;, &#34;name&#34;)
+        self.neptune = self.position_calc(
+            self.planets_degrees[8], &#34;Neptune&#34;, &#34;name&#34;)
+        self.pluto = self.position_calc(
+            self.planets_degrees[9], &#34;Pluto&#34;, &#34;name&#34;)
+        self.mean_node = self.position_calc(
+            self.planets_degrees[10], &#34;Mean_Node&#34;, &#34;name&#34;)
+        self.true_node = self.position_calc(
+            self.planets_degrees[11], &#34;True_Node&#34;, &#34;name&#34;)
+
+    def planets_in_houses(self):
+        &#34;&#34;&#34;Calculates the house of the planet and updates
+        the planets dictionary.&#34;&#34;&#34;
+        self.planets()
+        self.houses()
+
+        def for_every_planet(planet, planet_deg):
+            &#34;&#34;&#34;Functio to do the calculation.
+            Args: planet dictionary, planet degree&#34;&#34;&#34;
+
+            def point_between(p1, p2, p3):
+                &#34;&#34;&#34;Finds if a point is between two other in a circle
+                args: first point, second point, point in the middle&#34;&#34;&#34;
+                p1_p2 = math.fmod(p2 - p1 + 360, 360)
+                p1_p3 = math.fmod(p3 - p1 + 360, 360)
+                if (p1_p2 &lt;= 180) != (p1_p3 &gt; p1_p2):
+                    return True
+                else:
+                    return False
+
+            if point_between(self.houses_degree_ut[0], self.houses_degree_ut[1],
+                             planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;1st House&#34;
+            elif point_between(self.houses_degree_ut[1], self.houses_degree_ut[2],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;2nd House&#34;
+            elif point_between(self.houses_degree_ut[2], self.houses_degree_ut[3],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;3rd House&#34;
+            elif point_between(self.houses_degree_ut[3], self.houses_degree_ut[4],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;4th House&#34;
+            elif point_between(self.houses_degree_ut[4], self.houses_degree_ut[5],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;5th House&#34;
+            elif point_between(self.houses_degree_ut[5], self.houses_degree_ut[6],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;6th House&#34;
+            elif point_between(self.houses_degree_ut[6], self.houses_degree_ut[7],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;7th House&#34;
+            elif point_between(self.houses_degree_ut[7], self.houses_degree_ut[8],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;8th House&#34;
+            elif point_between(self.houses_degree_ut[8], self.houses_degree_ut[9],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;9th House&#34;
+            elif point_between(self.houses_degree_ut[9], self.houses_degree_ut[10],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;10th House&#34;
+            elif point_between(self.houses_degree_ut[10], self.houses_degree_ut[11],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;11th House&#34;
+            elif point_between(self.houses_degree_ut[11], self.houses_degree_ut[0],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;12th House&#34;
+            else:
+                planet[&#34;house&#34;] = &#34;error!&#34;
+
+            return planet
+
+        self.sun = for_every_planet(self.sun, self.planets_degrees[0])
+        self.moon = for_every_planet(self.moon, self.planets_degrees[1])
+        self.mercury = for_every_planet(
+            self.mercury, self.planets_degrees[2])
+        self.venus = for_every_planet(
+            self.venus, self.planets_degrees[3])
+        self.mars = for_every_planet(self.mars, self.planets_degrees[4])
+        self.jupiter = for_every_planet(
+            self.jupiter, self.planets_degrees[5])
+        self.saturn = for_every_planet(
+            self.saturn, self.planets_degrees[6])
+        self.uranus = for_every_planet(
+            self.uranus, self.planets_degrees[7])
+        self.neptune = for_every_planet(
+            self.neptune, self.planets_degrees[8])
+        self.pluto = for_every_planet(
+            self.pluto, self.planets_degrees[9])
+        self.mean_node = for_every_planet(
+            self.mean_node, self.planets_degrees[10])
+        self.true_node = for_every_planet(
+            self.true_node, self.planets_degrees[11])
+
+        planets_list = [self.sun, self.moon, self.mercury, self.venus,
+                        self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
+                        self.pluto, self.mean_node, self.true_node]
+
+        # Check in retrograde or not:
+
+        planets_ret = []
+        for plan in planets_list:
+            planet_number = self.get_number(plan[&#34;name&#34;])
+            if swe.calc(self.julian_day, planet_number, self.iflag)[0][3] &lt; 0:
+                plan.update({&#39;retrograde&#39;: True})
+            else:
+                plan.update({&#39;retrograde&#39;: False})
+            planets_ret.append(plan)
+
+    def lunar_phase_calc(self):
+        &#34;&#34;&#34; Function to calculate the lunar phase&#34;&#34;&#34;
+
+        # anti-clockwise degrees between sun and moon
+        moon, sun = self.planets_degrees[1], self.planets_degrees[0]
+        degrees_between = moon - sun
+
+        if degrees_between &lt; 0:
+            degrees_between += 360.0
+
+        step = 360.0 / 28.0
+
+        for x in range(28):
+            low = x * step
+            high = (x + 1) * step
+            if degrees_between &gt;= low and degrees_between &lt; high:
+                mphase = x + 1
+
+        sunstep = [0, 30, 40,  50, 60, 70, 80, 90, 120, 130, 140, 150, 160, 170, 180,
+                   210, 220, 230, 240, 250, 260, 270, 300, 310, 320, 330, 340, 350]
+
+        for x in range(len(sunstep)):
+
+            low = sunstep[x]
+
+            if x == 27:
+                high = 360
+            else:
+                high = sunstep[x+1]
+            if degrees_between &gt;= low and degrees_between &lt; high:
+                sphase = x + 1
+
+        def moon_emoji(phase):
+            if phase == 1:
+                result = &#34;🌑&#34;
+            elif phase &lt; 7:
+                result = &#34;🌒&#34;
+            elif 7 &lt;= phase &lt;= 9:
+                result = &#34;🌓&#34;
+            elif phase &lt; 14:
+                result = &#34;🌔&#34;
+            elif phase == 14:
+                result = &#34;🌕&#34;
+            elif phase &lt; 20:
+                result = &#34;🌖&#34;
+            elif 20 &lt;= phase &lt;= 22:
+                result = &#34;🌗&#34;
+            elif phase &lt;= 28:
+                result = &#34;🌘&#34;
+            else:
+                result = phase
+
+            return result
+
+        self.lunar_phase = {
+            &#34;degrees_between_s_m&#34;: degrees_between,
+            &#34;moon_phase&#34;: mphase,
+            &#34;sun_phase&#34;: sphase,
+            &#34;moon_emoji&#34;: moon_emoji(mphase)
+        }
+
+    def make_lists(self):
+        self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
+                             self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
+                             self.pluto, self.mean_node, self.true_node]
+
+        self.houses_list = [self.first_house, self.second_house, self.third_house,
+                            self.fourth_house, self.fifth_house, self.sixth_house, self.seventh_house,
+                            self.eighth_house, self.ninth_house, self.tenth_house, self.eleventh_house,
+                            self.twelfth_house]
+
+    def get_all(self):
+        &#34;&#34;&#34; Gets all data from all the functions &#34;&#34;&#34;
+
+        self.planets_in_houses()
+        # self.retrograde()
+        self.lunar_phase_calc()
+        self.make_lists()
+
+    # Utility Functions:
+
+    def json_dump(self, dump=True, new_output_directory=None):
+        import jsonpickle, json
+
+        &#34;&#34;&#34;
+        Dumps the Kerykeion object to a json file located in the home folder.
+        This json file allows the object to be recreated with jsonpickle
+        &#34;&#34;&#34;
+
+        try:
+            self.sun
+        except:
+            self.get_all()
+
+        if new_output_directory:
+            self.json_path = os.path.join(
+                new_output_directory, f&#34;{self.name}_kerykeion.json&#34;)
+        else:
+            self.json_path = os.path.join(
+                self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
+
+        json_string = jsonpickle.encode(self)
+        
+        hiden_values = [f&#39; &#34;json_dir&#34;: &#34;{self.json_dir}&#34;,&#39;, f&#39;, &#34;json_path&#34;: &#34;{self.json_path}&#34;&#39;
+                        ]
+
+        for string in hiden_values:
+            json_string = json_string.replace(string, &#34;&#34;)
+
+        if dump:
+            json_string = json.loads(json_string.replace(&#34;&#39;&#34;,&#39;&#34;&#39;))
+            with open(self.json_path, &#34;w&#34;) as file:
+                json.dump(json_string, file,  indent=4,sort_keys=True)
+                print(f&#34;JSON file dumped in {self.json_path}.&#34;)
+        else:
+            pass
+        return json_string
+
+    def json_api(self, dump=False):
+        from json import dumps
+
+        if not self.sun:
+            self.get_all()
+
+        obj_dict = self.__dict__.copy()
+        keys_to_remove = [&#34;utc&#34;, &#34;iflag&#34;, &#34;json_dir&#34;, &#34;planets_list&#34;,
+                          &#34;houses_list&#34;, &#34;planets_degrees&#34;, &#34;houses_degree_ut&#34;]
+        for key in keys_to_remove:
+            obj_dict.pop(key)
+
+        json_obj = dumps(obj_dict)
+
+        if dump:
+            json_path = os.path.join(
+                self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
+            with open(json_path, &#34;w&#34;) as file:
+                file.write(json_obj)
+                print(f&#34;JSON file dumped in {json_path}.&#34;)
+
+        return json_obj
+
+
+if __name__ == &#34;__main__&#34;:
+    # kanye = KrInstance(&#34;Kanye&#34;, 1977, 6, 8, 8, 45, &#34;Atlanta&#34;,
+    #                   lon = 50, lat = 50, tz_str = &#34;Europe/Rome&#34;)
+    # kanye = KrInstance(&#34;Kanye&#34;, 1977, 6, 8, 8, 45, &#34;Atlanta&#34;)
+    # kanye.get_all()
+    # print(kanye.sun)
+    # print(kanye.city_tz)
+    # print(kanye.fifth_house[&#34;position&#34;])
+    # print(KrInstance().city)
+    # print(KrInstance())
+
+    #############################
+
+    # f = kanye.json_dump(dump=True)
+    # api_json = kanye.json_api()
+    # print(api_json)
+
+    # print(kanye.city)
+    # print(f)
+    # print(kanye.lunar_phase)
+    # kanye.json_dump()
+
+    # for p in kanye.planets_list:
+    #     print(p)
+    ###############################
+    now = KrInstance(&#34;Kanye&#34;, 1977, 6, 8, 8, 45, &#34;Atlanta&#34;,
+                     lon=50, lat=50, tz_str=&#34;Europe/Rome&#34;)
+    now.get_all()
+    print(now.lunar_phase)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="kerykeion.main.debug_print"><code class="name flex">
+<span>def <span class="ident">debug_print</span></span>(<span>str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def debug_print(str):
+    if DEBUG:
+        print(&#39;%s&#39; % str)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="kerykeion.main.KrInstance"><code class="flex name class">
+<span>class <span class="ident">KrInstance</span></span>
+<span>(</span><span>name: str = 'Now', year: int = 2021, month: int = 12, day: int = 22, hours: int = 22, minuts: int = 4, city: str = 'London', nat: str = '', lon: Union[int, float] = False, lat: Union[int, float] = False, tz_str: Union[str, bool] = False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculates all the astrological informations, the coordinates,
+it's utc and julian day and returns an object with all that data.
+Args: name, year, month, day, hours, minuts, city,
+initial of the nation (Ex: "IT"),
+longitude, latitude and the timezone string are set to false so they will
+be calulated, if you want you can set them.
+Default values are set for now at greenwich time.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class KrInstance():
+    &#34;&#34;&#34;
+    Calculates all the astrological informations, the coordinates,
+    it&#39;s utc and julian day and returns an object with all that data.
+    Args: name, year, month, day, hours, minuts, city,
+    initial of the nation (Ex: &#34;IT&#34;),
+    longitude, latitude and the timezone string are set to false so they will
+    be calulated, if you want you can set them.
+    Default values are set for now at greenwich time.
+
+    &#34;&#34;&#34;
+    now = datetime.datetime.now()
+
+    def __init__(
+        self,
+        name: str = &#34;Now&#34;,
+        year: int = now.year,
+        month: int = now.month,
+        day: int = now.day,
+        hours: int = now.hour,
+        minuts: int = now.minute,
+        city: str = &#34;London&#34;,
+        nat: str = &#34;&#34;,
+        lon: Union[int, float] = False,
+        lat: Union[int, float] = False,
+        tz_str: Union[str, bool] = False
+    ):
+        logging.info(&#39;Starting Kerykeion&#39;)
+        self.name = name
+        self.year = year
+        self.month = month
+        self.day = day
+        self.hours = hours
+        self.minuts = minuts
+        self.city = city
+        self.nation = nat
+        self.city_long = lon
+        self.city_lat = lat
+        self.city_tz = tz_str
+
+        self.json_dir = os.path.expanduser(&#34;~&#34;)
+
+        self.julian_day = self.get_jd()
+        self.zodiactype = &#34;Tropic&#34;
+
+    def __str__(self):
+        return f&#34;Astrological data for: {self.name}, {self.utc} UTC&#34;
+
+    def get_tz(self):
+        &#34;&#34;&#34;Gets the nerest time zone for the calculation&#34;&#34;&#34;
+        logging.info(&#34;Conneting to Geonames...&#34;)
+        self.city_data = search(self.city, self.nation)[0]
+
+        logging.info(&#34;Geonames done!&#34;)
+
+        self.nation = self.city_data[&#34;countryCode&#34;]
+        self.city_long = float(self.city_data[&#34;lng&#34;])
+        self.city_lat = float(self.city_data[&#34;lat&#34;])
+        self.city_tz = self.city_data[&#34;timezonestr&#34;]
+
+        # self.country_code = self.city_data[&#34;countryCode&#34;]
+
+        if self.city_lat &gt; 66.0:
+            self.city_lat = 66.0
+            print(&#34;polar circle override for houses, using 66 degrees&#34;)
+
+        elif self.city_lat &lt; -66.0:
+            self.city_lat = -66.0
+            print(&#34;polar circle override for houses, using -66 degrees&#34;)
+
+        return self.city_tz
+
+    def get_utc(self):
+        &#34;&#34;&#34;Converts local time to utc time. &#34;&#34;&#34;
+
+        if not self.city_long or not self.city_lat or not self.city_tz:
+            local_time = pytz.timezone(self.get_tz())
+        else:
+            local_time = pytz.timezone(self.city_tz)
+
+        naive_datetime = datetime.datetime(self.year, self.month,
+                                           self.day, self.hours, self.minuts, 0)
+        local_datetime = local_time.localize(naive_datetime, is_dst=None)
+        utc_datetime = local_datetime.astimezone(pytz.utc)
+        self.utc = utc_datetime
+        return self.utc
+
+    def get_jd(self):
+        &#34;&#34;&#34; Calculates julian day from the utc time.&#34;&#34;&#34;
+        utc = self.get_utc()
+        self.time_utc = utc.hour + utc.minute/60
+        self.time = self.hours + self.minuts/60
+        self.julian_day = float(swe.julday(utc.year, utc.month, utc.day,
+                                           self.time_utc))
+
+        return self.julian_day
+
+    @staticmethod
+    def get_number(name):
+        &#34;&#34;&#34;Internal function, gets number id from the name.&#34;&#34;&#34;
+        name = name.lower()
+
+        if name == &#34;sun&#34;:
+            return 0
+        elif name == &#34;moon&#34;:
+            return 1
+        elif name == &#34;mercury&#34;:
+            return 2
+        elif name == &#34;venus&#34;:
+            return 3
+        elif name == &#34;mars&#34;:
+            return 4
+        elif name == &#34;jupiter&#34;:
+            return 5
+        elif name == &#34;saturn&#34;:
+            return 6
+        elif name == &#34;uranus&#34;:
+            return 7
+        elif name == &#34;neptune&#34;:
+            return 8
+        elif name == &#34;pluto&#34;:
+            return 9
+        elif name == &#34;mean_node&#34;:
+            return 10  # change!
+        elif name == &#34;true_node&#34;:
+            return 11
+        else:
+            return int(name)
+
+    @staticmethod
+    def position_calc(degree, number_name, label):
+        &#34;&#34;&#34;A function to be used in others to create a dictionary deviding
+        the houses or the planets list.&#34;&#34;&#34;
+        if degree &lt; 30:
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Cardinal&#34;, &#34;element&#34;:
+                          &#34;Fire&#34;, &#34;sign&#34;: &#34;Ari&#34;, &#34;sign_num&#34;: 0, &#34;position&#34;: degree, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♈️&#34;}
+        elif degree &lt; 60:
+            result = degree - 30
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Fixed&#34;, &#34;element&#34;:
+                          &#34;Earth&#34;, &#34;sign&#34;: &#34;Tau&#34;, &#34;sign_num&#34;: 1, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♉️&#34;}
+        elif degree &lt; 90:
+            result = degree - 60
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Mutable&#34;, &#34;element&#34;:
+                          &#34;Air&#34;, &#34;sign&#34;: &#34;Gem&#34;, &#34;sign_num&#34;: 2, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♊️&#34;}
+        elif degree &lt; 120:
+            result = degree - 90
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Cardinal&#34;, &#34;element&#34;:
+                          &#34;Water&#34;, &#34;sign&#34;: &#34;Can&#34;, &#34;sign_num&#34;: 3, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♋️&#34;}
+        elif degree &lt; 150:
+            result = degree - 120
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Fixed&#34;, &#34;element&#34;:
+                          &#34;Fire&#34;, &#34;sign&#34;: &#34;Leo&#34;, &#34;sign_num&#34;: 4, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♌️&#34;}
+        elif degree &lt; 180:
+            result = degree - 150
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Mutable&#34;, &#34;element&#34;:
+                          &#34;Earth&#34;, &#34;sign&#34;: &#34;Vir&#34;, &#34;sign_num&#34;: 5, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♍️&#34;}
+        elif degree &lt; 210:
+            result = degree - 180
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Cardinal&#34;, &#34;element&#34;:
+                          &#34;Air&#34;, &#34;sign&#34;: &#34;Lib&#34;, &#34;sign_num&#34;: 6, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♎️&#34;}
+        elif degree &lt; 240:
+            result = degree - 210
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Fixed&#34;, &#34;element&#34;:
+                          &#34;Water&#34;, &#34;sign&#34;: &#34;Sco&#34;, &#34;sign_num&#34;: 7, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♏️&#34;}
+        elif degree &lt; 270:
+            result = degree - 240
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Mutable&#34;, &#34;element&#34;:
+                          &#34;Fire&#34;, &#34;sign&#34;: &#34;Sag&#34;, &#34;sign_num&#34;: 8, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♐️&#34;}
+        elif degree &lt; 300:
+            result = degree - 270
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Cardinal&#34;, &#34;element&#34;:
+                          &#34;Earth&#34;, &#34;sign&#34;: &#34;Cap&#34;, &#34;sign_num&#34;: 9, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♑️&#34;}
+        elif degree &lt; 330:
+            result = degree - 300
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Fixed&#34;, &#34;element&#34;:
+                          &#34;Air&#34;, &#34;sign&#34;: &#34;Aqu&#34;, &#34;sign_num&#34;: 10, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♒️&#34;}
+        elif degree &lt; 360:
+            result = degree - 330
+            dictionary = {label: number_name, &#34;quality&#34;: &#34;Mutable&#34;, &#34;element&#34;:
+                          &#34;Water&#34;, &#34;sign&#34;: &#34;Pis&#34;, &#34;sign_num&#34;: 11, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                          &#34;emoji&#34;: &#34;♓️&#34;}
+        else:
+            dictionary = {label: &#34;position_calc error&#34;, &#34;sign&#34;: &#34;position_calc error&#34;,
+                          &#34;position&#34;: &#34;position_calc error&#34;}
+
+        return dictionary
+
+    def houses(self):
+        &#34;&#34;&#34;Calculatetype positions and store them in dictionaries&#34;&#34;&#34;
+
+        # creates the list of the house in 360°
+        self.houses_degree_ut = swe.houses(self.julian_day, self.city_lat,
+                                           self.city_long)[0]
+        # stores the house in signulare dictionaries.
+        self.first_house = self.position_calc(
+            self.houses_degree_ut[0], &#34;1&#34;, &#34;name&#34;)
+        self.second_house = self.position_calc(
+            self.houses_degree_ut[1], &#34;2&#34;, &#34;name&#34;)
+        self.third_house = self.position_calc(
+            self.houses_degree_ut[2], &#34;3&#34;, &#34;name&#34;)
+        self.fourth_house = self.position_calc(
+            self.houses_degree_ut[3], &#34;4&#34;, &#34;name&#34;)
+        self.fifth_house = self.position_calc(
+            self.houses_degree_ut[4], &#34;5&#34;, &#34;name&#34;)
+        self.sixth_house = self.position_calc(
+            self.houses_degree_ut[5], &#34;6&#34;, &#34;name&#34;)
+        self.seventh_house = self.position_calc(
+            self.houses_degree_ut[6], &#34;7&#34;, &#34;name&#34;)
+        self.eighth_house = self.position_calc(
+            self.houses_degree_ut[7], &#34;8&#34;, &#34;name&#34;)
+        self.ninth_house = self.position_calc(
+            self.houses_degree_ut[8], &#34;9&#34;, &#34;name&#34;)
+        self.tenth_house = self.position_calc(
+            self.houses_degree_ut[9], &#34;10&#34;, &#34;name&#34;)
+        self.eleventh_house = self.position_calc(
+            self.houses_degree_ut[10], &#34;11&#34;, &#34;name&#34;)
+        self.twelfth_house = self.position_calc(
+            self.houses_degree_ut[11], &#34;12&#34;, &#34;name&#34;)
+
+        # creates a list of all the dictionaries of thetype.
+
+        houses_degree = [self.first_house[&#34;position&#34;], self.second_house[&#34;position&#34;],
+                         self.third_house[&#34;position&#34;], self.fourth_house[&#34;position&#34;], self.fifth_house[&#34;position&#34;],
+                         self.sixth_house[&#34;position&#34;], self.seventh_house, self.eighth_house[&#34;position&#34;],
+                         self.ninth_house[&#34;position&#34;], self.tenth_house[&#34;position&#34;], self.eleventh_house[&#34;position&#34;],
+                         self.twelfth_house[&#34;position&#34;]]
+
+        # return self.houses_list
+        return houses_degree
+
+    def planets_deegrees_lister(self):
+        &#34;&#34;&#34;Sidereal or tropic mode.&#34;&#34;&#34;
+        self.iflag = swe.FLG_SWIEPH+swe.FLG_SPEED
+
+        if self.zodiactype == &#34;sidereal&#34;:
+            self.iflag += swe.FLG_SIDEREAL
+            mode = &#34;SIDM_FAGAN_BRADLEY&#34;
+            swe.set_sid_mode(getattr(swe, mode))
+
+        &#34;&#34;&#34;Calculates the position of the planets and stores it in a list.&#34;&#34;&#34;
+
+        sun_deg = swe.calc(self.julian_day, 0, self.iflag)[0][0]
+        moon_deg = swe.calc(self.julian_day, 1, self.iflag)[0][0]
+        mercury_deg = swe.calc(self.julian_day, 2, self.iflag)[0][0]
+        venus_deg = swe.calc(self.julian_day, 3, self.iflag)[0][0]
+        mars_deg = swe.calc(self.julian_day, 4, self.iflag)[0][0]
+        jupiter_deg = swe.calc(self.julian_day, 5, self.iflag)[0][0]
+        saturn_deg = swe.calc(self.julian_day, 6, self.iflag)[0][0]
+        uranus_deg = swe.calc(self.julian_day, 7, self.iflag)[0][0]
+        neptune_deg = swe.calc(self.julian_day, 8, self.iflag)[0][0]
+        pluto_deg = swe.calc(self.julian_day, 9, self.iflag)[0][0]
+        mean_node_deg = swe.calc(self.julian_day, 10, self.iflag)[0][0]
+        true_node_deg = swe.calc(self.julian_day, 11, self.iflag)[0][0]
+
+        # print(swe.calc(self.julian_day, 7, self.iflag)[3])
+
+        self.planets_degrees = [sun_deg, moon_deg, mercury_deg,
+                                venus_deg, mars_deg, jupiter_deg, saturn_deg,
+                                uranus_deg, neptune_deg, pluto_deg, mean_node_deg,
+                                true_node_deg]
+
+        return self.planets_degrees
+
+    def planets(self):
+        &#34;&#34;&#34; Defines body positon in signs and informations and
+         stores them in dictionaries&#34;&#34;&#34;
+        self.planets_degrees = self.planets_deegrees_lister()
+        # stores the planets in signulare dictionaries.
+        self.sun = self.position_calc(self.planets_degrees[0], &#34;Sun&#34;, &#34;name&#34;)
+        self.moon = self.position_calc(self.planets_degrees[1], &#34;Moon&#34;, &#34;name&#34;)
+        self.mercury = self.position_calc(
+            self.planets_degrees[2], &#34;Mercury&#34;, &#34;name&#34;)
+        self.venus = self.position_calc(
+            self.planets_degrees[3], &#34;Venus&#34;, &#34;name&#34;)
+        self.mars = self.position_calc(self.planets_degrees[4], &#34;Mars&#34;, &#34;name&#34;)
+        self.jupiter = self.position_calc(
+            self.planets_degrees[5], &#34;Jupiter&#34;, &#34;name&#34;)
+        self.saturn = self.position_calc(
+            self.planets_degrees[6], &#34;Saturn&#34;, &#34;name&#34;)
+        self.uranus = self.position_calc(
+            self.planets_degrees[7], &#34;Uranus&#34;, &#34;name&#34;)
+        self.neptune = self.position_calc(
+            self.planets_degrees[8], &#34;Neptune&#34;, &#34;name&#34;)
+        self.pluto = self.position_calc(
+            self.planets_degrees[9], &#34;Pluto&#34;, &#34;name&#34;)
+        self.mean_node = self.position_calc(
+            self.planets_degrees[10], &#34;Mean_Node&#34;, &#34;name&#34;)
+        self.true_node = self.position_calc(
+            self.planets_degrees[11], &#34;True_Node&#34;, &#34;name&#34;)
+
+    def planets_in_houses(self):
+        &#34;&#34;&#34;Calculates the house of the planet and updates
+        the planets dictionary.&#34;&#34;&#34;
+        self.planets()
+        self.houses()
+
+        def for_every_planet(planet, planet_deg):
+            &#34;&#34;&#34;Functio to do the calculation.
+            Args: planet dictionary, planet degree&#34;&#34;&#34;
+
+            def point_between(p1, p2, p3):
+                &#34;&#34;&#34;Finds if a point is between two other in a circle
+                args: first point, second point, point in the middle&#34;&#34;&#34;
+                p1_p2 = math.fmod(p2 - p1 + 360, 360)
+                p1_p3 = math.fmod(p3 - p1 + 360, 360)
+                if (p1_p2 &lt;= 180) != (p1_p3 &gt; p1_p2):
+                    return True
+                else:
+                    return False
+
+            if point_between(self.houses_degree_ut[0], self.houses_degree_ut[1],
+                             planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;1st House&#34;
+            elif point_between(self.houses_degree_ut[1], self.houses_degree_ut[2],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;2nd House&#34;
+            elif point_between(self.houses_degree_ut[2], self.houses_degree_ut[3],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;3rd House&#34;
+            elif point_between(self.houses_degree_ut[3], self.houses_degree_ut[4],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;4th House&#34;
+            elif point_between(self.houses_degree_ut[4], self.houses_degree_ut[5],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;5th House&#34;
+            elif point_between(self.houses_degree_ut[5], self.houses_degree_ut[6],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;6th House&#34;
+            elif point_between(self.houses_degree_ut[6], self.houses_degree_ut[7],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;7th House&#34;
+            elif point_between(self.houses_degree_ut[7], self.houses_degree_ut[8],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;8th House&#34;
+            elif point_between(self.houses_degree_ut[8], self.houses_degree_ut[9],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;9th House&#34;
+            elif point_between(self.houses_degree_ut[9], self.houses_degree_ut[10],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;10th House&#34;
+            elif point_between(self.houses_degree_ut[10], self.houses_degree_ut[11],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;11th House&#34;
+            elif point_between(self.houses_degree_ut[11], self.houses_degree_ut[0],
+                               planet_deg) == True:
+                planet[&#34;house&#34;] = &#34;12th House&#34;
+            else:
+                planet[&#34;house&#34;] = &#34;error!&#34;
+
+            return planet
+
+        self.sun = for_every_planet(self.sun, self.planets_degrees[0])
+        self.moon = for_every_planet(self.moon, self.planets_degrees[1])
+        self.mercury = for_every_planet(
+            self.mercury, self.planets_degrees[2])
+        self.venus = for_every_planet(
+            self.venus, self.planets_degrees[3])
+        self.mars = for_every_planet(self.mars, self.planets_degrees[4])
+        self.jupiter = for_every_planet(
+            self.jupiter, self.planets_degrees[5])
+        self.saturn = for_every_planet(
+            self.saturn, self.planets_degrees[6])
+        self.uranus = for_every_planet(
+            self.uranus, self.planets_degrees[7])
+        self.neptune = for_every_planet(
+            self.neptune, self.planets_degrees[8])
+        self.pluto = for_every_planet(
+            self.pluto, self.planets_degrees[9])
+        self.mean_node = for_every_planet(
+            self.mean_node, self.planets_degrees[10])
+        self.true_node = for_every_planet(
+            self.true_node, self.planets_degrees[11])
+
+        planets_list = [self.sun, self.moon, self.mercury, self.venus,
+                        self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
+                        self.pluto, self.mean_node, self.true_node]
+
+        # Check in retrograde or not:
+
+        planets_ret = []
+        for plan in planets_list:
+            planet_number = self.get_number(plan[&#34;name&#34;])
+            if swe.calc(self.julian_day, planet_number, self.iflag)[0][3] &lt; 0:
+                plan.update({&#39;retrograde&#39;: True})
+            else:
+                plan.update({&#39;retrograde&#39;: False})
+            planets_ret.append(plan)
+
+    def lunar_phase_calc(self):
+        &#34;&#34;&#34; Function to calculate the lunar phase&#34;&#34;&#34;
+
+        # anti-clockwise degrees between sun and moon
+        moon, sun = self.planets_degrees[1], self.planets_degrees[0]
+        degrees_between = moon - sun
+
+        if degrees_between &lt; 0:
+            degrees_between += 360.0
+
+        step = 360.0 / 28.0
+
+        for x in range(28):
+            low = x * step
+            high = (x + 1) * step
+            if degrees_between &gt;= low and degrees_between &lt; high:
+                mphase = x + 1
+
+        sunstep = [0, 30, 40,  50, 60, 70, 80, 90, 120, 130, 140, 150, 160, 170, 180,
+                   210, 220, 230, 240, 250, 260, 270, 300, 310, 320, 330, 340, 350]
+
+        for x in range(len(sunstep)):
+
+            low = sunstep[x]
+
+            if x == 27:
+                high = 360
+            else:
+                high = sunstep[x+1]
+            if degrees_between &gt;= low and degrees_between &lt; high:
+                sphase = x + 1
+
+        def moon_emoji(phase):
+            if phase == 1:
+                result = &#34;🌑&#34;
+            elif phase &lt; 7:
+                result = &#34;🌒&#34;
+            elif 7 &lt;= phase &lt;= 9:
+                result = &#34;🌓&#34;
+            elif phase &lt; 14:
+                result = &#34;🌔&#34;
+            elif phase == 14:
+                result = &#34;🌕&#34;
+            elif phase &lt; 20:
+                result = &#34;🌖&#34;
+            elif 20 &lt;= phase &lt;= 22:
+                result = &#34;🌗&#34;
+            elif phase &lt;= 28:
+                result = &#34;🌘&#34;
+            else:
+                result = phase
+
+            return result
+
+        self.lunar_phase = {
+            &#34;degrees_between_s_m&#34;: degrees_between,
+            &#34;moon_phase&#34;: mphase,
+            &#34;sun_phase&#34;: sphase,
+            &#34;moon_emoji&#34;: moon_emoji(mphase)
+        }
+
+    def make_lists(self):
+        self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
+                             self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
+                             self.pluto, self.mean_node, self.true_node]
+
+        self.houses_list = [self.first_house, self.second_house, self.third_house,
+                            self.fourth_house, self.fifth_house, self.sixth_house, self.seventh_house,
+                            self.eighth_house, self.ninth_house, self.tenth_house, self.eleventh_house,
+                            self.twelfth_house]
+
+    def get_all(self):
+        &#34;&#34;&#34; Gets all data from all the functions &#34;&#34;&#34;
+
+        self.planets_in_houses()
+        # self.retrograde()
+        self.lunar_phase_calc()
+        self.make_lists()
+
+    # Utility Functions:
+
+    def json_dump(self, dump=True, new_output_directory=None):
+        import jsonpickle, json
+
+        &#34;&#34;&#34;
+        Dumps the Kerykeion object to a json file located in the home folder.
+        This json file allows the object to be recreated with jsonpickle
+        &#34;&#34;&#34;
+
+        try:
+            self.sun
+        except:
+            self.get_all()
+
+        if new_output_directory:
+            self.json_path = os.path.join(
+                new_output_directory, f&#34;{self.name}_kerykeion.json&#34;)
+        else:
+            self.json_path = os.path.join(
+                self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
+
+        json_string = jsonpickle.encode(self)
+        
+        hiden_values = [f&#39; &#34;json_dir&#34;: &#34;{self.json_dir}&#34;,&#39;, f&#39;, &#34;json_path&#34;: &#34;{self.json_path}&#34;&#39;
+                        ]
+
+        for string in hiden_values:
+            json_string = json_string.replace(string, &#34;&#34;)
+
+        if dump:
+            json_string = json.loads(json_string.replace(&#34;&#39;&#34;,&#39;&#34;&#39;))
+            with open(self.json_path, &#34;w&#34;) as file:
+                json.dump(json_string, file,  indent=4,sort_keys=True)
+                print(f&#34;JSON file dumped in {self.json_path}.&#34;)
+        else:
+            pass
+        return json_string
+
+    def json_api(self, dump=False):
+        from json import dumps
+
+        if not self.sun:
+            self.get_all()
+
+        obj_dict = self.__dict__.copy()
+        keys_to_remove = [&#34;utc&#34;, &#34;iflag&#34;, &#34;json_dir&#34;, &#34;planets_list&#34;,
+                          &#34;houses_list&#34;, &#34;planets_degrees&#34;, &#34;houses_degree_ut&#34;]
+        for key in keys_to_remove:
+            obj_dict.pop(key)
+
+        json_obj = dumps(obj_dict)
+
+        if dump:
+            json_path = os.path.join(
+                self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
+            with open(json_path, &#34;w&#34;) as file:
+                file.write(json_obj)
+                print(f&#34;JSON file dumped in {json_path}.&#34;)
+
+        return json_obj</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="kerykeion.main.KrInstance.now"><code class="name">var <span class="ident">now</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="kerykeion.main.KrInstance.get_number"><code class="name flex">
+<span>def <span class="ident">get_number</span></span>(<span>name)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Internal function, gets number id from the name.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_number(name):
+    &#34;&#34;&#34;Internal function, gets number id from the name.&#34;&#34;&#34;
+    name = name.lower()
+
+    if name == &#34;sun&#34;:
+        return 0
+    elif name == &#34;moon&#34;:
+        return 1
+    elif name == &#34;mercury&#34;:
+        return 2
+    elif name == &#34;venus&#34;:
+        return 3
+    elif name == &#34;mars&#34;:
+        return 4
+    elif name == &#34;jupiter&#34;:
+        return 5
+    elif name == &#34;saturn&#34;:
+        return 6
+    elif name == &#34;uranus&#34;:
+        return 7
+    elif name == &#34;neptune&#34;:
+        return 8
+    elif name == &#34;pluto&#34;:
+        return 9
+    elif name == &#34;mean_node&#34;:
+        return 10  # change!
+    elif name == &#34;true_node&#34;:
+        return 11
+    else:
+        return int(name)</code></pre>
+</details>
+</dd>
+<dt id="kerykeion.main.KrInstance.position_calc"><code class="name flex">
+<span>def <span class="ident">position_calc</span></span>(<span>degree, number_name, label)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A function to be used in others to create a dictionary deviding
+the houses or the planets list.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def position_calc(degree, number_name, label):
+    &#34;&#34;&#34;A function to be used in others to create a dictionary deviding
+    the houses or the planets list.&#34;&#34;&#34;
+    if degree &lt; 30:
+        dictionary = {label: number_name, &#34;quality&#34;: &#34;Cardinal&#34;, &#34;element&#34;:
+                      &#34;Fire&#34;, &#34;sign&#34;: &#34;Ari&#34;, &#34;sign_num&#34;: 0, &#34;position&#34;: degree, &#34;abs_pos&#34;: degree,
+                      &#34;emoji&#34;: &#34;♈️&#34;}
+    elif degree &lt; 60:
+        result = degree - 30
+        dictionary = {label: number_name, &#34;quality&#34;: &#34;Fixed&#34;, &#34;element&#34;:
+                      &#34;Earth&#34;, &#34;sign&#34;: &#34;Tau&#34;, &#34;sign_num&#34;: 1, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                      &#34;emoji&#34;: &#34;♉️&#34;}
+    elif degree &lt; 90:
+        result = degree - 60
+        dictionary = {label: number_name, &#34;quality&#34;: &#34;Mutable&#34;, &#34;element&#34;:
+                      &#34;Air&#34;, &#34;sign&#34;: &#34;Gem&#34;, &#34;sign_num&#34;: 2, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                      &#34;emoji&#34;: &#34;♊️&#34;}
+    elif degree &lt; 120:
+        result = degree - 90
+        dictionary = {label: number_name, &#34;quality&#34;: &#34;Cardinal&#34;, &#34;element&#34;:
+                      &#34;Water&#34;, &#34;sign&#34;: &#34;Can&#34;, &#34;sign_num&#34;: 3, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                      &#34;emoji&#34;: &#34;♋️&#34;}
+    elif degree &lt; 150:
+        result = degree - 120
+        dictionary = {label: number_name, &#34;quality&#34;: &#34;Fixed&#34;, &#34;element&#34;:
+                      &#34;Fire&#34;, &#34;sign&#34;: &#34;Leo&#34;, &#34;sign_num&#34;: 4, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                      &#34;emoji&#34;: &#34;♌️&#34;}
+    elif degree &lt; 180:
+        result = degree - 150
+        dictionary = {label: number_name, &#34;quality&#34;: &#34;Mutable&#34;, &#34;element&#34;:
+                      &#34;Earth&#34;, &#34;sign&#34;: &#34;Vir&#34;, &#34;sign_num&#34;: 5, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                      &#34;emoji&#34;: &#34;♍️&#34;}
+    elif degree &lt; 210:
+        result = degree - 180
+        dictionary = {label: number_name, &#34;quality&#34;: &#34;Cardinal&#34;, &#34;element&#34;:
+                      &#34;Air&#34;, &#34;sign&#34;: &#34;Lib&#34;, &#34;sign_num&#34;: 6, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                      &#34;emoji&#34;: &#34;♎️&#34;}
+    elif degree &lt; 240:
+        result = degree - 210
+        dictionary = {label: number_name, &#34;quality&#34;: &#34;Fixed&#34;, &#34;element&#34;:
+                      &#34;Water&#34;, &#34;sign&#34;: &#34;Sco&#34;, &#34;sign_num&#34;: 7, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                      &#34;emoji&#34;: &#34;♏️&#34;}
+    elif degree &lt; 270:
+        result = degree - 240
+        dictionary = {label: number_name, &#34;quality&#34;: &#34;Mutable&#34;, &#34;element&#34;:
+                      &#34;Fire&#34;, &#34;sign&#34;: &#34;Sag&#34;, &#34;sign_num&#34;: 8, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                      &#34;emoji&#34;: &#34;♐️&#34;}
+    elif degree &lt; 300:
+        result = degree - 270
+        dictionary = {label: number_name, &#34;quality&#34;: &#34;Cardinal&#34;, &#34;element&#34;:
+                      &#34;Earth&#34;, &#34;sign&#34;: &#34;Cap&#34;, &#34;sign_num&#34;: 9, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                      &#34;emoji&#34;: &#34;♑️&#34;}
+    elif degree &lt; 330:
+        result = degree - 300
+        dictionary = {label: number_name, &#34;quality&#34;: &#34;Fixed&#34;, &#34;element&#34;:
+                      &#34;Air&#34;, &#34;sign&#34;: &#34;Aqu&#34;, &#34;sign_num&#34;: 10, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                      &#34;emoji&#34;: &#34;♒️&#34;}
+    elif degree &lt; 360:
+        result = degree - 330
+        dictionary = {label: number_name, &#34;quality&#34;: &#34;Mutable&#34;, &#34;element&#34;:
+                      &#34;Water&#34;, &#34;sign&#34;: &#34;Pis&#34;, &#34;sign_num&#34;: 11, &#34;position&#34;: result, &#34;abs_pos&#34;: degree,
+                      &#34;emoji&#34;: &#34;♓️&#34;}
+    else:
+        dictionary = {label: &#34;position_calc error&#34;, &#34;sign&#34;: &#34;position_calc error&#34;,
+                      &#34;position&#34;: &#34;position_calc error&#34;}
+
+    return dictionary</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="kerykeion.main.KrInstance.get_all"><code class="name flex">
+<span>def <span class="ident">get_all</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets all data from all the functions</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_all(self):
+    &#34;&#34;&#34; Gets all data from all the functions &#34;&#34;&#34;
+
+    self.planets_in_houses()
+    # self.retrograde()
+    self.lunar_phase_calc()
+    self.make_lists()</code></pre>
+</details>
+</dd>
+<dt id="kerykeion.main.KrInstance.get_jd"><code class="name flex">
+<span>def <span class="ident">get_jd</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculates julian day from the utc time.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_jd(self):
+    &#34;&#34;&#34; Calculates julian day from the utc time.&#34;&#34;&#34;
+    utc = self.get_utc()
+    self.time_utc = utc.hour + utc.minute/60
+    self.time = self.hours + self.minuts/60
+    self.julian_day = float(swe.julday(utc.year, utc.month, utc.day,
+                                       self.time_utc))
+
+    return self.julian_day</code></pre>
+</details>
+</dd>
+<dt id="kerykeion.main.KrInstance.get_tz"><code class="name flex">
+<span>def <span class="ident">get_tz</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets the nerest time zone for the calculation</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_tz(self):
+    &#34;&#34;&#34;Gets the nerest time zone for the calculation&#34;&#34;&#34;
+    logging.info(&#34;Conneting to Geonames...&#34;)
+    self.city_data = search(self.city, self.nation)[0]
+
+    logging.info(&#34;Geonames done!&#34;)
+
+    self.nation = self.city_data[&#34;countryCode&#34;]
+    self.city_long = float(self.city_data[&#34;lng&#34;])
+    self.city_lat = float(self.city_data[&#34;lat&#34;])
+    self.city_tz = self.city_data[&#34;timezonestr&#34;]
+
+    # self.country_code = self.city_data[&#34;countryCode&#34;]
+
+    if self.city_lat &gt; 66.0:
+        self.city_lat = 66.0
+        print(&#34;polar circle override for houses, using 66 degrees&#34;)
+
+    elif self.city_lat &lt; -66.0:
+        self.city_lat = -66.0
+        print(&#34;polar circle override for houses, using -66 degrees&#34;)
+
+    return self.city_tz</code></pre>
+</details>
+</dd>
+<dt id="kerykeion.main.KrInstance.get_utc"><code class="name flex">
+<span>def <span class="ident">get_utc</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts local time to utc time.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_utc(self):
+    &#34;&#34;&#34;Converts local time to utc time. &#34;&#34;&#34;
+
+    if not self.city_long or not self.city_lat or not self.city_tz:
+        local_time = pytz.timezone(self.get_tz())
+    else:
+        local_time = pytz.timezone(self.city_tz)
+
+    naive_datetime = datetime.datetime(self.year, self.month,
+                                       self.day, self.hours, self.minuts, 0)
+    local_datetime = local_time.localize(naive_datetime, is_dst=None)
+    utc_datetime = local_datetime.astimezone(pytz.utc)
+    self.utc = utc_datetime
+    return self.utc</code></pre>
+</details>
+</dd>
+<dt id="kerykeion.main.KrInstance.houses"><code class="name flex">
+<span>def <span class="ident">houses</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculatetype positions and store them in dictionaries</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def houses(self):
+    &#34;&#34;&#34;Calculatetype positions and store them in dictionaries&#34;&#34;&#34;
+
+    # creates the list of the house in 360°
+    self.houses_degree_ut = swe.houses(self.julian_day, self.city_lat,
+                                       self.city_long)[0]
+    # stores the house in signulare dictionaries.
+    self.first_house = self.position_calc(
+        self.houses_degree_ut[0], &#34;1&#34;, &#34;name&#34;)
+    self.second_house = self.position_calc(
+        self.houses_degree_ut[1], &#34;2&#34;, &#34;name&#34;)
+    self.third_house = self.position_calc(
+        self.houses_degree_ut[2], &#34;3&#34;, &#34;name&#34;)
+    self.fourth_house = self.position_calc(
+        self.houses_degree_ut[3], &#34;4&#34;, &#34;name&#34;)
+    self.fifth_house = self.position_calc(
+        self.houses_degree_ut[4], &#34;5&#34;, &#34;name&#34;)
+    self.sixth_house = self.position_calc(
+        self.houses_degree_ut[5], &#34;6&#34;, &#34;name&#34;)
+    self.seventh_house = self.position_calc(
+        self.houses_degree_ut[6], &#34;7&#34;, &#34;name&#34;)
+    self.eighth_house = self.position_calc(
+        self.houses_degree_ut[7], &#34;8&#34;, &#34;name&#34;)
+    self.ninth_house = self.position_calc(
+        self.houses_degree_ut[8], &#34;9&#34;, &#34;name&#34;)
+    self.tenth_house = self.position_calc(
+        self.houses_degree_ut[9], &#34;10&#34;, &#34;name&#34;)
+    self.eleventh_house = self.position_calc(
+        self.houses_degree_ut[10], &#34;11&#34;, &#34;name&#34;)
+    self.twelfth_house = self.position_calc(
+        self.houses_degree_ut[11], &#34;12&#34;, &#34;name&#34;)
+
+    # creates a list of all the dictionaries of thetype.
+
+    houses_degree = [self.first_house[&#34;position&#34;], self.second_house[&#34;position&#34;],
+                     self.third_house[&#34;position&#34;], self.fourth_house[&#34;position&#34;], self.fifth_house[&#34;position&#34;],
+                     self.sixth_house[&#34;position&#34;], self.seventh_house, self.eighth_house[&#34;position&#34;],
+                     self.ninth_house[&#34;position&#34;], self.tenth_house[&#34;position&#34;], self.eleventh_house[&#34;position&#34;],
+                     self.twelfth_house[&#34;position&#34;]]
+
+    # return self.houses_list
+    return houses_degree</code></pre>
+</details>
+</dd>
+<dt id="kerykeion.main.KrInstance.json_api"><code class="name flex">
+<span>def <span class="ident">json_api</span></span>(<span>self, dump=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def json_api(self, dump=False):
+    from json import dumps
+
+    if not self.sun:
+        self.get_all()
+
+    obj_dict = self.__dict__.copy()
+    keys_to_remove = [&#34;utc&#34;, &#34;iflag&#34;, &#34;json_dir&#34;, &#34;planets_list&#34;,
+                      &#34;houses_list&#34;, &#34;planets_degrees&#34;, &#34;houses_degree_ut&#34;]
+    for key in keys_to_remove:
+        obj_dict.pop(key)
+
+    json_obj = dumps(obj_dict)
+
+    if dump:
+        json_path = os.path.join(
+            self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
+        with open(json_path, &#34;w&#34;) as file:
+            file.write(json_obj)
+            print(f&#34;JSON file dumped in {json_path}.&#34;)
+
+    return json_obj</code></pre>
+</details>
+</dd>
+<dt id="kerykeion.main.KrInstance.json_dump"><code class="name flex">
+<span>def <span class="ident">json_dump</span></span>(<span>self, dump=True, new_output_directory=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def json_dump(self, dump=True, new_output_directory=None):
+    import jsonpickle, json
+
+    &#34;&#34;&#34;
+    Dumps the Kerykeion object to a json file located in the home folder.
+    This json file allows the object to be recreated with jsonpickle
+    &#34;&#34;&#34;
+
+    try:
+        self.sun
+    except:
+        self.get_all()
+
+    if new_output_directory:
+        self.json_path = os.path.join(
+            new_output_directory, f&#34;{self.name}_kerykeion.json&#34;)
+    else:
+        self.json_path = os.path.join(
+            self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
+
+    json_string = jsonpickle.encode(self)
+    
+    hiden_values = [f&#39; &#34;json_dir&#34;: &#34;{self.json_dir}&#34;,&#39;, f&#39;, &#34;json_path&#34;: &#34;{self.json_path}&#34;&#39;
+                    ]
+
+    for string in hiden_values:
+        json_string = json_string.replace(string, &#34;&#34;)
+
+    if dump:
+        json_string = json.loads(json_string.replace(&#34;&#39;&#34;,&#39;&#34;&#39;))
+        with open(self.json_path, &#34;w&#34;) as file:
+            json.dump(json_string, file,  indent=4,sort_keys=True)
+            print(f&#34;JSON file dumped in {self.json_path}.&#34;)
+    else:
+        pass
+    return json_string</code></pre>
+</details>
+</dd>
+<dt id="kerykeion.main.KrInstance.lunar_phase_calc"><code class="name flex">
+<span>def <span class="ident">lunar_phase_calc</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Function to calculate the lunar phase</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lunar_phase_calc(self):
+    &#34;&#34;&#34; Function to calculate the lunar phase&#34;&#34;&#34;
+
+    # anti-clockwise degrees between sun and moon
+    moon, sun = self.planets_degrees[1], self.planets_degrees[0]
+    degrees_between = moon - sun
+
+    if degrees_between &lt; 0:
+        degrees_between += 360.0
+
+    step = 360.0 / 28.0
+
+    for x in range(28):
+        low = x * step
+        high = (x + 1) * step
+        if degrees_between &gt;= low and degrees_between &lt; high:
+            mphase = x + 1
+
+    sunstep = [0, 30, 40,  50, 60, 70, 80, 90, 120, 130, 140, 150, 160, 170, 180,
+               210, 220, 230, 240, 250, 260, 270, 300, 310, 320, 330, 340, 350]
+
+    for x in range(len(sunstep)):
+
+        low = sunstep[x]
+
+        if x == 27:
+            high = 360
+        else:
+            high = sunstep[x+1]
+        if degrees_between &gt;= low and degrees_between &lt; high:
+            sphase = x + 1
+
+    def moon_emoji(phase):
+        if phase == 1:
+            result = &#34;🌑&#34;
+        elif phase &lt; 7:
+            result = &#34;🌒&#34;
+        elif 7 &lt;= phase &lt;= 9:
+            result = &#34;🌓&#34;
+        elif phase &lt; 14:
+            result = &#34;🌔&#34;
+        elif phase == 14:
+            result = &#34;🌕&#34;
+        elif phase &lt; 20:
+            result = &#34;🌖&#34;
+        elif 20 &lt;= phase &lt;= 22:
+            result = &#34;🌗&#34;
+        elif phase &lt;= 28:
+            result = &#34;🌘&#34;
+        else:
+            result = phase
+
+        return result
+
+    self.lunar_phase = {
+        &#34;degrees_between_s_m&#34;: degrees_between,
+        &#34;moon_phase&#34;: mphase,
+        &#34;sun_phase&#34;: sphase,
+        &#34;moon_emoji&#34;: moon_emoji(mphase)
+    }</code></pre>
+</details>
+</dd>
+<dt id="kerykeion.main.KrInstance.make_lists"><code class="name flex">
+<span>def <span class="ident">make_lists</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_lists(self):
+    self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
+                         self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
+                         self.pluto, self.mean_node, self.true_node]
+
+    self.houses_list = [self.first_house, self.second_house, self.third_house,
+                        self.fourth_house, self.fifth_house, self.sixth_house, self.seventh_house,
+                        self.eighth_house, self.ninth_house, self.tenth_house, self.eleventh_house,
+                        self.twelfth_house]</code></pre>
+</details>
+</dd>
+<dt id="kerykeion.main.KrInstance.planets"><code class="name flex">
+<span>def <span class="ident">planets</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Defines body positon in signs and informations and
+stores them in dictionaries</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def planets(self):
+    &#34;&#34;&#34; Defines body positon in signs and informations and
+     stores them in dictionaries&#34;&#34;&#34;
+    self.planets_degrees = self.planets_deegrees_lister()
+    # stores the planets in signulare dictionaries.
+    self.sun = self.position_calc(self.planets_degrees[0], &#34;Sun&#34;, &#34;name&#34;)
+    self.moon = self.position_calc(self.planets_degrees[1], &#34;Moon&#34;, &#34;name&#34;)
+    self.mercury = self.position_calc(
+        self.planets_degrees[2], &#34;Mercury&#34;, &#34;name&#34;)
+    self.venus = self.position_calc(
+        self.planets_degrees[3], &#34;Venus&#34;, &#34;name&#34;)
+    self.mars = self.position_calc(self.planets_degrees[4], &#34;Mars&#34;, &#34;name&#34;)
+    self.jupiter = self.position_calc(
+        self.planets_degrees[5], &#34;Jupiter&#34;, &#34;name&#34;)
+    self.saturn = self.position_calc(
+        self.planets_degrees[6], &#34;Saturn&#34;, &#34;name&#34;)
+    self.uranus = self.position_calc(
+        self.planets_degrees[7], &#34;Uranus&#34;, &#34;name&#34;)
+    self.neptune = self.position_calc(
+        self.planets_degrees[8], &#34;Neptune&#34;, &#34;name&#34;)
+    self.pluto = self.position_calc(
+        self.planets_degrees[9], &#34;Pluto&#34;, &#34;name&#34;)
+    self.mean_node = self.position_calc(
+        self.planets_degrees[10], &#34;Mean_Node&#34;, &#34;name&#34;)
+    self.true_node = self.position_calc(
+        self.planets_degrees[11], &#34;True_Node&#34;, &#34;name&#34;)</code></pre>
+</details>
+</dd>
+<dt id="kerykeion.main.KrInstance.planets_deegrees_lister"><code class="name flex">
+<span>def <span class="ident">planets_deegrees_lister</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sidereal or tropic mode.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def planets_deegrees_lister(self):
+    &#34;&#34;&#34;Sidereal or tropic mode.&#34;&#34;&#34;
+    self.iflag = swe.FLG_SWIEPH+swe.FLG_SPEED
+
+    if self.zodiactype == &#34;sidereal&#34;:
+        self.iflag += swe.FLG_SIDEREAL
+        mode = &#34;SIDM_FAGAN_BRADLEY&#34;
+        swe.set_sid_mode(getattr(swe, mode))
+
+    &#34;&#34;&#34;Calculates the position of the planets and stores it in a list.&#34;&#34;&#34;
+
+    sun_deg = swe.calc(self.julian_day, 0, self.iflag)[0][0]
+    moon_deg = swe.calc(self.julian_day, 1, self.iflag)[0][0]
+    mercury_deg = swe.calc(self.julian_day, 2, self.iflag)[0][0]
+    venus_deg = swe.calc(self.julian_day, 3, self.iflag)[0][0]
+    mars_deg = swe.calc(self.julian_day, 4, self.iflag)[0][0]
+    jupiter_deg = swe.calc(self.julian_day, 5, self.iflag)[0][0]
+    saturn_deg = swe.calc(self.julian_day, 6, self.iflag)[0][0]
+    uranus_deg = swe.calc(self.julian_day, 7, self.iflag)[0][0]
+    neptune_deg = swe.calc(self.julian_day, 8, self.iflag)[0][0]
+    pluto_deg = swe.calc(self.julian_day, 9, self.iflag)[0][0]
+    mean_node_deg = swe.calc(self.julian_day, 10, self.iflag)[0][0]
+    true_node_deg = swe.calc(self.julian_day, 11, self.iflag)[0][0]
+
+    # print(swe.calc(self.julian_day, 7, self.iflag)[3])
+
+    self.planets_degrees = [sun_deg, moon_deg, mercury_deg,
+                            venus_deg, mars_deg, jupiter_deg, saturn_deg,
+                            uranus_deg, neptune_deg, pluto_deg, mean_node_deg,
+                            true_node_deg]
+
+    return self.planets_degrees</code></pre>
+</details>
+</dd>
+<dt id="kerykeion.main.KrInstance.planets_in_houses"><code class="name flex">
+<span>def <span class="ident">planets_in_houses</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculates the house of the planet and updates
+the planets dictionary.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def planets_in_houses(self):
+    &#34;&#34;&#34;Calculates the house of the planet and updates
+    the planets dictionary.&#34;&#34;&#34;
+    self.planets()
+    self.houses()
+
+    def for_every_planet(planet, planet_deg):
+        &#34;&#34;&#34;Functio to do the calculation.
+        Args: planet dictionary, planet degree&#34;&#34;&#34;
+
+        def point_between(p1, p2, p3):
+            &#34;&#34;&#34;Finds if a point is between two other in a circle
+            args: first point, second point, point in the middle&#34;&#34;&#34;
+            p1_p2 = math.fmod(p2 - p1 + 360, 360)
+            p1_p3 = math.fmod(p3 - p1 + 360, 360)
+            if (p1_p2 &lt;= 180) != (p1_p3 &gt; p1_p2):
+                return True
+            else:
+                return False
+
+        if point_between(self.houses_degree_ut[0], self.houses_degree_ut[1],
+                         planet_deg) == True:
+            planet[&#34;house&#34;] = &#34;1st House&#34;
+        elif point_between(self.houses_degree_ut[1], self.houses_degree_ut[2],
+                           planet_deg) == True:
+            planet[&#34;house&#34;] = &#34;2nd House&#34;
+        elif point_between(self.houses_degree_ut[2], self.houses_degree_ut[3],
+                           planet_deg) == True:
+            planet[&#34;house&#34;] = &#34;3rd House&#34;
+        elif point_between(self.houses_degree_ut[3], self.houses_degree_ut[4],
+                           planet_deg) == True:
+            planet[&#34;house&#34;] = &#34;4th House&#34;
+        elif point_between(self.houses_degree_ut[4], self.houses_degree_ut[5],
+                           planet_deg) == True:
+            planet[&#34;house&#34;] = &#34;5th House&#34;
+        elif point_between(self.houses_degree_ut[5], self.houses_degree_ut[6],
+                           planet_deg) == True:
+            planet[&#34;house&#34;] = &#34;6th House&#34;
+        elif point_between(self.houses_degree_ut[6], self.houses_degree_ut[7],
+                           planet_deg) == True:
+            planet[&#34;house&#34;] = &#34;7th House&#34;
+        elif point_between(self.houses_degree_ut[7], self.houses_degree_ut[8],
+                           planet_deg) == True:
+            planet[&#34;house&#34;] = &#34;8th House&#34;
+        elif point_between(self.houses_degree_ut[8], self.houses_degree_ut[9],
+                           planet_deg) == True:
+            planet[&#34;house&#34;] = &#34;9th House&#34;
+        elif point_between(self.houses_degree_ut[9], self.houses_degree_ut[10],
+                           planet_deg) == True:
+            planet[&#34;house&#34;] = &#34;10th House&#34;
+        elif point_between(self.houses_degree_ut[10], self.houses_degree_ut[11],
+                           planet_deg) == True:
+            planet[&#34;house&#34;] = &#34;11th House&#34;
+        elif point_between(self.houses_degree_ut[11], self.houses_degree_ut[0],
+                           planet_deg) == True:
+            planet[&#34;house&#34;] = &#34;12th House&#34;
+        else:
+            planet[&#34;house&#34;] = &#34;error!&#34;
+
+        return planet
+
+    self.sun = for_every_planet(self.sun, self.planets_degrees[0])
+    self.moon = for_every_planet(self.moon, self.planets_degrees[1])
+    self.mercury = for_every_planet(
+        self.mercury, self.planets_degrees[2])
+    self.venus = for_every_planet(
+        self.venus, self.planets_degrees[3])
+    self.mars = for_every_planet(self.mars, self.planets_degrees[4])
+    self.jupiter = for_every_planet(
+        self.jupiter, self.planets_degrees[5])
+    self.saturn = for_every_planet(
+        self.saturn, self.planets_degrees[6])
+    self.uranus = for_every_planet(
+        self.uranus, self.planets_degrees[7])
+    self.neptune = for_every_planet(
+        self.neptune, self.planets_degrees[8])
+    self.pluto = for_every_planet(
+        self.pluto, self.planets_degrees[9])
+    self.mean_node = for_every_planet(
+        self.mean_node, self.planets_degrees[10])
+    self.true_node = for_every_planet(
+        self.true_node, self.planets_degrees[11])
+
+    planets_list = [self.sun, self.moon, self.mercury, self.venus,
+                    self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
+                    self.pluto, self.mean_node, self.true_node]
+
+    # Check in retrograde or not:
+
+    planets_ret = []
+    for plan in planets_list:
+        planet_number = self.get_number(plan[&#34;name&#34;])
+        if swe.calc(self.julian_day, planet_number, self.iflag)[0][3] &lt; 0:
+            plan.update({&#39;retrograde&#39;: True})
+        else:
+            plan.update({&#39;retrograde&#39;: False})
+        planets_ret.append(plan)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="kerykeion" href="index.html">kerykeion</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="kerykeion.main.debug_print" href="#kerykeion.main.debug_print">debug_print</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="kerykeion.main.KrInstance" href="#kerykeion.main.KrInstance">KrInstance</a></code></h4>
+<ul class="">
+<li><code><a title="kerykeion.main.KrInstance.get_all" href="#kerykeion.main.KrInstance.get_all">get_all</a></code></li>
+<li><code><a title="kerykeion.main.KrInstance.get_jd" href="#kerykeion.main.KrInstance.get_jd">get_jd</a></code></li>
+<li><code><a title="kerykeion.main.KrInstance.get_number" href="#kerykeion.main.KrInstance.get_number">get_number</a></code></li>
+<li><code><a title="kerykeion.main.KrInstance.get_tz" href="#kerykeion.main.KrInstance.get_tz">get_tz</a></code></li>
+<li><code><a title="kerykeion.main.KrInstance.get_utc" href="#kerykeion.main.KrInstance.get_utc">get_utc</a></code></li>
+<li><code><a title="kerykeion.main.KrInstance.houses" href="#kerykeion.main.KrInstance.houses">houses</a></code></li>
+<li><code><a title="kerykeion.main.KrInstance.json_api" href="#kerykeion.main.KrInstance.json_api">json_api</a></code></li>
+<li><code><a title="kerykeion.main.KrInstance.json_dump" href="#kerykeion.main.KrInstance.json_dump">json_dump</a></code></li>
+<li><code><a title="kerykeion.main.KrInstance.lunar_phase_calc" href="#kerykeion.main.KrInstance.lunar_phase_calc">lunar_phase_calc</a></code></li>
+<li><code><a title="kerykeion.main.KrInstance.make_lists" href="#kerykeion.main.KrInstance.make_lists">make_lists</a></code></li>
+<li><code><a title="kerykeion.main.KrInstance.now" href="#kerykeion.main.KrInstance.now">now</a></code></li>
+<li><code><a title="kerykeion.main.KrInstance.planets" href="#kerykeion.main.KrInstance.planets">planets</a></code></li>
+<li><code><a title="kerykeion.main.KrInstance.planets_deegrees_lister" href="#kerykeion.main.KrInstance.planets_deegrees_lister">planets_deegrees_lister</a></code></li>
+<li><code><a title="kerykeion.main.KrInstance.planets_in_houses" href="#kerykeion.main.KrInstance.planets_in_houses">planets_in_houses</a></code></li>
+<li><code><a title="kerykeion.main.KrInstance.position_calc" href="#kerykeion.main.KrInstance.position_calc">position_calc</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
