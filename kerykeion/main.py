@@ -2,14 +2,15 @@
     This is part of Kerykeion (C) 2020 Giacomo Battaglia
 """
 
-import os.path
-from typing import Union
-import swisseph as swe
-from kerykeion.geoname import search
-import pytz
 import datetime
-import math
+from kerykeion.geoname import search
 import logging
+import math
+import os.path
+import pytz
+from sys import exit
+import swisseph as swe
+from typing import Union
 
 # swe.set_ephe_path("/")
 
@@ -69,15 +70,21 @@ class KrInstance():
         self.julian_day = self.get_jd()
         self.zodiactype = "Tropic"
 
+        # Get all the calculations
+        self.get_all()
+
     def __str__(self):
         return f"Astrological data for: {self.name}, {self.utc} UTC"
 
     def get_tz(self):
         """Gets the nerest time zone for the calculation"""
-        logging.info("Conneting to Geonames...")
-        self.city_data = search(self.city, self.nation)[0]
+        logging.debug("Conneting to Geonames...")
+        try:
+            self.city_data = search(self.city, self.nation)[0]
+        except:
+            exit('Error connecting to geonames, try again!')
 
-        logging.info("Geonames done!")
+        logging.debug("Geonames done!")
 
         self.nation = self.city_data["countryCode"]
         self.city_long = float(self.city_data["lng"])
@@ -332,7 +339,7 @@ class KrInstance():
         self.houses()
 
         def for_every_planet(planet, planet_deg):
-            """Functio to do the calculation.
+            """Function to do the calculation.
             Args: planet dictionary, planet degree"""
 
             def point_between(p1, p2, p3):
@@ -415,13 +422,13 @@ class KrInstance():
         # Check in retrograde or not:
 
         planets_ret = []
-        for plan in planets_list:
-            planet_number = self.get_number(plan["name"])
+        for p in planets_list:
+            planet_number = self.get_number(p["name"])
             if swe.calc(self.julian_day, planet_number, self.iflag)[0][3] < 0:
-                plan.update({'retrograde': True})
+                p.update({'retrograde': True})
             else:
-                plan.update({'retrograde': False})
-            planets_ret.append(plan)
+                p.update({'retrograde': False})
+            planets_ret.append(p)
 
     def lunar_phase_calc(self):
         """ Function to calculate the lunar phase"""
@@ -485,6 +492,7 @@ class KrInstance():
         }
 
     def make_lists(self):
+        """ Internal function to generate the lists"""
         self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
                              self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
                              self.pluto, self.mean_node, self.true_node]
@@ -591,6 +599,7 @@ if __name__ == "__main__":
     #     print(p)
     ###############################
     now = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta",
-                     lon=50, lat=50, tz_str="Europe/Rome")
-    now.get_all()
-    print(now.lunar_phase)
+        lon=50, lat=50, tz_str="Europe/Rome")
+
+    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")               
+    print(kanye.sun)
