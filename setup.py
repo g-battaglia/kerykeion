@@ -9,10 +9,10 @@ with open("README.md", "r", encoding="utf8") as fh:
 
 setuptools.setup(
     name="kerykeion",
-    version="2.2.2",
+    version="2.2.4",
     author="Giacomo Battaglia",
     author_email="battaglia.giacomo@yahoo.it",
-    description="An astrology library.",
+    description="A python library for astrology.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/g-battaglia/kerykeion",
@@ -20,9 +20,9 @@ setuptools.setup(
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License (GPL)",
-        "Operating System :: OS Independent",
+        "Operating Systemx :: OS Independent",
     ],
     include_package_data=True,
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     install_requires=['pyswisseph', 'pytz', 'jsonpickle'],
 )
