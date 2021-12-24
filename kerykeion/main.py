@@ -27,12 +27,12 @@ def debug_print(str):
 
 class KrInstance():
     """
-    Calculates all the astrological informations, the coordinates,
+    Calculates all the astrological information, the coordinates,
     it's utc and julian day and returns an object with all that data.
     Args: name, year, month, day, hours, minuts, city,
     initial of the nation (Ex: "IT"),
     longitude, latitude and the timezone string are set to false so they will
-    be calulated, if you want you can set them.
+    be calculated, if you want you can set them.
     Default values are set for now at greenwich time.
 
     """
@@ -85,7 +85,8 @@ class KrInstance():
         try:
             self.city_data = search(self.city, self.nation)[0]
         except:
-            exit('Error connecting to geonames, try again!')
+            logging.error('Error connecting to geonames, try again!')
+            exit()
 
         logging.debug("Geonames done!")
 
@@ -98,11 +99,11 @@ class KrInstance():
 
         if self.city_lat > 66.0:
             self.city_lat = 66.0
-            print("polar circle override for houses, using 66 degrees")
+            logging.info('Polar circle override for houses, using 66 degrees')
 
         elif self.city_lat < -66.0:
             self.city_lat = -66.0
-            print("polar circle override for houses, using -66 degrees")
+            logging.info('Polar circle override for houses, using -66 degrees')
 
         return self.city_tz
 
@@ -516,7 +517,8 @@ class KrInstance():
     # Utility Functions:
 
     def json_dump(self, dump=True, new_output_directory=None):
-        import jsonpickle, json
+        import jsonpickle
+        import json
 
         """
         Dumps the Kerykeion object to a json file located in the home folder.
@@ -536,7 +538,7 @@ class KrInstance():
                 self.json_dir, f"{self.name}_kerykeion.json")
 
         json_string = jsonpickle.encode(self)
-        
+
         hiden_values = [f' "json_dir": "{self.json_dir}",', f', "json_path": "{self.json_path}"'
                         ]
 
@@ -544,10 +546,10 @@ class KrInstance():
             json_string = json_string.replace(string, "")
 
         if dump:
-            json_string = json.loads(json_string.replace("'",'"'))
+            json_string = json.loads(json_string.replace("'", '"'))
             with open(self.json_path, "w") as file:
-                json.dump(json_string, file,  indent=4,sort_keys=True)
-                print(f"JSON file dumped in {self.json_path}.")
+                json.dump(json_string, file,  indent=4, sort_keys=True)
+                logging.info(f"JSON file dumped in {self.json_path}.")
         else:
             pass
         return json_string
@@ -571,7 +573,7 @@ class KrInstance():
                 self.json_dir, f"{self.name}_kerykeion.json")
             with open(json_path, "w") as file:
                 file.write(json_obj)
-                print(f"JSON file dumped in {json_path}.")
+                logging.info(f"JSON file dumped in {json_path}.")
 
         return json_obj
 
@@ -602,7 +604,7 @@ if __name__ == "__main__":
     #     print(p)
     ###############################
     now = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta",
-        lon=50, lat=50, tz_str="Europe/Rome")
+                     lon=50, lat=50, tz_str="Europe/Rome")
 
-    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")               
+    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
     print(kanye.sun)

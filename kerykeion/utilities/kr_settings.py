@@ -1,24 +1,87 @@
 # Label settings
+language_settings = {
+    'EN': {
+        "cusp": "Cusp",
+        "longitude": "Longitude",
+        "latitude": "Latitude",
+        "north": "North",
+        "east": "East",
+        "south": "South",
+        "west": "West",
+        "fire": "Fire",
+        "earth": "Earth",
+        "air": "Air",
+        "water": "Water",
+        "&": "and",
+        "transits": "Transits for",
+        "type": "Type",
+        "aspects": "Couple aspects",
+        "planets_and_house": "Planets and houses for",
+        "transit_name": "Here and now",
+        "lunar_phase": "Lunar phase",
+        "day": "Day",
 
-english = {
-    "cusp": "Cusp",
-    "longitude": "Longitude",
-    "latitude": "Latitude",
-    "north": "North",
-    "east": "East",
-    "south": "South",
-    "west": "West",
-    "fire": "Fire",
-    "earth": "Earth",
-    "air": "Air",
-    "water": "Water",
-    "&": "and",
-    "transits": "Transits for",
-    "type": "Type",
-    "aspects": "Couple aspects",
-    "planets_and_house": "Planets and houses for",
-    "transit_name": "Here and now"
+        "planets": {
+            "Sun": "Sun",
+            "Moon": "Moon",
+            "Mercury": "Mercury",
+            "Venus": "Venus",
+            "Mars": "Mars",
+            "Jupiter": "Jupiter",
+            "Saturn": "Saturn",
+            "Uranus": "Uranus",
+            "Neptune": "Neptune",
+            "Pluto": "Pluto",
+            "Asc": "Asc",
+            "Mc": "Mc",
+            "Dsc": "Dsc",
+            "Ic": "Ic",
+            "North_Node": "North Node",
+            "Mean_Node": "Mean Node"
+        }
+    },
 
+    'IT': {
+        "cusp": "Cuspide",
+        "longitude": "Longitudine",
+        "latitude": "Latitudine",
+        "north": "Nord",
+        "east": "Est",
+        "south": "Sud",
+        "west": "Ovest",
+        "fire": "Fuoco",
+        "earth": "Terra",
+        "air": "Aria",
+        "water": "Acqua",
+        "&": "e",
+        "transits": "Transiti per",
+        "type": "Tipo",
+        "aspects": "Aspetti di coppia",
+        "planets_and_house": "Pianeti e case per",
+        "transit_name": "Qui ed ora",
+        "lunar_phase": "Fase lunare",
+        "day": "Giorno",
+
+
+        "planets": {
+            "Sun": "Sole",
+            "Moon": "Luna",
+            "Mercury": "Mercurio",
+            "Venus": "Venere",
+            "Mars": "Marte",
+            "Jupiter": "Giove",
+            "Saturn": "Saturno",
+            "Uranus": "Urano",
+            "Neptune": "Nettuno",
+            "Pluto": "Plutone",
+            "Asc": "Asc",
+            "Mc": "Mc",
+            "Dsc": "Dsc",
+            "Ic": "Ic",
+            "North_Node": "Nodo Nord",
+            "Mean_Node": "Mean Node"
+        }
+    }
 }
 
 
@@ -307,8 +370,8 @@ planets = [
         "visible": 0,
         "element_points": 20,
         "zodiac_relation": "-1",
-        "label": "North Node",
-        "label_short": "Node"
+        "label": "North_Node",
+        "label_short": "North_Node"
     },
     {
         "id": 11,
