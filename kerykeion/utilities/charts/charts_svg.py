@@ -58,8 +58,6 @@ class MakeSvgInstance:
         else:
             self.output_directory = self.homedir
 
-        self.template = False
-
         # Template types:
         if template_type == "basic":
             self.xml_svg = os.path.join(DATADIR, 'templates/basic.xml')
@@ -260,7 +258,8 @@ class MakeSvgInstance:
 
         # get color configuration
 
-        return
+        # Immediately generate template.
+        self.template = self.makeTemplate()
 
     def makeTemplate(self, printing=None):
         # self.type = "Transit"
@@ -495,17 +494,17 @@ class MakeSvgInstance:
         # read template
         with open(self.xml_svg, "r") as output_file:
             f = open(self.xml_svg)
-            self.template = Template(f.read()).substitute(td)
+            template = Template(f.read()).substitute(td)
 
         # return filename
 
-        return self.template
+        return template
 
     def makeSVG(self):
         """Prints out the SVG file in the specifide folder"""
 
         if not (self.template):
-            self.makeTemplate()
+            self.template = self.makeTemplate()
 
         self.chartname = os.path.join(
             self.output_directory, f'{self.name}{self.type}Chart.svg')

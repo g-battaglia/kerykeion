@@ -14,15 +14,12 @@ from typing import Union
 
 # swe.set_ephe_path("/")
 
-DEBUG = False
-
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 
-
-def debug_print(str):
-    if DEBUG:
-        print('%s' % str)
+logger = logging.getLogger('Kerykeion')
 
 
 class KrInstance():
@@ -52,7 +49,7 @@ class KrInstance():
         lat: Union[int, float] = False,
         tz_str: Union[str, bool] = False
     ):
-        logging.info('Starting Kerykeion')
+        logger.debug('Starting Kerykeion')
         self.name = name
         self.year = year
         self.month = month
@@ -74,21 +71,21 @@ class KrInstance():
         self.get_all()
 
     def __str__(self):
-        return f"Astrological data for: {self.name}, {self.utc} UTC"
+        return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.city_lat}, Lon {self.city_long}"
 
     def __repr__(self) -> str:
-        return f"Astrological data for: {self.name}, {self.utc} UTC"
+        return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.city_lat}, Lon {self.city_long}"
 
     def get_tz(self):
-        """Gets the nerest time zone for the calculation"""
-        logging.debug("Conneting to Geonames...")
+        """Gets the nearest time zone for the calculation"""
+        logger.debug("Conneting to Geonames...")
         try:
             self.city_data = search(self.city, self.nation)[0]
         except:
-            logging.error('Error connecting to geonames, try again!')
+            logger.error('Error connecting to geonames, try again!')
             exit()
 
-        logging.debug("Geonames done!")
+        logger.debug("Geonames done!")
 
         self.nation = self.city_data["countryCode"]
         self.city_long = float(self.city_data["lng"])
@@ -99,11 +96,11 @@ class KrInstance():
 
         if self.city_lat > 66.0:
             self.city_lat = 66.0
-            logging.info('Polar circle override for houses, using 66 degrees')
+            logger.info('Polar circle override for houses, using 66 degrees')
 
         elif self.city_lat < -66.0:
             self.city_lat = -66.0
-            logging.info('Polar circle override for houses, using -66 degrees')
+            logger.info('Polar circle override for houses, using -66 degrees')
 
         return self.city_tz
 
@@ -516,13 +513,14 @@ class KrInstance():
 
     # Utility Functions:
 
-    def json_dump(self, dump=True, new_output_directory=None):
+    def dangerous_json_dump(self, dump=True, new_output_directory=None):
         import jsonpickle
         import json
 
         """
         Dumps the Kerykeion object to a json file located in the home folder.
-        This json file allows the object to be recreated with jsonpickle
+        This json file allows the object to be recreated with jsonpickle.
+        It's dangerous since it contains local system information.
         """
 
         try:
@@ -549,31 +547,50 @@ class KrInstance():
             json_string = json.loads(json_string.replace("'", '"'))
             with open(self.json_path, "w") as file:
                 json.dump(json_string, file,  indent=4, sort_keys=True)
-                logging.info(f"JSON file dumped in {self.json_path}.")
+                logger.info(f"JSON file dumped in {self.json_path}.")
         else:
             pass
         return json_string
 
-    def json_api(self, dump=False):
+    def json_dump(self, dump=False, destination_folder=False):
         from json import dumps
+
+        """
+        Dumps the Kerykeion object to a json string foramt,
+        if dump=True also dumps to file located in destination
+        or the home folder.
+        """
 
         if not self.sun:
             self.get_all()
 
         obj_dict = self.__dict__.copy()
-        keys_to_remove = ["utc", "iflag", "json_dir", "planets_list",
-                          "houses_list", "planets_degrees", "houses_degree_ut"]
+        keys_to_remove = [
+            "utc",
+            "iflag",
+            "json_dir",
+            "planets_list",
+            "houses_list",
+            "planets_degrees",
+            "houses_degree_ut"
+        ]
+
         for key in keys_to_remove:
             obj_dict.pop(key)
 
         json_obj = dumps(obj_dict)
 
         if dump:
-            json_path = os.path.join(
-                self.json_dir, f"{self.name}_kerykeion.json")
+            if destination_folder:
+                json_path = os.path.join(
+                    destination_folder, f"{self.name}_kerykeion.json")
+            else:
+                json_path = os.path.join(
+                    self.json_dir, f"{self.name}_kerykeion.json")
+
             with open(json_path, "w") as file:
                 file.write(json_obj)
-                logging.info(f"JSON file dumped in {json_path}.")
+                logger.info(f"JSON file dumped in {json_path}.")
 
         return json_obj
 
@@ -607,4 +624,4 @@ if __name__ == "__main__":
                      lon=50, lat=50, tz_str="Europe/Rome")
 
     kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
-    print(kanye.sun)
+    print(kanye)
