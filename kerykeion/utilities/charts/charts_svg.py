@@ -379,7 +379,7 @@ class MakeSvgInstance:
         if self.type == "Composite" or self.name == "Transit":
             td['stringName'] = f"{self.name}:"
         else:
-            td['stringName'] = "Info:"
+            td['stringName'] = f'{self.language_settings["info"]}:'
 
         # bottom left
 
