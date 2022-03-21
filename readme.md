@@ -1,3 +1,12 @@
+<p align="center">
+    <a href="https://github.com/g-battaglia/kerykeion"><img src="https://img.shields.io/badge/status-updating-brightgreen.svg"></a>
+    <a href="https://github.com/python/cpython"><img src="https://img.shields.io/badge/Python-3.9-FF1493.svg"></a>
+    <a href="https://github.com/g-battaglia/kerykeion/graphs/contributors"><img src="https://img.shields.io/github/contributors/BEPb/BEPb?color=blue"></a>
+    <a href="https://github.com/g-battaglia/kerykeion/stargazers"><img src="https://img.shields.io/github/stars/BEPb/BEPb.svg?logo=github"></a>
+    <a href="https://github.com/g-battaglia/kerykeion/network/members"><img src="https://img.shields.io/github/forks/BEPb/BEPb.svg?color=blue&logo=github"></a>
+    <img src="https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion" alt="visitors"/>   
+</p>
+
 # Kerykeion
 
 Kerykeion is a python library for Astrology. 
