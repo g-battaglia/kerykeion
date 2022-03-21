@@ -1,23 +1,20 @@
-<p align="center">
-    <a href="https://github.com/g-battaglia/kerykeion"><img src="https://img.shields.io/badge/status-updating-brightgreen.svg"></a>
-    
-    <a href="https://github.com/python/cpython"><img src="https://img.shields.io/badge/Python-3.9-FF1493.svg"></a>
-    <a href="https://github.com/g-battaglia/kerykeion/graphs/contributors"><img src="https://img.shields.io/github/contributors/BEPb/BEPb?color=blue"></a>
-    <a href="https://github.com/g-battaglia/kerykeion/stargazers"><img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github"></a>
-    <a href="https://github.com/g-battaglia/kerykeion/network/members"><img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github""></a>
-    <img src="https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion" alt="visitors"/>   
-        <img src="https://img.shields.io/github/license/g-battaglia/kerykeion" alt="visitors"/> 
-</p>
+<div align="center">
+    <img src="https://img.shields.io/badge/Python-3.9-FF1493.svg" alt="python version">
+    <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue" alt="contributors">
+    <img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="stars">
+    <img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="forks">
+    <img src="https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion     alt="visitors"/>
+</div>
 
 # Kerykeion
 
-Kerykeion is a python library for Astrology. 
+Kerykeion is a python library for Astrology.
 It can calculate all the planet and house position,
 also it can calculate the aspects of a single persone or between two, you can set how many planets you
 need in the settings in the utility module.
-It also can generrate an SVG of a birthchart, a composite chart or a transit chart.
+It also can generate an SVG of a birthchart, a composite chart or a transit chart.
 
-Here some exemples:
+Here some examples:
 
 ```python
 
@@ -42,6 +39,7 @@ Here some exemples:
 'Water'
 
 ```
+
 ## Generate a SVG of the birthchart:
 
 ```
@@ -67,6 +65,7 @@ SVG Generated Correctly
 ![alt text](http://centuryboy.altervista.org/JackComposite_Chart.svg)
 
 # Example of a possible text output with information:
+
 ```
 
 
@@ -137,8 +136,6 @@ Generating kerykeion object for Jane...
 {'p1_name': 'Sun', 'p1_abs_pos': 84.17867971515636, 'p2_name': 'Sun', 'p2_abs_pos': 211.90472999502984, 'aspect': 'trine', 'orbit': 7.726050279873476, 'aspect_degrees': 120, 'color': '#36d100', 'aid': 6, 'diff': 127.72605027987348, 'p1': 0, 'p2': 0}
 
 ```
-
-
 
 ## Documentation
 
