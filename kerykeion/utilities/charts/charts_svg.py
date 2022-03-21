@@ -379,7 +379,7 @@ class MakeSvgInstance:
         if self.type == "Composite" or self.name == "Transit":
             td['stringName'] = f"{self.name}:"
         else:
-            td['stringName'] = "Info:"
+            td['stringName'] = f'{self.language_settings["info"]}:'
 
         # bottom left
 
@@ -509,7 +509,7 @@ class MakeSvgInstance:
         self.chartname = os.path.join(
             self.output_directory, f'{self.name}{self.type}Chart.svg')
 
-        with open(self.chartname, "w") as output_file:
+        with open(self.chartname, "w", encoding='utf-8') as output_file:
             output_file.write(self.template)
 
         return print(f"SVG Generated Correctly in: {self.output_directory}")
