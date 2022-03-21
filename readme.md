@@ -1,6 +1,6 @@
 <div align="center">
     <img src="https://img.shields.io/badge/Python-3.9-FF1493.svg" alt="python version">
-    <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue" alt="contributors">
+    <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
     <img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="stars">
     <img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="forks">
     <img src="https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion" alt="visitors"/>
