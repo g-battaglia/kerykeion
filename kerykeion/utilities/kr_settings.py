@@ -1,6 +1,7 @@
 # Label settings
 language_settings = {
     'EN': {
+        "info": "Info",
         "cusp": "Cusp",
         "longitude": "Longitude",
         "latitude": "Latitude",
@@ -42,6 +43,7 @@ language_settings = {
     },
 
     'IT': {
+        "info": "Info",
         "cusp": "Cuspide",
         "longitude": "Longitudine",
         "latitude": "Latitudine",
