@@ -4,7 +4,7 @@
     <a href="https://github.com/g-battaglia/kerykeion/graphs/contributors"><img src="https://img.shields.io/github/contributors/BEPb/BEPb?color=blue"></a>
     <a href="https://github.com/g-battaglia/kerykeion/stargazers"><img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github"></a>
     <a href="https://github.com/g-battaglia/kerykeion/network/members"><img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github""></a>
-    <img src="https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion?logo=github"" alt="visitors"/>   
+    <img src="https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion" alt="visitors"/>   
 </p>
 
 # Kerykeion
