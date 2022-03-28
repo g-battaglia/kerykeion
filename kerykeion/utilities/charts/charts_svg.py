@@ -512,7 +512,7 @@ class MakeSvgInstance:
         with open(self.chartname, "w", encoding='utf-8') as output_file:
             output_file.write(self.template)
 
-        return print(f"SVG Generated Correctly in: {self.output_directory}")
+        return print(f"SVG Generated Correctly in: {self.chartname}")
 
     # draw transit ring
     def transitRing(self, r):
