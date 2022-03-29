@@ -20,23 +20,23 @@ Here some examples:
 ```python
 
 # Import the main class for creating a kerykeion instance:
->>> from kerykeion import KrInstance
+from kerykeion import KrInstance
 
 # Create a kerykeion instance:
 # Args: Name, year, month, day, hour, minuts, city, nation(optional)
->>> kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
 
 # Get the information about the sun in the chart:
 # (The position of the planets always starts at 0)
->>> kanye.sun
+kanye.sun
 {'name': 'Sun', 'quality': 'Mutable', 'element': 'Air', 'sign': 'Gem', 'sign_num': 2, 'pos': 17.598992059774275, 'abs_pos': 77.59899205977428, 'emoji': '♊️', 'house': '12th House', 'retrograde': False}
 
 # Get informations about the first house:
->>> kanye.first_house
+kanye.first_house
 {'name': '1', 'quality': 'Cardinal', 'element': 'Water', 'sign': 'Can', 'sign_num': 3, 'pos': 17.995779673209114, 'abs_pos': 107.99577967320911, 'emoji': '♋️'}
 
 # Get element of the moon sign:
->>> kanye.moon.get("element")
+kanye.moon.get("element")
 'Water'
 
 ```
@@ -65,6 +65,8 @@ SVG Generated Correctly
 
 ![alt text](http://centuryboy.altervista.org/JackComposite_Chart.svg)
 
+- You can set the planets that you want to see in the chart editing the setting in the file 
+kr_settings.py
 # Example of a possible text output with information:
 
 ```
