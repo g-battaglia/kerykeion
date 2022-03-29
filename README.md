@@ -1,3 +1,4 @@
+# Kerykeion
 <div align="center">
     <img src="https://img.shields.io/badge/Python-3.9-FF1493.svg" alt="python version">
     <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
@@ -6,8 +7,8 @@
     <img src="https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion" alt="visitors"/>
 </div>
 
-# Kerykeion
 
+---
 Kerykeion is a python library for Astrology.
 It can calculate all the planet and house position,
 also it can calculate the aspects of a single persone or between two, you can set how many planets you
