@@ -1,4 +1,4 @@
-<h1> Kerykeion </h1>
+# Kerykeion
 <div align="center">
     <img src="https://img.shields.io/badge/Python-3.9-FF1493.svg" alt="python version">
     <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
