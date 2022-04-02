@@ -41,6 +41,7 @@ class MakeSvgInstance:
         # Directories:
         DATADIR = Path(__file__).parent
         self.homedir = Path.home()
+    
 
         if new_output_directory:
             self.output_directory = Path(new_output_directory)
@@ -58,12 +59,13 @@ class MakeSvgInstance:
         self.full_width = 1200
 
         # Settings file:
-        if new_settings_file:
-            settings_file = Path(new_settings_file)
+        if not new_settings_file:
+            self.settings_file = DATADIR.parent / 'kr.config.json'
         else:
-            settings_file = DATADIR.parent / 'kr.config.json'
+            self.settings_file = Path(new_settings_file)
+            
 
-        self.parse_json_settings(settings_file, lang)
+        self.parse_json_settings(self.settings_file, lang)
         self.type = chart_type
 
         # Kerykeion instance
@@ -116,7 +118,7 @@ class MakeSvgInstance:
             self.houses_sign_graph.append(h['sign_num'])
 
         if self.type == "Natal":
-            natal_aspects_instance = kr.utilities.NatalAspects(self.user)
+            natal_aspects_instance = kr.utilities.NatalAspects(self.user, new_settings_file=self.settings_file)
             self.aspects_list = natal_aspects_instance.get_aspects()
 
         if self.type == "Transit" or self.type == "Composite":
@@ -1339,7 +1341,9 @@ class MakeSvgInstance:
         out = ""
 
         self.aspects_list = kr.utilities.CompositeAspects(
-            self.user, self.t_user).get_aspects()
+            self.user, self.t_user, new_settings_file=self.settings_file
+            ).get_aspects()
+
         for element in self.aspects_list:
             out += self.drawAspect(r, ar, element['p1_abs_pos'], element['p2_abs_pos'],
                                    self.colors_settings[f"aspect_{element['aspect_degrees']}"])

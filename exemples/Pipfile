@@ -12,4 +12,4 @@ kerykeion = {editable = true, path = "./.."}
 python_version = "3.9"
 
 [scripts]
-chart = "python create_chart.py"
+chart = "python eg_create_chart.py"

@@ -1,4 +1,3 @@
-from calendar import c
 import kerykeion as kr
 from kerykeion.utilities.charts import MakeSvgInstance
 from pathlib import Path
