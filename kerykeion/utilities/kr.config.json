@@ -402,7 +402,7 @@
       "id": 10,
       "name": "Mean_Node",
       "color": "#4c1541",
-      "visible": 1,
+      "visible": 0,
       "element_points": 20,
       "zodiac_relation": "-1",
       "label": "North_Node",
@@ -410,13 +410,13 @@
     },
     {
       "id": 11,
-      "name": "True_Node",
+      "name": "Mean_Node",
       "color": "#4c1541",
       "visible": 0,
       "element_points": 0,
       "zodiac_relation": "-1",
-      "label": "True_Node",
-      "label_short": "True_Node"
+      "label": "Mean_Node",
+      "label_short": "Mean_Node"
     },
     {
       "id": 12,
@@ -442,7 +442,7 @@
       "id": 14,
       "name": "7",
       "color": "#0000FF",
-      "visible": 1,
+      "visible": 0,
       "element_points": 0,
       "zodiac_relation": "-1",
       "label": "Dsc",
@@ -452,7 +452,7 @@
       "id": 15,
       "name": "4",
       "color": "#000000",
-      "visible": 1,
+      "visible": 0,
       "element_points": 0,
       "zodiac_relation": "-1",
       "label": "Ic",
