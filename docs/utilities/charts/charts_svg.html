@@ -32,23 +32,14 @@
 # * TODO: Change the label for language in 2 objects, one for IT and one for ENG.
 # * Then change the label for planets like this: planet[&#34;label&#34;] =&gt; planet[language]
 
-# basics
-# import settings as chart_settings
-import kerykeion.utilities.kr_settings as chart_settings
-
-import math
-import os.path
 import datetime
 import json
-import pytz
 import kerykeion as kr
-
-# template processing
+import math
+import pytz
+from pathlib import Path
 from string import Template
-
-# minidom parser
-from xml.dom.minidom import parseString
-
+from typing import Union
 
 # calculation and svg drawing class
 class MakeSvgInstance:
@@ -59,42 +50,55 @@ class MakeSvgInstance:
     There are 2 templates, the extended (default) which has all the
     information and the basic, which has just the chart.
 
-    Args: First kerykeion object,
-    Chart type (Natal, Transit, Composite, Default: Type=&#34;Natal&#34;),
-    second kerykeion object (Not required if type is Natal)
-
-
+    Parameters:
+        - first_obj: First kerykeion object
+        - chart_type: Natal, Transit, Composite (Default: Type=&#34;Natal&#34;)
+        - second_obj: Second kerykeion object (Not required if type is Natal)
+        - new_output_directory: Set the output directory (default: output_directory)
+        - template_type: set the template type to include or not the aspects grid, default: extended)
+        - lang: language settings (default: &#34;EN&#34;)
+        - new_settings_file: Set the settings file (default: kr.config.json)
     &#34;&#34;&#34;
 
-    def __init__(self, first_obj, chart_type=&#34;Natal&#34;, second_obj=None, new_output_directory=None, template_type=&#34;extended&#34;):
-    
+    def __init__(
+            self,
+            first_obj: kr.KrInstance,
+            chart_type: str = &#34;Natal&#34;,
+            second_obj: Union[kr.KrInstance, None] = None,
+            new_output_directory: Union[str, None] = None,
+            template_type: str = &#34;extended&#34;,
+            lang: str = &#34;EN&#34;,
+            new_settings_file: Union[str, Path, None] = None,
+    ):
+
         # Directories:
-        DATADIR = os.path.dirname(__file__)
-        self.homedir = os.path.expanduser(&#34;~&#34;)
-        
+        DATADIR = Path(__file__).parent
+        self.homedir = Path.home()
+    
+
         if new_output_directory:
-            self.output_directory = new_output_directory
+            self.output_directory = Path(new_output_directory)
         else:
             self.output_directory = self.homedir
-            
-        self.template = False
-        
+
         # Template types:
         if template_type == &#34;basic&#34;:
-            self.xml_svg = os.path.join(DATADIR, &#39;templates/basic.xml&#39;)
+            self.xml_svg = DATADIR / &#39;templates/basic.xml&#39;
         else:
-            self.xml_svg == os.path.join(DATADIR, &#39;templates/extended.xml&#39;)
+            self.xml_svg = DATADIR / &#39;templates/extended.xml&#39;
 
         # SVG Width
         self.natal_width = 772.2
         self.full_width = 1200
 
-        # Settings file
+        # Settings file:
+        if not new_settings_file:
+            self.settings_file = DATADIR.parent / &#39;kr.config.json&#39;
+        else:
+            self.settings_file = Path(new_settings_file)
+            
 
-        self.language_settings = chart_settings.english
-        self.colors_settings = chart_settings.colors
-        self.planets_settings = chart_settings.planets
-        self.aspects_settings = chart_settings.aspects
+        self.parse_json_settings(self.settings_file, lang)
         self.type = chart_type
 
         # Kerykeion instance
@@ -147,7 +151,7 @@ class MakeSvgInstance:
             self.houses_sign_graph.append(h[&#39;sign_num&#39;])
 
         if self.type == &#34;Natal&#34;:
-            natal_aspects_instance = kr.utilities.NatalAspects(self.user)
+            natal_aspects_instance = kr.utilities.NatalAspects(self.user, new_settings_file=self.settings_file)
             self.aspects_list = natal_aspects_instance.get_aspects()
 
         if self.type == &#34;Transit&#34; or self.type == &#34;Composite&#34;:
@@ -278,8 +282,24 @@ class MakeSvgInstance:
 
         # get color configuration
 
-        return
+        # Immediately generate template.
+        self.template = self.makeTemplate()
 
+
+    def parse_json_settings(self, settings_file, lang: str):
+        &#34;&#34;&#34;
+        Parse the settings file.
+        &#34;&#34;&#34;
+        with open(settings_file, &#39;r&#39;) as f:
+            settings = json.load(f)
+
+        self.language_settings = settings[&#39;language_settings&#39;].get(
+            lang, &#34;EN&#34;)
+        self.colors_settings = settings[&#39;colors&#39;]
+        self.planets_settings = settings[&#39;planets&#39;]
+        self.aspects_settings = settings[&#39;aspects&#39;]
+
+        
     def makeTemplate(self, printing=None):
         # self.type = &#34;Transit&#34;
         # empty element points
@@ -398,14 +418,13 @@ class MakeSvgInstance:
         if self.type == &#34;Composite&#34; or self.name == &#34;Transit&#34;:
             td[&#39;stringName&#39;] = f&#34;{self.name}:&#34;
         else:
-            td[&#39;stringName&#39;] = &#34;Info:&#34;
+            td[&#39;stringName&#39;] = f&#39;{self.language_settings[&#34;info&#34;]}:&#39;
 
         # bottom left
 
         td[&#39;bottomLeft1&#39;] = &#39;&#39;
         td[&#39;bottomLeft2&#39;] = &#39;&#39;
-        td[&#39;bottomLeft3&#39;] = &#39;%s: %s&#39; % ((&#34;Lunar Phase&#34;), self.dec2deg(
-            self.lunar_phase[&#39;degrees_between_s_m&#39;]))
+        td[&#39;bottomLeft3&#39;] = f&#39;{self.language_settings.get(&#34;lunar_phase&#34;, &#34;Lunar Phase&#34;)}: {self.language_settings.get(&#34;day&#34;, &#34;Day&#34;)} {self.lunar_phase.get(&#34;moon_phase&#34;, &#34;&#34;)}&#39;
         td[&#39;bottomLeft4&#39;] = &#39;&#39;
 
         # lunar phase
@@ -514,25 +533,24 @@ class MakeSvgInstance:
         # read template
         with open(self.xml_svg, &#34;r&#34;) as output_file:
             f = open(self.xml_svg)
-            self.template = Template(f.read()).substitute(td)
+            template = Template(f.read()).substitute(td)
 
         # return filename
 
-        return self.template
+        return template
 
     def makeSVG(self):
         &#34;&#34;&#34;Prints out the SVG file in the specifide folder&#34;&#34;&#34;
 
         if not (self.template):
-            self.makeTemplate()
+            self.template = self.makeTemplate()
 
-        self.chartname = os.path.join(
-            self.output_directory, f&#39;{self.name}{self.type}Chart.svg&#39;)
+        self.chartname = self.output_directory / f&#39;{self.name}{self.type}Chart.svg&#39;
 
-        with open(self.chartname, &#34;w&#34;) as output_file:
+        with open(self.chartname, &#34;w&#34;, encoding=&#39;utf-8&#39;) as output_file:
             output_file.write(self.template)
 
-        return print(f&#34;SVG Generated Correctly in: {self.output_directory}&#34;)
+        return print(f&#34;SVG Generated Correctly in: {self.chartname}&#34;)
 
     # draw transit ring
     def transitRing(self, r):
@@ -1309,8 +1327,8 @@ class MakeSvgInstance:
     def makeAspects(self, r, ar):
         out = &#34;&#34;
         for element in self.aspects_list:
-            out = out + self.drawAspect(r, ar, element[&#39;p1_abs_pos&#39;], element[&#39;p2_abs_pos&#39;],
-                                        self.colors_settings[f&#34;aspect_{element[&#39;aspect_degrees&#39;]}&#34;])
+            out += self.drawAspect(r, ar, element[&#39;p1_abs_pos&#39;], element[&#39;p2_abs_pos&#39;],
+                                   self.colors_settings[f&#34;aspect_{element[&#39;aspect_degrees&#39;]}&#34;])
 
         return out
 
@@ -1328,9 +1346,9 @@ class MakeSvgInstance:
         for a in revr:
             counter += 1
             if self.planets_settings[a][&#39;visible&#39;] == 1:
-                out = out + &#39;&lt;rect x=&#34;&#39;+str(xindent)+&#39;&#34; y=&#34;&#39;+str(yindent)+&#39;&#34; width=&#34;&#39;+str(
+                out += &#39;&lt;rect x=&#34;&#39;+str(xindent)+&#39;&#34; y=&#34;&#39;+str(yindent)+&#39;&#34; width=&#34;&#39;+str(
                     box)+&#39;&#34; height=&#34;&#39;+str(box)+&#39;&#34; style=&#34;&#39;+style+&#39;&#34;/&gt;\n&#39;
-                out = out + &#39;&lt;use transform=&#34;scale(0.4)&#34; x=&#34;&#39;+str((xindent+2)*2.5)+&#39;&#34; y=&#34;&#39;+str(
+                out += &#39;&lt;use transform=&#34;scale(0.4)&#34; x=&#34;&#39;+str((xindent+2)*2.5)+&#39;&#34; y=&#34;&#39;+str(
                     (yindent+1)*2.5)+&#39;&#34; xlink:href=&#34;#&#39;+self.planets_settings[a][&#39;name&#39;]+&#39;&#34; /&gt;\n&#39;
                 xindent = xindent + box
                 yindent = yindent - box
@@ -1340,12 +1358,12 @@ class MakeSvgInstance:
                 yorb = yindent + box
                 for b in revr2:
                     if self.planets_settings[b][&#39;visible&#39;] == 1:
-                        out = out + &#39;&lt;rect x=&#34;&#39;+str(xorb)+&#39;&#34; y=&#34;&#39;+str(yorb)+&#39;&#34; width=&#34;&#39;+str(
+                        out += &#39;&lt;rect x=&#34;&#39;+str(xorb)+&#39;&#34; y=&#34;&#39;+str(yorb)+&#39;&#34; width=&#34;&#39;+str(
                             box)+&#39;&#34; height=&#34;&#39;+str(box)+&#39;&#34; style=&#34;&#39;+style+&#39;&#34;/&gt;\n&#39;
                         xorb = xorb+box
                         for element in self.aspects_list:
                             if (element[&#39;p1&#39;] == a and element[&#39;p2&#39;] == b) or (element[&#39;p1&#39;] == b and element[&#39;p2&#39;] == a):
-                                out = out + &#39;&lt;use  x=&#34;&#39;+str(xorb-box+1)+&#39;&#34; y=&#34;&#39;+str(
+                                out += &#39;&lt;use  x=&#34;&#39;+str(xorb-box+1)+&#39;&#34; y=&#34;&#39;+str(
                                     yorb+1)+&#39;&#34; xlink:href=&#34;#orb&#39;+str(element[&#39;aspect_degrees&#39;])+&#39;&#34; /&gt;\n&#39;
 
         return out
@@ -1356,10 +1374,12 @@ class MakeSvgInstance:
         out = &#34;&#34;
 
         self.aspects_list = kr.utilities.CompositeAspects(
-            self.user, self.t_user).get_aspects()
+            self.user, self.t_user, new_settings_file=self.settings_file
+            ).get_aspects()
+
         for element in self.aspects_list:
-            out = out + self.drawAspect(r, ar, element[&#39;p1_abs_pos&#39;], element[&#39;p2_abs_pos&#39;],
-                                        self.colors_settings[f&#34;aspect_{element[&#39;aspect_degrees&#39;]}&#34;])
+            out += self.drawAspect(r, ar, element[&#39;p1_abs_pos&#39;], element[&#39;p2_abs_pos&#39;],
+                                   self.colors_settings[f&#34;aspect_{element[&#39;aspect_degrees&#39;]}&#34;])
 
         return out
 
@@ -1423,15 +1443,15 @@ class MakeSvgInstance:
         pa = int(round(100*self.air/total))
         pw = int(round(100*self.water/total))
         out = &#39;&lt;g transform=&#34;translate(-30,79)&#34;&gt;\n&#39;
-        out = out + &#39;&lt;text y=&#34;0&#34; style=&#34;fill:#ff6600; font-size: 10px;&#34;&gt;&#39; + \
+        out += &#39;&lt;text y=&#34;0&#34; style=&#34;fill:#ff6600; font-size: 10px;&#34;&gt;&#39; + \
             self.language_settings[&#39;fire&#39;]+&#39;  &#39;+str(pf)+&#39;%&lt;/text&gt;\n&#39;
-        out = out + &#39;&lt;text y=&#34;12&#34; style=&#34;fill:#6a2d04; font-size: 10px;&#34;&gt;&#39; + \
+        out += &#39;&lt;text y=&#34;12&#34; style=&#34;fill:#6a2d04; font-size: 10px;&#34;&gt;&#39; + \
             self.language_settings[&#39;earth&#39;]+&#39; &#39;+str(pe)+&#39;%&lt;/text&gt;\n&#39;
-        out = out + &#39;&lt;text y=&#34;24&#34; style=&#34;fill:#6f76d1; font-size: 10px;&#34;&gt;&#39; + \
+        out += &#39;&lt;text y=&#34;24&#34; style=&#34;fill:#6f76d1; font-size: 10px;&#34;&gt;&#39; + \
             self.language_settings[&#39;air&#39;]+&#39;   &#39;+str(pa)+&#39;%&lt;/text&gt;\n&#39;
-        out = out + &#39;&lt;text y=&#34;36&#34; style=&#34;fill:#630e73; font-size: 10px;&#34;&gt;&#39; + \
+        out += &#39;&lt;text y=&#34;36&#34; style=&#34;fill:#630e73; font-size: 10px;&#34;&gt;&#39; + \
             self.language_settings[&#39;water&#39;]+&#39; &#39;+str(pw)+&#39;%&lt;/text&gt;\n&#39;
-        out = out + &#39;&lt;/g&gt;\n&#39;
+        out += &#39;&lt;/g&gt;\n&#39;
         return out
 
     def makePlanetGrid(self):
@@ -1441,10 +1461,10 @@ class MakeSvgInstance:
         li = 10
         offset = 0
 
-        out = out + &#39;&lt;g transform=&#34;translate(140, -15)&#34;&gt;&#39;
-        out = out + \
+        out += &#39;&lt;g transform=&#34;translate(140, -15)&#34;&gt;&#39;
+        out += \
             f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 14px;&#34;&gt;{self.language_settings[&#34;planets_and_house&#34;]} {self.name}:&lt;/text&gt;&#39;
-        out = out + &#39;&lt;/g&gt;\n&#39;
+        out += &#39;&lt;/g&gt;\n&#39;
 
         for i in range(len(self.planets_settings)):
 
@@ -1454,27 +1474,26 @@ class MakeSvgInstance:
                 offset = -120
             if self.planets_settings[i][&#39;visible&#39;] == 1:
                 # start of line
-                out = out + &#39;&lt;g transform=&#34;translate(%s,%s)&#34;&gt;&#39; % (offset, li)
+                out += &#39;&lt;g transform=&#34;translate(%s,%s)&#34;&gt;&#39; % (offset, li)
                 # planet text
-                out = out + &#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
-                    self.colors_settings[&#39;paper_0&#39;], self.planets_settings[i][&#39;label&#39;])
+                out += f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 10px;&#34;&gt;{self.language_settings[&#34;planets&#34;][self.planets_settings[i][&#34;label&#34;]]}&lt;/text&gt;&#39;
                 # planet symbol
-                out = out + \
+                out += \
                     &#39;&lt;g transform=&#34;translate(5,-8)&#34;&gt;&lt;use transform=&#34;scale(0.4)&#34; xlink:href=&#34;#&#39; + \
                     self.planets_settings[i][&#39;name&#39;]+&#39;&#34; /&gt;&lt;/g&gt;&#39;
                 # planet degree
-                out = out + &#39;&lt;text text-anchor=&#34;start&#34; x=&#34;19&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
+                out += &#39;&lt;text text-anchor=&#34;start&#34; x=&#34;19&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
                     self.colors_settings[&#39;paper_0&#39;], self.dec2deg(self.planets_degree[i]))
                 # zodiac
-                out = out + &#39;&lt;g transform=&#34;translate(60,-8)&#34;&gt;&lt;use transform=&#34;scale(0.3)&#34; xlink:href=&#34;#&#39; + \
+                out += &#39;&lt;g transform=&#34;translate(60,-8)&#34;&gt;&lt;use transform=&#34;scale(0.3)&#34; xlink:href=&#34;#&#39; + \
                     self.zodiac[self.planets_sign[i]]+&#39;&#34; /&gt;&lt;/g&gt;&#39;
                 # planet retrograde
                 if self.planets_retrograde[i]:
-                    out = out + \
+                    out += \
                         &#39;&lt;g transform=&#34;translate(74,-6)&#34;&gt;&lt;use transform=&#34;scale(.5)&#34; xlink:href=&#34;#retrograde&#34; /&gt;&lt;/g&gt;&#39;
 
                 # end of line
-                out = out + &#39;&lt;/g&gt;\n&#39;
+                out += &#39;&lt;/g&gt;\n&#39;
                 # offset between lines
                 li = li + 14
 
@@ -1483,54 +1502,46 @@ class MakeSvgInstance:
         if self.type == &#34;Transit&#34; or self.type == &#34;Composite&#34;:
 
             if self.type == &#34;Transit&#34;:
-                out = out + &#39;&lt;g transform=&#34;translate(320, -15)&#34;&gt;&#39;
-                out = out + \
+                out += &#39;&lt;g transform=&#34;translate(320, -15)&#34;&gt;&#39;
+                out += \
                     f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 14px;&#34;&gt;{self.t_name}:&lt;/text&gt;&#39;
             else:
-                out = out + &#39;&lt;g transform=&#34;translate(380, -15)&#34;&gt;&#39;
-                out = out + \
+                out += &#39;&lt;g transform=&#34;translate(380, -15)&#34;&gt;&#39;
+                out += \
                     f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 14px;&#34;&gt;{self.language_settings[&#34;planets_and_house&#34;]} {self.t_user.name}:&lt;/text&gt;&#39;
-            out = out + &#39;&lt;/g&gt;\n&#39;
+            out += &#39;&lt;/g&gt;\n&#39;
 
             t_li = 10
             t_offset = 250
 
             for i in range(len(self.planets_settings)):
-
-                # Guarda qui !!
                 if i == 27:
                     t_li = 10
                     t_offset = -120
                 if self.planets_settings[i][&#39;visible&#39;] == 1:
                     # start of line
-                    out = out + \
-                        &#39;&lt;g transform=&#34;translate(%s,%s)&#34;&gt;&#39; % (t_offset, t_li)
+                    out += f&#39;&lt;g transform=&#34;translate({t_offset},{t_li})&#34;&gt;&#39;
+
                     # planet text
-                    out = out + &#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
-                        self.colors_settings[&#39;paper_0&#39;], self.planets_settings[i][&#39;label&#39;])
+                    out += f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 10px;&#34;&gt;{self.language_settings[&#34;planets&#34;][self.planets_settings[i][&#34;label&#34;]]}&lt;/text&gt;&#39;
                     # planet symbol
-                    out = out + \
-                        &#39;&lt;g transform=&#34;translate(5,-8)&#34;&gt;&lt;use transform=&#34;scale(0.4)&#34; xlink:href=&#34;#&#39; + \
-                        self.planets_settings[i][&#39;name&#39;]+&#39;&#34; /&gt;&lt;/g&gt;&#39;
+                    out += f&#39;&lt;g transform=&#34;translate(5,-8)&#34;&gt;&lt;use transform=&#34;scale(0.4)&#34; xlink:href=&#34;# {self.planets_settings[i][&#34;name&#34;]}&#34; /&gt;&lt;/g&gt;&#39;
                     # planet degree
-                    out = out + &#39;&lt;text text-anchor=&#34;start&#34; x=&#34;19&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
+                    out += &#39;&lt;text text-anchor=&#34;start&#34; x=&#34;19&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
                         self.colors_settings[&#39;paper_0&#39;], self.dec2deg(self.t_planets_degree[i]))
                     # zodiac
-                    out = out + &#39;&lt;g transform=&#34;translate(60,-8)&#34;&gt;&lt;use transform=&#34;scale(0.3)&#34; xlink:href=&#34;#&#39; + \
+                    out += &#39;&lt;g transform=&#34;translate(60,-8)&#34;&gt;&lt;use transform=&#34;scale(0.3)&#34; xlink:href=&#34;#&#39; + \
                         self.zodiac[self.t_planets_sign[i]]+&#39;&#34; /&gt;&lt;/g&gt;&#39;
                     # planet retrograde
                     if self.t_planets_retrograde[i]:
-                        out = out + \
+                        out += \
                             &#39;&lt;g transform=&#34;translate(74,-6)&#34;&gt;&lt;use transform=&#34;scale(.5)&#34; xlink:href=&#34;#retrograde&#34; /&gt;&lt;/g&gt;&#39;
 
                     # end of line
-                    out = out + &#39;&lt;/g&gt;\n&#39;
+                    out += &#39;&lt;/g&gt;\n&#39;
                     # offset between lines
                     t_li = t_li + 14
-
-        # ----------
-
-        out = out + &#39;&lt;/g&gt;\n&#39;
+        out += &#39;&lt;/g&gt;\n&#39;
 
         return out
 
@@ -1581,7 +1592,7 @@ class MakeSvgInstance:
         &#34;&#34;&#34;
         Sets the output direcotry and returns it&#39;s path.
         &#34;&#34;&#34;
-        self.output_directory = dir_path
+        self.output_directory = Path(dir_path)
         dir_string = f&#34;Output direcotry set to: {self.output_directory}&#34;
         return (print(dir_string))
 
@@ -1591,13 +1602,12 @@ if __name__ == &#34;__main__&#34;:
     first = kr.KrInstance(&#34;Jack&#34;, 1990, 6, 15, 15, 15, &#34;Roma&#34;)
     second = kr.KrInstance(&#34;Jane&#34;, 1991, 10, 25, 21, 00, &#34;Roma&#34;)
 
-    name = MakeSvgInstance(first, chart_type=&#34;Natal&#34;, second_obj=second)
-    name.output_directory = os.path.expanduser(&#34;~&#34;)
+    name = MakeSvgInstance(first, chart_type=&#34;Composite&#34;,
+                           second_obj=second, lang=&#34;IT&#34;)
+    # name.output_directory = Path.home() / &#34;charts&#34;
     template = name.makeTemplate()
     name.makeSVG()
-    # print(len(name.aspects_list))
-    kr.print_settings_path()
-    print(template)</code></pre>
+    # print(len(name.aspects_list))</code></pre>
 </details>
 </section>
 <section>
@@ -1611,16 +1621,23 @@ if __name__ == &#34;__main__&#34;:
 <dl>
 <dt id="kerykeion.utilities.charts.charts_svg.MakeSvgInstance"><code class="flex name class">
 <span>class <span class="ident">MakeSvgInstance</span></span>
-<span>(</span><span>first_obj, chart_type='Natal', second_obj=None, new_output_directory=None, template_type='extended')</span>
+<span>(</span><span>first_obj: <a title="kerykeion.main.KrInstance" href="../../main.html#kerykeion.main.KrInstance">KrInstance</a>, chart_type: str = 'Natal', second_obj: Optional[<a title="kerykeion.main.KrInstance" href="../../main.html#kerykeion.main.KrInstance">KrInstance</a>] = None, new_output_directory: Optional[str] = None, template_type: str = 'extended', lang: str = 'EN', new_settings_file: Union[str, pathlib.Path, ForwardRef(None)] = None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Creates the instance that can genearte the chart with the
 function makeSVG().</p>
 <p>There are 2 templates, the extended (default) which has all the
 information and the basic, which has just the chart.</p>
-<p>Args: First kerykeion object,
-Chart type (Natal, Transit, Composite, Default: Type="Natal"),
-second kerykeion object (Not required if type is Natal)</p></div>
+<h2 id="parameters">Parameters</h2>
+<ul>
+<li>first_obj: First kerykeion object</li>
+<li>chart_type: Natal, Transit, Composite (Default: Type="Natal")</li>
+<li>second_obj: Second kerykeion object (Not required if type is Natal)</li>
+<li>new_output_directory: Set the output directory (default: output_directory)</li>
+<li>template_type: set the template type to include or not the aspects grid, default: extended)</li>
+<li>lang: language settings (default: "EN")</li>
+<li>new_settings_file: Set the settings file (default: kr.config.json)</li>
+</ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1633,42 +1650,55 @@ second kerykeion object (Not required if type is Natal)</p></div>
     There are 2 templates, the extended (default) which has all the
     information and the basic, which has just the chart.
 
-    Args: First kerykeion object,
-    Chart type (Natal, Transit, Composite, Default: Type=&#34;Natal&#34;),
-    second kerykeion object (Not required if type is Natal)
-
-
+    Parameters:
+        - first_obj: First kerykeion object
+        - chart_type: Natal, Transit, Composite (Default: Type=&#34;Natal&#34;)
+        - second_obj: Second kerykeion object (Not required if type is Natal)
+        - new_output_directory: Set the output directory (default: output_directory)
+        - template_type: set the template type to include or not the aspects grid, default: extended)
+        - lang: language settings (default: &#34;EN&#34;)
+        - new_settings_file: Set the settings file (default: kr.config.json)
     &#34;&#34;&#34;
 
-    def __init__(self, first_obj, chart_type=&#34;Natal&#34;, second_obj=None, new_output_directory=None, template_type=&#34;extended&#34;):
-    
+    def __init__(
+            self,
+            first_obj: kr.KrInstance,
+            chart_type: str = &#34;Natal&#34;,
+            second_obj: Union[kr.KrInstance, None] = None,
+            new_output_directory: Union[str, None] = None,
+            template_type: str = &#34;extended&#34;,
+            lang: str = &#34;EN&#34;,
+            new_settings_file: Union[str, Path, None] = None,
+    ):
+
         # Directories:
-        DATADIR = os.path.dirname(__file__)
-        self.homedir = os.path.expanduser(&#34;~&#34;)
-        
+        DATADIR = Path(__file__).parent
+        self.homedir = Path.home()
+    
+
         if new_output_directory:
-            self.output_directory = new_output_directory
+            self.output_directory = Path(new_output_directory)
         else:
             self.output_directory = self.homedir
-            
-        self.template = False
-        
+
         # Template types:
         if template_type == &#34;basic&#34;:
-            self.xml_svg = os.path.join(DATADIR, &#39;templates/basic.xml&#39;)
+            self.xml_svg = DATADIR / &#39;templates/basic.xml&#39;
         else:
-            self.xml_svg == os.path.join(DATADIR, &#39;templates/extended.xml&#39;)
+            self.xml_svg = DATADIR / &#39;templates/extended.xml&#39;
 
         # SVG Width
         self.natal_width = 772.2
         self.full_width = 1200
 
-        # Settings file
+        # Settings file:
+        if not new_settings_file:
+            self.settings_file = DATADIR.parent / &#39;kr.config.json&#39;
+        else:
+            self.settings_file = Path(new_settings_file)
+            
 
-        self.language_settings = chart_settings.english
-        self.colors_settings = chart_settings.colors
-        self.planets_settings = chart_settings.planets
-        self.aspects_settings = chart_settings.aspects
+        self.parse_json_settings(self.settings_file, lang)
         self.type = chart_type
 
         # Kerykeion instance
@@ -1721,7 +1751,7 @@ second kerykeion object (Not required if type is Natal)</p></div>
             self.houses_sign_graph.append(h[&#39;sign_num&#39;])
 
         if self.type == &#34;Natal&#34;:
-            natal_aspects_instance = kr.utilities.NatalAspects(self.user)
+            natal_aspects_instance = kr.utilities.NatalAspects(self.user, new_settings_file=self.settings_file)
             self.aspects_list = natal_aspects_instance.get_aspects()
 
         if self.type == &#34;Transit&#34; or self.type == &#34;Composite&#34;:
@@ -1852,8 +1882,24 @@ second kerykeion object (Not required if type is Natal)</p></div>
 
         # get color configuration
 
-        return
+        # Immediately generate template.
+        self.template = self.makeTemplate()
 
+
+    def parse_json_settings(self, settings_file, lang: str):
+        &#34;&#34;&#34;
+        Parse the settings file.
+        &#34;&#34;&#34;
+        with open(settings_file, &#39;r&#39;) as f:
+            settings = json.load(f)
+
+        self.language_settings = settings[&#39;language_settings&#39;].get(
+            lang, &#34;EN&#34;)
+        self.colors_settings = settings[&#39;colors&#39;]
+        self.planets_settings = settings[&#39;planets&#39;]
+        self.aspects_settings = settings[&#39;aspects&#39;]
+
+        
     def makeTemplate(self, printing=None):
         # self.type = &#34;Transit&#34;
         # empty element points
@@ -1972,14 +2018,13 @@ second kerykeion object (Not required if type is Natal)</p></div>
         if self.type == &#34;Composite&#34; or self.name == &#34;Transit&#34;:
             td[&#39;stringName&#39;] = f&#34;{self.name}:&#34;
         else:
-            td[&#39;stringName&#39;] = &#34;Info:&#34;
+            td[&#39;stringName&#39;] = f&#39;{self.language_settings[&#34;info&#34;]}:&#39;
 
         # bottom left
 
         td[&#39;bottomLeft1&#39;] = &#39;&#39;
         td[&#39;bottomLeft2&#39;] = &#39;&#39;
-        td[&#39;bottomLeft3&#39;] = &#39;%s: %s&#39; % ((&#34;Lunar Phase&#34;), self.dec2deg(
-            self.lunar_phase[&#39;degrees_between_s_m&#39;]))
+        td[&#39;bottomLeft3&#39;] = f&#39;{self.language_settings.get(&#34;lunar_phase&#34;, &#34;Lunar Phase&#34;)}: {self.language_settings.get(&#34;day&#34;, &#34;Day&#34;)} {self.lunar_phase.get(&#34;moon_phase&#34;, &#34;&#34;)}&#39;
         td[&#39;bottomLeft4&#39;] = &#39;&#39;
 
         # lunar phase
@@ -2088,25 +2133,24 @@ second kerykeion object (Not required if type is Natal)</p></div>
         # read template
         with open(self.xml_svg, &#34;r&#34;) as output_file:
             f = open(self.xml_svg)
-            self.template = Template(f.read()).substitute(td)
+            template = Template(f.read()).substitute(td)
 
         # return filename
 
-        return self.template
+        return template
 
     def makeSVG(self):
         &#34;&#34;&#34;Prints out the SVG file in the specifide folder&#34;&#34;&#34;
 
         if not (self.template):
-            self.makeTemplate()
+            self.template = self.makeTemplate()
 
-        self.chartname = os.path.join(
-            self.output_directory, f&#39;{self.name}{self.type}Chart.svg&#39;)
+        self.chartname = self.output_directory / f&#39;{self.name}{self.type}Chart.svg&#39;
 
-        with open(self.chartname, &#34;w&#34;) as output_file:
+        with open(self.chartname, &#34;w&#34;, encoding=&#39;utf-8&#39;) as output_file:
             output_file.write(self.template)
 
-        return print(f&#34;SVG Generated Correctly in: {self.output_directory}&#34;)
+        return print(f&#34;SVG Generated Correctly in: {self.chartname}&#34;)
 
     # draw transit ring
     def transitRing(self, r):
@@ -2883,8 +2927,8 @@ second kerykeion object (Not required if type is Natal)</p></div>
     def makeAspects(self, r, ar):
         out = &#34;&#34;
         for element in self.aspects_list:
-            out = out + self.drawAspect(r, ar, element[&#39;p1_abs_pos&#39;], element[&#39;p2_abs_pos&#39;],
-                                        self.colors_settings[f&#34;aspect_{element[&#39;aspect_degrees&#39;]}&#34;])
+            out += self.drawAspect(r, ar, element[&#39;p1_abs_pos&#39;], element[&#39;p2_abs_pos&#39;],
+                                   self.colors_settings[f&#34;aspect_{element[&#39;aspect_degrees&#39;]}&#34;])
 
         return out
 
@@ -2902,9 +2946,9 @@ second kerykeion object (Not required if type is Natal)</p></div>
         for a in revr:
             counter += 1
             if self.planets_settings[a][&#39;visible&#39;] == 1:
-                out = out + &#39;&lt;rect x=&#34;&#39;+str(xindent)+&#39;&#34; y=&#34;&#39;+str(yindent)+&#39;&#34; width=&#34;&#39;+str(
+                out += &#39;&lt;rect x=&#34;&#39;+str(xindent)+&#39;&#34; y=&#34;&#39;+str(yindent)+&#39;&#34; width=&#34;&#39;+str(
                     box)+&#39;&#34; height=&#34;&#39;+str(box)+&#39;&#34; style=&#34;&#39;+style+&#39;&#34;/&gt;\n&#39;
-                out = out + &#39;&lt;use transform=&#34;scale(0.4)&#34; x=&#34;&#39;+str((xindent+2)*2.5)+&#39;&#34; y=&#34;&#39;+str(
+                out += &#39;&lt;use transform=&#34;scale(0.4)&#34; x=&#34;&#39;+str((xindent+2)*2.5)+&#39;&#34; y=&#34;&#39;+str(
                     (yindent+1)*2.5)+&#39;&#34; xlink:href=&#34;#&#39;+self.planets_settings[a][&#39;name&#39;]+&#39;&#34; /&gt;\n&#39;
                 xindent = xindent + box
                 yindent = yindent - box
@@ -2914,12 +2958,12 @@ second kerykeion object (Not required if type is Natal)</p></div>
                 yorb = yindent + box
                 for b in revr2:
                     if self.planets_settings[b][&#39;visible&#39;] == 1:
-                        out = out + &#39;&lt;rect x=&#34;&#39;+str(xorb)+&#39;&#34; y=&#34;&#39;+str(yorb)+&#39;&#34; width=&#34;&#39;+str(
+                        out += &#39;&lt;rect x=&#34;&#39;+str(xorb)+&#39;&#34; y=&#34;&#39;+str(yorb)+&#39;&#34; width=&#34;&#39;+str(
                             box)+&#39;&#34; height=&#34;&#39;+str(box)+&#39;&#34; style=&#34;&#39;+style+&#39;&#34;/&gt;\n&#39;
                         xorb = xorb+box
                         for element in self.aspects_list:
                             if (element[&#39;p1&#39;] == a and element[&#39;p2&#39;] == b) or (element[&#39;p1&#39;] == b and element[&#39;p2&#39;] == a):
-                                out = out + &#39;&lt;use  x=&#34;&#39;+str(xorb-box+1)+&#39;&#34; y=&#34;&#39;+str(
+                                out += &#39;&lt;use  x=&#34;&#39;+str(xorb-box+1)+&#39;&#34; y=&#34;&#39;+str(
                                     yorb+1)+&#39;&#34; xlink:href=&#34;#orb&#39;+str(element[&#39;aspect_degrees&#39;])+&#39;&#34; /&gt;\n&#39;
 
         return out
@@ -2930,10 +2974,12 @@ second kerykeion object (Not required if type is Natal)</p></div>
         out = &#34;&#34;
 
         self.aspects_list = kr.utilities.CompositeAspects(
-            self.user, self.t_user).get_aspects()
+            self.user, self.t_user, new_settings_file=self.settings_file
+            ).get_aspects()
+
         for element in self.aspects_list:
-            out = out + self.drawAspect(r, ar, element[&#39;p1_abs_pos&#39;], element[&#39;p2_abs_pos&#39;],
-                                        self.colors_settings[f&#34;aspect_{element[&#39;aspect_degrees&#39;]}&#34;])
+            out += self.drawAspect(r, ar, element[&#39;p1_abs_pos&#39;], element[&#39;p2_abs_pos&#39;],
+                                   self.colors_settings[f&#34;aspect_{element[&#39;aspect_degrees&#39;]}&#34;])
 
         return out
 
@@ -2997,15 +3043,15 @@ second kerykeion object (Not required if type is Natal)</p></div>
         pa = int(round(100*self.air/total))
         pw = int(round(100*self.water/total))
         out = &#39;&lt;g transform=&#34;translate(-30,79)&#34;&gt;\n&#39;
-        out = out + &#39;&lt;text y=&#34;0&#34; style=&#34;fill:#ff6600; font-size: 10px;&#34;&gt;&#39; + \
+        out += &#39;&lt;text y=&#34;0&#34; style=&#34;fill:#ff6600; font-size: 10px;&#34;&gt;&#39; + \
             self.language_settings[&#39;fire&#39;]+&#39;  &#39;+str(pf)+&#39;%&lt;/text&gt;\n&#39;
-        out = out + &#39;&lt;text y=&#34;12&#34; style=&#34;fill:#6a2d04; font-size: 10px;&#34;&gt;&#39; + \
+        out += &#39;&lt;text y=&#34;12&#34; style=&#34;fill:#6a2d04; font-size: 10px;&#34;&gt;&#39; + \
             self.language_settings[&#39;earth&#39;]+&#39; &#39;+str(pe)+&#39;%&lt;/text&gt;\n&#39;
-        out = out + &#39;&lt;text y=&#34;24&#34; style=&#34;fill:#6f76d1; font-size: 10px;&#34;&gt;&#39; + \
+        out += &#39;&lt;text y=&#34;24&#34; style=&#34;fill:#6f76d1; font-size: 10px;&#34;&gt;&#39; + \
             self.language_settings[&#39;air&#39;]+&#39;   &#39;+str(pa)+&#39;%&lt;/text&gt;\n&#39;
-        out = out + &#39;&lt;text y=&#34;36&#34; style=&#34;fill:#630e73; font-size: 10px;&#34;&gt;&#39; + \
+        out += &#39;&lt;text y=&#34;36&#34; style=&#34;fill:#630e73; font-size: 10px;&#34;&gt;&#39; + \
             self.language_settings[&#39;water&#39;]+&#39; &#39;+str(pw)+&#39;%&lt;/text&gt;\n&#39;
-        out = out + &#39;&lt;/g&gt;\n&#39;
+        out += &#39;&lt;/g&gt;\n&#39;
         return out
 
     def makePlanetGrid(self):
@@ -3015,10 +3061,10 @@ second kerykeion object (Not required if type is Natal)</p></div>
         li = 10
         offset = 0
 
-        out = out + &#39;&lt;g transform=&#34;translate(140, -15)&#34;&gt;&#39;
-        out = out + \
+        out += &#39;&lt;g transform=&#34;translate(140, -15)&#34;&gt;&#39;
+        out += \
             f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 14px;&#34;&gt;{self.language_settings[&#34;planets_and_house&#34;]} {self.name}:&lt;/text&gt;&#39;
-        out = out + &#39;&lt;/g&gt;\n&#39;
+        out += &#39;&lt;/g&gt;\n&#39;
 
         for i in range(len(self.planets_settings)):
 
@@ -3028,27 +3074,26 @@ second kerykeion object (Not required if type is Natal)</p></div>
                 offset = -120
             if self.planets_settings[i][&#39;visible&#39;] == 1:
                 # start of line
-                out = out + &#39;&lt;g transform=&#34;translate(%s,%s)&#34;&gt;&#39; % (offset, li)
+                out += &#39;&lt;g transform=&#34;translate(%s,%s)&#34;&gt;&#39; % (offset, li)
                 # planet text
-                out = out + &#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
-                    self.colors_settings[&#39;paper_0&#39;], self.planets_settings[i][&#39;label&#39;])
+                out += f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 10px;&#34;&gt;{self.language_settings[&#34;planets&#34;][self.planets_settings[i][&#34;label&#34;]]}&lt;/text&gt;&#39;
                 # planet symbol
-                out = out + \
+                out += \
                     &#39;&lt;g transform=&#34;translate(5,-8)&#34;&gt;&lt;use transform=&#34;scale(0.4)&#34; xlink:href=&#34;#&#39; + \
                     self.planets_settings[i][&#39;name&#39;]+&#39;&#34; /&gt;&lt;/g&gt;&#39;
                 # planet degree
-                out = out + &#39;&lt;text text-anchor=&#34;start&#34; x=&#34;19&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
+                out += &#39;&lt;text text-anchor=&#34;start&#34; x=&#34;19&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
                     self.colors_settings[&#39;paper_0&#39;], self.dec2deg(self.planets_degree[i]))
                 # zodiac
-                out = out + &#39;&lt;g transform=&#34;translate(60,-8)&#34;&gt;&lt;use transform=&#34;scale(0.3)&#34; xlink:href=&#34;#&#39; + \
+                out += &#39;&lt;g transform=&#34;translate(60,-8)&#34;&gt;&lt;use transform=&#34;scale(0.3)&#34; xlink:href=&#34;#&#39; + \
                     self.zodiac[self.planets_sign[i]]+&#39;&#34; /&gt;&lt;/g&gt;&#39;
                 # planet retrograde
                 if self.planets_retrograde[i]:
-                    out = out + \
+                    out += \
                         &#39;&lt;g transform=&#34;translate(74,-6)&#34;&gt;&lt;use transform=&#34;scale(.5)&#34; xlink:href=&#34;#retrograde&#34; /&gt;&lt;/g&gt;&#39;
 
                 # end of line
-                out = out + &#39;&lt;/g&gt;\n&#39;
+                out += &#39;&lt;/g&gt;\n&#39;
                 # offset between lines
                 li = li + 14
 
@@ -3057,54 +3102,46 @@ second kerykeion object (Not required if type is Natal)</p></div>
         if self.type == &#34;Transit&#34; or self.type == &#34;Composite&#34;:
 
             if self.type == &#34;Transit&#34;:
-                out = out + &#39;&lt;g transform=&#34;translate(320, -15)&#34;&gt;&#39;
-                out = out + \
+                out += &#39;&lt;g transform=&#34;translate(320, -15)&#34;&gt;&#39;
+                out += \
                     f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 14px;&#34;&gt;{self.t_name}:&lt;/text&gt;&#39;
             else:
-                out = out + &#39;&lt;g transform=&#34;translate(380, -15)&#34;&gt;&#39;
-                out = out + \
+                out += &#39;&lt;g transform=&#34;translate(380, -15)&#34;&gt;&#39;
+                out += \
                     f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 14px;&#34;&gt;{self.language_settings[&#34;planets_and_house&#34;]} {self.t_user.name}:&lt;/text&gt;&#39;
-            out = out + &#39;&lt;/g&gt;\n&#39;
+            out += &#39;&lt;/g&gt;\n&#39;
 
             t_li = 10
             t_offset = 250
 
             for i in range(len(self.planets_settings)):
-
-                # Guarda qui !!
                 if i == 27:
                     t_li = 10
                     t_offset = -120
                 if self.planets_settings[i][&#39;visible&#39;] == 1:
                     # start of line
-                    out = out + \
-                        &#39;&lt;g transform=&#34;translate(%s,%s)&#34;&gt;&#39; % (t_offset, t_li)
+                    out += f&#39;&lt;g transform=&#34;translate({t_offset},{t_li})&#34;&gt;&#39;
+
                     # planet text
-                    out = out + &#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
-                        self.colors_settings[&#39;paper_0&#39;], self.planets_settings[i][&#39;label&#39;])
+                    out += f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 10px;&#34;&gt;{self.language_settings[&#34;planets&#34;][self.planets_settings[i][&#34;label&#34;]]}&lt;/text&gt;&#39;
                     # planet symbol
-                    out = out + \
-                        &#39;&lt;g transform=&#34;translate(5,-8)&#34;&gt;&lt;use transform=&#34;scale(0.4)&#34; xlink:href=&#34;#&#39; + \
-                        self.planets_settings[i][&#39;name&#39;]+&#39;&#34; /&gt;&lt;/g&gt;&#39;
+                    out += f&#39;&lt;g transform=&#34;translate(5,-8)&#34;&gt;&lt;use transform=&#34;scale(0.4)&#34; xlink:href=&#34;# {self.planets_settings[i][&#34;name&#34;]}&#34; /&gt;&lt;/g&gt;&#39;
                     # planet degree
-                    out = out + &#39;&lt;text text-anchor=&#34;start&#34; x=&#34;19&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
+                    out += &#39;&lt;text text-anchor=&#34;start&#34; x=&#34;19&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
                         self.colors_settings[&#39;paper_0&#39;], self.dec2deg(self.t_planets_degree[i]))
                     # zodiac
-                    out = out + &#39;&lt;g transform=&#34;translate(60,-8)&#34;&gt;&lt;use transform=&#34;scale(0.3)&#34; xlink:href=&#34;#&#39; + \
+                    out += &#39;&lt;g transform=&#34;translate(60,-8)&#34;&gt;&lt;use transform=&#34;scale(0.3)&#34; xlink:href=&#34;#&#39; + \
                         self.zodiac[self.t_planets_sign[i]]+&#39;&#34; /&gt;&lt;/g&gt;&#39;
                     # planet retrograde
                     if self.t_planets_retrograde[i]:
-                        out = out + \
+                        out += \
                             &#39;&lt;g transform=&#34;translate(74,-6)&#34;&gt;&lt;use transform=&#34;scale(.5)&#34; xlink:href=&#34;#retrograde&#34; /&gt;&lt;/g&gt;&#39;
 
                     # end of line
-                    out = out + &#39;&lt;/g&gt;\n&#39;
+                    out += &#39;&lt;/g&gt;\n&#39;
                     # offset between lines
                     t_li = t_li + 14
-
-        # ----------
-
-        out = out + &#39;&lt;/g&gt;\n&#39;
+        out += &#39;&lt;/g&gt;\n&#39;
 
         return out
 
@@ -3155,7 +3192,7 @@ second kerykeion object (Not required if type is Natal)</p></div>
         &#34;&#34;&#34;
         Sets the output direcotry and returns it&#39;s path.
         &#34;&#34;&#34;
-        self.output_directory = dir_path
+        self.output_directory = Path(dir_path)
         dir_string = f&#34;Output direcotry set to: {self.output_directory}&#34;
         return (print(dir_string))</code></pre>
 </details>
@@ -3398,9 +3435,9 @@ second kerykeion object (Not required if type is Natal)</p></div>
     for a in revr:
         counter += 1
         if self.planets_settings[a][&#39;visible&#39;] == 1:
-            out = out + &#39;&lt;rect x=&#34;&#39;+str(xindent)+&#39;&#34; y=&#34;&#39;+str(yindent)+&#39;&#34; width=&#34;&#39;+str(
+            out += &#39;&lt;rect x=&#34;&#39;+str(xindent)+&#39;&#34; y=&#34;&#39;+str(yindent)+&#39;&#34; width=&#34;&#39;+str(
                 box)+&#39;&#34; height=&#34;&#39;+str(box)+&#39;&#34; style=&#34;&#39;+style+&#39;&#34;/&gt;\n&#39;
-            out = out + &#39;&lt;use transform=&#34;scale(0.4)&#34; x=&#34;&#39;+str((xindent+2)*2.5)+&#39;&#34; y=&#34;&#39;+str(
+            out += &#39;&lt;use transform=&#34;scale(0.4)&#34; x=&#34;&#39;+str((xindent+2)*2.5)+&#39;&#34; y=&#34;&#39;+str(
                 (yindent+1)*2.5)+&#39;&#34; xlink:href=&#34;#&#39;+self.planets_settings[a][&#39;name&#39;]+&#39;&#34; /&gt;\n&#39;
             xindent = xindent + box
             yindent = yindent - box
@@ -3410,12 +3447,12 @@ second kerykeion object (Not required if type is Natal)</p></div>
             yorb = yindent + box
             for b in revr2:
                 if self.planets_settings[b][&#39;visible&#39;] == 1:
-                    out = out + &#39;&lt;rect x=&#34;&#39;+str(xorb)+&#39;&#34; y=&#34;&#39;+str(yorb)+&#39;&#34; width=&#34;&#39;+str(
+                    out += &#39;&lt;rect x=&#34;&#39;+str(xorb)+&#39;&#34; y=&#34;&#39;+str(yorb)+&#39;&#34; width=&#34;&#39;+str(
                         box)+&#39;&#34; height=&#34;&#39;+str(box)+&#39;&#34; style=&#34;&#39;+style+&#39;&#34;/&gt;\n&#39;
                     xorb = xorb+box
                     for element in self.aspects_list:
                         if (element[&#39;p1&#39;] == a and element[&#39;p2&#39;] == b) or (element[&#39;p1&#39;] == b and element[&#39;p2&#39;] == a):
-                            out = out + &#39;&lt;use  x=&#34;&#39;+str(xorb-box+1)+&#39;&#34; y=&#34;&#39;+str(
+                            out += &#39;&lt;use  x=&#34;&#39;+str(xorb-box+1)+&#39;&#34; y=&#34;&#39;+str(
                                 yorb+1)+&#39;&#34; xlink:href=&#34;#orb&#39;+str(element[&#39;aspect_degrees&#39;])+&#39;&#34; /&gt;\n&#39;
 
     return out</code></pre>
@@ -3496,8 +3533,8 @@ second kerykeion object (Not required if type is Natal)</p></div>
 <pre><code class="python">def makeAspects(self, r, ar):
     out = &#34;&#34;
     for element in self.aspects_list:
-        out = out + self.drawAspect(r, ar, element[&#39;p1_abs_pos&#39;], element[&#39;p2_abs_pos&#39;],
-                                    self.colors_settings[f&#34;aspect_{element[&#39;aspect_degrees&#39;]}&#34;])
+        out += self.drawAspect(r, ar, element[&#39;p1_abs_pos&#39;], element[&#39;p2_abs_pos&#39;],
+                               self.colors_settings[f&#34;aspect_{element[&#39;aspect_degrees&#39;]}&#34;])
 
     return out</code></pre>
 </details>
@@ -3515,10 +3552,12 @@ second kerykeion object (Not required if type is Natal)</p></div>
     out = &#34;&#34;
 
     self.aspects_list = kr.utilities.CompositeAspects(
-        self.user, self.t_user).get_aspects()
+        self.user, self.t_user, new_settings_file=self.settings_file
+        ).get_aspects()
+
     for element in self.aspects_list:
-        out = out + self.drawAspect(r, ar, element[&#39;p1_abs_pos&#39;], element[&#39;p2_abs_pos&#39;],
-                                    self.colors_settings[f&#34;aspect_{element[&#39;aspect_degrees&#39;]}&#34;])
+        out += self.drawAspect(r, ar, element[&#39;p1_abs_pos&#39;], element[&#39;p2_abs_pos&#39;],
+                               self.colors_settings[f&#34;aspect_{element[&#39;aspect_degrees&#39;]}&#34;])
 
     return out</code></pre>
 </details>
@@ -3539,15 +3578,15 @@ second kerykeion object (Not required if type is Natal)</p></div>
     pa = int(round(100*self.air/total))
     pw = int(round(100*self.water/total))
     out = &#39;&lt;g transform=&#34;translate(-30,79)&#34;&gt;\n&#39;
-    out = out + &#39;&lt;text y=&#34;0&#34; style=&#34;fill:#ff6600; font-size: 10px;&#34;&gt;&#39; + \
+    out += &#39;&lt;text y=&#34;0&#34; style=&#34;fill:#ff6600; font-size: 10px;&#34;&gt;&#39; + \
         self.language_settings[&#39;fire&#39;]+&#39;  &#39;+str(pf)+&#39;%&lt;/text&gt;\n&#39;
-    out = out + &#39;&lt;text y=&#34;12&#34; style=&#34;fill:#6a2d04; font-size: 10px;&#34;&gt;&#39; + \
+    out += &#39;&lt;text y=&#34;12&#34; style=&#34;fill:#6a2d04; font-size: 10px;&#34;&gt;&#39; + \
         self.language_settings[&#39;earth&#39;]+&#39; &#39;+str(pe)+&#39;%&lt;/text&gt;\n&#39;
-    out = out + &#39;&lt;text y=&#34;24&#34; style=&#34;fill:#6f76d1; font-size: 10px;&#34;&gt;&#39; + \
+    out += &#39;&lt;text y=&#34;24&#34; style=&#34;fill:#6f76d1; font-size: 10px;&#34;&gt;&#39; + \
         self.language_settings[&#39;air&#39;]+&#39;   &#39;+str(pa)+&#39;%&lt;/text&gt;\n&#39;
-    out = out + &#39;&lt;text y=&#34;36&#34; style=&#34;fill:#630e73; font-size: 10px;&#34;&gt;&#39; + \
+    out += &#39;&lt;text y=&#34;36&#34; style=&#34;fill:#630e73; font-size: 10px;&#34;&gt;&#39; + \
         self.language_settings[&#39;water&#39;]+&#39; &#39;+str(pw)+&#39;%&lt;/text&gt;\n&#39;
-    out = out + &#39;&lt;/g&gt;\n&#39;
+    out += &#39;&lt;/g&gt;\n&#39;
     return out</code></pre>
 </details>
 </dd>
@@ -3909,10 +3948,10 @@ second kerykeion object (Not required if type is Natal)</p></div>
     li = 10
     offset = 0
 
-    out = out + &#39;&lt;g transform=&#34;translate(140, -15)&#34;&gt;&#39;
-    out = out + \
+    out += &#39;&lt;g transform=&#34;translate(140, -15)&#34;&gt;&#39;
+    out += \
         f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 14px;&#34;&gt;{self.language_settings[&#34;planets_and_house&#34;]} {self.name}:&lt;/text&gt;&#39;
-    out = out + &#39;&lt;/g&gt;\n&#39;
+    out += &#39;&lt;/g&gt;\n&#39;
 
     for i in range(len(self.planets_settings)):
 
@@ -3922,27 +3961,26 @@ second kerykeion object (Not required if type is Natal)</p></div>
             offset = -120
         if self.planets_settings[i][&#39;visible&#39;] == 1:
             # start of line
-            out = out + &#39;&lt;g transform=&#34;translate(%s,%s)&#34;&gt;&#39; % (offset, li)
+            out += &#39;&lt;g transform=&#34;translate(%s,%s)&#34;&gt;&#39; % (offset, li)
             # planet text
-            out = out + &#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
-                self.colors_settings[&#39;paper_0&#39;], self.planets_settings[i][&#39;label&#39;])
+            out += f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 10px;&#34;&gt;{self.language_settings[&#34;planets&#34;][self.planets_settings[i][&#34;label&#34;]]}&lt;/text&gt;&#39;
             # planet symbol
-            out = out + \
+            out += \
                 &#39;&lt;g transform=&#34;translate(5,-8)&#34;&gt;&lt;use transform=&#34;scale(0.4)&#34; xlink:href=&#34;#&#39; + \
                 self.planets_settings[i][&#39;name&#39;]+&#39;&#34; /&gt;&lt;/g&gt;&#39;
             # planet degree
-            out = out + &#39;&lt;text text-anchor=&#34;start&#34; x=&#34;19&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
+            out += &#39;&lt;text text-anchor=&#34;start&#34; x=&#34;19&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
                 self.colors_settings[&#39;paper_0&#39;], self.dec2deg(self.planets_degree[i]))
             # zodiac
-            out = out + &#39;&lt;g transform=&#34;translate(60,-8)&#34;&gt;&lt;use transform=&#34;scale(0.3)&#34; xlink:href=&#34;#&#39; + \
+            out += &#39;&lt;g transform=&#34;translate(60,-8)&#34;&gt;&lt;use transform=&#34;scale(0.3)&#34; xlink:href=&#34;#&#39; + \
                 self.zodiac[self.planets_sign[i]]+&#39;&#34; /&gt;&lt;/g&gt;&#39;
             # planet retrograde
             if self.planets_retrograde[i]:
-                out = out + \
+                out += \
                     &#39;&lt;g transform=&#34;translate(74,-6)&#34;&gt;&lt;use transform=&#34;scale(.5)&#34; xlink:href=&#34;#retrograde&#34; /&gt;&lt;/g&gt;&#39;
 
             # end of line
-            out = out + &#39;&lt;/g&gt;\n&#39;
+            out += &#39;&lt;/g&gt;\n&#39;
             # offset between lines
             li = li + 14
 
@@ -3951,54 +3989,46 @@ second kerykeion object (Not required if type is Natal)</p></div>
     if self.type == &#34;Transit&#34; or self.type == &#34;Composite&#34;:
 
         if self.type == &#34;Transit&#34;:
-            out = out + &#39;&lt;g transform=&#34;translate(320, -15)&#34;&gt;&#39;
-            out = out + \
+            out += &#39;&lt;g transform=&#34;translate(320, -15)&#34;&gt;&#39;
+            out += \
                 f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 14px;&#34;&gt;{self.t_name}:&lt;/text&gt;&#39;
         else:
-            out = out + &#39;&lt;g transform=&#34;translate(380, -15)&#34;&gt;&#39;
-            out = out + \
+            out += &#39;&lt;g transform=&#34;translate(380, -15)&#34;&gt;&#39;
+            out += \
                 f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 14px;&#34;&gt;{self.language_settings[&#34;planets_and_house&#34;]} {self.t_user.name}:&lt;/text&gt;&#39;
-        out = out + &#39;&lt;/g&gt;\n&#39;
+        out += &#39;&lt;/g&gt;\n&#39;
 
         t_li = 10
         t_offset = 250
 
         for i in range(len(self.planets_settings)):
-
-            # Guarda qui !!
             if i == 27:
                 t_li = 10
                 t_offset = -120
             if self.planets_settings[i][&#39;visible&#39;] == 1:
                 # start of line
-                out = out + \
-                    &#39;&lt;g transform=&#34;translate(%s,%s)&#34;&gt;&#39; % (t_offset, t_li)
+                out += f&#39;&lt;g transform=&#34;translate({t_offset},{t_li})&#34;&gt;&#39;
+
                 # planet text
-                out = out + &#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
-                    self.colors_settings[&#39;paper_0&#39;], self.planets_settings[i][&#39;label&#39;])
+                out += f&#39;&lt;text text-anchor=&#34;end&#34; style=&#34;fill:{self.colors_settings[&#34;paper_0&#34;]}; font-size: 10px;&#34;&gt;{self.language_settings[&#34;planets&#34;][self.planets_settings[i][&#34;label&#34;]]}&lt;/text&gt;&#39;
                 # planet symbol
-                out = out + \
-                    &#39;&lt;g transform=&#34;translate(5,-8)&#34;&gt;&lt;use transform=&#34;scale(0.4)&#34; xlink:href=&#34;#&#39; + \
-                    self.planets_settings[i][&#39;name&#39;]+&#39;&#34; /&gt;&lt;/g&gt;&#39;
+                out += f&#39;&lt;g transform=&#34;translate(5,-8)&#34;&gt;&lt;use transform=&#34;scale(0.4)&#34; xlink:href=&#34;# {self.planets_settings[i][&#34;name&#34;]}&#34; /&gt;&lt;/g&gt;&#39;
                 # planet degree
-                out = out + &#39;&lt;text text-anchor=&#34;start&#34; x=&#34;19&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
+                out += &#39;&lt;text text-anchor=&#34;start&#34; x=&#34;19&#34; style=&#34;fill:%s; font-size: 10px;&#34;&gt;%s&lt;/text&gt;&#39; % (
                     self.colors_settings[&#39;paper_0&#39;], self.dec2deg(self.t_planets_degree[i]))
                 # zodiac
-                out = out + &#39;&lt;g transform=&#34;translate(60,-8)&#34;&gt;&lt;use transform=&#34;scale(0.3)&#34; xlink:href=&#34;#&#39; + \
+                out += &#39;&lt;g transform=&#34;translate(60,-8)&#34;&gt;&lt;use transform=&#34;scale(0.3)&#34; xlink:href=&#34;#&#39; + \
                     self.zodiac[self.t_planets_sign[i]]+&#39;&#34; /&gt;&lt;/g&gt;&#39;
                 # planet retrograde
                 if self.t_planets_retrograde[i]:
-                    out = out + \
+                    out += \
                         &#39;&lt;g transform=&#34;translate(74,-6)&#34;&gt;&lt;use transform=&#34;scale(.5)&#34; xlink:href=&#34;#retrograde&#34; /&gt;&lt;/g&gt;&#39;
 
                 # end of line
-                out = out + &#39;&lt;/g&gt;\n&#39;
+                out += &#39;&lt;/g&gt;\n&#39;
                 # offset between lines
                 t_li = t_li + 14
-
-    # ----------
-
-    out = out + &#39;&lt;/g&gt;\n&#39;
+    out += &#39;&lt;/g&gt;\n&#39;
 
     return out</code></pre>
 </details>
@@ -4358,15 +4388,14 @@ second kerykeion object (Not required if type is Natal)</p></div>
     &#34;&#34;&#34;Prints out the SVG file in the specifide folder&#34;&#34;&#34;
 
     if not (self.template):
-        self.makeTemplate()
+        self.template = self.makeTemplate()
 
-    self.chartname = os.path.join(
-        self.output_directory, f&#39;{self.name}{self.type}Chart.svg&#39;)
+    self.chartname = self.output_directory / f&#39;{self.name}{self.type}Chart.svg&#39;
 
-    with open(self.chartname, &#34;w&#34;) as output_file:
+    with open(self.chartname, &#34;w&#34;, encoding=&#39;utf-8&#39;) as output_file:
         output_file.write(self.template)
 
-    return print(f&#34;SVG Generated Correctly in: {self.output_directory}&#34;)</code></pre>
+    return print(f&#34;SVG Generated Correctly in: {self.chartname}&#34;)</code></pre>
 </details>
 </dd>
 <dt id="kerykeion.utilities.charts.charts_svg.MakeSvgInstance.makeTemplate"><code class="name flex">
@@ -4496,14 +4525,13 @@ second kerykeion object (Not required if type is Natal)</p></div>
     if self.type == &#34;Composite&#34; or self.name == &#34;Transit&#34;:
         td[&#39;stringName&#39;] = f&#34;{self.name}:&#34;
     else:
-        td[&#39;stringName&#39;] = &#34;Info:&#34;
+        td[&#39;stringName&#39;] = f&#39;{self.language_settings[&#34;info&#34;]}:&#39;
 
     # bottom left
 
     td[&#39;bottomLeft1&#39;] = &#39;&#39;
     td[&#39;bottomLeft2&#39;] = &#39;&#39;
-    td[&#39;bottomLeft3&#39;] = &#39;%s: %s&#39; % ((&#34;Lunar Phase&#34;), self.dec2deg(
-        self.lunar_phase[&#39;degrees_between_s_m&#39;]))
+    td[&#39;bottomLeft3&#39;] = f&#39;{self.language_settings.get(&#34;lunar_phase&#34;, &#34;Lunar Phase&#34;)}: {self.language_settings.get(&#34;day&#34;, &#34;Day&#34;)} {self.lunar_phase.get(&#34;moon_phase&#34;, &#34;&#34;)}&#39;
     td[&#39;bottomLeft4&#39;] = &#39;&#39;
 
     # lunar phase
@@ -4612,11 +4640,11 @@ second kerykeion object (Not required if type is Natal)</p></div>
     # read template
     with open(self.xml_svg, &#34;r&#34;) as output_file:
         f = open(self.xml_svg)
-        self.template = Template(f.read()).substitute(td)
+        template = Template(f.read()).substitute(td)
 
     # return filename
 
-    return self.template</code></pre>
+    return template</code></pre>
 </details>
 </dd>
 <dt id="kerykeion.utilities.charts.charts_svg.MakeSvgInstance.makeZodiac"><code class="name flex">
@@ -4652,6 +4680,29 @@ second kerykeion object (Not required if type is Natal)</p></div>
     return output</code></pre>
 </details>
 </dd>
+<dt id="kerykeion.utilities.charts.charts_svg.MakeSvgInstance.parse_json_settings"><code class="name flex">
+<span>def <span class="ident">parse_json_settings</span></span>(<span>self, settings_file, lang: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parse the settings file.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_json_settings(self, settings_file, lang: str):
+    &#34;&#34;&#34;
+    Parse the settings file.
+    &#34;&#34;&#34;
+    with open(settings_file, &#39;r&#39;) as f:
+        settings = json.load(f)
+
+    self.language_settings = settings[&#39;language_settings&#39;].get(
+        lang, &#34;EN&#34;)
+    self.colors_settings = settings[&#39;colors&#39;]
+    self.planets_settings = settings[&#39;planets&#39;]
+    self.aspects_settings = settings[&#39;aspects&#39;]</code></pre>
+</details>
+</dd>
 <dt id="kerykeion.utilities.charts.charts_svg.MakeSvgInstance.set_output_directory"><code class="name flex">
 <span>def <span class="ident">set_output_directory</span></span>(<span>self, dir_path)</span>
 </code></dt>
@@ -4665,7 +4716,7 @@ second kerykeion object (Not required if type is Natal)</p></div>
     &#34;&#34;&#34;
     Sets the output direcotry and returns it&#39;s path.
     &#34;&#34;&#34;
-    self.output_directory = dir_path
+    self.output_directory = Path(dir_path)
     dir_string = f&#34;Output direcotry set to: {self.output_directory}&#34;
     return (print(dir_string))</code></pre>
 </details>
@@ -4793,6 +4844,7 @@ second kerykeion object (Not required if type is Natal)</p></div>
 <li><code><a title="kerykeion.utilities.charts.charts_svg.MakeSvgInstance.makeTemplate" href="#kerykeion.utilities.charts.charts_svg.MakeSvgInstance.makeTemplate">makeTemplate</a></code></li>
 <li><code><a title="kerykeion.utilities.charts.charts_svg.MakeSvgInstance.makeZodiac" href="#kerykeion.utilities.charts.charts_svg.MakeSvgInstance.makeZodiac">makeZodiac</a></code></li>
 <li><code><a title="kerykeion.utilities.charts.charts_svg.MakeSvgInstance.offsetToTz" href="#kerykeion.utilities.charts.charts_svg.MakeSvgInstance.offsetToTz">offsetToTz</a></code></li>
+<li><code><a title="kerykeion.utilities.charts.charts_svg.MakeSvgInstance.parse_json_settings" href="#kerykeion.utilities.charts.charts_svg.MakeSvgInstance.parse_json_settings">parse_json_settings</a></code></li>
 <li><code><a title="kerykeion.utilities.charts.charts_svg.MakeSvgInstance.set_output_directory" href="#kerykeion.utilities.charts.charts_svg.MakeSvgInstance.set_output_directory">set_output_directory</a></code></li>
 <li><code><a title="kerykeion.utilities.charts.charts_svg.MakeSvgInstance.sliceToX" href="#kerykeion.utilities.charts.charts_svg.MakeSvgInstance.sliceToX">sliceToX</a></code></li>
 <li><code><a title="kerykeion.utilities.charts.charts_svg.MakeSvgInstance.sliceToY" href="#kerykeion.utilities.charts.charts_svg.MakeSvgInstance.sliceToY">sliceToY</a></code></li>

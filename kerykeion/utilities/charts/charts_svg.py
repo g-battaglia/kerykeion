@@ -4,24 +4,14 @@
 # * TODO: Change the label for language in 2 objects, one for IT and one for ENG.
 # * Then change the label for planets like this: planet["label"] => planet[language]
 
-# basics
-# import settings as chart_settings
-import string
-import kerykeion.utilities.kr_settings as chart_settings
-
-import math
-import os.path
 import datetime
 import json
-import pytz
 import kerykeion as kr
-
-# template processing
+import math
+import pytz
+from pathlib import Path
 from string import Template
-
-# minidom parser
-from xml.dom.minidom import parseString
-
+from typing import Union
 
 # calculation and svg drawing class
 class MakeSvgInstance:
@@ -32,49 +22,55 @@ class MakeSvgInstance:
     There are 2 templates, the extended (default) which has all the
     information and the basic, which has just the chart.
 
-    Args: First kerykeion object,
-    Chart type (Natal, Transit, Composite, Default: Type="Natal"),
-    second kerykeion object (Not required if type is Natal)
-
-
+    Parameters:
+        - first_obj: First kerykeion object
+        - chart_type: Natal, Transit, Composite (Default: Type="Natal")
+        - second_obj: Second kerykeion object (Not required if type is Natal)
+        - new_output_directory: Set the output directory (default: output_directory)
+        - template_type: set the template type to include or not the aspects grid, default: extended)
+        - lang: language settings (default: "EN")
+        - new_settings_file: Set the settings file (default: kr.config.json)
     """
 
     def __init__(
             self,
             first_obj: kr.KrInstance,
             chart_type: str = "Natal",
-            second_obj: kr.KrInstance = None,
-            new_output_directory: string = None,
+            second_obj: Union[kr.KrInstance, None] = None,
+            new_output_directory: Union[str, None] = None,
             template_type: str = "extended",
-            lang: str = "EN"
+            lang: str = "EN",
+            new_settings_file: Union[str, Path, None] = None,
     ):
 
         # Directories:
-        DATADIR = os.path.dirname(__file__)
-        self.homedir = os.path.expanduser("~")
+        DATADIR = Path(__file__).parent
+        self.homedir = Path.home()
+    
 
         if new_output_directory:
-            self.output_directory = new_output_directory
+            self.output_directory = Path(new_output_directory)
         else:
             self.output_directory = self.homedir
 
         # Template types:
         if template_type == "basic":
-            self.xml_svg = os.path.join(DATADIR, 'templates/basic.xml')
+            self.xml_svg = DATADIR / 'templates/basic.xml'
         else:
-            self.xml_svg = os.path.join(DATADIR, 'templates/extended.xml')
+            self.xml_svg = DATADIR / 'templates/extended.xml'
 
         # SVG Width
         self.natal_width = 772.2
         self.full_width = 1200
 
-        # Settings file
+        # Settings file:
+        if not new_settings_file:
+            self.settings_file = DATADIR.parent / 'kr.config.json'
+        else:
+            self.settings_file = Path(new_settings_file)
+            
 
-        self.language_settings = chart_settings.language_settings.get(
-            lang, "EN")
-        self.colors_settings = chart_settings.colors
-        self.planets_settings = chart_settings.planets
-        self.aspects_settings = chart_settings.aspects
+        self.parse_json_settings(self.settings_file, lang)
         self.type = chart_type
 
         # Kerykeion instance
@@ -127,7 +123,7 @@ class MakeSvgInstance:
             self.houses_sign_graph.append(h['sign_num'])
 
         if self.type == "Natal":
-            natal_aspects_instance = kr.utilities.NatalAspects(self.user)
+            natal_aspects_instance = kr.utilities.NatalAspects(self.user, new_settings_file=self.settings_file)
             self.aspects_list = natal_aspects_instance.get_aspects()
 
         if self.type == "Transit" or self.type == "Composite":
@@ -261,6 +257,21 @@ class MakeSvgInstance:
         # Immediately generate template.
         self.template = self.makeTemplate()
 
+
+    def parse_json_settings(self, settings_file, lang: str):
+        """
+        Parse the settings file.
+        """
+        with open(settings_file, 'r') as f:
+            settings = json.load(f)
+
+        self.language_settings = settings['language_settings'].get(
+            lang, "EN")
+        self.colors_settings = settings['colors']
+        self.planets_settings = settings['planets']
+        self.aspects_settings = settings['aspects']
+
+        
     def makeTemplate(self, printing=None):
         # self.type = "Transit"
         # empty element points
@@ -506,8 +517,7 @@ class MakeSvgInstance:
         if not (self.template):
             self.template = self.makeTemplate()
 
-        self.chartname = os.path.join(
-            self.output_directory, f'{self.name}{self.type}Chart.svg')
+        self.chartname = self.output_directory / f'{self.name}{self.type}Chart.svg'
 
         with open(self.chartname, "w", encoding='utf-8') as output_file:
             output_file.write(self.template)
@@ -1336,7 +1346,9 @@ class MakeSvgInstance:
         out = ""
 
         self.aspects_list = kr.utilities.CompositeAspects(
-            self.user, self.t_user).get_aspects()
+            self.user, self.t_user, new_settings_file=self.settings_file
+            ).get_aspects()
+
         for element in self.aspects_list:
             out += self.drawAspect(r, ar, element['p1_abs_pos'], element['p2_abs_pos'],
                                    self.colors_settings[f"aspect_{element['aspect_degrees']}"])
@@ -1552,7 +1564,7 @@ class MakeSvgInstance:
         """
         Sets the output direcotry and returns it's path.
         """
-        self.output_directory = dir_path
+        self.output_directory = Path(dir_path)
         dir_string = f"Output direcotry set to: {self.output_directory}"
         return (print(dir_string))
 
@@ -1564,8 +1576,7 @@ if __name__ == "__main__":
 
     name = MakeSvgInstance(first, chart_type="Composite",
                            second_obj=second, lang="IT")
-    name.output_directory = os.path.expanduser("~")
+    # name.output_directory = Path.home() / "charts"
     template = name.makeTemplate()
     name.makeSVG()
     # print(len(name.aspects_list))
-    kr.print_settings_path()

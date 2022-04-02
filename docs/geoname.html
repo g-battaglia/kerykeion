@@ -132,7 +132,7 @@ def geonames_proxy(operation: str, params: str):
             try:
                 # this can fail if json file is corrupted
                 cache_dict = json.load(cache_file)
-                logging.info(f&#39;Loaded proxy cache file: &#34;{cache_file_path}&#34; and parsed as JSON.&#39;)
+                logging.debug(f&#39;Loaded proxy cache file: &#34;{cache_file_path}&#34; and parsed as JSON.&#39;)
 
             except:
                 logging.error(f&#39;Failed to parse JSON file: &#34;{cache_file_path}&#34;!&#39;)
@@ -145,7 +145,7 @@ def geonames_proxy(operation: str, params: str):
             cache_file = open(cache_file_path, &#39;w+&#39;, encoding=&#39;utf-8&#39;)
 
     except:
-        logging.error(f&#39;Failed to access: {cache_file_path}&#39;)
+        logging.debug(f&#39;Failed to access: {cache_file_path}&#39;)
         raise Exception(&#39;Error: failed to access Geonames cache file.&#39;)
 
     if params not in cache_dict or cache_dict[params] == &#34;&#34;:
@@ -156,10 +156,10 @@ def geonames_proxy(operation: str, params: str):
         if params in cache_dict and cache_dict[params] == &#34;&#34;:
             logging.warning(f&#39;Proxy cache file has an empty value for key:&#34;{params}&#34;.&#39;)
         elif params not in cache_dict:
-            logging.info(f&#39;Params: &#34;{params}&#34; not found in proxy cache file.&#39;)
+            logging.debug(f&#39;Params: &#34;{params}&#34; not found in proxy cache file.&#39;)
         try:
             # try to query geonames
-            logging.info(f&#39;Calling Geonames API endpoint: &#34;{api_endpoint}&#34; with params: &#34;{params}&#34;.&#39;)
+            logging.debug(f&#39;Calling Geonames API endpoint: &#34;{api_endpoint}&#34; with params: &#34;{params}&#34;.&#39;)
             http_response = urlopen(api_endpoint % params, timeout=20)
 
         except (HTTPError, URLError) as error:
@@ -181,7 +181,7 @@ def geonames_proxy(operation: str, params: str):
         # dump the dict in JSON format into the file
         json.dump(cache_dict, cache_file)
         cache_file.close()
-        logging.info(&#39;Saved new proxy cache file.&#39;)
+        logging.debug(&#39;Saved new proxy cache file.&#39;)
 
     return cache_dict[params], cache_file_path
 
@@ -327,7 +327,7 @@ def search(name=&#39;&#39;, country=&#39;&#39;):
             try:
                 # this can fail if json file is corrupted
                 cache_dict = json.load(cache_file)
-                logging.info(f&#39;Loaded proxy cache file: &#34;{cache_file_path}&#34; and parsed as JSON.&#39;)
+                logging.debug(f&#39;Loaded proxy cache file: &#34;{cache_file_path}&#34; and parsed as JSON.&#39;)
 
             except:
                 logging.error(f&#39;Failed to parse JSON file: &#34;{cache_file_path}&#34;!&#39;)
@@ -340,7 +340,7 @@ def search(name=&#39;&#39;, country=&#39;&#39;):
             cache_file = open(cache_file_path, &#39;w+&#39;, encoding=&#39;utf-8&#39;)
 
     except:
-        logging.error(f&#39;Failed to access: {cache_file_path}&#39;)
+        logging.debug(f&#39;Failed to access: {cache_file_path}&#39;)
         raise Exception(&#39;Error: failed to access Geonames cache file.&#39;)
 
     if params not in cache_dict or cache_dict[params] == &#34;&#34;:
@@ -351,10 +351,10 @@ def search(name=&#39;&#39;, country=&#39;&#39;):
         if params in cache_dict and cache_dict[params] == &#34;&#34;:
             logging.warning(f&#39;Proxy cache file has an empty value for key:&#34;{params}&#34;.&#39;)
         elif params not in cache_dict:
-            logging.info(f&#39;Params: &#34;{params}&#34; not found in proxy cache file.&#39;)
+            logging.debug(f&#39;Params: &#34;{params}&#34; not found in proxy cache file.&#39;)
         try:
             # try to query geonames
-            logging.info(f&#39;Calling Geonames API endpoint: &#34;{api_endpoint}&#34; with params: &#34;{params}&#34;.&#39;)
+            logging.debug(f&#39;Calling Geonames API endpoint: &#34;{api_endpoint}&#34; with params: &#34;{params}&#34;.&#39;)
             http_response = urlopen(api_endpoint % params, timeout=20)
 
         except (HTTPError, URLError) as error:
@@ -376,7 +376,7 @@ def search(name=&#39;&#39;, country=&#39;&#39;):
         # dump the dict in JSON format into the file
         json.dump(cache_dict, cache_file)
         cache_file.close()
-        logging.info(&#39;Saved new proxy cache file.&#39;)
+        logging.debug(&#39;Saved new proxy cache file.&#39;)
 
     return cache_dict[params], cache_file_path</code></pre>
 </details>
