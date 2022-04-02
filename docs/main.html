@@ -31,36 +31,34 @@
     This is part of Kerykeion (C) 2020 Giacomo Battaglia
 &#34;&#34;&#34;
 
-import os.path
-from typing import Union
-import swisseph as swe
-from kerykeion.geoname import search
-import pytz
 import datetime
-import math
+from kerykeion.geoname import search
 import logging
+import math
+import os.path
+import pytz
+from sys import exit
+import swisseph as swe
+from typing import Union
 
 # swe.set_ephe_path(&#34;/&#34;)
 
-DEBUG = False
-
 logging.basicConfig(
-    format=&#39;%(asctime)s - %(name)s - %(levelname)s - %(message)s&#39;, level=logging.INFO)
+    format=&#39;%(asctime)s - %(name)s - %(levelname)s - %(message)s&#39;,
+    level=logging.INFO
+)
 
-
-def debug_print(str):
-    if DEBUG:
-        print(&#39;%s&#39; % str)
+logger = logging.getLogger(&#39;Kerykeion&#39;)
 
 
 class KrInstance():
     &#34;&#34;&#34;
-    Calculates all the astrological informations, the coordinates,
+    Calculates all the astrological information, the coordinates,
     it&#39;s utc and julian day and returns an object with all that data.
     Args: name, year, month, day, hours, minuts, city,
     initial of the nation (Ex: &#34;IT&#34;),
     longitude, latitude and the timezone string are set to false so they will
-    be calulated, if you want you can set them.
+    be calculated, if you want you can set them.
     Default values are set for now at greenwich time.
 
     &#34;&#34;&#34;
@@ -80,7 +78,7 @@ class KrInstance():
         lat: Union[int, float] = False,
         tz_str: Union[str, bool] = False
     ):
-        logging.info(&#39;Starting Kerykeion&#39;)
+        logger.debug(&#39;Starting Kerykeion&#39;)
         self.name = name
         self.year = year
         self.month = month
@@ -98,15 +96,25 @@ class KrInstance():
         self.julian_day = self.get_jd()
         self.zodiactype = &#34;Tropic&#34;
 
+        # Get all the calculations
+        self.get_all()
+
     def __str__(self):
-        return f&#34;Astrological data for: {self.name}, {self.utc} UTC&#34;
+        return f&#34;Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.city_lat}, Lon {self.city_long}&#34;
+
+    def __repr__(self) -&gt; str:
+        return f&#34;Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.city_lat}, Lon {self.city_long}&#34;
 
     def get_tz(self):
-        &#34;&#34;&#34;Gets the nerest time zone for the calculation&#34;&#34;&#34;
-        logging.info(&#34;Conneting to Geonames...&#34;)
-        self.city_data = search(self.city, self.nation)[0]
+        &#34;&#34;&#34;Gets the nearest time zone for the calculation&#34;&#34;&#34;
+        logger.debug(&#34;Conneting to Geonames...&#34;)
+        try:
+            self.city_data = search(self.city, self.nation)[0]
+        except:
+            logger.error(&#39;Error connecting to geonames, try again!&#39;)
+            exit()
 
-        logging.info(&#34;Geonames done!&#34;)
+        logger.debug(&#34;Geonames done!&#34;)
 
         self.nation = self.city_data[&#34;countryCode&#34;]
         self.city_long = float(self.city_data[&#34;lng&#34;])
@@ -117,11 +125,11 @@ class KrInstance():
 
         if self.city_lat &gt; 66.0:
             self.city_lat = 66.0
-            print(&#34;polar circle override for houses, using 66 degrees&#34;)
+            logger.info(&#39;Polar circle override for houses, using 66 degrees&#39;)
 
         elif self.city_lat &lt; -66.0:
             self.city_lat = -66.0
-            print(&#34;polar circle override for houses, using -66 degrees&#34;)
+            logger.info(&#39;Polar circle override for houses, using -66 degrees&#39;)
 
         return self.city_tz
 
@@ -361,7 +369,7 @@ class KrInstance():
         self.houses()
 
         def for_every_planet(planet, planet_deg):
-            &#34;&#34;&#34;Functio to do the calculation.
+            &#34;&#34;&#34;Function to do the calculation.
             Args: planet dictionary, planet degree&#34;&#34;&#34;
 
             def point_between(p1, p2, p3):
@@ -444,13 +452,13 @@ class KrInstance():
         # Check in retrograde or not:
 
         planets_ret = []
-        for plan in planets_list:
-            planet_number = self.get_number(plan[&#34;name&#34;])
+        for p in planets_list:
+            planet_number = self.get_number(p[&#34;name&#34;])
             if swe.calc(self.julian_day, planet_number, self.iflag)[0][3] &lt; 0:
-                plan.update({&#39;retrograde&#39;: True})
+                p.update({&#39;retrograde&#39;: True})
             else:
-                plan.update({&#39;retrograde&#39;: False})
-            planets_ret.append(plan)
+                p.update({&#39;retrograde&#39;: False})
+            planets_ret.append(p)
 
     def lunar_phase_calc(self):
         &#34;&#34;&#34; Function to calculate the lunar phase&#34;&#34;&#34;
@@ -514,6 +522,7 @@ class KrInstance():
         }
 
     def make_lists(self):
+        &#34;&#34;&#34; Internal function to generate the lists&#34;&#34;&#34;
         self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
                              self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
                              self.pluto, self.mean_node, self.true_node]
@@ -533,12 +542,14 @@ class KrInstance():
 
     # Utility Functions:
 
-    def json_dump(self, dump=True, new_output_directory=None):
-        import jsonpickle, json
+    def dangerous_json_dump(self, dump=True, new_output_directory=None):
+        import jsonpickle
+        import json
 
         &#34;&#34;&#34;
         Dumps the Kerykeion object to a json file located in the home folder.
-        This json file allows the object to be recreated with jsonpickle
+        This json file allows the object to be recreated with jsonpickle.
+        It&#39;s dangerous since it contains local system information.
         &#34;&#34;&#34;
 
         try:
@@ -554,7 +565,7 @@ class KrInstance():
                 self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
 
         json_string = jsonpickle.encode(self)
-        
+
         hiden_values = [f&#39; &#34;json_dir&#34;: &#34;{self.json_dir}&#34;,&#39;, f&#39;, &#34;json_path&#34;: &#34;{self.json_path}&#34;&#39;
                         ]
 
@@ -562,34 +573,53 @@ class KrInstance():
             json_string = json_string.replace(string, &#34;&#34;)
 
         if dump:
-            json_string = json.loads(json_string.replace(&#34;&#39;&#34;,&#39;&#34;&#39;))
+            json_string = json.loads(json_string.replace(&#34;&#39;&#34;, &#39;&#34;&#39;))
             with open(self.json_path, &#34;w&#34;) as file:
-                json.dump(json_string, file,  indent=4,sort_keys=True)
-                print(f&#34;JSON file dumped in {self.json_path}.&#34;)
+                json.dump(json_string, file,  indent=4, sort_keys=True)
+                logger.info(f&#34;JSON file dumped in {self.json_path}.&#34;)
         else:
             pass
         return json_string
 
-    def json_api(self, dump=False):
+    def json_dump(self, dump=False, destination_folder=False):
         from json import dumps
+
+        &#34;&#34;&#34;
+        Dumps the Kerykeion object to a json string foramt,
+        if dump=True also dumps to file located in destination
+        or the home folder.
+        &#34;&#34;&#34;
 
         if not self.sun:
             self.get_all()
 
         obj_dict = self.__dict__.copy()
-        keys_to_remove = [&#34;utc&#34;, &#34;iflag&#34;, &#34;json_dir&#34;, &#34;planets_list&#34;,
-                          &#34;houses_list&#34;, &#34;planets_degrees&#34;, &#34;houses_degree_ut&#34;]
+        keys_to_remove = [
+            &#34;utc&#34;,
+            &#34;iflag&#34;,
+            &#34;json_dir&#34;,
+            &#34;planets_list&#34;,
+            &#34;houses_list&#34;,
+            &#34;planets_degrees&#34;,
+            &#34;houses_degree_ut&#34;
+        ]
+
         for key in keys_to_remove:
             obj_dict.pop(key)
 
         json_obj = dumps(obj_dict)
 
         if dump:
-            json_path = os.path.join(
-                self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
+            if destination_folder:
+                json_path = os.path.join(
+                    destination_folder, f&#34;{self.name}_kerykeion.json&#34;)
+            else:
+                json_path = os.path.join(
+                    self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
+
             with open(json_path, &#34;w&#34;) as file:
                 file.write(json_obj)
-                print(f&#34;JSON file dumped in {json_path}.&#34;)
+                logger.info(f&#34;JSON file dumped in {json_path}.&#34;)
 
         return json_obj
 
@@ -621,8 +651,9 @@ if __name__ == &#34;__main__&#34;:
     ###############################
     now = KrInstance(&#34;Kanye&#34;, 1977, 6, 8, 8, 45, &#34;Atlanta&#34;,
                      lon=50, lat=50, tz_str=&#34;Europe/Rome&#34;)
-    now.get_all()
-    print(now.lunar_phase)</code></pre>
+
+    kanye = KrInstance(&#34;Kanye&#34;, 1977, 6, 8, 8, 45, &#34;Atlanta&#34;)
+    print(kanye)</code></pre>
 </details>
 </section>
 <section>
@@ -630,38 +661,21 @@ if __name__ == &#34;__main__&#34;:
 <section>
 </section>
 <section>
-<h2 class="section-title" id="header-functions">Functions</h2>
-<dl>
-<dt id="kerykeion.main.debug_print"><code class="name flex">
-<span>def <span class="ident">debug_print</span></span>(<span>str)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def debug_print(str):
-    if DEBUG:
-        print(&#39;%s&#39; % str)</code></pre>
-</details>
-</dd>
-</dl>
 </section>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
 <dt id="kerykeion.main.KrInstance"><code class="flex name class">
 <span>class <span class="ident">KrInstance</span></span>
-<span>(</span><span>name: str = 'Now', year: int = 2021, month: int = 12, day: int = 22, hours: int = 22, minuts: int = 4, city: str = 'London', nat: str = '', lon: Union[int, float] = False, lat: Union[int, float] = False, tz_str: Union[str, bool] = False)</span>
+<span>(</span><span>name: str = 'Now', year: int = 2022, month: int = 4, day: int = 2, hours: int = 18, minuts: int = 55, city: str = 'London', nat: str = '', lon: Union[int, float] = False, lat: Union[int, float] = False, tz_str: Union[str, bool] = False)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Calculates all the astrological informations, the coordinates,
+<div class="desc"><p>Calculates all the astrological information, the coordinates,
 it's utc and julian day and returns an object with all that data.
 Args: name, year, month, day, hours, minuts, city,
 initial of the nation (Ex: "IT"),
 longitude, latitude and the timezone string are set to false so they will
-be calulated, if you want you can set them.
+be calculated, if you want you can set them.
 Default values are set for now at greenwich time.</p></div>
 <details class="source">
 <summary>
@@ -669,12 +683,12 @@ Default values are set for now at greenwich time.</p></div>
 </summary>
 <pre><code class="python">class KrInstance():
     &#34;&#34;&#34;
-    Calculates all the astrological informations, the coordinates,
+    Calculates all the astrological information, the coordinates,
     it&#39;s utc and julian day and returns an object with all that data.
     Args: name, year, month, day, hours, minuts, city,
     initial of the nation (Ex: &#34;IT&#34;),
     longitude, latitude and the timezone string are set to false so they will
-    be calulated, if you want you can set them.
+    be calculated, if you want you can set them.
     Default values are set for now at greenwich time.
 
     &#34;&#34;&#34;
@@ -694,7 +708,7 @@ Default values are set for now at greenwich time.</p></div>
         lat: Union[int, float] = False,
         tz_str: Union[str, bool] = False
     ):
-        logging.info(&#39;Starting Kerykeion&#39;)
+        logger.debug(&#39;Starting Kerykeion&#39;)
         self.name = name
         self.year = year
         self.month = month
@@ -712,15 +726,25 @@ Default values are set for now at greenwich time.</p></div>
         self.julian_day = self.get_jd()
         self.zodiactype = &#34;Tropic&#34;
 
+        # Get all the calculations
+        self.get_all()
+
     def __str__(self):
-        return f&#34;Astrological data for: {self.name}, {self.utc} UTC&#34;
+        return f&#34;Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.city_lat}, Lon {self.city_long}&#34;
+
+    def __repr__(self) -&gt; str:
+        return f&#34;Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.city_lat}, Lon {self.city_long}&#34;
 
     def get_tz(self):
-        &#34;&#34;&#34;Gets the nerest time zone for the calculation&#34;&#34;&#34;
-        logging.info(&#34;Conneting to Geonames...&#34;)
-        self.city_data = search(self.city, self.nation)[0]
+        &#34;&#34;&#34;Gets the nearest time zone for the calculation&#34;&#34;&#34;
+        logger.debug(&#34;Conneting to Geonames...&#34;)
+        try:
+            self.city_data = search(self.city, self.nation)[0]
+        except:
+            logger.error(&#39;Error connecting to geonames, try again!&#39;)
+            exit()
 
-        logging.info(&#34;Geonames done!&#34;)
+        logger.debug(&#34;Geonames done!&#34;)
 
         self.nation = self.city_data[&#34;countryCode&#34;]
         self.city_long = float(self.city_data[&#34;lng&#34;])
@@ -731,11 +755,11 @@ Default values are set for now at greenwich time.</p></div>
 
         if self.city_lat &gt; 66.0:
             self.city_lat = 66.0
-            print(&#34;polar circle override for houses, using 66 degrees&#34;)
+            logger.info(&#39;Polar circle override for houses, using 66 degrees&#39;)
 
         elif self.city_lat &lt; -66.0:
             self.city_lat = -66.0
-            print(&#34;polar circle override for houses, using -66 degrees&#34;)
+            logger.info(&#39;Polar circle override for houses, using -66 degrees&#39;)
 
         return self.city_tz
 
@@ -975,7 +999,7 @@ Default values are set for now at greenwich time.</p></div>
         self.houses()
 
         def for_every_planet(planet, planet_deg):
-            &#34;&#34;&#34;Functio to do the calculation.
+            &#34;&#34;&#34;Function to do the calculation.
             Args: planet dictionary, planet degree&#34;&#34;&#34;
 
             def point_between(p1, p2, p3):
@@ -1058,13 +1082,13 @@ Default values are set for now at greenwich time.</p></div>
         # Check in retrograde or not:
 
         planets_ret = []
-        for plan in planets_list:
-            planet_number = self.get_number(plan[&#34;name&#34;])
+        for p in planets_list:
+            planet_number = self.get_number(p[&#34;name&#34;])
             if swe.calc(self.julian_day, planet_number, self.iflag)[0][3] &lt; 0:
-                plan.update({&#39;retrograde&#39;: True})
+                p.update({&#39;retrograde&#39;: True})
             else:
-                plan.update({&#39;retrograde&#39;: False})
-            planets_ret.append(plan)
+                p.update({&#39;retrograde&#39;: False})
+            planets_ret.append(p)
 
     def lunar_phase_calc(self):
         &#34;&#34;&#34; Function to calculate the lunar phase&#34;&#34;&#34;
@@ -1128,6 +1152,7 @@ Default values are set for now at greenwich time.</p></div>
         }
 
     def make_lists(self):
+        &#34;&#34;&#34; Internal function to generate the lists&#34;&#34;&#34;
         self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
                              self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
                              self.pluto, self.mean_node, self.true_node]
@@ -1147,12 +1172,14 @@ Default values are set for now at greenwich time.</p></div>
 
     # Utility Functions:
 
-    def json_dump(self, dump=True, new_output_directory=None):
-        import jsonpickle, json
+    def dangerous_json_dump(self, dump=True, new_output_directory=None):
+        import jsonpickle
+        import json
 
         &#34;&#34;&#34;
         Dumps the Kerykeion object to a json file located in the home folder.
-        This json file allows the object to be recreated with jsonpickle
+        This json file allows the object to be recreated with jsonpickle.
+        It&#39;s dangerous since it contains local system information.
         &#34;&#34;&#34;
 
         try:
@@ -1168,7 +1195,7 @@ Default values are set for now at greenwich time.</p></div>
                 self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
 
         json_string = jsonpickle.encode(self)
-        
+
         hiden_values = [f&#39; &#34;json_dir&#34;: &#34;{self.json_dir}&#34;,&#39;, f&#39;, &#34;json_path&#34;: &#34;{self.json_path}&#34;&#39;
                         ]
 
@@ -1176,34 +1203,53 @@ Default values are set for now at greenwich time.</p></div>
             json_string = json_string.replace(string, &#34;&#34;)
 
         if dump:
-            json_string = json.loads(json_string.replace(&#34;&#39;&#34;,&#39;&#34;&#39;))
+            json_string = json.loads(json_string.replace(&#34;&#39;&#34;, &#39;&#34;&#39;))
             with open(self.json_path, &#34;w&#34;) as file:
-                json.dump(json_string, file,  indent=4,sort_keys=True)
-                print(f&#34;JSON file dumped in {self.json_path}.&#34;)
+                json.dump(json_string, file,  indent=4, sort_keys=True)
+                logger.info(f&#34;JSON file dumped in {self.json_path}.&#34;)
         else:
             pass
         return json_string
 
-    def json_api(self, dump=False):
+    def json_dump(self, dump=False, destination_folder=False):
         from json import dumps
+
+        &#34;&#34;&#34;
+        Dumps the Kerykeion object to a json string foramt,
+        if dump=True also dumps to file located in destination
+        or the home folder.
+        &#34;&#34;&#34;
 
         if not self.sun:
             self.get_all()
 
         obj_dict = self.__dict__.copy()
-        keys_to_remove = [&#34;utc&#34;, &#34;iflag&#34;, &#34;json_dir&#34;, &#34;planets_list&#34;,
-                          &#34;houses_list&#34;, &#34;planets_degrees&#34;, &#34;houses_degree_ut&#34;]
+        keys_to_remove = [
+            &#34;utc&#34;,
+            &#34;iflag&#34;,
+            &#34;json_dir&#34;,
+            &#34;planets_list&#34;,
+            &#34;houses_list&#34;,
+            &#34;planets_degrees&#34;,
+            &#34;houses_degree_ut&#34;
+        ]
+
         for key in keys_to_remove:
             obj_dict.pop(key)
 
         json_obj = dumps(obj_dict)
 
         if dump:
-            json_path = os.path.join(
-                self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
+            if destination_folder:
+                json_path = os.path.join(
+                    destination_folder, f&#34;{self.name}_kerykeion.json&#34;)
+            else:
+                json_path = os.path.join(
+                    self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
+
             with open(json_path, &#34;w&#34;) as file:
                 file.write(json_obj)
-                print(f&#34;JSON file dumped in {json_path}.&#34;)
+                logger.info(f&#34;JSON file dumped in {json_path}.&#34;)
 
         return json_obj</code></pre>
 </details>
@@ -1341,6 +1387,55 @@ def position_calc(degree, number_name, label):
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="kerykeion.main.KrInstance.dangerous_json_dump"><code class="name flex">
+<span>def <span class="ident">dangerous_json_dump</span></span>(<span>self, dump=True, new_output_directory=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dangerous_json_dump(self, dump=True, new_output_directory=None):
+    import jsonpickle
+    import json
+
+    &#34;&#34;&#34;
+    Dumps the Kerykeion object to a json file located in the home folder.
+    This json file allows the object to be recreated with jsonpickle.
+    It&#39;s dangerous since it contains local system information.
+    &#34;&#34;&#34;
+
+    try:
+        self.sun
+    except:
+        self.get_all()
+
+    if new_output_directory:
+        self.json_path = os.path.join(
+            new_output_directory, f&#34;{self.name}_kerykeion.json&#34;)
+    else:
+        self.json_path = os.path.join(
+            self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
+
+    json_string = jsonpickle.encode(self)
+
+    hiden_values = [f&#39; &#34;json_dir&#34;: &#34;{self.json_dir}&#34;,&#39;, f&#39;, &#34;json_path&#34;: &#34;{self.json_path}&#34;&#39;
+                    ]
+
+    for string in hiden_values:
+        json_string = json_string.replace(string, &#34;&#34;)
+
+    if dump:
+        json_string = json.loads(json_string.replace(&#34;&#39;&#34;, &#39;&#34;&#39;))
+        with open(self.json_path, &#34;w&#34;) as file:
+            json.dump(json_string, file,  indent=4, sort_keys=True)
+            logger.info(f&#34;JSON file dumped in {self.json_path}.&#34;)
+    else:
+        pass
+    return json_string</code></pre>
+</details>
+</dd>
 <dt id="kerykeion.main.KrInstance.get_all"><code class="name flex">
 <span>def <span class="ident">get_all</span></span>(<span>self)</span>
 </code></dt>
@@ -1383,17 +1478,21 @@ def position_calc(degree, number_name, label):
 <span>def <span class="ident">get_tz</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Gets the nerest time zone for the calculation</p></div>
+<div class="desc"><p>Gets the nearest time zone for the calculation</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_tz(self):
-    &#34;&#34;&#34;Gets the nerest time zone for the calculation&#34;&#34;&#34;
-    logging.info(&#34;Conneting to Geonames...&#34;)
-    self.city_data = search(self.city, self.nation)[0]
+    &#34;&#34;&#34;Gets the nearest time zone for the calculation&#34;&#34;&#34;
+    logger.debug(&#34;Conneting to Geonames...&#34;)
+    try:
+        self.city_data = search(self.city, self.nation)[0]
+    except:
+        logger.error(&#39;Error connecting to geonames, try again!&#39;)
+        exit()
 
-    logging.info(&#34;Geonames done!&#34;)
+    logger.debug(&#34;Geonames done!&#34;)
 
     self.nation = self.city_data[&#34;countryCode&#34;]
     self.city_long = float(self.city_data[&#34;lng&#34;])
@@ -1404,11 +1503,11 @@ def position_calc(degree, number_name, label):
 
     if self.city_lat &gt; 66.0:
         self.city_lat = 66.0
-        print(&#34;polar circle override for houses, using 66 degrees&#34;)
+        logger.info(&#39;Polar circle override for houses, using 66 degrees&#39;)
 
     elif self.city_lat &lt; -66.0:
         self.city_lat = -66.0
-        print(&#34;polar circle override for houses, using -66 degrees&#34;)
+        logger.info(&#39;Polar circle override for houses, using -66 degrees&#39;)
 
     return self.city_tz</code></pre>
 </details>
@@ -1491,8 +1590,8 @@ def position_calc(degree, number_name, label):
     return houses_degree</code></pre>
 </details>
 </dd>
-<dt id="kerykeion.main.KrInstance.json_api"><code class="name flex">
-<span>def <span class="ident">json_api</span></span>(<span>self, dump=False)</span>
+<dt id="kerykeion.main.KrInstance.json_dump"><code class="name flex">
+<span>def <span class="ident">json_dump</span></span>(<span>self, dump=False, destination_folder=False)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1500,75 +1599,47 @@ def position_calc(degree, number_name, label):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def json_api(self, dump=False):
+<pre><code class="python">def json_dump(self, dump=False, destination_folder=False):
     from json import dumps
+
+    &#34;&#34;&#34;
+    Dumps the Kerykeion object to a json string foramt,
+    if dump=True also dumps to file located in destination
+    or the home folder.
+    &#34;&#34;&#34;
 
     if not self.sun:
         self.get_all()
 
     obj_dict = self.__dict__.copy()
-    keys_to_remove = [&#34;utc&#34;, &#34;iflag&#34;, &#34;json_dir&#34;, &#34;planets_list&#34;,
-                      &#34;houses_list&#34;, &#34;planets_degrees&#34;, &#34;houses_degree_ut&#34;]
+    keys_to_remove = [
+        &#34;utc&#34;,
+        &#34;iflag&#34;,
+        &#34;json_dir&#34;,
+        &#34;planets_list&#34;,
+        &#34;houses_list&#34;,
+        &#34;planets_degrees&#34;,
+        &#34;houses_degree_ut&#34;
+    ]
+
     for key in keys_to_remove:
         obj_dict.pop(key)
 
     json_obj = dumps(obj_dict)
 
     if dump:
-        json_path = os.path.join(
-            self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
+        if destination_folder:
+            json_path = os.path.join(
+                destination_folder, f&#34;{self.name}_kerykeion.json&#34;)
+        else:
+            json_path = os.path.join(
+                self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
+
         with open(json_path, &#34;w&#34;) as file:
             file.write(json_obj)
-            print(f&#34;JSON file dumped in {json_path}.&#34;)
+            logger.info(f&#34;JSON file dumped in {json_path}.&#34;)
 
     return json_obj</code></pre>
-</details>
-</dd>
-<dt id="kerykeion.main.KrInstance.json_dump"><code class="name flex">
-<span>def <span class="ident">json_dump</span></span>(<span>self, dump=True, new_output_directory=None)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def json_dump(self, dump=True, new_output_directory=None):
-    import jsonpickle, json
-
-    &#34;&#34;&#34;
-    Dumps the Kerykeion object to a json file located in the home folder.
-    This json file allows the object to be recreated with jsonpickle
-    &#34;&#34;&#34;
-
-    try:
-        self.sun
-    except:
-        self.get_all()
-
-    if new_output_directory:
-        self.json_path = os.path.join(
-            new_output_directory, f&#34;{self.name}_kerykeion.json&#34;)
-    else:
-        self.json_path = os.path.join(
-            self.json_dir, f&#34;{self.name}_kerykeion.json&#34;)
-
-    json_string = jsonpickle.encode(self)
-    
-    hiden_values = [f&#39; &#34;json_dir&#34;: &#34;{self.json_dir}&#34;,&#39;, f&#39;, &#34;json_path&#34;: &#34;{self.json_path}&#34;&#39;
-                    ]
-
-    for string in hiden_values:
-        json_string = json_string.replace(string, &#34;&#34;)
-
-    if dump:
-        json_string = json.loads(json_string.replace(&#34;&#39;&#34;,&#39;&#34;&#39;))
-        with open(self.json_path, &#34;w&#34;) as file:
-            json.dump(json_string, file,  indent=4,sort_keys=True)
-            print(f&#34;JSON file dumped in {self.json_path}.&#34;)
-    else:
-        pass
-    return json_string</code></pre>
 </details>
 </dd>
 <dt id="kerykeion.main.KrInstance.lunar_phase_calc"><code class="name flex">
@@ -1646,12 +1717,13 @@ def position_calc(degree, number_name, label):
 <span>def <span class="ident">make_lists</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Internal function to generate the lists</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def make_lists(self):
+    &#34;&#34;&#34; Internal function to generate the lists&#34;&#34;&#34;
     self.planets_list = [self.sun, self.moon, self.mercury, self.venus,
                          self.mars, self.jupiter, self.saturn, self.uranus, self.neptune,
                          self.pluto, self.mean_node, self.true_node]
@@ -1760,7 +1832,7 @@ the planets dictionary.</p></div>
     self.houses()
 
     def for_every_planet(planet, planet_deg):
-        &#34;&#34;&#34;Functio to do the calculation.
+        &#34;&#34;&#34;Function to do the calculation.
         Args: planet dictionary, planet degree&#34;&#34;&#34;
 
         def point_between(p1, p2, p3):
@@ -1843,13 +1915,13 @@ the planets dictionary.</p></div>
     # Check in retrograde or not:
 
     planets_ret = []
-    for plan in planets_list:
-        planet_number = self.get_number(plan[&#34;name&#34;])
+    for p in planets_list:
+        planet_number = self.get_number(p[&#34;name&#34;])
         if swe.calc(self.julian_day, planet_number, self.iflag)[0][3] &lt; 0:
-            plan.update({&#39;retrograde&#39;: True})
+            p.update({&#39;retrograde&#39;: True})
         else:
-            plan.update({&#39;retrograde&#39;: False})
-        planets_ret.append(plan)</code></pre>
+            p.update({&#39;retrograde&#39;: False})
+        planets_ret.append(p)</code></pre>
 </details>
 </dd>
 </dl>
@@ -1868,23 +1940,18 @@ the planets dictionary.</p></div>
 <li><code><a title="kerykeion" href="index.html">kerykeion</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="">
-<li><code><a title="kerykeion.main.debug_print" href="#kerykeion.main.debug_print">debug_print</a></code></li>
-</ul>
-</li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
 <h4><code><a title="kerykeion.main.KrInstance" href="#kerykeion.main.KrInstance">KrInstance</a></code></h4>
 <ul class="">
+<li><code><a title="kerykeion.main.KrInstance.dangerous_json_dump" href="#kerykeion.main.KrInstance.dangerous_json_dump">dangerous_json_dump</a></code></li>
 <li><code><a title="kerykeion.main.KrInstance.get_all" href="#kerykeion.main.KrInstance.get_all">get_all</a></code></li>
 <li><code><a title="kerykeion.main.KrInstance.get_jd" href="#kerykeion.main.KrInstance.get_jd">get_jd</a></code></li>
 <li><code><a title="kerykeion.main.KrInstance.get_number" href="#kerykeion.main.KrInstance.get_number">get_number</a></code></li>
 <li><code><a title="kerykeion.main.KrInstance.get_tz" href="#kerykeion.main.KrInstance.get_tz">get_tz</a></code></li>
 <li><code><a title="kerykeion.main.KrInstance.get_utc" href="#kerykeion.main.KrInstance.get_utc">get_utc</a></code></li>
 <li><code><a title="kerykeion.main.KrInstance.houses" href="#kerykeion.main.KrInstance.houses">houses</a></code></li>
-<li><code><a title="kerykeion.main.KrInstance.json_api" href="#kerykeion.main.KrInstance.json_api">json_api</a></code></li>
 <li><code><a title="kerykeion.main.KrInstance.json_dump" href="#kerykeion.main.KrInstance.json_dump">json_dump</a></code></li>
 <li><code><a title="kerykeion.main.KrInstance.lunar_phase_calc" href="#kerykeion.main.KrInstance.lunar_phase_calc">lunar_phase_calc</a></code></li>
 <li><code><a title="kerykeion.main.KrInstance.make_lists" href="#kerykeion.main.KrInstance.make_lists">make_lists</a></code></li>

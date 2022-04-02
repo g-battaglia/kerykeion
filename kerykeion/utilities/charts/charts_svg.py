@@ -22,9 +22,14 @@ class MakeSvgInstance:
     There are 2 templates, the extended (default) which has all the
     information and the basic, which has just the chart.
 
-    Args: First kerykeion object,
-    Chart type (Natal, Transit, Composite, Default: Type="Natal"),
-    second kerykeion object (Not required if type is Natal).
+    Parameters:
+        - first_obj: First kerykeion object
+        - chart_type: Natal, Transit, Composite (Default: Type="Natal")
+        - second_obj: Second kerykeion object (Not required if type is Natal)
+        - new_output_directory: Set the output directory (default: output_directory)
+        - template_type: set the template type to include or not the aspects grid, default: extended)
+        - lang: language settings (default: "EN")
+        - new_settings_file: Set the settings file (default: kr.config.json)
     """
 
     def __init__(
