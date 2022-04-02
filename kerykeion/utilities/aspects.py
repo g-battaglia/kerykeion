@@ -1,8 +1,17 @@
 from kerykeion.main import KrInstance
-from kerykeion.utilities.kr_settings import aspects, colors, planets, axes_orbit
 from swisseph import difdeg2n
+import json
+from pathlib import Path
 
+DATADIR = Path(__file__).parent
 
+with open(DATADIR / 'kr.config.json', 'r') as f:
+    settings = json.load(f)
+
+colors = settings['colors']
+planets = settings['planets']
+aspects = settings['aspects']
+axes_orbit = settings['axes_orbit']
 
 
 

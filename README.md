@@ -62,8 +62,6 @@ SVG Generated Correctly
 38
 
 ```
-- You can set the planets that you want to see in the chart editing the setting in the file 
-[kr_settings.py](/kerykeion/utilities/kr_settings.py)
 
 ![alt text](http://centuryboy.altervista.org/JackComposite_Chart.svg)
 
