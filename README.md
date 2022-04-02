@@ -20,30 +20,30 @@ Here some examples:
 ```python
 
 # Import the main class for creating a kerykeion instance:
-from kerykeion import KrInstance
+>>> from kerykeion import KrInstance
 
 # Create a kerykeion instance:
 # Args: Name, year, month, day, hour, minuts, city, nation(optional)
-kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+>>> kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
 
 # Get the information about the sun in the chart:
 # (The position of the planets always starts at 0)
-kanye.sun
+>>> kanye.sun
 {'name': 'Sun', 'quality': 'Mutable', 'element': 'Air', 'sign': 'Gem', 'sign_num': 2, 'pos': 17.598992059774275, 'abs_pos': 77.59899205977428, 'emoji': '♊️', 'house': '12th House', 'retrograde': False}
 
 # Get informations about the first house:
-kanye.first_house
+>>> kanye.first_house
 {'name': '1', 'quality': 'Cardinal', 'element': 'Water', 'sign': 'Can', 'sign_num': 3, 'pos': 17.995779673209114, 'abs_pos': 107.99577967320911, 'emoji': '♋️'}
 
 # Get element of the moon sign:
-kanye.moon.get("element")
+>>> kanye.moon.get("element")
 'Water'
 
 ```
 
 ## Generate a SVG of the birthchart:
 
-```
+```python
 >>> import kerykeion as kr
 >>> from kerykeion.utilities.charts import MakeSvgInstance
 
@@ -62,17 +62,13 @@ SVG Generated Correctly
 38
 
 ```
-- You can set the planets that you want to see in the chart editing the setting in the file 
-kr_settings.py
 
 ![alt text](http://centuryboy.altervista.org/JackComposite_Chart.svg)
 
 
 # Example of a possible text output with information:
 
-```
-
-
+```python
 >>> from kerykeion import output, KrInstance
 
 >>> kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
@@ -111,9 +107,7 @@ House Cusp 12:    Gem  15.681
 
 ## Other exeples of possibles usecase
 
-```
-
-
+```python
 >>> print(kanye.houses()[3]) # Print the house information.
 {'name': '4', 'quality': 'Cardinal', 'element': 'Air', 'sign': 'Lib', 'pos': 3.9766709280539203, 'abs_pos': 183.97667092805392, 'emoji': '♎️'}
 
