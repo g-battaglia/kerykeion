@@ -20,7 +20,7 @@ TRIGON_VALUE = 7
 class DiscepoloNumber():
     """
     Calculates the synastry using Ciro Discepolo's algorithm.
-    Empirically 57 is the max score for a synastry.
+    Empirically 60 is the max score for a synastry.
 
     Parameters:
         - user_a: first user object
