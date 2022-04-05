@@ -1,7 +1,6 @@
 <h1 align=center>Kerykeion</h1>
 <div align="center">
     <img src="https://img.shields.io/pypi/v/kerykeion.svg" alt="PyPI Version">
-    <img src="https://img.shields.io/badge/Python-3.9-FF1493.svg" alt="python version">
     <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
     <img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="stars">
     <img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="forks">
