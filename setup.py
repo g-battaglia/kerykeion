@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf8") as fh:
 
 setuptools.setup(
     name="kerykeion",
-    version="2.3.0",
+    version="2.3.1",
     author="Giacomo Battaglia",
     author_email="battaglia.giacomo@yahoo.it",
     description="A python library for astrology.",

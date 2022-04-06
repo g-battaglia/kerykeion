@@ -10,9 +10,6 @@ import requests
 import requests_cache
 from typing import Union
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-
 requests_cache.install_cache(
     cache_name='request_cache/geonames_cache', 
     backend='sqlite', 
@@ -24,12 +21,19 @@ class FetchGeonames:
     Class to handle requests to the geonames API
     """
     
-    def __init__(self, city_name: str, country_name: str, username: str = "century.boy"):
+    def __init__(self, city_name: str, country_name: str, username: str = "century.boy", logger: Union[logging.Logger, None] = None):
         self.username = username
         self.city_name = city_name
         self.country_name = country_name
         self.base_url = "http://api.geonames.org/searchJSON"
         self.timezone_url = "http://api.geonames.org/timezoneJSON"
+        self.logger = logger or logging.getLogger('FetchGeonames')
+
+        if not logger:
+            logging.basicConfig(
+                format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                level=logging.INFO
+            )
 
     def get_timezone(self, lat: Union[str, float, int], lon: Union[str, float, int]) -> dict[str, str]:
         """
@@ -46,7 +50,7 @@ class FetchGeonames:
             response_json = response.json()
         
         except Exception as e:
-            logging.error(f"Error fetching {self.timezone_url}: {e}")
+            self.logger.error(f"Error fetching {self.timezone_url}: {e}")
             return {}
 
         # Serialize the response:
@@ -56,7 +60,7 @@ class FetchGeonames:
             timezone_data['timezonestr'] = response_json['timezoneId']
 
         except Exception as e:
-            logging.error(f"Error serializing data maybe wrong username? Details: {e}")
+            self.logger.error(f"Error serializing data maybe wrong username? Details: {e}")
             return {}
 
         timezone_data['from_tz_cached'] = response.from_cache
@@ -79,7 +83,7 @@ class FetchGeonames:
             response_json = response.json()
 
         except Exception as e:
-            logging.error(f"Error in fetching {self.base_url}: {e}")
+            self.logger.error(f"Error in fetching {self.base_url}: {e}")
             return {}
 
         # Serialize the response
@@ -92,7 +96,7 @@ class FetchGeonames:
             city_data_whitout_tz['countryCode'] = response_json['geonames'][0]['countryCode']
 
         except Exception as e:
-            logging.error(f"Error serializing data maybe wrong username? Details: {e}")
+            self.logger.error(f"Error serializing data maybe wrong username? Details: {e}")
             return {}
 
         city_data_whitout_tz['from_country_cache'] = response.from_cache
@@ -111,7 +115,7 @@ class FetchGeonames:
             timezone_response = self.get_timezone(city_data_response['lat'], city_data_response['lng'])
 
         except Exception as e:
-            logging.error(f"Error in fetching timezone: {e}")
+            self.logger.error(f"Error in fetching timezone: {e}")
             return {}
 
         return {**timezone_response, **city_data_response}
