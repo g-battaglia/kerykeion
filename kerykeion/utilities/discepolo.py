@@ -1,5 +1,5 @@
 """
-    This is part of Kerykeion (C) 2020 Giacomo Battaglia
+    This is part of Kerykeion (C) 2022 Giacomo Battaglia
 """
 
 #!/usr/bin/env python3
@@ -20,7 +20,11 @@ TRIGON_VALUE = 7
 class DiscepoloNumber():
     """
     Calculates the synastry using Ciro Discepolo's algorithm.
-    Args: first user object, second user object
+    Empirically 60 is the max score for a synastry.
+
+    Parameters:
+        - user_a: first user object
+        - user_b: second user object
     """
 
     def __init__(self, user_a: KrInstance, user_b: KrInstance):
@@ -37,7 +41,7 @@ class DiscepoloNumber():
         """ 
         Calculates the aspects between the 2 users.
         Args: first user object, first list of planets and houses,
-        second user objcet, second list of planets and houses. 
+        second user object, second list of planets and houses. 
         """
 
         distance = abs(swe.difdeg2n(self.first_points_list[pl_us1]["abs_pos"],

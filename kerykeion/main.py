@@ -1,10 +1,12 @@
 """
-    This is part of Kerykeion (C) 2020 Giacomo Battaglia
+    This is part of Kerykeion (C) 2022 Giacomo Battaglia
 """
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import datetime
-from kerykeion.geoname import search
 import logging
+from kerykeion.fetch_geonames import FetchGeonames
 import math
 import os.path
 import pytz
@@ -79,8 +81,10 @@ class KrInstance():
     def get_tz(self):
         """Gets the nearest time zone for the calculation"""
         logger.debug("Conneting to Geonames...")
+        
         try:
-            self.city_data = search(self.city, self.nation)[0]
+            geonames = FetchGeonames(self.city, self.nation)
+            self.city_data = geonames.get_serialized_data()
         except:
             logger.error('Error connecting to geonames, try again!')
             exit()

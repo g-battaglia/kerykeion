@@ -1,14 +1,15 @@
-# Kerykeion
+<h1 align=center>Kerykeion</h1>
 <div align="center">
-    <img src="https://img.shields.io/badge/Python-3.9-FF1493.svg" alt="python version">
+    <img src="https://img.shields.io/pypi/v/kerykeion.svg" alt="PyPI Version">
     <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
     <img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="stars">
     <img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="forks">
     <img src="https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion" alt="visitors"/>
+    <img src="https://img.shields.io/badge/Python-3.9-FF1493.svg" alt="python version">
 </div>
 
+&nbsp;
 
----
 Kerykeion is a python library for Astrology.
 It can calculate all the planet and house position,
 also it can calculate the aspects of a single persone or between two, you can set how many planets you
@@ -152,3 +153,14 @@ You can clone this repository or download a zip file using the right side button
 ## Contributing
 
 Feel free to contribute to the code!
+
+## Versione 2.3.0 updates:
+
+Created a new fetch_geonames module to replace the older geoname.py (which was part of OpenAstro).
+The new module introduces the `requests` and the `requests-cache` library for fetching the data from
+`geonames.org` . It's more maintainable and more efficient than before.
+
+Created also a tests directory with a pipenv for testing, the tests and the examples folder should
+be maybe merged, or an global pipenv should be created for development.
+
+A refactoring and a restructuring of the folder structure should be done in the future.
