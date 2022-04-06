@@ -16,13 +16,6 @@ from typing import Union
 
 # swe.set_ephe_path("/")
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
-
-logger = logging.getLogger('Kerykeion')
-
 
 class KrInstance():
     """
@@ -49,9 +42,17 @@ class KrInstance():
         nat: str = "",
         lon: Union[int, float] = False,
         lat: Union[int, float] = False,
-        tz_str: Union[str, bool] = False
+        tz_str: Union[str, bool] = False,
+        logger: Union[logging.Logger, None] = None
     ):
-        logger.debug('Starting Kerykeion')
+        if not logger:
+            logging.basicConfig(
+                format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                level=logging.INFO
+            )
+
+        self.logger = logger or logging.getLogger('Kerykeion')
+        self.logger.debug('Starting Kerykeion')
         self.name = name
         self.year = year
         self.month = month
@@ -80,16 +81,16 @@ class KrInstance():
 
     def get_tz(self):
         """Gets the nearest time zone for the calculation"""
-        logger.debug("Conneting to Geonames...")
+        self.logger.debug("Conneting to Geonames...")
         
         try:
-            geonames = FetchGeonames(self.city, self.nation)
+            geonames = FetchGeonames(self.city, self.nation, logger=self.logger)
             self.city_data = geonames.get_serialized_data()
         except:
-            logger.error('Error connecting to geonames, try again!')
+            self.logger.error('Error connecting to geonames, try again!')
             exit()
 
-        logger.debug("Geonames done!")
+        self.logger.debug("Geonames done!")
 
         self.nation = self.city_data["countryCode"]
         self.city_long = float(self.city_data["lng"])
@@ -100,11 +101,11 @@ class KrInstance():
 
         if self.city_lat > 66.0:
             self.city_lat = 66.0
-            logger.info('Polar circle override for houses, using 66 degrees')
+            self.logger.info('Polar circle override for houses, using 66 degrees')
 
         elif self.city_lat < -66.0:
             self.city_lat = -66.0
-            logger.info('Polar circle override for houses, using -66 degrees')
+            self.logger.info('Polar circle override for houses, using -66 degrees')
 
         return self.city_tz
 
@@ -551,7 +552,7 @@ class KrInstance():
             json_string = json.loads(json_string.replace("'", '"'))
             with open(self.json_path, "w") as file:
                 json.dump(json_string, file,  indent=4, sort_keys=True)
-                logger.info(f"JSON file dumped in {self.json_path}.")
+                self.logger.info(f"JSON file dumped in {self.json_path}.")
         else:
             pass
         return json_string
@@ -594,7 +595,7 @@ class KrInstance():
 
             with open(json_path, "w") as file:
                 file.write(json_obj)
-                logger.info(f"JSON file dumped in {json_path}.")
+                self.logger.info(f"JSON file dumped in {json_path}.")
 
         return json_obj
 
