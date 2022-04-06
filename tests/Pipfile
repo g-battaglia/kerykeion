@@ -4,11 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pyswisseph = "==2.8.0.post1"
-pytz = "==2020.1"
-jsonpickle = "==1.4.2"
+kerykeion = {editable = true, path = "./.."}
+pytest = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.9"
+
+[scripts]
+chart = "python eg_create_chart.py"

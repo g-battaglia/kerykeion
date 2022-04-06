@@ -1,5 +1,5 @@
 """
-    This is part of Kerykeion (C) 2020 Giacomo Battaglia
+    This is part of Kerykeion (C) 2022 Giacomo Battaglia
 """
 
 import setuptools
@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf8") as fh:
 
 setuptools.setup(
     name="kerykeion",
-    version="2.2.8",
+    version="2.3.0",
     author="Giacomo Battaglia",
     author_email="battaglia.giacomo@yahoo.it",
     description="A python library for astrology.",
@@ -24,5 +24,5 @@ setuptools.setup(
     ],
     include_package_data=True,
     python_requires='>=3.8',
-    install_requires=['pyswisseph', 'pytz', 'jsonpickle'],
+    install_requires=['pyswisseph', 'pytz', 'jsonpickle', 'requests', 'requests_cache'],
 )
