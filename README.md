@@ -153,3 +153,14 @@ You can clone this repository or download a zip file using the right side button
 ## Contributing
 
 Feel free to contribute to the code!
+
+## Versione 2.3.0 updates:
+
+Created a new fetch_geonames module to replace the older geoname.py (which was part of OpenAstro).
+The new module introduces the `requests` and the `requests-cache` library for fetching the data from
+`geonames.org` . It's more maintainable and more efficient than before.
+
+Created also a tests directory with a pipenv for testing, the tests and the examples folder should
+be maybe merged, or an global pipenv should be created for development.
+
+A refactoring and a restructuring of the folder structure should be done in the future.
