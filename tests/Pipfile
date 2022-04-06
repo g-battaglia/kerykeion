@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+kerykeion = {editable = true, path = "./.."}
+pytest = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+chart = "python eg_create_chart.py"

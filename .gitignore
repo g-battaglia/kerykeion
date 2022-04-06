@@ -49,3 +49,4 @@ dist/
 .geonames_cache
 .kerykeion
 kr_venv
+request_cache

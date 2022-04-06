@@ -1,5 +1,5 @@
 """
-    This is part of Kerykeion (C) 2020 Giacomo Battaglia
+    This is part of Kerykeion (C) 2022 Giacomo Battaglia
 """
 
 #!/usr/bin/env python3
