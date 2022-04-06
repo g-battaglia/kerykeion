@@ -542,8 +542,9 @@ class KrInstance():
 
         json_string = jsonpickle.encode(self)
 
-        hiden_values = [f' "json_dir": "{self.json_dir}",', f', "json_path": "{self.json_path}"'
-                        ]
+        hiden_values = [
+            f' "json_dir": "{self.json_dir}",', f', "json_path": "{self.json_path}"'
+            ]
 
         for string in hiden_values:
             json_string = json_string.replace(string, "")
@@ -577,7 +578,8 @@ class KrInstance():
             "planets_list",
             "houses_list",
             "planets_degrees",
-            "houses_degree_ut"
+            "houses_degree_ut",
+            "logger"
         ]
 
         for key in keys_to_remove:
@@ -629,4 +631,4 @@ if __name__ == "__main__":
                      lon=50, lat=50, tz_str="Europe/Rome")
 
     kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
-    print(kanye)
+    print(kanye.json_dump(dump=False))

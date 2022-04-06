@@ -22,6 +22,12 @@ class FetchGeonames:
     """
     
     def __init__(self, city_name: str, country_name: str, username: str = "century.boy", logger: Union[logging.Logger, None] = None):
+        if not logger:
+            logging.basicConfig(
+                format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                level=logging.INFO
+            )
+        
         self.username = username
         self.city_name = city_name
         self.country_name = country_name
@@ -29,11 +35,7 @@ class FetchGeonames:
         self.timezone_url = "http://api.geonames.org/timezoneJSON"
         self.logger = logger or logging.getLogger('FetchGeonames')
 
-        if not logger:
-            logging.basicConfig(
-                format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                level=logging.INFO
-            )
+
 
     def get_timezone(self, lat: Union[str, float, int], lon: Union[str, float, int]) -> dict[str, str]:
         """
