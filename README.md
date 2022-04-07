@@ -112,10 +112,6 @@ House Cusp 12:    Gem  15.681
 >>> print(kanye.houses()[3]) # Print the house information.
 {'name': '4', 'quality': 'Cardinal', 'element': 'Air', 'sign': 'Lib', 'pos': 3.9766709280539203, 'abs_pos': 183.97667092805392, 'emoji': '♎️'}
 
-
->>> print(kanye.planets_house()[0]) # Print the planet information.
-{'name': 'Sun', 'quality': 'Mutable', 'element': 'Air', 'sign': 'Gem', 'pos': 17.598990175203994, 'abs_pos': 77.598990175204, 'emoji': '♊️', 'house': '12th House'}
-
 >>> print(kanye.aspects()['all']['Sun']) # Print aspects for the planet.
 ["('Square', 'Moon', 1.1735227310748542)", "('Semisquare', 'Venus', 0.5668097396966303)", "('Semisquare', 'Mars', 0.8092756679079827)", "('Conjuction', 'Jupiter', 2.992099853982751)", "('Oposition', 'Neptune', -2.906233250740513)", "('Trigon', 'Pluto', -6.153155598911468)", "('Conjuction', 'Juno', 0.0)", "('Semisextil', '1', 0.39678949800406826)", "('Oposition', '6', -1.917784119528534)", "('Quincunx', '7', -0.39678949800406826)", "('Conjuction', '12', 1.917784119528534)"]
 
