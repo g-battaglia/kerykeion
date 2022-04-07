@@ -43,7 +43,8 @@ class KrInstance():
         lon: Union[int, float] = False,
         lat: Union[int, float] = False,
         tz_str: Union[str, bool] = False,
-        logger: Union[logging.Logger, None] = None
+        logger: Union[logging.Logger, None] = None,
+        geonames_username: str = 'century.boy'
     ):
         if not logger:
             logging.basicConfig(
@@ -64,12 +65,13 @@ class KrInstance():
         self.city_long = lon
         self.city_lat = lat
         self.city_tz = tz_str
+        self.geonames_username = geonames_username
+        self.zodiactype = "Tropic"
 
         self.json_dir = os.path.expanduser("~")
 
         self.julian_day = self.get_jd()
-        self.zodiactype = "Tropic"
-
+        
         # Get all the calculations
         self.get_all()
 
@@ -84,10 +86,10 @@ class KrInstance():
         self.logger.debug("Conneting to Geonames...")
         
         try:
-            geonames = FetchGeonames(self.city, self.nation, logger=self.logger)
+            geonames = FetchGeonames(self.city, self.nation, logger=self.logger, username=self.geonames_username)
             self.city_data = geonames.get_serialized_data()
-        except:
-            self.logger.error('Error connecting to geonames, try again!')
+        except Exception as e:
+            self.logger.error(f'Error connecting to geonames, try again! Details {e}')
             exit()
 
         self.logger.debug("Geonames done!")
@@ -241,7 +243,7 @@ class KrInstance():
         # creates the list of the house in 360°
         self.houses_degree_ut = swe.houses(self.julian_day, self.city_lat,
                                            self.city_long)[0]
-        # stores the house in signulare dictionaries.
+        # stores the house in singular dictionaries.
         self.first_house = self.position_calc(
             self.houses_degree_ut[0], "1", "name")
         self.second_house = self.position_calc(
@@ -628,8 +630,10 @@ if __name__ == "__main__":
     # for p in kanye.planets_list:
     #     print(p)
     ###############################
+    
     now = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta",
                      lon=50, lat=50, tz_str="Europe/Rome")
 
     kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+    print(kanye.geonames_username)
     print(kanye.json_dump(dump=False))
