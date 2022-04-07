@@ -542,16 +542,17 @@ class KrInstance():
 
         json_string = jsonpickle.encode(self)
 
-        hiden_values = [
+        hidden_values = [
             f' "json_dir": "{self.json_dir}",', f', "json_path": "{self.json_path}"'
             ]
 
-        for string in hiden_values:
+        for string in hidden_values:
             json_string = json_string.replace(string, "")
 
         if dump:
             json_string = json.loads(json_string.replace("'", '"'))
-            with open(self.json_path, "w") as file:
+
+            with open(self.json_path, "w", encoding="utf-8") as file:
                 json.dump(json_string, file,  indent=4, sort_keys=True)
                 self.logger.info(f"JSON file dumped in {self.json_path}.")
         else:
@@ -595,7 +596,7 @@ class KrInstance():
                 json_path = os.path.join(
                     self.json_dir, f"{self.name}_kerykeion.json")
 
-            with open(json_path, "w") as file:
+            with open(json_path, "w", encoding="utf-8") as file:
                 file.write(json_obj)
                 self.logger.info(f"JSON file dumped in {json_path}.")
 

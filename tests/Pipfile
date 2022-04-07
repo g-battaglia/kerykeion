@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 kerykeion = {editable = true, path = "./.."}
 pytest = "*"
+requests-cache = "*"
 
 [dev-packages]
 
