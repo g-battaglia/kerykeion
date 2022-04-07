@@ -262,7 +262,7 @@ class MakeSvgInstance:
         """
         Parse the settings file.
         """
-        with open(settings_file, 'r') as f:
+        with open(settings_file, 'r', encoding="utf-8") as f:
             settings = json.load(f)
 
         self.language_settings = settings['language_settings'].get(
@@ -503,7 +503,7 @@ class MakeSvgInstance:
         td['makeHousesGrid'] = self.makeHousesGrid()
 
         # read template
-        with open(self.xml_svg, "r") as output_file:
+        with open(self.xml_svg, "r", encoding="utf-8") as output_file:
             f = open(self.xml_svg)
             template = Template(f.read()).substitute(td)
 
