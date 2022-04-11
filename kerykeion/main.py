@@ -44,7 +44,8 @@ class KrInstance():
         lat: Union[int, float] = False,
         tz_str: Union[str, bool] = False,
         logger: Union[logging.Logger, None] = None,
-        geonames_username: str = 'century.boy'
+        geonames_username: str = 'century.boy',
+        online: bool = True,
     ):
         if not logger:
             logging.basicConfig(
@@ -67,8 +68,13 @@ class KrInstance():
         self.city_tz = tz_str
         self.geonames_username = geonames_username
         self.zodiactype = "Tropic"
-
+        self.online = online
         self.json_dir = os.path.expanduser("~")
+
+        if not self.online:
+            assert(lon is not False, "need to provide longitude if offline")
+            assert(lat is not False, "need to provide latitude if offline")
+            assert(tz_str is not False, "need to provide timezone if offline")
 
         self.julian_day = self.get_jd()
         
@@ -84,20 +90,27 @@ class KrInstance():
     def get_tz(self):
         """Gets the nearest time zone for the calculation"""
         self.logger.debug("Conneting to Geonames...")
-        
-        try:
-            geonames = FetchGeonames(self.city, self.nation, logger=self.logger, username=self.geonames_username)
-            self.city_data = geonames.get_serialized_data()
-        except Exception as e:
-            self.logger.error(f'Error connecting to geonames, try again! Details {e}')
-            exit()
+        if self.online:
+            try:
+                geonames = FetchGeonames(self.city, self.nation, logger=self.logger, username=self.geonames_username)
+                geonames.get_serialized_data()
+            except Exception as e:
+                self.logger.error(f'Error connecting to geonames, try again! Details {e}')
+                exit()
+            self.logger.debug("Geonames done!")
+        else:
+            self.city_data = {}
+            self.logger.debug("Geonames skipped, using local data!")
 
-        self.logger.debug("Geonames done!")
 
-        self.nation = self.city_data["countryCode"]
-        self.city_long = float(self.city_data["lng"])
-        self.city_lat = float(self.city_data["lat"])
-        self.city_tz = self.city_data["timezonestr"]
+        if "countryCode" in self.city_data:
+            self.nation = self.city_data["countryCode"]
+        if "lng" in self.city_data:
+            self.city_long = float(self.city_data["lng"])
+        if "lat" in self.city_data:
+            self.city_lat = float(self.city_data["lat"])
+        if "timezonestr" in self.city_data:
+            self.city_tz = self.city_data["timezonestr"]
 
         # self.country_code = self.city_data["countryCode"]
 
