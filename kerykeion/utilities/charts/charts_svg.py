@@ -1579,4 +1579,4 @@ if __name__ == "__main__":
     # name.output_directory = Path.home() / "charts"
     template = name.makeTemplate()
     name.makeSVG()
-    # print(len(name.aspects_list))
+    print(name.aspects_list[-1])
