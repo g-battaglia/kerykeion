@@ -473,6 +473,9 @@ class KrInstance():
     def lunar_phase_calc(self):
         """ Function to calculate the lunar phase"""
 
+        # If ther's an error:
+        mphase, sphase = 'NO DATA', 'NO DATA'
+
         # anti-clockwise degrees between sun and moon
         moon, sun = self.planets_degrees[1], self.planets_degrees[0]
         degrees_between = moon - sun
@@ -582,10 +585,10 @@ class KrInstance():
         ]
 
         for string in hidden_values:
-            json_string = json_string.replace(string, "")
+            json_string = json_string.replace(string, "") # type: ignore TODO: Fix this
 
         if dump:
-            json_string = json.loads(json_string.replace("'", '"'))
+            json_string = json.loads(json_string.replace("'", '"')) # type: ignore TODO: Fix this
 
             with open(self.json_path, "w", encoding="utf-8") as file:
                 json.dump(json_string, file,  indent=4, sort_keys=True)
