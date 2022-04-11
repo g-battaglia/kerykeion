@@ -8,11 +8,12 @@ import datetime
 import logging
 from kerykeion.fetch_geonames import FetchGeonames
 import math
-import os.path
+from pathlib import Path
 import pytz
+from typing import Union
 from sys import exit
 import swisseph as swe
-from typing import Union
+
 
 # swe.set_ephe_path("/")
 
@@ -21,12 +22,23 @@ class KrInstance():
     """
     Calculates all the astrological information, the coordinates,
     it's utc and julian day and returns an object with all that data.
-    Args: name, year, month, day, hours, minuts, city,
-    initial of the nation (Ex: "IT"),
-    longitude, latitude and the timezone string are set to false so they will
-    be calculated, if you want you can set them.
-    Default values are set for now at greenwich time.
 
+    Args:
+    - name (str, optional): _ Defaults to "Now".
+    - year (int, optional): _ Defaults to now.year.
+    - month (int, optional): _ Defaults to now.month.
+    - day (int, optional): _ Defaults to now.day.
+    - hours (int, optional): _ Defaults to now.hour.
+    - minuts (int, optional): _ Defaults to now.minute.
+    - city (str, optional): _ Defaults to "London".
+    - nat (str, optional): _ Defaults to "".
+    - lon (Union[int, float], optional): _ Defaults to False.
+    - lat (Union[int, float], optional): _ Defaults to False.
+    - tz_str (Union[str, bool], optional): _ Defaults to False.
+    - logger (Union[logging.Logger, None], optional): _ Defaults to None.
+    - geonames_username (str, optional): _ Defaults to 'century.boy'.
+    - online (bool, optional): Sets if you want to use the online mode (using
+        geonames) or not. Defaults to True.
     """
     now = datetime.datetime.now()
 
@@ -40,9 +52,9 @@ class KrInstance():
         minuts: int = now.minute,
         city: str = "London",
         nat: str = "",
-        lon: Union[int, float] = False,
-        lat: Union[int, float] = False,
-        tz_str: Union[str, bool] = False,
+        lon: Union[int, float] = 0,
+        lat: Union[int, float] = 0,
+        tz_str: str = "",
         logger: Union[logging.Logger, None] = None,
         geonames_username: str = 'century.boy',
         online: bool = True,
@@ -69,50 +81,50 @@ class KrInstance():
         self.geonames_username = geonames_username
         self.zodiactype = "Tropic"
         self.online = online
-        self.json_dir = os.path.expanduser("~")
+        self.json_dir = Path.home()
 
-        if not self.online:
-            assert(lon is not False, "need to provide longitude if offline")
-            assert(lat is not False, "need to provide latitude if offline")
-            assert(tz_str is not False, "need to provide timezone if offline")
+        if (not self.online) and (not lon or not lat or not tz_str):
+            self.logger.error("You need to set the coordinates and timezone if you want to use the offline mode!")
+            exit()
 
         self.julian_day = self.get_jd()
         
         # Get all the calculations
         self.get_all()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.city_lat}, Lon {self.city_long}"
 
     def __repr__(self) -> str:
         return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.city_lat}, Lon {self.city_long}"
 
-    def get_tz(self):
+    def get_tz(self) -> str:
         """Gets the nearest time zone for the calculation"""
         self.logger.debug("Conneting to Geonames...")
-        if self.online:
-            try:
-                geonames = FetchGeonames(self.city, self.nation, logger=self.logger, username=self.geonames_username)
-                geonames.get_serialized_data()
-            except Exception as e:
-                self.logger.error(f'Error connecting to geonames, try again! Details {e}')
-                exit()
-            self.logger.debug("Geonames done!")
-        else:
-            self.city_data = {}
-            self.logger.debug("Geonames skipped, using local data!")
+
+        try:
+            geonames = FetchGeonames(self.city, self.nation, logger=self.logger, username=self.geonames_username)
+            self.city_data = geonames.get_serialized_data()
+        except Exception as e:
+            self.logger.error(f'Error connecting to geonames, try again! Details {e}')
+            exit()
+            
+        self.logger.debug("Geonames done!")
 
 
-        if "countryCode" in self.city_data:
-            self.nation = self.city_data["countryCode"]
-        if "lng" in self.city_data:
-            self.city_long = float(self.city_data["lng"])
-        if "lat" in self.city_data:
-            self.city_lat = float(self.city_data["lat"])
-        if "timezonestr" in self.city_data:
-            self.city_tz = self.city_data["timezonestr"]
-
-        # self.country_code = self.city_data["countryCode"]
+        if (
+            not 'countryCode' in self.city_data or
+            not 'timezonestr' in self.city_data or 
+            not 'lat' in self.city_data or 
+            not 'lng' in self.city_data
+        ):
+            self.logger.error("No data found for this city, try again! Maybe check your connection?")
+            exit()
+        
+        self.nation = self.city_data["countryCode"]
+        self.city_long = float(self.city_data["lng"])
+        self.city_lat = float(self.city_data["lat"])
+        self.city_tz = self.city_data["timezonestr"]
 
         if self.city_lat > 66.0:
             self.city_lat = 66.0
@@ -126,14 +138,21 @@ class KrInstance():
 
     def get_utc(self):
         """Converts local time to utc time. """
-
-        if not self.city_long or not self.city_lat or not self.city_tz:
-            local_time = pytz.timezone(self.get_tz())
+        if (self.online) and (not self.city_tz or not self.city_long or not self.city_lat):
+            tz = self.get_tz()
+            local_time = pytz.timezone(tz)
         else:
             local_time = pytz.timezone(self.city_tz)
 
-        naive_datetime = datetime.datetime(self.year, self.month,
-                                           self.day, self.hours, self.minuts, 0)
+        naive_datetime = datetime.datetime(
+            self.year,
+            self.month,
+            self.day,
+            self.hours,
+            self.minuts,
+            0
+        )
+        
         local_datetime = local_time.localize(naive_datetime, is_dst=None)
         utc_datetime = local_datetime.astimezone(pytz.utc)
         self.utc = utc_datetime
@@ -466,6 +485,7 @@ class KrInstance():
         for x in range(28):
             low = x * step
             high = (x + 1) * step
+
             if degrees_between >= low and degrees_between < high:
                 mphase = x + 1
 
@@ -549,17 +569,17 @@ class KrInstance():
             self.get_all()
 
         if new_output_directory:
-            self.json_path = os.path.join(
-                new_output_directory, f"{self.name}_kerykeion.json")
+            output_directory_path = Path(new_output_directory)
+            self.json_path = new_output_directory / f"{self.name}_kerykeion.json"
         else:
-            self.json_path = os.path.join(
-                self.json_dir, f"{self.name}_kerykeion.json")
+            self.json_path = self.json_dir / f"{self.name}_kerykeion.json"
 
         json_string = jsonpickle.encode(self)
 
         hidden_values = [
-            f' "json_dir": "{self.json_dir}",', f', "json_path": "{self.json_path}"'
-            ]
+            f' "json_dir": "{self.json_dir}",',
+            f', "json_path": "{self.json_path}"'
+        ]
 
         for string in hidden_values:
             json_string = json_string.replace(string, "")
@@ -574,7 +594,7 @@ class KrInstance():
             pass
         return json_string
 
-    def json_dump(self, dump=False, destination_folder=False):
+    def json_dump(self, dump=False, destination_folder: Union[str, None] = None):
         from json import dumps
 
         """
@@ -595,7 +615,8 @@ class KrInstance():
             "houses_list",
             "planets_degrees",
             "houses_degree_ut",
-            "logger"
+            "logger",
+            "online"
         ]
 
         for key in keys_to_remove:
@@ -605,11 +626,12 @@ class KrInstance():
 
         if dump:
             if destination_folder:
-                json_path = os.path.join(
-                    destination_folder, f"{self.name}_kerykeion.json")
+                destination_path = Path(destination_folder)
+                json_path = destination_path / f"{self.name}_kerykeion.json"
+                
+
             else:
-                json_path = os.path.join(
-                    self.json_dir, f"{self.name}_kerykeion.json")
+                json_path = self.json_dir / f"{self.name}_kerykeion.json"
 
             with open(json_path, "w", encoding="utf-8") as file:
                 file.write(json_obj)
@@ -644,9 +666,9 @@ if __name__ == "__main__":
     #     print(p)
     ###############################
     
-    now = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta",
+    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45,
                      lon=50, lat=50, tz_str="Europe/Rome")
 
-    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+    # = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Milano")
     print(kanye.geonames_username)
-    print(kanye.json_dump(dump=False))
+    print(kanye.json_dump(dump=True))
