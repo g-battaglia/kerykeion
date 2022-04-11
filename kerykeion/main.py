@@ -102,16 +102,9 @@ class KrInstance():
         """Gets the nearest time zone for the calculation"""
         self.logger.debug("Conneting to Geonames...")
 
-        try:
-            geonames = FetchGeonames(self.city, self.nation, logger=self.logger, username=self.geonames_username)
-            self.city_data = geonames.get_serialized_data()
-        except Exception as e:
-            self.logger.error(f'Error connecting to geonames, try again! Details {e}')
-            exit()
+        geonames = FetchGeonames(self.city, self.nation, logger=self.logger, username=self.geonames_username)
+        self.city_data = geonames.get_serialized_data()
             
-        self.logger.debug("Geonames done!")
-
-
         if (
             not 'countryCode' in self.city_data or
             not 'timezonestr' in self.city_data or 
@@ -672,6 +665,6 @@ if __name__ == "__main__":
     kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45,
                      lon=50, lat=50, tz_str="Europe/Rome")
 
-    # = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Milano")
+    test = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Milano")
     print(kanye.geonames_username)
     print(kanye.json_dump(dump=True))
