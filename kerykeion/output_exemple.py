@@ -10,7 +10,7 @@ from kerykeion.main import KrInstance
 def output(user):
     p = user.planets_in_houses()
     h = user.houses()
-    finale = ("-----------------------------------------------------\n")
+    finale = ("\n")
     finale += ("NAME: " + user.name + "\n")
     finale += ("PLANET     POSITION\n")
     finale += ("                      \n") 
