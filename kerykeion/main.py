@@ -4,12 +4,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import datetime
+from datetime import datetime
 import logging
 from kerykeion.fetch_geonames import FetchGeonames
 import math
 from pathlib import Path
 import pytz
+from kerykeion.types import KerykeionException, KerykeionPlanetDictionary, ZodiacType
 from typing import Union
 from sys import exit
 import swisseph as swe
@@ -40,25 +41,48 @@ class KrInstance():
     - online (bool, optional): Sets if you want to use the online mode (using
         geonames) or not. Defaults to True.
     """
-    now = datetime.datetime.now()
+    # Deined by the user
+    name: str
+    year: int
+    month: int
+    day: int
+    hours: int
+    minuts: int
+    city: str
+    nation: str
+    lon: Union[int, float]
+    lat: Union[int, float]
+    tz_str: str
+    logger: logging.Logger
+    geonames_username: str
+    online: bool
+    zodiactype: ZodiacType
+
+    # Generated internally
+    julian_day: Union[int, float] 
+    utc: datetime
+
+
+    now = datetime.now()
 
     def __init__(
         self,
-        name: str = "Now",
+        name = "Now",
         year: int = now.year,
         month: int = now.month,
         day: int = now.day,
         hours: int = now.hour,
         minuts: int = now.minute,
         city: str = "London",
-        nat: str = "",
+        nation: str = "",
         lon: Union[int, float] = 0,
         lat: Union[int, float] = 0,
         tz_str: str = "",
         logger: Union[logging.Logger, None] = None,
         geonames_username: str = 'century.boy',
+        zodiactype: ZodiacType = "Tropic",
         online: bool = True,
-    ):
+    ) -> None:
         if not logger:
             logging.basicConfig(
                 format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -68,29 +92,26 @@ class KrInstance():
         self.logger: logging.Logger = logger or logging.getLogger('Kerykeion')
         self.logger.debug('Starting Kerykeion')
 
-        self.name: str = name
-        self.year: int = year
-        self.month: int = month
-        self.day: int = day
-        self.hours: int = hours
-        self.minuts: int = minuts
-        self.city: str = city
-        self.nation: str = nat
-        self.city_long: Union[int, float] = lon
-        self.city_lat: Union[int, float] = lat
-        self.city_tz: str = tz_str
-        self.geonames_username: str = geonames_username
-        self.zodiactype: str = "Tropic"
-        self.online: bool = online
-        self.json_dir: Path = Path.home()
+        self.name = name
+        self.year = year
+        self.month  = month
+        self.day = day
+        self.hours = hours
+        self.minuts = minuts
+        self.city = city
+        self.nation = nation
+        self.city_long = lon
+        self.city_lat = lat
+        self.city_tz = tz_str
+        self.geonames_username = geonames_username
+        self.zodiactype = zodiactype
+        self.online = online
+        self.json_dir = Path.home()
 
         if (not self.online) and (not lon or not lat or not tz_str):
-            self.logger.error(
-                "You need to set the coordinates and timezone if you want to use the offline mode!"
-            )
-            exit()
+            raise KerykeionException("You need to set the coordinates and timezone if you want to use the offline mode!")
 
-        self.julian_day: Union[int, float] = self.get_jd()
+        self.julian_day = self.get_jd()
         
         # Get all the calculations
         self.get_all()
@@ -114,10 +135,9 @@ class KrInstance():
             not 'lat' in self.city_data or 
             not 'lng' in self.city_data
         ):
-            self.logger.error(
-                "No data found for this city, try again! Maybe check your connection?"
-                )
-            exit()
+
+            raise KerykeionException("No data found for this city, try again! Maybe check your connection?")
+
         
         self.nation = self.city_data["countryCode"]
         self.city_long = float(self.city_data["lng"])
@@ -142,7 +162,7 @@ class KrInstance():
         else:
             local_time = pytz.timezone(self.city_tz)
 
-        naive_datetime = datetime.datetime(
+        naive_datetime = datetime(
             self.year,
             self.month,
             self.day,
@@ -262,8 +282,7 @@ class KrInstance():
                           "Water", "sign": "Pis", "sign_num": 11, "position": result, "abs_pos": degree,
                           "emoji": "♓️"}
         else:
-            dictionary = {label: "position_calc error", "sign": "position_calc error",
-                          "position": "position_calc error"}
+            raise KerykeionException(f'Error in calculating positions! Degrees: {degree}')
 
         return dictionary
 
@@ -326,7 +345,7 @@ class KrInstance():
         """Sidereal or tropic mode."""
         self.iflag = swe.FLG_SWIEPH+swe.FLG_SPEED
 
-        if self.zodiactype == "sidereal":
+        if self.zodiactype == "Sidereal":
             self.iflag += swe.FLG_SIDEREAL
             mode = "SIDM_FAGAN_BRADLEY"
             swe.set_sid_mode(getattr(swe, mode))
@@ -711,6 +730,8 @@ if __name__ == "__main__":
         lon=50, lat=50, tz_str="Europe/Rome"
     )
 
+
     test = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Milano")
-    print(kanye.geonames_username)
-    print(kanye.json_dump(dump=True))
+    print(test.sun)
+    # print(kanye.geonames_username)
+    # print(kanye.json_dump(dump=True))
