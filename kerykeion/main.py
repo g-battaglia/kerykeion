@@ -10,7 +10,7 @@ from kerykeion.fetch_geonames import FetchGeonames
 import math
 from pathlib import Path
 import pytz
-from kerykeion.types import KerykeionException, KerykeionPlanetDictionary, ZodiacType
+from kerykeion.types import KerykeionException, KerykeionPlanetDictionary, KerykeionPlanetDictionaryKey, KerykeionPlanetDictionaryValue, ZodiacType
 from typing import Union
 from sys import exit
 import swisseph as swe
@@ -219,71 +219,74 @@ class KrInstance():
             return int(name)
 
     @staticmethod
-    def position_calc(degree: Union[int, float], number_name: str, label: str) -> dict[str, str]:
+    def position_calc(degree: Union[int, float], number_name: str) -> dict[KerykeionPlanetDictionaryKey, Union[str, int, float]]:
         """A function to be used in others to create a dictionary deviding
         the houses or the planets list."""
+        dictionary: dict[KerykeionPlanetDictionaryKey, Union[str, int, float]]
+
         if degree < 30:
-            dictionary = {label: number_name, "quality": "Cardinal", "element":
+            dictionary = {"name": number_name, "quality": "Cardinal", "element":
                           "Fire", "sign": "Ari", "sign_num": 0, "position": degree, "abs_pos": degree,
                           "emoji": "♈️"}
         elif degree < 60:
             result = degree - 30
-            dictionary = {label: number_name, "quality": "Fixed", "element":
+            dictionary = {"name": number_name, "quality": "Fixed", "element":
                           "Earth", "sign": "Tau", "sign_num": 1, "position": result, "abs_pos": degree,
                           "emoji": "♉️"}
         elif degree < 90:
             result = degree - 60
-            dictionary = {label: number_name, "quality": "Mutable", "element":
+            dictionary = {"name": number_name, "quality": "Mutable", "element":
                           "Air", "sign": "Gem", "sign_num": 2, "position": result, "abs_pos": degree,
                           "emoji": "♊️"}
         elif degree < 120:
             result = degree - 90
-            dictionary = {label: number_name, "quality": "Cardinal", "element":
+            dictionary = {"name": number_name, "quality": "Cardinal", "element":
                           "Water", "sign": "Can", "sign_num": 3, "position": result, "abs_pos": degree,
                           "emoji": "♋️"}
         elif degree < 150:
             result = degree - 120
-            dictionary = {label: number_name, "quality": "Fixed", "element":
+            dictionary = {"name": number_name, "quality": "Fixed", "element":
                           "Fire", "sign": "Leo", "sign_num": 4, "position": result, "abs_pos": degree,
                           "emoji": "♌️"}
         elif degree < 180:
             result = degree - 150
-            dictionary = {label: number_name, "quality": "Mutable", "element":
+            dictionary = {"name": number_name, "quality": "Mutable", "element":
                           "Earth", "sign": "Vir", "sign_num": 5, "position": result, "abs_pos": degree,
                           "emoji": "♍️"}
         elif degree < 210:
             result = degree - 180
-            dictionary = {label: number_name, "quality": "Cardinal", "element":
+            dictionary = {"name": number_name, "quality": "Cardinal", "element":
                           "Air", "sign": "Lib", "sign_num": 6, "position": result, "abs_pos": degree,
                           "emoji": "♎️"}
         elif degree < 240:
             result = degree - 210
-            dictionary = {label: number_name, "quality": "Fixed", "element":
+            dictionary = {"name": number_name, "quality": "Fixed", "element":
                           "Water", "sign": "Sco", "sign_num": 7, "position": result, "abs_pos": degree,
                           "emoji": "♏️"}
         elif degree < 270:
             result = degree - 240
-            dictionary = {label: number_name, "quality": "Mutable", "element":
+            dictionary = {"name": number_name, "quality": "Mutable", "element":
                           "Fire", "sign": "Sag", "sign_num": 8, "position": result, "abs_pos": degree,
                           "emoji": "♐️"}
         elif degree < 300:
             result = degree - 270
-            dictionary = {label: number_name, "quality": "Cardinal", "element":
+            dictionary = {"name": number_name, "quality": "Cardinal", "element":
                           "Earth", "sign": "Cap", "sign_num": 9, "position": result, "abs_pos": degree,
                           "emoji": "♑️"}
         elif degree < 330:
             result = degree - 300
-            dictionary = {label: number_name, "quality": "Fixed", "element":
+            dictionary = {"name": number_name, "quality": "Fixed", "element":
                           "Air", "sign": "Aqu", "sign_num": 10, "position": result, "abs_pos": degree,
                           "emoji": "♒️"}
         elif degree < 360:
             result = degree - 330
-            dictionary = {label: number_name, "quality": "Mutable", "element":
+            dictionary = {"name": number_name, "quality": "Mutable", "element":
                           "Water", "sign": "Pis", "sign_num": 11, "position": result, "abs_pos": degree,
                           "emoji": "♓️"}
         else:
             raise KerykeionException(f'Error in calculating positions! Degrees: {degree}')
 
+        
         return dictionary
 
     def houses(self) -> list:
@@ -294,49 +297,58 @@ class KrInstance():
                                            self.city_long)[0]
         # stores the house in singular dictionaries.
         self.first_house = self.position_calc(
-            self.houses_degree_ut[0], "1", "name"
+            self.houses_degree_ut[0], "1"
         )
         self.second_house = self.position_calc(
-            self.houses_degree_ut[1], "2", "name"
+            self.houses_degree_ut[1], "2"
         )
         self.third_house = self.position_calc(
-            self.houses_degree_ut[2], "3", "name"
+            self.houses_degree_ut[2], "3"
         )
         self.fourth_house = self.position_calc(
-            self.houses_degree_ut[3], "4", "name"
+            self.houses_degree_ut[3], "4"
         )
         self.fifth_house = self.position_calc(
-            self.houses_degree_ut[4], "5", "name"
+            self.houses_degree_ut[4], "5"
         )
         self.sixth_house = self.position_calc(
-            self.houses_degree_ut[5], "6", "name"
+            self.houses_degree_ut[5], "6"
         )
         self.seventh_house = self.position_calc(
-            self.houses_degree_ut[6], "7", "name"
+            self.houses_degree_ut[6], "7"
         )
         self.eighth_house = self.position_calc(
-            self.houses_degree_ut[7], "8", "name"
+            self.houses_degree_ut[7], "8"
         )
         self.ninth_house = self.position_calc(
-            self.houses_degree_ut[8], "9", "name"
+            self.houses_degree_ut[8], "9"
         )
         self.tenth_house = self.position_calc(
-            self.houses_degree_ut[9], "10", "name"
+            self.houses_degree_ut[9], "10"
         )
         self.eleventh_house = self.position_calc(
-            self.houses_degree_ut[10], "11", "name"
+            self.houses_degree_ut[10], "11"
         )
         self.twelfth_house = self.position_calc(
-            self.houses_degree_ut[11], "12", "name"
+            self.houses_degree_ut[11], "12"
         )
 
         # creates a list of all the dictionaries of thetype.
 
-        houses_degree = [self.first_house["position"], self.second_house["position"],
-                         self.third_house["position"], self.fourth_house["position"], self.fifth_house["position"],
-                         self.sixth_house["position"], self.seventh_house, self.eighth_house["position"],
-                         self.ninth_house["position"], self.tenth_house["position"], self.eleventh_house["position"],
-                         self.twelfth_house["position"]]
+        houses_degree = [
+            self.first_house["position"], 
+            self.second_house["position"],
+            self.third_house["position"], 
+            self.fourth_house["position"], 
+            self.fifth_house["position"],
+            self.sixth_house["position"], 
+            self.seventh_house["position"], 
+            self.eighth_house["position"],
+            self.ninth_house["position"], 
+            self.tenth_house["position"], 
+            self.eleventh_house["position"],
+            self.twelfth_house["position"]
+        ]
 
         # return self.houses_list
         return houses_degree
@@ -391,40 +403,40 @@ class KrInstance():
 
         # stores the planets in singular dictionaries.
         self.sun = self.position_calc(
-            self.planets_degrees[0], "Sun", "name"
+            self.planets_degrees[0], "Sun"
         )
         self.moon = self.position_calc(
-            self.planets_degrees[1], "Moon", "name"
+            self.planets_degrees[1], "Moon"
         )
         self.mercury = self.position_calc(
-            self.planets_degrees[2], "Mercury", "name"
+            self.planets_degrees[2], "Mercury"
         )
         self.venus = self.position_calc(
-            self.planets_degrees[3], "Venus", "name"
+            self.planets_degrees[3], "Venus"
         )
         self.mars = self.position_calc(
-            self.planets_degrees[4], "Mars", "name"
+            self.planets_degrees[4], "Mars"
         )
         self.jupiter = self.position_calc(
-            self.planets_degrees[5], "Jupiter", "name"
+            self.planets_degrees[5], "Jupiter"
         )
         self.saturn = self.position_calc(
-            self.planets_degrees[6], "Saturn", "name"
+            self.planets_degrees[6], "Saturn"
         )
         self.uranus = self.position_calc(
-            self.planets_degrees[7], "Uranus", "name"
+            self.planets_degrees[7], "Uranus"
         )
         self.neptune = self.position_calc(
-            self.planets_degrees[8], "Neptune", "name"
+            self.planets_degrees[8], "Neptune"
         )
         self.pluto = self.position_calc(
-            self.planets_degrees[9], "Pluto", "name"
+            self.planets_degrees[9], "Pluto"
         )
         self.mean_node = self.position_calc(
-            self.planets_degrees[10], "Mean_Node", "name"
+            self.planets_degrees[10], "Mean_Node"
         )
         self.true_node = self.position_calc(
-            self.planets_degrees[11], "True_Node", "name"
+            self.planets_degrees[11], "True_Node"
         )
 
     def planets_in_houses(self):
@@ -573,7 +585,7 @@ class KrInstance():
                 mphase = x + 1
 
         sunstep = [
-            0, 30, 40,  50, 60, 70, 80, 90, 120, 130, 140, 150, 160, 170, 180,
+            0, 30, 40, 50, 60, 70, 80, 90, 120, 130, 140, 150, 160, 170, 180,
             210, 220, 230, 240, 250, 260, 270, 300, 310, 320, 330, 340, 350
         ]
 
