@@ -5,19 +5,23 @@ import json
 from pathlib import Path
 from typing import Union
 
+
 class NatalAspects():
     """
     Generates an object with all the aspects of a birthcart.
     """
-    
-    def __init__(self, kr_object: KrInstance, new_settings_file: Union[str, Path, None] = None):
+
+    def __init__(
+            self, kr_object: KrInstance,
+            new_settings_file: Union[str, Path, None] = None
+    ):
         self.user = kr_object
         self.new_settings_file = new_settings_file
         self.parse_json_settings()
-        
+
         if not hasattr(self.user, "sun"):
             self.user.get_all()
-        
+
         self.init_point_list = self.user.planets_list + self.user.houses_list
 
     def parse_json_settings(self):
@@ -54,72 +58,70 @@ class NatalAspects():
             verdict = True
             aid = 0
 
-        elif ( self.aspects_settings[1]['degree'] - self.aspects_settings[1]['orb']) <= int(distance) <= ( self.aspects_settings[1]['degree'] + self.aspects_settings[1]['orb']):
+        elif (self.aspects_settings[1]['degree'] - self.aspects_settings[1]['orb']) <= int(distance) <= (self.aspects_settings[1]['degree'] + self.aspects_settings[1]['orb']):
             name = self.aspects_settings[1]['name']
             aspect_degrees = self.aspects_settings[1]['degree']
             color = self.colors_settings['aspect_30']
             verdict = True
             aid = 1
 
-        elif ( self.aspects_settings[2]['degree'] - self.aspects_settings[2]['orb']) <= int(distance) <= ( self.aspects_settings[2]['degree'] + self.aspects_settings[2]['orb']):
+        elif (self.aspects_settings[2]['degree'] - self.aspects_settings[2]['orb']) <= int(distance) <= (self.aspects_settings[2]['degree'] + self.aspects_settings[2]['orb']):
             name = self.aspects_settings[2]['name']
             aspect_degrees = self.aspects_settings[2]['degree']
             color = self.colors_settings['aspect_45']
             verdict = True
             aid = 2
-        
-        elif ( self.aspects_settings[3]['degree'] - self.aspects_settings[3]['orb']) <= int(distance) <= ( self.aspects_settings[3]['degree'] + self.aspects_settings[3]['orb']):
+
+        elif (self.aspects_settings[3]['degree'] - self.aspects_settings[3]['orb']) <= int(distance) <= (self.aspects_settings[3]['degree'] + self.aspects_settings[3]['orb']):
             name = self.aspects_settings[3]['name']
             aspect_degrees = self.aspects_settings[3]['degree']
             color = self.colors_settings['aspect_60']
             verdict = True
             aid = 3
-        
-        elif ( self.aspects_settings[4]['degree'] - self.aspects_settings[4]['orb']) <= int(distance) <= ( self.aspects_settings[4]['degree'] + self.aspects_settings[4]['orb']):
+
+        elif (self.aspects_settings[4]['degree'] - self.aspects_settings[4]['orb']) <= int(distance) <= (self.aspects_settings[4]['degree'] + self.aspects_settings[4]['orb']):
             name = self.aspects_settings[4]['name']
             aspect_degrees = self.aspects_settings[4]['degree']
             color = self.colors_settings['aspect_72']
             verdict = True
             aid = 4
-        
-        elif ( self.aspects_settings[5]['degree'] - self.aspects_settings[5]['orb']) <= int(distance) <= ( self.aspects_settings[5]['degree'] + self.aspects_settings[5]['orb']):
+
+        elif (self.aspects_settings[5]['degree'] - self.aspects_settings[5]['orb']) <= int(distance) <= (self.aspects_settings[5]['degree'] + self.aspects_settings[5]['orb']):
             name = self.aspects_settings[5]['name']
             aspect_degrees = self.aspects_settings[5]['degree']
             color = self.colors_settings['aspect_90']
             verdict = True
             aid = 5
 
-        elif ( self.aspects_settings[6]['degree'] - self.aspects_settings[6]['orb']) <= int(distance) <= ( self.aspects_settings[6]['degree'] + self.aspects_settings[6]['orb']):
+        elif (self.aspects_settings[6]['degree'] - self.aspects_settings[6]['orb']) <= int(distance) <= (self.aspects_settings[6]['degree'] + self.aspects_settings[6]['orb']):
             name = self.aspects_settings[6]['name']
             aspect_degrees = self.aspects_settings[6]['degree']
             color = self.colors_settings['aspect_120']
             verdict = True
             aid = 6
 
-
-        elif ( self.aspects_settings[7]['degree'] - self.aspects_settings[7]['orb']) <= int(distance) <= ( self.aspects_settings[7]['degree'] + self.aspects_settings[7]['orb']):
+        elif (self.aspects_settings[7]['degree'] - self.aspects_settings[7]['orb']) <= int(distance) <= (self.aspects_settings[7]['degree'] + self.aspects_settings[7]['orb']):
             name = self.aspects_settings[7]['name']
             aspect_degrees = self.aspects_settings[7]['degree']
             color = self.colors_settings['aspect_135']
             verdict = True
             aid = 7
-        
-        elif ( self.aspects_settings[8]['degree'] - self.aspects_settings[8]['orb']) <= int(distance) <= ( self.aspects_settings[8]['degree'] + self.aspects_settings[8]['orb']):
+
+        elif (self.aspects_settings[8]['degree'] - self.aspects_settings[8]['orb']) <= int(distance) <= (self.aspects_settings[8]['degree'] + self.aspects_settings[8]['orb']):
             name = self.aspects_settings[8]['name']
             aspect_degrees = self.aspects_settings[8]['degree']
             color = self.colors_settings['aspect_144']
             verdict = True
             aid = 8
-        
-        elif ( self.aspects_settings[9]['degree'] - self.aspects_settings[9]['orb']) <= int(distance) <= ( self.aspects_settings[9]['degree'] + self.aspects_settings[9]['orb']):
+
+        elif (self.aspects_settings[9]['degree'] - self.aspects_settings[9]['orb']) <= int(distance) <= (self.aspects_settings[9]['degree'] + self.aspects_settings[9]['orb']):
             name = self.aspects_settings[9]['name']
             aspect_degrees = self.aspects_settings[9]['degree']
             color = self.colors_settings['aspect_150']
             verdict = True
             aid = 9
 
-
-        elif ( self.aspects_settings[10]['degree'] - self.aspects_settings[10]['orb']) <= int(distance) <= ( self.aspects_settings[10]['degree'] + self.aspects_settings[10]['orb']):
+        elif (self.aspects_settings[10]['degree'] - self.aspects_settings[10]['orb']) <= int(distance) <= (self.aspects_settings[10]['degree'] + self.aspects_settings[10]['orb']):
             name = self.aspects_settings[10]['name']
             aspect_degrees = self.aspects_settings[10]['degree']
             color = self.colors_settings['aspect_180']
@@ -133,12 +135,10 @@ class NatalAspects():
             aspect_degrees = 0
             color = None
             aid = None
-            
-        
-        return verdict, name, distance - aspect_degrees, aspect_degrees, color, aid, diff
-    
-    def p_id_decoder(self, name):
 
+        return verdict, name, distance - aspect_degrees, aspect_degrees, color, aid, diff
+
+    def p_id_decoder(self, name):
         """ 
         Check if the name of the planet is the same in the settings and return
         the correct id for the planet.
@@ -159,14 +159,14 @@ class NatalAspects():
         for p in self.planets_settings:
             if p['visible']:
                 set_points_name.append(p['name'])
-        
+
         point_list = []
         for l in init_point_list:
             if l['name'] in set_points_name:
                 point_list.append(l)
-        
-        return point_list 
-        
+
+        return point_list
+
     def get_all_aspects(self):
         """
         Return all the aspects of the points in the natal chart in a dictionary,
@@ -175,52 +175,49 @@ class NatalAspects():
         """
 
         point_list = self.filter_by_settings(self.init_point_list)
-        
+
         self.all_aspects_list = []
 
         for first in range(len(point_list)):
-        #Generates the aspects list whitout repetitions
+            # Generates the aspects list whitout repetitions
             for second in range(first + 1, len(point_list)):
-                
+
                 verdict, name, orbit, aspect_degrees, color, aid, diff = self.asp_calc(point_list[first]["abs_pos"],
-                point_list[second]["abs_pos"])
-                
+                                                                                       point_list[second]["abs_pos"])
+
                 if verdict == True:
-                    d_asp = { "p1_name": point_list[first]['name'],
-                              "p1_abs_pos": point_list[first]['abs_pos'],
-                              "p2_name": point_list[second]['name'],
-                              "p2_abs_pos": point_list[second]['abs_pos'],
-                              "aspect": name,
-                              "orbit": orbit,
-                              "aspect_degrees": aspect_degrees,
-                              "color": color,
-                              "aid": aid,
-                              "diff": diff,
-                              "p1": self.p_id_decoder(point_list[first]['name']),
-                              "p2": self.p_id_decoder(point_list[second]['name'],)
-                     }
+                    d_asp = {"p1_name": point_list[first]['name'],
+                             "p1_abs_pos": point_list[first]['abs_pos'],
+                             "p2_name": point_list[second]['name'],
+                             "p2_abs_pos": point_list[second]['abs_pos'],
+                             "aspect": name,
+                             "orbit": orbit,
+                             "aspect_degrees": aspect_degrees,
+                             "color": color,
+                             "aid": aid,
+                             "diff": diff,
+                             "p1": self.p_id_decoder(point_list[first]['name']),
+                             "p2": self.p_id_decoder(point_list[second]['name'],)
+                             }
 
                     self.all_aspects_list.append(d_asp)
 
         return self.all_aspects_list
 
     def get_aspects(self):
-
         """ 
         Filters the aspects list with the desired points, in this case
         the most important are hardcoded.
         Set the list with set_points and creating a list with the names
         or the numbers of the houses.
         """
-            
+
         self.get_all_aspects()
 
         aspects_filtered = []
         for a in self.all_aspects_list:
             if self.aspects_settings[a["aid"]]["visible"] == True:
-                aspects_filtered.append(a)  
-
-
+                aspects_filtered.append(a)
 
         axes_list = ["1", "10", "7", "4"]
         counter = 0
@@ -230,7 +227,7 @@ class NatalAspects():
             counter += 1
             name_p1 = str(a['p1_name'])
             name_p2 = str(a['p2_name'])
-            
+
             if name_p1 in axes_list:
                 if abs(a['orbit']) >= self.axes_orbit_settings:
                     aspects_list_subtract.append(a)
@@ -239,11 +236,11 @@ class NatalAspects():
                 if abs(a['orbit']) >= self.axes_orbit_settings:
                     aspects_list_subtract.append(a)
 
-
-        self.aspects = [item for item in aspects_filtered if item not in aspects_list_subtract]
-
+        self.aspects = [
+            item for item in aspects_filtered if item not in aspects_list_subtract]
 
         return self.aspects
+
 
 class CompositeAspects(NatalAspects):
     """
@@ -256,18 +253,18 @@ class CompositeAspects(NatalAspects):
 
         self.new_settings_file = new_settings_file
         self.parse_json_settings()
-        
+
         if not hasattr(self.first_user, "sun"):
             self.first_user.get_all()
-        
+
         if not hasattr(self.second_user, "sun"):
             self.second_user.get_all()
-        
 
-        
-        self.first_init_point_list = self.first_user.planets_list + self.first_user.houses_list
-        self.second_init_point_list = self.second_user.planets_list + self.second_user.houses_list
-        
+        self.first_init_point_list = self.first_user.planets_list + \
+            self.first_user.houses_list
+        self.second_init_point_list = self.second_user.planets_list + \
+            self.second_user.houses_list
+
     def get_all_aspects(self):
         """
         Return all the aspects of the points in the natal chart in a dictionary,
@@ -277,35 +274,35 @@ class CompositeAspects(NatalAspects):
 
         f_1 = self.filter_by_settings(self.first_init_point_list)
         f_2 = self.filter_by_settings(self.second_init_point_list)
-        
+
         self.all_aspects_list = []
 
         for first in range(len(f_1)):
-        #Generates the aspects list whitout repetitions
+            # Generates the aspects list whitout repetitions
             for second in range(len(f_2)):
-                
+
                 verdict, name, orbit, aspect_degrees, color, aid, diff = self.asp_calc(f_1[first]["abs_pos"],
-                f_2[second]["abs_pos"])
-                
+                                                                                       f_2[second]["abs_pos"])
+
                 if verdict == True:
-                    d_asp = { "p1_name": f_1[first]['name'],
-                              "p1_abs_pos": f_1[first]['abs_pos'],
-                              "p2_name": f_2[second]['name'],
-                              "p2_abs_pos": f_2[second]['abs_pos'],
-                              "aspect": name,
-                              "orbit": orbit,
-                              "aspect_degrees": aspect_degrees,
-                              "color": color,
-                              "aid": aid,
-                              "diff": diff,
-                              "p1": self.p_id_decoder(f_1[first]['name']),
-                              "p2": self.p_id_decoder(f_2[second]['name'],)
-                     }
+                    d_asp = {"p1_name": f_1[first]['name'],
+                             "p1_abs_pos": f_1[first]['abs_pos'],
+                             "p2_name": f_2[second]['name'],
+                             "p2_abs_pos": f_2[second]['abs_pos'],
+                             "aspect": name,
+                             "orbit": orbit,
+                             "aspect_degrees": aspect_degrees,
+                             "color": color,
+                             "aid": aid,
+                             "diff": diff,
+                             "p1": self.p_id_decoder(f_1[first]['name']),
+                             "p2": self.p_id_decoder(f_2[second]['name'],)
+                             }
 
                     self.all_aspects_list.append(d_asp)
 
         return self.all_aspects_list
-    
+
 
 if __name__ == "__main__":
     kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
@@ -318,10 +315,6 @@ if __name__ == "__main__":
     cm = CompositeAspects(kanye, jack)
     res = cm.get_aspects()
     for a in res:
-        print(a['p1_name'] , 'number is', a['p1'], a['p2_name'], 'number is', a['p2'], a['orbit'], a['aspect'])
+        print(a['p1_name'], 'number is', a['p1'], a['p2_name'],
+              'number is', a['p2'], a['orbit'], a['aspect'])
     print(len(res))
-
-    
-    
-    
-        

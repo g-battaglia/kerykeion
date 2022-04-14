@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pyswisseph = "==2.8.0.post1"
+pytz = "==2020.1"
+jsonpickle = "==1.4.2"
+requests-cache = "==0.9.3"
+requests = "==2.27.1"
+
+[dev-packages]
+kerykeion = {editable = true, path = "."}
+pytest = "*"
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+test = "pytest tests"
