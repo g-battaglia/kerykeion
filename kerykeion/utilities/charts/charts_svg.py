@@ -14,6 +14,8 @@ from string import Template
 from typing import Union
 
 # calculation and svg drawing class
+
+
 class MakeSvgInstance:
     """
     Creates the instance that can genearte the chart with the
@@ -40,13 +42,12 @@ class MakeSvgInstance:
             new_output_directory: Union[str, None] = None,
             template_type: str = "extended",
             lang: str = "EN",
-            new_settings_file: Union[str, Path, None] = None,
+            new_settings_file: Union[str, Path, None] = None
     ):
 
         # Directories:
         DATADIR = Path(__file__).parent
         self.homedir = Path.home()
-    
 
         if new_output_directory:
             self.output_directory = Path(new_output_directory)
@@ -68,7 +69,6 @@ class MakeSvgInstance:
             self.settings_file = DATADIR.parent / 'kr.config.json'
         else:
             self.settings_file = Path(new_settings_file)
-            
 
         self.parse_json_settings(self.settings_file, lang)
         self.type = chart_type
@@ -91,9 +91,12 @@ class MakeSvgInstance:
         for planet in self.user.planets_list:
             self.points_deg.append(planet["position"])
 
-        self.points_deg = self.points_deg + [self.user.houses_list[0]["position"],
-                                             self.user.houses_list[9]["position"], self.user.houses_list[6]["position"],
-                                             self.user.houses_list[3]["position"]]
+        self.points_deg = self.points_deg + [
+            self.user.houses_list[0]["position"],
+            self.user.houses_list[9]["position"],
+            self.user.houses_list[6]["position"],
+            self.user.houses_list[3]["position"]
+        ]
 
         # Make list of the poits sign.
 
@@ -102,9 +105,12 @@ class MakeSvgInstance:
         for planet in self.user.planets_list:
             self.points_sign.append(planet["sign_num"])
 
-        self.points_sign = self.points_sign + [self.user.houses_list[0]["sign_num"],
-                                               self.user.houses_list[9]["sign_num"], self.user.houses_list[6]["sign_num"],
-                                               self.user.houses_list[3]["sign_num"]]
+        self.points_sign = self.points_sign + [
+            self.user.houses_list[0]["sign_num"],
+            self.user.houses_list[9]["sign_num"],
+            self.user.houses_list[6]["sign_num"],
+            self.user.houses_list[3]["sign_num"]
+        ]
 
         # Make a list of poits if they are retrograde or not.
 
@@ -113,8 +119,12 @@ class MakeSvgInstance:
         for planet in self.user.planets_list:
             self.points_retrograde.append(planet["retrograde"])
 
-        self.points_retrograde = self.points_retrograde + [False,
-                                                           False, False, False]
+        self.points_retrograde = self.points_retrograde + [
+            False,
+            False,
+            False,
+            False
+        ]
 
         # Makes the sign number list.
 
@@ -123,13 +133,15 @@ class MakeSvgInstance:
             self.houses_sign_graph.append(h['sign_num'])
 
         if self.type == "Natal":
-            natal_aspects_instance = kr.utilities.NatalAspects(self.user, new_settings_file=self.settings_file)
+            natal_aspects_instance = kr.utilities.NatalAspects(
+                self.user, new_settings_file=self.settings_file)
             self.aspects_list = natal_aspects_instance.get_aspects()
 
-        if (self.type == "Transit" or self.type == "Composite"): # TODO: If not second should exit
+        if (self.type == "Transit" or self.type == "Composite"):  # TODO: If not second should exit
 
             if not second_obj:
-                raise kr.KerykeionException("Second object is required for Transit or Composite charts.")
+                raise kr.KerykeionException(
+                    "Second object is required for Transit or Composite charts.")
 
             # Kerykeion instance
             self.t_user = second_obj
@@ -140,10 +152,12 @@ class MakeSvgInstance:
 
             # Make a list for the absolute degrees of the points of the graphic.
 
-            self.t_points_deg_ut = self.t_user.planets_degrees + [self.t_user.houses_degree_ut[0],
-                                                                  self.t_user.houses_degree_ut[
-                                                                      9], self.t_user.houses_degree_ut[6],
-                                                                  self.t_user.houses_degree_ut[3]]
+            self.t_points_deg_ut = self.t_user.planets_degrees + [
+                self.t_user.houses_degree_ut[0],
+                self.t_user.houses_degree_ut[9],
+                self.t_user.houses_degree_ut[6],
+                self.t_user.houses_degree_ut[3]
+            ]
 
             # Make a list of the relative degrees of the points in the graphic.
 
@@ -151,9 +165,12 @@ class MakeSvgInstance:
             for planet in self.t_user.planets_list:
                 self.t_points_deg.append(planet["position"])
 
-            self.t_points_deg = self.t_points_deg + [self.t_user.houses_list[0]["position"],
-                                                     self.t_user.houses_list[9]["position"], self.t_user.houses_list[6]["position"],
-                                                     self.t_user.houses_list[3]["position"]]
+            self.t_points_deg = self.t_points_deg + [
+                self.t_user.houses_list[0]["position"],
+                self.t_user.houses_list[9]["position"],
+                self.t_user.houses_list[6]["position"],
+                self.t_user.houses_list[3]["position"]
+            ]
 
             # Make list of the poits sign.
 
@@ -162,9 +179,12 @@ class MakeSvgInstance:
             for planet in self.t_user.planets_list:
                 self.t_points_sign.append(planet["sign_num"])
 
-            self.t_points_sign = self.t_points_sign + [self.t_user.houses_list[0]["sign_num"],
-                                                       self.t_user.houses_list[9]["sign_num"], self.t_user.houses_list[6]["sign_num"],
-                                                       self.t_user.houses_list[3]["sign_num"]]
+            self.t_points_sign = self.t_points_sign + [
+                self.t_user.houses_list[0]["sign_num"],
+                self.t_user.houses_list[9]["sign_num"],
+                self.t_user.houses_list[6]["sign_num"],
+                self.t_user.houses_list[3]["sign_num"]
+            ]
 
             # Make a list of poits if they are retrograde or not.
 
@@ -260,7 +280,6 @@ class MakeSvgInstance:
         # Immediately generate template.
         self.template = self.makeTemplate()
 
-
     def parse_json_settings(self, settings_file, lang: str):
         """
         Parse the settings file.
@@ -274,7 +293,6 @@ class MakeSvgInstance:
         self.planets_settings = settings['planets']
         self.aspects_settings = settings['aspects']
 
-        
     def makeTemplate(self, printing=None):
         # self.type = "Transit"
         # empty element points
@@ -520,7 +538,8 @@ class MakeSvgInstance:
         if not (self.template):
             self.template = self.makeTemplate()
 
-        self.chartname = self.output_directory / f'{self.name}{self.type}Chart.svg'
+        self.chartname = self.output_directory / \
+            f'{self.name}{self.type}Chart.svg'
 
         with open(self.chartname, "w", encoding='utf-8') as output_file:
             output_file.write(self.template)
@@ -1350,7 +1369,7 @@ class MakeSvgInstance:
 
         self.aspects_list = kr.utilities.CompositeAspects(
             self.user, self.t_user, new_settings_file=self.settings_file
-            ).get_aspects()
+        ).get_aspects()
 
         for element in self.aspects_list:
             out += self.drawAspect(r, ar, element['p1_abs_pos'], element['p2_abs_pos'],

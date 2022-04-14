@@ -1,13 +1,22 @@
-import kerykeion as kr
-from kerykeion.utilities.charts import MakeSvgInstance
+from kerykeion import KrInstance, MakeSvgInstance
 from pathlib import Path
 
-first = kr.KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
-second = kr.KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
 
-# Set the type, it can be Natal, Composite or Transit
+def main():
+    first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
+    second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
 
-CURRENT_DIR = Path(__file__).parent
-name = MakeSvgInstance(first, chart_type="Composite", second_obj=second, new_settings_file=CURRENT_DIR / "new-kr.config.json")
-name.makeSVG()
-print(len(name.aspects_list))
+    # Set the type, it can be Natal, Composite or Transit
+    CURRENT_DIR = Path(__file__).parent
+    name = MakeSvgInstance(
+        first, chart_type="Composite",
+        second_obj=second,
+        new_settings_file=CURRENT_DIR / "new-kr.config.json"
+    )
+
+    name.makeSVG()
+    print(len(name.aspects_list))
+
+
+if __name__ == "__main__":
+    main()
