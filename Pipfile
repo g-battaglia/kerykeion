@@ -13,6 +13,7 @@ requests = "==2.27.1"
 [dev-packages]
 kerykeion = {editable = true, path = "."}
 pytest = "*"
+pdoc = "*"
 
 [requires]
 python_version = "3.9"
