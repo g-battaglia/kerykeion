@@ -59,15 +59,14 @@ class KrInstance():
     zodiactype: ZodiacType
 
     # Generated internally
-    julian_day: Union[int, float] 
+    julian_day: Union[int, float]
     utc: datetime
-
 
     now = datetime.now()
 
     def __init__(
         self,
-        name = "Now",
+        name="Now",
         year: int = now.year,
         month: int = now.month,
         day: int = now.day,
@@ -94,7 +93,7 @@ class KrInstance():
 
         self.name = name
         self.year = year
-        self.month  = month
+        self.month = month
         self.day = day
         self.hours = hours
         self.minuts = minuts
@@ -109,10 +108,11 @@ class KrInstance():
         self.json_dir = Path.home()
 
         if (not self.online) and (not lon or not lat or not tz_str):
-            raise KerykeionException("You need to set the coordinates and timezone if you want to use the offline mode!")
+            raise KerykeionException(
+                "You need to set the coordinates and timezone if you want to use the offline mode!")
 
         self.julian_day = self.get_jd()
-        
+
         # Get all the calculations
         self.get_all()
 
@@ -126,19 +126,20 @@ class KrInstance():
         """Gets the nearest time zone for the calculation"""
         self.logger.debug("Conneting to Geonames...")
 
-        geonames = FetchGeonames(self.city, self.nation, logger=self.logger, username=self.geonames_username)
+        geonames = FetchGeonames(
+            self.city, self.nation, logger=self.logger, username=self.geonames_username)
         self.city_data: dict[str, str] = geonames.get_serialized_data()
-            
+
         if (
             not 'countryCode' in self.city_data or
-            not 'timezonestr' in self.city_data or 
-            not 'lat' in self.city_data or 
+            not 'timezonestr' in self.city_data or
+            not 'lat' in self.city_data or
             not 'lng' in self.city_data
         ):
 
-            raise KerykeionException("No data found for this city, try again! Maybe check your connection?")
+            raise KerykeionException(
+                "No data found for this city, try again! Maybe check your connection?")
 
-        
         self.nation = self.city_data["countryCode"]
         self.city_long = float(self.city_data["lng"])
         self.city_lat = float(self.city_data["lat"])
@@ -146,11 +147,13 @@ class KrInstance():
 
         if self.city_lat > 66.0:
             self.city_lat = 66.0
-            self.logger.info('Polar circle override for houses, using 66 degrees')
+            self.logger.info(
+                'Polar circle override for houses, using 66 degrees')
 
         elif self.city_lat < -66.0:
             self.city_lat = -66.0
-            self.logger.info('Polar circle override for houses, using -66 degrees')
+            self.logger.info(
+                'Polar circle override for houses, using -66 degrees')
 
         return self.city_tz
 
@@ -170,7 +173,7 @@ class KrInstance():
             self.minuts,
             0
         )
-        
+
         local_datetime = local_time.localize(naive_datetime, is_dst=None)
         utc_datetime = local_datetime.astimezone(pytz.utc)
         self.utc = utc_datetime
@@ -284,9 +287,9 @@ class KrInstance():
                           "Water", "sign": "Pis", "sign_num": 11, "position": result, "abs_pos": degree,
                           "emoji": "♓️"}
         else:
-            raise KerykeionException(f'Error in calculating positions! Degrees: {degree}')
+            raise KerykeionException(
+                f'Error in calculating positions! Degrees: {degree}')
 
-        
         return dictionary
 
     def houses(self) -> list:
@@ -336,16 +339,16 @@ class KrInstance():
         # creates a list of all the dictionaries of thetype.
 
         houses_degree = [
-            self.first_house["position"], 
+            self.first_house["position"],
             self.second_house["position"],
-            self.third_house["position"], 
-            self.fourth_house["position"], 
+            self.third_house["position"],
+            self.fourth_house["position"],
             self.fifth_house["position"],
-            self.sixth_house["position"], 
-            self.seventh_house["position"], 
+            self.sixth_house["position"],
+            self.seventh_house["position"],
             self.eighth_house["position"],
-            self.ninth_house["position"], 
-            self.tenth_house["position"], 
+            self.ninth_house["position"],
+            self.tenth_house["position"],
             self.eleventh_house["position"],
             self.twelfth_house["position"]
         ]
@@ -383,13 +386,13 @@ class KrInstance():
             sun_deg,
             moon_deg,
             mercury_deg,
-            venus_deg, 
+            venus_deg,
             mars_deg,
-            jupiter_deg, 
+            jupiter_deg,
             saturn_deg,
-            uranus_deg, 
-            neptune_deg, 
-            pluto_deg, 
+            uranus_deg,
+            neptune_deg,
+            pluto_deg,
             mean_node_deg,
             true_node_deg
         ]
@@ -538,17 +541,17 @@ class KrInstance():
         )
 
         planets_list = [
-            self.sun, 
-            self.moon, 
-            self.mercury, 
+            self.sun,
+            self.moon,
+            self.mercury,
             self.venus,
-            self.mars, 
-            self.jupiter, 
-            self.saturn, 
-            self.uranus, 
+            self.mars,
+            self.jupiter,
+            self.saturn,
+            self.uranus,
             self.neptune,
-            self.pluto, 
-            self.mean_node, 
+            self.pluto,
+            self.mean_node,
             self.true_node
         ]
 
@@ -666,7 +669,8 @@ class KrInstance():
 
         if new_output_directory:
             output_directory_path = Path(new_output_directory)
-            self.json_path = new_output_directory / f"{self.name}_kerykeion.json"
+            self.json_path = new_output_directory / \
+                f"{self.name}_kerykeion.json"
         else:
             self.json_path = self.json_dir / f"{self.name}_kerykeion.json"
 
@@ -678,10 +682,12 @@ class KrInstance():
         ]
 
         for string in hidden_values:
-            json_string = json_string.replace(string, "") # type: ignore TODO: Fix this
+            json_string = json_string.replace(
+                string, "")  # type: ignore TODO: Fix this
 
         if dump:
-            json_string = json.loads(json_string.replace("'", '"')) # type: ignore TODO: Fix this
+            json_string = json.loads(json_string.replace(
+                "'", '"'))  # type: ignore TODO: Fix this
 
             with open(self.json_path, "w", encoding="utf-8") as file:
                 json.dump(json_string, file,  indent=4, sort_keys=True)
@@ -724,7 +730,7 @@ class KrInstance():
             if destination_folder:
                 destination_path = Path(destination_folder)
                 json_path = destination_path / f"{self.name}_kerykeion.json"
-                
+
             else:
                 json_path = self.json_dir / f"{self.name}_kerykeion.json"
 
@@ -741,7 +747,6 @@ if __name__ == "__main__":
         "Kanye", 1977, 6, 8, 8, 45,
         lon=50, lat=50, tz_str="Europe/Rome"
     )
-
 
     test = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Milano")
     print(test.sun)
