@@ -6,13 +6,17 @@ from typing import Any, Literal, Union
 from pkg_resources import UnknownExtra
 
 # Exceptions:
+
+
 class KerykeionException(Exception):
     """
     Custom Kerykeion Exception
     """
-    def __init__(self, message):            
+
+    def __init__(self, message):
         # Call the base class constructor with the parameters it needs
         super().__init__(message)
+
 
 # Zodiac Types:
 ZodiacType = Literal['Tropic', 'Sidereal']
@@ -44,8 +48,10 @@ KerykeionPlanetDictionaryKey = Literal[
     'house',
     'retrograde'
 ]
-KerykeionPlanetDictionaryValue = Union[KerykeionPlanetDictionaryKey, int, float, str, Any]
-KerykeionPlanetDictionary = dict[KerykeionPlanetDictionaryKey, KerykeionPlanetDictionaryValue]
+KerykeionPlanetDictionaryValue = Union[KerykeionPlanetDictionaryKey,
+                                       int, float, str, Any]
+KerykeionPlanetDictionary = dict[KerykeionPlanetDictionaryKey,
+                                 KerykeionPlanetDictionaryValue]
 
 if __name__ == "__main__":
     print()
