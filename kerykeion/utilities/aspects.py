@@ -10,7 +10,7 @@ class NatalAspects():
     Generates an object with all the aspects of a birthcart.
     """
     
-    def __init__(self, kr_object, new_settings_file: Union[str, Path, None] = None):
+    def __init__(self, kr_object: KrInstance, new_settings_file: Union[str, Path, None] = None):
         self.user = kr_object
         self.new_settings_file = new_settings_file
         self.parse_json_settings()
@@ -250,7 +250,7 @@ class CompositeAspects(NatalAspects):
     Generates an object with all the aspects between two persons.
     """
 
-    def __init__(self, kr_object_one, kr_object_two, new_settings_file: Union[str, Path, None] = None):
+    def __init__(self, kr_object_one: KrInstance, kr_object_two: KrInstance, new_settings_file: Union[str, Path, None] = None):
         self.first_user = kr_object_one
         self.second_user = kr_object_two
 
