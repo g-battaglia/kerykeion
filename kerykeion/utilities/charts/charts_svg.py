@@ -126,7 +126,10 @@ class MakeSvgInstance:
             natal_aspects_instance = kr.utilities.NatalAspects(self.user, new_settings_file=self.settings_file)
             self.aspects_list = natal_aspects_instance.get_aspects()
 
-        if self.type == "Transit" or self.type == "Composite":
+        if (self.type == "Transit" or self.type == "Composite"): # TODO: If not second should exit
+
+            if not second_obj:
+                raise kr.KerykeionException("Second object is required for Transit or Composite charts.")
 
             # Kerykeion instance
             self.t_user = second_obj
