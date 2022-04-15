@@ -134,7 +134,8 @@ Generating kerykeion object for Jane...
 ## Documentation
 
 Most of the functions and the classes are self documented by the types and have docstrings.
-An auto-generated documentation is available in the docs folder.
+An auto-generated documentation [is available here](https://g-battaglia.github.io/kerykeion).
+
 Sooner or later I'll try to write an extensive documentation.
 
 ## Installation
