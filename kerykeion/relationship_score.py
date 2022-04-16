@@ -39,11 +39,10 @@ class RelationshipScore:
     """
     first_subject: KrInstance
     second_subject: KrInstance
-    aspects: list
     score: int
-    relevant_default_aspects: list
-    relevant_default_aspects: list
     is_destiny_sign: bool
+    relevant_default_aspects: list
+    relevant_default_aspects: list
 
     def __init__(self, first_subject: KrInstance, second_subject: KrInstance, logger: Union[Logger, None] = None, new_settings_file: Union[str, Path, None] = None):
 
