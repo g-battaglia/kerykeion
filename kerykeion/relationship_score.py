@@ -100,17 +100,21 @@ class RelationshipScore:
 
             if aspect['orbit'] <= 2:
                 score = 11
+
                 if log:
                     self.__log_aspect(aspect, score)
-                self.relevant_aspects.append(
-                    self.__create_aspects_dictionary(aspect, score))
+                    self.relevant_aspects.append(
+                        self.__create_aspects_dictionary(aspect, score))
+
                 return score
             else:
                 score = 8
+
                 if log:
                     self.__log_aspect(aspect, score)
-                self.relevant_aspects.append(
-                    self.__create_aspects_dictionary(aspect, score))
+                    self.relevant_aspects.append(
+                        self.__create_aspects_dictionary(aspect, score))
+
                 return score
 
         return 0
@@ -128,18 +132,21 @@ class RelationshipScore:
 
             if aspect['orbit'] <= 2:
                 score = 11
+
                 if log:
                     self.__log_aspect(aspect, score)
-                self.relevant_aspects.append(
-                    self.__create_aspects_dictionary(aspect, score))
+                    self.relevant_aspects.append(
+                        self.__create_aspects_dictionary(aspect, score))
+
                 return score
 
             else:
                 score = 8
                 if log:
                     self.__log_aspect(aspect, score)
-                self.relevant_aspects.append(
-                    self.__create_aspects_dictionary(aspect, score))
+                    self.relevant_aspects.append(
+                        self.__create_aspects_dictionary(aspect, score))
+
                 return score
 
         return 0
@@ -153,10 +160,12 @@ class RelationshipScore:
         if (aspect['p1_name'] in planets and aspect['p2_name'] in planets):
             self.relevant_default_aspects.append(aspect)
             score = 4
+
             if log:
                 self.__log_aspect(aspect, score)
-            self.relevant_aspects.append(
-                self.__create_aspects_dictionary(aspect, score))
+                self.relevant_aspects.append(
+                    self.__create_aspects_dictionary(aspect, score))
+
             return score
 
         return 0
@@ -169,8 +178,9 @@ class RelationshipScore:
 
             if log:
                 self.__log_aspect(aspect, score)
-            self.relevant_aspects.append(
-                self.__create_aspects_dictionary(aspect, score))
+                self.relevant_aspects.append(
+                    self.__create_aspects_dictionary(aspect, score))
+                    
             return score
 
         return 0
