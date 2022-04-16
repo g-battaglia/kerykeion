@@ -5,7 +5,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from traceback import print_tb
 from kerykeion import KrInstance
 
 def print_all_data(user: KrInstance) -> None:
@@ -39,10 +38,6 @@ def print_all_data(user: KrInstance) -> None:
     output += (f"House Cusp 12:    {user.twelfth_house['sign']}  {round(user.twelfth_house['position'], 3)}\n")
     output += ("\n")
     print(output)
-
-
-
-
 
 if __name__ == "__main__":
     user = KrInstance("Brigitte Bardot", 1934, 9, 28, 13, 15, "Paris", "FR")
