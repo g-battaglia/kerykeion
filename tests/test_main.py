@@ -81,7 +81,7 @@ def test_relationship_score():
     second_subject = KrInstance("Sarah", 1978, 2, 9, 15, 50, 'Roma', 'IT')
 
     score = RelationshipScore(first_subject, second_subject)
-    assert score.__dict__()['score'] == 20
+    assert score.__dict__()['score'] == 21
     assert score.__dict__()['is_destiny_sign'] == False
     assert score.__dict__()['relevant_aspects'][0] == {
         'points': 4,
