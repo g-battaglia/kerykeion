@@ -2,28 +2,47 @@
     This is part of Kerykeion (C) 2022 Giacomo Battaglia
 """
 
-import setuptools
+from setuptools import setup, find_packages
 
 with open("README.md", "r", encoding="utf8") as fh:
     long_description = fh.read()
 
-setuptools.setup(
+setup(
     name="kerykeion",
     version="3.0.4",
     author="Giacomo Battaglia",
     author_email="battaglia.giacomo@yahoo.it",
     description="A python library for astrology.",
+    home_page="https://github.com/g-battaglia/kerykeion",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/g-battaglia/kerykeion",
-    packages=setuptools.find_packages(),
+    packages=find_packages(),
     classifiers=[
-        "Programming Language :: Python :: 3",
+        "Intended Audience :: Astrologers",
+        "Intended Audience :: Information Technology",
+        "Intended Audience :: Developers",
+        "Operating System :: OS Independent",
+        "Topic :: Astrology",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: Software Development :: Libraries",
+        "Topic :: Software Development",
+        "Typing :: Typed",
+        "Development Status :: 3",
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: GNU General Public License (GPL)",
         "Operating System :: OS Independent",
     ],
     include_package_data=True,
     python_requires='>=3.8',
-    install_requires=['pyswisseph', 'pytz',
-                      'jsonpickle', 'requests', 'requests_cache'],
+    install_requires=[
+        'pyswisseph',
+        'pytz',
+        'jsonpickle',
+        'requests',
+        'requests_cache'
+    ],
 )
