@@ -133,6 +133,10 @@ Sooner or later I'll try to write an extensive documentation.
 
 Kerykeion is a Python 3 package, make sure you have Python 3 installed on your system.
 
+```bash
+pip3 install kerykeion
+```
+
 ## Development
 
 You can clone this repository or download a zip file using the right side buttons.
