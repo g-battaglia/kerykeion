@@ -46,9 +46,9 @@ class FetchGeonames:
         self.country_code = country_code
         self.base_url = "http://api.geonames.org/searchJSON"
         self.timezone_url = "http://api.geonames.org/timezoneJSON"
-        self.logger = logger or logging.getLogger('FetchGeonames')
+        self.__logger = logger or logging.getLogger(self.__class__.__name__)
 
-    def get_timezone(self, lat: Union[str, float, int], lon: Union[str, float, int]) -> dict[str, str]:
+    def __get_timezone(self, lat: Union[str, float, int], lon: Union[str, float, int]) -> dict[str, str]:
         """
         Get the timezone for a given latitude and longitude
         """
@@ -63,22 +63,22 @@ class FetchGeonames:
 
         prepared_request = Request(
             "GET", self.timezone_url, params=params).prepare()
-        self.logger.debug(
-            f"Requesting data from geonames timezones:\n{prepared_request.url}")
+        self.__logger.debug(
+            f"Requesting data from geonames timezones: {prepared_request.url}")
 
         try:
             response = self.session.send(prepared_request)
             response_json = response.json()
 
         except Exception as e:
-            self.logger.error(f"Error fetching {self.timezone_url}: {e}")
+            self.__logger.error(f"Error fetching {self.timezone_url}: {e}")
             return {}
 
         try:
             timezone_data['timezonestr'] = response_json['timezoneId']
 
         except Exception as e:
-            self.logger.error(
+            self.__logger.error(
                 f"Error serializing data maybe wrong username? Details: {e}")
             return {}
 
@@ -87,7 +87,7 @@ class FetchGeonames:
 
         return timezone_data
 
-    def get_contry_data(self, city_name: str, country_code: str) -> dict[str, str]:
+    def __get_contry_data(self, city_name: str, country_code: str) -> dict[str, str]:
         """
         Get the city data *whitout timezone* for a given city and country name
         """
@@ -104,15 +104,15 @@ class FetchGeonames:
 
         prepared_request = Request(
             "GET", self.base_url, params=params).prepare()
-        self.logger.debug(
-            f"Requesting data from geonames basic:\n{prepared_request.url}")
+        self.__logger.debug(
+            f"Requesting data from geonames basic: {prepared_request.url}")
 
         try:
             response = self.session.send(prepared_request)
             response_json = response.json()
 
         except Exception as e:
-            self.logger.error(f"Error in fetching {self.base_url}: {e}")
+            self.__logger.error(f"Error in fetching {self.base_url}: {e}")
             return {}
 
         try:
@@ -122,7 +122,7 @@ class FetchGeonames:
             city_data_whitout_tz['countryCode'] = response_json['geonames'][0]['countryCode']
 
         except Exception as e:
-            self.logger.error(
+            self.__logger.error(
                 f"Error serializing data maybe wrong username? Details: {e}")
             return {}
 
@@ -138,14 +138,14 @@ class FetchGeonames:
         Returns:
             dict[str, str]: _description_
         """
-        city_data_response = self.get_contry_data(
+        city_data_response = self.__get_contry_data(
             self.city_name, self.country_code)
         try:
-            timezone_response = self.get_timezone(
+            timezone_response = self.__get_timezone(
                 city_data_response['lat'], city_data_response['lng'])
 
         except Exception as e:
-            self.logger.error(f"Error in fetching timezone: {e}")
+            self.__logger.error(f"Error in fetching timezone: {e}")
             return {}
 
         return {**timezone_response, **city_data_response}

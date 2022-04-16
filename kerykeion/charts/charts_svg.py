@@ -6,7 +6,9 @@
 
 import datetime
 import json
-import kerykeion as kr
+from kerykeion.aspects import NatalAspects, CompositeAspects
+from kerykeion.main import KrInstance
+from kerykeion.types import KerykeionException
 import math
 import pytz
 from pathlib import Path
@@ -36,9 +38,9 @@ class MakeSvgInstance:
 
     def __init__(
             self,
-            first_obj: kr.KrInstance,
+            first_obj: KrInstance,
             chart_type: str = "Natal",
-            second_obj: Union[kr.KrInstance, None] = None,
+            second_obj: Union[KrInstance, None] = None,
             new_output_directory: Union[str, None] = None,
             template_type: str = "extended",
             lang: str = "EN",
@@ -77,7 +79,7 @@ class MakeSvgInstance:
         self.user = first_obj
         if not hasattr(self.user, "sun"):
             print(f"Generating kerykeion object for {self.user.name}...")
-            self.user.get_all()
+            self.user.__get_all()
 
         # Make a list for the absolute degrees of the points of the graphic.
 
@@ -133,14 +135,14 @@ class MakeSvgInstance:
             self.houses_sign_graph.append(h['sign_num'])
 
         if self.type == "Natal":
-            natal_aspects_instance = kr.utilities.NatalAspects(
+            natal_aspects_instance = NatalAspects(
                 self.user, new_settings_file=self.settings_file)
             self.aspects_list = natal_aspects_instance.get_aspects()
 
         if (self.type == "Transit" or self.type == "Composite"):  # TODO: If not second should exit
 
             if not second_obj:
-                raise kr.KerykeionException(
+                raise KerykeionException(
                     "Second object is required for Transit or Composite charts.")
 
             # Kerykeion instance
@@ -148,7 +150,7 @@ class MakeSvgInstance:
 
             if not hasattr(self.t_user, "sun"):
                 print(f"Generating kerykeion object for {self.t_user.name}...")
-                self.t_user.get_all()
+                self.t_user.__get_all()
 
             # Make a list for the absolute degrees of the points of the graphic.
 
@@ -1367,7 +1369,7 @@ class MakeSvgInstance:
     def makeAspectsTransit(self, r, ar):
         out = ""
 
-        self.aspects_list = kr.utilities.CompositeAspects(
+        self.aspects_list = CompositeAspects(
             self.user, self.t_user, new_settings_file=self.settings_file
         ).get_aspects()
 
@@ -1593,8 +1595,8 @@ class MakeSvgInstance:
 
 if __name__ == "__main__":
 
-    first = kr.KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
-    second = kr.KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
+    first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
+    second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
 
     name = MakeSvgInstance(first, chart_type="Composite",
                            second_obj=second, lang="IT")

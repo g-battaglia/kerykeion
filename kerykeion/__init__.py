@@ -1,10 +1,7 @@
-import sys
-from os.path import dirname
-from kerykeion.main import KrInstance
-from kerykeion.output_exemple import output
-from kerykeion.utilities.charts import MakeSvgInstance as MakeSvgInstance
-from kerykeion.utilities.discepolo import DiscepoloNumber
-from kerykeion.types import KerykeionException
-
-
-sys.path.append(dirname(__file__))
+# Local
+from .main import KrInstance
+from .print_all_data import print_all_data
+from .charts.charts_svg import MakeSvgInstance
+from .types import *
+from .relationship_score import RelationshipScore
+from .aspects import NatalAspects, CompositeAspects
