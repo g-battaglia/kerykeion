@@ -21,6 +21,11 @@ jobs:
           pip install
           pipenv
           --user
+      - name: Install packages
+        run: >-
+          pipenv
+          install
+          --dev
       - name: Run the test
         run: >-
           pipenv
