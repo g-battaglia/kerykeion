@@ -25,6 +25,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development",
+        "Topic :: Scientific/Engineering :: Astronomy",
         "Typing :: Typed",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.8",
@@ -32,6 +33,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: GNU General Public License (GPL)",
         "Operating System :: OS Independent",
+        "Development Status :: 5 - Production/Stable"
     ],
     include_package_data=True,
     python_requires='>=3.8',
