@@ -6,9 +6,39 @@ on:
       - master
 
 jobs:
+  test:
+    name: Test all changes 💫
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@master
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+
+      - name: Install pipenv
+        run: >-
+          python -m
+          pip install
+          pipenv
+          --user
+      - name: Install packages
+        run: >-
+          pipenv
+          install
+          --dev
+      - name: Run the test
+        run: >-
+          pipenv
+          run
+          test
+
   build-n-publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI
     runs-on: ubuntu-18.04
+    if: ${{ always() && (needs.test.result=='success'}}
+    needs: [test]
 
     steps:
       - uses: actions/checkout@master
