@@ -19,7 +19,7 @@ class NatalAspects():
         self._parse_json_settings()
 
         if not hasattr(self.user, "sun"):
-            self.user.get_all()
+            self.user.__get_all()
 
         self.init_point_list = self.user.planets_list + self.user.houses_list
 
@@ -203,7 +203,7 @@ class NatalAspects():
 
         return self.all_aspects_list
 
-    def get_aspects(self):
+    def get_relevant_aspects(self):
         """ 
         Filters the aspects list with the desired points, in this case
         the most important are hardcoded.
@@ -254,10 +254,10 @@ class CompositeAspects(NatalAspects):
         self._parse_json_settings()
 
         if not hasattr(self.first_user, "sun"):
-            self.first_user.get_all()
+            self.first_user.__get_all()
 
         if not hasattr(self.second_user, "sun"):
-            self.second_user.get_all()
+            self.second_user.__get_all()
 
         self.first_init_point_list = self.first_user.planets_list + \
             self.first_user.houses_list
@@ -308,12 +308,13 @@ if __name__ == "__main__":
     jack = KrInstance("Jack", 1990, 6, 15, 13, 00, "Montichiari")
     # kanye.get_all()
     # natal = NatalAspects(kanye)
-    # natal.get_aspects()
+    # natal.get_relevant_aspects()
     # for a in natal.aspects:
     #     print(a['p1_name'], a['p2_name'], a['orbit'])
     cm = CompositeAspects(kanye, jack)
-    res = cm.get_aspects()
+    res = cm.get_relevant_aspects()
     for a in res:
         print(a['p1_name'], 'number is', a['p1'], a['p2_name'],
               'number is', a['p2'], a['orbit'], a['aspect'])
     print(len(res))
+    print(res[0])

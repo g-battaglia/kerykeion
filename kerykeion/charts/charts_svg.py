@@ -8,12 +8,12 @@ import datetime
 import json
 from kerykeion.aspects import NatalAspects, CompositeAspects
 from kerykeion.main import KrInstance
-from kerykeion.types import KerykeionException
+from kerykeion.types import KerykeionException, ChartType
 import math
 import pytz
 from pathlib import Path
 from string import Template
-from typing import Union
+from typing import Literal, Union
 
 # calculation and svg drawing class
 
@@ -39,7 +39,7 @@ class MakeSvgInstance:
     def __init__(
             self,
             first_obj: KrInstance,
-            chart_type: str = "Natal",
+            chart_type: ChartType = "Natal",
             second_obj: Union[KrInstance, None] = None,
             new_output_directory: Union[str, None] = None,
             template_type: str = "extended",
@@ -73,7 +73,7 @@ class MakeSvgInstance:
             self.settings_file = Path(new_settings_file)
 
         self.parse_json_settings(self.settings_file, lang)
-        self.type = chart_type
+        self.chart_type = chart_type
 
         # Kerykeion instance
         self.user = first_obj
@@ -134,12 +134,12 @@ class MakeSvgInstance:
         for h in self.user.houses_list:
             self.houses_sign_graph.append(h['sign_num'])
 
-        if self.type == "Natal":
+        if self.chart_type == "Natal":
             natal_aspects_instance = NatalAspects(
                 self.user, new_settings_file=self.settings_file)
-            self.aspects_list = natal_aspects_instance.get_aspects()
+            self.aspects_list = natal_aspects_instance.get_relevant_aspects()
 
-        if (self.type == "Transit" or self.type == "Composite"):  # TODO: If not second should exit
+        if (self.chart_type == "Transit" or self.chart_type == "Composite"):  # TODO: If not second should exit
 
             if not second_obj:
                 raise KerykeionException(
@@ -203,7 +203,7 @@ class MakeSvgInstance:
                 self.t_houses_sign_graph.append(h['sign_num'])
 
         # screen size
-        if self.type == "Natal":
+        if self.chart_type == "Natal":
             self.screen_width = 772.2
         else:
             self.screen_width = 1200
@@ -238,7 +238,7 @@ class MakeSvgInstance:
 
         # Default
         self.name = self.user.name
-        self.charttype = self.type
+        self.charttype = self.chart_type
         self.year = self.user.utc.year
         self.month = self.user.utc.month
         self.day = self.user.utc.day
@@ -249,7 +249,7 @@ class MakeSvgInstance:
 
         # Transit
 
-        if self.type == "Transit":
+        if self.chart_type == "Transit":
             self.t_geolon = self.geolon
             self.t_geolat = self.geolat
             self.t_altitude = self.altitude
@@ -296,7 +296,7 @@ class MakeSvgInstance:
         self.aspects_settings = settings['aspects']
 
     def makeTemplate(self, printing=None):
-        # self.type = "Transit"
+        # self.chart_type = "Transit"
         # empty element points
         self.fire = 0.0
         self.earth = 0.0
@@ -304,7 +304,7 @@ class MakeSvgInstance:
         self.water = 0.0
 
         # Transit module data
-        if self.type == "Transit" or self.type == "Composite":
+        if self.chart_type == "Transit" or self.chart_type == "Composite":
             # grab transiting module data
 
             self.t_planets_sign = self.t_points_sign
@@ -343,7 +343,7 @@ class MakeSvgInstance:
         translate = "0"
         # Defoult:
         # viewbox = '0 0 772.2 546.0' #297mm * 2.6 + 210mm * 2.6
-        if self.type == "Natal":
+        if self.chart_type == "Natal":
             viewbox = '0 0 772.2 546.0'  # 297mm * 2.6 + 210mm * 2.6
         else:
             viewbox = '0 0 1000 546.0'
@@ -356,7 +356,7 @@ class MakeSvgInstance:
         self.c3 = 120
 
         # transit
-        if self.type == "Transit" or self.type == "Composite":
+        if self.chart_type == "Transit" or self.chart_type == "Composite":
             td['transitRing'] = self.transitRing(r)
             td['degreeRing'] = self.degreeTransitRing(r)
             # circles
@@ -402,15 +402,15 @@ class MakeSvgInstance:
         td['svgWidth'] = str(svgWidth)
         td['svgHeight'] = str(svgHeight)
         td['viewbox'] = viewbox
-        if self.type == "Composite":
+        if self.chart_type == "Composite":
             td['stringTitle'] = f"{self.name} {self.language_settings['&']} {self.t_user.name}"
-        elif self.type == "Transit":
+        elif self.chart_type == "Transit":
             td['stringTitle'] = f"{self.language_settings['transits']} {self.t_user.day}/{self.t_user.month}/{self.t_user.year}"
         else:
             td['stringTitle'] = self.name
 
         # Tipo di carta
-        if self.type == "Composite" or self.name == "Transit":
+        if self.chart_type == "Composite" or self.name == "Transit":
             td['stringName'] = f"{self.name}:"
         else:
             td['stringName'] = f'{self.language_settings["info"]}:'
@@ -481,7 +481,7 @@ class MakeSvgInstance:
         # td['stringDateTime']= str(self.user.year)+'-%(#1)02d-%(#2)02d %(#3)02d:%(#4)02d:%(#5)02d' % {'#1':self.user.month,'#2':self.user.day,'#3':self.user.hours,'#4':self.user.minuts,'#5':00} + self.decTzStr(self.timezone)
         td['stringDateTime'] = f'{self.user.year}-{self.user.month}-{self.user.day} {self.user.hours:02d}:{self.user.minuts:02d}'
 
-        if self.type == "Composite":
+        if self.chart_type == "Composite":
             td['stringLat'] = f'{self.t_user.name}: '
             td['stringLon'] = self.t_user.city
             td['stringPosition'] = f'{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hours:02d}:{self.t_user.minuts:02d}'
@@ -541,7 +541,7 @@ class MakeSvgInstance:
             self.template = self.makeTemplate()
 
         self.chartname = self.output_directory / \
-            f'{self.name}{self.type}Chart.svg'
+            f'{self.name}{self.chart_type}Chart.svg'
 
         with open(self.chartname, "w", encoding='utf-8') as output_file:
             output_file.write(self.template)
@@ -699,7 +699,7 @@ class MakeSvgInstance:
         # pie slices
         offset = 360 - self.houses_degree_ut[6]
         # check transit
-        if self.type == "Transit" or self.type == "Composite":
+        if self.chart_type == "Transit" or self.chart_type == "Composite":
             dropin = 0
         else:
             dropin = self.c1
@@ -708,7 +708,7 @@ class MakeSvgInstance:
         # symbols
         offset = offset + 15
         # check transit
-        if self.type == "Transit" or self.type == "Composite":
+        if self.chart_type == "Transit" or self.chart_type == "Composite":
             dropin = 54
         else:
             dropin = 18+self.c1
@@ -729,7 +729,7 @@ class MakeSvgInstance:
         xr = 12
         for i in range(xr):
             # check transit
-            if self.type == "Transit" or self.type == "Composite":
+            if self.chart_type == "Transit" or self.chart_type == "Composite":
                 dropin = 160
                 roff = 72
                 t_roff = 36
@@ -767,7 +767,7 @@ class MakeSvgInstance:
                 linecolor = self.colors_settings['houses_radix_line']
 
             # Transit houses lines.
-            if self.type == "Transit" or self.type == "Composite":
+            if self.chart_type == "Transit" or self.chart_type == "Composite":
 
                 # Degrees for point zero.
 
@@ -795,7 +795,7 @@ class MakeSvgInstance:
                 xtext = self.sliceToX(0, (r-8), t_text_offset) + 8
                 ytext = self.sliceToY(0, (r-8), t_text_offset) + 8
 
-                if self.type == "Transit":
+                if self.chart_type == "Transit":
                     path = path + '<text style="fill: #00f; fill-opacity: 0; font-size: 14px"><tspan x="' + \
                         str(xtext-3)+'" y="'+str(ytext+3) + \
                         '">'+str(i+1)+'</tspan></text>\n'
@@ -810,7 +810,7 @@ class MakeSvgInstance:
                         t_y2)+'" style="stroke: '+t_linecolor+'; stroke-width: 2px; stroke-opacity:.3;"/>\n'
 
             # if transit
-            if self.type == "Transit" or self.type == "Composite":
+            if self.chart_type == "Transit" or self.chart_type == "Composite":
                 dropin = 84
 
             dropin = 48
@@ -981,7 +981,7 @@ class MakeSvgInstance:
             i = planets_degut[keys[e]]
 
             # coordinates
-            if self.type == "Transit" or self.type == "Composite":
+            if self.chart_type == "Transit" or self.chart_type == "Composite":
                 if 22 < i < 27:
                     rplanet = 76
                 elif switch == 1:
@@ -1013,7 +1013,7 @@ class MakeSvgInstance:
 
             planet_x = self.sliceToX(0, (r-rplanet), offset) + rplanet
             planet_y = self.sliceToY(0, (r-rplanet), offset) + rplanet
-            if self.type == "Transit" or self.type == "Composite":
+            if self.chart_type == "Transit" or self.chart_type == "Composite":
                 scale = 0.8
 
             scale = 1
@@ -1022,10 +1022,10 @@ class MakeSvgInstance:
                 planet_x*(1/scale)) + '" y="' + str(planet_y*(1/scale)) + '" xlink:href="#' + self.planets_settings[i]['name'] + '" /></g></g>\n'
 
         # make transit degut and display planets
-        if self.type == "Transit" or self.type == "Composite":
+        if self.chart_type == "Transit" or self.chart_type == "Composite":
             group_offset = {}
             t_planets_degut = {}
-            if self.type == "Transit":
+            if self.chart_type == "Transit":
                 list_range = len(self.planets_settings)-4
             else:
                 list_range = len(self.planets_settings)
@@ -1131,7 +1131,7 @@ class MakeSvgInstance:
                 output += '</text></g>\n'
 
             # check transit
-            if self.type == "Transit" or self.type == "Composite":
+            if self.chart_type == "Transit" or self.chart_type == "Composite":
                 dropin = 36
             else:
                 dropin = 0
@@ -1145,7 +1145,7 @@ class MakeSvgInstance:
                 y2)+'" style="stroke: '+self.planets_settings[i]['color']+'; stroke-width: 2px; stroke-opacity:.6;"/>\n'
 
             # check transit
-            if self.type == "Transit" or self.type == "Composite":
+            if self.chart_type == "Transit" or self.chart_type == "Composite":
                 dropin = 160
             else:
                 dropin = 120
@@ -1371,7 +1371,7 @@ class MakeSvgInstance:
 
         self.aspects_list = CompositeAspects(
             self.user, self.t_user, new_settings_file=self.settings_file
-        ).get_aspects()
+        ).get_relevant_aspects()
 
         for element in self.aspects_list:
             out += self.drawAspect(r, ar, element['p1_abs_pos'], element['p2_abs_pos'],
@@ -1495,9 +1495,9 @@ class MakeSvgInstance:
 
         # ----------
 
-        if self.type == "Transit" or self.type == "Composite":
+        if self.chart_type == "Transit" or self.chart_type == "Composite":
 
-            if self.type == "Transit":
+            if self.chart_type == "Transit":
                 out += '<g transform="translate(320, -15)">'
                 out += \
                     f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.t_name}:</text>'
@@ -1563,7 +1563,7 @@ class MakeSvgInstance:
 
         # ----------
 
-        if self.type == "Composite":
+        if self.chart_type == "Composite":
             out += '<g transform="translate(840, -20)">'
             li = 10
             for i in range(12):

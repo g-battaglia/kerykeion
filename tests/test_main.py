@@ -1,5 +1,5 @@
 from kerykeion.fetch_geonames import FetchGeonames
-from kerykeion import KrInstance, MakeSvgInstance, RelationshipScore
+from kerykeion import KrInstance, MakeSvgInstance, RelationshipScore, NatalAspects, CompositeAspects
 from logging import basicConfig
 
 basicConfig(
@@ -7,6 +7,7 @@ basicConfig(
     level=10,
     force=True
 )
+
 
 def test_geonames():
     geonames = FetchGeonames("Roma", "IT")
@@ -33,11 +34,46 @@ def test_kerykeion_instace():
     assert object.sun['retrograde'] == False
 
 
+def test_composite_aspects():
+    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "New York")
+    jack = KrInstance("Jack", 1990, 6, 15, 13, 00, "Montichiari")
+
+    instance = CompositeAspects(kanye, jack)
+    aspects = instance.get_relevant_aspects()
+
+    assert len(aspects) == 37
+    assert aspects[0] == {
+        'p1_name': 'Sun',
+        'p1_abs_pos': 77.59899205977428,
+        'p2_name': 'Sun',
+        'p2_abs_pos': 84.08913890182518,
+        'aspect': 'conjunction',
+        'orbit': 6.490146842050876,
+        'aspect_degrees': 0,
+        'color': '#5757e2',
+        'aid': 0,
+        'diff': 6.490146842050905,
+        'p1': 0, 'p2': 0
+    }
+
+
 def test_birthchart_instance():
     subject = KrInstance("Test", 1993, 10, 10, 12, 12, "London", "UK")
     birthchart_svg = MakeSvgInstance(subject).makeTemplate()
 
     assert birthchart_svg.startswith('<?xml version="1.0" encoding="UTF-8"?>')
+
+
+def test_composite_chart_instance():
+    # TODO: Improve with bs4
+    first_subject = KrInstance("John", 1975, 10, 10, 21, 15, 'Roma', 'IT')
+    second_subject = KrInstance("Sarah", 1978, 2, 9, 15, 50, 'Roma', 'IT')
+    birthchart_instance = MakeSvgInstance(
+        first_subject, 'Composite', second_subject)
+    template = birthchart_instance.makeTemplate()
+
+    assert birthchart_instance.chart_type == 'Composite'
+    assert template.startswith('<?xml version="1.0" encoding="UTF-8"?>')
 
 
 def test_relationship_score():
@@ -60,4 +96,6 @@ if __name__ == "__main__":
     test_geonames()
     test_kerykeion_instace()
     test_birthchart_instance()
+    test_composite_aspects()
     test_relationship_score()
+    test_composite_chart_instance()

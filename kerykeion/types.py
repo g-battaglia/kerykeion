@@ -49,6 +49,9 @@ KerykeionPlanetDictionaryKey = Literal[
     'house',
     'retrograde'
 ]
+
+ChartType = Literal['Natal', 'Composite', 'Transit']
+
 KerykeionPlanetDictionaryValue = Union[KerykeionPlanetDictionaryKey,
                                        int, float, str, Any]
 KerykeionPlanetDictionary = dict[KerykeionPlanetDictionaryKey,
