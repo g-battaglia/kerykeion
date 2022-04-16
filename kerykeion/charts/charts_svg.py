@@ -478,13 +478,13 @@ class MakeSvgInstance:
         else:
             td['stringLocation'] = self.location
 
-        # td['stringDateTime']= str(self.user.year)+'-%(#1)02d-%(#2)02d %(#3)02d:%(#4)02d:%(#5)02d' % {'#1':self.user.month,'#2':self.user.day,'#3':self.user.hours,'#4':self.user.minuts,'#5':00} + self.decTzStr(self.timezone)
-        td['stringDateTime'] = f'{self.user.year}-{self.user.month}-{self.user.day} {self.user.hours:02d}:{self.user.minuts:02d}'
+        # td['stringDateTime']= str(self.user.year)+'-%(#1)02d-%(#2)02d %(#3)02d:%(#4)02d:%(#5)02d' % {'#1':self.user.month,'#2':self.user.day,'#3':self.user.hour,'#4':self.user.minute,'#5':00} + self.decTzStr(self.timezone)
+        td['stringDateTime'] = f'{self.user.year}-{self.user.month}-{self.user.day} {self.user.hour:02d}:{self.user.minute:02d}'
 
         if self.chart_type == "Composite":
             td['stringLat'] = f'{self.t_user.name}: '
             td['stringLon'] = self.t_user.city
-            td['stringPosition'] = f'{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hours:02d}:{self.t_user.minuts:02d}'
+            td['stringPosition'] = f'{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hour:02d}:{self.t_user.minute:02d}'
 
         else:
             td['stringLat'] = "%s: %s" % (
