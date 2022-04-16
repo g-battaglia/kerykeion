@@ -24,11 +24,13 @@
 
         <h2>Submodules</h2>
         <ul>
+                <li><a href="kerykeion/aspects.html">kerykeion.aspects</a></li>
+                <li><a href="kerykeion/charts.html">kerykeion.charts</a></li>
                 <li><a href="kerykeion/fetch_geonames.html">kerykeion.fetch_geonames</a></li>
                 <li><a href="kerykeion/main.html">kerykeion.main</a></li>
-                <li><a href="kerykeion/output_exemple.html">kerykeion.output_exemple</a></li>
+                <li><a href="kerykeion/print_all_data.html">kerykeion.print_all_data</a></li>
+                <li><a href="kerykeion/relationship_score.html">kerykeion.relationship_score</a></li>
                 <li><a href="kerykeion/types.html">kerykeion.types</a></li>
-                <li><a href="kerykeion/utilities.html">kerykeion.utilities</a></li>
         </ul>
 
 
@@ -45,19 +47,24 @@
                     <h1 class="modulename">
 kerykeion    </h1>
 
-                
+                        <div class="docstring"><p>This is part of Kerykeion (C) 2022 Giacomo Battaglia</p>
+</div>
+
                         <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">dirname</span>
-<span class="kn">from</span> <span class="nn">kerykeion.main</span> <span class="kn">import</span> <span class="n">KrInstance</span>
-<span class="kn">from</span> <span class="nn">kerykeion.output_exemple</span> <span class="kn">import</span> <span class="n">output</span>
-<span class="kn">from</span> <span class="nn">kerykeion.utilities.charts</span> <span class="kn">import</span> <span class="n">MakeSvgInstance</span> <span class="k">as</span> <span class="n">MakeSvgInstance</span>
-<span class="kn">from</span> <span class="nn">kerykeion.utilities.discepolo</span> <span class="kn">import</span> <span class="n">DiscepoloNumber</span>
-<span class="kn">from</span> <span class="nn">kerykeion.types</span> <span class="kn">import</span> <span class="n">KerykeionException</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is part of Kerykeion (C) 2022 Giacomo Battaglia</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
 
-
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="c1"># Local</span>
+<span class="kn">from</span> <span class="nn">.main</span> <span class="kn">import</span> <span class="n">KrInstance</span>
+<span class="kn">from</span> <span class="nn">.print_all_data</span> <span class="kn">import</span> <span class="n">print_all_data</span>
+<span class="kn">from</span> <span class="nn">.charts.charts_svg</span> <span class="kn">import</span> <span class="n">MakeSvgInstance</span>
+<span class="kn">from</span> <span class="nn">.types</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.relationship_score</span> <span class="kn">import</span> <span class="n">RelationshipScore</span>
+<span class="kn">from</span> <span class="nn">.aspects</span> <span class="kn">import</span> <span class="n">NatalAspects</span><span class="p">,</span> <span class="n">CompositeAspects</span>
 </pre></div>
 
         </details>

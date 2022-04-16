@@ -63,18 +63,25 @@
             <div class="pdoc-code codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This is part of Kerykeion (C) 2022 Giacomo Battaglia</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="c1">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">UnknownExtra</span>
 
 <span class="c1"># Exceptions:</span>
+
+
 <span class="k">class</span> <span class="nc">KerykeionException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Custom Kerykeion Exception</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>            
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
         <span class="c1"># Call the base class constructor with the parameters it needs</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
 
 <span class="c1"># Zodiac Types:</span>
 <span class="n">ZodiacType</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;Tropic&#39;</span><span class="p">,</span> <span class="s1">&#39;Sidereal&#39;</span><span class="p">]</span>
@@ -94,6 +101,7 @@
     <span class="s2">&quot;Aqu&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Pis&quot;</span>
 <span class="p">]</span>
+
 <span class="n">KerykeionPlanetDictionaryKey</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
     <span class="s1">&#39;name&#39;</span><span class="p">,</span>
     <span class="s1">&#39;quality&#39;</span><span class="p">,</span>
@@ -106,8 +114,13 @@
     <span class="s1">&#39;house&#39;</span><span class="p">,</span>
     <span class="s1">&#39;retrograde&#39;</span>
 <span class="p">]</span>
-<span class="n">KerykeionPlanetDictionaryValue</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">KerykeionPlanetDictionaryKey</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
-<span class="n">KerykeionPlanetDictionary</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">KerykeionPlanetDictionaryKey</span><span class="p">,</span> <span class="n">KerykeionPlanetDictionaryValue</span><span class="p">]</span>
+
+<span class="n">ChartType</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;Natal&#39;</span><span class="p">,</span> <span class="s1">&#39;Composite&#39;</span><span class="p">,</span> <span class="s1">&#39;Transit&#39;</span><span class="p">]</span>
+
+<span class="n">KerykeionPlanetDictionaryValue</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">KerykeionPlanetDictionaryKey</span><span class="p">,</span>
+                                       <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="n">KerykeionPlanetDictionary</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">KerykeionPlanetDictionaryKey</span><span class="p">,</span>
+                                 <span class="n">KerykeionPlanetDictionaryValue</span><span class="p">]</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">()</span>
@@ -131,7 +144,8 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Custom Kerykeion Exception</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>            
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
         <span class="c1"># Call the base class constructor with the parameters it needs</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </pre></div>
@@ -151,7 +165,7 @@
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>            
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
         <span class="c1"># Call the base class constructor with the parameters it needs</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </pre></div>
