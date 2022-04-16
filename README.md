@@ -44,11 +44,10 @@ Here some examples:
 ## Generate a SVG of the birthchart:
 
 ```python
->>> import kerykeion as kr
->>> from kerykeion.utilities.charts import MakeSvgInstance
+>>> from kerykeion import KrInstance, MakeSvgInstance
 
->>> first = kr.KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
->>> second = kr.KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
+>>> first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
+>>> second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
 
 # Set the type, it can be Natal, Composite or Transit
 
@@ -69,12 +68,11 @@ SVG Generated Correctly
 # Example of a possible text output with information:
 
 ```python
->>> from kerykeion import output, KrInstance
+>>> from kerykeion import print_all_data, KrInstance
 
 >>> kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
 
->>> print(output(kanye))
------------------------------------------------------
+>>> print_all_data(kanye)
 NAME: Kanye
 PLANET     POSITION
 
@@ -108,21 +106,14 @@ House Cusp 12:    Gem  15.681
 ## Other exeples of possibles usecase
 
 ```python
->>> print(kanye.houses()[3]) # Print the house information.
-{'name': '4', 'quality': 'Cardinal', 'element': 'Air', 'sign': 'Lib', 'pos': 3.9766709280539203, 'abs_pos': 183.97667092805392, 'emoji': '♎️'}
-
->>> print(kanye.aspects()['all']['Sun']) # Print aspects for the planet.
-["('Square', 'Moon', 1.1735227310748542)", "('Semisquare', 'Venus', 0.5668097396966303)", "('Semisquare', 'Mars', 0.8092756679079827)", "('Conjuction', 'Jupiter', 2.992099853982751)", "('Oposition', 'Neptune', -2.906233250740513)", "('Trigon', 'Pluto', -6.153155598911468)", "('Conjuction', 'Juno', 0.0)", "('Semisextil', '1', 0.39678949800406826)", "('Oposition', '6', -1.917784119528534)", "('Quincunx', '7', -0.39678949800406826)", "('Conjuction', '12', 1.917784119528534)"]
-
 # Get all aspects between two persons:
 
->>> import kerykeion as kr
->>> from kerykeion.utilities import CompositeAspects
->>> first = kr.KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
->>> second = kr.KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
+>>> from kerykeion import CompositeAspects, KrInstance
+>>> first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
+>>> second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
 
 >>> name = CompositeAspects(first, second)
->>> aspect_list = name.get_aspects()
+>>> aspect_list = name.get_relevant_aspects()
 >>> print(aspect_list[0])
 
 Generating kerykeion object for Jack...
@@ -149,14 +140,3 @@ You can clone this repository or download a zip file using the right side button
 ## Contributing
 
 Feel free to contribute to the code!
-
-## Versione 2.3.0 updates:
-
-Created a new fetch_geonames module to replace the older geoname.py (which was part of OpenAstro).
-The new module introduces the `requests` and the `requests-cache` library for fetching the data from
-`geonames.org` . It's more maintainable and more efficient than before.
-
-Created also a tests directory with a pipenv for testing, the tests and the examples folder should
-be maybe merged, or an global pipenv should be created for development.
-
-A refactoring and a restructuring of the folder structure should be done in the future.

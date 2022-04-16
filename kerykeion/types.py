@@ -1,6 +1,9 @@
 """
     This is part of Kerykeion (C) 2022 Giacomo Battaglia
 """
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from typing import Any, Literal, Union
 
 from pkg_resources import UnknownExtra
