@@ -1,5 +1,4 @@
-from importlib.resources import path
-from kerykeion.main import KrInstance
+from kerykeion import KrInstance
 from swisseph import difdeg2n
 import json
 from pathlib import Path
@@ -17,14 +16,14 @@ class NatalAspects():
     ):
         self.user = kr_object
         self.new_settings_file = new_settings_file
-        self.parse_json_settings()
+        self._parse_json_settings()
 
         if not hasattr(self.user, "sun"):
             self.user.get_all()
 
         self.init_point_list = self.user.planets_list + self.user.houses_list
 
-    def parse_json_settings(self):
+    def _parse_json_settings(self):
         # Load settings file
         DATADIR = Path(__file__).parent
 
@@ -252,7 +251,7 @@ class CompositeAspects(NatalAspects):
         self.second_user = kr_object_two
 
         self.new_settings_file = new_settings_file
-        self.parse_json_settings()
+        self._parse_json_settings()
 
         if not hasattr(self.first_user, "sun"):
             self.first_user.get_all()
@@ -305,7 +304,7 @@ class CompositeAspects(NatalAspects):
 
 
 if __name__ == "__main__":
-    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "New York")
     jack = KrInstance("Jack", 1990, 6, 15, 13, 00, "Montichiari")
     # kanye.get_all()
     # natal = NatalAspects(kanye)
