@@ -36,6 +36,7 @@ Sign = Literal[
     "Aqu",
     "Pis"
 ]
+
 KerykeionPlanetDictionaryKey = Literal[
     'name',
     'quality',

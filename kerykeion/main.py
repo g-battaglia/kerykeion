@@ -10,13 +10,18 @@ from kerykeion.fetch_geonames import FetchGeonames
 import math
 from pathlib import Path
 import pytz
-from kerykeion.types import KerykeionException, KerykeionPlanetDictionary, KerykeionPlanetDictionaryKey, KerykeionPlanetDictionaryValue, ZodiacType
+from kerykeion.types import KerykeionException, KerykeionPlanetDictionaryKey, ZodiacType
 from typing import Union
 from sys import exit
 import swisseph as swe
 
 
 # swe.set_ephe_path("/")
+
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 
 
 class KrInstance():
@@ -82,11 +87,6 @@ class KrInstance():
         zodiactype: ZodiacType = "Tropic",
         online: bool = True,
     ) -> None:
-        if not logger:
-            logging.basicConfig(
-                format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                level=logging.INFO
-            )
 
         self.logger: logging.Logger = logger or logging.getLogger('Kerykeion')
         self.logger.debug('Starting Kerykeion')

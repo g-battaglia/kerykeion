@@ -10,6 +10,11 @@ from requests import Request
 from requests_cache import CachedSession
 from typing import Union
 
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+
 
 class FetchGeonames:
     """
@@ -29,11 +34,6 @@ class FetchGeonames:
         username: str = "century.boy",
         logger: Union[logging.Logger, None] = None
     ):
-        if not logger:
-            logging.basicConfig(
-                format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                level=logging.INFO
-            )
 
         self.session = CachedSession(
             cache_name='cache/kerykeion_geonames_cache',
@@ -63,7 +63,7 @@ class FetchGeonames:
 
         prepared_request = Request(
             "GET", self.timezone_url, params=params).prepare()
-        self.logger.info(
+        self.logger.debug(
             f"Requesting data from geonames timezones:\n{prepared_request.url}")
 
         try:
@@ -104,7 +104,7 @@ class FetchGeonames:
 
         prepared_request = Request(
             "GET", self.base_url, params=params).prepare()
-        self.logger.info(
+        self.logger.debug(
             f"Requesting data from geonames basic:\n{prepared_request.url}")
 
         try:
