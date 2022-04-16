@@ -33,9 +33,9 @@ class KrInstance():
     - year (int, optional): _ Defaults to now.year.
     - month (int, optional): _ Defaults to now.month.
     - day (int, optional): _ Defaults to now.day.
-    - hours (int, optional): _ Defaults to now.hour.
-    - minuts (int, optional): _ Defaults to now.minute.
-    - city (str, optional): _ Defaults to "London".
+    - hour (int, optional): _ Defaults to now.hour.
+    - minute (int, optional): _ Defaults to now.minute.
+    - city (str, optional): City or location of birth. Defaults to "London".
     - nat (str, optional): _ Defaults to "".
     - lon (Union[int, float], optional): _ Defaults to False.
     - lat (Union[int, float], optional): _ Defaults to False.
@@ -50,14 +50,14 @@ class KrInstance():
     year: int
     month: int
     day: int
-    hours: int
-    minuts: int
+    hour: int
+    minute: int
     city: str
     nation: str
     lon: Union[int, float]
     lat: Union[int, float]
     tz_str: str
-    logger: Logger
+    __logger: Logger
     geonames_username: str
     online: bool
     zodiactype: ZodiacType
@@ -74,8 +74,8 @@ class KrInstance():
         year: int = now.year,
         month: int = now.month,
         day: int = now.day,
-        hours: int = now.hour,
-        minuts: int = now.minute,
+        hour: int = now.hour,
+        minute: int = now.minute,
         city: str = "London",
         nation: str = "",
         lon: Union[int, float] = 0,
@@ -95,8 +95,8 @@ class KrInstance():
         self.year = year
         self.month = month
         self.day = day
-        self.hours = hours
-        self.minuts = minuts
+        self.hour = hour
+        self.minute = minute
         self.city = city
         self.nation = nation
         self.city_long = lon
@@ -169,8 +169,8 @@ class KrInstance():
             self.year,
             self.month,
             self.day,
-            self.hours,
-            self.minuts,
+            self.hour,
+            self.minute,
             0
         )
 
@@ -183,7 +183,7 @@ class KrInstance():
         """ Calculates julian day from the utc time."""
         utc = self.__get_utc()
         self.time_utc = utc.hour + utc.minute/60
-        self.time = self.hours + self.minuts/60
+        self.time = self.hour + self.minute/60
         self.julian_day = float(swe.julday(utc.year, utc.month, utc.day,
                                            self.time_utc))
 
@@ -709,16 +709,17 @@ class KrInstance():
             self.__get_all()
 
         obj_dict = self.__dict__.copy()
+
         keys_to_remove = [
             "utc",
-            "iflag",
             "json_dir",
             "planets_list",
             "houses_list",
             "planets_degrees",
             "houses_degree_ut",
-            "logger",
-            "online"
+            "online",
+            "_KrInstance__logger",
+            "_KrInstance__iflag"
         ]
 
         for key in keys_to_remove:
@@ -749,6 +750,7 @@ if __name__ == "__main__":
     )
 
     test = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Milano")
-    print(test.sun)
+    # print(test.sun)
     # print(kanye.geonames_username)
-    # print(kanye.json_dump(dump=True))
+    # kanye.json_dump(dump=True)
+    print(kanye.json_dump())
