@@ -1,4 +1,4 @@
 include README.md
 include LICENSE.txt
-recursive-include kerykeion/utilities/charts *.xml
-recursive-include kerykeion/utilities *.json
+recursive-include kerykeion *.xml
+recursive-include kerykeion *.json
