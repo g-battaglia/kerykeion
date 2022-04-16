@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
-      - uses: actions/checkout
+      - uses: actions/checkout@master
       - name: Set up Python 3.9
         uses: actions/setup-python@v1
         with:
