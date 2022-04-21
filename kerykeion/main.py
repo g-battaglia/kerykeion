@@ -4,7 +4,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import json
 import math
 import pytz
 import swisseph as swe
@@ -13,7 +12,7 @@ from datetime import datetime
 from logging import Logger, getLogger, basicConfig
 from kerykeion.fetch_geonames import FetchGeonames
 from pathlib import Path
-from kerykeion.types import KerykeionException, KerykeionPoint, ZodiacType
+from kerykeion.types import KerykeionException, KerykeionPoint, ZodiacType, KerykeionSubject
 from typing import Literal, Union
 
 # swe.set_ephe_path("/")
@@ -38,7 +37,7 @@ class KrInstance():
     - minute (int, optional): _ Defaults to now.minute.
     - city (str, optional): City or location of birth. Defaults to "London".
     - nat (str, optional): _ Defaults to "".
-    - lon (Union[int, float], optional): _ Defaults to False.
+    - lng (Union[int, float], optional): _ Defaults to False.
     - lat (Union[int, float], optional): _ Defaults to False.
     - tz_str (Union[str, bool], optional): _ Defaults to False.
     - logger (Union[Logger, None], optional): _ Defaults to None.
@@ -55,13 +54,13 @@ class KrInstance():
     minute: int
     city: str
     nation: str
-    lon: Union[int, float]
+    lng: Union[int, float]
     lat: Union[int, float]
     tz_str: str
     __logger: Logger
     geonames_username: str
     online: bool
-    zodiactype: ZodiacType
+    zodiac_type: ZodiacType
 
     # Generated internally
     julian_day: Union[int, float]
@@ -79,12 +78,12 @@ class KrInstance():
         minute: int = now.minute,
         city: str = "London",
         nation: str = "",
-        lon: Union[int, float] = 0,
+        lng: Union[int, float] = 0,
         lat: Union[int, float] = 0,
         tz_str: str = "",
         logger: Union[Logger, None] = None,
         geonames_username: str = 'century.boy',
-        zodiactype: ZodiacType = "Tropic",
+        zodiac_type: ZodiacType = "Tropic",
         online: bool = True,
     ) -> None:
 
@@ -100,15 +99,15 @@ class KrInstance():
         self.minute = minute
         self.city = city
         self.nation = nation
-        self.city_long = lon
-        self.city_lat = lat
-        self.city_tz = tz_str
-        self.geonames_username = geonames_username
-        self.zodiactype = zodiactype
+        self.lng = lng
+        self.lat = lat
+        self.tz_str = tz_str
+        self.__geonames_username = geonames_username
+        self.zodiac_type = zodiac_type
         self.online = online
         self.json_dir = Path.home()
 
-        if (not self.online) and (not lon or not lat or not tz_str):
+        if (not self.online) and (not lng or not lat or not tz_str):
             raise KerykeionException(
                 "You need to set the coordinates and timezone if you want to use the offline mode!")
 
@@ -118,17 +117,17 @@ class KrInstance():
         self.__get_all()
 
     def __str__(self) -> str:
-        return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.city_lat}, Lon {self.city_long}"
+        return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
 
     def __repr__(self) -> str:
-        return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.city_lat}, Lon {self.city_long}"
+        return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
 
     def __get_tz(self) -> str:
         """Gets the nearest time zone for the calculation"""
         self.__logger.debug("Conneting to Geonames...")
 
         geonames = FetchGeonames(
-            self.city, self.nation, logger=self.__logger, username=self.geonames_username)
+            self.city, self.nation, logger=self.__logger, username=self.__geonames_username)
         self.city_data: dict[str, str] = geonames.get_serialized_data()
 
         if (
@@ -142,29 +141,29 @@ class KrInstance():
                 "No data found for this city, try again! Maybe check your connection?")
 
         self.nation = self.city_data["countryCode"]
-        self.city_long = float(self.city_data["lng"])
-        self.city_lat = float(self.city_data["lat"])
-        self.city_tz = self.city_data["timezonestr"]
+        self.lng = float(self.city_data["lng"])
+        self.lat = float(self.city_data["lat"])
+        self.tz_str = self.city_data["timezonestr"]
 
-        if self.city_lat > 66.0:
-            self.city_lat = 66.0
+        if self.lat > 66.0:
+            self.lat = 66.0
             self.__logger.info(
                 'Polar circle override for houses, using 66 degrees')
 
-        elif self.city_lat < -66.0:
-            self.city_lat = -66.0
+        elif self.lat < -66.0:
+            self.lat = -66.0
             self.__logger.info(
                 'Polar circle override for houses, using -66 degrees')
 
-        return self.city_tz
+        return self.tz_str
 
     def __get_utc(self):
         """Converts local time to utc time. """
-        if (self.online) and (not self.city_tz or not self.city_long or not self.city_lat):
+        if (self.online) and (not self.tz_str or not self.lng or not self.lat):
             tz = self.__get_tz()
             local_time = pytz.timezone(tz)
         else:
-            local_time = pytz.timezone(self.city_tz)
+            local_time = pytz.timezone(self.tz_str)
 
         naive_datetime = datetime(
             self.year,
@@ -183,10 +182,10 @@ class KrInstance():
     def __get_jd(self):
         """ Calculates julian day from the utc time."""
         utc = self.__get_utc()
-        self.time_utc = utc.hour + utc.minute/60
-        self.time = self.hour + self.minute/60
+        self.utc_time = utc.hour + utc.minute/60
+        self.local_time = self.hour + self.minute/60
         self.julian_day = float(swe.julday(utc.year, utc.month, utc.day,
-                                           self.time_utc))
+                                           self.utc_time))
 
         return self.julian_day
 
@@ -297,8 +296,8 @@ class KrInstance():
         """Calculatetype positions and store them in dictionaries"""
         point_type = "House"
         # creates the list of the house in 360°
-        self.houses_degree_ut = swe.houses(self.julian_day, self.city_lat,
-                                           self.city_long)[0]
+        self.houses_degree_ut = swe.houses(self.julian_day, self.lat,
+                                           self.lng)[0]
         # stores the house in singular dictionaries.
         self.first_house = self.position_calc(
             self.houses_degree_ut[0], "First House", point_type=point_type
@@ -361,7 +360,7 @@ class KrInstance():
         """Sidereal or tropic mode."""
         self.__iflag = swe.FLG_SWIEPH+swe.FLG_SPEED
 
-        if self.zodiactype == "Sidereal":
+        if self.zodiac_type == "Sidereal":
             self.__iflag += swe.FLG_SIDEREAL
             mode = "SIDM_FAGAN_BRADLEY"
             swe.set_sid_mode(getattr(swe, mode))
@@ -651,54 +650,7 @@ class KrInstance():
         self.__lunar_phase_calc()
         self.__make_lists()
 
-    # Utility Functions
-
-    def _dangerous_json_dump(self, dump=True, new_output_directory=None):
-        import jsonpickle
-        import json
-
-        """
-        Dumps the Kerykeion object to a json file located in the home folder.
-        This json file allows the object to be recreated with jsonpickle.
-        It's dangerous since it contains local system information.
-        """
-
-        try:
-            self.sun
-        except:
-            self.__get_all()
-
-        if new_output_directory:
-            output_directory_path = Path(new_output_directory)
-            self.json_path = new_output_directory / \
-                f"{self.name}_kerykeion.json"
-        else:
-            self.json_path = self.json_dir / f"{self.name}_kerykeion.json"
-
-        json_string = jsonpickle.encode(self)
-
-        hidden_values = [
-            f' "json_dir": "{self.json_dir}",',
-            f', "json_path": "{self.json_path}"'
-        ]
-
-        for string in hidden_values:
-            json_string = json_string.replace(
-                string, "")  # type: ignore TODO: Fix this
-
-        if dump:
-            json_string = json.loads(json_string.replace(
-                "'", '"'))  # type: ignore TODO: Fix this
-
-            with open(self.json_path, "w", encoding="utf-8") as file:
-                json.dump(json_string, file,  indent=4, sort_keys=True)
-                self.__logger.info(f"JSON file dumped in {self.json_path}.")
-        else:
-            pass
-        return json_string
-
-    def json_dump(self, dump=False, destination_folder: Union[str, None] = None):
-        from json import dumps
+    def json(self, dump=False, destination_folder: Union[str, None] = None) -> str:
 
         """
         Dumps the Kerykeion object to a json string foramt,
@@ -706,27 +658,9 @@ class KrInstance():
         or the home folder.
         """
 
-        if not self.sun:
-            self.__get_all()
-
-        obj_dict = self.__dict__.copy()
-
-        keys_to_remove = [
-            "utc",
-            "json_dir",
-            "planets_list",
-            "houses_list",
-            "planets_degrees",
-            "houses_degree_ut",
-            "online",
-            "_KrInstance__logger",
-            "_KrInstance__iflag"
-        ]
-
-        for key in keys_to_remove:
-            obj_dict.pop(key)
-
-        json_obj = dumps(obj_dict, default=vars)
+        KrData = KerykeionSubject(**self.__dict__)
+        json_string = KrData.json(exclude_none=True)
+        print(json_string)
 
         if dump:
             if destination_folder:
@@ -737,21 +671,27 @@ class KrInstance():
                 json_path = self.json_dir / f"{self.name}_kerykeion.json"
 
             with open(json_path, "w", encoding="utf-8") as file:
-                file.write(json_obj)
+                file.write(json_string)
                 self.__logger.info(f"JSON file dumped in {json_path}.")
 
-        return json_obj
+        return json_string
 
+    def model(self) -> KerykeionSubject:
+        """
+        Creates a Pydantic model of the Kerykeion object.
+        """
+
+        return KerykeionSubject(**self.__dict__)
 
 if __name__ == "__main__":
 
     kanye = KrInstance(
         "Kanye", 1977, 6, 8, 8, 45,
-        lon=50, lat=50, tz_str="Europe/Rome"
+        lng=50, lat=50, tz_str="Europe/Rome"
     )
 
     test = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Milano")
     # print(test.sun)
     # print(kanye.geonames_username)
-    # kanye.json_dump(dump=True)
-    print(kanye.twelfth_house)
+    
+    print(kanye.model())

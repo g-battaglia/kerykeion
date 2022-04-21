@@ -93,9 +93,10 @@ ChartType = Literal[
 
 
 class KerykeionPoint(BaseModel):
+    """   
+        Kerykeion Point Model
     """
-    Kerykeion Point Model
-    """
+
     name: Union[Planet, Houses]
     quality:  Quality
     element: Element
@@ -105,14 +106,14 @@ class KerykeionPoint(BaseModel):
     abs_pos: float
     emoji: str
     point_type: Literal['Planet', 'House']
-    house: Optional[Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
-    retrograde: Optional[bool]
+    house: Optional[Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]] = None
+    retrograde: Optional[bool] = None
 
     def __str__(self):
-        return self.dict().__str__()
+        return super().dict(exclude_none=True, exclude_unset=True, exclude_defaults=True, by_alias=False).__str__()
 
     def __repr__(self):
-        return self.dict().__str__()
+        return super().dict(exclude_none=True, exclude_unset=True, exclude_defaults=True, by_alias=False).__str__()
 
     def __getitem__(self, key):
         return getattr(self, key)
@@ -122,6 +123,56 @@ class KerykeionPoint(BaseModel):
 
     def __delitem__(self, key):
         delattr(self, key)
+
+
+class KerykeionSubject(BaseModel):
+    # Data
+    name: str
+    year: int
+    month: int
+    day: int
+    hour: int
+    minute: int
+    city: str
+    nation: str
+    lng: float
+    lat: float
+    tz_str: str
+    zodiac_type: ZodiacType
+    local_time: float
+    utc_time: float
+    julian_day: float
+
+    # Planets
+    sun: KerykeionPoint
+    moon: KerykeionPoint
+    mercury: KerykeionPoint
+    venus: KerykeionPoint
+    mars: KerykeionPoint
+    jupiter: KerykeionPoint
+    saturn: KerykeionPoint
+    uranus: KerykeionPoint
+    neptune: KerykeionPoint
+    pluto: KerykeionPoint
+
+    # Houses
+    first_house: KerykeionPoint
+    second_house: KerykeionPoint
+    third_house: KerykeionPoint
+    fourth_house: KerykeionPoint
+    fifth_house: KerykeionPoint
+    sixth_house: KerykeionPoint
+    seventh_house: KerykeionPoint
+    eighth_house: KerykeionPoint
+    ninth_house: KerykeionPoint
+    tenth_house: KerykeionPoint
+    eleventh_house: KerykeionPoint
+    twelfth_house: KerykeionPoint
+
+    # Nodes
+    mean_node: KerykeionPoint
+    true_node: KerykeionPoint
+
 
 if __name__ == "__main__":
     sun = KerykeionPoint(
@@ -133,11 +184,8 @@ if __name__ == "__main__":
         position=0,
         abs_pos=12.123123,
         emoji='♈',
-        point_type='Planet',
-        house=1,
-        retrograde=False,
-
+        point_type='Planet'
     )
 
-    print(json.dumps(sun, default=vars))
-    print(sun.abs_pos)
+    print(sun.json())
+    print(sun)
