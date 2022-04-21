@@ -46,7 +46,7 @@ Here some examples:
 
 # Get informations about the first house:
 >>> kanye.first_house
-{'name': '1', 'quality': 'Cardinal', 'element': 'Water', 'sign': 'Can', 'sign_num': 3, 'pos': 17.995779673209114, 'abs_pos': 107.99577967320911, 'emoji': '♋️'}
+{'name': 'First House', 'quality': 'Cardinal', 'element': 'Water', 'sign': 'Can', 'sign_num': 3, 'pos': 17.995779673209114, 'abs_pos': 107.99577967320911, 'emoji': '♋️'}
 
 # Get element of the moon sign:
 >>> kanye.moon.get("element")

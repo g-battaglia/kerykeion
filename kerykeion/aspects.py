@@ -224,7 +224,12 @@ class NatalAspects():
             if self.aspects_settings[a["aid"]]["visible"] == True:
                 aspects_filtered.append(a)
 
-        axes_list = ["1", "10", "7", "4"]
+        axes_list = [
+            "1st House",
+            "10th House",
+            "7th House",
+            "4th House",
+        ]
         counter = 0
 
         aspects_list_subtract = []
