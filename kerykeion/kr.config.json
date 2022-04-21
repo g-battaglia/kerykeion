@@ -420,7 +420,7 @@
     },
     {
       "id": 12,
-      "name": "1",
+      "name": "1st House",
       "color": "orange",
       "visible": 1,
       "element_points": 40,
@@ -430,7 +430,7 @@
     },
     {
       "id": 13,
-      "name": "10",
+      "name": "10th House",
       "color": "#FF0000",
       "visible": 1,
       "element_points": 20,
@@ -440,7 +440,7 @@
     },
     {
       "id": 14,
-      "name": "7",
+      "name": "7th House",
       "color": "#0000FF",
       "visible": 0,
       "element_points": 0,
@@ -450,7 +450,7 @@
     },
     {
       "id": 15,
-      "name": "4",
+      "name": "4th House",
       "color": "#000000",
       "visible": 0,
       "element_points": 0,

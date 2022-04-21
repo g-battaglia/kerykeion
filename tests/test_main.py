@@ -23,42 +23,17 @@ def test_geonames():
 def test_kerykeion_instace():
     object = KrInstance("Test", 1993, 10, 10, 12, 12, "London", "GB")
 
-    assert object.sun['name'] == "Sun"
-    assert object.sun['quality'] == "Cardinal"
-    assert object.sun['element'] == "Air"
-    assert object.sun['sign'] == "Lib"
-    assert object.sun['sign_num'] == 6
-    assert object.sun['position'] == 17.16206089113507
-    assert object.sun['abs_pos'] == 197.16206089113507
-    assert object.sun['emoji'] == "♎️"
-    assert object.sun['house'] == "10th House"
-    assert object.sun['retrograde'] == False
-
-
-def test_kerykeion_instace_json_dump():
-    object = KrInstance("Test", 1993, 10, 10, 12, 12, "London", "GB")
-    json = object.json_dump()
-    dictionary = loads(json)
-
-    assert dictionary['name'] == "Test"
-    assert dictionary['year'] == 1993
-    assert dictionary['month'] == 10
-    assert dictionary['day'] == 10
-    assert dictionary['hour'] == 12
-    assert dictionary['minute'] == 12
-    assert dictionary['city'] == "London"
-    assert dictionary['nation'] == "GB"
-    assert dictionary['sun']['name'] == "Sun"
-    assert dictionary['sun']['quality'] == "Cardinal"
-    assert dictionary['sun']['element'] == "Air"
-    assert dictionary['sun']['sign'] == "Lib"
-    assert dictionary['sun']['sign_num'] == 6
-    assert dictionary['sun']['position'] == 17.16206089113507
-    assert dictionary['sun']['abs_pos'] == 197.16206089113507
-    assert dictionary['sun']['emoji'] == "♎️"
-    assert dictionary['sun']['house'] == "10th House"
-    assert dictionary['sun']['retrograde'] == False
-
+    assert object.sun.name == "Sun"
+    assert object.sun.quality == "Cardinal"
+    assert object.sun.element == "Air"
+    assert object.sun.sign == "Lib"
+    assert object.sun.sign_num == 6
+    assert object.sun.position == 17.16206089113507
+    assert object.sun.abs_pos == 197.16206089113507
+    assert object.sun.emoji == "♎️"
+    assert object.sun.house == "10th House"
+    assert object.sun.retrograde == False
+    assert object.sun.point_type == "Planet"
 
 
 def test_composite_aspects():
@@ -122,7 +97,6 @@ def test_relationship_score():
 if __name__ == "__main__":
     test_geonames()
     test_kerykeion_instace()
-    test_kerykeion_instace_json_dump()
     test_birthchart_instance()
     test_composite_aspects()
     test_relationship_score()

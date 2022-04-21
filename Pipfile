@@ -9,6 +9,7 @@ pytz = "==2020.1"
 jsonpickle = "==1.4.2"
 requests-cache = "==0.9.3"
 requests = "==2.27.1"
+pydantic = "*"
 
 [dev-packages]
 kerykeion = {editable = true, path = "."}

@@ -4,9 +4,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import Any, Literal, Union
+from typing import Literal, Union, Optional
+from pydantic import BaseModel
+import json
 
-from pkg_resources import UnknownExtra
 
 # Exceptions:
 
@@ -40,25 +41,103 @@ Sign = Literal[
     "Pis"
 ]
 
-KerykeionPlanetDictionaryKey = Literal[
-    'name',
-    'quality',
-    'element',
-    'sign',
-    'sign_num',
-    'position',
-    'abs_pos',
-    'emoji',
-    'house',
-    'retrograde'
+Houses = Literal[
+    "1st House",
+    "2nd House",
+    "3rd House",
+    "4th House",
+    "5th House",
+    "6th House",
+    "7th House",
+    "8th House",
+    "9th House",
+    "10th House",
+    "11th House",
+    "12th House"
 ]
 
-ChartType = Literal['Natal', 'Composite', 'Transit']
+Planet = Literal[
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto",
+    "Mean_Node",
+    "True_Node"
+]
 
-KerykeionPlanetDictionaryValue = Union[KerykeionPlanetDictionaryKey,
-                                       int, float, str, Any]
-KerykeionPlanetDictionary = dict[KerykeionPlanetDictionaryKey,
-                                 KerykeionPlanetDictionaryValue]
+Element = Literal[
+    "Air",
+    "Fire",
+    "Earth",
+    "Water"
+]
+
+Quality = Literal[
+    'Cardinal',
+    'Fixed',
+    'Mutable',
+]
+
+
+ChartType = Literal[
+    'Natal',
+    'Composite',
+    'Transit'
+]
+
+
+class KerykeionPoint(BaseModel):
+    """
+    Kerykeion Point Model
+    """
+    name: Union[Planet, Houses]
+    quality:  Quality
+    element: Element
+    sign: Sign
+    sign_num: Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    position: float
+    abs_pos: float
+    emoji: str
+    point_type: Literal['Planet', 'House']
+    house: Optional[Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+    retrograde: Optional[bool]
+
+    def __str__(self):
+        return self.dict().__str__()
+
+    def __repr__(self):
+        return self.dict().__str__()
+
+    def __getitem__(self, key):
+        return getattr(self, key)
+
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
+
+    def __delitem__(self, key):
+        delattr(self, key)
 
 if __name__ == "__main__":
-    print()
+    sun = KerykeionPoint(
+        name='Sun',
+        element='Air',
+        quality='Fixed',
+        sign='Aqu',
+        sign_num=1,
+        position=0,
+        abs_pos=12.123123,
+        emoji='♈',
+        point_type='Planet',
+        house=1,
+        retrograde=False,
+
+    )
+
+    print(json.dumps(sun, default=vars))
+    print(sun.abs_pos)
