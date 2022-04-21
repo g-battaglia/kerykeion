@@ -17,6 +17,14 @@ class TestJsonDump:
         assert self.dictionary['minute'] == 12
         assert self.dictionary['city'] == "London"
         assert self.dictionary['nation'] == "GB"
+        assert self.dictionary['lat'] == 51.50853
+        assert self.dictionary['lng'] == -0.12574
+        assert self.dictionary['tz_str'] == 'Europe/London'
+        assert self.dictionary['local_time'] == 12.2
+        assert self.dictionary['utc_time'] == 11.2
+        assert self.dictionary['zodiac_type'] == "Tropic"
+        assert self.dictionary['julian_day'] == 2449270.966666667
+
 
     def test_json_dump_sun(self):
         assert self.dictionary['sun']['name'] == "Sun"
