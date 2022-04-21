@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf8") as fh:
 
 setup(
     name="kerykeion",
-    version="3.05b1",
+    version="3.05b2",
     author="Giacomo Battaglia",
     author_email="battaglia.giacomo@yahoo.it",
     description="A python library for astrology.",
@@ -19,7 +19,7 @@ setup(
     url="https://github.com/g-battaglia/kerykeion",
     packages=find_packages(),
     classifiers=[
-        "Development Status :: 5 - Production/Stable"
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Information Technology",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU General Public License (GPL)",
