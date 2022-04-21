@@ -212,10 +212,10 @@ class MakeSvgInstance:
 
         # check for home
         self.home_location = self.user.city
-        self.home_geolat = self.user.city_lat
-        self.home_geolon = self.user.city_long
+        self.home_geolat = self.user.lat
+        self.home_geolon = self.user.lng
         self.home_countrycode = self.user.nation
-        self.home_timezonestr = self.user.city_tz
+        self.home_timezonestr = self.user.tz_str
 
         print(f'{self.user.name} birth location: {self.home_location}, {self.home_geolat}, {self.home_geolon}')
 

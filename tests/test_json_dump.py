@@ -5,7 +5,7 @@ class TestJsonDump:
     def setup_class(self):
         self.instance = KrInstance(
             "Test", 1993, 10, 10, 12, 12, "London", "GB")
-        json = self.instance.json_dump()
+        json = self.instance.json()
         self.dictionary = loads(json)
 
     def test_json_dump_data(self):
@@ -60,6 +60,39 @@ class TestJsonDump:
 
     def test_json_dump_first_house(self):
         assert self.dictionary['first_house']['name'] == "First House"
+
+    def test_json_dump_second_house(self):
+        assert self.dictionary['second_house']['name'] == "Second House"
+    
+    def test_json_dump_third_house(self):
+        assert self.dictionary['third_house']['name'] == "Third House"
+
+    def test_json_dump_fourth_house(self):
+        assert self.dictionary['fourth_house']['name'] == "Fourth House"
+
+    def test_json_dump_fifth_house(self):
+        assert self.dictionary['fifth_house']['name'] == "Fifth House"
+    
+    def test_json_dump_sixth_house(self):
+        assert self.dictionary['sixth_house']['name'] == "Sixth House"
+    
+    def test_json_dump_seventh_house(self):
+        assert self.dictionary['seventh_house']['name'] == "Seventh House"
+
+    def test_json_dump_eighth_house(self):
+        assert self.dictionary['eighth_house']['name'] == "Eighth House"
+
+    def test_json_dump_ninth_house(self):
+        assert self.dictionary['ninth_house']['name'] == "Ninth House"
+    
+    def test_json_dump_tenth_house(self):
+        assert self.dictionary['tenth_house']['name'] == "Tenth House"
+
+    def test_json_dump_eleventh_house(self):
+        assert self.dictionary['eleventh_house']['name'] == "Eleventh House"
+    
+    def test_json_dump_twelfth_house(self):
+        assert self.dictionary['twelfth_house']['name'] == "Twelfth House"
 
 
 if __name__ == "__main__":
