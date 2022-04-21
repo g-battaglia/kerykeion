@@ -4,16 +4,17 @@
 # * TODO: Change the label for language in 2 objects, one for IT and one for ENG.
 # * Then change the label for planets like this: planet["label"] => planet[language]
 
-import datetime
 import json
+import math
+import pytz
+
+from datetime import datetime
 from kerykeion.aspects import NatalAspects, CompositeAspects
 from kerykeion.main import KrInstance
 from kerykeion.types import KerykeionException, ChartType
-import math
-import pytz
 from pathlib import Path
 from string import Template
-from typing import Literal, Union
+from typing import Union
 
 # calculation and svg drawing class
 
@@ -226,10 +227,10 @@ class MakeSvgInstance:
         self.timezonestr = self.home_timezonestr
 
         # current datetime
-        now = datetime.datetime.now()
+        now = datetime.now()
 
         # aware datetime object
-        dt_input = datetime.datetime(
+        dt_input = datetime(
             now.year, now.month, now.day, now.hour, now.minute, now.second)
         dt = pytz.timezone(self.timezonestr).localize(dt_input)
 

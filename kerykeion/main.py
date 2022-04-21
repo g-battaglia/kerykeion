@@ -4,16 +4,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import math
+import pytz
+import swisseph as swe
+
 from datetime import datetime
 from logging import Logger, getLogger, basicConfig
 from kerykeion.fetch_geonames import FetchGeonames
-import math
 from pathlib import Path
-import pytz
 from kerykeion.types import KerykeionException, KerykeionPlanetDictionaryKey, ZodiacType
 from typing import Union
-from sys import exit
-import swisseph as swe
 
 # swe.set_ephe_path("/")
 
