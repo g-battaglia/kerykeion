@@ -27,7 +27,7 @@ class TestJsonDump:
         assert self.dictionary['sun']['position'] == 17.16206089113507
         assert self.dictionary['sun']['abs_pos'] == 197.16206089113507
         assert self.dictionary['sun']['emoji'] == "♎️"
-        assert self.dictionary['sun']['house'] == "10th House"
+        assert self.dictionary['sun']['house'] == "Tenth House"
         assert self.dictionary['sun']['retrograde'] == False
         assert self.dictionary['sun']['point_type'] == "Planet"
 
@@ -59,7 +59,7 @@ class TestJsonDump:
         assert self.dictionary['pluto']['name'] == "Pluto"
 
     def test_json_dump_first_house(self):
-        assert self.dictionary['first_house']['name'] == "1st House"
+        assert self.dictionary['first_house']['name'] == "First House"
 
 
 if __name__ == "__main__":

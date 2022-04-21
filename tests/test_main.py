@@ -31,7 +31,7 @@ def test_kerykeion_instace():
     assert object.sun.position == 17.16206089113507
     assert object.sun.abs_pos == 197.16206089113507
     assert object.sun.emoji == "♎️"
-    assert object.sun.house == "10th House"
+    assert object.sun.house == "Tenth House"
     assert object.sun.retrograde == False
     assert object.sun.point_type == "Planet"
 
