@@ -1,0 +1,68 @@
+from kerykeion import KrInstance
+from json import loads
+
+class TestJsonDump:
+    def setup_class(self):
+        self.instance = KrInstance(
+            "Test", 1993, 10, 10, 12, 12, "London", "GB")
+        json = self.instance.json_dump()
+        self.dictionary = loads(json)
+
+    def test_json_dump_data(self):
+        assert self.dictionary['name'] == "Test"
+        assert self.dictionary['year'] == 1993
+        assert self.dictionary['month'] == 10
+        assert self.dictionary['day'] == 10
+        assert self.dictionary['hour'] == 12
+        assert self.dictionary['minute'] == 12
+        assert self.dictionary['city'] == "London"
+        assert self.dictionary['nation'] == "GB"
+
+    def test_json_dump_sun(self):
+        assert self.dictionary['sun']['name'] == "Sun"
+        assert self.dictionary['sun']['quality'] == "Cardinal"
+        assert self.dictionary['sun']['element'] == "Air"
+        assert self.dictionary['sun']['sign'] == "Lib"
+        assert self.dictionary['sun']['sign_num'] == 6
+        assert self.dictionary['sun']['position'] == 17.16206089113507
+        assert self.dictionary['sun']['abs_pos'] == 197.16206089113507
+        assert self.dictionary['sun']['emoji'] == "♎️"
+        assert self.dictionary['sun']['house'] == "10th House"
+        assert self.dictionary['sun']['retrograde'] == False
+        assert self.dictionary['sun']['point_type'] == "Planet"
+
+    def test_json_dump_moon(self):
+        assert self.dictionary['moon']['name'] == "Moon"
+
+    def test_json_dump_mercury(self):
+        assert self.dictionary['mercury']['name'] == "Mercury"
+
+    def test_json_dump_venus(self):
+        assert self.dictionary['venus']['name'] == "Venus"
+
+    def test_json_dump_mars(self):
+        assert self.dictionary['mars']['name'] == "Mars"
+
+    def test_json_dump_jupiter(self):
+        assert self.dictionary['jupiter']['name'] == "Jupiter"
+
+    def test_json_dump_saturn(self):
+        assert self.dictionary['saturn']['name'] == "Saturn"
+
+    def test_json_dump_uranus(self):
+        assert self.dictionary['uranus']['name'] == "Uranus"
+
+    def test_json_dump_neptune(self):
+        assert self.dictionary['neptune']['name'] == "Neptune"
+
+    def test_json_dump_pluto(self):
+        assert self.dictionary['pluto']['name'] == "Pluto"
+
+    def test_json_dump_first_house(self):
+        assert self.dictionary['first_house']['name'] == "1st House"
+
+
+if __name__ == "__main__":
+    test = TestJsonDump()
+    test.setup_class()
+    test.test_json_dump_data()
