@@ -67,7 +67,7 @@ kanye.moon.get("element")
 
 ```
 
-## Generate a SVG of the birthchart:
+## Generate a SVG Chart:
 
 ```python
 from kerykeion import KrInstance, MakeSvgInstance
