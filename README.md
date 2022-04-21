@@ -28,6 +28,16 @@ also it can calculate the aspects of a single persone or between two, you can se
 need in the settings in the utility module.
 It also can generate an SVG of a birthchart, a composite chart or a transit chart.
 
+## Installation
+
+Kerykeion is a Python 3 package, make sure you have Python 3 installed on your system.
+
+```bash
+pip3 install kerykeion
+```
+
+## Usage
+
 Here some examples:
 
 ```python
@@ -57,21 +67,22 @@ Here some examples:
 ## Generate a SVG of the birthchart:
 
 ```python
->>> from kerykeion import KrInstance, MakeSvgInstance
+from kerykeion import KrInstance, MakeSvgInstance
 
->>> first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
->>> second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
+first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
+second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
 
 # Set the type, it can be Natal, Composite or Transit
 
->>> name = MakeSvgInstance(first, chart_type="Composite", second_obj=second)
->>> name.makeSVG()
->>> print(len(name.aspects_list))
->>> Generating kerykeion object for Jack...
-Generating kerykeion object for Jane...
-Jack birth location: Roma, 41.89193, 12.51133
-SVG Generated Correctly
-38
+name = MakeSvgInstance(first, chart_type="Composite", second_obj=second)
+name.makeSVG()
+print(len(name.aspects_list))
+
+#> Generating kerykeion object for Jack...
+#> Generating kerykeion object for Jane...
+#> Jack birth location: Roma, 41.89193, 12.51133
+#> SVG Generated Correctly
+#> 38
 
 ```
 
@@ -81,11 +92,17 @@ SVG Generated Correctly
 # Example of a possible text output with information:
 
 ```python
->>> from kerykeion import print_all_data, KrInstance
+from kerykeion import print_all_data, KrInstance
 
->>> kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
 
->>> print_all_data(kanye)
+print_all_data(kanye)
+
+```
+
+Returns:
+
+```
 NAME: Kanye
 PLANET     POSITION
 
@@ -121,17 +138,17 @@ House Cusp 12:    Gem  15.681
 ```python
 # Get all aspects between two persons:
 
->>> from kerykeion import CompositeAspects, KrInstance
->>> first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
->>> second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
+from kerykeion import CompositeAspects, KrInstance
+first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
+second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
 
->>> name = CompositeAspects(first, second)
->>> aspect_list = name.get_relevant_aspects()
->>> print(aspect_list[0])
+name = CompositeAspects(first, second)
+aspect_list = name.get_relevant_aspects()
+print(aspect_list[0])
 
-Generating kerykeion object for Jack...
-Generating kerykeion object for Jane...
-{'p1_name': 'Sun', 'p1_abs_pos': 84.17867971515636, 'p2_name': 'Sun', 'p2_abs_pos': 211.90472999502984, 'aspect': 'trine', 'orbit': 7.726050279873476, 'aspect_degrees': 120, 'color': '#36d100', 'aid': 6, 'diff': 127.72605027987348, 'p1': 0, 'p2': 0}
+#> Generating kerykeion object for Jack...
+#> Generating kerykeion object for Jane...
+#> {'p1_name': 'Sun', 'p1_abs_pos': 84.17867971515636, 'p2_name': 'Sun', 'p2_abs_pos': 211.90472999502984, 'aspect': 'trine', 'orbit': 7.726050279873476, 'aspect_degrees': 120, 'color': '#36d100', 'aid': 6, 'diff': 127.72605027987348, 'p1': 0, 'p2': 0}
 
 ```
 
@@ -141,14 +158,6 @@ Most of the functions and the classes are self documented by the types and have 
 An auto-generated documentation [is available here](https://g-battaglia.github.io/kerykeion).
 
 Sooner or later I'll try to write an extensive documentation.
-
-## Installation
-
-Kerykeion is a Python 3 package, make sure you have Python 3 installed on your system.
-
-```bash
-pip3 install kerykeion
-```
 
 ## Development
 
