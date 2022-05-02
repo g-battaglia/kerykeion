@@ -287,7 +287,7 @@ class MakeSvgInstance:
         """
         Parse the settings file.
         """
-        with open(settings_file, 'r', encoding="utf-8") as f:
+        with open(settings_file, 'r', encoding="utf-8", errors='ignore') as f:
             settings = json.load(f)
 
         self.language_settings = settings['language_settings'].get(
@@ -527,7 +527,7 @@ class MakeSvgInstance:
         td['makeHousesGrid'] = self.makeHousesGrid()
 
         # read template
-        with open(self.xml_svg, "r", encoding="utf-8") as output_file:
+        with open(self.xml_svg, "r", encoding="utf-8", errors='ignore') as output_file:
             f = open(self.xml_svg)
             template = Template(f.read()).substitute(td)
 
@@ -544,7 +544,7 @@ class MakeSvgInstance:
         self.chartname = self.output_directory / \
             f'{self.name}{self.chart_type}Chart.svg'
 
-        with open(self.chartname, "w", encoding='utf-8') as output_file:
+        with open(self.chartname, "w", encoding='utf-8', errors='ignore') as output_file:
             output_file.write(self.template)
 
         return print(f"SVG Generated Correctly in: {self.chartname}")
