@@ -30,7 +30,7 @@ It also can generate an SVG of a birthchart, a composite chart or a transit char
 
 ## Installation
 
-Kerykeion is a Python 3 package, make sure you have Python 3 installed on your system.
+Kerykeion is a *Python 3.9* package, make sure you have *Python 3.9* or above installed on your system.
 
 ```bash
 pip3 install kerykeion
