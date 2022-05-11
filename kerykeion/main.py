@@ -11,7 +11,7 @@ import swisseph as swe
 from datetime import datetime
 from logging import Logger, getLogger, basicConfig
 from kerykeion.fetch_geonames import FetchGeonames
-from kerykeion.types import KerykeionException, ZodiacType, KerykeionSubject
+from kerykeion.types import KerykeionException, ZodiacType, KerykeionSubject, LunarPhaseObject
 from kerykeion.utilities import get_number_from_name, calculate_position
 from pathlib import Path
 from typing import Union
@@ -523,12 +523,14 @@ class KrInstance():
 
             return result
 
-        self.lunar_phase = {
+        lunar_phase_dictionary = {
             "degrees_between_s_m": degrees_between,
             "moon_phase": moon_phase,
             "sun_phase": sun_phase,
             "moon_emoji": moon_emoji(moon_phase)
         }
+
+        self.lunar_phase = LunarPhaseObject(**lunar_phase_dictionary)
 
     def __make_lists(self):
         """ Internal function to generate the lists"""
@@ -592,4 +594,5 @@ if __name__ == "__main__":
     # print(test.sun)
     # print(kanye.geonames_username)
 
-    print(kanye.model())
+    #print(kanye.model().sun)
+    print(kanye.model().lunar_phase)

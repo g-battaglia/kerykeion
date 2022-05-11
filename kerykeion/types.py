@@ -4,6 +4,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from ast import Dict
 from typing import Literal, Union, Optional
 from pydantic import BaseModel
 
@@ -90,6 +91,40 @@ ChartType = Literal[
     'Transit'
 ]
 
+LunarPhaseEmoji = Literal[
+    '🌑',
+    '🌒',
+    '🌓',
+    '🌔',
+    '🌕',
+    '🌖',
+    '🌗',
+    '🌘'
+]
+
+class LunarPhaseObject(BaseModel):
+    degrees_between_s_m: Union[int, float]
+    moon_phase: int
+    sun_phase: int
+    moon_emoji: LunarPhaseEmoji
+
+    def __str__(self):
+        return super().dict(exclude_none=True, exclude_unset=True, exclude_defaults=True, by_alias=False).__str__()
+
+    def __repr__(self):
+        return super().dict(exclude_none=True, exclude_unset=True, exclude_defaults=True, by_alias=False).__str__()
+
+    def __getitem__(self, key):
+        return getattr(self, key)
+
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
+
+    def __delitem__(self, key):
+        delattr(self, key)
+    
+    def get(self, key, default):
+        return getattr(self, key, default)
 
 class KerykeionPoint(BaseModel):
     """   
@@ -122,6 +157,9 @@ class KerykeionPoint(BaseModel):
 
     def __delitem__(self, key):
         delattr(self, key)
+    
+    def get(self, key, default):
+        return getattr(self, key, default)
 
 
 class KerykeionSubject(BaseModel):
@@ -172,6 +210,8 @@ class KerykeionSubject(BaseModel):
     mean_node: KerykeionPoint
     true_node: KerykeionPoint
 
+    # Lunar Phase
+    lunar_phase: LunarPhaseObject
 
 if __name__ == "__main__":
     sun = KerykeionPoint(

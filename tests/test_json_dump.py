@@ -101,9 +101,14 @@ class TestJsonDump:
     
     def test_json_dump_twelfth_house(self):
         assert self.dictionary['twelfth_house']['name'] == "Twelfth House"
-
+    
+    def test_lunar_phase(self):
+        print('------')
+        print(self.dictionary['lunar_phase']['moon_emoji'])
+        assert self.dictionary['lunar_phase']['moon_emoji'] == '🌘'
 
 if __name__ == "__main__":
     test = TestJsonDump()
     test.setup_class()
     test.test_json_dump_data()
+    test.test_lunar_phase()
