@@ -244,7 +244,7 @@ class MakeSvgInstance:
         self.month = self.user.utc.month
         self.day = self.user.utc.day
         self.hour = self.user.utc.hour + self.user.utc.minute/100
-        self.timezone = self.offsetToTz(dt.utcoffset())
+        self.timezone = self.__offsetToTz(dt.utcoffset())
         self.altitude = 25
         self.geonameid = None
 
@@ -258,9 +258,9 @@ class MakeSvgInstance:
             self.t_year = dt_utc.year
             self.t_month = dt_utc.month
             self.t_day = dt_utc.day
-            self.t_hour = self.decHourJoin(
+            self.t_hour = self.__decHourJoin(
                 dt_utc.hour, dt_utc.minute, dt_utc.second)
-            self.t_timezone = self.offsetToTz(dt.utcoffset())
+            self.t_timezone = self.__offsetToTz(dt.utcoffset())
             self.t_altitude = 25
             self.t_geonameid = None
 
@@ -283,274 +283,8 @@ class MakeSvgInstance:
         # Immediately generate template.
         self.template = self.makeTemplate()
 
-    def parse_json_settings(self, settings_file, lang: str):
-        """
-        Parse the settings file.
-        """
-        with open(settings_file, 'r', encoding="utf-8", errors='ignore') as f:
-            settings = json.load(f)
-
-        self.language_settings = settings['language_settings'].get(
-            lang, "EN")
-        self.colors_settings = settings['colors']
-        self.planets_settings = settings['planets']
-        self.aspects_settings = settings['aspects']
-
-    def makeTemplate(self):
-        # self.chart_type = "Transit"
-        # empty element points
-        self.fire = 0.0
-        self.earth = 0.0
-        self.air = 0.0
-        self.water = 0.0
-
-        # Transit module data
-        if self.chart_type == "Transit" or self.chart_type == "Composite":
-            # grab transiting module data
-
-            self.t_planets_sign = self.t_points_sign
-            self.t_planets_degree = self.t_points_deg
-            self.t_planets_degree_ut = self.t_points_deg_ut
-            self.t_planets_retrograde = self.t_points_retrograde
-            self.t_houses_list = self.t_user.houses_list
-            self.t_houses_sign = self.t_houses_sign_graph
-            self.t_houses_degree_ut = self.t_user.houses_degree_ut
-
-        # grab normal module data
-        self.planets_sign = self.points_sign
-        self.planets_degree = self.points_deg
-        self.planets_degree_ut = self.points_deg_ut
-        self.planets_retrograde = self.points_retrograde
-        self.houses_list = self.user.houses_list
-        self.houses_sign = self.houses_sign_graph
-        self.houses_degree_ut = self.user.houses_degree_ut
-        self.lunar_phase = self.user.lunar_phase
-        #
-
-        # width and height from screen
-        ratio = float(self.screen_width) / float(self.screen_height)
-        if ratio < 1.3:  # 1280x1024
-            wm_off = 130
-        else:  # 1024x768, 800x600, 1280x800, 1680x1050
-            wm_off = 100
-
-        # Viewbox and sizing
-        svgHeight = "100%"  # self.screen_height-wm_off
-        svgWidth = "100%"  #  self.screen_width-5.0
-        # svgHeight=self.screen_height-wm_off
-        # svgWidth=(770.0*svgHeight)/540.0
-        # svgWidth=float(self.screen_width)-25.0
-        rotate = "0"
-        translate = "0"
-        # Defoult:
-        # viewbox = '0 0 772.2 546.0' #297mm * 2.6 + 210mm * 2.6
-        if self.chart_type == "Natal":
-            viewbox = '0 0 772.2 546.0'  # 297mm * 2.6 + 210mm * 2.6
-        else:
-            viewbox = '0 0 1000 546.0'
-
-        # template dictionary
-        td = dict()
-        r = 240
-        self.c1 = 0
-        self.c2 = 36
-        self.c3 = 120
-
-        # transit
-        if self.chart_type == "Transit" or self.chart_type == "Composite":
-            td['transitRing'] = self.transitRing(r)
-            td['degreeRing'] = self.degreeTransitRing(r)
-            # circles
-            td['c1'] = 'cx="' + str(r) + '" cy="' + \
-                str(r) + '" r="' + str(r-36) + '"'
-            td['c1style'] = 'fill: none; stroke: %s; stroke-width: 1px; stroke-opacity:.4;' % (
-                self.colors_settings['zodiac_transit_ring_2'])
-            td['c2'] = 'cx="' + str(r) + '" cy="' + \
-                str(r) + '" r="' + str(r-72) + '"'
-            td['c2style'] = 'fill: %s; fill-opacity:.4; stroke: %s; stroke-opacity:.4; stroke-width: 1px' % (
-                self.colors_settings['paper_1'], self.colors_settings['zodiac_transit_ring_1'])
-            td['c3'] = 'cx="' + str(r) + '" cy="' + \
-                str(r) + '" r="' + str(r-160) + '"'
-            td['c3style'] = 'fill: %s; fill-opacity:.8; stroke: %s; stroke-width: 1px' % (
-                self.colors_settings['paper_1'], self.colors_settings['zodiac_transit_ring_0'])
-            td['makeAspects'] = self.makeAspectsTransit(r, (r-160))
-            td['makeAspectGrid'] = self.makeAspectTransitGrid(r)
-            td['makePatterns'] = ''
-            td['chart_width'] = self.full_width
-        else:
-            td['transitRing'] = ""
-            td['degreeRing'] = self.degreeRing(r)
-            # circles
-            td['c1'] = 'cx="' + str(r) + '" cy="' + \
-                str(r) + '" r="' + str(r-self.c1) + '"'
-            td['c1style'] = 'fill: none; stroke: %s; stroke-width: 1px; ' % (
-                self.colors_settings['zodiac_radix_ring_2'])
-            td['c2'] = 'cx="' + str(r) + '" cy="' + \
-                str(r) + '" r="' + str(r-self.c2) + '"'
-            td['c2style'] = 'fill: %s; fill-opacity:.2; stroke: %s; stroke-opacity:.4; stroke-width: 1px' % (
-                self.colors_settings['paper_1'], self.colors_settings['zodiac_radix_ring_1'])
-            td['c3'] = 'cx="' + str(r) + '" cy="' + \
-                str(r) + '" r="' + str(r-self.c3) + '"'
-            td['c3style'] = 'fill: %s; fill-opacity:.8; stroke: %s; stroke-width: 1px' % (
-                self.colors_settings['paper_1'], self.colors_settings['zodiac_radix_ring_0'])
-            td['makeAspects'] = self.makeAspects(r, (r-self.c3))
-            td['makeAspectGrid'] = self.makeAspectGrid(r)
-            td['makePatterns'] = self.makePatterns()
-            td['chart_width'] = self.natal_width
-
-        td['circleX'] = str(0)
-        td['circleY'] = str(0)
-        td['svgWidth'] = str(svgWidth)
-        td['svgHeight'] = str(svgHeight)
-        td['viewbox'] = viewbox
-        if self.chart_type == "Composite":
-            td['stringTitle'] = f"{self.name} {self.language_settings['&']} {self.t_user.name}"
-        elif self.chart_type == "Transit":
-            td['stringTitle'] = f"{self.language_settings['transits']} {self.t_user.day}/{self.t_user.month}/{self.t_user.year}"
-        else:
-            td['stringTitle'] = self.name
-
-        # Tipo di carta
-        if self.chart_type == "Composite" or self.name == "Transit":
-            td['stringName'] = f"{self.name}:"
-        else:
-            td['stringName'] = f'{self.language_settings["info"]}:'
-
-        # bottom left
-
-        td['bottomLeft1'] = ''
-        td['bottomLeft2'] = ''
-        td['bottomLeft3'] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.lunar_phase.get("moon_phase", "")}'
-        td['bottomLeft4'] = ''
-
-        # lunar phase
-        deg = self.lunar_phase['degrees_between_s_m']
-
-        if(deg < 90.0):
-            maxr = deg
-            if(deg > 80.0):
-                maxr = maxr*maxr
-            lfcx = 20.0+(deg/90.0)*(maxr+10.0)
-            lfr = 10.0+(deg/90.0)*maxr
-            lffg, lfbg = self.colors_settings["lunar_phase_0"], self.colors_settings["lunar_phase_1"]
-
-        elif(deg < 180.0):
-            maxr = 180.0-deg
-            if(deg < 100.0):
-                maxr = maxr*maxr
-            lfcx = 20.0+((deg-90.0)/90.0*(maxr+10.0))-(maxr+10.0)
-            lfr = 10.0+maxr-((deg-90.0)/90.0*maxr)
-            lffg, lfbg = self.colors_settings["lunar_phase_1"], self.colors_settings["lunar_phase_0"]
-
-        elif(deg < 270.0):
-            maxr = deg-180.0
-            if(deg > 260.0):
-                maxr = maxr*maxr
-            lfcx = 20.0+((deg-180.0)/90.0*(maxr+10.0))
-            lfr = 10.0+((deg-180.0)/90.0*maxr)
-            lffg, lfbg = self.colors_settings["lunar_phase_1"], self.colors_settings["lunar_phase_0"]
-
-        elif(deg < 361):
-            maxr = 360.0-deg
-            if(deg < 280.0):
-                maxr = maxr*maxr
-            lfcx = 20.0+((deg-270.0)/90.0*(maxr+10.0))-(maxr+10.0)
-            lfr = 10.0+maxr-((deg-270.0)/90.0*maxr)
-            lffg, lfbg = self.colors_settings["lunar_phase_0"], self.colors_settings["lunar_phase_1"]
-
-        td['lunar_phase_fg'] = lffg
-        td['lunar_phase_bg'] = lfbg
-        td['lunar_phase_cx'] = lfcx
-        td['lunar_phase_r'] = lfr
-        td['lunar_phase_outline'] = self.colors_settings["lunar_phase_2"]
-
-        # rotation based on latitude
-        td['lunar_phase_rotate'] = (-90.0-self.geolat)
-
-        # stringlocation
-        if len(self.location) > 35:
-            split = self.location.split(",")
-            if len(split) > 1:
-                td['stringLocation'] = split[0]+", "+split[-1]
-                if len(td['stringLocation']) > 35:
-                    td['stringLocation'] = td['stringLocation'][:35]+"..."
-            else:
-                td['stringLocation'] = self.location[:35]+"..."
-        else:
-            td['stringLocation'] = self.location
-
-        # td['stringDateTime']= str(self.user.year)+'-%(#1)02d-%(#2)02d %(#3)02d:%(#4)02d:%(#5)02d' % {'#1':self.user.month,'#2':self.user.day,'#3':self.user.hour,'#4':self.user.minute,'#5':00} + self.decTzStr(self.timezone)
-        td['stringDateTime'] = f'{self.user.year}-{self.user.month}-{self.user.day} {self.user.hour:02d}:{self.user.minute:02d}'
-
-        if self.chart_type == "Composite":
-            td['stringLat'] = f'{self.t_user.name}: '
-            td['stringLon'] = self.t_user.city
-            td['stringPosition'] = f'{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hour:02d}:{self.t_user.minute:02d}'
-
-        else:
-            td['stringLat'] = "%s: %s" % (
-                self.language_settings['latitude'], self.lat2str(self.geolat))
-            td['stringLon'] = "%s: %s" % (
-                self.language_settings['longitude'], self.lon2str(self.geolon))
-            td['stringPosition'] = f"{self.language_settings['type']}: {self.charttype}"
-
-        # paper_color_X
-        td['paper_color_0'] = self.colors_settings["paper_0"]
-        td['paper_color_1'] = self.colors_settings["paper_1"]
-
-        # planets_color_X
-        for i in range(len(self.planets_settings)):
-            td['planets_color_%s' %
-                (i)] = self.colors_settings["planet_%s" % (i)]
-
-        # zodiac_color_X
-        for i in range(12):
-            td['zodiac_color_%s' %
-                (i)] = self.colors_settings["zodiac_icon_%s" % (i)]
-
-        # orb_color_X
-        for i in range(len(self.aspects_settings)):
-            td['orb_color_%s' % (self.aspects_settings[i]['degree'])] = self.colors_settings["aspect_%s" % (
-                self.aspects_settings[i]['degree'])]
-
-        # config
-        td['cfgZoom'] = str(self.zoom)
-        td['cfgRotate'] = rotate
-        td['cfgTranslate'] = translate
-
-        # functions
-        td['makeZodiac'] = self.makeZodiac(r)
-        td['makeHouses'] = self.makeHouses(r)
-        td['makePlanets'] = self.makePlanets(r)
-        td['makeElements'] = self.makeElements(r)
-        td['makePlanetGrid'] = self.makePlanetGrid()
-        td['makeHousesGrid'] = self.makeHousesGrid()
-
-        # read template
-        with open(self.xml_svg, "r", encoding="utf-8", errors='ignore') as output_file:
-            f = open(self.xml_svg)
-            template = Template(f.read()).substitute(td)
-
-        # return filename
-
-        return template
-
-    def makeSVG(self):
-        """Prints out the SVG file in the specifide folder"""
-
-        if not (self.template):
-            self.template = self.makeTemplate()
-
-        self.chartname = self.output_directory / \
-            f'{self.name}{self.chart_type}Chart.svg'
-
-        with open(self.chartname, "w", encoding='utf-8', errors='ignore') as output_file:
-            output_file.write(self.template)
-
-        return print(f"SVG Generated Correctly in: {self.chartname}")
-
     # draw transit ring
-    def transitRing(self, r):
+    def __transitRing(self, r):
         out = '<circle cx="%s" cy="%s" r="%s" style="fill: none; stroke: %s; stroke-width: 36px; stroke-opacity: .4;"/>' % (
             r, r, r-18, self.colors_settings['paper_1'])
         out += '<circle cx="%s" cy="%s" r="%s" style="fill: none; stroke: %s; stroke-width: 1px; stroke-opacity: .6;"/>' % (
@@ -558,7 +292,7 @@ class MakeSvgInstance:
         return out
 
     # draw degree ring
-    def degreeRing(self, r):
+    def __degreeRing(self, r):
         out = ''
         for i in range(72):
             offset = float(i*5) - self.houses_degree_ut[6]
@@ -566,15 +300,15 @@ class MakeSvgInstance:
                 offset = offset + 360.0
             elif offset > 360:
                 offset = offset - 360.0
-            x1 = self.sliceToX(0, r-self.c1, offset) + self.c1
-            y1 = self.sliceToY(0, r-self.c1, offset) + self.c1
-            x2 = self.sliceToX(0, r+2-self.c1, offset) - 2 + self.c1
-            y2 = self.sliceToY(0, r+2-self.c1, offset) - 2 + self.c1
+            x1 = self.__sliceToX(0, r-self.c1, offset) + self.c1
+            y1 = self.__sliceToY(0, r-self.c1, offset) + self.c1
+            x2 = self.__sliceToX(0, r+2-self.c1, offset) - 2 + self.c1
+            y2 = self.__sliceToY(0, r+2-self.c1, offset) - 2 + self.c1
             out += '<line x1="%s" y1="%s" x2="%s" y2="%s" style="stroke: %s; stroke-width: 1px; stroke-opacity:.9;"/>\n' % (
                 x1, y1, x2, y2, self.colors_settings['paper_0'])
         return out
 
-    def degreeTransitRing(self, r):
+    def __degreeTransitRing(self, r):
         out = ''
         for i in range(72):
             offset = float(i*5) - self.houses_degree_ut[6]
@@ -582,16 +316,16 @@ class MakeSvgInstance:
                 offset = offset + 360.0
             elif offset > 360:
                 offset = offset - 360.0
-            x1 = self.sliceToX(0, r, offset)
-            y1 = self.sliceToY(0, r, offset)
-            x2 = self.sliceToX(0, r+2, offset) - 2
-            y2 = self.sliceToY(0, r+2, offset) - 2
+            x1 = self.__sliceToX(0, r, offset)
+            y1 = self.__sliceToY(0, r, offset)
+            x2 = self.__sliceToX(0, r+2, offset) - 2
+            y2 = self.__sliceToY(0, r+2, offset) - 2
             out += '<line x1="%s" y1="%s" x2="%s" y2="%s" style="stroke: #F00; stroke-width: 1px; stroke-opacity:.9;"/>\n' % (
                 x1, y1, x2, y2)
         return out
 
     # floating latitude an longitude to string
-    def lat2str(self, coord):
+    def __lat2str(self, coord):
         sign = self.language_settings["north"]
         if coord < 0.0:
             sign = self.language_settings["south"]
@@ -601,7 +335,7 @@ class MakeSvgInstance:
         sec = int(round(float(((float(coord) - deg) * 60) - min) * 60.0))
         return "%s°%s'%s\" %s" % (deg, min, sec, sign)
 
-    def lon2str(self, coord):
+    def __lon2str(self, coord):
         sign = self.language_settings["east"]
         if coord < 0.0:
             sign = self.language_settings["west"]
@@ -611,17 +345,8 @@ class MakeSvgInstance:
         sec = int(round(float(((float(coord) - deg) * 60) - min) * 60.0))
         return "%s°%s'%s\" %s" % (deg, min, sec, sign)
 
-    # decimal hour to minutes and seconds
-    def decHour(self, input):
-        hours = int(input)
-        mands = (input-hours)*60.0
-        mands = round(mands, 5)
-        minutes = int(mands)
-        seconds = int(round((mands-minutes)*60))
-        return [hours, minutes, seconds]
-
     # join hour, minutes, seconds, timezone integere to hour float
-    def decHourJoin(self, inH, inM, inS):
+    def __decHourJoin(self, inH, inM, inS):
         dh = float(inH)
         dm = float(inM)/60
         ds = float(inS)/3600
@@ -629,25 +354,14 @@ class MakeSvgInstance:
         return output
 
     # Datetime offset to float in hours
-    def offsetToTz(self, dtoffset):
+    def __offsetToTz(self, dtoffset):
         dh = float(dtoffset.days * 24)
         sh = float(dtoffset.seconds / 3600.0)
         output = dh + sh
         return output
 
-    # decimal timezone string
-    def decTzStr(self, tz):
-        if tz > 0:
-            h = int(tz)
-            m = int((float(tz)-float(h))*float(60))
-            return " [+%(#1)02d:%(#2)02d]" % {'#1': h, '#2': m}
-        else:
-            h = int(tz)
-            m = int((float(tz)-float(h))*float(60))/-1
-            return " [-%(#1)02d:%(#2)02d]" % {'#1': h/-1, '#2': m}
-
     # degree difference
-    def degreeDiff(self, a, b):
+    def __degreeDiff(self, a, b):
         out = float()
         if a > b:
             out = a - b
@@ -658,7 +372,7 @@ class MakeSvgInstance:
         return out
 
     # decimal to degrees (a°b'c")
-    def dec2deg(self, dec, type="3"):
+    def __dec2deg(self, dec, type="3"):
         dec = float(dec)
         a = int(dec)
         a_new = (dec-float(a)) * 60.0
@@ -675,28 +389,28 @@ class MakeSvgInstance:
         return str(out)
 
     # draw svg aspects: ring, aspect ring, degreeA degreeB
-    def drawAspect(self, r, ar, degA, degB, color):
+    def __drawAspect(self, r, ar, degA, degB, color):
         offset = (int(self.houses_degree_ut[6]) / -1) + int(degA)
-        x1 = self.sliceToX(0, ar, offset) + (r-ar)
-        y1 = self.sliceToY(0, ar, offset) + (r-ar)
+        x1 = self.__sliceToX(0, ar, offset) + (r-ar)
+        y1 = self.__sliceToY(0, ar, offset) + (r-ar)
         offset = (int(self.houses_degree_ut[6]) / -1) + int(degB)
-        x2 = self.sliceToX(0, ar, offset) + (r-ar)
-        y2 = self.sliceToY(0, ar, offset) + (r-ar)
+        x2 = self.__sliceToX(0, ar, offset) + (r-ar)
+        y2 = self.__sliceToY(0, ar, offset) + (r-ar)
         out = '            <line x1="'+str(x1)+'" y1="'+str(y1)+'" x2="'+str(x2)+'" y2="'+str(
             y2)+'" style="stroke: '+color+'; stroke-width: 1; stroke-opacity: .9;"/>\n'
         return out
 
-    def sliceToX(self, slice, r, offset):
+    def __sliceToX(self, slice, r, offset):
         plus = (math.pi * offset) / 180
         radial = ((math.pi/6) * slice) + plus
         return r * (math.cos(radial)+1)
 
-    def sliceToY(self, slice, r, offset):
+    def __sliceToY(self, slice, r, offset):
         plus = (math.pi * offset) / 180
         radial = ((math.pi/6) * slice) + plus
         return r * ((math.sin(radial)/-1)+1)
 
-    def zodiacSlice(self, num, r, style,  type):
+    def __zodiacSlice(self, num, r, style,  type):
         # pie slices
         offset = 360 - self.houses_degree_ut[6]
         # check transit
@@ -704,8 +418,8 @@ class MakeSvgInstance:
             dropin = 0
         else:
             dropin = self.c1
-        slice = '<path d="M' + str(r) + ',' + str(r) + ' L' + str(dropin + self.sliceToX(num, r-dropin, offset)) + ',' + str(dropin + self.sliceToY(num, r-dropin, offset)) + ' A' + str(
-            r-dropin) + ',' + str(r-dropin) + ' 0 0,0 ' + str(dropin + self.sliceToX(num+1, r-dropin, offset)) + ',' + str(dropin + self.sliceToY(num+1, r-dropin, offset)) + ' z" style="' + style + '"/>'
+        slice = '<path d="M' + str(r) + ',' + str(r) + ' L' + str(dropin + self.__sliceToX(num, r-dropin, offset)) + ',' + str(dropin + self.__sliceToY(num, r-dropin, offset)) + ' A' + str(
+            r-dropin) + ',' + str(r-dropin) + ' 0 0,0 ' + str(dropin + self.__sliceToX(num+1, r-dropin, offset)) + ',' + str(dropin + self.__sliceToY(num+1, r-dropin, offset)) + ' z" style="' + style + '"/>'
         # symbols
         offset = offset + 15
         # check transit
@@ -713,18 +427,18 @@ class MakeSvgInstance:
             dropin = 54
         else:
             dropin = 18+self.c1
-        sign = '<g transform="translate(-16,-16)"><use x="' + str(dropin + self.sliceToX(num, r-dropin, offset)) + '" y="' + str(
-            dropin + self.sliceToY(num, r-dropin, offset)) + '" xlink:href="#' + type + '" /></g>\n'
+        sign = '<g transform="translate(-16,-16)"><use x="' + str(dropin + self.__sliceToX(num, r-dropin, offset)) + '" y="' + str(
+            dropin + self.__sliceToY(num, r-dropin, offset)) + '" xlink:href="#' + type + '" /></g>\n'
         return slice + '\n' + sign
 
-    def makeZodiac(self, r):
+    def __makeZodiac(self, r):
         output = ""
         for i in range(len(self.zodiac)):
-            output = output + self.zodiacSlice(i, r, "fill:" + self.colors_settings["zodiac_bg_%s" % (
+            output = output + self.__zodiacSlice(i, r, "fill:" + self.colors_settings["zodiac_bg_%s" % (
                 i)] + "; fill-opacity: 0.5;", self.zodiac[i]) + '\n'
         return output
 
-    def makeHouses(self, r):
+    def __makeHouses(self, r):
         path = ""
 
         xr = 12
@@ -741,18 +455,18 @@ class MakeSvgInstance:
             # offset is negative desc houses_degree_ut[6]
             offset = (
                 int(self.houses_degree_ut[int(xr/2)]) / -1) + int(self.houses_degree_ut[i])
-            x1 = self.sliceToX(0, (r-dropin), offset) + dropin
-            y1 = self.sliceToY(0, (r-dropin), offset) + dropin
-            x2 = self.sliceToX(0, r-roff, offset) + roff
-            y2 = self.sliceToY(0, r-roff, offset) + roff
+            x1 = self.__sliceToX(0, (r-dropin), offset) + dropin
+            y1 = self.__sliceToY(0, (r-dropin), offset) + dropin
+            x2 = self.__sliceToX(0, r-roff, offset) + roff
+            y2 = self.__sliceToY(0, r-roff, offset) + roff
 
             if i < (xr-1):
                 text_offset = offset + \
-                    int(self.degreeDiff(self.houses_degree_ut[(
+                    int(self.__degreeDiff(self.houses_degree_ut[(
                         i+1)], self.houses_degree_ut[i]) / 2)
             else:
                 text_offset = offset + \
-                    int(self.degreeDiff(
+                    int(self.__degreeDiff(
                         self.houses_degree_ut[0], self.houses_degree_ut[(xr-1)]) / 2)
 
             # mc, asc, dsc, ic
@@ -776,25 +490,25 @@ class MakeSvgInstance:
                 t_offset = zeropoint + self.t_houses_degree_ut[i]
                 if t_offset > 360:
                     t_offset = t_offset - 360
-                t_x1 = self.sliceToX(0, (r-t_roff), t_offset) + t_roff
-                t_y1 = self.sliceToY(0, (r-t_roff), t_offset) + t_roff
-                t_x2 = self.sliceToX(0, r, t_offset)
-                t_y2 = self.sliceToY(0, r, t_offset)
+                t_x1 = self.__sliceToX(0, (r-t_roff), t_offset) + t_roff
+                t_y1 = self.__sliceToY(0, (r-t_roff), t_offset) + t_roff
+                t_x2 = self.__sliceToX(0, r, t_offset)
+                t_y2 = self.__sliceToY(0, r, t_offset)
                 if i < 11:
                     t_text_offset = t_offset + \
-                        int(self.degreeDiff(self.t_houses_degree_ut[(
+                        int(self.__degreeDiff(self.t_houses_degree_ut[(
                             i+1)], self.t_houses_degree_ut[i]) / 2)
                 else:
                     t_text_offset = t_offset + \
-                        int(self.degreeDiff(
+                        int(self.__degreeDiff(
                             self.t_houses_degree_ut[0], self.t_houses_degree_ut[11]) / 2)
                 # linecolor
                 if i == 0 or i == 9 or i == 6 or i == 3:
                     t_linecolor = linecolor
                 else:
                     t_linecolor = self.colors_settings['houses_transit_line']
-                xtext = self.sliceToX(0, (r-8), t_text_offset) + 8
-                ytext = self.sliceToY(0, (r-8), t_text_offset) + 8
+                xtext = self.__sliceToX(0, (r-8), t_text_offset) + 8
+                ytext = self.__sliceToY(0, (r-8), t_text_offset) + 8
 
                 if self.chart_type == "Transit":
                     path = path + '<text style="fill: #00f; fill-opacity: 0; font-size: 14px"><tspan x="' + \
@@ -816,9 +530,9 @@ class MakeSvgInstance:
 
             dropin = 48
 
-            xtext = self.sliceToX(
+            xtext = self.__sliceToX(
                 0, (r-dropin), text_offset) + dropin  # was 132
-            ytext = self.sliceToY(
+            ytext = self.__sliceToY(
                 0, (r-dropin), text_offset) + dropin  # was 132
             path = path + '<line x1="'+str(x1)+'" y1="'+str(y1)+'" x2="'+str(x2)+'" y2="'+str(
                 y2)+'" style="stroke: '+linecolor+'; stroke-width: 2px; stroke-dasharray:3,2; stroke-opacity:.4;"/>\n'
@@ -828,7 +542,7 @@ class MakeSvgInstance:
 
         return path
 
-    def makePlanets(self, r):
+    def __makePlanets(self, r):
 
         planets_degut = {}
 
@@ -885,8 +599,8 @@ class MakeSvgInstance:
             else:
                 prev = self.planets_degree_ut[planets_degut[keys[e-1]]]
                 next = self.planets_degree_ut[planets_degut[keys[e+1]]]
-            diffa = self.degreeDiff(prev, self.planets_degree_ut[i])
-            diffb = self.degreeDiff(next, self.planets_degree_ut[i])
+            diffa = self.__degreeDiff(prev, self.planets_degree_ut[i])
+            diffb = self.__degreeDiff(next, self.planets_degree_ut[i])
             planets_by_pos[e] = [i, diffa, diffb]
             # print "%s %s %s" % (self.planets_settings[i]['label'],diffa,diffb)
             if (diffb < planet_drange):
@@ -1012,8 +726,8 @@ class MakeSvgInstance:
             trueoffset = (
                 int(self.houses_degree_ut[6]) / -1) + int(self.planets_degree_ut[i])
 
-            planet_x = self.sliceToX(0, (r-rplanet), offset) + rplanet
-            planet_y = self.sliceToY(0, (r-rplanet), offset) + rplanet
+            planet_x = self.__sliceToX(0, (r-rplanet), offset) + rplanet
+            planet_y = self.__sliceToY(0, (r-rplanet), offset) + rplanet
             if self.chart_type == "Transit" or self.chart_type == "Composite":
                 scale = 0.8
 
@@ -1049,7 +763,7 @@ class MakeSvgInstance:
 
                 a = self.t_planets_degree_ut[i_a]
                 b = self.t_planets_degree_ut[i_b]
-                diff = self.degreeDiff(a, b)
+                diff = self.__degreeDiff(a, b)
                 if diff <= 2.5:
                     if in_group:
                         groups[-1].append(i_b)
@@ -1091,15 +805,15 @@ class MakeSvgInstance:
                 t_offset = zeropoint + self.t_planets_degree_ut[i]
                 if t_offset > 360:
                     t_offset = t_offset - 360
-                planet_x = self.sliceToX(0, (r-rplanet), t_offset) + rplanet
-                planet_y = self.sliceToY(0, (r-rplanet), t_offset) + rplanet
+                planet_x = self.__sliceToX(0, (r-rplanet), t_offset) + rplanet
+                planet_y = self.__sliceToY(0, (r-rplanet), t_offset) + rplanet
                 output = output + '<g transform="translate(-6,-6)"><g transform="scale(0.5)"><use x="' + str(
                     planet_x*2) + '" y="' + str(planet_y*2) + '" xlink:href="#' + self.planets_settings[i]['name'] + '" /></g></g>\n'
                 # transit planet line
-                x1 = self.sliceToX(0, r+3, t_offset) - 3
-                y1 = self.sliceToY(0, r+3, t_offset) - 3
-                x2 = self.sliceToX(0, r-3, t_offset) + 3
-                y2 = self.sliceToY(0, r-3, t_offset) + 3
+                x1 = self.__sliceToX(0, r+3, t_offset) - 3
+                y1 = self.__sliceToY(0, r+3, t_offset) - 3
+                x2 = self.__sliceToX(0, r-3, t_offset) + 3
+                y2 = self.__sliceToY(0, r-3, t_offset) + 3
                 output = output + '<line x1="'+str(x1)+'" y1="'+str(y1)+'" x2="'+str(x2)+'" y2="'+str(
                     y2)+'" style="stroke: '+self.planets_settings[i]['color']+'; stroke-width: 1px; stroke-opacity:.8;"/>\n'
 
@@ -1120,15 +834,15 @@ class MakeSvgInstance:
                     xo = 1
                 else:
                     xo = -1
-                deg_x = self.sliceToX(0, (r-rtext), t_offset + xo) + rtext
-                deg_y = self.sliceToY(0, (r-rtext), t_offset + xo) + rtext
+                deg_x = self.__sliceToX(0, (r-rtext), t_offset + xo) + rtext
+                deg_y = self.__sliceToY(0, (r-rtext), t_offset + xo) + rtext
                 degree = int(t_offset)
                 output += '<g transform="translate(%s,%s)">' % (deg_x, deg_y)
                 output += '<text transform="rotate(%s)" text-anchor="%s' % (
                     rotate, textanchor)
                 output += '" style="fill: ' + \
                     self.planets_settings[i]['color']+'; font-size: 10px;">' + \
-                    self.dec2deg(self.t_planets_degree[i], type="1")
+                    self.__dec2deg(self.t_planets_degree[i], type="1")
                 output += '</text></g>\n'
 
             # check transit
@@ -1138,10 +852,10 @@ class MakeSvgInstance:
                 dropin = 0
 
             # planet line
-            x1 = self.sliceToX(0, r-(dropin+3), offset) + (dropin+3)
-            y1 = self.sliceToY(0, r-(dropin+3), offset) + (dropin+3)
-            x2 = self.sliceToX(0, (r-(dropin-3)), offset) + (dropin-3)
-            y2 = self.sliceToY(0, (r-(dropin-3)), offset) + (dropin-3)
+            x1 = self.__sliceToX(0, r-(dropin+3), offset) + (dropin+3)
+            y1 = self.__sliceToY(0, r-(dropin+3), offset) + (dropin+3)
+            x2 = self.__sliceToX(0, (r-(dropin-3)), offset) + (dropin-3)
+            y2 = self.__sliceToY(0, (r-(dropin-3)), offset) + (dropin-3)
             output = output + '<line x1="'+str(x1)+'" y1="'+str(y1)+'" x2="'+str(x2)+'" y2="'+str(
                 y2)+'" style="stroke: '+self.planets_settings[i]['color']+'; stroke-width: 2px; stroke-opacity:.6;"/>\n'
 
@@ -1151,16 +865,16 @@ class MakeSvgInstance:
             else:
                 dropin = 120
 
-            x1 = self.sliceToX(0, r-dropin, offset) + dropin
-            y1 = self.sliceToY(0, r-dropin, offset) + dropin
-            x2 = self.sliceToX(0, (r-(dropin-3)), offset) + (dropin-3)
-            y2 = self.sliceToY(0, (r-(dropin-3)), offset) + (dropin-3)
+            x1 = self.__sliceToX(0, r-dropin, offset) + dropin
+            y1 = self.__sliceToY(0, r-dropin, offset) + dropin
+            x2 = self.__sliceToX(0, (r-(dropin-3)), offset) + (dropin-3)
+            y2 = self.__sliceToY(0, (r-(dropin-3)), offset) + (dropin-3)
             output = output + '<line x1="'+str(x1)+'" y1="'+str(y1)+'" x2="'+str(x2)+'" y2="'+str(
                 y2)+'" style="stroke: '+self.planets_settings[i]['color']+'; stroke-width: 2px; stroke-opacity:.6;"/>\n'
 
         return output
 
-    def makePatterns(self):
+    def __makePatterns(self):
         """
         * Stellium: At least four planets linked together in a series of continuous conjunctions.
         * Grand trine: Three trine aspects together.
@@ -1196,7 +910,7 @@ class MakeSvgInstance:
                 if n == 'Dsc' or n == 'Ic':
                     continue
                 b = self.planets_degree_ut[j]
-                delta = float(self.degreeDiff(a, b))
+                delta = float(self.__degreeDiff(a, b))
                 # check for opposition
                 xa = float(self.aspects_settings[10]['degree']) - \
                     float(self.aspects_settings[10]['orb'])
@@ -1321,15 +1035,15 @@ class MakeSvgInstance:
 
     # Aspect and aspect grid functions for natal type charts.
 
-    def makeAspects(self, r, ar):
+    def __makeAspects(self, r, ar):
         out = ""
         for element in self.aspects_list:
-            out += self.drawAspect(r, ar, element['p1_abs_pos'], element['p2_abs_pos'],
+            out += self.__drawAspect(r, ar, element['p1_abs_pos'], element['p2_abs_pos'],
                                    self.colors_settings[f"aspect_{element['aspect_degrees']}"])
 
         return out
 
-    def makeAspectGrid(self, r):
+    def __makeAspectGrid(self, r):
 
         out = ""
         style = 'stroke:%s; stroke-width: 1px; stroke-opacity:.6; fill:none' % (
@@ -1367,7 +1081,7 @@ class MakeSvgInstance:
 
     # Aspect and aspect grid functions for transit type charts.
 
-    def makeAspectsTransit(self, r, ar):
+    def __makeAspectsTransit(self, r, ar):
         out = ""
 
         self.aspects_list = CompositeAspects(
@@ -1375,12 +1089,12 @@ class MakeSvgInstance:
         ).get_relevant_aspects()
 
         for element in self.aspects_list:
-            out += self.drawAspect(r, ar, element['p1_abs_pos'], element['p2_abs_pos'],
+            out += self.__drawAspect(r, ar, element['p1_abs_pos'], element['p2_abs_pos'],
                                    self.colors_settings[f"aspect_{element['aspect_degrees']}"])
 
         return out
 
-    def makeAspectTransitGrid(self, r):
+    def __makeAspectTransitGrid(self, r):
         out = '<g transform="translate(500,310)">'
         out += '<text y="-15" x="0" style="fill:%s; font-size: 14px;">%s</text>\n' % (
             self.colors_settings['paper_0'], (f"{self.language_settings['aspects']}:"))
@@ -1426,14 +1140,14 @@ class MakeSvgInstance:
             # difference in degrees
             out += '<text y="8" x="45" style="fill:%s; font-size: 10px;">%s</text>' % (
                 self.colors_settings['paper_0'],
-                self.dec2deg(self.aspects_list[i]['orbit']))
+                self.__dec2deg(self.aspects_list[i]['orbit']))
             # line
             out += '</g>'
             line = line + 14
         out += '</g>'
         return out
 
-    def makeElements(self, r):
+    def __makeElements(self, r):
         total = self.fire + self.earth + self.air + self.water
         pf = int(round(100*self.fire/total))
         pe = int(round(100*self.earth/total))
@@ -1451,7 +1165,7 @@ class MakeSvgInstance:
         out += '</g>\n'
         return out
 
-    def makePlanetGrid(self):
+    def __makePlanetGrid(self):
         out = '<g transform="translate(500,-20)">'
 
         # loop over all planets
@@ -1480,7 +1194,7 @@ class MakeSvgInstance:
                     self.planets_settings[i]['name']+'" /></g>'
                 # planet degree
                 out += '<text text-anchor="start" x="19" style="fill:%s; font-size: 10px;">%s</text>' % (
-                    self.colors_settings['paper_0'], self.dec2deg(self.planets_degree[i]))
+                    self.colors_settings['paper_0'], self.__dec2deg(self.planets_degree[i]))
                 # zodiac
                 out += '<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#' + \
                     self.zodiac[self.planets_sign[i]]+'" /></g>'
@@ -1525,7 +1239,7 @@ class MakeSvgInstance:
                     out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="# {self.planets_settings[i]["name"]}" /></g>'
                     # planet degree
                     out += '<text text-anchor="start" x="19" style="fill:%s; font-size: 10px;">%s</text>' % (
-                        self.colors_settings['paper_0'], self.dec2deg(self.t_planets_degree[i]))
+                        self.colors_settings['paper_0'], self.__dec2deg(self.t_planets_degree[i]))
                     # zodiac
                     out += '<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#' + \
                         self.zodiac[self.t_planets_sign[i]]+'" /></g>'
@@ -1542,7 +1256,7 @@ class MakeSvgInstance:
 
         return out
 
-    def makeHousesGrid(self):
+    def __makeHousesGrid(self):
 
         out = '<g transform="translate(600,-20)">'
         li = 10
@@ -1557,7 +1271,7 @@ class MakeSvgInstance:
             out += '<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#' + \
                 self.zodiac[self.houses_sign[i]]+'" /></g>'
             out += '<text x="53" style="fill:%s; font-size: 10px;"> %s</text>' % (
-                self.colors_settings['paper_0'], self.dec2deg(self.houses_list[i]["position"]))
+                self.colors_settings['paper_0'], self.__dec2deg(self.houses_list[i]["position"]))
             out += '</g>\n'
             li = li + 14
         out += '</g>\n'
@@ -1578,7 +1292,7 @@ class MakeSvgInstance:
                 out += '<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#' + \
                     self.zodiac[self.t_houses_sign[i]]+'" /></g>'
                 out += '<text x="53" style="fill:%s; font-size: 10px;"> %s</text>' % (
-                    self.colors_settings['paper_0'], self.dec2deg(self.t_houses_list[i]["position"]))
+                    self.colors_settings['paper_0'], self.__dec2deg(self.t_houses_list[i]["position"]))
                 out += '</g>\n'
                 li = li + 14
             out += '</g>\n'
@@ -1592,6 +1306,271 @@ class MakeSvgInstance:
         self.output_directory = Path(dir_path)
         dir_string = f"Output direcotry set to: {self.output_directory}"
         return (print(dir_string))
+
+    def parse_json_settings(self, settings_file, lang: str):
+        """
+        Parse the settings file.
+        """
+        with open(settings_file, 'r', encoding="utf-8", errors='ignore') as f:
+            settings = json.load(f)
+
+        self.language_settings = settings['language_settings'].get(
+            lang, "EN")
+        self.colors_settings = settings['colors']
+        self.planets_settings = settings['planets']
+        self.aspects_settings = settings['aspects']
+
+    def makeTemplate(self):
+        # self.chart_type = "Transit"
+        # empty element points
+        self.fire = 0.0
+        self.earth = 0.0
+        self.air = 0.0
+        self.water = 0.0
+
+        # Transit module data
+        if self.chart_type == "Transit" or self.chart_type == "Composite":
+            # grab transiting module data
+
+            self.t_planets_sign = self.t_points_sign
+            self.t_planets_degree = self.t_points_deg
+            self.t_planets_degree_ut = self.t_points_deg_ut
+            self.t_planets_retrograde = self.t_points_retrograde
+            self.t_houses_list = self.t_user.houses_list
+            self.t_houses_sign = self.t_houses_sign_graph
+            self.t_houses_degree_ut = self.t_user.houses_degree_ut
+
+        # grab normal module data
+        self.planets_sign = self.points_sign
+        self.planets_degree = self.points_deg
+        self.planets_degree_ut = self.points_deg_ut
+        self.planets_retrograde = self.points_retrograde
+        self.houses_list = self.user.houses_list
+        self.houses_sign = self.houses_sign_graph
+        self.houses_degree_ut = self.user.houses_degree_ut
+        self.lunar_phase = self.user.lunar_phase
+        #
+
+        # width and height from screen
+        ratio = float(self.screen_width) / float(self.screen_height)
+        if ratio < 1.3:  # 1280x1024
+            wm_off = 130
+        else:  # 1024x768, 800x600, 1280x800, 1680x1050
+            wm_off = 100
+
+        # Viewbox and sizing
+        svgHeight = "100%"  # self.screen_height-wm_off
+        svgWidth = "100%"  #  self.screen_width-5.0
+        # svgHeight=self.screen_height-wm_off
+        # svgWidth=(770.0*svgHeight)/540.0
+        # svgWidth=float(self.screen_width)-25.0
+        rotate = "0"
+        translate = "0"
+        # Defoult:
+        # viewbox = '0 0 772.2 546.0' #297mm * 2.6 + 210mm * 2.6
+        if self.chart_type == "Natal":
+            viewbox = '0 0 772.2 546.0'  # 297mm * 2.6 + 210mm * 2.6
+        else:
+            viewbox = '0 0 1000 546.0'
+
+        # template dictionary
+        td = dict()
+        r = 240
+        self.c1 = 0
+        self.c2 = 36
+        self.c3 = 120
+
+        # transit
+        if self.chart_type == "Transit" or self.chart_type == "Composite":
+            td['transitRing'] = self.__transitRing(r)
+            td['degreeRing'] = self.__degreeTransitRing(r)
+            # circles
+            td['c1'] = 'cx="' + str(r) + '" cy="' + \
+                str(r) + '" r="' + str(r-36) + '"'
+            td['c1style'] = 'fill: none; stroke: %s; stroke-width: 1px; stroke-opacity:.4;' % (
+                self.colors_settings['zodiac_transit_ring_2'])
+            td['c2'] = 'cx="' + str(r) + '" cy="' + \
+                str(r) + '" r="' + str(r-72) + '"'
+            td['c2style'] = 'fill: %s; fill-opacity:.4; stroke: %s; stroke-opacity:.4; stroke-width: 1px' % (
+                self.colors_settings['paper_1'], self.colors_settings['zodiac_transit_ring_1'])
+            td['c3'] = 'cx="' + str(r) + '" cy="' + \
+                str(r) + '" r="' + str(r-160) + '"'
+            td['c3style'] = 'fill: %s; fill-opacity:.8; stroke: %s; stroke-width: 1px' % (
+                self.colors_settings['paper_1'], self.colors_settings['zodiac_transit_ring_0'])
+            td['makeAspects'] = self.__makeAspectsTransit(r, (r-160))
+            td['makeAspectGrid'] = self.__makeAspectTransitGrid(r)
+            td['makePatterns'] = ''
+            td['chart_width'] = self.full_width
+        else:
+            td['transitRing'] = ""
+            td['degreeRing'] = self.__degreeRing(r)
+            # circles
+            td['c1'] = 'cx="' + str(r) + '" cy="' + \
+                str(r) + '" r="' + str(r-self.c1) + '"'
+            td['c1style'] = 'fill: none; stroke: %s; stroke-width: 1px; ' % (
+                self.colors_settings['zodiac_radix_ring_2'])
+            td['c2'] = 'cx="' + str(r) + '" cy="' + \
+                str(r) + '" r="' + str(r-self.c2) + '"'
+            td['c2style'] = 'fill: %s; fill-opacity:.2; stroke: %s; stroke-opacity:.4; stroke-width: 1px' % (
+                self.colors_settings['paper_1'], self.colors_settings['zodiac_radix_ring_1'])
+            td['c3'] = 'cx="' + str(r) + '" cy="' + \
+                str(r) + '" r="' + str(r-self.c3) + '"'
+            td['c3style'] = 'fill: %s; fill-opacity:.8; stroke: %s; stroke-width: 1px' % (
+                self.colors_settings['paper_1'], self.colors_settings['zodiac_radix_ring_0'])
+            td['makeAspects'] = self.__makeAspects(r, (r-self.c3))
+            td['makeAspectGrid'] = self.__makeAspectGrid(r)
+            td['makePatterns'] = self.__makePatterns()
+            td['chart_width'] = self.natal_width
+
+        td['circleX'] = str(0)
+        td['circleY'] = str(0)
+        td['svgWidth'] = str(svgWidth)
+        td['svgHeight'] = str(svgHeight)
+        td['viewbox'] = viewbox
+        if self.chart_type == "Composite":
+            td['stringTitle'] = f"{self.name} {self.language_settings['&']} {self.t_user.name}"
+        elif self.chart_type == "Transit":
+            td['stringTitle'] = f"{self.language_settings['transits']} {self.t_user.day}/{self.t_user.month}/{self.t_user.year}"
+        else:
+            td['stringTitle'] = self.name
+
+        # Tipo di carta
+        if self.chart_type == "Composite" or self.name == "Transit":
+            td['stringName'] = f"{self.name}:"
+        else:
+            td['stringName'] = f'{self.language_settings["info"]}:'
+
+        # bottom left
+
+        td['bottomLeft1'] = ''
+        td['bottomLeft2'] = ''
+        td['bottomLeft3'] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.lunar_phase.get("moon_phase", "")}'
+        td['bottomLeft4'] = ''
+
+        # lunar phase
+        deg = self.lunar_phase['degrees_between_s_m']
+
+        if(deg < 90.0):
+            maxr = deg
+            if(deg > 80.0):
+                maxr = maxr*maxr
+            lfcx = 20.0+(deg/90.0)*(maxr+10.0)
+            lfr = 10.0+(deg/90.0)*maxr
+            lffg, lfbg = self.colors_settings["lunar_phase_0"], self.colors_settings["lunar_phase_1"]
+
+        elif(deg < 180.0):
+            maxr = 180.0-deg
+            if(deg < 100.0):
+                maxr = maxr*maxr
+            lfcx = 20.0+((deg-90.0)/90.0*(maxr+10.0))-(maxr+10.0)
+            lfr = 10.0+maxr-((deg-90.0)/90.0*maxr)
+            lffg, lfbg = self.colors_settings["lunar_phase_1"], self.colors_settings["lunar_phase_0"]
+
+        elif(deg < 270.0):
+            maxr = deg-180.0
+            if(deg > 260.0):
+                maxr = maxr*maxr
+            lfcx = 20.0+((deg-180.0)/90.0*(maxr+10.0))
+            lfr = 10.0+((deg-180.0)/90.0*maxr)
+            lffg, lfbg = self.colors_settings["lunar_phase_1"], self.colors_settings["lunar_phase_0"]
+
+        elif(deg < 361):
+            maxr = 360.0-deg
+            if(deg < 280.0):
+                maxr = maxr*maxr
+            lfcx = 20.0+((deg-270.0)/90.0*(maxr+10.0))-(maxr+10.0)
+            lfr = 10.0+maxr-((deg-270.0)/90.0*maxr)
+            lffg, lfbg = self.colors_settings["lunar_phase_0"], self.colors_settings["lunar_phase_1"]
+
+        td['lunar_phase_fg'] = lffg
+        td['lunar_phase_bg'] = lfbg
+        td['lunar_phase_cx'] = lfcx
+        td['lunar_phase_r'] = lfr
+        td['lunar_phase_outline'] = self.colors_settings["lunar_phase_2"]
+
+        # rotation based on latitude
+        td['lunar_phase_rotate'] = (-90.0-self.geolat)
+
+        # stringlocation
+        if len(self.location) > 35:
+            split = self.location.split(",")
+            if len(split) > 1:
+                td['stringLocation'] = split[0]+", "+split[-1]
+                if len(td['stringLocation']) > 35:
+                    td['stringLocation'] = td['stringLocation'][:35]+"..."
+            else:
+                td['stringLocation'] = self.location[:35]+"..."
+        else:
+            td['stringLocation'] = self.location
+
+        td['stringDateTime'] = f'{self.user.year}-{self.user.month}-{self.user.day} {self.user.hour:02d}:{self.user.minute:02d}'
+
+        if self.chart_type == "Composite":
+            td['stringLat'] = f'{self.t_user.name}: '
+            td['stringLon'] = self.t_user.city
+            td['stringPosition'] = f'{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hour:02d}:{self.t_user.minute:02d}'
+
+        else:
+            td['stringLat'] = "%s: %s" % (
+                self.language_settings['latitude'], self.__lat2str(self.geolat))
+            td['stringLon'] = "%s: %s" % (
+                self.language_settings['longitude'], self.__lon2str(self.geolon))
+            td['stringPosition'] = f"{self.language_settings['type']}: {self.charttype}"
+
+        # paper_color_X
+        td['paper_color_0'] = self.colors_settings["paper_0"]
+        td['paper_color_1'] = self.colors_settings["paper_1"]
+
+        # planets_color_X
+        for i in range(len(self.planets_settings)):
+            td['planets_color_%s' %
+                (i)] = self.colors_settings["planet_%s" % (i)]
+
+        # zodiac_color_X
+        for i in range(12):
+            td['zodiac_color_%s' %
+                (i)] = self.colors_settings["zodiac_icon_%s" % (i)]
+
+        # orb_color_X
+        for i in range(len(self.aspects_settings)):
+            td['orb_color_%s' % (self.aspects_settings[i]['degree'])] = self.colors_settings["aspect_%s" % (
+                self.aspects_settings[i]['degree'])]
+
+        # config
+        td['cfgZoom'] = str(self.zoom)
+        td['cfgRotate'] = rotate
+        td['cfgTranslate'] = translate
+
+        # functions
+        td['makeZodiac'] = self.__makeZodiac(r)
+        td['makeHouses'] = self.__makeHouses(r)
+        td['makePlanets'] = self.__makePlanets(r)
+        td['makeElements'] = self.__makeElements(r)
+        td['makePlanetGrid'] = self.__makePlanetGrid()
+        td['makeHousesGrid'] = self.__makeHousesGrid()
+
+        # read template
+        with open(self.xml_svg, "r", encoding="utf-8", errors='ignore') as output_file:
+            f = open(self.xml_svg)
+            template = Template(f.read()).substitute(td)
+
+        # return filename
+
+        return template
+
+    def makeSVG(self):
+        """Prints out the SVG file in the specifide folder"""
+
+        if not (self.template):
+            self.template = self.makeTemplate()
+
+        self.chartname = self.output_directory / \
+            f'{self.name}{self.chart_type}Chart.svg'
+
+        with open(self.chartname, "w", encoding='utf-8', errors='ignore') as output_file:
+            output_file.write(self.template)
+
+        return print(f"SVG Generated Correctly in: {self.chartname}")
 
 
 if __name__ == "__main__":
