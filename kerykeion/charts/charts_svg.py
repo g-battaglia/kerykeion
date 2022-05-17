@@ -296,7 +296,7 @@ class MakeSvgInstance:
         self.planets_settings = settings['planets']
         self.aspects_settings = settings['aspects']
 
-    def makeTemplate(self, printing=None):
+    def makeTemplate(self):
         # self.chart_type = "Transit"
         # empty element points
         self.fire = 0.0
@@ -1605,3 +1605,5 @@ if __name__ == "__main__":
     template = name.makeTemplate()
     name.makeSVG()
     print(name.aspects_list[-1])
+    name.makeSVG()
+    print(template)
