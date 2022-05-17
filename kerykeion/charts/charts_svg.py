@@ -1556,7 +1556,7 @@ class MakeSvgInstance:
 
         # return filename
 
-        return template
+        return template.replace("\"", "'")
 
     def makeSVG(self):
         """Prints out the SVG file in the specifide folder"""
