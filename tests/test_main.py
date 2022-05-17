@@ -63,7 +63,7 @@ def test_birthchart_instance():
     subject = KrInstance("Test", 1993, 10, 10, 12, 12, "London", "GB")
     birthchart_svg = MakeSvgInstance(subject).makeTemplate()
 
-    assert birthchart_svg.startswith('<?xml version="1.0" encoding="UTF-8"?>')
+    assert birthchart_svg.startswith("<?xml version='1.0' encoding='UTF-8'?>")
 
 
 def test_composite_chart_instance():
@@ -75,7 +75,7 @@ def test_composite_chart_instance():
     template = birthchart_instance.makeTemplate()
 
     assert birthchart_instance.chart_type == 'Composite'
-    assert template.startswith('<?xml version="1.0" encoding="UTF-8"?>')
+    assert template.startswith("<?xml version='1.0' encoding='UTF-8'?>")
 
 
 def test_relationship_score():
