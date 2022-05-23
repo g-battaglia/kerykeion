@@ -38,7 +38,7 @@ class NatalAspects():
         else:
             settings_file = Path(self.new_settings_file)
 
-        with open(settings_file, 'r') as f:
+        with open(settings_file, 'r',encoding="cp866") as f:
             settings = json.load(f)
 
         self.colors_settings = settings['colors']
