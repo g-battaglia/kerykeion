@@ -1575,7 +1575,7 @@ class MakeSvgInstance:
 
 if __name__ == "__main__":
 
-    first = KrInstance("J'ack", 1990, 6, 15, 15, 15, "Roma")
+    first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
     second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
 
     name = MakeSvgInstance(first, chart_type="Composite",
