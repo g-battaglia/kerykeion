@@ -35,6 +35,15 @@ def test_kerykeion_instace():
     assert object.sun.retrograde == False
     assert object.sun.point_type == "Planet"
 
+    object = KrInstance("Test", 1993, 10, 10, 12, 12, "Roma", "IT")
+
+    assert object.city == "Roma"
+    assert object.nation == "IT"
+
+    object = KrInstance("Test", 1993, 10, 10, 12, 12, lng=2.1, lat=2.1, tz_str='Europe/Rome')
+
+    assert object.lng == 2.1
+    assert object.lat == 2.1
 
 def test_composite_aspects():
     kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "New York")
