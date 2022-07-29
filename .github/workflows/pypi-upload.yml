@@ -1,19 +1,23 @@
-name: Publish Python 🐍 distributions 📦 to PyPI
+name: Publish Kerykeion 💫 to PyPI 📦
 
 on:
   push:
     branches:
       - master
+    # tags:
+    #  - "v*"
 
 jobs:
   test:
     name: Test all changes 💫
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@master
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Set up Python 3.9
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
 
@@ -23,11 +27,13 @@ jobs:
           pip install
           pipenv
           --user
+
       - name: Install packages
         run: >-
           pipenv
           install
           --dev
+
       - name: Run the test
         run: >-
           pipenv
@@ -36,14 +42,19 @@ jobs:
 
   build-n-publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI
-    runs-on: ubuntu-18.04
-    if: ${{ always() && (needs.test.result=='success') }}
     needs: [test]
+    if: |
+      ${{ always() && (needs.test.result=='success') }} &&
+      # prevents this action from running on forks
+      github.repository == 'g-battaglia/kerykeion'
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@master
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Set up Python 3.9
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
 
@@ -53,6 +64,7 @@ jobs:
           pip install
           build
           --user
+
       - name: Build a binary wheel and a source tarball
         run: >-
           python -m
