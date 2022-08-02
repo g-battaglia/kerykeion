@@ -67,7 +67,7 @@ kanye.moon.get("element")
 
 ```
 
-### To avoid connecting to GeoNames (EG avoiding hourly limit or no internet connection) you should instance kerykeion like this:
+**To avoid connecting to GeoNames (eg. avoiding hourly limit or no internet connection) you should instance kerykeion like this:**
 
 ```python
 kanye = KrInstance(
