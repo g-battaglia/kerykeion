@@ -67,6 +67,15 @@ kanye.moon.get("element")
 
 ```
 
+### To avoid connecting to GeoNames (EG avoiding hourly limit or no internet connection) you should instance kerykeion like this:
+
+```python
+kanye = KrInstance(
+    "Kanye", 1977, 6, 8, 8, 45,
+    lng=50, lat=50, tz_str="Europe/Rome"
+    )
+```
+
 ## Generate a SVG Chart:
 
 ```python
