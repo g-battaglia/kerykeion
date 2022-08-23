@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf8") as fh:
 
 setup(
     name="kerykeion",
-    version="3.1.8",
+    version="3.1.9",
     author="Giacomo Battaglia",
     author_email="battaglia.giacomo@yahoo.it",
     description="A python library for astrology.",
@@ -34,12 +34,13 @@ setup(
         "Typing :: Typed",
     ],
     include_package_data=True,
-    python_requires='>=3.9',
+    python_requires=">=3.9",
     install_requires=[
-        'pyswisseph',
-        'pytz',
-        'jsonpickle',
-        'requests',
-        'requests_cache'
+        "pyswisseph",
+        "pytz",
+        "jsonpickle",
+        "requests",
+        "requests_cache",
+        "pydantic",
     ],
 )
