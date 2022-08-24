@@ -13,6 +13,7 @@ pydantic = "*"
 kerykeion = {editable = true, path = "."}
 pytest = "*"
 pdoc = "*"
+terminaltables = "*"
 
 [requires]
 python_version = "3.9"

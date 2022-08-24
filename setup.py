@@ -42,5 +42,6 @@ setup(
         "requests",
         "requests_cache",
         "pydantic",
+        "terminaltables"
     ],
 )
