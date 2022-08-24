@@ -1,6 +1,7 @@
 from json import loads
+from re import sub
 from kerykeion.fetch_geonames import FetchGeonames
-from kerykeion import KrInstance, MakeSvgInstance, RelationshipScore, NatalAspects, CompositeAspects
+from kerykeion import KrInstance, MakeSvgInstance, RelationshipScore, NatalAspects, CompositeAspects, Report
 from logging import basicConfig
 
 basicConfig(
@@ -102,6 +103,12 @@ def test_relationship_score():
         'orbit': 3.6029094171302063
     }
 
+def test_print_report():
+    subject = KrInstance("John", 1975, 10, 10, 21, 15, 'Roma', 'IT')
+    report = Report(subject)
+
+    assert report.report_title == "\n+- Kerykeion report for John -+"
+
 
 if __name__ == "__main__":
     test_geonames()
@@ -110,3 +117,4 @@ if __name__ == "__main__":
     test_composite_aspects()
     test_relationship_score()
     test_composite_chart_instance()
+    test_print_report()

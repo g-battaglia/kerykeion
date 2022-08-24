@@ -144,3 +144,4 @@ from .charts.charts_svg import MakeSvgInstance
 from .types import *
 from .relationship_score import RelationshipScore
 from .aspects import NatalAspects, CompositeAspects
+from .report import Report
