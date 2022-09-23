@@ -117,6 +117,7 @@ report.print_report()
 Returns:
 
 ```
++- Kerykeion report for Kanye -+
 +----------+------+-------------+-----------+----------+
 | Date     | Time | Location    | Longitude | Latitude |
 +----------+------+-------------+-----------+----------+
