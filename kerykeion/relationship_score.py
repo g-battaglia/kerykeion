@@ -190,7 +190,7 @@ class RelationshipScore:
             'points': score,
             'p1_name': aspect['p1_name'],
             'p2_name': aspect['p2_name'],
-            'aspect': 'conjunction',
+            'aspect': aspect['aspect'],
             'orbit': aspect['orbit']
         }
 
