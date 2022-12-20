@@ -99,7 +99,7 @@ def test_relationship_score():
         'points': 4,
         'p1_name': 'Sun',
         'p2_name': 'Sun',
-        'aspect': 'conjunction',
+        'aspect': 'trine',
         'orbit': 3.6029094171302063
     }
 
