@@ -22,7 +22,7 @@
       "lunar_phase": "Lunar phase",
       "day": "Day",
 
-      "planets": {
+      "celestial_points": {
         "Sun": "Sun",
         "Moon": "Moon",
         "Mercury": "Mercury",
@@ -64,7 +64,7 @@
       "lunar_phase": "Fase lunar",
       "day": "Dia",
 
-      "planets": {
+      "celestial_points": {
         "Sun": "Sol",
         "Moon": "Lua",
         "Mercury": "Mercúrio",
@@ -106,7 +106,7 @@
       "lunar_phase": "Fase lunare",
       "day": "Giorno",
 
-      "planets": {
+      "celestial_points": {
         "Sun": "Sole",
         "Moon": "Luna",
         "Mercury": "Mercurio",
@@ -297,7 +297,7 @@
     }
   ],
 
-  "planets": [
+  "celestial_points": [
     {
       "id": 0,
       "name": "Sun",

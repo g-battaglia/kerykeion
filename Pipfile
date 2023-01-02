@@ -14,6 +14,10 @@ kerykeion = {editable = true, path = "."}
 pytest = "*"
 pdoc = "*"
 terminaltables = "*"
+mypy = "*"
+types-requests = "*"
+types-pytz = "*"
+black = "*"
 
 [requires]
 python_version = "3.9"
@@ -21,3 +25,7 @@ python_version = "3.9"
 [scripts]
 test = "pytest tests"
 create-docs = "pdoc kerykeion -o ./docs"
+analyze = "python -m mypy --ignore-missing-imports kerykeion"
+
+[pipenv]
+allow_prereleases = true

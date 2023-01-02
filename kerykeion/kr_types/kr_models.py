@@ -4,103 +4,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from ast import Dict
 from typing import Literal, Union, Optional
 from pydantic import BaseModel
 
+from .kr_literals import *
 
-# Exceptions:
-
-
-class KerykeionException(Exception):
-    """
-    Custom Kerykeion Exception
-    """
-
-    def __init__(self, message):
-        # Call the base class constructor with the parameters it needs
-        super().__init__(message)
-
-
-# Zodiac Types:
-ZodiacType = Literal['Tropic', 'Sidereal']
-
-# Sings:
-Sign = Literal[
-    "Ari",
-    "Tau",
-    "Gem",
-    "Can",
-    "Leo",
-    "Vir",
-    "Lib",
-    "Sco",
-    "Sag",
-    "Cap",
-    "Aqu",
-    "Pis"
-]
-
-Houses = Literal[
-    "First House",
-    "Second House",
-    "Third House",
-    "Fourth House",
-    "Fifth House",
-    "Sixth House",
-    "Seventh House",
-    "Eighth House",
-    "Ninth House",
-    "Tenth House",
-    "Eleventh House",
-    "Twelfth House"
-]
-
-Planet = Literal[
-    "Sun",
-    "Moon",
-    "Mercury",
-    "Venus",
-    "Mars",
-    "Jupiter",
-    "Saturn",
-    "Uranus",
-    "Neptune",
-    "Pluto",
-    "Mean_Node",
-    "True_Node"
-]
-
-Element = Literal[
-    "Air",
-    "Fire",
-    "Earth",
-    "Water"
-]
-
-Quality = Literal[
-    'Cardinal',
-    'Fixed',
-    'Mutable',
-]
-
-
-ChartType = Literal[
-    'Natal',
-    'Composite',
-    'Transit'
-]
-
-LunarPhaseEmoji = Literal[
-    '🌑',
-    '🌒',
-    '🌓',
-    '🌔',
-    '🌕',
-    '🌖',
-    '🌗',
-    '🌘'
-]
 
 class LunarPhaseObject(BaseModel):
     degrees_between_s_m: Union[int, float]
@@ -109,10 +17,28 @@ class LunarPhaseObject(BaseModel):
     moon_emoji: LunarPhaseEmoji
 
     def __str__(self):
-        return super().dict(exclude_none=True, exclude_unset=True, exclude_defaults=True, by_alias=False).__str__()
+        return (
+            super()
+            .dict(
+                exclude_none=True,
+                exclude_unset=True,
+                exclude_defaults=True,
+                by_alias=False,
+            )
+            .__str__()
+        )
 
     def __repr__(self):
-        return super().dict(exclude_none=True, exclude_unset=True, exclude_defaults=True, by_alias=False).__str__()
+        return (
+            super()
+            .dict(
+                exclude_none=True,
+                exclude_unset=True,
+                exclude_defaults=True,
+                by_alias=False,
+            )
+            .__str__()
+        )
 
     def __getitem__(self, key):
         return getattr(self, key)
@@ -122,32 +48,51 @@ class LunarPhaseObject(BaseModel):
 
     def __delitem__(self, key):
         delattr(self, key)
-    
+
     def get(self, key, default):
         return getattr(self, key, default)
 
+
 class KerykeionPoint(BaseModel):
-    """   
-        Kerykeion Point Model
+    """
+    Kerykeion Point Model
     """
 
     name: Union[Planet, Houses]
-    quality:  Quality
+    quality: Quality
     element: Element
     sign: Sign
     sign_num: Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     position: float
     abs_pos: float
     emoji: str
-    point_type: Literal['Planet', 'House']
+    point_type: Literal["Planet", "House"]
     house: Optional[Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]] = None
     retrograde: Optional[bool] = None
 
     def __str__(self):
-        return super().dict(exclude_none=True, exclude_unset=True, exclude_defaults=True, by_alias=False).__str__()
+        return (
+            super()
+            .dict(
+                exclude_none=True,
+                exclude_unset=True,
+                exclude_defaults=True,
+                by_alias=False,
+            )
+            .__str__()
+        )
 
     def __repr__(self):
-        return super().dict(exclude_none=True, exclude_unset=True, exclude_defaults=True, by_alias=False).__str__()
+        return (
+            super()
+            .dict(
+                exclude_none=True,
+                exclude_unset=True,
+                exclude_defaults=True,
+                by_alias=False,
+            )
+            .__str__()
+        )
 
     def __getitem__(self, key):
         return getattr(self, key)
@@ -157,7 +102,7 @@ class KerykeionPoint(BaseModel):
 
     def __delitem__(self, key):
         delattr(self, key)
-    
+
     def get(self, key, default):
         return getattr(self, key, default)
 
@@ -213,17 +158,18 @@ class KerykeionSubject(BaseModel):
     # Lunar Phase
     lunar_phase: LunarPhaseObject
 
+
 if __name__ == "__main__":
     sun = KerykeionPoint(
-        name='Sun',
-        element='Air',
-        quality='Fixed',
-        sign='Aqu',
+        name="Sun",
+        element="Air",
+        quality="Fixed",
+        sign="Aqu",
         sign_num=1,
         position=0,
         abs_pos=12.123123,
-        emoji='♈',
-        point_type='Planet'
+        emoji="♈",
+        point_type="Planet",
     )
 
     print(sun.json())
