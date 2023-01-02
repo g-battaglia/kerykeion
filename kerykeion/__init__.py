@@ -138,10 +138,10 @@
 # -*- coding: utf-8 -*-
 
 # Local
-from .main import KrInstance
+from .kr_instance import KrInstance
 from .print_all_data import print_all_data
 from .charts.charts_svg import MakeSvgInstance
-from .types import *
+from .kr_types import *
 from .relationship_score import RelationshipScore
-from .aspects import NatalAspects, CompositeAspects
+from .aspects import CompositeAspects, NatalAspects
 from .report import Report

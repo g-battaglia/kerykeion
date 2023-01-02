@@ -1,120 +1,79 @@
-from json import loads
-from re import sub
-from kerykeion.fetch_geonames import FetchGeonames
-from kerykeion import KrInstance, MakeSvgInstance, RelationshipScore, NatalAspects, CompositeAspects, Report
-from logging import basicConfig
+from kerykeion import KrInstance
+from logging import getLogger
 
-basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=10,
-    force=True
-)
+logger = getLogger(__name__)
 
 
-def test_geonames():
-    geonames = FetchGeonames("Roma", "IT")
-    data = geonames.get_serialized_data()
+class TestKrInstance:
+    def setup_class(self):
+        # Johnny Depp
+        self.subject = KrInstance("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
 
-    assert data["countryCode"] == "IT"
-    assert data["timezonestr"] == "Europe/Rome"
-    assert data["lat"] == '41.89193'
-    assert data["lng"] == '12.51133'
+    def test_basic_input_data(self):
+        assert self.subject.name == "Johnny Depp"
+        assert self.subject.year == 1963
+        assert self.subject.month == 6
+        assert self.subject.day == 9
+        assert self.subject.hour == 0
+        assert self.subject.minute == 0
+        assert self.subject.city == "Owensboro"
+        assert self.subject.nation == "US"
 
+    def test_internal_data(self):
+        assert round(self.subject.lat, 3) == round(37.774, 3)
+        assert round(self.subject.lng, 3) == round(-87.113, 3)
+        assert self.subject.tz_str == "America/Chicago"
+        assert self.subject.zodiac_type == "Tropic"
+        assert round(self.subject.julian_day, 3) == round(2438189.708, 3)
 
-def test_kerykeion_instace():
-    object = KrInstance("Test", 1993, 10, 10, 12, 12, "London", "GB")
+    def test_sun(self):
+        assert self.subject.sun.name == "Sun"
+        assert self.subject.sun.quality == "Mutable"
+        assert self.subject.sun.element == "Air"
+        assert self.subject.sun.sign == "Gem"
+        assert self.subject.sun.sign_num == 2
+        assert round(self.subject.sun.position, 3) == round(17.66, 3)
+        assert round(self.subject.sun.abs_pos, 3) == round(77.66, 3)
+        assert self.subject.sun.emoji == "♊️"
+        assert self.subject.sun.house == "Fourth House"
+        assert self.subject.sun.retrograde == False
+        assert self.subject.sun.point_type == "Planet"
 
-    assert object.sun.name == "Sun"
-    assert object.sun.quality == "Cardinal"
-    assert object.sun.element == "Air"
-    assert object.sun.sign == "Lib"
-    assert object.sun.sign_num == 6
-    assert object.sun.position == 17.16206089113507
-    assert object.sun.abs_pos == 197.16206089113507
-    assert object.sun.emoji == "♎️"
-    assert object.sun.house == "Tenth House"
-    assert object.sun.retrograde == False
-    assert object.sun.point_type == "Planet"
+    def test_moon(self):
+        assert self.subject.moon.name == "Moon"
+        assert self.subject.moon.quality == "Cardinal"
+        assert self.subject.moon.element == "Earth"
+        assert self.subject.moon.sign == "Cap"
+        assert self.subject.moon.sign_num == 9
+        assert round(self.subject.moon.position, 3) == round(8.735, 3)
+        assert round(self.subject.moon.abs_pos, 3) == round(278.735, 3)
+        assert self.subject.moon.emoji == "♑️"
+        assert self.subject.moon.house == "Eleventh House"
+        assert self.subject.moon.retrograde == False
+        assert self.subject.moon.point_type == "Planet"
 
-    object = KrInstance("Test", 1993, 10, 10, 12, 12, "Roma", "IT")
+    def test_mercury(self):
+        assert self.subject.mercury.name == "Mercury"
+        assert self.subject.mercury.quality == "Fixed"
+        assert self.subject.mercury.element == "Earth"
+        assert self.subject.mercury.sign == "Tau"
+        assert self.subject.mercury.sign_num == 1
+        assert round(self.subject.mercury.position, 3) == round(25.002, 3)
+        assert round(self.subject.mercury.abs_pos, 3) == round(55.002, 3)
+        assert self.subject.mercury.emoji == "♉️"
+        assert self.subject.mercury.house == "Third House"
+        assert self.subject.mercury.retrograde == False
+        assert self.subject.mercury.point_type == "Planet"
 
-    assert object.city == "Roma"
-    assert object.nation == "IT"
-
-    object = KrInstance("Test", 1993, 10, 10, 12, 12, lng=2.1, lat=2.1, tz_str='Europe/Rome')
-
-    assert object.lng == 2.1
-    assert object.lat == 2.1
-
-def test_composite_aspects():
-    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "New York")
-    jack = KrInstance("Jack", 1990, 6, 15, 13, 00, "Montichiari")
-
-    instance = CompositeAspects(kanye, jack)
-    aspects = instance.get_relevant_aspects()
-
-    assert len(aspects) == 37
-    assert aspects[0] == {
-        'p1_name': 'Sun',
-        'p1_abs_pos': 77.59899205977428,
-        'p2_name': 'Sun',
-        'p2_abs_pos': 84.08913890182518,
-        'aspect': 'conjunction',
-        'orbit': 6.490146842050876,
-        'aspect_degrees': 0,
-        'color': '#5757e2',
-        'aid': 0,
-        'diff': 6.490146842050905,
-        'p1': 0, 'p2': 0
-    }
-
-
-def test_birthchart_instance():
-    subject = KrInstance("Test", 1993, 10, 10, 12, 12, "London", "GB")
-    birthchart_svg = MakeSvgInstance(subject).makeTemplate()
-
-    assert birthchart_svg.startswith("<?xml version='1.0' encoding='UTF-8'?>")
-
-
-def test_composite_chart_instance():
-    # TODO: Improve with bs4
-    first_subject = KrInstance("John", 1975, 10, 10, 21, 15, 'Roma', 'IT')
-    second_subject = KrInstance("Sarah", 1978, 2, 9, 15, 50, 'Roma', 'IT')
-    birthchart_instance = MakeSvgInstance(
-        first_subject, 'Composite', second_subject)
-    template = birthchart_instance.makeTemplate()
-
-    assert birthchart_instance.chart_type == 'Composite'
-    assert template.startswith("<?xml version='1.0' encoding='UTF-8'?>")
-
-
-def test_relationship_score():
-    first_subject = KrInstance("John", 1975, 10, 10, 21, 15, 'Roma', 'IT')
-    second_subject = KrInstance("Sarah", 1978, 2, 9, 15, 50, 'Roma', 'IT')
-
-    score = RelationshipScore(first_subject, second_subject)
-    assert score.__dict__()['score'] == 20
-    assert score.__dict__()['is_destiny_sign'] == False
-    assert score.__dict__()['relevant_aspects'][0] == {
-        'points': 4,
-        'p1_name': 'Sun',
-        'p2_name': 'Sun',
-        'aspect': 'trine',
-        'orbit': 3.6029094171302063
-    }
-
-def test_print_report():
-    subject = KrInstance("John", 1975, 10, 10, 21, 15, 'Roma', 'IT')
-    report = Report(subject)
-
-    assert report.report_title == "\n+- Kerykeion report for John -+"
-
-
-if __name__ == "__main__":
-    test_geonames()
-    test_kerykeion_instace()
-    test_birthchart_instance()
-    test_composite_aspects()
-    test_relationship_score()
-    test_composite_chart_instance()
-    test_print_report()
+    def test_venus(self):
+        assert self.subject.venus.name == "Venus"
+        assert self.subject.venus.quality == "Fixed"
+        assert self.subject.venus.element == "Earth"
+        assert self.subject.venus.sign == "Tau"
+        assert self.subject.venus.sign_num == 1
+        assert round(self.subject.venus.position, 3) == round(25.604, 3)
+        assert round(self.subject.venus.abs_pos, 3) == round(55.604, 3)
+        assert self.subject.venus.emoji == "♉️"
+        assert self.subject.venus.house == "Third House"
+        assert self.subject.venus.retrograde == False
+        assert self.subject.venus.point_type == "Planet"

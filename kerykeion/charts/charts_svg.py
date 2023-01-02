@@ -9,9 +9,10 @@ import math
 import pytz
 
 from datetime import datetime
-from kerykeion.aspects import NatalAspects, CompositeAspects
-from kerykeion.main import KrInstance
-from kerykeion.types import KerykeionException, ChartType
+from kerykeion.aspects.composite_aspects import CompositeAspects
+from kerykeion.aspects.natal_aspects import NatalAspects
+from kerykeion.kr_instance import KrInstance
+from kerykeion.kr_types import KerykeionException, ChartType
 from pathlib import Path
 from string import Template
 from typing import Union
@@ -235,7 +236,7 @@ class MakeSvgInstance:
         dt = pytz.timezone(self.timezonestr).localize(dt_input)
 
         # naive utc datetime object
-        dt_utc = dt.replace(tzinfo=None) - dt.utcoffset()
+        dt_utc = dt.replace(tzinfo=None) - dt.utcoffset() # type: ignore
 
         # Default
         self.name = self.user.name
@@ -1187,7 +1188,7 @@ class MakeSvgInstance:
                 # start of line
                 out += '<g transform="translate(%s,%s)">' % (offset, li)
                 # planet text
-                out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["planets"][self.planets_settings[i]["label"]]}</text>'
+                out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
                 # planet symbol
                 out += \
                     '<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#' + \
@@ -1234,7 +1235,7 @@ class MakeSvgInstance:
                     out += f'<g transform="translate({t_offset},{t_li})">'
 
                     # planet text
-                    out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["planets"][self.planets_settings[i]["label"]]}</text>'
+                    out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
                     # planet symbol
                     out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="# {self.planets_settings[i]["name"]}" /></g>'
                     # planet degree
@@ -1317,7 +1318,7 @@ class MakeSvgInstance:
         self.language_settings = settings['language_settings'].get(
             lang, "EN")
         self.colors_settings = settings['colors']
-        self.planets_settings = settings['planets']
+        self.planets_settings = settings['celestial_points']
         self.aspects_settings = settings['aspects']
 
     def makeTemplate(self):
