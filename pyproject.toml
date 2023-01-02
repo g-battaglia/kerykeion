@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kerykeion"
-version = "3.4"
+version = "4.0a1"
 authors = ["Giacomo Battaglia <battaglia.giacomo@yahoo.it>"]
 description = "A python library for astrology."
 license = "GPL-2.0"
@@ -84,6 +84,6 @@ log_format = "%(asctime)s %(levelname)s %(message)s"
 ### Scripts: ###
 ################
 
-# poetry run create-docs
 #-poetry run pytest
 # poetry run mypy
+# python -m pdoc kerykeion -o ./docs
