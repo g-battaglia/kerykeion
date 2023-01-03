@@ -571,7 +571,11 @@ class KrInstance:
 if __name__ == "__main__":
     import json
 
-    basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=20)
+    basicConfig(
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        level=10,
+        force=True,
+    )
 
     johnny = KrInstance("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
     print(json.loads(johnny.json(dump=True)))

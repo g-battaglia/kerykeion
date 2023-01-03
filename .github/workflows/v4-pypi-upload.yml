@@ -3,7 +3,7 @@ name: Publish Kerykeion 💫 to PyPI 📦
 on:
   push:
     branches:
-      - dev-v4
+      - v4
     # tags:
     #  - "v*"
 

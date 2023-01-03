@@ -43,9 +43,7 @@ class FetchGeonames:
         self.base_url = "http://api.geonames.org/searchJSON"
         self.timezone_url = "http://api.geonames.org/timezoneJSON"
 
-    def __get_timezone(
-        self, lat: Union[str, float, int], lon: Union[str, float, int]
-    ) -> dict[str, str]:
+    def __get_timezone(self, lat: Union[str, float, int], lon: Union[str, float, int]) -> dict[str, str]:
         """
         Get the timezone for a given latitude and longitude
         """
@@ -107,9 +105,7 @@ class FetchGeonames:
             city_data_whitout_tz["name"] = response_json["geonames"][0]["name"]
             city_data_whitout_tz["lat"] = response_json["geonames"][0]["lat"]
             city_data_whitout_tz["lng"] = response_json["geonames"][0]["lng"]
-            city_data_whitout_tz["countryCode"] = response_json["geonames"][0][
-                "countryCode"
-            ]
+            city_data_whitout_tz["countryCode"] = response_json["geonames"][0]["countryCode"]
 
         except Exception as e:
             logger.error(f"Error serializing data maybe wrong username? Details: {e}")
@@ -129,9 +125,7 @@ class FetchGeonames:
         """
         city_data_response = self.__get_contry_data(self.city_name, self.country_code)
         try:
-            timezone_response = self.__get_timezone(
-                city_data_response["lat"], city_data_response["lng"]
-            )
+            timezone_response = self.__get_timezone(city_data_response["lat"], city_data_response["lng"])
 
         except Exception as e:
             logger.error(f"Error in fetching timezone: {e}")
@@ -145,7 +139,8 @@ if __name__ == "__main__":
 
     basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        level=INFO,
+        level=10,
+        force=True,
     )
 
     geonames = FetchGeonames("Roma", "IT")
