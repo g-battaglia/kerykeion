@@ -10,7 +10,7 @@ from kerykeion import KrInstance
 from swisseph import difdeg2n
 from typing import Union
 
-from .aspects_settings import DEFAULT_KR_CONFIG_FILE
+from kerykeion.aspects.aspects_settings import DEFAULT_KR_CONFIG_FILE
 
 
 class NatalAspects:
@@ -305,10 +305,9 @@ class NatalAspects:
 
 
 if __name__ == "__main__":
-    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "New York")
-    natal = NatalAspects(kanye)
-    natal.get_relevant_aspects()
-    print(natal.aspects[0])
+    johnny = KrInstance("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
+    aspects = NatalAspects(johnny).get_all_aspects()
 
-    for a in natal.aspects:
-        print(a["p1_name"], a["p2_name"], a["orbit"])
+    print(aspects)
+
+
