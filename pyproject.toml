@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kerykeion"
-version = "4.0a2"
+version = "4.0a3"
 authors = ["Giacomo Battaglia <battaglia.giacomo@yahoo.it>"]
 description = "A python library for astrology."
 license = "GPL-2.0"

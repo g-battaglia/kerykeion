@@ -43,7 +43,7 @@ jobs:
     name: Build and publish Python 🐍 distributions 📦 to PyPI
     needs: [test]
     if: |
-      ${{ always() && (needs.test.result=='success') }} &&
+      ${{ always() && (needs.test.result == 'success') }} &&
       # prevents this action from running on forks
       github.repository == 'g-battaglia/kerykeion'
     runs-on: ubuntu-latest
