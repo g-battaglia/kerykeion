@@ -64,7 +64,14 @@ jobs:
           poetry
           --user
 
-      - name: Install poetry
+      - name: Define test-pypi
+        run: >-
+          python -m
+          poetry config 
+          repositories.test-pypi 
+          https://test.pypi.org/legacy/
+
+      - name: Publish to PYPI
         run: >-
           python -m
           poetry publish
