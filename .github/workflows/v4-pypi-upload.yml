@@ -64,19 +64,27 @@ jobs:
           poetry
           --user
 
-      - name: Define test-pypi
-        run: >-
-          python -m
-          poetry config 
-          repositories.test-pypi 
-          https://test.pypi.org/legacy/
+      # - name: Define test-pypi
+      #  run: >-
+      #    python -m
+      #    poetry config 
+      #    repositories.test-pypi 
+      #    https://test.pypi.org/legacy/
+
+      # - name: Publish to PYPI
+      #  run: >-
+      #    python -m
+      #    poetry publish
+      #    --build 
+      #    -r test-pypi
+      #    --username __token__
+      #    --password ${{ secrets.TEST_PYPI_API_TOKEN }}
 
       - name: Publish to PYPI
         run: >-
           python -m
           poetry publish
           --build 
-          -r test-pypi
           --username __token__
-          --password ${{ secrets.TEST_PYPI_API_TOKEN }}
+          --password ${{ secrets.PYP4_V4A_SECRET_TOKEN }}
 
