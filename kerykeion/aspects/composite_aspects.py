@@ -84,23 +84,9 @@ class CompositeAspects(NatalAspects):
 
 
 if __name__ == "__main__":
-    # Testing
-    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "New York")
-    jack = KrInstance("Jack", 1990, 6, 15, 13, 00, "Montichiari")
-    cm = CompositeAspects(kanye, jack)
-    res = cm.get_relevant_aspects()
+    john = KrInstance("John", 1940, 10, 9, 10, 30, "Liverpool")
+    yoko = KrInstance("Yoko", 1933, 2, 18, 10, 30, "Tokyo")
 
-    for a in res:
-        print(
-            a["p1_name"],
-            "number is",
-            a["p1"],
-            a["p2_name"],
-            "number is",
-            a["p2"],
-            a["orbit"],
-            a["aspect"],
-        )
+    composite_aspects = CompositeAspects(john, yoko)
 
-    print(len(res))
-    print(res[0])
+    print(composite_aspects.get_all_aspects())
