@@ -42,6 +42,48 @@
       }
     },
 
+    "FR": {
+      "info": "Informations",
+      "cusp": "Maison",
+      "longitude": "Longitude",
+      "latitude": "Latitude",
+      "north": "Nord",
+      "east": "Est",
+      "south": "Sud",
+      "west": "Ouest",
+      "fire": "Feu",
+      "earth": "Terre",
+      "air": "Air",
+      "water": "Eau",
+      "&": "et",
+      "transits": "Transites pour",
+      "type": "Type",
+      "aspects": "Les aspects",
+      "planets_and_house": "Planetes et Maisons pour",
+      "transit_name": "Au moment de la transition",
+      "lunar_phase": "Phase Lunaire",
+      "day": "Jour",
+
+      "planets": {
+        "Sun": "Soleil",
+        "Moon": "Lune",
+        "Mercury": "Mercure",
+        "Venus": "Vénus",
+        "Mars": "Mars",
+        "Jupiter": "Jupiter",
+        "Saturn": "Saturne",
+        "Uranus": "Uranus",
+        "Neptune": "Neptune",
+        "Pluto": "Pluton",
+        "Asc": "Asc",
+        "Mc": "Mc",
+        "Dsc": "Dsc",
+        "Ic": "Ic",
+        "North_Node": "Noeud Nord",
+        "Mean_Node": "Noeud Moyen"
+      }
+    },
+
     "PT": {
       "info": "Informações",
       "cusp": "Casa",
