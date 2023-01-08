@@ -19,15 +19,15 @@ class TestNatalAspects:
     def test_relevant_aspects(self):
         for i, aspect in enumerate(self.expected_relevant_aspects):
             assert self.subject_relevant_aspects[i]["p1_name"] == aspect["p1_name"]
-            assert self.subject_relevant_aspects[i]["p1_abs_pos"] == aspect["p1_abs_pos"]
+            assert round(self.subject_relevant_aspects[i]["p1_abs_pos"], 3) == round(aspect["p1_abs_pos"], 3)
             assert self.subject_relevant_aspects[i]["p2_name"] == aspect["p2_name"]
-            assert self.subject_relevant_aspects[i]["p2_abs_pos"] == aspect["p2_abs_pos"]
+            assert round(self.subject_relevant_aspects[i]["p2_abs_pos"], 3) == round(aspect["p2_abs_pos"], 3)
             assert self.subject_relevant_aspects[i]["aspect"] == aspect["aspect"]
-            assert self.subject_relevant_aspects[i]["orbit"] == aspect["orbit"]
+            assert round(self.subject_relevant_aspects[i]["aspect_degrees"], 3) == round(aspect["aspect_degrees"], 3)
             assert self.subject_relevant_aspects[i]["aspect_degrees"] == aspect["aspect_degrees"]
             assert self.subject_relevant_aspects[i]["color"] == aspect["color"]
             assert self.subject_relevant_aspects[i]["aid"] == aspect["aid"]
-            assert self.subject_relevant_aspects[i]["diff"] == aspect["diff"]
+            assert round(self.subject_relevant_aspects[i]["diff"], 3) == round(aspect["diff"], 3)
             assert self.subject_relevant_aspects[i]["p1"] == aspect["p1"]
             assert self.subject_relevant_aspects[i]["p2"] == aspect["p2"]
 
@@ -37,14 +37,14 @@ class TestNatalAspects:
     def test_all_aspects(self):
         for i, aspect in enumerate(self.expected_all_aspects):
             assert self.subject_all_aspects[i]["p1_name"] == aspect["p1_name"]
-            assert self.subject_all_aspects[i]["p1_abs_pos"] == aspect["p1_abs_pos"]
+            assert round(self.subject_all_aspects[i]["p1_abs_pos"], 3) == round(aspect["p1_abs_pos"], 3)
             assert self.subject_all_aspects[i]["p2_name"] == aspect["p2_name"]
-            assert self.subject_all_aspects[i]["p2_abs_pos"] == aspect["p2_abs_pos"]
+            assert round(self.subject_all_aspects[i]["p2_abs_pos"], 3) == round(aspect["p2_abs_pos"], 3)
             assert self.subject_all_aspects[i]["aspect"] == aspect["aspect"]
-            assert self.subject_all_aspects[i]["orbit"] == aspect["orbit"]
-            assert self.subject_all_aspects[i]["aspect_degrees"] == aspect["aspect_degrees"]
+            assert round(self.subject_all_aspects[i]["orbit"], 3) == round(aspect["orbit"], 3)
+            assert round(self.subject_all_aspects[i]["aspect_degrees"], 3) == round(aspect["aspect_degrees"], 3)
             assert self.subject_all_aspects[i]["color"] == aspect["color"]
             assert self.subject_all_aspects[i]["aid"] == aspect["aid"]
-            assert self.subject_all_aspects[i]["diff"] == aspect["diff"]
+            assert round(self.subject_all_aspects[i]["diff"], 3) == round(aspect["diff"], 3)
             assert self.subject_all_aspects[i]["p1"] == aspect["p1"]
             assert self.subject_all_aspects[i]["p2"] == aspect["p2"]

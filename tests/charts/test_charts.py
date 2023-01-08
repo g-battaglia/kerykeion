@@ -21,6 +21,7 @@ class TestCharts:
 
     def test_composite_chart(self):
         composite_chart_svg = MakeSvgInstance(self.first_subject, "Composite", self.second_subject).makeTemplate()
+        MakeSvgInstance(self.first_subject, "Composite", self.second_subject).makeSVG()
         with open(CURRENT_DIR / "expected_legacy_composite_chart.svg", "r") as f:
             file_content = f.read()
 
