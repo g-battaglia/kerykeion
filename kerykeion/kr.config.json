@@ -21,7 +21,6 @@
       "transit_name": "Here and now",
       "lunar_phase": "Lunar phase",
       "day": "Day",
-
       "planets": {
         "Sun": "Sun",
         "Moon": "Moon",
@@ -41,7 +40,6 @@
         "Mean_Node": "Mean Node"
       }
     },
-
     "FR": {
       "info": "Informations",
       "cusp": "Maison",
@@ -63,7 +61,6 @@
       "transit_name": "Au moment de la transition",
       "lunar_phase": "Phase Lunaire",
       "day": "Jour",
-
       "planets": {
         "Sun": "Soleil",
         "Moon": "Lune",
@@ -83,7 +80,6 @@
         "Mean_Node": "Noeud Moyen"
       }
     },
-
     "PT": {
       "info": "Informações",
       "cusp": "Casa",
@@ -105,7 +101,6 @@
       "transit_name": "Aqui e agora",
       "lunar_phase": "Fase lunar",
       "day": "Dia",
-
       "planets": {
         "Sun": "Sol",
         "Moon": "Lua",
@@ -125,7 +120,6 @@
         "Mean_Node": "Nodo Médio"
       }
     },
-
     "IT": {
       "info": "Info",
       "cusp": "Cuspide",
@@ -147,7 +141,6 @@
       "transit_name": "Qui ed ora",
       "lunar_phase": "Fase lunare",
       "day": "Giorno",
-
       "planets": {
         "Sun": "Sole",
         "Moon": "Luna",
@@ -166,9 +159,48 @@
         "North_Node": "Nodo Nord",
         "Mean_Node": "Mean Node"
       }
+    },
+    "CN": {
+      "info": "命盤資訊",
+      "cusp": "宮",
+      "longitude": "經度",
+      "latitude": "緯度",
+      "north": "北",
+      "east": "東",
+      "south": "南",
+      "west": "西",
+      "fire": "火",
+      "earth": "土",
+      "air": "風",
+      "water": "水",
+      "&": "與",
+      "transits": "流年合盤",
+      "type": "盤型",
+      "aspects": "相位",
+      "planets_and_house": "行星 與 宫位",
+      "transit_name": "流年星相",
+      "lunar_phase": "月相",
+      "day": "日",
+      "planets": {
+        "Sun": "太陽",
+        "Moon": "月亮",
+        "Mercury": "水星",
+        "Venus": "金星",
+        "Mars": "火星",
+        "Jupiter": "木星",
+        "Saturn": "土星",
+        "Uranus": "天王星",
+        "Neptune": "海王星",
+        "Pluto": "冥王星",
+        "Asc": "上升點",
+        "Mc": "上中天",
+        "Dsc": "下降點",
+        "Ic": "下中天",
+        "North_Node": "北交點",
+        "Mean_Node": "平交點"
+      }
     }
   },
-
   "colors": {
     "paper_0": "#000000",
     "paper_1": "#ffffff",
@@ -236,7 +268,6 @@
     "lunar_phase_1": "#FFFFFF",
     "lunar_phase_2": "#CCCCCC"
   },
-
   "aspects": [
     {
       "degree": 0,
@@ -338,7 +369,6 @@
       "orb": 10
     }
   ],
-
   "planets": [
     {
       "id": 0,
@@ -501,6 +531,5 @@
       "label_short": "Ic"
     }
   ],
-
   "axes_orbit": 1
 }
