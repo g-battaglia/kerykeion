@@ -13,12 +13,10 @@ from kerykeion.aspects.composite_aspects import CompositeAspects
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.kr_instance import KrInstance
 from kerykeion.kr_types import KerykeionException, ChartType
+from kerykeion.charts.charts_utils import decHourJoin, degreeDiff, offsetToTz, sliceToX, sliceToY
 from pathlib import Path
 from string import Template
 from typing import Union
-
-# calculation and svg drawing class
-
 
 class MakeSvgInstance:
     """
@@ -245,7 +243,7 @@ class MakeSvgInstance:
         self.month = self.user.utc.month
         self.day = self.user.utc.day
         self.hour = self.user.utc.hour + self.user.utc.minute/100
-        self.timezone = self.__offsetToTz(dt.utcoffset())
+        self.timezone = offsetToTz(dt.utcoffset())
         self.altitude = 25
         self.geonameid = None
 
@@ -259,9 +257,9 @@ class MakeSvgInstance:
             self.t_year = dt_utc.year
             self.t_month = dt_utc.month
             self.t_day = dt_utc.day
-            self.t_hour = self.__decHourJoin(
+            self.t_hour = decHourJoin(
                 dt_utc.hour, dt_utc.minute, dt_utc.second)
-            self.t_timezone = self.__offsetToTz(dt.utcoffset())
+            self.t_timezone = offsetToTz(dt.utcoffset())
             self.t_altitude = 25
             self.t_geonameid = None
 
@@ -292,8 +290,11 @@ class MakeSvgInstance:
             r, r, r, self.colors_settings['zodiac_transit_ring_3'])
         return out
 
-    # draw degree ring
-    def __degreeRing(self, r):
+    def __degreeRing(self, r) -> str:
+        """
+        Draws the degree ring.
+        """
+
         out = ''
         for i in range(72):
             offset = float(i*5) - self.houses_degree_ut[6]
@@ -301,10 +302,10 @@ class MakeSvgInstance:
                 offset = offset + 360.0
             elif offset > 360:
                 offset = offset - 360.0
-            x1 = self.__sliceToX(0, r-self.c1, offset) + self.c1
-            y1 = self.__sliceToY(0, r-self.c1, offset) + self.c1
-            x2 = self.__sliceToX(0, r+2-self.c1, offset) - 2 + self.c1
-            y2 = self.__sliceToY(0, r+2-self.c1, offset) - 2 + self.c1
+            x1 = sliceToX(0, r-self.c1, offset) + self.c1
+            y1 = sliceToY(0, r-self.c1, offset) + self.c1
+            x2 = sliceToX(0, r+2-self.c1, offset) - 2 + self.c1
+            y2 = sliceToY(0, r+2-self.c1, offset) - 2 + self.c1
             out += '<line x1="%s" y1="%s" x2="%s" y2="%s" style="stroke: %s; stroke-width: 1px; stroke-opacity:.9;"/>' % (
                 x1, y1, x2, y2, self.colors_settings['paper_0'])
         return out
@@ -317,16 +318,26 @@ class MakeSvgInstance:
                 offset = offset + 360.0
             elif offset > 360:
                 offset = offset - 360.0
-            x1 = self.__sliceToX(0, r, offset)
-            y1 = self.__sliceToY(0, r, offset)
-            x2 = self.__sliceToX(0, r+2, offset) - 2
-            y2 = self.__sliceToY(0, r+2, offset) - 2
+            x1 = sliceToX(0, r, offset)
+            y1 = sliceToY(0, r, offset)
+            x2 = sliceToX(0, r+2, offset) - 2
+            y2 = sliceToY(0, r+2, offset) - 2
             out += '<line x1="%s" y1="%s" x2="%s" y2="%s" style="stroke: #F00; stroke-width: 1px; stroke-opacity:.9;"/>' % (
                 x1, y1, x2, y2)
         return out
 
-    # floating latitude an longitude to string
     def __lat2str(self, coord):
+        """ Converts a floating point latitude to string with
+        degree, minutes and seconds and the appropriate sign
+        (north or south). Eg. 52.1234567 -> 52°7'25" N
+
+        Args:
+            coord (float): latitude in floating point format
+        Returns:
+            str: latitude in string format with degree, minutes,
+             seconds and sign (N/S)
+        """
+        
         sign = self.language_settings["north"]
         if coord < 0.0:
             sign = self.language_settings["south"]
@@ -337,6 +348,17 @@ class MakeSvgInstance:
         return "%s°%s'%s\" %s" % (deg, min, sec, sign)
 
     def __lon2str(self, coord):
+        """ Converts a floating point longitude to string with
+        degree, minutes and seconds and the appropriate sign
+        (east or west). Eg. 52.1234567 -> 52°7'25" E
+        
+        Args:
+            coord (float): longitude in floating point format
+        Returns:
+            str: longitude in string format with degree, minutes,
+                seconds and sign (E/W)
+        """
+        
         sign = self.language_settings["east"]
         if coord < 0.0:
             sign = self.language_settings["west"]
@@ -346,34 +368,11 @@ class MakeSvgInstance:
         sec = int(round(float(((float(coord) - deg) * 60) - min) * 60.0))
         return "%s°%s'%s\" %s" % (deg, min, sec, sign)
 
-    # join hour, minutes, seconds, timezone integere to hour float
-    def __decHourJoin(self, inH, inM, inS):
-        dh = float(inH)
-        dm = float(inM)/60
-        ds = float(inS)/3600
-        output = dh + dm + ds
-        return output
-
-    # Datetime offset to float in hours
-    def __offsetToTz(self, dtoffset):
-        dh = float(dtoffset.days * 24)
-        sh = float(dtoffset.seconds / 3600.0)
-        output = dh + sh
-        return output
-
-    # degree difference
-    def __degreeDiff(self, a, b):
-        out = float()
-        if a > b:
-            out = a - b
-        if a < b:
-            out = b-a
-        if out > 180.0:
-            out = 360.0-out
-        return out
-
-    # decimal to degrees (a°b'c")
     def __dec2deg(self, dec, type="3"):
+        """ Coverts decimal float to degrees in format
+            a°b'c".
+        """
+
         dec = float(dec)
         a = int(dec)
         a_new = (dec-float(a)) * 60.0
@@ -389,27 +388,20 @@ class MakeSvgInstance:
             out = '%(#1)02d&#176;' % {'#1': a}
         return str(out)
 
-    # draw svg aspects: ring, aspect ring, degreeA degreeB
     def __drawAspect(self, r, ar, degA, degB, color):
+        """
+        Draws svg aspects: ring, aspect ring, degreeA degreeB
+        """
         offset = (int(self.houses_degree_ut[6]) / -1) + int(degA)
-        x1 = self.__sliceToX(0, ar, offset) + (r-ar)
-        y1 = self.__sliceToY(0, ar, offset) + (r-ar)
+        x1 = sliceToX(0, ar, offset) + (r-ar)
+        y1 = sliceToY(0, ar, offset) + (r-ar)
         offset = (int(self.houses_degree_ut[6]) / -1) + int(degB)
-        x2 = self.__sliceToX(0, ar, offset) + (r-ar)
-        y2 = self.__sliceToY(0, ar, offset) + (r-ar)
+        x2 = sliceToX(0, ar, offset) + (r-ar)
+        y2 = sliceToY(0, ar, offset) + (r-ar)
         out = '            <line x1="'+str(x1)+'" y1="'+str(y1)+'" x2="'+str(x2)+'" y2="'+str(
             y2)+'" style="stroke: '+color+'; stroke-width: 1; stroke-opacity: .9;"/>'
         return out
 
-    def __sliceToX(self, slice, r, offset):
-        plus = (math.pi * offset) / 180
-        radial = ((math.pi/6) * slice) + plus
-        return r * (math.cos(radial)+1)
-
-    def __sliceToY(self, slice, r, offset):
-        plus = (math.pi * offset) / 180
-        radial = ((math.pi/6) * slice) + plus
-        return r * ((math.sin(radial)/-1)+1)
 
     def __zodiacSlice(self, num, r, style,  type):
         # pie slices
@@ -419,8 +411,8 @@ class MakeSvgInstance:
             dropin = 0
         else:
             dropin = self.c1
-        slice = '<path d="M' + str(r) + ',' + str(r) + ' L' + str(dropin + self.__sliceToX(num, r-dropin, offset)) + ',' + str(dropin + self.__sliceToY(num, r-dropin, offset)) + ' A' + str(
-            r-dropin) + ',' + str(r-dropin) + ' 0 0,0 ' + str(dropin + self.__sliceToX(num+1, r-dropin, offset)) + ',' + str(dropin + self.__sliceToY(num+1, r-dropin, offset)) + ' z" style="' + style + '"/>'
+        slice = '<path d="M' + str(r) + ',' + str(r) + ' L' + str(dropin + sliceToX(num, r-dropin, offset)) + ',' + str(dropin + sliceToY(num, r-dropin, offset)) + ' A' + str(
+            r-dropin) + ',' + str(r-dropin) + ' 0 0,0 ' + str(dropin + sliceToX(num+1, r-dropin, offset)) + ',' + str(dropin + sliceToY(num+1, r-dropin, offset)) + ' z" style="' + style + '"/>'
         # symbols
         offset = offset + 15
         # check transit
@@ -428,8 +420,8 @@ class MakeSvgInstance:
             dropin = 54
         else:
             dropin = 18+self.c1
-        sign = '<g transform="translate(-16,-16)"><use x="' + str(dropin + self.__sliceToX(num, r-dropin, offset)) + '" y="' + str(
-            dropin + self.__sliceToY(num, r-dropin, offset)) + '" xlink:href="#' + type + '" /></g>'
+        sign = '<g transform="translate(-16,-16)"><use x="' + str(dropin + sliceToX(num, r-dropin, offset)) + '" y="' + str(
+            dropin + sliceToY(num, r-dropin, offset)) + '" xlink:href="#' + type + '" /></g>'
         return slice + '' + sign
 
     def __makeZodiac(self, r):
@@ -456,18 +448,18 @@ class MakeSvgInstance:
             # offset is negative desc houses_degree_ut[6]
             offset = (
                 int(self.houses_degree_ut[int(xr/2)]) / -1) + int(self.houses_degree_ut[i])
-            x1 = self.__sliceToX(0, (r-dropin), offset) + dropin
-            y1 = self.__sliceToY(0, (r-dropin), offset) + dropin
-            x2 = self.__sliceToX(0, r-roff, offset) + roff
-            y2 = self.__sliceToY(0, r-roff, offset) + roff
+            x1 = sliceToX(0, (r-dropin), offset) + dropin
+            y1 = sliceToY(0, (r-dropin), offset) + dropin
+            x2 = sliceToX(0, r-roff, offset) + roff
+            y2 = sliceToY(0, r-roff, offset) + roff
 
             if i < (xr-1):
                 text_offset = offset + \
-                    int(self.__degreeDiff(self.houses_degree_ut[(
+                    int(degreeDiff(self.houses_degree_ut[(
                         i+1)], self.houses_degree_ut[i]) / 2)
             else:
                 text_offset = offset + \
-                    int(self.__degreeDiff(
+                    int(degreeDiff(
                         self.houses_degree_ut[0], self.houses_degree_ut[(xr-1)]) / 2)
 
             # mc, asc, dsc, ic
@@ -491,25 +483,25 @@ class MakeSvgInstance:
                 t_offset = zeropoint + self.t_houses_degree_ut[i]
                 if t_offset > 360:
                     t_offset = t_offset - 360
-                t_x1 = self.__sliceToX(0, (r-t_roff), t_offset) + t_roff
-                t_y1 = self.__sliceToY(0, (r-t_roff), t_offset) + t_roff
-                t_x2 = self.__sliceToX(0, r, t_offset)
-                t_y2 = self.__sliceToY(0, r, t_offset)
+                t_x1 = sliceToX(0, (r-t_roff), t_offset) + t_roff
+                t_y1 = sliceToY(0, (r-t_roff), t_offset) + t_roff
+                t_x2 = sliceToX(0, r, t_offset)
+                t_y2 = sliceToY(0, r, t_offset)
                 if i < 11:
                     t_text_offset = t_offset + \
-                        int(self.__degreeDiff(self.t_houses_degree_ut[(
+                        int(degreeDiff(self.t_houses_degree_ut[(
                             i+1)], self.t_houses_degree_ut[i]) / 2)
                 else:
                     t_text_offset = t_offset + \
-                        int(self.__degreeDiff(
+                        int(degreeDiff(
                             self.t_houses_degree_ut[0], self.t_houses_degree_ut[11]) / 2)
                 # linecolor
                 if i == 0 or i == 9 or i == 6 or i == 3:
                     t_linecolor = linecolor
                 else:
                     t_linecolor = self.colors_settings['houses_transit_line']
-                xtext = self.__sliceToX(0, (r-8), t_text_offset) + 8
-                ytext = self.__sliceToY(0, (r-8), t_text_offset) + 8
+                xtext = sliceToX(0, (r-8), t_text_offset) + 8
+                ytext = sliceToY(0, (r-8), t_text_offset) + 8
 
                 if self.chart_type == "Transit":
                     path = path + '<text style="fill: #00f; fill-opacity: 0; font-size: 14px"><tspan x="' + \
@@ -531,9 +523,9 @@ class MakeSvgInstance:
 
             dropin = 48
 
-            xtext = self.__sliceToX(
+            xtext = sliceToX(
                 0, (r-dropin), text_offset) + dropin  # was 132
-            ytext = self.__sliceToY(
+            ytext = sliceToY(
                 0, (r-dropin), text_offset) + dropin  # was 132
             path = path + '<line x1="'+str(x1)+'" y1="'+str(y1)+'" x2="'+str(x2)+'" y2="'+str(
                 y2)+'" style="stroke: '+linecolor+'; stroke-width: 2px; stroke-dasharray:3,2; stroke-opacity:.4;"/>'
@@ -549,33 +541,29 @@ class MakeSvgInstance:
 
         diff = range(len(self.planets_settings))
         for i in range(len(self.planets_settings)):
-            if self.planets_settings[i]['visible'] == 1:
+            if self.planets_settings[i]["visible"] == 1:
                 # list of planets sorted by degree
                 planets_degut[self.planets_degree_ut[i]] = i
 
             # element: get extra points if planet is in own zodiac
-            pz = self.planets_settings[i]['zodiac_relation']
+            pz = self.planets_settings[i]["zodiac_relation"]
             cz = self.planets_sign[i]
             extrapoints = 0
             if pz != -1:
-                for e in range(len(pz.split(','))):
-                    if int(pz.split(',')[e]) == int(cz):
+                for e in range(len(pz.split(","))):
+                    if int(pz.split(",")[e]) == int(cz):
                         extrapoints = 10
 
             # calculate element points for all planets
             ele = self.zodiac_element[self.planets_sign[i]]
             if ele == "fire":
-                self.fire = self.fire + \
-                    self.planets_settings[i]['element_points'] + extrapoints
+                self.fire = self.fire + self.planets_settings[i]["element_points"] + extrapoints
             elif ele == "earth":
-                self.earth = self.earth + \
-                    self.planets_settings[i]['element_points'] + extrapoints
+                self.earth = self.earth + self.planets_settings[i]["element_points"] + extrapoints
             elif ele == "air":
-                self.air = self.air + \
-                    self.planets_settings[i]['element_points'] + extrapoints
+                self.air = self.air + self.planets_settings[i]["element_points"] + extrapoints
             elif ele == "water":
-                self.water = self.water + \
-                    self.planets_settings[i]['element_points'] + extrapoints
+                self.water = self.water + self.planets_settings[i]["element_points"] + extrapoints
 
         output = ""
         keys = list(planets_degut.keys())
@@ -594,32 +582,31 @@ class MakeSvgInstance:
             if e == 0:
                 prev = self.planets_degree_ut[planets_degut[keys[-1]]]
                 next = self.planets_degree_ut[planets_degut[keys[1]]]
-            elif e == (len(keys)-1):
-                prev = self.planets_degree_ut[planets_degut[keys[e-1]]]
+            elif e == (len(keys) - 1):
+                prev = self.planets_degree_ut[planets_degut[keys[e - 1]]]
                 next = self.planets_degree_ut[planets_degut[keys[0]]]
             else:
-                prev = self.planets_degree_ut[planets_degut[keys[e-1]]]
-                next = self.planets_degree_ut[planets_degut[keys[e+1]]]
-            diffa = self.__degreeDiff(prev, self.planets_degree_ut[i])
-            diffb = self.__degreeDiff(next, self.planets_degree_ut[i])
+                prev = self.planets_degree_ut[planets_degut[keys[e - 1]]]
+                next = self.planets_degree_ut[planets_degut[keys[e + 1]]]
+            diffa = degreeDiff(prev, self.planets_degree_ut[i])
+            diffb = degreeDiff(next, self.planets_degree_ut[i])
             planets_by_pos[e] = [i, diffa, diffb]
             # print "%s %s %s" % (self.planets_settings[i]['label'],diffa,diffb)
-            if (diffb < planet_drange):
+            if diffb < planet_drange:
                 if group_open:
-                    groups[-1].append([e, diffa, diffb,
-                                      self.planets_settings[planets_degut[keys[e]]]["label"]])
+                    groups[-1].append([e, diffa, diffb, self.planets_settings[planets_degut[keys[e]]]["label"]])
                 else:
                     group_open = True
                     groups.append([])
-                    groups[-1].append([e, diffa, diffb,
-                                      self.planets_settings[planets_degut[keys[e]]]["label"]])
+                    groups[-1].append([e, diffa, diffb, self.planets_settings[planets_degut[keys[e]]]["label"]])
             else:
                 if group_open:
-                    groups[-1].append([e, diffa, diffb,
-                                      self.planets_settings[planets_degut[keys[e]]]["label"]])
+                    groups[-1].append([e, diffa, diffb, self.planets_settings[planets_degut[keys[e]]]["label"]])
                 group_open = False
 
-        def zero(x): return 0
+        def zero(x):
+            return 0
+
         planets_delta = list(map(zero, range(len(self.planets_settings))))
 
         # print groups
@@ -627,44 +614,40 @@ class MakeSvgInstance:
         for a in range(len(groups)):
             # Two grouped planets
             if len(groups[a]) == 2:
-                next_to_a = groups[a][0][0]-1
-                if groups[a][1][0] == (len(planets_by_pos)-1):
+                next_to_a = groups[a][0][0] - 1
+                if groups[a][1][0] == (len(planets_by_pos) - 1):
                     next_to_b = 0
                 else:
-                    next_to_b = groups[a][1][0]+1
+                    next_to_b = groups[a][1][0] + 1
                 # if both planets have room
-                if (groups[a][0][1] > (2*planet_drange)) & (groups[a][1][2] > (2*planet_drange)):
-                    planets_delta[groups[a][0][0]] = - \
-                        (planet_drange-groups[a][0][2])/2
-                    planets_delta[groups[a][1][0]] = + \
-                        (planet_drange-groups[a][0][2])/2
+                if (groups[a][0][1] > (2 * planet_drange)) & (groups[a][1][2] > (2 * planet_drange)):
+                    planets_delta[groups[a][0][0]] = -(planet_drange - groups[a][0][2]) / 2
+                    planets_delta[groups[a][1][0]] = +(planet_drange - groups[a][0][2]) / 2
                 # if planet a has room
-                elif (groups[a][0][1] > (2*planet_drange)):
+                elif groups[a][0][1] > (2 * planet_drange):
                     planets_delta[groups[a][0][0]] = -planet_drange
                 # if planet b has room
-                elif (groups[a][1][2] > (2*planet_drange)):
+                elif groups[a][1][2] > (2 * planet_drange):
                     planets_delta[groups[a][1][0]] = +planet_drange
 
                 # if planets next to a and b have room move them
-                elif (planets_by_pos[next_to_a][1] > (2.4*planet_drange)) & (planets_by_pos[next_to_b][2] > (2.4*planet_drange)):
-                    planets_delta[(next_to_a)] = (
-                        groups[a][0][1]-planet_drange*2)
-                    planets_delta[groups[a][0][0]] = -planet_drange*.5
-                    planets_delta[next_to_b] = - \
-                        (groups[a][1][2]-planet_drange*2)
-                    planets_delta[groups[a][1][0]] = +planet_drange*.5
+                elif (planets_by_pos[next_to_a][1] > (2.4 * planet_drange)) & (
+                    planets_by_pos[next_to_b][2] > (2.4 * planet_drange)
+                ):
+                    planets_delta[(next_to_a)] = groups[a][0][1] - planet_drange * 2
+                    planets_delta[groups[a][0][0]] = -planet_drange * 0.5
+                    planets_delta[next_to_b] = -(groups[a][1][2] - planet_drange * 2)
+                    planets_delta[groups[a][1][0]] = +planet_drange * 0.5
 
                 # if planet next to a has room move them
-                elif (planets_by_pos[next_to_a][1] > (2*planet_drange)):
-                    planets_delta[(next_to_a)] = (
-                        groups[a][0][1]-planet_drange*2.5)
-                    planets_delta[groups[a][0][0]] = -planet_drange*1.2
+                elif planets_by_pos[next_to_a][1] > (2 * planet_drange):
+                    planets_delta[(next_to_a)] = groups[a][0][1] - planet_drange * 2.5
+                    planets_delta[groups[a][0][0]] = -planet_drange * 1.2
 
                 # if planet next to b has room move them
-                elif (planets_by_pos[next_to_b][2] > (2*planet_drange)):
-                    planets_delta[next_to_b] = - \
-                        (groups[a][1][2]-planet_drange*2.5)
-                    planets_delta[groups[a][1][0]] = +planet_drange*1.2
+                elif planets_by_pos[next_to_b][2] > (2 * planet_drange):
+                    planets_delta[next_to_b] = -(groups[a][1][2] - planet_drange * 2.5)
+                    planets_delta[groups[a][1][0]] = +planet_drange * 1.2
 
             # Three grouped planets or more
             xl = len(groups[a])
@@ -673,25 +656,25 @@ class MakeSvgInstance:
                 available = groups[a][0][1]
                 for f in range(xl):
                     available += groups[a][f][2]
-                need = (3*planet_drange)+(1.2*(xl-1)*planet_drange)
+                need = (3 * planet_drange) + (1.2 * (xl - 1) * planet_drange)
                 leftover = available - need
                 xa = groups[a][0][1]
-                xb = groups[a][(xl-1)][2]
+                xb = groups[a][(xl - 1)][2]
 
                 # center
-                if (xa > (need*.5)) & (xb > (need*.5)):
-                    startA = xa - (need*.5)
+                if (xa > (need * 0.5)) & (xb > (need * 0.5)):
+                    startA = xa - (need * 0.5)
                 # position relative to next planets
                 else:
-                    startA = (leftover/(xa+xb))*xa
-                    startB = (leftover/(xa+xb))*xb
+                    startA = (leftover / (xa + xb)) * xa
+                    startB = (leftover / (xa + xb)) * xb
 
                 if available > need:
-                    planets_delta[groups[a][0][0]] = startA - \
-                        groups[a][0][1]+(1.5*planet_drange)
-                    for f in range(xl-1):
-                        planets_delta[groups[a][(
-                            f+1)][0]] = 1.2*planet_drange+planets_delta[groups[a][f][0]]-groups[a][f][2]
+                    planets_delta[groups[a][0][0]] = startA - groups[a][0][1] + (1.5 * planet_drange)
+                    for f in range(xl - 1):
+                        planets_delta[groups[a][(f + 1)][0]] = (
+                            1.2 * planet_drange + planets_delta[groups[a][f][0]] - groups[a][f][2]
+                        )
 
         for e in range(len(keys)):
             i = planets_degut[keys[e]]
@@ -712,42 +695,54 @@ class MakeSvgInstance:
                 amin, bmin, cmin = 0, 0, 0
 
                 if 22 < i < 27:
-                    rplanet = 40-cmin
+                    rplanet = 40 - cmin
                 elif switch == 1:
-                    rplanet = 74-amin
+                    rplanet = 74 - amin
                     switch = 0
                 else:
-                    rplanet = 94-bmin
+                    rplanet = 94 - bmin
                     switch = 1
 
             rtext = 45
 
-            offset = (int(self.houses_degree_ut[6]) / -1) + \
-                int(self.planets_degree_ut[i]+planets_delta[e])
-            trueoffset = (
-                int(self.houses_degree_ut[6]) / -1) + int(self.planets_degree_ut[i])
+            offset = (int(self.houses_degree_ut[6]) / -1) + int(self.planets_degree_ut[i] + planets_delta[e])
+            trueoffset = (int(self.houses_degree_ut[6]) / -1) + int(self.planets_degree_ut[i])
 
-            planet_x = self.__sliceToX(0, (r-rplanet), offset) + rplanet
-            planet_y = self.__sliceToY(0, (r-rplanet), offset) + rplanet
+            planet_x = sliceToX(0, (r - rplanet), offset) + rplanet
+            planet_y = sliceToY(0, (r - rplanet), offset) + rplanet
             if self.chart_type == "Transit" or self.chart_type == "Composite":
                 scale = 0.8
 
             scale = 1
             # output planet
-            output = output + '<g transform="translate(-'+str(12*scale)+',-'+str(12*scale)+')"><g transform="scale('+str(scale)+')"><use x="' + str(
-                planet_x*(1/scale)) + '" y="' + str(planet_y*(1/scale)) + '" xlink:href="#' + self.planets_settings[i]['name'] + '" /></g></g>'
+            output = (
+                output
+                + '<g transform="translate(-'
+                + str(12 * scale)
+                + ",-"
+                + str(12 * scale)
+                + ')"><g transform="scale('
+                + str(scale)
+                + ')"><use x="'
+                + str(planet_x * (1 / scale))
+                + '" y="'
+                + str(planet_y * (1 / scale))
+                + '" xlink:href="#'
+                + self.planets_settings[i]["name"]
+                + '" /></g></g>'
+            )
 
         # make transit degut and display planets
         if self.chart_type == "Transit" or self.chart_type == "Composite":
             group_offset = {}
             t_planets_degut = {}
             if self.chart_type == "Transit":
-                list_range = len(self.planets_settings)-4
+                list_range = len(self.planets_settings) - 4
             else:
                 list_range = len(self.planets_settings)
             for i in range(list_range):
                 group_offset[i] = 0
-                if self.planets_settings[i]['visible'] == 1:
+                if self.planets_settings[i]["visible"] == 1:
                     t_planets_degut[self.t_planets_degree_ut[i]] = i
             t_keys = list(t_planets_degut.keys())
             t_keys.sort()
@@ -757,14 +752,14 @@ class MakeSvgInstance:
             in_group = False
             for e in range(len(t_keys)):
                 i_a = t_planets_degut[t_keys[e]]
-                if e == (len(t_keys)-1):
+                if e == (len(t_keys) - 1):
                     i_b = t_planets_degut[t_keys[0]]
                 else:
-                    i_b = t_planets_degut[t_keys[e+1]]
+                    i_b = t_planets_degut[t_keys[e + 1]]
 
                 a = self.t_planets_degree_ut[i_a]
                 b = self.t_planets_degree_ut[i_b]
-                diff = self.__degreeDiff(a, b)
+                diff = degreeDiff(a, b)
                 if diff <= 2.5:
                     if in_group:
                         groups[-1].append(i_b)
@@ -806,17 +801,37 @@ class MakeSvgInstance:
                 t_offset = zeropoint + self.t_planets_degree_ut[i]
                 if t_offset > 360:
                     t_offset = t_offset - 360
-                planet_x = self.__sliceToX(0, (r-rplanet), t_offset) + rplanet
-                planet_y = self.__sliceToY(0, (r-rplanet), t_offset) + rplanet
-                output = output + '<g transform="translate(-6,-6)"><g transform="scale(0.5)"><use x="' + str(
-                    planet_x*2) + '" y="' + str(planet_y*2) + '" xlink:href="#' + self.planets_settings[i]['name'] + '" /></g></g>'
+                planet_x = sliceToX(0, (r - rplanet), t_offset) + rplanet
+                planet_y = sliceToY(0, (r - rplanet), t_offset) + rplanet
+                output = (
+                    output
+                    + '<g transform="translate(-6,-6)"><g transform="scale(0.5)"><use x="'
+                    + str(planet_x * 2)
+                    + '" y="'
+                    + str(planet_y * 2)
+                    + '" xlink:href="#'
+                    + self.planets_settings[i]["name"]
+                    + '" /></g></g>'
+                )
                 # transit planet line
-                x1 = self.__sliceToX(0, r+3, t_offset) - 3
-                y1 = self.__sliceToY(0, r+3, t_offset) - 3
-                x2 = self.__sliceToX(0, r-3, t_offset) + 3
-                y2 = self.__sliceToY(0, r-3, t_offset) + 3
-                output = output + '<line x1="'+str(x1)+'" y1="'+str(y1)+'" x2="'+str(x2)+'" y2="'+str(
-                    y2)+'" style="stroke: '+self.planets_settings[i]['color']+'; stroke-width: 1px; stroke-opacity:.8;"/>'
+                x1 = sliceToX(0, r + 3, t_offset) - 3
+                y1 = sliceToY(0, r + 3, t_offset) - 3
+                x2 = sliceToX(0, r - 3, t_offset) + 3
+                y2 = sliceToY(0, r - 3, t_offset) + 3
+                output = (
+                    output
+                    + '<line x1="'
+                    + str(x1)
+                    + '" y1="'
+                    + str(y1)
+                    + '" x2="'
+                    + str(x2)
+                    + '" y2="'
+                    + str(y2)
+                    + '" style="stroke: '
+                    + self.planets_settings[i]["color"]
+                    + '; stroke-width: 1px; stroke-opacity:.8;"/>'
+                )
 
                 # transit planet degree text
                 rotate = self.houses_degree_ut[0] - self.t_planets_degree_ut[i]
@@ -835,16 +850,18 @@ class MakeSvgInstance:
                     xo = 1
                 else:
                     xo = -1
-                deg_x = self.__sliceToX(0, (r-rtext), t_offset + xo) + rtext
-                deg_y = self.__sliceToY(0, (r-rtext), t_offset + xo) + rtext
+                deg_x = sliceToX(0, (r - rtext), t_offset + xo) + rtext
+                deg_y = sliceToY(0, (r - rtext), t_offset + xo) + rtext
                 degree = int(t_offset)
                 output += '<g transform="translate(%s,%s)">' % (deg_x, deg_y)
-                output += '<text transform="rotate(%s)" text-anchor="%s' % (
-                    rotate, textanchor)
-                output += '" style="fill: ' + \
-                    self.planets_settings[i]['color']+'; font-size: 10px;">' + \
-                    self.__dec2deg(self.t_planets_degree[i], type="1")
-                output += '</text></g>'
+                output += '<text transform="rotate(%s)" text-anchor="%s' % (rotate, textanchor)
+                output += (
+                    '" style="fill: '
+                    + self.planets_settings[i]["color"]
+                    + '; font-size: 10px;">'
+                    + self.__dec2deg(self.t_planets_degree[i], type="1")
+                )
+                output += "</text></g>"
 
             # check transit
             if self.chart_type == "Transit" or self.chart_type == "Composite":
@@ -853,12 +870,24 @@ class MakeSvgInstance:
                 dropin = 0
 
             # planet line
-            x1 = self.__sliceToX(0, r-(dropin+3), offset) + (dropin+3)
-            y1 = self.__sliceToY(0, r-(dropin+3), offset) + (dropin+3)
-            x2 = self.__sliceToX(0, (r-(dropin-3)), offset) + (dropin-3)
-            y2 = self.__sliceToY(0, (r-(dropin-3)), offset) + (dropin-3)
-            output = output + '<line x1="'+str(x1)+'" y1="'+str(y1)+'" x2="'+str(x2)+'" y2="'+str(
-                y2)+'" style="stroke: '+self.planets_settings[i]['color']+'; stroke-width: 2px; stroke-opacity:.6;"/>'
+            x1 = sliceToX(0, r - (dropin + 3), offset) + (dropin + 3)
+            y1 = sliceToY(0, r - (dropin + 3), offset) + (dropin + 3)
+            x2 = sliceToX(0, (r - (dropin - 3)), offset) + (dropin - 3)
+            y2 = sliceToY(0, (r - (dropin - 3)), offset) + (dropin - 3)
+            output = (
+                output
+                + '<line x1="'
+                + str(x1)
+                + '" y1="'
+                + str(y1)
+                + '" x2="'
+                + str(x2)
+                + '" y2="'
+                + str(y2)
+                + '" style="stroke: '
+                + self.planets_settings[i]["color"]
+                + '; stroke-width: 2px; stroke-opacity:.6;"/>'
+            )
 
             # check transit
             if self.chart_type == "Transit" or self.chart_type == "Composite":
@@ -866,12 +895,24 @@ class MakeSvgInstance:
             else:
                 dropin = 120
 
-            x1 = self.__sliceToX(0, r-dropin, offset) + dropin
-            y1 = self.__sliceToY(0, r-dropin, offset) + dropin
-            x2 = self.__sliceToX(0, (r-(dropin-3)), offset) + (dropin-3)
-            y2 = self.__sliceToY(0, (r-(dropin-3)), offset) + (dropin-3)
-            output = output + '<line x1="'+str(x1)+'" y1="'+str(y1)+'" x2="'+str(x2)+'" y2="'+str(
-                y2)+'" style="stroke: '+self.planets_settings[i]['color']+'; stroke-width: 2px; stroke-opacity:.6;"/>'
+            x1 = sliceToX(0, r - dropin, offset) + dropin
+            y1 = sliceToY(0, r - dropin, offset) + dropin
+            x2 = sliceToX(0, (r - (dropin - 3)), offset) + (dropin - 3)
+            y2 = sliceToY(0, (r - (dropin - 3)), offset) + (dropin - 3)
+            output = (
+                output
+                + '<line x1="'
+                + str(x1)
+                + '" y1="'
+                + str(y1)
+                + '" x2="'
+                + str(x2)
+                + '" y2="'
+                + str(y2)
+                + '" style="stroke: '
+                + self.planets_settings[i]["color"]
+                + '; stroke-width: 2px; stroke-opacity:.6;"/>'
+            )
 
         return output
 
@@ -911,7 +952,7 @@ class MakeSvgInstance:
                 if n == 'Dsc' or n == 'Ic':
                     continue
                 b = self.planets_degree_ut[j]
-                delta = float(self.__degreeDiff(a, b))
+                delta = float(degreeDiff(a, b))
                 # check for opposition
                 xa = float(self.aspects_settings[10]['degree']) - \
                     float(self.aspects_settings[10]['orb'])
