@@ -13,10 +13,15 @@ from kerykeion.aspects.composite_aspects import CompositeAspects
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.kr_instance import KrInstance
 from kerykeion.kr_types import KerykeionException, ChartType
+from kerykeion.kr_types.chart_types import ChartTemplateModel
 from kerykeion.charts.charts_utils import decHourJoin, degreeDiff, offsetToTz, sliceToX, sliceToY
+from logging import getLogger, basicConfig, StreamHandler, DEBUG
 from pathlib import Path
 from string import Template
 from typing import Union
+
+logger = getLogger(__name__)
+basicConfig(level=DEBUG)
 
 class MakeSvgInstance:
     """
@@ -282,8 +287,10 @@ class MakeSvgInstance:
         # Immediately generate template.
         self.template = self.makeTemplate()
 
-    # draw transit ring
     def __transitRing(self, r):
+        """
+        Draws the transit ring.
+        """
         out = '<circle cx="%s" cy="%s" r="%s" style="fill: none; stroke: %s; stroke-width: 36px; stroke-opacity: .4;"/>' % (
             r, r, r-18, self.colors_settings['paper_1'])
         out += '<circle cx="%s" cy="%s" r="%s" style="fill: none; stroke: %s; stroke-width: 1px; stroke-opacity: .6;"/>' % (
@@ -294,7 +301,6 @@ class MakeSvgInstance:
         """
         Draws the degree ring.
         """
-
         out = ''
         for i in range(72):
             offset = float(i*5) - self.houses_degree_ut[6]
@@ -1076,7 +1082,6 @@ class MakeSvgInstance:
         return ''
 
     # Aspect and aspect grid functions for natal type charts.
-
     def __makeAspects(self, r, ar):
         out = ""
         for element in self.aspects_list:
@@ -1208,61 +1213,75 @@ class MakeSvgInstance:
         return out
 
     def __makePlanetGrid(self):
-        out = '<g transform="translate(500,-20)">'
-
-        # loop over all planets
         li = 10
         offset = 0
+        
+        out = \
+            '<g transform="translate(500,-20)">'
 
-        out += '<g transform="translate(140, -15)">'
+        # loop over all planets
+        out += \
+            '<g transform="translate(140, -15)">'
         out += \
             f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.name}:</text>'
         out += '</g>'
 
         for i in range(len(self.planets_settings)):
+            offset_between_lines = 14
+            end_of_line = '</g>'
 
             # Guarda qui !!
             if i == 27:
                 li = 10
                 offset = -120
+
             if self.planets_settings[i]['visible'] == 1:
                 # start of line
-                out += '<g transform="translate(%s,%s)">' % (offset, li)
+                out += \
+                    f'<g transform="translate({offset},{li})">'
+                
                 # planet text
-                out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
+                out += \
+                    f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
+                
                 # planet symbol
                 out += \
-                    '<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#' + \
-                    self.planets_settings[i]['name']+'" /></g>'
+                    f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.planets_settings[i]["name"]}" /></g>'
+                
                 # planet degree
                 out += '<text text-anchor="start" x="19" style="fill:%s; font-size: 10px;">%s</text>' % (
                     self.colors_settings['paper_0'], self.__dec2deg(self.planets_degree[i]))
+                
                 # zodiac
                 out += '<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#' + \
                     self.zodiac[self.planets_sign[i]]+'" /></g>'
+                
                 # planet retrograde
                 if self.planets_retrograde[i]:
                     out += \
                         '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
 
                 # end of line
-                out += '</g>'
-                # offset between lines
-                li = li + 14
+                out += end_of_line
 
-        # ----------
+                li = li + offset_between_lines
 
+        # -------------------- #
+        # Transit or Composite #
+        # -------------------- #
         if self.chart_type == "Transit" or self.chart_type == "Composite":
 
             if self.chart_type == "Transit":
-                out += '<g transform="translate(320, -15)">'
+                out += \
+                    '<g transform="translate(320, -15)">'
                 out += \
                     f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.t_name}:</text>'
             else:
-                out += '<g transform="translate(380, -15)">'
+                out += \
+                    '<g transform="translate(380, -15)">'
                 out += \
                     f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.t_user.name}:</text>'
-            out += '</g>'
+            out += end_of_line
 
             t_li = 10
             t_offset = 250
@@ -1271,36 +1290,43 @@ class MakeSvgInstance:
                 if i == 27:
                     t_li = 10
                     t_offset = -120
-                if self.planets_settings[i]['visible'] == 1:
+
+                if self.planets_settings[i]["visible"] == 1:
                     # start of line
-                    out += f'<g transform="translate({t_offset},{t_li})">'
+                    out += \
+                       f'<g transform="translate({t_offset},{t_li})">'
 
                     # planet text
-                    out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
+                    out += \
+                        f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
                     # planet symbol
-                    out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.planets_settings[i]["name"]}" /></g>'
+                    out += \
+                         f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.planets_settings[i]["name"]}" /></g>'
                     # planet degree
-                    out += '<text text-anchor="start" x="19" style="fill:%s; font-size: 10px;">%s</text>' % (
-                        self.colors_settings['paper_0'], self.__dec2deg(self.t_planets_degree[i]))
+                    out += \
+                        f'<text text-anchor="start" x="19" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.__dec2deg(self.t_planets_degree[i])}</text>'
                     # zodiac
-                    out += '<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#' + \
-                        self.zodiac[self.t_planets_sign[i]]+'" /></g>'
+                    out += \
+                        f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.t_planets_sign[i]]}" /></g>'
+                    
                     # planet retrograde
                     if self.t_planets_retrograde[i]:
                         out += \
                             '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
 
                     # end of line
-                    out += '</g>'
-                    # offset between lines
-                    t_li = t_li + 14
-        out += '</g>'
+                    out += end_of_line
 
+                    t_li = t_li + offset_between_lines
+        
+        out += end_of_line
         return out
 
     def __makeHousesGrid(self):
 
-        out = '<g transform="translate(600,-20)">'
+        out =  \
+            '<g transform="translate(600,-20)">'
+
         li = 10
         for i in range(12):
             if i < 9:
@@ -1362,7 +1388,7 @@ class MakeSvgInstance:
         self.planets_settings = settings['celestial_points']
         self.aspects_settings = settings['aspects']
 
-    def makeTemplate(self):
+    def __createTemplateDictionary(self):
         # self.chart_type = "Transit"
         # empty element points
         self.fire = 0.0
@@ -1416,7 +1442,7 @@ class MakeSvgInstance:
             viewbox = '0 0 1000 546.0'
 
         # template dictionary
-        td = dict()
+        td: ChartTemplateModel = dict()
         r = 240
         self.c1 = 0
         self.c2 = 36
@@ -1426,6 +1452,7 @@ class MakeSvgInstance:
         if self.chart_type == "Transit" or self.chart_type == "Composite":
             td['transitRing'] = self.__transitRing(r)
             td['degreeRing'] = self.__degreeTransitRing(r)
+
             # circles
             td['c1'] = 'cx="' + str(r) + '" cy="' + \
                 str(r) + '" r="' + str(r-36) + '"'
@@ -1446,19 +1473,14 @@ class MakeSvgInstance:
         else:
             td['transitRing'] = ""
             td['degreeRing'] = self.__degreeRing(r)
+            
             # circles
-            td['c1'] = 'cx="' + str(r) + '" cy="' + \
-                str(r) + '" r="' + str(r-self.c1) + '"'
-            td['c1style'] = 'fill: none; stroke: %s; stroke-width: 1px; ' % (
-                self.colors_settings['zodiac_radix_ring_2'])
-            td['c2'] = 'cx="' + str(r) + '" cy="' + \
-                str(r) + '" r="' + str(r-self.c2) + '"'
-            td['c2style'] = 'fill: %s; fill-opacity:.2; stroke: %s; stroke-opacity:.4; stroke-width: 1px' % (
-                self.colors_settings['paper_1'], self.colors_settings['zodiac_radix_ring_1'])
-            td['c3'] = 'cx="' + str(r) + '" cy="' + \
-                str(r) + '" r="' + str(r-self.c3) + '"'
-            td['c3style'] = 'fill: %s; fill-opacity:.8; stroke: %s; stroke-width: 1px' % (
-                self.colors_settings['paper_1'], self.colors_settings['zodiac_radix_ring_0'])
+            td['c1'] = f'cx="{str(r)}" cy="{str(r)}" r="{str(r-self.c1)}"'
+            td['c1style'] = f'fill: none; stroke: {self.colors_settings["zodiac_radix_ring_2"]}; stroke-width: 1px; '
+            td['c2'] = f'cx="{str(r)}" cy="{str(r)}" r="{str(r-self.c2)}"'
+            td['c2style'] = f'fill: {self.colors_settings["paper_1"]}; fill-opacity:.2; stroke: {self.colors_settings["zodiac_radix_ring_1"]}; stroke-opacity:.4; stroke-width: 1px'
+            td['c3'] = f'cx="{str(r)}" cy="{str(r)}" r="{str(r-self.c3)}"'
+            td['c3style'] = f'fill: {self.colors_settings["paper_1"]}; fill-opacity:.8; stroke: {self.colors_settings["zodiac_radix_ring_0"]}; stroke-width: 1px'
             td['makeAspects'] = self.__makeAspects(r, (r-self.c3))
             td['makeAspectGrid'] = self.__makeAspectGrid(r)
             td['makePatterns'] = self.__makePatterns()
@@ -1471,8 +1493,10 @@ class MakeSvgInstance:
         td['viewbox'] = viewbox
         if self.chart_type == "Composite":
             td['stringTitle'] = f"{self.name} {self.language_settings['&']} {self.t_user.name}"
+
         elif self.chart_type == "Transit":
             td['stringTitle'] = f"{self.language_settings['transits']} {self.t_user.day}/{self.t_user.month}/{self.t_user.year}"
+
         else:
             td['stringTitle'] = self.name
 
@@ -1483,7 +1507,6 @@ class MakeSvgInstance:
             td['stringName'] = f'{self.language_settings["info"]}:'
 
         # bottom left
-
         td['bottomLeft1'] = ''
         td['bottomLeft2'] = ''
         td['bottomLeft3'] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.lunar_phase.get("moon_phase", "")}'
@@ -1498,7 +1521,8 @@ class MakeSvgInstance:
                 maxr = maxr*maxr
             lfcx = 20.0+(deg/90.0)*(maxr+10.0)
             lfr = 10.0+(deg/90.0)*maxr
-            lffg, lfbg = self.colors_settings["lunar_phase_0"], self.colors_settings["lunar_phase_1"]
+            lffg = self.colors_settings["lunar_phase_0"]
+            lfbg = self.colors_settings["lunar_phase_1"]
 
         elif(deg < 180.0):
             maxr = 180.0-deg
@@ -1506,7 +1530,8 @@ class MakeSvgInstance:
                 maxr = maxr*maxr
             lfcx = 20.0+((deg-90.0)/90.0*(maxr+10.0))-(maxr+10.0)
             lfr = 10.0+maxr-((deg-90.0)/90.0*maxr)
-            lffg, lfbg = self.colors_settings["lunar_phase_1"], self.colors_settings["lunar_phase_0"]
+            lffg = self.colors_settings["lunar_phase_1"]
+            lfbg = self.colors_settings["lunar_phase_0"]
 
         elif(deg < 270.0):
             maxr = deg-180.0
@@ -1590,6 +1615,12 @@ class MakeSvgInstance:
         td['makeElements'] = self.__makeElements(r)
         td['makePlanetGrid'] = self.__makePlanetGrid()
         td['makeHousesGrid'] = self.__makeHousesGrid()
+        
+        return td
+
+    def makeTemplate(self):
+        """Creates the template for the SVG file"""
+        td = self.__createTemplateDictionary()
 
         # read template
         with open(self.xml_svg, "r", encoding="utf-8", errors='ignore') as output_file:
@@ -1598,6 +1629,9 @@ class MakeSvgInstance:
 
         # return filename
 
+        logger.debug("Template dictionary keys: %s" % (td.keys()))
+
+        self.__createTemplateDictionary()
         return template.replace("\"", "'")
 
     def makeSVG(self):
@@ -1625,6 +1659,6 @@ if __name__ == "__main__":
     # name.output_directory = Path.home() / "charts"
     template = name.makeTemplate()
     name.makeSVG()
-    print(name.aspects_list[-1])
+    #print(name.aspects_list[-1])
     name.makeSVG()
-    print(template)
+    #print(template)
