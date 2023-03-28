@@ -1201,15 +1201,14 @@ class MakeSvgInstance:
         pa = int(round(100*self.air/total))
         pw = int(round(100*self.water/total))
         out = '<g transform="translate(-30,79)">'
-        out += '<text y="0" style="fill:#ff6600; font-size: 10px;">' + \
-            self.language_settings['fire']+'  '+str(pf)+'%</text>'
-        out += '<text y="12" style="fill:#6a2d04; font-size: 10px;">' + \
-            self.language_settings['earth']+' '+str(pe)+'%</text>'
-        out += '<text y="24" style="fill:#6f76d1; font-size: 10px;">' + \
-            self.language_settings['air']+'   '+str(pa)+'%</text>'
-        out += '<text y="36" style="fill:#630e73; font-size: 10px;">' + \
-            self.language_settings['water']+' '+str(pw)+'%</text>'
-        out += '</g>'
+        out += '<text y="0" style="fill:#ff6600; font-size: 10px;">' + self.language_settings['fire']+'  ' + str(pf) + '%</text>'
+        out += '<text y="12" style="fill:#6a2d04; font-size: 10px;">' + self.language_settings['earth']+' '+str(pe)+'%</text>'
+        out += \
+            f'<text y="24" style="fill:#6f76d1; font-size: 10px;">{self.language_settings["air"]}   {str(pa)}%</text>'
+        out += \
+            f'<text y="36" style="fill:#630e73; font-size: 10px;">{self.language_settings["water"]} {str(pw)}%</text>'
+        out += \
+            '</g>'
         return out
 
     def __makePlanetGrid(self):
@@ -1344,7 +1343,9 @@ class MakeSvgInstance:
             li = li + 14
         out += '</g>'
 
-        # ----------
+        # -------------------- #
+        #      Composite       #
+        # -------------------- #
 
         if self.chart_type == "Composite":
             out += '<g transform="translate(840, -20)">'
@@ -1491,6 +1492,7 @@ class MakeSvgInstance:
         td['svgWidth'] = str(svgWidth)
         td['svgHeight'] = str(svgHeight)
         td['viewbox'] = viewbox
+        
         if self.chart_type == "Composite":
             td['stringTitle'] = f"{self.name} {self.language_settings['&']} {self.t_user.name}"
 
