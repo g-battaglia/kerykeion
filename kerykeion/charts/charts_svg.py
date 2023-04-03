@@ -88,7 +88,6 @@ class MakeSvgInstance:
             self.user.__get_all()
 
         # Make a list for the absolute degrees of the points of the graphic.
-
         self.points_deg_ut = self.user.planets_degrees + [
             self.user.houses_degree_ut[0],
             self.user.houses_degree_ut[9],
@@ -97,7 +96,6 @@ class MakeSvgInstance:
         ]
 
         # Make a list of the relative degrees of the points in the graphic.
-
         self.points_deg = []
         for planet in self.user.planets_list:
             self.points_deg.append(planet["position"])
@@ -109,8 +107,7 @@ class MakeSvgInstance:
             self.user.houses_list[3]["position"],
         ]
 
-        # Make list of the poits sign.
-
+        # Make list of the points sign
         self.points_sign = []
 
         for planet in self.user.planets_list:
@@ -123,8 +120,7 @@ class MakeSvgInstance:
             self.user.houses_list[3]["sign_num"],
         ]
 
-        # Make a list of poits if they are retrograde or not.
-
+        # Make a list of points if they are retrograde or not.
         self.points_retrograde = []
 
         for planet in self.user.planets_list:
@@ -273,48 +269,35 @@ class MakeSvgInstance:
         # ZOOM 1 = 100%
         self.zoom = 1
 
-        # 12 zodiacs
-        self.zodiac = [
-            "aries",
-            "taurus",
-            "gemini",
-            "cancer",
-            "leo",
-            "virgo",
-            "libra",
-            "scorpio",
-            "sagittarius",
-            "capricorn",
-            "aquarius",
-            "pisces",
-        ]
-
-        self.zodiac_element = [
-            "fire",
-            "earth",
-            "air",
-            "water",
-            "fire",
-            "earth",
-            "air",
-            "water",
-            "fire",
-            "earth",
-            "air",
-            "water",
-        ]
+        self.zodiac = (
+            {"name": "aries", "element": "fire"},
+            {"name": "taurus", "element": "earth"},
+            {"name": "gemini", "element": "air"},
+            {"name": "cancer", "element": "water"},
+            {"name": "leo", "element": "fire"},
+            {"name": "virgo", "element": "earth"},
+            {"name": "libra", "element": "air"},
+            {"name": "scorpio", "element": "water"},
+            {"name": "sagittarius", "element": "fire"},
+            {"name": "capricorn", "element": "earth"},
+            {"name": "aquarius", "element": "air"},
+            {"name": "pisces", "element": "water"},
+        )
 
         # Immediately generate template.
         self.template = self.makeTemplate()
 
-    def __transitRing(self, r):
+    def __transitRing(self, r) -> str:
         """
         Draws the transit ring.
         """
-        out = '<circle cx="%s" cy="%s" r="%s" style="fill: none; stroke: %s; stroke-width: 36px; stroke-opacity: .4;"/>' % (
-            r, r, r-18, self.colors_settings['paper_1'])
-        out += '<circle cx="%s" cy="%s" r="%s" style="fill: none; stroke: %s; stroke-width: 1px; stroke-opacity: .6;"/>' % (
-            r, r, r, self.colors_settings['zodiac_transit_ring_3'])
+        radius_offset = 18
+
+        out = \
+            f'<circle cx="{r}" cy="{r}" r="{r - radius_offset}" style="fill: none; stroke: {self.colors_settings["paper_1"]}; stroke-width: 36px; stroke-opacity: .4;"/>'
+        out += \
+            f'<circle cx="{r}" cy="{r}" r="{r}" style="fill: none; stroke: {self.colors_settings["zodiac_transit_ring_3"]}; stroke-width: 1px; stroke-opacity: .6;"/>'
+
         return out
 
     def __degreeRing(self, r) -> str:
@@ -332,8 +315,10 @@ class MakeSvgInstance:
             y1 = sliceToY(0, r-self.c1, offset) + self.c1
             x2 = sliceToX(0, r+2-self.c1, offset) - 2 + self.c1
             y2 = sliceToY(0, r+2-self.c1, offset) - 2 + self.c1
-            out += '<line x1="%s" y1="%s" x2="%s" y2="%s" style="stroke: %s; stroke-width: 1px; stroke-opacity:.9;"/>' % (
-                x1, y1, x2, y2, self.colors_settings['paper_0'])
+
+            out += \
+                f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.colors_settings["paper_0"]}; stroke-width: 1px; stroke-opacity:.9;"/>'
+
         return out
 
     def __degreeTransitRing(self, r):
@@ -348,8 +333,8 @@ class MakeSvgInstance:
             y1 = sliceToY(0, r, offset)
             x2 = sliceToX(0, r+2, offset) - 2
             y2 = sliceToY(0, r+2, offset) - 2
-            out += '<line x1="%s" y1="%s" x2="%s" y2="%s" style="stroke: #F00; stroke-width: 1px; stroke-opacity:.9;"/>' % (
-                x1, y1, x2, y2)
+            out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: #F00; stroke-width: 1px; stroke-opacity:.9;"/>'
+
         return out
 
     def __lat2str(self, coord):
@@ -453,7 +438,7 @@ class MakeSvgInstance:
         output = ""
         for i in range(len(self.zodiac)):
             output = output + self.__zodiacSlice(i, r, "fill:" + self.colors_settings["zodiac_bg_%s" % (
-                i)] + "; fill-opacity: 0.5;", self.zodiac[i]) + ''
+                i)] + "; fill-opacity: 0.5;", self.zodiac[i]["name"]) + ''
         return output
 
     def __makeHouses(self, r):
@@ -574,7 +559,7 @@ class MakeSvgInstance:
                 if int(pz.split(",")[e]) == int(cz):
                     extra_points = 10
 
-        ele = self.zodiac_element[self.points_sign[i]]
+        ele = self.zodiac[self.points_sign[i]]["element"]
         if ele == "fire":
             self.fire = \
                 self.fire + \
@@ -936,6 +921,7 @@ class MakeSvgInstance:
             y1 = sliceToY(0, r - (dropin + 3), offset) + (dropin + 3)
             x2 = sliceToX(0, (r - (dropin - 3)), offset) + (dropin - 3)
             y2 = sliceToY(0, (r - (dropin - 3)), offset) + (dropin - 3)
+
             output = (
                 output
                 + '<line x1="'
@@ -1147,7 +1133,6 @@ class MakeSvgInstance:
         return out
 
     def __makeAspectGrid(self, r):
-
         out = ""
         style = 'stroke:%s; stroke-width: 1px; stroke-opacity:.6; fill:none' % (
             self.colors_settings['paper_0'])
@@ -1205,6 +1190,7 @@ class MakeSvgInstance:
             self.colors_settings['paper_0'], (f"{self.language_settings['aspects']}:"))
         line = 0
         nl = 0
+        
         for i in range(len(self.aspects_list)):
             if i == 12:
                 nl = 100
@@ -1314,7 +1300,7 @@ class MakeSvgInstance:
 
                 # zodiac
                 out += '<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#' + \
-                    self.zodiac[self.points_sign[i]]+'" /></g>'
+                    self.zodiac[self.points_sign[i]]["name"]+'" /></g>'
 
                 # planet retrograde
                 if self.points_retrograde[i]:
@@ -1367,7 +1353,7 @@ class MakeSvgInstance:
                         f'<text text-anchor="start" x="19" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.__dec2deg(self.t_points_deg[i])}</text>'
                     # zodiac
                     out += \
-                        f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.t_points_sign[i]]}" /></g>'
+                        f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.t_points_sign[i]]["name"]}" /></g>'
 
                     # planet retrograde
                     if self.t_points_retrograde[i]:
@@ -1397,7 +1383,7 @@ class MakeSvgInstance:
             out += '<text text-anchor="end" x="40" style="fill:%s; font-size: 10px;">%s %s:</text>' % (
                 self.colors_settings['paper_0'], self.language_settings['cusp'], cusp)
             out += '<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#' + \
-                self.zodiac[self.houses_sign_graph[i]]+'" /></g>'
+                self.zodiac[self.houses_sign_graph[i]]["name"]+'" /></g>'
             out += '<text x="53" style="fill:%s; font-size: 10px;"> %s</text>' % (
                 self.colors_settings['paper_0'], self.__dec2deg(self.user.houses_list[i]["position"]))
             out += '</g>'
@@ -1420,7 +1406,7 @@ class MakeSvgInstance:
                 out += '<text text-anchor="end" x="40" style="fill:%s; font-size: 10px;">%s %s:</text>' % (
                     self.colors_settings['paper_0'], self.language_settings['cusp'], cusp)
                 out += '<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#' + \
-                    self.zodiac[self.t_houses_sign_graph[i]]+'" /></g>'
+                    self.zodiac[self.t_houses_sign_graph[i]]["name"]+'" /></g>'
                 out += '<text x="53" style="fill:%s; font-size: 10px;"> %s</text>' % (
                     self.colors_settings['paper_0'], self.__dec2deg(self.t_user.houses_list[i]["position"]))
                 out += '</g>'
@@ -1492,8 +1478,7 @@ class MakeSvgInstance:
             td['degreeRing'] = self.__degreeTransitRing(r)
 
             # circles
-            td['c1'] = 'cx="' + str(r) + '" cy="' + \
-                str(r) + '" r="' + str(r-36) + '"'
+            td['c1'] = f'cx="{r}" cy="{r}" r="{r - 36}"'
             td['c1style'] = 'fill: none; stroke: %s; stroke-width: 1px; stroke-opacity:.4;' % (
                 self.colors_settings['zodiac_transit_ring_2'])
             td['c2'] = 'cx="' + str(r) + '" cy="' + \
@@ -1513,11 +1498,11 @@ class MakeSvgInstance:
             td['degreeRing'] = self.__degreeRing(r)
 
             # circles
-            td['c1'] = f'cx="{str(r)}" cy="{str(r)}" r="{str(r-self.c1)}"'
+            td['c1'] = f'cx="{r}" cy="{r}" r="{r - self.c1}"'
             td['c1style'] = f'fill: none; stroke: {self.colors_settings["zodiac_radix_ring_2"]}; stroke-width: 1px; '
-            td['c2'] = f'cx="{str(r)}" cy="{str(r)}" r="{str(r-self.c2)}"'
+            td['c2'] = f'cx="{r}" cy="{r}" r="{r - self.c2}"'
             td['c2style'] = f'fill: {self.colors_settings["paper_1"]}; fill-opacity:.2; stroke: {self.colors_settings["zodiac_radix_ring_1"]}; stroke-opacity:.4; stroke-width: 1px'
-            td['c3'] = f'cx="{str(r)}" cy="{str(r)}" r="{str(r-self.c3)}"'
+            td['c3'] = f'cx="{r}" cy="{r}" r="{r - self.c3}"'
             td['c3style'] = f'fill: {self.colors_settings["paper_1"]}; fill-opacity:.8; stroke: {self.colors_settings["zodiac_radix_ring_0"]}; stroke-width: 1px'
             td['makeAspects'] = self.__makeAspects(r, (r-self.c3))
             td['makeAspectGrid'] = self.__makeAspectGrid(r)
@@ -1557,7 +1542,7 @@ class MakeSvgInstance:
         if (deg < 90.0):
             maxr = deg
             if (deg > 80.0):
-                maxr = maxr*maxr
+                maxr = maxr * maxr
             lfcx = 20.0+(deg/90.0)*(maxr+10.0)
             lfr = 10.0+(deg/90.0)*maxr
             lffg = self.colors_settings["lunar_phase_0"]
@@ -1566,7 +1551,7 @@ class MakeSvgInstance:
         elif (deg < 180.0):
             maxr = 180.0-deg
             if (deg < 100.0):
-                maxr = maxr*maxr
+                maxr = maxr * maxr
             lfcx = 20.0+((deg-90.0)/90.0*(maxr+10.0))-(maxr+10.0)
             lfr = 10.0+maxr-((deg-90.0)/90.0*maxr)
             lffg = self.colors_settings["lunar_phase_1"]
@@ -1575,7 +1560,7 @@ class MakeSvgInstance:
         elif (deg < 270.0):
             maxr = deg-180.0
             if (deg > 260.0):
-                maxr = maxr*maxr
+                maxr = maxr * maxr
             lfcx = 20.0+((deg-180.0)/90.0*(maxr+10.0))
             lfr = 10.0+((deg-180.0)/90.0*maxr)
             lffg, lfbg = self.colors_settings["lunar_phase_1"], self.colors_settings["lunar_phase_0"]
