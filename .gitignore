@@ -50,3 +50,4 @@ dist/
 .kerykeion
 kr_venv
 request_cache
+Pipfile

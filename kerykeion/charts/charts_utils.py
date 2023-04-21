@@ -20,12 +20,12 @@ def decHourJoin(inH: int, inM: int, inS: int) -> float:
     return output
 
 
-def degreeDiff(a: float, b: float) -> float:
+def degreeDiff(a: int | float, b: int | float) -> float:
     """Calculate the difference between two degrees.
 
     Args:
-        - a (float): first degree
-        - b (float): second degree
+        - a (int | float): first degree
+        - b (int | float): second degree
 
     Returns:
         float: difference between a and b
@@ -60,7 +60,7 @@ def offsetToTz(datetime_offset: datetime.timedelta) -> float:
     return output
 
 
-def sliceToX(slice: int, radius: float, offset: int) -> float:
+def sliceToX(slice: int | float, radius: float, offset: int) -> float:
     """
     Calculates the x-coordinate of a point on a circle based on the slice, radius, and offset.
 
@@ -86,7 +86,7 @@ def sliceToX(slice: int, radius: float, offset: int) -> float:
     return radius * (math.cos(radial) + 1)
 
 
-def sliceToY(slice: int, r: float, offset: int) -> float:
+def sliceToY(slice: int | float, r: float, offset: int) -> float:
     """
     Calculates the y-coordinate of a point on a circle based on the slice, radius, and offset.
 
