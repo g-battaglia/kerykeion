@@ -36,7 +36,11 @@ class KrInstance():
     - day (int, optional): _ Defaults to now.day.
     - hour (int, optional): _ Defaults to now.hour.
     - minute (int, optional): _ Defaults to now.minute.
-    - city (str, optional): City or location of birth. Defaults to "London".
+    - city (str, optional): City or location of birth. Defaults to "London", which is GMT time.
+        The city argument is used to get the coordinates and timezone from geonames just in case
+        you don't insert them manually (see __get_tz).
+        If you insert the coordinates and timezone manually, the city argument is not used for calculations
+        but it's still used as a value for the city attribute.
     - nat (str, optional): _ Defaults to "".
     - lng (Union[int, float], optional): _ Defaults to False.
     - lat (Union[int, float], optional): _ Defaults to False.
@@ -46,7 +50,7 @@ class KrInstance():
     - online (bool, optional): Sets if you want to use the online mode (using
         geonames) or not. Defaults to True.
     """
-    # Deined by the user
+    # Defined by the user
     name: str
     year: int
     month: int
@@ -77,7 +81,7 @@ class KrInstance():
         day: int = now.day,
         hour: int = now.hour,
         minute: int = now.minute,
-        city: str = "London",
+        city: str = "",
         nation: str = "",
         lng: Union[int, float] = 0,
         lat: Union[int, float] = 0,
@@ -107,6 +111,14 @@ class KrInstance():
         self.zodiac_type = zodiac_type
         self.online = online
         self.json_dir = Path.home()
+        
+        if not self.city:
+            self.city = "London"
+            self.__logger.warning("No city specified, using London as default")
+        
+        if not self.nation:
+            self.nation = "GB"
+            self.__logger.warning("No nation specified, using GB as default")
 
         if (not self.online) and (not lng or not lat or not tz_str):
             raise KerykeionException(
@@ -160,6 +172,8 @@ class KrInstance():
 
     def __get_utc(self):
         """Converts local time to utc time. """
+        
+        # If the coordinates are not set, get them from geonames.
         if (self.online) and (not self.tz_str or not self.lng or not self.lat):
             tz = self.__get_tz()
             local_time = pytz.timezone(tz)
