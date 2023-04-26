@@ -397,6 +397,8 @@ class MakeSvgInstance:
             out = '%(#1)02d&#176;%(#2)02d&#39;' % {'#1': a, '#2': b_rounded}
         elif type == "1":
             out = '%(#1)02d&#176;' % {'#1': a}
+        else:
+            raise KerykeionException(f"Wrong type: {type}, it must be 1, 2 or 3.")
         return str(out)
 
     def __drawAspect(self, r, ar, degA, degB, color):
