@@ -1,6 +1,8 @@
 import math
 import datetime
 
+from kerykeion.kr_types import KerykeionException
+
 
 def decHourJoin(inH: int, inM: int, inS: int) -> float:
     """Join hour, minutes, seconds, timezone integer to hour float.
@@ -41,7 +43,7 @@ def degreeDiff(a: int | float, b: int | float) -> float:
     return out
 
 
-def offsetToTz(datetime_offset: datetime.timedelta) -> float:
+def offsetToTz(datetime_offset: datetime.timedelta | None) -> float:
     """Convert datetime offset to float in hours.
 
     Args:
@@ -50,6 +52,9 @@ def offsetToTz(datetime_offset: datetime.timedelta) -> float:
     Returns:
         - float: offset in hours
     """
+
+    if datetime_offset is None:
+        raise KerykeionException("datetime_offset is None")
 
     # days to hours
     dh = float(datetime_offset.days * 24)
@@ -60,17 +65,17 @@ def offsetToTz(datetime_offset: datetime.timedelta) -> float:
     return output
 
 
-def sliceToX(slice: int | float, radius: float, offset: int) -> float:
+def sliceToX(slice: int | float, radius: int | float, offset: int | float) -> float:
     """
     Calculates the x-coordinate of a point on a circle based on the slice, radius, and offset.
 
     Args:
-        - slice (int): An integer value that represents the
+        - slice (int | float): Represents the
             slice of the circle to calculate the x-coordinate for.
-            It must be an integer value between 0 and 11 (inclusive).
-        - radius (float): A float value representing the radius of the circle.
-        - offset (int): An integer value that represents the offset in degrees.
-            It must be an integer value between 0 and 360 (inclusive).
+            It must be  between 0 and 11 (inclusive).
+        - radius (int | float): Represents the radius of the circle.
+        - offset (int | float): Represents the offset in degrees.
+            It must be between 0 and 360 (inclusive).
 
     Returns:
         float: The x-coordinate of the point on the circle.
@@ -86,16 +91,16 @@ def sliceToX(slice: int | float, radius: float, offset: int) -> float:
     return radius * (math.cos(radial) + 1)
 
 
-def sliceToY(slice: int | float, r: float, offset: int) -> float:
+def sliceToY(slice: int | float, r: int | float, offset: int | float) -> float:
     """
     Calculates the y-coordinate of a point on a circle based on the slice, radius, and offset.
 
     Args:
-        - slice (int): An integer value that represents the slice of the circle to calculate
-            the y-coordinate for. It must be an integer value between 0 and 11 (inclusive).
-        - r (float): A float value representing the radius of the circle.
-        - offset (int): An integer value that represents the offset in degrees.
-            It must be an integer value between 0 and 360 (inclusive).
+        - slice (int | float): Represents the slice of the circle to calculate
+            the y-coordinate for. It must be between 0 and 11 (inclusive).
+        - r (int | float): Represents the radius of the circle.
+        - offset (int | float): Represents the offset in degrees.
+            It must be between 0 and 360 (inclusive).
 
     Returns:
         float: The y-coordinate of the point on the circle.
