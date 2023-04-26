@@ -42,7 +42,7 @@ class KrInstance:
     - minute (int, optional): _ Defaults to now.minute.
     - city (str, optional): City or location of birth. Defaults to "London", which is GMT time.
         The city argument is used to get the coordinates and timezone from geonames just in case
-        you don't insert them manually (see __get_tz).
+        you don't insert them manually (see _get_tz).
         If you insert the coordinates and timezone manually, the city argument is not used for calculations
         but it's still used as a value for the city attribute.
     - nat (str, optional): _ Defaults to "".
@@ -74,8 +74,8 @@ class KrInstance:
     # Generated internally
     city_data: dict[str, str]
     julian_day: Union[int, float]
-    utc_time: datetime
-    local_time: datetime
+    utc_time: float
+    local_time: float
     utc: datetime
     json_dir: Path
 
@@ -139,7 +139,7 @@ class KrInstance:
         self.lng = lng
         self.lat = lat
         self.tz_str = tz_str
-        self.__geonames_username = geonames_username
+        self._geonames_username = geonames_username
         self.zodiac_type = zodiac_type
         self.online = online
         self.json_dir = Path.home()
@@ -157,10 +157,12 @@ class KrInstance:
                 "You need to set the coordinates and timezone if you want to use the offline mode!"
             )
 
-        self.julian_day = self.__get_jd()
+        self.julian_day = self._get_jd()
 
-        # Get all the calculations
-        self.__get_all()
+        # Initialize everything
+        self._planets_in_houses()
+        self._lunar_phase_calc()
+        self._make_lists()
 
     def __str__(self) -> str:
         return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
@@ -168,14 +170,14 @@ class KrInstance:
     def __repr__(self) -> str:
         return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
 
-    def __get_tz(self) -> str:
+    def _get_tz(self) -> str:
         """Gets the nearest time zone for the calculation"""
         logger.debug("Conneting to Geonames...")
 
         geonames = FetchGeonames(
             self.city,
             self.nation,
-            username=self.__geonames_username,
+            username=self._geonames_username,
         )
         self.city_data: dict[str, str] = geonames.get_serialized_data()
 
@@ -203,12 +205,12 @@ class KrInstance:
 
         return self.tz_str
 
-    def __get_utc(self):
+    def _get_utc(self) -> datetime:
         """Converts local time to utc time. """
 
         # If the coordinates are not set, get them from geonames.
         if (self.online) and (not self.tz_str or not self.lng or not self.lat):
-            tz = self.__get_tz()
+            tz = self._get_tz()
             local_time = pytz.timezone(tz)
         else:
             local_time = pytz.timezone(self.tz_str)
@@ -221,9 +223,9 @@ class KrInstance:
         self.utc = utc_datetime
         return self.utc
 
-    def __get_jd(self):
+    def _get_jd(self) -> float:
         """Calculates julian day from the utc time."""
-        utc = self.__get_utc()
+        utc = self._get_utc()
         self.utc_time = utc.hour + utc.minute / 60
         self.local_time = self.hour + self.minute / 60
         self.julian_day = float(swe.julday(
@@ -231,8 +233,8 @@ class KrInstance:
 
         return self.julian_day
 
-    def __houses(self) -> list:
-        """Calculatetype positions and store them in dictionaries"""
+    def _houses(self) -> list:
+        """Calculate positions and store them in dictionaries"""
         point_type: Literal["Planet", "House"] = "House"
         # creates the list of the house in 360°
         self.houses_degree_ut = swe.houses(
@@ -283,31 +285,31 @@ class KrInstance:
         # return self.houses_list
         return houses_degree
 
-    def __planets_degrees_lister(self):
+    def _planets_degrees_lister(self):
         """Sidereal or tropic mode."""
-        self.__iflag = swe.FLG_SWIEPH + swe.FLG_SPEED
+        self._iflag = swe.FLG_SWIEPH + swe.FLG_SPEED
 
         if self.zodiac_type == "Sidereal":
-            self.__iflag += swe.FLG_SIDEREAL
+            self._iflag += swe.FLG_SIDEREAL
             mode = "SIDM_FAGAN_BRADLEY"
             swe.set_sid_mode(getattr(swe, mode))
 
         """Calculates the position of the planets and stores it in a list."""
 
-        sun_deg = swe.calc(self.julian_day, 0, self.__iflag)[0][0]
-        moon_deg = swe.calc(self.julian_day, 1, self.__iflag)[0][0]
-        mercury_deg = swe.calc(self.julian_day, 2, self.__iflag)[0][0]
-        venus_deg = swe.calc(self.julian_day, 3, self.__iflag)[0][0]
-        mars_deg = swe.calc(self.julian_day, 4, self.__iflag)[0][0]
-        jupiter_deg = swe.calc(self.julian_day, 5, self.__iflag)[0][0]
-        saturn_deg = swe.calc(self.julian_day, 6, self.__iflag)[0][0]
-        uranus_deg = swe.calc(self.julian_day, 7, self.__iflag)[0][0]
-        neptune_deg = swe.calc(self.julian_day, 8, self.__iflag)[0][0]
-        pluto_deg = swe.calc(self.julian_day, 9, self.__iflag)[0][0]
-        mean_node_deg = swe.calc(self.julian_day, 10, self.__iflag)[0][0]
-        true_node_deg = swe.calc(self.julian_day, 11, self.__iflag)[0][0]
+        sun_deg = swe.calc(self.julian_day, 0, self._iflag)[0][0]
+        moon_deg = swe.calc(self.julian_day, 1, self._iflag)[0][0]
+        mercury_deg = swe.calc(self.julian_day, 2, self._iflag)[0][0]
+        venus_deg = swe.calc(self.julian_day, 3, self._iflag)[0][0]
+        mars_deg = swe.calc(self.julian_day, 4, self._iflag)[0][0]
+        jupiter_deg = swe.calc(self.julian_day, 5, self._iflag)[0][0]
+        saturn_deg = swe.calc(self.julian_day, 6, self._iflag)[0][0]
+        uranus_deg = swe.calc(self.julian_day, 7, self._iflag)[0][0]
+        neptune_deg = swe.calc(self.julian_day, 8, self._iflag)[0][0]
+        pluto_deg = swe.calc(self.julian_day, 9, self._iflag)[0][0]
+        mean_node_deg = swe.calc(self.julian_day, 10, self._iflag)[0][0]
+        true_node_deg = swe.calc(self.julian_day, 11, self._iflag)[0][0]
 
-        # print(swe.calc(self.julian_day, 7, self.__iflag)[3])
+        # print(swe.calc(self.julian_day, 7, self._iflag)[3])
 
         self.planets_degrees = [
             sun_deg,
@@ -326,10 +328,10 @@ class KrInstance:
 
         return self.planets_degrees
 
-    def __planets(self) -> None:
+    def _planets(self) -> None:
         """Defines body positon in signs and information and
         stores them in dictionaries"""
-        self.planets_degrees = self.__planets_degrees_lister()
+        self.planets_degrees = self._planets_degrees_lister()
         point_type: Literal["Planet", "House"] = "Planet"
         # stores the planets in singular dictionaries.
         self.sun = calculate_position(
@@ -357,11 +359,11 @@ class KrInstance:
         self.true_node = calculate_position(
             self.planets_degrees[11], "True_Node", point_type=point_type)
 
-    def __planets_in_houses(self):
+    def _planets_in_houses(self) -> None:
         """Calculates the house of the planet and updates
         the planets dictionary."""
-        self.__planets()
-        self.__houses()
+        self._planets()
+        self._houses()
 
         def for_every_planet(planet, planet_deg):
             """Function to do the calculation.
@@ -440,13 +442,13 @@ class KrInstance:
         planets_ret = []
         for p in planets_list:
             planet_number = get_number_from_name(p["name"])
-            if swe.calc(self.julian_day, planet_number, self.__iflag)[0][3] < 0:
+            if swe.calc(self.julian_day, planet_number, self._iflag)[0][3] < 0:
                 p["retrograde"] = True
             else:
                 p["retrograde"] = False
             planets_ret.append(p)
 
-    def __lunar_phase_calc(self) -> None:
+    def _lunar_phase_calc(self) -> None:
         """Function to calculate the lunar phase"""
 
         # If ther's an error:
@@ -540,7 +542,7 @@ class KrInstance:
 
         self.lunar_phase = LunarPhaseObject(**lunar_phase_dictionary)
 
-    def __make_lists(self):
+    def _make_lists(self) -> None:
         """Internal function to generate the lists"""
         self.planets_list = [
             self.sun,
@@ -571,13 +573,6 @@ class KrInstance:
             self.eleventh_house,
             self.twelfth_house,
         ]
-
-    def __get_all(self):
-        """Gets all data from all the functions"""
-
-        self.__planets_in_houses()
-        self.__lunar_phase_calc()
-        self.__make_lists()
 
     def json(self, dump=False, destination_folder: Union[str, None] = None) -> str:
         """

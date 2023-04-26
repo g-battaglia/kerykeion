@@ -88,6 +88,6 @@ line-length = 120
 ### Scripts: ###
 ################
 
-#-poetry run pytest
+# poetry run pytest
 # poetry run mypy
 # python -m pdoc kerykeion -o ./docs

@@ -52,7 +52,7 @@ class MakeSvgInstance:
         lang: str = "EN",
         new_settings_file: Union[str, Path, None] = None,
     ):
-
+        
         # Directories:
         DATA_DIR = Path(__file__).parent
         self.homedir = Path.home()
@@ -83,9 +83,6 @@ class MakeSvgInstance:
 
         # Kerykeion instance
         self.user = first_obj
-        if not hasattr(self.user, "sun"):
-            print(f"Generating kerykeion object for {self.user.name}...")
-            self.user.__get_all()
 
         # Make a list for the absolute degrees of the points of the graphic.
         self.points_deg_ut = self.user.planets_degrees + [
@@ -149,10 +146,6 @@ class MakeSvgInstance:
 
             # Kerykeion instance
             self.t_user = second_obj
-
-            if not hasattr(self.t_user, "sun"):
-                print(f"Generating kerykeion object for {self.t_user.name}...")
-                self.t_user.__get_all()
 
             # Make a list for the absolute degrees of the points of the graphic.
 
@@ -1677,8 +1670,8 @@ class MakeSvgInstance:
 
 if __name__ == "__main__":
 
-    first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
-    second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
+    first = KrInstance("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+    second = KrInstance("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
     name = MakeSvgInstance(first, chart_type="Composite",
                            second_obj=second, lang="IT")
