@@ -25,9 +25,6 @@ class NatalAspects:
         self.new_settings_file = new_settings_file
         self._parse_json_settings()
 
-        if not hasattr(self.user, "sun"):
-            self.user.__get_all()
-
         self.init_point_list = self.user.planets_list + self.user.houses_list
 
     def _parse_json_settings(self):

@@ -28,12 +28,6 @@ class CompositeAspects(NatalAspects):
         self.new_settings_file = new_settings_file
         self._parse_json_settings()
 
-        if not hasattr(self.first_user, "sun"):
-            self.first_user.__get_all()
-
-        if not hasattr(self.second_user, "sun"):
-            self.second_user.__get_all()
-
         self.first_init_point_list = (
             self.first_user.planets_list + self.first_user.houses_list
         )
@@ -45,7 +39,7 @@ class CompositeAspects(NatalAspects):
         """
         Return all the aspects of the points in the natal chart in a dictionary,
         first all the individual aspects of each planet, second the aspects
-        whitout repetitions.
+        whiteout repetitions.
         """
 
         f_1 = self.filter_by_settings(self.first_init_point_list)
