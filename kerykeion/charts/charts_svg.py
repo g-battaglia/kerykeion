@@ -280,20 +280,18 @@ class MakeSvgInstance:
         # Immediately generate template.
         self.template = self.makeTemplate()
 
-    def __transitRing(self, r) -> str:
+    def _transitRing(self, r) -> str:
         """
         Draws the transit ring.
         """
         radius_offset = 18
 
-        out = \
-            f'<circle cx="{r}" cy="{r}" r="{r - radius_offset}" style="fill: none; stroke: {self.colors_settings["paper_1"]}; stroke-width: 36px; stroke-opacity: .4;"/>'
-        out += \
-            f'<circle cx="{r}" cy="{r}" r="{r}" style="fill: none; stroke: {self.colors_settings["zodiac_transit_ring_3"]}; stroke-width: 1px; stroke-opacity: .6;"/>'
+        out = f'<circle cx="{r}" cy="{r}" r="{r - radius_offset}" style="fill: none; stroke: {self.colors_settings["paper_1"]}; stroke-width: 36px; stroke-opacity: .4;"/>'
+        out += f'<circle cx="{r}" cy="{r}" r="{r}" style="fill: none; stroke: {self.colors_settings["zodiac_transit_ring_3"]}; stroke-width: 1px; stroke-opacity: .6;"/>'
 
         return out
 
-    def __degreeRing(self, r) -> str:
+    def _degreeRing(self, r) -> str:
         """
         Draws the degree ring.
         """
@@ -309,12 +307,11 @@ class MakeSvgInstance:
             x2 = sliceToX(0, r+2-self.c1, offset) - 2 + self.c1
             y2 = sliceToY(0, r+2-self.c1, offset) - 2 + self.c1
 
-            out += \
-                f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.colors_settings["paper_0"]}; stroke-width: 1px; stroke-opacity:.9;"/>'
+            out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.colors_settings["paper_0"]}; stroke-width: 1px; stroke-opacity:.9;"/>'
 
         return out
 
-    def __degreeTransitRing(self, r):
+    def _degreeTransitRing(self, r):
         out = ''
         for i in range(72):
             offset = float(i*5) - self.user.houses_degree_ut[6]
@@ -330,7 +327,7 @@ class MakeSvgInstance:
 
         return out
 
-    def __lat2str(self, coord):
+    def _lat2str(self, coord):
         """ Converts a floating point latitude to string with
         degree, minutes and seconds and the appropriate sign
         (north or south). Eg. 52.1234567 -> 52°7'25" N
@@ -349,9 +346,9 @@ class MakeSvgInstance:
         deg = int(coord)
         min = int((float(coord) - deg) * 60)
         sec = int(round(float(((float(coord) - deg) * 60) - min) * 60.0))
-        return "%s°%s'%s\" %s" % (deg, min, sec, sign)
+        return f"{deg}°{min}'{sec}\" {sign}"
 
-    def __lon2str(self, coord):
+    def _lon2str(self, coord):
         """ Converts a floating point longitude to string with
         degree, minutes and seconds and the appropriate sign
         (east or west). Eg. 52.1234567 -> 52°7'25" E
@@ -370,9 +367,9 @@ class MakeSvgInstance:
         deg = int(coord)
         min = int((float(coord) - deg) * 60)
         sec = int(round(float(((float(coord) - deg) * 60) - min) * 60.0))
-        return "%s°%s'%s\" %s" % (deg, min, sec, sign)
+        return f"{deg}°{min}'{sec}\" {sign}"
 
-    def __dec2deg(self, dec, type="3"):
+    def _dec2deg(self, dec, type="3"):
         """ Coverts decimal float to degrees in format
             a°b'c".
         """
@@ -384,17 +381,16 @@ class MakeSvgInstance:
         b = int(a_new)
         c = int(round((a_new-float(b))*60.0))
         if type == "3":
-            out = '%(#1)02d&#176;%(#2)02d&#39;%(#3)02d&#34;' % {
-                '#1': a, '#2': b, '#3': c}
+            out = f'{a:02d}&#176;{b:02d}&#39;{c:02d}&#34;'
         elif type == "2":
-            out = '%(#1)02d&#176;%(#2)02d&#39;' % {'#1': a, '#2': b_rounded}
+            out = f"{a:02d}&#176;{b_rounded:02d}&#39;"
         elif type == "1":
-            out = '%(#1)02d&#176;' % {'#1': a}
+            out = f'{a:02d}&#176;'
         else:
             raise KerykeionException(f"Wrong type: {type}, it must be 1, 2 or 3.")
         return str(out)
 
-    def __drawAspect(self, r, ar, degA, degB, color):
+    def _drawAspect(self, r, ar, degA, degB, color):
         """
         Draws svg aspects: ring, aspect ring, degreeA degreeB
         """
@@ -404,11 +400,11 @@ class MakeSvgInstance:
         offset = (int(self.user.houses_degree_ut[6]) / -1) + int(degB)
         x2 = sliceToX(0, ar, offset) + (r-ar)
         y2 = sliceToY(0, ar, offset) + (r-ar)
-        out = '            <line x1="'+str(x1)+'" y1="'+str(y1)+'" x2="'+str(x2)+'" y2="'+str(
-            y2)+'" style="stroke: '+color+'; stroke-width: 1; stroke-opacity: .9;"/>'
+        out = f'            <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
+
         return out
 
-    def __zodiacSlice(self, num, r, style,  type):
+    def _zodiacSlice(self, num, r, style,  type):
         # pie slices
         offset = 360 - self.user.houses_degree_ut[6]
         # check transit
@@ -429,14 +425,14 @@ class MakeSvgInstance:
             dropin + sliceToY(num, r-dropin, offset)) + '" xlink:href="#' + type + '" /></g>'
         return slice + '' + sign
 
-    def __makeZodiac(self, r):
+    def _makeZodiac(self, r):
         output = ""
         for i in range(len(self.zodiac)):
-            output = output + self.__zodiacSlice(i, r, "fill:" + self.colors_settings["zodiac_bg_%s" % (
+            output = output + self._zodiacSlice(i, r, "fill:" + self.colors_settings["zodiac_bg_%s" % (
                 i)] + "; fill-opacity: 0.5;", self.zodiac[i]["name"]) + ''
         return output
 
-    def __makeHouses(self, r):
+    def _makeHouses(self, r):
         path = ""
 
         xr = 12
@@ -540,7 +536,7 @@ class MakeSvgInstance:
 
         return path
 
-    def __value_element_from_planet(self, i):
+    def _value_element_from_planet(self, i):
         """
             Calculate chart element points from a planet.
         """
@@ -579,18 +575,17 @@ class MakeSvgInstance:
                 self.planets_settings[i]["element_points"] + \
                 extra_points
 
-    def __make_planets(self, r):
+    def _make_planets(self, r):
         planets_degut = {}
         diff = range(len(self.planets_settings))
 
         for i in range(len(self.planets_settings)):
             if self.planets_settings[i]["visible"] == 1:
                 # list of planets sorted by degree
-                logger.debug("planet: %s, degree: %s",
-                             i, self.points_deg_ut[i])
+                logger.debug(f'planet: {i}, degree: {self.points_deg_ut[i]}')
                 planets_degut[self.points_deg_ut[i]] = i
 
-            self.__value_element_from_planet(i)
+            self._value_element_from_planet(i)
 
         output = ""
         keys = list(planets_degut.keys())
@@ -618,7 +613,9 @@ class MakeSvgInstance:
             diffa = degreeDiff(prev, self.points_deg_ut[i])
             diffb = degreeDiff(next, self.points_deg_ut[i])
             planets_by_pos[e] = [i, diffa, diffb]
-            # print "%s %s %s" % (self.planets_settings[i]['label'],diffa,diffb)
+            
+            logger.debug(f'{self.planets_settings[i]["label"]}, {diffa}, {diffb}')
+            
             if diffb < planet_drange:
                 if group_open:
                     groups[-1].append([e, diffa, diffb,
@@ -755,22 +752,8 @@ class MakeSvgInstance:
 
             scale = 1
             # output planet
-            output = (
-                output
-                + '<g transform="translate(-'
-                + str(12 * scale)
-                + ",-"
-                + str(12 * scale)
-                + ')"><g transform="scale('
-                + str(scale)
-                + ')"><use x="'
-                + str(planet_x * (1 / scale))
-                + '" y="'
-                + str(planet_y * (1 / scale))
-                + '" xlink:href="#'
-                + self.planets_settings[i]["name"]
-                + '" /></g></g>'
-            )
+            output += f'<g transform="translate(-{12 * scale},-{12 * scale})"><g transform="scale({scale})"><use x="{planet_x * (1/scale)}" y="{planet_y * (1/scale)}" xlink:href="#{self.planets_settings[i]["name"]}" /></g></g>'
+
 
         # make transit degut and display planets
         if self.chart_type == "Transit" or self.chart_type == "Composite":
@@ -858,20 +841,8 @@ class MakeSvgInstance:
                 y1 = sliceToY(0, r + 3, t_offset) - 3
                 x2 = sliceToX(0, r - 3, t_offset) + 3
                 y2 = sliceToY(0, r - 3, t_offset) + 3
-                output = (
-                    output
-                    + '<line x1="'
-                    + str(x1)
-                    + '" y1="'
-                    + str(y1)
-                    + '" x2="'
-                    + str(x2)
-                    + '" y2="'
-                    + str(y2)
-                    + '" style="stroke: '
-                    + self.planets_settings[i]["color"]
-                    + '; stroke-width: 1px; stroke-opacity:.8;"/>'
-                )
+                output += f'<line x1="{str(x1)}" y1="{str(y1)}" x2="{str(x2)}" y2="{str(y2)}" style="stroke: {self.planets_settings[i]["color"]}; stroke-width: 1px; stroke-opacity:.8;"/>'
+
 
                 # transit planet degree text
                 rotate = self.user.houses_degree_ut[0] - \
@@ -901,7 +872,7 @@ class MakeSvgInstance:
                     '" style="fill: '
                     + self.planets_settings[i]["color"]
                     + '; font-size: 10px;">'
-                    + self.__dec2deg(self.t_points_deg[i], type="1")
+                    + self._dec2deg(self.t_points_deg[i], type="1")
                 )
                 output += "</text></g>"
 
@@ -917,20 +888,7 @@ class MakeSvgInstance:
             x2 = sliceToX(0, (r - (dropin - 3)), offset) + (dropin - 3)
             y2 = sliceToY(0, (r - (dropin - 3)), offset) + (dropin - 3)
 
-            output = (
-                output
-                + '<line x1="'
-                + str(x1)
-                + '" y1="'
-                + str(y1)
-                + '" x2="'
-                + str(x2)
-                + '" y2="'
-                + str(y2)
-                + '" style="stroke: '
-                + self.planets_settings[i]["color"]
-                + '; stroke-width: 2px; stroke-opacity:.6;"/>'
-            )
+            output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.planets_settings[i]["color"]}; stroke-width: 2px; stroke-opacity:.6;"/>'
 
             # check transit
             if self.chart_type == "Transit" or self.chart_type == "Composite":
@@ -942,24 +900,11 @@ class MakeSvgInstance:
             y1 = sliceToY(0, r - dropin, offset) + dropin
             x2 = sliceToX(0, (r - (dropin - 3)), offset) + (dropin - 3)
             y2 = sliceToY(0, (r - (dropin - 3)), offset) + (dropin - 3)
-            output = (
-                output
-                + '<line x1="'
-                + str(x1)
-                + '" y1="'
-                + str(y1)
-                + '" x2="'
-                + str(x2)
-                + '" y2="'
-                + str(y2)
-                + '" style="stroke: '
-                + self.planets_settings[i]["color"]
-                + '; stroke-width: 2px; stroke-opacity:.6;"/>'
-            )
+            output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.planets_settings[i]["color"]}; stroke-width: 2px; stroke-opacity:.6;"/>'
 
         return output
 
-    def __makePatterns(self):
+    def _makePatterns(self):
         """
         * Stellium: At least four planets linked together in a series of continuous conjunctions.
         * Grand trine: Three trine aspects together.
@@ -1052,13 +997,13 @@ class MakeSvgInstance:
                 for l, w in opp[k].items():
                     for a, b in sq.items():
                         if k in sq[a] and l in sq[a]:
-                            # print 'got tsquare %s %s %s' % (a,k,l)
+                            logger.debug(f'Got tsquare {a} {k} {l}')
                             if k > l:
-                                tsquare['%s,%s,%s' % (a, l, k)] = '%s => %s, %s' % (
-                                    self.planets_settings[a]['label'], self.planets_settings[l]['label'], self.planets_settings[k]['label'])
+                                tsquare[f"{a},{l},{k}"] = f"{self.planets_settings[a]['label']} => {self.planets_settings[l]['label']}, {self.planets_settings[k]['label']}"
+                                
                             else:
-                                tsquare['%s,%s,%s' % (a, k, l)] = '%s => %s, %s' % (
-                                    self.planets_settings[a]['label'], self.planets_settings[k]['label'], self.planets_settings[l]['label'])
+                                tsquare[f"{a},{k},{l}"] = f"{self.planets_settings[a]['label']} => {self.planets_settings[k]['label']}, {self.planets_settings[l]['label']}"
+
         stellium = {}
         # check for 4 continuous conjunctions
         for k, v in conj.items():
@@ -1094,23 +1039,20 @@ class MakeSvgInstance:
         if len(yot) >= 1:
             y = 0
             for k, v in yot.items():
-                out += '<text y="%s" style="fill:%s; font-size: 12px;">%s</text>' % (
-                    y, self.colors_settings['paper_0'], ("Yot"))
+                out += f'<text y="{y}" style="fill:{self.colors_settings["paper_0"]}; font-size: 12px;">{"Yot"}</text>'
 
                 # first planet symbol
-                out += '<g transform="translate(20,%s)">' % (y)
-                out += '<use transform="scale(0.4)" x="0" y="-20" xlink:href="#%s" /></g>' % (
-                    self.planets_settings[yot[k][0]]['name'])
+                out += f'<g transform="translate(20,{y})">'
+                out += f'<use transform="scale(0.4)" x="0" y="-20" xlink:href="#{self.planets_settings[yot[k][0]]["name"]}" /></g>'
+
 
                 # second planet symbol
-                out += '<g transform="translate(30,%s)">' % (y)
-                out += '<use transform="scale(0.4)" x="0" y="-20" xlink:href="#%s" /></g>' % (
-                    self.planets_settings[yot[k][1]]['name'])
+                out += f'<g transform="translate(30,{y})">'
+                out += f'<use transform="scale(0.4)" x="0" y="-20" xlink:href="#{self.planets_settings[yot[k][1]]["name"]}" /></g>'
 
                 # third planet symbol
-                out += '<g transform="translate(40,%s)">' % (y)
-                out += '<use transform="scale(0.4)" x="0" y="-20" xlink:href="#%s" /></g>' % (
-                    self.planets_settings[yot[k][2]]['name'])
+                out += f'<g transform="translate(40,{y})">'
+                out += f'<use transform="scale(0.4)" x="0" y="-20" xlink:href="#{self.planets_settings[yot[k][2]]["name"]}" /></g>'
 
                 y = y+14
         # finalize
@@ -1119,15 +1061,15 @@ class MakeSvgInstance:
         return ''
 
     # Aspect and aspect grid functions for natal type charts.
-    def __makeAspects(self, r, ar):
+    def _makeAspects(self, r, ar):
         out = ""
         for element in self.aspects_list:
-            out += self.__drawAspect(r, ar, element['p1_abs_pos'], element['p2_abs_pos'],
+            out += self._drawAspect(r, ar, element['p1_abs_pos'], element['p2_abs_pos'],
                                      self.colors_settings[f"aspect_{element['aspect_degrees']}"])
 
         return out
 
-    def __makeAspectGrid(self, r):
+    def _makeAspectGrid(self, r):
         out = ""
         style = 'stroke:%s; stroke-width: 1px; stroke-opacity:.6; fill:none' % (
             self.colors_settings['paper_0'])
@@ -1140,10 +1082,9 @@ class MakeSvgInstance:
         for a in revr:
             counter += 1
             if self.planets_settings[a]['visible'] == 1:
-                out += '<rect x="'+str(xindent)+'" y="'+str(yindent)+'" width="'+str(
-                    box)+'" height="'+str(box)+'" style="'+style+'"/>'
-                out += '<use transform="scale(0.4)" x="'+str((xindent+2)*2.5)+'" y="'+str(
-                    (yindent+1)*2.5)+'" xlink:href="#'+self.planets_settings[a]['name']+'" />'
+                out += f'<rect x="{xindent}" y="{yindent}" width="{box}" height="{box}" style="{style}"/>'
+                out += f'<use transform="scale(0.4)" x="{(xindent+2)*2.5}" y="{(yindent+1)*2.5}" xlink:href="#{self.planets_settings[a]["name"]}" />'
+
                 xindent = xindent + box
                 yindent = yindent - box
                 revr2 = list(range(a))
@@ -1152,19 +1093,18 @@ class MakeSvgInstance:
                 yorb = yindent + box
                 for b in revr2:
                     if self.planets_settings[b]['visible'] == 1:
-                        out += '<rect x="'+str(xorb)+'" y="'+str(yorb)+'" width="'+str(
-                            box)+'" height="'+str(box)+'" style="'+style+'"/>'
+                        out += f'<rect x="{xorb}" y="{yorb}" width="{box}" height="{box}" style="{style}"/>'
+
                         xorb = xorb+box
                         for element in self.aspects_list:
                             if (element['p1'] == a and element['p2'] == b) or (element['p1'] == b and element['p2'] == a):
-                                out += '<use  x="'+str(xorb-box+1)+'" y="'+str(
-                                    yorb+1)+'" xlink:href="#orb'+str(element['aspect_degrees'])+'" />'
+                                out += f'<use  x="{xorb-box+1}" y="{yorb+1}" xlink:href="#orb{element["aspect_degrees"]}" />'
 
         return out
 
     # Aspect and aspect grid functions for transit type charts.
 
-    def __makeAspectsTransit(self, r, ar):
+    def _makeAspectsTransit(self, r, ar):
         out = ""
 
         self.aspects_list = CompositeAspects(
@@ -1174,15 +1114,15 @@ class MakeSvgInstance:
         ).get_relevant_aspects()
 
         for element in self.aspects_list:
-            out += self.__drawAspect(r, ar, element['p1_abs_pos'], element['p2_abs_pos'],
+            out += self._drawAspect(r, ar, element['p1_abs_pos'], element['p2_abs_pos'],
                                      self.colors_settings[f"aspect_{element['aspect_degrees']}"])
 
         return out
 
-    def __makeAspectTransitGrid(self, r):
+    def _makeAspectTransitGrid(self, r):
         out = '<g transform="translate(500,310)">'
-        out += '<text y="-15" x="0" style="fill:%s; font-size: 14px;">%s</text>' % (
-            self.colors_settings['paper_0'], (f"{self.language_settings['aspects']}:"))
+        out += f'<text y="-15" x="0" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["aspects"]}:</text>'
+
         line = 0
         nl = 0
         
@@ -1226,48 +1166,39 @@ class MakeSvgInstance:
             # difference in degrees
             out += '<text y="8" x="45" style="fill:%s; font-size: 10px;">%s</text>' % (
                 self.colors_settings['paper_0'],
-                self.__dec2deg(self.aspects_list[i]['orbit']))
+                self._dec2deg(self.aspects_list[i]['orbit']))
             # line
             out += '</g>'
             line = line + 14
         out += '</g>'
         return out
 
-    def __makeElements(self, r):
+    def _makeElements(self, r):
         total = self.fire + self.earth + self.air + self.water
         pf = int(round(100 * self.fire / total))
         pe = int(round(100 * self.earth / total))
         pa = int(round(100 * self.air / total))
         pw = int(round(100 * self.water / total))
-        out = \
-            '<g transform="translate(-30,79)">'
-        out += \
-            f'<text y="0" style="fill:#ff6600; font-size: 10px;">{self.language_settings["fire"]}  {str(pf)}%</text>'
-        out += \
-            f'<text y="12" style="fill:#6a2d04; font-size: 10px;">{self.language_settings["earth"]} {str(pe)}%</text>'
-        out += \
-            f'<text y="24" style="fill:#6f76d1; font-size: 10px;">{self.language_settings["air"]}   {str(pa)}%</text>'
-        out += \
-            f'<text y="36" style="fill:#630e73; font-size: 10px;">{self.language_settings["water"]} {str(pw)}%</text>'
-        out += \
-            '</g>'
+        
+        out = '<g transform="translate(-30,79)">'
+        out += f'<text y="0" style="fill:#ff6600; font-size: 10px;">{self.language_settings["fire"]}  {str(pf)}%</text>'
+        out += f'<text y="12" style="fill:#6a2d04; font-size: 10px;">{self.language_settings["earth"]} {str(pe)}%</text>'
+        out += f'<text y="24" style="fill:#6f76d1; font-size: 10px;">{self.language_settings["air"]}   {str(pa)}%</text>'
+        out += f'<text y="36" style="fill:#630e73; font-size: 10px;">{self.language_settings["water"]} {str(pw)}%</text>'
+        out += '</g>'
+        
         return out
 
-    def __makePlanetGrid(self):
+    def _makePlanetGrid(self):
         li = 10
         offset = 0
 
-        out = \
-            '<g transform="translate(500,-20)">'
-
-        # loop over all planets
-        out += \
-            '<g transform="translate(140, -15)">'
-        out += \
-            f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.name}:</text>'
+        out = '<g transform="translate(500,-20)">'
+        out += '<g transform="translate(140, -15)">'
+        out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.name}:</text>'
         out += '</g>'
 
-        end_of_line = ''
+        end_of_line = None
         for i in range(len(self.planets_settings)):
             offset_between_lines = 14
             end_of_line = '</g>'
@@ -1279,29 +1210,23 @@ class MakeSvgInstance:
 
             if self.planets_settings[i]['visible'] == 1:
                 # start of line
-                out += \
-                    f'<g transform="translate({offset},{li})">'
+                out += f'<g transform="translate({offset},{li})">'
 
                 # planet text
-                out += \
-                    f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
+                out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
 
                 # planet symbol
-                out += \
-                    f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.planets_settings[i]["name"]}" /></g>'
+                out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.planets_settings[i]["name"]}" /></g>'
 
                 # planet degree
-                out += '<text text-anchor="start" x="19" style="fill:%s; font-size: 10px;">%s</text>' % (
-                    self.colors_settings['paper_0'], self.__dec2deg(self.points_deg[i]))
+                out += f'<text text-anchor="start" x="19" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self._dec2deg(self.points_deg[i])}</text>'
 
                 # zodiac
-                out += '<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#' + \
-                    self.zodiac[self.points_sign[i]]["name"]+'" /></g>'
+                out += f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.points_sign[i]]["name"]}" /></g>'
 
                 # planet retrograde
                 if self.points_retrograde[i]:
-                    out += \
-                        '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+                    out += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
 
                 # end of line
                 out += end_of_line
@@ -1314,15 +1239,12 @@ class MakeSvgInstance:
         if self.chart_type == "Transit" or self.chart_type == "Composite":
 
             if self.chart_type == "Transit":
-                out += \
-                    '<g transform="translate(320, -15)">'
-                out += \
-                    f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.t_name}:</text>'
+                out += '<g transform="translate(320, -15)">'
+                out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.t_name}:</text>'
             else:
-                out += \
-                    '<g transform="translate(380, -15)">'
-                out += \
-                    f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.t_user.name}:</text>'
+                out += '<g transform="translate(380, -15)">'
+                out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.t_user.name}:</text>'
+
             out += end_of_line
 
             t_li = 10
@@ -1335,42 +1257,35 @@ class MakeSvgInstance:
 
                 if self.planets_settings[i]["visible"] == 1:
                     # start of line
-                    out += \
-                        f'<g transform="translate({t_offset},{t_li})">'
+                    out += f'<g transform="translate({t_offset},{t_li})">'
 
                     # planet text
-                    out += \
-                        f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
+                    out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
                     # planet symbol
-                    out += \
-                        f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.planets_settings[i]["name"]}" /></g>'
+                    out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.planets_settings[i]["name"]}" /></g>'
                     # planet degree
-                    out += \
-                        f'<text text-anchor="start" x="19" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.__dec2deg(self.t_points_deg[i])}</text>'
+                    out += f'<text text-anchor="start" x="19" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self._dec2deg(self.t_points_deg[i])}</text>'
                     # zodiac
-                    out += \
-                        f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.t_points_sign[i]]["name"]}" /></g>'
+                    out += f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.t_points_sign[i]]["name"]}" /></g>'
 
                     # planet retrograde
                     if self.t_points_retrograde[i]:
-                        out += \
-                            '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+                        out += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
 
                     # end of line
                     out += end_of_line
 
                     t_li = t_li + offset_between_lines
 
-        if not end_of_line:
+        if end_of_line is None:
             raise KerykeionException("End of line not found")
 
         out += end_of_line
         return out
 
-    def __makeHousesGrid(self):
+    def _makeHousesGrid(self):
 
-        out =  \
-            '<g transform="translate(600,-20)">'
+        out =  '<g transform="translate(600,-20)">'
 
         li = 10
         for i in range(12):
@@ -1378,20 +1293,14 @@ class MakeSvgInstance:
                 cusp = '&#160;&#160;'+str(i+1)
             else:
                 cusp = str(i+1)
-            out += '<g transform="translate(0,'+str(li)+')">'
-            out += '<text text-anchor="end" x="40" style="fill:%s; font-size: 10px;">%s %s:</text>' % (
-                self.colors_settings['paper_0'], self.language_settings['cusp'], cusp)
-            out += '<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#' + \
-                self.zodiac[self.houses_sign_graph[i]]["name"]+'" /></g>'
-            out += '<text x="53" style="fill:%s; font-size: 10px;"> %s</text>' % (
-                self.colors_settings['paper_0'], self.__dec2deg(self.user.houses_list[i]["position"]))
+            out += f'<g transform="translate(0,{li})">'
+            out += f'<text text-anchor="end" x="40" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["cusp"]} {cusp}:</text>'
+            out += f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.houses_sign_graph[i]]["name"]}" /></g>'
+            out += f'<text x="53" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;"> {self._dec2deg(self.user.houses_list[i]["position"])}</text>'
             out += '</g>'
             li = li + 14
+            
         out += '</g>'
-
-        # -------------------- #
-        #      Composite       #
-        # -------------------- #
 
         if self.chart_type == "Composite":
             out += '<g transform="translate(840, -20)">'
@@ -1402,12 +1311,9 @@ class MakeSvgInstance:
                 else:
                     cusp = str(i+1)
                 out += '<g transform="translate(0,'+str(li)+')">'
-                out += '<text text-anchor="end" x="40" style="fill:%s; font-size: 10px;">%s %s:</text>' % (
-                    self.colors_settings['paper_0'], self.language_settings['cusp'], cusp)
-                out += '<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#' + \
-                    self.zodiac[self.t_houses_sign_graph[i]]["name"]+'" /></g>'
-                out += '<text x="53" style="fill:%s; font-size: 10px;"> %s</text>' % (
-                    self.colors_settings['paper_0'], self.__dec2deg(self.t_user.houses_list[i]["position"]))
+                out += f'<text text-anchor="end" x="40" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["cusp"]} {cusp}:</text>'
+                out += f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.t_houses_sign_graph[i]]["name"]}" /></g>'
+                out += f'<text x="53" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;"> {self._dec2deg(self.t_user.houses_list[i]["position"])}</text>'
                 out += '</g>'
                 li = li + 14
             out += '</g>'
@@ -1434,7 +1340,7 @@ class MakeSvgInstance:
         self.planets_settings = settings['celestial_points']
         self.aspects_settings = settings['aspects']
 
-    def __createTemplateDictionary(self):
+    def _createTemplateDictionary(self):
         # self.chart_type = "Transit"
         # empty element points
         self.fire = 0.0
@@ -1473,13 +1379,12 @@ class MakeSvgInstance:
 
         # transit
         if self.chart_type == "Transit" or self.chart_type == "Composite":
-            td['transitRing'] = self.__transitRing(r)
-            td['degreeRing'] = self.__degreeTransitRing(r)
+            td['transitRing'] = self._transitRing(r)
+            td['degreeRing'] = self._degreeTransitRing(r)
 
             # circles
             td['c1'] = f'cx="{r}" cy="{r}" r="{r - 36}"'
-            td['c1style'] = 'fill: none; stroke: %s; stroke-width: 1px; stroke-opacity:.4;' % (
-                self.colors_settings['zodiac_transit_ring_2'])
+            td['c1style'] = f'fill: none; stroke: {self.colors_settings["zodiac_transit_ring_2"]}; stroke-width: 1px; stroke-opacity:.4;'
             td['c2'] = 'cx="' + str(r) + '" cy="' + \
                 str(r) + '" r="' + str(r-72) + '"'
             td['c2style'] = 'fill: %s; fill-opacity:.4; stroke: %s; stroke-opacity:.4; stroke-width: 1px' % (
@@ -1488,13 +1393,13 @@ class MakeSvgInstance:
                 str(r) + '" r="' + str(r-160) + '"'
             td['c3style'] = 'fill: %s; fill-opacity:.8; stroke: %s; stroke-width: 1px' % (
                 self.colors_settings['paper_1'], self.colors_settings['zodiac_transit_ring_0'])
-            td['makeAspects'] = self.__makeAspectsTransit(r, (r-160))
-            td['makeAspectGrid'] = self.__makeAspectTransitGrid(r)
+            td['makeAspects'] = self._makeAspectsTransit(r, (r-160))
+            td['makeAspectGrid'] = self._makeAspectTransitGrid(r)
             td['makePatterns'] = ''
             td['chart_width'] = self.full_width
         else:
             td['transitRing'] = ""
-            td['degreeRing'] = self.__degreeRing(r)
+            td['degreeRing'] = self._degreeRing(r)
 
             # circles
             td['c1'] = f'cx="{r}" cy="{r}" r="{r - self.c1}"'
@@ -1503,9 +1408,9 @@ class MakeSvgInstance:
             td['c2style'] = f'fill: {self.colors_settings["paper_1"]}; fill-opacity:.2; stroke: {self.colors_settings["zodiac_radix_ring_1"]}; stroke-opacity:.4; stroke-width: 1px'
             td['c3'] = f'cx="{r}" cy="{r}" r="{r - self.c3}"'
             td['c3style'] = f'fill: {self.colors_settings["paper_1"]}; fill-opacity:.8; stroke: {self.colors_settings["zodiac_radix_ring_0"]}; stroke-width: 1px'
-            td['makeAspects'] = self.__makeAspects(r, (r-self.c3))
-            td['makeAspectGrid'] = self.__makeAspectGrid(r)
-            td['makePatterns'] = self.__makePatterns()
+            td['makeAspects'] = self._makeAspects(r, (r-self.c3))
+            td['makeAspectGrid'] = self._makeAspectGrid(r)
+            td['makePatterns'] = self._makePatterns()
             td['chart_width'] = self.natal_width
 
         td['circleX'] = str(0)
@@ -1537,6 +1442,11 @@ class MakeSvgInstance:
 
         # lunar phase
         deg = self.user.lunar_phase['degrees_between_s_m']
+
+        lffg = None
+        lfbg = None
+        lfcx = None
+        lfr = None
 
         if (deg < 90.0):
             maxr = deg
@@ -1572,6 +1482,9 @@ class MakeSvgInstance:
             lfr = 10.0+maxr-((deg-270.0)/90.0*maxr)
             lffg, lfbg = self.colors_settings["lunar_phase_0"], self.colors_settings["lunar_phase_1"]
 
+        if lffg is None or lfbg is None or lfcx is None or lfr is None:
+            raise KerykeionException("Lunar phase error")
+
         td['lunar_phase_fg'] = lffg
         td['lunar_phase_bg'] = lfbg
         td['lunar_phase_cx'] = lfcx
@@ -1601,10 +1514,8 @@ class MakeSvgInstance:
             td['stringPosition'] = f'{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hour:02d}:{self.t_user.minute:02d}'
 
         else:
-            td['stringLat'] = "%s: %s" % (
-                self.language_settings['latitude'], self.__lat2str(self.geolat))
-            td['stringLon'] = "%s: %s" % (
-                self.language_settings['longitude'], self.__lon2str(self.geolon))
+            td['stringLat'] = f"{self.language_settings['latitude']}: {self._lat2str(self.geolat)}"
+            td['stringLon'] = f"{self.language_settings['longitude']}: {self._lon2str(self.geolon)}"
             td['stringPosition'] = f"{self.language_settings['type']}: {self.charttype}"
 
         # paper_color_X
@@ -1632,18 +1543,18 @@ class MakeSvgInstance:
         td['cfgTranslate'] = translate
 
         # functions
-        td['makeZodiac'] = self.__makeZodiac(r)
-        td['makeHouses'] = self.__makeHouses(r)
-        td['makePlanets'] = self.__make_planets(r)
-        td['makeElements'] = self.__makeElements(r)
-        td['makePlanetGrid'] = self.__makePlanetGrid()
-        td['makeHousesGrid'] = self.__makeHousesGrid()
+        td['makeZodiac'] = self._makeZodiac(r)
+        td['makeHouses'] = self._makeHouses(r)
+        td['makePlanets'] = self._make_planets(r)
+        td['makeElements'] = self._makeElements(r)
+        td['makePlanetGrid'] = self._makePlanetGrid()
+        td['makeHousesGrid'] = self._makeHousesGrid()
 
         return td
 
     def makeTemplate(self):
         """Creates the template for the SVG file"""
-        td = self.__createTemplateDictionary()
+        td = self._createTemplateDictionary()
 
         # read template
         with open(self.xml_svg, "r", encoding="utf-8", errors='ignore') as output_file:
@@ -1652,9 +1563,9 @@ class MakeSvgInstance:
 
         # return filename
 
-        logger.debug("Template dictionary keys: %s" % (td.keys()))
+        logger.debug(f"Template dictionary keys: {td.keys()}")
 
-        self.__createTemplateDictionary()
+        self._createTemplateDictionary()
         return template.replace("\"", "'")
 
     def makeSVG(self):
