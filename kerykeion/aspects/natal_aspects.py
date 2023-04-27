@@ -38,7 +38,6 @@ class NatalAspects:
         with open(settings_file, "r", encoding="utf-8", errors="ignore") as f:
             settings = json.load(f)
 
-        self.colors_settings = settings["colors"]
         self.planets_settings = settings["celestial_points"]
         self.aspects_settings = settings["aspects"]
         self.axes_orbit_settings = settings["axes_orbit"]
@@ -56,7 +55,7 @@ class NatalAspects:
         if int(distance) <= self.aspects_settings[0]["orb"]:
             name = self.aspects_settings[0]["name"]
             aspect_degrees = self.aspects_settings[0]["degree"]
-            color = self.colors_settings["aspect_0"]
+            color = self.aspects_settings[0]["color"]
             verdict = True
             aid = 0
 
@@ -67,7 +66,7 @@ class NatalAspects:
         ):
             name = self.aspects_settings[1]["name"]
             aspect_degrees = self.aspects_settings[1]["degree"]
-            color = self.colors_settings["aspect_30"]
+            color = self.aspects_settings[1]["color"]
             verdict = True
             aid = 1
 
@@ -78,7 +77,7 @@ class NatalAspects:
         ):
             name = self.aspects_settings[2]["name"]
             aspect_degrees = self.aspects_settings[2]["degree"]
-            color = self.colors_settings["aspect_45"]
+            color = self.aspects_settings[2]["color"]
             verdict = True
             aid = 2
 
@@ -89,7 +88,7 @@ class NatalAspects:
         ):
             name = self.aspects_settings[3]["name"]
             aspect_degrees = self.aspects_settings[3]["degree"]
-            color = self.colors_settings["aspect_60"]
+            color = self.aspects_settings[3]["color"]
             verdict = True
             aid = 3
 
@@ -100,7 +99,7 @@ class NatalAspects:
         ):
             name = self.aspects_settings[4]["name"]
             aspect_degrees = self.aspects_settings[4]["degree"]
-            color = self.colors_settings["aspect_72"]
+            color = self.aspects_settings[4]["color"]
             verdict = True
             aid = 4
 
@@ -111,7 +110,7 @@ class NatalAspects:
         ):
             name = self.aspects_settings[5]["name"]
             aspect_degrees = self.aspects_settings[5]["degree"]
-            color = self.colors_settings["aspect_90"]
+            color = self.aspects_settings[5]["color"]
             verdict = True
             aid = 5
 
@@ -122,7 +121,7 @@ class NatalAspects:
         ):
             name = self.aspects_settings[6]["name"]
             aspect_degrees = self.aspects_settings[6]["degree"]
-            color = self.colors_settings["aspect_120"]
+            color = self.aspects_settings[6]["color"]
             verdict = True
             aid = 6
 
@@ -133,7 +132,7 @@ class NatalAspects:
         ):
             name = self.aspects_settings[7]["name"]
             aspect_degrees = self.aspects_settings[7]["degree"]
-            color = self.colors_settings["aspect_135"]
+            color = self.aspects_settings[7]["color"]
             verdict = True
             aid = 7
 
@@ -144,7 +143,7 @@ class NatalAspects:
         ):
             name = self.aspects_settings[8]["name"]
             aspect_degrees = self.aspects_settings[8]["degree"]
-            color = self.colors_settings["aspect_144"]
+            color = self.aspects_settings[8]["color"]
             verdict = True
             aid = 8
 
@@ -155,7 +154,7 @@ class NatalAspects:
         ):
             name = self.aspects_settings[9]["name"]
             aspect_degrees = self.aspects_settings[9]["degree"]
-            color = self.colors_settings["aspect_150"]
+            color = self.aspects_settings[9]["color"]
             verdict = True
             aid = 9
 
@@ -166,7 +165,7 @@ class NatalAspects:
         ):
             name = self.aspects_settings[10]["name"]
             aspect_degrees = self.aspects_settings[10]["degree"]
-            color = self.colors_settings["aspect_180"]
+            color = self.aspects_settings[10]["color"]
             verdict = True
             aid = 10
 

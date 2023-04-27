@@ -421,7 +421,7 @@
     {
       "id": 12,
       "name": "1",
-      "color": "orange",
+      "color": "#ff7e00",
       "visible": 1,
       "element_points": 40,
       "zodiac_relation": "-1",
