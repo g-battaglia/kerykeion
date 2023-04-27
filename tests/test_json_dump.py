@@ -33,7 +33,7 @@ class TestJsonDump:
         assert round(self.dictionary["sun"]["position"], 3) == 17.162
         assert round(self.dictionary["sun"]["abs_pos"], 3) == 197.162
         assert self.dictionary["sun"]["emoji"] == "♎️"
-        assert self.dictionary["sun"]["house"] == "Tenth House"
+        assert self.dictionary["sun"]["house"] == "Tenth_House"
         assert self.dictionary["sun"]["retrograde"] == False
         assert self.dictionary["sun"]["point_type"] == "Planet"
 
@@ -65,40 +65,40 @@ class TestJsonDump:
         assert self.dictionary["pluto"]["name"] == "Pluto"
 
     def test_json_dump_first_house(self):
-        assert self.dictionary["first_house"]["name"] == "First House"
+        assert self.dictionary["first_house"]["name"] == "First_House"
 
     def test_json_dump_second_house(self):
-        assert self.dictionary["second_house"]["name"] == "Second House"
+        assert self.dictionary["second_house"]["name"] == "Second_House"
 
     def test_json_dump_third_house(self):
-        assert self.dictionary["third_house"]["name"] == "Third House"
+        assert self.dictionary["third_house"]["name"] == "Third_House"
 
     def test_json_dump_fourth_house(self):
-        assert self.dictionary["fourth_house"]["name"] == "Fourth House"
+        assert self.dictionary["fourth_house"]["name"] == "Fourth_House"
 
     def test_json_dump_fifth_house(self):
-        assert self.dictionary["fifth_house"]["name"] == "Fifth House"
+        assert self.dictionary["fifth_house"]["name"] == "Fifth_House"
 
     def test_json_dump_sixth_house(self):
-        assert self.dictionary["sixth_house"]["name"] == "Sixth House"
+        assert self.dictionary["sixth_house"]["name"] == "Sixth_House"
 
     def test_json_dump_seventh_house(self):
-        assert self.dictionary["seventh_house"]["name"] == "Seventh House"
+        assert self.dictionary["seventh_house"]["name"] == "Seventh_House"
 
     def test_json_dump_eighth_house(self):
-        assert self.dictionary["eighth_house"]["name"] == "Eighth House"
+        assert self.dictionary["eighth_house"]["name"] == "Eighth_House"
 
     def test_json_dump_ninth_house(self):
-        assert self.dictionary["ninth_house"]["name"] == "Ninth House"
+        assert self.dictionary["ninth_house"]["name"] == "Ninth_House"
 
     def test_json_dump_tenth_house(self):
-        assert self.dictionary["tenth_house"]["name"] == "Tenth House"
+        assert self.dictionary["tenth_house"]["name"] == "Tenth_House"
 
     def test_json_dump_eleventh_house(self):
-        assert self.dictionary["eleventh_house"]["name"] == "Eleventh House"
+        assert self.dictionary["eleventh_house"]["name"] == "Eleventh_House"
 
     def test_json_dump_twelfth_house(self):
-        assert self.dictionary["twelfth_house"]["name"] == "Twelfth House"
+        assert self.dictionary["twelfth_house"]["name"] == "Twelfth_House"
 
     def test_lunar_phase(self):
         assert self.dictionary["lunar_phase"]["moon_emoji"] == "🌘"

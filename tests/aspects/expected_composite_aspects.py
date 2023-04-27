@@ -142,7 +142,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Moon",
         "p1_abs_pos": 299.34965352879067,
-        "p2_name": "First House",
+        "p2_name": "First_House",
         "p2_abs_pos": 56.743000082027145,
         "aspect": "trine",
         "orbit": -2.6066534467635165,
@@ -156,7 +156,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Moon",
         "p1_abs_pos": 299.34965352879067,
-        "p2_name": "Tenth House",
+        "p2_name": "Tenth_House",
         "p2_abs_pos": 307.3509692918553,
         "aspect": "conjunction",
         "orbit": 8.00131576306461,
@@ -226,7 +226,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Mercury",
         "p1_abs_pos": 218.1169321219999,
-        "p2_name": "Tenth House",
+        "p2_name": "Tenth_House",
         "p2_abs_pos": 307.3509692918553,
         "aspect": "square",
         "orbit": -0.7659628301446446,
@@ -324,7 +324,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Mars",
         "p1_abs_pos": 182.447355414421,
-        "p2_name": "First House",
+        "p2_name": "First_House",
         "p2_abs_pos": 56.743000082027145,
         "aspect": "trine",
         "orbit": 5.704355332393845,
@@ -338,7 +338,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Mars",
         "p1_abs_pos": 182.447355414421,
-        "p2_name": "Tenth House",
+        "p2_name": "Tenth_House",
         "p2_abs_pos": 307.3509692918553,
         "aspect": "trine",
         "orbit": 4.903613877434282,
@@ -520,7 +520,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Saturn",
         "p1_abs_pos": 43.237387375959095,
-        "p2_name": "Tenth House",
+        "p2_name": "Tenth_House",
         "p2_abs_pos": 307.3509692918553,
         "aspect": "square",
         "orbit": 5.886418084103809,
@@ -590,7 +590,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Uranus",
         "p1_abs_pos": 55.56164354349259,
-        "p2_name": "First House",
+        "p2_name": "First_House",
         "p2_abs_pos": 56.743000082027145,
         "aspect": "conjunction",
         "orbit": 1.1813565385345441,
@@ -646,7 +646,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Neptune",
         "p1_abs_pos": 176.0183223849651,
-        "p2_name": "First House",
+        "p2_name": "First_House",
         "p2_abs_pos": 56.743000082027145,
         "aspect": "trine",
         "orbit": -0.7246776970620488,
@@ -716,7 +716,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Pluto",
         "p1_abs_pos": 124.18439657856378,
-        "p2_name": "Tenth House",
+        "p2_name": "Tenth_House",
         "p2_abs_pos": 307.3509692918553,
         "aspect": "opposition",
         "orbit": -3.1665727132914867,
@@ -728,7 +728,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 13,
     },
     {
-        "p1_name": "First House",
+        "p1_name": "First_House",
         "p1_abs_pos": 226.07806373936137,
         "p2_name": "Venus",
         "p2_abs_pos": 313.2650283842848,
@@ -742,7 +742,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 3,
     },
     {
-        "p1_name": "First House",
+        "p1_name": "First_House",
         "p1_abs_pos": 226.07806373936137,
         "p2_name": "Mars",
         "p2_abs_pos": 165.26826406273574,
@@ -756,7 +756,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 4,
     },
     {
-        "p1_name": "First House",
+        "p1_name": "First_House",
         "p1_abs_pos": 226.07806373936137,
         "p2_name": "Jupiter",
         "p2_abs_pos": 170.7427509692113,
@@ -770,7 +770,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 5,
     },
     {
-        "p1_name": "First House",
+        "p1_name": "First_House",
         "p1_abs_pos": 226.07806373936137,
         "p2_name": "Neptune",
         "p2_abs_pos": 159.08740100136927,
@@ -784,7 +784,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 8,
     },
     {
-        "p1_name": "First House",
+        "p1_name": "First_House",
         "p1_abs_pos": 226.07806373936137,
         "p2_name": "Pluto",
         "p2_abs_pos": 111.63539063314039,
@@ -798,7 +798,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 9,
     },
     {
-        "p1_name": "Tenth House",
+        "p1_name": "Tenth_House",
         "p1_abs_pos": 155.56508098528505,
         "p2_name": "Sun",
         "p2_abs_pos": 328.95884862284834,
@@ -812,7 +812,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 0,
     },
     {
-        "p1_name": "Tenth House",
+        "p1_name": "Tenth_House",
         "p1_abs_pos": 155.56508098528505,
         "p2_name": "Moon",
         "p2_abs_pos": 245.20233917100873,
@@ -826,7 +826,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 1,
     },
     {
-        "p1_name": "Tenth House",
+        "p1_name": "Tenth_House",
         "p1_abs_pos": 155.56508098528505,
         "p2_name": "Mercury",
         "p2_abs_pos": 337.1174048153651,
@@ -840,7 +840,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 2,
     },
     {
-        "p1_name": "Tenth House",
+        "p1_name": "Tenth_House",
         "p1_abs_pos": 155.56508098528505,
         "p2_name": "Mars",
         "p2_abs_pos": 165.26826406273574,
@@ -854,7 +854,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 4,
     },
     {
-        "p1_name": "Tenth House",
+        "p1_name": "Tenth_House",
         "p1_abs_pos": 155.56508098528505,
         "p2_name": "Uranus",
         "p2_abs_pos": 20.531034996130582,
@@ -868,7 +868,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 7,
     },
     {
-        "p1_name": "Tenth House",
+        "p1_name": "Tenth_House",
         "p1_abs_pos": 155.56508098528505,
         "p2_name": "Neptune",
         "p2_abs_pos": 159.08740100136927,
@@ -882,9 +882,9 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 8,
     },
     {
-        "p1_name": "Tenth House",
+        "p1_name": "Tenth_House",
         "p1_abs_pos": 155.56508098528505,
-        "p2_name": "Tenth House",
+        "p2_name": "Tenth_House",
         "p2_abs_pos": 307.3509692918553,
         "aspect": "quincunx",
         "orbit": 1.7858883065702287,
@@ -1055,7 +1055,7 @@ EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Mercury",
         "p1_abs_pos": 218.1169321219999,
-        "p2_name": "Tenth House",
+        "p2_name": "Tenth_House",
         "p2_abs_pos": 307.3509692918553,
         "aspect": "square",
         "orbit": -0.7659628301446446,
@@ -1419,7 +1419,7 @@ EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Neptune",
         "p1_abs_pos": 176.0183223849651,
-        "p2_name": "First House",
+        "p2_name": "First_House",
         "p2_abs_pos": 56.743000082027145,
         "aspect": "trine",
         "orbit": -0.7246776970620488,
@@ -1473,7 +1473,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 6,
     },
     {
-        "p1_name": "First House",
+        "p1_name": "First_House",
         "p1_abs_pos": 226.07806373936137,
         "p2_name": "Mars",
         "p2_abs_pos": 165.26826406273574,
@@ -1487,7 +1487,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 4,
     },
     {
-        "p1_name": "Tenth House",
+        "p1_name": "Tenth_House",
         "p1_abs_pos": 155.56508098528505,
         "p2_name": "Moon",
         "p2_abs_pos": 245.20233917100873,

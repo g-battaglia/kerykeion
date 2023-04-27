@@ -15,18 +15,18 @@ Sign = Literal[
 ]
 
 Houses = Literal[
-    "First House",
-    "Second House",
-    "Third House",
-    "Fourth House",
-    "Fifth House",
-    "Sixth House",
-    "Seventh House",
-    "Eighth House",
-    "Ninth House",
-    "Tenth House",
-    "Eleventh House",
-    "Twelfth House",
+    "First_House",
+    "Second_House",
+    "Third_House",
+    "Fourth_House",
+    "Fifth_House",
+    "Sixth_House",
+    "Seventh_House",
+    "Eighth_House",
+    "Ninth_House",
+    "Tenth_House",
+    "Eleventh_House",
+    "Twelfth_House",
 ]
 
 Planet = Literal[

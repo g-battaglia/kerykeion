@@ -34,7 +34,7 @@ class TestKrInstance:
                 "abs_pos": 77.65970072361976,
                 "emoji": "♊️",
                 "point_type": "Planet",
-                "house": "Fourth House",
+                "house": "Fourth_House",
                 "retrograde": False,
             },
             "moon": {
@@ -47,7 +47,7 @@ class TestKrInstance:
                 "abs_pos": 278.73517321089366,
                 "emoji": "♑️",
                 "point_type": "Planet",
-                "house": "Eleventh House",
+                "house": "Eleventh_House",
                 "retrograde": False,
             },
             "mercury": {
@@ -60,7 +60,7 @@ class TestKrInstance:
                 "abs_pos": 55.00187700457719,
                 "emoji": "♉️",
                 "point_type": "Planet",
-                "house": "Third House",
+                "house": "Third_House",
                 "retrograde": False,
             },
             "venus": {
@@ -73,7 +73,7 @@ class TestKrInstance:
                 "abs_pos": 55.60375324022454,
                 "emoji": "♉️",
                 "point_type": "Planet",
-                "house": "Third House",
+                "house": "Third_House",
                 "retrograde": False,
             },
             "mars": {
@@ -86,7 +86,7 @@ class TestKrInstance:
                 "abs_pos": 153.01166984755753,
                 "emoji": "♍️",
                 "point_type": "Planet",
-                "house": "Seventh House",
+                "house": "Seventh_House",
                 "retrograde": False,
             },
             "jupiter": {
@@ -99,7 +99,7 @@ class TestKrInstance:
                 "abs_pos": 13.910952211401664,
                 "emoji": "♈️",
                 "point_type": "Planet",
-                "house": "Second House",
+                "house": "Second_House",
                 "retrograde": False,
             },
             "saturn": {
@@ -112,7 +112,7 @@ class TestKrInstance:
                 "abs_pos": 323.0835109999455,
                 "emoji": "♒️",
                 "point_type": "Planet",
-                "house": "First House",
+                "house": "First_House",
                 "retrograde": True,
             },
             "uranus": {
@@ -125,7 +125,7 @@ class TestKrInstance:
                 "abs_pos": 151.5666373257096,
                 "emoji": "♍️",
                 "point_type": "Planet",
-                "house": "Seventh House",
+                "house": "Seventh_House",
                 "retrograde": False,
             },
             "neptune": {
@@ -138,7 +138,7 @@ class TestKrInstance:
                 "abs_pos": 223.42348141929108,
                 "emoji": "♏️",
                 "point_type": "Planet",
-                "house": "Ninth House",
+                "house": "Ninth_House",
                 "retrograde": True,
             },
             "pluto": {
@@ -151,11 +151,11 @@ class TestKrInstance:
                 "abs_pos": 159.62564136198964,
                 "emoji": "♍️",
                 "point_type": "Planet",
-                "house": "Seventh House",
+                "house": "Seventh_House",
                 "retrograde": False,
             },
             "first_house": {
-                "name": "First House",
+                "name": "First_House",
                 "quality": "Fixed",
                 "element": "Air",
                 "sign": "Aqu",
@@ -166,7 +166,7 @@ class TestKrInstance:
                 "point_type": "House",
             },
             "second_house": {
-                "name": "Second House",
+                "name": "Second_House",
                 "quality": "Cardinal",
                 "element": "Fire",
                 "sign": "Ari",
@@ -177,7 +177,7 @@ class TestKrInstance:
                 "point_type": "House",
             },
             "third_house": {
-                "name": "Third House",
+                "name": "Third_House",
                 "quality": "Fixed",
                 "element": "Earth",
                 "sign": "Tau",
@@ -188,7 +188,7 @@ class TestKrInstance:
                 "point_type": "House",
             },
             "fourth_house": {
-                "name": "Fourth House",
+                "name": "Fourth_House",
                 "quality": "Mutable",
                 "element": "Air",
                 "sign": "Gem",
@@ -199,7 +199,7 @@ class TestKrInstance:
                 "point_type": "House",
             },
             "fifth_house": {
-                "name": "Fifth House",
+                "name": "Fifth_House",
                 "quality": "Mutable",
                 "element": "Air",
                 "sign": "Gem",
@@ -210,7 +210,7 @@ class TestKrInstance:
                 "point_type": "House",
             },
             "sixth_house": {
-                "name": "Sixth House",
+                "name": "Sixth_House",
                 "quality": "Cardinal",
                 "element": "Water",
                 "sign": "Can",
@@ -221,7 +221,7 @@ class TestKrInstance:
                 "point_type": "House",
             },
             "seventh_house": {
-                "name": "Seventh House",
+                "name": "Seventh_House",
                 "quality": "Fixed",
                 "element": "Fire",
                 "sign": "Leo",
@@ -232,7 +232,7 @@ class TestKrInstance:
                 "point_type": "House",
             },
             "eighth_house": {
-                "name": "Eighth House",
+                "name": "Eighth_House",
                 "quality": "Cardinal",
                 "element": "Air",
                 "sign": "Lib",
@@ -243,7 +243,7 @@ class TestKrInstance:
                 "point_type": "House",
             },
             "ninth_house": {
-                "name": "Ninth House",
+                "name": "Ninth_House",
                 "quality": "Fixed",
                 "element": "Water",
                 "sign": "Sco",
@@ -254,7 +254,7 @@ class TestKrInstance:
                 "point_type": "House",
             },
             "tenth_house": {
-                "name": "Tenth House",
+                "name": "Tenth_House",
                 "quality": "Mutable",
                 "element": "Fire",
                 "sign": "Sag",
@@ -265,7 +265,7 @@ class TestKrInstance:
                 "point_type": "House",
             },
             "eleventh_house": {
-                "name": "Eleventh House",
+                "name": "Eleventh_House",
                 "quality": "Mutable",
                 "element": "Fire",
                 "sign": "Sag",
@@ -276,7 +276,7 @@ class TestKrInstance:
                 "point_type": "House",
             },
             "twelfth_house": {
-                "name": "Twelfth House",
+                "name": "Twelfth_House",
                 "quality": "Cardinal",
                 "element": "Earth",
                 "sign": "Cap",
@@ -296,7 +296,7 @@ class TestKrInstance:
                 "abs_pos": 112.25322751786969,
                 "emoji": "♋️",
                 "point_type": "Planet",
-                "house": "Sixth House",
+                "house": "Sixth_House",
                 "retrograde": True,
             },
             "true_node": {
@@ -309,7 +309,7 @@ class TestKrInstance:
                 "abs_pos": 110.63971940408193,
                 "emoji": "♋️",
                 "point_type": "Planet",
-                "house": "Fifth House",
+                "house": "Fifth_House",
                 "retrograde": True,
             },
             "lunar_phase": {"degrees_between_s_m": 201, "moon_phase": 16, "sun_phase": 15, "moon_emoji": "🌖"},
