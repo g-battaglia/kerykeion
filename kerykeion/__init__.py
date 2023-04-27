@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     This is part of Kerykeion (C) 2023 Giacomo Battaglia
 
@@ -96,8 +97,6 @@
     Feel free to contribute to the code!
 
 """
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 # Local
 from .kr_instance import KrInstance

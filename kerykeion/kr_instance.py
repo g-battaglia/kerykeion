@@ -157,12 +157,15 @@ class KrInstance:
                 "You need to set the coordinates and timezone if you want to use the offline mode!"
             )
 
-        self.julian_day = self._get_jd()
-
         # Initialize everything
+        self._get_utc()
+        self._get_jd()
+        self._planets_degrees_lister()
+        self._planets()
+        self._houses()
+
         self._planets_in_houses()
         self._lunar_phase_calc()
-        self._make_lists()
 
     def __str__(self) -> str:
         return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
@@ -170,7 +173,7 @@ class KrInstance:
     def __repr__(self) -> str:
         return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
 
-    def _get_tz(self) -> str:
+    def _fetch_tz_from_geonames(self) -> None:
         """Gets the nearest time zone for the calculation"""
         logger.debug("Conneting to Geonames...")
 
@@ -187,8 +190,7 @@ class KrInstance:
             or not "lat" in self.city_data
             or not "lng" in self.city_data
         ):
-            raise KerykeionException(
-                "No data found for this city, try again! Maybe check your connection?")
+            raise KerykeionException("No data found for this city, try again! Maybe check your connection?")
 
         self.nation = self.city_data["countryCode"]
         self.lng = float(self.city_data["lng"])
@@ -203,87 +205,59 @@ class KrInstance:
             self.lat = -66.0
             logger.info("Polar circle override for houses, using -66 degrees")
 
-        return self.tz_str
-
-    def _get_utc(self) -> datetime:
-        """Converts local time to utc time. """
+    def _get_utc(self) -> None:
+        """Converts local time to utc time."""
 
         # If the coordinates are not set, get them from geonames.
         if (self.online) and (not self.tz_str or not self.lng or not self.lat):
-            tz = self._get_tz()
-            local_time = pytz.timezone(tz)
-        else:
-            local_time = pytz.timezone(self.tz_str)
+            self._fetch_tz_from_geonames()
 
-        naive_datetime = datetime(
-            self.year, self.month, self.day, self.hour, self.minute, 0)
+        local_time = pytz.timezone(self.tz_str)
+
+        naive_datetime = datetime(self.year, self.month, self.day, self.hour, self.minute, 0)
 
         local_datetime = local_time.localize(naive_datetime, is_dst=None)
-        utc_datetime = local_datetime.astimezone(pytz.utc)
-        self.utc = utc_datetime
-        return self.utc
+        self.utc = local_datetime.astimezone(pytz.utc)
 
-    def _get_jd(self) -> float:
+    def _get_jd(self) -> None:
         """Calculates julian day from the utc time."""
-        utc = self._get_utc()
-        self.utc_time = utc.hour + utc.minute / 60
+        self.utc_time = self.utc.hour + self.utc.minute / 60
         self.local_time = self.hour + self.minute / 60
-        self.julian_day = float(swe.julday(
-            utc.year, utc.month, utc.day, self.utc_time))
+        self.julian_day = float(swe.julday(self.utc.year, self.utc.month, self.utc.day, self.utc_time))
 
-        return self.julian_day
-
-    def _houses(self) -> list:
+    def _houses(self) -> None:
         """Calculate positions and store them in dictionaries"""
         point_type: Literal["Planet", "House"] = "House"
         # creates the list of the house in 360°
-        self.houses_degree_ut = swe.houses(
-            self.julian_day, self.lat, self.lng)[0]
+        self.houses_degree_ut = swe.houses(self.julian_day, self.lat, self.lng)[0]
         # stores the house in singular dictionaries.
-        self.first_house = calculate_position(
-            self.houses_degree_ut[0], "First House", point_type=point_type)
-        self.second_house = calculate_position(
-            self.houses_degree_ut[1], "Second House", point_type=point_type)
-        self.third_house = calculate_position(
-            self.houses_degree_ut[2], "Third House", point_type=point_type)
-        self.fourth_house = calculate_position(
-            self.houses_degree_ut[3], "Fourth House", point_type=point_type)
-        self.fifth_house = calculate_position(
-            self.houses_degree_ut[4], "Fifth House", point_type=point_type)
-        self.sixth_house = calculate_position(
-            self.houses_degree_ut[5], "Sixth House", point_type=point_type)
-        self.seventh_house = calculate_position(
-            self.houses_degree_ut[6], "Seventh House", point_type=point_type)
-        self.eighth_house = calculate_position(
-            self.houses_degree_ut[7], "Eighth House", point_type=point_type)
-        self.ninth_house = calculate_position(
-            self.houses_degree_ut[8], "Ninth House", point_type=point_type)
-        self.tenth_house = calculate_position(
-            self.houses_degree_ut[9], "Tenth House", point_type=point_type)
-        self.eleventh_house = calculate_position(
-            self.houses_degree_ut[10], "Eleventh House", point_type=point_type)
-        self.twelfth_house = calculate_position(
-            self.houses_degree_ut[11], "Twelfth House", point_type=point_type)
+        self.first_house = calculate_position(self.houses_degree_ut[0], "First House", point_type=point_type)
+        self.second_house = calculate_position(self.houses_degree_ut[1], "Second House", point_type=point_type)
+        self.third_house = calculate_position(self.houses_degree_ut[2], "Third House", point_type=point_type)
+        self.fourth_house = calculate_position(self.houses_degree_ut[3], "Fourth House", point_type=point_type)
+        self.fifth_house = calculate_position(self.houses_degree_ut[4], "Fifth House", point_type=point_type)
+        self.sixth_house = calculate_position(self.houses_degree_ut[5], "Sixth House", point_type=point_type)
+        self.seventh_house = calculate_position(self.houses_degree_ut[6], "Seventh House", point_type=point_type)
+        self.eighth_house = calculate_position(self.houses_degree_ut[7], "Eighth House", point_type=point_type)
+        self.ninth_house = calculate_position(self.houses_degree_ut[8], "Ninth House", point_type=point_type)
+        self.tenth_house = calculate_position(self.houses_degree_ut[9], "Tenth House", point_type=point_type)
+        self.eleventh_house = calculate_position(self.houses_degree_ut[10], "Eleventh House", point_type=point_type)
+        self.twelfth_house = calculate_position(self.houses_degree_ut[11], "Twelfth House", point_type=point_type)
 
-        # creates a list of all the dictionaries of thetype.
-
-        houses_degree = [
-            self.first_house["position"],
-            self.second_house["position"],
-            self.third_house["position"],
-            self.fourth_house["position"],
-            self.fifth_house["position"],
-            self.sixth_house["position"],
-            self.seventh_house["position"],
-            self.eighth_house["position"],
-            self.ninth_house["position"],
-            self.tenth_house["position"],
-            self.eleventh_house["position"],
-            self.twelfth_house["position"],
+        self.houses_list = [
+            self.first_house,
+            self.second_house,
+            self.third_house,
+            self.fourth_house,
+            self.fifth_house,
+            self.sixth_house,
+            self.seventh_house,
+            self.eighth_house,
+            self.ninth_house,
+            self.tenth_house,
+            self.eleventh_house,
+            self.twelfth_house,
         ]
-
-        # return self.houses_list
-        return houses_degree
 
     def _planets_degrees_lister(self):
         """Sidereal or tropic mode."""
@@ -309,8 +283,6 @@ class KrInstance:
         mean_node_deg = swe.calc(self.julian_day, 10, self._iflag)[0][0]
         true_node_deg = swe.calc(self.julian_day, 11, self._iflag)[0][0]
 
-        # print(swe.calc(self.julian_day, 7, self._iflag)[3])
-
         self.planets_degrees = [
             sun_deg,
             moon_deg,
@@ -326,44 +298,28 @@ class KrInstance:
             true_node_deg,
         ]
 
-        return self.planets_degrees
-
     def _planets(self) -> None:
         """Defines body positon in signs and information and
         stores them in dictionaries"""
-        self.planets_degrees = self._planets_degrees_lister()
+
         point_type: Literal["Planet", "House"] = "Planet"
         # stores the planets in singular dictionaries.
-        self.sun = calculate_position(
-            self.planets_degrees[0], "Sun", point_type=point_type)
-        self.moon = calculate_position(
-            self.planets_degrees[1], "Moon", point_type=point_type)
-        self.mercury = calculate_position(
-            self.planets_degrees[2], "Mercury", point_type=point_type)
-        self.venus = calculate_position(
-            self.planets_degrees[3], "Venus", point_type=point_type)
-        self.mars = calculate_position(
-            self.planets_degrees[4], "Mars", point_type=point_type)
-        self.jupiter = calculate_position(
-            self.planets_degrees[5], "Jupiter", point_type=point_type)
-        self.saturn = calculate_position(
-            self.planets_degrees[6], "Saturn", point_type=point_type)
-        self.uranus = calculate_position(
-            self.planets_degrees[7], "Uranus", point_type=point_type)
-        self.neptune = calculate_position(
-            self.planets_degrees[8], "Neptune", point_type=point_type)
-        self.pluto = calculate_position(
-            self.planets_degrees[9], "Pluto", point_type=point_type)
-        self.mean_node = calculate_position(
-            self.planets_degrees[10], "Mean_Node", point_type=point_type)
-        self.true_node = calculate_position(
-            self.planets_degrees[11], "True_Node", point_type=point_type)
+        self.sun = calculate_position(self.planets_degrees[0], "Sun", point_type=point_type)
+        self.moon = calculate_position(self.planets_degrees[1], "Moon", point_type=point_type)
+        self.mercury = calculate_position(self.planets_degrees[2], "Mercury", point_type=point_type)
+        self.venus = calculate_position(self.planets_degrees[3], "Venus", point_type=point_type)
+        self.mars = calculate_position(self.planets_degrees[4], "Mars", point_type=point_type)
+        self.jupiter = calculate_position(self.planets_degrees[5], "Jupiter", point_type=point_type)
+        self.saturn = calculate_position(self.planets_degrees[6], "Saturn", point_type=point_type)
+        self.uranus = calculate_position(self.planets_degrees[7], "Uranus", point_type=point_type)
+        self.neptune = calculate_position(self.planets_degrees[8], "Neptune", point_type=point_type)
+        self.pluto = calculate_position(self.planets_degrees[9], "Pluto", point_type=point_type)
+        self.mean_node = calculate_position(self.planets_degrees[10], "Mean_Node", point_type=point_type)
+        self.true_node = calculate_position(self.planets_degrees[11], "True_Node", point_type=point_type)
 
     def _planets_in_houses(self) -> None:
         """Calculates the house of the planet and updates
         the planets dictionary."""
-        self._planets()
-        self._houses()
 
         def for_every_planet(planet, planet_deg):
             """Function to do the calculation.
@@ -418,12 +374,10 @@ class KrInstance:
         self.uranus = for_every_planet(self.uranus, self.planets_degrees[7])
         self.neptune = for_every_planet(self.neptune, self.planets_degrees[8])
         self.pluto = for_every_planet(self.pluto, self.planets_degrees[9])
-        self.mean_node = for_every_planet(
-            self.mean_node, self.planets_degrees[10])
-        self.true_node = for_every_planet(
-            self.true_node, self.planets_degrees[11])
+        self.mean_node = for_every_planet(self.mean_node, self.planets_degrees[10])
+        self.true_node = for_every_planet(self.true_node, self.planets_degrees[11])
 
-        planets_list = [
+        self.planets_list = [
             self.sun,
             self.moon,
             self.mercury,
@@ -440,7 +394,7 @@ class KrInstance:
 
         # Check in retrograde or not:
         planets_ret = []
-        for p in planets_list:
+        for p in self.planets_list:
             planet_number = get_number_from_name(p["name"])
             if swe.calc(self.julian_day, planet_number, self._iflag)[0][3] < 0:
                 p["retrograde"] = True
@@ -541,38 +495,6 @@ class KrInstance:
         }
 
         self.lunar_phase = LunarPhaseObject(**lunar_phase_dictionary)
-
-    def _make_lists(self) -> None:
-        """Internal function to generate the lists"""
-        self.planets_list = [
-            self.sun,
-            self.moon,
-            self.mercury,
-            self.venus,
-            self.mars,
-            self.jupiter,
-            self.saturn,
-            self.uranus,
-            self.neptune,
-            self.pluto,
-            self.mean_node,
-            self.true_node,
-        ]
-
-        self.houses_list = [
-            self.first_house,
-            self.second_house,
-            self.third_house,
-            self.fourth_house,
-            self.fifth_house,
-            self.sixth_house,
-            self.seventh_house,
-            self.eighth_house,
-            self.ninth_house,
-            self.tenth_house,
-            self.eleventh_house,
-            self.twelfth_house,
-        ]
 
     def json(self, dump=False, destination_folder: Union[str, None] = None) -> str:
         """
