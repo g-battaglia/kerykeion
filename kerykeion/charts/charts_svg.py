@@ -589,10 +589,10 @@ class MakeSvgInstance:
         related_zodiac_signs = self.planets_settings[i]["related_zodiac_signs"]
         cz = self.points_sign[i]
         extra_points = 0
-        if related_zodiac_signs != -1:
-            for e in range(len(related_zodiac_signs.split(","))):
-                if int(related_zodiac_signs.split(",")[e]) == int(cz):
-                    extra_points = 10
+        if related_zodiac_signs != []:
+            for e in range(len(related_zodiac_signs)):
+                if int(related_zodiac_signs[e]) == int(cz):
+                    extra_points = self.planet_in_zodiac_extra_points
 
         ele = self.zodiac[self.points_sign[i]]["element"]
         if ele == "fire":
@@ -1066,7 +1066,6 @@ class MakeSvgInstance:
                 element["p1_abs_pos"],
                 element["p2_abs_pos"],
                 self.aspects_settings[element["aid"]]["color"],
-
             )
 
         return out
@@ -1214,9 +1213,7 @@ class MakeSvgInstance:
                 out += f'<g transform="translate({offset},{li})">'
 
                 # planet text
-                out += (
-                    f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
-                )
+                out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
 
                 # planet symbol
                 out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.planets_settings[i]["name"]}" /></g>'
@@ -1236,9 +1233,6 @@ class MakeSvgInstance:
 
                 li = li + offset_between_lines
 
-        # -------------------- #
-        # Transit or Composite #
-        # -------------------- #
         if self.chart_type == "Transit" or self.chart_type == "Composite":
             if self.chart_type == "Transit":
                 out += '<g transform="translate(320, -15)">'
@@ -1340,6 +1334,7 @@ class MakeSvgInstance:
         self.chart_colors_settings = settings["chart_colors"]
         self.planets_settings = settings["celestial_points"]
         self.aspects_settings = settings["aspects"]
+        self.planet_in_zodiac_extra_points = settings["planet_in_zodiac_extra_points"]
 
     def _createTemplateDictionary(self):
         # self.chart_type = "Transit"
@@ -1535,7 +1530,6 @@ class MakeSvgInstance:
 
         # orb_color_X
         for i in range(len(self.aspects_settings)):
-            #td["orb_color_%s" % (self.aspects_settings[i]["degree"])] = self.chart_colors_settings["aspect_%s" % (self.aspects_settings[i]["degree"])]
             td["orb_color_%s" % (self.aspects_settings[i]["degree"])] = self.aspects_settings[i]["color"]
 
         # config
