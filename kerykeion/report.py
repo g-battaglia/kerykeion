@@ -1,7 +1,6 @@
 from kerykeion import KrInstance
 from terminaltables import AsciiTable
 
-
 class Report:
     """
     Create a report for a Kerykeion instance.

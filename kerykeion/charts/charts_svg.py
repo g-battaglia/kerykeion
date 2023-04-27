@@ -1267,6 +1267,7 @@ class MakeSvgInstance:
             f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.name}:</text>'
         out += '</g>'
 
+        end_of_line = ''
         for i in range(len(self.planets_settings)):
             offset_between_lines = 14
             end_of_line = '</g>'
@@ -1359,6 +1360,9 @@ class MakeSvgInstance:
                     out += end_of_line
 
                     t_li = t_li + offset_between_lines
+
+        if not end_of_line:
+            raise KerykeionException("End of line not found")
 
         out += end_of_line
         return out
@@ -1674,10 +1678,10 @@ if __name__ == "__main__":
     second = KrInstance("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
     name = MakeSvgInstance(first, chart_type="Composite",
-                           second_obj=second, lang="IT")
-    # name.output_directory = Path.home() / "charts"
+                           second_obj=second, lang="EN")
+
+    # Print the template
     template = name.makeTemplate()
+    
+    # Save the SVG file
     name.makeSVG()
-    # print(name.aspects_list[-1])
-    name.makeSVG()
-    # print(template)

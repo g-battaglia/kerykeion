@@ -218,11 +218,6 @@ def dangerous_json_dump(subject, dump=True, new_output_directory=None):
 
     OUTPUT_DIR = Path.home()
 
-    try:
-        subject.sun
-    except:
-        subject.__get_all()
-
     if new_output_directory:
         output_directory_path = Path(new_output_directory)
         json_dir = new_output_directory / f"{subject.name}_kerykeion.json"

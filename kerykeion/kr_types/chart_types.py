@@ -3,6 +3,11 @@ from pydantic import BaseModel
 
 
 class ChartTemplateModel(BaseModel):
+    """Pydantic model for the chart template."""
+
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
+
     transitRing: str
     degreeRing: str
     c1: str
