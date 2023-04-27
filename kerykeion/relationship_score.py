@@ -159,7 +159,7 @@ class RelationshipScore:
         return 0
 
     def __check_if_sun_moon_asc_aspect(self, aspect: dict, log: bool = True) -> int:
-        planets = ["Sun", "Moon", "First House"]
+        planets = ["Sun", "Moon", "First_House"]
 
         if self.__check_if_sun_sun_aspect(
             aspect, log=False

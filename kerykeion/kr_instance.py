@@ -231,18 +231,18 @@ class KrInstance:
         # creates the list of the house in 360°
         self.houses_degree_ut = swe.houses(self.julian_day, self.lat, self.lng)[0]
         # stores the house in singular dictionaries.
-        self.first_house = calculate_position(self.houses_degree_ut[0], "First House", point_type=point_type)
-        self.second_house = calculate_position(self.houses_degree_ut[1], "Second House", point_type=point_type)
-        self.third_house = calculate_position(self.houses_degree_ut[2], "Third House", point_type=point_type)
-        self.fourth_house = calculate_position(self.houses_degree_ut[3], "Fourth House", point_type=point_type)
-        self.fifth_house = calculate_position(self.houses_degree_ut[4], "Fifth House", point_type=point_type)
-        self.sixth_house = calculate_position(self.houses_degree_ut[5], "Sixth House", point_type=point_type)
-        self.seventh_house = calculate_position(self.houses_degree_ut[6], "Seventh House", point_type=point_type)
-        self.eighth_house = calculate_position(self.houses_degree_ut[7], "Eighth House", point_type=point_type)
-        self.ninth_house = calculate_position(self.houses_degree_ut[8], "Ninth House", point_type=point_type)
-        self.tenth_house = calculate_position(self.houses_degree_ut[9], "Tenth House", point_type=point_type)
-        self.eleventh_house = calculate_position(self.houses_degree_ut[10], "Eleventh House", point_type=point_type)
-        self.twelfth_house = calculate_position(self.houses_degree_ut[11], "Twelfth House", point_type=point_type)
+        self.first_house = calculate_position(self.houses_degree_ut[0], "First_House", point_type=point_type)
+        self.second_house = calculate_position(self.houses_degree_ut[1], "Second_House", point_type=point_type)
+        self.third_house = calculate_position(self.houses_degree_ut[2], "Third_House", point_type=point_type)
+        self.fourth_house = calculate_position(self.houses_degree_ut[3], "Fourth_House", point_type=point_type)
+        self.fifth_house = calculate_position(self.houses_degree_ut[4], "Fifth_House", point_type=point_type)
+        self.sixth_house = calculate_position(self.houses_degree_ut[5], "Sixth_House", point_type=point_type)
+        self.seventh_house = calculate_position(self.houses_degree_ut[6], "Seventh_House", point_type=point_type)
+        self.eighth_house = calculate_position(self.houses_degree_ut[7], "Eighth_House", point_type=point_type)
+        self.ninth_house = calculate_position(self.houses_degree_ut[8], "Ninth_House", point_type=point_type)
+        self.tenth_house = calculate_position(self.houses_degree_ut[9], "Tenth_House", point_type=point_type)
+        self.eleventh_house = calculate_position(self.houses_degree_ut[10], "Eleventh_House", point_type=point_type)
+        self.twelfth_house = calculate_position(self.houses_degree_ut[11], "Twelfth_House", point_type=point_type)
 
         self.houses_list = [
             self.first_house,
@@ -336,29 +336,29 @@ class KrInstance:
                     return False
 
             if point_between(self.houses_degree_ut[0], self.houses_degree_ut[1], planet_deg) == True:
-                planet["house"] = "First House"
+                planet["house"] = "First_House"
             elif point_between(self.houses_degree_ut[1], self.houses_degree_ut[2], planet_deg) == True:
-                planet["house"] = "Second House"
+                planet["house"] = "Second_House"
             elif point_between(self.houses_degree_ut[2], self.houses_degree_ut[3], planet_deg) == True:
-                planet["house"] = "Third House"
+                planet["house"] = "Third_House"
             elif point_between(self.houses_degree_ut[3], self.houses_degree_ut[4], planet_deg) == True:
-                planet["house"] = "Fourth House"
+                planet["house"] = "Fourth_House"
             elif point_between(self.houses_degree_ut[4], self.houses_degree_ut[5], planet_deg) == True:
-                planet["house"] = "Fifth House"
+                planet["house"] = "Fifth_House"
             elif point_between(self.houses_degree_ut[5], self.houses_degree_ut[6], planet_deg) == True:
-                planet["house"] = "Sixth House"
+                planet["house"] = "Sixth_House"
             elif point_between(self.houses_degree_ut[6], self.houses_degree_ut[7], planet_deg) == True:
-                planet["house"] = "Seventh House"
+                planet["house"] = "Seventh_House"
             elif point_between(self.houses_degree_ut[7], self.houses_degree_ut[8], planet_deg) == True:
-                planet["house"] = "Eighth House"
+                planet["house"] = "Eighth_House"
             elif point_between(self.houses_degree_ut[8], self.houses_degree_ut[9], planet_deg) == True:
-                planet["house"] = "Ninth House"
+                planet["house"] = "Ninth_House"
             elif point_between(self.houses_degree_ut[9], self.houses_degree_ut[10], planet_deg) == True:
-                planet["house"] = "Tenth House"
+                planet["house"] = "Tenth_House"
             elif point_between(self.houses_degree_ut[10], self.houses_degree_ut[11], planet_deg) == True:
-                planet["house"] = "Eleventh House"
+                planet["house"] = "Eleventh_House"
             elif point_between(self.houses_degree_ut[11], self.houses_degree_ut[0], planet_deg) == True:
-                planet["house"] = "Twelfth House"
+                planet["house"] = "Twelfth_House"
             else:
                 planet["house"] = "error!"
 

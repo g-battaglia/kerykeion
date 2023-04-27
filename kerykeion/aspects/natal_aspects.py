@@ -273,10 +273,10 @@ class NatalAspects:
                 aspects_filtered.append(a)
 
         axes_list = [
-            "First House",
-            "Tenth House",
-            "Seventh House",
-            "Fourth House",
+            "First_House",
+            "Tenth_House",
+            "Seventh_House",
+            "Fourth_House",
         ]
         counter = 0
 

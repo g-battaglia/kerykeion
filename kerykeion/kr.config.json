@@ -492,7 +492,7 @@
     },
     {
       "id": 12,
-      "name": "First House",
+      "name": "First_House",
       "color": "orange",
       "visible": 1,
       "element_points": 40,
@@ -502,7 +502,7 @@
     },
     {
       "id": 13,
-      "name": "Tenth House",
+      "name": "Tenth_House",
       "color": "#FF0000",
       "visible": 1,
       "element_points": 20,
@@ -512,7 +512,7 @@
     },
     {
       "id": 14,
-      "name": "Seventh House",
+      "name": "Seventh_House",
       "color": "#0000FF",
       "visible": 0,
       "element_points": 0,
@@ -522,7 +522,7 @@
     },
     {
       "id": 15,
-      "name": "Fourth House",
+      "name": "Fourth_House",
       "color": "#000000",
       "visible": 0,
       "element_points": 0,
