@@ -206,7 +206,7 @@ class NatalAspects:
 
         set_points_name = []
         for p in self.planets_settings:
-            if p["active"]:
+            if p["is_active"]:
                 set_points_name.append(p["name"])
 
         point_list = []
@@ -268,7 +268,7 @@ class NatalAspects:
 
         aspects_filtered = []
         for a in self.all_aspects_list:
-            if self.aspects_settings[a["aid"]]["active"] == True:
+            if self.aspects_settings[a["aid"]]["is_active"] == True:
                 aspects_filtered.append(a)
 
         axes_list = [

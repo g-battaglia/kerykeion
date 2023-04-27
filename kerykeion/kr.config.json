@@ -205,7 +205,7 @@
     {
       "degree": 0,
       "name": "conjunction",
-      "active": 1,
+      "is_active": 1,
       "visible_grid": 1,
       "is_major": 1,
       "is_minor": 0,
@@ -215,7 +215,7 @@
     {
       "degree": 30,
       "name": "semi-sextile",
-      "active": 0,
+      "is_active": 0,
       "visible_grid": 0,
       "is_major": 0,
       "is_minor": 1,
@@ -225,7 +225,7 @@
     {
       "degree": 45,
       "name": "semi-square",
-      "active": 0,
+      "is_active": 0,
       "visible_grid": 0,
       "is_major": 0,
       "is_minor": 1,
@@ -235,7 +235,7 @@
     {
       "degree": 60,
       "name": "sextile",
-      "active": 1,
+      "is_active": 1,
       "visible_grid": 1,
       "is_major": 1,
       "is_minor": 0,
@@ -245,7 +245,7 @@
     {
       "degree": 72,
       "name": "quintile",
-      "active": 1,
+      "is_active": 1,
       "visible_grid": 1,
       "is_major": 0,
       "is_minor": 1,
@@ -255,7 +255,7 @@
     {
       "degree": 90,
       "name": "square",
-      "active": 1,
+      "is_active": 1,
       "visible_grid": 1,
       "is_major": 1,
       "is_minor": 0,
@@ -265,7 +265,7 @@
     {
       "degree": 120,
       "name": "trine",
-      "active": 1,
+      "is_active": 1,
       "visible_grid": 1,
       "is_major": 1,
       "is_minor": 0,
@@ -275,7 +275,7 @@
     {
       "degree": 135,
       "name": "sesquiquadrate",
-      "active": 0,
+      "is_active": 0,
       "visible_grid": 0,
       "is_major": 0,
       "is_minor": 1,
@@ -285,7 +285,7 @@
     {
       "degree": 144,
       "name": "biquintile",
-      "active": 0,
+      "is_active": 0,
       "visible_grid": 0,
       "is_major": 0,
       "is_minor": 1,
@@ -295,7 +295,7 @@
     {
       "degree": 150,
       "name": "quincunx",
-      "active": 0,
+      "is_active": 0,
       "visible_grid": 0,
       "is_major": 0,
       "is_minor": 0,
@@ -305,7 +305,7 @@
     {
       "degree": 180,
       "name": "opposition",
-      "active": 1,
+      "is_active": 1,
       "visible_grid": 1,
       "is_major": 1,
       "is_minor": 0,
@@ -318,161 +318,145 @@
       "id": 0,
       "name": "Sun",
       "color": "#984b00",
-      "active": 1,
+      "is_active": true,
       "element_points": 40,
-      "zodiac_relation": "4",
-      "label": "Sun",
-      "label_short": "sun"
+      "related_zodiac_signs": "4",
+      "label": "Sun"
     },
     {
       "id": 1,
       "name": "Moon",
       "color": "#150052",
-      "active": 1,
+      "is_active": true,
       "element_points": 40,
-      "zodiac_relation": "3",
-      "label": "Moon",
-      "label_short": "moon"
+      "related_zodiac_signs": "3",
+      "label": "Moon"
     },
     {
       "id": 2,
       "name": "Mercury",
       "color": "#520800",
-      "active": 1,
+      "is_active": true,
       "element_points": 15,
-      "zodiac_relation": "2,5",
-      "label": "Mercury",
-      "label_short": "mercury"
+      "related_zodiac_signs": "2,5",
+      "label": "Mercury"
     },
     {
       "id": 3,
       "name": "Venus",
       "color": "#400052",
-      "active": 1,
+      "is_active": true,
       "element_points": 15,
-      "zodiac_relation": "1,6",
-      "label": "Venus",
-      "label_short": "venus"
+      "related_zodiac_signs": "1,6",
+      "label": "Venus"
     },
     {
       "id": 4,
       "name": "Mars",
       "color": "#540000",
-      "active": 1,
+      "is_active": true,
       "element_points": 15,
-      "zodiac_relation": "0",
-      "label": "Mars",
-      "label_short": "mars"
+      "related_zodiac_signs": "0",
+      "label": "Mars"
     },
     {
       "id": 5,
       "name": "Jupiter",
       "color": "#47133d",
-      "active": 1,
+      "is_active": true,
       "element_points": 10,
-      "zodiac_relation": "8",
-      "label": "Jupiter",
-      "label_short": "jupiter"
+      "related_zodiac_signs": "8",
+      "label": "Jupiter"
     },
     {
       "id": 6,
       "name": "Saturn",
       "color": "#124500",
-      "active": 1,
+      "is_active": true,
       "element_points": 10,
-      "zodiac_relation": "9",
-      "label": "Saturn",
-      "label_short": "saturn"
+      "related_zodiac_signs": "9",
+      "label": "Saturn"
     },
     {
       "id": 7,
       "name": "Uranus",
       "color": "#6f0766",
-      "active": 1,
+      "is_active": true,
       "element_points": 10,
-      "zodiac_relation": "10",
-      "label": "Uranus",
-      "label_short": "uranus"
+      "related_zodiac_signs": "10",
+      "label": "Uranus"
     },
     {
       "id": 8,
       "name": "Neptune",
       "color": "#06537f",
-      "active": 1,
+      "is_active": true,
       "element_points": 10,
-      "zodiac_relation": "11",
-      "label": "Neptune",
-      "label_short": "neptune"
+      "related_zodiac_signs": "11",
+      "label": "Neptune"
     },
     {
       "id": 9,
       "name": "Pluto",
       "color": "#713f04",
-      "active": 1,
+      "is_active": true,
       "element_points": 10,
-      "zodiac_relation": "7",
-      "label": "Pluto",
-      "label_short": "pluto"
+      "related_zodiac_signs": "7",
+      "label": "Pluto"
     },
     {
       "id": 10,
       "name": "Mean_Node",
       "color": "#4c1541",
-      "active": 0,
+      "is_active": false,
       "element_points": 20,
-      "zodiac_relation": "-1",
-      "label": "North_Node",
-      "label_short": "North_Node"
+      "related_zodiac_signs": "-1",
+      "label": "North_Node"
     },
     {
       "id": 11,
       "name": "Mean_Node",
       "color": "#4c1541",
-      "active": 0,
+      "is_active": false,
       "element_points": 0,
-      "zodiac_relation": "-1",
-      "label": "Mean_Node",
-      "label_short": "Mean_Node"
+      "related_zodiac_signs": "-1",
+      "label": "Mean_Node"
     },
     {
       "id": 12,
       "name": "First_House",
       "color": "#ff7e00",
-      "active": 1,
+      "is_active": true,
       "element_points": 40,
-      "zodiac_relation": "-1",
-      "label": "Asc",
-      "label_short": "Asc"
+      "related_zodiac_signs": "-1",
+      "label": "Asc"
     },
     {
       "id": 13,
       "name": "Tenth_House",
       "color": "#FF0000",
-      "active": 1,
+      "is_active": true,
       "element_points": 20,
-      "zodiac_relation": "-1",
-      "label": "Mc",
-      "label_short": "Mc"
+      "related_zodiac_signs": "-1",
+      "label": "Mc"
     },
     {
       "id": 14,
       "name": "Seventh_House",
       "color": "#0000FF",
-      "active": 0,
+      "is_active": false,
       "element_points": 0,
-      "zodiac_relation": "-1",
-      "label": "Dsc",
-      "label_short": "Dsc"
+      "related_zodiac_signs": "-1",
+      "label": "Dsc"
     },
     {
       "id": 15,
       "name": "Fourth_House",
       "color": "#000000",
-      "active": 0,
+      "is_active": false,
       "element_points": 0,
-      "zodiac_relation": "-1",
-      "label": "Ic",
-      "label_short": "Ic"
+      "related_zodiac_signs": "-1",
+      "label": "Ic"
     }
   ],
   "chart_colors": {
