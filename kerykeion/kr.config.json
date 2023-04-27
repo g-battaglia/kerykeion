@@ -201,73 +201,6 @@
       }
     }
   },
-  "colors": {
-    "paper_0": "#000000",
-    "paper_1": "#ffffff",
-    "zodiac_bg_0": "#ff7200",
-    "zodiac_bg_1": "#6b3d00",
-    "zodiac_bg_2": "#69acf1",
-    "zodiac_bg_3": "#2b4972",
-    "zodiac_bg_4": "#ff7200",
-    "zodiac_bg_5": "#6b3d00",
-    "zodiac_bg_6": "#69acf1",
-    "zodiac_bg_7": "#2b4972",
-    "zodiac_bg_8": "#ff7200",
-    "zodiac_bg_9": "#6b3d00",
-    "zodiac_bg_10": "#69acf1",
-    "zodiac_bg_11": "#2b4972",
-    "zodiac_icon_0": "#ff7200",
-    "zodiac_icon_1": "#6b3d00",
-    "zodiac_icon_2": "#69acf1",
-    "zodiac_icon_3": "#2b4972",
-    "zodiac_icon_4": "#ff7200",
-    "zodiac_icon_5": "#6b3d00",
-    "zodiac_icon_6": "#69acf1",
-    "zodiac_icon_7": "#2b4972",
-    "zodiac_icon_8": "#ff7200",
-    "zodiac_icon_9": "#6b3d00",
-    "zodiac_icon_10": "#69acf1",
-    "zodiac_icon_11": "#2b4972",
-    "zodiac_radix_ring_0": "#ff0000",
-    "zodiac_radix_ring_1": "#ff0000",
-    "zodiac_radix_ring_2": "#ff0000",
-    "zodiac_transit_ring_0": "#ff0000",
-    "zodiac_transit_ring_1": "#ff0000",
-    "zodiac_transit_ring_2": "#0000ff",
-    "zodiac_transit_ring_3": "#0000ff",
-    "houses_radix_line": "#ff0000",
-    "houses_transit_line": "#0000ff",
-    "aspect_0": "#5757e2",
-    "aspect_30": "#810757",
-    "aspect_45": "#b14e58",
-    "aspect_60": "#d59e28",
-    "aspect_72": "#1f99b3",
-    "aspect_90": "#dc0000",
-    "aspect_120": "#36d100",
-    "aspect_135": "#985a10",
-    "aspect_144": "#7a9810",
-    "aspect_150": "#26bbcf",
-    "aspect_180": "#510060",
-    "planet_0": "#984b00",
-    "planet_1": "#150052",
-    "planet_2": "#520800",
-    "planet_3": "#400052",
-    "planet_4": "#540000",
-    "planet_5": "#47133d",
-    "planet_6": "#124500",
-    "planet_7": "#6f0766",
-    "planet_8": "#06537f",
-    "planet_9": "#713f04",
-    "planet_10": "#4c1541",
-    "planet_11": "#4c1541",
-    "planet_12": "#ff7e00",
-    "planet_13": "#FF0000",
-    "planet_14": "#0000FF",
-    "planet_15": "#000000",
-    "lunar_phase_0": "#000000",
-    "lunar_phase_1": "#FFFFFF",
-    "lunar_phase_2": "#CCCCCC"
-  },
   "aspects": [
     {
       "degree": 0,
@@ -276,7 +209,8 @@
       "visible_grid": 1,
       "is_major": 1,
       "is_minor": 0,
-      "orb": 10
+      "orb": 10,
+      "color": "#5757e2"
     },
     {
       "degree": 30,
@@ -285,7 +219,8 @@
       "visible_grid": 0,
       "is_major": 0,
       "is_minor": 1,
-      "orb": 1
+      "orb": 1,
+      "color": "#810757"
     },
     {
       "degree": 45,
@@ -294,7 +229,8 @@
       "visible_grid": 0,
       "is_major": 0,
       "is_minor": 1,
-      "orb": 1
+      "orb": 1,
+      "color": "#b14e58"
     },
     {
       "degree": 60,
@@ -303,7 +239,8 @@
       "visible_grid": 1,
       "is_major": 1,
       "is_minor": 0,
-      "orb": 6
+      "orb": 6,
+      "color": "#d59e28"
     },
     {
       "degree": 72,
@@ -312,7 +249,8 @@
       "visible_grid": 1,
       "is_major": 0,
       "is_minor": 1,
-      "orb": 1
+      "orb": 1,
+      "color": "#1f99b3"
     },
     {
       "degree": 90,
@@ -321,7 +259,8 @@
       "visible_grid": 1,
       "is_major": 1,
       "is_minor": 0,
-      "orb": 5
+      "orb": 5,
+      "color": "#dc0000"
     },
     {
       "degree": 120,
@@ -330,7 +269,8 @@
       "visible_grid": 1,
       "is_major": 1,
       "is_minor": 0,
-      "orb": 8
+      "orb": 8,
+      "color": "#36d100"
     },
     {
       "degree": 135,
@@ -339,7 +279,8 @@
       "visible_grid": 0,
       "is_major": 0,
       "is_minor": 1,
-      "orb": 1
+      "orb": 1,
+      "color": "#985a10"
     },
     {
       "degree": 144,
@@ -348,7 +289,8 @@
       "visible_grid": 0,
       "is_major": 0,
       "is_minor": 1,
-      "orb": 1
+      "orb": 1,
+      "color": "#7a9810"
     },
     {
       "degree": 150,
@@ -357,7 +299,8 @@
       "visible_grid": 0,
       "is_major": 0,
       "is_minor": 0,
-      "orb": 1
+      "orb": 1,
+      "color": "#26bbcf"
     },
     {
       "degree": 180,
@@ -366,7 +309,8 @@
       "visible_grid": 1,
       "is_major": 1,
       "is_minor": 0,
-      "orb": 10
+      "orb": 10,
+      "color": "#510060"
     }
   ],
   "celestial_points": [
@@ -493,7 +437,7 @@
     {
       "id": 12,
       "name": "First_House",
-      "color": "orange",
+      "color": "#ff7e00",
       "visible": 1,
       "element_points": 40,
       "zodiac_relation": "-1",
@@ -531,5 +475,45 @@
       "label_short": "Ic"
     }
   ],
+  "chart_colors": {
+    "paper_0": "#000000",
+    "paper_1": "#ffffff",
+    "zodiac_bg_0": "#ff7200",
+    "zodiac_bg_1": "#6b3d00",
+    "zodiac_bg_2": "#69acf1",
+    "zodiac_bg_3": "#2b4972",
+    "zodiac_bg_4": "#ff7200",
+    "zodiac_bg_5": "#6b3d00",
+    "zodiac_bg_6": "#69acf1",
+    "zodiac_bg_7": "#2b4972",
+    "zodiac_bg_8": "#ff7200",
+    "zodiac_bg_9": "#6b3d00",
+    "zodiac_bg_10": "#69acf1",
+    "zodiac_bg_11": "#2b4972",
+    "zodiac_icon_0": "#ff7200",
+    "zodiac_icon_1": "#6b3d00",
+    "zodiac_icon_2": "#69acf1",
+    "zodiac_icon_3": "#2b4972",
+    "zodiac_icon_4": "#ff7200",
+    "zodiac_icon_5": "#6b3d00",
+    "zodiac_icon_6": "#69acf1",
+    "zodiac_icon_7": "#2b4972",
+    "zodiac_icon_8": "#ff7200",
+    "zodiac_icon_9": "#6b3d00",
+    "zodiac_icon_10": "#69acf1",
+    "zodiac_icon_11": "#2b4972",
+    "zodiac_radix_ring_0": "#ff0000",
+    "zodiac_radix_ring_1": "#ff0000",
+    "zodiac_radix_ring_2": "#ff0000",
+    "zodiac_transit_ring_0": "#ff0000",
+    "zodiac_transit_ring_1": "#ff0000",
+    "zodiac_transit_ring_2": "#0000ff",
+    "zodiac_transit_ring_3": "#0000ff",
+    "houses_radix_line": "#ff0000",
+    "houses_transit_line": "#0000ff",
+    "lunar_phase_0": "#000000",
+    "lunar_phase_1": "#FFFFFF",
+    "lunar_phase_2": "#CCCCCC"
+  },
   "axes_orbit": 1
 }

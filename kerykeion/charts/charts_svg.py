@@ -278,8 +278,8 @@ class MakeSvgInstance:
         """
         radius_offset = 18
 
-        out = f'<circle cx="{r}" cy="{r}" r="{r - radius_offset}" style="fill: none; stroke: {self.colors_settings["paper_1"]}; stroke-width: 36px; stroke-opacity: .4;"/>'
-        out += f'<circle cx="{r}" cy="{r}" r="{r}" style="fill: none; stroke: {self.colors_settings["zodiac_transit_ring_3"]}; stroke-width: 1px; stroke-opacity: .6;"/>'
+        out = f'<circle cx="{r}" cy="{r}" r="{r - radius_offset}" style="fill: none; stroke: {self.chart_colors_settings["paper_1"]}; stroke-width: 36px; stroke-opacity: .4;"/>'
+        out += f'<circle cx="{r}" cy="{r}" r="{r}" style="fill: none; stroke: {self.chart_colors_settings["zodiac_transit_ring_3"]}; stroke-width: 1px; stroke-opacity: .6;"/>'
 
         return out
 
@@ -299,7 +299,7 @@ class MakeSvgInstance:
             x2 = sliceToX(0, r + 2 - self.c1, offset) - 2 + self.c1
             y2 = sliceToY(0, r + 2 - self.c1, offset) - 2 + self.c1
 
-            out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.colors_settings["paper_0"]}; stroke-width: 1px; stroke-opacity:.9;"/>'
+            out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.chart_colors_settings["paper_0"]}; stroke-width: 1px; stroke-opacity:.9;"/>'
 
         return out
 
@@ -451,7 +451,7 @@ class MakeSvgInstance:
                 + self._zodiacSlice(
                     i,
                     r,
-                    "fill:" + self.colors_settings["zodiac_bg_%s" % (i)] + "; fill-opacity: 0.5;",
+                    "fill:" + self.chart_colors_settings["zodiac_bg_%s" % (i)] + "; fill-opacity: 0.5;",
                     self.zodiac[i]["name"],
                 )
                 + ""
@@ -494,7 +494,7 @@ class MakeSvgInstance:
             elif i == 3:
                 linecolor = self.planets_settings[15]["color"]
             else:
-                linecolor = self.colors_settings["houses_radix_line"]
+                linecolor = self.chart_colors_settings["houses_radix_line"]
 
             # Transit houses lines.
             if self.chart_type == "Transit" or self.chart_type == "Composite":
@@ -516,7 +516,7 @@ class MakeSvgInstance:
                 if i == 0 or i == 9 or i == 6 or i == 3:
                     t_linecolor = linecolor
                 else:
-                    t_linecolor = self.colors_settings["houses_transit_line"]
+                    t_linecolor = self.chart_colors_settings["houses_transit_line"]
                 xtext = sliceToX(0, (r - 8), t_text_offset) + 8
                 ytext = sliceToY(0, (r - 8), t_text_offset) + 8
 
@@ -1036,7 +1036,7 @@ class MakeSvgInstance:
         if len(yot) >= 1:
             y = 0
             for k, v in yot.items():
-                out += f'<text y="{y}" style="fill:{self.colors_settings["paper_0"]}; font-size: 12px;">{"Yot"}</text>'
+                out += f'<text y="{y}" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 12px;">{"Yot"}</text>'
 
                 # first planet symbol
                 out += f'<g transform="translate(20,{y})">'
@@ -1065,14 +1065,15 @@ class MakeSvgInstance:
                 ar,
                 element["p1_abs_pos"],
                 element["p2_abs_pos"],
-                self.colors_settings[f"aspect_{element['aspect_degrees']}"],
+                self.aspects_settings[element["aid"]]["color"],
+
             )
 
         return out
 
     def _makeAspectGrid(self, r):
         out = ""
-        style = "stroke:%s; stroke-width: 1px; stroke-opacity:.6; fill:none" % (self.colors_settings["paper_0"])
+        style = "stroke:%s; stroke-width: 1px; stroke-opacity:.6; fill:none" % (self.chart_colors_settings["paper_0"])
         xindent = 380
         yindent = 468
         box = 14
@@ -1110,19 +1111,20 @@ class MakeSvgInstance:
         self.aspects_list = CompositeAspects(self.user, self.t_user, new_settings_file=self.settings_file).get_relevant_aspects()
 
         for element in self.aspects_list:
+            print(element)
             out += self._drawAspect(
                 r,
                 ar,
                 element["p1_abs_pos"],
                 element["p2_abs_pos"],
-                self.colors_settings[f"aspect_{element['aspect_degrees']}"],
+                self.aspects_settings[element["aid"]]["color"],
             )
 
         return out
 
     def _makeAspectTransitGrid(self, r):
         out = '<g transform="translate(500,310)">'
-        out += f'<text y="-15" x="0" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["aspects"]}:</text>'
+        out += f'<text y="-15" x="0" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["aspects"]}:</text>'
 
         line = 0
         nl = 0
@@ -1163,7 +1165,7 @@ class MakeSvgInstance:
             out += "</g>"
             # difference in degrees
             out += '<text y="8" x="45" style="fill:%s; font-size: 10px;">%s</text>' % (
-                self.colors_settings["paper_0"],
+                self.chart_colors_settings["paper_0"],
                 self._dec2deg(self.aspects_list[i]["orbit"]),
             )
             # line
@@ -1194,7 +1196,7 @@ class MakeSvgInstance:
 
         out = '<g transform="translate(500,-20)">'
         out += '<g transform="translate(140, -15)">'
-        out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.name}:</text>'
+        out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.name}:</text>'
         out += "</g>"
 
         end_of_line = None
@@ -1213,14 +1215,14 @@ class MakeSvgInstance:
 
                 # planet text
                 out += (
-                    f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
+                    f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
                 )
 
                 # planet symbol
                 out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.planets_settings[i]["name"]}" /></g>'
 
                 # planet degree
-                out += f'<text text-anchor="start" x="19" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self._dec2deg(self.points_deg[i])}</text>'
+                out += f'<text text-anchor="start" x="19" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self._dec2deg(self.points_deg[i])}</text>'
 
                 # zodiac
                 out += f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.points_sign[i]]["name"]}" /></g>'
@@ -1240,10 +1242,10 @@ class MakeSvgInstance:
         if self.chart_type == "Transit" or self.chart_type == "Composite":
             if self.chart_type == "Transit":
                 out += '<g transform="translate(320, -15)">'
-                out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.t_name}:</text>'
+                out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 14px;">{self.t_name}:</text>'
             else:
                 out += '<g transform="translate(380, -15)">'
-                out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.t_user.name}:</text>'
+                out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.t_user.name}:</text>'
 
             out += end_of_line
 
@@ -1260,11 +1262,11 @@ class MakeSvgInstance:
                     out += f'<g transform="translate({t_offset},{t_li})">'
 
                     # planet text
-                    out += f'<text text-anchor="end" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
+                    out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
                     # planet symbol
                     out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.planets_settings[i]["name"]}" /></g>'
                     # planet degree
-                    out += f'<text text-anchor="start" x="19" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self._dec2deg(self.t_points_deg[i])}</text>'
+                    out += f'<text text-anchor="start" x="19" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self._dec2deg(self.t_points_deg[i])}</text>'
                     # zodiac
                     out += f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.t_points_sign[i]]["name"]}" /></g>'
 
@@ -1293,9 +1295,9 @@ class MakeSvgInstance:
             else:
                 cusp = str(i + 1)
             out += f'<g transform="translate(0,{li})">'
-            out += f'<text text-anchor="end" x="40" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["cusp"]} {cusp}:</text>'
+            out += f'<text text-anchor="end" x="40" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["cusp"]} {cusp}:</text>'
             out += f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.houses_sign_graph[i]]["name"]}" /></g>'
-            out += f'<text x="53" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;"> {self._dec2deg(self.user.houses_list[i]["position"])}</text>'
+            out += f'<text x="53" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;"> {self._dec2deg(self.user.houses_list[i]["position"])}</text>'
             out += "</g>"
             li = li + 14
 
@@ -1310,9 +1312,9 @@ class MakeSvgInstance:
                 else:
                     cusp = str(i + 1)
                 out += '<g transform="translate(0,' + str(li) + ')">'
-                out += f'<text text-anchor="end" x="40" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["cusp"]} {cusp}:</text>'
+                out += f'<text text-anchor="end" x="40" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["cusp"]} {cusp}:</text>'
                 out += f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.t_houses_sign_graph[i]]["name"]}" /></g>'
-                out += f'<text x="53" style="fill:{self.colors_settings["paper_0"]}; font-size: 10px;"> {self._dec2deg(self.t_user.houses_list[i]["position"])}</text>'
+                out += f'<text x="53" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;"> {self._dec2deg(self.t_user.houses_list[i]["position"])}</text>'
                 out += "</g>"
                 li = li + 14
             out += "</g>"
@@ -1335,7 +1337,7 @@ class MakeSvgInstance:
             settings = json.load(f)
 
         self.language_settings = settings["language_settings"].get(lang, "EN")
-        self.colors_settings = settings["colors"]
+        self.chart_colors_settings = settings["chart_colors"]
         self.planets_settings = settings["celestial_points"]
         self.aspects_settings = settings["aspects"]
 
@@ -1383,16 +1385,16 @@ class MakeSvgInstance:
 
             # circles
             td["c1"] = f'cx="{r}" cy="{r}" r="{r - 36}"'
-            td["c1style"] = f'fill: none; stroke: {self.colors_settings["zodiac_transit_ring_2"]}; stroke-width: 1px; stroke-opacity:.4;'
+            td["c1style"] = f'fill: none; stroke: {self.chart_colors_settings["zodiac_transit_ring_2"]}; stroke-width: 1px; stroke-opacity:.4;'
             td["c2"] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r - 72) + '"'
             td["c2style"] = "fill: %s; fill-opacity:.4; stroke: %s; stroke-opacity:.4; stroke-width: 1px" % (
-                self.colors_settings["paper_1"],
-                self.colors_settings["zodiac_transit_ring_1"],
+                self.chart_colors_settings["paper_1"],
+                self.chart_colors_settings["zodiac_transit_ring_1"],
             )
             td["c3"] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r - 160) + '"'
             td["c3style"] = "fill: %s; fill-opacity:.8; stroke: %s; stroke-width: 1px" % (
-                self.colors_settings["paper_1"],
-                self.colors_settings["zodiac_transit_ring_0"],
+                self.chart_colors_settings["paper_1"],
+                self.chart_colors_settings["zodiac_transit_ring_0"],
             )
             td["makeAspects"] = self._makeAspectsTransit(r, (r - 160))
             td["makeAspectGrid"] = self._makeAspectTransitGrid(r)
@@ -1404,11 +1406,11 @@ class MakeSvgInstance:
 
             # circles
             td["c1"] = f'cx="{r}" cy="{r}" r="{r - self.c1}"'
-            td["c1style"] = f'fill: none; stroke: {self.colors_settings["zodiac_radix_ring_2"]}; stroke-width: 1px; '
+            td["c1style"] = f'fill: none; stroke: {self.chart_colors_settings["zodiac_radix_ring_2"]}; stroke-width: 1px; '
             td["c2"] = f'cx="{r}" cy="{r}" r="{r - self.c2}"'
-            td["c2style"] = f'fill: {self.colors_settings["paper_1"]}; fill-opacity:.2; stroke: {self.colors_settings["zodiac_radix_ring_1"]}; stroke-opacity:.4; stroke-width: 1px'
+            td["c2style"] = f'fill: {self.chart_colors_settings["paper_1"]}; fill-opacity:.2; stroke: {self.chart_colors_settings["zodiac_radix_ring_1"]}; stroke-opacity:.4; stroke-width: 1px'
             td["c3"] = f'cx="{r}" cy="{r}" r="{r - self.c3}"'
-            td["c3style"] = f'fill: {self.colors_settings["paper_1"]}; fill-opacity:.8; stroke: {self.colors_settings["zodiac_radix_ring_0"]}; stroke-width: 1px'
+            td["c3style"] = f'fill: {self.chart_colors_settings["paper_1"]}; fill-opacity:.8; stroke: {self.chart_colors_settings["zodiac_radix_ring_0"]}; stroke-width: 1px'
             td["makeAspects"] = self._makeAspects(r, (r - self.c3))
             td["makeAspectGrid"] = self._makeAspectGrid(r)
             td["makePatterns"] = self._makePatterns()
@@ -1455,8 +1457,8 @@ class MakeSvgInstance:
                 maxr = maxr * maxr
             lfcx = 20.0 + (deg / 90.0) * (maxr + 10.0)
             lfr = 10.0 + (deg / 90.0) * maxr
-            lffg = self.colors_settings["lunar_phase_0"]
-            lfbg = self.colors_settings["lunar_phase_1"]
+            lffg = self.chart_colors_settings["lunar_phase_0"]
+            lfbg = self.chart_colors_settings["lunar_phase_1"]
 
         elif deg < 180.0:
             maxr = 180.0 - deg
@@ -1464,8 +1466,8 @@ class MakeSvgInstance:
                 maxr = maxr * maxr
             lfcx = 20.0 + ((deg - 90.0) / 90.0 * (maxr + 10.0)) - (maxr + 10.0)
             lfr = 10.0 + maxr - ((deg - 90.0) / 90.0 * maxr)
-            lffg = self.colors_settings["lunar_phase_1"]
-            lfbg = self.colors_settings["lunar_phase_0"]
+            lffg = self.chart_colors_settings["lunar_phase_1"]
+            lfbg = self.chart_colors_settings["lunar_phase_0"]
 
         elif deg < 270.0:
             maxr = deg - 180.0
@@ -1473,7 +1475,7 @@ class MakeSvgInstance:
                 maxr = maxr * maxr
             lfcx = 20.0 + ((deg - 180.0) / 90.0 * (maxr + 10.0))
             lfr = 10.0 + ((deg - 180.0) / 90.0 * maxr)
-            lffg, lfbg = self.colors_settings["lunar_phase_1"], self.colors_settings["lunar_phase_0"]
+            lffg, lfbg = self.chart_colors_settings["lunar_phase_1"], self.chart_colors_settings["lunar_phase_0"]
 
         elif deg < 361:
             maxr = 360.0 - deg
@@ -1481,7 +1483,7 @@ class MakeSvgInstance:
                 maxr = maxr * maxr
             lfcx = 20.0 + ((deg - 270.0) / 90.0 * (maxr + 10.0)) - (maxr + 10.0)
             lfr = 10.0 + maxr - ((deg - 270.0) / 90.0 * maxr)
-            lffg, lfbg = self.colors_settings["lunar_phase_0"], self.colors_settings["lunar_phase_1"]
+            lffg, lfbg = self.chart_colors_settings["lunar_phase_0"], self.chart_colors_settings["lunar_phase_1"]
 
         if lffg is None or lfbg is None or lfcx is None or lfr is None:
             raise KerykeionException("Lunar phase error")
@@ -1490,7 +1492,7 @@ class MakeSvgInstance:
         td["lunar_phase_bg"] = lfbg
         td["lunar_phase_cx"] = lfcx
         td["lunar_phase_r"] = lfr
-        td["lunar_phase_outline"] = self.colors_settings["lunar_phase_2"]
+        td["lunar_phase_outline"] = self.chart_colors_settings["lunar_phase_2"]
 
         # rotation based on latitude
         td["lunar_phase_rotate"] = -90.0 - self.geolat
@@ -1520,20 +1522,21 @@ class MakeSvgInstance:
             td["stringPosition"] = f"{self.language_settings['type']}: {self.charttype}"
 
         # paper_color_X
-        td["paper_color_0"] = self.colors_settings["paper_0"]
-        td["paper_color_1"] = self.colors_settings["paper_1"]
+        td["paper_color_0"] = self.chart_colors_settings["paper_0"]
+        td["paper_color_1"] = self.chart_colors_settings["paper_1"]
 
         # planets_color_X
         for i in range(len(self.planets_settings)):
-            td["planets_color_%s" % (i)] = self.colors_settings["planet_%s" % (i)]
+            td["planets_color_%s" % (i)] = self.planets_settings[i]["color"]
 
         # zodiac_color_X
         for i in range(12):
-            td["zodiac_color_%s" % (i)] = self.colors_settings["zodiac_icon_%s" % (i)]
+            td["zodiac_color_%s" % (i)] = self.chart_colors_settings["zodiac_icon_%s" % (i)]
 
         # orb_color_X
         for i in range(len(self.aspects_settings)):
-            td["orb_color_%s" % (self.aspects_settings[i]["degree"])] = self.colors_settings["aspect_%s" % (self.aspects_settings[i]["degree"])]
+            #td["orb_color_%s" % (self.aspects_settings[i]["degree"])] = self.chart_colors_settings["aspect_%s" % (self.aspects_settings[i]["degree"])]
+            td["orb_color_%s" % (self.aspects_settings[i]["degree"])] = self.aspects_settings[i]["color"]
 
         # config
         td["cfgZoom"] = str(self.zoom)
