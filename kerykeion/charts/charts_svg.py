@@ -585,13 +585,13 @@ class MakeSvgInstance:
         Calculate chart element points from a planet.
         """
 
-        # element: get extra points if planet is in own zodiac
-        pz = self.planets_settings[i]["zodiac_relation"]
+        # element: get extra points if planet is in own zodiac sign.
+        related_zodiac_signs = self.planets_settings[i]["related_zodiac_signs"]
         cz = self.points_sign[i]
         extra_points = 0
-        if pz != -1:
-            for e in range(len(pz.split(","))):
-                if int(pz.split(",")[e]) == int(cz):
+        if related_zodiac_signs != -1:
+            for e in range(len(related_zodiac_signs.split(","))):
+                if int(related_zodiac_signs.split(",")[e]) == int(cz):
                     extra_points = 10
 
         ele = self.zodiac[self.points_sign[i]]["element"]
@@ -612,7 +612,7 @@ class MakeSvgInstance:
         diff = range(len(self.planets_settings))
 
         for i in range(len(self.planets_settings)):
-            if self.planets_settings[i]["active"] == 1:
+            if self.planets_settings[i]["is_active"] == 1:
                 # list of planets sorted by degree
                 logger.debug(f"planet: {i}, degree: {self.points_deg_ut[i]}")
                 planets_degut[self.points_deg_ut[i]] = i
@@ -778,7 +778,7 @@ class MakeSvgInstance:
                 list_range = len(self.planets_settings)
             for i in range(list_range):
                 group_offset[i] = 0
-                if self.planets_settings[i]["active"] == 1:
+                if self.planets_settings[i]["is_active"] == 1:
                     t_planets_degut[self.t_points_deg_ut[i]] = i
             t_keys = list(t_planets_degut.keys())
             t_keys.sort()
@@ -1082,7 +1082,7 @@ class MakeSvgInstance:
         counter = 0
         for a in revr:
             counter += 1
-            if self.planets_settings[a]["active"] == 1:
+            if self.planets_settings[a]["is_active"] == 1:
                 out += f'<rect x="{xindent}" y="{yindent}" width="{box}" height="{box}" style="{style}"/>'
                 out += f'<use transform="scale(0.4)" x="{(xindent+2)*2.5}" y="{(yindent+1)*2.5}" xlink:href="#{self.planets_settings[a]["name"]}" />'
 
@@ -1093,7 +1093,7 @@ class MakeSvgInstance:
                 xorb = xindent
                 yorb = yindent + box
                 for b in revr2:
-                    if self.planets_settings[b]["active"] == 1:
+                    if self.planets_settings[b]["is_active"] == 1:
                         out += f'<rect x="{xorb}" y="{yorb}" width="{box}" height="{box}" style="{style}"/>'
 
                         xorb = xorb + box
@@ -1209,7 +1209,7 @@ class MakeSvgInstance:
                 li = 10
                 offset = -120
 
-            if self.planets_settings[i]["active"] == 1:
+            if self.planets_settings[i]["is_active"] == 1:
                 # start of line
                 out += f'<g transform="translate({offset},{li})">'
 
@@ -1257,7 +1257,7 @@ class MakeSvgInstance:
                     t_li = 10
                     t_offset = -120
 
-                if self.planets_settings[i]["active"] == 1:
+                if self.planets_settings[i]["is_active"] == 1:
                     # start of line
                     out += f'<g transform="translate({t_offset},{t_li})">'
 
