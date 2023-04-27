@@ -58,6 +58,7 @@ types-requests = "^2.28.11.7"
 types-pytz = "^2022.7.0.0"
 
 # PyPi Publishing
+poethepoet = "^0.19.0"
 [[tool.poetry.source]]
 name = "test"
 url = "https://test.pypi.org/simple/"
@@ -84,10 +85,9 @@ log_format = "%(asctime)s %(levelname)s %(message)s"
 [tool.black]
 line-length = 120
 
-################
-### Scripts: ###
-################
-
-# poetry run pytest
-# poetry run mypy
-# python -m pdoc kerykeion -o ./docs
+# Task Runner
+[tool.poe.tasks]
+test = "pytest"
+lint = "mypy"
+docs = "pdoc kerykeion -o ./docs"
+format = "black kerykeion tests scripts --line-length 120"
