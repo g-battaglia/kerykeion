@@ -320,7 +320,7 @@
       "color": "#984b00",
       "is_active": true,
       "element_points": 40,
-      "related_zodiac_signs": "4",
+      "related_zodiac_signs": ["4"],
       "label": "Sun"
     },
     {
@@ -329,7 +329,7 @@
       "color": "#150052",
       "is_active": true,
       "element_points": 40,
-      "related_zodiac_signs": "3",
+      "related_zodiac_signs": ["3"],
       "label": "Moon"
     },
     {
@@ -338,7 +338,7 @@
       "color": "#520800",
       "is_active": true,
       "element_points": 15,
-      "related_zodiac_signs": "2,5",
+      "related_zodiac_signs": ["2","5"],
       "label": "Mercury"
     },
     {
@@ -347,7 +347,7 @@
       "color": "#400052",
       "is_active": true,
       "element_points": 15,
-      "related_zodiac_signs": "1,6",
+      "related_zodiac_signs": ["1","6"],
       "label": "Venus"
     },
     {
@@ -356,7 +356,7 @@
       "color": "#540000",
       "is_active": true,
       "element_points": 15,
-      "related_zodiac_signs": "0",
+      "related_zodiac_signs": ["0"],
       "label": "Mars"
     },
     {
@@ -365,7 +365,7 @@
       "color": "#47133d",
       "is_active": true,
       "element_points": 10,
-      "related_zodiac_signs": "8",
+      "related_zodiac_signs": ["8"],
       "label": "Jupiter"
     },
     {
@@ -374,7 +374,7 @@
       "color": "#124500",
       "is_active": true,
       "element_points": 10,
-      "related_zodiac_signs": "9",
+      "related_zodiac_signs": ["9"],
       "label": "Saturn"
     },
     {
@@ -383,7 +383,7 @@
       "color": "#6f0766",
       "is_active": true,
       "element_points": 10,
-      "related_zodiac_signs": "10",
+      "related_zodiac_signs": ["10"],
       "label": "Uranus"
     },
     {
@@ -392,7 +392,7 @@
       "color": "#06537f",
       "is_active": true,
       "element_points": 10,
-      "related_zodiac_signs": "11",
+      "related_zodiac_signs": ["11"],
       "label": "Neptune"
     },
     {
@@ -401,7 +401,7 @@
       "color": "#713f04",
       "is_active": true,
       "element_points": 10,
-      "related_zodiac_signs": "7",
+      "related_zodiac_signs": ["7"],
       "label": "Pluto"
     },
     {
@@ -410,7 +410,7 @@
       "color": "#4c1541",
       "is_active": false,
       "element_points": 20,
-      "related_zodiac_signs": "-1",
+      "related_zodiac_signs": [],
       "label": "North_Node"
     },
     {
@@ -419,7 +419,7 @@
       "color": "#4c1541",
       "is_active": false,
       "element_points": 0,
-      "related_zodiac_signs": "-1",
+      "related_zodiac_signs": [],
       "label": "Mean_Node"
     },
     {
@@ -428,7 +428,7 @@
       "color": "#ff7e00",
       "is_active": true,
       "element_points": 40,
-      "related_zodiac_signs": "-1",
+      "related_zodiac_signs": [],
       "label": "Asc"
     },
     {
@@ -437,7 +437,7 @@
       "color": "#FF0000",
       "is_active": true,
       "element_points": 20,
-      "related_zodiac_signs": "-1",
+      "related_zodiac_signs": [],
       "label": "Mc"
     },
     {
@@ -446,7 +446,7 @@
       "color": "#0000FF",
       "is_active": false,
       "element_points": 0,
-      "related_zodiac_signs": "-1",
+      "related_zodiac_signs": [],
       "label": "Dsc"
     },
     {
@@ -455,7 +455,7 @@
       "color": "#000000",
       "is_active": false,
       "element_points": 0,
-      "related_zodiac_signs": "-1",
+      "related_zodiac_signs": [],
       "label": "Ic"
     }
   ],
@@ -499,5 +499,6 @@
     "lunar_phase_1": "#FFFFFF",
     "lunar_phase_2": "#CCCCCC"
   },
-  "axes_orbit": 1
+  "axes_orbit": 1,
+  "planet_in_zodiac_extra_points": 10
 }

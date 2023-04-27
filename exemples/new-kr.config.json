@@ -404,7 +404,7 @@
       "color": "#4c1541",
       "is_active": 0,
       "element_points": 20,
-      "related_zodiac_signs": "-1",
+      "related_zodiac_signs": [],
       "label": "North_Node",
       "label_short": "North_Node"
     },
@@ -414,7 +414,7 @@
       "color": "#4c1541",
       "is_active": 0,
       "element_points": 0,
-      "related_zodiac_signs": "-1",
+      "related_zodiac_signs": [],
       "label": "True_Node",
       "label_short": "True_Node"
     },
@@ -424,7 +424,7 @@
       "color": "#ff7e00",
       "is_active": 1,
       "element_points": 40,
-      "related_zodiac_signs": "-1",
+      "related_zodiac_signs": [],
       "label": "Asc",
       "label_short": "Asc"
     },
@@ -434,7 +434,7 @@
       "color": "#FF0000",
       "is_active": 1,
       "element_points": 20,
-      "related_zodiac_signs": "-1",
+      "related_zodiac_signs": [],
       "label": "Mc",
       "label_short": "Mc"
     },
@@ -444,7 +444,7 @@
       "color": "#0000FF",
       "is_active": 1,
       "element_points": 0,
-      "related_zodiac_signs": "-1",
+      "related_zodiac_signs": [],
       "label": "Dsc",
       "label_short": "Dsc"
     },
@@ -454,7 +454,7 @@
       "color": "#000000",
       "is_active": 0,
       "element_points": 0,
-      "related_zodiac_signs": "-1",
+      "related_zodiac_signs": [],
       "label": "Ic",
       "label_short": "Ic"
     }
