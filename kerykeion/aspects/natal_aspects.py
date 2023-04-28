@@ -6,11 +6,10 @@
 
 import json
 from pathlib import Path
-from kerykeion import KrInstance
+from kerykeion import KerykeionSubject
 from swisseph import difdeg2n
 from typing import Union
-
-from kerykeion.aspects.aspects_settings import DEFAULT_KR_CONFIG_FILE
+from kerykeion.kerykeion_settings import parse_settings_file
 
 
 class NatalAspects:
@@ -18,9 +17,7 @@ class NatalAspects:
     Generates an object with all the aspects of a birthcart.
     """
 
-    def __init__(
-        self, kr_object: KrInstance, new_settings_file: Union[str, Path, None] = None
-    ):
+    def __init__(self, kr_object: KerykeionSubject, new_settings_file: Union[str, Path, None] = None):
         self.user = kr_object
         self.new_settings_file = new_settings_file
         self._parse_json_settings()
@@ -30,13 +27,9 @@ class NatalAspects:
     def _parse_json_settings(self):
         # Load settings file
 
-        if not self.new_settings_file:
-            settings_file = DEFAULT_KR_CONFIG_FILE
-        else:
-            settings_file = Path(self.new_settings_file)
-
-        with open(settings_file, "r", encoding="utf-8", errors="ignore") as f:
-            settings = json.load(f)
+        settings = parse_settings_file(
+            self.new_settings_file,
+        )
 
         self.planets_settings = settings["celestial_points"]
         self.aspects_settings = settings["aspects"]
@@ -293,17 +286,13 @@ class NatalAspects:
                 if abs(a["orbit"]) >= self.axes_orbit_settings:
                     aspects_list_subtract.append(a)
 
-        self.aspects = [
-            item for item in aspects_filtered if item not in aspects_list_subtract
-        ]
+        self.aspects = [item for item in aspects_filtered if item not in aspects_list_subtract]
 
         return self.aspects
 
 
 if __name__ == "__main__":
-    johnny = KrInstance("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
+    johnny = KerykeionSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
     aspects = NatalAspects(johnny).get_all_aspects()
 
     print(aspects)
-
-

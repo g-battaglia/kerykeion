@@ -1,13 +1,13 @@
-from kerykeion import KrInstance
+from kerykeion import KerykeionSubject
 from logging import getLogger
 
 logger = getLogger(__name__)
 
 
-class TestKrInstance:
+class TestKerykeionSubject:
     def setup_class(self):
         # Johnny Depp
-        self.subject = KrInstance("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
+        self.subject = KerykeionSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
         self.expected_output = {
             "name": "Johnny Depp",
             "year": 1963,

@@ -4,14 +4,13 @@
 # * TODO: Change the label for language in 2 objects, one for IT and one for ENG.
 # * Then change the label for planets like this: planet["label"] => planet[language]
 
-import json
-import math
 import pytz
 
 from datetime import datetime
+from kerykeion.kerykeion_settings import parse_settings_file
 from kerykeion.aspects.composite_aspects import CompositeAspects
 from kerykeion.aspects.natal_aspects import NatalAspects
-from kerykeion.kr_instance import KrInstance
+from kerykeion.kerykeion_subject import KerykeionSubject
 from kerykeion.kr_types import KerykeionException, ChartType
 from kerykeion.kr_types.chart_types import ChartTemplateModel
 from kerykeion.charts.charts_utils import decHourJoin, degreeDiff, offsetToTz, sliceToX, sliceToY
@@ -26,7 +25,7 @@ basicConfig(level=DEBUG)
 
 class MakeSvgInstance:
     """
-    Creates the instance that can genearte the chart with the
+    Creates the instance that can generate the chart with the
     function makeSVG().
 
     There are 2 templates, the extended (default) which has all the
@@ -44,9 +43,9 @@ class MakeSvgInstance:
 
     def __init__(
         self,
-        first_obj: KrInstance,
+        first_obj: KerykeionSubject,
         chart_type: ChartType = "Natal",
-        second_obj: Union[KrInstance, None] = None,
+        second_obj: Union[KerykeionSubject, None] = None,
         new_output_directory: Union[str, None] = None,
         template_type: str = "extended",
         lang: str = "EN",
@@ -55,6 +54,7 @@ class MakeSvgInstance:
         # Directories:
         DATA_DIR = Path(__file__).parent
         self.homedir = Path.home()
+        self.new_settings_file = new_settings_file
 
         if new_output_directory:
             self.output_directory = Path(new_output_directory)
@@ -71,13 +71,7 @@ class MakeSvgInstance:
         self.natal_width = 772.2
         self.full_width = 1200
 
-        # Settings file:
-        if not new_settings_file:
-            self.settings_file = DATA_DIR.parent / "kr.config.json"
-        else:
-            self.settings_file = Path(new_settings_file)
-
-        self.parse_json_settings(self.settings_file, lang)
+        self.parse_json_settings(new_settings_file, lang)
         self.chart_type = chart_type
 
         # Kerykeion instance
@@ -131,7 +125,7 @@ class MakeSvgInstance:
             self.houses_sign_graph.append(h["sign_num"])
 
         if self.chart_type == "Natal":
-            natal_aspects_instance = NatalAspects(self.user, new_settings_file=self.settings_file)
+            natal_aspects_instance = NatalAspects(self.user, new_settings_file=self.new_settings_file)
             self.aspects_list = natal_aspects_instance.get_relevant_aspects()
 
         # TODO: If not second should exit
@@ -1107,7 +1101,7 @@ class MakeSvgInstance:
     def _makeAspectsTransit(self, r, ar):
         out = ""
 
-        self.aspects_list = CompositeAspects(self.user, self.t_user, new_settings_file=self.settings_file).get_relevant_aspects()
+        self.aspects_list = CompositeAspects(self.user, self.t_user, new_settings_file=self.new_settings_file).get_relevant_aspects()
 
         for element in self.aspects_list:
             print(element)
@@ -1327,8 +1321,7 @@ class MakeSvgInstance:
         """
         Parse the settings file.
         """
-        with open(settings_file, "r", encoding="utf-8", errors="ignore") as f:
-            settings = json.load(f)
+        settings = parse_settings_file(settings_file)
 
         self.language_settings = settings["language_settings"].get(lang, "EN")
         self.chart_colors_settings = settings["chart_colors"]
@@ -1418,7 +1411,7 @@ class MakeSvgInstance:
         td["viewbox"] = viewbox
 
         if self.chart_type == "Composite":
-            td["stringTitle"] = f"{self.name} {self.language_settings['&']} {self.t_user.name}"
+            td["stringTitle"] = f"{self.name} {self.language_settings['and_word']} {self.t_user.name}"
 
         elif self.chart_type == "Transit":
             td["stringTitle"] = f"{self.language_settings['transits']} {self.t_user.day}/{self.t_user.month}/{self.t_user.year}"
@@ -1578,8 +1571,8 @@ class MakeSvgInstance:
 
 
 if __name__ == "__main__":
-    first = KrInstance("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
-    second = KrInstance("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+    first = KerykeionSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+    second = KerykeionSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
     name = MakeSvgInstance(first, chart_type="Composite", second_obj=second, lang="EN")
 

@@ -14,9 +14,9 @@ from kerykeion.fetch_geonames import FetchGeonames
 from kerykeion.kr_types import (
     KerykeionException,
     ZodiacType,
-    KerykeionSubject,
-    LunarPhaseObject,
-    KerykeionPoint,
+    KerykeionSubjectModel,
+    LunarPhaseModel,
+    KerykeionPointModel,
 )
 from kerykeion.utilities import get_number_from_name, calculate_position
 from pathlib import Path
@@ -28,7 +28,7 @@ from typing import Union, Literal
 logger = getLogger(__name__)
 
 
-class KrInstance:
+class KerykeionSubject:
     """
     Calculates all the astrological information, the coordinates,
     it's utc and julian day and returns an object with all that data.
@@ -80,36 +80,36 @@ class KrInstance:
     json_dir: Path
 
     # Planets
-    sun: KerykeionPoint
-    moon: KerykeionPoint
-    mercury: KerykeionPoint
-    venus: KerykeionPoint
-    mars: KerykeionPoint
-    jupiter: KerykeionPoint
-    saturn: KerykeionPoint
-    uranus: KerykeionPoint
-    neptune: KerykeionPoint
-    pluto: KerykeionPoint
-    true_node: KerykeionPoint
-    mean_node: KerykeionPoint
+    sun: KerykeionPointModel
+    moon: KerykeionPointModel
+    mercury: KerykeionPointModel
+    venus: KerykeionPointModel
+    mars: KerykeionPointModel
+    jupiter: KerykeionPointModel
+    saturn: KerykeionPointModel
+    uranus: KerykeionPointModel
+    neptune: KerykeionPointModel
+    pluto: KerykeionPointModel
+    true_node: KerykeionPointModel
+    mean_node: KerykeionPointModel
 
     # Houses
-    first_house: KerykeionPoint
-    second_house: KerykeionPoint
-    third_house: KerykeionPoint
-    fourth_house: KerykeionPoint
-    fifth_house: KerykeionPoint
-    sixth_house: KerykeionPoint
-    seventh_house: KerykeionPoint
-    eighth_house: KerykeionPoint
-    ninth_house: KerykeionPoint
-    tenth_house: KerykeionPoint
-    eleventh_house: KerykeionPoint
-    twelfth_house: KerykeionPoint
+    first_house: KerykeionPointModel
+    second_house: KerykeionPointModel
+    third_house: KerykeionPointModel
+    fourth_house: KerykeionPointModel
+    fifth_house: KerykeionPointModel
+    sixth_house: KerykeionPointModel
+    seventh_house: KerykeionPointModel
+    eighth_house: KerykeionPointModel
+    ninth_house: KerykeionPointModel
+    tenth_house: KerykeionPointModel
+    eleventh_house: KerykeionPointModel
+    twelfth_house: KerykeionPointModel
     
     # Lists
-    houses: list[KerykeionPoint]
-    planets: list[KerykeionPoint]
+    houses: list[KerykeionPointModel]
+    planets: list[KerykeionPointModel]
     planets_degrees_ut: list[float]
     houses_degree_ut: list[float]
 
@@ -499,7 +499,7 @@ class KrInstance:
             "moon_emoji": moon_emoji(moon_phase),
         }
 
-        self.lunar_phase = LunarPhaseObject(**lunar_phase_dictionary)
+        self.lunar_phase = LunarPhaseModel(**lunar_phase_dictionary)
 
     def json(self, dump=False, destination_folder: Union[str, None] = None) -> str:
         """
@@ -508,7 +508,7 @@ class KrInstance:
         or the home folder.
         """
 
-        KrData = KerykeionSubject(**self.__dict__)
+        KrData = KerykeionSubjectModel(**self.__dict__)
         json_string = KrData.json(exclude_none=True)
         print(json_string)
 
@@ -526,12 +526,12 @@ class KrInstance:
 
         return json_string
 
-    def model(self) -> KerykeionSubject:
+    def model(self) -> KerykeionSubjectModel:
         """
         Creates a Pydantic model of the Kerykeion object.
         """
 
-        return KerykeionSubject(**self.__dict__)
+        return KerykeionSubjectModel(**self.__dict__)
 
 
 if __name__ == "__main__":
@@ -543,5 +543,5 @@ if __name__ == "__main__":
         force=True,
     )
 
-    johnny = KrInstance("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
+    johnny = KerykeionSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
     print(json.loads(johnny.json(dump=True)))

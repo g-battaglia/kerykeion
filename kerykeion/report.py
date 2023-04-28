@@ -1,4 +1,4 @@
-from kerykeion import KrInstance
+from kerykeion import KerykeionSubject
 from terminaltables import AsciiTable
 
 class Report:
@@ -11,7 +11,7 @@ class Report:
     planets_table: str
     houses_table: str
 
-    def __init__(self, instance: KrInstance):
+    def __init__(self, instance: KerykeionSubject):
         self.instance = instance
 
         self.get_report_title()
@@ -83,6 +83,6 @@ class Report:
 
 
 if __name__ == "__main__":
-    john = KrInstance("John", 1975, 10, 10, 21, 15, "Roma", "IT")
+    john = KerykeionSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
     report = Report(john)
     report.print_report()

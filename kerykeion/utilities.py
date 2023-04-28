@@ -1,7 +1,7 @@
 import jsonpickle
 import json
 
-from kerykeion.kr_types import KerykeionPoint, KerykeionException
+from kerykeion.kr_types import KerykeionPointModel, KerykeionException
 from pathlib import Path
 from typing import Union, Literal
 from logging import getLogger
@@ -43,7 +43,7 @@ def get_number_from_name(name: str) -> int:
 
 def calculate_position(
     degree: Union[int, float], number_name: str, point_type: Literal["Planet", "House"]
-) -> KerykeionPoint:
+) -> KerykeionPointModel:
     """Utility function to create a dictionary dividing the houses or the planets list."""
 
     if degree < 30:
@@ -205,7 +205,7 @@ def calculate_position(
     else:
         raise KerykeionException(f"Error in calculating positions! Degrees: {degree}")
 
-    return KerykeionPoint(**dictionary)
+    return KerykeionPointModel(**dictionary)
 
 
 def dangerous_json_dump(subject, dump=True, new_output_directory=None):
