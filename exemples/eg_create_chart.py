@@ -1,4 +1,4 @@
-from kerykeion import KerykeionSubject, MakeSvgInstance
+from kerykeion import KerykeionSubject, KerykeionChartSVG
 from pathlib import Path
 
 CURRENT_DIR = Path(__file__).parent
@@ -10,7 +10,7 @@ def main():
 
     # Set the type, it can be Natal, Composite or Transit
 
-    name = MakeSvgInstance(
+    name = KerykeionChartSVG(
         first, chart_type="Composite", second_obj=second, new_settings_file=CURRENT_DIR / "new-kr.config.json"
     )
 

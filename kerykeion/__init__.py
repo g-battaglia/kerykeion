@@ -37,14 +37,14 @@
     ## Generate a SVG of the birthchart:
 
     ```python
-    >>> from kerykeion import KerykeionSubject, MakeSvgInstance
+    >>> from kerykeion import KerykeionSubject, KerykeionChartSVG
 
     >>> first = KerykeionSubject("Jack", 1990, 6, 15, 15, 15, "Roma")
     >>> second = KerykeionSubject("Jane", 1991, 10, 25, 21, 00, "Roma")
 
     # Set the type, it can be Natal, Composite or Transit
 
-    >>> name = MakeSvgInstance(first, chart_type="Composite", second_obj=second)
+    >>> name = KerykeionChartSVG(first, chart_type="Composite", second_obj=second)
     >>> name.makeSVG()
     >>> print(len(name.aspects_list))
     >>> Generating kerykeion object for Jack...
@@ -100,7 +100,7 @@
 
 # Local
 from .kerykeion_subject import KerykeionSubject
-from .charts.charts_svg import MakeSvgInstance
+from .charts.kerykeion_chart_svg import KerykeionChartSVG
 from .kr_types import *
 from .relationship_score import RelationshipScore
 from .aspects import CompositeAspects, NatalAspects
