@@ -1,7 +1,7 @@
 from pathlib import Path
 from kerykeion import (
     KerykeionSubject,
-    MakeSvgInstance,
+    KerykeionChartSVG,
 )
 
 CURRENT_DIR = Path(__file__).parent
@@ -13,15 +13,15 @@ class TestCharts:
         self.second_subject = KerykeionSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
     def test_birth_chart(self):
-        birth_chart_svg = MakeSvgInstance(self.first_subject).makeTemplate()
+        birth_chart_svg = KerykeionChartSVG(self.first_subject).makeTemplate()
         with open(CURRENT_DIR / "expected_legacy_birth_chart.svg", "r") as f:
             file_content = f.read()
 
         assert birth_chart_svg == file_content
 
     def test_composite_chart(self):
-        composite_chart_svg = MakeSvgInstance(self.first_subject, "Composite", self.second_subject).makeTemplate()
-        MakeSvgInstance(self.first_subject, "Composite", self.second_subject).makeSVG()
+        composite_chart_svg = KerykeionChartSVG(self.first_subject, "Composite", self.second_subject).makeTemplate()
+        KerykeionChartSVG(self.first_subject, "Composite", self.second_subject).makeSVG()
         with open(CURRENT_DIR / "expected_legacy_composite_chart.svg", "r") as f:
             file_content = f.read()
 

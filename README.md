@@ -79,14 +79,14 @@ kanye = KerykeionSubject(
 ## Generate a SVG Chart:
 
 ```python
-from kerykeion import KerykeionSubject, MakeSvgInstance
+from kerykeion import KerykeionSubject, KerykeionChartSVG
 
 first = KerykeionSubject("Jack", 1990, 6, 15, 15, 15, "Roma")
 second = KerykeionSubject("Jane", 1991, 10, 25, 21, 00, "Roma")
 
 # Set the type, it can be Natal, Composite or Transit
 
-name = MakeSvgInstance(first, chart_type="Composite", second_obj=second)
+name = KerykeionChartSVG(first, chart_type="Composite", second_obj=second)
 name.makeSVG()
 print(len(name.aspects_list))
 
