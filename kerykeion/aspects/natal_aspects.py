@@ -33,7 +33,7 @@ class NatalAspects:
 
         self.planets_settings = settings["celestial_points"]
         self.aspects_settings = settings["aspects"]
-        self.axes_orbit_settings = settings["axes_orbit"]
+        self.axes_orbit_settings = settings["general_settings"]["axes_orbit"]
 
     def asp_calc(self, point_one, point_two):
         """

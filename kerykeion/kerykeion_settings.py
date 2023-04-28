@@ -130,14 +130,19 @@ class KerykeionLanguageModel(BaseModel):
     celestial_points: KerykeionLanguageCelestialPointModel
 
 
-## Settings Model
-class KerykeionSettingsModel(BaseModel):
+class KerykeionGeneralSettingsModel(BaseModel):
     axes_orbit: int
     planet_in_zodiac_extra_points: int
+    language: str
+
+
+## Settings Model
+class KerykeionSettingsModel(BaseModel):
     chart_colors: KerykeionSettingsChartColorsModel = KerykeionSettingsChartColorsModel()
     celestial_points: List[KerykeionSettingsCelestialPointModel]
     aspects: List[KerykeionSettingsAspectModel]
     language_settings: dict[str, KerykeionLanguageModel]
+    general_settings: KerykeionGeneralSettingsModel
 
 
 def parse_settings_file(new_settings_file: Union[str, Path, None] = None) -> Dict:

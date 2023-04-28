@@ -48,7 +48,6 @@ class MakeSvgInstance:
         second_obj: Union[KerykeionSubject, None] = None,
         new_output_directory: Union[str, None] = None,
         template_type: str = "extended",
-        lang: str = "EN",
         new_settings_file: Union[str, Path, None] = None,
     ):
         # Directories:
@@ -71,7 +70,7 @@ class MakeSvgInstance:
         self.natal_width = 772.2
         self.full_width = 1200
 
-        self.parse_json_settings(new_settings_file, lang)
+        self.parse_json_settings(new_settings_file)
         self.chart_type = chart_type
 
         # Kerykeion instance
@@ -265,6 +264,27 @@ class MakeSvgInstance:
 
         # Immediately generate template.
         self.template = self.makeTemplate()
+
+    def set_output_directory(self, dir_path):
+        """
+        Sets the output direcotry and returns it's path.
+        """
+        self.output_directory = Path(dir_path)
+        dir_string = f"Output direcotry set to: {self.output_directory}"
+        return print(dir_string)
+
+    def parse_json_settings(self, settings_file):
+        """
+        Parse the settings file.
+        """
+        settings = parse_settings_file(settings_file)
+
+        language = settings["general_settings"]["language"]
+        self.language_settings = settings["language_settings"].get(language, "EN")
+        self.chart_colors_settings = settings["chart_colors"]
+        self.planets_settings = settings["celestial_points"]
+        self.aspects_settings = settings["aspects"]
+        self.planet_in_zodiac_extra_points = settings["general_settings"]["planet_in_zodiac_extra_points"]
 
     def _transitRing(self, r) -> str:
         """
@@ -1309,26 +1329,6 @@ class MakeSvgInstance:
 
         return out
 
-    def set_output_directory(self, dir_path):
-        """
-        Sets the output direcotry and returns it's path.
-        """
-        self.output_directory = Path(dir_path)
-        dir_string = f"Output direcotry set to: {self.output_directory}"
-        return print(dir_string)
-
-    def parse_json_settings(self, settings_file, lang: str):
-        """
-        Parse the settings file.
-        """
-        settings = parse_settings_file(settings_file)
-
-        self.language_settings = settings["language_settings"].get(lang, "EN")
-        self.chart_colors_settings = settings["chart_colors"]
-        self.planets_settings = settings["celestial_points"]
-        self.aspects_settings = settings["aspects"]
-        self.planet_in_zodiac_extra_points = settings["planet_in_zodiac_extra_points"]
-
     def _createTemplateDictionary(self):
         # self.chart_type = "Transit"
         # empty element points
@@ -1574,7 +1574,7 @@ if __name__ == "__main__":
     first = KerykeionSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
     second = KerykeionSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
-    name = MakeSvgInstance(first, chart_type="Composite", second_obj=second, lang="EN")
+    name = MakeSvgInstance(first, chart_type="Composite", second_obj=second)
 
     # Print the template
     template = name.makeTemplate()
