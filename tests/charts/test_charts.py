@@ -14,15 +14,25 @@ class TestCharts:
 
     def test_birth_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.first_subject).makeTemplate()
-        with open(CURRENT_DIR / "expected_legacy_birth_chart.svg", "r") as f:
+        birth_chart_svg_lines = birth_chart_svg.split("\n")
+
+        with open(CURRENT_DIR / "expected_birth_chart.svg", "r") as f:
             file_content = f.read()
 
-        assert birth_chart_svg == file_content
+        file_content_lines = file_content.split("\n")
+
+        for i in range(len(birth_chart_svg_lines)):
+            assert birth_chart_svg_lines[i] == file_content_lines[i]
 
     def test_composite_chart(self):
         composite_chart_svg = KerykeionChartSVG(self.first_subject, "Composite", self.second_subject).makeTemplate()
         KerykeionChartSVG(self.first_subject, "Composite", self.second_subject).makeSVG()
-        with open(CURRENT_DIR / "expected_legacy_composite_chart.svg", "r") as f:
+        composite_chart_svg_lines = composite_chart_svg.split("\n")
+
+        with open(CURRENT_DIR / "expected_composite_chart.svg", "r") as f:
             file_content = f.read()
 
-        assert composite_chart_svg == file_content
+        file_content_lines = file_content.split("\n")
+
+        for i in range(len(composite_chart_svg_lines)):
+            assert composite_chart_svg_lines[i] == file_content_lines[i]
