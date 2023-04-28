@@ -193,9 +193,9 @@ class NatalAspects:
         the correct id for the planet.
         """
         str_name = str(name)
-        for a in self.planets_settings:
-            if a["name"] == str_name:
-                result = a["id"]
+        for planet in self.planets_settings:
+            if planet["name"] == str_name:
+                result = planet["id"]
                 return result
 
     def filter_by_settings(self, init_point_list):

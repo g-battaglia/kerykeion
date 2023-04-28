@@ -44,8 +44,7 @@ def get_number_from_name(name: str) -> int:
 def calculate_position(
     degree: Union[int, float], number_name: str, point_type: Literal["Planet", "House"]
 ) -> KerykeionPoint:
-    """Utility function to create a dictionary deviding
-    the houses or the planets list."""
+    """Utility function to create a dictionary dividing the houses or the planets list."""
 
     if degree < 30:
         dictionary = {

@@ -106,6 +106,12 @@ class KrInstance:
     tenth_house: KerykeionPoint
     eleventh_house: KerykeionPoint
     twelfth_house: KerykeionPoint
+    
+    # Lists
+    houses: list[KerykeionPoint]
+    planets: list[KerykeionPoint]
+    planets_degrees_ut: list[float]
+    houses_degree_ut: list[float]
 
     now = datetime.now()
 
@@ -268,8 +274,7 @@ class KrInstance:
             mode = "SIDM_FAGAN_BRADLEY"
             swe.set_sid_mode(getattr(swe, mode))
 
-        """Calculates the position of the planets and stores it in a list."""
-
+        # Calculates the position of the planets and stores it in a list.
         sun_deg = swe.calc(self.julian_day, 0, self._iflag)[0][0]
         moon_deg = swe.calc(self.julian_day, 1, self._iflag)[0][0]
         mercury_deg = swe.calc(self.julian_day, 2, self._iflag)[0][0]
@@ -283,7 +288,7 @@ class KrInstance:
         mean_node_deg = swe.calc(self.julian_day, 10, self._iflag)[0][0]
         true_node_deg = swe.calc(self.julian_day, 11, self._iflag)[0][0]
 
-        self.planets_degrees = [
+        self.planets_degrees_ut = [
             sun_deg,
             moon_deg,
             mercury_deg,
@@ -304,18 +309,18 @@ class KrInstance:
 
         point_type: Literal["Planet", "House"] = "Planet"
         # stores the planets in singular dictionaries.
-        self.sun = calculate_position(self.planets_degrees[0], "Sun", point_type=point_type)
-        self.moon = calculate_position(self.planets_degrees[1], "Moon", point_type=point_type)
-        self.mercury = calculate_position(self.planets_degrees[2], "Mercury", point_type=point_type)
-        self.venus = calculate_position(self.planets_degrees[3], "Venus", point_type=point_type)
-        self.mars = calculate_position(self.planets_degrees[4], "Mars", point_type=point_type)
-        self.jupiter = calculate_position(self.planets_degrees[5], "Jupiter", point_type=point_type)
-        self.saturn = calculate_position(self.planets_degrees[6], "Saturn", point_type=point_type)
-        self.uranus = calculate_position(self.planets_degrees[7], "Uranus", point_type=point_type)
-        self.neptune = calculate_position(self.planets_degrees[8], "Neptune", point_type=point_type)
-        self.pluto = calculate_position(self.planets_degrees[9], "Pluto", point_type=point_type)
-        self.mean_node = calculate_position(self.planets_degrees[10], "Mean_Node", point_type=point_type)
-        self.true_node = calculate_position(self.planets_degrees[11], "True_Node", point_type=point_type)
+        self.sun = calculate_position(self.planets_degrees_ut[0], "Sun", point_type=point_type)
+        self.moon = calculate_position(self.planets_degrees_ut[1], "Moon", point_type=point_type)
+        self.mercury = calculate_position(self.planets_degrees_ut[2], "Mercury", point_type=point_type)
+        self.venus = calculate_position(self.planets_degrees_ut[3], "Venus", point_type=point_type)
+        self.mars = calculate_position(self.planets_degrees_ut[4], "Mars", point_type=point_type)
+        self.jupiter = calculate_position(self.planets_degrees_ut[5], "Jupiter", point_type=point_type)
+        self.saturn = calculate_position(self.planets_degrees_ut[6], "Saturn", point_type=point_type)
+        self.uranus = calculate_position(self.planets_degrees_ut[7], "Uranus", point_type=point_type)
+        self.neptune = calculate_position(self.planets_degrees_ut[8], "Neptune", point_type=point_type)
+        self.pluto = calculate_position(self.planets_degrees_ut[9], "Pluto", point_type=point_type)
+        self.mean_node = calculate_position(self.planets_degrees_ut[10], "Mean_Node", point_type=point_type)
+        self.true_node = calculate_position(self.planets_degrees_ut[11], "True_Node", point_type=point_type)
 
     def _planets_in_houses(self) -> None:
         """Calculates the house of the planet and updates
@@ -364,18 +369,18 @@ class KrInstance:
 
             return planet
 
-        self.sun = for_every_planet(self.sun, self.planets_degrees[0])
-        self.moon = for_every_planet(self.moon, self.planets_degrees[1])
-        self.mercury = for_every_planet(self.mercury, self.planets_degrees[2])
-        self.venus = for_every_planet(self.venus, self.planets_degrees[3])
-        self.mars = for_every_planet(self.mars, self.planets_degrees[4])
-        self.jupiter = for_every_planet(self.jupiter, self.planets_degrees[5])
-        self.saturn = for_every_planet(self.saturn, self.planets_degrees[6])
-        self.uranus = for_every_planet(self.uranus, self.planets_degrees[7])
-        self.neptune = for_every_planet(self.neptune, self.planets_degrees[8])
-        self.pluto = for_every_planet(self.pluto, self.planets_degrees[9])
-        self.mean_node = for_every_planet(self.mean_node, self.planets_degrees[10])
-        self.true_node = for_every_planet(self.true_node, self.planets_degrees[11])
+        self.sun = for_every_planet(self.sun, self.planets_degrees_ut[0])
+        self.moon = for_every_planet(self.moon, self.planets_degrees_ut[1])
+        self.mercury = for_every_planet(self.mercury, self.planets_degrees_ut[2])
+        self.venus = for_every_planet(self.venus, self.planets_degrees_ut[3])
+        self.mars = for_every_planet(self.mars, self.planets_degrees_ut[4])
+        self.jupiter = for_every_planet(self.jupiter, self.planets_degrees_ut[5])
+        self.saturn = for_every_planet(self.saturn, self.planets_degrees_ut[6])
+        self.uranus = for_every_planet(self.uranus, self.planets_degrees_ut[7])
+        self.neptune = for_every_planet(self.neptune, self.planets_degrees_ut[8])
+        self.pluto = for_every_planet(self.pluto, self.planets_degrees_ut[9])
+        self.mean_node = for_every_planet(self.mean_node, self.planets_degrees_ut[10])
+        self.true_node = for_every_planet(self.true_node, self.planets_degrees_ut[11])
 
         self.planets_list = [
             self.sun,
@@ -409,7 +414,7 @@ class KrInstance:
         moon_phase, sun_phase = None, None
 
         # anti-clockwise degrees between sun and moon
-        moon, sun = self.planets_degrees[1], self.planets_degrees[0]
+        moon, sun = self.planets_degrees_ut[1], self.planets_degrees_ut[0]
         degrees_between = moon - sun
 
         if degrees_between < 0:
