@@ -13,11 +13,11 @@
     ```python
 
     # Import the main class for creating a kerykeion instance:
-    >>> from kerykeion import KrInstance
+    >>> from kerykeion import KerykeionSubject
 
     # Create a kerykeion instance:
     # Args: Name, year, month, day, hour, minuts, city, nation(optional)
-    >>> kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+    >>> kanye = KerykeionSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
 
     # Get the information about the sun in the chart:
     # (The position of the planets always starts at 0)
@@ -37,10 +37,10 @@
     ## Generate a SVG of the birthchart:
 
     ```python
-    >>> from kerykeion import KrInstance, MakeSvgInstance
+    >>> from kerykeion import KerykeionSubject, MakeSvgInstance
 
-    >>> first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
-    >>> second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
+    >>> first = KerykeionSubject("Jack", 1990, 6, 15, 15, 15, "Roma")
+    >>> second = KerykeionSubject("Jane", 1991, 10, 25, 21, 00, "Roma")
 
     # Set the type, it can be Natal, Composite or Transit
 
@@ -63,9 +63,9 @@
     ```python
     # Get all aspects between two persons:
 
-    >>> from kerykeion import CompositeAspects, KrInstance
-    >>> first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
-    >>> second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
+    >>> from kerykeion import CompositeAspects, KerykeionSubject
+    >>> first = KerykeionSubject("Jack", 1990, 6, 15, 15, 15, "Roma")
+    >>> second = KerykeionSubject("Jane", 1991, 10, 25, 21, 00, "Roma")
 
     >>> name = CompositeAspects(first, second)
     >>> aspect_list = name.get_relevant_aspects()
@@ -99,7 +99,7 @@
 """
 
 # Local
-from .kr_instance import KrInstance
+from .kerykeion_subject import KerykeionSubject
 from .charts.charts_svg import MakeSvgInstance
 from .kr_types import *
 from .relationship_score import RelationshipScore

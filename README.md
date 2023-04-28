@@ -43,11 +43,11 @@ Here some examples:
 ```python
 
 # Import the main class for creating a kerykeion instance:
-from kerykeion import KrInstance
+from kerykeion import KerykeionSubject
 
 # Create a kerykeion instance:
 # Args: Name, year, month, day, hour, minuts, city, nation(optional)
-kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+kanye = KerykeionSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
 
 # Get the information about the sun in the chart:
 # (The position of the planets always starts at 0)
@@ -70,7 +70,7 @@ kanye.moon.get("element")
 **To avoid connecting to GeoNames (eg. avoiding hourly limit or no internet connection) you should instance kerykeion like this:**
 
 ```python
-kanye = KrInstance(
+kanye = KerykeionSubject(
     "Kanye", 1977, 6, 8, 8, 45,
     lng=50, lat=50, tz_str="Europe/Rome"
     )
@@ -79,10 +79,10 @@ kanye = KrInstance(
 ## Generate a SVG Chart:
 
 ```python
-from kerykeion import KrInstance, MakeSvgInstance
+from kerykeion import KerykeionSubject, MakeSvgInstance
 
-first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
-second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
+first = KerykeionSubject("Jack", 1990, 6, 15, 15, 15, "Roma")
+second = KerykeionSubject("Jane", 1991, 10, 25, 21, 00, "Roma")
 
 # Set the type, it can be Natal, Composite or Transit
 
@@ -106,9 +106,9 @@ print(len(name.aspects_list))
 To print a report of all the data:
 
 ```python
-from kerykeion import Report, KrInstance
+from kerykeion import Report, KerykeionSubject
 
-kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+kanye = KerykeionSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
 report = Report(kanye)
 report.print_report()
 
@@ -169,9 +169,9 @@ $ python3 your_script_name.py > file.txt
 ```python
 # Get all aspects between two persons:
 
-from kerykeion import CompositeAspects, KrInstance
-first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
-second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
+from kerykeion import CompositeAspects, KerykeionSubject
+first = KerykeionSubject("Jack", 1990, 6, 15, 15, 15, "Roma")
+second = KerykeionSubject("Jane", 1991, 10, 25, 21, 00, "Roma")
 
 name = CompositeAspects(first, second)
 aspect_list = name.get_relevant_aspects()

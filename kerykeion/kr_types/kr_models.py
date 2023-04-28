@@ -1,8 +1,7 @@
+# -*- coding: utf-8 -*-
 """
     This is part of Kerykeion (C) 2023 Giacomo Battaglia
 """
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 from typing import Literal, Union, Optional
 from pydantic import BaseModel
@@ -10,7 +9,7 @@ from pydantic import BaseModel
 from .kr_literals import *
 
 
-class LunarPhaseObject(BaseModel):
+class LunarPhaseModel(BaseModel):
     degrees_between_s_m: Union[int, float]
     moon_phase: int
     sun_phase: int
@@ -53,7 +52,7 @@ class LunarPhaseObject(BaseModel):
         return getattr(self, key, default)
 
 
-class KerykeionPoint(BaseModel):
+class KerykeionPointModel(BaseModel):
     """
     Kerykeion Point Model
     """
@@ -107,7 +106,7 @@ class KerykeionPoint(BaseModel):
         return getattr(self, key, default)
 
 
-class KerykeionSubject(BaseModel):
+class KerykeionSubjectModel(BaseModel):
     # Data
     name: str
     year: int
@@ -126,41 +125,41 @@ class KerykeionSubject(BaseModel):
     julian_day: float
 
     # Planets
-    sun: KerykeionPoint
-    moon: KerykeionPoint
-    mercury: KerykeionPoint
-    venus: KerykeionPoint
-    mars: KerykeionPoint
-    jupiter: KerykeionPoint
-    saturn: KerykeionPoint
-    uranus: KerykeionPoint
-    neptune: KerykeionPoint
-    pluto: KerykeionPoint
+    sun: KerykeionPointModel
+    moon: KerykeionPointModel
+    mercury: KerykeionPointModel
+    venus: KerykeionPointModel
+    mars: KerykeionPointModel
+    jupiter: KerykeionPointModel
+    saturn: KerykeionPointModel
+    uranus: KerykeionPointModel
+    neptune: KerykeionPointModel
+    pluto: KerykeionPointModel
 
     # Houses
-    first_house: KerykeionPoint
-    second_house: KerykeionPoint
-    third_house: KerykeionPoint
-    fourth_house: KerykeionPoint
-    fifth_house: KerykeionPoint
-    sixth_house: KerykeionPoint
-    seventh_house: KerykeionPoint
-    eighth_house: KerykeionPoint
-    ninth_house: KerykeionPoint
-    tenth_house: KerykeionPoint
-    eleventh_house: KerykeionPoint
-    twelfth_house: KerykeionPoint
+    first_house: KerykeionPointModel
+    second_house: KerykeionPointModel
+    third_house: KerykeionPointModel
+    fourth_house: KerykeionPointModel
+    fifth_house: KerykeionPointModel
+    sixth_house: KerykeionPointModel
+    seventh_house: KerykeionPointModel
+    eighth_house: KerykeionPointModel
+    ninth_house: KerykeionPointModel
+    tenth_house: KerykeionPointModel
+    eleventh_house: KerykeionPointModel
+    twelfth_house: KerykeionPointModel
 
     # Nodes
-    mean_node: KerykeionPoint
-    true_node: KerykeionPoint
+    mean_node: KerykeionPointModel
+    true_node: KerykeionPointModel
 
     # Lunar Phase
-    lunar_phase: LunarPhaseObject
+    lunar_phase: LunarPhaseModel
 
 
 if __name__ == "__main__":
-    sun = KerykeionPoint(
+    sun = KerykeionPointModel(
         name="Sun",
         element="Air",
         quality="Fixed",

@@ -1,13 +1,13 @@
 from kerykeion import (
-    KrInstance,
+    KerykeionSubject,
     RelationshipScore,
 )
 
 
 # TODO: Extend this test to cover all
 def test_relationship_score():
-    first_subject = KrInstance("John", 1975, 10, 10, 21, 15, "Roma", "IT")
-    second_subject = KrInstance("Sarah", 1978, 2, 9, 15, 50, "Roma", "IT")
+    first_subject = KerykeionSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
+    second_subject = KerykeionSubject("Sarah", 1978, 2, 9, 15, 50, "Roma", "IT")
 
     score = RelationshipScore(first_subject, second_subject)
     assert score.__dict__()["score"] == 20
