@@ -1572,6 +1572,10 @@ class KerykeionChartSVG:
 
 if __name__ == "__main__":
     first = KerykeionSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+    single_chart = KerykeionChartSVG(first)
+
+    single_chart.makeSVG()
+
     second = KerykeionSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
     name = KerykeionChartSVG(first, chart_type="Composite", second_obj=second)
