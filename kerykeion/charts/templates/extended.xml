@@ -472,15 +472,7 @@ This file is part of Kerykeion and is based on OpenAstro.org -->
                     <!-- Elements -->$makeElements <!-- Planet Grid -->$makePlanetGrid <!-- Houses Grid -->
                     $makeHousesGrid
                 </g>
-                <!-- testing printer<rect x='0' y='0' width='772.2' height='546.0' style='fill:
-                $paper_color_1; stroke-width: 1px; stroke:red;' /><line x1='0' y1='0' x2='772.2'
-                y2='546.0' style='fill:none; stroke-width: 1px; stroke:red;' /><line x1='772.2'
-                y1='0' x2='0' y2='546.0' style='fill:none; stroke-width: 1px; stroke:red;' />-->
             </g>
         </g>
     </g>
-    <!-- testing printer<rect x='0' y='0' width='$svgWidth' height='$svgHeight' style='fill:none;
-    stroke-width: 1px; stroke:blue;' /><line x1='0' y1='0' x2='$svgWidth' y2='$svgHeight'
-    style='fill:none; stroke-width: 1px; stroke:blue;' /><line x1='$svgWidth' y1='0' x2='0'
-    y2='$svgHeight' style='fill:none; stroke-width: 1px; stroke:blue;' />-->
 </svg>
