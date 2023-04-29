@@ -88,6 +88,7 @@ line-length = 120
 # Task Runner
 [tool.poe.tasks]
 test = "pytest"
+test-no-capture = "poetry run pytest --show-capture no  "
 lint = "mypy"
 docs = "pdoc kerykeion -o ./docs"
 format = "black kerykeion tests scripts --line-length 120"

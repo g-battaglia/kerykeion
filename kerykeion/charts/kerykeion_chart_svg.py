@@ -1515,7 +1515,8 @@ class KerykeionChartSVG:
 
         # planets_color_X
         for i in range(len(self.planets_settings)):
-            td["planets_color_%s" % (i)] = self.planets_settings[i]["color"]
+            planet_id = self.planets_settings[i]["id"]
+            td[f"planets_color_{planet_id}"] = self.planets_settings[i]["color"]
 
         # zodiac_color_X
         for i in range(12):
