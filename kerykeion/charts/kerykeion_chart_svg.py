@@ -1,8 +1,4 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-# * TODO: Change the label for language in 2 objects, one for IT and one for ENG.
-# * Then change the label for planets like this: planet["label"] => planet[language]
 
 import pytz
 
@@ -1169,12 +1165,12 @@ class KerykeionChartSVG:
                     line = 0
             out += '<g transform="translate(%s,%s)">' % (nl, line)
             # first planet symbol
-            out += '<use transform="scale(0.4)" x="0" y="3" xlink:href="#%s" />' % (self.planets_settings[self.aspects_list[i]["p1"]]["name"])
+            out += '<use transform="scale(0.4)" x="0" y="3" xlink:href="#%s" />' % (self.planets_settings[self.aspects_list[i]["p1"]]["name"]) # TODO: (next((item for item in self.planets_settings if item["id"] == self.aspects_list[i]["p1"]))) It preventes the use ot numeric ID, but it is not working.
             # aspect symbol
             out += '<use  x="15" y="0" xlink:href="#orb%s" />' % (self.aspects_settings[self.aspects_list[i]["aid"]]["degree"])
             # second planet symbol
             out += '<g transform="translate(30,0)">'
-            out += '<use transform="scale(0.4)" x="0" y="3" xlink:href="#%s" />' % (self.planets_settings[self.aspects_list[i]["p2"]]["name"])
+            out += '<use transform="scale(0.4)" x="0" y="3" xlink:href="#%s" />' % (self.planets_settings[self.aspects_list[i]["p2"]]["name"]) # TODO: (next((item for item in self.planets_settings if item["id"] == self.aspects_list[i]["p3"])))
             out += "</g>"
             # difference in degrees
             out += '<text y="8" x="45" style="fill:%s; font-size: 10px;">%s</text>' % (
