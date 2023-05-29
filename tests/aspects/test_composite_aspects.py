@@ -1,5 +1,5 @@
 from kerykeion import (
-    KerykeionSubject,
+    AstrologicalSubject,
     CompositeAspects,
 )
 
@@ -7,8 +7,8 @@ from .expected_composite_aspects import EXPECTED_ALL_ASPECTS, EXPECTED_RELEVANT_
 
 class TestNatalAspects:
     def setup_class(self):
-        self.first_subject = KerykeionSubject("John", 1940, 10, 9, 10, 30, "Liverpool", "GB")
-        self.second_subject = KerykeionSubject("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP")
+        self.first_subject = AstrologicalSubject("John", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+        self.second_subject = AstrologicalSubject("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP")
 
         self.composite_relevant_aspects = CompositeAspects(self.first_subject, self.second_subject).get_relevant_aspects()
         self.composite_all_aspects = CompositeAspects(self.first_subject, self.second_subject).get_all_aspects()

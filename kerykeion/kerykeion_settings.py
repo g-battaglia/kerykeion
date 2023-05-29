@@ -10,7 +10,7 @@ from dataclasses import dataclass
 import os
 
 
-class BaseModel(BaseModel):
+class CustomBaseModel(BaseModel):
     def __init__(self, **data):
         super().__init__(**data)
 
@@ -22,7 +22,7 @@ class BaseModel(BaseModel):
 
 
 ## Celestial Points Settings
-class KerykeionSettingsCelestialPointModel(BaseModel):
+class KerykeionSettingsCelestialPointModel(CustomBaseModel):
     id: int
     name: str
     color: str
@@ -33,7 +33,7 @@ class KerykeionSettingsCelestialPointModel(BaseModel):
 
 
 ## Chart Colors Settings
-class KerykeionSettingsChartColorsModel(BaseModel):
+class KerykeionSettingsChartColorsModel(CustomBaseModel):
     paper_0: str = "#000000"
     paper_1: str = "#ffffff"
     zodiac_bg_0: str = "#ff7200"
@@ -75,7 +75,7 @@ class KerykeionSettingsChartColorsModel(BaseModel):
 
 
 ## Aspect Settings
-class KerykeionSettingsAspectModel(BaseModel):
+class KerykeionSettingsAspectModel(CustomBaseModel):
     degree: int
     name: str
     is_active: bool
@@ -87,7 +87,7 @@ class KerykeionSettingsAspectModel(BaseModel):
 
 
 ## Language Settings
-class KerykeionLanguageCelestialPointModel(BaseModel):
+class KerykeionLanguageCelestialPointModel(CustomBaseModel):
     Sun: str
     Moon: str
     Mercury: str
@@ -106,7 +106,7 @@ class KerykeionLanguageCelestialPointModel(BaseModel):
     Mean_Node: str
 
 
-class KerykeionLanguageModel(BaseModel):
+class KerykeionLanguageModel(CustomBaseModel):
     info: str
     cusp: str
     longitude: str
@@ -130,14 +130,14 @@ class KerykeionLanguageModel(BaseModel):
     celestial_points: KerykeionLanguageCelestialPointModel
 
 
-class KerykeionGeneralSettingsModel(BaseModel):
+class KerykeionGeneralSettingsModel(CustomBaseModel):
     axes_orbit: int
     planet_in_zodiac_extra_points: int
     language: str
 
 
 ## Settings Model
-class KerykeionSettingsModel(BaseModel):
+class KerykeionSettingsModel(CustomBaseModel):
     chart_colors: KerykeionSettingsChartColorsModel = KerykeionSettingsChartColorsModel()
     celestial_points: List[KerykeionSettingsCelestialPointModel]
     aspects: List[KerykeionSettingsAspectModel]

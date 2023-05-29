@@ -4,7 +4,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from kerykeion import KerykeionSubject
+from kerykeion import AstrologicalSubject
 from pathlib import Path
 from typing import Union
 
@@ -18,8 +18,8 @@ class CompositeAspects(NatalAspects):
 
     def __init__(
         self,
-        kr_object_one: KerykeionSubject,
-        kr_object_two: KerykeionSubject,
+        kr_object_one: AstrologicalSubject,
+        kr_object_two: AstrologicalSubject,
         new_settings_file: Union[str, Path, None] = None,
     ):
         self.first_user = kr_object_one
@@ -78,8 +78,8 @@ class CompositeAspects(NatalAspects):
 
 
 if __name__ == "__main__":
-    john = KerykeionSubject("John", 1940, 10, 9, 10, 30, "Liverpool")
-    yoko = KerykeionSubject("Yoko", 1933, 2, 18, 10, 30, "Tokyo")
+    john = AstrologicalSubject("John", 1940, 10, 9, 10, 30, "Liverpool")
+    yoko = AstrologicalSubject("Yoko", 1933, 2, 18, 10, 30, "Tokyo")
 
     composite_aspects = CompositeAspects(john, yoko)
 

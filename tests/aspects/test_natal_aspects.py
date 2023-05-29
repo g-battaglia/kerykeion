@@ -1,5 +1,5 @@
 from kerykeion import (
-    KerykeionSubject,
+    AstrologicalSubject,
     NatalAspects,
 )
 
@@ -7,7 +7,7 @@ from .expected_natal_aspects import EXPECTED_ALL_ASPECTS, EXPECTED_RELEVANT_ASPE
 
 class TestNatalAspects:
     def setup_class(self):
-        self.subject = KerykeionSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
+        self.subject = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
         self.subject_relevant_aspects = NatalAspects(self.subject).get_relevant_aspects()
         self.subject_all_aspects = NatalAspects(self.subject).get_all_aspects()
 

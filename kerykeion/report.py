@@ -1,4 +1,4 @@
-from kerykeion import KerykeionSubject
+from kerykeion import AstrologicalSubject
 from terminaltables import AsciiTable
 
 class Report:
@@ -11,7 +11,7 @@ class Report:
     planets_table: str
     houses_table: str
 
-    def __init__(self, instance: KerykeionSubject):
+    def __init__(self, instance: AstrologicalSubject):
         self.instance = instance
 
         self.get_report_title()
@@ -83,6 +83,6 @@ class Report:
 
 
 if __name__ == "__main__":
-    john = KerykeionSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
+    john = AstrologicalSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
     report = Report(john)
     report.print_report()

@@ -1,12 +1,12 @@
-from kerykeion import KerykeionSubject, KerykeionChartSVG
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
 from pathlib import Path
 
 CURRENT_DIR = Path(__file__).parent
 
 
 def main():
-    first = KerykeionSubject("Jack", 1990, 6, 15, 15, 15, "Roma", zodiac_type="Tropic")
-    second = KerykeionSubject("Jane", 1991, 10, 25, 21, 00, "Roma", zodiac_type="Tropic")
+    first = AstrologicalSubject("Jack", 1990, 6, 15, 15, 15, "Roma", zodiac_type="Tropic")
+    second = AstrologicalSubject("Jane", 1991, 10, 25, 21, 00, "Roma", zodiac_type="Tropic")
 
     # Set the type, it can be Natal, Composite or Transit
 

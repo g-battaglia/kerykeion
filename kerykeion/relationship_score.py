@@ -3,7 +3,7 @@
     This is part of Kerykeion (C) 2023 Giacomo Battaglia
 """
 
-from kerykeion import KerykeionSubject
+from kerykeion import AstrologicalSubject
 from kerykeion.aspects.composite_aspects import CompositeAspects
 from logging import basicConfig, Logger, getLogger
 from pathlib import Path
@@ -29,14 +29,14 @@ class RelationshipScore:
     http://www.cirodiscepolo.it/Articoli/Discepoloele.htm
 
     Args:
-        first_subject (KerykeionSubject): First subject kerykeion instance
-        second_subject (KerykeionSubject): Second subject kerykeion instance
+        first_subject (AstrologicalSubject): First subject kerykeion instance
+        second_subject (AstrologicalSubject): Second subject kerykeion instance
         logger (Union[Logger, None], optional): Instance of Logger if None creates new one. Defaults to None.
 
     """
 
-    first_subject: KerykeionSubject
-    second_subject: KerykeionSubject
+    first_subject: AstrologicalSubject
+    second_subject: AstrologicalSubject
     score: int
     is_destiny_sign: bool
     relevant_aspects: list
@@ -44,8 +44,8 @@ class RelationshipScore:
 
     def __init__(
         self,
-        first_subject: KerykeionSubject,
-        second_subject: KerykeionSubject,
+        first_subject: AstrologicalSubject,
+        second_subject: AstrologicalSubject,
         logger: Union[Logger, None] = None,
         new_settings_file: Union[str, Path, None] = None,
     ):
@@ -221,8 +221,8 @@ if __name__ == "__main__":
         level=10,
         force=True,
     )
-    lui = KerykeionSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
-    lei = KerykeionSubject("Sarah", 1978, 2, 9, 15, 50, "Roma", "IT")
+    lui = AstrologicalSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
+    lei = AstrologicalSubject("Sarah", 1978, 2, 9, 15, 50, "Roma", "IT")
 
     score = RelationshipScore(lui, lei)
     print(score.__dict__()["score"])

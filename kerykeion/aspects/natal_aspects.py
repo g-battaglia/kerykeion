@@ -6,7 +6,7 @@
 
 import json
 from pathlib import Path
-from kerykeion import KerykeionSubject
+from kerykeion import AstrologicalSubject
 from swisseph import difdeg2n
 from typing import Union
 from kerykeion.kerykeion_settings import parse_settings_file
@@ -17,7 +17,7 @@ class NatalAspects:
     Generates an object with all the aspects of a birthcart.
     """
 
-    def __init__(self, kr_object: KerykeionSubject, new_settings_file: Union[str, Path, None] = None):
+    def __init__(self, kr_object: AstrologicalSubject, new_settings_file: Union[str, Path, None] = None):
         self.user = kr_object
         self.new_settings_file = new_settings_file
         self._parse_json_settings()
@@ -292,7 +292,7 @@ class NatalAspects:
 
 
 if __name__ == "__main__":
-    johnny = KerykeionSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
     aspects = NatalAspects(johnny).get_all_aspects()
 
     print(aspects)
