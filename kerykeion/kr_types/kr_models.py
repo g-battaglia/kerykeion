@@ -106,7 +106,7 @@ class KerykeionPointModel(BaseModel):
         return getattr(self, key, default)
 
 
-class KerykeionSubjectModel(BaseModel):
+class AstrologicalSubjectModel(BaseModel):
     # Data
     name: str
     year: int

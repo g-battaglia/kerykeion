@@ -1,8 +1,7 @@
+# -*- coding: utf-8 -*-
 """
     This is part of Kerykeion (C) 2023 Giacomo Battaglia
 """
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import math
 import pytz
@@ -14,7 +13,7 @@ from kerykeion.fetch_geonames import FetchGeonames
 from kerykeion.kr_types import (
     KerykeionException,
     ZodiacType,
-    KerykeionSubjectModel,
+    AstrologicalSubjectModel,
     LunarPhaseModel,
     KerykeionPointModel,
 )
@@ -28,7 +27,7 @@ from typing import Union, Literal
 logger = getLogger(__name__)
 
 
-class KerykeionSubject:
+class AstrologicalSubject:
     """
     Calculates all the astrological information, the coordinates,
     it's utc and julian day and returns an object with all that data.
@@ -106,7 +105,7 @@ class KerykeionSubject:
     tenth_house: KerykeionPointModel
     eleventh_house: KerykeionPointModel
     twelfth_house: KerykeionPointModel
-    
+
     # Lists
     houses: list[KerykeionPointModel]
     planets: list[KerykeionPointModel]
@@ -508,7 +507,7 @@ class KerykeionSubject:
         or the home folder.
         """
 
-        KrData = KerykeionSubjectModel(**self.__dict__)
+        KrData = AstrologicalSubjectModel(**self.__dict__)
         json_string = KrData.json(exclude_none=True)
         print(json_string)
 
@@ -526,12 +525,12 @@ class KerykeionSubject:
 
         return json_string
 
-    def model(self) -> KerykeionSubjectModel:
+    def model(self) -> AstrologicalSubjectModel:
         """
         Creates a Pydantic model of the Kerykeion object.
         """
 
-        return KerykeionSubjectModel(**self.__dict__)
+        return AstrologicalSubjectModel(**self.__dict__)
 
 
 if __name__ == "__main__":
@@ -543,5 +542,5 @@ if __name__ == "__main__":
         force=True,
     )
 
-    johnny = KerykeionSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
     print(json.loads(johnny.json(dump=True)))

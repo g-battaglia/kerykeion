@@ -1,6 +1,6 @@
 from pathlib import Path
 from kerykeion import (
-    KerykeionSubject,
+    AstrologicalSubject,
     KerykeionChartSVG,
 )
 
@@ -9,8 +9,8 @@ CURRENT_DIR = Path(__file__).parent
 
 class TestCharts:
     def setup_class(self):
-        self.first_subject = KerykeionSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
-        self.second_subject = KerykeionSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+        self.first_subject = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+        self.second_subject = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
     def test_birth_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.first_subject).makeTemplate()

@@ -6,7 +6,7 @@ from datetime import datetime
 from kerykeion.kerykeion_settings import parse_settings_file
 from kerykeion.aspects.composite_aspects import CompositeAspects
 from kerykeion.aspects.natal_aspects import NatalAspects
-from kerykeion.kerykeion_subject import KerykeionSubject
+from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types import KerykeionException, ChartType
 from kerykeion.kr_types.chart_types import ChartTemplateModel
 from kerykeion.charts.charts_utils import decHourJoin, degreeDiff, offsetToTz, sliceToX, sliceToY
@@ -39,9 +39,9 @@ class KerykeionChartSVG:
 
     def __init__(
         self,
-        first_obj: KerykeionSubject,
+        first_obj: AstrologicalSubject,
         chart_type: ChartType = "Natal",
-        second_obj: Union[KerykeionSubject, None] = None,
+        second_obj: Union[AstrologicalSubject, None] = None,
         new_output_directory: Union[str, None] = None,
         template_type: str = "extended",
         new_settings_file: Union[str, Path, None] = None,
@@ -572,20 +572,7 @@ class KerykeionChartSVG:
 
             xtext = sliceToX(0, (r - dropin), text_offset) + dropin  # was 132
             ytext = sliceToY(0, (r - dropin), text_offset) + dropin  # was 132
-            path = (
-                path
-                + '<line x1="'
-                + str(x1)
-                + '" y1="'
-                + str(y1)
-                + '" x2="'
-                + str(x2)
-                + '" y2="'
-                + str(y2)
-                + '" style="stroke: '
-                + linecolor
-                + '; stroke-width: 2px; stroke-dasharray:3,2; stroke-opacity:.4;"/>'
-            )
+            path = f'{path}<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {linecolor}; stroke-width: 2px; stroke-dasharray:3,2; stroke-opacity:.4;"/>'
             path = path + '<text style="fill: #f00; fill-opacity: .6; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
 
         return path
@@ -849,16 +836,8 @@ class KerykeionChartSVG:
                     t_offset = t_offset - 360
                 planet_x = sliceToX(0, (r - rplanet), t_offset) + rplanet
                 planet_y = sliceToY(0, (r - rplanet), t_offset) + rplanet
-                output = (
-                    output
-                    + '<g transform="translate(-6,-6)"><g transform="scale(0.5)"><use x="'
-                    + str(planet_x * 2)
-                    + '" y="'
-                    + str(planet_y * 2)
-                    + '" xlink:href="#'
-                    + self.planets_settings[i]["name"]
-                    + '" /></g></g>'
-                )
+                output += f'<g transform="translate(-6,-6)"><g transform="scale(0.5)"><use x="{planet_x*2}" y="{planet_y*2}" xlink:href="#{self.planets_settings[i]["name"]}" /></g></g>'
+
                 # transit planet line
                 x1 = sliceToX(0, r + 3, t_offset) - 3
                 y1 = sliceToY(0, r + 3, t_offset) - 3
@@ -1568,12 +1547,12 @@ class KerykeionChartSVG:
 
 
 if __name__ == "__main__":
-    first = KerykeionSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+    first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
     single_chart = KerykeionChartSVG(first)
 
     single_chart.makeSVG()
 
-    second = KerykeionSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+    second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
     name = KerykeionChartSVG(first, chart_type="Composite", second_obj=second)
 

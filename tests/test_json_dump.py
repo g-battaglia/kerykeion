@@ -1,10 +1,10 @@
-from kerykeion import KerykeionSubject
+from kerykeion import AstrologicalSubject
 from json import loads
 
 
 class TestJsonDump:
     def setup_class(self):
-        self.instance = KerykeionSubject("Test", 1993, 10, 10, 12, 12, "London", "GB")
+        self.instance = AstrologicalSubject("Test", 1993, 10, 10, 12, 12, "London", "GB")
         self.dictionary = loads(self.instance.json())
 
     def test_json_dump_data(self):
