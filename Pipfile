@@ -8,7 +8,7 @@ pyswisseph = "==2.8.0.post1"
 pytz = "==2020.1"
 jsonpickle = "==1.4.2"
 requests-cache = "==0.9.3"
-requests = "==2.27.1"
+requests = "==2.31.0"
 pydantic = "*"
 kerykeion = {editable = true, path = "."}
 pytest = "*"
