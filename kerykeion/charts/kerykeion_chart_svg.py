@@ -414,27 +414,8 @@ class KerykeionChartSVG:
             dropin = 0
         else:
             dropin = self.c1
-        slice = (
-            '<path d="M'
-            + str(r)
-            + ","
-            + str(r)
-            + " L"
-            + str(dropin + sliceToX(num, r - dropin, offset))
-            + ","
-            + str(dropin + sliceToY(num, r - dropin, offset))
-            + " A"
-            + str(r - dropin)
-            + ","
-            + str(r - dropin)
-            + " 0 0,0 "
-            + str(dropin + sliceToX(num + 1, r - dropin, offset))
-            + ","
-            + str(dropin + sliceToY(num + 1, r - dropin, offset))
-            + ' z" style="'
-            + style
-            + '"/>'
-        )
+        slice = f'<path d="M{str(r)},{str(r)} L{str(dropin + sliceToX(num, r - dropin, offset))},{str(dropin + sliceToY(num, r - dropin, offset))} A{str(r - dropin)},{str(r - dropin)} 0 0,0 {str(dropin + sliceToX(num + 1, r - dropin, offset))},{str(dropin + sliceToY(num + 1, r - dropin, offset))} z" style="{style}"/>'
+
         # symbols
         offset = offset + 15
         # check transit
@@ -442,15 +423,8 @@ class KerykeionChartSVG:
             dropin = 54
         else:
             dropin = 18 + self.c1
-        sign = (
-            '<g transform="translate(-16,-16)"><use x="'
-            + str(dropin + sliceToX(num, r - dropin, offset))
-            + '" y="'
-            + str(dropin + sliceToY(num, r - dropin, offset))
-            + '" xlink:href="#'
-            + type
-            + '" /></g>'
-        )
+        sign = f'<g transform="translate(-16,-16)"><use x="{str(dropin + sliceToX(num, r - dropin, offset))}" y="{str(dropin + sliceToY(num, r - dropin, offset))}" xlink:href="#{type}" /></g>'
+
         return slice + "" + sign
 
     def _makeZodiac(self, r):
@@ -461,10 +435,9 @@ class KerykeionChartSVG:
                 + self._zodiacSlice(
                     i,
                     r,
-                    "fill:" + self.chart_colors_settings["zodiac_bg_%s" % (i)] + "; fill-opacity: 0.5;",
+                    f'fill:{self.chart_colors_settings[f"zodiac_bg_{i}"]}; fill-opacity: 0.5;',
                     self.zodiac[i]["name"],
                 )
-                + ""
             )
         return output
 
@@ -532,37 +505,12 @@ class KerykeionChartSVG:
 
                 if self.chart_type == "Transit":
                     path = path + '<text style="fill: #00f; fill-opacity: 0; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
-                    path = (
-                        path
-                        + '<line x1="'
-                        + str(t_x1)
-                        + '" y1="'
-                        + str(t_y1)
-                        + '" x2="'
-                        + str(t_x2)
-                        + '" y2="'
-                        + str(t_y2)
-                        + '" style="stroke: '
-                        + t_linecolor
-                        + '; stroke-width: 2px; stroke-opacity:0;"/>'
-                    )
+                    path = f"{path}<line x1='{str(t_x1)}' y1='{str(t_y1)}' x2='{str(t_x2)}' y2='{str(t_y2)}' style='stroke: {t_linecolor}; stroke-width: 2px; stroke-opacity:0;'/>"
 
                 else:
                     path = path + '<text style="fill: #00f; fill-opacity: .4; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
-                    path = (
-                        path
-                        + '<line x1="'
-                        + str(t_x1)
-                        + '" y1="'
-                        + str(t_y1)
-                        + '" x2="'
-                        + str(t_x2)
-                        + '" y2="'
-                        + str(t_y2)
-                        + '" style="stroke: '
-                        + t_linecolor
-                        + '; stroke-width: 2px; stroke-opacity:.3;"/>'
-                    )
+                    path = f"{path}<line x1='{str(t_x1)}' y1='{str(t_y1)}' x2='{str(t_x2)}' y2='{str(t_y2)}' style='stroke: {t_linecolor}; stroke-width: 2px; stroke-opacity:.3;'/>"
+
 
             # if transit
             if self.chart_type == "Transit" or self.chart_type == "Composite":
@@ -865,9 +813,9 @@ class KerykeionChartSVG:
                 deg_x = sliceToX(0, (r - rtext), t_offset + xo) + rtext
                 deg_y = sliceToY(0, (r - rtext), t_offset + xo) + rtext
                 degree = int(t_offset)
-                output += '<g transform="translate(%s,%s)">' % (deg_x, deg_y)
-                output += '<text transform="rotate(%s)" text-anchor="%s' % (rotate, textanchor)
-                output += '" style="fill: ' + self.planets_settings[i]["color"] + '; font-size: 10px;">' + self._dec2deg(self.t_points_deg[i], type="1")
+                output += f'<g transform="translate({deg_x},{deg_y})">'
+                output += f'<text transform="rotate({rotate})" text-anchor="{textanchor}'
+                output += f'" style="fill: {self.planets_settings[i]["color"]}; font-size: 10px;">{self._dec2deg(self.t_points_deg[i], type="1")}'
                 output += "</text></g>"
 
             # check transit
@@ -1142,20 +1090,23 @@ class KerykeionChartSVG:
                     line = -1 * (len(self.aspects_list) - 48) * 14
                 else:
                     line = 0
-            out += '<g transform="translate(%s,%s)">' % (nl, line)
+            out += f'<g transform="translate({nl},{line})">'
             # first planet symbol
-            out += '<use transform="scale(0.4)" x="0" y="3" xlink:href="#%s" />' % (self.planets_settings[self.aspects_list[i]["p1"]]["name"]) # TODO: (next((item for item in self.planets_settings if item["id"] == self.aspects_list[i]["p1"]))) It preventes the use ot numeric ID, but it is not working.
+
+            # TODO: (next((item for item in self.planets_settings if item["id"] == self.aspects_list[i]["p1"]))) It preventes the use ot numeric ID, but it is not working.
+            out += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{self.planets_settings[self.aspects_list[i]["p1"]]["name"]}" />'
+            
             # aspect symbol
-            out += '<use  x="15" y="0" xlink:href="#orb%s" />' % (self.aspects_settings[self.aspects_list[i]["aid"]]["degree"])
+            out += f'<use  x="15" y="0" xlink:href="#orb{self.aspects_settings[self.aspects_list[i]["aid"]]["degree"]}" />'
             # second planet symbol
             out += '<g transform="translate(30,0)">'
-            out += '<use transform="scale(0.4)" x="0" y="3" xlink:href="#%s" />' % (self.planets_settings[self.aspects_list[i]["p2"]]["name"]) # TODO: (next((item for item in self.planets_settings if item["id"] == self.aspects_list[i]["p3"])))
+            
+            # TODO: (next((item for item in self.planets_settings if item["id"] == self.aspects_list[i]["p3"])))
+            out += '<use transform="scale(0.4)" x="0" y="3" xlink:href="#%s" />' % (self.planets_settings[self.aspects_list[i]["p2"]]["name"]) 
+            
             out += "</g>"
             # difference in degrees
-            out += '<text y="8" x="45" style="fill:%s; font-size: 10px;">%s</text>' % (
-                self.chart_colors_settings["paper_0"],
-                self._dec2deg(self.aspects_list[i]["orbit"]),
-            )
+            out += f'<text y="8" x="45" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self._dec2deg(self.aspects_list[i]["orbit"])}</text>'
             # line
             out += "</g>"
             line = line + 14
@@ -1350,15 +1301,11 @@ class KerykeionChartSVG:
             td["c1"] = f'cx="{r}" cy="{r}" r="{r - 36}"'
             td["c1style"] = f'fill: none; stroke: {self.chart_colors_settings["zodiac_transit_ring_2"]}; stroke-width: 1px; stroke-opacity:.4;'
             td["c2"] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r - 72) + '"'
-            td["c2style"] = "fill: %s; fill-opacity:.4; stroke: %s; stroke-opacity:.4; stroke-width: 1px" % (
-                self.chart_colors_settings["paper_1"],
-                self.chart_colors_settings["zodiac_transit_ring_1"],
-            )
+            td["c2style"] = f"fill: {self.chart_colors_settings['paper_1']}; fill-opacity:.4; stroke: {self.chart_colors_settings['zodiac_transit_ring_1']}; stroke-opacity:.4; stroke-width: 1px"
+
             td["c3"] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r - 160) + '"'
-            td["c3style"] = "fill: %s; fill-opacity:.8; stroke: %s; stroke-width: 1px" % (
-                self.chart_colors_settings["paper_1"],
-                self.chart_colors_settings["zodiac_transit_ring_0"],
-            )
+            td["c3style"] = f"fill: {self.chart_colors_settings['paper_1']}; fill-opacity:.8; stroke: {self.chart_colors_settings['zodiac_transit_ring_0']}; stroke-width: 1px"
+
             td["makeAspects"] = self._makeAspectsTransit(r, (r - 160))
             td["makeAspectGrid"] = self._makeAspectTransitGrid(r)
             td["makePatterns"] = ""
@@ -1495,11 +1442,11 @@ class KerykeionChartSVG:
 
         # zodiac_color_X
         for i in range(12):
-            td["zodiac_color_%s" % (i)] = self.chart_colors_settings["zodiac_icon_%s" % (i)]
+            td[f"zodiac_color_{i}"] = self.chart_colors_settings[f"zodiac_icon_{i}"]
 
         # orb_color_X
         for i in range(len(self.aspects_settings)):
-            td["orb_color_%s" % (self.aspects_settings[i]["degree"])] = self.aspects_settings[i]["color"]
+            td[f"orb_color_{self.aspects_settings[i]['degree']}"] = self.aspects_settings[i]['color']
 
         # config
         td["cfgZoom"] = str(self.zoom)
