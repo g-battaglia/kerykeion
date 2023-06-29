@@ -515,8 +515,11 @@ class KerykeionChartSVG:
             # if transit
             if self.chart_type == "Transit" or self.chart_type == "Composite":
                 dropin = 84
-
-            dropin = 48
+            elif self.chart_type == "ExternalNatal":
+                dropin = 100
+            # Natal
+            else:
+                dropin = 48
 
             xtext = sliceToX(0, (r - dropin), text_offset) + dropin  # was 132
             ytext = sliceToY(0, (r - dropin), text_offset) + dropin  # was 132
