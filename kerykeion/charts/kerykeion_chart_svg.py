@@ -119,7 +119,7 @@ class KerykeionChartSVG:
         for h in self.user.houses_list:
             self.houses_sign_graph.append(h["sign_num"])
 
-        if self.chart_type == "Natal":
+        if self.chart_type == "Natal" or self.chart_type == "ExternalNatal":
             natal_aspects_instance = NatalAspects(self.user, new_settings_file=self.new_settings_file)
             self.aspects_list = natal_aspects_instance.get_relevant_aspects()
 
@@ -689,6 +689,10 @@ class KerykeionChartSVG:
                 # if 22 < i < 27 it is asc,mc,dsc,ic (angles of chart)
                 # put on special line (rplanet is range from outer ring)
                 amin, bmin, cmin = 0, 0, 0
+                if self.chart_type == "ExternalNatal":
+                    amin = 74 - 10
+                    bmin = 94 - 10
+                    cmin = 40 - 10
 
                 if 22 < i < 27:
                     rplanet = 40 - cmin
@@ -708,8 +712,31 @@ class KerykeionChartSVG:
             planet_y = sliceToY(0, (r - rplanet), offset) + rplanet
             if self.chart_type == "Transit" or self.chart_type == "Composite":
                 scale = 0.8
-
-            scale = 1
+                
+            elif self.chart_type == "ExternalNatal":
+                scale = 0.8
+                # line1
+                x1 = sliceToX(0, (r - self.c3), trueoffset) + self.c3
+                y1 = sliceToY(0, (r - self.c3), trueoffset) + self.c3
+                x2 = sliceToX(0, (r - rplanet - 30), trueoffset) + rplanet + 30
+                y2 = sliceToY(0, (r - rplanet - 30), trueoffset) + rplanet + 30
+                color = self.planets_settings[i]["color"]
+                output += (
+                    '<line x1="%s" y1="%s" x2="%s" y2="%s" style="stroke-width:1px;stroke:%s;stroke-opacity:.3;"/>\n'
+                    % (x1, y1, x2, y2, color)
+                )
+                # line2
+                x1 = sliceToX(0, (r - rplanet - 30), trueoffset) + rplanet + 30
+                y1 = sliceToY(0, (r - rplanet - 30), trueoffset) + rplanet + 30
+                x2 = sliceToX(0, (r - rplanet - 10), offset) + rplanet + 10
+                y2 = sliceToY(0, (r - rplanet - 10), offset) + rplanet + 10
+                output += (
+                    '<line x1="%s" y1="%s" x2="%s" y2="%s" style="stroke-width:1px;stroke:%s;stroke-opacity:.5;"/>\n'
+                    % (x1, y1, x2, y2, color)
+                )
+                
+            else:
+                scale = 1
             # output planet
             output += f'<g transform="translate(-{12 * scale},-{12 * scale})"><g transform="scale({scale})"><use x="{planet_x * (1/scale)}" y="{planet_y * (1/scale)}" xlink:href="#{self.planets_settings[i]["name"]}" /></g></g>'
 
@@ -1288,9 +1315,15 @@ class KerykeionChartSVG:
         # template dictionary
         td: ChartTemplateModel = dict()
         r = 240
-        self.c1 = 0
-        self.c2 = 36
-        self.c3 = 120
+
+        if self.chart_type == "ExternalNatal":
+            self.c1 = 56
+            self.c2 = 92
+            self.c3 = 112
+        else:
+            self.c1 = 0
+            self.c2 = 36
+            self.c3 = 120
 
         # transit
         if self.chart_type == "Transit" or self.chart_type == "Composite":
@@ -1501,7 +1534,7 @@ if __name__ == "__main__":
 
     second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
-    name = KerykeionChartSVG(first, chart_type="Composite", second_obj=second)
+    name = KerykeionChartSVG(first, chart_type="ExternalNatal", second_obj=second)
 
     # Print the template
     template = name.makeTemplate()
