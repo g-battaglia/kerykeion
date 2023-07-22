@@ -90,6 +90,7 @@ class AstrologicalSubject:
     pluto: KerykeionPointModel
     true_node: KerykeionPointModel
     mean_node: KerykeionPointModel
+    chiron: KerykeionPointModel
 
     # Houses
     first_house: KerykeionPointModel
@@ -285,6 +286,7 @@ class AstrologicalSubject:
         pluto_deg = swe.calc(self.julian_day, 9, self._iflag)[0][0]
         mean_node_deg = swe.calc(self.julian_day, 10, self._iflag)[0][0]
         true_node_deg = swe.calc(self.julian_day, 11, self._iflag)[0][0]
+        chiron_deg = swe.calc(self.julian_day, 15, self._iflag)[0][0]
 
         self.planets_degrees_ut = [
             sun_deg,
@@ -299,6 +301,7 @@ class AstrologicalSubject:
             pluto_deg,
             mean_node_deg,
             true_node_deg,
+            chiron_deg,
         ]
 
     def _planets(self) -> None:
@@ -319,6 +322,7 @@ class AstrologicalSubject:
         self.pluto = calculate_position(self.planets_degrees_ut[9], "Pluto", point_type=point_type)
         self.mean_node = calculate_position(self.planets_degrees_ut[10], "Mean_Node", point_type=point_type)
         self.true_node = calculate_position(self.planets_degrees_ut[11], "True_Node", point_type=point_type)
+        self.chiron = calculate_position(self.planets_degrees_ut[12], "Chiron", point_type=point_type)
 
     def _planets_in_houses(self) -> None:
         """Calculates the house of the planet and updates
@@ -379,6 +383,7 @@ class AstrologicalSubject:
         self.pluto = for_every_planet(self.pluto, self.planets_degrees_ut[9])
         self.mean_node = for_every_planet(self.mean_node, self.planets_degrees_ut[10])
         self.true_node = for_every_planet(self.true_node, self.planets_degrees_ut[11])
+        self.chiron = for_every_planet(self.chiron, self.planets_degrees_ut[12])
 
         self.planets_list = [
             self.sun,
@@ -393,6 +398,7 @@ class AstrologicalSubject:
             self.pluto,
             self.mean_node,
             self.true_node,
+            self.chiron
         ]
 
         # Check in retrograde or not:
@@ -543,3 +549,6 @@ if __name__ == "__main__":
 
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
     print(json.loads(johnny.json(dump=True)))
+
+    print('\n')
+    print(johnny.chiron)

@@ -1531,12 +1531,23 @@ if __name__ == "__main__":
     first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
     second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
+    # Internal Natal Chart
     internal_natal_chart = KerykeionChartSVG(first)
     internal_natal_chart.makeSVG()
 
     # External Natal Chart
     external_natal_chart = KerykeionChartSVG(first, "ExternalNatal", second)
     external_natal_chart.makeSVG()
+
+    # Synastry Chart
+    synastry_chart = KerykeionChartSVG(first, "Synastry", second)
+    synastry_chart.makeSVG()
+
+    # Transits Chart
+    transits_chart = KerykeionChartSVG(first, "Transit", second)
+    transits_chart.makeSVG()
+
+
 
 
 
