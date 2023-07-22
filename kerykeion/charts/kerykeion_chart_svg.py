@@ -24,18 +24,21 @@ class KerykeionChartSVG:
     Creates the instance that can generate the chart with the
     function makeSVG().
 
-    There are 2 templates, the extended (default) which has all the
-    information and the basic, which has just the chart.
-
     Parameters:
         - first_obj: First kerykeion object
-        - chart_type: Natal, Transit, Composite (Default: Type="Natal")
+        - chart_type: Natal, ExternalNatal, Transit, Composite (Default: Type="Natal").
         - second_obj: Second kerykeion object (Not required if type is Natal)
         - new_output_directory: Set the output directory (default: output_directory)
-        - template_type: set the template type to include or not the aspects grid, default: extended)
         - lang: language settings (default: "EN")
         - new_settings_file: Set the settings file (default: kr.config.json)
     """
+
+    first_obj: AstrologicalSubject
+    second_obj: Union[AstrologicalSubject, None]
+    chart_type: ChartType
+    new_output_directory: Union[str, None]
+    new_settings_file: Union[str, Path, None]
+    output_directory: Path
 
     def __init__(
         self,
@@ -43,7 +46,6 @@ class KerykeionChartSVG:
         chart_type: ChartType = "Natal",
         second_obj: Union[AstrologicalSubject, None] = None,
         new_output_directory: Union[str, None] = None,
-        template_type: str = "extended",
         new_settings_file: Union[str, Path, None] = None,
     ):
         # Directories:
@@ -56,11 +58,7 @@ class KerykeionChartSVG:
         else:
             self.output_directory = self.homedir
 
-        # Template types:
-        if template_type == "basic":
-            self.xml_svg = DATA_DIR / "templates/basic.xml"
-        else:
-            self.xml_svg = DATA_DIR / "templates/extended.xml"
+        self.xml_svg = DATA_DIR / "templates/chart.xml"
 
         # SVG Width
         self.natal_width = 772.2
@@ -1531,16 +1529,15 @@ class KerykeionChartSVG:
 
 if __name__ == "__main__":
     first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
-    single_chart = KerykeionChartSVG(first)
-
-    single_chart.makeSVG()
-
     second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
-    name = KerykeionChartSVG(first, chart_type="ExternalNatal", second_obj=second)
+    internal_natal_chart = KerykeionChartSVG(first)
+    internal_natal_chart.makeSVG()
 
-    # Print the template
-    template = name.makeTemplate()
+    # External Natal Chart
+    external_natal_chart = KerykeionChartSVG(first, "ExternalNatal", second)
+    external_natal_chart.makeSVG()
 
-    # Save the SVG file
-    name.makeSVG()
+
+
+
