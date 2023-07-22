@@ -293,6 +293,14 @@ class NatalAspects:
 
 if __name__ == "__main__":
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
-    aspects = NatalAspects(johnny).get_all_aspects()
 
+    # All aspects
+    aspects = NatalAspects(johnny).get_all_aspects()
     print(aspects)
+
+    print("\n")
+
+    # Relevant aspects
+    aspects = NatalAspects(johnny).get_relevant_aspects()
+    print(aspects)
+

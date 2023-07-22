@@ -21,7 +21,6 @@ from kerykeion.utilities import get_number_from_name, calculate_position
 from pathlib import Path
 from typing import Union, Literal
 
-# swe.set_ephe_path("/")
 
 logger = getLogger(__name__)
 
@@ -114,6 +113,7 @@ class AstrologicalSubject:
 
     now = datetime.now()
 
+
     def __init__(
         self,
         name="Now",
@@ -132,6 +132,14 @@ class AstrologicalSubject:
         online: bool = True,
     ) -> None:
         logger.debug("Starting Kerykeion")
+
+        # We set the swisseph path to the current directory
+        swe.set_ephe_path(
+            str(
+                Path(__file__).parent.absolute() / "sweph"
+            )
+        )
+
 
         self.name = name
         self.year = year
