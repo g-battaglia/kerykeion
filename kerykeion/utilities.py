@@ -31,9 +31,11 @@ def get_number_from_name(name: str) -> int:
     elif name == "pluto":
         return 9
     elif name == "mean_node":
-        return 10  # change!
+        return 10
     elif name == "true_node":
         return 11
+    elif name == "chiron":
+        return 15
     else:
         return int(name)
 

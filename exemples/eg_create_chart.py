@@ -11,7 +11,7 @@ def main():
     # Set the type, it can be Natal, Synastry or Transit
 
     name = KerykeionChartSVG(
-        first, chart_type="Synastry", second_obj=second, new_settings_file=CURRENT_DIR / "new-kr.config.json"
+        first, chart_type="Synastry", second_obj=second,
     )
 
     name.makeSVG()
