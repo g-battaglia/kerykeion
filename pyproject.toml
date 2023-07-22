@@ -61,7 +61,7 @@ poethepoet = "^0.19.0"
 [[tool.poetry.source]]
 name = "test"
 url = "https://test.pypi.org/simple/"
-secondary = true
+priority = 'supplemental'
 
 # MyPy Static Analysis
 [tool.mypy]
