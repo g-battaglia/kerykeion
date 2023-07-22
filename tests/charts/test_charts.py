@@ -24,15 +24,15 @@ class TestCharts:
         for i in range(len(birth_chart_svg_lines)):
             assert birth_chart_svg_lines[i] == file_content_lines[i]
 
-    def test_composite_chart(self):
-        composite_chart_svg = KerykeionChartSVG(self.first_subject, "Composite", self.second_subject).makeTemplate()
-        KerykeionChartSVG(self.first_subject, "Composite", self.second_subject).makeSVG()
-        composite_chart_svg_lines = composite_chart_svg.split("\n")
+    def test_synastry_chart(self):
+        synastry_chart_svg = KerykeionChartSVG(self.first_subject, "Synastry", self.second_subject).makeTemplate()
+        KerykeionChartSVG(self.first_subject, "Synastry", self.second_subject).makeSVG()
+        synastry_chart_svg_lines = synastry_chart_svg.split("\n")
 
-        with open(CURRENT_DIR / "expected_composite_chart.svg", "r") as f:
+        with open(CURRENT_DIR / "expected_synastry_chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = file_content.split("\n")
 
-        for i in range(len(composite_chart_svg_lines)):
-            assert composite_chart_svg_lines[i] == file_content_lines[i]
+        for i in range(len(synastry_chart_svg_lines)):
+            assert synastry_chart_svg_lines[i] == file_content_lines[i]
