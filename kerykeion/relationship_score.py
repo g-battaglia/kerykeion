@@ -4,7 +4,7 @@
 """
 
 from kerykeion import AstrologicalSubject
-from kerykeion.aspects.composite_aspects import CompositeAspects
+from kerykeion.aspects.synastry_aspects import SynastryAspects
 from logging import basicConfig, Logger, getLogger
 from pathlib import Path
 from typing import Union
@@ -55,7 +55,7 @@ class RelationshipScore:
         self.is_destiny_sign = False
         self.relevant_aspects = []
         self.relevant_default_aspects = []
-        self.__all_composite_aspects = CompositeAspects(
+        self.__all_synastry_aspects = SynastryAspects(
             first_subject, second_subject, new_settings_file=new_settings_file
         ).get_all_aspects()
 
@@ -208,7 +208,7 @@ class RelationshipScore:
     def __get_all(self) -> None:
         self.score += self.__evaluate_destiny_sign()
 
-        for a in self.__all_composite_aspects:
+        for a in self.__all_synastry_aspects:
             self.score += self.__check_if_sun_sun_aspect(a)
             self.score += self.__check_if_sun_moon_conjunction(a)
             self.score += self.__check_if_sun_moon_asc_aspect(a)

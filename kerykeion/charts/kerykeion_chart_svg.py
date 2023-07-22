@@ -4,7 +4,7 @@ import pytz
 
 from datetime import datetime
 from kerykeion.kerykeion_settings import parse_settings_file
-from kerykeion.aspects.composite_aspects import CompositeAspects
+from kerykeion.aspects.synastry_aspects import SynastryAspects
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types import KerykeionException, ChartType
@@ -26,7 +26,7 @@ class KerykeionChartSVG:
 
     Parameters:
         - first_obj: First kerykeion object
-        - chart_type: Natal, ExternalNatal, Transit, Composite (Default: Type="Natal").
+        - chart_type: Natal, ExternalNatal, Transit, Synastry (Default: Type="Natal").
         - second_obj: Second kerykeion object (Not required if type is Natal)
         - new_output_directory: Set the output directory (default: output_directory)
         - lang: language settings (default: "EN")
@@ -122,9 +122,9 @@ class KerykeionChartSVG:
             self.aspects_list = natal_aspects_instance.get_relevant_aspects()
 
         # TODO: If not second should exit
-        if self.chart_type == "Transit" or self.chart_type == "Composite":
+        if self.chart_type == "Transit" or self.chart_type == "Synastry":
             if not second_obj:
-                raise KerykeionException("Second object is required for Transit or Composite charts.")
+                raise KerykeionException("Second object is required for Transit or Synastry charts.")
 
             # Kerykeion instance
             self.t_user = second_obj
@@ -408,7 +408,7 @@ class KerykeionChartSVG:
         # pie slices
         offset = 360 - self.user.houses_degree_ut[6]
         # check transit
-        if self.chart_type == "Transit" or self.chart_type == "Composite":
+        if self.chart_type == "Transit" or self.chart_type == "Synastry":
             dropin = 0
         else:
             dropin = self.c1
@@ -417,7 +417,7 @@ class KerykeionChartSVG:
         # symbols
         offset = offset + 15
         # check transit
-        if self.chart_type == "Transit" or self.chart_type == "Composite":
+        if self.chart_type == "Transit" or self.chart_type == "Synastry":
             dropin = 54
         else:
             dropin = 18 + self.c1
@@ -445,7 +445,7 @@ class KerykeionChartSVG:
         xr = 12
         for i in range(xr):
             # check transit
-            if self.chart_type == "Transit" or self.chart_type == "Composite":
+            if self.chart_type == "Transit" or self.chart_type == "Synastry":
                 dropin = 160
                 roff = 72
                 t_roff = 36
@@ -478,7 +478,7 @@ class KerykeionChartSVG:
                 linecolor = self.chart_colors_settings["houses_radix_line"]
 
             # Transit houses lines.
-            if self.chart_type == "Transit" or self.chart_type == "Composite":
+            if self.chart_type == "Transit" or self.chart_type == "Synastry":
                 # Degrees for point zero.
 
                 zeropoint = 360 - self.user.houses_degree_ut[6]
@@ -511,7 +511,7 @@ class KerykeionChartSVG:
 
 
             # if transit
-            if self.chart_type == "Transit" or self.chart_type == "Composite":
+            if self.chart_type == "Transit" or self.chart_type == "Synastry":
                 dropin = 84
             elif self.chart_type == "ExternalNatal":
                 dropin = 100
@@ -677,7 +677,7 @@ class KerykeionChartSVG:
             i = planets_degut[keys[e]]
 
             # coordinates
-            if self.chart_type == "Transit" or self.chart_type == "Composite":
+            if self.chart_type == "Transit" or self.chart_type == "Synastry":
                 if 22 < i < 27:
                     rplanet = 76
                 elif switch == 1:
@@ -711,7 +711,7 @@ class KerykeionChartSVG:
 
             planet_x = sliceToX(0, (r - rplanet), offset) + rplanet
             planet_y = sliceToY(0, (r - rplanet), offset) + rplanet
-            if self.chart_type == "Transit" or self.chart_type == "Composite":
+            if self.chart_type == "Transit" or self.chart_type == "Synastry":
                 scale = 0.8
                 
             elif self.chart_type == "ExternalNatal":
@@ -742,7 +742,7 @@ class KerykeionChartSVG:
             output += f'<g transform="translate(-{12 * scale},-{12 * scale})"><g transform="scale({scale})"><use x="{planet_x * (1/scale)}" y="{planet_y * (1/scale)}" xlink:href="#{self.planets_settings[i]["name"]}" /></g></g>'
 
         # make transit degut and display planets
-        if self.chart_type == "Transit" or self.chart_type == "Composite":
+        if self.chart_type == "Transit" or self.chart_type == "Synastry":
             group_offset = {}
             t_planets_degut = {}
             if self.chart_type == "Transit":
@@ -847,7 +847,7 @@ class KerykeionChartSVG:
                 output += "</text></g>"
 
             # check transit
-            if self.chart_type == "Transit" or self.chart_type == "Composite":
+            if self.chart_type == "Transit" or self.chart_type == "Synastry":
                 dropin = 36
             else:
                 dropin = 0
@@ -861,7 +861,7 @@ class KerykeionChartSVG:
             output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.planets_settings[i]["color"]}; stroke-width: 2px; stroke-opacity:.6;"/>'
 
             # check transit
-            if self.chart_type == "Transit" or self.chart_type == "Composite":
+            if self.chart_type == "Transit" or self.chart_type == "Synastry":
                 dropin = 160
             else:
                 dropin = 120
@@ -1072,7 +1072,7 @@ class KerykeionChartSVG:
     def _makeAspectsTransit(self, r, ar):
         out = ""
 
-        self.aspects_list = CompositeAspects(self.user, self.t_user, new_settings_file=self.new_settings_file).get_relevant_aspects()
+        self.aspects_list = SynastryAspects(self.user, self.t_user, new_settings_file=self.new_settings_file).get_relevant_aspects()
 
         for element in self.aspects_list:
             print(element)
@@ -1201,7 +1201,7 @@ class KerykeionChartSVG:
 
                 li = li + offset_between_lines
 
-        if self.chart_type == "Transit" or self.chart_type == "Composite":
+        if self.chart_type == "Transit" or self.chart_type == "Synastry":
             if self.chart_type == "Transit":
                 out += '<g transform="translate(320, -15)">'
                 out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 14px;">{self.t_name}:</text>'
@@ -1265,7 +1265,7 @@ class KerykeionChartSVG:
 
         out += "</g>"
 
-        if self.chart_type == "Composite":
+        if self.chart_type == "Synastry":
             out += '<g transform="translate(840, -20)">'
             li = 10
             for i in range(12):
@@ -1327,7 +1327,7 @@ class KerykeionChartSVG:
             self.c3 = 120
 
         # transit
-        if self.chart_type == "Transit" or self.chart_type == "Composite":
+        if self.chart_type == "Transit" or self.chart_type == "Synastry":
             td["transitRing"] = self._transitRing(r)
             td["degreeRing"] = self._degreeTransitRing(r)
 
@@ -1366,7 +1366,7 @@ class KerykeionChartSVG:
         td["svgHeight"] = str(svgHeight)
         td["viewbox"] = viewbox
 
-        if self.chart_type == "Composite":
+        if self.chart_type == "Synastry":
             td["stringTitle"] = f"{self.name} {self.language_settings['and_word']} {self.t_user.name}"
 
         elif self.chart_type == "Transit":
@@ -1376,7 +1376,7 @@ class KerykeionChartSVG:
             td["stringTitle"] = self.name
 
         # Tipo di carta
-        if self.chart_type == "Composite" or self.name == "Transit":
+        if self.chart_type == "Synastry" or self.name == "Transit":
             td["stringName"] = f"{self.name}:"
         else:
             td["stringName"] = f'{self.language_settings["info"]}:'
@@ -1455,7 +1455,7 @@ class KerykeionChartSVG:
 
         td["stringDateTime"] = f"{self.user.year}-{self.user.month}-{self.user.day} {self.user.hour:02d}:{self.user.minute:02d}"
 
-        if self.chart_type == "Composite":
+        if self.chart_type == "Synastry":
             td["stringLat"] = f"{self.t_user.name}: "
             td["stringLon"] = self.t_user.city
             td["stringPosition"] = f"{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hour:02d}:{self.t_user.minute:02d}"

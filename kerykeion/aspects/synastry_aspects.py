@@ -11,7 +11,7 @@ from typing import Union
 from kerykeion.aspects.natal_aspects import NatalAspects
 
 
-class CompositeAspects(NatalAspects):
+class SynastryAspects(NatalAspects):
     """
     Generates an object with all the aspects between two persons.
     """
@@ -81,6 +81,6 @@ if __name__ == "__main__":
     john = AstrologicalSubject("John", 1940, 10, 9, 10, 30, "Liverpool")
     yoko = AstrologicalSubject("Yoko", 1933, 2, 18, 10, 30, "Tokyo")
 
-    composite_aspects = CompositeAspects(john, yoko)
+    synastry_aspects = SynastryAspects(john, yoko)
 
-    print(composite_aspects.get_all_aspects())
+    print(synastry_aspects.get_all_aspects())

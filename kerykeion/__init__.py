@@ -6,7 +6,7 @@
     It can calculate all the planet and house position,
     also it can calculate the aspects of a single persone or between two, you can set how many planets you
     need in the settings in the utility module.
-    It also can generate an SVG of a birthchart, a composite chart or a transit chart.
+    It also can generate an SVG of a birthchart, a synastry chart or a transit chart.
 
     Here some examples:
 
@@ -42,9 +42,9 @@
     >>> first = AstrologicalSubject("Jack", 1990, 6, 15, 15, 15, "Roma")
     >>> second = AstrologicalSubject("Jane", 1991, 10, 25, 21, 00, "Roma")
 
-    # Set the type, it can be Natal, Composite or Transit
+    # Set the type, it can be Natal, Synastry or Transit
 
-    >>> name = KerykeionChartSVG(first, chart_type="Composite", second_obj=second)
+    >>> name = KerykeionChartSVG(first, chart_type="Synastry", second_obj=second)
     >>> name.makeSVG()
     >>> print(len(name.aspects_list))
     >>> Generating kerykeion object for Jack...
@@ -55,7 +55,7 @@
 
     ```
 
-    ![alt text](http://centuryboy.altervista.org/JackComposite_Chart.svg)
+    ![alt text](http://centuryboy.altervista.org/JackSynastry_Chart.svg)
 
 
     ## Other exeples of possibles usecase
@@ -63,11 +63,11 @@
     ```python
     # Get all aspects between two persons:
 
-    >>> from kerykeion import CompositeAspects, AstrologicalSubject
+    >>> from kerykeion import SynastryAspects, AstrologicalSubject
     >>> first = AstrologicalSubject("Jack", 1990, 6, 15, 15, 15, "Roma")
     >>> second = AstrologicalSubject("Jane", 1991, 10, 25, 21, 00, "Roma")
 
-    >>> name = CompositeAspects(first, second)
+    >>> name = SynastryAspects(first, second)
     >>> aspect_list = name.get_relevant_aspects()
     >>> print(aspect_list[0])
 
@@ -103,5 +103,5 @@ from .astrological_subject import AstrologicalSubject
 from .charts.kerykeion_chart_svg import KerykeionChartSVG
 from .kr_types import *
 from .relationship_score import RelationshipScore
-from .aspects import CompositeAspects, NatalAspects
+from .aspects import SynastryAspects, NatalAspects
 from .report import Report
