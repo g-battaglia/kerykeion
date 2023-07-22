@@ -406,7 +406,7 @@
         },
         {
             "id": 10,
-            "name": "Mean_Node",
+            "name": "North_Node",
             "color": "#4c1541",
             "is_active": false,
             "element_points": 20,
