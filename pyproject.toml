@@ -40,7 +40,6 @@ classifiers = [
 python = "^3.9"
 pyswisseph = "^2.10.3.1"
 pytz = "^2022.7"
-jsonpickle = "^3.0.1"
 requests = "^2.28.1"
 requests-cache = "^0.9.7"
 pydantic = "^1.10.4"

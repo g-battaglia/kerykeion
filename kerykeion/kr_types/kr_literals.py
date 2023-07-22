@@ -52,7 +52,6 @@ Quality = Literal[
     "Mutable",
 ]
 
-
-ChartType = Literal["Natal", "Composite", "Transit"]
+ChartType = Literal["Natal", "ExternalNatal" "Synastry", "Transit"]
 
 LunarPhaseEmoji = Literal["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"]

@@ -23,7 +23,6 @@ from typing import Union, Literal
 
 # swe.set_ephe_path("/")
 
-
 logger = getLogger(__name__)
 
 

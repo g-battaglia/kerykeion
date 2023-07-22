@@ -1,6 +1,3 @@
-import jsonpickle
-import json
-
 from kerykeion.kr_types import KerykeionPointModel, KerykeionException
 from pathlib import Path
 from typing import Union, Literal
@@ -207,30 +204,3 @@ def calculate_position(
 
     return KerykeionPointModel(**dictionary)
 
-
-def dangerous_json_dump(subject, dump=True, new_output_directory=None):
-    """
-    Dumps the Kerykeion object to a json file located in the home folder.
-    This json file allows the object to be recreated with jsonpickle.
-    It's dangerous since it contains local system information.
-    """
-
-    OUTPUT_DIR = Path.home()
-
-    if new_output_directory:
-        output_directory_path = Path(new_output_directory)
-        json_dir = new_output_directory / f"{subject.name}_kerykeion.json"
-    else:
-        json_dir = f"{subject.name}_kerykeion.json"
-
-    json_string = jsonpickle.encode(subject)
-
-    if dump:
-        json_string = json.loads(json_string.replace("'", '"'))
-
-        with open(json_dir, "w", encoding="utf-8") as file:
-            json.dump(json_string, file, indent=4, sort_keys=True)
-            logger.info(f"JSON file dumped in {json_dir}.")
-    else:
-        pass
-    return json_string
