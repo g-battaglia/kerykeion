@@ -1,8 +1,8 @@
+# -*- coding: utf-8 -*-
 """
     This is part of Kerykeion (C) 2023 Giacomo Battaglia
 """
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 from typing import Literal
 
