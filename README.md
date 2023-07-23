@@ -30,7 +30,7 @@ It also can generate an SVG of a birthchart, a synastry chart or a transit chart
 
 ## Installation
 
-Kerykeion is a *Python 3.9* package, make sure you have *Python 3.9* or above installed on your system.
+Kerykeion is a _Python 3.9_ package, make sure you have _Python 3.9_ or above installed on your system.
 
 ```bash
 pip3 install kerykeion
@@ -55,7 +55,7 @@ kanye.sun
 
 #> {'name': 'Sun', 'quality': 'Mutable', 'element': 'Air', 'sign': 'Gem', 'sign_num': 2, 'pos': 17.598992059774275, 'abs_pos': 77.59899205977428, 'emoji': '♊️', 'house': '12th House', 'retrograde': False}
 
-# Get informations about the first house:
+# Get information about the first house:
 kanye.first_house
 
 #> {'name': 'First_House', 'quality': 'Cardinal', 'element': 'Water', 'sign': 'Can', 'sign_num': 3, 'pos': 17.995779673209114, 'abs_pos': 107.99577967320911, 'emoji': '♋️'}
@@ -99,7 +99,6 @@ print(len(name.aspects_list))
 ```
 
 ![alt text](http://centuryboy.altervista.org/JackSynastry_Chart.svg)
-
 
 # Report
 
@@ -161,7 +160,7 @@ Returns:
 And if you want to export it to a file:
 
 ```bash
-$ python3 your_script_name.py > file.txt 
+$ python3 your_script_name.py > file.txt
 ```
 
 ## Other exeples of possibles usecase

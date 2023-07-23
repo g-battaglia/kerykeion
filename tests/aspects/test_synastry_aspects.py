@@ -1,9 +1,7 @@
-from kerykeion import (
-    AstrologicalSubject,
-    SynastryAspects,
-)
+from kerykeion import AstrologicalSubject, SynastryAspects
 
 from .expected_synastry_aspects import EXPECTED_ALL_ASPECTS, EXPECTED_RELEVANT_ASPECTS
+
 
 class TestNatalAspects:
     def setup_class(self):
@@ -15,8 +13,9 @@ class TestNatalAspects:
 
         self.expected_relevant_aspects = EXPECTED_RELEVANT_ASPECTS
         self.expected_all_aspects = EXPECTED_ALL_ASPECTS
+
     def test_relevant_aspects_length(self):
-        assert len(self.expected_relevant_aspects) == 43
+        assert len(self.expected_relevant_aspects) == len(self.synastry_relevant_aspects)
 
     def test_relevant_aspects(self):
         for i, aspect in enumerate(self.expected_relevant_aspects):
@@ -25,7 +24,7 @@ class TestNatalAspects:
             assert self.synastry_relevant_aspects[i]["p2_name"] == aspect["p2_name"]
             assert round(self.synastry_relevant_aspects[i]["p2_abs_pos"], 3) == round(aspect["p2_abs_pos"], 3)
             assert self.synastry_relevant_aspects[i]["aspect"] == aspect["aspect"]
-            assert round(self.synastry_relevant_aspects[i]['orbit'], 3) == round(aspect['orbit'], 3)
+            assert round(self.synastry_relevant_aspects[i]["orbit"], 3) == round(aspect["orbit"], 3)
             assert round(self.synastry_relevant_aspects[i]["aspect_degrees"], 3) == round(aspect["aspect_degrees"], 3)
             assert self.synastry_relevant_aspects[i]["color"] == aspect["color"]
             assert self.synastry_relevant_aspects[i]["aid"] == aspect["aid"]
@@ -34,7 +33,7 @@ class TestNatalAspects:
             assert self.synastry_relevant_aspects[i]["p2"] == aspect["p2"]
 
     def test_all_aspects_length(self):
-        assert len(self.expected_all_aspects) == 64
+        assert len(self.expected_all_aspects) == len(self.synastry_all_aspects)
 
     def test_all_aspects(self):
         for i, aspect in enumerate(self.expected_all_aspects):
@@ -43,7 +42,7 @@ class TestNatalAspects:
             assert self.synastry_all_aspects[i]["p2_name"] == aspect["p2_name"]
             assert round(self.synastry_all_aspects[i]["p2_abs_pos"], 3) == round(aspect["p2_abs_pos"], 3)
             assert self.synastry_all_aspects[i]["aspect"] == aspect["aspect"]
-            assert round(self.synastry_all_aspects[i]['orbit'], 3) == round(aspect['orbit'], 3)
+            assert round(self.synastry_all_aspects[i]["orbit"], 3) == round(aspect["orbit"], 3)
             assert round(self.synastry_all_aspects[i]["aspect_degrees"], 3) == round(aspect["aspect_degrees"], 3)
             assert self.synastry_all_aspects[i]["color"] == aspect["color"]
             assert self.synastry_all_aspects[i]["aid"] == aspect["aid"]

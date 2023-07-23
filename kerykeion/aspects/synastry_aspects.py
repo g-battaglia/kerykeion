@@ -28,12 +28,8 @@ class SynastryAspects(NatalAspects):
         self.new_settings_file = new_settings_file
         self._parse_json_settings()
 
-        self.first_init_point_list = (
-            self.first_user.planets_list + self.first_user.houses_list
-        )
-        self.second_init_point_list = (
-            self.second_user.planets_list + self.second_user.houses_list
-        )
+        self.first_init_point_list = self.first_user.planets_list + self.first_user.houses_list
+        self.second_init_point_list = self.second_user.planets_list + self.second_user.houses_list
 
     def get_all_aspects(self):
         """
@@ -83,4 +79,8 @@ if __name__ == "__main__":
 
     synastry_aspects = SynastryAspects(john, yoko)
 
+    # All aspects
     print(synastry_aspects.get_all_aspects())
+
+    # Relevant aspects
+    print(synastry_aspects.get_relevant_aspects())

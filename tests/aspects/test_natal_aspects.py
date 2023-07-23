@@ -5,6 +5,7 @@ from kerykeion import (
 
 from .expected_natal_aspects import EXPECTED_ALL_ASPECTS, EXPECTED_RELEVANT_ASPECTS
 
+
 class TestNatalAspects:
     def setup_class(self):
         self.subject = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
@@ -13,8 +14,9 @@ class TestNatalAspects:
 
         self.expected_relevant_aspects = EXPECTED_RELEVANT_ASPECTS
         self.expected_all_aspects = EXPECTED_ALL_ASPECTS
+
     def test_relevant_aspects_length(self):
-        assert len(self.expected_relevant_aspects) == 19
+        assert len(self.expected_relevant_aspects) == len(self.subject_relevant_aspects)
 
     def test_relevant_aspects(self):
         for i, aspect in enumerate(self.expected_relevant_aspects):
@@ -32,7 +34,7 @@ class TestNatalAspects:
             assert self.subject_relevant_aspects[i]["p2"] == aspect["p2"]
 
     def test_all_aspects_length(self):
-        assert len(self.expected_all_aspects) == 33
+        assert len(self.expected_all_aspects) == len(self.subject_all_aspects)
 
     def test_all_aspects(self):
         for i, aspect in enumerate(self.expected_all_aspects):
