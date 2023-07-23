@@ -1,8 +1,5 @@
 from pathlib import Path
-from kerykeion import (
-    AstrologicalSubject,
-    KerykeionChartSVG,
-)
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
 CURRENT_DIR = Path(__file__).parent
 
