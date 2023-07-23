@@ -1,8 +1,8 @@
+# -*- coding: utf-8 -*-
 """
     This is part of Kerykeion (C) 2023 Giacomo Battaglia
 """
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 from logging import getLogger
 from requests import Request
@@ -71,7 +71,7 @@ class FetchGeonames:
             return {}
 
         if hasattr(response, "from_cache"):
-            timezone_data["from_tz_cache"] = response.from_cache # type: ignore
+            timezone_data["from_tz_cache"] = response.from_cache  # type: ignore
 
         return timezone_data
 
@@ -112,7 +112,7 @@ class FetchGeonames:
             return {}
 
         if hasattr(response, "from_cache"):
-            city_data_whitout_tz["from_country_cache"] = response.from_cache # type: ignore
+            city_data_whitout_tz["from_country_cache"] = response.from_cache  # type: ignore
 
         return city_data_whitout_tz
 

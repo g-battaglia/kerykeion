@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+    This is part of Kerykeion (C) 2023 Giacomo Battaglia
+"""
+
 
 import pytz
 

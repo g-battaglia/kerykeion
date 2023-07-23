@@ -3,6 +3,7 @@
     This is part of Kerykeion (C) 2023 Giacomo Battaglia
 """
 
+
 from typing import Literal, Union, Optional
 from pydantic import BaseModel
 
