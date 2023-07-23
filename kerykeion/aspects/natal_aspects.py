@@ -9,7 +9,7 @@ from pathlib import Path
 from kerykeion import AstrologicalSubject
 from swisseph import difdeg2n
 from typing import Union
-from kerykeion.kerykeion_settings import parse_settings_file
+from kerykeion.settings.kerykeion_settings import get_settings_dict
 
 
 class NatalAspects:
@@ -27,7 +27,7 @@ class NatalAspects:
     def _parse_json_settings(self):
         # Load settings file
 
-        settings = parse_settings_file(
+        settings = get_settings_dict(
             self.new_settings_file,
         )
 

@@ -173,13 +173,13 @@ class KerykeionSettingsModel(CustomBaseModel):
     general_settings: KerykeionGeneralSettingsModel = Field(title="General Settings", description="The general settings of the chart")
 
 
-def parse_settings_file(new_settings_file: Union[str, Path, None] = None) -> Dict:
+def get_settings_dict(new_settings_file: Union[str, Path, None] = None) -> Dict:
     if new_settings_file is not None:
         settings_file = Path(new_settings_file)
+        
         if not settings_file.exists():
             raise FileNotFoundError(f"File {settings_file} does not exist")
 
-    # Check if there is a settings file in windows, linux or mac
     home_folder = Path.home()
     settings_file = home_folder / ".config" / "kerykeion" / "kr.config.json"
 
@@ -198,4 +198,4 @@ def merge_settings_file(settings: KerykeionSettingsModel, new_settings: Dict) ->
 
 
 if __name__ == "__main__":
-    print(parse_settings_file())
+    print(get_settings_dict())
