@@ -3,7 +3,7 @@
 import pytz
 
 from datetime import datetime
-from kerykeion.kerykeion_settings import parse_settings_file
+from kerykeion.settings.kerykeion_settings import get_settings_dict
 from kerykeion.aspects.synastry_aspects import SynastryAspects
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
@@ -271,7 +271,7 @@ class KerykeionChartSVG:
         """
         Parse the settings file.
         """
-        settings = parse_settings_file(settings_file)
+        settings = get_settings_dict(settings_file)
 
         language = settings["general_settings"]["language"]
         self.language_settings = settings["language_settings"].get(language, "EN")
