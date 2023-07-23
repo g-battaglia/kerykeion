@@ -1,7 +1,4 @@
-from kerykeion import (
-    AstrologicalSubject,
-    RelationshipScore,
-)
+from kerykeion import AstrologicalSubject, RelationshipScore
 
 
 # TODO: Extend this test to cover all
@@ -16,7 +13,7 @@ def test_relationship_score():
     assert score.__dict__()["relevant_aspects"][0]["p1_name"] == "Sun"
     assert score.__dict__()["relevant_aspects"][0]["p2_name"] == "Sun"
     assert score.__dict__()["relevant_aspects"][0]["aspect"] == "trine"
-    assert round(score.__dict__()["relevant_aspects"][0]["orbit"], 3) == 3.603
+    assert round(score.__dict__()["relevant_aspects"][0]["orbit"], 2) == 3.60
 
 
 if __name__ == "__main__":

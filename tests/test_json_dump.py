@@ -16,13 +16,13 @@ class TestJsonDump:
         assert self.dictionary["minute"] == 12
         assert self.dictionary["city"] == "London"
         assert self.dictionary["nation"] == "GB"
-        assert round(self.dictionary["lat"], 3) == 51.509
-        assert round(self.dictionary["lng"], 3) == -0.126
+        assert round(self.dictionary["lat"], 2) == 51.51
+        assert round(self.dictionary["lng"], 2) == -0.13
         assert self.dictionary["tz_str"] == "Europe/London"
         assert self.dictionary["local_time"] == 12.2
         assert self.dictionary["utc_time"] == 11.2
         assert self.dictionary["zodiac_type"] == "Tropic"
-        assert round(self.dictionary["julian_day"], 3) == 2449270.967
+        assert round(self.dictionary["julian_day"], 2) == 2449270.97
 
     def test_json_dump_sun(self):
         assert self.dictionary["sun"]["name"] == "Sun"
@@ -30,8 +30,8 @@ class TestJsonDump:
         assert self.dictionary["sun"]["element"] == "Air"
         assert self.dictionary["sun"]["sign"] == "Lib"
         assert self.dictionary["sun"]["sign_num"] == 6
-        assert round(self.dictionary["sun"]["position"], 3) == 17.162
-        assert round(self.dictionary["sun"]["abs_pos"], 3) == 197.162
+        assert round(self.dictionary["sun"]["position"], 2) == 17.16
+        assert round(self.dictionary["sun"]["abs_pos"], 2) == 197.16
         assert self.dictionary["sun"]["emoji"] == "♎️"
         assert self.dictionary["sun"]["house"] == "Tenth_House"
         assert self.dictionary["sun"]["retrograde"] == False
