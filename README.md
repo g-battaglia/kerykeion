@@ -31,15 +31,16 @@ It also can generate an SVG of a birthchart, a synastry chart or a transit chart
 Here's an example of a birthchart:
 ![Kanye Birth Chart](http://centuryboy.altervista.org/KanyeNatalChart.svg)
 
-
 ## Web API
-If you want to use Kerykeion in a web application, I've created a web API for this purpose, you can find it here: 
+
+If you want to use Kerykeion in a web application, I've created a web API for this purpose, you can find it here:
 
 **[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/)**
 
 It's [open source](https://github.com/g-battaglia/Astrologer-API), it's a way to support me and the project.
 
 ## Donate
+
 Maintaining this project is a lot of work, the Astrologer API doesn't nearly cover the costs of a software engineer working on this project full time. I do this because I love it, but until I can make this my full time job, I won't be able to spend as much time on it.
 
 If you want to support me, you can do it here:
@@ -89,10 +90,12 @@ kanye.moon.element
 
 ```python
 kanye = AstrologicalSubject(
-    "Kanye", 1977, 6, 8, 8, 45,
-    lng=50, lat=50, tz_str="Europe/Rome"
-    )
+    "Kanye", 1977, 6, 8, 8, 45, lng=50, lat=50, tz_str="Europe/Rome", city="Rome"
+)
 ```
+
+The difference is that you have to pass the longitude, latitude and the timezone string, instead of the city and nation.
+If you omit the nation, it will be set to "GB" by default, but the value is not used for calculations. It's better to set it to the correct value though.
 
 ## Generate a SVG Chart:
 
