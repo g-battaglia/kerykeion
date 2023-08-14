@@ -28,6 +28,10 @@ also it can calculate the aspects of a single persone or between two, you can se
 need in the settings in the utility module.
 It also can generate an SVG of a birthchart, a synastry chart or a transit chart.
 
+Here's an example of a birthchart:
+![Kanye Birth Chart](http://centuryboy.altervista.org/KanyeNatalChart.svg)
+
+
 ## Web API
 If you want to use Kerykeion in a web application, I've created a web API for this purpose, you can find it here: 
 
@@ -112,7 +116,7 @@ print(len(name.aspects_list))
 
 ```
 
-![alt text](http://centuryboy.altervista.org/JackSynastry_Chart.svg)
+![Synastry Chart](http://centuryboy.altervista.org/JackComposite_Chart.svg)
 
 # Report
 
