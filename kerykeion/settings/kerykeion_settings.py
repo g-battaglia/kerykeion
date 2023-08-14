@@ -119,13 +119,13 @@ class KerykeionLanguageCelestialPointModel(CustomBaseModel):
     Uranus: str = Field(title="Uranus", description="The name of Uranus in the chart, in the language")
     Neptune: str = Field(title="Neptune", description="The name of Neptune in the chart, in the language")
     Pluto: str = Field(title="Pluto", description="The name of Pluto in the chart, in the language")
+    True_Node: str = Field(title="True Node", description="The name of True Node in the chart, in the language")
+    Mean_Node: str = Field(title="Mean Node", description="The name of Mean Node in the chart, in the language")
+    Chiron: str = Field(title="Chiron", description="The name of Chiron in the chart, in the language")
     Asc: str = Field(title="Ascendant", description="The name of Ascendant in the chart, in the language")
     Mc: str = Field(title="Medium Coeli", description="The name of Medium Coeli in the chart, in the language")
     Dsc: str = Field(title="Descendant", description="The name of Descendant in the chart, in the language")
     Ic: str = Field(title="Imum Coeli", description="The name of Imum Coeli in the chart, in the language")
-    True_Node: str = Field(title="True Node", description="The name of True Node in the chart, in the language")
-    Mean_Node: str = Field(title="Mean Node", description="The name of Mean Node in the chart, in the language")
-    Chiron: str = Field(title="Chiron", description="The name of Chiron in the chart, in the language")
 
 
 class KerykeionLanguageModel(CustomBaseModel):
