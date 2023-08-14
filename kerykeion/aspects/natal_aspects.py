@@ -16,7 +16,7 @@ class NatalAspects:
     Generates an object with all the aspects of a birthcart.
     """
 
-    def __init__(self, kr_object: AstrologicalSubject, new_settings_file: Union[str, Path, None] = None):
+    def __init__(self, kr_object: AstrologicalSubject, new_settings_file: Union[Path, None] = None):
         self.user = kr_object
         self.new_settings_file = new_settings_file
         self._parse_json_settings()

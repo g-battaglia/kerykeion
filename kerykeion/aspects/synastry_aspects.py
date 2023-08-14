@@ -19,7 +19,7 @@ class SynastryAspects(NatalAspects):
         self,
         kr_object_one: AstrologicalSubject,
         kr_object_two: AstrologicalSubject,
-        new_settings_file: Union[str, Path, None] = None,
+        new_settings_file: Union[Path, None] = None,
     ):
         self.first_user = kr_object_one
         self.second_user = kr_object_two

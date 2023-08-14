@@ -44,8 +44,8 @@ class KerykeionChartSVG:
     first_obj: AstrologicalSubject
     second_obj: Union[AstrologicalSubject, None]
     chart_type: ChartType
-    new_output_directory: Union[str, None]
-    new_settings_file: Union[str, Path, None]
+    new_output_directory: Union[Path, None]
+    new_settings_file: Union[Path, None]
     output_directory: Path
 
     def __init__(
@@ -54,7 +54,7 @@ class KerykeionChartSVG:
         chart_type: ChartType = "Natal",
         second_obj: Union[AstrologicalSubject, None] = None,
         new_output_directory: Union[str, None] = None,
-        new_settings_file: Union[str, Path, None] = None,
+        new_settings_file: Union[Path, None] = None,
     ):
         # Directories:
         DATA_DIR = Path(__file__).parent
@@ -267,11 +267,11 @@ class KerykeionChartSVG:
         # Immediately generate template.
         self.template = self.makeTemplate()
 
-    def set_output_directory(self, dir_path):
+    def set_output_directory(self, dir_path: Path) -> None:
         """
         Sets the output direcotry and returns it's path.
         """
-        self.output_directory = Path(dir_path)
+        self.output_directory = dir_path
         dir_string = f"Output direcotry set to: {self.output_directory}"
         return print(dir_string)
 

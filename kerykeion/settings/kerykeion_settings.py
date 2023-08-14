@@ -176,7 +176,7 @@ class KerykeionSettingsModel(CustomBaseModel):
     general_settings: KerykeionGeneralSettingsModel = Field(title="General Settings", description="The general settings of the chart")
 
 
-def get_settings_dict(new_settings_file: Union[str, Path, None] = None) -> Dict:
+def get_settings_dict(new_settings_file: Union[Path, None] = None) -> Dict:
     if new_settings_file is not None:
         settings_file = Path(new_settings_file)
         

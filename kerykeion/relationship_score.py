@@ -49,7 +49,7 @@ class RelationshipScore:
         self,
         first_subject: AstrologicalSubject,
         second_subject: AstrologicalSubject,
-        new_settings_file: Union[str, Path, None] = None,
+        new_settings_file: Union[Path, None] = None,
     ):
         self.first_subject = first_subject
         self.second_subject = second_subject
