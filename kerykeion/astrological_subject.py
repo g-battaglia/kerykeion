@@ -23,6 +23,7 @@ from typing import Union, Literal
 
 
 logger = getLogger(__name__)
+basicConfig(level="INFO", format="%(name)s - %(levelname)s - %(message)s")
 
 
 class AstrologicalSubject:
