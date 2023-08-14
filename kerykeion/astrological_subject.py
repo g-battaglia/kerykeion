@@ -23,7 +23,10 @@ from typing import Union, Literal
 
 
 logger = getLogger(__name__)
-basicConfig(level="INFO", format="%(name)s - %(levelname)s - %(message)s")
+basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO"
+)
 
 
 class AstrologicalSubject:
@@ -549,12 +552,7 @@ class AstrologicalSubject:
 
 if __name__ == "__main__":
     import json
-
-    basicConfig(
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        level=10,
-        force=True,
-    )
+    basicConfig(level="DEBUG", force=True)
 
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
     print(json.loads(johnny.json(dump=True)))

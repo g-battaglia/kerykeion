@@ -14,13 +14,17 @@ from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types import KerykeionException, ChartType
 from kerykeion.kr_types.chart_types import ChartTemplateModel
 from kerykeion.charts.charts_utils import decHourJoin, degreeDiff, offsetToTz, sliceToX, sliceToY
-from logging import getLogger, basicConfig, StreamHandler, DEBUG
+from logging import getLogger, basicConfig
 from pathlib import Path
 from string import Template
 from typing import Union
 
+
 logger = getLogger(__name__)
-basicConfig(level=DEBUG)
+basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO"
+)
 
 
 class KerykeionChartSVG:
@@ -1532,6 +1536,8 @@ class KerykeionChartSVG:
 
 
 if __name__ == "__main__":
+    basicConfig(level="DEBUG")
+
     first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
     second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 

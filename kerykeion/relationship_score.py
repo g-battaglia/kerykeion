@@ -5,16 +5,15 @@
 
 from kerykeion import AstrologicalSubject
 from kerykeion.aspects.synastry_aspects import SynastryAspects
-from logging import basicConfig, getLogger, DEBUG
+from logging import basicConfig, getLogger
 from pathlib import Path
 from typing import Union
 
 
 logger = getLogger(__name__)
-
 basicConfig(
-    format="%(levelname)s - %(message)s",
-    level=DEBUG,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO"
 )
 
 
@@ -201,6 +200,8 @@ class RelationshipScore:
 
 
 if __name__ == "__main__":
+    basicConfig(level="DEBUG", force=True)
+
     lui = AstrologicalSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
     lei = AstrologicalSubject("Sarah", 1978, 2, 9, 15, 50, "Roma", "IT")
 
