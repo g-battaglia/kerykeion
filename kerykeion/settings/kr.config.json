@@ -429,6 +429,15 @@
     },
     {
       "id": 12,
+      "name": "Chiron",
+      "color": "#666f06",
+      "is_active": true,
+      "element_points": 0,
+      "related_zodiac_signs": [],
+      "label": "Chiron"
+    },
+    {
+      "id": 13,
       "name": "First_House",
       "color": "#ff7e00",
       "is_active": true,
@@ -437,7 +446,7 @@
       "label": "Asc"
     },
     {
-      "id": 13,
+      "id": 14,
       "name": "Tenth_House",
       "color": "#FF0000",
       "is_active": true,
@@ -446,7 +455,7 @@
       "label": "Mc"
     },
     {
-      "id": 14,
+      "id": 15,
       "name": "Seventh_House",
       "color": "#0000FF",
       "is_active": false,
@@ -455,22 +464,13 @@
       "label": "Dsc"
     },
     {
-      "id": 15,
+      "id": 16,
       "name": "Fourth_House",
       "color": "#000000",
       "is_active": false,
       "element_points": 0,
       "related_zodiac_signs": [],
       "label": "Ic"
-    },
-    {
-      "id": 16,
-      "name": "Chiron",
-      "color": "#666f06",
-      "is_active": true,
-      "element_points": 0,
-      "related_zodiac_signs": [],
-      "label": "Chiron"
     }
   ],
   "chart_colors": {

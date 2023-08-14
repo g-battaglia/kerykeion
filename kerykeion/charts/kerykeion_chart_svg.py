@@ -1556,9 +1556,3 @@ if __name__ == "__main__":
     # Transits Chart
     transits_chart = KerykeionChartSVG(first, "Transit", second)
     transits_chart.makeSVG()
-
-
-
-
-
-
