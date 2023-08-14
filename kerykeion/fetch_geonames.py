@@ -4,13 +4,17 @@
 """
 
 
-from logging import getLogger
+from logging import getLogger, basicConfig
 from requests import Request
 from requests_cache import CachedSession
 from typing import Union
 
 
 logger = getLogger(__name__)
+basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO"
+)
 
 
 class FetchGeonames:
@@ -135,11 +139,9 @@ class FetchGeonames:
 
 
 if __name__ == "__main__":
-    from logging import basicConfig
-
     basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        level=10,
+        level="DEBUG",
         force=True,
     )
 
