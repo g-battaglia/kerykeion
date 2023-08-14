@@ -26,11 +26,25 @@ Kerykeion is a python library for Astrology.
 It can calculate all the planet and house position,
 also it can calculate the aspects of a single persone or between two, you can set how many planets you
 need in the settings in the utility module.
-It also can generate an SVG of a birthchart, a composite chart or a transit chart.
+It also can generate an SVG of a birthchart, a synastry chart or a transit chart.
+
+## Web API
+If you want to use Kerykeion in a web application, I've created a web API for this purpose, you can find it here: 
+
+**[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/)**
+
+It's [open source](https://github.com/g-battaglia/Astrologer-API), it's a way to support me and the project.
+
+## Donate
+Maintaining this project is a lot of work, the Astrologer API doesn't nearly cover the costs of a software engineer working on this project full time. I do this because I love it, but until I can make this my full time job, I won't be able to spend as much time on it.
+
+If you want to support me, you can do it here:
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/kerykeion)
 
 ## Installation
 
-Kerykeion is a *Python 3.9* package, make sure you have *Python 3.9* or above installed on your system.
+Kerykeion is a _Python 3.9_ package, make sure you have _Python 3.9_ or above installed on your system.
 
 ```bash
 pip3 install kerykeion
@@ -43,11 +57,11 @@ Here some examples:
 ```python
 
 # Import the main class for creating a kerykeion instance:
-from kerykeion import KrInstance
+from kerykeion import AstrologicalSubject
 
 # Create a kerykeion instance:
 # Args: Name, year, month, day, hour, minuts, city, nation(optional)
-kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+kanye = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
 
 # Get the information about the sun in the chart:
 # (The position of the planets always starts at 0)
@@ -55,13 +69,13 @@ kanye.sun
 
 #> {'name': 'Sun', 'quality': 'Mutable', 'element': 'Air', 'sign': 'Gem', 'sign_num': 2, 'pos': 17.598992059774275, 'abs_pos': 77.59899205977428, 'emoji': '♊️', 'house': '12th House', 'retrograde': False}
 
-# Get informations about the first house:
+# Get information about the first house:
 kanye.first_house
 
-#> {'name': 'First House', 'quality': 'Cardinal', 'element': 'Water', 'sign': 'Can', 'sign_num': 3, 'pos': 17.995779673209114, 'abs_pos': 107.99577967320911, 'emoji': '♋️'}
+#> {'name': 'First_House', 'quality': 'Cardinal', 'element': 'Water', 'sign': 'Can', 'sign_num': 3, 'pos': 17.995779673209114, 'abs_pos': 107.99577967320911, 'emoji': '♋️'}
 
 # Get element of the moon sign:
-kanye.moon.get("element")
+kanye.moon.element
 
 #> 'Water'
 
@@ -70,7 +84,7 @@ kanye.moon.get("element")
 **To avoid connecting to GeoNames (eg. avoiding hourly limit or no internet connection) you should instance kerykeion like this:**
 
 ```python
-kanye = KrInstance(
+kanye = AstrologicalSubject(
     "Kanye", 1977, 6, 8, 8, 45,
     lng=50, lat=50, tz_str="Europe/Rome"
     )
@@ -79,14 +93,14 @@ kanye = KrInstance(
 ## Generate a SVG Chart:
 
 ```python
-from kerykeion import KrInstance, MakeSvgInstance
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
-second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
+first = AstrologicalSubject("Jack", 1990, 6, 15, 15, 15, "Roma")
+second = AstrologicalSubject("Jane", 1991, 10, 25, 21, 00, "Roma")
 
-# Set the type, it can be Natal, Composite or Transit
+# Set the type, it can be Natal, Synastry or Transit
 
-name = MakeSvgInstance(first, chart_type="Composite", second_obj=second)
+name = KerykeionChartSVG(first, chart_type="Synastry", second_obj=second)
 name.makeSVG()
 print(len(name.aspects_list))
 
@@ -98,17 +112,16 @@ print(len(name.aspects_list))
 
 ```
 
-![alt text](http://centuryboy.altervista.org/JackComposite_Chart.svg)
-
+![alt text](http://centuryboy.altervista.org/JackSynastry_Chart.svg)
 
 # Report
 
 To print a report of all the data:
 
 ```python
-from kerykeion import Report, KrInstance
+from kerykeion import Report, AstrologicalSubject
 
-kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+kanye = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
 report = Report(kanye)
 report.print_report()
 
@@ -126,34 +139,34 @@ Returns:
 +-----------+------+-------+------+----------------+
 | Planet    | Sign | Pos.  | Ret. | House          |
 +-----------+------+-------+------+----------------+
-| Sun       | Gem  | 17.6  | -    | Twelfth House  |
-| Moon      | Pis  | 16.43 | -    | Ninth House    |
-| Mercury   | Tau  | 26.29 | -    | Eleventh House |
-| Venus     | Tau  | 2.03  | -    | Tenth House    |
-| Mars      | Tau  | 1.79  | -    | Tenth House    |
-| Jupiter   | Gem  | 14.61 | -    | Eleventh House |
-| Saturn    | Leo  | 12.8  | -    | Second House   |
-| Uranus    | Sco  | 8.27  | R    | Fourth House   |
-| Neptune   | Sag  | 14.69 | R    | Fifth House    |
-| Pluto     | Lib  | 11.45 | R    | Fourth House   |
-| Mean_Node | Lib  | 21.49 | R    | Fourth House   |
-| True_Node | Lib  | 22.82 | R    | Fourth House   |
+| Sun       | Gem  | 17.6  | -    | Twelfth_House  |
+| Moon      | Pis  | 16.43 | -    | Ninth_House    |
+| Mercury   | Tau  | 26.29 | -    | Eleventh_House |
+| Venus     | Tau  | 2.03  | -    | Tenth_House    |
+| Mars      | Tau  | 1.79  | -    | Tenth_House    |
+| Jupiter   | Gem  | 14.61 | -    | Eleventh_House |
+| Saturn    | Leo  | 12.8  | -    | Second_House   |
+| Uranus    | Sco  | 8.27  | R    | Fourth_House   |
+| Neptune   | Sag  | 14.69 | R    | Fifth_House    |
+| Pluto     | Lib  | 11.45 | R    | Fourth_House   |
+| Mean_Node | Lib  | 21.49 | R    | Fourth_House   |
+| True_Node | Lib  | 22.82 | R    | Fourth_House   |
 +-----------+------+-------+------+----------------+
 +----------------+------+----------+
 | House          | Sign | Position |
 +----------------+------+----------+
-| First House    | Can  | 18.0     |
-| Second House   | Leo  | 9.51     |
-| Third House    | Vir  | 4.02     |
-| Fourth House   | Lib  | 3.98     |
-| Fifth House    | Sco  | 9.39     |
-| Sixth House    | Sag  | 15.68    |
-| Seventh House  | Cap  | 18.0     |
-| Eighth House   | Aqu  | 9.51     |
-| Ninth House    | Pis  | 4.02     |
-| Tenth House    | Ari  | 3.98     |
-| Eleventh House | Tau  | 9.39     |
-| Twelfth House  | Gem  | 15.68    |
+| First_House    | Can  | 18.0     |
+| Second_House   | Leo  | 9.51     |
+| Third_House    | Vir  | 4.02     |
+| Fourth_House   | Lib  | 3.98     |
+| Fifth_House    | Sco  | 9.39     |
+| Sixth_House    | Sag  | 15.68    |
+| Seventh_House  | Cap  | 18.0     |
+| Eighth_House   | Aqu  | 9.51     |
+| Ninth_House    | Pis  | 4.02     |
+| Tenth_House    | Ari  | 3.98     |
+| Eleventh_House | Tau  | 9.39     |
+| Twelfth_House  | Gem  | 15.68    |
 +----------------+------+----------+
 
 ```
@@ -161,51 +174,7 @@ Returns:
 And if you want to export it to a file:
 
 ```bash
-$ python3 your_script_name.py > file.txt 
-```
-
-# Example of a possible text output with information:
-
-```python
-from kerykeion import print_all_data, KrInstance
-
-kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
-
-print_all_data(kanye)
-
-```
-
-Returns:
-
-```
-NAME: Kanye
-PLANET     POSITION
-
-Sun:       Gem 17.599 in 12th House
-Moon:      Pis 16.425 in 9th House
-Mercury:   Tau 26.286 in 11th House
-Venus:     Tau 2.032 in 10th House
-Mars:      Tau 1.79 in 10th House
-Jupiter:   Gem 14.607 in 11th House
-Saturn:    Leo 12.799 in 2nd House
-Uranus:    Sco 8.273 in 4th House
-Neptune:   Sag 14.693 in 5th House
-Pluto:     Lib 11.446 in 4th House
-
-PLACIDUS HAUSES
-House Cusp 1:     Can  17.996
-House Cusp 2:     Leo  9.506
-House Cusp 3:     Vir  4.022
-House Cusp 4:     Lib  3.977
-House Cusp 5:     Sco  9.393
-House Cusp 6:     Sag  15.681
-House Cusp 7:     Cap  17.996
-House Cusp 8:     Aqu  9.506
-House Cusp 9:     Pis  4.022
-House Cusp 10:    Ari  3.977
-House Cusp 11:    Tau  9.393
-House Cusp 12:    Gem  15.681
-
+$ python3 your_script_name.py > file.txt
 ```
 
 ## Other exeples of possibles usecase
@@ -213,11 +182,11 @@ House Cusp 12:    Gem  15.681
 ```python
 # Get all aspects between two persons:
 
-from kerykeion import CompositeAspects, KrInstance
-first = KrInstance("Jack", 1990, 6, 15, 15, 15, "Roma")
-second = KrInstance("Jane", 1991, 10, 25, 21, 00, "Roma")
+from kerykeion import SynastryAspects, AstrologicalSubject
+first = AstrologicalSubject("Jack", 1990, 6, 15, 15, 15, "Roma")
+second = AstrologicalSubject("Jane", 1991, 10, 25, 21, 00, "Roma")
 
-name = CompositeAspects(first, second)
+name = SynastryAspects(first, second)
 aspect_list = name.get_relevant_aspects()
 print(aspect_list[0])
 

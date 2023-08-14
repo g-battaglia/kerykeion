@@ -1,13 +1,17 @@
-from kerykeion import KrInstance
+from kerykeion import AstrologicalSubject
 from terminaltables import AsciiTable
-
 
 class Report:
     """
-    Create a report for a Kerkyeon instance.
+    Create a report for a Kerykeion instance.
     """
 
-    def __init__(self, instance: KrInstance):
+    report_title: str
+    data_table: str
+    planets_table: str
+    houses_table: str
+
+    def __init__(self, instance: AstrologicalSubject):
         self.instance = instance
 
         self.get_report_title()
@@ -17,7 +21,6 @@ class Report:
 
     def get_report_title(self) -> None:
         self.report_title = f"\n+- Kerykeion report for {self.instance.name} -+"
-
 
     def get_data_table(self) -> None:
         """
@@ -59,24 +62,27 @@ class Report:
         """
 
         houses_data = [["House", "Sign", "Position"]] + [
-            [house.name, house.sign, round(float(house.position), 2)]
-            for house in self.instance.houses_list
+            [house.name, house.sign, round(float(house.position), 2)] for house in self.instance.houses_list
         ]
 
         self.houses_table = AsciiTable(houses_data).table
+
+    def get_full_report(self) -> str:
+        """
+        Returns the full report.
+        """
+
+        return f"{self.report_title}\n{self.data_table}\n{self.planets_table}\n{self.houses_table}"
 
     def print_report(self) -> None:
         """
         Print the report.
         """
 
-        print(self.report_title)
-        print(self.data_table)
-        print(self.planets_table)
-        print(self.houses_table)
+        print(self.get_full_report())
 
 
 if __name__ == "__main__":
-    kanye = KrInstance("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
-    report = Report(kanye)
+    john = AstrologicalSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
+    report = Report(john)
     report.print_report()

@@ -1,43 +1,44 @@
-"""
-    This is part of Kerykeion (C) 2022 Giacomo Battaglia
-"""
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+    This is part of Kerykeion (C) 2023 Giacomo Battaglia
+"""
 
-import logging
+
+from logging import getLogger, basicConfig
 from requests import Request
 from requests_cache import CachedSession
 from typing import Union
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
+
+logger = getLogger(__name__)
+basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO"
 )
 
 
 class FetchGeonames:
     """
-    Class to handle requests to the geonames API
+    Class to handle requests to the GeoNames API
 
     Args:
     city_name (str): Name of the city
     country_code (str): Two letters country code
-    username (str, optional): Geonames username, defaults to "century.boy".
-    logger (Union[logging.Logger, None], optional): 
+    username (str, optional): GeoNames username, defaults to "century.boy".
+    logger (Union[logging.Logger, None], optional):
         Optional logger, defaults to None. If none provided creates one.
     """
 
     def __init__(
-        self, city_name: str,
+        self,
+        city_name: str,
         country_code: str,
         username: str = "century.boy",
-        logger: Union[logging.Logger, None] = None
     ):
-
         self.session = CachedSession(
-            cache_name='cache/kerykeion_geonames_cache',
-            backend='sqlite',
-            expire_after=86400
+            cache_name="cache/kerykeion_geonames_cache",
+            backend="sqlite",
+            expire_after=86400,
         )
 
         self.username = username
@@ -45,7 +46,6 @@ class FetchGeonames:
         self.country_code = country_code
         self.base_url = "http://api.geonames.org/searchJSON"
         self.timezone_url = "http://api.geonames.org/timezoneJSON"
-        self.__logger = logger or logging.getLogger(self.__class__.__name__)
 
     def __get_timezone(self, lat: Union[str, float, int], lon: Union[str, float, int]) -> dict[str, str]:
         """
@@ -54,35 +54,28 @@ class FetchGeonames:
         # Dictionary that will be returned:
         timezone_data = {}
 
-        params = {
-            "lat": lat,
-            "lng": lon,
-            "username": self.username
-        }
+        params = {"lat": lat, "lng": lon, "username": self.username}
 
-        prepared_request = Request(
-            "GET", self.timezone_url, params=params).prepare()
-        self.__logger.debug(
-            f"Requesting data from geonames timezones: {prepared_request.url}")
+        prepared_request = Request("GET", self.timezone_url, params=params).prepare()
+        logger.debug(f"Requesting data from GeoName timezones: {prepared_request.url}")
 
         try:
             response = self.session.send(prepared_request)
             response_json = response.json()
 
         except Exception as e:
-            self.__logger.error(f"Error fetching {self.timezone_url}: {e}")
+            logger.error(f"Error fetching {self.timezone_url}: {e}")
             return {}
 
         try:
-            timezone_data['timezonestr'] = response_json['timezoneId']
+            timezone_data["timezonestr"] = response_json["timezoneId"]
 
         except Exception as e:
-            self.__logger.error(
-                f"Error serializing data maybe wrong username? Details: {e}")
+            logger.error(f"Error serializing data maybe wrong username? Details: {e}")
             return {}
 
-        if hasattr(response, 'from_cache'):
-            timezone_data['from_tz_cache'] = response.from_cache
+        if hasattr(response, "from_cache"):
+            timezone_data["from_tz_cache"] = response.from_cache  # type: ignore
 
         return timezone_data
 
@@ -98,58 +91,59 @@ class FetchGeonames:
             "contry": country_code,
             "username": self.username,
             "maxRows": 1,
-            "style": "FULL"
+            "style": "FULL",
         }
 
-        prepared_request = Request(
-            "GET", self.base_url, params=params).prepare()
-        self.__logger.debug(
-            f"Requesting data from geonames basic: {prepared_request.url}")
+        prepared_request = Request("GET", self.base_url, params=params).prepare()
+        logger.debug(f"Requesting data from geonames basic: {prepared_request.url}")
 
         try:
             response = self.session.send(prepared_request)
             response_json = response.json()
 
         except Exception as e:
-            self.__logger.error(f"Error in fetching {self.base_url}: {e}")
+            logger.error(f"Error in fetching {self.base_url}: {e}")
             return {}
 
         try:
-            city_data_whitout_tz['name'] = response_json['geonames'][0]['name']
-            city_data_whitout_tz['lat'] = response_json['geonames'][0]['lat']
-            city_data_whitout_tz['lng'] = response_json['geonames'][0]['lng']
-            city_data_whitout_tz['countryCode'] = response_json['geonames'][0]['countryCode']
+            city_data_whitout_tz["name"] = response_json["geonames"][0]["name"]
+            city_data_whitout_tz["lat"] = response_json["geonames"][0]["lat"]
+            city_data_whitout_tz["lng"] = response_json["geonames"][0]["lng"]
+            city_data_whitout_tz["countryCode"] = response_json["geonames"][0]["countryCode"]
 
         except Exception as e:
-            self.__logger.error(
-                f"Error serializing data maybe wrong username? Details: {e}")
+            logger.error(f"Error serializing data maybe wrong username? Details: {e}")
             return {}
 
-        if hasattr(response, 'from_cache'):
-            city_data_whitout_tz['from_country_cache'] = response.from_cache
+        if hasattr(response, "from_cache"):
+            city_data_whitout_tz["from_country_cache"] = response.from_cache  # type: ignore
 
         return city_data_whitout_tz
 
     def get_serialized_data(self) -> dict[str, str]:
         """
-        Returns all the data necessary for the Kerykeion calculation.        
+        Returns all the data necessary for the Kerykeion calculation.
 
         Returns:
             dict[str, str]: _description_
         """
-        city_data_response = self.__get_contry_data(
-            self.city_name, self.country_code)
+        city_data_response = self.__get_contry_data(self.city_name, self.country_code)
         try:
-            timezone_response = self.__get_timezone(
-                city_data_response['lat'], city_data_response['lng'])
+            timezone_response = self.__get_timezone(city_data_response["lat"], city_data_response["lng"])
 
         except Exception as e:
-            self.__logger.error(f"Error in fetching timezone: {e}")
+            logger.error(f"Error in fetching timezone: {e}")
             return {}
 
         return {**timezone_response, **city_data_response}
 
 
 if __name__ == "__main__":
+    basicConfig(
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        level="DEBUG",
+        force=True,
+    )
+
     geonames = FetchGeonames("Roma", "IT")
     print(geonames.get_serialized_data())

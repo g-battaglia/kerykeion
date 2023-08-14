@@ -1,0 +1,90 @@
+[tool.poetry]
+name = "kerykeion"
+version = "4.0.0"
+authors = ["Giacomo Battaglia <battaglia.giacomo@yahoo.it>"]
+description = "A python library for astrology."
+license = "AGPL-3.0"
+homepage = "https://github.com/g-battaglia/kerykeion"
+repository = "https://github.com/g-battaglia/kerykeion"
+keywords = [
+    "astrology",
+    "ephemeris",
+    "astrology library",
+    "birtchart",
+    "svg",
+    "zodiac",
+    "zodiac-sing",
+    "astronomical-algorithms",
+    "synastry",
+    "astrology-calculator",
+]
+readme = "README.md"
+include = ["LICENSE"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License (GPL)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Typing :: Typed",
+]
+
+# To include Kerykeion itself
+packages = [{ include = "kerykeion" }]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pyswisseph = "^2.10.3.1"
+pytz = "^2022.7"
+requests = "^2.28.1"
+requests-cache = "^0.9.7"
+pydantic = "^1.10.4"
+terminaltables = "^3.1.10"
+
+[tool.poetry.scripts]
+create-docs = "scripts.docs:main"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+mypy = "^0.991"
+black = "^22.12.0"
+pdoc = "^12.3.0"
+types-requests = "^2.28.11.7"
+types-pytz = "^2022.7.0.0"
+poethepoet = "^0.19.0"
+
+# MyPy Static Analysis
+[tool.mypy]
+ignore_missing_imports = true
+mypy_path = "kerkeion"
+files = "kerykeion"
+
+# PyTest Automated Testing
+[tool.pytest.ini_options]
+log_cli_level = 20
+
+log_cli = "True"
+testpaths = "tests"
+
+log_level = 20
+log_date_format = "%Y-%m-%d %H:%M:%S"
+log_format = "%(asctime)s %(levelname)s %(message)s"
+
+# Black Code Formatter
+[tool.black]
+line-length = 120
+
+# Task Runner
+[tool.poe.tasks]
+test = "pytest"
+test-no-capture = "poetry run pytest --show-capture no  "
+lint = "mypy"
+docs = "pdoc kerykeion -o ./docs"
+format = "black kerykeion tests --line-length 120"
