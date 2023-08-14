@@ -1,8 +1,7 @@
 import math
 import datetime
-
 from kerykeion.kr_types import KerykeionException
-
+from typing import Union
 
 def decHourJoin(inH: int, inM: int, inS: int) -> float:
     """Join hour, minutes, seconds, timezone integer to hour float.
@@ -21,8 +20,7 @@ def decHourJoin(inH: int, inM: int, inS: int) -> float:
     output = dh + dm + ds
     return output
 
-
-def degreeDiff(a: int | float, b: int | float) -> float:
+def degreeDiff(a: Union[int, float], b: Union[int, float]) -> float:
     """Calculate the difference between two degrees.
 
     Args:
@@ -42,8 +40,7 @@ def degreeDiff(a: int | float, b: int | float) -> float:
         out = 360.0 - out
     return out
 
-
-def offsetToTz(datetime_offset: datetime.timedelta | None) -> float:
+def offsetToTz(datetime_offset: Union[datetime.timedelta, None]) -> float:
     """Convert datetime offset to float in hours.
 
     Args:
@@ -64,8 +61,7 @@ def offsetToTz(datetime_offset: datetime.timedelta | None) -> float:
     output = dh + sh
     return output
 
-
-def sliceToX(slice: int | float, radius: int | float, offset: int | float) -> float:
+def sliceToX(slice: Union[int, float], radius: Union[int, float], offset: Union[int, float]) -> float:
     """
     Calculates the x-coordinate of a point on a circle based on the slice, radius, and offset.
 
@@ -90,8 +86,7 @@ def sliceToX(slice: int | float, radius: int | float, offset: int | float) -> fl
     radial = ((math.pi / 6) * slice) + plus
     return radius * (math.cos(radial) + 1)
 
-
-def sliceToY(slice: int | float, r: int | float, offset: int | float) -> float:
+def sliceToY(slice: Union[int, float], r: Union[int, float], offset: Union[int, float]) -> float:
     """
     Calculates the y-coordinate of a point on a circle based on the slice, radius, and offset.
 
