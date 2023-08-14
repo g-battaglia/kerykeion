@@ -28,6 +28,20 @@ also it can calculate the aspects of a single persone or between two, you can se
 need in the settings in the utility module.
 It also can generate an SVG of a birthchart, a synastry chart or a transit chart.
 
+## Web API
+If you want to use Kerykeion in a web application, I've created a web API for this purpose, you can find it here: 
+
+**[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/)**
+
+It's [open source](https://github.com/g-battaglia/Astrologer-API), it's a way to support me and the project.
+
+## Donate
+Maintaining this project is a lot of work, the Astrologer API doesn't nearly cover the costs of a software engineer working on this project full time. I do this because I love it, but until I can make this my full time job, I won't be able to spend as much time on it.
+
+If you want to support me, you can do it here:
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/kerykeion)
+
 ## Installation
 
 Kerykeion is a _Python 3.9_ package, make sure you have _Python 3.9_ or above installed on your system.
@@ -61,7 +75,7 @@ kanye.first_house
 #> {'name': 'First_House', 'quality': 'Cardinal', 'element': 'Water', 'sign': 'Can', 'sign_num': 3, 'pos': 17.995779673209114, 'abs_pos': 107.99577967320911, 'emoji': '♋️'}
 
 # Get element of the moon sign:
-kanye.moon.get("element")
+kanye.moon.element
 
 #> 'Water'
 
