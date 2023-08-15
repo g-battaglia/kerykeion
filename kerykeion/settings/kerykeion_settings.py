@@ -4,11 +4,15 @@
 """
 
 
-
-from typing import Dict, List, Union
+from json import load
+from logging import getLogger, basicConfig
 from pydantic import BaseModel, Field
 from pathlib import Path
-from json import load
+from typing import Dict, List, Union
+
+
+logger = getLogger(__name__)
+basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO")
 
 
 class CustomBaseModel(BaseModel):
@@ -177,18 +181,23 @@ class KerykeionSettingsModel(CustomBaseModel):
 
 
 def get_settings_dict(new_settings_file: Union[Path, None] = None) -> Dict:
+    # Config path we passed as argument
     if new_settings_file is not None:
-        settings_file = Path(new_settings_file)
-        
+        settings_file = new_settings_file
+
         if not settings_file.exists():
             raise FileNotFoundError(f"File {settings_file} does not exist")
 
-    home_folder = Path.home()
-    settings_file = home_folder / ".config" / "kerykeion" / "kr.config.json"
+    # System wide config path
+    else:
+        home_folder = Path.home()
+        settings_file = home_folder / ".config" / "kerykeion" / "kr.config.json"
 
+    # Fallback to the default config in the package
     if not settings_file.exists():
         settings_file = Path(__file__).parent / "kr.config.json"
 
+    logger.debug(f"Kerykeion config file path: {settings_file}")
     with open(settings_file, "r") as f:
         settings_dict = load(f)
 
