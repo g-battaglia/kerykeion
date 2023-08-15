@@ -1075,15 +1075,13 @@ class KerykeionChartSVG:
 
         return out
 
-    # Aspect and aspect grid functions for transit type charts.
-
+    # Aspect and aspect grid functions for transit type charts
     def _makeAspectsTransit(self, r, ar):
         out = ""
 
         self.aspects_list = SynastryAspects(self.user, self.t_user, new_settings_file=self.new_settings_file).get_relevant_aspects()
 
         for element in self.aspects_list:
-            print(element)
             out += self._drawAspect(
                 r,
                 ar,
