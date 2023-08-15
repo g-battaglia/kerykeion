@@ -287,6 +287,7 @@ class KerykeionChartSVG:
         self.planets_settings = settings["celestial_points"]
         self.aspects_settings = settings["aspects"]
         self.planet_in_zodiac_extra_points = settings["general_settings"]["planet_in_zodiac_extra_points"]
+        self.chart_settings = settings["chart_settings"]
 
     def _transitRing(self, r) -> str:
         """
@@ -1102,28 +1103,28 @@ class KerykeionChartSVG:
         for i in range(len(self.aspects_list)):
             if i == 12:
                 nl = 100
-                # if len(self.aspects_list) > 24:
-                #     line = -1 * ( len(self.aspects_list) - 24) * 14
-                # else:
-                #     line = 0
-
-                # temporary:
+                
                 line = 0
 
-            if i == 24:
+            elif i == 24:
                 nl = 200
-                # if len(self.aspects_list) > 36:
-                #     line = -1 * ( len(self.aspects_list) - 36) * 14
-                # else:
-                #     line = 0
+
                 line = 0
 
-            if i == 36:
+            elif i == 36:
                 nl = 300
-                if len(self.aspects_list) > 48:
-                    line = -1 * (len(self.aspects_list) - 48) * 14
+                
+                line = 0
+                    
+            elif i == 48:
+                nl = 400
+
+                # When there are more than 60 aspects, the text is moved up
+                if len(self.aspects_list) > 60:
+                    line = -1 * (len(self.aspects_list) - 60) * 14
                 else:
                     line = 0
+
             out += f'<g transform="translate({nl},{line})">'
             # first planet symbol
 
@@ -1305,19 +1306,16 @@ class KerykeionChartSVG:
             wm_off = 100
 
         # Viewbox and sizing
-        svgHeight = "100%"  # self.screen_height-wm_off
-        svgWidth = "100%"  #  self.screen_width-5.0
-        # svgHeight=self.screen_height-wm_off
-        # svgWidth=(770.0*svgHeight)/540.0
-        # svgWidth=float(self.screen_width)-25.0
+        svgHeight = "100%"
+        svgWidth = "100%"
         rotate = "0"
         translate = "0"
-        # Defoult:
-        # viewbox = '0 0 772.2 546.0' #297mm * 2.6 + 210mm * 2.6
-        if self.chart_type == "Natal":
-            viewbox = "0 0 772.2 546.0"  # 297mm * 2.6 + 210mm * 2.6
+        
+        # To increase the size of the chart, change the viewbox
+        if self.chart_type == "Natal" or self.chart_type == "ExternalNatal":
+            viewbox = self.chart_settings["basic_chart_viewBox"]
         else:
-            viewbox = "0 0 1000 546.0"
+            viewbox = self.chart_settings["wide_chart_viewBox"]
 
         # template dictionary
         td: ChartTemplateModel = dict()
@@ -1534,7 +1532,7 @@ class KerykeionChartSVG:
 
 
 if __name__ == "__main__":
-    basicConfig(level="DEBUG")
+    basicConfig(level="DEBUG", force=True)
 
     first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
     second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")

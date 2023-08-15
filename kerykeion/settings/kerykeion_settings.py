@@ -166,6 +166,9 @@ class KerykeionGeneralSettingsModel(CustomBaseModel):
     planet_in_zodiac_extra_points: int = Field(title="Planet in Zodiac Extra Points", description="The extra points of the planet in the zodiac")
     language: str = Field(title="Language", description="The language of the chart")
 
+class KerykeionChartSettingsModel(CustomBaseModel):
+    basic_chart_viewBox: str = Field(title="Basic Chart ViewBox", description="The viewbox of the basic chart")
+    basic_chart_viewBox_width: int = Field(title="Basic Chart ViewBox Width", description="The width of the viewbox of the basic chart")
 
 # Settings Model
 class KerykeionSettingsModel(CustomBaseModel):
@@ -178,9 +181,23 @@ class KerykeionSettingsModel(CustomBaseModel):
     aspects: List[KerykeionSettingsAspectModel] = Field(title="Aspects", description="The list of the aspects of the chart")
     language_settings: dict[str, KerykeionLanguageModel] = Field(title="Language Settings", description="The language settings of the chart")
     general_settings: KerykeionGeneralSettingsModel = Field(title="General Settings", description="The general settings of the chart")
+    chart_settings: KerykeionChartSettingsModel = Field(title="Chart Settings", description="The chart settings of the chart")
 
 
 def get_settings_dict(new_settings_file: Union[Path, None] = None) -> Dict:
+    """
+    This function is used to get the settings dict from the settings file.
+    If no settings file is passed as argument, or the file is not found, it will fallback to:
+    - The system wide config file, located in ~/.config/kerykeion/kr.config.json
+    - The default config file, located in the package folder
+    
+    Args:
+        new_settings_file (Union[Path, None], optional): The path of the settings file. Defaults to None.
+        
+    Returns:
+        Dict: The settings dict
+    """
+
     # Config path we passed as argument
     if new_settings_file is not None:
         settings_file = new_settings_file
@@ -205,6 +222,17 @@ def get_settings_dict(new_settings_file: Union[Path, None] = None) -> Dict:
 
 
 def merge_settings_file(settings: KerykeionSettingsModel, new_settings: Dict) -> KerykeionSettingsModel:
+    """
+    This function is used to merge the settings file with the default settings,
+    it's useful to add new settings to the config file without breaking the old ones.
+    
+    Args:
+        settings (KerykeionSettingsModel): The default settings
+        new_settings (Dict): The new settings to add to the default ones
+        
+    Returns:
+        KerykeionSettingsModel: The new settings
+    """
     new_settings_dict = settings.dict() | new_settings
     return KerykeionSettingsModel(**new_settings_dict)
 

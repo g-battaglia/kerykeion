@@ -517,5 +517,9 @@
     "axes_orbit": 1,
     "planet_in_zodiac_extra_points": 10,
     "language": "EN"
+  },
+  "chart_settings": {
+    "basic_chart_viewBox": "0 0 772.2 546.0",
+    "wide_chart_viewBox": "0 0 1060 546.0"
   }
 }
