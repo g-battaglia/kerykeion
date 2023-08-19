@@ -215,7 +215,7 @@ def get_settings_dict(new_settings_file: Union[Path, None] = None) -> Dict:
         settings_file = Path(__file__).parent / "kr.config.json"
 
     logger.debug(f"Kerykeion config file path: {settings_file}")
-    with open(settings_file, "r") as f:
+    with open(settings_file, "r", encoding="utf8") as f:
         settings_dict = load(f)
 
     return settings_dict
