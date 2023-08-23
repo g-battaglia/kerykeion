@@ -151,7 +151,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 6,
         "diff": 245.62170553218357,
         "p1": 1,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Moon",
@@ -165,7 +165,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 6,
         "diff": 242.60665344676352,
         "p1": 1,
-        "p2": 12,
+        "p2": 13,
     },
     {
         "p1_name": "Moon",
@@ -179,7 +179,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 0,
         "diff": 8.00131576306461,
         "p1": 1,
-        "p2": 13,
+        "p2": 14,
     },
     {
         "p1_name": "Mercury",
@@ -263,7 +263,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 5,
         "diff": 89.23403716985538,
         "p1": 2,
-        "p2": 13,
+        "p2": 14,
     },
     {
         "p1_name": "Venus",
@@ -375,7 +375,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 6,
         "diff": 128.7194074178139,
         "p1": 4,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Mars",
@@ -389,7 +389,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 6,
         "diff": 125.70435533239385,
         "p1": 4,
-        "p2": 12,
+        "p2": 13,
     },
     {
         "p1_name": "Mars",
@@ -403,7 +403,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 6,
         "diff": 124.90361387743428,
         "p1": 4,
-        "p2": 13,
+        "p2": 14,
     },
     {
         "p1_name": "Jupiter",
@@ -515,7 +515,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 0,
         "diff": 10.000738338262245,
         "p1": 5,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Saturn",
@@ -627,7 +627,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 0,
         "diff": 10.49056062065668,
         "p1": 6,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Saturn",
@@ -641,7 +641,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 5,
         "diff": 264.1135819159049,
         "p1": 6,
-        "p2": 13,
+        "p2": 14,
     },
     {
         "p1_name": "Uranus",
@@ -711,7 +711,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 0,
         "diff": 1.833695546885501,
         "p1": 7,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Uranus",
@@ -725,7 +725,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 0,
         "diff": 1.1813565385345512,
         "p1": 7,
-        "p2": 12,
+        "p2": 13,
     },
     {
         "p1_name": "Neptune",
@@ -781,7 +781,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 6,
         "diff": 122.290374388358,
         "p1": 8,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Neptune",
@@ -795,7 +795,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 6,
         "diff": 119.27532230293795,
         "p1": 8,
-        "p2": 12,
+        "p2": 13,
     },
     {
         "p1_name": "Pluto",
@@ -865,7 +865,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 10,
         "diff": 183.16657271321853,
         "p1": 9,
-        "p2": 13,
+        "p2": 14,
     },
     {
         "p1_name": "True_Node",
@@ -949,7 +949,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 7,
         "diff": 134.28253987403298,
         "p1": 10,
-        "p2": 12,
+        "p2": 13,
     },
     {
         "p1_name": "True_Node",
@@ -963,7 +963,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 6,
         "diff": 116.32542933579515,
         "p1": 10,
-        "p2": 13,
+        "p2": 14,
     },
     {
         "p1_name": "Chiron",
@@ -976,7 +976,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#26bbcf",
         "aid": 9,
         "diff": 208.4084490502215,
-        "p1": 16,
+        "p1": 12,
         "p2": 0,
     },
     {
@@ -990,7 +990,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#36d100",
         "aid": 6,
         "diff": 124.65193959838189,
-        "p1": 16,
+        "p1": 12,
         "p2": 1,
     },
     {
@@ -1004,7 +1004,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#7a9810",
         "aid": 8,
         "diff": 216.56700524273825,
-        "p1": 16,
+        "p1": 12,
         "p2": 2,
     },
     {
@@ -1018,7 +1018,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#b14e58",
         "aid": 2,
         "diff": 44.717864490108894,
-        "p1": 16,
+        "p1": 12,
         "p2": 4,
     },
     {
@@ -1032,7 +1032,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#510060",
         "aid": 10,
         "diff": 189.1385691283621,
-        "p1": 16,
+        "p1": 12,
         "p2": 6,
     },
     {
@@ -1046,7 +1046,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#5757e2",
         "aid": 0,
         "diff": 8.915008939539973,
-        "p1": 16,
+        "p1": 12,
         "p2": 9,
     },
     {
@@ -1060,8 +1060,8 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#d59e28",
         "aid": 3,
         "diff": 66.82245157601974,
-        "p1": 16,
-        "p2": 16,
+        "p1": 12,
+        "p2": 12,
     },
     {
         "p1_name": "Chiron",
@@ -1074,8 +1074,8 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#d59e28",
         "aid": 3,
         "diff": 63.8073994905997,
-        "p1": 16,
-        "p2": 12,
+        "p1": 12,
+        "p2": 13,
     },
     {
         "p1_name": "Chiron",
@@ -1088,8 +1088,8 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#510060",
         "aid": 10,
         "diff": 186.80056971922843,
-        "p1": 16,
-        "p2": 13,
+        "p1": 12,
+        "p2": 14,
     },
     {
         "p1_name": "First_House",
@@ -1102,7 +1102,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#dc0000",
         "aid": 5,
         "diff": 87.18696464492342,
-        "p1": 12,
+        "p1": 13,
         "p2": 3,
     },
     {
@@ -1116,7 +1116,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#d59e28",
         "aid": 3,
         "diff": 60.80979967662563,
-        "p1": 12,
+        "p1": 13,
         "p2": 4,
     },
     {
@@ -1130,7 +1130,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#d59e28",
         "aid": 3,
         "diff": 55.33531277015007,
-        "p1": 12,
+        "p1": 13,
         "p2": 5,
     },
     {
@@ -1144,7 +1144,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#d59e28",
         "aid": 3,
         "diff": 66.9906627379921,
-        "p1": 12,
+        "p1": 13,
         "p2": 8,
     },
     {
@@ -1158,7 +1158,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#36d100",
         "aid": 6,
         "diff": 114.4426731062745,
-        "p1": 12,
+        "p1": 13,
         "p2": 9,
     },
     {
@@ -1172,8 +1172,8 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#510060",
         "aid": 10,
         "diff": 172.35011574275427,
-        "p1": 12,
-        "p2": 16,
+        "p1": 13,
+        "p2": 12,
     },
     {
         "p1_name": "Tenth_House",
@@ -1186,7 +1186,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#510060",
         "aid": 10,
         "diff": 173.3937676375633,
-        "p1": 13,
+        "p1": 14,
         "p2": 0,
     },
     {
@@ -1200,7 +1200,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#dc0000",
         "aid": 5,
         "diff": 89.63725818572368,
-        "p1": 13,
+        "p1": 14,
         "p2": 1,
     },
     {
@@ -1214,7 +1214,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#510060",
         "aid": 10,
         "diff": 181.55232383008004,
-        "p1": 13,
+        "p1": 14,
         "p2": 2,
     },
     {
@@ -1228,7 +1228,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#5757e2",
         "aid": 0,
         "diff": 9.703183077450689,
-        "p1": 13,
+        "p1": 14,
         "p2": 4,
     },
     {
@@ -1242,7 +1242,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#985a10",
         "aid": 7,
         "diff": 135.03404598915446,
-        "p1": 13,
+        "p1": 14,
         "p2": 7,
     },
     {
@@ -1256,7 +1256,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#5757e2",
         "aid": 0,
         "diff": 3.5223200160842225,
-        "p1": 13,
+        "p1": 14,
         "p2": 8,
     },
     {
@@ -1270,7 +1270,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#510060",
         "aid": 10,
         "diff": 182.23538205989766,
-        "p1": 13,
+        "p1": 14,
         "p2": 10,
     },
     {
@@ -1284,10 +1284,11 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#26bbcf",
         "aid": 9,
         "diff": 151.78588830657023,
-        "p1": 13,
-        "p2": 13,
+        "p1": 14,
+        "p2": 14,
     },
 ]
+
 EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Sun",
@@ -1399,7 +1400,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 6,
         "diff": 245.62170553218357,
         "p1": 1,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Mercury",
@@ -1483,7 +1484,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 5,
         "diff": 89.23403716985538,
         "p1": 2,
-        "p2": 13,
+        "p2": 14,
     },
     {
         "p1_name": "Venus",
@@ -1595,7 +1596,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 6,
         "diff": 128.7194074178139,
         "p1": 4,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Jupiter",
@@ -1707,7 +1708,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 0,
         "diff": 10.000738338262245,
         "p1": 5,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Saturn",
@@ -1819,7 +1820,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 0,
         "diff": 10.49056062065668,
         "p1": 6,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Uranus",
@@ -1889,7 +1890,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 0,
         "diff": 1.833695546885501,
         "p1": 7,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Neptune",
@@ -1945,7 +1946,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 6,
         "diff": 122.290374388358,
         "p1": 8,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Neptune",
@@ -1959,7 +1960,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 6,
         "diff": 119.27532230293795,
         "p1": 8,
-        "p2": 12,
+        "p2": 13,
     },
     {
         "p1_name": "Pluto",
@@ -2070,7 +2071,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "color": "#36d100",
         "aid": 6,
         "diff": 124.65193959838189,
-        "p1": 16,
+        "p1": 12,
         "p2": 1,
     },
     {
@@ -2084,7 +2085,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "color": "#510060",
         "aid": 10,
         "diff": 189.1385691283621,
-        "p1": 16,
+        "p1": 12,
         "p2": 6,
     },
     {
@@ -2098,7 +2099,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "color": "#5757e2",
         "aid": 0,
         "diff": 8.915008939539973,
-        "p1": 16,
+        "p1": 12,
         "p2": 9,
     },
     {
@@ -2112,8 +2113,8 @@ EXPECTED_RELEVANT_ASPECTS = [
         "color": "#d59e28",
         "aid": 3,
         "diff": 66.82245157601974,
-        "p1": 16,
-        "p2": 16,
+        "p1": 12,
+        "p2": 12,
     },
     {
         "p1_name": "First_House",
@@ -2126,7 +2127,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "color": "#d59e28",
         "aid": 3,
         "diff": 60.80979967662563,
-        "p1": 12,
+        "p1": 13,
         "p2": 4,
     },
     {
@@ -2140,7 +2141,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "color": "#dc0000",
         "aid": 5,
         "diff": 89.63725818572368,
-        "p1": 13,
+        "p1": 14,
         "p2": 1,
     },
 ]

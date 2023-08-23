@@ -67,7 +67,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 5,
         "diff": 267.21426487040833,
         "p1": 0,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Sun",
@@ -81,7 +81,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 6,
         "diff": 243.03697154847697,
         "p1": 0,
-        "p2": 12,
+        "p2": 13,
     },
     {
         "p1_name": "Moon",
@@ -207,7 +207,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 3,
         "diff": 66.13879238313444,
         "p1": 1,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Mercury",
@@ -263,7 +263,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 5,
         "diff": 265.6947952675196,
         "p1": 2,
-        "p2": 12,
+        "p2": 13,
     },
     {
         "p1_name": "Venus",
@@ -319,7 +319,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 5,
         "diff": 265.0929190318722,
         "p1": 3,
-        "p2": 12,
+        "p2": 13,
     },
     {
         "p1_name": "Mars",
@@ -375,7 +375,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 5,
         "diff": 93.5760790463213,
         "p1": 4,
-        "p2": 13,
+        "p2": 14,
     },
     {
         "p1_name": "Jupiter",
@@ -417,7 +417,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 1,
         "diff": 330.96301338262646,
         "p1": 5,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Jupiter",
@@ -431,7 +431,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 6,
         "diff": 232.67679668247717,
         "p1": 5,
-        "p2": 13,
+        "p2": 14,
     },
     {
         "p1_name": "Saturn",
@@ -459,7 +459,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 0,
         "diff": 2.386838727851341,
         "p1": 6,
-        "p2": 12,
+        "p2": 13,
     },
     {
         "p1_name": "Uranus",
@@ -501,7 +501,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 5,
         "diff": 95.02111156816974,
         "p1": 7,
-        "p2": 13,
+        "p2": 14,
     },
     {
         "p1_name": "Neptune",
@@ -543,7 +543,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 6,
         "diff": 121.45048417473538,
         "p1": 8,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Pluto",
@@ -557,7 +557,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 10,
         "diff": 185.2483242321348,
         "p1": 9,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Pluto",
@@ -571,7 +571,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 5,
         "diff": 86.96210753198551,
         "p1": 9,
-        "p2": 13,
+        "p2": 14,
     },
     {
         "p1_name": "True_Node",
@@ -585,7 +585,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 6,
         "diff": 234.2342461898942,
         "p1": 10,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "True_Node",
@@ -599,7 +599,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 9,
         "diff": 210.05695286796285,
         "p1": 10,
-        "p2": 12,
+        "p2": 13,
     },
     {
         "p1_name": "True_Node",
@@ -613,10 +613,9 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 7,
         "diff": 135.94802948974493,
         "p1": 10,
-        "p2": 13,
+        "p2": 14,
     },
 ]
-
 
 EXPECTED_RELEVANT_ASPECTS = [
     {
@@ -673,7 +672,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 5,
         "diff": 267.21426487040833,
         "p1": 0,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Moon",
@@ -757,7 +756,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 3,
         "diff": 66.13879238313444,
         "p1": 1,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Mercury",
@@ -967,7 +966,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 6,
         "diff": 121.45048417473538,
         "p1": 8,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "Pluto",
@@ -981,7 +980,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 10,
         "diff": 185.2483242321348,
         "p1": 9,
-        "p2": 16,
+        "p2": 12,
     },
     {
         "p1_name": "True_Node",
@@ -995,6 +994,6 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 6,
         "diff": 234.2342461898942,
         "p1": 10,
-        "p2": 16,
+        "p2": 12,
     },
 ]
