@@ -12,7 +12,7 @@ from kerykeion.aspects.synastry_aspects import SynastryAspects
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types import KerykeionException, ChartType
-from kerykeion.kr_types.chart_types import ChartTemplateModel
+from kerykeion.kr_types import ChartTemplateModel
 from kerykeion.charts.charts_utils import decHourJoin, degreeDiff, offsetToTz, sliceToX, sliceToY
 from logging import getLogger, basicConfig
 from pathlib import Path
