@@ -21,6 +21,7 @@ from kerykeion.utilities import get_number_from_name, calculate_position
 from pathlib import Path
 from typing import Union, Literal
 
+DEFAULT_GEONAMES_USERNAME = "century.boy"
 
 logger = getLogger(__name__)
 basicConfig(
@@ -131,7 +132,7 @@ class AstrologicalSubject:
         lng: Union[int, float] = 0,
         lat: Union[int, float] = 0,
         tz_str: str = "",
-        geonames_username: str = "century.boy",
+        geonames_username: Union[str, None] = None,
         zodiac_type: ZodiacType = "Tropic",
         online: bool = True,
     ) -> None:
@@ -156,10 +157,29 @@ class AstrologicalSubject:
         self.lng = lng
         self.lat = lat
         self.tz_str = tz_str
-        self._geonames_username = geonames_username
         self.zodiac_type = zodiac_type
         self.online = online
         self.json_dir = Path.home()
+        
+        # This message is set to encourage the user to set a custom geonames username
+        if geonames_username is None and online:
+            logger.info(
+                "\n"
+                "********" + \
+                "\n" + \
+                "NO GEONAMES USERNAME SET!" + \
+                "\n" + \
+                "Using the default geonames username is not recommended, please set a custom one!" + \
+                "\n" + \
+                "You can get one for free here:" + \
+                "\n" + \
+                "https://www.geonames.org/login" + \
+                "\n" + \
+                "Keep in mind that the default username is limited to 2000 requests per hour and is shared with everyone else using this library." + \
+                "\n" + \
+                "********"
+            )
+            self.geonames_username = DEFAULT_GEONAMES_USERNAME
 
         if not self.city:
             self.city = "London"
@@ -197,7 +217,7 @@ class AstrologicalSubject:
         geonames = FetchGeonames(
             self.city,
             self.nation,
-            username=self._geonames_username,
+            username=self.geonames_username,
         )
         self.city_data: dict[str, str] = geonames.get_serialized_data()
 

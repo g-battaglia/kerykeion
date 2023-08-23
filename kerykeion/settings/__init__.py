@@ -1,1 +1,1 @@
-from .kerykeion_settings import KerykeionSettingsModel, get_settings_dict
+from .kerykeion_settings import KerykeionSettingsModel, get_settings

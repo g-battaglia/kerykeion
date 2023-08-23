@@ -29,24 +29,33 @@ class SynastryAspects(NatalAspects):
 
         self.first_init_point_list = self.first_user.planets_list + self.first_user.houses_list
         self.second_init_point_list = self.second_user.planets_list + self.second_user.houses_list
+        
+        self._all_aspects: list = None
+        self._relevant_aspects: list = None
 
-    def get_all_aspects(self):
+    @property
+    def all_aspects(self):
         """
         Return all the aspects of the points in the natal chart in a dictionary,
         first all the individual aspects of each planet, second the aspects
         whiteout repetitions.
         """
+        
+        if self._all_aspects is not None:
+            return self._all_aspects
 
-        f_1 = self.filter_by_settings(self.first_init_point_list)
-        f_2 = self.filter_by_settings(self.second_init_point_list)
+        f_1 = self._filter_by_settings(self.first_init_point_list)
+        f_2 = self._filter_by_settings(self.second_init_point_list)
 
         self.all_aspects_list = []
 
         for first in range(len(f_1)):
             # Generates the aspects list whitout repetitions
             for second in range(len(f_2)):
-                verdict, name, orbit, aspect_degrees, color, aid, diff = self.asp_calc(
-                    f_1[first]["abs_pos"], f_2[second]["abs_pos"]
+                verdict, name, orbit, aspect_degrees, color, aid, diff = self.get_aspect_from_two_points(
+                    self.aspects_settings,
+                    f_1[first]["abs_pos"],
+                    f_2[second]["abs_pos"]
                 )
 
                 if verdict == True:
@@ -61,8 +70,8 @@ class SynastryAspects(NatalAspects):
                         "color": color,
                         "aid": aid,
                         "diff": diff,
-                        "p1": self.p_id_decoder(f_1[first]["name"]),
-                        "p2": self.p_id_decoder(
+                        "p1": self._p_id_decoder(f_1[first]["name"]),
+                        "p2": self._p_id_decoder(
                             f_2[second]["name"],
                         ),
                     }
@@ -79,7 +88,7 @@ if __name__ == "__main__":
     synastry_aspects = SynastryAspects(john, yoko)
 
     # All aspects
-    print(synastry_aspects.get_all_aspects())
+    print(synastry_aspects.all_aspects)
 
     # Relevant aspects
-    print(synastry_aspects.get_relevant_aspects())
+    print(synastry_aspects.relevant_aspects)
