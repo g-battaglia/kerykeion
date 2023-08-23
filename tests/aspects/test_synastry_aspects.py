@@ -8,8 +8,8 @@ class TestNatalAspects:
         self.first_subject = AstrologicalSubject("John", 1940, 10, 9, 10, 30, "Liverpool", "GB")
         self.second_subject = AstrologicalSubject("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP")
 
-        self.synastry_relevant_aspects = SynastryAspects(self.first_subject, self.second_subject).get_relevant_aspects()
-        self.synastry_all_aspects = SynastryAspects(self.first_subject, self.second_subject).get_all_aspects()
+        self.synastry_relevant_aspects = SynastryAspects(self.first_subject, self.second_subject).relevant_aspects
+        self.synastry_all_aspects = SynastryAspects(self.first_subject, self.second_subject).all_aspects
 
         self.expected_relevant_aspects = EXPECTED_RELEVANT_ASPECTS
         self.expected_all_aspects = EXPECTED_ALL_ASPECTS

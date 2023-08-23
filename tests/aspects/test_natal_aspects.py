@@ -9,8 +9,8 @@ from .expected_natal_aspects import EXPECTED_ALL_ASPECTS, EXPECTED_RELEVANT_ASPE
 class TestNatalAspects:
     def setup_class(self):
         self.subject = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
-        self.subject_relevant_aspects = NatalAspects(self.subject).get_relevant_aspects()
-        self.subject_all_aspects = NatalAspects(self.subject).get_all_aspects()
+        self.subject_relevant_aspects = NatalAspects(self.subject).relevant_aspects
+        self.subject_all_aspects = NatalAspects(self.subject).all_aspects
 
         self.expected_relevant_aspects = EXPECTED_RELEVANT_ASPECTS
         self.expected_all_aspects = EXPECTED_ALL_ASPECTS

@@ -7,7 +7,7 @@
 import pytz
 
 from datetime import datetime
-from kerykeion.settings.kerykeion_settings import get_settings_dict
+from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.synastry_aspects import SynastryAspects
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
@@ -127,7 +127,7 @@ class KerykeionChartSVG:
 
         if self.chart_type == "Natal" or self.chart_type == "ExternalNatal":
             natal_aspects_instance = NatalAspects(self.user, new_settings_file=self.new_settings_file)
-            self.aspects_list = natal_aspects_instance.get_relevant_aspects()
+            self.aspects_list = natal_aspects_instance.relevant_aspects
 
         # TODO: If not second should exit
         if self.chart_type == "Transit" or self.chart_type == "Synastry":
@@ -279,7 +279,7 @@ class KerykeionChartSVG:
         """
         Parse the settings file.
         """
-        settings = get_settings_dict(settings_file)
+        settings = get_settings(settings_file)
 
         language = settings["general_settings"]["language"]
         self.language_settings = settings["language_settings"].get(language, "EN")
@@ -1080,7 +1080,7 @@ class KerykeionChartSVG:
     def _makeAspectsTransit(self, r, ar):
         out = ""
 
-        self.aspects_list = SynastryAspects(self.user, self.t_user, new_settings_file=self.new_settings_file).get_relevant_aspects()
+        self.aspects_list = SynastryAspects(self.user, self.t_user, new_settings_file=self.new_settings_file).relevant_aspects
 
         for element in self.aspects_list:
             out += self._drawAspect(

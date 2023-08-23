@@ -68,7 +68,7 @@
     >>> second = AstrologicalSubject("Jane", 1991, 10, 25, 21, 00, "Roma")
 
     >>> name = SynastryAspects(first, second)
-    >>> aspect_list = name.get_relevant_aspects()
+    >>> aspect_list = name.relevant_aspects
     >>> print(aspect_list[0])
 
     Generating kerykeion object for Jack...
@@ -105,4 +105,4 @@ from .kr_types import *
 from .relationship_score import RelationshipScore
 from .aspects import SynastryAspects, NatalAspects
 from .report import Report
-from .settings import KerykeionSettingsModel, get_settings_dict
+from .settings import KerykeionSettingsModel, get_settings

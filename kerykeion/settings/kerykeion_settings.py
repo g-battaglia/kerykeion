@@ -17,7 +17,7 @@ basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level
 
 
 
-def get_settings_dict(new_settings_file: Union[Path, None] = None) -> KerykeionSettingsModel:
+def get_settings(new_settings_file: Union[Path, None] = None) -> KerykeionSettingsModel:
     """
     This function is used to get the settings dict from the settings file.
     If no settings file is passed as argument, or the file is not found, it will fallback to:
@@ -71,4 +71,4 @@ def merge_settings(settings: KerykeionSettingsModel, new_settings: Dict) -> Kery
 
 
 if __name__ == "__main__":
-    print(get_settings_dict())
+    print(get_settings())

@@ -59,7 +59,7 @@ class RelationshipScore:
         self.relevant_default_aspects = []
         self.__all_synastry_aspects = SynastryAspects(
             first_subject, second_subject, new_settings_file=new_settings_file
-        ).get_all_aspects()
+        ).all_aspects
 
         # Calculates all at initialization
         self._get_all()
