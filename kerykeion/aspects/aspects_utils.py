@@ -1,0 +1,185 @@
+# -*- coding: utf-8 -*-
+"""
+    This is part of Kerykeion (C) 2023 Giacomo Battaglia
+"""
+# TODO: Better documentation and unit tests
+
+from swisseph import difdeg2n
+from typing import Union
+
+
+def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, int], point_two: Union[float, int]):
+    """
+    Utility function.
+    It calculates the aspects between the 2 points.
+    Args: first point, second point.
+    """
+
+    distance = abs(difdeg2n(point_one, point_two))
+    diff = abs(point_one - point_two)
+
+    if int(distance) <= aspects_settings[0]["orb"]:
+        name = aspects_settings[0]["name"]
+        aspect_degrees = aspects_settings[0]["degree"]
+        color = aspects_settings[0]["color"]
+        verdict = True
+        aid = 0
+
+    elif (
+        (aspects_settings[1]["degree"] - aspects_settings[1]["orb"])
+        <= int(distance)
+        <= (aspects_settings[1]["degree"] + aspects_settings[1]["orb"])
+    ):
+        name = aspects_settings[1]["name"]
+        aspect_degrees = aspects_settings[1]["degree"]
+        color = aspects_settings[1]["color"]
+        verdict = True
+        aid = 1
+
+    elif (
+        (aspects_settings[2]["degree"] - aspects_settings[2]["orb"])
+        <= int(distance)
+        <= (aspects_settings[2]["degree"] + aspects_settings[2]["orb"])
+    ):
+        name = aspects_settings[2]["name"]
+        aspect_degrees = aspects_settings[2]["degree"]
+        color = aspects_settings[2]["color"]
+        verdict = True
+        aid = 2
+
+    elif (
+        (aspects_settings[3]["degree"] - aspects_settings[3]["orb"])
+        <= int(distance)
+        <= (aspects_settings[3]["degree"] + aspects_settings[3]["orb"])
+    ):
+        name = aspects_settings[3]["name"]
+        aspect_degrees = aspects_settings[3]["degree"]
+        color = aspects_settings[3]["color"]
+        verdict = True
+        aid = 3
+
+    elif (
+        (aspects_settings[4]["degree"] - aspects_settings[4]["orb"])
+        <= int(distance)
+        <= (aspects_settings[4]["degree"] + aspects_settings[4]["orb"])
+    ):
+        name = aspects_settings[4]["name"]
+        aspect_degrees = aspects_settings[4]["degree"]
+        color = aspects_settings[4]["color"]
+        verdict = True
+        aid = 4
+
+    elif (
+        (aspects_settings[5]["degree"] - aspects_settings[5]["orb"])
+        <= int(distance)
+        <= (aspects_settings[5]["degree"] + aspects_settings[5]["orb"])
+    ):
+        name = aspects_settings[5]["name"]
+        aspect_degrees = aspects_settings[5]["degree"]
+        color = aspects_settings[5]["color"]
+        verdict = True
+        aid = 5
+
+    elif (
+        (aspects_settings[6]["degree"] - aspects_settings[6]["orb"])
+        <= int(distance)
+        <= (aspects_settings[6]["degree"] + aspects_settings[6]["orb"])
+    ):
+        name = aspects_settings[6]["name"]
+        aspect_degrees = aspects_settings[6]["degree"]
+        color = aspects_settings[6]["color"]
+        verdict = True
+        aid = 6
+
+    elif (
+        (aspects_settings[7]["degree"] - aspects_settings[7]["orb"])
+        <= int(distance)
+        <= (aspects_settings[7]["degree"] + aspects_settings[7]["orb"])
+    ):
+        name = aspects_settings[7]["name"]
+        aspect_degrees = aspects_settings[7]["degree"]
+        color = aspects_settings[7]["color"]
+        verdict = True
+        aid = 7
+
+    elif (
+        (aspects_settings[8]["degree"] - aspects_settings[8]["orb"])
+        <= int(distance)
+        <= (aspects_settings[8]["degree"] + aspects_settings[8]["orb"])
+    ):
+        name = aspects_settings[8]["name"]
+        aspect_degrees = aspects_settings[8]["degree"]
+        color = aspects_settings[8]["color"]
+        verdict = True
+        aid = 8
+
+    elif (
+        (aspects_settings[9]["degree"] - aspects_settings[9]["orb"])
+        <= int(distance)
+        <= (aspects_settings[9]["degree"] + aspects_settings[9]["orb"])
+    ):
+        name = aspects_settings[9]["name"]
+        aspect_degrees = aspects_settings[9]["degree"]
+        color = aspects_settings[9]["color"]
+        verdict = True
+        aid = 9
+
+    elif (
+        (aspects_settings[10]["degree"] - aspects_settings[10]["orb"])
+        <= int(distance)
+        <= (aspects_settings[10]["degree"] + aspects_settings[10]["orb"])
+    ):
+        name = aspects_settings[10]["name"]
+        aspect_degrees = aspects_settings[10]["degree"]
+        color = aspects_settings[10]["color"]
+        verdict = True
+        aid = 10
+
+    else:
+        verdict = False
+        name = None
+        distance = 0
+        aspect_degrees = 0
+        color = None
+        aid = None
+
+    return (
+        verdict,
+        name,
+        distance - aspect_degrees,
+        aspect_degrees,
+        color,
+        aid,
+        diff,
+    )
+
+
+def planet_id_decoder(planets_settings: dict, name: str):
+    """
+    Check if the name of the planet is the same in the settings and return
+    the correct id for the planet.
+    """
+    str_name = str(name)
+    for planet in planets_settings:
+        if planet["name"] == str_name:
+            result = planet["id"]
+            return result
+
+
+def filter_by_settings(planets_settings: dict, init_point_list: list):
+    """
+    Creates a list of all the desired
+    points filtering by the settings.
+    """
+
+    set_points_name = []
+    for p in planets_settings:
+        if p["is_active"]:
+            set_points_name.append(p["name"])
+
+    point_list = []
+    for l in init_point_list:
+        if l["name"] in set_points_name:
+            point_list.append(l)
+
+    return point_list

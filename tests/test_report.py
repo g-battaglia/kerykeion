@@ -5,7 +5,7 @@ from kerykeion import (
 
 
 def test_print_report():
-    subject = AstrologicalSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
+    subject = AstrologicalSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT", geonames_username="century.boy")
     report = Report(subject)
 
     assert report.report_title == "\n+- Kerykeion report for John -+"

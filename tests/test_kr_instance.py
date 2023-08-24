@@ -7,7 +7,7 @@ logger = getLogger(__name__)
 class TestAstrologicalSubject:
     def setup_class(self):
         # Johnny Depp
-        self.subject = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
+        self.subject = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", geonames_username="century.boy")
         self.expected_output = {
             "name": "Johnny Depp",
             "year": 1963,

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kerykeion"
-version = "4.1.0"
+version = "4.1.1"
 authors = ["Giacomo Battaglia <battaglia.giacomo@yahoo.it>"]
 description = "A python library for astrology."
 license = "AGPL-3.0"
@@ -85,7 +85,7 @@ line-length = 120
 [tool.poe.tasks]
 test = "pytest"
 test-no-capture = "poetry run pytest --show-capture no  "
-lint = "mypy"
+analize = "mypy"
 docs = "pdoc kerykeion -o ./docs"
 format = "black --line-length 120"
 "format:all" = "black kerykeion tests --line-length 120"
