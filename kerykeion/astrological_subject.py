@@ -145,7 +145,6 @@ class AstrologicalSubject:
             )
         )
 
-
         self.name = name
         self.year = year
         self.month = month
@@ -160,7 +159,8 @@ class AstrologicalSubject:
         self.zodiac_type = zodiac_type
         self.online = online
         self.json_dir = Path.home()
-        
+        self.geonames_username = geonames_username
+
         # This message is set to encourage the user to set a custom geonames username
         if geonames_username is None and online:
             logger.info(
@@ -179,6 +179,7 @@ class AstrologicalSubject:
                 "\n" + \
                 "********"
             )
+
             self.geonames_username = DEFAULT_GEONAMES_USERNAME
 
         if not self.city:
@@ -263,7 +264,50 @@ class AstrologicalSubject:
         self.julian_day = float(swe.julday(self.utc.year, self.utc.month, self.utc.day, self.utc_time))
 
     def _houses(self) -> None:
-        """Calculate positions and store them in dictionaries"""
+        """
+        Calculate positions and store them in dictionaries
+
+        https://www.astro.com/faq/fq_fh_owhouse_e.htm
+        https://github.com/jwmatthys/pd-swisseph/blob/master/swehouse.c#L685
+        hsys = letter code for house system;
+            A  equal
+            E  equal
+            B  Alcabitius
+            C  Campanus
+            D  equal (MC)
+            F  Carter "Poli-Equatorial"
+            G  36 Gauquelin sectors
+            H  horizon / azimut
+            I  Sunshine solution Treindl
+            i  Sunshine solution Makransky
+            K  Koch
+            L  Pullen SD "sinusoidal delta", ex Neo-Porphyry
+            M  Morinus
+            N  equal/1=Aries
+            O  Porphyry
+            P  Placidus
+            Q  Pullen SR "sinusoidal ratio"
+            R  Regiomontanus
+            S  Sripati
+            T  Polich/Page ("topocentric")
+            U  Krusinski-Pisa-Goelzer
+            V  equal Vehlow
+            W  equal, whole sign
+            X  axial rotation system/ Meridian houses
+            Y  APC houses
+        """
+
+        if self.zodiac_type == "Sidereal":
+            self.houses_degree_ut = swe.houses_ex(
+                tjdut=self.julian_day, lat=self.lat, lon=self.lng, hsys=str.encode('P'), flags=swe.FLG_SIDEREAL
+            )[0]
+        elif self.zodiac_type == "Tropic":
+            self.houses_degree_ut = swe.houses(
+                tjdut=self.julian_day, lat=self.lat, lon=self.lng, hsys=str.encode('P')
+            )[0]
+        else:
+            raise KerykeionException("Zodiac type not recognized! Please use 'Tropic' or 'Sidereal'")
+
         point_type: Literal["Planet", "House"] = "House"
         # creates the list of the house in 360°
         self.houses_degree_ut = swe.houses(self.julian_day, self.lat, self.lng)[0]
