@@ -166,7 +166,7 @@ class KerykeionChartSVG:
         self.home_countrycode = self.user.nation
         self.home_timezonestr = self.user.tz_str
 
-        print(f"{self.user.name} birth location: {self.home_location}, {self.home_geolat}, {self.home_geolon}")
+        logger.info(f"{self.user.name} birth location: {self.home_location}, {self.home_geolat}, {self.home_geolon}")
 
         # default location
         self.location = self.home_location
@@ -238,8 +238,7 @@ class KerykeionChartSVG:
         Sets the output direcotry and returns it's path.
         """
         self.output_directory = dir_path
-        dir_string = f"Output direcotry set to: {self.output_directory}"
-        return print(dir_string)
+        logger.info(f"Output direcotry set to: {self.output_directory}")
 
     def parse_json_settings(self, settings_file):
         """
@@ -507,7 +506,7 @@ class KerykeionChartSVG:
         """
 
         # element: get extra points if planet is in own zodiac sign.
-        related_zodiac_signs = self.planets_settings[i]["related_zodiac_signs"]
+        related_zodiac_signs = self.available_planets_setting[i]["related_zodiac_signs"]
         cz = self.points_sign[i]
         extra_points = 0
         if related_zodiac_signs != []:
@@ -517,23 +516,23 @@ class KerykeionChartSVG:
 
         ele = self.zodiac[self.points_sign[i]]["element"]
         if ele == "fire":
-            self.fire = self.fire + self.planets_settings[i]["element_points"] + extra_points
+            self.fire = self.fire + self.available_planets_setting[i]["element_points"] + extra_points
 
         elif ele == "earth":
-            self.earth = self.earth + self.planets_settings[i]["element_points"] + extra_points
+            self.earth = self.earth + self.available_planets_setting[i]["element_points"] + extra_points
 
         elif ele == "air":
-            self.air = self.air + self.planets_settings[i]["element_points"] + extra_points
+            self.air = self.air + self.available_planets_setting[i]["element_points"] + extra_points
 
         elif ele == "water":
-            self.water = self.water + self.planets_settings[i]["element_points"] + extra_points
+            self.water = self.water + self.available_planets_setting[i]["element_points"] + extra_points
 
     def _make_planets(self, r):
         planets_degut = {}
-        diff = range(len(self.planets_settings))
+        diff = range(len(self.available_planets_setting))
 
         for i in range(len(self.available_planets_setting)):
-            if self.planets_settings[i]["is_active"] == 1:
+            if self.available_planets_setting[i]["is_active"] == 1:
                 # list of planets sorted by degree
                 logger.debug(f"planet: {i}, degree: {self.points_deg_ut[i]}")
                 planets_degut[self.points_deg_ut[i]] = i
@@ -567,24 +566,24 @@ class KerykeionChartSVG:
             diffb = degreeDiff(next, self.points_deg_ut[i])
             planets_by_pos[e] = [i, diffa, diffb]
 
-            logger.debug(f'{self.planets_settings[i]["label"]}, {diffa}, {diffb}')
+            logger.debug(f'{self.available_planets_setting[i]["label"]}, {diffa}, {diffb}')
 
             if diffb < planet_drange:
                 if group_open:
-                    groups[-1].append([e, diffa, diffb, self.planets_settings[planets_degut[keys[e]]]["label"]])
+                    groups[-1].append([e, diffa, diffb, self.available_planets_setting[planets_degut[keys[e]]]["label"]])
                 else:
                     group_open = True
                     groups.append([])
-                    groups[-1].append([e, diffa, diffb, self.planets_settings[planets_degut[keys[e]]]["label"]])
+                    groups[-1].append([e, diffa, diffb, self.available_planets_setting[planets_degut[keys[e]]]["label"]])
             else:
                 if group_open:
-                    groups[-1].append([e, diffa, diffb, self.planets_settings[planets_degut[keys[e]]]["label"]])
+                    groups[-1].append([e, diffa, diffb, self.available_planets_setting[planets_degut[keys[e]]]["label"]])
                 group_open = False
 
         def zero(x):
             return 0
 
-        planets_delta = list(map(zero, range(len(self.planets_settings))))
+        planets_delta = list(map(zero, range(len(self.available_planets_setting))))
 
         # print groups
         # print planets_by_pos
@@ -696,7 +695,7 @@ class KerykeionChartSVG:
                 y1 = sliceToY(0, (r - self.c3), trueoffset) + self.c3
                 x2 = sliceToX(0, (r - rplanet - 30), trueoffset) + rplanet + 30
                 y2 = sliceToY(0, (r - rplanet - 30), trueoffset) + rplanet + 30
-                color = self.planets_settings[i]["color"]
+                color = self.available_planets_setting[i]["color"]
                 output += (
                     '<line x1="%s" y1="%s" x2="%s" y2="%s" style="stroke-width:1px;stroke:%s;stroke-opacity:.3;"/>\n'
                     % (x1, y1, x2, y2, color)
@@ -714,7 +713,7 @@ class KerykeionChartSVG:
             else:
                 scale = 1
             # output planet
-            output += f'<g transform="translate(-{12 * scale},-{12 * scale})"><g transform="scale({scale})"><use x="{planet_x * (1/scale)}" y="{planet_y * (1/scale)}" xlink:href="#{self.planets_settings[i]["name"]}" /></g></g>'
+            output += f'<g transform="translate(-{12 * scale},-{12 * scale})"><g transform="scale({scale})"><use x="{planet_x * (1/scale)}" y="{planet_y * (1/scale)}" xlink:href="#{self.available_planets_setting[i]["name"]}" /></g></g>'
 
         # make transit degut and display planets
         if self.chart_type == "Transit" or self.chart_type == "Synastry":
@@ -726,7 +725,7 @@ class KerykeionChartSVG:
                 list_range = len(self.available_planets_setting)
             for i in range(list_range):
                 group_offset[i] = 0
-                if self.planets_settings[i]["is_active"] == 1:
+                if self.available_planets_setting[i]["is_active"] == 1:
                     t_planets_degut[self.t_points_deg_ut[i]] = i
             t_keys = list(t_planets_degut.keys())
             t_keys.sort()
@@ -787,14 +786,14 @@ class KerykeionChartSVG:
                     t_offset = t_offset - 360
                 planet_x = sliceToX(0, (r - rplanet), t_offset) + rplanet
                 planet_y = sliceToY(0, (r - rplanet), t_offset) + rplanet
-                output += f'<g transform="translate(-6,-6)"><g transform="scale(0.5)"><use x="{planet_x*2}" y="{planet_y*2}" xlink:href="#{self.planets_settings[i]["name"]}" /></g></g>'
+                output += f'<g transform="translate(-6,-6)"><g transform="scale(0.5)"><use x="{planet_x*2}" y="{planet_y*2}" xlink:href="#{self.available_planets_setting[i]["name"]}" /></g></g>'
 
                 # transit planet line
                 x1 = sliceToX(0, r + 3, t_offset) - 3
                 y1 = sliceToY(0, r + 3, t_offset) - 3
                 x2 = sliceToX(0, r - 3, t_offset) + 3
                 y2 = sliceToY(0, r - 3, t_offset) + 3
-                output += f'<line x1="{str(x1)}" y1="{str(y1)}" x2="{str(x2)}" y2="{str(y2)}" style="stroke: {self.planets_settings[i]["color"]}; stroke-width: 1px; stroke-opacity:.8;"/>'
+                output += f'<line x1="{str(x1)}" y1="{str(y1)}" x2="{str(x2)}" y2="{str(y2)}" style="stroke: {self.available_planets_setting[i]["color"]}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
                 # transit planet degree text
                 rotate = self.user.houses_degree_ut[0] - self.t_points_deg_ut[i]
@@ -818,7 +817,7 @@ class KerykeionChartSVG:
                 degree = int(t_offset)
                 output += f'<g transform="translate({deg_x},{deg_y})">'
                 output += f'<text transform="rotate({rotate})" text-anchor="{textanchor}'
-                output += f'" style="fill: {self.planets_settings[i]["color"]}; font-size: 10px;">{self._dec2deg(self.t_points_deg[i], type="1")}'
+                output += f'" style="fill: {self.available_planets_setting[i]["color"]}; font-size: 10px;">{self._dec2deg(self.t_points_deg[i], type="1")}'
                 output += "</text></g>"
 
             # check transit
@@ -833,7 +832,7 @@ class KerykeionChartSVG:
             x2 = sliceToX(0, (r - (dropin - 3)), offset) + (dropin - 3)
             y2 = sliceToY(0, (r - (dropin - 3)), offset) + (dropin - 3)
 
-            output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.planets_settings[i]["color"]}; stroke-width: 2px; stroke-opacity:.6;"/>'
+            output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.available_planets_setting[i]["color"]}; stroke-width: 2px; stroke-opacity:.6;"/>'
 
             # check transit
             if self.chart_type == "Transit" or self.chart_type == "Synastry":
@@ -845,7 +844,7 @@ class KerykeionChartSVG:
             y1 = sliceToY(0, r - dropin, offset) + dropin
             x2 = sliceToX(0, (r - (dropin - 3)), offset) + (dropin - 3)
             y2 = sliceToY(0, (r - (dropin - 3)), offset) + (dropin - 3)
-            output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.planets_settings[i]["color"]}; stroke-width: 2px; stroke-opacity:.6;"/>'
+            output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.available_planets_setting[i]["color"]}; stroke-width: 2px; stroke-opacity:.6;"/>'
 
         return output
 
@@ -872,14 +871,14 @@ class KerykeionChartSVG:
             tr[i] = {}
             conj[i] = {}
             # skip some points
-            n = self.planets_settings[i]["name"]
+            n = self.available_planets_setting[i]["name"]
             if n == "earth" or n == "True_Node" or n == "osc. apogee" or n == "intp. apogee" or n == "intp. perigee":
                 continue
             if n == "Dsc" or n == "Ic":
                 continue
             for j in range(len(self.available_planets_setting)):
                 # skip some points
-                n = self.planets_settings[j]["name"]
+                n = self.available_planets_setting[j]["name"]
                 if n == "earth" or n == "True_Node" or n == "osc. apogee" or n == "intp. apogee" or n == "intp. perigee":
                     continue
                 if n == "Dsc" or n == "Ic":
@@ -934,10 +933,10 @@ class KerykeionChartSVG:
                         if k in sq[a] and l in sq[a]:
                             logger.debug(f"Got tsquare {a} {k} {l}")
                             if k > l:
-                                tsquare[f"{a},{l},{k}"] = f"{self.planets_settings[a]['label']} => {self.planets_settings[l]['label']}, {self.planets_settings[k]['label']}"
+                                tsquare[f"{a},{l},{k}"] = f"{self.available_planets_setting[a]['label']} => {self.available_planets_setting[l]['label']}, {self.available_planets_setting[k]['label']}"
 
                             else:
-                                tsquare[f"{a},{k},{l}"] = f"{self.planets_settings[a]['label']} => {self.planets_settings[k]['label']}, {self.planets_settings[l]['label']}"
+                                tsquare[f"{a},{k},{l}"] = f"{self.available_planets_setting[a]['label']} => {self.available_planets_setting[k]['label']}, {self.available_planets_setting[l]['label']}"
 
         stellium = {}
         # check for 4 continuous conjunctions
@@ -966,10 +965,10 @@ class KerykeionChartSVG:
                                             l = [k, n, p, r]
                                             l.sort()
                                             stellium["%s %s %s %s" % (l[0], l[1], l[2], l[3])] = "%s %s %s %s" % (
-                                                self.planets_settings[l[0]]["label"],
-                                                self.planets_settings[l[1]]["label"],
-                                                self.planets_settings[l[2]]["label"],
-                                                self.planets_settings[l[3]]["label"],
+                                                self.available_planets_setting[l[0]]["label"],
+                                                self.available_planets_setting[l[1]]["label"],
+                                                self.available_planets_setting[l[2]]["label"],
+                                                self.available_planets_setting[l[3]]["label"],
                                             )
         # print yots
         out = '<g transform="translate(-30,380)">'
@@ -980,15 +979,15 @@ class KerykeionChartSVG:
 
                 # first planet symbol
                 out += f'<g transform="translate(20,{y})">'
-                out += f'<use transform="scale(0.4)" x="0" y="-20" xlink:href="#{self.planets_settings[yot[k][0]]["name"]}" /></g>'
+                out += f'<use transform="scale(0.4)" x="0" y="-20" xlink:href="#{self.available_planets_setting[yot[k][0]]["name"]}" /></g>'
 
                 # second planet symbol
                 out += f'<g transform="translate(30,{y})">'
-                out += f'<use transform="scale(0.4)" x="0" y="-20" xlink:href="#{self.planets_settings[yot[k][1]]["name"]}" /></g>'
+                out += f'<use transform="scale(0.4)" x="0" y="-20" xlink:href="#{self.available_planets_setting[yot[k][1]]["name"]}" /></g>'
 
                 # third planet symbol
                 out += f'<g transform="translate(40,{y})">'
-                out += f'<use transform="scale(0.4)" x="0" y="-20" xlink:href="#{self.planets_settings[yot[k][2]]["name"]}" /></g>'
+                out += f'<use transform="scale(0.4)" x="0" y="-20" xlink:href="#{self.available_planets_setting[yot[k][2]]["name"]}" /></g>'
 
                 y = y + 14
         # finalize
@@ -1016,14 +1015,14 @@ class KerykeionChartSVG:
         xindent = 380
         yindent = 468
         box = 14
-        revr = list(range(len(self.planets_settings)))
+        revr = list(range(len(self.available_planets_setting)))
         revr.reverse()
         counter = 0
         for a in revr:
             counter += 1
-            if self.planets_settings[a]["is_active"] == 1:
+            if self.available_planets_setting[a]["is_active"] == 1:
                 out += f'<rect x="{xindent}" y="{yindent}" width="{box}" height="{box}" style="{style}"/>'
-                out += f'<use transform="scale(0.4)" x="{(xindent+2)*2.5}" y="{(yindent+1)*2.5}" xlink:href="#{self.planets_settings[a]["name"]}" />'
+                out += f'<use transform="scale(0.4)" x="{(xindent+2)*2.5}" y="{(yindent+1)*2.5}" xlink:href="#{self.available_planets_setting[a]["name"]}" />'
 
                 xindent = xindent + box
                 yindent = yindent - box
@@ -1032,7 +1031,7 @@ class KerykeionChartSVG:
                 xorb = xindent
                 yorb = yindent + box
                 for b in revr2:
-                    if self.planets_settings[b]["is_active"] == 1:
+                    if self.available_planets_setting[b]["is_active"] == 1:
                         out += f'<rect x="{xorb}" y="{yorb}" width="{box}" height="{box}" style="{style}"/>'
 
                         xorb = xorb + box
@@ -1092,17 +1091,15 @@ class KerykeionChartSVG:
                     line = 0
 
             out += f'<g transform="translate({nl},{line})">'
+            
             # first planet symbol
-
-            # TODO: (next((item for item in self.planets_settings if item["id"] == self.aspects_list[i]["p1"]))) It preventes the use ot numeric ID, but it is not working.
             out += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{self.planets_settings[self.aspects_list[i]["p1"]]["name"]}" />'
             
             # aspect symbol
             out += f'<use  x="15" y="0" xlink:href="#orb{self.aspects_settings[self.aspects_list[i]["aid"]]["degree"]}" />'
+            
             # second planet symbol
             out += '<g transform="translate(30,0)">'
-            
-            # TODO: (next((item for item in self.planets_settings if item["id"] == self.aspects_list[i]["p3"])))
             out += '<use transform="scale(0.4)" x="0" y="3" xlink:href="#%s" />' % (self.planets_settings[self.aspects_list[i]["p2"]]["name"]) 
             
             out += "</g>"
@@ -1149,30 +1146,29 @@ class KerykeionChartSVG:
                 li = 10
                 offset = -120
 
-            if self.planets_settings[i]["is_active"] == 1:
-                # start of line
-                out += f'<g transform="translate({offset},{li})">'
+            # start of line
+            out += f'<g transform="translate({offset},{li})">'
 
-                # planet text
-                out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
+            # planet text
+            out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.available_planets_setting[i]["label"]]}</text>'
 
-                # planet symbol
-                out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.planets_settings[i]["name"]}" /></g>'
+            # planet symbol
+            out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.available_planets_setting[i]["name"]}" /></g>'
 
-                # planet degree
-                out += f'<text text-anchor="start" x="19" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self._dec2deg(self.points_deg[i])}</text>'
+            # planet degree
+            out += f'<text text-anchor="start" x="19" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self._dec2deg(self.points_deg[i])}</text>'
 
-                # zodiac
-                out += f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.points_sign[i]]["name"]}" /></g>'
+            # zodiac
+            out += f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.points_sign[i]]["name"]}" /></g>'
 
-                # planet retrograde
-                if self.points_retrograde[i]:
-                    out += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+            # planet retrograde
+            if self.points_retrograde[i]:
+                out += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
 
-                # end of line
-                out += end_of_line
+            # end of line
+            out += end_of_line
 
-                li = li + offset_between_lines
+            li = li + offset_between_lines
 
         if self.chart_type == "Transit" or self.chart_type == "Synastry":
             if self.chart_type == "Transit":
@@ -1192,14 +1188,14 @@ class KerykeionChartSVG:
                     t_li = 10
                     t_offset = -120
 
-                if self.planets_settings[i]["is_active"] == 1:
+                if self.available_planets_setting[i]["is_active"] == 1:
                     # start of line
                     out += f'<g transform="translate({t_offset},{t_li})">'
 
                     # planet text
-                    out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.planets_settings[i]["label"]]}</text>'
+                    out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.available_planets_setting[i]["label"]]}</text>'
                     # planet symbol
-                    out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.planets_settings[i]["name"]}" /></g>'
+                    out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.available_planets_setting[i]["name"]}" /></g>'
                     # planet degree
                     out += f'<text text-anchor="start" x="19" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self._dec2deg(self.t_points_deg[i])}</text>'
                     # zodiac
@@ -1483,7 +1479,7 @@ class KerykeionChartSVG:
         self._createTemplateDictionary()
         return template.replace('"', "'")
 
-    def makeSVG(self):
+    def makeSVG(self) -> None:
         """Prints out the SVG file in the specifide folder"""
 
         if not (self.template):
@@ -1494,7 +1490,7 @@ class KerykeionChartSVG:
         with open(self.chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(self.template)
 
-        return print(f"SVG Generated Correctly in: {self.chartname}")
+        logger.info(f"SVG Generated Correctly in: {self.chartname}")
 
 
 if __name__ == "__main__":
