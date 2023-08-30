@@ -111,8 +111,8 @@ class AstrologicalSubject:
     twelfth_house: KerykeionPointModel
 
     # Lists
-    houses: list[KerykeionPointModel]
-    planets: list[KerykeionPointModel]
+    houses_list: list[KerykeionPointModel]
+    planets_list: list[KerykeionPointModel]
     planets_degrees_ut: list[float]
     houses_degree_ut: list[float]
 
@@ -210,6 +210,12 @@ class AstrologicalSubject:
 
     def __repr__(self) -> str:
         return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
+    
+    def __getitem__(self, item):
+        return getattr(self, item)
+    
+    def get(self, item, default=None):
+        return getattr(self, item, default)
 
     def _fetch_tz_from_geonames(self) -> None:
         """Gets the nearest time zone for the calculation"""
