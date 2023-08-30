@@ -411,21 +411,21 @@
     },
     {
       "id": 10,
-      "name": "True_Node",
-      "color": "#4c1541",
-      "is_active": true,
-      "element_points": 20,
-      "related_zodiac_signs": [],
-      "label": "True_Node"
-    },
-    {
-      "id": 11,
       "name": "Mean_Node",
       "color": "#4c1541",
       "is_active": false,
       "element_points": 0,
       "related_zodiac_signs": [],
       "label": "Mean_Node"
+    },
+    {
+      "id": 11,
+      "name": "True_Node",
+      "color": "#4c1541",
+      "is_active": true,
+      "element_points": 20,
+      "related_zodiac_signs": [],
+      "label": "True_Node"
     },
     {
       "id": 12,

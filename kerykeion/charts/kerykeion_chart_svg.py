@@ -78,46 +78,37 @@ class KerykeionChartSVG:
         # Kerykeion instance
         self.user = first_obj
 
+        self.available_planets_setting = []
+        for body in self.planets_settings:
+            if body['is_active'] == False:
+                continue
+
+            self.available_planets_setting.append(body)
+            
+        # Available bodies
+        available_celestial_points = []
+        for body in self.available_planets_setting:
+            available_celestial_points.append(body["name"].lower())
+        
         # Make a list for the absolute degrees of the points of the graphic.
-        self.points_deg_ut = self.user.planets_degrees_ut + [
-            self.user.houses_degree_ut[0],
-            self.user.houses_degree_ut[9],
-            self.user.houses_degree_ut[6],
-            self.user.houses_degree_ut[3],
-        ]
+        self.points_deg_ut = []
+        for planet in available_celestial_points:
+            self.points_deg_ut.append(self.user.get(planet).abs_pos)
 
         # Make a list of the relative degrees of the points in the graphic.
         self.points_deg = []
-        for planet in self.user.planets_list:
-            self.points_deg.append(planet["position"])
-
-        self.points_deg = self.points_deg + [
-            self.user.houses_list[0]["position"],
-            self.user.houses_list[9]["position"],
-            self.user.houses_list[6]["position"],
-            self.user.houses_list[3]["position"],
-        ]
+        for planet in available_celestial_points:
+            self.points_deg.append(self.user.get(planet).position)
 
         # Make list of the points sign
         self.points_sign = []
-
-        for planet in self.user.planets_list:
-            self.points_sign.append(planet["sign_num"])
-
-        self.points_sign = self.points_sign + [
-            self.user.houses_list[0]["sign_num"],
-            self.user.houses_list[9]["sign_num"],
-            self.user.houses_list[6]["sign_num"],
-            self.user.houses_list[3]["sign_num"],
-        ]
+        for planet in available_celestial_points:
+            self.points_sign.append(self.user.get(planet).sign_num)
 
         # Make a list of points if they are retrograde or not.
         self.points_retrograde = []
-
-        for planet in self.user.planets_list:
-            self.points_retrograde.append(planet["retrograde"])
-
-        self.points_retrograde = self.points_retrograde + [False, False, False, False]
+        for planet in available_celestial_points:
+            self.points_retrograde.append(self.user.get(planet).retrograde)
 
         # Makes the sign number list.
 
@@ -138,49 +129,24 @@ class KerykeionChartSVG:
             self.t_user = second_obj
 
             # Make a list for the absolute degrees of the points of the graphic.
-
-            self.t_points_deg_ut = self.t_user.planets_degrees_ut + [
-                self.t_user.houses_degree_ut[0],
-                self.t_user.houses_degree_ut[9],
-                self.t_user.houses_degree_ut[6],
-                self.t_user.houses_degree_ut[3],
-            ]
+            self.t_points_deg_ut = []
+            for planet in available_celestial_points:            
+                self.t_points_deg_ut.append(self.t_user.get(planet).abs_pos)
 
             # Make a list of the relative degrees of the points in the graphic.
-
             self.t_points_deg = []
-            for planet in self.t_user.planets_list:
-                self.t_points_deg.append(planet["position"])
-
-            self.t_points_deg = self.t_points_deg + [
-                self.t_user.houses_list[0]["position"],
-                self.t_user.houses_list[9]["position"],
-                self.t_user.houses_list[6]["position"],
-                self.t_user.houses_list[3]["position"],
-            ]
+            for planet in available_celestial_points:
+                self.t_points_deg.append(self.t_user.get(planet).position)
 
             # Make list of the poits sign.
-
             self.t_points_sign = []
-
-            for planet in self.t_user.planets_list:
-                self.t_points_sign.append(planet["sign_num"])
-
-            self.t_points_sign = self.t_points_sign + [
-                self.t_user.houses_list[0]["sign_num"],
-                self.t_user.houses_list[9]["sign_num"],
-                self.t_user.houses_list[6]["sign_num"],
-                self.t_user.houses_list[3]["sign_num"],
-            ]
+            for planet in available_celestial_points:
+                self.t_points_sign.append(self.t_user.get(planet).sign_num)
 
             # Make a list of poits if they are retrograde or not.
-
             self.t_points_retrograde = []
-
-            for planet in self.t_user.planets_list:
-                self.t_points_retrograde.append(planet["retrograde"])
-
-            self.t_points_retrograde = self.t_points_retrograde + [False, False, False, False]
+            for planet in available_celestial_points:
+                self.t_points_retrograde.append(self.t_user.get(planet).retrograde)
 
             self.t_houses_sign_graph = []
             for h in self.t_user.houses_list:
@@ -566,7 +532,7 @@ class KerykeionChartSVG:
         planets_degut = {}
         diff = range(len(self.planets_settings))
 
-        for i in range(len(self.planets_settings)):
+        for i in range(len(self.available_planets_setting)):
             if self.planets_settings[i]["is_active"] == 1:
                 # list of planets sorted by degree
                 logger.debug(f"planet: {i}, degree: {self.points_deg_ut[i]}")
@@ -755,9 +721,9 @@ class KerykeionChartSVG:
             group_offset = {}
             t_planets_degut = {}
             if self.chart_type == "Transit":
-                list_range = len(self.planets_settings) - 4
+                list_range = len(self.available_planets_setting) - 4
             else:
-                list_range = len(self.planets_settings)
+                list_range = len(self.available_planets_setting)
             for i in range(list_range):
                 group_offset[i] = 0
                 if self.planets_settings[i]["is_active"] == 1:
@@ -897,7 +863,7 @@ class KerykeionChartSVG:
         tr = {}  # 6
         qc = {}  # 9
         sext = {}  # 3
-        for i in range(len(self.planets_settings)):
+        for i in range(len(self.available_planets_setting)):
             a = self.points_deg_ut[i]
             qc[i] = {}
             sext[i] = {}
@@ -911,7 +877,7 @@ class KerykeionChartSVG:
                 continue
             if n == "Dsc" or n == "Ic":
                 continue
-            for j in range(len(self.planets_settings)):
+            for j in range(len(self.available_planets_setting)):
                 # skip some points
                 n = self.planets_settings[j]["name"]
                 if n == "earth" or n == "True_Node" or n == "osc. apogee" or n == "intp. apogee" or n == "intp. perigee":
@@ -1174,7 +1140,7 @@ class KerykeionChartSVG:
         out += "</g>"
 
         end_of_line = None
-        for i in range(len(self.planets_settings)):
+        for i in range(len(self.available_planets_setting)):
             offset_between_lines = 14
             end_of_line = "</g>"
 
@@ -1221,7 +1187,7 @@ class KerykeionChartSVG:
             t_li = 10
             t_offset = 250
 
-            for i in range(len(self.planets_settings)):
+            for i in range(len(self.available_planets_setting)):
                 if i == 27:
                     t_li = 10
                     t_offset = -120

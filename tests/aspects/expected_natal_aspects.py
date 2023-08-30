@@ -249,7 +249,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 3,
         "diff": 55.63784239955676,
         "p1": 2,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Mercury",
@@ -305,7 +305,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 3,
         "diff": 55.03596616390936,
         "p1": 3,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Venus",
@@ -529,7 +529,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 6,
         "diff": 112.78376201515883,
         "p1": 8,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Neptune",
@@ -584,7 +584,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#36d100",
         "aid": 6,
         "diff": 234.2342461898942,
-        "p1": 10,
+        "p1": 11,
         "p2": 12,
     },
     {
@@ -598,7 +598,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#26bbcf",
         "aid": 9,
         "diff": 210.05695286796285,
-        "p1": 10,
+        "p1": 11,
         "p2": 13,
     },
     {
@@ -612,7 +612,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#985a10",
         "aid": 7,
         "diff": 135.94802948974493,
-        "p1": 10,
+        "p1": 11,
         "p2": 14,
     },
 ]
@@ -798,7 +798,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 3,
         "diff": 55.63784239955676,
         "p1": 2,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Venus",
@@ -840,7 +840,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 3,
         "diff": 55.03596616390936,
         "p1": 3,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Mars",
@@ -952,7 +952,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 6,
         "diff": 112.78376201515883,
         "p1": 8,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Neptune",
@@ -993,7 +993,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "color": "#36d100",
         "aid": 6,
         "diff": 234.2342461898942,
-        "p1": 10,
+        "p1": 11,
         "p2": 12,
     },
 ]

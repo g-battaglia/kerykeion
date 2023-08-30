@@ -249,7 +249,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 6,
         "diff": 119.68353092318281,
         "p1": 2,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Mercury",
@@ -333,7 +333,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 10,
         "diff": 184.96310845608258,
         "p1": 3,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Mars",
@@ -501,7 +501,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 3,
         "diff": 294.07325338683785,
         "p1": 5,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Jupiter",
@@ -613,7 +613,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 3,
         "diff": 294.5630756692323,
         "p1": 6,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Saturn",
@@ -878,7 +878,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#d59e28",
         "aid": 3,
         "diff": 54.1767992149486,
-        "p1": 10,
+        "p1": 11,
         "p2": 1,
     },
     {
@@ -892,7 +892,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#36d100",
         "aid": 6,
         "diff": 122.23948842822466,
-        "p1": 10,
+        "p1": 11,
         "p2": 3,
     },
     {
@@ -906,7 +906,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#36d100",
         "aid": 6,
         "diff": 118.66342874492881,
-        "p1": 10,
+        "p1": 11,
         "p2": 6,
     },
     {
@@ -920,7 +920,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#510060",
         "aid": 10,
         "diff": 170.49450495992954,
-        "p1": 10,
+        "p1": 11,
         "p2": 7,
     },
     {
@@ -934,7 +934,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#810757",
         "aid": 1,
         "diff": 31.938138954690857,
-        "p1": 10,
+        "p1": 11,
         "p2": 8,
     },
     {
@@ -948,7 +948,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#985a10",
         "aid": 7,
         "diff": 134.28253987403298,
-        "p1": 10,
+        "p1": 11,
         "p2": 13,
     },
     {
@@ -962,7 +962,7 @@ EXPECTED_ALL_ASPECTS = [
         "color": "#36d100",
         "aid": 6,
         "diff": 116.32542933579515,
-        "p1": 10,
+        "p1": 11,
         "p2": 14,
     },
     {
@@ -1271,7 +1271,7 @@ EXPECTED_ALL_ASPECTS = [
         "aid": 10,
         "diff": 182.23538205989766,
         "p1": 14,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Tenth_House",
@@ -1288,7 +1288,6 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 14,
     },
 ]
-
 EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Sun",
@@ -1470,7 +1469,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 6,
         "diff": 119.68353092318281,
         "p1": 2,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Mercury",
@@ -1554,7 +1553,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 10,
         "diff": 184.96310845608258,
         "p1": 3,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Mars",
@@ -1694,7 +1693,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 3,
         "diff": 294.07325338683785,
         "p1": 5,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Jupiter",
@@ -1806,7 +1805,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aid": 3,
         "diff": 294.5630756692323,
         "p1": 6,
-        "p2": 10,
+        "p2": 11,
     },
     {
         "p1_name": "Saturn",
@@ -2015,7 +2014,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "color": "#d59e28",
         "aid": 3,
         "diff": 54.1767992149486,
-        "p1": 10,
+        "p1": 11,
         "p2": 1,
     },
     {
@@ -2029,7 +2028,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "color": "#36d100",
         "aid": 6,
         "diff": 122.23948842822466,
-        "p1": 10,
+        "p1": 11,
         "p2": 3,
     },
     {
@@ -2043,7 +2042,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "color": "#36d100",
         "aid": 6,
         "diff": 118.66342874492881,
-        "p1": 10,
+        "p1": 11,
         "p2": 6,
     },
     {
@@ -2057,7 +2056,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "color": "#510060",
         "aid": 10,
         "diff": 170.49450495992954,
-        "p1": 10,
+        "p1": 11,
         "p2": 7,
     },
     {
