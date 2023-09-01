@@ -9,8 +9,7 @@ from logging import getLogger, basicConfig
 from typing import Union
 from kerykeion.settings.kerykeion_settings import get_settings
 from dataclasses import dataclass
-from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points
-from kerykeion.utilities import get_active_points_list
+from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
 
 logger = getLogger(__name__)
 basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO")

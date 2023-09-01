@@ -9,8 +9,7 @@ from typing import Union
 
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.settings.kerykeion_settings import get_settings
-from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points
-from kerykeion.utilities import get_active_points_list
+from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
 
 
 class SynastryAspects(NatalAspects):
