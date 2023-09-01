@@ -10,10 +10,17 @@ from typing import Union
 from kerykeion.settings.kerykeion_settings import get_settings
 from dataclasses import dataclass
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points
+from kerykeion.utilities import get_active_points_list
 
 logger = getLogger(__name__)
 basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO")
 
+AXES_LIST = [
+    "First_House",
+    "Tenth_House",
+    "Seventh_House",
+    "Fourth_House",
+]
 
 @dataclass
 class NatalAspects:
@@ -27,11 +34,11 @@ class NatalAspects:
     _relevant_aspects: Union[list, None] = None
 
     def __post_init__(self):
-        settings = get_settings(self.new_settings_file)
+        self.settings = get_settings(self.new_settings_file)
 
-        self.planets_settings = settings["celestial_points"]
-        self.aspects_settings = settings["aspects"]
-        self.axes_orbit_settings = settings["general_settings"]["axes_orbit"]
+        self.celestial_points = self.settings["celestial_points"]
+        self.aspects_settings = self.settings["aspects"]
+        self.axes_orbit_settings = self.settings["general_settings"]["axes_orbit"]
 
     @property
     def all_aspects(self):
@@ -44,36 +51,36 @@ class NatalAspects:
         if self._all_aspects is not None:
             return self._all_aspects
 
-        point_list = []
-        for planet in self.planets_settings:
-            if planet["is_active"] == True:
-                point_list.append(self.user[planet["name"].lower()])
+        active_points_list = get_active_points_list(self.user, self.settings)
 
         self.all_aspects_list = []
 
-        for first in range(len(point_list)):
+        for first in range(len(active_points_list)):
             # Generates the aspects list without repetitions
-            for second in range(first + 1, len(point_list)):
+            for second in range(first + 1, len(active_points_list)):
                 verdict, name, orbit, aspect_degrees, color, aid, diff = get_aspect_from_two_points(
-                    self.aspects_settings, point_list[first]["abs_pos"], point_list[second]["abs_pos"]
+                    self.aspects_settings, active_points_list[first]["abs_pos"], active_points_list[second]["abs_pos"]
                 )
 
                 if verdict == True:
                     d_asp = {
-                        "p1_name": point_list[first]["name"],
-                        "p1_abs_pos": point_list[first]["abs_pos"],
-                        "p2_name": point_list[second]["name"],
-                        "p2_abs_pos": point_list[second]["abs_pos"],
+                        "p1_name": active_points_list[first]["name"],
+                        "p1_abs_pos": active_points_list[first]["abs_pos"],
+                        "p2_name": active_points_list[second]["name"],
+                        "p2_abs_pos": active_points_list[second]["abs_pos"],
                         "aspect": name,
                         "orbit": orbit,
                         "aspect_degrees": aspect_degrees,
                         "color": color,
                         "aid": aid,
                         "diff": diff,
-                        "p1": planet_id_decoder(self.planets_settings, point_list[first]["name"]),
+                        "p1": planet_id_decoder(
+                            self.celestial_points,
+                            active_points_list[first]["name"]
+                        ),
                         "p2": planet_id_decoder(
-                            self.planets_settings,
-                            point_list[second]["name"],
+                            self.celestial_points,
+                            active_points_list[second]["name"],
                         ),
                     }
 
@@ -102,12 +109,7 @@ class NatalAspects:
             if self.aspects_settings[a["aid"]]["is_active"] == True:
                 aspects_filtered.append(a)
 
-        axes_list = [
-            "First_House",
-            "Tenth_House",
-            "Seventh_House",
-            "Fourth_House",
-        ]
+        axes_list = AXES_LIST
         counter = 0
 
         aspects_list_subtract = []
