@@ -164,22 +164,3 @@ def planet_id_decoder(planets_settings: dict, name: str):
         if planet["name"] == str_name:
             result = planet["id"]
             return result
-
-
-def filter_by_settings(planets_settings: dict, init_point_list: list):
-    """
-    Creates a list of all the desired
-    points filtering by the settings.
-    """
-
-    set_points_name = []
-    for p in planets_settings:
-        if p["is_active"]:
-            set_points_name.append(p["name"])
-
-    point_list = []
-    for l in init_point_list:
-        if l["name"] in set_points_name:
-            point_list.append(l)
-
-    return point_list

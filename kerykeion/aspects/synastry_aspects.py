@@ -9,7 +9,8 @@ from typing import Union
 
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.settings.kerykeion_settings import get_settings
-from kerykeion.aspects.aspects_utils import filter_by_settings, planet_id_decoder, get_aspect_from_two_points
+from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points
+from kerykeion.utilities import get_active_points_list
 
 
 class SynastryAspects(NatalAspects):
@@ -23,22 +24,24 @@ class SynastryAspects(NatalAspects):
         kr_object_two: AstrologicalSubject,
         new_settings_file: Union[Path, None] = None,
     ):
+        # Subjects
         self.first_user = kr_object_one
         self.second_user = kr_object_two
-
+        
+        # Settings
         self.new_settings_file = new_settings_file
+        self.settings = get_settings(self.new_settings_file)
+        
+        self.celestial_points = self.settings["celestial_points"]
+        self.aspects_settings = self.settings["aspects"]
+        self.axes_orbit_settings = self.settings["general_settings"]["axes_orbit"]
 
-        self.first_init_point_list = self.first_user.planets_list + self.first_user.houses_list
-        self.second_init_point_list = self.second_user.planets_list + self.second_user.houses_list
-
+        # Private variables of the aspects
         self._all_aspects: Union[list, None] = None
         self._relevant_aspects: Union[list, None] = None
 
-        settings = get_settings(self.new_settings_file)
 
-        self.planets_settings = settings["celestial_points"]
-        self.aspects_settings = settings["aspects"]
-        self.axes_orbit_settings = settings["general_settings"]["axes_orbit"]
+
 
     @property
     def all_aspects(self):
@@ -50,36 +53,39 @@ class SynastryAspects(NatalAspects):
 
         if self._all_aspects is not None:
             return self._all_aspects
-
-        f_1 = filter_by_settings(self.planets_settings, self.first_init_point_list)
-
-        f_2 = filter_by_settings(self.planets_settings, self.second_init_point_list)
+        
+        # Celestial Points Lists
+        first_active_points_list = get_active_points_list(self.first_user, self.settings)
+        second_active_points_list = get_active_points_list(self.second_user, self.settings)
 
         self.all_aspects_list = []
 
-        for first in range(len(f_1)):
+        for first in range(len(first_active_points_list)):
             # Generates the aspects list whitout repetitions
-            for second in range(len(f_2)):
+            for second in range(len(second_active_points_list)):
                 verdict, name, orbit, aspect_degrees, color, aid, diff = get_aspect_from_two_points(
-                    self.aspects_settings, f_1[first]["abs_pos"], f_2[second]["abs_pos"]
+                    self.aspects_settings, first_active_points_list[first]["abs_pos"], second_active_points_list[second]["abs_pos"]
                 )
 
                 if verdict == True:
                     d_asp = {
-                        "p1_name": f_1[first]["name"],
-                        "p1_abs_pos": f_1[first]["abs_pos"],
-                        "p2_name": f_2[second]["name"],
-                        "p2_abs_pos": f_2[second]["abs_pos"],
+                        "p1_name": first_active_points_list[first]["name"],
+                        "p1_abs_pos": first_active_points_list[first]["abs_pos"],
+                        "p2_name": second_active_points_list[second]["name"],
+                        "p2_abs_pos": second_active_points_list[second]["abs_pos"],
                         "aspect": name,
                         "orbit": orbit,
                         "aspect_degrees": aspect_degrees,
                         "color": color,
                         "aid": aid,
                         "diff": diff,
-                        "p1": planet_id_decoder(self.planets_settings, f_1[first]["name"]),
+                        "p1": planet_id_decoder(
+                            self.settings.celestial_points,
+                            first_active_points_list[first]["name"]
+                        ),
                         "p2": planet_id_decoder(
-                            self.planets_settings,
-                            f_2[second]["name"],
+                            self.settings.celestial_points,
+                            second_active_points_list[second]["name"],
                         ),
                     }
 
