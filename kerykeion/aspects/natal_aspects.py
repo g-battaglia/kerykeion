@@ -9,7 +9,7 @@ from logging import getLogger, basicConfig
 from typing import Union
 from kerykeion.settings.kerykeion_settings import get_settings
 from dataclasses import dataclass
-from kerykeion.aspects.aspects_utils import filter_by_settings, planet_id_decoder, get_aspect_from_two_points
+from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points
 
 logger = getLogger(__name__)
 basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO")
@@ -29,8 +29,6 @@ class NatalAspects:
     def __post_init__(self):
         settings = get_settings(self.new_settings_file)
 
-        self.init_point_list = self.user.planets_list + self.user.houses_list
-
         self.planets_settings = settings["celestial_points"]
         self.aspects_settings = settings["aspects"]
         self.axes_orbit_settings = settings["general_settings"]["axes_orbit"]
@@ -46,7 +44,10 @@ class NatalAspects:
         if self._all_aspects is not None:
             return self._all_aspects
 
-        point_list = filter_by_settings(self.planets_settings, self.init_point_list)
+        point_list = []
+        for planet in self.planets_settings:
+            if planet["is_active"] == True:
+                point_list.append(self.user[planet["name"].lower()])
 
         self.all_aspects_list = []
 
