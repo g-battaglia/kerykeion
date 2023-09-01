@@ -204,20 +204,3 @@ def calculate_position(
         raise KerykeionException(f"Error in calculating positions! Degrees: {degree}")
 
     return KerykeionPointModel(**dictionary)
-
-def get_active_points_list(subject: AstrologicalSubjectModel, settings: Union[KerykeionSettingsModel, dict]) -> list:
-    """
-    Given an astrological subject and the settings, return a list of the active points.
-    Args:
-        subject (AstrologicalSubject): The astrological subject to get the active points from.
-        settings (Union[KerykeionSettingsModel, dict]): Settings model o dictionary.
-
-    Returns:
-        list: List of the active points.
-    """
-    point_list = []
-    for planet in settings["celestial_points"]:
-        if planet["is_active"] == True:
-            point_list.append(subject[planet["name"].lower()])
-
-    return point_list

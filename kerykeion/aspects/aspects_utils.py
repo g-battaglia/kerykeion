@@ -4,6 +4,8 @@
 """
 # TODO: Better documentation and unit tests
 
+from kerykeion import AstrologicalSubject
+from kerykeion.settings import KerykeionSettingsModel
 from swisseph import difdeg2n
 from typing import Union
 
@@ -164,3 +166,21 @@ def planet_id_decoder(planets_settings: dict, name: str):
         if planet["name"] == str_name:
             result = planet["id"]
             return result
+
+
+def get_active_points_list(subject: AstrologicalSubject, settings: Union[KerykeionSettingsModel, dict]) -> list:
+    """
+    Given an astrological subject and the settings, return a list of the active points.
+    Args:
+        subject (AstrologicalSubject): The astrological subject to get the active points from.
+        settings (Union[KerykeionSettingsModel, dict]): Settings model o dictionary.
+
+    Returns:
+        list: List of the active points.
+    """
+    point_list = []
+    for planet in settings["celestial_points"]:
+        if planet["is_active"] == True:
+            point_list.append(subject[planet["name"].lower()])
+
+    return point_list
