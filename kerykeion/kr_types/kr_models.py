@@ -136,6 +136,7 @@ class AstrologicalSubjectModel(BaseModel):
     uranus: KerykeionPointModel
     neptune: KerykeionPointModel
     pluto: KerykeionPointModel
+    chiron: KerykeionPointModel
 
     # Houses
     first_house: KerykeionPointModel
