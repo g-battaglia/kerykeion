@@ -9,6 +9,7 @@ from logging import getLogger, basicConfig
 from typing import Union
 from kerykeion.settings.kerykeion_settings import get_settings
 from dataclasses import dataclass
+from functools import cached_property
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
 
 logger = getLogger(__name__)
@@ -21,6 +22,7 @@ AXES_LIST = [
     "Fourth_House",
 ]
 
+
 @dataclass
 class NatalAspects:
     """
@@ -29,8 +31,6 @@ class NatalAspects:
 
     user: AstrologicalSubject
     new_settings_file: Union[Path, None] = None
-    _all_aspects: Union[list, None] = None
-    _relevant_aspects: Union[list, None] = None
 
     def __post_init__(self):
         self.settings = get_settings(self.new_settings_file)
@@ -39,16 +39,13 @@ class NatalAspects:
         self.aspects_settings = self.settings["aspects"]
         self.axes_orbit_settings = self.settings["general_settings"]["axes_orbit"]
 
-    @property
+    @cached_property
     def all_aspects(self):
         """
         Return all the aspects of the points in the natal chart in a dictionary,
         first all the individual aspects of each planet, second the aspects
         without repetitions.
         """
-
-        if self._all_aspects is not None:
-            return self._all_aspects
 
         active_points_list = get_active_points_list(self.user, self.settings)
 
@@ -73,10 +70,7 @@ class NatalAspects:
                         "color": color,
                         "aid": aid,
                         "diff": diff,
-                        "p1": planet_id_decoder(
-                            self.celestial_points,
-                            active_points_list[first]["name"]
-                        ),
+                        "p1": planet_id_decoder(self.celestial_points, active_points_list[first]["name"]),
                         "p2": planet_id_decoder(
                             self.celestial_points,
                             active_points_list[second]["name"],
@@ -87,7 +81,7 @@ class NatalAspects:
 
         return self.all_aspects_list
 
-    @property
+    @cached_property
     def relevant_aspects(self):
         """
         Filters the aspects list with the desired points, in this case
@@ -95,10 +89,6 @@ class NatalAspects:
         Set the list with set_points and creating a list with the names
         or the numbers of the houses.
         """
-
-        if self._relevant_aspects is not None:
-            logger.debug("Relevant aspects already calculated, returning cached value")
-            return self._relevant_aspects
 
         logger.debug("Relevant aspects not already calculated, calculating now...")
         self.all_aspects

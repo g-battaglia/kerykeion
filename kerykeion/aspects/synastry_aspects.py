@@ -6,6 +6,7 @@
 from kerykeion import AstrologicalSubject
 from pathlib import Path
 from typing import Union
+from functools import cached_property
 
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.settings.kerykeion_settings import get_settings
@@ -26,11 +27,11 @@ class SynastryAspects(NatalAspects):
         # Subjects
         self.first_user = kr_object_one
         self.second_user = kr_object_two
-        
+
         # Settings
         self.new_settings_file = new_settings_file
         self.settings = get_settings(self.new_settings_file)
-        
+
         self.celestial_points = self.settings["celestial_points"]
         self.aspects_settings = self.settings["aspects"]
         self.axes_orbit_settings = self.settings["general_settings"]["axes_orbit"]
@@ -39,10 +40,7 @@ class SynastryAspects(NatalAspects):
         self._all_aspects: Union[list, None] = None
         self._relevant_aspects: Union[list, None] = None
 
-
-
-
-    @property
+    @cached_property
     def all_aspects(self):
         """
         Return all the aspects of the points in the natal chart in a dictionary,
@@ -52,7 +50,7 @@ class SynastryAspects(NatalAspects):
 
         if self._all_aspects is not None:
             return self._all_aspects
-        
+
         # Celestial Points Lists
         first_active_points_list = get_active_points_list(self.first_user, self.settings)
         second_active_points_list = get_active_points_list(self.second_user, self.settings)
@@ -63,7 +61,9 @@ class SynastryAspects(NatalAspects):
             # Generates the aspects list whitout repetitions
             for second in range(len(second_active_points_list)):
                 verdict, name, orbit, aspect_degrees, color, aid, diff = get_aspect_from_two_points(
-                    self.aspects_settings, first_active_points_list[first]["abs_pos"], second_active_points_list[second]["abs_pos"]
+                    self.aspects_settings,
+                    first_active_points_list[first]["abs_pos"],
+                    second_active_points_list[second]["abs_pos"],
                 )
 
                 if verdict == True:
@@ -79,8 +79,7 @@ class SynastryAspects(NatalAspects):
                         "aid": aid,
                         "diff": diff,
                         "p1": planet_id_decoder(
-                            self.settings.celestial_points,
-                            first_active_points_list[first]["name"]
+                            self.settings.celestial_points, first_active_points_list[first]["name"]
                         ),
                         "p2": planet_id_decoder(
                             self.settings.celestial_points,
