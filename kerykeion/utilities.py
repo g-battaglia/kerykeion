@@ -1,8 +1,6 @@
 from kerykeion.kr_types import KerykeionPointModel, KerykeionException, KerykeionSettingsModel, AstrologicalSubjectModel
 from typing import Union, Literal
-from logging import getLogger
-
-logger = getLogger(__name__)
+import logging
 
 
 def get_number_from_name(name: str) -> int:
@@ -204,3 +202,16 @@ def calculate_position(
         raise KerykeionException(f"Error in calculating positions! Degrees: {degree}")
 
     return KerykeionPointModel(**dictionary)
+
+def setup_logging(level: str) -> None:
+    """Setup logging for testing.
+    
+    Args:
+        level: Log level as a string, options: debug, info, warning, error"""
+    logopt: dict[str, int]  = {"debug": logging.DEBUG, 
+                               "info": logging.INFO, 
+                               "warning": logging.WARNING , 
+                               "error": logging.ERROR}
+    format: str             = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    loglevel: int           = logopt.get(level, logging.INFO)
+    logging.basicConfig(format=format, level=loglevel)

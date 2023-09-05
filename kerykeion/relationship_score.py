@@ -5,16 +5,9 @@
 
 from kerykeion import AstrologicalSubject
 from kerykeion.aspects.synastry_aspects import SynastryAspects
-from logging import basicConfig, getLogger
+import logging
 from pathlib import Path
 from typing import Union
-
-
-logger = getLogger(__name__)
-basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level="INFO"
-)
 
 
 class RelationshipScore:
@@ -78,7 +71,7 @@ class RelationshipScore:
         }
 
     def _log_aspect(self, aspect: dict, points: int) -> None:
-        logger.debug(
+        logging.debug(
             f"{points} Points: {aspect['p1_name']} {aspect['aspect']} {aspect['p2_name']}, rounded orbit: {int(aspect['orbit'])}"
         )
 
@@ -87,7 +80,7 @@ class RelationshipScore:
         5 points if is a destiny sign:
         """
         if self.first_subject.sun["quality"] == self.second_subject.sun["quality"]:
-            logger.debug(
+            logging.debug(
                 f'5 points: Destiny sign, {self.first_subject.sun["sign"]} and {self.second_subject.sun["sign"]}'
             )
             self.is_destiny_sign = True
@@ -200,7 +193,8 @@ class RelationshipScore:
 
 
 if __name__ == "__main__":
-    basicConfig(level="DEBUG", force=True)
+    from kerykeion.utilities import setup_logging
+    setup_logging(level="debug")
 
     lui = AstrologicalSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
     lei = AstrologicalSubject("Sarah", 1978, 2, 9, 15, 50, "Roma", "IT")

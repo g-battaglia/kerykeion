@@ -5,14 +5,12 @@
 
 from pathlib import Path
 from kerykeion import AstrologicalSubject
-from logging import getLogger, basicConfig
+import logging
 from typing import Union
 from kerykeion.settings.kerykeion_settings import get_settings
 from dataclasses import dataclass
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
 
-logger = getLogger(__name__)
-basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO")
 
 AXES_LIST = [
     "First_House",
@@ -97,10 +95,10 @@ class NatalAspects:
         """
 
         if self._relevant_aspects is not None:
-            logger.debug("Relevant aspects already calculated, returning cached value")
+            logging.debug("Relevant aspects already calculated, returning cached value")
             return self._relevant_aspects
 
-        logger.debug("Relevant aspects not already calculated, calculating now...")
+        logging.debug("Relevant aspects not already calculated, calculating now...")
         self.all_aspects
 
         aspects_filtered = []
@@ -131,7 +129,9 @@ class NatalAspects:
 
 
 if __name__ == "__main__":
-    basicConfig(level="DEBUG", force=True)
+    from kerykeion.utilities import setup_logging
+    setup_logging(level="debug")
+
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
 
     # All aspects
