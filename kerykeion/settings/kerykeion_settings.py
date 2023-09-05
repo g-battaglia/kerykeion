@@ -5,16 +5,10 @@
 
 
 from json import load
-from logging import getLogger, basicConfig
+import logging
 from pathlib import Path
 from typing import Dict, Union
 from kerykeion.kr_types import KerykeionSettingsModel
-
-
-logger = getLogger(__name__)
-basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO")
-
-
 
 
 def get_settings(new_settings_file: Union[Path, None] = None) -> KerykeionSettingsModel:
@@ -47,7 +41,7 @@ def get_settings(new_settings_file: Union[Path, None] = None) -> KerykeionSettin
     if not settings_file.exists():
         settings_file = Path(__file__).parent / "kr.config.json"
 
-    logger.debug(f"Kerykeion config file path: {settings_file}")
+    logging.debug(f"Kerykeion config file path: {settings_file}")
     with open(settings_file, "r", encoding="utf8") as f:
         settings_dict = load(f)
 
@@ -71,4 +65,7 @@ def merge_settings(settings: KerykeionSettingsModel, new_settings: Dict) -> Kery
 
 
 if __name__ == "__main__":
+    from kerykeion.utilities import setup_logging
+    setup_logging(level="debug")
+
     print(get_settings())
