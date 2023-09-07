@@ -105,6 +105,9 @@ class TestJsonDump:
 
 
 if __name__ == "__main__":
+    from kerykeion.utilities import setup_logging
+    setup_logging(level="debug")
+
     test = TestJsonDump()
     test.setup_class()
     test.test_json_dump_data()

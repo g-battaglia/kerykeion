@@ -93,6 +93,9 @@ class SynastryAspects(NatalAspects):
 
 
 if __name__ == "__main__":
+    from kerykeion.utilities import setup_logging
+    setup_logging(level="debug")
+
     john = AstrologicalSubject("John", 1940, 10, 9, 10, 30, "Liverpool")
     yoko = AstrologicalSubject("Yoko", 1933, 2, 18, 10, 30, "Tokyo")
 

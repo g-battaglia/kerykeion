@@ -5,14 +5,9 @@
 
 
 from json import load
-from logging import getLogger, basicConfig
 from pydantic import BaseModel, Field
 from pathlib import Path
 from typing import Dict, List, Union
-
-
-logger = getLogger(__name__)
-basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO")
 
 
 class CustomBaseModel(BaseModel):

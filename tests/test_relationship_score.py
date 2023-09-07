@@ -17,4 +17,7 @@ def test_relationship_score():
 
 
 if __name__ == "__main__":
+    from kerykeion.utilities import setup_logging
+    setup_logging(level="debug")
+
     test_relationship_score()

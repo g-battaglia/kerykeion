@@ -83,6 +83,9 @@ class Report:
 
 
 if __name__ == "__main__":
+    from kerykeion.utilities import setup_logging
+    setup_logging(level="debug")
+
     john = AstrologicalSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
     report = Report(john)
     report.print_report()
