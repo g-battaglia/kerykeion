@@ -1,8 +1,7 @@
-from typing import Literal, Union, Optional
-from pydantic import BaseModel
+from dataclasses import dataclass
 
-
-class ChartTemplateModel(BaseModel):
+@dataclass
+class ChartTemplateModel():
     """Pydantic model for the chart template."""
 
     def __setitem__(self, key, value):
