@@ -1,7 +1,4 @@
 from kerykeion import AstrologicalSubject
-from logging import getLogger
-
-logger = getLogger(__name__)
 
 
 class TestAstrologicalSubject:
