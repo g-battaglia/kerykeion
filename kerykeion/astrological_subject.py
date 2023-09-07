@@ -6,9 +6,9 @@
 import math
 import pytz
 import swisseph as swe
+import logging
 
 from datetime import datetime
-from logging import getLogger, basicConfig
 from kerykeion.fetch_geonames import FetchGeonames
 from kerykeion.kr_types import (
     KerykeionException,
@@ -22,12 +22,6 @@ from pathlib import Path
 from typing import Union, Literal
 
 DEFAULT_GEONAMES_USERNAME = "century.boy"
-
-logger = getLogger(__name__)
-basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level="INFO"
-)
 
 
 class AstrologicalSubject:
@@ -51,7 +45,6 @@ class AstrologicalSubject:
     - lng (Union[int, float], optional): _ Defaults to False.
     - lat (Union[int, float], optional): _ Defaults to False.
     - tz_str (Union[str, bool], optional): _ Defaults to False.
-    - logger (Union[Logger, None], optional): _ Defaults to None.
     - geonames_username (str, optional): _ Defaults to 'century.boy'.
     - online (bool, optional): Sets if you want to use the online mode (using
         geonames) or not. Defaults to True.
@@ -136,7 +129,7 @@ class AstrologicalSubject:
         zodiac_type: ZodiacType = "Tropic",
         online: bool = True,
     ) -> None:
-        logger.debug("Starting Kerykeion")
+        logging.debug("Starting Kerykeion")
 
         # We set the swisseph path to the current directory
         swe.set_ephe_path(
@@ -163,7 +156,7 @@ class AstrologicalSubject:
 
         # This message is set to encourage the user to set a custom geonames username
         if geonames_username is None and online:
-            logger.info(
+            logging.info(
                 "\n"
                 "********" + \
                 "\n" + \
@@ -184,11 +177,11 @@ class AstrologicalSubject:
 
         if not self.city:
             self.city = "London"
-            logger.warning("No city specified, using London as default")
+            logging.warning("No city specified, using London as default")
 
         if not self.nation:
             self.nation = "GB"
-            logger.warning("No nation specified, using GB as default")
+            logging.warning("No nation specified, using GB as default")
 
         if (not self.online) and (not lng or not lat or not tz_str):
             raise KerykeionException(
@@ -219,7 +212,7 @@ class AstrologicalSubject:
 
     def _fetch_tz_from_geonames(self) -> None:
         """Gets the nearest time zone for the calculation"""
-        logger.debug("Conneting to Geonames...")
+        logging.debug("Conneting to Geonames...")
 
         geonames = FetchGeonames(
             self.city,
@@ -243,11 +236,11 @@ class AstrologicalSubject:
 
         if self.lat > 66.0:
             self.lat = 66.0
-            logger.info("Polar circle override for houses, using 66 degrees")
+            logging.info("Polar circle override for houses, using 66 degrees")
 
         elif self.lat < -66.0:
             self.lat = -66.0
-            logger.info("Polar circle override for houses, using -66 degrees")
+            logging.info("Polar circle override for houses, using -66 degrees")
 
     def _get_utc(self) -> None:
         """Converts local time to utc time."""
@@ -608,7 +601,7 @@ class AstrologicalSubject:
 
             with open(json_path, "w", encoding="utf-8") as file:
                 file.write(json_string)
-                logger.info(f"JSON file dumped in {json_path}.")
+                logging.info(f"JSON file dumped in {json_path}.")
 
         return json_string
 
@@ -622,7 +615,8 @@ class AstrologicalSubject:
 
 if __name__ == "__main__":
     import json
-    basicConfig(level="DEBUG", force=True)
+    from kerykeion.utilities import setup_logging
+    setup_logging(level="debug")
 
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
     print(json.loads(johnny.json(dump=True)))

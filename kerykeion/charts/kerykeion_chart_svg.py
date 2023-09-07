@@ -5,6 +5,7 @@
 
 
 import pytz
+import logging
 
 from datetime import datetime
 from kerykeion.settings.kerykeion_settings import get_settings
@@ -14,17 +15,9 @@ from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types import KerykeionException, ChartType
 from kerykeion.kr_types import ChartTemplateModel
 from kerykeion.charts.charts_utils import decHourJoin, degreeDiff, offsetToTz, sliceToX, sliceToY
-from logging import getLogger, basicConfig
 from pathlib import Path
 from string import Template
 from typing import Union
-
-
-logger = getLogger(__name__)
-basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level="INFO"
-)
 
 
 class KerykeionChartSVG:
@@ -166,7 +159,7 @@ class KerykeionChartSVG:
         self.home_countrycode = self.user.nation
         self.home_timezonestr = self.user.tz_str
 
-        logger.info(f"{self.user.name} birth location: {self.home_location}, {self.home_geolat}, {self.home_geolon}")
+        logging.info(f"{self.user.name} birth location: {self.home_location}, {self.home_geolat}, {self.home_geolon}")
 
         # default location
         self.location = self.home_location
@@ -238,7 +231,7 @@ class KerykeionChartSVG:
         Sets the output direcotry and returns it's path.
         """
         self.output_directory = dir_path
-        logger.info(f"Output direcotry set to: {self.output_directory}")
+        logging.info(f"Output direcotry set to: {self.output_directory}")
 
     def parse_json_settings(self, settings_file):
         """
@@ -534,7 +527,7 @@ class KerykeionChartSVG:
         for i in range(len(self.available_planets_setting)):
             if self.available_planets_setting[i]["is_active"] == 1:
                 # list of planets sorted by degree
-                logger.debug(f"planet: {i}, degree: {self.points_deg_ut[i]}")
+                logging.debug(f"planet: {i}, degree: {self.points_deg_ut[i]}")
                 planets_degut[self.points_deg_ut[i]] = i
 
             self._value_element_from_planet(i)
@@ -566,7 +559,7 @@ class KerykeionChartSVG:
             diffb = degreeDiff(next, self.points_deg_ut[i])
             planets_by_pos[e] = [i, diffa, diffb]
 
-            logger.debug(f'{self.available_planets_setting[i]["label"]}, {diffa}, {diffb}')
+            logging.debug(f'{self.available_planets_setting[i]["label"]}, {diffa}, {diffb}')
 
             if diffb < planet_drange:
                 if group_open:
@@ -931,7 +924,7 @@ class KerykeionChartSVG:
                 for l, w in opp[k].items():
                     for a, b in sq.items():
                         if k in sq[a] and l in sq[a]:
-                            logger.debug(f"Got tsquare {a} {k} {l}")
+                            logging.debug(f"Got tsquare {a} {k} {l}")
                             if k > l:
                                 tsquare[f"{a},{l},{k}"] = f"{self.available_planets_setting[a]['label']} => {self.available_planets_setting[l]['label']}, {self.available_planets_setting[k]['label']}"
 
@@ -1474,7 +1467,7 @@ class KerykeionChartSVG:
 
         # return filename
 
-        logger.debug(f"Template dictionary keys: {td.keys()}")
+        logging.debug(f"Template dictionary keys: {td.keys()}")
 
         self._createTemplateDictionary()
         return template.replace('"', "'")
@@ -1490,11 +1483,12 @@ class KerykeionChartSVG:
         with open(self.chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(self.template)
 
-        logger.info(f"SVG Generated Correctly in: {self.chartname}")
+        logging.info(f"SVG Generated Correctly in: {self.chartname}")
 
 
 if __name__ == "__main__":
-    basicConfig(level="DEBUG", force=True)
+    from kerykeion.utilities import setup_logging
+    setup_logging(level="debug")
 
     first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
     second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
