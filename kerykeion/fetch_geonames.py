@@ -4,17 +4,10 @@
 """
 
 
-from logging import getLogger, basicConfig
+import logging
 from requests import Request
 from requests_cache import CachedSession
 from typing import Union
-
-
-logger = getLogger(__name__)
-basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level="INFO"
-)
 
 
 class FetchGeonames:
@@ -25,8 +18,6 @@ class FetchGeonames:
     city_name (str): Name of the city
     country_code (str): Two letters country code
     username (str, optional): GeoNames username, defaults to "century.boy".
-    logger (Union[logging.Logger, None], optional):
-        Optional logger, defaults to None. If none provided creates one.
     """
 
     def __init__(
@@ -57,21 +48,21 @@ class FetchGeonames:
         params = {"lat": lat, "lng": lon, "username": self.username}
 
         prepared_request = Request("GET", self.timezone_url, params=params).prepare()
-        logger.debug(f"Requesting data from GeoName timezones: {prepared_request.url}")
+        logging.debug(f"Requesting data from GeoName timezones: {prepared_request.url}")
 
         try:
             response = self.session.send(prepared_request)
             response_json = response.json()
 
         except Exception as e:
-            logger.error(f"Error fetching {self.timezone_url}: {e}")
+            logging.error(f"Error fetching {self.timezone_url}: {e}")
             return {}
 
         try:
             timezone_data["timezonestr"] = response_json["timezoneId"]
 
         except Exception as e:
-            logger.error(f"Error serializing data maybe wrong username? Details: {e}")
+            logging.error(f"Error serializing data maybe wrong username? Details: {e}")
             return {}
 
         if hasattr(response, "from_cache"):
@@ -95,14 +86,14 @@ class FetchGeonames:
         }
 
         prepared_request = Request("GET", self.base_url, params=params).prepare()
-        logger.debug(f"Requesting data from geonames basic: {prepared_request.url}")
+        logging.debug(f"Requesting data from geonames basic: {prepared_request.url}")
 
         try:
             response = self.session.send(prepared_request)
             response_json = response.json()
 
         except Exception as e:
-            logger.error(f"Error in fetching {self.base_url}: {e}")
+            logging.error(f"Error in fetching {self.base_url}: {e}")
             return {}
 
         try:
@@ -112,7 +103,7 @@ class FetchGeonames:
             city_data_whitout_tz["countryCode"] = response_json["geonames"][0]["countryCode"]
 
         except Exception as e:
-            logger.error(f"Error serializing data maybe wrong username? Details: {e}")
+            logging.error(f"Error serializing data maybe wrong username? Details: {e}")
             return {}
 
         if hasattr(response, "from_cache"):
@@ -132,18 +123,15 @@ class FetchGeonames:
             timezone_response = self.__get_timezone(city_data_response["lat"], city_data_response["lng"])
 
         except Exception as e:
-            logger.error(f"Error in fetching timezone: {e}")
+            logging.error(f"Error in fetching timezone: {e}")
             return {}
 
         return {**timezone_response, **city_data_response}
 
 
 if __name__ == "__main__":
-    basicConfig(
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        level="DEBUG",
-        force=True,
-    )
+    from kerykeion.utilities import setup_logging
+    setup_logging(level="debug")
 
     geonames = FetchGeonames("Roma", "IT")
     print(geonames.get_serialized_data())

@@ -161,6 +161,9 @@ class AstrologicalSubjectModel(BaseModel):
 
 
 if __name__ == "__main__":
+    from kerykeion.utilities import setup_logging
+    setup_logging(level="debug")
+
     sun = KerykeionPointModel(
         name="Sun",
         element="Air",
