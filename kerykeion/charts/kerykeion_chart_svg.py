@@ -13,7 +13,7 @@ from kerykeion.aspects.synastry_aspects import SynastryAspects
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types import KerykeionException, ChartType
-from kerykeion.kr_types import ChartTemplateModel
+from kerykeion.kr_types import ChartTemplateDictionary
 from kerykeion.charts.charts_utils import decHourJoin, degreeDiff, offsetToTz, sliceToX, sliceToY
 from pathlib import Path
 from string import Template
@@ -1245,7 +1245,7 @@ class KerykeionChartSVG:
 
         return out
 
-    def _createTemplateDictionary(self):
+    def _createTemplateDictionary(self) -> ChartTemplateDictionary:
         # self.chart_type = "Transit"
         # empty element points
         self.fire = 0.0
@@ -1273,7 +1273,7 @@ class KerykeionChartSVG:
             viewbox = self.chart_settings["wide_chart_viewBox"]
 
         # template dictionary
-        td: ChartTemplateModel = dict()
+        td: ChartTemplateDictionary = dict() # type: ignore
         r = 240
 
         if self.chart_type == "ExternalNatal":
