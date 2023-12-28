@@ -31,7 +31,7 @@ class LunarPhaseModel(BaseModel):
     def __repr__(self):
         return (
             super()
-            .dict(
+            .model_dump(
                 exclude_none=True,
                 exclude_unset=True,
                 exclude_defaults=True,
