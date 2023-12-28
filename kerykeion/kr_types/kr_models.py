@@ -11,7 +11,7 @@ from .kr_literals import *
 
 
 class LunarPhaseModel(BaseModel):
-    degrees_between_s_m: Union[int, float]
+    degrees_between_s_m: Union[float, int]
     moon_phase: int
     sun_phase: int
     moon_emoji: LunarPhaseEmoji
