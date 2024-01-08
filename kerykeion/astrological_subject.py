@@ -588,7 +588,7 @@ class AstrologicalSubject:
         """
 
         KrData = AstrologicalSubjectModel(**self.__dict__)
-        json_string = KrData.json(exclude_none=True)
+        json_string = KrData.model_dump_json(exclude_none=True)
         print(json_string)
 
         if dump:
