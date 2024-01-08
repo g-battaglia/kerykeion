@@ -36,9 +36,9 @@ This file is part of Kerykeion and is based on OpenAstro.org -->
                         </defs>
                         <circle cx='20' cy='10' r='10' style='fill: #000000' />
                         <circle
-                            cx='-54.43333333333334'
+                            cx='-53.685349672458216'
                             cy='10'
-                            r='75.87777777777778'
+                            r='75.17551760682048'
                             style='fill: #FFFFFF'
                             clip-path='url(#cut-off-circle)'
                         />

@@ -309,7 +309,12 @@ class TestAstrologicalSubject:
                 "house": "Fifth_House",
                 "retrograde": True,
             },
-            "lunar_phase": {"degrees_between_s_m": 201, "moon_phase": 16, "sun_phase": 15, "moon_emoji": "🌖"},
+            "lunar_phase": {
+                "degrees_between_s_m": 201.07547248727388, 
+                "moon_phase": 16, 
+                "sun_phase": 15, 
+                "moon_emoji": "🌖"
+            },
         }
 
     def test_basic_input_data(self):
@@ -618,4 +623,4 @@ class TestAstrologicalSubject:
         assert self.subject.twelfth_house.point_type == self.expected_output["twelfth_house"]["point_type"]
 
     def test_lunar_phase(self):
-        assert self.subject.lunar_phase == self.expected_output["lunar_phase"]
+        assert self.subject.lunar_phase.model_dump() == self.expected_output["lunar_phase"]
