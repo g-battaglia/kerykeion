@@ -90,7 +90,7 @@
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>
 </span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="k">class</span> <span class="nc">LunarPhaseModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="n">degrees_between_s_m</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="n">degrees_between_s_m</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>    <span class="n">moon_phase</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>    <span class="n">sun_phase</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>    <span class="n">moon_emoji</span><span class="p">:</span> <span class="n">LunarPhaseEmoji</span>
@@ -110,7 +110,7 @@
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>        <span class="k">return</span> <span class="p">(</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>            <span class="nb">super</span><span class="p">()</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>            <span class="o">.</span><span class="n">dict</span><span class="p">(</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>            <span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -215,44 +215,48 @@
 </span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="n">uranus</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
 </span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="n">neptune</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
 </span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="n">pluto</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>    <span class="c1"># Houses</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>    <span class="n">first_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="n">second_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="n">third_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>    <span class="n">fourth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>    <span class="n">fifth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>    <span class="n">sixth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>    <span class="n">seventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>    <span class="n">eighth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>    <span class="n">ninth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>    <span class="n">tenth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="n">eleventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="n">twelfth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>    <span class="c1"># Nodes</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>    <span class="n">mean_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="n">true_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>    <span class="c1"># Lunar Phase</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>    <span class="n">lunar_phase</span><span class="p">:</span> <span class="n">LunarPhaseModel</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>    <span class="n">chiron</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>    <span class="c1"># Houses</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="n">first_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="n">second_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>    <span class="n">third_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>    <span class="n">fourth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>    <span class="n">fifth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>    <span class="n">sixth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>    <span class="n">seventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>    <span class="n">eighth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>    <span class="n">ninth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="n">tenth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="n">eleventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="n">twelfth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>    <span class="c1"># Nodes</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="n">mean_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>    <span class="n">true_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>    <span class="c1"># Lunar Phase</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>    <span class="n">lunar_phase</span><span class="p">:</span> <span class="n">LunarPhaseModel</span>
 </span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>    <span class="n">sun</span> <span class="o">=</span> <span class="n">KerykeionPointModel</span><span class="p">(</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sun&quot;</span><span class="p">,</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>        <span class="n">element</span><span class="o">=</span><span class="s2">&quot;Air&quot;</span><span class="p">,</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>        <span class="n">quality</span><span class="o">=</span><span class="s2">&quot;Fixed&quot;</span><span class="p">,</span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>        <span class="n">sign</span><span class="o">=</span><span class="s2">&quot;Aqu&quot;</span><span class="p">,</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>        <span class="n">sign_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>        <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>        <span class="n">abs_pos</span><span class="o">=</span><span class="mf">12.123123</span><span class="p">,</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>        <span class="n">emoji</span><span class="o">=</span><span class="s2">&quot;♈&quot;</span><span class="p">,</span>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>        <span class="n">point_type</span><span class="o">=</span><span class="s2">&quot;Planet&quot;</span><span class="p">,</span>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>    <span class="p">)</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>    <span class="nb">print</span><span class="p">(</span><span class="n">sun</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>    <span class="nb">print</span><span class="p">(</span><span class="n">sun</span><span class="p">)</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="kn">from</span> <span class="nn">kerykeion.utilities</span> <span class="kn">import</span> <span class="n">setup_logging</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>    <span class="n">setup_logging</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>    <span class="n">sun</span> <span class="o">=</span> <span class="n">KerykeionPointModel</span><span class="p">(</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sun&quot;</span><span class="p">,</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>        <span class="n">element</span><span class="o">=</span><span class="s2">&quot;Air&quot;</span><span class="p">,</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>        <span class="n">quality</span><span class="o">=</span><span class="s2">&quot;Fixed&quot;</span><span class="p">,</span>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>        <span class="n">sign</span><span class="o">=</span><span class="s2">&quot;Aqu&quot;</span><span class="p">,</span>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>        <span class="n">sign_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>        <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>        <span class="n">abs_pos</span><span class="o">=</span><span class="mf">12.123123</span><span class="p">,</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>        <span class="n">emoji</span><span class="o">=</span><span class="s2">&quot;♈&quot;</span><span class="p">,</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>        <span class="n">point_type</span><span class="o">=</span><span class="s2">&quot;Planet&quot;</span><span class="p">,</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>    <span class="p">)</span>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>    <span class="nb">print</span><span class="p">(</span><span class="n">sun</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>    <span class="nb">print</span><span class="p">(</span><span class="n">sun</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -269,7 +273,7 @@
     </div>
     <a class="headerlink" href="#LunarPhaseModel"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="LunarPhaseModel-14"><a href="#LunarPhaseModel-14"><span class="linenos">14</span></a><span class="k">class</span> <span class="nc">LunarPhaseModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="LunarPhaseModel-15"><a href="#LunarPhaseModel-15"><span class="linenos">15</span></a>    <span class="n">degrees_between_s_m</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+</span><span id="LunarPhaseModel-15"><a href="#LunarPhaseModel-15"><span class="linenos">15</span></a>    <span class="n">degrees_between_s_m</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
 </span><span id="LunarPhaseModel-16"><a href="#LunarPhaseModel-16"><span class="linenos">16</span></a>    <span class="n">moon_phase</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="LunarPhaseModel-17"><a href="#LunarPhaseModel-17"><span class="linenos">17</span></a>    <span class="n">sun_phase</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="LunarPhaseModel-18"><a href="#LunarPhaseModel-18"><span class="linenos">18</span></a>    <span class="n">moon_emoji</span><span class="p">:</span> <span class="n">LunarPhaseEmoji</span>
@@ -289,7 +293,7 @@
 </span><span id="LunarPhaseModel-32"><a href="#LunarPhaseModel-32"><span class="linenos">32</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="LunarPhaseModel-33"><a href="#LunarPhaseModel-33"><span class="linenos">33</span></a>        <span class="k">return</span> <span class="p">(</span>
 </span><span id="LunarPhaseModel-34"><a href="#LunarPhaseModel-34"><span class="linenos">34</span></a>            <span class="nb">super</span><span class="p">()</span>
-</span><span id="LunarPhaseModel-35"><a href="#LunarPhaseModel-35"><span class="linenos">35</span></a>            <span class="o">.</span><span class="n">dict</span><span class="p">(</span>
+</span><span id="LunarPhaseModel-35"><a href="#LunarPhaseModel-35"><span class="linenos">35</span></a>            <span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
 </span><span id="LunarPhaseModel-36"><a href="#LunarPhaseModel-36"><span class="linenos">36</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="LunarPhaseModel-37"><a href="#LunarPhaseModel-37"><span class="linenos">37</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="LunarPhaseModel-38"><a href="#LunarPhaseModel-38"><span class="linenos">38</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -312,7 +316,35 @@
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.5/concepts/models/">https://docs.pydantic.dev/2.5/concepts/models/</a></p>
+
+<p>A base class for creating Pydantic models.</p>
+
+<p>Attributes:
+    __class_vars__: The names of classvars defined on the model.
+    __private_attributes__: Metadata about the private attributes of the model.
+    __signature__: The signature for instantiating the model.</p>
+
+<pre><code>__pydantic_complete__: Whether model building is completed, or if there are still undefined fields.
+__pydantic_core_schema__: The pydantic-core schema used to build the SchemaValidator and SchemaSerializer.
+__pydantic_custom_init__: Whether the model has a custom `__init__` function.
+__pydantic_decorators__: Metadata containing the decorators defined on the model.
+    This replaces `Model.__validators__` and `Model.__root_validators__` from Pydantic V1.
+__pydantic_generic_metadata__: Metadata for generic models; contains data used for a similar purpose to
+    __args__, __origin__, __parameters__ in typing-module generics. May eventually be replaced by these.
+__pydantic_parent_namespace__: Parent namespace of the model, used for automatic rebuilding of models.
+__pydantic_post_init__: The name of the post-init method for the model, if defined.
+__pydantic_root_model__: Whether the model is a `RootModel`.
+__pydantic_serializer__: The pydantic-core SchemaSerializer used to dump instances of the model.
+__pydantic_validator__: The pydantic-core SchemaValidator used to validate instances of the model.
+
+__pydantic_extra__: An instance attribute with the values of extra fields from validation when
+    `model_config['extra'] == 'allow'`.
+__pydantic_fields_set__: An instance attribute with the names of fields explicitly set.
+__pydantic_private__: Instance attribute with the values of private attributes set on the model instance.
+</code></pre>
+</div>
+
 
                             <div id="LunarPhaseModel.get" class="classattr">
                                         <input id="LunarPhaseModel.get-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -338,6 +370,20 @@
                                 <dl>
                                     <div><dt>pydantic.main.BaseModel</dt>
                                 <dd id="LunarPhaseModel.__init__" class="function">BaseModel</dd>
+                <dd id="LunarPhaseModel.model_computed_fields" class="variable">model_computed_fields</dd>
+                <dd id="LunarPhaseModel.model_extra" class="variable">model_extra</dd>
+                <dd id="LunarPhaseModel.model_fields_set" class="variable">model_fields_set</dd>
+                <dd id="LunarPhaseModel.model_construct" class="function">model_construct</dd>
+                <dd id="LunarPhaseModel.model_copy" class="function">model_copy</dd>
+                <dd id="LunarPhaseModel.model_dump" class="function">model_dump</dd>
+                <dd id="LunarPhaseModel.model_dump_json" class="function">model_dump_json</dd>
+                <dd id="LunarPhaseModel.model_json_schema" class="function">model_json_schema</dd>
+                <dd id="LunarPhaseModel.model_parametrized_name" class="function">model_parametrized_name</dd>
+                <dd id="LunarPhaseModel.model_post_init" class="function">model_post_init</dd>
+                <dd id="LunarPhaseModel.model_rebuild" class="function">model_rebuild</dd>
+                <dd id="LunarPhaseModel.model_validate" class="function">model_validate</dd>
+                <dd id="LunarPhaseModel.model_validate_json" class="function">model_validate_json</dd>
+                <dd id="LunarPhaseModel.model_validate_strings" class="function">model_validate_strings</dd>
                 <dd id="LunarPhaseModel.dict" class="function">dict</dd>
                 <dd id="LunarPhaseModel.json" class="function">json</dd>
                 <dd id="LunarPhaseModel.parse_obj" class="function">parse_obj</dd>
@@ -449,6 +495,20 @@
                                 <dl>
                                     <div><dt>pydantic.main.BaseModel</dt>
                                 <dd id="KerykeionPointModel.__init__" class="function">BaseModel</dd>
+                <dd id="KerykeionPointModel.model_computed_fields" class="variable">model_computed_fields</dd>
+                <dd id="KerykeionPointModel.model_extra" class="variable">model_extra</dd>
+                <dd id="KerykeionPointModel.model_fields_set" class="variable">model_fields_set</dd>
+                <dd id="KerykeionPointModel.model_construct" class="function">model_construct</dd>
+                <dd id="KerykeionPointModel.model_copy" class="function">model_copy</dd>
+                <dd id="KerykeionPointModel.model_dump" class="function">model_dump</dd>
+                <dd id="KerykeionPointModel.model_dump_json" class="function">model_dump_json</dd>
+                <dd id="KerykeionPointModel.model_json_schema" class="function">model_json_schema</dd>
+                <dd id="KerykeionPointModel.model_parametrized_name" class="function">model_parametrized_name</dd>
+                <dd id="KerykeionPointModel.model_post_init" class="function">model_post_init</dd>
+                <dd id="KerykeionPointModel.model_rebuild" class="function">model_rebuild</dd>
+                <dd id="KerykeionPointModel.model_validate" class="function">model_validate</dd>
+                <dd id="KerykeionPointModel.model_validate_json" class="function">model_validate_json</dd>
+                <dd id="KerykeionPointModel.model_validate_strings" class="function">model_validate_strings</dd>
                 <dd id="KerykeionPointModel.dict" class="function">dict</dd>
                 <dd id="KerykeionPointModel.json" class="function">json</dd>
                 <dd id="KerykeionPointModel.parse_obj" class="function">parse_obj</dd>
@@ -506,37 +566,80 @@
 </span><span id="AstrologicalSubjectModel-137"><a href="#AstrologicalSubjectModel-137"><span class="linenos">137</span></a>    <span class="n">uranus</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
 </span><span id="AstrologicalSubjectModel-138"><a href="#AstrologicalSubjectModel-138"><span class="linenos">138</span></a>    <span class="n">neptune</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
 </span><span id="AstrologicalSubjectModel-139"><a href="#AstrologicalSubjectModel-139"><span class="linenos">139</span></a>    <span class="n">pluto</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-140"><a href="#AstrologicalSubjectModel-140"><span class="linenos">140</span></a>
-</span><span id="AstrologicalSubjectModel-141"><a href="#AstrologicalSubjectModel-141"><span class="linenos">141</span></a>    <span class="c1"># Houses</span>
-</span><span id="AstrologicalSubjectModel-142"><a href="#AstrologicalSubjectModel-142"><span class="linenos">142</span></a>    <span class="n">first_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-143"><a href="#AstrologicalSubjectModel-143"><span class="linenos">143</span></a>    <span class="n">second_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-144"><a href="#AstrologicalSubjectModel-144"><span class="linenos">144</span></a>    <span class="n">third_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-145"><a href="#AstrologicalSubjectModel-145"><span class="linenos">145</span></a>    <span class="n">fourth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-146"><a href="#AstrologicalSubjectModel-146"><span class="linenos">146</span></a>    <span class="n">fifth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-147"><a href="#AstrologicalSubjectModel-147"><span class="linenos">147</span></a>    <span class="n">sixth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-148"><a href="#AstrologicalSubjectModel-148"><span class="linenos">148</span></a>    <span class="n">seventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-149"><a href="#AstrologicalSubjectModel-149"><span class="linenos">149</span></a>    <span class="n">eighth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-150"><a href="#AstrologicalSubjectModel-150"><span class="linenos">150</span></a>    <span class="n">ninth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-151"><a href="#AstrologicalSubjectModel-151"><span class="linenos">151</span></a>    <span class="n">tenth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-152"><a href="#AstrologicalSubjectModel-152"><span class="linenos">152</span></a>    <span class="n">eleventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-153"><a href="#AstrologicalSubjectModel-153"><span class="linenos">153</span></a>    <span class="n">twelfth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-154"><a href="#AstrologicalSubjectModel-154"><span class="linenos">154</span></a>
-</span><span id="AstrologicalSubjectModel-155"><a href="#AstrologicalSubjectModel-155"><span class="linenos">155</span></a>    <span class="c1"># Nodes</span>
-</span><span id="AstrologicalSubjectModel-156"><a href="#AstrologicalSubjectModel-156"><span class="linenos">156</span></a>    <span class="n">mean_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-157"><a href="#AstrologicalSubjectModel-157"><span class="linenos">157</span></a>    <span class="n">true_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-158"><a href="#AstrologicalSubjectModel-158"><span class="linenos">158</span></a>
-</span><span id="AstrologicalSubjectModel-159"><a href="#AstrologicalSubjectModel-159"><span class="linenos">159</span></a>    <span class="c1"># Lunar Phase</span>
-</span><span id="AstrologicalSubjectModel-160"><a href="#AstrologicalSubjectModel-160"><span class="linenos">160</span></a>    <span class="n">lunar_phase</span><span class="p">:</span> <span class="n">LunarPhaseModel</span>
+</span><span id="AstrologicalSubjectModel-140"><a href="#AstrologicalSubjectModel-140"><span class="linenos">140</span></a>    <span class="n">chiron</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-141"><a href="#AstrologicalSubjectModel-141"><span class="linenos">141</span></a>
+</span><span id="AstrologicalSubjectModel-142"><a href="#AstrologicalSubjectModel-142"><span class="linenos">142</span></a>    <span class="c1"># Houses</span>
+</span><span id="AstrologicalSubjectModel-143"><a href="#AstrologicalSubjectModel-143"><span class="linenos">143</span></a>    <span class="n">first_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-144"><a href="#AstrologicalSubjectModel-144"><span class="linenos">144</span></a>    <span class="n">second_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-145"><a href="#AstrologicalSubjectModel-145"><span class="linenos">145</span></a>    <span class="n">third_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-146"><a href="#AstrologicalSubjectModel-146"><span class="linenos">146</span></a>    <span class="n">fourth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-147"><a href="#AstrologicalSubjectModel-147"><span class="linenos">147</span></a>    <span class="n">fifth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-148"><a href="#AstrologicalSubjectModel-148"><span class="linenos">148</span></a>    <span class="n">sixth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-149"><a href="#AstrologicalSubjectModel-149"><span class="linenos">149</span></a>    <span class="n">seventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-150"><a href="#AstrologicalSubjectModel-150"><span class="linenos">150</span></a>    <span class="n">eighth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-151"><a href="#AstrologicalSubjectModel-151"><span class="linenos">151</span></a>    <span class="n">ninth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-152"><a href="#AstrologicalSubjectModel-152"><span class="linenos">152</span></a>    <span class="n">tenth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-153"><a href="#AstrologicalSubjectModel-153"><span class="linenos">153</span></a>    <span class="n">eleventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-154"><a href="#AstrologicalSubjectModel-154"><span class="linenos">154</span></a>    <span class="n">twelfth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-155"><a href="#AstrologicalSubjectModel-155"><span class="linenos">155</span></a>
+</span><span id="AstrologicalSubjectModel-156"><a href="#AstrologicalSubjectModel-156"><span class="linenos">156</span></a>    <span class="c1"># Nodes</span>
+</span><span id="AstrologicalSubjectModel-157"><a href="#AstrologicalSubjectModel-157"><span class="linenos">157</span></a>    <span class="n">mean_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-158"><a href="#AstrologicalSubjectModel-158"><span class="linenos">158</span></a>    <span class="n">true_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-159"><a href="#AstrologicalSubjectModel-159"><span class="linenos">159</span></a>
+</span><span id="AstrologicalSubjectModel-160"><a href="#AstrologicalSubjectModel-160"><span class="linenos">160</span></a>    <span class="c1"># Lunar Phase</span>
+</span><span id="AstrologicalSubjectModel-161"><a href="#AstrologicalSubjectModel-161"><span class="linenos">161</span></a>    <span class="n">lunar_phase</span><span class="p">:</span> <span class="n">LunarPhaseModel</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.5/concepts/models/">https://docs.pydantic.dev/2.5/concepts/models/</a></p>
+
+<p>A base class for creating Pydantic models.</p>
+
+<p>Attributes:
+    __class_vars__: The names of classvars defined on the model.
+    __private_attributes__: Metadata about the private attributes of the model.
+    __signature__: The signature for instantiating the model.</p>
+
+<pre><code>__pydantic_complete__: Whether model building is completed, or if there are still undefined fields.
+__pydantic_core_schema__: The pydantic-core schema used to build the SchemaValidator and SchemaSerializer.
+__pydantic_custom_init__: Whether the model has a custom `__init__` function.
+__pydantic_decorators__: Metadata containing the decorators defined on the model.
+    This replaces `Model.__validators__` and `Model.__root_validators__` from Pydantic V1.
+__pydantic_generic_metadata__: Metadata for generic models; contains data used for a similar purpose to
+    __args__, __origin__, __parameters__ in typing-module generics. May eventually be replaced by these.
+__pydantic_parent_namespace__: Parent namespace of the model, used for automatic rebuilding of models.
+__pydantic_post_init__: The name of the post-init method for the model, if defined.
+__pydantic_root_model__: Whether the model is a `RootModel`.
+__pydantic_serializer__: The pydantic-core SchemaSerializer used to dump instances of the model.
+__pydantic_validator__: The pydantic-core SchemaValidator used to validate instances of the model.
+
+__pydantic_extra__: An instance attribute with the values of extra fields from validation when
+    `model_config['extra'] == 'allow'`.
+__pydantic_fields_set__: An instance attribute with the names of fields explicitly set.
+__pydantic_private__: Instance attribute with the values of private attributes set on the model instance.
+</code></pre>
+</div>
+
 
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt>pydantic.main.BaseModel</dt>
                                 <dd id="AstrologicalSubjectModel.__init__" class="function">BaseModel</dd>
+                <dd id="AstrologicalSubjectModel.model_computed_fields" class="variable">model_computed_fields</dd>
+                <dd id="AstrologicalSubjectModel.model_extra" class="variable">model_extra</dd>
+                <dd id="AstrologicalSubjectModel.model_fields_set" class="variable">model_fields_set</dd>
+                <dd id="AstrologicalSubjectModel.model_construct" class="function">model_construct</dd>
+                <dd id="AstrologicalSubjectModel.model_copy" class="function">model_copy</dd>
+                <dd id="AstrologicalSubjectModel.model_dump" class="function">model_dump</dd>
+                <dd id="AstrologicalSubjectModel.model_dump_json" class="function">model_dump_json</dd>
+                <dd id="AstrologicalSubjectModel.model_json_schema" class="function">model_json_schema</dd>
+                <dd id="AstrologicalSubjectModel.model_parametrized_name" class="function">model_parametrized_name</dd>
+                <dd id="AstrologicalSubjectModel.model_post_init" class="function">model_post_init</dd>
+                <dd id="AstrologicalSubjectModel.model_rebuild" class="function">model_rebuild</dd>
+                <dd id="AstrologicalSubjectModel.model_validate" class="function">model_validate</dd>
+                <dd id="AstrologicalSubjectModel.model_validate_json" class="function">model_validate_json</dd>
+                <dd id="AstrologicalSubjectModel.model_validate_strings" class="function">model_validate_strings</dd>
                 <dd id="AstrologicalSubjectModel.dict" class="function">dict</dd>
                 <dd id="AstrologicalSubjectModel.json" class="function">json</dd>
                 <dd id="AstrologicalSubjectModel.parse_obj" class="function">parse_obj</dd>
