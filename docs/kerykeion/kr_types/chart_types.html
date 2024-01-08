@@ -31,7 +31,7 @@
         <h2>API Documentation</h2>
             <ul class="memberlist">
             <li>
-                    <a class="class" href="#ChartTemplateModel">ChartTemplateModel</a>
+                    <a class="class" href="#ChartTemplateDictionary">ChartTemplateDictionary</a>
                             <ul class="memberlist">
                 </ul>
 
@@ -57,235 +57,214 @@
 
                         <label class="view-source-button" for="mod-chart_types-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypedDict</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="k">class</span> <span class="nc">ChartTemplateModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Pydantic model for the chart template.&quot;&quot;&quot;</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="n">transitRing</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="n">degreeRing</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="n">c1</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="n">c1style</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="n">c2</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="n">c2style</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">c3</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="n">c3style</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="n">makeAspects</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="n">makeAspectGrid</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="n">makePatterns</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="n">chart_width</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="n">circleX</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>    <span class="n">circleY</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="n">svgWidth</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="n">svgHeight</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="n">viewbox</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="n">stringTitle</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="n">stringName</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="n">bottomLeft1</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>    <span class="n">bottomLeft2</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="n">bottomLeft3</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="n">bottomLeft4</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="n">lunar_phase_fg</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="n">lunar_phase_bg</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="n">lunar_phase_cx</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="n">lunar_phase_r</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="n">lunar_phase_outline</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="n">lunar_phase_rotate</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="n">stringLocation</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="n">stringDateTime</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>    <span class="n">stringLat</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="n">stringLon</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="n">stringPosition</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>    <span class="n">paper_color_0</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>    <span class="n">paper_color_1</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>    <span class="n">planets_color_0</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>    <span class="n">planets_color_1</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>    <span class="n">planets_color_2</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="n">planets_color_3</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>    <span class="n">planets_color_4</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>    <span class="n">planets_color_5</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>    <span class="n">planets_color_6</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>    <span class="n">planets_color_7</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>    <span class="n">planets_color_8</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>    <span class="n">planets_color_9</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="n">planets_color_10</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="n">planets_color_11</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>    <span class="n">planets_color_12</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>    <span class="n">planets_color_13</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>    <span class="n">planets_color_14</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>    <span class="n">planets_color_15</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>    <span class="n">zodiac_color_0</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="n">zodiac_color_1</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="n">zodiac_color_2</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="n">zodiac_color_3</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="n">zodiac_color_4</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="n">zodiac_color_5</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>    <span class="n">zodiac_color_6</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="n">zodiac_color_7</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>    <span class="n">zodiac_color_8</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>    <span class="n">zodiac_color_9</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="n">zodiac_color_10</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>    <span class="n">zodiac_color_11</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>    <span class="n">orb_color_0</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>    <span class="n">orb_color_30</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="n">orb_color_45</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>    <span class="n">orb_color_60</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>    <span class="n">orb_color_72</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>    <span class="n">orb_color_90</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>    <span class="n">orb_color_120</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>    <span class="n">orb_color_135</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>    <span class="n">orb_color_144</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>    <span class="n">orb_color_150</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>    <span class="n">orb_color_180</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>    <span class="n">cfgZoom</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>    <span class="n">cfgRotate</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>    <span class="n">cfgTranslate</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>    <span class="n">makeZodiac</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a>    <span class="n">makeHouses</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos">94</span></a>    <span class="n">makePlanets</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos">95</span></a>    <span class="n">makeElements</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos">96</span></a>    <span class="n">makePlanetGrid</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos">97</span></a>    <span class="n">makeHousesGrid</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="k">class</span> <span class="nc">ChartTemplateDictionary</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>    <span class="n">transitRing</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>    <span class="n">degreeRing</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>    <span class="n">c1</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>    <span class="n">c1style</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="n">c2</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="n">c2style</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="n">c3</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="n">c3style</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="n">makeAspects</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="n">makeAspectGrid</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="n">makePatterns</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="n">chart_width</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="n">circleX</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="n">circleY</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="n">svgWidth</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">svgHeight</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="n">viewbox</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="n">stringTitle</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="n">stringName</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="n">bottomLeft1</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="n">bottomLeft2</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="n">bottomLeft3</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>    <span class="n">bottomLeft4</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="n">lunar_phase_fg</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="n">lunar_phase_bg</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="n">lunar_phase_cx</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="n">lunar_phase_r</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="n">lunar_phase_outline</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="n">lunar_phase_rotate</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>    <span class="n">stringLocation</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="n">stringDateTime</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="n">stringLat</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="n">stringLon</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="n">stringPosition</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="n">paper_color_0</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="n">paper_color_1</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="n">planets_color_0</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="n">planets_color_1</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="n">planets_color_2</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="n">planets_color_3</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>    <span class="n">planets_color_4</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="n">planets_color_5</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="n">planets_color_6</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>    <span class="n">planets_color_7</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>    <span class="n">planets_color_8</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>    <span class="n">planets_color_9</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>    <span class="n">planets_color_10</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>    <span class="n">planets_color_11</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="n">planets_color_12</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>    <span class="n">planets_color_13</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>    <span class="n">planets_color_14</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>    <span class="n">planets_color_15</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>    <span class="n">zodiac_color_0</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>    <span class="n">zodiac_color_1</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>    <span class="n">zodiac_color_2</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="n">zodiac_color_3</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="n">zodiac_color_4</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>    <span class="n">zodiac_color_5</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>    <span class="n">zodiac_color_6</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>    <span class="n">zodiac_color_7</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>    <span class="n">zodiac_color_8</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>    <span class="n">zodiac_color_9</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="n">zodiac_color_10</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="n">zodiac_color_11</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="n">orb_color_0</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="n">orb_color_30</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="n">orb_color_45</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>    <span class="n">orb_color_60</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="n">orb_color_72</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>    <span class="n">orb_color_90</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>    <span class="n">orb_color_120</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="n">orb_color_135</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>    <span class="n">orb_color_144</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>    <span class="n">orb_color_150</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>    <span class="n">orb_color_180</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="n">cfgZoom</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>    <span class="n">cfgRotate</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>    <span class="n">cfgTranslate</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>    <span class="n">makeZodiac</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>    <span class="n">makeHouses</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>    <span class="n">makePlanets</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>    <span class="n">makeElements</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>    <span class="n">makePlanetGrid</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>    <span class="n">makeHousesGrid</span><span class="p">:</span> <span class="nb">str</span>
 </span></pre></div>
 
 
             </section>
-                <section id="ChartTemplateModel">
-                            <input id="ChartTemplateModel-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="ChartTemplateDictionary">
+                            <input id="ChartTemplateDictionary-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">ChartTemplateModel</span><wbr>(<span class="base">pydantic.main.BaseModel</span>):
+    <span class="name">ChartTemplateDictionary</span><wbr>(<span class="base">typing.TypedDict</span>):
 
-                <label class="view-source-button" for="ChartTemplateModel-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="ChartTemplateDictionary-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#ChartTemplateModel"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ChartTemplateModel-6"><a href="#ChartTemplateModel-6"><span class="linenos"> 6</span></a><span class="k">class</span> <span class="nc">ChartTemplateModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="ChartTemplateModel-7"><a href="#ChartTemplateModel-7"><span class="linenos"> 7</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Pydantic model for the chart template.&quot;&quot;&quot;</span>
-</span><span id="ChartTemplateModel-8"><a href="#ChartTemplateModel-8"><span class="linenos"> 8</span></a>
-</span><span id="ChartTemplateModel-9"><a href="#ChartTemplateModel-9"><span class="linenos"> 9</span></a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-</span><span id="ChartTemplateModel-10"><a href="#ChartTemplateModel-10"><span class="linenos">10</span></a>        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="ChartTemplateModel-11"><a href="#ChartTemplateModel-11"><span class="linenos">11</span></a>
-</span><span id="ChartTemplateModel-12"><a href="#ChartTemplateModel-12"><span class="linenos">12</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span id="ChartTemplateModel-13"><a href="#ChartTemplateModel-13"><span class="linenos">13</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-</span><span id="ChartTemplateModel-14"><a href="#ChartTemplateModel-14"><span class="linenos">14</span></a>
-</span><span id="ChartTemplateModel-15"><a href="#ChartTemplateModel-15"><span class="linenos">15</span></a>    <span class="n">transitRing</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-16"><a href="#ChartTemplateModel-16"><span class="linenos">16</span></a>    <span class="n">degreeRing</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-17"><a href="#ChartTemplateModel-17"><span class="linenos">17</span></a>    <span class="n">c1</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-18"><a href="#ChartTemplateModel-18"><span class="linenos">18</span></a>    <span class="n">c1style</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-19"><a href="#ChartTemplateModel-19"><span class="linenos">19</span></a>    <span class="n">c2</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-20"><a href="#ChartTemplateModel-20"><span class="linenos">20</span></a>    <span class="n">c2style</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-21"><a href="#ChartTemplateModel-21"><span class="linenos">21</span></a>    <span class="n">c3</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-22"><a href="#ChartTemplateModel-22"><span class="linenos">22</span></a>    <span class="n">c3style</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-23"><a href="#ChartTemplateModel-23"><span class="linenos">23</span></a>    <span class="n">makeAspects</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="ChartTemplateModel-24"><a href="#ChartTemplateModel-24"><span class="linenos">24</span></a>    <span class="n">makeAspectGrid</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="ChartTemplateModel-25"><a href="#ChartTemplateModel-25"><span class="linenos">25</span></a>    <span class="n">makePatterns</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="ChartTemplateModel-26"><a href="#ChartTemplateModel-26"><span class="linenos">26</span></a>    <span class="n">chart_width</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ChartTemplateModel-27"><a href="#ChartTemplateModel-27"><span class="linenos">27</span></a>    <span class="n">circleX</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ChartTemplateModel-28"><a href="#ChartTemplateModel-28"><span class="linenos">28</span></a>    <span class="n">circleY</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ChartTemplateModel-29"><a href="#ChartTemplateModel-29"><span class="linenos">29</span></a>    <span class="n">svgWidth</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ChartTemplateModel-30"><a href="#ChartTemplateModel-30"><span class="linenos">30</span></a>    <span class="n">svgHeight</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ChartTemplateModel-31"><a href="#ChartTemplateModel-31"><span class="linenos">31</span></a>    <span class="n">viewbox</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-32"><a href="#ChartTemplateModel-32"><span class="linenos">32</span></a>    <span class="n">stringTitle</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-33"><a href="#ChartTemplateModel-33"><span class="linenos">33</span></a>    <span class="n">stringName</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-34"><a href="#ChartTemplateModel-34"><span class="linenos">34</span></a>    <span class="n">bottomLeft1</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-35"><a href="#ChartTemplateModel-35"><span class="linenos">35</span></a>    <span class="n">bottomLeft2</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-36"><a href="#ChartTemplateModel-36"><span class="linenos">36</span></a>    <span class="n">bottomLeft3</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-37"><a href="#ChartTemplateModel-37"><span class="linenos">37</span></a>    <span class="n">bottomLeft4</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-38"><a href="#ChartTemplateModel-38"><span class="linenos">38</span></a>    <span class="n">lunar_phase_fg</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-39"><a href="#ChartTemplateModel-39"><span class="linenos">39</span></a>    <span class="n">lunar_phase_bg</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-40"><a href="#ChartTemplateModel-40"><span class="linenos">40</span></a>    <span class="n">lunar_phase_cx</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ChartTemplateModel-41"><a href="#ChartTemplateModel-41"><span class="linenos">41</span></a>    <span class="n">lunar_phase_r</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ChartTemplateModel-42"><a href="#ChartTemplateModel-42"><span class="linenos">42</span></a>    <span class="n">lunar_phase_outline</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-43"><a href="#ChartTemplateModel-43"><span class="linenos">43</span></a>    <span class="n">lunar_phase_rotate</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ChartTemplateModel-44"><a href="#ChartTemplateModel-44"><span class="linenos">44</span></a>    <span class="n">stringLocation</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-45"><a href="#ChartTemplateModel-45"><span class="linenos">45</span></a>    <span class="n">stringDateTime</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-46"><a href="#ChartTemplateModel-46"><span class="linenos">46</span></a>    <span class="n">stringLat</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-47"><a href="#ChartTemplateModel-47"><span class="linenos">47</span></a>    <span class="n">stringLon</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-48"><a href="#ChartTemplateModel-48"><span class="linenos">48</span></a>    <span class="n">stringPosition</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-49"><a href="#ChartTemplateModel-49"><span class="linenos">49</span></a>    <span class="n">paper_color_0</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-50"><a href="#ChartTemplateModel-50"><span class="linenos">50</span></a>    <span class="n">paper_color_1</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-51"><a href="#ChartTemplateModel-51"><span class="linenos">51</span></a>    <span class="n">planets_color_0</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-52"><a href="#ChartTemplateModel-52"><span class="linenos">52</span></a>    <span class="n">planets_color_1</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-53"><a href="#ChartTemplateModel-53"><span class="linenos">53</span></a>    <span class="n">planets_color_2</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-54"><a href="#ChartTemplateModel-54"><span class="linenos">54</span></a>    <span class="n">planets_color_3</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-55"><a href="#ChartTemplateModel-55"><span class="linenos">55</span></a>    <span class="n">planets_color_4</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-56"><a href="#ChartTemplateModel-56"><span class="linenos">56</span></a>    <span class="n">planets_color_5</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-57"><a href="#ChartTemplateModel-57"><span class="linenos">57</span></a>    <span class="n">planets_color_6</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-58"><a href="#ChartTemplateModel-58"><span class="linenos">58</span></a>    <span class="n">planets_color_7</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-59"><a href="#ChartTemplateModel-59"><span class="linenos">59</span></a>    <span class="n">planets_color_8</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-60"><a href="#ChartTemplateModel-60"><span class="linenos">60</span></a>    <span class="n">planets_color_9</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-61"><a href="#ChartTemplateModel-61"><span class="linenos">61</span></a>    <span class="n">planets_color_10</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-62"><a href="#ChartTemplateModel-62"><span class="linenos">62</span></a>    <span class="n">planets_color_11</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-63"><a href="#ChartTemplateModel-63"><span class="linenos">63</span></a>    <span class="n">planets_color_12</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-64"><a href="#ChartTemplateModel-64"><span class="linenos">64</span></a>    <span class="n">planets_color_13</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-65"><a href="#ChartTemplateModel-65"><span class="linenos">65</span></a>    <span class="n">planets_color_14</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-66"><a href="#ChartTemplateModel-66"><span class="linenos">66</span></a>    <span class="n">planets_color_15</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-67"><a href="#ChartTemplateModel-67"><span class="linenos">67</span></a>    <span class="n">zodiac_color_0</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-68"><a href="#ChartTemplateModel-68"><span class="linenos">68</span></a>    <span class="n">zodiac_color_1</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-69"><a href="#ChartTemplateModel-69"><span class="linenos">69</span></a>    <span class="n">zodiac_color_2</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-70"><a href="#ChartTemplateModel-70"><span class="linenos">70</span></a>    <span class="n">zodiac_color_3</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-71"><a href="#ChartTemplateModel-71"><span class="linenos">71</span></a>    <span class="n">zodiac_color_4</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-72"><a href="#ChartTemplateModel-72"><span class="linenos">72</span></a>    <span class="n">zodiac_color_5</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-73"><a href="#ChartTemplateModel-73"><span class="linenos">73</span></a>    <span class="n">zodiac_color_6</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-74"><a href="#ChartTemplateModel-74"><span class="linenos">74</span></a>    <span class="n">zodiac_color_7</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-75"><a href="#ChartTemplateModel-75"><span class="linenos">75</span></a>    <span class="n">zodiac_color_8</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-76"><a href="#ChartTemplateModel-76"><span class="linenos">76</span></a>    <span class="n">zodiac_color_9</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-77"><a href="#ChartTemplateModel-77"><span class="linenos">77</span></a>    <span class="n">zodiac_color_10</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-78"><a href="#ChartTemplateModel-78"><span class="linenos">78</span></a>    <span class="n">zodiac_color_11</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-79"><a href="#ChartTemplateModel-79"><span class="linenos">79</span></a>    <span class="n">orb_color_0</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-80"><a href="#ChartTemplateModel-80"><span class="linenos">80</span></a>    <span class="n">orb_color_30</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-81"><a href="#ChartTemplateModel-81"><span class="linenos">81</span></a>    <span class="n">orb_color_45</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-82"><a href="#ChartTemplateModel-82"><span class="linenos">82</span></a>    <span class="n">orb_color_60</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-83"><a href="#ChartTemplateModel-83"><span class="linenos">83</span></a>    <span class="n">orb_color_72</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-84"><a href="#ChartTemplateModel-84"><span class="linenos">84</span></a>    <span class="n">orb_color_90</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-85"><a href="#ChartTemplateModel-85"><span class="linenos">85</span></a>    <span class="n">orb_color_120</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-86"><a href="#ChartTemplateModel-86"><span class="linenos">86</span></a>    <span class="n">orb_color_135</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-87"><a href="#ChartTemplateModel-87"><span class="linenos">87</span></a>    <span class="n">orb_color_144</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-88"><a href="#ChartTemplateModel-88"><span class="linenos">88</span></a>    <span class="n">orb_color_150</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-89"><a href="#ChartTemplateModel-89"><span class="linenos">89</span></a>    <span class="n">orb_color_180</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-90"><a href="#ChartTemplateModel-90"><span class="linenos">90</span></a>    <span class="n">cfgZoom</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="ChartTemplateModel-91"><a href="#ChartTemplateModel-91"><span class="linenos">91</span></a>    <span class="n">cfgRotate</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ChartTemplateModel-92"><a href="#ChartTemplateModel-92"><span class="linenos">92</span></a>    <span class="n">cfgTranslate</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ChartTemplateModel-93"><a href="#ChartTemplateModel-93"><span class="linenos">93</span></a>    <span class="n">makeZodiac</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="ChartTemplateModel-94"><a href="#ChartTemplateModel-94"><span class="linenos">94</span></a>    <span class="n">makeHouses</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="ChartTemplateModel-95"><a href="#ChartTemplateModel-95"><span class="linenos">95</span></a>    <span class="n">makePlanets</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="ChartTemplateModel-96"><a href="#ChartTemplateModel-96"><span class="linenos">96</span></a>    <span class="n">makeElements</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="ChartTemplateModel-97"><a href="#ChartTemplateModel-97"><span class="linenos">97</span></a>    <span class="n">makePlanetGrid</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="ChartTemplateModel-98"><a href="#ChartTemplateModel-98"><span class="linenos">98</span></a>    <span class="n">makeHousesGrid</span><span class="p">:</span> <span class="nb">bool</span>
+    <a class="headerlink" href="#ChartTemplateDictionary"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ChartTemplateDictionary-5"><a href="#ChartTemplateDictionary-5"><span class="linenos"> 5</span></a><span class="k">class</span> <span class="nc">ChartTemplateDictionary</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="ChartTemplateDictionary-6"><a href="#ChartTemplateDictionary-6"><span class="linenos"> 6</span></a>    <span class="n">transitRing</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-7"><a href="#ChartTemplateDictionary-7"><span class="linenos"> 7</span></a>    <span class="n">degreeRing</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-8"><a href="#ChartTemplateDictionary-8"><span class="linenos"> 8</span></a>    <span class="n">c1</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-9"><a href="#ChartTemplateDictionary-9"><span class="linenos"> 9</span></a>    <span class="n">c1style</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-10"><a href="#ChartTemplateDictionary-10"><span class="linenos">10</span></a>    <span class="n">c2</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-11"><a href="#ChartTemplateDictionary-11"><span class="linenos">11</span></a>    <span class="n">c2style</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-12"><a href="#ChartTemplateDictionary-12"><span class="linenos">12</span></a>    <span class="n">c3</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-13"><a href="#ChartTemplateDictionary-13"><span class="linenos">13</span></a>    <span class="n">c3style</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-14"><a href="#ChartTemplateDictionary-14"><span class="linenos">14</span></a>    <span class="n">makeAspects</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-15"><a href="#ChartTemplateDictionary-15"><span class="linenos">15</span></a>    <span class="n">makeAspectGrid</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-16"><a href="#ChartTemplateDictionary-16"><span class="linenos">16</span></a>    <span class="n">makePatterns</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-17"><a href="#ChartTemplateDictionary-17"><span class="linenos">17</span></a>    <span class="n">chart_width</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="ChartTemplateDictionary-18"><a href="#ChartTemplateDictionary-18"><span class="linenos">18</span></a>    <span class="n">circleX</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-19"><a href="#ChartTemplateDictionary-19"><span class="linenos">19</span></a>    <span class="n">circleY</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-20"><a href="#ChartTemplateDictionary-20"><span class="linenos">20</span></a>    <span class="n">svgWidth</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-21"><a href="#ChartTemplateDictionary-21"><span class="linenos">21</span></a>    <span class="n">svgHeight</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-22"><a href="#ChartTemplateDictionary-22"><span class="linenos">22</span></a>    <span class="n">viewbox</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-23"><a href="#ChartTemplateDictionary-23"><span class="linenos">23</span></a>    <span class="n">stringTitle</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-24"><a href="#ChartTemplateDictionary-24"><span class="linenos">24</span></a>    <span class="n">stringName</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-25"><a href="#ChartTemplateDictionary-25"><span class="linenos">25</span></a>    <span class="n">bottomLeft1</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-26"><a href="#ChartTemplateDictionary-26"><span class="linenos">26</span></a>    <span class="n">bottomLeft2</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-27"><a href="#ChartTemplateDictionary-27"><span class="linenos">27</span></a>    <span class="n">bottomLeft3</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-28"><a href="#ChartTemplateDictionary-28"><span class="linenos">28</span></a>    <span class="n">bottomLeft4</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-29"><a href="#ChartTemplateDictionary-29"><span class="linenos">29</span></a>    <span class="n">lunar_phase_fg</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-30"><a href="#ChartTemplateDictionary-30"><span class="linenos">30</span></a>    <span class="n">lunar_phase_bg</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-31"><a href="#ChartTemplateDictionary-31"><span class="linenos">31</span></a>    <span class="n">lunar_phase_cx</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="ChartTemplateDictionary-32"><a href="#ChartTemplateDictionary-32"><span class="linenos">32</span></a>    <span class="n">lunar_phase_r</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="ChartTemplateDictionary-33"><a href="#ChartTemplateDictionary-33"><span class="linenos">33</span></a>    <span class="n">lunar_phase_outline</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-34"><a href="#ChartTemplateDictionary-34"><span class="linenos">34</span></a>    <span class="n">lunar_phase_rotate</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="ChartTemplateDictionary-35"><a href="#ChartTemplateDictionary-35"><span class="linenos">35</span></a>    <span class="n">stringLocation</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-36"><a href="#ChartTemplateDictionary-36"><span class="linenos">36</span></a>    <span class="n">stringDateTime</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-37"><a href="#ChartTemplateDictionary-37"><span class="linenos">37</span></a>    <span class="n">stringLat</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-38"><a href="#ChartTemplateDictionary-38"><span class="linenos">38</span></a>    <span class="n">stringLon</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-39"><a href="#ChartTemplateDictionary-39"><span class="linenos">39</span></a>    <span class="n">stringPosition</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-40"><a href="#ChartTemplateDictionary-40"><span class="linenos">40</span></a>    <span class="n">paper_color_0</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-41"><a href="#ChartTemplateDictionary-41"><span class="linenos">41</span></a>    <span class="n">paper_color_1</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-42"><a href="#ChartTemplateDictionary-42"><span class="linenos">42</span></a>    <span class="n">planets_color_0</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-43"><a href="#ChartTemplateDictionary-43"><span class="linenos">43</span></a>    <span class="n">planets_color_1</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-44"><a href="#ChartTemplateDictionary-44"><span class="linenos">44</span></a>    <span class="n">planets_color_2</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-45"><a href="#ChartTemplateDictionary-45"><span class="linenos">45</span></a>    <span class="n">planets_color_3</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-46"><a href="#ChartTemplateDictionary-46"><span class="linenos">46</span></a>    <span class="n">planets_color_4</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-47"><a href="#ChartTemplateDictionary-47"><span class="linenos">47</span></a>    <span class="n">planets_color_5</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-48"><a href="#ChartTemplateDictionary-48"><span class="linenos">48</span></a>    <span class="n">planets_color_6</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-49"><a href="#ChartTemplateDictionary-49"><span class="linenos">49</span></a>    <span class="n">planets_color_7</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-50"><a href="#ChartTemplateDictionary-50"><span class="linenos">50</span></a>    <span class="n">planets_color_8</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-51"><a href="#ChartTemplateDictionary-51"><span class="linenos">51</span></a>    <span class="n">planets_color_9</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-52"><a href="#ChartTemplateDictionary-52"><span class="linenos">52</span></a>    <span class="n">planets_color_10</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-53"><a href="#ChartTemplateDictionary-53"><span class="linenos">53</span></a>    <span class="n">planets_color_11</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-54"><a href="#ChartTemplateDictionary-54"><span class="linenos">54</span></a>    <span class="n">planets_color_12</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-55"><a href="#ChartTemplateDictionary-55"><span class="linenos">55</span></a>    <span class="n">planets_color_13</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-56"><a href="#ChartTemplateDictionary-56"><span class="linenos">56</span></a>    <span class="n">planets_color_14</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-57"><a href="#ChartTemplateDictionary-57"><span class="linenos">57</span></a>    <span class="n">planets_color_15</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-58"><a href="#ChartTemplateDictionary-58"><span class="linenos">58</span></a>    <span class="n">zodiac_color_0</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-59"><a href="#ChartTemplateDictionary-59"><span class="linenos">59</span></a>    <span class="n">zodiac_color_1</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-60"><a href="#ChartTemplateDictionary-60"><span class="linenos">60</span></a>    <span class="n">zodiac_color_2</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-61"><a href="#ChartTemplateDictionary-61"><span class="linenos">61</span></a>    <span class="n">zodiac_color_3</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-62"><a href="#ChartTemplateDictionary-62"><span class="linenos">62</span></a>    <span class="n">zodiac_color_4</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-63"><a href="#ChartTemplateDictionary-63"><span class="linenos">63</span></a>    <span class="n">zodiac_color_5</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-64"><a href="#ChartTemplateDictionary-64"><span class="linenos">64</span></a>    <span class="n">zodiac_color_6</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-65"><a href="#ChartTemplateDictionary-65"><span class="linenos">65</span></a>    <span class="n">zodiac_color_7</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-66"><a href="#ChartTemplateDictionary-66"><span class="linenos">66</span></a>    <span class="n">zodiac_color_8</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-67"><a href="#ChartTemplateDictionary-67"><span class="linenos">67</span></a>    <span class="n">zodiac_color_9</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-68"><a href="#ChartTemplateDictionary-68"><span class="linenos">68</span></a>    <span class="n">zodiac_color_10</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-69"><a href="#ChartTemplateDictionary-69"><span class="linenos">69</span></a>    <span class="n">zodiac_color_11</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-70"><a href="#ChartTemplateDictionary-70"><span class="linenos">70</span></a>    <span class="n">orb_color_0</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-71"><a href="#ChartTemplateDictionary-71"><span class="linenos">71</span></a>    <span class="n">orb_color_30</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-72"><a href="#ChartTemplateDictionary-72"><span class="linenos">72</span></a>    <span class="n">orb_color_45</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-73"><a href="#ChartTemplateDictionary-73"><span class="linenos">73</span></a>    <span class="n">orb_color_60</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-74"><a href="#ChartTemplateDictionary-74"><span class="linenos">74</span></a>    <span class="n">orb_color_72</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-75"><a href="#ChartTemplateDictionary-75"><span class="linenos">75</span></a>    <span class="n">orb_color_90</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-76"><a href="#ChartTemplateDictionary-76"><span class="linenos">76</span></a>    <span class="n">orb_color_120</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-77"><a href="#ChartTemplateDictionary-77"><span class="linenos">77</span></a>    <span class="n">orb_color_135</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-78"><a href="#ChartTemplateDictionary-78"><span class="linenos">78</span></a>    <span class="n">orb_color_144</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-79"><a href="#ChartTemplateDictionary-79"><span class="linenos">79</span></a>    <span class="n">orb_color_150</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-80"><a href="#ChartTemplateDictionary-80"><span class="linenos">80</span></a>    <span class="n">orb_color_180</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-81"><a href="#ChartTemplateDictionary-81"><span class="linenos">81</span></a>    <span class="n">cfgZoom</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-82"><a href="#ChartTemplateDictionary-82"><span class="linenos">82</span></a>    <span class="n">cfgRotate</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-83"><a href="#ChartTemplateDictionary-83"><span class="linenos">83</span></a>    <span class="n">cfgTranslate</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-84"><a href="#ChartTemplateDictionary-84"><span class="linenos">84</span></a>    <span class="n">makeZodiac</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-85"><a href="#ChartTemplateDictionary-85"><span class="linenos">85</span></a>    <span class="n">makeHouses</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-86"><a href="#ChartTemplateDictionary-86"><span class="linenos">86</span></a>    <span class="n">makePlanets</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-87"><a href="#ChartTemplateDictionary-87"><span class="linenos">87</span></a>    <span class="n">makeElements</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-88"><a href="#ChartTemplateDictionary-88"><span class="linenos">88</span></a>    <span class="n">makePlanetGrid</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ChartTemplateDictionary-89"><a href="#ChartTemplateDictionary-89"><span class="linenos">89</span></a>    <span class="n">makeHousesGrid</span><span class="p">:</span> <span class="nb">str</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Pydantic model for the chart template.</p>
-</div>
-
+    
 
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ChartTemplateModel.__init__" class="function">BaseModel</dd>
-                <dd id="ChartTemplateModel.dict" class="function">dict</dd>
-                <dd id="ChartTemplateModel.json" class="function">json</dd>
-                <dd id="ChartTemplateModel.parse_obj" class="function">parse_obj</dd>
-                <dd id="ChartTemplateModel.parse_raw" class="function">parse_raw</dd>
-                <dd id="ChartTemplateModel.parse_file" class="function">parse_file</dd>
-                <dd id="ChartTemplateModel.from_orm" class="function">from_orm</dd>
-                <dd id="ChartTemplateModel.construct" class="function">construct</dd>
-                <dd id="ChartTemplateModel.copy" class="function">copy</dd>
-                <dd id="ChartTemplateModel.schema" class="function">schema</dd>
-                <dd id="ChartTemplateModel.schema_json" class="function">schema_json</dd>
-                <dd id="ChartTemplateModel.validate" class="function">validate</dd>
-                <dd id="ChartTemplateModel.update_forward_refs" class="function">update_forward_refs</dd>
+                                    <div><dt>builtins.dict</dt>
+                                <dd id="ChartTemplateDictionary.get" class="function">get</dd>
+                <dd id="ChartTemplateDictionary.setdefault" class="function">setdefault</dd>
+                <dd id="ChartTemplateDictionary.pop" class="function">pop</dd>
+                <dd id="ChartTemplateDictionary.popitem" class="function">popitem</dd>
+                <dd id="ChartTemplateDictionary.keys" class="function">keys</dd>
+                <dd id="ChartTemplateDictionary.items" class="function">items</dd>
+                <dd id="ChartTemplateDictionary.values" class="function">values</dd>
+                <dd id="ChartTemplateDictionary.update" class="function">update</dd>
+                <dd id="ChartTemplateDictionary.fromkeys" class="function">fromkeys</dd>
+                <dd id="ChartTemplateDictionary.clear" class="function">clear</dd>
+                <dd id="ChartTemplateDictionary.copy" class="function">copy</dd>
 
             </div>
                                 </dl>
