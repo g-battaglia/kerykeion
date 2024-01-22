@@ -123,6 +123,17 @@ class KrInstance():
         if (not self.online) and (not lng or not lat or not tz_str):
             raise KerykeionException(
                 "You need to set the coordinates and timezone if you want to use the offline mode!")
+        
+        if not self.online:
+            if self.lat > 66.0:
+                self.lat = 66.0
+                self.__logger.info(
+                    'Polar circle override for houses, using 66 degrees')
+                
+            elif self.lat < -66.0:
+                self.lat = -66.0
+                self.__logger.info(
+                    'Polar circle override for houses, using -66 degrees')
 
         self.julian_day = self.__get_jd()
 
