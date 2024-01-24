@@ -341,7 +341,8 @@ class AstrologicalSubject:
 
         if self.zodiac_type == "Sidereal":
             self._iflag += swe.FLG_SIDEREAL
-            mode = "SIDM_FAGAN_BRADLEY"
+            #mode = "SIDM_FAGAN_BRADLEY"
+            mode = "SIDM_LAHIRI"
             swe.set_sid_mode(getattr(swe, mode))
 
         # Calculates the position of the planets and stores it in a list.
