@@ -125,7 +125,7 @@ It also can generate an SVG of a birthchart, a synastry chart or a transit chart
 <span class="o">&gt;&gt;&gt;</span> <span class="n">second</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Jane&quot;</span><span class="p">,</span> <span class="mi">1991</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">00</span><span class="p">,</span> <span class="s2">&quot;Roma&quot;</span><span class="p">)</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">name</span> <span class="o">=</span> <span class="n">SynastryAspects</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">aspect_list</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">get_relevant_aspects</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">aspect_list</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">relevant_aspects</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">aspect_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
 <span class="n">Generating</span> <span class="n">kerykeion</span> <span class="nb">object</span> <span class="k">for</span> <span class="n">Jack</span><span class="o">...</span>
@@ -228,7 +228,7 @@ An auto-generated documentation <a href="https://g-battaglia.github.io/kerykeion
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">    &gt;&gt;&gt; second = AstrologicalSubject(&quot;Jane&quot;, 1991, 10, 25, 21, 00, &quot;Roma&quot;)</span>
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">    &gt;&gt;&gt; name = SynastryAspects(first, second)</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">    &gt;&gt;&gt; aspect_list = name.get_relevant_aspects()</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">    &gt;&gt;&gt; aspect_list = name.relevant_aspects</span>
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">    &gt;&gt;&gt; print(aspect_list[0])</span>
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">    Generating kerykeion object for Jack...</span>
@@ -265,7 +265,7 @@ An auto-generated documentation <a href="https://g-battaglia.github.io/kerykeion
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="kn">from</span> <span class="nn">.relationship_score</span> <span class="kn">import</span> <span class="n">RelationshipScore</span>
 </span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="kn">from</span> <span class="nn">.aspects</span> <span class="kn">import</span> <span class="n">SynastryAspects</span><span class="p">,</span> <span class="n">NatalAspects</span>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="kn">from</span> <span class="nn">.report</span> <span class="kn">import</span> <span class="n">Report</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="kn">from</span> <span class="nn">.settings</span> <span class="kn">import</span> <span class="n">KerykeionSettingsModel</span><span class="p">,</span> <span class="n">get_settings_dict</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="kn">from</span> <span class="nn">.settings</span> <span class="kn">import</span> <span class="n">KerykeionSettingsModel</span><span class="p">,</span> <span class="n">get_settings</span>
 </span></pre></div>
 
 

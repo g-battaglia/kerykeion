@@ -191,6 +191,8 @@ class AstrologicalSubject:
                 "You need to set the coordinates and timezone if you want to use the offline mode!"
             )
 
+        self._check_if_poles()
+
         # Initialize everything
         self._get_utc()
         self._get_jd()
@@ -237,13 +239,7 @@ class AstrologicalSubject:
         self.lat = float(self.city_data["lat"])
         self.tz_str = self.city_data["timezonestr"]
 
-        if self.lat > 66.0:
-            self.lat = 66.0
-            logging.info("Polar circle override for houses, using 66 degrees")
-
-        elif self.lat < -66.0:
-            self.lat = -66.0
-            logging.info("Polar circle override for houses, using -66 degrees")
+        self._check_if_poles()
 
     def _get_utc(self) -> None:
         """Converts local time to utc time."""
@@ -587,6 +583,19 @@ class AstrologicalSubject:
         }
 
         self.lunar_phase = LunarPhaseModel(**lunar_phase_dictionary)
+
+    def _check_if_poles(self):
+        """
+            Utility function to check if the location is in the polar circle.
+            If it is, it sets the latitude to 66 or -66 degrees.
+        """
+        if self.lat > 66.0:
+            self.lat = 66.0
+            logging.info("Polar circle override for houses, using 66 degrees")
+            
+        elif self.lat < -66.0:
+            self.lat = -66.0
+            logging.info("Polar circle override for houses, using -66 degrees")
 
     def json(self, dump=False, destination_folder: Union[str, None] = None) -> str:
         """

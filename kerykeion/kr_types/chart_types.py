@@ -1,16 +1,7 @@
-from typing import Literal, Union, Optional
-from pydantic import BaseModel
+from typing import TypedDict
 
 
-class ChartTemplateModel(BaseModel):
-    """Pydantic model for the chart template."""
-
-    def __setitem__(self, key, value):
-        setattr(self, key, value)
-
-    def __getitem__(self, key):
-        return getattr(self, key)
-
+class ChartTemplateDictionary(TypedDict):
     transitRing: str
     degreeRing: str
     c1: str
@@ -19,14 +10,14 @@ class ChartTemplateModel(BaseModel):
     c2style: str
     c3: str
     c3style: str
-    makeAspects: bool
-    makeAspectGrid: bool
-    makePatterns: bool
-    chart_width: int
-    circleX: int
-    circleY: int
-    svgWidth: int
-    svgHeight: int
+    makeAspects: str
+    makeAspectGrid: str
+    makePatterns: str
+    chart_width: float
+    circleX: str
+    circleY: str
+    svgWidth: str
+    svgHeight: str
     viewbox: str
     stringTitle: str
     stringName: str
@@ -39,7 +30,7 @@ class ChartTemplateModel(BaseModel):
     lunar_phase_cx: int
     lunar_phase_r: int
     lunar_phase_outline: str
-    lunar_phase_rotate: int
+    lunar_phase_rotate: float
     stringLocation: str
     stringDateTime: str
     stringLat: str
@@ -86,12 +77,12 @@ class ChartTemplateModel(BaseModel):
     orb_color_144: str
     orb_color_150: str
     orb_color_180: str
-    cfgZoom: float
-    cfgRotate: int
+    cfgZoom: str
+    cfgRotate: str
     cfgTranslate: str
-    makeZodiac: bool
-    makeHouses: bool
-    makePlanets: bool
-    makeElements: bool
-    makePlanetGrid: bool
-    makeHousesGrid: bool
+    makeZodiac: str
+    makeHouses: str
+    makePlanets: str
+    makeElements: str
+    makePlanetGrid: str
+    makeHousesGrid: str
