@@ -28,7 +28,10 @@ also it can calculate the aspects of a single persone or between two, you can se
 need in the settings in the utility module.
 It also can generate an SVG of a birthchart, a synastry chart or a transit chart.
 
+The core goal of this project is to provide a simple and easy approach to astrology in a data driven way.
+
 Here's an example of a birthchart:
+
 ![Kanye Birth Chart](http://centuryboy.altervista.org/KanyeNatalChart.svg)
 
 ## Web API
