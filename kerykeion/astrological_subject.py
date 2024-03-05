@@ -48,10 +48,12 @@ class AstrologicalSubject:
     - geonames_username (str, optional): _ Defaults to 'century.boy'.
     - online (bool, optional): Sets if you want to use the online mode (using
         geonames) or not. Defaults to True.
+    - utc_datetime (datetime, optional): _ Defaults to None.
     """
 
     # Defined by the user
     name: str
+    utc_datetime: Union[datetime, None]
     year: int
     month: int
     day: int
@@ -111,7 +113,6 @@ class AstrologicalSubject:
 
     now = datetime.now()
 
-
     def __init__(
         self,
         name="Now",
@@ -128,6 +129,7 @@ class AstrologicalSubject:
         geonames_username: Union[str, None] = None,
         zodiac_type: ZodiacType = "Tropic",
         online: bool = True,
+        utc_datetime: Union[datetime, None] = None,
     ) -> None:
         logging.debug("Starting Kerykeion")
 
@@ -153,23 +155,24 @@ class AstrologicalSubject:
         self.online = online
         self.json_dir = Path.home()
         self.geonames_username = geonames_username
+        self.utc_datetime = utc_datetime
 
         # This message is set to encourage the user to set a custom geonames username
         if geonames_username is None and online:
             logging.info(
                 "\n"
-                "********" + \
-                "\n" + \
-                "NO GEONAMES USERNAME SET!" + \
-                "\n" + \
-                "Using the default geonames username is not recommended, please set a custom one!" + \
-                "\n" + \
-                "You can get one for free here:" + \
-                "\n" + \
-                "https://www.geonames.org/login" + \
-                "\n" + \
-                "Keep in mind that the default username is limited to 2000 requests per hour and is shared with everyone else using this library." + \
-                "\n" + \
+                "********" +
+                "\n" +
+                "NO GEONAMES USERNAME SET!" +
+                "\n" +
+                "Using the default geonames username is not recommended, please set a custom one!" +
+                "\n" +
+                "You can get one for free here:" +
+                "\n" +
+                "https://www.geonames.org/login" +
+                "\n" +
+                "Keep in mind that the default username is limited to 2000 requests per hour and is shared with everyone else using this library." +
+                "\n" +
                 "********"
             )
 
@@ -203,10 +206,10 @@ class AstrologicalSubject:
 
     def __repr__(self) -> str:
         return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
-    
+
     def __getitem__(self, item):
         return getattr(self, item)
-    
+
     def get(self, item, default=None):
         return getattr(self, item, default)
 
@@ -248,6 +251,11 @@ class AstrologicalSubject:
         # If the coordinates are not set, get them from geonames.
         if (self.online) and (not self.tz_str or not self.lng or not self.lat):
             self._fetch_tz_from_geonames()
+
+        # If UTC datetime is provided, then use it directly
+        if (self.utc_datetime):
+            self.utc = self.utc_datetime
+            return
 
         local_time = pytz.timezone(self.tz_str)
 
