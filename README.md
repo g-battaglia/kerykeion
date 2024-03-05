@@ -226,7 +226,7 @@ Feel free to contribute to the code!
 
 This project is licensed under the AGPL-3.0 License.
 To understand how this impacts your use of the software, please see the [LICENSE](LICENSE) file for details.
-If you have questions, you can reach out to me at my [email](mailto:battaglia.giacomo@yahoo.it) address.
+If you have questions, you can reach out to me at my [email](mailto:battaglia.giacomo@yahoo.it?subject=Kerykeion) address.
 As a rule of thumb, if you are using this library in a project, you should open source the code of the project with a compatible license.
 
 You can implement the logic of kerkeion in your project and also keep it closed source by using a third party API, like the [AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/). The AstrologerAPI is AGPL-3.0 compliant. Subscribing to the API is also, currently, the best way to support the project.
