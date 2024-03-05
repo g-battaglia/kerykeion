@@ -48,7 +48,9 @@ class AstrologicalSubject:
     - geonames_username (str, optional): _ Defaults to 'century.boy'.
     - online (bool, optional): Sets if you want to use the online mode (using
         geonames) or not. Defaults to True.
-    - utc_datetime (datetime, optional): _ Defaults to None.
+    - utc_datetime (datetime, optional): An alternative way of constructing the object, 
+        if you know the UTC datetime but do not have easy access to e.g. timezone identifier
+        _ Defaults to None.
     """
 
     # Defined by the user
@@ -592,7 +594,7 @@ class AstrologicalSubject:
         if self.lat > 66.0:
             self.lat = 66.0
             logging.info("Polar circle override for houses, using 66 degrees")
-            
+
         elif self.lat < -66.0:
             self.lat = -66.0
             logging.info("Polar circle override for houses, using -66 degrees")
