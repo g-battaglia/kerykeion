@@ -1461,8 +1461,7 @@ class KerykeionChartSVG:
         td = self._createTemplateDictionary()
 
         # read template
-        with open(self.xml_svg, "r", encoding="utf-8", errors="ignore") as output_file:
-            f = open(self.xml_svg)
+        with open(self.xml_svg, "r", encoding="utf-8", errors="ignore") as f:
             template = Template(f.read()).substitute(td)
 
         # return filename
