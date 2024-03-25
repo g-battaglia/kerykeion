@@ -123,11 +123,11 @@ class AstrologicalSubject:
         day: int = now.day,
         hour: int = now.hour,
         minute: int = now.minute,
-        city: str = "",
-        nation: str = "",
-        lng: Union[int, float] = 0,
-        lat: Union[int, float] = 0,
-        tz_str: str = "",
+        city: Union[str, None] = None,
+        nation: Union[str, None] = None,
+        lng: Union[int, float, None] = None,
+        lat: Union[int, float, None] = None,
+        tz_str: Union[str, None] = None,
         geonames_username: Union[str, None] = None,
         zodiac_type: ZodiacType = "Tropic",
         online: bool = True,
@@ -188,7 +188,15 @@ class AstrologicalSubject:
             self.nation = "GB"
             logging.warning("No nation specified, using GB as default")
 
-        if (not self.online) and (not lng or not lat or not tz_str):
+        if not self.lat:
+            self.lat = 51.5074
+            logging.warning("No latitude specified, using London as default")
+
+        if not self.lng:
+            self.lng = 0
+            logging.warning("No longitude specified, using London as default")
+
+        if (not self.online) and (not tz_str):
             raise KerykeionException(
                 "You need to set the coordinates and timezone if you want to use the offline mode!"
             )
@@ -219,7 +227,7 @@ class AstrologicalSubject:
 
     def _fetch_tz_from_geonames(self) -> None:
         """Gets the nearest time zone for the calculation"""
-        logging.debug("Conneting to Geonames...")
+        logging.info("Fetching timezone/coordinates from geonames")
 
         geonames = FetchGeonames(
             self.city,
@@ -247,7 +255,7 @@ class AstrologicalSubject:
         """Converts local time to utc time."""
 
         # If the coordinates are not set, get them from geonames.
-        if (self.online) and (not self.tz_str or not self.lng or not self.lat):
+        if (self.online) and (not self.tz_str):
             self._fetch_tz_from_geonames()
 
         # If UTC datetime is provided, then use it directly
