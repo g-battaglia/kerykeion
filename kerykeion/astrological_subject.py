@@ -51,6 +51,8 @@ class AstrologicalSubject:
     - utc_datetime (datetime, optional): An alternative way of constructing the object, 
         if you know the UTC datetime but do not have easy access to e.g. timezone identifier
         _ Defaults to None.
+    - disable_chiron (bool, optional): Disables the calculation of Chiron. Defaults to False.
+        Chiron calculation can create some issues with the Swiss Ephemeris when the date is too far in the past.
     """
 
     # Defined by the user
@@ -91,7 +93,7 @@ class AstrologicalSubject:
     pluto: KerykeionPointModel
     true_node: KerykeionPointModel
     mean_node: KerykeionPointModel
-    chiron: KerykeionPointModel
+    chiron: KerykeionPointModel | None
 
     # Houses
     first_house: KerykeionPointModel
@@ -132,6 +134,7 @@ class AstrologicalSubject:
         zodiac_type: ZodiacType = "Tropic",
         online: bool = True,
         utc_datetime: Union[datetime, None] = None,
+        disable_chiron: bool = False
     ) -> None:
         logging.debug("Starting Kerykeion")
 
@@ -158,6 +161,7 @@ class AstrologicalSubject:
         self.json_dir = Path.home()
         self.geonames_username = geonames_username
         self.utc_datetime = utc_datetime
+        self.disable_chiron = disable_chiron
 
         # This message is set to encourage the user to set a custom geonames username
         if geonames_username is None and online:
@@ -375,7 +379,11 @@ class AstrologicalSubject:
         pluto_deg = swe.calc(self.julian_day, 9, self._iflag)[0][0]
         mean_node_deg = swe.calc(self.julian_day, 10, self._iflag)[0][0]
         true_node_deg = swe.calc(self.julian_day, 11, self._iflag)[0][0]
-        chiron_deg = swe.calc(self.julian_day, 15, self._iflag)[0][0]
+        
+        if not self.disable_chiron:
+            chiron_deg = swe.calc(self.julian_day, 15, self._iflag)[0][0]
+        else:
+            chiron_deg = 0
 
         self.planets_degrees_ut = [
             sun_deg,
@@ -390,8 +398,10 @@ class AstrologicalSubject:
             pluto_deg,
             mean_node_deg,
             true_node_deg,
-            chiron_deg,
         ]
+        
+        if not self.disable_chiron:
+            self.planets_degrees_ut.append(chiron_deg)
 
     def _planets(self) -> None:
         """Defines body positon in signs and information and
@@ -411,7 +421,11 @@ class AstrologicalSubject:
         self.pluto = calculate_position(self.planets_degrees_ut[9], "Pluto", point_type=point_type)
         self.mean_node = calculate_position(self.planets_degrees_ut[10], "Mean_Node", point_type=point_type)
         self.true_node = calculate_position(self.planets_degrees_ut[11], "True_Node", point_type=point_type)
-        self.chiron = calculate_position(self.planets_degrees_ut[12], "Chiron", point_type=point_type)
+        
+        if not self.disable_chiron:
+            self.chiron = calculate_position(self.planets_degrees_ut[12], "Chiron", point_type=point_type)
+        else:
+            self.chiron = None
 
     def _planets_in_houses(self) -> None:
         """Calculates the house of the planet and updates
@@ -472,7 +486,11 @@ class AstrologicalSubject:
         self.pluto = for_every_planet(self.pluto, self.planets_degrees_ut[9])
         self.mean_node = for_every_planet(self.mean_node, self.planets_degrees_ut[10])
         self.true_node = for_every_planet(self.true_node, self.planets_degrees_ut[11])
-        self.chiron = for_every_planet(self.chiron, self.planets_degrees_ut[12])
+
+        if not self.disable_chiron:
+            self.chiron = for_every_planet(self.chiron, self.planets_degrees_ut[12])
+        else:
+            self.chiron = None
 
         self.planets_list = [
             self.sun,
@@ -487,8 +505,10 @@ class AstrologicalSubject:
             self.pluto,
             self.mean_node,
             self.true_node,
-            self.chiron
         ]
+        
+        if not self.disable_chiron:
+            self.planets_list.append(self.chiron)
 
         # Check in retrograde or not:
         planets_ret = []
@@ -643,9 +663,18 @@ class AstrologicalSubject:
 if __name__ == "__main__":
     import json
     from kerykeion.utilities import setup_logging
-    setup_logging(level="debug")
 
+    setup_logging(level="debug")
+    
+    # With Chiron enabled
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
+    print(json.loads(johnny.json(dump=True)))
+
+    print('\n')
+    print(johnny.chiron)
+
+    # With Chiron disabled
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", disable_chiron=True)
     print(json.loads(johnny.json(dump=True)))
 
     print('\n')
