@@ -203,15 +203,20 @@ def calculate_position(
 
     return KerykeionPointModel(**dictionary)
 
+
 def setup_logging(level: str) -> None:
-    """Setup logging for testing.
-    
+    """
+    Setup logging for testing.
+
     Args:
-        level: Log level as a string, options: debug, info, warning, error"""
-    logopt: dict[str, int]  = {"debug": logging.DEBUG, 
-                               "info": logging.INFO, 
-                               "warning": logging.WARNING , 
-                               "error": logging.ERROR}
-    format: str             = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    loglevel: int           = logopt.get(level, logging.INFO)
+        level: Log level as a string, options: debug, info, warning, error
+    """
+    logopt: dict[str, int] = {
+        "debug": logging.DEBUG,
+        "info": logging.INFO,
+        "warning": logging.WARNING,
+        "error": logging.ERROR,
+    }
+    format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    loglevel: int = logopt.get(level, logging.INFO)
     logging.basicConfig(format=format, level=loglevel)

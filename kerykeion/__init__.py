@@ -106,3 +106,4 @@ from .relationship_score import RelationshipScore
 from .aspects import SynastryAspects, NatalAspects
 from .report import Report
 from .settings import KerykeionSettingsModel, get_settings
+from .enums import Planets, Aspects, Signs
