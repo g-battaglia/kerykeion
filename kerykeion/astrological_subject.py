@@ -93,7 +93,7 @@ class AstrologicalSubject:
     pluto: KerykeionPointModel
     true_node: KerykeionPointModel
     mean_node: KerykeionPointModel
-    chiron: KerykeionPointModel | None
+    chiron: Union[KerykeionPointModel, None]
 
     # Houses
     first_house: KerykeionPointModel
