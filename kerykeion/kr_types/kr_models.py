@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2023 Giacomo Battaglia
+    This is part of Kerykeion (C) 2024 Giacomo Battaglia
 """
 
 
 from typing import Literal, Union, Optional
 from pydantic import BaseModel
 
-from .kr_literals import *
+from kerykeion.kr_types import LunarPhaseEmoji, LunarPhaseName, Planet, Houses, Quality, Element, Sign, ZodiacType
 
 
 class LunarPhaseModel(BaseModel):
@@ -15,11 +15,12 @@ class LunarPhaseModel(BaseModel):
     moon_phase: int
     sun_phase: int
     moon_emoji: LunarPhaseEmoji
+    moon_phase_name: LunarPhaseName
 
     def __str__(self):
         return (
             super()
-            .dict(
+            .model_dump(
                 exclude_none=True,
                 exclude_unset=True,
                 exclude_defaults=True,
@@ -73,7 +74,7 @@ class KerykeionPointModel(BaseModel):
     def __str__(self):
         return (
             super()
-            .dict(
+            .model_dump(
                 exclude_none=True,
                 exclude_unset=True,
                 exclude_defaults=True,
@@ -85,7 +86,7 @@ class KerykeionPointModel(BaseModel):
     def __repr__(self):
         return (
             super()
-            .dict(
+            .model_dump(
                 exclude_none=True,
                 exclude_unset=True,
                 exclude_defaults=True,
@@ -162,6 +163,7 @@ class AstrologicalSubjectModel(BaseModel):
 
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
+
     setup_logging(level="debug")
 
     sun = KerykeionPointModel(
@@ -176,5 +178,5 @@ if __name__ == "__main__":
         point_type="Planet",
     )
 
-    print(sun.json())
+    print(sun.model_dump_json())
     print(sun)
