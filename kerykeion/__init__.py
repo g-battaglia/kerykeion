@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2023 Giacomo Battaglia
+    This is part of Kerykeion (C) 2024 Giacomo Battaglia
 
     Kerykeion is a python library for Astrology.
     It can calculate all the planet and house position,

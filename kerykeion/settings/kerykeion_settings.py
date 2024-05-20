@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2023 Giacomo Battaglia
+    This is part of Kerykeion (C) 2024 Giacomo Battaglia
 """
 
 
@@ -60,7 +60,7 @@ def merge_settings(settings: KerykeionSettingsModel, new_settings: Dict) -> Kery
     Returns:
         KerykeionSettingsModel: The new settings
     """
-    new_settings_dict = settings.dict() | new_settings
+    new_settings_dict = settings.model_dump() | new_settings
     return KerykeionSettingsModel(**new_settings_dict)
 
 

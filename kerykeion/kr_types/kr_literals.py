@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2023 Giacomo Battaglia
+    This is part of Kerykeion (C) 2024 Giacomo Battaglia
 """
 
 
@@ -56,3 +56,13 @@ Quality = Literal[
 ChartType = Literal["Natal", "ExternalNatal", "Synastry", "Transit"]
 
 LunarPhaseEmoji = Literal["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"]
+LunarPhaseName = Literal[
+        "New Moon", 
+        "Waxing Crescent", 
+        "First Quarter", 
+        "Waxing Gibbous", 
+        "Full Moon", 
+        "Waning Gibbous", 
+        "Last Quarter", 
+        "Waning Crescent"
+    ]

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2023 Giacomo Battaglia
+    This is part of Kerykeion (C) 2024 Giacomo Battaglia
 """
 
 
@@ -22,7 +22,7 @@ class CustomBaseModel(BaseModel):
         return getattr(self, item)
     
     def __str__(self) -> str:
-        return str(self.dict())
+        return str(self.model_dump())
 
     def get(self, item, default=None):
         return getattr(self, item, default)

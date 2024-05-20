@@ -313,7 +313,8 @@ class TestAstrologicalSubject:
                 "degrees_between_s_m": 201.07547248727388, 
                 "moon_phase": 16, 
                 "sun_phase": 15, 
-                "moon_emoji": "🌖"
+                "moon_emoji": "🌖",
+                "moon_phase_name": "Waning Gibbous"
             },
         }
 

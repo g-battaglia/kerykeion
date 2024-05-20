@@ -106,7 +106,7 @@
                     <h1 class="modulename">
 <a href="./../../kerykeion.html">kerykeion</a><wbr>.<a href="./../kr_types.html">kr_types</a><wbr>.settings_models    </h1>
 
-                        <div class="docstring"><p>This is part of Kerykeion (C) 2023 Giacomo Battaglia</p>
+                        <div class="docstring"><p>This is part of Kerykeion (C) 2024 Giacomo Battaglia</p>
 </div>
 
                         <input id="mod-settings_models-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -115,7 +115,7 @@
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="c1"># -*- coding: utf-8 -*-</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">    This is part of Kerykeion (C) 2023 Giacomo Battaglia</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">    This is part of Kerykeion (C) 2024 Giacomo Battaglia</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
@@ -137,7 +137,7 @@
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
@@ -322,7 +322,7 @@
 </span><span id="CustomBaseModel-23"><a href="#CustomBaseModel-23"><span class="linenos">23</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
 </span><span id="CustomBaseModel-24"><a href="#CustomBaseModel-24"><span class="linenos">24</span></a>    
 </span><span id="CustomBaseModel-25"><a href="#CustomBaseModel-25"><span class="linenos">25</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="CustomBaseModel-26"><a href="#CustomBaseModel-26"><span class="linenos">26</span></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
+</span><span id="CustomBaseModel-26"><a href="#CustomBaseModel-26"><span class="linenos">26</span></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
 </span><span id="CustomBaseModel-27"><a href="#CustomBaseModel-27"><span class="linenos">27</span></a>
 </span><span id="CustomBaseModel-28"><a href="#CustomBaseModel-28"><span class="linenos">28</span></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span id="CustomBaseModel-29"><a href="#CustomBaseModel-29"><span class="linenos">29</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
@@ -353,8 +353,7 @@
 <p>Raises [<code>ValidationError</code>][pydantic_core.ValidationError] if the input data cannot be
 validated to form a valid model.</p>
 
-<p><code><a href="#CustomBaseModel.__init__">__init__</a></code> uses <code>__pydantic_self__</code> instead of the more common <code>self</code> for the first arg to
-allow <code>self</code> as a field name.</p>
+<p><code>self</code> is explicitly positional-only to allow <code>self</code> as a field name.</p>
 </div>
 
 
@@ -382,8 +381,7 @@ allow <code>self</code> as a field name.</p>
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="CustomBaseModel.model_computed_fields" class="variable">model_computed_fields</dd>
-                <dd id="CustomBaseModel.model_extra" class="variable">model_extra</dd>
+                                <dd id="CustomBaseModel.model_extra" class="variable">model_extra</dd>
                 <dd id="CustomBaseModel.model_fields_set" class="variable">model_fields_set</dd>
                 <dd id="CustomBaseModel.model_construct" class="function">model_construct</dd>
                 <dd id="CustomBaseModel.model_copy" class="function">model_copy</dd>
@@ -452,8 +450,7 @@ allow <code>self</code> as a field name.</p>
 
             </div>
             <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="KerykeionSettingsCelestialPointModel.model_computed_fields" class="variable">model_computed_fields</dd>
-                <dd id="KerykeionSettingsCelestialPointModel.model_extra" class="variable">model_extra</dd>
+                                <dd id="KerykeionSettingsCelestialPointModel.model_extra" class="variable">model_extra</dd>
                 <dd id="KerykeionSettingsCelestialPointModel.model_fields_set" class="variable">model_fields_set</dd>
                 <dd id="KerykeionSettingsCelestialPointModel.model_construct" class="function">model_construct</dd>
                 <dd id="KerykeionSettingsCelestialPointModel.model_copy" class="function">model_copy</dd>
@@ -553,8 +550,7 @@ allow <code>self</code> as a field name.</p>
 
             </div>
             <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="KerykeionSettingsChartColorsModel.model_computed_fields" class="variable">model_computed_fields</dd>
-                <dd id="KerykeionSettingsChartColorsModel.model_extra" class="variable">model_extra</dd>
+                                <dd id="KerykeionSettingsChartColorsModel.model_extra" class="variable">model_extra</dd>
                 <dd id="KerykeionSettingsChartColorsModel.model_fields_set" class="variable">model_fields_set</dd>
                 <dd id="KerykeionSettingsChartColorsModel.model_construct" class="function">model_construct</dd>
                 <dd id="KerykeionSettingsChartColorsModel.model_copy" class="function">model_copy</dd>
@@ -624,8 +620,7 @@ allow <code>self</code> as a field name.</p>
 
             </div>
             <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="KerykeionSettingsAspectModel.model_computed_fields" class="variable">model_computed_fields</dd>
-                <dd id="KerykeionSettingsAspectModel.model_extra" class="variable">model_extra</dd>
+                                <dd id="KerykeionSettingsAspectModel.model_extra" class="variable">model_extra</dd>
                 <dd id="KerykeionSettingsAspectModel.model_fields_set" class="variable">model_fields_set</dd>
                 <dd id="KerykeionSettingsAspectModel.model_construct" class="function">model_construct</dd>
                 <dd id="KerykeionSettingsAspectModel.model_copy" class="function">model_copy</dd>
@@ -706,8 +701,7 @@ It is used to translate the celestial points in the language of the chart.</p>
 
             </div>
             <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="KerykeionLanguageCelestialPointModel.model_computed_fields" class="variable">model_computed_fields</dd>
-                <dd id="KerykeionLanguageCelestialPointModel.model_extra" class="variable">model_extra</dd>
+                                <dd id="KerykeionLanguageCelestialPointModel.model_extra" class="variable">model_extra</dd>
                 <dd id="KerykeionLanguageCelestialPointModel.model_fields_set" class="variable">model_fields_set</dd>
                 <dd id="KerykeionLanguageCelestialPointModel.model_construct" class="function">model_construct</dd>
                 <dd id="KerykeionLanguageCelestialPointModel.model_copy" class="function">model_copy</dd>
@@ -792,8 +786,7 @@ it's used to translate the celestial points and the other labels</p>
 
             </div>
             <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="KerykeionLanguageModel.model_computed_fields" class="variable">model_computed_fields</dd>
-                <dd id="KerykeionLanguageModel.model_extra" class="variable">model_extra</dd>
+                                <dd id="KerykeionLanguageModel.model_extra" class="variable">model_extra</dd>
                 <dd id="KerykeionLanguageModel.model_fields_set" class="variable">model_fields_set</dd>
                 <dd id="KerykeionLanguageModel.model_construct" class="function">model_construct</dd>
                 <dd id="KerykeionLanguageModel.model_copy" class="function">model_copy</dd>
@@ -854,8 +847,7 @@ it's used to translate the celestial points and the other labels</p>
 
             </div>
             <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="KerykeionGeneralSettingsModel.model_computed_fields" class="variable">model_computed_fields</dd>
-                <dd id="KerykeionGeneralSettingsModel.model_extra" class="variable">model_extra</dd>
+                                <dd id="KerykeionGeneralSettingsModel.model_extra" class="variable">model_extra</dd>
                 <dd id="KerykeionGeneralSettingsModel.model_fields_set" class="variable">model_fields_set</dd>
                 <dd id="KerykeionGeneralSettingsModel.model_construct" class="function">model_construct</dd>
                 <dd id="KerykeionGeneralSettingsModel.model_copy" class="function">model_copy</dd>
@@ -915,8 +907,7 @@ it's used to translate the celestial points and the other labels</p>
 
             </div>
             <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="KerykeionChartSettingsModel.model_computed_fields" class="variable">model_computed_fields</dd>
-                <dd id="KerykeionChartSettingsModel.model_extra" class="variable">model_extra</dd>
+                                <dd id="KerykeionChartSettingsModel.model_extra" class="variable">model_extra</dd>
                 <dd id="KerykeionChartSettingsModel.model_fields_set" class="variable">model_fields_set</dd>
                 <dd id="KerykeionChartSettingsModel.model_construct" class="function">model_construct</dd>
                 <dd id="KerykeionChartSettingsModel.model_copy" class="function">model_copy</dd>
@@ -984,8 +975,7 @@ it's used to translate the celestial points and the other labels</p>
 
             </div>
             <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="KerykeionSettingsModel.model_computed_fields" class="variable">model_computed_fields</dd>
-                <dd id="KerykeionSettingsModel.model_extra" class="variable">model_extra</dd>
+                                <dd id="KerykeionSettingsModel.model_extra" class="variable">model_extra</dd>
                 <dd id="KerykeionSettingsModel.model_fields_set" class="variable">model_fields_set</dd>
                 <dd id="KerykeionSettingsModel.model_construct" class="function">model_construct</dd>
                 <dd id="KerykeionSettingsModel.model_copy" class="function">model_copy</dd>

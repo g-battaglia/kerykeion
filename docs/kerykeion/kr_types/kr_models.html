@@ -70,7 +70,7 @@
                     <h1 class="modulename">
 <a href="./../../kerykeion.html">kerykeion</a><wbr>.<a href="./../kr_types.html">kr_types</a><wbr>.kr_models    </h1>
 
-                        <div class="docstring"><p>This is part of Kerykeion (C) 2023 Giacomo Battaglia</p>
+                        <div class="docstring"><p>This is part of Kerykeion (C) 2024 Giacomo Battaglia</p>
 </div>
 
                         <input id="mod-kr_models-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -79,14 +79,14 @@
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="c1"># -*- coding: utf-8 -*-</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">    This is part of Kerykeion (C) 2023 Giacomo Battaglia</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">    This is part of Kerykeion (C) 2024 Giacomo Battaglia</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">from</span> <span class="nn">.kr_literals</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">from</span> <span class="nn">kerykeion.kr_types</span> <span class="kn">import</span> <span class="n">LunarPhaseEmoji</span><span class="p">,</span> <span class="n">LunarPhaseName</span><span class="p">,</span> <span class="n">Planet</span><span class="p">,</span> <span class="n">Houses</span><span class="p">,</span> <span class="n">Quality</span><span class="p">,</span> <span class="n">Element</span><span class="p">,</span> <span class="n">Sign</span><span class="p">,</span> <span class="n">ZodiacType</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>
 </span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="k">class</span> <span class="nc">LunarPhaseModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
@@ -94,169 +94,171 @@
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>    <span class="n">moon_phase</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>    <span class="n">sun_phase</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>    <span class="n">moon_emoji</span><span class="p">:</span> <span class="n">LunarPhaseEmoji</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>        <span class="k">return</span> <span class="p">(</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>            <span class="nb">super</span><span class="p">()</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>            <span class="o">.</span><span class="n">dict</span><span class="p">(</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>            <span class="p">)</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>        <span class="p">)</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>        <span class="k">return</span> <span class="p">(</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>            <span class="nb">super</span><span class="p">()</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>            <span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>            <span class="p">)</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>        <span class="p">)</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>        <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>    <span class="n">moon_phase_name</span><span class="p">:</span> <span class="n">LunarPhaseName</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>        <span class="k">return</span> <span class="p">(</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>            <span class="nb">super</span><span class="p">()</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>            <span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>            <span class="p">)</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>        <span class="p">)</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>        <span class="k">return</span> <span class="p">(</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>            <span class="nb">super</span><span class="p">()</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>            <span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>            <span class="p">)</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>        <span class="p">)</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>        <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="k">class</span> <span class="nc">KerykeionPointModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">    Kerykeion Point Model</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Planet</span><span class="p">,</span> <span class="n">Houses</span><span class="p">]</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="n">quality</span><span class="p">:</span> <span class="n">Quality</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="n">element</span><span class="p">:</span> <span class="n">Element</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="n">sign</span><span class="p">:</span> <span class="n">Sign</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="n">sign_num</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">]</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="n">position</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>    <span class="n">abs_pos</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="n">emoji</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>    <span class="n">point_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Planet&quot;</span><span class="p">,</span> <span class="s2">&quot;House&quot;</span><span class="p">]</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="n">house</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>    <span class="n">retrograde</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>        <span class="k">return</span> <span class="p">(</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>            <span class="nb">super</span><span class="p">()</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>            <span class="o">.</span><span class="n">dict</span><span class="p">(</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>            <span class="p">)</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>        <span class="p">)</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="k">return</span> <span class="p">(</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>            <span class="nb">super</span><span class="p">()</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>            <span class="o">.</span><span class="n">dict</span><span class="p">(</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>            <span class="p">)</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>        <span class="p">)</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>        <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="k">class</span> <span class="nc">KerykeionPointModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    Kerykeion Point Model</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Planet</span><span class="p">,</span> <span class="n">Houses</span><span class="p">]</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="n">quality</span><span class="p">:</span> <span class="n">Quality</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="n">element</span><span class="p">:</span> <span class="n">Element</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="n">sign</span><span class="p">:</span> <span class="n">Sign</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="n">sign_num</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">]</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>    <span class="n">position</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="n">abs_pos</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>    <span class="n">emoji</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="n">point_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Planet&quot;</span><span class="p">,</span> <span class="s2">&quot;House&quot;</span><span class="p">]</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>    <span class="n">house</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>    <span class="n">retrograde</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>        <span class="k">return</span> <span class="p">(</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>            <span class="nb">super</span><span class="p">()</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>            <span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>            <span class="p">)</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>        <span class="p">)</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>        <span class="k">return</span> <span class="p">(</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>            <span class="nb">super</span><span class="p">()</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>            <span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>            <span class="p">)</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="p">)</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
 </span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="k">class</span> <span class="nc">AstrologicalSubjectModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="c1"># Data</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="n">year</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>    <span class="n">month</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="n">day</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="n">hour</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="n">minute</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>    <span class="n">city</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="n">nation</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>    <span class="n">lng</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="n">lat</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>    <span class="n">tz_str</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>    <span class="n">zodiac_type</span><span class="p">:</span> <span class="n">ZodiacType</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>    <span class="n">local_time</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>    <span class="n">utc_time</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="n">julian_day</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>    <span class="c1"># Planets</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>    <span class="n">sun</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>    <span class="n">moon</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>    <span class="n">mercury</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>    <span class="n">venus</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>    <span class="n">mars</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>    <span class="n">jupiter</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="n">saturn</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="n">uranus</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="n">neptune</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="n">pluto</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>    <span class="n">chiron</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>    <span class="c1"># Houses</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="n">first_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="n">second_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>    <span class="n">third_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>    <span class="n">fourth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>    <span class="n">fifth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>    <span class="n">sixth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>    <span class="n">seventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>    <span class="n">eighth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>    <span class="n">ninth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="n">tenth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="n">eleventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="n">twelfth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>    <span class="c1"># Nodes</span>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="n">mean_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>    <span class="n">true_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>    <span class="c1"># Lunar Phase</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>    <span class="n">lunar_phase</span><span class="p">:</span> <span class="n">LunarPhaseModel</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="k">class</span> <span class="nc">AstrologicalSubjectModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>    <span class="c1"># Data</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>    <span class="n">year</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="n">month</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="n">day</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="n">hour</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>    <span class="n">minute</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="n">city</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>    <span class="n">nation</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="n">lng</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>    <span class="n">lat</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>    <span class="n">tz_str</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>    <span class="n">zodiac_type</span><span class="p">:</span> <span class="n">ZodiacType</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>    <span class="n">local_time</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="n">utc_time</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>    <span class="n">julian_day</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>    <span class="c1"># Planets</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>    <span class="n">sun</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>    <span class="n">moon</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>    <span class="n">mercury</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>    <span class="n">venus</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>    <span class="n">mars</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="n">jupiter</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="n">saturn</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="n">uranus</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="n">neptune</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>    <span class="n">pluto</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>    <span class="n">chiron</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">KerykeionPointModel</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="c1"># Houses</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="n">first_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>    <span class="n">second_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>    <span class="n">third_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>    <span class="n">fourth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>    <span class="n">fifth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>    <span class="n">sixth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>    <span class="n">seventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>    <span class="n">eighth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="n">ninth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="n">tenth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="n">eleventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>    <span class="n">twelfth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="c1"># Nodes</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>    <span class="n">mean_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>    <span class="n">true_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>    <span class="c1"># Lunar Phase</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>    <span class="n">lunar_phase</span><span class="p">:</span> <span class="n">LunarPhaseModel</span>
 </span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="kn">from</span> <span class="nn">kerykeion.utilities</span> <span class="kn">import</span> <span class="n">setup_logging</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>    <span class="n">setup_logging</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>    <span class="kn">from</span> <span class="nn">kerykeion.utilities</span> <span class="kn">import</span> <span class="n">setup_logging</span>
 </span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>    <span class="n">sun</span> <span class="o">=</span> <span class="n">KerykeionPointModel</span><span class="p">(</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sun&quot;</span><span class="p">,</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>        <span class="n">element</span><span class="o">=</span><span class="s2">&quot;Air&quot;</span><span class="p">,</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>        <span class="n">quality</span><span class="o">=</span><span class="s2">&quot;Fixed&quot;</span><span class="p">,</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>        <span class="n">sign</span><span class="o">=</span><span class="s2">&quot;Aqu&quot;</span><span class="p">,</span>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>        <span class="n">sign_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>        <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>        <span class="n">abs_pos</span><span class="o">=</span><span class="mf">12.123123</span><span class="p">,</span>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>        <span class="n">emoji</span><span class="o">=</span><span class="s2">&quot;♈&quot;</span><span class="p">,</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>        <span class="n">point_type</span><span class="o">=</span><span class="s2">&quot;Planet&quot;</span><span class="p">,</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>    <span class="p">)</span>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>    <span class="nb">print</span><span class="p">(</span><span class="n">sun</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>    <span class="nb">print</span><span class="p">(</span><span class="n">sun</span><span class="p">)</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>    <span class="n">setup_logging</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>    <span class="n">sun</span> <span class="o">=</span> <span class="n">KerykeionPointModel</span><span class="p">(</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sun&quot;</span><span class="p">,</span>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>        <span class="n">element</span><span class="o">=</span><span class="s2">&quot;Air&quot;</span><span class="p">,</span>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>        <span class="n">quality</span><span class="o">=</span><span class="s2">&quot;Fixed&quot;</span><span class="p">,</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>        <span class="n">sign</span><span class="o">=</span><span class="s2">&quot;Aqu&quot;</span><span class="p">,</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>        <span class="n">sign_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>        <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>        <span class="n">abs_pos</span><span class="o">=</span><span class="mf">12.123123</span><span class="p">,</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>        <span class="n">emoji</span><span class="o">=</span><span class="s2">&quot;♈&quot;</span><span class="p">,</span>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>        <span class="n">point_type</span><span class="o">=</span><span class="s2">&quot;Planet&quot;</span><span class="p">,</span>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>    <span class="p">)</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>    <span class="nb">print</span><span class="p">(</span><span class="n">sun</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">())</span>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>    <span class="nb">print</span><span class="p">(</span><span class="n">sun</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -277,46 +279,47 @@
 </span><span id="LunarPhaseModel-16"><a href="#LunarPhaseModel-16"><span class="linenos">16</span></a>    <span class="n">moon_phase</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="LunarPhaseModel-17"><a href="#LunarPhaseModel-17"><span class="linenos">17</span></a>    <span class="n">sun_phase</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="LunarPhaseModel-18"><a href="#LunarPhaseModel-18"><span class="linenos">18</span></a>    <span class="n">moon_emoji</span><span class="p">:</span> <span class="n">LunarPhaseEmoji</span>
-</span><span id="LunarPhaseModel-19"><a href="#LunarPhaseModel-19"><span class="linenos">19</span></a>
-</span><span id="LunarPhaseModel-20"><a href="#LunarPhaseModel-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="LunarPhaseModel-21"><a href="#LunarPhaseModel-21"><span class="linenos">21</span></a>        <span class="k">return</span> <span class="p">(</span>
-</span><span id="LunarPhaseModel-22"><a href="#LunarPhaseModel-22"><span class="linenos">22</span></a>            <span class="nb">super</span><span class="p">()</span>
-</span><span id="LunarPhaseModel-23"><a href="#LunarPhaseModel-23"><span class="linenos">23</span></a>            <span class="o">.</span><span class="n">dict</span><span class="p">(</span>
-</span><span id="LunarPhaseModel-24"><a href="#LunarPhaseModel-24"><span class="linenos">24</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="LunarPhaseModel-25"><a href="#LunarPhaseModel-25"><span class="linenos">25</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="LunarPhaseModel-26"><a href="#LunarPhaseModel-26"><span class="linenos">26</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="LunarPhaseModel-27"><a href="#LunarPhaseModel-27"><span class="linenos">27</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="LunarPhaseModel-28"><a href="#LunarPhaseModel-28"><span class="linenos">28</span></a>            <span class="p">)</span>
-</span><span id="LunarPhaseModel-29"><a href="#LunarPhaseModel-29"><span class="linenos">29</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
-</span><span id="LunarPhaseModel-30"><a href="#LunarPhaseModel-30"><span class="linenos">30</span></a>        <span class="p">)</span>
-</span><span id="LunarPhaseModel-31"><a href="#LunarPhaseModel-31"><span class="linenos">31</span></a>
-</span><span id="LunarPhaseModel-32"><a href="#LunarPhaseModel-32"><span class="linenos">32</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="LunarPhaseModel-33"><a href="#LunarPhaseModel-33"><span class="linenos">33</span></a>        <span class="k">return</span> <span class="p">(</span>
-</span><span id="LunarPhaseModel-34"><a href="#LunarPhaseModel-34"><span class="linenos">34</span></a>            <span class="nb">super</span><span class="p">()</span>
-</span><span id="LunarPhaseModel-35"><a href="#LunarPhaseModel-35"><span class="linenos">35</span></a>            <span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
-</span><span id="LunarPhaseModel-36"><a href="#LunarPhaseModel-36"><span class="linenos">36</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="LunarPhaseModel-37"><a href="#LunarPhaseModel-37"><span class="linenos">37</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="LunarPhaseModel-38"><a href="#LunarPhaseModel-38"><span class="linenos">38</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="LunarPhaseModel-39"><a href="#LunarPhaseModel-39"><span class="linenos">39</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="LunarPhaseModel-40"><a href="#LunarPhaseModel-40"><span class="linenos">40</span></a>            <span class="p">)</span>
-</span><span id="LunarPhaseModel-41"><a href="#LunarPhaseModel-41"><span class="linenos">41</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
-</span><span id="LunarPhaseModel-42"><a href="#LunarPhaseModel-42"><span class="linenos">42</span></a>        <span class="p">)</span>
-</span><span id="LunarPhaseModel-43"><a href="#LunarPhaseModel-43"><span class="linenos">43</span></a>
-</span><span id="LunarPhaseModel-44"><a href="#LunarPhaseModel-44"><span class="linenos">44</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span id="LunarPhaseModel-45"><a href="#LunarPhaseModel-45"><span class="linenos">45</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-</span><span id="LunarPhaseModel-46"><a href="#LunarPhaseModel-46"><span class="linenos">46</span></a>
-</span><span id="LunarPhaseModel-47"><a href="#LunarPhaseModel-47"><span class="linenos">47</span></a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-</span><span id="LunarPhaseModel-48"><a href="#LunarPhaseModel-48"><span class="linenos">48</span></a>        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="LunarPhaseModel-49"><a href="#LunarPhaseModel-49"><span class="linenos">49</span></a>
-</span><span id="LunarPhaseModel-50"><a href="#LunarPhaseModel-50"><span class="linenos">50</span></a>    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span id="LunarPhaseModel-51"><a href="#LunarPhaseModel-51"><span class="linenos">51</span></a>        <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-</span><span id="LunarPhaseModel-52"><a href="#LunarPhaseModel-52"><span class="linenos">52</span></a>
-</span><span id="LunarPhaseModel-53"><a href="#LunarPhaseModel-53"><span class="linenos">53</span></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
-</span><span id="LunarPhaseModel-54"><a href="#LunarPhaseModel-54"><span class="linenos">54</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+</span><span id="LunarPhaseModel-19"><a href="#LunarPhaseModel-19"><span class="linenos">19</span></a>    <span class="n">moon_phase_name</span><span class="p">:</span> <span class="n">LunarPhaseName</span>
+</span><span id="LunarPhaseModel-20"><a href="#LunarPhaseModel-20"><span class="linenos">20</span></a>
+</span><span id="LunarPhaseModel-21"><a href="#LunarPhaseModel-21"><span class="linenos">21</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="LunarPhaseModel-22"><a href="#LunarPhaseModel-22"><span class="linenos">22</span></a>        <span class="k">return</span> <span class="p">(</span>
+</span><span id="LunarPhaseModel-23"><a href="#LunarPhaseModel-23"><span class="linenos">23</span></a>            <span class="nb">super</span><span class="p">()</span>
+</span><span id="LunarPhaseModel-24"><a href="#LunarPhaseModel-24"><span class="linenos">24</span></a>            <span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
+</span><span id="LunarPhaseModel-25"><a href="#LunarPhaseModel-25"><span class="linenos">25</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="LunarPhaseModel-26"><a href="#LunarPhaseModel-26"><span class="linenos">26</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="LunarPhaseModel-27"><a href="#LunarPhaseModel-27"><span class="linenos">27</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="LunarPhaseModel-28"><a href="#LunarPhaseModel-28"><span class="linenos">28</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="LunarPhaseModel-29"><a href="#LunarPhaseModel-29"><span class="linenos">29</span></a>            <span class="p">)</span>
+</span><span id="LunarPhaseModel-30"><a href="#LunarPhaseModel-30"><span class="linenos">30</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+</span><span id="LunarPhaseModel-31"><a href="#LunarPhaseModel-31"><span class="linenos">31</span></a>        <span class="p">)</span>
+</span><span id="LunarPhaseModel-32"><a href="#LunarPhaseModel-32"><span class="linenos">32</span></a>
+</span><span id="LunarPhaseModel-33"><a href="#LunarPhaseModel-33"><span class="linenos">33</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="LunarPhaseModel-34"><a href="#LunarPhaseModel-34"><span class="linenos">34</span></a>        <span class="k">return</span> <span class="p">(</span>
+</span><span id="LunarPhaseModel-35"><a href="#LunarPhaseModel-35"><span class="linenos">35</span></a>            <span class="nb">super</span><span class="p">()</span>
+</span><span id="LunarPhaseModel-36"><a href="#LunarPhaseModel-36"><span class="linenos">36</span></a>            <span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
+</span><span id="LunarPhaseModel-37"><a href="#LunarPhaseModel-37"><span class="linenos">37</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="LunarPhaseModel-38"><a href="#LunarPhaseModel-38"><span class="linenos">38</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="LunarPhaseModel-39"><a href="#LunarPhaseModel-39"><span class="linenos">39</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="LunarPhaseModel-40"><a href="#LunarPhaseModel-40"><span class="linenos">40</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="LunarPhaseModel-41"><a href="#LunarPhaseModel-41"><span class="linenos">41</span></a>            <span class="p">)</span>
+</span><span id="LunarPhaseModel-42"><a href="#LunarPhaseModel-42"><span class="linenos">42</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+</span><span id="LunarPhaseModel-43"><a href="#LunarPhaseModel-43"><span class="linenos">43</span></a>        <span class="p">)</span>
+</span><span id="LunarPhaseModel-44"><a href="#LunarPhaseModel-44"><span class="linenos">44</span></a>
+</span><span id="LunarPhaseModel-45"><a href="#LunarPhaseModel-45"><span class="linenos">45</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+</span><span id="LunarPhaseModel-46"><a href="#LunarPhaseModel-46"><span class="linenos">46</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span><span id="LunarPhaseModel-47"><a href="#LunarPhaseModel-47"><span class="linenos">47</span></a>
+</span><span id="LunarPhaseModel-48"><a href="#LunarPhaseModel-48"><span class="linenos">48</span></a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span><span id="LunarPhaseModel-49"><a href="#LunarPhaseModel-49"><span class="linenos">49</span></a>        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="LunarPhaseModel-50"><a href="#LunarPhaseModel-50"><span class="linenos">50</span></a>
+</span><span id="LunarPhaseModel-51"><a href="#LunarPhaseModel-51"><span class="linenos">51</span></a>    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+</span><span id="LunarPhaseModel-52"><a href="#LunarPhaseModel-52"><span class="linenos">52</span></a>        <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span><span id="LunarPhaseModel-53"><a href="#LunarPhaseModel-53"><span class="linenos">53</span></a>
+</span><span id="LunarPhaseModel-54"><a href="#LunarPhaseModel-54"><span class="linenos">54</span></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+</span><span id="LunarPhaseModel-55"><a href="#LunarPhaseModel-55"><span class="linenos">55</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.5/concepts/models/">https://docs.pydantic.dev/2.5/concepts/models/</a></p>
+            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.6/concepts/models/">https://docs.pydantic.dev/2.6/concepts/models/</a></p>
 
 <p>A base class for creating Pydantic models.</p>
 
@@ -357,8 +360,8 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 
     </div>
     <a class="headerlink" href="#LunarPhaseModel.get"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LunarPhaseModel.get-53"><a href="#LunarPhaseModel.get-53"><span class="linenos">53</span></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
-</span><span id="LunarPhaseModel.get-54"><a href="#LunarPhaseModel.get-54"><span class="linenos">54</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LunarPhaseModel.get-54"><a href="#LunarPhaseModel.get-54"><span class="linenos">54</span></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+</span><span id="LunarPhaseModel.get-55"><a href="#LunarPhaseModel.get-55"><span class="linenos">55</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -370,7 +373,6 @@ __pydantic_private__: Instance attribute with the values of private attributes s
                                 <dl>
                                     <div><dt>pydantic.main.BaseModel</dt>
                                 <dd id="LunarPhaseModel.__init__" class="function">BaseModel</dd>
-                <dd id="LunarPhaseModel.model_computed_fields" class="variable">model_computed_fields</dd>
                 <dd id="LunarPhaseModel.model_extra" class="variable">model_extra</dd>
                 <dd id="LunarPhaseModel.model_fields_set" class="variable">model_fields_set</dd>
                 <dd id="LunarPhaseModel.model_construct" class="function">model_construct</dd>
@@ -412,58 +414,58 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 
     </div>
     <a class="headerlink" href="#KerykeionPointModel"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="KerykeionPointModel-57"><a href="#KerykeionPointModel-57"><span class="linenos"> 57</span></a><span class="k">class</span> <span class="nc">KerykeionPointModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="KerykeionPointModel-58"><a href="#KerykeionPointModel-58"><span class="linenos"> 58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="KerykeionPointModel-59"><a href="#KerykeionPointModel-59"><span class="linenos"> 59</span></a><span class="sd">    Kerykeion Point Model</span>
-</span><span id="KerykeionPointModel-60"><a href="#KerykeionPointModel-60"><span class="linenos"> 60</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="KerykeionPointModel-61"><a href="#KerykeionPointModel-61"><span class="linenos"> 61</span></a>
-</span><span id="KerykeionPointModel-62"><a href="#KerykeionPointModel-62"><span class="linenos"> 62</span></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Planet</span><span class="p">,</span> <span class="n">Houses</span><span class="p">]</span>
-</span><span id="KerykeionPointModel-63"><a href="#KerykeionPointModel-63"><span class="linenos"> 63</span></a>    <span class="n">quality</span><span class="p">:</span> <span class="n">Quality</span>
-</span><span id="KerykeionPointModel-64"><a href="#KerykeionPointModel-64"><span class="linenos"> 64</span></a>    <span class="n">element</span><span class="p">:</span> <span class="n">Element</span>
-</span><span id="KerykeionPointModel-65"><a href="#KerykeionPointModel-65"><span class="linenos"> 65</span></a>    <span class="n">sign</span><span class="p">:</span> <span class="n">Sign</span>
-</span><span id="KerykeionPointModel-66"><a href="#KerykeionPointModel-66"><span class="linenos"> 66</span></a>    <span class="n">sign_num</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">]</span>
-</span><span id="KerykeionPointModel-67"><a href="#KerykeionPointModel-67"><span class="linenos"> 67</span></a>    <span class="n">position</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="KerykeionPointModel-68"><a href="#KerykeionPointModel-68"><span class="linenos"> 68</span></a>    <span class="n">abs_pos</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="KerykeionPointModel-69"><a href="#KerykeionPointModel-69"><span class="linenos"> 69</span></a>    <span class="n">emoji</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="KerykeionPointModel-70"><a href="#KerykeionPointModel-70"><span class="linenos"> 70</span></a>    <span class="n">point_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Planet&quot;</span><span class="p">,</span> <span class="s2">&quot;House&quot;</span><span class="p">]</span>
-</span><span id="KerykeionPointModel-71"><a href="#KerykeionPointModel-71"><span class="linenos"> 71</span></a>    <span class="n">house</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="KerykeionPointModel-72"><a href="#KerykeionPointModel-72"><span class="linenos"> 72</span></a>    <span class="n">retrograde</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="KerykeionPointModel-73"><a href="#KerykeionPointModel-73"><span class="linenos"> 73</span></a>
-</span><span id="KerykeionPointModel-74"><a href="#KerykeionPointModel-74"><span class="linenos"> 74</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="KerykeionPointModel-75"><a href="#KerykeionPointModel-75"><span class="linenos"> 75</span></a>        <span class="k">return</span> <span class="p">(</span>
-</span><span id="KerykeionPointModel-76"><a href="#KerykeionPointModel-76"><span class="linenos"> 76</span></a>            <span class="nb">super</span><span class="p">()</span>
-</span><span id="KerykeionPointModel-77"><a href="#KerykeionPointModel-77"><span class="linenos"> 77</span></a>            <span class="o">.</span><span class="n">dict</span><span class="p">(</span>
-</span><span id="KerykeionPointModel-78"><a href="#KerykeionPointModel-78"><span class="linenos"> 78</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="KerykeionPointModel-79"><a href="#KerykeionPointModel-79"><span class="linenos"> 79</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="KerykeionPointModel-80"><a href="#KerykeionPointModel-80"><span class="linenos"> 80</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="KerykeionPointModel-81"><a href="#KerykeionPointModel-81"><span class="linenos"> 81</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="KerykeionPointModel-82"><a href="#KerykeionPointModel-82"><span class="linenos"> 82</span></a>            <span class="p">)</span>
-</span><span id="KerykeionPointModel-83"><a href="#KerykeionPointModel-83"><span class="linenos"> 83</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
-</span><span id="KerykeionPointModel-84"><a href="#KerykeionPointModel-84"><span class="linenos"> 84</span></a>        <span class="p">)</span>
-</span><span id="KerykeionPointModel-85"><a href="#KerykeionPointModel-85"><span class="linenos"> 85</span></a>
-</span><span id="KerykeionPointModel-86"><a href="#KerykeionPointModel-86"><span class="linenos"> 86</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="KerykeionPointModel-87"><a href="#KerykeionPointModel-87"><span class="linenos"> 87</span></a>        <span class="k">return</span> <span class="p">(</span>
-</span><span id="KerykeionPointModel-88"><a href="#KerykeionPointModel-88"><span class="linenos"> 88</span></a>            <span class="nb">super</span><span class="p">()</span>
-</span><span id="KerykeionPointModel-89"><a href="#KerykeionPointModel-89"><span class="linenos"> 89</span></a>            <span class="o">.</span><span class="n">dict</span><span class="p">(</span>
-</span><span id="KerykeionPointModel-90"><a href="#KerykeionPointModel-90"><span class="linenos"> 90</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="KerykeionPointModel-91"><a href="#KerykeionPointModel-91"><span class="linenos"> 91</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="KerykeionPointModel-92"><a href="#KerykeionPointModel-92"><span class="linenos"> 92</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="KerykeionPointModel-93"><a href="#KerykeionPointModel-93"><span class="linenos"> 93</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="KerykeionPointModel-94"><a href="#KerykeionPointModel-94"><span class="linenos"> 94</span></a>            <span class="p">)</span>
-</span><span id="KerykeionPointModel-95"><a href="#KerykeionPointModel-95"><span class="linenos"> 95</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
-</span><span id="KerykeionPointModel-96"><a href="#KerykeionPointModel-96"><span class="linenos"> 96</span></a>        <span class="p">)</span>
-</span><span id="KerykeionPointModel-97"><a href="#KerykeionPointModel-97"><span class="linenos"> 97</span></a>
-</span><span id="KerykeionPointModel-98"><a href="#KerykeionPointModel-98"><span class="linenos"> 98</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span id="KerykeionPointModel-99"><a href="#KerykeionPointModel-99"><span class="linenos"> 99</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-</span><span id="KerykeionPointModel-100"><a href="#KerykeionPointModel-100"><span class="linenos">100</span></a>
-</span><span id="KerykeionPointModel-101"><a href="#KerykeionPointModel-101"><span class="linenos">101</span></a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-</span><span id="KerykeionPointModel-102"><a href="#KerykeionPointModel-102"><span class="linenos">102</span></a>        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="KerykeionPointModel-103"><a href="#KerykeionPointModel-103"><span class="linenos">103</span></a>
-</span><span id="KerykeionPointModel-104"><a href="#KerykeionPointModel-104"><span class="linenos">104</span></a>    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span id="KerykeionPointModel-105"><a href="#KerykeionPointModel-105"><span class="linenos">105</span></a>        <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-</span><span id="KerykeionPointModel-106"><a href="#KerykeionPointModel-106"><span class="linenos">106</span></a>
-</span><span id="KerykeionPointModel-107"><a href="#KerykeionPointModel-107"><span class="linenos">107</span></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
-</span><span id="KerykeionPointModel-108"><a href="#KerykeionPointModel-108"><span class="linenos">108</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="KerykeionPointModel-58"><a href="#KerykeionPointModel-58"><span class="linenos"> 58</span></a><span class="k">class</span> <span class="nc">KerykeionPointModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="KerykeionPointModel-59"><a href="#KerykeionPointModel-59"><span class="linenos"> 59</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="KerykeionPointModel-60"><a href="#KerykeionPointModel-60"><span class="linenos"> 60</span></a><span class="sd">    Kerykeion Point Model</span>
+</span><span id="KerykeionPointModel-61"><a href="#KerykeionPointModel-61"><span class="linenos"> 61</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="KerykeionPointModel-62"><a href="#KerykeionPointModel-62"><span class="linenos"> 62</span></a>
+</span><span id="KerykeionPointModel-63"><a href="#KerykeionPointModel-63"><span class="linenos"> 63</span></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Planet</span><span class="p">,</span> <span class="n">Houses</span><span class="p">]</span>
+</span><span id="KerykeionPointModel-64"><a href="#KerykeionPointModel-64"><span class="linenos"> 64</span></a>    <span class="n">quality</span><span class="p">:</span> <span class="n">Quality</span>
+</span><span id="KerykeionPointModel-65"><a href="#KerykeionPointModel-65"><span class="linenos"> 65</span></a>    <span class="n">element</span><span class="p">:</span> <span class="n">Element</span>
+</span><span id="KerykeionPointModel-66"><a href="#KerykeionPointModel-66"><span class="linenos"> 66</span></a>    <span class="n">sign</span><span class="p">:</span> <span class="n">Sign</span>
+</span><span id="KerykeionPointModel-67"><a href="#KerykeionPointModel-67"><span class="linenos"> 67</span></a>    <span class="n">sign_num</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">]</span>
+</span><span id="KerykeionPointModel-68"><a href="#KerykeionPointModel-68"><span class="linenos"> 68</span></a>    <span class="n">position</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="KerykeionPointModel-69"><a href="#KerykeionPointModel-69"><span class="linenos"> 69</span></a>    <span class="n">abs_pos</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="KerykeionPointModel-70"><a href="#KerykeionPointModel-70"><span class="linenos"> 70</span></a>    <span class="n">emoji</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="KerykeionPointModel-71"><a href="#KerykeionPointModel-71"><span class="linenos"> 71</span></a>    <span class="n">point_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Planet&quot;</span><span class="p">,</span> <span class="s2">&quot;House&quot;</span><span class="p">]</span>
+</span><span id="KerykeionPointModel-72"><a href="#KerykeionPointModel-72"><span class="linenos"> 72</span></a>    <span class="n">house</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="KerykeionPointModel-73"><a href="#KerykeionPointModel-73"><span class="linenos"> 73</span></a>    <span class="n">retrograde</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="KerykeionPointModel-74"><a href="#KerykeionPointModel-74"><span class="linenos"> 74</span></a>
+</span><span id="KerykeionPointModel-75"><a href="#KerykeionPointModel-75"><span class="linenos"> 75</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="KerykeionPointModel-76"><a href="#KerykeionPointModel-76"><span class="linenos"> 76</span></a>        <span class="k">return</span> <span class="p">(</span>
+</span><span id="KerykeionPointModel-77"><a href="#KerykeionPointModel-77"><span class="linenos"> 77</span></a>            <span class="nb">super</span><span class="p">()</span>
+</span><span id="KerykeionPointModel-78"><a href="#KerykeionPointModel-78"><span class="linenos"> 78</span></a>            <span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
+</span><span id="KerykeionPointModel-79"><a href="#KerykeionPointModel-79"><span class="linenos"> 79</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="KerykeionPointModel-80"><a href="#KerykeionPointModel-80"><span class="linenos"> 80</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="KerykeionPointModel-81"><a href="#KerykeionPointModel-81"><span class="linenos"> 81</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="KerykeionPointModel-82"><a href="#KerykeionPointModel-82"><span class="linenos"> 82</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="KerykeionPointModel-83"><a href="#KerykeionPointModel-83"><span class="linenos"> 83</span></a>            <span class="p">)</span>
+</span><span id="KerykeionPointModel-84"><a href="#KerykeionPointModel-84"><span class="linenos"> 84</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+</span><span id="KerykeionPointModel-85"><a href="#KerykeionPointModel-85"><span class="linenos"> 85</span></a>        <span class="p">)</span>
+</span><span id="KerykeionPointModel-86"><a href="#KerykeionPointModel-86"><span class="linenos"> 86</span></a>
+</span><span id="KerykeionPointModel-87"><a href="#KerykeionPointModel-87"><span class="linenos"> 87</span></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="KerykeionPointModel-88"><a href="#KerykeionPointModel-88"><span class="linenos"> 88</span></a>        <span class="k">return</span> <span class="p">(</span>
+</span><span id="KerykeionPointModel-89"><a href="#KerykeionPointModel-89"><span class="linenos"> 89</span></a>            <span class="nb">super</span><span class="p">()</span>
+</span><span id="KerykeionPointModel-90"><a href="#KerykeionPointModel-90"><span class="linenos"> 90</span></a>            <span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
+</span><span id="KerykeionPointModel-91"><a href="#KerykeionPointModel-91"><span class="linenos"> 91</span></a>                <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="KerykeionPointModel-92"><a href="#KerykeionPointModel-92"><span class="linenos"> 92</span></a>                <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="KerykeionPointModel-93"><a href="#KerykeionPointModel-93"><span class="linenos"> 93</span></a>                <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="KerykeionPointModel-94"><a href="#KerykeionPointModel-94"><span class="linenos"> 94</span></a>                <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="KerykeionPointModel-95"><a href="#KerykeionPointModel-95"><span class="linenos"> 95</span></a>            <span class="p">)</span>
+</span><span id="KerykeionPointModel-96"><a href="#KerykeionPointModel-96"><span class="linenos"> 96</span></a>            <span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+</span><span id="KerykeionPointModel-97"><a href="#KerykeionPointModel-97"><span class="linenos"> 97</span></a>        <span class="p">)</span>
+</span><span id="KerykeionPointModel-98"><a href="#KerykeionPointModel-98"><span class="linenos"> 98</span></a>
+</span><span id="KerykeionPointModel-99"><a href="#KerykeionPointModel-99"><span class="linenos"> 99</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+</span><span id="KerykeionPointModel-100"><a href="#KerykeionPointModel-100"><span class="linenos">100</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span><span id="KerykeionPointModel-101"><a href="#KerykeionPointModel-101"><span class="linenos">101</span></a>
+</span><span id="KerykeionPointModel-102"><a href="#KerykeionPointModel-102"><span class="linenos">102</span></a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span><span id="KerykeionPointModel-103"><a href="#KerykeionPointModel-103"><span class="linenos">103</span></a>        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="KerykeionPointModel-104"><a href="#KerykeionPointModel-104"><span class="linenos">104</span></a>
+</span><span id="KerykeionPointModel-105"><a href="#KerykeionPointModel-105"><span class="linenos">105</span></a>    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+</span><span id="KerykeionPointModel-106"><a href="#KerykeionPointModel-106"><span class="linenos">106</span></a>        <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span><span id="KerykeionPointModel-107"><a href="#KerykeionPointModel-107"><span class="linenos">107</span></a>
+</span><span id="KerykeionPointModel-108"><a href="#KerykeionPointModel-108"><span class="linenos">108</span></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+</span><span id="KerykeionPointModel-109"><a href="#KerykeionPointModel-109"><span class="linenos">109</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -482,8 +484,8 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 
     </div>
     <a class="headerlink" href="#KerykeionPointModel.get"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="KerykeionPointModel.get-107"><a href="#KerykeionPointModel.get-107"><span class="linenos">107</span></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
-</span><span id="KerykeionPointModel.get-108"><a href="#KerykeionPointModel.get-108"><span class="linenos">108</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="KerykeionPointModel.get-108"><a href="#KerykeionPointModel.get-108"><span class="linenos">108</span></a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+</span><span id="KerykeionPointModel.get-109"><a href="#KerykeionPointModel.get-109"><span class="linenos">109</span></a>        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -495,7 +497,6 @@ __pydantic_private__: Instance attribute with the values of private attributes s
                                 <dl>
                                     <div><dt>pydantic.main.BaseModel</dt>
                                 <dd id="KerykeionPointModel.__init__" class="function">BaseModel</dd>
-                <dd id="KerykeionPointModel.model_computed_fields" class="variable">model_computed_fields</dd>
                 <dd id="KerykeionPointModel.model_extra" class="variable">model_extra</dd>
                 <dd id="KerykeionPointModel.model_fields_set" class="variable">model_fields_set</dd>
                 <dd id="KerykeionPointModel.model_construct" class="function">model_construct</dd>
@@ -537,61 +538,61 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AstrologicalSubjectModel-111"><a href="#AstrologicalSubjectModel-111"><span class="linenos">111</span></a><span class="k">class</span> <span class="nc">AstrologicalSubjectModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="AstrologicalSubjectModel-112"><a href="#AstrologicalSubjectModel-112"><span class="linenos">112</span></a>    <span class="c1"># Data</span>
-</span><span id="AstrologicalSubjectModel-113"><a href="#AstrologicalSubjectModel-113"><span class="linenos">113</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="AstrologicalSubjectModel-114"><a href="#AstrologicalSubjectModel-114"><span class="linenos">114</span></a>    <span class="n">year</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="AstrologicalSubjectModel-115"><a href="#AstrologicalSubjectModel-115"><span class="linenos">115</span></a>    <span class="n">month</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="AstrologicalSubjectModel-116"><a href="#AstrologicalSubjectModel-116"><span class="linenos">116</span></a>    <span class="n">day</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="AstrologicalSubjectModel-117"><a href="#AstrologicalSubjectModel-117"><span class="linenos">117</span></a>    <span class="n">hour</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="AstrologicalSubjectModel-118"><a href="#AstrologicalSubjectModel-118"><span class="linenos">118</span></a>    <span class="n">minute</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="AstrologicalSubjectModel-119"><a href="#AstrologicalSubjectModel-119"><span class="linenos">119</span></a>    <span class="n">city</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="AstrologicalSubjectModel-120"><a href="#AstrologicalSubjectModel-120"><span class="linenos">120</span></a>    <span class="n">nation</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="AstrologicalSubjectModel-121"><a href="#AstrologicalSubjectModel-121"><span class="linenos">121</span></a>    <span class="n">lng</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="AstrologicalSubjectModel-122"><a href="#AstrologicalSubjectModel-122"><span class="linenos">122</span></a>    <span class="n">lat</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="AstrologicalSubjectModel-123"><a href="#AstrologicalSubjectModel-123"><span class="linenos">123</span></a>    <span class="n">tz_str</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="AstrologicalSubjectModel-124"><a href="#AstrologicalSubjectModel-124"><span class="linenos">124</span></a>    <span class="n">zodiac_type</span><span class="p">:</span> <span class="n">ZodiacType</span>
-</span><span id="AstrologicalSubjectModel-125"><a href="#AstrologicalSubjectModel-125"><span class="linenos">125</span></a>    <span class="n">local_time</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="AstrologicalSubjectModel-126"><a href="#AstrologicalSubjectModel-126"><span class="linenos">126</span></a>    <span class="n">utc_time</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="AstrologicalSubjectModel-127"><a href="#AstrologicalSubjectModel-127"><span class="linenos">127</span></a>    <span class="n">julian_day</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="AstrologicalSubjectModel-128"><a href="#AstrologicalSubjectModel-128"><span class="linenos">128</span></a>
-</span><span id="AstrologicalSubjectModel-129"><a href="#AstrologicalSubjectModel-129"><span class="linenos">129</span></a>    <span class="c1"># Planets</span>
-</span><span id="AstrologicalSubjectModel-130"><a href="#AstrologicalSubjectModel-130"><span class="linenos">130</span></a>    <span class="n">sun</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-131"><a href="#AstrologicalSubjectModel-131"><span class="linenos">131</span></a>    <span class="n">moon</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-132"><a href="#AstrologicalSubjectModel-132"><span class="linenos">132</span></a>    <span class="n">mercury</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-133"><a href="#AstrologicalSubjectModel-133"><span class="linenos">133</span></a>    <span class="n">venus</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-134"><a href="#AstrologicalSubjectModel-134"><span class="linenos">134</span></a>    <span class="n">mars</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-135"><a href="#AstrologicalSubjectModel-135"><span class="linenos">135</span></a>    <span class="n">jupiter</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-136"><a href="#AstrologicalSubjectModel-136"><span class="linenos">136</span></a>    <span class="n">saturn</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-137"><a href="#AstrologicalSubjectModel-137"><span class="linenos">137</span></a>    <span class="n">uranus</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-138"><a href="#AstrologicalSubjectModel-138"><span class="linenos">138</span></a>    <span class="n">neptune</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-139"><a href="#AstrologicalSubjectModel-139"><span class="linenos">139</span></a>    <span class="n">pluto</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-140"><a href="#AstrologicalSubjectModel-140"><span class="linenos">140</span></a>    <span class="n">chiron</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-141"><a href="#AstrologicalSubjectModel-141"><span class="linenos">141</span></a>
-</span><span id="AstrologicalSubjectModel-142"><a href="#AstrologicalSubjectModel-142"><span class="linenos">142</span></a>    <span class="c1"># Houses</span>
-</span><span id="AstrologicalSubjectModel-143"><a href="#AstrologicalSubjectModel-143"><span class="linenos">143</span></a>    <span class="n">first_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-144"><a href="#AstrologicalSubjectModel-144"><span class="linenos">144</span></a>    <span class="n">second_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-145"><a href="#AstrologicalSubjectModel-145"><span class="linenos">145</span></a>    <span class="n">third_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-146"><a href="#AstrologicalSubjectModel-146"><span class="linenos">146</span></a>    <span class="n">fourth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-147"><a href="#AstrologicalSubjectModel-147"><span class="linenos">147</span></a>    <span class="n">fifth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-148"><a href="#AstrologicalSubjectModel-148"><span class="linenos">148</span></a>    <span class="n">sixth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-149"><a href="#AstrologicalSubjectModel-149"><span class="linenos">149</span></a>    <span class="n">seventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-150"><a href="#AstrologicalSubjectModel-150"><span class="linenos">150</span></a>    <span class="n">eighth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-151"><a href="#AstrologicalSubjectModel-151"><span class="linenos">151</span></a>    <span class="n">ninth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-152"><a href="#AstrologicalSubjectModel-152"><span class="linenos">152</span></a>    <span class="n">tenth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-153"><a href="#AstrologicalSubjectModel-153"><span class="linenos">153</span></a>    <span class="n">eleventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-154"><a href="#AstrologicalSubjectModel-154"><span class="linenos">154</span></a>    <span class="n">twelfth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-155"><a href="#AstrologicalSubjectModel-155"><span class="linenos">155</span></a>
-</span><span id="AstrologicalSubjectModel-156"><a href="#AstrologicalSubjectModel-156"><span class="linenos">156</span></a>    <span class="c1"># Nodes</span>
-</span><span id="AstrologicalSubjectModel-157"><a href="#AstrologicalSubjectModel-157"><span class="linenos">157</span></a>    <span class="n">mean_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-158"><a href="#AstrologicalSubjectModel-158"><span class="linenos">158</span></a>    <span class="n">true_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
-</span><span id="AstrologicalSubjectModel-159"><a href="#AstrologicalSubjectModel-159"><span class="linenos">159</span></a>
-</span><span id="AstrologicalSubjectModel-160"><a href="#AstrologicalSubjectModel-160"><span class="linenos">160</span></a>    <span class="c1"># Lunar Phase</span>
-</span><span id="AstrologicalSubjectModel-161"><a href="#AstrologicalSubjectModel-161"><span class="linenos">161</span></a>    <span class="n">lunar_phase</span><span class="p">:</span> <span class="n">LunarPhaseModel</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AstrologicalSubjectModel-112"><a href="#AstrologicalSubjectModel-112"><span class="linenos">112</span></a><span class="k">class</span> <span class="nc">AstrologicalSubjectModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="AstrologicalSubjectModel-113"><a href="#AstrologicalSubjectModel-113"><span class="linenos">113</span></a>    <span class="c1"># Data</span>
+</span><span id="AstrologicalSubjectModel-114"><a href="#AstrologicalSubjectModel-114"><span class="linenos">114</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="AstrologicalSubjectModel-115"><a href="#AstrologicalSubjectModel-115"><span class="linenos">115</span></a>    <span class="n">year</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="AstrologicalSubjectModel-116"><a href="#AstrologicalSubjectModel-116"><span class="linenos">116</span></a>    <span class="n">month</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="AstrologicalSubjectModel-117"><a href="#AstrologicalSubjectModel-117"><span class="linenos">117</span></a>    <span class="n">day</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="AstrologicalSubjectModel-118"><a href="#AstrologicalSubjectModel-118"><span class="linenos">118</span></a>    <span class="n">hour</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="AstrologicalSubjectModel-119"><a href="#AstrologicalSubjectModel-119"><span class="linenos">119</span></a>    <span class="n">minute</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="AstrologicalSubjectModel-120"><a href="#AstrologicalSubjectModel-120"><span class="linenos">120</span></a>    <span class="n">city</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="AstrologicalSubjectModel-121"><a href="#AstrologicalSubjectModel-121"><span class="linenos">121</span></a>    <span class="n">nation</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="AstrologicalSubjectModel-122"><a href="#AstrologicalSubjectModel-122"><span class="linenos">122</span></a>    <span class="n">lng</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="AstrologicalSubjectModel-123"><a href="#AstrologicalSubjectModel-123"><span class="linenos">123</span></a>    <span class="n">lat</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="AstrologicalSubjectModel-124"><a href="#AstrologicalSubjectModel-124"><span class="linenos">124</span></a>    <span class="n">tz_str</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="AstrologicalSubjectModel-125"><a href="#AstrologicalSubjectModel-125"><span class="linenos">125</span></a>    <span class="n">zodiac_type</span><span class="p">:</span> <span class="n">ZodiacType</span>
+</span><span id="AstrologicalSubjectModel-126"><a href="#AstrologicalSubjectModel-126"><span class="linenos">126</span></a>    <span class="n">local_time</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="AstrologicalSubjectModel-127"><a href="#AstrologicalSubjectModel-127"><span class="linenos">127</span></a>    <span class="n">utc_time</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="AstrologicalSubjectModel-128"><a href="#AstrologicalSubjectModel-128"><span class="linenos">128</span></a>    <span class="n">julian_day</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="AstrologicalSubjectModel-129"><a href="#AstrologicalSubjectModel-129"><span class="linenos">129</span></a>
+</span><span id="AstrologicalSubjectModel-130"><a href="#AstrologicalSubjectModel-130"><span class="linenos">130</span></a>    <span class="c1"># Planets</span>
+</span><span id="AstrologicalSubjectModel-131"><a href="#AstrologicalSubjectModel-131"><span class="linenos">131</span></a>    <span class="n">sun</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-132"><a href="#AstrologicalSubjectModel-132"><span class="linenos">132</span></a>    <span class="n">moon</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-133"><a href="#AstrologicalSubjectModel-133"><span class="linenos">133</span></a>    <span class="n">mercury</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-134"><a href="#AstrologicalSubjectModel-134"><span class="linenos">134</span></a>    <span class="n">venus</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-135"><a href="#AstrologicalSubjectModel-135"><span class="linenos">135</span></a>    <span class="n">mars</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-136"><a href="#AstrologicalSubjectModel-136"><span class="linenos">136</span></a>    <span class="n">jupiter</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-137"><a href="#AstrologicalSubjectModel-137"><span class="linenos">137</span></a>    <span class="n">saturn</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-138"><a href="#AstrologicalSubjectModel-138"><span class="linenos">138</span></a>    <span class="n">uranus</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-139"><a href="#AstrologicalSubjectModel-139"><span class="linenos">139</span></a>    <span class="n">neptune</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-140"><a href="#AstrologicalSubjectModel-140"><span class="linenos">140</span></a>    <span class="n">pluto</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-141"><a href="#AstrologicalSubjectModel-141"><span class="linenos">141</span></a>    <span class="n">chiron</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">KerykeionPointModel</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+</span><span id="AstrologicalSubjectModel-142"><a href="#AstrologicalSubjectModel-142"><span class="linenos">142</span></a>
+</span><span id="AstrologicalSubjectModel-143"><a href="#AstrologicalSubjectModel-143"><span class="linenos">143</span></a>    <span class="c1"># Houses</span>
+</span><span id="AstrologicalSubjectModel-144"><a href="#AstrologicalSubjectModel-144"><span class="linenos">144</span></a>    <span class="n">first_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-145"><a href="#AstrologicalSubjectModel-145"><span class="linenos">145</span></a>    <span class="n">second_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-146"><a href="#AstrologicalSubjectModel-146"><span class="linenos">146</span></a>    <span class="n">third_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-147"><a href="#AstrologicalSubjectModel-147"><span class="linenos">147</span></a>    <span class="n">fourth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-148"><a href="#AstrologicalSubjectModel-148"><span class="linenos">148</span></a>    <span class="n">fifth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-149"><a href="#AstrologicalSubjectModel-149"><span class="linenos">149</span></a>    <span class="n">sixth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-150"><a href="#AstrologicalSubjectModel-150"><span class="linenos">150</span></a>    <span class="n">seventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-151"><a href="#AstrologicalSubjectModel-151"><span class="linenos">151</span></a>    <span class="n">eighth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-152"><a href="#AstrologicalSubjectModel-152"><span class="linenos">152</span></a>    <span class="n">ninth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-153"><a href="#AstrologicalSubjectModel-153"><span class="linenos">153</span></a>    <span class="n">tenth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-154"><a href="#AstrologicalSubjectModel-154"><span class="linenos">154</span></a>    <span class="n">eleventh_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-155"><a href="#AstrologicalSubjectModel-155"><span class="linenos">155</span></a>    <span class="n">twelfth_house</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-156"><a href="#AstrologicalSubjectModel-156"><span class="linenos">156</span></a>
+</span><span id="AstrologicalSubjectModel-157"><a href="#AstrologicalSubjectModel-157"><span class="linenos">157</span></a>    <span class="c1"># Nodes</span>
+</span><span id="AstrologicalSubjectModel-158"><a href="#AstrologicalSubjectModel-158"><span class="linenos">158</span></a>    <span class="n">mean_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-159"><a href="#AstrologicalSubjectModel-159"><span class="linenos">159</span></a>    <span class="n">true_node</span><span class="p">:</span> <span class="n">KerykeionPointModel</span>
+</span><span id="AstrologicalSubjectModel-160"><a href="#AstrologicalSubjectModel-160"><span class="linenos">160</span></a>
+</span><span id="AstrologicalSubjectModel-161"><a href="#AstrologicalSubjectModel-161"><span class="linenos">161</span></a>    <span class="c1"># Lunar Phase</span>
+</span><span id="AstrologicalSubjectModel-162"><a href="#AstrologicalSubjectModel-162"><span class="linenos">162</span></a>    <span class="n">lunar_phase</span><span class="p">:</span> <span class="n">LunarPhaseModel</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.5/concepts/models/">https://docs.pydantic.dev/2.5/concepts/models/</a></p>
+            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.6/concepts/models/">https://docs.pydantic.dev/2.6/concepts/models/</a></p>
 
 <p>A base class for creating Pydantic models.</p>
 
@@ -626,7 +627,6 @@ __pydantic_private__: Instance attribute with the values of private attributes s
                                 <dl>
                                     <div><dt>pydantic.main.BaseModel</dt>
                                 <dd id="AstrologicalSubjectModel.__init__" class="function">BaseModel</dd>
-                <dd id="AstrologicalSubjectModel.model_computed_fields" class="variable">model_computed_fields</dd>
                 <dd id="AstrologicalSubjectModel.model_extra" class="variable">model_extra</dd>
                 <dd id="AstrologicalSubjectModel.model_fields_set" class="variable">model_fields_set</dd>
                 <dd id="AstrologicalSubjectModel.model_construct" class="function">model_construct</dd>
