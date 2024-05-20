@@ -37,7 +37,7 @@ Allow UTC datetime to be passed in the constructor as an alternative to year, mo
 
 - Fixed | bug for compatibility with Python 3.9
 
-## 4.5.0
+## 4.6.0
 
 - Now the `lunar_phase` contains also the `lunar_phase_name` property, which is a string representation of the phase.
 - Minor general cleanup and refactoring of the codebase.
