@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2023 Giacomo Battaglia
+    This is part of Kerykeion (C) 2024 Giacomo Battaglia
 """
 
-import math
 import pytz
 import swisseph as swe
 import logging
@@ -17,7 +16,13 @@ from kerykeion.kr_types import (
     LunarPhaseModel,
     KerykeionPointModel,
 )
-from kerykeion.utilities import get_number_from_name, calculate_position
+from kerykeion.utilities import (
+    get_number_from_name, 
+    calculate_position, 
+    get_planet_house,
+    get_moon_emoji_from_phase_int,
+    get_moon_phase_name_from_phase_int,
+)
 from pathlib import Path
 from typing import Union, Literal
 
@@ -431,64 +436,21 @@ class AstrologicalSubject:
         """Calculates the house of the planet and updates
         the planets dictionary."""
 
-        def for_every_planet(planet, planet_deg):
-            """Function to do the calculation.
-            Args: planet dictionary, planet degree"""
-
-            def point_between(p1, p2, p3):
-                """Finds if a point is between two other in a circle
-                args: first point, second point, point in the middle"""
-                p1_p2 = math.fmod(p2 - p1 + 360, 360)
-                p1_p3 = math.fmod(p3 - p1 + 360, 360)
-                if (p1_p2 <= 180) != (p1_p3 > p1_p2):
-                    return True
-                else:
-                    return False
-
-            if point_between(self.houses_degree_ut[0], self.houses_degree_ut[1], planet_deg) == True:
-                planet["house"] = "First_House"
-            elif point_between(self.houses_degree_ut[1], self.houses_degree_ut[2], planet_deg) == True:
-                planet["house"] = "Second_House"
-            elif point_between(self.houses_degree_ut[2], self.houses_degree_ut[3], planet_deg) == True:
-                planet["house"] = "Third_House"
-            elif point_between(self.houses_degree_ut[3], self.houses_degree_ut[4], planet_deg) == True:
-                planet["house"] = "Fourth_House"
-            elif point_between(self.houses_degree_ut[4], self.houses_degree_ut[5], planet_deg) == True:
-                planet["house"] = "Fifth_House"
-            elif point_between(self.houses_degree_ut[5], self.houses_degree_ut[6], planet_deg) == True:
-                planet["house"] = "Sixth_House"
-            elif point_between(self.houses_degree_ut[6], self.houses_degree_ut[7], planet_deg) == True:
-                planet["house"] = "Seventh_House"
-            elif point_between(self.houses_degree_ut[7], self.houses_degree_ut[8], planet_deg) == True:
-                planet["house"] = "Eighth_House"
-            elif point_between(self.houses_degree_ut[8], self.houses_degree_ut[9], planet_deg) == True:
-                planet["house"] = "Ninth_House"
-            elif point_between(self.houses_degree_ut[9], self.houses_degree_ut[10], planet_deg) == True:
-                planet["house"] = "Tenth_House"
-            elif point_between(self.houses_degree_ut[10], self.houses_degree_ut[11], planet_deg) == True:
-                planet["house"] = "Eleventh_House"
-            elif point_between(self.houses_degree_ut[11], self.houses_degree_ut[0], planet_deg) == True:
-                planet["house"] = "Twelfth_House"
-            else:
-                planet["house"] = "error!"
-
-            return planet
-
-        self.sun = for_every_planet(self.sun, self.planets_degrees_ut[0])
-        self.moon = for_every_planet(self.moon, self.planets_degrees_ut[1])
-        self.mercury = for_every_planet(self.mercury, self.planets_degrees_ut[2])
-        self.venus = for_every_planet(self.venus, self.planets_degrees_ut[3])
-        self.mars = for_every_planet(self.mars, self.planets_degrees_ut[4])
-        self.jupiter = for_every_planet(self.jupiter, self.planets_degrees_ut[5])
-        self.saturn = for_every_planet(self.saturn, self.planets_degrees_ut[6])
-        self.uranus = for_every_planet(self.uranus, self.planets_degrees_ut[7])
-        self.neptune = for_every_planet(self.neptune, self.planets_degrees_ut[8])
-        self.pluto = for_every_planet(self.pluto, self.planets_degrees_ut[9])
-        self.mean_node = for_every_planet(self.mean_node, self.planets_degrees_ut[10])
-        self.true_node = for_every_planet(self.true_node, self.planets_degrees_ut[11])
+        self.sun.house = get_planet_house(self.planets_degrees_ut[0], self.houses_degree_ut)
+        self.moon.house = get_planet_house(self.planets_degrees_ut[1], self.houses_degree_ut)
+        self.mercury.house = get_planet_house(self.planets_degrees_ut[2], self.houses_degree_ut)
+        self.venus.house = get_planet_house(self.planets_degrees_ut[3], self.houses_degree_ut)
+        self.mars.house = get_planet_house(self.planets_degrees_ut[4], self.houses_degree_ut)
+        self.jupiter.house = get_planet_house(self.planets_degrees_ut[5], self.houses_degree_ut)
+        self.saturn.house = get_planet_house(self.planets_degrees_ut[6], self.houses_degree_ut)
+        self.uranus.house = get_planet_house(self.planets_degrees_ut[7], self.houses_degree_ut)
+        self.neptune.house = get_planet_house(self.planets_degrees_ut[8], self.houses_degree_ut)
+        self.pluto.house = get_planet_house(self.planets_degrees_ut[9], self.houses_degree_ut)
+        self.mean_node.house = get_planet_house(self.planets_degrees_ut[10], self.houses_degree_ut)
+        self.true_node.house = get_planet_house(self.planets_degrees_ut[11], self.houses_degree_ut)
 
         if not self.disable_chiron:
-            self.chiron = for_every_planet(self.chiron, self.planets_degrees_ut[12])
+            self.chiron.house = get_planet_house(self.planets_degrees_ut[12], self.houses_degree_ut)
         else:
             self.chiron = None
 
@@ -583,33 +545,12 @@ class AstrologicalSubject:
             if degrees_between >= low and degrees_between < high:
                 sun_phase = x + 1
 
-        def moon_emoji(phase):
-            if phase == 1:
-                result = "🌑"
-            elif phase < 7:
-                result = "🌒"
-            elif 7 <= phase <= 9:
-                result = "🌓"
-            elif phase < 14:
-                result = "🌔"
-            elif phase == 14:
-                result = "🌕"
-            elif phase < 20:
-                result = "🌖"
-            elif 20 <= phase <= 22:
-                result = "🌗"
-            elif phase <= 28:
-                result = "🌘"
-            else:
-                result = phase
-
-            return result
-
         lunar_phase_dictionary = {
             "degrees_between_s_m": degrees_between,
             "moon_phase": moon_phase,
             "sun_phase": sun_phase,
-            "moon_emoji": moon_emoji(moon_phase),
+            "moon_emoji": get_moon_emoji_from_phase_int(moon_phase),
+            "moon_phase_name": get_moon_phase_name_from_phase_int(moon_phase)
         }
 
         self.lunar_phase = LunarPhaseModel(**lunar_phase_dictionary)

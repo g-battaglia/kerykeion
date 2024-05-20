@@ -1,6 +1,9 @@
 from kerykeion.kr_types import KerykeionPointModel, KerykeionException, KerykeionSettingsModel, AstrologicalSubjectModel
+from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName
 from typing import Union, Literal
 import logging
+import math
+
 
 
 def get_number_from_name(name: str) -> int:
@@ -220,3 +223,135 @@ def setup_logging(level: str) -> None:
     format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     loglevel: int = logopt.get(level, logging.INFO)
     logging.basicConfig(format=format, level=loglevel)
+
+def check_if_point_between(
+    start_point: Union[int, float], end_point: Union[int, float], evaluated_point: Union[int, float]
+) -> bool:
+    """
+    Finds if a point is between two other in a circle.
+
+    Args:
+        - start_point: The first point
+        - end_point: The second point
+        - point: The point to check if it is between start_point and end_point
+
+    Returns:
+        - True if point is between start_point and end_point, False otherwise
+    """
+
+    p1_p2 = math.fmod(end_point - start_point + 360, 360)
+    p1_p3 = math.fmod(evaluated_point - start_point + 360, 360)
+
+    if (p1_p2 <= 180) != (p1_p3 > p1_p2):
+        return True
+    else:
+        return False
+
+
+def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut_list: list) -> str:
+    """
+    Returns the house in which a planet is located.
+
+    Args:
+        - planet_position_degree: The position of the planet in degrees
+        - houses_degree_ut_list: A list of the houses in degrees (0-360)
+
+    Returns:
+        - The house in which the planet is located
+    """
+
+    house = None
+    if check_if_point_between(houses_degree_ut_list[0], houses_degree_ut_list[1], planet_position_degree) == True:
+        house = "First_House"
+    elif check_if_point_between(houses_degree_ut_list[1], houses_degree_ut_list[2], planet_position_degree) == True:
+        house = "Second_House"
+    elif check_if_point_between(houses_degree_ut_list[2], houses_degree_ut_list[3], planet_position_degree) == True:
+        house = "Third_House"
+    elif check_if_point_between(houses_degree_ut_list[3], houses_degree_ut_list[4], planet_position_degree) == True:
+        house = "Fourth_House"
+    elif check_if_point_between(houses_degree_ut_list[4], houses_degree_ut_list[5], planet_position_degree) == True:
+        house = "Fifth_House"
+    elif check_if_point_between(houses_degree_ut_list[5], houses_degree_ut_list[6], planet_position_degree) == True:
+        house = "Sixth_House"
+    elif check_if_point_between(houses_degree_ut_list[6], houses_degree_ut_list[7], planet_position_degree) == True:
+        house = "Seventh_House"
+    elif check_if_point_between(houses_degree_ut_list[7], houses_degree_ut_list[8], planet_position_degree) == True:
+        house = "Eighth_House"
+    elif check_if_point_between(houses_degree_ut_list[8], houses_degree_ut_list[9], planet_position_degree) == True:
+        house = "Ninth_House"
+    elif check_if_point_between(houses_degree_ut_list[9], houses_degree_ut_list[10], planet_position_degree) == True:
+        house = "Tenth_House"
+    elif check_if_point_between(houses_degree_ut_list[10], houses_degree_ut_list[11], planet_position_degree) == True:
+        house = "Eleventh_House"
+    elif check_if_point_between(houses_degree_ut_list[11], houses_degree_ut_list[0], planet_position_degree) == True:
+        house = "Twelfth_House"
+    else:
+        raise ValueError("Error in house calculation, planet: ", planet_position_degree)
+
+    return house
+
+def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
+    """
+    Returns the emoji of the moon phase.
+    
+    Args:
+        - phase: The phase of the moon (0-28)
+    
+    Returns:
+        - The emoji of the moon phase
+    """
+    
+    if phase == 1:
+        result = "🌑"
+    elif phase < 7:
+        result = "🌒"
+    elif 7 <= phase <= 9:
+        result = "🌓"
+    elif phase < 14:
+        result = "🌔"
+    elif phase == 14:
+        result = "🌕"
+    elif phase < 20:
+        result = "🌖"
+    elif 20 <= phase <= 22:
+        result = "🌗"
+    elif phase <= 28:
+        result = "🌘"
+
+    else:
+        raise KerykeionException(f"Error in moon emoji calculation! Phase: {phase}")
+
+    return result
+
+def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
+    """
+    Returns the name of the moon phase.
+    
+    Args:
+        - phase: The phase of the moon (0-28)
+    
+    Returns:
+        - The name of the moon phase
+    """
+    
+    if phase == 1:
+        result = "New Moon"
+    elif phase < 7:
+        result = "Waxing Crescent"
+    elif 7 <= phase <= 9:
+        result = "First Quarter"
+    elif phase < 14:
+        result = "Waxing Gibbous"
+    elif phase == 14:
+        result = "Full Moon"
+    elif phase < 20:
+        result = "Waning Gibbous"
+    elif 20 <= phase <= 22:
+        result = "Last Quarter"
+    elif phase <= 28:
+        result = "Waning Crescent"
+
+    else:
+        raise KerykeionException(f"Error in moon name calculation! Phase: {phase}")
+    
+    return result
