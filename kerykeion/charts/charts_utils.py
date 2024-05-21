@@ -1,6 +1,6 @@
 import math
 import datetime
-from kerykeion.kr_types import KerykeionException
+from kerykeion.kr_types import KerykeionException, ChartType
 from typing import Union
 
 def decHourJoin(inH: int, inM: int, inS: int) -> float:
@@ -108,3 +108,52 @@ def sliceToY(slice: Union[int, float], r: Union[int, float], offset: Union[int, 
     plus = (math.pi * offset) / 180
     radial = ((math.pi / 6) * slice) + plus
     return r * ((math.sin(radial) / -1) + 1)
+
+
+def draw_zodiac_slice(
+        c1: Union[int, float],
+        chart_type: ChartType,
+        sixth_house_degree_ut: Union[int, float],
+        num: int,
+        r: Union[int, float],
+        style: str,
+        type: str,
+    ):
+    """
+    Draws a zodiac slice based on the given parameters.
+
+    Args:
+        - c1 (Union[int, float]): The value of c1.
+        - chart_type (Literal["Natal", "ExternalNatal", "Synastry", "Transit"]): The type of chart.
+        - sixth_house_degree_ut (Union[int, float]): The degree of the sixth house.
+        - num (int): The number of the sign. Note: In OpenAstro it did refer to self.zodiac, 
+            which is a list of the signs in order, starting with Aries. Eg:
+            {"name": "aries", "element": "fire"}
+        - r (Union[int, float]): The value of r.
+        - style (str): The CSS inline style.
+        - type (str): The type ?. In OpenAstro, it was the symbol of the sign. Eg: "aries".
+            self.zodiac[i]["name"]
+
+    Returns:
+        - str: The zodiac slice and symbol as an SVG path.
+    """
+
+    # pie slices
+    offset = 360 - sixth_house_degree_ut
+    # check transit
+    if chart_type == "Transit" or chart_type == "Synastry":
+        dropin = 0
+    else:
+        dropin = c1
+    slice = f'<path d="M{str(r)},{str(r)} L{str(dropin + sliceToX(num, r - dropin, offset))},{str(dropin + sliceToY(num, r - dropin, offset))} A{str(r - dropin)},{str(r - dropin)} 0 0,0 {str(dropin + sliceToX(num + 1, r - dropin, offset))},{str(dropin + sliceToY(num + 1, r - dropin, offset))} z" style="{style}"/>'
+
+    # symbols
+    offset = offset + 15
+    # check transit
+    if chart_type == "Transit" or chart_type == "Synastry":
+        dropin = 54
+    else:
+        dropin = 18 + c1
+    sign = f'<g transform="translate(-16,-16)"><use x="{str(dropin + sliceToX(num, r - dropin, offset))}" y="{str(dropin + sliceToY(num, r - dropin, offset))}" xlink:href="#{type}" /></g>'
+
+    return slice + "" + sign
