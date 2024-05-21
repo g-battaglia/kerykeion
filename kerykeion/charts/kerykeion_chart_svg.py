@@ -1201,6 +1201,12 @@ class KerykeionChartSVG:
         return out
 
     def _draw_house_grid(self):
+        """
+        Generate SVG code for a grid of astrological houses.
+
+        Returns:
+            str: The SVG code for the grid of houses.
+        """
         out = '<g transform="translate(600,-20)">'
 
         li = 10
