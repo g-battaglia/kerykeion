@@ -14,7 +14,7 @@ from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types import KerykeionException, ChartType
 from kerykeion.kr_types import ChartTemplateDictionary
-from kerykeion.charts.charts_utils import decHourJoin, degreeDiff, offsetToTz, sliceToX, sliceToY
+from kerykeion.charts.charts_utils import decHourJoin, degreeDiff, offsetToTz, sliceToX, sliceToY, draw_zodiac_slice
 from pathlib import Path
 from string import Template
 from typing import Union
@@ -371,39 +371,30 @@ class KerykeionChartSVG:
 
         return out
 
-    def _zodiacSlice(self, num, r, style, type):
-        # pie slices
-        offset = 360 - self.user.houses_degree_ut[6]
-        # check transit
-        if self.chart_type == "Transit" or self.chart_type == "Synastry":
-            dropin = 0
-        else:
-            dropin = self.c1
-        slice = f'<path d="M{str(r)},{str(r)} L{str(dropin + sliceToX(num, r - dropin, offset))},{str(dropin + sliceToY(num, r - dropin, offset))} A{str(r - dropin)},{str(r - dropin)} 0 0,0 {str(dropin + sliceToX(num + 1, r - dropin, offset))},{str(dropin + sliceToY(num + 1, r - dropin, offset))} z" style="{style}"/>'
+    def _draw_zodiac_circle_slices(self, r):
+        """
+        Generate the SVG string representing the zodiac circle
+        with the 12 slices for each zodiac sign.
 
-        # symbols
-        offset = offset + 15
-        # check transit
-        if self.chart_type == "Transit" or self.chart_type == "Synastry":
-            dropin = 54
-        else:
-            dropin = 18 + self.c1
-        sign = f'<g transform="translate(-16,-16)"><use x="{str(dropin + sliceToX(num, r - dropin, offset))}" y="{str(dropin + sliceToY(num, r - dropin, offset))}" xlink:href="#{type}" /></g>'
+        Args:
+            r (float): The radius of the zodiac slices.
 
-        return slice + "" + sign
+        Returns:
+            str: The SVG string representing the zodiac circle.
+        """
 
-    def _makeZodiac(self, r):
         output = ""
-        for i in range(len(self.zodiac)):
-            output = (
-                output
-                + self._zodiacSlice(
-                    i,
-                    r,
-                    f'fill:{self.chart_colors_settings[f"zodiac_bg_{i}"]}; fill-opacity: 0.5;',
-                    self.zodiac[i]["name"],
-                )
+        for i, zodiac_element in enumerate(self.zodiac):
+            output += draw_zodiac_slice(
+                c1=self.c1,
+                chart_type=self.chart_type,
+                sixth_house_degree_ut=self.user.houses_degree_ut[6],
+                num=i,
+                r=r,
+                style=f'fill:{self.chart_colors_settings[f"zodiac_bg_{i}"]}; fill-opacity: 0.5;',
+                type=zodiac_element["name"],
             )
+
         return output
 
     def _makeHouses(self, r):
@@ -1210,40 +1201,47 @@ class KerykeionChartSVG:
         return out
 
     def _makeHousesGrid(self):
-        out = '<g transform="translate(600,-20)">'
+        """
+        Generate SVG code for a grid of astrological houses.
 
-        li = 10
+        Returns:
+            str: The SVG code for the grid of houses.
+        """
+        # Initialize the SVG group for the grid
+        grid_svg = '<g transform="translate(600,-20)">'
+
+        # Vertical position of the current house in the grid
+        vertical_position = 10
+
+        # Generate SVG code for each house
         for i in range(12):
-            if i < 9:
-                cusp = "&#160;&#160;" + str(i + 1)
-            else:
-                cusp = str(i + 1)
-            out += f'<g transform="translate(0,{li})">'
-            out += f'<text text-anchor="end" x="40" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["cusp"]} {cusp}:</text>'
-            out += f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.houses_sign_graph[i]]["name"]}" /></g>'
-            out += f'<text x="53" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;"> {self._dec2deg(self.user.houses_list[i]["position"])}</text>'
-            out += "</g>"
-            li = li + 14
+            # Add leading spaces to single-digit house numbers for alignment
+            house_number = str(i + 1).rjust(2, ' ')
 
-        out += "</g>"
+            # Start a new SVG group for the current house
+            grid_svg += f'<g transform="translate(0,{vertical_position})">'
 
-        if self.chart_type == "Synastry":
-            out += '<g transform="translate(840, -20)">'
-            li = 10
-            for i in range(12):
-                if i < 9:
-                    cusp = "&#160;&#160;" + str(i + 1)
-                else:
-                    cusp = str(i + 1)
-                out += '<g transform="translate(0,' + str(li) + ')">'
-                out += f'<text text-anchor="end" x="40" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["cusp"]} {cusp}:</text>'
-                out += f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.t_houses_sign_graph[i]]["name"]}" /></g>'
-                out += f'<text x="53" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;"> {self._dec2deg(self.t_user.houses_list[i]["position"])}</text>'
-                out += "</g>"
-                li = li + 14
-            out += "</g>"
+            # Add the house label
+            grid_svg += f'<text text-anchor="end" x="40" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["cusp"]} {house_number}:</text>'
 
-        return out
+            # Add the zodiac sign symbol for the house
+            zodiac_sign = self.zodiac[self.houses_sign_graph[i]]["name"]
+            grid_svg += f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{zodiac_sign}" /></g>'
+
+            # Add the position of the house
+            house_position = self._dec2deg(self.user.houses_list[i]["position"])
+            grid_svg += f'<text x="53" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;"> {house_position}</text>'
+
+            # End the SVG group for the current house
+            grid_svg += "</g>"
+
+            # Move down for the next house
+            vertical_position += 14
+
+        # End the SVG group for the grid
+        grid_svg += "</g>"
+
+        return grid_svg
 
     def _createTemplateDictionary(self) -> ChartTemplateDictionary:
         # self.chart_type = "Transit"
@@ -1446,8 +1444,13 @@ class KerykeionChartSVG:
         td["cfgRotate"] = rotate
         td["cfgTranslate"] = translate
 
-        # functions
-        td["makeZodiac"] = self._makeZodiac(r)
+        # ---
+        # Drawing Functions
+        #--- 
+
+        # Drawing the Zodiac slices
+        td["makeZodiac"] = self._draw_zodiac_circle_slices(r)
+        # TODO: Add the rest of the functions
         td["makeHouses"] = self._makeHouses(r)
         td["makePlanets"] = self._make_planets(r)
         td["makeElements"] = self._makeElements(r)
