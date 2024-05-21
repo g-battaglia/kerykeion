@@ -1200,7 +1200,7 @@ class KerykeionChartSVG:
         out += end_of_line
         return out
 
-    def _makeHousesGrid(self):
+    def _draw_house_grid(self):
         """
         Generate SVG code for a grid of astrological houses.
 
@@ -1448,14 +1448,13 @@ class KerykeionChartSVG:
         # Drawing Functions
         #--- 
 
-        # Drawing the Zodiac slices
         td["makeZodiac"] = self._draw_zodiac_circle_slices(r)
+        td["makeHousesGrid"] = self._draw_house_grid()
         # TODO: Add the rest of the functions
         td["makeHouses"] = self._makeHouses(r)
         td["makePlanets"] = self._make_planets(r)
         td["makeElements"] = self._makeElements(r)
         td["makePlanetGrid"] = self._makePlanetGrid()
-        td["makeHousesGrid"] = self._makeHousesGrid()
 
         return td
 
