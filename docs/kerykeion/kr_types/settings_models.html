@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.3.1"/>
+    <meta name="generator" content="pdoc 14.5.0"/>
     <title>kerykeion.kr_types.settings_models API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
     <style>/*! syntax-highlighting.css */pre{line-height:125%;}span.linenos{color:inherit; background-color:transparent; padding-left:5px; padding-right:20px;}.pdoc-code .hll{background-color:#ffffcc}.pdoc-code{background:#f8f8f8;}.pdoc-code .c{color:#3D7B7B; font-style:italic}.pdoc-code .err{border:1px solid #FF0000}.pdoc-code .k{color:#008000; font-weight:bold}.pdoc-code .o{color:#666666}.pdoc-code .ch{color:#3D7B7B; font-style:italic}.pdoc-code .cm{color:#3D7B7B; font-style:italic}.pdoc-code .cp{color:#9C6500}.pdoc-code .cpf{color:#3D7B7B; font-style:italic}.pdoc-code .c1{color:#3D7B7B; font-style:italic}.pdoc-code .cs{color:#3D7B7B; font-style:italic}.pdoc-code .gd{color:#A00000}.pdoc-code .ge{font-style:italic}.pdoc-code .gr{color:#E40000}.pdoc-code .gh{color:#000080; font-weight:bold}.pdoc-code .gi{color:#008400}.pdoc-code .go{color:#717171}.pdoc-code .gp{color:#000080; font-weight:bold}.pdoc-code .gs{font-weight:bold}.pdoc-code .gu{color:#800080; font-weight:bold}.pdoc-code .gt{color:#0044DD}.pdoc-code .kc{color:#008000; font-weight:bold}.pdoc-code .kd{color:#008000; font-weight:bold}.pdoc-code .kn{color:#008000; font-weight:bold}.pdoc-code .kp{color:#008000}.pdoc-code .kr{color:#008000; font-weight:bold}.pdoc-code .kt{color:#B00040}.pdoc-code .m{color:#666666}.pdoc-code .s{color:#BA2121}.pdoc-code .na{color:#687822}.pdoc-code .nb{color:#008000}.pdoc-code .nc{color:#0000FF; font-weight:bold}.pdoc-code .no{color:#880000}.pdoc-code .nd{color:#AA22FF}.pdoc-code .ni{color:#717171; font-weight:bold}.pdoc-code .ne{color:#CB3F38; font-weight:bold}.pdoc-code .nf{color:#0000FF}.pdoc-code .nl{color:#767600}.pdoc-code .nn{color:#0000FF; font-weight:bold}.pdoc-code .nt{color:#008000; font-weight:bold}.pdoc-code .nv{color:#19177C}.pdoc-code .ow{color:#AA22FF; font-weight:bold}.pdoc-code .w{color:#bbbbbb}.pdoc-code .mb{color:#666666}.pdoc-code .mf{color:#666666}.pdoc-code .mh{color:#666666}.pdoc-code .mi{color:#666666}.pdoc-code .mo{color:#666666}.pdoc-code .sa{color:#BA2121}.pdoc-code .sb{color:#BA2121}.pdoc-code .sc{color:#BA2121}.pdoc-code .dl{color:#BA2121}.pdoc-code .sd{color:#BA2121; font-style:italic}.pdoc-code .s2{color:#BA2121}.pdoc-code .se{color:#AA5D1F; font-weight:bold}.pdoc-code .sh{color:#BA2121}.pdoc-code .si{color:#A45A77; font-weight:bold}.pdoc-code .sx{color:#008000}.pdoc-code .sr{color:#A45A77}.pdoc-code .s1{color:#BA2121}.pdoc-code .ss{color:#19177C}.pdoc-code .bp{color:#008000}.pdoc-code .fm{color:#0000FF}.pdoc-code .vc{color:#19177C}.pdoc-code .vg{color:#19177C}.pdoc-code .vi{color:#19177C}.pdoc-code .vm{color:#19177C}.pdoc-code .il{color:#666666}</style>
     <style>/*! theme.css */:root{--pdoc-background:#fff;}.pdoc{--text:#212529;--muted:#6c757d;--link:#3660a5;--link-hover:#1659c5;--code:#f8f8f8;--active:#fff598;--accent:#eee;--accent2:#c1c1c1;--nav-hover:rgba(255, 255, 255, 0.5);--name:#0066BB;--def:#008800;--annotation:#007020;}</style>
-    <style>/*! layout.css */html, body{width:100%;height:100%;}html, main{scroll-behavior:smooth;}body{background-color:var(--pdoc-background);}@media (max-width:769px){#navtoggle{cursor:pointer;position:absolute;width:50px;height:40px;top:1rem;right:1rem;border-color:var(--text);color:var(--text);display:flex;opacity:0.8;}#navtoggle:hover{opacity:1;}#togglestate + div{display:none;}#togglestate:checked + div{display:inherit;}main, header{padding:2rem 3vw;}header + main{margin-top:-3rem;}.git-button{display:none !important;}nav input[type="search"]{max-width:77%;}nav input[type="search"]:first-child{margin-top:-6px;}nav input[type="search"]:valid ~ *{display:none !important;}}@media (min-width:770px){:root{--sidebar-width:clamp(12.5rem, 28vw, 22rem);}nav{position:fixed;overflow:auto;height:100vh;width:var(--sidebar-width);}main, header{padding:3rem 2rem 3rem calc(var(--sidebar-width) + 3rem);width:calc(54rem + var(--sidebar-width));max-width:100%;}header + main{margin-top:-4rem;}#navtoggle{display:none;}}#togglestate{position:absolute;height:0;opacity:0;}nav.pdoc{--pad:clamp(0.5rem, 2vw, 1.75rem);--indent:1.5rem;background-color:var(--accent);border-right:1px solid var(--accent2);box-shadow:0 0 20px rgba(50, 50, 50, .2) inset;padding:0 0 0 var(--pad);overflow-wrap:anywhere;scrollbar-width:thin; scrollbar-color:var(--accent2) transparent }nav.pdoc::-webkit-scrollbar{width:.4rem; }nav.pdoc::-webkit-scrollbar-thumb{background-color:var(--accent2); }nav.pdoc > div{padding:var(--pad) 0;}nav.pdoc .module-list-button{display:inline-flex;align-items:center;color:var(--text);border-color:var(--muted);margin-bottom:1rem;}nav.pdoc .module-list-button:hover{border-color:var(--text);}nav.pdoc input[type=search]{display:block;outline-offset:0;width:calc(100% - var(--pad));}nav.pdoc .logo{max-width:calc(100% - var(--pad));max-height:35vh;display:block;margin:0 auto 1rem;transform:translate(calc(-.5 * var(--pad)), 0);}nav.pdoc ul{list-style:none;padding-left:0;}nav.pdoc > div > ul{margin-left:calc(0px - var(--pad));}nav.pdoc li a{padding:.2rem 0 .2rem calc(var(--pad) + var(--indent));}nav.pdoc > div > ul > li > a{padding-left:var(--pad);}nav.pdoc li{transition:all 100ms;}nav.pdoc li:hover{background-color:var(--nav-hover);}nav.pdoc a, nav.pdoc a:hover{color:var(--text);}nav.pdoc a{display:block;}nav.pdoc > h2:first-of-type{margin-top:1.5rem;}nav.pdoc .class:before{content:"class ";color:var(--muted);}nav.pdoc .function:after{content:"()";color:var(--muted);}nav.pdoc footer:before{content:"";display:block;width:calc(100% - var(--pad));border-top:solid var(--accent2) 1px;margin-top:1.5rem;padding-top:.5rem;}nav.pdoc footer{font-size:small;}</style>
-    <style>/*! content.css */.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .pdoc-alert{padding:1rem 1rem 1rem calc(1.5rem + 24px);border:1px solid transparent;border-radius:.25rem;background-repeat:no-repeat;background-position:1rem center;margin-bottom:1rem;}.pdoc .pdoc-alert > *:last-child{margin-bottom:0;}.pdoc .pdoc-alert-note {color:#084298;background-color:#cfe2ff;border-color:#b6d4fe;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23084298%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%2016A8%208%200%201%200%208%200a8%208%200%200%200%200%2016zm.93-9.412-1%204.705c-.07.34.029.533.304.533.194%200%20.487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703%200-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381%202.29-.287zM8%205.5a1%201%200%201%201%200-2%201%201%200%200%201%200%202z%22/%3E%3C/svg%3E");}.pdoc .pdoc-alert-warning{color:#664d03;background-color:#fff3cd;border-color:#ffecb5;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23664d03%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8.982%201.566a1.13%201.13%200%200%200-1.96%200L.165%2013.233c-.457.778.091%201.767.98%201.767h13.713c.889%200%201.438-.99.98-1.767L8.982%201.566zM8%205c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%205.995A.905.905%200%200%201%208%205zm.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2z%22/%3E%3C/svg%3E");}.pdoc .pdoc-alert-danger{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5.52.359A.5.5%200%200%201%206%200h4a.5.5%200%200%201%20.474.658L8.694%206H12.5a.5.5%200%200%201%20.395.807l-7%209a.5.5%200%200%201-.873-.454L6.823%209.5H3.5a.5.5%200%200%201-.48-.641l2.5-8.5z%22/%3E%3C/svg%3E");}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc > section:not(.module-info) h1{font-size:1.5rem;font-weight:500;}.pdoc > section:not(.module-info) h2{font-size:1.4rem;font-weight:500;}.pdoc > section:not(.module-info) h3{font-size:1.3rem;font-weight:500;}.pdoc > section:not(.module-info) h4{font-size:1.2rem;}.pdoc > section:not(.module-info) h5{font-size:1.1rem;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-top:0;margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;background-color:var(--code);}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--code);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc > section:not(.module-info){margin-bottom:1.5rem;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.view-source-toggle-state,.view-source-toggle-state ~ .pdoc-code{display:none;}.view-source-toggle-state:checked ~ .pdoc-code{display:block;}.view-source-button{display:inline-block;float:right;font-size:.75rem;line-height:1.5rem;color:var(--muted);padding:0 .4rem 0 1.3rem;cursor:pointer;text-indent:-2px;}.view-source-button > span{visibility:hidden;}.module-info .view-source-button{float:none;display:flex;justify-content:flex-end;margin:-1.2rem .4rem -.2rem 0;}.view-source-button::before{position:absolute;content:"View Source";display:list-item;list-style-type:disclosure-closed;}.view-source-toggle-state:checked ~ .attr .view-source-button::before,.view-source-toggle-state:checked ~ .view-source-button::before{list-style-type:disclosure-open;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc section:not(.module-info) .docstring{margin-left:clamp(0rem, 5vw - 2rem, 1rem);}.pdoc .docstring .pdoc-code{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target,.pdoc .pdoc-code > pre > span:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc .pdoc-code > pre > span:target{display:block;}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc *{scroll-margin:2rem;}.pdoc .pdoc-code .linenos{user-select:none;}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc section, .pdoc .classattr{position:relative;}.pdoc .headerlink{--width:clamp(1rem, 3vw, 2rem);position:absolute;top:0;left:calc(0rem - var(--width));transition:all 100ms ease-in-out;opacity:0;}.pdoc .headerlink::before{content:"#";display:block;text-align:center;width:var(--width);height:2.3rem;line-height:2.3rem;font-size:1.5rem;}.pdoc .attr:hover ~ .headerlink,.pdoc *:target > .headerlink,.pdoc .headerlink:hover{opacity:1;}.pdoc .attr{display:block;margin:.5rem 0 .5rem;padding:.4rem .4rem .4rem 1rem;background-color:var(--accent);overflow-x:auto;}.pdoc .classattr{margin-left:2rem;}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{background-color:transparent;}.pdoc .param, .pdoc .return-annotation{white-space:pre;}.pdoc .signature.multiline .param{display:block;}.pdoc .signature.condensed .param{display:inline-block;}.pdoc .annotation{color:var(--annotation);}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:35px;vertical-align:middle;width:70px;transition:all 200ms;}.pdoc table{display:block;width:max-content;max-width:100%;overflow:auto;margin-bottom:1rem;}.pdoc table th{font-weight:600;}.pdoc table th, .pdoc table td{padding:6px 13px;border:1px solid var(--accent2);}</style>
+    <style>/*! layout.css */html, body{width:100%;height:100%;}html, main{scroll-behavior:smooth;}body{background-color:var(--pdoc-background);}@media (max-width:769px){#navtoggle{cursor:pointer;position:absolute;width:50px;height:40px;top:1rem;right:1rem;border-color:var(--text);color:var(--text);display:flex;opacity:0.8;z-index:999;}#navtoggle:hover{opacity:1;}#togglestate + div{display:none;}#togglestate:checked + div{display:inherit;}main, header{padding:2rem 3vw;}header + main{margin-top:-3rem;}.git-button{display:none !important;}nav input[type="search"]{max-width:77%;}nav input[type="search"]:first-child{margin-top:-6px;}nav input[type="search"]:valid ~ *{display:none !important;}}@media (min-width:770px){:root{--sidebar-width:clamp(12.5rem, 28vw, 22rem);}nav{position:fixed;overflow:auto;height:100vh;width:var(--sidebar-width);}main, header{padding:3rem 2rem 3rem calc(var(--sidebar-width) + 3rem);width:calc(54rem + var(--sidebar-width));max-width:100%;}header + main{margin-top:-4rem;}#navtoggle{display:none;}}#togglestate{position:absolute;height:0;opacity:0;}nav.pdoc{--pad:clamp(0.5rem, 2vw, 1.75rem);--indent:1.5rem;background-color:var(--accent);border-right:1px solid var(--accent2);box-shadow:0 0 20px rgba(50, 50, 50, .2) inset;padding:0 0 0 var(--pad);overflow-wrap:anywhere;scrollbar-width:thin; scrollbar-color:var(--accent2) transparent; z-index:1}nav.pdoc::-webkit-scrollbar{width:.4rem; }nav.pdoc::-webkit-scrollbar-thumb{background-color:var(--accent2); }nav.pdoc > div{padding:var(--pad) 0;}nav.pdoc .module-list-button{display:inline-flex;align-items:center;color:var(--text);border-color:var(--muted);margin-bottom:1rem;}nav.pdoc .module-list-button:hover{border-color:var(--text);}nav.pdoc input[type=search]{display:block;outline-offset:0;width:calc(100% - var(--pad));}nav.pdoc .logo{max-width:calc(100% - var(--pad));max-height:35vh;display:block;margin:0 auto 1rem;transform:translate(calc(-.5 * var(--pad)), 0);}nav.pdoc ul{list-style:none;padding-left:0;}nav.pdoc > div > ul{margin-left:calc(0px - var(--pad));}nav.pdoc li a{padding:.2rem 0 .2rem calc(var(--pad) + var(--indent));}nav.pdoc > div > ul > li > a{padding-left:var(--pad);}nav.pdoc li{transition:all 100ms;}nav.pdoc li:hover{background-color:var(--nav-hover);}nav.pdoc a, nav.pdoc a:hover{color:var(--text);}nav.pdoc a{display:block;}nav.pdoc > h2:first-of-type{margin-top:1.5rem;}nav.pdoc .class:before{content:"class ";color:var(--muted);}nav.pdoc .function:after{content:"()";color:var(--muted);}nav.pdoc footer:before{content:"";display:block;width:calc(100% - var(--pad));border-top:solid var(--accent2) 1px;margin-top:1.5rem;padding-top:.5rem;}nav.pdoc footer{font-size:small;}</style>
+    <style>/*! content.css */.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{cursor:pointer;display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .pdoc-alert{padding:1rem 1rem 1rem calc(1.5rem + 24px);border:1px solid transparent;border-radius:.25rem;background-repeat:no-repeat;background-position:1rem center;margin-bottom:1rem;}.pdoc .pdoc-alert > *:last-child{margin-bottom:0;}.pdoc .pdoc-alert-note {color:#084298;background-color:#cfe2ff;border-color:#b6d4fe;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23084298%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%2016A8%208%200%201%200%208%200a8%208%200%200%200%200%2016zm.93-9.412-1%204.705c-.07.34.029.533.304.533.194%200%20.487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703%200-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381%202.29-.287zM8%205.5a1%201%200%201%201%200-2%201%201%200%200%201%200%202z%22/%3E%3C/svg%3E");}.pdoc .pdoc-alert-warning{color:#664d03;background-color:#fff3cd;border-color:#ffecb5;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23664d03%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8.982%201.566a1.13%201.13%200%200%200-1.96%200L.165%2013.233c-.457.778.091%201.767.98%201.767h13.713c.889%200%201.438-.99.98-1.767L8.982%201.566zM8%205c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%205.995A.905.905%200%200%201%208%205zm.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2z%22/%3E%3C/svg%3E");}.pdoc .pdoc-alert-danger{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5.52.359A.5.5%200%200%201%206%200h4a.5.5%200%200%201%20.474.658L8.694%206H12.5a.5.5%200%200%201%20.395.807l-7%209a.5.5%200%200%201-.873-.454L6.823%209.5H3.5a.5.5%200%200%201-.48-.641l2.5-8.5z%22/%3E%3C/svg%3E");}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc > section:not(.module-info) h1{font-size:1.5rem;font-weight:500;}.pdoc > section:not(.module-info) h2{font-size:1.4rem;font-weight:500;}.pdoc > section:not(.module-info) h3{font-size:1.3rem;font-weight:500;}.pdoc > section:not(.module-info) h4{font-size:1.2rem;}.pdoc > section:not(.module-info) h5{font-size:1.1rem;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-top:0;margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;background-color:var(--code);}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--accent);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc > section:not(.module-info){margin-bottom:1.5rem;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.view-source-toggle-state,.view-source-toggle-state ~ .pdoc-code{display:none;}.view-source-toggle-state:checked ~ .pdoc-code{display:block;}.view-source-button{display:inline-block;float:right;font-size:.75rem;line-height:1.5rem;color:var(--muted);padding:0 .4rem 0 1.3rem;cursor:pointer;text-indent:-2px;}.view-source-button > span{visibility:hidden;}.module-info .view-source-button{float:none;display:flex;justify-content:flex-end;margin:-1.2rem .4rem -.2rem 0;}.view-source-button::before{position:absolute;content:"View Source";display:list-item;list-style-type:disclosure-closed;}.view-source-toggle-state:checked ~ .attr .view-source-button::before,.view-source-toggle-state:checked ~ .view-source-button::before{list-style-type:disclosure-open;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc section:not(.module-info) .docstring{margin-left:clamp(0rem, 5vw - 2rem, 1rem);}.pdoc .docstring .pdoc-code{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target,.pdoc .pdoc-code > pre > span:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc .pdoc-code > pre > span:target{display:block;}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc *{scroll-margin:2rem;}.pdoc .pdoc-code .linenos{user-select:none;}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc section, .pdoc .classattr{position:relative;}.pdoc .headerlink{--width:clamp(1rem, 3vw, 2rem);position:absolute;top:0;left:calc(0rem - var(--width));transition:all 100ms ease-in-out;opacity:0;}.pdoc .headerlink::before{content:"#";display:block;text-align:center;width:var(--width);height:2.3rem;line-height:2.3rem;font-size:1.5rem;}.pdoc .attr:hover ~ .headerlink,.pdoc *:target > .headerlink,.pdoc .headerlink:hover{opacity:1;}.pdoc .attr{display:block;margin:.5rem 0 .5rem;padding:.4rem .4rem .4rem 1rem;background-color:var(--accent);overflow-x:auto;}.pdoc .classattr{margin-left:2rem;}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{background-color:transparent;}.pdoc .param, .pdoc .return-annotation{white-space:pre;}.pdoc .signature.multiline .param{display:block;}.pdoc .signature.condensed .param{display:inline-block;}.pdoc .annotation{color:var(--annotation);}.pdoc .view-value-toggle-state,.pdoc .view-value-toggle-state ~ .default_value{display:none;}.pdoc .view-value-toggle-state:checked ~ .default_value{display:inherit;}.pdoc .view-value-button{font-size:.5rem;vertical-align:middle;border-style:dashed;margin-top:-0.1rem;}.pdoc .view-value-button:hover{background:white;}.pdoc .view-value-button::before{content:"show";text-align:center;width:2.2em;display:inline-block;}.pdoc .view-value-toggle-state:checked ~ .view-value-button::before{content:"hide";}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:35px;vertical-align:middle;width:70px;transition:all 200ms;}.pdoc table{display:block;width:max-content;max-width:100%;overflow:auto;margin-bottom:1rem;}.pdoc table th{font-weight:600;}.pdoc table th, .pdoc table td{padding:6px 13px;border:1px solid var(--accent2);}</style>
     <style>/*! custom.css */</style></head>
 <body>
     <nav class="pdoc">
@@ -28,8 +28,8 @@
 
 
 
-        <h2>API Documentation</h2>
-            <ul class="memberlist">
+            <h2>API Documentation</h2>
+                <ul class="memberlist">
             <li>
                     <a class="class" href="#CustomBaseModel">CustomBaseModel</a>
                             <ul class="memberlist">
@@ -39,54 +39,441 @@
                         <li>
                                 <a class="function" href="#CustomBaseModel.get">get</a>
                         </li>
+                        <li>
+                                <a class="variable" href="#CustomBaseModel.model_config">model_config</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CustomBaseModel.model_fields">model_fields</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#CustomBaseModel.model_computed_fields">model_computed_fields</a>
+                        </li>
                 </ul>
 
             </li>
             <li>
                     <a class="class" href="#KerykeionSettingsCelestialPointModel">KerykeionSettingsCelestialPointModel</a>
                             <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsCelestialPointModel.id">id</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsCelestialPointModel.name">name</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsCelestialPointModel.color">color</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsCelestialPointModel.is_active">is_active</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsCelestialPointModel.element_points">element_points</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsCelestialPointModel.related_zodiac_signs">related_zodiac_signs</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsCelestialPointModel.label">label</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsCelestialPointModel.model_config">model_config</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsCelestialPointModel.model_fields">model_fields</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsCelestialPointModel.model_computed_fields">model_computed_fields</a>
+                        </li>
                 </ul>
 
             </li>
             <li>
                     <a class="class" href="#KerykeionSettingsChartColorsModel">KerykeionSettingsChartColorsModel</a>
                             <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.paper_0">paper_0</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.paper_1">paper_1</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_bg_0">zodiac_bg_0</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_bg_1">zodiac_bg_1</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_bg_2">zodiac_bg_2</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_bg_3">zodiac_bg_3</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_bg_4">zodiac_bg_4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_bg_5">zodiac_bg_5</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_bg_6">zodiac_bg_6</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_bg_7">zodiac_bg_7</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_bg_8">zodiac_bg_8</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_bg_9">zodiac_bg_9</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_bg_10">zodiac_bg_10</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_bg_11">zodiac_bg_11</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_icon_0">zodiac_icon_0</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_icon_1">zodiac_icon_1</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_icon_2">zodiac_icon_2</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_icon_3">zodiac_icon_3</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_icon_4">zodiac_icon_4</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_icon_5">zodiac_icon_5</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_icon_6">zodiac_icon_6</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_icon_7">zodiac_icon_7</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_icon_8">zodiac_icon_8</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_icon_9">zodiac_icon_9</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_icon_10">zodiac_icon_10</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_icon_11">zodiac_icon_11</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_radix_ring_0">zodiac_radix_ring_0</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_radix_ring_1">zodiac_radix_ring_1</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_radix_ring_2">zodiac_radix_ring_2</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_transit_ring_0">zodiac_transit_ring_0</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_transit_ring_1">zodiac_transit_ring_1</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_transit_ring_2">zodiac_transit_ring_2</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.zodiac_transit_ring_3">zodiac_transit_ring_3</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.houses_radix_line">houses_radix_line</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.houses_transit_line">houses_transit_line</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.lunar_phase_0">lunar_phase_0</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.lunar_phase_1">lunar_phase_1</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.lunar_phase_2">lunar_phase_2</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.model_config">model_config</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.model_fields">model_fields</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsChartColorsModel.model_computed_fields">model_computed_fields</a>
+                        </li>
                 </ul>
 
             </li>
             <li>
                     <a class="class" href="#KerykeionSettingsAspectModel">KerykeionSettingsAspectModel</a>
                             <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsAspectModel.degree">degree</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsAspectModel.name">name</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsAspectModel.is_active">is_active</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsAspectModel.visible_grid">visible_grid</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsAspectModel.is_major">is_major</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsAspectModel.is_minor">is_minor</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsAspectModel.orb">orb</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsAspectModel.color">color</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsAspectModel.model_config">model_config</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsAspectModel.model_fields">model_fields</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsAspectModel.model_computed_fields">model_computed_fields</a>
+                        </li>
                 </ul>
 
             </li>
             <li>
                     <a class="class" href="#KerykeionLanguageCelestialPointModel">KerykeionLanguageCelestialPointModel</a>
                             <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Sun">Sun</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Moon">Moon</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Mercury">Mercury</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Venus">Venus</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Mars">Mars</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Jupiter">Jupiter</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Saturn">Saturn</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Uranus">Uranus</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Neptune">Neptune</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Pluto">Pluto</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.True_Node">True_Node</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Mean_Node">Mean_Node</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Chiron">Chiron</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Asc">Asc</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Mc">Mc</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Dsc">Dsc</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.Ic">Ic</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.model_config">model_config</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.model_fields">model_fields</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageCelestialPointModel.model_computed_fields">model_computed_fields</a>
+                        </li>
                 </ul>
 
             </li>
             <li>
                     <a class="class" href="#KerykeionLanguageModel">KerykeionLanguageModel</a>
                             <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.info">info</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.cusp">cusp</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.longitude">longitude</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.latitude">latitude</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.north">north</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.east">east</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.south">south</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.west">west</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.fire">fire</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.earth">earth</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.air">air</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.water">water</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.and_word">and_word</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.transits">transits</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.type">type</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.aspects">aspects</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.planets_and_house">planets_and_house</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.transit_name">transit_name</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.lunar_phase">lunar_phase</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.day">day</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.celestial_points">celestial_points</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.model_config">model_config</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.model_fields">model_fields</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionLanguageModel.model_computed_fields">model_computed_fields</a>
+                        </li>
                 </ul>
 
             </li>
             <li>
                     <a class="class" href="#KerykeionGeneralSettingsModel">KerykeionGeneralSettingsModel</a>
                             <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#KerykeionGeneralSettingsModel.axes_orbit">axes_orbit</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionGeneralSettingsModel.planet_in_zodiac_extra_points">planet_in_zodiac_extra_points</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionGeneralSettingsModel.language">language</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionGeneralSettingsModel.model_config">model_config</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionGeneralSettingsModel.model_fields">model_fields</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionGeneralSettingsModel.model_computed_fields">model_computed_fields</a>
+                        </li>
                 </ul>
 
             </li>
             <li>
                     <a class="class" href="#KerykeionChartSettingsModel">KerykeionChartSettingsModel</a>
                             <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#KerykeionChartSettingsModel.basic_chart_viewBox">basic_chart_viewBox</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionChartSettingsModel.wide_chart_viewBox">wide_chart_viewBox</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionChartSettingsModel.model_config">model_config</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionChartSettingsModel.model_fields">model_fields</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionChartSettingsModel.model_computed_fields">model_computed_fields</a>
+                        </li>
                 </ul>
 
             </li>
             <li>
                     <a class="class" href="#KerykeionSettingsModel">KerykeionSettingsModel</a>
                             <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsModel.chart_colors">chart_colors</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsModel.celestial_points">celestial_points</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsModel.aspects">aspects</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsModel.language_settings">language_settings</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsModel.general_settings">general_settings</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsModel.chart_settings">chart_settings</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsModel.model_config">model_config</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsModel.model_fields">model_fields</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionSettingsModel.model_computed_fields">model_computed_fields</a>
+                        </li>
                 </ul>
 
             </li>
@@ -377,6 +764,42 @@ validated to form a valid model.</p>
     
 
                             </div>
+                            <div id="CustomBaseModel.model_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_config</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#CustomBaseModel.model_config"></a>
+    
+    
+
+                            </div>
+                            <div id="CustomBaseModel.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#CustomBaseModel.model_fields"></a>
+    
+    
+
+                            </div>
+                            <div id="CustomBaseModel.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#CustomBaseModel.model_computed_fields"></a>
+    
+    
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -441,6 +864,120 @@ validated to form a valid model.</p>
 </div>
 
 
+                            <div id="KerykeionSettingsCelestialPointModel.id" class="classattr">
+                                <div class="attr variable">
+            <span class="name">id</span><span class="annotation">: int</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsCelestialPointModel.id"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsCelestialPointModel.name" class="classattr">
+                                <div class="attr variable">
+            <span class="name">name</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsCelestialPointModel.name"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsCelestialPointModel.color" class="classattr">
+                                <div class="attr variable">
+            <span class="name">color</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsCelestialPointModel.color"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsCelestialPointModel.is_active" class="classattr">
+                                <div class="attr variable">
+            <span class="name">is_active</span><span class="annotation">: bool</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsCelestialPointModel.is_active"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsCelestialPointModel.element_points" class="classattr">
+                                <div class="attr variable">
+            <span class="name">element_points</span><span class="annotation">: int</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsCelestialPointModel.element_points"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsCelestialPointModel.related_zodiac_signs" class="classattr">
+                                <div class="attr variable">
+            <span class="name">related_zodiac_signs</span><span class="annotation">: List[int]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsCelestialPointModel.related_zodiac_signs"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsCelestialPointModel.label" class="classattr">
+                                <div class="attr variable">
+            <span class="name">label</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsCelestialPointModel.label"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsCelestialPointModel.model_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_config</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsCelestialPointModel.model_config"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsCelestialPointModel.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span>        =
+<input id="KerykeionSettingsCelestialPointModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="KerykeionSettingsCelestialPointModel.model_fields-view-value"></label><span class="default_value">{&#39;id&#39;: FieldInfo(annotation=int, required=True, title=&#39;Celestial Point ID&#39;, description=&#39;Celestial Point ID according to Pyswisseph&#39;), &#39;name&#39;: FieldInfo(annotation=str, required=True, title=&#39;Celestial Point Name&#39;, description=&#39;Celestial Point Name&#39;), &#39;color&#39;: FieldInfo(annotation=str, required=True, title=&#39;Celestial Point Color&#39;, description=&#39;Celestial Point Color, used in the chart&#39;), &#39;is_active&#39;: FieldInfo(annotation=bool, required=True, title=&#39;Celestial Point is Active&#39;, description=&#39;Indicates if the celestial point is active in the chart&#39;), &#39;element_points&#39;: FieldInfo(annotation=int, required=True, title=&#39;Celestial Point Element Points&#39;, description=&#39;Element Points given to the celestial point&#39;), &#39;related_zodiac_signs&#39;: FieldInfo(annotation=List[int], required=True, title=&#39;Celestial Point Related Zodiac Signs&#39;, description=&#39;Zodiac Signs related to the celestial point&#39;), &#39;label&#39;: FieldInfo(annotation=str, required=True, title=&#39;Celestial Point Label&#39;, description=&#39;The name of the celestial point in the chart, it can be different from the name&#39;)}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsCelestialPointModel.model_fields"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsCelestialPointModel.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsCelestialPointModel.model_computed_fields"></a>
+    
+    
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -541,6 +1078,461 @@ validated to form a valid model.</p>
 </div>
 
 
+                            <div id="KerykeionSettingsChartColorsModel.paper_0" class="classattr">
+                                <div class="attr variable">
+            <span class="name">paper_0</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.paper_0"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.paper_1" class="classattr">
+                                <div class="attr variable">
+            <span class="name">paper_1</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.paper_1"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_bg_0" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_bg_0</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_bg_0"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_bg_1" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_bg_1</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_bg_1"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_bg_2" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_bg_2</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_bg_2"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_bg_3" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_bg_3</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_bg_3"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_bg_4" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_bg_4</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_bg_4"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_bg_5" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_bg_5</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_bg_5"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_bg_6" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_bg_6</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_bg_6"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_bg_7" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_bg_7</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_bg_7"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_bg_8" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_bg_8</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_bg_8"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_bg_9" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_bg_9</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_bg_9"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_bg_10" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_bg_10</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_bg_10"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_bg_11" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_bg_11</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_bg_11"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_icon_0" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_icon_0</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_icon_0"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_icon_1" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_icon_1</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_icon_1"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_icon_2" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_icon_2</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_icon_2"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_icon_3" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_icon_3</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_icon_3"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_icon_4" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_icon_4</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_icon_4"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_icon_5" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_icon_5</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_icon_5"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_icon_6" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_icon_6</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_icon_6"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_icon_7" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_icon_7</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_icon_7"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_icon_8" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_icon_8</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_icon_8"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_icon_9" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_icon_9</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_icon_9"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_icon_10" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_icon_10</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_icon_10"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_icon_11" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_icon_11</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_icon_11"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_radix_ring_0" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_radix_ring_0</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_radix_ring_0"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_radix_ring_1" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_radix_ring_1</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_radix_ring_1"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_radix_ring_2" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_radix_ring_2</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_radix_ring_2"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_transit_ring_0" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_transit_ring_0</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_transit_ring_0"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_transit_ring_1" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_transit_ring_1</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_transit_ring_1"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_transit_ring_2" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_transit_ring_2</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_transit_ring_2"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.zodiac_transit_ring_3" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_transit_ring_3</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.zodiac_transit_ring_3"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.houses_radix_line" class="classattr">
+                                <div class="attr variable">
+            <span class="name">houses_radix_line</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.houses_radix_line"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.houses_transit_line" class="classattr">
+                                <div class="attr variable">
+            <span class="name">houses_transit_line</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.houses_transit_line"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.lunar_phase_0" class="classattr">
+                                <div class="attr variable">
+            <span class="name">lunar_phase_0</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.lunar_phase_0"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.lunar_phase_1" class="classattr">
+                                <div class="attr variable">
+            <span class="name">lunar_phase_1</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.lunar_phase_1"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.lunar_phase_2" class="classattr">
+                                <div class="attr variable">
+            <span class="name">lunar_phase_2</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.lunar_phase_2"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.model_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_config</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.model_config"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span>        =
+<input id="KerykeionSettingsChartColorsModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="KerykeionSettingsChartColorsModel.model_fields-view-value"></label><span class="default_value">{&#39;paper_0&#39;: FieldInfo(annotation=str, required=True, title=&#39;Paper Color 0&#39;, description=&#39;Paper Color 0&#39;), &#39;paper_1&#39;: FieldInfo(annotation=str, required=True, title=&#39;Paper Color 1&#39;, description=&#39;Paper Color 1&#39;), &#39;zodiac_bg_0&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Background Color 0&#39;, description=&#39;Zodiac Background Color 0&#39;), &#39;zodiac_bg_1&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Background Color 1&#39;, description=&#39;Zodiac Background Color 1&#39;), &#39;zodiac_bg_2&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Background Color 2&#39;, description=&#39;Zodiac Background Color 2&#39;), &#39;zodiac_bg_3&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Background Color 3&#39;, description=&#39;Zodiac Background Color 3&#39;), &#39;zodiac_bg_4&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Background Color 4&#39;, description=&#39;Zodiac Background Color 4&#39;), &#39;zodiac_bg_5&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Background Color 5&#39;, description=&#39;Zodiac Background Color 5&#39;), &#39;zodiac_bg_6&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Background Color 6&#39;, description=&#39;Zodiac Background Color 6&#39;), &#39;zodiac_bg_7&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Background Color 7&#39;, description=&#39;Zodiac Background Color 7&#39;), &#39;zodiac_bg_8&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Background Color 8&#39;, description=&#39;Zodiac Background Color 8&#39;), &#39;zodiac_bg_9&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Background Color 9&#39;, description=&#39;Zodiac Background Color 9&#39;), &#39;zodiac_bg_10&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Background Color 10&#39;, description=&#39;Zodiac Background Color 10&#39;), &#39;zodiac_bg_11&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Background Color 11&#39;, description=&#39;Zodiac Background Color 11&#39;), &#39;zodiac_icon_0&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Icon Color 0&#39;, description=&#39;Zodiac Icon Color 0&#39;), &#39;zodiac_icon_1&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Icon Color 1&#39;, description=&#39;Zodiac Icon Color 1&#39;), &#39;zodiac_icon_2&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Icon Color 2&#39;, description=&#39;Zodiac Icon Color 2&#39;), &#39;zodiac_icon_3&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Icon Color 3&#39;, description=&#39;Zodiac Icon Color 3&#39;), &#39;zodiac_icon_4&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Icon Color 4&#39;, description=&#39;Zodiac Icon Color 4&#39;), &#39;zodiac_icon_5&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Icon Color 5&#39;, description=&#39;Zodiac Icon Color 5&#39;), &#39;zodiac_icon_6&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Icon Color 6&#39;, description=&#39;Zodiac Icon Color 6&#39;), &#39;zodiac_icon_7&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Icon Color 7&#39;, description=&#39;Zodiac Icon Color 7&#39;), &#39;zodiac_icon_8&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Icon Color 8&#39;, description=&#39;Zodiac Icon Color 8&#39;), &#39;zodiac_icon_9&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Icon Color 9&#39;, description=&#39;Zodiac Icon Color 9&#39;), &#39;zodiac_icon_10&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Icon Color 10&#39;, description=&#39;Zodiac Icon Color 10&#39;), &#39;zodiac_icon_11&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Icon Color 11&#39;, description=&#39;Zodiac Icon Color 11&#39;), &#39;zodiac_radix_ring_0&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Radix Ring Color 0&#39;, description=&#39;Zodiac Radix Ring Color 0&#39;), &#39;zodiac_radix_ring_1&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Radix Ring Color 1&#39;, description=&#39;Zodiac Radix Ring Color 1&#39;), &#39;zodiac_radix_ring_2&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Radix Ring Color 2&#39;, description=&#39;Zodiac Radix Ring Color 2&#39;), &#39;zodiac_transit_ring_0&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Transit Ring Color 0&#39;, description=&#39;Zodiac Transit Ring Color 0&#39;), &#39;zodiac_transit_ring_1&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Transit Ring Color 1&#39;, description=&#39;Zodiac Transit Ring Color 1&#39;), &#39;zodiac_transit_ring_2&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Transit Ring Color 2&#39;, description=&#39;Zodiac Transit Ring Color 2&#39;), &#39;zodiac_transit_ring_3&#39;: FieldInfo(annotation=str, required=True, title=&#39;Zodiac Transit Ring Color 3&#39;, description=&#39;Zodiac Transit Ring Color 3&#39;), &#39;houses_radix_line&#39;: FieldInfo(annotation=str, required=True, title=&#39;Houses Radix Line Color&#39;, description=&#39;Houses Radix Line Color&#39;), &#39;houses_transit_line&#39;: FieldInfo(annotation=str, required=True, title=&#39;Houses Transit Line Color&#39;, description=&#39;Houses Transit Line Color&#39;), &#39;lunar_phase_0&#39;: FieldInfo(annotation=str, required=True, title=&#39;Lunar Phase Color 0&#39;, description=&#39;Lunar Phase Color 0&#39;), &#39;lunar_phase_1&#39;: FieldInfo(annotation=str, required=True, title=&#39;Lunar Phase Color 1&#39;, description=&#39;Lunar Phase Color 1&#39;), &#39;lunar_phase_2&#39;: FieldInfo(annotation=str, required=True, title=&#39;Lunar Phase Color 2&#39;, description=&#39;Lunar Phase Color 2&#39;)}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.model_fields"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsChartColorsModel.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsChartColorsModel.model_computed_fields"></a>
+    
+    
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -611,6 +1603,131 @@ validated to form a valid model.</p>
 </div>
 
 
+                            <div id="KerykeionSettingsAspectModel.degree" class="classattr">
+                                <div class="attr variable">
+            <span class="name">degree</span><span class="annotation">: int</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsAspectModel.degree"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsAspectModel.name" class="classattr">
+                                <div class="attr variable">
+            <span class="name">name</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsAspectModel.name"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsAspectModel.is_active" class="classattr">
+                                <div class="attr variable">
+            <span class="name">is_active</span><span class="annotation">: bool</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsAspectModel.is_active"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsAspectModel.visible_grid" class="classattr">
+                                <div class="attr variable">
+            <span class="name">visible_grid</span><span class="annotation">: bool</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsAspectModel.visible_grid"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsAspectModel.is_major" class="classattr">
+                                <div class="attr variable">
+            <span class="name">is_major</span><span class="annotation">: bool</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsAspectModel.is_major"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsAspectModel.is_minor" class="classattr">
+                                <div class="attr variable">
+            <span class="name">is_minor</span><span class="annotation">: bool</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsAspectModel.is_minor"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsAspectModel.orb" class="classattr">
+                                <div class="attr variable">
+            <span class="name">orb</span><span class="annotation">: int</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsAspectModel.orb"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsAspectModel.color" class="classattr">
+                                <div class="attr variable">
+            <span class="name">color</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsAspectModel.color"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsAspectModel.model_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_config</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsAspectModel.model_config"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsAspectModel.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span>        =
+<input id="KerykeionSettingsAspectModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="KerykeionSettingsAspectModel.model_fields-view-value"></label><span class="default_value">{&#39;degree&#39;: FieldInfo(annotation=int, required=True, title=&#39;Aspect Degrees&#39;, description=&#39;The degree of the aspect&#39;), &#39;name&#39;: FieldInfo(annotation=str, required=True, title=&#39;Aspect Name&#39;, description=&#39;The name of the aspect&#39;), &#39;is_active&#39;: FieldInfo(annotation=bool, required=True, title=&#39;Aspect is Active&#39;, description=&#39;Is the aspect active?&#39;), &#39;visible_grid&#39;: FieldInfo(annotation=bool, required=True, title=&#39;Aspect Visible Grid&#39;, description=&#39;Is the aspect visible in the grid?&#39;), &#39;is_major&#39;: FieldInfo(annotation=bool, required=True, title=&#39;Aspect is Major&#39;, description=&#39;Is the aspect major?&#39;), &#39;is_minor&#39;: FieldInfo(annotation=bool, required=True, title=&#39;Aspect is Minor&#39;, description=&#39;Is the aspect minor?&#39;), &#39;orb&#39;: FieldInfo(annotation=int, required=True, title=&#39;Aspect Orb&#39;, description=&#39;The orb of the aspect&#39;), &#39;color&#39;: FieldInfo(annotation=str, required=True, title=&#39;Aspect Color&#39;, description=&#39;The color of the aspect&#39;)}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsAspectModel.model_fields"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsAspectModel.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsAspectModel.model_computed_fields"></a>
+    
+    
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -692,6 +1809,230 @@ It is used to translate the celestial points in the language of the chart.</p>
 </div>
 
 
+                            <div id="KerykeionLanguageCelestialPointModel.Sun" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Sun</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Sun"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Moon" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Moon</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Moon"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Mercury" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Mercury</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Mercury"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Venus" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Venus</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Venus"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Mars" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Mars</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Mars"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Jupiter" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Jupiter</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Jupiter"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Saturn" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Saturn</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Saturn"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Uranus" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Uranus</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Uranus"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Neptune" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Neptune</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Neptune"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Pluto" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Pluto</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Pluto"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.True_Node" class="classattr">
+                                <div class="attr variable">
+            <span class="name">True_Node</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.True_Node"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Mean_Node" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Mean_Node</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Mean_Node"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Chiron" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Chiron</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Chiron"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Asc" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Asc</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Asc"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Mc" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Mc</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Mc"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Dsc" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Dsc</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Dsc"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.Ic" class="classattr">
+                                <div class="attr variable">
+            <span class="name">Ic</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.Ic"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.model_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_config</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.model_config"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span>        =
+<input id="KerykeionLanguageCelestialPointModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="KerykeionLanguageCelestialPointModel.model_fields-view-value"></label><span class="default_value">{&#39;Sun&#39;: FieldInfo(annotation=str, required=True, title=&#39;Sun&#39;, description=&#39;The name of the Sun in the chart, in the language&#39;), &#39;Moon&#39;: FieldInfo(annotation=str, required=True, title=&#39;Moon&#39;, description=&#39;The name of the Moon in the chart, in the language&#39;), &#39;Mercury&#39;: FieldInfo(annotation=str, required=True, title=&#39;Mercury&#39;, description=&#39;The name of Mercury in the chart, in the language&#39;), &#39;Venus&#39;: FieldInfo(annotation=str, required=True, title=&#39;Venus&#39;, description=&#39;The name of Venus in the chart, in the language&#39;), &#39;Mars&#39;: FieldInfo(annotation=str, required=True, title=&#39;Mars&#39;, description=&#39;The name of Mars in the chart, in the language&#39;), &#39;Jupiter&#39;: FieldInfo(annotation=str, required=True, title=&#39;Jupiter&#39;, description=&#39;The name of Jupiter in the chart, in the language&#39;), &#39;Saturn&#39;: FieldInfo(annotation=str, required=True, title=&#39;Saturn&#39;, description=&#39;The name of Saturn in the chart, in the language&#39;), &#39;Uranus&#39;: FieldInfo(annotation=str, required=True, title=&#39;Uranus&#39;, description=&#39;The name of Uranus in the chart, in the language&#39;), &#39;Neptune&#39;: FieldInfo(annotation=str, required=True, title=&#39;Neptune&#39;, description=&#39;The name of Neptune in the chart, in the language&#39;), &#39;Pluto&#39;: FieldInfo(annotation=str, required=True, title=&#39;Pluto&#39;, description=&#39;The name of Pluto in the chart, in the language&#39;), &#39;True_Node&#39;: FieldInfo(annotation=str, required=True, title=&#39;True Node&#39;, description=&#39;The name of True Node in the chart, in the language&#39;), &#39;Mean_Node&#39;: FieldInfo(annotation=str, required=True, title=&#39;Mean Node&#39;, description=&#39;The name of Mean Node in the chart, in the language&#39;), &#39;Chiron&#39;: FieldInfo(annotation=str, required=True, title=&#39;Chiron&#39;, description=&#39;The name of Chiron in the chart, in the language&#39;), &#39;Asc&#39;: FieldInfo(annotation=str, required=True, title=&#39;Ascendant&#39;, description=&#39;The name of Ascendant in the chart, in the language&#39;), &#39;Mc&#39;: FieldInfo(annotation=str, required=True, title=&#39;Medium Coeli&#39;, description=&#39;The name of Medium Coeli in the chart, in the language&#39;), &#39;Dsc&#39;: FieldInfo(annotation=str, required=True, title=&#39;Descendant&#39;, description=&#39;The name of Descendant in the chart, in the language&#39;), &#39;Ic&#39;: FieldInfo(annotation=str, required=True, title=&#39;Imum Coeli&#39;, description=&#39;The name of Imum Coeli in the chart, in the language&#39;)}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.model_fields"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageCelestialPointModel.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageCelestialPointModel.model_computed_fields"></a>
+    
+    
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -777,6 +2118,274 @@ it's used to translate the celestial points and the other labels</p>
 </div>
 
 
+                            <div id="KerykeionLanguageModel.info" class="classattr">
+                                <div class="attr variable">
+            <span class="name">info</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.info"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.cusp" class="classattr">
+                                <div class="attr variable">
+            <span class="name">cusp</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.cusp"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.longitude" class="classattr">
+                                <div class="attr variable">
+            <span class="name">longitude</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.longitude"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.latitude" class="classattr">
+                                <div class="attr variable">
+            <span class="name">latitude</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.latitude"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.north" class="classattr">
+                                <div class="attr variable">
+            <span class="name">north</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.north"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.east" class="classattr">
+                                <div class="attr variable">
+            <span class="name">east</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.east"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.south" class="classattr">
+                                <div class="attr variable">
+            <span class="name">south</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.south"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.west" class="classattr">
+                                <div class="attr variable">
+            <span class="name">west</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.west"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.fire" class="classattr">
+                                <div class="attr variable">
+            <span class="name">fire</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.fire"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.earth" class="classattr">
+                                <div class="attr variable">
+            <span class="name">earth</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.earth"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.air" class="classattr">
+                                <div class="attr variable">
+            <span class="name">air</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.air"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.water" class="classattr">
+                                <div class="attr variable">
+            <span class="name">water</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.water"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.and_word" class="classattr">
+                                <div class="attr variable">
+            <span class="name">and_word</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.and_word"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.transits" class="classattr">
+                                <div class="attr variable">
+            <span class="name">transits</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.transits"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">type</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.type"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.aspects" class="classattr">
+                                <div class="attr variable">
+            <span class="name">aspects</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.aspects"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.planets_and_house" class="classattr">
+                                <div class="attr variable">
+            <span class="name">planets_and_house</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.planets_and_house"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.transit_name" class="classattr">
+                                <div class="attr variable">
+            <span class="name">transit_name</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.transit_name"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.lunar_phase" class="classattr">
+                                <div class="attr variable">
+            <span class="name">lunar_phase</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.lunar_phase"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.day" class="classattr">
+                                <div class="attr variable">
+            <span class="name">day</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.day"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.celestial_points" class="classattr">
+                                <div class="attr variable">
+            <span class="name">celestial_points</span><span class="annotation">: <a href="#KerykeionLanguageCelestialPointModel">KerykeionLanguageCelestialPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.celestial_points"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.model_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_config</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.model_config"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span>        =
+<input id="KerykeionLanguageModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="KerykeionLanguageModel.model_fields-view-value"></label><span class="default_value">{&#39;info&#39;: FieldInfo(annotation=str, required=True, title=&#39;Info&#39;, description=&#39;The name of the Info label in the chart, in the language&#39;), &#39;cusp&#39;: FieldInfo(annotation=str, required=True, title=&#39;Cusp&#39;, description=&#39;The name of the Cusp label in the chart, in the language&#39;), &#39;longitude&#39;: FieldInfo(annotation=str, required=True, title=&#39;Longitude&#39;, description=&#39;The name of the Longitude label in the chart, in the language&#39;), &#39;latitude&#39;: FieldInfo(annotation=str, required=True, title=&#39;Latitude&#39;, description=&#39;The name of the Latitude label in the chart, in the language&#39;), &#39;north&#39;: FieldInfo(annotation=str, required=True, title=&#39;North&#39;, description=&#39;The name of the North label in the chart, in the language&#39;), &#39;east&#39;: FieldInfo(annotation=str, required=True, title=&#39;East&#39;, description=&#39;The name of the East label in the chart, in the language&#39;), &#39;south&#39;: FieldInfo(annotation=str, required=True, title=&#39;South&#39;, description=&#39;The name of the South label in the chart, in the language&#39;), &#39;west&#39;: FieldInfo(annotation=str, required=True, title=&#39;West&#39;, description=&#39;The name of the West label in the chart, in the language&#39;), &#39;fire&#39;: FieldInfo(annotation=str, required=True, title=&#39;Fire&#39;, description=&#39;The name of the Fire label in the chart, in the language&#39;), &#39;earth&#39;: FieldInfo(annotation=str, required=True, title=&#39;Earth&#39;, description=&#39;The name of the Earth label in the chart, in the language&#39;), &#39;air&#39;: FieldInfo(annotation=str, required=True, title=&#39;Air&#39;, description=&#39;The name of the Air label in the chart, in the language&#39;), &#39;water&#39;: FieldInfo(annotation=str, required=True, title=&#39;Water&#39;, description=&#39;The name of the Water label in the chart, in the language&#39;), &#39;and_word&#39;: FieldInfo(annotation=str, required=True, title=&#39;And&#39;, description=&#39;The name of the And word in the chart, in the language&#39;), &#39;transits&#39;: FieldInfo(annotation=str, required=True, title=&#39;Transits&#39;, description=&#39;The name of the Transits label in the chart, in the language&#39;), &#39;type&#39;: FieldInfo(annotation=str, required=True, title=&#39;Type&#39;, description=&#39;The name of the Type label in the chart, in the language&#39;), &#39;aspects&#39;: FieldInfo(annotation=str, required=True, title=&#39;Aspects&#39;, description=&#39;The name of the Aspects label in the chart, in the language&#39;), &#39;planets_and_house&#39;: FieldInfo(annotation=str, required=True, title=&#39;Planets and Houses&#39;, description=&#39;The name of the Planets and Houses label in the chart, in the language&#39;), &#39;transit_name&#39;: FieldInfo(annotation=str, required=True, title=&#39;Transit Name&#39;, description=&#39;The name of the Transit Name label in the chart, in the language&#39;), &#39;lunar_phase&#39;: FieldInfo(annotation=str, required=True, title=&#39;Lunar Phase&#39;, description=&#39;The name of the Lunar Phase label in the chart, in the language&#39;), &#39;day&#39;: FieldInfo(annotation=str, required=True, title=&#39;Day&#39;, description=&#39;The name of the Day label in the chart, in the language&#39;), &#39;celestial_points&#39;: FieldInfo(annotation=KerykeionLanguageCelestialPointModel, required=True)}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.model_fields"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionLanguageModel.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionLanguageModel.model_computed_fields"></a>
+    
+    
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -838,6 +2447,76 @@ it's used to translate the celestial points and the other labels</p>
 </div>
 
 
+                            <div id="KerykeionGeneralSettingsModel.axes_orbit" class="classattr">
+                                <div class="attr variable">
+            <span class="name">axes_orbit</span><span class="annotation">: int</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionGeneralSettingsModel.axes_orbit"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionGeneralSettingsModel.planet_in_zodiac_extra_points" class="classattr">
+                                <div class="attr variable">
+            <span class="name">planet_in_zodiac_extra_points</span><span class="annotation">: int</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionGeneralSettingsModel.planet_in_zodiac_extra_points"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionGeneralSettingsModel.language" class="classattr">
+                                <div class="attr variable">
+            <span class="name">language</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionGeneralSettingsModel.language"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionGeneralSettingsModel.model_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_config</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionGeneralSettingsModel.model_config"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionGeneralSettingsModel.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span>        =
+<input id="KerykeionGeneralSettingsModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="KerykeionGeneralSettingsModel.model_fields-view-value"></label><span class="default_value">{&#39;axes_orbit&#39;: FieldInfo(annotation=int, required=True, title=&#39;Axes Orbit&#39;, description=&#39;The orbit of the axes in the chart&#39;), &#39;planet_in_zodiac_extra_points&#39;: FieldInfo(annotation=int, required=True, title=&#39;Planet in Zodiac Extra Points&#39;, description=&#39;The extra points of the planet in the zodiac&#39;), &#39;language&#39;: FieldInfo(annotation=str, required=True, title=&#39;Language&#39;, description=&#39;The language of the chart&#39;)}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionGeneralSettingsModel.model_fields"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionGeneralSettingsModel.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionGeneralSettingsModel.model_computed_fields"></a>
+    
+    
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -898,6 +2577,65 @@ it's used to translate the celestial points and the other labels</p>
 </div>
 
 
+                            <div id="KerykeionChartSettingsModel.basic_chart_viewBox" class="classattr">
+                                <div class="attr variable">
+            <span class="name">basic_chart_viewBox</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionChartSettingsModel.basic_chart_viewBox"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionChartSettingsModel.wide_chart_viewBox" class="classattr">
+                                <div class="attr variable">
+            <span class="name">wide_chart_viewBox</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionChartSettingsModel.wide_chart_viewBox"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionChartSettingsModel.model_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_config</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionChartSettingsModel.model_config"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionChartSettingsModel.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span>        =
+<input id="KerykeionChartSettingsModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="KerykeionChartSettingsModel.model_fields-view-value"></label><span class="default_value">{&#39;basic_chart_viewBox&#39;: FieldInfo(annotation=str, required=True, title=&#39;Basic Chart ViewBox&#39;, description=&#39;The viewbox of the basic chart&#39;), &#39;wide_chart_viewBox&#39;: FieldInfo(annotation=str, required=True, title=&#39;Wide Chart ViewBox&#39;, description=&#39;The viewbox of the wide chart&#39;)}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionChartSettingsModel.model_fields"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionChartSettingsModel.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionChartSettingsModel.model_computed_fields"></a>
+    
+    
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -966,6 +2704,109 @@ it's used to translate the celestial points and the other labels</p>
 </div>
 
 
+                            <div id="KerykeionSettingsModel.chart_colors" class="classattr">
+                                <div class="attr variable">
+            <span class="name">chart_colors</span><span class="annotation">: <a href="#KerykeionSettingsChartColorsModel">KerykeionSettingsChartColorsModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsModel.chart_colors"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsModel.celestial_points" class="classattr">
+                                <div class="attr variable">
+            <span class="name">celestial_points</span><span class="annotation">: List[<a href="#KerykeionSettingsCelestialPointModel">KerykeionSettingsCelestialPointModel</a>]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsModel.celestial_points"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsModel.aspects" class="classattr">
+                                <div class="attr variable">
+            <span class="name">aspects</span><span class="annotation">: List[<a href="#KerykeionSettingsAspectModel">KerykeionSettingsAspectModel</a>]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsModel.aspects"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsModel.language_settings" class="classattr">
+                                <div class="attr variable">
+            <span class="name">language_settings</span><span class="annotation">: dict[str, <a href="#KerykeionLanguageModel">KerykeionLanguageModel</a>]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsModel.language_settings"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsModel.general_settings" class="classattr">
+                                <div class="attr variable">
+            <span class="name">general_settings</span><span class="annotation">: <a href="#KerykeionGeneralSettingsModel">KerykeionGeneralSettingsModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsModel.general_settings"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsModel.chart_settings" class="classattr">
+                                <div class="attr variable">
+            <span class="name">chart_settings</span><span class="annotation">: <a href="#KerykeionChartSettingsModel">KerykeionChartSettingsModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsModel.chart_settings"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsModel.model_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_config</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsModel.model_config"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsModel.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span>        =
+<input id="KerykeionSettingsModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="KerykeionSettingsModel.model_fields-view-value"></label><span class="default_value">{&#39;chart_colors&#39;: FieldInfo(annotation=KerykeionSettingsChartColorsModel, required=True, title=&#39;Chart Colors&#39;, description=&#39;The colors of the chart&#39;), &#39;celestial_points&#39;: FieldInfo(annotation=List[KerykeionSettingsCelestialPointModel], required=True, title=&#39;Celestial Points&#39;, description=&#39;The list of the celestial points of the chart&#39;), &#39;aspects&#39;: FieldInfo(annotation=List[KerykeionSettingsAspectModel], required=True, title=&#39;Aspects&#39;, description=&#39;The list of the aspects of the chart&#39;), &#39;language_settings&#39;: FieldInfo(annotation=dict[str, KerykeionLanguageModel], required=True, title=&#39;Language Settings&#39;, description=&#39;The language settings of the chart&#39;), &#39;general_settings&#39;: FieldInfo(annotation=KerykeionGeneralSettingsModel, required=True, title=&#39;General Settings&#39;, description=&#39;The general settings of the chart&#39;), &#39;chart_settings&#39;: FieldInfo(annotation=KerykeionChartSettingsModel, required=True, title=&#39;Chart Settings&#39;, description=&#39;The chart settings of the chart&#39;)}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsModel.model_fields"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionSettingsModel.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionSettingsModel.model_computed_fields"></a>
+    
+    
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -1125,7 +2966,7 @@ it's used to translate the celestial points and the other labels</p>
                         if (doc.annotation)
                             heading += `<span class="annotation">${doc.annotation}</span>`;
                         if (doc.default_value)
-                            heading += `<span class="default_value">${doc.default_value}</span>`;
+                            heading += `<span class="default_value"> = ${doc.default_value}</span>`;
                         break;
                     default:
                         heading = `<span class="name">${doc.fullname}</span>`;

@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.3.1"/>
+    <meta name="generator" content="pdoc 14.5.0"/>
     <title>kerykeion.kr_types.kr_models API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
     <style>/*! syntax-highlighting.css */pre{line-height:125%;}span.linenos{color:inherit; background-color:transparent; padding-left:5px; padding-right:20px;}.pdoc-code .hll{background-color:#ffffcc}.pdoc-code{background:#f8f8f8;}.pdoc-code .c{color:#3D7B7B; font-style:italic}.pdoc-code .err{border:1px solid #FF0000}.pdoc-code .k{color:#008000; font-weight:bold}.pdoc-code .o{color:#666666}.pdoc-code .ch{color:#3D7B7B; font-style:italic}.pdoc-code .cm{color:#3D7B7B; font-style:italic}.pdoc-code .cp{color:#9C6500}.pdoc-code .cpf{color:#3D7B7B; font-style:italic}.pdoc-code .c1{color:#3D7B7B; font-style:italic}.pdoc-code .cs{color:#3D7B7B; font-style:italic}.pdoc-code .gd{color:#A00000}.pdoc-code .ge{font-style:italic}.pdoc-code .gr{color:#E40000}.pdoc-code .gh{color:#000080; font-weight:bold}.pdoc-code .gi{color:#008400}.pdoc-code .go{color:#717171}.pdoc-code .gp{color:#000080; font-weight:bold}.pdoc-code .gs{font-weight:bold}.pdoc-code .gu{color:#800080; font-weight:bold}.pdoc-code .gt{color:#0044DD}.pdoc-code .kc{color:#008000; font-weight:bold}.pdoc-code .kd{color:#008000; font-weight:bold}.pdoc-code .kn{color:#008000; font-weight:bold}.pdoc-code .kp{color:#008000}.pdoc-code .kr{color:#008000; font-weight:bold}.pdoc-code .kt{color:#B00040}.pdoc-code .m{color:#666666}.pdoc-code .s{color:#BA2121}.pdoc-code .na{color:#687822}.pdoc-code .nb{color:#008000}.pdoc-code .nc{color:#0000FF; font-weight:bold}.pdoc-code .no{color:#880000}.pdoc-code .nd{color:#AA22FF}.pdoc-code .ni{color:#717171; font-weight:bold}.pdoc-code .ne{color:#CB3F38; font-weight:bold}.pdoc-code .nf{color:#0000FF}.pdoc-code .nl{color:#767600}.pdoc-code .nn{color:#0000FF; font-weight:bold}.pdoc-code .nt{color:#008000; font-weight:bold}.pdoc-code .nv{color:#19177C}.pdoc-code .ow{color:#AA22FF; font-weight:bold}.pdoc-code .w{color:#bbbbbb}.pdoc-code .mb{color:#666666}.pdoc-code .mf{color:#666666}.pdoc-code .mh{color:#666666}.pdoc-code .mi{color:#666666}.pdoc-code .mo{color:#666666}.pdoc-code .sa{color:#BA2121}.pdoc-code .sb{color:#BA2121}.pdoc-code .sc{color:#BA2121}.pdoc-code .dl{color:#BA2121}.pdoc-code .sd{color:#BA2121; font-style:italic}.pdoc-code .s2{color:#BA2121}.pdoc-code .se{color:#AA5D1F; font-weight:bold}.pdoc-code .sh{color:#BA2121}.pdoc-code .si{color:#A45A77; font-weight:bold}.pdoc-code .sx{color:#008000}.pdoc-code .sr{color:#A45A77}.pdoc-code .s1{color:#BA2121}.pdoc-code .ss{color:#19177C}.pdoc-code .bp{color:#008000}.pdoc-code .fm{color:#0000FF}.pdoc-code .vc{color:#19177C}.pdoc-code .vg{color:#19177C}.pdoc-code .vi{color:#19177C}.pdoc-code .vm{color:#19177C}.pdoc-code .il{color:#666666}</style>
     <style>/*! theme.css */:root{--pdoc-background:#fff;}.pdoc{--text:#212529;--muted:#6c757d;--link:#3660a5;--link-hover:#1659c5;--code:#f8f8f8;--active:#fff598;--accent:#eee;--accent2:#c1c1c1;--nav-hover:rgba(255, 255, 255, 0.5);--name:#0066BB;--def:#008800;--annotation:#007020;}</style>
-    <style>/*! layout.css */html, body{width:100%;height:100%;}html, main{scroll-behavior:smooth;}body{background-color:var(--pdoc-background);}@media (max-width:769px){#navtoggle{cursor:pointer;position:absolute;width:50px;height:40px;top:1rem;right:1rem;border-color:var(--text);color:var(--text);display:flex;opacity:0.8;}#navtoggle:hover{opacity:1;}#togglestate + div{display:none;}#togglestate:checked + div{display:inherit;}main, header{padding:2rem 3vw;}header + main{margin-top:-3rem;}.git-button{display:none !important;}nav input[type="search"]{max-width:77%;}nav input[type="search"]:first-child{margin-top:-6px;}nav input[type="search"]:valid ~ *{display:none !important;}}@media (min-width:770px){:root{--sidebar-width:clamp(12.5rem, 28vw, 22rem);}nav{position:fixed;overflow:auto;height:100vh;width:var(--sidebar-width);}main, header{padding:3rem 2rem 3rem calc(var(--sidebar-width) + 3rem);width:calc(54rem + var(--sidebar-width));max-width:100%;}header + main{margin-top:-4rem;}#navtoggle{display:none;}}#togglestate{position:absolute;height:0;opacity:0;}nav.pdoc{--pad:clamp(0.5rem, 2vw, 1.75rem);--indent:1.5rem;background-color:var(--accent);border-right:1px solid var(--accent2);box-shadow:0 0 20px rgba(50, 50, 50, .2) inset;padding:0 0 0 var(--pad);overflow-wrap:anywhere;scrollbar-width:thin; scrollbar-color:var(--accent2) transparent }nav.pdoc::-webkit-scrollbar{width:.4rem; }nav.pdoc::-webkit-scrollbar-thumb{background-color:var(--accent2); }nav.pdoc > div{padding:var(--pad) 0;}nav.pdoc .module-list-button{display:inline-flex;align-items:center;color:var(--text);border-color:var(--muted);margin-bottom:1rem;}nav.pdoc .module-list-button:hover{border-color:var(--text);}nav.pdoc input[type=search]{display:block;outline-offset:0;width:calc(100% - var(--pad));}nav.pdoc .logo{max-width:calc(100% - var(--pad));max-height:35vh;display:block;margin:0 auto 1rem;transform:translate(calc(-.5 * var(--pad)), 0);}nav.pdoc ul{list-style:none;padding-left:0;}nav.pdoc > div > ul{margin-left:calc(0px - var(--pad));}nav.pdoc li a{padding:.2rem 0 .2rem calc(var(--pad) + var(--indent));}nav.pdoc > div > ul > li > a{padding-left:var(--pad);}nav.pdoc li{transition:all 100ms;}nav.pdoc li:hover{background-color:var(--nav-hover);}nav.pdoc a, nav.pdoc a:hover{color:var(--text);}nav.pdoc a{display:block;}nav.pdoc > h2:first-of-type{margin-top:1.5rem;}nav.pdoc .class:before{content:"class ";color:var(--muted);}nav.pdoc .function:after{content:"()";color:var(--muted);}nav.pdoc footer:before{content:"";display:block;width:calc(100% - var(--pad));border-top:solid var(--accent2) 1px;margin-top:1.5rem;padding-top:.5rem;}nav.pdoc footer{font-size:small;}</style>
-    <style>/*! content.css */.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .pdoc-alert{padding:1rem 1rem 1rem calc(1.5rem + 24px);border:1px solid transparent;border-radius:.25rem;background-repeat:no-repeat;background-position:1rem center;margin-bottom:1rem;}.pdoc .pdoc-alert > *:last-child{margin-bottom:0;}.pdoc .pdoc-alert-note {color:#084298;background-color:#cfe2ff;border-color:#b6d4fe;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23084298%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%2016A8%208%200%201%200%208%200a8%208%200%200%200%200%2016zm.93-9.412-1%204.705c-.07.34.029.533.304.533.194%200%20.487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703%200-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381%202.29-.287zM8%205.5a1%201%200%201%201%200-2%201%201%200%200%201%200%202z%22/%3E%3C/svg%3E");}.pdoc .pdoc-alert-warning{color:#664d03;background-color:#fff3cd;border-color:#ffecb5;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23664d03%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8.982%201.566a1.13%201.13%200%200%200-1.96%200L.165%2013.233c-.457.778.091%201.767.98%201.767h13.713c.889%200%201.438-.99.98-1.767L8.982%201.566zM8%205c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%205.995A.905.905%200%200%201%208%205zm.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2z%22/%3E%3C/svg%3E");}.pdoc .pdoc-alert-danger{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5.52.359A.5.5%200%200%201%206%200h4a.5.5%200%200%201%20.474.658L8.694%206H12.5a.5.5%200%200%201%20.395.807l-7%209a.5.5%200%200%201-.873-.454L6.823%209.5H3.5a.5.5%200%200%201-.48-.641l2.5-8.5z%22/%3E%3C/svg%3E");}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc > section:not(.module-info) h1{font-size:1.5rem;font-weight:500;}.pdoc > section:not(.module-info) h2{font-size:1.4rem;font-weight:500;}.pdoc > section:not(.module-info) h3{font-size:1.3rem;font-weight:500;}.pdoc > section:not(.module-info) h4{font-size:1.2rem;}.pdoc > section:not(.module-info) h5{font-size:1.1rem;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-top:0;margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;background-color:var(--code);}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--code);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc > section:not(.module-info){margin-bottom:1.5rem;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.view-source-toggle-state,.view-source-toggle-state ~ .pdoc-code{display:none;}.view-source-toggle-state:checked ~ .pdoc-code{display:block;}.view-source-button{display:inline-block;float:right;font-size:.75rem;line-height:1.5rem;color:var(--muted);padding:0 .4rem 0 1.3rem;cursor:pointer;text-indent:-2px;}.view-source-button > span{visibility:hidden;}.module-info .view-source-button{float:none;display:flex;justify-content:flex-end;margin:-1.2rem .4rem -.2rem 0;}.view-source-button::before{position:absolute;content:"View Source";display:list-item;list-style-type:disclosure-closed;}.view-source-toggle-state:checked ~ .attr .view-source-button::before,.view-source-toggle-state:checked ~ .view-source-button::before{list-style-type:disclosure-open;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc section:not(.module-info) .docstring{margin-left:clamp(0rem, 5vw - 2rem, 1rem);}.pdoc .docstring .pdoc-code{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target,.pdoc .pdoc-code > pre > span:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc .pdoc-code > pre > span:target{display:block;}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc *{scroll-margin:2rem;}.pdoc .pdoc-code .linenos{user-select:none;}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc section, .pdoc .classattr{position:relative;}.pdoc .headerlink{--width:clamp(1rem, 3vw, 2rem);position:absolute;top:0;left:calc(0rem - var(--width));transition:all 100ms ease-in-out;opacity:0;}.pdoc .headerlink::before{content:"#";display:block;text-align:center;width:var(--width);height:2.3rem;line-height:2.3rem;font-size:1.5rem;}.pdoc .attr:hover ~ .headerlink,.pdoc *:target > .headerlink,.pdoc .headerlink:hover{opacity:1;}.pdoc .attr{display:block;margin:.5rem 0 .5rem;padding:.4rem .4rem .4rem 1rem;background-color:var(--accent);overflow-x:auto;}.pdoc .classattr{margin-left:2rem;}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{background-color:transparent;}.pdoc .param, .pdoc .return-annotation{white-space:pre;}.pdoc .signature.multiline .param{display:block;}.pdoc .signature.condensed .param{display:inline-block;}.pdoc .annotation{color:var(--annotation);}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:35px;vertical-align:middle;width:70px;transition:all 200ms;}.pdoc table{display:block;width:max-content;max-width:100%;overflow:auto;margin-bottom:1rem;}.pdoc table th{font-weight:600;}.pdoc table th, .pdoc table td{padding:6px 13px;border:1px solid var(--accent2);}</style>
+    <style>/*! layout.css */html, body{width:100%;height:100%;}html, main{scroll-behavior:smooth;}body{background-color:var(--pdoc-background);}@media (max-width:769px){#navtoggle{cursor:pointer;position:absolute;width:50px;height:40px;top:1rem;right:1rem;border-color:var(--text);color:var(--text);display:flex;opacity:0.8;z-index:999;}#navtoggle:hover{opacity:1;}#togglestate + div{display:none;}#togglestate:checked + div{display:inherit;}main, header{padding:2rem 3vw;}header + main{margin-top:-3rem;}.git-button{display:none !important;}nav input[type="search"]{max-width:77%;}nav input[type="search"]:first-child{margin-top:-6px;}nav input[type="search"]:valid ~ *{display:none !important;}}@media (min-width:770px){:root{--sidebar-width:clamp(12.5rem, 28vw, 22rem);}nav{position:fixed;overflow:auto;height:100vh;width:var(--sidebar-width);}main, header{padding:3rem 2rem 3rem calc(var(--sidebar-width) + 3rem);width:calc(54rem + var(--sidebar-width));max-width:100%;}header + main{margin-top:-4rem;}#navtoggle{display:none;}}#togglestate{position:absolute;height:0;opacity:0;}nav.pdoc{--pad:clamp(0.5rem, 2vw, 1.75rem);--indent:1.5rem;background-color:var(--accent);border-right:1px solid var(--accent2);box-shadow:0 0 20px rgba(50, 50, 50, .2) inset;padding:0 0 0 var(--pad);overflow-wrap:anywhere;scrollbar-width:thin; scrollbar-color:var(--accent2) transparent; z-index:1}nav.pdoc::-webkit-scrollbar{width:.4rem; }nav.pdoc::-webkit-scrollbar-thumb{background-color:var(--accent2); }nav.pdoc > div{padding:var(--pad) 0;}nav.pdoc .module-list-button{display:inline-flex;align-items:center;color:var(--text);border-color:var(--muted);margin-bottom:1rem;}nav.pdoc .module-list-button:hover{border-color:var(--text);}nav.pdoc input[type=search]{display:block;outline-offset:0;width:calc(100% - var(--pad));}nav.pdoc .logo{max-width:calc(100% - var(--pad));max-height:35vh;display:block;margin:0 auto 1rem;transform:translate(calc(-.5 * var(--pad)), 0);}nav.pdoc ul{list-style:none;padding-left:0;}nav.pdoc > div > ul{margin-left:calc(0px - var(--pad));}nav.pdoc li a{padding:.2rem 0 .2rem calc(var(--pad) + var(--indent));}nav.pdoc > div > ul > li > a{padding-left:var(--pad);}nav.pdoc li{transition:all 100ms;}nav.pdoc li:hover{background-color:var(--nav-hover);}nav.pdoc a, nav.pdoc a:hover{color:var(--text);}nav.pdoc a{display:block;}nav.pdoc > h2:first-of-type{margin-top:1.5rem;}nav.pdoc .class:before{content:"class ";color:var(--muted);}nav.pdoc .function:after{content:"()";color:var(--muted);}nav.pdoc footer:before{content:"";display:block;width:calc(100% - var(--pad));border-top:solid var(--accent2) 1px;margin-top:1.5rem;padding-top:.5rem;}nav.pdoc footer{font-size:small;}</style>
+    <style>/*! content.css */.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{cursor:pointer;display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .pdoc-alert{padding:1rem 1rem 1rem calc(1.5rem + 24px);border:1px solid transparent;border-radius:.25rem;background-repeat:no-repeat;background-position:1rem center;margin-bottom:1rem;}.pdoc .pdoc-alert > *:last-child{margin-bottom:0;}.pdoc .pdoc-alert-note {color:#084298;background-color:#cfe2ff;border-color:#b6d4fe;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23084298%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%2016A8%208%200%201%200%208%200a8%208%200%200%200%200%2016zm.93-9.412-1%204.705c-.07.34.029.533.304.533.194%200%20.487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703%200-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381%202.29-.287zM8%205.5a1%201%200%201%201%200-2%201%201%200%200%201%200%202z%22/%3E%3C/svg%3E");}.pdoc .pdoc-alert-warning{color:#664d03;background-color:#fff3cd;border-color:#ffecb5;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23664d03%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8.982%201.566a1.13%201.13%200%200%200-1.96%200L.165%2013.233c-.457.778.091%201.767.98%201.767h13.713c.889%200%201.438-.99.98-1.767L8.982%201.566zM8%205c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%205.995A.905.905%200%200%201%208%205zm.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2z%22/%3E%3C/svg%3E");}.pdoc .pdoc-alert-danger{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5.52.359A.5.5%200%200%201%206%200h4a.5.5%200%200%201%20.474.658L8.694%206H12.5a.5.5%200%200%201%20.395.807l-7%209a.5.5%200%200%201-.873-.454L6.823%209.5H3.5a.5.5%200%200%201-.48-.641l2.5-8.5z%22/%3E%3C/svg%3E");}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc > section:not(.module-info) h1{font-size:1.5rem;font-weight:500;}.pdoc > section:not(.module-info) h2{font-size:1.4rem;font-weight:500;}.pdoc > section:not(.module-info) h3{font-size:1.3rem;font-weight:500;}.pdoc > section:not(.module-info) h4{font-size:1.2rem;}.pdoc > section:not(.module-info) h5{font-size:1.1rem;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-top:0;margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;background-color:var(--code);}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--accent);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc > section:not(.module-info){margin-bottom:1.5rem;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.view-source-toggle-state,.view-source-toggle-state ~ .pdoc-code{display:none;}.view-source-toggle-state:checked ~ .pdoc-code{display:block;}.view-source-button{display:inline-block;float:right;font-size:.75rem;line-height:1.5rem;color:var(--muted);padding:0 .4rem 0 1.3rem;cursor:pointer;text-indent:-2px;}.view-source-button > span{visibility:hidden;}.module-info .view-source-button{float:none;display:flex;justify-content:flex-end;margin:-1.2rem .4rem -.2rem 0;}.view-source-button::before{position:absolute;content:"View Source";display:list-item;list-style-type:disclosure-closed;}.view-source-toggle-state:checked ~ .attr .view-source-button::before,.view-source-toggle-state:checked ~ .view-source-button::before{list-style-type:disclosure-open;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc section:not(.module-info) .docstring{margin-left:clamp(0rem, 5vw - 2rem, 1rem);}.pdoc .docstring .pdoc-code{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target,.pdoc .pdoc-code > pre > span:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc .pdoc-code > pre > span:target{display:block;}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc *{scroll-margin:2rem;}.pdoc .pdoc-code .linenos{user-select:none;}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc section, .pdoc .classattr{position:relative;}.pdoc .headerlink{--width:clamp(1rem, 3vw, 2rem);position:absolute;top:0;left:calc(0rem - var(--width));transition:all 100ms ease-in-out;opacity:0;}.pdoc .headerlink::before{content:"#";display:block;text-align:center;width:var(--width);height:2.3rem;line-height:2.3rem;font-size:1.5rem;}.pdoc .attr:hover ~ .headerlink,.pdoc *:target > .headerlink,.pdoc .headerlink:hover{opacity:1;}.pdoc .attr{display:block;margin:.5rem 0 .5rem;padding:.4rem .4rem .4rem 1rem;background-color:var(--accent);overflow-x:auto;}.pdoc .classattr{margin-left:2rem;}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{background-color:transparent;}.pdoc .param, .pdoc .return-annotation{white-space:pre;}.pdoc .signature.multiline .param{display:block;}.pdoc .signature.condensed .param{display:inline-block;}.pdoc .annotation{color:var(--annotation);}.pdoc .view-value-toggle-state,.pdoc .view-value-toggle-state ~ .default_value{display:none;}.pdoc .view-value-toggle-state:checked ~ .default_value{display:inherit;}.pdoc .view-value-button{font-size:.5rem;vertical-align:middle;border-style:dashed;margin-top:-0.1rem;}.pdoc .view-value-button:hover{background:white;}.pdoc .view-value-button::before{content:"show";text-align:center;width:2.2em;display:inline-block;}.pdoc .view-value-toggle-state:checked ~ .view-value-button::before{content:"hide";}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:35px;vertical-align:middle;width:70px;transition:all 200ms;}.pdoc table{display:block;width:max-content;max-width:100%;overflow:auto;margin-bottom:1rem;}.pdoc table th{font-weight:600;}.pdoc table th, .pdoc table td{padding:6px 13px;border:1px solid var(--accent2);}</style>
     <style>/*! custom.css */</style></head>
 <body>
     <nav class="pdoc">
@@ -28,13 +28,37 @@
 
 
 
-        <h2>API Documentation</h2>
-            <ul class="memberlist">
+            <h2>API Documentation</h2>
+                <ul class="memberlist">
             <li>
                     <a class="class" href="#LunarPhaseModel">LunarPhaseModel</a>
                             <ul class="memberlist">
                         <li>
+                                <a class="variable" href="#LunarPhaseModel.degrees_between_s_m">degrees_between_s_m</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#LunarPhaseModel.moon_phase">moon_phase</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#LunarPhaseModel.sun_phase">sun_phase</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#LunarPhaseModel.moon_emoji">moon_emoji</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#LunarPhaseModel.moon_phase_name">moon_phase_name</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#LunarPhaseModel.get">get</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#LunarPhaseModel.model_config">model_config</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#LunarPhaseModel.model_fields">model_fields</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#LunarPhaseModel.model_computed_fields">model_computed_fields</a>
                         </li>
                 </ul>
 
@@ -43,7 +67,49 @@
                     <a class="class" href="#KerykeionPointModel">KerykeionPointModel</a>
                             <ul class="memberlist">
                         <li>
+                                <a class="variable" href="#KerykeionPointModel.name">name</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionPointModel.quality">quality</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionPointModel.element">element</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionPointModel.sign">sign</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionPointModel.sign_num">sign_num</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionPointModel.position">position</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionPointModel.abs_pos">abs_pos</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionPointModel.emoji">emoji</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionPointModel.point_type">point_type</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionPointModel.house">house</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionPointModel.retrograde">retrograde</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#KerykeionPointModel.get">get</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionPointModel.model_config">model_config</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionPointModel.model_fields">model_fields</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#KerykeionPointModel.model_computed_fields">model_computed_fields</a>
                         </li>
                 </ul>
 
@@ -51,6 +117,138 @@
             <li>
                     <a class="class" href="#AstrologicalSubjectModel">AstrologicalSubjectModel</a>
                             <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.name">name</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.year">year</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.month">month</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.day">day</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.hour">hour</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.minute">minute</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.city">city</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.nation">nation</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.lng">lng</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.lat">lat</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.tz_str">tz_str</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.zodiac_type">zodiac_type</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.local_time">local_time</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.utc_time">utc_time</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.julian_day">julian_day</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.sun">sun</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.moon">moon</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.mercury">mercury</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.venus">venus</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.mars">mars</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.jupiter">jupiter</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.saturn">saturn</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.uranus">uranus</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.neptune">neptune</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.pluto">pluto</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.chiron">chiron</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.first_house">first_house</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.second_house">second_house</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.third_house">third_house</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.fourth_house">fourth_house</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.fifth_house">fifth_house</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.sixth_house">sixth_house</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.seventh_house">seventh_house</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.eighth_house">eighth_house</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.ninth_house">ninth_house</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.tenth_house">tenth_house</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.eleventh_house">eleventh_house</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.twelfth_house">twelfth_house</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.mean_node">mean_node</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.true_node">true_node</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.lunar_phase">lunar_phase</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.model_config">model_config</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.model_fields">model_fields</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AstrologicalSubjectModel.model_computed_fields">model_computed_fields</a>
+                        </li>
                 </ul>
 
             </li>
@@ -319,7 +517,7 @@
 </span></pre></div>
 
 
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.6/concepts/models/">https://docs.pydantic.dev/2.6/concepts/models/</a></p>
+            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.7/concepts/models/">https://docs.pydantic.dev/2.7/concepts/models/</a></p>
 
 <p>A base class for creating Pydantic models.</p>
 
@@ -349,6 +547,61 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 </div>
 
 
+                            <div id="LunarPhaseModel.degrees_between_s_m" class="classattr">
+                                <div class="attr variable">
+            <span class="name">degrees_between_s_m</span><span class="annotation">: Union[float, int]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LunarPhaseModel.degrees_between_s_m"></a>
+    
+    
+
+                            </div>
+                            <div id="LunarPhaseModel.moon_phase" class="classattr">
+                                <div class="attr variable">
+            <span class="name">moon_phase</span><span class="annotation">: int</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LunarPhaseModel.moon_phase"></a>
+    
+    
+
+                            </div>
+                            <div id="LunarPhaseModel.sun_phase" class="classattr">
+                                <div class="attr variable">
+            <span class="name">sun_phase</span><span class="annotation">: int</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LunarPhaseModel.sun_phase"></a>
+    
+    
+
+                            </div>
+                            <div id="LunarPhaseModel.moon_emoji" class="classattr">
+                                <div class="attr variable">
+            <span class="name">moon_emoji</span><span class="annotation">: Literal[&#39;🌑&#39;, &#39;🌒&#39;, &#39;🌓&#39;, &#39;🌔&#39;, &#39;🌕&#39;, &#39;🌖&#39;, &#39;🌗&#39;, &#39;🌘&#39;]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LunarPhaseModel.moon_emoji"></a>
+    
+    
+
+                            </div>
+                            <div id="LunarPhaseModel.moon_phase_name" class="classattr">
+                                <div class="attr variable">
+            <span class="name">moon_phase_name</span><span class="annotation">: Literal[&#39;New Moon&#39;, &#39;Waxing Crescent&#39;, &#39;First Quarter&#39;, &#39;Waxing Gibbous&#39;, &#39;Full Moon&#39;, &#39;Waning Gibbous&#39;, &#39;Last Quarter&#39;, &#39;Waning Crescent&#39;]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LunarPhaseModel.moon_phase_name"></a>
+    
+    
+
+                            </div>
                             <div id="LunarPhaseModel.get" class="classattr">
                                         <input id="LunarPhaseModel.get-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -365,6 +618,43 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 </span></pre></div>
 
 
+    
+
+                            </div>
+                            <div id="LunarPhaseModel.model_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_config</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LunarPhaseModel.model_config"></a>
+    
+    
+
+                            </div>
+                            <div id="LunarPhaseModel.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span>        =
+<input id="LunarPhaseModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="LunarPhaseModel.model_fields-view-value"></label><span class="default_value">{&#39;degrees_between_s_m&#39;: FieldInfo(annotation=Union[float, int], required=True), &#39;moon_phase&#39;: FieldInfo(annotation=int, required=True), &#39;sun_phase&#39;: FieldInfo(annotation=int, required=True), &#39;moon_emoji&#39;: FieldInfo(annotation=Literal[&#39;🌑&#39;, &#39;🌒&#39;, &#39;🌓&#39;, &#39;🌔&#39;, &#39;🌕&#39;, &#39;🌖&#39;, &#39;🌗&#39;, &#39;🌘&#39;], required=True), &#39;moon_phase_name&#39;: FieldInfo(annotation=Literal[&#39;New Moon&#39;, &#39;Waxing Crescent&#39;, &#39;First Quarter&#39;, &#39;Waxing Gibbous&#39;, &#39;Full Moon&#39;, &#39;Waning Gibbous&#39;, &#39;Last Quarter&#39;, &#39;Waning Crescent&#39;], required=True)}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LunarPhaseModel.model_fields"></a>
+    
+    
+
+                            </div>
+                            <div id="LunarPhaseModel.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LunarPhaseModel.model_computed_fields"></a>
+    
     
 
                             </div>
@@ -473,6 +763,127 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 </div>
 
 
+                            <div id="KerykeionPointModel.name" class="classattr">
+                                <div class="attr variable">
+            <span class="name">name</span><span class="annotation">: Union[Literal[&#39;Sun&#39;, &#39;Moon&#39;, &#39;Mercury&#39;, &#39;Venus&#39;, &#39;Mars&#39;, &#39;Jupiter&#39;, &#39;Saturn&#39;, &#39;Uranus&#39;, &#39;Neptune&#39;, &#39;Pluto&#39;, &#39;Mean_Node&#39;, &#39;True_Node&#39;, &#39;Chiron&#39;], Literal[&#39;First_House&#39;, &#39;Second_House&#39;, &#39;Third_House&#39;, &#39;Fourth_House&#39;, &#39;Fifth_House&#39;, &#39;Sixth_House&#39;, &#39;Seventh_House&#39;, &#39;Eighth_House&#39;, &#39;Ninth_House&#39;, &#39;Tenth_House&#39;, &#39;Eleventh_House&#39;, &#39;Twelfth_House&#39;]]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionPointModel.name"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionPointModel.quality" class="classattr">
+                                <div class="attr variable">
+            <span class="name">quality</span><span class="annotation">: Literal[&#39;Cardinal&#39;, &#39;Fixed&#39;, &#39;Mutable&#39;]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionPointModel.quality"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionPointModel.element" class="classattr">
+                                <div class="attr variable">
+            <span class="name">element</span><span class="annotation">: Literal[&#39;Air&#39;, &#39;Fire&#39;, &#39;Earth&#39;, &#39;Water&#39;]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionPointModel.element"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionPointModel.sign" class="classattr">
+                                <div class="attr variable">
+            <span class="name">sign</span><span class="annotation">: Literal[&#39;Ari&#39;, &#39;Tau&#39;, &#39;Gem&#39;, &#39;Can&#39;, &#39;Leo&#39;, &#39;Vir&#39;, &#39;Lib&#39;, &#39;Sco&#39;, &#39;Sag&#39;, &#39;Cap&#39;, &#39;Aqu&#39;, &#39;Pis&#39;]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionPointModel.sign"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionPointModel.sign_num" class="classattr">
+                                <div class="attr variable">
+            <span class="name">sign_num</span><span class="annotation">: Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionPointModel.sign_num"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionPointModel.position" class="classattr">
+                                <div class="attr variable">
+            <span class="name">position</span><span class="annotation">: float</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionPointModel.position"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionPointModel.abs_pos" class="classattr">
+                                <div class="attr variable">
+            <span class="name">abs_pos</span><span class="annotation">: float</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionPointModel.abs_pos"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionPointModel.emoji" class="classattr">
+                                <div class="attr variable">
+            <span class="name">emoji</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionPointModel.emoji"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionPointModel.point_type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">point_type</span><span class="annotation">: Literal[&#39;Planet&#39;, &#39;House&#39;]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionPointModel.point_type"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionPointModel.house" class="classattr">
+                                <div class="attr variable">
+            <span class="name">house</span><span class="annotation">: Optional[Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionPointModel.house"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionPointModel.retrograde" class="classattr">
+                                <div class="attr variable">
+            <span class="name">retrograde</span><span class="annotation">: Optional[bool]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionPointModel.retrograde"></a>
+    
+    
+
+                            </div>
                             <div id="KerykeionPointModel.get" class="classattr">
                                         <input id="KerykeionPointModel.get-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -489,6 +900,43 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 </span></pre></div>
 
 
+    
+
+                            </div>
+                            <div id="KerykeionPointModel.model_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_config</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionPointModel.model_config"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionPointModel.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span>        =
+<input id="KerykeionPointModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="KerykeionPointModel.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=Union[Literal[&#39;Sun&#39;, &#39;Moon&#39;, &#39;Mercury&#39;, &#39;Venus&#39;, &#39;Mars&#39;, &#39;Jupiter&#39;, &#39;Saturn&#39;, &#39;Uranus&#39;, &#39;Neptune&#39;, &#39;Pluto&#39;, &#39;Mean_Node&#39;, &#39;True_Node&#39;, &#39;Chiron&#39;], Literal[&#39;First_House&#39;, &#39;Second_House&#39;, &#39;Third_House&#39;, &#39;Fourth_House&#39;, &#39;Fifth_House&#39;, &#39;Sixth_House&#39;, &#39;Seventh_House&#39;, &#39;Eighth_House&#39;, &#39;Ninth_House&#39;, &#39;Tenth_House&#39;, &#39;Eleventh_House&#39;, &#39;Twelfth_House&#39;]], required=True), &#39;quality&#39;: FieldInfo(annotation=Literal[&#39;Cardinal&#39;, &#39;Fixed&#39;, &#39;Mutable&#39;], required=True), &#39;element&#39;: FieldInfo(annotation=Literal[&#39;Air&#39;, &#39;Fire&#39;, &#39;Earth&#39;, &#39;Water&#39;], required=True), &#39;sign&#39;: FieldInfo(annotation=Literal[&#39;Ari&#39;, &#39;Tau&#39;, &#39;Gem&#39;, &#39;Can&#39;, &#39;Leo&#39;, &#39;Vir&#39;, &#39;Lib&#39;, &#39;Sco&#39;, &#39;Sag&#39;, &#39;Cap&#39;, &#39;Aqu&#39;, &#39;Pis&#39;], required=True), &#39;sign_num&#39;: FieldInfo(annotation=Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], required=True), &#39;position&#39;: FieldInfo(annotation=float, required=True), &#39;abs_pos&#39;: FieldInfo(annotation=float, required=True), &#39;emoji&#39;: FieldInfo(annotation=str, required=True), &#39;point_type&#39;: FieldInfo(annotation=Literal[&#39;Planet&#39;, &#39;House&#39;], required=True), &#39;house&#39;: FieldInfo(annotation=Union[Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], NoneType], required=False, default=None), &#39;retrograde&#39;: FieldInfo(annotation=Union[bool, NoneType], required=False, default=None)}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionPointModel.model_fields"></a>
+    
+    
+
+                            </div>
+                            <div id="KerykeionPointModel.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#KerykeionPointModel.model_computed_fields"></a>
+    
     
 
                             </div>
@@ -592,7 +1040,7 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 </span></pre></div>
 
 
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.6/concepts/models/">https://docs.pydantic.dev/2.6/concepts/models/</a></p>
+            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.7/concepts/models/">https://docs.pydantic.dev/2.7/concepts/models/</a></p>
 
 <p>A base class for creating Pydantic models.</p>
 
@@ -622,6 +1070,494 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 </div>
 
 
+                            <div id="AstrologicalSubjectModel.name" class="classattr">
+                                <div class="attr variable">
+            <span class="name">name</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.name"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.year" class="classattr">
+                                <div class="attr variable">
+            <span class="name">year</span><span class="annotation">: int</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.year"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.month" class="classattr">
+                                <div class="attr variable">
+            <span class="name">month</span><span class="annotation">: int</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.month"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.day" class="classattr">
+                                <div class="attr variable">
+            <span class="name">day</span><span class="annotation">: int</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.day"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.hour" class="classattr">
+                                <div class="attr variable">
+            <span class="name">hour</span><span class="annotation">: int</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.hour"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.minute" class="classattr">
+                                <div class="attr variable">
+            <span class="name">minute</span><span class="annotation">: int</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.minute"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.city" class="classattr">
+                                <div class="attr variable">
+            <span class="name">city</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.city"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.nation" class="classattr">
+                                <div class="attr variable">
+            <span class="name">nation</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.nation"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.lng" class="classattr">
+                                <div class="attr variable">
+            <span class="name">lng</span><span class="annotation">: float</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.lng"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.lat" class="classattr">
+                                <div class="attr variable">
+            <span class="name">lat</span><span class="annotation">: float</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.lat"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.tz_str" class="classattr">
+                                <div class="attr variable">
+            <span class="name">tz_str</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.tz_str"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.zodiac_type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">zodiac_type</span><span class="annotation">: Literal[&#39;Tropic&#39;, &#39;Sidereal&#39;]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.zodiac_type"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.local_time" class="classattr">
+                                <div class="attr variable">
+            <span class="name">local_time</span><span class="annotation">: float</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.local_time"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.utc_time" class="classattr">
+                                <div class="attr variable">
+            <span class="name">utc_time</span><span class="annotation">: float</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.utc_time"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.julian_day" class="classattr">
+                                <div class="attr variable">
+            <span class="name">julian_day</span><span class="annotation">: float</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.julian_day"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.sun" class="classattr">
+                                <div class="attr variable">
+            <span class="name">sun</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.sun"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.moon" class="classattr">
+                                <div class="attr variable">
+            <span class="name">moon</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.moon"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.mercury" class="classattr">
+                                <div class="attr variable">
+            <span class="name">mercury</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.mercury"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.venus" class="classattr">
+                                <div class="attr variable">
+            <span class="name">venus</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.venus"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.mars" class="classattr">
+                                <div class="attr variable">
+            <span class="name">mars</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.mars"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.jupiter" class="classattr">
+                                <div class="attr variable">
+            <span class="name">jupiter</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.jupiter"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.saturn" class="classattr">
+                                <div class="attr variable">
+            <span class="name">saturn</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.saturn"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.uranus" class="classattr">
+                                <div class="attr variable">
+            <span class="name">uranus</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.uranus"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.neptune" class="classattr">
+                                <div class="attr variable">
+            <span class="name">neptune</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.neptune"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.pluto" class="classattr">
+                                <div class="attr variable">
+            <span class="name">pluto</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.pluto"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.chiron" class="classattr">
+                                <div class="attr variable">
+            <span class="name">chiron</span><span class="annotation">: Optional[<a href="#KerykeionPointModel">KerykeionPointModel</a>]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.chiron"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.first_house" class="classattr">
+                                <div class="attr variable">
+            <span class="name">first_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.first_house"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.second_house" class="classattr">
+                                <div class="attr variable">
+            <span class="name">second_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.second_house"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.third_house" class="classattr">
+                                <div class="attr variable">
+            <span class="name">third_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.third_house"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.fourth_house" class="classattr">
+                                <div class="attr variable">
+            <span class="name">fourth_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.fourth_house"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.fifth_house" class="classattr">
+                                <div class="attr variable">
+            <span class="name">fifth_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.fifth_house"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.sixth_house" class="classattr">
+                                <div class="attr variable">
+            <span class="name">sixth_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.sixth_house"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.seventh_house" class="classattr">
+                                <div class="attr variable">
+            <span class="name">seventh_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.seventh_house"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.eighth_house" class="classattr">
+                                <div class="attr variable">
+            <span class="name">eighth_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.eighth_house"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.ninth_house" class="classattr">
+                                <div class="attr variable">
+            <span class="name">ninth_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.ninth_house"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.tenth_house" class="classattr">
+                                <div class="attr variable">
+            <span class="name">tenth_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.tenth_house"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.eleventh_house" class="classattr">
+                                <div class="attr variable">
+            <span class="name">eleventh_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.eleventh_house"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.twelfth_house" class="classattr">
+                                <div class="attr variable">
+            <span class="name">twelfth_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.twelfth_house"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.mean_node" class="classattr">
+                                <div class="attr variable">
+            <span class="name">mean_node</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.mean_node"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.true_node" class="classattr">
+                                <div class="attr variable">
+            <span class="name">true_node</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.true_node"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.lunar_phase" class="classattr">
+                                <div class="attr variable">
+            <span class="name">lunar_phase</span><span class="annotation">: <a href="#LunarPhaseModel">LunarPhaseModel</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.lunar_phase"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.model_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_config</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.model_config"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span>        =
+<input id="AstrologicalSubjectModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="AstrologicalSubjectModel.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=True), &#39;year&#39;: FieldInfo(annotation=int, required=True), &#39;month&#39;: FieldInfo(annotation=int, required=True), &#39;day&#39;: FieldInfo(annotation=int, required=True), &#39;hour&#39;: FieldInfo(annotation=int, required=True), &#39;minute&#39;: FieldInfo(annotation=int, required=True), &#39;city&#39;: FieldInfo(annotation=str, required=True), &#39;nation&#39;: FieldInfo(annotation=str, required=True), &#39;lng&#39;: FieldInfo(annotation=float, required=True), &#39;lat&#39;: FieldInfo(annotation=float, required=True), &#39;tz_str&#39;: FieldInfo(annotation=str, required=True), &#39;zodiac_type&#39;: FieldInfo(annotation=Literal[&#39;Tropic&#39;, &#39;Sidereal&#39;], required=True), &#39;local_time&#39;: FieldInfo(annotation=float, required=True), &#39;utc_time&#39;: FieldInfo(annotation=float, required=True), &#39;julian_day&#39;: FieldInfo(annotation=float, required=True), &#39;sun&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;moon&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;mercury&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;venus&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;mars&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;jupiter&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;saturn&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;uranus&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;neptune&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;pluto&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;chiron&#39;: FieldInfo(annotation=Union[KerykeionPointModel, NoneType], required=True), &#39;first_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;second_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;third_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;fourth_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;fifth_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;sixth_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;seventh_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;eighth_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;ninth_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;tenth_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;eleventh_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;twelfth_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;mean_node&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;true_node&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;lunar_phase&#39;: FieldInfo(annotation=LunarPhaseModel, required=True)}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.model_fields"></a>
+    
+    
+
+                            </div>
+                            <div id="AstrologicalSubjectModel.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AstrologicalSubjectModel.model_computed_fields"></a>
+    
+    
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -777,7 +1713,7 @@ __pydantic_private__: Instance attribute with the values of private attributes s
                         if (doc.annotation)
                             heading += `<span class="annotation">${doc.annotation}</span>`;
                         if (doc.default_value)
-                            heading += `<span class="default_value">${doc.default_value}</span>`;
+                            heading += `<span class="default_value"> = ${doc.default_value}</span>`;
                         break;
                     default:
                         heading = `<span class="name">${doc.fullname}</span>`;
