@@ -24,7 +24,8 @@ from kerykeion.charts.charts_utils import (
     convert_latitude_coordinate_to_string, 
     convert_longitude_coordinate_to_string,
     drawAspect,
-    draw_elements_percentages
+    draw_elements_percentages,
+    convert_decimal_to_degree_string
 )
 from pathlib import Path
 from string import Template
@@ -304,27 +305,6 @@ class KerykeionChartSVG:
             out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: #F00; stroke-width: 1px; stroke-opacity:.9;"/>'
 
         return out
-
-    def _dec2deg(self, dec, type="3"):
-        """Coverts decimal float to degrees in format
-        a°b'c".
-        """
-
-        dec = float(dec)
-        a = int(dec)
-        a_new = (dec - float(a)) * 60.0
-        b_rounded = int(round(a_new))
-        b = int(a_new)
-        c = int(round((a_new - float(b)) * 60.0))
-        if type == "3":
-            out = f"{a:02d}&#176;{b:02d}&#39;{c:02d}&#34;"
-        elif type == "2":
-            out = f"{a:02d}&#176;{b_rounded:02d}&#39;"
-        elif type == "1":
-            out = f"{a:02d}&#176;"
-        else:
-            raise KerykeionException(f"Wrong type: {type}, it must be 1, 2 or 3.")
-        return str(out)
 
     def _draw_zodiac_circle_slices(self, r):
         """
@@ -756,7 +736,7 @@ class KerykeionChartSVG:
                 degree = int(t_offset)
                 output += f'<g transform="translate({deg_x},{deg_y})">'
                 output += f'<text transform="rotate({rotate})" text-anchor="{textanchor}'
-                output += f'" style="fill: {self.available_planets_setting[i]["color"]}; font-size: 10px;">{self._dec2deg(self.t_points_deg[i], type="1")}'
+                output += f'" style="fill: {self.available_planets_setting[i]["color"]}; font-size: 10px;">{convert_decimal_to_degree_string(self.t_points_deg[i], type="1")}'
                 output += "</text></g>"
 
             # check transit
@@ -1045,7 +1025,7 @@ class KerykeionChartSVG:
             
             out += "</g>"
             # difference in degrees
-            out += f'<text y="8" x="45" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self._dec2deg(self.aspects_list[i]["orbit"])}</text>'
+            out += f'<text y="8" x="45" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{convert_decimal_to_degree_string(self.aspects_list[i]["orbit"])}</text>'
             # line
             out += "</g>"
             line = line + 14
@@ -1081,7 +1061,7 @@ class KerykeionChartSVG:
             out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.available_planets_setting[i]["name"]}" /></g>'
 
             # planet degree
-            out += f'<text text-anchor="start" x="19" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self._dec2deg(self.points_deg[i])}</text>'
+            out += f'<text text-anchor="start" x="19" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{convert_decimal_to_degree_string(self.points_deg[i])}</text>'
 
             # zodiac
             out += f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.points_sign[i]]["name"]}" /></g>'
@@ -1122,7 +1102,7 @@ class KerykeionChartSVG:
                     # planet symbol
                     out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.available_planets_setting[i]["name"]}" /></g>'
                     # planet degree
-                    out += f'<text text-anchor="start" x="19" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self._dec2deg(self.t_points_deg[i])}</text>'
+                    out += f'<text text-anchor="start" x="19" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{convert_decimal_to_degree_string(self.t_points_deg[i])}</text>'
                     # zodiac
                     out += f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.t_points_sign[i]]["name"]}" /></g>'
 
@@ -1159,7 +1139,7 @@ class KerykeionChartSVG:
             out += f'<g transform="translate(0,{li})">'
             out += f'<text text-anchor="end" x="40" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["cusp"]} {cusp}:</text>'
             out += f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.houses_sign_graph[i]]["name"]}" /></g>'
-            out += f'<text x="53" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;"> {self._dec2deg(self.user.houses_list[i]["position"])}</text>'
+            out += f'<text x="53" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;"> {convert_decimal_to_degree_string(self.user.houses_list[i]["position"])}</text>'
             out += "</g>"
             li = li + 14
 
@@ -1176,7 +1156,7 @@ class KerykeionChartSVG:
                 out += '<g transform="translate(0,' + str(li) + ')">'
                 out += f'<text text-anchor="end" x="40" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["cusp"]} {cusp}:</text>'
                 out += f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.t_houses_sign_graph[i]]["name"]}" /></g>'
-                out += f'<text x="53" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;"> {self._dec2deg(self.t_user.houses_list[i]["position"])}</text>'
+                out += f'<text x="53" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;"> {convert_decimal_to_degree_string(self.t_user.houses_list[i]["position"])}</text>'
                 out += "</g>"
                 li = li + 14
             out += "</g>"
