@@ -287,3 +287,37 @@ def draw_elements_percentages(
     out += "</g>"
 
     return out
+
+
+def convert_decimal_to_degree_string(dec:float, type="3"):
+    """
+    Coverts decimal float to degrees in format a°b'c".
+    
+    Args:
+        - dec (float): decimal float
+        - type (str): type of format:
+            - 1: a°
+            - 2: a°b'
+            - 3: a°b'c"
+        
+    Returns:
+        str: degrees in format a°b'c"
+    """
+
+    dec = float(dec)
+    a = int(dec)
+    a_new = (dec - float(a)) * 60.0
+    b_rounded = int(round(a_new))
+    b = int(a_new)
+    c = int(round((a_new - float(b)) * 60.0))
+
+    if type == "3":
+        out = f"{a:02d}&#176;{b:02d}&#39;{c:02d}&#34;"
+    elif type == "2":
+        out = f"{a:02d}&#176;{b_rounded:02d}&#39;"
+    elif type == "1":
+        out = f"{a:02d}&#176;"
+    else:
+        raise KerykeionException(f"Wrong type: {type}, it must be 1, 2 or 3.")
+
+    return str(out)
