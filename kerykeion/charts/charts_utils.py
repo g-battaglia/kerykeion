@@ -123,7 +123,7 @@ def draw_zodiac_slice(
     r: Union[int, float],
     style: str,
     type: str,
-):
+) -> str:
     """
     Draws a zodiac slice based on the given parameters.
 
@@ -224,7 +224,7 @@ def drawAspect(
 ) -> str:
     """
     Draws svg aspects: ring, aspect ring, degreeA degreeB
-    
+
     Args:
         - r (Union[int, float]): The value of r.
         - ar (Union[int, float]): The value of ar.
@@ -232,7 +232,7 @@ def drawAspect(
         - degB (Union[int, float]): The degree of B.
         - color (str): The color of the aspect.
         - seventh_house_degree_ut (Union[int, float]): The degree of the seventh house.
-        
+
     Returns:
         str: The SVG line element as a string.
     """
@@ -249,25 +249,26 @@ def drawAspect(
 
     return out
 
+
 def draw_elements_percentages(
-        fire_label: str,
-        fire_points: int,
-        earth_label: str, 
-        earth_points: int,
-        air_label: str,
-        air_points: int,
-        water_label: str,
-        water_points: int,
-    ):
+    fire_label: str,
+    fire_points: int,
+    earth_label: str,
+    earth_points: int,
+    air_label: str,
+    air_points: int,
+    water_label: str,
+    water_points: int,
+) -> str:
     """
     Draw the elements grid.
-    
+
     Args:
         - fire_label (str): Label for fire
         - earth_label (str): Label for earth
         - air_label (str): Label for air
         - water_label (str): Label for water
-        - 
+        -
 
     Returns:
         str: The SVG elements grid as a string.
@@ -289,17 +290,17 @@ def draw_elements_percentages(
     return out
 
 
-def convert_decimal_to_degree_string(dec:float, type="3"):
+def convert_decimal_to_degree_string(dec: float, type="3") -> str:
     """
     Coverts decimal float to degrees in format a°b'c".
-    
+
     Args:
         - dec (float): decimal float
         - type (str): type of format:
             - 1: a°
             - 2: a°b'
             - 3: a°b'c"
-        
+
     Returns:
         str: degrees in format a°b'c"
     """
