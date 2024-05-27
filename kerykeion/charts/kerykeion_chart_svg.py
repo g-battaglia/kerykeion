@@ -14,7 +14,16 @@ from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types import KerykeionException, ChartType
 from kerykeion.kr_types import ChartTemplateDictionary
-from kerykeion.charts.charts_utils import decHourJoin, degreeDiff, offsetToTz, sliceToX, sliceToY, draw_zodiac_slice
+from kerykeion.charts.charts_utils import (
+    decHourJoin, 
+    degreeDiff, 
+    offsetToTz, 
+    sliceToX, 
+    sliceToY, 
+    draw_zodiac_slice, 
+    convert_latitude_coordinate_to_string, 
+    convert_longitude_coordinate_to_string
+)
 from pathlib import Path
 from string import Template
 from typing import Union
@@ -293,48 +302,6 @@ class KerykeionChartSVG:
             out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: #F00; stroke-width: 1px; stroke-opacity:.9;"/>'
 
         return out
-
-    def _lat2str(self, coord):
-        """Converts a floating point latitude to string with
-        degree, minutes and seconds and the appropriate sign
-        (north or south). Eg. 52.1234567 -> 52°7'25" N
-
-        Args:
-            coord (float): latitude in floating point format
-        Returns:
-            str: latitude in string format with degree, minutes,
-             seconds and sign (N/S)
-        """
-
-        sign = self.language_settings["north"]
-        if coord < 0.0:
-            sign = self.language_settings["south"]
-            coord = abs(coord)
-        deg = int(coord)
-        min = int((float(coord) - deg) * 60)
-        sec = int(round(float(((float(coord) - deg) * 60) - min) * 60.0))
-        return f"{deg}°{min}'{sec}\" {sign}"
-
-    def _lon2str(self, coord):
-        """Converts a floating point longitude to string with
-        degree, minutes and seconds and the appropriate sign
-        (east or west). Eg. 52.1234567 -> 52°7'25" E
-
-        Args:
-            coord (float): longitude in floating point format
-        Returns:
-            str: longitude in string format with degree, minutes,
-                seconds and sign (E/W)
-        """
-
-        sign = self.language_settings["east"]
-        if coord < 0.0:
-            sign = self.language_settings["west"]
-            coord = abs(coord)
-        deg = int(coord)
-        min = int((float(coord) - deg) * 60)
-        sec = int(round(float(((float(coord) - deg) * 60) - min) * 60.0))
-        return f"{deg}°{min}'{sec}\" {sign}"
 
     def _dec2deg(self, dec, type="3"):
         """Coverts decimal float to degrees in format
@@ -1417,8 +1384,19 @@ class KerykeionChartSVG:
             td["stringPosition"] = f"{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hour:02d}:{self.t_user.minute:02d}"
 
         else:
-            td["stringLat"] = f"{self.language_settings['latitude']}: {self._lat2str(self.geolat)}"
-            td["stringLon"] = f"{self.language_settings['longitude']}: {self._lon2str(self.geolon)}"
+            latitude_string = convert_latitude_coordinate_to_string(
+                self.geolat, 
+                self.language_settings['north'], 
+                self.language_settings['south']
+            )
+            longitude_string = convert_longitude_coordinate_to_string(
+                self.geolon, 
+                self.language_settings['east'], 
+                self.language_settings['west']
+            )
+
+            td["stringLat"] = f"{self.language_settings['latitude']}: {latitude_string}"
+            td["stringLon"] = f"{self.language_settings['longitude']}: {longitude_string}"
             td["stringPosition"] = f"{self.language_settings['type']}: {self.charttype}"
 
         # paper_color_X

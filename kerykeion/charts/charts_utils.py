@@ -157,3 +157,52 @@ def draw_zodiac_slice(
     sign = f'<g transform="translate(-16,-16)"><use x="{str(dropin + sliceToX(num, r - dropin, offset))}" y="{str(dropin + sliceToY(num, r - dropin, offset))}" xlink:href="#{type}" /></g>'
 
     return slice + "" + sign
+
+def convert_latitude_coordinate_to_string(coord: Union[int, float], north_label: str, south_label: str) -> str:
+    """
+    Converts a floating point latitude to string with
+    degree, minutes and seconds and the appropriate sign
+    (north or south). Eg. 52.1234567 -> 52°7'25" N
+
+    Args:
+        - coord (float | int): latitude in floating or integer format
+        - north_label (str): String label for north
+        - south_label (str): String label for south
+    Returns:
+        - str: latitude in string format with degree, minutes,
+        seconds and sign (N/S)
+    """
+
+    sign = north_label
+    if coord < 0.0:
+        sign = south_label
+        coord = abs(coord)
+    deg = int(coord)
+    min = int((float(coord) - deg) * 60)
+    sec = int(round(float(((float(coord) - deg) * 60) - min) * 60.0))
+    return f"{deg}°{min}'{sec}\" {sign}"
+
+
+def convert_longitude_coordinate_to_string(coord: Union[int, float], east_label: str, west_label: str) -> str:
+    """
+    Converts a floating point longitude to string with
+    degree, minutes and seconds and the appropriate sign
+    (east or west). Eg. 52.1234567 -> 52°7'25" E
+
+    Args:
+        - coord (float|int): longitude in floating point format
+        - east_label (str): String label for east
+        - west_label (str): String label for west
+    Returns:
+        str: longitude in string format with degree, minutes,
+            seconds and sign (E/W)
+    """
+
+    sign = east_label
+    if coord < 0.0:
+        sign = west_label
+        coord = abs(coord)
+    deg = int(coord)
+    min = int((float(coord) - deg) * 60)
+    sec = int(round(float(((float(coord) - deg) * 60) - min) * 60.0))
+    return f"{deg}°{min}'{sec}\" {sign}"
