@@ -118,7 +118,7 @@ def sliceToY(slice: Union[int, float], r: Union[int, float], offset: Union[int, 
 def draw_zodiac_slice(
     c1: Union[int, float],
     chart_type: ChartType,
-    sixth_house_degree_ut: Union[int, float],
+    seventh_house_degree_ut: Union[int, float],
     num: int,
     r: Union[int, float],
     style: str,
@@ -130,7 +130,7 @@ def draw_zodiac_slice(
     Args:
         - c1 (Union[int, float]): The value of c1.
         - chart_type (Literal["Natal", "ExternalNatal", "Synastry", "Transit"]): The type of chart.
-        - sixth_house_degree_ut (Union[int, float]): The degree of the sixth house.
+        - seventh_house_degree_ut (Union[int, float]): The degree of the seventh house.
         - num (int): The number of the sign. Note: In OpenAstro it did refer to self.zodiac,
             which is a list of the signs in order, starting with Aries. Eg:
             {"name": "aries", "element": "fire"}
@@ -144,7 +144,7 @@ def draw_zodiac_slice(
     """
 
     # pie slices
-    offset = 360 - sixth_house_degree_ut
+    offset = 360 - seventh_house_degree_ut
     # check transit
     if chart_type == "Transit" or chart_type == "Synastry":
         dropin = 0
@@ -215,12 +215,12 @@ def convert_longitude_coordinate_to_string(coord: Union[int, float], east_label:
 
 
 def drawAspect(
-    r,
+    r: Union[int, float],
     ar: Union[int, float],
     degA: Union[int, float],
     degB: Union[int, float],
     color: str,
-    sixth_house_degree_ut: Union[int, float],
+    seventh_house_degree_ut: Union[int, float],
 ) -> str:
     """
     Draws svg aspects: ring, aspect ring, degreeA degreeB
@@ -231,17 +231,17 @@ def drawAspect(
         - degA (Union[int, float]): The degree of A.
         - degB (Union[int, float]): The degree of B.
         - color (str): The color of the aspect.
-        - sixth_house_degree_ut (Union[int, float]): The degree of the sixth house.
+        - seventh_house_degree_ut (Union[int, float]): The degree of the seventh house.
         
     Returns:
         str: The SVG line element as a string.
     """
 
-    first_offset = (int(sixth_house_degree_ut) / -1) + int(degA)
+    first_offset = (int(seventh_house_degree_ut) / -1) + int(degA)
     x1 = sliceToX(0, ar, first_offset) + (r - ar)
     y1 = sliceToY(0, ar, first_offset) + (r - ar)
 
-    second_offset = (int(sixth_house_degree_ut) / -1) + int(degB)
+    second_offset = (int(seventh_house_degree_ut) / -1) + int(degB)
     x2 = sliceToX(0, ar, second_offset) + (r - ar)
     y2 = sliceToY(0, ar, second_offset) + (r - ar)
 

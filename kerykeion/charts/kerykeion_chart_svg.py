@@ -342,7 +342,7 @@ class KerykeionChartSVG:
             output += draw_zodiac_slice(
                 c1=self.c1,
                 chart_type=self.chart_type,
-                sixth_house_degree_ut=self.user.houses_degree_ut[6],
+                seventh_house_degree_ut=self.user.houses_degree_ut[6],
                 num=i,
                 r=r,
                 style=f'fill:{self.chart_colors_settings[f"zodiac_bg_{i}"]}; fill-opacity: 0.5;',
@@ -938,12 +938,12 @@ class KerykeionChartSVG:
         out = ""
         for element in self.aspects_list:
             out += drawAspect(
-                r,
-                ar,
-                element["p1_abs_pos"],
-                element["p2_abs_pos"],
-                self.aspects_settings[element["aid"]]["color"],
-                self.user.seventh_house.abs_pos
+                r=r,
+                ar=ar,
+                degA=element["p1_abs_pos"],
+                degB=element["p2_abs_pos"],
+                color=self.aspects_settings[element["aid"]]["color"],
+                seventh_house_degree_ut=self.user.seventh_house.abs_pos
             )
 
         return out
@@ -988,12 +988,12 @@ class KerykeionChartSVG:
 
         for element in self.aspects_list:
             out += drawAspect(
-                r,
-                ar,
-                element["p1_abs_pos"],
-                element["p2_abs_pos"],
-                self.aspects_settings[element["aid"]]["color"],
-                self.user.seventh_house.abs_pos
+                r=r,
+                ar=ar,
+                degA=element["p1_abs_pos"],
+                degB=element["p2_abs_pos"],
+                color=self.aspects_settings[element["aid"]]["color"],
+                seventh_house_degree_ut=self.user.seventh_house.abs_pos
             )
 
         return out
