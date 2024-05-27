@@ -3,6 +3,7 @@ import datetime
 from kerykeion.kr_types import KerykeionException, ChartType
 from typing import Union
 
+
 def decHourJoin(inH: int, inM: int, inS: int) -> float:
     """Join hour, minutes, seconds, timezone integer to hour float.
 
@@ -19,6 +20,7 @@ def decHourJoin(inH: int, inM: int, inS: int) -> float:
     ds = float(inS) / 3600
     output = dh + dm + ds
     return output
+
 
 def degreeDiff(a: Union[int, float], b: Union[int, float]) -> float:
     """Calculate the difference between two degrees.
@@ -40,6 +42,7 @@ def degreeDiff(a: Union[int, float], b: Union[int, float]) -> float:
         out = 360.0 - out
     return out
 
+
 def offsetToTz(datetime_offset: Union[datetime.timedelta, None]) -> float:
     """Convert datetime offset to float in hours.
 
@@ -60,6 +63,7 @@ def offsetToTz(datetime_offset: Union[datetime.timedelta, None]) -> float:
     # total hours
     output = dh + sh
     return output
+
 
 def sliceToX(slice: Union[int, float], radius: Union[int, float], offset: Union[int, float]) -> float:
     """
@@ -86,6 +90,7 @@ def sliceToX(slice: Union[int, float], radius: Union[int, float], offset: Union[
     radial = ((math.pi / 6) * slice) + plus
     return radius * (math.cos(radial) + 1)
 
+
 def sliceToY(slice: Union[int, float], r: Union[int, float], offset: Union[int, float]) -> float:
     """
     Calculates the y-coordinate of a point on a circle based on the slice, radius, and offset.
@@ -111,14 +116,14 @@ def sliceToY(slice: Union[int, float], r: Union[int, float], offset: Union[int, 
 
 
 def draw_zodiac_slice(
-        c1: Union[int, float],
-        chart_type: ChartType,
-        sixth_house_degree_ut: Union[int, float],
-        num: int,
-        r: Union[int, float],
-        style: str,
-        type: str,
-    ):
+    c1: Union[int, float],
+    chart_type: ChartType,
+    sixth_house_degree_ut: Union[int, float],
+    num: int,
+    r: Union[int, float],
+    style: str,
+    type: str,
+):
     """
     Draws a zodiac slice based on the given parameters.
 
@@ -126,7 +131,7 @@ def draw_zodiac_slice(
         - c1 (Union[int, float]): The value of c1.
         - chart_type (Literal["Natal", "ExternalNatal", "Synastry", "Transit"]): The type of chart.
         - sixth_house_degree_ut (Union[int, float]): The degree of the sixth house.
-        - num (int): The number of the sign. Note: In OpenAstro it did refer to self.zodiac, 
+        - num (int): The number of the sign. Note: In OpenAstro it did refer to self.zodiac,
             which is a list of the signs in order, starting with Aries. Eg:
             {"name": "aries", "element": "fire"}
         - r (Union[int, float]): The value of r.
@@ -157,6 +162,7 @@ def draw_zodiac_slice(
     sign = f'<g transform="translate(-16,-16)"><use x="{str(dropin + sliceToX(num, r - dropin, offset))}" y="{str(dropin + sliceToY(num, r - dropin, offset))}" xlink:href="#{type}" /></g>'
 
     return slice + "" + sign
+
 
 def convert_latitude_coordinate_to_string(coord: Union[int, float], north_label: str, south_label: str) -> str:
     """
@@ -206,3 +212,39 @@ def convert_longitude_coordinate_to_string(coord: Union[int, float], east_label:
     min = int((float(coord) - deg) * 60)
     sec = int(round(float(((float(coord) - deg) * 60) - min) * 60.0))
     return f"{deg}°{min}'{sec}\" {sign}"
+
+
+def drawAspect(
+    r,
+    ar: Union[int, float],
+    degA: Union[int, float],
+    degB: Union[int, float],
+    color: str,
+    sixth_house_degree_ut: Union[int, float],
+) -> str:
+    """
+    Draws svg aspects: ring, aspect ring, degreeA degreeB
+    
+    Args:
+        - r (Union[int, float]): The value of r.
+        - ar (Union[int, float]): The value of ar.
+        - degA (Union[int, float]): The degree of A.
+        - degB (Union[int, float]): The degree of B.
+        - color (str): The color of the aspect.
+        - sixth_house_degree_ut (Union[int, float]): The degree of the sixth house.
+        
+    Returns:
+        str: The SVG line element as a string.
+    """
+
+    first_offset = (int(sixth_house_degree_ut) / -1) + int(degA)
+    x1 = sliceToX(0, ar, first_offset) + (r - ar)
+    y1 = sliceToY(0, ar, first_offset) + (r - ar)
+
+    second_offset = (int(sixth_house_degree_ut) / -1) + int(degB)
+    x2 = sliceToX(0, ar, second_offset) + (r - ar)
+    y2 = sliceToY(0, ar, second_offset) + (r - ar)
+
+    out = f'            <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
+
+    return out
