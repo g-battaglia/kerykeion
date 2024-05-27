@@ -23,7 +23,8 @@ from kerykeion.charts.charts_utils import (
     draw_zodiac_slice, 
     convert_latitude_coordinate_to_string, 
     convert_longitude_coordinate_to_string,
-    drawAspect
+    drawAspect,
+    draw_elements_percentages
 )
 from pathlib import Path
 from string import Template
@@ -1051,22 +1052,6 @@ class KerykeionChartSVG:
         out += "</g>"
         return out
 
-    def _makeElements(self, r):
-        total = self.fire + self.earth + self.air + self.water
-        pf = int(round(100 * self.fire / total))
-        pe = int(round(100 * self.earth / total))
-        pa = int(round(100 * self.air / total))
-        pw = int(round(100 * self.water / total))
-
-        out = '<g transform="translate(-30,79)">'
-        out += f'<text y="0" style="fill:#ff6600; font-size: 10px;">{self.language_settings["fire"]}  {str(pf)}%</text>'
-        out += f'<text y="12" style="fill:#6a2d04; font-size: 10px;">{self.language_settings["earth"]} {str(pe)}%</text>'
-        out += f'<text y="24" style="fill:#6f76d1; font-size: 10px;">{self.language_settings["air"]}   {str(pa)}%</text>'
-        out += f'<text y="36" style="fill:#630e73; font-size: 10px;">{self.language_settings["water"]} {str(pw)}%</text>'
-        out += "</g>"
-
-        return out
-
     def _makePlanetGrid(self):
         li = 10
         offset = 0
@@ -1419,7 +1404,16 @@ class KerykeionChartSVG:
         # TODO: Add the rest of the functions
         td["makeHouses"] = self._makeHouses(r)
         td["makePlanets"] = self._make_planets(r)
-        td["makeElements"] = self._makeElements(r)
+        td["elements_percentages"] = draw_elements_percentages(
+            self.language_settings['fire'],
+            self.fire,
+            self.language_settings['earth'],
+            self.earth,
+            self.language_settings['air'],
+            self.air,
+            self.language_settings['water'],
+            self.water,
+        )
         td["makePlanetGrid"] = self._makePlanetGrid()
 
         return td
