@@ -23,7 +23,7 @@ from kerykeion.charts.charts_utils import (
     draw_zodiac_slice, 
     convert_latitude_coordinate_to_string, 
     convert_longitude_coordinate_to_string,
-    drawAspect,
+    draw_aspect_line,
     draw_elements_percentages,
     convert_decimal_to_degree_string
 )
@@ -918,7 +918,7 @@ class KerykeionChartSVG:
     def _makeAspects(self, r, ar):
         out = ""
         for element in self.aspects_list:
-            out += drawAspect(
+            out += draw_aspect_line(
                 r=r,
                 ar=ar,
                 degA=element["p1_abs_pos"],
@@ -968,7 +968,7 @@ class KerykeionChartSVG:
         self.aspects_list = SynastryAspects(self.user, self.t_user, new_settings_file=self.new_settings_file).relevant_aspects
 
         for element in self.aspects_list:
-            out += drawAspect(
+            out += draw_aspect_line(
                 r=r,
                 ar=ar,
                 degA=element["p1_abs_pos"],

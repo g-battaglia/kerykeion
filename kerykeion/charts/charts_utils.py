@@ -214,7 +214,7 @@ def convert_longitude_coordinate_to_string(coord: Union[int, float], east_label:
     return f"{deg}°{min}'{sec}\" {sign}"
 
 
-def drawAspect(
+def draw_aspect_line(
     r: Union[int, float],
     ar: Union[int, float],
     degA: Union[int, float],
@@ -245,7 +245,7 @@ def drawAspect(
     x2 = sliceToX(0, ar, second_offset) + (r - ar)
     y2 = sliceToY(0, ar, second_offset) + (r - ar)
 
-    out = f'            <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
+    out = f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
 
     return out
 
