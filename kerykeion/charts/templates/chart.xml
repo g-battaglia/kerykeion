@@ -481,7 +481,7 @@ This file is part of Kerykeion and is based on OpenAstro.org -->
                         <!-- Planets -->$makePlanets <!-- Aspects -->$makeAspects </g>
                     <!-- makePatterns -->$makePatterns <!-- AspectGrid -->
                     $makeAspectGrid
-                    <!-- Elements -->$makeElements <!-- Planet Grid -->$makePlanetGrid <!-- Houses Grid -->
+                    <!-- Elements -->$elements_percentages <!-- Planet Grid -->$makePlanetGrid <!-- Houses Grid -->
                     $makeHousesGrid
                 </g>
             </g>
