@@ -22,7 +22,8 @@ from kerykeion.charts.charts_utils import (
     sliceToY, 
     draw_zodiac_slice, 
     convert_latitude_coordinate_to_string, 
-    convert_longitude_coordinate_to_string
+    convert_longitude_coordinate_to_string,
+    drawAspect
 )
 from pathlib import Path
 from string import Template
@@ -323,20 +324,6 @@ class KerykeionChartSVG:
         else:
             raise KerykeionException(f"Wrong type: {type}, it must be 1, 2 or 3.")
         return str(out)
-
-    def _drawAspect(self, r, ar, degA, degB, color):
-        """
-        Draws svg aspects: ring, aspect ring, degreeA degreeB
-        """
-        offset = (int(self.user.houses_degree_ut[6]) / -1) + int(degA)
-        x1 = sliceToX(0, ar, offset) + (r - ar)
-        y1 = sliceToY(0, ar, offset) + (r - ar)
-        offset = (int(self.user.houses_degree_ut[6]) / -1) + int(degB)
-        x2 = sliceToX(0, ar, offset) + (r - ar)
-        y2 = sliceToY(0, ar, offset) + (r - ar)
-        out = f'            <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
-
-        return out
 
     def _draw_zodiac_circle_slices(self, r):
         """
@@ -950,12 +937,13 @@ class KerykeionChartSVG:
     def _makeAspects(self, r, ar):
         out = ""
         for element in self.aspects_list:
-            out += self._drawAspect(
+            out += drawAspect(
                 r,
                 ar,
                 element["p1_abs_pos"],
                 element["p2_abs_pos"],
                 self.aspects_settings[element["aid"]]["color"],
+                self.user.seventh_house.abs_pos
             )
 
         return out
@@ -999,12 +987,13 @@ class KerykeionChartSVG:
         self.aspects_list = SynastryAspects(self.user, self.t_user, new_settings_file=self.new_settings_file).relevant_aspects
 
         for element in self.aspects_list:
-            out += self._drawAspect(
+            out += drawAspect(
                 r,
                 ar,
                 element["p1_abs_pos"],
                 element["p2_abs_pos"],
                 self.aspects_settings[element["aid"]]["color"],
+                self.user.seventh_house.abs_pos
             )
 
         return out
