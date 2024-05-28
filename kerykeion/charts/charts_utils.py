@@ -350,3 +350,33 @@ def draw_transit_ring_degree_steps(r: Union[int, float], seventh_house_degree_ut
         out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: #F00; stroke-width: 1px; stroke-opacity:.9;"/>'
 
     return out
+
+
+def draw_degree_ring(r: Union[int, float], c1: Union[int, float], seventh_house_degree_ut: Union[int, float], stroke_color: str) -> str:
+    """
+    Draws the degree ring.
+    
+    Args:
+        - r (Union[int, float]): The value of r.
+        - c1 (Union[int, float]): The value of c1.
+        - seventh_house_degree_ut (Union[int, float]): The degree of the seventh house.
+        - stroke_color (str): The color of the stroke.
+        
+    Returns:
+        str: The SVG path of the degree ring.
+    """
+    out = ""
+    for i in range(72):
+        offset = float(i * 5) - seventh_house_degree_ut
+        if offset < 0:
+            offset = offset + 360.0
+        elif offset > 360:
+            offset = offset - 360.0
+        x1 = sliceToX(0, r - c1, offset) + c1
+        y1 = sliceToY(0, r - c1, offset) + c1
+        x2 = sliceToX(0, r + 2 - c1, offset) - 2 + c1
+        y2 = sliceToY(0, r + 2 - c1, offset) - 2 + c1
+
+        out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {stroke_color}; stroke-width: 1px; stroke-opacity:.9;"/>'
+
+    return out
