@@ -1,7 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>
-<!---
-This file is part of Kerykeion and is based on OpenAstro.org -->
+<!--- This file is part of Kerykeion and is based on OpenAstro.org -->
 <svg
     xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -10,7 +8,7 @@ This file is part of Kerykeion and is based on OpenAstro.org -->
     viewBox="$viewbox"
     preserveAspectRatio="xMidYMid"
 >
-    <title>Kerykeion</title>
+    <title>$stringTitle | Kerykeion</title>
     <g transform="translate($cfgTranslate)">
         <g transform="rotate($cfgRotate)">
             <g transform="scale($cfgZoom)">
@@ -469,20 +467,49 @@ This file is part of Kerykeion and is based on OpenAstro.org -->
                 </symbol>
                 <g transform="translate(50,50)">
                     <g transform="translate($circleX,$circleY)">
-                        <!-- Zodiac -->$makeZodiac <!-- First Circle -->
+                        <!-- Zodiac -->
+                        $makeZodiac 
+
+                        <!-- First Circle -->
                         <circle $c1 style="$c1style" />
+
                         <!-- Second Circle -->
-                        <circle
-                            $c2 style="$c2style" />
+                        <circle $c2 style="$c2style" />
+
                         <!-- Third Circle -->
                         <circle $c3 style="$c3style" />
-                        <!-- TransitRing -->$transitRing <!-- Degree Ring -->$degreeRing <!-- Houses -->
-                    $makeHouses
-                        <!-- Planets -->$makePlanets <!-- Aspects -->$makeAspects </g>
-                    <!-- makePatterns -->$makePatterns <!-- AspectGrid -->
+
+                        <!-- TransitRing -->
+                        $transitRing 
+
+                        <!-- Degree Ring -->
+                        $degreeRing
+
+                        <!-- Houses -->
+                        $makeHouses
+
+                        <!-- Planets -->
+                        $makePlanets
+
+                        <!-- Aspects -->
+                        $makeAspects 
+                    </g>
+
+                    <!-- makePatterns -->
+                    $makePatterns
+
+                    <!-- AspectGrid -->
                     $makeAspectGrid
-                    <!-- Elements -->$elements_percentages <!-- Planet Grid -->$makePlanetGrid <!-- Houses Grid -->
+
+                    <!-- Elements -->
+                    $elements_percentages 
+
+                    <!-- Planet Grid -->
+                    $makePlanetGrid
+
+                    <!-- Houses Grid -->
                     $makeHousesGrid
+
                 </g>
             </g>
         </g>
