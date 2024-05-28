@@ -370,32 +370,33 @@ class KerykeionChartSVG:
 
         return path
 
-    def _value_element_from_planet(self, i):
+    def _calculate_elements_points_from_planets(self):
         """
         Calculate chart element points from a planet.
         """
+        
+        for i in range(len(self.available_planets_setting)):
+            # element: get extra points if planet is in own zodiac sign.
+            related_zodiac_signs = self.available_planets_setting[i]["related_zodiac_signs"]
+            cz = self.points_sign[i]
+            extra_points = 0
+            if related_zodiac_signs != []:
+                for e in range(len(related_zodiac_signs)):
+                    if int(related_zodiac_signs[e]) == int(cz):
+                        extra_points = self.planet_in_zodiac_extra_points
 
-        # element: get extra points if planet is in own zodiac sign.
-        related_zodiac_signs = self.available_planets_setting[i]["related_zodiac_signs"]
-        cz = self.points_sign[i]
-        extra_points = 0
-        if related_zodiac_signs != []:
-            for e in range(len(related_zodiac_signs)):
-                if int(related_zodiac_signs[e]) == int(cz):
-                    extra_points = self.planet_in_zodiac_extra_points
+            ele = self.zodiac[self.points_sign[i]]["element"]
+            if ele == "fire":
+                self.fire = self.fire + self.available_planets_setting[i]["element_points"] + extra_points
 
-        ele = self.zodiac[self.points_sign[i]]["element"]
-        if ele == "fire":
-            self.fire = self.fire + self.available_planets_setting[i]["element_points"] + extra_points
+            elif ele == "earth":
+                self.earth = self.earth + self.available_planets_setting[i]["element_points"] + extra_points
 
-        elif ele == "earth":
-            self.earth = self.earth + self.available_planets_setting[i]["element_points"] + extra_points
+            elif ele == "air":
+                self.air = self.air + self.available_planets_setting[i]["element_points"] + extra_points
 
-        elif ele == "air":
-            self.air = self.air + self.available_planets_setting[i]["element_points"] + extra_points
-
-        elif ele == "water":
-            self.water = self.water + self.available_planets_setting[i]["element_points"] + extra_points
+            elif ele == "water":
+                self.water = self.water + self.available_planets_setting[i]["element_points"] + extra_points
 
     def _make_planets(self, r):
         planets_degut = {}
@@ -406,8 +407,6 @@ class KerykeionChartSVG:
                 # list of planets sorted by degree
                 logging.debug(f"planet: {i}, degree: {self.points_deg_ut[i]}")
                 planets_degut[self.points_deg_ut[i]] = i
-
-            self._value_element_from_planet(i)
 
         output = ""
         keys = list(planets_degut.keys())
@@ -1121,6 +1120,9 @@ class KerykeionChartSVG:
         self.earth = 0.0
         self.air = 0.0
         self.water = 0.0
+
+        # Calculate the elements points
+        self._calculate_elements_points_from_planets()
 
         # width and height from screen
         ratio = float(self.screen_width) / float(self.screen_height)
