@@ -380,3 +380,22 @@ def draw_degree_ring(r: Union[int, float], c1: Union[int, float], seventh_house_
         out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {stroke_color}; stroke-width: 1px; stroke-opacity:.9;"/>'
 
     return out
+
+def draw_transit_ring(r: Union[int, float], paper_1_color: str, zodiac_transit_ring_3_color: str) -> str:
+    """
+    Draws the transit ring.
+    
+    Args:
+        - r (Union[int, float]): The value of r.
+        - paper_1_color (str): The color of paper 1.
+        - zodiac_transit_ring_3_color (str): The color of the zodiac transit ring
+        
+    Returns:
+        str: The SVG path of the transit ring.
+    """
+    radius_offset = 18
+
+    out = f'<circle cx="{r}" cy="{r}" r="{r - radius_offset}" style="fill: none; stroke: {paper_1_color}; stroke-width: 36px; stroke-opacity: .4;"/>'
+    out += f'<circle cx="{r}" cy="{r}" r="{r}" style="fill: none; stroke: {zodiac_transit_ring_3_color}; stroke-width: 1px; stroke-opacity: .6;"/>'
+
+    return out
