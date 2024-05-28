@@ -23,7 +23,8 @@ from kerykeion.charts.charts_utils import (
     draw_aspect_line,
     draw_elements_percentages,
     convert_decimal_to_degree_string,
-    draw_transit_ring_degree_steps
+    draw_transit_ring_degree_steps,
+    draw_degree_ring
 )
 from pathlib import Path
 from string import Template
@@ -223,26 +224,6 @@ class KerykeionChartSVG:
 
         out = f'<circle cx="{r}" cy="{r}" r="{r - radius_offset}" style="fill: none; stroke: {self.chart_colors_settings["paper_1"]}; stroke-width: 36px; stroke-opacity: .4;"/>'
         out += f'<circle cx="{r}" cy="{r}" r="{r}" style="fill: none; stroke: {self.chart_colors_settings["zodiac_transit_ring_3"]}; stroke-width: 1px; stroke-opacity: .6;"/>'
-
-        return out
-
-    def _degreeRing(self, r) -> str:
-        """
-        Draws the degree ring.
-        """
-        out = ""
-        for i in range(72):
-            offset = float(i * 5) - self.user.houses_degree_ut[6]
-            if offset < 0:
-                offset = offset + 360.0
-            elif offset > 360:
-                offset = offset - 360.0
-            x1 = sliceToX(0, r - self.c1, offset) + self.c1
-            y1 = sliceToY(0, r - self.c1, offset) + self.c1
-            x2 = sliceToX(0, r + 2 - self.c1, offset) - 2 + self.c1
-            y2 = sliceToY(0, r + 2 - self.c1, offset) - 2 + self.c1
-
-            out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.chart_colors_settings["paper_0"]}; stroke-width: 1px; stroke-opacity:.9;"/>'
 
         return out
 
@@ -1163,7 +1144,7 @@ class KerykeionChartSVG:
             td["chart_width"] = self.full_width
         else:
             td["transitRing"] = ""
-            td["degreeRing"] = self._degreeRing(r)
+            td["degreeRing"] = draw_degree_ring(r, self.c1, self.user.seventh_house.abs_pos, self.chart_colors_settings["paper_0"])
 
             # circles
             td["c1"] = f'cx="{r}" cy="{r}" r="{r - self.c1}"'
