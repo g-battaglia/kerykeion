@@ -36,8 +36,13 @@ class ChartTemplateDictionary(TypedDict):
     stringLat: str
     stringLon: str
     stringPosition: str
+
+    # Font color
     paper_color_0: str
+    # Background color of the chart
     paper_color_1: str
+    
+    # Planets colors, from 1 to 15 (0 is the Sun)
     planets_color_0: str
     planets_color_1: str
     planets_color_2: str
@@ -54,6 +59,8 @@ class ChartTemplateDictionary(TypedDict):
     planets_color_13: str
     planets_color_14: str
     planets_color_15: str
+    
+    # Zodiac colors, from 0 to 11 (0 is Aries)
     zodiac_color_0: str
     zodiac_color_1: str
     zodiac_color_2: str
@@ -66,6 +73,8 @@ class ChartTemplateDictionary(TypedDict):
     zodiac_color_9: str
     zodiac_color_10: str
     zodiac_color_11: str
+
+    # Aspects colors, from 0 to 9 (0 is conjunction)
     orb_color_0: str
     orb_color_30: str
     orb_color_45: str
@@ -77,6 +86,7 @@ class ChartTemplateDictionary(TypedDict):
     orb_color_144: str
     orb_color_150: str
     orb_color_180: str
+
     cfgZoom: str
     cfgRotate: str
     cfgTranslate: str
