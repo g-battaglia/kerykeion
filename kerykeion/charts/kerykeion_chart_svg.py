@@ -164,57 +164,17 @@ class KerykeionChartSVG:
             self.screen_width = 1200
         self.screen_height = 772.2
 
-        # check for home
-        self.home_location = self.user.city
-        self.home_geolat = self.user.lat
-        self.home_geolon = self.user.lng
-        self.home_countrycode = self.user.nation
-        self.home_timezonestr = self.user.tz_str
-
-        logging.info(f"{self.user.name} birth location: {self.home_location}, {self.home_geolat}, {self.home_geolon}")
-
         # default location
-        self.location = self.home_location
-        self.geolat = float(self.home_geolat)
-        self.geolon = float(self.home_geolon)
-        self.countrycode = self.home_countrycode
-        self.timezonestr = self.home_timezonestr
-
-        # current datetime
-        now = datetime.now()
-
-        # aware datetime object
-        dt_input = datetime(now.year, now.month, now.day, now.hour, now.minute, now.second)
-        dt = pytz.timezone(self.timezonestr).localize(dt_input)
-
-        # naive utc datetime object
-        dt_utc = dt.replace(tzinfo=None) - dt.utcoffset()  # type: ignore
-
-        # Default
-        self.name = self.user.name
-        self.charttype = self.chart_type
-        self.year = self.user.utc.year
-        self.month = self.user.utc.month
-        self.day = self.user.utc.day
-        self.hour = self.user.utc.hour + self.user.utc.minute / 100
-        self.timezone = offsetToTz(dt.utcoffset())
-        self.altitude = 25
-        self.geonameid = None
-
-        # Transit
+        self.location = self.user.city
+        self.geolat = self.user.lat
+        self.geolon =  self.user.lng
+        self.countrycode = self.user.nation
+        self.timezonestr = self.user.tz_str
+        
+        logging.info(f"{self.user.name} birth location: {self.location}, {self.geolat}, {self.geolon}")
 
         if self.chart_type == "Transit":
-            self.t_geolon = self.geolon
-            self.t_geolat = self.geolat
-            self.t_altitude = self.altitude
             self.t_name = self.language_settings["transit_name"]
-            self.t_year = dt_utc.year
-            self.t_month = dt_utc.month
-            self.t_day = dt_utc.day
-            self.t_hour = decHourJoin(dt_utc.hour, dt_utc.minute, dt_utc.second)
-            self.t_timezone = offsetToTz(dt.utcoffset())
-            self.t_altitude = 25
-            self.t_geonameid = None
 
         # configuration
         # ZOOM 1 = 100%
@@ -1038,7 +998,7 @@ class KerykeionChartSVG:
 
         out = '<g transform="translate(500,-20)">'
         out += '<g transform="translate(140, -15)">'
-        out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.name}:</text>'
+        out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.user.name}:</text>'
         out += "</g>"
 
         end_of_line = None
@@ -1244,17 +1204,17 @@ class KerykeionChartSVG:
         td["viewbox"] = viewbox
 
         if self.chart_type == "Synastry":
-            td["stringTitle"] = f"{self.name} {self.language_settings['and_word']} {self.t_user.name}"
+            td["stringTitle"] = f"{self.user.name} {self.language_settings['and_word']} {self.t_user.name}"
 
         elif self.chart_type == "Transit":
             td["stringTitle"] = f"{self.language_settings['transits']} {self.t_user.day}/{self.t_user.month}/{self.t_user.year}"
 
         else:
-            td["stringTitle"] = self.name
+            td["stringTitle"] = self.user.name
 
         # Tipo di carta
-        if self.chart_type == "Synastry" or self.name == "Transit":
-            td["stringName"] = f"{self.name}:"
+        if self.chart_type == "Synastry" or self.chart_type == "Transit":
+            td["stringName"] = f"{self.user.name}:"
         else:
             td["stringName"] = f'{self.language_settings["info"]}:'
 
@@ -1351,7 +1311,7 @@ class KerykeionChartSVG:
 
             td["stringLat"] = f"{self.language_settings['latitude']}: {latitude_string}"
             td["stringLon"] = f"{self.language_settings['longitude']}: {longitude_string}"
-            td["stringPosition"] = f"{self.language_settings['type']}: {self.charttype}"
+            td["stringPosition"] = f"{self.language_settings['type']}: {self.chart_type}"
 
         # paper_color_X
         td["paper_color_0"] = self.chart_colors_settings["paper_0"]
@@ -1419,7 +1379,7 @@ class KerykeionChartSVG:
         if not (self.template):
             self.template = self.makeTemplate()
 
-        self.chartname = self.output_directory / f"{self.name}{self.chart_type}Chart.svg"
+        self.chartname = self.output_directory / f"{self.user.name}{self.chart_type}Chart.svg"
 
         with open(self.chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(self.template)
