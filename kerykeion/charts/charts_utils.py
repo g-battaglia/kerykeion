@@ -322,3 +322,31 @@ def convert_decimal_to_degree_string(dec: float, type="3") -> str:
         raise KerykeionException(f"Wrong type: {type}, it must be 1, 2 or 3.")
 
     return str(out)
+
+
+def draw_transit_ring_degree_steps(r: Union[int, float], seventh_house_degree_ut: Union[int, float]) -> str:
+    """
+    Draws the transit ring degree steps.
+
+    Args:
+        r (Union[int, float]): The value of r.
+        seventh_house_degree_ut (Union[int, float]): The degree of the seventh house.
+
+    Returns:
+        str: The SVG path of the transit ring degree steps.
+    """
+
+    out = ""
+    for i in range(72):
+        offset = float(i * 5) - seventh_house_degree_ut
+        if offset < 0:
+            offset = offset + 360.0
+        elif offset > 360:
+            offset = offset - 360.0
+        x1 = sliceToX(0, r, offset)
+        y1 = sliceToY(0, r, offset)
+        x2 = sliceToX(0, r + 2, offset) - 2
+        y2 = sliceToY(0, r + 2, offset) - 2
+        out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: #F00; stroke-width: 1px; stroke-opacity:.9;"/>'
+
+    return out
