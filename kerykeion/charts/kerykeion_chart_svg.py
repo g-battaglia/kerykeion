@@ -24,7 +24,8 @@ from kerykeion.charts.charts_utils import (
     draw_elements_percentages,
     convert_decimal_to_degree_string,
     draw_transit_ring_degree_steps,
-    draw_degree_ring
+    draw_degree_ring,
+    draw_transit_ring
 )
 from pathlib import Path
 from string import Template
@@ -215,17 +216,6 @@ class KerykeionChartSVG:
         self.aspects_settings = settings["aspects"]
         self.planet_in_zodiac_extra_points = settings["general_settings"]["planet_in_zodiac_extra_points"]
         self.chart_settings = settings["chart_settings"]
-
-    def _transitRing(self, r) -> str:
-        """
-        Draws the transit ring.
-        """
-        radius_offset = 18
-
-        out = f'<circle cx="{r}" cy="{r}" r="{r - radius_offset}" style="fill: none; stroke: {self.chart_colors_settings["paper_1"]}; stroke-width: 36px; stroke-opacity: .4;"/>'
-        out += f'<circle cx="{r}" cy="{r}" r="{r}" style="fill: none; stroke: {self.chart_colors_settings["zodiac_transit_ring_3"]}; stroke-width: 1px; stroke-opacity: .6;"/>'
-
-        return out
 
     def _draw_zodiac_circle_slices(self, r):
         """
@@ -1126,7 +1116,7 @@ class KerykeionChartSVG:
 
         # transit
         if self.chart_type == "Transit" or self.chart_type == "Synastry":
-            td["transitRing"] = self._transitRing(r)
+            td["transitRing"] = draw_transit_ring(r, self.chart_colors_settings["paper_1"], self.chart_colors_settings["zodiac_transit_ring_3"])
             td["degreeRing"] = draw_transit_ring_degree_steps(r, self.user.seventh_house.abs_pos)
 
             # circles
