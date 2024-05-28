@@ -252,13 +252,13 @@ def draw_aspect_line(
 
 def draw_elements_percentages(
     fire_label: str,
-    fire_points: int,
+    fire_points: float,
     earth_label: str,
-    earth_points: int,
+    earth_points: float,
     air_label: str,
-    air_points: int,
+    air_points: float,
     water_label: str,
-    water_points: int,
+    water_points: float,
 ) -> str:
     """
     Draw the elements grid.

@@ -46,12 +46,54 @@ class KerykeionChartSVG:
         - new_settings_file: Set the settings file (default: kr.config.json)
     """
 
+    # Set at init
     first_obj: AstrologicalSubject
     second_obj: Union[AstrologicalSubject, None]
     chart_type: ChartType
     new_output_directory: Union[Path, None]
     new_settings_file: Union[Path, None]
     output_directory: Path
+
+    # Internal properties
+    fire: float
+    earth: float
+    air: float
+    water: float
+    c1: float
+    c2: float
+    c3: float
+    homedir: Path
+    xml_svg: Path
+    natal_width: float
+    full_width: float
+    language_settings: dict
+    chart_colors_settings: dict
+    planets_settings: dict
+    aspects_settings: dict
+    planet_in_zodiac_extra_points: int
+    chart_settings: dict
+    user: AstrologicalSubject
+    available_planets_setting: list
+    points_deg_ut: list
+    points_deg: list
+    points_sign: list
+    points_retrograde: list
+    houses_sign_graph: list
+    aspects_list: list
+    t_user: Union[AstrologicalSubject, None]
+    t_points_deg_ut: list
+    t_points_deg: list
+    t_points_sign: list
+    t_points_retrograde: list
+    t_houses_sign_graph: list
+    screen_width: float
+    screen_height: float
+    location: str
+    geolat: float
+    geolon: float
+    zoom: int
+    zodiac: tuple
+    template: str
 
     def __init__(
         self,
