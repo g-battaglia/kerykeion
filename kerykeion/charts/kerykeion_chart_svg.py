@@ -166,8 +166,6 @@ class KerykeionChartSVG:
         self.location = self.user.city
         self.geolat = self.user.lat
         self.geolon =  self.user.lng
-        self.countrycode = self.user.nation
-        self.timezonestr = self.user.tz_str
         
         logging.info(f"{self.user.name} birth location: {self.location}, {self.geolat}, {self.geolon}")
 
