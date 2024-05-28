@@ -4,7 +4,6 @@
 """
 
 
-import pytz
 import logging
 
 from datetime import datetime
@@ -15,9 +14,7 @@ from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types import KerykeionException, ChartType
 from kerykeion.kr_types import ChartTemplateDictionary
 from kerykeion.charts.charts_utils import (
-    decHourJoin, 
     degreeDiff, 
-    offsetToTz, 
     sliceToX, 
     sliceToY, 
     draw_zodiac_slice, 
@@ -25,7 +22,8 @@ from kerykeion.charts.charts_utils import (
     convert_longitude_coordinate_to_string,
     draw_aspect_line,
     draw_elements_percentages,
-    convert_decimal_to_degree_string
+    convert_decimal_to_degree_string,
+    draw_transit_ring_degree_steps
 )
 from pathlib import Path
 from string import Template
@@ -247,22 +245,6 @@ class KerykeionChartSVG:
             y2 = sliceToY(0, r + 2 - self.c1, offset) - 2 + self.c1
 
             out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.chart_colors_settings["paper_0"]}; stroke-width: 1px; stroke-opacity:.9;"/>'
-
-        return out
-
-    def _degreeTransitRing(self, r):
-        out = ""
-        for i in range(72):
-            offset = float(i * 5) - self.user.houses_degree_ut[6]
-            if offset < 0:
-                offset = offset + 360.0
-            elif offset > 360:
-                offset = offset - 360.0
-            x1 = sliceToX(0, r, offset)
-            y1 = sliceToY(0, r, offset)
-            x2 = sliceToX(0, r + 2, offset) - 2
-            y2 = sliceToY(0, r + 2, offset) - 2
-            out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: #F00; stroke-width: 1px; stroke-opacity:.9;"/>'
 
         return out
 
@@ -1166,7 +1148,7 @@ class KerykeionChartSVG:
         # transit
         if self.chart_type == "Transit" or self.chart_type == "Synastry":
             td["transitRing"] = self._transitRing(r)
-            td["degreeRing"] = self._degreeTransitRing(r)
+            td["degreeRing"] = draw_transit_ring_degree_steps(r, self.user.seventh_house.abs_pos)
 
             # circles
             td["c1"] = f'cx="{r}" cy="{r}" r="{r - 36}"'
