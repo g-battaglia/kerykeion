@@ -4,10 +4,8 @@
 """
 
 
-from json import load
 from pydantic import BaseModel, Field
-from pathlib import Path
-from typing import Dict, List, Union
+from typing import List
 
 
 class CustomBaseModel(BaseModel):
