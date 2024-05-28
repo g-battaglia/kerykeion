@@ -12,6 +12,7 @@ from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types import KerykeionException, ChartType
 from kerykeion.kr_types import ChartTemplateDictionary
+from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel
 from kerykeion.charts.charts_utils import (
     degreeDiff, 
     sliceToX, 
@@ -28,7 +29,7 @@ from kerykeion.charts.charts_utils import (
 )
 from pathlib import Path
 from string import Template
-from typing import Union
+from typing import Union, List
 
 
 class KerykeionChartSVG:
@@ -72,7 +73,7 @@ class KerykeionChartSVG:
     planet_in_zodiac_extra_points: int
     chart_settings: dict
     user: AstrologicalSubject
-    available_planets_setting: list
+    available_planets_setting: List[KerykeionSettingsCelestialPointModel]
     points_deg_ut: list
     points_deg: list
     points_sign: list
