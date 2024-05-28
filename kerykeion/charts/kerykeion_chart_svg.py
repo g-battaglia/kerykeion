@@ -6,7 +6,6 @@
 
 import logging
 
-from datetime import datetime
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.synastry_aspects import SynastryAspects
 from kerykeion.aspects.natal_aspects import NatalAspects
@@ -79,8 +78,6 @@ class KerykeionChartSVG:
     points_sign: list
     points_retrograde: list
     houses_sign_graph: list
-    aspects_list: list
-    t_user: Union[AstrologicalSubject, None]
     t_points_deg_ut: list
     t_points_deg: list
     t_points_sign: list
