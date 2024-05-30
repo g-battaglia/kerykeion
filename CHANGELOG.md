@@ -41,3 +41,9 @@ Allow UTC datetime to be passed in the constructor as an alternative to year, mo
 
 - Now the `lunar_phase` contains also the `lunar_phase_name` property, which is a string representation of the phase.
 - Minor general cleanup and refactoring of the codebase.
+
+## 4.7.0
+
+A lot of refactoring and clean up.
+`Fix`: In the old version the 4 last planets of the Transit chart were always removed, now we check if those are Axes and then
+remove them.
