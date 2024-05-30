@@ -66,8 +66,7 @@ def offsetToTz(datetime_offset: Union[datetime.timedelta, None]) -> float:
 
 
 def sliceToX(slice: Union[int, float], radius: Union[int, float], offset: Union[int, float]) -> float:
-    """
-    Calculates the x-coordinate of a point on a circle based on the slice, radius, and offset.
+    """Calculates the x-coordinate of a point on a circle based on the slice, radius, and offset.
 
     Args:
         - slice (int | float): Represents the
@@ -92,8 +91,7 @@ def sliceToX(slice: Union[int, float], radius: Union[int, float], offset: Union[
 
 
 def sliceToY(slice: Union[int, float], r: Union[int, float], offset: Union[int, float]) -> float:
-    """
-    Calculates the y-coordinate of a point on a circle based on the slice, radius, and offset.
+    """Calculates the y-coordinate of a point on a circle based on the slice, radius, and offset.
 
     Args:
         - slice (int | float): Represents the slice of the circle to calculate
@@ -124,8 +122,7 @@ def draw_zodiac_slice(
     style: str,
     type: str,
 ) -> str:
-    """
-    Draws a zodiac slice based on the given parameters.
+    """Draws a zodiac slice based on the given parameters.
 
     Args:
         - c1 (Union[int, float]): The value of c1.
@@ -165,8 +162,7 @@ def draw_zodiac_slice(
 
 
 def convert_latitude_coordinate_to_string(coord: Union[int, float], north_label: str, south_label: str) -> str:
-    """
-    Converts a floating point latitude to string with
+    """Converts a floating point latitude to string with
     degree, minutes and seconds and the appropriate sign
     (north or south). Eg. 52.1234567 -> 52°7'25" N
 
@@ -190,8 +186,7 @@ def convert_latitude_coordinate_to_string(coord: Union[int, float], north_label:
 
 
 def convert_longitude_coordinate_to_string(coord: Union[int, float], east_label: str, west_label: str) -> str:
-    """
-    Converts a floating point longitude to string with
+    """Converts a floating point longitude to string with
     degree, minutes and seconds and the appropriate sign
     (east or west). Eg. 52.1234567 -> 52°7'25" E
 
@@ -222,8 +217,7 @@ def draw_aspect_line(
     color: str,
     seventh_house_degree_ut: Union[int, float],
 ) -> str:
-    """
-    Draws svg aspects: ring, aspect ring, degreeA degreeB
+    """Draws svg aspects: ring, aspect ring, degreeA degreeB
 
     Args:
         - r (Union[int, float]): The value of r.
@@ -260,15 +254,17 @@ def draw_elements_percentages(
     water_label: str,
     water_points: float,
 ) -> str:
-    """
-    Draw the elements grid.
+    """Draw the elements grid.
 
     Args:
         - fire_label (str): Label for fire
+        - fire_points (float): Points for fire
         - earth_label (str): Label for earth
+        - earth_points (float): Points for earth
         - air_label (str): Label for air
+        - air_points (float): Points for air
         - water_label (str): Label for water
-        -
+        - water_points (float): Points for water
 
     Returns:
         str: The SVG elements grid as a string.
@@ -325,18 +321,17 @@ def convert_decimal_to_degree_string(dec: float, type="3") -> str:
 
 
 def draw_transit_ring_degree_steps(r: Union[int, float], seventh_house_degree_ut: Union[int, float]) -> str:
-    """
-    Draws the transit ring degree steps.
+    """Draws the transit ring degree steps.
 
     Args:
-        r (Union[int, float]): The value of r.
-        seventh_house_degree_ut (Union[int, float]): The degree of the seventh house.
+        - r (Union[int, float]): The value of r.
+        - seventh_house_degree_ut (Union[int, float]): The degree of the seventh house.
 
     Returns:
         str: The SVG path of the transit ring degree steps.
     """
 
-    out = ""
+    out = '<g id="transitRingDegreeSteps">'
     for i in range(72):
         offset = float(i * 5) - seventh_house_degree_ut
         if offset < 0:
@@ -348,13 +343,13 @@ def draw_transit_ring_degree_steps(r: Union[int, float], seventh_house_degree_ut
         x2 = sliceToX(0, r + 2, offset) - 2
         y2 = sliceToY(0, r + 2, offset) - 2
         out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: #F00; stroke-width: 1px; stroke-opacity:.9;"/>'
-
+    out += "</g>"
+    
     return out
 
 
 def draw_degree_ring(r: Union[int, float], c1: Union[int, float], seventh_house_degree_ut: Union[int, float], stroke_color: str) -> str:
-    """
-    Draws the degree ring.
+    """Draws the degree ring.
     
     Args:
         - r (Union[int, float]): The value of r.
@@ -365,7 +360,7 @@ def draw_degree_ring(r: Union[int, float], c1: Union[int, float], seventh_house_
     Returns:
         str: The SVG path of the degree ring.
     """
-    out = ""
+    out = '<g id="degreeRing">'
     for i in range(72):
         offset = float(i * 5) - seventh_house_degree_ut
         if offset < 0:
@@ -378,7 +373,8 @@ def draw_degree_ring(r: Union[int, float], c1: Union[int, float], seventh_house_
         y2 = sliceToY(0, r + 2 - c1, offset) - 2 + c1
 
         out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {stroke_color}; stroke-width: 1px; stroke-opacity:.9;"/>'
-
+    out += "</g>"
+    
     return out
 
 def draw_transit_ring(r: Union[int, float], paper_1_color: str, zodiac_transit_ring_3_color: str) -> str:
