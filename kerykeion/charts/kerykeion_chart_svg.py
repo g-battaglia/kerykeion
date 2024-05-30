@@ -408,6 +408,14 @@ class KerykeionChartSVG:
                 logging.debug(f"planet: {i}, degree: {self.points_deg_ut[i]}")
                 planets_degut[self.points_deg_ut[i]] = i
 
+        """
+        FIXME: The planets_degut is a dictionary like:
+        {planet_degree: planet_index}
+        It should be replaced bu points_deg_ut
+        print(self.points_deg_ut)
+        print(planets_degut)
+        """
+
         output = ""
         keys = list(planets_degut.keys())
         keys.sort()
