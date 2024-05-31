@@ -28,8 +28,10 @@ from kerykeion.charts.charts_utils import (
     draw_transit_ring
 )
 from pathlib import Path
+from scour.scour import scourString
 from string import Template
 from typing import Union, List
+
 
 
 class KerykeionChartSVG:
@@ -1393,8 +1395,7 @@ class KerykeionChartSVG:
         self._createTemplateDictionary()
 
         if minify:
-            from scour import scour
-            template = scour.scourString(template).replace('"', "'").replace("\n", "").replace("\t","").replace("    ", "").replace("  ", "")
+            template = scourString(template).replace('"', "'").replace("\n", "").replace("\t","").replace("    ", "").replace("  ", "")
 
         else:
             template = template.replace('"', "'")
