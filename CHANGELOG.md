@@ -47,3 +47,7 @@ Allow UTC datetime to be passed in the constructor as an alternative to year, mo
 A lot of refactoring and clean up.
 `Fix`: In the old version the 4 last planets of the Transit chart were always removed, now we check if those are Axes and then
 remove them.
+
+# 4.8.0
+
+Added the optional `minify` argument to makeTemplate in the charts module.
