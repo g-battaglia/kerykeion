@@ -779,6 +779,19 @@ security = ["itsdangerous (>=2.0)"]
 yaml = ["pyyaml (>=5.4)"]
 
 [[package]]
+name = "scour"
+version = "0.38.2"
+description = "Scour SVG Optimizer"
+optional = false
+python-versions = "*"
+files = [
+    {file = "scour-0.38.2.tar.gz", hash = "sha256:6881ec26660c130c5ecd996ac6f6b03939dd574198f50773f2508b81a68e0daf"},
+]
+
+[package.dependencies]
+six = ">=1.9.0"
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -881,4 +894,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "a84e10dbc73488c5b680fc67f472ddc9c6087c84a5883b03ada28630e551dc36"
+content-hash = "b9dc9beedf2e67501588bbda8911c6a98996d428f95da5f8f8c918a5c0237773"
