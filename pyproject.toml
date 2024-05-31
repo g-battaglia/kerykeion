@@ -48,6 +48,7 @@ requests = "^2.28.1"
 requests-cache = "^0.9.7"
 pydantic = "^2.5"
 terminaltables = "^3.1.10"
+scour = "^0.38.2"
 
 [tool.poetry.scripts]
 create-docs = "scripts.docs:main"

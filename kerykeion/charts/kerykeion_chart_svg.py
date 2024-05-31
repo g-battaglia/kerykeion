@@ -250,8 +250,7 @@ class KerykeionChartSVG:
             {"name": "pisces", "element": "water"},
         )
 
-        # Immediately generate template.
-        self.template = self.makeTemplate()
+        self.template = None
 
     def set_output_directory(self, dir_path: Path) -> None:
         """
@@ -1379,7 +1378,7 @@ class KerykeionChartSVG:
 
         return td
 
-    def makeTemplate(self):
+    def makeTemplate(self, minify: bool = False) -> str:
         """Creates the template for the SVG file"""
         td = self._createTemplateDictionary()
 
@@ -1392,13 +1391,21 @@ class KerykeionChartSVG:
         logging.debug(f"Template dictionary keys: {td.keys()}")
 
         self._createTemplateDictionary()
-        return template.replace('"', "'")
 
-    def makeSVG(self) -> None:
+        if minify:
+            from scour import scour
+            template = scour.scourString(template).replace('"', "'").replace("\n", "").replace("\t","").replace("    ", "").replace("  ", "")
+
+        else:
+            template = template.replace('"', "'")
+
+        return template
+
+    def makeSVG(self, minify: bool = False):
         """Prints out the SVG file in the specifide folder"""
 
         if not (self.template):
-            self.template = self.makeTemplate()
+            self.template = self.makeTemplate(minify)
 
         self.chartname = self.output_directory / f"{self.user.name}{self.chart_type}Chart.svg"
 
@@ -1425,8 +1432,9 @@ if __name__ == "__main__":
 
     # Synastry Chart
     synastry_chart = KerykeionChartSVG(first, "Synastry", second)
-    synastry_chart.makeSVG()
+    synastry_chart.makeSVG(minify=True)
 
     # Transits Chart
     transits_chart = KerykeionChartSVG(first, "Transit", second)
-    transits_chart.makeSVG()
+    transits_chart.makeSVG(minify=True)
+
