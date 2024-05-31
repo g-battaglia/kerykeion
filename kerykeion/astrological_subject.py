@@ -170,7 +170,7 @@ class AstrologicalSubject:
 
         # This message is set to encourage the user to set a custom geonames username
         if geonames_username is None and online:
-            logging.info(
+            logging.warning(
                 "\n"
                 "********" +
                 "\n" +
@@ -191,19 +191,19 @@ class AstrologicalSubject:
 
         if not self.city:
             self.city = "London"
-            logging.warning("No city specified, using London as default")
+            logging.info("No city specified, using London as default")
 
         if not self.nation:
             self.nation = "GB"
-            logging.warning("No nation specified, using GB as default")
+            logging.info("No nation specified, using GB as default")
 
         if not self.lat:
             self.lat = 51.5074
-            logging.warning("No latitude specified, using London as default")
+            logging.info("No latitude specified, using London as default")
 
         if not self.lng:
             self.lng = 0
-            logging.warning("No longitude specified, using London as default")
+            logging.info("No longitude specified, using London as default")
 
         if (not self.online) and (not tz_str):
             raise KerykeionException(
