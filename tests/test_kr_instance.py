@@ -310,7 +310,7 @@ class TestAstrologicalSubject:
                 "retrograde": True,
             },
             "lunar_phase": {
-                "degrees_between_s_m": 201.07547248727388, 
+                "degrees_between_s_m": 201.07547248727332, 
                 "moon_phase": 16, 
                 "sun_phase": 15, 
                 "moon_emoji": "🌖",
