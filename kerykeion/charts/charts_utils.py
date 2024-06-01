@@ -395,3 +395,50 @@ def draw_transit_ring(r: Union[int, float], paper_1_color: str, zodiac_transit_r
     out += f'<circle cx="{r}" cy="{r}" r="{r}" style="fill: none; stroke: {zodiac_transit_ring_3_color}; stroke-width: 1px; stroke-opacity: .6;"/>'
 
     return out
+
+
+def draw_first_circle(r: Union[int, float], stroke_color: str, chart_type: ChartType, c1: Union[int, float, None] = None) -> str:
+    """
+    Draws the first circle.
+    
+    Args:
+        - r (Union[int, float]): The value of r.
+        - color (str): The color of the circle.
+        - chart_type (ChartType): The type of chart.
+        - c1 (Union[int, float]): The value of c1.
+        
+    Returns:
+        str: The SVG path of the first circle.
+    """
+    if chart_type == "Synastry" or chart_type == "Transit":
+        return f'<circle cx="{r}" cy="{r}" r="{r - 36}" style="fill: none; stroke: {stroke_color}; stroke-width: 1px; stroke-opacity:.4;" />'
+    else:
+        if c1 is None:
+            raise KerykeionException("c1 is None")
+
+        return f'<circle cx="{r}" cy="{r}" r="{r - c1}" style="fill: none; stroke: {stroke_color}; stroke-width: 1px; " />'
+
+
+def draw_second_circle(r: Union[int, float], stroke_color: str, fill_color: str, chart_type: ChartType, c2: Union[int, float, None] = None) -> str:
+    """
+    Draws the second circle.
+    
+    Args:
+        - r (Union[int, float]): The value of r.
+        - stroke_color (str): The color of the stroke.
+        - fill_color (str): The color of the fill.
+        - chart_type (ChartType): The type of chart.
+        - c2 (Union[int, float]): The value of c2.
+        
+    Returns:
+        str: The SVG path of the second circle.
+    """
+    
+    if chart_type == "Synastry" or chart_type == "Transit":
+        return f'<circle cx="{r}" cy="{r}" r="{r - 72}" style="fill: {fill_color}; fill-opacity:.4; stroke: {stroke_color}; stroke-opacity:.4; stroke-width: 1px" />'
+    
+    else:
+        if c2 is None:
+            raise KerykeionException("c2 is None")
+
+        return f'<circle cx="{r}" cy="{r}" r="{r - c2}" style="fill: {fill_color}; fill-opacity:.2; stroke: {stroke_color}; stroke-opacity:.4; stroke-width: 1px" />'

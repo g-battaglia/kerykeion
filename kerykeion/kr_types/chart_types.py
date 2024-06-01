@@ -4,15 +4,14 @@ from typing import TypedDict
 class ChartTemplateDictionary(TypedDict):
     transitRing: str
     degreeRing: str
-    c1: str
-    c1style: str
-    c2: str
-    c2style: str
+    first_circle: str
+    second_circle: str
     c3: str
     c3style: str
     makeAspects: str
     makeAspectGrid: str
     makePatterns: str
+    chart_height: float
     chart_width: float
     circleX: str
     circleY: str
