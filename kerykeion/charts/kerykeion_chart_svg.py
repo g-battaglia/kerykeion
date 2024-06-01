@@ -25,7 +25,8 @@ from kerykeion.charts.charts_utils import (
     convert_decimal_to_degree_string,
     draw_transit_ring_degree_steps,
     draw_degree_ring,
-    draw_transit_ring
+    draw_transit_ring,
+    draw_first_circle
 )
 from pathlib import Path
 from scour.scour import scourString
@@ -1191,8 +1192,8 @@ class KerykeionChartSVG:
             td["degreeRing"] = draw_transit_ring_degree_steps(r, self.user.seventh_house.abs_pos)
 
             # circles
-            td["c1"] = f'cx="{r}" cy="{r}" r="{r - 36}"'
-            td["c1style"] = f'fill: none; stroke: {self.chart_colors_settings["zodiac_transit_ring_2"]}; stroke-width: 1px; stroke-opacity:.4;'
+            td["first_circle"] = draw_first_circle(r, self.chart_colors_settings["zodiac_transit_ring_2"])
+
             td["c2"] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r - 72) + '"'
             td["c2style"] = f"fill: {self.chart_colors_settings['paper_1']}; fill-opacity:.4; stroke: {self.chart_colors_settings['zodiac_transit_ring_1']}; stroke-opacity:.4; stroke-width: 1px"
 
@@ -1207,13 +1208,14 @@ class KerykeionChartSVG:
             td["transitRing"] = ""
             td["degreeRing"] = draw_degree_ring(r, self.c1, self.user.seventh_house.abs_pos, self.chart_colors_settings["paper_0"])
 
-            # circles
-            td["c1"] = f'cx="{r}" cy="{r}" r="{r - self.c1}"'
-            td["c1style"] = f'fill: none; stroke: {self.chart_colors_settings["zodiac_radix_ring_2"]}; stroke-width: 1px; '
+            td['first_circle'] = f'<circle cx="{r}" cy="{r}" r="{r - self.c1}" style="fill: none; stroke: {self.chart_colors_settings["zodiac_radix_ring_2"]}; stroke-width: 1px; " />'
+
             td["c2"] = f'cx="{r}" cy="{r}" r="{r - self.c2}"'
             td["c2style"] = f'fill: {self.chart_colors_settings["paper_1"]}; fill-opacity:.2; stroke: {self.chart_colors_settings["zodiac_radix_ring_1"]}; stroke-opacity:.4; stroke-width: 1px'
+            
             td["c3"] = f'cx="{r}" cy="{r}" r="{r - self.c3}"'
             td["c3style"] = f'fill: {self.chart_colors_settings["paper_1"]}; fill-opacity:.8; stroke: {self.chart_colors_settings["zodiac_radix_ring_0"]}; stroke-width: 1px'
+            
             td["makeAspects"] = self._makeAspects(r, (r - self.c3))
             td["makeAspectGrid"] = self._makeAspectGrid(r)
             td["makePatterns"] = self._makePatterns()
