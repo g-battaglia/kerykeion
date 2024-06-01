@@ -395,3 +395,17 @@ def draw_transit_ring(r: Union[int, float], paper_1_color: str, zodiac_transit_r
     out += f'<circle cx="{r}" cy="{r}" r="{r}" style="fill: none; stroke: {zodiac_transit_ring_3_color}; stroke-width: 1px; stroke-opacity: .6;"/>'
 
     return out
+
+
+def draw_first_circle(r: Union[int, float], color: str) -> str:
+    """
+    Draws the first circle.
+    
+    Args:
+        - r (Union[int, float]): The value of r.
+        - color (str): The color of the circle.
+        
+    Returns:
+        str: The SVG path of the first circle.
+    """
+    return f'<circle cx="{r}" cy="{r}" r="{r - 36}" style="fill: none; stroke: {color}; stroke-width: 1px; stroke-opacity:.4;" />'

@@ -4,8 +4,7 @@ from typing import TypedDict
 class ChartTemplateDictionary(TypedDict):
     transitRing: str
     degreeRing: str
-    c1: str
-    c1style: str
+    first_circle: str
     c2: str
     c2style: str
     c3: str
