@@ -5,13 +5,13 @@ class ChartTemplateDictionary(TypedDict):
     transitRing: str
     degreeRing: str
     first_circle: str
-    c2: str
-    c2style: str
+    second_circle: str
     c3: str
     c3style: str
     makeAspects: str
     makeAspectGrid: str
     makePatterns: str
+    chart_height: float
     chart_width: float
     circleX: str
     circleY: str

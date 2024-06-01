@@ -12,7 +12,7 @@
     <g transform='translate(0)'>
         <g transform='rotate(0)'>
             <g transform='scale(1)'>
-                <rect x='0' y='0' width='1200' height='546.0' style='fill: #ffffff' />
+                <rect class='background-rectangle' x='0' y='0' width='1200' height='546.0' style='fill: #ffffff' />
                 <text x='20' y='30' style='fill: #000000; font-size: 24px'>Transits for 18/6/1942</text>
                 <text x='20' y='50' style='fill: #000000; font-size: 11px'>John Lennon:</text>
                 <text x='20' y='62' style='fill: #000000; font-size: 11px'>Liverpool</text>

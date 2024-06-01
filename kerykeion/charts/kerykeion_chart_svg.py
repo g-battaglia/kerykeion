@@ -26,7 +26,8 @@ from kerykeion.charts.charts_utils import (
     draw_transit_ring_degree_steps,
     draw_degree_ring,
     draw_transit_ring,
-    draw_first_circle
+    draw_first_circle,
+    draw_second_circle
 )
 from pathlib import Path
 from scour.scour import scourString
@@ -48,6 +49,11 @@ class KerykeionChartSVG:
         - lang: language settings (default: "EN")
         - new_settings_file: Set the settings file (default: kr.config.json)
     """
+    
+    # Constants
+    _DEFAULT_HEIGHT = 546.0
+    _DEFAULT_FULL_WIDTH = 1200
+    _DEFAULT_NATAL_WIDTH = 772.2
 
     # Set at init
     first_obj: AstrologicalSubject
@@ -67,8 +73,7 @@ class KerykeionChartSVG:
     c3: float
     homedir: Path
     xml_svg: Path
-    natal_width: float
-    full_width: float
+    width: Union[float, int]
     language_settings: dict
     chart_colors_settings: dict
     planets_settings: dict
@@ -88,8 +93,7 @@ class KerykeionChartSVG:
     t_points_sign: list
     t_points_retrograde: list
     t_houses_sign_graph: list
-    screen_width: float
-    screen_height: float
+    height: float
     location: str
     geolat: float
     geolon: float
@@ -116,10 +120,6 @@ class KerykeionChartSVG:
             self.output_directory = self.homedir
 
         self.xml_svg = DATA_DIR / "templates/chart.xml"
-
-        # SVG Width
-        self.natal_width = 772.2
-        self.full_width = 1200
 
         self.parse_json_settings(new_settings_file)
         self.chart_type = chart_type
@@ -218,11 +218,12 @@ class KerykeionChartSVG:
                 self.t_houses_sign_graph.append(h["sign_num"])
 
         # screen size
-        if self.chart_type == "Natal":
-            self.screen_width = 772.2
+        
+        self.height = self._DEFAULT_HEIGHT
+        if self.chart_type == "Synastry" or self.chart_type == "Transit":
+            self.width = self._DEFAULT_FULL_WIDTH
         else:
-            self.screen_width = 1200
-        self.screen_height = 772.2
+            self.width = self._DEFAULT_NATAL_WIDTH
 
         # default location
         self.location = self.user.city
@@ -1154,13 +1155,6 @@ class KerykeionChartSVG:
         # Calculate the elements points
         self._calculate_elements_points_from_planets()
 
-        # width and height from screen
-        ratio = float(self.screen_width) / float(self.screen_height)
-        if ratio < 1.3:  # 1280x1024
-            wm_off = 130
-        else:  # 1024x768, 800x600, 1280x800, 1680x1050
-            wm_off = 100
-
         # Viewbox and sizing
         svgHeight = "100%"
         svgWidth = "100%"
@@ -1192,10 +1186,8 @@ class KerykeionChartSVG:
             td["degreeRing"] = draw_transit_ring_degree_steps(r, self.user.seventh_house.abs_pos)
 
             # circles
-            td["first_circle"] = draw_first_circle(r, self.chart_colors_settings["zodiac_transit_ring_2"])
-
-            td["c2"] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r - 72) + '"'
-            td["c2style"] = f"fill: {self.chart_colors_settings['paper_1']}; fill-opacity:.4; stroke: {self.chart_colors_settings['zodiac_transit_ring_1']}; stroke-opacity:.4; stroke-width: 1px"
+            td["first_circle"] = draw_first_circle(r, self.chart_colors_settings["zodiac_transit_ring_2"], self.chart_type)
+            td["second_circle"] = draw_second_circle(r, self.chart_colors_settings['zodiac_transit_ring_1'], self.chart_colors_settings['paper_1'], self.chart_type)
 
             td["c3"] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r - 160) + '"'
             td["c3style"] = f"fill: {self.chart_colors_settings['paper_1']}; fill-opacity:.8; stroke: {self.chart_colors_settings['zodiac_transit_ring_0']}; stroke-width: 1px"
@@ -1203,15 +1195,13 @@ class KerykeionChartSVG:
             td["makeAspects"] = self._makeAspectsTransit(r, (r - 160))
             td["makeAspectGrid"] = self._makeAspectTransitGrid(r)
             td["makePatterns"] = ""
-            td["chart_width"] = self.full_width
         else:
             td["transitRing"] = ""
             td["degreeRing"] = draw_degree_ring(r, self.c1, self.user.seventh_house.abs_pos, self.chart_colors_settings["paper_0"])
 
-            td['first_circle'] = f'<circle cx="{r}" cy="{r}" r="{r - self.c1}" style="fill: none; stroke: {self.chart_colors_settings["zodiac_radix_ring_2"]}; stroke-width: 1px; " />'
+            td['first_circle'] = draw_first_circle(r, self.chart_colors_settings["zodiac_radix_ring_2"], self.chart_type, self.c1)
 
-            td["c2"] = f'cx="{r}" cy="{r}" r="{r - self.c2}"'
-            td["c2style"] = f'fill: {self.chart_colors_settings["paper_1"]}; fill-opacity:.2; stroke: {self.chart_colors_settings["zodiac_radix_ring_1"]}; stroke-opacity:.4; stroke-width: 1px'
+            td["second_circle"] = draw_second_circle(r, self.chart_colors_settings["zodiac_radix_ring_1"], self.chart_colors_settings["paper_1"], self.chart_type, self.c2)
             
             td["c3"] = f'cx="{r}" cy="{r}" r="{r - self.c3}"'
             td["c3style"] = f'fill: {self.chart_colors_settings["paper_1"]}; fill-opacity:.8; stroke: {self.chart_colors_settings["zodiac_radix_ring_0"]}; stroke-width: 1px'
@@ -1219,8 +1209,9 @@ class KerykeionChartSVG:
             td["makeAspects"] = self._makeAspects(r, (r - self.c3))
             td["makeAspectGrid"] = self._makeAspectGrid(r)
             td["makePatterns"] = self._makePatterns()
-            td["chart_width"] = self.natal_width
-
+        
+        td["chart_height"] = self.height
+        td["chart_width"] = self.width
         td["circleX"] = str(0)
         td["circleY"] = str(0)
         td["svgWidth"] = str(svgWidth)
