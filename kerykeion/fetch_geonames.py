@@ -82,7 +82,9 @@ class FetchGeonames:
             "contry": country_code,
             "username": self.username,
             "maxRows": 1,
-            "style": "FULL",
+            "style": "SHORT",
+            "featureClass": "A",
+            "featureClass": "P",
         }
 
         prepared_request = Request("GET", self.base_url, params=params).prepare()
@@ -91,6 +93,7 @@ class FetchGeonames:
         try:
             response = self.session.send(prepared_request)
             response_json = response.json()
+            logging.debug(f"Response from GeoNames: {response_json}")
 
         except Exception as e:
             logging.error(f"Error in fetching {self.base_url}: {e}")
@@ -133,5 +136,5 @@ if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
     setup_logging(level="debug")
 
-    geonames = FetchGeonames("Roma", "IT")
+    geonames = FetchGeonames("Montichiari", "IT")
     print(geonames.get_serialized_data())
