@@ -210,7 +210,7 @@ print(aspect_list[0])
 ## Documentation
 
 Most of the functions and the classes are self documented by the types and have docstrings.
-An auto-generated documentation [is available here](https://g-battaglia.github.io/kerykeion).
+An auto-generated documentation [is available here](https://www.kerykeion.net/pydocs/kerykeion.html).
 
 Sooner or later I'll try to write an extensive documentation.
 
