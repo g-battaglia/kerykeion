@@ -1,47 +1,46 @@
 from kerykeion.kr_types import KerykeionPointModel, KerykeionException, KerykeionSettingsModel, AstrologicalSubjectModel
-from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName
-from typing import Union, Literal
+from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, Planet
+from typing import Union
 import logging
 import math
 
 
 
-def get_number_from_name(name: str) -> int:
+def get_number_from_name(name: Planet) -> int:
     """Utility function, gets planet id from the name."""
-    name = name.lower()
 
-    if name == "sun":
+    if name == "Sun":
         return 0
-    elif name == "moon":
+    elif name == "Moon":
         return 1
-    elif name == "mercury":
+    elif name == "Mercury":
         return 2
-    elif name == "venus":
+    elif name == "Venus":
         return 3
-    elif name == "mars":
+    elif name == "Mars":
         return 4
-    elif name == "jupiter":
+    elif name == "Jupiter":
         return 5
-    elif name == "saturn":
+    elif name == "Saturn":
         return 6
-    elif name == "uranus":
+    elif name == "Uranus":
         return 7
-    elif name == "neptune":
+    elif name == "Neptune":
         return 8
-    elif name == "pluto":
+    elif name == "Pluto":
         return 9
-    elif name == "mean_node":
+    elif name == "Mean_Node":
         return 10
-    elif name == "true_node":
+    elif name == "True_Node":
         return 11
-    elif name == "chiron":
+    elif name == "Chiron":
         return 15
     else:
-        return int(name)
+        raise KerykeionException(f"Error in getting number from name! Name: {name}")
 
 
 def calculate_position(
-    degree: Union[int, float], number_name: str, point_type: Literal["Planet", "House"]
+    degree: Union[int, float], number_name: str, point_type: PointType
 ) -> KerykeionPointModel:
     """Utility function to create a dictionary dividing the houses or the planets list."""
 
@@ -214,14 +213,14 @@ def setup_logging(level: str) -> None:
     Args:
         level: Log level as a string, options: debug, info, warning, error
     """
-    logopt: dict[str, int] = {
+    logging_options: dict[str, int] = {
         "debug": logging.DEBUG,
         "info": logging.INFO,
         "warning": logging.WARNING,
         "error": logging.ERROR,
     }
     format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    loglevel: int = logopt.get(level, logging.INFO)
+    loglevel: int = logging_options.get(level, logging.INFO)
     logging.basicConfig(format=format, level=loglevel)
 
 def check_if_point_between(

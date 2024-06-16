@@ -15,6 +15,7 @@ from kerykeion.kr_types import (
     AstrologicalSubjectModel,
     LunarPhaseModel,
     KerykeionPointModel,
+    PointType
 )
 from kerykeion.utilities import (
     get_number_from_name, 
@@ -24,7 +25,7 @@ from kerykeion.utilities import (
     get_moon_phase_name_from_phase_int,
 )
 from pathlib import Path
-from typing import Union, Literal
+from typing import Union
 
 DEFAULT_GEONAMES_USERNAME = "century.boy"
 
@@ -330,7 +331,7 @@ class AstrologicalSubject:
         else:
             raise KerykeionException("Zodiac type not recognized! Please use 'Tropic' or 'Sidereal'")
 
-        point_type: Literal["Planet", "House"] = "House"
+        point_type: PointType = "House"
         # creates the list of the house in 360°
         self.houses_degree_ut = swe.houses(self.julian_day, self.lat, self.lng)[0]
         # stores the house in singular dictionaries.
@@ -412,7 +413,7 @@ class AstrologicalSubject:
         """Defines body positon in signs and information and
         stores them in dictionaries"""
 
-        point_type: Literal["Planet", "House"] = "Planet"
+        point_type: PointType = "Planet"
         # stores the planets in singular dictionaries.
         self.sun = calculate_position(self.planets_degrees_ut[0], "Sun", point_type=point_type)
         self.moon = calculate_position(self.planets_degrees_ut[1], "Moon", point_type=point_type)
@@ -474,13 +475,13 @@ class AstrologicalSubject:
 
         # Check in retrograde or not:
         planets_ret = []
-        for p in self.planets_list:
-            planet_number = get_number_from_name(p["name"])
+        for planet in self.planets_list:
+            planet_number = get_number_from_name(planet["name"])
             if swe.calc(self.julian_day, planet_number, self._iflag)[0][3] < 0:
-                p["retrograde"] = True
+                planet["retrograde"] = True
             else:
-                p["retrograde"] = False
-            planets_ret.append(p)
+                planet["retrograde"] = False
+            planets_ret.append(planet)
 
     def _lunar_phase_calc(self) -> None:
         """Function to calculate the lunar phase"""

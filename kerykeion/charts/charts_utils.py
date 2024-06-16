@@ -126,7 +126,7 @@ def draw_zodiac_slice(
 
     Args:
         - c1 (Union[int, float]): The value of c1.
-        - chart_type (Literal["Natal", "ExternalNatal", "Synastry", "Transit"]): The type of chart.
+        - chart_type (ChartType): The type of chart.
         - seventh_house_degree_ut (Union[int, float]): The degree of the seventh house.
         - num (int): The number of the sign. Note: In OpenAstro it did refer to self.zodiac,
             which is a list of the signs in order, starting with Aries. Eg:
