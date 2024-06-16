@@ -4,43 +4,15 @@
 """
 
 
-from typing import Literal, Union, Optional
+from typing import Union, Optional
 from pydantic import BaseModel
 
-from kerykeion.kr_types import LunarPhaseEmoji, LunarPhaseName, Planet, Houses, Quality, Element, Sign, ZodiacType
+from kerykeion.kr_types import LunarPhaseEmoji, LunarPhaseName, Planet, Houses, Quality, Element, Sign, ZodiacType, SignNumbers, HouseNumbers, PointType
 
-
-class LunarPhaseModel(BaseModel):
-    degrees_between_s_m: Union[float, int]
-    moon_phase: int
-    sun_phase: int
-    moon_emoji: LunarPhaseEmoji
-    moon_phase_name: LunarPhaseName
-
-    def __str__(self):
-        return (
-            super()
-            .model_dump(
-                exclude_none=True,
-                exclude_unset=True,
-                exclude_defaults=True,
-                by_alias=False,
-            )
-            .__str__()
-        )
-
-    def __repr__(self):
-        return (
-            super()
-            .model_dump(
-                exclude_none=True,
-                exclude_unset=True,
-                exclude_defaults=True,
-                by_alias=False,
-            )
-            .__str__()
-        )
-
+class SubscriptableBaseModel(BaseModel):
+    """
+    Pydantic BaseModel with subscriptable support, so you can access the fields as if they were a dictionary.
+    """
     def __getitem__(self, key):
         return getattr(self, key)
 
@@ -53,8 +25,15 @@ class LunarPhaseModel(BaseModel):
     def get(self, key, default):
         return getattr(self, key, default)
 
+class LunarPhaseModel(SubscriptableBaseModel):
+    degrees_between_s_m: Union[float, int]
+    moon_phase: int
+    sun_phase: int
+    moon_emoji: LunarPhaseEmoji
+    moon_phase_name: LunarPhaseName
 
-class KerykeionPointModel(BaseModel):
+
+class KerykeionPointModel(SubscriptableBaseModel):
     """
     Kerykeion Point Model
     """
@@ -63,52 +42,16 @@ class KerykeionPointModel(BaseModel):
     quality: Quality
     element: Element
     sign: Sign
-    sign_num: Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    sign_num: SignNumbers
     position: float
     abs_pos: float
     emoji: str
-    point_type: Literal["Planet", "House"]
-    house: Optional[Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]] = None
+    point_type: PointType
+    house: Optional[HouseNumbers] = None
     retrograde: Optional[bool] = None
 
-    def __str__(self):
-        return (
-            super()
-            .model_dump(
-                exclude_none=True,
-                exclude_unset=True,
-                exclude_defaults=True,
-                by_alias=False,
-            )
-            .__str__()
-        )
 
-    def __repr__(self):
-        return (
-            super()
-            .model_dump(
-                exclude_none=True,
-                exclude_unset=True,
-                exclude_defaults=True,
-                by_alias=False,
-            )
-            .__str__()
-        )
-
-    def __getitem__(self, key):
-        return getattr(self, key)
-
-    def __setitem__(self, key, value):
-        setattr(self, key, value)
-
-    def __delitem__(self, key):
-        delattr(self, key)
-
-    def get(self, key, default):
-        return getattr(self, key, default)
-
-
-class AstrologicalSubjectModel(BaseModel):
+class AstrologicalSubjectModel(SubscriptableBaseModel):
     # Data
     name: str
     year: int
@@ -137,6 +80,8 @@ class AstrologicalSubjectModel(BaseModel):
     uranus: KerykeionPointModel
     neptune: KerykeionPointModel
     pluto: KerykeionPointModel
+
+    # Optional Planets:
     chiron: Union[KerykeionPointModel, None]
 
     # Houses

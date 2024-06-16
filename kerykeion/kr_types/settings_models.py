@@ -4,29 +4,12 @@
 """
 
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 from typing import List
+from kerykeion.kr_types.kr_models import SubscriptableBaseModel
 
 
-class CustomBaseModel(BaseModel):
-    """
-    Extends the BaseModel class of Pydantic to add some useful methods.
-    """
-
-    def __init__(self, **data):
-        super().__init__(**data)
-
-    def __getitem__(self, item):
-        return getattr(self, item)
-    
-    def __str__(self) -> str:
-        return str(self.model_dump())
-
-    def get(self, item, default=None):
-        return getattr(self, item, default)
-
-
-class KerykeionSettingsCelestialPointModel(CustomBaseModel):
+class KerykeionSettingsCelestialPointModel(SubscriptableBaseModel):
     """
     Defines the model for a celestial point data.
     """
@@ -41,7 +24,7 @@ class KerykeionSettingsCelestialPointModel(CustomBaseModel):
 
 
 # Chart Colors Settings
-class KerykeionSettingsChartColorsModel(CustomBaseModel):
+class KerykeionSettingsChartColorsModel(SubscriptableBaseModel):
     """
     Defines the model for the chart colors.
     """
@@ -87,7 +70,7 @@ class KerykeionSettingsChartColorsModel(CustomBaseModel):
 
 
 # Aspect Settings
-class KerykeionSettingsAspectModel(CustomBaseModel):
+class KerykeionSettingsAspectModel(SubscriptableBaseModel):
     """
     Defines the model for an aspect.
     """
@@ -103,7 +86,7 @@ class KerykeionSettingsAspectModel(CustomBaseModel):
 
 
 # Language Settings
-class KerykeionLanguageCelestialPointModel(CustomBaseModel):
+class KerykeionLanguageCelestialPointModel(SubscriptableBaseModel):
     """
     This class is used to define the labels, show in the chart, for the celestial points.
     It is used to translate the celestial points in the language of the chart.
@@ -128,7 +111,7 @@ class KerykeionLanguageCelestialPointModel(CustomBaseModel):
     Ic: str = Field(title="Imum Coeli", description="The name of Imum Coeli in the chart, in the language")
 
 
-class KerykeionLanguageModel(CustomBaseModel):
+class KerykeionLanguageModel(SubscriptableBaseModel):
     """
     This model is used to store the language settings for the chart,
     it's used to translate the celestial points and the other labels
@@ -157,17 +140,17 @@ class KerykeionLanguageModel(CustomBaseModel):
     celestial_points: KerykeionLanguageCelestialPointModel
 
 
-class KerykeionGeneralSettingsModel(CustomBaseModel):
+class KerykeionGeneralSettingsModel(SubscriptableBaseModel):
     axes_orbit: int = Field(title="Axes Orbit", description="The orbit of the axes in the chart")
     planet_in_zodiac_extra_points: int = Field(title="Planet in Zodiac Extra Points", description="The extra points of the planet in the zodiac")
     language: str = Field(title="Language", description="The language of the chart")
 
-class KerykeionChartSettingsModel(CustomBaseModel):
+class KerykeionChartSettingsModel(SubscriptableBaseModel):
     basic_chart_viewBox: str = Field(title="Basic Chart ViewBox", description="The viewbox of the basic chart")
     wide_chart_viewBox: str = Field(title="Wide Chart ViewBox", description="The viewbox of the wide chart")
 
 # Settings Model
-class KerykeionSettingsModel(CustomBaseModel):
+class KerykeionSettingsModel(SubscriptableBaseModel):
     """
     This class is used to define the global settings for the Kerykeion.
     """
