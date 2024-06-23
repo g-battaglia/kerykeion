@@ -21,7 +21,8 @@
             <text x='20' y='86' style='fill: #000000; font-size: 11px'>Latitude: 53°24'38' North</text>
             <text x='20' y='98' style='fill: #000000; font-size: 11px'>Longitude: 2°58'41' West</text>
             <text x='20' y='110' style='fill: #000000; font-size: 11px'>Type: Natal</text>
-            <text x='20' y='480' style='fill: #000000; font-size: 10px'>Tropic</text>
+            <text x='20' y='466' style='fill: #000000; font-size: 10px'>Tropic</text>
+            <text x='20' y='480' style='fill: #000000; font-size: 10px'>Placidus</text>
             <text x='20' y='494' style='fill: #000000; font-size: 10px'>Lunar phase: First Quarter</text>
             <text x='20' y='508' style='fill: #000000; font-size: 10px'>Lunar phase: Day 9</text>
             <text x='20' y='522' style='fill: #000000; font-size: 10px'></text>

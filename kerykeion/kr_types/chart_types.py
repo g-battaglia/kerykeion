@@ -20,6 +20,7 @@ class ChartTemplateDictionary(TypedDict):
     viewbox: str
     stringTitle: str
     stringName: str
+    bottomLeft0: str
     bottomLeft1: str
     bottomLeft2: str
     bottomLeft3: str

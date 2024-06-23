@@ -1234,13 +1234,15 @@ class KerykeionChartSVG:
 
         # Bottom Left Corner
         if self.chart_type == "Natal" or self.chart_type == "ExternalNatal" or self.chart_type == "Synastry":
-            td["bottomLeft1"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
+            td["bottomLeft0"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
+            td["bottomLeft1"] = f"{self.user.houses_system_name}"
             td["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.moon_phase_name}'
             td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.user.lunar_phase.get("moon_phase", "")}'
             td["bottomLeft4"] = ""
 
         else:
-            td["bottomLeft1"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
+            td["bottomLeft0"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
+            td["bottomLeft1"] = f"{self.user.houses_system_name}"
             td["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
             td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.t_user.lunar_phase.get("moon_phase", "")}'
             td["bottomLeft4"] = ""
@@ -1456,3 +1458,16 @@ if __name__ == "__main__":
     sidereal_subject = AstrologicalSubject("John Lennon J2000", 1940, 10, 9, 10, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="J2000")
     sidereal_chart = KerykeionChartSVG(sidereal_subject)
     sidereal_chart.makeSVG()
+
+    # House System Morinus
+    morinus_house_subject = AstrologicalSubject("John Lennon - House System Morinus", 1940, 10, 9, 10, 30, "Liverpool", "GB", houses_system_identifier="M")
+    morinus_house_chart = KerykeionChartSVG(morinus_house_subject)
+    morinus_house_chart.makeSVG()
+
+    ## To check all the available house systems uncomment the following code:
+    # from kerykeion.kr_types import HousesSystemIdentifier
+    # from typing import get_args
+    # for i in get_args(HousesSystemIdentifier):
+    #     alternatives_house_subject = AstrologicalSubject(f"John Lennon - House System {i}", 1940, 10, 9, 10, 30, "Liverpool", "GB", houses_system=i)
+    #     alternatives_house_chart = KerykeionChartSVG(alternatives_house_subject)
+    #     alternatives_house_chart.makeSVG()

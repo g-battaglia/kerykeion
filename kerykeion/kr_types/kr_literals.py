@@ -55,3 +55,35 @@ LunarPhaseName = Literal["New Moon", "Waxing Crescent", "First Quarter", "Waxing
 
 SiderealMode = Literal["FAGAN_BRADLEY", "LAHIRI", "DELUCE", "RAMAN", "USHASHASHI", "KRISHNAMURTI", "DJWHAL_KHUL", "YUKTESHWAR", "JN_BHASIN", "BABYL_KUGLER1", "BABYL_KUGLER2", "BABYL_KUGLER3", "BABYL_HUBER", "BABYL_ETPSC", "ALDEBARAN_15TAU", "HIPPARCHOS", "SASSANIAN", "J2000", "J1900", "B1950"]
 """Literal type for Sidereal Modes, as known as Ayanamsa"""
+
+
+HousesSystemIdentifier = Literal["A", "B", "C", "D", "F", "H", "I", "i", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y"]
+"""
+Literal type for Houses Systems:
+
+A = equal
+B = Alcabitius
+C = Campanus
+D = equal (MC)
+F = Carter poli-equ.
+H = horizon/azimut
+I = Sunshine
+i = Sunshine/alt.
+K = Koch
+L = Pullen SD
+M = Morinus
+N = equal/1=Aries
+O = Porphyry
+P = Placidus
+Q = Pullen SR
+R = Regiomontanus
+S = Sripati
+T = Polich/Page
+U = Krusinski-Pisa-Goelzer
+V = equal/Vehlow
+W = equal/whole sign
+X = axial rotation system/Meridian houses
+Y = APC houses
+
+Usually the standard is Placidus (P)
+"""

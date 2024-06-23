@@ -16,7 +16,8 @@ from kerykeion.kr_types import (
     LunarPhaseModel,
     KerykeionPointModel,
     PointType,
-    SiderealMode
+    SiderealMode,
+    HousesSystemIdentifier
 )
 from kerykeion.utilities import (
     get_number_from_name, 
@@ -30,6 +31,7 @@ from typing import Union, get_args
 
 DEFAULT_GEONAMES_USERNAME = "century.boy"
 DEFAULT_SIDEREAL_MODE = "FAGAN_BRADLEY"
+DEFAULT_HOUSES_SYSTEM = "P"
 
 
 class AstrologicalSubject:
@@ -65,6 +67,7 @@ class AstrologicalSubject:
         The mode to use for the sidereal zodiac, according to the Swiss Ephemeris.
         Defaults to "FAGAN_BRADLEY".
         Available modes are visible in the SiderealMode Literal.
+    - houses_system_identifier (HousesSystemIdentifier, optional): The system to use for the calculation of the houses.
     """
 
     # Defined by the user
@@ -84,6 +87,8 @@ class AstrologicalSubject:
     online: bool
     zodiac_type: ZodiacType
     sidereal_mode: SiderealMode
+    houses_system_identifier: HousesSystemIdentifier
+    houses_system_name: str
 
     # Generated internally
     city_data: dict[str, str]
@@ -148,7 +153,8 @@ class AstrologicalSubject:
         online: bool = True,
         utc_datetime: Union[datetime, None] = None,
         disable_chiron: bool = False,
-        sidereal_mode: Union[SiderealMode, None] = None
+        sidereal_mode: Union[SiderealMode, None] = None,
+        houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM
     ) -> None:
         logging.debug("Starting Kerykeion")
 
@@ -176,6 +182,14 @@ class AstrologicalSubject:
         self.utc_datetime = utc_datetime
         self.disable_chiron = disable_chiron
         self.sidereal_mode = sidereal_mode
+        self.houses_system_identifier = houses_system_identifier
+
+        # House System check and setup --->
+        if self.houses_system_identifier not in get_args(HousesSystemIdentifier):
+            raise KerykeionException(f"\n* ERROR: '{self.houses_system_identifier}' is NOT a valid house system! Available systems are: *" + "\n" + str(get_args(HousesSystemIdentifier)))
+
+        self.houses_system_name = swe.house_name(self.houses_system_identifier.encode('ascii'))
+        # <--- House System check and setup
 
         # Zodiac Type and Sidereal mode checks and setup --->
         if zodiac_type and not zodiac_type in get_args(ZodiacType):
@@ -350,11 +364,17 @@ class AstrologicalSubject:
 
         if self.zodiac_type == "Sidereal":
             self.houses_degree_ut = swe.houses_ex(
-                tjdut=self.julian_day, lat=self.lat, lon=self.lng, hsys=str.encode('P'), flags=swe.FLG_SIDEREAL
+                tjdut=self.julian_day,
+                lat=self.lat, lon=self.lng,
+                hsys=str.encode(self.houses_system_identifier),
+                flags=swe.FLG_SIDEREAL
             )[0]
+
         elif self.zodiac_type == "Tropic":
             self.houses_degree_ut = swe.houses(
-                tjdut=self.julian_day, lat=self.lat, lon=self.lng, hsys=str.encode('P')
+                tjdut=self.julian_day, lat=self.lat,
+                lon=self.lng,
+                hsys=str.encode(self.houses_system_identifier)
             )[0]
 
         point_type: PointType = "House"
@@ -642,4 +662,8 @@ if __name__ == "__main__":
 
     # With Sidereal Zodiac
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+    print(johnny.json(dump=True, indent=2))
+
+    # With Morinus Houses
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", houses_system_identifier="M")
     print(johnny.json(dump=True, indent=2))
