@@ -26,7 +26,7 @@ from kerykeion.utilities import (
     get_moon_phase_name_from_phase_int,
 )
 from pathlib import Path
-from typing import Union
+from typing import Union, get_args
 
 DEFAULT_GEONAMES_USERNAME = "century.boy"
 DEFAULT_SIDEREAL_MODE = "FAGAN_BRADLEY"
@@ -177,7 +177,10 @@ class AstrologicalSubject:
         self.disable_chiron = disable_chiron
         self.sidereal_mode = sidereal_mode
 
-        # Sidereal mode check and setup --->
+        # Zodiac Type and Sidereal mode checks and setup --->
+        if zodiac_type and not zodiac_type in get_args(ZodiacType):
+            raise KerykeionException(f"\n* ERROR: '{zodiac_type}' is NOT a valid zodiac type! Available types are: *" + "\n" + str(get_args(ZodiacType)))
+
         if self.sidereal_mode and self.zodiac_type == "Tropic":
             raise KerykeionException("You can't set a sidereal mode with a Tropic zodiac type!")
         
@@ -186,11 +189,15 @@ class AstrologicalSubject:
             logging.info("No sidereal mode set, using default FAGAN_BRADLEY")
 
         if self.zodiac_type == "Sidereal":
+            # Check if the sidereal mode is valid
+            if not self.sidereal_mode in get_args(SiderealMode):
+                raise KerykeionException(f"\n* ERROR: '{self.sidereal_mode}' is NOT a valid sidereal mode! Available modes are: *" + "\n" + str(get_args(SiderealMode)))
+
             self._iflag += swe.FLG_SIDEREAL
-            mode = "SIDM_" + sidereal_mode
+            mode = "SIDM_" + self.sidereal_mode
             swe.set_sid_mode(getattr(swe, mode))
             logging.debug(f"Using sidereal mode: {mode}")
-        # <--- Sidereal mode check and setup
+        # <--- Zodiac Type and Sidereal mode checks and setup
 
         # This message is set to encourage the user to set a custom geonames username
         if geonames_username is None and online:
@@ -581,7 +588,7 @@ class AstrologicalSubject:
             self.lat = -66.0
             logging.info("Polar circle override for houses, using -66 degrees")
 
-    def json(self, dump=False, destination_folder: Union[str, None] = None) -> str:
+    def json(self, dump=False, destination_folder: Union[str, None] = None, indent: Union[int, None] = None) -> str:
         """
         Dumps the Kerykeion object to a json string foramt,
         if dump=True also dumps to file located in destination
@@ -589,7 +596,7 @@ class AstrologicalSubject:
         """
 
         KrData = AstrologicalSubjectModel(**self.__dict__)
-        json_string = KrData.model_dump_json(exclude_none=True)
+        json_string = KrData.model_dump_json(exclude_none=True, indent=indent)
 
         if dump:
             if destination_folder:
@@ -635,4 +642,4 @@ if __name__ == "__main__":
 
     # With Sidereal Zodiac
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
-    print(json.loads(johnny.json(dump=True)))
+    print(johnny.json(dump=True, indent=2))

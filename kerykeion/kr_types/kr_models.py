@@ -7,7 +7,7 @@
 from typing import Union, Optional
 from pydantic import BaseModel
 
-from kerykeion.kr_types import LunarPhaseEmoji, LunarPhaseName, Planet, Houses, Quality, Element, Sign, ZodiacType, SignNumbers, HouseNumbers, PointType
+from kerykeion.kr_types import LunarPhaseEmoji, LunarPhaseName, Planet, Houses, Quality, Element, Sign, ZodiacType, SignNumbers, HouseNumbers, PointType, SiderealMode
 
 class SubscriptableBaseModel(BaseModel):
     """
@@ -65,6 +65,7 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     lat: float
     tz_str: str
     zodiac_type: ZodiacType
+    sidereal_mode: Union[SiderealMode, None]
     local_time: float
     utc_time: float
     julian_day: float
