@@ -139,7 +139,7 @@ report.print_report()
 
 Returns:
 
-```bash
+```txt
 +- Kerykeion report for Kanye -+
 +----------+------+-------------+-----------+----------+
 | Date     | Time | Location    | Longitude | Latitude |

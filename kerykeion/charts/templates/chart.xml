@@ -21,6 +21,7 @@
             <text x="20" y="86" style="fill: $paper_color_0; font-size: 11px">$stringLat</text>
             <text x="20" y="98" style="fill: $paper_color_0; font-size: 11px">$stringLon</text>
             <text x="20" y="110" style="fill: $paper_color_0; font-size: 11px">$stringPosition</text>
+            <text x="20" y="466" style="fill: $paper_color_0; font-size: 10px">$bottomLeft0</text>
             <text x="20" y="480" style="fill: $paper_color_0; font-size: 10px">$bottomLeft1</text>
             <text x="20" y="494" style="fill: $paper_color_0; font-size: 10px">$bottomLeft2</text>
             <text x="20" y="508" style="fill: $paper_color_0; font-size: 10px">$bottomLeft3</text>

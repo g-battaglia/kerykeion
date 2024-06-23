@@ -285,7 +285,7 @@ def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut
     elif check_if_point_between(houses_degree_ut_list[11], houses_degree_ut_list[0], planet_position_degree) == True:
         house = "Twelfth_House"
     else:
-        raise ValueError("Error in house calculation, planet: ", planet_position_degree)
+        raise ValueError("Error in house calculation, planet: ", planet_position_degree, "houses: ", houses_degree_ut_list)
 
     return house
 
