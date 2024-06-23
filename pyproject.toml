@@ -44,11 +44,11 @@ packages = [{ include = "kerykeion" }]
 python = "^3.9"
 pyswisseph = "^2.10.3.1"
 pytz = "^2022.7"
-requests = "^2.28.1"
-requests-cache = "^0.9.7"
 pydantic = "^2.5"
 terminaltables = "^3.1.10"
 scour = "^0.38.2"
+requests-cache = "^1.2.1"
+requests = "^2.32.3"
 
 [tool.poetry.scripts]
 create-docs = "scripts.docs:main"
@@ -56,7 +56,7 @@ create-docs = "scripts.docs:main"
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"
 mypy = "^0.991"
-black = "^22.12.0"
+black = "^24.4.2"
 pdoc = "^14.5.0"
 types-requests = "^2.28.11.7"
 types-pytz = "^2022.7.0.0"
