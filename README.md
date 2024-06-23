@@ -207,6 +207,14 @@ print(aspect_list[0])
 
 ```
 
+## Ayanamsa (Sidereal Modes)
+
+You can set the zodiac type and the sidereal mode in the AstrologicalSubject class:
+
+```python
+johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+```
+
 ## Documentation
 
 Most of the functions and the classes are self documented by the types and have docstrings.

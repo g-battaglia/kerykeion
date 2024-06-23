@@ -634,4 +634,4 @@ if __name__ == "__main__":
     print(johnny.chiron)
 
     # With Sidereal Zodiac
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY")
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
