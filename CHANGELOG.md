@@ -6,7 +6,7 @@ _Released 08/01/2023_
 
 **Bugfixes:**
 
-- fixing float-int presidence bug 
+- fixing float-int presidence bug
 
 **Dependency Updates:**
 
@@ -30,7 +30,7 @@ Allow UTC datetime to be passed in the constructor as an alternative to year, mo
 
 ## 4.5.0
 
-- *AstrologicalSubject* Is now possible to disable Chiron calculation with `disable_chiron=True` for better compatibility with older dates.
+- _AstrologicalSubject_ Is now possible to disable Chiron calculation with `disable_chiron=True` for better compatibility with older dates.
 - New module enums added for better type hinting, still to be expanded and really used.
 
 ## 4.5.1
@@ -53,4 +53,5 @@ remove them.
 Added the optional `minify` argument to makeTemplate in the charts module.
 
 # 4.10.0
+
 - Added the `sidereal_mode` argument to the `AstrologicalChart` class to allow differet Ayanamsa calculation methods.
