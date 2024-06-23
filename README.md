@@ -215,6 +215,10 @@ You can set the zodiac type and the sidereal mode in the AstrologicalSubject cla
 johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
 ```
 
+More examples [here](https://www.kerykeion.net/docs/examples/sidereal-modes/).
+
+Full list of supported sidereal modes [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#SiderealMode).
+
 ## Documentation
 
 Most of the functions and the classes are self documented by the types and have docstrings.
