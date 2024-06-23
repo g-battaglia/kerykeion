@@ -51,3 +51,6 @@ remove them.
 # 4.8.0
 
 Added the optional `minify` argument to makeTemplate in the charts module.
+
+# 4.10.0
+- Added the `sidereal_mode` argument to the `AstrologicalChart` class to allow differet Ayanamsa calculation methods.
