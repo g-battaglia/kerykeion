@@ -124,7 +124,7 @@ print(len(name.aspects_list))
 
 ![Synastry Chart](http://centuryboy.altervista.org/JackComposite_Chart.svg)
 
-# Report
+## Report
 
 To print a report of all the data:
 

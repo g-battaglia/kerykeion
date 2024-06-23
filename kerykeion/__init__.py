@@ -126,7 +126,7 @@ print(len(name.aspects_list))
 
 ![Synastry Chart](http://centuryboy.altervista.org/JackComposite_Chart.svg)
 
-# Report
+## Report
 
 To print a report of all the data:
 
@@ -216,6 +216,10 @@ You can set the zodiac type and the sidereal mode in the AstrologicalSubject cla
 ```python
 johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
 ```
+
+More examples [here](https://www.kerykeion.net/docs/examples/sidereal-modes/).
+
+Full list of supported sidereal modes [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#SiderealMode).
 
 ## Documentation
 
