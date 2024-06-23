@@ -45,9 +45,9 @@ class KerykeionChartSVG:
         - first_obj: First kerykeion object
         - chart_type: Natal, ExternalNatal, Transit, Synastry (Default: Type="Natal").
         - second_obj: Second kerykeion object (Not required if type is Natal)
-        - new_output_directory: Set the output directory (default: output_directory)
-        - lang: language settings (default: "EN")
-        - new_settings_file: Set the settings file (default: kr.config.json)
+        - new_output_directory: Set the output directory (default: home directory).
+        - new_settings_file: Set the settings file (default: kr.config.json).
+            In the settings file you can set the language, colors, planets, aspects, etc.
     """
     
     # Constants
@@ -218,7 +218,6 @@ class KerykeionChartSVG:
                 self.t_houses_sign_graph.append(h["sign_num"])
 
         # screen size
-        
         self.height = self._DEFAULT_HEIGHT
         if self.chart_type == "Synastry" or self.chart_type == "Transit":
             self.width = self._DEFAULT_FULL_WIDTH
@@ -1159,7 +1158,6 @@ class KerykeionChartSVG:
         svgHeight = "100%"
         svgWidth = "100%"
         rotate = "0"
-        translate = "0"
         
         # To increase the size of the chart, change the viewbox
         if self.chart_type == "Natal" or self.chart_type == "ExternalNatal":
@@ -1218,6 +1216,7 @@ class KerykeionChartSVG:
         td["svgHeight"] = str(svgHeight)
         td["viewbox"] = viewbox
 
+        # Chart Title
         if self.chart_type == "Synastry":
             td["stringTitle"] = f"{self.user.name} {self.language_settings['and_word']} {self.t_user.name}"
 
@@ -1227,17 +1226,24 @@ class KerykeionChartSVG:
         else:
             td["stringTitle"] = self.user.name
 
-        # Tipo di carta
+        # Chart Name
         if self.chart_type == "Synastry" or self.chart_type == "Transit":
             td["stringName"] = f"{self.user.name}:"
         else:
             td["stringName"] = f'{self.language_settings["info"]}:'
 
-        # bottom left
-        td["bottomLeft1"] = ""
-        td["bottomLeft2"] = ""
-        td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.user.lunar_phase.get("moon_phase", "")}'
-        td["bottomLeft4"] = ""
+        # Bottom Left Corner
+        if self.chart_type == "Natal" or self.chart_type == "ExternalNatal" or self.chart_type == "Synastry":
+            td["bottomLeft1"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
+            td["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.moon_phase_name}'
+            td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.user.lunar_phase.get("moon_phase", "")}'
+            td["bottomLeft4"] = ""
+
+        else:
+            td["bottomLeft1"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
+            td["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
+            td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.t_user.lunar_phase.get("moon_phase", "")}'
+            td["bottomLeft4"] = ""
 
         # lunar phase
         deg = self.user.lunar_phase["degrees_between_s_m"]
@@ -1348,7 +1354,6 @@ class KerykeionChartSVG:
         # config
         td["cfgZoom"] = str(self.zoom)
         td["cfgRotate"] = rotate
-        td["cfgTranslate"] = translate
 
         # ---
         # Drawing Functions
@@ -1401,7 +1406,7 @@ class KerykeionChartSVG:
         if not (self.template):
             self.template = self.makeTemplate(minify)
 
-        self.chartname = self.output_directory / f"{self.user.name}{self.chart_type}Chart.svg"
+        self.chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart.svg"
 
         with open(self.chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(self.template)
@@ -1426,9 +1431,28 @@ if __name__ == "__main__":
 
     # Synastry Chart
     synastry_chart = KerykeionChartSVG(first, "Synastry", second)
-    synastry_chart.makeSVG(minify=True)
+    synastry_chart.makeSVG()
 
     # Transits Chart
     transits_chart = KerykeionChartSVG(first, "Transit", second)
-    transits_chart.makeSVG(minify=True)
+    transits_chart.makeSVG()
+    
+    # Sidereal Birth Chart (Lahiri)
+    sidereal_subject = AstrologicalSubject("John Lennon Lahiri", 1940, 10, 9, 10, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+    sidereal_chart = KerykeionChartSVG(sidereal_subject)
+    sidereal_chart.makeSVG()
 
+    # Sidereal Birth Chart (Fagan-Bradley)
+    sidereal_subject = AstrologicalSubject("John Lennon Fagan-Bradley", 1940, 10, 9, 10, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY")
+    sidereal_chart = KerykeionChartSVG(sidereal_subject)
+    sidereal_chart.makeSVG()
+
+    # Sidereal Birth Chart (DeLuce)
+    sidereal_subject = AstrologicalSubject("John Lennon DeLuce", 1940, 10, 9, 10, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="DELUCE")
+    sidereal_chart = KerykeionChartSVG(sidereal_subject)
+    sidereal_chart.makeSVG()
+
+    # Sidereal Birth Chart (J2000)
+    sidereal_subject = AstrologicalSubject("John Lennon J2000", 1940, 10, 9, 10, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="J2000")
+    sidereal_chart = KerykeionChartSVG(sidereal_subject)
+    sidereal_chart.makeSVG()
