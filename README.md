@@ -11,7 +11,7 @@
     </a>
     <a href="https://pypi.org/project/kerykeion" target="_blank">
         <img src="https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion" alt="visitors"/>
-    </a>    
+    </a>
     <a href="https://pypi.org/project/kerykeion" target="_blank">
         <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
     </a>
@@ -100,7 +100,7 @@ kanye = AstrologicalSubject(
 The difference is that you have to pass the longitude, latitude and the timezone string, instead of the city and nation.
 If you omit the nation, it will be set to "GB" by default, but the value is not used for calculations. It's better to set it to the correct value though.
 
-## Generate a SVG Chart:
+## Generate a SVG Chart
 
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
@@ -139,7 +139,7 @@ report.print_report()
 
 Returns:
 
-```
+```bash
 +- Kerykeion report for Kanye -+
 +----------+------+-------------+-----------+----------+
 | Date     | Time | Location    | Longitude | Latitude |
@@ -185,7 +185,7 @@ Returns:
 And if you want to export it to a file:
 
 ```bash
-$ python3 your_script_name.py > file.txt
+python3 your_script_name.py > file.txt
 ```
 
 ## Other exeples of possibles usecase
