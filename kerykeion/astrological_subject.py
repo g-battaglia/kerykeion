@@ -635,3 +635,4 @@ if __name__ == "__main__":
 
     # With Sidereal Zodiac
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+    print(json.loads(johnny.json(dump=True)))
