@@ -13,7 +13,7 @@
     </a>
     <a href="https://pypi.org/project/kerykeion" target="_blank">
         <img src="https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion" alt="visitors"/>
-    </a>    
+    </a>
     <a href="https://pypi.org/project/kerykeion" target="_blank">
         <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
     </a>
@@ -102,7 +102,7 @@ kanye = AstrologicalSubject(
 The difference is that you have to pass the longitude, latitude and the timezone string, instead of the city and nation.
 If you omit the nation, it will be set to "GB" by default, but the value is not used for calculations. It's better to set it to the correct value though.
 
-## Generate a SVG Chart:
+## Generate a SVG Chart
 
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
@@ -141,7 +141,7 @@ report.print_report()
 
 Returns:
 
-```
+```bash
 +- Kerykeion report for Kanye -+
 +----------+------+-------------+-----------+----------+
 | Date     | Time | Location    | Longitude | Latitude |
@@ -187,7 +187,7 @@ Returns:
 And if you want to export it to a file:
 
 ```bash
-$ python3 your_script_name.py > file.txt
+python3 your_script_name.py > file.txt
 ```
 
 ## Other exeples of possibles usecase
@@ -207,6 +207,14 @@ print(aspect_list[0])
 #> Generating kerykeion object for Jane...
 #> {'p1_name': 'Sun', 'p1_abs_pos': 84.17867971515636, 'p2_name': 'Sun', 'p2_abs_pos': 211.90472999502984, 'aspect': 'trine', 'orbit': 7.726050279873476, 'aspect_degrees': 120, 'color': '#36d100', 'aid': 6, 'diff': 127.72605027987348, 'p1': 0, 'p2': 0}
 
+```
+
+## Ayanamsa (Sidereal Modes)
+
+You can set the zodiac type and the sidereal mode in the AstrologicalSubject class:
+
+```python
+johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
 ```
 
 ## Documentation
@@ -231,8 +239,7 @@ To understand how this impacts your use of the software, please see the [LICENSE
 If you have questions, you can reach out to me at my [email](mailto:battaglia.giacomo@yahoo.it?subject=Kerykeion) address.
 As a rule of thumb, if you are using this library in a project, you should open source the code of the project with a compatible license.
 
-You can implement the logic of kerkeion in your project and also keep it closed source by using a third party API, like the [AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/). The AstrologerAPI is AGPL-3.0 compliant. Subscribing to the API is also, currently, the best way to support the project.
-
+You can implement the logic of kerykeion in your project and also keep it closed source by using a third party API, like the [AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/). The AstrologerAPI is AGPL-3.0 compliant. Subscribing to the API is also, currently, the best way to support the project.
 """
 
 # Local
