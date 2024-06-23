@@ -15,7 +15,8 @@ from kerykeion.kr_types import (
     AstrologicalSubjectModel,
     LunarPhaseModel,
     KerykeionPointModel,
-    PointType
+    PointType,
+    SiderealMode
 )
 from kerykeion.utilities import (
     get_number_from_name, 
@@ -28,6 +29,7 @@ from pathlib import Path
 from typing import Union
 
 DEFAULT_GEONAMES_USERNAME = "century.boy"
+DEFAULT_SIDEREAL_MODE = "FAGAN_BRADLEY"
 
 
 class AstrologicalSubject:
@@ -59,6 +61,10 @@ class AstrologicalSubject:
         _ Defaults to None.
     - disable_chiron (bool, optional): Disables the calculation of Chiron. Defaults to False.
         Chiron calculation can create some issues with the Swiss Ephemeris when the date is too far in the past.
+    - sidereal_mode (SiderealMode, optional): Also known as Ayanamsa. 
+        The mode to use for the sidereal zodiac, according to the Swiss Ephemeris.
+        Defaults to "FAGAN_BRADLEY".
+        Available modes are visible in the SiderealMode Literal.
     """
 
     # Defined by the user
@@ -77,6 +83,7 @@ class AstrologicalSubject:
     geonames_username: str
     online: bool
     zodiac_type: ZodiacType
+    sidereal_mode: SiderealMode
 
     # Generated internally
     city_data: dict[str, str]
@@ -140,16 +147,16 @@ class AstrologicalSubject:
         zodiac_type: ZodiacType = "Tropic",
         online: bool = True,
         utc_datetime: Union[datetime, None] = None,
-        disable_chiron: bool = False
+        disable_chiron: bool = False,
+        sidereal_mode: Union[SiderealMode, None] = None
     ) -> None:
         logging.debug("Starting Kerykeion")
 
         # We set the swisseph path to the current directory
-        swe.set_ephe_path(
-            str(
-                Path(__file__).parent.absolute() / "sweph"
-            )
-        )
+        swe.set_ephe_path(str(Path(__file__).parent.absolute() / "sweph"))
+        
+        # Flags for the Swiss Ephemeris
+        self._iflag = swe.FLG_SWIEPH + swe.FLG_SPEED
 
         self.name = name
         self.year = year
@@ -168,6 +175,22 @@ class AstrologicalSubject:
         self.geonames_username = geonames_username
         self.utc_datetime = utc_datetime
         self.disable_chiron = disable_chiron
+        self.sidereal_mode = sidereal_mode
+
+        # Sidereal mode check and setup --->
+        if self.sidereal_mode and self.zodiac_type == "Tropic":
+            raise KerykeionException("You can't set a sidereal mode with a Tropic zodiac type!")
+        
+        if self.zodiac_type == "Sidereal" and not self.sidereal_mode:
+            self.sidereal_mode = DEFAULT_SIDEREAL_MODE
+            logging.info("No sidereal mode set, using default FAGAN_BRADLEY")
+
+        if self.zodiac_type == "Sidereal":
+            self._iflag += swe.FLG_SIDEREAL
+            mode = "SIDM_" + sidereal_mode
+            swe.set_sid_mode(getattr(swe, mode))
+            logging.debug(f"Using sidereal mode: {mode}")
+        # <--- Sidereal mode check and setup
 
         # This message is set to encourage the user to set a custom geonames username
         if geonames_username is None and online:
@@ -207,9 +230,7 @@ class AstrologicalSubject:
             logging.info("No longitude specified, using London as default")
 
         if (not self.online) and (not tz_str):
-            raise KerykeionException(
-                "You need to set the coordinates and timezone if you want to use the offline mode!"
-            )
+            raise KerykeionException("You need to set the coordinates and timezone if you want to use the offline mode!")
 
         self._check_if_poles()
 
@@ -328,12 +349,9 @@ class AstrologicalSubject:
             self.houses_degree_ut = swe.houses(
                 tjdut=self.julian_day, lat=self.lat, lon=self.lng, hsys=str.encode('P')
             )[0]
-        else:
-            raise KerykeionException("Zodiac type not recognized! Please use 'Tropic' or 'Sidereal'")
 
         point_type: PointType = "House"
-        # creates the list of the house in 360°
-        self.houses_degree_ut = swe.houses(self.julian_day, self.lat, self.lng)[0]
+
         # stores the house in singular dictionaries.
         self.first_house = calculate_position(self.houses_degree_ut[0], "First_House", point_type=point_type)
         self.second_house = calculate_position(self.houses_degree_ut[1], "Second_House", point_type=point_type)
@@ -365,12 +383,6 @@ class AstrologicalSubject:
 
     def _planets_degrees_lister(self):
         """Sidereal or tropic mode."""
-        self._iflag = swe.FLG_SWIEPH + swe.FLG_SPEED
-
-        if self.zodiac_type == "Sidereal":
-            self._iflag += swe.FLG_SIDEREAL
-            mode = "SIDM_FAGAN_BRADLEY"
-            swe.set_sid_mode(getattr(swe, mode))
 
         # Calculates the position of the planets and stores it in a list.
         sun_deg = swe.calc(self.julian_day, 0, self._iflag)[0][0]
@@ -620,3 +632,6 @@ if __name__ == "__main__":
 
     print('\n')
     print(johnny.chiron)
+
+    # With Sidereal Zodiac
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY")
