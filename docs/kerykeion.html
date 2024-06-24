@@ -31,6 +31,7 @@
   <li><a href="#report">Report</a></li>
   <li><a href="#other-exeples-of-possibles-usecase">Other exeples of possibles usecase</a></li>
   <li><a href="#ayanamsa-sidereal-modes">Ayanamsa (Sidereal Modes)</a></li>
+  <li><a href="#houses-systems">Houses Systems</a></li>
   <li><a href="#documentation">Documentation</a></li>
   <li><a href="#development">Development</a></li>
   <li><a href="#contributing">Contributing</a></li>
@@ -66,7 +67,9 @@
                     <h1 class="modulename">
 kerykeion    </h1>
 
-                        <div class="docstring"><h1 align=center>Kerykeion</h1>
+                        <div class="docstring"><p>This is part of Kerykeion (C) 2024 Giacomo Battaglia</p>
+
+<h1 align=center>Kerykeion</h1>
 
 <div align="center">
     <a href="#">
@@ -101,13 +104,13 @@ It also can generate an SVG of a birthchart, a synastry chart or a transit chart
 
 <p>Here's an example of a birthchart:</p>
 
-<p><img src="http://centuryboy.altervista.org/KanyeNatalChart.svg" alt="Kanye Birth Chart" /></p>
+<p><img src="https://www.kerykeion.net/assets/img/examples/birth-chart.svg" alt="Kanye Birth Chart" /></p>
 
 <h2 id="web-api">Web API</h2>
 
 <p>If you want to use Kerykeion in a web application, I've created a web API for this purpose, you can find it here:</p>
 
-<p><strong><a href="https://rapidapi.com/gbattaglia/api/astrologer/">AstrologerAPI</a></strong></p>
+<p><strong><a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing">AstrologerAPI</a></strong></p>
 
 <p>It's <a href="https://github.com/g-battaglia/Astrologer-API">open source</a>, it's a way to support me and the project.</p>
 
@@ -175,24 +178,30 @@ If you omit the nation, it will be set to "GB" by default, but the value is not 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="kn">from</span> <span class="nn">kerykeion</span> <span class="kn">import</span> <span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">KerykeionChartSVG</span>
 
-<span class="n">first</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Jack&quot;</span><span class="p">,</span> <span class="mi">1990</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="s2">&quot;Roma&quot;</span><span class="p">)</span>
-<span class="n">second</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Jane&quot;</span><span class="p">,</span> <span class="mi">1991</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">00</span><span class="p">,</span> <span class="s2">&quot;Roma&quot;</span><span class="p">)</span>
+<span class="n">first</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;John Lennon&quot;</span><span class="p">,</span> <span class="mi">1940</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">)</span>
+<span class="n">second</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Paul McCartney&quot;</span><span class="p">,</span> <span class="mi">1942</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">)</span>
 
 <span class="c1"># Set the type, it can be Natal, Synastry or Transit</span>
-
-<span class="n">name</span> <span class="o">=</span> <span class="n">KerykeionChartSVG</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">chart_type</span><span class="o">=</span><span class="s2">&quot;Synastry&quot;</span><span class="p">,</span> <span class="n">second_obj</span><span class="o">=</span><span class="n">second</span><span class="p">)</span>
-<span class="n">name</span><span class="o">.</span><span class="n">makeSVG</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">aspects_list</span><span class="p">))</span>
-
-<span class="c1">#&gt; Generating kerykeion object for Jack...</span>
-<span class="c1">#&gt; Generating kerykeion object for Jane...</span>
-<span class="c1">#&gt; Jack birth location: Roma, 41.89193, 12.51133</span>
-<span class="c1">#&gt; SVG Generated Correctly</span>
-<span class="c1">#&gt; 38</span>
+<span class="n">synastry_chart</span> <span class="o">=</span> <span class="n">KerykeionChartSVG</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="s2">&quot;Synastry&quot;</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span>
+<span class="n">synastry_chart</span><span class="o">.</span><span class="n">makeSVG</span><span class="p">()</span>
 </code></pre>
 </div>
 
-<p><img src="http://centuryboy.altervista.org/JackComposite_Chart.svg" alt="Synastry Chart" /></p>
+<p><img src="https://www.kerykeion.net/assets/img/examples/synastry-chart.svg" alt="John Lennon and Paul McCartney Synastry" /></p>
+
+<p>Note: By default, the generated SVG file will be in the home directory! To change the destination directory:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span> <span class="nn">kerykeion</span> <span class="kn">import</span> <span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">KerykeionChartSVG</span>
+
+<span class="n">first</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;John Lennon&quot;</span><span class="p">,</span> <span class="mi">1940</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">)</span>
+<span class="n">second</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Paul McCartney&quot;</span><span class="p">,</span> <span class="mi">1942</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">)</span>
+
+<span class="c1"># Synastry Chart</span>
+<span class="n">synastry_chart</span> <span class="o">=</span> <span class="n">KerykeionChartSVG</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="s2">&quot;Synastry&quot;</span><span class="p">,</span> <span class="n">second</span><span class="p">,</span> <span class="n">new_output_directory</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+<span class="n">synastry_chart</span><span class="o">.</span><span class="n">makeSVG</span><span class="p">()</span>
+</code></pre>
+</div>
 
 <h2 id="report">Report</h2>
 
@@ -209,48 +218,47 @@ If you omit the nation, it will be set to "GB" by default, but the value is not 
 
 <p>Returns:</p>
 
-<div class="pdoc-code codehilite">
-<pre><span></span><code>+-<span class="w"> </span>Kerykeion<span class="w"> </span>report<span class="w"> </span><span class="k">for</span><span class="w"> </span>Kanye<span class="w"> </span>-+
+<pre><code>+- Kerykeion report for Kanye -+
 +----------+------+-------------+-----------+----------+
-<span class="p">|</span><span class="w"> </span>Date<span class="w">     </span><span class="p">|</span><span class="w"> </span>Time<span class="w"> </span><span class="p">|</span><span class="w"> </span>Location<span class="w">    </span><span class="p">|</span><span class="w"> </span>Longitude<span class="w"> </span><span class="p">|</span><span class="w"> </span>Latitude<span class="w"> </span><span class="p">|</span>
+| Date     | Time | Location    | Longitude | Latitude |
 +----------+------+-------------+-----------+----------+
-<span class="p">|</span><span class="w"> </span><span class="m">8</span>/6/1977<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">8</span>:45<span class="w"> </span><span class="p">|</span><span class="w"> </span>Atlanta,<span class="w"> </span>US<span class="w"> </span><span class="p">|</span><span class="w"> </span>-84.38798<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">33</span>.749<span class="w">   </span><span class="p">|</span>
+| 8/6/1977 | 8:45 | Atlanta, US | -84.38798 | 33.749   |
 +----------+------+-------------+-----------+----------+
 +-----------+------+-------+------+----------------+
-<span class="p">|</span><span class="w"> </span>Planet<span class="w">    </span><span class="p">|</span><span class="w"> </span>Sign<span class="w"> </span><span class="p">|</span><span class="w"> </span>Pos.<span class="w">  </span><span class="p">|</span><span class="w"> </span>Ret.<span class="w"> </span><span class="p">|</span><span class="w"> </span>House<span class="w">          </span><span class="p">|</span>
+| Planet    | Sign | Pos.  | Ret. | House          |
 +-----------+------+-------+------+----------------+
-<span class="p">|</span><span class="w"> </span>Sun<span class="w">       </span><span class="p">|</span><span class="w"> </span>Gem<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">17</span>.6<span class="w">  </span><span class="p">|</span><span class="w"> </span>-<span class="w">    </span><span class="p">|</span><span class="w"> </span>Twelfth_House<span class="w">  </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Moon<span class="w">      </span><span class="p">|</span><span class="w"> </span>Pis<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">16</span>.43<span class="w"> </span><span class="p">|</span><span class="w"> </span>-<span class="w">    </span><span class="p">|</span><span class="w"> </span>Ninth_House<span class="w">    </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Mercury<span class="w">   </span><span class="p">|</span><span class="w"> </span>Tau<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">26</span>.29<span class="w"> </span><span class="p">|</span><span class="w"> </span>-<span class="w">    </span><span class="p">|</span><span class="w"> </span>Eleventh_House<span class="w"> </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Venus<span class="w">     </span><span class="p">|</span><span class="w"> </span>Tau<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">2</span>.03<span class="w">  </span><span class="p">|</span><span class="w"> </span>-<span class="w">    </span><span class="p">|</span><span class="w"> </span>Tenth_House<span class="w">    </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Mars<span class="w">      </span><span class="p">|</span><span class="w"> </span>Tau<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">1</span>.79<span class="w">  </span><span class="p">|</span><span class="w"> </span>-<span class="w">    </span><span class="p">|</span><span class="w"> </span>Tenth_House<span class="w">    </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Jupiter<span class="w">   </span><span class="p">|</span><span class="w"> </span>Gem<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">14</span>.61<span class="w"> </span><span class="p">|</span><span class="w"> </span>-<span class="w">    </span><span class="p">|</span><span class="w"> </span>Eleventh_House<span class="w"> </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Saturn<span class="w">    </span><span class="p">|</span><span class="w"> </span>Leo<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">12</span>.8<span class="w">  </span><span class="p">|</span><span class="w"> </span>-<span class="w">    </span><span class="p">|</span><span class="w"> </span>Second_House<span class="w">   </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Uranus<span class="w">    </span><span class="p">|</span><span class="w"> </span>Sco<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">8</span>.27<span class="w">  </span><span class="p">|</span><span class="w"> </span>R<span class="w">    </span><span class="p">|</span><span class="w"> </span>Fourth_House<span class="w">   </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Neptune<span class="w">   </span><span class="p">|</span><span class="w"> </span>Sag<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">14</span>.69<span class="w"> </span><span class="p">|</span><span class="w"> </span>R<span class="w">    </span><span class="p">|</span><span class="w"> </span>Fifth_House<span class="w">    </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Pluto<span class="w">     </span><span class="p">|</span><span class="w"> </span>Lib<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">11</span>.45<span class="w"> </span><span class="p">|</span><span class="w"> </span>R<span class="w">    </span><span class="p">|</span><span class="w"> </span>Fourth_House<span class="w">   </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Mean_Node<span class="w"> </span><span class="p">|</span><span class="w"> </span>Lib<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">21</span>.49<span class="w"> </span><span class="p">|</span><span class="w"> </span>R<span class="w">    </span><span class="p">|</span><span class="w"> </span>Fourth_House<span class="w">   </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>True_Node<span class="w"> </span><span class="p">|</span><span class="w"> </span>Lib<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">22</span>.82<span class="w"> </span><span class="p">|</span><span class="w"> </span>R<span class="w">    </span><span class="p">|</span><span class="w"> </span>Fourth_House<span class="w">   </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Chiron<span class="w">    </span><span class="p">|</span><span class="w"> </span>Tau<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">4</span>.17<span class="w">  </span><span class="p">|</span><span class="w"> </span>-<span class="w">    </span><span class="p">|</span><span class="w"> </span>Tenth_House<span class="w">    </span><span class="p">|</span>
+| Sun       | Gem  | 17.6  | -    | Twelfth_House  |
+| Moon      | Pis  | 16.43 | -    | Ninth_House    |
+| Mercury   | Tau  | 26.29 | -    | Eleventh_House |
+| Venus     | Tau  | 2.03  | -    | Tenth_House    |
+| Mars      | Tau  | 1.79  | -    | Tenth_House    |
+| Jupiter   | Gem  | 14.61 | -    | Eleventh_House |
+| Saturn    | Leo  | 12.8  | -    | Second_House   |
+| Uranus    | Sco  | 8.27  | R    | Fourth_House   |
+| Neptune   | Sag  | 14.69 | R    | Fifth_House    |
+| Pluto     | Lib  | 11.45 | R    | Fourth_House   |
+| Mean_Node | Lib  | 21.49 | R    | Fourth_House   |
+| True_Node | Lib  | 22.82 | R    | Fourth_House   |
+| Chiron    | Tau  | 4.17  | -    | Tenth_House    |
 +-----------+------+-------+------+----------------+
 +----------------+------+----------+
-<span class="p">|</span><span class="w"> </span>House<span class="w">          </span><span class="p">|</span><span class="w"> </span>Sign<span class="w"> </span><span class="p">|</span><span class="w"> </span>Position<span class="w"> </span><span class="p">|</span>
+| House          | Sign | Position |
 +----------------+------+----------+
-<span class="p">|</span><span class="w"> </span>First_House<span class="w">    </span><span class="p">|</span><span class="w"> </span>Can<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">18</span>.0<span class="w">     </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Second_House<span class="w">   </span><span class="p">|</span><span class="w"> </span>Leo<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">9</span>.51<span class="w">     </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Third_House<span class="w">    </span><span class="p">|</span><span class="w"> </span>Vir<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">4</span>.02<span class="w">     </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Fourth_House<span class="w">   </span><span class="p">|</span><span class="w"> </span>Lib<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">3</span>.98<span class="w">     </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Fifth_House<span class="w">    </span><span class="p">|</span><span class="w"> </span>Sco<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">9</span>.39<span class="w">     </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Sixth_House<span class="w">    </span><span class="p">|</span><span class="w"> </span>Sag<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">15</span>.68<span class="w">    </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Seventh_House<span class="w">  </span><span class="p">|</span><span class="w"> </span>Cap<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">18</span>.0<span class="w">     </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Eighth_House<span class="w">   </span><span class="p">|</span><span class="w"> </span>Aqu<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">9</span>.51<span class="w">     </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Ninth_House<span class="w">    </span><span class="p">|</span><span class="w"> </span>Pis<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">4</span>.02<span class="w">     </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Tenth_House<span class="w">    </span><span class="p">|</span><span class="w"> </span>Ari<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">3</span>.98<span class="w">     </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Eleventh_House<span class="w"> </span><span class="p">|</span><span class="w"> </span>Tau<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">9</span>.39<span class="w">     </span><span class="p">|</span>
-<span class="p">|</span><span class="w"> </span>Twelfth_House<span class="w">  </span><span class="p">|</span><span class="w"> </span>Gem<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">15</span>.68<span class="w">    </span><span class="p">|</span>
+| First_House    | Can  | 18.0     |
+| Second_House   | Leo  | 9.51     |
+| Third_House    | Vir  | 4.02     |
+| Fourth_House   | Lib  | 3.98     |
+| Fifth_House    | Sco  | 9.39     |
+| Sixth_House    | Sag  | 15.68    |
+| Seventh_House  | Cap  | 18.0     |
+| Eighth_House   | Aqu  | 9.51     |
+| Ninth_House    | Pis  | 4.02     |
+| Tenth_House    | Ari  | 3.98     |
+| Eleventh_House | Tau  | 9.39     |
+| Twelfth_House  | Gem  | 15.68    |
 +----------------+------+----------+
+
 </code></pre>
-</div>
 
 <p>And if you want to export it to a file:</p>
 
@@ -291,6 +299,21 @@ If you omit the nation, it will be set to "GB" by default, but the value is not 
 
 <p>Full list of supported sidereal modes <a href="https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#SiderealMode">here</a>.</p>
 
+<h2 id="houses-systems">Houses Systems</h2>
+
+<p>You can set the houses system in the AstrologicalSubject class:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="n">johnny</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Johnny Depp&quot;</span><span class="p">,</span> <span class="mi">1963</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Owensboro&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">,</span> <span class="n">houses_system</span><span class="o">=</span><span class="s2">&quot;M&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>More examples <a href="https://www.kerykeion.net/docs/examples/houses-systems/">here</a>.</p>
+
+<p>Full list of supported house systems <a href="https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#HousesSystem">here</a>.</p>
+
+<p>So far all the available houses system in the Swiss Ephemeris are supported but the Gauquelin Sectors.</p>
+
 <h2 id="documentation">Documentation</h2>
 
 <p>Most of the functions and the classes are self documented by the types and have docstrings.
@@ -320,263 +343,22 @@ As a rule of thumb, if you are using this library in a project, you should open 
 
                         <label class="view-source-button" for="mod-kerykeion-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="c1"># -*- coding: utf-8 -*-</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">&lt;h1 align=center&gt;Kerykeion&lt;/h1&gt;</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="sd">&lt;div align=&quot;center&quot;&gt;</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">    &lt;a href=&quot;#&quot;&gt;</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="sd">        &lt;img src=&quot;https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&amp;logo=github&quot; alt=&quot;contributors&quot;&gt;</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="sd">    &lt;/a&gt;</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">    &lt;a href=&quot;#&quot;&gt;</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="sd">        &lt;img src=&quot;https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github&quot; alt=&quot;stars&quot;&gt;</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="sd">    &lt;/a&gt;</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="sd">    &lt;a href=&quot;#&quot;&gt;</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="sd">        &lt;img src=&quot;https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github&quot; alt=&quot;forks&quot;&gt;</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="sd">    &lt;/a&gt;</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="sd">    &lt;a href=&quot;https://pypi.org/project/kerykeion&quot; target=&quot;_blank&quot;&gt;</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="sd">        &lt;img src=&quot;https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion&quot; alt=&quot;visitors&quot;/&gt;</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="sd">    &lt;/a&gt;</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="sd">    &lt;a href=&quot;https://pypi.org/project/kerykeion&quot; target=&quot;_blank&quot;&gt;</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="sd">        &lt;img src=&quot;https://img.shields.io/pypi/v/kerykeion?label=pypi%20package&quot; alt=&quot;Package version&quot;&gt;</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="sd">    &lt;/a&gt;</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">    &lt;a href=&quot;https://pypi.org/project/kerykeion&quot; target=&quot;_blank&quot;&gt;</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">        &lt;img src=&quot;https://img.shields.io/pypi/pyversions/kerykeion.svg&quot; alt=&quot;Supported Python versions&quot;&gt;</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">    &lt;/a&gt;</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">&lt;/div&gt;</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">&amp;nbsp;</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="sd">Kerykeion is a python library for Astrology.</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">It can calculate all the planet and house position,</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">also it can calculate the aspects of a single persone or between two, you can set how many planets you</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="sd">need in the settings in the utility module.</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">It also can generate an SVG of a birthchart, a synastry chart or a transit chart.</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">The core goal of this project is to provide a simple and easy approach to astrology in a data driven way.</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">Here&#39;s an example of a birthchart:</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">![Kanye Birth Chart](http://centuryboy.altervista.org/KanyeNatalChart.svg)</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">## Web API</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">If you want to use Kerykeion in a web application, I&#39;ve created a web API for this purpose, you can find it here:</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">**[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/)**</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">It&#39;s [open source](https://github.com/g-battaglia/Astrologer-API), it&#39;s a way to support me and the project.</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">## Donate</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">Maintaining this project is a lot of work, the Astrologer API doesn&#39;t nearly cover the costs of a software engineer working on this project full time. I do this because I love it, but until I can make this my full time job, I won&#39;t be able to spend as much time on it.</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">If you want to support me, you can do it here:</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/kerykeion)</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">## Installation</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">Kerykeion is a _Python 3.9_ package, make sure you have _Python 3.9_ or above installed on your system.</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">```bash</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">pip3 install kerykeion</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">```</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">## Usage</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">Here some examples:</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">```python</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd"># Import the main class for creating a kerykeion instance:</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">from kerykeion import AstrologicalSubject</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd"># Create a kerykeion instance:</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd"># Args: Name, year, month, day, hour, minuts, city, nation(optional)</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">kanye = AstrologicalSubject(&quot;Kanye&quot;, 1977, 6, 8, 8, 45, &quot;Atlanta&quot;)</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd"># Get the information about the sun in the chart:</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd"># (The position of the planets always starts at 0)</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">kanye.sun</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">#&gt; {&#39;name&#39;: &#39;Sun&#39;, &#39;quality&#39;: &#39;Mutable&#39;, &#39;element&#39;: &#39;Air&#39;, &#39;sign&#39;: &#39;Gem&#39;, &#39;sign_num&#39;: 2, &#39;pos&#39;: 17.598992059774275, &#39;abs_pos&#39;: 77.59899205977428, &#39;emoji&#39;: &#39;♊️&#39;, &#39;house&#39;: &#39;12th House&#39;, &#39;retrograde&#39;: False}</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd"># Get information about the first house:</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">kanye.first_house</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">#&gt; {&#39;name&#39;: &#39;First_House&#39;, &#39;quality&#39;: &#39;Cardinal&#39;, &#39;element&#39;: &#39;Water&#39;, &#39;sign&#39;: &#39;Can&#39;, &#39;sign_num&#39;: 3, &#39;pos&#39;: 17.995779673209114, &#39;abs_pos&#39;: 107.99577967320911, &#39;emoji&#39;: &#39;♋️&#39;}</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd"># Get element of the moon sign:</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">kanye.moon.element</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">#&gt; &#39;Water&#39;</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">```</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">**To avoid connecting to GeoNames (eg. avoiding hourly limit or no internet connection) you should instance kerykeion like this:**</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">```python</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">kanye = AstrologicalSubject(</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">    &quot;Kanye&quot;, 1977, 6, 8, 8, 45, lng=50, lat=50, tz_str=&quot;Europe/Rome&quot;, city=&quot;Rome&quot;</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">)</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">```</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">The difference is that you have to pass the longitude, latitude and the timezone string, instead of the city and nation.</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">If you omit the nation, it will be set to &quot;GB&quot; by default, but the value is not used for calculations. It&#39;s better to set it to the correct value though.</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">## Generate a SVG Chart</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">```python</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">from kerykeion import AstrologicalSubject, KerykeionChartSVG</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">first = AstrologicalSubject(&quot;Jack&quot;, 1990, 6, 15, 15, 15, &quot;Roma&quot;)</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">second = AstrologicalSubject(&quot;Jane&quot;, 1991, 10, 25, 21, 00, &quot;Roma&quot;)</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd"># Set the type, it can be Natal, Synastry or Transit</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">name = KerykeionChartSVG(first, chart_type=&quot;Synastry&quot;, second_obj=second)</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">name.makeSVG()</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">print(len(name.aspects_list))</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">#&gt; Generating kerykeion object for Jack...</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">#&gt; Generating kerykeion object for Jane...</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">#&gt; Jack birth location: Roma, 41.89193, 12.51133</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">#&gt; SVG Generated Correctly</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">#&gt; 38</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">```</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">![Synastry Chart](http://centuryboy.altervista.org/JackComposite_Chart.svg)</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">## Report</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">To print a report of all the data:</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="sd">```python</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="sd">from kerykeion import Report, AstrologicalSubject</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a><span class="sd">kanye = AstrologicalSubject(&quot;Kanye&quot;, 1977, 6, 8, 8, 45, &quot;Atlanta&quot;)</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a><span class="sd">report = Report(kanye)</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="sd">report.print_report()</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">```</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="sd">Returns:</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="sd">```bash</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="sd">+- Kerykeion report for Kanye -+</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="sd">+----------+------+-------------+-----------+----------+</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">| Date     | Time | Location    | Longitude | Latitude |</span>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="sd">+----------+------+-------------+-----------+----------+</span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">| 8/6/1977 | 8:45 | Atlanta, US | -84.38798 | 33.749   |</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">+----------+------+-------------+-----------+----------+</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="sd">+-----------+------+-------+------+----------------+</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">| Planet    | Sign | Pos.  | Ret. | House          |</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">+-----------+------+-------+------+----------------+</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">| Sun       | Gem  | 17.6  | -    | Twelfth_House  |</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">| Moon      | Pis  | 16.43 | -    | Ninth_House    |</span>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="sd">| Mercury   | Tau  | 26.29 | -    | Eleventh_House |</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">| Venus     | Tau  | 2.03  | -    | Tenth_House    |</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">| Mars      | Tau  | 1.79  | -    | Tenth_House    |</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">| Jupiter   | Gem  | 14.61 | -    | Eleventh_House |</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a><span class="sd">| Saturn    | Leo  | 12.8  | -    | Second_House   |</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="sd">| Uranus    | Sco  | 8.27  | R    | Fourth_House   |</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="sd">| Neptune   | Sag  | 14.69 | R    | Fifth_House    |</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="sd">| Pluto     | Lib  | 11.45 | R    | Fourth_House   |</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="sd">| Mean_Node | Lib  | 21.49 | R    | Fourth_House   |</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">| True_Node | Lib  | 22.82 | R    | Fourth_House   |</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">| Chiron    | Tau  | 4.17  | -    | Tenth_House    |</span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">+-----------+------+-------+------+----------------+</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="sd">+----------------+------+----------+</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="sd">| House          | Sign | Position |</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="sd">+----------------+------+----------+</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="sd">| First_House    | Can  | 18.0     |</span>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="sd">| Second_House   | Leo  | 9.51     |</span>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">| Third_House    | Vir  | 4.02     |</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">| Fourth_House   | Lib  | 3.98     |</span>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">| Fifth_House    | Sco  | 9.39     |</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">| Sixth_House    | Sag  | 15.68    |</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">| Seventh_House  | Cap  | 18.0     |</span>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a><span class="sd">| Eighth_House   | Aqu  | 9.51     |</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="sd">| Ninth_House    | Pis  | 4.02     |</span>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a><span class="sd">| Tenth_House    | Ari  | 3.98     |</span>
-</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a><span class="sd">| Eleventh_House | Tau  | 9.39     |</span>
-</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="sd">| Twelfth_House  | Gem  | 15.68    |</span>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">+----------------+------+----------+</span>
-</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>
-</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="sd">```</span>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>
-</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="sd">And if you want to export it to a file:</span>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="sd">```bash</span>
-</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a><span class="sd">python3 your_script_name.py &gt; file.txt</span>
-</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a><span class="sd">```</span>
-</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>
-</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a><span class="sd">## Other exeples of possibles usecase</span>
-</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>
-</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="sd">```python</span>
-</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a><span class="sd"># Get all aspects between two persons:</span>
-</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>
-</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a><span class="sd">from kerykeion import SynastryAspects, AstrologicalSubject</span>
-</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a><span class="sd">first = AstrologicalSubject(&quot;Jack&quot;, 1990, 6, 15, 15, 15, &quot;Roma&quot;)</span>
-</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a><span class="sd">second = AstrologicalSubject(&quot;Jane&quot;, 1991, 10, 25, 21, 00, &quot;Roma&quot;)</span>
-</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>
-</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="sd">name = SynastryAspects(first, second)</span>
-</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a><span class="sd">aspect_list = name.get_relevant_aspects()</span>
-</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a><span class="sd">print(aspect_list[0])</span>
-</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a>
-</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a><span class="sd">#&gt; Generating kerykeion object for Jack...</span>
-</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a><span class="sd">#&gt; Generating kerykeion object for Jane...</span>
-</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a><span class="sd">#&gt; {&#39;p1_name&#39;: &#39;Sun&#39;, &#39;p1_abs_pos&#39;: 84.17867971515636, &#39;p2_name&#39;: &#39;Sun&#39;, &#39;p2_abs_pos&#39;: 211.90472999502984, &#39;aspect&#39;: &#39;trine&#39;, &#39;orbit&#39;: 7.726050279873476, &#39;aspect_degrees&#39;: 120, &#39;color&#39;: &#39;#36d100&#39;, &#39;aid&#39;: 6, &#39;diff&#39;: 127.72605027987348, &#39;p1&#39;: 0, &#39;p2&#39;: 0}</span>
-</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>
-</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="sd">```</span>
-</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>
-</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a><span class="sd">## Ayanamsa (Sidereal Modes)</span>
-</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a>
-</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a><span class="sd">You can set the zodiac type and the sidereal mode in the AstrologicalSubject class:</span>
-</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a>
-</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a><span class="sd">```python</span>
-</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a><span class="sd">johnny = AstrologicalSubject(&quot;Johnny Depp&quot;, 1963, 6, 9, 0, 0, &quot;Owensboro&quot;, &quot;US&quot;, zodiac_type=&quot;Sidereal&quot;, sidereal_mode=&quot;LAHIRI&quot;)</span>
-</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a><span class="sd">```</span>
-</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>
-</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a><span class="sd">More examples [here](https://www.kerykeion.net/docs/examples/sidereal-modes/).</span>
-</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>
-</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a><span class="sd">Full list of supported sidereal modes [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#SiderealMode).</span>
-</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>
-</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a><span class="sd">## Documentation</span>
-</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>
-</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a><span class="sd">Most of the functions and the classes are self documented by the types and have docstrings.</span>
-</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a><span class="sd">An auto-generated documentation [is available here](https://www.kerykeion.net/pydocs/kerykeion.html).</span>
-</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a>
-</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a><span class="sd">Sooner or later I&#39;ll try to write an extensive documentation.</span>
-</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>
-</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a><span class="sd">## Development</span>
-</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a>
-</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="sd">You can clone this repository or download a zip file using the right side buttons.</span>
-</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a>
-</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a><span class="sd">## Contributing</span>
-</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>
-</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a><span class="sd">Feel free to contribute to the code!</span>
-</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>
-</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a><span class="sd">## License</span>
-</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>
-</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a><span class="sd">This project is licensed under the AGPL-3.0 License.</span>
-</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a><span class="sd">To understand how this impacts your use of the software, please see the [LICENSE](LICENSE) file for details.</span>
-</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a><span class="sd">If you have questions, you can reach out to me at my [email](mailto:battaglia.giacomo@yahoo.it?subject=Kerykeion) address.</span>
-</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="sd">As a rule of thumb, if you are using this library in a project, you should open source the code of the project with a compatible license.</span>
-</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>
-</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a><span class="sd">You can implement the logic of kerykeion in your project and also keep it closed source by using a third party API, like the [AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/). The AstrologerAPI is AGPL-3.0 compliant. Subscribing to the API is also, currently, the best way to support the project.</span>
-</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>
-</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a><span class="c1"># Local</span>
-</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a><span class="kn">from</span> <span class="nn">.astrological_subject</span> <span class="kn">import</span> <span class="n">AstrologicalSubject</span>
-</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a><span class="kn">from</span> <span class="nn">.charts.kerykeion_chart_svg</span> <span class="kn">import</span> <span class="n">KerykeionChartSVG</span>
-</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a><span class="kn">from</span> <span class="nn">.kr_types</span> <span class="kn">import</span> <span class="o">*</span>
-</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a><span class="kn">from</span> <span class="nn">.relationship_score</span> <span class="kn">import</span> <span class="n">RelationshipScore</span>
-</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="kn">from</span> <span class="nn">.aspects</span> <span class="kn">import</span> <span class="n">SynastryAspects</span><span class="p">,</span> <span class="n">NatalAspects</span>
-</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a><span class="kn">from</span> <span class="nn">.report</span> <span class="kn">import</span> <span class="n">Report</span>
-</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a><span class="kn">from</span> <span class="nn">.settings</span> <span class="kn">import</span> <span class="n">KerykeionSettingsModel</span><span class="p">,</span> <span class="n">get_settings</span>
-</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a><span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">Planets</span><span class="p">,</span> <span class="n">Aspects</span><span class="p">,</span> <span class="n">Signs</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="c1"># -*- coding: utf-8 -*-</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">This is part of Kerykeion (C) 2024 Giacomo Battaglia</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">.. include:: ../README.md</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="c1"># Local</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="kn">from</span> <span class="nn">.astrological_subject</span> <span class="kn">import</span> <span class="n">AstrologicalSubject</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span> <span class="nn">.charts.kerykeion_chart_svg</span> <span class="kn">import</span> <span class="n">KerykeionChartSVG</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="kn">from</span> <span class="nn">.kr_types</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span> <span class="nn">.relationship_score</span> <span class="kn">import</span> <span class="n">RelationshipScore</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">from</span> <span class="nn">.aspects</span> <span class="kn">import</span> <span class="n">SynastryAspects</span><span class="p">,</span> <span class="n">NatalAspects</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">from</span> <span class="nn">.report</span> <span class="kn">import</span> <span class="n">Report</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">from</span> <span class="nn">.settings</span> <span class="kn">import</span> <span class="n">KerykeionSettingsModel</span><span class="p">,</span> <span class="n">get_settings</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">Planets</span><span class="p">,</span> <span class="n">Aspects</span><span class="p">,</span> <span class="n">Signs</span>
 </span></pre></div>
 
 
