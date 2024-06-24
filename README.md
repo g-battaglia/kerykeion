@@ -129,8 +129,6 @@ second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool",
 synastry_chart = KerykeionChartSVG(first, "Synastry", second, new_output_directory=".")
 synastry_chart.makeSVG()
 ```
-```
-
 
 ## Report
 
