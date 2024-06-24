@@ -34,13 +34,13 @@ The core goal of this project is to provide a simple and easy approach to astrol
 
 Here's an example of a birthchart:
 
-![Kanye Birth Chart](http://centuryboy.altervista.org/KanyeNatalChart.svg)
+![Kanye Birth Chart](https://www.kerykeion.net/assets/img/examples/birth-chart.svg)
 
 ## Web API
 
 If you want to use Kerykeion in a web application, I've created a web API for this purpose, you can find it here:
 
-**[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/)**
+**[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/pricing)**
 
 It's [open source](https://github.com/g-battaglia/Astrologer-API), it's a way to support me and the project.
 
@@ -107,24 +107,30 @@ If you omit the nation, it will be set to "GB" by default, but the value is not 
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-first = AstrologicalSubject("Jack", 1990, 6, 15, 15, 15, "Roma")
-second = AstrologicalSubject("Jane", 1991, 10, 25, 21, 00, "Roma")
+first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
 # Set the type, it can be Natal, Synastry or Transit
-
-name = KerykeionChartSVG(first, chart_type="Synastry", second_obj=second)
-name.makeSVG()
-print(len(name.aspects_list))
-
-#> Generating kerykeion object for Jack...
-#> Generating kerykeion object for Jane...
-#> Jack birth location: Roma, 41.89193, 12.51133
-#> SVG Generated Correctly
-#> 38
+synastry_chart = KerykeionChartSVG(first, "Synastry", second)
+synastry_chart.makeSVG()
 
 ```
 
-![Synastry Chart](http://centuryboy.altervista.org/JackComposite_Chart.svg)
+![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/assets/img/examples/synastry-chart.svg)
+
+
+Note: By default, the generated SVG file will be in the home directory! To change the destination directory:
+
+```python
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
+
+first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+
+# Synastry Chart
+synastry_chart = KerykeionChartSVG(first, "Synastry", second, new_output_directory=".")
+synastry_chart.makeSVG()
+```
 
 ## Report
 
@@ -141,7 +147,7 @@ report.print_report()
 
 Returns:
 
-```bash
+```txt
 +- Kerykeion report for Kanye -+
 +----------+------+-------------+-----------+----------+
 | Date     | Time | Location    | Longitude | Latitude |
@@ -220,6 +226,20 @@ johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US",
 More examples [here](https://www.kerykeion.net/docs/examples/sidereal-modes/).
 
 Full list of supported sidereal modes [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#SiderealMode).
+
+## Houses Systems
+
+You can set the houses system in the AstrologicalSubject class:
+
+```python
+johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", houses_system="M")
+```
+
+More examples [here](https://www.kerykeion.net/docs/examples/houses-systems/).
+
+Full list of supported house systems [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#HousesSystem).
+
+So far all the available houses system in the Swiss Ephemeris are supported but the Gauquelin Sectors.
 
 ## Documentation
 
