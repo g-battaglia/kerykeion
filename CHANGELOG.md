@@ -48,10 +48,14 @@ A lot of refactoring and clean up.
 `Fix`: In the old version the 4 last planets of the Transit chart were always removed, now we check if those are Axes and then
 remove them.
 
-# 4.8.0
+## 4.8.0
 
 Added the optional `minify` argument to makeTemplate in the charts module.
 
-# 4.10.0
+## 4.10.0
 
 - Added the `sidereal_mode` argument to the `AstrologicalChart` class to allow differet Ayanamsa calculation methods.
+
+## 4.11.0
+
+- Added different House Systems to the `AstrologicalChart` class.

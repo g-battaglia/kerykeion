@@ -219,6 +219,20 @@ More examples [here](https://www.kerykeion.net/docs/examples/sidereal-modes/).
 
 Full list of supported sidereal modes [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#SiderealMode).
 
+## Houses Systems
+
+You can set the houses system in the AstrologicalSubject class:
+
+```python
+johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", houses_system="M")
+```
+
+More examples [here](https://www.kerykeion.net/docs/examples/house-systems/).
+
+Full list of supported house systems [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#HousesSystem).
+
+So far all the available houses system in the Swiss Ephemeris are supported but the Gauquelin Sectors.
+
 ## Documentation
 
 Most of the functions and the classes are self documented by the types and have docstrings.
