@@ -38,7 +38,7 @@ Here's an example of a birthchart:
 
 If you want to use Kerykeion in a web application, I've created a web API for this purpose, you can find it here:
 
-**[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/)**
+**[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/pricing)**
 
 It's [open source](https://github.com/g-battaglia/Astrologer-API), it's a way to support me and the project.
 
@@ -233,7 +233,7 @@ You can set the houses system in the AstrologicalSubject class:
 johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", houses_system="M")
 ```
 
-More examples [here](https://www.kerykeion.net/docs/examples/house-systems/).
+More examples [here](https://www.kerykeion.net/docs/examples/houses-systems/).
 
 Full list of supported house systems [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#HousesSystem).
 
