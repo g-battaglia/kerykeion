@@ -32,7 +32,7 @@ The core goal of this project is to provide a simple and easy approach to astrol
 
 Here's an example of a birthchart:
 
-![Kanye Birth Chart](http://centuryboy.altervista.org/KanyeNatalChart.svg)
+![Kanye Birth Chart](https://www.kerykeion.net/assets/img/examples/birth-chart.svg)
 
 ## Web API
 
@@ -105,24 +105,32 @@ If you omit the nation, it will be set to "GB" by default, but the value is not 
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-first = AstrologicalSubject("Jack", 1990, 6, 15, 15, 15, "Roma")
-second = AstrologicalSubject("Jane", 1991, 10, 25, 21, 00, "Roma")
+first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
 # Set the type, it can be Natal, Synastry or Transit
-
-name = KerykeionChartSVG(first, chart_type="Synastry", second_obj=second)
-name.makeSVG()
-print(len(name.aspects_list))
-
-#> Generating kerykeion object for Jack...
-#> Generating kerykeion object for Jane...
-#> Jack birth location: Roma, 41.89193, 12.51133
-#> SVG Generated Correctly
-#> 38
+synastry_chart = KerykeionChartSVG(first, "Synastry", second, new_output_directory=".")
+synastry_chart.makeSVG()
 
 ```
 
-![Synastry Chart](http://centuryboy.altervista.org/JackComposite_Chart.svg)
+![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/assets/img/examples/synastry-chart.svg)
+
+
+Note: By default, the generated SVG file will be in the home directory! To change the destination directory:
+
+```python
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
+
+first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+
+# Synastry Chart
+synastry_chart = KerykeionChartSVG(first, "Synastry", second, new_output_directory=".")
+synastry_chart.makeSVG()
+```
+```
+
 
 ## Report
 
