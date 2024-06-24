@@ -60,7 +60,7 @@ class SynastryAspects(NatalAspects):
         for first in range(len(first_active_points_list)):
             # Generates the aspects list whitout repetitions
             for second in range(len(second_active_points_list)):
-                verdict, name, orbit, aspect_degrees, color, aid, diff = get_aspect_from_two_points(
+                verdict, name, orbit, aspect_degrees, aid, diff = get_aspect_from_two_points(
                     self.aspects_settings,
                     first_active_points_list[first]["abs_pos"],
                     second_active_points_list[second]["abs_pos"],
@@ -75,7 +75,6 @@ class SynastryAspects(NatalAspects):
                         "aspect": name,
                         "orbit": orbit,
                         "aspect_degrees": aspect_degrees,
-                        "color": color,
                         "aid": aid,
                         "diff": diff,
                         "p1": planet_id_decoder(

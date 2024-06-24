@@ -52,7 +52,7 @@ class NatalAspects:
         for first in range(len(active_points_list)):
             # Generates the aspects list without repetitions
             for second in range(first + 1, len(active_points_list)):
-                verdict, name, orbit, aspect_degrees, color, aid, diff = get_aspect_from_two_points(
+                verdict, name, orbit, aspect_degrees, aid, diff = get_aspect_from_two_points(
                     self.aspects_settings, active_points_list[first]["abs_pos"], active_points_list[second]["abs_pos"]
                 )
 
@@ -65,7 +65,6 @@ class NatalAspects:
                         "aspect": name,
                         "orbit": orbit,
                         "aspect_degrees": aspect_degrees,
-                        "color": color,
                         "aid": aid,
                         "diff": diff,
                         "p1": planet_id_decoder(self.celestial_points, active_points_list[first]["name"]),

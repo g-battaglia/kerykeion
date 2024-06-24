@@ -23,7 +23,6 @@ def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, i
     if int(distance) <= aspects_settings[0]["orb"]:
         name = aspects_settings[0]["name"]
         aspect_degrees = aspects_settings[0]["degree"]
-        color = aspects_settings[0]["color"]
         verdict = True
         aid = 0
 
@@ -34,7 +33,6 @@ def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, i
     ):
         name = aspects_settings[1]["name"]
         aspect_degrees = aspects_settings[1]["degree"]
-        color = aspects_settings[1]["color"]
         verdict = True
         aid = 1
 
@@ -45,7 +43,6 @@ def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, i
     ):
         name = aspects_settings[2]["name"]
         aspect_degrees = aspects_settings[2]["degree"]
-        color = aspects_settings[2]["color"]
         verdict = True
         aid = 2
 
@@ -56,7 +53,6 @@ def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, i
     ):
         name = aspects_settings[3]["name"]
         aspect_degrees = aspects_settings[3]["degree"]
-        color = aspects_settings[3]["color"]
         verdict = True
         aid = 3
 
@@ -67,7 +63,6 @@ def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, i
     ):
         name = aspects_settings[4]["name"]
         aspect_degrees = aspects_settings[4]["degree"]
-        color = aspects_settings[4]["color"]
         verdict = True
         aid = 4
 
@@ -78,7 +73,6 @@ def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, i
     ):
         name = aspects_settings[5]["name"]
         aspect_degrees = aspects_settings[5]["degree"]
-        color = aspects_settings[5]["color"]
         verdict = True
         aid = 5
 
@@ -89,7 +83,6 @@ def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, i
     ):
         name = aspects_settings[6]["name"]
         aspect_degrees = aspects_settings[6]["degree"]
-        color = aspects_settings[6]["color"]
         verdict = True
         aid = 6
 
@@ -100,7 +93,6 @@ def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, i
     ):
         name = aspects_settings[7]["name"]
         aspect_degrees = aspects_settings[7]["degree"]
-        color = aspects_settings[7]["color"]
         verdict = True
         aid = 7
 
@@ -111,7 +103,6 @@ def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, i
     ):
         name = aspects_settings[8]["name"]
         aspect_degrees = aspects_settings[8]["degree"]
-        color = aspects_settings[8]["color"]
         verdict = True
         aid = 8
 
@@ -122,7 +113,6 @@ def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, i
     ):
         name = aspects_settings[9]["name"]
         aspect_degrees = aspects_settings[9]["degree"]
-        color = aspects_settings[9]["color"]
         verdict = True
         aid = 9
 
@@ -133,7 +123,6 @@ def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, i
     ):
         name = aspects_settings[10]["name"]
         aspect_degrees = aspects_settings[10]["degree"]
-        color = aspects_settings[10]["color"]
         verdict = True
         aid = 10
 
@@ -150,7 +139,6 @@ def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, i
         name,
         distance - aspect_degrees,
         aspect_degrees,
-        color,
         aid,
         diff,
     )

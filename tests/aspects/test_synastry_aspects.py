@@ -26,7 +26,6 @@ class TestNatalAspects:
             assert self.synastry_relevant_aspects[i]["aspect"] == aspect["aspect"]
             assert round(self.synastry_relevant_aspects[i]["orbit"], 2) == round(aspect["orbit"], 2)
             assert round(self.synastry_relevant_aspects[i]["aspect_degrees"], 2) == round(aspect["aspect_degrees"], 2)
-            assert self.synastry_relevant_aspects[i]["color"] == aspect["color"]
             assert self.synastry_relevant_aspects[i]["aid"] == aspect["aid"]
             assert round(self.synastry_relevant_aspects[i]["diff"], 2) == round(aspect["diff"], 2)
             assert self.synastry_relevant_aspects[i]["p1"] == aspect["p1"]
@@ -44,7 +43,6 @@ class TestNatalAspects:
             assert self.synastry_all_aspects[i]["aspect"] == aspect["aspect"]
             assert round(self.synastry_all_aspects[i]["orbit"], 2) == round(aspect["orbit"], 2)
             assert round(self.synastry_all_aspects[i]["aspect_degrees"], 2) == round(aspect["aspect_degrees"], 2)
-            assert self.synastry_all_aspects[i]["color"] == aspect["color"]
             assert self.synastry_all_aspects[i]["aid"] == aspect["aid"]
             assert round(self.synastry_all_aspects[i]["diff"], 2) == round(aspect["diff"], 2)
             assert self.synastry_all_aspects[i]["p1"] == aspect["p1"]
