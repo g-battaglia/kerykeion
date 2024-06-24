@@ -109,7 +109,7 @@ first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB
 second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
 # Set the type, it can be Natal, Synastry or Transit
-synastry_chart = KerykeionChartSVG(first, "Synastry", second, new_output_directory=".")
+synastry_chart = KerykeionChartSVG(first, "Synastry", second)
 synastry_chart.makeSVG()
 
 ```
