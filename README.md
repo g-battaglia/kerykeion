@@ -116,7 +116,6 @@ synastry_chart.makeSVG()
 
 ![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/assets/img/examples/synastry-chart.svg)
 
-
 Note: By default, the generated SVG file will be in the home directory! To change the destination directory:
 
 ```python
@@ -129,6 +128,12 @@ second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool",
 synastry_chart = KerykeionChartSVG(first, "Synastry", second, new_output_directory=".")
 synastry_chart.makeSVG()
 ```
+
+### Change Language
+
+To change the language of the chart you should create a new kr.config.js file and pass it to the BirthChartSVG class. So far the available languages are English, Portuguese, Italian, Spanish, French and Chinese.
+
+Some examples [here](https://www.kerykeion.net/docs/examples/change-language).
 
 ## Report
 
