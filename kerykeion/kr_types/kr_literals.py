@@ -14,7 +14,7 @@ Sign = Literal["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "C
 
 
 SignNumbers = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-"""Literal type for Zodiac Sign Numbers"""
+"""Literal type for Zodiac Sign Numbers, the signs are numbered in order starting from Aries (0) to Pisces (11)"""
 
 
 Houses = Literal["First_House", "Second_House", "Third_House", "Fourth_House", "Fifth_House", "Sixth_House", "Seventh_House", "Eighth_House", "Ninth_House", "Tenth_House", "Eleventh_House", "Twelfth_House"]
@@ -22,7 +22,7 @@ Houses = Literal["First_House", "Second_House", "Third_House", "Fourth_House", "
 
 
 HouseNumbers = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-"""Literal type for House Numbers"""
+"""Literal type for House Numbers, starting from the First House (1) to the Twelfth House (12)"""
 
 
 Planet = Literal["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Mean_Node", "True_Node", "Chiron"]
@@ -87,3 +87,7 @@ Y = APC houses
 
 Usually the standard is Placidus (P)
 """
+
+
+ChartPerspective = Literal["Apparent Geocentric", "Heliocentric", "Topocentric", "True Geocentric"]
+"""Literal type for Chart Perspectives, which are the point of view of the observer"""

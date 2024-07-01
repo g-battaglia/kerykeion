@@ -17,7 +17,8 @@ from kerykeion.kr_types import (
     KerykeionPointModel,
     PointType,
     SiderealMode,
-    HousesSystemIdentifier
+    HousesSystemIdentifier,
+    ChartPerspective
 )
 from kerykeion.utilities import (
     get_number_from_name, 
@@ -32,6 +33,7 @@ from typing import Union, get_args
 DEFAULT_GEONAMES_USERNAME = "century.boy"
 DEFAULT_SIDEREAL_MODE = "FAGAN_BRADLEY"
 DEFAULT_HOUSES_SYSTEM = "P"
+DEFAULT_CHART_PERSPECTIVE = "Apparent Geocentric"
 
 
 class AstrologicalSubject:
@@ -68,6 +70,11 @@ class AstrologicalSubject:
         Defaults to "FAGAN_BRADLEY".
         Available modes are visible in the SiderealMode Literal.
     - houses_system_identifier (HousesSystemIdentifier, optional): The system to use for the calculation of the houses.
+        Defaults to "P" (Placidus).
+        Available systems are visible in the HousesSystemIdentifier Literal.
+    - chart_perspective (ChartPerspective, optional): The perspective to use for the calculation of the chart.
+        Defaults to "Apparent Geocentric".
+        Available perspectives are visible in the ChartPerspective Literal.
     """
 
     # Defined by the user
@@ -89,6 +96,7 @@ class AstrologicalSubject:
     sidereal_mode: SiderealMode
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
+    chart_perspective: ChartPerspective
 
     # Generated internally
     city_data: dict[str, str]
@@ -154,15 +162,10 @@ class AstrologicalSubject:
         utc_datetime: Union[datetime, None] = None,
         disable_chiron: bool = False,
         sidereal_mode: Union[SiderealMode, None] = None,
-        houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM
+        houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM,
+        chart_perspective: ChartPerspective = DEFAULT_CHART_PERSPECTIVE
     ) -> None:
         logging.debug("Starting Kerykeion")
-
-        # We set the swisseph path to the current directory
-        swe.set_ephe_path(str(Path(__file__).parent.absolute() / "sweph"))
-        
-        # Flags for the Swiss Ephemeris
-        self._iflag = swe.FLG_SWIEPH + swe.FLG_SPEED
 
         self.name = name
         self.year = year
@@ -183,35 +186,11 @@ class AstrologicalSubject:
         self.disable_chiron = disable_chiron
         self.sidereal_mode = sidereal_mode
         self.houses_system_identifier = houses_system_identifier
+        self.chart_perspective = chart_perspective
 
-        # House System check and setup --->
-        if self.houses_system_identifier not in get_args(HousesSystemIdentifier):
-            raise KerykeionException(f"\n* ERROR: '{self.houses_system_identifier}' is NOT a valid house system! Available systems are: *" + "\n" + str(get_args(HousesSystemIdentifier)))
-
-        self.houses_system_name = swe.house_name(self.houses_system_identifier.encode('ascii'))
-        # <--- House System check and setup
-
-        # Zodiac Type and Sidereal mode checks and setup --->
-        if zodiac_type and not zodiac_type in get_args(ZodiacType):
-            raise KerykeionException(f"\n* ERROR: '{zodiac_type}' is NOT a valid zodiac type! Available types are: *" + "\n" + str(get_args(ZodiacType)))
-
-        if self.sidereal_mode and self.zodiac_type == "Tropic":
-            raise KerykeionException("You can't set a sidereal mode with a Tropic zodiac type!")
-        
-        if self.zodiac_type == "Sidereal" and not self.sidereal_mode:
-            self.sidereal_mode = DEFAULT_SIDEREAL_MODE
-            logging.info("No sidereal mode set, using default FAGAN_BRADLEY")
-
-        if self.zodiac_type == "Sidereal":
-            # Check if the sidereal mode is valid
-            if not self.sidereal_mode in get_args(SiderealMode):
-                raise KerykeionException(f"\n* ERROR: '{self.sidereal_mode}' is NOT a valid sidereal mode! Available modes are: *" + "\n" + str(get_args(SiderealMode)))
-
-            self._iflag += swe.FLG_SIDEREAL
-            mode = "SIDM_" + self.sidereal_mode
-            swe.set_sid_mode(getattr(swe, mode))
-            logging.debug(f"Using sidereal mode: {mode}")
-        # <--- Zodiac Type and Sidereal mode checks and setup
+        #---------------#
+        # General setup #
+        #---------------#
 
         # This message is set to encourage the user to set a custom geonames username
         if geonames_username is None and online:
@@ -253,15 +232,69 @@ class AstrologicalSubject:
         if (not self.online) and (not tz_str):
             raise KerykeionException("You need to set the coordinates and timezone if you want to use the offline mode!")
 
-        self._check_if_poles()
+        #-----------------------#
+        # Swiss Ephemeris setup #
+        #-----------------------#
 
-        # Initialize everything
+        # We set the swisseph path to the current directory
+        swe.set_ephe_path(str(Path(__file__).parent.absolute() / "sweph"))
+
+        # Flags for the Swiss Ephemeris
+        self._iflag = swe.FLG_SWIEPH + swe.FLG_SPEED
+
+        # Chart Perspective check and setup --->
+        if self.chart_perspective not in get_args(ChartPerspective):
+            raise KerykeionException(f"\n* ERROR: '{self.chart_perspective}' is NOT a valid chart perspective! Available perspectives are: *" + "\n" + str(get_args(ChartPerspective)))
+        
+        if self.chart_perspective == "True Geocentric":
+            self._iflag += swe.FLG_TRUEPOS
+        elif self.chart_perspective == "Heliocentric":
+            self._iflag += swe.FLG_HELCTR
+        elif self.chart_perspective == "Topocentric":
+            self._iflag += swe.FLG_TOPOCTR
+            # geopos_is_set, for topocentric
+            swe.set_topo(self.lng, self.lat, 0)
+        # <--- Chart Perspective check and setup
+
+        # House System check and setup --->
+        if self.houses_system_identifier not in get_args(HousesSystemIdentifier):
+            raise KerykeionException(f"\n* ERROR: '{self.houses_system_identifier}' is NOT a valid house system! Available systems are: *" + "\n" + str(get_args(HousesSystemIdentifier)))
+
+        self.houses_system_name = swe.house_name(self.houses_system_identifier.encode('ascii'))
+        # <--- House System check and setup
+
+        # Zodiac Type and Sidereal mode checks and setup --->
+        if zodiac_type and not zodiac_type in get_args(ZodiacType):
+            raise KerykeionException(f"\n* ERROR: '{zodiac_type}' is NOT a valid zodiac type! Available types are: *" + "\n" + str(get_args(ZodiacType)))
+
+        if self.sidereal_mode and self.zodiac_type == "Tropic":
+            raise KerykeionException("You can't set a sidereal mode with a Tropic zodiac type!")
+        
+        if self.zodiac_type == "Sidereal" and not self.sidereal_mode:
+            self.sidereal_mode = DEFAULT_SIDEREAL_MODE
+            logging.info("No sidereal mode set, using default FAGAN_BRADLEY")
+
+        if self.zodiac_type == "Sidereal":
+            # Check if the sidereal mode is valid
+            if not self.sidereal_mode in get_args(SiderealMode):
+                raise KerykeionException(f"\n* ERROR: '{self.sidereal_mode}' is NOT a valid sidereal mode! Available modes are: *" + "\n" + str(get_args(SiderealMode)))
+
+            self._iflag += swe.FLG_SIDEREAL
+            mode = "SIDM_" + self.sidereal_mode
+            swe.set_sid_mode(getattr(swe, mode))
+            logging.debug(f"Using sidereal mode: {mode}")
+        # <--- Zodiac Type and Sidereal mode checks and setup
+
+        #------------------------#
+        # Start the calculations #
+        #------------------------#
+
+        self._check_if_poles()
         self._get_utc()
         self._get_jd()
         self._planets_degrees_lister()
         self._planets()
         self._houses()
-
         self._planets_in_houses()
         self._lunar_phase_calc()
 
@@ -666,4 +699,16 @@ if __name__ == "__main__":
 
     # With Morinus Houses
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", houses_system_identifier="M")
+    print(johnny.json(dump=True, indent=2))
+
+    # With True Geocentric Perspective
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", chart_perspective="True Geocentric")
+    print(johnny.json(dump=True, indent=2))
+
+    # With Heliocentric Perspective
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", chart_perspective="Heliocentric")
+    print(johnny.json(dump=True, indent=2))
+
+    # With Topocentric Perspective
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", chart_perspective="Topocentric")
     print(johnny.json(dump=True, indent=2))
