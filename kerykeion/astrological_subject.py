@@ -18,7 +18,7 @@ from kerykeion.kr_types import (
     PointType,
     SiderealMode,
     HousesSystemIdentifier,
-    ChartPerspective
+    PerspectiveType
 )
 from kerykeion.utilities import (
     get_number_from_name, 
@@ -33,7 +33,8 @@ from typing import Union, get_args
 DEFAULT_GEONAMES_USERNAME = "century.boy"
 DEFAULT_SIDEREAL_MODE = "FAGAN_BRADLEY"
 DEFAULT_HOUSES_SYSTEM = "P"
-DEFAULT_CHART_PERSPECTIVE = "Apparent Geocentric"
+PERSPECTIVE_TYPE = "Apparent Geocentric"
+NOW = datetime.now()
 
 
 class AstrologicalSubject:
@@ -42,27 +43,28 @@ class AstrologicalSubject:
     it's utc and julian day and returns an object with all that data.
 
     Args:
-    - name (str, optional): _ Defaults to "Now".
-    - year (int, optional): _ Defaults to now.year.
-    - month (int, optional): _ Defaults to now.month.
-    - day (int, optional): _ Defaults to now.day.
-    - hour (int, optional): _ Defaults to now.hour.
-    - minute (int, optional): _ Defaults to now.minute.
+    - name (str, optional): The name of the subject. Defaults to "Now".
+    - year (int, optional): The year of birth. Defaults to the current year.
+    - month (int, optional): The month of birth. Defaults to the current month.
+    - day (int, optional): The day of birth. Defaults to the current day.
+    - hour (int, optional): The hour of birth. Defaults to the current hour.
+    - minute (int, optional): Defaults to the current minute.
     - city (str, optional): City or location of birth. Defaults to "London", which is GMT time.
         The city argument is used to get the coordinates and timezone from geonames just in case
         you don't insert them manually (see _get_tz).
         If you insert the coordinates and timezone manually, the city argument is not used for calculations
         but it's still used as a value for the city attribute.
     - nat (str, optional): _ Defaults to "".
-    - lng (Union[int, float], optional): _ Defaults to False.
-    - lat (Union[int, float], optional): _ Defaults to False.
-    - tz_str (Union[str, bool], optional): _ Defaults to False.
-    - geonames_username (str, optional): _ Defaults to 'century.boy'.
-    - online (bool, optional): Sets if you want to use the online mode (using
-        geonames) or not. Defaults to True.
+    - lng (Union[int, float], optional): Longitude of the birth location. Defaults to 0 (Greenwich, London).
+    - lat (Union[int, float], optional): Latitude of the birth location. Defaults to 51.5074 (Greenwich, London).
+    - tz_str (Union[str, bool], optional): Timezone of the birth location. Defaults to "GMT".
+    - geonames_username (str, optional): The username for the geonames API. Note: Change this to your own username to avoid rate limits!
+        You can get one for free here: https://www.geonames.org/login
+    - online (bool, optional): Sets if you want to use the online mode, which fetches the timezone and coordinates from geonames.
+        If you already have the coordinates and timezone, set this to False. Defaults to True.
     - utc_datetime (datetime, optional): An alternative way of constructing the object, 
         if you know the UTC datetime but do not have easy access to e.g. timezone identifier
-        _ Defaults to None.
+        Defaults to None.
     - disable_chiron (bool, optional): Disables the calculation of Chiron. Defaults to False.
         Chiron calculation can create some issues with the Swiss Ephemeris when the date is too far in the past.
     - sidereal_mode (SiderealMode, optional): Also known as Ayanamsa. 
@@ -72,9 +74,9 @@ class AstrologicalSubject:
     - houses_system_identifier (HousesSystemIdentifier, optional): The system to use for the calculation of the houses.
         Defaults to "P" (Placidus).
         Available systems are visible in the HousesSystemIdentifier Literal.
-    - chart_perspective (ChartPerspective, optional): The perspective to use for the calculation of the chart.
+    - perspective_type (PerspectiveType, optional): The perspective to use for the calculation of the chart.
         Defaults to "Apparent Geocentric".
-        Available perspectives are visible in the ChartPerspective Literal.
+        Available perspectives are visible in the PerspectiveType Literal.
     """
 
     # Defined by the user
@@ -96,7 +98,7 @@ class AstrologicalSubject:
     sidereal_mode: SiderealMode
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
-    chart_perspective: ChartPerspective
+    perspective_type: PerspectiveType
 
     # Generated internally
     city_data: dict[str, str]
@@ -141,16 +143,14 @@ class AstrologicalSubject:
     planets_degrees_ut: list[float]
     houses_degree_ut: list[float]
 
-    now = datetime.now()
-
     def __init__(
         self,
         name="Now",
-        year: int = now.year,
-        month: int = now.month,
-        day: int = now.day,
-        hour: int = now.hour,
-        minute: int = now.minute,
+        year: int = NOW.year,
+        month: int = NOW.month,
+        day: int = NOW.day,
+        hour: int = NOW.hour,
+        minute: int = NOW.minute,
         city: Union[str, None] = None,
         nation: Union[str, None] = None,
         lng: Union[int, float, None] = None,
@@ -163,7 +163,7 @@ class AstrologicalSubject:
         disable_chiron: bool = False,
         sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM,
-        chart_perspective: ChartPerspective = DEFAULT_CHART_PERSPECTIVE
+        perspective_type: PerspectiveType = PERSPECTIVE_TYPE
     ) -> None:
         logging.debug("Starting Kerykeion")
 
@@ -186,7 +186,7 @@ class AstrologicalSubject:
         self.disable_chiron = disable_chiron
         self.sidereal_mode = sidereal_mode
         self.houses_system_identifier = houses_system_identifier
-        self.chart_perspective = chart_perspective
+        self.perspective_type = perspective_type
 
         #---------------#
         # General setup #
@@ -243,14 +243,14 @@ class AstrologicalSubject:
         self._iflag = swe.FLG_SWIEPH + swe.FLG_SPEED
 
         # Chart Perspective check and setup --->
-        if self.chart_perspective not in get_args(ChartPerspective):
-            raise KerykeionException(f"\n* ERROR: '{self.chart_perspective}' is NOT a valid chart perspective! Available perspectives are: *" + "\n" + str(get_args(ChartPerspective)))
+        if self.perspective_type not in get_args(PerspectiveType):
+            raise KerykeionException(f"\n* ERROR: '{self.perspective_type}' is NOT a valid chart perspective! Available perspectives are: *" + "\n" + str(get_args(PerspectiveType)))
         
-        if self.chart_perspective == "True Geocentric":
+        if self.perspective_type == "True Geocentric":
             self._iflag += swe.FLG_TRUEPOS
-        elif self.chart_perspective == "Heliocentric":
+        elif self.perspective_type == "Heliocentric":
             self._iflag += swe.FLG_HELCTR
-        elif self.chart_perspective == "Topocentric":
+        elif self.perspective_type == "Topocentric":
             self._iflag += swe.FLG_TOPOCTR
             # geopos_is_set, for topocentric
             swe.set_topo(self.lng, self.lat, 0)
@@ -702,13 +702,13 @@ if __name__ == "__main__":
     print(johnny.json(dump=True, indent=2))
 
     # With True Geocentric Perspective
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", chart_perspective="True Geocentric")
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="True Geocentric")
     print(johnny.json(dump=True, indent=2))
 
     # With Heliocentric Perspective
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", chart_perspective="Heliocentric")
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="Heliocentric")
     print(johnny.json(dump=True, indent=2))
 
     # With Topocentric Perspective
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", chart_perspective="Topocentric")
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="Topocentric")
     print(johnny.json(dump=True, indent=2))

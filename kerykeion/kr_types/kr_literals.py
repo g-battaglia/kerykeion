@@ -89,5 +89,13 @@ Usually the standard is Placidus (P)
 """
 
 
-ChartPerspective = Literal["Apparent Geocentric", "Heliocentric", "Topocentric", "True Geocentric"]
-"""Literal type for Chart Perspectives, which are the point of view of the observer"""
+PerspectiveType = Literal["Apparent Geocentric", "Heliocentric", "Topocentric", "True Geocentric"]
+"""
+Literal type for perspective types.
+- "Apparent Geocentric": Earth-centered, apparent positions.
+- "Heliocentric": Sun-centered.
+- "Topocentric": Observer's location on Earth's surface.
+- "True Geocentric": Earth-centered, true positions.
+
+Usually the standard is "Apparent Geocentric"
+"""
