@@ -1473,16 +1473,16 @@ if __name__ == "__main__":
     #     alternatives_house_chart.makeSVG()
 
     # With True Geocentric Perspective
-    true_geocentric_subject = AstrologicalSubject("John Lennon - True Geocentric", 1940, 10, 9, 10, 30, "Liverpool", "GB", chart_perspective="True Geocentric")
+    true_geocentric_subject = AstrologicalSubject("John Lennon - True Geocentric", 1940, 10, 9, 10, 30, "Liverpool", "GB", perspective_type="True Geocentric")
     true_geocentric_chart = KerykeionChartSVG(true_geocentric_subject)
     true_geocentric_chart.makeSVG()
 
     # With Heliocentric Perspective
-    heliocentric_subject = AstrologicalSubject("John Lennon - Heliocentric", 1940, 10, 9, 10, 30, "Liverpool", "GB", chart_perspective="Heliocentric")
+    heliocentric_subject = AstrologicalSubject("John Lennon - Heliocentric", 1940, 10, 9, 10, 30, "Liverpool", "GB", perspective_type="Heliocentric")
     heliocentric_chart = KerykeionChartSVG(heliocentric_subject)
     heliocentric_chart.makeSVG()
 
     # With Topocentric Perspective
-    topocentric_subject = AstrologicalSubject("John Lennon - Topocentric", 1940, 10, 9, 10, 30, "Liverpool", "GB", chart_perspective="Topocentric")
+    topocentric_subject = AstrologicalSubject("John Lennon - Topocentric", 1940, 10, 9, 10, 30, "Liverpool", "GB", perspective_type="Topocentric")
     topocentric_chart = KerykeionChartSVG(topocentric_subject)
     topocentric_chart.makeSVG()
