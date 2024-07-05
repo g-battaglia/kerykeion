@@ -47,3 +47,16 @@ class TestNatalAspects:
             assert round(self.synastry_all_aspects[i]["diff"], 2) == round(aspect["diff"], 2)
             assert self.synastry_all_aspects[i]["p1"] == aspect["p1"]
             assert self.synastry_all_aspects[i]["p2"] == aspect["p2"]
+
+
+if __name__ == "__main__":
+    from kerykeion.utilities import setup_logging
+
+    setup_logging(level="debug")
+
+    test_natal_aspects = TestNatalAspects()
+    test_natal_aspects.setup_class()
+
+    test_natal_aspects.test_relevant_aspects_length()
+    test_natal_aspects.test_relevant_aspects()
+    test_natal_aspects.test_all_aspects_length()

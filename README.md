@@ -105,7 +105,7 @@ If you omit the nation, it will be set to "GB" by default, but the value is not 
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
 # Set the type, it can be Natal, Synastry or Transit
@@ -121,7 +121,7 @@ Note: By default, the generated SVG file will be in the home directory! To chang
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
 # Synastry Chart
@@ -243,6 +243,19 @@ More examples [here](https://www.kerykeion.net/docs/examples/houses-systems/).
 Full list of supported house systems [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#HousesSystem).
 
 So far all the available houses system in the Swiss Ephemeris are supported but the Gauquelin Sectors.
+
+## Perspective Type
+
+The perspective indicates the point of view from which the chart is calculated (Es. Apparent Geocentric, Heliocentric, etc.).
+You can set the perspective type in the AstrologicalSubject class:
+
+```python
+johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="Heliocentric")
+```
+
+More examples [here](https://www.kerykeion.net/docs/examples/perspective-type/).
+
+Full list of supported perspective types [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#PerspectiveType).
 
 ## Documentation
 

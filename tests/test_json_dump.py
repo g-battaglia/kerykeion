@@ -19,8 +19,6 @@ class TestJsonDump:
         assert round(self.dictionary["lat"], 2) == 51.51
         assert round(self.dictionary["lng"], 2) == -0.13
         assert self.dictionary["tz_str"] == "Europe/London"
-        assert self.dictionary["local_time"] == 12.2
-        assert self.dictionary["utc_time"] == 11.2
         assert self.dictionary["zodiac_type"] == "Tropic"
         assert round(self.dictionary["julian_day"], 2) == 2449270.97
 

@@ -18,8 +18,6 @@ class TestAstrologicalSubject:
             "lat": 37.77422,
             "tz_str": "America/Chicago",
             "zodiac_type": "Tropic",
-            "local_time": 0.0,
-            "utc_time": 5.0,
             "julian_day": 2438189.7083333335,
             "sun": {
                 "name": "Sun",
@@ -625,3 +623,45 @@ class TestAstrologicalSubject:
 
     def test_lunar_phase(self):
         assert self.subject.lunar_phase.model_dump() == self.expected_output["lunar_phase"]
+
+if __name__ == "__main__":
+    from kerykeion.utilities import setup_logging
+    setup_logging(level="info")
+    
+    test_astrological_subject = TestAstrologicalSubject()
+    test_astrological_subject.setup_class()
+
+    test_astrological_subject.test_basic_input_data()
+    test_astrological_subject.test_internal_data()
+
+    # Planets
+    test_astrological_subject.test_sun()
+    test_astrological_subject.test_moon()
+    test_astrological_subject.test_mercury()
+    test_astrological_subject.test_venus()
+    test_astrological_subject.test_mars()
+    test_astrological_subject.test_jupiter()
+    test_astrological_subject.test_saturn()
+    test_astrological_subject.test_uranus()
+    test_astrological_subject.test_neptune()
+    test_astrological_subject.test_pluto()
+    test_astrological_subject.test_mean_node()
+    test_astrological_subject.test_true_node()
+
+    # Houses
+    test_astrological_subject.test_first_house()
+    test_astrological_subject.test_second_house()
+    test_astrological_subject.test_third_house()
+    test_astrological_subject.test_fourth_house()
+    test_astrological_subject.test_fifth_house()
+    test_astrological_subject.test_sixth_house()
+    test_astrological_subject.test_seventh_house()
+    test_astrological_subject.test_eighth_house()
+    test_astrological_subject.test_ninth_house()
+    test_astrological_subject.test_tenth_house()
+    test_astrological_subject.test_eleventh_house()
+    test_astrological_subject.test_twelfth_house()
+    
+    test_astrological_subject.test_lunar_phase()
+
+    print("All tests passed!")

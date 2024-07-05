@@ -14,18 +14,18 @@
         <g transform="scale($cfgZoom)">
             <rect class="background-rectangle" x="0" y="0" width="$chart_width"
                 height="$chart_height" style="fill: $paper_color_1" />
-            <text x="20" y="30" style="fill: $paper_color_0; font-size: 24px">$stringTitle</text>
+            <text x="20" y="22" style="fill: $paper_color_0; font-size: 24px">$stringTitle</text>
             <text x="20" y="50" style="fill: $paper_color_0; font-size: 11px">$stringName</text>
             <text x="20" y="62" style="fill: $paper_color_0; font-size: 11px">$stringLocation</text>
             <text x="20" y="74" style="fill: $paper_color_0; font-size: 11px">$stringDateTime</text>
             <text x="20" y="86" style="fill: $paper_color_0; font-size: 11px">$stringLat</text>
             <text x="20" y="98" style="fill: $paper_color_0; font-size: 11px">$stringLon</text>
             <text x="20" y="110" style="fill: $paper_color_0; font-size: 11px">$stringPosition</text>
-            <text x="20" y="466" style="fill: $paper_color_0; font-size: 10px">$bottomLeft0</text>
-            <text x="20" y="480" style="fill: $paper_color_0; font-size: 10px">$bottomLeft1</text>
-            <text x="20" y="494" style="fill: $paper_color_0; font-size: 10px">$bottomLeft2</text>
-            <text x="20" y="508" style="fill: $paper_color_0; font-size: 10px">$bottomLeft3</text>
-            <text x="20" y="522" style="fill: $paper_color_0; font-size: 10px">$bottomLeft4</text>
+            <text x="20" y="452" style="fill: $paper_color_0; font-size: 10px">$bottomLeft0</text>
+            <text x="20" y="466" style="fill: $paper_color_0; font-size: 10px">$bottomLeft1</text>
+            <text x="20" y="480" style="fill: $paper_color_0; font-size: 10px">$bottomLeft2</text>
+            <text x="20" y="494" style="fill: $paper_color_0; font-size: 10px">$bottomLeft3</text>
+            <text x="20" y="508" style="fill: $paper_color_0; font-size: 10px">$bottomLeft4</text>
             <!-- Lunar Phase -->
             <g transform="translate(20,518)">
                 <g transform="rotate($lunar_phase_rotate 20 10)">
