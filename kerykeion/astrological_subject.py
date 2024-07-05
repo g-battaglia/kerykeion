@@ -26,6 +26,7 @@ from kerykeion.utilities import (
     get_planet_house,
     get_moon_emoji_from_phase_int,
     get_moon_phase_name_from_phase_int,
+    check_and_adjust_polar_latitude
 )
 from pathlib import Path
 from typing import Union, get_args
@@ -62,9 +63,6 @@ class AstrologicalSubject:
         You can get one for free here: https://www.geonames.org/login
     - online (bool, optional): Sets if you want to use the online mode, which fetches the timezone and coordinates from geonames.
         If you already have the coordinates and timezone, set this to False. Defaults to True.
-    - utc_datetime (datetime, optional): An alternative way of constructing the object, 
-        if you know the UTC datetime but do not have easy access to e.g. timezone identifier
-        Defaults to None.
     - disable_chiron (bool, optional): Disables the calculation of Chiron. Defaults to False.
         Chiron calculation can create some issues with the Swiss Ephemeris when the date is too far in the past.
     - sidereal_mode (SiderealMode, optional): Also known as Ayanamsa. 
@@ -81,7 +79,6 @@ class AstrologicalSubject:
 
     # Defined by the user
     name: str
-    utc_datetime: Union[datetime, None]
     year: int
     month: int
     day: int
@@ -103,10 +100,9 @@ class AstrologicalSubject:
     # Generated internally
     city_data: dict[str, str]
     julian_day: Union[int, float]
-    utc_time: float
-    local_time: float
-    utc: datetime
     json_dir: Path
+    iso_formatted_local_datetime: str
+    iso_formatted_utc_datetime: str
 
     # Planets
     sun: KerykeionPointModel
@@ -159,7 +155,6 @@ class AstrologicalSubject:
         geonames_username: Union[str, None] = None,
         zodiac_type: ZodiacType = "Tropic",
         online: bool = True,
-        utc_datetime: Union[datetime, None] = None,
         disable_chiron: bool = False,
         sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM,
@@ -182,7 +177,6 @@ class AstrologicalSubject:
         self.online = online
         self.json_dir = Path.home()
         self.geonames_username = geonames_username
-        self.utc_datetime = utc_datetime
         self.disable_chiron = disable_chiron
         self.sidereal_mode = sidereal_mode
         self.houses_system_identifier = houses_system_identifier
@@ -288,10 +282,28 @@ class AstrologicalSubject:
         #------------------------#
         # Start the calculations #
         #------------------------#
+        
+        check_and_adjust_polar_latitude(self.lat, self.lng)
 
-        self._check_if_poles()
-        self._get_utc()
-        self._get_jd()
+        # UTC, julian day and local time setup --->
+        if (self.online) and (not self.tz_str):
+            self._fetch_tz_from_geonames()
+
+        # Local time to UTC
+        local_time = pytz.timezone(self.tz_str)
+        naive_datetime = datetime(self.year, self.month, self.day, self.hour, self.minute, 0)
+        local_datetime = local_time.localize(naive_datetime, is_dst=None)
+        utc_object = local_datetime.astimezone(pytz.utc)
+        self.iso_formatted_utc_datetime = utc_object.isoformat()
+
+        # ISO formatted local datetime
+        self.iso_formatted_local_datetime = local_datetime.isoformat()
+
+        # Julian day calculation
+        utc_float_hour_with_minutes = utc_object.hour + (utc_object.minute / 60)
+        self.julian_day = float(swe.julday(utc_object.year, utc_object.month, utc_object.day, utc_float_hour_with_minutes))
+        # <--- UTC, julian day and local time setup
+
         self._planets_degrees_lister()
         self._planets()
         self._houses()
@@ -299,10 +311,10 @@ class AstrologicalSubject:
         self._lunar_phase_calc()
 
     def __str__(self) -> str:
-        return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
+        return f"Astrological data for: {self.name}, {self.iso_formatted_utc_datetime} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
 
     def __repr__(self) -> str:
-        return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
+        return f"Astrological data for: {self.name}, {self.iso_formatted_utc_datetime} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
 
     def __getitem__(self, item):
         return getattr(self, item)
@@ -334,32 +346,7 @@ class AstrologicalSubject:
         self.lat = float(self.city_data["lat"])
         self.tz_str = self.city_data["timezonestr"]
 
-        self._check_if_poles()
-
-    def _get_utc(self) -> None:
-        """Converts local time to utc time."""
-
-        # If the coordinates are not set, get them from geonames.
-        if (self.online) and (not self.tz_str):
-            self._fetch_tz_from_geonames()
-
-        # If UTC datetime is provided, then use it directly
-        if (self.utc_datetime):
-            self.utc = self.utc_datetime
-            return
-
-        local_time = pytz.timezone(self.tz_str)
-
-        naive_datetime = datetime(self.year, self.month, self.day, self.hour, self.minute, 0)
-
-        local_datetime = local_time.localize(naive_datetime, is_dst=None)
-        self.utc = local_datetime.astimezone(pytz.utc)
-
-    def _get_jd(self) -> None:
-        """Calculates julian day from the utc time."""
-        self.utc_time = self.utc.hour + self.utc.minute / 60
-        self.local_time = self.hour + self.minute / 60
-        self.julian_day = float(swe.julday(self.utc.year, self.utc.month, self.utc.day, self.utc_time))
+        check_and_adjust_polar_latitude(self.lat, self.lng)
 
     def _houses(self) -> None:
         """
@@ -627,19 +614,6 @@ class AstrologicalSubject:
         }
 
         self.lunar_phase = LunarPhaseModel(**lunar_phase_dictionary)
-
-    def _check_if_poles(self):
-        """
-            Utility function to check if the location is in the polar circle.
-            If it is, it sets the latitude to 66 or -66 degrees.
-        """
-        if self.lat > 66.0:
-            self.lat = 66.0
-            logging.info("Polar circle override for houses, using 66 degrees")
-
-        elif self.lat < -66.0:
-            self.lat = -66.0
-            logging.info("Polar circle override for houses, using -66 degrees")
 
     def json(self, dump=False, destination_folder: Union[str, None] = None, indent: Union[int, None] = None) -> str:
         """
