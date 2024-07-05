@@ -244,6 +244,19 @@ Full list of supported house systems [here](https://www.kerykeion.net/pydocs/ker
 
 So far all the available houses system in the Swiss Ephemeris are supported but the Gauquelin Sectors.
 
+## Perspective Type
+
+The perspective indicates the point of view from which the chart is calculated (Es. Apparent Geocentric, Heliocentric, etc.).
+You can set the perspective type in the AstrologicalSubject class:
+
+```python
+johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="Heliocentric")
+```
+
+More examples [here](https://www.kerykeion.net/docs/examples/perspective-type/).
+
+Full list of supported perspective types [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#PerspectiveType).
+
 ## Documentation
 
 Most of the functions and the classes are self documented by the types and have docstrings.
