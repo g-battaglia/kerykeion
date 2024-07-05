@@ -1017,7 +1017,7 @@ class KerykeionChartSVG:
         li = 10
         offset = 0
 
-        out = '<g transform="translate(500,-20)">'
+        out = '<g transform="translate(510,-20)">'
         out += '<g transform="translate(140, -15)">'
         out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.user.name}:</text>'
         out += "</g>"
@@ -1108,7 +1108,7 @@ class KerykeionChartSVG:
         Returns:
             str: The SVG code for the grid of houses.
         """
-        out = '<g transform="translate(600,-20)">'
+        out = '<g transform="translate(610,-20)">'
 
         li = 10
         for i in range(12):
@@ -1126,8 +1126,10 @@ class KerykeionChartSVG:
         out += "</g>"
 
         if self.chart_type == "Synastry":
-            out += '<g transform="translate(840, -20)">'
+            out += '<!-- Synastry Houses -->'
+            out += '<g transform="translate(850, -20)">'
             li = 10
+
             for i in range(12):
                 if i < 9:
                     cusp = "&#160;&#160;" + str(i + 1)
@@ -1236,16 +1238,16 @@ class KerykeionChartSVG:
         if self.chart_type == "Natal" or self.chart_type == "ExternalNatal" or self.chart_type == "Synastry":
             td["bottomLeft0"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
             td["bottomLeft1"] = f"{self.user.houses_system_name}"
-            td["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.moon_phase_name}'
-            td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.user.lunar_phase.get("moon_phase", "")}'
-            td["bottomLeft4"] = ""
+            td["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.user.lunar_phase.get("moon_phase", "")}'
+            td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.moon_phase_name}'
+            td["bottomLeft4"] = f'{self.user.perspective_type}'
 
         else:
             td["bottomLeft0"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
             td["bottomLeft1"] = f"{self.user.houses_system_name}"
-            td["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
-            td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.t_user.lunar_phase.get("moon_phase", "")}'
-            td["bottomLeft4"] = ""
+            td["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.t_user.lunar_phase.get("moon_phase", "")}'
+            td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
+            td["bottomLeft4"] = f'{self.t_user.perspective_type}'
 
         # lunar phase
         deg = self.user.lunar_phase["degrees_between_s_m"]
