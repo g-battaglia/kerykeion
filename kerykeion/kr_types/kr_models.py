@@ -68,8 +68,9 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     sidereal_mode: Union[SiderealMode, None]
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
-    local_time: float
-    utc_time: float
+    perspective_type: str
+    iso_formatted_local_datetime: str
+    iso_formatted_utc_datetime: str
     julian_day: float
 
     # Planets
@@ -108,6 +109,11 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     # Lunar Phase
     lunar_phase: LunarPhaseModel
 
+    # Lists
+    # houses_list: list[KerykeionPointModel]
+    # planets_list: list[KerykeionPointModel]
+    # planets_degrees_ut: list[float]
+    # houses_degree_ut: list[float]
 
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging

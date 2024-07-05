@@ -17,7 +17,8 @@ from kerykeion.kr_types import (
     KerykeionPointModel,
     PointType,
     SiderealMode,
-    HousesSystemIdentifier
+    HousesSystemIdentifier,
+    PerspectiveType
 )
 from kerykeion.utilities import (
     get_number_from_name, 
@@ -25,6 +26,7 @@ from kerykeion.utilities import (
     get_planet_house,
     get_moon_emoji_from_phase_int,
     get_moon_phase_name_from_phase_int,
+    check_and_adjust_polar_latitude
 )
 from pathlib import Path
 from typing import Union, get_args
@@ -32,6 +34,8 @@ from typing import Union, get_args
 DEFAULT_GEONAMES_USERNAME = "century.boy"
 DEFAULT_SIDEREAL_MODE = "FAGAN_BRADLEY"
 DEFAULT_HOUSES_SYSTEM = "P"
+PERSPECTIVE_TYPE = "Apparent Geocentric"
+NOW = datetime.now()
 
 
 class AstrologicalSubject:
@@ -40,27 +44,25 @@ class AstrologicalSubject:
     it's utc and julian day and returns an object with all that data.
 
     Args:
-    - name (str, optional): _ Defaults to "Now".
-    - year (int, optional): _ Defaults to now.year.
-    - month (int, optional): _ Defaults to now.month.
-    - day (int, optional): _ Defaults to now.day.
-    - hour (int, optional): _ Defaults to now.hour.
-    - minute (int, optional): _ Defaults to now.minute.
+    - name (str, optional): The name of the subject. Defaults to "Now".
+    - year (int, optional): The year of birth. Defaults to the current year.
+    - month (int, optional): The month of birth. Defaults to the current month.
+    - day (int, optional): The day of birth. Defaults to the current day.
+    - hour (int, optional): The hour of birth. Defaults to the current hour.
+    - minute (int, optional): Defaults to the current minute.
     - city (str, optional): City or location of birth. Defaults to "London", which is GMT time.
         The city argument is used to get the coordinates and timezone from geonames just in case
         you don't insert them manually (see _get_tz).
         If you insert the coordinates and timezone manually, the city argument is not used for calculations
         but it's still used as a value for the city attribute.
     - nat (str, optional): _ Defaults to "".
-    - lng (Union[int, float], optional): _ Defaults to False.
-    - lat (Union[int, float], optional): _ Defaults to False.
-    - tz_str (Union[str, bool], optional): _ Defaults to False.
-    - geonames_username (str, optional): _ Defaults to 'century.boy'.
-    - online (bool, optional): Sets if you want to use the online mode (using
-        geonames) or not. Defaults to True.
-    - utc_datetime (datetime, optional): An alternative way of constructing the object, 
-        if you know the UTC datetime but do not have easy access to e.g. timezone identifier
-        _ Defaults to None.
+    - lng (Union[int, float], optional): Longitude of the birth location. Defaults to 0 (Greenwich, London).
+    - lat (Union[int, float], optional): Latitude of the birth location. Defaults to 51.5074 (Greenwich, London).
+    - tz_str (Union[str, bool], optional): Timezone of the birth location. Defaults to "GMT".
+    - geonames_username (str, optional): The username for the geonames API. Note: Change this to your own username to avoid rate limits!
+        You can get one for free here: https://www.geonames.org/login
+    - online (bool, optional): Sets if you want to use the online mode, which fetches the timezone and coordinates from geonames.
+        If you already have the coordinates and timezone, set this to False. Defaults to True.
     - disable_chiron (bool, optional): Disables the calculation of Chiron. Defaults to False.
         Chiron calculation can create some issues with the Swiss Ephemeris when the date is too far in the past.
     - sidereal_mode (SiderealMode, optional): Also known as Ayanamsa. 
@@ -68,11 +70,15 @@ class AstrologicalSubject:
         Defaults to "FAGAN_BRADLEY".
         Available modes are visible in the SiderealMode Literal.
     - houses_system_identifier (HousesSystemIdentifier, optional): The system to use for the calculation of the houses.
+        Defaults to "P" (Placidus).
+        Available systems are visible in the HousesSystemIdentifier Literal.
+    - perspective_type (PerspectiveType, optional): The perspective to use for the calculation of the chart.
+        Defaults to "Apparent Geocentric".
+        Available perspectives are visible in the PerspectiveType Literal.
     """
 
     # Defined by the user
     name: str
-    utc_datetime: Union[datetime, None]
     year: int
     month: int
     day: int
@@ -89,14 +95,14 @@ class AstrologicalSubject:
     sidereal_mode: SiderealMode
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
+    perspective_type: PerspectiveType
 
     # Generated internally
     city_data: dict[str, str]
     julian_day: Union[int, float]
-    utc_time: float
-    local_time: float
-    utc: datetime
     json_dir: Path
+    iso_formatted_local_datetime: str
+    iso_formatted_utc_datetime: str
 
     # Planets
     sun: KerykeionPointModel
@@ -133,16 +139,14 @@ class AstrologicalSubject:
     planets_degrees_ut: list[float]
     houses_degree_ut: list[float]
 
-    now = datetime.now()
-
     def __init__(
         self,
         name="Now",
-        year: int = now.year,
-        month: int = now.month,
-        day: int = now.day,
-        hour: int = now.hour,
-        minute: int = now.minute,
+        year: int = NOW.year,
+        month: int = NOW.month,
+        day: int = NOW.day,
+        hour: int = NOW.hour,
+        minute: int = NOW.minute,
         city: Union[str, None] = None,
         nation: Union[str, None] = None,
         lng: Union[int, float, None] = None,
@@ -151,18 +155,12 @@ class AstrologicalSubject:
         geonames_username: Union[str, None] = None,
         zodiac_type: ZodiacType = "Tropic",
         online: bool = True,
-        utc_datetime: Union[datetime, None] = None,
         disable_chiron: bool = False,
         sidereal_mode: Union[SiderealMode, None] = None,
-        houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM
+        houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM,
+        perspective_type: PerspectiveType = PERSPECTIVE_TYPE
     ) -> None:
         logging.debug("Starting Kerykeion")
-
-        # We set the swisseph path to the current directory
-        swe.set_ephe_path(str(Path(__file__).parent.absolute() / "sweph"))
-        
-        # Flags for the Swiss Ephemeris
-        self._iflag = swe.FLG_SWIEPH + swe.FLG_SPEED
 
         self.name = name
         self.year = year
@@ -179,39 +177,14 @@ class AstrologicalSubject:
         self.online = online
         self.json_dir = Path.home()
         self.geonames_username = geonames_username
-        self.utc_datetime = utc_datetime
         self.disable_chiron = disable_chiron
         self.sidereal_mode = sidereal_mode
         self.houses_system_identifier = houses_system_identifier
+        self.perspective_type = perspective_type
 
-        # House System check and setup --->
-        if self.houses_system_identifier not in get_args(HousesSystemIdentifier):
-            raise KerykeionException(f"\n* ERROR: '{self.houses_system_identifier}' is NOT a valid house system! Available systems are: *" + "\n" + str(get_args(HousesSystemIdentifier)))
-
-        self.houses_system_name = swe.house_name(self.houses_system_identifier.encode('ascii'))
-        # <--- House System check and setup
-
-        # Zodiac Type and Sidereal mode checks and setup --->
-        if zodiac_type and not zodiac_type in get_args(ZodiacType):
-            raise KerykeionException(f"\n* ERROR: '{zodiac_type}' is NOT a valid zodiac type! Available types are: *" + "\n" + str(get_args(ZodiacType)))
-
-        if self.sidereal_mode and self.zodiac_type == "Tropic":
-            raise KerykeionException("You can't set a sidereal mode with a Tropic zodiac type!")
-        
-        if self.zodiac_type == "Sidereal" and not self.sidereal_mode:
-            self.sidereal_mode = DEFAULT_SIDEREAL_MODE
-            logging.info("No sidereal mode set, using default FAGAN_BRADLEY")
-
-        if self.zodiac_type == "Sidereal":
-            # Check if the sidereal mode is valid
-            if not self.sidereal_mode in get_args(SiderealMode):
-                raise KerykeionException(f"\n* ERROR: '{self.sidereal_mode}' is NOT a valid sidereal mode! Available modes are: *" + "\n" + str(get_args(SiderealMode)))
-
-            self._iflag += swe.FLG_SIDEREAL
-            mode = "SIDM_" + self.sidereal_mode
-            swe.set_sid_mode(getattr(swe, mode))
-            logging.debug(f"Using sidereal mode: {mode}")
-        # <--- Zodiac Type and Sidereal mode checks and setup
+        #---------------#
+        # General setup #
+        #---------------#
 
         # This message is set to encourage the user to set a custom geonames username
         if geonames_username is None and online:
@@ -253,23 +226,95 @@ class AstrologicalSubject:
         if (not self.online) and (not tz_str):
             raise KerykeionException("You need to set the coordinates and timezone if you want to use the offline mode!")
 
-        self._check_if_poles()
+        #-----------------------#
+        # Swiss Ephemeris setup #
+        #-----------------------#
 
-        # Initialize everything
-        self._get_utc()
-        self._get_jd()
+        # We set the swisseph path to the current directory
+        swe.set_ephe_path(str(Path(__file__).parent.absolute() / "sweph"))
+
+        # Flags for the Swiss Ephemeris
+        self._iflag = swe.FLG_SWIEPH + swe.FLG_SPEED
+
+        # Chart Perspective check and setup --->
+        if self.perspective_type not in get_args(PerspectiveType):
+            raise KerykeionException(f"\n* ERROR: '{self.perspective_type}' is NOT a valid chart perspective! Available perspectives are: *" + "\n" + str(get_args(PerspectiveType)))
+        
+        if self.perspective_type == "True Geocentric":
+            self._iflag += swe.FLG_TRUEPOS
+        elif self.perspective_type == "Heliocentric":
+            self._iflag += swe.FLG_HELCTR
+        elif self.perspective_type == "Topocentric":
+            self._iflag += swe.FLG_TOPOCTR
+            # geopos_is_set, for topocentric
+            swe.set_topo(self.lng, self.lat, 0)
+        # <--- Chart Perspective check and setup
+
+        # House System check and setup --->
+        if self.houses_system_identifier not in get_args(HousesSystemIdentifier):
+            raise KerykeionException(f"\n* ERROR: '{self.houses_system_identifier}' is NOT a valid house system! Available systems are: *" + "\n" + str(get_args(HousesSystemIdentifier)))
+
+        self.houses_system_name = swe.house_name(self.houses_system_identifier.encode('ascii'))
+        # <--- House System check and setup
+
+        # Zodiac Type and Sidereal mode checks and setup --->
+        if zodiac_type and not zodiac_type in get_args(ZodiacType):
+            raise KerykeionException(f"\n* ERROR: '{zodiac_type}' is NOT a valid zodiac type! Available types are: *" + "\n" + str(get_args(ZodiacType)))
+
+        if self.sidereal_mode and self.zodiac_type == "Tropic":
+            raise KerykeionException("You can't set a sidereal mode with a Tropic zodiac type!")
+        
+        if self.zodiac_type == "Sidereal" and not self.sidereal_mode:
+            self.sidereal_mode = DEFAULT_SIDEREAL_MODE
+            logging.info("No sidereal mode set, using default FAGAN_BRADLEY")
+
+        if self.zodiac_type == "Sidereal":
+            # Check if the sidereal mode is valid
+            if not self.sidereal_mode in get_args(SiderealMode):
+                raise KerykeionException(f"\n* ERROR: '{self.sidereal_mode}' is NOT a valid sidereal mode! Available modes are: *" + "\n" + str(get_args(SiderealMode)))
+
+            self._iflag += swe.FLG_SIDEREAL
+            mode = "SIDM_" + self.sidereal_mode
+            swe.set_sid_mode(getattr(swe, mode))
+            logging.debug(f"Using sidereal mode: {mode}")
+        # <--- Zodiac Type and Sidereal mode checks and setup
+
+        #------------------------#
+        # Start the calculations #
+        #------------------------#
+        
+        check_and_adjust_polar_latitude(self.lat, self.lng)
+
+        # UTC, julian day and local time setup --->
+        if (self.online) and (not self.tz_str):
+            self._fetch_tz_from_geonames()
+
+        # Local time to UTC
+        local_time = pytz.timezone(self.tz_str)
+        naive_datetime = datetime(self.year, self.month, self.day, self.hour, self.minute, 0)
+        local_datetime = local_time.localize(naive_datetime, is_dst=None)
+        utc_object = local_datetime.astimezone(pytz.utc)
+        self.iso_formatted_utc_datetime = utc_object.isoformat()
+
+        # ISO formatted local datetime
+        self.iso_formatted_local_datetime = local_datetime.isoformat()
+
+        # Julian day calculation
+        utc_float_hour_with_minutes = utc_object.hour + (utc_object.minute / 60)
+        self.julian_day = float(swe.julday(utc_object.year, utc_object.month, utc_object.day, utc_float_hour_with_minutes))
+        # <--- UTC, julian day and local time setup
+
         self._planets_degrees_lister()
         self._planets()
         self._houses()
-
         self._planets_in_houses()
         self._lunar_phase_calc()
 
     def __str__(self) -> str:
-        return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
+        return f"Astrological data for: {self.name}, {self.iso_formatted_utc_datetime} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
 
     def __repr__(self) -> str:
-        return f"Astrological data for: {self.name}, {self.utc} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
+        return f"Astrological data for: {self.name}, {self.iso_formatted_utc_datetime} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
 
     def __getitem__(self, item):
         return getattr(self, item)
@@ -301,32 +346,7 @@ class AstrologicalSubject:
         self.lat = float(self.city_data["lat"])
         self.tz_str = self.city_data["timezonestr"]
 
-        self._check_if_poles()
-
-    def _get_utc(self) -> None:
-        """Converts local time to utc time."""
-
-        # If the coordinates are not set, get them from geonames.
-        if (self.online) and (not self.tz_str):
-            self._fetch_tz_from_geonames()
-
-        # If UTC datetime is provided, then use it directly
-        if (self.utc_datetime):
-            self.utc = self.utc_datetime
-            return
-
-        local_time = pytz.timezone(self.tz_str)
-
-        naive_datetime = datetime(self.year, self.month, self.day, self.hour, self.minute, 0)
-
-        local_datetime = local_time.localize(naive_datetime, is_dst=None)
-        self.utc = local_datetime.astimezone(pytz.utc)
-
-    def _get_jd(self) -> None:
-        """Calculates julian day from the utc time."""
-        self.utc_time = self.utc.hour + self.utc.minute / 60
-        self.local_time = self.hour + self.minute / 60
-        self.julian_day = float(swe.julday(self.utc.year, self.utc.month, self.utc.day, self.utc_time))
+        check_and_adjust_polar_latitude(self.lat, self.lng)
 
     def _houses(self) -> None:
         """
@@ -595,19 +615,6 @@ class AstrologicalSubject:
 
         self.lunar_phase = LunarPhaseModel(**lunar_phase_dictionary)
 
-    def _check_if_poles(self):
-        """
-            Utility function to check if the location is in the polar circle.
-            If it is, it sets the latitude to 66 or -66 degrees.
-        """
-        if self.lat > 66.0:
-            self.lat = 66.0
-            logging.info("Polar circle override for houses, using 66 degrees")
-
-        elif self.lat < -66.0:
-            self.lat = -66.0
-            logging.info("Polar circle override for houses, using -66 degrees")
-
     def json(self, dump=False, destination_folder: Union[str, None] = None, indent: Union[int, None] = None) -> str:
         """
         Dumps the Kerykeion object to a json string foramt,
@@ -666,4 +673,16 @@ if __name__ == "__main__":
 
     # With Morinus Houses
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", houses_system_identifier="M")
+    print(johnny.json(dump=True, indent=2))
+
+    # With True Geocentric Perspective
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="True Geocentric")
+    print(johnny.json(dump=True, indent=2))
+
+    # With Heliocentric Perspective
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="Heliocentric")
+    print(johnny.json(dump=True, indent=2))
+
+    # With Topocentric Perspective
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="Topocentric")
     print(johnny.json(dump=True, indent=2))

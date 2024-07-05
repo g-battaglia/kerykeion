@@ -18,3 +18,11 @@ Legend:
   - [ ] Implement Gauquelin Sector as House System mode (G).
 - [ ] Create new AstrologicalSubject argument for Position Mode (Geocentric, Heliocentric, Topocentric, etc).
 - [ ] Implement week day name.
+
+
+## V5
+- [ ] New structure based on the new AstrologicalSubjectModel and a factory class to create the objects in different ways:
+  - [ ] Online
+  - [ ] Offline
+  - [ ] With UTC ISO 8601 string
+  - [ ] For now at UTC time

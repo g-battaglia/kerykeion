@@ -33,6 +33,7 @@ from pathlib import Path
 from scour.scour import scourString
 from string import Template
 from typing import Union, List
+from datetime import datetime
 
 
 
@@ -1017,7 +1018,7 @@ class KerykeionChartSVG:
         li = 10
         offset = 0
 
-        out = '<g transform="translate(500,-20)">'
+        out = '<g transform="translate(510,-20)">'
         out += '<g transform="translate(140, -15)">'
         out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.user.name}:</text>'
         out += "</g>"
@@ -1108,7 +1109,7 @@ class KerykeionChartSVG:
         Returns:
             str: The SVG code for the grid of houses.
         """
-        out = '<g transform="translate(600,-20)">'
+        out = '<g transform="translate(610,-20)">'
 
         li = 10
         for i in range(12):
@@ -1126,8 +1127,10 @@ class KerykeionChartSVG:
         out += "</g>"
 
         if self.chart_type == "Synastry":
-            out += '<g transform="translate(840, -20)">'
+            out += '<!-- Synastry Houses -->'
+            out += '<g transform="translate(850, -20)">'
             li = 10
+
             for i in range(12):
                 if i < 9:
                     cusp = "&#160;&#160;" + str(i + 1)
@@ -1236,16 +1239,16 @@ class KerykeionChartSVG:
         if self.chart_type == "Natal" or self.chart_type == "ExternalNatal" or self.chart_type == "Synastry":
             td["bottomLeft0"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
             td["bottomLeft1"] = f"{self.user.houses_system_name}"
-            td["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.moon_phase_name}'
-            td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.user.lunar_phase.get("moon_phase", "")}'
-            td["bottomLeft4"] = ""
+            td["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.user.lunar_phase.get("moon_phase", "")}'
+            td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.moon_phase_name}'
+            td["bottomLeft4"] = f'{self.user.perspective_type}'
 
         else:
             td["bottomLeft0"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
             td["bottomLeft1"] = f"{self.user.houses_system_name}"
-            td["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
-            td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.t_user.lunar_phase.get("moon_phase", "")}'
-            td["bottomLeft4"] = ""
+            td["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.t_user.lunar_phase.get("moon_phase", "")}'
+            td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
+            td["bottomLeft4"] = f'{self.t_user.perspective_type}'
 
         # lunar phase
         deg = self.user.lunar_phase["degrees_between_s_m"]
@@ -1313,8 +1316,6 @@ class KerykeionChartSVG:
         else:
             td["stringLocation"] = self.location
 
-        td["stringDateTime"] = f"{self.user.year}-{self.user.month}-{self.user.day} {self.user.hour:02d}:{self.user.minute:02d}"
-
         if self.chart_type == "Synastry":
             td["stringLat"] = f"{self.t_user.name}: "
             td["stringLon"] = self.t_user.city
@@ -1378,6 +1379,12 @@ class KerykeionChartSVG:
         )
         td["makePlanetGrid"] = self._makePlanetGrid()
 
+        # Date time String
+        dt = datetime.fromisoformat(self.user.iso_formatted_local_datetime)
+        custom_format = dt.strftime('%Y-%-m-%-d %H:%M [%z]')  # Note the use of '-' to remove leading zeros
+        custom_format = custom_format[:-3] + ':' + custom_format[-3:]
+        td["stringDateTime"] = f"{custom_format}"
+
         return td
 
     def makeTemplate(self, minify: bool = False) -> str:
@@ -1420,7 +1427,7 @@ if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
     setup_logging(level="debug")
 
-    first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+    first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
     second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
     # Internal Natal Chart
@@ -1440,27 +1447,27 @@ if __name__ == "__main__":
     transits_chart.makeSVG()
     
     # Sidereal Birth Chart (Lahiri)
-    sidereal_subject = AstrologicalSubject("John Lennon Lahiri", 1940, 10, 9, 10, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+    sidereal_subject = AstrologicalSubject("John Lennon Lahiri", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
     sidereal_chart = KerykeionChartSVG(sidereal_subject)
     sidereal_chart.makeSVG()
 
     # Sidereal Birth Chart (Fagan-Bradley)
-    sidereal_subject = AstrologicalSubject("John Lennon Fagan-Bradley", 1940, 10, 9, 10, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY")
+    sidereal_subject = AstrologicalSubject("John Lennon Fagan-Bradley", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY")
     sidereal_chart = KerykeionChartSVG(sidereal_subject)
     sidereal_chart.makeSVG()
 
     # Sidereal Birth Chart (DeLuce)
-    sidereal_subject = AstrologicalSubject("John Lennon DeLuce", 1940, 10, 9, 10, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="DELUCE")
+    sidereal_subject = AstrologicalSubject("John Lennon DeLuce", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="DELUCE")
     sidereal_chart = KerykeionChartSVG(sidereal_subject)
     sidereal_chart.makeSVG()
 
     # Sidereal Birth Chart (J2000)
-    sidereal_subject = AstrologicalSubject("John Lennon J2000", 1940, 10, 9, 10, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="J2000")
+    sidereal_subject = AstrologicalSubject("John Lennon J2000", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="J2000")
     sidereal_chart = KerykeionChartSVG(sidereal_subject)
     sidereal_chart.makeSVG()
 
     # House System Morinus
-    morinus_house_subject = AstrologicalSubject("John Lennon - House System Morinus", 1940, 10, 9, 10, 30, "Liverpool", "GB", houses_system_identifier="M")
+    morinus_house_subject = AstrologicalSubject("John Lennon - House System Morinus", 1940, 10, 9, 18, 30, "Liverpool", "GB", houses_system_identifier="M")
     morinus_house_chart = KerykeionChartSVG(morinus_house_subject)
     morinus_house_chart.makeSVG()
 
@@ -1468,6 +1475,21 @@ if __name__ == "__main__":
     # from kerykeion.kr_types import HousesSystemIdentifier
     # from typing import get_args
     # for i in get_args(HousesSystemIdentifier):
-    #     alternatives_house_subject = AstrologicalSubject(f"John Lennon - House System {i}", 1940, 10, 9, 10, 30, "Liverpool", "GB", houses_system=i)
+    #     alternatives_house_subject = AstrologicalSubject(f"John Lennon - House System {i}", 1940, 10, 9, 18, 30, "Liverpool", "GB", houses_system=i)
     #     alternatives_house_chart = KerykeionChartSVG(alternatives_house_subject)
     #     alternatives_house_chart.makeSVG()
+
+    # With True Geocentric Perspective
+    true_geocentric_subject = AstrologicalSubject("John Lennon - True Geocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", perspective_type="True Geocentric")
+    true_geocentric_chart = KerykeionChartSVG(true_geocentric_subject)
+    true_geocentric_chart.makeSVG()
+
+    # With Heliocentric Perspective
+    heliocentric_subject = AstrologicalSubject("John Lennon - Heliocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", perspective_type="Heliocentric")
+    heliocentric_chart = KerykeionChartSVG(heliocentric_subject)
+    heliocentric_chart.makeSVG()
+
+    # With Topocentric Perspective
+    topocentric_subject = AstrologicalSubject("John Lennon - Topocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", perspective_type="Topocentric")
+    topocentric_chart = KerykeionChartSVG(topocentric_subject)
+    topocentric_chart.makeSVG()
