@@ -105,7 +105,7 @@ If you omit the nation, it will be set to "GB" by default, but the value is not 
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
 # Set the type, it can be Natal, Synastry or Transit
@@ -121,7 +121,7 @@ Note: By default, the generated SVG file will be in the home directory! To chang
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-first = AstrologicalSubject("John Lennon", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
 # Synastry Chart
