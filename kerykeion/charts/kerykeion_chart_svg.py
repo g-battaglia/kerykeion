@@ -33,6 +33,7 @@ from pathlib import Path
 from scour.scour import scourString
 from string import Template
 from typing import Union, List
+from datetime import datetime
 
 
 
@@ -1315,8 +1316,6 @@ class KerykeionChartSVG:
         else:
             td["stringLocation"] = self.location
 
-        td["stringDateTime"] = f"{self.user.year}-{self.user.month}-{self.user.day} {self.user.hour:02d}:{self.user.minute:02d}"
-
         if self.chart_type == "Synastry":
             td["stringLat"] = f"{self.t_user.name}: "
             td["stringLon"] = self.t_user.city
@@ -1379,6 +1378,12 @@ class KerykeionChartSVG:
             self.water,
         )
         td["makePlanetGrid"] = self._makePlanetGrid()
+
+        # Date time String
+        dt = datetime.fromisoformat(self.user.iso_formatted_local_datetime)
+        custom_format = dt.strftime('%Y-%-m-%-d %H:%M [%z]')  # Note the use of '-' to remove leading zeros
+        custom_format = custom_format[:-3] + ':' + custom_format[-3:]
+        td["stringDateTime"] = f"{custom_format}"
 
         return td
 

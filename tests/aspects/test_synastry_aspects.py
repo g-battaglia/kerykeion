@@ -5,8 +5,8 @@ from .expected_synastry_aspects import EXPECTED_ALL_ASPECTS, EXPECTED_RELEVANT_A
 
 class TestNatalAspects:
     def setup_class(self):
-        self.first_subject = AstrologicalSubject("John", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
-        self.second_subject = AstrologicalSubject("Yoko", 1933, 2, 18, 18, 30, "Tokyo", "JP", geonames_username="century.boy")
+        self.first_subject = AstrologicalSubject("John", 1940, 10, 9, 10, 30, "Liverpool", "GB", geonames_username="century.boy")
+        self.second_subject = AstrologicalSubject("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP", geonames_username="century.boy")
 
         self.synastry_relevant_aspects = SynastryAspects(self.first_subject, self.second_subject).relevant_aspects
         self.synastry_all_aspects = SynastryAspects(self.first_subject, self.second_subject).all_aspects
@@ -47,3 +47,16 @@ class TestNatalAspects:
             assert round(self.synastry_all_aspects[i]["diff"], 2) == round(aspect["diff"], 2)
             assert self.synastry_all_aspects[i]["p1"] == aspect["p1"]
             assert self.synastry_all_aspects[i]["p2"] == aspect["p2"]
+
+
+if __name__ == "__main__":
+    from kerykeion.utilities import setup_logging
+
+    setup_logging(level="debug")
+
+    test_natal_aspects = TestNatalAspects()
+    test_natal_aspects.setup_class()
+
+    test_natal_aspects.test_relevant_aspects_length()
+    test_natal_aspects.test_relevant_aspects()
+    test_natal_aspects.test_all_aspects_length()
