@@ -8,6 +8,7 @@ import swisseph as swe
 import logging
 
 from datetime import datetime
+from functools import cached_property
 from kerykeion.fetch_geonames import FetchGeonames
 from kerykeion.kr_types import (
     KerykeionException,
@@ -309,6 +310,10 @@ class AstrologicalSubject:
         self._houses()
         self._planets_in_houses()
         self._lunar_phase_calc()
+
+        # Deprecated properties
+        self.utc_time
+        self.local_time
 
     def __str__(self) -> str:
         return f"Astrological data for: {self.name}, {self.iso_formatted_utc_datetime} UTC\nBirth location: {self.city}, Lat {self.lat}, Lon {self.lng}"
@@ -646,6 +651,41 @@ class AstrologicalSubject:
 
         return AstrologicalSubjectModel(**self.__dict__)
 
+    @cached_property
+    def utc_time(self) -> float:
+        """
+        Deprecated property, use iso_formatted_utc_datetime instead, will be removed in the future.
+        Returns the UTC time as a float.
+        """
+        dt = datetime.fromisoformat(self.iso_formatted_utc_datetime)
+        
+        # Extract the hours, minutes, and seconds
+        hours = dt.hour
+        minutes = dt.minute
+        seconds = dt.second + dt.microsecond / 1_000_000
+
+        # Convert time to float hours
+        float_time = hours + minutes / 60 + seconds / 3600
+
+        return float_time
+
+    @cached_property
+    def local_time(self) -> float:
+        """
+        Deprecated property, use iso_formatted_local_datetime instead, will be removed in the future.
+        Returns the local time as a float.
+        """
+        dt = datetime.fromisoformat(self.iso_formatted_local_datetime)
+        
+        # Extract the hours, minutes, and seconds
+        hours = dt.hour
+        minutes = dt.minute
+        seconds = dt.second + dt.microsecond / 1_000_000
+
+        # Convert time to float hours
+        float_time = hours + minutes / 60 + seconds / 3600
+
+        return float_time
 
 if __name__ == "__main__":
     import json
@@ -685,4 +725,7 @@ if __name__ == "__main__":
 
     # With Topocentric Perspective
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="Topocentric")
-    print(johnny.json(dump=True, indent=2))
+
+    # Print the utc time
+    print(johnny.utc_time)
+    print(johnny.local_time)
