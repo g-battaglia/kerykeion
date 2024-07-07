@@ -109,6 +109,10 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     # Lunar Phase
     lunar_phase: LunarPhaseModel
 
+    # Deprecated properties
+    utc_time: float
+    local_time: float
+
     # Lists
     # houses_list: list[KerykeionPointModel]
     # planets_list: list[KerykeionPointModel]

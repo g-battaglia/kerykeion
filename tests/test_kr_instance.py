@@ -19,6 +19,11 @@ class TestAstrologicalSubject:
             "tz_str": "America/Chicago",
             "zodiac_type": "Tropic",
             "julian_day": 2438189.7083333335,
+            # Deprecated -->
+            "local_time": 0.0,
+            "utc_time": 5.0,
+            # <-- Deprecated
+    
             "sun": {
                 "name": "Sun",
                 "quality": "Mutable",
