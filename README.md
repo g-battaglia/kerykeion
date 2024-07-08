@@ -199,7 +199,7 @@ And if you want to export it to a file:
 python3 your_script_name.py > file.txt
 ```
 
-## Other exeples of possibles usecase
+## Other examples of possible use cases:
 
 ```python
 # Get all aspects between two persons:
@@ -220,7 +220,8 @@ print(aspect_list[0])
 
 ## Ayanamsa (Sidereal Modes)
 
-You can set the zodiac type and the sidereal mode in the AstrologicalSubject class:
+By default, the zodiac type is set to Tropic (Tropical).
+You can set the zodiac type to Sidereal and the sidereal mode in the AstrologicalSubject class:
 
 ```python
 johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
@@ -232,6 +233,7 @@ Full list of supported sidereal modes [here](https://www.kerykeion.net/pydocs/ke
 
 ## Houses Systems
 
+By default, the houses system is set to Placidus.
 You can set the houses system in the AstrologicalSubject class:
 
 ```python
@@ -246,6 +248,7 @@ So far all the available houses system in the Swiss Ephemeris are supported but 
 
 ## Perspective Type
 
+By default, the perspective type is set to Apparent Geocentric (the most common standard for astrology).
 The perspective indicates the point of view from which the chart is calculated (Es. Apparent Geocentric, Heliocentric, etc.).
 You can set the perspective type in the AstrologicalSubject class:
 
@@ -256,6 +259,29 @@ johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US",
 More examples [here](https://www.kerykeion.net/docs/examples/perspective-type/).
 
 Full list of supported perspective types [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#PerspectiveType).
+
+## Alternative Initialization
+
+You can initialize the AstrologicalSubject from a **UTC** ISO 8601 string:
+
+```python
+subject = AstrologicalSubject.get_from_iso_utc_time(
+    "Johnny Depp", "1963-06-09T05:00:00Z", "Owensboro", "US")
+```
+
+Note : The default time zone is UTC, with Greenwich longitude and latitude.
+
+
+The default online/offline mode is set to offline, if you set it online the default latitude and longitude will be ignored and
+calculated from the city and nation. Remember to pass also the geonames_username parameter if you want to use the online mode, like this:
+
+```python
+from kerykeion.astrological_subject import AstrologicalSubject
+
+# Use the static method get_from_iso_utc_time to create an instance of AstrologicalSubject
+subject2 = AstrologicalSubject.get_from_iso_utc_time(
+    "Johnny Depp", "1963-06-09T05:00:00Z", "Owensboro", "US", online=True)
+```
 
 ## Documentation
 
