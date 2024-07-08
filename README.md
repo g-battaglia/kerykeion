@@ -70,8 +70,8 @@ Here's an example:
 from kerykeion import AstrologicalSubject
 
 # Create a kerykeion instance:
-# Args: Name, year, month, day, hour, minuts, city, nation(optional)
-kanye = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+# Args: Name, year, month, day, hour, minuts, city, nation
+kanye = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
 
 # Get the information about the sun in the chart:
 # (The position of the planets always starts at 0)
@@ -163,7 +163,7 @@ To print a report of all the data:
 ```python
 from kerykeion import Report, AstrologicalSubject
 
-kanye = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+kanye = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
 report = Report(kanye)
 report.print_report()
 
