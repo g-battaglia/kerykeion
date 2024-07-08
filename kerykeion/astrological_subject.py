@@ -36,6 +36,16 @@ DEFAULT_GEONAMES_USERNAME = "century.boy"
 DEFAULT_SIDEREAL_MODE = "FAGAN_BRADLEY"
 DEFAULT_HOUSES_SYSTEM = "P"
 PERSPECTIVE_TYPE = "Apparent Geocentric"
+GEONAMES_DEFAULT_USERNAME_WARNING = (
+    "\n********\n"
+    "NO GEONAMES USERNAME SET!\n"
+    "Using the default geonames username is not recommended, please set a custom one!\n"
+    "You can get one for free here:\n"
+    "https://www.geonames.org/login\n"
+    "Keep in mind that the default username is limited to 2000 requests per hour and is shared with everyone else using this library.\n"
+    "********"
+)
+
 NOW = datetime.now()
 
 
@@ -190,20 +200,7 @@ class AstrologicalSubject:
         # This message is set to encourage the user to set a custom geonames username
         if geonames_username is None and online:
             logging.warning(
-                "\n"
-                "********" +
-                "\n" +
-                "NO GEONAMES USERNAME SET!" +
-                "\n" +
-                "Using the default geonames username is not recommended, please set a custom one!" +
-                "\n" +
-                "You can get one for free here:" +
-                "\n" +
-                "https://www.geonames.org/login" +
-                "\n" +
-                "Keep in mind that the default username is limited to 2000 requests per hour and is shared with everyone else using this library." +
-                "\n" +
-                "********"
+
             )
 
             self.geonames_username = DEFAULT_GEONAMES_USERNAME
@@ -687,6 +684,71 @@ class AstrologicalSubject:
 
         return float_time
 
+
+    @staticmethod
+    def get_from_iso_utc_time(
+        name: str,
+        iso_utc_time: str, 
+        city: str = "Greenwich", 
+        nation: str = "GB",
+        tz_str: str = "Etc/GMT",
+        online: bool = False,
+        lng: Union[int, float] = 0,
+        lat: Union[int, float] = 51.5074,
+        geonames_username: str = DEFAULT_GEONAMES_USERNAME
+    ) -> "AstrologicalSubject":
+        """
+        Creates an AstrologicalSubject object from an iso formatted UTC time.
+        This method is offline by default, set online=True to fetch the timezone and coordinates from geonames.
+
+        Args:
+        - name (str): The name of the subject.
+        - iso_utc_time (str): The iso formatted UTC time.
+        - city (str, optional): City or location of birth. Defaults to "Greenwich".
+        - nation (str, optional): Nation of birth. Defaults to "GB".
+        - tz_str (str, optional): Timezone of the birth location. Defaults to "Etc/GMT".
+        - online (bool, optional): Sets if you want to use the online mode, which fetches the timezone and coordinates from geonames.
+            If you already have the coordinates and timezone, set this to False. Defaults to False.
+        - lng (Union[int, float], optional): Longitude of the birth location. Defaults to 0 (Greenwich, London).
+        - lat (Union[int, float], optional): Latitude of the birth location. Defaults to 51.5074 (Greenwich, London).
+        - geonames_username (str, optional): The username for the geonames API. Note: Change this to your own username to avoid rate limits!
+            You can get one for free here: https://www.geonames.org/login
+
+        Returns:
+        - AstrologicalSubject: The AstrologicalSubject object.
+        """
+        dt = datetime.fromisoformat(iso_utc_time)
+
+        if online == True:
+            if geonames_username == DEFAULT_GEONAMES_USERNAME:
+                logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
+
+            geonames = FetchGeonames(
+                city,
+                nation,
+                username=geonames_username,
+            )
+            city_data: dict[str, str] = geonames.get_serialized_data()
+            lng = float(city_data["lng"])
+            lat = float(city_data["lat"])
+
+        subject = AstrologicalSubject(
+            name=name,
+            year=dt.year,
+            month=dt.month,
+            day=dt.day,
+            hour=dt.hour,
+            minute=dt.minute,
+            city=city,
+            nation=city,
+            lng=lng,
+            lat=lat,
+            tz_str=tz_str,
+            online=False
+        )
+
+        return subject
+
 if __name__ == "__main__":
     import json
     from kerykeion.utilities import setup_logging
@@ -725,7 +787,3 @@ if __name__ == "__main__":
 
     # With Topocentric Perspective
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="Topocentric")
-
-    # Print the utc time
-    print(johnny.utc_time)
-    print(johnny.local_time)
