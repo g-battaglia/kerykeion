@@ -226,8 +226,8 @@ python3 your_script_name.py > file.txt
 # Get all aspects between two persons:
 
 from kerykeion import SynastryAspects, AstrologicalSubject
-first = AstrologicalSubject("Jack", 1990, 6, 15, 15, 15, "Roma")
-second = AstrologicalSubject("Jane", 1991, 10, 25, 21, 00, "Roma")
+first = AstrologicalSubject("Jack", 1990, 6, 15, 15, 15, "Roma", "IT")
+second = AstrologicalSubject("Jane", 1991, 10, 25, 21, 00, "Roma", "IT")
 
 name = SynastryAspects(first, second)
 aspect_list = name.get_relevant_aspects()
