@@ -299,7 +299,7 @@ calculated from the city and nation. Remember to pass also the geonames_username
 from kerykeion.astrological_subject import AstrologicalSubject
 
 # Use the static method get_from_iso_utc_time to create an instance of AstrologicalSubject
-subject2 = AstrologicalSubject.get_from_iso_utc_time(
+subject = AstrologicalSubject.get_from_iso_utc_time(
     "Johnny Depp", "1963-06-09T05:00:00Z", "Owensboro", "US", online=True)
 ```
 
