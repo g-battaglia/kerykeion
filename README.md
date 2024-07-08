@@ -58,9 +58,11 @@ Kerykeion is a _Python 3.9_ package, make sure you have _Python 3.9_ or above in
 pip3 install kerykeion
 ```
 
-## Usage
+## Basic Usage
 
-Here some examples:
+The basic usage of the library is to create an instance of the AstrologicalSubject class and then access the properties of the instance to get the astrological information about the subject.
+
+Here's an example:
 
 ```python
 
@@ -102,6 +104,23 @@ If you omit the nation, it will be set to "GB" by default, but the value is not 
 
 ## Generate a SVG Chart
 
+### Birth Chart
+
+```python
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
+
+
+birth_chart = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart_svg = KerykeionChartSVG(birth_chart)
+
+birth_chart_svg.makeSVG()
+```
+
+The SVG file will be saved in the home directory.
+![John Lennon Birth Chart](https://www.kerykeion.net/assets/img/examples/birth-chart.svg)
+
+### Synastry Chart
+
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
@@ -116,7 +135,9 @@ synastry_chart.makeSVG()
 
 ![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/assets/img/examples/synastry-chart.svg)
 
-Note: By default, the generated SVG file will be in the home directory! To change the destination directory:
+### Change the output directory
+
+By default the output directory is the home directory, you can change it by passing the new_output_directory parameter to the KerykeionChartSVG class:
 
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
@@ -124,7 +145,7 @@ from kerykeion import AstrologicalSubject, KerykeionChartSVG
 first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
-# Synastry Chart
+# Set the output directory to the current directory
 synastry_chart = KerykeionChartSVG(first, "Synastry", second, new_output_directory=".")
 synastry_chart.makeSVG()
 ```
@@ -270,7 +291,6 @@ subject = AstrologicalSubject.get_from_iso_utc_time(
 ```
 
 Note : The default time zone is UTC, with Greenwich longitude and latitude.
-
 
 The default online/offline mode is set to offline, if you set it online the default latitude and longitude will be ignored and
 calculated from the city and nation. Remember to pass also the geonames_username parameter if you want to use the online mode, like this:
