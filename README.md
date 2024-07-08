@@ -110,7 +110,7 @@ If you omit the nation, it will be set to "GB" by default, but the value is not 
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
 
-birth_chart = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta")
+birth_chart = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
 birth_chart_svg = KerykeionChartSVG(birth_chart)
 
 birth_chart_svg.makeSVG()
