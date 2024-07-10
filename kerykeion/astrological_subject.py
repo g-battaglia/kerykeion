@@ -34,8 +34,9 @@ from typing import Union, get_args
 
 DEFAULT_GEONAMES_USERNAME = "century.boy"
 DEFAULT_SIDEREAL_MODE = "FAGAN_BRADLEY"
-DEFAULT_HOUSES_SYSTEM = "P"
-PERSPECTIVE_TYPE = "Apparent Geocentric"
+DEFAULT_HOUSES_SYSTEM_IDENTIFIER = "P"
+DEFAULT_ZODIAC_TYPE = "Tropic"
+DEFAULT_PERSPECTIVE_TYPE = "Apparent Geocentric"
 GEONAMES_DEFAULT_USERNAME_WARNING = (
     "\n********\n"
     "NO GEONAMES USERNAME SET!\n"
@@ -164,12 +165,12 @@ class AstrologicalSubject:
         lat: Union[int, float, None] = None,
         tz_str: Union[str, None] = None,
         geonames_username: Union[str, None] = None,
-        zodiac_type: ZodiacType = "Tropic",
+        zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
         online: bool = True,
         disable_chiron: bool = False,
         sidereal_mode: Union[SiderealMode, None] = None,
-        houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM,
-        perspective_type: PerspectiveType = PERSPECTIVE_TYPE
+        houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
+        perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE
     ) -> None:
         logging.debug("Starting Kerykeion")
 
@@ -695,7 +696,13 @@ class AstrologicalSubject:
         online: bool = False,
         lng: Union[int, float] = 0,
         lat: Union[int, float] = 51.5074,
-        geonames_username: str = DEFAULT_GEONAMES_USERNAME
+        geonames_username: str = DEFAULT_GEONAMES_USERNAME,
+        zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
+        disable_chiron: bool = False,
+        sidereal_mode: Union[SiderealMode, None] = None,
+        houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
+        perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE
+        
     ) -> "AstrologicalSubject":
         """
         Creates an AstrologicalSubject object from an iso formatted UTC time.
@@ -713,6 +720,18 @@ class AstrologicalSubject:
         - lat (Union[int, float], optional): Latitude of the birth location. Defaults to 51.5074 (Greenwich, London).
         - geonames_username (str, optional): The username for the geonames API. Note: Change this to your own username to avoid rate limits!
             You can get one for free here: https://www.geonames.org/login
+        - zodiac_type (ZodiacType, optional): The zodiac type to use. Defaults to "Tropic".
+        - disable_chiron (bool, optional): Disables the calculation of Chiron. Defaults to False.
+            Chiron calculation can create some issues with the Swiss Ephemeris when the date is too far in the past.
+        - sidereal_mode (SiderealMode, optional): Also known as Ayanamsa.
+            The mode to use for the sidereal zodiac, according to the Swiss Ephemeris.
+            Defaults to None.
+            Available modes are visible in the SiderealMode Literal.
+        - houses_system_identifier (HousesSystemIdentifier, optional): The system to use for the calculation of the houses.
+            Defaults to "P" (Placidus).
+            Available systems are visible in the HousesSystemIdentifier Literal.
+        - perspective_type (PerspectiveType, optional): The perspective to use for the calculation of the chart.
+            Defaults to "Apparent Geocentric".
 
         Returns:
         - AstrologicalSubject: The AstrologicalSubject object.
@@ -728,6 +747,7 @@ class AstrologicalSubject:
                 nation,
                 username=geonames_username,
             )
+
             city_data: dict[str, str] = geonames.get_serialized_data()
             lng = float(city_data["lng"])
             lat = float(city_data["lat"])
@@ -744,7 +764,13 @@ class AstrologicalSubject:
             lng=lng,
             lat=lat,
             tz_str=tz_str,
-            online=False
+            online=False,
+            geonames_username=geonames_username,
+            zodiac_type=zodiac_type,
+            disable_chiron=disable_chiron,
+            sidereal_mode=sidereal_mode,
+            houses_system_identifier=houses_system_identifier,
+            perspective_type=perspective_type
         )
 
         return subject
