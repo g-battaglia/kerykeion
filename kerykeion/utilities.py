@@ -356,7 +356,7 @@ def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
     return result
 
 
-def check_and_adjust_polar_latitude(latitude: float, longitude: float) -> bool:
+def check_and_adjust_polar_latitude(latitude: float) -> float:
     """
         Utility function to check if the location is in the polar circle.
         If it is, it sets the latitude to 66 or -66 degrees.
@@ -368,3 +368,5 @@ def check_and_adjust_polar_latitude(latitude: float, longitude: float) -> bool:
     elif latitude < -66.0:
         latitude = -66.0
         logging.info("Polar circle override for houses, using -66 degrees")
+
+    return latitude
