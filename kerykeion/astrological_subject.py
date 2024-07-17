@@ -280,7 +280,7 @@ class AstrologicalSubject:
         # Start the calculations #
         #------------------------#
         
-        check_and_adjust_polar_latitude(self.lat, self.lng)
+        self.lat = check_and_adjust_polar_latitude(self.lat)
 
         # UTC, julian day and local time setup --->
         if (self.online) and (not self.tz_str):
@@ -347,7 +347,7 @@ class AstrologicalSubject:
         self.lat = float(self.city_data["lat"])
         self.tz_str = self.city_data["timezonestr"]
 
-        check_and_adjust_polar_latitude(self.lat, self.lng)
+        self.lat = check_and_adjust_polar_latitude(self.lat)
 
     def _houses(self) -> None:
         """
