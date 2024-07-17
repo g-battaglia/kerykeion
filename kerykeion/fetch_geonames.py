@@ -79,12 +79,11 @@ class FetchGeonames:
 
         params = {
             "q": city_name,
-            "contry": country_code,
+            "country": country_code,
             "username": self.username,
             "maxRows": 1,
             "style": "SHORT",
-            "featureClass": "A",
-            "featureClass": "P",
+            "featureClass": ["A", "P"],
         }
 
         prepared_request = Request("GET", self.base_url, params=params).prepare()
