@@ -200,9 +200,7 @@ class AstrologicalSubject:
 
         # This message is set to encourage the user to set a custom geonames username
         if geonames_username is None and online:
-            logging.warning(
-
-            )
+            logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
 
             self.geonames_username = DEFAULT_GEONAMES_USERNAME
 
