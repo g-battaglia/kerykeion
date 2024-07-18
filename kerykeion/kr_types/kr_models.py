@@ -7,7 +7,7 @@
 from typing import Union, Optional
 from pydantic import BaseModel
 
-from kerykeion.kr_types import LunarPhaseEmoji, LunarPhaseName, Planet, Houses, Quality, Element, Sign, ZodiacType, SignNumbers, HouseNumbers, PointType, SiderealMode, HousesSystemIdentifier
+from kerykeion.kr_types import LunarPhaseEmoji, LunarPhaseName, Planet, Houses, Quality, Element, Sign, ZodiacType, SignNumbers, HouseNumbers, PointType, SiderealMode, HousesSystemIdentifier, Houses
 
 class SubscriptableBaseModel(BaseModel):
     """
@@ -47,7 +47,7 @@ class KerykeionPointModel(SubscriptableBaseModel):
     abs_pos: float
     emoji: str
     point_type: PointType
-    house: Optional[HouseNumbers] = None
+    house: Optional[Houses] = None
     retrograde: Optional[bool] = None
 
 
