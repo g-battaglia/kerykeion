@@ -3,7 +3,7 @@ from kerykeion.astrological_subject import DEFAULT_HOUSES_SYSTEM_IDENTIFIER, DEF
 from kerykeion.kr_types import EphemerisDictModel
 from kerykeion.kr_types import SiderealMode, HousesSystemIdentifier, PerspectiveType, ZodiacType
 from datetime import datetime, timedelta
-from typing import Literal
+from typing import Literal, Union
 import logging
 
 
@@ -49,7 +49,7 @@ class EphemerisDataFactory:
         is_dst: bool = False,
         disable_chiron: bool = False,
         zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
-        sidereal_mode: SiderealMode | None = None,
+        sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
         max_days: int = 730,
