@@ -218,11 +218,11 @@ class AstrologicalSubject:
             self.nation = "GB"
             logging.info("No nation specified, using GB as default")
 
-        if not self.lat:
+        if not self.lat and not self.online:
             self.lat = 51.5074
             logging.info("No latitude specified, using London as default")
 
-        if not self.lng:
+        if not self.lng and not self.online:
             self.lng = 0
             logging.info("No longitude specified, using London as default")
 
@@ -250,6 +250,7 @@ class AstrologicalSubject:
         elif self.perspective_type == "Topocentric":
             self._iflag += swe.FLG_TOPOCTR
             # geopos_is_set, for topocentric
+            self._fetch_and_set_tz_and_coordinates_from_geonames()
             swe.set_topo(self.lng, self.lat, 0)
         # <--- Chart Perspective check and setup
 
@@ -285,12 +286,12 @@ class AstrologicalSubject:
         #------------------------#
         # Start the calculations #
         #------------------------#
-        
-        self.lat = check_and_adjust_polar_latitude(self.lat)
 
         # UTC, julian day and local time setup --->
-        if (self.online) and (not self.tz_str):
-            self._fetch_tz_from_geonames()
+        if (self.online) and (not self.tz_str) and (not self.lat) and (not self.lng):
+            self._fetch_and_set_tz_and_coordinates_from_geonames()
+        
+        self.lat = check_and_adjust_polar_latitude(self.lat)
 
         # Local time to UTC
         local_time = pytz.timezone(self.tz_str)
@@ -334,7 +335,7 @@ class AstrologicalSubject:
     def get(self, item, default=None):
         return getattr(self, item, default)
 
-    def _fetch_tz_from_geonames(self) -> None:
+    def _fetch_and_set_tz_and_coordinates_from_geonames(self) -> None:
         """Gets the nearest time zone for the calculation"""
         logging.info("Fetching timezone/coordinates from geonames")
 
@@ -357,8 +358,6 @@ class AstrologicalSubject:
         self.lng = float(self.city_data["lng"])
         self.lat = float(self.city_data["lat"])
         self.tz_str = self.city_data["timezonestr"]
-
-        self.lat = check_and_adjust_polar_latitude(self.lat)
 
     def _houses(self) -> None:
         """
