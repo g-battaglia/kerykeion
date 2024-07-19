@@ -120,6 +120,11 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     # planets_degrees_ut: list[float]
     # houses_degree_ut: list[float]
 
+class EphemerisDictModel(BaseModel):
+    date: str
+    planets: list[KerykeionPointModel]
+    houses: list[KerykeionPointModel]
+
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
 
