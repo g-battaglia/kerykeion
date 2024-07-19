@@ -122,6 +122,8 @@ class EphemerisDataFactory:
                 lng=self.lng,
                 lat=self.lat,
                 tz_str=self.tz_str,
+                city="Placeholder",
+                nation="Placeholder",
                 online=False,
                 disable_chiron=self.disable_chiron,
                 zodiac_type=self.zodiac_type,

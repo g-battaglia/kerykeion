@@ -14,3 +14,4 @@ from .aspects import SynastryAspects, NatalAspects
 from .report import Report
 from .settings import KerykeionSettingsModel, get_settings
 from .enums import Planets, Aspects, Signs
+from .ephemeris_data import EphemerisDataFactory
