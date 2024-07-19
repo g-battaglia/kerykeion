@@ -87,6 +87,9 @@ class AstrologicalSubject:
     - perspective_type (PerspectiveType, optional): The perspective to use for the calculation of the chart.
         Defaults to "Apparent Geocentric".
         Available perspectives are visible in the PerspectiveType Literal.
+    - is_dst (Union[None, bool], optional): Specify if the time is in DST. Defaults to None.
+        By default (None), the library will try to guess if the time is in DST or not and raise an AmbiguousTimeError
+        if it can't guess. If you know the time is in DST, set this to True, if you know it's not, set it to False.
     """
 
     # Defined by the user
@@ -108,6 +111,7 @@ class AstrologicalSubject:
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
     perspective_type: PerspectiveType
+    is_dst: Union[None, bool]
 
     # Generated internally
     city_data: dict[str, str]
@@ -170,7 +174,8 @@ class AstrologicalSubject:
         disable_chiron: bool = False,
         sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
-        perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE
+        perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
+        is_dst: Union[None, bool] = None
     ) -> None:
         logging.debug("Starting Kerykeion")
 
@@ -193,6 +198,7 @@ class AstrologicalSubject:
         self.sidereal_mode = sidereal_mode
         self.houses_system_identifier = houses_system_identifier
         self.perspective_type = perspective_type
+        self.is_dst = is_dst
 
         #---------------#
         # General setup #
@@ -289,7 +295,12 @@ class AstrologicalSubject:
         # Local time to UTC
         local_time = pytz.timezone(self.tz_str)
         naive_datetime = datetime(self.year, self.month, self.day, self.hour, self.minute, 0)
-        local_datetime = local_time.localize(naive_datetime, is_dst=None)
+
+        try:
+            local_datetime = local_time.localize(naive_datetime, is_dst=self.is_dst)
+        except pytz.exceptions.AmbiguousTimeError:
+            raise KerykeionException("Ambiguous time! Please specify if the time is in DST or not with the is_dst argument.")
+
         utc_object = local_datetime.astimezone(pytz.utc)
         self.iso_formatted_utc_datetime = utc_object.isoformat()
 
