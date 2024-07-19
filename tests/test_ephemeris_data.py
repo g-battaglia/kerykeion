@@ -8,7 +8,7 @@ def test_ephemeris_data():
     factory = EphemerisDataFactory(
         start_datetime=start_date,
         end_datetime=end_date,
-        step_type="minutes",
+        step_type="days",
         step=1,
         lat=37.9838,
         lng=23.7275,
