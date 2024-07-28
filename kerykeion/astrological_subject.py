@@ -250,7 +250,8 @@ class AstrologicalSubject:
         elif self.perspective_type == "Topocentric":
             self._iflag += swe.FLG_TOPOCTR
             # geopos_is_set, for topocentric
-            self._fetch_and_set_tz_and_coordinates_from_geonames()
+            if (self.online) and (not self.tz_str) and (not self.lat) and (not self.lng):
+                self._fetch_and_set_tz_and_coordinates_from_geonames()
             swe.set_topo(self.lng, self.lat, 0)
         # <--- Chart Perspective check and setup
 
