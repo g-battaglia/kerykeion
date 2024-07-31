@@ -52,9 +52,17 @@ class NatalAspects:
         for first in range(len(active_points_list)):
             # Generates the aspects list without repetitions
             for second in range(first + 1, len(active_points_list)):
-                verdict, name, orbit, aspect_degrees, aid, diff = get_aspect_from_two_points(
+                aspect = get_aspect_from_two_points(
                     self.aspects_settings, active_points_list[first]["abs_pos"], active_points_list[second]["abs_pos"]
                 )
+
+                verdict = aspect["verdict"]
+                name = aspect["name"]
+                orbit = aspect["orbit"]
+                aspect_degrees = aspect["aspect_degrees"]
+                aid = aspect["aid"]
+                diff = aspect["diff"]
+                
 
                 if verdict == True:
                     d_asp = {

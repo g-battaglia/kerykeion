@@ -60,11 +60,19 @@ class SynastryAspects(NatalAspects):
         for first in range(len(first_active_points_list)):
             # Generates the aspects list whitout repetitions
             for second in range(len(second_active_points_list)):
-                verdict, name, orbit, aspect_degrees, aid, diff = get_aspect_from_two_points(
+                aspect = get_aspect_from_two_points(
                     self.aspects_settings,
                     first_active_points_list[first]["abs_pos"],
                     second_active_points_list[second]["abs_pos"],
                 )
+
+                verdict = aspect["verdict"]
+                name = aspect["name"]
+                orbit = aspect["orbit"]
+                aspect_degrees = aspect["aspect_degrees"]
+                aid = aspect["aid"]
+                diff = aspect["diff"]
+
 
                 if verdict == True:
                     d_asp = {
@@ -96,7 +104,7 @@ if __name__ == "__main__":
     setup_logging(level="debug")
 
     john = AstrologicalSubject("John", 1940, 10, 9, 18, 30, "Liverpool")
-    yoko = AstrologicalSubject("Yoko", 1933, 2, 18, 18, 30, "Tokyo")
+    yoko = AstrologicalSubject("Yoko", 1933, 2, 18, 18, 30, "Tokyo", "JP")
 
     synastry_aspects = SynastryAspects(john, yoko)
 
