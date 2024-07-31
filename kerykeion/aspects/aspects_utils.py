@@ -131,17 +131,18 @@ def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, i
         name = None
         distance = 0
         aspect_degrees = 0
-        color = None
         aid = None
 
-    return (
-        verdict,
-        name,
-        distance - aspect_degrees,
-        aspect_degrees,
-        aid,
-        diff,
-    )
+
+    return {
+        "verdict": verdict, 
+        "name": name,
+        "orbit": distance - aspect_degrees,
+        "distance": distance - aspect_degrees,
+        "aspect_degrees": aspect_degrees,
+        "aid": aid,
+        "diff": diff
+    }
 
 
 def planet_id_decoder(planets_settings: dict, name: str):
