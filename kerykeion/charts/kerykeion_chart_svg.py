@@ -915,30 +915,36 @@ class KerykeionChartSVG:
 
     def _makeAspectGrid(self, r):
         out = ""
-        style = "stroke:%s; stroke-width: 1px; stroke-opacity:.6; fill:none" % (self.chart_colors_settings["paper_0"])
+        style = f"stroke:{self.chart_colors_settings['paper_0']}; stroke-width: 1px; stroke-opacity:.6; fill:none"
         xindent = 380
         yindent = 468
         box = 14
-        revr = list(range(len(self.available_planets_setting)))
-        revr.reverse()
         counter = 0
-        for a in revr:
+
+        actual_planets = []
+        for planet in self.available_planets_setting:
+            if planet.is_active:
+                actual_planets.append(planet)
+
+        first_iteration_revers_planets = actual_planets[::-1]
+        for index, a in enumerate(first_iteration_revers_planets):
             counter += 1
             out += f'<rect x="{xindent}" y="{yindent}" width="{box}" height="{box}" style="{style}"/>'
-            out += f'<use transform="scale(0.4)" x="{(xindent+2)*2.5}" y="{(yindent+1)*2.5}" xlink:href="#{self.available_planets_setting[a]["name"]}" />'
+            out += f'<use transform="scale(0.4)" x="{(xindent+2)*2.5}" y="{(yindent+1)*2.5}" xlink:href="#{a["name"]}" />'
 
             xindent = xindent + box
             yindent = yindent - box
-            revr2 = list(range(a))
-            revr2.reverse()
+            
             xorb = xindent
             yorb = yindent + box
-            for b in revr2:
-                out += f'<rect x="{xorb}" y="{yorb}" width="{box}" height="{box}" style="{style}"/>'
 
+            second_iteration_revers_planets = first_iteration_revers_planets[index+1:]
+            for b in second_iteration_revers_planets:
+                out += f'<rect x="{xorb}" y="{yorb}" width="{box}" height="{box}" style="{style}"/>'
                 xorb = xorb + box
+
                 for element in self.aspects_list:
-                    if (element["p1"] == a and element["p2"] == b) or (element["p1"] == b and element["p2"] == a):
+                    if (element["p1"] == a["id"] and element["p2"] == b['id']) or (element["p1"] == b["id"] and element["p2"] == a["id"]):
                         out += f'<use  x="{xorb-box+1}" y="{yorb+1}" xlink:href="#orb{element["aspect_degrees"]}" />'
 
         return out
