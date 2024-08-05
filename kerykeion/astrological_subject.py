@@ -6,6 +6,7 @@
 import pytz
 import swisseph as swe
 import logging
+import warnings
 
 from datetime import datetime
 from functools import cached_property
@@ -75,8 +76,7 @@ class AstrologicalSubject:
         You can get one for free here: https://www.geonames.org/login
     - online (bool, optional): Sets if you want to use the online mode, which fetches the timezone and coordinates from geonames.
         If you already have the coordinates and timezone, set this to False. Defaults to True.
-    - disable_chiron_and_lilith: boolean representing if Chiron and Lilith should be disabled. Default is False.
-        Chiron calculation can create some issues with the Swiss Ephemeris when the date is too far in the past.
+    - disable_chiron: Deprecated, use disable_chiron_and_lilith instead.
     - sidereal_mode (SiderealMode, optional): Also known as Ayanamsa. 
         The mode to use for the sidereal zodiac, according to the Swiss Ephemeris.
         Defaults to "FAGAN_BRADLEY".
@@ -90,6 +90,8 @@ class AstrologicalSubject:
     - is_dst (Union[None, bool], optional): Specify if the time is in DST. Defaults to None.
         By default (None), the library will try to guess if the time is in DST or not and raise an AmbiguousTimeError
         if it can't guess. If you know the time is in DST, set this to True, if you know it's not, set it to False.
+    - disable_chiron_and_lilith (bool, optional): boolean representing if Chiron and Lilith should be disabled. Default is False.
+        Chiron calculation can create some issues with the Swiss Ephemeris when the date is too far in the past.
     """
 
     # Defined by the user
@@ -157,6 +159,7 @@ class AstrologicalSubject:
     houses_degree_ut: list[float]
 
     # Enable or disable features
+    disable_chiron: bool # Deprecated
     disable_chiron_and_lilith: bool
 
     def __init__(
@@ -175,13 +178,28 @@ class AstrologicalSubject:
         geonames_username: Union[str, None] = None,
         zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
         online: bool = True,
-        disable_chiron_and_lilith: bool = False,
+        disable_chiron: Union[None, bool] = None,
         sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
         is_dst: Union[None, bool] = None,
+        disable_chiron_and_lilith: bool = False
     ) -> None:
         logging.debug("Starting Kerykeion")
+
+        # Deprecation warnings --->
+        if disable_chiron is not None:
+            warnings.warn(
+                "The 'disable_chiron' argument is deprecated and will be removed in a future version. "
+                "Please use 'disable_chiron' instead.",
+                DeprecationWarning
+            )
+            
+            if disable_chiron_and_lilith:
+                raise ValueError("Cannot specify both 'disable_chiron' and 'disable_chiron_and_lilith'. Use 'disable_chiron_and_lilith' only.")
+        
+            self.disable_chiron_and_lilith = disable_chiron
+        # <--- Deprecation warnings
 
         self.name = name
         self.year = year
@@ -198,11 +216,12 @@ class AstrologicalSubject:
         self.online = online
         self.json_dir = Path.home()
         self.geonames_username = geonames_username
-        self.disable_chiron_and_lilith = disable_chiron_and_lilith
+        self.disable_chiron = disable_chiron
         self.sidereal_mode = sidereal_mode
         self.houses_system_identifier = houses_system_identifier
         self.perspective_type = perspective_type
         self.is_dst = is_dst
+        self.disable_chiron_and_lilith = disable_chiron_and_lilith
 
         #---------------#
         # General setup #
@@ -791,10 +810,10 @@ class AstrologicalSubject:
             online=False,
             geonames_username=geonames_username,
             zodiac_type=zodiac_type,
-            disable_chiron_and_lilith=disable_chiron_and_lilith,
             sidereal_mode=sidereal_mode,
             houses_system_identifier=houses_system_identifier,
-            perspective_type=perspective_type
+            perspective_type=perspective_type,
+            disable_chiron_and_lilith=disable_chiron_and_lilith
         )
 
         return subject
@@ -813,7 +832,7 @@ if __name__ == "__main__":
     print(johnny.chiron)
 
     # With Chiron disabled
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", disable_chiron_and_lilith=True)
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", disable_chiron=True)
     print(json.loads(johnny.json(dump=True)))
 
     print('\n')
@@ -839,5 +858,5 @@ if __name__ == "__main__":
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="Topocentric")
 
     # Test Mean Lilith
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", disable_chiron_and_lilith=False)
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", disable_chiron_and_lilith=True)
     print(johnny.mean_lilith)
