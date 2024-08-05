@@ -15,6 +15,7 @@ class Planets(Enum):
     CHIRON = "Chiron"
     TRUE_NODE = "True_Node"
     MEAN_NODE = "Mean_Node"
+    MEAN_LILITH = "Mean_Lilith"
 
 
 class Aspects(Enum):
