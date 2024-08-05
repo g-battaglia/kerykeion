@@ -92,6 +92,7 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
 
     # Optional Planets:
     chiron: Union[KerykeionPointModel, None]
+    mean_lilith: Union[KerykeionPointModel, None]
 
     # Houses
     first_house: KerykeionPointModel

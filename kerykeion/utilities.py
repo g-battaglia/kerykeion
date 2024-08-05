@@ -35,6 +35,8 @@ def get_number_from_name(name: Planet) -> int:
         return 11
     elif name == "Chiron":
         return 15
+    elif name == "Mean_Lilith":
+        return 12
     else:
         raise KerykeionException(f"Error in getting number from name! Name: {name}")
 

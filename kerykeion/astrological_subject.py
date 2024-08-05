@@ -75,7 +75,7 @@ class AstrologicalSubject:
         You can get one for free here: https://www.geonames.org/login
     - online (bool, optional): Sets if you want to use the online mode, which fetches the timezone and coordinates from geonames.
         If you already have the coordinates and timezone, set this to False. Defaults to True.
-    - disable_chiron (bool, optional): Disables the calculation of Chiron. Defaults to False.
+    - disable_chiron_and_lilith: boolean representing if Chiron and Lilith should be disabled. Default is False.
         Chiron calculation can create some issues with the Swiss Ephemeris when the date is too far in the past.
     - sidereal_mode (SiderealMode, optional): Also known as Ayanamsa. 
         The mode to use for the sidereal zodiac, according to the Swiss Ephemeris.
@@ -99,15 +99,15 @@ class AstrologicalSubject:
     day: int
     hour: int
     minute: int
-    city: str
-    nation: str
-    lng: Union[int, float]
-    lat: Union[int, float]
-    tz_str: str
-    geonames_username: str
+    city: Union[str, None]
+    nation: Union[str, None]
+    lng: Union[int, float, None]
+    lat: Union[int, float, None]
+    tz_str: Union[str, None]
+    geonames_username: Union[str, None]
     online: bool
     zodiac_type: ZodiacType
-    sidereal_mode: SiderealMode
+    sidereal_mode: Union[SiderealMode, None]
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
     perspective_type: PerspectiveType
@@ -134,6 +134,7 @@ class AstrologicalSubject:
     true_node: KerykeionPointModel
     mean_node: KerykeionPointModel
     chiron: Union[KerykeionPointModel, None]
+    mean_lilit: Union[KerykeionPointModel, None]
 
     # Houses
     first_house: KerykeionPointModel
@@ -155,6 +156,9 @@ class AstrologicalSubject:
     planets_degrees_ut: list[float]
     houses_degree_ut: list[float]
 
+    # Enable or disable features
+    disable_chiron_and_lilith: bool
+
     def __init__(
         self,
         name="Now",
@@ -171,11 +175,11 @@ class AstrologicalSubject:
         geonames_username: Union[str, None] = None,
         zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
         online: bool = True,
-        disable_chiron: bool = False,
+        disable_chiron_and_lilith: bool = False,
         sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
-        is_dst: Union[None, bool] = None
+        is_dst: Union[None, bool] = None,
     ) -> None:
         logging.debug("Starting Kerykeion")
 
@@ -194,7 +198,7 @@ class AstrologicalSubject:
         self.online = online
         self.json_dir = Path.home()
         self.geonames_username = geonames_username
-        self.disable_chiron = disable_chiron
+        self.disable_chiron_and_lilith = disable_chiron_and_lilith
         self.sidereal_mode = sidereal_mode
         self.houses_system_identifier = houses_system_identifier
         self.perspective_type = perspective_type
@@ -456,11 +460,6 @@ class AstrologicalSubject:
         pluto_deg = swe.calc(self.julian_day, 9, self._iflag)[0][0]
         mean_node_deg = swe.calc(self.julian_day, 10, self._iflag)[0][0]
         true_node_deg = swe.calc(self.julian_day, 11, self._iflag)[0][0]
-        
-        if not self.disable_chiron:
-            chiron_deg = swe.calc(self.julian_day, 15, self._iflag)[0][0]
-        else:
-            chiron_deg = 0
 
         self.planets_degrees_ut = [
             sun_deg,
@@ -477,8 +476,17 @@ class AstrologicalSubject:
             true_node_deg,
         ]
         
-        if not self.disable_chiron:
+        if not self.disable_chiron_and_lilith:
+            chiron_deg = swe.calc(self.julian_day, 15, self._iflag)[0][0]
             self.planets_degrees_ut.append(chiron_deg)
+
+            mean_lilith_deg = swe.calc(self.julian_day, 12, self._iflag)[0][0]
+            self.planets_degrees_ut.append(mean_lilith_deg)
+
+        else:
+            self.chiron = None
+            self.mean_lilith = None
+
 
     def _planets(self) -> None:
         """Defines body positon in signs and information and
@@ -499,10 +507,14 @@ class AstrologicalSubject:
         self.mean_node = calculate_position(self.planets_degrees_ut[10], "Mean_Node", point_type=point_type)
         self.true_node = calculate_position(self.planets_degrees_ut[11], "True_Node", point_type=point_type)
         
-        if not self.disable_chiron:
+        if not self.disable_chiron_and_lilith:
             self.chiron = calculate_position(self.planets_degrees_ut[12], "Chiron", point_type=point_type)
+            self.mean_lilith = calculate_position(self.planets_degrees_ut[13], "Mean_Lilith", point_type=point_type)
+
         else:
             self.chiron = None
+            self.mean_lilith = None
+
 
     def _planets_in_houses(self) -> None:
         """Calculates the house of the planet and updates
@@ -521,11 +533,6 @@ class AstrologicalSubject:
         self.mean_node.house = get_planet_house(self.planets_degrees_ut[10], self.houses_degree_ut)
         self.true_node.house = get_planet_house(self.planets_degrees_ut[11], self.houses_degree_ut)
 
-        if not self.disable_chiron:
-            self.chiron.house = get_planet_house(self.planets_degrees_ut[12], self.houses_degree_ut)
-        else:
-            self.chiron = None
-
         self.planets_list = [
             self.sun,
             self.moon,
@@ -541,8 +548,16 @@ class AstrologicalSubject:
             self.true_node,
         ]
         
-        if not self.disable_chiron:
+        if not self.disable_chiron_and_lilith:
+            self.chiron.house = get_planet_house(self.planets_degrees_ut[12], self.houses_degree_ut)
             self.planets_list.append(self.chiron)
+
+            self.mean_lilith.house = get_planet_house(self.planets_degrees_ut[13], self.houses_degree_ut)
+            self.planets_list.append(self.mean_lilith)
+
+        else:
+            self.chiron = None
+            self.mean_lilith = None
 
         # Check in retrograde or not:
         planets_ret = []
@@ -707,7 +722,7 @@ class AstrologicalSubject:
         lat: Union[int, float] = 51.5074,
         geonames_username: str = DEFAULT_GEONAMES_USERNAME,
         zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
-        disable_chiron: bool = False,
+        disable_chiron_and_lilith: bool = False,
         sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE
@@ -730,7 +745,7 @@ class AstrologicalSubject:
         - geonames_username (str, optional): The username for the geonames API. Note: Change this to your own username to avoid rate limits!
             You can get one for free here: https://www.geonames.org/login
         - zodiac_type (ZodiacType, optional): The zodiac type to use. Defaults to "Tropic".
-        - disable_chiron (bool, optional): Disables the calculation of Chiron. Defaults to False.
+        - disable_chiron_and_lilith: boolean representing if Chiron and Lilith should be disabled. Default is False.
             Chiron calculation can create some issues with the Swiss Ephemeris when the date is too far in the past.
         - sidereal_mode (SiderealMode, optional): Also known as Ayanamsa.
             The mode to use for the sidereal zodiac, according to the Swiss Ephemeris.
@@ -776,7 +791,7 @@ class AstrologicalSubject:
             online=False,
             geonames_username=geonames_username,
             zodiac_type=zodiac_type,
-            disable_chiron=disable_chiron,
+            disable_chiron_and_lilith=disable_chiron_and_lilith,
             sidereal_mode=sidereal_mode,
             houses_system_identifier=houses_system_identifier,
             perspective_type=perspective_type
@@ -798,7 +813,7 @@ if __name__ == "__main__":
     print(johnny.chiron)
 
     # With Chiron disabled
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", disable_chiron=True)
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", disable_chiron_and_lilith=True)
     print(json.loads(johnny.json(dump=True)))
 
     print('\n')
@@ -822,3 +837,7 @@ if __name__ == "__main__":
 
     # With Topocentric Perspective
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="Topocentric")
+
+    # Test Mean Lilith
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", disable_chiron_and_lilith=False)
+    print(johnny.mean_lilith)

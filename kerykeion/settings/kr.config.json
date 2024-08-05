@@ -38,7 +38,8 @@
         "Ic": "Ic",
         "True_Node": "North Node",
         "Mean_Node": "Mean Node",
-        "Chiron": "Chiron"
+        "Chiron": "Chiron",
+        "Mean_Lilith": "Lilith"
       }
     },
     "FR": {
@@ -79,7 +80,8 @@
         "Ic": "Ic",
         "True_Node": "Noeud Nord",
         "Mean_Node": "Noeud Moyen",
-        "Chiron": "Chiron"
+        "Chiron": "Chiron",
+        "Mean_Lilith": "Lilith"
       }
     },
     "PT": {
@@ -120,7 +122,8 @@
         "Ic": "Ic",
         "True_Node": "Nodo Norte",
         "Mean_Node": "Nodo Médio",
-        "Chiron": "Quíron"
+        "Chiron": "Quíron",
+        "Mean_Lilith": "Lilith"
       }
     },
     "IT": {
@@ -161,7 +164,8 @@
         "Ic": "Ic",
         "True_Node": "Nodo Nord",
         "Mean_Node": "Nodo Medio",
-        "Chiron": "Chirone"
+        "Chiron": "Chirone",
+        "Mean_Lilith": "Lilith"
       }
     },
     "CN": {
@@ -202,7 +206,8 @@
         "Ic": "下中天",
         "True_Node": "北交點",
         "Mean_Node": "平交點",
-        "Chiron": "凱龍星"
+        "Chiron": "凱龍星",
+        "Mean_Lilith": "黑月亮"
       }
     }
   },
@@ -471,6 +476,15 @@
       "element_points": 0,
       "related_zodiac_signs": [],
       "label": "Ic"
+    },
+    {
+      "id": 17,
+      "name": "Mean_Lilith",
+      "color": "#000",
+      "is_active": true,
+      "element_points": 0,
+      "related_zodiac_signs": [],
+      "label": "Mean_Lilith"
     }
   ],
   "chart_colors": {

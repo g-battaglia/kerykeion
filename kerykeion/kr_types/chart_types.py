@@ -42,7 +42,7 @@ class ChartTemplateDictionary(TypedDict):
     # Background color of the chart
     paper_color_1: str
     
-    # Planets colors, from 1 to 15 (0 is the Sun)
+    # Planets colors, from 0 to 16 (0 is the Sun)
     planets_color_0: str
     planets_color_1: str
     planets_color_2: str
@@ -59,6 +59,7 @@ class ChartTemplateDictionary(TypedDict):
     planets_color_13: str
     planets_color_14: str
     planets_color_15: str
+    planets_color_16: str
     
     # Zodiac colors, from 0 to 11 (0 is Aries)
     zodiac_color_0: str
