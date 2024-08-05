@@ -20,7 +20,7 @@ class EphemerisDataFactory:
     - lng: float representing the longitude. Default is 0.0005 (Greenwich).
     - tz_str: string representing the timezone. Default is "Etc/UTC".
     - is_dst: boolean representing if daylight saving time is active. Default is False.
-    - disable_chiron: boolean representing if Chiron should be disabled. Default is False.
+    - disable_chiron_and_lilith: boolean representing if Chiron and Lilith should be disabled. Default is False.
     - zodiac_type: ZodiacType object representing the zodiac type. Default is DEFAULT_ZODIAC_TYPE.
     - sidereal_mode: SiderealMode object representing the sidereal mode. Default is None.
     - houses_system_identifier: HousesSystemIdentifier object representing the houses system identifier. Default is DEFAULT_HOUSES_SYSTEM_IDENTIFIER.
@@ -47,7 +47,7 @@ class EphemerisDataFactory:
         lng: float = 0.0005,
         tz_str: str = "Etc/UTC",
         is_dst: bool = False,
-        disable_chiron: bool = False,
+        disable_chiron_and_lilith: bool = False,
         zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
         sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
@@ -64,7 +64,7 @@ class EphemerisDataFactory:
         self.lng = lng
         self.tz_str = tz_str
         self.is_dst = is_dst
-        self.disable_chiron = disable_chiron
+        self.disable_chiron_and_lilith = disable_chiron_and_lilith
         self.zodiac_type = zodiac_type
         self.sidereal_mode = sidereal_mode
         self.houses_system_identifier = houses_system_identifier
@@ -125,7 +125,7 @@ class EphemerisDataFactory:
                 city="Placeholder",
                 nation="Placeholder",
                 online=False,
-                disable_chiron=self.disable_chiron,
+                disable_chiron_and_lilith=self.disable_chiron_and_lilith,
                 zodiac_type=self.zodiac_type,
                 sidereal_mode=self.sidereal_mode,
                 houses_system_identifier=self.houses_system_identifier,
