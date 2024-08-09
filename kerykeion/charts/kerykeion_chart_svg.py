@@ -367,13 +367,22 @@ class KerykeionChartSVG:
                 ytext = sliceToY(0, (r - 8), t_text_offset) + 8
 
                 if self.chart_type == "Transit":
-                    path = path + '<text style="fill: #00f; fill-opacity: 0; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
-                    path = f"{path}<line x1='{str(t_x1)}' y1='{str(t_y1)}' x2='{str(t_x2)}' y2='{str(t_y2)}' style='stroke: {t_linecolor}; stroke-width: 2px; stroke-opacity:0;'/>"
+                    path += f'<g kr:node="HouseNumber">'
+                    path += f'<text style="fill: #00f; fill-opacity: 0; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
+                    path += f'</g>'
+
+                    path += f'<g kr:node="Cusp">'
+                    path += f"<line x1='{str(t_x1)}' y1='{str(t_y1)}' x2='{str(t_x2)}' y2='{str(t_y2)}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:0;'/>"
+                    path += f"</g>"
 
                 else:
-                    path = path + '<text style="fill: #00f; fill-opacity: .4; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
-                    path = f"{path}<line x1='{str(t_x1)}' y1='{str(t_y1)}' x2='{str(t_x2)}' y2='{str(t_y2)}' style='stroke: {t_linecolor}; stroke-width: 2px; stroke-opacity:.3;'/>"
+                    path += f'<g kr:node="HouseNumber">'
+                    path += f'<text style="fill: #00f; fill-opacity: .4; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
+                    path += f'</g>'
 
+                    path += f'<g kr:node="Cusp">'
+                    path += f"<line x1='{str(t_x1)}' y1='{str(t_y1)}' x2='{str(t_x2)}' y2='{str(t_y2)}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:.3;'/>"
+                    path += f'</g>'
 
             # if transit
             if self.chart_type == "Transit" or self.chart_type == "Synastry":
@@ -386,8 +395,14 @@ class KerykeionChartSVG:
 
             xtext = sliceToX(0, (r - dropin), text_offset) + dropin  # was 132
             ytext = sliceToY(0, (r - dropin), text_offset) + dropin  # was 132
-            path = f'{path}<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {linecolor}; stroke-width: 2px; stroke-dasharray:3,2; stroke-opacity:.4;"/>'
-            path = path + '<text style="fill: #f00; fill-opacity: .6; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
+
+            path += f'<g kr:node="Cusp">'
+            path += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {linecolor}; stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;"/>'
+            path += f'</g>'
+            
+            path += f'<g kr:node="HouseNumber">'
+            path += f'<text style="fill: #f00; fill-opacity: .6; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
+            path += f'</g>'
 
         return path
 
@@ -609,8 +624,12 @@ class KerykeionChartSVG:
                 
             else:
                 scale = 1
-            # output planet
-            output += f'<g transform="translate(-{12 * scale},-{12 * scale})"><g transform="scale({scale})"><use x="{planet_x * (1/scale)}" y="{planet_y * (1/scale)}" xlink:href="#{self.available_planets_setting[i]["name"]}" /></g></g>'
+
+            planet_details = self.user[self.available_planets_setting[i]["name"].lower()]
+
+            output += f'<g kr:node="ChartPoint" kr:house="{planet_details['house']}" kr:sign="{planet_details['sign']}" kr:slug="{planet_details['name']}" transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">'
+            output += f'<use x="{planet_x * (1/scale)}" y="{planet_y * (1/scale)}" xlink:href="#{self.available_planets_setting[i]["name"]}" />'
+            output += f'</g>'
 
         # make transit degut and display planets
         if self.chart_type == "Transit" or self.chart_type == "Synastry":
@@ -902,13 +921,12 @@ class KerykeionChartSVG:
     # Aspect and aspect grid functions for natal type charts.
     def _makeAspects(self, r, ar):
         out = ""
-        for element in self.aspects_list:
+        for aspect in self.aspects_list:
             out += draw_aspect_line(
                 r=r,
                 ar=ar,
-                degA=element["p1_abs_pos"],
-                degB=element["p2_abs_pos"],
-                color=self.aspects_settings[element["aid"]]["color"],
+                aspect_dict=aspect,
+                color=self.aspects_settings[aspect["aid"]]["color"],
                 seventh_house_degree_ut=self.user.seventh_house.abs_pos
             )
 
@@ -920,13 +938,12 @@ class KerykeionChartSVG:
 
         self.aspects_list = SynastryAspects(self.user, self.t_user, new_settings_file=self.new_settings_file).relevant_aspects
 
-        for element in self.aspects_list:
+        for aspect in self.aspects_list:
             out += draw_aspect_line(
                 r=r,
                 ar=ar,
-                degA=element["p1_abs_pos"],
-                degB=element["p2_abs_pos"],
-                color=self.aspects_settings[element["aid"]]["color"],
+                aspect_dict=aspect,
+                color=self.aspects_settings[aspect["aid"]]["color"],
                 seventh_house_degree_ut=self.user.seventh_house.abs_pos
             )
 

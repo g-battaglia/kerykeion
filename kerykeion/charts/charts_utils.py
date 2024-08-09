@@ -212,8 +212,7 @@ def convert_longitude_coordinate_to_string(coord: Union[int, float], east_label:
 def draw_aspect_line(
     r: Union[int, float],
     ar: Union[int, float],
-    degA: Union[int, float],
-    degB: Union[int, float],
+    aspect_dict: dict,
     color: str,
     seventh_house_degree_ut: Union[int, float],
 ) -> str:
@@ -222,8 +221,7 @@ def draw_aspect_line(
     Args:
         - r (Union[int, float]): The value of r.
         - ar (Union[int, float]): The value of ar.
-        - degA (Union[int, float]): The degree of A.
-        - degB (Union[int, float]): The degree of B.
+        - aspect_dict (dict): The aspect dictionary.
         - color (str): The color of the aspect.
         - seventh_house_degree_ut (Union[int, float]): The degree of the seventh house.
 
@@ -231,15 +229,18 @@ def draw_aspect_line(
         str: The SVG line element as a string.
     """
 
-    first_offset = (int(seventh_house_degree_ut) / -1) + int(degA)
+    first_offset = (int(seventh_house_degree_ut) / -1) + int(aspect_dict["p1_abs_pos"])
     x1 = sliceToX(0, ar, first_offset) + (r - ar)
     y1 = sliceToY(0, ar, first_offset) + (r - ar)
 
-    second_offset = (int(seventh_house_degree_ut) / -1) + int(degB)
+    second_offset = (int(seventh_house_degree_ut) / -1) + int(aspect_dict["p2_abs_pos"])
     x2 = sliceToX(0, ar, second_offset) + (r - ar)
     y2 = sliceToY(0, ar, second_offset) + (r - ar)
 
-    out = f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
+    out = ""
+    out += f'<g kr:node="Aspect" kr:to="{aspect_dict['p1_name']}" kr:tooriginaldegrees="{aspect_dict["p1_abs_pos"]}" kr:from="{aspect_dict["p2_name"]}" kr:fromoriginaldegrees="{aspect_dict["p2_abs_pos"]}">'
+    out += f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
+    out += f'</g>'
 
     return out
 
