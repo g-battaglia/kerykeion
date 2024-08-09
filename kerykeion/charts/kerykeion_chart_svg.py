@@ -27,7 +27,8 @@ from kerykeion.charts.charts_utils import (
     draw_degree_ring,
     draw_transit_ring,
     draw_first_circle,
-    draw_second_circle
+    draw_second_circle,
+    draw_aspect_grid
 )
 from pathlib import Path
 from scour.scour import scourString
@@ -913,42 +914,6 @@ class KerykeionChartSVG:
 
         return out
 
-    def _makeAspectGrid(self, r):
-        out = ""
-        style = f"stroke:{self.chart_colors_settings['paper_0']}; stroke-width: 1px; stroke-opacity:.6; fill:none"
-        xindent = 380
-        yindent = 468
-        box = 14
-        counter = 0
-
-        actual_planets = []
-        for planet in self.available_planets_setting:
-            if planet.is_active:
-                actual_planets.append(planet)
-
-        first_iteration_revers_planets = actual_planets[::-1]
-        for index, a in enumerate(first_iteration_revers_planets):
-            counter += 1
-            out += f'<rect x="{xindent}" y="{yindent}" width="{box}" height="{box}" style="{style}"/>'
-            out += f'<use transform="scale(0.4)" x="{(xindent+2)*2.5}" y="{(yindent+1)*2.5}" xlink:href="#{a["name"]}" />'
-
-            xindent = xindent + box
-            yindent = yindent - box
-            
-            xorb = xindent
-            yorb = yindent + box
-
-            second_iteration_revers_planets = first_iteration_revers_planets[index+1:]
-            for b in second_iteration_revers_planets:
-                out += f'<rect x="{xorb}" y="{yorb}" width="{box}" height="{box}" style="{style}"/>'
-                xorb = xorb + box
-
-                for element in self.aspects_list:
-                    if (element["p1"] == a["id"] and element["p2"] == b['id']) or (element["p1"] == b["id"] and element["p2"] == a["id"]):
-                        out += f'<use  x="{xorb-box+1}" y="{yorb+1}" xlink:href="#orb{element["aspect_degrees"]}" />'
-
-        return out
-
     # Aspect and aspect grid functions for transit type charts
     def _makeAspectsTransit(self, r, ar):
         out = ""
@@ -1214,7 +1179,7 @@ class KerykeionChartSVG:
             td["c3style"] = f'fill: {self.chart_colors_settings["paper_1"]}; fill-opacity:.8; stroke: {self.chart_colors_settings["zodiac_radix_ring_0"]}; stroke-width: 1px'
             
             td["makeAspects"] = self._makeAspects(r, (r - self.c3))
-            td["makeAspectGrid"] = self._makeAspectGrid(r)
+            td["makeAspectGrid"] = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list)
             td["makePatterns"] = self._makePatterns()
         
         td["chart_height"] = self.height

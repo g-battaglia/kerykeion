@@ -442,3 +442,51 @@ def draw_second_circle(r: Union[int, float], stroke_color: str, fill_color: str,
             raise KerykeionException("c2 is None")
 
         return f'<circle cx="{r}" cy="{r}" r="{r - c2}" style="fill: {fill_color}; fill-opacity:.2; stroke: {stroke_color}; stroke-opacity:.4; stroke-width: 1px" />'
+    
+
+def draw_aspect_grid(stroke_color: str, available_planets_list: list, aspects_list: list) -> str:
+    """
+    Draws the aspect grid.
+    
+    Args:
+        - stroke_color (str): The color of the stroke.
+        - available_planets_list (list): List of all the planets, they will be actually filtered to so if they have
+            the "is_active" key set to True inside the function to have the correct list of just the active planets.
+        - aspects_list (list): List of aspects.
+
+    """
+
+    out = ""
+    style = f"stroke:{stroke_color}; stroke-width: 1px; stroke-opacity:.6; fill:none"
+    xindent = 380
+    yindent = 468
+    box = 14
+    counter = 0
+
+    actual_planets = []
+    for planet in available_planets_list:
+        if planet.is_active:
+            actual_planets.append(planet)
+
+    first_iteration_revers_planets = actual_planets[::-1]
+    for index, a in enumerate(first_iteration_revers_planets):
+        counter += 1
+        out += f'<rect x="{xindent}" y="{yindent}" width="{box}" height="{box}" style="{style}"/>'
+        out += f'<use transform="scale(0.4)" x="{(xindent+2)*2.5}" y="{(yindent+1)*2.5}" xlink:href="#{a["name"]}" />'
+
+        xindent = xindent + box
+        yindent = yindent - box
+        
+        xorb = xindent
+        yorb = yindent + box
+
+        second_iteration_revers_planets = first_iteration_revers_planets[index+1:]
+        for b in second_iteration_revers_planets:
+            out += f'<rect x="{xorb}" y="{yorb}" width="{box}" height="{box}" style="{style}"/>'
+            xorb = xorb + box
+
+            for aspect in aspects_list:
+                if (aspect["p1"] == a["id"] and aspect["p2"] == b['id']) or (aspect["p1"] == b["id"] and aspect["p2"] == a["id"]):
+                    out += f'<use  x="{xorb-box+1}" y="{yorb+1}" xlink:href="#orb{aspect["aspect_degrees"]}" />'
+
+    return out
