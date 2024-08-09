@@ -494,121 +494,113 @@ def draw_aspect_grid(stroke_color: str, available_planets_list: list, aspects_li
 
 
 def draw_houses_cusps_and_text_number(
-        r: Union[int, float],
-        first_subject_houses_list_ut: list,
-        standard_house_cusp_color: str,
-        first_house_color: str,
-        tenth_house_color: str,
-        seventh_house_color: str,
-        fourth_house_color: str,
-        c1: Union[int, float],
-        c3: Union[int, float],
-        chart_type: ChartType,
-        second_subject_houses_list_ut: list = None,
-        transit_house_cusp_color: str = None,
-    ):
+    r: Union[int, float],
+    first_subject_houses_list_ut: list,
+    standard_house_cusp_color: str,
+    first_house_color: str,
+    tenth_house_color: str,
+    seventh_house_color: str,
+    fourth_house_color: str,
+    c1: Union[int, float],
+    c3: Union[int, float],
+    chart_type: ChartType,
+    second_subject_houses_list_ut: list = None,
+    transit_house_cusp_color: str = None,
+) -> str:
+    """
+    Draws the houses cusps and text numbers for a given chart type.
 
-    if chart_type == "Transit" or chart_type == "Synastry":
-         if (second_subject_houses_list_ut is None or transit_house_cusp_color is None):
+    Parameters:
+    - r: Radius of the chart.
+    - first_subject_houses_list_ut: List of house cusps for the first subject.
+    - standard_house_cusp_color: Default color for house cusps.
+    - first_house_color: Color for the first house cusp.
+    - tenth_house_color: Color for the tenth house cusp.
+    - seventh_house_color: Color for the seventh house cusp.
+    - fourth_house_color: Color for the fourth house cusp.
+    - c1: Offset for the first subject.
+    - c3: Offset for the third subject.
+    - chart_type: Type of the chart (e.g., Transit, Synastry).
+    - second_subject_houses_list_ut: List of house cusps for the second subject (optional).
+    - transit_house_cusp_color: Color for transit house cusps (optional).
+
+    Returns:
+    - A string containing the SVG path for the houses cusps and text numbers.
+    """
+    if chart_type in ["Transit", "Synastry"]:
+        if second_subject_houses_list_ut is None or transit_house_cusp_color is None:
             raise KerykeionException("second_subject_houses_list_ut or transit_house_cusp_color is None")
 
     path = ""
     xr = 12
 
     for i in range(xr):
-        # check transit
-        if chart_type == "Transit" or chart_type == "Synastry":
-            dropin = 160
-            roff = 72
-            t_roff = 36
-        else:
-            dropin = c3
-            roff = c1
-
-        # offset is negative desc houses_degree_ut[6]
+        # Determine offsets based on chart type
+        dropin, roff, t_roff = (160, 72, 36) if chart_type in ["Transit", "Synastry"] else (c3, c1, None)
+        
+        # Calculate the offset for the current house cusp
         offset = (int(first_subject_houses_list_ut[int(xr / 2)]) / -1) + int(first_subject_houses_list_ut[i])
+        
+        # Calculate the coordinates for the house cusp lines
         x1 = sliceToX(0, (r - dropin), offset) + dropin
         y1 = sliceToY(0, (r - dropin), offset) + dropin
         x2 = sliceToX(0, r - roff, offset) + roff
         y2 = sliceToY(0, r - roff, offset) + roff
 
-        if i < (xr - 1):
-            text_offset = offset + int(degreeDiff(first_subject_houses_list_ut[(i + 1)], first_subject_houses_list_ut[i]) / 2)
-        else:
-            text_offset = offset + int(degreeDiff(first_subject_houses_list_ut[0], first_subject_houses_list_ut[(xr - 1)]) / 2)
+        # Calculate the text offset for the house number
+        next_index = (i + 1) % xr
+        text_offset = offset + int(degreeDiff(first_subject_houses_list_ut[next_index], first_subject_houses_list_ut[i]) / 2)
 
-        # mc, asc, dsc, ic
-        if i == 0:
-            linecolor = first_house_color
-        elif i == 9:
-            linecolor = tenth_house_color
-        elif i == 6:
-            linecolor = seventh_house_color
-        elif i == 3:
-            linecolor = fourth_house_color
-        else:
-            linecolor = standard_house_cusp_color
+        # Determine the line color based on the house index
+        linecolor = {
+            0: first_house_color,
+            9: tenth_house_color,
+            6: seventh_house_color,
+            3: fourth_house_color
+        }.get(i, standard_house_cusp_color)
 
-        # Transit houses lines.
-        if chart_type == "Transit" or chart_type == "Synastry":
-            # Degrees for point zero.
-
+        if chart_type in ["Transit", "Synastry"]:
+            # Calculate the offset for the second subject's house cusp
             zeropoint = 360 - first_subject_houses_list_ut[6]
-            t_offset = zeropoint + second_subject_houses_list_ut[i]
-            if t_offset > 360:
-                t_offset = t_offset - 360
+            t_offset = (zeropoint + second_subject_houses_list_ut[i]) % 360
+
+            # Calculate the coordinates for the second subject's house cusp lines
             t_x1 = sliceToX(0, (r - t_roff), t_offset) + t_roff
             t_y1 = sliceToY(0, (r - t_roff), t_offset) + t_roff
             t_x2 = sliceToX(0, r, t_offset)
             t_y2 = sliceToY(0, r, t_offset)
-            if i < 11:
-                t_text_offset = t_offset + int(degreeDiff(second_subject_houses_list_ut[(i + 1)], second_subject_houses_list_ut[i]) / 2)
-            else:
-                t_text_offset = t_offset + int(degreeDiff(second_subject_houses_list_ut[0], second_subject_houses_list_ut[11]) / 2)
-            # linecolor
-            if i == 0 or i == 9 or i == 6 or i == 3:
-                t_linecolor = linecolor
-            else:
-                t_linecolor = transit_house_cusp_color
+
+            # Calculate the text offset for the second subject's house number
+            t_text_offset = t_offset + int(degreeDiff(second_subject_houses_list_ut[next_index], second_subject_houses_list_ut[i]) / 2)
+            t_linecolor = linecolor if i in [0, 9, 6, 3] else transit_house_cusp_color
             xtext = sliceToX(0, (r - 8), t_text_offset) + 8
             ytext = sliceToY(0, (r - 8), t_text_offset) + 8
 
-            if chart_type == "Transit":
-                path += f'<g kr:node="HouseNumber">'
-                path += f'<text style="fill: #00f; fill-opacity: 0; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
-                path += f'</g>'
+            # Add the house number text for the second subject
+            fill_opacity = "0" if chart_type == "Transit" else ".4"
+            path += f'<g kr:node="HouseNumber">'
+            path += f'<text style="fill: #00f; fill-opacity: {fill_opacity}; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
+            path += f'</g>'
+            
+            # Add the house cusp line for the second subject
+            stroke_opacity = "0" if chart_type == "Transit" else ".3"
+            path += f'<g kr:node="Cusp">'
+            path += f"<line x1='{t_x1}' y1='{t_y1}' x2='{t_x2}' y2='{t_y2}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:{stroke_opacity};'/>"
+            path += f'</g>'
 
-                path += f'<g kr:node="Cusp">'
-                path += f"<line x1='{str(t_x1)}' y1='{str(t_y1)}' x2='{str(t_x2)}' y2='{str(t_y2)}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:0;'/>"
-                path += f"</g>"
+        # Adjust dropin based on chart type
+        dropin = {"Transit": 84, "Synastry": 84, "ExternalNatal": 100}.get(chart_type, 48)
+        xtext = sliceToX(0, (r - dropin), text_offset) + dropin
+        ytext = sliceToY(0, (r - dropin), text_offset) + dropin
 
-            else:
-                path += f'<g kr:node="HouseNumber">'
-                path += f'<text style="fill: #00f; fill-opacity: .4; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
-                path += f'</g>'
-
-                path += f'<g kr:node="Cusp">'
-                path += f"<line x1='{str(t_x1)}' y1='{str(t_y1)}' x2='{str(t_x2)}' y2='{str(t_y2)}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:.3;'/>"
-                path += f'</g>'
-
-        # if transit
-        if chart_type == "Transit" or chart_type == "Synastry":
-            dropin = 84
-        elif chart_type == "ExternalNatal":
-            dropin = 100
-        # Natal
-        else:
-            dropin = 48
-
-        xtext = sliceToX(0, (r - dropin), text_offset) + dropin  # was 132
-        ytext = sliceToY(0, (r - dropin), text_offset) + dropin  # was 132
-
+        # Add the house cusp line for the first subject
         path += f'<g kr:node="Cusp">'
         path += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {linecolor}; stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;"/>'
         path += f'</g>'
         
+        # Add the house number text for the first subject
         path += f'<g kr:node="HouseNumber">'
-        path += f'<text style="fill: #f00; fill-opacity: .6; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
+        path += f'<text style="fill: #f00; fill-opacity: .6; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
         path += f'</g>'
 
     return path
