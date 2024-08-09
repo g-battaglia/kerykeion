@@ -15,6 +15,9 @@ class TestCharts:
         self.deluce_subject = AstrologicalSubject("John Lennon DeLuce", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="DELUCE", geonames_username="century.boy")
         self.j2000_subject = AstrologicalSubject("John Lennon J2000", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="J2000", geonames_username="century.boy")
         self.morinus_house_system_subject = AstrologicalSubject("John Lennon - House System Morinus", 1940, 10, 9, 18, 30, "Liverpool", "GB", houses_system_identifier="M", geonames_username="century.boy")
+        self.heliocentric_perspective_natal_chart = AstrologicalSubject("John Lennon - Heliocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy", perspective_type="Heliocentric")
+        self.topocentric_perspective_natal_chart = AstrologicalSubject("John Lennon - Topocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy", perspective_type="Topocentric")
+        self.true_geocentric_perspective_natal_chart = AstrologicalSubject("John Lennon - True Geocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy", perspective_type="True Geocentric")
 
     def test_natal_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.first_subject).makeTemplate()
@@ -151,3 +154,48 @@ class TestCharts:
 
         for i in range(len(birth_chart_svg_lines)):
             assert birth_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_heliocentric_perspective_natals_chart(self):
+        heliocentric_perspective_natals_chart_svg = KerykeionChartSVG(self.heliocentric_perspective_natal_chart).makeTemplate()
+        heliocentric_perspective_natals_chart_svg_lines = heliocentric_perspective_natals_chart_svg.split("\n")
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.first_subject, perspective="Heliocentric").makeSVG()
+
+        with open(CURRENT_DIR / "expected_heliocentric_perspective_natals_chart.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = file_content.split("\n")
+
+        for i in range(len(heliocentric_perspective_natals_chart_svg_lines)):
+            assert heliocentric_perspective_natals_chart_svg_lines[i] == file_content_lines[i]
+    
+    def test_topocentric_perspective_natals_chart(self):
+        topocentric_perspective_natals_chart_svg = KerykeionChartSVG(self.topocentric_perspective_natal_chart).makeTemplate()
+        topocentric_perspective_natals_chart_svg_lines = topocentric_perspective_natals_chart_svg.split("\n")
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.first_subject, perspective="Topocentric").makeSVG()
+
+        with open(CURRENT_DIR / "expected_topocentric_perspective_natals_chart.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = file_content.split("\n")
+
+        for i in range(len(topocentric_perspective_natals_chart_svg_lines)):
+            assert topocentric_perspective_natals_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_true_geocentric_perspective_natals_chart(self):
+        true_geocentric_perspective_natals_chart_svg = KerykeionChartSVG(self.true_geocentric_perspective_natal_chart).makeTemplate()
+        true_geocentric_perspective_natals_chart_svg_lines = true_geocentric_perspective_natals_chart_svg.split("\n")
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.first_subject, perspective="True Geocentric").makeSVG()
+
+        with open(CURRENT_DIR / "expected_true_geocentric_perspective_natals_chart.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = file_content.split("\n")
+
+        for i in range(len(true_geocentric_perspective_natals_chart_svg_lines)):
+            assert true_geocentric_perspective_natals_chart_svg_lines[i] == file_content_lines[i]
