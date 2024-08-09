@@ -496,7 +496,7 @@ def draw_aspect_grid(stroke_color: str, available_planets_list: list, aspects_li
 def draw_houses_cusps_and_text_number(
         r: Union[int, float],
         first_subject_houses_list_ut: list,
-        standard_house_color: str,
+        standard_house_cusp_color: str,
         first_house_color: str,
         tenth_house_color: str,
         seventh_house_color: str,
@@ -505,10 +505,12 @@ def draw_houses_cusps_and_text_number(
         c3: Union[int, float],
         chart_type: ChartType,
         second_subject_houses_list_ut: list = None,
+        transit_house_cusp_color: str = None,
     ):
 
-    if (chart_type == "Transit" or chart_type == "Synastry") and second_subject_houses_list_ut is None:
-        raise KerykeionException("second_subject_houses_list is None")
+    if chart_type == "Transit" or chart_type == "Synastry":
+         if (second_subject_houses_list_ut is None or transit_house_cusp_color is None):
+            raise KerykeionException("second_subject_houses_list_ut or transit_house_cusp_color is None")
 
     path = ""
     xr = 12
@@ -545,7 +547,7 @@ def draw_houses_cusps_and_text_number(
         elif i == 3:
             linecolor = fourth_house_color
         else:
-            linecolor = standard_house_color
+            linecolor = standard_house_cusp_color
 
         # Transit houses lines.
         if chart_type == "Transit" or chart_type == "Synastry":
@@ -567,7 +569,7 @@ def draw_houses_cusps_and_text_number(
             if i == 0 or i == 9 or i == 6 or i == 3:
                 t_linecolor = linecolor
             else:
-                t_linecolor = standard_house_color
+                t_linecolor = transit_house_cusp_color
             xtext = sliceToX(0, (r - 8), t_text_offset) + 8
             ytext = sliceToY(0, (r - 8), t_text_offset) + 8
 

@@ -1257,7 +1257,7 @@ class KerykeionChartSVG:
             td["makeHouses"] = draw_houses_cusps_and_text_number(
                 r=r,
                 first_subject_houses_list_ut=self.user.houses_degree_ut,
-                standard_house_color=self.chart_colors_settings["houses_radix_line"],
+                standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
                 first_house_color=self.planets_settings[12]["color"],
                 tenth_house_color=self.planets_settings[13]["color"],
                 seventh_house_color=self.planets_settings[14]["color"],
@@ -1265,13 +1265,14 @@ class KerykeionChartSVG:
                 c1=self.c1,
                 c3=self.c3,
                 chart_type=self.chart_type,
-                second_subject_houses_list_ut=self.t_user.houses_degree_ut
+                second_subject_houses_list_ut=self.t_user.houses_degree_ut,
+                transit_house_cusp_color=self.chart_colors_settings["houses_transit_line"],
             )
         else:
             td["makeHouses"] = draw_houses_cusps_and_text_number(
                 r=r,
                 first_subject_houses_list_ut=self.user.houses_degree_ut,
-                standard_house_color=self.chart_colors_settings["houses_radix_line"],
+                standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
                 first_house_color=self.planets_settings[12]["color"],
                 tenth_house_color=self.planets_settings[13]["color"],
                 seventh_house_color=self.planets_settings[14]["color"],
