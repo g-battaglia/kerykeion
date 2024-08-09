@@ -491,3 +491,122 @@ def draw_aspect_grid(stroke_color: str, available_planets_list: list, aspects_li
                     out += f'<use  x="{xorb-box+1}" y="{yorb+1}" xlink:href="#orb{aspect["aspect_degrees"]}" />'
 
     return out
+
+
+def draw_houses_cusps_and_text_number(
+        r: Union[int, float],
+        first_subject_houses_list_ut: list,
+        standard_house_color: str,
+        first_house_color: str,
+        tenth_house_color: str,
+        seventh_house_color: str,
+        fourth_house_color: str,
+        c1: Union[int, float],
+        c3: Union[int, float],
+        chart_type: ChartType,
+        second_subject_houses_list_ut: list = None,
+    ):
+
+    if (chart_type == "Transit" or chart_type == "Synastry") and second_subject_houses_list_ut is None:
+        raise KerykeionException("second_subject_houses_list is None")
+
+    path = ""
+    xr = 12
+
+    for i in range(xr):
+        # check transit
+        if chart_type == "Transit" or chart_type == "Synastry":
+            dropin = 160
+            roff = 72
+            t_roff = 36
+        else:
+            dropin = c3
+            roff = c1
+
+        # offset is negative desc houses_degree_ut[6]
+        offset = (int(first_subject_houses_list_ut[int(xr / 2)]) / -1) + int(first_subject_houses_list_ut[i])
+        x1 = sliceToX(0, (r - dropin), offset) + dropin
+        y1 = sliceToY(0, (r - dropin), offset) + dropin
+        x2 = sliceToX(0, r - roff, offset) + roff
+        y2 = sliceToY(0, r - roff, offset) + roff
+
+        if i < (xr - 1):
+            text_offset = offset + int(degreeDiff(first_subject_houses_list_ut[(i + 1)], first_subject_houses_list_ut[i]) / 2)
+        else:
+            text_offset = offset + int(degreeDiff(first_subject_houses_list_ut[0], first_subject_houses_list_ut[(xr - 1)]) / 2)
+
+        # mc, asc, dsc, ic
+        if i == 0:
+            linecolor = first_house_color
+        elif i == 9:
+            linecolor = tenth_house_color
+        elif i == 6:
+            linecolor = seventh_house_color
+        elif i == 3:
+            linecolor = fourth_house_color
+        else:
+            linecolor = standard_house_color
+
+        # Transit houses lines.
+        if chart_type == "Transit" or chart_type == "Synastry":
+            # Degrees for point zero.
+
+            zeropoint = 360 - first_subject_houses_list_ut[6]
+            t_offset = zeropoint + second_subject_houses_list_ut[i]
+            if t_offset > 360:
+                t_offset = t_offset - 360
+            t_x1 = sliceToX(0, (r - t_roff), t_offset) + t_roff
+            t_y1 = sliceToY(0, (r - t_roff), t_offset) + t_roff
+            t_x2 = sliceToX(0, r, t_offset)
+            t_y2 = sliceToY(0, r, t_offset)
+            if i < 11:
+                t_text_offset = t_offset + int(degreeDiff(second_subject_houses_list_ut[(i + 1)], second_subject_houses_list_ut[i]) / 2)
+            else:
+                t_text_offset = t_offset + int(degreeDiff(second_subject_houses_list_ut[0], second_subject_houses_list_ut[11]) / 2)
+            # linecolor
+            if i == 0 or i == 9 or i == 6 or i == 3:
+                t_linecolor = linecolor
+            else:
+                t_linecolor = standard_house_color
+            xtext = sliceToX(0, (r - 8), t_text_offset) + 8
+            ytext = sliceToY(0, (r - 8), t_text_offset) + 8
+
+            if chart_type == "Transit":
+                path += f'<g kr:node="HouseNumber">'
+                path += f'<text style="fill: #00f; fill-opacity: 0; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
+                path += f'</g>'
+
+                path += f'<g kr:node="Cusp">'
+                path += f"<line x1='{str(t_x1)}' y1='{str(t_y1)}' x2='{str(t_x2)}' y2='{str(t_y2)}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:0;'/>"
+                path += f"</g>"
+
+            else:
+                path += f'<g kr:node="HouseNumber">'
+                path += f'<text style="fill: #00f; fill-opacity: .4; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
+                path += f'</g>'
+
+                path += f'<g kr:node="Cusp">'
+                path += f"<line x1='{str(t_x1)}' y1='{str(t_y1)}' x2='{str(t_x2)}' y2='{str(t_y2)}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:.3;'/>"
+                path += f'</g>'
+
+        # if transit
+        if chart_type == "Transit" or chart_type == "Synastry":
+            dropin = 84
+        elif chart_type == "ExternalNatal":
+            dropin = 100
+        # Natal
+        else:
+            dropin = 48
+
+        xtext = sliceToX(0, (r - dropin), text_offset) + dropin  # was 132
+        ytext = sliceToY(0, (r - dropin), text_offset) + dropin  # was 132
+
+        path += f'<g kr:node="Cusp">'
+        path += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {linecolor}; stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;"/>'
+        path += f'</g>'
+        
+        path += f'<g kr:node="HouseNumber">'
+        path += f'<text style="fill: #f00; fill-opacity: .6; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
+        path += f'</g>'
+
+    return path

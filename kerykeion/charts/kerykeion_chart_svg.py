@@ -28,7 +28,8 @@ from kerykeion.charts.charts_utils import (
     draw_transit_ring,
     draw_first_circle,
     draw_second_circle,
-    draw_aspect_grid
+    draw_aspect_grid,
+    draw_houses_cusps_and_text_number
 )
 from pathlib import Path
 from scour.scour import scourString
@@ -303,108 +304,6 @@ class KerykeionChartSVG:
             )
 
         return output
-
-    def _makeHouses(self, r):
-        path = ""
-
-        xr = 12
-        for i in range(xr):
-            # check transit
-            if self.chart_type == "Transit" or self.chart_type == "Synastry":
-                dropin = 160
-                roff = 72
-                t_roff = 36
-            else:
-                dropin = self.c3
-                roff = self.c1
-
-            # offset is negative desc houses_degree_ut[6]
-            offset = (int(self.user.houses_degree_ut[int(xr / 2)]) / -1) + int(self.user.houses_degree_ut[i])
-            x1 = sliceToX(0, (r - dropin), offset) + dropin
-            y1 = sliceToY(0, (r - dropin), offset) + dropin
-            x2 = sliceToX(0, r - roff, offset) + roff
-            y2 = sliceToY(0, r - roff, offset) + roff
-
-            if i < (xr - 1):
-                text_offset = offset + int(degreeDiff(self.user.houses_degree_ut[(i + 1)], self.user.houses_degree_ut[i]) / 2)
-            else:
-                text_offset = offset + int(degreeDiff(self.user.houses_degree_ut[0], self.user.houses_degree_ut[(xr - 1)]) / 2)
-
-            # mc, asc, dsc, ic
-            if i == 0:
-                linecolor = self.planets_settings[12]["color"]
-            elif i == 9:
-                linecolor = self.planets_settings[13]["color"]
-            elif i == 6:
-                linecolor = self.planets_settings[14]["color"]
-            elif i == 3:
-                linecolor = self.planets_settings[15]["color"]
-            else:
-                linecolor = self.chart_colors_settings["houses_radix_line"]
-
-            # Transit houses lines.
-            if self.chart_type == "Transit" or self.chart_type == "Synastry":
-                # Degrees for point zero.
-
-                zeropoint = 360 - self.user.houses_degree_ut[6]
-                t_offset = zeropoint + self.t_user.houses_degree_ut[i]
-                if t_offset > 360:
-                    t_offset = t_offset - 360
-                t_x1 = sliceToX(0, (r - t_roff), t_offset) + t_roff
-                t_y1 = sliceToY(0, (r - t_roff), t_offset) + t_roff
-                t_x2 = sliceToX(0, r, t_offset)
-                t_y2 = sliceToY(0, r, t_offset)
-                if i < 11:
-                    t_text_offset = t_offset + int(degreeDiff(self.t_user.houses_degree_ut[(i + 1)], self.t_user.houses_degree_ut[i]) / 2)
-                else:
-                    t_text_offset = t_offset + int(degreeDiff(self.t_user.houses_degree_ut[0], self.t_user.houses_degree_ut[11]) / 2)
-                # linecolor
-                if i == 0 or i == 9 or i == 6 or i == 3:
-                    t_linecolor = linecolor
-                else:
-                    t_linecolor = self.chart_colors_settings["houses_transit_line"]
-                xtext = sliceToX(0, (r - 8), t_text_offset) + 8
-                ytext = sliceToY(0, (r - 8), t_text_offset) + 8
-
-                if self.chart_type == "Transit":
-                    path += f'<g kr:node="HouseNumber">'
-                    path += f'<text style="fill: #00f; fill-opacity: 0; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
-                    path += f'</g>'
-
-                    path += f'<g kr:node="Cusp">'
-                    path += f"<line x1='{str(t_x1)}' y1='{str(t_y1)}' x2='{str(t_x2)}' y2='{str(t_y2)}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:0;'/>"
-                    path += f"</g>"
-
-                else:
-                    path += f'<g kr:node="HouseNumber">'
-                    path += f'<text style="fill: #00f; fill-opacity: .4; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
-                    path += f'</g>'
-
-                    path += f'<g kr:node="Cusp">'
-                    path += f"<line x1='{str(t_x1)}' y1='{str(t_y1)}' x2='{str(t_x2)}' y2='{str(t_y2)}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:.3;'/>"
-                    path += f'</g>'
-
-            # if transit
-            if self.chart_type == "Transit" or self.chart_type == "Synastry":
-                dropin = 84
-            elif self.chart_type == "ExternalNatal":
-                dropin = 100
-            # Natal
-            else:
-                dropin = 48
-
-            xtext = sliceToX(0, (r - dropin), text_offset) + dropin  # was 132
-            ytext = sliceToY(0, (r - dropin), text_offset) + dropin  # was 132
-
-            path += f'<g kr:node="Cusp">'
-            path += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {linecolor}; stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;"/>'
-            path += f'</g>'
-            
-            path += f'<g kr:node="HouseNumber">'
-            path += f'<text style="fill: #f00; fill-opacity: .6; font-size: 14px"><tspan x="' + str(xtext - 3) + '" y="' + str(ytext + 3) + '">' + str(i + 1) + "</tspan></text>"
-            path += f'</g>'
-
-        return path
 
     def _calculate_elements_points_from_planets(self):
         """
@@ -1352,8 +1251,36 @@ class KerykeionChartSVG:
 
         td["makeZodiac"] = self._draw_zodiac_circle_slices(r)
         td["makeHousesGrid"] = self._draw_house_grid()
-        # TODO: Add the rest of the functions
-        td["makeHouses"] = self._makeHouses(r)
+        
+        # Houses Cusps and Number
+        if self.chart_type == "Transit" or self.chart_type == "Synastry":
+            td["makeHouses"] = draw_houses_cusps_and_text_number(
+                r=r,
+                first_subject_houses_list_ut=self.user.houses_degree_ut,
+                standard_house_color=self.chart_colors_settings["houses_radix_line"],
+                first_house_color=self.planets_settings[12]["color"],
+                tenth_house_color=self.planets_settings[13]["color"],
+                seventh_house_color=self.planets_settings[14]["color"],
+                fourth_house_color=self.planets_settings[15]["color"],
+                c1=self.c1,
+                c3=self.c3,
+                chart_type=self.chart_type,
+                second_subject_houses_list_ut=self.t_user.houses_degree_ut
+            )
+        else:
+            td["makeHouses"] = draw_houses_cusps_and_text_number(
+                r=r,
+                first_subject_houses_list_ut=self.user.houses_degree_ut,
+                standard_house_color=self.chart_colors_settings["houses_radix_line"],
+                first_house_color=self.planets_settings[12]["color"],
+                tenth_house_color=self.planets_settings[13]["color"],
+                seventh_house_color=self.planets_settings[14]["color"],
+                fourth_house_color=self.planets_settings[15]["color"],
+                c1=self.c1,
+                c3=self.c3,
+                chart_type=self.chart_type,
+            )
+
         td["makePlanets"] = self._make_planets(r)
         td["elements_percentages"] = draw_elements_percentages(
             self.language_settings['fire'],
