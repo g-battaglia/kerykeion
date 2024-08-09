@@ -240,7 +240,7 @@ def draw_aspect_line(
     out = ""
     out += f'<g kr:node="Aspect" kr:to="{aspect_dict['p1_name']}" kr:tooriginaldegrees="{aspect_dict["p1_abs_pos"]}" kr:from="{aspect_dict["p2_name"]}" kr:fromoriginaldegrees="{aspect_dict["p2_abs_pos"]}">'
     out += f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
-    out += f'</g>'
+    out += f"</g>"
 
     return out
 
@@ -345,19 +345,21 @@ def draw_transit_ring_degree_steps(r: Union[int, float], seventh_house_degree_ut
         y2 = sliceToY(0, r + 2, offset) - 2
         out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: #F00; stroke-width: 1px; stroke-opacity:.9;"/>'
     out += "</g>"
-    
+
     return out
 
 
-def draw_degree_ring(r: Union[int, float], c1: Union[int, float], seventh_house_degree_ut: Union[int, float], stroke_color: str) -> str:
+def draw_degree_ring(
+    r: Union[int, float], c1: Union[int, float], seventh_house_degree_ut: Union[int, float], stroke_color: str
+) -> str:
     """Draws the degree ring.
-    
+
     Args:
         - r (Union[int, float]): The value of r.
         - c1 (Union[int, float]): The value of c1.
         - seventh_house_degree_ut (Union[int, float]): The degree of the seventh house.
         - stroke_color (str): The color of the stroke.
-        
+
     Returns:
         str: The SVG path of the degree ring.
     """
@@ -375,18 +377,19 @@ def draw_degree_ring(r: Union[int, float], c1: Union[int, float], seventh_house_
 
         out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {stroke_color}; stroke-width: 1px; stroke-opacity:.9;"/>'
     out += "</g>"
-    
+
     return out
+
 
 def draw_transit_ring(r: Union[int, float], paper_1_color: str, zodiac_transit_ring_3_color: str) -> str:
     """
     Draws the transit ring.
-    
+
     Args:
         - r (Union[int, float]): The value of r.
         - paper_1_color (str): The color of paper 1.
         - zodiac_transit_ring_3_color (str): The color of the zodiac transit ring
-        
+
     Returns:
         str: The SVG path of the transit ring.
     """
@@ -398,16 +401,18 @@ def draw_transit_ring(r: Union[int, float], paper_1_color: str, zodiac_transit_r
     return out
 
 
-def draw_first_circle(r: Union[int, float], stroke_color: str, chart_type: ChartType, c1: Union[int, float, None] = None) -> str:
+def draw_first_circle(
+    r: Union[int, float], stroke_color: str, chart_type: ChartType, c1: Union[int, float, None] = None
+) -> str:
     """
     Draws the first circle.
-    
+
     Args:
         - r (Union[int, float]): The value of r.
         - color (str): The color of the circle.
         - chart_type (ChartType): The type of chart.
         - c1 (Union[int, float]): The value of c1.
-        
+
     Returns:
         str: The SVG path of the first circle.
     """
@@ -417,38 +422,42 @@ def draw_first_circle(r: Union[int, float], stroke_color: str, chart_type: Chart
         if c1 is None:
             raise KerykeionException("c1 is None")
 
-        return f'<circle cx="{r}" cy="{r}" r="{r - c1}" style="fill: none; stroke: {stroke_color}; stroke-width: 1px; " />'
+        return (
+            f'<circle cx="{r}" cy="{r}" r="{r - c1}" style="fill: none; stroke: {stroke_color}; stroke-width: 1px; " />'
+        )
 
 
-def draw_second_circle(r: Union[int, float], stroke_color: str, fill_color: str, chart_type: ChartType, c2: Union[int, float, None] = None) -> str:
+def draw_second_circle(
+    r: Union[int, float], stroke_color: str, fill_color: str, chart_type: ChartType, c2: Union[int, float, None] = None
+) -> str:
     """
     Draws the second circle.
-    
+
     Args:
         - r (Union[int, float]): The value of r.
         - stroke_color (str): The color of the stroke.
         - fill_color (str): The color of the fill.
         - chart_type (ChartType): The type of chart.
         - c2 (Union[int, float]): The value of c2.
-        
+
     Returns:
         str: The SVG path of the second circle.
     """
-    
+
     if chart_type == "Synastry" or chart_type == "Transit":
         return f'<circle cx="{r}" cy="{r}" r="{r - 72}" style="fill: {fill_color}; fill-opacity:.4; stroke: {stroke_color}; stroke-opacity:.4; stroke-width: 1px" />'
-    
+
     else:
         if c2 is None:
             raise KerykeionException("c2 is None")
 
         return f'<circle cx="{r}" cy="{r}" r="{r - c2}" style="fill: {fill_color}; fill-opacity:.2; stroke: {stroke_color}; stroke-opacity:.4; stroke-width: 1px" />'
-    
+
 
 def draw_aspect_grid(stroke_color: str, available_planets_list: list, aspects_list: list) -> str:
     """
     Draws the aspect grid.
-    
+
     Args:
         - stroke_color (str): The color of the stroke.
         - available_planets_list (list): List of all the planets, they will be actually filtered to so if they have
@@ -477,17 +486,19 @@ def draw_aspect_grid(stroke_color: str, available_planets_list: list, aspects_li
 
         xindent = xindent + box
         yindent = yindent - box
-        
+
         xorb = xindent
         yorb = yindent + box
 
-        second_iteration_revers_planets = first_iteration_revers_planets[index+1:]
+        second_iteration_revers_planets = first_iteration_revers_planets[index + 1 :]
         for b in second_iteration_revers_planets:
             out += f'<rect x="{xorb}" y="{yorb}" width="{box}" height="{box}" style="{style}"/>'
             xorb = xorb + box
 
             for aspect in aspects_list:
-                if (aspect["p1"] == a["id"] and aspect["p2"] == b['id']) or (aspect["p1"] == b["id"] and aspect["p2"] == a["id"]):
+                if (aspect["p1"] == a["id"] and aspect["p2"] == b["id"]) or (
+                    aspect["p1"] == b["id"] and aspect["p2"] == a["id"]
+                ):
                     out += f'<use  x="{xorb-box+1}" y="{yorb+1}" xlink:href="#orb{aspect["aspect_degrees"]}" />'
 
     return out
