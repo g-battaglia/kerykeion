@@ -671,153 +671,6 @@ class KerykeionChartSVG:
 
         return output
 
-    def _makePatterns(self):
-        """
-        * Stellium: At least four planets linked together in a series of continuous conjunctions.
-        * Grand trine: Three trine aspects together.
-        * Grand cross: Two pairs of opposing planets squared to each other.
-        * T-Square: Two planets in opposition squared to a third.
-        * Yod: Two qunicunxes together joined by a sextile.
-        """
-        conj = {}  # 0
-        opp = {}  # 10
-        sq = {}  # 5
-        tr = {}  # 6
-        qc = {}  # 9
-        sext = {}  # 3
-        for i in range(len(self.available_planets_setting)):
-            a = self.points_deg_ut[i]
-            qc[i] = {}
-            sext[i] = {}
-            opp[i] = {}
-            sq[i] = {}
-            tr[i] = {}
-            conj[i] = {}
-            # skip some points
-            n = self.available_planets_setting[i]["name"]
-            if n == "earth" or n == "True_Node" or n == "osc. apogee" or n == "intp. apogee" or n == "intp. perigee":
-                continue
-            if n == "Dsc" or n == "Ic":
-                continue
-            for j in range(len(self.available_planets_setting)):
-                # skip some points
-                n = self.available_planets_setting[j]["name"]
-                if n == "earth" or n == "True_Node" or n == "osc. apogee" or n == "intp. apogee" or n == "intp. perigee":
-                    continue
-                if n == "Dsc" or n == "Ic":
-                    continue
-                b = self.points_deg_ut[j]
-                delta = float(degreeDiff(a, b))
-                # check for opposition
-                xa = float(self.aspects_settings[10]["degree"]) - float(self.aspects_settings[10]["orb"])
-                xb = float(self.aspects_settings[10]["degree"]) + float(self.aspects_settings[10]["orb"])
-                if xa <= delta <= xb:
-                    opp[i][j] = True
-                # check for conjunction
-                xa = float(self.aspects_settings[0]["degree"]) - float(self.aspects_settings[0]["orb"])
-                xb = float(self.aspects_settings[0]["degree"]) + float(self.aspects_settings[0]["orb"])
-                if xa <= delta <= xb:
-                    conj[i][j] = True
-                # check for squares
-                xa = float(self.aspects_settings[5]["degree"]) - float(self.aspects_settings[5]["orb"])
-                xb = float(self.aspects_settings[5]["degree"]) + float(self.aspects_settings[5]["orb"])
-                if xa <= delta <= xb:
-                    sq[i][j] = True
-                # check for qunicunxes
-                xa = float(self.aspects_settings[9]["degree"]) - float(self.aspects_settings[9]["orb"])
-                xb = float(self.aspects_settings[9]["degree"]) + float(self.aspects_settings[9]["orb"])
-                if xa <= delta <= xb:
-                    qc[i][j] = True
-                # check for sextiles
-                xa = float(self.aspects_settings[3]["degree"]) - float(self.aspects_settings[3]["orb"])
-                xb = float(self.aspects_settings[3]["degree"]) + float(self.aspects_settings[3]["orb"])
-                if xa <= delta <= xb:
-                    sext[i][j] = True
-
-        yot = {}
-        # check for double qunicunxes
-        for k, v in qc.items():
-            if len(qc[k]) >= 2:
-                # check for sextile
-                for l, w in qc[k].items():
-                    for m, x in qc[k].items():
-                        if m in sext[l]:
-                            if l > m:
-                                yot["%s,%s,%s" % (k, m, l)] = [k, m, l]
-                            else:
-                                yot["%s,%s,%s" % (k, l, m)] = [k, l, m]
-        tsquare = {}
-        # check for opposition
-        for k, v in opp.items():
-            if len(opp[k]) >= 1:
-                # check for square
-                for l, w in opp[k].items():
-                    for a, b in sq.items():
-                        if k in sq[a] and l in sq[a]:
-                            logging.debug(f"Got tsquare {a} {k} {l}")
-                            if k > l:
-                                tsquare[f"{a},{l},{k}"] = f"{self.available_planets_setting[a]['label']} => {self.available_planets_setting[l]['label']}, {self.available_planets_setting[k]['label']}"
-
-                            else:
-                                tsquare[f"{a},{k},{l}"] = f"{self.available_planets_setting[a]['label']} => {self.available_planets_setting[k]['label']}, {self.available_planets_setting[l]['label']}"
-
-        stellium = {}
-        # check for 4 continuous conjunctions
-        for k, v in conj.items():
-            if len(conj[k]) >= 1:
-                # first conjunction
-                for l, m in conj[k].items():
-                    if len(conj[l]) >= 1:
-                        for n, o in conj[l].items():
-                            # skip 1st conj
-                            if n == k:
-                                continue
-                            if len(conj[n]) >= 1:
-                                # third conjunction
-                                for p, q in conj[n].items():
-                                    # skip first and second conj
-                                    if p == k or p == n:
-                                        continue
-                                    if len(conj[p]) >= 1:
-                                        # fourth conjunction
-                                        for r, s in conj[p].items():
-                                            # skip conj 1,2,3
-                                            if r == k or r == n or r == p:
-                                                continue
-
-                                            l = [k, n, p, r]
-                                            l.sort()
-                                            stellium["%s %s %s %s" % (l[0], l[1], l[2], l[3])] = "%s %s %s %s" % (
-                                                self.available_planets_setting[l[0]]["label"],
-                                                self.available_planets_setting[l[1]]["label"],
-                                                self.available_planets_setting[l[2]]["label"],
-                                                self.available_planets_setting[l[3]]["label"],
-                                            )
-        # print yots
-        out = '<g transform="translate(-30,380)">'
-        if len(yot) >= 1:
-            y = 0
-            for k, v in yot.items():
-                out += f'<text y="{y}" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 12px;">{"Yot"}</text>'
-
-                # first planet symbol
-                out += f'<g transform="translate(20,{y})">'
-                out += f'<use transform="scale(0.4)" x="0" y="-20" xlink:href="#{self.available_planets_setting[yot[k][0]]["name"]}" /></g>'
-
-                # second planet symbol
-                out += f'<g transform="translate(30,{y})">'
-                out += f'<use transform="scale(0.4)" x="0" y="-20" xlink:href="#{self.available_planets_setting[yot[k][1]]["name"]}" /></g>'
-
-                # third planet symbol
-                out += f'<g transform="translate(40,{y})">'
-                out += f'<use transform="scale(0.4)" x="0" y="-20" xlink:href="#{self.available_planets_setting[yot[k][2]]["name"]}" /></g>'
-
-                y = y + 14
-        # finalize
-        out += "</g>"
-        # return out
-        return ""
-
     # Aspect and aspect grid functions for natal type charts.
     def _draw_all_aspects_lines(self, r, ar):
         out = ""
@@ -1032,8 +885,6 @@ class KerykeionChartSVG:
                 self.aspects_settings
             )
 
-            td["makePatterns"] = ""
-
         # Natal, External Natal
         else:
             td["transitRing"] = ""
@@ -1045,8 +896,7 @@ class KerykeionChartSVG:
             
             td["makeAspects"] = self._draw_all_aspects_lines(r, (r - self.c3))
             td["makeAspectGrid"] = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list)
-            td["makePatterns"] = self._makePatterns()
-        
+
         td["chart_height"] = self.height
         td["chart_width"] = self.width
 

@@ -100,11 +100,6 @@
                 $makeAspects
             </g>
 
-            <!-- makePatterns -->
-            <g kr:node="Patterns_Wheel">
-                $makePatterns
-            </g>
-
             <!-- AspectGrid -->
             <g kr:node="Aspect_Grid">
                 $makeAspectGrid
