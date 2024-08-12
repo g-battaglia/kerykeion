@@ -244,18 +244,18 @@ class KerykeionChartSVG:
         self.zoom = 1
 
         self.zodiac = (
-            {"name": "aries", "element": "fire"},
-            {"name": "taurus", "element": "earth"},
-            {"name": "gemini", "element": "air"},
-            {"name": "cancer", "element": "water"},
-            {"name": "leo", "element": "fire"},
-            {"name": "virgo", "element": "earth"},
-            {"name": "libra", "element": "air"},
-            {"name": "scorpio", "element": "water"},
-            {"name": "sagittarius", "element": "fire"},
-            {"name": "capricorn", "element": "earth"},
-            {"name": "aquarius", "element": "air"},
-            {"name": "pisces", "element": "water"},
+            {"name": "Ari", "element": "fire"},
+            {"name": "Tau", "element": "earth"},
+            {"name": "Gem", "element": "air"},
+            {"name": "Can", "element": "water"},
+            {"name": "Leo", "element": "fire"},
+            {"name": "Vir", "element": "earth"},
+            {"name": "Lib", "element": "air"},
+            {"name": "Sco", "element": "water"},
+            {"name": "Sag", "element": "fire"},
+            {"name": "Cap", "element": "earth"},
+            {"name": "Aqu", "element": "air"},
+            {"name": "Pis", "element": "water"},
         )
 
         self.template = None

@@ -132,10 +132,10 @@ def draw_zodiac_slice(
         - seventh_house_degree_ut (Union[int, float]): The degree of the seventh house.
         - num (int): The number of the sign. Note: In OpenAstro it did refer to self.zodiac,
             which is a list of the signs in order, starting with Aries. Eg:
-            {"name": "aries", "element": "fire"}
+            {"name": "Ari", "element": "fire"}
         - r (Union[int, float]): The value of r.
         - style (str): The CSS inline style.
-        - type (str): The type ?. In OpenAstro, it was the symbol of the sign. Eg: "aries".
+        - type (str): The type ?. In OpenAstro, it was the symbol of the sign. Eg: "Ari".
             self.zodiac[i]["name"]
 
     Returns:
