@@ -818,7 +818,7 @@ class KerykeionChartSVG:
         return ""
 
     # Aspect and aspect grid functions for natal type charts.
-    def _makeAspects(self, r, ar):
+    def _draw_all_aspects_lines(self, r, ar):
         out = ""
         for aspect in self.aspects_list:
             out += draw_aspect_line(
@@ -832,7 +832,7 @@ class KerykeionChartSVG:
         return out
 
     # Aspect and aspect grid functions for transit type charts
-    def _makeAspectsTransit(self, r, ar):
+    def _draw_all_transit_aspects_lines(self, r, ar):
         out = ""
 
         self.aspects_list = SynastryAspects(self.user, self.t_user, new_settings_file=self.new_settings_file).relevant_aspects
@@ -936,7 +936,7 @@ class KerykeionChartSVG:
         out += end_of_line
         return out
 
-    def _draw_house_grid(self):
+    def _makeHouseGrid(self):
         """
         Generate SVG code for a grid of astrological houses.
 
@@ -991,20 +991,17 @@ class KerykeionChartSVG:
         # Calculate the elements points
         self._calculate_elements_points_from_planets()
 
-        # Viewbox and sizing
-        svgHeight = "100%"
-        svgWidth = "100%"
         rotate = "0"
-        
-        # To increase the size of the chart, change the viewbox
-        if self.chart_type == "Natal" or self.chart_type == "ExternalNatal":
-            viewbox = self.chart_settings["basic_chart_viewBox"]
-        else:
-            viewbox = self.chart_settings["wide_chart_viewBox"]
 
         # template dictionary
         td: ChartTemplateDictionary = dict() # type: ignore
         r = 240
+
+        # To increase the size of the chart, change the viewbox
+        if self.chart_type == "Natal" or self.chart_type == "ExternalNatal":
+            td['viewbox'] = self.chart_settings["basic_chart_viewBox"]
+        else:
+            td['viewbox'] = self.chart_settings["wide_chart_viewBox"]
 
         if self.chart_type == "ExternalNatal":
             self.c1 = 56
@@ -1027,8 +1024,7 @@ class KerykeionChartSVG:
             td["c3"] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r - 160) + '"'
             td["c3style"] = f"fill: {self.chart_colors_settings['paper_1']}; fill-opacity:.8; stroke: {self.chart_colors_settings['zodiac_transit_ring_0']}; stroke-width: 1px"
 
-            td["makeAspects"] = self._makeAspectsTransit(r, (r - 160))
-
+            td["makeAspects"] = self._draw_all_transit_aspects_lines(r, (r - 160))
 
             td["makeAspectGrid"] = draw_aspect_transit_grid(
                 self.language_settings["aspects"],
@@ -1038,6 +1034,8 @@ class KerykeionChartSVG:
             )
 
             td["makePatterns"] = ""
+
+        # Natal, External Natal
         else:
             td["transitRing"] = ""
             td["degreeRing"] = draw_degree_ring(r, self.c1, self.user.seventh_house.abs_pos, self.chart_colors_settings["paper_0"])
@@ -1049,15 +1047,12 @@ class KerykeionChartSVG:
             td["c3"] = f'cx="{r}" cy="{r}" r="{r - self.c3}"'
             td["c3style"] = f'fill: {self.chart_colors_settings["paper_1"]}; fill-opacity:.8; stroke: {self.chart_colors_settings["zodiac_radix_ring_0"]}; stroke-width: 1px'
             
-            td["makeAspects"] = self._makeAspects(r, (r - self.c3))
+            td["makeAspects"] = self._draw_all_aspects_lines(r, (r - self.c3))
             td["makeAspectGrid"] = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list)
             td["makePatterns"] = self._makePatterns()
         
         td["chart_height"] = self.height
         td["chart_width"] = self.width
-        td["svgWidth"] = str(svgWidth)
-        td["svgHeight"] = str(svgHeight)
-        td["viewbox"] = viewbox
 
         # Chart Title
         if self.chart_type == "Synastry":
@@ -1090,7 +1085,9 @@ class KerykeionChartSVG:
             td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
             td["bottomLeft4"] = f'{self.t_user.perspective_type}'
 
-        # lunar phase
+        # Lunar Phase --->
+        # TODO: Should be it's own function
+
         deg = self.user.lunar_phase["degrees_between_s_m"]
 
         lffg = None
@@ -1144,6 +1141,8 @@ class KerykeionChartSVG:
         # rotation based on latitude
         td["lunar_phase_rotate"] = -90.0 - self.geolat
 
+        # <--- End Lunar Phase
+        
         # stringlocation
         if len(self.location) > 35:
             split = self.location.split(",")
@@ -1202,7 +1201,7 @@ class KerykeionChartSVG:
         #--- 
 
         td["makeZodiac"] = self._draw_zodiac_circle_slices(r)
-        td["makeHousesGrid"] = self._draw_house_grid()
+        td["makeHousesGrid"] = self._makeHouseGrid()
         
         # Houses Cusps and Number
         if self.chart_type == "Transit" or self.chart_type == "Synastry":
@@ -1245,6 +1244,7 @@ class KerykeionChartSVG:
             self.language_settings['water'],
             self.water,
         )
+
         td["makePlanetGrid"] = self._makePlanetGrid()
 
         # Date time String

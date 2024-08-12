@@ -13,8 +13,6 @@ class ChartTemplateDictionary(TypedDict):
     makePatterns: str
     chart_height: float
     chart_width: float
-    svgWidth: str
-    svgHeight: str
     viewbox: str
     stringTitle: str
     stringName: str
