@@ -910,91 +910,92 @@ def draw_planet_grid(
         second_subject_name: str = None,
         second_subject_available_kerykeion_celestial_points: list[KerykeionPointModel] = None,
         text_color: str = "#000000",
-    ):
-    li = 10
+    ) -> str:
+    """
+    Draws the planet grid for the given celestial points and chart type.
+
+    Args:
+        planets_and_houses_grid_title (str): Title of the grid.
+        subject_name (str): Name of the subject.
+        available_kerykeion_celestial_points (list[KerykeionPointModel]): List of celestial points for the subject.
+        chart_type (ChartType): Type of the chart.
+        celestial_point_language (KerykeionLanguageCelestialPointModel): Language model for celestial points.
+        second_subject_name (str, optional): Name of the second subject. Defaults to None.
+        second_subject_available_kerykeion_celestial_points (list[KerykeionPointModel], optional): List of celestial points for the second subject. Defaults to None.
+        text_color (str, optional): Color of the text. Defaults to "#000000".
+
+    Returns:
+        str: The SVG output for the planet grid.
+    """
+    line_height = 10
     offset = 0
+    offset_between_lines = 14
 
-    out = '<g transform="translate(510,-20)">'
-    out += '<g transform="translate(140, -15)">'
-    out += f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}:</text>'
-    out += "</g>"
+    svg_output = (
+        f'<g transform="translate(510,-20)">'
+        f'<g transform="translate(140, -15)">'
+        f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}:</text>'
+        f'</g>'
+    )
 
-    end_of_line = None
+    end_of_line = "</g>"
+
     for i, planet in enumerate(available_kerykeion_celestial_points):
-        offset_between_lines = 14
-        end_of_line = "</g>"
-
-        # Guarda qui !!
         if i == 27:
-            li = 10
+            line_height = 10
             offset = -120
 
-        # start of line
-        out += f'<g transform="translate({offset},{li})">'
+        decoded_name = get_decoded_kerykeion_celestial_point_name(planet["name"], celestial_point_language)
+        svg_output += (
+            f'<g transform="translate({offset},{line_height})">'
+            f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{decoded_name}</text>'
+            f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{planet["name"]}" /></g>'
+            f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(planet["position"])}</text>'
+            f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{planet["sign"]}" /></g>'
+        )
 
-        decoded_kerykeion_celestial_point_name = get_decoded_kerykeion_celestial_point_name(planet["name"], celestial_point_language)
-        out += f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{decoded_kerykeion_celestial_point_name}</text>'
+        if planet["retrograde"]:
+            svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
 
-        # planet symbol
-        out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{planet["name"]}" /></g>'
+        svg_output += end_of_line
+        line_height += offset_between_lines
 
-        # planet degree
-        out += f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(planet['position'])}</text>'
-
-        # zodiac
-        out += f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{planet['sign']}" /></g>'
-
-        # planet retrograde
-        if planet['retrograde']:
-            out += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
-
-        # end of line
-        out += end_of_line
-
-        li = li + offset_between_lines
-
-    if chart_type == "Transit" or chart_type == "Synastry":
+    if chart_type in ["Transit", "Synastry"]:
         if chart_type == "Transit":
-            out += '<g transform="translate(320, -15)">'
-            out += f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{second_subject_name}:</text>'
+            svg_output += (
+                f'<g transform="translate(320, -15)">'
+                f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{second_subject_name}:</text>'
+            )
         else:
-            out += '<g transform="translate(380, -15)">'
-            out += f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}:</text>'
+            svg_output += (
+                f'<g transform="translate(380, -15)">'
+                f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}:</text>'
+            )
 
-        out += end_of_line
+        svg_output += end_of_line
 
-        t_li = 10
-        t_offset = 250
+        second_line_height = 10
+        second_offset = 250
 
         for i, t_planet in enumerate(second_subject_available_kerykeion_celestial_points):
             if i == 27:
-                t_li = 10
-                t_offset = -120
+                second_line_height = 10
+                second_offset = -120
 
-            # start of line
-            out += f'<g transform="translate({t_offset},{t_li})">'
+            second_decoded_name = get_decoded_kerykeion_celestial_point_name(t_planet["name"], celestial_point_language)
+            svg_output += (
+                f'<g transform="translate({second_offset},{second_line_height})">'
+                f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{second_decoded_name}</text>'
+                f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{t_planet["name"]}" /></g>'
+                f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(t_planet["position"])}</text>'
+                f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{t_planet["sign"]}" /></g>'
+            )
 
-            # planet text
-            second_decoded_kerykeion_celestial_point_name = get_decoded_kerykeion_celestial_point_name(t_planet["name"], celestial_point_language)
-            out += f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{second_decoded_kerykeion_celestial_point_name}</text>'
-            # planet symbol
-            out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{t_planet["name"]}" /></g>'
-            # planet degree
-            out += f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(t_planet['position'])}</text>'
-            # zodiac
-            out += f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{t_planet['sign']}" /></g>'
+            if t_planet["retrograde"]:
+                svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
 
-            # planet retrograde
-            if t_planet['retrograde']:
-                out += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+            svg_output += end_of_line
+            second_line_height += offset_between_lines
 
-            # end of line
-            out += end_of_line
-
-            t_li = t_li + offset_between_lines
-
-    if end_of_line is None:
-        raise KerykeionException("End of line not found")
-
-    out += end_of_line
-    return out
+    svg_output += end_of_line
+    return svg_output
