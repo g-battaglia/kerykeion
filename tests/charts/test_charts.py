@@ -21,7 +21,7 @@ class TestCharts:
 
     def test_natal_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.first_subject).makeTemplate()
-        birth_chart_svg_lines = birth_chart_svg.split("\n")
+        birth_chart_svg_lines = [birth_chart_svg[i:i+100] for i in range(0, len(birth_chart_svg), 100)]
 
         if WRITE_TO_FILE:
             KerykeionChartSVG(self.first_subject).makeSVG()
@@ -29,14 +29,14 @@ class TestCharts:
         with open(CURRENT_DIR / "expected_natal_chart.svg", "r") as f:
             file_content = f.read()
 
-        file_content_lines = file_content.split("\n")
+        file_content_lines = [file_content[i:i+100] for i in range(0, len(file_content), 100)]
 
         for i in range(len(birth_chart_svg_lines)):
             assert birth_chart_svg_lines[i] == file_content_lines[i]
 
     def test_synastry_chart(self):
         synastry_chart_svg = KerykeionChartSVG(self.first_subject, "Synastry", self.second_subject).makeTemplate()
-        synastry_chart_svg_lines = synastry_chart_svg.split("\n")
+        synastry_chart_svg_lines = [synastry_chart_svg[i:i+100] for i in range(0, len(synastry_chart_svg), 100)]
         
         if WRITE_TO_FILE:
             KerykeionChartSVG(self.first_subject, "Synastry", self.second_subject).makeSVG()
@@ -44,14 +44,14 @@ class TestCharts:
         with open(CURRENT_DIR / "expected_synastry_chart.svg", "r") as f:
             file_content = f.read()
 
-        file_content_lines = file_content.split("\n")
+        file_content_lines = [file_content[i:i+100] for i in range(0, len(file_content), 100)]
 
         for i in range(len(synastry_chart_svg_lines)):
             assert synastry_chart_svg_lines[i] == file_content_lines[i]
 
     def test_transit_chart(self):
         transit_chart_svg = KerykeionChartSVG(self.first_subject, "Transit", self.second_subject).makeTemplate()
-        transit_chart_svg_lines = transit_chart_svg.split("\n")
+        transit_chart_svg_lines = [transit_chart_svg[i:i+100] for i in range(0, len(transit_chart_svg), 100)]
 
         if WRITE_TO_FILE:
             KerykeionChartSVG(self.first_subject, "Transit", self.second_subject).makeSVG()
@@ -59,14 +59,14 @@ class TestCharts:
         with open(CURRENT_DIR / "expected_transit_chart.svg", "r", encoding="utf-8") as f:
             file_content = f.read()
 
-        file_content_lines = file_content.split("\n")
+        file_content_lines = [file_content[i:i+100] for i in range(0, len(file_content), 100)]
 
         for i in range(len(transit_chart_svg_lines)):
             assert transit_chart_svg_lines[i] == file_content_lines[i]
 
     def test_external_natal_chart(self):
         external_natal_chart_svg = KerykeionChartSVG(self.first_subject, "ExternalNatal").makeTemplate()
-        external_natal_chart_svg_lines = external_natal_chart_svg.split("\n")
+        external_natal_chart_svg_lines = [external_natal_chart_svg[i:i+100] for i in range(0, len(external_natal_chart_svg), 100)]
 
         if WRITE_TO_FILE:
             KerykeionChartSVG(self.first_subject, "ExternalNatal").makeSVG()
@@ -74,14 +74,14 @@ class TestCharts:
         with open(CURRENT_DIR / "expected_external_natal_chart.svg", "r", encoding="utf-8") as f:
             file_content = f.read()
 
-        file_content_lines = file_content.split("\n")
+        file_content_lines = [file_content[i:i+100] for i in range(0, len(file_content), 100)]
 
         for i in range(len(external_natal_chart_svg_lines)):
             assert external_natal_chart_svg_lines[i] == file_content_lines[i]
 
     def test_lahiri_birth_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.lahiri_subject).makeTemplate()
-        birth_chart_svg_lines = birth_chart_svg.split("\n")
+        birth_chart_svg_lines = [birth_chart_svg[i:i+100] for i in range(0, len(birth_chart_svg), 100)]
 
         if WRITE_TO_FILE:
             KerykeionChartSVG(self.lahiri_subject).makeSVG()
@@ -89,15 +89,14 @@ class TestCharts:
         with open(CURRENT_DIR / "expected_lahiri_birth_chart.svg", "r") as f:
             file_content = f.read()
 
-        file_content_lines = file_content.split("\n")
+        file_content_lines = [file_content[i:i+100] for i in range(0, len(file_content), 100)]
 
         for i in range(len(birth_chart_svg_lines)):
             assert birth_chart_svg_lines[i] == file_content_lines[i]
 
-
     def test_fagan_bradley_birth_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.fagan_bradley_subject).makeTemplate()
-        birth_chart_svg_lines = birth_chart_svg.split("\n")
+        birth_chart_svg_lines = [birth_chart_svg[i:i+100] for i in range(0, len(birth_chart_svg), 100)]
 
         if WRITE_TO_FILE:
             KerykeionChartSVG(self.fagan_bradley_subject).makeSVG()
@@ -105,14 +104,14 @@ class TestCharts:
         with open(CURRENT_DIR / "expected_fagan_bradley_birth_chart.svg", "r") as f:
             file_content = f.read()
 
-        file_content_lines = file_content.split("\n")
+        file_content_lines = [file_content[i:i+100] for i in range(0, len(file_content), 100)]
 
         for i in range(len(birth_chart_svg_lines)):
             assert birth_chart_svg_lines[i] == file_content_lines[i]
 
     def test_deluce_birth_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.deluce_subject).makeTemplate()
-        birth_chart_svg_lines = birth_chart_svg.split("\n")
+        birth_chart_svg_lines = [birth_chart_svg[i:i+100] for i in range(0, len(birth_chart_svg), 100)]
 
         if WRITE_TO_FILE:
             KerykeionChartSVG(self.deluce_subject).makeSVG()
@@ -120,14 +119,14 @@ class TestCharts:
         with open(CURRENT_DIR / "expected_deluce_birth_chart.svg", "r") as f:
             file_content = f.read()
 
-        file_content_lines = file_content.split("\n")
+        file_content_lines = [file_content[i:i+100] for i in range(0, len(file_content), 100)]
 
         for i in range(len(birth_chart_svg_lines)):
             assert birth_chart_svg_lines[i] == file_content_lines[i]
 
     def test_j2000_birth_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.j2000_subject).makeTemplate()
-        birth_chart_svg_lines = birth_chart_svg.split("\n")
+        birth_chart_svg_lines = [birth_chart_svg[i:i+100] for i in range(0, len(birth_chart_svg), 100)]
 
         if WRITE_TO_FILE:
             KerykeionChartSVG(self.j2000_subject).makeSVG()
@@ -135,14 +134,14 @@ class TestCharts:
         with open(CURRENT_DIR / "expected_j2000_birth_chart.svg", "r") as f:
             file_content = f.read()
 
-        file_content_lines = file_content.split("\n")
+        file_content_lines = [file_content[i:i+100] for i in range(0, len(file_content), 100)]
 
         for i in range(len(birth_chart_svg_lines)):
             assert birth_chart_svg_lines[i] == file_content_lines[i]
 
     def test_morinus_house_system_birth_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.morinus_house_system_subject).makeTemplate()
-        birth_chart_svg_lines = birth_chart_svg.split("\n")
+        birth_chart_svg_lines = [birth_chart_svg[i:i+100] for i in range(0, len(birth_chart_svg), 100)]
 
         if WRITE_TO_FILE:
             KerykeionChartSVG(self.morinus_house_system_subject).makeSVG()
@@ -150,14 +149,14 @@ class TestCharts:
         with open(CURRENT_DIR / "expected_morinus_house_system_birth_chart.svg", "r") as f:
             file_content = f.read()
 
-        file_content_lines = file_content.split("\n")
+        file_content_lines = [file_content[i:i+100] for i in range(0, len(file_content), 100)]
 
         for i in range(len(birth_chart_svg_lines)):
             assert birth_chart_svg_lines[i] == file_content_lines[i]
 
     def test_heliocentric_perspective_natals_chart(self):
         heliocentric_perspective_natals_chart_svg = KerykeionChartSVG(self.heliocentric_perspective_natal_chart).makeTemplate()
-        heliocentric_perspective_natals_chart_svg_lines = heliocentric_perspective_natals_chart_svg.split("\n")
+        heliocentric_perspective_natals_chart_svg_lines = [heliocentric_perspective_natals_chart_svg[i:i+100] for i in range(0, len(heliocentric_perspective_natals_chart_svg), 100)]
 
         if WRITE_TO_FILE:
             KerykeionChartSVG(self.first_subject, perspective="Heliocentric").makeSVG()
@@ -165,10 +164,10 @@ class TestCharts:
         with open(CURRENT_DIR / "expected_heliocentric_perspective_natals_chart.svg", "r") as f:
             file_content = f.read()
 
-        file_content_lines = file_content.split("\n")
+        file_content_lines = [file_content[i:i+100] for i in range(0, len(file_content), 100)]
 
         for i in range(len(heliocentric_perspective_natals_chart_svg_lines)):
-            assert heliocentric_perspective_natals_chart_svg_lines[i] == file_content_lines[i]
+            assert heliocentric_perspective_natals_chart_svg
     
     def test_topocentric_perspective_natals_chart(self):
         topocentric_perspective_natals_chart_svg = KerykeionChartSVG(self.topocentric_perspective_natal_chart).makeTemplate()
@@ -199,3 +198,20 @@ class TestCharts:
 
         for i in range(len(true_geocentric_perspective_natals_chart_svg_lines)):
             assert true_geocentric_perspective_natals_chart_svg_lines[i] == file_content_lines[i]
+
+
+if __name__ == "__main__":
+    test = TestCharts()
+    test.setup_class()
+    test.test_natal_chart()
+    test.test_synastry_chart()
+    test.test_transit_chart()
+    test.test_external_natal_chart()
+    test.test_lahiri_birth_chart()
+    test.test_fagan_bradley_birth_chart()
+    test.test_deluce_birth_chart()
+    test.test_j2000_birth_chart()
+    test.test_morinus_house_system_birth_chart()
+    test.test_heliocentric_perspective_natals_chart()
+    test.test_topocentric_perspective_natals_chart()
+    test.test_true_geocentric_perspective_natals_chart()

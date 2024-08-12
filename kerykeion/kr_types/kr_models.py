@@ -7,12 +7,29 @@
 from typing import Union, Optional
 from pydantic import BaseModel
 
-from kerykeion.kr_types import LunarPhaseEmoji, LunarPhaseName, Planet, Houses, Quality, Element, Sign, ZodiacType, SignNumbers, HouseNumbers, PointType, SiderealMode, HousesSystemIdentifier, Houses
+from kerykeion.kr_types import (
+    LunarPhaseEmoji,
+    LunarPhaseName,
+    Planet,
+    Houses,
+    Quality,
+    Element,
+    Sign,
+    ZodiacType,
+    SignNumbers,
+    HouseNumbers,
+    PointType,
+    SiderealMode,
+    HousesSystemIdentifier,
+    Houses,
+)
+
 
 class SubscriptableBaseModel(BaseModel):
     """
     Pydantic BaseModel with subscriptable support, so you can access the fields as if they were a dictionary.
     """
+
     def __getitem__(self, key):
         return getattr(self, key)
 
@@ -24,6 +41,7 @@ class SubscriptableBaseModel(BaseModel):
 
     def get(self, key, default):
         return getattr(self, key, default)
+
 
 class LunarPhaseModel(SubscriptableBaseModel):
     degrees_between_s_m: Union[float, int]
@@ -72,7 +90,7 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     iso_formatted_local_datetime: str
     iso_formatted_utc_datetime: str
     julian_day: float
-    
+
     # Deprecated properties -->
     utc_time: float
     local_time: float
@@ -121,27 +139,22 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     # planets_degrees_ut: list[float]
     # houses_degree_ut: list[float]
 
-class EphemerisDictModel(BaseModel):
+
+class EphemerisDictModel(SubscriptableBaseModel):
     date: str
     planets: list[KerykeionPointModel]
     houses: list[KerykeionPointModel]
 
-if __name__ == "__main__":
-    from kerykeion.utilities import setup_logging
 
-    setup_logging(level="debug")
-
-    sun = KerykeionPointModel(
-        name="Sun",
-        element="Air",
-        quality="Fixed",
-        sign="Aqu",
-        sign_num=1,
-        position=0,
-        abs_pos=12.123123,
-        emoji="♈",
-        point_type="Planet",
-    )
-
-    print(sun.model_dump_json())
-    print(sun)
+class AspectModel(SubscriptableBaseModel):
+    p1_name: str
+    p1_abs_pos: float
+    p2_name: str
+    p2_abs_pos: float
+    aspect: str
+    orbit: float
+    aspect_degrees: int
+    aid: int
+    diff: float
+    p1: int
+    p2: int
