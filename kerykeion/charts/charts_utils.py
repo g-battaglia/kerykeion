@@ -459,13 +459,12 @@ def draw_second_circle(
         return f'<circle cx="{r}" cy="{r}" r="{r - c2}" style="fill: {fill_color}; fill-opacity:.2; stroke: {stroke_color}; stroke-opacity:.4; stroke-width: 1px" />'
 
 
-
 def draw_third_circle(
-    radius: Union[int, float], 
-    stroke_color: str, 
-    fill_color: str, 
-    chart_type: ChartType, 
-    c3: Union[int, float, None] = None
+    radius: Union[int, float],
+    stroke_color: str,
+    fill_color: str,
+    chart_type: ChartType,
+    c3: Union[int, float, None] = None,
 ) -> str:
     """
     Draws the third circle in an SVG chart.
@@ -486,6 +485,7 @@ def draw_third_circle(
 
     else:
         return f'<circle cx="{radius}" cy="{radius}" r="{radius - c3}" style="fill: {fill_color}; fill-opacity:.8; stroke: {stroke_color}; stroke-width: 1px" />'
+
 
 def draw_aspect_grid(stroke_color: str, available_planets_list: list, aspects_list: list) -> str:
     """
@@ -581,10 +581,10 @@ def draw_houses_cusps_and_text_number(
     for i in range(xr):
         # Determine offsets based on chart type
         dropin, roff, t_roff = (160, 72, 36) if chart_type in ["Transit", "Synastry"] else (c3, c1, None)
-        
+
         # Calculate the offset for the current house cusp
         offset = (int(first_subject_houses_list_ut[int(xr / 2)]) / -1) + int(first_subject_houses_list_ut[i])
-        
+
         # Calculate the coordinates for the house cusp lines
         x1 = sliceToX(0, (r - dropin), offset) + dropin
         y1 = sliceToY(0, (r - dropin), offset) + dropin
@@ -593,15 +593,14 @@ def draw_houses_cusps_and_text_number(
 
         # Calculate the text offset for the house number
         next_index = (i + 1) % xr
-        text_offset = offset + int(degreeDiff(first_subject_houses_list_ut[next_index], first_subject_houses_list_ut[i]) / 2)
+        text_offset = offset + int(
+            degreeDiff(first_subject_houses_list_ut[next_index], first_subject_houses_list_ut[i]) / 2
+        )
 
         # Determine the line color based on the house index
-        linecolor = {
-            0: first_house_color,
-            9: tenth_house_color,
-            6: seventh_house_color,
-            3: fourth_house_color
-        }.get(i, standard_house_cusp_color)
+        linecolor = {0: first_house_color, 9: tenth_house_color, 6: seventh_house_color, 3: fourth_house_color}.get(
+            i, standard_house_cusp_color
+        )
 
         if chart_type in ["Transit", "Synastry"]:
             # Calculate the offset for the second subject's house cusp
@@ -615,7 +614,9 @@ def draw_houses_cusps_and_text_number(
             t_y2 = sliceToY(0, r, t_offset)
 
             # Calculate the text offset for the second subject's house number
-            t_text_offset = t_offset + int(degreeDiff(second_subject_houses_list_ut[next_index], second_subject_houses_list_ut[i]) / 2)
+            t_text_offset = t_offset + int(
+                degreeDiff(second_subject_houses_list_ut[next_index], second_subject_houses_list_ut[i]) / 2
+            )
             t_linecolor = linecolor if i in [0, 9, 6, 3] else transit_house_cusp_color
             xtext = sliceToX(0, (r - 8), t_text_offset) + 8
             ytext = sliceToY(0, (r - 8), t_text_offset) + 8
@@ -624,13 +625,13 @@ def draw_houses_cusps_and_text_number(
             fill_opacity = "0" if chart_type == "Transit" else ".4"
             path += f'<g kr:node="HouseNumber">'
             path += f'<text style="fill: #00f; fill-opacity: {fill_opacity}; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
-            path += f'</g>'
-            
+            path += f"</g>"
+
             # Add the house cusp line for the second subject
             stroke_opacity = "0" if chart_type == "Transit" else ".3"
             path += f'<g kr:node="Cusp">'
             path += f"<line x1='{t_x1}' y1='{t_y1}' x2='{t_x2}' y2='{t_y2}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:{stroke_opacity};'/>"
-            path += f'</g>'
+            path += f"</g>"
 
         # Adjust dropin based on chart type
         dropin = {"Transit": 84, "Synastry": 84, "ExternalNatal": 100}.get(chart_type, 48)
@@ -640,20 +641,21 @@ def draw_houses_cusps_and_text_number(
         # Add the house cusp line for the first subject
         path += f'<g kr:node="Cusp">'
         path += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {linecolor}; stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;"/>'
-        path += f'</g>'
-        
+        path += f"</g>"
+
         # Add the house number text for the first subject
         path += f'<g kr:node="HouseNumber">'
         path += f'<text style="fill: #f00; fill-opacity: .6; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
-        path += f'</g>'
+        path += f"</g>"
 
     return path
+
 
 def draw_aspect_transit_grid(
     grid_title: str,
     aspects_list: Union[list[AspectModel], list[dict]],
     celestial_point_language: KerykeionLanguageCelestialPointModel,
-    aspects_settings: KerykeionSettingsAspectModel
+    aspects_settings: KerykeionSettingsAspectModel,
 ) -> str:
     """
     Generates the SVG output for the aspect transit grid.
@@ -689,7 +691,7 @@ def draw_aspect_transit_grid(
         elif i == 36:
             nl = 300
             line = 0
-                
+
         elif i == 48:
             nl = 400
             # When there are more than 60 aspects, the text is moved up
@@ -699,13 +701,13 @@ def draw_aspect_transit_grid(
                 line = 0
 
         inner_path += f'<g transform="translate({nl},{line})">'
-        
+
         # first planet symbol
         inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspects_list[i]["p1"]]["name"]}" />'
-        
+
         # aspect symbol
         inner_path += f'<use  x="15" y="0" xlink:href="#orb{aspects_settings[aspects_list[i]["aid"]]["degree"]}" />'
-        
+
         # second planet symbol
         inner_path += f'<g transform="translate(30,0)">'
         inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspects_list[i]["p2"]]["name"]}" />'
@@ -724,66 +726,84 @@ def draw_aspect_transit_grid(
 
     return out
 
+
 def draw_moon_phase(
-        degrees_between_s_m,
-        latitude: float,
-        lunar_phase_outline_color: str = "#000000",
-        dark_color: str = "#000000",
-        light_color: str = "#ffffff",
-    ):
+    degrees_between_sun_and_moon: float,
+    latitude: float,
+    lunar_phase_outline_color: str = "#000000",
+    dark_color: str = "#000000",
+    light_color: str = "#ffffff",
+) -> str:
+    """
+    Draws the moon phase based on the degrees between the sun and the moon.
 
-    deg = degrees_between_s_m
+    Parameters:
+    - degrees_between_sun_and_moon (float): The degrees between the sun and the moon.
+    - latitude (float): The latitude for rotation calculation.
+    - lunar_phase_outline_color (str): The color for the lunar phase outline.
+    - dark_color (str): The color for the dark part of the moon.
+    - light_color (str): The color for the light part of the moon.
 
-    lffg = None
-    lfbg = None
-    lfcx = None
-    lfr = None
+    Returns:
+    - str: The SVG element as a string.
+    """
+    deg = degrees_between_sun_and_moon
 
+    # Initialize variables for lunar phase properties
+    fill_color_foreground = None
+    fill_color_background = None
+    circle_center_x = None
+    circle_radius = None
+
+    # Determine lunar phase properties based on the degree
     if deg < 90.0:
-        maxr = deg
+        max_radius = deg
         if deg > 80.0:
-            maxr = maxr * maxr
-        lfcx = 20.0 + (deg / 90.0) * (maxr + 10.0)
-        lfr = 10.0 + (deg / 90.0) * maxr
-        lffg = dark_color
-        lfbg = light_color
+            max_radius = max_radius * max_radius
+        circle_center_x = 20.0 + (deg / 90.0) * (max_radius + 10.0)
+        circle_radius = 10.0 + (deg / 90.0) * max_radius
+        fill_color_foreground = dark_color
+        fill_color_background = light_color
 
     elif deg < 180.0:
-        maxr = 180.0 - deg
+        max_radius = 180.0 - deg
         if deg < 100.0:
-            maxr = maxr * maxr
-        lfcx = 20.0 + ((deg - 90.0) / 90.0 * (maxr + 10.0)) - (maxr + 10.0)
-        lfr = 10.0 + maxr - ((deg - 90.0) / 90.0 * maxr)
-        lffg = light_color
-        lfbg = dark_color
+            max_radius = max_radius * max_radius
+        circle_center_x = 20.0 + ((deg - 90.0) / 90.0 * (max_radius + 10.0)) - (max_radius + 10.0)
+        circle_radius = 10.0 + max_radius - ((deg - 90.0) / 90.0 * max_radius)
+        fill_color_foreground = light_color
+        fill_color_background = dark_color
 
     elif deg < 270.0:
-        maxr = deg - 180.0
+        max_radius = deg - 180.0
         if deg > 260.0:
-            maxr = maxr * maxr
-        lfcx = 20.0 + ((deg - 180.0) / 90.0 * (maxr + 10.0))
-        lfr = 10.0 + ((deg - 180.0) / 90.0 * maxr)
-        lffg, lfbg = light_color, dark_color
+            max_radius = max_radius * max_radius
+        circle_center_x = 20.0 + ((deg - 180.0) / 90.0 * (max_radius + 10.0))
+        circle_radius = 10.0 + ((deg - 180.0) / 90.0 * max_radius)
+        fill_color_foreground = light_color
+        fill_color_background = dark_color
 
-    elif deg < 361:
-        maxr = 360.0 - deg
+    elif deg < 361.0:
+        max_radius = 360.0 - deg
         if deg < 280.0:
-            maxr = maxr * maxr
-        lfcx = 20.0 + ((deg - 270.0) / 90.0 * (maxr + 10.0)) - (maxr + 10.0)
-        lfr = 10.0 + maxr - ((deg - 270.0) / 90.0 * maxr)
-        lffg, lfbg = dark_color, light_color
+            max_radius = max_radius * max_radius
+        circle_center_x = 20.0 + ((deg - 270.0) / 90.0 * (max_radius + 10.0)) - (max_radius + 10.0)
+        circle_radius = 10.0 + max_radius - ((deg - 270.0) / 90.0 * max_radius)
+        fill_color_foreground = dark_color
+        fill_color_background = light_color
 
-    if lffg is None or lfbg is None or lfcx is None or lfr is None:
-        raise KerykeionException("Lunar phase error")
+    else:
+        raise KerykeionException(f"Invalid degree value: {deg}")
 
 
-    # rotation based on latitude
+    # Calculate rotation based on latitude
     lunar_phase_rotate = -90.0 - latitude
 
+    # Return the SVG element as a string
     return (
         f'<g transform="rotate({lunar_phase_rotate} 20 10)">'
-        f'<circle cx="20" cy="10" r="10" style="fill: {lfbg}" />'
-        f'<circle cx="{lfcx}" cy="10" r="{lfr}" style="fill: {lffg}" clip-path="url(#moonPhaseCutOffCircle)" />'
-        f'<circle cx="20" cy="10" r="10" style="fill: none; stroke: {lunar_phase_outline_color}; stroke-width: 0.5px; stroke-opacity: 0.5" />'
-        f'</g>'
+        f'    <circle cx="20" cy="10" r="10" style="fill: {fill_color_background}" />'
+        f'    <circle cx="{circle_center_x}" cy="10" r="{circle_radius}" style="fill: {fill_color_foreground}" clip-path="url(#moonPhaseCutOffCircle)" />'
+        f'    <circle cx="20" cy="10" r="10" style="fill: none; stroke: {lunar_phase_outline_color}; stroke-width: 0.5px; stroke-opacity: 0.5" />'
+        f"</g>"
     )
