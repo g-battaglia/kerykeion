@@ -31,7 +31,8 @@ from kerykeion.charts.charts_utils import (
     draw_third_circle,
     draw_aspect_grid,
     draw_houses_cusps_and_text_number,
-    draw_aspect_transit_grid
+    draw_aspect_transit_grid,
+    draw_moon_phase
 )
 from pathlib import Path
 from scour.scour import scourString
@@ -931,63 +932,10 @@ class KerykeionChartSVG:
             td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
             td["bottomLeft4"] = f'{self.t_user.perspective_type}'
 
-        # Lunar Phase --->
-        # TODO: Should be it's own function
-
-        deg = self.user.lunar_phase["degrees_between_s_m"]
-
-        lffg = None
-        lfbg = None
-        lfcx = None
-        lfr = None
-
-        if deg < 90.0:
-            maxr = deg
-            if deg > 80.0:
-                maxr = maxr * maxr
-            lfcx = 20.0 + (deg / 90.0) * (maxr + 10.0)
-            lfr = 10.0 + (deg / 90.0) * maxr
-            lffg = self.chart_colors_settings["lunar_phase_0"]
-            lfbg = self.chart_colors_settings["lunar_phase_1"]
-
-        elif deg < 180.0:
-            maxr = 180.0 - deg
-            if deg < 100.0:
-                maxr = maxr * maxr
-            lfcx = 20.0 + ((deg - 90.0) / 90.0 * (maxr + 10.0)) - (maxr + 10.0)
-            lfr = 10.0 + maxr - ((deg - 90.0) / 90.0 * maxr)
-            lffg = self.chart_colors_settings["lunar_phase_1"]
-            lfbg = self.chart_colors_settings["lunar_phase_0"]
-
-        elif deg < 270.0:
-            maxr = deg - 180.0
-            if deg > 260.0:
-                maxr = maxr * maxr
-            lfcx = 20.0 + ((deg - 180.0) / 90.0 * (maxr + 10.0))
-            lfr = 10.0 + ((deg - 180.0) / 90.0 * maxr)
-            lffg, lfbg = self.chart_colors_settings["lunar_phase_1"], self.chart_colors_settings["lunar_phase_0"]
-
-        elif deg < 361:
-            maxr = 360.0 - deg
-            if deg < 280.0:
-                maxr = maxr * maxr
-            lfcx = 20.0 + ((deg - 270.0) / 90.0 * (maxr + 10.0)) - (maxr + 10.0)
-            lfr = 10.0 + maxr - ((deg - 270.0) / 90.0 * maxr)
-            lffg, lfbg = self.chart_colors_settings["lunar_phase_0"], self.chart_colors_settings["lunar_phase_1"]
-
-        if lffg is None or lfbg is None or lfcx is None or lfr is None:
-            raise KerykeionException("Lunar phase error")
-
-        td["lunar_phase_fg"] = lffg
-        td["lunar_phase_bg"] = lfbg
-        td["lunar_phase_cx"] = lfcx
-        td["lunar_phase_r"] = lfr
-        td["lunar_phase_outline"] = self.chart_colors_settings["lunar_phase_2"]
-
-        # rotation based on latitude
-        td["lunar_phase_rotate"] = -90.0 - self.geolat
-
-        # <--- End Lunar Phase
+        td['moon_phase'] = draw_moon_phase(
+            self.user.lunar_phase["degrees_between_s_m"],
+            self.geolat
+        )
         
         # stringlocation
         if len(self.location) > 35:

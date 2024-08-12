@@ -64,6 +64,8 @@ class KerykeionSettingsChartColorsModel(SubscriptableBaseModel):
     zodiac_transit_ring_3: str = Field(title="Zodiac Transit Ring Color 3", description="Zodiac Transit Ring Color 3")
     houses_radix_line: str = Field(title="Houses Radix Line Color", description="Houses Radix Line Color")
     houses_transit_line: str = Field(title="Houses Transit Line Color", description="Houses Transit Line Color")
+
+    # Deprecated: Not used anymore
     lunar_phase_0: str = Field(title="Lunar Phase Color 0", description="Lunar Phase Color 0")
     lunar_phase_1: str = Field(title="Lunar Phase Color 1", description="Lunar Phase Color 1")
     lunar_phase_2: str = Field(title="Lunar Phase Color 2", description="Lunar Phase Color 2")
