@@ -528,7 +528,7 @@ class KerykeionChartSVG:
 
             planet_details = self.user[self.available_planets_setting[i]["name"].lower()]
 
-            output += f'<g kr:node="ChartPoint" kr:house="{planet_details['house']}" kr:sign="{planet_details['sign']}" kr:slug="{planet_details['name']}" transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">'
+            output += f'<g kr:node="ChartPoint" kr:house="{planet_details["house"]}" kr:sign="{planet_details["sign"]}" kr:slug="{planet_details["name"]}" transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">'
             output += f'<use x="{planet_x * (1/scale)}" y="{planet_y * (1/scale)}" xlink:href="#{self.available_planets_setting[i]["name"]}" />'
             output += f'</g>'
 
