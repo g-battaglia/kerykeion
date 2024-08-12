@@ -2,7 +2,7 @@ import math
 import datetime
 from kerykeion.kr_types import KerykeionException, ChartType
 from typing import Union
-from kerykeion.kr_types.kr_models import AspectModel
+from kerykeion.kr_types.kr_models import AspectModel, KerykeionPointModel
 from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsAspectModel
 
 
@@ -807,3 +807,64 @@ def draw_moon_phase(
         f'    <circle cx="20" cy="10" r="10" style="fill: none; stroke: {lunar_phase_outline_color}; stroke-width: 0.5px; stroke-opacity: 0.5" />'
         f"</g>"
     )
+
+
+def draw_house_grid(
+        main_subject_houses_list: list[KerykeionPointModel],
+        chart_type: ChartType,
+        secondary_subject_houses_list: Union[list[KerykeionPointModel], None] = None,
+        text_color: str = "#000000",
+        house_cusp_generale_name_label: str = "Cusp",
+    ) -> str:
+    """
+    Generate SVG code for a grid of astrological houses.
+
+    Parameters:
+    - main_houses (list[KerykeionPointModel]): List of houses for the main subject.
+    - chart_type (ChartType): Type of the chart (e.g., Synastry, Transit).
+    - secondary_houses (list[KerykeionPointModel], optional): List of houses for the secondary subject.
+    - text_color (str): Color of the text.
+    - cusp_label (str): Label for the house cusp.
+
+    Returns:
+    - str: The SVG code for the grid of houses.
+    """
+    
+    if chart_type in ["Synastry", "Transit"] and secondary_subject_houses_list is None:
+        raise KerykeionException("secondary_houses is None")
+
+    svg_output = '<g transform="translate(610,-20)">'
+
+    line_increment = 10
+    for i, house in enumerate(main_subject_houses_list):
+        cusp_number = f"&#160;&#160;{i + 1}" if i < 9 else str(i + 1)
+        svg_output += (
+            f'<g transform="translate(0,{line_increment})">'
+            f'<text text-anchor="end" x="40" style="fill:{text_color}; font-size: 10px;">{house_cusp_generale_name_label} {cusp_number}:</text>'
+            f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{house["sign"]}" /></g>'
+            f'<text x="53" style="fill:{text_color}; font-size: 10px;"> {convert_decimal_to_degree_string(house["position"])}</text>'
+            f'</g>'
+        )
+        line_increment += 14
+
+    svg_output += "</g>"
+
+    if chart_type == "Synastry":
+        svg_output += '<!-- Synastry Houses -->'
+        svg_output += '<g transform="translate(850, -20)">'
+        line_increment = 10
+
+        for i, house in enumerate(secondary_subject_houses_list):
+            cusp_number = f"&#160;&#160;{i + 1}" if i < 9 else str(i + 1)
+            svg_output += (
+                f'<g transform="translate(0,{line_increment})">'
+                f'<text text-anchor="end" x="40" style="fill:{text_color}; font-size: 10px;">{house_cusp_generale_name_label} {cusp_number}:</text>'
+                f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{house["sign"]}" /></g>'
+                f'<text x="53" style="fill:{text_color}; font-size: 10px;"> {convert_decimal_to_degree_string(house["position"])}</text>'
+                f'</g>'
+            )
+            line_increment += 14
+
+        svg_output += "</g>"
+
+    return svg_output
