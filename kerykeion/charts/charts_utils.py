@@ -723,3 +723,67 @@ def draw_aspect_transit_grid(
     out += "</g>"
 
     return out
+
+def draw_moon_phase(
+        degrees_between_s_m,
+        latitude: float,
+        lunar_phase_outline_color: str = "#000000",
+        dark_color: str = "#000000",
+        light_color: str = "#ffffff",
+    ):
+
+    deg = degrees_between_s_m
+
+    lffg = None
+    lfbg = None
+    lfcx = None
+    lfr = None
+
+    if deg < 90.0:
+        maxr = deg
+        if deg > 80.0:
+            maxr = maxr * maxr
+        lfcx = 20.0 + (deg / 90.0) * (maxr + 10.0)
+        lfr = 10.0 + (deg / 90.0) * maxr
+        lffg = dark_color
+        lfbg = light_color
+
+    elif deg < 180.0:
+        maxr = 180.0 - deg
+        if deg < 100.0:
+            maxr = maxr * maxr
+        lfcx = 20.0 + ((deg - 90.0) / 90.0 * (maxr + 10.0)) - (maxr + 10.0)
+        lfr = 10.0 + maxr - ((deg - 90.0) / 90.0 * maxr)
+        lffg = light_color
+        lfbg = dark_color
+
+    elif deg < 270.0:
+        maxr = deg - 180.0
+        if deg > 260.0:
+            maxr = maxr * maxr
+        lfcx = 20.0 + ((deg - 180.0) / 90.0 * (maxr + 10.0))
+        lfr = 10.0 + ((deg - 180.0) / 90.0 * maxr)
+        lffg, lfbg = light_color, dark_color
+
+    elif deg < 361:
+        maxr = 360.0 - deg
+        if deg < 280.0:
+            maxr = maxr * maxr
+        lfcx = 20.0 + ((deg - 270.0) / 90.0 * (maxr + 10.0)) - (maxr + 10.0)
+        lfr = 10.0 + maxr - ((deg - 270.0) / 90.0 * maxr)
+        lffg, lfbg = dark_color, light_color
+
+    if lffg is None or lfbg is None or lfcx is None or lfr is None:
+        raise KerykeionException("Lunar phase error")
+
+
+    # rotation based on latitude
+    lunar_phase_rotate = -90.0 - latitude
+
+    return (
+        f'<g transform="rotate({lunar_phase_rotate} 20 10)">'
+        f'<circle cx="20" cy="10" r="10" style="fill: {lfbg}" />'
+        f'<circle cx="{lfcx}" cy="10" r="{lfr}" style="fill: {lffg}" clip-path="url(#moonPhaseCutOffCircle)" />'
+        f'<circle cx="20" cy="10" r="10" style="fill: none; stroke: {lunar_phase_outline_color}; stroke-width: 0.5px; stroke-opacity: 0.5" />'
+        f'</g>'
+    )
