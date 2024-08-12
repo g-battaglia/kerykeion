@@ -10,7 +10,7 @@ from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.synastry_aspects import SynastryAspects
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
-from kerykeion.kr_types import KerykeionException, ChartType
+from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointModel
 from kerykeion.kr_types import ChartTemplateDictionary
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel
 from kerykeion.charts.charts_utils import (
@@ -33,7 +33,8 @@ from kerykeion.charts.charts_utils import (
     draw_houses_cusps_and_text_number,
     draw_aspect_transit_grid,
     draw_moon_phase,
-    draw_house_grid
+    draw_house_grid,
+    draw_planet_grid
 )
 from pathlib import Path
 from scour.scour import scourString
@@ -157,28 +158,32 @@ class KerykeionChartSVG:
         ]
 
         # Available bodies
-        available_celestial_points = []
+        available_celestial_points_names = []
         for body in self.available_planets_setting:
-            available_celestial_points.append(body["name"].lower())
-        
+            available_celestial_points_names.append(body["name"].lower())
+
+        self.available_kerykeion_celestial_points = []
+        for body in available_celestial_points_names:
+            self.available_kerykeion_celestial_points.append(self.user.get(body))
+
         # Make a list for the absolute degrees of the points of the graphic.
         self.points_deg_ut = []
-        for planet in available_celestial_points:
+        for planet in available_celestial_points_names:
             self.points_deg_ut.append(self.user.get(planet).abs_pos)
 
         # Make a list of the relative degrees of the points in the graphic.
         self.points_deg = []
-        for planet in available_celestial_points:
+        for planet in available_celestial_points_names:
             self.points_deg.append(self.user.get(planet).position)
 
         # Make list of the points sign
         self.points_sign = []
-        for planet in available_celestial_points:
+        for planet in available_celestial_points_names:
             self.points_sign.append(self.user.get(planet).sign_num)
 
         # Make a list of points if they are retrograde or not.
         self.points_retrograde = []
-        for planet in available_celestial_points:
+        for planet in available_celestial_points_names:
             self.points_retrograde.append(self.user.get(planet).retrograde)
 
         # Makes the sign number list.
@@ -199,24 +204,28 @@ class KerykeionChartSVG:
             # Kerykeion instance
             self.t_user = second_obj
 
+            self.t_available_kerykeion_celestial_points = []
+            for body in available_celestial_points_names:
+                self.t_available_kerykeion_celestial_points.append(self.t_user.get(body))
+
             # Make a list for the absolute degrees of the points of the graphic.
             self.t_points_deg_ut = []
-            for planet in available_celestial_points:            
+            for planet in available_celestial_points_names:
                 self.t_points_deg_ut.append(self.t_user.get(planet).abs_pos)
 
             # Make a list of the relative degrees of the points in the graphic.
             self.t_points_deg = []
-            for planet in available_celestial_points:
+            for planet in available_celestial_points_names:
                 self.t_points_deg.append(self.t_user.get(planet).position)
 
             # Make list of the poits sign.
             self.t_points_sign = []
-            for planet in available_celestial_points:
+            for planet in available_celestial_points_names:
                 self.t_points_sign.append(self.t_user.get(planet).sign_num)
 
             # Make a list of poits if they are retrograde or not.
             self.t_points_retrograde = []
-            for planet in available_celestial_points:
+            for planet in available_celestial_points_names:
                 self.t_points_retrograde.append(self.t_user.get(planet).retrograde)
 
             self.t_houses_sign_graph = []
@@ -704,94 +713,6 @@ class KerykeionChartSVG:
 
         return out
 
-    def _makePlanetGrid(self):
-        li = 10
-        offset = 0
-
-        out = '<g transform="translate(510,-20)">'
-        out += '<g transform="translate(140, -15)">'
-        out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.user.name}:</text>'
-        out += "</g>"
-
-        end_of_line = None
-        for i in range(len(self.available_planets_setting)):
-            offset_between_lines = 14
-            end_of_line = "</g>"
-
-            # Guarda qui !!
-            if i == 27:
-                li = 10
-                offset = -120
-
-            # start of line
-            out += f'<g transform="translate({offset},{li})">'
-
-            # planet text
-            out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.available_planets_setting[i]["label"]]}</text>'
-
-            # planet symbol
-            out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.available_planets_setting[i]["name"]}" /></g>'
-
-            # planet degree
-            out += f'<text text-anchor="start" x="19" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{convert_decimal_to_degree_string(self.points_deg[i])}</text>'
-
-            # zodiac
-            out += f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.points_sign[i]]["name"]}" /></g>'
-
-            # planet retrograde
-            if self.points_retrograde[i]:
-                out += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
-
-            # end of line
-            out += end_of_line
-
-            li = li + offset_between_lines
-
-        if self.chart_type == "Transit" or self.chart_type == "Synastry":
-            if self.chart_type == "Transit":
-                out += '<g transform="translate(320, -15)">'
-                out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 14px;">{self.t_name}:</text>'
-            else:
-                out += '<g transform="translate(380, -15)">'
-                out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["planets_and_house"]} {self.t_user.name}:</text>'
-
-            out += end_of_line
-
-            t_li = 10
-            t_offset = 250
-
-            for i in range(len(self.available_planets_setting)):
-                if i == 27:
-                    t_li = 10
-                    t_offset = -120
-
-                # start of line
-                out += f'<g transform="translate({t_offset},{t_li})">'
-
-                # planet text
-                out += f'<text text-anchor="end" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["celestial_points"][self.available_planets_setting[i]["label"]]}</text>'
-                # planet symbol
-                out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{self.available_planets_setting[i]["name"]}" /></g>'
-                # planet degree
-                out += f'<text text-anchor="start" x="19" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{convert_decimal_to_degree_string(self.t_points_deg[i])}</text>'
-                # zodiac
-                out += f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.t_points_sign[i]]["name"]}" /></g>'
-
-                # planet retrograde
-                if self.t_points_retrograde[i]:
-                    out += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
-
-                # end of line
-                out += end_of_line
-
-                t_li = t_li + offset_between_lines
-
-        if end_of_line is None:
-            raise KerykeionException("End of line not found")
-
-        out += end_of_line
-        return out
-
     def _create_template_dictionary(self) -> ChartTemplateDictionary:
         """
         Create a dictionary containing the template data for generating an astrological chart.
@@ -981,7 +902,30 @@ class KerykeionChartSVG:
         )
 
         # Draw planet grid
-        template_dict["makePlanetGrid"] = self._makePlanetGrid()
+        if self.chart_type in ["Transit", "Synastry"]:
+            if self.chart_type == "Transit":
+                second_subject_table_name = self.language_settings["transit_name"]
+            else:
+                second_subject_table_name = self.t_user.name
+            template_dict["makePlanetGrid"] = draw_planet_grid(
+                planets_and_houses_grid_title=self.language_settings["planets_and_house"],
+                subject_name=self.user.name,
+                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
+                chart_type=self.chart_type,
+                text_color=self.chart_colors_settings["paper_0"],
+                celestial_point_language=self.language_settings["celestial_points"],
+                second_subject_name=second_subject_table_name,
+                second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
+            )
+        else:
+            template_dict["makePlanetGrid"] = draw_planet_grid(
+                planets_and_houses_grid_title=self.language_settings["planets_and_house"],
+                subject_name=self.user.name,
+                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
+                chart_type=self.chart_type,
+                text_color=self.chart_colors_settings["paper_0"],
+                celestial_point_language=self.language_settings["celestial_points"],
+            )
 
         # Set date time string
         dt = datetime.fromisoformat(self.user.iso_formatted_local_datetime)
