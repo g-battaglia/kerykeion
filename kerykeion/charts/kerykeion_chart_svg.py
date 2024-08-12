@@ -94,14 +94,10 @@ class KerykeionChartSVG:
     transit_ring_exclude_points_names: List[str]
     points_deg_ut: list
     points_deg: list
-    points_sign: list
     points_retrograde: list
-    houses_sign_graph: list
     t_points_deg_ut: list
     t_points_deg: list
-    t_points_sign: list
     t_points_retrograde: list
-    t_houses_sign_graph: list
     height: float
     location: str
     geolat: float
@@ -176,22 +172,7 @@ class KerykeionChartSVG:
         for planet in available_celestial_points_names:
             self.points_deg.append(self.user.get(planet).position)
 
-        # Make list of the points sign
-        self.points_sign = []
-        for planet in available_celestial_points_names:
-            self.points_sign.append(self.user.get(planet).sign_num)
-
-        # Make a list of points if they are retrograde or not.
-        self.points_retrograde = []
-        for planet in available_celestial_points_names:
-            self.points_retrograde.append(self.user.get(planet).retrograde)
-
         # Makes the sign number list.
-
-        self.houses_sign_graph = []
-        for h in self.user.houses_list:
-            self.houses_sign_graph.append(h["sign_num"])
-
         if self.chart_type == "Natal" or self.chart_type == "ExternalNatal":
             natal_aspects_instance = NatalAspects(self.user, new_settings_file=self.new_settings_file)
             self.aspects_list = natal_aspects_instance.relevant_aspects
@@ -218,19 +199,10 @@ class KerykeionChartSVG:
             for planet in available_celestial_points_names:
                 self.t_points_deg.append(self.t_user.get(planet).position)
 
-            # Make list of the poits sign.
-            self.t_points_sign = []
-            for planet in available_celestial_points_names:
-                self.t_points_sign.append(self.t_user.get(planet).sign_num)
-
             # Make a list of poits if they are retrograde or not.
             self.t_points_retrograde = []
             for planet in available_celestial_points_names:
                 self.t_points_retrograde.append(self.t_user.get(planet).retrograde)
-
-            self.t_houses_sign_graph = []
-            for h in self.t_user.houses_list:
-                self.t_houses_sign_graph.append(h["sign_num"])
 
         # screen size
         self.height = self._DEFAULT_HEIGHT
@@ -320,18 +292,28 @@ class KerykeionChartSVG:
             {"name": "Aqu", "element": "air"},
             {"name": "Pis", "element": "water"},
         )
+        
+        # Available bodies
+        available_celestial_points_names = []
+        for body in self.available_planets_setting:
+            available_celestial_points_names.append(body["name"].lower())
+
+        # Make list of the points sign
+        points_sign = []
+        for planet in available_celestial_points_names:
+            points_sign.append(self.user.get(planet).sign_num)
 
         for i in range(len(self.available_planets_setting)):
             # element: get extra points if planet is in own zodiac sign.
             related_zodiac_signs = self.available_planets_setting[i]["related_zodiac_signs"]
-            cz = self.points_sign[i]
+            cz = points_sign[i]
             extra_points = 0
             if related_zodiac_signs != []:
                 for e in range(len(related_zodiac_signs)):
                     if int(related_zodiac_signs[e]) == int(cz):
                         extra_points = self.planet_in_zodiac_extra_points
 
-            ele = zodiac[self.points_sign[i]]["element"]
+            ele = zodiac[points_sign[i]]["element"]
             if ele == "fire":
                 self.fire = self.fire + self.available_planets_setting[i]["element_points"] + extra_points
 
