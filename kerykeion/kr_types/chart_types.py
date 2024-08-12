@@ -6,8 +6,7 @@ class ChartTemplateDictionary(TypedDict):
     degreeRing: str
     first_circle: str
     second_circle: str
-    c3: str
-    c3style: str
+    third_circle: str
     makeAspects: str
     makeAspectGrid: str
     makePatterns: str
