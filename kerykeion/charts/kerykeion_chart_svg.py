@@ -32,7 +32,8 @@ from kerykeion.charts.charts_utils import (
     draw_aspect_grid,
     draw_houses_cusps_and_text_number,
     draw_aspect_transit_grid,
-    draw_moon_phase
+    draw_moon_phase,
+    draw_house_grid
 )
 from pathlib import Path
 from scour.scour import scourString
@@ -791,50 +792,6 @@ class KerykeionChartSVG:
         out += end_of_line
         return out
 
-    def _makeHouseGrid(self):
-        """
-        Generate SVG code for a grid of astrological houses.
-
-        Returns:
-            str: The SVG code for the grid of houses.
-        """
-        out = '<g transform="translate(610,-20)">'
-
-        li = 10
-        for i in range(12):
-            if i < 9:
-                cusp = "&#160;&#160;" + str(i + 1)
-            else:
-                cusp = str(i + 1)
-            out += f'<g transform="translate(0,{li})">'
-            out += f'<text text-anchor="end" x="40" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["cusp"]} {cusp}:</text>'
-            out += f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.houses_sign_graph[i]]["name"]}" /></g>'
-            out += f'<text x="53" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;"> {convert_decimal_to_degree_string(self.user.houses_list[i]["position"])}</text>'
-            out += "</g>"
-            li = li + 14
-
-        out += "</g>"
-
-        if self.chart_type == "Synastry":
-            out += '<!-- Synastry Houses -->'
-            out += '<g transform="translate(850, -20)">'
-            li = 10
-
-            for i in range(12):
-                if i < 9:
-                    cusp = "&#160;&#160;" + str(i + 1)
-                else:
-                    cusp = str(i + 1)
-                out += '<g transform="translate(0,' + str(li) + ')">'
-                out += f'<text text-anchor="end" x="40" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{self.language_settings["cusp"]} {cusp}:</text>'
-                out += f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{self.zodiac[self.t_houses_sign_graph[i]]["name"]}" /></g>'
-                out += f'<text x="53" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;"> {convert_decimal_to_degree_string(self.t_user.houses_list[i]["position"])}</text>'
-                out += "</g>"
-                li = li + 14
-            out += "</g>"
-
-        return out
-
     def _createTemplateDictionary(self) -> ChartTemplateDictionary:
         # self.chart_type = "Transit"
         # empty element points
@@ -995,7 +952,23 @@ class KerykeionChartSVG:
         #--- 
 
         td["makeZodiac"] = self._draw_zodiac_circle_slices(r)
-        td["makeHousesGrid"] = self._makeHouseGrid()
+
+        # Houses Grid
+        if self.chart_type == "Transit" or self.chart_type == "Synastry":
+            td["makeHousesGrid"] = draw_house_grid(
+                main_subject_houses_list=self.user.houses_list,
+                secondary_subject_houses_list=self.t_user.houses_list,
+                chart_type=self.chart_type,
+                text_color=self.chart_colors_settings["paper_0"],
+                house_cusp_generale_name_label=self.language_settings["cusp"]
+            )
+        else:
+            td["makeHousesGrid"] = draw_house_grid(
+                main_subject_houses_list=self.user.houses_list,
+                chart_type=self.chart_type,
+                text_color=self.chart_colors_settings["paper_0"],
+                house_cusp_generale_name_label=self.language_settings["cusp"]
+            )
         
         # Houses Cusps and Number
         if self.chart_type == "Transit" or self.chart_type == "Synastry":
