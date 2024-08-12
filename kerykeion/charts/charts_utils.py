@@ -6,6 +6,37 @@ from kerykeion.kr_types.kr_models import AspectModel, KerykeionPointModel
 from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsAspectModel
 
 
+def get_decoded_kerykeion_celestial_point_name(input_planet_name: str, celestial_point_language: KerykeionLanguageCelestialPointModel) -> str:
+    """
+    Decode the given celestial point name based on the provided language model.
+
+    Args:
+        input_planet_name (str): The name of the celestial point to decode.
+        celestial_point_language (KerykeionLanguageCelestialPointModel): The language model containing celestial point names.
+
+    Returns:
+        str: The decoded celestial point name.
+    """
+
+    # Dictionary for special house names
+    special_house_names = {
+        "First_House": "Asc",
+        "Seventh_House": "Dsc",
+        "Tenth_House": "Mc",
+        "Fourth_House": "Ic"
+    }
+
+    # Get the language model keys
+    language_keys = celestial_point_language.model_dump().keys()
+
+    # Check if the input planet name exists in the language model
+    if input_planet_name in language_keys:
+        return celestial_point_language[input_planet_name]
+
+    # Return the special house name if it exists, otherwise return an empty string
+    return special_house_names.get(input_planet_name, "")
+
+
 def decHourJoin(inH: int, inM: int, inS: int) -> float:
     """Join hour, minutes, seconds, timezone integer to hour float.
 
@@ -868,3 +899,102 @@ def draw_house_grid(
         svg_output += "</g>"
 
     return svg_output
+
+
+def draw_planet_grid(
+        planets_and_houses_grid_title: str,
+        subject_name: str,
+        available_kerykeion_celestial_points: list[KerykeionPointModel],
+        chart_type: ChartType,
+        celestial_point_language: KerykeionLanguageCelestialPointModel,
+        second_subject_name: str = None,
+        second_subject_available_kerykeion_celestial_points: list[KerykeionPointModel] = None,
+        text_color: str = "#000000",
+    ):
+    li = 10
+    offset = 0
+
+    out = '<g transform="translate(510,-20)">'
+    out += '<g transform="translate(140, -15)">'
+    out += f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}:</text>'
+    out += "</g>"
+
+    end_of_line = None
+    for i, planet in enumerate(available_kerykeion_celestial_points):
+        offset_between_lines = 14
+        end_of_line = "</g>"
+
+        # Guarda qui !!
+        if i == 27:
+            li = 10
+            offset = -120
+
+        # start of line
+        out += f'<g transform="translate({offset},{li})">'
+
+        decoded_kerykeion_celestial_point_name = get_decoded_kerykeion_celestial_point_name(planet["name"], celestial_point_language)
+        out += f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{decoded_kerykeion_celestial_point_name}</text>'
+
+        # planet symbol
+        out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{planet["name"]}" /></g>'
+
+        # planet degree
+        out += f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(planet['position'])}</text>'
+
+        # zodiac
+        out += f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{planet['sign']}" /></g>'
+
+        # planet retrograde
+        if planet['retrograde']:
+            out += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+
+        # end of line
+        out += end_of_line
+
+        li = li + offset_between_lines
+
+    if chart_type == "Transit" or chart_type == "Synastry":
+        if chart_type == "Transit":
+            out += '<g transform="translate(320, -15)">'
+            out += f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{second_subject_name}:</text>'
+        else:
+            out += '<g transform="translate(380, -15)">'
+            out += f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}:</text>'
+
+        out += end_of_line
+
+        t_li = 10
+        t_offset = 250
+
+        for i, t_planet in enumerate(second_subject_available_kerykeion_celestial_points):
+            if i == 27:
+                t_li = 10
+                t_offset = -120
+
+            # start of line
+            out += f'<g transform="translate({t_offset},{t_li})">'
+
+            # planet text
+            second_decoded_kerykeion_celestial_point_name = get_decoded_kerykeion_celestial_point_name(t_planet["name"], celestial_point_language)
+            out += f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{second_decoded_kerykeion_celestial_point_name}</text>'
+            # planet symbol
+            out += f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{t_planet["name"]}" /></g>'
+            # planet degree
+            out += f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(t_planet['position'])}</text>'
+            # zodiac
+            out += f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{t_planet['sign']}" /></g>'
+
+            # planet retrograde
+            if t_planet['retrograde']:
+                out += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+
+            # end of line
+            out += end_of_line
+
+            t_li = t_li + offset_between_lines
+
+    if end_of_line is None:
+        raise KerykeionException("End of line not found")
+
+    out += end_of_line
+    return out
