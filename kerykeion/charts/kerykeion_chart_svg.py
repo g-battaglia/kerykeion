@@ -28,6 +28,7 @@ from kerykeion.charts.charts_utils import (
     draw_transit_ring,
     draw_first_circle,
     draw_second_circle,
+    draw_third_circle,
     draw_aspect_grid,
     draw_houses_cusps_and_text_number,
     draw_aspect_transit_grid
@@ -1020,9 +1021,7 @@ class KerykeionChartSVG:
             # circles
             td["first_circle"] = draw_first_circle(r, self.chart_colors_settings["zodiac_transit_ring_2"], self.chart_type)
             td["second_circle"] = draw_second_circle(r, self.chart_colors_settings['zodiac_transit_ring_1'], self.chart_colors_settings['paper_1'], self.chart_type)
-
-            td["c3"] = 'cx="' + str(r) + '" cy="' + str(r) + '" r="' + str(r - 160) + '"'
-            td["c3style"] = f"fill: {self.chart_colors_settings['paper_1']}; fill-opacity:.8; stroke: {self.chart_colors_settings['zodiac_transit_ring_0']}; stroke-width: 1px"
+            td['third_circle'] = draw_third_circle(r, self.chart_colors_settings['zodiac_transit_ring_0'], self.chart_colors_settings['paper_1'], self.chart_type)
 
             td["makeAspects"] = self._draw_all_transit_aspects_lines(r, (r - 160))
 
@@ -1041,11 +1040,8 @@ class KerykeionChartSVG:
             td["degreeRing"] = draw_degree_ring(r, self.c1, self.user.seventh_house.abs_pos, self.chart_colors_settings["paper_0"])
 
             td['first_circle'] = draw_first_circle(r, self.chart_colors_settings["zodiac_radix_ring_2"], self.chart_type, self.c1)
-
             td["second_circle"] = draw_second_circle(r, self.chart_colors_settings["zodiac_radix_ring_1"], self.chart_colors_settings["paper_1"], self.chart_type, self.c2)
-            
-            td["c3"] = f'cx="{r}" cy="{r}" r="{r - self.c3}"'
-            td["c3style"] = f'fill: {self.chart_colors_settings["paper_1"]}; fill-opacity:.8; stroke: {self.chart_colors_settings["zodiac_radix_ring_0"]}; stroke-width: 1px'
+            td['third_circle'] = draw_third_circle(r,  self.chart_colors_settings["zodiac_radix_ring_0"], self.chart_colors_settings["paper_1"], self.chart_type, self.c3)
             
             td["makeAspects"] = self._draw_all_aspects_lines(r, (r - self.c3))
             td["makeAspectGrid"] = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list)

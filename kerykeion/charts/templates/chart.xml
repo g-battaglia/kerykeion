@@ -72,7 +72,7 @@
 
             <!-- Third Circle -->
             <g kr:node="Third_Circle">
-                <circle $c3 style="$c3style" />
+                $third_circle
             </g>
 
             <!-- Transit_Ring -->

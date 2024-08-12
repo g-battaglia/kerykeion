@@ -459,6 +459,34 @@ def draw_second_circle(
         return f'<circle cx="{r}" cy="{r}" r="{r - c2}" style="fill: {fill_color}; fill-opacity:.2; stroke: {stroke_color}; stroke-opacity:.4; stroke-width: 1px" />'
 
 
+
+def draw_third_circle(
+    radius: Union[int, float], 
+    stroke_color: str, 
+    fill_color: str, 
+    chart_type: ChartType, 
+    c3: Union[int, float, None] = None
+) -> str:
+    """
+    Draws the third circle in an SVG chart.
+
+    Parameters:
+    - radius (Union[int, float]): The radius of the circle.
+    - stroke_color (str): The stroke color of the circle.
+    - fill_color (str): The fill color of the circle.
+    - chart_type (ChartType): The type of the chart.
+    - c3 (Union[int, float, None], optional): The radius adjustment for non-Synastry and non-Transit charts.
+
+    Returns:
+    - str: The SVG element as a string.
+    """
+    if chart_type in {"Synastry", "Transit"}:
+        # For Synastry and Transit charts, use a fixed radius adjustment of 160
+        return f'<circle cx="{radius}" cy="{radius}" r="{radius - 160}" style="fill: {fill_color}; fill-opacity:.8; stroke: {stroke_color}; stroke-width: 1px" />'
+
+    else:
+        return f'<circle cx="{radius}" cy="{radius}" r="{radius - c3}" style="fill: {fill_color}; fill-opacity:.8; stroke: {stroke_color}; stroke-width: 1px" />'
+
 def draw_aspect_grid(stroke_color: str, available_planets_list: list, aspects_list: list) -> str:
     """
     Draws the aspect grid.
