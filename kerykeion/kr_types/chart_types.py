@@ -13,8 +13,6 @@ class ChartTemplateDictionary(TypedDict):
     makePatterns: str
     chart_height: float
     chart_width: float
-    circleX: str
-    circleY: str
     svgWidth: str
     svgHeight: str
     viewbox: str
@@ -88,7 +86,6 @@ class ChartTemplateDictionary(TypedDict):
     orb_color_150: str
     orb_color_180: str
 
-    cfgZoom: str
     cfgRotate: str
     cfgTranslate: str
     makeZodiac: str

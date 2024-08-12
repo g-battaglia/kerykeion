@@ -1,7 +1,9 @@
 import math
 import datetime
 from kerykeion.kr_types import KerykeionException, ChartType
-from typing import Union
+from typing import Protocol, Dict, List, Union, Protocol
+from kerykeion.kr_types.kr_models import AspectModel
+from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsAspectModel
 
 
 def decHourJoin(inH: int, inM: int, inS: int) -> float:
@@ -212,7 +214,7 @@ def convert_longitude_coordinate_to_string(coord: Union[int, float], east_label:
 def draw_aspect_line(
     r: Union[int, float],
     ar: Union[int, float],
-    aspect_dict: dict,
+    aspect: Union[AspectModel, dict],
     color: str,
     seventh_house_degree_ut: Union[int, float],
 ) -> str:
@@ -229,16 +231,19 @@ def draw_aspect_line(
         str: The SVG line element as a string.
     """
 
-    first_offset = (int(seventh_house_degree_ut) / -1) + int(aspect_dict["p1_abs_pos"])
+    if isinstance(aspect, dict):
+        aspect = AspectModel(**aspect)
+
+    first_offset = (int(seventh_house_degree_ut) / -1) + int(aspect["p1_abs_pos"])
     x1 = sliceToX(0, ar, first_offset) + (r - ar)
     y1 = sliceToY(0, ar, first_offset) + (r - ar)
 
-    second_offset = (int(seventh_house_degree_ut) / -1) + int(aspect_dict["p2_abs_pos"])
+    second_offset = (int(seventh_house_degree_ut) / -1) + int(aspect["p2_abs_pos"])
     x2 = sliceToX(0, ar, second_offset) + (r - ar)
     y2 = sliceToY(0, ar, second_offset) + (r - ar)
 
     out = ""
-    out += f'<g kr:node="Aspect" kr:to="{aspect_dict['p1_name']}" kr:tooriginaldegrees="{aspect_dict["p1_abs_pos"]}" kr:from="{aspect_dict["p2_name"]}" kr:fromoriginaldegrees="{aspect_dict["p2_abs_pos"]}">'
+    out += f'<g kr:node="Aspect" kr:aspectname="{aspect['aspect']}" kr:to="{aspect['p1_name']}" kr:tooriginaldegrees="{aspect["p1_abs_pos"]}" kr:from="{aspect["p2_name"]}" kr:fromoriginaldegrees="{aspect["p2_abs_pos"]}">'
     out += f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
     out += f"</g>"
 
@@ -615,3 +620,78 @@ def draw_houses_cusps_and_text_number(
         path += f'</g>'
 
     return path
+
+def draw_aspect_transit_grid(
+    grid_title: str,
+    aspects_list: Union[List[AspectModel], List[dict]],
+    celestial_point_language: KerykeionLanguageCelestialPointModel,
+    aspects_settings: KerykeionSettingsAspectModel
+) -> str:
+    """
+    Generates the SVG output for the aspect transit grid.
+
+    Parameters:
+    - grid_title: Title of the grid.
+    - aspects_list: List of aspects.
+    - planets_labels: Dictionary containing the planet labels.
+    - aspects_settings: Dictionary containing the aspect settings.
+
+    Returns:
+    - A string containing the SVG path data for the aspect transit grid.
+    """
+
+    # If not instance of AspectModel, convert to AspectModel
+    if isinstance(aspects_list[0], dict):
+        aspects_list = [AspectModel(**aspect) for aspect in aspects_list]
+
+    line = 0
+    nl = 0
+    inner_path = ""
+    scale = 1
+    for i, aspect in enumerate(aspects_list):
+        # Adjust the vertical position for every 12 aspects
+        if i == 12:
+            nl = 100
+            line = 0
+
+        elif i == 24:
+            nl = 200
+            line = 0
+
+        elif i == 36:
+            nl = 300
+            line = 0
+                
+        elif i == 48:
+            nl = 400
+            # When there are more than 60 aspects, the text is moved up
+            if len(aspects_list) > 60:
+                line = -1 * (len(aspects_list) - 60) * 14
+            else:
+                line = 0
+
+        inner_path += f'<g transform="translate({nl},{line})">'
+        
+        # first planet symbol
+        inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspects_list[i]["p1"]]["name"]}" />'
+        
+        # aspect symbol
+        inner_path += f'<use  x="15" y="0" xlink:href="#orb{aspects_settings[aspects_list[i]["aid"]]["degree"]}" />'
+        
+        # second planet symbol
+        inner_path += f'<g transform="translate(30,0)">'
+        inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspects_list[i]["p2"]]["name"]}" />'
+        inner_path += f"</g>"
+
+        # difference in degrees
+        inner_path += f'<text y="8" x="45" style="fill:#000000; font-size: 10px;">{convert_decimal_to_degree_string(aspects_list[i]["orbit"])}</text>'
+        # line
+        inner_path += f"</g>"
+        line = line + 14
+
+    out = f'<g style="transform: translate(47%, 61%) scale({scale})">'
+    out += f'<text y="-15" x="0" style="fill:#000000; font-size: 14px;">{grid_title}:</text>'
+    out += inner_path
+    out += "</g>"
+
+    return out

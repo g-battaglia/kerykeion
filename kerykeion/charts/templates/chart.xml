@@ -11,10 +11,10 @@
 >
     <title>$stringTitle | Kerykeion</title>
     <!--- Main Chart -->
-    <g transform="rotate($cfgRotate)">
-        <g transform="scale($cfgZoom)">
-            <rect class="background-rectangle" x="0" y="0" width="$chart_width"
-                height="$chart_height" style="fill: $paper_color_1" />
+    <g kr:node="Main_Chart" transform="rotate($cfgRotate)">
+
+        <g kr:node="Main_Text">
+            <rect class="background-rectangle" x="0" y="0" width="$chart_width" height="$chart_height" style="fill: $paper_color_1" />
             <text x="20" y="22" style="fill: $paper_color_0; font-size: 24px">$stringTitle</text>
             <text x="20" y="50" style="fill: $paper_color_0; font-size: 11px">$stringName</text>
             <text x="20" y="62" style="fill: $paper_color_0; font-size: 11px">$stringLocation</text>
@@ -27,77 +27,105 @@
             <text x="20" y="480" style="fill: $paper_color_0; font-size: 10px">$bottomLeft2</text>
             <text x="20" y="494" style="fill: $paper_color_0; font-size: 10px">$bottomLeft3</text>
             <text x="20" y="508" style="fill: $paper_color_0; font-size: 10px">$bottomLeft4</text>
-            <!-- Lunar Phase -->
-            <g transform="translate(20,518)">
-                <g transform="rotate($lunar_phase_rotate 20 10)">
-                    <defs>
-                        <clipPath id="cut-off-circle">
-                            <circle cx="20" cy="10" r="10" />
-                        </clipPath>
-                    </defs>
-                    <circle cx="20" cy="10" r="10" style="fill: $lunar_phase_bg" />
-                    <circle
-                        cx="$lunar_phase_cx"
-                        cy="10"
-                        r="$lunar_phase_r"
-                        style="fill: $lunar_phase_fg"
-                        clip-path="url(#cut-off-circle)"
-                    />
-                    <circle
-                        cx="20"
-                        cy="10"
-                        r="10"
-                        style="fill: none; stroke: $lunar_phase_outline; stroke-width: 0.5px; stroke-opacity: 0.5"
-                    />
-                </g>
-            </g>
-            <g transform="translate(50,50)">
-                <g transform="translate($circleX,$circleY)">
-                    <!-- Zodiac -->
-                    $makeZodiac 
+        </g>
 
-                    <!-- First Circle -->
-                    $first_circle
-
-                    <!-- Second Circle -->
-                    $second_circle
-
-                    <!-- Third Circle -->
-                    <circle $c3 style="$c3style" />
-
-                    <!-- TransitRing -->
-                    $transitRing 
-
-                    <!-- Degree Ring -->
-                    $degreeRing
-
-                    <!-- Houses -->
-                    $makeHouses
-
-                    <!-- Planets -->
-                    $makePlanets
-
-                    <!-- Aspects -->
-                    $makeAspects 
-                </g>
-
-                <!-- makePatterns -->
-                $makePatterns
-
-                <!-- AspectGrid -->
-                $makeAspectGrid
-
-                <!-- Elements -->
-                $elements_percentages 
-
-                <!-- Planet Grid -->
-                $makePlanetGrid
-
-                <!-- Houses Grid -->
-                $makeHousesGrid
-
+        <!-- Lunar Phase -->
+        <g kr:node="Lunar_Phase" transform="translate(20,518)">
+            <g transform="rotate($lunar_phase_rotate 20 10)">
+                <defs>
+                    <clipPath id="cut-off-circle">
+                        <circle cx="20" cy="10" r="10" />
+                    </clipPath>
+                </defs>
+                <circle cx="20" cy="10" r="10" style="fill: $lunar_phase_bg" />
+                <circle
+                    cx="$lunar_phase_cx"
+                    cy="10"
+                    r="$lunar_phase_r"
+                    style="fill: $lunar_phase_fg"
+                    clip-path="url(#cut-off-circle)"
+                />
+                <circle
+                    cx="20"
+                    cy="10"
+                    r="10"
+                    style="fill: none; stroke: $lunar_phase_outline; stroke-width: 0.5px; stroke-opacity: 0.5"
+                />
             </g>
         </g>
+
+        <g kr:node="Main_Content" transform="translate(50,50)">
+            <!-- Zodiac -->
+            <g kr:node="Zodiac">
+                $makeZodiac 
+            </g>
+
+            <!-- First Circle -->
+            <g kr:node="First_Circle">
+                $first_circle
+            </g>
+
+            <!-- Second Circle -->
+            <g kr:node="Second_Circle">
+                $second_circle
+            </g>
+
+            <!-- Third Circle -->
+            <g kr:node="Third_Circle">
+                <circle $c3 style="$c3style" />
+            </g>
+
+            <!-- Transit_Ring -->
+            <g kr:node="Transint_Ring">
+                $transitRing 
+            </g>
+
+            <!-- Degree Ring -->
+            <g kr:node="Degree_Ring">
+                $degreeRing
+            </g>
+
+            <!-- Houses -->
+            <g kr:node="Houses_Wheel">
+                $makeHouses
+            </g>
+
+            <!-- Planets -->
+            <g kr:node="Planets_Wheel">
+                $makePlanets
+            </g>
+
+            <!-- Aspects -->
+            <g kr:node="Aspects_Wheel">
+                $makeAspects
+            </g>
+
+            <!-- makePatterns -->
+            <g kr:node="Patterns_Wheel">
+                $makePatterns
+            </g>
+
+            <!-- AspectGrid -->
+            <g kr:node="Aspect_Grid">
+                $makeAspectGrid
+            </g>
+
+            <!-- Elements -->
+            <g kr:node="Elements_Percentages">
+                $elements_percentages 
+            </g>
+
+            <!-- Planet Grid -->
+            <g kr:node="Planet_Grid">
+                $makePlanetGrid
+            </g>
+
+            <!-- Houses Grid -->
+            <g kr:node="Houses_Grid">
+                $makeHousesGrid
+            </g>
+        </g>
+        
     </g>
 
     <!-- Symbols Definitions -->

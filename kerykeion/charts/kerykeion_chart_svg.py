@@ -29,7 +29,8 @@ from kerykeion.charts.charts_utils import (
     draw_first_circle,
     draw_second_circle,
     draw_aspect_grid,
-    draw_houses_cusps_and_text_number
+    draw_houses_cusps_and_text_number,
+    draw_aspect_transit_grid
 )
 from pathlib import Path
 from scour.scour import scourString
@@ -100,7 +101,6 @@ class KerykeionChartSVG:
     location: str
     geolat: float
     geolon: float
-    zoom: int
     zodiac: tuple
     template: str
 
@@ -824,7 +824,7 @@ class KerykeionChartSVG:
             out += draw_aspect_line(
                 r=r,
                 ar=ar,
-                aspect_dict=aspect,
+                aspect=aspect,
                 color=self.aspects_settings[aspect["aid"]]["color"],
                 seventh_house_degree_ut=self.user.seventh_house.abs_pos
             )
@@ -841,64 +841,11 @@ class KerykeionChartSVG:
             out += draw_aspect_line(
                 r=r,
                 ar=ar,
-                aspect_dict=aspect,
+                aspect=aspect,
                 color=self.aspects_settings[aspect["aid"]]["color"],
                 seventh_house_degree_ut=self.user.seventh_house.abs_pos
             )
 
-        return out
-
-    def _makeAspectTransitGrid(self, r):
-        out = '<g transform="translate(500,310)">'
-        out += f'<text y="-15" x="0" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 14px;">{self.language_settings["aspects"]}:</text>'
-
-        line = 0
-        nl = 0
-
-        for i in range(len(self.aspects_list)):
-            if i == 12:
-                nl = 100
-                
-                line = 0
-
-            elif i == 24:
-                nl = 200
-
-                line = 0
-
-            elif i == 36:
-                nl = 300
-                
-                line = 0
-                    
-            elif i == 48:
-                nl = 400
-
-                # When there are more than 60 aspects, the text is moved up
-                if len(self.aspects_list) > 60:
-                    line = -1 * (len(self.aspects_list) - 60) * 14
-                else:
-                    line = 0
-
-            out += f'<g transform="translate({nl},{line})">'
-            
-            # first planet symbol
-            out += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{self.planets_settings[self.aspects_list[i]["p1"]]["name"]}" />'
-            
-            # aspect symbol
-            out += f'<use  x="15" y="0" xlink:href="#orb{self.aspects_settings[self.aspects_list[i]["aid"]]["degree"]}" />'
-            
-            # second planet symbol
-            out += '<g transform="translate(30,0)">'
-            out += '<use transform="scale(0.4)" x="0" y="3" xlink:href="#%s" />' % (self.planets_settings[self.aspects_list[i]["p2"]]["name"]) 
-            
-            out += "</g>"
-            # difference in degrees
-            out += f'<text y="8" x="45" style="fill:{self.chart_colors_settings["paper_0"]}; font-size: 10px;">{convert_decimal_to_degree_string(self.aspects_list[i]["orbit"])}</text>'
-            # line
-            out += "</g>"
-            line = line + 14
-        out += "</g>"
         return out
 
     def _makePlanetGrid(self):
@@ -1081,7 +1028,15 @@ class KerykeionChartSVG:
             td["c3style"] = f"fill: {self.chart_colors_settings['paper_1']}; fill-opacity:.8; stroke: {self.chart_colors_settings['zodiac_transit_ring_0']}; stroke-width: 1px"
 
             td["makeAspects"] = self._makeAspectsTransit(r, (r - 160))
-            td["makeAspectGrid"] = self._makeAspectTransitGrid(r)
+
+
+            td["makeAspectGrid"] = draw_aspect_transit_grid(
+                self.language_settings["aspects"],
+                self.aspects_list,
+                self.planets_settings,
+                self.aspects_settings
+            )
+
             td["makePatterns"] = ""
         else:
             td["transitRing"] = ""
@@ -1100,8 +1055,6 @@ class KerykeionChartSVG:
         
         td["chart_height"] = self.height
         td["chart_width"] = self.width
-        td["circleX"] = str(0)
-        td["circleY"] = str(0)
         td["svgWidth"] = str(svgWidth)
         td["svgHeight"] = str(svgHeight)
         td["viewbox"] = viewbox
@@ -1242,7 +1195,6 @@ class KerykeionChartSVG:
             td[f"orb_color_{self.aspects_settings[i]['degree']}"] = self.aspects_settings[i]['color']
 
         # config
-        td["cfgZoom"] = str(self.zoom)
         td["cfgRotate"] = rotate
 
         # ---
