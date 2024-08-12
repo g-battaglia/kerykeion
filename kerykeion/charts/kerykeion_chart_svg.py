@@ -5,12 +5,13 @@
 
 
 import logging
+from typing import get_args
 
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.synastry_aspects import SynastryAspects
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
-from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointModel
+from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointModel, Sign
 from kerykeion.kr_types import ChartTemplateDictionary
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel
 from kerykeion.charts.charts_utils import (
@@ -105,7 +106,6 @@ class KerykeionChartSVG:
     location: str
     geolat: float
     geolon: float
-    zodiac: tuple
     template: str
 
     def __init__(
@@ -249,25 +249,6 @@ class KerykeionChartSVG:
         if self.chart_type == "Transit":
             self.t_name = self.language_settings["transit_name"]
 
-        # configuration
-        # ZOOM 1 = 100%
-        self.zoom = 1
-
-        self.zodiac = (
-            {"name": "Ari", "element": "fire"},
-            {"name": "Tau", "element": "earth"},
-            {"name": "Gem", "element": "air"},
-            {"name": "Can", "element": "water"},
-            {"name": "Leo", "element": "fire"},
-            {"name": "Vir", "element": "earth"},
-            {"name": "Lib", "element": "air"},
-            {"name": "Sco", "element": "water"},
-            {"name": "Sag", "element": "fire"},
-            {"name": "Cap", "element": "earth"},
-            {"name": "Aqu", "element": "air"},
-            {"name": "Pis", "element": "water"},
-        )
-
         self.template = None
 
     def set_output_directory(self, dir_path: Path) -> None:
@@ -302,9 +283,10 @@ class KerykeionChartSVG:
         Returns:
             str: The SVG string representing the zodiac circle.
         """
+        sings = get_args(Sign)
 
         output = ""
-        for i, zodiac_element in enumerate(self.zodiac):
+        for i, sing in enumerate(sings):
             output += draw_zodiac_slice(
                 c1=self.c1,
                 chart_type=self.chart_type,
@@ -312,7 +294,7 @@ class KerykeionChartSVG:
                 num=i,
                 r=r,
                 style=f'fill:{self.chart_colors_settings[f"zodiac_bg_{i}"]}; fill-opacity: 0.5;',
-                type=zodiac_element["name"],
+                type=sing,
             )
 
         return output
@@ -320,8 +302,25 @@ class KerykeionChartSVG:
     def _calculate_elements_points_from_planets(self):
         """
         Calculate chart element points from a planet.
+        TODO: Refactor this method.
+        Should be completely rewritten. Maybe even part of the AstrologicalSubject class.
         """
-        
+
+        zodiac = (
+            {"name": "Ari", "element": "fire"},
+            {"name": "Tau", "element": "earth"},
+            {"name": "Gem", "element": "air"},
+            {"name": "Can", "element": "water"},
+            {"name": "Leo", "element": "fire"},
+            {"name": "Vir", "element": "earth"},
+            {"name": "Lib", "element": "air"},
+            {"name": "Sco", "element": "water"},
+            {"name": "Sag", "element": "fire"},
+            {"name": "Cap", "element": "earth"},
+            {"name": "Aqu", "element": "air"},
+            {"name": "Pis", "element": "water"},
+        )
+
         for i in range(len(self.available_planets_setting)):
             # element: get extra points if planet is in own zodiac sign.
             related_zodiac_signs = self.available_planets_setting[i]["related_zodiac_signs"]
@@ -332,7 +331,7 @@ class KerykeionChartSVG:
                     if int(related_zodiac_signs[e]) == int(cz):
                         extra_points = self.planet_in_zodiac_extra_points
 
-            ele = self.zodiac[self.points_sign[i]]["element"]
+            ele = zodiac[self.points_sign[i]]["element"]
             if ele == "fire":
                 self.fire = self.fire + self.available_planets_setting[i]["element_points"] + extra_points
 
@@ -682,7 +681,6 @@ class KerykeionChartSVG:
 
         return output
 
-    # Aspect and aspect grid functions for natal type charts.
     def _draw_all_aspects_lines(self, r, ar):
         out = ""
         for aspect in self.aspects_list:
@@ -696,7 +694,6 @@ class KerykeionChartSVG:
 
         return out
 
-    # Aspect and aspect grid functions for transit type charts
     def _draw_all_transit_aspects_lines(self, r, ar):
         out = ""
 
