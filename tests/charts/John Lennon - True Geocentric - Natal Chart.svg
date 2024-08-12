@@ -31,7 +31,7 @@
 
         <!-- Lunar Phase -->
         <g kr:node='Lunar_Phase' transform='translate(20,518)'>
-            <g transform='rotate(-143.41058 20 10)'><circle cx='20' cy='10' r='10' style='fill: #000000' /><circle cx='-46.85525100639515' cy='10' r='68.77412582195362' style='fill: #ffffff' clip-path='url(#moonPhaseCutOffCircle)' /><circle cx='20' cy='10' r='10' style='fill: none; stroke: #000000; stroke-width: 0.5px; stroke-opacity: 0.5' /></g>
+            <g transform='rotate(-143.41058 20 10)'>    <circle cx='20' cy='10' r='10' style='fill: #000000' />    <circle cx='-46.85525100639515' cy='10' r='68.77412582195362' style='fill: #ffffff' clip-path='url(#moonPhaseCutOffCircle)' />    <circle cx='20' cy='10' r='10' style='fill: none; stroke: #000000; stroke-width: 0.5px; stroke-opacity: 0.5' /></g>
         </g>
 
         <g kr:node='Main_Content' transform='translate(50,50)'>
