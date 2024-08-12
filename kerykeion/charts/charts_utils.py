@@ -1,7 +1,7 @@
 import math
 import datetime
 from kerykeion.kr_types import KerykeionException, ChartType
-from typing import Protocol, Dict, List, Union, Protocol
+from typing import Union
 from kerykeion.kr_types.kr_models import AspectModel
 from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsAspectModel
 
@@ -651,7 +651,7 @@ def draw_houses_cusps_and_text_number(
 
 def draw_aspect_transit_grid(
     grid_title: str,
-    aspects_list: Union[List[AspectModel], List[dict]],
+    aspects_list: Union[list[AspectModel], list[dict]],
     celestial_point_language: KerykeionLanguageCelestialPointModel,
     aspects_settings: KerykeionSettingsAspectModel
 ) -> str:
