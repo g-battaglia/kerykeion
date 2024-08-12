@@ -792,188 +792,145 @@ class KerykeionChartSVG:
         out += end_of_line
         return out
 
-    def _createTemplateDictionary(self) -> ChartTemplateDictionary:
-        # self.chart_type = "Transit"
-        # empty element points
+    def _create_template_dictionary(self) -> ChartTemplateDictionary:
+        """
+        Create a dictionary containing the template data for generating an astrological chart.
+
+        Returns:
+            ChartTemplateDictionary: A dictionary with template data for the chart.
+        """
+        # Initialize element points
         self.fire = 0.0
         self.earth = 0.0
         self.air = 0.0
         self.water = 0.0
 
-        # Calculate the elements points
+        # Calculate element points from planets
         self._calculate_elements_points_from_planets()
 
-        rotate = "0"
+        # Default rotation
+        rotation = "0"
 
-        # template dictionary
-        td: ChartTemplateDictionary = dict() # type: ignore
-        r = 240
+        # Initialize template dictionary
+        template_dict: ChartTemplateDictionary = dict()  # type: ignore
+        radius = 240
 
-        # To increase the size of the chart, change the viewbox
-        if self.chart_type == "Natal" or self.chart_type == "ExternalNatal":
-            td['viewbox'] = self.chart_settings["basic_chart_viewBox"]
-        else:
-            td['viewbox'] = self.chart_settings["wide_chart_viewBox"]
+        # Set viewbox based on chart type
+        template_dict['viewbox'] = self.chart_settings["basic_chart_viewBox"] if self.chart_type in ["Natal", "ExternalNatal"] else self.chart_settings["wide_chart_viewBox"]
 
+        # Set circle radii based on chart type
         if self.chart_type == "ExternalNatal":
-            self.c1 = 56
-            self.c2 = 92
-            self.c3 = 112
+            self.c1, self.c2, self.c3 = 56, 92, 112
         else:
-            self.c1 = 0
-            self.c2 = 36
-            self.c3 = 120
+            self.c1, self.c2, self.c3 = 0, 36, 120
 
-        # transit
-        if self.chart_type == "Transit" or self.chart_type == "Synastry":
-            td["transitRing"] = draw_transit_ring(r, self.chart_colors_settings["paper_1"], self.chart_colors_settings["zodiac_transit_ring_3"])
-            td["degreeRing"] = draw_transit_ring_degree_steps(r, self.user.seventh_house.abs_pos)
-
-            # circles
-            td["first_circle"] = draw_first_circle(r, self.chart_colors_settings["zodiac_transit_ring_2"], self.chart_type)
-            td["second_circle"] = draw_second_circle(r, self.chart_colors_settings['zodiac_transit_ring_1'], self.chart_colors_settings['paper_1'], self.chart_type)
-            td['third_circle'] = draw_third_circle(r, self.chart_colors_settings['zodiac_transit_ring_0'], self.chart_colors_settings['paper_1'], self.chart_type)
-
-            td["makeAspects"] = self._draw_all_transit_aspects_lines(r, (r - 160))
-
-            td["makeAspectGrid"] = draw_aspect_transit_grid(
-                self.language_settings["aspects"],
-                self.aspects_list,
-                self.planets_settings,
-                self.aspects_settings
-            )
-
-        # Natal, External Natal
+        # Generate rings and circles based on chart type
+        if self.chart_type in ["Transit", "Synastry"]:
+            template_dict["transitRing"] = draw_transit_ring(radius, self.chart_colors_settings["paper_1"], self.chart_colors_settings["zodiac_transit_ring_3"])
+            template_dict["degreeRing"] = draw_transit_ring_degree_steps(radius, self.user.seventh_house.abs_pos)
+            template_dict["first_circle"] = draw_first_circle(radius, self.chart_colors_settings["zodiac_transit_ring_2"], self.chart_type)
+            template_dict["second_circle"] = draw_second_circle(radius, self.chart_colors_settings['zodiac_transit_ring_1'], self.chart_colors_settings['paper_1'], self.chart_type)
+            template_dict['third_circle'] = draw_third_circle(radius, self.chart_colors_settings['zodiac_transit_ring_0'], self.chart_colors_settings['paper_1'], self.chart_type)
+            template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(radius, radius - 160)
+            template_dict["makeAspectGrid"] = draw_aspect_transit_grid(self.language_settings["aspects"], self.aspects_list, self.planets_settings, self.aspects_settings)
         else:
-            td["transitRing"] = ""
-            td["degreeRing"] = draw_degree_ring(r, self.c1, self.user.seventh_house.abs_pos, self.chart_colors_settings["paper_0"])
+            template_dict["transitRing"] = ""
+            template_dict["degreeRing"] = draw_degree_ring(radius, self.c1, self.user.seventh_house.abs_pos, self.chart_colors_settings["paper_0"])
+            template_dict['first_circle'] = draw_first_circle(radius, self.chart_colors_settings["zodiac_radix_ring_2"], self.chart_type, self.c1)
+            template_dict["second_circle"] = draw_second_circle(radius, self.chart_colors_settings["zodiac_radix_ring_1"], self.chart_colors_settings["paper_1"], self.chart_type, self.c2)
+            template_dict['third_circle'] = draw_third_circle(radius, self.chart_colors_settings["zodiac_radix_ring_0"], self.chart_colors_settings["paper_1"], self.chart_type, self.c3)
+            template_dict["makeAspects"] = self._draw_all_aspects_lines(radius, radius - self.c3)
+            template_dict["makeAspectGrid"] = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list)
 
-            td['first_circle'] = draw_first_circle(r, self.chart_colors_settings["zodiac_radix_ring_2"], self.chart_type, self.c1)
-            td["second_circle"] = draw_second_circle(r, self.chart_colors_settings["zodiac_radix_ring_1"], self.chart_colors_settings["paper_1"], self.chart_type, self.c2)
-            td['third_circle'] = draw_third_circle(r,  self.chart_colors_settings["zodiac_radix_ring_0"], self.chart_colors_settings["paper_1"], self.chart_type, self.c3)
-            
-            td["makeAspects"] = self._draw_all_aspects_lines(r, (r - self.c3))
-            td["makeAspectGrid"] = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list)
+        # Set chart dimensions
+        template_dict["chart_height"] = self.height
+        template_dict["chart_width"] = self.width
 
-        td["chart_height"] = self.height
-        td["chart_width"] = self.width
-
-        # Chart Title
+        # Set chart title
         if self.chart_type == "Synastry":
-            td["stringTitle"] = f"{self.user.name} {self.language_settings['and_word']} {self.t_user.name}"
-
+            template_dict["stringTitle"] = f"{self.user.name} {self.language_settings['and_word']} {self.t_user.name}"
         elif self.chart_type == "Transit":
-            td["stringTitle"] = f"{self.language_settings['transits']} {self.t_user.day}/{self.t_user.month}/{self.t_user.year}"
-
+            template_dict["stringTitle"] = f"{self.language_settings['transits']} {self.t_user.day}/{self.t_user.month}/{self.t_user.year}"
         else:
-            td["stringTitle"] = self.user.name
+            template_dict["stringTitle"] = self.user.name
 
-        # Chart Name
-        if self.chart_type == "Synastry" or self.chart_type == "Transit":
-            td["stringName"] = f"{self.user.name}:"
+        # Set chart name
+        template_dict["stringName"] = f"{self.user.name}:" if self.chart_type in ["Synastry", "Transit"] else f'{self.language_settings["info"]}:'
+
+        # Set bottom left corner information
+        template_dict["bottomLeft0"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
+        template_dict["bottomLeft1"] = f"{self.user.houses_system_name}"
+        if self.chart_type in ["Natal", "ExternalNatal", "Synastry"]:
+            template_dict["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.user.lunar_phase.get("moon_phase", "")}'
+            template_dict["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.moon_phase_name}'
+            template_dict["bottomLeft4"] = f'{self.user.perspective_type}'
         else:
-            td["stringName"] = f'{self.language_settings["info"]}:'
+            template_dict["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.t_user.lunar_phase.get("moon_phase", "")}'
+            template_dict["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
+            template_dict["bottomLeft4"] = f'{self.t_user.perspective_type}'
 
-        # Bottom Left Corner
-        if self.chart_type == "Natal" or self.chart_type == "ExternalNatal" or self.chart_type == "Synastry":
-            td["bottomLeft0"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
-            td["bottomLeft1"] = f"{self.user.houses_system_name}"
-            td["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.user.lunar_phase.get("moon_phase", "")}'
-            td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.moon_phase_name}'
-            td["bottomLeft4"] = f'{self.user.perspective_type}'
+        # Draw moon phase
+        template_dict['moon_phase'] = draw_moon_phase(self.user.lunar_phase["degrees_between_s_m"], self.geolat)
 
-        else:
-            td["bottomLeft0"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
-            td["bottomLeft1"] = f"{self.user.houses_system_name}"
-            td["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.t_user.lunar_phase.get("moon_phase", "")}'
-            td["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
-            td["bottomLeft4"] = f'{self.t_user.perspective_type}'
-
-        td['moon_phase'] = draw_moon_phase(
-            self.user.lunar_phase["degrees_between_s_m"],
-            self.geolat
-        )
-        
-        # stringlocation
+        # Set location string
         if len(self.location) > 35:
-            split = self.location.split(",")
-            if len(split) > 1:
-                td["stringLocation"] = split[0] + ", " + split[-1]
-                if len(td["stringLocation"]) > 35:
-                    td["stringLocation"] = td["stringLocation"][:35] + "..."
+            split_location = self.location.split(",")
+            if len(split_location) > 1:
+                template_dict["stringLocation"] = split_location[0] + ", " + split_location[-1]
+                if len(template_dict["stringLocation"]) > 35:
+                    template_dict["stringLocation"] = template_dict["stringLocation"][:35] + "..."
             else:
-                td["stringLocation"] = self.location[:35] + "..."
+                template_dict["stringLocation"] = self.location[:35] + "..."
         else:
-            td["stringLocation"] = self.location
+            template_dict["stringLocation"] = self.location
 
+        # Set additional information for Synastry chart type
         if self.chart_type == "Synastry":
-            td["stringLat"] = f"{self.t_user.name}: "
-            td["stringLon"] = self.t_user.city
-            td["stringPosition"] = f"{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hour:02d}:{self.t_user.minute:02d}"
-
+            template_dict["stringLat"] = f"{self.t_user.name}: "
+            template_dict["stringLon"] = self.t_user.city
+            template_dict["stringPosition"] = f"{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hour:02d}:{self.t_user.minute:02d}"
         else:
-            latitude_string = convert_latitude_coordinate_to_string(
-                self.geolat, 
-                self.language_settings['north'], 
-                self.language_settings['south']
-            )
-            longitude_string = convert_longitude_coordinate_to_string(
-                self.geolon, 
-                self.language_settings['east'], 
-                self.language_settings['west']
-            )
+            latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings['north'], self.language_settings['south'])
+            longitude_string = convert_longitude_coordinate_to_string(self.geolon, self.language_settings['east'], self.language_settings['west'])
+            template_dict["stringLat"] = f"{self.language_settings['latitude']}: {latitude_string}"
+            template_dict["stringLon"] = f"{self.language_settings['longitude']}: {longitude_string}"
+            template_dict["stringPosition"] = f"{self.language_settings['type']}: {self.chart_type}"
 
-            td["stringLat"] = f"{self.language_settings['latitude']}: {latitude_string}"
-            td["stringLon"] = f"{self.language_settings['longitude']}: {longitude_string}"
-            td["stringPosition"] = f"{self.language_settings['type']}: {self.chart_type}"
+        # Set paper colors
+        template_dict["paper_color_0"] = self.chart_colors_settings["paper_0"]
+        template_dict["paper_color_1"] = self.chart_colors_settings["paper_1"]
 
-        # paper_color_X
-        td["paper_color_0"] = self.chart_colors_settings["paper_0"]
-        td["paper_color_1"] = self.chart_colors_settings["paper_1"]
+        # Set planet colors
+        for planet in self.planets_settings:
+            planet_id = planet["id"]
+            template_dict[f"planets_color_{planet_id}"] = planet["color"]
 
-        # planets_color_X
-        for i in range(len(self.planets_settings)):
-            planet_id = self.planets_settings[i]["id"]
-            td[f"planets_color_{planet_id}"] = self.planets_settings[i]["color"]
-
-        # zodiac_color_X
+        # Set zodiac colors
         for i in range(12):
-            td[f"zodiac_color_{i}"] = self.chart_colors_settings[f"zodiac_icon_{i}"]
+            template_dict[f"zodiac_color_{i}"] = self.chart_colors_settings[f"zodiac_icon_{i}"]
 
-        # orb_color_X
-        for i in range(len(self.aspects_settings)):
-            td[f"orb_color_{self.aspects_settings[i]['degree']}"] = self.aspects_settings[i]['color']
+        # Set orb colors
+        for aspect in self.aspects_settings:
+            template_dict[f"orb_color_{aspect['degree']}"] = aspect['color']
 
-        # config
-        td["cfgRotate"] = rotate
+        # Set configuration rotation
+        template_dict["cfgRotate"] = rotation
 
-        # ---
-        # Drawing Functions
-        #--- 
+        # Drawing functions
+        template_dict["makeZodiac"] = self._draw_zodiac_circle_slices(radius)
 
-        td["makeZodiac"] = self._draw_zodiac_circle_slices(r)
-
-        # Houses Grid
-        if self.chart_type == "Transit" or self.chart_type == "Synastry":
-            td["makeHousesGrid"] = draw_house_grid(
+        # Draw houses grid and cusps
+        if self.chart_type in ["Transit", "Synastry"]:
+            template_dict["makeHousesGrid"] = draw_house_grid(
                 main_subject_houses_list=self.user.houses_list,
                 secondary_subject_houses_list=self.t_user.houses_list,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self.language_settings["cusp"]
             )
-        else:
-            td["makeHousesGrid"] = draw_house_grid(
-                main_subject_houses_list=self.user.houses_list,
-                chart_type=self.chart_type,
-                text_color=self.chart_colors_settings["paper_0"],
-                house_cusp_generale_name_label=self.language_settings["cusp"]
-            )
-        
-        # Houses Cusps and Number
-        if self.chart_type == "Transit" or self.chart_type == "Synastry":
-            td["makeHouses"] = draw_houses_cusps_and_text_number(
-                r=r,
+
+            template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
+                r=radius,
                 first_subject_houses_list_ut=self.user.houses_degree_ut,
                 standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
                 first_house_color=self.planets_settings[12]["color"],
@@ -986,9 +943,17 @@ class KerykeionChartSVG:
                 second_subject_houses_list_ut=self.t_user.houses_degree_ut,
                 transit_house_cusp_color=self.chart_colors_settings["houses_transit_line"],
             )
+
         else:
-            td["makeHouses"] = draw_houses_cusps_and_text_number(
-                r=r,
+            template_dict["makeHousesGrid"] = draw_house_grid(
+                main_subject_houses_list=self.user.houses_list,
+                chart_type=self.chart_type,
+                text_color=self.chart_colors_settings["paper_0"],
+                house_cusp_generale_name_label=self.language_settings["cusp"]
+            )
+
+            template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
+                r=radius,
                 first_subject_houses_list_ut=self.user.houses_degree_ut,
                 standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
                 first_house_color=self.planets_settings[12]["color"],
@@ -1000,8 +965,11 @@ class KerykeionChartSVG:
                 chart_type=self.chart_type,
             )
 
-        td["makePlanets"] = self._make_planets(r)
-        td["elements_percentages"] = draw_elements_percentages(
+        # Draw planets
+        template_dict["makePlanets"] = self._make_planets(radius)
+
+        # Draw elements percentages
+        template_dict["elements_percentages"] = draw_elements_percentages(
             self.language_settings['fire'],
             self.fire,
             self.language_settings['earth'],
@@ -1012,19 +980,20 @@ class KerykeionChartSVG:
             self.water,
         )
 
-        td["makePlanetGrid"] = self._makePlanetGrid()
+        # Draw planet grid
+        template_dict["makePlanetGrid"] = self._makePlanetGrid()
 
-        # Date time String
+        # Set date time string
         dt = datetime.fromisoformat(self.user.iso_formatted_local_datetime)
         custom_format = dt.strftime('%Y-%-m-%-d %H:%M [%z]')  # Note the use of '-' to remove leading zeros
         custom_format = custom_format[:-3] + ':' + custom_format[-3:]
-        td["stringDateTime"] = f"{custom_format}"
+        template_dict["stringDateTime"] = f"{custom_format}"
 
-        return td
+        return template_dict
 
     def makeTemplate(self, minify: bool = False) -> str:
         """Creates the template for the SVG file"""
-        td = self._createTemplateDictionary()
+        td = self._create_template_dictionary()
 
         # read template
         with open(self.xml_svg, "r", encoding="utf-8", errors="ignore") as f:
@@ -1034,7 +1003,7 @@ class KerykeionChartSVG:
 
         logging.debug(f"Template dictionary keys: {td.keys()}")
 
-        self._createTemplateDictionary()
+        self._create_template_dictionary()
 
         if minify:
             template = scourString(template).replace('"', "'").replace("\n", "").replace("\t","").replace("    ", "").replace("  ", "")
@@ -1128,3 +1097,5 @@ if __name__ == "__main__":
     topocentric_subject = AstrologicalSubject("John Lennon - Topocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", perspective_type="Topocentric")
     topocentric_chart = KerykeionChartSVG(topocentric_subject)
     topocentric_chart.makeSVG()
+
+
