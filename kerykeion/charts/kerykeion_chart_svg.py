@@ -365,7 +365,7 @@ class KerykeionChartSVG:
             template_dict["stringTitle"] = self.user.name
 
         # Set bottom left corner information
-        template_dict["bottomLeft0"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
+        template_dict["bottomLeft0"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else str(self.user.zodiac_type) + ' ' + str(self.user.sidereal_mode)}"
         template_dict["bottomLeft1"] = f"{self.user.houses_system_name}"
         if self.chart_type in ["Natal", "ExternalNatal", "Synastry"]:
             template_dict["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.user.lunar_phase.get("moon_phase", "")}'

@@ -9,7 +9,7 @@ from typing import Union, get_args
 
 
 def draw_planets(
-    radius: int,
+    radius: Union[int, float],
     available_kerykeion_celestial_points: list[KerykeionPointModel],
     available_planets_setting: list[KerykeionSettingsCelestialPointModel],
     third_circle_radius: Union[int, float],
