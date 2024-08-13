@@ -88,7 +88,6 @@ class KerykeionChartSVG:
     chart_settings: dict
     user: AstrologicalSubject
     available_planets_setting: List[KerykeionSettingsCelestialPointModel]
-    transit_ring_exclude_points_names: List[str]
     points_deg_ut: list
     points_deg: list
     points_retrograde: list
@@ -134,28 +133,12 @@ class KerykeionChartSVG:
 
             self.available_planets_setting.append(body)
 
-        # House cusp points are excluded from the transit ring.
-        self.transit_ring_exclude_points_names = [
-            "First_House",
-            "Second_House",
-            "Third_House",
-            "Fourth_House",
-            "Fifth_House",
-            "Sixth_House",
-            "Seventh_House",
-            "Eighth_House",
-            "Ninth_House",
-            "Tenth_House",
-            "Eleventh_House",
-            "Twelfth_House"
-        ]
-
         # Available bodies
         available_celestial_points_names = []
         for body in self.available_planets_setting:
             available_celestial_points_names.append(body["name"].lower())
 
-        self.available_kerykeion_celestial_points = []
+        self.available_kerykeion_celestial_points: list[KerykeionPointModel] = []
         for body in available_celestial_points_names:
             self.available_kerykeion_celestial_points.append(self.user.get(body))
 
@@ -502,9 +485,26 @@ class KerykeionChartSVG:
 
         # Draw planets
         if self.chart_type in ["Transit", "Synastry"]:
-            template_dict["makePlanets"] = draw_planets(self, radius, self.available_kerykeion_celestial_points, self.chart_type, self.t_available_kerykeion_celestial_points)
+            template_dict["makePlanets"] = draw_planets(
+                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points, 
+                available_planets_setting=self.available_planets_setting,
+                second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
+                radius=radius, 
+                main_subject_first_house_degree_ut=self.user.houses_degree_ut[0],
+                main_subject_seventh_house_degree_ut=self.user.houses_degree_ut[6],
+                chart_type=self.chart_type, 
+                third_circle_radius=self.c3,
+            )
         else:
-            template_dict["makePlanets"] = draw_planets(self, radius, self.available_kerykeion_celestial_points, self.chart_type)
+            template_dict["makePlanets"] = draw_planets(
+                available_planets_setting=self.available_planets_setting,
+                chart_type=self.chart_type,
+                radius=radius, 
+                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
+                third_circle_radius=self.c3,
+                main_subject_first_house_degree_ut=self.user.houses_degree_ut[0],
+                main_subject_seventh_house_degree_ut=self.user.houses_degree_ut[6],
+            )
 
 
         # Draw elements percentages

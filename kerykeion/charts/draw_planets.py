@@ -1,7 +1,28 @@
 from kerykeion.charts.charts_utils import degreeDiff, sliceToX, sliceToY, convert_decimal_to_degree_string
+from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointModel
+from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel
+from kerykeion.kr_types.kr_literals import Houses
 import logging
+from typing import Union, get_args
 
-def draw_planets(self, r, available_kerykeion_celestial_points, chart_type, second_subject_available_kerykeion_celestial_points=None):
+
+
+
+def draw_planets(
+    radius: int,
+    available_kerykeion_celestial_points: list[KerykeionPointModel],
+    available_planets_setting: list[KerykeionSettingsCelestialPointModel],
+    third_circle_radius: Union[int, float],
+    main_subject_first_house_degree_ut: Union[int, float],
+    main_subject_seventh_house_degree_ut: Union[int, float],
+    chart_type: ChartType,
+    second_subject_available_kerykeion_celestial_points: Union[list[KerykeionPointModel], None] = None,
+):
+    TRANSIT_RING_EXCLUDE_POINTS_NAMES = get_args(Houses)
+
+    if chart_type == "Transit" or chart_type == "Synastry":
+        if second_subject_available_kerykeion_celestial_points is None:
+            raise KerykeionException("Second subject is required for Transit or Synastry charts")
 
     # Make a list for the absolute degrees of the points of the graphic.
     points_deg_ut = []
@@ -12,7 +33,6 @@ def draw_planets(self, r, available_kerykeion_celestial_points, chart_type, seco
     points_deg = []
     for planet in available_kerykeion_celestial_points:
         points_deg.append(planet.position)
-
 
     if chart_type == "Transit" or chart_type == "Synastry":
         # Make a list for the absolute degrees of the points of the graphic.
@@ -26,9 +46,9 @@ def draw_planets(self, r, available_kerykeion_celestial_points, chart_type, seco
             t_points_deg.append(planet.position)
 
     planets_degut = {}
-    diff = range(len(self.available_planets_setting))
+    diff = range(len(available_planets_setting))
 
-    for i in range(len(self.available_planets_setting)):
+    for i in range(len(available_planets_setting)):
         # list of planets sorted by degree
         logging.debug(f"planet: {i}, degree: {points_deg_ut[i]}")
         planets_degut[points_deg_ut[i]] = i
@@ -68,24 +88,24 @@ def draw_planets(self, r, available_kerykeion_celestial_points, chart_type, seco
         diffb = degreeDiff(next, points_deg_ut[i])
         planets_by_pos[e] = [i, diffa, diffb]
 
-        logging.debug(f'{self.available_planets_setting[i]["label"]}, {diffa}, {diffb}')
+        logging.debug(f'{available_planets_setting[i]["label"]}, {diffa}, {diffb}')
 
         if diffb < planet_drange:
             if group_open:
-                groups[-1].append([e, diffa, diffb, self.available_planets_setting[planets_degut[keys[e]]]["label"]])
+                groups[-1].append([e, diffa, diffb, available_planets_setting[planets_degut[keys[e]]]["label"]])
             else:
                 group_open = True
                 groups.append([])
-                groups[-1].append([e, diffa, diffb, self.available_planets_setting[planets_degut[keys[e]]]["label"]])
+                groups[-1].append([e, diffa, diffb, available_planets_setting[planets_degut[keys[e]]]["label"]])
         else:
             if group_open:
-                groups[-1].append([e, diffa, diffb, self.available_planets_setting[planets_degut[keys[e]]]["label"]])
+                groups[-1].append([e, diffa, diffb, available_planets_setting[planets_degut[keys[e]]]["label"]])
             group_open = False
 
     def zero(x):
         return 0
 
-    planets_delta = list(map(zero, range(len(self.available_planets_setting))))
+    planets_delta = list(map(zero, range(len(available_planets_setting))))
 
     # print groups
     # print planets_by_pos
@@ -109,7 +129,9 @@ def draw_planets(self, r, available_kerykeion_celestial_points, chart_type, seco
                 planets_delta[groups[a][1][0]] = +planet_drange
 
             # if planets next to a and b have room move them
-            elif (planets_by_pos[next_to_a][1] > (2.4 * planet_drange)) & (planets_by_pos[next_to_b][2] > (2.4 * planet_drange)):
+            elif (planets_by_pos[next_to_a][1] > (2.4 * planet_drange)) & (
+                planets_by_pos[next_to_b][2] > (2.4 * planet_drange)
+            ):
                 planets_delta[(next_to_a)] = groups[a][0][1] - planet_drange * 2
                 planets_delta[groups[a][0][0]] = -planet_drange * 0.5
                 planets_delta[next_to_b] = -(groups[a][1][2] - planet_drange * 2)
@@ -147,7 +169,9 @@ def draw_planets(self, r, available_kerykeion_celestial_points, chart_type, seco
             if available > need:
                 planets_delta[groups[a][0][0]] = startA - groups[a][0][1] + (1.5 * planet_drange)
                 for f in range(xl - 1):
-                    planets_delta[groups[a][(f + 1)][0]] = 1.2 * planet_drange + planets_delta[groups[a][f][0]] - groups[a][f][2]
+                    planets_delta[groups[a][(f + 1)][0]] = (
+                        1.2 * planet_drange + planets_delta[groups[a][f][0]] - groups[a][f][2]
+                    )
 
     for e in range(len(keys)):
         i = planets_degut[keys[e]]
@@ -182,58 +206,58 @@ def draw_planets(self, r, available_kerykeion_celestial_points, chart_type, seco
 
         rtext = 45
 
-        offset = (int(self.user.houses_degree_ut[6]) / -1) + int(points_deg_ut[i] + planets_delta[e])
-        trueoffset = (int(self.user.houses_degree_ut[6]) / -1) + int(points_deg_ut[i])
+        offset = (int(main_subject_seventh_house_degree_ut) / -1) + int(points_deg_ut[i] + planets_delta[e])
+        trueoffset = (int(main_subject_seventh_house_degree_ut) / -1) + int(points_deg_ut[i])
 
-        planet_x = sliceToX(0, (r - rplanet), offset) + rplanet
-        planet_y = sliceToY(0, (r - rplanet), offset) + rplanet
+        planet_x = sliceToX(0, (radius - rplanet), offset) + rplanet
+        planet_y = sliceToY(0, (radius - rplanet), offset) + rplanet
         if chart_type == "Transit" or chart_type == "Synastry":
             scale = 0.8
-            
+
         elif chart_type == "ExternalNatal":
             scale = 0.8
             # line1
-            x1 = sliceToX(0, (r - self.c3), trueoffset) + self.c3
-            y1 = sliceToY(0, (r - self.c3), trueoffset) + self.c3
-            x2 = sliceToX(0, (r - rplanet - 30), trueoffset) + rplanet + 30
-            y2 = sliceToY(0, (r - rplanet - 30), trueoffset) + rplanet + 30
-            color = self.available_planets_setting[i]["color"]
+            x1 = sliceToX(0, (radius - third_circle_radius), trueoffset) + third_circle_radius
+            y1 = sliceToY(0, (radius - third_circle_radius), trueoffset) + third_circle_radius
+            x2 = sliceToX(0, (radius - rplanet - 30), trueoffset) + rplanet + 30
+            y2 = sliceToY(0, (radius - rplanet - 30), trueoffset) + rplanet + 30
+            color = available_planets_setting[i]["color"]
             output += (
                 '<line x1="%s" y1="%s" x2="%s" y2="%s" style="stroke-width:1px;stroke:%s;stroke-opacity:.3;"/>\n'
                 % (x1, y1, x2, y2, color)
             )
             # line2
-            x1 = sliceToX(0, (r - rplanet - 30), trueoffset) + rplanet + 30
-            y1 = sliceToY(0, (r - rplanet - 30), trueoffset) + rplanet + 30
-            x2 = sliceToX(0, (r - rplanet - 10), offset) + rplanet + 10
-            y2 = sliceToY(0, (r - rplanet - 10), offset) + rplanet + 10
+            x1 = sliceToX(0, (radius - rplanet - 30), trueoffset) + rplanet + 30
+            y1 = sliceToY(0, (radius - rplanet - 30), trueoffset) + rplanet + 30
+            x2 = sliceToX(0, (radius - rplanet - 10), offset) + rplanet + 10
+            y2 = sliceToY(0, (radius - rplanet - 10), offset) + rplanet + 10
             output += (
                 '<line x1="%s" y1="%s" x2="%s" y2="%s" style="stroke-width:1px;stroke:%s;stroke-opacity:.5;"/>\n'
                 % (x1, y1, x2, y2, color)
             )
-            
+
         else:
             scale = 1
 
-        planet_details = self.user[self.available_planets_setting[i]["name"].lower()]
+        planet_details = available_kerykeion_celestial_points[i]
 
         output += f'<g kr:node="ChartPoint" kr:house="{planet_details["house"]}" kr:sign="{planet_details["sign"]}" kr:slug="{planet_details["name"]}" transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">'
-        output += f'<use x="{planet_x * (1/scale)}" y="{planet_y * (1/scale)}" xlink:href="#{self.available_planets_setting[i]["name"]}" />'
-        output += f'</g>'
+        output += f'<use x="{planet_x * (1/scale)}" y="{planet_y * (1/scale)}" xlink:href="#{available_planets_setting[i]["name"]}" />'
+        output += f"</g>"
 
     # make transit degut and display planets
     if chart_type == "Transit" or chart_type == "Synastry":
         group_offset = {}
         t_planets_degut = {}
-        list_range = len(self.available_planets_setting)
+        list_range = len(available_planets_setting)
 
         for i in range(list_range):
-            if chart_type == "Transit" and self.available_planets_setting[i]['name'] in self.transit_ring_exclude_points_names:
+            if chart_type == "Transit" and available_planets_setting[i]["name"] in TRANSIT_RING_EXCLUDE_POINTS_NAMES:
                 continue
-            
+
             group_offset[i] = 0
             t_planets_degut[t_points_deg_ut[i]] = i
-    
+
         t_keys = list(t_planets_degut.keys())
         t_keys.sort()
 
@@ -275,10 +299,10 @@ def draw_planets(self, r, available_kerykeion_celestial_points, chart_type, seco
                 group_offset[groups[i][3]] = 2.0
 
         switch = 0
-        
+
         # Transit planets loop
         for e in range(len(t_keys)):
-            if chart_type == "Transit" and self.available_planets_setting[e]["name"] in self.transit_ring_exclude_points_names:
+            if chart_type == "Transit" and available_planets_setting[e]["name"] in TRANSIT_RING_EXCLUDE_POINTS_NAMES:
                 continue
 
             i = t_planets_degut[t_keys[e]]
@@ -293,23 +317,23 @@ def draw_planets(self, r, available_kerykeion_celestial_points, chart_type, seco
                 switch = 1
 
             # Transit planet name
-            zeropoint = 360 - self.user.houses_degree_ut[6]
+            zeropoint = 360 - main_subject_seventh_house_degree_ut
             t_offset = zeropoint + t_points_deg_ut[i]
             if t_offset > 360:
                 t_offset = t_offset - 360
-            planet_x = sliceToX(0, (r - rplanet), t_offset) + rplanet
-            planet_y = sliceToY(0, (r - rplanet), t_offset) + rplanet
-            output += f'<g class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)"><use x="{planet_x*2}" y="{planet_y*2}" xlink:href="#{self.available_planets_setting[i]["name"]}" /></g></g>'
+            planet_x = sliceToX(0, (radius - rplanet), t_offset) + rplanet
+            planet_y = sliceToY(0, (radius - rplanet), t_offset) + rplanet
+            output += f'<g class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)"><use x="{planet_x*2}" y="{planet_y*2}" xlink:href="#{available_planets_setting[i]["name"]}" /></g></g>'
 
             # Transit planet line
-            x1 = sliceToX(0, r + 3, t_offset) - 3
-            y1 = sliceToY(0, r + 3, t_offset) - 3
-            x2 = sliceToX(0, r - 3, t_offset) + 3
-            y2 = sliceToY(0, r - 3, t_offset) + 3
-            output += f'<line class="transit-planet-line" x1="{str(x1)}" y1="{str(y1)}" x2="{str(x2)}" y2="{str(y2)}" style="stroke: {self.available_planets_setting[i]["color"]}; stroke-width: 1px; stroke-opacity:.8;"/>'
+            x1 = sliceToX(0, radius + 3, t_offset) - 3
+            y1 = sliceToY(0, radius + 3, t_offset) - 3
+            x2 = sliceToX(0, radius - 3, t_offset) + 3
+            y2 = sliceToY(0, radius - 3, t_offset) + 3
+            output += f'<line class="transit-planet-line" x1="{str(x1)}" y1="{str(y1)}" x2="{str(x2)}" y2="{str(y2)}" style="stroke: {available_planets_setting[i]["color"]}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
             # transit planet degree text
-            rotate = self.user.houses_degree_ut[0] - t_points_deg_ut[i]
+            rotate = main_subject_first_house_degree_ut - t_points_deg_ut[i]
             textanchor = "end"
             t_offset += group_offset[i]
             rtext = -3.0
@@ -325,12 +349,12 @@ def draw_planets(self, r, available_kerykeion_celestial_points, chart_type, seco
                 xo = 1
             else:
                 xo = -1
-            deg_x = sliceToX(0, (r - rtext), t_offset + xo) + rtext
-            deg_y = sliceToY(0, (r - rtext), t_offset + xo) + rtext
+            deg_x = sliceToX(0, (radius - rtext), t_offset + xo) + rtext
+            deg_y = sliceToY(0, (radius - rtext), t_offset + xo) + rtext
             degree = int(t_offset)
             output += f'<g transform="translate({deg_x},{deg_y})">'
             output += f'<text transform="rotate({rotate})" text-anchor="{textanchor}'
-            output += f'" style="fill: {self.available_planets_setting[i]["color"]}; font-size: 10px;">{convert_decimal_to_degree_string(t_points_deg[i], type="1")}'
+            output += f'" style="fill: {available_planets_setting[i]["color"]}; font-size: 10px;">{convert_decimal_to_degree_string(t_points_deg[i], type="1")}'
             output += "</text></g>"
 
         # check transit
@@ -340,12 +364,12 @@ def draw_planets(self, r, available_kerykeion_celestial_points, chart_type, seco
             dropin = 0
 
         # planet line
-        x1 = sliceToX(0, r - (dropin + 3), offset) + (dropin + 3)
-        y1 = sliceToY(0, r - (dropin + 3), offset) + (dropin + 3)
-        x2 = sliceToX(0, (r - (dropin - 3)), offset) + (dropin - 3)
-        y2 = sliceToY(0, (r - (dropin - 3)), offset) + (dropin - 3)
+        x1 = sliceToX(0, radius - (dropin + 3), offset) + (dropin + 3)
+        y1 = sliceToY(0, radius - (dropin + 3), offset) + (dropin + 3)
+        x2 = sliceToX(0, (radius - (dropin - 3)), offset) + (dropin - 3)
+        y2 = sliceToY(0, (radius - (dropin - 3)), offset) + (dropin - 3)
 
-        output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.available_planets_setting[i]["color"]}; stroke-width: 2px; stroke-opacity:.6;"/>'
+        output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {available_planets_setting[i]["color"]}; stroke-width: 2px; stroke-opacity:.6;"/>'
 
         # check transit
         if chart_type == "Transit" or chart_type == "Synastry":
@@ -353,10 +377,10 @@ def draw_planets(self, r, available_kerykeion_celestial_points, chart_type, seco
         else:
             dropin = 120
 
-        x1 = sliceToX(0, r - dropin, offset) + dropin
-        y1 = sliceToY(0, r - dropin, offset) + dropin
-        x2 = sliceToX(0, (r - (dropin - 3)), offset) + (dropin - 3)
-        y2 = sliceToY(0, (r - (dropin - 3)), offset) + (dropin - 3)
-        output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {self.available_planets_setting[i]["color"]}; stroke-width: 2px; stroke-opacity:.6;"/>'
+        x1 = sliceToX(0, radius - dropin, offset) + dropin
+        y1 = sliceToY(0, radius - dropin, offset) + dropin
+        x2 = sliceToX(0, (radius - (dropin - 3)), offset) + (dropin - 3)
+        y2 = sliceToY(0, (radius - (dropin - 3)), offset) + (dropin - 3)
+        output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {available_planets_setting[i]["color"]}; stroke-width: 2px; stroke-opacity:.6;"/>'
 
     return output
