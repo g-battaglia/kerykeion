@@ -80,11 +80,13 @@ class KerykeionSettingsAspectModel(SubscriptableBaseModel):
     degree: int = Field(title="Aspect Degrees", description="The degree of the aspect")
     name: str = Field(title="Aspect Name", description="The name of the aspect")
     is_active: bool = Field(title="Aspect is Active", description="Is the aspect active?")
-    visible_grid: bool = Field(title="Aspect Visible Grid", description="Is the aspect visible in the grid?")
     is_major: bool = Field(title="Aspect is Major", description="Is the aspect major?")
     is_minor: bool = Field(title="Aspect is Minor", description="Is the aspect minor?")
     orb: int = Field(title="Aspect Orb", description="The orb of the aspect")
     color: str = Field(title="Aspect Color", description="The color of the aspect")
+
+    # Deprecated: Not used anymore
+    visible_grid: bool = Field(title="Aspect Visible Grid", description="Is the aspect visible in the grid?")
 
 
 # Language Settings
@@ -145,8 +147,10 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
 
 class KerykeionGeneralSettingsModel(SubscriptableBaseModel):
     axes_orbit: int = Field(title="Axes Orbit", description="The orbit of the axes in the chart")
-    planet_in_zodiac_extra_points: int = Field(title="Planet in Zodiac Extra Points", description="The extra points of the planet in the zodiac")
     language: str = Field(title="Language", description="The language of the chart")
+
+    # Deprecated: Should be removed
+    planet_in_zodiac_extra_points: int = Field(title="Planet in Zodiac Extra Points", description="The extra points of the planet in the zodiac")
 
 class KerykeionChartSettingsModel(SubscriptableBaseModel):
     basic_chart_viewBox: str = Field(title="Basic Chart ViewBox", description="The viewbox of the basic chart")

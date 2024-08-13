@@ -2,8 +2,39 @@ import math
 import datetime
 from kerykeion.kr_types import KerykeionException, ChartType
 from typing import Union
-from kerykeion.kr_types.kr_models import AspectModel
+from kerykeion.kr_types.kr_models import AspectModel, KerykeionPointModel
 from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsAspectModel
+
+
+def get_decoded_kerykeion_celestial_point_name(input_planet_name: str, celestial_point_language: KerykeionLanguageCelestialPointModel) -> str:
+    """
+    Decode the given celestial point name based on the provided language model.
+
+    Args:
+        input_planet_name (str): The name of the celestial point to decode.
+        celestial_point_language (KerykeionLanguageCelestialPointModel): The language model containing celestial point names.
+
+    Returns:
+        str: The decoded celestial point name.
+    """
+
+    # Dictionary for special house names
+    special_house_names = {
+        "First_House": "Asc",
+        "Seventh_House": "Dsc",
+        "Tenth_House": "Mc",
+        "Fourth_House": "Ic"
+    }
+
+    # Get the language model keys
+    language_keys = celestial_point_language.model_dump().keys()
+
+    # Check if the input planet name exists in the language model
+    if input_planet_name in language_keys:
+        return celestial_point_language[input_planet_name]
+
+    # Return the special house name if it exists, otherwise return an empty string
+    return special_house_names.get(input_planet_name, "")
 
 
 def decHourJoin(inH: int, inM: int, inS: int) -> float:
@@ -132,10 +163,10 @@ def draw_zodiac_slice(
         - seventh_house_degree_ut (Union[int, float]): The degree of the seventh house.
         - num (int): The number of the sign. Note: In OpenAstro it did refer to self.zodiac,
             which is a list of the signs in order, starting with Aries. Eg:
-            {"name": "aries", "element": "fire"}
+            {"name": "Ari", "element": "fire"}
         - r (Union[int, float]): The value of r.
         - style (str): The CSS inline style.
-        - type (str): The type ?. In OpenAstro, it was the symbol of the sign. Eg: "aries".
+        - type (str): The type ?. In OpenAstro, it was the symbol of the sign. Eg: "Ari".
             self.zodiac[i]["name"]
 
     Returns:
@@ -807,3 +838,164 @@ def draw_moon_phase(
         f'    <circle cx="20" cy="10" r="10" style="fill: none; stroke: {lunar_phase_outline_color}; stroke-width: 0.5px; stroke-opacity: 0.5" />'
         f"</g>"
     )
+
+
+def draw_house_grid(
+        main_subject_houses_list: list[KerykeionPointModel],
+        chart_type: ChartType,
+        secondary_subject_houses_list: Union[list[KerykeionPointModel], None] = None,
+        text_color: str = "#000000",
+        house_cusp_generale_name_label: str = "Cusp",
+    ) -> str:
+    """
+    Generate SVG code for a grid of astrological houses.
+
+    Parameters:
+    - main_houses (list[KerykeionPointModel]): List of houses for the main subject.
+    - chart_type (ChartType): Type of the chart (e.g., Synastry, Transit).
+    - secondary_houses (list[KerykeionPointModel], optional): List of houses for the secondary subject.
+    - text_color (str): Color of the text.
+    - cusp_label (str): Label for the house cusp.
+
+    Returns:
+    - str: The SVG code for the grid of houses.
+    """
+    
+    if chart_type in ["Synastry", "Transit"] and secondary_subject_houses_list is None:
+        raise KerykeionException("secondary_houses is None")
+
+    svg_output = '<g transform="translate(610,-20)">'
+
+    line_increment = 10
+    for i, house in enumerate(main_subject_houses_list):
+        cusp_number = f"&#160;&#160;{i + 1}" if i < 9 else str(i + 1)
+        svg_output += (
+            f'<g transform="translate(0,{line_increment})">'
+            f'<text text-anchor="end" x="40" style="fill:{text_color}; font-size: 10px;">{house_cusp_generale_name_label} {cusp_number}:</text>'
+            f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{house["sign"]}" /></g>'
+            f'<text x="53" style="fill:{text_color}; font-size: 10px;"> {convert_decimal_to_degree_string(house["position"])}</text>'
+            f'</g>'
+        )
+        line_increment += 14
+
+    svg_output += "</g>"
+
+    if chart_type == "Synastry":
+        svg_output += '<!-- Synastry Houses -->'
+        svg_output += '<g transform="translate(850, -20)">'
+        line_increment = 10
+
+        for i, house in enumerate(secondary_subject_houses_list):
+            cusp_number = f"&#160;&#160;{i + 1}" if i < 9 else str(i + 1)
+            svg_output += (
+                f'<g transform="translate(0,{line_increment})">'
+                f'<text text-anchor="end" x="40" style="fill:{text_color}; font-size: 10px;">{house_cusp_generale_name_label} {cusp_number}:</text>'
+                f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{house["sign"]}" /></g>'
+                f'<text x="53" style="fill:{text_color}; font-size: 10px;"> {convert_decimal_to_degree_string(house["position"])}</text>'
+                f'</g>'
+            )
+            line_increment += 14
+
+        svg_output += "</g>"
+
+    return svg_output
+
+
+def draw_planet_grid(
+        planets_and_houses_grid_title: str,
+        subject_name: str,
+        available_kerykeion_celestial_points: list[KerykeionPointModel],
+        chart_type: ChartType,
+        celestial_point_language: KerykeionLanguageCelestialPointModel,
+        second_subject_name: str = None,
+        second_subject_available_kerykeion_celestial_points: list[KerykeionPointModel] = None,
+        text_color: str = "#000000",
+    ) -> str:
+    """
+    Draws the planet grid for the given celestial points and chart type.
+
+    Args:
+        planets_and_houses_grid_title (str): Title of the grid.
+        subject_name (str): Name of the subject.
+        available_kerykeion_celestial_points (list[KerykeionPointModel]): List of celestial points for the subject.
+        chart_type (ChartType): Type of the chart.
+        celestial_point_language (KerykeionLanguageCelestialPointModel): Language model for celestial points.
+        second_subject_name (str, optional): Name of the second subject. Defaults to None.
+        second_subject_available_kerykeion_celestial_points (list[KerykeionPointModel], optional): List of celestial points for the second subject. Defaults to None.
+        text_color (str, optional): Color of the text. Defaults to "#000000".
+
+    Returns:
+        str: The SVG output for the planet grid.
+    """
+    line_height = 10
+    offset = 0
+    offset_between_lines = 14
+
+    svg_output = (
+        f'<g transform="translate(510,-20)">'
+        f'<g transform="translate(140, -15)">'
+        f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}:</text>'
+        f'</g>'
+    )
+
+    end_of_line = "</g>"
+
+    for i, planet in enumerate(available_kerykeion_celestial_points):
+        if i == 27:
+            line_height = 10
+            offset = -120
+
+        decoded_name = get_decoded_kerykeion_celestial_point_name(planet["name"], celestial_point_language)
+        svg_output += (
+            f'<g transform="translate({offset},{line_height})">'
+            f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{decoded_name}</text>'
+            f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{planet["name"]}" /></g>'
+            f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(planet["position"])}</text>'
+            f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{planet["sign"]}" /></g>'
+        )
+
+        if planet["retrograde"]:
+            svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+
+        svg_output += end_of_line
+        line_height += offset_between_lines
+
+    if chart_type in ["Transit", "Synastry"]:
+        if chart_type == "Transit":
+            svg_output += (
+                f'<g transform="translate(320, -15)">'
+                f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{second_subject_name}:</text>'
+            )
+        else:
+            svg_output += (
+                f'<g transform="translate(380, -15)">'
+                f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}:</text>'
+            )
+
+        svg_output += end_of_line
+
+        second_line_height = 10
+        second_offset = 250
+
+        for i, t_planet in enumerate(second_subject_available_kerykeion_celestial_points):
+            if i == 27:
+                second_line_height = 10
+                second_offset = -120
+
+            second_decoded_name = get_decoded_kerykeion_celestial_point_name(t_planet["name"], celestial_point_language)
+            svg_output += (
+                f'<g transform="translate({second_offset},{second_line_height})">'
+                f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{second_decoded_name}</text>'
+                f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{t_planet["name"]}" /></g>'
+                f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(t_planet["position"])}</text>'
+                f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{t_planet["sign"]}" /></g>'
+            )
+
+            if t_planet["retrograde"]:
+                svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+
+            svg_output += end_of_line
+            second_line_height += offset_between_lines
+
+    svg_output += end_of_line
+    return svg_output
