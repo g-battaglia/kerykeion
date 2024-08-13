@@ -11,7 +11,7 @@
 >
     <title>John Lennon Lahiri | Kerykeion</title>
     <!--- Main Chart -->
-    <g kr:node='Main_Chart' transform='rotate(0)'>
+    <g kr:node='Main_Chart'>
 
         <g kr:node='Main_Text'>
             <rect class='background-rectangle' x='0' y='0' width='772.2' height='546.0' style='fill: #ffffff' />

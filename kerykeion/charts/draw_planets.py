@@ -18,6 +18,26 @@ def draw_planets(
     chart_type: ChartType,
     second_subject_available_kerykeion_celestial_points: Union[list[KerykeionPointModel], None] = None,
 ):
+    """
+    Draws the planets on a chart based on the provided parameters.
+
+    Args:
+        radius (int): The radius of the chart.
+        available_kerykeion_celestial_points (list[KerykeionPointModel]): List of celestial points for the main subject.
+        available_planets_setting (list[KerykeionSettingsCelestialPointModel]): Settings for the celestial points.
+        third_circle_radius (Union[int, float]): Radius of the third circle.
+        main_subject_first_house_degree_ut (Union[int, float]): Degree of the first house for the main subject.
+        main_subject_seventh_house_degree_ut (Union[int, float]): Degree of the seventh house for the main subject.
+        chart_type (ChartType): Type of the chart (e.g., "Transit", "Synastry").
+        second_subject_available_kerykeion_celestial_points (Union[list[KerykeionPointModel], None], optional): 
+            List of celestial points for the second subject, required for "Transit" or "Synastry" charts. Defaults to None.
+
+    Raises:
+        KerykeionException: If the second subject is required but not provided.
+
+    Returns:
+        str: SVG output for the chart with the planets drawn.
+    """
     TRANSIT_RING_EXCLUDE_POINTS_NAMES = get_args(Houses)
 
     if chart_type == "Transit" or chart_type == "Synastry":

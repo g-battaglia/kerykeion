@@ -74,11 +74,11 @@ class KerykeionChartSVG:
     earth: float
     air: float
     water: float
-    c1: float
-    c2: float
-    c3: float
+    main_radius: float
+    first_circle_radius: float
+    second_circle_radius: float
+    third_circle_radius: float
     homedir: Path
-    xml_svg: Path
     width: Union[float, int]
     language_settings: dict
     chart_colors_settings: dict
@@ -88,12 +88,6 @@ class KerykeionChartSVG:
     chart_settings: dict
     user: AstrologicalSubject
     available_planets_setting: List[KerykeionSettingsCelestialPointModel]
-    points_deg_ut: list
-    points_deg: list
-    points_retrograde: list
-    t_points_deg_ut: list
-    t_points_deg: list
-    t_points_retrograde: list
     height: float
     location: str
     geolat: float
@@ -109,7 +103,6 @@ class KerykeionChartSVG:
         new_settings_file: Union[Path, None] = None,
     ):
         # Directories:
-        DATA_DIR = Path(__file__).parent
         self.homedir = Path.home()
         self.new_settings_file = new_settings_file
 
@@ -117,8 +110,6 @@ class KerykeionChartSVG:
             self.output_directory = Path(new_output_directory)
         else:
             self.output_directory = self.homedir
-
-        self.xml_svg = DATA_DIR / "templates/chart.xml"
 
         self.parse_json_settings(new_settings_file)
         self.chart_type = chart_type
@@ -147,13 +138,15 @@ class KerykeionChartSVG:
             natal_aspects_instance = NatalAspects(self.user, new_settings_file=self.new_settings_file)
             self.aspects_list = natal_aspects_instance.relevant_aspects
 
-        # TODO: If not second should exit
         if self.chart_type == "Transit" or self.chart_type == "Synastry":
             if not second_obj:
                 raise KerykeionException("Second object is required for Transit or Synastry charts.")
 
             # Kerykeion instance
             self.t_user = second_obj
+
+            # Aspects
+            self.aspects_list = SynastryAspects(self.user, self.t_user, new_settings_file=self.new_settings_file).relevant_aspects
 
             self.t_available_kerykeion_celestial_points = []
             for body in available_celestial_points_names:
@@ -171,12 +164,29 @@ class KerykeionChartSVG:
         self.geolat = self.user.lat
         self.geolon =  self.user.lng
         
-        logging.info(f"{self.user.name} birth location: {self.location}, {self.geolat}, {self.geolon}")
-
         if self.chart_type == "Transit":
             self.t_name = self.language_settings["transit_name"]
 
         self.template = None
+
+
+        # Default radius for the chart
+        self.main_radius = 240
+
+        # Set circle radii based on chart type
+        if self.chart_type == "ExternalNatal":
+            self.first_circle_radius, self.second_circle_radius, self.third_circle_radius = 56, 92, 112
+        else:
+            self.first_circle_radius, self.second_circle_radius, self.third_circle_radius = 0, 36, 120
+
+        # Initialize element points
+        self.fire = 0.0
+        self.earth = 0.0
+        self.air = 0.0
+        self.water = 0.0
+
+        # Calculate element points from planets
+        self._calculate_elements_points_from_planets()
 
     def set_output_directory(self, dir_path: Path) -> None:
         """
@@ -211,11 +221,10 @@ class KerykeionChartSVG:
             str: The SVG string representing the zodiac circle.
         """
         sings = get_args(Sign)
-
         output = ""
         for i, sing in enumerate(sings):
             output += draw_zodiac_slice(
-                c1=self.c1,
+                c1=self.first_circle_radius,
                 chart_type=self.chart_type,
                 seventh_house_degree_ut=self.user.houses_degree_ut[6],
                 num=i,
@@ -231,6 +240,7 @@ class KerykeionChartSVG:
         Calculate chart element points from a planet.
         TODO: Refactor this method.
         Should be completely rewritten. Maybe even part of the AstrologicalSubject class.
+        The points should include just the standard way of calculating the elements points.
         """
 
         zodiac = (
@@ -296,9 +306,6 @@ class KerykeionChartSVG:
 
     def _draw_all_transit_aspects_lines(self, r, ar):
         out = ""
-
-        self.aspects_list = SynastryAspects(self.user, self.t_user, new_settings_file=self.new_settings_file).relevant_aspects
-
         for aspect in self.aspects_list:
             out += draw_aspect_line(
                 r=r,
@@ -307,7 +314,6 @@ class KerykeionChartSVG:
                 color=self.aspects_settings[aspect["aid"]]["color"],
                 seventh_house_degree_ut=self.user.seventh_house.abs_pos
             )
-
         return out
 
     def _create_template_dictionary(self) -> ChartTemplateDictionary:
@@ -317,52 +323,38 @@ class KerykeionChartSVG:
         Returns:
             ChartTemplateDictionary: A dictionary with template data for the chart.
         """
-        # Initialize element points
-        self.fire = 0.0
-        self.earth = 0.0
-        self.air = 0.0
-        self.water = 0.0
-
-        # Calculate element points from planets
-        self._calculate_elements_points_from_planets()
-
-        # Default rotation
-        rotation = "0"
-
         # Initialize template dictionary
         template_dict: ChartTemplateDictionary = dict()  # type: ignore
-        radius = 240
-
-        # Set viewbox based on chart type
-        template_dict['viewbox'] = self.chart_settings["basic_chart_viewBox"] if self.chart_type in ["Natal", "ExternalNatal"] else self.chart_settings["wide_chart_viewBox"]
-
-        # Set circle radii based on chart type
-        if self.chart_type == "ExternalNatal":
-            self.c1, self.c2, self.c3 = 56, 92, 112
-        else:
-            self.c1, self.c2, self.c3 = 0, 36, 120
-
-        # Generate rings and circles based on chart type
-        if self.chart_type in ["Transit", "Synastry"]:
-            template_dict["transitRing"] = draw_transit_ring(radius, self.chart_colors_settings["paper_1"], self.chart_colors_settings["zodiac_transit_ring_3"])
-            template_dict["degreeRing"] = draw_transit_ring_degree_steps(radius, self.user.seventh_house.abs_pos)
-            template_dict["first_circle"] = draw_first_circle(radius, self.chart_colors_settings["zodiac_transit_ring_2"], self.chart_type)
-            template_dict["second_circle"] = draw_second_circle(radius, self.chart_colors_settings['zodiac_transit_ring_1'], self.chart_colors_settings['paper_1'], self.chart_type)
-            template_dict['third_circle'] = draw_third_circle(radius, self.chart_colors_settings['zodiac_transit_ring_0'], self.chart_colors_settings['paper_1'], self.chart_type)
-            template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(radius, radius - 160)
-            template_dict["makeAspectGrid"] = draw_aspect_transit_grid(self.language_settings["aspects"], self.aspects_list, self.planets_settings, self.aspects_settings)
-        else:
-            template_dict["transitRing"] = ""
-            template_dict["degreeRing"] = draw_degree_ring(radius, self.c1, self.user.seventh_house.abs_pos, self.chart_colors_settings["paper_0"])
-            template_dict['first_circle'] = draw_first_circle(radius, self.chart_colors_settings["zodiac_radix_ring_2"], self.chart_type, self.c1)
-            template_dict["second_circle"] = draw_second_circle(radius, self.chart_colors_settings["zodiac_radix_ring_1"], self.chart_colors_settings["paper_1"], self.chart_type, self.c2)
-            template_dict['third_circle'] = draw_third_circle(radius, self.chart_colors_settings["zodiac_radix_ring_0"], self.chart_colors_settings["paper_1"], self.chart_type, self.c3)
-            template_dict["makeAspects"] = self._draw_all_aspects_lines(radius, radius - self.c3)
-            template_dict["makeAspectGrid"] = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list)
 
         # Set chart dimensions
         template_dict["chart_height"] = self.height
         template_dict["chart_width"] = self.width
+
+        # Set chart name
+        template_dict["stringName"] = f"{self.user.name}:" if self.chart_type in ["Synastry", "Transit"] else f'{self.language_settings["info"]}:'
+
+        # Set viewbox based on chart type
+        template_dict['viewbox'] = self.chart_settings["basic_chart_viewBox"] if self.chart_type in ["Natal", "ExternalNatal"] else self.chart_settings["wide_chart_viewBox"]
+
+        # Generate rings and circles based on chart type
+        if self.chart_type in ["Transit", "Synastry"]:
+            template_dict["transitRing"] = draw_transit_ring(self.main_radius, self.chart_colors_settings["paper_1"], self.chart_colors_settings["zodiac_transit_ring_3"])
+            template_dict["degreeRing"] = draw_transit_ring_degree_steps(self.main_radius, self.user.seventh_house.abs_pos)
+            template_dict["first_circle"] = draw_first_circle(self.main_radius, self.chart_colors_settings["zodiac_transit_ring_2"], self.chart_type)
+            template_dict["second_circle"] = draw_second_circle(self.main_radius, self.chart_colors_settings['zodiac_transit_ring_1'], self.chart_colors_settings['paper_1'], self.chart_type)
+            template_dict['third_circle'] = draw_third_circle(self.main_radius, self.chart_colors_settings['zodiac_transit_ring_0'], self.chart_colors_settings['paper_1'], self.chart_type)
+            template_dict["makeAspectGrid"] = draw_aspect_transit_grid(self.language_settings["aspects"], self.aspects_list, self.planets_settings, self.aspects_settings)
+
+            template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(self.main_radius, self.main_radius - 160)
+        else:
+            template_dict["transitRing"] = ""
+            template_dict["degreeRing"] = draw_degree_ring(self.main_radius, self.first_circle_radius, self.user.seventh_house.abs_pos, self.chart_colors_settings["paper_0"])
+            template_dict['first_circle'] = draw_first_circle(self.main_radius, self.chart_colors_settings["zodiac_radix_ring_2"], self.chart_type, self.first_circle_radius)
+            template_dict["second_circle"] = draw_second_circle(self.main_radius, self.chart_colors_settings["zodiac_radix_ring_1"], self.chart_colors_settings["paper_1"], self.chart_type, self.second_circle_radius)
+            template_dict['third_circle'] = draw_third_circle(self.main_radius, self.chart_colors_settings["zodiac_radix_ring_0"], self.chart_colors_settings["paper_1"], self.chart_type, self.third_circle_radius)
+            template_dict["makeAspectGrid"] = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list)
+
+            template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - self.third_circle_radius)
 
         # Set chart title
         if self.chart_type == "Synastry":
@@ -371,9 +363,6 @@ class KerykeionChartSVG:
             template_dict["stringTitle"] = f"{self.language_settings['transits']} {self.t_user.day}/{self.t_user.month}/{self.t_user.year}"
         else:
             template_dict["stringTitle"] = self.user.name
-
-        # Set chart name
-        template_dict["stringName"] = f"{self.user.name}:" if self.chart_type in ["Synastry", "Transit"] else f'{self.language_settings["info"]}:'
 
         # Set bottom left corner information
         template_dict["bottomLeft0"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else self.user.zodiac_type + ' ' + self.user.sidereal_mode}"
@@ -431,11 +420,8 @@ class KerykeionChartSVG:
         for aspect in self.aspects_settings:
             template_dict[f"orb_color_{aspect['degree']}"] = aspect['color']
 
-        # Set configuration rotation
-        template_dict["cfgRotate"] = rotation
-
         # Drawing functions
-        template_dict["makeZodiac"] = self._draw_zodiac_circle_slices(radius)
+        template_dict["makeZodiac"] = self._draw_zodiac_circle_slices(self.main_radius)
 
         # Draw houses grid and cusps
         if self.chart_type in ["Transit", "Synastry"]:
@@ -448,15 +434,15 @@ class KerykeionChartSVG:
             )
 
             template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
-                r=radius,
+                r=self.main_radius,
                 first_subject_houses_list_ut=self.user.houses_degree_ut,
                 standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
                 first_house_color=self.planets_settings[12]["color"],
                 tenth_house_color=self.planets_settings[13]["color"],
                 seventh_house_color=self.planets_settings[14]["color"],
                 fourth_house_color=self.planets_settings[15]["color"],
-                c1=self.c1,
-                c3=self.c3,
+                c1=self.first_circle_radius,
+                c3=self.third_circle_radius,
                 chart_type=self.chart_type,
                 second_subject_houses_list_ut=self.t_user.houses_degree_ut,
                 transit_house_cusp_color=self.chart_colors_settings["houses_transit_line"],
@@ -471,15 +457,15 @@ class KerykeionChartSVG:
             )
 
             template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
-                r=radius,
+                r=self.main_radius,
                 first_subject_houses_list_ut=self.user.houses_degree_ut,
                 standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
                 first_house_color=self.planets_settings[12]["color"],
                 tenth_house_color=self.planets_settings[13]["color"],
                 seventh_house_color=self.planets_settings[14]["color"],
                 fourth_house_color=self.planets_settings[15]["color"],
-                c1=self.c1,
-                c3=self.c3,
+                c1=self.first_circle_radius,
+                c3=self.third_circle_radius,
                 chart_type=self.chart_type,
             )
 
@@ -489,23 +475,22 @@ class KerykeionChartSVG:
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points, 
                 available_planets_setting=self.available_planets_setting,
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
-                radius=radius, 
+                radius=self.main_radius, 
                 main_subject_first_house_degree_ut=self.user.houses_degree_ut[0],
                 main_subject_seventh_house_degree_ut=self.user.houses_degree_ut[6],
                 chart_type=self.chart_type, 
-                third_circle_radius=self.c3,
+                third_circle_radius=self.third_circle_radius,
             )
         else:
             template_dict["makePlanets"] = draw_planets(
                 available_planets_setting=self.available_planets_setting,
                 chart_type=self.chart_type,
-                radius=radius, 
+                radius=self.main_radius, 
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-                third_circle_radius=self.c3,
+                third_circle_radius=self.third_circle_radius,
                 main_subject_first_house_degree_ut=self.user.houses_degree_ut[0],
                 main_subject_seventh_house_degree_ut=self.user.houses_degree_ut[6],
             )
-
 
         # Draw elements percentages
         template_dict["elements_percentages"] = draw_elements_percentages(
@@ -557,8 +542,11 @@ class KerykeionChartSVG:
         """Creates the template for the SVG file"""
         td = self._create_template_dictionary()
 
+        DATA_DIR = Path(__file__).parent
+        xml_svg = DATA_DIR / "templates/chart.xml"
+        
         # read template
-        with open(self.xml_svg, "r", encoding="utf-8", errors="ignore") as f:
+        with open(xml_svg, "r", encoding="utf-8", errors="ignore") as f:
             template = Template(f.read()).substitute(td)
 
         # return filename

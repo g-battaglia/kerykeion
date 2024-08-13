@@ -11,7 +11,7 @@
 >
     <title>$stringTitle | Kerykeion</title>
     <!--- Main Chart -->
-    <g kr:node="Main_Chart" transform="rotate($cfgRotate)">
+    <g kr:node="Main_Chart">
 
         <g kr:node="Main_Text">
             <rect class="background-rectangle" x="0" y="0" width="$chart_width" height="$chart_height" style="fill: $paper_color_1" />
