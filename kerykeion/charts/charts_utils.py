@@ -833,10 +833,15 @@ def draw_moon_phase(
     # Return the SVG element as a string
     return (
         f'<g transform="rotate({lunar_phase_rotate} 20 10)">'
+        f'    <defs>'
+        f'        <clipPath id="moonPhaseCutOffCircle">'
+        f'        <circle cx="20" cy="10" r="10" />'
+        f'        </clipPath>'
+        f'    </defs>'
         f'    <circle cx="20" cy="10" r="10" style="fill: {fill_color_background}" />'
         f'    <circle cx="{circle_center_x}" cy="10" r="{circle_radius}" style="fill: {fill_color_foreground}" clip-path="url(#moonPhaseCutOffCircle)" />'
         f'    <circle cx="20" cy="10" r="10" style="fill: none; stroke: {lunar_phase_outline_color}; stroke-width: 0.5px; stroke-opacity: 0.5" />'
-        f"</g>"
+        f'</g>'
     )
 
 
