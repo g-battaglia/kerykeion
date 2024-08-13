@@ -19,12 +19,7 @@ class ChartTemplateDictionary(TypedDict):
     bottomLeft2: str
     bottomLeft3: str
     bottomLeft4: str
-    lunar_phase_fg: str
-    lunar_phase_bg: str
-    lunar_phase_cx: int
-    lunar_phase_r: int
-    lunar_phase_outline: str
-    lunar_phase_rotate: float
+    moon_phase: str
     stringLocation: str
     stringDateTime: str
     stringLat: str
@@ -82,7 +77,6 @@ class ChartTemplateDictionary(TypedDict):
     orb_color_150: str
     orb_color_180: str
 
-    cfgRotate: str
     cfgTranslate: str
     makeZodiac: str
     makeHouses: str
