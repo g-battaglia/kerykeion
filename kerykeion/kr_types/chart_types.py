@@ -82,7 +82,6 @@ class ChartTemplateDictionary(TypedDict):
     orb_color_150: str
     orb_color_180: str
 
-    cfgRotate: str
     cfgTranslate: str
     makeZodiac: str
     makeHouses: str

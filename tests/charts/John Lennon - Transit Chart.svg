@@ -11,7 +11,7 @@
 >
     <title>Transits for 18/6/1942 | Kerykeion</title>
     <!--- Main Chart -->
-    <g kr:node='Main_Chart' transform='rotate(0)'>
+    <g kr:node='Main_Chart'>
 
         <g kr:node='Main_Text'>
             <rect class='background-rectangle' x='0' y='0' width='1200' height='546.0' style='fill: #ffffff' />
