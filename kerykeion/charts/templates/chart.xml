@@ -529,12 +529,5 @@
                 style="fill: $paper_color_0"
             />
         </symbol>
-
-        <!-- Moon Phases Cut Off Circle -->
-        <defs>
-            <clipPath id="moonPhaseCutOffCircle">
-                <circle cx="20" cy="10" r="10" />
-            </clipPath>
-        </defs>
     </defs>
 </svg>
