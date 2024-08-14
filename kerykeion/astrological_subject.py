@@ -34,10 +34,10 @@ from pathlib import Path
 from typing import Union, get_args
 
 DEFAULT_GEONAMES_USERNAME = "century.boy"
-DEFAULT_SIDEREAL_MODE = "FAGAN_BRADLEY"
-DEFAULT_HOUSES_SYSTEM_IDENTIFIER = "P"
-DEFAULT_ZODIAC_TYPE = "Tropic"
-DEFAULT_PERSPECTIVE_TYPE = "Apparent Geocentric"
+DEFAULT_SIDEREAL_MODE: SiderealMode = "FAGAN_BRADLEY"
+DEFAULT_HOUSES_SYSTEM_IDENTIFIER: HousesSystemIdentifier = "P"
+DEFAULT_ZODIAC_TYPE: ZodiacType = "Tropic"
+DEFAULT_PERSPECTIVE_TYPE: PerspectiveType = "Apparent Geocentric"
 GEONAMES_DEFAULT_USERNAME_WARNING = (
     "\n********\n"
     "NO GEONAMES USERNAME SET!\n"
@@ -101,12 +101,12 @@ class AstrologicalSubject:
     day: int
     hour: int
     minute: int
-    city: Union[str, None]
-    nation: Union[str, None]
-    lng: Union[int, float, None]
-    lat: Union[int, float, None]
-    tz_str: Union[str, None]
-    geonames_username: Union[str, None]
+    city: str
+    nation: str
+    lng: Union[int, float]
+    lat: Union[int, float]
+    tz_str: str
+    geonames_username: str
     online: bool
     zodiac_type: ZodiacType
     sidereal_mode: Union[SiderealMode, None]
@@ -178,7 +178,7 @@ class AstrologicalSubject:
         geonames_username: Union[str, None] = None,
         zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
         online: bool = True,
-        disable_chiron: Union[None, bool] = None,
+        disable_chiron: bool = False,
         sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
@@ -207,15 +207,9 @@ class AstrologicalSubject:
         self.day = day
         self.hour = hour
         self.minute = minute
-        self.city = city
-        self.nation = nation
-        self.lng = lng
-        self.lat = lat
-        self.tz_str = tz_str
         self.zodiac_type = zodiac_type
         self.online = online
         self.json_dir = Path.home()
-        self.geonames_username = geonames_username
         self.disable_chiron = disable_chiron
         self.sidereal_mode = sidereal_mode
         self.houses_system_identifier = houses_system_identifier
@@ -230,27 +224,38 @@ class AstrologicalSubject:
         # This message is set to encourage the user to set a custom geonames username
         if geonames_username is None and online:
             logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
-
             self.geonames_username = DEFAULT_GEONAMES_USERNAME
+        else:
+            self.geonames_username = geonames_username
 
-        if not self.city:
+        if not city:
             self.city = "London"
             logging.info("No city specified, using London as default")
+        else:
+            self.city = city
 
-        if not self.nation:
+        if not nation:
             self.nation = "GB"
             logging.info("No nation specified, using GB as default")
+        else:
+            self.nation = nation
 
-        if not self.lat and not self.online:
+        if not lat and not self.online:
             self.lat = 51.5074
             logging.info("No latitude specified, using London as default")
+        else:
+            self.lat = lat
 
-        if not self.lng and not self.online:
+        if not lng and not self.online:
             self.lng = 0
             logging.info("No longitude specified, using London as default")
+        else:
+            self.lng = lng
 
         if (not self.online) and (not tz_str):
             raise KerykeionException("You need to set the coordinates and timezone if you want to use the offline mode!")
+        else:
+            self.tz_str = tz_str
 
         #-----------------------#
         # Swiss Ephemeris setup #

@@ -1,5 +1,5 @@
 from kerykeion.kr_types import KerykeionPointModel, KerykeionException, KerykeionSettingsModel, AstrologicalSubjectModel
-from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, Planet
+from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, Planet, Houses
 from typing import Union
 import logging
 import math
@@ -249,7 +249,7 @@ def check_if_point_between(
         return False
 
 
-def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut_list: list) -> str:
+def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut_list: list) -> Houses:
     """
     Returns the house in which a planet is located.
 
