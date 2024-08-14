@@ -52,9 +52,9 @@ class EphemerisDataFactory:
         sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
-        max_days: int = 730,
-        max_hours: int = 8760,
-        max_minutes: int = 525600,
+        max_days: Union[int, None] = 730,
+        max_hours: Union[int, None] = 8760,
+        max_minutes: Union[int, None] = 525600,
     ):
         self.start_datetime = start_datetime
         self.end_datetime = end_datetime
