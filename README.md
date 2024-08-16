@@ -32,7 +32,7 @@ The core goal of this project is to provide a simple and easy approach to astrol
 
 Here's an example of a birthchart:
 
-![Kanye Birth Chart](https://www.kerykeion.net/assets/img/examples/birth-chart.svg)
+![Kanye Birth Chart](https://www.kerykeion.net/docs/assets/img/examples/birth-chart.svg)
 
 ## Web API
 
@@ -117,7 +117,7 @@ birth_chart_svg.makeSVG()
 ```
 
 The SVG file will be saved in the home directory.
-![John Lennon Birth Chart](https://www.kerykeion.net/assets/img/examples/birth-chart.svg)
+![John Lennon Birth Chart](https://www.kerykeion.net/docs/assets/img/examples/birth-chart.svg)
 
 ### Synastry Chart
 
@@ -133,7 +133,7 @@ synastry_chart.makeSVG()
 
 ```
 
-![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/assets/img/examples/synastry-chart.svg)
+![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/docs/assets/img/examples/synastry-chart.svg)
 
 ### Change the output directory
 
