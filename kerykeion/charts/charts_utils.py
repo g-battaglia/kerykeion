@@ -273,12 +273,11 @@ def draw_aspect_line(
     x2 = sliceToX(0, ar, second_offset) + (r - ar)
     y2 = sliceToY(0, ar, second_offset) + (r - ar)
 
-    out = ""
-    out += f'<g kr:node="Aspect" kr:aspectname="{aspect["aspect"]}" kr:to="{aspect["p1_name"]}" kr:tooriginaldegrees="{aspect["p1_abs_pos"]}" kr:from="{aspect["p2_name"]}" kr:fromoriginaldegrees="{aspect["p2_abs_pos"]}">'
-    out += f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
-    out += f"</g>"
-
-    return out
+    return (
+        f'<g kr:node="Aspect" kr:aspectname="{aspect["aspect"]}" kr:to="{aspect["p1_name"]}" kr:tooriginaldegrees="{aspect["p1_abs_pos"]}" kr:from="{aspect["p2_name"]}" kr:fromoriginaldegrees="{aspect["p2_abs_pos"]}">'
+        f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
+        f"</g>"
+    )
 
 
 def draw_elements_percentages(
@@ -313,14 +312,14 @@ def draw_elements_percentages(
     air_percentage = int(round(100 * air_points / total))
     water_percentage = int(round(100 * water_points / total))
 
-    out = '<g transform="translate(-30,79)">'
-    out += f'<text y="0" style="fill:#ff6600; font-size: 10px;">{fire_label}  {str(fire_percentage)}%</text>'
-    out += f'<text y="12" style="fill:#6a2d04; font-size: 10px;">{earth_label} {str(earth_percentage)}%</text>'
-    out += f'<text y="24" style="fill:#6f76d1; font-size: 10px;">{air_label}   {str(air_percentage)}%</text>'
-    out += f'<text y="36" style="fill:#630e73; font-size: 10px;">{water_label} {str(water_percentage)}%</text>'
-    out += "</g>"
-
-    return out
+    return (
+        f'<g transform="translate(-30,79)">'
+        f'<text y="0" style="fill:#ff6600; font-size: 10px;">{fire_label}  {str(fire_percentage)}%</text>'
+        f'<text y="12" style="fill:#6a2d04; font-size: 10px;">{earth_label} {str(earth_percentage)}%</text>'
+        f'<text y="24" style="fill:#6f76d1; font-size: 10px;">{air_label}   {str(air_percentage)}%</text>'
+        f'<text y="36" style="fill:#630e73; font-size: 10px;">{water_label} {str(water_percentage)}%</text>'
+        f"</g>"
+    )
 
 
 def convert_decimal_to_degree_string(dec: float, type="3") -> str:
