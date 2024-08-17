@@ -20,7 +20,8 @@ from kerykeion.kr_types import (
     PointType,
     SiderealMode,
     HousesSystemIdentifier,
-    PerspectiveType
+    PerspectiveType,
+    Planet
 )
 from kerykeion.utilities import (
     get_number_from_name, 
@@ -155,12 +156,13 @@ class AstrologicalSubject:
     # Lists
     houses_list: list[KerykeionPointModel]
     planets_list: list[KerykeionPointModel]
-    planets_degrees_ut: list[float]
     houses_degree_ut: list[float]
 
     # Enable or disable features
-    disable_chiron: bool # Deprecated
+    disable_chiron: Union[None, bool]
     disable_chiron_and_lilith: bool
+
+    available_planets_names: list[Planet]
 
     def __init__(
         self,
@@ -178,7 +180,7 @@ class AstrologicalSubject:
         geonames_username: Union[str, None] = None,
         zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
         online: bool = True,
-        disable_chiron: bool = False,
+        disable_chiron: Union[None, bool] = None, # Deprecated
         sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
@@ -221,37 +223,42 @@ class AstrologicalSubject:
         # General setup #
         #---------------#
 
-        # This message is set to encourage the user to set a custom geonames username
+        # Geonames username
         if geonames_username is None and online:
             logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
             self.geonames_username = DEFAULT_GEONAMES_USERNAME
         else:
             self.geonames_username = geonames_username
 
+        # City
         if not city:
             self.city = "London"
             logging.info("No city specified, using London as default")
         else:
             self.city = city
 
+        # Nation
         if not nation:
             self.nation = "GB"
             logging.info("No nation specified, using GB as default")
         else:
             self.nation = nation
 
+        # Latitude
         if not lat and not self.online:
             self.lat = 51.5074
             logging.info("No latitude specified, using London as default")
         else:
             self.lat = lat
 
+        # Longitude
         if not lng and not self.online:
             self.lng = 0
             logging.info("No longitude specified, using London as default")
         else:
             self.lng = lng
 
+        # Timezone
         if (not self.online) and (not tz_str):
             raise KerykeionException("You need to set the coordinates and timezone if you want to use the offline mode!")
         else:
@@ -303,7 +310,8 @@ class AstrologicalSubject:
 
         if self.zodiac_type == "Sidereal":
             # Check if the sidereal mode is valid
-            if not self.sidereal_mode in get_args(SiderealMode):
+            
+            if not self.sidereal_mode or not self.sidereal_mode in get_args(SiderealMode):
                 raise KerykeionException(f"\n* ERROR: '{self.sidereal_mode}' is NOT a valid sidereal mode! Available modes are: *" + "\n" + str(get_args(SiderealMode)))
 
             self._iflag += swe.FLG_SIDEREAL
@@ -342,11 +350,9 @@ class AstrologicalSubject:
         self.julian_day = float(swe.julday(utc_object.year, utc_object.month, utc_object.day, utc_float_hour_with_minutes))
         # <--- UTC, julian day and local time setup
 
-        self._planets_degrees_lister()
-        self._planets()
-        self._houses()
-        self._planets_in_houses()
-        self._lunar_phase_calc()
+        self._initialize_houses()
+        self._initialize_planets()
+        self._initialize_moon_phase()
 
         # Deprecated properties
         self.utc_time
@@ -388,7 +394,7 @@ class AstrologicalSubject:
         self.lat = float(self.city_data["lat"])
         self.tz_str = self.city_data["timezonestr"]
 
-    def _houses(self) -> None:
+    def _initialize_houses(self) -> None:
         """
         Calculate positions and store them in dictionaries
 
@@ -468,10 +474,12 @@ class AstrologicalSubject:
             self.twelfth_house,
         ]
 
-    def _planets_degrees_lister(self):
-        """Sidereal or tropic mode."""
+    def _initialize_planets(self) -> None:
+        """Defines body positon in signs and information and
+        stores them in dictionaries"""
 
-        # Calculates the position of the planets and stores it in a list.
+        point_type: PointType = "Planet"
+
         sun_deg = swe.calc(self.julian_day, 0, self._iflag)[0][0]
         moon_deg = swe.calc(self.julian_day, 1, self._iflag)[0][0]
         mercury_deg = swe.calc(self.julian_day, 2, self._iflag)[0][0]
@@ -485,78 +493,33 @@ class AstrologicalSubject:
         mean_node_deg = swe.calc(self.julian_day, 10, self._iflag)[0][0]
         true_node_deg = swe.calc(self.julian_day, 11, self._iflag)[0][0]
 
-        self.planets_degrees_ut = [
-            sun_deg,
-            moon_deg,
-            mercury_deg,
-            venus_deg,
-            mars_deg,
-            jupiter_deg,
-            saturn_deg,
-            uranus_deg,
-            neptune_deg,
-            pluto_deg,
-            mean_node_deg,
-            true_node_deg,
-        ]
-        
-        if not self.disable_chiron_and_lilith:
-            chiron_deg = swe.calc(self.julian_day, 15, self._iflag)[0][0]
-            self.planets_degrees_ut.append(chiron_deg)
+        self.sun = get_kerykeion_point_from_degree(sun_deg, "Sun", point_type=point_type)
+        self.moon = get_kerykeion_point_from_degree(moon_deg, "Moon", point_type=point_type)
+        self.mercury = get_kerykeion_point_from_degree(mercury_deg, "Mercury", point_type=point_type)
+        self.venus = get_kerykeion_point_from_degree(venus_deg, "Venus", point_type=point_type)
+        self.mars = get_kerykeion_point_from_degree(mars_deg, "Mars", point_type=point_type)
+        self.jupiter = get_kerykeion_point_from_degree(jupiter_deg, "Jupiter", point_type=point_type)
+        self.saturn = get_kerykeion_point_from_degree(saturn_deg, "Saturn", point_type=point_type)
+        self.uranus = get_kerykeion_point_from_degree(uranus_deg, "Uranus", point_type=point_type)
+        self.neptune = get_kerykeion_point_from_degree(neptune_deg, "Neptune", point_type=point_type)
+        self.pluto = get_kerykeion_point_from_degree(pluto_deg, "Pluto", point_type=point_type)
+        self.mean_node = get_kerykeion_point_from_degree(mean_node_deg, "Mean_Node", point_type=point_type)
+        self.true_node = get_kerykeion_point_from_degree(true_node_deg, "True_Node", point_type=point_type)
 
-            mean_lilith_deg = swe.calc(self.julian_day, 12, self._iflag)[0][0]
-            self.planets_degrees_ut.append(mean_lilith_deg)
+        self.sun.house = get_planet_house(sun_deg, self.houses_degree_ut)
+        self.moon.house = get_planet_house(moon_deg, self.houses_degree_ut)
+        self.mercury.house = get_planet_house(mercury_deg, self.houses_degree_ut)
+        self.venus.house = get_planet_house(venus_deg, self.houses_degree_ut)
+        self.mars.house = get_planet_house(mars_deg, self.houses_degree_ut)
+        self.jupiter.house = get_planet_house(jupiter_deg, self.houses_degree_ut)
+        self.saturn.house = get_planet_house(saturn_deg, self.houses_degree_ut)
+        self.uranus.house = get_planet_house(uranus_deg, self.houses_degree_ut)
+        self.neptune.house = get_planet_house(neptune_deg, self.houses_degree_ut)
+        self.pluto.house = get_planet_house(pluto_deg, self.houses_degree_ut)
+        self.mean_node.house = get_planet_house(mean_node_deg, self.houses_degree_ut)
+        self.true_node.house = get_planet_house(true_node_deg, self.houses_degree_ut)
 
-        else:
-            self.chiron = None
-            self.mean_lilith = None
-
-
-    def _planets(self) -> None:
-        """Defines body positon in signs and information and
-        stores them in dictionaries"""
-
-        point_type: PointType = "Planet"
-        # stores the planets in singular dictionaries.
-        self.sun = get_kerykeion_point_from_degree(self.planets_degrees_ut[0], "Sun", point_type=point_type)
-        self.moon = get_kerykeion_point_from_degree(self.planets_degrees_ut[1], "Moon", point_type=point_type)
-        self.mercury = get_kerykeion_point_from_degree(self.planets_degrees_ut[2], "Mercury", point_type=point_type)
-        self.venus = get_kerykeion_point_from_degree(self.planets_degrees_ut[3], "Venus", point_type=point_type)
-        self.mars = get_kerykeion_point_from_degree(self.planets_degrees_ut[4], "Mars", point_type=point_type)
-        self.jupiter = get_kerykeion_point_from_degree(self.planets_degrees_ut[5], "Jupiter", point_type=point_type)
-        self.saturn = get_kerykeion_point_from_degree(self.planets_degrees_ut[6], "Saturn", point_type=point_type)
-        self.uranus = get_kerykeion_point_from_degree(self.planets_degrees_ut[7], "Uranus", point_type=point_type)
-        self.neptune = get_kerykeion_point_from_degree(self.planets_degrees_ut[8], "Neptune", point_type=point_type)
-        self.pluto = get_kerykeion_point_from_degree(self.planets_degrees_ut[9], "Pluto", point_type=point_type)
-        self.mean_node = get_kerykeion_point_from_degree(self.planets_degrees_ut[10], "Mean_Node", point_type=point_type)
-        self.true_node = get_kerykeion_point_from_degree(self.planets_degrees_ut[11], "True_Node", point_type=point_type)
-        
-        if not self.disable_chiron_and_lilith:
-            self.chiron = get_kerykeion_point_from_degree(self.planets_degrees_ut[12], "Chiron", point_type=point_type)
-            self.mean_lilith = get_kerykeion_point_from_degree(self.planets_degrees_ut[13], "Mean_Lilith", point_type=point_type)
-
-        else:
-            self.chiron = None
-            self.mean_lilith = None
-
-
-    def _planets_in_houses(self) -> None:
-        """Calculates the house of the planet and updates
-        the planets dictionary."""
-
-        self.sun.house = get_planet_house(self.planets_degrees_ut[0], self.houses_degree_ut)
-        self.moon.house = get_planet_house(self.planets_degrees_ut[1], self.houses_degree_ut)
-        self.mercury.house = get_planet_house(self.planets_degrees_ut[2], self.houses_degree_ut)
-        self.venus.house = get_planet_house(self.planets_degrees_ut[3], self.houses_degree_ut)
-        self.mars.house = get_planet_house(self.planets_degrees_ut[4], self.houses_degree_ut)
-        self.jupiter.house = get_planet_house(self.planets_degrees_ut[5], self.houses_degree_ut)
-        self.saturn.house = get_planet_house(self.planets_degrees_ut[6], self.houses_degree_ut)
-        self.uranus.house = get_planet_house(self.planets_degrees_ut[7], self.houses_degree_ut)
-        self.neptune.house = get_planet_house(self.planets_degrees_ut[8], self.houses_degree_ut)
-        self.pluto.house = get_planet_house(self.planets_degrees_ut[9], self.houses_degree_ut)
-        self.mean_node.house = get_planet_house(self.planets_degrees_ut[10], self.houses_degree_ut)
-        self.true_node.house = get_planet_house(self.planets_degrees_ut[11], self.houses_degree_ut)
-
+        # Deprecated
         self.planets_list = [
             self.sun,
             self.moon,
@@ -571,17 +534,29 @@ class AstrologicalSubject:
             self.mean_node,
             self.true_node,
         ]
-        
-        if not self.disable_chiron_and_lilith:
-            self.chiron.house = get_planet_house(self.planets_degrees_ut[12], self.houses_degree_ut)
-            self.planets_list.append(self.chiron)
 
-            self.mean_lilith.house = get_planet_house(self.planets_degrees_ut[13], self.houses_degree_ut)
+        if not self.disable_chiron_and_lilith:
+            chiron_deg = swe.calc(self.julian_day, 15, self._iflag)[0][0]
+            mean_lilith_deg = swe.calc(self.julian_day, 12, self._iflag)[0][0]
+
+            self.chiron = get_kerykeion_point_from_degree(chiron_deg, "Chiron", point_type=point_type)
+            self.mean_lilith = get_kerykeion_point_from_degree(mean_lilith_deg, "Mean_Lilith", point_type=point_type)
+
+            self.chiron.house = get_planet_house(chiron_deg, self.houses_degree_ut)
+            self.mean_lilith.house = get_planet_house(mean_lilith_deg, self.houses_degree_ut)
+
+            # Deprecated
+            self.planets_list.append(self.chiron)
             self.planets_list.append(self.mean_lilith)
 
         else:
             self.chiron = None
             self.mean_lilith = None
+            self.chiron = None
+            self.mean_lilith = None
+
+        # FIXME: Update after removing planets_list
+        self.available_planets_names = [planet["name"] for planet in self.planets_list]
 
         # Check in retrograde or not:
         planets_ret = []
@@ -593,14 +568,16 @@ class AstrologicalSubject:
                 planet["retrograde"] = False
             planets_ret.append(planet)
 
-    def _lunar_phase_calc(self) -> None:
+
+    def _initialize_moon_phase(self) -> None:
         """Function to calculate the lunar phase"""
 
         # If ther's an error:
         moon_phase, sun_phase = None, None
 
         # anti-clockwise degrees between sun and moon
-        moon, sun = self.planets_degrees_ut[1], self.planets_degrees_ut[0]
+        moon, sun = self.moon.abs_pos, self.sun.abs_pos  
+
         degrees_between = moon - sun
 
         if degrees_between < 0:
