@@ -177,7 +177,7 @@ def draw_zodiac_slice(
     offset = 360 - seventh_house_degree_ut
     # check transit
     if chart_type == "Transit" or chart_type == "Synastry":
-        dropin = 0
+        dropin: Union[int, float] = 0
     else:
         dropin = c1
     slice = f'<path d="M{str(r)},{str(r)} L{str(dropin + sliceToX(num, r - dropin, offset))},{str(dropin + sliceToY(num, r - dropin, offset))} A{str(r - dropin)},{str(r - dropin)} 0 0,0 {str(dropin + sliceToX(num + 1, r - dropin, offset))},{str(dropin + sliceToY(num + 1, r - dropin, offset))} z" style="{style}"/>'
@@ -607,7 +607,7 @@ def draw_houses_cusps_and_text_number(
 
     for i in range(xr):
         # Determine offsets based on chart type
-        dropin, roff, t_roff = (160, 72, 36) if chart_type in ["Transit", "Synastry"] else (c3, c1, None)
+        dropin, roff, t_roff = (160, 72, 36) if chart_type in ["Transit", "Synastry"] else (c3, c1, False)
 
         # Calculate the offset for the current house cusp
         offset = (int(first_subject_houses_list[int(xr / 2)].abs_pos) / -1) + int(first_subject_houses_list[i].abs_pos)
@@ -684,8 +684,8 @@ def draw_houses_cusps_and_text_number(
 def draw_aspect_transit_grid(
     grid_title: str,
     aspects_list: Union[list[AspectModel], list[dict]],
-    celestial_point_language: KerykeionLanguageCelestialPointModel,
-    aspects_settings: KerykeionSettingsAspectModel,
+    celestial_point_language: Union[KerykeionLanguageCelestialPointModel, dict],
+    aspects_settings: Union[KerykeionSettingsAspectModel, dict],
 ) -> str:
     """
     Generates the SVG output for the aspect transit grid.
@@ -699,10 +699,16 @@ def draw_aspect_transit_grid(
     Returns:
     - A string containing the SVG path data for the aspect transit grid.
     """
+    
+    if isinstance(celestial_point_language, dict):
+        celestial_point_language = KerykeionLanguageCelestialPointModel(**celestial_point_language)
+
+    if isinstance(aspects_settings, dict):
+        aspects_settings = KerykeionSettingsAspectModel(**aspects_settings)
 
     # If not instance of AspectModel, convert to AspectModel
     if isinstance(aspects_list[0], dict):
-        aspects_list = [AspectModel(**aspect) for aspect in aspects_list]
+        aspects_list = [AspectModel(**aspect) for aspect in aspects_list] # type: ignore
 
     line = 0
     nl = 0
@@ -889,7 +895,7 @@ def draw_house_grid(
         svg_output += '<g transform="translate(850, -20)">'
         line_increment = 10
 
-        for i, house in enumerate(secondary_subject_houses_list):
+        for i, house in enumerate(secondary_subject_houses_list): # type: ignore
             cusp_number = f"&#160;&#160;{i + 1}" if i < 9 else str(i + 1)
             svg_output += (
                 f'<g transform="translate(0,{line_increment})">'
@@ -911,8 +917,8 @@ def draw_planet_grid(
         available_kerykeion_celestial_points: list[KerykeionPointModel],
         chart_type: ChartType,
         celestial_point_language: KerykeionLanguageCelestialPointModel,
-        second_subject_name: str = None,
-        second_subject_available_kerykeion_celestial_points: list[KerykeionPointModel] = None,
+        second_subject_name: Union[str, None] = None,
+        second_subject_available_kerykeion_celestial_points: Union[list[KerykeionPointModel], None] = None,
         text_color: str = "#000000",
     ) -> str:
     """
@@ -965,6 +971,9 @@ def draw_planet_grid(
         line_height += offset_between_lines
 
     if chart_type in ["Transit", "Synastry"]:
+        if second_subject_available_kerykeion_celestial_points is None:
+            raise KerykeionException("second_subject_available_kerykeion_celestial_points is None")
+
         if chart_type == "Transit":
             svg_output += (
                 f'<g transform="translate(320, -15)">'
