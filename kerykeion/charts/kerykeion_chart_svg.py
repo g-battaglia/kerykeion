@@ -34,7 +34,7 @@ from kerykeion.charts.charts_utils import (
     draw_planet_grid,
 )
 from kerykeion.charts.draw_planets import draw_planets
-from kerykeion.utilities import get_houses_list, get_houses_absolute_position_list
+from kerykeion.utilities import get_houses_list
 from pathlib import Path
 from scour.scour import scourString
 from string import Template
@@ -424,12 +424,10 @@ class KerykeionChartSVG:
         # Drawing functions
         template_dict["makeZodiac"] = self._draw_zodiac_circle_slices(self.main_radius)
 
-        first_subject_houses_absolute_position_list = get_houses_absolute_position_list(self.user)
         first_subject_houses_list = get_houses_list(self.user)
 
         # Draw houses grid and cusps
         if self.chart_type in ["Transit", "Synastry"]:
-            second_subject_houses_absolute_position_list = get_houses_absolute_position_list(self.t_user)
             second_subject_houses_list = get_houses_list(self.t_user)
 
             template_dict["makeHousesGrid"] = draw_house_grid(
@@ -442,7 +440,7 @@ class KerykeionChartSVG:
 
             template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
                 r=self.main_radius,
-                first_subject_houses_list_ut=first_subject_houses_absolute_position_list,
+                first_subject_houses_list=first_subject_houses_list,
                 standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
                 first_house_color=self.planets_settings[12]["color"],
                 tenth_house_color=self.planets_settings[13]["color"],
@@ -451,7 +449,7 @@ class KerykeionChartSVG:
                 c1=self.first_circle_radius,
                 c3=self.third_circle_radius,
                 chart_type=self.chart_type,
-                second_subject_houses_list_ut=second_subject_houses_absolute_position_list,
+                second_subject_houses_list=second_subject_houses_list,
                 transit_house_cusp_color=self.chart_colors_settings["houses_transit_line"],
             )
 
@@ -465,7 +463,7 @@ class KerykeionChartSVG:
 
             template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
                 r=self.main_radius,
-                first_subject_houses_list_ut=first_subject_houses_absolute_position_list,
+                first_subject_houses_list=first_subject_houses_list,
                 standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
                 first_house_color=self.planets_settings[12]["color"],
                 tenth_house_color=self.planets_settings[13]["color"],

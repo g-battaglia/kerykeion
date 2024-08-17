@@ -256,15 +256,3 @@ def get_houses_list(subject: Union["AstrologicalSubject", AstrologicalSubjectMod
             houses_absolute_position_list.append(subject[house.lower()])
 
     return houses_absolute_position_list
-
-
-def get_houses_absolute_position_list(subject: Union["AstrologicalSubject", AstrologicalSubjectModel]) -> list[float]:
-    """
-    Return the absolute positions of the houses in the order of the houses.
-    """
-
-    houses_absolute_position_list = []
-    for house in subject.houses_names:
-            houses_absolute_position_list.append(subject[house.lower()].abs_pos)
-
-    return houses_absolute_position_list

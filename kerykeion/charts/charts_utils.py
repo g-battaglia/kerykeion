@@ -569,7 +569,7 @@ def draw_aspect_grid(stroke_color: str, available_planets_list: list, aspects_li
 
 def draw_houses_cusps_and_text_number(
     r: Union[int, float],
-    first_subject_houses_list_ut: list,
+    first_subject_houses_list: list[KerykeionPointModel],
     standard_house_cusp_color: str,
     first_house_color: str,
     tenth_house_color: str,
@@ -578,15 +578,15 @@ def draw_houses_cusps_and_text_number(
     c1: Union[int, float],
     c3: Union[int, float],
     chart_type: ChartType,
-    second_subject_houses_list_ut: list = None,
-    transit_house_cusp_color: str = None,
+    second_subject_houses_list: Union[list[KerykeionPointModel], None] = None,
+    transit_house_cusp_color: Union[str, None] = None,
 ) -> str:
     """
     Draws the houses cusps and text numbers for a given chart type.
 
     Parameters:
     - r: Radius of the chart.
-    - first_subject_houses_list_ut: List of house cusps for the first subject.
+    - first_subject_houses_list: List of house for the first subject.
     - standard_house_cusp_color: Default color for house cusps.
     - first_house_color: Color for the first house cusp.
     - tenth_house_color: Color for the tenth house cusp.
@@ -595,15 +595,12 @@ def draw_houses_cusps_and_text_number(
     - c1: Offset for the first subject.
     - c3: Offset for the third subject.
     - chart_type: Type of the chart (e.g., Transit, Synastry).
-    - second_subject_houses_list_ut: List of house cusps for the second subject (optional).
+    - second_subject_houses_list: List of house for the second subject (optional).
     - transit_house_cusp_color: Color for transit house cusps (optional).
 
     Returns:
     - A string containing the SVG path for the houses cusps and text numbers.
     """
-    if chart_type in ["Transit", "Synastry"]:
-        if second_subject_houses_list_ut is None or transit_house_cusp_color is None:
-            raise KerykeionException("second_subject_houses_list_ut or transit_house_cusp_color is None")
 
     path = ""
     xr = 12
@@ -613,7 +610,7 @@ def draw_houses_cusps_and_text_number(
         dropin, roff, t_roff = (160, 72, 36) if chart_type in ["Transit", "Synastry"] else (c3, c1, None)
 
         # Calculate the offset for the current house cusp
-        offset = (int(first_subject_houses_list_ut[int(xr / 2)]) / -1) + int(first_subject_houses_list_ut[i])
+        offset = (int(first_subject_houses_list[int(xr / 2)].abs_pos) / -1) + int(first_subject_houses_list[i].abs_pos)
 
         # Calculate the coordinates for the house cusp lines
         x1 = sliceToX(0, (r - dropin), offset) + dropin
@@ -624,7 +621,7 @@ def draw_houses_cusps_and_text_number(
         # Calculate the text offset for the house number
         next_index = (i + 1) % xr
         text_offset = offset + int(
-            degreeDiff(first_subject_houses_list_ut[next_index], first_subject_houses_list_ut[i]) / 2
+            degreeDiff(first_subject_houses_list[next_index].abs_pos, first_subject_houses_list[i].abs_pos) / 2
         )
 
         # Determine the line color based on the house index
@@ -633,9 +630,12 @@ def draw_houses_cusps_and_text_number(
         )
 
         if chart_type in ["Transit", "Synastry"]:
+            if second_subject_houses_list is None or transit_house_cusp_color is None:
+                raise KerykeionException("second_subject_houses_list_ut or transit_house_cusp_color is None")
+
             # Calculate the offset for the second subject's house cusp
-            zeropoint = 360 - first_subject_houses_list_ut[6]
-            t_offset = (zeropoint + second_subject_houses_list_ut[i]) % 360
+            zeropoint = 360 - first_subject_houses_list[6].abs_pos
+            t_offset = (zeropoint + second_subject_houses_list[i].abs_pos) % 360
 
             # Calculate the coordinates for the second subject's house cusp lines
             t_x1 = sliceToX(0, (r - t_roff), t_offset) + t_roff
@@ -645,7 +645,7 @@ def draw_houses_cusps_and_text_number(
 
             # Calculate the text offset for the second subject's house number
             t_text_offset = t_offset + int(
-                degreeDiff(second_subject_houses_list_ut[next_index], second_subject_houses_list_ut[i]) / 2
+                degreeDiff(second_subject_houses_list[next_index].abs_pos, second_subject_houses_list[i].abs_pos) / 2
             )
             t_linecolor = linecolor if i in [0, 9, 6, 3] else transit_house_cusp_color
             xtext = sliceToX(0, (r - 8), t_text_offset) + 8
