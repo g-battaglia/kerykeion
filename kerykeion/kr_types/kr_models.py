@@ -137,11 +137,6 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     available_planets_names: list[Planet]
     houses_names: list[Houses]
 
-    # Lists
-    # houses_list: list[KerykeionPointModel]
-    # planets_list: list[KerykeionPointModel]
-    # houses_degree_ut: list[float]
-
 
 class EphemerisDictModel(SubscriptableBaseModel):
     date: str

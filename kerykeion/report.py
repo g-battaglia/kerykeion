@@ -1,6 +1,6 @@
 from kerykeion import AstrologicalSubject
 from terminaltables import AsciiTable
-from kerykeion.utilities import get_houses_list
+from kerykeion.utilities import get_houses_list, get_available_planets_list
 
 class Report:
     """
@@ -52,7 +52,7 @@ class Report:
                 ("R" if planet.retrograde else "-"),
                 planet.house,
             ]
-            for planet in self.instance.planets_list
+            for planet in get_available_planets_list(self.instance)
         ]
 
         self.planets_table = AsciiTable(planets_data).table
