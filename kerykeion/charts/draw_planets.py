@@ -1,10 +1,11 @@
+# type: ignore
+
 from kerykeion.charts.charts_utils import degreeDiff, sliceToX, sliceToY, convert_decimal_to_degree_string
 from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel
 from kerykeion.kr_types.kr_literals import Houses
 import logging
 from typing import Union, get_args
-
 
 
 
