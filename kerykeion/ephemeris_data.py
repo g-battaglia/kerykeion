@@ -1,5 +1,5 @@
 from kerykeion import AstrologicalSubject
-from kerykeion.utilities import get_houses_list
+from kerykeion.utilities import get_houses_list, get_available_planets_list
 from kerykeion.astrological_subject import DEFAULT_HOUSES_SYSTEM_IDENTIFIER, DEFAULT_PERSPECTIVE_TYPE, DEFAULT_ZODIAC_TYPE
 from kerykeion.kr_types import EphemerisDictModel
 from kerykeion.kr_types import SiderealMode, HousesSystemIdentifier, PerspectiveType, ZodiacType
@@ -134,9 +134,10 @@ class EphemerisDataFactory:
                 is_dst=self.is_dst,
             )
 
-            houses_absolute_position_list = get_houses_list(subject)
+            houses_list = get_houses_list(subject)
+            available_planets = get_available_planets_list(subject)
 
-            ephemeris_data_list.append({"date": date.isoformat(), "planets": subject.planets_list, "houses": houses_absolute_position_list})
+            ephemeris_data_list.append({"date": date.isoformat(), "planets": available_planets, "houses": houses_list})
 
         return ephemeris_data_list
 

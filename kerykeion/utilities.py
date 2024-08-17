@@ -256,3 +256,13 @@ def get_houses_list(subject: Union["AstrologicalSubject", AstrologicalSubjectMod
             houses_absolute_position_list.append(subject[house.lower()])
 
     return houses_absolute_position_list
+
+def get_available_planets_list(subject: Union["AstrologicalSubject", AstrologicalSubjectModel]) -> list[KerykeionPointModel]:
+    """
+    Return the names of the houses in the order of the houses.
+    """
+    planets_absolute_position_list = []
+    for planet in subject.available_planets_names:
+            planets_absolute_position_list.append(subject[planet.lower()])
+
+    return planets_absolute_position_list

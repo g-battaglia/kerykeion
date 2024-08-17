@@ -156,7 +156,6 @@ class AstrologicalSubject:
 
     # Lists
     _houses_list: list[KerykeionPointModel]
-    planets_list: list[KerykeionPointModel]
     _houses_degree_ut: list[float]
 
     # Enable or disable features
@@ -525,7 +524,7 @@ class AstrologicalSubject:
         self.true_node.house = get_planet_house(true_node_deg, self._houses_degree_ut)
 
         # Deprecated
-        self.planets_list = [
+        planets_list = [
             self.sun,
             self.moon,
             self.mercury,
@@ -551,8 +550,8 @@ class AstrologicalSubject:
             self.mean_lilith.house = get_planet_house(mean_lilith_deg, self._houses_degree_ut)
 
             # Deprecated
-            self.planets_list.append(self.chiron)
-            self.planets_list.append(self.mean_lilith)
+            planets_list.append(self.chiron)
+            planets_list.append(self.mean_lilith)
 
         else:
             self.chiron = None
@@ -561,17 +560,15 @@ class AstrologicalSubject:
             self.mean_lilith = None
 
         # FIXME: Update after removing planets_list
-        self.available_planets_names = [planet["name"] for planet in self.planets_list]
+        self.available_planets_names = [planet["name"] for planet in planets_list]
 
         # Check in retrograde or not:
-        planets_ret = []
-        for planet in self.planets_list:
+        for planet in planets_list:
             planet_number = get_number_from_name(planet["name"])
             if swe.calc(self.julian_day, planet_number, self._iflag)[0][3] < 0:
                 planet["retrograde"] = True
             else:
                 planet["retrograde"] = False
-            planets_ret.append(planet)
 
 
     def _initialize_moon_phase(self) -> None:
