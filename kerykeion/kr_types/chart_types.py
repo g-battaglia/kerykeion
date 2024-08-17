@@ -84,3 +84,5 @@ class ChartTemplateDictionary(TypedDict):
     elements_percentages: str
     makePlanetGrid: str
     makeHousesGrid: str
+
+    color_style_tag: str

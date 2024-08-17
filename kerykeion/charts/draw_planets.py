@@ -375,7 +375,7 @@ def draw_planets(
             degree = int(t_offset)
             output += f'<g transform="translate({deg_x},{deg_y})">'
             output += f'<text transform="rotate({rotate})" text-anchor="{textanchor}'
-            output += f'" style="fill: {available_planets_setting[i]["color"]}; font-size: 10px;">{convert_decimal_to_degree_string(t_points_deg[i], type="1")}'
+            output += f'" style="fill: {available_planets_setting[i]["color"]}; font-size: 10px;">{convert_decimal_to_degree_string(t_points_deg[i], format_type="1")}'
             output += "</text></g>"
 
         # check transit

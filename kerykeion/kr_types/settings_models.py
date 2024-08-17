@@ -68,7 +68,6 @@ class KerykeionSettingsChartColorsModel(SubscriptableBaseModel):
     # Deprecated: Not used anymore
     lunar_phase_0: str = Field(title="Lunar Phase Color 0", description="Lunar Phase Color 0")
     lunar_phase_1: str = Field(title="Lunar Phase Color 1", description="Lunar Phase Color 1")
-    lunar_phase_2: str = Field(title="Lunar Phase Color 2", description="Lunar Phase Color 2")
 
 
 # Aspect Settings

@@ -36,6 +36,7 @@ from kerykeion.charts.charts_utils import (
 )
 from kerykeion.charts.draw_planets import draw_planets # type: ignore
 from kerykeion.utilities import get_houses_list
+from kerykeion.charts.color_style_tags import DEFAULT_COLOR_STYLE_TAG
 from pathlib import Path
 from scour.scour import scourString
 from string import Template
@@ -103,6 +104,7 @@ class KerykeionChartSVG:
         second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, None] = None,
         new_output_directory: Union[str, None] = None,
         new_settings_file: Union[Path, None] = None,
+        color_style_tag: str = DEFAULT_COLOR_STYLE_TAG
     ):
         # Directories:
         self.homedir = Path.home()
@@ -183,6 +185,9 @@ class KerykeionChartSVG:
         self.earth = 0.0
         self.air = 0.0
         self.water = 0.0
+
+        # Color style tag
+        self.color_style_tag = color_style_tag
 
         # Calculate element points from planets
         self._calculate_elements_points_from_planets()
@@ -325,6 +330,9 @@ class KerykeionChartSVG:
         # Initialize template dictionary
         template_dict: ChartTemplateDictionary = dict()  # type: ignore
 
+        # Set the color style tag
+        template_dict["color_style_tag"] = self.color_style_tag
+
         # Set chart dimensions
         template_dict["chart_height"] = self.height
         template_dict["chart_width"] = self.width
@@ -376,7 +384,10 @@ class KerykeionChartSVG:
             template_dict["bottomLeft4"] = f'{self.t_user.perspective_type}'
 
         # Draw moon phase
-        template_dict['moon_phase'] = draw_moon_phase(self.user.lunar_phase["degrees_between_s_m"], self.geolat)
+        template_dict['moon_phase'] = draw_moon_phase(
+            self.user.lunar_phase["degrees_between_s_m"], 
+            self.geolat
+        )
 
         # Set location string
         if len(self.location) > 35:

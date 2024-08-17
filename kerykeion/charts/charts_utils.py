@@ -1,7 +1,7 @@
 import math
 import datetime
 from kerykeion.kr_types import KerykeionException, ChartType
-from typing import Union
+from typing import Union, Literal
 from kerykeion.kr_types.kr_models import AspectModel, KerykeionPointModel
 from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsAspectModel
 
@@ -314,46 +314,43 @@ def draw_elements_percentages(
 
     return (
         f'<g transform="translate(-30,79)">'
-        f'<text y="0" style="fill:#ff6600; font-size: 10px;">{fire_label}  {str(fire_percentage)}%</text>'
-        f'<text y="12" style="fill:#6a2d04; font-size: 10px;">{earth_label} {str(earth_percentage)}%</text>'
-        f'<text y="24" style="fill:#6f76d1; font-size: 10px;">{air_label}   {str(air_percentage)}%</text>'
-        f'<text y="36" style="fill:#630e73; font-size: 10px;">{water_label} {str(water_percentage)}%</text>'
+        f'<text y="0" style="fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;">{fire_label}  {str(fire_percentage)}%</text>'
+        f'<text y="12" style="fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;">{earth_label} {str(earth_percentage)}%</text>'
+        f'<text y="24" style="fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;">{air_label}   {str(air_percentage)}%</text>'
+        f'<text y="36" style="fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;">{water_label} {str(water_percentage)}%</text>'
         f"</g>"
     )
 
 
-def convert_decimal_to_degree_string(dec: float, type="3") -> str:
+def convert_decimal_to_degree_string(dec: float, format_type: Literal["1", "2", "3"] = "3") -> str:
     """
-    Coverts decimal float to degrees in format a°b'c".
+    Converts a decimal float to a degrees string in the specified format.
 
     Args:
-        - dec (float): decimal float
-        - type (str): type of format:
-            - 1: a°
-            - 2: a°b'
-            - 3: a°b'c"
+        dec (float): The decimal float to convert.
+        format_type (str): The format type:
+            - "1": a°
+            - "2": a°b'
+            - "3": a°b'c" (default)
 
     Returns:
-        str: degrees in format a°b'c"
+        str: The degrees string in the specified format.
     """
-
+    # Ensure the input is a float
     dec = float(dec)
-    a = int(dec)
-    a_new = (dec - float(a)) * 60.0
-    b_rounded = int(round(a_new))
-    b = int(a_new)
-    c = int(round((a_new - float(b)) * 60.0))
 
-    if type == "3":
-        out = f"{a:02d}&#176;{b:02d}&#39;{c:02d}&#34;"
-    elif type == "2":
-        out = f"{a:02d}&#176;{b_rounded:02d}&#39;"
-    elif type == "1":
-        out = f"{a:02d}&#176;"
-    else:
-        raise KerykeionException(f"Wrong type: {type}, it must be 1, 2 or 3.")
+    # Calculate degrees, minutes, and seconds
+    degrees = int(dec)
+    minutes = int((dec - degrees) * 60)
+    seconds = int(round((dec - degrees - minutes / 60) * 3600))
 
-    return str(out)
+    # Format the output based on the specified type
+    if format_type == "1":
+        return f"{degrees}°"
+    elif format_type == "2":
+        return f"{degrees}°{minutes:02d}'"
+    elif format_type == "3":
+        return f"{degrees}°{minutes:02d}'{seconds:02d}\""
 
 
 def draw_transit_ring_degree_steps(r: Union[int, float], seventh_house_degree_ut: Union[int, float]) -> str:
@@ -675,7 +672,7 @@ def draw_houses_cusps_and_text_number(
 
         # Add the house number text for the first subject
         path += f'<g kr:node="HouseNumber">'
-        path += f'<text style="fill: #f00; fill-opacity: .6; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
+        path += f'<text style="fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
         path += f"</g>"
 
     return path
@@ -765,10 +762,7 @@ def draw_aspect_transit_grid(
 
 def draw_moon_phase(
     degrees_between_sun_and_moon: float,
-    latitude: float,
-    lunar_phase_outline_color: str = "#000000",
-    dark_color: str = "#000000",
-    light_color: str = "#ffffff",
+    latitude: float
 ) -> str:
     """
     Draws the moon phase based on the degrees between the sun and the moon.
@@ -786,8 +780,6 @@ def draw_moon_phase(
     deg = degrees_between_sun_and_moon
 
     # Initialize variables for lunar phase properties
-    fill_color_foreground = None
-    fill_color_background = None
     circle_center_x = None
     circle_radius = None
 
@@ -798,8 +790,6 @@ def draw_moon_phase(
             max_radius = max_radius * max_radius
         circle_center_x = 20.0 + (deg / 90.0) * (max_radius + 10.0)
         circle_radius = 10.0 + (deg / 90.0) * max_radius
-        fill_color_foreground = dark_color
-        fill_color_background = light_color
 
     elif deg < 180.0:
         max_radius = 180.0 - deg
@@ -807,8 +797,6 @@ def draw_moon_phase(
             max_radius = max_radius * max_radius
         circle_center_x = 20.0 + ((deg - 90.0) / 90.0 * (max_radius + 10.0)) - (max_radius + 10.0)
         circle_radius = 10.0 + max_radius - ((deg - 90.0) / 90.0 * max_radius)
-        fill_color_foreground = light_color
-        fill_color_background = dark_color
 
     elif deg < 270.0:
         max_radius = deg - 180.0
@@ -816,8 +804,6 @@ def draw_moon_phase(
             max_radius = max_radius * max_radius
         circle_center_x = 20.0 + ((deg - 180.0) / 90.0 * (max_radius + 10.0))
         circle_radius = 10.0 + ((deg - 180.0) / 90.0 * max_radius)
-        fill_color_foreground = light_color
-        fill_color_background = dark_color
 
     elif deg < 361.0:
         max_radius = 360.0 - deg
@@ -825,8 +811,6 @@ def draw_moon_phase(
             max_radius = max_radius * max_radius
         circle_center_x = 20.0 + ((deg - 270.0) / 90.0 * (max_radius + 10.0)) - (max_radius + 10.0)
         circle_radius = 10.0 + max_radius - ((deg - 270.0) / 90.0 * max_radius)
-        fill_color_foreground = dark_color
-        fill_color_background = light_color
 
     else:
         raise KerykeionException(f"Invalid degree value: {deg}")
@@ -843,9 +827,9 @@ def draw_moon_phase(
         f'        <circle cx="20" cy="10" r="10" />'
         f'        </clipPath>'
         f'    </defs>'
-        f'    <circle cx="20" cy="10" r="10" style="fill: {fill_color_background}" />'
-        f'    <circle cx="{circle_center_x}" cy="10" r="{circle_radius}" style="fill: {fill_color_foreground}" clip-path="url(#moonPhaseCutOffCircle)" />'
-        f'    <circle cx="20" cy="10" r="10" style="fill: none; stroke: {lunar_phase_outline_color}; stroke-width: 0.5px; stroke-opacity: 0.5" />'
+        f'    <circle cx="20" cy="10" r="10" style="fill: var(--kerykeion-chart-color-lunar-phase-0)" />'
+        f'    <circle cx="{circle_center_x}" cy="10" r="{circle_radius}" style="fill: var(--kerykeion-chart-color-lunar-phase-1)" clip-path="url(#moonPhaseCutOffCircle)" />'
+        f'    <circle cx="20" cy="10" r="10" style="fill: none; stroke: var(--kerykeion-chart-color-lunar-phase-0); stroke-width: 0.5px; stroke-opacity: 0.5" />'
         f'</g>'
     )
 
