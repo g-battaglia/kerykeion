@@ -137,7 +137,6 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     # Lists
     # houses_list: list[KerykeionPointModel]
     # planets_list: list[KerykeionPointModel]
-    # planets_degrees_ut: list[float]
     # houses_degree_ut: list[float]
 
 

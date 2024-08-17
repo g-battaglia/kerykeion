@@ -1,6 +1,6 @@
 from kerykeion.kr_types import KerykeionPointModel, KerykeionException, ZodiacSignModel
 from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, Planet, Houses
-from typing import Union
+from typing import Union, get_args
 import logging
 import math
 
@@ -136,45 +136,31 @@ def check_if_point_between(
 
 def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut_list: list) -> Houses:
     """
-    Returns the house in which a planet is located.
+    Determines the house in which a planet is located based on its position in degrees.
 
     Args:
-        - planet_position_degree: The position of the planet in degrees
-        - houses_degree_ut_list: A list of the houses in degrees (0-360)
+        planet_position_degree (Union[int, float]): The position of the planet in degrees.
+        houses_degree_ut_list (list): A list of the houses in degrees (0-360).
 
     Returns:
-        - The house in which the planet is located
+        str: The house in which the planet is located.
+
+    Raises:
+        ValueError: If the planet's position does not fall within any house range.
     """
 
-    house = None
-    if check_if_point_between(houses_degree_ut_list[0], houses_degree_ut_list[1], planet_position_degree) == True:
-        house = "First_House"
-    elif check_if_point_between(houses_degree_ut_list[1], houses_degree_ut_list[2], planet_position_degree) == True:
-        house = "Second_House"
-    elif check_if_point_between(houses_degree_ut_list[2], houses_degree_ut_list[3], planet_position_degree) == True:
-        house = "Third_House"
-    elif check_if_point_between(houses_degree_ut_list[3], houses_degree_ut_list[4], planet_position_degree) == True:
-        house = "Fourth_House"
-    elif check_if_point_between(houses_degree_ut_list[4], houses_degree_ut_list[5], planet_position_degree) == True:
-        house = "Fifth_House"
-    elif check_if_point_between(houses_degree_ut_list[5], houses_degree_ut_list[6], planet_position_degree) == True:
-        house = "Sixth_House"
-    elif check_if_point_between(houses_degree_ut_list[6], houses_degree_ut_list[7], planet_position_degree) == True:
-        house = "Seventh_House"
-    elif check_if_point_between(houses_degree_ut_list[7], houses_degree_ut_list[8], planet_position_degree) == True:
-        house = "Eighth_House"
-    elif check_if_point_between(houses_degree_ut_list[8], houses_degree_ut_list[9], planet_position_degree) == True:
-        house = "Ninth_House"
-    elif check_if_point_between(houses_degree_ut_list[9], houses_degree_ut_list[10], planet_position_degree) == True:
-        house = "Tenth_House"
-    elif check_if_point_between(houses_degree_ut_list[10], houses_degree_ut_list[11], planet_position_degree) == True:
-        house = "Eleventh_House"
-    elif check_if_point_between(houses_degree_ut_list[11], houses_degree_ut_list[0], planet_position_degree) == True:
-        house = "Twelfth_House"
-    else:
-        raise ValueError("Error in house calculation, planet: ", planet_position_degree, "houses: ", houses_degree_ut_list)
+    house_names = get_args(Houses)
 
-    return house
+    # Iterate through the house boundaries to find the correct house
+    for i in range(len(house_names)):
+        start_degree = houses_degree_ut_list[i]
+        end_degree = houses_degree_ut_list[(i + 1) % len(houses_degree_ut_list)]
+        if check_if_point_between(start_degree, end_degree, planet_position_degree):
+            return house_names[i]
+
+    # If no house is found, raise an error
+    raise ValueError(f"Error in house calculation, planet: {planet_position_degree}, houses: {houses_degree_ut_list}")
+
 
 def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
     """
