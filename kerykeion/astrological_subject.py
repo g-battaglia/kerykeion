@@ -21,7 +21,8 @@ from kerykeion.kr_types import (
     SiderealMode,
     HousesSystemIdentifier,
     PerspectiveType,
-    Planet
+    Planet,
+    Houses
 )
 from kerykeion.utilities import (
     get_number_from_name, 
@@ -154,15 +155,16 @@ class AstrologicalSubject:
     twelfth_house: KerykeionPointModel
 
     # Lists
-    houses_list: list[KerykeionPointModel]
+    _houses_list: list[KerykeionPointModel]
     planets_list: list[KerykeionPointModel]
-    houses_degree_ut: list[float]
+    _houses_degree_ut: list[float]
 
     # Enable or disable features
     disable_chiron: Union[None, bool]
     disable_chiron_and_lilith: bool
 
     available_planets_names: list[Planet]
+    houses_names: list[Houses]
 
     def __init__(
         self,
@@ -429,7 +431,7 @@ class AstrologicalSubject:
         """
 
         if self.zodiac_type == "Sidereal":
-            self.houses_degree_ut = swe.houses_ex(
+            self._houses_degree_ut = swe.houses_ex(
                 tjdut=self.julian_day,
                 lat=self.lat, lon=self.lng,
                 hsys=str.encode(self.houses_system_identifier),
@@ -437,7 +439,7 @@ class AstrologicalSubject:
             )[0]
 
         elif self.zodiac_type == "Tropic":
-            self.houses_degree_ut = swe.houses(
+            self._houses_degree_ut = swe.houses(
                 tjdut=self.julian_day, lat=self.lat,
                 lon=self.lng,
                 hsys=str.encode(self.houses_system_identifier)
@@ -446,20 +448,23 @@ class AstrologicalSubject:
         point_type: PointType = "House"
 
         # stores the house in singular dictionaries.
-        self.first_house = get_kerykeion_point_from_degree(self.houses_degree_ut[0], "First_House", point_type=point_type)
-        self.second_house = get_kerykeion_point_from_degree(self.houses_degree_ut[1], "Second_House", point_type=point_type)
-        self.third_house = get_kerykeion_point_from_degree(self.houses_degree_ut[2], "Third_House", point_type=point_type)
-        self.fourth_house = get_kerykeion_point_from_degree(self.houses_degree_ut[3], "Fourth_House", point_type=point_type)
-        self.fifth_house = get_kerykeion_point_from_degree(self.houses_degree_ut[4], "Fifth_House", point_type=point_type)
-        self.sixth_house = get_kerykeion_point_from_degree(self.houses_degree_ut[5], "Sixth_House", point_type=point_type)
-        self.seventh_house = get_kerykeion_point_from_degree(self.houses_degree_ut[6], "Seventh_House", point_type=point_type)
-        self.eighth_house = get_kerykeion_point_from_degree(self.houses_degree_ut[7], "Eighth_House", point_type=point_type)
-        self.ninth_house = get_kerykeion_point_from_degree(self.houses_degree_ut[8], "Ninth_House", point_type=point_type)
-        self.tenth_house = get_kerykeion_point_from_degree(self.houses_degree_ut[9], "Tenth_House", point_type=point_type)
-        self.eleventh_house = get_kerykeion_point_from_degree(self.houses_degree_ut[10], "Eleventh_House", point_type=point_type)
-        self.twelfth_house = get_kerykeion_point_from_degree(self.houses_degree_ut[11], "Twelfth_House", point_type=point_type)
+        self.first_house = get_kerykeion_point_from_degree(self._houses_degree_ut[0], "First_House", point_type=point_type)
+        self.second_house = get_kerykeion_point_from_degree(self._houses_degree_ut[1], "Second_House", point_type=point_type)
+        self.third_house = get_kerykeion_point_from_degree(self._houses_degree_ut[2], "Third_House", point_type=point_type)
+        self.fourth_house = get_kerykeion_point_from_degree(self._houses_degree_ut[3], "Fourth_House", point_type=point_type)
+        self.fifth_house = get_kerykeion_point_from_degree(self._houses_degree_ut[4], "Fifth_House", point_type=point_type)
+        self.sixth_house = get_kerykeion_point_from_degree(self._houses_degree_ut[5], "Sixth_House", point_type=point_type)
+        self.seventh_house = get_kerykeion_point_from_degree(self._houses_degree_ut[6], "Seventh_House", point_type=point_type)
+        self.eighth_house = get_kerykeion_point_from_degree(self._houses_degree_ut[7], "Eighth_House", point_type=point_type)
+        self.ninth_house = get_kerykeion_point_from_degree(self._houses_degree_ut[8], "Ninth_House", point_type=point_type)
+        self.tenth_house = get_kerykeion_point_from_degree(self._houses_degree_ut[9], "Tenth_House", point_type=point_type)
+        self.eleventh_house = get_kerykeion_point_from_degree(self._houses_degree_ut[10], "Eleventh_House", point_type=point_type)
+        self.twelfth_house = get_kerykeion_point_from_degree(self._houses_degree_ut[11], "Twelfth_House", point_type=point_type)
 
-        self.houses_list = [
+        self.houses_names = list(get_args(Houses))
+
+        # Deprecated
+        self._houses_list = [
             self.first_house,
             self.second_house,
             self.third_house,
@@ -506,18 +511,18 @@ class AstrologicalSubject:
         self.mean_node = get_kerykeion_point_from_degree(mean_node_deg, "Mean_Node", point_type=point_type)
         self.true_node = get_kerykeion_point_from_degree(true_node_deg, "True_Node", point_type=point_type)
 
-        self.sun.house = get_planet_house(sun_deg, self.houses_degree_ut)
-        self.moon.house = get_planet_house(moon_deg, self.houses_degree_ut)
-        self.mercury.house = get_planet_house(mercury_deg, self.houses_degree_ut)
-        self.venus.house = get_planet_house(venus_deg, self.houses_degree_ut)
-        self.mars.house = get_planet_house(mars_deg, self.houses_degree_ut)
-        self.jupiter.house = get_planet_house(jupiter_deg, self.houses_degree_ut)
-        self.saturn.house = get_planet_house(saturn_deg, self.houses_degree_ut)
-        self.uranus.house = get_planet_house(uranus_deg, self.houses_degree_ut)
-        self.neptune.house = get_planet_house(neptune_deg, self.houses_degree_ut)
-        self.pluto.house = get_planet_house(pluto_deg, self.houses_degree_ut)
-        self.mean_node.house = get_planet_house(mean_node_deg, self.houses_degree_ut)
-        self.true_node.house = get_planet_house(true_node_deg, self.houses_degree_ut)
+        self.sun.house = get_planet_house(sun_deg, self._houses_degree_ut)
+        self.moon.house = get_planet_house(moon_deg, self._houses_degree_ut)
+        self.mercury.house = get_planet_house(mercury_deg, self._houses_degree_ut)
+        self.venus.house = get_planet_house(venus_deg, self._houses_degree_ut)
+        self.mars.house = get_planet_house(mars_deg, self._houses_degree_ut)
+        self.jupiter.house = get_planet_house(jupiter_deg, self._houses_degree_ut)
+        self.saturn.house = get_planet_house(saturn_deg, self._houses_degree_ut)
+        self.uranus.house = get_planet_house(uranus_deg, self._houses_degree_ut)
+        self.neptune.house = get_planet_house(neptune_deg, self._houses_degree_ut)
+        self.pluto.house = get_planet_house(pluto_deg, self._houses_degree_ut)
+        self.mean_node.house = get_planet_house(mean_node_deg, self._houses_degree_ut)
+        self.true_node.house = get_planet_house(true_node_deg, self._houses_degree_ut)
 
         # Deprecated
         self.planets_list = [
@@ -542,8 +547,8 @@ class AstrologicalSubject:
             self.chiron = get_kerykeion_point_from_degree(chiron_deg, "Chiron", point_type=point_type)
             self.mean_lilith = get_kerykeion_point_from_degree(mean_lilith_deg, "Mean_Lilith", point_type=point_type)
 
-            self.chiron.house = get_planet_house(chiron_deg, self.houses_degree_ut)
-            self.mean_lilith.house = get_planet_house(mean_lilith_deg, self.houses_degree_ut)
+            self.chiron.house = get_planet_house(chiron_deg, self._houses_degree_ut)
+            self.mean_lilith.house = get_planet_house(mean_lilith_deg, self._houses_degree_ut)
 
             # Deprecated
             self.planets_list.append(self.chiron)

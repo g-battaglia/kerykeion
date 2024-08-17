@@ -1,5 +1,6 @@
 from kerykeion import AstrologicalSubject
 from terminaltables import AsciiTable
+from kerykeion.utilities import get_houses_list
 
 class Report:
     """
@@ -62,7 +63,7 @@ class Report:
         """
 
         houses_data = [["House", "Sign", "Position"]] + [
-            [house.name, house.sign, round(float(house.position), 2)] for house in self.instance.houses_list
+            [house.name, house.sign, round(float(house.position), 2)] for house in get_houses_list(self.instance)
         ]
 
         self.houses_table = AsciiTable(houses_data).table

@@ -1,9 +1,11 @@
-from kerykeion.kr_types import KerykeionPointModel, KerykeionException, ZodiacSignModel
+from kerykeion.kr_types import KerykeionPointModel, KerykeionException, ZodiacSignModel, AstrologicalSubjectModel
 from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, Planet, Houses
-from typing import Union, get_args
+from typing import Union, get_args, TYPE_CHECKING
 import logging
 import math
 
+if TYPE_CHECKING:
+    from kerykeion import AstrologicalSubject
 
 
 def get_number_from_name(name: Planet) -> int:
@@ -243,3 +245,26 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
         logging.info("Polar circle override for houses, using -66 degrees")
 
     return latitude
+
+
+def get_houses_list(subject: Union["AstrologicalSubject", AstrologicalSubjectModel]) -> list[KerykeionPointModel]:
+    """
+    Return the names of the houses in the order of the houses.
+    """
+    houses_absolute_position_list = []
+    for house in subject.houses_names:
+            houses_absolute_position_list.append(subject[house.lower()])
+
+    return houses_absolute_position_list
+
+
+def get_houses_absolute_position_list(subject: Union["AstrologicalSubject", AstrologicalSubjectModel]) -> list[float]:
+    """
+    Return the absolute positions of the houses in the order of the houses.
+    """
+
+    houses_absolute_position_list = []
+    for house in subject.houses_names:
+            houses_absolute_position_list.append(subject[house.lower()].abs_pos)
+
+    return houses_absolute_position_list
