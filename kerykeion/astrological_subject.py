@@ -570,69 +570,38 @@ class AstrologicalSubject:
 
 
     def _initialize_moon_phase(self) -> None:
-        """Function to calculate the lunar phase"""
+        """
+        Calculate and initialize the lunar phase based on the positions of the moon and sun.
 
-        # If ther's an error:
+        This function calculates the degrees between the moon and the sun, determines the moon phase
+        and sun phase, and initializes the lunar phase model with the calculated values.
+        """
+        # Initialize moon_phase and sun_phase to None in case of an error
         moon_phase, sun_phase = None, None
 
-        # anti-clockwise degrees between sun and moon
-        moon, sun = self.moon.abs_pos, self.sun.abs_pos  
+        # Calculate the anti-clockwise degrees between the sun and moon
+        moon, sun = self.moon.abs_pos, self.sun.abs_pos
+        degrees_between = (moon - sun) % 360
 
-        degrees_between = moon - sun
-
-        if degrees_between < 0:
-            degrees_between += 360.0
-
+        # Calculate the moon phase (1-28) based on the degrees between the sun and moon
         step = 360.0 / 28.0
+        moon_phase = int(degrees_between // step) + 1
 
-        for x in range(28):
-            low = x * step
-            high = (x + 1) * step
-
-            if degrees_between >= low and degrees_between < high:
-                moon_phase = x + 1
-
+        # Define the sun phase steps
         sunstep = [
-            0,
-            30,
-            40,
-            50,
-            60,
-            70,
-            80,
-            90,
-            120,
-            130,
-            140,
-            150,
-            160,
-            170,
-            180,
-            210,
-            220,
-            230,
-            240,
-            250,
-            260,
-            270,
-            300,
-            310,
-            320,
-            330,
-            340,
-            350,
+            0, 30, 40, 50, 60, 70, 80, 90, 120, 130, 140, 150, 160, 170, 180,
+            210, 220, 230, 240, 250, 260, 270, 300, 310, 320, 330, 340, 350
         ]
 
+        # Calculate the sun phase (1-28) based on the degrees between the sun and moon
         for x in range(len(sunstep)):
             low = sunstep[x]
-
-            if x == 27:
-                high = 360
-            else:
-                high = sunstep[x + 1]
-            if degrees_between >= low and degrees_between < high:
+            high = sunstep[x + 1] if x < len(sunstep) - 1 else 360
+            if low <= degrees_between < high:
                 sun_phase = x + 1
+                break
 
+        # Create a dictionary with the lunar phase information
         lunar_phase_dictionary = {
             "degrees_between_s_m": degrees_between,
             "moon_phase": moon_phase,
@@ -641,6 +610,7 @@ class AstrologicalSubject:
             "moon_phase_name": get_moon_phase_name_from_phase_int(moon_phase)
         }
 
+        # Initialize the lunar phase model with the calculated values
         self.lunar_phase = LunarPhaseModel(**lunar_phase_dictionary)
 
     def json(self, dump=False, destination_folder: Union[str, None] = None, indent: Union[int, None] = None) -> str:
