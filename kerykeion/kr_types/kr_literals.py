@@ -99,3 +99,6 @@ Literal type for perspective types.
 
 Usually the standard is "Apparent Geocentric"
 """
+
+
+SignsEmoji = Literal["♈️", "♉️", "♊️", "♋️", "♌️", "♍️", "♎️", "♏️", "♐️", "♑️", "♒️", "♓️"]

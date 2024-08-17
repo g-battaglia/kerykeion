@@ -22,6 +22,7 @@ from kerykeion.kr_types import (
     SiderealMode,
     HousesSystemIdentifier,
     Houses,
+    SignsEmoji
 )
 
 
@@ -158,3 +159,11 @@ class AspectModel(SubscriptableBaseModel):
     diff: float
     p1: int
     p2: int
+
+
+class ZodiacSignModel(SubscriptableBaseModel):
+    sign: Sign
+    quality: Quality
+    element: Element
+    emoji: SignsEmoji
+    sign_num: SignNumbers
