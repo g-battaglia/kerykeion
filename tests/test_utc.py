@@ -10,7 +10,7 @@ def test_utc_constructor():
         "Johnny Depp", "1963-06-09T05:00:00Z", "Owensboro", "US", online=True)
 
     assert subject.julian_day == subject2.julian_day
-    assert subject.houses_list == subject2.houses_list
+    assert subject._houses_list == subject2._houses_list
     assert subject.planets_list == subject2.planets_list
 
 

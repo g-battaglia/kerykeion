@@ -133,6 +133,9 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
 
     # Lunar Phase
     lunar_phase: LunarPhaseModel
+    
+    available_planets_names: list[Planet]
+    houses_names: list[Houses]
 
     # Lists
     # houses_list: list[KerykeionPointModel]

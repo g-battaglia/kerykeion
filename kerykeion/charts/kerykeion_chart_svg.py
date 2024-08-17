@@ -34,6 +34,7 @@ from kerykeion.charts.charts_utils import (
     draw_planet_grid,
 )
 from kerykeion.charts.draw_planets import draw_planets
+from kerykeion.utilities import get_houses_list, get_houses_absolute_position_list
 from pathlib import Path
 from scour.scour import scourString
 from string import Template
@@ -226,7 +227,7 @@ class KerykeionChartSVG:
             output += draw_zodiac_slice(
                 c1=self.first_circle_radius,
                 chart_type=self.chart_type,
-                seventh_house_degree_ut=self.user.houses_degree_ut[6],
+                seventh_house_degree_ut=self.user.seventh_house.abs_pos,
                 num=i,
                 r=r,
                 style=f'fill:{self.chart_colors_settings[f"zodiac_bg_{i}"]}; fill-opacity: 0.5;',
@@ -423,11 +424,17 @@ class KerykeionChartSVG:
         # Drawing functions
         template_dict["makeZodiac"] = self._draw_zodiac_circle_slices(self.main_radius)
 
+        first_subject_houses_absolute_position_list = get_houses_absolute_position_list(self.user)
+        first_subject_houses_list = get_houses_list(self.user)
+
         # Draw houses grid and cusps
         if self.chart_type in ["Transit", "Synastry"]:
+            second_subject_houses_absolute_position_list = get_houses_absolute_position_list(self.t_user)
+            second_subject_houses_list = get_houses_list(self.t_user)
+
             template_dict["makeHousesGrid"] = draw_house_grid(
-                main_subject_houses_list=self.user.houses_list,
-                secondary_subject_houses_list=self.t_user.houses_list,
+                main_subject_houses_list=first_subject_houses_list,
+                secondary_subject_houses_list=second_subject_houses_list,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self.language_settings["cusp"]
@@ -435,7 +442,7 @@ class KerykeionChartSVG:
 
             template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
                 r=self.main_radius,
-                first_subject_houses_list_ut=self.user.houses_degree_ut,
+                first_subject_houses_list_ut=first_subject_houses_absolute_position_list,
                 standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
                 first_house_color=self.planets_settings[12]["color"],
                 tenth_house_color=self.planets_settings[13]["color"],
@@ -444,13 +451,13 @@ class KerykeionChartSVG:
                 c1=self.first_circle_radius,
                 c3=self.third_circle_radius,
                 chart_type=self.chart_type,
-                second_subject_houses_list_ut=self.t_user.houses_degree_ut,
+                second_subject_houses_list_ut=second_subject_houses_absolute_position_list,
                 transit_house_cusp_color=self.chart_colors_settings["houses_transit_line"],
             )
 
         else:
             template_dict["makeHousesGrid"] = draw_house_grid(
-                main_subject_houses_list=self.user.houses_list,
+                main_subject_houses_list=first_subject_houses_list,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self.language_settings["cusp"]
@@ -458,7 +465,7 @@ class KerykeionChartSVG:
 
             template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
                 r=self.main_radius,
-                first_subject_houses_list_ut=self.user.houses_degree_ut,
+                first_subject_houses_list_ut=first_subject_houses_absolute_position_list,
                 standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
                 first_house_color=self.planets_settings[12]["color"],
                 tenth_house_color=self.planets_settings[13]["color"],
@@ -476,8 +483,8 @@ class KerykeionChartSVG:
                 available_planets_setting=self.available_planets_setting,
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
                 radius=self.main_radius, 
-                main_subject_first_house_degree_ut=self.user.houses_degree_ut[0],
-                main_subject_seventh_house_degree_ut=self.user.houses_degree_ut[6],
+                main_subject_first_house_degree_ut=self.user.first_house.abs_pos,
+                main_subject_seventh_house_degree_ut=self.user.seventh_house.abs_pos,
                 chart_type=self.chart_type, 
                 third_circle_radius=self.third_circle_radius,
             )
@@ -488,8 +495,8 @@ class KerykeionChartSVG:
                 radius=self.main_radius, 
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
                 third_circle_radius=self.third_circle_radius,
-                main_subject_first_house_degree_ut=self.user.houses_degree_ut[0],
-                main_subject_seventh_house_degree_ut=self.user.houses_degree_ut[6],
+                main_subject_first_house_degree_ut=self.user.first_house.abs_pos,
+                main_subject_seventh_house_degree_ut=self.user.seventh_house.abs_pos
             )
 
         # Draw elements percentages
