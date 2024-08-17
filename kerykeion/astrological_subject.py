@@ -24,7 +24,7 @@ from kerykeion.kr_types import (
 )
 from kerykeion.utilities import (
     get_number_from_name, 
-    calculate_position, 
+    get_kerykeion_point_from_degree, 
     get_planet_house,
     get_moon_emoji_from_phase_int,
     get_moon_phase_name_from_phase_int,
@@ -440,18 +440,18 @@ class AstrologicalSubject:
         point_type: PointType = "House"
 
         # stores the house in singular dictionaries.
-        self.first_house = calculate_position(self.houses_degree_ut[0], "First_House", point_type=point_type)
-        self.second_house = calculate_position(self.houses_degree_ut[1], "Second_House", point_type=point_type)
-        self.third_house = calculate_position(self.houses_degree_ut[2], "Third_House", point_type=point_type)
-        self.fourth_house = calculate_position(self.houses_degree_ut[3], "Fourth_House", point_type=point_type)
-        self.fifth_house = calculate_position(self.houses_degree_ut[4], "Fifth_House", point_type=point_type)
-        self.sixth_house = calculate_position(self.houses_degree_ut[5], "Sixth_House", point_type=point_type)
-        self.seventh_house = calculate_position(self.houses_degree_ut[6], "Seventh_House", point_type=point_type)
-        self.eighth_house = calculate_position(self.houses_degree_ut[7], "Eighth_House", point_type=point_type)
-        self.ninth_house = calculate_position(self.houses_degree_ut[8], "Ninth_House", point_type=point_type)
-        self.tenth_house = calculate_position(self.houses_degree_ut[9], "Tenth_House", point_type=point_type)
-        self.eleventh_house = calculate_position(self.houses_degree_ut[10], "Eleventh_House", point_type=point_type)
-        self.twelfth_house = calculate_position(self.houses_degree_ut[11], "Twelfth_House", point_type=point_type)
+        self.first_house = get_kerykeion_point_from_degree(self.houses_degree_ut[0], "First_House", point_type=point_type)
+        self.second_house = get_kerykeion_point_from_degree(self.houses_degree_ut[1], "Second_House", point_type=point_type)
+        self.third_house = get_kerykeion_point_from_degree(self.houses_degree_ut[2], "Third_House", point_type=point_type)
+        self.fourth_house = get_kerykeion_point_from_degree(self.houses_degree_ut[3], "Fourth_House", point_type=point_type)
+        self.fifth_house = get_kerykeion_point_from_degree(self.houses_degree_ut[4], "Fifth_House", point_type=point_type)
+        self.sixth_house = get_kerykeion_point_from_degree(self.houses_degree_ut[5], "Sixth_House", point_type=point_type)
+        self.seventh_house = get_kerykeion_point_from_degree(self.houses_degree_ut[6], "Seventh_House", point_type=point_type)
+        self.eighth_house = get_kerykeion_point_from_degree(self.houses_degree_ut[7], "Eighth_House", point_type=point_type)
+        self.ninth_house = get_kerykeion_point_from_degree(self.houses_degree_ut[8], "Ninth_House", point_type=point_type)
+        self.tenth_house = get_kerykeion_point_from_degree(self.houses_degree_ut[9], "Tenth_House", point_type=point_type)
+        self.eleventh_house = get_kerykeion_point_from_degree(self.houses_degree_ut[10], "Eleventh_House", point_type=point_type)
+        self.twelfth_house = get_kerykeion_point_from_degree(self.houses_degree_ut[11], "Twelfth_House", point_type=point_type)
 
         self.houses_list = [
             self.first_house,
@@ -518,22 +518,22 @@ class AstrologicalSubject:
 
         point_type: PointType = "Planet"
         # stores the planets in singular dictionaries.
-        self.sun = calculate_position(self.planets_degrees_ut[0], "Sun", point_type=point_type)
-        self.moon = calculate_position(self.planets_degrees_ut[1], "Moon", point_type=point_type)
-        self.mercury = calculate_position(self.planets_degrees_ut[2], "Mercury", point_type=point_type)
-        self.venus = calculate_position(self.planets_degrees_ut[3], "Venus", point_type=point_type)
-        self.mars = calculate_position(self.planets_degrees_ut[4], "Mars", point_type=point_type)
-        self.jupiter = calculate_position(self.planets_degrees_ut[5], "Jupiter", point_type=point_type)
-        self.saturn = calculate_position(self.planets_degrees_ut[6], "Saturn", point_type=point_type)
-        self.uranus = calculate_position(self.planets_degrees_ut[7], "Uranus", point_type=point_type)
-        self.neptune = calculate_position(self.planets_degrees_ut[8], "Neptune", point_type=point_type)
-        self.pluto = calculate_position(self.planets_degrees_ut[9], "Pluto", point_type=point_type)
-        self.mean_node = calculate_position(self.planets_degrees_ut[10], "Mean_Node", point_type=point_type)
-        self.true_node = calculate_position(self.planets_degrees_ut[11], "True_Node", point_type=point_type)
+        self.sun = get_kerykeion_point_from_degree(self.planets_degrees_ut[0], "Sun", point_type=point_type)
+        self.moon = get_kerykeion_point_from_degree(self.planets_degrees_ut[1], "Moon", point_type=point_type)
+        self.mercury = get_kerykeion_point_from_degree(self.planets_degrees_ut[2], "Mercury", point_type=point_type)
+        self.venus = get_kerykeion_point_from_degree(self.planets_degrees_ut[3], "Venus", point_type=point_type)
+        self.mars = get_kerykeion_point_from_degree(self.planets_degrees_ut[4], "Mars", point_type=point_type)
+        self.jupiter = get_kerykeion_point_from_degree(self.planets_degrees_ut[5], "Jupiter", point_type=point_type)
+        self.saturn = get_kerykeion_point_from_degree(self.planets_degrees_ut[6], "Saturn", point_type=point_type)
+        self.uranus = get_kerykeion_point_from_degree(self.planets_degrees_ut[7], "Uranus", point_type=point_type)
+        self.neptune = get_kerykeion_point_from_degree(self.planets_degrees_ut[8], "Neptune", point_type=point_type)
+        self.pluto = get_kerykeion_point_from_degree(self.planets_degrees_ut[9], "Pluto", point_type=point_type)
+        self.mean_node = get_kerykeion_point_from_degree(self.planets_degrees_ut[10], "Mean_Node", point_type=point_type)
+        self.true_node = get_kerykeion_point_from_degree(self.planets_degrees_ut[11], "True_Node", point_type=point_type)
         
         if not self.disable_chiron_and_lilith:
-            self.chiron = calculate_position(self.planets_degrees_ut[12], "Chiron", point_type=point_type)
-            self.mean_lilith = calculate_position(self.planets_degrees_ut[13], "Mean_Lilith", point_type=point_type)
+            self.chiron = get_kerykeion_point_from_degree(self.planets_degrees_ut[12], "Chiron", point_type=point_type)
+            self.mean_lilith = get_kerykeion_point_from_degree(self.planets_degrees_ut[13], "Mean_Lilith", point_type=point_type)
 
         else:
             self.chiron = None

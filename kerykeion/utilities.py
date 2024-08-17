@@ -1,4 +1,4 @@
-from kerykeion.kr_types import KerykeionPointModel, KerykeionException, KerykeionSettingsModel, AstrologicalSubjectModel
+from kerykeion.kr_types import KerykeionPointModel, KerykeionException, ZodiacSignModel
 from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, Planet, Houses
 from typing import Union
 import logging
@@ -41,172 +41,57 @@ def get_number_from_name(name: Planet) -> int:
         raise KerykeionException(f"Error in getting number from name! Name: {name}")
 
 
-def calculate_position(
-    degree: Union[int, float], number_name: str, point_type: PointType
+def get_kerykeion_point_from_degree(
+    degree: Union[int, float], name: Union[Planet, Houses], point_type: PointType
 ) -> KerykeionPointModel:
-    """Utility function to create a dictionary dividing the houses or the planets list."""
+    """
+    Returns a KerykeionPointModel object based on the given degree.
 
-    if degree < 30:
-        dictionary = {
-            "name": number_name,
-            "quality": "Cardinal",
-            "element": "Fire",
-            "sign": "Ari",
-            "sign_num": 0,
-            "position": degree,
-            "abs_pos": degree,
-            "emoji": "♈️",
-            "point_type": point_type,
-        }
+    Args:
+        degree (Union[int, float]): The degree of the celestial point.
+        name (str): The name of the celestial point.
+        point_type (PointType): The type of the celestial point.
 
-    elif degree < 60:
-        result = degree - 30
-        dictionary = {
-            "name": number_name,
-            "quality": "Fixed",
-            "element": "Earth",
-            "sign": "Tau",
-            "sign_num": 1,
-            "position": result,
-            "abs_pos": degree,
-            "emoji": "♉️",
-            "point_type": point_type,
-        }
-    elif degree < 90:
-        result = degree - 60
-        dictionary = {
-            "name": number_name,
-            "quality": "Mutable",
-            "element": "Air",
-            "sign": "Gem",
-            "sign_num": 2,
-            "position": result,
-            "abs_pos": degree,
-            "emoji": "♊️",
-            "point_type": point_type,
-        }
-    elif degree < 120:
-        result = degree - 90
-        dictionary = {
-            "name": number_name,
-            "quality": "Cardinal",
-            "element": "Water",
-            "sign": "Can",
-            "sign_num": 3,
-            "position": result,
-            "abs_pos": degree,
-            "emoji": "♋️",
-            "point_type": point_type,
-        }
-    elif degree < 150:
-        result = degree - 120
-        dictionary = {
-            "name": number_name,
-            "quality": "Fixed",
-            "element": "Fire",
-            "sign": "Leo",
-            "sign_num": 4,
-            "position": result,
-            "abs_pos": degree,
-            "emoji": "♌️",
-            "point_type": point_type,
-        }
-    elif degree < 180:
-        result = degree - 150
-        dictionary = {
-            "name": number_name,
-            "quality": "Mutable",
-            "element": "Earth",
-            "sign": "Vir",
-            "sign_num": 5,
-            "position": result,
-            "abs_pos": degree,
-            "emoji": "♍️",
-            "point_type": point_type,
-        }
-    elif degree < 210:
-        result = degree - 180
-        dictionary = {
-            "name": number_name,
-            "quality": "Cardinal",
-            "element": "Air",
-            "sign": "Lib",
-            "sign_num": 6,
-            "position": result,
-            "abs_pos": degree,
-            "emoji": "♎️",
-            "point_type": point_type,
-        }
-    elif degree < 240:
-        result = degree - 210
-        dictionary = {
-            "name": number_name,
-            "quality": "Fixed",
-            "element": "Water",
-            "sign": "Sco",
-            "sign_num": 7,
-            "position": result,
-            "abs_pos": degree,
-            "emoji": "♏️",
-            "point_type": point_type,
-        }
-    elif degree < 270:
-        result = degree - 240
-        dictionary = {
-            "name": number_name,
-            "quality": "Mutable",
-            "element": "Fire",
-            "sign": "Sag",
-            "sign_num": 8,
-            "position": result,
-            "abs_pos": degree,
-            "emoji": "♐️",
-            "point_type": point_type,
-        }
-    elif degree < 300:
-        result = degree - 270
-        dictionary = {
-            "name": number_name,
-            "quality": "Cardinal",
-            "element": "Earth",
-            "sign": "Cap",
-            "sign_num": 9,
-            "position": result,
-            "abs_pos": degree,
-            "emoji": "♑️",
-            "point_type": point_type,
-        }
-    elif degree < 330:
-        result = degree - 300
-        dictionary = {
-            "name": number_name,
-            "quality": "Fixed",
-            "element": "Air",
-            "sign": "Aqu",
-            "sign_num": 10,
-            "position": result,
-            "abs_pos": degree,
-            "emoji": "♒️",
-            "point_type": point_type,
-        }
-    elif degree < 360:
-        result = degree - 330
-        dictionary = {
-            "name": number_name,
-            "quality": "Mutable",
-            "element": "Water",
-            "sign": "Pis",
-            "sign_num": 11,
-            "position": result,
-            "abs_pos": degree,
-            "emoji": "♓️",
-            "point_type": point_type,
-        }
-    else:
+    Raises:
+        KerykeionException: If the degree is not within the valid range (0-360).
+
+    Returns:
+        KerykeionPointModel: The model representing the celestial point.
+    """
+
+    if degree < 0 or degree >= 360:
         raise KerykeionException(f"Error in calculating positions! Degrees: {degree}")
 
-    return KerykeionPointModel(**dictionary)
+    ZODIAC_SIGNS = {
+        0: ZodiacSignModel(sign="Ari", quality="Cardinal", element="Fire", emoji="♈️", sign_num=0),
+        1: ZodiacSignModel(sign="Tau", quality="Fixed", element="Earth", emoji="♉️", sign_num=1),
+        2: ZodiacSignModel(sign="Gem", quality="Mutable", element="Air", emoji="♊️", sign_num=2),
+        3: ZodiacSignModel(sign="Can", quality="Cardinal", element="Water", emoji="♋️", sign_num=3),
+        4: ZodiacSignModel(sign="Leo", quality="Fixed", element="Fire", emoji="♌️", sign_num=4),
+        5: ZodiacSignModel(sign="Vir", quality="Mutable", element="Earth", emoji="♍️", sign_num=5),
+        6: ZodiacSignModel(sign="Lib", quality="Cardinal", element="Air", emoji="♎️", sign_num=6),
+        7: ZodiacSignModel(sign="Sco", quality="Fixed", element="Water", emoji="♏️", sign_num=7),
+        8: ZodiacSignModel(sign="Sag", quality="Mutable", element="Fire", emoji="♐️", sign_num=8),
+        9: ZodiacSignModel(sign="Cap", quality="Cardinal", element="Earth", emoji="♑️", sign_num=9),
+        10: ZodiacSignModel(sign="Aqu", quality="Fixed", element="Air", emoji="♒️", sign_num=10),
+        11: ZodiacSignModel(sign="Pis", quality="Mutable", element="Water", emoji="♓️", sign_num=11),
+    }
 
+    sign_index = int(degree // 30)
+    sign_degree = degree % 30
+    zodiac_sign = ZODIAC_SIGNS[sign_index]
+
+    return KerykeionPointModel(
+        name=name,
+        quality=zodiac_sign.quality,
+        element=zodiac_sign.element,
+        sign=zodiac_sign.sign,
+        sign_num=zodiac_sign.sign_num,
+        position=sign_degree,
+        abs_pos=degree,
+        emoji=zodiac_sign.emoji,
+        point_type=point_type,
+    )
 
 def setup_logging(level: str) -> None:
     """
