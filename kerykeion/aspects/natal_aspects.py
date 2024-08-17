@@ -11,6 +11,7 @@ from kerykeion.settings.kerykeion_settings import get_settings
 from dataclasses import dataclass
 from functools import cached_property
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 
 
 AXES_LIST = [
@@ -27,7 +28,7 @@ class NatalAspects:
     Generates an object with all the aspects of a birthcart.
     """
 
-    user: AstrologicalSubject
+    user: Union[AstrologicalSubject, AstrologicalSubjectModel]
     new_settings_file: Union[Path, None] = None
 
     def __post_init__(self):

@@ -138,7 +138,7 @@ class AstrologicalSubject:
     true_node: KerykeionPointModel
     mean_node: KerykeionPointModel
     chiron: Union[KerykeionPointModel, None]
-    mean_lilit: Union[KerykeionPointModel, None]
+    mean_lilith: Union[KerykeionPointModel, None]
 
     # Houses
     first_house: KerykeionPointModel
@@ -162,8 +162,8 @@ class AstrologicalSubject:
     disable_chiron: Union[None, bool]
     disable_chiron_and_lilith: bool
 
-    available_planets_names: list[Planet]
-    houses_names: list[Houses]
+    planets_names_list: list[Planet]
+    houses_names_list: list[Houses]
 
     def __init__(
         self,
@@ -229,7 +229,7 @@ class AstrologicalSubject:
             logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
             self.geonames_username = DEFAULT_GEONAMES_USERNAME
         else:
-            self.geonames_username = geonames_username
+            self.geonames_username = geonames_username # type: ignore
 
         # City
         if not city:
@@ -250,20 +250,20 @@ class AstrologicalSubject:
             self.lat = 51.5074
             logging.info("No latitude specified, using London as default")
         else:
-            self.lat = lat
-
+            self.lat = lat # type: ignore
+ 
         # Longitude
         if not lng and not self.online:
             self.lng = 0
             logging.info("No longitude specified, using London as default")
         else:
-            self.lng = lng
+            self.lng = lng # type: ignore
 
         # Timezone
         if (not self.online) and (not tz_str):
             raise KerykeionException("You need to set the coordinates and timezone if you want to use the offline mode!")
         else:
-            self.tz_str = tz_str
+            self.tz_str = tz_str # type: ignore
 
         #-----------------------#
         # Swiss Ephemeris setup #
@@ -460,7 +460,7 @@ class AstrologicalSubject:
         self.eleventh_house = get_kerykeion_point_from_degree(self._houses_degree_ut[10], "Eleventh_House", point_type=point_type)
         self.twelfth_house = get_kerykeion_point_from_degree(self._houses_degree_ut[11], "Twelfth_House", point_type=point_type)
 
-        self.houses_names = list(get_args(Houses))
+        self.houses_names_list = list(get_args(Houses))
 
         # Deprecated
         self._houses_list = [
@@ -556,11 +556,9 @@ class AstrologicalSubject:
         else:
             self.chiron = None
             self.mean_lilith = None
-            self.chiron = None
-            self.mean_lilith = None
 
         # FIXME: Update after removing planets_list
-        self.available_planets_names = [planet["name"] for planet in planets_list]
+        self.planets_names_list = [planet["name"] for planet in planets_list]
 
         # Check in retrograde or not:
         for planet in planets_list:

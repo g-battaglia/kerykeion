@@ -8,6 +8,7 @@ from kerykeion.aspects.synastry_aspects import SynastryAspects
 import logging
 from pathlib import Path
 from typing import Union
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 
 
 class RelationshipScore:
@@ -31,8 +32,8 @@ class RelationshipScore:
 
     """
 
-    first_subject: AstrologicalSubject
-    second_subject: AstrologicalSubject
+    first_subject: Union[AstrologicalSubject, AstrologicalSubjectModel]
+    second_subject: Union[AstrologicalSubject, AstrologicalSubjectModel]
     score: int
     is_destiny_sign: bool
     relevant_aspects: list
@@ -40,8 +41,8 @@ class RelationshipScore:
 
     def __init__(
         self,
-        first_subject: AstrologicalSubject,
-        second_subject: AstrologicalSubject,
+        first_subject: Union[AstrologicalSubject, AstrologicalSubjectModel],
+        second_subject: Union[AstrologicalSubject, AstrologicalSubjectModel],
         new_settings_file: Union[Path, None] = None,
     ):
         self.first_subject = first_subject

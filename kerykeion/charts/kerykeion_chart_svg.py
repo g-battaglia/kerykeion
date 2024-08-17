@@ -13,6 +13,7 @@ from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointModel, Sign
 from kerykeion.kr_types import ChartTemplateDictionary
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel
 from kerykeion.charts.charts_utils import (
     draw_zodiac_slice, 
@@ -63,8 +64,8 @@ class KerykeionChartSVG:
     _DEFAULT_NATAL_WIDTH = 772.2
 
     # Set at init
-    first_obj: AstrologicalSubject
-    second_obj: Union[AstrologicalSubject, None]
+    first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel]
+    second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, None]
     chart_type: ChartType
     new_output_directory: Union[Path, None]
     new_settings_file: Union[Path, None]
@@ -87,7 +88,7 @@ class KerykeionChartSVG:
     aspects_settings: dict
     planet_in_zodiac_extra_points: int
     chart_settings: dict
-    user: AstrologicalSubject
+    user: Union[AstrologicalSubject, AstrologicalSubjectModel]
     available_planets_setting: List[KerykeionSettingsCelestialPointModel]
     height: float
     location: str
@@ -97,9 +98,9 @@ class KerykeionChartSVG:
 
     def __init__(
         self,
-        first_obj: AstrologicalSubject,
+        first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel],
         chart_type: ChartType = "Natal",
-        second_obj: Union[AstrologicalSubject, None] = None,
+        second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, None] = None,
         new_output_directory: Union[str, None] = None,
         new_settings_file: Union[Path, None] = None,
     ):
@@ -343,7 +344,7 @@ class KerykeionChartSVG:
             template_dict["degreeRing"] = draw_transit_ring_degree_steps(self.main_radius, self.user.seventh_house.abs_pos)
             template_dict["first_circle"] = draw_first_circle(self.main_radius, self.chart_colors_settings["zodiac_transit_ring_2"], self.chart_type)
             template_dict["second_circle"] = draw_second_circle(self.main_radius, self.chart_colors_settings['zodiac_transit_ring_1'], self.chart_colors_settings['paper_1'], self.chart_type)
-            template_dict['third_circle'] = draw_third_circle(self.main_radius, self.chart_colors_settings['zodiac_transit_ring_0'], self.chart_colors_settings['paper_1'], self.chart_type)
+            template_dict['third_circle'] = draw_third_circle(self.main_radius, self.chart_colors_settings['zodiac_transit_ring_0'], self.chart_colors_settings['paper_1'], self.chart_type, self.third_circle_radius)
             template_dict["makeAspectGrid"] = draw_aspect_transit_grid(self.language_settings["aspects"], self.aspects_list, self.planets_settings, self.aspects_settings)
 
             template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(self.main_radius, self.main_radius - 160)

@@ -200,6 +200,20 @@ class TestCharts:
         for i in range(len(true_geocentric_perspective_natals_chart_svg_lines)):
             assert true_geocentric_perspective_natals_chart_svg_lines[i] == file_content_lines[i]
 
+    def test_natal_chart_from_model(self):
+        birth_chart_svg = KerykeionChartSVG(self.first_subject).makeTemplate()
+        birth_chart_svg_lines = [birth_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(birth_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.first_subject.model()).makeSVG()
+
+        with open(CURRENT_DIR / "John Lennon - Natal Chart.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+
+        for i in range(len(birth_chart_svg_lines)):
+            assert birth_chart_svg_lines[i] == file_content_lines[i]
 
 if __name__ == "__main__":
     test = TestCharts()

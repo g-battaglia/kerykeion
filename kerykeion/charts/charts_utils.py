@@ -494,7 +494,7 @@ def draw_third_circle(
     stroke_color: str,
     fill_color: str,
     chart_type: ChartType,
-    c3: Union[int, float, None] = None,
+    c3: Union[int, float]
 ) -> str:
     """
     Draws the third circle in an SVG chart.

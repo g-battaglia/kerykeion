@@ -1,6 +1,8 @@
 from kerykeion import AstrologicalSubject
 from terminaltables import AsciiTable
 from kerykeion.utilities import get_houses_list, get_available_planets_list
+from typing import Union
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 
 class Report:
     """
@@ -12,7 +14,7 @@ class Report:
     planets_table: str
     houses_table: str
 
-    def __init__(self, instance: AstrologicalSubject):
+    def __init__(self, instance: Union[AstrologicalSubject, AstrologicalSubjectModel]):
         self.instance = instance
 
         self.get_report_title()

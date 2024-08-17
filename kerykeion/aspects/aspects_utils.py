@@ -8,6 +8,7 @@ from kerykeion import AstrologicalSubject
 from kerykeion.settings import KerykeionSettingsModel
 from swisseph import difdeg2n
 from typing import Union
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 
 
 def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, int], point_two: Union[float, int]):
@@ -157,7 +158,7 @@ def planet_id_decoder(planets_settings: dict, name: str):
             return result
 
 
-def get_active_points_list(subject: AstrologicalSubject, settings: Union[KerykeionSettingsModel, dict]) -> list:
+def get_active_points_list(subject: Union[AstrologicalSubject, AstrologicalSubjectModel], settings: Union[KerykeionSettingsModel, dict]) -> list:
     """
     Given an astrological subject and the settings, return a list of the active points.
     Args:

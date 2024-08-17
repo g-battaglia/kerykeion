@@ -51,3 +51,4 @@ dist/
 kr_venv
 request_cache
 Pipfile
+.mypy_cache

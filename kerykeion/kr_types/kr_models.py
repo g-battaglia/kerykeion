@@ -17,7 +17,6 @@ from kerykeion.kr_types import (
     Sign,
     ZodiacType,
     SignNumbers,
-    HouseNumbers,
     PointType,
     SiderealMode,
     HousesSystemIdentifier,
@@ -40,7 +39,7 @@ class SubscriptableBaseModel(BaseModel):
     def __delitem__(self, key):
         delattr(self, key)
 
-    def get(self, key, default):
+    def get(self, key, default = None):
         return getattr(self, key, default)
 
 
@@ -131,11 +130,14 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     mean_node: KerykeionPointModel
     true_node: KerykeionPointModel
 
-    # Lunar Phase
     lunar_phase: LunarPhaseModel
+    """Lunar phase model"""
     
-    available_planets_names: list[Planet]
-    houses_names: list[Houses]
+    planets_names_list: list[Planet]
+    """Ordered list of available planets names"""
+
+    houses_names_list: list[Houses]
+    """Ordered list of houses names"""
 
 
 class EphemerisDictModel(SubscriptableBaseModel):
