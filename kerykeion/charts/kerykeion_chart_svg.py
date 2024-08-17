@@ -569,7 +569,7 @@ class KerykeionChartSVG:
     def makeSVG(self, minify: bool = False):
         """Prints out the SVG file in the specifide folder"""
 
-        if not (self.template):
+        if not hasattr(self, "template"):
             self.template = self.makeTemplate(minify)
 
         self.chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart.svg"
