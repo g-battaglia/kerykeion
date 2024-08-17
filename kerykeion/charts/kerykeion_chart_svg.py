@@ -34,7 +34,7 @@ from kerykeion.charts.charts_utils import (
     draw_house_grid,
     draw_planet_grid,
 )
-from kerykeion.charts.draw_planets import draw_planets
+from kerykeion.charts.draw_planets import draw_planets # type: ignore
 from kerykeion.utilities import get_houses_list
 from pathlib import Path
 from scour.scour import scourString
@@ -168,9 +168,6 @@ class KerykeionChartSVG:
         
         if self.chart_type == "Transit":
             self.t_name = self.language_settings["transit_name"]
-
-        self.template = None
-
 
         # Default radius for the chart
         self.main_radius = 240
@@ -412,15 +409,15 @@ class KerykeionChartSVG:
         # Set planet colors
         for planet in self.planets_settings:
             planet_id = planet["id"]
-            template_dict[f"planets_color_{planet_id}"] = planet["color"]
+            template_dict[f"planets_color_{planet_id}"] = planet["color"] # type: ignore
 
         # Set zodiac colors
         for i in range(12):
-            template_dict[f"zodiac_color_{i}"] = self.chart_colors_settings[f"zodiac_icon_{i}"]
+            template_dict[f"zodiac_color_{i}"] = self.chart_colors_settings[f"zodiac_icon_{i}"] # type: ignore
 
         # Set orb colors
         for aspect in self.aspects_settings:
-            template_dict[f"orb_color_{aspect['degree']}"] = aspect['color']
+            template_dict[f"orb_color_{aspect['degree']}"] = aspect['color'] # type: ignore
 
         # Drawing functions
         template_dict["makeZodiac"] = self._draw_zodiac_circle_slices(self.main_radius)

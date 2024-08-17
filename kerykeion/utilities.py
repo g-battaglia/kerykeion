@@ -174,23 +174,25 @@ def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
     Returns:
         - The emoji of the moon phase
     """
+
+    lunar_phase_emojis = get_args(LunarPhaseEmoji)
     
     if phase == 1:
-        result = "🌑"
+        result = lunar_phase_emojis[0]
     elif phase < 7:
-        result = "🌒"
+        result = lunar_phase_emojis[1]
     elif 7 <= phase <= 9:
-        result = "🌓"
+        result = lunar_phase_emojis[2]
     elif phase < 14:
-        result = "🌔"
+        result = lunar_phase_emojis[3]
     elif phase == 14:
-        result = "🌕"
+        result = lunar_phase_emojis[4]
     elif phase < 20:
-        result = "🌖"
+        result = lunar_phase_emojis[5]
     elif 20 <= phase <= 22:
-        result = "🌗"
+        result = lunar_phase_emojis[6]
     elif phase <= 28:
-        result = "🌘"
+        result = lunar_phase_emojis[7]
 
     else:
         raise KerykeionException(f"Error in moon emoji calculation! Phase: {phase}")
@@ -207,23 +209,25 @@ def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
     Returns:
         - The name of the moon phase
     """
-    
+    lunar_phase_names = get_args(LunarPhaseName)
+
+
     if phase == 1:
-        result = "New Moon"
+        result = lunar_phase_names[0]
     elif phase < 7:
-        result = "Waxing Crescent"
+        result =  lunar_phase_names[1]
     elif 7 <= phase <= 9:
-        result = "First Quarter"
+        result = lunar_phase_names[2]
     elif phase < 14:
-        result = "Waxing Gibbous"
+        result = lunar_phase_names[3]
     elif phase == 14:
-        result = "Full Moon"
+        result = lunar_phase_names[4]
     elif phase < 20:
-        result = "Waning Gibbous"
+        result = lunar_phase_names[5]
     elif 20 <= phase <= 22:
-        result = "Last Quarter"
+        result = lunar_phase_names[6]
     elif phase <= 28:
-        result = "Waning Crescent"
+        result = lunar_phase_names[7]
 
     else:
         raise KerykeionException(f"Error in moon name calculation! Phase: {phase}")
