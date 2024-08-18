@@ -747,13 +747,13 @@ def draw_aspect_transit_grid(
         inner_path += f"</g>"
 
         # difference in degrees
-        inner_path += f'<text y="8" x="45" style="fill:#000000; font-size: 10px;">{convert_decimal_to_degree_string(aspects_list[i]["orbit"])}</text>'
+        inner_path += f'<text y="8" x="45" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;">{convert_decimal_to_degree_string(aspects_list[i]["orbit"])}</text>'
         # line
         inner_path += f"</g>"
         line = line + 14
 
     out = f'<g style="transform: translate(47%, 61%) scale({scale})">'
-    out += f'<text y="-15" x="0" style="fill:#000000; font-size: 14px;">{grid_title}:</text>'
+    out += f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{grid_title}:</text>'
     out += inner_path
     out += "</g>"
 

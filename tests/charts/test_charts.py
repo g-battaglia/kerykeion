@@ -19,6 +19,11 @@ class TestCharts:
         self.heliocentric_perspective_natal_chart = AstrologicalSubject("John Lennon - Heliocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy", perspective_type="Heliocentric")
         self.topocentric_perspective_natal_chart = AstrologicalSubject("John Lennon - Topocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy", perspective_type="Topocentric")
         self.true_geocentric_perspective_natal_chart = AstrologicalSubject("John Lennon - True Geocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy", perspective_type="True Geocentric")
+        self.minified_natal_chart = AstrologicalSubject("John Lennon - Minified", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
+        self.dark_theme_natal_chart = AstrologicalSubject("John Lennon - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
+        self.dark_high_contrast_theme_natal_chart = AstrologicalSubject("John Lennon - Dark High Contrast Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
+        self.light_theme_natal_chart = AstrologicalSubject("John Lennon - Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
+
 
     def test_natal_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.first_subject).makeTemplate()
@@ -214,6 +219,66 @@ class TestCharts:
 
         for i in range(len(birth_chart_svg_lines)):
             assert birth_chart_svg_lines[i] == file_content_lines[i]
+    
+    def test_minified_natal_chart(self):
+        birth_chart_svg = KerykeionChartSVG(self.minified_natal_chart).makeTemplate(minify=True)
+        birth_chart_svg_lines = [birth_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(birth_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.minified_natal_chart).makeSVG(minify=True)
+
+        with open(CURRENT_DIR / "John Lennon - Minified - Natal Chart.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+
+        for i in range(len(birth_chart_svg_lines)):
+            assert birth_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_dark_theme_natal_chart(self):
+        birth_chart_svg = KerykeionChartSVG(self.dark_theme_natal_chart, theme="dark").makeTemplate()
+        birth_chart_svg_lines = [birth_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(birth_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.dark_theme_natal_chart, theme="dark").makeSVG()
+
+        with open(CURRENT_DIR / "John Lennon - Dark Theme - Natal Chart.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+
+        for i in range(len(birth_chart_svg_lines)):
+            assert birth_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_dark_high_contrast_theme_natal_chart(self):
+        birth_chart_svg = KerykeionChartSVG(self.dark_high_contrast_theme_natal_chart, theme="dark-high-contrast").makeTemplate()
+        birth_chart_svg_lines = [birth_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(birth_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.dark_high_contrast_theme_natal_chart, theme="dark-high-contrast").makeSVG()
+
+        with open(CURRENT_DIR / "John Lennon - Dark High Contrast Theme - Natal Chart.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+
+        for i in range(len(birth_chart_svg_lines)):
+            assert birth_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_light_theme_natal_chart(self):
+        birth_chart_svg = KerykeionChartSVG(self.light_theme_natal_chart, theme="light").makeTemplate()
+        birth_chart_svg_lines = [birth_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(birth_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.light_theme_natal_chart, theme="light").makeSVG()
+        
+        with open(CURRENT_DIR / "John Lennon - Light Theme - Natal Chart.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+
+        for i in range(len(birth_chart_svg_lines)):
+            assert birth_chart_svg_lines[i] == file_content_lines[i]
 
 if __name__ == "__main__":
     test = TestCharts()
@@ -230,3 +295,7 @@ if __name__ == "__main__":
     test.test_heliocentric_perspective_natals_chart()
     test.test_topocentric_perspective_natals_chart()
     test.test_true_geocentric_perspective_natals_chart()
+    test.test_natal_chart_from_model()
+    test.test_minified_natal_chart()
+    test.test_dark_theme_natal_chart()
+    test.test_dark_high_contrast_theme_natal_chart()

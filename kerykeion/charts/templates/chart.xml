@@ -8,11 +8,14 @@
     height="100%"
     viewBox="$viewbox"
     preserveAspectRatio="xMidYMid"
+    style="background-color: $paper_color_1"
 >
     <title>$stringTitle | Kerykeion</title>
 
     <!-- Colors -->
-    $color_style_tag
+    <style kr:node="Theme_Colors_Tag">
+        $color_style_tag
+    </style>
 
     <!--- Main Chart -->
     <g kr:node="Main_Chart">
