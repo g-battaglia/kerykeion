@@ -15,6 +15,7 @@ from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointMode
 from kerykeion.kr_types import ChartTemplateDictionary
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel
+from kerykeion.kr_types.kr_literals import KerykeionChartTheme
 from kerykeion.charts.charts_utils import (
     draw_zodiac_slice, 
     convert_latitude_coordinate_to_string, 
@@ -36,13 +37,11 @@ from kerykeion.charts.charts_utils import (
 )
 from kerykeion.charts.draw_planets import draw_planets # type: ignore
 from kerykeion.utilities import get_houses_list
-from kerykeion.charts.color_style_tags import DEFAULT_COLOR_STYLE_TAG
 from pathlib import Path
 from scour.scour import scourString
 from string import Template
-from typing import Union, List
+from typing import Union, List, Literal
 from datetime import datetime
-
 
 
 class KerykeionChartSVG:
@@ -57,6 +56,8 @@ class KerykeionChartSVG:
         - new_output_directory: Set the output directory (default: home directory).
         - new_settings_file: Set the settings file (default: kr.config.json).
             In the settings file you can set the language, colors, planets, aspects, etc.
+        - theme: Set the theme for the chart (default: classic). If None the <style> tag will be empty.
+            That's useful if you want to use your own CSS file customizing the value of the default theme variables.
     """
     
     # Constants
@@ -104,7 +105,7 @@ class KerykeionChartSVG:
         second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, None] = None,
         new_output_directory: Union[str, None] = None,
         new_settings_file: Union[Path, None] = None,
-        color_style_tag: str = DEFAULT_COLOR_STYLE_TAG
+        theme: Union[KerykeionChartTheme, None] = "classic",
     ):
         # Directories:
         self.homedir = Path.home()
@@ -186,11 +187,27 @@ class KerykeionChartSVG:
         self.air = 0.0
         self.water = 0.0
 
-        # Color style tag
-        self.color_style_tag = color_style_tag
-
         # Calculate element points from planets
         self._calculate_elements_points_from_planets()
+
+        # Set up theme
+        if theme not in get_args(KerykeionChartTheme) and theme is not None:
+            raise KerykeionException(f"Theme {theme} is not available. Set None for default theme.")
+
+        self.set_up_theme(theme)
+
+    def set_up_theme(self, theme: Union[KerykeionChartTheme, None] = None) -> None:
+        """
+        Set the theme for the chart.
+        """
+        if theme is None:
+            self.color_style_tag = ""
+            return
+
+        theme_dir = Path(__file__).parent / "themes"
+
+        with open(theme_dir / f"{theme}.css", "r") as f:
+            self.color_style_tag = f.read()
 
     def set_output_directory(self, dir_path: Path) -> None:
         """
@@ -662,4 +679,22 @@ if __name__ == "__main__":
     topocentric_chart = KerykeionChartSVG(topocentric_subject)
     topocentric_chart.makeSVG()
 
+    # Minified SVG
+    minified_subject = AstrologicalSubject("John Lennon - Minified", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    minified_chart = KerykeionChartSVG(minified_subject)
+    minified_chart.makeSVG(minify=True)
 
+    # Dark Theme Natal Chart
+    dark_theme_subject = AstrologicalSubject("John Lennon - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    dark_theme_natal_chart = KerykeionChartSVG(dark_theme_subject, theme="dark")
+    dark_theme_natal_chart.makeSVG()
+
+    # Dark High Contrast Theme Natal Chart
+    dark_high_contrast_theme_subject = AstrologicalSubject("John Lennon - Dark High Contrast Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    dark_high_contrast_theme_natal_chart = KerykeionChartSVG(dark_high_contrast_theme_subject, theme="dark-high-contrast")
+    dark_high_contrast_theme_natal_chart.makeSVG()
+
+    # Light Theme Natal Chart
+    light_theme_subject = AstrologicalSubject("John Lennon - Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    light_theme_natal_chart = KerykeionChartSVG(light_theme_subject, theme="light")
+    light_theme_natal_chart.makeSVG()

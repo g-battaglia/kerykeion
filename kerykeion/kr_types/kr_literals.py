@@ -102,3 +102,6 @@ Usually the standard is "Apparent Geocentric"
 
 
 SignsEmoji = Literal["♈️", "♉️", "♊️", "♋️", "♌️", "♍️", "♎️", "♏️", "♐️", "♑️", "♒️", "♓️"]
+
+
+KerykeionChartTheme = Literal["light", "dark", "dark-high-contrast", "classic"]
