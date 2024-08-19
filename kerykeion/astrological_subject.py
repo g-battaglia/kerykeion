@@ -812,3 +812,7 @@ if __name__ == "__main__":
     # Test Mean Lilith
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", disable_chiron_and_lilith=True)
     print(johnny.mean_lilith)
+
+    # Offline mode
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", online=False, tz_str="America/New_York", lng=-87.1111, lat=37.7711)
+    print(johnny.json(dump=True, indent=2))
