@@ -752,7 +752,7 @@ def draw_aspect_transit_grid(
         inner_path += f"</g>"
         line = line + 14
 
-    out = f'<g style="transform: translate(47%, 61%) scale({scale})">'
+    out = f'<g style="transform: translate(47%, 59%) scale({scale})">'
     out += f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{grid_title}:</text>'
     out += inner_path
     out += "</g>"
