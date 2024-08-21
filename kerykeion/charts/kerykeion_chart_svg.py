@@ -646,7 +646,7 @@ class KerykeionChartSVG:
             template = f.read()
 
         template_dict = self._create_template_dictionary()
-        aspects_grid = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list, xindent = 50, yindent = 250)
+        aspects_grid = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list, x_start=50, y_start=250)
         template = Template(template).substitute({**template_dict, "makeAspectGrid": aspects_grid})
         
         if minify:

@@ -516,58 +516,61 @@ def draw_third_circle(
 
 def draw_aspect_grid(
         stroke_color: str, 
-        available_planets_list: list, 
-        aspects_list: list,
-        xindent: int = 380,
-        yindent: int = 468,
+        available_planets: list, 
+        aspects: list,
+        x_start: int = 380,
+        y_start: int = 468,
     ) -> str:
     """
-    Draws the aspect grid.
+    Draws the aspect grid for the given planets and aspects.
 
     Args:
-        - stroke_color (str): The color of the stroke.
-        - available_planets_list (list): List of all the planets, they will be actually filtered to so if they have
-            the "is_active" key set to True inside the function to have the correct list of just the active planets.
-        - aspects_list (list): List of aspects.
-        - xindent (int): The x indent starting point.
-        - yindent (int): The y indent starting point.
+        stroke_color (str): The color of the stroke.
+        available_planets (list): List of all planets. Only planets with "is_active" set to True will be used.
+        aspects (list): List of aspects.
+        x_start (int): The x-coordinate starting point.
+        y_start (int): The y-coordinate starting point.
 
+    Returns:
+        str: SVG string representing the aspect grid.
     """
-
-    out = ""
+    svg_output = ""
     style = f"stroke:{stroke_color}; stroke-width: 1px; stroke-opacity:.6; fill:none"
-    box = 14
-    counter = 0
+    box_size = 14
 
-    actual_planets = []
-    for planet in available_planets_list:
-        if planet.is_active:
-            actual_planets.append(planet)
+    # Filter active planets
+    active_planets = [planet for planet in available_planets if planet.is_active]
 
-    first_iteration_revers_planets = actual_planets[::-1]
-    for index, a in enumerate(first_iteration_revers_planets):
-        counter += 1
-        out += f'<rect x="{xindent}" y="{yindent}" width="{box}" height="{box}" style="{style}"/>'
-        out += f'<use transform="scale(0.4)" x="{(xindent+2)*2.5}" y="{(yindent+1)*2.5}" xlink:href="#{a["name"]}" />'
+    # Reverse the list of active planets for the first iteration
+    reversed_planets = active_planets[::-1]
 
-        xindent = xindent + box
-        yindent = yindent - box
+    for index, planet_a in enumerate(reversed_planets):
+        # Draw the grid box for the planet
+        svg_output += f'<rect x="{x_start}" y="{y_start}" width="{box_size}" height="{box_size}" style="{style}"/>'
+        svg_output += f'<use transform="scale(0.4)" x="{(x_start + 2) * 2.5}" y="{(y_start + 1) * 2.5}" xlink:href="#{planet_a["name"]}" />'
 
-        xorb = xindent
-        yorb = yindent + box
+        # Update the starting coordinates for the next box
+        x_start += box_size
+        y_start -= box_size
 
-        second_iteration_revers_planets = first_iteration_revers_planets[index + 1 :]
-        for b in second_iteration_revers_planets:
-            out += f'<rect x="{xorb}" y="{yorb}" width="{box}" height="{box}" style="{style}"/>'
-            xorb = xorb + box
+        # Coordinates for the aspect symbols
+        x_aspect = x_start
+        y_aspect = y_start + box_size
 
-            for aspect in aspects_list:
-                if (aspect["p1"] == a["id"] and aspect["p2"] == b["id"]) or (
-                    aspect["p1"] == b["id"] and aspect["p2"] == a["id"]
+        # Iterate over the remaining planets
+        for planet_b in reversed_planets[index + 1:]:
+            # Draw the grid box for the aspect
+            svg_output += f'<rect x="{x_aspect}" y="{y_aspect}" width="{box_size}" height="{box_size}" style="{style}"/>'
+            x_aspect += box_size
+
+            # Check for aspects between the planets
+            for aspect in aspects:
+                if (aspect["p1"] == planet_a["id"] and aspect["p2"] == planet_b["id"]) or (
+                    aspect["p1"] == planet_b["id"] and aspect["p2"] == planet_a["id"]
                 ):
-                    out += f'<use  x="{xorb-box+1}" y="{yorb+1}" xlink:href="#orb{aspect["aspect_degrees"]}" />'
+                    svg_output += f'<use  x="{x_aspect - box_size + 1}" y="{y_aspect + 1}" xlink:href="#orb{aspect["aspect_degrees"]}" />'
 
-    return out
+    return svg_output
 
 
 def draw_houses_cusps_and_text_number(
