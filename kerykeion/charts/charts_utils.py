@@ -514,7 +514,13 @@ def draw_third_circle(
         return f'<circle cx="{radius}" cy="{radius}" r="{radius - c3}" style="fill: {fill_color}; fill-opacity:.8; stroke: {stroke_color}; stroke-width: 1px" />'
 
 
-def draw_aspect_grid(stroke_color: str, available_planets_list: list, aspects_list: list) -> str:
+def draw_aspect_grid(
+        stroke_color: str, 
+        available_planets_list: list, 
+        aspects_list: list,
+        xindent: int = 380,
+        yindent: int = 468,
+    ) -> str:
     """
     Draws the aspect grid.
 
@@ -523,13 +529,13 @@ def draw_aspect_grid(stroke_color: str, available_planets_list: list, aspects_li
         - available_planets_list (list): List of all the planets, they will be actually filtered to so if they have
             the "is_active" key set to True inside the function to have the correct list of just the active planets.
         - aspects_list (list): List of aspects.
+        - xindent (int): The x indent starting point.
+        - yindent (int): The y indent starting point.
 
     """
 
     out = ""
     style = f"stroke:{stroke_color}; stroke-width: 1px; stroke-opacity:.6; fill:none"
-    xindent = 380
-    yindent = 468
     box = 14
     counter = 0
 

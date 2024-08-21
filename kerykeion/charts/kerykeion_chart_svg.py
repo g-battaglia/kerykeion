@@ -636,6 +636,39 @@ class KerykeionChartSVG:
 
         logging.info(f"SVG Generated Correctly in: {self.chartname}")
 
+    def makeAspectGridOnlyTemplate(self, minify: bool = False):
+        """Creates the template for the SVG file with only the aspect grid"""
+
+        if self.chart_type in ["Transit", "Synastry"]:
+            raise KerykeionException("Aspect Grid is not available for Transit and Synastry charts yet.")
+    
+        with open(Path(__file__).parent / "templates" / "aspect_grid_only.xml", "r", encoding="utf-8", errors="ignore") as f:
+            template = f.read()
+
+        template_dict = self._create_template_dictionary()
+        aspects_grid = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list, xindent = 50, yindent = 250)
+        template = Template(template).substitute({**template_dict, "makeAspectGrid": aspects_grid})
+        
+        if minify:
+            template = scourString(template).replace('"', "'").replace("\n", "").replace("\t","").replace("    ", "").replace("  ", "")
+            
+        else:
+            template = template.replace('"', "'")
+
+        return template
+
+    def makeAspectGridOnlySVG(self, minify: bool = False):
+        """Prints out the SVG file in the specified folder with only the aspect grid"""
+
+        template = self.makeAspectGridOnlyTemplate(minify)
+
+        self.chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart - Aspect Grid Only.svg"
+
+        with open(self.chartname, "w", encoding="utf-8", errors="ignore") as output_file:
+            output_file.write(template)
+
+        logging.info(f"SVG Generated Correctly in: {self.chartname}")
+
 
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
@@ -752,3 +785,23 @@ if __name__ == "__main__":
     sidereal_dark_subject = AstrologicalSubject("John Lennon Lahiri - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
     sidereal_dark_chart = KerykeionChartSVG(sidereal_dark_subject, theme="dark")
     sidereal_dark_chart.makeWheelOnlySVG()
+
+    # Wheel Sidereal Birth Chart (Fagan-Bradley) Light Theme
+    sidereal_light_subject = AstrologicalSubject("John Lennon Fagan-Bradley - Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY")
+    sidereal_light_chart = KerykeionChartSVG(sidereal_light_subject, theme="light")
+    sidereal_light_chart.makeWheelOnlySVG()
+
+    # Aspect Grid Only Natal Chart
+    aspect_grid_only_subject = AstrologicalSubject("John Lennon - Aspect Grid Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    aspect_grid_only_chart = KerykeionChartSVG(aspect_grid_only_subject)
+    aspect_grid_only_chart.makeAspectGridOnlySVG()
+
+    # Aspect Grid Only Dark Theme Natal Chart
+    aspect_grid_dark_subject = AstrologicalSubject("John Lennon - Aspect Grid Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    aspect_grid_dark_chart = KerykeionChartSVG(aspect_grid_dark_subject, theme="dark")
+    aspect_grid_dark_chart.makeAspectGridOnlySVG()
+
+    # Aspect Grid Only Light Theme Natal Chart
+    aspect_grid_light_subject = AstrologicalSubject("John Lennon - Aspect Grid Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    aspect_grid_light_chart = KerykeionChartSVG(aspect_grid_light_subject, theme="light")
+    aspect_grid_light_chart.makeAspectGridOnlySVG()
