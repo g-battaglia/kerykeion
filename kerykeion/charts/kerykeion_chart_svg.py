@@ -574,7 +574,7 @@ class KerykeionChartSVG:
         td = self._create_template_dictionary()
 
         DATA_DIR = Path(__file__).parent
-        xml_svg = DATA_DIR / "templates/chart.xml"
+        xml_svg = DATA_DIR / "templates" / "chart.xml"
         
         # read template
         with open(xml_svg, "r", encoding="utf-8", errors="ignore") as f:
@@ -595,7 +595,7 @@ class KerykeionChartSVG:
         return template
 
     def makeSVG(self, minify: bool = False):
-        """Prints out the SVG file in the specifide folder"""
+        """Prints out the SVG file in the specified folder"""
 
         if not hasattr(self, "template"):
             self.template = self.makeTemplate(minify)
@@ -604,6 +604,35 @@ class KerykeionChartSVG:
 
         with open(self.chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(self.template)
+
+        logging.info(f"SVG Generated Correctly in: {self.chartname}")
+
+    def makeWheelOnlyTemplate(self, minify: bool = False):
+        """Creates the template for the SVG file with only the wheel"""
+    
+        with open(Path(__file__).parent / "templates" / "wheel_only.xml", "r", encoding="utf-8", errors="ignore") as f:
+            template = f.read()
+
+        template_dict = self._create_template_dictionary()
+        template = Template(template).substitute(template_dict)
+        
+        if minify:
+            template = scourString(template).replace('"', "'").replace("\n", "").replace("\t","").replace("    ", "").replace("  ", "")
+            
+        else:
+            template = template.replace('"', "'")
+
+        return template
+
+    def makeWheelOnlySVG(self, minify: bool = False):
+        """Prints out the SVG file in the specified folder with only the wheel"""
+
+        template = self.makeWheelOnlyTemplate(minify)
+
+        self.chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart - Wheel Only.svg"
+
+        with open(self.chartname, "w", encoding="utf-8", errors="ignore") as output_file:
+            output_file.write(template)
 
         logging.info(f"SVG Generated Correctly in: {self.chartname}")
 
@@ -698,3 +727,28 @@ if __name__ == "__main__":
     light_theme_subject = AstrologicalSubject("John Lennon - Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
     light_theme_natal_chart = KerykeionChartSVG(light_theme_subject, theme="light")
     light_theme_natal_chart.makeSVG()
+
+    # Wheel Natal Only Chart
+    wheel_only_subject = AstrologicalSubject("John Lennon - Wheel Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    wheel_only_chart = KerykeionChartSVG(wheel_only_subject)
+    wheel_only_chart.makeWheelOnlySVG()
+
+    # Wheel External Natal Only Chart
+    wheel_external_subject = AstrologicalSubject("John Lennon - Wheel External Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    wheel_external_chart = KerykeionChartSVG(wheel_external_subject, "ExternalNatal", second)
+    wheel_external_chart.makeWheelOnlySVG()
+
+    # Wheel Synastry Only Chart
+    wheel_synastry_subject = AstrologicalSubject("John Lennon - Wheel Synastry Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    wheel_synastry_chart = KerykeionChartSVG(wheel_synastry_subject, "Synastry", second)
+    wheel_synastry_chart.makeWheelOnlySVG()
+
+    # Wheel Transit Only Chart
+    wheel_transit_subject = AstrologicalSubject("John Lennon - Wheel Transit Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    wheel_transit_chart = KerykeionChartSVG(wheel_transit_subject, "Transit", second)
+    wheel_transit_chart.makeWheelOnlySVG()
+
+    # Wheel Sidereal Birth Chart (Lahiri) Dark Theme
+    sidereal_dark_subject = AstrologicalSubject("John Lennon Lahiri - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+    sidereal_dark_chart = KerykeionChartSVG(sidereal_dark_subject, theme="dark")
+    sidereal_dark_chart.makeWheelOnlySVG()
