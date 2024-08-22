@@ -42,6 +42,7 @@ from scour.scour import scourString
 from string import Template
 from typing import Union, List, Literal
 from datetime import datetime
+from kerykeion.charts.draw_transit_aspect_grid import draw_transit_aspect_grid
 
 
 class KerykeionChartSVG:
@@ -638,15 +639,16 @@ class KerykeionChartSVG:
 
     def makeAspectGridOnlyTemplate(self, minify: bool = False):
         """Creates the template for the SVG file with only the aspect grid"""
-
-        if self.chart_type in ["Transit", "Synastry"]:
-            raise KerykeionException("Aspect Grid is not available for Transit and Synastry charts yet.")
     
         with open(Path(__file__).parent / "templates" / "aspect_grid_only.xml", "r", encoding="utf-8", errors="ignore") as f:
             template = f.read()
 
         template_dict = self._create_template_dictionary()
-        aspects_grid = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list, x_start=50, y_start=250)
+
+        if self.chart_type in ["Transit", "Synastry"]:
+            aspects_grid = draw_transit_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list, x_start=50, y_start=250)
+        else:
+            aspects_grid = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list, x_start=50, y_start=250)
         template = Template(template).substitute({**template_dict, "makeAspectGrid": aspects_grid})
         
         if minify:
@@ -805,3 +807,8 @@ if __name__ == "__main__":
     aspect_grid_light_subject = AstrologicalSubject("John Lennon - Aspect Grid Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
     aspect_grid_light_chart = KerykeionChartSVG(aspect_grid_light_subject, theme="light")
     aspect_grid_light_chart.makeAspectGridOnlySVG()
+
+    # Synastry Chart Aspect Grid Only
+    aspect_grid_synastry_subject = AstrologicalSubject("John Lennon - Aspect Grid Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    aspect_grid_synastry_chart = KerykeionChartSVG(aspect_grid_synastry_subject, "Synastry", second)
+    aspect_grid_synastry_chart.makeAspectGridOnlySVG()
