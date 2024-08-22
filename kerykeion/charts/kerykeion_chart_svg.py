@@ -30,7 +30,8 @@ from kerykeion.charts.charts_utils import (
     draw_third_circle,
     draw_aspect_grid,
     draw_houses_cusps_and_text_number,
-    draw_aspect_transit_grid,
+    draw_transit_aspect_list,
+    draw_transit_aspect_grid,
     draw_moon_phase,
     draw_house_grid,
     draw_planet_grid,
@@ -42,7 +43,6 @@ from scour.scour import scourString
 from string import Template
 from typing import Union, List, Literal
 from datetime import datetime
-from kerykeion.charts.draw_transit_aspect_grid import draw_transit_aspect_grid
 
 
 class KerykeionChartSVG:
@@ -107,6 +107,7 @@ class KerykeionChartSVG:
         new_output_directory: Union[str, None] = None,
         new_settings_file: Union[Path, None] = None,
         theme: Union[KerykeionChartTheme, None] = "classic",
+        double_chart_aspect_grid_type: Literal["list", "table"] = "list"
     ):
         # Directories:
         self.homedir = Path.home()
@@ -157,6 +158,9 @@ class KerykeionChartSVG:
             self.t_available_kerykeion_celestial_points = []
             for body in available_celestial_points_names:
                 self.t_available_kerykeion_celestial_points.append(self.t_user.get(body))
+
+        # Double chart aspect grid type
+        self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
 
         # screen size
         self.height = self._DEFAULT_HEIGHT
@@ -368,7 +372,11 @@ class KerykeionChartSVG:
             template_dict["first_circle"] = draw_first_circle(self.main_radius, self.chart_colors_settings["zodiac_transit_ring_2"], self.chart_type)
             template_dict["second_circle"] = draw_second_circle(self.main_radius, self.chart_colors_settings['zodiac_transit_ring_1'], self.chart_colors_settings['paper_1'], self.chart_type)
             template_dict['third_circle'] = draw_third_circle(self.main_radius, self.chart_colors_settings['zodiac_transit_ring_0'], self.chart_colors_settings['paper_1'], self.chart_type, self.third_circle_radius)
-            template_dict["makeAspectGrid"] = draw_aspect_transit_grid(self.language_settings["aspects"], self.aspects_list, self.planets_settings, self.aspects_settings)
+
+            if self.double_chart_aspect_grid_type == "list":
+                template_dict["makeAspectGrid"] = draw_transit_aspect_list(self.language_settings["aspects"], self.aspects_list, self.planets_settings, self.aspects_settings)
+            else:
+                template_dict["makeAspectGrid"] = draw_transit_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list, 550, 450)
 
             template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(self.main_radius, self.main_radius - 160)
         else:
@@ -646,9 +654,10 @@ class KerykeionChartSVG:
         template_dict = self._create_template_dictionary()
 
         if self.chart_type in ["Transit", "Synastry"]:
-            aspects_grid = draw_transit_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list, x_start=50, y_start=250)
+            aspects_grid = draw_transit_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list)
         else:
             aspects_grid = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list, x_start=50, y_start=250)
+
         template = Template(template).substitute({**template_dict, "makeAspectGrid": aspects_grid})
         
         if minify:
@@ -763,6 +772,16 @@ if __name__ == "__main__":
     light_theme_natal_chart = KerykeionChartSVG(light_theme_subject, theme="light")
     light_theme_natal_chart.makeSVG()
 
+    # Dark Theme External Natal Chart
+    dark_theme_external_subject = AstrologicalSubject("John Lennon - Dark Theme External", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    dark_theme_external_chart = KerykeionChartSVG(dark_theme_external_subject, "ExternalNatal", second, theme="dark")
+    dark_theme_external_chart.makeSVG()
+
+    # Dark Theme Synastry Chart
+    dark_theme_synastry_subject = AstrologicalSubject("John Lennon - DTS", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    dark_theme_synastry_chart = KerykeionChartSVG(dark_theme_synastry_subject, "Synastry", second, theme="dark")
+    dark_theme_synastry_chart.makeSVG()
+
     # Wheel Natal Only Chart
     wheel_only_subject = AstrologicalSubject("John Lennon - Wheel Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
     wheel_only_chart = KerykeionChartSVG(wheel_only_subject)
@@ -822,3 +841,8 @@ if __name__ == "__main__":
     aspect_grid_dark_synastry_subject = AstrologicalSubject("John Lennon - Aspect Grid Dark Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB")
     aspect_grid_dark_synastry_chart = KerykeionChartSVG(aspect_grid_dark_synastry_subject, "Synastry", second, theme="dark")
     aspect_grid_dark_synastry_chart.makeAspectGridOnlySVG()
+
+    # Transit Chart With draw_transit_aspect_grid table
+    transit_chart_with_table_grid_subject = AstrologicalSubject("John Lennon - TCWTG", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    transit_chart_with_table_grid = KerykeionChartSVG(transit_chart_with_table_grid_subject, "Transit", second, double_chart_aspect_grid_type="table", theme="dark")
+    transit_chart_with_table_grid.makeSVG()
