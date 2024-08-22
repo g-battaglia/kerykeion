@@ -812,3 +812,13 @@ if __name__ == "__main__":
     aspect_grid_synastry_subject = AstrologicalSubject("John Lennon - Aspect Grid Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB")
     aspect_grid_synastry_chart = KerykeionChartSVG(aspect_grid_synastry_subject, "Synastry", second)
     aspect_grid_synastry_chart.makeAspectGridOnlySVG()
+
+    # Transit Chart Aspect Grid Only
+    aspect_grid_transit_subject = AstrologicalSubject("John Lennon - Aspect Grid Transit", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    aspect_grid_transit_chart = KerykeionChartSVG(aspect_grid_transit_subject, "Transit", second)
+    aspect_grid_transit_chart.makeAspectGridOnlySVG()
+
+    # Synastry Chart Aspect Grid Only Dark Theme
+    aspect_grid_dark_synastry_subject = AstrologicalSubject("John Lennon - Aspect Grid Dark Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    aspect_grid_dark_synastry_chart = KerykeionChartSVG(aspect_grid_dark_synastry_subject, "Synastry", second, theme="dark")
+    aspect_grid_dark_synastry_chart.makeAspectGridOnlySVG()
