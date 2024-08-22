@@ -65,9 +65,8 @@ def draw_transit_aspect_grid(
 
             # Check for aspects between the planets
             for aspect in aspects:
-                if (aspect["p1"] == planet_a["id"] and aspect["p2"] == planet_b["id"]) or (
-                    aspect["p1"] == planet_b["id"] and aspect["p2"] == planet_a["id"]
-                ):
+                if (aspect["p1"] == planet_a["id"] and aspect["p2"] == planet_b["id"]):
                     svg_output += f'<use  x="{x_aspect - box_size + 1}" y="{y_aspect + 1}" xlink:href="#orb{aspect["aspect_degrees"]}" />'
+                    aspects.remove(aspect)
 
     return svg_output
