@@ -23,7 +23,22 @@ class TestCharts:
         self.dark_theme_natal_chart = AstrologicalSubject("John Lennon - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
         self.dark_high_contrast_theme_natal_chart = AstrologicalSubject("John Lennon - Dark High Contrast Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
         self.light_theme_natal_chart = AstrologicalSubject("John Lennon - Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
+        self.dark_theme_external_subject = AstrologicalSubject("John Lennon - Dark Theme External", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+        self.dark_theme_synastry_subject = AstrologicalSubject("John Lennon - DTS", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+        self.wheel_only_subject = AstrologicalSubject("John Lennon - Wheel Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 
+        self.wheel_external_subject = AstrologicalSubject("John Lennon - Wheel External Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+        self.wheel_synastry_subject = AstrologicalSubject("John Lennon - Wheel Synastry Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+        self.wheel_transit_subject = AstrologicalSubject("John Lennon - Wheel Transit Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+        self.sidereal_dark_subject = AstrologicalSubject("John Lennon Lahiri - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+        self.sidereal_light_subject = AstrologicalSubject("John Lennon Fagan-Bradley - Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY")
+        self.aspect_grid_only_subject = AstrologicalSubject("John Lennon - Aspect Grid Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+        self.aspect_grid_dark_subject = AstrologicalSubject("John Lennon - Aspect Grid Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+        self.aspect_grid_light_subject = AstrologicalSubject("John Lennon - Aspect Grid Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+        self.aspect_grid_synastry_subject = AstrologicalSubject("John Lennon - Aspect Grid Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+        self.aspect_grid_transit_subject = AstrologicalSubject("John Lennon - Aspect Grid Transit", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+        self.aspect_grid_dark_synastry_subject = AstrologicalSubject("John Lennon - Aspect Grid Dark Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+        self.transit_chart_with_table_grid_subject = AstrologicalSubject("John Lennon - TCWTG", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 
     def test_natal_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.first_subject).makeTemplate()
@@ -280,6 +295,214 @@ class TestCharts:
         for i in range(len(birth_chart_svg_lines)):
             assert birth_chart_svg_lines[i] == file_content_lines[i]
 
+    def test_dark_theme_external_natal_chart(self):
+        external_natal_chart_svg = KerykeionChartSVG(self.dark_theme_external_subject, theme="dark", chart_type="ExternalNatal").makeTemplate()
+        external_natal_chart_svg_lines = [external_natal_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(external_natal_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.dark_theme_external_subject, theme="dark").makeSVG()
+
+        with open(CURRENT_DIR / "John Lennon - Dark Theme External - ExternalNatal Chart.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+        
+        for i in range(len(external_natal_chart_svg_lines)):
+            assert external_natal_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_dark_theme_synastry_chart(self):
+        synastry_chart_svg = KerykeionChartSVG(self.dark_theme_synastry_subject, "Synastry", self.second_subject, theme="dark").makeTemplate()
+        synastry_chart_svg_lines = [synastry_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(synastry_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.dark_theme_synastry_subject, theme="dark").makeSVG()
+
+        with open(CURRENT_DIR / "John Lennon - DTS - Synastry Chart.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+        
+        for i in range(len(synastry_chart_svg_lines)):
+            assert synastry_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_wheel_only_chart(self):
+        wheel_only_chart_svg = KerykeionChartSVG(self.wheel_only_subject).makeWheelOnlyTemplate()
+
+        wheel_only_chart_svg_lines = [wheel_only_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(wheel_only_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.wheel_only_subject).makeWheelOnlySVG()
+
+        with open(CURRENT_DIR / "John Lennon - Wheel Only - Natal Chart - Wheel Only.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+        
+        for i in range(len(wheel_only_chart_svg_lines)):
+            assert wheel_only_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_wheel_external_chart(self):
+        wheel_external_chart_svg = KerykeionChartSVG(self.wheel_external_subject, chart_type="ExternalNatal").makeWheelOnlyTemplate()
+
+        wheel_external_chart_svg_lines = [wheel_external_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(wheel_external_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.wheel_external_subject, chart_type="ExternalNatal").makeWheelOnlySVG()
+
+        with open(CURRENT_DIR / "John Lennon - Wheel External Only - ExternalNatal Chart - Wheel Only.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+        
+        for i in range(len(wheel_external_chart_svg_lines)):
+            assert wheel_external_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_wheel_synastry_chart(self):
+        wheel_synastry_chart_svg = KerykeionChartSVG(self.wheel_synastry_subject, chart_type="Synastry", second_obj=self.second_subject).makeWheelOnlyTemplate()
+
+        wheel_synastry_chart_svg_lines = [wheel_synastry_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(wheel_synastry_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.wheel_synastry_subject, chart_type="Synastry", second_obj=self.second_subject).makeWheelOnlySVG()
+
+        with open(CURRENT_DIR / "John Lennon - Wheel Synastry Only - Synastry Chart - Wheel Only.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+        
+        for i in range(len(wheel_synastry_chart_svg_lines)):
+            assert wheel_synastry_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_wheel_transit_chart(self):
+        wheel_transit_chart_svg = KerykeionChartSVG(self.wheel_transit_subject, chart_type="Transit", second_obj=self.second_subject).makeWheelOnlyTemplate()
+
+        wheel_transit_chart_svg_lines = [wheel_transit_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(wheel_transit_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.wheel_transit_subject, chart_type="Transit", second_obj=self.second_subject).makeWheelOnlySVG()
+
+        with open(CURRENT_DIR / "John Lennon - Wheel Transit Only - Transit Chart - Wheel Only.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+        
+        for i in range(len(wheel_transit_chart_svg_lines)):
+            assert wheel_transit_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_aspect_grid_only_chart(self):
+        aspect_grid_only_chart_svg = KerykeionChartSVG(self.aspect_grid_only_subject).makeAspectGridOnlyTemplate()
+
+        aspect_grid_only_chart_svg_lines = [aspect_grid_only_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(aspect_grid_only_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.aspect_grid_only_subject).makeAspectGridOnlySVG()
+
+        with open(CURRENT_DIR / "John Lennon - Aspect Grid Only - Natal Chart - Aspect Grid Only.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+        
+        for i in range(len(aspect_grid_only_chart_svg_lines)):
+            assert aspect_grid_only_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_aspect_grid_dark_chart(self):
+        aspect_grid_dark_chart_svg = KerykeionChartSVG(self.aspect_grid_dark_subject, theme="dark").makeAspectGridOnlyTemplate()
+
+        aspect_grid_dark_chart_svg_lines = [aspect_grid_dark_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(aspect_grid_dark_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.aspect_grid_dark_subject, theme="dark").makeAspectGridOnlySVG()
+
+        with open(CURRENT_DIR / "John Lennon - Aspect Grid Dark Theme - Natal Chart - Aspect Grid Only.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+        
+        for i in range(len(aspect_grid_dark_chart_svg_lines)):
+            assert aspect_grid_dark_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_aspect_grid_light_chart(self):
+        aspect_grid_light_chart_svg = KerykeionChartSVG(self.aspect_grid_light_subject, theme="light").makeAspectGridOnlyTemplate()
+
+        aspect_grid_light_chart_svg_lines = [aspect_grid_light_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(aspect_grid_light_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.aspect_grid_light_subject, theme="light").makeAspectGridOnlySVG()
+
+        with open(CURRENT_DIR / "John Lennon - Aspect Grid Light Theme - Natal Chart - Aspect Grid Only.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+        
+        for i in range(len(aspect_grid_light_chart_svg_lines)):
+            assert aspect_grid_light_chart_svg_lines[i] == file_content_lines[i]
+
+
+    def test_aspect_grid_synastry_chart(self):
+        aspect_grid_synastry_chart_svg = KerykeionChartSVG(self.aspect_grid_synastry_subject, "Synastry", self.second_subject).makeAspectGridOnlyTemplate()
+
+        aspect_grid_synastry_chart_svg_lines = [aspect_grid_synastry_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(aspect_grid_synastry_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.aspect_grid_synastry_subject, "Synastry", self.second_subject).makeAspectGridOnlySVG()
+
+        with open(CURRENT_DIR / "John Lennon - Aspect Grid Synastry - Synastry Chart - Aspect Grid Only.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+        
+        for i in range(len(aspect_grid_synastry_chart_svg_lines)):
+            assert aspect_grid_synastry_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_aspect_grid_transit(self):
+        aspect_grid_transit_chart_svg = KerykeionChartSVG(self.aspect_grid_transit_subject, "Transit", self.second_subject).makeAspectGridOnlyTemplate()
+
+        aspect_grid_transit_chart_svg_lines = [aspect_grid_transit_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(aspect_grid_transit_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.aspect_grid_transit_subject, "Transit", self.second_subject).makeAspectGridOnlySVG()
+
+        with open(CURRENT_DIR / "John Lennon - Aspect Grid Transit - Transit Chart - Aspect Grid Only.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+
+        for i in range(len(aspect_grid_transit_chart_svg_lines)):
+            assert aspect_grid_transit_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_aspect_grid_dark_synastry(self):
+        aspect_grid_dark_synastry_chart_svg = KerykeionChartSVG(self.aspect_grid_dark_synastry_subject, "Synastry", self.second_subject, theme="dark").makeAspectGridOnlyTemplate()
+
+        aspect_grid_dark_synastry_chart_svg_lines = [aspect_grid_dark_synastry_chart_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(aspect_grid_dark_synastry_chart_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.aspect_grid_dark_synastry_subject, "Synastry", self.second_subject, theme="dark").makeAspectGridOnlySVG()
+
+        with open(CURRENT_DIR / "John Lennon - Aspect Grid Dark Synastry - Synastry Chart - Aspect Grid Only.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+
+        for i in range(len(aspect_grid_dark_synastry_chart_svg_lines)):
+            assert aspect_grid_dark_synastry_chart_svg_lines[i] == file_content_lines[i]
+
+    def test_transit_chart_with_table_grid(self):
+        transit_chart_with_table_grid_svg = KerykeionChartSVG(self.transit_chart_with_table_grid_subject, "Transit", self.second_subject, double_chart_aspect_grid_type="table", theme="dark").makeTemplate()
+
+        transit_chart_with_table_grid_svg_lines = [transit_chart_with_table_grid_svg[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(transit_chart_with_table_grid_svg), SPLIT_LINE_LENGTH)]
+
+        if WRITE_TO_FILE:
+            KerykeionChartSVG(self.transit_chart_with_table_grid_subject, "Transit", self.second_subject, double_chart_aspect_grid_type="table").makeSVG()
+
+        with open(CURRENT_DIR / "John Lennon - TCWTG - Transit Chart.svg", "r") as f:
+            file_content = f.read()
+
+        file_content_lines = [file_content[i:i+SPLIT_LINE_LENGTH] for i in range(0, len(file_content), SPLIT_LINE_LENGTH)]
+
+        for i in range(len(transit_chart_with_table_grid_svg_lines)):
+            assert transit_chart_with_table_grid_svg_lines[i] == file_content_lines[i]
+
+
 if __name__ == "__main__":
     test = TestCharts()
     test.setup_class()
@@ -299,3 +522,18 @@ if __name__ == "__main__":
     test.test_minified_natal_chart()
     test.test_dark_theme_natal_chart()
     test.test_dark_high_contrast_theme_natal_chart()
+    test.test_light_theme_natal_chart()
+    test.test_dark_theme_external_natal_chart()
+    test.test_dark_theme_synastry_chart()
+    test.test_wheel_only_chart()
+    test.test_wheel_external_chart()
+    test.test_wheel_synastry_chart()
+    test.test_wheel_transit_chart()
+    test.test_aspect_grid_only_chart()
+    test.test_aspect_grid_dark_chart()
+    test.test_aspect_grid_light_chart()
+    test.test_aspect_grid_synastry_chart()
+    test.test_transit_chart_with_table_grid()
+
+    # Done
+    print("All tests passed!")
