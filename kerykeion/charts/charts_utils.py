@@ -535,7 +535,7 @@ def draw_aspect_grid(
         str: SVG string representing the aspect grid.
     """
     svg_output = ""
-    style = f"stroke:{stroke_color}; stroke-width: 1px; stroke-opacity:.6; fill:none"
+    style = f"stroke:{stroke_color}; stroke-width: 1px; fill:none"
     box_size = 14
 
     # Filter active planets
@@ -660,7 +660,7 @@ def draw_houses_cusps_and_text_number(
             # Add the house number text for the second subject
             fill_opacity = "0" if chart_type == "Transit" else ".4"
             path += f'<g kr:node="HouseNumber">'
-            path += f'<text style="fill: #00f; fill-opacity: {fill_opacity}; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
+            path += f'<text style="fill: var(--kerykeion-chart-color-house-number); fill-opacity: {fill_opacity}; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
             path += f"</g>"
 
             # Add the house cusp line for the second subject
@@ -1030,7 +1030,7 @@ def draw_transit_aspect_grid(
         str: SVG string representing the aspect grid.
     """
     svg_output = ""
-    style = f"stroke:{stroke_color}; stroke-width: 1px; stroke-opacity:.6; fill:none"
+    style = f"stroke:{stroke_color}; stroke-width: 1px; fill:none"
     x_start = x_indent
     y_start = y_indent
 
