@@ -339,13 +339,13 @@ You can clone this repository or download a zip file using the right side button
 
 ## Integrate Kerykeion Functionalities in Your Project
 
-If you are interested in integrating Kerykeion's astrological functionalities into your project, I would be happy to collaborate with you. Whether you need custom features, support, or consultation, feel free to reach out to me at my [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com) email address.
+If you are interested in integrating Kerykeion's astrological functionalities into your project, I would be happy to collaborate with you. Whether you need custom features, support, or consultation, feel free to reach out to me at my [email](mailto:kerykeion.astrology@gmail.com?subject=Integration%20Request) address.
 
 ## License
 
 This project is licensed under the AGPL-3.0 License.
 To understand how this impacts your use of the software, please see the [LICENSE](LICENSE) file for details.
-If you have questions, you can reach out to me at my [email](mailto:battaglia.giacomo@yahoo.it?subject=Kerykeion) address.
+If you have questions, you can reach out to me at my [email](mailto:kerykeion.astrology@gmail.com?subject=Kerykeion) address.
 As a rule of thumb, if you are using this library in a project, you should open source the code of the project with a compatible license.
 
 You can implement the logic of kerykeion in your project and also keep it closed source by using a third party API, like the [AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/). The AstrologerAPI is AGPL-3.0 compliant. Subscribing to the API is also, currently, the best way to support the project.
