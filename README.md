@@ -281,6 +281,29 @@ More examples [here](https://www.kerykeion.net/docs/examples/perspective-type/).
 
 Full list of supported perspective types [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#PerspectiveType).
 
+## Theme
+
+You can now personalize your astrological charts with different themes! Four themes are available:
+
+- **Classic** (default)
+- **Dark**
+- **Dark High Contrast**
+- **Light**
+
+Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables. For more detailed instructions on how to apply themes, check the [documentation]().
+
+Here's an example of how to set the theme:
+
+```python
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
+
+dark_theme_subject = AstrologicalSubject("John Lennon - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+dark_theme_natal_chart = KerykeionChartSVG(dark_high_contrast_theme_subject, theme="dark_high_contrast")
+dark_theme_natal_chart.makeSVG()
+```
+
+![John Lennon](https://www.kerykeion.net/assets/img/showcase/John%20Lennon%20-%20Dark%20-%20Natal%20Chart.svg)
+
 ## Alternative Initialization
 
 You can initialize the AstrologicalSubject from a **UTC** ISO 8601 string:
