@@ -341,6 +341,10 @@ You can clone this repository or download a zip file using the right side button
 
 Feel free to contribute to the code!
 
+## Integrate Kerykeion Functionalities in Your Project
+
+If you are interested in integrating Kerykeion's astrological functionalities into your project, I would be happy to collaborate with you. Whether you need custom features, support, or consultation, feel free to reach out to me at my [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com) email address.
+
 ## License
 
 This project is licensed under the AGPL-3.0 License.
