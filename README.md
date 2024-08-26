@@ -152,9 +152,12 @@ synastry_chart.makeSVG()
 
 ### Change Language
 
-To change the language of the chart you should create a new kr.config.js file and pass it to the BirthChartSVG class. So far the available languages are English, Portuguese, Italian, Spanish, French and Chinese.
+You can change the language of the SVG by passing the `chart_language` parameter to the KerykeionChartSVG class:
 
-Some examples [here](https://www.kerykeion.net/docs/examples/change-language).
+```python
+first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", chart_language="ES")
+```
+More details [here](https://www.kerykeion.net/docs/examples/change-language/).
 
 ## Report
 
