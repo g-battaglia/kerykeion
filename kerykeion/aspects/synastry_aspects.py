@@ -12,6 +12,7 @@ from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
+from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 from typing import Union
 
 
@@ -24,7 +25,7 @@ class SynastryAspects(NatalAspects):
         self,
         kr_object_one: Union[AstrologicalSubject, AstrologicalSubjectModel],
         kr_object_two: Union[AstrologicalSubject, AstrologicalSubjectModel],
-        new_settings_file: Union[Path, None] = None,
+        new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None
     ):
         # Subjects
         self.first_user = kr_object_one

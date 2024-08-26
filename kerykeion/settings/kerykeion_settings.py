@@ -11,7 +11,7 @@ from typing import Dict, Union
 from kerykeion.kr_types import KerykeionSettingsModel
 
 
-def get_settings(new_settings_file: Union[Path, None] = None) -> KerykeionSettingsModel:
+def get_settings(new_settings_file: Union[Path, None, KerykeionSettingsModel, dict] = None) -> KerykeionSettingsModel:
     """
     This function is used to get the settings dict from the settings file.
     If no settings file is passed as argument, or the file is not found, it will fallback to:
@@ -24,6 +24,11 @@ def get_settings(new_settings_file: Union[Path, None] = None) -> KerykeionSettin
     Returns:
         Dict: The settings dict
     """
+
+    if isinstance(new_settings_file, dict):
+        return KerykeionSettingsModel(**new_settings_file)
+    elif isinstance(new_settings_file, KerykeionSettingsModel):
+        return new_settings_file
 
     # Config path we passed as argument
     if new_settings_file is not None:

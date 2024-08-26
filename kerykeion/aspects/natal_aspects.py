@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
+from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 
 
 AXES_LIST = [
@@ -29,7 +30,7 @@ class NatalAspects:
     """
 
     user: Union[AstrologicalSubject, AstrologicalSubjectModel]
-    new_settings_file: Union[Path, None] = None
+    new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None
 
     def __post_init__(self):
         self.settings = get_settings(self.new_settings_file)

@@ -14,7 +14,7 @@ from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointModel, Sign
 from kerykeion.kr_types import ChartTemplateDictionary
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
-from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel
+from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel, KerykeionSettingsModel
 from kerykeion.kr_types.kr_literals import KerykeionChartTheme
 from kerykeion.charts.charts_utils import (
     draw_zodiac_slice, 
@@ -71,7 +71,7 @@ class KerykeionChartSVG:
     second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, None]
     chart_type: ChartType
     new_output_directory: Union[Path, None]
-    new_settings_file: Union[Path, None]
+    new_settings_file: Union[Path, None, KerykeionSettingsModel, dict]
     output_directory: Path
 
     # Internal properties
@@ -105,7 +105,7 @@ class KerykeionChartSVG:
         chart_type: ChartType = "Natal",
         second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, None] = None,
         new_output_directory: Union[str, None] = None,
-        new_settings_file: Union[Path, None] = None,
+        new_settings_file: Union[Path, None, KerykeionSettingsModel, dict] = None,
         theme: Union[KerykeionChartTheme, None] = "classic",
         double_chart_aspect_grid_type: Literal["list", "table"] = "list"
     ):
@@ -221,11 +221,11 @@ class KerykeionChartSVG:
         self.output_directory = dir_path
         logging.info(f"Output direcotry set to: {self.output_directory}")
 
-    def parse_json_settings(self, settings_file):
+    def parse_json_settings(self, settings_file_or_dict: Union[Path, dict, KerykeionSettingsModel, None]) -> None:
         """
         Parse the settings file.
         """
-        settings = get_settings(settings_file)
+        settings = get_settings(settings_file_or_dict)
 
         language = settings["general_settings"]["language"]
         self.language_settings = settings["language_settings"].get(language, "EN")
@@ -846,3 +846,12 @@ if __name__ == "__main__":
     transit_chart_with_table_grid_subject = AstrologicalSubject("John Lennon - TCWTG", 1940, 10, 9, 18, 30, "Liverpool", "GB")
     transit_chart_with_table_grid = KerykeionChartSVG(transit_chart_with_table_grid_subject, "Transit", second, double_chart_aspect_grid_type="table", theme="dark")
     transit_chart_with_table_grid.makeSVG()
+
+    # Check settings:
+    import json
+    settings_path = Path(__file__).parent.parent / "settings" / "kr.config.json"
+    with open(settings_path, "r") as f:
+        settings = json.load(f)
+        settings = KerykeionSettingsModel(**settings)
+
+    chart = KerykeionChartSVG(first, new_settings_file=settings)
