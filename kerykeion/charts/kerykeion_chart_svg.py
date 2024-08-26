@@ -59,6 +59,8 @@ class KerykeionChartSVG:
             In the settings file you can set the language, colors, planets, aspects, etc.
         - theme: Set the theme for the chart (default: classic). If None the <style> tag will be empty.
             That's useful if you want to use your own CSS file customizing the value of the default theme variables.
+        - double_chart_aspect_grid_type: Set the type of the aspect grid for the double chart (transit or synastry). (Default: list.)
+        - chart_language: Set the language for the chart (default: EN).
     """
     
     # Constants
@@ -107,11 +109,13 @@ class KerykeionChartSVG:
         new_output_directory: Union[str, None] = None,
         new_settings_file: Union[Path, None, KerykeionSettingsModel, dict] = None,
         theme: Union[KerykeionChartTheme, None] = "classic",
-        double_chart_aspect_grid_type: Literal["list", "table"] = "list"
+        double_chart_aspect_grid_type: Literal["list", "table"] = "list",
+        chart_language: str = "EN",
     ):
         # Directories:
         self.homedir = Path.home()
         self.new_settings_file = new_settings_file
+        self.chart_language = chart_language
 
         if new_output_directory:
             self.output_directory = Path(new_output_directory)
@@ -227,8 +231,7 @@ class KerykeionChartSVG:
         """
         settings = get_settings(settings_file_or_dict)
 
-        language = settings["general_settings"]["language"]
-        self.language_settings = settings["language_settings"].get(language, "EN")
+        self.language_settings = settings["language_settings"][self.chart_language]
         self.chart_colors_settings = settings["chart_colors"]
         self.planets_settings = settings["celestial_points"]
         self.aspects_settings = settings["aspects"]
@@ -847,11 +850,42 @@ if __name__ == "__main__":
     transit_chart_with_table_grid = KerykeionChartSVG(transit_chart_with_table_grid_subject, "Transit", second, double_chart_aspect_grid_type="table", theme="dark")
     transit_chart_with_table_grid.makeSVG()
 
-    # Check settings:
-    import json
-    settings_path = Path(__file__).parent.parent / "settings" / "kr.config.json"
-    with open(settings_path, "r") as f:
-        settings = json.load(f)
-        settings = KerykeionSettingsModel(**settings)
+    # Chines Language Chart
+    chinese_subject = AstrologicalSubject("Hua Chenyu", 1990, 2, 7, 12, 0, "Hunan", "CN")
+    chinese_chart = KerykeionChartSVG(chinese_subject, chart_language="CN")
+    chinese_chart.makeSVG()
 
-    chart = KerykeionChartSVG(first, new_settings_file=settings)
+    # French Language Chart
+    french_subject = AstrologicalSubject("Jeanne Moreau", 1928, 1, 23, 10, 0, "Paris", "FR")
+    french_chart = KerykeionChartSVG(french_subject, chart_language="FR")
+    french_chart.makeSVG()
+
+    # Spanish Language Chart
+    spanish_subject = AstrologicalSubject("Antonio Banderas", 1960, 8, 10, 12, 0, "Malaga", "ES")
+    spanish_chart = KerykeionChartSVG(spanish_subject, chart_language="ES")
+    spanish_chart.makeSVG()
+
+    # Portuguese Language Chart
+    portuguese_subject = AstrologicalSubject("Cristiano Ronaldo", 1985, 2, 5, 5, 25, "Funchal", "PT")
+    portuguese_chart = KerykeionChartSVG(portuguese_subject, chart_language="PT")
+    portuguese_chart.makeSVG()
+
+    # Italian Language Chart
+    italian_subject = AstrologicalSubject("Sophia Loren", 1934, 9, 20, 2, 0, "Rome", "IT")
+    italian_chart = KerykeionChartSVG(italian_subject, chart_language="IT")
+    italian_chart.makeSVG()
+
+    # Russian Language Chart
+    russian_subject = AstrologicalSubject("Mikhail Bulgakov", 1891, 5, 15, 12, 0, "Kiev", "UA")
+    russian_chart = KerykeionChartSVG(russian_subject, chart_language="RU")
+    russian_chart.makeSVG()
+
+    # Turkish Language Chart
+    turkish_subject = AstrologicalSubject("Mehmet Oz", 1960, 6, 11, 12, 0, "Istanbul", "TR")
+    turkish_chart = KerykeionChartSVG(turkish_subject, chart_language="TR")
+    turkish_chart.makeSVG()
+
+    # German Language Chart
+    german_subject = AstrologicalSubject("Albert Einstein", 1879, 3, 14, 11, 30, "Ulm", "DE")
+    german_chart = KerykeionChartSVG(german_subject, chart_language="DE")
+    german_chart.makeSVG()
