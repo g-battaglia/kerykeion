@@ -572,7 +572,7 @@ class KerykeionChartSVG:
 
         # Set date time string
         dt = datetime.fromisoformat(self.user.iso_formatted_local_datetime)
-        custom_format = dt.strftime('%Y-%-m-%-d %H:%M [%z]')  # Note the use of '-' to remove leading zeros
+        custom_format = dt.strftime('%Y-%m-%d %H:%M [%z]')
         custom_format = custom_format[:-3] + ':' + custom_format[-3:]
         template_dict["stringDateTime"] = f"{custom_format}"
 
