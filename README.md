@@ -281,7 +281,7 @@ More examples [here](https://www.kerykeion.net/docs/examples/perspective-type/).
 
 Full list of supported perspective types [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#PerspectiveType).
 
-## Theme
+## Themes
 
 You can now personalize your astrological charts with different themes! Four themes are available:
 
