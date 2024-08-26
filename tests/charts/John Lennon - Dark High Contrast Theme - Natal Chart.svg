@@ -146,7 +146,7 @@
             <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>John Lennon - Dark High Contrast Theme</text>
             <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Info:</text>
             <text x='20' y='62' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Liverpool</text>
-            <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>1940-10-9 18:30 [+01:00]</text>
+            <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>1940-10-09 18:30 [+01:00]</text>
             <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Latitude: 53°24'38' North</text>
             <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Longitude: 2°58'41' West</text>
             <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Type: Natal</text>
