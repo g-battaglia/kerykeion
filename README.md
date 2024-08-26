@@ -157,7 +157,7 @@ You can change the language of the SVG by passing the `chart_language` parameter
 ```python
 first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", chart_language="ES")
 ```
-More details [here](https://www.kerykeion.net/docs/examples/change-language).
+More details [here](https://www.kerykeion.net/docs/examples/chart-language).
 
 ## Report
 
