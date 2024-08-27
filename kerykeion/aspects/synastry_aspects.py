@@ -11,7 +11,7 @@ from functools import cached_property
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
-from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 from typing import Union
 
@@ -25,7 +25,7 @@ class SynastryAspects(NatalAspects):
         self,
         kr_object_one: Union[AstrologicalSubject, AstrologicalSubjectModel],
         kr_object_two: Union[AstrologicalSubject, AstrologicalSubjectModel],
-        new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None
+        new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
     ):
         # Subjects
         self.first_user = kr_object_one
@@ -35,7 +35,7 @@ class SynastryAspects(NatalAspects):
         self.new_settings_file = new_settings_file
         self.settings = get_settings(self.new_settings_file)
 
-        self.celestial_points = self.settings["celestial_points"]
+        self.celestial_points = self.settings.celestial_points
         self.aspects_settings = self.settings["aspects"]
         self.axes_orbit_settings = self.settings["general_settings"]["axes_orbit"]
 
@@ -76,34 +76,28 @@ class SynastryAspects(NatalAspects):
                 aid = aspect["aid"]
                 diff = aspect["diff"]
 
-
                 if verdict == True:
-                    d_asp = {
-                        "p1_name": first_active_points_list[first]["name"],
-                        "p1_abs_pos": first_active_points_list[first]["abs_pos"],
-                        "p2_name": second_active_points_list[second]["name"],
-                        "p2_abs_pos": second_active_points_list[second]["abs_pos"],
-                        "aspect": name,
-                        "orbit": orbit,
-                        "aspect_degrees": aspect_degrees,
-                        "aid": aid,
-                        "diff": diff,
-                        "p1": planet_id_decoder(
-                            self.settings.celestial_points, first_active_points_list[first]["name"]
-                        ),
-                        "p2": planet_id_decoder(
-                            self.settings.celestial_points,
-                            second_active_points_list[second]["name"],
-                        ),
-                    }
-
-                    self.all_aspects_list.append(d_asp)
+                    aspect_model = AspectModel(
+                        p1_name=first_active_points_list[first]["name"],
+                        p1_abs_pos=first_active_points_list[first]["abs_pos"],
+                        p2_name=second_active_points_list[second]["name"],
+                        p2_abs_pos=second_active_points_list[second]["abs_pos"],
+                        aspect=name,
+                        orbit=orbit,
+                        aspect_degrees=aspect_degrees,
+                        aid=aid,
+                        diff=diff,
+                        p1=planet_id_decoder(self.celestial_points, first_active_points_list[first]["name"]),
+                        p2=planet_id_decoder(self.celestial_points, second_active_points_list[second]["name"]),
+                    )
+                    self.all_aspects_list.append(aspect_model)
 
         return self.all_aspects_list
 
 
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
+
     setup_logging(level="debug")
 
     john = AstrologicalSubject("John", 1940, 10, 9, 18, 30, "Liverpool")
