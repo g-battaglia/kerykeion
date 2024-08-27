@@ -99,18 +99,25 @@ class EphemerisDataFactory:
         if len(self.dates_list) > 1000:
             logging.warning(f"Large number of dates: {len(self.dates_list)}. The calculation may take a while.")
 
-    def get_ephemeris_data(self) -> list:
+    def get_ephemeris_data(self, as_model: bool = False) -> list:
         """
         Generate ephemeris data for the specified date range.
         The data is structured as a list of dictionaries, where each dictionary contains the date, planets, and houses data.
-        Eg. [{"date": "2020-01-01T00:00:00", "planets": [{...}, {...}, ...], "houses": [{...}, {...}, ...]}, ...]
+        Example:
+        [
+            {
+                "date": "2020-01-01T00:00:00",
+                "planets": [{...}, {...}, ...],
+                "houses": [{...}, {...}, ...]
+            },
+            ...
+        ]
 
         Args:
-        - as_model: boolean representing if the ephemeris data should be returned as model instances. Default is False.
-        - as_dict: boolean representing if the ephemeris data should be returned as dictionaries. Default is False.
+        - as_model (bool): If True, the ephemeris data will be returned as model instances. Default is False.
 
         Returns:
-        - list of dictionaries representing the ephemeris data.
+        - list: A list of dictionaries representing the ephemeris data. If as_model is True, a list of EphemerisDictModel instances is returned.
         """
         ephemeris_data_list = []
         for date in self.dates_list:
@@ -139,17 +146,10 @@ class EphemerisDataFactory:
 
             ephemeris_data_list.append({"date": date.isoformat(), "planets": available_planets, "houses": houses_list})
 
+        if as_model:
+            return [EphemerisDictModel(**data) for data in ephemeris_data_list]
+
         return ephemeris_data_list
-
-    def get_ephemeris_data_as_model(self) -> list[EphemerisDictModel]:
-        """
-        Generate ephemeris data as model instances for the specified date range.
-        The data is structured as a list of EphemerisDictModel instances.
-
-        Returns:
-        - list of EphemerisDictModel instances representing the ephemeris data.
-        """
-        return [EphemerisDictModel(**data) for data in self.get_ephemeris_data()]
 
 
 if "__main__" == __name__:
