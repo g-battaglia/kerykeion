@@ -36,8 +36,8 @@ class SynastryAspects(NatalAspects):
         self.settings = get_settings(self.new_settings_file)
 
         self.celestial_points = self.settings.celestial_points
-        self.aspects_settings = self.settings["aspects"]
-        self.axes_orbit_settings = self.settings["general_settings"]["axes_orbit"]
+        self.aspects_settings = self.settings.aspects
+        self.axes_orbit_settings = self.settings.general_settings.axes_orbit
 
         # Private variables of the aspects
         self._all_aspects: Union[list, None] = None

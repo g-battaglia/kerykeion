@@ -36,8 +36,8 @@ class NatalAspects:
         self.settings = get_settings(self.new_settings_file)
 
         self.celestial_points = self.settings.celestial_points
-        self.aspects_settings = self.settings["aspects"]
-        self.axes_orbit_settings = self.settings["general_settings"]["axes_orbit"]
+        self.aspects_settings = self.settings.aspects
+        self.axes_orbit_settings = self.settings.general_settings.axes_orbit
 
     @cached_property
     def all_aspects(self):
