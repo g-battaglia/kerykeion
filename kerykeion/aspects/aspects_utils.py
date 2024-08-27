@@ -9,6 +9,7 @@ from kerykeion.settings import KerykeionSettingsModel
 from swisseph import difdeg2n
 from typing import Union
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
+from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel
 
 
 def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, int], point_two: Union[float, int]):
@@ -146,7 +147,7 @@ def get_aspect_from_two_points(aspects_settings: dict, point_one: Union[float, i
     }
 
 
-def planet_id_decoder(planets_settings: dict, name: str):
+def planet_id_decoder(planets_settings: list[KerykeionSettingsCelestialPointModel], name: str) -> int:
     """
     Check if the name of the planet is the same in the settings and return
     the correct id for the planet.
@@ -157,6 +158,7 @@ def planet_id_decoder(planets_settings: dict, name: str):
             result = planet["id"]
             return result
 
+    raise ValueError(f"Planet {name} not found in the settings")
 
 def get_active_points_list(subject: Union[AstrologicalSubject, AstrologicalSubjectModel], settings: Union[KerykeionSettingsModel, dict]) -> list:
     """

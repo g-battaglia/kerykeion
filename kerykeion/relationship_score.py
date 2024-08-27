@@ -8,7 +8,7 @@ from kerykeion.aspects.synastry_aspects import SynastryAspects
 import logging
 from pathlib import Path
 from typing import Union
-from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel
 
 
 class RelationshipScore:
@@ -40,8 +40,8 @@ class RelationshipScore:
         self.second_subject = second_subject
         self.score = 0
         self.is_destiny_sign = False
-        self.relevant_aspects = []
-        self.relevant_default_aspects = []
+        self.relevant_aspects: list = []
+        self.relevant_default_aspects: list = []
         self.__all_synastry_aspects = SynastryAspects(first_subject, second_subject, new_settings_file=new_settings_file).all_aspects
 
         # Calculate all aspects at initialization
