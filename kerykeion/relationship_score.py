@@ -21,7 +21,7 @@ class RelationshipScore:
         - From 5 a 10 = Mediocre relationship
         - From 10 to 15 = Important relationship
         - From 15 to 20 = Very important relationship
-        - From 20 to su = Exceptional relationship
+        - From 20 and above = Exceptional relationship
 
     Documentation at:
     http://www.cirodiscepolo.it/Articoli/Discepoloele.htm
