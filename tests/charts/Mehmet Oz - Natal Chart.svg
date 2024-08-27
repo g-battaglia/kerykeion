@@ -176,7 +176,7 @@
 
                 <!-- Elements -->
             <g kr:node='Elements_Percentages'>
-                <g transform='translate(-30,79)'><text y='0' style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>Ateş  19%</text><text y='12' style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>Toprak 46%</text><text y='24' style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>Hava   26%</text><text y='36' style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>Su 9%</text></g> 
+                <g transform='translate(-30,79)'><text y='0' style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>Ateş  21%</text><text y='12' style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>Toprak 42%</text><text y='24' style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>Hava   28%</text><text y='36' style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>Su 9%</text></g> 
             </g>
 
                 <!-- Planet Grid -->
