@@ -19,7 +19,7 @@ def test_ephemeris_data():
         max_days=None,
     )
 
-    ephemeris_data = factory.get_ephemeris_data_as_model()
+    ephemeris_data = factory.get_ephemeris_data(as_model=True)
 
     assert ephemeris_data is not None
     assert ephemeris_data[0].planets is not None
