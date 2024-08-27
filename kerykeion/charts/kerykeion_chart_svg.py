@@ -15,7 +15,7 @@ from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointMode
 from kerykeion.kr_types import ChartTemplateDictionary
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel, KerykeionSettingsModel
-from kerykeion.kr_types.kr_literals import KerykeionChartTheme
+from kerykeion.kr_types.kr_literals import KerykeionChartTheme, KerykeionChartLanguage
 from kerykeion.charts.charts_utils import (
     draw_zodiac_slice, 
     convert_latitude_coordinate_to_string, 
@@ -110,7 +110,7 @@ class KerykeionChartSVG:
         new_settings_file: Union[Path, None, KerykeionSettingsModel, dict] = None,
         theme: Union[KerykeionChartTheme, None] = "classic",
         double_chart_aspect_grid_type: Literal["list", "table"] = "list",
-        chart_language: str = "EN",
+        chart_language: KerykeionChartLanguage = "EN",
     ):
         # Directories:
         home_directory = Path.home()
@@ -887,3 +887,8 @@ if __name__ == "__main__":
     german_subject = AstrologicalSubject("Albert Einstein", 1879, 3, 14, 11, 30, "Ulm", "DE")
     german_chart = KerykeionChartSVG(german_subject, chart_language="DE")
     german_chart.makeSVG()
+
+    # Hindi Language Chart
+    hindi_subject = AstrologicalSubject("Amitabh Bachchan", 1942, 10, 11, 4, 0, "Allahabad", "IN")
+    hindi_chart = KerykeionChartSVG(hindi_subject, chart_language="HI")
+    hindi_chart.makeSVG()

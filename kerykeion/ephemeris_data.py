@@ -170,7 +170,7 @@ if "__main__" == __name__:
         max_days=None,
     )
 
-    ephemeris_data = factory.get_ephemeris_data_as_model()
+    ephemeris_data = factory.get_ephemeris_data(as_model=True)
     print(ephemeris_data[0])
     print(len(ephemeris_data))
 

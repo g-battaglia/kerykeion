@@ -377,6 +377,48 @@
         "Chiron": "Chiron",
         "Mean_Lilith": "Lilith"
       }
+    },
+    "HI": {
+      "info": "जानकारी",
+      "cusp": "घर",
+      "longitude": "देशांतर",
+      "latitude": "अक्षांश",
+      "north": "उत्तर",
+      "east": "पूर्व",
+      "south": "दक्षिण",
+      "west": "पश्चिम",
+      "fire": "अग्नि",
+      "earth": "पृथ्वी",
+      "air": "वायु",
+      "water": "जल",
+      "and_word": "और",
+      "transits": "गोचर के लिए",
+      "type": "प्रकार",
+      "aspects": "जोड़ी के पहलू",
+      "planets_and_house": "अंक के लिए",
+      "transit_name": "गोचर के समय",
+      "lunar_phase": "चंद्र चरण",
+      "day": "दिन",
+      "celestial_points": {
+        "Sun": "सूर्य",
+        "Moon": "चंद्रमा",
+        "Mercury": "बुध",
+        "Venus": "शुक्र",
+        "Mars": "मंगल",
+        "Jupiter": "गुरु",
+        "Saturn": "शनि",
+        "Uranus": "यूरेनस",
+        "Neptune": "नेपच्यून",
+        "Pluto": "प्लूटो",
+        "Asc": "आस",
+        "Mc": "एमसी",
+        "Dsc": "डीएससी",
+        "Ic": "आईसी",
+        "True_Node": "सत्य चंद्र नोड",
+        "Mean_Node": "औसत चंद्र नोड",
+        "Chiron": "चिरोन",
+        "Mean_Lilith": "लिलिथ"
+      }
     }
   },
   "aspects": [
@@ -448,7 +490,7 @@
       "degree": 144,
       "name": "biquintile",
       "is_active": 0,
-      "is_major" : 0,
+      "is_major": 0,
       "orb": 1,
       "color": "var(--kerykeion-chart-color-biquintile)"
     },

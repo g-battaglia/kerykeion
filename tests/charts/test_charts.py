@@ -59,6 +59,7 @@ class TestCharts:
         self.russian_subject = AstrologicalSubject("Mikhail Bulgakov", 1891, 5, 15, 12, 0, "Kiev", "UA")
         self.turkish_subject = AstrologicalSubject("Mehmet Oz", 1960, 6, 11, 12, 0, "Istanbul", "TR")
         self.german_subject = AstrologicalSubject("Albert Einstein", 1879, 3, 14, 11, 30, "Ulm", "DE")
+        self.hindi_subject = AstrologicalSubject("Amitabh Bachchan", 1942, 10, 11, 4, 0, "Allahabad", "IN")
 
     def test_natal_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.first_subject).makeTemplate()
@@ -553,7 +554,9 @@ class TestCharts:
         german_chart_svg = KerykeionChartSVG(self.german_subject, chart_language="DE").makeTemplate()
         self._compare_chart_svg("Albert Einstein - Natal Chart.svg", german_chart_svg)
 
-
+    def test_hindi_chart(self):
+        hindi_chart_svg = KerykeionChartSVG(self.hindi_subject, chart_language="HI").makeTemplate()
+        self._compare_chart_svg("Amitabh Bachchan - Natal Chart.svg", hindi_chart_svg)
 
 if __name__ == "__main__":
     import pytest
