@@ -20,3 +20,13 @@ def test_geonames():
     assert data["lat"] == expected_data["lat"]
     assert data["lng"] == expected_data["lng"]
     assert data["countryCode"] == expected_data["countryCode"]
+
+
+if __name__ == "__main__":
+    import pytest
+    import logging
+
+    # Set the log level to CRITICAL
+    logging.basicConfig(level=logging.CRITICAL)
+    
+    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

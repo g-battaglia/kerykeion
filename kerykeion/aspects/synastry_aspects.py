@@ -89,6 +89,7 @@ class SynastryAspects(NatalAspects):
                         diff=diff,
                         p1=planet_id_decoder(self.celestial_points, first_active_points_list[first]["name"]),
                         p2=planet_id_decoder(self.celestial_points, second_active_points_list[second]["name"]),
+                        is_major=self.aspects_settings[aid]["is_major"],
                     )
                     self.all_aspects_list.append(aspect_model)
 

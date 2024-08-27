@@ -79,6 +79,7 @@ class KerykeionSettingsAspectModel(SubscriptableBaseModel):
     degree: int = Field(title="Aspect Degrees", description="The degree of the aspect")
     name: str = Field(title="Aspect Name", description="The name of the aspect")
     is_active: bool = Field(title="Aspect is Active", description="Is the aspect active?")
+    is_major: bool = Field(title="Aspect is Major", description="Is the aspect major?")
     orb: int = Field(title="Aspect Orb", description="The orb of the aspect")
     color: str = Field(title="Aspect Color", description="The color of the aspect")
 

@@ -103,10 +103,10 @@ class TestJsonDump:
 
 
 if __name__ == "__main__":
-    from kerykeion.utilities import setup_logging
-    setup_logging(level="debug")
+    import pytest
+    import logging
 
-    test = TestJsonDump()
-    test.setup_class()
-    test.test_json_dump_data()
-    test.test_lunar_phase()
+    # Set the log level to CRITICAL
+    logging.basicConfig(level=logging.CRITICAL)
+    
+    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

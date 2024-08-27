@@ -32,11 +32,11 @@ def get_aspect_from_two_points(
     diff = abs(point_one - point_two)
 
     for aid, aspect in enumerate(aspects_settings):
-        aspect_degree = aspect["degree"]
-        aspect_orb = aspect["orb"]
+        aspect_degree = aspect["degree"] # type: ignore
+        aspect_orb = aspect["orb"] # type: ignore
 
         if (aspect_degree - aspect_orb) <= int(distance) <= (aspect_degree + aspect_orb):
-            name = aspect["name"]
+            name = aspect["name"] # type: ignore
             aspect_degrees = aspect_degree
             verdict = True
             break
@@ -44,7 +44,7 @@ def get_aspect_from_two_points(
         verdict = False
         name = None
         aspect_degrees = 0
-        aid = None
+        aid = None # type: ignore
 
     return {
         "verdict": verdict,
