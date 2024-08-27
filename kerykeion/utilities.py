@@ -261,9 +261,11 @@ def get_houses_list(subject: Union["AstrologicalSubject", AstrologicalSubjectMod
 
     return houses_absolute_position_list
 
+
 def get_available_planets_list(subject: Union["AstrologicalSubject", AstrologicalSubjectModel]) -> list[KerykeionPointModel]:
     """
-    Return the names of the houses in the order of the houses.
+    Return the names of the planets in the order of the planets.
+    The names can be used to access the planets from the AstrologicalSubject object with the __getitem__ method or the [] operator.
     """
     planets_absolute_position_list = []
     for planet in subject.planets_names_list:
