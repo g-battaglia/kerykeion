@@ -64,9 +64,12 @@ class KerykeionChartSVG:
     """
     
     # Constants
+    _BASIC_CHART_VIEWBOX = "0 0 772.2 546.0"
+    _WIDE_CHART_VIEWBOX = "0 0 1060 546.0"
     _DEFAULT_HEIGHT = 546.0
     _DEFAULT_FULL_WIDTH = 1200
     _DEFAULT_NATAL_WIDTH = 772.2
+    _PLANET_IN_ZODIAC_EXTRA_POINTS = 10
 
     # Set at init
     first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel]
@@ -85,14 +88,11 @@ class KerykeionChartSVG:
     first_circle_radius: float
     second_circle_radius: float
     third_circle_radius: float
-    homedir: Path
     width: Union[float, int]
     language_settings: dict
     chart_colors_settings: dict
     planets_settings: dict
     aspects_settings: dict
-    planet_in_zodiac_extra_points: int
-    chart_settings: dict
     user: Union[AstrologicalSubject, AstrologicalSubjectModel]
     available_planets_setting: List[KerykeionSettingsCelestialPointModel]
     height: float
@@ -113,14 +113,14 @@ class KerykeionChartSVG:
         chart_language: str = "EN",
     ):
         # Directories:
-        self.homedir = Path.home()
+        home_directory = Path.home()
         self.new_settings_file = new_settings_file
         self.chart_language = chart_language
 
         if new_output_directory:
             self.output_directory = Path(new_output_directory)
         else:
-            self.output_directory = self.homedir
+            self.output_directory = home_directory
 
         self.parse_json_settings(new_settings_file)
         self.chart_type = chart_type
@@ -235,8 +235,6 @@ class KerykeionChartSVG:
         self.chart_colors_settings = settings["chart_colors"]
         self.planets_settings = settings["celestial_points"]
         self.aspects_settings = settings["aspects"]
-        self.planet_in_zodiac_extra_points = settings["general_settings"]["planet_in_zodiac_extra_points"]
-        self.chart_settings = settings["chart_settings"]
 
     def _draw_zodiac_circle_slices(self, r):
         """
@@ -272,7 +270,7 @@ class KerykeionChartSVG:
         The points should include just the standard way of calculating the elements points.
         """
 
-        zodiac = (
+        ZODIAC = (
             {"name": "Ari", "element": "fire"},
             {"name": "Tau", "element": "earth"},
             {"name": "Gem", "element": "air"},
@@ -305,9 +303,9 @@ class KerykeionChartSVG:
             if related_zodiac_signs != []:
                 for e in range(len(related_zodiac_signs)):
                     if int(related_zodiac_signs[e]) == int(cz):
-                        extra_points = self.planet_in_zodiac_extra_points
+                        extra_points = self._PLANET_IN_ZODIAC_EXTRA_POINTS
 
-            ele = zodiac[points_sign[i]]["element"]
+            ele = ZODIAC[points_sign[i]]["element"]
             if ele == "fire":
                 self.fire = self.fire + self.available_planets_setting[i]["element_points"] + extra_points
 
@@ -366,7 +364,7 @@ class KerykeionChartSVG:
         template_dict["stringName"] = f"{self.user.name}:" if self.chart_type in ["Synastry", "Transit"] else f'{self.language_settings["info"]}:'
 
         # Set viewbox based on chart type
-        template_dict['viewbox'] = self.chart_settings["basic_chart_viewBox"] if self.chart_type in ["Natal", "ExternalNatal"] else self.chart_settings["wide_chart_viewBox"]
+        template_dict['viewbox'] = self._BASIC_CHART_VIEWBOX if self.chart_type in ["Natal", "ExternalNatal"] else self._WIDE_CHART_VIEWBOX
 
         # Generate rings and circles based on chart type
         if self.chart_type in ["Transit", "Synastry"]:
