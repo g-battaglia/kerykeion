@@ -21,7 +21,8 @@ from kerykeion.kr_types import (
     SiderealMode,
     HousesSystemIdentifier,
     Houses,
-    SignsEmoji
+    SignsEmoji,
+    RelationshipScoreDescription
 )
 
 
@@ -158,6 +159,7 @@ class AspectModel(SubscriptableBaseModel):
     diff: float
     p1: int
     p2: int
+    is_major: bool
 
 
 class ZodiacSignModel(SubscriptableBaseModel):
@@ -166,3 +168,18 @@ class ZodiacSignModel(SubscriptableBaseModel):
     element: Element
     emoji: SignsEmoji
     sign_num: SignNumbers
+
+
+class RelationshipScoreAspectModel(SubscriptableBaseModel):
+    p1_name: str
+    p2_name: str
+    aspect: str
+    orbit: float
+
+
+class RelationshipScoreModel(SubscriptableBaseModel):
+    score_value: int
+    score_description: RelationshipScoreDescription
+    is_destiny_sign: bool
+    aspects: list[RelationshipScoreAspectModel]
+    subjects: list[AstrologicalSubjectModel]

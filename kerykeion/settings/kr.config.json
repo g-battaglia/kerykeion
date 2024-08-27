@@ -384,7 +384,7 @@
       "degree": 0,
       "name": "conjunction",
       "is_active": 1,
-
+      "is_major": 1,
       "orb": 10,
       "color": "var(--kerykeion-chart-color-conjunction)"
     },
@@ -392,6 +392,7 @@
       "degree": 30,
       "name": "semi-sextile",
       "is_active": 0,
+      "is_major": 0,
       "orb": 1,
       "color": "var(--kerykeion-chart-color-semi-sextile)"
     },
@@ -399,6 +400,7 @@
       "degree": 45,
       "name": "semi-square",
       "is_active": 0,
+      "is_major": 0,
       "orb": 1,
       "color": "var(--kerykeion-chart-color-semi-square)"
     },
@@ -406,6 +408,7 @@
       "degree": 60,
       "name": "sextile",
       "is_active": 1,
+      "is_major": 1,
       "orb": 6,
       "color": "var(--kerykeion-chart-color-sextile)"
     },
@@ -413,6 +416,7 @@
       "degree": 72,
       "name": "quintile",
       "is_active": 1,
+      "is_major": 0,
       "orb": 1,
       "color": "var(--kerykeion-chart-color-quintile)"
     },
@@ -420,6 +424,7 @@
       "degree": 90,
       "name": "square",
       "is_active": 1,
+      "is_major": 1,
       "orb": 5,
       "color": "var(--kerykeion-chart-color-square)"
     },
@@ -427,6 +432,7 @@
       "degree": 120,
       "name": "trine",
       "is_active": 1,
+      "is_major": 1,
       "orb": 8,
       "color": "var(--kerykeion-chart-color-trine)"
     },
@@ -434,6 +440,7 @@
       "degree": 135,
       "name": "sesquiquadrate",
       "is_active": 0,
+      "is_major": 0,
       "orb": 1,
       "color": "var(--kerykeion-chart-color-sesquiquadrate)"
     },
@@ -441,6 +448,7 @@
       "degree": 144,
       "name": "biquintile",
       "is_active": 0,
+      "is_major" : 0,
       "orb": 1,
       "color": "var(--kerykeion-chart-color-biquintile)"
     },
@@ -448,6 +456,7 @@
       "degree": 150,
       "name": "quincunx",
       "is_active": 0,
+      "is_major": 0,
       "orb": 1,
       "color": "var(--kerykeion-chart-color-quincunx)"
     },
@@ -455,6 +464,7 @@
       "degree": 180,
       "name": "opposition",
       "is_active": 1,
+      "is_major": 1,
       "orb": 10,
       "color": "var(--kerykeion-chart-color-opposition)"
     }

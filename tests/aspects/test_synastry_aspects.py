@@ -50,13 +50,10 @@ class TestNatalAspects:
 
 
 if __name__ == "__main__":
-    from kerykeion.utilities import setup_logging
+    import pytest
+    import logging
 
-    setup_logging(level="debug")
-
-    test_natal_aspects = TestNatalAspects()
-    test_natal_aspects.setup_class()
-
-    test_natal_aspects.test_relevant_aspects_length()
-    test_natal_aspects.test_relevant_aspects()
-    test_natal_aspects.test_all_aspects_length()
+    # Set the log level to CRITICAL
+    logging.basicConfig(level=logging.CRITICAL)
+    
+    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

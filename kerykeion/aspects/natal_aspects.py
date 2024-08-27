@@ -79,6 +79,7 @@ class NatalAspects:
                         diff=diff,
                         p1=planet_id_decoder(self.celestial_points, active_points_list[first]["name"]),
                         p2=planet_id_decoder(self.celestial_points, active_points_list[second]["name"]),
+                        is_major=self.aspects_settings[aid]["is_major"],
                     )
                     self.all_aspects_list.append(aspect_model)
 
@@ -91,6 +92,7 @@ class NatalAspects:
         the most important are hardcoded.
         Set the list with set_points and creating a list with the names
         or the numbers of the houses.
+        The relevant aspects are the ones that are set as active ("is_active") in the settings.
         """
 
         logging.debug("Relevant aspects not already calculated, calculating now...")

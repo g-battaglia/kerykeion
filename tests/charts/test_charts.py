@@ -556,45 +556,10 @@ class TestCharts:
 
 
 if __name__ == "__main__":
-    test = TestCharts()
-    test.setup_class()
-    test.test_natal_chart()
-    test.test_synastry_chart()
-    test.test_transit_chart()
-    test.test_external_natal_chart()
-    test.test_lahiri_birth_chart()
-    test.test_fagan_bradley_birth_chart()
-    test.test_deluce_birth_chart()
-    test.test_j2000_birth_chart()
-    test.test_morinus_house_system_birth_chart()
-    test.test_heliocentric_perspective_natals_chart()
-    test.test_topocentric_perspective_natals_chart()
-    test.test_true_geocentric_perspective_natals_chart()
-    test.test_natal_chart_from_model()
-    test.test_minified_natal_chart()
-    test.test_dark_theme_natal_chart()
-    test.test_dark_high_contrast_theme_natal_chart()
-    test.test_light_theme_natal_chart()
-    test.test_dark_theme_external_natal_chart()
-    test.test_dark_theme_synastry_chart()
-    test.test_wheel_only_chart()
-    test.test_wheel_external_chart()
-    test.test_wheel_synastry_chart()
-    test.test_wheel_transit_chart()
-    test.test_aspect_grid_only_chart()
-    test.test_aspect_grid_dark_chart()
-    test.test_aspect_grid_light_chart()
-    test.test_aspect_grid_synastry_chart()
-    test.test_transit_chart_with_table_grid()
-    test.test_chinese_chart()
-    test.test_french_chart()
-    test.test_spanish_chart()
-    test.test_portuguese_chart()
-    test.test_italian_chart()
-    test.test_russian_chart()
-    test.test_turkish_chart()
-    test.test_german_chart()
+    import pytest
+    import logging
 
-
-    # Done
-    print("All tests passed!")
+    # Set the log level to CRITICAL
+    logging.basicConfig(level=logging.CRITICAL)
+    
+    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

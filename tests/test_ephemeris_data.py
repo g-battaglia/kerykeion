@@ -29,4 +29,10 @@ def test_ephemeris_data():
 
 
 if __name__ == "__main__":
-    test_ephemeris_data()
+    import pytest
+    import logging
+
+    # Set the log level to CRITICAL
+    logging.basicConfig(level=logging.CRITICAL)
+    
+    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

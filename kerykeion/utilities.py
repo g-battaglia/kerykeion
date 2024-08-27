@@ -107,6 +107,7 @@ def setup_logging(level: str) -> None:
         "info": logging.INFO,
         "warning": logging.WARNING,
         "error": logging.ERROR,
+        "critical": logging.CRITICAL,
     }
     format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     loglevel: int = logging_options.get(level, logging.INFO)

@@ -29,6 +29,10 @@ def test_model_settings():
     assert settings.language_settings['EN']['info'] == "This is a test file"
 
 if __name__ == "__main__":
-    test_file_settings()
-    test_dict_settings()
-    test_model_settings()
+    import pytest
+    import logging
+
+    # Set the log level to CRITICAL
+    logging.basicConfig(level=logging.CRITICAL)
+    
+    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

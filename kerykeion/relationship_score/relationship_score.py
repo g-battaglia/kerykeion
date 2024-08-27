@@ -8,7 +8,8 @@ from kerykeion.aspects.synastry_aspects import SynastryAspects
 import logging
 from pathlib import Path
 from typing import Union
-from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
+import warnings
 
 
 class RelationshipScore:
@@ -36,6 +37,11 @@ class RelationshipScore:
         second_subject: Union[AstrologicalSubject, AstrologicalSubjectModel],
         new_settings_file: Union[Path, None] = None,
     ):
+        warnings.warn(
+            "The RelationshipScore class is deprecated and will be removed in a future version. Use RelationshipScoreFactory instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
         self.first_subject = first_subject
         self.second_subject = second_subject
         self.score = 0
@@ -50,7 +56,7 @@ class RelationshipScore:
     def __str__(self) -> str:
         return f"CoupleScoreInstance: {self.first_subject.name} and {self.second_subject.name}, score: {self.score}"
 
-    def __dict__(self) -> dict:
+    def __dict__(self) -> dict: # type: ignore
         return {
             "first_subject_name": self.first_subject.name,
             "second_subject_name": self.second_subject.name,
@@ -167,17 +173,3 @@ class RelationshipScore:
             self.score += self._check_if_sun_moon_conjunction(aspect)
             self.score += self._check_if_sun_moon_asc_aspect(aspect)
             self.score += self._check_if_venus_mars_aspect(aspect)
-
-
-if __name__ == "__main__":
-    from kerykeion.utilities import setup_logging
-
-    setup_logging(level="debug")
-
-    john = AstrologicalSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
-    sarah = AstrologicalSubject("Sarah", 1978, 2, 9, 15, 50, "Roma", "IT")
-
-    score = RelationshipScore(john, sarah)
-    print(score.__dict__()["score"])
-    print(score.__dict__()["is_destiny_sign"])
-    print(score.__dict__()["relevant_aspects"][0])
