@@ -17,11 +17,11 @@ class RelationshipScore:
 
     Results:
         - 0 to 5: Minimal relationship
-        - 5 to 10: Mediocre relationship
+        - 5 to 10: Medium relationship
         - 10 to 15: Important relationship
         - 15 to 20: Very important relationship
         - 20 and 35: Exceptional relationship
-        - 35 and above: Extraordinary relationship
+        - 35 and above: Rare Exceptional relationship
 
     Documentation: http://www.cirodiscepolo.it/Articoli/Discepoloele.htm
 
