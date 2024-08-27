@@ -574,7 +574,7 @@
       "name": "True_Node",
       "color": "var(--kerykeion-chart-color-true-node)",
       "is_active": true,
-      "element_points": 20,
+      "element_points": 0,
       "related_zodiac_signs": [],
       "label": "True_Node"
     },

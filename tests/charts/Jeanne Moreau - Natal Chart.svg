@@ -176,7 +176,7 @@
 
                 <!-- Elements -->
             <g kr:node='Elements_Percentages'>
-                <g transform='translate(-30,79)'><text y='0' style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>Feu  37%</text><text y='12' style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>Terre 14%</text><text y='24' style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>Air   45%</text><text y='36' style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>Eau 4%</text></g> 
+                <g transform='translate(-30,79)'><text y='0' style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>Feu  40%</text><text y='12' style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>Terre 15%</text><text y='24' style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>Air   40%</text><text y='36' style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>Eau 4%</text></g> 
             </g>
 
                 <!-- Planet Grid -->
