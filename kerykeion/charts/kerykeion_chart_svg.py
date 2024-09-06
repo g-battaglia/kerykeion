@@ -610,12 +610,12 @@ class KerykeionChartSVG:
         if not hasattr(self, "template"):
             self.template = self.makeTemplate(minify)
 
-        self.chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart.svg"
+        chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart.svg"
 
-        with open(self.chartname, "w", encoding="utf-8", errors="ignore") as output_file:
+        with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(self.template)
 
-        logging.info(f"SVG Generated Correctly in: {self.chartname}")
+        logging.info(f"SVG Generated Correctly in: {chartname}")
 
     def makeWheelOnlyTemplate(self, minify: bool = False):
         """Creates the template for the SVG file with only the wheel"""
@@ -638,13 +638,12 @@ class KerykeionChartSVG:
         """Prints out the SVG file in the specified folder with only the wheel"""
 
         template = self.makeWheelOnlyTemplate(minify)
+        chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart - Wheel Only.svg"
 
-        self.chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart - Wheel Only.svg"
-
-        with open(self.chartname, "w", encoding="utf-8", errors="ignore") as output_file:
+        with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(template)
 
-        logging.info(f"SVG Generated Correctly in: {self.chartname}")
+        logging.info(f"SVG Generated Correctly in: {chartname}")
 
     def makeAspectGridOnlyTemplate(self, minify: bool = False):
         """Creates the template for the SVG file with only the aspect grid"""
@@ -673,13 +672,12 @@ class KerykeionChartSVG:
         """Prints out the SVG file in the specified folder with only the aspect grid"""
 
         template = self.makeAspectGridOnlyTemplate(minify)
+        chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart - Aspect Grid Only.svg"
 
-        self.chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart - Aspect Grid Only.svg"
-
-        with open(self.chartname, "w", encoding="utf-8", errors="ignore") as output_file:
+        with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(template)
 
-        logging.info(f"SVG Generated Correctly in: {self.chartname}")
+        logging.info(f"SVG Generated Correctly in: {chartname}")
 
 
 if __name__ == "__main__":
