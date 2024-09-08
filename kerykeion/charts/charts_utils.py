@@ -1030,7 +1030,7 @@ def draw_transit_aspect_grid(
         str: SVG string representing the aspect grid.
     """
     svg_output = ""
-    style = f"stroke:{stroke_color}; stroke-width: 1px; fill:none"
+    style = f"stroke:{stroke_color}; stroke-width: 1px; stroke-width: 0.5px; fill:none"
     x_start = x_indent
     y_start = y_indent
 
