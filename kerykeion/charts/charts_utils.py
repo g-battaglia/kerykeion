@@ -535,7 +535,7 @@ def draw_aspect_grid(
         str: SVG string representing the aspect grid.
     """
     svg_output = ""
-    style = f"stroke:{stroke_color}; stroke-width: 1px; fill:none"
+    style = f"stroke:{stroke_color}; stroke-width: 1px; stroke-width: 0.5px; fill:none"
     box_size = 14
 
     # Filter active planets
@@ -546,7 +546,7 @@ def draw_aspect_grid(
 
     for index, planet_a in enumerate(reversed_planets):
         # Draw the grid box for the planet
-        svg_output += f'<rect x="{x_start}" y="{y_start}" width="{box_size}" height="{box_size}" style="{style}"/>'
+        svg_output += f'<rect kr:node="AspectsGridRect" x="{x_start}" y="{y_start}" width="{box_size}" height="{box_size}" style="{style}"/>'
         svg_output += f'<use transform="scale(0.4)" x="{(x_start + 2) * 2.5}" y="{(y_start + 1) * 2.5}" xlink:href="#{planet_a["name"]}" />'
 
         # Update the starting coordinates for the next box
@@ -560,7 +560,7 @@ def draw_aspect_grid(
         # Iterate over the remaining planets
         for planet_b in reversed_planets[index + 1:]:
             # Draw the grid box for the aspect
-            svg_output += f'<rect x="{x_aspect}" y="{y_aspect}" width="{box_size}" height="{box_size}" style="{style}"/>'
+            svg_output += f'<rect kr:node="AspectsGridRect" x="{x_aspect}" y="{y_aspect}" width="{box_size}" height="{box_size}" style="{style}"/>'
             x_aspect += box_size
 
             # Check for aspects between the planets
