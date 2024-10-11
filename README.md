@@ -196,8 +196,8 @@ Returns:
 | Pluto           | Lib  | 11.45 | R    | Fourth_House   |
 | Mean_North_Node | Lib  | 21.49 | R    | Fourth_House   |
 | True_North_Node | Lib  | 22.82 | R    | Fourth_House   |
-| Mean_South_Node | Ari  | 21.49 | R    | Tenth_House   |
-| True_South_Node | Ari  | 22.82 | R    | Tenth_House   |
+| Mean_South_Node | Ari  | 21.49 | R    | Tenth_House    |
+| True_South_Node | Ari  | 22.82 | R    | Tenth_House    |
 | Chiron          | Tau  | 4.17  | -    | Tenth_House    |
 +-----------------+------+-------+------+----------------+
 +----------------+------+----------+
