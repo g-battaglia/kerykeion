@@ -62,8 +62,10 @@
   --kerykeion-chart-color-uranus: #6f0766;
   --kerykeion-chart-color-neptune: #06537f;
   --kerykeion-chart-color-pluto: #713f04;
-  --kerykeion-chart-color-mean-node: #4c1541;
-  --kerykeion-chart-color-true-node: #4c1541;
+  --kerykeion-chart-color-mean-north-node: #4c1541;
+  --kerykeion-chart-color-true-north-node: #4c1541;
+  --kerykeion-chart-color-mean-south-node: #4c1541;
+  --kerykeion-chart-color-true-south-node: #4c1541;
   --kerykeion-chart-color-chiron: #666f06;
   --kerykeion-chart-color-first-house: #ff7e00;
   --kerykeion-chart-color-tenth-house: #ff0000;

@@ -181,23 +181,25 @@ Returns:
 +----------+------+-------------+-----------+----------+
 | 8/6/1977 | 8:45 | Atlanta, US | -84.38798 | 33.749   |
 +----------+------+-------------+-----------+----------+
-+-----------+------+-------+------+----------------+
-| Planet    | Sign | Pos.  | Ret. | House          |
-+-----------+------+-------+------+----------------+
-| Sun       | Gem  | 17.6  | -    | Twelfth_House  |
-| Moon      | Pis  | 16.43 | -    | Ninth_House    |
-| Mercury   | Tau  | 26.29 | -    | Eleventh_House |
-| Venus     | Tau  | 2.03  | -    | Tenth_House    |
-| Mars      | Tau  | 1.79  | -    | Tenth_House    |
-| Jupiter   | Gem  | 14.61 | -    | Eleventh_House |
-| Saturn    | Leo  | 12.8  | -    | Second_House   |
-| Uranus    | Sco  | 8.27  | R    | Fourth_House   |
-| Neptune   | Sag  | 14.69 | R    | Fifth_House    |
-| Pluto     | Lib  | 11.45 | R    | Fourth_House   |
-| Mean_Node | Lib  | 21.49 | R    | Fourth_House   |
-| True_Node | Lib  | 22.82 | R    | Fourth_House   |
-| Chiron    | Tau  | 4.17  | -    | Tenth_House    |
-+-----------+------+-------+------+----------------+
++-----------------+------+-------+------+----------------+
+| Planet          | Sign | Pos.  | Ret. | House          |
++-----------------+------+-------+------+----------------+
+| Sun             | Gem  | 17.6  | -    | Twelfth_House  |
+| Moon            | Pis  | 16.43 | -    | Ninth_House    |
+| Mercury         | Tau  | 26.29 | -    | Eleventh_House |
+| Venus           | Tau  | 2.03  | -    | Tenth_House    |
+| Mars            | Tau  | 1.79  | -    | Tenth_House    |
+| Jupiter         | Gem  | 14.61 | -    | Eleventh_House |
+| Saturn          | Leo  | 12.8  | -    | Second_House   |
+| Uranus          | Sco  | 8.27  | R    | Fourth_House   |
+| Neptune         | Sag  | 14.69 | R    | Fifth_House    |
+| Pluto           | Lib  | 11.45 | R    | Fourth_House   |
+| Mean_North_Node | Lib  | 21.49 | R    | Fourth_House   |
+| True_North_Node | Lib  | 22.82 | R    | Fourth_House   |
+| Mean_South_Node | Ari  | 21.49 | R    | Tenth_House    |
+| True_South_Node | Ari  | 22.82 | R    | Tenth_House    |
+| Chiron          | Tau  | 4.17  | -    | Tenth_House    |
++-----------------+------+-------+------+----------------+
 +----------------+------+----------+
 | House          | Sign | Position |
 +----------------+------+----------+
