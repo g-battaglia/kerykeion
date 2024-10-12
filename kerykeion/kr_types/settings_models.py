@@ -109,6 +109,8 @@ class KerykeionLanguageCelestialPointModel(SubscriptableBaseModel):
     Dsc: str = Field(title="Descendant", description="The name of Descendant in the chart, in the language")
     Ic: str = Field(title="Imum Coeli", description="The name of Imum Coeli in the chart, in the language")
     Mean_Lilith: str = Field(title="Mean Lilith", description="The name of Mean Lilith in the chart, in the language")
+    True_South_Node: str = Field(title="True South Node", description="The name of True South Node in the chart, in the language")
+    Mean_South_Node: str = Field(title="Mean South Node", description="The name of Mean South Node in the chart, in the language")
 
 
 class KerykeionLanguageModel(SubscriptableBaseModel):

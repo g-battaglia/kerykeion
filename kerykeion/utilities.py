@@ -35,6 +35,11 @@ def get_number_from_name(name: Planet) -> int:
         return 10
     elif name == "True_Node":
         return 11
+    # Note: Swiss ephemeris library has no constants for south nodes. We're using integers >= 1000 for them.
+    elif name == "Mean_South_Node":
+        return 1000
+    elif name == "True_South_Node":
+        return 1100
     elif name == "Chiron":
         return 15
     elif name == "Mean_Lilith":
@@ -168,16 +173,16 @@ def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut
 def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
     """
     Returns the emoji of the moon phase.
-    
+
     Args:
         - phase: The phase of the moon (0-28)
-    
+
     Returns:
         - The emoji of the moon phase
     """
 
     lunar_phase_emojis = get_args(LunarPhaseEmoji)
-    
+
     if phase == 1:
         result = lunar_phase_emojis[0]
     elif phase < 7:
@@ -203,10 +208,10 @@ def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
 def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
     """
     Returns the name of the moon phase.
-    
+
     Args:
         - phase: The phase of the moon (0-28)
-    
+
     Returns:
         - The name of the moon phase
     """
@@ -232,7 +237,7 @@ def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
 
     else:
         raise KerykeionException(f"Error in moon name calculation! Phase: {phase}")
-    
+
     return result
 
 

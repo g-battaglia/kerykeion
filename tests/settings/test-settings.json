@@ -36,8 +36,10 @@
         "Mc": "Mc",
         "Dsc": "Dsc",
         "Ic": "Ic",
-        "True_Node": "North Node",
-        "Mean_Node": "Mean Node",
+        "True_Node": "True North Node",
+        "Mean_Node": "Mean North Node",
+        "True_South_Node": "True South Node",
+        "Mean_South_Node": "Mean South Node",
         "Chiron": "Chiron",
         "Mean_Lilith": "Lilith"
       }
@@ -78,8 +80,10 @@
         "Mc": "Mc",
         "Dsc": "Dsc",
         "Ic": "Ic",
-        "True_Node": "Noeud Nord",
-        "Mean_Node": "Noeud Moyen",
+        "True_Node": "Noeud Nord Vrai",
+        "Mean_Node": "Noeud Nord Moyen",
+        "True_South_Node": "Noeud Sud Vrai",
+        "Mean_South_Node": "Noeud Sud Moyen",
         "Chiron": "Chiron",
         "Mean_Lilith": "Lilith"
       }
@@ -120,8 +124,10 @@
         "Mc": "Mc",
         "Dsc": "Dsc",
         "Ic": "Ic",
-        "True_Node": "Nodo Norte",
-        "Mean_Node": "Nodo Médio",
+        "True_Node": "Nodo Norte Verdadeiro",
+        "Mean_Node": "Nodo Norte Médio",
+        "True_South_Node": "Nodo Sul Verdadeiro",
+        "Mean_South_Node": "Nodo Sul Médio",
         "Chiron": "Quíron",
         "Mean_Lilith": "Lilith"
       }
@@ -162,8 +168,10 @@
         "Mc": "Mc",
         "Dsc": "Dsc",
         "Ic": "Ic",
-        "True_Node": "Nodo Nord",
-        "Mean_Node": "Nodo Medio",
+        "True_Node": "Nodo Nord Vero",
+        "Mean_Node": "Nodo Nord Medio",
+        "True_South_Node": "Nodo Sud Vero",
+        "Mean_South_Node": "Nodo Sud Medio",
         "Chiron": "Chirone",
         "Mean_Lilith": "Lilith"
       }
@@ -204,8 +212,10 @@
         "Mc": "上中天",
         "Dsc": "下降點",
         "Ic": "下中天",
-        "True_Node": "北交點",
-        "Mean_Node": "平交點",
+        "True_Node": "真北交点",
+        "Mean_Node": "平均北交点",
+        "True_South_Node": "真南交点",
+        "Mean_South_Node": "平均南交点",
         "Chiron": "凱龍星",
         "Mean_Lilith": "黑月亮"
       }
@@ -246,8 +256,10 @@
         "Mc": "Mc",
         "Dsc": "Dsc",
         "Ic": "Ic",
-        "True_Node": "Nodo Norte",
-        "Mean_Node": "Nodo Medio",
+        "True_Node": "Nodo Norte Verdadero",
+        "Mean_Node": "Nodo Norte Medio",
+        "True_South_Node": "Nodo Sur Verdadero",
+        "Mean_South_Node": "Nodo Sur Medio",
         "Chiron": "Quirón",
         "Mean_Lilith": "Lilith"
       }
@@ -288,8 +300,10 @@
         "Mc": "MC",
         "Dsc": "ДСЦ",
         "Ic": "IC",
-        "True_Node": "Северный узел",
-        "Mean_Node": "Средний узел",
+        "True_Node": "Истинный Северный Узел",
+        "Mean_Node": "Средний Северный Узел",
+        "True_South_Node": "Истинный Южный Узел",
+        "Mean_South_Node": "Средний Южный Узел",
         "Chiron": "Хирон",
         "Mean_Lilith": "Лилит"
       }
@@ -330,8 +344,10 @@
         "Mc": "MC",
         "Dsc": "İK",
         "Ic": "IC",
-        "True_Node": "Kuzey Düğümü",
-        "Mean_Node": "Ortalama Düğüm",
+        "True_Node": "Gerçek Kuzey Düğümü",
+        "Mean_Node": "Ortalama Kuzey Düğümü",
+        "True_South_Node": "Gerçek Güney Düğümü",
+        "Mean_South_Node": "Ortalama Güney Düğümü",
         "Chiron": "Kiron",
         "Mean_Lilith": "Lilith"
       }
@@ -372,8 +388,10 @@
         "Mc": "MC",
         "Dsc": "DSC",
         "Ic": "IC",
-        "True_Node": "Wahrer Mondknoten",
-        "Mean_Node": "Mittlerer Mondknoten",
+        "True_Node": "Wahrer nördlicher Mondknoten",
+        "Mean_Node": "Mittlerer nördlicher Mondknoten",
+        "True_South_Node": "Wahrer südlicher Mondknoten",
+        "Mean_South_Node": "Mittlerer südlicher Mondknoten",
         "Chiron": "Chiron",
         "Mean_Lilith": "Lilith"
       }

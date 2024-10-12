@@ -130,10 +130,12 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     # Nodes
     mean_node: KerykeionPointModel
     true_node: KerykeionPointModel
+    mean_south_node: KerykeionPointModel
+    true_south_node: KerykeionPointModel
 
     lunar_phase: LunarPhaseModel
     """Lunar phase model"""
-    
+
     planets_names_list: list[Planet]
     """Ordered list of available planets names"""
 

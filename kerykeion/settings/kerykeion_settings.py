@@ -17,10 +17,10 @@ def get_settings(new_settings_file: Union[Path, None, KerykeionSettingsModel, di
     If no settings file is passed as argument, or the file is not found, it will fallback to:
     - The system wide config file, located in ~/.config/kerykeion/kr.config.json
     - The default config file, located in the package folder
-    
+
     Args:
         new_settings_file (Union[Path, None], optional): The path of the settings file. Defaults to None.
-        
+
     Returns:
         Dict: The settings dict
     """
@@ -57,11 +57,11 @@ def merge_settings(settings: KerykeionSettingsModel, new_settings: Dict) -> Kery
     """
     This function is used to merge the settings file with the default settings,
     it's useful to add new settings to the config file without breaking the old ones.
-    
+
     Args:
         settings (KerykeionSettingsModel): The default settings
         new_settings (Dict): The new settings to add to the default ones
-        
+
     Returns:
         KerykeionSettingsModel: The new settings
     """
