@@ -216,11 +216,11 @@
 </span><span id="L-14"><a href="#L-14"><span class="linenos">  14</span></a><span class="kn">from</span> <span class="nn">kerykeion.kr_types</span> <span class="kn">import</span> <span class="n">ChartTemplateDictionary</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">  15</span></a><span class="kn">from</span> <span class="nn">kerykeion.kr_types.settings_models</span> <span class="kn">import</span> <span class="n">KerykeionSettingsCelestialPointModel</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">  16</span></a><span class="kn">from</span> <span class="nn">kerykeion.charts.charts_utils</span> <span class="kn">import</span> <span class="p">(</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">  17</span></a>    <span class="n">degreeDiff</span><span class="p">,</span> 
-</span><span id="L-18"><a href="#L-18"><span class="linenos">  18</span></a>    <span class="n">sliceToX</span><span class="p">,</span> 
-</span><span id="L-19"><a href="#L-19"><span class="linenos">  19</span></a>    <span class="n">sliceToY</span><span class="p">,</span> 
-</span><span id="L-20"><a href="#L-20"><span class="linenos">  20</span></a>    <span class="n">draw_zodiac_slice</span><span class="p">,</span> 
-</span><span id="L-21"><a href="#L-21"><span class="linenos">  21</span></a>    <span class="n">convert_latitude_coordinate_to_string</span><span class="p">,</span> 
+</span><span id="L-17"><a href="#L-17"><span class="linenos">  17</span></a>    <span class="n">degreeDiff</span><span class="p">,</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">  18</span></a>    <span class="n">sliceToX</span><span class="p">,</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">  19</span></a>    <span class="n">sliceToY</span><span class="p">,</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">  20</span></a>    <span class="n">draw_zodiac_slice</span><span class="p">,</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">  21</span></a>    <span class="n">convert_latitude_coordinate_to_string</span><span class="p">,</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">  22</span></a>    <span class="n">convert_longitude_coordinate_to_string</span><span class="p">,</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">  23</span></a>    <span class="n">draw_aspect_line</span><span class="p">,</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">  24</span></a>    <span class="n">draw_elements_percentages</span><span class="p">,</span>
@@ -251,7 +251,7 @@
 </span><span id="L-49"><a href="#L-49"><span class="linenos">  49</span></a><span class="sd">        - new_settings_file: Set the settings file (default: kr.config.json).</span>
 </span><span id="L-50"><a href="#L-50"><span class="linenos">  50</span></a><span class="sd">            In the settings file you can set the language, colors, planets, aspects, etc.</span>
 </span><span id="L-51"><a href="#L-51"><span class="linenos">  51</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">  52</span></a>    
+</span><span id="L-52"><a href="#L-52"><span class="linenos">  52</span></a>
 </span><span id="L-53"><a href="#L-53"><span class="linenos">  53</span></a>    <span class="c1"># Constants</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos">  54</span></a>    <span class="n">_DEFAULT_HEIGHT</span> <span class="o">=</span> <span class="mf">546.0</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos">  55</span></a>    <span class="n">_DEFAULT_FULL_WIDTH</span> <span class="o">=</span> <span class="mi">1200</span>
@@ -356,7 +356,7 @@
 </span><span id="L-154"><a href="#L-154"><span class="linenos"> 154</span></a>        <span class="n">available_celestial_points</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="L-155"><a href="#L-155"><span class="linenos"> 155</span></a>        <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_planets_setting</span><span class="p">:</span>
 </span><span id="L-156"><a href="#L-156"><span class="linenos"> 156</span></a>            <span class="n">available_celestial_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">body</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos"> 157</span></a>        
+</span><span id="L-157"><a href="#L-157"><span class="linenos"> 157</span></a>
 </span><span id="L-158"><a href="#L-158"><span class="linenos"> 158</span></a>        <span class="c1"># Make a list for the absolute degrees of the points of the graphic.</span>
 </span><span id="L-159"><a href="#L-159"><span class="linenos"> 159</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">points_deg_ut</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="L-160"><a href="#L-160"><span class="linenos"> 160</span></a>        <span class="k">for</span> <span class="n">planet</span> <span class="ow">in</span> <span class="n">available_celestial_points</span><span class="p">:</span>
@@ -397,7 +397,7 @@
 </span><span id="L-195"><a href="#L-195"><span class="linenos"> 195</span></a>
 </span><span id="L-196"><a href="#L-196"><span class="linenos"> 196</span></a>            <span class="c1"># Make a list for the absolute degrees of the points of the graphic.</span>
 </span><span id="L-197"><a href="#L-197"><span class="linenos"> 197</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">t_points_deg_ut</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="L-198"><a href="#L-198"><span class="linenos"> 198</span></a>            <span class="k">for</span> <span class="n">planet</span> <span class="ow">in</span> <span class="n">available_celestial_points</span><span class="p">:</span>            
+</span><span id="L-198"><a href="#L-198"><span class="linenos"> 198</span></a>            <span class="k">for</span> <span class="n">planet</span> <span class="ow">in</span> <span class="n">available_celestial_points</span><span class="p">:</span>
 </span><span id="L-199"><a href="#L-199"><span class="linenos"> 199</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">t_points_deg_ut</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">planet</span><span class="p">)</span><span class="o">.</span><span class="n">abs_pos</span><span class="p">)</span>
 </span><span id="L-200"><a href="#L-200"><span class="linenos"> 200</span></a>
 </span><span id="L-201"><a href="#L-201"><span class="linenos"> 201</span></a>            <span class="c1"># Make a list of the relative degrees of the points in the graphic.</span>
@@ -430,7 +430,7 @@
 </span><span id="L-228"><a href="#L-228"><span class="linenos"> 228</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">city</span>
 </span><span id="L-229"><a href="#L-229"><span class="linenos"> 229</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">geolat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">lat</span>
 </span><span id="L-230"><a href="#L-230"><span class="linenos"> 230</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">geolon</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">lng</span>
-</span><span id="L-231"><a href="#L-231"><span class="linenos"> 231</span></a>        
+</span><span id="L-231"><a href="#L-231"><span class="linenos"> 231</span></a>
 </span><span id="L-232"><a href="#L-232"><span class="linenos"> 232</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> birth location: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geolat</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geolon</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="L-233"><a href="#L-233"><span class="linenos"> 233</span></a>
 </span><span id="L-234"><a href="#L-234"><span class="linenos"> 234</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;Transit&quot;</span><span class="p">:</span>
@@ -595,7 +595,7 @@
 </span><span id="L-393"><a href="#L-393"><span class="linenos"> 393</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-394"><a href="#L-394"><span class="linenos"> 394</span></a><span class="sd">        Calculate chart element points from a planet.</span>
 </span><span id="L-395"><a href="#L-395"><span class="linenos"> 395</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-396"><a href="#L-396"><span class="linenos"> 396</span></a>        
+</span><span id="L-396"><a href="#L-396"><span class="linenos"> 396</span></a>
 </span><span id="L-397"><a href="#L-397"><span class="linenos"> 397</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">available_planets_setting</span><span class="p">)):</span>
 </span><span id="L-398"><a href="#L-398"><span class="linenos"> 398</span></a>            <span class="c1"># element: get extra points if planet is in own zodiac sign.</span>
 </span><span id="L-399"><a href="#L-399"><span class="linenos"> 399</span></a>            <span class="n">related_zodiac_signs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_planets_setting</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;related_zodiac_signs&quot;</span><span class="p">]</span>
@@ -784,7 +784,7 @@
 </span><span id="L-582"><a href="#L-582"><span class="linenos"> 582</span></a>            <span class="n">planet_y</span> <span class="o">=</span> <span class="n">sliceToY</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">rplanet</span><span class="p">),</span> <span class="n">offset</span><span class="p">)</span> <span class="o">+</span> <span class="n">rplanet</span>
 </span><span id="L-583"><a href="#L-583"><span class="linenos"> 583</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;Transit&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;Synastry&quot;</span><span class="p">:</span>
 </span><span id="L-584"><a href="#L-584"><span class="linenos"> 584</span></a>                <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.8</span>
-</span><span id="L-585"><a href="#L-585"><span class="linenos"> 585</span></a>                
+</span><span id="L-585"><a href="#L-585"><span class="linenos"> 585</span></a>
 </span><span id="L-586"><a href="#L-586"><span class="linenos"> 586</span></a>            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;ExternalNatal&quot;</span><span class="p">:</span>
 </span><span id="L-587"><a href="#L-587"><span class="linenos"> 587</span></a>                <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.8</span>
 </span><span id="L-588"><a href="#L-588"><span class="linenos"> 588</span></a>                <span class="c1"># line1</span>
@@ -806,7 +806,7 @@
 </span><span id="L-604"><a href="#L-604"><span class="linenos"> 604</span></a>                    <span class="s1">&#39;&lt;line x1=&quot;</span><span class="si">%s</span><span class="s1">&quot; y1=&quot;</span><span class="si">%s</span><span class="s1">&quot; x2=&quot;</span><span class="si">%s</span><span class="s1">&quot; y2=&quot;</span><span class="si">%s</span><span class="s1">&quot; style=&quot;stroke-width:1px;stroke:</span><span class="si">%s</span><span class="s1">;stroke-opacity:.5;&quot;/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
 </span><span id="L-605"><a href="#L-605"><span class="linenos"> 605</span></a>                    <span class="o">%</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
 </span><span id="L-606"><a href="#L-606"><span class="linenos"> 606</span></a>                <span class="p">)</span>
-</span><span id="L-607"><a href="#L-607"><span class="linenos"> 607</span></a>                
+</span><span id="L-607"><a href="#L-607"><span class="linenos"> 607</span></a>
 </span><span id="L-608"><a href="#L-608"><span class="linenos"> 608</span></a>            <span class="k">else</span><span class="p">:</span>
 </span><span id="L-609"><a href="#L-609"><span class="linenos"> 609</span></a>                <span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span id="L-610"><a href="#L-610"><span class="linenos"> 610</span></a>            <span class="c1"># output planet</span>
@@ -821,10 +821,10 @@
 </span><span id="L-619"><a href="#L-619"><span class="linenos"> 619</span></a>            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">list_range</span><span class="p">):</span>
 </span><span id="L-620"><a href="#L-620"><span class="linenos"> 620</span></a>                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;Transit&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_planets_setting</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transit_ring_exclude_points_names</span><span class="p">:</span>
 </span><span id="L-621"><a href="#L-621"><span class="linenos"> 621</span></a>                    <span class="k">continue</span>
-</span><span id="L-622"><a href="#L-622"><span class="linenos"> 622</span></a>                
+</span><span id="L-622"><a href="#L-622"><span class="linenos"> 622</span></a>
 </span><span id="L-623"><a href="#L-623"><span class="linenos"> 623</span></a>                <span class="n">group_offset</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="L-624"><a href="#L-624"><span class="linenos"> 624</span></a>                <span class="n">t_planets_degut</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t_points_deg_ut</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span>
-</span><span id="L-625"><a href="#L-625"><span class="linenos"> 625</span></a>        
+</span><span id="L-625"><a href="#L-625"><span class="linenos"> 625</span></a>
 </span><span id="L-626"><a href="#L-626"><span class="linenos"> 626</span></a>            <span class="n">t_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">t_planets_degut</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 </span><span id="L-627"><a href="#L-627"><span class="linenos"> 627</span></a>            <span class="n">t_keys</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
 </span><span id="L-628"><a href="#L-628"><span class="linenos"> 628</span></a>
@@ -866,7 +866,7 @@
 </span><span id="L-664"><a href="#L-664"><span class="linenos"> 664</span></a>                    <span class="n">group_offset</span><span class="p">[</span><span class="n">groups</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">2.0</span>
 </span><span id="L-665"><a href="#L-665"><span class="linenos"> 665</span></a>
 </span><span id="L-666"><a href="#L-666"><span class="linenos"> 666</span></a>            <span class="n">switch</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="L-667"><a href="#L-667"><span class="linenos"> 667</span></a>            
+</span><span id="L-667"><a href="#L-667"><span class="linenos"> 667</span></a>
 </span><span id="L-668"><a href="#L-668"><span class="linenos"> 668</span></a>            <span class="c1"># Transit planets loop</span>
 </span><span id="L-669"><a href="#L-669"><span class="linenos"> 669</span></a>            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t_keys</span><span class="p">)):</span>
 </span><span id="L-670"><a href="#L-670"><span class="linenos"> 670</span></a>                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;Transit&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_planets_setting</span><span class="p">[</span><span class="n">e</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transit_ring_exclude_points_names</span><span class="p">:</span>
@@ -1172,7 +1172,7 @@
 </span><span id="L-970"><a href="#L-970"><span class="linenos"> 970</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aspects_list</span><span class="p">)):</span>
 </span><span id="L-971"><a href="#L-971"><span class="linenos"> 971</span></a>            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
 </span><span id="L-972"><a href="#L-972"><span class="linenos"> 972</span></a>                <span class="n">nl</span> <span class="o">=</span> <span class="mi">100</span>
-</span><span id="L-973"><a href="#L-973"><span class="linenos"> 973</span></a>                
+</span><span id="L-973"><a href="#L-973"><span class="linenos"> 973</span></a>
 </span><span id="L-974"><a href="#L-974"><span class="linenos"> 974</span></a>                <span class="n">line</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="L-975"><a href="#L-975"><span class="linenos"> 975</span></a>
 </span><span id="L-976"><a href="#L-976"><span class="linenos"> 976</span></a>            <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
@@ -1182,9 +1182,9 @@
 </span><span id="L-980"><a href="#L-980"><span class="linenos"> 980</span></a>
 </span><span id="L-981"><a href="#L-981"><span class="linenos"> 981</span></a>            <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">36</span><span class="p">:</span>
 </span><span id="L-982"><a href="#L-982"><span class="linenos"> 982</span></a>                <span class="n">nl</span> <span class="o">=</span> <span class="mi">300</span>
-</span><span id="L-983"><a href="#L-983"><span class="linenos"> 983</span></a>                
+</span><span id="L-983"><a href="#L-983"><span class="linenos"> 983</span></a>
 </span><span id="L-984"><a href="#L-984"><span class="linenos"> 984</span></a>                <span class="n">line</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="L-985"><a href="#L-985"><span class="linenos"> 985</span></a>                    
+</span><span id="L-985"><a href="#L-985"><span class="linenos"> 985</span></a>
 </span><span id="L-986"><a href="#L-986"><span class="linenos"> 986</span></a>            <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">48</span><span class="p">:</span>
 </span><span id="L-987"><a href="#L-987"><span class="linenos"> 987</span></a>                <span class="n">nl</span> <span class="o">=</span> <span class="mi">400</span>
 </span><span id="L-988"><a href="#L-988"><span class="linenos"> 988</span></a>
@@ -1195,17 +1195,17 @@
 </span><span id="L-993"><a href="#L-993"><span class="linenos"> 993</span></a>                    <span class="n">line</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="L-994"><a href="#L-994"><span class="linenos"> 994</span></a>
 </span><span id="L-995"><a href="#L-995"><span class="linenos"> 995</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;g transform=&quot;translate(</span><span class="si">{</span><span class="n">nl</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s1">)&quot;&gt;&#39;</span>
-</span><span id="L-996"><a href="#L-996"><span class="linenos"> 996</span></a>            
+</span><span id="L-996"><a href="#L-996"><span class="linenos"> 996</span></a>
 </span><span id="L-997"><a href="#L-997"><span class="linenos"> 997</span></a>            <span class="c1"># first planet symbol</span>
 </span><span id="L-998"><a href="#L-998"><span class="linenos"> 998</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;use transform=&quot;scale(0.4)&quot; x=&quot;0&quot; y=&quot;3&quot; xlink:href=&quot;#</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_settings</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">aspects_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;p1&quot;</span><span class="p">]][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot; /&gt;&#39;</span>
-</span><span id="L-999"><a href="#L-999"><span class="linenos"> 999</span></a>            
+</span><span id="L-999"><a href="#L-999"><span class="linenos"> 999</span></a>
 </span><span id="L-1000"><a href="#L-1000"><span class="linenos">1000</span></a>            <span class="c1"># aspect symbol</span>
 </span><span id="L-1001"><a href="#L-1001"><span class="linenos">1001</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;use  x=&quot;15&quot; y=&quot;0&quot; xlink:href=&quot;#orb</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aspects_settings</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">aspects_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;aid&quot;</span><span class="p">]][</span><span class="s2">&quot;degree&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot; /&gt;&#39;</span>
-</span><span id="L-1002"><a href="#L-1002"><span class="linenos">1002</span></a>            
+</span><span id="L-1002"><a href="#L-1002"><span class="linenos">1002</span></a>
 </span><span id="L-1003"><a href="#L-1003"><span class="linenos">1003</span></a>            <span class="c1"># second planet symbol</span>
 </span><span id="L-1004"><a href="#L-1004"><span class="linenos">1004</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;&lt;g transform=&quot;translate(30,0)&quot;&gt;&#39;</span>
-</span><span id="L-1005"><a href="#L-1005"><span class="linenos">1005</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;&lt;use transform=&quot;scale(0.4)&quot; x=&quot;0&quot; y=&quot;3&quot; xlink:href=&quot;#</span><span class="si">%s</span><span class="s1">&quot; /&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_settings</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">aspects_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;p2&quot;</span><span class="p">]][</span><span class="s2">&quot;name&quot;</span><span class="p">])</span> 
-</span><span id="L-1006"><a href="#L-1006"><span class="linenos">1006</span></a>            
+</span><span id="L-1005"><a href="#L-1005"><span class="linenos">1005</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;&lt;use transform=&quot;scale(0.4)&quot; x=&quot;0&quot; y=&quot;3&quot; xlink:href=&quot;#</span><span class="si">%s</span><span class="s1">&quot; /&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_settings</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">aspects_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;p2&quot;</span><span class="p">]][</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+</span><span id="L-1006"><a href="#L-1006"><span class="linenos">1006</span></a>
 </span><span id="L-1007"><a href="#L-1007"><span class="linenos">1007</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/g&gt;&quot;</span>
 </span><span id="L-1008"><a href="#L-1008"><span class="linenos">1008</span></a>            <span class="c1"># difference in degrees</span>
 </span><span id="L-1009"><a href="#L-1009"><span class="linenos">1009</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;text y=&quot;8&quot; x=&quot;45&quot; style=&quot;fill:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chart_colors_settings</span><span class="p">[</span><span class="s2">&quot;paper_0&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">; font-size: 10px;&quot;&gt;</span><span class="si">{</span><span class="n">convert_decimal_to_degree_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aspects_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;orbit&quot;</span><span class="p">])</span><span class="si">}</span><span class="s1">&lt;/text&gt;&#39;</span>
@@ -1220,7 +1220,7 @@
 </span><span id="L-1018"><a href="#L-1018"><span class="linenos">1018</span></a>        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="L-1019"><a href="#L-1019"><span class="linenos">1019</span></a>
 </span><span id="L-1020"><a href="#L-1020"><span class="linenos">1020</span></a>        <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;&lt;g transform=&quot;translate(500,-20)&quot;&gt;&#39;</span>
-</span><span id="L-1021"><a href="#L-1021"><span class="linenos">1021</span></a>        <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;&lt;g transform=&quot;translate(140, -15)&quot;&gt;&#39;</span>
+</span><span id="L-1021"><a href="#L-1021"><span class="linenos">1021</span></a>        <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;&lt;g transform=&quot;translate(175, -15)&quot;&gt;&#39;</span>
 </span><span id="L-1022"><a href="#L-1022"><span class="linenos">1022</span></a>        <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;text text-anchor=&quot;end&quot; style=&quot;fill:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chart_colors_settings</span><span class="p">[</span><span class="s2">&quot;paper_0&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">; font-size: 14px;&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">language_settings</span><span class="p">[</span><span class="s2">&quot;planets_and_house&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">:&lt;/text&gt;&#39;</span>
 </span><span id="L-1023"><a href="#L-1023"><span class="linenos">1023</span></a>        <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/g&gt;&quot;</span>
 </span><span id="L-1024"><a href="#L-1024"><span class="linenos">1024</span></a>
@@ -1360,7 +1360,7 @@
 </span><span id="L-1158"><a href="#L-1158"><span class="linenos">1158</span></a>        <span class="n">svgHeight</span> <span class="o">=</span> <span class="s2">&quot;100%&quot;</span>
 </span><span id="L-1159"><a href="#L-1159"><span class="linenos">1159</span></a>        <span class="n">svgWidth</span> <span class="o">=</span> <span class="s2">&quot;100%&quot;</span>
 </span><span id="L-1160"><a href="#L-1160"><span class="linenos">1160</span></a>        <span class="n">rotate</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
-</span><span id="L-1161"><a href="#L-1161"><span class="linenos">1161</span></a>        
+</span><span id="L-1161"><a href="#L-1161"><span class="linenos">1161</span></a>
 </span><span id="L-1162"><a href="#L-1162"><span class="linenos">1162</span></a>        <span class="c1"># To increase the size of the chart, change the viewbox</span>
 </span><span id="L-1163"><a href="#L-1163"><span class="linenos">1163</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;Natal&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;ExternalNatal&quot;</span><span class="p">:</span>
 </span><span id="L-1164"><a href="#L-1164"><span class="linenos">1164</span></a>            <span class="n">viewbox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_settings</span><span class="p">[</span><span class="s2">&quot;basic_chart_viewBox&quot;</span><span class="p">]</span>
@@ -1402,14 +1402,14 @@
 </span><span id="L-1200"><a href="#L-1200"><span class="linenos">1200</span></a>            <span class="n">td</span><span class="p">[</span><span class="s1">&#39;first_circle&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">draw_first_circle</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_colors_settings</span><span class="p">[</span><span class="s2">&quot;zodiac_radix_ring_2&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c1</span><span class="p">)</span>
 </span><span id="L-1201"><a href="#L-1201"><span class="linenos">1201</span></a>
 </span><span id="L-1202"><a href="#L-1202"><span class="linenos">1202</span></a>            <span class="n">td</span><span class="p">[</span><span class="s2">&quot;second_circle&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">draw_second_circle</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_colors_settings</span><span class="p">[</span><span class="s2">&quot;zodiac_radix_ring_1&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_colors_settings</span><span class="p">[</span><span class="s2">&quot;paper_1&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c2</span><span class="p">)</span>
-</span><span id="L-1203"><a href="#L-1203"><span class="linenos">1203</span></a>            
+</span><span id="L-1203"><a href="#L-1203"><span class="linenos">1203</span></a>
 </span><span id="L-1204"><a href="#L-1204"><span class="linenos">1204</span></a>            <span class="n">td</span><span class="p">[</span><span class="s2">&quot;c3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;cx=&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1">&quot; cy=&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1">&quot; r=&quot;</span><span class="si">{</span><span class="n">r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">c3</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
 </span><span id="L-1205"><a href="#L-1205"><span class="linenos">1205</span></a>            <span class="n">td</span><span class="p">[</span><span class="s2">&quot;c3style&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;fill: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chart_colors_settings</span><span class="p">[</span><span class="s2">&quot;paper_1&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">; fill-opacity:.8; stroke: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chart_colors_settings</span><span class="p">[</span><span class="s2">&quot;zodiac_radix_ring_0&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">; stroke-width: 1px&#39;</span>
-</span><span id="L-1206"><a href="#L-1206"><span class="linenos">1206</span></a>            
+</span><span id="L-1206"><a href="#L-1206"><span class="linenos">1206</span></a>
 </span><span id="L-1207"><a href="#L-1207"><span class="linenos">1207</span></a>            <span class="n">td</span><span class="p">[</span><span class="s2">&quot;makeAspects&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_makeAspects</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">c3</span><span class="p">))</span>
 </span><span id="L-1208"><a href="#L-1208"><span class="linenos">1208</span></a>            <span class="n">td</span><span class="p">[</span><span class="s2">&quot;makeAspectGrid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_makeAspectGrid</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 </span><span id="L-1209"><a href="#L-1209"><span class="linenos">1209</span></a>            <span class="n">td</span><span class="p">[</span><span class="s2">&quot;makePatterns&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_makePatterns</span><span class="p">()</span>
-</span><span id="L-1210"><a href="#L-1210"><span class="linenos">1210</span></a>        
+</span><span id="L-1210"><a href="#L-1210"><span class="linenos">1210</span></a>
 </span><span id="L-1211"><a href="#L-1211"><span class="linenos">1211</span></a>        <span class="n">td</span><span class="p">[</span><span class="s2">&quot;chart_height&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span>
 </span><span id="L-1212"><a href="#L-1212"><span class="linenos">1212</span></a>        <span class="n">td</span><span class="p">[</span><span class="s2">&quot;chart_width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span>
 </span><span id="L-1213"><a href="#L-1213"><span class="linenos">1213</span></a>        <span class="n">td</span><span class="p">[</span><span class="s2">&quot;circleX&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -1524,13 +1524,13 @@
 </span><span id="L-1322"><a href="#L-1322"><span class="linenos">1322</span></a>
 </span><span id="L-1323"><a href="#L-1323"><span class="linenos">1323</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="L-1324"><a href="#L-1324"><span class="linenos">1324</span></a>            <span class="n">latitude_string</span> <span class="o">=</span> <span class="n">convert_latitude_coordinate_to_string</span><span class="p">(</span>
-</span><span id="L-1325"><a href="#L-1325"><span class="linenos">1325</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">geolat</span><span class="p">,</span> 
-</span><span id="L-1326"><a href="#L-1326"><span class="linenos">1326</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">language_settings</span><span class="p">[</span><span class="s1">&#39;north&#39;</span><span class="p">],</span> 
+</span><span id="L-1325"><a href="#L-1325"><span class="linenos">1325</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">geolat</span><span class="p">,</span>
+</span><span id="L-1326"><a href="#L-1326"><span class="linenos">1326</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">language_settings</span><span class="p">[</span><span class="s1">&#39;north&#39;</span><span class="p">],</span>
 </span><span id="L-1327"><a href="#L-1327"><span class="linenos">1327</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">language_settings</span><span class="p">[</span><span class="s1">&#39;south&#39;</span><span class="p">]</span>
 </span><span id="L-1328"><a href="#L-1328"><span class="linenos">1328</span></a>            <span class="p">)</span>
 </span><span id="L-1329"><a href="#L-1329"><span class="linenos">1329</span></a>            <span class="n">longitude_string</span> <span class="o">=</span> <span class="n">convert_longitude_coordinate_to_string</span><span class="p">(</span>
-</span><span id="L-1330"><a href="#L-1330"><span class="linenos">1330</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">geolon</span><span class="p">,</span> 
-</span><span id="L-1331"><a href="#L-1331"><span class="linenos">1331</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">language_settings</span><span class="p">[</span><span class="s1">&#39;east&#39;</span><span class="p">],</span> 
+</span><span id="L-1330"><a href="#L-1330"><span class="linenos">1330</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">geolon</span><span class="p">,</span>
+</span><span id="L-1331"><a href="#L-1331"><span class="linenos">1331</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">language_settings</span><span class="p">[</span><span class="s1">&#39;east&#39;</span><span class="p">],</span>
 </span><span id="L-1332"><a href="#L-1332"><span class="linenos">1332</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">language_settings</span><span class="p">[</span><span class="s1">&#39;west&#39;</span><span class="p">]</span>
 </span><span id="L-1333"><a href="#L-1333"><span class="linenos">1333</span></a>            <span class="p">)</span>
 </span><span id="L-1334"><a href="#L-1334"><span class="linenos">1334</span></a>
@@ -1640,7 +1640,7 @@
 </span><span id="L-1438"><a href="#L-1438"><span class="linenos">1438</span></a>    <span class="c1"># Transits Chart</span>
 </span><span id="L-1439"><a href="#L-1439"><span class="linenos">1439</span></a>    <span class="n">transits_chart</span> <span class="o">=</span> <span class="n">KerykeionChartSVG</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="s2">&quot;Transit&quot;</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span>
 </span><span id="L-1440"><a href="#L-1440"><span class="linenos">1440</span></a>    <span class="n">transits_chart</span><span class="o">.</span><span class="n">makeSVG</span><span class="p">()</span>
-</span><span id="L-1441"><a href="#L-1441"><span class="linenos">1441</span></a>    
+</span><span id="L-1441"><a href="#L-1441"><span class="linenos">1441</span></a>
 </span><span id="L-1442"><a href="#L-1442"><span class="linenos">1442</span></a>    <span class="c1"># Sidereal Birth Chart (Lahiri)</span>
 </span><span id="L-1443"><a href="#L-1443"><span class="linenos">1443</span></a>    <span class="n">sidereal_subject</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;John Lennon Lahiri&quot;</span><span class="p">,</span> <span class="mi">1940</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">,</span> <span class="n">zodiac_type</span><span class="o">=</span><span class="s2">&quot;Sidereal&quot;</span><span class="p">,</span> <span class="n">sidereal_mode</span><span class="o">=</span><span class="s2">&quot;LAHIRI&quot;</span><span class="p">)</span>
 </span><span id="L-1444"><a href="#L-1444"><span class="linenos">1444</span></a>    <span class="n">sidereal_chart</span> <span class="o">=</span> <span class="n">KerykeionChartSVG</span><span class="p">(</span><span class="n">sidereal_subject</span><span class="p">)</span>
@@ -1680,7 +1680,7 @@
                 <section id="KerykeionChartSVG">
                             <input id="KerykeionChartSVG-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
-            
+
     <span class="def">class</span>
     <span class="name">KerykeionChartSVG</span>:
 
@@ -1701,7 +1701,7 @@
 </span><span id="KerykeionChartSVG-50"><a href="#KerykeionChartSVG-50"><span class="linenos">  50</span></a><span class="sd">        - new_settings_file: Set the settings file (default: kr.config.json).</span>
 </span><span id="KerykeionChartSVG-51"><a href="#KerykeionChartSVG-51"><span class="linenos">  51</span></a><span class="sd">            In the settings file you can set the language, colors, planets, aspects, etc.</span>
 </span><span id="KerykeionChartSVG-52"><a href="#KerykeionChartSVG-52"><span class="linenos">  52</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="KerykeionChartSVG-53"><a href="#KerykeionChartSVG-53"><span class="linenos">  53</span></a>    
+</span><span id="KerykeionChartSVG-53"><a href="#KerykeionChartSVG-53"><span class="linenos">  53</span></a>
 </span><span id="KerykeionChartSVG-54"><a href="#KerykeionChartSVG-54"><span class="linenos">  54</span></a>    <span class="c1"># Constants</span>
 </span><span id="KerykeionChartSVG-55"><a href="#KerykeionChartSVG-55"><span class="linenos">  55</span></a>    <span class="n">_DEFAULT_HEIGHT</span> <span class="o">=</span> <span class="mf">546.0</span>
 </span><span id="KerykeionChartSVG-56"><a href="#KerykeionChartSVG-56"><span class="linenos">  56</span></a>    <span class="n">_DEFAULT_FULL_WIDTH</span> <span class="o">=</span> <span class="mi">1200</span>
@@ -1806,7 +1806,7 @@
 </span><span id="KerykeionChartSVG-155"><a href="#KerykeionChartSVG-155"><span class="linenos"> 155</span></a>        <span class="n">available_celestial_points</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="KerykeionChartSVG-156"><a href="#KerykeionChartSVG-156"><span class="linenos"> 156</span></a>        <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_planets_setting</span><span class="p">:</span>
 </span><span id="KerykeionChartSVG-157"><a href="#KerykeionChartSVG-157"><span class="linenos"> 157</span></a>            <span class="n">available_celestial_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">body</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-</span><span id="KerykeionChartSVG-158"><a href="#KerykeionChartSVG-158"><span class="linenos"> 158</span></a>        
+</span><span id="KerykeionChartSVG-158"><a href="#KerykeionChartSVG-158"><span class="linenos"> 158</span></a>
 </span><span id="KerykeionChartSVG-159"><a href="#KerykeionChartSVG-159"><span class="linenos"> 159</span></a>        <span class="c1"># Make a list for the absolute degrees of the points of the graphic.</span>
 </span><span id="KerykeionChartSVG-160"><a href="#KerykeionChartSVG-160"><span class="linenos"> 160</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">points_deg_ut</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="KerykeionChartSVG-161"><a href="#KerykeionChartSVG-161"><span class="linenos"> 161</span></a>        <span class="k">for</span> <span class="n">planet</span> <span class="ow">in</span> <span class="n">available_celestial_points</span><span class="p">:</span>
@@ -1847,7 +1847,7 @@
 </span><span id="KerykeionChartSVG-196"><a href="#KerykeionChartSVG-196"><span class="linenos"> 196</span></a>
 </span><span id="KerykeionChartSVG-197"><a href="#KerykeionChartSVG-197"><span class="linenos"> 197</span></a>            <span class="c1"># Make a list for the absolute degrees of the points of the graphic.</span>
 </span><span id="KerykeionChartSVG-198"><a href="#KerykeionChartSVG-198"><span class="linenos"> 198</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">t_points_deg_ut</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="KerykeionChartSVG-199"><a href="#KerykeionChartSVG-199"><span class="linenos"> 199</span></a>            <span class="k">for</span> <span class="n">planet</span> <span class="ow">in</span> <span class="n">available_celestial_points</span><span class="p">:</span>            
+</span><span id="KerykeionChartSVG-199"><a href="#KerykeionChartSVG-199"><span class="linenos"> 199</span></a>            <span class="k">for</span> <span class="n">planet</span> <span class="ow">in</span> <span class="n">available_celestial_points</span><span class="p">:</span>
 </span><span id="KerykeionChartSVG-200"><a href="#KerykeionChartSVG-200"><span class="linenos"> 200</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">t_points_deg_ut</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">planet</span><span class="p">)</span><span class="o">.</span><span class="n">abs_pos</span><span class="p">)</span>
 </span><span id="KerykeionChartSVG-201"><a href="#KerykeionChartSVG-201"><span class="linenos"> 201</span></a>
 </span><span id="KerykeionChartSVG-202"><a href="#KerykeionChartSVG-202"><span class="linenos"> 202</span></a>            <span class="c1"># Make a list of the relative degrees of the points in the graphic.</span>
@@ -1880,7 +1880,7 @@
 </span><span id="KerykeionChartSVG-229"><a href="#KerykeionChartSVG-229"><span class="linenos"> 229</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">city</span>
 </span><span id="KerykeionChartSVG-230"><a href="#KerykeionChartSVG-230"><span class="linenos"> 230</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">geolat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">lat</span>
 </span><span id="KerykeionChartSVG-231"><a href="#KerykeionChartSVG-231"><span class="linenos"> 231</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">geolon</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">lng</span>
-</span><span id="KerykeionChartSVG-232"><a href="#KerykeionChartSVG-232"><span class="linenos"> 232</span></a>        
+</span><span id="KerykeionChartSVG-232"><a href="#KerykeionChartSVG-232"><span class="linenos"> 232</span></a>
 </span><span id="KerykeionChartSVG-233"><a href="#KerykeionChartSVG-233"><span class="linenos"> 233</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> birth location: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geolat</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geolon</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="KerykeionChartSVG-234"><a href="#KerykeionChartSVG-234"><span class="linenos"> 234</span></a>
 </span><span id="KerykeionChartSVG-235"><a href="#KerykeionChartSVG-235"><span class="linenos"> 235</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;Transit&quot;</span><span class="p">:</span>
@@ -2045,7 +2045,7 @@
 </span><span id="KerykeionChartSVG-394"><a href="#KerykeionChartSVG-394"><span class="linenos"> 394</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="KerykeionChartSVG-395"><a href="#KerykeionChartSVG-395"><span class="linenos"> 395</span></a><span class="sd">        Calculate chart element points from a planet.</span>
 </span><span id="KerykeionChartSVG-396"><a href="#KerykeionChartSVG-396"><span class="linenos"> 396</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="KerykeionChartSVG-397"><a href="#KerykeionChartSVG-397"><span class="linenos"> 397</span></a>        
+</span><span id="KerykeionChartSVG-397"><a href="#KerykeionChartSVG-397"><span class="linenos"> 397</span></a>
 </span><span id="KerykeionChartSVG-398"><a href="#KerykeionChartSVG-398"><span class="linenos"> 398</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">available_planets_setting</span><span class="p">)):</span>
 </span><span id="KerykeionChartSVG-399"><a href="#KerykeionChartSVG-399"><span class="linenos"> 399</span></a>            <span class="c1"># element: get extra points if planet is in own zodiac sign.</span>
 </span><span id="KerykeionChartSVG-400"><a href="#KerykeionChartSVG-400"><span class="linenos"> 400</span></a>            <span class="n">related_zodiac_signs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_planets_setting</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;related_zodiac_signs&quot;</span><span class="p">]</span>
@@ -2234,7 +2234,7 @@
 </span><span id="KerykeionChartSVG-583"><a href="#KerykeionChartSVG-583"><span class="linenos"> 583</span></a>            <span class="n">planet_y</span> <span class="o">=</span> <span class="n">sliceToY</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">rplanet</span><span class="p">),</span> <span class="n">offset</span><span class="p">)</span> <span class="o">+</span> <span class="n">rplanet</span>
 </span><span id="KerykeionChartSVG-584"><a href="#KerykeionChartSVG-584"><span class="linenos"> 584</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;Transit&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;Synastry&quot;</span><span class="p">:</span>
 </span><span id="KerykeionChartSVG-585"><a href="#KerykeionChartSVG-585"><span class="linenos"> 585</span></a>                <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.8</span>
-</span><span id="KerykeionChartSVG-586"><a href="#KerykeionChartSVG-586"><span class="linenos"> 586</span></a>                
+</span><span id="KerykeionChartSVG-586"><a href="#KerykeionChartSVG-586"><span class="linenos"> 586</span></a>
 </span><span id="KerykeionChartSVG-587"><a href="#KerykeionChartSVG-587"><span class="linenos"> 587</span></a>            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;ExternalNatal&quot;</span><span class="p">:</span>
 </span><span id="KerykeionChartSVG-588"><a href="#KerykeionChartSVG-588"><span class="linenos"> 588</span></a>                <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.8</span>
 </span><span id="KerykeionChartSVG-589"><a href="#KerykeionChartSVG-589"><span class="linenos"> 589</span></a>                <span class="c1"># line1</span>
@@ -2256,7 +2256,7 @@
 </span><span id="KerykeionChartSVG-605"><a href="#KerykeionChartSVG-605"><span class="linenos"> 605</span></a>                    <span class="s1">&#39;&lt;line x1=&quot;</span><span class="si">%s</span><span class="s1">&quot; y1=&quot;</span><span class="si">%s</span><span class="s1">&quot; x2=&quot;</span><span class="si">%s</span><span class="s1">&quot; y2=&quot;</span><span class="si">%s</span><span class="s1">&quot; style=&quot;stroke-width:1px;stroke:</span><span class="si">%s</span><span class="s1">;stroke-opacity:.5;&quot;/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
 </span><span id="KerykeionChartSVG-606"><a href="#KerykeionChartSVG-606"><span class="linenos"> 606</span></a>                    <span class="o">%</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
 </span><span id="KerykeionChartSVG-607"><a href="#KerykeionChartSVG-607"><span class="linenos"> 607</span></a>                <span class="p">)</span>
-</span><span id="KerykeionChartSVG-608"><a href="#KerykeionChartSVG-608"><span class="linenos"> 608</span></a>                
+</span><span id="KerykeionChartSVG-608"><a href="#KerykeionChartSVG-608"><span class="linenos"> 608</span></a>
 </span><span id="KerykeionChartSVG-609"><a href="#KerykeionChartSVG-609"><span class="linenos"> 609</span></a>            <span class="k">else</span><span class="p">:</span>
 </span><span id="KerykeionChartSVG-610"><a href="#KerykeionChartSVG-610"><span class="linenos"> 610</span></a>                <span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span id="KerykeionChartSVG-611"><a href="#KerykeionChartSVG-611"><span class="linenos"> 611</span></a>            <span class="c1"># output planet</span>
@@ -2271,10 +2271,10 @@
 </span><span id="KerykeionChartSVG-620"><a href="#KerykeionChartSVG-620"><span class="linenos"> 620</span></a>            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">list_range</span><span class="p">):</span>
 </span><span id="KerykeionChartSVG-621"><a href="#KerykeionChartSVG-621"><span class="linenos"> 621</span></a>                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;Transit&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_planets_setting</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transit_ring_exclude_points_names</span><span class="p">:</span>
 </span><span id="KerykeionChartSVG-622"><a href="#KerykeionChartSVG-622"><span class="linenos"> 622</span></a>                    <span class="k">continue</span>
-</span><span id="KerykeionChartSVG-623"><a href="#KerykeionChartSVG-623"><span class="linenos"> 623</span></a>                
+</span><span id="KerykeionChartSVG-623"><a href="#KerykeionChartSVG-623"><span class="linenos"> 623</span></a>
 </span><span id="KerykeionChartSVG-624"><a href="#KerykeionChartSVG-624"><span class="linenos"> 624</span></a>                <span class="n">group_offset</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="KerykeionChartSVG-625"><a href="#KerykeionChartSVG-625"><span class="linenos"> 625</span></a>                <span class="n">t_planets_degut</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t_points_deg_ut</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span>
-</span><span id="KerykeionChartSVG-626"><a href="#KerykeionChartSVG-626"><span class="linenos"> 626</span></a>        
+</span><span id="KerykeionChartSVG-626"><a href="#KerykeionChartSVG-626"><span class="linenos"> 626</span></a>
 </span><span id="KerykeionChartSVG-627"><a href="#KerykeionChartSVG-627"><span class="linenos"> 627</span></a>            <span class="n">t_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">t_planets_degut</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 </span><span id="KerykeionChartSVG-628"><a href="#KerykeionChartSVG-628"><span class="linenos"> 628</span></a>            <span class="n">t_keys</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
 </span><span id="KerykeionChartSVG-629"><a href="#KerykeionChartSVG-629"><span class="linenos"> 629</span></a>
@@ -2316,7 +2316,7 @@
 </span><span id="KerykeionChartSVG-665"><a href="#KerykeionChartSVG-665"><span class="linenos"> 665</span></a>                    <span class="n">group_offset</span><span class="p">[</span><span class="n">groups</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">2.0</span>
 </span><span id="KerykeionChartSVG-666"><a href="#KerykeionChartSVG-666"><span class="linenos"> 666</span></a>
 </span><span id="KerykeionChartSVG-667"><a href="#KerykeionChartSVG-667"><span class="linenos"> 667</span></a>            <span class="n">switch</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="KerykeionChartSVG-668"><a href="#KerykeionChartSVG-668"><span class="linenos"> 668</span></a>            
+</span><span id="KerykeionChartSVG-668"><a href="#KerykeionChartSVG-668"><span class="linenos"> 668</span></a>
 </span><span id="KerykeionChartSVG-669"><a href="#KerykeionChartSVG-669"><span class="linenos"> 669</span></a>            <span class="c1"># Transit planets loop</span>
 </span><span id="KerykeionChartSVG-670"><a href="#KerykeionChartSVG-670"><span class="linenos"> 670</span></a>            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t_keys</span><span class="p">)):</span>
 </span><span id="KerykeionChartSVG-671"><a href="#KerykeionChartSVG-671"><span class="linenos"> 671</span></a>                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;Transit&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_planets_setting</span><span class="p">[</span><span class="n">e</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transit_ring_exclude_points_names</span><span class="p">:</span>
@@ -2622,7 +2622,7 @@
 </span><span id="KerykeionChartSVG-971"><a href="#KerykeionChartSVG-971"><span class="linenos"> 971</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aspects_list</span><span class="p">)):</span>
 </span><span id="KerykeionChartSVG-972"><a href="#KerykeionChartSVG-972"><span class="linenos"> 972</span></a>            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
 </span><span id="KerykeionChartSVG-973"><a href="#KerykeionChartSVG-973"><span class="linenos"> 973</span></a>                <span class="n">nl</span> <span class="o">=</span> <span class="mi">100</span>
-</span><span id="KerykeionChartSVG-974"><a href="#KerykeionChartSVG-974"><span class="linenos"> 974</span></a>                
+</span><span id="KerykeionChartSVG-974"><a href="#KerykeionChartSVG-974"><span class="linenos"> 974</span></a>
 </span><span id="KerykeionChartSVG-975"><a href="#KerykeionChartSVG-975"><span class="linenos"> 975</span></a>                <span class="n">line</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="KerykeionChartSVG-976"><a href="#KerykeionChartSVG-976"><span class="linenos"> 976</span></a>
 </span><span id="KerykeionChartSVG-977"><a href="#KerykeionChartSVG-977"><span class="linenos"> 977</span></a>            <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
@@ -2632,9 +2632,9 @@
 </span><span id="KerykeionChartSVG-981"><a href="#KerykeionChartSVG-981"><span class="linenos"> 981</span></a>
 </span><span id="KerykeionChartSVG-982"><a href="#KerykeionChartSVG-982"><span class="linenos"> 982</span></a>            <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">36</span><span class="p">:</span>
 </span><span id="KerykeionChartSVG-983"><a href="#KerykeionChartSVG-983"><span class="linenos"> 983</span></a>                <span class="n">nl</span> <span class="o">=</span> <span class="mi">300</span>
-</span><span id="KerykeionChartSVG-984"><a href="#KerykeionChartSVG-984"><span class="linenos"> 984</span></a>                
+</span><span id="KerykeionChartSVG-984"><a href="#KerykeionChartSVG-984"><span class="linenos"> 984</span></a>
 </span><span id="KerykeionChartSVG-985"><a href="#KerykeionChartSVG-985"><span class="linenos"> 985</span></a>                <span class="n">line</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="KerykeionChartSVG-986"><a href="#KerykeionChartSVG-986"><span class="linenos"> 986</span></a>                    
+</span><span id="KerykeionChartSVG-986"><a href="#KerykeionChartSVG-986"><span class="linenos"> 986</span></a>
 </span><span id="KerykeionChartSVG-987"><a href="#KerykeionChartSVG-987"><span class="linenos"> 987</span></a>            <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">48</span><span class="p">:</span>
 </span><span id="KerykeionChartSVG-988"><a href="#KerykeionChartSVG-988"><span class="linenos"> 988</span></a>                <span class="n">nl</span> <span class="o">=</span> <span class="mi">400</span>
 </span><span id="KerykeionChartSVG-989"><a href="#KerykeionChartSVG-989"><span class="linenos"> 989</span></a>
@@ -2645,17 +2645,17 @@
 </span><span id="KerykeionChartSVG-994"><a href="#KerykeionChartSVG-994"><span class="linenos"> 994</span></a>                    <span class="n">line</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="KerykeionChartSVG-995"><a href="#KerykeionChartSVG-995"><span class="linenos"> 995</span></a>
 </span><span id="KerykeionChartSVG-996"><a href="#KerykeionChartSVG-996"><span class="linenos"> 996</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;g transform=&quot;translate(</span><span class="si">{</span><span class="n">nl</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s1">)&quot;&gt;&#39;</span>
-</span><span id="KerykeionChartSVG-997"><a href="#KerykeionChartSVG-997"><span class="linenos"> 997</span></a>            
+</span><span id="KerykeionChartSVG-997"><a href="#KerykeionChartSVG-997"><span class="linenos"> 997</span></a>
 </span><span id="KerykeionChartSVG-998"><a href="#KerykeionChartSVG-998"><span class="linenos"> 998</span></a>            <span class="c1"># first planet symbol</span>
 </span><span id="KerykeionChartSVG-999"><a href="#KerykeionChartSVG-999"><span class="linenos"> 999</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;use transform=&quot;scale(0.4)&quot; x=&quot;0&quot; y=&quot;3&quot; xlink:href=&quot;#</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_settings</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">aspects_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;p1&quot;</span><span class="p">]][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot; /&gt;&#39;</span>
-</span><span id="KerykeionChartSVG-1000"><a href="#KerykeionChartSVG-1000"><span class="linenos">1000</span></a>            
+</span><span id="KerykeionChartSVG-1000"><a href="#KerykeionChartSVG-1000"><span class="linenos">1000</span></a>
 </span><span id="KerykeionChartSVG-1001"><a href="#KerykeionChartSVG-1001"><span class="linenos">1001</span></a>            <span class="c1"># aspect symbol</span>
 </span><span id="KerykeionChartSVG-1002"><a href="#KerykeionChartSVG-1002"><span class="linenos">1002</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;use  x=&quot;15&quot; y=&quot;0&quot; xlink:href=&quot;#orb</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aspects_settings</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">aspects_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;aid&quot;</span><span class="p">]][</span><span class="s2">&quot;degree&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot; /&gt;&#39;</span>
-</span><span id="KerykeionChartSVG-1003"><a href="#KerykeionChartSVG-1003"><span class="linenos">1003</span></a>            
+</span><span id="KerykeionChartSVG-1003"><a href="#KerykeionChartSVG-1003"><span class="linenos">1003</span></a>
 </span><span id="KerykeionChartSVG-1004"><a href="#KerykeionChartSVG-1004"><span class="linenos">1004</span></a>            <span class="c1"># second planet symbol</span>
 </span><span id="KerykeionChartSVG-1005"><a href="#KerykeionChartSVG-1005"><span class="linenos">1005</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;&lt;g transform=&quot;translate(30,0)&quot;&gt;&#39;</span>
-</span><span id="KerykeionChartSVG-1006"><a href="#KerykeionChartSVG-1006"><span class="linenos">1006</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;&lt;use transform=&quot;scale(0.4)&quot; x=&quot;0&quot; y=&quot;3&quot; xlink:href=&quot;#</span><span class="si">%s</span><span class="s1">&quot; /&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_settings</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">aspects_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;p2&quot;</span><span class="p">]][</span><span class="s2">&quot;name&quot;</span><span class="p">])</span> 
-</span><span id="KerykeionChartSVG-1007"><a href="#KerykeionChartSVG-1007"><span class="linenos">1007</span></a>            
+</span><span id="KerykeionChartSVG-1006"><a href="#KerykeionChartSVG-1006"><span class="linenos">1006</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;&lt;use transform=&quot;scale(0.4)&quot; x=&quot;0&quot; y=&quot;3&quot; xlink:href=&quot;#</span><span class="si">%s</span><span class="s1">&quot; /&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_settings</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">aspects_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;p2&quot;</span><span class="p">]][</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+</span><span id="KerykeionChartSVG-1007"><a href="#KerykeionChartSVG-1007"><span class="linenos">1007</span></a>
 </span><span id="KerykeionChartSVG-1008"><a href="#KerykeionChartSVG-1008"><span class="linenos">1008</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/g&gt;&quot;</span>
 </span><span id="KerykeionChartSVG-1009"><a href="#KerykeionChartSVG-1009"><span class="linenos">1009</span></a>            <span class="c1"># difference in degrees</span>
 </span><span id="KerykeionChartSVG-1010"><a href="#KerykeionChartSVG-1010"><span class="linenos">1010</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;text y=&quot;8&quot; x=&quot;45&quot; style=&quot;fill:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chart_colors_settings</span><span class="p">[</span><span class="s2">&quot;paper_0&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">; font-size: 10px;&quot;&gt;</span><span class="si">{</span><span class="n">convert_decimal_to_degree_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aspects_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;orbit&quot;</span><span class="p">])</span><span class="si">}</span><span class="s1">&lt;/text&gt;&#39;</span>
@@ -2670,7 +2670,7 @@
 </span><span id="KerykeionChartSVG-1019"><a href="#KerykeionChartSVG-1019"><span class="linenos">1019</span></a>        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="KerykeionChartSVG-1020"><a href="#KerykeionChartSVG-1020"><span class="linenos">1020</span></a>
 </span><span id="KerykeionChartSVG-1021"><a href="#KerykeionChartSVG-1021"><span class="linenos">1021</span></a>        <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;&lt;g transform=&quot;translate(500,-20)&quot;&gt;&#39;</span>
-</span><span id="KerykeionChartSVG-1022"><a href="#KerykeionChartSVG-1022"><span class="linenos">1022</span></a>        <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;&lt;g transform=&quot;translate(140, -15)&quot;&gt;&#39;</span>
+</span><span id="KerykeionChartSVG-1022"><a href="#KerykeionChartSVG-1022"><span class="linenos">1022</span></a>        <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;&lt;g transform=&quot;translate(175, -15)&quot;&gt;&#39;</span>
 </span><span id="KerykeionChartSVG-1023"><a href="#KerykeionChartSVG-1023"><span class="linenos">1023</span></a>        <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;text text-anchor=&quot;end&quot; style=&quot;fill:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chart_colors_settings</span><span class="p">[</span><span class="s2">&quot;paper_0&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">; font-size: 14px;&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">language_settings</span><span class="p">[</span><span class="s2">&quot;planets_and_house&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">:&lt;/text&gt;&#39;</span>
 </span><span id="KerykeionChartSVG-1024"><a href="#KerykeionChartSVG-1024"><span class="linenos">1024</span></a>        <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/g&gt;&quot;</span>
 </span><span id="KerykeionChartSVG-1025"><a href="#KerykeionChartSVG-1025"><span class="linenos">1025</span></a>
@@ -2810,7 +2810,7 @@
 </span><span id="KerykeionChartSVG-1159"><a href="#KerykeionChartSVG-1159"><span class="linenos">1159</span></a>        <span class="n">svgHeight</span> <span class="o">=</span> <span class="s2">&quot;100%&quot;</span>
 </span><span id="KerykeionChartSVG-1160"><a href="#KerykeionChartSVG-1160"><span class="linenos">1160</span></a>        <span class="n">svgWidth</span> <span class="o">=</span> <span class="s2">&quot;100%&quot;</span>
 </span><span id="KerykeionChartSVG-1161"><a href="#KerykeionChartSVG-1161"><span class="linenos">1161</span></a>        <span class="n">rotate</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
-</span><span id="KerykeionChartSVG-1162"><a href="#KerykeionChartSVG-1162"><span class="linenos">1162</span></a>        
+</span><span id="KerykeionChartSVG-1162"><a href="#KerykeionChartSVG-1162"><span class="linenos">1162</span></a>
 </span><span id="KerykeionChartSVG-1163"><a href="#KerykeionChartSVG-1163"><span class="linenos">1163</span></a>        <span class="c1"># To increase the size of the chart, change the viewbox</span>
 </span><span id="KerykeionChartSVG-1164"><a href="#KerykeionChartSVG-1164"><span class="linenos">1164</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;Natal&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;ExternalNatal&quot;</span><span class="p">:</span>
 </span><span id="KerykeionChartSVG-1165"><a href="#KerykeionChartSVG-1165"><span class="linenos">1165</span></a>            <span class="n">viewbox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_settings</span><span class="p">[</span><span class="s2">&quot;basic_chart_viewBox&quot;</span><span class="p">]</span>
@@ -2852,14 +2852,14 @@
 </span><span id="KerykeionChartSVG-1201"><a href="#KerykeionChartSVG-1201"><span class="linenos">1201</span></a>            <span class="n">td</span><span class="p">[</span><span class="s1">&#39;first_circle&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">draw_first_circle</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_colors_settings</span><span class="p">[</span><span class="s2">&quot;zodiac_radix_ring_2&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c1</span><span class="p">)</span>
 </span><span id="KerykeionChartSVG-1202"><a href="#KerykeionChartSVG-1202"><span class="linenos">1202</span></a>
 </span><span id="KerykeionChartSVG-1203"><a href="#KerykeionChartSVG-1203"><span class="linenos">1203</span></a>            <span class="n">td</span><span class="p">[</span><span class="s2">&quot;second_circle&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">draw_second_circle</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_colors_settings</span><span class="p">[</span><span class="s2">&quot;zodiac_radix_ring_1&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_colors_settings</span><span class="p">[</span><span class="s2">&quot;paper_1&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c2</span><span class="p">)</span>
-</span><span id="KerykeionChartSVG-1204"><a href="#KerykeionChartSVG-1204"><span class="linenos">1204</span></a>            
+</span><span id="KerykeionChartSVG-1204"><a href="#KerykeionChartSVG-1204"><span class="linenos">1204</span></a>
 </span><span id="KerykeionChartSVG-1205"><a href="#KerykeionChartSVG-1205"><span class="linenos">1205</span></a>            <span class="n">td</span><span class="p">[</span><span class="s2">&quot;c3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;cx=&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1">&quot; cy=&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1">&quot; r=&quot;</span><span class="si">{</span><span class="n">r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">c3</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
 </span><span id="KerykeionChartSVG-1206"><a href="#KerykeionChartSVG-1206"><span class="linenos">1206</span></a>            <span class="n">td</span><span class="p">[</span><span class="s2">&quot;c3style&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;fill: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chart_colors_settings</span><span class="p">[</span><span class="s2">&quot;paper_1&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">; fill-opacity:.8; stroke: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chart_colors_settings</span><span class="p">[</span><span class="s2">&quot;zodiac_radix_ring_0&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">; stroke-width: 1px&#39;</span>
-</span><span id="KerykeionChartSVG-1207"><a href="#KerykeionChartSVG-1207"><span class="linenos">1207</span></a>            
+</span><span id="KerykeionChartSVG-1207"><a href="#KerykeionChartSVG-1207"><span class="linenos">1207</span></a>
 </span><span id="KerykeionChartSVG-1208"><a href="#KerykeionChartSVG-1208"><span class="linenos">1208</span></a>            <span class="n">td</span><span class="p">[</span><span class="s2">&quot;makeAspects&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_makeAspects</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">c3</span><span class="p">))</span>
 </span><span id="KerykeionChartSVG-1209"><a href="#KerykeionChartSVG-1209"><span class="linenos">1209</span></a>            <span class="n">td</span><span class="p">[</span><span class="s2">&quot;makeAspectGrid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_makeAspectGrid</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 </span><span id="KerykeionChartSVG-1210"><a href="#KerykeionChartSVG-1210"><span class="linenos">1210</span></a>            <span class="n">td</span><span class="p">[</span><span class="s2">&quot;makePatterns&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_makePatterns</span><span class="p">()</span>
-</span><span id="KerykeionChartSVG-1211"><a href="#KerykeionChartSVG-1211"><span class="linenos">1211</span></a>        
+</span><span id="KerykeionChartSVG-1211"><a href="#KerykeionChartSVG-1211"><span class="linenos">1211</span></a>
 </span><span id="KerykeionChartSVG-1212"><a href="#KerykeionChartSVG-1212"><span class="linenos">1212</span></a>        <span class="n">td</span><span class="p">[</span><span class="s2">&quot;chart_height&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span>
 </span><span id="KerykeionChartSVG-1213"><a href="#KerykeionChartSVG-1213"><span class="linenos">1213</span></a>        <span class="n">td</span><span class="p">[</span><span class="s2">&quot;chart_width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span>
 </span><span id="KerykeionChartSVG-1214"><a href="#KerykeionChartSVG-1214"><span class="linenos">1214</span></a>        <span class="n">td</span><span class="p">[</span><span class="s2">&quot;circleX&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -2974,13 +2974,13 @@
 </span><span id="KerykeionChartSVG-1323"><a href="#KerykeionChartSVG-1323"><span class="linenos">1323</span></a>
 </span><span id="KerykeionChartSVG-1324"><a href="#KerykeionChartSVG-1324"><span class="linenos">1324</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="KerykeionChartSVG-1325"><a href="#KerykeionChartSVG-1325"><span class="linenos">1325</span></a>            <span class="n">latitude_string</span> <span class="o">=</span> <span class="n">convert_latitude_coordinate_to_string</span><span class="p">(</span>
-</span><span id="KerykeionChartSVG-1326"><a href="#KerykeionChartSVG-1326"><span class="linenos">1326</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">geolat</span><span class="p">,</span> 
-</span><span id="KerykeionChartSVG-1327"><a href="#KerykeionChartSVG-1327"><span class="linenos">1327</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">language_settings</span><span class="p">[</span><span class="s1">&#39;north&#39;</span><span class="p">],</span> 
+</span><span id="KerykeionChartSVG-1326"><a href="#KerykeionChartSVG-1326"><span class="linenos">1326</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">geolat</span><span class="p">,</span>
+</span><span id="KerykeionChartSVG-1327"><a href="#KerykeionChartSVG-1327"><span class="linenos">1327</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">language_settings</span><span class="p">[</span><span class="s1">&#39;north&#39;</span><span class="p">],</span>
 </span><span id="KerykeionChartSVG-1328"><a href="#KerykeionChartSVG-1328"><span class="linenos">1328</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">language_settings</span><span class="p">[</span><span class="s1">&#39;south&#39;</span><span class="p">]</span>
 </span><span id="KerykeionChartSVG-1329"><a href="#KerykeionChartSVG-1329"><span class="linenos">1329</span></a>            <span class="p">)</span>
 </span><span id="KerykeionChartSVG-1330"><a href="#KerykeionChartSVG-1330"><span class="linenos">1330</span></a>            <span class="n">longitude_string</span> <span class="o">=</span> <span class="n">convert_longitude_coordinate_to_string</span><span class="p">(</span>
-</span><span id="KerykeionChartSVG-1331"><a href="#KerykeionChartSVG-1331"><span class="linenos">1331</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">geolon</span><span class="p">,</span> 
-</span><span id="KerykeionChartSVG-1332"><a href="#KerykeionChartSVG-1332"><span class="linenos">1332</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">language_settings</span><span class="p">[</span><span class="s1">&#39;east&#39;</span><span class="p">],</span> 
+</span><span id="KerykeionChartSVG-1331"><a href="#KerykeionChartSVG-1331"><span class="linenos">1331</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">geolon</span><span class="p">,</span>
+</span><span id="KerykeionChartSVG-1332"><a href="#KerykeionChartSVG-1332"><span class="linenos">1332</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">language_settings</span><span class="p">[</span><span class="s1">&#39;east&#39;</span><span class="p">],</span>
 </span><span id="KerykeionChartSVG-1333"><a href="#KerykeionChartSVG-1333"><span class="linenos">1333</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">language_settings</span><span class="p">[</span><span class="s1">&#39;west&#39;</span><span class="p">]</span>
 </span><span id="KerykeionChartSVG-1334"><a href="#KerykeionChartSVG-1334"><span class="linenos">1334</span></a>            <span class="p">)</span>
 </span><span id="KerykeionChartSVG-1335"><a href="#KerykeionChartSVG-1335"><span class="linenos">1335</span></a>
@@ -3085,7 +3085,7 @@ function makeSVG().</p>
                             <div id="KerykeionChartSVG.__init__" class="classattr">
                                         <input id="KerykeionChartSVG.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-            
+
         <span class="name">KerykeionChartSVG</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">first_obj</span><span class="p">:</span> <span class="n"><a href="../astrological_subject.html#AstrologicalSubject">kerykeion.astrological_subject.AstrologicalSubject</a></span>,</span><span class="param">	<span class="n">chart_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;Natal&#39;</span><span class="p">,</span> <span class="s1">&#39;ExternalNatal&#39;</span><span class="p">,</span> <span class="s1">&#39;Synastry&#39;</span><span class="p">,</span> <span class="s1">&#39;Transit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Natal&#39;</span>,</span><span class="param">	<span class="n">second_obj</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="../astrological_subject.html#AstrologicalSubject">kerykeion.astrological_subject.AstrologicalSubject</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">new_output_directory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">new_settings_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
                 <label class="view-source-button" for="KerykeionChartSVG.__init__-view-source"><span>View Source</span></label>
@@ -3145,7 +3145,7 @@ function makeSVG().</p>
 </span><span id="KerykeionChartSVG.__init__-155"><a href="#KerykeionChartSVG.__init__-155"><span class="linenos">155</span></a>        <span class="n">available_celestial_points</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="KerykeionChartSVG.__init__-156"><a href="#KerykeionChartSVG.__init__-156"><span class="linenos">156</span></a>        <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_planets_setting</span><span class="p">:</span>
 </span><span id="KerykeionChartSVG.__init__-157"><a href="#KerykeionChartSVG.__init__-157"><span class="linenos">157</span></a>            <span class="n">available_celestial_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">body</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-</span><span id="KerykeionChartSVG.__init__-158"><a href="#KerykeionChartSVG.__init__-158"><span class="linenos">158</span></a>        
+</span><span id="KerykeionChartSVG.__init__-158"><a href="#KerykeionChartSVG.__init__-158"><span class="linenos">158</span></a>
 </span><span id="KerykeionChartSVG.__init__-159"><a href="#KerykeionChartSVG.__init__-159"><span class="linenos">159</span></a>        <span class="c1"># Make a list for the absolute degrees of the points of the graphic.</span>
 </span><span id="KerykeionChartSVG.__init__-160"><a href="#KerykeionChartSVG.__init__-160"><span class="linenos">160</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">points_deg_ut</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="KerykeionChartSVG.__init__-161"><a href="#KerykeionChartSVG.__init__-161"><span class="linenos">161</span></a>        <span class="k">for</span> <span class="n">planet</span> <span class="ow">in</span> <span class="n">available_celestial_points</span><span class="p">:</span>
@@ -3186,7 +3186,7 @@ function makeSVG().</p>
 </span><span id="KerykeionChartSVG.__init__-196"><a href="#KerykeionChartSVG.__init__-196"><span class="linenos">196</span></a>
 </span><span id="KerykeionChartSVG.__init__-197"><a href="#KerykeionChartSVG.__init__-197"><span class="linenos">197</span></a>            <span class="c1"># Make a list for the absolute degrees of the points of the graphic.</span>
 </span><span id="KerykeionChartSVG.__init__-198"><a href="#KerykeionChartSVG.__init__-198"><span class="linenos">198</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">t_points_deg_ut</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="KerykeionChartSVG.__init__-199"><a href="#KerykeionChartSVG.__init__-199"><span class="linenos">199</span></a>            <span class="k">for</span> <span class="n">planet</span> <span class="ow">in</span> <span class="n">available_celestial_points</span><span class="p">:</span>            
+</span><span id="KerykeionChartSVG.__init__-199"><a href="#KerykeionChartSVG.__init__-199"><span class="linenos">199</span></a>            <span class="k">for</span> <span class="n">planet</span> <span class="ow">in</span> <span class="n">available_celestial_points</span><span class="p">:</span>
 </span><span id="KerykeionChartSVG.__init__-200"><a href="#KerykeionChartSVG.__init__-200"><span class="linenos">200</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">t_points_deg_ut</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">planet</span><span class="p">)</span><span class="o">.</span><span class="n">abs_pos</span><span class="p">)</span>
 </span><span id="KerykeionChartSVG.__init__-201"><a href="#KerykeionChartSVG.__init__-201"><span class="linenos">201</span></a>
 </span><span id="KerykeionChartSVG.__init__-202"><a href="#KerykeionChartSVG.__init__-202"><span class="linenos">202</span></a>            <span class="c1"># Make a list of the relative degrees of the points in the graphic.</span>
@@ -3219,7 +3219,7 @@ function makeSVG().</p>
 </span><span id="KerykeionChartSVG.__init__-229"><a href="#KerykeionChartSVG.__init__-229"><span class="linenos">229</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">city</span>
 </span><span id="KerykeionChartSVG.__init__-230"><a href="#KerykeionChartSVG.__init__-230"><span class="linenos">230</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">geolat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">lat</span>
 </span><span id="KerykeionChartSVG.__init__-231"><a href="#KerykeionChartSVG.__init__-231"><span class="linenos">231</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">geolon</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">lng</span>
-</span><span id="KerykeionChartSVG.__init__-232"><a href="#KerykeionChartSVG.__init__-232"><span class="linenos">232</span></a>        
+</span><span id="KerykeionChartSVG.__init__-232"><a href="#KerykeionChartSVG.__init__-232"><span class="linenos">232</span></a>
 </span><span id="KerykeionChartSVG.__init__-233"><a href="#KerykeionChartSVG.__init__-233"><span class="linenos">233</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> birth location: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geolat</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geolon</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="KerykeionChartSVG.__init__-234"><a href="#KerykeionChartSVG.__init__-234"><span class="linenos">234</span></a>
 </span><span id="KerykeionChartSVG.__init__-235"><a href="#KerykeionChartSVG.__init__-235"><span class="linenos">235</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chart_type</span> <span class="o">==</span> <span class="s2">&quot;Transit&quot;</span><span class="p">:</span>
@@ -3248,475 +3248,475 @@ function makeSVG().</p>
 </span></pre></div>
 
 
-    
+
 
                             </div>
                             <div id="KerykeionChartSVG.first_obj" class="classattr">
                                 <div class="attr variable">
             <span class="name">first_obj</span><span class="annotation">: <a href="../astrological_subject.html#AstrologicalSubject">kerykeion.astrological_subject.AstrologicalSubject</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.first_obj"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.second_obj" class="classattr">
                                 <div class="attr variable">
             <span class="name">second_obj</span><span class="annotation">: Optional[<a href="../astrological_subject.html#AstrologicalSubject">kerykeion.astrological_subject.AstrologicalSubject</a>]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.second_obj"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.chart_type" class="classattr">
                                 <div class="attr variable">
             <span class="name">chart_type</span><span class="annotation">: Literal[&#39;Natal&#39;, &#39;ExternalNatal&#39;, &#39;Synastry&#39;, &#39;Transit&#39;]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.chart_type"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.new_output_directory" class="classattr">
                                 <div class="attr variable">
             <span class="name">new_output_directory</span><span class="annotation">: Optional[pathlib.Path]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.new_output_directory"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.new_settings_file" class="classattr">
                                 <div class="attr variable">
             <span class="name">new_settings_file</span><span class="annotation">: Optional[pathlib.Path]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.new_settings_file"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.output_directory" class="classattr">
                                 <div class="attr variable">
             <span class="name">output_directory</span><span class="annotation">: pathlib.Path</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.output_directory"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.fire" class="classattr">
                                 <div class="attr variable">
             <span class="name">fire</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.fire"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.earth" class="classattr">
                                 <div class="attr variable">
             <span class="name">earth</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.earth"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.air" class="classattr">
                                 <div class="attr variable">
             <span class="name">air</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.air"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.water" class="classattr">
                                 <div class="attr variable">
             <span class="name">water</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.water"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.c1" class="classattr">
                                 <div class="attr variable">
             <span class="name">c1</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.c1"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.c2" class="classattr">
                                 <div class="attr variable">
             <span class="name">c2</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.c2"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.c3" class="classattr">
                                 <div class="attr variable">
             <span class="name">c3</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.c3"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.homedir" class="classattr">
                                 <div class="attr variable">
             <span class="name">homedir</span><span class="annotation">: pathlib.Path</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.homedir"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.xml_svg" class="classattr">
                                 <div class="attr variable">
             <span class="name">xml_svg</span><span class="annotation">: pathlib.Path</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.xml_svg"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.width" class="classattr">
                                 <div class="attr variable">
             <span class="name">width</span><span class="annotation">: Union[float, int]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.width"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.language_settings" class="classattr">
                                 <div class="attr variable">
             <span class="name">language_settings</span><span class="annotation">: dict</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.language_settings"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.chart_colors_settings" class="classattr">
                                 <div class="attr variable">
             <span class="name">chart_colors_settings</span><span class="annotation">: dict</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.chart_colors_settings"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.planets_settings" class="classattr">
                                 <div class="attr variable">
             <span class="name">planets_settings</span><span class="annotation">: dict</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.planets_settings"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.aspects_settings" class="classattr">
                                 <div class="attr variable">
             <span class="name">aspects_settings</span><span class="annotation">: dict</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.aspects_settings"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.planet_in_zodiac_extra_points" class="classattr">
                                 <div class="attr variable">
             <span class="name">planet_in_zodiac_extra_points</span><span class="annotation">: int</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.planet_in_zodiac_extra_points"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.chart_settings" class="classattr">
                                 <div class="attr variable">
             <span class="name">chart_settings</span><span class="annotation">: dict</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.chart_settings"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.user" class="classattr">
                                 <div class="attr variable">
             <span class="name">user</span><span class="annotation">: <a href="../astrological_subject.html#AstrologicalSubject">kerykeion.astrological_subject.AstrologicalSubject</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.user"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.available_planets_setting" class="classattr">
                                 <div class="attr variable">
             <span class="name">available_planets_setting</span><span class="annotation">: List[<a href="../kr_types/settings_models.html#KerykeionSettingsCelestialPointModel">kerykeion.kr_types.settings_models.KerykeionSettingsCelestialPointModel</a>]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.available_planets_setting"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.transit_ring_exclude_points_names" class="classattr">
                                 <div class="attr variable">
             <span class="name">transit_ring_exclude_points_names</span><span class="annotation">: List[str]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.transit_ring_exclude_points_names"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.points_deg_ut" class="classattr">
                                 <div class="attr variable">
             <span class="name">points_deg_ut</span><span class="annotation">: list</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.points_deg_ut"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.points_deg" class="classattr">
                                 <div class="attr variable">
             <span class="name">points_deg</span><span class="annotation">: list</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.points_deg"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.points_sign" class="classattr">
                                 <div class="attr variable">
             <span class="name">points_sign</span><span class="annotation">: list</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.points_sign"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.points_retrograde" class="classattr">
                                 <div class="attr variable">
             <span class="name">points_retrograde</span><span class="annotation">: list</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.points_retrograde"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.houses_sign_graph" class="classattr">
                                 <div class="attr variable">
             <span class="name">houses_sign_graph</span><span class="annotation">: list</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.houses_sign_graph"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.t_points_deg_ut" class="classattr">
                                 <div class="attr variable">
             <span class="name">t_points_deg_ut</span><span class="annotation">: list</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.t_points_deg_ut"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.t_points_deg" class="classattr">
                                 <div class="attr variable">
             <span class="name">t_points_deg</span><span class="annotation">: list</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.t_points_deg"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.t_points_sign" class="classattr">
                                 <div class="attr variable">
             <span class="name">t_points_sign</span><span class="annotation">: list</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.t_points_sign"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.t_points_retrograde" class="classattr">
                                 <div class="attr variable">
             <span class="name">t_points_retrograde</span><span class="annotation">: list</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.t_points_retrograde"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.t_houses_sign_graph" class="classattr">
                                 <div class="attr variable">
             <span class="name">t_houses_sign_graph</span><span class="annotation">: list</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.t_houses_sign_graph"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.height" class="classattr">
                                 <div class="attr variable">
             <span class="name">height</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.height"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.location" class="classattr">
                                 <div class="attr variable">
             <span class="name">location</span><span class="annotation">: str</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.location"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.geolat" class="classattr">
                                 <div class="attr variable">
             <span class="name">geolat</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.geolat"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.geolon" class="classattr">
                                 <div class="attr variable">
             <span class="name">geolon</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.geolon"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.zoom" class="classattr">
                                 <div class="attr variable">
             <span class="name">zoom</span><span class="annotation">: int</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.zoom"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.zodiac" class="classattr">
                                 <div class="attr variable">
             <span class="name">zodiac</span><span class="annotation">: tuple</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.zodiac"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.template" class="classattr">
                                 <div class="attr variable">
             <span class="name">template</span><span class="annotation">: str</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionChartSVG.template"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionChartSVG.set_output_directory" class="classattr">
                                         <input id="KerykeionChartSVG.set_output_directory-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">set_output_directory</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">dir_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
@@ -3741,7 +3741,7 @@ function makeSVG().</p>
                             <div id="KerykeionChartSVG.parse_json_settings" class="classattr">
                                         <input id="KerykeionChartSVG.parse_json_settings-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">parse_json_settings</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">settings_file</span></span><span class="return-annotation">):</span></span>
 
@@ -3773,7 +3773,7 @@ function makeSVG().</p>
                             <div id="KerykeionChartSVG.makeTemplate" class="classattr">
                                         <input id="KerykeionChartSVG.makeTemplate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">makeTemplate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">minify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
@@ -3813,7 +3813,7 @@ function makeSVG().</p>
                             <div id="KerykeionChartSVG.makeSVG" class="classattr">
                                         <input id="KerykeionChartSVG.makeSVG-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">makeSVG</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">minify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">):</span></span>
 

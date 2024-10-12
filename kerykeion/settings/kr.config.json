@@ -36,12 +36,12 @@
         "Mc": "Mc",
         "Dsc": "Dsc",
         "Ic": "Ic",
-        "True_Node": "North Node",
-        "Mean_Node": "Mean Node",
+        "True_Node": "True N. Node",
+        "Mean_Node": "Mean N. Node",
         "Chiron": "Chiron",
         "Mean_Lilith": "Lilith",
-        "True_South_Node": "True South Node",
-        "Mean_South_Node": "Mean South Node"
+        "True_South_Node": "True S. Node",
+        "Mean_South_Node": "Mean S. Node"
       }
     },
     "FR": {
@@ -124,10 +124,10 @@
         "Mc": "Mc",
         "Dsc": "Dsc",
         "Ic": "Ic",
-        "True_Node": "Nodo Norte Verdadeiro",
-        "Mean_Node": "Nodo Norte Médio",
-        "True_South_Node": "Nodo Sul Verdadeiro",
-        "Mean_South_Node": "Nodo Sul Médio",
+        "True_Node": "N. Norte V.",
+        "Mean_Node": "N. Norte M.",
+        "True_South_Node": "N. Sul V.",
+        "Mean_South_Node": "N. Sul M.",
         "Chiron": "Quíron",
         "Mean_Lilith": "Lilith"
       }
@@ -256,10 +256,10 @@
         "Mc": "Mc",
         "Dsc": "Dsc",
         "Ic": "Ic",
-        "True_Node": "Nodo Norte Verdadero",
-        "Mean_Node": "Nodo Norte Medio",
-        "True_South_Node": "Nodo Sur Verdadero",
-        "Mean_South_Node": "Nodo Sur Medio",
+        "True_Node": "N. Norte Ver.",
+        "Mean_Node": "N. Norte Med.",
+        "True_South_Node": "N. Sur Ver.",
+        "Mean_South_Node": "N. Sur Med.",
         "Chiron": "Quirón",
         "Mean_Lilith": "Lilith"
       }
@@ -300,10 +300,10 @@
         "Mc": "MC",
         "Dsc": "ДСЦ",
         "Ic": "IC",
-        "True_Node": "Истинный Северный Узел",
-        "Mean_Node": "Средний Северный Узел",
-        "True_South_Node": "Истинный Южный Узел",
-        "Mean_South_Node": "Средний Южный Узел",
+        "True_Node": "И. С. У.",
+        "Mean_Node": "Ср. С. У.",
+        "True_South_Node": "И. Ю. У.",
+        "Mean_South_Node": "Ср. Ю. У.",
         "Chiron": "Хирон",
         "Mean_Lilith": "Лилит"
       }
@@ -344,10 +344,10 @@
         "Mc": "MC",
         "Dsc": "İK",
         "Ic": "IC",
-        "True_Node": "Gerçek Kuzey Düğümü",
-        "Mean_Node": "Ortalama Kuzey Düğümü",
-        "True_South_Node": "Gerçek Güney Düğümü",
-        "Mean_South_Node": "Ortalama Güney Düğümü",
+        "True_Node": "G. K. D.",
+        "Mean_Node": "O. K. D.",
+        "True_South_Node": "G. G. D.",
+        "Mean_South_Node": "O. G. D.",
         "Chiron": "Kiron",
         "Mean_Lilith": "Lilith"
       }
@@ -388,10 +388,10 @@
         "Mc": "MC",
         "Dsc": "DSC",
         "Ic": "IC",
-        "True_Node": "Wahrer nördlicher Mondknoten",
-        "Mean_Node": "Mittlerer nördlicher Mondknoten",
-        "True_South_Node": "Wahrer südlicher Mondknoten",
-        "Mean_South_Node": "Mittlerer südlicher Mondknoten",
+        "True_Node": "W. n. MK",
+        "Mean_Node": "M. n. MK",
+        "True_South_Node": "W. s. MK",
+        "Mean_South_Node": "M. s. MK",
         "Chiron": "Chiron",
         "Mean_Lilith": "Lilith"
       }
@@ -432,10 +432,10 @@
         "Mc": "एमसी",
         "Dsc": "डीएससी",
         "Ic": "आईसी",
-        "True_Node": "सच्चा उत्तर नोड",
-        "Mean_Node": "माध्य उत्तर नोड",
-        "True_South_Node": "सच्चा दक्षिण नोड",
-        "Mean_South_Node": "माध्य दक्षिण नोड",
+        "True_Node": "सच्चा उ. नोड",
+        "Mean_Node": "माध्य उ. नोड",
+        "True_South_Node": "सच्चा द. नोड",
+        "Mean_South_Node": "माध्य द. नोड",
         "Chiron": "चिरोन",
         "Mean_Lilith": "लिलिथ"
       }
@@ -590,7 +590,7 @@
       "id": 6,
       "name": "Saturn",
       "color": "var(--kerykeion-chart-color-saturn)",
-      "is_active": true,
+      "is_active": false,
       "element_points": 10,
       "related_zodiac_signs": ["9"],
       "label": "Saturn"
@@ -697,7 +697,7 @@
     {
       "id": 18,
       "name": "Mean_South_Node",
-      "color": "var(--kerykeion-chart-color-mean-south-node)",
+      "color": "var(--kerykeion-chart-color-mean-node)",
       "is_active": false,
       "element_points": 0,
       "related_zodiac_signs": [],
@@ -706,7 +706,7 @@
     {
       "id": 19,
       "name": "True_South_Node",
-      "color": "var(--kerykeion-chart-color-true-south-node)",
+      "color": "var(--kerykeion-chart-color-true-node)",
       "is_active": true,
       "element_points": 0,
       "related_zodiac_signs": [],

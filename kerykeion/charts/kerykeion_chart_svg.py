@@ -17,8 +17,8 @@ from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel, KerykeionSettingsModel
 from kerykeion.kr_types.kr_literals import KerykeionChartTheme, KerykeionChartLanguage
 from kerykeion.charts.charts_utils import (
-    draw_zodiac_slice, 
-    convert_latitude_coordinate_to_string, 
+    draw_zodiac_slice,
+    convert_latitude_coordinate_to_string,
     convert_longitude_coordinate_to_string,
     draw_aspect_line,
     draw_elements_percentages,
@@ -62,9 +62,9 @@ class KerykeionChartSVG:
         - double_chart_aspect_grid_type: Set the type of the aspect grid for the double chart (transit or synastry). (Default: list.)
         - chart_language: Set the language for the chart (default: EN).
     """
-    
+
     # Constants
-    _BASIC_CHART_VIEWBOX = "0 0 772.2 546.0"
+    _BASIC_CHART_VIEWBOX = "0 0 772.2 550.0"
     _WIDE_CHART_VIEWBOX = "0 0 1060 546.0"
     _DEFAULT_HEIGHT = 546.0
     _DEFAULT_FULL_WIDTH = 1200
@@ -177,7 +177,7 @@ class KerykeionChartSVG:
         self.location = self.user.city
         self.geolat = self.user.lat
         self.geolon =  self.user.lng
-        
+
         if self.chart_type == "Transit":
             self.t_name = self.language_settings["transit_name"]
 
@@ -284,7 +284,7 @@ class KerykeionChartSVG:
             {"name": "Aqu", "element": "air"},
             {"name": "Pis", "element": "water"},
         )
-        
+
         # Available bodies
         available_celestial_points_names = []
         for body in self.available_planets_setting:
@@ -412,7 +412,7 @@ class KerykeionChartSVG:
 
         # Draw moon phase
         template_dict['moon_phase'] = draw_moon_phase(
-            self.user.lunar_phase["degrees_between_s_m"], 
+            self.user.lunar_phase["degrees_between_s_m"],
             self.geolat
         )
 
@@ -513,20 +513,20 @@ class KerykeionChartSVG:
         # Draw planets
         if self.chart_type in ["Transit", "Synastry"]:
             template_dict["makePlanets"] = draw_planets(
-                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points, 
+                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
                 available_planets_setting=self.available_planets_setting,
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
-                radius=self.main_radius, 
+                radius=self.main_radius,
                 main_subject_first_house_degree_ut=self.user.first_house.abs_pos,
                 main_subject_seventh_house_degree_ut=self.user.seventh_house.abs_pos,
-                chart_type=self.chart_type, 
+                chart_type=self.chart_type,
                 third_circle_radius=self.third_circle_radius,
             )
         else:
             template_dict["makePlanets"] = draw_planets(
                 available_planets_setting=self.available_planets_setting,
                 chart_type=self.chart_type,
-                radius=self.main_radius, 
+                radius=self.main_radius,
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
                 third_circle_radius=self.third_circle_radius,
                 main_subject_first_house_degree_ut=self.user.first_house.abs_pos,
@@ -585,7 +585,7 @@ class KerykeionChartSVG:
 
         DATA_DIR = Path(__file__).parent
         xml_svg = DATA_DIR / "templates" / "chart.xml"
-        
+
         # read template
         with open(xml_svg, "r", encoding="utf-8", errors="ignore") as f:
             template = Template(f.read()).substitute(td)
@@ -619,16 +619,16 @@ class KerykeionChartSVG:
 
     def makeWheelOnlyTemplate(self, minify: bool = False):
         """Creates the template for the SVG file with only the wheel"""
-    
+
         with open(Path(__file__).parent / "templates" / "wheel_only.xml", "r", encoding="utf-8", errors="ignore") as f:
             template = f.read()
 
         template_dict = self._create_template_dictionary()
         template = Template(template).substitute(template_dict)
-        
+
         if minify:
             template = scourString(template).replace('"', "'").replace("\n", "").replace("\t","").replace("    ", "").replace("  ", "")
-            
+
         else:
             template = template.replace('"', "'")
 
@@ -647,7 +647,7 @@ class KerykeionChartSVG:
 
     def makeAspectGridOnlyTemplate(self, minify: bool = False):
         """Creates the template for the SVG file with only the aspect grid"""
-    
+
         with open(Path(__file__).parent / "templates" / "aspect_grid_only.xml", "r", encoding="utf-8", errors="ignore") as f:
             template = f.read()
 
@@ -659,10 +659,10 @@ class KerykeionChartSVG:
             aspects_grid = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list, x_start=50, y_start=250)
 
         template = Template(template).substitute({**template_dict, "makeAspectGrid": aspects_grid})
-        
+
         if minify:
             template = scourString(template).replace('"', "'").replace("\n", "").replace("\t","").replace("    ", "").replace("  ", "")
-            
+
         else:
             template = template.replace('"', "'")
 
@@ -702,7 +702,7 @@ if __name__ == "__main__":
     # Transits Chart
     transits_chart = KerykeionChartSVG(first, "Transit", second)
     transits_chart.makeSVG()
-    
+
     # Sidereal Birth Chart (Lahiri)
     sidereal_subject = AstrologicalSubject("John Lennon Lahiri", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
     sidereal_chart = KerykeionChartSVG(sidereal_subject)
