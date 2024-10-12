@@ -25,7 +25,7 @@ HouseNumbers = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 """Literal type for House Numbers, starting from the First House (1) to the Twelfth House (12)"""
 
 
-Planet = Literal["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Mean_Node", "True_Node", "Chiron", "Mean_Lilith"]
+Planet = Literal["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Mean_Node", "True_Node", "Mean_South_Node", "True_South_Node", "Chiron", "Mean_Lilith"]
 """Literal type for Planets"""
 
 

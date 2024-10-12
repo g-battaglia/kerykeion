@@ -23,7 +23,7 @@ class TestAstrologicalSubject:
             "local_time": 0.0,
             "utc_time": 5.0,
             # <-- Deprecated
-    
+
             "sun": {
                 "name": "Sun",
                 "quality": "Mutable",
@@ -312,10 +312,36 @@ class TestAstrologicalSubject:
                 "house": "Fifth_House",
                 "retrograde": True,
             },
+            "mean_south_node": {
+                "name": "Mean_South_Node",
+                "quality": "Cardinal",
+                "element": "Earth",
+                "sign": "Cap",
+                "sign_num": 9,
+                "position": 22.25322751786969,
+                "abs_pos": 292.25322751786969,
+                "emoji": "♑️",
+                "point_type": "Planet",
+                "house": "Twelfth_House",
+                "retrograde": True,
+            },
+            "true_south_node": {
+                "name": "True_South_Node",
+                "quality": "Cardinal",
+                "element": "Earth",
+                "sign": "Cap",
+                "sign_num": 9,
+                "position": 20.63971940408193,
+                "abs_pos": 290.63971940408193,
+                "emoji": "♑️",
+                "point_type": "Planet",
+                "house": "Eleventh_House",
+                "retrograde": True,
+            },
             "lunar_phase": {
-                "degrees_between_s_m": 201.07547248727332, 
-                "moon_phase": 16, 
-                "sun_phase": 15, 
+                "degrees_between_s_m": 201.07547248727332,
+                "moon_phase": 16,
+                "sun_phase": 15,
                 "moon_emoji": "🌖",
                 "moon_phase_name": "Waning Gibbous"
             },
@@ -494,6 +520,32 @@ class TestAstrologicalSubject:
         assert self.subject.true_node.house == self.expected_output["true_node"]["house"]
         assert self.subject.true_node.retrograde == self.expected_output["true_node"]["retrograde"]
 
+    def test_mean_south_node(self):
+        assert self.subject.mean_south_node.name == self.expected_output["mean_south_node"]["name"]
+        assert self.subject.mean_south_node.quality == self.expected_output["mean_south_node"]["quality"]
+        assert self.subject.mean_south_node.element == self.expected_output["mean_south_node"]["element"]
+        assert self.subject.mean_south_node.sign == self.expected_output["mean_south_node"]["sign"]
+        assert self.subject.mean_south_node.sign_num == self.expected_output["mean_south_node"]["sign_num"]
+        assert round(self.subject.mean_south_node.position, 2) == round(self.expected_output["mean_south_node"]["position"], 2)
+        assert round(self.subject.mean_south_node.abs_pos, 2) == round(self.expected_output["mean_south_node"]["abs_pos"], 2)
+        assert self.subject.mean_south_node.emoji == self.expected_output["mean_south_node"]["emoji"]
+        assert self.subject.mean_south_node.point_type == self.expected_output["mean_south_node"]["point_type"]
+        assert self.subject.mean_south_node.house == self.expected_output["mean_south_node"]["house"]
+        assert self.subject.mean_south_node.retrograde == self.expected_output["mean_south_node"]["retrograde"]
+
+    def test_true_south_node(self):
+        assert self.subject.true_south_node.name == self.expected_output["true_south_node"]["name"]
+        assert self.subject.true_south_node.quality == self.expected_output["true_south_node"]["quality"]
+        assert self.subject.true_south_node.element == self.expected_output["true_south_node"]["element"]
+        assert self.subject.true_south_node.sign == self.expected_output["true_south_node"]["sign"]
+        assert self.subject.true_south_node.sign_num == self.expected_output["true_south_node"]["sign_num"]
+        assert round(self.subject.true_south_node.position, 2) == round(self.expected_output["true_south_node"]["position"], 2)
+        assert round(self.subject.true_south_node.abs_pos, 2) == round(self.expected_output["true_south_node"]["abs_pos"], 2)
+        assert self.subject.true_south_node.emoji == self.expected_output["true_south_node"]["emoji"]
+        assert self.subject.true_south_node.point_type == self.expected_output["true_south_node"]["point_type"]
+        assert self.subject.true_south_node.house == self.expected_output["true_south_node"]["house"]
+        assert self.subject.true_south_node.retrograde == self.expected_output["true_south_node"]["retrograde"]
+
     def test_first_house(self):
         assert self.subject.first_house.name == self.expected_output["first_house"]["name"]
         assert self.subject.first_house.quality == self.expected_output["first_house"]["quality"]
@@ -635,5 +687,5 @@ if __name__ == "__main__":
 
     # Set the log level to CRITICAL
     logging.basicConfig(level=logging.CRITICAL)
-    
+
     pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

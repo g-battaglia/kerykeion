@@ -23,7 +23,7 @@ def test_utc_constructor():
     assert subject.pluto == subject2.pluto
     assert subject.chiron == subject2.chiron
     assert subject.mean_lilith == subject2.mean_lilith
-    
+
     assert subject.first_house == subject2.first_house
     assert subject.second_house == subject2.second_house
     assert subject.third_house == subject2.third_house
@@ -39,7 +39,8 @@ def test_utc_constructor():
     assert subject.mean_node == subject2.mean_node
     assert subject.true_node == subject2.true_node
     assert subject.lunar_phase == subject2.lunar_phase
-    
+
+
     assert subject.planets_names_list == subject2.planets_names_list
     assert subject.houses_names_list == subject2.houses_names_list
 
@@ -50,5 +51,5 @@ if __name__ == "__main__":
 
     # Set the log level to CRITICAL
     logging.basicConfig(level=logging.CRITICAL)
-    
+
     pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])
