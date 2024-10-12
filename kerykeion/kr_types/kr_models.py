@@ -128,8 +128,10 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     twelfth_house: KerykeionPointModel
 
     # Nodes
-    mean_node: KerykeionPointModel
-    true_node: KerykeionPointModel
+    mean_north_node: KerykeionPointModel
+    true_north_node: KerykeionPointModel
+    mean_south_node: KerykeionPointModel
+    true_south_node: KerykeionPointModel
 
     lunar_phase: LunarPhaseModel
     """Lunar phase model"""

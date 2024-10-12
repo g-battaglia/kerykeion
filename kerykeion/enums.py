@@ -13,8 +13,10 @@ class Planets(Enum):
     NEPTUNE = "Neptune"
     PLUTO = "Pluto"
     CHIRON = "Chiron"
-    TRUE_NODE = "True_Node"
-    MEAN_NODE = "Mean_Node"
+    TRUE_NORTH_NODE = "True_North_Node"
+    MEAN_NORTH_NODE = "Mean_South_Node"
+    TRUE_SOUTH_NODE = "True_South_Node"
+    MEAN_SOUTH_NODE = "Mean_South_Node"
     MEAN_LILITH = "Mean_Lilith"
 
 
