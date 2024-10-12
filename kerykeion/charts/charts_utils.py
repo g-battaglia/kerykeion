@@ -515,8 +515,8 @@ def draw_third_circle(
 
 
 def draw_aspect_grid(
-        stroke_color: str, 
-        available_planets: list, 
+        stroke_color: str,
+        available_planets: list,
         aspects: list,
         x_start: int = 380,
         y_start: int = 468,
@@ -705,7 +705,7 @@ def draw_transit_aspect_list(
     Returns:
     - A string containing the SVG path data for the aspect transit grid.
     """
-    
+
     if isinstance(celestial_point_language, dict):
         celestial_point_language = KerykeionLanguageCelestialPointModel(**celestial_point_language)
 
@@ -863,11 +863,11 @@ def draw_house_grid(
     Returns:
     - str: The SVG code for the grid of houses.
     """
-    
+
     if chart_type in ["Synastry", "Transit"] and secondary_subject_houses_list is None:
         raise KerykeionException("secondary_houses is None")
 
-    svg_output = '<g transform="translate(610,-20)">'
+    svg_output = '<g transform="translate(615,-20)">'
 
     line_increment = 10
     for i, house in enumerate(main_subject_houses_list):
@@ -935,8 +935,8 @@ def draw_planet_grid(
     offset_between_lines = 14
 
     svg_output = (
-        f'<g transform="translate(510,-20)">'
-        f'<g transform="translate(140, -15)">'
+        f'<g transform="translate(530,-20)">'
+        f'<g transform="translate(175, -15)">'
         f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}:</text>'
         f'</g>'
     )
@@ -1008,8 +1008,8 @@ def draw_planet_grid(
 
 
 def draw_transit_aspect_grid(
-        stroke_color: str, 
-        available_planets: list, 
+        stroke_color: str,
+        available_planets: list,
         aspects: list,
         x_indent: int = 50,
         y_indent: int = 250,
