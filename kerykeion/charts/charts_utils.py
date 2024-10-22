@@ -34,7 +34,8 @@ def get_decoded_kerykeion_celestial_point_name(input_planet_name: str, celestial
         return celestial_point_language[input_planet_name]
 
     # Return the special house name if it exists, otherwise return an empty string
-    return special_house_names.get(input_planet_name, "")
+    decoded_special_name = special_house_names.get(input_planet_name, "")
+    return celestial_point_language[decoded_special_name]
 
 
 def decHourJoin(inH: int, inM: int, inS: int) -> float:
@@ -719,26 +720,29 @@ def draw_transit_aspect_list(
     line = 0
     nl = 0
     inner_path = ""
-    scale = 1
     for i, aspect in enumerate(aspects_list):
         # Adjust the vertical position for every 12 aspects
-        if i == 12:
+        if i == 14:
             nl = 100
             line = 0
 
-        elif i == 24:
+        elif i == 28:
             nl = 200
             line = 0
 
-        elif i == 36:
+        elif i == 42:
             nl = 300
             line = 0
 
-        elif i == 48:
+        elif i == 56:
             nl = 400
+            line = 0
+
+        elif i == 70:
+            nl = 500
             # When there are more than 60 aspects, the text is moved up
-            if len(aspects_list) > 60:
-                line = -1 * (len(aspects_list) - 60) * 14
+            if len(aspects_list) > 84:
+                line = -1 * (len(aspects_list) - 84) * 14
             else:
                 line = 0
 
@@ -761,7 +765,7 @@ def draw_transit_aspect_list(
         inner_path += f"</g>"
         line = line + 14
 
-    out = f'<g style="transform: translate(47%, 59%) scale({scale})">'
+    out = f'<g style="transform: translate(43%, 50%)">'
     out += f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{grid_title}:</text>'
     out += inner_path
     out += "</g>"
@@ -867,7 +871,7 @@ def draw_house_grid(
     if chart_type in ["Synastry", "Transit"] and secondary_subject_houses_list is None:
         raise KerykeionException("secondary_houses is None")
 
-    svg_output = '<g transform="translate(615,-20)">'
+    svg_output = '<g transform="translate(650,-20)">'
 
     line_increment = 10
     for i, house in enumerate(main_subject_houses_list):
@@ -885,7 +889,7 @@ def draw_house_grid(
 
     if chart_type == "Synastry":
         svg_output += '<!-- Synastry Houses -->'
-        svg_output += '<g transform="translate(850, -20)">'
+        svg_output += '<g transform="translate(910, -20)">'
         line_increment = 10
 
         for i, house in enumerate(secondary_subject_houses_list): # type: ignore
@@ -935,7 +939,6 @@ def draw_planet_grid(
     offset_between_lines = 14
 
     svg_output = (
-        f'<g transform="translate(530,-20)">'
         f'<g transform="translate(175, -15)">'
         f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}:</text>'
         f'</g>'
@@ -1003,7 +1006,6 @@ def draw_planet_grid(
             svg_output += end_of_line
             second_line_height += offset_between_lines
 
-    svg_output += end_of_line
     return svg_output
 
 
