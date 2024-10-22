@@ -64,11 +64,14 @@ class KerykeionChartSVG:
     """
 
     # Constants
-    _BASIC_CHART_VIEWBOX = "0 0 772.2 550.0"
-    _WIDE_CHART_VIEWBOX = "0 0 1060 546.0"
-    _DEFAULT_HEIGHT = 546.0
+    _BASIC_CHART_VIEWBOX = "0 0 820 550.0"
+    _WIDE_CHART_VIEWBOX = "0 0 1200 546.0"
+    _TRANSIT_CHART_WITH_TABLE_VIWBOX = "0 0 960 546.0"
+
+    _DEFAULT_HEIGHT = 550
     _DEFAULT_FULL_WIDTH = 1200
-    _DEFAULT_NATAL_WIDTH = 772.2
+    _DEFAULT_NATAL_WIDTH = 820
+    _DEFAULT_FULL_WIDTH_WITH_TABLE = 960
     _PLANET_IN_ZODIAC_EXTRA_POINTS = 10
 
     # Set at init
@@ -170,6 +173,8 @@ class KerykeionChartSVG:
         self.height = self._DEFAULT_HEIGHT
         if self.chart_type == "Synastry" or self.chart_type == "Transit":
             self.width = self._DEFAULT_FULL_WIDTH
+        elif self.double_chart_aspect_grid_type == "table" and self.chart_type == "Transit":
+            self.width = self._DEFAULT_FULL_WIDTH_WITH_TABLE
         else:
             self.width = self._DEFAULT_NATAL_WIDTH
 
@@ -364,7 +369,12 @@ class KerykeionChartSVG:
         template_dict["stringName"] = f"{self.user.name}:" if self.chart_type in ["Synastry", "Transit"] else f'{self.language_settings["info"]}:'
 
         # Set viewbox based on chart type
-        template_dict['viewbox'] = self._BASIC_CHART_VIEWBOX if self.chart_type in ["Natal", "ExternalNatal"] else self._WIDE_CHART_VIEWBOX
+        if self.chart_type in ["Natal", "ExternalNatal"]:
+            template_dict['viewbox'] = self._BASIC_CHART_VIEWBOX
+        elif self.double_chart_aspect_grid_type == "table" and self.chart_type == "Transit":
+            template_dict['viewbox'] = self._TRANSIT_CHART_WITH_TABLE_VIWBOX
+        else:
+            template_dict['viewbox'] = self._WIDE_CHART_VIEWBOX
 
         # Generate rings and circles based on chart type
         if self.chart_type in ["Transit", "Synastry"]:
@@ -840,6 +850,11 @@ if __name__ == "__main__":
     aspect_grid_dark_synastry_subject = AstrologicalSubject("John Lennon - Aspect Grid Dark Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB")
     aspect_grid_dark_synastry_chart = KerykeionChartSVG(aspect_grid_dark_synastry_subject, "Synastry", second, theme="dark")
     aspect_grid_dark_synastry_chart.makeAspectGridOnlySVG()
+
+    # Synastry Chart With draw_transit_aspect_list table
+    synastry_chart_with_table_list_subject = AstrologicalSubject("John Lennon - SCTWL", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    synastry_chart_with_table_list = KerykeionChartSVG(synastry_chart_with_table_list_subject, "Synastry", second, double_chart_aspect_grid_type="list", theme="dark")
+    synastry_chart_with_table_list.makeSVG()
 
     # Transit Chart With draw_transit_aspect_grid table
     transit_chart_with_table_grid_subject = AstrologicalSubject("John Lennon - TCWTG", 1940, 10, 9, 18, 30, "Liverpool", "GB")
