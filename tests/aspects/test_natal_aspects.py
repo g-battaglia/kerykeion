@@ -11,7 +11,7 @@ class TestNatalAspects:
         self.subject = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", geonames_username="century.boy")
         self.subject_relevant_aspects = NatalAspects(self.subject).relevant_aspects
         self.subject_all_aspects = NatalAspects(self.subject).all_aspects
-        
+
         self.expected_relevant_aspects = EXPECTED_RELEVANT_ASPECTS
         self.expected_all_aspects = EXPECTED_ALL_ASPECTS
 
@@ -56,5 +56,5 @@ if __name__ == "__main__":
 
     # Set the log level to CRITICAL
     logging.basicConfig(level=logging.CRITICAL)
-    
+
     pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])
