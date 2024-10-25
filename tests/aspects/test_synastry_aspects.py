@@ -3,7 +3,7 @@ from kerykeion import AstrologicalSubject, SynastryAspects
 from .expected_synastry_aspects import EXPECTED_ALL_ASPECTS, EXPECTED_RELEVANT_ASPECTS
 
 
-class TestNatalAspects:
+class TestSynastryAspects:
     def setup_class(self):
         self.first_subject = AstrologicalSubject("John", 1940, 10, 9, 10, 30, "Liverpool", "GB", geonames_username="century.boy")
         self.second_subject = AstrologicalSubject("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP", geonames_username="century.boy")
@@ -55,5 +55,5 @@ if __name__ == "__main__":
 
     # Set the log level to CRITICAL
     logging.basicConfig(level=logging.CRITICAL)
-    
+
     pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])
