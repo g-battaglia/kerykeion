@@ -101,13 +101,10 @@ if __name__ == "__main__":
 
     setup_logging(level="debug")
 
-    john = AstrologicalSubject("John", 1940, 10, 9, 18, 30, "Liverpool")
-    yoko = AstrologicalSubject("Yoko", 1933, 2, 18, 18, 30, "Tokyo", "JP")
+    john = AstrologicalSubject("John", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+    yoko = AstrologicalSubject("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP")
 
     synastry_aspects = SynastryAspects(john, yoko)
 
-    # All aspects
-    print(synastry_aspects.all_aspects)
-
-    # Relevant aspects
-    print(synastry_aspects.relevant_aspects)
+    # All aspects as a list of dictionaries
+    print([aspect.dict() for aspect in synastry_aspects.all_aspects])
