@@ -43,6 +43,7 @@ from scour.scour import scourString
 from string import Template
 from typing import Union, List, Literal
 from datetime import datetime
+from cairosvg import svg2png
 
 class KerykeionChartSVG:
     """
@@ -629,6 +630,24 @@ class KerykeionChartSVG:
             output_file.write(self.template)
 
         logging.info(f"SVG Generated Correctly in: {chartname}")
+
+    def makePNG(self, minify: bool = False):
+        """ Saves the chart as a PNG file. """
+        
+        if not hasattr(self, "template"):
+            self.template = self.makeTemplate(minify)
+
+        chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart.png"
+
+        try:
+            svg2png(
+                bytestring=self.template.encode('utf-8'),
+                write_to=str(chartname),
+                output_width=3640
+            )
+            logging.info(f"PNG Generated Correctly in: {chartname}")
+        except Exception as e:
+            logging.error(f"Error generating PNG: {e}")
 
     def makeWheelOnlyTemplate(self, minify: bool = False):
         """Creates the template for the SVG file with only the wheel"""
