@@ -37,13 +37,12 @@ from kerykeion.charts.charts_utils import (
     draw_planet_grid,
 )
 from kerykeion.charts.draw_planets import draw_planets # type: ignore
-from kerykeion.utilities import get_houses_list
+from kerykeion.utilities import get_houses_list, get_colors_css
 from pathlib import Path
 from scour.scour import scourString
 from string import Template
 from typing import Union, List, Literal
 from datetime import datetime
-
 
 class KerykeionChartSVG:
     """
@@ -611,6 +610,10 @@ class KerykeionChartSVG:
 
         else:
             template = template.replace('"', "'")
+
+        color_map = get_colors_css(self.color_style_tag)
+        for var, color in color_map.items():
+            template = template.replace(str(f"var({var})"), color)
 
         return template
 
