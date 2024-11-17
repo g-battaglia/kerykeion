@@ -639,15 +639,13 @@ class KerykeionChartSVG:
 
         chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart.png"
 
-        try:
-            svg2png(
-                bytestring=self.template.encode('utf-8'),
-                write_to=str(chartname),
-                output_width=3640
-            )
-            logging.info(f"PNG Generated Correctly in: {chartname}")
-        except Exception as e:
-            logging.error(f"Error generating PNG: {e}")
+        svg2png(
+            bytestring=self.template.encode('utf-8'),
+            write_to=str(chartname),
+            output_width=self.width * 4,
+            output_height=self.height * 4,
+        )
+        logging.info(f"PNG Generated Correctly in: {chartname}")
 
     def makeWheelOnlyTemplate(self, minify: bool = False):
         """Creates the template for the SVG file with only the wheel"""
