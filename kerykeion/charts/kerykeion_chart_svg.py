@@ -61,6 +61,9 @@ class KerykeionChartSVG:
             That's useful if you want to use your own CSS file customizing the value of the default theme variables.
         - double_chart_aspect_grid_type: Set the type of the aspect grid for the double chart (transit or synastry). (Default: list.)
         - chart_language: Set the language for the chart (default: EN).
+        - safe_svg_colors: If set to `True`, the colors in the SVG will be hardcoded in the specific nodes instead of being set as
+            separate CSS variables. This is useful if you want to use the SVG as a standalone file to be opened in graphic editors
+            (like Inkscape) or if you want to convert the SVG to a PNG file. (Default: `False`)
     """
 
     # Constants
@@ -114,11 +117,13 @@ class KerykeionChartSVG:
         theme: Union[KerykeionChartTheme, None] = "classic",
         double_chart_aspect_grid_type: Literal["list", "table"] = "list",
         chart_language: KerykeionChartLanguage = "EN",
+        safe_svg_colors: bool = False,
     ):
         # Directories:
         home_directory = Path.home()
         self.new_settings_file = new_settings_file
         self.chart_language = chart_language
+        self.safe_svg_colors = safe_svg_colors
 
         if new_output_directory:
             self.output_directory = Path(new_output_directory)
@@ -612,9 +617,10 @@ class KerykeionChartSVG:
         else:
             template = template.replace('"', "'")
 
-        color_map = get_colors_css(self.color_style_tag)
-        for var, color in color_map.items():
-            template = template.replace(str(f"var({var})"), color)
+        if self.safe_svg_colors:
+            color_map = get_colors_css(self.color_style_tag)
+            for var, color in color_map.items():
+                template = template.replace(str(f"var({var})"), color)
 
         return template
 
@@ -633,7 +639,11 @@ class KerykeionChartSVG:
 
     def makePNG(self, minify: bool = False):
         """ Saves the chart as a PNG file. """
-        
+
+        if not self.safe_svg_colors:
+            self.safe_svg_colors = True
+            self.template = self.makeTemplate(minify)
+
         if not hasattr(self, "template"):
             self.template = self.makeTemplate(minify)
 
@@ -925,3 +935,6 @@ if __name__ == "__main__":
     hindi_subject = AstrologicalSubject("Amitabh Bachchan", 1942, 10, 11, 4, 0, "Allahabad", "IN")
     hindi_chart = KerykeionChartSVG(hindi_subject, chart_language="HI")
     hindi_chart.makeSVG()
+
+    # Make a PNG
+    dark_theme_natal_chart.makePNG()

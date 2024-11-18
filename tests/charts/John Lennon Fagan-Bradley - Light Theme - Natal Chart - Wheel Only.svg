@@ -36,7 +36,7 @@
 
   /* Zodiac */
   --kerykeion-color-base-200: #d1d1d1;
-  --kerykeion-color-base-300: rgb(113 113 122);
+  --kerykeion-color-base-300: #71717a;
 
   /* ----------- */
   /* Chart Color */
