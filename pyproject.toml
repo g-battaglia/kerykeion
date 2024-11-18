@@ -49,6 +49,7 @@ terminaltables = "^3.1.10"
 scour = "^0.38.2"
 requests-cache = "^1.2.1"
 requests = "^2.32.3"
+cairosvg = "^2.7.1"
 
 [tool.poetry.scripts]
 create-docs = "scripts.docs:main"

@@ -3,6 +3,7 @@ from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, Poin
 from typing import Union, get_args, TYPE_CHECKING
 import logging
 import math
+import re
 
 if TYPE_CHECKING:
     from kerykeion import AstrologicalSubject
@@ -278,3 +279,26 @@ def get_available_planets_list(subject: Union["AstrologicalSubject", Astrologica
             planets_absolute_position_list.append(subject[planet.lower()])
 
     return planets_absolute_position_list
+
+def get_colors_css(css_text: str) -> dict:
+    """
+    Return dict of css color variable names and their color code values.
+    """
+    css_vars = {
+        f"--{var}": value.strip()
+        for var, value in re.findall(r"--([a-zA-Z0-9-]+):\s*(.+?);", css_text)
+    }  
+    
+    general_colors = {k: v for k, v in css_vars.items() if v.startswith("#")}
+    variables_to_resolve = {k: v for k, v in css_vars.items() if v.startswith("var(")}
+
+    for var, value in variables_to_resolve.items():
+        while "var(" in value:
+            ref_var = re.search(r"var\((--[a-zA-Z0-9-]+)\)", value).group(1)
+            if ref_var in general_colors:
+                value = value.replace(f"var({ref_var})", general_colors[ref_var])
+            else:
+                break 
+        variables_to_resolve[var] = value
+
+    return variables_to_resolve

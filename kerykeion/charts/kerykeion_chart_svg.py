@@ -37,13 +37,13 @@ from kerykeion.charts.charts_utils import (
     draw_planet_grid,
 )
 from kerykeion.charts.draw_planets import draw_planets # type: ignore
-from kerykeion.utilities import get_houses_list
+from kerykeion.utilities import get_houses_list, get_colors_css
 from pathlib import Path
 from scour.scour import scourString
 from string import Template
 from typing import Union, List, Literal
 from datetime import datetime
-
+from cairosvg import svg2png
 
 class KerykeionChartSVG:
     """
@@ -612,6 +612,10 @@ class KerykeionChartSVG:
         else:
             template = template.replace('"', "'")
 
+        color_map = get_colors_css(self.color_style_tag)
+        for var, color in color_map.items():
+            template = template.replace(str(f"var({var})"), color)
+
         return template
 
     def makeSVG(self, minify: bool = False):
@@ -626,6 +630,22 @@ class KerykeionChartSVG:
             output_file.write(self.template)
 
         logging.info(f"SVG Generated Correctly in: {chartname}")
+
+    def makePNG(self, minify: bool = False):
+        """ Saves the chart as a PNG file. """
+        
+        if not hasattr(self, "template"):
+            self.template = self.makeTemplate(minify)
+
+        chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart.png"
+
+        svg2png(
+            bytestring=self.template.encode('utf-8'),
+            write_to=str(chartname),
+            output_width=self.width * 4,
+            output_height=self.height * 4,
+        )
+        logging.info(f"PNG Generated Correctly in: {chartname}")
 
     def makeWheelOnlyTemplate(self, minify: bool = False):
         """Creates the template for the SVG file with only the wheel"""
