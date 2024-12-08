@@ -359,6 +359,18 @@ Example:
 ...
 ```
 
+## JSON Support
+
+The astrological subject, which is the base of data used in the library, can be easily serialized to JSON with the `json` method.
+
+```python
+from kerykeion import AstrologicalSubject
+
+johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
+
+print(johnny.json(dump=False, indent=2))
+```
+
 ## Documentation
 
 Most of the functions and the classes are self documented by the types and have docstrings.
