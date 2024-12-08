@@ -359,6 +359,9 @@ Example:
 ...
 ```
 
+In the charts, by default, the mean nodes (M) are displayed, while the true nodes are not displayed. 
+To display them, you need to edit the configuration file (kr.config.json).
+
 ## JSON Support
 
 The astrological subject, which is the base of data used in the library, can be easily serialized to JSON with the `json` method.

@@ -905,3 +905,8 @@ if __name__ == "__main__":
     hindi_subject = AstrologicalSubject("Amitabh Bachchan", 1942, 10, 11, 4, 0, "Allahabad", "IN")
     hindi_chart = KerykeionChartSVG(hindi_subject, chart_language="HI")
     hindi_chart.makeSVG()
+
+    # Kanye West Natal Chart
+    kanye_west_subject = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
+    kanye_west_chart = KerykeionChartSVG(kanye_west_subject)
+    kanye_west_chart.makeSVG()
