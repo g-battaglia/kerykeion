@@ -837,3 +837,6 @@ if __name__ == "__main__":
     # Offline mode
     johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", online=False, tz_str="America/New_York", lng=-87.1111, lat=37.7711)
     print(johnny.json(dump=True, indent=2))
+
+    # Print as JSON
+    print(johnny.json(dump=False, indent=2))
