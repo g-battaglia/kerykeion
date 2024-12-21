@@ -114,9 +114,9 @@ OpenAstro.org -->
             <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Latitude: 53°24'38' North</text>
             <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Longitude: 2°58'41' West</text>
             <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Type: Natal</text>
-            <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Tropic</text>
-            <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Placidus</text>
-            <text x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Lunar phase: Day 2</text>
+            <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Placidus Houses</text>
+            <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Tropical Zodiac</text>
+            <text x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Lunar phase day: 2</text>
             <text x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Lunar phase: Waxing Crescent</text>
             <text x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Heliocentric</text>
         </g>

@@ -227,7 +227,7 @@ class AstrologicalSubject:
         #---------------#
 
         # Geonames username
-        if geonames_username is None and online:
+        if geonames_username is None and online and (not lat or not lng or not tz_str):
             logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
             self.geonames_username = DEFAULT_GEONAMES_USERNAME
         else:
@@ -835,5 +835,5 @@ if __name__ == "__main__":
     print(johnny.mean_lilith)
 
     # Offline mode
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", online=False, tz_str="America/New_York", lng=-87.1111, lat=37.7711)
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", online=False, tz_str="America/New_York", lng=-87.1111, lat=37.7711, sidereal_mode="FAGAN_BRADLEY", zodiac_type="Sidereal")
     print(johnny.json(dump=True, indent=2))
