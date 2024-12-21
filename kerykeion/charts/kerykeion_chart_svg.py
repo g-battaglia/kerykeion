@@ -5,6 +5,7 @@
 
 
 import logging
+import swisseph as swe
 from typing import get_args
 
 from kerykeion.settings.kerykeion_settings import get_settings
@@ -408,11 +409,19 @@ class KerykeionChartSVG:
         else:
             template_dict["stringTitle"] = self.user.name
 
-        # Set bottom left corner information
-        template_dict["bottomLeft0"] = f"{self.user.zodiac_type if self.user.zodiac_type == 'Tropic' else str(self.user.zodiac_type) + ' ' + str(self.user.sidereal_mode)}"
-        template_dict["bottomLeft1"] = f"{self.user.houses_system_name}"
+        if self.user.zodiac_type == 'Tropic':
+            zodiac_info = "Tropical Zodiac"
+
+        else:
+            mode_const = "SIDM_" + self.user.sidereal_mode # type: ignore
+            mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
+            zodiac_info = f"Ayanamsa: {mode_name}"
+
+        template_dict["bottomLeft0"] = f"{self.user.houses_system_name} Houses"
+        template_dict["bottomLeft1"] = zodiac_info
+
         if self.chart_type in ["Natal", "ExternalNatal", "Synastry"]:
-            template_dict["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.user.lunar_phase.get("moon_phase", "")}'
+            template_dict["bottomLeft2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")} {self.language_settings.get("day", "Day").lower()}: {self.user.lunar_phase.get("moon_phase", "")}'
             template_dict["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.moon_phase_name}'
             template_dict["bottomLeft4"] = f'{self.user.perspective_type}'
         else:
