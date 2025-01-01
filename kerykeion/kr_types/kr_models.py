@@ -97,7 +97,12 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     local_time: float
     # <-- Deprecated properties
 
-    # Planets
+    # Planets (axes are treated as planets here)
+    ascendant: KerykeionPointModel
+    descendant: KerykeionPointModel
+    medium_coeli: KerykeionPointModel
+    imum_coeli: KerykeionPointModel
+    
     sun: KerykeionPointModel
     moon: KerykeionPointModel
     mercury: KerykeionPointModel

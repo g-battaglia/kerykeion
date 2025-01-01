@@ -44,6 +44,14 @@ def get_number_from_name(name: Planet) -> int:
         return 15
     elif name == "Mean_Lilith":
         return 12
+    elif name == "Ascendant": # TODO: Is this needed?
+        return 9900
+    elif name == "Descendant": # TODO: Is this needed?
+        return 9901
+    elif name == "Medium_Coeli": # TODO: Is this needed?
+        return 9902
+    elif name == "Imum_Coeli": # TODO: Is this needed?
+        return 9903
     else:
         raise KerykeionException(f"Error in getting number from name! Name: {name}")
 
@@ -118,28 +126,54 @@ def setup_logging(level: str) -> None:
     loglevel: int = logging_options.get(level, logging.INFO)
     logging.basicConfig(format=format, level=loglevel)
 
-def check_if_point_between(
-    start_point: Union[int, float], end_point: Union[int, float], evaluated_point: Union[int, float]
+
+def is_point_between(
+    start_point: Union[int, float],
+    end_point: Union[int, float],
+    evaluated_point: Union[int, float]
 ) -> bool:
     """
-    Finds if a point is between two other in a circle.
+    Determines if a point is between two others on a circle, with additional rules:
+    - If evaluated_point == start_point, it is considered between.
+    - If evaluated_point == end_point, it is NOT considered between.
+    - The range between start_point and end_point must not exceed 180°.
 
     Args:
-        - start_point: The first point
-        - end_point: The second point
-        - point: The point to check if it is between start_point and end_point
+        - start_point: The first point on the circle.
+        - end_point: The second point on the circle.
+        - evaluated_point: The point to check.
 
     Returns:
-        - True if point is between start_point and end_point, False otherwise
+        - True if evaluated_point is between start_point and end_point, False otherwise.
     """
 
-    p1_p2 = math.fmod(end_point - start_point + 360, 360)
+    # Normalize angles to [0, 360)
+    start_point = start_point % 360
+    end_point = end_point % 360
+    evaluated_point = evaluated_point % 360
+
+    # Compute angular difference
+    angular_difference = math.fmod(end_point - start_point + 360, 360)
+
+    # Ensure the range is not greater than 180°. Otherwise, it is not truly defined what
+    # being located in between two points on a circle actually means.
+    if angular_difference > 180:
+        raise KerykeionException(f"The angle between start and end point is not allowed to exceed 180°, yet is: {angular_difference}")
+
+    # Handle explicitly when evaluated_point == start_point
+    if evaluated_point == start_point:
+        return True
+
+    # Handle explicitly when evaluated_point == end_point
+    if evaluated_point == end_point:
+        return False
+
+    # Compute angular differences for evaluation
     p1_p3 = math.fmod(evaluated_point - start_point + 360, 360)
 
-    if (p1_p2 <= 180) != (p1_p3 > p1_p2):
-        return True
-    else:
-        return False
+    # Check if point lies in the interval
+    return 0 < p1_p3 < angular_difference
+
 
 
 def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut_list: list) -> Houses:
@@ -163,7 +197,8 @@ def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut
     for i in range(len(house_names)):
         start_degree = houses_degree_ut_list[i]
         end_degree = houses_degree_ut_list[(i + 1) % len(houses_degree_ut_list)]
-        if check_if_point_between(start_degree, end_degree, planet_position_degree):
+        #if check_if_point_between(start_degree, end_degree, planet_position_degree):
+        if is_point_between(start_degree, end_degree, planet_position_degree):
             return house_names[i]
 
     # If no house is found, raise an error
