@@ -756,7 +756,7 @@
       "id": 20,
       "name": "Ascendant",
       "color": "var(--kerykeion-chart-color-asc)",
-      "is_active": false,
+      "is_active": true,
       "element_points": 0,
       "related_zodiac_signs": [],
       "label": "Ascendant"
