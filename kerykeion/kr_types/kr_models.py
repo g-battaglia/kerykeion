@@ -98,10 +98,10 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     # <-- Deprecated properties
 
     # Planets (axes are treated as planets here)
-    ascendant: KerykeionPointModel
-    descendant: KerykeionPointModel
-    medium_coeli: KerykeionPointModel
-    imum_coeli: KerykeionPointModel
+    asc: KerykeionPointModel
+    dsc: KerykeionPointModel
+    mc: KerykeionPointModel
+    ic: KerykeionPointModel
     
     sun: KerykeionPointModel
     moon: KerykeionPointModel

@@ -714,7 +714,7 @@
     },
     {
       "id": 20,
-      "name": "Ascendant",
+      "name": "Asc",
       "color": "var(--kerykeion-chart-color-asc)",
       "is_active": true,
       "element_points": 0,
@@ -723,8 +723,8 @@
     },
     {
       "id": 21,
-      "name": "Descendant",
-      "color": "var(--kerykeion-chart-color-desc)",
+      "name": "Dsc",
+      "color": "var(--kerykeion-chart-color-dsc)",
       "is_active": false,
       "element_points": 0,
       "related_zodiac_signs": [],
@@ -732,7 +732,7 @@
     },
     {
       "id": 22,
-      "name": "Medium_Coeli",
+      "name": "Mc",
       "color": "var(--kerykeion-chart-color-mc)",
       "is_active": false,
       "element_points": 0,
@@ -741,7 +741,7 @@
     },
     {
       "id": 23,
-      "name": "Imum_Coeli",
+      "name": "Ic",
       "color": "var(--kerykeion-chart-color-ic)",
       "is_active": false,
       "element_points": 0,

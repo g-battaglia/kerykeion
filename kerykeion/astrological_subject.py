@@ -127,10 +127,10 @@ class AstrologicalSubject:
     iso_formatted_utc_datetime: str
 
     # Axes
-    ascendant: KerykeionPointModel
-    descendant: KerykeionPointModel
-    medium_coeli: KerykeionPointModel
-    imum_coeli: KerykeionPointModel
+    asc: KerykeionPointModel
+    dsc: KerykeionPointModel
+    mc: KerykeionPointModel
+    ic: KerykeionPointModel
 
     # Planets
     sun: KerykeionPointModel
@@ -466,14 +466,14 @@ class AstrologicalSubject:
         point_type: PointType = "Planet"
 
         # Calculate ascendant and medium coeli
-        self.ascendant = get_kerykeion_point_from_degree(_ascmc[0], "Ascendant", point_type=point_type)
-        self.medium_coeli = get_kerykeion_point_from_degree(_ascmc[1], "Medium_Coeli", point_type=point_type)
+        self.asc = get_kerykeion_point_from_degree(_ascmc[0], "Asc", point_type=point_type)
+        self.mc = get_kerykeion_point_from_degree(_ascmc[1], "Mc", point_type=point_type)
         # For descendant and imum coeli there exist no Swiss Ephemeris library calculation function,
         # but they are simply opposite the the ascendant and medium coeli
-        dc_deg = math.fmod(_ascmc[0] + 180, 360)
+        dsc_deg = math.fmod(_ascmc[0] + 180, 360)
         ic_deg = math.fmod(_ascmc[1] + 180, 360)
-        self.descendant = get_kerykeion_point_from_degree(dc_deg, "Descendant", point_type=point_type)
-        self.imum_coeli = get_kerykeion_point_from_degree(ic_deg, "Imum_Coeli", point_type=point_type)
+        self.dsc = get_kerykeion_point_from_degree(dsc_deg, "Dsc", point_type=point_type)
+        self.ic = get_kerykeion_point_from_degree(ic_deg, "Ic", point_type=point_type)
 
 
         point_type: PointType = "House"
@@ -552,10 +552,10 @@ class AstrologicalSubject:
 
         # Note that in whole-sign house systems ac/dc or mc/ic axes may not align with house cusps.
         # Therefore, for the axes we need to calculate house positions explicitly too.
-        self.ascendant.house = get_planet_house(self.ascendant.abs_pos, self._houses_degree_ut)
-        self.descendant.house = get_planet_house(self.descendant.abs_pos, self._houses_degree_ut)
-        self.medium_coeli.house = get_planet_house(self.medium_coeli.abs_pos, self._houses_degree_ut)
-        self.imum_coeli.house = get_planet_house(self.imum_coeli.abs_pos, self._houses_degree_ut)
+        self.asc.house = get_planet_house(self.asc.abs_pos, self._houses_degree_ut)
+        self.dsc.house = get_planet_house(self.dsc.abs_pos, self._houses_degree_ut)
+        self.mc.house = get_planet_house(self.mc.abs_pos, self._houses_degree_ut)
+        self.ic.house = get_planet_house(self.ic.abs_pos, self._houses_degree_ut)
 
         self.sun.house = get_planet_house(sun_deg, self._houses_degree_ut)
         self.moon.house = get_planet_house(moon_deg, self._houses_degree_ut)
@@ -629,10 +629,10 @@ class AstrologicalSubject:
                 planet["retrograde"] = False
                 
         # AC/DC and MC/IC axes are never retrograde. For consistency, set them to be not retrograde.
-        self.ascendant["retrograde"] = False
-        self.descendant["retrograde"] = False
-        self.medium_coeli["retrograde"] = False
-        self.imum_coeli["retrograde"] = False
+        self.asc["retrograde"] = False
+        self.dsc["retrograde"] = False
+        self.mc["retrograde"] = False
+        self.ic["retrograde"] = False
 
 
 
