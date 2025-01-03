@@ -172,7 +172,7 @@ def is_point_between(
     p1_p3 = math.fmod(evaluated_point - start_point + 360, 360)
 
     # Check if point lies in the interval
-    return 0 < p1_p3 < angular_difference
+    return (0 <= p1_p3) and (p1_p3 < angular_difference)
 
 
 
@@ -197,7 +197,13 @@ def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut
     for i in range(len(house_names)):
         start_degree = houses_degree_ut_list[i]
         end_degree = houses_degree_ut_list[(i + 1) % len(houses_degree_ut_list)]
-        #if check_if_point_between(start_degree, end_degree, planet_position_degree):
+        
+        if (planet_position_degree == 97.89789490940348):
+            print()
+            print("--------> start_degree: ", start_degree)
+            print("--------> end_degree: ", end_degree)
+            print("--------> planet_position_degree: ", planet_position_degree)
+        
         if is_point_between(start_degree, end_degree, planet_position_degree):
             return house_names[i]
 
