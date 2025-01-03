@@ -160,7 +160,9 @@ def is_point_between(
     if angular_difference > 180:
         raise KerykeionException(f"The angle between start and end point is not allowed to exceed 180°, yet is: {angular_difference}")
 
-    # Handle explicitly when evaluated_point == start_point
+    # Handle explicitly when evaluated_point == start_point. Note: It may happen for mathematical
+    # reasons that evaluated_point and start_point deviate very slightly from each other, but
+    # should really be same value. This case is captured later below by the term 0 <= p1_p3.
     if evaluated_point == start_point:
         return True
 
@@ -197,12 +199,6 @@ def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut
     for i in range(len(house_names)):
         start_degree = houses_degree_ut_list[i]
         end_degree = houses_degree_ut_list[(i + 1) % len(houses_degree_ut_list)]
-        
-        if (planet_position_degree == 97.89789490940348):
-            print()
-            print("--------> start_degree: ", start_degree)
-            print("--------> end_degree: ", end_degree)
-            print("--------> planet_position_degree: ", planet_position_degree)
         
         if is_point_between(start_degree, end_degree, planet_position_degree):
             return house_names[i]
