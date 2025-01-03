@@ -22,10 +22,6 @@
       "lunar_phase": "Lunar phase",
       "day": "Day",
       "celestial_points": {
-        "Ascendant": "Asc",
-        "Descendant": "Desc",
-        "Medium_Coeli": "MC",
-        "Imum_Coeli": "IC",
         "Sun": "Sun",
         "Moon": "Moon",
         "Mercury": "Mercury",
@@ -70,10 +66,6 @@
       "lunar_phase": "Phase Lunaire",
       "day": "Jour",
       "celestial_points": {
-        "Ascendant": "Asc",
-        "Descendant": "Desc",
-        "Medium_Coeli": "MC",
-        "Imum_Coeli": "FC",
         "Sun": "Soleil",
         "Moon": "Lune",
         "Mercury": "Mercure",
@@ -118,10 +110,6 @@
       "lunar_phase": "Fase lunar",
       "day": "Dia",
       "celestial_points": {
-        "Ascendant": "Asc",
-        "Descendant": "Desc",
-        "Medium_Coeli": "MC",
-        "Imum_Coeli": "FC",
         "Sun": "Sol",
         "Moon": "Lua",
         "Mercury": "Mercúrio",
@@ -166,10 +154,6 @@
       "lunar_phase": "Fase lunare",
       "day": "Giorno",
       "celestial_points": {
-        "Ascendant": "Asc",
-        "Descendant": "Disc",
-        "Medium_Coeli": "MC",
-        "Imum_Coeli": "IC",
         "Sun": "Sole",
         "Moon": "Luna",
         "Mercury": "Mercurio",
@@ -214,10 +198,6 @@
       "lunar_phase": "月相",
       "day": "日",
       "celestial_points": {
-        "Ascendant": "上升点 ",
-        "Descendant": "下降点",
-        "Medium_Coeli": "天顶",
-        "Imum_Coeli": "天底",
         "Sun": "太陽",
         "Moon": "月亮",
         "Mercury": "水星",
@@ -262,10 +242,6 @@
       "lunar_phase": "Fase lunar",
       "day": "Día",
       "celestial_points": {
-        "Ascendant": "Asc ",
-        "Descendant": "Desc",
-        "Medium_Coeli": "MC",
-        "Imum_Coeli": "FC",
         "Sun": "Sol",
         "Moon": "Luna",
         "Mercury": "Mercurio",
@@ -310,10 +286,6 @@
       "lunar_phase": "Лунная фаза",
       "day": "День",
       "celestial_points": {
-        "Ascendant": "Асц ",
-        "Descendant": "Десц",
-        "Medium_Coeli": "МЦ",
-        "Imum_Coeli": "ИЦ",
         "Sun": "Солнце",
         "Moon": "Луна",
         "Mercury": "Меркурий",
@@ -358,10 +330,6 @@
       "lunar_phase": "Ay Aşaması",
       "day": "Gün",
       "celestial_points": {
-        "Ascendant": "Asc ",
-        "Descendant": "Desc",
-        "Medium_Coeli": "MC",
-        "Imum_Coeli": "IC",
         "Sun": "Güneş",
         "Moon": "Ay",
         "Mercury": "Merkür",
@@ -406,10 +374,6 @@
       "lunar_phase": "Mondphase",
       "day": "Tag",
       "celestial_points": {
-        "Ascendant": "Asc ",
-        "Descendant": "Desc",
-        "Medium_Coeli": "MC",
-        "Imum_Coeli": "IC",
         "Sun": "Sonne",
         "Moon": "Mond",
         "Mercury": "Merkur",
@@ -454,10 +418,6 @@
       "lunar_phase": "चंद्र चरण",
       "day": "दिन",
       "celestial_points": {
-        "Ascendant": "Asc",
-        "Descendant": "Desc",
-        "Medium_Coeli": "MC",
-        "Imum_Coeli": "IC",
         "Sun": "सूर्य",
         "Moon": "चंद्रमा",
         "Mercury": "बुध",
@@ -759,7 +719,7 @@
       "is_active": true,
       "element_points": 0,
       "related_zodiac_signs": [],
-      "label": "Ascendant"
+      "label": "Asc"
     },
     {
       "id": 21,
@@ -768,7 +728,7 @@
       "is_active": false,
       "element_points": 0,
       "related_zodiac_signs": [],
-      "label": "Descendant"
+      "label": "Dsc"
     },
     {
       "id": 22,
@@ -777,7 +737,7 @@
       "is_active": false,
       "element_points": 0,
       "related_zodiac_signs": [],
-      "label": "Medium_Coeli"
+      "label": "Mc"
     },
     {
       "id": 23,
@@ -786,7 +746,7 @@
       "is_active": false,
       "element_points": 0,
       "related_zodiac_signs": [],
-      "label": "Imum_Coeli"
+      "label": "Ic"
     }
   ],
 
