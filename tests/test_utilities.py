@@ -38,6 +38,11 @@ class TestUtilities:
         assert is_point_between(340, 0, 340) is True
         assert is_point_between(340, 0, 0) is False
         assert is_point_between(360, 20, 360) is True
+        
+        assert is_point_between(10, 30, 10.00000000001) is True
+        assert is_point_between(10, 30, 9.999999999999) is False
+        assert is_point_between(10, 30, 29.999999999999) is True
+        assert is_point_between(10, 30, 30.00000000001) is False
 
 
     def test_is_point_between_with_exception(self):
