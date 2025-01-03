@@ -18,6 +18,7 @@ class TestNatalAspects:
     def test_relevant_aspects_length(self):
         assert len(self.expected_relevant_aspects) == len(self.subject_relevant_aspects)
 
+
     def test_relevant_aspects(self):
         for i, aspect in enumerate(self.expected_relevant_aspects):
             assert self.subject_relevant_aspects[i]["p1_name"] == aspect["p1_name"]
@@ -32,8 +33,11 @@ class TestNatalAspects:
             assert self.subject_relevant_aspects[i]["p1"] == aspect["p1"]
             assert self.subject_relevant_aspects[i]["p2"] == aspect["p2"]
 
+
+
     def test_all_aspects_length(self):
         assert len(self.expected_all_aspects) == len(self.subject_all_aspects)
+
 
     def test_all_aspects(self):
         for i, aspect in enumerate(self.expected_all_aspects):
@@ -48,6 +52,7 @@ class TestNatalAspects:
             assert round(self.subject_all_aspects[i]["diff"], 2) == round(aspect["diff"], 2)
             assert self.subject_all_aspects[i]["p1"] == aspect["p1"]
             assert self.subject_all_aspects[i]["p2"] == aspect["p2"]
+            
 
 
 if __name__ == "__main__":

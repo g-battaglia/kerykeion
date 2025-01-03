@@ -90,7 +90,7 @@ class KerykeionLanguageCelestialPointModel(SubscriptableBaseModel):
     This class is used to define the labels, show in the chart, for the celestial points.
     It is used to translate the celestial points in the language of the chart.
     """
-
+    
     Sun: str = Field(title="Sun", description="The name of the Sun in the chart, in the language")
     Moon: str = Field(title="Moon", description="The name of the Moon in the chart, in the language")
     Mercury: str = Field(title="Mercury", description="The name of Mercury in the chart, in the language")

@@ -6,6 +6,7 @@ from .expected_synastry_aspects import EXPECTED_ALL_ASPECTS, EXPECTED_RELEVANT_A
 class TestSynastryAspects:
     def setup_class(self):
         self.first_subject = AstrologicalSubject("John", 1940, 10, 9, 10, 30, "Liverpool", "GB", geonames_username="century.boy")
+        print(self.first_subject.json(indent=4))
         self.second_subject = AstrologicalSubject("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP", geonames_username="century.boy")
 
         self.synastry_relevant_aspects = SynastryAspects(self.first_subject, self.second_subject).relevant_aspects
@@ -16,6 +17,7 @@ class TestSynastryAspects:
 
     def test_relevant_aspects_length(self):
         assert len(self.expected_relevant_aspects) == len(self.synastry_relevant_aspects)
+
 
     def test_relevant_aspects(self):
         for i, aspect in enumerate(self.expected_relevant_aspects):
@@ -31,9 +33,11 @@ class TestSynastryAspects:
             assert self.synastry_relevant_aspects[i]["p1"] == aspect["p1"]
             assert self.synastry_relevant_aspects[i]["p2"] == aspect["p2"]
 
+
     def test_all_aspects_length(self):
         assert len(self.expected_all_aspects) == len(self.synastry_all_aspects)
-
+        
+        
     def test_all_aspects(self):
         for i, aspect in enumerate(self.expected_all_aspects):
             assert self.synastry_all_aspects[i]["p1_name"] == aspect["p1_name"]

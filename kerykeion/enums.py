@@ -18,6 +18,10 @@ class Planets(Enum):
     TRUE_SOUTH_NODE = "True_South_Node"
     MEAN_SOUTH_NODE = "Mean_South_Node"
     MEAN_LILITH = "Mean_Lilith"
+    ASCENDANT = "Ascendant"
+    DESCENDANT = "Descendant"
+    MEDIUM_COELI = "Medium_Coeli"
+    IMUM_COELI = "Imum_Coeli"
 
 
 class Aspects(Enum):
