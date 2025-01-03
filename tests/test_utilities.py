@@ -43,6 +43,11 @@ class TestUtilities:
         assert is_point_between(10, 30, 9.999999999999) is False
         assert is_point_between(10, 30, 29.999999999999) is True
         assert is_point_between(10, 30, 30.00000000001) is False
+        
+        assert is_point_between(97.89789490940346, 116.14575774583493, 97.89789490940348) is True
+        assert is_point_between(97.89789490940346, 116.14575774583493, 97.89789490940340) is False
+        assert is_point_between(97.89789490940346, 116.14575774583493, 116.14575774583490) is True
+        assert is_point_between(97.89789490940346, 116.14575774583493, 116.14575774583496) is False
 
 
     def test_is_point_between_with_exception(self):
