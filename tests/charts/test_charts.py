@@ -77,7 +77,6 @@ class TestCharts:
         for i in range(len(birth_chart_svg_lines)):
             assert birth_chart_svg_lines[i] == file_content_lines[i]
 
-    '''
     def test_synastry_chart(self):
         synastry_chart_svg = KerykeionChartSVG(self.first_subject, "Synastry", self.second_subject).makeTemplate()
         synastry_chart_svg_lines = [synastry_chart_svg[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(synastry_chart_svg), self.SPLIT_LINE_LENGTH)]
@@ -559,7 +558,7 @@ class TestCharts:
     def test_hindi_chart(self):
         hindi_chart_svg = KerykeionChartSVG(self.hindi_subject, chart_language="HI").makeTemplate()
         self._compare_chart_svg("Amitabh Bachchan - Natal Chart.svg", hindi_chart_svg)
-    '''
+
 
 if __name__ == "__main__":
     import pytest
