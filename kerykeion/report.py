@@ -1,9 +1,9 @@
-from kerykeion import AstrologicalSubject
-from kerykeion import TransitAnalysis
+from kerykeion import AstrologicalSubject, TransitAnalysis
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, TransitAnalysisModel, AspectModel
+from kerykeion.kr_types.kr_literals import AngularHouses
 from terminaltables import AsciiTable
 from kerykeion.utilities import get_houses_list, get_available_planets_list
 from typing import Union
-from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 import json
 import logging
 
@@ -90,6 +90,36 @@ class Report:
 
 
 class TransitAnalysisReport(Report):
+    """Create a formatted report comparing natal and transit charts."""
+
+    def __init__(self, transit_analysis: TransitAnalysis,
+                 max_orb: float = 8.0,
+                 include_minor_aspects: bool = True,
+                 traditional_aspects_only: bool = False,
+                 max_aspects: int = None,
+                 include_auxiliary_points: bool = True):
+        self.transit_analysis = transit_analysis
+        self.include_house_aspects = transit_analysis.model.include_house_aspects  # Get from model
+        super().__init__(transit_analysis.natal)
+
+        # Store the raw data as class attributes
+        self.summary_data = self._gather_summary_data()
+        self.planetary_data = self._gather_planetary_data()
+        self.houses_data = self._gather_houses_data()
+        self.aspects_data = self._gather_aspects_data()
+
+        # Generate the formatted tables from the data
+        self.get_summary_section()
+        self.get_combined_planets_table()
+        self.get_combined_houses_table()
+        self.get_filtered_aspects_table(
+            max_orb=max_orb,
+            include_minor_aspects=include_minor_aspects,
+            traditional_aspects_only=traditional_aspects_only,
+            max_aspects=max_aspects,
+            include_auxiliary_points=include_auxiliary_points
+        )
+
     HOUSE_MEANINGS = {
         "First_House": "Identity/Self",
         "Second_House": "Values/Resources",
@@ -151,36 +181,6 @@ class TransitAnalysisReport(Report):
         'Aqu': 'Aquarius',
         'Pis': 'Pisces'
     }
-
-    """Create a formatted report comparing natal and transit charts."""
-
-    def __init__(self, transit_analysis: TransitAnalysis,
-                 max_orb: float = 8.0,
-                 include_minor_aspects: bool = True,
-                 traditional_aspects_only: bool = False,
-                 max_aspects: int = None,
-                 include_auxiliary_points: bool = True):
-        self.transit_analysis = transit_analysis
-        self.transit_time = transit_analysis.transit_time
-        super().__init__(transit_analysis.natal)
-
-        # Store the raw data as class attributes
-        self.summary_data = self._gather_summary_data()
-        self.planetary_data = self._gather_planetary_data()
-        self.houses_data = self._gather_houses_data()
-        self.aspects_data = self._gather_aspects_data()
-
-        # Generate the formatted tables from the data
-        self.get_summary_section()
-        self.get_combined_planets_table()
-        self.get_combined_houses_table()
-        self.get_filtered_aspects_table(
-            max_orb=max_orb,
-            include_minor_aspects=include_minor_aspects,
-            traditional_aspects_only=traditional_aspects_only,
-            max_aspects=max_aspects,
-            include_auxiliary_points=include_auxiliary_points
-        )
 
     def _gather_summary_data(self) -> dict:
         """Gather raw summary data before formatting"""
@@ -263,15 +263,14 @@ class TransitAnalysisReport(Report):
 
     def _gather_aspects_data(self) -> dict:
         """Gather raw aspect data before formatting"""
-        # Define aspect categories and filtering parameters
         traditional_aspects = ['conjunction', 'opposition', 'trine', 'square', 'sextile']
         auxiliary_points = ['Mean_Node', 'True_Node', 'Mean_South_Node', 'True_South_Node', 'Mean_Lilith']
 
-        # Gather all aspects
         major_aspects = []
         minor_aspects = []
 
-        for aspect in self.transit_analysis.aspects.all_aspects:
+        # Use already filtered aspects from model
+        for aspect in self.transit_analysis.model.aspects:
             aspect_data = {
                 "natal_planet": aspect.p2_name,
                 "transit_planet": aspect.p1_name,
@@ -284,8 +283,7 @@ class TransitAnalysisReport(Report):
                                        aspect.p2_name in auxiliary_points)
             }
 
-            if (aspect.p1_name in ['Sun', 'Moon', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto']
-                    and aspect.orbit < 3):
+            if aspect.is_major:
                 major_aspects.append(aspect_data)
             else:
                 minor_aspects.append(aspect_data)
@@ -503,7 +501,6 @@ class TransitAnalysisReport(Report):
             ["Natal Planet", "Aspect Type", "Transit Planet", "Orb", "Nature", "Significance"]
         ]
 
-        # Filter and process major aspects
         filtered_major = [
             aspect for aspect in self.aspects_data["major_aspects"]
             if (aspect["orbit"] < max_orb and
@@ -511,7 +508,6 @@ class TransitAnalysisReport(Report):
                 (include_auxiliary_points or not aspect["involves_auxiliary"]))
         ]
 
-        # Filter and process minor aspects
         filtered_minor = []
         if include_minor_aspects:
             filtered_minor = [
@@ -521,14 +517,12 @@ class TransitAnalysisReport(Report):
                     (include_auxiliary_points or not aspect["involves_auxiliary"]))
             ]
 
-        # Apply max_aspects limit if specified
         if max_aspects:
             major_count = min(len(filtered_major), max_aspects // 2)
             minor_count = min(len(filtered_minor), max_aspects - major_count)
             filtered_major = filtered_major[:major_count]
             filtered_minor = filtered_minor[:minor_count]
 
-        # Add major aspects
         if filtered_major:
             aspects_data.append(["-" * 20, "-" * 15, "-" * 15, "-" * 8, "-" * 12, "-" * 12])  # Add separator
             aspects_data.append(["MAJOR ASPECTS:", "", "", "", "", ""])
@@ -537,12 +531,11 @@ class TransitAnalysisReport(Report):
                     aspect["natal_planet"],
                     aspect["aspect_type"],
                     aspect["transit_planet"],
-                    f"{aspect['orbit']}°",
+                    aspect["orbit"],
                     aspect["nature"],
                     "Major"
                 ])
 
-        # Add minor aspects
         if filtered_minor:
             aspects_data.append(["-" * 20, "-" * 15, "-" * 15, "-" * 8, "-" * 12, "-" * 12])  # Add separator
             aspects_data.append(["MINOR ASPECTS:", "", "", "", "", ""])
@@ -551,7 +544,7 @@ class TransitAnalysisReport(Report):
                     aspect["natal_planet"],
                     aspect["aspect_type"],
                     aspect["transit_planet"],
-                    f"{aspect['orbit']}°",
+                    aspect["orbit"],
                     aspect["nature"],
                     "Minor"
                 ])
@@ -675,7 +668,7 @@ class TransitAnalysisReport(Report):
                     "longitude": self.transit_analysis.natal.lng,
                     "latitude": self.transit_analysis.natal.lat
                 },
-                "current_analysis_time": self.transit_time.strftime('%Y-%m-%d %H:%M'),
+                "current_analysis_time": self.transit_analysis.transit_time.strftime('%Y-%m-%d %H:%M'),
                 "current_location": (
                     f"{self.transit_analysis.transit.city}, {self.transit_analysis.transit.nation}"
                     if self.transit_analysis.transit.city != self.transit_analysis.natal.city
@@ -734,7 +727,7 @@ class TransitAnalysisReport(Report):
             f"{significant_transits}"
             f"NATAL BIRTH DATA:\n"
             f"{self.data_table}\n\n"
-            f"CURRENT ANALYSIS TIME: {self.transit_time.strftime('%Y-%m-%d %H:%M')}"
+            f"TRANSIT ANALYSIS TIME: {self.transit_analysis.transit_time.strftime('%Y-%m-%d %H:%M')}"
             f"{current_location}\n\n"
             f"{self.summary_table}\n\n"
             f"{self.combined_planets_table}\n"
@@ -748,18 +741,18 @@ class TransitAnalysisReport(Report):
 
 
 if __name__ == "__main__":
-    from kerykeion.utilities import setup_logging
-    setup_logging(level="debug")
+    # from kerykeion.utilities import setup_logging
+    # setup_logging(level="debug")
 
-    # Test basic natal report
-    john = AstrologicalSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
-    report = Report(john)
-    report.print_report()
+    # # Test basic natal report
+    # john = AstrologicalSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
+    # report = Report(john)
+    # report.print_report()
 
     # Test transit analysis report
     transit_analysis = TransitAnalysis("John", 1975, 10, 10, 21, 15,
-                                       birth_place="Roma", birth_country="IT",
-                                       current_place="London", current_country="GB"
+                                       birth_city="Roma", birth_country="IT",
+                                       transit_city="London", transit_country="GB"
                                        )
     analysis_report = TransitAnalysisReport(transit_analysis, include_minor_aspects=True, traditional_aspects_only=False)
     # Only traditional aspects (conjunction, opposition, trine, square, sextile)
@@ -776,11 +769,11 @@ if __name__ == "__main__":
     )
     text_report = analysis_report.get_full_report()
 
-    # # Save output to a text file
-    # output_file_path = "transit_analysis_report.txt"  # Specify the file name
-    # with open(output_file_path, "w", encoding="utf-8") as file:
-    #     file.write(text_report)
-    # print(f"Text report saved to: {output_file_path}")
+    # Save output to a text file
+    output_file_path = "transit_analysis_report.txt"  # Specify the file name
+    with open(output_file_path, "w", encoding="utf-8") as file:
+        file.write(text_report)
+    print(f"Text report saved to: {output_file_path}")
 
     # Traditional aspects with tight orbs
     analysis_report = TransitAnalysisReport(
