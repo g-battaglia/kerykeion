@@ -289,7 +289,7 @@
                     <h1 class="modulename">
 <a href="./../../kerykeion.html">kerykeion</a><wbr>.<a href="./../kr_types.html">kr_types</a><wbr>.kr_models    </h1>
 
-                        <div class="docstring"><p>This is part of Kerykeion (C) 2024 Giacomo Battaglia</p>
+                        <div class="docstring"><p>This is part of Kerykeion (C) 2025 Giacomo Battaglia</p>
 </div>
 
                         <input id="mod-kr_models-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -298,7 +298,7 @@
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="c1"># -*- coding: utf-8 -*-</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">    This is part of Kerykeion (C) 2024 Giacomo Battaglia</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">    This is part of Kerykeion (C) 2025 Giacomo Battaglia</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
@@ -433,7 +433,7 @@
                 <section id="SubscriptableBaseModel">
                             <input id="SubscriptableBaseModel-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
-            
+
     <span class="def">class</span>
     <span class="name">SubscriptableBaseModel</span><wbr>(<span class="base">pydantic.main.BaseModel</span>):
 
@@ -466,7 +466,7 @@
                             <div id="SubscriptableBaseModel.get" class="classattr">
                                         <input id="SubscriptableBaseModel.get-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">get</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">key</span>, </span><span class="param"><span class="n">default</span></span><span class="return-annotation">):</span></span>
 
@@ -479,7 +479,7 @@
 </span></pre></div>
 
 
-    
+
 
                             </div>
                             <div id="SubscriptableBaseModel.model_config" class="classattr">
@@ -487,11 +487,11 @@
             <span class="name">model_config</span>        =
 <span class="default_value">{}</span>
 
-        
+
     </div>
     <a class="headerlink" href="#SubscriptableBaseModel.model_config"></a>
-    
-    
+
+
 
                             </div>
                             <div id="SubscriptableBaseModel.model_fields" class="classattr">
@@ -499,11 +499,11 @@
             <span class="name">model_fields</span>        =
 <span class="default_value">{}</span>
 
-        
+
     </div>
     <a class="headerlink" href="#SubscriptableBaseModel.model_fields"></a>
-    
-    
+
+
 
                             </div>
                             <div id="SubscriptableBaseModel.model_computed_fields" class="classattr">
@@ -511,11 +511,11 @@
             <span class="name">model_computed_fields</span>        =
 <span class="default_value">{}</span>
 
-        
+
     </div>
     <a class="headerlink" href="#SubscriptableBaseModel.model_computed_fields"></a>
-    
-    
+
+
 
                             </div>
                             <div class="inherited">
@@ -556,7 +556,7 @@
                 <section id="LunarPhaseModel">
                             <input id="LunarPhaseModel-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
-            
+
     <span class="def">class</span>
     <span class="name">LunarPhaseModel</span><wbr>(<span class="base"><a href="#SubscriptableBaseModel">SubscriptableBaseModel</a></span>):
 
@@ -581,55 +581,55 @@
                                 <div class="attr variable">
             <span class="name">degrees_between_s_m</span><span class="annotation">: Union[float, int]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#LunarPhaseModel.degrees_between_s_m"></a>
-    
-    
+
+
 
                             </div>
                             <div id="LunarPhaseModel.moon_phase" class="classattr">
                                 <div class="attr variable">
             <span class="name">moon_phase</span><span class="annotation">: int</span>
 
-        
+
     </div>
     <a class="headerlink" href="#LunarPhaseModel.moon_phase"></a>
-    
-    
+
+
 
                             </div>
                             <div id="LunarPhaseModel.sun_phase" class="classattr">
                                 <div class="attr variable">
             <span class="name">sun_phase</span><span class="annotation">: int</span>
 
-        
+
     </div>
     <a class="headerlink" href="#LunarPhaseModel.sun_phase"></a>
-    
-    
+
+
 
                             </div>
                             <div id="LunarPhaseModel.moon_emoji" class="classattr">
                                 <div class="attr variable">
             <span class="name">moon_emoji</span><span class="annotation">: Literal[&#39;🌑&#39;, &#39;🌒&#39;, &#39;🌓&#39;, &#39;🌔&#39;, &#39;🌕&#39;, &#39;🌖&#39;, &#39;🌗&#39;, &#39;🌘&#39;]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#LunarPhaseModel.moon_emoji"></a>
-    
-    
+
+
 
                             </div>
                             <div id="LunarPhaseModel.moon_phase_name" class="classattr">
                                 <div class="attr variable">
             <span class="name">moon_phase_name</span><span class="annotation">: Literal[&#39;New Moon&#39;, &#39;Waxing Crescent&#39;, &#39;First Quarter&#39;, &#39;Waxing Gibbous&#39;, &#39;Full Moon&#39;, &#39;Waning Gibbous&#39;, &#39;Last Quarter&#39;, &#39;Waning Crescent&#39;]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#LunarPhaseModel.moon_phase_name"></a>
-    
-    
+
+
 
                             </div>
                             <div id="LunarPhaseModel.model_config" class="classattr">
@@ -637,11 +637,11 @@
             <span class="name">model_config</span>        =
 <span class="default_value">{}</span>
 
-        
+
     </div>
     <a class="headerlink" href="#LunarPhaseModel.model_config"></a>
-    
-    
+
+
 
                             </div>
                             <div id="LunarPhaseModel.model_fields" class="classattr">
@@ -650,11 +650,11 @@
 <input id="LunarPhaseModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="LunarPhaseModel.model_fields-view-value"></label><span class="default_value">{&#39;degrees_between_s_m&#39;: FieldInfo(annotation=Union[float, int], required=True), &#39;moon_phase&#39;: FieldInfo(annotation=int, required=True), &#39;sun_phase&#39;: FieldInfo(annotation=int, required=True), &#39;moon_emoji&#39;: FieldInfo(annotation=Literal[&#39;🌑&#39;, &#39;🌒&#39;, &#39;🌓&#39;, &#39;🌔&#39;, &#39;🌕&#39;, &#39;🌖&#39;, &#39;🌗&#39;, &#39;🌘&#39;], required=True), &#39;moon_phase_name&#39;: FieldInfo(annotation=Literal[&#39;New Moon&#39;, &#39;Waxing Crescent&#39;, &#39;First Quarter&#39;, &#39;Waxing Gibbous&#39;, &#39;Full Moon&#39;, &#39;Waning Gibbous&#39;, &#39;Last Quarter&#39;, &#39;Waning Crescent&#39;], required=True)}</span>
 
-        
+
     </div>
     <a class="headerlink" href="#LunarPhaseModel.model_fields"></a>
-    
-    
+
+
 
                             </div>
                             <div id="LunarPhaseModel.model_computed_fields" class="classattr">
@@ -662,11 +662,11 @@
             <span class="name">model_computed_fields</span>        =
 <span class="default_value">{}</span>
 
-        
+
     </div>
     <a class="headerlink" href="#LunarPhaseModel.model_computed_fields"></a>
-    
-    
+
+
 
                             </div>
                             <div class="inherited">
@@ -711,7 +711,7 @@
                 <section id="KerykeionPointModel">
                             <input id="KerykeionPointModel-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
-            
+
     <span class="def">class</span>
     <span class="name">KerykeionPointModel</span><wbr>(<span class="base"><a href="#SubscriptableBaseModel">SubscriptableBaseModel</a></span>):
 
@@ -746,121 +746,121 @@
                                 <div class="attr variable">
             <span class="name">name</span><span class="annotation">: Union[Literal[&#39;Sun&#39;, &#39;Moon&#39;, &#39;Mercury&#39;, &#39;Venus&#39;, &#39;Mars&#39;, &#39;Jupiter&#39;, &#39;Saturn&#39;, &#39;Uranus&#39;, &#39;Neptune&#39;, &#39;Pluto&#39;, &#39;Mean_Node&#39;, &#39;True_Node&#39;, &#39;Chiron&#39;], Literal[&#39;First_House&#39;, &#39;Second_House&#39;, &#39;Third_House&#39;, &#39;Fourth_House&#39;, &#39;Fifth_House&#39;, &#39;Sixth_House&#39;, &#39;Seventh_House&#39;, &#39;Eighth_House&#39;, &#39;Ninth_House&#39;, &#39;Tenth_House&#39;, &#39;Eleventh_House&#39;, &#39;Twelfth_House&#39;]]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionPointModel.name"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionPointModel.quality" class="classattr">
                                 <div class="attr variable">
             <span class="name">quality</span><span class="annotation">: Literal[&#39;Cardinal&#39;, &#39;Fixed&#39;, &#39;Mutable&#39;]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionPointModel.quality"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionPointModel.element" class="classattr">
                                 <div class="attr variable">
             <span class="name">element</span><span class="annotation">: Literal[&#39;Air&#39;, &#39;Fire&#39;, &#39;Earth&#39;, &#39;Water&#39;]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionPointModel.element"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionPointModel.sign" class="classattr">
                                 <div class="attr variable">
             <span class="name">sign</span><span class="annotation">: Literal[&#39;Ari&#39;, &#39;Tau&#39;, &#39;Gem&#39;, &#39;Can&#39;, &#39;Leo&#39;, &#39;Vir&#39;, &#39;Lib&#39;, &#39;Sco&#39;, &#39;Sag&#39;, &#39;Cap&#39;, &#39;Aqu&#39;, &#39;Pis&#39;]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionPointModel.sign"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionPointModel.sign_num" class="classattr">
                                 <div class="attr variable">
             <span class="name">sign_num</span><span class="annotation">: Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionPointModel.sign_num"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionPointModel.position" class="classattr">
                                 <div class="attr variable">
             <span class="name">position</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionPointModel.position"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionPointModel.abs_pos" class="classattr">
                                 <div class="attr variable">
             <span class="name">abs_pos</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionPointModel.abs_pos"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionPointModel.emoji" class="classattr">
                                 <div class="attr variable">
             <span class="name">emoji</span><span class="annotation">: str</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionPointModel.emoji"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionPointModel.point_type" class="classattr">
                                 <div class="attr variable">
             <span class="name">point_type</span><span class="annotation">: Literal[&#39;Planet&#39;, &#39;House&#39;]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionPointModel.point_type"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionPointModel.house" class="classattr">
                                 <div class="attr variable">
             <span class="name">house</span><span class="annotation">: Optional[Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionPointModel.house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionPointModel.retrograde" class="classattr">
                                 <div class="attr variable">
             <span class="name">retrograde</span><span class="annotation">: Optional[bool]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionPointModel.retrograde"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionPointModel.model_config" class="classattr">
@@ -868,11 +868,11 @@
             <span class="name">model_config</span>        =
 <span class="default_value">{}</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionPointModel.model_config"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionPointModel.model_fields" class="classattr">
@@ -881,11 +881,11 @@
 <input id="KerykeionPointModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="KerykeionPointModel.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=Union[Literal[&#39;Sun&#39;, &#39;Moon&#39;, &#39;Mercury&#39;, &#39;Venus&#39;, &#39;Mars&#39;, &#39;Jupiter&#39;, &#39;Saturn&#39;, &#39;Uranus&#39;, &#39;Neptune&#39;, &#39;Pluto&#39;, &#39;Mean_Node&#39;, &#39;True_Node&#39;, &#39;Chiron&#39;], Literal[&#39;First_House&#39;, &#39;Second_House&#39;, &#39;Third_House&#39;, &#39;Fourth_House&#39;, &#39;Fifth_House&#39;, &#39;Sixth_House&#39;, &#39;Seventh_House&#39;, &#39;Eighth_House&#39;, &#39;Ninth_House&#39;, &#39;Tenth_House&#39;, &#39;Eleventh_House&#39;, &#39;Twelfth_House&#39;]], required=True), &#39;quality&#39;: FieldInfo(annotation=Literal[&#39;Cardinal&#39;, &#39;Fixed&#39;, &#39;Mutable&#39;], required=True), &#39;element&#39;: FieldInfo(annotation=Literal[&#39;Air&#39;, &#39;Fire&#39;, &#39;Earth&#39;, &#39;Water&#39;], required=True), &#39;sign&#39;: FieldInfo(annotation=Literal[&#39;Ari&#39;, &#39;Tau&#39;, &#39;Gem&#39;, &#39;Can&#39;, &#39;Leo&#39;, &#39;Vir&#39;, &#39;Lib&#39;, &#39;Sco&#39;, &#39;Sag&#39;, &#39;Cap&#39;, &#39;Aqu&#39;, &#39;Pis&#39;], required=True), &#39;sign_num&#39;: FieldInfo(annotation=Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], required=True), &#39;position&#39;: FieldInfo(annotation=float, required=True), &#39;abs_pos&#39;: FieldInfo(annotation=float, required=True), &#39;emoji&#39;: FieldInfo(annotation=str, required=True), &#39;point_type&#39;: FieldInfo(annotation=Literal[&#39;Planet&#39;, &#39;House&#39;], required=True), &#39;house&#39;: FieldInfo(annotation=Union[Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], NoneType], required=False, default=None), &#39;retrograde&#39;: FieldInfo(annotation=Union[bool, NoneType], required=False, default=None)}</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionPointModel.model_fields"></a>
-    
-    
+
+
 
                             </div>
                             <div id="KerykeionPointModel.model_computed_fields" class="classattr">
@@ -893,11 +893,11 @@
             <span class="name">model_computed_fields</span>        =
 <span class="default_value">{}</span>
 
-        
+
     </div>
     <a class="headerlink" href="#KerykeionPointModel.model_computed_fields"></a>
-    
-    
+
+
 
                             </div>
                             <div class="inherited">
@@ -942,7 +942,7 @@
                 <section id="AstrologicalSubjectModel">
                             <input id="AstrologicalSubjectModel-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
-            
+
     <span class="def">class</span>
     <span class="name">AstrologicalSubjectModel</span><wbr>(<span class="base"><a href="#SubscriptableBaseModel">SubscriptableBaseModel</a></span>):
 
@@ -1017,484 +1017,484 @@
                                 <div class="attr variable">
             <span class="name">name</span><span class="annotation">: str</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.name"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.year" class="classattr">
                                 <div class="attr variable">
             <span class="name">year</span><span class="annotation">: int</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.year"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.month" class="classattr">
                                 <div class="attr variable">
             <span class="name">month</span><span class="annotation">: int</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.month"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.day" class="classattr">
                                 <div class="attr variable">
             <span class="name">day</span><span class="annotation">: int</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.day"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.hour" class="classattr">
                                 <div class="attr variable">
             <span class="name">hour</span><span class="annotation">: int</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.hour"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.minute" class="classattr">
                                 <div class="attr variable">
             <span class="name">minute</span><span class="annotation">: int</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.minute"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.city" class="classattr">
                                 <div class="attr variable">
             <span class="name">city</span><span class="annotation">: str</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.city"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.nation" class="classattr">
                                 <div class="attr variable">
             <span class="name">nation</span><span class="annotation">: str</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.nation"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.lng" class="classattr">
                                 <div class="attr variable">
             <span class="name">lng</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.lng"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.lat" class="classattr">
                                 <div class="attr variable">
             <span class="name">lat</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.lat"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.tz_str" class="classattr">
                                 <div class="attr variable">
             <span class="name">tz_str</span><span class="annotation">: str</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.tz_str"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.zodiac_type" class="classattr">
                                 <div class="attr variable">
             <span class="name">zodiac_type</span><span class="annotation">: Literal[&#39;Tropic&#39;, &#39;Sidereal&#39;]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.zodiac_type"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.sidereal_mode" class="classattr">
                                 <div class="attr variable">
             <span class="name">sidereal_mode</span><span class="annotation">: Optional[Literal[&#39;FAGAN_BRADLEY&#39;, &#39;LAHIRI&#39;, &#39;DELUCE&#39;, &#39;RAMAN&#39;, &#39;USHASHASHI&#39;, &#39;KRISHNAMURTI&#39;, &#39;DJWHAL_KHUL&#39;, &#39;YUKTESHWAR&#39;, &#39;JN_BHASIN&#39;, &#39;BABYL_KUGLER1&#39;, &#39;BABYL_KUGLER2&#39;, &#39;BABYL_KUGLER3&#39;, &#39;BABYL_HUBER&#39;, &#39;BABYL_ETPSC&#39;, &#39;ALDEBARAN_15TAU&#39;, &#39;HIPPARCHOS&#39;, &#39;SASSANIAN&#39;, &#39;J2000&#39;, &#39;J1900&#39;, &#39;B1950&#39;]]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.sidereal_mode"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.houses_system_identifier" class="classattr">
                                 <div class="attr variable">
             <span class="name">houses_system_identifier</span><span class="annotation">: Literal[&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;F&#39;, &#39;H&#39;, &#39;I&#39;, &#39;i&#39;, &#39;K&#39;, &#39;L&#39;, &#39;M&#39;, &#39;N&#39;, &#39;O&#39;, &#39;P&#39;, &#39;Q&#39;, &#39;R&#39;, &#39;S&#39;, &#39;T&#39;, &#39;U&#39;, &#39;V&#39;, &#39;W&#39;, &#39;X&#39;, &#39;Y&#39;]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.houses_system_identifier"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.houses_system_name" class="classattr">
                                 <div class="attr variable">
             <span class="name">houses_system_name</span><span class="annotation">: str</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.houses_system_name"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.local_time" class="classattr">
                                 <div class="attr variable">
             <span class="name">local_time</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.local_time"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.utc_time" class="classattr">
                                 <div class="attr variable">
             <span class="name">utc_time</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.utc_time"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.julian_day" class="classattr">
                                 <div class="attr variable">
             <span class="name">julian_day</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.julian_day"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.sun" class="classattr">
                                 <div class="attr variable">
             <span class="name">sun</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.sun"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.moon" class="classattr">
                                 <div class="attr variable">
             <span class="name">moon</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.moon"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.mercury" class="classattr">
                                 <div class="attr variable">
             <span class="name">mercury</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.mercury"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.venus" class="classattr">
                                 <div class="attr variable">
             <span class="name">venus</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.venus"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.mars" class="classattr">
                                 <div class="attr variable">
             <span class="name">mars</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.mars"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.jupiter" class="classattr">
                                 <div class="attr variable">
             <span class="name">jupiter</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.jupiter"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.saturn" class="classattr">
                                 <div class="attr variable">
             <span class="name">saturn</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.saturn"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.uranus" class="classattr">
                                 <div class="attr variable">
             <span class="name">uranus</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.uranus"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.neptune" class="classattr">
                                 <div class="attr variable">
             <span class="name">neptune</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.neptune"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.pluto" class="classattr">
                                 <div class="attr variable">
             <span class="name">pluto</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.pluto"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.chiron" class="classattr">
                                 <div class="attr variable">
             <span class="name">chiron</span><span class="annotation">: Optional[<a href="#KerykeionPointModel">KerykeionPointModel</a>]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.chiron"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.first_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">first_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.first_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.second_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">second_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.second_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.third_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">third_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.third_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.fourth_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">fourth_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.fourth_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.fifth_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">fifth_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.fifth_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.sixth_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">sixth_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.sixth_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.seventh_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">seventh_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.seventh_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.eighth_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">eighth_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.eighth_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.ninth_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">ninth_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.ninth_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.tenth_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">tenth_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.tenth_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.eleventh_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">eleventh_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.eleventh_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.twelfth_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">twelfth_house</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.twelfth_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.mean_node" class="classattr">
                                 <div class="attr variable">
             <span class="name">mean_node</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.mean_node"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.true_node" class="classattr">
                                 <div class="attr variable">
             <span class="name">true_node</span><span class="annotation">: <a href="#KerykeionPointModel">KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.true_node"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.lunar_phase" class="classattr">
                                 <div class="attr variable">
             <span class="name">lunar_phase</span><span class="annotation">: <a href="#LunarPhaseModel">LunarPhaseModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.lunar_phase"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.model_config" class="classattr">
@@ -1502,11 +1502,11 @@
             <span class="name">model_config</span>        =
 <span class="default_value">{}</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.model_config"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.model_fields" class="classattr">
@@ -1515,11 +1515,11 @@
 <input id="AstrologicalSubjectModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="AstrologicalSubjectModel.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=True), &#39;year&#39;: FieldInfo(annotation=int, required=True), &#39;month&#39;: FieldInfo(annotation=int, required=True), &#39;day&#39;: FieldInfo(annotation=int, required=True), &#39;hour&#39;: FieldInfo(annotation=int, required=True), &#39;minute&#39;: FieldInfo(annotation=int, required=True), &#39;city&#39;: FieldInfo(annotation=str, required=True), &#39;nation&#39;: FieldInfo(annotation=str, required=True), &#39;lng&#39;: FieldInfo(annotation=float, required=True), &#39;lat&#39;: FieldInfo(annotation=float, required=True), &#39;tz_str&#39;: FieldInfo(annotation=str, required=True), &#39;zodiac_type&#39;: FieldInfo(annotation=Literal[&#39;Tropic&#39;, &#39;Sidereal&#39;], required=True), &#39;sidereal_mode&#39;: FieldInfo(annotation=Union[Literal[&#39;FAGAN_BRADLEY&#39;, &#39;LAHIRI&#39;, &#39;DELUCE&#39;, &#39;RAMAN&#39;, &#39;USHASHASHI&#39;, &#39;KRISHNAMURTI&#39;, &#39;DJWHAL_KHUL&#39;, &#39;YUKTESHWAR&#39;, &#39;JN_BHASIN&#39;, &#39;BABYL_KUGLER1&#39;, &#39;BABYL_KUGLER2&#39;, &#39;BABYL_KUGLER3&#39;, &#39;BABYL_HUBER&#39;, &#39;BABYL_ETPSC&#39;, &#39;ALDEBARAN_15TAU&#39;, &#39;HIPPARCHOS&#39;, &#39;SASSANIAN&#39;, &#39;J2000&#39;, &#39;J1900&#39;, &#39;B1950&#39;], NoneType], required=True), &#39;houses_system_identifier&#39;: FieldInfo(annotation=Literal[&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;F&#39;, &#39;H&#39;, &#39;I&#39;, &#39;i&#39;, &#39;K&#39;, &#39;L&#39;, &#39;M&#39;, &#39;N&#39;, &#39;O&#39;, &#39;P&#39;, &#39;Q&#39;, &#39;R&#39;, &#39;S&#39;, &#39;T&#39;, &#39;U&#39;, &#39;V&#39;, &#39;W&#39;, &#39;X&#39;, &#39;Y&#39;], required=True), &#39;houses_system_name&#39;: FieldInfo(annotation=str, required=True), &#39;local_time&#39;: FieldInfo(annotation=float, required=True), &#39;utc_time&#39;: FieldInfo(annotation=float, required=True), &#39;julian_day&#39;: FieldInfo(annotation=float, required=True), &#39;sun&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;moon&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;mercury&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;venus&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;mars&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;jupiter&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;saturn&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;uranus&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;neptune&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;pluto&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;chiron&#39;: FieldInfo(annotation=Union[KerykeionPointModel, NoneType], required=True), &#39;first_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;second_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;third_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;fourth_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;fifth_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;sixth_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;seventh_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;eighth_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;ninth_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;tenth_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;eleventh_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;twelfth_house&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;mean_node&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;true_node&#39;: FieldInfo(annotation=KerykeionPointModel, required=True), &#39;lunar_phase&#39;: FieldInfo(annotation=LunarPhaseModel, required=True)}</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.model_fields"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubjectModel.model_computed_fields" class="classattr">
@@ -1527,11 +1527,11 @@
             <span class="name">model_computed_fields</span>        =
 <span class="default_value">{}</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubjectModel.model_computed_fields"></a>
-    
-    
+
+
 
                             </div>
                             <div class="inherited">
