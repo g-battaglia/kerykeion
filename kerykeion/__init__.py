@@ -7,6 +7,7 @@ This is part of Kerykeion (C) 2024 Giacomo Battaglia
 
 # Local
 from .astrological_subject import AstrologicalSubject
+from .transit_analysis import TransitAnalysis
 from .charts.kerykeion_chart_svg import KerykeionChartSVG
 from .kr_types import *
 from .relationship_score.relationship_score import RelationshipScore
