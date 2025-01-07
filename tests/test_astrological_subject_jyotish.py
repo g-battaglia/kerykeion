@@ -3,11 +3,11 @@ from kerykeion import AstrologicalSubject
 
 class TestAstrologicalSubjectJyotish:
     def setup_class(self):
-        
+
         # Johnny Depp's vedic horoscope: using sidereal zodiac, Lahiri ayanamsha and whole-sign houses
         self.subject = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", \
             zodiac_type="Sidereal", sidereal_mode="LAHIRI", houses_system_identifier="W", geonames_username="century.boy")
-                
+
         self.expected_output = {
             "name": "Johnny Depp",
             "year": 1963,
@@ -27,8 +27,8 @@ class TestAstrologicalSubjectJyotish:
             "utc_time": 5.0,
             # <-- Deprecated
 
-            "asc": {
-                "name": "Asc",
+            "ascendant": {
+                "name": "Ascendant",
                 "quality": "Cardinal",
                 "element": "Earth",
                 "sign": "Cap",
@@ -36,12 +36,12 @@ class TestAstrologicalSubjectJyotish:
                 "position": 27.35490680258141,
                 "abs_pos": 297.3549068025814,
                 "emoji": "♑️",
-                "point_type": "Planet",
+                "point_type": "Axis",
                 "house": "First_House",
                 "retrograde": False,
             },
-            "dsc": {
-                "name": "Dsc",
+            "descendant": {
+                "name": "Descendant",
                 "quality": "Cardinal",
                 "element": "Water",
                 "sign": "Can",
@@ -49,12 +49,12 @@ class TestAstrologicalSubjectJyotish:
                 "position": 27.35490680258141,
                 "abs_pos": 117.35490680258141,
                 "emoji": "♋️",
-                "point_type": "Planet",
+                "point_type": "Axis",
                 "house": "Seventh_House",
                 "retrograde": False,
             },
-            "mc": {
-                "name": "Mc",
+            "medium_coeli": {
+                "name": "Medium_Coeli",
                 "quality": "Fixed",
                 "element": "Water",
                 "sign": "Sco",
@@ -62,12 +62,12 @@ class TestAstrologicalSubjectJyotish:
                 "position": 13.245983424363487,
                 "abs_pos": 223.2459834243635,
                 "emoji": "♏️",
-                "point_type": "Planet",
+                "point_type": "Axis",
                 "house": "Eleventh_House",
                 "retrograde": False,
             },
-            "ic": {
-                "name": "Ic",
+            "imum_coeli": {
+                "name": "Imum_Coeli",
                 "quality": "Fixed",
                 "element": "Earth",
                 "sign": "Tau",
@@ -75,10 +75,10 @@ class TestAstrologicalSubjectJyotish:
                 "position": 13.245983424363487,
                 "abs_pos": 43.24598342436349,
                 "emoji": "♉️",
-                "point_type": "Planet",
+                "point_type": "Axis",
                 "house": "Fifth_House",
                 "retrograde": False,
-            },               
+            },
             "sun": {
                 "name": "Sun",
                 "quality": "Fixed",
@@ -420,56 +420,56 @@ class TestAstrologicalSubjectJyotish:
         assert self.subject.julian_day == self.expected_output["julian_day"]
 
     def test_ascendant(self):
-        assert self.subject.asc.name == self.expected_output["asc"]["name"]
-        assert self.subject.asc.quality == self.expected_output["asc"]["quality"]
-        assert self.subject.asc.element == self.expected_output["asc"]["element"]
-        assert self.subject.asc.sign == self.expected_output["asc"]["sign"]
-        assert self.subject.asc.sign_num == self.expected_output["asc"]["sign_num"]
-        assert round(self.subject.asc.position, 2) == round(self.expected_output["asc"]["position"], 2)
-        assert round(self.subject.asc.abs_pos, 2) == round(self.expected_output["asc"]["abs_pos"], 2)
-        assert self.subject.asc.emoji == self.expected_output["asc"]["emoji"]
-        assert self.subject.asc.point_type == self.expected_output["asc"]["point_type"]
-        assert self.subject.asc.house == self.expected_output["asc"]["house"]
-        assert self.subject.asc.retrograde == self.expected_output["asc"]["retrograde"]
-        
+        assert self.subject.ascendant.name == self.expected_output["ascendant"]["name"]
+        assert self.subject.ascendant.quality == self.expected_output["ascendant"]["quality"]
+        assert self.subject.ascendant.element == self.expected_output["ascendant"]["element"]
+        assert self.subject.ascendant.sign == self.expected_output["ascendant"]["sign"]
+        assert self.subject.ascendant.sign_num == self.expected_output["ascendant"]["sign_num"]
+        assert round(self.subject.ascendant.position, 2) == round(self.expected_output["ascendant"]["position"], 2)
+        assert round(self.subject.ascendant.abs_pos, 2) == round(self.expected_output["ascendant"]["abs_pos"], 2)
+        assert self.subject.ascendant.emoji == self.expected_output["ascendant"]["emoji"]
+        assert self.subject.ascendant.point_type == self.expected_output["ascendant"]["point_type"]
+        assert self.subject.ascendant.house == self.expected_output["ascendant"]["house"]
+        assert self.subject.ascendant.retrograde == self.expected_output["ascendant"]["retrograde"]
+
     def test_descendant(self):
-        assert self.subject.dsc.name == self.expected_output["dsc"]["name"]
-        assert self.subject.dsc.quality == self.expected_output["dsc"]["quality"]
-        assert self.subject.dsc.element == self.expected_output["dsc"]["element"]
-        assert self.subject.dsc.sign == self.expected_output["dsc"]["sign"]
-        assert self.subject.dsc.sign_num == self.expected_output["dsc"]["sign_num"]
-        assert round(self.subject.dsc.position, 2) == round(self.expected_output["dsc"]["position"], 2)
-        assert round(self.subject.dsc.abs_pos, 2) == round(self.expected_output["dsc"]["abs_pos"], 2)
-        assert self.subject.dsc.emoji == self.expected_output["dsc"]["emoji"]
-        assert self.subject.dsc.point_type == self.expected_output["dsc"]["point_type"]
-        assert self.subject.dsc.house == self.expected_output["dsc"]["house"]
-        assert self.subject.dsc.retrograde == self.expected_output["dsc"]["retrograde"]
+        assert self.subject.descendant.name == self.expected_output["descendant"]["name"]
+        assert self.subject.descendant.quality == self.expected_output["descendant"]["quality"]
+        assert self.subject.descendant.element == self.expected_output["descendant"]["element"]
+        assert self.subject.descendant.sign == self.expected_output["descendant"]["sign"]
+        assert self.subject.descendant.sign_num == self.expected_output["descendant"]["sign_num"]
+        assert round(self.subject.descendant.position, 2) == round(self.expected_output["descendant"]["position"], 2)
+        assert round(self.subject.descendant.abs_pos, 2) == round(self.expected_output["descendant"]["abs_pos"], 2)
+        assert self.subject.descendant.emoji == self.expected_output["descendant"]["emoji"]
+        assert self.subject.descendant.point_type == self.expected_output["descendant"]["point_type"]
+        assert self.subject.descendant.house == self.expected_output["descendant"]["house"]
+        assert self.subject.descendant.retrograde == self.expected_output["descendant"]["retrograde"]
 
     def test_medium_coeli(self):
-        assert self.subject.mc.name == self.expected_output["mc"]["name"]
-        assert self.subject.mc.quality == self.expected_output["mc"]["quality"]
-        assert self.subject.mc.element == self.expected_output["mc"]["element"]
-        assert self.subject.mc.sign == self.expected_output["mc"]["sign"]
-        assert self.subject.mc.sign_num == self.expected_output["mc"]["sign_num"]
-        assert round(self.subject.mc.position, 2) == round(self.expected_output["mc"]["position"], 2)
-        assert round(self.subject.mc.abs_pos, 2) == round(self.expected_output["mc"]["abs_pos"], 2)
-        assert self.subject.mc.emoji == self.expected_output["mc"]["emoji"]
-        assert self.subject.mc.point_type == self.expected_output["mc"]["point_type"]
-        assert self.subject.mc.house == self.expected_output["mc"]["house"]
-        assert self.subject.mc.retrograde == self.expected_output["mc"]["retrograde"]
-        
+        assert self.subject.medium_coeli.name == self.expected_output["medium_coeli"]["name"]
+        assert self.subject.medium_coeli.quality == self.expected_output["medium_coeli"]["quality"]
+        assert self.subject.medium_coeli.element == self.expected_output["medium_coeli"]["element"]
+        assert self.subject.medium_coeli.sign == self.expected_output["medium_coeli"]["sign"]
+        assert self.subject.medium_coeli.sign_num == self.expected_output["medium_coeli"]["sign_num"]
+        assert round(self.subject.medium_coeli.position, 2) == round(self.expected_output["medium_coeli"]["position"], 2)
+        assert round(self.subject.medium_coeli.abs_pos, 2) == round(self.expected_output["medium_coeli"]["abs_pos"], 2)
+        assert self.subject.medium_coeli.emoji == self.expected_output["medium_coeli"]["emoji"]
+        assert self.subject.medium_coeli.point_type == self.expected_output["medium_coeli"]["point_type"]
+        assert self.subject.medium_coeli.house == self.expected_output["medium_coeli"]["house"]
+        assert self.subject.medium_coeli.retrograde == self.expected_output["medium_coeli"]["retrograde"]
+
     def test_imum_coeli(self):
-        assert self.subject.ic.name == self.expected_output["ic"]["name"]
-        assert self.subject.ic.quality == self.expected_output["ic"]["quality"]
-        assert self.subject.ic.element == self.expected_output["ic"]["element"]
-        assert self.subject.ic.sign == self.expected_output["ic"]["sign"]
-        assert self.subject.ic.sign_num == self.expected_output["ic"]["sign_num"]
-        assert round(self.subject.ic.position, 2) == round(self.expected_output["ic"]["position"], 2)
-        assert round(self.subject.ic.abs_pos, 2) == round(self.expected_output["ic"]["abs_pos"], 2)
-        assert self.subject.ic.emoji == self.expected_output["ic"]["emoji"]
-        assert self.subject.ic.point_type == self.expected_output["ic"]["point_type"]
-        assert self.subject.ic.house == self.expected_output["ic"]["house"]
-        assert self.subject.ic.retrograde == self.expected_output["ic"]["retrograde"]
+        assert self.subject.imum_coeli.name == self.expected_output["imum_coeli"]["name"]
+        assert self.subject.imum_coeli.quality == self.expected_output["imum_coeli"]["quality"]
+        assert self.subject.imum_coeli.element == self.expected_output["imum_coeli"]["element"]
+        assert self.subject.imum_coeli.sign == self.expected_output["imum_coeli"]["sign"]
+        assert self.subject.imum_coeli.sign_num == self.expected_output["imum_coeli"]["sign_num"]
+        assert round(self.subject.imum_coeli.position, 2) == round(self.expected_output["imum_coeli"]["position"], 2)
+        assert round(self.subject.imum_coeli.abs_pos, 2) == round(self.expected_output["imum_coeli"]["abs_pos"], 2)
+        assert self.subject.imum_coeli.emoji == self.expected_output["imum_coeli"]["emoji"]
+        assert self.subject.imum_coeli.point_type == self.expected_output["imum_coeli"]["point_type"]
+        assert self.subject.imum_coeli.house == self.expected_output["imum_coeli"]["house"]
+        assert self.subject.imum_coeli.retrograde == self.expected_output["imum_coeli"]["retrograde"]
 
     def test_sun(self):
         assert self.subject.sun.name == self.expected_output["sun"]["name"]

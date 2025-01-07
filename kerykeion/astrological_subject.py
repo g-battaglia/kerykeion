@@ -24,7 +24,8 @@ from kerykeion.kr_types import (
     HousesSystemIdentifier,
     PerspectiveType,
     Planet,
-    Houses
+    Houses,
+    Axis,
 )
 from kerykeion.utilities import (
     get_number_from_name,
@@ -128,12 +129,6 @@ class AstrologicalSubject:
     iso_formatted_local_datetime: str
     iso_formatted_utc_datetime: str
 
-    # Axes
-    asc: KerykeionPointModel
-    dsc: KerykeionPointModel
-    mc: KerykeionPointModel
-    ic: KerykeionPointModel
-
     # Planets
     sun: KerykeionPointModel
     moon: KerykeionPointModel
@@ -152,6 +147,12 @@ class AstrologicalSubject:
     true_south_node: KerykeionPointModel
     mean_south_node: KerykeionPointModel
 
+    # Axes
+    asc: KerykeionPointModel
+    dsc: KerykeionPointModel
+    mc: KerykeionPointModel
+    ic: KerykeionPointModel
+
     # Houses
     first_house: KerykeionPointModel
     second_house: KerykeionPointModel
@@ -169,13 +170,15 @@ class AstrologicalSubject:
     # Lists
     _houses_list: list[KerykeionPointModel]
     _houses_degree_ut: list[float]
+    planets_names_list: list[Planet]
+    houses_names_list: list[Houses]
+    axes_names_list: list[Axis]
 
     # Enable or disable features
     disable_chiron: Union[None, bool]
     disable_chiron_and_lilith: bool
 
-    planets_names_list: list[Planet]
-    houses_names_list: list[Houses]
+    lunar_phase: LunarPhaseModel
 
     def __init__(
         self,
@@ -445,7 +448,7 @@ class AstrologicalSubject:
         """
 
         _ascmc = (-1.0, -1.0)
-        
+
         if self.zodiac_type == "Sidereal":
             cusps, ascmc = swe.houses_ex(
                 tjdut=self.julian_day,
@@ -464,22 +467,9 @@ class AstrologicalSubject:
             )
             self._houses_degree_ut = cusps
             _ascmc = ascmc
-            
+
         else:
             raise KerykeionException("Not a valid zodiac type: ", self.zodiac_type)
-
-        point_type: PointType = "Planet"
-
-        # Calculate ascendant and medium coeli
-        self.asc = get_kerykeion_point_from_degree(_ascmc[0], "Asc", point_type=point_type)
-        self.mc = get_kerykeion_point_from_degree(_ascmc[1], "Mc", point_type=point_type)
-        # For descendant and imum coeli there exist no Swiss Ephemeris library calculation function,
-        # but they are simply opposite the the ascendant and medium coeli
-        dsc_deg = math.fmod(_ascmc[0] + 180, 360)
-        ic_deg = math.fmod(_ascmc[1] + 180, 360)
-        self.dsc = get_kerykeion_point_from_degree(dsc_deg, "Dsc", point_type=point_type)
-        self.ic = get_kerykeion_point_from_degree(ic_deg, "Ic", point_type=point_type)
-
 
         point_type: PointType = "House"
 
@@ -514,6 +504,19 @@ class AstrologicalSubject:
             self.eleventh_house,
             self.twelfth_house,
         ]
+
+        # Axis
+        point_type: PointType = "Axis"
+
+        # Calculate ascendant and medium coeli
+        self.ascendant = get_kerykeion_point_from_degree(_ascmc[0], "Ascendant", point_type=point_type)
+        self.medium_coeli = get_kerykeion_point_from_degree(_ascmc[1], "Medium_Coeli", point_type=point_type)
+        # For descendant and imum coeli there exist no Swiss Ephemeris library calculation function,
+        # but they are simply opposite the the ascendant and medium coeli
+        dsc_deg = math.fmod(_ascmc[0] + 180, 360)
+        ic_deg = math.fmod(_ascmc[1] + 180, 360)
+        self.descendant = get_kerykeion_point_from_degree(dsc_deg, "Descendant", point_type=point_type)
+        self.imum_coeli = get_kerykeion_point_from_degree(ic_deg, "Imum_Coeli", point_type=point_type)
 
     def _initialize_planets(self) -> None:
         """Defines body positon in signs and information and
@@ -557,10 +560,10 @@ class AstrologicalSubject:
 
         # Note that in whole-sign house systems ac/dc or mc/ic axes may not align with house cusps.
         # Therefore, for the axes we need to calculate house positions explicitly too.
-        self.asc.house = get_planet_house(self.asc.abs_pos, self._houses_degree_ut)
-        self.dsc.house = get_planet_house(self.dsc.abs_pos, self._houses_degree_ut)
-        self.mc.house = get_planet_house(self.mc.abs_pos, self._houses_degree_ut)
-        self.ic.house = get_planet_house(self.ic.abs_pos, self._houses_degree_ut)
+        self.ascendant.house = get_planet_house(self.ascendant.abs_pos, self._houses_degree_ut)
+        self.descendant.house = get_planet_house(self.descendant.abs_pos, self._houses_degree_ut)
+        self.medium_coeli.house = get_planet_house(self.medium_coeli.abs_pos, self._houses_degree_ut)
+        self.imum_coeli.house = get_planet_house(self.imum_coeli.abs_pos, self._houses_degree_ut)
 
         self.sun.house = get_planet_house(sun_deg, self._houses_degree_ut)
         self.moon.house = get_planet_house(moon_deg, self._houses_degree_ut)
@@ -616,9 +619,12 @@ class AstrologicalSubject:
 
         # FIXME: Update after removing planets_list
         self.planets_names_list = [planet["name"] for planet in planets_list]
+        self.axes_names_list = [
+            axis["name"] for axis in [self.ascendant, self.descendant, self.medium_coeli, self.imum_coeli]
+        ]
 
         # Check in retrograde or not:
-        for planet in planets_list:            
+        for planet in planets_list:
             planet_number = get_number_from_name(planet["name"])
 
             # Swiss ephemeris library does not offer calculation of direction of south nodes.
@@ -628,18 +634,17 @@ class AstrologicalSubject:
             elif planet_number == 1100: # Number of True South Node
                 planet_number = 11      # Number of True North Node
 
+
             if swe.calc(self.julian_day, planet_number, self._iflag)[0][3] < 0:
                 planet["retrograde"] = True
             else:
                 planet["retrograde"] = False
-                
+
         # AC/DC and MC/IC axes are never retrograde. For consistency, set them to be not retrograde.
-        self.asc["retrograde"] = False
-        self.dsc["retrograde"] = False
-        self.mc["retrograde"] = False
-        self.ic["retrograde"] = False
-
-
+        self.ascendant.retrograde = False
+        self.descendant.retrograde = False
+        self.medium_coeli.retrograde = False
+        self.imum_coeli.retrograde = False
 
     def _initialize_moon_phase(self) -> None:
         """
