@@ -40,6 +40,7 @@ DEFAULT_SIDEREAL_MODE: SiderealMode = "FAGAN_BRADLEY"
 DEFAULT_HOUSES_SYSTEM_IDENTIFIER: HousesSystemIdentifier = "P"
 DEFAULT_ZODIAC_TYPE: ZodiacType = "Tropic"
 DEFAULT_PERSPECTIVE_TYPE: PerspectiveType = "Apparent Geocentric"
+DEFAULT_CACHE_EXPIRE_AFTER_DAYS = 30
 GEONAMES_DEFAULT_USERNAME_WARNING = (
     "\n********\n"
     "NO GEONAMES USERNAME SET!\n"
@@ -89,6 +90,7 @@ class AstrologicalSubject:
     - perspective_type (PerspectiveType, optional): The perspective to use for the calculation of the chart.
         Defaults to "Apparent Geocentric".
         Available perspectives are visible in the PerspectiveType Literal.
+    - cache_expire_after_days (int, optional): The number of days after which the geonames cache will expire. Defaults to 30.
     - is_dst (Union[None, bool], optional): Specify if the time is in DST. Defaults to None.
         By default (None), the library will try to guess if the time is in DST or not and raise an AmbiguousTimeError
         if it can't guess. If you know the time is in DST, set this to True, if you know it's not, set it to False.
@@ -187,6 +189,7 @@ class AstrologicalSubject:
         sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
+        cache_expire_after_days: int = DEFAULT_CACHE_EXPIRE_AFTER_DAYS,
         is_dst: Union[None, bool] = None,
         disable_chiron_and_lilith: bool = False
     ) -> None:
@@ -219,6 +222,7 @@ class AstrologicalSubject:
         self.sidereal_mode = sidereal_mode
         self.houses_system_identifier = houses_system_identifier
         self.perspective_type = perspective_type
+        self.cache_expire_after_days = cache_expire_after_days
         self.is_dst = is_dst
         self.disable_chiron_and_lilith = disable_chiron_and_lilith
 
@@ -381,6 +385,7 @@ class AstrologicalSubject:
             self.city,
             self.nation,
             username=self.geonames_username,
+            cache_expire_after=self.cache_expire_after_days*24*60*60  # Convert days to seconds
         )
         self.city_data: dict[str, str] = geonames.get_serialized_data()
 
