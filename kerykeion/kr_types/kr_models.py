@@ -97,7 +97,12 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     local_time: float
     # <-- Deprecated properties
 
-    # Planets
+    # Planets (axes are treated as planets here)
+    asc: KerykeionPointModel
+    dsc: KerykeionPointModel
+    mc: KerykeionPointModel
+    ic: KerykeionPointModel
+    
     sun: KerykeionPointModel
     moon: KerykeionPointModel
     mercury: KerykeionPointModel
