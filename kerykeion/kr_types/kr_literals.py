@@ -17,15 +17,21 @@ SignNumbers = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 """Literal type for Zodiac Sign Numbers, the signs are numbered in order starting from Aries (0) to Pis (11)"""
 
 
-Houses = Literal["First_House", "Second_House", "Third_House", "Fourth_House", "Fifth_House", "Sixth_House", "Seventh_House", "Eighth_House", "Ninth_House", "Tenth_House", "Eleventh_House", "Twelfth_House"]
+Houses = Literal["First_House", "Second_House", "Third_House", "Fourth_House", "Fifth_House", "Sixth_House",
+                 "Seventh_House", "Eighth_House", "Ninth_House", "Tenth_House", "Eleventh_House", "Twelfth_House"]
 """Literal type for Houses"""
+
+
+AngularHouses = Literal["First_House", "Fourth_House", "Seventh_House", "Tenth_House"]
+"""Literal type for Angular Houses - the four major angles of an astrological chart"""
 
 
 HouseNumbers = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 """Literal type for House Numbers, starting from the First House (1) to the Twelfth House (12)"""
 
 
-Planet = Literal["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Mean_Node", "True_Node", "Mean_South_Node", "True_South_Node", "Chiron", "Mean_Lilith"]
+Planet = Literal["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune",
+                 "Pluto", "Mean_Node", "True_Node", "Mean_South_Node", "True_South_Node", "Chiron", "Mean_Lilith"]
 """Literal type for Planets"""
 
 
@@ -53,7 +59,8 @@ LunarPhaseName = Literal["New Moon", "Waxing Crescent", "First Quarter", "Waxing
 """Literal type for Lunar Phases Name"""
 
 
-SiderealMode = Literal["FAGAN_BRADLEY", "LAHIRI", "DELUCE", "RAMAN", "USHASHASHI", "KRISHNAMURTI", "DJWHAL_KHUL", "YUKTESHWAR", "JN_BHASIN", "BABYL_KUGLER1", "BABYL_KUGLER2", "BABYL_KUGLER3", "BABYL_HUBER", "BABYL_ETPSC", "ALDEBARAN_15TAU", "HIPPARCHOS", "SASSANIAN", "J2000", "J1900", "B1950"]
+SiderealMode = Literal["FAGAN_BRADLEY", "LAHIRI", "DELUCE", "RAMAN", "USHASHASHI", "KRISHNAMURTI", "DJWHAL_KHUL", "YUKTESHWAR", "JN_BHASIN",
+                       "BABYL_KUGLER1", "BABYL_KUGLER2", "BABYL_KUGLER3", "BABYL_HUBER", "BABYL_ETPSC", "ALDEBARAN_15TAU", "HIPPARCHOS", "SASSANIAN", "J2000", "J1900", "B1950"]
 """Literal type for Sidereal Modes, as known as Ayanamsa"""
 
 

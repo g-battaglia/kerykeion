@@ -6,6 +6,7 @@
 
 from typing import Union, Optional
 from pydantic import BaseModel
+from datetime import datetime
 
 from kerykeion.kr_types import (
     LunarPhaseEmoji,
@@ -40,7 +41,7 @@ class SubscriptableBaseModel(BaseModel):
     def __delitem__(self, key):
         delattr(self, key)
 
-    def get(self, key, default = None):
+    def get(self, key, default=None):
         return getattr(self, key, default)
 
 
@@ -185,3 +186,22 @@ class RelationshipScoreModel(SubscriptableBaseModel):
     is_destiny_sign: bool
     aspects: list[RelationshipScoreAspectModel]
     subjects: list[AstrologicalSubjectModel]
+
+
+class TransitAnalysisModel(SubscriptableBaseModel):
+    # Chart data
+    natal: AstrologicalSubjectModel
+    transit: AstrologicalSubjectModel
+    aspects: list[AspectModel]
+
+    # Timing
+    transit_time: datetime
+
+    # Configuration
+    zodiac_type: ZodiacType
+    houses_system_identifier: HousesSystemIdentifier
+    perspective_type: str
+    sidereal_mode: Optional[SiderealMode]
+    online: bool = True
+    disable_chiron_and_lilith: bool = False
+    include_house_aspects: bool = False
