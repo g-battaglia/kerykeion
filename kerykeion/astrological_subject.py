@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2024 Giacomo Battaglia
+    This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import pytz

@@ -238,7 +238,7 @@
                     <h1 class="modulename">
 <a href="./../kerykeion.html">kerykeion</a><wbr>.astrological_subject    </h1>
 
-                        <div class="docstring"><p>This is part of Kerykeion (C) 2024 Giacomo Battaglia</p>
+                        <div class="docstring"><p>This is part of Kerykeion (C) 2025 Giacomo Battaglia</p>
 </div>
 
                         <input id="mod-astrological_subject-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -247,7 +247,7 @@
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="c1"># -*- coding: utf-8 -*-</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">    This is part of Kerykeion (C) 2024 Giacomo Battaglia</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">    This is part of Kerykeion (C) 2025 Giacomo Battaglia</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">import</span> <span class="nn">pytz</span>
@@ -267,8 +267,8 @@
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>    <span class="n">HousesSystemIdentifier</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="p">)</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="kn">from</span> <span class="nn">kerykeion.utilities</span> <span class="kn">import</span> <span class="p">(</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">get_number_from_name</span><span class="p">,</span> 
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="n">calculate_position</span><span class="p">,</span> 
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">get_number_from_name</span><span class="p">,</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="n">calculate_position</span><span class="p">,</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>    <span class="n">get_planet_house</span><span class="p">,</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>    <span class="n">get_moon_emoji_from_phase_int</span><span class="p">,</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>    <span class="n">get_moon_phase_name_from_phase_int</span><span class="p">,</span>
@@ -407,7 +407,7 @@
 </span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>
 </span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>        <span class="c1"># We set the swisseph path to the current directory</span>
 </span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>        <span class="n">swe</span><span class="o">.</span><span class="n">set_ephe_path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;sweph&quot;</span><span class="p">))</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>        
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>
 </span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>        <span class="c1"># Flags for the Swiss Ephemeris</span>
 </span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_iflag</span> <span class="o">=</span> <span class="n">swe</span><span class="o">.</span><span class="n">FLG_SWIEPH</span> <span class="o">+</span> <span class="n">swe</span><span class="o">.</span><span class="n">FLG_SPEED</span>
 </span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>
@@ -444,7 +444,7 @@
 </span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>
 </span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sidereal_mode</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">zodiac_type</span> <span class="o">==</span> <span class="s2">&quot;Tropic&quot;</span><span class="p">:</span>
 </span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>            <span class="k">raise</span> <span class="n">KerykeionException</span><span class="p">(</span><span class="s2">&quot;You can&#39;t set a sidereal mode with a Tropic zodiac type!&quot;</span><span class="p">)</span>
-</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>        
+</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>
 </span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">zodiac_type</span> <span class="o">==</span> <span class="s2">&quot;Sidereal&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">sidereal_mode</span><span class="p">:</span>
 </span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">sidereal_mode</span> <span class="o">=</span> <span class="n">DEFAULT_SIDEREAL_MODE</span>
 </span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No sidereal mode set, using default FAGAN_BRADLEY&quot;</span><span class="p">)</span>
@@ -671,7 +671,7 @@
 </span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a>        <span class="n">pluto_deg</span> <span class="o">=</span> <span class="n">swe</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">julian_day</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iflag</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>        <span class="n">mean_node_deg</span> <span class="o">=</span> <span class="n">swe</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">julian_day</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iflag</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a>        <span class="n">true_node_deg</span> <span class="o">=</span> <span class="n">swe</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">julian_day</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iflag</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a>        
+</span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a>
 </span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_chiron</span><span class="p">:</span>
 </span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a>            <span class="n">chiron_deg</span> <span class="o">=</span> <span class="n">swe</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">julian_day</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iflag</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a>        <span class="k">else</span><span class="p">:</span>
@@ -691,7 +691,7 @@
 </span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a>            <span class="n">mean_node_deg</span><span class="p">,</span>
 </span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a>            <span class="n">true_node_deg</span><span class="p">,</span>
 </span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a>        <span class="p">]</span>
-</span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a>        
+</span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a>
 </span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_chiron</span><span class="p">:</span>
 </span><span id="L-449"><a href="#L-449"><span class="linenos">449</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">planets_degrees_ut</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chiron_deg</span><span class="p">)</span>
 </span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a>
@@ -713,7 +713,7 @@
 </span><span id="L-466"><a href="#L-466"><span class="linenos">466</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pluto</span> <span class="o">=</span> <span class="n">calculate_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_degrees_ut</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="s2">&quot;Pluto&quot;</span><span class="p">,</span> <span class="n">point_type</span><span class="o">=</span><span class="n">point_type</span><span class="p">)</span>
 </span><span id="L-467"><a href="#L-467"><span class="linenos">467</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">mean_node</span> <span class="o">=</span> <span class="n">calculate_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_degrees_ut</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="s2">&quot;Mean_Node&quot;</span><span class="p">,</span> <span class="n">point_type</span><span class="o">=</span><span class="n">point_type</span><span class="p">)</span>
 </span><span id="L-468"><a href="#L-468"><span class="linenos">468</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">true_node</span> <span class="o">=</span> <span class="n">calculate_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_degrees_ut</span><span class="p">[</span><span class="mi">11</span><span class="p">],</span> <span class="s2">&quot;True_Node&quot;</span><span class="p">,</span> <span class="n">point_type</span><span class="o">=</span><span class="n">point_type</span><span class="p">)</span>
-</span><span id="L-469"><a href="#L-469"><span class="linenos">469</span></a>        
+</span><span id="L-469"><a href="#L-469"><span class="linenos">469</span></a>
 </span><span id="L-470"><a href="#L-470"><span class="linenos">470</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_chiron</span><span class="p">:</span>
 </span><span id="L-471"><a href="#L-471"><span class="linenos">471</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">chiron</span> <span class="o">=</span> <span class="n">calculate_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_degrees_ut</span><span class="p">[</span><span class="mi">12</span><span class="p">],</span> <span class="s2">&quot;Chiron&quot;</span><span class="p">,</span> <span class="n">point_type</span><span class="o">=</span><span class="n">point_type</span><span class="p">)</span>
 </span><span id="L-472"><a href="#L-472"><span class="linenos">472</span></a>        <span class="k">else</span><span class="p">:</span>
@@ -755,7 +755,7 @@
 </span><span id="L-508"><a href="#L-508"><span class="linenos">508</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">mean_node</span><span class="p">,</span>
 </span><span id="L-509"><a href="#L-509"><span class="linenos">509</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">true_node</span><span class="p">,</span>
 </span><span id="L-510"><a href="#L-510"><span class="linenos">510</span></a>        <span class="p">]</span>
-</span><span id="L-511"><a href="#L-511"><span class="linenos">511</span></a>        
+</span><span id="L-511"><a href="#L-511"><span class="linenos">511</span></a>
 </span><span id="L-512"><a href="#L-512"><span class="linenos">512</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_chiron</span><span class="p">:</span>
 </span><span id="L-513"><a href="#L-513"><span class="linenos">513</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">planets_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chiron</span><span class="p">)</span>
 </span><span id="L-514"><a href="#L-514"><span class="linenos">514</span></a>
@@ -892,7 +892,7 @@
 </span><span id="L-645"><a href="#L-645"><span class="linenos">645</span></a>    <span class="kn">from</span> <span class="nn">kerykeion.utilities</span> <span class="kn">import</span> <span class="n">setup_logging</span>
 </span><span id="L-646"><a href="#L-646"><span class="linenos">646</span></a>
 </span><span id="L-647"><a href="#L-647"><span class="linenos">647</span></a>    <span class="n">setup_logging</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>
-</span><span id="L-648"><a href="#L-648"><span class="linenos">648</span></a>    
+</span><span id="L-648"><a href="#L-648"><span class="linenos">648</span></a>
 </span><span id="L-649"><a href="#L-649"><span class="linenos">649</span></a>    <span class="c1"># With Chiron enabled</span>
 </span><span id="L-650"><a href="#L-650"><span class="linenos">650</span></a>    <span class="n">johnny</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Johnny Depp&quot;</span><span class="p">,</span> <span class="mi">1963</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Owensboro&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">)</span>
 </span><span id="L-651"><a href="#L-651"><span class="linenos">651</span></a>    <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">johnny</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">dump</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span>
@@ -923,11 +923,11 @@
             <span class="name">DEFAULT_GEONAMES_USERNAME</span>        =
 <span class="default_value">&#39;century.boy&#39;</span>
 
-        
+
     </div>
     <a class="headerlink" href="#DEFAULT_GEONAMES_USERNAME"></a>
-    
-    
+
+
 
                 </section>
                 <section id="DEFAULT_SIDEREAL_MODE">
@@ -935,11 +935,11 @@
             <span class="name">DEFAULT_SIDEREAL_MODE</span>        =
 <span class="default_value">&#39;FAGAN_BRADLEY&#39;</span>
 
-        
+
     </div>
     <a class="headerlink" href="#DEFAULT_SIDEREAL_MODE"></a>
-    
-    
+
+
 
                 </section>
                 <section id="DEFAULT_HOUSES_SYSTEM">
@@ -947,17 +947,17 @@
             <span class="name">DEFAULT_HOUSES_SYSTEM</span>        =
 <span class="default_value">&#39;P&#39;</span>
 
-        
+
     </div>
     <a class="headerlink" href="#DEFAULT_HOUSES_SYSTEM"></a>
-    
-    
+
+
 
                 </section>
                 <section id="AstrologicalSubject">
                             <input id="AstrologicalSubject-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
-            
+
     <span class="def">class</span>
     <span class="name">AstrologicalSubject</span>:
 
@@ -1091,7 +1091,7 @@
 </span><span id="AstrologicalSubject-161"><a href="#AstrologicalSubject-161"><span class="linenos">161</span></a>
 </span><span id="AstrologicalSubject-162"><a href="#AstrologicalSubject-162"><span class="linenos">162</span></a>        <span class="c1"># We set the swisseph path to the current directory</span>
 </span><span id="AstrologicalSubject-163"><a href="#AstrologicalSubject-163"><span class="linenos">163</span></a>        <span class="n">swe</span><span class="o">.</span><span class="n">set_ephe_path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;sweph&quot;</span><span class="p">))</span>
-</span><span id="AstrologicalSubject-164"><a href="#AstrologicalSubject-164"><span class="linenos">164</span></a>        
+</span><span id="AstrologicalSubject-164"><a href="#AstrologicalSubject-164"><span class="linenos">164</span></a>
 </span><span id="AstrologicalSubject-165"><a href="#AstrologicalSubject-165"><span class="linenos">165</span></a>        <span class="c1"># Flags for the Swiss Ephemeris</span>
 </span><span id="AstrologicalSubject-166"><a href="#AstrologicalSubject-166"><span class="linenos">166</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_iflag</span> <span class="o">=</span> <span class="n">swe</span><span class="o">.</span><span class="n">FLG_SWIEPH</span> <span class="o">+</span> <span class="n">swe</span><span class="o">.</span><span class="n">FLG_SPEED</span>
 </span><span id="AstrologicalSubject-167"><a href="#AstrologicalSubject-167"><span class="linenos">167</span></a>
@@ -1128,7 +1128,7 @@
 </span><span id="AstrologicalSubject-198"><a href="#AstrologicalSubject-198"><span class="linenos">198</span></a>
 </span><span id="AstrologicalSubject-199"><a href="#AstrologicalSubject-199"><span class="linenos">199</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sidereal_mode</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">zodiac_type</span> <span class="o">==</span> <span class="s2">&quot;Tropic&quot;</span><span class="p">:</span>
 </span><span id="AstrologicalSubject-200"><a href="#AstrologicalSubject-200"><span class="linenos">200</span></a>            <span class="k">raise</span> <span class="n">KerykeionException</span><span class="p">(</span><span class="s2">&quot;You can&#39;t set a sidereal mode with a Tropic zodiac type!&quot;</span><span class="p">)</span>
-</span><span id="AstrologicalSubject-201"><a href="#AstrologicalSubject-201"><span class="linenos">201</span></a>        
+</span><span id="AstrologicalSubject-201"><a href="#AstrologicalSubject-201"><span class="linenos">201</span></a>
 </span><span id="AstrologicalSubject-202"><a href="#AstrologicalSubject-202"><span class="linenos">202</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">zodiac_type</span> <span class="o">==</span> <span class="s2">&quot;Sidereal&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">sidereal_mode</span><span class="p">:</span>
 </span><span id="AstrologicalSubject-203"><a href="#AstrologicalSubject-203"><span class="linenos">203</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">sidereal_mode</span> <span class="o">=</span> <span class="n">DEFAULT_SIDEREAL_MODE</span>
 </span><span id="AstrologicalSubject-204"><a href="#AstrologicalSubject-204"><span class="linenos">204</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No sidereal mode set, using default FAGAN_BRADLEY&quot;</span><span class="p">)</span>
@@ -1355,7 +1355,7 @@
 </span><span id="AstrologicalSubject-425"><a href="#AstrologicalSubject-425"><span class="linenos">425</span></a>        <span class="n">pluto_deg</span> <span class="o">=</span> <span class="n">swe</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">julian_day</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iflag</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="AstrologicalSubject-426"><a href="#AstrologicalSubject-426"><span class="linenos">426</span></a>        <span class="n">mean_node_deg</span> <span class="o">=</span> <span class="n">swe</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">julian_day</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iflag</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="AstrologicalSubject-427"><a href="#AstrologicalSubject-427"><span class="linenos">427</span></a>        <span class="n">true_node_deg</span> <span class="o">=</span> <span class="n">swe</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">julian_day</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iflag</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="AstrologicalSubject-428"><a href="#AstrologicalSubject-428"><span class="linenos">428</span></a>        
+</span><span id="AstrologicalSubject-428"><a href="#AstrologicalSubject-428"><span class="linenos">428</span></a>
 </span><span id="AstrologicalSubject-429"><a href="#AstrologicalSubject-429"><span class="linenos">429</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_chiron</span><span class="p">:</span>
 </span><span id="AstrologicalSubject-430"><a href="#AstrologicalSubject-430"><span class="linenos">430</span></a>            <span class="n">chiron_deg</span> <span class="o">=</span> <span class="n">swe</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">julian_day</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iflag</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="AstrologicalSubject-431"><a href="#AstrologicalSubject-431"><span class="linenos">431</span></a>        <span class="k">else</span><span class="p">:</span>
@@ -1375,7 +1375,7 @@
 </span><span id="AstrologicalSubject-445"><a href="#AstrologicalSubject-445"><span class="linenos">445</span></a>            <span class="n">mean_node_deg</span><span class="p">,</span>
 </span><span id="AstrologicalSubject-446"><a href="#AstrologicalSubject-446"><span class="linenos">446</span></a>            <span class="n">true_node_deg</span><span class="p">,</span>
 </span><span id="AstrologicalSubject-447"><a href="#AstrologicalSubject-447"><span class="linenos">447</span></a>        <span class="p">]</span>
-</span><span id="AstrologicalSubject-448"><a href="#AstrologicalSubject-448"><span class="linenos">448</span></a>        
+</span><span id="AstrologicalSubject-448"><a href="#AstrologicalSubject-448"><span class="linenos">448</span></a>
 </span><span id="AstrologicalSubject-449"><a href="#AstrologicalSubject-449"><span class="linenos">449</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_chiron</span><span class="p">:</span>
 </span><span id="AstrologicalSubject-450"><a href="#AstrologicalSubject-450"><span class="linenos">450</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">planets_degrees_ut</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chiron_deg</span><span class="p">)</span>
 </span><span id="AstrologicalSubject-451"><a href="#AstrologicalSubject-451"><span class="linenos">451</span></a>
@@ -1397,7 +1397,7 @@
 </span><span id="AstrologicalSubject-467"><a href="#AstrologicalSubject-467"><span class="linenos">467</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pluto</span> <span class="o">=</span> <span class="n">calculate_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_degrees_ut</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="s2">&quot;Pluto&quot;</span><span class="p">,</span> <span class="n">point_type</span><span class="o">=</span><span class="n">point_type</span><span class="p">)</span>
 </span><span id="AstrologicalSubject-468"><a href="#AstrologicalSubject-468"><span class="linenos">468</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">mean_node</span> <span class="o">=</span> <span class="n">calculate_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_degrees_ut</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="s2">&quot;Mean_Node&quot;</span><span class="p">,</span> <span class="n">point_type</span><span class="o">=</span><span class="n">point_type</span><span class="p">)</span>
 </span><span id="AstrologicalSubject-469"><a href="#AstrologicalSubject-469"><span class="linenos">469</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">true_node</span> <span class="o">=</span> <span class="n">calculate_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_degrees_ut</span><span class="p">[</span><span class="mi">11</span><span class="p">],</span> <span class="s2">&quot;True_Node&quot;</span><span class="p">,</span> <span class="n">point_type</span><span class="o">=</span><span class="n">point_type</span><span class="p">)</span>
-</span><span id="AstrologicalSubject-470"><a href="#AstrologicalSubject-470"><span class="linenos">470</span></a>        
+</span><span id="AstrologicalSubject-470"><a href="#AstrologicalSubject-470"><span class="linenos">470</span></a>
 </span><span id="AstrologicalSubject-471"><a href="#AstrologicalSubject-471"><span class="linenos">471</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_chiron</span><span class="p">:</span>
 </span><span id="AstrologicalSubject-472"><a href="#AstrologicalSubject-472"><span class="linenos">472</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">chiron</span> <span class="o">=</span> <span class="n">calculate_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_degrees_ut</span><span class="p">[</span><span class="mi">12</span><span class="p">],</span> <span class="s2">&quot;Chiron&quot;</span><span class="p">,</span> <span class="n">point_type</span><span class="o">=</span><span class="n">point_type</span><span class="p">)</span>
 </span><span id="AstrologicalSubject-473"><a href="#AstrologicalSubject-473"><span class="linenos">473</span></a>        <span class="k">else</span><span class="p">:</span>
@@ -1439,7 +1439,7 @@
 </span><span id="AstrologicalSubject-509"><a href="#AstrologicalSubject-509"><span class="linenos">509</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">mean_node</span><span class="p">,</span>
 </span><span id="AstrologicalSubject-510"><a href="#AstrologicalSubject-510"><span class="linenos">510</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">true_node</span><span class="p">,</span>
 </span><span id="AstrologicalSubject-511"><a href="#AstrologicalSubject-511"><span class="linenos">511</span></a>        <span class="p">]</span>
-</span><span id="AstrologicalSubject-512"><a href="#AstrologicalSubject-512"><span class="linenos">512</span></a>        
+</span><span id="AstrologicalSubject-512"><a href="#AstrologicalSubject-512"><span class="linenos">512</span></a>
 </span><span id="AstrologicalSubject-513"><a href="#AstrologicalSubject-513"><span class="linenos">513</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_chiron</span><span class="p">:</span>
 </span><span id="AstrologicalSubject-514"><a href="#AstrologicalSubject-514"><span class="linenos">514</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">planets_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chiron</span><span class="p">)</span>
 </span><span id="AstrologicalSubject-515"><a href="#AstrologicalSubject-515"><span class="linenos">515</span></a>
@@ -1596,12 +1596,12 @@ but it's still used as a value for the city attribute.</li>
 <li>geonames_username (str, optional): _ Defaults to 'century.boy'.</li>
 <li>online (bool, optional): Sets if you want to use the online mode (using
 geonames) or not. Defaults to True.</li>
-<li>utc_datetime (datetime, optional): An alternative way of constructing the object, 
+<li>utc_datetime (datetime, optional): An alternative way of constructing the object,
 if you know the UTC datetime but do not have easy access to e.g. timezone identifier
 _ Defaults to None.</li>
 <li>disable_chiron (bool, optional): Disables the calculation of Chiron. Defaults to False.
 Chiron calculation can create some issues with the Swiss Ephemeris when the date is too far in the past.</li>
-<li>sidereal_mode (SiderealMode, optional): Also known as Ayanamsa. 
+<li>sidereal_mode (SiderealMode, optional): Also known as Ayanamsa.
 The mode to use for the sidereal zodiac, according to the Swiss Ephemeris.
 Defaults to "FAGAN_BRADLEY".
 Available modes are visible in the SiderealMode Literal.</li>
@@ -1613,7 +1613,7 @@ Available modes are visible in the SiderealMode Literal.</li>
                             <div id="AstrologicalSubject.__init__" class="classattr">
                                         <input id="AstrologicalSubject.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-            
+
         <span class="name">AstrologicalSubject</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="o">=</span><span class="s1">&#39;Now&#39;</span>,</span><span class="param">	<span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2024</span>,</span><span class="param">	<span class="n">month</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span>,</span><span class="param">	<span class="n">day</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">24</span>,</span><span class="param">	<span class="n">hour</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">23</span>,</span><span class="param">	<span class="n">minute</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">35</span>,</span><span class="param">	<span class="n">city</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">nation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">lng</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">lat</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">tz_str</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">geonames_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">zodiac_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;Tropic&#39;</span><span class="p">,</span> <span class="s1">&#39;Sidereal&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Tropic&#39;</span>,</span><span class="param">	<span class="n">online</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">utc_datetime</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">disable_chiron</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">sidereal_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;FAGAN_BRADLEY&#39;</span><span class="p">,</span> <span class="s1">&#39;LAHIRI&#39;</span><span class="p">,</span> <span class="s1">&#39;DELUCE&#39;</span><span class="p">,</span> <span class="s1">&#39;RAMAN&#39;</span><span class="p">,</span> <span class="s1">&#39;USHASHASHI&#39;</span><span class="p">,</span> <span class="s1">&#39;KRISHNAMURTI&#39;</span><span class="p">,</span> <span class="s1">&#39;DJWHAL_KHUL&#39;</span><span class="p">,</span> <span class="s1">&#39;YUKTESHWAR&#39;</span><span class="p">,</span> <span class="s1">&#39;JN_BHASIN&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_KUGLER1&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_KUGLER2&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_KUGLER3&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_HUBER&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_ETPSC&#39;</span><span class="p">,</span> <span class="s1">&#39;ALDEBARAN_15TAU&#39;</span><span class="p">,</span> <span class="s1">&#39;HIPPARCHOS&#39;</span><span class="p">,</span> <span class="s1">&#39;SASSANIAN&#39;</span><span class="p">,</span> <span class="s1">&#39;J2000&#39;</span><span class="p">,</span> <span class="s1">&#39;J1900&#39;</span><span class="p">,</span> <span class="s1">&#39;B1950&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">houses_system_identifier</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="s1">&#39;U&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;P&#39;</span></span>)</span>
 
                 <label class="view-source-button" for="AstrologicalSubject.__init__-view-source"><span>View Source</span></label>
@@ -1645,7 +1645,7 @@ Available modes are visible in the SiderealMode Literal.</li>
 </span><span id="AstrologicalSubject.__init__-161"><a href="#AstrologicalSubject.__init__-161"><span class="linenos">161</span></a>
 </span><span id="AstrologicalSubject.__init__-162"><a href="#AstrologicalSubject.__init__-162"><span class="linenos">162</span></a>        <span class="c1"># We set the swisseph path to the current directory</span>
 </span><span id="AstrologicalSubject.__init__-163"><a href="#AstrologicalSubject.__init__-163"><span class="linenos">163</span></a>        <span class="n">swe</span><span class="o">.</span><span class="n">set_ephe_path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;sweph&quot;</span><span class="p">))</span>
-</span><span id="AstrologicalSubject.__init__-164"><a href="#AstrologicalSubject.__init__-164"><span class="linenos">164</span></a>        
+</span><span id="AstrologicalSubject.__init__-164"><a href="#AstrologicalSubject.__init__-164"><span class="linenos">164</span></a>
 </span><span id="AstrologicalSubject.__init__-165"><a href="#AstrologicalSubject.__init__-165"><span class="linenos">165</span></a>        <span class="c1"># Flags for the Swiss Ephemeris</span>
 </span><span id="AstrologicalSubject.__init__-166"><a href="#AstrologicalSubject.__init__-166"><span class="linenos">166</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_iflag</span> <span class="o">=</span> <span class="n">swe</span><span class="o">.</span><span class="n">FLG_SWIEPH</span> <span class="o">+</span> <span class="n">swe</span><span class="o">.</span><span class="n">FLG_SPEED</span>
 </span><span id="AstrologicalSubject.__init__-167"><a href="#AstrologicalSubject.__init__-167"><span class="linenos">167</span></a>
@@ -1682,7 +1682,7 @@ Available modes are visible in the SiderealMode Literal.</li>
 </span><span id="AstrologicalSubject.__init__-198"><a href="#AstrologicalSubject.__init__-198"><span class="linenos">198</span></a>
 </span><span id="AstrologicalSubject.__init__-199"><a href="#AstrologicalSubject.__init__-199"><span class="linenos">199</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sidereal_mode</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">zodiac_type</span> <span class="o">==</span> <span class="s2">&quot;Tropic&quot;</span><span class="p">:</span>
 </span><span id="AstrologicalSubject.__init__-200"><a href="#AstrologicalSubject.__init__-200"><span class="linenos">200</span></a>            <span class="k">raise</span> <span class="n">KerykeionException</span><span class="p">(</span><span class="s2">&quot;You can&#39;t set a sidereal mode with a Tropic zodiac type!&quot;</span><span class="p">)</span>
-</span><span id="AstrologicalSubject.__init__-201"><a href="#AstrologicalSubject.__init__-201"><span class="linenos">201</span></a>        
+</span><span id="AstrologicalSubject.__init__-201"><a href="#AstrologicalSubject.__init__-201"><span class="linenos">201</span></a>
 </span><span id="AstrologicalSubject.__init__-202"><a href="#AstrologicalSubject.__init__-202"><span class="linenos">202</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">zodiac_type</span> <span class="o">==</span> <span class="s2">&quot;Sidereal&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">sidereal_mode</span><span class="p">:</span>
 </span><span id="AstrologicalSubject.__init__-203"><a href="#AstrologicalSubject.__init__-203"><span class="linenos">203</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">sidereal_mode</span> <span class="o">=</span> <span class="n">DEFAULT_SIDEREAL_MODE</span>
 </span><span id="AstrologicalSubject.__init__-204"><a href="#AstrologicalSubject.__init__-204"><span class="linenos">204</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No sidereal mode set, using default FAGAN_BRADLEY&quot;</span><span class="p">)</span>
@@ -1752,590 +1752,590 @@ Available modes are visible in the SiderealMode Literal.</li>
 </span></pre></div>
 
 
-    
+
 
                             </div>
                             <div id="AstrologicalSubject.name" class="classattr">
                                 <div class="attr variable">
             <span class="name">name</span><span class="annotation">: str</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.name"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.utc_datetime" class="classattr">
                                 <div class="attr variable">
             <span class="name">utc_datetime</span><span class="annotation">: Optional[datetime.datetime]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.utc_datetime"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.year" class="classattr">
                                 <div class="attr variable">
             <span class="name">year</span><span class="annotation">: int</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.year"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.month" class="classattr">
                                 <div class="attr variable">
             <span class="name">month</span><span class="annotation">: int</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.month"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.day" class="classattr">
                                 <div class="attr variable">
             <span class="name">day</span><span class="annotation">: int</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.day"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.hour" class="classattr">
                                 <div class="attr variable">
             <span class="name">hour</span><span class="annotation">: int</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.hour"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.minute" class="classattr">
                                 <div class="attr variable">
             <span class="name">minute</span><span class="annotation">: int</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.minute"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.city" class="classattr">
                                 <div class="attr variable">
             <span class="name">city</span><span class="annotation">: str</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.city"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.nation" class="classattr">
                                 <div class="attr variable">
             <span class="name">nation</span><span class="annotation">: str</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.nation"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.lng" class="classattr">
                                 <div class="attr variable">
             <span class="name">lng</span><span class="annotation">: Union[int, float]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.lng"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.lat" class="classattr">
                                 <div class="attr variable">
             <span class="name">lat</span><span class="annotation">: Union[int, float]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.lat"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.tz_str" class="classattr">
                                 <div class="attr variable">
             <span class="name">tz_str</span><span class="annotation">: str</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.tz_str"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.geonames_username" class="classattr">
                                 <div class="attr variable">
             <span class="name">geonames_username</span><span class="annotation">: str</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.geonames_username"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.online" class="classattr">
                                 <div class="attr variable">
             <span class="name">online</span><span class="annotation">: bool</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.online"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.zodiac_type" class="classattr">
                                 <div class="attr variable">
             <span class="name">zodiac_type</span><span class="annotation">: Literal[&#39;Tropic&#39;, &#39;Sidereal&#39;]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.zodiac_type"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.sidereal_mode" class="classattr">
                                 <div class="attr variable">
             <span class="name">sidereal_mode</span><span class="annotation">: Literal[&#39;FAGAN_BRADLEY&#39;, &#39;LAHIRI&#39;, &#39;DELUCE&#39;, &#39;RAMAN&#39;, &#39;USHASHASHI&#39;, &#39;KRISHNAMURTI&#39;, &#39;DJWHAL_KHUL&#39;, &#39;YUKTESHWAR&#39;, &#39;JN_BHASIN&#39;, &#39;BABYL_KUGLER1&#39;, &#39;BABYL_KUGLER2&#39;, &#39;BABYL_KUGLER3&#39;, &#39;BABYL_HUBER&#39;, &#39;BABYL_ETPSC&#39;, &#39;ALDEBARAN_15TAU&#39;, &#39;HIPPARCHOS&#39;, &#39;SASSANIAN&#39;, &#39;J2000&#39;, &#39;J1900&#39;, &#39;B1950&#39;]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.sidereal_mode"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.houses_system_identifier" class="classattr">
                                 <div class="attr variable">
             <span class="name">houses_system_identifier</span><span class="annotation">: Literal[&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;F&#39;, &#39;H&#39;, &#39;I&#39;, &#39;i&#39;, &#39;K&#39;, &#39;L&#39;, &#39;M&#39;, &#39;N&#39;, &#39;O&#39;, &#39;P&#39;, &#39;Q&#39;, &#39;R&#39;, &#39;S&#39;, &#39;T&#39;, &#39;U&#39;, &#39;V&#39;, &#39;W&#39;, &#39;X&#39;, &#39;Y&#39;]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.houses_system_identifier"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.houses_system_name" class="classattr">
                                 <div class="attr variable">
             <span class="name">houses_system_name</span><span class="annotation">: str</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.houses_system_name"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.city_data" class="classattr">
                                 <div class="attr variable">
             <span class="name">city_data</span><span class="annotation">: dict[str, str]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.city_data"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.julian_day" class="classattr">
                                 <div class="attr variable">
             <span class="name">julian_day</span><span class="annotation">: Union[int, float]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.julian_day"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.utc_time" class="classattr">
                                 <div class="attr variable">
             <span class="name">utc_time</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.utc_time"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.local_time" class="classattr">
                                 <div class="attr variable">
             <span class="name">local_time</span><span class="annotation">: float</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.local_time"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.utc" class="classattr">
                                 <div class="attr variable">
             <span class="name">utc</span><span class="annotation">: datetime.datetime</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.utc"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.json_dir" class="classattr">
                                 <div class="attr variable">
             <span class="name">json_dir</span><span class="annotation">: pathlib.Path</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.json_dir"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.sun" class="classattr">
                                 <div class="attr variable">
             <span class="name">sun</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.sun"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.moon" class="classattr">
                                 <div class="attr variable">
             <span class="name">moon</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.moon"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.mercury" class="classattr">
                                 <div class="attr variable">
             <span class="name">mercury</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.mercury"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.venus" class="classattr">
                                 <div class="attr variable">
             <span class="name">venus</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.venus"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.mars" class="classattr">
                                 <div class="attr variable">
             <span class="name">mars</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.mars"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.jupiter" class="classattr">
                                 <div class="attr variable">
             <span class="name">jupiter</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.jupiter"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.saturn" class="classattr">
                                 <div class="attr variable">
             <span class="name">saturn</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.saturn"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.uranus" class="classattr">
                                 <div class="attr variable">
             <span class="name">uranus</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.uranus"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.neptune" class="classattr">
                                 <div class="attr variable">
             <span class="name">neptune</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.neptune"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.pluto" class="classattr">
                                 <div class="attr variable">
             <span class="name">pluto</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.pluto"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.true_node" class="classattr">
                                 <div class="attr variable">
             <span class="name">true_node</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.true_node"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.mean_node" class="classattr">
                                 <div class="attr variable">
             <span class="name">mean_node</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.mean_node"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.chiron" class="classattr">
                                 <div class="attr variable">
             <span class="name">chiron</span><span class="annotation">: Optional[<a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a>]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.chiron"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.first_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">first_house</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.first_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.second_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">second_house</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.second_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.third_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">third_house</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.third_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.fourth_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">fourth_house</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.fourth_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.fifth_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">fifth_house</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.fifth_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.sixth_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">sixth_house</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.sixth_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.seventh_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">seventh_house</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.seventh_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.eighth_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">eighth_house</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.eighth_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.ninth_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">ninth_house</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.ninth_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.tenth_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">tenth_house</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.tenth_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.eleventh_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">eleventh_house</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.eleventh_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.twelfth_house" class="classattr">
                                 <div class="attr variable">
             <span class="name">twelfth_house</span><span class="annotation">: <a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a></span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.twelfth_house"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.houses_list" class="classattr">
                                 <div class="attr variable">
             <span class="name">houses_list</span><span class="annotation">: list[<a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a>]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.houses_list"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.planets_list" class="classattr">
                                 <div class="attr variable">
             <span class="name">planets_list</span><span class="annotation">: list[<a href="kr_types/kr_models.html#KerykeionPointModel">kerykeion.kr_types.kr_models.KerykeionPointModel</a>]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.planets_list"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.planets_degrees_ut" class="classattr">
                                 <div class="attr variable">
             <span class="name">planets_degrees_ut</span><span class="annotation">: list[float]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.planets_degrees_ut"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.houses_degree_ut" class="classattr">
                                 <div class="attr variable">
             <span class="name">houses_degree_ut</span><span class="annotation">: list[float]</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.houses_degree_ut"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.now" class="classattr">
@@ -2343,28 +2343,28 @@ Available modes are visible in the SiderealMode Literal.</li>
             <span class="name">now</span>        =
 <span class="default_value">datetime.datetime(2024, 6, 24, 23, 35, 35, 935830)</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.now"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.disable_chiron" class="classattr">
                                 <div class="attr variable">
             <span class="name">disable_chiron</span>
 
-        
+
     </div>
     <a class="headerlink" href="#AstrologicalSubject.disable_chiron"></a>
-    
-    
+
+
 
                             </div>
                             <div id="AstrologicalSubject.get" class="classattr">
                                         <input id="AstrologicalSubject.get-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">get</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">item</span>, </span><span class="param"><span class="n">default</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
@@ -2377,13 +2377,13 @@ Available modes are visible in the SiderealMode Literal.</li>
 </span></pre></div>
 
 
-    
+
 
                             </div>
                             <div id="AstrologicalSubject.json" class="classattr">
                                         <input id="AstrologicalSubject.json-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">json</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">dump</span><span class="o">=</span><span class="kc">False</span>,</span><span class="param">	<span class="n">destination_folder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">indent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
@@ -2427,7 +2427,7 @@ or the home folder.</p>
                             <div id="AstrologicalSubject.model" class="classattr">
                                         <input id="AstrologicalSubject.model-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n"><a href="kr_types/kr_models.html#AstrologicalSubjectModel">kerykeion.kr_types.kr_models.AstrologicalSubjectModel</a></span>:</span></span>
 
