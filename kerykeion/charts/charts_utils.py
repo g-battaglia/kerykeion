@@ -18,13 +18,6 @@ def get_decoded_kerykeion_celestial_point_name(input_planet_name: str, celestial
         str: The decoded celestial point name.
     """
 
-    # Dictionary for special house names
-    special_house_names = {
-        "First_House": "Asc",
-        "Seventh_House": "Dsc",
-        "Tenth_House": "Mc",
-        "Fourth_House": "Ic"
-    }
 
     # Get the language model keys
     language_keys = celestial_point_language.model_dump().keys()
@@ -32,11 +25,8 @@ def get_decoded_kerykeion_celestial_point_name(input_planet_name: str, celestial
     # Check if the input planet name exists in the language model
     if input_planet_name in language_keys:
         return celestial_point_language[input_planet_name]
-
-    # Return the special house name if it exists, otherwise return an empty string
-    decoded_special_name = special_house_names.get(input_planet_name, "")
-    return celestial_point_language[decoded_special_name]
-
+    else:
+        raise KerykeionException(f"Celestial point {input_planet_name} not found in language model.")
 
 def decHourJoin(inH: int, inM: int, inS: int) -> float:
     """Join hour, minutes, seconds, timezone integer to hour float.

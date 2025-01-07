@@ -148,7 +148,7 @@ class RelationshipScoreFactory:
         Args:
             aspect (dict): Aspect information.
         """
-        if {aspect["p1_name"], aspect["p2_name"]} == {"Sun", "First_House"}:
+        if {aspect["p1_name"], aspect["p2_name"]} == {"Sun", "Ascendant"}:
             points = 4
             self._evaluate_aspect(aspect, points)
 
@@ -160,7 +160,7 @@ class RelationshipScoreFactory:
         Args:
             aspect (dict): Aspect information.
         """
-        if {aspect["p1_name"], aspect["p2_name"]} == {"Moon", "First_House"}:
+        if {aspect["p1_name"], aspect["p2_name"]} == {"Moon", "Ascendant"}:
             points = 4
             self._evaluate_aspect(aspect, points)
 

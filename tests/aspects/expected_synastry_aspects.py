@@ -1,58 +1,3 @@
-'''
-Explanation:
-  p1_name: Name of planet 1
-  p1_abs_pos: Absolute position in degrees in relation to 0° aries
-  p2_name: Name of planet 2
-  p2_abs_pos: Absolute position in degrees in relation to 0° aries
-  aspect: Name of aspect
-  orbit: The deviation in degrees from the perfect aspect (e.g. a 123.4° for a trine of 120.0° would have an orbit of 3.4°.)
-      Note, the orbit is calculated from the perspective of planet 1 as the deviation from the perfect angle to the left or right.
-      Therefore, it can take negative values too.
-  aspect_degrees: The precise degrees of an aspect, i.e. 180 for opposition, 90 for square, 120 for trine, etc.
-  aid: An integer value indicating which aspect is referred to. It is:
-      0 = conjunction 0°
-      1 = semi-sextile 30°
-      2 = semi-square 45°
-      3 = sextile 60°
-      4 = quintile 72°
-      5 = square 90°
-      6 = trine 120°
-      7 = sesquiquadrate 135°
-      8 = biquintile 144°
-      9 = quinkunx 150°
-      10 = opposition 180°
-  diff: The absolute value of the difference in degrees between planet 1 and planet 2
-  p1: An integer value indicating which planet is referred to. See also IDs in kr.config.json file.
-      0 = Sun
-      1 = Moon
-      2 = Mercury
-      3 = Venus
-      4 = Mars
-      5 = Jupiter
-      6 = Saturn
-      7 = Uranus
-      8 = Neptune
-      9 = Pluto
-      10 = Mean_Node
-      11 = True_Node
-      12 = Chiron
-      13 = First_House
-      14 = Tenth_House
-      15 = Seventh_House
-      16 = Fourth_House
-      17 = Mean_Lilith
-      18 = Mean_South_Node
-      19 = True_South_Node
-      20 = Asc
-      21 = Dsc
-      22 = Mc
-      23 = Ic
-  p2: Same as 'p1 but for planet 2
-  is_major:   True for major aspects [conjunction, opposition, square, trine, sextile],
-              False for minor aspects [quintile, sesquiquadrate, semi-sextile, quinkunx, biquintile, semi-square]
-'''
-
-# Note: This list is ordered by p1 primarily, and by p2 secondary.
 EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Sun",
@@ -211,7 +156,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Moon",
         "p1_abs_pos": 299.3496535287914,
-        "p2_name": "First_House",
+        "p2_name": "Ascendant",
         "p2_abs_pos": 56.743000084248784,
         "aspect": "trine",
         "orbit": -2.6066534445426157,
@@ -225,7 +170,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Moon",
         "p1_abs_pos": 299.3496535287914,
-        "p2_name": "Tenth_House",
+        "p2_name": "Medium_Coeli",
         "p2_abs_pos": 307.35096929368245,
         "aspect": "conjunction",
         "orbit": 8.001315764891046,
@@ -248,20 +193,6 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 236.87948006915343,
         "p1": 1,
         "p2": 17,
-        "is_major": True,
-    },
-    {
-        "p1_name": "Moon",
-        "p1_abs_pos": 299.3496535287914,
-        "p2_name": "Asc",
-        "p2_abs_pos": 56.743000084248784,
-        "aspect": "trine",
-        "orbit": -2.60665344454264,
-        "aspect_degrees": 120,
-        "aid": 6,
-        "diff": 242.606653444543,
-        "p1": 1,
-        "p2": 20,
         "is_major": True,
     },
     {
@@ -337,7 +268,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Mercury",
         "p1_abs_pos": 218.11693212244938,
-        "p2_name": "Tenth_House",
+        "p2_name": "Medium_Coeli",
         "p2_abs_pos": 307.35096929368245,
         "aspect": "square",
         "orbit": -0.7659628287669307,
@@ -505,7 +436,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Mars",
         "p1_abs_pos": 182.4473554146491,
-        "p2_name": "First_House",
+        "p2_name": "Ascendant",
         "p2_abs_pos": 56.743000084248784,
         "aspect": "trine",
         "orbit": 5.704355330400318,
@@ -519,7 +450,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Mars",
         "p1_abs_pos": 182.4473554146491,
-        "p2_name": "Tenth_House",
+        "p2_name": "Medium_Coeli",
         "p2_abs_pos": 307.35096929368245,
         "aspect": "trine",
         "orbit": 4.903613879033344,
@@ -542,20 +473,6 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 119.97718195501112,
         "p1": 4,
         "p2": 17,
-        "is_major": True,
-    },
-    {
-        "p1_name": "Mars",
-        "p1_abs_pos": 182.4473554146491,
-        "p2_name": "Asc",
-        "p2_abs_pos": 56.743000084248784,
-        "aspect": "trine",
-        "orbit": 5.70435533040032,
-        "aspect_degrees": 120,
-        "aid": 6,
-        "diff": 125.7043553304,
-        "p1": 4,
-        "p2": 20,
         "is_major": True,
     },
     {
@@ -799,7 +716,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Saturn",
         "p1_abs_pos": 43.23738737567273,
-        "p2_name": "Tenth_House",
+        "p2_name": "Medium_Coeli",
         "p2_abs_pos": 307.35096929368245,
         "aspect": "square",
         "orbit": 5.886418081990257,
@@ -897,7 +814,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Uranus",
         "p1_abs_pos": 55.56164354331872,
-        "p2_name": "First_House",
+        "p2_name": "Ascendant",
         "p2_abs_pos": 56.743000084248784,
         "aspect": "conjunction",
         "orbit": 1.1813565409300395,
@@ -920,20 +837,6 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 6.908529916319267,
         "p1": 7,
         "p2": 17,
-        "is_major": True,
-    },
-    {
-        "p1_name": "Uranus",
-        "p1_abs_pos": 55.56164354331872,
-        "p2_name": "Asc",
-        "p2_abs_pos": 56.743000084248784,
-        "aspect": "conjunction",
-        "orbit": 1.18135654093006,
-        "aspect_degrees": 0,
-        "aid": 0,
-        "diff": 1.18135654093006,
-        "p1": 7,
-        "p2": 20,
         "is_major": True,
     },
     {
@@ -995,7 +898,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Neptune",
         "p1_abs_pos": 176.01832238523434,
-        "p2_name": "First_House",
+        "p2_name": "Ascendant",
         "p2_abs_pos": 56.743000084248784,
         "aspect": "trine",
         "orbit": -0.7246776990144497,
@@ -1018,20 +921,6 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 113.54814892559635,
         "p1": 8,
         "p2": 17,
-        "is_major": True,
-    },
-    {
-        "p1_name": "Neptune",
-        "p1_abs_pos": 176.01832238523434,
-        "p2_name": "Asc",
-        "p2_abs_pos": 56.743000084248784,
-        "aspect": "trine",
-        "orbit": -0.72467769901445,
-        "aspect_degrees": 120,
-        "aid": 6,
-        "diff": 119.275322300986,
-        "p1": 8,
-        "p2": 20,
         "is_major": True,
     },
     {
@@ -1107,7 +996,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Pluto",
         "p1_abs_pos": 124.18439657848431,
-        "p2_name": "Tenth_House",
+        "p2_name": "Medium_Coeli",
         "p2_abs_pos": 307.35096929368245,
         "aspect": "opposition",
         "orbit": -3.1665727151981287,
@@ -1219,7 +1108,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Mean_Node",
         "p1_abs_pos": 190.60034487821736,
-        "p2_name": "Tenth_House",
+        "p2_name": "Medium_Coeli",
         "p2_abs_pos": 307.35096929368245,
         "aspect": "trine",
         "orbit": -3.249375584534903,
@@ -1345,7 +1234,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Chiron",
         "p1_abs_pos": 120.55039957268578,
-        "p2_name": "First_House",
+        "p2_name": "Ascendant",
         "p2_abs_pos": 56.743000084248784,
         "aspect": "sextile",
         "orbit": 3.8073994884369924,
@@ -1359,7 +1248,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Chiron",
         "p1_abs_pos": 120.55039957268578,
-        "p2_name": "Tenth_House",
+        "p2_name": "Medium_Coeli",
         "p2_abs_pos": 307.35096929368245,
         "aspect": "opposition",
         "orbit": -6.800569720996691,
@@ -1385,21 +1274,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "Chiron",
-        "p1_abs_pos": 120.55039957268578,
-        "p2_name": "Asc",
-        "p2_abs_pos": 56.743000084248784,
-        "aspect": "sextile",
-        "orbit": 3.8073994884369924,
-        "aspect_degrees": 60,
-        "aid": 3,
-        "diff": 63.80739948843699,
-        "p1": 12,
-        "p2": 20,
-        "is_major": True,
-    },
-    {
-        "p1_name": "First_House",
+        "p1_name": "Ascendant",
         "p1_abs_pos": 226.07806374063588,
         "p2_name": "Venus",
         "p2_abs_pos": 313.2650283848281,
@@ -1413,7 +1288,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "First_House",
+        "p1_name": "Ascendant",
         "p1_abs_pos": 226.07806374063588,
         "p2_name": "Mars",
         "p2_abs_pos": 165.26826406270942,
@@ -1427,7 +1302,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "First_House",
+        "p1_name": "Ascendant",
         "p1_abs_pos": 226.07806374063588,
         "p2_name": "Jupiter",
         "p2_abs_pos": 170.74275096900124,
@@ -1441,7 +1316,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "First_House",
+        "p1_name": "Ascendant",
         "p1_abs_pos": 226.07806374063588,
         "p2_name": "Neptune",
         "p2_abs_pos": 159.08740100113968,
@@ -1455,7 +1330,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "First_House",
+        "p1_name": "Ascendant",
         "p1_abs_pos": 226.07806374063588,
         "p2_name": "Pluto",
         "p2_abs_pos": 111.63539063267123,
@@ -1469,7 +1344,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "First_House",
+        "p1_name": "Ascendant",
         "p1_abs_pos": 226.07806374063588,
         "p2_name": "Mean_Node",
         "p2_abs_pos": 338.3605077122034,
@@ -1483,7 +1358,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "First_House",
+        "p1_name": "Ascendant",
         "p1_abs_pos": 226.07806374063588,
         "p2_name": "Chiron",
         "p2_abs_pos": 53.72794799663002,
@@ -1497,7 +1372,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "Tenth_House",
+        "p1_name": "Medium_Coeli",
         "p1_abs_pos": 155.5650809872603,
         "p2_name": "Sun",
         "p2_abs_pos": 328.9588486230784,
@@ -1511,7 +1386,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "Tenth_House",
+        "p1_name": "Medium_Coeli",
         "p1_abs_pos": 155.5650809872603,
         "p2_name": "Moon",
         "p2_abs_pos": 245.2023391710988,
@@ -1525,7 +1400,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "Tenth_House",
+        "p1_name": "Medium_Coeli",
         "p1_abs_pos": 155.5650809872603,
         "p2_name": "Mercury",
         "p2_abs_pos": 337.1174048155984,
@@ -1539,7 +1414,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "Tenth_House",
+        "p1_name": "Medium_Coeli",
         "p1_abs_pos": 155.5650809872603,
         "p2_name": "Mars",
         "p2_abs_pos": 165.26826406270942,
@@ -1553,7 +1428,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "Tenth_House",
+        "p1_name": "Medium_Coeli",
         "p1_abs_pos": 155.5650809872603,
         "p2_name": "Uranus",
         "p2_abs_pos": 20.53103499630899,
@@ -1567,7 +1442,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": False,
     },
     {
-        "p1_name": "Tenth_House",
+        "p1_name": "Medium_Coeli",
         "p1_abs_pos": 155.5650809872603,
         "p2_name": "Neptune",
         "p2_abs_pos": 159.08740100113968,
@@ -1581,7 +1456,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "Tenth_House",
+        "p1_name": "Medium_Coeli",
         "p1_abs_pos": 155.5650809872603,
         "p2_name": "Mean_Node",
         "p2_abs_pos": 338.3605077122034,
@@ -1595,9 +1470,9 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "Tenth_House",
+        "p1_name": "Medium_Coeli",
         "p1_abs_pos": 155.5650809872603,
-        "p2_name": "Tenth_House",
+        "p2_name": "Medium_Coeli",
         "p2_abs_pos": 307.35096929368245,
         "aspect": "quincunx",
         "orbit": 1.7858883064221516,
@@ -1609,7 +1484,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": False,
     },
     {
-        "p1_name": "Tenth_House",
+        "p1_name": "Medium_Coeli",
         "p1_abs_pos": 155.5650809872603,
         "p2_name": "Mean_Lilith",
         "p2_abs_pos": 62.47017345963799,
@@ -1623,7 +1498,7 @@ EXPECTED_ALL_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "Tenth_House",
+        "p1_name": "Medium_Coeli",
         "p1_abs_pos": 155.5650809872603,
         "p2_name": "Mean_South_Node",
         "p2_abs_pos": 158.36050771220334,
@@ -1737,7 +1612,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Mean_Lilith",
         "p1_abs_pos": 13.335339425119228,
-        "p2_name": "Tenth_House",
+        "p2_name": "Medium_Coeli",
         "p2_abs_pos": 307.35096929368245,
         "aspect": "sextile",
         "orbit": 5.984370131436776,
@@ -1821,7 +1696,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Mean_South_Node",
         "p1_abs_pos": 10.600344878217356,
-        "p2_name": "First_House",
+        "p2_name": "Ascendant",
         "p2_abs_pos": 56.743000084248784,
         "aspect": "semi-square",
         "orbit": 1.1426552060314066,
@@ -1835,7 +1710,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Mean_South_Node",
         "p1_abs_pos": 10.600344878217356,
-        "p2_name": "Tenth_House",
+        "p2_name": "Medium_Coeli",
         "p2_abs_pos": 307.35096929368245,
         "aspect": "sextile",
         "orbit": 3.249375584534903,
@@ -1844,118 +1719,6 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 296.7506244154651,
         "p1": 18,
         "p2": 14,
-        "is_major": True,
-    },
-    {
-        "p1_name": "Mean_South_Node",
-        "p1_abs_pos": 10.600344878217356,
-        "p2_name": "Asc",
-        "p2_abs_pos": 56.743000084248784,
-        "aspect": "semi-square",
-        "orbit": 1.1426552060314066,
-        "aspect_degrees": 45,
-        "aid": 2,
-        "diff": 46.14265520603143,
-        "p1": 18,
-        "p2": 20,
-        "is_major": False,
-    },
-    {
-        "p1_name": "Asc",
-        "p1_abs_pos": 226.07806374063588 ,
-        "p2_name": "Venus",
-        "p2_abs_pos": 313.2650283848281,
-        "aspect": "square",
-        "orbit": -2.813035355807756,
-        "aspect_degrees": 90,
-        "aid": 5,
-        "diff": 87.18696464419222,
-        "p1": 20,
-        "p2": 3,
-        "is_major": True,       
-    },
-    {
-        "p1_name": "Asc",
-        "p1_abs_pos": 226.07806374063588,
-        "p2_name": "Mars",
-        "p2_abs_pos": 165.26826406270942,
-        "aspect": "sextile",
-        "orbit": 0.8097996779264633,
-        "aspect_degrees": 60,
-        "aid": 3,
-        "diff": 60.8097996779265,
-        "p1": 20,
-        "p2": 4,
-        "is_major": True,       
-    },
-    {
-        "p1_name": "Asc",
-        "p1_abs_pos": 226.07806374063588,
-        "p2_name": "Jupiter",
-        "p2_abs_pos": 170.74275096900124,
-        "aspect": "sextile",
-        "orbit": -4.664687228365352,
-        "aspect_degrees": 60,
-        "aid": 3,
-        "diff": 55.33531277163465,
-        "p1": 20,
-        "p2": 5,
-        "is_major": True,       
-    },
-    {
-        "p1_name": "Asc",
-        "p1_abs_pos": 226.07806374063588,
-        "p2_name": "Neptune",
-        "p2_abs_pos": 159.08740100113968,
-        "aspect": "sextile",
-        "orbit": 6.9906627394962015,
-        "aspect_degrees": 60,
-        "aid": 3,
-        "diff": 66.9906627394962,
-        "p1": 20,
-        "p2": 8,
-        "is_major": True,       
-    },
-    {
-        "p1_name": "Asc",
-        "p1_abs_pos": 226.07806374063588,
-        "p2_name": "Pluto",
-        "p2_abs_pos": 111.63539063267123,
-        "aspect": "trine",
-        "orbit": -5.5573268920353485,
-        "aspect_degrees": 120,
-        "aid": 6,
-        "diff": 114.44267310796465,
-        "p1": 20,
-        "p2": 9,
-        "is_major": True,
-    },
-    {
-        "p1_name": "Asc",
-        "p1_abs_pos": 226.07806374063588,
-        "p2_name": "Mean_Node",
-        "p2_abs_pos": 338.3605077122034,
-        "aspect": "trine",
-        "orbit": -7.717556028432483,
-        "aspect_degrees": 120,
-        "aid": 6,
-        "diff": 112.28244397156752,
-        "p1": 20,
-        "p2": 10,
-        "is_major": True,
-    },
-    {
-        "p1_name": "Asc",
-        "p1_abs_pos": 226.07806374063588,
-        "p2_name": "Chiron",
-        "p2_abs_pos": 53.72794799663002,
-        "aspect": "opposition",
-        "orbit": -7.649884255994152,
-        "aspect_degrees": 180,
-        "aid": 10,
-        "diff": 172.35011574400585,
-        "p1": 20,
-        "p2": 12,
         "is_major": True,
     },
 ]
@@ -2088,20 +1851,6 @@ EXPECTED_RELEVANT_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "Moon",
-        "p1_abs_pos": 299.3496535287914,
-        "p2_name": "Asc",
-        "p2_abs_pos": 56.743000084248784,
-        "aspect": "trine",
-        "orbit": -2.60665344454264,
-        "aspect_degrees": 120,
-        "aid": 6,
-        "diff": 242.606653444543,
-        "p1": 1,
-        "p2": 20,
-        "is_major": True,
-    },
-    {
         "p1_name": "Mercury",
         "p1_abs_pos": 218.11693212244938,
         "p2_name": "Mercury",
@@ -2174,7 +1923,7 @@ EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Mercury",
         "p1_abs_pos": 218.11693212244938,
-        "p2_name": "Tenth_House",
+        "p2_name": "Medium_Coeli",
         "p2_abs_pos": 307.35096929368245,
         "aspect": "square",
         "orbit": -0.7659628287669307,
@@ -2351,20 +2100,6 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 119.97718195501112,
         "p1": 4,
         "p2": 17,
-        "is_major": True,
-    },
-    {
-        "p1_name": "Mars",
-        "p1_abs_pos": 182.4473554146491,
-        "p2_name": "Asc",
-        "p2_abs_pos": 56.743000084248784,
-        "aspect": "trine",
-        "orbit": 5.70435533040032,
-        "aspect_degrees": 120,
-        "aid": 6,
-        "diff": 125.7043553304,
-        "p1": 4,
-        "p2": 20,
         "is_major": True,
     },
     {
@@ -2704,20 +2439,6 @@ EXPECTED_RELEVANT_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "Uranus",
-        "p1_abs_pos": 55.56164354331872,
-        "p2_name": "Asc",
-        "p2_abs_pos": 56.743000084248784,
-        "aspect": "conjunction",
-        "orbit": 1.18135654093006,
-        "aspect_degrees": 0,
-        "aid": 0,
-        "diff": 1.18135654093006,
-        "p1": 7,
-        "p2": 20,
-        "is_major": True,
-    },
-    {
         "p1_name": "Neptune",
         "p1_abs_pos": 176.01832238523434,
         "p2_name": "Mars",
@@ -2776,7 +2497,7 @@ EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Neptune",
         "p1_abs_pos": 176.01832238523434,
-        "p2_name": "First_House",
+        "p2_name": "Ascendant",
         "p2_abs_pos": 56.743000084248784,
         "aspect": "trine",
         "orbit": -0.7246776990144497,
@@ -2799,20 +2520,6 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 113.54814892559635,
         "p1": 8,
         "p2": 17,
-        "is_major": True,
-    },
-    {
-        "p1_name": "Neptune",
-        "p1_abs_pos": 176.01832238523434,
-        "p2_name": "Asc",
-        "p2_abs_pos": 56.743000084248784,
-        "aspect": "trine",
-        "orbit": -0.72467769901445,
-        "aspect_degrees": 120,
-        "aid": 6,
-        "diff": 119.275322300986,
-        "p1": 8,
-        "p2": 20,
         "is_major": True,
     },
     {
@@ -3012,21 +2719,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "Chiron",
-        "p1_abs_pos": 120.55039957268578,
-        "p2_name": "Asc",
-        "p2_abs_pos": 56.743000084248784,
-        "aspect": "sextile",
-        "orbit": 3.8073994884369924,
-        "aspect_degrees": 60,
-        "aid": 3,
-        "diff": 63.80739948843699,
-        "p1": 12,
-        "p2": 20,
-        "is_major": True,
-    },
-    {
-        "p1_name": "First_House",
+        "p1_name": "Ascendant",
         "p1_abs_pos": 226.07806374063588,
         "p2_name": "Mars",
         "p2_abs_pos": 165.26826406270942,
@@ -3040,7 +2733,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "is_major": True,
     },
     {
-        "p1_name": "Tenth_House",
+        "p1_name": "Medium_Coeli",
         "p1_abs_pos": 155.5650809872603,
         "p2_name": "Moon",
         "p2_abs_pos": 245.2023391710988,
@@ -3163,104 +2856,6 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 9.930690118091633,
         "p1": 18,
         "p2": 7,
-        "is_major": True,
-    },
-    {
-        "p1_name": "Asc",
-        "p1_abs_pos": 226.07806374063588,
-        "p2_name": "Venus",
-        "p2_abs_pos": 313.2650283848281,
-        "aspect": "square",
-        "orbit": -2.813035355807756,
-        "aspect_degrees": 90,
-        "aid": 5,
-        "diff": 87.18696464419222,
-        "p1": 20,
-        "p2": 3,
-        "is_major": True,       
-    },
-    {
-        "p1_name": "Asc",
-        "p1_abs_pos": 226.07806374063588,
-        "p2_name": "Mars",
-        "p2_abs_pos": 165.26826406270942,
-        "aspect": "sextile",
-        "orbit": 0.8097996779264633,
-        "aspect_degrees": 60,
-        "aid": 3,
-        "diff": 60.8097996779265,
-        "p1": 20,
-        "p2": 4,
-        "is_major": True,       
-    },
-    {
-        "p1_name": "Asc",
-        "p1_abs_pos": 226.07806374063588,
-        "p2_name": "Jupiter",
-        "p2_abs_pos": 170.74275096900124,
-        "aspect": "sextile",
-        "orbit": -4.664687228365352,
-        "aspect_degrees": 60,
-        "aid": 3,
-        "diff": 55.33531277163465,
-        "p1": 20,
-        "p2": 5,
-        "is_major": True,       
-    },
-    {
-        "p1_name": "Asc",
-        "p1_abs_pos": 226.07806374063588,
-        "p2_name": "Neptune",
-        "p2_abs_pos": 159.08740100113968,
-        "aspect": "sextile",
-        "orbit": 6.9906627394962015,
-        "aspect_degrees": 60,
-        "aid": 3,
-        "diff": 66.9906627394962,
-        "p1": 20,
-        "p2": 8,
-        "is_major": True,       
-    },
-    {
-        "p1_name": "Asc",
-        "p1_abs_pos": 226.07806374063588,
-        "p2_name": "Pluto",
-        "p2_abs_pos": 111.63539063267123,
-        "aspect": "trine",
-        "orbit": -5.5573268920353485,
-        "aspect_degrees": 120,
-        "aid": 6,
-        "diff": 114.44267310796465,
-        "p1": 20,
-        "p2": 9,
-        "is_major": True,
-    },
-    {
-        "p1_name": "Asc",
-        "p1_abs_pos": 226.07806374063588,
-        "p2_name": "Mean_Node",
-        "p2_abs_pos": 338.3605077122034,
-        "aspect": "trine",
-        "orbit": -7.717556028432483,
-        "aspect_degrees": 120,
-        "aid": 6,
-        "diff": 112.28244397156752,
-        "p1": 20,
-        "p2": 10,
-        "is_major": True,
-    },
-    {
-        "p1_name": "Asc",
-        "p1_abs_pos": 226.07806374063588,
-        "p2_name": "Chiron",
-        "p2_abs_pos": 53.72794799663002,
-        "aspect": "opposition",
-        "orbit": -7.649884255994152,
-        "aspect_degrees": 180,
-        "aid": 10,
-        "diff": 172.35011574400585,
-        "p1": 20,
-        "p2": 12,
         "is_major": True,
     },
 ]

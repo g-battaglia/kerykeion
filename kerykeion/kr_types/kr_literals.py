@@ -25,8 +25,10 @@ HouseNumbers = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 """Literal type for House Numbers, starting from the First House (1) to the Twelfth House (12)"""
 
 
-Planet = Literal["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Mean_Node", "True_Node", "Mean_South_Node", "True_South_Node", "Chiron", "Mean_Lilith", "Asc", "Dsc", "Mc", "Ic"]
+Planet = Literal["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Mean_Node", "True_Node", "Mean_South_Node", "True_South_Node", "Chiron", "Mean_Lilith"]
 """Literal type for Planets"""
+
+Axis = Literal["Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
 
 
 Element = Literal["Air", "Fire", "Earth", "Water"]
@@ -41,7 +43,7 @@ ChartType = Literal["Natal", "ExternalNatal", "Synastry", "Transit"]
 """Literal type for Chart Types"""
 
 
-PointType = Literal["Planet", "House"]
+PointType = Literal["Planet", "House", "Axis"]
 """Literal type for Point Types"""
 
 

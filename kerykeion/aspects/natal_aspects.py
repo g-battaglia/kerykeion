@@ -16,10 +16,10 @@ from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 
 
 AXES_LIST = [
-    "First_House",
-    "Tenth_House",
-    "Seventh_House",
-    "Fourth_House",
+    "Ascendant",
+    "Medium_Coeli",
+    "Descendant",
+    "Imum_Coeli",
 ]
 
 
@@ -114,7 +114,7 @@ class NatalAspects:
         self.all_aspects
 
         aspects_filtered = []
-        
+
         # Only pick aspects for which the is_active setting (specified usually in kr.config.json file) is true.
         for a in self.all_aspects_list:
             if self.aspects_settings[a["aid"]]["is_active"] == True:
@@ -153,7 +153,7 @@ if __name__ == "__main__":
 
     # All aspects as a list of dictionaries
     aspects = NatalAspects(johnny)
-    print([a.model_dump() for a in aspects.all_aspects])
+    #print([a.model_dump() for a in aspects.all_aspects])
 
     print("\n")
 

@@ -1,5 +1,5 @@
 from kerykeion.kr_types import KerykeionPointModel, KerykeionException, ZodiacSignModel, AstrologicalSubjectModel
-from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, Planet, Houses
+from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, Planet, Houses, Axis
 from typing import Union, get_args, TYPE_CHECKING
 import logging
 import math
@@ -57,7 +57,7 @@ def get_number_from_name(name: Planet) -> int:
 
 
 def get_kerykeion_point_from_degree(
-    degree: Union[int, float], name: Union[Planet, Houses], point_type: PointType
+    degree: Union[int, float], name: Union[Planet, Houses, Axis], point_type: PointType
 ) -> KerykeionPointModel:
     """
     Returns a KerykeionPointModel object based on the given degree.
@@ -199,7 +199,7 @@ def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut
     for i in range(len(house_names)):
         start_degree = houses_degree_ut_list[i]
         end_degree = houses_degree_ut_list[(i + 1) % len(houses_degree_ut_list)]
-        
+
         if is_point_between(start_degree, end_degree, planet_position_degree):
             return house_names[i]
 
@@ -305,7 +305,7 @@ def get_houses_list(subject: Union["AstrologicalSubject", AstrologicalSubjectMod
     return houses_absolute_position_list
 
 
-def get_available_planets_list(subject: Union["AstrologicalSubject", AstrologicalSubjectModel]) -> list[KerykeionPointModel]:
+def get_available_astrological_points_list(subject: Union["AstrologicalSubject", AstrologicalSubjectModel]) -> list[KerykeionPointModel]:
     """
     Return the names of the planets in the order of the planets.
     The names can be used to access the planets from the AstrologicalSubject object with the __getitem__ method or the [] operator.
@@ -313,5 +313,8 @@ def get_available_planets_list(subject: Union["AstrologicalSubject", Astrologica
     planets_absolute_position_list = []
     for planet in subject.planets_names_list:
             planets_absolute_position_list.append(subject[planet.lower()])
+
+    for axis in subject.axes_names_list:
+        planets_absolute_position_list.append(subject[axis.lower()])
 
     return planets_absolute_position_list
