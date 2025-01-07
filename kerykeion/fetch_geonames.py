@@ -5,6 +5,7 @@
 
 
 import logging
+from datetime import timedelta
 from requests import Request
 from requests_cache import CachedSession
 from typing import Union
@@ -15,9 +16,10 @@ class FetchGeonames:
     Class to handle requests to the GeoNames API
 
     Args:
-    city_name (str): Name of the city
-    country_code (str): Two letters country code
-    username (str, optional): GeoNames username, defaults to "century.boy".
+    - city_name (str): Name of the city
+    - country_code (str): Two letters country code
+    - username (str, optional): GeoNames username, defaults to "century.boy".
+    - cache_expire_after_days (int, optional): Cache expiration time in days, defaults to 30.
     """
 
     def __init__(
@@ -25,12 +27,12 @@ class FetchGeonames:
         city_name: str,
         country_code: str,
         username: str = "century.boy",
-        cache_expire_after=86400
+        cache_expire_after_days=30,
     ):
         self.session = CachedSession(
             cache_name="cache/kerykeion_geonames_cache",
             backend="sqlite",
-            expire_after=cache_expire_after,
+            expire_after=timedelta(days=cache_expire_after_days),
         )
 
         self.username = username
