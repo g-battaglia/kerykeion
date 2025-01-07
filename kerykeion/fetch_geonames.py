@@ -25,11 +25,12 @@ class FetchGeonames:
         city_name: str,
         country_code: str,
         username: str = "century.boy",
+        cache_expire_after=86400
     ):
         self.session = CachedSession(
             cache_name="cache/kerykeion_geonames_cache",
             backend="sqlite",
-            expire_after=86400,
+            expire_after=cache_expire_after,
         )
 
         self.username = username
