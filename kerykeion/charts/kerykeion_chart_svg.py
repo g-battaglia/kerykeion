@@ -88,7 +88,6 @@ class KerykeionChartSVG:
     earth: float
     air: float
     water: float
-    main_radius: float
     first_circle_radius: float
     second_circle_radius: float
     third_circle_radius: float

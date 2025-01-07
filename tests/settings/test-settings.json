@@ -649,6 +649,42 @@
       "element_points": 0,
       "related_zodiac_signs": [],
       "label": "Mean_Lilith"
+    },
+    {
+      "id": 20,
+      "name": "Asc",
+      "color": "var(--kerykeion-chart-color-asc)",
+      "is_active": true,
+      "element_points": 0,
+      "related_zodiac_signs": [],
+      "label": "Asc"
+    },
+    {
+      "id": 21,
+      "name": "Dsc",
+      "color": "var(--kerykeion-chart-color-dsc)",
+      "is_active": false,
+      "element_points": 0,
+      "related_zodiac_signs": [],
+      "label": "Dsc"
+    },
+    {
+      "id": 22,
+      "name": "Mc",
+      "color": "var(--kerykeion-chart-color-mc)",
+      "is_active": false,
+      "element_points": 0,
+      "related_zodiac_signs": [],
+      "label": "Mc"
+    },
+    {
+      "id": 23,
+      "name": "Ic",
+      "color": "var(--kerykeion-chart-color-ic)",
+      "is_active": false,
+      "element_points": 0,
+      "related_zodiac_signs": [],
+      "label": "Ic"
     }
   ],
 
