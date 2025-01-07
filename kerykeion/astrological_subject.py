@@ -40,7 +40,7 @@ DEFAULT_SIDEREAL_MODE: SiderealMode = "FAGAN_BRADLEY"
 DEFAULT_HOUSES_SYSTEM_IDENTIFIER: HousesSystemIdentifier = "P"
 DEFAULT_ZODIAC_TYPE: ZodiacType = "Tropic"
 DEFAULT_PERSPECTIVE_TYPE: PerspectiveType = "Apparent Geocentric"
-DEFAULT_CACHE_EXPIRE_AFTER_DAYS = 30
+DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS = 30
 GEONAMES_DEFAULT_USERNAME_WARNING = (
     "\n********\n"
     "NO GEONAMES USERNAME SET!\n"
@@ -189,7 +189,7 @@ class AstrologicalSubject:
         sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
-        cache_expire_after_days: int = DEFAULT_CACHE_EXPIRE_AFTER_DAYS,
+        cache_expire_after_days: int = DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
         is_dst: Union[None, bool] = None,
         disable_chiron_and_lilith: bool = False
     ) -> None:
@@ -385,7 +385,7 @@ class AstrologicalSubject:
             self.city,
             self.nation,
             username=self.geonames_username,
-            cache_expire_after=self.cache_expire_after_days*24*60*60  # Convert days to seconds
+            cache_expire_after_days=self.cache_expire_after_days
         )
         self.city_data: dict[str, str] = geonames.get_serialized_data()
 
