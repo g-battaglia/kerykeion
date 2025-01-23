@@ -48,7 +48,7 @@ pydantic = "^2.5"
 scour = "^0.38.2"
 requests-cache = "^1.2.1"
 requests = "^2.32.3"
-simple-ascii-tables = "^0.1.0"
+simple-ascii-tables = "^1.0.0"
 
 [tool.poetry.scripts]
 create-docs = "scripts.docs:main"
