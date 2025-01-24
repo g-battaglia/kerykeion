@@ -529,13 +529,13 @@ poetry-plugin = ["poetry (>=1.0,<2.0)"]
 
 [[package]]
 name = "pydantic"
-version = "2.10.5"
+version = "2.10.6"
 description = "Data validation using Python type hints"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pydantic-2.10.5-py3-none-any.whl", hash = "sha256:4dd4e322dbe55472cb7ca7e73f4b63574eecccf2835ffa2af9021ce113c83c53"},
-    {file = "pydantic-2.10.5.tar.gz", hash = "sha256:278b38dbbaec562011d659ee05f63346951b3a248a6f3642e1bc68894ea2b4ff"},
+    {file = "pydantic-2.10.6-py3-none-any.whl", hash = "sha256:427d664bf0b8a2b34ff5dd0f5a18df00591adcee7198fbd71981054cef37b584"},
+    {file = "pydantic-2.10.6.tar.gz", hash = "sha256:ca5daa827cce33de7a42be142548b0096bf05a7e7b365aebfa5f8eeec7128236"},
 ]
 
 [package.dependencies]
@@ -747,13 +747,13 @@ testing = ["argcomplete", "attrs (>=19.2.0)", "hypothesis (>=3.56)", "mock", "no
 
 [[package]]
 name = "pytz"
-version = "2022.7.1"
+version = "2024.2"
 description = "World timezone definitions, modern and historical"
 optional = false
 python-versions = "*"
 files = [
-    {file = "pytz-2022.7.1-py2.py3-none-any.whl", hash = "sha256:78f4f37d8198e0627c5f1143240bb0206b8691d8d7ac6d78fee88b78733f8c4a"},
-    {file = "pytz-2022.7.1.tar.gz", hash = "sha256:01a0681c4b9684a28304615eba55d1ab31ae00bf68ec157ec3708a8182dbbcd0"},
+    {file = "pytz-2024.2-py2.py3-none-any.whl", hash = "sha256:31c7c1817eb7fae7ca4b8c7ee50c72f93aa2dd863de768e1ef4245d426aa0725"},
+    {file = "pytz-2024.2.tar.gz", hash = "sha256:2aa355083c50a0f93fa581709deac0c9ad65cca8a9e9beac660adcbd493c798a"},
 ]
 
 [[package]]
@@ -822,13 +822,13 @@ six = ">=1.9.0"
 
 [[package]]
 name = "simple-ascii-tables"
-version = "0.1.0"
+version = "1.0.1"
 description = "Simple, minimal, dependency-free ASCII tables for Python."
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "simple_ascii_tables-0.1.0-py3-none-any.whl", hash = "sha256:7658178830143bcce6746c0e1d1a9ec81d88eac8b19887bffa4464305b6f6056"},
-    {file = "simple_ascii_tables-0.1.0.tar.gz", hash = "sha256:90f541a74f82a04d235627fc90c6ad2ad35355dc1a7e1fe1b8914520f1975985"},
+    {file = "simple_ascii_tables-1.0.1-py3-none-any.whl", hash = "sha256:b67941c6e6262900b288700afae6eabaac16b1899a30e5f00cb203ff5aecfe11"},
+    {file = "simple_ascii_tables-1.0.1.tar.gz", hash = "sha256:33a0d8f31f562084b614091d7c8f70897d23a03806796765039254984efe383a"},
 ]
 
 [[package]]
@@ -953,4 +953,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "95eece4d36c26d703c4040fa0011bd12b2cc0e4147292cdaf22e6cfdb31ef296"
+content-hash = "92ebc3a6542718f20eaa3c584281e07c8fb64623bc3b6b10ed32fa612ce50279"
