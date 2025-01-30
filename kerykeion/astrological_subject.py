@@ -172,7 +172,7 @@ class AstrologicalSubject:
     _houses_degree_ut: list[float]
     planets_names_list: list[Planet]
     houses_names_list: list[Houses]
-    axes_names_list: list[AxialCusps]
+    axial_cusps_names_list: list[AxialCusps]
 
     # Enable or disable features
     disable_chiron: Union[None, bool]
@@ -619,7 +619,7 @@ class AstrologicalSubject:
 
         # FIXME: Update after removing planets_list
         self.planets_names_list = [planet["name"] for planet in planets_list]
-        self.axes_names_list = [
+        self.axial_cusps_names_list = [
             axis["name"] for axis in [self.ascendant, self.descendant, self.medium_coeli, self.imum_coeli]
         ]
 

@@ -314,7 +314,7 @@ def get_available_astrological_points_list(subject: Union["AstrologicalSubject",
     for planet in subject.planets_names_list:
             planets_absolute_position_list.append(subject[planet.lower()])
 
-    for axis in subject.axes_names_list:
+    for axis in subject.axial_cusps_names_list:
         planets_absolute_position_list.append(subject[axis.lower()])
 
     return planets_absolute_position_list
