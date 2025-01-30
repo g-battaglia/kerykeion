@@ -146,7 +146,7 @@
 <line x1='41.09562092634532' y1='219.09430734646938' x2='21.205183018979852' y2='217.00373808111632' style='stroke-width:1px;stroke:var(--kerykeion-chart-color-mean-lilith);stroke-opacity:.5;'/>
 <g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:slug='Mean_Lilith' transform='translate(-9.600000000000001,-9.600000000000001) scale(0.8)'><use x='14.074955081621397' y='269.94806681054973' xlink:href='#Mean_Lilith' /></g><line x1='112.0' y1='240.00000000000003' x2='40.0' y2='240.00000000000006' style='stroke-width:1px;stroke:var(--kerykeion-chart-color-first-house);stroke-opacity:.3;'/>
 <line x1='40.0' y1='240.00000000000006' x2='20.0' y2='240.00000000000006' style='stroke-width:1px;stroke:var(--kerykeion-chart-color-first-house);stroke-opacity:.5;'/>
-<g kr:node='ChartPoint' kr:house='None' kr:sign='Ari' kr:slug='First_House' transform='translate(-9.600000000000001,-9.600000000000001) scale(0.8)'><use x='12.5' y='300.00000000000006' xlink:href='#First_House' /></g><line x1='123.0661814217471' y1='292.0622903137024' x2='57.29090847147985' y2='321.34732861516005' style='stroke-width:1px;stroke:var(--kerykeion-chart-color-saturn);stroke-opacity:.3;'/>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Ari' kr:slug='Ascendant' transform='translate(-9.600000000000001,-9.600000000000001) scale(0.8)'><use x='12.5' y='300.00000000000006' xlink:href='#Ascendant' /></g><line x1='123.0661814217471' y1='292.0622903137024' x2='57.29090847147985' y2='321.34732861516005' style='stroke-width:1px;stroke:var(--kerykeion-chart-color-saturn);stroke-opacity:.3;'/>
 <line x1='57.29090847147985' y1='321.34732861516005' x2='36.01955199530679' y2='322.41345055150066' style='stroke-width:1px;stroke:var(--kerykeion-chart-color-saturn);stroke-opacity:.5;'/>
 <g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:slug='Saturn' transform='translate(-9.600000000000001,-9.600000000000001) scale(0.8)'><use x='33.434641812048646' y='407.6993956070748' xlink:href='#Saturn' /></g><line x1='123.0661814217471' y1='292.0622903137024' x2='57.29090847147985' y2='321.34732861516005' style='stroke-width:1px;stroke:var(--kerykeion-chart-color-jupiter);stroke-opacity:.3;'/>
 <line x1='57.29090847147985' y1='321.34732861516005' x2='42.265309814183254' y2='336.44165229359703' style='stroke-width:1px;stroke:var(--kerykeion-chart-color-jupiter);stroke-opacity:.5;'/>
@@ -170,7 +170,7 @@
 <line x1='429.1037151198634' y1='174.88636910856866' x2='448.01408663184975' y2='168.3750060194255' style='stroke-width:1px;stroke:var(--kerykeion-chart-color-mercury);stroke-opacity:.5;'/>
 <g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Sco' kr:slug='Mercury' transform='translate(-9.600000000000001,-9.600000000000001) scale(0.8)'><use x='571.8365904848037' y='206.39915559356746' xlink:href='#Mercury' /></g><line x1='266.61269642467323' y1='114.79710710607289' x2='281.58233816355187' y2='44.37047985323888' style='stroke-width:1px;stroke:var(--kerykeion-chart-color-tenth-house);stroke-opacity:.3;'/>
 <line x1='281.58233816355187' y1='44.37047985323888' x2='285.7405719799071' y2='24.807527838562773' style='stroke-width:1px;stroke:var(--kerykeion-chart-color-tenth-house);stroke-opacity:.5;'/>
-<g kr:node='ChartPoint' kr:house='None' kr:sign='Cap' kr:slug='Tenth_House' transform='translate(-9.600000000000001,-9.600000000000001) scale(0.8)'><use x='359.77461111010587' y='18.782564789030896' xlink:href='#Tenth_House' /></g><line x1='209.03399736324252' y1='115.80214703667245' x2='191.61562088006644' y2='45.9408547448007' style='stroke-width:1px;stroke:var(--kerykeion-chart-color-moon);stroke-opacity:.3;'/>
+<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Cap' kr:slug='Medium_Coeli' transform='translate(-9.600000000000001,-9.600000000000001) scale(0.8)'><use x='359.77461111010587' y='18.782564789030896' xlink:href='#Medium_Coeli' /></g><line x1='209.03399736324252' y1='115.80214703667245' x2='191.61562088006644' y2='45.9408547448007' style='stroke-width:1px;stroke:var(--kerykeion-chart-color-moon);stroke-opacity:.3;'/>
 <line x1='191.61562088006644' y1='45.9408547448007' x2='186.77718296807308' y2='26.534940219280777' style='stroke-width:1px;stroke:var(--kerykeion-chart-color-moon);stroke-opacity:.5;'/>
 <g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Aqu' kr:slug='Moon' transform='translate(-9.600000000000001,-9.600000000000001) scale(0.8)'><use x='230.4474550150955' y='21.039978695651016' xlink:href='#Moon' /></g>
             </g>
@@ -337,16 +337,16 @@
               style='fill: var(--kerykeion-chart-color-fourth-house);' />
           </g>
         </symbol>
-        <symbol id='First_House'>
+        <symbol id='Ascendant'>
             <text y='20' style='font-size: 22px; fill: var(--kerykeion-chart-color-chiron)'>As</text>
         </symbol>
-        <symbol id='Tenth_House'>
+        <symbol id='Medium_Coeli'>
             <text y='20' style='font-size: 20px; fill: var(--kerykeion-chart-color-first-house)'>Mc</text>
         </symbol>
-        <symbol id='Seventh_House'>
+        <symbol id='Descendant'>
             <text y='20' style='font-size: 22px; fill: var(--kerykeion-chart-color-tenth-house)'>Ds</text>
         </symbol>
-        <symbol id='Fourth_House'>
+        <symbol id='Imum_Coeli'>
             <text y='20' style='font-size: 22px; fill: var(--kerykeion-chart-color-seventh-house)'>Ic</text>
         </symbol>
             <!-- Zodiac -->

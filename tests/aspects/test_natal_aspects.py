@@ -9,14 +9,19 @@ from .expected_natal_aspects import EXPECTED_ALL_ASPECTS, EXPECTED_RELEVANT_ASPE
 class TestNatalAspects:
     def setup_class(self):
         self.subject = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", geonames_username="century.boy")
+
         self.subject_relevant_aspects = NatalAspects(self.subject).relevant_aspects
+        self.subject_relevant_aspects = [a.model_dump() for a in self.subject_relevant_aspects]
+
         self.subject_all_aspects = NatalAspects(self.subject).all_aspects
+        self.subject_all_aspects = [a.model_dump() for a in self.subject_all_aspects]
 
         self.expected_relevant_aspects = EXPECTED_RELEVANT_ASPECTS
         self.expected_all_aspects = EXPECTED_ALL_ASPECTS
 
     def test_relevant_aspects_length(self):
         assert len(self.expected_relevant_aspects) == len(self.subject_relevant_aspects)
+
 
     def test_relevant_aspects(self):
         for i, aspect in enumerate(self.expected_relevant_aspects):
@@ -32,8 +37,11 @@ class TestNatalAspects:
             assert self.subject_relevant_aspects[i]["p1"] == aspect["p1"]
             assert self.subject_relevant_aspects[i]["p2"] == aspect["p2"]
 
+
+
     def test_all_aspects_length(self):
         assert len(self.expected_all_aspects) == len(self.subject_all_aspects)
+
 
     def test_all_aspects(self):
         for i, aspect in enumerate(self.expected_all_aspects):
@@ -48,6 +56,7 @@ class TestNatalAspects:
             assert round(self.subject_all_aspects[i]["diff"], 2) == round(aspect["diff"], 2)
             assert self.subject_all_aspects[i]["p1"] == aspect["p1"]
             assert self.subject_all_aspects[i]["p2"] == aspect["p2"]
+
 
 
 if __name__ == "__main__":
