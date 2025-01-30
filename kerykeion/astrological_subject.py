@@ -25,7 +25,7 @@ from kerykeion.kr_types import (
     PerspectiveType,
     Planet,
     Houses,
-    Axis,
+    AxialCusps,
 )
 from kerykeion.utilities import (
     get_number_from_name,
@@ -172,7 +172,7 @@ class AstrologicalSubject:
     _houses_degree_ut: list[float]
     planets_names_list: list[Planet]
     houses_names_list: list[Houses]
-    axes_names_list: list[Axis]
+    axes_names_list: list[AxialCusps]
 
     # Enable or disable features
     disable_chiron: Union[None, bool]
@@ -505,8 +505,8 @@ class AstrologicalSubject:
             self.twelfth_house,
         ]
 
-        # Axis
-        point_type: PointType = "Axis"
+        # AxialCusps
+        point_type: PointType = "AxialCusps"
 
         # Calculate ascendant and medium coeli
         self.ascendant = get_kerykeion_point_from_degree(_ascmc[0], "Ascendant", point_type=point_type)

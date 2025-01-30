@@ -1,5 +1,5 @@
 from kerykeion.kr_types import KerykeionPointModel, KerykeionException, ZodiacSignModel, AstrologicalSubjectModel
-from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, Planet, Houses, Axis
+from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, Planet, Houses, AxialCusps
 from typing import Union, get_args, TYPE_CHECKING
 import logging
 import math
@@ -57,7 +57,7 @@ def get_number_from_name(name: Planet) -> int:
 
 
 def get_kerykeion_point_from_degree(
-    degree: Union[int, float], name: Union[Planet, Houses, Axis], point_type: PointType
+    degree: Union[int, float], name: Union[Planet, Houses, AxialCusps], point_type: PointType
 ) -> KerykeionPointModel:
     """
     Returns a KerykeionPointModel object based on the given degree.
