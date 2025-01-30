@@ -144,7 +144,7 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     planets_names_list: list[Planet]
     """Ordered list of available planets names"""
 
-    axes_names_list: list[AxialCusps]
+    axial_cusps_names_list: list[AxialCusps]
     """Ordered list of available axes names"""
 
     houses_names_list: list[Houses]
