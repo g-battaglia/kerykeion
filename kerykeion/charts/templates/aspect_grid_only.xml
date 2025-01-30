@@ -176,16 +176,16 @@ OpenAstro.org -->
                     style="fill: $planets_color_16;" />
             </g>
         </symbol>
-        <symbol id="First_House">
+        <symbol id="Ascendant">
             <text y="20" style="font-size: 22px; fill: $planets_color_12">As</text>
         </symbol>
-        <symbol id="Tenth_House">
+        <symbol id="Medium_Coeli">
             <text y="20" style="font-size: 20px; fill: $planets_color_13">Mc</text>
         </symbol>
-        <symbol id="Seventh_House">
+        <symbol id="Descendant">
             <text y="20" style="font-size: 22px; fill: $planets_color_14">Ds</text>
         </symbol>
-        <symbol id="Fourth_House">
+        <symbol id="Imum_Coeli">
             <text y="20" style="font-size: 22px; fill: $planets_color_15">Ic</text>
         </symbol>
         <!-- Zodiac -->

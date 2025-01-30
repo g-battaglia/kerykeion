@@ -16,10 +16,10 @@ from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 
 
 AXES_LIST = [
-    "First_House",
-    "Tenth_House",
-    "Seventh_House",
-    "Fourth_House",
+    "Ascendant",
+    "Medium_Coeli",
+    "Descendant",
+    "Imum_Coeli",
 ]
 
 
@@ -54,18 +54,23 @@ class NatalAspects:
         for first in range(len(active_points_list)):
             # Generates the aspects list without repetitions
             for second in range(first + 1, len(active_points_list)):
-                # South Node and North Node are always in opposition
-                nodes_pairs = {
+                # AC/DC, MC/IC and North/South nodes are always in opposition
+                opposite_pairs = {
+                    ("Ascendant", "Descendant"),
+                    ("Descendant", "Ascendant"),
+                    ("Medium_Coeli", "Imum_Coeli"),
+                    ("Imum_Coeli", "Medium_Coeli"),
                     ("True_Node", "True_South_Node"),
                     ("Mean_Node", "Mean_South_Node"),
                     ("True_South_Node", "True_Node"),
                     ("Mean_South_Node", "Mean_Node"),
                 }
-                if (active_points_list[first]["name"], active_points_list[second]["name"]) in nodes_pairs:
+                if (active_points_list[first]["name"], active_points_list[second]["name"]) in opposite_pairs:
                     continue
 
                 aspect = get_aspect_from_two_points(
-                    self.aspects_settings, active_points_list[first]["abs_pos"],
+                    self.aspects_settings,
+                    active_points_list[first]["abs_pos"],
                     active_points_list[second]["abs_pos"]
                 )
 
@@ -109,6 +114,8 @@ class NatalAspects:
         self.all_aspects
 
         aspects_filtered = []
+
+        # Only pick aspects for which the is_active setting (specified usually in kr.config.json file) is true.
         for a in self.all_aspects_list:
             if self.aspects_settings[a["aid"]]["is_active"] == True:
                 aspects_filtered.append(a)
@@ -116,6 +123,8 @@ class NatalAspects:
         axes_list = AXES_LIST
         counter = 0
 
+        # Remove aspects where the orbits exceed the maximum orb thresholds specified in the settings
+        # (specified usually in kr.config.json file)
         aspects_list_subtract = []
         for a in aspects_filtered:
             counter += 1
@@ -144,7 +153,7 @@ if __name__ == "__main__":
 
     # All aspects as a list of dictionaries
     aspects = NatalAspects(johnny)
-    print([a.model_dump() for a in aspects.all_aspects])
+    #print([a.model_dump() for a in aspects.all_aspects])
 
     print("\n")
 

@@ -62,7 +62,8 @@ class TestCharts:
         self.hindi_subject = AstrologicalSubject("Amitabh Bachchan", 1942, 10, 11, 4, 0, "Allahabad", "IN")
 
     def test_natal_chart(self):
-        birth_chart_svg = KerykeionChartSVG(self.first_subject).makeTemplate()
+        s = KerykeionChartSVG(self.first_subject)
+        birth_chart_svg = s.makeTemplate()
         birth_chart_svg_lines = [birth_chart_svg[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(birth_chart_svg), self.SPLIT_LINE_LENGTH)]
 
         if self.WRITE_TO_FILE:
@@ -557,6 +558,7 @@ class TestCharts:
     def test_hindi_chart(self):
         hindi_chart_svg = KerykeionChartSVG(self.hindi_subject, chart_language="HI").makeTemplate()
         self._compare_chart_svg("Amitabh Bachchan - Natal Chart.svg", hindi_chart_svg)
+
 
 if __name__ == "__main__":
     import pytest

@@ -8,6 +8,7 @@ from typing import Union, Optional
 from pydantic import BaseModel
 
 from kerykeion.kr_types import (
+    AxialCusps,
     LunarPhaseEmoji,
     LunarPhaseName,
     Planet,
@@ -57,7 +58,7 @@ class KerykeionPointModel(SubscriptableBaseModel):
     Kerykeion Point Model
     """
 
-    name: Union[Planet, Houses]
+    name: Union[Planet, Houses, AxialCusps]
     quality: Quality
     element: Element
     sign: Sign
@@ -97,6 +98,7 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     local_time: float
     # <-- Deprecated properties
 
+
     # Planets
     sun: KerykeionPointModel
     moon: KerykeionPointModel
@@ -108,6 +110,12 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     uranus: KerykeionPointModel
     neptune: KerykeionPointModel
     pluto: KerykeionPointModel
+
+    # Axes
+    ascendant: KerykeionPointModel
+    descendant: KerykeionPointModel
+    medium_coeli: KerykeionPointModel
+    imum_coeli: KerykeionPointModel
 
     # Optional Planets:
     chiron: Union[KerykeionPointModel, None]
@@ -133,14 +141,17 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     mean_south_node: KerykeionPointModel
     true_south_node: KerykeionPointModel
 
-    lunar_phase: LunarPhaseModel
-    """Lunar phase model"""
-
     planets_names_list: list[Planet]
     """Ordered list of available planets names"""
 
+    axial_cusps_names_list: list[AxialCusps]
+    """Ordered list of available axes names"""
+
     houses_names_list: list[Houses]
     """Ordered list of houses names"""
+
+    lunar_phase: LunarPhaseModel
+    """Lunar phase model"""
 
 
 class EphemerisDictModel(SubscriptableBaseModel):
