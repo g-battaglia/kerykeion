@@ -8,7 +8,7 @@ from typing import Union, Optional
 from pydantic import BaseModel
 
 from kerykeion.kr_types import (
-    Axis,
+    AxialCusps,
     LunarPhaseEmoji,
     LunarPhaseName,
     Planet,
@@ -58,7 +58,7 @@ class KerykeionPointModel(SubscriptableBaseModel):
     Kerykeion Point Model
     """
 
-    name: Union[Planet, Houses, Axis]
+    name: Union[Planet, Houses, AxialCusps]
     quality: Quality
     element: Element
     sign: Sign
@@ -144,7 +144,7 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     planets_names_list: list[Planet]
     """Ordered list of available planets names"""
 
-    axes_names_list: list[Axis]
+    axes_names_list: list[AxialCusps]
     """Ordered list of available axes names"""
 
     houses_names_list: list[Houses]
