@@ -6,6 +6,7 @@
 
 import logging
 import swisseph as swe
+from base64 import b64encode
 from typing import get_args
 
 from kerykeion.settings.kerykeion_settings import get_settings
@@ -597,7 +598,7 @@ class KerykeionChartSVG:
 
         return template_dict
 
-    def makeTemplate(self, minify: bool = False) -> str:
+    def makeTemplate(self, minify: bool = False, b64: bool = False) -> str:
         """Creates the template for the SVG file"""
         td = self._create_template_dictionary()
 
@@ -620,6 +621,9 @@ class KerykeionChartSVG:
         else:
             template = template.replace('"', "'")
 
+        if b64:
+            return b64encode(template.encode()).decode()
+
         return template
 
     def makeSVG(self, minify: bool = False):
@@ -634,7 +638,8 @@ class KerykeionChartSVG:
             output_file.write(self.template)
 
         print(f"SVG Generated Correctly in: {chartname}")
-    def makeWheelOnlyTemplate(self, minify: bool = False):
+
+    def makeWheelOnlyTemplate(self, minify: bool = False, b64: bool = False) -> str:
         """Creates the template for the SVG file with only the wheel"""
 
         with open(Path(__file__).parent / "templates" / "wheel_only.xml", "r", encoding="utf-8", errors="ignore") as f:
@@ -649,6 +654,9 @@ class KerykeionChartSVG:
         else:
             template = template.replace('"', "'")
 
+        if b64:
+            return b64encode(template).decode()
+
         return template
 
     def makeWheelOnlySVG(self, minify: bool = False):
@@ -661,7 +669,8 @@ class KerykeionChartSVG:
             output_file.write(template)
 
         print(f"SVG Generated Correctly in: {chartname}")
-    def makeAspectGridOnlyTemplate(self, minify: bool = False):
+
+    def makeAspectGridOnlyTemplate(self, minify: bool = False, b64: bool = False):
         """Creates the template for the SVG file with only the aspect grid"""
 
         with open(Path(__file__).parent / "templates" / "aspect_grid_only.xml", "r", encoding="utf-8", errors="ignore") as f:
@@ -681,6 +690,9 @@ class KerykeionChartSVG:
 
         else:
             template = template.replace('"', "'")
+
+        if b64:
+            return b64encode(template.encode()).decode()
 
         return template
 
@@ -915,3 +927,8 @@ if __name__ == "__main__":
     kanye_west_subject = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
     kanye_west_chart = KerykeionChartSVG(kanye_west_subject)
     kanye_west_chart.makeSVG()
+
+    # B64 Example
+    b64_subject = AstrologicalSubject("B64", 1977, 6, 8, 8, 45, "Atlanta", "US")
+    b64_chart = KerykeionChartSVG(b64_subject)
+    print(b64_chart.makeTemplate(b64=True))
