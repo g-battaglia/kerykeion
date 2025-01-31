@@ -633,8 +633,7 @@ class KerykeionChartSVG:
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(self.template)
 
-        logging.info(f"SVG Generated Correctly in: {chartname}")
-
+        print(f"SVG Generated Correctly in: {chartname}")
     def makeWheelOnlyTemplate(self, minify: bool = False):
         """Creates the template for the SVG file with only the wheel"""
 
@@ -661,8 +660,7 @@ class KerykeionChartSVG:
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(template)
 
-        logging.info(f"SVG Generated Correctly in: {chartname}")
-
+        print(f"SVG Generated Correctly in: {chartname}")
     def makeAspectGridOnlyTemplate(self, minify: bool = False):
         """Creates the template for the SVG file with only the aspect grid"""
 
@@ -695,8 +693,7 @@ class KerykeionChartSVG:
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(template)
 
-        logging.info(f"SVG Generated Correctly in: {chartname}")
-
+        print(f"SVG Generated Correctly in: {chartname}")
 
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
