@@ -40,7 +40,7 @@ Quality = Literal["Cardinal", "Fixed", "Mutable"]
 """Literal type for Qualities"""
 
 
-ChartType = Literal["Natal", "ExternalNatal", "Synastry", "Transit"]
+ChartType = Literal["Natal", "ExternalNatal", "Synastry", "Transit", "Composite"]
 """Literal type for Chart Types"""
 
 

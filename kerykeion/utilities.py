@@ -318,3 +318,28 @@ def get_available_astrological_points_list(subject: Union["AstrologicalSubject",
         planets_absolute_position_list.append(subject[axis.lower()])
 
     return planets_absolute_position_list
+
+
+def circular_mean(first_position: Union[int, float], second_position: Union[int, float]) -> float:
+    """
+    Computes the circular mean of two astrological positions (e.g., house cusps, planets).
+
+    This function ensures that positions crossing 0° Aries (360°) are correctly averaged,
+    avoiding errors that occur with simple linear means.
+
+    Args:
+        position1 (Union[int, float]): First position in degrees (0-360).
+        position2 (Union[int, float]): Second position in degrees (0-360).
+
+    Returns:
+        float: The circular mean position in degrees (0-360).
+    """
+    x = (math.cos(math.radians(first_position)) + math.cos(math.radians(second_position))) / 2
+    y = (math.sin(math.radians(first_position)) + math.sin(math.radians(second_position))) / 2
+    mean_position = math.degrees(math.atan2(y, x))
+
+    # Ensure the result is within 0-360°
+    if mean_position < 0:
+        mean_position += 360
+
+    return mean_position
