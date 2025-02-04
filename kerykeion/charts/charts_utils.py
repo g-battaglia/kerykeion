@@ -28,6 +28,7 @@ def get_decoded_kerykeion_celestial_point_name(input_planet_name: str, celestial
     else:
         raise KerykeionException(f"Celestial point {input_planet_name} not found in language model.")
 
+
 def decHourJoin(inH: int, inM: int, inS: int) -> float:
     """Join hour, minutes, seconds, timezone integer to hour float.
 
@@ -47,24 +48,42 @@ def decHourJoin(inH: int, inM: int, inS: int) -> float:
 
 
 def degreeDiff(a: Union[int, float], b: Union[int, float]) -> float:
-    """Calculate the difference between two degrees.
+    """Calculate the smallest difference between two angles in degrees.
 
     Args:
-        - a (int | float): first degree
-        - b (int | float): second degree
+        a (int | float): first angle in degrees
+        b (int | float): second angle in degrees
 
     Returns:
-        float: difference between a and b
+        float: smallest difference between a and b (0 to 180 degrees)
     """
+    diff = math.fmod(abs(a - b), 360)  # Assicura che il valore sia in [0, 360)
+    return min(diff, 360 - diff)  # Prende l'angolo più piccolo tra i due possibili
 
-    out = float()
-    if a > b:
-        out = a - b
-    if a < b:
-        out = b - a
-    if out > 180.0:
-        out = 360.0 - out
-    return out
+
+def degreeSum(a: Union[int, float], b: Union[int, float]) -> float:
+    """Calculate the sum of two angles in degrees, normalized to [0, 360).
+
+    Args:
+        a (int | float): first angle in degrees
+        b (int | float): second angle in degrees
+
+    Returns:
+        float: normalized sum of a and b in the range [0, 360)
+    """
+    return math.fmod(a + b, 360) if (a + b) % 360 != 0 else 0.0
+
+
+def normalizeDegree(angle: Union[int, float]) -> float:
+    """Normalize an angle to the range [0, 360).
+
+    Args:
+        angle (int | float): The input angle in degrees.
+
+    Returns:
+        float: The normalized angle in the range [0, 360).
+    """
+    return angle % 360 if angle % 360 != 0 else 0.0
 
 
 def offsetToTz(datetime_offset: Union[datetime.timedelta, None]) -> float:
