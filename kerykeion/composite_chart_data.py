@@ -1,7 +1,7 @@
 from kerykeion import AstrologicalSubject, KerykeionPointModel
-from kerykeion import KerykeionException, NatalAspects
-from kerykeion.kr_types.kr_models import CompositeChartDataModel
-from kerykeion.charts.charts_utils import normalizeDegree
+from kerykeion import KerykeionException
+from kerykeion.kr_types.kr_models import CompositeChartDataModel, AstrologicalSubjectModel
+from kerykeion.kr_types.kr_literals import ZodiacType, PerspectiveType, HousesSystemIdentifier, SiderealMode, Planet, Houses, AxialCusps
 from kerykeion.utilities import (
     get_number_from_name,
     get_kerykeion_point_from_degree,
@@ -18,12 +18,31 @@ import logging
 # TODO: ORDER UTILS!
 
 class CompositeChartDataFactory:
+    model: Union[CompositeChartDataModel, None]
+    aspects: list
+    first_subject: AstrologicalSubjectModel
+    second_subject: AstrologicalSubjectModel
+    name: str
+    zodiac_type: ZodiacType
+    sidereal_mode: Union[SiderealMode, None]
+    houses_system_identifier: HousesSystemIdentifier
+    houses_system_name: str
+    perspective_type: PerspectiveType
+    planets_names_list: list[Planet]
+    houses_names_list: list[Houses]
+    axial_cusps_names_list: list[AxialCusps]
 
-    def __init__(self, first_subject: AstrologicalSubject, second_subject: AstrologicalSubject, chart_name: Union[str, None] = None):
+    def __init__(self, first_subject: Union[AstrologicalSubject, AstrologicalSubjectModel], second_subject: Union[AstrologicalSubject, AstrologicalSubjectModel], chart_name: Union[str, None] = None):
         self.model: Union[CompositeChartDataModel, None] = None
-        self.first_subject = first_subject
-        self.second_subject = second_subject
         self.aspects = []
+
+        # Subjects
+        if isinstance(first_subject, AstrologicalSubject) or isinstance(first_subject, AstrologicalSubjectModel):
+            self.first_subject = first_subject.model() # type: ignore
+            self.second_subject = second_subject.model() # type: ignore
+        else:
+            self.first_subject = first_subject
+            self.second_subject = second_subject
 
         # Name
         if chart_name is None:
@@ -96,7 +115,7 @@ class CompositeChartDataFactory:
     def __getitem__(self, key):
         return getattr(self, key)
 
-    def _calculate_composite_points(self):
+    def _calculate_composite_points_and_houses(self):
         # Houses
         house_degree_list_ut = []
         for house in self.first_subject.houses_names_list:
@@ -146,7 +165,7 @@ class CompositeChartDataFactory:
 
 
     def _calculate_composite_aspects(self):
-        # TODO: Implement this
+        # TODO: Implement this ?
         logging.warning("Composite Aspects not implemented yet")
         self.aspects = []
 
@@ -155,8 +174,7 @@ class CompositeChartDataFactory:
         self.lunar_phase = self.first_subject.lunar_phase
 
     def get_composite_chart_data(self):
-        self._calculate_composite_points()
-        self._calculate_composite_aspects()
+        self._calculate_composite_points_and_houses()
         self._calculate_composite_lunar_phase()
 
         return CompositeChartDataModel(

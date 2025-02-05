@@ -23,7 +23,8 @@ from kerykeion.kr_types import (
     HousesSystemIdentifier,
     Houses,
     SignsEmoji,
-    RelationshipScoreDescription
+    RelationshipScoreDescription,
+    PerspectiveType
 )
 
 
@@ -88,7 +89,7 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     sidereal_mode: Union[SiderealMode, None]
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
-    perspective_type: str
+    perspective_type: PerspectiveType
     iso_formatted_local_datetime: str
     iso_formatted_utc_datetime: str
     julian_day: float
@@ -201,14 +202,14 @@ class RelationshipScoreModel(SubscriptableBaseModel):
 class CompositeChartDataModel(SubscriptableBaseModel):
     # Data
     name: str
-    #first_subject: AstrologicalSubjectModel
-    #second_subject: AstrologicalSubjectModel
+    first_subject: AstrologicalSubjectModel
+    second_subject: AstrologicalSubjectModel
 
     zodiac_type: ZodiacType
     sidereal_mode: Union[SiderealMode, None]
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
-    perspective_type: str
+    perspective_type: PerspectiveType
 
     # Planets
     sun: KerykeionPointModel

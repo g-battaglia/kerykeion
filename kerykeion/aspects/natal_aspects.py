@@ -5,6 +5,7 @@
 
 from pathlib import Path
 from kerykeion import AstrologicalSubject
+from kerykeion.kr_types import CompositeChartDataModel
 import logging
 from typing import Union
 from kerykeion.settings.kerykeion_settings import get_settings
@@ -29,7 +30,7 @@ class NatalAspects:
     Generates an object with all the aspects of a birthcart.
     """
 
-    user: Union[AstrologicalSubject, AstrologicalSubjectModel]
+    user: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeChartDataModel]
     new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None
 
     def __post_init__(self):
