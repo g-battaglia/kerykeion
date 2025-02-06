@@ -108,12 +108,12 @@ OpenAstro.org -->
             <rect class='background-rectangle' x='0' y='0' width='820'
                 height='550' style='fill: var(--kerykeion-chart-color-paper-1)' />
             <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Jeanne Moreau</text>
-            <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Informations:</text>
-            <text x='20' y='62' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Paris</text>
-            <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>1928-01-23 10:00 [+00:00]</text>
-            <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Latitude: 48°51'12' Nord</text>
-            <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Longitude: 2°20'56' Est</text>
-            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Type: Natal</text>
+            <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Informations:</text>
+            <text x='20' y='62' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Paris</text>
+            <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1928-01-23 10:00 [+00:00]</text>
+            <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Latitude: 48°51'12' Nord</text>
+            <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Longitude: 2°20'56' Est</text>
+            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Type: Natal</text>
             <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Placidus Houses</text>
             <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Tropical Zodiac</text>
             <text x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Phase Lunaire jour: 1</text>
