@@ -19,7 +19,6 @@ class ChartTemplateDictionary(TypedDict):
     bottom_left_2: str
     bottom_left_3: str
     bottom_left_4: str
-    moon_phase: str
     top_left_1: str
     top_left_2: str
     top_left_3: str
@@ -90,3 +89,7 @@ class ChartTemplateDictionary(TypedDict):
     earth_string: str
     air_string: str
     water_string: str
+
+    lunar_phase_rotate: str
+    lunar_phase_circle_center_x: str
+    lunar_phase_circle_radius: str

@@ -32,7 +32,7 @@ from kerykeion.charts.charts_utils import (
     draw_houses_cusps_and_text_number,
     draw_transit_aspect_list,
     draw_transit_aspect_grid,
-    draw_moon_phase,
+    calculate_moon_phase_chart_params,
     draw_house_grid,
     draw_planet_grid,
 )
@@ -444,10 +444,14 @@ class KerykeionChartSVG:
             template_dict["bottom_left_4"] = ""
 
         # Draw moon phase
-        template_dict['moon_phase'] = draw_moon_phase(
+        moon_phase_dict = calculate_moon_phase_chart_params(
             self.user.lunar_phase["degrees_between_s_m"],
             self.geolat
         )
+
+        template_dict["lunar_phase_rotate"] = moon_phase_dict["lunar_phase_rotate"]
+        template_dict["lunar_phase_circle_center_x"] = moon_phase_dict["circle_center_x"]
+        template_dict["lunar_phase_circle_radius"] = moon_phase_dict["circle_radius"]
 
         # Set location string
         if len(self.location) > 35:
@@ -591,7 +595,6 @@ class KerykeionChartSVG:
         template_dict["earth_string"] = f"{self.language_settings['earth']} {earth_percentage}%"
         template_dict["air_string"] = f"{self.language_settings['air']} {air_percentage}%"
         template_dict["water_string"] = f"{self.language_settings['water']} {water_percentage}%"
-
 
         # Draw planet grid
         if self.chart_type in ["Transit", "Synastry"]:

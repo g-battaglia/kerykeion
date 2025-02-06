@@ -739,22 +739,19 @@ def draw_transit_aspect_list(
     return out
 
 
-def draw_moon_phase(
+def calculate_moon_phase_chart_params(
     degrees_between_sun_and_moon: float,
     latitude: float
-) -> str:
+) -> dict:
     """
-    Draws the moon phase based on the degrees between the sun and the moon.
+    Calculate the parameters for the moon phase chart.
 
     Parameters:
     - degrees_between_sun_and_moon (float): The degrees between the sun and the moon.
     - latitude (float): The latitude for rotation calculation.
-    - lunar_phase_outline_color (str): The color for the lunar phase outline.
-    - dark_color (str): The color for the dark part of the moon.
-    - light_color (str): The color for the light part of the moon.
 
     Returns:
-    - str: The SVG element as a string.
+    - dict: The moon phase chart parameters.
     """
     deg = degrees_between_sun_and_moon
 
@@ -798,20 +795,11 @@ def draw_moon_phase(
     # Calculate rotation based on latitude
     lunar_phase_rotate = -90.0 - latitude
 
-    # Return the SVG element as a string
-    return (
-        f'<g transform="rotate({lunar_phase_rotate} 20 10)">'
-        f'    <defs>'
-        f'        <clipPath id="moonPhaseCutOffCircle">'
-        f'        <circle cx="20" cy="10" r="10" />'
-        f'        </clipPath>'
-        f'    </defs>'
-        f'    <circle cx="20" cy="10" r="10" style="fill: var(--kerykeion-chart-color-lunar-phase-0)" />'
-        f'    <circle cx="{circle_center_x}" cy="10" r="{circle_radius}" style="fill: var(--kerykeion-chart-color-lunar-phase-1)" clip-path="url(#moonPhaseCutOffCircle)" />'
-        f'    <circle cx="20" cy="10" r="10" style="fill: none; stroke: var(--kerykeion-chart-color-lunar-phase-0); stroke-width: 0.5px; stroke-opacity: 0.5" />'
-        f'</g>'
-    )
-
+    return {
+        "circle_center_x": circle_center_x,
+        "circle_radius": circle_radius,
+        "lunar_phase_rotate": lunar_phase_rotate,
+    }
 
 def draw_house_grid(
         main_subject_houses_list: list[KerykeionPointModel],
