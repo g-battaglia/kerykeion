@@ -108,12 +108,12 @@ OpenAstro.org -->
             <rect class='background-rectangle' x='0' y='0' width='820'
                 height='550' style='fill: var(--kerykeion-chart-color-paper-1)' />
             <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Cristiano Ronaldo</text>
-            <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Informações:</text>
-            <text x='20' y='62' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Funchal</text>
-            <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>1985-02-05 05:25 [+00:00]</text>
-            <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Latitude: 32°39'56' Norte</text>
-            <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Longitude: 16°55'32' Oeste</text>
-            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 11px'>Tipo: Natal</text>
+            <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Informações:</text>
+            <text x='20' y='62' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Funchal</text>
+            <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1985-02-05 05:25 [+00:00]</text>
+            <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Latitude: 32°39'56' Norte</text>
+            <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Longitude: 16°55'32' Oeste</text>
+            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Tipo: Natal</text>
             <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Placidus Houses</text>
             <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Tropical Zodiac</text>
             <text x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Fase lunar dia: 14</text>

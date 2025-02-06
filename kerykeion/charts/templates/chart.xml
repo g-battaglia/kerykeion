@@ -26,12 +26,12 @@ OpenAstro.org -->
             <rect class="background-rectangle" x="0" y="0" width="$chart_width"
                 height="$chart_height" style="fill: $paper_color_1" />
             <text x="20" y="22" style="fill: $paper_color_0; font-size: 24px">$stringTitle</text>
-            <text x="20" y="50" style="fill: $paper_color_0; font-size: 11px">$top_left_0</text>
-            <text x="20" y="62" style="fill: $paper_color_0; font-size: 11px">$top_left_1</text>
-            <text x="20" y="74" style="fill: $paper_color_0; font-size: 11px">$top_left_2</text>
-            <text x="20" y="86" style="fill: $paper_color_0; font-size: 11px">$top_left_3</text>
-            <text x="20" y="98" style="fill: $paper_color_0; font-size: 11px">$top_left_4</text>
-            <text x="20" y="110" style="fill: $paper_color_0; font-size: 11px">$top_left_5</text>
+            <text x="20" y="50" style="fill: $paper_color_0; font-size: 10px">$top_left_0</text>
+            <text x="20" y="62" style="fill: $paper_color_0; font-size: 10px">$top_left_1</text>
+            <text x="20" y="74" style="fill: $paper_color_0; font-size: 10px">$top_left_2</text>
+            <text x="20" y="86" style="fill: $paper_color_0; font-size: 10px">$top_left_3</text>
+            <text x="20" y="98" style="fill: $paper_color_0; font-size: 10px">$top_left_4</text>
+            <text x="20" y="110" style="fill: $paper_color_0; font-size: 10px">$top_left_5</text>
             <text x="20" y="452" style="fill: $paper_color_0; font-size: 10px">$bottom_left_0</text>
             <text x="20" y="466" style="fill: $paper_color_0; font-size: 10px">$bottom_left_1</text>
             <text x="20" y="480" style="fill: $paper_color_0; font-size: 10px">$bottom_left_2</text>
