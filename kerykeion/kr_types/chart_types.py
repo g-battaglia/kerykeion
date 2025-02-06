@@ -81,8 +81,12 @@ class ChartTemplateDictionary(TypedDict):
     makeZodiac: str
     makeHouses: str
     makePlanets: str
-    elements_percentages: str
     makePlanetGrid: str
     makeHousesGrid: str
 
     color_style_tag: str
+
+    fire_string: str
+    earth_string: str
+    air_string: str
+    water_string: str
