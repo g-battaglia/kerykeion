@@ -370,7 +370,7 @@ class KerykeionChartSVG:
             ChartTemplateDictionary: A dictionary with template data for the chart.
         """
         # Initialize template dictionary
-        template_dict: ChartTemplateDictionary = dict()  # type: ignore
+        template_dict: dict = {}
 
         # Set the color style tag
         template_dict["color_style_tag"] = self.color_style_tag
@@ -378,14 +378,6 @@ class KerykeionChartSVG:
         # Set chart dimensions
         template_dict["chart_height"] = self.height
         template_dict["chart_width"] = self.width
-
-        # Set chart name
-        if self.chart_type in ["Synastry", "Transit"]:
-            template_dict["top_left_0"] = f"{self.user.name}:"
-        elif self.chart_type in ["Natal", "ExternalNatal"]:
-            template_dict["top_left_0"] = f'{self.language_settings["info"]}:'
-        elif self.chart_type == "Composite":
-            template_dict["top_left_0"] = ""
 
         # Set viewbox based on chart type
         if self.chart_type in ["Natal", "ExternalNatal", "Composite"]:
@@ -469,6 +461,14 @@ class KerykeionChartSVG:
                 template_dict["top_left_1"] = self.location[:35] + "..."
         else:
             template_dict["top_left_1"] = self.location
+
+        # Set chart name
+        if self.chart_type in ["Synastry", "Transit"]:
+            template_dict["top_left_0"] = f"{self.user.name}:"
+        elif self.chart_type in ["Natal", "ExternalNatal"]:
+            template_dict["top_left_0"] = f'{self.language_settings["info"]}:'
+        elif self.chart_type == "Composite":
+            template_dict["top_left_0"] = ""
 
         # Set additional information for Synastry chart type
         if self.chart_type == "Synastry":
@@ -633,7 +633,7 @@ class KerykeionChartSVG:
             custom_format = custom_format[:-3] + ':' + custom_format[-3:]
             template_dict["top_left_2"] = f"{custom_format}"
 
-        return template_dict
+        return ChartTemplateDictionary(**template_dict)
 
     def makeTemplate(self, minify: bool = False) -> str:
         """Creates the template for the SVG file"""
