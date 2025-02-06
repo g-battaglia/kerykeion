@@ -190,9 +190,9 @@ class KerykeionChartSVG:
             self.geolon =  self.user.lng
 
         elif self.chart_type == "Composite":
-            self.location = "TODO: Location"
-            self.geolat = self.user.first_subject.lat
-            self.geolon = self.user.first_subject.lng
+            self.location = ""
+            self.geolat = (self.user.first_subject.lat + self.user.second_subject.lat) / 2
+            self.geolon = (self.user.first_subject.lng + self.user.second_subject.lng) / 2
 
         elif self.chart_type in ["Transit"]:
             self.location = self.t_user.city
@@ -385,7 +385,7 @@ class KerykeionChartSVG:
         elif self.chart_type in ["Natal", "ExternalNatal"]:
             template_dict["stringName"] = f'{self.language_settings["info"]}:'
         elif self.chart_type == "Composite":
-            template_dict["stringName"] = f'TODO: stringName'
+            template_dict["stringName"] = ""
 
         # Set viewbox based on chart type
         if self.chart_type in ["Natal", "ExternalNatal", "Composite"]:
@@ -427,8 +427,7 @@ class KerykeionChartSVG:
         elif self.chart_type in ["Natal", "ExternalNatal"]:
             template_dict["stringTitle"] = self.user.name
         elif self.chart_type == "Composite":
-            template_dict["stringTitle"] = f"TODO: stringTitle"
-
+            template_dict["stringTitle"] = f"{self.user.first_subject.name} {self.language_settings['and_word']} {self.user.second_subject.name}"
         if self.user.zodiac_type == 'Tropic':
             zodiac_info = "Tropical Zodiac"
 
@@ -449,9 +448,9 @@ class KerykeionChartSVG:
             template_dict["bottomLeft3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
             template_dict["bottomLeft4"] = f'{self.t_user.perspective_type}'
         elif self.chart_type == "Composite":
-            template_dict["bottomLeft2"] = "TODO: bottomLeft2"
-            template_dict["bottomLeft3"] = "TODO: bottomLeft3"
-            template_dict["bottomLeft4"] = "TODO: bottomLeft4"
+            template_dict["bottomLeft2"] = f'{self.user.first_subject.perspective_type}'
+            template_dict["bottomLeft3"] = ""
+            template_dict["bottomLeft4"] = ""
 
         # Draw moon phase
         template_dict['moon_phase'] = draw_moon_phase(
@@ -476,12 +475,17 @@ class KerykeionChartSVG:
             template_dict["stringLat"] = f"{self.t_user.name}: "
             template_dict["stringLon"] = self.t_user.city
             template_dict["stringPosition"] = f"{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hour:02d}:{self.t_user.minute:02d}"
+        elif self.chart_type == "Composite":
+            template_dict["stringLat"] = ""
+            template_dict["stringLon"] = ""
+            template_dict["stringPosition"] = ""
         else:
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings['north'], self.language_settings['south'])
             longitude_string = convert_longitude_coordinate_to_string(self.geolon, self.language_settings['east'], self.language_settings['west'])
             template_dict["stringLat"] = f"{self.language_settings['latitude']}: {latitude_string}"
             template_dict["stringLon"] = f"{self.language_settings['longitude']}: {longitude_string}"
             template_dict["stringPosition"] = f"{self.language_settings['type']}: {self.chart_type}"
+
 
         # Set paper colors
         template_dict["paper_color_0"] = self.chart_colors_settings["paper_0"]
@@ -606,9 +610,14 @@ class KerykeionChartSVG:
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
             )
         else:
+            if self.chart_type == "Composite":
+                subject_name = f"{self.user.first_subject.name} {self.language_settings['and_word']} {self.user.second_subject.name}"
+            else:
+                subject_name = self.user.name
+
             template_dict["makePlanetGrid"] = draw_planet_grid(
                 planets_and_houses_grid_title=self.language_settings["planets_and_house"],
-                subject_name=self.user.name if self.chart_type in ["Natal", "ExternalNatal"] else "TODO: Name",
+                subject_name=subject_name,
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
@@ -617,7 +626,7 @@ class KerykeionChartSVG:
 
         # Set date time string
         if self.chart_type in ["Composite"]:
-            template_dict["stringDateTime"] = "TODO: StringDateTime"
+            template_dict["stringDateTime"] = ""
         else:
             dt = datetime.fromisoformat(self.user.iso_formatted_local_datetime)
             custom_format = dt.strftime('%Y-%m-%d %H:%M [%z]')
@@ -731,7 +740,7 @@ if __name__ == "__main__":
     setup_logging(level="debug")
 
     first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+    second = AstrologicalSubject("Yoko Ono", 1933, 2, 18, 8, 30, "Tokyo", "JP")
 
     factory = CompositeChartDataFactory(first, second)
     data = factory.get_composite_chart_data()
