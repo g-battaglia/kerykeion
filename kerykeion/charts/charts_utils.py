@@ -289,49 +289,6 @@ def draw_aspect_line(
         f"</g>"
     )
 
-
-def draw_elements_percentages(
-    fire_label: str,
-    fire_points: float,
-    earth_label: str,
-    earth_points: float,
-    air_label: str,
-    air_points: float,
-    water_label: str,
-    water_points: float,
-) -> str:
-    """Draw the elements grid.
-
-    Args:
-        - fire_label (str): Label for fire
-        - fire_points (float): Points for fire
-        - earth_label (str): Label for earth
-        - earth_points (float): Points for earth
-        - air_label (str): Label for air
-        - air_points (float): Points for air
-        - water_label (str): Label for water
-        - water_points (float): Points for water
-
-    Returns:
-        str: The SVG elements grid as a string.
-    """
-    total = fire_points + earth_points + air_points + water_points
-
-    fire_percentage = int(round(100 * fire_points / total))
-    earth_percentage = int(round(100 * earth_points / total))
-    air_percentage = int(round(100 * air_points / total))
-    water_percentage = int(round(100 * water_points / total))
-
-    return (
-        f'<g transform="translate(-30,79)">'
-        f'<text y="0" style="fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;">{fire_label}  {str(fire_percentage)}%</text>'
-        f'<text y="12" style="fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;">{earth_label} {str(earth_percentage)}%</text>'
-        f'<text y="24" style="fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;">{air_label}   {str(air_percentage)}%</text>'
-        f'<text y="36" style="fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;">{water_label} {str(water_percentage)}%</text>'
-        f"</g>"
-    )
-
-
 def convert_decimal_to_degree_string(dec: float, format_type: Literal["1", "2", "3"] = "3") -> str:
     """
     Converts a decimal float to a degrees string in the specified format.

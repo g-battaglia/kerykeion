@@ -22,7 +22,6 @@ from kerykeion.charts.charts_utils import (
     convert_latitude_coordinate_to_string,
     convert_longitude_coordinate_to_string,
     draw_aspect_line,
-    draw_elements_percentages,
     draw_transit_ring_degree_steps,
     draw_degree_ring,
     draw_transit_ring,
@@ -581,16 +580,18 @@ class KerykeionChartSVG:
             )
 
         # Draw elements percentages
-        template_dict["elements_percentages"] = draw_elements_percentages(
-            self.language_settings['fire'],
-            self.fire,
-            self.language_settings['earth'],
-            self.earth,
-            self.language_settings['air'],
-            self.air,
-            self.language_settings['water'],
-            self.water,
-        )
+        total = self.fire + self.water + self.earth + self.air
+
+        fire_percentage = int(round(100 * self.fire / total))
+        earth_percentage = int(round(100 * self.earth / total))
+        air_percentage = int(round(100 * self.air / total))
+        water_percentage = int(round(100 * self.water / total))
+
+        template_dict["fire_string"] = f"{self.language_settings['fire']} {fire_percentage}%"
+        template_dict["earth_string"] = f"{self.language_settings['earth']} {earth_percentage}%"
+        template_dict["air_string"] = f"{self.language_settings['air']} {air_percentage}%"
+        template_dict["water_string"] = f"{self.language_settings['water']} {water_percentage}%"
+
 
         # Draw planet grid
         if self.chart_type in ["Transit", "Synastry"]:
