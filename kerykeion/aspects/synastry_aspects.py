@@ -13,6 +13,8 @@ from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+from kerykeion.kr_types.kr_literals import AxialCusps, Planet
 from typing import Union
 
 
@@ -26,6 +28,7 @@ class SynastryAspects(NatalAspects):
         kr_object_one: Union[AstrologicalSubject, AstrologicalSubjectModel],
         kr_object_two: Union[AstrologicalSubject, AstrologicalSubjectModel],
         new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
+        active_points: list[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS,
     ):
         # Subjects
         self.first_user = kr_object_one
@@ -38,6 +41,7 @@ class SynastryAspects(NatalAspects):
         self.celestial_points = self.settings.celestial_points
         self.aspects_settings = self.settings.aspects
         self.axes_orbit_settings = self.settings.general_settings.axes_orbit
+        self.active_points = active_points
 
         # Private variables of the aspects
         self._all_aspects: Union[list, None] = None
@@ -55,8 +59,8 @@ class SynastryAspects(NatalAspects):
             return self._all_aspects
 
         # Celestial Points Lists
-        first_active_points_list = get_active_points_list(self.first_user, self.settings)
-        second_active_points_list = get_active_points_list(self.second_user, self.settings)
+        first_active_points_list = get_active_points_list(self.first_user, self.settings, self.active_points)
+        second_active_points_list = get_active_points_list(self.second_user, self.settings, self.active_points)
 
         self.all_aspects_list = []
 
