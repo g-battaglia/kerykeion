@@ -16,7 +16,7 @@ from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointMode
 from kerykeion.kr_types import ChartTemplateDictionary
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, CompositeChartDataModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel, KerykeionSettingsModel
-from kerykeion.kr_types.kr_literals import KerykeionChartTheme, KerykeionChartLanguage
+from kerykeion.kr_types.kr_literals import KerykeionChartTheme, KerykeionChartLanguage, AxialCusps, Planet
 from kerykeion.charts.charts_utils import (
     draw_zodiac_slice,
     convert_latitude_coordinate_to_string,
@@ -38,12 +38,12 @@ from kerykeion.charts.charts_utils import (
 )
 from kerykeion.charts.draw_planets import draw_planets # type: ignore
 from kerykeion.utilities import get_houses_list
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 from pathlib import Path
 from scour.scour import scourString
 from string import Template
 from typing import Union, List, Literal
 from datetime import datetime
-
 
 class KerykeionChartSVG:
     """
@@ -61,6 +61,8 @@ class KerykeionChartSVG:
             That's useful if you want to use your own CSS file customizing the value of the default theme variables.
         - double_chart_aspect_grid_type: Set the type of the aspect grid for the double chart (transit or synastry). (Default: list.)
         - chart_language: Set the language for the chart (default: EN).
+        - active_points: Set the active points for the chart (default: DEFAULT_ACTIVE_POINTS). Example:
+            ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "True_Node", "True_South_Node", "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
     """
 
     # Constants
@@ -113,6 +115,7 @@ class KerykeionChartSVG:
         theme: Union[KerykeionChartTheme, None] = "classic",
         double_chart_aspect_grid_type: Literal["list", "table"] = "list",
         chart_language: KerykeionChartLanguage = "EN",
+        active_points: List[Union[Planet, AxialCusps]] = DEFAULT_ACTIVE_POINTS,
     ):
         # Directories:
         home_directory = Path.home()
@@ -132,8 +135,10 @@ class KerykeionChartSVG:
 
         self.available_planets_setting = []
         for body in self.planets_settings:
-            if body['is_active'] == False:
+            if body["name"] not in active_points:
                 continue
+            else:
+                body["is_active"] = True
 
             self.available_planets_setting.append(body)
 
@@ -147,8 +152,8 @@ class KerykeionChartSVG:
             self.available_kerykeion_celestial_points.append(self.user.get(body))
 
         # Makes the sign number list.
-        if self.chart_type == "Natal" or self.chart_type == "ExternalNatal" or self.chart_type == "Composite":
-            natal_aspects_instance = NatalAspects(self.user, new_settings_file=self.new_settings_file)
+        if self.chart_type == "Natal" or self.chart_type == "ExternalNatal":
+            natal_aspects_instance = NatalAspects(self.user, new_settings_file=self.new_settings_file, active_points=active_points)
             self.aspects_list = natal_aspects_instance.relevant_aspects
 
         elif self.chart_type == "Transit" or self.chart_type == "Synastry":
@@ -159,7 +164,7 @@ class KerykeionChartSVG:
             self.t_user = second_obj
 
             # Aspects
-            self.aspects_list = SynastryAspects(self.user, self.t_user, new_settings_file=self.new_settings_file).relevant_aspects
+            self.aspects_list = SynastryAspects(self.user, self.t_user, new_settings_file=self.new_settings_file, active_points=active_points).relevant_aspects
 
             self.t_available_kerykeion_celestial_points = []
             for body in available_celestial_points_names:
