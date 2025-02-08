@@ -9,6 +9,7 @@ from kerykeion.settings import KerykeionSettingsModel
 from swisseph import difdeg2n
 from typing import Union
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
+from kerykeion.kr_types.kr_literals import Planet, AxialCusps
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel, KerykeionSettingsAspectModel
 
 
@@ -72,7 +73,7 @@ def planet_id_decoder(planets_settings: list[KerykeionSettingsCelestialPointMode
 
 
 def get_active_points_list(
-    subject: Union[AstrologicalSubject, AstrologicalSubjectModel], settings: Union[KerykeionSettingsModel, dict]
+    subject: Union[AstrologicalSubject, AstrologicalSubjectModel], settings: Union[KerykeionSettingsModel, dict], active_points: list = []
 ) -> list:
     """
     Given an astrological subject and the settings, return a list of the active points.
@@ -85,7 +86,7 @@ def get_active_points_list(
     """
     point_list = []
     for planet in settings["celestial_points"]:
-        if planet["is_active"] == True:
+        if planet["name"] in active_points:
             point_list.append(subject[planet["name"].lower()])
 
     return point_list
