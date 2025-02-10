@@ -453,7 +453,7 @@ class KerykeionChartSVG:
             mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
             zodiac_info = f"Ayanamsa: {mode_name}"
 
-        template_dict["bottomLeft0"] = f"{self.user.houses_system_name} Houses"
+        template_dict["bottomLeft0"] = f"{self.user.houses_system_name.capitalize()} Houses"
         template_dict["bottomLeft1"] = zodiac_info
 
         if self.chart_type in ["Natal", "ExternalNatal", "Synastry"]:
