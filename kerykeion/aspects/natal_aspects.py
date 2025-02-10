@@ -11,10 +11,10 @@ from kerykeion.settings.kerykeion_settings import get_settings
 from dataclasses import dataclass, field
 from functools import cached_property
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
-from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect
 from kerykeion.kr_types.kr_literals import AxialCusps, Planet
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
 
 
 
@@ -35,6 +35,7 @@ class NatalAspects:
     user: Union[AstrologicalSubject, AstrologicalSubjectModel]
     new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None
     active_points: List[Union[AxialCusps, Planet]] = field(default_factory=lambda: DEFAULT_ACTIVE_POINTS)
+    active_aspects: List[ActiveAspect] = field(default_factory=lambda: DEFAULT_ACTIVE_ASPECTS)
 
     def __post_init__(self):
         self.settings = get_settings(self.new_settings_file)
@@ -112,17 +113,15 @@ class NatalAspects:
         the most important are hardcoded.
         Set the list with set_points and creating a list with the names
         or the numbers of the houses.
-        The relevant aspects are the ones that are set as active ("is_active") in the settings.
+        The relevant aspects are the ones that are set as looping in the available_aspects list.
         """
 
         logging.debug("Relevant aspects not already calculated, calculating now...")
         self.all_aspects
 
         aspects_filtered = []
-
-        # Only pick aspects for which the is_active setting (specified usually in kr.config.json file) is true.
         for a in self.all_aspects_list:
-            if self.aspects_settings[a["aid"]]["is_active"] == True:
+            if a["aspect"] in [aspect["name"] for aspect in self.active_aspects]:
                 aspects_filtered.append(a)
 
         axes_list = AXES_LIST
