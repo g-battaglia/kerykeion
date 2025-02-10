@@ -4,7 +4,8 @@
 """
 
 
-from typing import Union, Optional, TypedDict
+from typing import Union, Optional
+from typing_extensions import TypedDict
 from pydantic import BaseModel
 from kerykeion.kr_types.kr_literals import AspectName
 

@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing_extensions import TypedDict
 
 
 class ChartTemplateDictionary(TypedDict):
@@ -30,7 +30,7 @@ class ChartTemplateDictionary(TypedDict):
     paper_color_0: str
     # Background color of the chart
     paper_color_1: str
-    
+
     # Planets colors, from 0 to 16 (0 is the Sun)
     planets_color_0: str
     planets_color_1: str
@@ -49,7 +49,7 @@ class ChartTemplateDictionary(TypedDict):
     planets_color_14: str
     planets_color_15: str
     planets_color_16: str
-    
+
     # Zodiac colors, from 0 to 11 (0 is Aries)
     zodiac_color_0: str
     zodiac_color_1: str
