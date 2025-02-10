@@ -94,7 +94,6 @@ class NatalAspects:
                 name = aspect["name"]
                 orbit = aspect["orbit"]
                 aspect_degrees = aspect["aspect_degrees"]
-                aid = aspect["aid"]
                 diff = aspect["diff"]
 
                 if verdict == True:
@@ -106,11 +105,9 @@ class NatalAspects:
                         aspect=name,
                         orbit=orbit,
                         aspect_degrees=aspect_degrees,
-                        aid=aid,
                         diff=diff,
                         p1=planet_id_decoder(self.celestial_points, active_points_list[first]["name"]),
                         p2=planet_id_decoder(self.celestial_points, active_points_list[second]["name"]),
-                        is_major=self.aspects_settings[aid]["is_major"],
                     )
                     self.all_aspects_list.append(aspect_model)
 

@@ -170,11 +170,9 @@ class AspectModel(SubscriptableBaseModel):
     aspect: str
     orbit: float
     aspect_degrees: int
-    aid: int
     diff: float
     p1: int
     p2: int
-    is_major: bool
 
 
 class ZodiacSignModel(SubscriptableBaseModel):
