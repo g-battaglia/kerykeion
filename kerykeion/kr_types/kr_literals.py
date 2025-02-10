@@ -105,11 +105,29 @@ Usually the standard is "Apparent Geocentric"
 
 
 SignsEmoji = Literal["♈️", "♉️", "♊️", "♋️", "♌️", "♍️", "♎️", "♏️", "♐️", "♑️", "♒️", "♓️"]
-
+"""Literal type for Zodiac Signs Emoji"""
 
 KerykeionChartTheme = Literal["light", "dark", "dark-high-contrast", "classic"]
+"""Literal type for Kerykeion Chart Themes"""
 
 
 KerykeionChartLanguage = Literal["EN", "FR", "PT", "IT", "CN", "ES", "RU", "TR", "DE", "HI"]
+"""Literal type for Kerykeion Chart Languages"""
 
 RelationshipScoreDescription = Literal["Minimal", "Medium", "Important", "Very Important", "Exceptional", "Rare Exceptional"]
+"""Literal type for Relationship Score Description"""
+
+AspectName = Literal[
+    "conjunction",
+    "semi-sextile",
+    "semi-square",
+    "sextile",
+    "quintile",
+    "square",
+    "trine",
+    "sesquiquadrate",
+    "biquintile",
+    "quincunx",
+    "opposition"
+]
+"""Literal type for all the available aspects names"""

@@ -4,8 +4,9 @@
 """
 
 
-from typing import Union, Optional
+from typing import Union, Optional, TypedDict
 from pydantic import BaseModel
+from kerykeion.kr_types.kr_literals import AspectName
 
 from kerykeion.kr_types import (
     AxialCusps,
@@ -196,3 +197,8 @@ class RelationshipScoreModel(SubscriptableBaseModel):
     is_destiny_sign: bool
     aspects: list[RelationshipScoreAspectModel]
     subjects: list[AstrologicalSubjectModel]
+
+
+class ActiveAspect(TypedDict):
+    name: AspectName
+    orb: int

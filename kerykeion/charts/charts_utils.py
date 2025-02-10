@@ -742,6 +742,7 @@ def draw_transit_aspect_list(
         inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspects_list[i]["p1"]]["name"]}" />'
 
         # aspect symbol
+        # TODO: Remove the "degree" element EVERYWHERE!
         inner_path += f'<use  x="15" y="0" xlink:href="#orb{aspects_settings[aspects_list[i]["aid"]]["degree"]}" />'
 
         # second planet symbol

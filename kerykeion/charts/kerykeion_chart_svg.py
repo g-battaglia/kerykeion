@@ -12,7 +12,7 @@ from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.synastry_aspects import SynastryAspects
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
-from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointModel, Sign
+from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointModel, Sign, ActiveAspect
 from kerykeion.kr_types import ChartTemplateDictionary
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel, KerykeionSettingsModel
@@ -39,7 +39,7 @@ from kerykeion.charts.charts_utils import (
 )
 from kerykeion.charts.draw_planets import draw_planets # type: ignore
 from kerykeion.utilities import get_houses_list
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
 from pathlib import Path
 from scour.scour import scourString
 from string import Template
@@ -64,6 +64,15 @@ class KerykeionChartSVG:
         - chart_language: Set the language for the chart (default: EN).
         - active_points: Set the active points for the chart (default: DEFAULT_ACTIVE_POINTS). Example:
             ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "True_Node", "True_South_Node", "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
+        - active_aspects: Set the active aspects for the chart (default: DEFAULT_ACTIVE_ASPECTS). Example:
+            [
+                {"name": "conjunction", "orb": 10},
+                {"name": "opposition", "orb": 10},
+                {"name": "trine", "orb": 8},
+                {"name": "sextile", "orb": 6},
+                {"name": "square", "orb": 5},
+                {"name": "quintile", "orb": 1},
+            ]
     """
 
     # Constants
@@ -84,6 +93,12 @@ class KerykeionChartSVG:
     new_output_directory: Union[Path, None]
     new_settings_file: Union[Path, None, KerykeionSettingsModel, dict]
     output_directory: Path
+    new_settings_file: Union[Path, None, KerykeionSettingsModel, dict]
+    theme: Union[KerykeionChartTheme, None]
+    double_chart_aspect_grid_type: Literal["list", "table"]
+    chart_language: KerykeionChartLanguage
+    active_points: List[Union[Planet, AxialCusps]]
+    active_aspects: List[ActiveAspect]
 
     # Internal properties
     fire: float
@@ -117,11 +132,13 @@ class KerykeionChartSVG:
         double_chart_aspect_grid_type: Literal["list", "table"] = "list",
         chart_language: KerykeionChartLanguage = "EN",
         active_points: List[Union[Planet, AxialCusps]] = DEFAULT_ACTIVE_POINTS,
+        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
     ):
-        # Directories:
         home_directory = Path.home()
         self.new_settings_file = new_settings_file
         self.chart_language = chart_language
+        self.active_points = active_points
+        self.active_aspects = active_aspects
 
         if new_output_directory:
             self.output_directory = Path(new_output_directory)
@@ -154,7 +171,11 @@ class KerykeionChartSVG:
 
         # Makes the sign number list.
         if self.chart_type == "Natal" or self.chart_type == "ExternalNatal":
-            natal_aspects_instance = NatalAspects(self.user, new_settings_file=self.new_settings_file, active_points=active_points)
+            natal_aspects_instance = NatalAspects(
+                self.user, new_settings_file=self.new_settings_file,
+                active_points=active_points,
+                active_aspects=active_aspects,
+            )
             self.aspects_list = natal_aspects_instance.relevant_aspects
 
         if self.chart_type == "Transit" or self.chart_type == "Synastry":
@@ -165,7 +186,13 @@ class KerykeionChartSVG:
             self.t_user = second_obj
 
             # Aspects
-            self.aspects_list = SynastryAspects(self.user, self.t_user, new_settings_file=self.new_settings_file, active_points=active_points).relevant_aspects
+            synastry_aspects_instance = SynastryAspects(
+                self.user, self.t_user,
+                new_settings_file=self.new_settings_file,
+                active_points=active_points,
+                active_aspects=active_aspects,
+            )
+            self.aspects_list = synastry_aspects_instance.relevant_aspects
 
             self.t_available_kerykeion_celestial_points = []
             for body in available_celestial_points_names:
