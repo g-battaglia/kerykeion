@@ -5,7 +5,7 @@
 
 
 from pydantic import Field
-from typing import List, Optional
+from typing import List, Optional, Union
 from kerykeion.kr_types.kr_models import SubscriptableBaseModel
 
 
@@ -79,9 +79,8 @@ class KerykeionSettingsAspectModel(SubscriptableBaseModel):
     degree: int = Field(title="Aspect Degrees", description="The degree of the aspect")
     name: str = Field(title="Aspect Name", description="The name of the aspect")
     is_major: bool = Field(title="Aspect is Major", description="Is the aspect major?")
-    orb: int = Field(title="Aspect Orb", description="The orb of the aspect")
     color: str = Field(title="Aspect Color", description="The color of the aspect")
-
+    orb: Optional[int] = Field(title="Aspect Orb", description="The orb of the aspect", default=None)
 
 # Language Settings
 class KerykeionLanguageCelestialPointModel(SubscriptableBaseModel):
