@@ -358,26 +358,31 @@ class KerykeionChartSVG:
     def _draw_all_aspects_lines(self, r, ar):
         out = ""
         for aspect in self.aspects_list:
-            out += draw_aspect_line(
-                r=r,
-                ar=ar,
-                aspect=aspect,
-                color=self.aspects_settings[aspect["aid"]]["color"],
-                seventh_house_degree_ut=self.user.seventh_house.abs_pos
-            )
-
+            aspect_name = aspect["aspect"]
+            aspect_color = next((a["color"] for a in self.aspects_settings if a["name"] == aspect_name), None)
+            if aspect_color:
+                out += draw_aspect_line(
+                    r=r,
+                    ar=ar,
+                    aspect=aspect,
+                    color=aspect_color,
+                    seventh_house_degree_ut=self.user.seventh_house.abs_pos
+                )
         return out
 
     def _draw_all_transit_aspects_lines(self, r, ar):
         out = ""
         for aspect in self.aspects_list:
-            out += draw_aspect_line(
-                r=r,
-                ar=ar,
-                aspect=aspect,
-                color=self.aspects_settings[aspect["aid"]]["color"],
-                seventh_house_degree_ut=self.user.seventh_house.abs_pos
-            )
+            aspect_name = aspect["aspect"]
+            aspect_color = next((a["color"] for a in self.aspects_settings if a["name"] == aspect_name), None)
+            if aspect_color:
+                out += draw_aspect_line(
+                    r=r,
+                    ar=ar,
+                    aspect=aspect,
+                    color=aspect_color,
+                    seventh_house_degree_ut=self.user.seventh_house.abs_pos
+                )
         return out
 
     def _create_template_dictionary(self) -> ChartTemplateDictionary:

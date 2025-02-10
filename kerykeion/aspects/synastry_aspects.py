@@ -64,8 +64,17 @@ class SynastryAspects(NatalAspects):
         first_active_points_list = get_active_points_list(self.first_user, self.settings, self.active_points)
         second_active_points_list = get_active_points_list(self.second_user, self.settings, self.active_points)
 
-        self.all_aspects_list = []
+        # ---> TODO: Clean this up
+        filtered_settings = []
+        for a in self.aspects_settings:
+            for aspect in self.active_aspects:
+                if a["name"] == aspect["name"]:
+                    a["orb"] = aspect["orb"]  # Assign the aspect's orb
+                    filtered_settings.append(a)
+        self.aspects_settings = filtered_settings
+        # <--- TODO: Clean this up
 
+        self.all_aspects_list = []
         for first in range(len(first_active_points_list)):
             # Generates the aspects list whitout repetitions
             for second in range(len(second_active_points_list)):
@@ -79,7 +88,6 @@ class SynastryAspects(NatalAspects):
                 name = aspect["name"]
                 orbit = aspect["orbit"]
                 aspect_degrees = aspect["aspect_degrees"]
-                aid = aspect["aid"]
                 diff = aspect["diff"]
 
                 if verdict == True:
@@ -91,11 +99,9 @@ class SynastryAspects(NatalAspects):
                         aspect=name,
                         orbit=orbit,
                         aspect_degrees=aspect_degrees,
-                        aid=aid,
                         diff=diff,
                         p1=planet_id_decoder(self.celestial_points, first_active_points_list[first]["name"]),
                         p2=planet_id_decoder(self.celestial_points, second_active_points_list[second]["name"]),
-                        is_major=self.aspects_settings[aid]["is_major"],
                     )
                     self.all_aspects_list.append(aspect_model)
 

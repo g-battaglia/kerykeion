@@ -743,7 +743,9 @@ def draw_transit_aspect_list(
 
         # aspect symbol
         # TODO: Remove the "degree" element EVERYWHERE!
-        inner_path += f'<use  x="15" y="0" xlink:href="#orb{aspects_settings[aspects_list[i]["aid"]]["degree"]}" />'
+        aspect_name = aspects_list[i]["aspect"]
+        id_value = next((a["degree"] for a in aspects_settings if a["name"] == aspect_name), None) # type: ignore
+        inner_path += f'<use  x="15" y="0" xlink:href="#orb{id_value}" />'
 
         # second planet symbol
         inner_path += f'<g transform="translate(30,0)">'
