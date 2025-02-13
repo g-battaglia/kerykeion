@@ -194,13 +194,13 @@ class AstrologicalSubject:
         lat: Union[int, float, None] = None,
         tz_str: Union[str, None] = None,
         geonames_username: Union[str, None] = None,
-        zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
+        zodiac_type: Union[ZodiacType, None] = DEFAULT_ZODIAC_TYPE,
         online: bool = True,
         disable_chiron: Union[None, bool] = None, # Deprecated
         sidereal_mode: Union[SiderealMode, None] = None,
-        houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
-        perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
-        cache_expire_after_days: int = DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
+        houses_system_identifier: Union[HousesSystemIdentifier, None] = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
+        perspective_type: Union[PerspectiveType, None] = DEFAULT_PERSPECTIVE_TYPE,
+        cache_expire_after_days: Union[int, None] = DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
         is_dst: Union[None, bool] = None,
         disable_chiron_and_lilith: bool = False
     ) -> None:
@@ -226,13 +226,10 @@ class AstrologicalSubject:
         self.day = day
         self.hour = hour
         self.minute = minute
-        self.zodiac_type = zodiac_type
         self.online = online
         self.json_dir = Path.home()
         self.disable_chiron = disable_chiron
         self.sidereal_mode = sidereal_mode
-        self.houses_system_identifier = houses_system_identifier
-        self.perspective_type = perspective_type
         self.cache_expire_after_days = cache_expire_after_days
         self.is_dst = is_dst
         self.disable_chiron_and_lilith = disable_chiron_and_lilith
@@ -281,6 +278,30 @@ class AstrologicalSubject:
             raise KerykeionException("You need to set the coordinates and timezone if you want to use the offline mode!")
         else:
             self.tz_str = tz_str # type: ignore
+
+        # Zodiac type
+        if not zodiac_type:
+            self.zodiac_type = DEFAULT_ZODIAC_TYPE
+        else:
+            self.zodiac_type = zodiac_type
+
+        # Perspective type
+        if not perspective_type:
+            self.perspective_type = DEFAULT_PERSPECTIVE_TYPE
+        else:
+            self.perspective_type = perspective_type
+
+        # Houses system identifier
+        if not houses_system_identifier:
+            self.houses_system_identifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER
+        else:
+            self.houses_system_identifier = houses_system_identifier
+
+        # Cache expire after days
+        if not cache_expire_after_days:
+            self.cache_expire_after_days = DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS
+        else:
+            self.cache_expire_after_days = cache_expire_after_days
 
         #-----------------------#
         # Swiss Ephemeris setup #
@@ -469,7 +490,7 @@ class AstrologicalSubject:
             _ascmc = ascmc
 
         else:
-            raise KerykeionException("Not a valid zodiac type: ", self.zodiac_type)
+            raise KerykeionException("Not a valid zodiac type: " + self.zodiac_type)
 
         point_type: PointType = "House"
 
@@ -854,42 +875,5 @@ if __name__ == "__main__":
     setup_logging(level="debug")
 
     # With Chiron enabled
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
+    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", zodiac_type=None)
     print(json.loads(johnny.json(dump=True)))
-
-    print('\n')
-    print(johnny.chiron)
-
-    # With Chiron disabled
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", disable_chiron=True)
-    print(json.loads(johnny.json(dump=True)))
-
-    print('\n')
-    print(johnny.chiron)
-
-    # With Sidereal Zodiac
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
-    print(johnny.json(dump=True, indent=2))
-
-    # With Morinus Houses
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", houses_system_identifier="M")
-    print(johnny.json(dump=True, indent=2))
-
-    # With True Geocentric Perspective
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="True Geocentric")
-    print(johnny.json(dump=True, indent=2))
-
-    # With Heliocentric Perspective
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="Heliocentric")
-    print(johnny.json(dump=True, indent=2))
-
-    # With Topocentric Perspective
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="Topocentric")
-
-    # Test Mean Lilith
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", disable_chiron_and_lilith=True)
-    print(johnny.mean_lilith)
-
-    # Offline mode
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", online=False, tz_str="America/New_York", lng=-87.1111, lat=37.7711, sidereal_mode="FAGAN_BRADLEY", zodiac_type="Sidereal")
-    print(johnny.json(dump=True, indent=2))
