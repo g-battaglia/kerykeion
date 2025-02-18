@@ -45,6 +45,7 @@ from scour.scour import scourString
 from string import Template
 from typing import Union, List, Literal
 from datetime import datetime
+from .inline_css import replace_css_variables_with_inline_styles
 
 class KerykeionChartSVG:
     """
@@ -634,7 +635,7 @@ class KerykeionChartSVG:
 
         return template_dict
 
-    def makeTemplate(self, minify: bool = False) -> str:
+    def makeTemplate(self, minify: bool = False, inline_css: bool = False) -> str:
         """Creates the template for the SVG file"""
         td = self._create_template_dictionary()
 
@@ -657,13 +658,17 @@ class KerykeionChartSVG:
         else:
             template = template.replace('"', "'")
 
+        if inline_css:
+            # Use serializing styles inline for embedding in PDF
+            template = replace_css_variables_with_inline_styles(template)
+
         return template
 
-    def makeSVG(self, minify: bool = False):
+    def makeSVG(self, minify: bool = False, inline_css: bool = False):
         """Prints out the SVG file in the specified folder"""
 
         if not hasattr(self, "template"):
-            self.template = self.makeTemplate(minify)
+            self.template = self.makeTemplate(minify, inline_css)
 
         chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart.svg"
 
@@ -671,6 +676,16 @@ class KerykeionChartSVG:
             output_file.write(self.template)
 
         print(f"SVG Generated Correctly in: {chartname}")
+
+
+    def makeSvgString(self, minify: bool = False, inline_css: bool = False):
+        """Prints out the SVG file in the specified folder"""
+
+        if not hasattr(self, "template"):
+            self.template = self.makeTemplate(minify, inline_css)
+            return self.template
+
+
     def makeWheelOnlyTemplate(self, minify: bool = False):
         """Creates the template for the SVG file with only the wheel"""
 
