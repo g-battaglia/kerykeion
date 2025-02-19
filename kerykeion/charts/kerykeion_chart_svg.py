@@ -45,7 +45,7 @@ from scour.scour import scourString
 from string import Template
 from typing import Union, List, Literal
 from datetime import datetime
-from .inline_css import replace_css_variables_with_inline_styles
+from .inline_css import replace_css_variables
 
 class KerykeionChartSVG:
     """
@@ -660,7 +660,7 @@ class KerykeionChartSVG:
 
         if inline_css:
             # Use serializing styles inline for embedding in PDF
-            template = replace_css_variables_with_inline_styles(template)
+            template = replace_css_variables(template)
 
         return template
 

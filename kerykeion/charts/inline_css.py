@@ -1,54 +1,91 @@
 import re
-from bs4 import BeautifulSoup, Tag
 import cssutils
+import logging
+from bs4 import BeautifulSoup, Tag
 from typing import Dict
 
+# Suppress cssutils warnings
+cssutils.log.setLevel(logging.CRITICAL)
+
+def resolve_nested_variables(value: str, css_variables: Dict[str, str]) -> str:
+    """
+    Recursively replaces var(--something) with its actual value from CSS variables.
+    """
+    while "var(--" in value:  # Keep resolving until no nested variables remain
+        match = re.search(r"var\((--[^)]+)\)", value)
+        if not match:
+            break
+        var_name = match.group(1)  # Extract --variable-name
+        replacement = css_variables.get(var_name, match.group(0))  # Replace if exists
+        value = value.replace(match.group(0), replacement)
+    return value
 
 def extract_css_variables(svg_content: str) -> Dict[str, str]:
     """
-    Extracts CSS variables from the <style> tag in an SVG file.
-
-    :param svg_content: The raw SVG file content as a string.
-    :return: A dictionary mapping CSS variable names to their values.
+    Extracts all CSS variables from <style> blocks in the SVG.
     """
     soup: BeautifulSoup = BeautifulSoup(svg_content, "xml")
-    style_tag: Tag | None = soup.find("style")
     css_variables: Dict[str, str] = {}
 
-    if style_tag:
+    for style_tag in soup.find_all("style"):
         css = cssutils.parseString(style_tag.text)
         for rule in css:
             if rule.type == rule.STYLE_RULE:
-                for property_name in rule.style:
+                for i in range(rule.style.length):
+                    property_name: str = rule.style.item(i)
                     if property_name.startswith("--"):  # Only capture CSS variables
-                        css_variables[property_name] = rule.style[property_name]
+                        css_variables[property_name] = resolve_nested_variables(
+                            rule.style.getPropertyValue(property_name), css_variables
+                        )  # Resolve if nested variables exist
 
     return css_variables
 
-
-def replace_css_variables_with_inline_styles(svg_content: str) -> str:
+def replace_css_variables(svg_content: str) -> str:
     """
-    Converts CSS variables to inline styles in an SVG file.
-
-    :param svg_content: The raw SVG file content as a string.
-    :return: The updated SVG content with inline styles.
+    Converts CSS variables to inline styles and direct attributes in an SVG file.
     """
     soup: BeautifulSoup = BeautifulSoup(svg_content, "xml")
     css_variables: Dict[str, str] = extract_css_variables(svg_content)
 
     if not css_variables:
-        return str(soup)  # No variables to replace, return as-is
+        return str(soup)  # No variables found, return unchanged SVG
 
+    # Process elements with style attributes
     for element in soup.find_all(True):  # Iterate over all SVG elements
-        if isinstance(element, Tag) and element.has_attr("style"):
-            new_style: str = element["style"]
-            for var, value in css_variables.items():
-                var_pattern: str = f"var\\({re.escape(var)}\\)"
-                new_style = re.sub(var_pattern, value, new_style)  # Replace CSS variable
-            element["style"] = new_style  # Apply updated styles
+        if isinstance(element, Tag):
+            # Replace CSS variables in style=""
+            if element.has_attr("style"):
+                new_style: str = element["style"]
+                for var, value in css_variables.items():
+                    var_pattern: str = f"var\\({re.escape(var)}\\)"
+                    new_style = re.sub(var_pattern, value, new_style)  # Replace CSS variable
+                element["style"] = new_style  # Apply updated styles
 
-    # Remove the <style> tag since it's no longer needed
+            # Replace CSS variables in direct attributes like fill, stroke, etc.
+            for attr in ["fill", "stroke", "stop-color"]:  # Add more attributes if needed
+                if element.has_attr(attr):
+                    attr_value = element[attr]
+                    element[attr] = resolve_nested_variables(attr_value, css_variables)
+
+    # Remove all <style> tags since they are no longer needed
     for style_tag in soup.find_all("style"):
         style_tag.decompose()
 
     return str(soup)
+
+if __name__ == "__main__":
+    input_svg_path: str = "input.svg"
+    output_svg_path: str = "output.svg"
+
+    # Read input SVG file
+    with open(input_svg_path, "r", encoding="utf-8") as file:
+        svg_data: str = file.read()
+
+    # Convert CSS variables to inline styles and attributes
+    updated_svg: str = replace_css_variables(svg_data)
+
+    # Save the modified SVG file
+    with open(output_svg_path, "w", encoding="utf-8") as file:
+        file.write(updated_svg)
+
+    print(f"SVG conversion complete! Saved as {output_svg_path}")
