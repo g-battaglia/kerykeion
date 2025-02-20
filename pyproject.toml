@@ -50,9 +50,12 @@ requests = "^2.32.3"
 simple-ascii-tables = "^1.0.0"
 pytz = "^2024.2"
 typing-extensions = "^4.12.2"
+
+[tool.poetry.group.optionalgroup.dependencies]
 beautifulsoup4 = "^4.13.3"
 cssutils = "^2.11.1"
 lxml = "^5.3.1"
+
 
 [tool.poetry.scripts]
 create-docs = "scripts.docs:main"
@@ -65,6 +68,8 @@ pdoc = "^14.5.0"
 types-requests = "^2.28.11.7"
 types-pytz = "^2022.7.0.0"
 poethepoet = "^0.19.0"
+
+
 
 # MyPy Static Analysis
 [tool.mypy]

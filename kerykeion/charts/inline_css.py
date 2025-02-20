@@ -1,11 +1,11 @@
 import re
-import cssutils
+
 import logging
-from bs4 import BeautifulSoup, Tag
+
 from typing import Dict
 
 # Suppress cssutils warnings
-cssutils.log.setLevel(logging.CRITICAL)
+
 
 def resolve_nested_variables(value: str, css_variables: Dict[str, str]) -> str:
     """
@@ -24,6 +24,8 @@ def extract_css_variables(svg_content: str) -> Dict[str, str]:
     """
     Extracts all CSS variables from <style> blocks in the SVG.
     """
+    import cssutils
+    cssutils.log.setLevel(logging.CRITICAL)
     soup: BeautifulSoup = BeautifulSoup(svg_content, "xml")
     css_variables: Dict[str, str] = {}
 
@@ -44,6 +46,7 @@ def replace_css_variables(svg_content: str) -> str:
     """
     Converts CSS variables to inline styles and direct attributes in an SVG file.
     """
+    from bs4 import BeautifulSoup, Tag
     soup: BeautifulSoup = BeautifulSoup(svg_content, "xml")
     css_variables: Dict[str, str] = extract_css_variables(svg_content)
 
@@ -72,20 +75,3 @@ def replace_css_variables(svg_content: str) -> str:
         style_tag.decompose()
 
     return str(soup)
-
-if __name__ == "__main__":
-    input_svg_path: str = "input.svg"
-    output_svg_path: str = "output.svg"
-
-    # Read input SVG file
-    with open(input_svg_path, "r", encoding="utf-8") as file:
-        svg_data: str = file.read()
-
-    # Convert CSS variables to inline styles and attributes
-    updated_svg: str = replace_css_variables(svg_data)
-
-    # Save the modified SVG file
-    with open(output_svg_path, "w", encoding="utf-8") as file:
-        file.write(updated_svg)
-
-    print(f"SVG conversion complete! Saved as {output_svg_path}")
