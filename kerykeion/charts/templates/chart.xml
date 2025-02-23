@@ -94,7 +94,7 @@ OpenAstro.org -->
             </g>
 
             <!-- AspectGrid -->
-            <g kr:node="Aspect_Grid" transform="translate(10,0)">
+            <g kr:node="Aspect_Grid" transform="translate(526,273)">
                 $makeAspectGrid
             </g>
 
