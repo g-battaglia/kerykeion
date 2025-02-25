@@ -9,6 +9,7 @@ import logging
 from pathlib import Path
 from typing import Dict, Union
 from kerykeion.kr_types import KerykeionSettingsModel
+import functools
 
 
 def get_settings(new_settings_file: Union[Path, None, KerykeionSettingsModel, dict] = None) -> KerykeionSettingsModel:
@@ -47,8 +48,7 @@ def get_settings(new_settings_file: Union[Path, None, KerykeionSettingsModel, di
         settings_file = Path(__file__).parent / "kr.config.json"
 
     logging.debug(f"Kerykeion config file path: {settings_file}")
-    with open(settings_file, "r", encoding="utf8") as f:
-        settings_dict = load(f)
+    settings_dict = load_settings_file(settings_file)
 
     return KerykeionSettingsModel(**settings_dict)
 
@@ -67,6 +67,23 @@ def merge_settings(settings: KerykeionSettingsModel, new_settings: Dict) -> Kery
     """
     new_settings_dict = settings.model_dump() | new_settings
     return KerykeionSettingsModel(**new_settings_dict)
+
+
+@functools.lru_cache
+def load_settings_file(settings_file_path: str) -> dict:
+    """
+    This function is used to load the settings file from a path.
+
+    Args:
+        settings_file (Path): The path of the settings file
+
+    Returns:
+        dict: The settings dict
+    """
+    with open(settings_file_path, "r", encoding="utf8") as f:
+        settings_dict = load(f)
+
+    return settings_dict
 
 
 if __name__ == "__main__":
