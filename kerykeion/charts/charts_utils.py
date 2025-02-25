@@ -758,8 +758,10 @@ def draw_transit_aspect_list(
         inner_path += f"</g>"
         line = line + 14
 
-    out = f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{grid_title}:</text>'
+    out = '<g transform="translate(526,273)">'
+    out += f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{grid_title}:</text>'
     out += inner_path
+    out += '</g>'
 
     return out
 
