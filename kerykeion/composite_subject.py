@@ -1,6 +1,6 @@
 from kerykeion import AstrologicalSubject, KerykeionPointModel
 from kerykeion import KerykeionException
-from kerykeion.kr_types.kr_models import CompositeChartDataModel, AstrologicalSubjectModel
+from kerykeion.kr_types.kr_models import CompositeSubjectModel, AstrologicalSubjectModel
 from kerykeion.kr_types.kr_literals import ZodiacType, PerspectiveType, HousesSystemIdentifier, SiderealMode, Planet, Houses, AxialCusps
 from kerykeion.utilities import (
     get_number_from_name,
@@ -17,9 +17,8 @@ import logging
 # TODO: Check DIFFERENCE IN DEGREES BETWEEN PLANETS AND HOUSES!
 # TODO: ORDER UTILS!
 
-class CompositeChartDataFactory:
-    model: Union[CompositeChartDataModel, None]
-    aspects: list
+class CompositeSubjectFactory:
+    model: Union[CompositeSubjectModel, None]
     first_subject: AstrologicalSubjectModel
     second_subject: AstrologicalSubjectModel
     name: str
@@ -33,8 +32,7 @@ class CompositeChartDataFactory:
     axial_cusps_names_list: list[AxialCusps]
 
     def __init__(self, first_subject: Union[AstrologicalSubject, AstrologicalSubjectModel], second_subject: Union[AstrologicalSubject, AstrologicalSubjectModel], chart_name: Union[str, None] = None):
-        self.model: Union[CompositeChartDataModel, None] = None
-        self.aspects = []
+        self.model: Union[CompositeSubjectModel, None] = None
 
         # Subjects
         if isinstance(first_subject, AstrologicalSubject) or isinstance(first_subject, AstrologicalSubjectModel):
@@ -107,7 +105,7 @@ class CompositeChartDataFactory:
         return hash((self.first_subject, self.second_subject, self.name))
 
     def __copy__(self):
-        return CompositeChartDataFactory(self.first_subject, self.second_subject, self.name)
+        return CompositeSubjectFactory(self.first_subject, self.second_subject, self.name)
 
     def __setitem__(self, key, value):
         setattr(self, key, value)
@@ -163,21 +161,15 @@ class CompositeChartDataFactory:
             )
             self[cusp_lower]["house"] = get_planet_house(self[cusp_lower]['abs_pos'], house_degree_list_ut)
 
-
-    def _calculate_composite_aspects(self):
-        # TODO: Implement this ?
-        logging.warning("Composite Aspects not implemented yet")
-        self.aspects = []
-
     def _calculate_composite_lunar_phase(self):
         logging.warning("Composite Lunar Phase not implemented yet")
         self.lunar_phase = self.first_subject.lunar_phase
 
-    def get_composite_chart_data(self):
+    def get_composite_subject_model(self):
         self._calculate_composite_points_and_houses()
         self._calculate_composite_lunar_phase()
 
-        return CompositeChartDataModel(
+        return CompositeSubjectModel(
             **self.__dict__
         )
 
@@ -189,5 +181,5 @@ if __name__ == "__main__":
     first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
     second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
-    composite_chart = CompositeChartDataFactory(first, second)
-    print(composite_chart.get_composite_chart_data().model_dump_json(indent=4))
+    composite_chart = CompositeSubjectFactory(first, second)
+    print(composite_chart.get_composite_subject_model().model_dump_json(indent=4))
