@@ -14,7 +14,7 @@ from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointModel, Sign
 from kerykeion.kr_types import ChartTemplateDictionary
-from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, CompositeChartDataModel
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, CompositeSubjectModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel, KerykeionSettingsModel
 from kerykeion.kr_types.kr_literals import KerykeionChartTheme, KerykeionChartLanguage, AxialCusps, Planet
 from kerykeion.charts.charts_utils import (
@@ -97,7 +97,7 @@ class KerykeionChartSVG:
     chart_colors_settings: dict
     planets_settings: dict
     aspects_settings: dict
-    user: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeChartDataModel]
+    user: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel]
     available_planets_setting: List[KerykeionSettingsCelestialPointModel]
     height: float
     location: str
@@ -107,7 +107,7 @@ class KerykeionChartSVG:
 
     def __init__(
         self,
-        first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeChartDataModel],
+        first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel],
         chart_type: ChartType = "Natal",
         second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, None] = None,
         new_output_directory: Union[str, None] = None,
@@ -171,10 +171,10 @@ class KerykeionChartSVG:
                 self.t_available_kerykeion_celestial_points.append(self.t_user.get(body))
 
         elif self.chart_type == "Composite":
-            if not isinstance(first_obj, CompositeChartDataModel):
-                raise KerykeionException("First object must be a CompositeChartDataModel instance.")
+            if not isinstance(first_obj, CompositeSubjectModel):
+                raise KerykeionException("First object must be a CompositeSubjectModel instance.")
 
-            self.aspects_list = self.user.aspects # type: ignore
+            self.aspects_list = NatalAspects(self.user, new_settings_file=self.new_settings_file, active_points=active_points).relevant_aspects
 
         # Double chart aspect grid type
         self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
@@ -744,11 +744,13 @@ class KerykeionChartSVG:
 
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
+    from kerykeion.composite_subject import CompositeSubjectFactory
     setup_logging(level="debug")
 
     first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
     second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
+    """
     # Internal Natal Chart
     internal_natal_chart = KerykeionChartSVG(first)
     internal_natal_chart.makeSVG()
@@ -962,3 +964,10 @@ if __name__ == "__main__":
     kanye_west_subject = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
     kanye_west_chart = KerykeionChartSVG(kanye_west_subject)
     kanye_west_chart.makeSVG()
+    """
+
+    # Composite Chart
+    composite_subject_factory = CompositeSubjectFactory(first, second)
+    composite_subject_model = composite_subject_factory.get_composite_subject_model()
+    composite_chart = KerykeionChartSVG(composite_subject_model, "Composite")
+    composite_chart.makeSVG()

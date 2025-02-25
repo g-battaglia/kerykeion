@@ -199,7 +199,7 @@ class RelationshipScoreModel(SubscriptableBaseModel):
     subjects: list[AstrologicalSubjectModel]
 
 
-class CompositeChartDataModel(SubscriptableBaseModel):
+class CompositeSubjectModel(SubscriptableBaseModel):
     # Data
     name: str
     first_subject: AstrologicalSubjectModel
@@ -264,6 +264,3 @@ class CompositeChartDataModel(SubscriptableBaseModel):
 
     lunar_phase: LunarPhaseModel
     """Lunar phase model"""
-
-    aspects: list[AspectModel]
-    """List of aspects"""
