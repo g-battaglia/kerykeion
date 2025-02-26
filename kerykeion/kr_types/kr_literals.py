@@ -112,4 +112,9 @@ KerykeionChartTheme = Literal["light", "dark", "dark-high-contrast", "classic"]
 
 KerykeionChartLanguage = Literal["EN", "FR", "PT", "IT", "CN", "ES", "RU", "TR", "DE", "HI"]
 
+
 RelationshipScoreDescription = Literal["Minimal", "Medium", "Important", "Very Important", "Exceptional", "Rare Exceptional"]
+
+
+CompositeChartType = Literal["Midpoint"]
+"""Literal type for Composite Chart Types"""

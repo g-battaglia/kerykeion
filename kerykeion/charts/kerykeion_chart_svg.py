@@ -476,7 +476,7 @@ class KerykeionChartSVG:
         elif self.chart_type in ["Natal", "ExternalNatal"]:
             template_dict["top_left_0"] = f'{self.language_settings["info"]}:'
         elif self.chart_type == "Composite":
-            template_dict["top_left_0"] = ""
+            template_dict["top_left_0"] = "Composite Chart"
 
         # Set additional information for Synastry chart type
         if self.chart_type == "Synastry":
@@ -747,10 +747,10 @@ if __name__ == "__main__":
     from kerykeion.composite_subject import CompositeSubjectFactory
     setup_logging(level="debug")
 
+    """
     first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
     second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
-    """
     # Internal Natal Chart
     internal_natal_chart = KerykeionChartSVG(first)
     internal_natal_chart.makeSVG()
@@ -967,7 +967,10 @@ if __name__ == "__main__":
     """
 
     # Composite Chart
-    composite_subject_factory = CompositeSubjectFactory(first, second)
-    composite_subject_model = composite_subject_factory.get_composite_subject_model()
+    angelina = AstrologicalSubject("Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US", lng=-118.15, lat=34.03, tz_str="America/Los_Angeles")
+    brad = AstrologicalSubject("Brad Pitt", 1963, 12, 18, 6, 31, "Shawnee", "US", lng=-96.56, lat=35.20, tz_str="America/Chicago")
+
+    composite_subject_factory = CompositeSubjectFactory(angelina, brad)
+    composite_subject_model = composite_subject_factory.get_midpoint_composite_subject_model()
     composite_chart = KerykeionChartSVG(composite_subject_model, "Composite")
     composite_chart.makeSVG()

@@ -1,18 +1,17 @@
-from kerykeion import AstrologicalSubject, KerykeionPointModel
+import logging
+from typing import Union
+
+from kerykeion import AstrologicalSubject
 from kerykeion import KerykeionException
 from kerykeion.kr_types.kr_models import CompositeSubjectModel, AstrologicalSubjectModel
-from kerykeion.kr_types.kr_literals import ZodiacType, PerspectiveType, HousesSystemIdentifier, SiderealMode, Planet, Houses, AxialCusps
+from kerykeion.kr_types.kr_literals import ZodiacType, PerspectiveType, HousesSystemIdentifier, SiderealMode, Planet, Houses, AxialCusps, CompositeChartType
 from kerykeion.utilities import (
-    get_number_from_name,
     get_kerykeion_point_from_degree,
     get_planet_house,
-    get_moon_emoji_from_phase_int,
-    get_moon_phase_name_from_phase_int,
-    check_and_adjust_polar_latitude,
-    circular_mean
+    circular_mean,
+    calculate_moon_phase
 )
-from typing import Union
-import logging
+
 
 # TODO: Check DIFFERENCE IN DEGREES BETWEEN PLANETS AND HOUSES!
 # TODO: ORDER UTILS!
@@ -22,6 +21,7 @@ class CompositeSubjectFactory:
     first_subject: AstrologicalSubjectModel
     second_subject: AstrologicalSubjectModel
     name: str
+    composite_chart_type: CompositeChartType
     zodiac_type: ZodiacType
     sidereal_mode: Union[SiderealMode, None]
     houses_system_identifier: HousesSystemIdentifier
@@ -31,8 +31,15 @@ class CompositeSubjectFactory:
     houses_names_list: list[Houses]
     axial_cusps_names_list: list[AxialCusps]
 
-    def __init__(self, first_subject: Union[AstrologicalSubject, AstrologicalSubjectModel], second_subject: Union[AstrologicalSubject, AstrologicalSubjectModel], chart_name: Union[str, None] = None):
+    def __init__(
+            self,
+            first_subject: Union[AstrologicalSubject, AstrologicalSubjectModel],
+            second_subject: Union[AstrologicalSubject, AstrologicalSubjectModel],
+            composite_chart_type: CompositeChartType = 'Midpoint',
+            chart_name: Union[str, None] = None
+    ):
         self.model: Union[CompositeSubjectModel, None] = None
+        self.composite_chart_type = composite_chart_type
 
         # Subjects
         if isinstance(first_subject, AstrologicalSubject) or isinstance(first_subject, AstrologicalSubjectModel):
@@ -113,7 +120,7 @@ class CompositeSubjectFactory:
     def __getitem__(self, key):
         return getattr(self, key)
 
-    def _calculate_composite_points_and_houses(self):
+    def _calculate_midpoint_composite_points_and_houses(self):
         # Houses
         house_degree_list_ut = []
         for house in self.first_subject.houses_names_list:
@@ -162,11 +169,13 @@ class CompositeSubjectFactory:
             self[cusp_lower]["house"] = get_planet_house(self[cusp_lower]['abs_pos'], house_degree_list_ut)
 
     def _calculate_composite_lunar_phase(self):
-        logging.warning("Composite Lunar Phase not implemented yet")
-        self.lunar_phase = self.first_subject.lunar_phase
+        self.lunar_phase = calculate_moon_phase(
+            self['moon'].abs_pos,
+            self['sun'].abs_pos
+        )
 
-    def get_composite_subject_model(self):
-        self._calculate_composite_points_and_houses()
+    def get_midpoint_composite_subject_model(self):
+        self._calculate_midpoint_composite_points_and_houses()
         self._calculate_composite_lunar_phase()
 
         return CompositeSubjectModel(
@@ -175,11 +184,10 @@ class CompositeSubjectFactory:
 
 
 if __name__ == "__main__":
-    import json
     from kerykeion.astrological_subject import AstrologicalSubject
 
     first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
     second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
     composite_chart = CompositeSubjectFactory(first, second)
-    print(composite_chart.get_composite_subject_model().model_dump_json(indent=4))
+    print(composite_chart.get_midpoint_composite_subject_model().model_dump_json(indent=4))

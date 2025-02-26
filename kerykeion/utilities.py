@@ -1,4 +1,4 @@
-from kerykeion.kr_types import KerykeionPointModel, KerykeionException, ZodiacSignModel, AstrologicalSubjectModel
+from kerykeion.kr_types import KerykeionPointModel, KerykeionException, ZodiacSignModel, AstrologicalSubjectModel, LunarPhaseModel
 from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, Planet, Houses, AxialCusps
 from typing import Union, get_args, TYPE_CHECKING
 import logging
@@ -343,3 +343,50 @@ def circular_mean(first_position: Union[int, float], second_position: Union[int,
         mean_position += 360
 
     return mean_position
+
+
+def calculate_moon_phase(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseModel:
+    """
+    Calculate the lunar phase based on the positions of the moon and sun.
+
+    Args:
+    - moon_abs_pos (float): The absolute position of the moon.
+    - sun_abs_pos (float): The absolute position of the sun.
+
+    Returns:
+    - dict: A dictionary containing the lunar phase information.
+    """
+    # Initialize moon_phase and sun_phase to None in case of an error
+    moon_phase, sun_phase = None, None
+
+    # Calculate the anti-clockwise degrees between the sun and moon
+    degrees_between = (moon_abs_pos - sun_abs_pos) % 360
+
+    # Calculate the moon phase (1-28) based on the degrees between the sun and moon
+    step = 360.0 / 28.0
+    moon_phase = int(degrees_between // step) + 1
+
+    # Define the sun phase steps
+    sunstep = [
+        0, 30, 40, 50, 60, 70, 80, 90, 120, 130, 140, 150, 160, 170, 180,
+        210, 220, 230, 240, 250, 260, 270, 300, 310, 320, 330, 340, 350
+    ]
+
+    # Calculate the sun phase (1-28) based on the degrees between the sun and moon
+    for x in range(len(sunstep)):
+        low = sunstep[x]
+        high = sunstep[x + 1] if x < len(sunstep) - 1 else 360
+        if low <= degrees_between < high:
+            sun_phase = x + 1
+            break
+
+    # Create a dictionary with the lunar phase information
+    lunar_phase_dictionary = {
+        "degrees_between_s_m": degrees_between,
+        "moon_phase": moon_phase,
+        "sun_phase": sun_phase,
+        "moon_emoji": get_moon_emoji_from_phase_int(moon_phase),
+        "moon_phase_name": get_moon_phase_name_from_phase_int(moon_phase)
+    }
+
+    return LunarPhaseModel(**lunar_phase_dictionary)
