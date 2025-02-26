@@ -5,7 +5,9 @@
 
 
 from typing import Union, Optional
+from typing_extensions import TypedDict
 from pydantic import BaseModel
+from kerykeion.kr_types.kr_literals import AspectName
 
 from kerykeion.kr_types import (
     AxialCusps,
@@ -169,11 +171,9 @@ class AspectModel(SubscriptableBaseModel):
     aspect: str
     orbit: float
     aspect_degrees: int
-    aid: int
     diff: float
     p1: int
     p2: int
-    is_major: bool
 
 
 class ZodiacSignModel(SubscriptableBaseModel):
@@ -265,3 +265,8 @@ class CompositeSubjectModel(SubscriptableBaseModel):
 
     lunar_phase: LunarPhaseModel
     """Lunar phase model"""
+
+
+class ActiveAspect(TypedDict):
+    name: AspectName
+    orb: int

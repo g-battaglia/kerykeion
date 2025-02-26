@@ -40,6 +40,8 @@ class RelationshipScoreFactory:
         ("Rare Exceptional", float("inf")),
     ]
 
+    MAJOR_ASPECTS = {"conjunction", "opposition", "square", "trine", "sextile"}
+
     def __init__(
         self,
         first_subject: Union[AstrologicalSubject, AstrologicalSubjectModel],
@@ -76,7 +78,7 @@ class RelationshipScoreFactory:
             aspect (dict): Aspect information.
             points (int): Points to add.
         """
-        if self.use_only_major_aspects and not aspect["is_major"]:
+        if self.use_only_major_aspects and aspect["aspect"] not in self.MAJOR_ASPECTS:
             return
 
         self.score_value += points

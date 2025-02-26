@@ -12,10 +12,10 @@ from kerykeion.settings.kerykeion_settings import get_settings
 from dataclasses import dataclass, field
 from functools import cached_property
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
-from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect
 from kerykeion.kr_types.kr_literals import AxialCusps, Planet
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
 
 
 
@@ -36,6 +36,7 @@ class NatalAspects:
     user: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel]
     new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None
     active_points: List[Union[AxialCusps, Planet]] = field(default_factory=lambda: DEFAULT_ACTIVE_POINTS)
+    active_aspects: List[ActiveAspect] = field(default_factory=lambda: DEFAULT_ACTIVE_ASPECTS)
 
     def __post_init__(self):
         self.settings = get_settings(self.new_settings_file)
@@ -55,8 +56,18 @@ class NatalAspects:
 
         active_points_list = get_active_points_list(self.user, self.settings, self.active_points)
 
-        self.all_aspects_list = []
+        # ---> TODO: Clean this up
+        filtered_settings = []
+        for a in self.aspects_settings:
+            for aspect in self.active_aspects:
+                if a["name"] == aspect["name"]:
+                    a["orb"] = aspect["orb"]  # Assign the aspect's orb
+                    filtered_settings.append(a)
+                    break  # Exit the inner loop once a match is found
+        self.aspects_settings = filtered_settings
+        # <--- TODO: Clean this up
 
+        self.all_aspects_list = []
         for first in range(len(active_points_list)):
             # Generates the aspects list without repetitions
             for second in range(first + 1, len(active_points_list)):
@@ -84,7 +95,6 @@ class NatalAspects:
                 name = aspect["name"]
                 orbit = aspect["orbit"]
                 aspect_degrees = aspect["aspect_degrees"]
-                aid = aspect["aid"]
                 diff = aspect["diff"]
 
                 if verdict == True:
@@ -96,11 +106,9 @@ class NatalAspects:
                         aspect=name,
                         orbit=orbit,
                         aspect_degrees=aspect_degrees,
-                        aid=aid,
                         diff=diff,
                         p1=planet_id_decoder(self.celestial_points, active_points_list[first]["name"]),
                         p2=planet_id_decoder(self.celestial_points, active_points_list[second]["name"]),
-                        is_major=self.aspects_settings[aid]["is_major"],
                     )
                     self.all_aspects_list.append(aspect_model)
 
@@ -113,24 +121,18 @@ class NatalAspects:
         the most important are hardcoded.
         Set the list with set_points and creating a list with the names
         or the numbers of the houses.
-        The relevant aspects are the ones that are set as active ("is_active") in the settings.
+        The relevant aspects are the ones that are set as looping in the available_aspects list.
         """
 
         logging.debug("Relevant aspects not already calculated, calculating now...")
         self.all_aspects
-
-        aspects_filtered = []
-
-        # Only pick aspects for which the is_active setting (specified usually in kr.config.json file) is true.
-        for a in self.all_aspects_list:
-            if self.aspects_settings[a["aid"]]["is_active"] == True:
-                aspects_filtered.append(a)
 
         axes_list = AXES_LIST
         counter = 0
 
         # Remove aspects where the orbits exceed the maximum orb thresholds specified in the settings
         # (specified usually in kr.config.json file)
+        aspects_filtered = self.all_aspects
         aspects_list_subtract = []
         for a in aspects_filtered:
             counter += 1

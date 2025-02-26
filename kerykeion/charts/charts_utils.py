@@ -718,7 +718,10 @@ def draw_transit_aspect_list(
         inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspects_list[i]["p1"]]["name"]}" />'
 
         # aspect symbol
-        inner_path += f'<use  x="15" y="0" xlink:href="#orb{aspects_settings[aspects_list[i]["aid"]]["degree"]}" />'
+        # TODO: Remove the "degree" element EVERYWHERE!
+        aspect_name = aspects_list[i]["aspect"]
+        id_value = next((a["degree"] for a in aspects_settings if a["name"] == aspect_name), None) # type: ignore
+        inner_path += f'<use  x="15" y="0" xlink:href="#orb{id_value}" />'
 
         # second planet symbol
         inner_path += f'<g transform="translate(30,0)">'
@@ -731,10 +734,10 @@ def draw_transit_aspect_list(
         inner_path += f"</g>"
         line = line + 14
 
-    out = f'<g style="transform: translate(43%, 50%)">'
+    out = '<g transform="translate(526,273)">'
     out += f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{grid_title}:</text>'
     out += inner_path
-    out += "</g>"
+    out += '</g>'
 
     return out
 
