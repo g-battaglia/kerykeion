@@ -1,5 +1,5 @@
 from pathlib import Path
-from kerykeion import AstrologicalSubject, KerykeionChartSVG
+from kerykeion import AstrologicalSubject, KerykeionChartSVG, CompositeSubjectFactory
 
 
 class TestCharts:
@@ -17,7 +17,7 @@ class TestCharts:
 
         for i in range(len(chart_svg_lines)):
             assert chart_svg_lines[i] == file_content_lines[i]
-            
+
     def setup_class(self):
         self.first_subject = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
         self.second_subject = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB", geonames_username="century.boy")
@@ -60,6 +60,11 @@ class TestCharts:
         self.turkish_subject = AstrologicalSubject("Mehmet Oz", 1960, 6, 11, 12, 0, "Istanbul", "TR")
         self.german_subject = AstrologicalSubject("Albert Einstein", 1879, 3, 14, 11, 30, "Ulm", "DE")
         self.hindi_subject = AstrologicalSubject("Amitabh Bachchan", 1942, 10, 11, 4, 0, "Allahabad", "IN")
+
+        # Composite Chart
+        self.angelina_jolie = AstrologicalSubject("Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US", lng=-118.15, lat=34.03, tz_str="America/Los_Angeles")
+        self.brad_pit = AstrologicalSubject("Brad Pitt", 1963, 12, 18, 6, 31, "Shawnee", "US", lng=-96.56, lat=35.20, tz_str="America/Chicago")
+
 
     def test_natal_chart(self):
         s = KerykeionChartSVG(self.first_subject)
@@ -559,6 +564,12 @@ class TestCharts:
         hindi_chart_svg = KerykeionChartSVG(self.hindi_subject, chart_language="HI").makeTemplate()
         self._compare_chart_svg("Amitabh Bachchan - Natal Chart.svg", hindi_chart_svg)
 
+    def test_composite_chart(self):
+        factory = CompositeSubjectFactory(self.angelina_jolie, self.brad_pit)
+        composite_chart_svg = factory.get_midpoint_composite_subject_model()
+        composite_chart_svg = KerykeionChartSVG(composite_chart_svg, "Composite").makeTemplate()
+        self._compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Composite Chart.svg", composite_chart_svg)
+
 
 if __name__ == "__main__":
     import pytest
@@ -566,5 +577,5 @@ if __name__ == "__main__":
 
     # Set the log level to CRITICAL
     logging.basicConfig(level=logging.CRITICAL)
-    
+
     pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

@@ -35,11 +35,10 @@ class CompositeSubjectFactory:
             self,
             first_subject: Union[AstrologicalSubject, AstrologicalSubjectModel],
             second_subject: Union[AstrologicalSubject, AstrologicalSubjectModel],
-            composite_chart_type: CompositeChartType = 'Midpoint',
             chart_name: Union[str, None] = None
     ):
         self.model: Union[CompositeSubjectModel, None] = None
-        self.composite_chart_type = composite_chart_type
+        self.composite_chart_type = "Midpoint"
 
         # Subjects
         if isinstance(first_subject, AstrologicalSubject) or isinstance(first_subject, AstrologicalSubjectModel):

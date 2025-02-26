@@ -21,6 +21,8 @@
       "transit_name": "At the time of the transit",
       "lunar_phase": "Lunar phase",
       "day": "Day",
+      "composite_chart": "Composite Chart",
+      "midpoints": "Midpoints",
       "celestial_points": {
         "Sun": "Sun",
         "Moon": "Moon",
@@ -65,6 +67,8 @@
       "transit_name": "Au moment de la transition",
       "lunar_phase": "Phase Lunaire",
       "day": "Jour",
+      "composite_chart": "Carte Composite",
+      "midpoints": "Milieux",
       "celestial_points": {
         "Sun": "Soleil",
         "Moon": "Lune",
@@ -109,6 +113,8 @@
       "transit_name": "No momento do trânsito",
       "lunar_phase": "Fase lunar",
       "day": "Dia",
+      "composite_chart": "Carta Composta",
+      "midpoints": "Meios",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Lua",
@@ -153,6 +159,8 @@
       "transit_name": "Al momento del transito",
       "lunar_phase": "Fase lunare",
       "day": "Giorno",
+      "composite_chart": "Tema Composito",
+      "midpoints": "Punti Medi",
       "celestial_points": {
         "Sun": "Sole",
         "Moon": "Luna",
@@ -197,6 +205,8 @@
       "transit_name": "流年名稱",
       "lunar_phase": "月相",
       "day": "日",
+      "composite_chart": "合盤",
+      "midpoints": "中點",
       "celestial_points": {
         "Sun": "太陽",
         "Moon": "月亮",
@@ -241,6 +251,8 @@
       "transit_name": "En el momento del tránsito",
       "lunar_phase": "Fase lunar",
       "day": "Día",
+      "composite_chart": "Carta Compuesta",
+      "midpoints": "Puntos Medios",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Luna",
@@ -285,6 +297,8 @@
       "transit_name": "В момент транзита",
       "lunar_phase": "Лунная фаза",
       "day": "День",
+      "composite_chart": "Композитная карта",
+      "midpoints": "Средние точки",
       "celestial_points": {
         "Sun": "Солнце",
         "Moon": "Луна",
@@ -329,6 +343,8 @@
       "transit_name": "Geçiş anında",
       "lunar_phase": "Ay Aşaması",
       "day": "Gün",
+      "composite_chart": "Kompozit Harita",
+      "midpoints": "Orta Noktalar",
       "celestial_points": {
         "Sun": "Güneş",
         "Moon": "Ay",
@@ -373,6 +389,8 @@
       "transit_name": "Zum Zeitpunkt des Transits",
       "lunar_phase": "Mondphase",
       "day": "Tag",
+      "composite_chart": "Komposit-Chart",
+      "midpoints": "Mittelpunkte",
       "celestial_points": {
         "Sun": "Sonne",
         "Moon": "Mond",
@@ -417,6 +435,8 @@
       "transit_name": "गोचर के समय",
       "lunar_phase": "चंद्र चरण",
       "day": "दिन",
+      "composite_chart": "संयुक्त चार्ट",
+      "midpoints": "मध्य बिंदु",
       "celestial_points": {
         "Sun": "सूर्य",
         "Moon": "चंद्रमा",

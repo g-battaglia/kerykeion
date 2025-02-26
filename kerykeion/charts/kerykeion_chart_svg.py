@@ -445,7 +445,7 @@ class KerykeionChartSVG:
             template_dict["bottom_left_4"] = f'{self.t_user.perspective_type}'
         elif self.chart_type == "Composite":
             template_dict["bottom_left_2"] = f'{self.user.first_subject.perspective_type}'
-            template_dict["bottom_left_3"] = ""
+            template_dict["bottom_left_3"] = f'{self.language_settings.get("composite_chart", "Composite Chart")} - {self.language_settings.get("midpoints", "Midpoints")}'
             template_dict["bottom_left_4"] = ""
 
         # Draw moon phase
@@ -458,8 +458,10 @@ class KerykeionChartSVG:
         template_dict["lunar_phase_circle_center_x"] = moon_phase_dict["circle_center_x"]
         template_dict["lunar_phase_circle_radius"] = moon_phase_dict["circle_radius"]
 
+        if self.chart_type == "Composite":
+            template_dict["top_left_1"] = datetime.fromisoformat(self.user.first_subject.iso_formatted_utc_datetime).strftime('%Y-%m-%d %H:%M')
         # Set location string
-        if len(self.location) > 35:
+        elif len(self.location) > 35:
             split_location = self.location.split(",")
             if len(split_location) > 1:
                 template_dict["top_left_1"] = split_location[0] + ", " + split_location[-1]
@@ -476,7 +478,7 @@ class KerykeionChartSVG:
         elif self.chart_type in ["Natal", "ExternalNatal"]:
             template_dict["top_left_0"] = f'{self.language_settings["info"]}:'
         elif self.chart_type == "Composite":
-            template_dict["top_left_0"] = "Composite Chart"
+            template_dict["top_left_0"] = f'{self.user.first_subject.name}'
 
         # Set additional information for Synastry chart type
         if self.chart_type == "Synastry":
@@ -484,9 +486,11 @@ class KerykeionChartSVG:
             template_dict["top_left_4"] = self.t_user.city
             template_dict["top_left_5"] = f"{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hour:02d}:{self.t_user.minute:02d}"
         elif self.chart_type == "Composite":
-            template_dict["top_left_3"] = ""
-            template_dict["top_left_4"] = ""
-            template_dict["top_left_5"] = ""
+            template_dict["top_left_3"] = self.user.second_subject.name
+            template_dict["top_left_4"] = datetime.fromisoformat(self.user.second_subject.iso_formatted_utc_datetime).strftime('%Y-%m-%d %H:%M')
+            latitude_string = convert_latitude_coordinate_to_string(self.user.second_subject.lat, "N", "S")
+            longitude_string = convert_longitude_coordinate_to_string(self.user.second_subject.lng, "E", "W")
+            template_dict["top_left_5"] = f"{latitude_string} / {longitude_string}"
         else:
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings['north'], self.language_settings['south'])
             longitude_string = convert_longitude_coordinate_to_string(self.geolon, self.language_settings['east'], self.language_settings['west'])
@@ -635,7 +639,10 @@ class KerykeionChartSVG:
 
         # Set date time string
         if self.chart_type in ["Composite"]:
-            template_dict["top_left_2"] = ""
+            # First Subject Latitude and Longitude
+            latitude = convert_latitude_coordinate_to_string(self.user.first_subject.lat, "N", "S")
+            longitude = convert_longitude_coordinate_to_string(self.user.first_subject.lng, "E", "W")
+            template_dict["top_left_2"] = f"{latitude} {longitude}"
         else:
             dt = datetime.fromisoformat(self.user.iso_formatted_local_datetime)
             custom_format = dt.strftime('%Y-%m-%d %H:%M [%z]')
@@ -744,10 +751,9 @@ class KerykeionChartSVG:
 
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
-    from kerykeion.composite_subject import CompositeSubjectFactory
+    from kerykeion.composite_subject_factory import CompositeSubjectFactory
     setup_logging(level="debug")
 
-    """
     first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
     second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
@@ -964,7 +970,6 @@ if __name__ == "__main__":
     kanye_west_subject = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
     kanye_west_chart = KerykeionChartSVG(kanye_west_subject)
     kanye_west_chart.makeSVG()
-    """
 
     # Composite Chart
     angelina = AstrologicalSubject("Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US", lng=-118.15, lat=34.03, tz_str="America/Los_Angeles")

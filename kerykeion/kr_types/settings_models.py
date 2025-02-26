@@ -140,6 +140,8 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     lunar_phase: str = Field(title="Lunar Phase", description="The name of the Lunar Phase label in the chart, in the language")
     day: str = Field(title="Day", description="The name of the Day label in the chart, in the language")
     celestial_points: KerykeionLanguageCelestialPointModel
+    composite_chart: str = Field(title="Composite Chart", description="The name of the Composite Chart label in the chart, in the language")
+    midpoints: str = Field(title="Midpoints", description="The name of the Midpoints label in the chart, in the language")
 
 
 class KerykeionGeneralSettingsModel(SubscriptableBaseModel):

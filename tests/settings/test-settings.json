@@ -21,6 +21,8 @@
       "transit_name": "At the time of the transit",
       "lunar_phase": "Lunar phase",
       "day": "Day",
+      "composite_chart": "Composite Chart",
+      "midpoints": "Midpoints",
       "celestial_points": {
         "Sun": "Sun",
         "Moon": "Moon",
@@ -65,6 +67,8 @@
       "transit_name": "Au moment de la transition",
       "lunar_phase": "Phase Lunaire",
       "day": "Jour",
+      "composite_chart": "Carte Composite",
+      "midpoints": "Milieux",
       "celestial_points": {
         "Sun": "Soleil",
         "Moon": "Lune",
@@ -109,6 +113,8 @@
       "transit_name": "No momento do trânsito",
       "lunar_phase": "Fase lunar",
       "day": "Dia",
+      "composite_chart": "Carta Composta",
+      "midpoints": "Meios",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Lua",
@@ -153,6 +159,8 @@
       "transit_name": "Al momento del transito",
       "lunar_phase": "Fase lunare",
       "day": "Giorno",
+      "composite_chart": "Tema Composito",
+      "midpoints": "Punti Medi",
       "celestial_points": {
         "Sun": "Sole",
         "Moon": "Luna",
@@ -197,6 +205,8 @@
       "transit_name": "流年名稱",
       "lunar_phase": "月相",
       "day": "日",
+      "composite_chart": "合盤",
+      "midpoints": "中點",
       "celestial_points": {
         "Sun": "太陽",
         "Moon": "月亮",
@@ -241,6 +251,8 @@
       "transit_name": "En el momento del tránsito",
       "lunar_phase": "Fase lunar",
       "day": "Día",
+      "composite_chart": "Carta Compuesta",
+      "midpoints": "Puntos Medios",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Luna",
@@ -285,6 +297,8 @@
       "transit_name": "В момент транзита",
       "lunar_phase": "Лунная фаза",
       "day": "День",
+      "composite_chart": "Композитная карта",
+      "midpoints": "Средние точки",
       "celestial_points": {
         "Sun": "Солнце",
         "Moon": "Луна",
@@ -329,6 +343,8 @@
       "transit_name": "Geçiş anında",
       "lunar_phase": "Ay Aşaması",
       "day": "Gün",
+      "composite_chart": "Kompozit Harita",
+      "midpoints": "Orta Noktalar",
       "celestial_points": {
         "Sun": "Güneş",
         "Moon": "Ay",
@@ -373,6 +389,8 @@
       "transit_name": "Zum Zeitpunkt des Transits",
       "lunar_phase": "Mondphase",
       "day": "Tag",
+      "composite_chart": "Komposit-Chart",
+      "midpoints": "Mittelpunkte",
       "celestial_points": {
         "Sun": "Sonne",
         "Moon": "Mond",
@@ -417,6 +435,8 @@
       "transit_name": "गोचर के समय",
       "lunar_phase": "चंद्र चरण",
       "day": "दिन",
+      "composite_chart": "संयुक्त चार्ट",
+      "midpoints": "मध्य बिंदु",
       "celestial_points": {
         "Sun": "सूर्य",
         "Moon": "चंद्रमा",
@@ -536,7 +556,6 @@
       "id": 0,
       "name": "Sun",
       "color": "var(--kerykeion-chart-color-sun)",
-      "is_active": true,
       "element_points": 40,
       "related_zodiac_signs": ["4"],
       "label": "Sun"
@@ -545,7 +564,6 @@
       "id": 1,
       "name": "Moon",
       "color": "var(--kerykeion-chart-color-moon)",
-      "is_active": true,
       "element_points": 40,
       "related_zodiac_signs": ["3"],
       "label": "Moon"
@@ -554,7 +572,6 @@
       "id": 2,
       "name": "Mercury",
       "color": "var(--kerykeion-chart-color-mercury)",
-      "is_active": true,
       "element_points": 15,
       "related_zodiac_signs": ["2", "5"],
       "label": "Mercury"
@@ -563,7 +580,6 @@
       "id": 3,
       "name": "Venus",
       "color": "var(--kerykeion-chart-color-venus)",
-      "is_active": true,
       "element_points": 15,
       "related_zodiac_signs": ["1", "6"],
       "label": "Venus"
@@ -572,7 +588,6 @@
       "id": 4,
       "name": "Mars",
       "color": "var(--kerykeion-chart-color-mars)",
-      "is_active": true,
       "element_points": 15,
       "related_zodiac_signs": ["0"],
       "label": "Mars"
@@ -581,7 +596,6 @@
       "id": 5,
       "name": "Jupiter",
       "color": "var(--kerykeion-chart-color-jupiter)",
-      "is_active": true,
       "element_points": 10,
       "related_zodiac_signs": ["8"],
       "label": "Jupiter"
@@ -590,7 +604,6 @@
       "id": 6,
       "name": "Saturn",
       "color": "var(--kerykeion-chart-color-saturn)",
-      "is_active": true,
       "element_points": 10,
       "related_zodiac_signs": ["9"],
       "label": "Saturn"
@@ -599,7 +612,6 @@
       "id": 7,
       "name": "Uranus",
       "color": "var(--kerykeion-chart-color-uranus)",
-      "is_active": true,
       "element_points": 10,
       "related_zodiac_signs": ["10"],
       "label": "Uranus"
@@ -608,7 +620,6 @@
       "id": 8,
       "name": "Neptune",
       "color": "var(--kerykeion-chart-color-neptune)",
-      "is_active": true,
       "element_points": 10,
       "related_zodiac_signs": ["11"],
       "label": "Neptune"
@@ -617,7 +628,6 @@
       "id": 9,
       "name": "Pluto",
       "color": "var(--kerykeion-chart-color-pluto)",
-      "is_active": true,
       "element_points": 10,
       "related_zodiac_signs": ["7"],
       "label": "Pluto"
@@ -626,7 +636,6 @@
       "id": 10,
       "name": "Mean_Node",
       "color": "var(--kerykeion-chart-color-mean-node)",
-      "is_active": true,
       "element_points": 0,
       "related_zodiac_signs": [],
       "label": "Mean_Node"
@@ -635,7 +644,6 @@
       "id": 11,
       "name": "True_Node",
       "color": "var(--kerykeion-chart-color-true-node)",
-      "is_active": false,
       "element_points": 0,
       "related_zodiac_signs": [],
       "label": "True_Node"
@@ -644,7 +652,6 @@
       "id": 12,
       "name": "Chiron",
       "color": "var(--kerykeion-chart-color-chiron)",
-      "is_active": true,
       "element_points": 0,
       "related_zodiac_signs": [],
       "label": "Chiron"
@@ -653,7 +660,6 @@
       "id": 13,
       "name": "Ascendant",
       "color": "var(--kerykeion-chart-color-first-house)",
-      "is_active": true,
       "element_points": 40,
       "related_zodiac_signs": [],
       "label": "Asc"
@@ -662,7 +668,6 @@
       "id": 14,
       "name": "Medium_Coeli",
       "color": "var(--kerykeion-chart-color-tenth-house)",
-      "is_active": true,
       "element_points": 20,
       "related_zodiac_signs": [],
       "label": "Mc"
@@ -671,7 +676,6 @@
       "id": 15,
       "name": "Descendant",
       "color": "var(--kerykeion-chart-color-seventh-house)",
-      "is_active": false,
       "element_points": 0,
       "related_zodiac_signs": [],
       "label": "Dsc"
@@ -680,7 +684,6 @@
       "id": 16,
       "name": "Imum_Coeli",
       "color": "var(--kerykeion-chart-color-fourth-house)",
-      "is_active": false,
       "element_points": 0,
       "related_zodiac_signs": [],
       "label": "Ic"
@@ -689,7 +692,6 @@
       "id": 17,
       "name": "Mean_Lilith",
       "color": "var(--kerykeion-chart-color-mean-lilith)",
-      "is_active": true,
       "element_points": 0,
       "related_zodiac_signs": [],
       "label": "Mean_Lilith"
@@ -698,7 +700,6 @@
       "id": 18,
       "name": "Mean_South_Node",
       "color": "var(--kerykeion-chart-color-mean-node)",
-      "is_active": true,
       "element_points": 0,
       "related_zodiac_signs": [],
       "label": "Mean_South_Node"
@@ -707,7 +708,6 @@
       "id": 19,
       "name": "True_South_Node",
       "color": "var(--kerykeion-chart-color-true-node)",
-      "is_active": false,
       "element_points": 0,
       "related_zodiac_signs": [],
       "label": "True_South_Node"

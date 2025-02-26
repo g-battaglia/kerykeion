@@ -204,6 +204,7 @@ class CompositeSubjectModel(SubscriptableBaseModel):
     name: str
     first_subject: AstrologicalSubjectModel
     second_subject: AstrologicalSubjectModel
+    composite_chart_type: str
 
     zodiac_type: ZodiacType
     sidereal_mode: Union[SiderealMode, None]
