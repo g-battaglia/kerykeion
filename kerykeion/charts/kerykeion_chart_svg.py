@@ -459,7 +459,7 @@ class KerykeionChartSVG:
         template_dict["lunar_phase_circle_radius"] = moon_phase_dict["circle_radius"]
 
         if self.chart_type == "Composite":
-            template_dict["top_left_1"] = datetime.fromisoformat(self.user.first_subject.iso_formatted_utc_datetime).strftime('%Y-%m-%d %H:%M')
+            template_dict["top_left_1"] = f"{datetime.fromisoformat(self.user.first_subject.iso_formatted_local_datetime).strftime('%Y-%m-%d %H:%M')}"
         # Set location string
         elif len(self.location) > 35:
             split_location = self.location.split(",")
@@ -487,7 +487,7 @@ class KerykeionChartSVG:
             template_dict["top_left_5"] = f"{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hour:02d}:{self.t_user.minute:02d}"
         elif self.chart_type == "Composite":
             template_dict["top_left_3"] = self.user.second_subject.name
-            template_dict["top_left_4"] = datetime.fromisoformat(self.user.second_subject.iso_formatted_utc_datetime).strftime('%Y-%m-%d %H:%M')
+            template_dict["top_left_4"] = f"{datetime.fromisoformat(self.user.second_subject.iso_formatted_local_datetime).strftime('%Y-%m-%d %H:%M')}"
             latitude_string = convert_latitude_coordinate_to_string(self.user.second_subject.lat, "N", "S")
             longitude_string = convert_longitude_coordinate_to_string(self.user.second_subject.lng, "E", "W")
             template_dict["top_left_5"] = f"{latitude_string} / {longitude_string}"
