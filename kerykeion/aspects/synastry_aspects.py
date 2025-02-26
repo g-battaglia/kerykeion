@@ -11,11 +11,11 @@ from functools import cached_property
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
-from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
 from kerykeion.kr_types.kr_literals import AxialCusps, Planet
-from typing import Union
+from typing import Union, List
 
 
 class SynastryAspects(NatalAspects):
@@ -29,6 +29,7 @@ class SynastryAspects(NatalAspects):
         kr_object_two: Union[AstrologicalSubject, AstrologicalSubjectModel],
         new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
         active_points: list[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS,
+        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
     ):
         # Subjects
         self.first_user = kr_object_one
@@ -42,6 +43,7 @@ class SynastryAspects(NatalAspects):
         self.aspects_settings = self.settings.aspects
         self.axes_orbit_settings = self.settings.general_settings.axes_orbit
         self.active_points = active_points
+        self.active_aspects = active_aspects
 
         # Private variables of the aspects
         self._all_aspects: Union[list, None] = None
@@ -62,8 +64,17 @@ class SynastryAspects(NatalAspects):
         first_active_points_list = get_active_points_list(self.first_user, self.settings, self.active_points)
         second_active_points_list = get_active_points_list(self.second_user, self.settings, self.active_points)
 
-        self.all_aspects_list = []
+        # ---> TODO: Clean this up
+        filtered_settings = []
+        for a in self.aspects_settings:
+            for aspect in self.active_aspects:
+                if a["name"] == aspect["name"]:
+                    a["orb"] = aspect["orb"]  # Assign the aspect's orb
+                    filtered_settings.append(a)
+        self.aspects_settings = filtered_settings
+        # <--- TODO: Clean this up
 
+        self.all_aspects_list = []
         for first in range(len(first_active_points_list)):
             # Generates the aspects list whitout repetitions
             for second in range(len(second_active_points_list)):
@@ -77,7 +88,6 @@ class SynastryAspects(NatalAspects):
                 name = aspect["name"]
                 orbit = aspect["orbit"]
                 aspect_degrees = aspect["aspect_degrees"]
-                aid = aspect["aid"]
                 diff = aspect["diff"]
 
                 if verdict == True:
@@ -89,11 +99,9 @@ class SynastryAspects(NatalAspects):
                         aspect=name,
                         orbit=orbit,
                         aspect_degrees=aspect_degrees,
-                        aid=aid,
                         diff=diff,
                         p1=planet_id_decoder(self.celestial_points, first_active_points_list[first]["name"]),
                         p2=planet_id_decoder(self.celestial_points, second_active_points_list[second]["name"]),
-                        is_major=self.aspects_settings[aid]["is_major"],
                     )
                     self.all_aspects_list.append(aspect_model)
 

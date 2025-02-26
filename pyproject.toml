@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kerykeion"
-version = "4.23.0"
+version = "4.24.7"
 authors = ["Giacomo Battaglia <kerykeion.astrology@gmail.com>"]
 description = "A python library for astrology."
 license = "AGPL-3.0"
@@ -49,6 +49,7 @@ requests-cache = "^1.2.1"
 requests = "^2.32.3"
 simple-ascii-tables = "^1.0.0"
 pytz = "^2024.2"
+typing-extensions = "^4.12.2"
 
 [tool.poetry.scripts]
 create-docs = "scripts.docs:main"
