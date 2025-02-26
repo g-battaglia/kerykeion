@@ -109,10 +109,10 @@ OpenAstro.org -->
                 height='550' style='fill: var(--kerykeion-chart-color-paper-1)' />
             <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Angelina Jolie and Brad Pitt</text>
             <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Angelina Jolie</text>
-            <text x='20' y='62' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1975-06-04 16:09</text>
+            <text x='20' y='62' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1975-06-04 09:09</text>
             <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>34°1'48' N 118°9'0' W</text>
             <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Brad Pitt</text>
-            <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1963-12-18 12:31</text>
+            <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1963-12-18 06:31</text>
             <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>35°12'0' N / 96°33'36' W</text>
             <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Placidus Houses</text>
             <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Tropical Zodiac</text>
