@@ -456,9 +456,10 @@ class KerykeionChartSVG:
             template_dict["stringTitle"] = self.user.name
         elif self.chart_type == "Composite":
             template_dict["stringTitle"] = f"{self.user.first_subject.name} {self.language_settings['and_word']} {self.user.second_subject.name}"
+
+        # Zodiac Type Info
         if self.user.zodiac_type == 'Tropic':
             zodiac_info = "Tropical Zodiac"
-
         else:
             mode_const = "SIDM_" + self.user.sidereal_mode # type: ignore
             mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
