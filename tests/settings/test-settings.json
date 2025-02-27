@@ -23,6 +23,10 @@
       "day": "Day",
       "composite_chart": "Composite Chart",
       "midpoints": "Midpoints",
+      "north_letter": "N",
+      "east_letter": "E",
+      "south_letter": "S",
+      "west_letter": "W",
       "celestial_points": {
         "Sun": "Sun",
         "Moon": "Moon",
@@ -69,6 +73,10 @@
       "day": "Jour",
       "composite_chart": "Carte Composite",
       "midpoints": "Milieux",
+      "north_letter": "N",
+      "east_letter": "E",
+      "south_letter": "S",
+      "west_letter": "W",
       "celestial_points": {
         "Sun": "Soleil",
         "Moon": "Lune",
@@ -115,6 +123,10 @@
       "day": "Dia",
       "composite_chart": "Carta Composta",
       "midpoints": "Meios",
+      "north_letter": "N",
+      "east_letter": "E",
+      "south_letter": "S",
+      "west_letter": "W",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Lua",
@@ -161,6 +173,10 @@
       "day": "Giorno",
       "composite_chart": "Tema Composito",
       "midpoints": "Punti Medi",
+      "north_letter": "N",
+      "east_letter": "E",
+      "south_letter": "S",
+      "west_letter": "W",
       "celestial_points": {
         "Sun": "Sole",
         "Moon": "Luna",
@@ -207,6 +223,10 @@
       "day": "日",
       "composite_chart": "合盤",
       "midpoints": "中點",
+      "north_letter": "北",
+      "east_letter": "東",
+      "south_letter": "南",
+      "west_letter": "西",
       "celestial_points": {
         "Sun": "太陽",
         "Moon": "月亮",
@@ -253,6 +273,10 @@
       "day": "Día",
       "composite_chart": "Carta Compuesta",
       "midpoints": "Puntos Medios",
+      "north_letter": "N",
+      "east_letter": "E",
+      "south_letter": "S",
+      "west_letter": "W",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Luna",
@@ -299,6 +323,10 @@
       "day": "День",
       "composite_chart": "Композитная карта",
       "midpoints": "Средние точки",
+      "north_letter": "С",
+      "east_letter": "В",
+      "south_letter": "Ю",
+      "west_letter": "З",
       "celestial_points": {
         "Sun": "Солнце",
         "Moon": "Луна",
@@ -345,6 +373,10 @@
       "day": "Gün",
       "composite_chart": "Kompozit Harita",
       "midpoints": "Orta Noktalar",
+      "north_letter": "K",
+      "east_letter": "D",
+      "south_letter": "G",
+      "west_letter": "B",
       "celestial_points": {
         "Sun": "Güneş",
         "Moon": "Ay",
@@ -391,6 +423,10 @@
       "day": "Tag",
       "composite_chart": "Komposit-Chart",
       "midpoints": "Mittelpunkte",
+      "north_letter": "N",
+      "east_letter": "E",
+      "south_letter": "S",
+      "west_letter": "W",
       "celestial_points": {
         "Sun": "Sonne",
         "Moon": "Mond",
@@ -437,6 +473,10 @@
       "day": "दिन",
       "composite_chart": "संयुक्त चार्ट",
       "midpoints": "मध्य बिंदु",
+      "north_letter": "उ",
+      "east_letter": "पू",
+      "south_letter": "द",
+      "west_letter": "प",
       "celestial_points": {
         "Sun": "सूर्य",
         "Moon": "चंद्रमा",
@@ -465,89 +505,67 @@
     {
       "degree": 0,
       "name": "conjunction",
-      "is_active": 1,
-      "is_major": 1,
-      "orb": 10,
+      "is_major": true,
       "color": "var(--kerykeion-chart-color-conjunction)"
     },
     {
       "degree": 30,
       "name": "semi-sextile",
-      "is_active": 0,
-      "is_major": 0,
-      "orb": 1,
+      "is_major": false,
       "color": "var(--kerykeion-chart-color-semi-sextile)"
     },
     {
       "degree": 45,
       "name": "semi-square",
-      "is_active": 0,
-      "is_major": 0,
-      "orb": 1,
+      "is_major": false,
       "color": "var(--kerykeion-chart-color-semi-square)"
     },
     {
       "degree": 60,
       "name": "sextile",
-      "is_active": 1,
-      "is_major": 1,
-      "orb": 6,
+      "is_major": true,
       "color": "var(--kerykeion-chart-color-sextile)"
     },
     {
       "degree": 72,
       "name": "quintile",
-      "is_active": 1,
-      "is_major": 0,
-      "orb": 1,
+      "is_major": false,
       "color": "var(--kerykeion-chart-color-quintile)"
     },
     {
       "degree": 90,
       "name": "square",
-      "is_active": 1,
-      "is_major": 1,
-      "orb": 5,
+      "is_major": true,
       "color": "var(--kerykeion-chart-color-square)"
     },
     {
       "degree": 120,
       "name": "trine",
-      "is_active": 1,
-      "is_major": 1,
-      "orb": 8,
+      "is_major": true,
       "color": "var(--kerykeion-chart-color-trine)"
     },
     {
       "degree": 135,
       "name": "sesquiquadrate",
-      "is_active": 0,
-      "is_major": 0,
-      "orb": 1,
+      "is_major": false,
       "color": "var(--kerykeion-chart-color-sesquiquadrate)"
     },
     {
       "degree": 144,
       "name": "biquintile",
-      "is_active": 0,
-      "is_major": 0,
-      "orb": 1,
+      "is_major": false,
       "color": "var(--kerykeion-chart-color-biquintile)"
     },
     {
       "degree": 150,
       "name": "quincunx",
-      "is_active": 0,
-      "is_major": 0,
-      "orb": 1,
+      "is_major": false,
       "color": "var(--kerykeion-chart-color-quincunx)"
     },
     {
       "degree": 180,
       "name": "opposition",
-      "is_active": 1,
-      "is_major": 1,
-      "orb": 10,
+      "is_major": true,
       "color": "var(--kerykeion-chart-color-opposition)"
     }
   ],

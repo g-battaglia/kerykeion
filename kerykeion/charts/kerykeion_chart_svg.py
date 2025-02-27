@@ -520,8 +520,8 @@ class KerykeionChartSVG:
         elif self.chart_type == "Composite":
             template_dict["top_left_3"] = self.user.second_subject.name
             template_dict["top_left_4"] = f"{datetime.fromisoformat(self.user.second_subject.iso_formatted_local_datetime).strftime('%Y-%m-%d %H:%M')}"
-            latitude_string = convert_latitude_coordinate_to_string(self.user.second_subject.lat, "N", "S")
-            longitude_string = convert_longitude_coordinate_to_string(self.user.second_subject.lng, "E", "W")
+            latitude_string = convert_latitude_coordinate_to_string(self.user.second_subject.lat, self.language_settings['north_letter'], self.language_settings['south_letter'])
+            longitude_string = convert_longitude_coordinate_to_string(self.user.second_subject.lng, self.language_settings['east_letter'], self.language_settings['west_letter'])
             template_dict["top_left_5"] = f"{latitude_string} / {longitude_string}"
         else:
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings['north'], self.language_settings['south'])
@@ -672,8 +672,8 @@ class KerykeionChartSVG:
         # Set date time string
         if self.chart_type in ["Composite"]:
             # First Subject Latitude and Longitude
-            latitude = convert_latitude_coordinate_to_string(self.user.first_subject.lat, "N", "S")
-            longitude = convert_longitude_coordinate_to_string(self.user.first_subject.lng, "E", "W")
+            latitude = convert_latitude_coordinate_to_string(self.user.first_subject.lat, self.language_settings["north_letter"], self.language_settings["south_letter"])
+            longitude = convert_longitude_coordinate_to_string(self.user.first_subject.lng, self.language_settings["east_letter"], self.language_settings["west_letter"])
             template_dict["top_left_2"] = f"{latitude} {longitude}"
         else:
             dt = datetime.fromisoformat(self.user.iso_formatted_local_datetime)
