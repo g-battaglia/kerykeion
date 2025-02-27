@@ -1,4 +1,3 @@
-import logging
 from typing import Union
 
 from kerykeion import AstrologicalSubject
@@ -13,10 +12,19 @@ from kerykeion.utilities import (
 )
 
 
-# TODO: Check DIFFERENCE IN DEGREES BETWEEN PLANETS AND HOUSES!
-# TODO: ORDER UTILS!
-
 class CompositeSubjectFactory:
+    """
+    Factory class to create a Composite Subject Model from two Astrological Subjects
+    Currently, the only available method for creating composite charts is the midpoint method.
+    The composite houses and planets are calculated based on the midpoint of the corresponding points of the two subjects.
+    The house are then reordered to match the original house system of the first subject.
+
+    Args:
+        first_subject (AstrologicalSubject): First astrological subject
+        second_subject (AstrologicalSubject): Second astrological subject
+        chart_name (str): Name of the composite chart. If None, it will be automatically generated.
+    """
+
     model: Union[CompositeSubjectModel, None]
     first_subject: AstrologicalSubjectModel
     second_subject: AstrologicalSubjectModel
