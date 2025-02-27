@@ -32,7 +32,7 @@ The core goal of this project is to provide a simple and easy approach to astrol
 
 Here's an example of a birthchart:
 
-![Kanye Birth Chart](https://www.kerykeion.net/docs/assets/img/examples/birth-chart.svg)
+![John Lenon Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
 
 ## Web API
 
