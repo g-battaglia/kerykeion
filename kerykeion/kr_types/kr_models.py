@@ -75,6 +75,10 @@ class KerykeionPointModel(SubscriptableBaseModel):
 
 
 class AstrologicalSubjectModel(SubscriptableBaseModel):
+    """
+    Pydantic Model for Astrological Subject
+    """
+
     # Data
     name: str
     year: int
@@ -200,6 +204,10 @@ class RelationshipScoreModel(SubscriptableBaseModel):
 
 
 class CompositeSubjectModel(SubscriptableBaseModel):
+    """
+    Pydantic Model for Composite Subject
+    """
+
     # Data
     name: str
     first_subject: AstrologicalSubjectModel
