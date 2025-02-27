@@ -139,6 +139,10 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     celestial_points: KerykeionLanguageCelestialPointModel
     composite_chart: str = Field(title="Composite Chart", description="The name of the Composite Chart label in the chart, in the language")
     midpoints: str = Field(title="Midpoints", description="The name of the Midpoints label in the chart, in the language")
+    north_letter: str = Field(title="North Letter", description="The name of the North Letter label in the chart, in the language")
+    east_letter: str = Field(title="East Letter", description="The name of the East Letter label in the chart, in the language")
+    south_letter: str = Field(title="South Letter", description="The name of the South Letter label in the chart, in the language")
+    west_letter: str = Field(title="West Letter", description="The name of the West Letter label in the chart, in the language")
 
 
 class KerykeionGeneralSettingsModel(SubscriptableBaseModel):
