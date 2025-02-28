@@ -159,6 +159,30 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     waning_gibbous: str
     last_quarter: str
     waning_crescent: str
+    houses: str
+    houses_system_A: str
+    houses_system_B: str
+    houses_system_C: str
+    houses_system_D: str
+    houses_system_F: str
+    houses_system_H: str
+    houses_system_I: str
+    houses_system_i: str
+    houses_system_K: str
+    houses_system_L: str
+    houses_system_M: str
+    houses_system_N: str
+    houses_system_O: str
+    houses_system_P: str
+    houses_system_Q: str
+    houses_system_R: str
+    houses_system_S: str
+    houses_system_T: str
+    houses_system_U: str
+    houses_system_V: str
+    houses_system_W: str
+    houses_system_X: str
+    houses_system_Y: str
 
 class KerykeionGeneralSettingsModel(SubscriptableBaseModel):
     axes_orbit: int = Field(title="Axes Orbit", description="The orbit of the axes in the chart")
