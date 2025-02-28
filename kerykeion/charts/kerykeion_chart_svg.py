@@ -459,23 +459,23 @@ class KerykeionChartSVG:
 
         # Zodiac Type Info
         if self.user.zodiac_type == 'Tropic':
-            zodiac_info = "Tropical Zodiac"
+            zodiac_info = f"{self.language_settings.get('zodiac', 'Zodiac')}: {self.language_settings.get('tropical', 'Tropical')}"
         else:
             mode_const = "SIDM_" + self.user.sidereal_mode # type: ignore
             mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
-            zodiac_info = f"Ayanamsa: {mode_name}"
+            zodiac_info = f"{self.language_settings.get('ayanamsa', 'Ayanamsa')}: {mode_name}"
 
-        template_dict["bottom_left_0"] = f"{self.user.houses_system_name} Houses"
+        template_dict["bottom_left_0"] = f"{self.language_settings.get('houses_system_' + self.user.houses_system_identifier, self.user.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
         template_dict["bottom_left_1"] = zodiac_info
 
         if self.chart_type in ["Natal", "ExternalNatal", "Synastry"]:
             template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")} {self.language_settings.get("day", "Day").lower()}: {self.user.lunar_phase.get("moon_phase", "")}'
-            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.moon_phase_name}'
-            template_dict["bottom_left_4"] = f'{self.user.perspective_type}'
+            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.user.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.user.lunar_phase.moon_phase_name)}'
+            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.user.perspective_type.lower().replace(" ", "_"), self.user.perspective_type)}'
         elif self.chart_type == "Transit":
             template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.t_user.lunar_phase.get("moon_phase", "")}'
             template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
-            template_dict["bottom_left_4"] = f'{self.t_user.perspective_type}'
+            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.t_user.perspective_type.lower().replace(" ", "_"), self.t_user.perspective_type)}'
         elif self.chart_type == "Composite":
             template_dict["bottom_left_2"] = f'{self.user.first_subject.perspective_type}'
             template_dict["bottom_left_3"] = f'{self.language_settings.get("composite_chart", "Composite Chart")} - {self.language_settings.get("midpoints", "Midpoints")}'
@@ -529,7 +529,7 @@ class KerykeionChartSVG:
             longitude_string = convert_longitude_coordinate_to_string(self.geolon, self.language_settings['east'], self.language_settings['west'])
             template_dict["top_left_3"] = f"{self.language_settings['latitude']}: {latitude_string}"
             template_dict["top_left_4"] = f"{self.language_settings['longitude']}: {longitude_string}"
-            template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.chart_type}"
+            template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings.get(self.chart_type, self.chart_type)}"
 
 
         # Set paper colors

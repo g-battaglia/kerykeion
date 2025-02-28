@@ -113,12 +113,12 @@ OpenAstro.org -->
             <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1879-03-14 11:30 [+00:53]</text>
             <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Breitengrad: 48°23'54' Norden</text>
             <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Längengrad: 9°59'30' Osten</text>
-            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Typ: Natal</text>
-            <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Placidus Houses</text>
-            <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Tropical Zodiac</text>
+            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Typ: Radix</text>
+            <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Placidus Häuser</text>
+            <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Tierkreis: Tropisch</text>
             <text x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Mondphase tag: 21</text>
-            <text x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Mondphase: Last Quarter</text>
-            <text x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Apparent Geocentric</text>
+            <text x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Mondphase: Letztes Viertel</text>
+            <text x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Scheinbar Geozentrisch</text>
         </g>
 
         <!-- Lunar Phase -->
