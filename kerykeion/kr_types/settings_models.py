@@ -116,37 +116,49 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     it's used to translate the celestial points and the other labels
     """
 
-    info: str = Field(title="Info", description="The name of the Info label in the chart, in the language")
-    cusp: str = Field(title="Cusp", description="The name of the Cusp label in the chart, in the language")
-    longitude: str = Field(title="Longitude", description="The name of the Longitude label in the chart, in the language")
-    latitude: str = Field(title="Latitude", description="The name of the Latitude label in the chart, in the language")
-    north: str = Field(title="North", description="The name of the North label in the chart, in the language")
-    east: str = Field(title="East", description="The name of the East label in the chart, in the language")
-    south: str = Field(title="South", description="The name of the South label in the chart, in the language")
-    west: str = Field(title="West", description="The name of the West label in the chart, in the language")
-    fire: str = Field(title="Fire", description="The name of the Fire label in the chart, in the language")
-    earth: str = Field(title="Earth", description="The name of the Earth label in the chart, in the language")
-    air: str = Field(title="Air", description="The name of the Air label in the chart, in the language")
-    water: str = Field(title="Water", description="The name of the Water label in the chart, in the language")
-    and_word: str = Field(title="And", description="The name of the And word in the chart, in the language")
-    transits: str = Field(title="Transits", description="The name of the Transits label in the chart, in the language")
-    type: str = Field(title="Type", description="The name of the Type label in the chart, in the language")
-    aspects: str = Field(title="Aspects", description="The name of the Aspects label in the chart, in the language")
-    planets_and_house: str = Field(title="Planets and Houses", description="The name of the Planets and Houses label in the chart, in the language")
-    transit_name: str = Field(title="Transit Name", description="The name of the Transit Name label in the chart, in the language")
-    lunar_phase: str = Field(title="Lunar Phase", description="The name of the Lunar Phase label in the chart, in the language")
-    day: str = Field(title="Day", description="The name of the Day label in the chart, in the language")
+    info: str
+    cusp: str
+    longitude: str
+    latitude: str
+    north: str
+    east: str
+    south: str
+    west: str
+    fire: str
+    earth: str
+    air: str
+    water: str
+    and_word: str
+    transits: str
+    type: str
+    aspects: str
+    planets_and_house: str
+    transit_name: str
+    lunar_phase: str
+    day: str
     celestial_points: KerykeionLanguageCelestialPointModel
-    composite_chart: str = Field(title="Composite Chart", description="The name of the Composite Chart label in the chart, in the language")
-    midpoints: str = Field(title="Midpoints", description="The name of the Midpoints label in the chart, in the language")
-    north_letter: str = Field(title="North Letter", description="The name of the North Letter label in the chart, in the language")
-    east_letter: str = Field(title="East Letter", description="The name of the East Letter label in the chart, in the language")
-    south_letter: str = Field(title="South Letter", description="The name of the South Letter label in the chart, in the language")
-    west_letter: str = Field(title="West Letter", description="The name of the West Letter label in the chart, in the language")
-    tropical: str = Field(title="Tropical", description="The name of the Tropical label in the chart, in the language")
-    sidereal: str = Field(title="Sidereal", description="The name of the Sidereal label in the chart, in the language")
-    zodiac: str = Field(title="Zodiac", description="The name of the Zodiac label in the chart, in the language")
-
+    composite_chart: str
+    midpoints: str
+    north_letter: str
+    east_letter: str
+    south_letter: str
+    west_letter: str
+    tropical: str
+    sidereal: str
+    zodiac: str
+    ayanamsa: str
+    apparent_geocentric: str
+    heliocentric: str
+    topocentric: str
+    true_geocentric: str
+    new_moon: str
+    waxing_crescent: str
+    first_quarter: str
+    waxing_gibbous: str
+    full_moon: str
+    waning_gibbous: str
+    last_quarter: str
+    waning_crescent: str
 
 class KerykeionGeneralSettingsModel(SubscriptableBaseModel):
     axes_orbit: int = Field(title="Axes Orbit", description="The orbit of the axes in the chart")
