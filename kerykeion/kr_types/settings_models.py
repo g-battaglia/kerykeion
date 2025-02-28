@@ -183,6 +183,12 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     houses_system_W: str
     houses_system_X: str
     houses_system_Y: str
+    Natal: str
+    ExternalNatal: str
+    Synastry: str
+    Transit: str
+    Composite: str
+
 
 class KerykeionGeneralSettingsModel(SubscriptableBaseModel):
     axes_orbit: int = Field(title="Axes Orbit", description="The orbit of the axes in the chart")
