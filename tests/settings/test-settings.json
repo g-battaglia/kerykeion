@@ -27,6 +27,9 @@
       "east_letter": "E",
       "south_letter": "S",
       "west_letter": "W",
+      "tropical": "Tropical",
+      "sidereal": "Sidereal",
+      "zodiac": "Zodiac",
       "celestial_points": {
         "Sun": "Sun",
         "Moon": "Moon",
@@ -77,6 +80,9 @@
       "east_letter": "E",
       "south_letter": "S",
       "west_letter": "W",
+      "tropical": "Tropical",
+      "sidereal": "Sidéral",
+      "zodiac": "Zodiaque",
       "celestial_points": {
         "Sun": "Soleil",
         "Moon": "Lune",
@@ -127,6 +133,9 @@
       "east_letter": "E",
       "south_letter": "S",
       "west_letter": "W",
+      "tropical": "Tropical",
+      "sidereal": "Sideral",
+      "zodiac": "Zodíaco",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Lua",
@@ -177,6 +186,9 @@
       "east_letter": "E",
       "south_letter": "S",
       "west_letter": "W",
+      "tropical": "Tropicale",
+      "sidereal": "Siderale",
+      "zodiac": "Zodiaco",
       "celestial_points": {
         "Sun": "Sole",
         "Moon": "Luna",
@@ -227,6 +239,9 @@
       "east_letter": "東",
       "south_letter": "南",
       "west_letter": "西",
+      "tropical": "熱帶",
+      "sidereal": "恆星",
+      "zodiac": "黃道",
       "celestial_points": {
         "Sun": "太陽",
         "Moon": "月亮",
@@ -277,6 +292,9 @@
       "east_letter": "E",
       "south_letter": "S",
       "west_letter": "W",
+      "tropical": "Tropical",
+      "sidereal": "Sideral",
+      "zodiac": "Zodiaco",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Luna",
@@ -327,6 +345,9 @@
       "east_letter": "В",
       "south_letter": "Ю",
       "west_letter": "З",
+      "tropical": "Тропический",
+      "sidereal": "Сидереальный",
+      "zodiac": "Зодиак",
       "celestial_points": {
         "Sun": "Солнце",
         "Moon": "Луна",
@@ -377,6 +398,9 @@
       "east_letter": "D",
       "south_letter": "G",
       "west_letter": "B",
+      "tropical": "Tropikal",
+      "sidereal": "Sidereal",
+      "zodiac": "Burçlar",
       "celestial_points": {
         "Sun": "Güneş",
         "Moon": "Ay",
@@ -427,6 +451,9 @@
       "east_letter": "E",
       "south_letter": "S",
       "west_letter": "W",
+      "tropical": "Tropisch",
+      "sidereal": "Siderisch",
+      "zodiac": "Tierkreis",
       "celestial_points": {
         "Sun": "Sonne",
         "Moon": "Mond",
@@ -477,6 +504,9 @@
       "east_letter": "पू",
       "south_letter": "द",
       "west_letter": "प",
+      "tropical": "ट्रॉपिकल",
+      "sidereal": "साइडीरियल",
+      "zodiac": "राशि",
       "celestial_points": {
         "Sun": "सूर्य",
         "Moon": "चंद्रमा",

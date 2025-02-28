@@ -459,7 +459,7 @@ class KerykeionChartSVG:
 
         # Zodiac Type Info
         if self.user.zodiac_type == 'Tropic':
-            zodiac_info = "Tropical Zodiac"
+            zodiac_info = f"{self.language_settings.get('zodiac', 'Zodiac')}: {self.language_settings.get('tropical', 'Tropical')}"
         else:
             mode_const = "SIDM_" + self.user.sidereal_mode # type: ignore
             mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
