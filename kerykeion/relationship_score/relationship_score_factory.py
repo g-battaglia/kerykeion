@@ -221,57 +221,10 @@ if __name__ == "__main__":
 
     setup_logging(level="critical")
 
-    john = AstrologicalSubject("John", 1940, 10, 9, 18, 30, "Liverpool", "UK")
-    yoko = AstrologicalSubject("Yoko", 1933, 2, 18, 20, 30, "Tokyo", "JP")
+    giacomo = AstrologicalSubject("Giacomo", 1993, 6, 10, 12, 15, "Montichiari", "IT")
+    yoko = AstrologicalSubject("Susie Cox", 1949, 6, 17, 9, 40, "Tucson", "US")
 
-    relationship_score_factory = RelationshipScoreFactory(john, yoko)
-    relationship_score = relationship_score_factory.get_relationship_score()
+    factory = RelationshipScoreFactory(giacomo, yoko)
+    score = factory.get_relationship_score()
+    print(score)
 
-    print("John and Yoko relationship score:")
-    print(relationship_score.score_value)
-    print(relationship_score.score_description)
-    print(relationship_score.is_destiny_sign)
-    print(len(relationship_score.aspects))
-    print(len(relationship_score_factory._synastry_aspects))
-
-    print("------------------->")
-    freud = AstrologicalSubject("Freud", 1856, 5, 6, 18, 30, "Freiberg", "DE")
-    jung = AstrologicalSubject("Jung", 1875, 7, 26, 18, 30, "Kesswil", "CH")
-
-    relationship_score_factory = RelationshipScoreFactory(freud, jung)
-    relationship_score = relationship_score_factory.get_relationship_score()
-
-    print("Freud and Jung relationship score:")
-    print(relationship_score.score_value)
-    print(relationship_score.score_description)
-    print(relationship_score.is_destiny_sign)
-    print(len(relationship_score.aspects))
-    print(len(relationship_score_factory._synastry_aspects))
-
-    print("------------------->")
-    richart_burton = AstrologicalSubject("Richard Burton", 1925, 11, 10, 15, 00, "Pontrhydyfen", "UK")
-    liz_taylor = AstrologicalSubject("Elizabeth Taylor", 1932, 2, 27, 2, 30, "London", "UK")
-
-    relationship_score_factory = RelationshipScoreFactory(richart_burton, liz_taylor)
-    relationship_score = relationship_score_factory.get_relationship_score()
-
-    print("Richard Burton and Elizabeth Taylor relationship score:")
-    print(relationship_score.score_value)
-    print(relationship_score.score_description)
-    print(relationship_score.is_destiny_sign)
-    print(len(relationship_score.aspects))
-    print(len(relationship_score_factory._synastry_aspects))
-
-    print("------------------->")
-    dario_fo = AstrologicalSubject("Dario Fo", 1926, 3, 24, 12, 25, "Sangiano", "IT")
-    franca_rame = AstrologicalSubject("Franca Rame", 1929, 7, 18, 12, 25, "Parabiago", "IT")
-
-    relationship_score_factory = RelationshipScoreFactory(dario_fo, franca_rame)
-    relationship_score = relationship_score_factory.get_relationship_score()
-
-    print("Dario Fo and Franca Rame relationship score:")
-    print(relationship_score.score_value)
-    print(relationship_score.score_description)
-    print(relationship_score.is_destiny_sign)
-    print(len(relationship_score.aspects))
-    print(len(relationship_score_factory._synastry_aspects))

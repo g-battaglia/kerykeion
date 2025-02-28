@@ -143,6 +143,9 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     east_letter: str = Field(title="East Letter", description="The name of the East Letter label in the chart, in the language")
     south_letter: str = Field(title="South Letter", description="The name of the South Letter label in the chart, in the language")
     west_letter: str = Field(title="West Letter", description="The name of the West Letter label in the chart, in the language")
+    tropical: str = Field(title="Tropical", description="The name of the Tropical label in the chart, in the language")
+    sidereal: str = Field(title="Sidereal", description="The name of the Sidereal label in the chart, in the language")
+    zodiac: str = Field(title="Zodiac", description="The name of the Zodiac label in the chart, in the language")
 
 
 class KerykeionGeneralSettingsModel(SubscriptableBaseModel):
