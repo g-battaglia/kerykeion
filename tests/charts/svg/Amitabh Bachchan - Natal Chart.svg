@@ -113,12 +113,12 @@ OpenAstro.org -->
             <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1942-10-11 04:00 [+06:30]</text>
             <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>अक्षांश: 25°26'41' उत्तर</text>
             <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>देशांतर: 81°50'36' पूर्व</text>
-            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>प्रकार: Natal</text>
-            <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Placidus Houses</text>
-            <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Tropical Zodiac</text>
+            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>प्रकार: जन्म</text>
+            <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>प्लासिडस भावों</text>
+            <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>राशि: ट्रॉपिकल</text>
             <text x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>चंद्र चरण दिन: 1</text>
-            <text x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>चंद्र चरण: New Moon</text>
-            <text x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Apparent Geocentric</text>
+            <text x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>चंद्र चरण: अमावस्या</text>
+            <text x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>आभासी भूकेंद्रीय</text>
         </g>
 
         <!-- Lunar Phase -->

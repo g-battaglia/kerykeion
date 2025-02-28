@@ -114,11 +114,11 @@ OpenAstro.org -->
             <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Latitude: 32°39'56' Norte</text>
             <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Longitude: 16°55'32' Oeste</text>
             <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Tipo: Natal</text>
-            <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Placidus Houses</text>
-            <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Tropical Zodiac</text>
+            <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Placidus Casas</text>
+            <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Zodíaco: Tropical</text>
             <text x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Fase lunar dia: 14</text>
-            <text x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Fase lunar: Full Moon</text>
-            <text x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Apparent Geocentric</text>
+            <text x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Fase lunar: Lua Cheia</text>
+            <text x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Geocêntrico Aparente</text>
         </g>
 
         <!-- Lunar Phase -->
