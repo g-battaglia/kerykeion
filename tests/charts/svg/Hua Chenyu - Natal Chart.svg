@@ -113,12 +113,12 @@ OpenAstro.org -->
             <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1990-02-07 12:00 [+08:00]</text>
             <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>緯度: 27°40'0' 北</text>
             <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>經度: 111°45'0' 東</text>
-            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>盤型: Natal</text>
-            <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Placidus Houses</text>
-            <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Tropical Zodiac</text>
+            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>盤型: 本命盤</text>
+            <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>普拉西達斯 宮位系統</text>
+            <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>黃道: 熱帶</text>
             <text x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>月相 日: 12</text>
-            <text x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>月相: Waxing Gibbous</text>
-            <text x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Apparent Geocentric</text>
+            <text x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>月相: 盈凸月</text>
+            <text x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>視地心</text>
         </g>
 
         <!-- Lunar Phase -->
