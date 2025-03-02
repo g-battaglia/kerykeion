@@ -1,23 +1,14 @@
 <h1 align=center>Kerykeion</h1>
 <div align="center">
-    <a href="#">
         <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
-    </a>
-    <a href="#">
         <img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="stars">
-    </a>
-    <a href="#">
         <img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="forks">
-    </a>
-    <a href="https://pypi.org/project/kerykeion" target="_blank">
+        <img src="https://static.pepy.tech/badge/kerykeion" alt="PyPI Downloads">
         <img src="https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion" alt="visitors"/>
-    </a>
-    <a href="https://pypi.org/project/kerykeion" target="_blank">
         <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
-    </a>
-    <a href="https://pypi.org/project/kerykeion" target="_blank">
         <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
-    </a>
+        <img src="https://img.shields.io/github/license/g-battaglia/kerykeion" alt="License">
+
 </div>
 
 &nbsp;
