@@ -135,6 +135,38 @@ synastry_chart.makeSVG()
 
 ![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/docs/assets/img/examples/synastry-chart.svg)
 
+
+### Transit Chart
+
+```python
+from kerykeion import AstrologicalSubject
+
+transit = AstrologicalSubject("Transit", 2025, 6, 8, 8, 45, "Atlanta", "US")
+subject = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+
+transit_chart = KerykeionChartSVG(subject, "Transit", transit)
+transit_chart.makeSVG()
+```
+
+![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Transit%20Chart.svg)
+
+### Composite Chart
+
+```python
+from kerykeion import CompositeChart, AstrologicalSubject, KerykeionChartSVG
+
+angelina = AstrologicalSubject("Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US", lng=-118.15, lat=34.03, tz_str="America/Los_Angeles")
+brad = AstrologicalSubject("Brad Pitt", 1963, 12, 18, 6, 31, "Shawnee", "US", lng=-96.56, lat=35.20, tz_str="America/Chicago")
+
+composite_subject_factory = CompositeSubjectFactory(angelina, brad)
+composite_subject_model = composite_subject_factory.get_midpoint_composite_subject_model()
+
+composite_chart = KerykeionChartSVG(composite_subject_model, "Composite")
+composite_chart.makeSVG()
+```
+
+![Angelina Jolie and Brad Pitt Composite Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/Angelina%20Jolie%20and%20Brad%20Pitt%20Composite%20Chart%20-%20Composite%20Chart.svg)
+
 ### Change the output directory
 
 By default the output directory is the home directory, you can change it by passing the new_output_directory parameter to the KerykeionChartSVG class:
