@@ -185,12 +185,24 @@ class KerykeionChartSVG:
             self.t_user = second_obj
 
             # Aspects
-            synastry_aspects_instance = SynastryAspects(
-                self.user, self.t_user,
-                new_settings_file=self.new_settings_file,
-                active_points=active_points,
-                active_aspects=active_aspects,
-            )
+            if self.chart_type == "Transit":
+                synastry_aspects_instance = SynastryAspects(
+                    self.t_user,
+                    self.user,
+                    new_settings_file=self.new_settings_file,
+                    active_points=active_points,
+                    active_aspects=active_aspects,
+                )
+
+            else:
+                synastry_aspects_instance = SynastryAspects(
+                    self.user,
+                    self.t_user,
+                    new_settings_file=self.new_settings_file,
+                    active_points=active_points,
+                    active_aspects=active_aspects,
+                )
+
             self.aspects_list = synastry_aspects_instance.relevant_aspects
 
             self.t_available_kerykeion_celestial_points = []
@@ -432,7 +444,13 @@ class KerykeionChartSVG:
             template_dict['third_circle'] = draw_third_circle(self.main_radius, self.chart_colors_settings['zodiac_transit_ring_0'], self.chart_colors_settings['paper_1'], self.chart_type, self.third_circle_radius)
 
             if self.double_chart_aspect_grid_type == "list":
-                template_dict["makeAspectGrid"] = draw_transit_aspect_list(self.language_settings["aspects"], self.aspects_list, self.planets_settings, self.aspects_settings)
+                title = ""
+                if self.chart_type == "Synastry":
+                    title = self.language_settings.get("couple_aspects", "Couple Aspects")
+                else:
+                    title = self.language_settings.get("transit_aspects", "Transit Aspects")
+
+                template_dict["makeAspectGrid"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings)
             else:
                 template_dict["makeAspectGrid"] = draw_transit_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list, 550, 450)
 
