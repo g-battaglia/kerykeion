@@ -1,11 +1,11 @@
 <h1 align=center>Kerykeion</h1>
 <div align="center">
-        <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
         <img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="stars">
         <img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="forks">
         <img src="https://static.pepy.tech/badge/kerykeion" alt="PyPI Downloads">
         <img src="https://static.pepy.tech/badge/kerykeion/month" alt="PyPI Downloads">
         <img src="https://static.pepy.tech/badge/kerykeion/week" alt="PyPI Downloads">
+        <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">ƒ
         <img src="https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion" alt="visitors"/>
         <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
         <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
