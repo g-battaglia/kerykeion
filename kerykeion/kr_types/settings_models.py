@@ -131,7 +131,8 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     and_word: str
     transits: str
     type: str
-    aspects: str
+    couple_aspects: str
+    transit_aspects: str
     planets_and_house: str
     transit_name: str
     lunar_phase: str
