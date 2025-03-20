@@ -25,7 +25,8 @@ from kerykeion.kr_types import (
     HousesSystemIdentifier,
     Houses,
     SignsEmoji,
-    RelationshipScoreDescription
+    RelationshipScoreDescription,
+    PerspectiveType
 )
 
 
@@ -74,6 +75,10 @@ class KerykeionPointModel(SubscriptableBaseModel):
 
 
 class AstrologicalSubjectModel(SubscriptableBaseModel):
+    """
+    Pydantic Model for Astrological Subject
+    """
+
     # Data
     name: str
     year: int
@@ -90,7 +95,7 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     sidereal_mode: Union[SiderealMode, None]
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
-    perspective_type: str
+    perspective_type: PerspectiveType
     iso_formatted_local_datetime: str
     iso_formatted_utc_datetime: str
     julian_day: float
@@ -196,6 +201,78 @@ class RelationshipScoreModel(SubscriptableBaseModel):
     is_destiny_sign: bool
     aspects: list[RelationshipScoreAspectModel]
     subjects: list[AstrologicalSubjectModel]
+
+
+class CompositeSubjectModel(SubscriptableBaseModel):
+    """
+    Pydantic Model for Composite Subject
+    """
+
+    # Data
+    name: str
+    first_subject: AstrologicalSubjectModel
+    second_subject: AstrologicalSubjectModel
+    composite_chart_type: str
+
+    zodiac_type: ZodiacType
+    sidereal_mode: Union[SiderealMode, None]
+    houses_system_identifier: HousesSystemIdentifier
+    houses_system_name: str
+    perspective_type: PerspectiveType
+
+    # Planets
+    sun: KerykeionPointModel
+    moon: KerykeionPointModel
+    mercury: KerykeionPointModel
+    venus: KerykeionPointModel
+    mars: KerykeionPointModel
+    jupiter: KerykeionPointModel
+    saturn: KerykeionPointModel
+    uranus: KerykeionPointModel
+    neptune: KerykeionPointModel
+    pluto: KerykeionPointModel
+
+    # Axes
+    ascendant: KerykeionPointModel
+    descendant: KerykeionPointModel
+    medium_coeli: KerykeionPointModel
+    imum_coeli: KerykeionPointModel
+
+    # Optional Planets:
+    chiron: Union[KerykeionPointModel, None]
+    mean_lilith: Union[KerykeionPointModel, None]
+
+    # Houses
+    first_house: KerykeionPointModel
+    second_house: KerykeionPointModel
+    third_house: KerykeionPointModel
+    fourth_house: KerykeionPointModel
+    fifth_house: KerykeionPointModel
+    sixth_house: KerykeionPointModel
+    seventh_house: KerykeionPointModel
+    eighth_house: KerykeionPointModel
+    ninth_house: KerykeionPointModel
+    tenth_house: KerykeionPointModel
+    eleventh_house: KerykeionPointModel
+    twelfth_house: KerykeionPointModel
+
+    # Nodes
+    mean_node: KerykeionPointModel
+    true_node: KerykeionPointModel
+    mean_south_node: KerykeionPointModel
+    true_south_node: KerykeionPointModel
+
+    planets_names_list: list[Planet]
+    """Ordered list of available planets names"""
+
+    axial_cusps_names_list: list[AxialCusps]
+    """Ordered list of available axes names"""
+
+    houses_names_list: list[Houses]
+    """Ordered list of houses names"""
+
+    lunar_phase: LunarPhaseModel
+    """Lunar phase model"""
 
 
 class ActiveAspect(TypedDict):

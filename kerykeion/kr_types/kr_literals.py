@@ -40,7 +40,7 @@ Quality = Literal["Cardinal", "Fixed", "Mutable"]
 """Literal type for Qualities"""
 
 
-ChartType = Literal["Natal", "ExternalNatal", "Synastry", "Transit"]
+ChartType = Literal["Natal", "ExternalNatal", "Synastry", "Transit", "Composite"]
 """Literal type for Chart Types"""
 
 
@@ -114,8 +114,13 @@ KerykeionChartTheme = Literal["light", "dark", "dark-high-contrast", "classic"]
 KerykeionChartLanguage = Literal["EN", "FR", "PT", "IT", "CN", "ES", "RU", "TR", "DE", "HI"]
 """Literal type for Kerykeion Chart Languages"""
 
+
 RelationshipScoreDescription = Literal["Minimal", "Medium", "Important", "Very Important", "Exceptional", "Rare Exceptional"]
 """Literal type for Relationship Score Description"""
+
+
+CompositeChartType = Literal["Midpoint"]
+"""Literal type for Composite Chart Types"""
 
 AspectName = Literal[
     "conjunction",

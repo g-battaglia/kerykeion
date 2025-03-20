@@ -1,23 +1,23 @@
 from pathlib import Path
-from kerykeion import AstrologicalSubject, KerykeionChartSVG
+from kerykeion import AstrologicalSubject, KerykeionChartSVG, CompositeSubjectFactory
 
 
 class TestCharts:
     SPLIT_LINE_LENGTH = 80  # Define the length of lines to split for comparison
     WRITE_TO_FILE = False  # Change this flag as needed
-    CURRENT_DIR = Path(__file__).parent
+    SVG_DIR = Path(__file__).parent / 'svg'
 
     def _compare_chart_svg(self, file_name, chart_svg):
         chart_svg_lines = [chart_svg[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(chart_svg), self.SPLIT_LINE_LENGTH)]
 
-        with open(self.CURRENT_DIR / file_name, "r") as f:
+        with open(self.SVG_DIR / file_name, "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
         for i in range(len(chart_svg_lines)):
             assert chart_svg_lines[i] == file_content_lines[i]
-            
+
     def setup_class(self):
         self.first_subject = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
         self.second_subject = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB", geonames_username="century.boy")
@@ -61,6 +61,11 @@ class TestCharts:
         self.german_subject = AstrologicalSubject("Albert Einstein", 1879, 3, 14, 11, 30, "Ulm", "DE")
         self.hindi_subject = AstrologicalSubject("Amitabh Bachchan", 1942, 10, 11, 4, 0, "Allahabad", "IN")
 
+        # Composite Chart
+        self.angelina_jolie = AstrologicalSubject("Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US", lng=-118.15, lat=34.03, tz_str="America/Los_Angeles")
+        self.brad_pit = AstrologicalSubject("Brad Pitt", 1963, 12, 18, 6, 31, "Shawnee", "US", lng=-96.56, lat=35.20, tz_str="America/Chicago")
+
+
     def test_natal_chart(self):
         s = KerykeionChartSVG(self.first_subject)
         birth_chart_svg = s.makeTemplate()
@@ -69,7 +74,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.first_subject).makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Natal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -84,7 +89,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.first_subject, "Synastry", self.second_subject).makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Synastry Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Synastry Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -99,7 +104,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.first_subject, "Transit", self.second_subject).makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Transit Chart.svg", "r", encoding="utf-8") as f:
+        with open(self.SVG_DIR / "John Lennon - Transit Chart.svg", "r", encoding="utf-8") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -114,7 +119,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.first_subject, "ExternalNatal").makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - ExternalNatal Chart.svg", "r", encoding="utf-8") as f:
+        with open(self.SVG_DIR / "John Lennon - ExternalNatal Chart.svg", "r", encoding="utf-8") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -129,7 +134,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.lahiri_subject).makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon Lahiri - Natal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon Lahiri - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -144,7 +149,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.fagan_bradley_subject).makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon Fagan-Bradley - Natal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon Fagan-Bradley - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -159,7 +164,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.deluce_subject).makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon DeLuce - Natal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon DeLuce - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -174,7 +179,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.j2000_subject).makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon J2000 - Natal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon J2000 - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -189,7 +194,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.morinus_house_system_subject).makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - House System Morinus - Natal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - House System Morinus - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -204,7 +209,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.first_subject, perspective="Heliocentric").makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Heliocentric - Natal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Heliocentric - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -219,7 +224,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.first_subject, perspective="Topocentric").makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Topocentric - Natal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Topocentric - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -234,7 +239,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.first_subject, perspective="True Geocentric").makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - True Geocentric - Natal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - True Geocentric - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -249,7 +254,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.first_subject.model()).makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Natal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -264,7 +269,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.minified_natal_chart).makeSVG(minify=True)
 
-        with open(self.CURRENT_DIR / "John Lennon - Minified - Natal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Minified - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -279,7 +284,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.dark_theme_natal_chart, theme="dark").makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Dark Theme - Natal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Dark Theme - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -294,7 +299,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.dark_high_contrast_theme_natal_chart, theme="dark-high-contrast").makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Dark High Contrast Theme - Natal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Dark High Contrast Theme - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -309,7 +314,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.light_theme_natal_chart, theme="light").makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Light Theme - Natal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Light Theme - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -324,7 +329,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.dark_theme_external_subject, theme="dark").makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Dark Theme External - ExternalNatal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Dark Theme External - ExternalNatal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -339,7 +344,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.dark_theme_synastry_subject, theme="dark").makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - DTS - Synastry Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - DTS - Synastry Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -355,7 +360,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.wheel_only_subject).makeWheelOnlySVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Wheel Only - Natal Chart - Wheel Only.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Wheel Only - Natal Chart - Wheel Only.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -371,7 +376,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.wheel_external_subject, chart_type="ExternalNatal").makeWheelOnlySVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Wheel External Only - ExternalNatal Chart - Wheel Only.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Wheel External Only - ExternalNatal Chart - Wheel Only.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -387,7 +392,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.wheel_synastry_subject, chart_type="Synastry", second_obj=self.second_subject).makeWheelOnlySVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Wheel Synastry Only - Synastry Chart - Wheel Only.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Wheel Synastry Only - Synastry Chart - Wheel Only.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -403,7 +408,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.wheel_transit_subject, chart_type="Transit", second_obj=self.second_subject).makeWheelOnlySVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Wheel Transit Only - Transit Chart - Wheel Only.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Wheel Transit Only - Transit Chart - Wheel Only.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -419,7 +424,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.aspect_grid_only_subject).makeAspectGridOnlySVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Aspect Grid Only - Natal Chart - Aspect Grid Only.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Aspect Grid Only - Natal Chart - Aspect Grid Only.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -435,7 +440,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.aspect_grid_dark_subject, theme="dark").makeAspectGridOnlySVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Aspect Grid Dark Theme - Natal Chart - Aspect Grid Only.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Aspect Grid Dark Theme - Natal Chart - Aspect Grid Only.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -451,7 +456,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.aspect_grid_light_subject, theme="light").makeAspectGridOnlySVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Aspect Grid Light Theme - Natal Chart - Aspect Grid Only.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Aspect Grid Light Theme - Natal Chart - Aspect Grid Only.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -467,7 +472,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.aspect_grid_synastry_subject, "Synastry", self.second_subject).makeAspectGridOnlySVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Aspect Grid Synastry - Synastry Chart - Aspect Grid Only.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Aspect Grid Synastry - Synastry Chart - Aspect Grid Only.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -483,7 +488,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.aspect_grid_transit_subject, "Transit", self.second_subject).makeAspectGridOnlySVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Aspect Grid Transit - Transit Chart - Aspect Grid Only.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Aspect Grid Transit - Transit Chart - Aspect Grid Only.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -499,7 +504,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.aspect_grid_dark_synastry_subject, "Synastry", self.second_subject, theme="dark").makeAspectGridOnlySVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - Aspect Grid Dark Synastry - Synastry Chart - Aspect Grid Only.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Aspect Grid Dark Synastry - Synastry Chart - Aspect Grid Only.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -515,7 +520,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             KerykeionChartSVG(self.transit_chart_with_table_grid_subject, "Transit", self.second_subject, double_chart_aspect_grid_type="table").makeSVG()
 
-        with open(self.CURRENT_DIR / "John Lennon - TCWTG - Transit Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - TCWTG - Transit Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
@@ -559,6 +564,12 @@ class TestCharts:
         hindi_chart_svg = KerykeionChartSVG(self.hindi_subject, chart_language="HI").makeTemplate()
         self._compare_chart_svg("Amitabh Bachchan - Natal Chart.svg", hindi_chart_svg)
 
+    def test_composite_chart(self):
+        factory = CompositeSubjectFactory(self.angelina_jolie, self.brad_pit)
+        composite_chart_svg = factory.get_midpoint_composite_subject_model()
+        composite_chart_svg = KerykeionChartSVG(composite_chart_svg, "Composite").makeTemplate()
+        self._compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Composite Chart.svg", composite_chart_svg)
+
 
 if __name__ == "__main__":
     import pytest
@@ -566,5 +577,5 @@ if __name__ == "__main__":
 
     # Set the log level to CRITICAL
     logging.basicConfig(level=logging.CRITICAL)
-    
+
     pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

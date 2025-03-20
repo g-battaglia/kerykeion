@@ -28,6 +28,7 @@ def get_decoded_kerykeion_celestial_point_name(input_planet_name: str, celestial
     else:
         raise KerykeionException(f"Celestial point {input_planet_name} not found in language model.")
 
+
 def decHourJoin(inH: int, inM: int, inS: int) -> float:
     """Join hour, minutes, seconds, timezone integer to hour float.
 
@@ -47,24 +48,42 @@ def decHourJoin(inH: int, inM: int, inS: int) -> float:
 
 
 def degreeDiff(a: Union[int, float], b: Union[int, float]) -> float:
-    """Calculate the difference between two degrees.
+    """Calculate the smallest difference between two angles in degrees.
 
     Args:
-        - a (int | float): first degree
-        - b (int | float): second degree
+        a (int | float): first angle in degrees
+        b (int | float): second angle in degrees
 
     Returns:
-        float: difference between a and b
+        float: smallest difference between a and b (0 to 180 degrees)
     """
+    diff = math.fmod(abs(a - b), 360)  # Assicura che il valore sia in [0, 360)
+    return min(diff, 360 - diff)  # Prende l'angolo più piccolo tra i due possibili
 
-    out = float()
-    if a > b:
-        out = a - b
-    if a < b:
-        out = b - a
-    if out > 180.0:
-        out = 360.0 - out
-    return out
+
+def degreeSum(a: Union[int, float], b: Union[int, float]) -> float:
+    """Calculate the sum of two angles in degrees, normalized to [0, 360).
+
+    Args:
+        a (int | float): first angle in degrees
+        b (int | float): second angle in degrees
+
+    Returns:
+        float: normalized sum of a and b in the range [0, 360)
+    """
+    return math.fmod(a + b, 360) if (a + b) % 360 != 0 else 0.0
+
+
+def normalizeDegree(angle: Union[int, float]) -> float:
+    """Normalize an angle to the range [0, 360).
+
+    Args:
+        angle (int | float): The input angle in degrees.
+
+    Returns:
+        float: The normalized angle in the range [0, 360).
+    """
+    return angle % 360 if angle % 360 != 0 else 0.0
 
 
 def offsetToTz(datetime_offset: Union[datetime.timedelta, None]) -> float:
@@ -269,49 +288,6 @@ def draw_aspect_line(
         f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
         f"</g>"
     )
-
-
-def draw_elements_percentages(
-    fire_label: str,
-    fire_points: float,
-    earth_label: str,
-    earth_points: float,
-    air_label: str,
-    air_points: float,
-    water_label: str,
-    water_points: float,
-) -> str:
-    """Draw the elements grid.
-
-    Args:
-        - fire_label (str): Label for fire
-        - fire_points (float): Points for fire
-        - earth_label (str): Label for earth
-        - earth_points (float): Points for earth
-        - air_label (str): Label for air
-        - air_points (float): Points for air
-        - water_label (str): Label for water
-        - water_points (float): Points for water
-
-    Returns:
-        str: The SVG elements grid as a string.
-    """
-    total = fire_points + earth_points + air_points + water_points
-
-    fire_percentage = int(round(100 * fire_points / total))
-    earth_percentage = int(round(100 * earth_points / total))
-    air_percentage = int(round(100 * air_points / total))
-    water_percentage = int(round(100 * water_points / total))
-
-    return (
-        f'<g transform="translate(-30,79)">'
-        f'<text y="0" style="fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;">{fire_label}  {str(fire_percentage)}%</text>'
-        f'<text y="12" style="fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;">{earth_label} {str(earth_percentage)}%</text>'
-        f'<text y="24" style="fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;">{air_label}   {str(air_percentage)}%</text>'
-        f'<text y="36" style="fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;">{water_label} {str(water_percentage)}%</text>'
-        f"</g>"
-    )
-
 
 def convert_decimal_to_degree_string(dec: float, format_type: Literal["1", "2", "3"] = "3") -> str:
     """
@@ -758,30 +734,27 @@ def draw_transit_aspect_list(
         inner_path += f"</g>"
         line = line + 14
 
-    out = f'<g style="transform: translate(43%, 50%)">'
+    out = '<g transform="translate(526,273)">'
     out += f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{grid_title}:</text>'
     out += inner_path
-    out += "</g>"
+    out += '</g>'
 
     return out
 
 
-def draw_moon_phase(
+def calculate_moon_phase_chart_params(
     degrees_between_sun_and_moon: float,
     latitude: float
-) -> str:
+) -> dict:
     """
-    Draws the moon phase based on the degrees between the sun and the moon.
+    Calculate the parameters for the moon phase chart.
 
     Parameters:
     - degrees_between_sun_and_moon (float): The degrees between the sun and the moon.
     - latitude (float): The latitude for rotation calculation.
-    - lunar_phase_outline_color (str): The color for the lunar phase outline.
-    - dark_color (str): The color for the dark part of the moon.
-    - light_color (str): The color for the light part of the moon.
 
     Returns:
-    - str: The SVG element as a string.
+    - dict: The moon phase chart parameters.
     """
     deg = degrees_between_sun_and_moon
 
@@ -825,20 +798,11 @@ def draw_moon_phase(
     # Calculate rotation based on latitude
     lunar_phase_rotate = -90.0 - latitude
 
-    # Return the SVG element as a string
-    return (
-        f'<g transform="rotate({lunar_phase_rotate} 20 10)">'
-        f'    <defs>'
-        f'        <clipPath id="moonPhaseCutOffCircle">'
-        f'        <circle cx="20" cy="10" r="10" />'
-        f'        </clipPath>'
-        f'    </defs>'
-        f'    <circle cx="20" cy="10" r="10" style="fill: var(--kerykeion-chart-color-lunar-phase-0)" />'
-        f'    <circle cx="{circle_center_x}" cy="10" r="{circle_radius}" style="fill: var(--kerykeion-chart-color-lunar-phase-1)" clip-path="url(#moonPhaseCutOffCircle)" />'
-        f'    <circle cx="20" cy="10" r="10" style="fill: none; stroke: var(--kerykeion-chart-color-lunar-phase-0); stroke-width: 0.5px; stroke-opacity: 0.5" />'
-        f'</g>'
-    )
-
+    return {
+        "circle_center_x": circle_center_x,
+        "circle_radius": circle_radius,
+        "lunar_phase_rotate": lunar_phase_rotate,
+    }
 
 def draw_house_grid(
         main_subject_houses_list: list[KerykeionPointModel],

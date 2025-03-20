@@ -1,23 +1,19 @@
 <h1 align=center>Kerykeion</h1>
 <div align="center">
-    <a href="#">
-        <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
-    </a>
-    <a href="#">
         <img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="stars">
-    </a>
-    <a href="#">
         <img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="forks">
-    </a>
-    <a href="https://pypi.org/project/kerykeion" target="_blank">
+        
+</div>
+<div align="center">
+        <img src="https://static.pepy.tech/badge/kerykeion" alt="PyPI Downloads">
+        <img src="https://static.pepy.tech/badge/kerykeion/month" alt="PyPI Downloads">
+        <img src="https://static.pepy.tech/badge/kerykeion/week" alt="PyPI Downloads">
+        <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
         <img src="https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion" alt="visitors"/>
-    </a>
-    <a href="https://pypi.org/project/kerykeion" target="_blank">
         <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
-    </a>
-    <a href="https://pypi.org/project/kerykeion" target="_blank">
         <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
-    </a>
+        <img src="https://img.shields.io/github/license/g-battaglia/kerykeion" alt="License">
+
 </div>
 
 &nbsp;
@@ -32,7 +28,7 @@ The core goal of this project is to provide a simple and easy approach to astrol
 
 Here's an example of a birthchart:
 
-![Kanye Birth Chart](https://www.kerykeion.net/docs/assets/img/examples/birth-chart.svg)
+![John Lenon Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
 
 ## Web API
 
@@ -134,6 +130,38 @@ synastry_chart.makeSVG()
 ```
 
 ![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/docs/assets/img/examples/synastry-chart.svg)
+
+
+### Transit Chart
+
+```python
+from kerykeion import AstrologicalSubject
+
+transit = AstrologicalSubject("Transit", 2025, 6, 8, 8, 45, "Atlanta", "US")
+subject = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+
+transit_chart = KerykeionChartSVG(subject, "Transit", transit)
+transit_chart.makeSVG()
+```
+
+![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Transit%20Chart.svg)
+
+### Composite Chart
+
+```python
+from kerykeion import CompositeSubjectFactory, AstrologicalSubject, KerykeionChartSVG
+
+angelina = AstrologicalSubject("Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US", lng=-118.15, lat=34.03, tz_str="America/Los_Angeles")
+brad = AstrologicalSubject("Brad Pitt", 1963, 12, 18, 6, 31, "Shawnee", "US", lng=-96.56, lat=35.20, tz_str="America/Chicago")
+
+composite_subject_factory = CompositeSubjectFactory(angelina, brad)
+composite_subject_model = composite_subject_factory.get_midpoint_composite_subject_model()
+
+composite_chart = KerykeionChartSVG(composite_subject_model, "Composite")
+composite_chart.makeSVG()
+```
+
+![Angelina Jolie and Brad Pitt Composite Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/Angelina%20Jolie%20and%20Brad%20Pitt%20Composite%20Chart%20-%20Composite%20Chart.svg)
 
 ### Change the output directory
 

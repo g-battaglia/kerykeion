@@ -13,18 +13,17 @@ class ChartTemplateDictionary(TypedDict):
     chart_width: float
     viewbox: str
     stringTitle: str
-    stringName: str
-    bottomLeft0: str
-    bottomLeft1: str
-    bottomLeft2: str
-    bottomLeft3: str
-    bottomLeft4: str
-    moon_phase: str
-    stringLocation: str
-    stringDateTime: str
-    stringLat: str
-    stringLon: str
-    stringPosition: str
+    top_left_0: str
+    bottom_left_0: str
+    bottom_left_1: str
+    bottom_left_2: str
+    bottom_left_3: str
+    bottom_left_4: str
+    top_left_1: str
+    top_left_2: str
+    top_left_3: str
+    top_left_4: str
+    top_left_5: str
 
     # Font color
     paper_color_0: str
@@ -81,8 +80,16 @@ class ChartTemplateDictionary(TypedDict):
     makeZodiac: str
     makeHouses: str
     makePlanets: str
-    elements_percentages: str
     makePlanetGrid: str
     makeHousesGrid: str
 
     color_style_tag: str
+
+    fire_string: str
+    earth_string: str
+    air_string: str
+    water_string: str
+
+    lunar_phase_rotate: str
+    lunar_phase_circle_center_x: str
+    lunar_phase_circle_radius: str

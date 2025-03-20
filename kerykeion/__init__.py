@@ -16,3 +16,4 @@ from .report import Report
 from .settings import KerykeionSettingsModel, get_settings
 from .enums import Planets, Aspects, Signs
 from .ephemeris_data import EphemerisDataFactory
+from .composite_subject_factory import CompositeSubjectFactory
