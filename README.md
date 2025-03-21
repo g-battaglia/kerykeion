@@ -5,7 +5,6 @@
         
 </div>
 <div align="center">
-        <img src="https://static.pepy.tech/badge/kerykeion" alt="PyPI Downloads">
         <img src="https://static.pepy.tech/badge/kerykeion/month" alt="PyPI Downloads">
         <img src="https://static.pepy.tech/badge/kerykeion/week" alt="PyPI Downloads">
         <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
