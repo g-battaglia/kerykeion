@@ -8,7 +8,8 @@ from kerykeion.utilities import (
     get_kerykeion_point_from_degree,
     get_planet_house,
     circular_mean,
-    calculate_moon_phase
+    calculate_moon_phase,
+    circular_sort
 )
 
 
@@ -132,17 +133,22 @@ class CompositeSubjectFactory:
         house_degree_list_ut = []
         for house in self.first_subject.houses_names_list:
             house_lower = house.lower()
-            self[house_lower] = get_kerykeion_point_from_degree(
+            house_degree_list_ut.append(
                 circular_mean(
                     self.first_subject[house_lower]["abs_pos"],
                     self.second_subject[house_lower]["abs_pos"]
-                ),
-                house,
+                )
+        )
+        house_degree_list_ut = circular_sort(house_degree_list_ut)
+
+        for house_index, house_name in enumerate(self.first_subject.houses_names_list):
+            house_lower = house_name.lower()
+            self[house_lower] = get_kerykeion_point_from_degree(
+                house_degree_list_ut[house_index],
+                house_name,
                 "House"
             )
-            house_degree_list_ut.append(self[house_lower]["abs_pos"])
 
-        house_degree_list_ut = sorted(house_degree_list_ut)
 
         # Planets
         common_planets = []

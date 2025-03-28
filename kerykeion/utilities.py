@@ -390,3 +390,53 @@ def calculate_moon_phase(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseM
     }
 
     return LunarPhaseModel(**lunar_phase_dictionary)
+
+
+def circular_sort(degrees: list[Union[int, float]]) -> list[Union[int, float]]:
+    """
+    Sort a list of degrees in a circular manner, starting from the first element
+    and progressing clockwise around the circle.
+
+    Args:
+        degrees: A list of numeric values representing degrees
+
+    Returns:
+        A list sorted based on circular clockwise progression from the first element
+
+    Raises:
+        ValueError: If the list is empty or contains non-numeric values
+    """
+    # Input validation
+    if not degrees:
+        raise ValueError("Input list cannot be empty")
+
+    if not all(isinstance(degree, (int, float)) for degree in degrees):
+        invalid = next(d for d in degrees if not isinstance(d, (int, float)))
+        raise ValueError(f"All elements must be numeric, found: {invalid} of type {type(invalid).__name__}")
+
+    # If list has 0 or 1 element, return it as is
+    if len(degrees) <= 1:
+        return degrees.copy()
+
+    # Save the first element as the reference
+    reference = degrees[0]
+
+    # Define a function to calculate clockwise distance from reference
+    def clockwise_distance(angle: Union[int, float]) -> Union[int, float]:
+        # Normalize angles to 0-360 range
+        ref_norm = reference % 360
+        angle_norm = angle % 360
+
+        # Calculate clockwise distance
+        distance = angle_norm - ref_norm
+        if distance < 0:
+            distance += 360
+
+        return distance
+
+    # Sort the rest of the elements based on circular distance
+    remaining = degrees[1:]
+    sorted_remaining = sorted(remaining, key=clockwise_distance)
+
+    # Return the reference followed by the sorted remaining elements
+    return [reference] + sorted_remaining
