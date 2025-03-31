@@ -109,7 +109,7 @@ birth_chart_svg.makeSVG()
 ```
 
 The SVG file will be saved in the home directory.
-![John Lennon Birth Chart](https://www.kerykeion.net/docs/assets/img/examples/birth-chart.svg)
+![John Lennon Birth Chart](https://www.kerykeion.net/img/examples/birth-chart.svg)
 
 ### Synastry Chart
 
@@ -120,12 +120,12 @@ first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB
 second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
 # Set the type, it can be Natal, Synastry or Transit
-synastry_chart = KerykeionChartSVG(first, "Synastry", second)
+synastry_chart = KerykeionChartSVG(first, "Synastry", second) 
 synastry_chart.makeSVG()
 
 ```
 
-![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/docs/assets/img/examples/synastry-chart.svg)
+![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/img/examples/synastry-chart.svg)
 
 
 ### Transit Chart
