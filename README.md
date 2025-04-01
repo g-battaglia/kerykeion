@@ -331,7 +331,7 @@ dark_theme_natal_chart = KerykeionChartSVG(dark_high_contrast_theme_subject, the
 dark_theme_natal_chart.makeSVG()
 ```
 
-![John Lennon](https://www.kerykeion.net/assets/img/showcase/John%20Lennon%20-%20Dark%20-%20Natal%20Chart.svg)
+![John Lennon](https://www.kerykeion.net/img/showcase/John%20Lennon%20-%20Dark%20-%20Natal%20Chart.svg)
 
 ## Alternative Initialization
 
