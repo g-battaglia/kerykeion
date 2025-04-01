@@ -5,10 +5,12 @@
 
 
 import logging
+import os
+import sqlite3
 from datetime import timedelta
 from requests import Request
 from requests_cache import CachedSession
-from typing import Union
+from typing import Dict, Union
 
 
 class FetchGeonames:
@@ -28,6 +30,7 @@ class FetchGeonames:
         country_code: str,
         username: str = "century.boy",
         cache_expire_after_days=30,
+        local_db_path: str = os.environ.get('KERYKEION_GEONAME_DB_PATH'),
     ):
         self.session = CachedSession(
             cache_name="cache/kerykeion_geonames_cache",
@@ -40,6 +43,7 @@ class FetchGeonames:
         self.country_code = country_code
         self.base_url = "http://api.geonames.org/searchJSON"
         self.timezone_url = "http://api.geonames.org/timezoneJSON"
+        self.local_db_path = local_db_path if os.path.exists(local_db_path) else None
 
     def __get_timezone(self, lat: Union[str, float, int], lon: Union[str, float, int]) -> dict[str, str]:
         """
@@ -116,6 +120,16 @@ class FetchGeonames:
 
         return city_data_whitout_tz
 
+    def __fetch_from_db(self, city_name: str, country_code: str) -> Dict[str, Union[int, str]]:
+        with sqlite3.connect(self.local_db_path) as db:
+            db.row_factory = sqlite3.Row
+            cur = db.cursor()
+            res = cur.execute('''
+              SELECT country_code AS countryCode, name, timezone AS timezonestr, latitude AS lat, longitude AS lng
+              FROM geoname WHERE country_code=? AND name=? AND feature_class IN ("A", "P")
+            ''', (country_code, city_name))
+            return [dict(result) for result in res.fetchall()]
+
     def get_serialized_data(self) -> dict[str, str]:
         """
         Returns all the data necessary for the Kerykeion calculation.
@@ -123,6 +137,12 @@ class FetchGeonames:
         Returns:
             dict[str, str]: _description_
         """
+        if self.local_db_path:
+            results = self.__fetch_from_db(self.city_name, self.country_code)
+            if len(results) == 1:
+                logging.debug("Using local geoname database")
+                return results[0]
+
         city_data_response = self.__get_contry_data(self.city_name, self.country_code)
         try:
             timezone_response = self.__get_timezone(city_data_response["lat"], city_data_response["lng"])
