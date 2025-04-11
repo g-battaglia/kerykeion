@@ -11,7 +11,7 @@ Legend:
 - [x] Fix the unit tests. The code is working but the tests must be updated to the new features.
 - [ ] Create unit test for checking polar circle
 - [ ] Finish the new examples to be added to the documentation
-- [>] Create a complete documentation (Vitepress) with all the examples: https://www.kerykeion.net/docs/examples/birth-chart
+- [>] Create a complete documentation (Vitepress) with all the examples: https://www.kerykeion.net/docs//birth-chart
 
 - [ ] Fix Settings in a way to accept a dictionary with the settings and not just a JSON file and write docs.
 - [>] Create new AstrologicalSubject argument for House System mode.
