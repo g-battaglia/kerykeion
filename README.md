@@ -22,6 +22,8 @@ It also can generate an SVG of a birthchart, a synastry chart or a transit chart
 
 The core goal of this project is to provide a simple and easy approach to astrology in a data driven way.
 
+Kerykeion also provides LLM/AI-friendly data structures that can be easily integrated into AI or generative language model workflows.
+
 Here's an example of a birthchart:
 
 ![John Lenon Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
