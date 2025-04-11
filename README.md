@@ -14,11 +14,11 @@
 
 &nbsp;
 
-Kerykeion is a Python library for astrology. It calculates planetary and house positions, determines aspects for individuals or between two people, and generates SVG charts (birth, synastry, transit, and composite). You can configure exactly which planets you need.
+Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects (individual, synastry, composite), and generates SVG charts—including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
 
-The core objective of this project is to provide a straightforward approach to astrology using data-driven techniques. 
+The main goal of this project is to offer a clean, data-driven approach to astrology, making it accessible and programmable.
 
-Kerykeion also supplies LLM/AI-friendly data structures easily integrated into AI or generative language model workflows.
+Kerykeion also integrates seamlessly with AI applications. It is designed to work well as a backend for chatbots, recommendation systems, or personal assistants that require astrological insights. You can access structured data in JSON format, making it easy to combine with natural language processing models or knowledge-based systems.
 
 Here is an example of a birthchart:
 
