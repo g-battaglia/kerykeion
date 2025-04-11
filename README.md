@@ -1,52 +1,46 @@
-<h1 align=center>Kerykeion</h1>
+<h1 align="center">Kerykeion</h1>
+
 <div align="center">
-        <img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="stars">
-        <img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="forks">
-        
+    <img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="stars">
+    <img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="forks">
 </div>
 <div align="center">
-        <img src="https://static.pepy.tech/badge/kerykeion/month" alt="PyPI Downloads">
-        <img src="https://static.pepy.tech/badge/kerykeion/week" alt="PyPI Downloads">
-        <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
-        <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
-        <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
+    <img src="https://static.pepy.tech/badge/kerykeion/month" alt="PyPI Downloads">
+    <img src="https://static.pepy.tech/badge/kerykeion/week" alt="PyPI Downloads">
+    <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
+    <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
+    <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
 </div>
 
 &nbsp;
 
-Kerykeion is a python library for Astrology.
-It can calculate all the planet and house position,
-also it can calculate the aspects of a single persone or between two, you can set how many planets you
-need in the settings in the utility module.
-It also can generate an SVG of a birthchart, a synastry chart or a transit chart.
+Kerykeion is a Python library for astrology. It calculates planetary and house positions, determines aspects for individuals or between two people, and generates SVG charts (birth, synastry, transit, and composite). You can configure exactly which planets you need.
 
-The core goal of this project is to provide a simple and easy approach to astrology in a data driven way.
+The core objective of this project is to provide a straightforward approach to astrology using data-driven techniques. 
 
-Kerykeion also provides LLM/AI-friendly data structures that can be easily integrated into AI or generative language model workflows.
+Kerykeion also supplies LLM/AI-friendly data structures easily integrated into AI or generative language model workflows.
 
-Here's an example of a birthchart:
+Here is an example of a birthchart:
 
 ![John Lenon Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
 
 ## Web API
 
-If you want to use Kerykeion in a web application, I've created a web API for this purpose, you can find it here:
+If you want to use Kerykeion in a web application, you can try the dedicated web API:
 
 **[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/pricing)**
 
-It's [open source](https://github.com/g-battaglia/Astrologer-API), it's a way to support me and the project.
+It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly supports this project.
 
 ## Donate
 
-Maintaining this project is a lot of work, the Astrologer API doesn't nearly cover the costs of a software engineer working on this project full time. I do this because I love it, but until I can make this my full time job, I won't be able to spend as much time on it.
-
-If you want to support me, you can do it here:
+Maintaining this project requires substantial time and effort. The Astrologer API alone cannot cover the costs of full-time development. If you find Kerykeion valuable and would like to support further development, please consider donating:
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/kerykeion)
 
 ## Installation
 
-Kerykeion is a _Python 3.9_ package, make sure you have _Python 3.9_ or above installed on your system.
+Kerykeion requires **Python 3.9** or higher.
 
 ```bash
 pip3 install kerykeion
@@ -54,47 +48,39 @@ pip3 install kerykeion
 
 ## Basic Usage
 
-The basic usage of the library is to create an instance of the AstrologicalSubject class and then access the properties of the instance to get the astrological information about the subject.
-
-Here's an example:
+Below is a simple example illustrating the creation of an astrological subject and retrieving astrological details:
 
 ```python
-
-# Import the main class for creating a kerykeion instance:
 from kerykeion import AstrologicalSubject
 
-# Create a kerykeion instance:
-# Args: Name, year, month, day, hour, minuts, city, nation
+# Create an instance of the AstrologicalSubject class.
+# Arguments: Name, year, month, day, hour, minutes, city, nation
 kanye = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
 
-# Get the information about the sun in the chart:
-# (The position of the planets always starts at 0)
+# Retrieve information about the Sun:
 kanye.sun
+# > {'name': 'Sun', 'quality': 'Mutable', 'element': 'Air', 'sign': 'Gem', 'sign_num': 2, ...}
 
-#> {'name': 'Sun', 'quality': 'Mutable', 'element': 'Air', 'sign': 'Gem', 'sign_num': 2, 'pos': 17.598992059774275, 'abs_pos': 77.59899205977428, 'emoji': '♊️', 'house': '12th House', 'retrograde': False}
-
-# Get information about the first house:
+# Retrieve information about the first house:
 kanye.first_house
+# > {'name': 'First_House', 'quality': 'Cardinal', 'element': 'Water', 'sign': 'Can', ...}
 
-#> {'name': 'First_House', 'quality': 'Cardinal', 'element': 'Water', 'sign': 'Can', 'sign_num': 3, 'pos': 17.995779673209114, 'abs_pos': 107.99577967320911, 'emoji': '♋️'}
-
-# Get element of the moon sign:
+# Retrieve the element of the Moon sign:
 kanye.moon.element
-
-#> 'Water'
-
+# > 'Water'
 ```
 
-**To avoid connecting to GeoNames (eg. avoiding hourly limit or no internet connection) you should instance kerykeion like this:**
+**To avoid using GeoNames online, specify longitude, latitude, and timezone instead of city and nation:**
 
 ```python
 kanye = AstrologicalSubject(
-    "Kanye", 1977, 6, 8, 8, 45, lng=50, lat=50, tz_str="Europe/Rome", city="Rome"
+    "Kanye", 1977, 6, 8, 8, 45,
+    lng=50,
+    lat=50,
+    tz_str="Europe/Rome",
+    city="Rome"
 )
 ```
-
-The difference is that you have to pass the longitude, latitude and the timezone string, instead of the city and nation.
-If you omit the nation, it will be set to "GB" by default, but the value is not used for calculations. It's better to set it to the correct value though.
 
 ## Generate a SVG Chart
 
@@ -103,10 +89,8 @@ If you omit the nation, it will be set to "GB" by default, but the value is not 
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-
 birth_chart = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
 birth_chart_svg = KerykeionChartSVG(birth_chart)
-
 birth_chart_svg.makeSVG()
 ```
 
@@ -121,10 +105,8 @@ from kerykeion import AstrologicalSubject, KerykeionChartSVG
 first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
-# Set the type, it can be Natal, Synastry or Transit
-synastry_chart = KerykeionChartSVG(first, "Synastry", second) 
+synastry_chart = KerykeionChartSVG(first, "Synastry", second)
 synastry_chart.makeSVG()
-
 ```
 
 ![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/img/examples/synastry-chart.svg)
@@ -150,20 +132,21 @@ transit_chart.makeSVG()
 from kerykeion import CompositeSubjectFactory, AstrologicalSubject, KerykeionChartSVG
 
 angelina = AstrologicalSubject("Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US", lng=-118.15, lat=34.03, tz_str="America/Los_Angeles")
+
 brad = AstrologicalSubject("Brad Pitt", 1963, 12, 18, 6, 31, "Shawnee", "US", lng=-96.56, lat=35.20, tz_str="America/Chicago")
 
-composite_subject_factory = CompositeSubjectFactory(angelina, brad)
-composite_subject_model = composite_subject_factory.get_midpoint_composite_subject_model()
+factory = CompositeSubjectFactory(angelina, brad)
+composite_model = factory.get_midpoint_composite_subject_model()
 
-composite_chart = KerykeionChartSVG(composite_subject_model, "Composite")
+composite_chart = KerykeionChartSVG(composite_model, "Composite")
 composite_chart.makeSVG()
 ```
 
 ![Angelina Jolie and Brad Pitt Composite Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/Angelina%20Jolie%20and%20Brad%20Pitt%20Composite%20Chart%20-%20Composite%20Chart.svg)
 
-### Change the output directory
+### Change the Output Directory
 
-By default the output directory is the home directory, you can change it by passing the new_output_directory parameter to the KerykeionChartSVG class:
+To save the SVG file in a custom location, specify `new_output_directory`:
 
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
@@ -171,23 +154,24 @@ from kerykeion import AstrologicalSubject, KerykeionChartSVG
 first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
-# Set the output directory to the current directory
-synastry_chart = KerykeionChartSVG(first, "Synastry", second, new_output_directory=".")
+synastry_chart = KerykeionChartSVG(
+    first, "Synastry", second,
+    new_output_directory="."
+)
 synastry_chart.makeSVG()
 ```
 
 ### Change Language
 
-You can change the language of the SVG by passing the `chart_language` parameter to the KerykeionChartSVG class:
+You can switch chart language by passing `chart_language` to the `AstrologicalSubject` or `KerykeionChartSVG` classes:
 
 ```python
 first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", chart_language="ES")
 ```
+
 More details [here](https://www.kerykeion.net/docs/examples/chart-language).
 
 ## Report
-
-To print a report of all the data:
 
 ```python
 from kerykeion import Report, AstrologicalSubject
@@ -195,7 +179,6 @@ from kerykeion import Report, AstrologicalSubject
 kanye = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
 report = Report(kanye)
 report.print_report()
-
 ```
 
 Returns:
@@ -243,53 +226,54 @@ Returns:
 | Twelfth_House  | Gem  | 15.68    |
 +----------------+------+----------+
 
-```
-
-And if you want to export it to a file:
+To export to a file:
 
 ```bash
 python3 your_script_name.py > file.txt
 ```
 
-## Other examples of possible use cases:
+## Example: Retrieving Aspects
 
 ```python
-# Get all aspects between two persons:
-
 from kerykeion import SynastryAspects, AstrologicalSubject
+
 first = AstrologicalSubject("Jack", 1990, 6, 15, 15, 15, "Roma", "IT")
-second = AstrologicalSubject("Jane", 1991, 10, 25, 21, 00, "Roma", "IT")
+second = AstrologicalSubject("Jane", 1991, 10, 25, 21, 0, "Roma", "IT")
 
 name = SynastryAspects(first, second)
 aspect_list = name.get_relevant_aspects()
 print(aspect_list[0])
-
-#> Generating kerykeion object for Jack...
-#> Generating kerykeion object for Jane...
 #> {'p1_name': 'Sun', 'p1_abs_pos': 84.17867971515636, 'p2_name': 'Sun', 'p2_abs_pos': 211.90472999502984, 'aspect': 'trine', 'orbit': 7.726050279873476, 'aspect_degrees': 120, 'color': '#36d100', 'aid': 6, 'diff': 127.72605027987348, 'p1': 0, 'p2': 0}
 
 ```
 
 ## Ayanamsa (Sidereal Modes)
 
-By default, the zodiac type is set to Tropic (Tropical).
-You can set the zodiac type to Sidereal and the sidereal mode in the AstrologicalSubject class:
+By default, the zodiac type is **Tropical**. To use **Sidereal**, specify the sidereal mode:
 
 ```python
-johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+johnny = AstrologicalSubject(
+    "Johnny Depp", 1963, 6, 9, 0, 0,
+    "Owensboro", "US",
+    zodiac_type="Sidereal",
+    sidereal_mode="LAHIRI"
+)
 ```
 
 More examples [here](https://www.kerykeion.net/docs/examples/sidereal-modes/).
 
 Full list of supported sidereal modes [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#SiderealMode).
 
-## Houses Systems
+## House Systems
 
-By default, the houses system is set to Placidus.
-You can set the houses system in the AstrologicalSubject class:
+By default, houses are calculated using **Placidus**. Configure a different house system as follows:
 
 ```python
-johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", houses_system="M")
+johnny = AstrologicalSubject(
+    "Johnny Depp", 1963, 6, 9, 0, 0,
+    "Owensboro", "US",
+    houses_system="M"
+)
 ```
 
 More examples [here](https://www.kerykeion.net/docs/examples/houses-systems/).
@@ -300,12 +284,14 @@ So far all the available houses system in the Swiss Ephemeris are supported but 
 
 ## Perspective Type
 
-By default, the perspective type is set to Apparent Geocentric (the most common standard for astrology).
-The perspective indicates the point of view from which the chart is calculated (Es. Apparent Geocentric, Heliocentric, etc.).
-You can set the perspective type in the AstrologicalSubject class:
+By default, Kerykeion uses the **Apparent Geocentric** perspective (the most standard in astrology). Other perspectives (e.g., **Heliocentric**) can be set this way:
 
 ```python
-johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", perspective_type="Heliocentric")
+johnny = AstrologicalSubject(
+    "Johnny Depp", 1963, 6, 9, 0, 0,
+    "Owensboro", "US",
+    perspective_type="Heliocentric"
+)
 ```
 
 More examples [here](https://www.kerykeion.net/docs/examples/perspective-type/).
@@ -314,13 +300,13 @@ Full list of supported perspective types [here](https://www.kerykeion.net/pydocs
 
 ## Themes
 
-You can now personalize your astrological charts with different themes! Four themes are available:
+Kerykeion provides several chart themes:
 
 - **Classic** (default)
 - **Dark**
 - **Dark High Contrast**
 - **Light**
-
+- 
 Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables. For more detailed instructions on how to apply themes, check the [documentation](https://www.kerykeion.net/docs/examples/theming)
 
 Here's an example of how to set the theme:
@@ -337,24 +323,22 @@ dark_theme_natal_chart.makeSVG()
 
 ## Alternative Initialization
 
-You can initialize the AstrologicalSubject from a **UTC** ISO 8601 string:
+Create an `AstrologicalSubject` from a UTC ISO 8601 string:
 
 ```python
 subject = AstrologicalSubject.get_from_iso_utc_time(
-    "Johnny Depp", "1963-06-09T05:00:00Z", "Owensboro", "US")
+    "Johnny Depp", "1963-06-09T05:00:00Z", "Owensboro", "US"
+)
 ```
 
-Note : The default time zone is UTC, with Greenwich longitude and latitude.
-
-The default online/offline mode is set to offline, if you set it online the default latitude and longitude will be ignored and
-calculated from the city and nation. Remember to pass also the geonames_username parameter if you want to use the online mode, like this:
+If you set `online=True`, provide a `geonames_username` to allow city-based geolocation:
 
 ```python
 from kerykeion.astrological_subject import AstrologicalSubject
 
-# Use the static method get_from_iso_utc_time to create an instance of AstrologicalSubject
 subject = AstrologicalSubject.get_from_iso_utc_time(
-    "Johnny Depp", "1963-06-09T05:00:00Z", "Owensboro", "US", online=True)
+    "Johnny Depp", "1963-06-09T05:00:00Z", "Owensboro", "US", online=True
+)
 ```
 
 ## Lunar Nodes (Rahu & Ketu)
@@ -390,7 +374,7 @@ To display them, you need to edit the configuration file (kr.config.json).
 
 ## JSON Support
 
-The astrological subject, which is the base of data used in the library, can be easily serialized to JSON with the `json` method.
+You can serialize the astrological subject (the base data used throughout the library) to JSON:
 
 ```python
 from kerykeion import AstrologicalSubject
@@ -400,30 +384,24 @@ johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
 print(johnny.json(dump=False, indent=2))
 ```
 
-## Documentation
+## Auto Generated Documentation
 
-Most of the functions and the classes are self documented by the types and have docstrings.
-An auto-generated documentation [is available here](https://www.kerykeion.net/pydocs/kerykeion.html).
-
-Sooner or later I'll try to write an extensive documentation.
+You can find auto-generated documentation [here](https://www.kerykeion.net/pydocs/kerykeion.html). Most classes and functions include docstrings.
 
 ## Development
 
-You can clone this repository or download a zip file using the right side buttons.
+Clone the repository or download the ZIP via the GitHub interface.
 
-## Integrate Kerykeion Functionalities in Your Project
+## Integrating Kerykeion into Your Project
 
-If you are interested in integrating Kerykeion's astrological functionalities into your project, I would be happy to collaborate with you. Whether you need custom features, support, or consultation, feel free to reach out to me at my [email](mailto:kerykeion.astrology@gmail.com?subject=Integration%20Request) address.
+If you would like to incorporate Kerykeion’s astrological features into your application, please reach out via [email](mailto:kerykeion.astrology@gmail.com?subject=Integration%20Request). Whether you need custom features, support, or specialized consulting, I am happy to discuss potential collaborations.
 
 ## License
 
-This project is licensed under the AGPL-3.0 License.
-To understand how this impacts your use of the software, please see the [LICENSE](LICENSE) file for details.
-If you have questions, you can reach out to me at my [email](mailto:kerykeion.astrology@gmail.com?subject=Kerykeion) address.
-As a rule of thumb, if you are using this library in a project, you should open source the code of the project with a compatible license.
+This project is covered under the AGPL-3.0 License. For detailed information, please see the [LICENSE](LICENSE) file. If you have questions, feel free to contact me at [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com?subject=Kerykeion).
 
-You can implement the logic of kerykeion in your project and also keep it closed source by using a third party API, like the [AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/). The AstrologerAPI is AGPL-3.0 compliant. Subscribing to the API is also, currently, the best way to support the project.
+As a rule of thumb, if you use this library in a project, you should open-source that project under a compatible license. Alternatively, if you wish to keep your source closed, consider using the [AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/), which is AGPL-3.0 compliant and also helps support the project.
 
 ## Contributing
 
-Feel free to contribute to the code!
+Contributions are welcome! Feel free to submit pull requests or report issues.
