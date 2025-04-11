@@ -18,7 +18,7 @@ Kerykeion is a Python library for astrology. It computes planetary and house pos
 
 The main goal of this project is to offer a clean, data-driven approach to astrology, making it accessible and programmable.
 
-Kerykeion also integrates seamlessly with AI applications. It is designed to work well as a backend for chatbots, recommendation systems, or personal assistants that require astrological insights. You can access structured data in JSON format, making it easy to combine with natural language processing models or knowledge-based systems.
+Kerykeion also integrates seamlessly with LLM and AI applications. 
 
 Here is an example of a birthchart:
 
