@@ -169,7 +169,7 @@ You can switch chart language by passing `chart_language` to the `AstrologicalSu
 first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", chart_language="ES")
 ```
 
-More details [here](https://www.kerykeion.net/docs/examples/chart-language).
+More details [here](https://www.kerykeion.net/docs//chart-language).
 
 ## Report
 
@@ -260,7 +260,7 @@ johnny = AstrologicalSubject(
 )
 ```
 
-More examples [here](https://www.kerykeion.net/docs/examples/sidereal-modes/).
+More examples [here](https://www.kerykeion.net/docs//sidereal-modes/).
 
 Full list of supported sidereal modes [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#SiderealMode).
 
@@ -276,7 +276,7 @@ johnny = AstrologicalSubject(
 )
 ```
 
-More examples [here](https://www.kerykeion.net/docs/examples/houses-systems/).
+More examples [here](https://www.kerykeion.net/docs//houses-systems/).
 
 Full list of supported house systems [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#HousesSystem).
 
@@ -294,7 +294,7 @@ johnny = AstrologicalSubject(
 )
 ```
 
-More examples [here](https://www.kerykeion.net/docs/examples/perspective-type/).
+More examples [here](https://www.kerykeion.net/docs//perspective-type/).
 
 Full list of supported perspective types [here](https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#PerspectiveType).
 
