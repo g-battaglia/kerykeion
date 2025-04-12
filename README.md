@@ -24,7 +24,8 @@ Here is an example of a birthchart:
 
 ![John Lenon Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
 
-## Web API
+**Web API**
+---
 
 If you want to use Kerykeion in a web application, you can try the dedicated web API:
 
@@ -32,11 +33,38 @@ If you want to use Kerykeion in a web application, you can try the dedicated web
 
 It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly supports this project.
 
-## Donate
+**Donate**
+--
 
 Maintaining this project requires substantial time and effort. The Astrologer API alone cannot cover the costs of full-time development. If you find Kerykeion valuable and would like to support further development, please consider donating:
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/kerykeion)
+
+
+## Table of Contents
+- [Installation](#installation)
+- [Basic Usage](#basic-usage)
+- [Generate a SVG Chart](#generate-a-svg-chart)
+  - [Birth Chart](#birth-chart)
+  - [Synastry Chart](#synastry-chart)
+  - [Transit Chart](#transit-chart)
+  - [Composite Chart](#composite-chart)
+  - [Change the Output Directory](#change-the-output-directory)
+  - [Change Language](#change-language)
+- [Report](#report)
+- [Example: Retrieving Aspects](#example-retrieving-aspects)
+- [Ayanamsa (Sidereal Modes)](#ayanamsa-sidereal-modes)
+- [House Systems](#house-systems)
+- [Perspective Type](#perspective-type)
+- [Themes](#themes)
+- [Alternative Initialization](#alternative-initialization)
+- [Lunar Nodes (Rahu \& Ketu)](#lunar-nodes-rahu--ketu)
+- [JSON Support](#json-support)
+- [Auto Generated Documentation](#auto-generated-documentation)
+- [Development](#development)
+- [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
+- [License](#license)
+- [Contributing](#contributing)
 
 ## Installation
 
