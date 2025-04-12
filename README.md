@@ -429,6 +429,7 @@ If you would like to incorporate Kerykeion’s astrological features into your a
 This project is covered under the AGPL-3.0 License. For detailed information, please see the [LICENSE](LICENSE) file. If you have questions, feel free to contact me at [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com?subject=Kerykeion).
 
 As a rule of thumb, if you use this library in a project, you should open-source that project under a compatible license. Alternatively, if you wish to keep your source closed, consider using the [AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/), which is AGPL-3.0 compliant and also helps support the project.
+
 Since the AstrologerAPI is an external third-party service, using it does *not* require your code to be open-source.
 
 ## Contributing
