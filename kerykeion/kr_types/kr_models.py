@@ -169,8 +169,10 @@ class EphemerisDictModel(SubscriptableBaseModel):
 
 class AspectModel(SubscriptableBaseModel):
     p1_name: str
+    p1_owner: str
     p1_abs_pos: float
     p2_name: str
+    p2_owner: str
     p2_abs_pos: float
     aspect: str
     orbit: float
@@ -278,3 +280,45 @@ class CompositeSubjectModel(SubscriptableBaseModel):
 class ActiveAspect(TypedDict):
     name: AspectName
     orb: int
+
+
+class TransitMomentModel(SubscriptableBaseModel):
+    """
+    Model representing a snapshot of astrological transits at a specific moment in time.
+
+    Captures all active aspects between moving celestial bodies and
+    the fixed positions in a person's natal chart at a specific date and time.
+
+    Attributes:
+        date: ISO 8601 formatted date and time of the transit moment.
+        aspects: List of astrological aspects active at this specific moment.
+    """
+
+    date: str
+    """ISO 8601 formatted date and time of the transit moment."""
+
+    aspects: list[AspectModel]
+    """List of aspects active at this specific moment."""
+
+
+class TransitsTimeRangeModel(SubscriptableBaseModel):
+    """
+    Model representing a collection of transit moments for an astrological subject.
+
+    This model holds a time series of transit snapshots, allowing analysis of
+    planetary movements and their aspects to a natal chart over a period of time.
+
+    Attributes:
+        transits: List of transit moments occurring during the specified time period.
+        subject: The astrological subject model for whom the transits are calculated.
+        dates: List of all dates in ISO 8601 format for which transits were calculated.
+    """
+
+    transits: list[TransitMomentModel]
+    """List of transit moments."""
+
+    subject: Optional[AstrologicalSubjectModel]
+    """Astrological subject data."""
+
+    dates: Optional[list[str]]
+    """ISO 8601 formatted dates of all transit moments."""

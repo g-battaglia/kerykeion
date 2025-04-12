@@ -100,8 +100,10 @@ class NatalAspects:
                 if verdict == True:
                     aspect_model = AspectModel(
                         p1_name=active_points_list[first]["name"],
+                        p1_owner=self.user.name,
                         p1_abs_pos=active_points_list[first]["abs_pos"],
                         p2_name=active_points_list[second]["name"],
+                        p2_owner=self.user.name,
                         p2_abs_pos=active_points_list[second]["abs_pos"],
                         aspect=name,
                         orbit=orbit,
