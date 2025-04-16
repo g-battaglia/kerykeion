@@ -93,8 +93,10 @@ class SynastryAspects(NatalAspects):
                 if verdict == True:
                     aspect_model = AspectModel(
                         p1_name=first_active_points_list[first]["name"],
+                        p1_owner=self.first_user.name,
                         p1_abs_pos=first_active_points_list[first]["abs_pos"],
                         p2_name=second_active_points_list[second]["name"],
+                        p2_owner=self.second_user.name,
                         p2_abs_pos=second_active_points_list[second]["abs_pos"],
                         aspect=name,
                         orbit=orbit,
