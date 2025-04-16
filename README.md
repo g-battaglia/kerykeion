@@ -42,9 +42,6 @@ Maintaining this project requires substantial time and effort. The Astrologer AP
 
 
 ## Table of Contents
-- [**Web API**](#web-api)
-- [**Donate**](#donate)
-- [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Basic Usage](#basic-usage)
 - [Generate a SVG Chart](#generate-a-svg-chart)
@@ -68,6 +65,7 @@ Maintaining this project requires substantial time and effort. The Astrologer AP
 - [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
 - [License](#license)
 - [Contributing](#contributing)
+- [Citations](#citations)
 
 ## Installation
 
@@ -453,3 +451,12 @@ Since the AstrologerAPI is an external third-party service, using it does *not* 
 ## Contributing
 
 Contributions are welcome! Feel free to submit pull requests or report issues.
+
+## Citations
+
+If using Kerykeion in published or academic work, please cite as follows:
+
+```
+Battaglia, G. (2025). Kerykeion: A Python Library for Astrological Calculations and Chart Generation.
+https://github.com/g-battaglia/kerykeion
+```
