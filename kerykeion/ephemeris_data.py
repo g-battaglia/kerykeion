@@ -4,7 +4,7 @@ from kerykeion.astrological_subject import DEFAULT_HOUSES_SYSTEM_IDENTIFIER, DEF
 from kerykeion.kr_types import EphemerisDictModel
 from kerykeion.kr_types import SiderealMode, HousesSystemIdentifier, PerspectiveType, ZodiacType
 from datetime import datetime, timedelta
-from typing import Literal, Union
+from typing import Literal, Union, List
 import logging
 
 
@@ -76,17 +76,19 @@ class EphemerisDataFactory:
 
         self.dates_list = []
         if self.step_type == "days":
-            self.dates_list = [self.start_datetime + timedelta(days=i) for i in range((self.end_datetime - self.start_datetime).days)]
+            self.dates_list = [self.start_datetime + timedelta(days=i * self.step) for i in range((self.end_datetime - self.start_datetime).days // self.step + 1)]
             if max_days and (len(self.dates_list) > max_days):
                 raise ValueError(f"Too many days: {len(self.dates_list)} > {self.max_days}. To prevent this error, set max_days to a higher value or reduce the date range.")
 
         elif self.step_type == "hours":
-            self.dates_list = [self.start_datetime + timedelta(hours=i) for i in range((self.end_datetime - self.start_datetime).days * 24)]
+            hours_diff = (self.end_datetime - self.start_datetime).total_seconds() / 3600
+            self.dates_list = [self.start_datetime + timedelta(hours=i * self.step) for i in range(int(hours_diff) // self.step + 1)]
             if max_hours and (len(self.dates_list) > max_hours):
                 raise ValueError(f"Too many hours: {len(self.dates_list)} > {self.max_hours}. To prevent this error, set max_hours to a higher value or reduce the date range.")
 
         elif self.step_type == "minutes":
-            self.dates_list = [self.start_datetime + timedelta(minutes=i) for i in range((self.end_datetime - self.start_datetime).days * 24 * 60)]
+            minutes_diff = (self.end_datetime - self.start_datetime).total_seconds() / 60
+            self.dates_list = [self.start_datetime + timedelta(minutes=i * self.step) for i in range(int(minutes_diff) // self.step + 1)]
             if max_minutes and (len(self.dates_list) > max_minutes):
                 raise ValueError(f"Too many minutes: {len(self.dates_list)} > {self.max_minutes}. To prevent this error, set max_minutes to a higher value or reduce the date range.")
 
@@ -151,6 +153,55 @@ class EphemerisDataFactory:
 
         return ephemeris_data_list
 
+    def get_ephemeris_data_as_astrological_subjects(self, as_model: bool = False) -> List[AstrologicalSubject]:
+        """
+        Generate ephemeris data for the specified date range as AstrologicalSubject instances.
+
+        This method creates a complete AstrologicalSubject object for each date in the date range,
+        allowing direct access to all properties and methods of the AstrologicalSubject class.
+
+        Args:
+        - as_model (bool): If True, the AstrologicalSubject instances will be returned as model instances. Default is False.
+
+        Returns:
+        - List[AstrologicalSubject]: A list of AstrologicalSubject instances, one for each date in the date range.
+
+        Example usage:
+            subjects = factory.get_ephemeris_data_as_astrological_subjects()
+            # Access methods and properties of the first subject
+            sun_position = subjects[0].get_sun()
+            all_points = subjects[0].get_all_points()
+            chart_drawing = subjects[0].draw_chart()
+        """
+        subjects_list = []
+        for date in self.dates_list:
+            subject = AstrologicalSubject(
+                year=date.year,
+                month=date.month,
+                day=date.day,
+                hour=date.hour,
+                minute=date.minute,
+                lng=self.lng,
+                lat=self.lat,
+                tz_str=self.tz_str,
+                city="Placeholder",
+                nation="Placeholder",
+                online=False,
+                disable_chiron_and_lilith=self.disable_chiron_and_lilith,
+                zodiac_type=self.zodiac_type,
+                sidereal_mode=self.sidereal_mode,
+                houses_system_identifier=self.houses_system_identifier,
+                perspective_type=self.perspective_type,
+                is_dst=self.is_dst,
+            )
+
+            if as_model:
+                subjects_list.append(subject.model())
+            else:
+                subjects_list.append(subject)
+
+        return subjects_list
+
 
 if "__main__" == __name__:
     start_date = datetime.fromisoformat("2020-01-01")
@@ -160,7 +211,7 @@ if "__main__" == __name__:
         start_datetime=start_date,
         end_datetime=end_date,
         step_type="minutes",
-        step=1,
+        step=60,  # One hour intervals to make the example more manageable
         lat=37.9838,
         lng=23.7275,
         tz_str="Europe/Athens",
@@ -170,9 +221,22 @@ if "__main__" == __name__:
         max_days=None,
     )
 
+    # Test original method
     ephemeris_data = factory.get_ephemeris_data(as_model=True)
-    print(ephemeris_data[0])
-    print(len(ephemeris_data))
+    print(f"Number of ephemeris data points: {len(ephemeris_data)}")
+    print(f"First data point date: {ephemeris_data[0].date}")
 
-    for ephe in ephemeris_data:
-        print(ephe.planets[0]["abs_pos"])
+    # Test new method
+    subjects = factory.get_ephemeris_data_as_astrological_subjects()
+    print(f"Number of astrological subjects: {len(subjects)}")
+    print(f"First subject sun position: {subjects[0].sun}")
+
+    # Example of accessing more data from the first subject
+    first_subject = subjects[0]
+    print(f"Sun sign: {first_subject.sun['sign']}")
+
+    # Compare sun positions from both methods
+    for i in range(min(3, len(subjects))):
+        print(f"Date: {ephemeris_data[i].date}")
+        print(f"Sun position from dict: {ephemeris_data[i].planets[0]['abs_pos']}")
+        print("---")
