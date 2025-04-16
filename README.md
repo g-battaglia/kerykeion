@@ -42,6 +42,9 @@ Maintaining this project requires substantial time and effort. The Astrologer AP
 
 
 ## Table of Contents
+- [**Web API**](#web-api)
+- [**Donate**](#donate)
+- [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Basic Usage](#basic-usage)
 - [Generate a SVG Chart](#generate-a-svg-chart)
@@ -371,34 +374,49 @@ subject = AstrologicalSubject.get_from_iso_utc_time(
 
 ## Lunar Nodes (Rahu & Ketu)
 
-The following are present:
+Kerykeion supports both **True** and **Mean** Lunar Nodes:
 
-- True North Lunar Node: Simply referred to as "true_node" (without the term "north") for backward compatibility.
-- True South Lunar Node: Referred to as "true_south_node."
-- Mean North Lunar Node: Referred to as "mean_node" (without the term "north") for backward compatibility.
-- Mean South Lunar Node: Referred to as "mean_south_node."
+- **True North Lunar Node**: `"true_node"` (name kept without "north" for backward compatibility).
+- **True South Lunar Node**: `"true_south_node"`.
+- **Mean North Lunar Node**: `"mean_node"` (name kept without "north" for backward compatibility).
+- **Mean South Lunar Node**: `"mean_south_node"`.
 
 In instances of the AstrologicalSubject class, all of them are active by default.
 
-In instances of the classes used to generate aspects and SVG charts, only the mean nodes are active. To activate the true nodes, you need to edit the configuration file (kr.config.json).
+In instances of the classes used to generate aspects and SVG charts, only the mean nodes are active. To activate the true nodes, you need to pass the `active_points` parameter to the `KerykeionChartSVG` class.
+
 Example:
 
-```json
-...
-    {
-      "id": 19,
-      "name": "True_South_Node",
-      "color": "var(--kerykeion-chart-color-true-node)",
-      "is_active": true, // Set to true to activate the true node
-      "element_points": 0,
-      "related_zodiac_signs": [],
-      "label": "True_South_Node"
-    }
-...
-```
+```python
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-In the charts, by default, the mean nodes (M) are displayed, while the true nodes are not displayed. 
-To display them, you need to edit the configuration file (kr.config.json).
+subject = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+
+chart = KerykeionChartSVG(
+    subject,
+    active_points=[
+        "Sun", 
+        "Moon", 
+        "Mercury", 
+        "Venus", 
+        "Mars", 
+        "Jupiter", 
+        "Saturn",
+        "Uranus", 
+        "Neptune", 
+        "Pluto", 
+        "Mean_Node", 
+        "Mean_South_Node", 
+        "True_Node",       # Activates True North Node 
+        "True_South_Node", # Activates True South Node
+        "Ascendant",
+        "Medium_Coeli", 
+        "Descendant", 
+        "Imum_Coeli"
+    ]
+)
+chart.makeSVG()
+```
 
 ## JSON Support
 
