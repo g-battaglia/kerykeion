@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.5.0"/>
+    <meta name="generator" content="pdoc 14.7.0"/>
     <title>kerykeion API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
     <style>/*! syntax-highlighting.css */pre{line-height:125%;}span.linenos{color:inherit; background-color:transparent; padding-left:5px; padding-right:20px;}.pdoc-code .hll{background-color:#ffffcc}.pdoc-code{background:#f8f8f8;}.pdoc-code .c{color:#3D7B7B; font-style:italic}.pdoc-code .err{border:1px solid #FF0000}.pdoc-code .k{color:#008000; font-weight:bold}.pdoc-code .o{color:#666666}.pdoc-code .ch{color:#3D7B7B; font-style:italic}.pdoc-code .cm{color:#3D7B7B; font-style:italic}.pdoc-code .cp{color:#9C6500}.pdoc-code .cpf{color:#3D7B7B; font-style:italic}.pdoc-code .c1{color:#3D7B7B; font-style:italic}.pdoc-code .cs{color:#3D7B7B; font-style:italic}.pdoc-code .gd{color:#A00000}.pdoc-code .ge{font-style:italic}.pdoc-code .gr{color:#E40000}.pdoc-code .gh{color:#000080; font-weight:bold}.pdoc-code .gi{color:#008400}.pdoc-code .go{color:#717171}.pdoc-code .gp{color:#000080; font-weight:bold}.pdoc-code .gs{font-weight:bold}.pdoc-code .gu{color:#800080; font-weight:bold}.pdoc-code .gt{color:#0044DD}.pdoc-code .kc{color:#008000; font-weight:bold}.pdoc-code .kd{color:#008000; font-weight:bold}.pdoc-code .kn{color:#008000; font-weight:bold}.pdoc-code .kp{color:#008000}.pdoc-code .kr{color:#008000; font-weight:bold}.pdoc-code .kt{color:#B00040}.pdoc-code .m{color:#666666}.pdoc-code .s{color:#BA2121}.pdoc-code .na{color:#687822}.pdoc-code .nb{color:#008000}.pdoc-code .nc{color:#0000FF; font-weight:bold}.pdoc-code .no{color:#880000}.pdoc-code .nd{color:#AA22FF}.pdoc-code .ni{color:#717171; font-weight:bold}.pdoc-code .ne{color:#CB3F38; font-weight:bold}.pdoc-code .nf{color:#0000FF}.pdoc-code .nl{color:#767600}.pdoc-code .nn{color:#0000FF; font-weight:bold}.pdoc-code .nt{color:#008000; font-weight:bold}.pdoc-code .nv{color:#19177C}.pdoc-code .ow{color:#AA22FF; font-weight:bold}.pdoc-code .w{color:#bbbbbb}.pdoc-code .mb{color:#666666}.pdoc-code .mf{color:#666666}.pdoc-code .mh{color:#666666}.pdoc-code .mi{color:#666666}.pdoc-code .mo{color:#666666}.pdoc-code .sa{color:#BA2121}.pdoc-code .sb{color:#BA2121}.pdoc-code .sc{color:#BA2121}.pdoc-code .dl{color:#BA2121}.pdoc-code .sd{color:#BA2121; font-style:italic}.pdoc-code .s2{color:#BA2121}.pdoc-code .se{color:#AA5D1F; font-weight:bold}.pdoc-code .sh{color:#BA2121}.pdoc-code .si{color:#A45A77; font-weight:bold}.pdoc-code .sx{color:#008000}.pdoc-code .sr{color:#A45A77}.pdoc-code .s1{color:#BA2121}.pdoc-code .ss{color:#19177C}.pdoc-code .bp{color:#008000}.pdoc-code .fm{color:#0000FF}.pdoc-code .vc{color:#19177C}.pdoc-code .vg{color:#19177C}.pdoc-code .vi{color:#19177C}.pdoc-code .vm{color:#19177C}.pdoc-code .il{color:#666666}</style>
     <style>/*! theme.css */:root{--pdoc-background:#fff;}.pdoc{--text:#212529;--muted:#6c757d;--link:#3660a5;--link-hover:#1659c5;--code:#f8f8f8;--active:#fff598;--accent:#eee;--accent2:#c1c1c1;--nav-hover:rgba(255, 255, 255, 0.5);--name:#0066BB;--def:#008800;--annotation:#007020;}</style>
     <style>/*! layout.css */html, body{width:100%;height:100%;}html, main{scroll-behavior:smooth;}body{background-color:var(--pdoc-background);}@media (max-width:769px){#navtoggle{cursor:pointer;position:absolute;width:50px;height:40px;top:1rem;right:1rem;border-color:var(--text);color:var(--text);display:flex;opacity:0.8;z-index:999;}#navtoggle:hover{opacity:1;}#togglestate + div{display:none;}#togglestate:checked + div{display:inherit;}main, header{padding:2rem 3vw;}header + main{margin-top:-3rem;}.git-button{display:none !important;}nav input[type="search"]{max-width:77%;}nav input[type="search"]:first-child{margin-top:-6px;}nav input[type="search"]:valid ~ *{display:none !important;}}@media (min-width:770px){:root{--sidebar-width:clamp(12.5rem, 28vw, 22rem);}nav{position:fixed;overflow:auto;height:100vh;width:var(--sidebar-width);}main, header{padding:3rem 2rem 3rem calc(var(--sidebar-width) + 3rem);width:calc(54rem + var(--sidebar-width));max-width:100%;}header + main{margin-top:-4rem;}#navtoggle{display:none;}}#togglestate{position:absolute;height:0;opacity:0;}nav.pdoc{--pad:clamp(0.5rem, 2vw, 1.75rem);--indent:1.5rem;background-color:var(--accent);border-right:1px solid var(--accent2);box-shadow:0 0 20px rgba(50, 50, 50, .2) inset;padding:0 0 0 var(--pad);overflow-wrap:anywhere;scrollbar-width:thin; scrollbar-color:var(--accent2) transparent; z-index:1}nav.pdoc::-webkit-scrollbar{width:.4rem; }nav.pdoc::-webkit-scrollbar-thumb{background-color:var(--accent2); }nav.pdoc > div{padding:var(--pad) 0;}nav.pdoc .module-list-button{display:inline-flex;align-items:center;color:var(--text);border-color:var(--muted);margin-bottom:1rem;}nav.pdoc .module-list-button:hover{border-color:var(--text);}nav.pdoc input[type=search]{display:block;outline-offset:0;width:calc(100% - var(--pad));}nav.pdoc .logo{max-width:calc(100% - var(--pad));max-height:35vh;display:block;margin:0 auto 1rem;transform:translate(calc(-.5 * var(--pad)), 0);}nav.pdoc ul{list-style:none;padding-left:0;}nav.pdoc > div > ul{margin-left:calc(0px - var(--pad));}nav.pdoc li a{padding:.2rem 0 .2rem calc(var(--pad) + var(--indent));}nav.pdoc > div > ul > li > a{padding-left:var(--pad);}nav.pdoc li{transition:all 100ms;}nav.pdoc li:hover{background-color:var(--nav-hover);}nav.pdoc a, nav.pdoc a:hover{color:var(--text);}nav.pdoc a{display:block;}nav.pdoc > h2:first-of-type{margin-top:1.5rem;}nav.pdoc .class:before{content:"class ";color:var(--muted);}nav.pdoc .function:after{content:"()";color:var(--muted);}nav.pdoc footer:before{content:"";display:block;width:calc(100% - var(--pad));border-top:solid var(--accent2) 1px;margin-top:1.5rem;padding-top:.5rem;}nav.pdoc footer{font-size:small;}</style>
-    <style>/*! content.css */.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{cursor:pointer;display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .pdoc-alert{padding:1rem 1rem 1rem calc(1.5rem + 24px);border:1px solid transparent;border-radius:.25rem;background-repeat:no-repeat;background-position:1rem center;margin-bottom:1rem;}.pdoc .pdoc-alert > *:last-child{margin-bottom:0;}.pdoc .pdoc-alert-note {color:#084298;background-color:#cfe2ff;border-color:#b6d4fe;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23084298%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%2016A8%208%200%201%200%208%200a8%208%200%200%200%200%2016zm.93-9.412-1%204.705c-.07.34.029.533.304.533.194%200%20.487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703%200-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381%202.29-.287zM8%205.5a1%201%200%201%201%200-2%201%201%200%200%201%200%202z%22/%3E%3C/svg%3E");}.pdoc .pdoc-alert-warning{color:#664d03;background-color:#fff3cd;border-color:#ffecb5;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23664d03%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8.982%201.566a1.13%201.13%200%200%200-1.96%200L.165%2013.233c-.457.778.091%201.767.98%201.767h13.713c.889%200%201.438-.99.98-1.767L8.982%201.566zM8%205c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%205.995A.905.905%200%200%201%208%205zm.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2z%22/%3E%3C/svg%3E");}.pdoc .pdoc-alert-danger{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5.52.359A.5.5%200%200%201%206%200h4a.5.5%200%200%201%20.474.658L8.694%206H12.5a.5.5%200%200%201%20.395.807l-7%209a.5.5%200%200%201-.873-.454L6.823%209.5H3.5a.5.5%200%200%201-.48-.641l2.5-8.5z%22/%3E%3C/svg%3E");}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc > section:not(.module-info) h1{font-size:1.5rem;font-weight:500;}.pdoc > section:not(.module-info) h2{font-size:1.4rem;font-weight:500;}.pdoc > section:not(.module-info) h3{font-size:1.3rem;font-weight:500;}.pdoc > section:not(.module-info) h4{font-size:1.2rem;}.pdoc > section:not(.module-info) h5{font-size:1.1rem;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-top:0;margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;background-color:var(--code);}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--accent);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc > section:not(.module-info){margin-bottom:1.5rem;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.view-source-toggle-state,.view-source-toggle-state ~ .pdoc-code{display:none;}.view-source-toggle-state:checked ~ .pdoc-code{display:block;}.view-source-button{display:inline-block;float:right;font-size:.75rem;line-height:1.5rem;color:var(--muted);padding:0 .4rem 0 1.3rem;cursor:pointer;text-indent:-2px;}.view-source-button > span{visibility:hidden;}.module-info .view-source-button{float:none;display:flex;justify-content:flex-end;margin:-1.2rem .4rem -.2rem 0;}.view-source-button::before{position:absolute;content:"View Source";display:list-item;list-style-type:disclosure-closed;}.view-source-toggle-state:checked ~ .attr .view-source-button::before,.view-source-toggle-state:checked ~ .view-source-button::before{list-style-type:disclosure-open;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc section:not(.module-info) .docstring{margin-left:clamp(0rem, 5vw - 2rem, 1rem);}.pdoc .docstring .pdoc-code{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target,.pdoc .pdoc-code > pre > span:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc .pdoc-code > pre > span:target{display:block;}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc *{scroll-margin:2rem;}.pdoc .pdoc-code .linenos{user-select:none;}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc section, .pdoc .classattr{position:relative;}.pdoc .headerlink{--width:clamp(1rem, 3vw, 2rem);position:absolute;top:0;left:calc(0rem - var(--width));transition:all 100ms ease-in-out;opacity:0;}.pdoc .headerlink::before{content:"#";display:block;text-align:center;width:var(--width);height:2.3rem;line-height:2.3rem;font-size:1.5rem;}.pdoc .attr:hover ~ .headerlink,.pdoc *:target > .headerlink,.pdoc .headerlink:hover{opacity:1;}.pdoc .attr{display:block;margin:.5rem 0 .5rem;padding:.4rem .4rem .4rem 1rem;background-color:var(--accent);overflow-x:auto;}.pdoc .classattr{margin-left:2rem;}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{background-color:transparent;}.pdoc .param, .pdoc .return-annotation{white-space:pre;}.pdoc .signature.multiline .param{display:block;}.pdoc .signature.condensed .param{display:inline-block;}.pdoc .annotation{color:var(--annotation);}.pdoc .view-value-toggle-state,.pdoc .view-value-toggle-state ~ .default_value{display:none;}.pdoc .view-value-toggle-state:checked ~ .default_value{display:inherit;}.pdoc .view-value-button{font-size:.5rem;vertical-align:middle;border-style:dashed;margin-top:-0.1rem;}.pdoc .view-value-button:hover{background:white;}.pdoc .view-value-button::before{content:"show";text-align:center;width:2.2em;display:inline-block;}.pdoc .view-value-toggle-state:checked ~ .view-value-button::before{content:"hide";}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:35px;vertical-align:middle;width:70px;transition:all 200ms;}.pdoc table{display:block;width:max-content;max-width:100%;overflow:auto;margin-bottom:1rem;}.pdoc table th{font-weight:600;}.pdoc table th, .pdoc table td{padding:6px 13px;border:1px solid var(--accent2);}</style>
+    <style>/*! content.css */.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{cursor:pointer;display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .alert{padding:1rem 1rem 1rem calc(1.5rem + 24px);border:1px solid transparent;border-radius:.25rem;background-repeat:no-repeat;background-position:.75rem center;margin-bottom:1rem;}.pdoc .alert > em{display:none;}.pdoc .alert > *:last-child{margin-bottom:0;}.pdoc .alert.note {color:#084298;background-color:#cfe2ff;border-color:#b6d4fe;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23084298%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%2016A8%208%200%201%200%208%200a8%208%200%200%200%200%2016zm.93-9.412-1%204.705c-.07.34.029.533.304.533.194%200%20.487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703%200-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381%202.29-.287zM8%205.5a1%201%200%201%201%200-2%201%201%200%200%201%200%202z%22/%3E%3C/svg%3E");}.pdoc .alert.warning{color:#664d03;background-color:#fff3cd;border-color:#ffecb5;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23664d03%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8.982%201.566a1.13%201.13%200%200%200-1.96%200L.165%2013.233c-.457.778.091%201.767.98%201.767h13.713c.889%200%201.438-.99.98-1.767L8.982%201.566zM8%205c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%205.995A.905.905%200%200%201%208%205zm.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2z%22/%3E%3C/svg%3E");}.pdoc .alert.danger{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5.52.359A.5.5%200%200%201%206%200h4a.5.5%200%200%201%20.474.658L8.694%206H12.5a.5.5%200%200%201%20.395.807l-7%209a.5.5%200%200%201-.873-.454L6.823%209.5H3.5a.5.5%200%200%201-.48-.641l2.5-8.5z%22/%3E%3C/svg%3E");}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc > section:not(.module-info) h1{font-size:1.5rem;font-weight:500;}.pdoc > section:not(.module-info) h2{font-size:1.4rem;font-weight:500;}.pdoc > section:not(.module-info) h3{font-size:1.3rem;font-weight:500;}.pdoc > section:not(.module-info) h4{font-size:1.2rem;}.pdoc > section:not(.module-info) h5{font-size:1.1rem;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-top:0;margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;background-color:var(--code);}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--accent);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc > section:not(.module-info){margin-bottom:1.5rem;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.view-source-toggle-state,.view-source-toggle-state ~ .pdoc-code{display:none;}.view-source-toggle-state:checked ~ .pdoc-code{display:block;}.view-source-button{display:inline-block;float:right;font-size:.75rem;line-height:1.5rem;color:var(--muted);padding:0 .4rem 0 1.3rem;cursor:pointer;text-indent:-2px;}.view-source-button > span{visibility:hidden;}.module-info .view-source-button{float:none;display:flex;justify-content:flex-end;margin:-1.2rem .4rem -.2rem 0;}.view-source-button::before{position:absolute;content:"View Source";display:list-item;list-style-type:disclosure-closed;}.view-source-toggle-state:checked ~ .attr .view-source-button::before,.view-source-toggle-state:checked ~ .view-source-button::before{list-style-type:disclosure-open;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc section:not(.module-info) .docstring{margin-left:clamp(0rem, 5vw - 2rem, 1rem);}.pdoc .docstring .pdoc-code{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target,.pdoc .pdoc-code > pre > span:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc .pdoc-code > pre > span:target{display:block;}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc *{scroll-margin:2rem;}.pdoc .pdoc-code .linenos{user-select:none;}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc section, .pdoc .classattr{position:relative;}.pdoc .headerlink{--width:clamp(1rem, 3vw, 2rem);position:absolute;top:0;left:calc(0rem - var(--width));transition:all 100ms ease-in-out;opacity:0;}.pdoc .headerlink::before{content:"#";display:block;text-align:center;width:var(--width);height:2.3rem;line-height:2.3rem;font-size:1.5rem;}.pdoc .attr:hover ~ .headerlink,.pdoc *:target > .headerlink,.pdoc .headerlink:hover{opacity:1;}.pdoc .attr{display:block;margin:.5rem 0 .5rem;padding:.4rem .4rem .4rem 1rem;background-color:var(--accent);overflow-x:auto;}.pdoc .classattr{margin-left:2rem;}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{background-color:transparent;}.pdoc .param, .pdoc .return-annotation{white-space:pre;}.pdoc .signature.multiline .param{display:block;}.pdoc .signature.condensed .param{display:inline-block;}.pdoc .annotation{color:var(--annotation);}.pdoc .view-value-toggle-state,.pdoc .view-value-toggle-state ~ .default_value{display:none;}.pdoc .view-value-toggle-state:checked ~ .default_value{display:inherit;}.pdoc .view-value-button{font-size:.5rem;vertical-align:middle;border-style:dashed;margin-top:-0.1rem;}.pdoc .view-value-button:hover{background:white;}.pdoc .view-value-button::before{content:"show";text-align:center;width:2.2em;display:inline-block;}.pdoc .view-value-toggle-state:checked ~ .view-value-button::before{content:"hide";}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:35px;vertical-align:middle;width:70px;transition:all 200ms;}.pdoc table{display:block;width:max-content;max-width:100%;overflow:auto;margin-bottom:1rem;}.pdoc table th{font-weight:600;}.pdoc table th, .pdoc table td{padding:6px 13px;border:1px solid var(--accent2);}</style>
     <style>/*! custom.css */</style></head>
 <body>
     <nav class="pdoc">
@@ -23,19 +23,27 @@
 
             <h2>Contents</h2>
             <ul>
-  <li><a href="#web-api">Web API</a></li>
-  <li><a href="#donate">Donate</a></li>
+  <li><a href="#web-api"><strong>Web API</strong></a></li>
+  <li><a href="#donate"><strong>Donate</strong></a></li>
+  <li><a href="#table-of-contents">Table of Contents</a></li>
   <li><a href="#installation">Installation</a></li>
-  <li><a href="#usage">Usage</a></li>
+  <li><a href="#basic-usage">Basic Usage</a></li>
   <li><a href="#generate-a-svg-chart">Generate a SVG Chart</a></li>
   <li><a href="#report">Report</a></li>
-  <li><a href="#other-exeples-of-possibles-usecase">Other exeples of possibles usecase</a></li>
+  <li><a href="#example-retrieving-aspects">Example: Retrieving Aspects</a></li>
   <li><a href="#ayanamsa-sidereal-modes">Ayanamsa (Sidereal Modes)</a></li>
-  <li><a href="#houses-systems">Houses Systems</a></li>
-  <li><a href="#documentation">Documentation</a></li>
+  <li><a href="#house-systems">House Systems</a></li>
+  <li><a href="#perspective-type">Perspective Type</a></li>
+  <li><a href="#themes">Themes</a></li>
+  <li><a href="#alternative-initialization">Alternative Initialization</a></li>
+  <li><a href="#lunar-nodes-rahu-ketu">Lunar Nodes (Rahu &amp; Ketu)</a></li>
+  <li><a href="#json-support">JSON Support</a></li>
+  <li><a href="#auto-generated-documentation">Auto Generated Documentation</a></li>
   <li><a href="#development">Development</a></li>
-  <li><a href="#contributing">Contributing</a></li>
+  <li><a href="#integrating-kerykeion-into-your-project">Integrating Kerykeion into Your Project</a></li>
   <li><a href="#license">License</a></li>
+  <li><a href="#contributing">Contributing</a></li>
+  <li><a href="#citations">Citations</a></li>
 </ul>
 
 
@@ -44,12 +52,15 @@
                     <li><a href="kerykeion/aspects.html">aspects</a></li>
                     <li><a href="kerykeion/astrological_subject.html">astrological_subject</a></li>
                     <li><a href="kerykeion/charts.html">charts</a></li>
+                    <li><a href="kerykeion/composite_subject_factory.html">composite_subject_factory</a></li>
                     <li><a href="kerykeion/enums.html">enums</a></li>
+                    <li><a href="kerykeion/ephemeris_data.html">ephemeris_data</a></li>
                     <li><a href="kerykeion/fetch_geonames.html">fetch_geonames</a></li>
                     <li><a href="kerykeion/kr_types.html">kr_types</a></li>
                     <li><a href="kerykeion/relationship_score.html">relationship_score</a></li>
                     <li><a href="kerykeion/report.html">report</a></li>
                     <li><a href="kerykeion/settings.html">settings</a></li>
+                    <li><a href="kerykeion/transits_time_range.html">transits_time_range</a></li>
                     <li><a href="kerykeion/utilities.html">utilities</a></li>
             </ul>
 
@@ -69,148 +80,227 @@ kerykeion    </h1>
 
                         <div class="docstring"><p>This is part of Kerykeion (C) 2025 Giacomo Battaglia</p>
 
-<h1 align=center>Kerykeion</h1>
+<h1 align="center">Kerykeion</h1>
 
 <div align="center">
-    <a href="#">
-        <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
-    </a>
-    <a href="#">
-        <img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="stars">
-    </a>
-    <a href="#">
-        <img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="forks">
-    </a>
-    <a href="https://pypi.org/project/kerykeion" target="_blank">
-        <img src="https://visitor-badge.laobi.icu/badge?page_id=g-battaglia.kerykeion" alt="visitors"/>
-    </a>
-    <a href="https://pypi.org/project/kerykeion" target="_blank">
-        <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
-    </a>
-    <a href="https://pypi.org/project/kerykeion" target="_blank">
-        <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
-    </a>
+    <img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="stars">
+    <img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="forks">
+</div>
+
+<div align="center">
+    <img src="https://static.pepy.tech/badge/kerykeion/month" alt="PyPI Downloads">
+    <img src="https://static.pepy.tech/badge/kerykeion/week" alt="PyPI Downloads">
+    <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
+    <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
+    <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
 </div>
 
 <p>&nbsp;</p>
 
-<p>Kerykeion is a python library for Astrology.
-It can calculate all the planet and house position,
-also it can calculate the aspects of a single persone or between two, you can set how many planets you
-need in the settings in the utility module.
-It also can generate an SVG of a birthchart, a synastry chart or a transit chart.</p>
+<p>Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects, and generates SVG charts—including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.</p>
 
-<p>The core goal of this project is to provide a simple and easy approach to astrology in a data driven way.</p>
+<p>The main goal of this project is to offer a clean, data-driven approach to astrology, making it accessible and programmable.</p>
 
-<p>Here's an example of a birthchart:</p>
+<p>Kerykeion also integrates seamlessly with LLM and AI applications. </p>
 
-<p><img src="https://www.kerykeion.net/assets/img/examples/birth-chart.svg" alt="Kanye Birth Chart" /></p>
+<p>Here is an example of a birthchart:</p>
 
-<h2 id="web-api">Web API</h2>
+<p><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg" alt="John Lenon Chart" /></p>
 
-<p>If you want to use Kerykeion in a web application, I've created a web API for this purpose, you can find it here:</p>
+<h2 id="web-api"><strong>Web API</strong></h2>
+
+<p>If you want to use Kerykeion in a web application, you can try the dedicated web API:</p>
 
 <p><strong><a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing">AstrologerAPI</a></strong></p>
 
-<p>It's <a href="https://github.com/g-battaglia/Astrologer-API">open source</a>, it's a way to support me and the project.</p>
+<p>It is <a href="https://github.com/g-battaglia/Astrologer-API">open source</a> and directly supports this project.</p>
 
-<h2 id="donate">Donate</h2>
+<h2 id="donate"><strong>Donate</strong></h2>
 
-<p>Maintaining this project is a lot of work, the Astrologer API doesn't nearly cover the costs of a software engineer working on this project full time. I do this because I love it, but until I can make this my full time job, I won't be able to spend as much time on it.</p>
-
-<p>If you want to support me, you can do it here:</p>
+<p>Maintaining this project requires substantial time and effort. The Astrologer API alone cannot cover the costs of full-time development. If you find Kerykeion valuable and would like to support further development, please consider donating:</p>
 
 <p><a href="https://ko-fi.com/kerykeion"><img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="ko-fi" /></a></p>
 
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#basic-usage">Basic Usage</a></li>
+<li><a href="#generate-a-svg-chart">Generate a SVG Chart</a>
+<ul>
+<li><a href="#birth-chart">Birth Chart</a></li>
+<li><a href="#synastry-chart">Synastry Chart</a></li>
+<li><a href="#transit-chart">Transit Chart</a></li>
+<li><a href="#composite-chart">Composite Chart</a></li>
+<li><a href="#change-the-output-directory">Change the Output Directory</a></li>
+<li><a href="#change-language">Change Language</a></li>
+</ul></li>
+<li><a href="#report">Report</a></li>
+<li><a href="#example-retrieving-aspects">Example: Retrieving Aspects</a></li>
+<li><a href="#ayanamsa-sidereal-modes">Ayanamsa (Sidereal Modes)</a></li>
+<li><a href="#house-systems">House Systems</a></li>
+<li><a href="#perspective-type">Perspective Type</a></li>
+<li><a href="#themes">Themes</a></li>
+<li><a href="#alternative-initialization">Alternative Initialization</a></li>
+<li><a href="#lunar-nodes-rahu--ketu">Lunar Nodes (Rahu \&amp; Ketu)</a></li>
+<li><a href="#json-support">JSON Support</a></li>
+<li><a href="#auto-generated-documentation">Auto Generated Documentation</a></li>
+<li><a href="#development">Development</a></li>
+<li><a href="#integrating-kerykeion-into-your-project">Integrating Kerykeion into Your Project</a></li>
+<li><a href="#license">License</a></li>
+<li><a href="#contributing">Contributing</a></li>
+<li><a href="#citations">Citations</a></li>
+</ul>
+
 <h2 id="installation">Installation</h2>
 
-<p>Kerykeion is a _Python 3.9_ package, make sure you have _Python 3.9_ or above installed on your system.</p>
+<p>Kerykeion requires <strong>Python 3.9</strong> or higher.</p>
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code>pip3<span class="w"> </span>install<span class="w"> </span>kerykeion
 </code></pre>
 </div>
 
-<h2 id="usage">Usage</h2>
+<h2 id="basic-usage">Basic Usage</h2>
 
-<p>Here some examples:</p>
+<p>Below is a simple example illustrating the creation of an astrological subject and retrieving astrological details:</p>
 
 <div class="pdoc-code codehilite">
-<pre><span></span><code><span class="c1"># Import the main class for creating a kerykeion instance:</span>
-<span class="kn">from</span> <span class="nn">kerykeion</span> <span class="kn">import</span> <span class="n">AstrologicalSubject</span>
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubject</span>
 
-<span class="c1"># Create a kerykeion instance:</span>
-<span class="c1"># Args: Name, year, month, day, hour, minuts, city, nation(optional)</span>
-<span class="n">kanye</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Kanye&quot;</span><span class="p">,</span> <span class="mi">1977</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="s2">&quot;Atlanta&quot;</span><span class="p">)</span>
+<span class="c1"># Create an instance of the AstrologicalSubject class.</span>
+<span class="c1"># Arguments: Name, year, month, day, hour, minutes, city, nation</span>
+<span class="n">kanye</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Kanye&quot;</span><span class="p">,</span> <span class="mi">1977</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="s2">&quot;Atlanta&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">)</span>
 
-<span class="c1"># Get the information about the sun in the chart:</span>
-<span class="c1"># (The position of the planets always starts at 0)</span>
+<span class="c1"># Retrieve information about the Sun:</span>
 <span class="n">kanye</span><span class="o">.</span><span class="n">sun</span>
+<span class="c1"># &gt; {&#39;name&#39;: &#39;Sun&#39;, &#39;quality&#39;: &#39;Mutable&#39;, &#39;element&#39;: &#39;Air&#39;, &#39;sign&#39;: &#39;Gem&#39;, &#39;sign_num&#39;: 2, ...}</span>
 
-<span class="c1">#&gt; {&#39;name&#39;: &#39;Sun&#39;, &#39;quality&#39;: &#39;Mutable&#39;, &#39;element&#39;: &#39;Air&#39;, &#39;sign&#39;: &#39;Gem&#39;, &#39;sign_num&#39;: 2, &#39;pos&#39;: 17.598992059774275, &#39;abs_pos&#39;: 77.59899205977428, &#39;emoji&#39;: &#39;♊️&#39;, &#39;house&#39;: &#39;12th House&#39;, &#39;retrograde&#39;: False}</span>
-
-<span class="c1"># Get information about the first house:</span>
+<span class="c1"># Retrieve information about the first house:</span>
 <span class="n">kanye</span><span class="o">.</span><span class="n">first_house</span>
+<span class="c1"># &gt; {&#39;name&#39;: &#39;First_House&#39;, &#39;quality&#39;: &#39;Cardinal&#39;, &#39;element&#39;: &#39;Water&#39;, &#39;sign&#39;: &#39;Can&#39;, ...}</span>
 
-<span class="c1">#&gt; {&#39;name&#39;: &#39;First_House&#39;, &#39;quality&#39;: &#39;Cardinal&#39;, &#39;element&#39;: &#39;Water&#39;, &#39;sign&#39;: &#39;Can&#39;, &#39;sign_num&#39;: 3, &#39;pos&#39;: 17.995779673209114, &#39;abs_pos&#39;: 107.99577967320911, &#39;emoji&#39;: &#39;♋️&#39;}</span>
-
-<span class="c1"># Get element of the moon sign:</span>
+<span class="c1"># Retrieve the element of the Moon sign:</span>
 <span class="n">kanye</span><span class="o">.</span><span class="n">moon</span><span class="o">.</span><span class="n">element</span>
-
-<span class="c1">#&gt; &#39;Water&#39;</span>
+<span class="c1"># &gt; &#39;Water&#39;</span>
 </code></pre>
 </div>
 
-<p><strong>To avoid connecting to GeoNames (eg. avoiding hourly limit or no internet connection) you should instance kerykeion like this:</strong></p>
+<p><strong>To avoid using GeoNames online, specify longitude, latitude, and timezone instead of city and nation:</strong></p>
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="n">kanye</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span>
-    <span class="s2">&quot;Kanye&quot;</span><span class="p">,</span> <span class="mi">1977</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">tz_str</span><span class="o">=</span><span class="s2">&quot;Europe/Rome&quot;</span><span class="p">,</span> <span class="n">city</span><span class="o">=</span><span class="s2">&quot;Rome&quot;</span>
+    <span class="s2">&quot;Kanye&quot;</span><span class="p">,</span> <span class="mi">1977</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span>
+    <span class="n">lng</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">lat</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">tz_str</span><span class="o">=</span><span class="s2">&quot;Europe/Rome&quot;</span><span class="p">,</span>
+    <span class="n">city</span><span class="o">=</span><span class="s2">&quot;Rome&quot;</span>
 <span class="p">)</span>
 </code></pre>
 </div>
 
-<p>The difference is that you have to pass the longitude, latitude and the timezone string, instead of the city and nation.
-If you omit the nation, it will be set to "GB" by default, but the value is not used for calculations. It's better to set it to the correct value though.</p>
-
 <h2 id="generate-a-svg-chart">Generate a SVG Chart</h2>
 
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="kn">from</span> <span class="nn">kerykeion</span> <span class="kn">import</span> <span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">KerykeionChartSVG</span>
+<h3 id="birth-chart">Birth Chart</h3>
 
-<span class="n">first</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;John Lennon&quot;</span><span class="p">,</span> <span class="mi">1940</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">)</span>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">KerykeionChartSVG</span>
+
+<span class="n">birth_chart</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Kanye&quot;</span><span class="p">,</span> <span class="mi">1977</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="s2">&quot;Atlanta&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">)</span>
+<span class="n">birth_chart_svg</span> <span class="o">=</span> <span class="n">KerykeionChartSVG</span><span class="p">(</span><span class="n">birth_chart</span><span class="p">)</span>
+<span class="n">birth_chart_svg</span><span class="o">.</span><span class="n">makeSVG</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p><strong>Tip:</strong> The optimized way to open the generated SVG files is with a web browser (e.g., Chrome, Firefox).</p>
+
+<p>The SVG file will be saved in the home directory.
+<img src="https://www.kerykeion.net/img/examples/birth-chart.svg" alt="John Lennon Birth Chart" /></p>
+
+<h3 id="synastry-chart">Synastry Chart</h3>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">KerykeionChartSVG</span>
+
+<span class="n">first</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;John Lennon&quot;</span><span class="p">,</span> <span class="mi">1940</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">)</span>
 <span class="n">second</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Paul McCartney&quot;</span><span class="p">,</span> <span class="mi">1942</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">)</span>
 
-<span class="c1"># Set the type, it can be Natal, Synastry or Transit</span>
 <span class="n">synastry_chart</span> <span class="o">=</span> <span class="n">KerykeionChartSVG</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="s2">&quot;Synastry&quot;</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span>
 <span class="n">synastry_chart</span><span class="o">.</span><span class="n">makeSVG</span><span class="p">()</span>
 </code></pre>
 </div>
 
-<p><img src="https://www.kerykeion.net/assets/img/examples/synastry-chart.svg" alt="John Lennon and Paul McCartney Synastry" /></p>
+<p><img src="https://www.kerykeion.net/img/examples/synastry-chart.svg" alt="John Lennon and Paul McCartney Synastry" /></p>
 
-<p>Note: By default, the generated SVG file will be in the home directory! To change the destination directory:</p>
+<h3 id="transit-chart">Transit Chart</h3>
 
 <div class="pdoc-code codehilite">
-<pre><span></span><code><span class="kn">from</span> <span class="nn">kerykeion</span> <span class="kn">import</span> <span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">KerykeionChartSVG</span>
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubject</span>
 
-<span class="n">first</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;John Lennon&quot;</span><span class="p">,</span> <span class="mi">1940</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">)</span>
+<span class="n">transit</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Transit&quot;</span><span class="p">,</span> <span class="mi">2025</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="s2">&quot;Atlanta&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">)</span>
+<span class="n">subject</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;John Lennon&quot;</span><span class="p">,</span> <span class="mi">1940</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">)</span>
+
+<span class="n">transit_chart</span> <span class="o">=</span> <span class="n">KerykeionChartSVG</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;Transit&quot;</span><span class="p">,</span> <span class="n">transit</span><span class="p">)</span>
+<span class="n">transit_chart</span><span class="o">.</span><span class="n">makeSVG</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Transit%20Chart.svg" alt="John Lennon Transit Chart" /></p>
+
+<h3 id="composite-chart">Composite Chart</h3>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompositeSubjectFactory</span><span class="p">,</span> <span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">KerykeionChartSVG</span>
+
+<span class="n">angelina</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Angelina Jolie&quot;</span><span class="p">,</span> <span class="mi">1975</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="s2">&quot;Los Angeles&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">,</span> <span class="n">lng</span><span class="o">=-</span><span class="mf">118.15</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="mf">34.03</span><span class="p">,</span> <span class="n">tz_str</span><span class="o">=</span><span class="s2">&quot;America/Los_Angeles&quot;</span><span class="p">)</span>
+
+<span class="n">brad</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Brad Pitt&quot;</span><span class="p">,</span> <span class="mi">1963</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="s2">&quot;Shawnee&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">,</span> <span class="n">lng</span><span class="o">=-</span><span class="mf">96.56</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="mf">35.20</span><span class="p">,</span> <span class="n">tz_str</span><span class="o">=</span><span class="s2">&quot;America/Chicago&quot;</span><span class="p">)</span>
+
+<span class="n">factory</span> <span class="o">=</span> <span class="n">CompositeSubjectFactory</span><span class="p">(</span><span class="n">angelina</span><span class="p">,</span> <span class="n">brad</span><span class="p">)</span>
+<span class="n">composite_model</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">get_midpoint_composite_subject_model</span><span class="p">()</span>
+
+<span class="n">composite_chart</span> <span class="o">=</span> <span class="n">KerykeionChartSVG</span><span class="p">(</span><span class="n">composite_model</span><span class="p">,</span> <span class="s2">&quot;Composite&quot;</span><span class="p">)</span>
+<span class="n">composite_chart</span><span class="o">.</span><span class="n">makeSVG</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/Angelina%20Jolie%20and%20Brad%20Pitt%20Composite%20Chart%20-%20Composite%20Chart.svg" alt="Angelina Jolie and Brad Pitt Composite Chart" /></p>
+
+<h3 id="change-the-output-directory">Change the Output Directory</h3>
+
+<p>To save the SVG file in a custom location, specify <code>new_output_directory</code>:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">KerykeionChartSVG</span>
+
+<span class="n">first</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;John Lennon&quot;</span><span class="p">,</span> <span class="mi">1940</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">)</span>
 <span class="n">second</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Paul McCartney&quot;</span><span class="p">,</span> <span class="mi">1942</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">)</span>
 
-<span class="c1"># Synastry Chart</span>
-<span class="n">synastry_chart</span> <span class="o">=</span> <span class="n">KerykeionChartSVG</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="s2">&quot;Synastry&quot;</span><span class="p">,</span> <span class="n">second</span><span class="p">,</span> <span class="n">new_output_directory</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+<span class="n">synastry_chart</span> <span class="o">=</span> <span class="n">KerykeionChartSVG</span><span class="p">(</span>
+    <span class="n">first</span><span class="p">,</span> <span class="s2">&quot;Synastry&quot;</span><span class="p">,</span> <span class="n">second</span><span class="p">,</span>
+    <span class="n">new_output_directory</span><span class="o">=</span><span class="s2">&quot;.&quot;</span>
+<span class="p">)</span>
 <span class="n">synastry_chart</span><span class="o">.</span><span class="n">makeSVG</span><span class="p">()</span>
 </code></pre>
 </div>
 
-<h2 id="report">Report</h2>
+<h3 id="change-language">Change Language</h3>
 
-<p>To print a report of all the data:</p>
+<p>You can switch chart language by passing <code>chart_language</code> to the <code>AstrologicalSubject</code> or <code>KerykeionChartSVG</code> classes:</p>
 
 <div class="pdoc-code codehilite">
-<pre><span></span><code><span class="kn">from</span> <span class="nn">kerykeion</span> <span class="kn">import</span> <span class="n">Report</span><span class="p">,</span> <span class="n">AstrologicalSubject</span>
+<pre><span></span><code><span class="n">first</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;John Lennon&quot;</span><span class="p">,</span> <span class="mi">1940</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">,</span> <span class="n">chart_language</span><span class="o">=</span><span class="s2">&quot;ES&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
 
-<span class="n">kanye</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Kanye&quot;</span><span class="p">,</span> <span class="mi">1977</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="s2">&quot;Atlanta&quot;</span><span class="p">)</span>
+<p>More details <a href="https://www.kerykeion.net/docs//chart-language">here</a>.</p>
+
+<h2 id="report">Report</h2>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">Report</span><span class="p">,</span> <span class="n">AstrologicalSubject</span>
+
+<span class="n">kanye</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Kanye&quot;</span><span class="p">,</span> <span class="mi">1977</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="s2">&quot;Atlanta&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">)</span>
 <span class="n">report</span> <span class="o">=</span> <span class="n">Report</span><span class="p">(</span><span class="n">kanye</span><span class="p">)</span>
 <span class="n">report</span><span class="o">.</span><span class="n">print_report</span><span class="p">()</span>
 </code></pre>
@@ -224,23 +314,25 @@ If you omit the nation, it will be set to "GB" by default, but the value is not 
 +----------+------+-------------+-----------+----------+
 | 8/6/1977 | 8:45 | Atlanta, US | -84.38798 | 33.749   |
 +----------+------+-------------+-----------+----------+
-+-----------+------+-------+------+----------------+
-| Planet    | Sign | Pos.  | Ret. | House          |
-+-----------+------+-------+------+----------------+
-| Sun       | Gem  | 17.6  | -    | Twelfth_House  |
-| Moon      | Pis  | 16.43 | -    | Ninth_House    |
-| Mercury   | Tau  | 26.29 | -    | Eleventh_House |
-| Venus     | Tau  | 2.03  | -    | Tenth_House    |
-| Mars      | Tau  | 1.79  | -    | Tenth_House    |
-| Jupiter   | Gem  | 14.61 | -    | Eleventh_House |
-| Saturn    | Leo  | 12.8  | -    | Second_House   |
-| Uranus    | Sco  | 8.27  | R    | Fourth_House   |
-| Neptune   | Sag  | 14.69 | R    | Fifth_House    |
-| Pluto     | Lib  | 11.45 | R    | Fourth_House   |
-| Mean_Node | Lib  | 21.49 | R    | Fourth_House   |
-| True_Node | Lib  | 22.82 | R    | Fourth_House   |
-| Chiron    | Tau  | 4.17  | -    | Tenth_House    |
-+-----------+------+-------+------+----------------+
++-----------------+------+-------+------+----------------+
+| Planet          | Sign | Pos.  | Ret. | House          |
++-----------------+------+-------+------+----------------+
+| Sun             | Gem  | 17.6  | -    | Twelfth_House  |
+| Moon            | Pis  | 16.43 | -    | Ninth_House    |
+| Mercury         | Tau  | 26.29 | -    | Eleventh_House |
+| Venus           | Tau  | 2.03  | -    | Tenth_House    |
+| Mars            | Tau  | 1.79  | -    | Tenth_House    |
+| Jupiter         | Gem  | 14.61 | -    | Eleventh_House |
+| Saturn          | Leo  | 12.8  | -    | Second_House   |
+| Uranus          | Sco  | 8.27  | R    | Fourth_House   |
+| Neptune         | Sag  | 14.69 | R    | Fifth_House    |
+| Pluto           | Lib  | 11.45 | R    | Fourth_House   |
+| Mean_Node       | Lib  | 21.49 | R    | Fourth_House   |
+| True_Node       | Lib  | 22.82 | R    | Fourth_House   |
+| Mean_South_Node | Ari  | 21.49 | R    | Tenth_House    |
+| True_South_Node | Ari  | 22.82 | R    | Tenth_House    |
+| Chiron          | Tau  | 4.17  | -    | Tenth_House    |
++-----------------+------+-------+------+----------------+
 +----------------+------+----------+
 | House          | Sign | Position |
 +----------------+------+----------+
@@ -258,40 +350,38 @@ If you omit the nation, it will be set to "GB" by default, but the value is not 
 | Twelfth_House  | Gem  | 15.68    |
 +----------------+------+----------+
 
+To export to a file:
+
+```bash
+python3 your_script_name.py &gt; file.txt
 </code></pre>
 
-<p>And if you want to export it to a file:</p>
+<h2 id="example-retrieving-aspects">Example: Retrieving Aspects</h2>
 
 <div class="pdoc-code codehilite">
-<pre><span></span><code>python3<span class="w"> </span>your_script_name.py<span class="w"> </span>&gt;<span class="w"> </span>file.txt
-</code></pre>
-</div>
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynastryAspects</span><span class="p">,</span> <span class="n">AstrologicalSubject</span>
 
-<h2 id="other-exeples-of-possibles-usecase">Other exeples of possibles usecase</h2>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="c1"># Get all aspects between two persons:</span>
-
-<span class="kn">from</span> <span class="nn">kerykeion</span> <span class="kn">import</span> <span class="n">SynastryAspects</span><span class="p">,</span> <span class="n">AstrologicalSubject</span>
-<span class="n">first</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Jack&quot;</span><span class="p">,</span> <span class="mi">1990</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="s2">&quot;Roma&quot;</span><span class="p">)</span>
-<span class="n">second</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Jane&quot;</span><span class="p">,</span> <span class="mi">1991</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">00</span><span class="p">,</span> <span class="s2">&quot;Roma&quot;</span><span class="p">)</span>
+<span class="n">first</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Jack&quot;</span><span class="p">,</span> <span class="mi">1990</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="s2">&quot;Roma&quot;</span><span class="p">,</span> <span class="s2">&quot;IT&quot;</span><span class="p">)</span>
+<span class="n">second</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Jane&quot;</span><span class="p">,</span> <span class="mi">1991</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Roma&quot;</span><span class="p">,</span> <span class="s2">&quot;IT&quot;</span><span class="p">)</span>
 
 <span class="n">name</span> <span class="o">=</span> <span class="n">SynastryAspects</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span>
 <span class="n">aspect_list</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">get_relevant_aspects</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">aspect_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-<span class="c1">#&gt; Generating kerykeion object for Jack...</span>
-<span class="c1">#&gt; Generating kerykeion object for Jane...</span>
 <span class="c1">#&gt; {&#39;p1_name&#39;: &#39;Sun&#39;, &#39;p1_abs_pos&#39;: 84.17867971515636, &#39;p2_name&#39;: &#39;Sun&#39;, &#39;p2_abs_pos&#39;: 211.90472999502984, &#39;aspect&#39;: &#39;trine&#39;, &#39;orbit&#39;: 7.726050279873476, &#39;aspect_degrees&#39;: 120, &#39;color&#39;: &#39;#36d100&#39;, &#39;aid&#39;: 6, &#39;diff&#39;: 127.72605027987348, &#39;p1&#39;: 0, &#39;p2&#39;: 0}</span>
 </code></pre>
 </div>
 
 <h2 id="ayanamsa-sidereal-modes">Ayanamsa (Sidereal Modes)</h2>
 
-<p>You can set the zodiac type and the sidereal mode in the AstrologicalSubject class:</p>
+<p>By default, the zodiac type is <strong>Tropical</strong>. To use <strong>Sidereal</strong>, specify the sidereal mode:</p>
 
 <div class="pdoc-code codehilite">
-<pre><span></span><code><span class="n">johnny</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Johnny Depp&quot;</span><span class="p">,</span> <span class="mi">1963</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Owensboro&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">,</span> <span class="n">zodiac_type</span><span class="o">=</span><span class="s2">&quot;Sidereal&quot;</span><span class="p">,</span> <span class="n">sidereal_mode</span><span class="o">=</span><span class="s2">&quot;LAHIRI&quot;</span><span class="p">)</span>
+<pre><span></span><code><span class="n">johnny</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span>
+    <span class="s2">&quot;Johnny Depp&quot;</span><span class="p">,</span> <span class="mi">1963</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Owensboro&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">,</span>
+    <span class="n">zodiac_type</span><span class="o">=</span><span class="s2">&quot;Sidereal&quot;</span><span class="p">,</span>
+    <span class="n">sidereal_mode</span><span class="o">=</span><span class="s2">&quot;LAHIRI&quot;</span>
+<span class="p">)</span>
 </code></pre>
 </div>
 
@@ -299,12 +389,16 @@ If you omit the nation, it will be set to "GB" by default, but the value is not 
 
 <p>Full list of supported sidereal modes <a href="https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#SiderealMode">here</a>.</p>
 
-<h2 id="houses-systems">Houses Systems</h2>
+<h2 id="house-systems">House Systems</h2>
 
-<p>You can set the houses system in the AstrologicalSubject class:</p>
+<p>By default, houses are calculated using <strong>Placidus</strong>. Configure a different house system as follows:</p>
 
 <div class="pdoc-code codehilite">
-<pre><span></span><code><span class="n">johnny</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Johnny Depp&quot;</span><span class="p">,</span> <span class="mi">1963</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Owensboro&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">,</span> <span class="n">houses_system</span><span class="o">=</span><span class="s2">&quot;M&quot;</span><span class="p">)</span>
+<pre><span></span><code><span class="n">johnny</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span>
+    <span class="s2">&quot;Johnny Depp&quot;</span><span class="p">,</span> <span class="mi">1963</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Owensboro&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">,</span>
+    <span class="n">houses_system</span><span class="o">=</span><span class="s2">&quot;M&quot;</span>
+<span class="p">)</span>
 </code></pre>
 </div>
 
@@ -314,29 +408,164 @@ If you omit the nation, it will be set to "GB" by default, but the value is not 
 
 <p>So far all the available houses system in the Swiss Ephemeris are supported but the Gauquelin Sectors.</p>
 
-<h2 id="documentation">Documentation</h2>
+<h2 id="perspective-type">Perspective Type</h2>
 
-<p>Most of the functions and the classes are self documented by the types and have docstrings.
-An auto-generated documentation <a href="https://www.kerykeion.net/pydocs/kerykeion.html">is available here</a>.</p>
+<p>By default, Kerykeion uses the <strong>Apparent Geocentric</strong> perspective (the most standard in astrology). Other perspectives (e.g., <strong>Heliocentric</strong>) can be set this way:</p>
 
-<p>Sooner or later I'll try to write an extensive documentation.</p>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="n">johnny</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span>
+    <span class="s2">&quot;Johnny Depp&quot;</span><span class="p">,</span> <span class="mi">1963</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Owensboro&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">,</span>
+    <span class="n">perspective_type</span><span class="o">=</span><span class="s2">&quot;Heliocentric&quot;</span>
+<span class="p">)</span>
+</code></pre>
+</div>
+
+<p>More examples <a href="https://www.kerykeion.net/docs//perspective-type/">here</a>.</p>
+
+<p>Full list of supported perspective types <a href="https://www.kerykeion.net/pydocs/kerykeion/kr_types/kr_literals.html#PerspectiveType">here</a>.</p>
+
+<h2 id="themes">Themes</h2>
+
+<p>Kerykeion provides several chart themes:</p>
+
+<ul>
+<li><strong>Classic</strong> (default)</li>
+<li><strong>Dark</strong></li>
+<li><strong>Dark High Contrast</strong></li>
+<li><strong>Light</strong></li>
+</ul>
+
+<p>Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables. For more detailed instructions on how to apply themes, check the <a href="https://www.kerykeion.net/docs/theming">documentation</a></p>
+
+<p>Here's an example of how to set the theme:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">KerykeionChartSVG</span>
+
+<span class="n">dark_theme_subject</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;John Lennon - Dark Theme&quot;</span><span class="p">,</span> <span class="mi">1940</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">)</span>
+<span class="n">dark_theme_natal_chart</span> <span class="o">=</span> <span class="n">KerykeionChartSVG</span><span class="p">(</span><span class="n">dark_high_contrast_theme_subject</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="s2">&quot;dark_high_contrast&quot;</span><span class="p">)</span>
+<span class="n">dark_theme_natal_chart</span><span class="o">.</span><span class="n">makeSVG</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p><img src="https://www.kerykeion.net/img/showcase/John%20Lennon%20-%20Dark%20-%20Natal%20Chart.svg" alt="John Lennon" /></p>
+
+<h2 id="alternative-initialization">Alternative Initialization</h2>
+
+<p>Create an <code>AstrologicalSubject</code> from a UTC ISO 8601 string:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="n">subject</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="o">.</span><span class="n">get_from_iso_utc_time</span><span class="p">(</span>
+    <span class="s2">&quot;Johnny Depp&quot;</span><span class="p">,</span> <span class="s2">&quot;1963-06-09T05:00:00Z&quot;</span><span class="p">,</span> <span class="s2">&quot;Owensboro&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span>
+<span class="p">)</span>
+</code></pre>
+</div>
+
+<p>If you set <code>online=True</code>, provide a <code>geonames_username</code> to allow city-based geolocation:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn"><a href="kerykeion/astrological_subject.html">kerykeion.astrological_subject</a></span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubject</span>
+
+<span class="n">subject</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="o">.</span><span class="n">get_from_iso_utc_time</span><span class="p">(</span>
+    <span class="s2">&quot;Johnny Depp&quot;</span><span class="p">,</span> <span class="s2">&quot;1963-06-09T05:00:00Z&quot;</span><span class="p">,</span> <span class="s2">&quot;Owensboro&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">,</span> <span class="n">online</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</code></pre>
+</div>
+
+<h2 id="lunar-nodes-rahu-ketu">Lunar Nodes (Rahu &amp; Ketu)</h2>
+
+<p>Kerykeion supports both <strong>True</strong> and <strong>Mean</strong> Lunar Nodes:</p>
+
+<ul>
+<li><strong>True North Lunar Node</strong>: <code>"true_node"</code> (name kept without "north" for backward compatibility).</li>
+<li><strong>True South Lunar Node</strong>: <code>"true_south_node"</code>.</li>
+<li><strong>Mean North Lunar Node</strong>: <code>"mean_node"</code> (name kept without "north" for backward compatibility).</li>
+<li><strong>Mean South Lunar Node</strong>: <code>"mean_south_node"</code>.</li>
+</ul>
+
+<p>In instances of the AstrologicalSubject class, all of them are active by default.</p>
+
+<p>In instances of the classes used to generate aspects and SVG charts, only the mean nodes are active. To activate the true nodes, you need to pass the <code>active_points</code> parameter to the <code>KerykeionChartSVG</code> class.</p>
+
+<p>Example:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">KerykeionChartSVG</span>
+
+<span class="n">subject</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;John Lennon&quot;</span><span class="p">,</span> <span class="mi">1940</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;Liverpool&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">)</span>
+
+<span class="n">chart</span> <span class="o">=</span> <span class="n">KerykeionChartSVG</span><span class="p">(</span>
+    <span class="n">subject</span><span class="p">,</span>
+    <span class="n">active_points</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;Sun&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;Moon&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;Mercury&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;Venus&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;Mars&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;Jupiter&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;Saturn&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Uranus&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;Neptune&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;Pluto&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;Mean_Node&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;Mean_South_Node&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;True_Node&quot;</span><span class="p">,</span>       <span class="c1"># Activates True North Node </span>
+        <span class="s2">&quot;True_South_Node&quot;</span><span class="p">,</span> <span class="c1"># Activates True South Node</span>
+        <span class="s2">&quot;Ascendant&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Medium_Coeli&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;Descendant&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;Imum_Coeli&quot;</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+<span class="n">chart</span><span class="o">.</span><span class="n">makeSVG</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<h2 id="json-support">JSON Support</h2>
+
+<p>You can serialize the astrological subject (the base data used throughout the library) to JSON:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubject</span>
+
+<span class="n">johnny</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;Johnny Depp&quot;</span><span class="p">,</span> <span class="mi">1963</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Owensboro&quot;</span><span class="p">,</span> <span class="s2">&quot;US&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">johnny</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">dump</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</code></pre>
+</div>
+
+<h2 id="auto-generated-documentation">Auto Generated Documentation</h2>
+
+<p>You can find auto-generated documentation <a href="https://www.kerykeion.net/pydocs/kerykeion.html">here</a>. Most classes and functions include docstrings.</p>
 
 <h2 id="development">Development</h2>
 
-<p>You can clone this repository or download a zip file using the right side buttons.</p>
+<p>Clone the repository or download the ZIP via the GitHub interface.</p>
 
-<h2 id="contributing">Contributing</h2>
+<h2 id="integrating-kerykeion-into-your-project">Integrating Kerykeion into Your Project</h2>
 
-<p>Feel free to contribute to the code!</p>
+<p>If you would like to incorporate Kerykeion’s astrological features into your application, please reach out via <a href="mailto:kerykeion.astrology@gmail.com?subject=Integration%20Request">email</a>. Whether you need custom features, support, or specialized consulting, I am happy to discuss potential collaborations.</p>
 
 <h2 id="license">License</h2>
 
-<p>This project is licensed under the AGPL-3.0 License.
-To understand how this impacts your use of the software, please see the <a href="LICENSE">LICENSE</a> file for details.
-If you have questions, you can reach out to me at my <a href="mailto:battaglia.giacomo@yahoo.it?subject=Kerykeion">email</a> address.
-As a rule of thumb, if you are using this library in a project, you should open source the code of the project with a compatible license.</p>
+<p>This project is covered under the AGPL-3.0 License. For detailed information, please see the <a href="LICENSE">LICENSE</a> file. If you have questions, feel free to contact me at <a href="mailto:kerykeion.astrology@gmail.com?subject=Kerykeion">kerykeion.astrology@gmail.com</a>.</p>
 
-<p>You can implement the logic of kerykeion in your project and also keep it closed source by using a third party API, like the <a href="https://rapidapi.com/gbattaglia/api/astrologer/">AstrologerAPI</a>. The AstrologerAPI is AGPL-3.0 compliant. Subscribing to the API is also, currently, the best way to support the project.</p>
+<p>As a rule of thumb, if you use this library in a project, you should open-source that project under a compatible license. Alternatively, if you wish to keep your source closed, consider using the <a href="https://rapidapi.com/gbattaglia/api/astrologer/">AstrologerAPI</a>, which is AGPL-3.0 compliant and also helps support the project.</p>
+
+<p>Since the AstrologerAPI is an external third-party service, using it does <em>not</em> require your code to be open-source.</p>
+
+<h2 id="contributing">Contributing</h2>
+
+<p>Contributions are welcome! Feel free to submit pull requests or report issues.</p>
+
+<h2 id="citations">Citations</h2>
+
+<p>If using Kerykeion in published or academic work, please cite as follows:</p>
+
+<pre><code>Battaglia, G. (2025). Kerykeion: A Python Library for Astrological Calculations and Chart Generation.
+https://github.com/g-battaglia/kerykeion
+</code></pre>
 </div>
 
                         <input id="mod-kerykeion-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -351,14 +580,18 @@ As a rule of thumb, if you are using this library in a project, you should open 
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="c1"># Local</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="kn">from</span> <span class="nn">.astrological_subject</span> <span class="kn">import</span> <span class="n">AstrologicalSubject</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span> <span class="nn">.charts.kerykeion_chart_svg</span> <span class="kn">import</span> <span class="n">KerykeionChartSVG</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="kn">from</span> <span class="nn">.kr_types</span> <span class="kn">import</span> <span class="o">*</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span> <span class="nn">.relationship_score</span> <span class="kn">import</span> <span class="n">RelationshipScore</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">from</span> <span class="nn">.aspects</span> <span class="kn">import</span> <span class="n">SynastryAspects</span><span class="p">,</span> <span class="n">NatalAspects</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">from</span> <span class="nn">.report</span> <span class="kn">import</span> <span class="n">Report</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">from</span> <span class="nn">.settings</span> <span class="kn">import</span> <span class="n">KerykeionSettingsModel</span><span class="p">,</span> <span class="n">get_settings</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">Planets</span><span class="p">,</span> <span class="n">Aspects</span><span class="p">,</span> <span class="n">Signs</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.astrological_subject</span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubject</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.charts.kerykeion_chart_svg</span><span class="w"> </span><span class="kn">import</span> <span class="n">KerykeionChartSVG</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.kr_types</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.relationship_score.relationship_score</span><span class="w"> </span><span class="kn">import</span> <span class="n">RelationshipScore</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.relationship_score.relationship_score_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">RelationshipScoreFactory</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.aspects</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynastryAspects</span><span class="p">,</span> <span class="n">NatalAspects</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.report</span><span class="w"> </span><span class="kn">import</span> <span class="n">Report</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">KerykeionSettingsModel</span><span class="p">,</span> <span class="n">get_settings</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Planets</span><span class="p">,</span> <span class="n">Aspects</span><span class="p">,</span> <span class="n">Signs</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.ephemeris_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">EphemerisDataFactory</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.composite_subject_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompositeSubjectFactory</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.transits_time_range</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransitsTimeRangeFactory</span>
 </span></pre></div>
 
 
