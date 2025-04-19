@@ -176,8 +176,33 @@ class KerykeionChartSVG:
         double_chart_aspect_grid_type: Literal["list", "table"] = "list",
         chart_language: KerykeionChartLanguage = "EN",
         active_points: List[Union[Planet, AxialCusps]] = DEFAULT_ACTIVE_POINTS,
-        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+    active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
     ):
+        """
+        Initialize the chart generator with subject data and configuration options.
+
+        Args:
+            first_obj (AstrologicalSubject, AstrologicalSubjectModel, or CompositeSubjectModel):
+                Primary astrological subject instance.
+            chart_type (ChartType, optional):
+                Type of chart to generate (e.g., 'Natal', 'Transit').
+            second_obj (AstrologicalSubject or AstrologicalSubjectModel, optional):
+                Secondary subject for Transit or Synastry charts.
+            new_output_directory (str or Path, optional):
+                Base directory to save generated SVG files.
+            new_settings_file (Path, dict, or KerykeionSettingsModel, optional):
+                Custom settings source for chart colors, fonts, and aspects.
+            theme (KerykeionChartTheme or None, optional):
+                CSS theme to apply; None for default styling.
+            double_chart_aspect_grid_type (Literal['list','table'], optional):
+                Layout style for double-chart aspect grids ('list' or 'table').
+            chart_language (KerykeionChartLanguage, optional):
+                Language code for chart labels (e.g., 'EN', 'IT').
+            active_points (List[Planet or AxialCusps], optional):
+                Celestial points to include in the chart visualization.
+            active_aspects (List[ActiveAspect], optional):
+                Aspects to calculate, each defined by name and orb.
+        """
         home_directory = Path.home()
         self.new_settings_file = new_settings_file
         self.chart_language = chart_language
@@ -314,7 +339,10 @@ class KerykeionChartSVG:
 
     def set_up_theme(self, theme: Union[KerykeionChartTheme, None] = None) -> None:
         """
-        Set the theme for the chart.
+        Load and apply a CSS theme for the chart visualization.
+
+        Args:
+            theme (KerykeionChartTheme or None): Name of the theme to apply. If None, no CSS is applied.
         """
         if theme is None:
             self.color_style_tag = ""
@@ -327,14 +355,21 @@ class KerykeionChartSVG:
 
     def set_output_directory(self, dir_path: Path) -> None:
         """
-        Sets the output direcotry and returns it's path.
+        Set the directory where generated SVG files will be saved.
+
+        Args:
+            dir_path (Path): Target directory for SVG output.
         """
         self.output_directory = dir_path
         logging.info(f"Output direcotry set to: {self.output_directory}")
 
     def parse_json_settings(self, settings_file_or_dict: Union[Path, dict, KerykeionSettingsModel, None]) -> None:
         """
-        Parse the settings file.
+        Load and parse chart configuration settings.
+
+        Args:
+            settings_file_or_dict (Path, dict, or KerykeionSettingsModel):
+                Source for custom chart settings.
         """
         settings = get_settings(settings_file_or_dict)
 
@@ -345,14 +380,13 @@ class KerykeionChartSVG:
 
     def _draw_zodiac_circle_slices(self, r):
         """
-        Generate the SVG string representing the zodiac circle
-        with the 12 slices for each zodiac sign.
+        Draw zodiac circle slices for each sign.
 
         Args:
-            r (float): The radius of the zodiac slices.
+            r (float): Outer radius of the zodiac ring.
 
         Returns:
-            str: The SVG string representing the zodiac circle.
+            str: Concatenated SVG elements for zodiac slices.
         """
         sings = get_args(Sign)
         output = ""
@@ -371,10 +405,13 @@ class KerykeionChartSVG:
 
     def _calculate_elements_points_from_planets(self):
         """
-        Calculate chart element points from a planet.
-        TODO: Refactor this method.
-        Should be completely rewritten. Maybe even part of the AstrologicalSubject class.
-        The points should include just the standard way of calculating the elements points.
+        Compute elemental point totals based on active planetary positions.
+
+        Iterates over each active planet to determine its zodiac element and adds extra points
+        if the planet is in a related sign. Updates self.fire, self.earth, self.air, and self.water.
+
+        Returns:
+            None
         """
 
         ZODIAC = (
@@ -426,6 +463,16 @@ class KerykeionChartSVG:
                 self.water = self.water + self.available_planets_setting[i]["element_points"] + extra_points
 
     def _draw_all_aspects_lines(self, r, ar):
+        """
+        Render SVG lines for all aspects in the chart.
+
+        Args:
+            r (float): Radius at which aspect lines originate.
+            ar (float): Radius at which aspect lines terminate.
+
+        Returns:
+            str: SVG markup for all aspect lines.
+        """
         out = ""
         for aspect in self.aspects_list:
             aspect_name = aspect["aspect"]
@@ -441,6 +488,16 @@ class KerykeionChartSVG:
         return out
 
     def _draw_all_transit_aspects_lines(self, r, ar):
+        """
+        Render SVG lines for all transit aspects in the chart.
+
+        Args:
+            r (float): Radius at which transit aspect lines originate.
+            ar (float): Radius at which transit aspect lines terminate.
+
+        Returns:
+            str: SVG markup for all transit aspect lines.
+        """
         out = ""
         for aspect in self.aspects_list:
             aspect_name = aspect["aspect"]
@@ -457,10 +514,13 @@ class KerykeionChartSVG:
 
     def _create_template_dictionary(self) -> ChartTemplateDictionary:
         """
-        Create a dictionary containing the template data for generating an astrological chart.
+        Assemble chart data and rendering instructions into a template dictionary.
+
+        Gathers styling, dimensions, and SVG fragments for chart components based on
+        chart type and subjects.
 
         Returns:
-            ChartTemplateDictionary: A dictionary with template data for the chart.
+            ChartTemplateDictionary: Populated structure of template variables.
         """
         # Initialize template dictionary
         template_dict: dict = {}
@@ -748,7 +808,19 @@ class KerykeionChartSVG:
         return ChartTemplateDictionary(**template_dict)
 
     def makeTemplate(self, minify: bool = False, inline_css_variables = False) -> str:
-        """Creates the template for the SVG file"""
+        """
+        Render the full chart SVG as a string.
+
+        Reads the XML template, substitutes variables, and optionally inlines CSS
+        variables and minifies the output.
+
+        Args:
+            minify (bool): Remove whitespace and quotes for compactness.
+            inline_css_variables (bool): Embed CSS variable definitions.
+
+        Returns:
+            str: SVG markup as a string.
+        """
         td = self._create_template_dictionary()
 
         DATA_DIR = Path(__file__).parent
@@ -776,7 +848,19 @@ class KerykeionChartSVG:
         return template
 
     def makeSVG(self, minify: bool = False, inline_css_variables = False):
-        """Prints out the SVG file in the specified folder"""
+        """
+        Generate and save the full chart SVG to disk.
+
+        Calls makeTemplate to render the SVG, then writes a file named
+        "{subject.name} - {chart_type} Chart.svg" in the output directory.
+
+        Args:
+            minify (bool): Pass-through to makeTemplate for compact output.
+            inline_css_variables (bool): Pass-through to makeTemplate to embed CSS variables.
+
+        Returns:
+            None
+        """
 
         self.template = self.makeTemplate(minify, inline_css_variables)
 
@@ -788,7 +872,19 @@ class KerykeionChartSVG:
         print(f"SVG Generated Correctly in: {chartname}")
 
     def makeWheelOnlyTemplate(self, minify: bool = False, inline_css_variables = False):
-        """Creates the template for the SVG file with only the wheel"""
+        """
+        Render the wheel-only chart SVG as a string.
+
+        Reads the wheel-only XML template, substitutes chart data, and applies optional
+        CSS inlining and minification.
+
+        Args:
+            minify (bool): Remove whitespace and quotes for compactness.
+            inline_css_variables (bool): Embed CSS variable definitions.
+
+        Returns:
+            str: SVG markup for the chart wheel only.
+        """
 
         with open(Path(__file__).parent / "templates" / "wheel_only.xml", "r", encoding="utf-8", errors="ignore") as f:
             template = f.read()
@@ -808,7 +904,19 @@ class KerykeionChartSVG:
         return template
 
     def makeWheelOnlySVG(self, minify: bool = False, inline_css_variables = False):
-        """Prints out the SVG file in the specified folder with only the wheel"""
+        """
+        Generate and save wheel-only chart SVG to disk.
+
+        Calls makeWheelOnlyTemplate and writes a file named
+        "{subject.name} - {chart_type} Chart - Wheel Only.svg" in the output directory.
+
+        Args:
+            minify (bool): Pass-through to makeWheelOnlyTemplate for compact output.
+            inline_css_variables (bool): Pass-through to makeWheelOnlyTemplate to embed CSS variables.
+
+        Returns:
+            None
+        """
 
         template = self.makeWheelOnlyTemplate(minify, inline_css_variables)
         chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart - Wheel Only.svg"
@@ -819,7 +927,19 @@ class KerykeionChartSVG:
         print(f"SVG Generated Correctly in: {chartname}")
 
     def makeAspectGridOnlyTemplate(self, minify: bool = False, inline_css_variables = False):
-        """Creates the template for the SVG file with only the aspect grid"""
+        """
+        Render the aspect-grid-only chart SVG as a string.
+
+        Reads the aspect-grid XML template, generates the aspect grid based on chart type,
+        and applies optional CSS inlining and minification.
+
+        Args:
+            minify (bool): Remove whitespace and quotes for compactness.
+            inline_css_variables (bool): Embed CSS variable definitions.
+
+        Returns:
+            str: SVG markup for the aspect grid only.
+        """
 
         with open(Path(__file__).parent / "templates" / "aspect_grid_only.xml", "r", encoding="utf-8", errors="ignore") as f:
             template = f.read()
@@ -845,7 +965,19 @@ class KerykeionChartSVG:
         return template
 
     def makeAspectGridOnlySVG(self, minify: bool = False, inline_css_variables = False):
-        """Prints out the SVG file in the specified folder with only the aspect grid"""
+        """
+        Generate and save aspect-grid-only chart SVG to disk.
+
+        Calls makeAspectGridOnlyTemplate and writes a file named
+        "{subject.name} - {chart_type} Chart - Aspect Grid Only.svg" in the output directory.
+
+        Args:
+            minify (bool): Pass-through to makeAspectGridOnlyTemplate for compact output.
+            inline_css_variables (bool): Pass-through to makeAspectGridOnlyTemplate to embed CSS variables.
+
+        Returns:
+            None
+        """
 
         template = self.makeAspectGridOnlyTemplate(minify, inline_css_variables)
         chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart - Aspect Grid Only.svg"
