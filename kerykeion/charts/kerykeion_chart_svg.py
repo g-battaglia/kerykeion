@@ -47,23 +47,44 @@ from datetime import datetime
 
 class KerykeionChartSVG:
     """
-    Creates the instance that can generate the chart with the
-    function makeSVG().
+    KerykeionChartSVG generates astrological chart visualizations as SVG files.
 
-    Parameters:
-        - first_obj: First kerykeion object
-        - chart_type: Natal, ExternalNatal, Transit, Synastry (Default: Type="Natal").
-        - second_obj: Second kerykeion object (Not required if type is Natal)
-        - new_output_directory: Set the output directory (default: home directory).
-        - new_settings_file: Set the settings file (default: kr.config.json).
-            In the settings file you can set the language, colors, planets, aspects, etc.
-        - theme: Set the theme for the chart (default: classic). If None the <style> tag will be empty.
-            That's useful if you want to use your own CSS file customizing the value of the default theme variables.
-        - double_chart_aspect_grid_type: Set the type of the aspect grid for the double chart (transit or synastry). (Default: list.)
-        - chart_language: Set the language for the chart (default: EN).
-        - active_points: Set the active points for the chart (default: DEFAULT_ACTIVE_POINTS). Example:
-            ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "True_Node", "True_South_Node", "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
-        - active_aspects: Set the active aspects for the chart (default: DEFAULT_ACTIVE_ASPECTS). Example:
+    This class supports creating full chart SVGs, wheel-only SVGs, and aspect-grid-only SVGs
+    for various chart types including Natal, ExternalNatal, Transit, Synastry, and Composite.
+    Charts are rendered using XML templates and drawing utilities, with customizable themes,
+    language, active points, and aspects.
+    The rendered SVGs can be saved to a specified output directory or, by default, to the user's home directory.
+
+    NOTE:
+        The generated SVG files are optimized for web use, opening in browsers. If you want to
+        use them in other applications, you might need to adjust the SVG settings or styles.
+
+    Args:
+        first_obj (AstrologicalSubject | AstrologicalSubjectModel | CompositeSubjectModel):
+            The primary astrological subject for the chart.
+        chart_type (ChartType, optional):
+            The type of chart to generate ('Natal', 'ExternalNatal', 'Transit', 'Synastry', 'Composite').
+            Defaults to 'Natal'.
+        second_obj (AstrologicalSubject | AstrologicalSubjectModel, optional):
+            The secondary subject for Transit or Synastry charts. Not required for Natal or Composite.
+        new_output_directory (str | Path, optional):
+            Directory to write generated SVG files. Defaults to the user's home directory.
+        new_settings_file (Path | dict | KerykeionSettingsModel, optional):
+            Path or settings object to override default chart configuration (colors, fonts, aspects).
+        theme (KerykeionChartTheme, optional):
+            CSS theme for the chart. If None, no default styles are applied. Defaults to 'classic'.
+        double_chart_aspect_grid_type (Literal['list', 'table'], optional):
+            Specifies rendering style for double-chart aspect grids. Defaults to 'list'.
+        chart_language (KerykeionChartLanguage, optional):
+            Language code for chart labels. Defaults to 'EN'.
+        active_points (list[Planet | AxialCusps], optional):
+            List of celestial points and angles to include. Defaults to DEFAULT_ACTIVE_POINTS.
+            Example:
+            ["Sun", "Moon", "Mercury", "Venus"]
+
+        active_aspects (list[ActiveAspect], optional):
+            List of aspects (name and orb) to calculate. Defaults to DEFAULT_ACTIVE_ASPECTS.
+            Example:
             [
                 {"name": "conjunction", "orb": 10},
                 {"name": "opposition", "orb": 10},
@@ -72,6 +93,30 @@ class KerykeionChartSVG:
                 {"name": "square", "orb": 5},
                 {"name": "quintile", "orb": 1},
             ]
+
+    Public Methods:
+        makeTemplate(minify=False, inline_css_variables=False) -> str:
+            Render the full chart SVG as a string without writing to disk. Use `minify=True`
+            to remove whitespace and quotes, and `inline_css_variables=True` to embed CSS vars.
+
+        makeSVG(minify=False, inline_css_variables=False) -> None:
+            Generate and write the full chart SVG file to the output directory.
+            Filenames follow the pattern:
+            '{subject.name} - {chart_type} Chart.svg'.
+
+        makeWheelOnlyTemplate(minify=False, inline_css_variables=False) -> str:
+            Render only the chart wheel (no aspect grid) as an SVG string.
+
+        makeWheelOnlySVG(minify=False, inline_css_variables=False) -> None:
+            Generate and write the wheel-only SVG file:
+            '{subject.name} - {chart_type} Chart - Wheel Only.svg'.
+
+        makeAspectGridOnlyTemplate(minify=False, inline_css_variables=False) -> str:
+            Render only the aspect grid as an SVG string.
+
+        makeAspectGridOnlySVG(minify=False, inline_css_variables=False) -> None:
+            Generate and write the aspect-grid-only SVG file:
+            '{subject.name} - {chart_type} Chart - Aspect Grid Only.svg'.
     """
 
     # Constants
