@@ -42,15 +42,25 @@ Maintaining this project requires substantial time and effort. The Astrologer AP
 
 
 ## Table of Contents
+- [**Web API**](#web-api)
+- [**Donate**](#donate)
+- [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Basic Usage](#basic-usage)
 - [Generate a SVG Chart](#generate-a-svg-chart)
   - [Birth Chart](#birth-chart)
+  - [External Birth Chart](#external-birth-chart)
   - [Synastry Chart](#synastry-chart)
   - [Transit Chart](#transit-chart)
   - [Composite Chart](#composite-chart)
+- [Wheel Only Charts](#wheel-only-charts)
+  - [Birth Chart](#birth-chart-1)
+  - [Wheel Only Birth Chart (External)](#wheel-only-birth-chart-external)
+  - [Synastry Chart](#synastry-chart-1)
   - [Change the Output Directory](#change-the-output-directory)
   - [Change Language](#change-language)
+  - [Minified SVG](#minified-svg)
+  - [SVG without CSS Variables](#svg-without-css-variables)
 - [Report](#report)
 - [Example: Retrieving Aspects](#example-retrieving-aspects)
 - [Ayanamsa (Sidereal Modes)](#ayanamsa-sidereal-modes)
@@ -113,6 +123,12 @@ kanye = AstrologicalSubject(
 
 ## Generate a SVG Chart
 
+To generate a chart, use the `KerykeionChartSVG` class. You can create various types of charts, including birth, synastry, transit, and composite charts.
+
+**Tip:** 
+The optimized way to open the generated SVG files is with a web browser (e.g., Chrome, Firefox).
+To improve compatibility across different applications, you can use the `remove_css_variables` parameter when generating the SVG. This will inline all styles and eliminate CSS variables, resulting in an SVG that is more broadly supported.
+
 ### Birth Chart
 
 ```python
@@ -123,18 +139,22 @@ birth_chart_svg = KerykeionChartSVG(birth_chart)
 birth_chart_svg.makeSVG()
 ```
 
-**Tip:** 
-The optimized way to open the generated SVG files is with a web browser (e.g., Chrome, Firefox).
-To improve compatibility across different applications, you can use the remove_css_variables parameter when generating the SVG. This will inline all styles and eliminate CSS variables, resulting in an SVG that is more broadly supported.
-
 ```python
-birth_chart_svg.makeSVG(
-    remove_css_variables=True
-)
+birth_chart_svg.makeSVG()
 ```
 
 The SVG file will be saved in the home directory.
 ![John Lennon Birth Chart](https://www.kerykeion.net/img/examples/birth-chart.svg)
+
+### External Birth Chart
+
+```python
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
+birth_chart = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart_svg = KerykeionChartSVG(birth_chart, chart_type="ExternalNatal")
+birth_chart_svg.makeSVG()
+```
+![John Lennon External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20ExternalNatal%20Chart.svg)
 
 ### Synastry Chart
 
@@ -183,6 +203,47 @@ composite_chart.makeSVG()
 
 ![Angelina Jolie and Brad Pitt Composite Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/Angelina%20Jolie%20and%20Brad%20Pitt%20Composite%20Chart%20-%20Composite%20Chart.svg)
 
+## Wheel Only Charts
+
+For *all* the charts, you can generate a wheel-only chart by using the method `makeWheelOnlySVG()`:
+
+### Birth Chart
+```python
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
+
+birth_chart = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart_svg = KerykeionChartSVG(birth_chart)
+birth_chart_svg.makeWheelOnlySVG()
+```
+![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Wheel%20Only%20-%20Natal%20Chart%20-%20Wheel%20Only.svg)
+
+### Wheel Only Birth Chart (External)
+
+```python
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
+birth_chart = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart_svg = KerykeionChartSVG(birth_chart, chart_type="ExternalNatal")
+birth_chart_svg.makeWheelOnlySVG(
+    wheel_only=True,
+    wheel_only_external=True
+)
+```
+
+![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Wheel%20External%20Only%20-%20ExternalNatal%20Chart%20-%20Wheel%20Only.svg)
+
+### Synastry Chart
+```python
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
+first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+synastry_chart = KerykeionChartSVG(
+    first, "Synastry", second
+)
+synastry_chart.makeWheelOnlySVG()
+```
+
+![John Lennon and Paul McCartney Synastry](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Wheel%20Synastry%20Only%20-%20Synastry%20Chart%20-%20Wheel%20Only.svg)
+
 ### Change the Output Directory
 
 To save the SVG file in a custom location, specify `new_output_directory`:
@@ -202,13 +263,59 @@ synastry_chart.makeSVG()
 
 ### Change Language
 
-You can switch chart language by passing `chart_language` to the `AstrologicalSubject` or `KerykeionChartSVG` classes:
+You can switch chart language by passing `chart_language` to the  `KerykeionChartSVG` class:
 
 ```python
-first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", chart_language="ES")
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
+
+birth_chart = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
+birth_chart_svg = KerykeionChartSVG(
+    birth_chart,
+    chart_language="IT"  # Change to Italian
+)
+birth_chart_svg.makeSVG()
 ```
 
-More details [here](https://www.kerykeion.net/docs//chart-language).
+More details [here](https://www.kerykeion.net/docs/chart-language).
+
+The available languages are:
+- EN (English)
+- FR (French)
+- PT (Portuguese)
+- ES (Spanish)
+- TR (Turkish)
+- RU (Russian)
+- IT (Italian)
+- CN (Chinese)
+- DE (German)
+
+
+### Minified SVG
+To generate a minified SVG, set `minify_svg=True` in the `makeSVG()` method:
+
+```python
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
+birth_chart = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
+birth_chart_svg = KerykeionChartSVG(birth_chart)
+birth_chart_svg.makeSVG(
+    minify=True
+)
+```
+
+### SVG without CSS Variables
+To generate an SVG without CSS variables, set `remove_css_variables=True` in the `makeSVG()` method:
+
+```python
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
+
+birth_chart = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
+birth_chart_svg = KerykeionChartSVG(birth_chart)
+birth_chart_svg.makeSVG(
+    remove_css_variables=True
+)
+```
+This will inline all styles and eliminate CSS variables, resulting in an SVG that is more broadly supported.
+
 
 ## Report
 
