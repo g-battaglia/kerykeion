@@ -42,6 +42,9 @@ Maintaining this project requires substantial time and effort. The Astrologer AP
 
 
 ## Table of Contents
+- [**Web API**](#web-api)
+- [**Donate**](#donate)
+- [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Basic Usage](#basic-usage)
 - [Generate a SVG Chart](#generate-a-svg-chart)
@@ -123,7 +126,15 @@ birth_chart_svg = KerykeionChartSVG(birth_chart)
 birth_chart_svg.makeSVG()
 ```
 
-**Tip:** The optimized way to open the generated SVG files is with a web browser (e.g., Chrome, Firefox).
+**Tip:** 
+The optimized way to open the generated SVG files is with a web browser (e.g., Chrome, Firefox).
+To improve compatibility across different applications, you can use the remove_css_variables parameter when generating the SVG. This will inline all styles and eliminate CSS variables, resulting in an SVG that is more broadly supported.
+
+```python
+birth_chart_svg.makeSVG(
+    remove_css_variables=True
+)
+```
 
 The SVG file will be saved in the home directory.
 ![John Lennon Birth Chart](https://www.kerykeion.net/img/examples/birth-chart.svg)
