@@ -95,26 +95,26 @@ class KerykeionChartSVG:
             ]
 
     Public Methods:
-        makeTemplate(minify=False, inline_css_variables=False) -> str:
+        makeTemplate(minify=False, remove_css_variables=False) -> str:
             Render the full chart SVG as a string without writing to disk. Use `minify=True`
-            to remove whitespace and quotes, and `inline_css_variables=True` to embed CSS vars.
+            to remove whitespace and quotes, and `remove_css_variables=True` to embed CSS vars.
 
-        makeSVG(minify=False, inline_css_variables=False) -> None:
+        makeSVG(minify=False, remove_css_variables=False) -> None:
             Generate and write the full chart SVG file to the output directory.
             Filenames follow the pattern:
             '{subject.name} - {chart_type} Chart.svg'.
 
-        makeWheelOnlyTemplate(minify=False, inline_css_variables=False) -> str:
+        makeWheelOnlyTemplate(minify=False, remove_css_variables=False) -> str:
             Render only the chart wheel (no aspect grid) as an SVG string.
 
-        makeWheelOnlySVG(minify=False, inline_css_variables=False) -> None:
+        makeWheelOnlySVG(minify=False, remove_css_variables=False) -> None:
             Generate and write the wheel-only SVG file:
             '{subject.name} - {chart_type} Chart - Wheel Only.svg'.
 
-        makeAspectGridOnlyTemplate(minify=False, inline_css_variables=False) -> str:
+        makeAspectGridOnlyTemplate(minify=False, remove_css_variables=False) -> str:
             Render only the aspect grid as an SVG string.
 
-        makeAspectGridOnlySVG(minify=False, inline_css_variables=False) -> None:
+        makeAspectGridOnlySVG(minify=False, remove_css_variables=False) -> None:
             Generate and write the aspect-grid-only SVG file:
             '{subject.name} - {chart_type} Chart - Aspect Grid Only.svg'.
     """
@@ -816,7 +816,7 @@ class KerykeionChartSVG:
 
         Args:
             minify (bool): Remove whitespace and quotes for compactness.
-            inline_css_variables (bool): Embed CSS variable definitions.
+            remove_css_variables (bool): Embed CSS variable definitions.
 
         Returns:
             str: SVG markup as a string.
@@ -856,13 +856,13 @@ class KerykeionChartSVG:
 
         Args:
             minify (bool): Pass-through to makeTemplate for compact output.
-            inline_css_variables (bool): Pass-through to makeTemplate to embed CSS variables.
+            remove_css_variables (bool): Pass-through to makeTemplate to embed CSS variables.
 
         Returns:
             None
         """
 
-        self.template = self.makeTemplate(minify, inline_css_variables)
+        self.template = self.makeTemplate(minify, remove_css_variables)
 
         chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart.svg"
 
@@ -880,7 +880,7 @@ class KerykeionChartSVG:
 
         Args:
             minify (bool): Remove whitespace and quotes for compactness.
-            inline_css_variables (bool): Embed CSS variable definitions.
+            remove_css_variables (bool): Embed CSS variable definitions.
 
         Returns:
             str: SVG markup for the chart wheel only.
@@ -912,13 +912,13 @@ class KerykeionChartSVG:
 
         Args:
             minify (bool): Pass-through to makeWheelOnlyTemplate for compact output.
-            inline_css_variables (bool): Pass-through to makeWheelOnlyTemplate to embed CSS variables.
+            remove_css_variables (bool): Pass-through to makeWheelOnlyTemplate to embed CSS variables.
 
         Returns:
             None
         """
 
-        template = self.makeWheelOnlyTemplate(minify, inline_css_variables)
+        template = self.makeWheelOnlyTemplate(minify, remove_css_variables)
         chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart - Wheel Only.svg"
 
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
@@ -935,7 +935,7 @@ class KerykeionChartSVG:
 
         Args:
             minify (bool): Remove whitespace and quotes for compactness.
-            inline_css_variables (bool): Embed CSS variable definitions.
+            remove_css_variables (bool): Embed CSS variable definitions.
 
         Returns:
             str: SVG markup for the aspect grid only.
@@ -973,13 +973,13 @@ class KerykeionChartSVG:
 
         Args:
             minify (bool): Pass-through to makeAspectGridOnlyTemplate for compact output.
-            inline_css_variables (bool): Pass-through to makeAspectGridOnlyTemplate to embed CSS variables.
+            remove_css_variables (bool): Pass-through to makeAspectGridOnlyTemplate to embed CSS variables.
 
         Returns:
             None
         """
 
-        template = self.makeAspectGridOnlyTemplate(minify, inline_css_variables)
+        template = self.makeAspectGridOnlyTemplate(minify, remove_css_variables)
         chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart - Aspect Grid Only.svg"
 
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
