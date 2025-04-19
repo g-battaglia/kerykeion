@@ -37,7 +37,7 @@ from kerykeion.charts.charts_utils import (
     draw_planet_grid,
 )
 from kerykeion.charts.draw_planets import draw_planets # type: ignore
-from kerykeion.utilities import get_houses_list
+from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
 from pathlib import Path
 from scour.scour import scourString
@@ -702,7 +702,7 @@ class KerykeionChartSVG:
 
         return ChartTemplateDictionary(**template_dict)
 
-    def makeTemplate(self, minify: bool = False) -> str:
+    def makeTemplate(self, minify: bool = False, inline_css_variables = False) -> str:
         """Creates the template for the SVG file"""
         td = self._create_template_dictionary()
 
@@ -719,6 +719,9 @@ class KerykeionChartSVG:
 
         self._create_template_dictionary()
 
+        if inline_css_variables:
+            template = inline_css_variables_in_svg(template)
+
         if minify:
             template = scourString(template).replace('"', "'").replace("\n", "").replace("\t","").replace("    ", "").replace("  ", "")
 
@@ -727,11 +730,10 @@ class KerykeionChartSVG:
 
         return template
 
-    def makeSVG(self, minify: bool = False):
+    def makeSVG(self, minify: bool = False, inline_css_variables = False):
         """Prints out the SVG file in the specified folder"""
 
-        if not hasattr(self, "template"):
-            self.template = self.makeTemplate(minify)
+        self.template = self.makeTemplate(minify, inline_css_variables)
 
         chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart.svg"
 
@@ -739,7 +741,8 @@ class KerykeionChartSVG:
             output_file.write(self.template)
 
         print(f"SVG Generated Correctly in: {chartname}")
-    def makeWheelOnlyTemplate(self, minify: bool = False):
+
+    def makeWheelOnlyTemplate(self, minify: bool = False, inline_css_variables = False):
         """Creates the template for the SVG file with only the wheel"""
 
         with open(Path(__file__).parent / "templates" / "wheel_only.xml", "r", encoding="utf-8", errors="ignore") as f:
@@ -748,6 +751,9 @@ class KerykeionChartSVG:
         template_dict = self._create_template_dictionary()
         template = Template(template).substitute(template_dict)
 
+        if inline_css_variables:
+            template = inline_css_variables_in_svg(template)
+
         if minify:
             template = scourString(template).replace('"', "'").replace("\n", "").replace("\t","").replace("    ", "").replace("  ", "")
 
@@ -756,17 +762,18 @@ class KerykeionChartSVG:
 
         return template
 
-    def makeWheelOnlySVG(self, minify: bool = False):
+    def makeWheelOnlySVG(self, minify: bool = False, inline_css_variables = False):
         """Prints out the SVG file in the specified folder with only the wheel"""
 
-        template = self.makeWheelOnlyTemplate(minify)
+        template = self.makeWheelOnlyTemplate(minify, inline_css_variables)
         chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart - Wheel Only.svg"
 
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(template)
 
         print(f"SVG Generated Correctly in: {chartname}")
-    def makeAspectGridOnlyTemplate(self, minify: bool = False):
+
+    def makeAspectGridOnlyTemplate(self, minify: bool = False, inline_css_variables = False):
         """Creates the template for the SVG file with only the aspect grid"""
 
         with open(Path(__file__).parent / "templates" / "aspect_grid_only.xml", "r", encoding="utf-8", errors="ignore") as f:
@@ -781,6 +788,9 @@ class KerykeionChartSVG:
 
         template = Template(template).substitute({**template_dict, "makeAspectGrid": aspects_grid})
 
+        if inline_css_variables:
+            template = inline_css_variables_in_svg(template)
+
         if minify:
             template = scourString(template).replace('"', "'").replace("\n", "").replace("\t","").replace("    ", "").replace("  ", "")
 
@@ -789,10 +799,10 @@ class KerykeionChartSVG:
 
         return template
 
-    def makeAspectGridOnlySVG(self, minify: bool = False):
+    def makeAspectGridOnlySVG(self, minify: bool = False, inline_css_variables = False):
         """Prints out the SVG file in the specified folder with only the aspect grid"""
 
-        template = self.makeAspectGridOnlyTemplate(minify)
+        template = self.makeAspectGridOnlyTemplate(minify, inline_css_variables)
         chartname = self.output_directory / f"{self.user.name} - {self.chart_type} Chart - Aspect Grid Only.svg"
 
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:

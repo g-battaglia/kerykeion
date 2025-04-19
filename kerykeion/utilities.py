@@ -3,6 +3,7 @@ from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, Poin
 from typing import Union, get_args, TYPE_CHECKING
 import logging
 import math
+import re
 
 if TYPE_CHECKING:
     from kerykeion import AstrologicalSubject
@@ -440,3 +441,57 @@ def circular_sort(degrees: list[Union[int, float]]) -> list[Union[int, float]]:
 
     # Return the reference followed by the sorted remaining elements
     return [reference] + sorted_remaining
+
+
+def inline_css_variables_in_svg(svg_content: str) -> str:
+    """
+    Process an SVG string to inline all CSS custom properties.
+
+    Args:
+        svg_content (str): The original SVG string with CSS variables
+
+    Returns:
+        str: The modified SVG with all CSS variables replaced by their values
+             and all style blocks removed
+    """
+    # Find and extract CSS custom properties from style tags
+    css_variable_map = {}
+    style_tag_pattern = re.compile(r"<style.*?>(.*?)</style>", re.DOTALL)
+    style_blocks = style_tag_pattern.findall(svg_content)
+
+    # Parse all CSS custom properties from style blocks
+    for style_block in style_blocks:
+        # Match patterns like --color-primary: #ff0000;
+        css_variable_pattern = re.compile(r"--([a-zA-Z0-9_-]+)\s*:\s*([^;]+);")
+        for match in css_variable_pattern.finditer(style_block):
+            variable_name = match.group(1)
+            variable_value = match.group(2).strip()
+            css_variable_map[f"--{variable_name}"] = variable_value
+
+    # Remove all style blocks from the SVG
+    svg_without_style_blocks = style_tag_pattern.sub("", svg_content)
+
+    # Function to replace var() references with their actual values
+    def replace_css_variable_reference(match):
+        variable_name = match.group(1).strip()
+        fallback_value = match.group(2) if match.group(2) else None
+
+        if variable_name in css_variable_map:
+            return css_variable_map[variable_name]
+        elif fallback_value:
+            return fallback_value.strip(", ")
+        else:
+            return ""  # If variable not found and no fallback provided
+
+    # Pattern to match var(--name) or var(--name, fallback)
+    variable_usage_pattern = re.compile(r"var\(\s*(--([\w-]+))\s*(,\s*([^)]+))?\s*\)")
+
+    # Repeatedly replace all var() references until none remain
+    # This handles nested variables or variables that reference other variables
+    processed_svg = svg_without_style_blocks
+    while variable_usage_pattern.search(processed_svg):
+        processed_svg = variable_usage_pattern.sub(
+            lambda m: replace_css_variable_reference(m), processed_svg
+        )
+
+    return processed_svg
