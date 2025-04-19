@@ -123,6 +123,8 @@ birth_chart_svg = KerykeionChartSVG(birth_chart)
 birth_chart_svg.makeSVG()
 ```
 
+**Tip:** The optimized way to open the generated SVG files is with a web browser (e.g., Chrome, Firefox).
+
 The SVG file will be saved in the home directory.
 ![John Lennon Birth Chart](https://www.kerykeion.net/img/examples/birth-chart.svg)
 
