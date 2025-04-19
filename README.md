@@ -42,9 +42,6 @@ Maintaining this project requires substantial time and effort. The Astrologer AP
 
 
 ## Table of Contents
-- [**Web API**](#web-api)
-- [**Donate**](#donate)
-- [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Basic Usage](#basic-usage)
 - [Generate a SVG Chart](#generate-a-svg-chart)
