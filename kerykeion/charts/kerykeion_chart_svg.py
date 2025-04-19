@@ -807,7 +807,7 @@ class KerykeionChartSVG:
 
         return ChartTemplateDictionary(**template_dict)
 
-    def makeTemplate(self, minify: bool = False, inline_css_variables = False) -> str:
+    def makeTemplate(self, minify: bool = False, remove_css_variables = False) -> str:
         """
         Render the full chart SVG as a string.
 
@@ -836,7 +836,7 @@ class KerykeionChartSVG:
 
         self._create_template_dictionary()
 
-        if inline_css_variables:
+        if remove_css_variables:
             template = inline_css_variables_in_svg(template)
 
         if minify:
@@ -847,7 +847,7 @@ class KerykeionChartSVG:
 
         return template
 
-    def makeSVG(self, minify: bool = False, inline_css_variables = False):
+    def makeSVG(self, minify: bool = False, remove_css_variables = False):
         """
         Generate and save the full chart SVG to disk.
 
@@ -871,7 +871,7 @@ class KerykeionChartSVG:
 
         print(f"SVG Generated Correctly in: {chartname}")
 
-    def makeWheelOnlyTemplate(self, minify: bool = False, inline_css_variables = False):
+    def makeWheelOnlyTemplate(self, minify: bool = False, remove_css_variables = False):
         """
         Render the wheel-only chart SVG as a string.
 
@@ -892,7 +892,7 @@ class KerykeionChartSVG:
         template_dict = self._create_template_dictionary()
         template = Template(template).substitute(template_dict)
 
-        if inline_css_variables:
+        if remove_css_variables:
             template = inline_css_variables_in_svg(template)
 
         if minify:
@@ -903,7 +903,7 @@ class KerykeionChartSVG:
 
         return template
 
-    def makeWheelOnlySVG(self, minify: bool = False, inline_css_variables = False):
+    def makeWheelOnlySVG(self, minify: bool = False, remove_css_variables = False):
         """
         Generate and save wheel-only chart SVG to disk.
 
@@ -926,7 +926,7 @@ class KerykeionChartSVG:
 
         print(f"SVG Generated Correctly in: {chartname}")
 
-    def makeAspectGridOnlyTemplate(self, minify: bool = False, inline_css_variables = False):
+    def makeAspectGridOnlyTemplate(self, minify: bool = False, remove_css_variables = False):
         """
         Render the aspect-grid-only chart SVG as a string.
 
@@ -953,7 +953,7 @@ class KerykeionChartSVG:
 
         template = Template(template).substitute({**template_dict, "makeAspectGrid": aspects_grid})
 
-        if inline_css_variables:
+        if remove_css_variables:
             template = inline_css_variables_in_svg(template)
 
         if minify:
@@ -964,7 +964,7 @@ class KerykeionChartSVG:
 
         return template
 
-    def makeAspectGridOnlySVG(self, minify: bool = False, inline_css_variables = False):
+    def makeAspectGridOnlySVG(self, minify: bool = False, remove_css_variables = False):
         """
         Generate and save aspect-grid-only chart SVG to disk.
 
