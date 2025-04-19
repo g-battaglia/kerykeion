@@ -61,6 +61,7 @@ Maintaining this project requires substantial time and effort. The Astrologer AP
   - [Change Language](#change-language)
   - [Minified SVG](#minified-svg)
   - [SVG without CSS Variables](#svg-without-css-variables)
+  - [Grid Only SVG](#grid-only-svg)
 - [Report](#report)
 - [Example: Retrieving Aspects](#example-retrieving-aspects)
 - [Ayanamsa (Sidereal Modes)](#ayanamsa-sidereal-modes)
@@ -134,8 +135,8 @@ To improve compatibility across different applications, you can use the `remove_
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-birth_chart = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
-birth_chart_svg = KerykeionChartSVG(birth_chart)
+john = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart_svg = KerykeionChartSVG(john)
 birth_chart_svg.makeSVG()
 ```
 
@@ -144,7 +145,7 @@ birth_chart_svg.makeSVG()
 ```
 
 The SVG file will be saved in the home directory.
-![John Lennon Birth Chart](https://www.kerykeion.net/img/examples/birth-chart.svg)
+![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Natal%20Chart.svg)
 
 ### External Birth Chart
 
@@ -268,7 +269,7 @@ You can switch chart language by passing `chart_language` to the  `KerykeionChar
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-birth_chart = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
+first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 birth_chart_svg = KerykeionChartSVG(
     birth_chart,
     chart_language="IT"  # Change to Italian
@@ -295,7 +296,7 @@ To generate a minified SVG, set `minify_svg=True` in the `makeSVG()` method:
 
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
-birth_chart = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
+first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 birth_chart_svg = KerykeionChartSVG(birth_chart)
 birth_chart_svg.makeSVG(
     minify=True
@@ -308,7 +309,7 @@ To generate an SVG without CSS variables, set `remove_css_variables=True` in the
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-birth_chart = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
+first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 birth_chart_svg = KerykeionChartSVG(birth_chart)
 birth_chart_svg.makeSVG(
     remove_css_variables=True
@@ -316,6 +317,18 @@ birth_chart_svg.makeSVG(
 ```
 This will inline all styles and eliminate CSS variables, resulting in an SVG that is more broadly supported.
 
+
+### Grid Only SVG
+
+It's possible to generate a grid-only SVG, useful for creating a custom layout. To do this, use the `makeGridOnlySVG()` method:
+
+```python
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
+birth_chart = AstrologicalSubject("John Lennon - Aspect Grid Dark Synastry", 1977, 6, 8, 8, 45, "Atlanta", "US")
+aspect_grid_dark_synastry_chart = KerykeionChartSVG(aspect_grid_dark_synastry_subject, "Synastry", second, theme="dark")
+aspect_grid_dark_synastry_chart.makeAspectGridOnlySVG()
+```
+![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Aspect%20Grid%20Only%20-%20Natal%20Chart%20-%20Aspect%20Grid%20Only.svg)
 
 ## Report
 
