@@ -11,6 +11,7 @@
     <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
     <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
 </div>
+<p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
 
 &nbsp;
 
