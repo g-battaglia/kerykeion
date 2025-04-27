@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+chart = """<?xml version='1.0' encoding='UTF-8'?>
 <!--- This file is part of Kerykeion and is based on
 OpenAstro.org -->
 <svg
@@ -579,3 +579,4 @@ OpenAstro.org -->
         </symbol>
     </defs>
 </svg>
+"""

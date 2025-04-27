@@ -824,11 +824,12 @@ class KerykeionChartSVG:
         td = self._create_template_dictionary()
 
         DATA_DIR = Path(__file__).parent
-        xml_svg = DATA_DIR / "templates" / "chart.xml"
+        from kerykeion.charts.templates.chart import chart as chart_svg
+        xml_svg = chart_svg
 
+        print(f"Chart type: {xml_svg}")
         # read template
-        with open(xml_svg, "r", encoding="utf-8", errors="ignore") as f:
-            template = Template(f.read()).substitute(td)
+        template = Template(xml_svg).substitute(td)
 
         # return filename
 
