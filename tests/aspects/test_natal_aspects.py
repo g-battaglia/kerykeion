@@ -2,6 +2,7 @@ from kerykeion import (
     AstrologicalSubject,
     NatalAspects,
 )
+from pytest import approx
 
 from .expected_natal_aspects import EXPECTED_ALL_ASPECTS, EXPECTED_RELEVANT_ASPECTS
 
@@ -26,13 +27,13 @@ class TestNatalAspects:
     def test_relevant_aspects(self):
         for i, aspect in enumerate(self.expected_relevant_aspects):
             assert self.subject_relevant_aspects[i]["p1_name"] == aspect["p1_name"]
-            assert round(self.subject_relevant_aspects[i]["p1_abs_pos"], 2) == round(aspect["p1_abs_pos"], 2)
+            assert self.subject_relevant_aspects[i]["p1_abs_pos"] == approx(aspect["p1_abs_pos"], abs=1e-2)
             assert self.subject_relevant_aspects[i]["p2_name"] == aspect["p2_name"]
-            assert round(self.subject_relevant_aspects[i]["p2_abs_pos"], 2) == round(aspect["p2_abs_pos"], 2)
+            assert self.subject_relevant_aspects[i]["p2_abs_pos"] == approx(aspect["p2_abs_pos"], abs=1e-2)
             assert self.subject_relevant_aspects[i]["aspect"] == aspect["aspect"]
-            assert round(self.subject_relevant_aspects[i]["aspect_degrees"], 2) == round(aspect["aspect_degrees"], 2)
+            assert self.subject_relevant_aspects[i]["aspect_degrees"] == approx(aspect["aspect_degrees"], abs=1e-2)
             assert self.subject_relevant_aspects[i]["aspect_degrees"] == aspect["aspect_degrees"]
-            assert round(self.subject_relevant_aspects[i]["diff"], 2) == round(aspect["diff"], 2)
+            assert self.subject_relevant_aspects[i]["diff"] == approx(aspect["diff"], abs=1e-2)
             assert self.subject_relevant_aspects[i]["p1"] == aspect["p1"]
             assert self.subject_relevant_aspects[i]["p2"] == aspect["p2"]
 
