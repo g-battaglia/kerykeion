@@ -9,6 +9,7 @@ import logging
 from pathlib import Path
 from typing import Dict, Union
 from kerykeion.kr_types import KerykeionSettingsModel
+from kerykeion.settings.default_kr_config import DEFAULT_KR_CONFIG
 import functools
 
 
@@ -45,7 +46,7 @@ def get_settings(new_settings_file: Union[Path, None, KerykeionSettingsModel, di
 
     # Fallback to the default config in the package
     if not settings_file.exists():
-        settings_file = Path(__file__).parent / "kr.config.json"
+        return KerykeionSettingsModel(**DEFAULT_KR_CONFIG)
 
     logging.debug(f"Kerykeion config file path: {settings_file}")
     settings_dict = load_settings_file(settings_file)
