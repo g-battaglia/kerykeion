@@ -550,18 +550,18 @@ class AstrologicalSubject:
 
         point_type: PointType = "Planet"
 
-        sun_deg = swe.calc(self.julian_day, 0, self._iflag)[0][0]
-        moon_deg = swe.calc(self.julian_day, 1, self._iflag)[0][0]
-        mercury_deg = swe.calc(self.julian_day, 2, self._iflag)[0][0]
-        venus_deg = swe.calc(self.julian_day, 3, self._iflag)[0][0]
-        mars_deg = swe.calc(self.julian_day, 4, self._iflag)[0][0]
-        jupiter_deg = swe.calc(self.julian_day, 5, self._iflag)[0][0]
-        saturn_deg = swe.calc(self.julian_day, 6, self._iflag)[0][0]
-        uranus_deg = swe.calc(self.julian_day, 7, self._iflag)[0][0]
-        neptune_deg = swe.calc(self.julian_day, 8, self._iflag)[0][0]
-        pluto_deg = swe.calc(self.julian_day, 9, self._iflag)[0][0]
-        mean_node_deg = swe.calc(self.julian_day, 10, self._iflag)[0][0]
-        true_node_deg = swe.calc(self.julian_day, 11, self._iflag)[0][0]
+        sun_deg = swe.calc_ut(self.julian_day, 0, self._iflag)[0][0]
+        moon_deg = swe.calc_ut(self.julian_day, 1, self._iflag)[0][0]
+        mercury_deg = swe.calc_ut(self.julian_day, 2, self._iflag)[0][0]
+        venus_deg = swe.calc_ut(self.julian_day, 3, self._iflag)[0][0]
+        mars_deg = swe.calc_ut(self.julian_day, 4, self._iflag)[0][0]
+        jupiter_deg = swe.calc_ut(self.julian_day, 5, self._iflag)[0][0]
+        saturn_deg = swe.calc_ut(self.julian_day, 6, self._iflag)[0][0]
+        uranus_deg = swe.calc_ut(self.julian_day, 7, self._iflag)[0][0]
+        neptune_deg = swe.calc_ut(self.julian_day, 8, self._iflag)[0][0]
+        pluto_deg = swe.calc_ut(self.julian_day, 9, self._iflag)[0][0]
+        mean_node_deg = swe.calc_ut(self.julian_day, 10, self._iflag)[0][0]
+        true_node_deg = swe.calc_ut(self.julian_day, 11, self._iflag)[0][0]
         # For south nodes there exist no Swiss Ephemeris library calculation function,
         # but they are simply opposite the north node.
         mean_south_node_deg = math.fmod(mean_node_deg + 180, 360)
@@ -626,8 +626,8 @@ class AstrologicalSubject:
         ]
 
         if not self.disable_chiron_and_lilith:
-            chiron_deg = swe.calc(self.julian_day, 15, self._iflag)[0][0]
-            mean_lilith_deg = swe.calc(self.julian_day, 12, self._iflag)[0][0]
+            chiron_deg = swe.calc_ut(self.julian_day, 15, self._iflag)[0][0]
+            mean_lilith_deg = swe.calc_ut(self.julian_day, 12, self._iflag)[0][0]
 
             self.chiron = get_kerykeion_point_from_degree(chiron_deg, "Chiron", point_type=point_type)
             self.mean_lilith = get_kerykeion_point_from_degree(mean_lilith_deg, "Mean_Lilith", point_type=point_type)
@@ -661,7 +661,7 @@ class AstrologicalSubject:
                 planet_number = 11      # Number of True North Node
 
 
-            if swe.calc(self.julian_day, planet_number, self._iflag)[0][3] < 0:
+            if swe.calc_ut(self.julian_day, planet_number, self._iflag)[0][3] < 0:
                 planet["retrograde"] = True
             else:
                 planet["retrograde"] = False
