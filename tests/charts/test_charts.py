@@ -1,5 +1,6 @@
 from pathlib import Path
 from kerykeion import AstrologicalSubject, KerykeionChartSVG, CompositeSubjectFactory
+from .compare_svg_lines import compare_svg_lines
 
 
 class TestCharts:
@@ -15,8 +16,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(chart_svg_lines)):
-            assert chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def setup_class(self):
         self.first_subject = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
@@ -79,8 +80,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(birth_chart_svg_lines)):
-            assert birth_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, birth_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_synastry_chart(self):
         synastry_chart_svg = KerykeionChartSVG(self.first_subject, "Synastry", self.second_subject).makeTemplate()
@@ -94,8 +95,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(synastry_chart_svg_lines)):
-            assert synastry_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, synastry_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_transit_chart(self):
         transit_chart_svg = KerykeionChartSVG(self.first_subject, "Transit", self.second_subject).makeTemplate()
@@ -109,8 +110,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(transit_chart_svg_lines)):
-            assert transit_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, transit_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_external_natal_chart(self):
         external_natal_chart_svg = KerykeionChartSVG(self.first_subject, "ExternalNatal").makeTemplate()
@@ -124,8 +125,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(external_natal_chart_svg_lines)):
-            assert external_natal_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, external_natal_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_lahiri_birth_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.lahiri_subject).makeTemplate()
@@ -139,8 +140,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(birth_chart_svg_lines)):
-            assert birth_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, birth_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_fagan_bradley_birth_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.fagan_bradley_subject).makeTemplate()
@@ -154,8 +155,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(birth_chart_svg_lines)):
-            assert birth_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, birth_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_deluce_birth_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.deluce_subject).makeTemplate()
@@ -169,8 +170,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(birth_chart_svg_lines)):
-            assert birth_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, birth_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_j2000_birth_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.j2000_subject).makeTemplate()
@@ -184,8 +185,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(birth_chart_svg_lines)):
-            assert birth_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, birth_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_morinus_house_system_birth_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.morinus_house_system_subject).makeTemplate()
@@ -199,8 +200,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(birth_chart_svg_lines)):
-            assert birth_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, birth_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_heliocentric_perspective_natals_chart(self):
         heliocentric_perspective_natals_chart_svg = KerykeionChartSVG(self.heliocentric_perspective_natal_chart).makeTemplate()
@@ -214,8 +215,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(heliocentric_perspective_natals_chart_svg_lines)):
-            assert heliocentric_perspective_natals_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, heliocentric_perspective_natals_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_topocentric_perspective_natals_chart(self):
         topocentric_perspective_natals_chart_svg = KerykeionChartSVG(self.topocentric_perspective_natal_chart).makeTemplate()
@@ -229,8 +230,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(topocentric_perspective_natals_chart_svg_lines)):
-            assert topocentric_perspective_natals_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, topocentric_perspective_natals_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_true_geocentric_perspective_natals_chart(self):
         true_geocentric_perspective_natals_chart_svg = KerykeionChartSVG(self.true_geocentric_perspective_natal_chart).makeTemplate()
@@ -244,8 +245,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(true_geocentric_perspective_natals_chart_svg_lines)):
-            assert true_geocentric_perspective_natals_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, true_geocentric_perspective_natals_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_natal_chart_from_model(self):
         birth_chart_svg = KerykeionChartSVG(self.first_subject).makeTemplate()
@@ -259,8 +260,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(birth_chart_svg_lines)):
-            assert birth_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, birth_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_minified_natal_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.minified_natal_chart).makeTemplate(minify=True)
@@ -274,8 +275,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(birth_chart_svg_lines)):
-            assert birth_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, birth_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_dark_theme_natal_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.dark_theme_natal_chart, theme="dark").makeTemplate()
@@ -289,8 +290,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(birth_chart_svg_lines)):
-            assert birth_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, birth_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_dark_high_contrast_theme_natal_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.dark_high_contrast_theme_natal_chart, theme="dark-high-contrast").makeTemplate()
@@ -304,8 +305,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(birth_chart_svg_lines)):
-            assert birth_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, birth_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_light_theme_natal_chart(self):
         birth_chart_svg = KerykeionChartSVG(self.light_theme_natal_chart, theme="light").makeTemplate()
@@ -319,8 +320,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(birth_chart_svg_lines)):
-            assert birth_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, birth_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_dark_theme_external_natal_chart(self):
         external_natal_chart_svg = KerykeionChartSVG(self.dark_theme_external_subject, theme="dark", chart_type="ExternalNatal").makeTemplate()
@@ -334,8 +335,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(external_natal_chart_svg_lines)):
-            assert external_natal_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, external_natal_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_dark_theme_synastry_chart(self):
         synastry_chart_svg = KerykeionChartSVG(self.dark_theme_synastry_subject, "Synastry", self.second_subject, theme="dark").makeTemplate()
@@ -349,8 +350,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(synastry_chart_svg_lines)):
-            assert synastry_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, synastry_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_wheel_only_chart(self):
         wheel_only_chart_svg = KerykeionChartSVG(self.wheel_only_subject).makeWheelOnlyTemplate()
@@ -365,8 +366,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(wheel_only_chart_svg_lines)):
-            assert wheel_only_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, wheel_only_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_wheel_external_chart(self):
         wheel_external_chart_svg = KerykeionChartSVG(self.wheel_external_subject, chart_type="ExternalNatal").makeWheelOnlyTemplate()
@@ -381,8 +382,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(wheel_external_chart_svg_lines)):
-            assert wheel_external_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, wheel_external_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_wheel_synastry_chart(self):
         wheel_synastry_chart_svg = KerykeionChartSVG(self.wheel_synastry_subject, chart_type="Synastry", second_obj=self.second_subject).makeWheelOnlyTemplate()
@@ -397,8 +398,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(wheel_synastry_chart_svg_lines)):
-            assert wheel_synastry_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, wheel_synastry_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_wheel_transit_chart(self):
         wheel_transit_chart_svg = KerykeionChartSVG(self.wheel_transit_subject, chart_type="Transit", second_obj=self.second_subject).makeWheelOnlyTemplate()
@@ -413,8 +414,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(wheel_transit_chart_svg_lines)):
-            assert wheel_transit_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, wheel_transit_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_aspect_grid_only_chart(self):
         aspect_grid_only_chart_svg = KerykeionChartSVG(self.aspect_grid_only_subject).makeAspectGridOnlyTemplate()
@@ -429,8 +430,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(aspect_grid_only_chart_svg_lines)):
-            assert aspect_grid_only_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, aspect_grid_only_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_aspect_grid_dark_chart(self):
         aspect_grid_dark_chart_svg = KerykeionChartSVG(self.aspect_grid_dark_subject, theme="dark").makeAspectGridOnlyTemplate()
@@ -445,8 +446,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(aspect_grid_dark_chart_svg_lines)):
-            assert aspect_grid_dark_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, aspect_grid_dark_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_aspect_grid_light_chart(self):
         aspect_grid_light_chart_svg = KerykeionChartSVG(self.aspect_grid_light_subject, theme="light").makeAspectGridOnlyTemplate()
@@ -461,8 +462,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(aspect_grid_light_chart_svg_lines)):
-            assert aspect_grid_light_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, aspect_grid_light_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_aspect_grid_synastry_chart(self):
         aspect_grid_synastry_chart_svg = KerykeionChartSVG(self.aspect_grid_synastry_subject, "Synastry", self.second_subject).makeAspectGridOnlyTemplate()
@@ -477,8 +478,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(aspect_grid_synastry_chart_svg_lines)):
-            assert aspect_grid_synastry_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, aspect_grid_synastry_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_aspect_grid_transit(self):
         aspect_grid_transit_chart_svg = KerykeionChartSVG(self.aspect_grid_transit_subject, "Transit", self.second_subject).makeAspectGridOnlyTemplate()
@@ -493,8 +494,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(aspect_grid_transit_chart_svg_lines)):
-            assert aspect_grid_transit_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, aspect_grid_transit_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_aspect_grid_dark_synastry(self):
         aspect_grid_dark_synastry_chart_svg = KerykeionChartSVG(self.aspect_grid_dark_synastry_subject, "Synastry", self.second_subject, theme="dark").makeAspectGridOnlyTemplate()
@@ -509,8 +510,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(aspect_grid_dark_synastry_chart_svg_lines)):
-            assert aspect_grid_dark_synastry_chart_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, aspect_grid_dark_synastry_chart_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_transit_chart_with_table_grid(self):
         transit_chart_with_table_grid_svg = KerykeionChartSVG(self.transit_chart_with_table_grid_subject, "Transit", self.second_subject, double_chart_aspect_grid_type="table", theme="dark").makeTemplate()
@@ -525,8 +526,8 @@ class TestCharts:
 
         file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
 
-        for i in range(len(transit_chart_with_table_grid_svg_lines)):
-            assert transit_chart_with_table_grid_svg_lines[i] == file_content_lines[i]
+        for expected_line, actual_line in zip(file_content_lines, transit_chart_with_table_grid_svg_lines):
+            compare_svg_lines(expected_line, actual_line)
 
     def test_chinese_chart(self):
         chinese_chart_svg = KerykeionChartSVG(self.chinese_subject, chart_language="CN").makeTemplate()
