@@ -9,12 +9,17 @@ class TestCharts:
     SVG_DIR = Path(__file__).parent / 'svg'
 
     def _compare_chart_svg(self, file_name, chart_svg):
-        chart_svg_lines = [chart_svg[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(chart_svg), self.SPLIT_LINE_LENGTH)]
+        chart_svg_lines = chart_svg.splitlines()
 
         with open(self.SVG_DIR / file_name, "r") as f:
             file_content = f.read()
 
-        file_content_lines = [file_content[i : i + self.SPLIT_LINE_LENGTH] for i in range(0, len(file_content), self.SPLIT_LINE_LENGTH)]
+        file_content_lines = file_content.splitlines()
+
+        assert len(chart_svg_lines) == len(file_content_lines), (
+            f"Line count mismatch: Expected {len(file_content_lines)} lines, "
+            f"but found {len(chart_svg_lines)} lines in the chart SVG."
+        )
 
         for expected_line, actual_line in zip(file_content_lines, chart_svg_lines):
             compare_svg_lines(expected_line, actual_line)
