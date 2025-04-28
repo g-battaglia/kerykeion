@@ -1,6 +1,6 @@
 import re
 
-def compare_svg_lines(expected_line: str, actual_line: str, rel_tol: float = 1e-6, abs_tol: float = 1e-6) -> None:
+def compare_svg_lines(expected_line: str, actual_line: str, rel_tol: float = 1e-10, abs_tol: float = 1e-10) -> None:
     """
     Compare two SVG lines allowing small floating-point differences, with additional absolute tolerance.
 
