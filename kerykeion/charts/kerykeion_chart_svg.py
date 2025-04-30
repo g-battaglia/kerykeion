@@ -14,7 +14,7 @@ from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointModel, Sign, ActiveAspect
 from kerykeion.kr_types import ChartTemplateDictionary
-from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, CompositeSubjectModel
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel, KerykeionSettingsModel
 from kerykeion.kr_types.kr_literals import KerykeionChartTheme, KerykeionChartLanguage, AxialCusps, Planet
 from kerykeion.charts.charts_utils import (
@@ -167,7 +167,7 @@ class KerykeionChartSVG:
 
     def __init__(
         self,
-        first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel],
+        first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         chart_type: ChartType = "Natal",
         second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, None] = None,
         new_output_directory: Union[str, None] = None,
