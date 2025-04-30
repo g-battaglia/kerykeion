@@ -2,7 +2,7 @@
 """
 Module for generating Planetary Return charts using the Swiss Ephemeris.
 
-This module provides the PlanetaryReturnCalculator class, which computes
+This module provides the PlanetaryReturnFactory class, which computes
 the return times and chart data for solar and lunar returns of a natal
 astrological subject.
 """
@@ -22,10 +22,10 @@ from kerykeion.astrological_subject import (
 )
 from kerykeion.astrological_subject import DEFAULT_GEONAMES_USERNAME
 from kerykeion.kr_types.kr_literals import ReturnType
-from kerykeion.planet_returns.planet_returns_models import PlanetReturnsModel
+from kerykeion.kr_types.kr_models import PlanetReturnModel
 
 
-class PlanetaryReturnCalculator:
+class PlanetaryReturnFactory:
     """
     Calculator class to generate Solar and Lunar Return charts.
     """
@@ -46,7 +46,7 @@ class PlanetaryReturnCalculator:
         ):
 
         """
-        Initialize a PlanetaryReturnCalculator instance.
+        Initialize a PlanetaryReturnFactory instance.
 
         Args:
             subject (AstrologicalSubject): The natal astrological subject.
@@ -136,7 +136,7 @@ class PlanetaryReturnCalculator:
         self,
         iso_formatted_time: str,
         return_type: ReturnType
-    ) -> PlanetReturnsModel:
+    ) -> PlanetReturnModel:
         """
         Get the next Return for the provided ISO-formatted time.
 
@@ -144,7 +144,7 @@ class PlanetaryReturnCalculator:
             iso_formatted_time (str): ISO-formatted datetime string.
 
         Returns:
-            PlanetReturnsModel: Pydantic model containing the return chart data.
+            PlanetReturnModel: Pydantic model containing the return chart data.
         """
 
         date = datetime.fromisoformat(iso_formatted_time)
@@ -179,7 +179,7 @@ class PlanetaryReturnCalculator:
             altitude=self.altitude,
         )
 
-        return PlanetReturnsModel(
+        return PlanetReturnModel(
             **solar_return_astrological_subject.model().model_dump(),
             return_type=return_type,
         )
@@ -195,7 +195,7 @@ if __name__ == "__main__":
     )
 
     print("=== Planet Return Calculator ===")
-    calculator = PlanetaryReturnCalculator(
+    calculator = PlanetaryReturnFactory(
         subject,
         city="San Francisco",
         nation="USA",
