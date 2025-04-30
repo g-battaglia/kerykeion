@@ -32,7 +32,8 @@ from kerykeion.utilities import (
     get_kerykeion_point_from_degree,
     get_planet_house,
     check_and_adjust_polar_latitude,
-    calculate_moon_phase
+    calculate_moon_phase,
+    datetime_to_julian
 )
 from pathlib import Path
 from typing import Union, get_args
@@ -201,7 +202,11 @@ class AstrologicalSubject:
         perspective_type: Union[PerspectiveType, None] = DEFAULT_PERSPECTIVE_TYPE,
         cache_expire_after_days: Union[int, None] = DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
         is_dst: Union[None, bool] = None,
-        disable_chiron_and_lilith: bool = False
+        disable_chiron_and_lilith: bool = False,
+        *,
+        seconds: int = 0,
+        altitude: Union[None, float, int] = None,
+
     ) -> None:
         logging.debug("Starting Kerykeion")
 
@@ -225,6 +230,7 @@ class AstrologicalSubject:
         self.day = day
         self.hour = hour
         self.minute = minute
+        self.seconds = seconds
         self.online = online
         self.json_dir = Path.home()
         self.disable_chiron = disable_chiron
@@ -232,6 +238,7 @@ class AstrologicalSubject:
         self.cache_expire_after_days = cache_expire_after_days
         self.is_dst = is_dst
         self.disable_chiron_and_lilith = disable_chiron_and_lilith
+        self.altitude = altitude
 
         #---------------#
         # General setup #
@@ -370,7 +377,7 @@ class AstrologicalSubject:
 
         # Local time to UTC
         local_time = pytz.timezone(self.tz_str)
-        naive_datetime = datetime(self.year, self.month, self.day, self.hour, self.minute, 0)
+        naive_datetime = datetime(self.year, self.month, self.day, self.hour, self.minute, seconds)
 
         try:
             local_datetime = local_time.localize(naive_datetime, is_dst=self.is_dst)
@@ -382,10 +389,7 @@ class AstrologicalSubject:
 
         # ISO formatted local datetime
         self.iso_formatted_local_datetime = local_datetime.isoformat()
-
-        # Julian day calculation
-        utc_float_hour_with_minutes = utc_object.hour + (utc_object.minute / 60)
-        self.julian_day = float(swe.julday(utc_object.year, utc_object.month, utc_object.day, utc_float_hour_with_minutes))
+        self.julian_day = datetime_to_julian(utc_object)
         # <--- UTC, julian day and local time setup
 
         # Planets and Houses setup
@@ -756,7 +760,9 @@ class AstrologicalSubject:
         disable_chiron_and_lilith: bool = False,
         sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
-        perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE
+        perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
+        *,
+        altitude: Union[None, float, int] = None,
 
     ) -> "AstrologicalSubject":
         """
@@ -807,13 +813,16 @@ class AstrologicalSubject:
             lng = float(city_data["lng"])
             lat = float(city_data["lat"])
 
+        local_time = pytz.timezone(tz_str)
+        local_datetime = dt.astimezone(local_time)
+
         subject = AstrologicalSubject(
             name=name,
-            year=dt.year,
-            month=dt.month,
-            day=dt.day,
-            hour=dt.hour,
-            minute=dt.minute,
+            year=local_datetime.year,
+            month=local_datetime.month,
+            day=local_datetime.day,
+            hour=local_datetime.hour,
+            minute=local_datetime.minute,
             city=city,
             nation=city,
             lng=lng,
@@ -825,7 +834,9 @@ class AstrologicalSubject:
             sidereal_mode=sidereal_mode,
             houses_system_identifier=houses_system_identifier,
             perspective_type=perspective_type,
-            disable_chiron_and_lilith=disable_chiron_and_lilith
+            disable_chiron_and_lilith=disable_chiron_and_lilith,
+            seconds=local_datetime.second,
+            altitude=altitude,
         )
 
         return subject
