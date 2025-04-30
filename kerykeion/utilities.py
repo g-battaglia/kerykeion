@@ -4,6 +4,7 @@ from typing import Union, get_args, TYPE_CHECKING
 import logging
 import math
 import re
+from datetime import datetime
 
 if TYPE_CHECKING:
     from kerykeion import AstrologicalSubject
@@ -495,3 +496,106 @@ def inline_css_variables_in_svg(svg_content: str) -> str:
         )
 
     return processed_svg
+
+
+def datetime_to_julian(dt: datetime) -> float:
+    """
+    Converts a Python datetime object to Julian day.
+
+    Args:
+        dt: A datetime object
+
+    Returns:
+        float: The corresponding Julian day (JD)
+    """
+    # Extract year, month and day
+    year = dt.year
+    month = dt.month
+    day = dt.day
+
+    # Adjust month and year according to the conversion formula
+    if month <= 2:
+        year -= 1
+        month += 12
+
+    # Calculate century and year in century
+    a = year // 100
+    b = 2 - a + (a // 4)
+
+    # Calculate the Julian day
+    jd = int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + day + b - 1524.5
+
+    # Add the time portion
+    hour = dt.hour
+    minute = dt.minute
+    second = dt.second
+    microsecond = dt.microsecond
+
+    jd += (hour + minute/60 + second/3600 + microsecond/3600000000) / 24
+
+    return jd
+
+
+def julian_to_datetime(jd):
+    """
+    Converts a Julian day to a Python datetime object.
+
+    Args:
+        jd: Julian day number (float)
+
+    Returns:
+        datetime: The corresponding datetime object
+    """
+    # Add 0.5 to the Julian day to adjust for noon-based Julian day
+    jd_plus = jd + 0.5
+
+    # Integer and fractional parts
+    Z = int(jd_plus)
+    F = jd_plus - Z
+
+    # Calculate alpha
+    if Z < 2299161:
+        A = Z  # Julian calendar
+    else:
+        alpha = int((Z - 1867216.25) / 36524.25)
+        A = Z + 1 + alpha - int(alpha / 4)  # Gregorian calendar
+
+    # Calculate B
+    B = A + 1524
+
+    # Calculate C
+    C = int((B - 122.1) / 365.25)
+
+    # Calculate D
+    D = int(365.25 * C)
+
+    # Calculate E
+    E = int((B - D) / 30.6001)
+
+    # Calculate day and month
+    day = B - D - int(30.6001 * E) + F
+
+    # Integer part of day
+    day_int = int(day)
+
+    # Fractional part converted to hours, minutes, seconds, microseconds
+    day_frac = day - day_int
+    hours = int(day_frac * 24)
+    minutes = int((day_frac * 24 - hours) * 60)
+    seconds = int((day_frac * 24 * 60 - hours * 60 - minutes) * 60)
+    microseconds = int(((day_frac * 24 * 60 - hours * 60 - minutes) * 60 - seconds) * 1000000)
+
+    # Calculate month
+    if E < 14:
+        month = E - 1
+    else:
+        month = E - 13
+
+    # Calculate year
+    if month > 2:
+        year = C - 4716
+    else:
+        year = C - 4715
+
+    # Create and return datetime object
+    return datetime(year, month, day_int, hours, minutes, seconds, microseconds)

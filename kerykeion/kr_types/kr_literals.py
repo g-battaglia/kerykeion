@@ -136,3 +136,6 @@ AspectName = Literal[
     "opposition"
 ]
 """Literal type for all the available aspects names"""
+
+ReturnType = Literal["Lunar", "Solar"]
+"""Literal type for Return Types"""
