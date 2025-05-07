@@ -329,6 +329,7 @@ class PlanetReturnModel(SubscriptableBaseModel):
     """
     Pydantic Model for Astrological Subject
     """
+    name: str
     return_type: ReturnType
     """Type of return: Solar or Lunar"""
 

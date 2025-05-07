@@ -73,6 +73,7 @@
       "Synastry": "Synastry",
       "Transit": "Transit",
       "Composite": "Composite",
+      "Return": "Return",
       "celestial_points": {
         "Sun": "Sun",
         "Moon": "Moon",
@@ -169,6 +170,7 @@
       "Synastry": "Synastrie",
       "Transit": "Transit",
       "Composite": "Composite",
+      "Return": "Retour",
       "celestial_points": {
         "Sun": "Soleil",
         "Moon": "Lune",
@@ -265,6 +267,7 @@
       "Synastry": "Sinastria",
       "Transit": "Trânsito",
       "Composite": "Composto",
+      "Return": "Retorno",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Lua",
@@ -361,6 +364,7 @@
       "Synastry": "Sinastria",
       "Transit": "Transito",
       "Composite": "Composito",
+      "Return": "Rivoluzione",
       "celestial_points": {
         "Sun": "Sole",
         "Moon": "Luna",
@@ -457,6 +461,7 @@
       "Synastry": "合盤",
       "Transit": "運行",
       "Composite": "合成盤",
+      "Return": "回歸",
       "celestial_points": {
         "Sun": "太陽",
         "Moon": "月亮",
@@ -553,6 +558,7 @@
       "Synastry": "Sinastría",
       "Transit": "Tránsito",
       "Composite": "Compuesto",
+      "Return": "Retorno",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Luna",
@@ -649,6 +655,7 @@
       "Synastry": "Синастрия",
       "Transit": "Транзит",
       "Composite": "Композит",
+      "Return": "Возврат",
       "celestial_points": {
         "Sun": "Солнце",
         "Moon": "Луна",
@@ -745,6 +752,7 @@
       "Synastry": "Sinastri",
       "Transit": "Geçiş",
       "Composite": "Kompozit",
+      "Return": "Dönüş",
       "celestial_points": {
         "Sun": "Güneş",
         "Moon": "Ay",
@@ -841,6 +849,7 @@
       "Synastry": "Synastrie",
       "Transit": "Transit",
       "Composite": "Composit",
+      "Return": "Rückkehr",
       "celestial_points": {
         "Sun": "Sonne",
         "Moon": "Mond",
@@ -937,6 +946,7 @@
       "Synastry": "सिनेस्ट्री",
       "Transit": "गोचर",
       "Composite": "संयुक्त",
+      "Return": "वापसी",
       "celestial_points": {
         "Sun": "सूर्य",
         "Moon": "चंद्रमा",

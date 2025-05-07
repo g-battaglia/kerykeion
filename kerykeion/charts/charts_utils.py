@@ -186,7 +186,7 @@ def draw_zodiac_slice(
     # pie slices
     offset = 360 - seventh_house_degree_ut
     # check transit
-    if chart_type == "Transit" or chart_type == "Synastry":
+    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
         dropin: Union[int, float] = 0
     else:
         dropin = c1
@@ -195,7 +195,7 @@ def draw_zodiac_slice(
     # symbols
     offset = offset + 15
     # check transit
-    if chart_type == "Transit" or chart_type == "Synastry":
+    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
         dropin = 54
     else:
         dropin = 18 + c1
@@ -415,7 +415,7 @@ def draw_first_circle(
     Returns:
         str: The SVG path of the first circle.
     """
-    if chart_type == "Synastry" or chart_type == "Transit":
+    if chart_type == "Synastry" or chart_type == "Transit" or chart_type == "Return":
         return f'<circle cx="{r}" cy="{r}" r="{r - 36}" style="fill: none; stroke: {stroke_color}; stroke-width: 1px; stroke-opacity:.4;" />'
     else:
         if c1 is None:
@@ -443,7 +443,7 @@ def draw_second_circle(
         str: The SVG path of the second circle.
     """
 
-    if chart_type == "Synastry" or chart_type == "Transit":
+    if chart_type == "Synastry" or chart_type == "Transit" or chart_type == "Return":
         return f'<circle cx="{r}" cy="{r}" r="{r - 72}" style="fill: {fill_color}; fill-opacity:.4; stroke: {stroke_color}; stroke-opacity:.4; stroke-width: 1px" />'
 
     else:
@@ -473,7 +473,7 @@ def draw_third_circle(
     Returns:
     - str: The SVG element as a string.
     """
-    if chart_type in {"Synastry", "Transit"}:
+    if chart_type in {"Synastry", "Transit", "Return"}:
         # For Synastry and Transit charts, use a fixed radius adjustment of 160
         return f'<circle cx="{radius}" cy="{radius}" r="{radius - 160}" style="fill: {fill_color}; fill-opacity:.8; stroke: {stroke_color}; stroke-width: 1px" />'
 
@@ -580,7 +580,7 @@ def draw_houses_cusps_and_text_number(
 
     for i in range(xr):
         # Determine offsets based on chart type
-        dropin, roff, t_roff = (160, 72, 36) if chart_type in ["Transit", "Synastry"] else (c3, c1, False)
+        dropin, roff, t_roff = (160, 72, 36) if chart_type in ["Transit", "Synastry", "Return"] else (c3, c1, False)
 
         # Calculate the offset for the current house cusp
         offset = (int(first_subject_houses_list[int(xr / 2)].abs_pos) / -1) + int(first_subject_houses_list[i].abs_pos)
@@ -602,7 +602,7 @@ def draw_houses_cusps_and_text_number(
             i, standard_house_cusp_color
         )
 
-        if chart_type in ["Transit", "Synastry"]:
+        if chart_type in ["Transit", "Synastry", "Return"]:
             if second_subject_houses_list is None or transit_house_cusp_color is None:
                 raise KerykeionException("second_subject_houses_list_ut or transit_house_cusp_color is None")
 
@@ -637,7 +637,7 @@ def draw_houses_cusps_and_text_number(
             path += f"</g>"
 
         # Adjust dropin based on chart type
-        dropin = {"Transit": 84, "Synastry": 84, "ExternalNatal": 100}.get(chart_type, 48)
+        dropin = {"Transit": 84, "Synastry": 84, "Return": 84, "ExternalNatal": 100}.get(chart_type, 48)
         xtext = sliceToX(0, (r - dropin), text_offset) + dropin
         ytext = sliceToY(0, (r - dropin), text_offset) + dropin
 
@@ -825,7 +825,7 @@ def draw_house_grid(
     - str: The SVG code for the grid of houses.
     """
 
-    if chart_type in ["Synastry", "Transit"] and secondary_subject_houses_list is None:
+    if chart_type in ["Synastry", "Transit", "Return"] and secondary_subject_houses_list is None:
         raise KerykeionException("secondary_houses is None")
 
     svg_output = '<g transform="translate(650,-20)">'
@@ -844,7 +844,7 @@ def draw_house_grid(
 
     svg_output += "</g>"
 
-    if chart_type == "Synastry":
+    if chart_type == "Synastry" or chart_type == "Return":
         svg_output += '<!-- Synastry Houses -->'
         svg_output += '<g transform="translate(910, -20)">'
         line_increment = 10
@@ -923,7 +923,7 @@ def draw_planet_grid(
         svg_output += end_of_line
         line_height += offset_between_lines
 
-    if chart_type in ["Transit", "Synastry"]:
+    if chart_type in ["Transit", "Synastry", "Return"]:
         if second_subject_available_kerykeion_celestial_points is None:
             raise KerykeionException("second_subject_available_kerykeion_celestial_points is None")
 

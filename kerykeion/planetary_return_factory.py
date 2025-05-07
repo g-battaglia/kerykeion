@@ -179,13 +179,17 @@ class PlanetaryReturnFactory:
             altitude=self.altitude,
         )
 
+        model_data = solar_return_astrological_subject.model().model_dump()
+        model_data['name'] = f"{self.subject.name} {return_type} Return"
+        model_data['return_type'] = return_type
+
         return PlanetReturnModel(
-            **solar_return_astrological_subject.model().model_dump(),
-            return_type=return_type,
+            **model_data,
         )
 
 
 if __name__ == "__main__":
+    import json
     # Example usage
     subject = AstrologicalSubject(
         name="Test Subject",
@@ -214,3 +218,4 @@ if __name__ == "__main__":
     print(f"Solar Return Julian Data:       {solar_return.julian_day}")
     print(f"Solar Return Date UTC:          {solar_return.iso_formatted_utc_datetime}")
     print(f"Solar Return Date Local:        {solar_return.iso_formatted_local_datetime}")
+    print(f"Solar Return JSON:              {json.dumps(solar_return.model_dump(), indent=4)}")
