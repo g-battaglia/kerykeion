@@ -189,6 +189,7 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     Synastry: str
     Transit: str
     Composite: str
+    Return: str
 
 
 class KerykeionGeneralSettingsModel(SubscriptableBaseModel):

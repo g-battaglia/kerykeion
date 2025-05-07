@@ -30,7 +30,7 @@ def draw_planets(
         main_subject_first_house_degree_ut (Union[int, float]): Degree of the first house for the main subject.
         main_subject_seventh_house_degree_ut (Union[int, float]): Degree of the seventh house for the main subject.
         chart_type (ChartType): Type of the chart (e.g., "Transit", "Synastry").
-        second_subject_available_kerykeion_celestial_points (Union[list[KerykeionPointModel], None], optional): 
+        second_subject_available_kerykeion_celestial_points (Union[list[KerykeionPointModel], None], optional):
             List of celestial points for the second subject, required for "Transit" or "Synastry" charts. Defaults to None.
 
     Raises:
@@ -41,7 +41,7 @@ def draw_planets(
     """
     TRANSIT_RING_EXCLUDE_POINTS_NAMES = get_args(Houses)
 
-    if chart_type == "Transit" or chart_type == "Synastry":
+    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
         if second_subject_available_kerykeion_celestial_points is None:
             raise KerykeionException("Second subject is required for Transit or Synastry charts")
 
@@ -55,7 +55,7 @@ def draw_planets(
     for planet in available_kerykeion_celestial_points:
         points_deg.append(planet.position)
 
-    if chart_type == "Transit" or chart_type == "Synastry":
+    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
         # Make a list for the absolute degrees of the points of the graphic.
         t_points_deg_ut = []
         for planet in second_subject_available_kerykeion_celestial_points:
@@ -198,7 +198,7 @@ def draw_planets(
         i = planets_degut[keys[e]]
 
         # coordinates
-        if chart_type == "Transit" or chart_type == "Synastry":
+        if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
             if 22 < i < 27:
                 rplanet = 76
             elif switch == 1:
@@ -232,7 +232,7 @@ def draw_planets(
 
         planet_x = sliceToX(0, (radius - rplanet), offset) + rplanet
         planet_y = sliceToY(0, (radius - rplanet), offset) + rplanet
-        if chart_type == "Transit" or chart_type == "Synastry":
+        if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
             scale = 0.8
 
         elif chart_type == "ExternalNatal":
@@ -267,7 +267,7 @@ def draw_planets(
         output += f"</g>"
 
     # make transit degut and display planets
-    if chart_type == "Transit" or chart_type == "Synastry":
+    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
         group_offset = {}
         t_planets_degut = {}
         list_range = len(available_planets_setting)
@@ -379,7 +379,7 @@ def draw_planets(
             output += "</text></g>"
 
         # check transit
-        if chart_type == "Transit" or chart_type == "Synastry":
+        if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
             dropin = 36
         else:
             dropin = 0
@@ -393,7 +393,7 @@ def draw_planets(
         output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {available_planets_setting[i]["color"]}; stroke-width: 2px; stroke-opacity:.6;"/>'
 
         # check transit
-        if chart_type == "Transit" or chart_type == "Synastry":
+        if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
             dropin = 160
         else:
             dropin = 120

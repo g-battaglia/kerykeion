@@ -167,9 +167,9 @@ class KerykeionChartSVG:
 
     def __init__(
         self,
-        first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel],
         chart_type: ChartType = "Natal",
-        second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, None] = None,
+        second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, PlanetReturnModel, None] = None,
         new_output_directory: Union[str, None] = None,
         new_settings_file: Union[Path, None, KerykeionSettingsModel, dict] = None,
         theme: Union[KerykeionChartTheme, None] = "classic",
@@ -247,7 +247,7 @@ class KerykeionChartSVG:
             )
             self.aspects_list = natal_aspects_instance.relevant_aspects
 
-        elif self.chart_type == "Transit" or self.chart_type == "Synastry":
+        elif self.chart_type == "Transit" or self.chart_type == "Synastry" or self.chart_type == "Return":
             if not second_obj:
                 raise KerykeionException("Second object is required for Transit or Synastry charts.")
 
@@ -290,14 +290,14 @@ class KerykeionChartSVG:
 
         # screen size
         self.height = self._DEFAULT_HEIGHT
-        if self.chart_type == "Synastry" or self.chart_type == "Transit":
+        if self.chart_type == "Synastry" or self.chart_type == "Transit" or self.chart_type == "Return":
             self.width = self._DEFAULT_FULL_WIDTH
         elif self.double_chart_aspect_grid_type == "table" and self.chart_type == "Transit":
             self.width = self._DEFAULT_FULL_WIDTH_WITH_TABLE
         else:
             self.width = self._DEFAULT_NATAL_WIDTH
 
-        if self.chart_type in ["Natal", "ExternalNatal", "Synastry"]:
+        if self.chart_type in ["Natal", "ExternalNatal", "Synastry", "Return"]:
             self.location = self.user.city
             self.geolat = self.user.lat
             self.geolon =  self.user.lng
@@ -541,7 +541,7 @@ class KerykeionChartSVG:
             template_dict['viewbox'] = self._WIDE_CHART_VIEWBOX
 
         # Generate rings and circles based on chart type
-        if self.chart_type in ["Transit", "Synastry"]:
+        if self.chart_type in ["Transit", "Synastry", "Return"]:
             template_dict["transitRing"] = draw_transit_ring(self.main_radius, self.chart_colors_settings["paper_1"], self.chart_colors_settings["zodiac_transit_ring_3"])
             template_dict["degreeRing"] = draw_transit_ring_degree_steps(self.main_radius, self.user.seventh_house.abs_pos)
             template_dict["first_circle"] = draw_first_circle(self.main_radius, self.chart_colors_settings["zodiac_transit_ring_2"], self.chart_type)
@@ -552,8 +552,10 @@ class KerykeionChartSVG:
                 title = ""
                 if self.chart_type == "Synastry":
                     title = self.language_settings.get("couple_aspects", "Couple Aspects")
-                else:
+                elif self.chart_type == "Transit":
                     title = self.language_settings.get("transit_aspects", "Transit Aspects")
+                elif self.chart_type == "Return":
+                    title = self.language_settings.get("return_aspects", "Return Aspects")
 
                 template_dict["makeAspectGrid"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings)
             else:
@@ -579,6 +581,8 @@ class KerykeionChartSVG:
             template_dict["stringTitle"] = self.user.name
         elif self.chart_type == "Composite":
             template_dict["stringTitle"] = f"{self.user.first_subject.name} {self.language_settings['and_word']} {self.user.second_subject.name}"
+        elif self.chart_type == "Return":
+            template_dict["stringTitle"] = f"{self.language_settings['Return']} {self.user.iso_formatted_utc_datetime}"
 
         # Zodiac Type Info
         if self.user.zodiac_type == 'Tropic':
@@ -603,6 +607,10 @@ class KerykeionChartSVG:
             template_dict["bottom_left_2"] = f'{self.user.first_subject.perspective_type}'
             template_dict["bottom_left_3"] = f'{self.language_settings.get("composite_chart", "Composite Chart")} - {self.language_settings.get("midpoints", "Midpoints")}'
             template_dict["bottom_left_4"] = ""
+        elif self.chart_type == "Return":
+            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.get("moon_phase", "")}'
+            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.moon_phase_name}'
+            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.user.perspective_type.lower().replace(" ", "_"), self.user.perspective_type)}'
 
         # Draw moon phase
         moon_phase_dict = calculate_moon_phase_chart_params(
@@ -629,12 +637,15 @@ class KerykeionChartSVG:
             template_dict["top_left_1"] = self.location
 
         # Set chart name
-        if self.chart_type in ["Synastry", "Transit"]:
+        if self.chart_type in ["Synastry", "Transit", "Return"]:
             template_dict["top_left_0"] = f"{self.user.name}:"
         elif self.chart_type in ["Natal", "ExternalNatal"]:
             template_dict["top_left_0"] = f'{self.language_settings["info"]}:'
         elif self.chart_type == "Composite":
             template_dict["top_left_0"] = f'{self.user.first_subject.name}'
+        elif self.chart_type == "Return":
+            template_dict["top_left_0"] = f'{self.language_settings["Return"]}:'
+            template_dict["top_left_1"] = f'{self.language_settings["Return"]}: {self.user.iso_formatted_utc_datetime}'
 
         # Set additional information for Synastry chart type
         if self.chart_type == "Synastry":
@@ -647,6 +658,10 @@ class KerykeionChartSVG:
             latitude_string = convert_latitude_coordinate_to_string(self.user.second_subject.lat, self.language_settings['north_letter'], self.language_settings['south_letter'])
             longitude_string = convert_longitude_coordinate_to_string(self.user.second_subject.lng, self.language_settings['east_letter'], self.language_settings['west_letter'])
             template_dict["top_left_5"] = f"{latitude_string} / {longitude_string}"
+        elif self.chart_type == "Return":
+            template_dict["top_left_3"] = f"{self.language_settings['Return']}: {self.user.iso_formatted_utc_datetime}"
+            template_dict["top_left_4"] = f"{self.language_settings['latitude']}: {self.user.lat}"
+            template_dict["top_left_5"] = f"{self.language_settings['longitude']}: {self.user.lng}"
         else:
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings['north'], self.language_settings['south'])
             longitude_string = convert_longitude_coordinate_to_string(self.geolon, self.language_settings['east'], self.language_settings['west'])
@@ -678,7 +693,7 @@ class KerykeionChartSVG:
         first_subject_houses_list = get_houses_list(self.user)
 
         # Draw houses grid and cusps
-        if self.chart_type in ["Transit", "Synastry"]:
+        if self.chart_type in ["Transit", "Synastry", "Return"]:
             second_subject_houses_list = get_houses_list(self.t_user)
 
             template_dict["makeHousesGrid"] = draw_house_grid(
@@ -726,7 +741,7 @@ class KerykeionChartSVG:
             )
 
         # Draw planets
-        if self.chart_type in ["Transit", "Synastry"]:
+        if self.chart_type in ["Transit", "Synastry", "Return"]:
             template_dict["makePlanets"] = draw_planets(
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
                 available_planets_setting=self.available_planets_setting,
@@ -762,7 +777,7 @@ class KerykeionChartSVG:
         template_dict["water_string"] = f"{self.language_settings['water']} {water_percentage}%"
 
         # Draw planet grid
-        if self.chart_type in ["Transit", "Synastry"]:
+        if self.chart_type in ["Transit", "Synastry", "Return"]:
             if self.chart_type == "Transit":
                 second_subject_table_name = self.language_settings["transit_name"]
             else:
@@ -946,7 +961,7 @@ class KerykeionChartSVG:
 
         template_dict = self._create_template_dictionary()
 
-        if self.chart_type in ["Transit", "Synastry"]:
+        if self.chart_type in ["Transit", "Synastry", "Return"]:
             aspects_grid = draw_transit_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list)
         else:
             aspects_grid = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list, x_start=50, y_start=250)
@@ -989,231 +1004,30 @@ class KerykeionChartSVG:
 
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
-    from kerykeion.composite_subject_factory import CompositeSubjectFactory
+    from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
     setup_logging(level="debug")
 
-    first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+    subject = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 
-    # Internal Natal Chart
-    internal_natal_chart = KerykeionChartSVG(first)
-    internal_natal_chart.makeSVG()
+    return_factory = PlanetaryReturnFactory(
+        subject,
+        city="Liverpool",
+        nation="GB",
+        lng=-2.978,
+        lat=53.408,
+        tz_str="Europe/London",
+        altitude=0,
+    )
+    solar_return = return_factory.next_return_from_iso_formatted_time(
+        "2026-10-09T18:30:00+01:00",  # UTC+1
+        return_type="Solar",
+    )
+    solar_return_chart = KerykeionChartSVG(
+        first_obj=subject,
+        chart_type="Return",
+        second_obj=solar_return,
+        chart_language="IT"
+    )
 
-    # External Natal Chart
-    external_natal_chart = KerykeionChartSVG(first, "ExternalNatal", second)
-    external_natal_chart.makeSVG()
-
-    # Synastry Chart
-    synastry_chart = KerykeionChartSVG(first, "Synastry", second)
-    synastry_chart.makeSVG()
-
-    # Transits Chart
-    transits_chart = KerykeionChartSVG(first, "Transit", second)
-    transits_chart.makeSVG()
-
-    # Sidereal Birth Chart (Lahiri)
-    sidereal_subject = AstrologicalSubject("John Lennon Lahiri", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
-    sidereal_chart = KerykeionChartSVG(sidereal_subject)
-    sidereal_chart.makeSVG()
-
-    # Sidereal Birth Chart (Fagan-Bradley)
-    sidereal_subject = AstrologicalSubject("John Lennon Fagan-Bradley", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY")
-    sidereal_chart = KerykeionChartSVG(sidereal_subject)
-    sidereal_chart.makeSVG()
-
-    # Sidereal Birth Chart (DeLuce)
-    sidereal_subject = AstrologicalSubject("John Lennon DeLuce", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="DELUCE")
-    sidereal_chart = KerykeionChartSVG(sidereal_subject)
-    sidereal_chart.makeSVG()
-
-    # Sidereal Birth Chart (J2000)
-    sidereal_subject = AstrologicalSubject("John Lennon J2000", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="J2000")
-    sidereal_chart = KerykeionChartSVG(sidereal_subject)
-    sidereal_chart.makeSVG()
-
-    # House System Morinus
-    morinus_house_subject = AstrologicalSubject("John Lennon - House System Morinus", 1940, 10, 9, 18, 30, "Liverpool", "GB", houses_system_identifier="M")
-    morinus_house_chart = KerykeionChartSVG(morinus_house_subject)
-    morinus_house_chart.makeSVG()
-
-    ## To check all the available house systems uncomment the following code:
-    # from kerykeion.kr_types import HousesSystemIdentifier
-    # from typing import get_args
-    # for i in get_args(HousesSystemIdentifier):
-    #     alternatives_house_subject = AstrologicalSubject(f"John Lennon - House System {i}", 1940, 10, 9, 18, 30, "Liverpool", "GB", houses_system=i)
-    #     alternatives_house_chart = KerykeionChartSVG(alternatives_house_subject)
-    #     alternatives_house_chart.makeSVG()
-
-    # With True Geocentric Perspective
-    true_geocentric_subject = AstrologicalSubject("John Lennon - True Geocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", perspective_type="True Geocentric")
-    true_geocentric_chart = KerykeionChartSVG(true_geocentric_subject)
-    true_geocentric_chart.makeSVG()
-
-    # With Heliocentric Perspective
-    heliocentric_subject = AstrologicalSubject("John Lennon - Heliocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", perspective_type="Heliocentric")
-    heliocentric_chart = KerykeionChartSVG(heliocentric_subject)
-    heliocentric_chart.makeSVG()
-
-    # With Topocentric Perspective
-    topocentric_subject = AstrologicalSubject("John Lennon - Topocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", perspective_type="Topocentric")
-    topocentric_chart = KerykeionChartSVG(topocentric_subject)
-    topocentric_chart.makeSVG()
-
-    # Minified SVG
-    minified_subject = AstrologicalSubject("John Lennon - Minified", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    minified_chart = KerykeionChartSVG(minified_subject)
-    minified_chart.makeSVG(minify=True)
-
-    # Dark Theme Natal Chart
-    dark_theme_subject = AstrologicalSubject("John Lennon - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    dark_theme_natal_chart = KerykeionChartSVG(dark_theme_subject, theme="dark")
-    dark_theme_natal_chart.makeSVG()
-
-    # Dark High Contrast Theme Natal Chart
-    dark_high_contrast_theme_subject = AstrologicalSubject("John Lennon - Dark High Contrast Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    dark_high_contrast_theme_natal_chart = KerykeionChartSVG(dark_high_contrast_theme_subject, theme="dark-high-contrast")
-    dark_high_contrast_theme_natal_chart.makeSVG()
-
-    # Light Theme Natal Chart
-    light_theme_subject = AstrologicalSubject("John Lennon - Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    light_theme_natal_chart = KerykeionChartSVG(light_theme_subject, theme="light")
-    light_theme_natal_chart.makeSVG()
-
-    # Dark Theme External Natal Chart
-    dark_theme_external_subject = AstrologicalSubject("John Lennon - Dark Theme External", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    dark_theme_external_chart = KerykeionChartSVG(dark_theme_external_subject, "ExternalNatal", second, theme="dark")
-    dark_theme_external_chart.makeSVG()
-
-    # Dark Theme Synastry Chart
-    dark_theme_synastry_subject = AstrologicalSubject("John Lennon - DTS", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    dark_theme_synastry_chart = KerykeionChartSVG(dark_theme_synastry_subject, "Synastry", second, theme="dark")
-    dark_theme_synastry_chart.makeSVG()
-
-    # Wheel Natal Only Chart
-    wheel_only_subject = AstrologicalSubject("John Lennon - Wheel Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    wheel_only_chart = KerykeionChartSVG(wheel_only_subject)
-    wheel_only_chart.makeWheelOnlySVG()
-
-    # Wheel External Natal Only Chart
-    wheel_external_subject = AstrologicalSubject("John Lennon - Wheel External Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    wheel_external_chart = KerykeionChartSVG(wheel_external_subject, "ExternalNatal", second)
-    wheel_external_chart.makeWheelOnlySVG()
-
-    # Wheel Synastry Only Chart
-    wheel_synastry_subject = AstrologicalSubject("John Lennon - Wheel Synastry Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    wheel_synastry_chart = KerykeionChartSVG(wheel_synastry_subject, "Synastry", second)
-    wheel_synastry_chart.makeWheelOnlySVG()
-
-    # Wheel Transit Only Chart
-    wheel_transit_subject = AstrologicalSubject("John Lennon - Wheel Transit Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    wheel_transit_chart = KerykeionChartSVG(wheel_transit_subject, "Transit", second)
-    wheel_transit_chart.makeWheelOnlySVG()
-
-    # Wheel Sidereal Birth Chart (Lahiri) Dark Theme
-    sidereal_dark_subject = AstrologicalSubject("John Lennon Lahiri - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
-    sidereal_dark_chart = KerykeionChartSVG(sidereal_dark_subject, theme="dark")
-    sidereal_dark_chart.makeWheelOnlySVG()
-
-    # Wheel Sidereal Birth Chart (Fagan-Bradley) Light Theme
-    sidereal_light_subject = AstrologicalSubject("John Lennon Fagan-Bradley - Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY")
-    sidereal_light_chart = KerykeionChartSVG(sidereal_light_subject, theme="light")
-    sidereal_light_chart.makeWheelOnlySVG()
-
-    # Aspect Grid Only Natal Chart
-    aspect_grid_only_subject = AstrologicalSubject("John Lennon - Aspect Grid Only", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    aspect_grid_only_chart = KerykeionChartSVG(aspect_grid_only_subject)
-    aspect_grid_only_chart.makeAspectGridOnlySVG()
-
-    # Aspect Grid Only Dark Theme Natal Chart
-    aspect_grid_dark_subject = AstrologicalSubject("John Lennon - Aspect Grid Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    aspect_grid_dark_chart = KerykeionChartSVG(aspect_grid_dark_subject, theme="dark")
-    aspect_grid_dark_chart.makeAspectGridOnlySVG()
-
-    # Aspect Grid Only Light Theme Natal Chart
-    aspect_grid_light_subject = AstrologicalSubject("John Lennon - Aspect Grid Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    aspect_grid_light_chart = KerykeionChartSVG(aspect_grid_light_subject, theme="light")
-    aspect_grid_light_chart.makeAspectGridOnlySVG()
-
-    # Synastry Chart Aspect Grid Only
-    aspect_grid_synastry_subject = AstrologicalSubject("John Lennon - Aspect Grid Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    aspect_grid_synastry_chart = KerykeionChartSVG(aspect_grid_synastry_subject, "Synastry", second)
-    aspect_grid_synastry_chart.makeAspectGridOnlySVG()
-
-    # Transit Chart Aspect Grid Only
-    aspect_grid_transit_subject = AstrologicalSubject("John Lennon - Aspect Grid Transit", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    aspect_grid_transit_chart = KerykeionChartSVG(aspect_grid_transit_subject, "Transit", second)
-    aspect_grid_transit_chart.makeAspectGridOnlySVG()
-
-    # Synastry Chart Aspect Grid Only Dark Theme
-    aspect_grid_dark_synastry_subject = AstrologicalSubject("John Lennon - Aspect Grid Dark Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    aspect_grid_dark_synastry_chart = KerykeionChartSVG(aspect_grid_dark_synastry_subject, "Synastry", second, theme="dark")
-    aspect_grid_dark_synastry_chart.makeAspectGridOnlySVG()
-
-    # Synastry Chart With draw_transit_aspect_list table
-    synastry_chart_with_table_list_subject = AstrologicalSubject("John Lennon - SCTWL", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    synastry_chart_with_table_list = KerykeionChartSVG(synastry_chart_with_table_list_subject, "Synastry", second, double_chart_aspect_grid_type="list", theme="dark")
-    synastry_chart_with_table_list.makeSVG()
-
-    # Transit Chart With draw_transit_aspect_grid table
-    transit_chart_with_table_grid_subject = AstrologicalSubject("John Lennon - TCWTG", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    transit_chart_with_table_grid = KerykeionChartSVG(transit_chart_with_table_grid_subject, "Transit", second, double_chart_aspect_grid_type="table", theme="dark")
-    transit_chart_with_table_grid.makeSVG()
-
-    # Chines Language Chart
-    chinese_subject = AstrologicalSubject("Hua Chenyu", 1990, 2, 7, 12, 0, "Hunan", "CN")
-    chinese_chart = KerykeionChartSVG(chinese_subject, chart_language="CN")
-    chinese_chart.makeSVG()
-
-    # French Language Chart
-    french_subject = AstrologicalSubject("Jeanne Moreau", 1928, 1, 23, 10, 0, "Paris", "FR")
-    french_chart = KerykeionChartSVG(french_subject, chart_language="FR")
-    french_chart.makeSVG()
-
-    # Spanish Language Chart
-    spanish_subject = AstrologicalSubject("Antonio Banderas", 1960, 8, 10, 12, 0, "Malaga", "ES")
-    spanish_chart = KerykeionChartSVG(spanish_subject, chart_language="ES")
-    spanish_chart.makeSVG()
-
-    # Portuguese Language Chart
-    portuguese_subject = AstrologicalSubject("Cristiano Ronaldo", 1985, 2, 5, 5, 25, "Funchal", "PT")
-    portuguese_chart = KerykeionChartSVG(portuguese_subject, chart_language="PT")
-    portuguese_chart.makeSVG()
-
-    # Italian Language Chart
-    italian_subject = AstrologicalSubject("Sophia Loren", 1934, 9, 20, 2, 0, "Rome", "IT")
-    italian_chart = KerykeionChartSVG(italian_subject, chart_language="IT")
-    italian_chart.makeSVG()
-
-    # Russian Language Chart
-    russian_subject = AstrologicalSubject("Mikhail Bulgakov", 1891, 5, 15, 12, 0, "Kiev", "UA")
-    russian_chart = KerykeionChartSVG(russian_subject, chart_language="RU")
-    russian_chart.makeSVG()
-
-    # Turkish Language Chart
-    turkish_subject = AstrologicalSubject("Mehmet Oz", 1960, 6, 11, 12, 0, "Istanbul", "TR")
-    turkish_chart = KerykeionChartSVG(turkish_subject, chart_language="TR")
-    turkish_chart.makeSVG()
-
-    # German Language Chart
-    german_subject = AstrologicalSubject("Albert Einstein", 1879, 3, 14, 11, 30, "Ulm", "DE")
-    german_chart = KerykeionChartSVG(german_subject, chart_language="DE")
-    german_chart.makeSVG()
-
-    # Hindi Language Chart
-    hindi_subject = AstrologicalSubject("Amitabh Bachchan", 1942, 10, 11, 4, 0, "Allahabad", "IN")
-    hindi_chart = KerykeionChartSVG(hindi_subject, chart_language="HI")
-    hindi_chart.makeSVG()
-
-    # Kanye West Natal Chart
-    kanye_west_subject = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
-    kanye_west_chart = KerykeionChartSVG(kanye_west_subject)
-    kanye_west_chart.makeSVG()
-
-    # Composite Chart
-    angelina = AstrologicalSubject("Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US", lng=-118.15, lat=34.03, tz_str="America/Los_Angeles")
-    brad = AstrologicalSubject("Brad Pitt", 1963, 12, 18, 6, 31, "Shawnee", "US", lng=-96.56, lat=35.20, tz_str="America/Chicago")
-
-    composite_subject_factory = CompositeSubjectFactory(angelina, brad)
-    composite_subject_model = composite_subject_factory.get_midpoint_composite_subject_model()
-    composite_chart = KerykeionChartSVG(composite_subject_model, "Composite")
-    composite_chart.makeSVG()
+    solar_return_chart.makeSVG(minify=True, remove_css_variables=True)
