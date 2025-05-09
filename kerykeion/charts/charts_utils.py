@@ -2,9 +2,9 @@ import math
 import datetime
 from kerykeion.kr_types import KerykeionException, ChartType
 from typing import Union, Literal
-from kerykeion.kr_types.kr_models import AspectModel, KerykeionPointModel
-from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsAspectModel
-
+from kerykeion.kr_types.kr_models import AspectModel, KerykeionPointModel, CompositeSubjectModel, PlanetReturnModel, AstrologicalSubjectModel
+from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsAspectModel, KerykeionSettingsCelestialPointModel
+from kerykeion import AstrologicalSubject
 
 def get_decoded_kerykeion_celestial_point_name(input_planet_name: str, celestial_point_language: KerykeionLanguageCelestialPointModel) -> str:
     """
@@ -1084,3 +1084,66 @@ def format_datetime_with_timezone(iso_datetime_string: str) -> str:
     custom_format = custom_format[:-3] + ':' + custom_format[-3:]
 
     return custom_format
+
+
+def calculate_element_points(
+        planets_settings: list[KerykeionSettingsCelestialPointModel],
+        celestial_points_names: list[str],
+        subject: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        planet_in_zodiac_extra_points: int = 10
+    ):
+    """
+    Calculate elemental point totals based on planetary positions.
+
+    Args:
+        planets_settings (list): List of planet configuration dictionaries
+        celestial_points_names (list): List of celestial point names to process
+        subject: Astrological subject with get() method for accessing planet data
+        planet_in_zodiac_extra_points (int): Extra points awarded for planets in their home sign
+
+    Returns:
+        dict: Dictionary with element point totals for 'fire', 'earth', 'air', and 'water'
+    """
+    ZODIAC = (
+        {"name": "Ari", "element": "fire"},
+        {"name": "Tau", "element": "earth"},
+        {"name": "Gem", "element": "air"},
+        {"name": "Can", "element": "water"},
+        {"name": "Leo", "element": "fire"},
+        {"name": "Vir", "element": "earth"},
+        {"name": "Lib", "element": "air"},
+        {"name": "Sco", "element": "water"},
+        {"name": "Sag", "element": "fire"},
+        {"name": "Cap", "element": "earth"},
+        {"name": "Aqu", "element": "air"},
+        {"name": "Pis", "element": "water"},
+    )
+
+    # Initialize element point totals
+    element_totals = {
+        "fire": 0.0,
+        "earth": 0.0,
+        "air": 0.0,
+        "water": 0.0
+    }
+
+    # Make list of the points sign
+    points_sign = [subject.get(planet).sign_num for planet in celestial_points_names]
+
+    for i in range(len(planets_settings)):
+        # Check if planet is in its own zodiac sign
+        related_zodiac_signs = planets_settings[i]["related_zodiac_signs"]
+        cz = points_sign[i]
+        extra_points = 0
+
+        if related_zodiac_signs:
+            for sign in related_zodiac_signs:
+                if int(sign) == int(cz):
+                    extra_points = planet_in_zodiac_extra_points
+                    break
+
+        # Add points to appropriate element
+        element = ZODIAC[points_sign[i]]["element"]
+        element_totals[element] += planets_settings[i]["element_points"] + extra_points
+
+    return element_totals
