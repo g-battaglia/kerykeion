@@ -35,7 +35,8 @@ from kerykeion.charts.charts_utils import (
     calculate_moon_phase_chart_params,
     draw_house_grid,
     draw_planet_grid,
-    format_location_string
+    format_location_string,
+    format_datetime_with_timezone
 )
 from kerykeion.charts.draw_planets import draw_planets # type: ignore
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg
@@ -588,11 +589,17 @@ class KerykeionChartSVG:
 
         # Top left section -->
         if self.chart_type == "Composite":
+            # First subject
+            latitude = convert_latitude_coordinate_to_string(self.user.first_subject.lat, self.language_settings["north_letter"], self.language_settings["south_letter"])
+            longitude = convert_longitude_coordinate_to_string(self.user.first_subject.lng, self.language_settings["east_letter"], self.language_settings["west_letter"])
+
+            # Second subject
             latitude_string = convert_latitude_coordinate_to_string(self.user.second_subject.lat, self.language_settings['north_letter'], self.language_settings['south_letter'])
             longitude_string = convert_longitude_coordinate_to_string(self.user.second_subject.lng, self.language_settings['east_letter'], self.language_settings['west_letter'])
 
             template_dict["top_left_0"] = f'{self.user.first_subject.name}'
             template_dict["top_left_1"] = f"{datetime.fromisoformat(self.user.first_subject.iso_formatted_local_datetime).strftime('%Y-%m-%d %H:%M')}"
+            template_dict["top_left_2"] = f"{latitude} {longitude}"
             template_dict["top_left_3"] = self.user.second_subject.name
             template_dict["top_left_4"] = f"{datetime.fromisoformat(self.user.second_subject.iso_formatted_local_datetime).strftime('%Y-%m-%d %H:%M')}"
             template_dict["top_left_5"] = f"{latitude_string} / {longitude_string}"
@@ -600,6 +607,7 @@ class KerykeionChartSVG:
         elif self.chart_type == "Synastry":
             template_dict["top_left_0"] = f"{self.user.name}:"
             template_dict["top_left_1"] = format_location_string(self.location)
+            template_dict["top_left_2"] = format_datetime_with_timezone(self.user.iso_formatted_local_datetime)
             template_dict["top_left_3"] = f"{self.t_user.name}: "
             template_dict["top_left_4"] = self.t_user.city
             template_dict["top_left_5"] = f"{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hour:02d}:{self.t_user.minute:02d}"
@@ -608,8 +616,9 @@ class KerykeionChartSVG:
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings['north'], self.language_settings['south'])
             longitude_string = convert_longitude_coordinate_to_string(self.geolon, self.language_settings['east'], self.language_settings['west'])
 
-            template_dict["top_left_1"] = format_location_string(self.location)
             template_dict["top_left_0"] = f"{self.user.name}:"
+            template_dict["top_left_1"] = format_location_string(self.location)
+            template_dict["top_left_2"] = format_datetime_with_timezone(self.user.iso_formatted_local_datetime)
             template_dict["top_left_3"] = f"{self.language_settings['latitude']}: {latitude_string}"
             template_dict["top_left_4"] = f"{self.language_settings['longitude']}: {longitude_string}"
             template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings.get(self.chart_type, self.chart_type)}"
@@ -617,6 +626,7 @@ class KerykeionChartSVG:
         elif self.chart_type == "Return":
             template_dict["top_left_0"] = f'{self.language_settings["Return"]}:'
             template_dict["top_left_1"] = f'{self.language_settings["Return"]}: {self.user.iso_formatted_utc_datetime}'
+            template_dict["top_left_2"] = format_datetime_with_timezone(self.user.iso_formatted_local_datetime)
             template_dict["top_left_3"] = f"{self.language_settings['Return']}: {self.user.iso_formatted_utc_datetime}"
             template_dict["top_left_4"] = f"{self.language_settings['latitude']}: {self.user.lat}"
             template_dict["top_left_5"] = f"{self.language_settings['longitude']}: {self.user.lng}"
@@ -627,6 +637,7 @@ class KerykeionChartSVG:
 
             template_dict["top_left_0"] = f'{self.language_settings["info"]}:'
             template_dict["top_left_1"] = format_location_string(self.location)
+            template_dict["top_left_2"] = format_datetime_with_timezone(self.user.iso_formatted_local_datetime)
             template_dict["top_left_3"] = f"{self.language_settings['latitude']}: {latitude_string}"
             template_dict["top_left_4"] = f"{self.language_settings['longitude']}: {longitude_string}"
             template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings.get(self.chart_type, self.chart_type)}"
@@ -817,18 +828,6 @@ class KerykeionChartSVG:
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
             )
-
-        # Set date time string
-        if self.chart_type in ["Composite"]:
-            # First Subject Latitude and Longitude
-            latitude = convert_latitude_coordinate_to_string(self.user.first_subject.lat, self.language_settings["north_letter"], self.language_settings["south_letter"])
-            longitude = convert_longitude_coordinate_to_string(self.user.first_subject.lng, self.language_settings["east_letter"], self.language_settings["west_letter"])
-            template_dict["top_left_2"] = f"{latitude} {longitude}"
-        else:
-            dt = datetime.fromisoformat(self.user.iso_formatted_local_datetime)
-            custom_format = dt.strftime('%Y-%m-%d %H:%M [%z]')
-            custom_format = custom_format[:-3] + ':' + custom_format[-3:]
-            template_dict["top_left_2"] = f"{custom_format}"
 
         return ChartTemplateDictionary(**template_dict)
 

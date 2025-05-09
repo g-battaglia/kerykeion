@@ -1067,3 +1067,20 @@ def format_location_string(location: str, max_length: int = 35) -> str:
         else:
             return location[:max_length] + "..."
     return location
+
+
+def format_datetime_with_timezone(iso_datetime_string: str) -> str:
+    """
+    Format an ISO datetime string with a custom format that includes properly formatted timezone.
+
+    Args:
+        iso_datetime_string: ISO formatted datetime string
+
+    Returns:
+        Formatted datetime string with properly formatted timezone offset (HH:MM)
+    """
+    dt = datetime.datetime.fromisoformat(iso_datetime_string)
+    custom_format = dt.strftime('%Y-%m-%d %H:%M [%z]')
+    custom_format = custom_format[:-3] + ':' + custom_format[-3:]
+
+    return custom_format

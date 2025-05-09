@@ -1,4 +1,4 @@
-from kerykeion.kr_types import KerykeionPointModel, KerykeionException, ZodiacSignModel, AstrologicalSubjectModel, LunarPhaseModel
+from kerykeion.kr_types import KerykeionPointModel, KerykeionException, ZodiacSignModel, AstrologicalSubjectModel, LunarPhaseModel, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, Planet, Houses, AxialCusps
 from typing import Union, get_args, TYPE_CHECKING
 import logging
@@ -296,7 +296,7 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
     return latitude
 
 
-def get_houses_list(subject: Union["AstrologicalSubject", AstrologicalSubjectModel]) -> list[KerykeionPointModel]:
+def get_houses_list(subject: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]) -> list[KerykeionPointModel]:
     """
     Return the names of the houses in the order of the houses.
     """
