@@ -35,6 +35,7 @@ from kerykeion.charts.charts_utils import (
     calculate_moon_phase_chart_params,
     draw_house_grid,
     draw_planet_grid,
+    format_location_string
 )
 from kerykeion.charts.draw_planets import draw_planets # type: ignore
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg
@@ -622,53 +623,51 @@ class KerykeionChartSVG:
         template_dict["lunar_phase_circle_center_x"] = moon_phase_dict["circle_center_x"]
         template_dict["lunar_phase_circle_radius"] = moon_phase_dict["circle_radius"]
 
+        # Top left section --->
         if self.chart_type == "Composite":
-            template_dict["top_left_1"] = f"{datetime.fromisoformat(self.user.first_subject.iso_formatted_local_datetime).strftime('%Y-%m-%d %H:%M')}"
-        # Set location string
-        elif len(self.location) > 35:
-            split_location = self.location.split(",")
-            if len(split_location) > 1:
-                template_dict["top_left_1"] = split_location[0] + ", " + split_location[-1]
-                if len(template_dict["top_left_1"]) > 35:
-                    template_dict["top_left_1"] = template_dict["top_left_1"][:35] + "..."
-            else:
-                template_dict["top_left_1"] = self.location[:35] + "..."
-        else:
-            template_dict["top_left_1"] = self.location
+            latitude_string = convert_latitude_coordinate_to_string(self.user.second_subject.lat, self.language_settings['north_letter'], self.language_settings['south_letter'])
+            longitude_string = convert_longitude_coordinate_to_string(self.user.second_subject.lng, self.language_settings['east_letter'], self.language_settings['west_letter'])
 
-        # Set chart name
-        if self.chart_type in ["Synastry", "Transit", "Return"]:
-            template_dict["top_left_0"] = f"{self.user.name}:"
-        elif self.chart_type in ["Natal", "ExternalNatal"]:
-            template_dict["top_left_0"] = f'{self.language_settings["info"]}:'
-        elif self.chart_type == "Composite":
             template_dict["top_left_0"] = f'{self.user.first_subject.name}'
-        elif self.chart_type == "Return":
-            template_dict["top_left_0"] = f'{self.language_settings["Return"]}:'
-            template_dict["top_left_1"] = f'{self.language_settings["Return"]}: {self.user.iso_formatted_utc_datetime}'
+            template_dict["top_left_1"] = f"{datetime.fromisoformat(self.user.first_subject.iso_formatted_local_datetime).strftime('%Y-%m-%d %H:%M')}"
+            template_dict["top_left_3"] = self.user.second_subject.name
+            template_dict["top_left_4"] = f"{datetime.fromisoformat(self.user.second_subject.iso_formatted_local_datetime).strftime('%Y-%m-%d %H:%M')}"
+            template_dict["top_left_5"] = f"{latitude_string} / {longitude_string}"
 
-        # Set additional information for Synastry chart type
-        if self.chart_type == "Synastry":
+        elif self.chart_type == "Synastry":
+            template_dict["top_left_0"] = f"{self.user.name}:"
+            template_dict["top_left_1"] = format_location_string(self.location)
             template_dict["top_left_3"] = f"{self.t_user.name}: "
             template_dict["top_left_4"] = self.t_user.city
             template_dict["top_left_5"] = f"{self.t_user.year}-{self.t_user.month}-{self.t_user.day} {self.t_user.hour:02d}:{self.t_user.minute:02d}"
-        elif self.chart_type == "Composite":
-            template_dict["top_left_3"] = self.user.second_subject.name
-            template_dict["top_left_4"] = f"{datetime.fromisoformat(self.user.second_subject.iso_formatted_local_datetime).strftime('%Y-%m-%d %H:%M')}"
-            latitude_string = convert_latitude_coordinate_to_string(self.user.second_subject.lat, self.language_settings['north_letter'], self.language_settings['south_letter'])
-            longitude_string = convert_longitude_coordinate_to_string(self.user.second_subject.lng, self.language_settings['east_letter'], self.language_settings['west_letter'])
-            template_dict["top_left_5"] = f"{latitude_string} / {longitude_string}"
-        elif self.chart_type == "Return":
-            template_dict["top_left_3"] = f"{self.language_settings['Return']}: {self.user.iso_formatted_utc_datetime}"
-            template_dict["top_left_4"] = f"{self.language_settings['latitude']}: {self.user.lat}"
-            template_dict["top_left_5"] = f"{self.language_settings['longitude']}: {self.user.lng}"
-        else:
+
+        elif self.chart_type == "Transit":
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings['north'], self.language_settings['south'])
             longitude_string = convert_longitude_coordinate_to_string(self.geolon, self.language_settings['east'], self.language_settings['west'])
+
+            template_dict["top_left_1"] = format_location_string(self.location)
+            template_dict["top_left_0"] = f"{self.user.name}:"
             template_dict["top_left_3"] = f"{self.language_settings['latitude']}: {latitude_string}"
             template_dict["top_left_4"] = f"{self.language_settings['longitude']}: {longitude_string}"
             template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings.get(self.chart_type, self.chart_type)}"
 
+        elif self.chart_type == "Return":
+            template_dict["top_left_0"] = f'{self.language_settings["Return"]}:'
+            template_dict["top_left_1"] = f'{self.language_settings["Return"]}: {self.user.iso_formatted_utc_datetime}'
+            template_dict["top_left_3"] = f"{self.language_settings['Return']}: {self.user.iso_formatted_utc_datetime}"
+            template_dict["top_left_4"] = f"{self.language_settings['latitude']}: {self.user.lat}"
+            template_dict["top_left_5"] = f"{self.language_settings['longitude']}: {self.user.lng}"
+
+        elif self.chart_type in ["Natal", "ExternalNatal"]:
+            latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings['north'], self.language_settings['south'])
+            longitude_string = convert_longitude_coordinate_to_string(self.geolon, self.language_settings['east'], self.language_settings['west'])
+
+            template_dict["top_left_0"] = f'{self.language_settings["info"]}:'
+            template_dict["top_left_1"] = format_location_string(self.location)
+            template_dict["top_left_3"] = f"{self.language_settings['latitude']}: {latitude_string}"
+            template_dict["top_left_4"] = f"{self.language_settings['longitude']}: {longitude_string}"
+            template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings.get(self.chart_type, self.chart_type)}"
+        # <-- Top left section
 
         # Set paper colors
         template_dict["paper_color_0"] = self.chart_colors_settings["paper_0"]
