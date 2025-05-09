@@ -36,7 +36,8 @@ from kerykeion.charts.charts_utils import (
     draw_house_grid,
     draw_planet_grid,
     format_location_string,
-    format_datetime_with_timezone
+    format_datetime_with_timezone,
+    calculate_element_points
 )
 from kerykeion.charts.draw_planets import draw_planets # type: ignore
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg
@@ -324,14 +325,21 @@ class KerykeionChartSVG:
         else:
             self.first_circle_radius, self.second_circle_radius, self.third_circle_radius = 0, 36, 120
 
-        # Initialize element points
-        self.fire = 0.0
-        self.earth = 0.0
-        self.air = 0.0
-        self.water = 0.0
+        # Initialize element points -->
+        celestial_points_names = [body["name"].lower() for body in self.available_planets_setting]
 
-        # Calculate element points from planets
-        self._calculate_elements_points_from_planets()
+        element_totals = calculate_element_points(
+            self.available_planets_setting,
+            celestial_points_names,
+            self.user,
+            self._PLANET_IN_ZODIAC_EXTRA_POINTS
+        )
+
+        self.fire = element_totals["fire"]
+        self.earth = element_totals["earth"]
+        self.air = element_totals["air"]
+        self.water = element_totals["water"]
+        # <-- Initialize element points
 
         # Set up theme
         if theme not in get_args(KerykeionChartTheme) and theme is not None:
@@ -404,65 +412,6 @@ class KerykeionChartSVG:
             )
 
         return output
-
-    def _calculate_elements_points_from_planets(self):
-        """
-        Compute elemental point totals based on active planetary positions.
-
-        Iterates over each active planet to determine its zodiac element and adds extra points
-        if the planet is in a related sign. Updates self.fire, self.earth, self.air, and self.water.
-
-        Returns:
-            None
-        """
-
-        ZODIAC = (
-            {"name": "Ari", "element": "fire"},
-            {"name": "Tau", "element": "earth"},
-            {"name": "Gem", "element": "air"},
-            {"name": "Can", "element": "water"},
-            {"name": "Leo", "element": "fire"},
-            {"name": "Vir", "element": "earth"},
-            {"name": "Lib", "element": "air"},
-            {"name": "Sco", "element": "water"},
-            {"name": "Sag", "element": "fire"},
-            {"name": "Cap", "element": "earth"},
-            {"name": "Aqu", "element": "air"},
-            {"name": "Pis", "element": "water"},
-        )
-
-        # Available bodies
-        available_celestial_points_names = []
-        for body in self.available_planets_setting:
-            available_celestial_points_names.append(body["name"].lower())
-
-        # Make list of the points sign
-        points_sign = []
-        for planet in available_celestial_points_names:
-            points_sign.append(self.user.get(planet).sign_num)
-
-        for i in range(len(self.available_planets_setting)):
-            # element: get extra points if planet is in own zodiac sign.
-            related_zodiac_signs = self.available_planets_setting[i]["related_zodiac_signs"]
-            cz = points_sign[i]
-            extra_points = 0
-            if related_zodiac_signs != []:
-                for e in range(len(related_zodiac_signs)):
-                    if int(related_zodiac_signs[e]) == int(cz):
-                        extra_points = self._PLANET_IN_ZODIAC_EXTRA_POINTS
-
-            ele = ZODIAC[points_sign[i]]["element"]
-            if ele == "fire":
-                self.fire = self.fire + self.available_planets_setting[i]["element_points"] + extra_points
-
-            elif ele == "earth":
-                self.earth = self.earth + self.available_planets_setting[i]["element_points"] + extra_points
-
-            elif ele == "air":
-                self.air = self.air + self.available_planets_setting[i]["element_points"] + extra_points
-
-            elif ele == "water":
-                self.water = self.water + self.available_planets_setting[i]["element_points"] + extra_points
 
     def _draw_all_aspects_lines(self, r, ar):
         """
