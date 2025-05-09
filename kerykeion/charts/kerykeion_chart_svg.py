@@ -506,7 +506,7 @@ class KerykeionChartSVG:
                 elif self.chart_type == "Transit":
                     title = self.language_settings.get("transit_aspects", "Transit Aspects")
                 elif self.chart_type == "Return":
-                    title = self.language_settings.get("return_aspects", "Return Aspects")
+                    title = self.language_settings.get("return_aspects", "Natal to Return Aspects")
 
                 template_dict["makeAspectGrid"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings)
             else:
@@ -533,7 +533,7 @@ class KerykeionChartSVG:
         elif self.chart_type == "Composite":
             template_dict["stringTitle"] = f"{self.user.first_subject.name} {self.language_settings['and_word']} {self.user.second_subject.name}"
         elif self.chart_type == "Return":
-            template_dict["stringTitle"] = f"{self.language_settings['Return']} {self.user.iso_formatted_utc_datetime}"
+            template_dict["stringTitle"] = f"{self.user.name} {self.t_user.return_type} {self.language_settings['Return']}"
         # <-- Chart title
 
         # Top left section -->
@@ -573,12 +573,20 @@ class KerykeionChartSVG:
             template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings.get(self.chart_type, self.chart_type)}"
 
         elif self.chart_type == "Return":
-            template_dict["top_left_0"] = f'{self.language_settings["Return"]}:'
-            template_dict["top_left_1"] = f'{self.language_settings["Return"]}: {self.user.iso_formatted_utc_datetime}'
-            template_dict["top_left_2"] = format_datetime_with_timezone(self.user.iso_formatted_local_datetime)
-            template_dict["top_left_3"] = f"{self.language_settings['Return']}: {self.user.iso_formatted_utc_datetime}"
-            template_dict["top_left_4"] = f"{self.language_settings['latitude']}: {self.user.lat}"
-            template_dict["top_left_5"] = f"{self.language_settings['longitude']}: {self.user.lng}"
+            # Subject
+            latitude_string = convert_latitude_coordinate_to_string(self.user.lat, self.language_settings['north'], self.language_settings['south'])
+            longitude_string = convert_longitude_coordinate_to_string(self.user.lng, self.language_settings['east'], self.language_settings['west'])
+
+            # Return
+            return_latitude_string = convert_latitude_coordinate_to_string(self.t_user.lat, self.language_settings['north'], self.language_settings['south'])
+            return_longitude_string = convert_longitude_coordinate_to_string(self.t_user.lng, self.language_settings['east'], self.language_settings['west'])
+
+            template_dict["top_left_0"] = f"{self.language_settings['Return']}"
+            template_dict["top_left_1"] = f"{return_latitude_string} / {return_longitude_string}"
+            template_dict["top_left_2"] = format_datetime_with_timezone(self.t_user.iso_formatted_local_datetime)
+            template_dict["top_left_3"] = f"{self.user.name}"
+            template_dict["top_left_4"] = f"{latitude_string} / {longitude_string}"
+            template_dict["top_left_5"] = format_datetime_with_timezone(self.user.iso_formatted_local_datetime)
 
         elif self.chart_type in ["Natal", "ExternalNatal"]:
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings['north'], self.language_settings['south'])
@@ -970,11 +978,11 @@ if __name__ == "__main__":
 
     return_factory = PlanetaryReturnFactory(
         subject,
-        city="Liverpool",
-        nation="GB",
-        lng=-2.978,
-        lat=53.408,
-        tz_str="Europe/London",
+        city="Los Angeles",
+        nation="US",
+        lng=-118.2437,
+        lat=34.0522,
+        tz_str="America/Los_Angeles",
         altitude=0,
     )
     solar_return = return_factory.next_return_from_iso_formatted_time(
