@@ -563,6 +563,7 @@ class KerykeionChartSVG:
                 template_dict["makeAspectGrid"] = draw_transit_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list, 550, 450)
 
             template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(self.main_radius, self.main_radius - 160)
+
         else:
             template_dict["transitRing"] = ""
             template_dict["degreeRing"] = draw_degree_ring(self.main_radius, self.first_circle_radius, self.user.seventh_house.abs_pos, self.chart_colors_settings["paper_0"])
@@ -570,10 +571,9 @@ class KerykeionChartSVG:
             template_dict["second_circle"] = draw_second_circle(self.main_radius, self.chart_colors_settings["zodiac_radix_ring_1"], self.chart_colors_settings["paper_1"], self.chart_type, self.second_circle_radius)
             template_dict['third_circle'] = draw_third_circle(self.main_radius, self.chart_colors_settings["zodiac_radix_ring_0"], self.chart_colors_settings["paper_1"], self.chart_type, self.third_circle_radius)
             template_dict["makeAspectGrid"] = draw_aspect_grid(self.chart_colors_settings['paper_0'], self.available_planets_setting, self.aspects_list)
-
             template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - self.third_circle_radius)
 
-        # Set chart title
+        # Chart title -->
         if self.chart_type == "Synastry":
             template_dict["stringTitle"] = f"{self.user.name} {self.language_settings['and_word']} {self.t_user.name}"
         elif self.chart_type == "Transit":
@@ -584,46 +584,9 @@ class KerykeionChartSVG:
             template_dict["stringTitle"] = f"{self.user.first_subject.name} {self.language_settings['and_word']} {self.user.second_subject.name}"
         elif self.chart_type == "Return":
             template_dict["stringTitle"] = f"{self.language_settings['Return']} {self.user.iso_formatted_utc_datetime}"
+        # <-- Chart title
 
-        # Zodiac Type Info
-        if self.user.zodiac_type == 'Tropic':
-            zodiac_info = f"{self.language_settings.get('zodiac', 'Zodiac')}: {self.language_settings.get('tropical', 'Tropical')}"
-        else:
-            mode_const = "SIDM_" + self.user.sidereal_mode # type: ignore
-            mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
-            zodiac_info = f"{self.language_settings.get('ayanamsa', 'Ayanamsa')}: {mode_name}"
-
-        template_dict["bottom_left_0"] = f"{self.language_settings.get('houses_system_' + self.user.houses_system_identifier, self.user.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
-        template_dict["bottom_left_1"] = zodiac_info
-
-        if self.chart_type in ["Natal", "ExternalNatal", "Synastry"]:
-            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")} {self.language_settings.get("day", "Day").lower()}: {self.user.lunar_phase.get("moon_phase", "")}'
-            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.user.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.user.lunar_phase.moon_phase_name)}'
-            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.user.perspective_type.lower().replace(" ", "_"), self.user.perspective_type)}'
-        elif self.chart_type == "Transit":
-            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.t_user.lunar_phase.get("moon_phase", "")}'
-            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
-            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.t_user.perspective_type.lower().replace(" ", "_"), self.t_user.perspective_type)}'
-        elif self.chart_type == "Composite":
-            template_dict["bottom_left_2"] = f'{self.user.first_subject.perspective_type}'
-            template_dict["bottom_left_3"] = f'{self.language_settings.get("composite_chart", "Composite Chart")} - {self.language_settings.get("midpoints", "Midpoints")}'
-            template_dict["bottom_left_4"] = ""
-        elif self.chart_type == "Return":
-            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.get("moon_phase", "")}'
-            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.moon_phase_name}'
-            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.user.perspective_type.lower().replace(" ", "_"), self.user.perspective_type)}'
-
-        # Draw moon phase
-        moon_phase_dict = calculate_moon_phase_chart_params(
-            self.user.lunar_phase["degrees_between_s_m"],
-            self.geolat
-        )
-
-        template_dict["lunar_phase_rotate"] = moon_phase_dict["lunar_phase_rotate"]
-        template_dict["lunar_phase_circle_center_x"] = moon_phase_dict["circle_center_x"]
-        template_dict["lunar_phase_circle_radius"] = moon_phase_dict["circle_radius"]
-
-        # Top left section --->
+        # Top left section -->
         if self.chart_type == "Composite":
             latitude_string = convert_latitude_coordinate_to_string(self.user.second_subject.lat, self.language_settings['north_letter'], self.language_settings['south_letter'])
             longitude_string = convert_longitude_coordinate_to_string(self.user.second_subject.lng, self.language_settings['east_letter'], self.language_settings['west_letter'])
@@ -668,6 +631,54 @@ class KerykeionChartSVG:
             template_dict["top_left_4"] = f"{self.language_settings['longitude']}: {longitude_string}"
             template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings.get(self.chart_type, self.chart_type)}"
         # <-- Top left section
+
+        # Bottom left section -->
+        if self.user.zodiac_type == 'Tropic':
+            zodiac_info = f"{self.language_settings.get('zodiac', 'Zodiac')}: {self.language_settings.get('tropical', 'Tropical')}"
+        else:
+            mode_const = "SIDM_" + self.user.sidereal_mode # type: ignore
+            mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
+            zodiac_info = f"{self.language_settings.get('ayanamsa', 'Ayanamsa')}: {mode_name}"
+
+        template_dict["bottom_left_0"] = f"{self.language_settings.get('houses_system_' + self.user.houses_system_identifier, self.user.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
+        template_dict["bottom_left_1"] = zodiac_info
+
+        if self.chart_type == "Natal" or self.chart_type == "ExternalNatal":
+            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")} {self.language_settings.get("day", "Day").lower()}: {self.user.lunar_phase.get("moon_phase", "")}'
+            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.user.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.user.lunar_phase.moon_phase_name)}'
+            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.user.perspective_type.lower().replace(" ", "_"), self.user.perspective_type)}'
+
+        elif self.chart_type == "Synastry":
+            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")} {self.language_settings.get("day", "Day").lower()}: {self.user.lunar_phase.get("moon_phase", "")}'
+            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.user.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.user.lunar_phase.moon_phase_name)}'
+            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.user.perspective_type.lower().replace(" ", "_"), self.user.perspective_type)}'
+
+        elif self.chart_type == "Transit":
+            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.t_user.lunar_phase.get("moon_phase", "")}'
+            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
+            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.t_user.perspective_type.lower().replace(" ", "_"), self.t_user.perspective_type)}'
+
+        elif self.chart_type == "Composite":
+            template_dict["bottom_left_2"] = f'{self.user.first_subject.perspective_type}'
+            template_dict["bottom_left_3"] = f'{self.language_settings.get("composite_chart", "Composite Chart")} - {self.language_settings.get("midpoints", "Midpoints")}'
+            template_dict["bottom_left_4"] = ""
+
+        elif self.chart_type == "Return":
+            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.get("moon_phase", "")}'
+            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.user.lunar_phase.moon_phase_name}'
+            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.user.perspective_type.lower().replace(" ", "_"), self.user.perspective_type)}'
+        # <-- Bottom left section
+
+        # Moon phase section -->
+        moon_phase_dict = calculate_moon_phase_chart_params(
+            self.user.lunar_phase["degrees_between_s_m"],
+            self.geolat
+        )
+
+        template_dict["lunar_phase_rotate"] = moon_phase_dict["lunar_phase_rotate"]
+        template_dict["lunar_phase_circle_center_x"] = moon_phase_dict["circle_center_x"]
+        template_dict["lunar_phase_circle_radius"] = moon_phase_dict["circle_radius"]
+        # <-- Moon phase section
 
         # Set paper colors
         template_dict["paper_color_0"] = self.chart_colors_settings["paper_0"]
