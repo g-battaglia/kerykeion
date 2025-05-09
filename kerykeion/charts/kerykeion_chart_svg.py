@@ -1006,7 +1006,7 @@ if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
     from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
-    setup_logging(level="debug")
+    setup_logging(level="info")
 
     subject = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 

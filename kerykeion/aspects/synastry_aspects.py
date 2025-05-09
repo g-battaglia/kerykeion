@@ -11,7 +11,7 @@ from functools import cached_property
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
-from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
 from kerykeion.kr_types.kr_literals import AxialCusps, Planet
@@ -25,8 +25,8 @@ class SynastryAspects(NatalAspects):
 
     def __init__(
         self,
-        kr_object_one: Union[AstrologicalSubject, AstrologicalSubjectModel],
-        kr_object_two: Union[AstrologicalSubject, AstrologicalSubjectModel],
+        kr_object_one: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        kr_object_two: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
         active_points: list[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
