@@ -1040,3 +1040,30 @@ def draw_transit_aspect_grid(
                     svg_output += f'<use  x="{x_aspect - box_size + 1}" y="{y_aspect + 1}" xlink:href="#orb{aspect["aspect_degrees"]}" />'
 
     return svg_output
+
+
+def format_location_string(location: str, max_length: int = 35) -> str:
+    """
+    Format a location string to ensure it fits within a specified maximum length.
+
+    If the location is longer than max_length, it attempts to shorten by using only
+    the first and last parts separated by commas. If still too long, it truncates
+    and adds ellipsis.
+
+    Args:
+        location: The original location string
+        max_length: Maximum allowed length for the output string (default: 35)
+
+    Returns:
+        Formatted location string that fits within max_length
+    """
+    if len(location) > max_length:
+        split_location = location.split(",")
+        if len(split_location) > 1:
+            shortened = split_location[0] + ", " + split_location[-1]
+            if len(shortened) > max_length:
+                return shortened[:max_length] + "..."
+            return shortened
+        else:
+            return location[:max_length] + "..."
+    return location
