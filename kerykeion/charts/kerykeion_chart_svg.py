@@ -371,7 +371,7 @@ class KerykeionChartSVG:
             dir_path (Path): Target directory for SVG output.
         """
         self.output_directory = dir_path
-        logging.info(f"Output direcotry set to: {self.output_directory}")
+        logging.info(f"Output directory set to: {self.output_directory}")
 
     def parse_json_settings(self, settings_file_or_dict: Union[Path, dict, KerykeionSettingsModel, None]) -> None:
         """
