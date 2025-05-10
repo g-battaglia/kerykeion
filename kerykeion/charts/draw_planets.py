@@ -1,4 +1,5 @@
 # type: ignore
+# TODO: Legacy original method extracted as function. The V2 is a heavy refactor of this code. If it's safe, delete this.
 
 from kerykeion.charts.charts_utils import degreeDiff, sliceToX, sliceToY, convert_decimal_to_degree_string
 from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointModel

@@ -57,7 +57,7 @@ from kerykeion.charts.charts_utils import (
     format_datetime_with_timezone,
     calculate_element_points,
 )
-from kerykeion.charts.draw_planets import draw_planets  # type: ignore
+from kerykeion.charts.draw_planets_v2 import draw_planets_v2 as draw_planets
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
 from pathlib import Path
