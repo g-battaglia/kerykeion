@@ -64,8 +64,12 @@ def draw_planets_v2(
     secondary_points_abs_positions = []
     secondary_points_rel_positions = []
     if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
-        secondary_points_abs_positions = [planet.abs_pos for planet in second_subject_available_kerykeion_celestial_points]
-        secondary_points_rel_positions = [planet.position for planet in second_subject_available_kerykeion_celestial_points]
+        secondary_points_abs_positions = [
+            planet.abs_pos for planet in second_subject_available_kerykeion_celestial_points
+        ]
+        secondary_points_rel_positions = [
+            planet.position for planet in second_subject_available_kerykeion_celestial_points
+        ]
 
     # -----------------------------------------------------------
     # 2. Create position lookup dictionary for main celestial points
@@ -110,7 +114,7 @@ def draw_planets_v2(
         planets_by_position[position_idx] = [point_idx, distance_to_prev, distance_to_next]
 
         label = available_planets_setting[point_idx]["label"]
-        logging.debug(f'{label}, distance_to_prev: {distance_to_prev}, distance_to_next: {distance_to_next}')
+        logging.debug(f"{label}, distance_to_prev: {distance_to_prev}, distance_to_next: {distance_to_next}")
 
         # Group points that are close to each other
         if distance_to_next < PLANET_GROUPING_THRESHOLD:
@@ -156,7 +160,7 @@ def draw_planets_v2(
         adjusted_offset = calculate_point_offset(
             main_subject_seventh_house_degree_ut,
             main_points_abs_positions[point_idx],
-            position_adjustments[position_idx]
+            position_adjustments[position_idx],
         )
 
         # Calculate true position without adjustment (used for connecting lines)
@@ -184,15 +188,19 @@ def draw_planets_v2(
         # Draw connecting lines for ExternalNatal chart type
         if chart_type == "ExternalNatal":
             output = draw_external_natal_lines(
-                output, radius, third_circle_radius, point_radius,
-                true_offset, adjusted_offset, available_planets_setting[point_idx]["color"]
+                output,
+                radius,
+                third_circle_radius,
+                point_radius,
+                true_offset,
+                adjusted_offset,
+                available_planets_setting[point_idx]["color"],
             )
 
         # Draw the celestial point SVG element
         point_details = available_kerykeion_celestial_points[point_idx]
         output += generate_point_svg(
-            point_details, point_x, point_y,
-            scale_factor, available_planets_setting[point_idx]["name"]
+            point_details, point_x, point_y, scale_factor, available_planets_setting[point_idx]["name"]
         )
 
     # -----------------------------------------------------------
@@ -200,18 +208,23 @@ def draw_planets_v2(
     # -----------------------------------------------------------
     if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
         output = draw_secondary_points(
-            output, radius, main_subject_first_house_degree_ut, main_subject_seventh_house_degree_ut,
-            secondary_points_abs_positions, secondary_points_rel_positions, available_planets_setting,
-            chart_type, TRANSIT_RING_EXCLUDE_POINTS_NAMES, adjusted_offset
+            output,
+            radius,
+            main_subject_first_house_degree_ut,
+            main_subject_seventh_house_degree_ut,
+            secondary_points_abs_positions,
+            secondary_points_rel_positions,
+            available_planets_setting,
+            chart_type,
+            TRANSIT_RING_EXCLUDE_POINTS_NAMES,
+            adjusted_offset,
         )
 
     return output
 
+
 def handle_two_point_group(
-    group: list,
-    planets_by_position: list,
-    position_adjustments: list,
-    threshold: float
+    group: list, planets_by_position: list, position_adjustments: list, threshold: float
 ) -> None:
     """
     Handle positioning for a group of two celestial points that are close to each other.
@@ -258,11 +271,8 @@ def handle_two_point_group(
         position_adjustments[next_to_b] = -(group[1][2] - threshold * 2.5)
         position_adjustments[group[1][0]] = +threshold * 1.2
 
-def handle_multi_point_group(
-    group: list,
-    position_adjustments: list,
-    threshold: float
-) -> None:
+
+def handle_multi_point_group(group: list, position_adjustments: list, threshold: float) -> None:
     """
     Handle positioning for a group of three or more celestial points that are close to each other.
 
@@ -302,9 +312,8 @@ def handle_multi_point_group(
 
         # Position each subsequent point relative to the previous one
         for i in range(group_size - 1):
-            position_adjustments[group[i + 1][0]] = (
-                1.2 * threshold + position_adjustments[group[i][0]] - group[i][2]
-            )
+            position_adjustments[group[i + 1][0]] = 1.2 * threshold + position_adjustments[group[i][0]] - group[i][2]
+
 
 def determine_point_radius(
     point_idx: int,
@@ -356,10 +365,9 @@ def determine_point_radius(
         else:
             return 94 - bmin
 
+
 def calculate_point_offset(
-    seventh_house_degree: Union[int, float],
-    point_degree: Union[int, float],
-    adjustment: Union[int, float]
+    seventh_house_degree: Union[int, float], point_degree: Union[int, float], adjustment: Union[int, float]
 ) -> float:
     """
     Calculate the offset position of a celestial point on the chart.
@@ -374,6 +382,7 @@ def calculate_point_offset(
     """
     return (int(seventh_house_degree) / -1) + int(point_degree + adjustment)
 
+
 def draw_external_natal_lines(
     output: str,
     radius: Union[int, float],
@@ -381,7 +390,7 @@ def draw_external_natal_lines(
     point_radius: Union[int, float],
     true_offset: Union[int, float],
     adjusted_offset: Union[int, float],
-    color: str
+    color: str,
 ) -> str:
     """
     Draw connecting lines for the ExternalNatal chart type.
@@ -417,13 +426,8 @@ def draw_external_natal_lines(
 
     return output
 
-def generate_point_svg(
-    point_details: KerykeionPointModel,
-    x: float,
-    y: float,
-    scale: float,
-    point_name: str
-) -> str:
+
+def generate_point_svg(point_details: KerykeionPointModel, x: float, y: float, scale: float, point_name: str) -> str:
     """
     Generate the SVG element for a celestial point.
 
@@ -443,6 +447,7 @@ def generate_point_svg(
     svg += "</g>"
     return svg
 
+
 def draw_secondary_points(
     output: str,
     radius: Union[int, float],
@@ -453,7 +458,7 @@ def draw_secondary_points(
     points_settings: list[KerykeionSettingsCelestialPointModel],
     chart_type: str,
     exclude_points: list[str],
-    main_offset: float
+    main_offset: float,
 ) -> str:
     """
     Draw secondary celestial points (transit/synastry/return) on the chart.
