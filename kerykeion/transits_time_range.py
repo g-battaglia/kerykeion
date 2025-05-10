@@ -4,7 +4,9 @@ from kerykeion import AstrologicalSubject, SynastryAspects
 from kerykeion.ephemeris_data import EphemerisDataFactory
 from kerykeion.kr_types.kr_literals import AxialCusps, Planet
 from kerykeion.kr_types.kr_models import ActiveAspect, TransitMomentModel, TransitsTimeRangeModel
+from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
+from pathlib import Path
 
 
 class TransitsTimeRangeFactory:
@@ -20,7 +22,7 @@ class TransitsTimeRangeFactory:
         ephemeris_data_points: List of ephemeris data points representing planetary positions at different times.
         active_points: List of celestial points to consider when calculating aspects.
         active_aspects: List of aspect types to consider when analyzing planetary relationships.
-        settings_file: Path to custom settings file for aspect calculations (optional).
+        settings_file: Path to the settings file or a KerykeionSettingsModel object.
     """
 
     def __init__(
@@ -29,7 +31,7 @@ class TransitsTimeRangeFactory:
         ephemeris_data_points: List[AstrologicalSubject],
         active_points: List[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
-        settings_file: Optional[str] = None
+        settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
     ):
         """
         Initialize the TransitMomentsFactory with the necessary data.
@@ -39,7 +41,7 @@ class TransitsTimeRangeFactory:
             ephemeris_data_points: List of ephemeris data points representing planetary positions at different times.
             active_points: List of celestial points to consider when calculating aspects.
             active_aspects: List of aspect types to consider when analyzing planetary relationships.
-            settings_file: Path to custom settings file for aspect calculations (optional).
+            settings_file: Path to the settings file or a KerykeionSettingsModel object.
         """
         self.natal_chart = natal_chart
         self.ephemeris_data_points = ephemeris_data_points
