@@ -271,7 +271,7 @@ class KerykeionChartSVG:
             # --- NATAL / EXTERNAL NATAL CHART SETUP ---
 
             # Validate Subject
-            if not isinstance(self.first_obj, AstrologicalSubjectModel) or isinstance(self.first_obj, AstrologicalSubject):
+            if not isinstance(self.first_obj, AstrologicalSubjectModel) and not isinstance(self.first_obj, AstrologicalSubject):
                 raise KerykeionException("First object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
 
             # Calculate aspects
@@ -332,9 +332,9 @@ class KerykeionChartSVG:
             # Validate Subjects
             if not second_obj:
                 raise KerykeionException("Second object is required for Transit charts.")
-            if not isinstance(self.first_obj, AstrologicalSubjectModel) or isinstance(self.first_obj, AstrologicalSubject):
+            if not isinstance(self.first_obj, AstrologicalSubjectModel) and not isinstance(self.first_obj, AstrologicalSubject):
                 raise KerykeionException("First object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
-            if not isinstance(self.second_obj, AstrologicalSubjectModel) or isinstance(self.second_obj, AstrologicalSubject):
+            if not isinstance(second_obj, AstrologicalSubjectModel) and not isinstance(second_obj, AstrologicalSubject):
                 raise KerykeionException("Second object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
 
             # Secondary subject setup
@@ -379,9 +379,9 @@ class KerykeionChartSVG:
             # Validate Subjects
             if not second_obj:
                 raise KerykeionException("Second object is required for Synastry charts.")
-            if not isinstance(self.first_obj, AstrologicalSubjectModel) or isinstance(self.first_obj, AstrologicalSubject):
+            if not isinstance(self.first_obj, AstrologicalSubjectModel) and not isinstance(self.first_obj, AstrologicalSubject):
                 raise KerykeionException("First object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
-            if not isinstance(self.second_obj, AstrologicalSubjectModel) or isinstance(self.second_obj, AstrologicalSubject):
+            if not isinstance(second_obj, AstrologicalSubjectModel) and not isinstance(second_obj, AstrologicalSubject):
                 raise KerykeionException("Second object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
 
             # Secondary subject setup
@@ -422,9 +422,9 @@ class KerykeionChartSVG:
             # Validate Subjects
             if not second_obj:
                 raise KerykeionException("Second object is required for Return charts.")
-            if not isinstance(self.first_obj, AstrologicalSubjectModel) or isinstance(self.first_obj, AstrologicalSubject):
+            if not isinstance(self.first_obj, AstrologicalSubjectModel) and not isinstance(self.first_obj, AstrologicalSubject):
                 raise KerykeionException("First object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
-            if not isinstance(self.second_obj, PlanetReturnModel):
+            if not isinstance(second_obj, PlanetReturnModel):
                 raise KerykeionException("Second object must be a PlanetReturnModel instance.")
 
             # Secondary subject setup
