@@ -307,11 +307,7 @@ class KerykeionChartSVG:
                 raise KerykeionException("First object must be a CompositeSubjectModel instance.")
 
             # Calculate aspects
-            self.aspects_list = NatalAspects(
-                self.user,
-                new_settings_file=self.new_settings_file,
-                active_points=active_points
-            ).relevant_aspects
+            self.aspects_list = NatalAspects(self.user, new_settings_file=self.new_settings_file, active_points=active_points).relevant_aspects
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
@@ -848,9 +844,7 @@ class KerykeionChartSVG:
                 mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
                 zodiac_info = f"{self.language_settings.get('ayanamsa', 'Ayanamsa')}: {mode_name}"
 
-            template_dict["bottom_left_0"] = (
-                f"{self.language_settings.get('houses_system_' + self.user.houses_system_identifier, self.user.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
-            )
+            template_dict["bottom_left_0"] = f"{self.language_settings.get('houses_system_' + self.user.houses_system_identifier, self.user.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
             template_dict["bottom_left_1"] = zodiac_info
             template_dict["bottom_left_2"] = f"{self.user.first_subject.perspective_type}"
             template_dict["bottom_left_3"] = f'{self.language_settings.get("composite_chart", "Composite Chart")} - {self.language_settings.get("midpoints", "Midpoints")}'
@@ -971,9 +965,7 @@ class KerykeionChartSVG:
                 mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
                 zodiac_info = f"{self.language_settings.get('ayanamsa', 'Ayanamsa')}: {mode_name}"
 
-            template_dict["bottom_left_0"] = (
-                f"{self.language_settings.get('houses_system_' + self.user.houses_system_identifier, self.user.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
-            )
+            template_dict["bottom_left_0"] = f"{self.language_settings.get('houses_system_' + self.user.houses_system_identifier, self.user.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
             template_dict["bottom_left_1"] = zodiac_info
             template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.t_user.lunar_phase.get("moon_phase", "")}'
             template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.t_user.lunar_phase.moon_phase_name}'
@@ -1094,16 +1086,10 @@ class KerykeionChartSVG:
                 mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
                 zodiac_info = f"{self.language_settings.get('ayanamsa', 'Ayanamsa')}: {mode_name}"
 
-            template_dict["bottom_left_0"] = (
-                f"{self.language_settings.get('houses_system_' + self.user.houses_system_identifier, self.user.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
-            )
+            template_dict["bottom_left_0"] = f"{self.language_settings.get('houses_system_' + self.user.houses_system_identifier, self.user.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
             template_dict["bottom_left_1"] = zodiac_info
-            template_dict["bottom_left_2"] = (
-                f'{self.language_settings.get("lunar_phase", "Lunar Phase")} {self.language_settings.get("day", "Day").lower()}: {self.user.lunar_phase.get("moon_phase", "")}'
-            )
-            template_dict["bottom_left_3"] = (
-                f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.user.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.user.lunar_phase.moon_phase_name)}'
-            )
+            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")} {self.language_settings.get("day", "Day").lower()}: {self.user.lunar_phase.get("moon_phase", "")}'
+            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.user.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.user.lunar_phase.moon_phase_name)}'
             template_dict["bottom_left_4"] = f'{self.language_settings.get(self.user.perspective_type.lower().replace(" ", "_"), self.user.perspective_type)}'
 
             # Houses and planet drawing
