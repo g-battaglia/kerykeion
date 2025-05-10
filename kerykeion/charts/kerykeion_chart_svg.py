@@ -149,7 +149,7 @@ class KerykeionChartSVG:
     _DEFAULT_HEIGHT = 550
     _DEFAULT_FULL_WIDTH = 1200
     _DEFAULT_NATAL_WIDTH = 820
-    _DEFAULT_FULL_WIDTH_WITH_TABLE = 960
+    _DEFAULT_FULL_WIDTH_WITH_TABLE = 1200
     _PLANET_IN_ZODIAC_EXTRA_POINTS = 10
 
     # Set at init
@@ -225,43 +225,53 @@ class KerykeionChartSVG:
             active_aspects (List[ActiveAspect], optional):
                 Aspects to calculate, each defined by name and orb.
         """
+        # --------------------
+        # COMMON INITIALIZATION
+        # --------------------
         home_directory = Path.home()
         self.new_settings_file = new_settings_file
         self.chart_language = chart_language
         self.active_points = active_points
         self.active_aspects = active_aspects
+        self.chart_type = chart_type
+        self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
 
+        # Set output directory
         if new_output_directory:
             self.output_directory = Path(new_output_directory)
         else:
             self.output_directory = home_directory
 
+        # Load settings
         self.parse_json_settings(new_settings_file)
-        self.chart_type = chart_type
 
-        # Kerykeion instance
+        # Primary subject
         self.user = first_obj
 
+        # Default radius for all charts
+        self.main_radius = 240
+
+        # Configure available planets
         self.available_planets_setting = []
         for body in self.planets_settings:
-            if body["name"] not in active_points:
-                continue
-            else:
+            if body["name"] in active_points:
                 body["is_active"] = True
+                self.available_planets_setting.append(body)
 
-            self.available_planets_setting.append(body)
-
-        # Available bodies
-        available_celestial_points_names = []
-        for body in self.available_planets_setting:
-            available_celestial_points_names.append(body["name"].lower())
-
-        self.available_kerykeion_celestial_points: list[KerykeionPointModel] = []
+        # Set available celestial points
+        available_celestial_points_names = [body["name"].lower() for body in self.available_planets_setting]
+        self.available_kerykeion_celestial_points = []
         for body in available_celestial_points_names:
             self.available_kerykeion_celestial_points.append(self.user.get(body))
 
-        # Makes the sign number list.
-        if self.chart_type == "Natal" or self.chart_type == "ExternalNatal":
+        # ------------------------
+        # CHART TYPE SPECIFIC SETUP
+        # ------------------------
+
+        if self.chart_type in ["Natal", "ExternalNatal"]:
+            # --- NATAL / EXTERNAL NATAL CHART SETUP ---
+
+            # Calculate aspects
             natal_aspects_instance = NatalAspects(
                 self.user,
                 new_settings_file=self.new_settings_file,
@@ -270,92 +280,180 @@ class KerykeionChartSVG:
             )
             self.aspects_list = natal_aspects_instance.relevant_aspects
 
-        elif self.chart_type == "Transit" or self.chart_type == "Synastry" or self.chart_type == "Return":
-            if not second_obj:
-                raise KerykeionException("Second object is required for Transit or Synastry charts.")
-
-            # Kerykeion instance
-            self.t_user = second_obj
-
-            # Aspects
-            if self.chart_type == "Transit":
-                synastry_aspects_instance = SynastryAspects(
-                    self.t_user,
-                    self.user,
-                    new_settings_file=self.new_settings_file,
-                    active_points=active_points,
-                    active_aspects=active_aspects,
-                )
-
-            else:
-                synastry_aspects_instance = SynastryAspects(
-                    self.user,
-                    self.t_user,
-                    new_settings_file=self.new_settings_file,
-                    active_points=active_points,
-                    active_aspects=active_aspects,
-                )
-
-            self.aspects_list = synastry_aspects_instance.relevant_aspects
-
-            self.t_available_kerykeion_celestial_points = []
-            for body in available_celestial_points_names:
-                self.t_available_kerykeion_celestial_points.append(self.t_user.get(body))
-
-        elif self.chart_type == "Composite":
-            if not isinstance(first_obj, CompositeSubjectModel):
-                raise KerykeionException("First object must be a CompositeSubjectModel instance.")
-
-            self.aspects_list = NatalAspects(self.user, new_settings_file=self.new_settings_file, active_points=active_points).relevant_aspects
-
-        # Double chart aspect grid type
-        self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
-
-        # screen size
-        self.height = self._DEFAULT_HEIGHT
-        if self.chart_type == "Synastry" or self.chart_type == "Transit" or self.chart_type == "Return":
-            self.width = self._DEFAULT_FULL_WIDTH
-        elif self.double_chart_aspect_grid_type == "table" and self.chart_type == "Transit":
-            self.width = self._DEFAULT_FULL_WIDTH_WITH_TABLE
-        else:
+            # Screen size
+            self.height = self._DEFAULT_HEIGHT
             self.width = self._DEFAULT_NATAL_WIDTH
 
-        if self.chart_type in ["Natal", "ExternalNatal", "Synastry", "Return"]:
+            # Location and coordinates
             self.location = self.user.city
             self.geolat = self.user.lat
             self.geolon = self.user.lng
 
+            # Circle radii
+            if self.chart_type == "ExternalNatal":
+                self.first_circle_radius = 56
+                self.second_circle_radius = 92
+                self.third_circle_radius = 112
+            else:
+                self.first_circle_radius = 0
+                self.second_circle_radius = 36
+                self.third_circle_radius = 120
+
         elif self.chart_type == "Composite":
+            # --- COMPOSITE CHART SETUP ---
+
+            # Validate input
+            if not isinstance(first_obj, CompositeSubjectModel):
+                raise KerykeionException("First object must be a CompositeSubjectModel instance.")
+
+            # Calculate aspects
+            self.aspects_list = NatalAspects(
+                self.user,
+                new_settings_file=self.new_settings_file,
+                active_points=active_points
+            ).relevant_aspects
+
+            # Screen size
+            self.height = self._DEFAULT_HEIGHT
+            self.width = self._DEFAULT_NATAL_WIDTH
+
+            # Location and coordinates (average of both subjects)
             self.location = ""
             self.geolat = (self.user.first_subject.lat + self.user.second_subject.lat) / 2
             self.geolon = (self.user.first_subject.lng + self.user.second_subject.lng) / 2
 
-        elif self.chart_type in ["Transit"]:
+            # Circle radii
+            self.first_circle_radius = 0
+            self.second_circle_radius = 36
+            self.third_circle_radius = 120
+
+        elif self.chart_type == "Transit":
+            # --- TRANSIT CHART SETUP ---
+
+            # Validate second object exists
+            if not second_obj:
+                raise KerykeionException("Second object is required for Transit charts.")
+
+            # Secondary subject setup
+            self.t_user = second_obj
+
+            # Calculate aspects (transit to natal)
+            synastry_aspects_instance = SynastryAspects(
+                self.t_user,
+                self.user,
+                new_settings_file=self.new_settings_file,
+                active_points=active_points,
+                active_aspects=active_aspects,
+            )
+            self.aspects_list = synastry_aspects_instance.relevant_aspects
+
+            # Secondary subject available points
+            self.t_available_kerykeion_celestial_points = []
+            for body in available_celestial_points_names:
+                self.t_available_kerykeion_celestial_points.append(self.t_user.get(body))
+
+            # Screen size
+            self.height = self._DEFAULT_HEIGHT
+            if self.double_chart_aspect_grid_type == "table":
+                self.width = self._DEFAULT_FULL_WIDTH_WITH_TABLE
+            else:
+                self.width = self._DEFAULT_FULL_WIDTH
+
+            # Location and coordinates (from transit subject)
             self.location = self.t_user.city
             self.geolat = self.t_user.lat
             self.geolon = self.t_user.lng
             self.t_name = self.language_settings["transit_name"]
 
-        # Default radius for the chart
-        self.main_radius = 240
+            # Circle radii
+            self.first_circle_radius = 0
+            self.second_circle_radius = 36
+            self.third_circle_radius = 120
 
-        # Set circle radii based on chart type
-        if self.chart_type == "ExternalNatal":
-            self.first_circle_radius, self.second_circle_radius, self.third_circle_radius = (
-                56,
-                92,
-                112,
-            )
-        else:
-            self.first_circle_radius, self.second_circle_radius, self.third_circle_radius = (
-                0,
-                36,
-                120,
-            )
+        elif self.chart_type == "Synastry":
+            # --- SYNASTRY CHART SETUP ---
 
-        # Initialize element points -->
+            # Validate second object exists
+            if not second_obj:
+                raise KerykeionException("Second object is required for Synastry charts.")
+
+            # Secondary subject setup
+            self.t_user = second_obj
+
+            # Calculate aspects (natal to partner)
+            synastry_aspects_instance = SynastryAspects(
+                self.user,
+                self.t_user,
+                new_settings_file=self.new_settings_file,
+                active_points=active_points,
+                active_aspects=active_aspects,
+            )
+            self.aspects_list = synastry_aspects_instance.relevant_aspects
+
+            # Secondary subject available points
+            self.t_available_kerykeion_celestial_points = []
+            for body in available_celestial_points_names:
+                self.t_available_kerykeion_celestial_points.append(self.t_user.get(body))
+
+            # Screen size
+            self.height = self._DEFAULT_HEIGHT
+            self.width = self._DEFAULT_FULL_WIDTH
+
+            # Location and coordinates (from primary subject)
+            self.location = self.user.city
+            self.geolat = self.user.lat
+            self.geolon = self.user.lng
+
+            # Circle radii
+            self.first_circle_radius = 0
+            self.second_circle_radius = 36
+            self.third_circle_radius = 120
+
+        elif self.chart_type == "Return":
+            # --- RETURN CHART SETUP ---
+
+            # Validate second object exists
+            if not second_obj:
+                raise KerykeionException("Second object is required for Return charts.")
+
+            # Secondary subject setup
+            self.t_user = second_obj
+
+            # Calculate aspects (natal to return)
+            synastry_aspects_instance = SynastryAspects(
+                self.user,
+                self.t_user,
+                new_settings_file=self.new_settings_file,
+                active_points=active_points,
+                active_aspects=active_aspects,
+            )
+            self.aspects_list = synastry_aspects_instance.relevant_aspects
+
+            # Secondary subject available points
+            self.t_available_kerykeion_celestial_points = []
+            for body in available_celestial_points_names:
+                self.t_available_kerykeion_celestial_points.append(self.t_user.get(body))
+
+            # Screen size
+            self.height = self._DEFAULT_HEIGHT
+            self.width = self._DEFAULT_FULL_WIDTH
+
+            # Location and coordinates (from natal subject)
+            self.location = self.user.city
+            self.geolat = self.user.lat
+            self.geolon = self.user.lng
+
+            # Circle radii
+            self.first_circle_radius = 0
+            self.second_circle_radius = 36
+            self.third_circle_radius = 120
+
+        # --------------------
+        # FINAL COMMON SETUP
+        # --------------------
+
+        # Calculate element points
         celestial_points_names = [body["name"].lower() for body in self.available_planets_setting]
-
         element_totals = calculate_element_points(
             self.available_planets_setting,
             celestial_points_names,
@@ -367,7 +465,6 @@ class KerykeionChartSVG:
         self.earth = element_totals["earth"]
         self.air = element_totals["air"]
         self.water = element_totals["water"]
-        # <-- Initialize element points
 
         # Set up theme
         if theme not in get_args(KerykeionChartTheme) and theme is not None:
