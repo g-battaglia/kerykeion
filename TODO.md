@@ -13,12 +13,12 @@ Legend:
 - [ ] Finish the new examples to be added to the documentation
 - [>] Create a complete documentation (Vitepress) with all the examples: https://www.kerykeion.net/docs//birth-chart
 
-- [ ] Fix Settings in a way to accept a dictionary with the settings and not just a JSON file and write docs.
 - [>] Create new AstrologicalSubject argument for House System mode.
   - [ ] Implement unit tests for the House System mode.
   - [ ] Implement Gauquelin Sector as House System mode (G).
-- [ ] Create new AstrologicalSubject argument for Position Mode (Geocentric, Heliocentric, Topocentric, etc).
+- [x] Create new AstrologicalSubject argument for Position Mode (Geocentric, Heliocentric, Topocentric, etc).
 - [ ] Implement week day name.
+
 
 ## V5
 
@@ -32,3 +32,18 @@ Legend:
 - [ ] New utility function to get all active planets, so we can remove aspect/planet list and use just the AstrologicalSubjectModel structure.
 
 - [ ] New way of setting the language, with an object representing the labels and the texts.
+
+
+## Solar Return
+
+TODO
+- [ ] Tabella pianeti di rivoluzione nelle case natali
+- [ ] Case di rivoluzione nelle case natali
+- [ ] Possibilità di disattivare pianeti di transito
+- [ ] Single Wheel Return 
+- [ ] Rename:
+      Domificazione: Placido  
+      Zodiaco: Tropicale  
+      Fase Lunare: Primo Quarto  
+      Lunazione: Giorno 9  
+      Geocentrico Apparente
