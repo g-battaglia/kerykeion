@@ -18,6 +18,7 @@ Legend:
   - [ ] Implement Gauquelin Sector as House System mode (G).
 - [x] Create new AstrologicalSubject argument for Position Mode (Geocentric, Heliocentric, Topocentric, etc).
 - [ ] Implement week day name.
+- [ ] Implement Speed and Direction for the planets.
 
 
 ## V5
