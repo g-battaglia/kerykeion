@@ -155,7 +155,7 @@ class KerykeionChartSVG:
     _PLANET_IN_ZODIAC_EXTRA_POINTS = 10
 
     # Set at init
-    first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel]
+    first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
     second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, PlanetReturnModel, None]
     chart_type: ChartType
     new_output_directory: Union[Path, None]
@@ -460,6 +460,41 @@ class KerykeionChartSVG:
             self.first_circle_radius = 0
             self.second_circle_radius = 36
             self.third_circle_radius = 120
+
+        elif self.chart_type == "SingleWheelReturn":
+            # --- NATAL / EXTERNAL NATAL CHART SETUP ---
+
+            # Validate Subject
+            if not isinstance(self.first_obj, PlanetReturnModel):
+                raise KerykeionException("First object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
+
+            # Calculate aspects
+            natal_aspects_instance = NatalAspects(
+                self.first_obj,
+                new_settings_file=self.new_settings_file,
+                active_points=active_points,
+                active_aspects=active_aspects,
+            )
+            self.aspects_list = natal_aspects_instance.relevant_aspects
+
+            # Screen size
+            self.height = self._DEFAULT_HEIGHT
+            self.width = self._DEFAULT_NATAL_WIDTH
+
+            # Location and coordinates
+            self.location = self.first_obj.city
+            self.geolat = self.first_obj.lat
+            self.geolon = self.first_obj.lng
+
+            # Circle radii
+            if self.chart_type == "ExternalNatal":
+                self.first_circle_radius = 56
+                self.second_circle_radius = 92
+                self.third_circle_radius = 112
+            else:
+                self.first_circle_radius = 0
+                self.second_circle_radius = 36
+                self.third_circle_radius = 120
 
         # --------------------
         # FINAL COMMON SETUP
@@ -1286,6 +1321,115 @@ class KerykeionChartSVG:
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
             )
 
+        if self.chart_type == "SingleWheelReturn":
+            # Set viewbox
+            template_dict["viewbox"] = self._BASIC_CHART_VIEWBOX
+
+            # Rings and circles
+            template_dict["transitRing"] = ""
+            template_dict["degreeRing"] = draw_degree_ring(
+                self.main_radius,
+                self.first_circle_radius,
+                self.first_obj.seventh_house.abs_pos,
+                self.chart_colors_settings["paper_0"],
+            )
+            template_dict["first_circle"] = draw_first_circle(
+                self.main_radius,
+                self.chart_colors_settings["zodiac_radix_ring_2"],
+                self.chart_type,
+                self.first_circle_radius,
+            )
+            template_dict["second_circle"] = draw_second_circle(
+                self.main_radius,
+                self.chart_colors_settings["zodiac_radix_ring_1"],
+                self.chart_colors_settings["paper_1"],
+                self.chart_type,
+                self.second_circle_radius,
+            )
+            template_dict["third_circle"] = draw_third_circle(
+                self.main_radius,
+                self.chart_colors_settings["zodiac_radix_ring_0"],
+                self.chart_colors_settings["paper_1"],
+                self.chart_type,
+                self.third_circle_radius,
+            )
+
+            # Aspects
+            template_dict["makeAspectGrid"] = draw_aspect_grid(
+                self.chart_colors_settings["paper_0"],
+                self.available_planets_setting,
+                self.aspects_list,
+            )
+            template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - self.third_circle_radius)
+
+            # Chart title
+            template_dict["stringTitle"] = self.first_obj.name
+
+            # Top left section
+            latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings["north"], self.language_settings["south"])
+            longitude_string = convert_longitude_coordinate_to_string(self.geolon, self.language_settings["east"], self.language_settings["west"])
+
+            template_dict["top_left_0"] = f'{self.language_settings["info"]}:'
+            template_dict["top_left_1"] = format_location_string(self.location)
+            template_dict["top_left_2"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime) # type: ignore
+            template_dict["top_left_3"] = f"{self.language_settings['latitude']}: {latitude_string}"
+            template_dict["top_left_4"] = f"{self.language_settings['longitude']}: {longitude_string}"
+            template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings['Return']}"
+
+            # Bottom left section
+            if self.first_obj.zodiac_type == "Tropic":
+                zodiac_info = f"{self.language_settings.get('zodiac', 'Zodiac')}: {self.language_settings.get('tropical', 'Tropical')}"
+            else:
+                mode_const = "SIDM_" + self.first_obj.sidereal_mode # type: ignore
+                mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
+                zodiac_info = f"{self.language_settings.get('ayanamsa', 'Ayanamsa')}: {mode_name}"
+
+            template_dict["bottom_left_0"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
+            template_dict["bottom_left_1"] = zodiac_info
+            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")} {self.language_settings.get("day", "Day").lower()}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
+            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
+            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
+
+            # Houses and planet drawing
+            template_dict["makeHousesGrid"] = draw_house_grid(
+                main_subject_houses_list=first_subject_houses_list,
+                chart_type=self.chart_type,
+                text_color=self.chart_colors_settings["paper_0"],
+                house_cusp_generale_name_label=self.language_settings["cusp"],
+            )
+
+            template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
+                r=self.main_radius,
+                first_subject_houses_list=first_subject_houses_list,
+                standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
+                first_house_color=self.planets_settings[12]["color"],
+                tenth_house_color=self.planets_settings[13]["color"],
+                seventh_house_color=self.planets_settings[14]["color"],
+                fourth_house_color=self.planets_settings[15]["color"],
+                c1=self.first_circle_radius,
+                c3=self.third_circle_radius,
+                chart_type=self.chart_type,
+            )
+
+            template_dict["makePlanets"] = draw_planets(
+                available_planets_setting=self.available_planets_setting,
+                chart_type=self.chart_type,
+                radius=self.main_radius,
+                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
+                third_circle_radius=self.third_circle_radius,
+                main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
+                main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+            )
+
+            template_dict["makePlanetGrid"] = draw_planet_grid(
+                planets_and_houses_grid_title=self.language_settings["planets_and_house"],
+                subject_name=self.first_obj.name,
+                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
+                chart_type=self.chart_type,
+                text_color=self.chart_colors_settings["paper_0"],
+                celestial_point_language=self.language_settings["celestial_points"],
+            )
+
         return ChartTemplateDictionary(**template_dict)
 
     def makeTemplate(self, minify: bool = False, remove_css_variables=False) -> str:
@@ -1513,3 +1657,13 @@ if __name__ == "__main__":
     solar_return_chart = KerykeionChartSVG(first_obj=subject, chart_type="Return", second_obj=solar_return, chart_language="IT")
 
     solar_return_chart.makeSVG(minify=True, remove_css_variables=True)
+
+    # Single wheel return
+    single_wheel_return_chart = KerykeionChartSVG(
+        first_obj=solar_return,
+        chart_type="SingleWheelReturn",
+        second_obj=solar_return,
+        chart_language="IT",
+    )
+
+    single_wheel_return_chart.makeSVG(minify=True, remove_css_variables=True)
