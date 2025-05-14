@@ -59,3 +59,61 @@ Added the optional `minify` argument to makeTemplate in the charts module.
 ## 4.11.0
 
 - Added different House Systems to the `AstrologicalChart` class.
+
+## 4.14.0
+
+- Added Lilith to astrological calculations and chart rendering.
+- Deprecated `disable_chiron` in favor of `disable_chiron_and_lilith` with deprecation warning.
+- Updated configuration in `kr.config.json` for Lilith settings.
+
+## 4.16.0
+
+- Added themed astrological charts (`theme` parameter), including Classic, Dark, Dark High Contrast, and Light themes.
+- Added wheel-only charts and separate aspect table SVG.
+- Added grid view for aspect tables in synastry and transit charts.
+
+## 4.17.0
+
+- Added `chart_language` parameter to set chart language (EN, FR, PT, ES, TR, RU, IT, CN, DE).
+- Enhanced `get_settings` function to accept a dictionary or `KerykeionSettingsModel` instance.
+
+## 4.19.0
+
+- Added support for True and Mean Lunar Nodes (`true_node`, `true_south_node`, `mean_node`, `mean_south_node`).
+- Default activation of mean nodes; configurable activation of true nodes via `kr.config.json`.
+
+## 4.21.0
+
+- Customizable Geonames cache timeout (default extended from 24 hours to 30 days).
+
+**Credits:**
+
+- Thanks to @tomshaffner for the idea and implementation.
+
+## 4.22.0
+
+- Explicit calculation of Ascendant (AC), Descendant (DC), Midheaven (MC), and Imum Coeli (IC) axes.
+- Introduced `axial_cusps_names_list` parameter and replaced `check_if_between` with `is_point_between` utility.
+- Configuration updates for axes in `kr.config.json`.
+
+**Credits:**
+
+- Thanks to @fkostadinov for implementing these changes in PR #138.
+
+## 4.23.0
+
+- Added `active_points` parameter to `KerykeionChartSVG` for runtime specification of active planets and axial cusps.
+
+## 4.24.0
+
+- Added `active_aspects` parameter to `KerykeionChartSVG` for runtime specification of active aspects and orbs.
+
+## 4.25.0
+
+- Added composite charts feature: create composite subjects and charts using the midpoint method.
+
+## 4.26.0
+
+- Introduced `TransitsTimeRangeFactory` for calculating transit events across specified time ranges.
+- Added `get_ephemeris_data_as_astrological_subjects` method in `EphemerisDataFactory`.
+- Added `p*_owner` fields in aspect models for subject identification in `natal_aspects` and `synastry_aspects`.
