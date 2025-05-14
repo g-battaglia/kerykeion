@@ -659,6 +659,11 @@ def draw_transit_aspect_list(
     aspects_list: Union[list[AspectModel], list[dict]],
     celestial_point_language: Union[KerykeionLanguageCelestialPointModel, dict],
     aspects_settings: Union[KerykeionSettingsAspectModel, dict],
+    *,
+    aspects_per_column: int = 14,
+    column_width: int = 100,
+    line_height: int = 14,
+    max_columns: int = 6
 ) -> str:
     """
     Generates the SVG output for the aspect transit grid.
@@ -666,8 +671,12 @@ def draw_transit_aspect_list(
     Parameters:
     - grid_title: Title of the grid.
     - aspects_list: List of aspects.
-    - planets_labels: Dictionary containing the planet labels.
+    - celestial_point_language: Dictionary containing the celestial point language data.
     - aspects_settings: Dictionary containing the aspect settings.
+    - aspects_per_column: Number of aspects to display per column (default: 14).
+    - column_width: Width in pixels for each column (default: 100).
+    - line_height: Height in pixels for each line (default: 14).
+    - max_columns: Maximum number of columns before vertical adjustment (default: 6).
 
     Returns:
     - A string containing the SVG path data for the aspect transit grid.
@@ -680,59 +689,49 @@ def draw_transit_aspect_list(
         aspects_settings = KerykeionSettingsAspectModel(**aspects_settings)
 
     # If not instance of AspectModel, convert to AspectModel
-    if isinstance(aspects_list[0], dict):
-        aspects_list = [AspectModel(**aspect) for aspect in aspects_list] # type: ignore
+    if aspects_list and isinstance(aspects_list[0], dict):
+        aspects_list = [AspectModel(**aspect) for aspect in aspects_list]  # type: ignore
 
-    line = 0
-    nl = 0
     inner_path = ""
+
     for i, aspect in enumerate(aspects_list):
-        # Adjust the vertical position for every 12 aspects
-        if i == 14:
-            nl = 100
-            line = 0
+        # Calculate which column this aspect belongs in
+        current_column = i // aspects_per_column
 
-        elif i == 28:
-            nl = 200
-            line = 0
+        # Calculate horizontal position based on column
+        horizontal_position = current_column * column_width
 
-        elif i == 42:
-            nl = 300
-            line = 0
+        # Calculate vertical position within the column
+        current_line = i % aspects_per_column
+        vertical_position = current_line * line_height
 
-        elif i == 56:
-            nl = 400
-            line = 0
+        # Special handling for many aspects - if we exceed max_columns
+        if current_column >= max_columns:
+            # Calculate how many aspects will overflow beyond the max columns
+            overflow_aspects = len(aspects_list) - (aspects_per_column * max_columns)
+            if overflow_aspects > 0:
+                # Adjust the starting vertical position to move text up
+                vertical_position = vertical_position - (overflow_aspects * line_height)
 
-        elif i == 70:
-            nl = 500
-            # When there are more than 60 aspects, the text is moved up
-            if len(aspects_list) > 84:
-                line = -1 * (len(aspects_list) - 84) * 14
-            else:
-                line = 0
+        inner_path += f'<g transform="translate({horizontal_position},{vertical_position})">'
 
-        inner_path += f'<g transform="translate({nl},{line})">'
+        # First planet symbol
+        inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspect["p1"]]["name"]}" />'
 
-        # first planet symbol
-        inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspects_list[i]["p1"]]["name"]}" />'
+        # Aspect symbol
+        aspect_name = aspect["aspect"]
+        id_value = next((a["degree"] for a in aspects_settings if a["name"] == aspect_name), None)  # type: ignore
+        inner_path += f'<use x="15" y="0" xlink:href="#orb{id_value}" />'
 
-        # aspect symbol
-        # TODO: Remove the "degree" element EVERYWHERE!
-        aspect_name = aspects_list[i]["aspect"]
-        id_value = next((a["degree"] for a in aspects_settings if a["name"] == aspect_name), None) # type: ignore
-        inner_path += f'<use  x="15" y="0" xlink:href="#orb{id_value}" />'
-
-        # second planet symbol
+        # Second planet symbol
         inner_path += f'<g transform="translate(30,0)">'
-        inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspects_list[i]["p2"]]["name"]}" />'
+        inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspect["p2"]]["name"]}" />'
         inner_path += f"</g>"
 
-        # difference in degrees
-        inner_path += f'<text y="8" x="45" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;">{convert_decimal_to_degree_string(aspects_list[i]["orbit"])}</text>'
-        # line
+        # Difference in degrees
+        inner_path += f'<text y="8" x="45" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;">{convert_decimal_to_degree_string(aspect["orbit"])}</text>'
+
         inner_path += f"</g>"
-        line = line + 14
 
     out = '<g transform="translate(526,273)">'
     out += f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{grid_title}:</text>'
@@ -740,7 +739,6 @@ def draw_transit_aspect_list(
     out += '</g>'
 
     return out
-
 
 def calculate_moon_phase_chart_params(
     degrees_between_sun_and_moon: float,
