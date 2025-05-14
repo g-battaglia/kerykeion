@@ -12,6 +12,7 @@ from kerykeion.kr_types import KerykeionSettingsModel
 import functools
 
 
+@functools.lru_cache
 def get_settings(new_settings_file: Union[Path, None, KerykeionSettingsModel, dict] = None) -> KerykeionSettingsModel:
     """
     This function is used to get the settings dict from the settings file.
@@ -53,6 +54,7 @@ def get_settings(new_settings_file: Union[Path, None, KerykeionSettingsModel, di
     return KerykeionSettingsModel(**settings_dict)
 
 
+@functools.lru_cache
 def merge_settings(settings: KerykeionSettingsModel, new_settings: Dict) -> KerykeionSettingsModel:
     """
     This function is used to merge the settings file with the default settings,
