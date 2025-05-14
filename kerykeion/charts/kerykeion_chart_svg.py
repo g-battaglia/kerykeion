@@ -144,12 +144,14 @@ class KerykeionChartSVG:
     # Constants
     _BASIC_CHART_VIEWBOX = "0 0 820 550.0"
     _WIDE_CHART_VIEWBOX = "0 0 1200 546.0"
+    _ULTRA_WIDE_CHART_VIEWBOX = "0 0 1300 546.0"
     _TRANSIT_CHART_WITH_TABLE_VIWBOX = "0 0 960 546.0"
 
     _DEFAULT_HEIGHT = 550
     _DEFAULT_FULL_WIDTH = 1200
     _DEFAULT_NATAL_WIDTH = 820
     _DEFAULT_FULL_WIDTH_WITH_TABLE = 1200
+    _DEFAULT_ULTRA_WIDE_WIDTH = 1300
     _PLANET_IN_ZODIAC_EXTRA_POINTS = 10
 
     # Set at init
@@ -447,7 +449,7 @@ class KerykeionChartSVG:
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
-            self.width = self._DEFAULT_FULL_WIDTH
+            self.width = self._DEFAULT_ULTRA_WIDE_WIDTH
 
             # Location and coordinates (from natal subject)
             self.location = self.first_obj.city
@@ -1157,7 +1159,7 @@ class KerykeionChartSVG:
 
         elif self.chart_type == "Return":
             # Set viewbox
-            template_dict["viewbox"] = self._WIDE_CHART_VIEWBOX
+            template_dict["viewbox"] = self._ULTRA_WIDE_CHART_VIEWBOX
 
             # Get houses list for secondary subject
             second_subject_houses_list = get_houses_list(self.second_obj) # type: ignore
@@ -1191,7 +1193,7 @@ class KerykeionChartSVG:
             # Aspects
             if self.double_chart_aspect_grid_type == "list":
                 title = self.language_settings.get("return_aspects", "Natal to Return Aspects")
-                template_dict["makeAspectGrid"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings)
+                template_dict["makeAspectGrid"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings, max_columns=7)
             else:
                 template_dict["makeAspectGrid"] = draw_transit_aspect_grid(
                     self.chart_colors_settings["paper_0"],
