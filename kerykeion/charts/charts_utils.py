@@ -1190,8 +1190,8 @@ def draw_house_comparison_grid(
     svg_output += (
         f'<g transform="translate(0,{line_increment})">'
         f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Point</text>'
-        f'<text text-anchor="start" x="70" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Radix</text>'
-        f'<text text-anchor="start" x="124" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Return</text>'
+        f'<text text-anchor="start" x="70" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Return</text>'
+        f'<text text-anchor="start" x="124" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Radix</text>'
         f'</g>'
     )
     line_increment += 20
@@ -1200,7 +1200,7 @@ def draw_house_comparison_grid(
     all_points_by_name = {}
 
     # Process first subject's points in second subject's houses
-    for point in first_points_in_second_houses:
+    for point in second_points_in_first_houses:
         if point.point_name not in all_points_by_name:
             all_points_by_name[point.point_name] = {
                 "name": point.point_name,
@@ -1209,8 +1209,8 @@ def draw_house_comparison_grid(
             }
 
     # Process second subject's points in first subject's houses if available
-    if second_points_in_first_houses:
-        for point in second_points_in_first_houses:
+    if first_points_in_second_houses:
+        for point in first_points_in_second_houses:
             if point.point_name in all_points_by_name:
                 # Update existing entry with second house info
                 all_points_by_name[point.point_name]["native_house"] = point.house_number
