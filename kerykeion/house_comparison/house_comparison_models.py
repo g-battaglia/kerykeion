@@ -33,7 +33,7 @@ class HouseComparisonModel(SubscriptableBaseModel):
     """Name of the second subject"""
     first_points_in_second_houses: list[PointInHouseModel]
     """List of points from the first subject in the houses of the second subject"""
-    second_points_in_first_houses: Optional[list[PointInHouseModel]] = None
+    second_points_in_first_houses: list[PointInHouseModel]
     """List of points from the second subject in the houses of the first subject"""
 
     def __str__(self) -> str:
