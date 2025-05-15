@@ -1191,7 +1191,7 @@ def draw_house_comparison_grid(
         f'<g transform="translate(0,{line_increment})">'
         f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Point</text>'
         f'<text text-anchor="start" x="70" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Radix</text>'
-        f'<text text-anchor="start" x="124" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Solar</text>'
+        f'<text text-anchor="start" x="124" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Return</text>'
         f'</g>'
     )
     line_increment += 20
