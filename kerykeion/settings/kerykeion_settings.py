@@ -12,7 +12,6 @@ from kerykeion.kr_types import KerykeionSettingsModel
 import functools
 
 
-@functools.lru_cache
 def get_settings(new_settings_file: Union[Path, None, KerykeionSettingsModel, dict] = None) -> KerykeionSettingsModel:
     """
     This function is used to get the settings dict from the settings file.
