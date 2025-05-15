@@ -896,11 +896,18 @@ def draw_planet_grid(
     offset = 0
     offset_between_lines = 14
 
-    svg_output = (
-        f'<g transform="translate(175, -15)">'
-        f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}:</text>'
-        f'</g>'
-    )
+    if chart_type in ["Transit", "Synastry", "Return"]:
+        svg_output = (
+            f'<g transform="translate(100, -15)">'
+            f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}:</text>'
+            f'</g>'
+        )
+    else:
+        svg_output = (
+            f'<g transform="translate(175, -15)">'
+            f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}:</text>'
+            f'</g>'
+        )
 
     end_of_line = "</g>"
 
@@ -935,7 +942,7 @@ def draw_planet_grid(
             )
         else:
             svg_output += (
-                f'<g transform="translate(380, -15)">'
+                f'<g transform="translate(405, -15)">'
                 f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}:</text>'
             )
 
@@ -1173,7 +1180,7 @@ def draw_house_comparison_grid(
     text_color = "#000000"
 
     # Start SVG output
-    svg_output = '<g transform="translate(1020,-20)">'
+    svg_output = '<g transform="translate(1050,-20)">'
 
     # Add title
     svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">House Comparison</text>'
@@ -1183,8 +1190,8 @@ def draw_house_comparison_grid(
     svg_output += (
         f'<g transform="translate(0,{line_increment})">'
         f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Point</text>'
-        f'<text text-anchor="start" x="80" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Natale</text>'
-        f'<text text-anchor="start" x="120" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Secondaria</text>'
+        f'<text text-anchor="start" x="70" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Radix</text>'
+        f'<text text-anchor="start" x="124" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Solar</text>'
         f'</g>'
     )
     line_increment += 20
@@ -1223,9 +1230,9 @@ def draw_house_comparison_grid(
 
         svg_output += (
             f'<g transform="translate(0,{line_increment})">'
-            f'<text text-anchor="start" x="0" style="fill:{text_color}; font-size: 10px;">{name}</text>'
-            f'<text text-anchor="start" x="80" style="fill:{text_color}; font-size: 10px;">{native_house}</text>'
-            f'<text text-anchor="start" x="120" style="fill:{text_color}; font-size: 10px;">{secondary_house}</text>'
+            f'<text text-anchor="start" x="0" style="fill:{text_color}; font-size: 10px;">{get_decoded_kerykeion_celestial_point_name(name, celestial_point_language)}</text>'
+            f'<text text-anchor="start" x="90" style="fill:{text_color}; font-size: 10px;">{native_house}</text>'
+            f'<text text-anchor="start" x="140" style="fill:{text_color}; font-size: 10px;">{secondary_house}</text>'
             f'</g>'
         )
         line_increment += 11

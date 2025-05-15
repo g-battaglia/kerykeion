@@ -812,6 +812,7 @@ class KerykeionChartSVG:
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
             )
+            template_dict["makeHouseComparisonGrid"] = ""
 
         elif self.chart_type == "Composite":
             # Set viewbox
@@ -944,6 +945,7 @@ class KerykeionChartSVG:
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
             )
+            template_dict["makeHouseComparisonGrid"] = ""
 
         elif self.chart_type == "Transit":
             # Set viewbox
@@ -1071,6 +1073,7 @@ class KerykeionChartSVG:
                 second_subject_name=second_subject_table_name,
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
             )
+            template_dict["makeHouseComparisonGrid"] = ""
 
         elif self.chart_type == "Synastry":
             # Set viewbox
@@ -1192,6 +1195,7 @@ class KerykeionChartSVG:
                 second_subject_name=second_subject_table_name,
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
             )
+            template_dict["makeHouseComparisonGrid"] = ""
 
         elif self.chart_type == "Return":
             # Set viewbox
@@ -1329,10 +1333,11 @@ class KerykeionChartSVG:
             house_comparison = house_comparison_factory.get_house_comparison()
 
             template_dict["makeHouseComparisonGrid"] = draw_house_comparison_grid(
-                house_comparison
+                house_comparison,
+                celestial_point_language=self.language_settings["celestial_points"],
             )
 
-        if self.chart_type == "SingleWheelReturn":
+        elif self.chart_type == "SingleWheelReturn":
             # Set viewbox
             template_dict["viewbox"] = self._BASIC_CHART_VIEWBOX
 
