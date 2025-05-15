@@ -1,4 +1,12 @@
-from kerykeion.kr_types import KerykeionPointModel, KerykeionException, ZodiacSignModel, AstrologicalSubjectModel, LunarPhaseModel, CompositeSubjectModel, PlanetReturnModel
+from kerykeion.kr_types import (
+    KerykeionPointModel,
+    KerykeionException,
+    ZodiacSignModel,
+    AstrologicalSubjectModel,
+    LunarPhaseModel,
+    CompositeSubjectModel,
+    PlanetReturnModel,
+)
 from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, Planet, Houses, AxialCusps
 from typing import Union, get_args, TYPE_CHECKING
 import logging
@@ -46,13 +54,13 @@ def get_number_from_name(name: Planet) -> int:
         return 15
     elif name == "Mean_Lilith":
         return 12
-    elif name == "Ascendant": # TODO: Is this needed?
+    elif name == "Ascendant":  # TODO: Is this needed?
         return 9900
-    elif name == "Descendant": # TODO: Is this needed?
+    elif name == "Descendant":  # TODO: Is this needed?
         return 9901
-    elif name == "Medium_Coeli": # TODO: Is this needed?
+    elif name == "Medium_Coeli":  # TODO: Is this needed?
         return 9902
-    elif name == "Imum_Coeli": # TODO: Is this needed?
+    elif name == "Imum_Coeli":  # TODO: Is this needed?
         return 9903
     else:
         raise KerykeionException(f"Error in getting number from name! Name: {name}")
@@ -110,6 +118,7 @@ def get_kerykeion_point_from_degree(
         point_type=point_type,
     )
 
+
 def setup_logging(level: str) -> None:
     """
     Setup logging for testing.
@@ -130,9 +139,7 @@ def setup_logging(level: str) -> None:
 
 
 def is_point_between(
-    start_point: Union[int, float],
-    end_point: Union[int, float],
-    evaluated_point: Union[int, float]
+    start_point: Union[int, float], end_point: Union[int, float], evaluated_point: Union[int, float]
 ) -> bool:
     """
     Determines if a point is between two others on a circle, with additional rules:
@@ -160,7 +167,9 @@ def is_point_between(
     # Ensure the range is not greater than 180°. Otherwise, it is not truly defined what
     # being located in between two points on a circle actually means.
     if angular_difference > 180:
-        raise KerykeionException(f"The angle between start and end point is not allowed to exceed 180°, yet is: {angular_difference}")
+        raise KerykeionException(
+            f"The angle between start and end point is not allowed to exceed 180°, yet is: {angular_difference}"
+        )
 
     # Handle explicitly when evaluated_point == start_point. Note: It may happen for mathematical
     # reasons that evaluated_point and start_point deviate very slightly from each other, but
@@ -177,7 +186,6 @@ def is_point_between(
 
     # Check if point lies in the interval
     return (0 <= p1_p3) and (p1_p3 < angular_difference)
-
 
 
 def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut_list: list) -> Houses:
@@ -244,6 +252,7 @@ def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
 
     return result
 
+
 def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
     """
     Returns the name of the moon phase.
@@ -256,11 +265,10 @@ def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
     """
     lunar_phase_names = get_args(LunarPhaseName)
 
-
     if phase == 1:
         result = lunar_phase_names[0]
     elif phase < 7:
-        result =  lunar_phase_names[1]
+        result = lunar_phase_names[1]
     elif 7 <= phase <= 9:
         result = lunar_phase_names[2]
     elif phase < 14:
@@ -282,8 +290,8 @@ def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
 
 def check_and_adjust_polar_latitude(latitude: float) -> float:
     """
-        Utility function to check if the location is in the polar circle.
-        If it is, it sets the latitude to 66 or -66 degrees.
+    Utility function to check if the location is in the polar circle.
+    If it is, it sets the latitude to 66 or -66 degrees.
     """
     if latitude > 66.0:
         latitude = 66.0
@@ -296,25 +304,29 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
     return latitude
 
 
-def get_houses_list(subject: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]) -> list[KerykeionPointModel]:
+def get_houses_list(
+    subject: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
+) -> list[KerykeionPointModel]:
     """
     Return the names of the houses in the order of the houses.
     """
     houses_absolute_position_list = []
     for house in subject.houses_names_list:
-            houses_absolute_position_list.append(subject[house.lower()])
+        houses_absolute_position_list.append(subject[house.lower()])
 
     return houses_absolute_position_list
 
 
-def get_available_astrological_points_list(subject: Union["AstrologicalSubject", AstrologicalSubjectModel]) -> list[KerykeionPointModel]:
+def get_available_astrological_points_list(
+    subject: Union["AstrologicalSubject", AstrologicalSubjectModel]
+) -> list[KerykeionPointModel]:
     """
     Return the names of the planets in the order of the planets.
     The names can be used to access the planets from the AstrologicalSubject object with the __getitem__ method or the [] operator.
     """
     planets_absolute_position_list = []
     for planet in subject.planets_names_list:
-            planets_absolute_position_list.append(subject[planet.lower()])
+        planets_absolute_position_list.append(subject[planet.lower()])
 
     for axis in subject.axial_cusps_names_list:
         planets_absolute_position_list.append(subject[axis.lower()])
@@ -388,7 +400,7 @@ def calculate_moon_phase(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseM
         "moon_phase": moon_phase,
         "sun_phase": sun_phase,
         "moon_emoji": get_moon_emoji_from_phase_int(moon_phase),
-        "moon_phase_name": get_moon_phase_name_from_phase_int(moon_phase)
+        "moon_phase_name": get_moon_phase_name_from_phase_int(moon_phase),
     }
 
     return LunarPhaseModel(**lunar_phase_dictionary)
@@ -491,9 +503,7 @@ def inline_css_variables_in_svg(svg_content: str) -> str:
     # This handles nested variables or variables that reference other variables
     processed_svg = svg_without_style_blocks
     while variable_usage_pattern.search(processed_svg):
-        processed_svg = variable_usage_pattern.sub(
-            lambda m: replace_css_variable_reference(m), processed_svg
-        )
+        processed_svg = variable_usage_pattern.sub(lambda m: replace_css_variable_reference(m), processed_svg)
 
     return processed_svg
 
@@ -531,7 +541,7 @@ def datetime_to_julian(dt: datetime) -> float:
     second = dt.second
     microsecond = dt.microsecond
 
-    jd += (hour + minute/60 + second/3600 + microsecond/3600000000) / 24
+    jd += (hour + minute / 60 + second / 3600 + microsecond / 3600000000) / 24
 
     return jd
 
@@ -599,3 +609,67 @@ def julian_to_datetime(jd):
 
     # Create and return datetime object
     return datetime(year, month, day_int, hours, minutes, seconds, microseconds)
+
+
+def get_house_name(house_number: int) -> Houses:
+    """
+    Returns the name of the house based on its number.
+
+    Args:
+        house_number: House number (1-12)
+
+    Returns:
+        Name of the house
+    """
+    house_names: dict[int, Houses] = {
+        1: "First_House",
+        2: "Second_House",
+        3: "Third_House",
+        4: "Fourth_House",
+        5: "Fifth_House",
+        6: "Sixth_House",
+        7: "Seventh_House",
+        8: "Eighth_House",
+        9: "Ninth_House",
+        10: "Tenth_House",
+        11: "Eleventh_House",
+        12: "Twelfth_House",
+    }
+
+    name = house_names.get(house_number, None)
+    if name is None:
+        raise ValueError(f"Invalid house number: {house_number}")
+
+    return name
+
+
+def get_house_number(house_name: Houses) -> int:
+    """
+    Returns the number of the house based on its name.
+
+    Args:
+        house_name: Name of the house
+
+    Returns:
+        House number (1-12)
+    """
+    house_numbers: dict[Houses, int] = {
+        "First_House": 1,
+        "Second_House": 2,
+        "Third_House": 3,
+        "Fourth_House": 4,
+        "Fifth_House": 5,
+        "Sixth_House": 6,
+        "Seventh_House": 7,
+        "Eighth_House": 8,
+        "Ninth_House": 9,
+        "Tenth_House": 10,
+        "Eleventh_House": 11,
+        "Twelfth_House": 12,
+    }
+
+    number = house_numbers.get(house_name, None)
+    if number is None:
+        raise ValueError(f"Invalid house name: {house_name}")
+
+    return number
