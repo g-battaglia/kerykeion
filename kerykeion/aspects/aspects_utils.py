@@ -4,14 +4,16 @@
 """
 # TODO: Better documentation and unit tests
 
-from kerykeion import AstrologicalSubject
 from kerykeion.settings import KerykeionSettingsModel
 from swisseph import difdeg2n
-from typing import Union
+from typing import Union, TYPE_CHECKING
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.kr_literals import Planet, AxialCusps
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel, KerykeionSettingsAspectModel
 
+
+if TYPE_CHECKING:
+    from kerykeion import AstrologicalSubject
 
 def get_aspect_from_two_points(
     aspects_settings: Union[list[KerykeionSettingsAspectModel], list[dict]],
@@ -72,7 +74,7 @@ def planet_id_decoder(planets_settings: list[KerykeionSettingsCelestialPointMode
 
 
 def get_active_points_list(
-    subject: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+    subject: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
     settings: Union[KerykeionSettingsModel, dict],
     active_points: list = []
 ) -> list:

@@ -1,6 +1,9 @@
-from kerykeion import AstrologicalSubject
-from kerykeion.house_comparison.house_comparison_models import HouseComparisonModel
 from kerykeion.house_comparison.house_comparison_utils import calculate_points_in_reciprocal_houses
+from typing import Union, TYPE_CHECKING
+from kerykeion.house_comparison.house_comparison_models import HouseComparisonModel
+
+if TYPE_CHECKING:
+    from kerykeion import AstrologicalSubject, AstrologicalSubjectModel, PlanetReturnModel
 
 
 class HouseComparisonFactory:
@@ -23,11 +26,12 @@ class HouseComparisonFactory:
         >>> print(comparison.model_dump_json(indent=4))
 
     """
-    def __init__(self, first_subject: AstrologicalSubject, second_subject: AstrologicalSubject):
+    def __init__(self, first_subject: Union["AstrologicalSubject", "AstrologicalSubjectModel", "PlanetReturnModel"],
+                 second_subject: Union["AstrologicalSubject", "AstrologicalSubjectModel", "PlanetReturnModel"]):
         self.first_subject = first_subject
         self.second_subject = second_subject
 
-    def get_house_comparison(self) -> HouseComparisonModel:
+    def get_house_comparison(self) -> "HouseComparisonModel":
         """
         Creates a house comparison model for two astrological subjects.
 
@@ -37,7 +41,7 @@ class HouseComparisonFactory:
             description: Description of the comparison
 
         Returns:
-            HouseComparisonModel: Model containing the comparison data.
+            "HouseComparisonModel": Model containing the comparison data.
         """
         first_points_in_second_houses = calculate_points_in_reciprocal_houses(self.first_subject, self.second_subject)
         second_points_in_first_houses = calculate_points_in_reciprocal_houses(self.second_subject, self.first_subject)

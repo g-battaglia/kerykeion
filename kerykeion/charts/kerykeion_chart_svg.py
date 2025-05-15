@@ -12,10 +12,10 @@ from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.synastry_aspects import SynastryAspects
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.astrological_subject import AstrologicalSubject
+from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
 from kerykeion.kr_types import (
     KerykeionException,
     ChartType,
-    KerykeionPointModel,
     Sign,
     ActiveAspect,
 )
@@ -44,6 +44,7 @@ from kerykeion.charts.charts_utils import (
     draw_degree_ring,
     draw_transit_ring,
     draw_first_circle,
+    draw_house_comparison_grid,
     draw_second_circle,
     draw_third_circle,
     draw_aspect_grid,
@@ -1321,6 +1322,16 @@ class KerykeionChartSVG:
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
             )
 
+            house_comparison_factory = HouseComparisonFactory(
+                first_subject=self.first_obj,
+                second_subject=self.second_obj,
+            )
+            house_comparison = house_comparison_factory.get_house_comparison()
+
+            template_dict["makeHouseComparisonGrid"] = draw_house_comparison_grid(
+                house_comparison
+            )
+
         if self.chart_type == "SingleWheelReturn":
             # Set viewbox
             template_dict["viewbox"] = self._BASIC_CHART_VIEWBOX
@@ -1429,6 +1440,7 @@ class KerykeionChartSVG:
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
             )
+            template_dict["makeHouseComparisonGrid"] = ""
 
         return ChartTemplateDictionary(**template_dict)
 

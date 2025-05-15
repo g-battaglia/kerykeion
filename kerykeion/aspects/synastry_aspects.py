@@ -3,10 +3,10 @@
     This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
-from kerykeion import AstrologicalSubject
 from pathlib import Path
 from typing import Union
 from functools import cached_property
+from typing import TYPE_CHECKING
 
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.settings.kerykeion_settings import get_settings
@@ -17,6 +17,9 @@ from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_A
 from kerykeion.kr_types.kr_literals import AxialCusps, Planet
 from typing import Union, List
 
+if TYPE_CHECKING:
+    from kerykeion import AstrologicalSubject
+
 
 class SynastryAspects(NatalAspects):
     """
@@ -25,8 +28,8 @@ class SynastryAspects(NatalAspects):
 
     def __init__(
         self,
-        kr_object_one: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-        kr_object_two: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        kr_object_one: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        kr_object_two: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
         active_points: list[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
