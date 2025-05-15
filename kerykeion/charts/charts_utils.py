@@ -1230,6 +1230,7 @@ def draw_house_comparison_grid(
 
         svg_output += (
             f'<g transform="translate(0,{line_increment})">'
+            f'<g transform="translate(-13,-9)"><use transform="scale(0.4)" xlink:href="#{name}" /></g>'
             f'<text text-anchor="start" x="0" style="fill:{text_color}; font-size: 10px;">{get_decoded_kerykeion_celestial_point_name(name, celestial_point_language)}</text>'
             f'<text text-anchor="start" x="90" style="fill:{text_color}; font-size: 10px;">{native_house}</text>'
             f'<text text-anchor="start" x="140" style="fill:{text_color}; font-size: 10px;">{secondary_house}</text>'
