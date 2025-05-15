@@ -1,7 +1,7 @@
-from typing import Union
+from typing import Union, TYPE_CHECKING
 
-from kerykeion import AstrologicalSubject
-from kerykeion import KerykeionException
+# Fix the circular import by changing this import
+from kerykeion.kr_types.kerykeion_exception import KerykeionException
 from kerykeion.kr_types.kr_models import CompositeSubjectModel, AstrologicalSubjectModel
 from kerykeion.kr_types.kr_literals import ZodiacType, PerspectiveType, HousesSystemIdentifier, SiderealMode, Planet, Houses, AxialCusps, CompositeChartType
 from kerykeion.utilities import (
@@ -11,6 +11,9 @@ from kerykeion.utilities import (
     calculate_moon_phase,
     circular_sort
 )
+
+if TYPE_CHECKING:
+    from kerykeion.astrological_subject import AstrologicalSubject
 
 
 class CompositeSubjectFactory:
@@ -42,8 +45,8 @@ class CompositeSubjectFactory:
 
     def __init__(
             self,
-            first_subject: Union[AstrologicalSubject, AstrologicalSubjectModel],
-            second_subject: Union[AstrologicalSubject, AstrologicalSubjectModel],
+            first_subject: Union["AstrologicalSubject", AstrologicalSubjectModel],
+            second_subject: Union["AstrologicalSubject", AstrologicalSubjectModel],
             chart_name: Union[str, None] = None
     ):
         self.model: Union[CompositeSubjectModel, None] = None

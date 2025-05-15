@@ -1,10 +1,13 @@
 import math
 import datetime
 from kerykeion.kr_types import KerykeionException, ChartType
-from typing import Union, Literal
+from typing import Union, Literal, TYPE_CHECKING
 from kerykeion.kr_types.kr_models import AspectModel, KerykeionPointModel, CompositeSubjectModel, PlanetReturnModel, AstrologicalSubjectModel
 from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsAspectModel, KerykeionSettingsCelestialPointModel
-from kerykeion import AstrologicalSubject
+
+
+if TYPE_CHECKING:
+    from kerykeion import AstrologicalSubject, HouseComparisonModel
 
 def get_decoded_kerykeion_celestial_point_name(input_planet_name: str, celestial_point_language: KerykeionLanguageCelestialPointModel) -> str:
     """
@@ -1087,7 +1090,7 @@ def format_datetime_with_timezone(iso_datetime_string: str) -> str:
 def calculate_element_points(
         planets_settings: list[KerykeionSettingsCelestialPointModel],
         celestial_points_names: list[str],
-        subject: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        subject: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         planet_in_zodiac_extra_points: int = 10
     ):
     """
@@ -1145,3 +1148,88 @@ def calculate_element_points(
         element_totals[element] += planets_settings[i]["element_points"] + extra_points
 
     return element_totals
+
+
+
+def draw_house_comparison_grid(
+        house_comparison: "HouseComparisonModel",
+        celestial_point_language: KerykeionLanguageCelestialPointModel,
+) -> str:
+    """
+    Generate SVG code for displaying a comparison of points across houses between two charts.
+
+    Parameters:
+    - house_comparison ("HouseComparisonModel"): Model containing house comparison data,
+      including first_subject_name, second_subject_name, and points in houses.
+
+    Returns:
+    - str: SVG code for the house comparison grid.
+    """
+    # Extract data from the model
+    first_points_in_second_houses = house_comparison.first_points_in_second_houses
+    second_points_in_first_houses = house_comparison.second_points_in_first_houses
+
+    # Default text color
+    text_color = "#000000"
+
+    # Start SVG output
+    svg_output = '<g transform="translate(1020,-20)">'
+
+    # Add title
+    svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">House Comparison</text>'
+
+    # Add column headers
+    line_increment = 10
+    svg_output += (
+        f'<g transform="translate(0,{line_increment})">'
+        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Point</text>'
+        f'<text text-anchor="start" x="80" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Natale</text>'
+        f'<text text-anchor="start" x="120" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Secondaria</text>'
+        f'</g>'
+    )
+    line_increment += 20
+
+    # Create a dictionary to store all points by name for combined display
+    all_points_by_name = {}
+
+    # Process first subject's points in second subject's houses
+    for point in first_points_in_second_houses:
+        if point.point_name not in all_points_by_name:
+            all_points_by_name[point.point_name] = {
+                "name": point.point_name,
+                "natal_position": f"{point.point_sign} {point.point_degree:.1f}°",
+                "secondary_house": point.house_number
+            }
+
+    # Process second subject's points in first subject's houses if available
+    if second_points_in_first_houses:
+        for point in second_points_in_first_houses:
+            if point.point_name in all_points_by_name:
+                # Update existing entry with second house info
+                all_points_by_name[point.point_name]["native_house"] = point.house_number
+            else:
+                # Create new entry for second subject points
+                all_points_by_name[point.point_name] = {
+                    "name": point.point_name,
+                    "natal_position": f"{point.point_sign} {point.point_degree:.1f}°",
+                    "native_house": point.house_number,
+                    "secondary_house": "-"
+                }
+
+    # Display all points organized by name
+    for name, point_data in all_points_by_name.items():
+        native_house = point_data.get("native_house", "-")
+        secondary_house = point_data.get("secondary_house", "-")
+
+        svg_output += (
+            f'<g transform="translate(0,{line_increment})">'
+            f'<text text-anchor="start" x="0" style="fill:{text_color}; font-size: 10px;">{name}</text>'
+            f'<text text-anchor="start" x="80" style="fill:{text_color}; font-size: 10px;">{native_house}</text>'
+            f'<text text-anchor="start" x="120" style="fill:{text_color}; font-size: 10px;">{secondary_house}</text>'
+            f'</g>'
+        )
+        line_increment += 11
+
+    svg_output += "</g>"
+
+    return svg_output

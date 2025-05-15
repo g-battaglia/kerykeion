@@ -4,9 +4,9 @@
 """
 
 import logging
+from typing import TYPE_CHECKING
 from dataclasses import dataclass, field
 from functools import cached_property
-from kerykeion import AstrologicalSubject
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect, CompositeSubjectModel, PlanetReturnModel
@@ -15,6 +15,9 @@ from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
 from pathlib import Path
 from typing import Union, List
+
+if TYPE_CHECKING:
+    from kerykeion import AstrologicalSubject
 
 
 
@@ -32,7 +35,7 @@ class NatalAspects:
     Generates an object with all the aspects of a birthcart.
     """
 
-    user: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
+    user: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
     new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None
     active_points: List[Union[AxialCusps, Planet]] = field(default_factory=lambda: DEFAULT_ACTIVE_POINTS)
     active_aspects: List[ActiveAspect] = field(default_factory=lambda: DEFAULT_ACTIVE_ASPECTS)
