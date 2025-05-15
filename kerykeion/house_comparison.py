@@ -1,88 +1,71 @@
-from typing import Dict, List, Tuple, Optional, Union, Literal
+from typing import Optional
 from pydantic import BaseModel
 from kerykeion import AstrologicalSubject
-from enum import Enum
+from kerykeion.utilities import get_planet_house, get_house_number
 
 
-class PlanetInHouseModel(BaseModel):
-    """Represents a planet from one chart positioned in a house from another chart"""
+class PointInHouseModel(BaseModel):
+    """Represents a point from one chart positioned in a house from another chart"""
 
-    planet_name: str
-    planet_degree: float
-    planet_sign: str
-    planet_owner_name: str
+    point_name: str
+    """Name of the celestial point"""
+    point_degree: float
+    """Degree of the celestial point"""
+    point_sign: str
+    """Sign of the celestial point"""
+    point_owner_name: str
+    """Name of the owner of the celestial point"""
     house_number: int
+    """Number of the house"""
     house_name: str
+    """Name of the house"""
     house_owner_name: str
+    """Name of the owner of the house"""
 
     def __str__(self) -> str:
-        return f"{self.planet_name} of {self.planet_owner_name} at {self.planet_degree}° {self.planet_sign} in {self.house_owner_name}'s {self.house_number} house"
+        return f"{self.point_name} of {self.point_owner_name} at {self.point_degree}° {self.point_sign} in {self.house_owner_name}'s {self.house_number} house"
 
 
 class HouseComparisonModel(BaseModel):
     """Pydantic model for any two-chart comparison analysis"""
 
-    chart1_name: str
-    chart2_name: str
-    chart1_planets_in_chart2_houses: List[PlanetInHouseModel]
-    chart2_planets_in_chart1_houses: Optional[List[PlanetInHouseModel]] = None
+    first_subject_name: str
+    """Name of the first subject"""
+    second_subject_name: str
+    """Name of the second subject"""
+    first_points_in_second_houses: list[PointInHouseModel]
+    """List of points from the first subject in the houses of the second subject"""
+    second_points_in_first_houses: Optional[list[PointInHouseModel]] = None
+    """List of points from the second subject in the houses of the first subject"""
 
 
-# Utility functions
-def find_house(planet_degree: float, house_cusps: List[float]) -> int:
+def calculate_points_in_houses(
+    point_subject: AstrologicalSubject, house_subject: AstrologicalSubject
+) -> list[PointInHouseModel]:
     """
-    Determines which house a planet falls in given its absolute degree.
+    Calculates which houses of the house_subject the points of point_subject fall into.
 
     Args:
-        planet_degree: Absolute degree of the planet (0-360)
-        house_cusps: List of absolute degrees of house cusps
-
-    Returns:
-        House number (1-12)
-    """
-    for i in range(11):
-        current_cusp = house_cusps[i]
-        next_cusp = house_cusps[i + 1]
-
-        # Handle the case when a house crosses 0° Aries
-        if next_cusp < current_cusp:
-            if planet_degree >= current_cusp or planet_degree < next_cusp:
-                return i + 1
-        else:
-            if current_cusp <= planet_degree < next_cusp:
-                return i + 1
-
-    # If not found in previous houses, it's in the 12th house
-    return 12
-
-
-def calculate_planets_in_houses(
-    planet_subject: AstrologicalSubject, house_subject: AstrologicalSubject
-) -> List[PlanetInHouseModel]:
-    """
-    Calculates which houses of the house_subject the planets of planet_subject fall into.
-
-    Args:
-        planet_subject: Subject whose planets are being analyzed
+        point_subject: Subject whose points are being analyzed
         house_subject: Subject whose houses are being considered
 
     Returns:
-        List of PlanetInHouseModel objects
+        List of PointInHouseModel objects
     """
-    planets_in_houses: List[PlanetInHouseModel] = []
+    points_in_houses: list[PointInHouseModel] = []
 
-    # List of planets to consider
-    planets = []
+    # List of points to consider
+    celestial_points = []
 
-    for planet in planet_subject.planets_names_list:
-        planet_obj = getattr(planet_subject, planet.lower())
-        if planet_obj is not None:
-            planets.append(planet_obj)
+    for point in point_subject.planets_names_list:
+        point_obj = getattr(point_subject, point.lower())
+        if point_obj is not None:
+            celestial_points.append(point_obj)
 
-    for axis in planet_subject.axial_cusps_names_list:
-        axis_obj = getattr(planet_subject, axis.lower())
+    for axis in point_subject.axial_cusps_names_list:
+        axis_obj = getattr(point_subject, axis.lower())
         if axis_obj is not None:
-            planets.append(axis_obj)
+            celestial_points.append(axis_obj)
 
     # Ordered list of house cusps degrees
     house_cusps = [
@@ -100,63 +83,31 @@ def calculate_planets_in_houses(
         house_subject.twelfth_house.abs_pos,
     ]
 
-    # For each planet, determine which house it falls in
-    for planet in planets:
-        if planet is None:
+    # For each point, determine which house it falls in
+    for point in celestial_points:
+        if point is None:
             continue
 
-        planet_degree = planet.abs_pos
-        house_number = find_house(planet_degree, house_cusps)
-        house_name = get_house_name(house_number)
+        point_degree = point.abs_pos
+        house_name = get_planet_house(point_degree, house_cusps)
+        house_number = get_house_number(house_name)
 
-        planet_in_house = PlanetInHouseModel(
-            planet_name=planet.name,
-            planet_degree=planet.position,
-            planet_sign=planet.sign,
-            planet_owner_name=planet_subject.name,
+        point_in_house = PointInHouseModel(
+            point_name=point.name,
+            point_degree=point.position,
+            point_sign=point.sign,
+            point_owner_name=point_subject.name,
             house_number=house_number,
             house_name=house_name,
             house_owner_name=house_subject.name,
         )
 
-        planets_in_houses.append(planet_in_house)
+        points_in_houses.append(point_in_house)
 
-    return planets_in_houses
-
-
-def get_house_name(house_number: int) -> str:
-    """
-    Returns the name of the house based on its number.
-
-    Args:
-        house_number: House number (1-12)
-
-    Returns:
-        Name of the house
-    """
-    house_names = {
-        1: "First_House",
-        2: "Second_House",
-        3: "Third_House",
-        4: "Fourth_House",
-        5: "Fifth_House",
-        6: "Sixth_House",
-        7: "Seventh_House",
-        8: "Eighth_House",
-        9: "Ninth_House",
-        10: "Tenth_House",
-        11: "Eleventh_House",
-        12: "Twelfth_House",
-    }
-
-    return house_names.get(house_number, "")
+    return points_in_houses
 
 
 class HouseComparisonFactory:
-    """
-    Factory class that creates various types of two-chart astrological analyses,
-    such as synastry, transits, solar returns, etc.
-    """
 
     def __init__(self, first_subject: AstrologicalSubject, second_subject: AstrologicalSubject):
         self.first_subject = first_subject
@@ -174,27 +125,22 @@ class HouseComparisonFactory:
         Returns:
             HouseComparisonModel object
         """
-        chart1_planets_in_chart2_houses = calculate_planets_in_houses(self.first_subject, self.second_subject)
-        chart2_planets_in_chart1_houses = calculate_planets_in_houses(self.second_subject, self.first_subject)
+        first_points_in_second_houses = calculate_points_in_houses(self.first_subject, self.second_subject)
+        second_points_in_first_houses = calculate_points_in_houses(self.second_subject, self.first_subject)
 
         return HouseComparisonModel(
-            chart1_name=self.first_subject.name,
-            chart2_name=self.second_subject.name,
-            chart1_planets_in_chart2_houses=chart1_planets_in_chart2_houses,
-            chart2_planets_in_chart1_houses=chart2_planets_in_chart1_houses,
+            first_subject_name=self.first_subject.name,
+            second_subject_name=self.second_subject.name,
+            first_points_in_second_houses=first_points_in_second_houses,
+            second_points_in_first_houses=second_points_in_first_houses,
         )
 
 
 if __name__ == "__main__":
-    # Create two astrological subjects
     natal_chart = AstrologicalSubject("Person A", 1990, 5, 15, 10, 30, "Rome", "IT")
-
-    # For synastry
     partner_chart = AstrologicalSubject("Person B", 1992, 8, 23, 14, 45, "Milan", "IT")
 
-    # Create a factory instance
     factory = HouseComparisonFactory(natal_chart, partner_chart)
-    # Generate a house comparison
     comparison = factory.get_house_comparison()
 
     print(comparison.model_dump_json(indent=4))
