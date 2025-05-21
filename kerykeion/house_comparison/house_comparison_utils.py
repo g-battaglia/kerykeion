@@ -1,5 +1,7 @@
 from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, PlanetReturnModel
+from kerykeion.kr_types.kr_literals import AxialCusps, Planet
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 from kerykeion.utilities import get_planet_house, get_house_number
 from kerykeion.house_comparison.house_comparison_models import PointInHouseModel
 from typing import Union
@@ -8,6 +10,7 @@ from typing import Union
 def calculate_points_in_reciprocal_houses(
     point_subject: Union[AstrologicalSubject, AstrologicalSubjectModel, PlanetReturnModel],
     house_subject: Union[AstrologicalSubject, AstrologicalSubjectModel, PlanetReturnModel],
+    active_points: list[Union[Planet, AxialCusps]] = DEFAULT_ACTIVE_POINTS,
 ) -> list[PointInHouseModel]:
     """
     Calculates which houses of the house_subject the points of point_subject fall into.
@@ -15,6 +18,7 @@ def calculate_points_in_reciprocal_houses(
     Args:
         point_subject: Subject whose points are being analyzed
         house_subject: Subject whose houses are being considered
+        active_points: Optional list of point names to process. If None, all points are processed.
 
     Returns:
         List of PointInHouseModel objects
@@ -25,11 +29,17 @@ def calculate_points_in_reciprocal_houses(
     celestial_points = []
 
     for point in point_subject.planets_names_list:
+        if point not in active_points:
+            continue
+
         point_obj = getattr(point_subject, point.lower())
         if point_obj is not None:
             celestial_points.append(point_obj)
 
     for axis in point_subject.axial_cusps_names_list:
+        if axis not in active_points:
+            continue
+
         axis_obj = getattr(point_subject, axis.lower())
         if axis_obj is not None:
             celestial_points.append(axis_obj)
