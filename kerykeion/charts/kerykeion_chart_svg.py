@@ -1329,6 +1329,7 @@ class KerykeionChartSVG:
             house_comparison_factory = HouseComparisonFactory(
                 first_subject=self.first_obj,
                 second_subject=self.second_obj,
+                active_points=self.active_points,
             )
             house_comparison = house_comparison_factory.get_house_comparison()
 
