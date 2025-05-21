@@ -13,12 +13,16 @@ class PointInHouseModel(SubscriptableBaseModel):
     """Sign of the celestial point"""
     point_owner_name: str
     """Name of the owner of the celestial point"""
-    house_number: int
-    """Number of the house"""
-    house_name: str
-    """Name of the house"""
-    house_owner_name: str
-    """Name of the owner of the house"""
+    point_owner_house_number: Optional[int]
+    """House number of the point of the owner of the celestial point"""
+    point_owner_house_name: Optional[str]
+    """House name of the point of the owner of the celestial point"""
+    projected_house_number: int
+    """Number of the house where the point is projected"""
+    projected_house_name: str
+    """Name of the house where the point is projected"""
+    projected_house_owner_name: str
+    """Name of the owner of the house where the point is projected"""
 
     def __str__(self) -> str:
         return f"{self.point_name} of {self.point_owner_name} at {self.point_degree}° {self.point_sign} in {self.house_owner_name}'s {self.house_number} house"
