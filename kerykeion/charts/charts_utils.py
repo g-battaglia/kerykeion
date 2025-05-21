@@ -1188,18 +1188,18 @@ def draw_house_comparison_grid(
     svg_output = '<g transform="translate(1030,-20)">'
 
     # Add title
-    svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">House Comparison</text>'
+    svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">House placement comparison</text>'
 
     # Add column headers
     line_increment = 10
     svg_output += (
         f'<g transform="translate(0,{line_increment})">'
-        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Return Point</text>'
-        f'<text text-anchor="start" x="75" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Return</text>'
-        f'<text text-anchor="start" x="129" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Radix</text>'
+        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">Return Point</text>'
+        f'<text text-anchor="start" x="77" style="fill:{text_color}; font-weight: bold; font-size: 10px;">Return</text>'
+        f'<text text-anchor="start" x="132" style="fill:{text_color}; font-weight: bold; font-size: 10px;">Radix</text>'
         f'</g>'
     )
-    line_increment += 20
+    line_increment += 15
 
     # Create a dictionary to store all points by name for combined display
     all_points_by_name = {}
