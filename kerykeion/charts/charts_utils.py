@@ -1,6 +1,7 @@
 import math
 import datetime
 from kerykeion.kr_types import KerykeionException, ChartType
+from kerykeion.kr_types.kr_literals import Planet, AxialCusps
 from typing import Union, Literal, TYPE_CHECKING
 from kerykeion.kr_types.kr_models import AspectModel, KerykeionPointModel, CompositeSubjectModel, PlanetReturnModel, AstrologicalSubjectModel
 from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsAspectModel, KerykeionSettingsCelestialPointModel
@@ -1161,7 +1162,9 @@ def calculate_element_points(
 def draw_house_comparison_grid(
         house_comparison: "HouseComparisonModel",
         celestial_point_language: KerykeionLanguageCelestialPointModel,
+        active_points: list[Planet | AxialCusps],
         *,
+        points_owner_subject_number: Literal[1, 2] = 1,
         text_color: str = "var(--kerykeion-color-neutral-content)"
 ) -> str:
     """
@@ -1170,14 +1173,18 @@ def draw_house_comparison_grid(
     Parameters:
     - house_comparison ("HouseComparisonModel"): Model containing house comparison data,
       including first_subject_name, second_subject_name, and points in houses.
+    - celestial_point_language (KerykeionLanguageCelestialPointModel): Language model for celestial points
+    - active_celestial_points (list[KerykeionPointModel]): List of active celestial points to display
+    - text_color (str): Color for the text elements
 
     Returns:
     - str: SVG code for the house comparison grid.
     """
-    # Extract data from the model
-    first_points_in_second_houses = house_comparison.first_points_in_second_houses
+    if points_owner_subject_number == 1:
+        comparison_data = house_comparison.first_points_in_second_houses
+    else:
+        comparison_data = house_comparison.second_points_in_first_houses
 
-    # Start SVG output
     svg_output = '<g transform="translate(1030,-20)">'
 
     # Add title
@@ -1197,14 +1204,13 @@ def draw_house_comparison_grid(
     # Create a dictionary to store all points by name for combined display
     all_points_by_name = {}
 
-    # Process first subject's points in second subject's houses
-    for point in first_points_in_second_houses:
-        if point.point_name not in all_points_by_name:
+    for point in comparison_data:
+        # Only process points that are active
+        if point.point_name in active_points and point.point_name not in all_points_by_name:
             all_points_by_name[point.point_name] = {
                 "name": point.point_name,
-                "natal_position": f"{point.point_sign} {point.point_degree:.1f}°",
-                "native_house": point.projected_house_number,
-                "secondary_house": point.point_owner_house_number
+                "secondary_house": point.projected_house_number,
+                "native_house": point.point_owner_house_number
             }
 
     # Display all points organized by name
