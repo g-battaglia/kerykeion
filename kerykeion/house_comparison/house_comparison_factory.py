@@ -1,9 +1,8 @@
 from kerykeion.house_comparison.house_comparison_utils import calculate_points_in_reciprocal_houses
 from typing import Union, TYPE_CHECKING
 from kerykeion.house_comparison.house_comparison_models import HouseComparisonModel
-
-if TYPE_CHECKING:
-    from kerykeion import AstrologicalSubject, AstrologicalSubjectModel, PlanetReturnModel
+from kerykeion.astrological_subject import AstrologicalSubject
+from kerykeion.kr_types import AstrologicalSubjectModel, PlanetReturnModel
 
 
 class HouseComparisonFactory:

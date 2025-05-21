@@ -145,14 +145,14 @@ class KerykeionChartSVG:
     # Constants
     _BASIC_CHART_VIEWBOX = "0 0 820 550.0"
     _WIDE_CHART_VIEWBOX = "0 0 1200 546.0"
-    _ULTRA_WIDE_CHART_VIEWBOX = "0 0 1300 546.0"
+    _ULTRA_WIDE_CHART_VIEWBOX = "0 0 1270 546.0"
     _TRANSIT_CHART_WITH_TABLE_VIWBOX = "0 0 960 546.0"
 
     _DEFAULT_HEIGHT = 550
     _DEFAULT_FULL_WIDTH = 1200
     _DEFAULT_NATAL_WIDTH = 820
     _DEFAULT_FULL_WIDTH_WITH_TABLE = 1200
-    _DEFAULT_ULTRA_WIDE_WIDTH = 1300
+    _DEFAULT_ULTRA_WIDE_WIDTH = 1270
     _PLANET_IN_ZODIAC_EXTRA_POINTS = 10
 
     # Set at init
@@ -1668,10 +1668,16 @@ if __name__ == "__main__":
         altitude=0,
     )
     solar_return = return_factory.next_return_from_iso_formatted_time(
-        "2026-10-09T18:30:00+01:00",  # UTC+1
+        "2025-01-09T18:30:00+01:00",  # UTC+1
         return_type="Solar",
     )
-    solar_return_chart = KerykeionChartSVG(first_obj=subject, chart_type="Return", second_obj=solar_return, chart_language="IT")
+    solar_return_chart = KerykeionChartSVG(
+        first_obj=subject, chart_type="Return",
+        second_obj=solar_return,
+        chart_language="IT",
+        theme="classic",
+        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant"],
+    )
 
     solar_return_chart.makeSVG(minify=True, remove_css_variables=True)
 
@@ -1681,6 +1687,8 @@ if __name__ == "__main__":
         chart_type="SingleWheelReturn",
         second_obj=solar_return,
         chart_language="IT",
+        theme="dark",
+        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
     )
 
     single_wheel_return_chart.makeSVG(minify=True, remove_css_variables=True)

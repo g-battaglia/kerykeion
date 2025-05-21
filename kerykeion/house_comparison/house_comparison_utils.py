@@ -1,10 +1,13 @@
-from kerykeion import AstrologicalSubject
+from kerykeion.astrological_subject import AstrologicalSubject
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, PlanetReturnModel
 from kerykeion.utilities import get_planet_house, get_house_number
 from kerykeion.house_comparison.house_comparison_models import PointInHouseModel
+from typing import Union
 
 
 def calculate_points_in_reciprocal_houses(
-    point_subject: AstrologicalSubject, house_subject: AstrologicalSubject
+    point_subject: Union[AstrologicalSubject, AstrologicalSubjectModel, PlanetReturnModel],
+    house_subject: Union[AstrologicalSubject, AstrologicalSubjectModel, PlanetReturnModel],
 ) -> list[PointInHouseModel]:
     """
     Calculates which houses of the house_subject the points of point_subject fall into.
@@ -31,7 +34,7 @@ def calculate_points_in_reciprocal_houses(
         if axis_obj is not None:
             celestial_points.append(axis_obj)
 
-    # Ordered list of house cusps degrees
+    # Ordered list of house cusps degrees for house_subject
     house_cusps = [
         house_subject.first_house.abs_pos,
         house_subject.second_house.abs_pos,
@@ -47,6 +50,22 @@ def calculate_points_in_reciprocal_houses(
         house_subject.twelfth_house.abs_pos,
     ]
 
+    # Ordered list of house cusps degrees for point_subject
+    point_subject_house_cusps = [
+        point_subject.first_house.abs_pos,
+        point_subject.second_house.abs_pos,
+        point_subject.third_house.abs_pos,
+        point_subject.fourth_house.abs_pos,
+        point_subject.fifth_house.abs_pos,
+        point_subject.sixth_house.abs_pos,
+        point_subject.seventh_house.abs_pos,
+        point_subject.eighth_house.abs_pos,
+        point_subject.ninth_house.abs_pos,
+        point_subject.tenth_house.abs_pos,
+        point_subject.eleventh_house.abs_pos,
+        point_subject.twelfth_house.abs_pos,
+    ]
+
     # For each point, determine which house it falls in
     for point in celestial_points:
         if point is None:
@@ -56,17 +75,22 @@ def calculate_points_in_reciprocal_houses(
         house_name = get_planet_house(point_degree, house_cusps)
         house_number = get_house_number(house_name)
 
+        # Find which house the point is in its own chart (point_subject)
+        point_owner_house_name = get_planet_house(point_degree, point_subject_house_cusps)
+        point_owner_house_number = get_house_number(point_owner_house_name)
+
         point_in_house = PointInHouseModel(
             point_name=point.name,
             point_degree=point.position,
             point_sign=point.sign,
             point_owner_name=point_subject.name,
-            house_number=house_number,
-            house_name=house_name,
-            house_owner_name=house_subject.name,
+            point_owner_house_name=point_owner_house_name,
+            point_owner_house_number=point_owner_house_number,
+            projected_house_number=house_number,
+            projected_house_name=house_name,
+            projected_house_owner_name=house_subject.name,
         )
 
         points_in_houses.append(point_in_house)
 
     return points_in_houses
-

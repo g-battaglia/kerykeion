@@ -1161,6 +1161,8 @@ def calculate_element_points(
 def draw_house_comparison_grid(
         house_comparison: "HouseComparisonModel",
         celestial_point_language: KerykeionLanguageCelestialPointModel,
+        *,
+        text_color: str = "var(--kerykeion-color-neutral-content)"
 ) -> str:
     """
     Generate SVG code for displaying a comparison of points across houses between two charts.
@@ -1174,13 +1176,9 @@ def draw_house_comparison_grid(
     """
     # Extract data from the model
     first_points_in_second_houses = house_comparison.first_points_in_second_houses
-    second_points_in_first_houses = house_comparison.second_points_in_first_houses
-
-    # Default text color
-    text_color = "#000000"
 
     # Start SVG output
-    svg_output = '<g transform="translate(1050,-20)">'
+    svg_output = '<g transform="translate(1030,-20)">'
 
     # Add title
     svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">House Comparison</text>'
@@ -1189,9 +1187,9 @@ def draw_house_comparison_grid(
     line_increment = 10
     svg_output += (
         f'<g transform="translate(0,{line_increment})">'
-        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Point</text>'
-        f'<text text-anchor="start" x="70" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Return</text>'
-        f'<text text-anchor="start" x="124" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Radix</text>'
+        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Return Point</text>'
+        f'<text text-anchor="start" x="75" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Return</text>'
+        f'<text text-anchor="start" x="129" style="fill:{text_color}; font-weight:bold; font-size: 11px;">Radix</text>'
         f'</g>'
     )
     line_increment += 20
@@ -1200,28 +1198,14 @@ def draw_house_comparison_grid(
     all_points_by_name = {}
 
     # Process first subject's points in second subject's houses
-    for point in second_points_in_first_houses:
+    for point in first_points_in_second_houses:
         if point.point_name not in all_points_by_name:
             all_points_by_name[point.point_name] = {
                 "name": point.point_name,
                 "natal_position": f"{point.point_sign} {point.point_degree:.1f}°",
-                "secondary_house": point.house_number
+                "native_house": point.projected_house_number,
+                "secondary_house": point.point_owner_house_number
             }
-
-    # Process second subject's points in first subject's houses if available
-    if first_points_in_second_houses:
-        for point in first_points_in_second_houses:
-            if point.point_name in all_points_by_name:
-                # Update existing entry with second house info
-                all_points_by_name[point.point_name]["native_house"] = point.house_number
-            else:
-                # Create new entry for second subject points
-                all_points_by_name[point.point_name] = {
-                    "name": point.point_name,
-                    "natal_position": f"{point.point_sign} {point.point_degree:.1f}°",
-                    "native_house": point.house_number,
-                    "secondary_house": "-"
-                }
 
     # Display all points organized by name
     for name, point_data in all_points_by_name.items():
