@@ -1335,6 +1335,8 @@ class KerykeionChartSVG:
             template_dict["makeHouseComparisonGrid"] = draw_house_comparison_grid(
                 house_comparison,
                 celestial_point_language=self.language_settings["celestial_points"],
+                active_points=self.active_points,
+                points_owner_subject_number=2 # The second subject is the Solar Return
             )
 
         elif self.chart_type == "SingleWheelReturn":
