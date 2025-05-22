@@ -1246,7 +1246,7 @@ class KerykeionChartSVG:
             template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(self.main_radius, self.main_radius - 160)
 
             # Chart title
-            template_dict["stringTitle"] = f"{self.first_obj.name} {self.second_obj.return_type} {self.language_settings['Return']}" # type: ignore
+            template_dict["stringTitle"] = f"{self.first_obj.name} x {self.second_obj.return_type} {self.language_settings['Return']}" # type: ignore
 
             # Top left section
             # Subject
@@ -1316,13 +1316,13 @@ class KerykeionChartSVG:
             # Planet grid
             second_subject_table_name = self.second_obj.name # type: ignore
             template_dict["makePlanetGrid"] = draw_planet_grid(
-                planets_and_houses_grid_title=self.language_settings["planets_and_house"],
-                subject_name=self.first_obj.name,
+                planets_and_houses_grid_title="",
+                subject_name=self.first_obj.name + " " + "(internal wheel)",
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
-                second_subject_name=second_subject_table_name,
+                second_subject_name="Return " + "(external wheel)",
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
             )
 

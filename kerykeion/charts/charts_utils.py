@@ -897,10 +897,16 @@ def draw_planet_grid(
     offset = 0
     offset_between_lines = 14
 
-    if chart_type in ["Transit", "Synastry", "Return"]:
+    if chart_type in ["Transit", "Synastry"]:
         svg_output = (
             f'<g transform="translate(100, -15)">'
-            f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}:</text>'
+            f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
+            f'</g>'
+        )
+    elif chart_type == "Return":
+        svg_output = (
+            f'<g transform="translate(150, -15)">'
+            f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
             f'</g>'
         )
     else:
@@ -940,6 +946,11 @@ def draw_planet_grid(
             svg_output += (
                 f'<g transform="translate(320, -15)">'
                 f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{second_subject_name}:</text>'
+            )
+        elif chart_type == "Return":
+            svg_output += (
+                f'<g transform="translate(400, -15)">'
+                f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}</text>'
             )
         else:
             svg_output += (
