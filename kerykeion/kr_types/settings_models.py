@@ -190,6 +190,7 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     Transit: str
     Composite: str
     Return: str
+    return_aspects: str
 
 
 class KerykeionGeneralSettingsModel(SubscriptableBaseModel):
