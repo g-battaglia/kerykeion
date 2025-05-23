@@ -1734,3 +1734,26 @@ if __name__ == "__main__":
         active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
     )
     lunar_return_chart.makeSVG(minify=True, remove_css_variables=True)
+
+    ## Transit Chart
+    transit = AstrologicalSubject("Transit", 2025, 1, 9, 18, 30, "Los Angeles", "US")
+    transit_chart = KerykeionChartSVG(
+        first_obj=subject,
+        chart_type="Transit",
+        second_obj=transit,
+        chart_language="IT",
+        theme="dark",
+        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
+    )
+    transit_chart.makeSVG(minify=True, remove_css_variables=True)
+
+    ## Synastry Chart
+    second_subject = AstrologicalSubject("Yoko Ono", 1933, 2, 18, 18, 30, "Tokyo", "JP")
+    synastry_chart = KerykeionChartSVG(
+        first_obj=subject,
+        chart_type="Synastry",
+        second_obj=second_subject,
+        chart_language="IT",
+        theme="dark",
+        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
+    )

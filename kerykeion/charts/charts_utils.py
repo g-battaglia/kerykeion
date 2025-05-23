@@ -945,7 +945,7 @@ def draw_planet_grid(
         if chart_type == "Transit":
             svg_output += (
                 f'<g transform="translate(320, -15)">'
-                f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{second_subject_name}:</text>'
+                f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{second_subject_name}</text>'
             )
         elif chart_type == "Return":
             svg_output += (
