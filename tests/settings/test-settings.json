@@ -74,6 +74,9 @@
       "Transit": "Transit",
       "Composite": "Composite",
       "Return": "Return",
+      "solar_return": "Solar Return",
+      "lunar_return": "Lunar Return",
+      "return_aspects": "Natal-Return Aspects",
       "celestial_points": {
         "Sun": "Sun",
         "Moon": "Moon",
@@ -171,6 +174,9 @@
       "Transit": "Transit",
       "Composite": "Composite",
       "Return": "Retour",
+      "solar_return": "Retour Solaire",
+      "lunar_return": "Retour Lunaire",
+      "return_aspects": "Aspects natal-retour",
       "celestial_points": {
         "Sun": "Soleil",
         "Moon": "Lune",
@@ -268,6 +274,9 @@
       "Transit": "Trânsito",
       "Composite": "Composto",
       "Return": "Retorno",
+      "solar_return": "Retorno Solar",
+      "lunar_return": "Retorno Lunar",
+      "return_aspects": "Aspectos do natal para o retorno",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Lua",
@@ -365,6 +374,9 @@
       "Transit": "Transito",
       "Composite": "Composito",
       "Return": "Rivoluzione",
+      "solar_return": "Ritorno Solare",
+      "lunar_return": "Ritorno Lunare",
+      "return_aspects": "Aspetti tra Tema Natale e Ritorno Solare",
       "celestial_points": {
         "Sun": "Sole",
         "Moon": "Luna",
@@ -462,6 +474,9 @@
       "Transit": "運行",
       "Composite": "合成盤",
       "Return": "回歸",
+      "solar_return": "太陽回歸",
+      "lunar_return": "月亮回歸",
+      "return_aspects": "本命与回归相位",
       "celestial_points": {
         "Sun": "太陽",
         "Moon": "月亮",
@@ -559,6 +574,9 @@
       "Transit": "Tránsito",
       "Composite": "Compuesto",
       "Return": "Retorno",
+      "solar_return": "Retorno Solar",
+      "lunar_return": "Retorno Lunar",
+      "return_aspects": "Aspectos entre natal y retorno",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Luna",
@@ -656,6 +674,9 @@
       "Transit": "Транзит",
       "Composite": "Композит",
       "Return": "Возврат",
+      "solar_return": "Солнечное возвращение",
+      "lunar_return": "Лунное возвращение",
+      "return_aspects": "Аспекты от натала к возвращению",
       "celestial_points": {
         "Sun": "Солнце",
         "Moon": "Луна",
@@ -753,6 +774,9 @@
       "Transit": "Geçiş",
       "Composite": "Kompozit",
       "Return": "Dönüş",
+      "solar_return": "Güneş Dönüşü",
+      "lunar_return": "Ay Dönüşü",
+      "return_aspects": "Doğumdan dönüşe açılar",
       "celestial_points": {
         "Sun": "Güneş",
         "Moon": "Ay",
@@ -850,6 +874,9 @@
       "Transit": "Transit",
       "Composite": "Composit",
       "Return": "Rückkehr",
+      "solar_return": "Sonnenrückkehr",
+      "lunar_return": "Mondrückkehr",
+      "return_aspects": "Aspekte vom Radix zum Return",
       "celestial_points": {
         "Sun": "Sonne",
         "Moon": "Mond",
@@ -947,6 +974,9 @@
       "Transit": "गोचर",
       "Composite": "संयुक्त",
       "Return": "वापसी",
+      "solar_return": "सौर वापसी",
+      "lunar_return": "चंद्र वापसी",
+      "return_aspects": "जन्म से रिटर्न तक के पहलू",
       "celestial_points": {
         "Sun": "सूर्य",
         "Moon": "चंद्रमा",
@@ -1045,9 +1075,7 @@
       "name": "Sun",
       "color": "var(--kerykeion-chart-color-sun)",
       "element_points": 40,
-      "related_zodiac_signs": [
-        "4"
-      ],
+      "related_zodiac_signs": ["4"],
       "label": "Sun"
     },
     {
@@ -1055,9 +1083,7 @@
       "name": "Moon",
       "color": "var(--kerykeion-chart-color-moon)",
       "element_points": 40,
-      "related_zodiac_signs": [
-        "3"
-      ],
+      "related_zodiac_signs": ["3"],
       "label": "Moon"
     },
     {
@@ -1065,10 +1091,7 @@
       "name": "Mercury",
       "color": "var(--kerykeion-chart-color-mercury)",
       "element_points": 15,
-      "related_zodiac_signs": [
-        "2",
-        "5"
-      ],
+      "related_zodiac_signs": ["2", "5"],
       "label": "Mercury"
     },
     {
@@ -1076,10 +1099,7 @@
       "name": "Venus",
       "color": "var(--kerykeion-chart-color-venus)",
       "element_points": 15,
-      "related_zodiac_signs": [
-        "1",
-        "6"
-      ],
+      "related_zodiac_signs": ["1", "6"],
       "label": "Venus"
     },
     {
@@ -1087,9 +1107,7 @@
       "name": "Mars",
       "color": "var(--kerykeion-chart-color-mars)",
       "element_points": 15,
-      "related_zodiac_signs": [
-        "0"
-      ],
+      "related_zodiac_signs": ["0"],
       "label": "Mars"
     },
     {
@@ -1097,9 +1115,7 @@
       "name": "Jupiter",
       "color": "var(--kerykeion-chart-color-jupiter)",
       "element_points": 10,
-      "related_zodiac_signs": [
-        "8"
-      ],
+      "related_zodiac_signs": ["8"],
       "label": "Jupiter"
     },
     {
@@ -1107,9 +1123,7 @@
       "name": "Saturn",
       "color": "var(--kerykeion-chart-color-saturn)",
       "element_points": 10,
-      "related_zodiac_signs": [
-        "9"
-      ],
+      "related_zodiac_signs": ["9"],
       "label": "Saturn"
     },
     {
@@ -1117,9 +1131,7 @@
       "name": "Uranus",
       "color": "var(--kerykeion-chart-color-uranus)",
       "element_points": 10,
-      "related_zodiac_signs": [
-        "10"
-      ],
+      "related_zodiac_signs": ["10"],
       "label": "Uranus"
     },
     {
@@ -1127,9 +1139,7 @@
       "name": "Neptune",
       "color": "var(--kerykeion-chart-color-neptune)",
       "element_points": 10,
-      "related_zodiac_signs": [
-        "11"
-      ],
+      "related_zodiac_signs": ["11"],
       "label": "Neptune"
     },
     {
@@ -1137,9 +1147,7 @@
       "name": "Pluto",
       "color": "var(--kerykeion-chart-color-pluto)",
       "element_points": 10,
-      "related_zodiac_signs": [
-        "7"
-      ],
+      "related_zodiac_signs": ["7"],
       "label": "Pluto"
     },
     {
