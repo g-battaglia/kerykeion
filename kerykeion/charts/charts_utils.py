@@ -1199,7 +1199,7 @@ def draw_house_comparison_grid(
     svg_output = '<g transform="translate(1030,-20)">'
 
     # Add title
-    svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">House placement comparison</text>'
+    svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">House Position Comparison</text>'
 
     # Add column headers
     line_increment = 10

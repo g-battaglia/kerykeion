@@ -1246,7 +1246,7 @@ class KerykeionChartSVG:
             template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(self.main_radius, self.main_radius - 160)
 
             # Chart title
-            template_dict["stringTitle"] = f"{self.first_obj.name} x {self.second_obj.return_type} {self.language_settings['Return']}" # type: ignore
+            template_dict["stringTitle"] = f"{self.first_obj.name} - {self.second_obj.return_type} {self.language_settings['Return']}" # type: ignore
 
             # Top left section
             # Subject
@@ -1317,12 +1317,12 @@ class KerykeionChartSVG:
             second_subject_table_name = self.second_obj.name # type: ignore
             template_dict["makePlanetGrid"] = draw_planet_grid(
                 planets_and_houses_grid_title="",
-                subject_name=self.first_obj.name + " " + "(internal wheel)",
+                subject_name=self.first_obj.name + " " + "(Inner Wheel)",
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
-                second_subject_name="Return " + "(external wheel)",
+                second_subject_name="Return " + "(Outer Wheel)",
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
             )
 
@@ -1695,3 +1695,18 @@ if __name__ == "__main__":
     )
 
     single_wheel_return_chart.makeSVG(minify=True, remove_css_variables=True)
+
+    # Lunar return
+    lunar_return = return_factory.next_return_from_iso_formatted_time(
+        "2025-01-09T18:30:00+01:00",  # UTC+1
+        return_type="Lunar",
+    )
+    lunar_return_chart = KerykeionChartSVG(
+        first_obj=subject,
+        chart_type="Return",
+        second_obj=lunar_return,
+        chart_language="IT",
+        theme="dark",
+        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
+    )
+    lunar_return_chart.makeSVG(minify=True, remove_css_variables=True)

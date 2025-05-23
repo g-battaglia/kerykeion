@@ -131,7 +131,6 @@ class PlanetaryReturnFactory:
             self.lat = float(self.city_data["lat"])
             self.tz_str = self.city_data["timezonestr"]
 
-
     def next_return_from_iso_formatted_time(
         self,
         iso_formatted_time: str,
@@ -187,6 +186,65 @@ class PlanetaryReturnFactory:
             **model_data,
         )
 
+    def next_return_from_year(
+        self,
+        year: int,
+        return_type: ReturnType
+    ) -> PlanetReturnModel:
+        """
+        Get the next Return for the specified year.
+
+        This method finds the first return that occurs in the given year.
+
+        Args:
+            year (int): The year to search for the return
+            return_type (ReturnType): The type of return ("Solar" or "Lunar")
+
+        Returns:
+            PlanetReturnModel: Pydantic model containing the return chart data
+        """
+        # Create datetime for January 1st of the specified year (UTC)
+        start_date = datetime(year, 1, 1, 0, 0, tzinfo=timezone.utc)
+
+        # Get the return using the existing method
+        return self.next_return_from_iso_formatted_time(
+            start_date.isoformat(),
+            return_type
+        )
+
+    def next_return_from_month_and_year(
+        self,
+        year: int,
+        month: int,
+        return_type: ReturnType
+    ) -> PlanetReturnModel:
+        """
+        Get the next Return for the specified month and year.
+
+        This method finds the first return that occurs after the first day
+        of the specified month and year.
+
+        Args:
+            year (int): The year to search for the return
+            month (int): The month to search for the return (1-12)
+            return_type (ReturnType): The type of return ("Solar" or "Lunar")
+
+        Returns:
+            PlanetReturnModel: Pydantic model containing the return chart data
+        """
+        # Validate month input
+        if month < 1 or month > 12:
+            raise KerykeionException(f"Invalid month {month}. Month must be between 1 and 12.")
+
+        # Create datetime for the first day of the specified month and year (UTC)
+        start_date = datetime(year, month, 1, 0, 0, tzinfo=timezone.utc)
+
+        # Get the return using the existing method
+        return self.next_return_from_iso_formatted_time(
+            start_date.isoformat(),
+            return_type
+        )
+
 
 if __name__ == "__main__":
     import json
@@ -215,7 +273,28 @@ if __name__ == "__main__":
         return_type="Lunar",
     )
     print("--- After ---")
-    print(f"Solar Return Julian Data:       {solar_return.julian_day}")
     print(f"Solar Return Date UTC:          {solar_return.iso_formatted_utc_datetime}")
     print(f"Solar Return Date Local:        {solar_return.iso_formatted_local_datetime}")
     print(f"Solar Return JSON:              {json.dumps(solar_return.model_dump(), indent=4)}")
+    print(f"Solar Return Julian Data:       {solar_return.julian_day}")
+    print(f"ISO UTC:                        {solar_return.iso_formatted_utc_datetime}")
+
+    ## From Year
+    print("=== Planet Return Calculator ===")
+    solar_return = calculator.next_return_from_year(
+        2026,
+        return_type="Lunar",
+    )
+    print("--- From Year ---")
+    print(f"Solar Return Julian Data:       {solar_return.julian_day}")
+    print(f"Solar Return Date UTC:          {solar_return.iso_formatted_utc_datetime}")
+    ## From Month and Year
+    print("=== Planet Return Calculator ===")
+    solar_return = calculator.next_return_from_month_and_year(
+        2026,
+        1,
+        return_type="Lunar",
+    )
+    print("--- From Month and Year ---")
+    print(f"Solar Return Julian Data:       {solar_return.julian_day}")
+    print(f"Solar Return Date UTC:          {solar_return.iso_formatted_utc_datetime}")
