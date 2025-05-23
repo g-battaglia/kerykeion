@@ -368,7 +368,7 @@
       "Transit": "Transito",
       "Composite": "Composito",
       "Return": "Rivoluzione",
-      "return_aspects": "Aspetti tra tema natale e tema di rivoluzione",
+      "return_aspects": "Aspetti tra Tema Natale e Ritorno Solare",
       "celestial_points": {
         "Sun": "Sole",
         "Moon": "Luna",
@@ -1049,7 +1049,6 @@
       "color": "var(--kerykeion-chart-color-opposition)"
     }
   ],
-  "return_aspects": "TODO",
   "celestial_points": [
     {
       "id": 0,
