@@ -949,7 +949,7 @@ def draw_planet_grid(
             )
         elif chart_type == "Return":
             svg_output += (
-                f'<g transform="translate(400, -15)">'
+                f'<g transform="translate(425, -15)">'
                 f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}</text>'
             )
         else:
