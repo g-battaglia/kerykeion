@@ -1322,17 +1322,19 @@ class KerykeionChartSVG:
 
             # Planet grid
             if self.second_obj.return_type == "Solar":
-                return_grid_title = f"{self.language_settings.get('solar_return', 'Solar Return')} ({self.language_settings.get('outer_wheel', 'Outer Wheel')})"
+                first_return_grid_title = f"{self.first_obj.name} ({self.language_settings.get('inner_wheel', 'Inner Wheel')})"
+                second_return_grid_title = f"{self.language_settings.get('solar_return', 'Solar Return')} ({self.language_settings.get('outer_wheel', 'Outer Wheel')})"
             else:
-                return_grid_title = f"{self.language_settings.get("lunar_return", "Lunar Return")} ({self.language_settings.get("outer_wheel", "Outer Wheel")})"
+                first_return_grid_title = f"{self.first_obj.name} ({self.language_settings.get('inner_wheel', 'Inner Wheel')})"
+                second_return_grid_title = f"{self.language_settings.get("lunar_return", "Lunar Return")} ({self.language_settings.get("outer_wheel", "Outer Wheel")})"
             template_dict["makePlanetGrid"] = draw_planet_grid(
                 planets_and_houses_grid_title="",
-                subject_name=self.first_obj.name + " " + "(Inner Wheel)",
+                subject_name=first_return_grid_title,
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
-                second_subject_name=return_grid_title,
+                second_subject_name=second_return_grid_title,
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
             )
 
@@ -1347,7 +1349,11 @@ class KerykeionChartSVG:
                 house_comparison,
                 celestial_point_language=self.language_settings["celestial_points"],
                 active_points=self.active_points,
-                points_owner_subject_number=2 # The second subject is the Solar Return
+                points_owner_subject_number=2, # The second subject is the Solar Return
+                house_position_comparison_label=self.language_settings.get("house_position_comparison", "House Position Comparison"),
+                return_point_label=self.language_settings.get("return_point", "Return Point"),
+                return_label=self.language_settings.get("Return", "Return"),
+                radix_label=self.language_settings.get("Natal", "Natal"),
             )
 
         elif self.chart_type == "SingleWheelReturn":

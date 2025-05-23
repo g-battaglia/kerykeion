@@ -189,10 +189,15 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     Synastry: str
     Transit: str
     Composite: str
+    Return: str
     return_aspects: str
     solar_return: str
     lunar_return: str
-
+    inner_wheel: str
+    outer_wheel: str
+    house_position_comparison: str
+    return_point: str
+    natal: str
 
 class KerykeionGeneralSettingsModel(SubscriptableBaseModel):
     axes_orbit: int = Field(title="Axes Orbit", description="The orbit of the axes in the chart")
