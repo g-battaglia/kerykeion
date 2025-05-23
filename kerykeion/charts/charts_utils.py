@@ -1176,7 +1176,11 @@ def draw_house_comparison_grid(
         active_points: list[Planet | AxialCusps],
         *,
         points_owner_subject_number: Literal[1, 2] = 1,
-        text_color: str = "var(--kerykeion-color-neutral-content)"
+        text_color: str = "var(--kerykeion-color-neutral-content)",
+        house_position_comparison_label: str = "House Position Comparison",
+        return_point_label: str = "Return Point",
+        return_label: str = "Return",
+        radix_label: str = "Radix",
 ) -> str:
     """
     Generate SVG code for displaying a comparison of points across houses between two charts.
@@ -1199,15 +1203,15 @@ def draw_house_comparison_grid(
     svg_output = '<g transform="translate(1030,-20)">'
 
     # Add title
-    svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">House Position Comparison</text>'
+    svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">{house_position_comparison_label}</text>'
 
     # Add column headers
     line_increment = 10
     svg_output += (
         f'<g transform="translate(0,{line_increment})">'
-        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">Return Point</text>'
-        f'<text text-anchor="start" x="77" style="fill:{text_color}; font-weight: bold; font-size: 10px;">Return</text>'
-        f'<text text-anchor="start" x="132" style="fill:{text_color}; font-weight: bold; font-size: 10px;">Radix</text>'
+        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{return_point_label}</text>'
+        f'<text text-anchor="start" x="77" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{return_label}</text>'
+        f'<text text-anchor="start" x="132" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{radix_label}</text>'
         f'</g>'
     )
     line_increment += 15

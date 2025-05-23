@@ -1246,7 +1246,11 @@ class KerykeionChartSVG:
             template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(self.main_radius, self.main_radius - 160)
 
             # Chart title
-            template_dict["stringTitle"] = f"{self.first_obj.name} - {self.second_obj.return_type} {self.language_settings['Return']}" # type: ignore
+            if self.second_obj.return_type == "Solar":
+                template_dict["stringTitle"] = f"{self.first_obj.name} - {self.language_settings.get('solar_return', 'Solar Return')}"
+            else:
+                template_dict["stringTitle"] = f"{self.first_obj.name} - {self.language_settings.get('lunar_return', 'Lunar Return')}"
+
 
             # Top left section
             # Subject
@@ -1257,12 +1261,15 @@ class KerykeionChartSVG:
             return_latitude_string = convert_latitude_coordinate_to_string(self.second_obj.lat, self.language_settings["north"], self.language_settings["south"]) # type: ignore
             return_longitude_string = convert_longitude_coordinate_to_string(self.second_obj.lng, self.language_settings["east"], self.language_settings["west"]) # type: ignore
 
-            template_dict["top_left_0"] = f"{self.language_settings['Return']}"
-            template_dict["top_left_1"] = f"{return_latitude_string} / {return_longitude_string}"
-            template_dict["top_left_2"] = format_datetime_with_timezone(self.second_obj.iso_formatted_local_datetime) # type: ignore
+            if self.second_obj.return_type == "Solar":
+                template_dict["top_left_0"] = f"{self.language_settings.get('solar_return', 'Solar Return')}:"
+            else:
+                template_dict["top_left_0"] = f"{self.language_settings.get('lunar_return', 'Lunar Return')}:"
+            template_dict["top_left_1"] = format_datetime_with_timezone(self.second_obj.iso_formatted_local_datetime) # type: ignore
+            template_dict["top_left_2"] = f"{return_latitude_string} / {return_longitude_string}"
             template_dict["top_left_3"] = f"{self.first_obj.name}"
-            template_dict["top_left_4"] = f"{latitude_string} / {longitude_string}"
-            template_dict["top_left_5"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime) # type: ignore
+            template_dict["top_left_4"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime) # type: ignore
+            template_dict["top_left_5"] = f"{latitude_string} / {longitude_string}"
 
             # Bottom left section
             if self.first_obj.zodiac_type == "Tropic":
@@ -1314,7 +1321,10 @@ class KerykeionChartSVG:
             )
 
             # Planet grid
-            second_subject_table_name = self.second_obj.name # type: ignore
+            if self.second_obj.return_type == "Solar":
+                return_grid_title = f"{self.language_settings.get('solar_return', 'Solar Return')} ({self.language_settings.get('outer_wheel', 'Outer Wheel')})"
+            else:
+                return_grid_title = f"{self.language_settings.get("lunar_return", "Lunar Return")} ({self.language_settings.get("outer_wheel", "Outer Wheel")})"
             template_dict["makePlanetGrid"] = draw_planet_grid(
                 planets_and_houses_grid_title="",
                 subject_name=self.first_obj.name + " " + "(Inner Wheel)",
@@ -1322,7 +1332,7 @@ class KerykeionChartSVG:
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
-                second_subject_name="Return " + "(Outer Wheel)",
+                second_subject_name=return_grid_title,
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
             )
 
@@ -1389,11 +1399,14 @@ class KerykeionChartSVG:
             longitude_string = convert_longitude_coordinate_to_string(self.geolon, self.language_settings["east"], self.language_settings["west"])
 
             template_dict["top_left_0"] = f'{self.language_settings["info"]}:'
-            template_dict["top_left_1"] = format_location_string(self.location)
-            template_dict["top_left_2"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime) # type: ignore
+            template_dict["top_left_1"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime) # type: ignore
+            template_dict["top_left_2"] = format_location_string(self.location)
             template_dict["top_left_3"] = f"{self.language_settings['latitude']}: {latitude_string}"
             template_dict["top_left_4"] = f"{self.language_settings['longitude']}: {longitude_string}"
-            template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings['Return']}"
+            if self.first_obj.return_type == "Solar":
+                template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings.get('solar_return', 'Solar Return')}"
+            else:
+                template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings.get('lunar_return', 'Lunar Return')}"
 
             # Bottom left section
             if self.first_obj.zodiac_type == "Tropic":
@@ -1509,7 +1522,12 @@ class KerykeionChartSVG:
 
         self.template = self.makeTemplate(minify, remove_css_variables)
 
-        chartname = self.output_directory / f"{self.first_obj.name} - {self.chart_type} Chart.svg"
+        if self.chart_type == "Return" and self.second_obj.return_type == "Lunar":
+            chartname = self.output_directory / f"{self.first_obj.name} - {self.chart_type} Chart - Lunar Return.svg"
+        elif self.chart_type == "Return" and self.second_obj.return_type == "Solar":
+            chartname = self.output_directory / f"{self.first_obj.name} - {self.chart_type} Chart - Solar Return.svg"
+        else:
+            chartname = self.output_directory / f"{self.first_obj.name} - {self.chart_type} Chart.svg"
 
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(self.template)

@@ -189,8 +189,9 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     Synastry: str
     Transit: str
     Composite: str
-    Return: str
     return_aspects: str
+    solar_return: str
+    lunar_return: str
 
 
 class KerykeionGeneralSettingsModel(SubscriptableBaseModel):
