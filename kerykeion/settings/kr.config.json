@@ -74,6 +74,8 @@
       "Transit": "Transit",
       "Composite": "Composite",
       "Return": "Return",
+      "solar_return": "Solar Return",
+      "lunar_return": "Lunar Return",
       "return_aspects": "Natal-Return Aspects",
       "celestial_points": {
         "Sun": "Sun",
@@ -172,6 +174,8 @@
       "Transit": "Transit",
       "Composite": "Composite",
       "Return": "Retour",
+      "solar_return": "Retour Solaire",
+      "lunar_return": "Retour Lunaire",
       "return_aspects": "Aspects natal-retour",
       "celestial_points": {
         "Sun": "Soleil",
@@ -270,6 +274,8 @@
       "Transit": "Trânsito",
       "Composite": "Composto",
       "Return": "Retorno",
+      "solar_return": "Retorno Solar",
+      "lunar_return": "Retorno Lunar",
       "return_aspects": "Aspectos do natal para o retorno",
       "celestial_points": {
         "Sun": "Sol",
@@ -368,6 +374,8 @@
       "Transit": "Transito",
       "Composite": "Composito",
       "Return": "Rivoluzione",
+      "solar_return": "Ritorno Solare",
+      "lunar_return": "Ritorno Lunare",
       "return_aspects": "Aspetti tra Tema Natale e Ritorno Solare",
       "celestial_points": {
         "Sun": "Sole",
@@ -466,6 +474,8 @@
       "Transit": "運行",
       "Composite": "合成盤",
       "Return": "回歸",
+      "solar_return": "太陽回歸",
+      "lunar_return": "月亮回歸",
       "return_aspects": "本命与回归相位",
       "celestial_points": {
         "Sun": "太陽",
@@ -564,6 +574,8 @@
       "Transit": "Tránsito",
       "Composite": "Compuesto",
       "Return": "Retorno",
+      "solar_return": "Retorno Solar",
+      "lunar_return": "Retorno Lunar",
       "return_aspects": "Aspectos entre natal y retorno",
       "celestial_points": {
         "Sun": "Sol",
@@ -662,6 +674,8 @@
       "Transit": "Транзит",
       "Composite": "Композит",
       "Return": "Возврат",
+      "solar_return": "Солнечное возвращение",
+      "lunar_return": "Лунное возвращение",
       "return_aspects": "Аспекты от натала к возвращению",
       "celestial_points": {
         "Sun": "Солнце",
@@ -760,6 +774,8 @@
       "Transit": "Geçiş",
       "Composite": "Kompozit",
       "Return": "Dönüş",
+      "solar_return": "Güneş Dönüşü",
+      "lunar_return": "Ay Dönüşü",
       "return_aspects": "Doğumdan dönüşe açılar",
       "celestial_points": {
         "Sun": "Güneş",
@@ -858,6 +874,8 @@
       "Transit": "Transit",
       "Composite": "Composit",
       "Return": "Rückkehr",
+      "solar_return": "Sonnenrückkehr",
+      "lunar_return": "Mondrückkehr",
       "return_aspects": "Aspekte vom Radix zum Return",
       "celestial_points": {
         "Sun": "Sonne",
@@ -956,6 +974,8 @@
       "Transit": "गोचर",
       "Composite": "संयुक्त",
       "Return": "वापसी",
+      "solar_return": "सौर वापसी",
+      "lunar_return": "चंद्र वापसी",
       "return_aspects": "जन्म से रिटर्न तक के पहलू",
       "celestial_points": {
         "Sun": "सूर्य",
