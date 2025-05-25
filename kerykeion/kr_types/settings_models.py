@@ -200,6 +200,7 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     return_point: str
     natal: str
     perspective_type: str
+    domification: str
 
 class KerykeionGeneralSettingsModel(SubscriptableBaseModel):
     axes_orbit: int = Field(title="Axes Orbit", description="The orbit of the axes in the chart")
