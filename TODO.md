@@ -38,13 +38,18 @@ Legend:
 ## Solar Return
 
 TODO
-- [ ] Tabella pianeti di rivoluzione nelle case natali
-- [ ] Case di rivoluzione nelle case natali
-- [ ] Possibilità di disattivare pianeti di transito
-- [ ] Single Wheel Return 
-- [ ] Rename:
+- [x] Tabella pianeti di rivoluzione nelle case natali
+- [x] Case di rivoluzione nelle case natali
+- [KO] Possibilità di disattivare pianeti di transito
+- [x] Single Wheel Return 
+- [x] Rename:
       Domificazione: Placido  
       Zodiaco: Tropicale  
       Fase Lunare: Primo Quarto  
       Lunazione: Giorno 9  
       Geocentrico Apparente
+
+
+## TODO 2
+- [ ] Fix Nome "Aspetti Tra [...]"
+- [ ] Fix Nome File stesso (quello visibile nel browser)
