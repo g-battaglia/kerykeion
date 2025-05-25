@@ -51,6 +51,7 @@ from kerykeion.charts.charts_utils import (
     draw_houses_cusps_and_text_number,
     draw_transit_aspect_list,
     draw_transit_aspect_grid,
+    draw_single_house_comparison_grid,
     calculate_moon_phase_chart_params,
     draw_house_grid,
     draw_planet_grid,
@@ -985,7 +986,7 @@ class KerykeionChartSVG:
 
             # Aspects
             if self.double_chart_aspect_grid_type == "list":
-                title = self.language_settings.get("transit_aspects", "Transit Aspects")
+                title = f"{self.first_obj.name} - {self.language_settings.get("transit_aspects", "Transit Aspects")}"
                 template_dict["makeAspectGrid"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings)
             else:
                 template_dict["makeAspectGrid"] = draw_transit_aspect_grid(
@@ -999,18 +1000,18 @@ class KerykeionChartSVG:
             template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(self.main_radius, self.main_radius - 160)
 
             # Chart title
-            template_dict["stringTitle"] = f"{self.language_settings['transits']} {self.second_obj.day}/{self.second_obj.month}/{self.second_obj.year}" # type: ignore
+            template_dict["stringTitle"] = f"{self.language_settings['transits']} {format_datetime_with_timezone(self.second_obj.iso_formatted_local_datetime)}" # type: ignore
 
             # Top left section
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings["north"], self.language_settings["south"])
             longitude_string = convert_longitude_coordinate_to_string(self.geolon, self.language_settings["east"], self.language_settings["west"])
 
-            template_dict["top_left_0"] = f"{self.first_obj.name}:"
-            template_dict["top_left_1"] = format_location_string(self.location)
+            template_dict["top_left_0"] = template_dict["top_left_0"] = f'{self.first_obj.name}'
+            template_dict["top_left_1"] = f"{format_location_string(self.first_obj.city)}, {self.first_obj.nation}" # type: ignore
             template_dict["top_left_2"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime) # type: ignore
             template_dict["top_left_3"] = f"{self.language_settings['latitude']}: {latitude_string}"
             template_dict["top_left_4"] = f"{self.language_settings['longitude']}: {longitude_string}"
-            template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings.get(self.chart_type, self.chart_type)}"
+            template_dict["top_left_5"] = ""#f"{self.language_settings['type']}: {self.language_settings.get(self.chart_type, self.chart_type)}"
 
             # Bottom left section
             if self.first_obj.zodiac_type == "Tropic":
@@ -1062,18 +1063,38 @@ class KerykeionChartSVG:
             )
 
             # Planet grid
-            second_subject_table_name = self.language_settings["transit_name"]
+
+            first_return_grid_title = f"{self.first_obj.name} ({self.language_settings.get('inner_wheel', 'Inner Wheel')})"
+            second_return_grid_title = f"{self.language_settings.get('Transit', 'Transit')} ({self.language_settings.get('outer_wheel', 'Outer Wheel')})"
             template_dict["makePlanetGrid"] = draw_planet_grid(
-                planets_and_houses_grid_title=self.language_settings["planets_and_house"],
-                subject_name=self.first_obj.name,
+                planets_and_houses_grid_title="",
+                subject_name=first_return_grid_title,
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
-                second_subject_name=second_subject_table_name,
+                second_subject_name=second_return_grid_title,
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
             )
-            template_dict["makeHouseComparisonGrid"] = ""
+
+            # House comparison grid
+            house_comparison_factory = HouseComparisonFactory(
+                first_subject=self.first_obj,
+                second_subject=self.second_obj,
+                active_points=self.active_points,
+            )
+            house_comparison = house_comparison_factory.get_house_comparison()
+
+            template_dict["makeHouseComparisonGrid"] = draw_single_house_comparison_grid(
+                house_comparison,
+                celestial_point_language=self.language_settings.get("celestial_points", "Celestial Points"),
+                active_points=self.active_points,
+                points_owner_subject_number=2, # The second subject is the Transit
+                house_position_comparison_label=self.language_settings.get("house_position_comparison", "House Position Comparison"),
+                return_point_label=self.language_settings.get("transit_point", "Transit Point"),
+                natal_house_label=self.language_settings.get("house_position", "Natal House"),
+                x_position=930,
+            )
 
         elif self.chart_type == "Synastry":
             # Set viewbox
@@ -1081,6 +1102,12 @@ class KerykeionChartSVG:
 
             # Get houses list for secondary subject
             second_subject_houses_list = get_houses_list(self.second_obj) # type: ignore
+
+            # The Synastry chart does not have the element calculations
+            template_dict["fire_string"] = ""
+            template_dict["earth_string"] = ""
+            template_dict["air_string"] = ""
+            template_dict["water_string"] = ""
 
             # Rings and circles
             template_dict["transitRing"] = draw_transit_ring(
@@ -1128,11 +1155,11 @@ class KerykeionChartSVG:
 
             # Top left section
             template_dict["top_left_0"] = f"{self.first_obj.name}:"
-            template_dict["top_left_1"] = format_location_string(self.location)
+            template_dict["top_left_1"] = f"{self.first_obj.city}, {self.first_obj.nation}" # type: ignore
             template_dict["top_left_2"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime) # type: ignore
             template_dict["top_left_3"] = f"{self.second_obj.name}: " # type: ignore
-            template_dict["top_left_4"] = self.second_obj.city # type: ignore
-            template_dict["top_left_5"] = f"{self.second_obj.year}-{self.second_obj.month}-{self.second_obj.day} {self.second_obj.hour:02d}:{self.second_obj.minute:02d}" # type: ignore
+            template_dict["top_left_4"] = f"{self.second_obj.city}, {self.second_obj.nation}" # type: ignore
+            template_dict["top_left_5"] = format_datetime_with_timezone(self.second_obj.iso_formatted_local_datetime) # type: ignore
 
             # Bottom left section
             if self.first_obj.zodiac_type == "Tropic":
@@ -1736,14 +1763,14 @@ if __name__ == "__main__":
     lunar_return_chart.makeSVG(minify=True, remove_css_variables=True)
 
     ## Transit Chart
-    transit = AstrologicalSubject("Transit", 2025, 1, 9, 18, 30, "Los Angeles", "US")
+    transit = AstrologicalSubject("Transit", 2024, 5, 23, 18, 30, "Guidizzolo", "IT")
     transit_chart = KerykeionChartSVG(
         first_obj=subject,
         chart_type="Transit",
         second_obj=transit,
         chart_language="IT",
         theme="dark",
-        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
+        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant"]
     )
     transit_chart.makeSVG(minify=True, remove_css_variables=True)
 
@@ -1757,3 +1784,4 @@ if __name__ == "__main__":
         theme="dark",
         active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
     )
+    synastry_chart.makeSVG(minify=True, remove_css_variables=True)

@@ -897,9 +897,15 @@ def draw_planet_grid(
     offset = 0
     offset_between_lines = 14
 
-    if chart_type in ["Transit", "Synastry"]:
+    if chart_type == "Synastry":
         svg_output = (
             f'<g transform="translate(100, -15)">'
+            f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
+            f'</g>'
+        )
+    elif chart_type == "Transit":
+        svg_output = (
+            f'<g transform="translate(120, -15)">'
             f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
             f'</g>'
         )
@@ -1181,6 +1187,8 @@ def draw_house_comparison_grid(
         return_point_label: str = "Return Point",
         return_label: str = "Return",
         radix_label: str = "Radix",
+        x_position: int = 1030,
+        y_position: int = -20,
 ) -> str:
     """
     Generate SVG code for displaying a comparison of points across houses between two charts.
@@ -1200,7 +1208,7 @@ def draw_house_comparison_grid(
     else:
         comparison_data = house_comparison.second_points_in_first_houses
 
-    svg_output = '<g transform="translate(1030,-20)">'
+    svg_output = f'<g transform="translate({x_position},{y_position})">'
 
     # Add title
     svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">{house_position_comparison_label}</text>'
@@ -1239,6 +1247,87 @@ def draw_house_comparison_grid(
             f'<text text-anchor="start" x="15" style="fill:{text_color}; font-size: 10px;">{get_decoded_kerykeion_celestial_point_name(name, celestial_point_language)}</text>'
             f'<text text-anchor="start" x="90" style="fill:{text_color}; font-size: 10px;">{native_house}</text>'
             f'<text text-anchor="start" x="140" style="fill:{text_color}; font-size: 10px;">{secondary_house}</text>'
+            f'</g>'
+        )
+        line_increment += 12
+
+    svg_output += "</g>"
+
+    return svg_output
+
+
+def draw_single_house_comparison_grid(
+        house_comparison: "HouseComparisonModel",
+        celestial_point_language: KerykeionLanguageCelestialPointModel,
+        active_points: list[Planet | AxialCusps],
+        *,
+        points_owner_subject_number: Literal[1, 2] = 1,
+        text_color: str = "var(--kerykeion-color-neutral-content)",
+        house_position_comparison_label: str = "House Position Comparison",
+        return_point_label: str = "Return Point",
+        natal_house_label: str = "Natal House",
+        x_position: int = 1030,
+        y_position: int = -20,
+) -> str:
+    """
+    Generate SVG code for displaying celestial points and their house positions.
+
+    Parameters:
+    - house_comparison ("HouseComparisonModel"): Model containing house comparison data,
+      including first_subject_name, second_subject_name, and points in houses.
+    - celestial_point_language (KerykeionLanguageCelestialPointModel): Language model for celestial points
+    - active_points (list[Planet | AxialCusps]): List of active celestial points to display
+    - points_owner_subject_number (Literal[1, 2]): Which subject's points to display (1 for first, 2 for second)
+    - text_color (str): Color for the text elements
+    - house_position_comparison_label (str): Label for the house position comparison grid
+    - return_point_label (str): Label for the return point column
+    - house_position_label (str): Label for the house position column
+    - x_position (int): X position for the grid
+    - y_position (int): Y position for the grid
+
+    Returns:
+    - str: SVG code for the house position grid.
+    """
+    if points_owner_subject_number == 1:
+        comparison_data = house_comparison.first_points_in_second_houses
+    else:
+        comparison_data = house_comparison.second_points_in_first_houses
+
+    svg_output = f'<g transform="translate({x_position},{y_position})">'
+
+    # Add title
+    svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">{house_position_comparison_label}</text>'
+
+    # Add column headers
+    line_increment = 10
+    svg_output += (
+        f'<g transform="translate(0,{line_increment})">'
+        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{return_point_label}</text>'
+        f'<text text-anchor="start" x="77" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{natal_house_label}</text>'
+        f'</g>'
+    )
+    line_increment += 15
+
+    # Create a dictionary to store all points by name for combined display
+    all_points_by_name = {}
+
+    for point in comparison_data:
+        # Only process points that are active
+        if point.point_name in active_points and point.point_name not in all_points_by_name:
+            all_points_by_name[point.point_name] = {
+                "name": point.point_name,
+                "house": point.projected_house_number
+            }
+
+    # Display all points organized by name
+    for name, point_data in all_points_by_name.items():
+        house = point_data.get("house", "-")
+
+        svg_output += (
+            f'<g transform="translate(0,{line_increment})">'
+            f'<g transform="translate(0,-9)"><use transform="scale(0.4)" xlink:href="#{name}" /></g>'
+            f'<text text-anchor="start" x="15" style="fill:{text_color}; font-size: 10px;">{get_decoded_kerykeion_celestial_point_name(name, celestial_point_language)}</text>'
+            f'<text text-anchor="start" x="90" style="fill:{text_color}; font-size: 10px;">{house}</text>'
             f'</g>'
         )
         line_increment += 12
