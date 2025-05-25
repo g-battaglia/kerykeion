@@ -91,6 +91,4 @@ class ChartTemplateDictionary(TypedDict):
     air_string: str
     water_string: str
 
-    lunar_phase_rotate: str
-    lunar_phase_circle_center_x: str
-    lunar_phase_circle_radius: str
+    makeLunarPhase: str
