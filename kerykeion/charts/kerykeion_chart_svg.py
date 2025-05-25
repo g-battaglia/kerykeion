@@ -772,11 +772,11 @@ class KerykeionChartSVG:
                 mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
                 zodiac_info = f"{self.language_settings.get('ayanamsa', 'Ayanamsa')}: {mode_name}"
 
-            template_dict["bottom_left_0"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
-            template_dict["bottom_left_1"] = zodiac_info
+            template_dict["bottom_left_0"] = zodiac_info
+            template_dict["bottom_left_1"] = f"{self.language_settings.get('housesss', 'Domification')}: {self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)}"
             template_dict["bottom_left_2"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
             template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
-            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
+            template_dict["bottom_left_4"] = f'{self.language_settings.get("perspective_type", "Perspective")}: {self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
 
             # Moon phase section calculations
             template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
@@ -908,7 +908,7 @@ class KerykeionChartSVG:
 
             template_dict["bottom_left_0"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
             template_dict["bottom_left_1"] = zodiac_info
-            template_dict["bottom_left_2"] = f"{self.first_obj.first_subject.perspective_type}" # type: ignore
+            template_dict["bottom_left_2"] = f"{self.language_settings.get("perspective_type", "Perspective")}: {self.first_obj.first_subject.perspective_type}" # type: ignore
             template_dict["bottom_left_3"] = f'{self.language_settings.get("composite_chart", "Composite Chart")} - {self.language_settings.get("midpoints", "Midpoints")}'
             template_dict["bottom_left_4"] = ""
 
@@ -1035,7 +1035,7 @@ class KerykeionChartSVG:
             template_dict["bottom_left_1"] = zodiac_info
             template_dict["bottom_left_2"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.second_obj.lunar_phase.get("moon_phase", "")}' # type: ignore
             template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.second_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
-            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.second_obj.perspective_type.lower().replace(" ", "_"), self.second_obj.perspective_type)}' # type: ignore
+            template_dict["bottom_left_4"] = f'{self.language_settings.get("perspective_type", "Perspective")}: {self.language_settings.get(self.second_obj.perspective_type.lower().replace(" ", "_"), self.second_obj.perspective_type)}' # type: ignore
 
             # Moon phase section calculations
             template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
@@ -1184,7 +1184,7 @@ class KerykeionChartSVG:
             template_dict["bottom_left_1"] = ""
             template_dict["bottom_left_2"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
             template_dict["bottom_left_3"] = zodiac_info
-            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
+            template_dict["bottom_left_4"] = f'{self.language_settings.get("perspective_type", "Perspective")}: {self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
 
             # Moon phase section calculations
             template_dict["makeLunarPhase"] = ""
@@ -1319,11 +1319,11 @@ class KerykeionChartSVG:
                 mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
                 zodiac_info = f"{self.language_settings.get('ayanamsa', 'Ayanamsa')}: {mode_name}"
 
-            template_dict["bottom_left_0"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
+            template_dict["bottom_left_0"] = f"{self.language_settings.get('houses', 'Houses')}: {self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)}"
             template_dict["bottom_left_1"] = zodiac_info
-            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase" )}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
-            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
-            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
+            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
+            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
+            template_dict["bottom_left_4"] = f'{self.language_settings.get("perspective_type", "Perspective")}: {self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
 
             # Moon phase section calculations
             template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
@@ -1741,6 +1741,17 @@ if __name__ == "__main__":
         tz_str="America/Los_Angeles",
         altitude=0,
     )
+
+    ## Birth Chart
+    birth_chart = KerykeionChartSVG(
+        first_obj=subject,
+        chart_language="EN",
+        theme="dark",
+        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant"],
+    )
+    birth_chart.makeSVG(minify=True, remove_css_variables=True)
+
+    ## Solar Return Chart
     solar_return = return_factory.next_return_from_iso_formatted_time(
         "2025-01-09T18:30:00+01:00",  # UTC+1
         return_type="Solar",
