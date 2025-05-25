@@ -84,6 +84,7 @@
       "return_point": "Return Point",
       "Return": "Return",
       "natal": "Natal",
+      "perspective_type": "Perspective",
       "celestial_points": {
         "Sun": "Sun",
         "Moon": "Moon",
@@ -191,6 +192,7 @@
       "return_point": "Point (rév.)",
       "Return": "Révolution",
       "natal": "Radix",
+      "perspective_type": "Perspective",
       "celestial_points": {
         "Sun": "Soleil",
         "Moon": "Lune",
@@ -298,6 +300,7 @@
       "return_point": "Ponto (ret.)",
       "Return": "Retorno",
       "natal": "Natal",
+      "perspective_type": "Perspectiva",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Lua",
@@ -404,6 +407,7 @@
       "return_point": "Punto del rit.",
       "Return": "Ritorno",
       "natal": "Radix",
+      "perspective_type": "Prospettiva",
       "celestial_points": {
         "Sun": "Sole",
         "Moon": "Luna",
@@ -511,6 +515,7 @@
       "return_point": "回归点",
       "Return": "回归",
       "natal": "本命",
+      "perspective_type": "视角",
       "celestial_points": {
         "Sun": "太陽",
         "Moon": "月亮",
@@ -617,6 +622,7 @@
       "house_position_comparison": "Comparación de posiciones en casas",
       "return_point": "Punto (rev.)",
       "natal": "Radix",
+      "perspective_type": "Perspectiva",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Luna",
@@ -724,6 +730,7 @@
       "return_point": "Точка воз.",
       "Return": "Возвращение",
       "natal": "Радикс",
+      "perspective_type": "Перспектива",
       "celestial_points": {
         "Sun": "Солнце",
         "Moon": "Луна",
@@ -831,6 +838,7 @@
       "return_point": "Dönüş noktası",
       "Return": "Dönüş",
       "natal": "Doğum haritası",
+      "perspective_type": "Perspektif",
       "celestial_points": {
         "Sun": "Güneş",
         "Moon": "Ay",
@@ -938,6 +946,7 @@
       "return_point": "Rückkehrpunkt",
       "Return": "Rückkehr",
       "natal": "Radix",
+      "perspective_type": "Perspektive",
       "celestial_points": {
         "Sun": "Sonne",
         "Moon": "Mond",
@@ -1045,6 +1054,7 @@
       "return_point": "पुनरागमन बिंदु",
       "Return": "पुनरागमन",
       "natal": "जन्म कुंडली",
+      "perspective_type": "दृष्टिकोण",
       "celestial_points": {
         "Sun": "सूर्य",
         "Moon": "चंद्रमा",
