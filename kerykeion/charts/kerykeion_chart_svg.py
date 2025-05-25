@@ -774,7 +774,7 @@ class KerykeionChartSVG:
 
             template_dict["bottom_left_0"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
             template_dict["bottom_left_1"] = zodiac_info
-            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")} {self.language_settings.get("day", "Day").lower()}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
+            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
             template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
             template_dict["bottom_left_4"] = f'{self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
 
@@ -1033,7 +1033,7 @@ class KerykeionChartSVG:
 
             template_dict["bottom_left_0"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
             template_dict["bottom_left_1"] = zodiac_info
-            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get("day", "Day")} {self.second_obj.lunar_phase.get("moon_phase", "")}' # type: ignore
+            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.second_obj.lunar_phase.get("moon_phase", "")}' # type: ignore
             template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.second_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
             template_dict["bottom_left_4"] = f'{self.language_settings.get(self.second_obj.perspective_type.lower().replace(" ", "_"), self.second_obj.perspective_type)}' # type: ignore
 
@@ -1182,9 +1182,9 @@ class KerykeionChartSVG:
 
             template_dict["bottom_left_0"] = ""
             template_dict["bottom_left_1"] = ""
-            template_dict["bottom_left_2"] = ""
-            template_dict["bottom_left_3"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
-            template_dict["bottom_left_4"] = zodiac_info
+            template_dict["bottom_left_2"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
+            template_dict["bottom_left_3"] = zodiac_info
+            template_dict["bottom_left_4"] = f'{self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
 
             # Moon phase section calculations
             template_dict["makeLunarPhase"] = ""
@@ -1321,8 +1321,8 @@ class KerykeionChartSVG:
 
             template_dict["bottom_left_0"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
             template_dict["bottom_left_1"] = zodiac_info
-            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")} {self.language_settings.get("day", "Day").lower()}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
-            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
+            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase" )}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
+            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
             template_dict["bottom_left_4"] = f'{self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
 
             # Moon phase section calculations
@@ -1468,8 +1468,8 @@ class KerykeionChartSVG:
 
             template_dict["bottom_left_0"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
             template_dict["bottom_left_1"] = zodiac_info
-            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")} {self.language_settings.get("day", "Day").lower()}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
-            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
+            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase" )}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
+            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
             template_dict["bottom_left_4"] = f'{self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
 
             # Moon phase section calculations

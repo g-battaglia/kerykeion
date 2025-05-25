@@ -136,6 +136,7 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     planets_and_house: str
     transit_name: str
     lunar_phase: str
+    lunation_day: str
     day: str
     celestial_points: KerykeionLanguageCelestialPointModel
     composite_chart: str
