@@ -899,7 +899,7 @@ def draw_planet_grid(
 
     if chart_type == "Synastry":
         svg_output = (
-            f'<g transform="translate(100, -15)">'
+            f'<g transform="translate(120, -15)">'
             f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
             f'</g>'
         )
@@ -961,7 +961,7 @@ def draw_planet_grid(
         else:
             svg_output += (
                 f'<g transform="translate(405, -15)">'
-                f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}:</text>'
+                f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}</text>'
             )
 
         svg_output += end_of_line
@@ -1193,9 +1193,7 @@ def calculate_synastry_element_points(
         planet_in_zodiac_extra_points (int): Extra points awarded for planets in their home sign
 
     Returns:
-        dict: Dictionary with element point totals for both subjects and combined,
-              containing 'subject1', 'subject2', and 'combined' keys, each with
-              'fire', 'earth', 'air', and 'water' totals
+        dict: Dictionary with element point totals as percentages, where the sum equals 100%
     """
     ZODIAC = (
         {"name": "Ari", "element": "fire"},
@@ -1212,15 +1210,8 @@ def calculate_synastry_element_points(
         {"name": "Pis", "element": "water"},
     )
 
-    # Initialize element point totals for both subjects
-    subject1_totals = {
-        "fire": 0.0,
-        "earth": 0.0,
-        "air": 0.0,
-        "water": 0.0
-    }
-
-    subject2_totals = {
+    # Initialize combined element point totals
+    combined_totals = {
         "fire": 0.0,
         "earth": 0.0,
         "air": 0.0,
@@ -1244,9 +1235,9 @@ def calculate_synastry_element_points(
                     extra_points1 = planet_in_zodiac_extra_points
                     break
 
-        # Add points to appropriate element for subject 1
+        # Add points to appropriate element
         element1 = ZODIAC[subject1_points_sign[i]]["element"]
-        subject1_totals[element1] += planets_settings[i]["element_points"] + extra_points1
+        combined_totals[element1] += planets_settings[i]["element_points"] + extra_points1
 
     # Calculate element points for subject 2
     for i in range(len(planets_settings)):
@@ -1261,23 +1252,20 @@ def calculate_synastry_element_points(
                     extra_points2 = planet_in_zodiac_extra_points
                     break
 
-        # Add points to appropriate element for subject 2
+        # Add points to appropriate element
         element2 = ZODIAC[subject2_points_sign[i]]["element"]
-        subject2_totals[element2] += planets_settings[i]["element_points"] + extra_points2
+        combined_totals[element2] += planets_settings[i]["element_points"] + extra_points2
 
-    # Calculate combined totals
-    combined_totals = {
-        "fire": subject1_totals["fire"] + subject2_totals["fire"],
-        "earth": subject1_totals["earth"] + subject2_totals["earth"],
-        "air": subject1_totals["air"] + subject2_totals["air"],
-        "water": subject1_totals["water"] + subject2_totals["water"]
-    }
+    # Calculate total points across all elements
+    total_points = sum(combined_totals.values())
 
-    return {
-        "subject1": subject1_totals,
-        "subject2": subject2_totals,
-        "combined": combined_totals
-    }
+    # Convert to percentages (total = 100%)
+    if total_points > 0:
+        for element in combined_totals:
+            combined_totals[element] = (combined_totals[element] / total_points) * 100.0
+
+    return combined_totals
+
 
 def draw_house_comparison_grid(
         house_comparison: "HouseComparisonModel",
@@ -1438,3 +1426,39 @@ def draw_single_house_comparison_grid(
     svg_output += "</g>"
 
     return svg_output
+
+
+def makeLunarPhase(degrees_between_sun_and_moon: float, latitude: float) -> str:
+    """
+    Generate SVG representation of lunar phase.
+
+    Parameters:
+    - degrees_between_sun_and_moon (float): Angle between sun and moon in degrees
+    - latitude (float): Observer's latitude for correct orientation
+
+    Returns:
+    - str: SVG representation of lunar phase
+    """
+    # Calculate parameters for the lunar phase visualization
+    params = calculate_moon_phase_chart_params(degrees_between_sun_and_moon, latitude)
+
+    # Extract the calculated values
+    lunar_phase_circle_center_x = params["circle_center_x"]
+    lunar_phase_circle_radius = params["circle_radius"]
+    lunar_phase_rotate = params["lunar_phase_rotate"]
+
+    # Generate the SVG for the lunar phase
+    svg = (
+        f'<g transform="rotate({lunar_phase_rotate} 20 10)">\n'
+        f'    <defs>\n'
+        f'        <clipPath id="moonPhaseCutOffCircle">\n'
+        f'            <circle cx="20" cy="10" r="10" />\n'
+        f'        </clipPath>\n'
+        f'    </defs>\n'
+        f'    <circle cx="20" cy="10" r="10" style="fill: var(--kerykeion-chart-color-lunar-phase-0)" />\n'
+        f'    <circle cx="{lunar_phase_circle_center_x}" cy="10" r="{lunar_phase_circle_radius}" style="fill: var(--kerykeion-chart-color-lunar-phase-1)" clip-path="url(#moonPhaseCutOffCircle)" />\n'
+        f'    <circle cx="20" cy="10" r="10" style="fill: none; stroke: var(--kerykeion-chart-color-lunar-phase-0); stroke-width: 0.5px; stroke-opacity: 0.5" />\n'
+        f'</g>'
+    )
+
+    return svg
