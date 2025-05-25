@@ -1175,6 +1175,109 @@ def calculate_element_points(
     return element_totals
 
 
+def calculate_synastry_element_points(
+        planets_settings: list[KerykeionSettingsCelestialPointModel],
+        celestial_points_names: list[str],
+        subject1: Union["AstrologicalSubject", AstrologicalSubjectModel],
+        subject2: Union["AstrologicalSubject", AstrologicalSubjectModel],
+        planet_in_zodiac_extra_points: int = 10
+    ):
+    """
+    Calculate elemental point totals for both subjects in a synastry chart.
+
+    Args:
+        planets_settings (list): List of planet configuration dictionaries
+        celestial_points_names (list): List of celestial point names to process
+        subject1: First astrological subject with get() method for accessing planet data
+        subject2: Second astrological subject with get() method for accessing planet data
+        planet_in_zodiac_extra_points (int): Extra points awarded for planets in their home sign
+
+    Returns:
+        dict: Dictionary with element point totals for both subjects and combined,
+              containing 'subject1', 'subject2', and 'combined' keys, each with
+              'fire', 'earth', 'air', and 'water' totals
+    """
+    ZODIAC = (
+        {"name": "Ari", "element": "fire"},
+        {"name": "Tau", "element": "earth"},
+        {"name": "Gem", "element": "air"},
+        {"name": "Can", "element": "water"},
+        {"name": "Leo", "element": "fire"},
+        {"name": "Vir", "element": "earth"},
+        {"name": "Lib", "element": "air"},
+        {"name": "Sco", "element": "water"},
+        {"name": "Sag", "element": "fire"},
+        {"name": "Cap", "element": "earth"},
+        {"name": "Aqu", "element": "air"},
+        {"name": "Pis", "element": "water"},
+    )
+
+    # Initialize element point totals for both subjects
+    subject1_totals = {
+        "fire": 0.0,
+        "earth": 0.0,
+        "air": 0.0,
+        "water": 0.0
+    }
+
+    subject2_totals = {
+        "fire": 0.0,
+        "earth": 0.0,
+        "air": 0.0,
+        "water": 0.0
+    }
+
+    # Make list of the points sign for both subjects
+    subject1_points_sign = [subject1.get(planet).sign_num for planet in celestial_points_names]
+    subject2_points_sign = [subject2.get(planet).sign_num for planet in celestial_points_names]
+
+    # Calculate element points for subject 1
+    for i in range(len(planets_settings)):
+        # Check if planet is in its own zodiac sign
+        related_zodiac_signs = planets_settings[i]["related_zodiac_signs"]
+        cz1 = subject1_points_sign[i]
+        extra_points1 = 0
+
+        if related_zodiac_signs:
+            for sign in related_zodiac_signs:
+                if int(sign) == int(cz1):
+                    extra_points1 = planet_in_zodiac_extra_points
+                    break
+
+        # Add points to appropriate element for subject 1
+        element1 = ZODIAC[subject1_points_sign[i]]["element"]
+        subject1_totals[element1] += planets_settings[i]["element_points"] + extra_points1
+
+    # Calculate element points for subject 2
+    for i in range(len(planets_settings)):
+        # Check if planet is in its own zodiac sign
+        related_zodiac_signs = planets_settings[i]["related_zodiac_signs"]
+        cz2 = subject2_points_sign[i]
+        extra_points2 = 0
+
+        if related_zodiac_signs:
+            for sign in related_zodiac_signs:
+                if int(sign) == int(cz2):
+                    extra_points2 = planet_in_zodiac_extra_points
+                    break
+
+        # Add points to appropriate element for subject 2
+        element2 = ZODIAC[subject2_points_sign[i]]["element"]
+        subject2_totals[element2] += planets_settings[i]["element_points"] + extra_points2
+
+    # Calculate combined totals
+    combined_totals = {
+        "fire": subject1_totals["fire"] + subject2_totals["fire"],
+        "earth": subject1_totals["earth"] + subject2_totals["earth"],
+        "air": subject1_totals["air"] + subject2_totals["air"],
+        "water": subject1_totals["water"] + subject2_totals["water"]
+    }
+
+    return {
+        "subject1": subject1_totals,
+        "subject2": subject2_totals,
+        "combined": combined_totals
+    }
 
 def draw_house_comparison_grid(
         house_comparison: "HouseComparisonModel",

@@ -58,6 +58,7 @@ from kerykeion.charts.charts_utils import (
     format_location_string,
     format_datetime_with_timezone,
     calculate_element_points,
+    calculate_synastry_element_points
 )
 from kerykeion.charts.draw_planets_v2 import draw_planets_v2 as draw_planets
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg
@@ -504,13 +505,23 @@ class KerykeionChartSVG:
 
         # Calculate element points
         celestial_points_names = [body["name"].lower() for body in self.available_planets_setting]
-        element_totals = calculate_element_points(
-            self.available_planets_setting,
-            celestial_points_names,
-            self.first_obj,
-            self._PLANET_IN_ZODIAC_EXTRA_POINTS,
-        )
+        if self.chart_type in ["Transit", "Synastry"]:
+            element_totals = calculate_synastry_element_points(
+                self.available_planets_setting,
+                celestial_points_names,
+                self.first_obj,
+                self.second_obj,
+                self._PLANET_IN_ZODIAC_EXTRA_POINTS,
+            )
+        else:
+            element_totals = calculate_element_points(
+                self.available_planets_setting,
+                celestial_points_names,
+                self.first_obj,
+                self._PLANET_IN_ZODIAC_EXTRA_POINTS,
+            )
 
+        print(f"Element totals: {element_totals}")
         self.fire = element_totals["fire"]
         self.earth = element_totals["earth"]
         self.air = element_totals["air"]
@@ -1102,12 +1113,6 @@ class KerykeionChartSVG:
 
             # Get houses list for secondary subject
             second_subject_houses_list = get_houses_list(self.second_obj) # type: ignore
-
-            # The Synastry chart does not have the element calculations
-            template_dict["fire_string"] = ""
-            template_dict["earth_string"] = ""
-            template_dict["air_string"] = ""
-            template_dict["water_string"] = ""
 
             # Rings and circles
             template_dict["transitRing"] = draw_transit_ring(
@@ -1710,16 +1715,13 @@ if __name__ == "__main__":
 
     setup_logging(level="info")
 
-    subject = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    subject = AstrologicalSubject("Giacomo", 1993, 6, 10, 12, 15, "Montichiari", "IT")
 
     return_factory = PlanetaryReturnFactory(
         subject,
-        city="Los Angeles",
-        nation="US",
-        lng=-118.2437,
-        lat=34.0522,
-        tz_str="America/Los_Angeles",
-        altitude=0,
+        city="Guidizzolo",
+        nation="IT",
+        geonames_username="century.boy"
     )
     solar_return = return_factory.next_return_from_iso_formatted_time(
         "2025-01-09T18:30:00+01:00",  # UTC+1
