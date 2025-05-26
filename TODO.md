@@ -28,6 +28,7 @@
 - [ ] Add weekday name to the output  
 - [ ] Add planetary speed and direction  
 - [ ] Create utility function to retrieve all active planets  
+- [ ] Full documentation for the library and AstrologerAPI
 
 
 ### 🟧 Medium Priority
