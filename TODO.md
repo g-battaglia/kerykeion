@@ -31,6 +31,7 @@
 - [ ] Full documentation for the library and AstrologerAPI
 - [ ] More "air space" around objects in the chart
 - [ ] More colorful themes (eg. "strawberry")
+- [ ] Correct the displayed file name (browser tab/title)
 
 
 ### 🟧 Medium Priority
@@ -41,7 +42,6 @@
 ### 🟨 Low Priority
 
 - [ ] Create unit tests for polar circle edge cases
-- [ ] Correct the displayed file name (browser tab/title)
 - [ ] `get_trasnlation` function for multiple languages
 
 
