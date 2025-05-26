@@ -29,6 +29,8 @@
 - [ ] Add planetary speed and direction  
 - [ ] Create utility function to retrieve all active planets  
 - [ ] Full documentation for the library and AstrologerAPI
+- [ ] More "air space" around objects in the chart
+- [ ] More colorful themes (eg. "strawberry")
 
 
 ### 🟧 Medium Priority
