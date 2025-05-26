@@ -1,55 +1,44 @@
-# TODO
+# TODO – Development Roadmap
 
-Legend:
+**Legend:**
 
-- `[ ]` - Task to be done
-- `[>]` - Task in progress
-- `[x]` - Task completed
+- `[ ]` – To do  
+- `[>]` – In progress  
+- `[x]` – Completed  
+- `[KO]` – Removed / No longer needed  
 
-## Tasks
+**Priority levels:**
+- 🟥 High  
+- 🟧 Medium  
+- 🟨 Low  
 
-- [x] Fix the unit tests. The code is working but the tests must be updated to the new features.
-- [ ] Create unit test for checking polar circle
-- [ ] Finish the new examples to be added to the documentation
-- [>] Create a complete documentation (Vitepress) with all the examples: https://www.kerykeion.net/docs//birth-chart
+---
 
-- [>] Create new AstrologicalSubject argument for House System mode.
-  - [ ] Implement unit tests for the House System mode.
-  - [ ] Implement Gauquelin Sector as House System mode (G).
-- [x] Create new AstrologicalSubject argument for Position Mode (Geocentric, Heliocentric, Topocentric, etc).
-- [ ] Implement week day name.
-- [ ] Implement Speed and Direction for the planets.
+## Version 5 Tasks
 
+### 🟥 High Priority
 
-## V5
-
-- [ ] New structure based on the new AstrologicalSubjectModel and a factory class to create the objects in different ways:
-
-  - [ ] Online
-  - [ ] Offline
-  - [ ] With UTC ISO 8601 string
-  - [ ] For now at UTC time
-
-- [ ] New utility function to get all active planets, so we can remove aspect/planet list and use just the AstrologicalSubjectModel structure.
-
-- [ ] New way of setting the language, with an object representing the labels and the texts.
+- [ ] Fix labels  (eg. "Aspetti Tra [...]")  
+- [ ] Refactor structure using the new `AstrologicalSubjectModel` and a factory class to instantiate objects in multiple ways:
+  - [ ] Online  
+  - [ ] Offline  
+  - [ ] With UTC ISO 8601 string  
+  - [ ] With current UTC time  
+  - [ ] With only active planets  
+- [ ] Add weekday name to the output  
+- [ ] Add planetary speed and direction  
+- [ ] Create utility function to retrieve all active planets  
 
 
-## Solar Return
+### 🟧 Medium Priority
 
-TODO
-- [x] Tabella pianeti di rivoluzione nelle case natali
-- [x] Case di rivoluzione nelle case natali
-- [KO] Possibilità di disattivare pianeti di transito
-- [x] Single Wheel Return 
-- [x] Rename:
-      Domificazione: Placido  
-      Zodiaco: Tropicale  
-      Fase Lunare: Primo Quarto  
-      Lunazione: Giorno 9  
-      Geocentrico Apparente
+- [ ] Implement Gauquelin Sector as an additional house system mode (`G`)
+- [ ] Finalize and integrate new examples into the documentation  
+
+### 🟨 Low Priority
+
+- [ ] Create unit tests for polar circle edge cases
+- [ ] Correct the displayed file name (browser tab/title)
+- [ ] `get_trasnlation` function for multiple languages
 
 
-## TODO 2
-- [ ] Fix Nome "Aspetti Tra [...]"
-- [ ] Fix Nome File stesso (quello visibile nel browser)
