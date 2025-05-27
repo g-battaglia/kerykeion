@@ -1161,7 +1161,6 @@
       "name": "Sun",
       "color": "var(--kerykeion-chart-color-sun)",
       "element_points": 40,
-      "related_zodiac_signs": ["4"],
       "label": "Sun"
     },
     {
@@ -1169,7 +1168,6 @@
       "name": "Moon",
       "color": "var(--kerykeion-chart-color-moon)",
       "element_points": 40,
-      "related_zodiac_signs": ["3"],
       "label": "Moon"
     },
     {
@@ -1177,7 +1175,6 @@
       "name": "Mercury",
       "color": "var(--kerykeion-chart-color-mercury)",
       "element_points": 15,
-      "related_zodiac_signs": ["2", "5"],
       "label": "Mercury"
     },
     {
@@ -1185,7 +1182,6 @@
       "name": "Venus",
       "color": "var(--kerykeion-chart-color-venus)",
       "element_points": 15,
-      "related_zodiac_signs": ["1", "6"],
       "label": "Venus"
     },
     {
@@ -1193,7 +1189,6 @@
       "name": "Mars",
       "color": "var(--kerykeion-chart-color-mars)",
       "element_points": 15,
-      "related_zodiac_signs": ["0"],
       "label": "Mars"
     },
     {
@@ -1201,7 +1196,6 @@
       "name": "Jupiter",
       "color": "var(--kerykeion-chart-color-jupiter)",
       "element_points": 10,
-      "related_zodiac_signs": ["8"],
       "label": "Jupiter"
     },
     {
@@ -1209,7 +1203,6 @@
       "name": "Saturn",
       "color": "var(--kerykeion-chart-color-saturn)",
       "element_points": 10,
-      "related_zodiac_signs": ["9"],
       "label": "Saturn"
     },
     {
@@ -1217,7 +1210,6 @@
       "name": "Uranus",
       "color": "var(--kerykeion-chart-color-uranus)",
       "element_points": 10,
-      "related_zodiac_signs": ["10"],
       "label": "Uranus"
     },
     {
@@ -1225,7 +1217,6 @@
       "name": "Neptune",
       "color": "var(--kerykeion-chart-color-neptune)",
       "element_points": 10,
-      "related_zodiac_signs": ["11"],
       "label": "Neptune"
     },
     {
@@ -1233,7 +1224,6 @@
       "name": "Pluto",
       "color": "var(--kerykeion-chart-color-pluto)",
       "element_points": 10,
-      "related_zodiac_signs": ["7"],
       "label": "Pluto"
     },
     {
@@ -1241,7 +1231,6 @@
       "name": "Mean_Node",
       "color": "var(--kerykeion-chart-color-mean-node)",
       "element_points": 0,
-      "related_zodiac_signs": [],
       "label": "Mean_Node"
     },
     {
@@ -1249,7 +1238,6 @@
       "name": "True_Node",
       "color": "var(--kerykeion-chart-color-true-node)",
       "element_points": 0,
-      "related_zodiac_signs": [],
       "label": "True_Node"
     },
     {
@@ -1257,7 +1245,6 @@
       "name": "Chiron",
       "color": "var(--kerykeion-chart-color-chiron)",
       "element_points": 0,
-      "related_zodiac_signs": [],
       "label": "Chiron"
     },
     {
@@ -1265,7 +1252,6 @@
       "name": "Ascendant",
       "color": "var(--kerykeion-chart-color-first-house)",
       "element_points": 40,
-      "related_zodiac_signs": [],
       "label": "Asc"
     },
     {
@@ -1273,7 +1259,6 @@
       "name": "Medium_Coeli",
       "color": "var(--kerykeion-chart-color-tenth-house)",
       "element_points": 20,
-      "related_zodiac_signs": [],
       "label": "Mc"
     },
     {
@@ -1281,7 +1266,6 @@
       "name": "Descendant",
       "color": "var(--kerykeion-chart-color-seventh-house)",
       "element_points": 0,
-      "related_zodiac_signs": [],
       "label": "Dsc"
     },
     {
@@ -1289,7 +1273,6 @@
       "name": "Imum_Coeli",
       "color": "var(--kerykeion-chart-color-fourth-house)",
       "element_points": 0,
-      "related_zodiac_signs": [],
       "label": "Ic"
     },
     {
@@ -1297,7 +1280,6 @@
       "name": "Mean_Lilith",
       "color": "var(--kerykeion-chart-color-mean-lilith)",
       "element_points": 0,
-      "related_zodiac_signs": [],
       "label": "Mean_Lilith"
     },
     {
@@ -1305,7 +1287,6 @@
       "name": "Mean_South_Node",
       "color": "var(--kerykeion-chart-color-mean-node)",
       "element_points": 0,
-      "related_zodiac_signs": [],
       "label": "Mean_South_Node"
     },
     {
@@ -1313,7 +1294,6 @@
       "name": "True_South_Node",
       "color": "var(--kerykeion-chart-color-true-node)",
       "element_points": 0,
-      "related_zodiac_signs": [],
       "label": "True_South_Node"
     }
   ],

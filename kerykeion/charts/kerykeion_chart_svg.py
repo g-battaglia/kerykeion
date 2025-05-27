@@ -145,17 +145,18 @@ class KerykeionChartSVG:
     """
 
     # Constants
-    _BASIC_CHART_VIEWBOX = "0 0 820 550.0"
-    _WIDE_CHART_VIEWBOX = "0 0 1200 546.0"
-    _ULTRA_WIDE_CHART_VIEWBOX = "0 0 1270 546.0"
-    _TRANSIT_CHART_WITH_TABLE_VIWBOX = "0 0 960 546.0"
 
     _DEFAULT_HEIGHT = 550
     _DEFAULT_FULL_WIDTH = 1200
-    _DEFAULT_NATAL_WIDTH = 820
+    _DEFAULT_NATAL_WIDTH = 870
     _DEFAULT_FULL_WIDTH_WITH_TABLE = 1200
     _DEFAULT_ULTRA_WIDE_WIDTH = 1270
     _PLANET_IN_ZODIAC_EXTRA_POINTS = 10
+
+    _BASIC_CHART_VIEWBOX = f"0 0 {_DEFAULT_NATAL_WIDTH} {_DEFAULT_HEIGHT}"
+    _WIDE_CHART_VIEWBOX = f"0 0 {_DEFAULT_FULL_WIDTH} 546.0"
+    _ULTRA_WIDE_CHART_VIEWBOX = f"0 0 {_DEFAULT_ULTRA_WIDE_WIDTH} 546.0"
+    _TRANSIT_CHART_WITH_TABLE_VIWBOX = f"0 0 {_DEFAULT_FULL_WIDTH_WITH_TABLE} 546.0"
 
     # Set at init
     first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
@@ -193,7 +194,7 @@ class KerykeionChartSVG:
 
     def __init__(
         self,
-        first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel],
+        first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         chart_type: ChartType = "Natal",
         second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, PlanetReturnModel, None] = None,
         new_output_directory: Union[str, None] = None,
@@ -698,6 +699,7 @@ class KerykeionChartSVG:
         water_percentage = int(round(100 * self.water / total))
 
         # Element Percentages
+        template_dict["elements_string"] = f"{self.language_settings.get('elements', 'Elements')}:"
         template_dict["fire_string"] = f"{self.language_settings['fire']} {fire_percentage}%"
         template_dict["earth_string"] = f"{self.language_settings['earth']} {earth_percentage}%"
         template_dict["air_string"] = f"{self.language_settings['air']} {air_percentage}%"
@@ -752,7 +754,7 @@ class KerykeionChartSVG:
             template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - self.third_circle_radius)
 
             # Chart title
-            template_dict["stringTitle"] = self.first_obj.name
+            template_dict["stringTitle"] = f"{self.first_obj.name} - {self.language_settings.get("Birth Chart", "Birth Chart")}"
 
             # Top left section
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings["north"], self.language_settings["south"])
@@ -962,6 +964,7 @@ class KerykeionChartSVG:
         elif self.chart_type == "Transit":
 
             # Transit has no Element Percentages
+            template_dict["elements_string"] = ""
             template_dict["fire_string"] = ""
             template_dict["earth_string"] = ""
             template_dict["air_string"] = ""
@@ -1755,7 +1758,7 @@ if __name__ == "__main__":
     birth_chart = KerykeionChartSVG(
         first_obj=subject,
         chart_language="IT",
-        theme="dark",
+        theme="strawberry",
         # active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant"],
     )
     birth_chart.makeSVG(minify=True, remove_css_variables=True)
@@ -1830,3 +1833,17 @@ if __name__ == "__main__":
         active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
     )
     synastry_chart.makeSVG(minify=True, remove_css_variables=True)
+
+    ##
+    # Transit Chart with Grid
+    subject.name = "Grid"
+    transit_chart_with_grid = KerykeionChartSVG(
+        first_obj=subject,
+        chart_type="Transit",
+        second_obj=transit,
+        chart_language="IT",
+        theme="dark",
+        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant"],
+        double_chart_aspect_grid_type="table"
+    )
+    transit_chart_with_grid.makeSVG(minify=True, remove_css_variables=True)

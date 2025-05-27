@@ -18,7 +18,6 @@ class KerykeionSettingsCelestialPointModel(SubscriptableBaseModel):
     name: str = Field(title="Celestial Point Name", description="Celestial Point Name")
     color: str = Field(title="Celestial Point Color", description="Celestial Point Color, used in the chart")
     element_points: int = Field(title="Celestial Point Element Points", description="Element Points given to the celestial point")
-    related_zodiac_signs: List[int] = Field(title="Celestial Point Related Zodiac Signs", description="Zodiac Signs related to the celestial point")
     label: str = Field(title="Celestial Point Label", description="The name of the celestial point in the chart, it can be different from the name")
     is_active: Optional[bool] = Field(title="Celestial Point is Active", description="Indicates if the celestial point is active in the chart", default=None)
 

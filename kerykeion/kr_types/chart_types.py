@@ -86,6 +86,7 @@ class ChartTemplateDictionary(TypedDict):
 
     color_style_tag: str
 
+    element_string: str
     fire_string: str
     earth_string: str
     air_string: str

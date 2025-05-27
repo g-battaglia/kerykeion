@@ -11,7 +11,7 @@ OpenAstro.org -->
     preserveAspectRatio="xMidYMid"
     style="background-color: $paper_color_1"
 >
-    <title>$stringTitle | Kerykeion</title>
+    <title>$stringTitle</title>
 
     <!-- Colors -->
     <style kr:node="Theme_Colors_Tag">
@@ -40,13 +40,13 @@ OpenAstro.org -->
         </g>
 
         <!-- Lunar Phase -->
-        <g kr:node="Lunar_Phase" transform="translate(20,518)">
+        <g kr:node="Lunar_Phase" transform="translate(10,518)">
             $makeLunarPhase
         </g>
 
         <g kr:node="Main_Content" transform="translate(50,50)">
             <!-- Full Wheel -->
-            <g kr:node="Full_Wheel" transform="translate(10,0)">
+            <g kr:node="Full_Wheel" transform="translate(30,0)">
                 <!-- Zodiac -->
                 <g kr:node="Zodiac">
                     $makeZodiac
@@ -101,17 +101,18 @@ OpenAstro.org -->
             <!-- Elements -->
             <g kr:node="Elements_Percentages">
                 <g transform="translate(-30,79)">
-                <text y="0" style="fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;">$fire_string</text>
-                <text y="12" style="fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;">$earth_string</text>
-                <text y="24" style="fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;">$air_string</text>
-                <text y="36" style="fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;">$water_string</text>
+                <text y="0" style="fill: $paper_color_0; font-size: 10px;">$elements_string</text>
+                <text y="12" style="fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;">$fire_string</text>
+                <text y="24" style="fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;">$earth_string</text>
+                <text y="36" style="fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;">$air_string</text>
+                <text y="48" style="fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;">$water_string</text>
                 </g>"
             </g>
 
             <!-- Houses_And_Planets_Grid -->
             <g kr:node="Houses_And_Planets_Grid">
                 <!-- Planet Grid -->
-                <g kr:node="Planet_Grid" transform="translate(560,-20)">
+                <g kr:node="Planet_Grid" transform="translate(590,-20)">
                     $makePlanetGrid
                 </g>
 
