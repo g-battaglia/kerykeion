@@ -6,9 +6,9 @@ from .expected_synastry_aspects import EXPECTED_ALL_ASPECTS, EXPECTED_RELEVANT_A
 
 class TestSynastryAspects:
     def setup_class(self):
-        self.first_subject = AstrologicalSubjectFactory.from_standard("John", 1940, 10, 9, 10, 30, "Liverpool", "GB", geonames_username="century.boy")
+        self.first_subject = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 10, 30, "Liverpool", "GB", geonames_username="century.boy")
         print(self.first_subject.model_dump_json(indent=4))
-        self.second_subject = AstrologicalSubjectFactory.from_standard("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP", geonames_username="century.boy")
+        self.second_subject = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP", geonames_username="century.boy")
 
         self.synastry_relevant_aspects = SynastryAspects(self.first_subject, self.second_subject).relevant_aspects
         self.synastry_all_aspects = SynastryAspects(self.first_subject, self.second_subject).all_aspects

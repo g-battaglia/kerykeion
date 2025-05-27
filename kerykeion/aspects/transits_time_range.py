@@ -6,7 +6,7 @@ from kerykeion import (
 )
 
 # Create a natal chart for the subject
-person = AstrologicalSubjectFactory.from_standard(
+person = AstrologicalSubjectFactory.from_birth_data(
     "Johnny Depp", 1963, 6, 9, 20, 15, 0, "Owensboro", "US"
 )
 

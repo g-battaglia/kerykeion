@@ -1754,7 +1754,7 @@ if __name__ == "__main__":
 
     setup_logging(level="info")
 
-    subject = AstrologicalSubjectFactory.from_standard("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 
     return_factory = PlanetaryReturnFactory(
         subject,
@@ -1823,7 +1823,7 @@ if __name__ == "__main__":
 
     ###
     ## Transit Chart
-    transit = AstrologicalSubjectFactory.from_standard("Transit", 2024, 5, 23, 18, 30, "Guidizzolo", "IT")
+    transit = AstrologicalSubjectFactory.from_birth_data("Transit", 2024, 5, 23, 18, 30, "Guidizzolo", "IT")
     transit_chart = KerykeionChartSVG(
         first_obj=subject,
         chart_type="Transit",
@@ -1836,7 +1836,7 @@ if __name__ == "__main__":
 
     ###
     ## Synastry Chart
-    second_subject = AstrologicalSubjectFactory.from_standard("Yoko Ono", 1933, 2, 18, 18, 30, "Tokyo", "JP")
+    second_subject = AstrologicalSubjectFactory.from_birth_data("Yoko Ono", 1933, 2, 18, 18, 30, "Tokyo", "JP")
     synastry_chart = KerykeionChartSVG(
         first_obj=subject,
         chart_type="Synastry",

@@ -218,8 +218,8 @@ if __name__ == "__main__":
 
     setup_logging(level="critical")
 
-    giacomo = AstrologicalSubjectFactory.from_standard("Giacomo", 1993, 6, 10, 12, 15, "Montichiari", "IT")
-    yoko = AstrologicalSubjectFactory.from_standard("Susie Cox", 1949, 6, 17, 9, 40, "Tucson", "US")
+    giacomo = AstrologicalSubjectFactory.from_birth_data("Giacomo", 1993, 6, 10, 12, 15, "Montichiari", "IT")
+    yoko = AstrologicalSubjectFactory.from_birth_data("Susie Cox", 1949, 6, 17, 9, 40, "Tucson", "US")
 
     factory = RelationshipScoreFactory(giacomo, yoko)
     score = factory.get_relationship_score()

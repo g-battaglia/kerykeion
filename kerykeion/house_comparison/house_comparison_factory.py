@@ -20,8 +20,8 @@ class HouseComparisonFactory:
         second_subject (AstrologicalSubject): The second person's astrological chart
 
     Example:
-        >>> natal_chart = AstrologicalSubjectFactory.from_standard("Person A", 1990, 5, 15, 10, 30, "Rome", "IT")
-        >>> partner_chart = AstrologicalSubjectFactory.from_standard("Person B", 1992, 8, 23, 14, 45, "Milan", "IT")
+        >>> natal_chart = AstrologicalSubjectFactory.from_birth_data("Person A", 1990, 5, 15, 10, 30, "Rome", "IT")
+        >>> partner_chart = AstrologicalSubjectFactory.from_birth_data("Person B", 1992, 8, 23, 14, 45, "Milan", "IT")
         >>> factory = HouseComparisonFactory(natal_chart, partner_chart)
         >>> comparison = factory.get_house_comparison()
         >>> print(comparison.model_dump_json(indent=4))
@@ -61,8 +61,8 @@ class HouseComparisonFactory:
 
 
 if __name__ == "__main__":
-    natal_chart = AstrologicalSubjectFactory.from_standard("Person A", 1990, 5, 15, 10, 30, "Rome", "IT")
-    partner_chart = AstrologicalSubjectFactory.from_standard("Person B", 1992, 8, 23, 14, 45, "Milan", "IT")
+    natal_chart = AstrologicalSubjectFactory.from_birth_data("Person A", 1990, 5, 15, 10, 30, "Rome", "IT")
+    partner_chart = AstrologicalSubjectFactory.from_birth_data("Person B", 1992, 8, 23, 14, 45, "Milan", "IT")
 
     factory = HouseComparisonFactory(natal_chart, partner_chart)
     comparison = factory.get_house_comparison()

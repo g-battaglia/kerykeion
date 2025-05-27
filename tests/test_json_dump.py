@@ -4,7 +4,7 @@ from json import loads
 
 class TestJsonDump:
     def setup_class(self):
-        self.instance = AstrologicalSubjectFactory.from_standard("Test", 1993, 10, 10, 12, 12, "London", "GB", geonames_username="century.boy")
+        self.instance = AstrologicalSubjectFactory.from_birth_data("Test", 1993, 10, 10, 12, 12, "London", "GB", geonames_username="century.boy")
         self.dictionary = loads(self.instance.model_dump_json())
 
     def test_json_dump_data(self):
