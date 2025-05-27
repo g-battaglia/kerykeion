@@ -256,6 +256,15 @@ class KerykeionChartSVG:
             first_obj.active_points
         )
 
+        if second_obj:
+            active_points = find_common_active_points(
+                active_points,
+                second_obj.active_points
+            )
+
+        # FIXME!
+        active_points = first_obj.active_points
+
         # Set output directory
         if new_output_directory:
             self.output_directory = Path(new_output_directory)
@@ -1772,7 +1781,6 @@ if __name__ == "__main__":
         first_obj=subject,
         chart_language="IT",
         theme="strawberry",
-        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant", "Medium_Coeli"]
     )
     birth_chart.makeSVG(minify=True, remove_css_variables=True)
 

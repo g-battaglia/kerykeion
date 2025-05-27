@@ -141,5 +141,159 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS = [
       "color": "var(--kerykeion-chart-color-true-node)",
       "element_points": 0,
       "label": "True_South_Node"
+    },
+    {
+      "id": 20,
+      "name": "True_Lilith",
+      "color": "var(--kerykeion-chart-color-mean-lilith)",
+      "element_points": 0,
+      "label": "True_Lilith"
+    },
+    {
+      "id": 21,
+      "name": "Earth",
+      "color": "var(--kerykeion-chart-color-earth)",
+      "element_points": 0,
+      "label": "Earth"
+    },
+    {
+      "id": 22,
+      "name": "Pholus",
+      "color": "var(--kerykeion-chart-color-pholus)",
+      "element_points": 0,
+      "label": "Pholus"
+    },
+    {
+      "id": 23,
+      "name": "Ceres",
+      "color": "var(--kerykeion-chart-color-ceres)",
+      "element_points": 0,
+      "label": "Ceres"
+    },
+    {
+      "id": 24,
+      "name": "Pallas",
+      "color": "var(--kerykeion-chart-color-pallas)",
+      "element_points": 0,
+      "label": "Pallas"
+    },
+    {
+      "id": 25,
+      "name": "Juno",
+      "color": "var(--kerykeion-chart-color-juno)",
+      "element_points": 0,
+      "label": "Juno"
+    },
+    {
+      "id": 26,
+      "name": "Vesta",
+      "color": "var(--kerykeion-chart-color-vesta)",
+      "element_points": 0,
+      "label": "Vesta"
+    },
+    {
+      "id": 27,
+      "name": "Eris",
+      "color": "var(--kerykeion-chart-color-eris)",
+      "element_points": 0,
+      "label": "Eris"
+    },
+    {
+      "id": 28,
+      "name": "Sedna",
+      "color": "var(--kerykeion-chart-color-sedna)",
+      "element_points": 0,
+      "label": "Sedna"
+    },
+    {
+      "id": 29,
+      "name": "Haumea",
+      "color": "var(--kerykeion-chart-color-haumea)",
+      "element_points": 0,
+      "label": "Haumea"
+    },
+    {
+      "id": 30,
+      "name": "Makemake",
+      "color": "var(--kerykeion-chart-color-makemake)",
+      "element_points": 0,
+      "label": "Makemake"
+    },
+    {
+      "id": 31,
+      "name": "Ixion",
+      "color": "var(--kerykeion-chart-color-ixion)",
+      "element_points": 0,
+      "label": "Ixion"
+    },
+    {
+      "id": 32,
+      "name": "Orcus",
+      "color": "var(--kerykeion-chart-color-orcus)",
+      "element_points": 0,
+      "label": "Orcus"
+    },
+    {
+      "id": 33,
+      "name": "Quaoar",
+      "color": "var(--kerykeion-chart-color-quaoar)",
+      "element_points": 0,
+      "label": "Quaoar"
+    },
+    {
+      "id": 34,
+      "name": "Regulus",
+      "color": "var(--kerykeion-chart-color-regulus)",
+      "element_points": 0,
+      "label": "Regulus"
+    },
+    {
+      "id": 35,
+      "name": "Spica",
+      "color": "var(--kerykeion-chart-color-spica)",
+      "element_points": 0,
+      "label": "Spica"
+    },
+    {
+      "id": 36,
+      "name": "Pars_Fortunae",
+      "color": "var(--kerykeion-chart-color-pars-fortunae)",
+      "element_points": 5,
+      "label": "Fortune"
+    },
+    {
+      "id": 37,
+      "name": "Pars_Spiritus",
+      "color": "var(--kerykeion-chart-color-pars-spiritus)",
+      "element_points": 0,
+      "label": "Spirit"
+    },
+    {
+      "id": 38,
+      "name": "Pars_Amoris",
+      "color": "var(--kerykeion-chart-color-pars-amoris)",
+      "element_points": 0,
+      "label": "Love"
+    },
+    {
+      "id": 39,
+      "name": "Pars_Fidei",
+      "color": "var(--kerykeion-chart-color-pars-fidei)",
+      "element_points": 0,
+      "label": "Faith"
+    },
+    {
+      "id": 40,
+      "name": "Vertex",
+      "color": "var(--kerykeion-chart-color-vertex)",
+      "element_points": 0,
+      "label": "Vertex"
+    },
+    {
+      "id": 41,
+      "name": "Anti_Vertex",
+      "color": "var(--kerykeion-chart-color-anti-vertex)",
+      "element_points": 0,
+      "label": "Anti_Vertex"
     }
   ]

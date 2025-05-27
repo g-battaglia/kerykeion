@@ -53,17 +53,36 @@ DEFAULT_ACTIVE_POINTS: List[Union[Planet, AxialCusps]] = [
     "Pluto",
     "Mean_Node",
     "True_Node",
+    "Mean_South_Node",
+    "True_South_Node",
     "Chiron",
+    "Mean_Lilith",
+    "True_Lilith",
+    "Earth",
+    "Pholus",
+    "Ceres",
+    "Pallas",
+    "Juno",
+    "Vesta",
+    "Eris",
+    "Sedna",
+    "Haumea",
+    "Makemake",
+    "Ixion",
+    "Orcus",
+    "Quaoar",
+    "Regulus",
+    "Spica",
     "Ascendant",
     "Medium_Coeli",
     "Descendant",
     "Imum_Coeli",
-    "Mean_Lilith",
-    "Mean_South_Node",
-    "True_South_Node",
+    "Vertex",
+    "Anti_Vertex",
     "Pars_Fortunae",
     "Pars_Spiritus",
-    "Vertex"
+    "Pars_Amoris",
+    "Pars_Fidei"
 ]
 
 # Default configuration values
@@ -890,6 +909,7 @@ class AstrologicalSubjectFactory:
                 calculated_planets.append("Eris")
             except:
                 logging.warning("Could not calculate Eris position")
+                active_points.remove("Eris")  # Remove if not calculated
 
         # Calculate Sedna
         if should_calculate("Sedna"):
@@ -901,6 +921,7 @@ class AstrologicalSubjectFactory:
                 calculated_planets.append("Sedna")
             except:
                 logging.warning("Could not calculate Sedna position")
+                active_points.remove("Sedna")
 
         # Calculate Haumea
         if should_calculate("Haumea"):
@@ -912,6 +933,7 @@ class AstrologicalSubjectFactory:
                 calculated_planets.append("Haumea")
             except:
                 logging.warning("Could not calculate Haumea position")
+                active_points.remove("Haumea")  # Remove if not calculated
 
         # Calculate Makemake
         if should_calculate("Makemake"):
@@ -923,6 +945,7 @@ class AstrologicalSubjectFactory:
                 calculated_planets.append("Makemake")
             except:
                 logging.warning("Could not calculate Makemake position")
+                active_points.remove("Makemake")  # Remove if not calculated
 
         # Calculate Ixion
         if should_calculate("Ixion"):
@@ -934,6 +957,7 @@ class AstrologicalSubjectFactory:
                 calculated_planets.append("Ixion")
             except:
                 logging.warning("Could not calculate Ixion position")
+                active_points.remove("Ixion")  # Remove if not calculated
 
         # Calculate Orcus
         if should_calculate("Orcus"):
@@ -945,6 +969,7 @@ class AstrologicalSubjectFactory:
                 calculated_planets.append("Orcus")
             except:
                 logging.warning("Could not calculate Orcus position")
+                active_points.remove("Orcus")  # Remove if not calculated
 
         # Calculate Quaoar
         if should_calculate("Quaoar"):
@@ -956,6 +981,7 @@ class AstrologicalSubjectFactory:
                 calculated_planets.append("Quaoar")
             except:
                 logging.warning("Could not calculate Quaoar position")
+                active_points.remove("Quaoar")  # Remove if not calculated
 
         # ==================
         # FIXED STARS
@@ -971,8 +997,9 @@ class AstrologicalSubjectFactory:
                 data["regulus"].house = get_planet_house(regulus_deg, houses_degree_ut)
                 data["regulus"].retrograde = False  # Fixed stars are never retrograde
                 calculated_planets.append("Regulus")
-            except:
-                logging.warning("Could not calculate Regulus position")
+            except Exception as e:
+                logging.warning(f"Could not calculate Regulus position: {e}")
+                active_points.remove("Regulus")  # Remove if not calculated
 
         # Calculate Spica (example fixed star)
         if should_calculate("Spica"):
@@ -984,8 +1011,9 @@ class AstrologicalSubjectFactory:
                 data["spica"].house = get_planet_house(spica_deg, houses_degree_ut)
                 data["spica"].retrograde = False  # Fixed stars are never retrograde
                 calculated_planets.append("Spica")
-            except:
-                logging.warning("Could not calculate Spica position")
+            except Exception as e:
+                logging.warning(f"Could not calculate Spica position: {e}")
+                active_points.remove("Spica")  # Remove if not calculated
 
         # ==================
         # ARABIC PARTS / LOTS
@@ -1085,8 +1113,9 @@ class AstrologicalSubjectFactory:
                 data["anti_vertex"].house = get_planet_house(anti_vertex_deg, houses_degree_ut)
                 data["anti_vertex"].retrograde = False
                 calculated_planets.append("Anti_Vertex")
-            except:
-                logging.warning("Could not calculate Vertex position")
+            except Exception as e:
+                logging.warning("Could not calculate Vertex position, error: %s", e)
+                active_points.remove("Vertex")
 
         # Store only the planets that were actually calculated
         data["planets_names_list"] = calculated_planets
@@ -1097,6 +1126,8 @@ if __name__ == "__main__":
     subject = AstrologicalSubjectFactory.from_current_time(name="Test Subject")
     print(subject.sun)
     print(subject.pars_amoris)
+    print(subject.eris)
+    print(subject.active_points)
 
     # Create JSON output
     json_string = subject.model_dump_json(exclude_none=True, indent=2)
