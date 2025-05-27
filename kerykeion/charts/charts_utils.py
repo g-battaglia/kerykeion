@@ -489,7 +489,7 @@ def draw_aspect_grid(
         stroke_color: str,
         available_planets: list,
         aspects: list,
-        x_start: int = 380,
+        x_start: int = 510,
         y_start: int = 468,
     ) -> str:
     """
@@ -737,7 +737,7 @@ def draw_transit_aspect_list(
 
         inner_path += f"</g>"
 
-    out = '<g transform="translate(526,273)">'
+    out = '<g transform="translate(565,273)">'
     out += f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{grid_title}:</text>'
     out += inner_path
     out += '</g>'
@@ -830,7 +830,7 @@ def draw_house_grid(
     if chart_type in ["Synastry", "Transit", "Return"] and secondary_subject_houses_list is None:
         raise KerykeionException("secondary_houses is None")
 
-    svg_output = '<g transform="translate(650,-20)">'
+    svg_output = '<g transform="translate(700,-20)">'
 
     line_increment = 10
     for i, house in enumerate(main_subject_houses_list):
@@ -916,11 +916,7 @@ def draw_planet_grid(
             f'</g>'
         )
     else:
-        svg_output = (
-            f'<g transform="translate(175, -15)">'
-            f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}:</text>'
-            f'</g>'
-        )
+        svg_output = ""
 
     end_of_line = "</g>"
 
@@ -1157,20 +1153,9 @@ def calculate_element_points(
     points_sign = [subject.get(planet).sign_num for planet in celestial_points_names]
 
     for i in range(len(planets_settings)):
-        # Check if planet is in its own zodiac sign
-        related_zodiac_signs = planets_settings[i]["related_zodiac_signs"]
-        cz = points_sign[i]
-        extra_points = 0
-
-        if related_zodiac_signs:
-            for sign in related_zodiac_signs:
-                if int(sign) == int(cz):
-                    extra_points = planet_in_zodiac_extra_points
-                    break
-
         # Add points to appropriate element
         element = ZODIAC[points_sign[i]]["element"]
-        element_totals[element] += planets_settings[i]["element_points"] + extra_points
+        element_totals[element] += planets_settings[i]["element_points"]
 
     return element_totals
 
@@ -1224,37 +1209,15 @@ def calculate_synastry_element_points(
 
     # Calculate element points for subject 1
     for i in range(len(planets_settings)):
-        # Check if planet is in its own zodiac sign
-        related_zodiac_signs = planets_settings[i]["related_zodiac_signs"]
-        cz1 = subject1_points_sign[i]
-        extra_points1 = 0
-
-        if related_zodiac_signs:
-            for sign in related_zodiac_signs:
-                if int(sign) == int(cz1):
-                    extra_points1 = planet_in_zodiac_extra_points
-                    break
-
         # Add points to appropriate element
         element1 = ZODIAC[subject1_points_sign[i]]["element"]
-        combined_totals[element1] += planets_settings[i]["element_points"] + extra_points1
+        combined_totals[element1] += planets_settings[i]["element_points"]
 
     # Calculate element points for subject 2
     for i in range(len(planets_settings)):
-        # Check if planet is in its own zodiac sign
-        related_zodiac_signs = planets_settings[i]["related_zodiac_signs"]
-        cz2 = subject2_points_sign[i]
-        extra_points2 = 0
-
-        if related_zodiac_signs:
-            for sign in related_zodiac_signs:
-                if int(sign) == int(cz2):
-                    extra_points2 = planet_in_zodiac_extra_points
-                    break
-
         # Add points to appropriate element
         element2 = ZODIAC[subject2_points_sign[i]]["element"]
-        combined_totals[element2] += planets_settings[i]["element_points"] + extra_points2
+        combined_totals[element2] += planets_settings[i]["element_points"]
 
     # Calculate total points across all elements
     total_points = sum(combined_totals.values())
