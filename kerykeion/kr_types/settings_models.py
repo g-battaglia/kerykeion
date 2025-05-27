@@ -21,54 +21,6 @@ class KerykeionSettingsCelestialPointModel(SubscriptableBaseModel):
     label: str = Field(title="Celestial Point Label", description="The name of the celestial point in the chart, it can be different from the name")
     is_active: Optional[bool] = Field(title="Celestial Point is Active", description="Indicates if the celestial point is active in the chart", default=None)
 
-
-# Chart Colors Settings
-class KerykeionSettingsChartColorsModel(SubscriptableBaseModel):
-    """
-    Defines the model for the chart colors.
-    """
-
-    paper_0: str = Field(title="Paper Color 0", description="Paper Color 0")
-    paper_1: str = Field(title="Paper Color 1", description="Paper Color 1")
-    zodiac_bg_0: str = Field(title="Zodiac Background Color 0", description="Zodiac Background Color 0")
-    zodiac_bg_1: str = Field(title="Zodiac Background Color 1", description="Zodiac Background Color 1")
-    zodiac_bg_2: str = Field(title="Zodiac Background Color 2", description="Zodiac Background Color 2")
-    zodiac_bg_3: str = Field(title="Zodiac Background Color 3", description="Zodiac Background Color 3")
-    zodiac_bg_4: str = Field(title="Zodiac Background Color 4", description="Zodiac Background Color 4")
-    zodiac_bg_5: str = Field(title="Zodiac Background Color 5", description="Zodiac Background Color 5")
-    zodiac_bg_6: str = Field(title="Zodiac Background Color 6", description="Zodiac Background Color 6")
-    zodiac_bg_7: str = Field(title="Zodiac Background Color 7", description="Zodiac Background Color 7")
-    zodiac_bg_8: str = Field(title="Zodiac Background Color 8", description="Zodiac Background Color 8")
-    zodiac_bg_9: str = Field(title="Zodiac Background Color 9", description="Zodiac Background Color 9")
-    zodiac_bg_10: str = Field(title="Zodiac Background Color 10", description="Zodiac Background Color 10")
-    zodiac_bg_11: str = Field(title="Zodiac Background Color 11", description="Zodiac Background Color 11")
-    zodiac_icon_0: str = Field(title="Zodiac Icon Color 0", description="Zodiac Icon Color 0")
-    zodiac_icon_1: str = Field(title="Zodiac Icon Color 1", description="Zodiac Icon Color 1")
-    zodiac_icon_2: str = Field(title="Zodiac Icon Color 2", description="Zodiac Icon Color 2")
-    zodiac_icon_3: str = Field(title="Zodiac Icon Color 3", description="Zodiac Icon Color 3")
-    zodiac_icon_4: str = Field(title="Zodiac Icon Color 4", description="Zodiac Icon Color 4")
-    zodiac_icon_5: str = Field(title="Zodiac Icon Color 5", description="Zodiac Icon Color 5")
-    zodiac_icon_6: str = Field(title="Zodiac Icon Color 6", description="Zodiac Icon Color 6")
-    zodiac_icon_7: str = Field(title="Zodiac Icon Color 7", description="Zodiac Icon Color 7")
-    zodiac_icon_8: str = Field(title="Zodiac Icon Color 8", description="Zodiac Icon Color 8")
-    zodiac_icon_9: str = Field(title="Zodiac Icon Color 9", description="Zodiac Icon Color 9")
-    zodiac_icon_10: str = Field(title="Zodiac Icon Color 10", description="Zodiac Icon Color 10")
-    zodiac_icon_11: str = Field(title="Zodiac Icon Color 11", description="Zodiac Icon Color 11")
-    zodiac_radix_ring_0: str = Field(title="Zodiac Radix Ring Color 0", description="Zodiac Radix Ring Color 0")
-    zodiac_radix_ring_1: str = Field(title="Zodiac Radix Ring Color 1", description="Zodiac Radix Ring Color 1")
-    zodiac_radix_ring_2: str = Field(title="Zodiac Radix Ring Color 2", description="Zodiac Radix Ring Color 2")
-    zodiac_transit_ring_0: str = Field(title="Zodiac Transit Ring Color 0", description="Zodiac Transit Ring Color 0")
-    zodiac_transit_ring_1: str = Field(title="Zodiac Transit Ring Color 1", description="Zodiac Transit Ring Color 1")
-    zodiac_transit_ring_2: str = Field(title="Zodiac Transit Ring Color 2", description="Zodiac Transit Ring Color 2")
-    zodiac_transit_ring_3: str = Field(title="Zodiac Transit Ring Color 3", description="Zodiac Transit Ring Color 3")
-    houses_radix_line: str = Field(title="Houses Radix Line Color", description="Houses Radix Line Color")
-    houses_transit_line: str = Field(title="Houses Transit Line Color", description="Houses Transit Line Color")
-
-    # Deprecated: Not used anymore
-    lunar_phase_0: str = Field(title="Lunar Phase Color 0", description="Lunar Phase Color 0")
-    lunar_phase_1: str = Field(title="Lunar Phase Color 1", description="Lunar Phase Color 1")
-
-
 # Aspect Settings
 class KerykeionSettingsAspectModel(SubscriptableBaseModel):
     """
@@ -210,9 +162,6 @@ class KerykeionSettingsModel(SubscriptableBaseModel):
     """
     This class is used to define the global settings for the Kerykeion.
     """
-
-    chart_colors: KerykeionSettingsChartColorsModel = Field(title="Chart Colors", description="The colors of the chart")
-    celestial_points: List[KerykeionSettingsCelestialPointModel] = Field(title="Celestial Points", description="The list of the celestial points of the chart")
     aspects: List[KerykeionSettingsAspectModel] = Field(title="Aspects", description="The list of the aspects of the chart")
     language_settings: dict[str, KerykeionLanguageModel] = Field(title="Language Settings", description="The language settings of the chart")
     general_settings: KerykeionGeneralSettingsModel = Field(title="General Settings", description="The general settings of the chart")

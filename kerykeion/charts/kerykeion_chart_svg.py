@@ -63,6 +63,8 @@ from kerykeion.charts.charts_utils import (
 from kerykeion.charts.draw_planets_v2 import draw_planets_v2 as draw_planets
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
+from kerykeion.settings.default_color_settings import DEFAULT_CHART_COLORS
+from kerykeion.settings.default_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from pathlib import Path
 from scour.scour import scourString
 from string import Template
@@ -204,6 +206,9 @@ class KerykeionChartSVG:
         chart_language: KerykeionChartLanguage = "EN",
         active_points: List[Union[Planet, AxialCusps]] = DEFAULT_ACTIVE_POINTS,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        *,
+        colors_settings: dict = DEFAULT_CHART_COLORS,
+        celestial_points_settings: list[dict] = DEFAULT_CELESTIAL_POINTS_SETTINGS
     ):
         """
         Initialize the chart generator with subject data and configuration options.
@@ -240,6 +245,8 @@ class KerykeionChartSVG:
         self.active_aspects = active_aspects
         self.chart_type = chart_type
         self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
+        self.chart_colors_settings = colors_settings
+        self.planets_settings = celestial_points_settings
 
         # Set output directory
         if new_output_directory:
@@ -570,8 +577,6 @@ class KerykeionChartSVG:
         settings = get_settings(settings_file_or_dict)
 
         self.language_settings = settings["language_settings"][self.chart_language]
-        self.chart_colors_settings = settings["chart_colors"]
-        self.planets_settings = settings["celestial_points"]
         self.aspects_settings = settings["aspects"]
 
     def _draw_zodiac_circle_slices(self, r):

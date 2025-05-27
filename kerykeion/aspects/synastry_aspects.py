@@ -8,17 +8,16 @@ from typing import Union
 from functools import cached_property
 from typing import TYPE_CHECKING
 
+from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
+from kerykeion.settings.default_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.kr_types.kr_literals import AxialCusps, Planet
 from typing import Union, List
-
-if TYPE_CHECKING:
-    from kerykeion import AstrologicalSubject
 
 
 class SynastryAspects(NatalAspects):
@@ -42,7 +41,7 @@ class SynastryAspects(NatalAspects):
         self.new_settings_file = new_settings_file
         self.settings = get_settings(self.new_settings_file)
 
-        self.celestial_points = self.settings.celestial_points
+        self.celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
         self.aspects_settings = self.settings.aspects
         self.axes_orbit_settings = self.settings.general_settings.axes_orbit
         self.active_points = active_points
@@ -64,8 +63,8 @@ class SynastryAspects(NatalAspects):
             return self._all_aspects
 
         # Celestial Points Lists
-        first_active_points_list = get_active_points_list(self.first_user, self.settings, self.active_points)
-        second_active_points_list = get_active_points_list(self.second_user, self.settings, self.active_points)
+        first_active_points_list = get_active_points_list(self.first_user, self.active_points)
+        second_active_points_list = get_active_points_list(self.second_user, self.active_points)
 
         # ---> TODO: Clean this up
         filtered_settings = []

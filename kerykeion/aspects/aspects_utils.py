@@ -10,6 +10,7 @@ from typing import Union, TYPE_CHECKING
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.kr_literals import Planet, AxialCusps
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel, KerykeionSettingsAspectModel
+from kerykeion.settings.default_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 
 
 if TYPE_CHECKING:
@@ -75,8 +76,9 @@ def planet_id_decoder(planets_settings: list[KerykeionSettingsCelestialPointMode
 
 def get_active_points_list(
     subject: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-    settings: Union[KerykeionSettingsModel, dict],
-    active_points: list = []
+    active_points: list = [],
+    *,
+    celestial_points: list[dict] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
 ) -> list:
     """
     Given an astrological subject and the settings, return a list of the active points.
@@ -88,7 +90,7 @@ def get_active_points_list(
         list: List of the active points.
     """
     point_list = []
-    for planet in settings["celestial_points"]:
+    for planet in celestial_points:
         if planet["name"] in active_points:
             point_list.append(subject[planet["name"].lower()])
 
