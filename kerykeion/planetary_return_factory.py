@@ -248,7 +248,7 @@ class PlanetaryReturnFactory:
 if __name__ == "__main__":
     import json
     # Example usage
-    subject = AstrologicalSubjectFactory.from_standard(
+    subject = AstrologicalSubjectFactory.from_birth_data(
         name="Test Subject",
         lng=-122.4194,
         lat=37.7749,

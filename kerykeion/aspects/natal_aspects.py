@@ -160,7 +160,7 @@ if __name__ == "__main__":
 
     setup_logging(level="debug")
 
-    johnny = AstrologicalSubjectFactory.from_standard("Johnny Depp", 1963, 6, 9, 0, 0, 0, "Owensboro", "US")
+    johnny = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 0, 0, 0, "Owensboro", "US")
 
     # All aspects as a list of dictionaries
     aspects = NatalAspects(johnny)

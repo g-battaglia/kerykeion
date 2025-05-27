@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 def test_utc_constructor():
-    subject = AstrologicalSubjectFactory.from_standard(
+    subject = AstrologicalSubjectFactory.from_birth_data(
         "Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", geonames_username="century.boy")
 
     subject2 = AstrologicalSubjectFactory.from_iso_utc_time(

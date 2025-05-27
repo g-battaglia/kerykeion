@@ -3,17 +3,17 @@ from kerykeion import AstrologicalSubjectFactory, RelationshipScoreFactory
 
 class TestRelationshipScore:
     def setup_class(self):
-        self.john_lennon = AstrologicalSubjectFactory.from_standard("John", 1940, 10, 9, 18, 30, "Liverpool", "UK")
-        self.yoko_ono = AstrologicalSubjectFactory.from_standard("Yoko", 1933, 2, 18, 20, 30, "Tokyo", "JP")
+        self.john_lennon = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 18, 30, "Liverpool", "UK")
+        self.yoko_ono = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 20, 30, "Tokyo", "JP")
 
-        self.freud = AstrologicalSubjectFactory.from_standard("Freud", 1856, 5, 6, 18, 30, "Freiberg", "DE")
-        self.jung = AstrologicalSubjectFactory.from_standard("Jung", 1875, 7, 26, 18, 30, "Kesswil", "CH")
+        self.freud = AstrologicalSubjectFactory.from_birth_data("Freud", 1856, 5, 6, 18, 30, "Freiberg", "DE")
+        self.jung = AstrologicalSubjectFactory.from_birth_data("Jung", 1875, 7, 26, 18, 30, "Kesswil", "CH")
 
-        self.richart_burton = AstrologicalSubjectFactory.from_standard("Richard Burton", 1925, 11, 10, 15, 00, "Pontrhydyfen", "UK")
-        self.liz_taylor = AstrologicalSubjectFactory.from_standard("Elizabeth Taylor", 1932, 2, 27, 2, 30, "London", "UK")
+        self.richart_burton = AstrologicalSubjectFactory.from_birth_data("Richard Burton", 1925, 11, 10, 15, 00, "Pontrhydyfen", "UK")
+        self.liz_taylor = AstrologicalSubjectFactory.from_birth_data("Elizabeth Taylor", 1932, 2, 27, 2, 30, "London", "UK")
 
-        self.dario_fo = AstrologicalSubjectFactory.from_standard("Dario Fo", 1926, 3, 24, 12, 25, "Sangiano", "IT")
-        self.franca_rame = AstrologicalSubjectFactory.from_standard("Franca Rame", 1929, 7, 18, 12, 25, "Parabiago", "IT")
+        self.dario_fo = AstrologicalSubjectFactory.from_birth_data("Dario Fo", 1926, 3, 24, 12, 25, "Sangiano", "IT")
+        self.franca_rame = AstrologicalSubjectFactory.from_birth_data("Franca Rame", 1929, 7, 18, 12, 25, "Parabiago", "IT")
 
     def test_john_lennon_yoko_ono_relationship_score(self):
         john_yoko_relationship_score_factory = RelationshipScoreFactory(self.john_lennon, self.yoko_ono)

@@ -121,7 +121,7 @@ class EphemerisDataFactory:
         """
         ephemeris_data_list = []
         for date in self.dates_list:
-            subject = AstrologicalSubjectFactory.from_standard(
+            subject = AstrologicalSubjectFactory.from_birth_data(
                 year=date.year,
                 month=date.month,
                 day=date.day,
@@ -172,7 +172,7 @@ class EphemerisDataFactory:
         """
         subjects_list = []
         for date in self.dates_list:
-            subject = AstrologicalSubjectFactory.from_standard(
+            subject = AstrologicalSubjectFactory.from_birth_data(
                 year=date.year,
                 month=date.month,
                 day=date.day,

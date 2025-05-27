@@ -183,7 +183,7 @@ class AstrologicalSubjectFactory:
     """
 
     @classmethod
-    def from_standard(
+    def from_birth_data(
         cls,
         name: str = "Now",
         year: int = NOW.year,
@@ -397,7 +397,7 @@ class AstrologicalSubjectFactory:
         local_datetime = dt.astimezone(local_time)
 
         # Create the subject with local time
-        return cls.from_standard(
+        return cls.from_birth_data(
             name=name,
             year=local_datetime.year,
             month=local_datetime.month,
@@ -459,7 +459,7 @@ class AstrologicalSubjectFactory:
         """
         now = datetime.now()
 
-        return cls.from_standard(
+        return cls.from_birth_data(
             name=name,
             year=now.year,
             month=now.month,

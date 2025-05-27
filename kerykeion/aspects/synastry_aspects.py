@@ -118,8 +118,8 @@ if __name__ == "__main__":
 
     setup_logging(level="debug")
 
-    john = AstrologicalSubjectFactory.from_standard("John", 1940, 10, 9, 10, 30, 0, "Liverpool", "GB")
-    yoko = AstrologicalSubjectFactory.from_standard("Yoko", 1933, 2, 18, 10, 30, 0, "Tokyo", "JP")
+    john = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 10, 30, 0, "Liverpool", "GB")
+    yoko = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 10, 30, 0, "Tokyo", "JP")
 
     synastry_aspects = SynastryAspects(john, yoko)
 
