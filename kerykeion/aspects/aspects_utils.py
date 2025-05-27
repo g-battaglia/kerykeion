@@ -10,7 +10,7 @@ from typing import Union, TYPE_CHECKING
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.kr_literals import Planet, AxialCusps
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel
-from kerykeion.settings.default_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
+from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 
 
 if TYPE_CHECKING:

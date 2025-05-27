@@ -13,8 +13,8 @@ from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, 
 from kerykeion.kr_types.kr_literals import AxialCusps, Planet
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
-from kerykeion.settings.default_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
-from kerykeion.settings.default_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
+from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
+from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
 from pathlib import Path
 from typing import Union, List
 
