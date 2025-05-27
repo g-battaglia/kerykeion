@@ -142,14 +142,9 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     perspective_type: str
     domification: str
 
-class KerykeionGeneralSettingsModel(SubscriptableBaseModel):
-    axes_orbit: int = Field(title="Axes Orbit", description="The orbit of the axes in the chart")
-
-
 # Settings Model
 class KerykeionSettingsModel(SubscriptableBaseModel):
     """
     This class is used to define the global settings for the Kerykeion.
     """
     language_settings: dict[str, KerykeionLanguageModel] = Field(title="Language Settings", description="The language settings of the chart")
-    general_settings: KerykeionGeneralSettingsModel = Field(title="General Settings", description="The general settings of the chart")

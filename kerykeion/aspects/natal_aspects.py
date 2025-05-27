@@ -12,7 +12,7 @@ from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_t
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.kr_literals import AxialCusps, Planet
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
 from kerykeion.settings.default_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.default_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
 from pathlib import Path
@@ -41,10 +41,10 @@ class NatalAspects:
     def __post_init__(self):
         self.settings = get_settings(self.new_settings_file)
 
-        self.axes_orbit_settings = self.settings.general_settings.axes_orbit
         self.active_points = self.active_points
         self.celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
         self.aspects_settings = DEFAULT_CHART_ASPECTS_SETTINGS
+        self.axes_orbit_settings =  DEFAULT_AXIS_ORBIT
 
 
     @cached_property
