@@ -2,7 +2,8 @@
     /* -------- */
     /* General */
     /* ------- */
---kerykeion-color-black: #141012; /* quasi nero con traccia impercettibile di rosa */    --kerykeion-color-white: #fef5f9; /* rosa tenue */
+    --kerykeion-color-black: #141012; /* quasi nero con traccia impercettibile di rosa */
+    --kerykeion-color-white: #fef5f9; /* rosa tenue */
     --kerykeion-color-neutral-content: #5c2d41; /* oklch(25% 0.08 330) - rosa scuro */
     --kerykeion-color-base-content: #5c2d41; /* stessa di neutral-content */
     --kerykeion-color-primary: #d91aa6; /* oklch(55% 0.35 320) - rosa magenta vibrante */
@@ -96,6 +97,22 @@
     --kerykeion-chart-color-seventh-house: var(--kerykeion-color-warning);
     --kerykeion-chart-color-fourth-house: var(--kerykeion-color-warning);
     --kerykeion-chart-color-mean-lilith: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-true-lilith: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-ceres: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-pallas: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-juno: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-vesta: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-pars-fortunae: var(--kerykeion-color-success);
+    --kerykeion-chart-color-vertex: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-east-point: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-eris: var(--kerykeion-color-error);
+    --kerykeion-chart-color-earth: var(--kerykeion-color-warning);
+
+    /* Arab Parts */
+    --kerykeion-chart-color-pars-spiritus: var(--kerykeion-color-success);
+    --kerykeion-chart-color-pars-amoris: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-pars-fortunae: var(--kerykeion-color-success);
+    --kerykeion-chart-color-pars-fidei: var(--kerykeion-color-success);
 
     /* Zodiac Signs */
     --kerykeion-chart-color-zodiac-icon-0: var(--kerykeion-color-accent);

@@ -817,19 +817,28 @@ class AstrologicalSubjectFactory:
 
         # Calculate Mean Lilith (Mean Black Moon)
         if should_calculate("Mean_Lilith"):
-            mean_lilith_deg = swe.calc_ut(julian_day, 12, iflag)[0][0]
-            data["mean_lilith"] = get_kerykeion_point_from_degree(mean_lilith_deg, "Mean_Lilith", point_type=point_type)
-            data["mean_lilith"].house = get_planet_house(mean_lilith_deg, houses_degree_ut)
-            data["mean_lilith"].retrograde = swe.calc_ut(julian_day, 12, iflag)[0][3] < 0
-            calculated_planets.append("Mean_Lilith")
+            try:
+                mean_lilith_deg = swe.calc_ut(julian_day, 12, iflag)[0][0]
+                data["mean_lilith"] = get_kerykeion_point_from_degree(mean_lilith_deg, "Mean_Lilith", point_type=point_type)
+                data["mean_lilith"].house = get_planet_house(mean_lilith_deg, houses_degree_ut)
+                data["mean_lilith"].retrograde = swe.calc_ut(julian_day, 12, iflag)[0][3] < 0
+                calculated_planets.append("Mean_Lilith")
+            except Exception as e:
+                logging.error(f"Error calculating Mean Lilith: {e}")
+                active_points.remove("Mean_Lilith")
+
 
         # Calculate True Lilith (Osculating Black Moon)
         if should_calculate("True_Lilith"):
-            true_lilith_deg = swe.calc_ut(julian_day, 13, iflag)[0][0]
-            data["true_lilith"] = get_kerykeion_point_from_degree(true_lilith_deg, "True_Lilith", point_type=point_type)
-            data["true_lilith"].house = get_planet_house(true_lilith_deg, houses_degree_ut)
-            data["true_lilith"].retrograde = swe.calc_ut(julian_day, 13, iflag)[0][3] < 0
-            calculated_planets.append("True_Lilith")
+            try:
+                true_lilith_deg = swe.calc_ut(julian_day, 13, iflag)[0][0]
+                data["true_lilith"] = get_kerykeion_point_from_degree(true_lilith_deg, "True_Lilith", point_type=point_type)
+                data["true_lilith"].house = get_planet_house(true_lilith_deg, houses_degree_ut)
+                data["true_lilith"].retrograde = swe.calc_ut(julian_day, 13, iflag)[0][3] < 0
+                calculated_planets.append("True_Lilith")
+            except Exception as e:
+                logging.error(f"Error calculating True Lilith: {e}")
+                active_points.remove("True_Lilith")
 
         # ==================
         # SPECIAL POINTS
@@ -837,27 +846,39 @@ class AstrologicalSubjectFactory:
 
         # Calculate Earth - useful for heliocentric charts
         if should_calculate("Earth"):
-            earth_deg = swe.calc_ut(julian_day, 14, iflag)[0][0]
-            data["earth"] = get_kerykeion_point_from_degree(earth_deg, "Earth", point_type=point_type)
-            data["earth"].house = get_planet_house(earth_deg, houses_degree_ut)
-            data["earth"].retrograde = swe.calc_ut(julian_day, 14, iflag)[0][3] < 0
-            calculated_planets.append("Earth")
+            try:
+                earth_deg = swe.calc_ut(julian_day, 14, iflag)[0][0]
+                data["earth"] = get_kerykeion_point_from_degree(earth_deg, "Earth", point_type=point_type)
+                data["earth"].house = get_planet_house(earth_deg, houses_degree_ut)
+                data["earth"].retrograde = swe.calc_ut(julian_day, 14, iflag)[0][3] < 0
+                calculated_planets.append("Earth")
+            except Exception as e:
+                logging.error(f"Error calculating Earth position: {e}")
+                active_points.remove("Earth")
 
         # Calculate Chiron
         if should_calculate("Chiron"):
-            chiron_deg = swe.calc_ut(julian_day, 15, iflag)[0][0]
-            data["chiron"] = get_kerykeion_point_from_degree(chiron_deg, "Chiron", point_type=point_type)
-            data["chiron"].house = get_planet_house(chiron_deg, houses_degree_ut)
-            data["chiron"].retrograde = swe.calc_ut(julian_day, 15, iflag)[0][3] < 0
-            calculated_planets.append("Chiron")
+            try:
+                chiron_deg = swe.calc_ut(julian_day, 15, iflag)[0][0]
+                data["chiron"] = get_kerykeion_point_from_degree(chiron_deg, "Chiron", point_type=point_type)
+                data["chiron"].house = get_planet_house(chiron_deg, houses_degree_ut)
+                data["chiron"].retrograde = swe.calc_ut(julian_day, 15, iflag)[0][3] < 0
+                calculated_planets.append("Chiron")
+            except Exception as e:
+                logging.error(f"Error calculating Chiron position: {e}")
+                active_points.remove("Chiron")
 
         # Calculate Pholus
         if should_calculate("Pholus"):
-            pholus_deg = swe.calc_ut(julian_day, 16, iflag)[0][0]
-            data["pholus"] = get_kerykeion_point_from_degree(pholus_deg, "Pholus", point_type=point_type)
-            data["pholus"].house = get_planet_house(pholus_deg, houses_degree_ut)
-            data["pholus"].retrograde = swe.calc_ut(julian_day, 16, iflag)[0][3] < 0
-            calculated_planets.append("Pholus")
+            try:
+                pholus_deg = swe.calc_ut(julian_day, 16, iflag)[0][0]
+                data["pholus"] = get_kerykeion_point_from_degree(pholus_deg, "Pholus", point_type=point_type)
+                data["pholus"].house = get_planet_house(pholus_deg, houses_degree_ut)
+                data["pholus"].retrograde = swe.calc_ut(julian_day, 16, iflag)[0][3] < 0
+                calculated_planets.append("Pholus")
+            except Exception as e:
+                logging.error(f"Error calculating Pholus position: {e}")
+                active_points.remove("Pholus")
 
         # ==================
         # ASTEROIDS
@@ -865,35 +886,51 @@ class AstrologicalSubjectFactory:
 
         # Calculate Ceres
         if should_calculate("Ceres"):
-            ceres_deg = swe.calc_ut(julian_day, 17, iflag)[0][0]
-            data["ceres"] = get_kerykeion_point_from_degree(ceres_deg, "Ceres", point_type=point_type)
-            data["ceres"].house = get_planet_house(ceres_deg, houses_degree_ut)
-            data["ceres"].retrograde = swe.calc_ut(julian_day, 17, iflag)[0][3] < 0
-            calculated_planets.append("Ceres")
+            try:
+                ceres_deg = swe.calc_ut(julian_day, 17, iflag)[0][0]
+                data["ceres"] = get_kerykeion_point_from_degree(ceres_deg, "Ceres", point_type=point_type)
+                data["ceres"].house = get_planet_house(ceres_deg, houses_degree_ut)
+                data["ceres"].retrograde = swe.calc_ut(julian_day, 17, iflag)[0][3] < 0
+                calculated_planets.append("Ceres")
+            except Exception as e:
+                logging.error(f"Error calculating Ceres position: {e}")
+                active_points.remove("Ceres")
 
         # Calculate Pallas
         if should_calculate("Pallas"):
-            pallas_deg = swe.calc_ut(julian_day, 18, iflag)[0][0]
-            data["pallas"] = get_kerykeion_point_from_degree(pallas_deg, "Pallas", point_type=point_type)
-            data["pallas"].house = get_planet_house(pallas_deg, houses_degree_ut)
-            data["pallas"].retrograde = swe.calc_ut(julian_day, 18, iflag)[0][3] < 0
-            calculated_planets.append("Pallas")
+            try:
+                pallas_deg = swe.calc_ut(julian_day, 18, iflag)[0][0]
+                data["pallas"] = get_kerykeion_point_from_degree(pallas_deg, "Pallas", point_type=point_type)
+                data["pallas"].house = get_planet_house(pallas_deg, houses_degree_ut)
+                data["pallas"].retrograde = swe.calc_ut(julian_day, 18, iflag)[0][3] < 0
+                calculated_planets.append("Pallas")
+            except Exception as e:
+                logging.error(f"Error calculating Pallas position: {e}")
+                active_points.remove("Pallas")
 
         # Calculate Juno
         if should_calculate("Juno"):
-            juno_deg = swe.calc_ut(julian_day, 19, iflag)[0][0]
-            data["juno"] = get_kerykeion_point_from_degree(juno_deg, "Juno", point_type=point_type)
-            data["juno"].house = get_planet_house(juno_deg, houses_degree_ut)
-            data["juno"].retrograde = swe.calc_ut(julian_day, 19, iflag)[0][3] < 0
-            calculated_planets.append("Juno")
+            try:
+                juno_deg = swe.calc_ut(julian_day, 19, iflag)[0][0]
+                data["juno"] = get_kerykeion_point_from_degree(juno_deg, "Juno", point_type=point_type)
+                data["juno"].house = get_planet_house(juno_deg, houses_degree_ut)
+                data["juno"].retrograde = swe.calc_ut(julian_day, 19, iflag)[0][3] < 0
+                calculated_planets.append("Juno")
+            except Exception as e:
+                logging.error(f"Error calculating Juno position: {e}")
+                active_points.remove("Juno")
 
         # Calculate Vesta
         if should_calculate("Vesta"):
-            vesta_deg = swe.calc_ut(julian_day, 20, iflag)[0][0]
-            data["vesta"] = get_kerykeion_point_from_degree(vesta_deg, "Vesta", point_type=point_type)
-            data["vesta"].house = get_planet_house(vesta_deg, houses_degree_ut)
-            data["vesta"].retrograde = swe.calc_ut(julian_day, 20, iflag)[0][3] < 0
-            calculated_planets.append("Vesta")
+            try:
+                vesta_deg = swe.calc_ut(julian_day, 20, iflag)[0][0]
+                data["vesta"] = get_kerykeion_point_from_degree(vesta_deg, "Vesta", point_type=point_type)
+                data["vesta"].house = get_planet_house(vesta_deg, houses_degree_ut)
+                data["vesta"].retrograde = swe.calc_ut(julian_day, 20, iflag)[0][3] < 0
+                calculated_planets.append("Vesta")
+            except Exception as e:
+                logging.error(f"Error calculating Vesta position: {e}")
+                active_points.remove("Vesta")
 
         # ==================
         # TRANS-NEPTUNIAN OBJECTS
@@ -907,8 +944,8 @@ class AstrologicalSubjectFactory:
                 data["eris"].house = get_planet_house(eris_deg, houses_degree_ut)
                 data["eris"].retrograde = swe.calc_ut(julian_day, swe.AST_OFFSET + 136199, iflag)[0][3] < 0
                 calculated_planets.append("Eris")
-            except:
-                logging.warning("Could not calculate Eris position")
+            except Exception as e:
+                logging.warning(f"Could not calculate Eris position: {e}")
                 active_points.remove("Eris")  # Remove if not calculated
 
         # Calculate Sedna
@@ -919,8 +956,8 @@ class AstrologicalSubjectFactory:
                 data["sedna"].house = get_planet_house(sedna_deg, houses_degree_ut)
                 data["sedna"].retrograde = swe.calc_ut(julian_day, swe.AST_OFFSET + 90377, iflag)[0][3] < 0
                 calculated_planets.append("Sedna")
-            except:
-                logging.warning("Could not calculate Sedna position")
+            except Exception as e:
+                logging.warning(f"Could not calculate Sedna position: {e}")
                 active_points.remove("Sedna")
 
         # Calculate Haumea
@@ -931,8 +968,8 @@ class AstrologicalSubjectFactory:
                 data["haumea"].house = get_planet_house(haumea_deg, houses_degree_ut)
                 data["haumea"].retrograde = swe.calc_ut(julian_day, swe.AST_OFFSET + 136108, iflag)[0][3] < 0
                 calculated_planets.append("Haumea")
-            except:
-                logging.warning("Could not calculate Haumea position")
+            except Exception as e:
+                logging.warning(f"Could not calculate Haumea position: {e}")
                 active_points.remove("Haumea")  # Remove if not calculated
 
         # Calculate Makemake
@@ -943,8 +980,8 @@ class AstrologicalSubjectFactory:
                 data["makemake"].house = get_planet_house(makemake_deg, houses_degree_ut)
                 data["makemake"].retrograde = swe.calc_ut(julian_day, swe.AST_OFFSET + 136472, iflag)[0][3] < 0
                 calculated_planets.append("Makemake")
-            except:
-                logging.warning("Could not calculate Makemake position")
+            except Exception as e:
+                logging.warning(f"Could not calculate Makemake position: {e}")
                 active_points.remove("Makemake")  # Remove if not calculated
 
         # Calculate Ixion
@@ -955,8 +992,8 @@ class AstrologicalSubjectFactory:
                 data["ixion"].house = get_planet_house(ixion_deg, houses_degree_ut)
                 data["ixion"].retrograde = swe.calc_ut(julian_day, swe.AST_OFFSET + 28978, iflag)[0][3] < 0
                 calculated_planets.append("Ixion")
-            except:
-                logging.warning("Could not calculate Ixion position")
+            except Exception as e:
+                logging.warning(f"Could not calculate Ixion position: {e}")
                 active_points.remove("Ixion")  # Remove if not calculated
 
         # Calculate Orcus
@@ -967,8 +1004,8 @@ class AstrologicalSubjectFactory:
                 data["orcus"].house = get_planet_house(orcus_deg, houses_degree_ut)
                 data["orcus"].retrograde = swe.calc_ut(julian_day, swe.AST_OFFSET + 90482, iflag)[0][3] < 0
                 calculated_planets.append("Orcus")
-            except:
-                logging.warning("Could not calculate Orcus position")
+            except Exception as e:
+                logging.warning(f"Could not calculate Orcus position: {e}")
                 active_points.remove("Orcus")  # Remove if not calculated
 
         # Calculate Quaoar
@@ -979,8 +1016,8 @@ class AstrologicalSubjectFactory:
                 data["quaoar"].house = get_planet_house(quaoar_deg, houses_degree_ut)
                 data["quaoar"].retrograde = swe.calc_ut(julian_day, swe.AST_OFFSET + 50000, iflag)[0][3] < 0
                 calculated_planets.append("Quaoar")
-            except:
-                logging.warning("Could not calculate Quaoar position")
+            except Exception as e:
+                logging.warning(f"Could not calculate Quaoar position: {e}")
                 active_points.remove("Quaoar")  # Remove if not calculated
 
         # ==================
