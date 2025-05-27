@@ -152,11 +152,11 @@ class ChartConfiguration:
 @dataclass
 class LocationData:
     """Information about a geographical location"""
-    city: str = "London"
+    city: str = "Greenwich"
     nation: str = "GB"
     lat: float = 51.5074
     lng: float = 0.0
-    tz_str: str = "Europe/London"
+    tz_str: str = "Etc/GMT"
     altitude: Optional[float] = None
 
     # Storage for city data fetched from geonames
@@ -325,11 +325,11 @@ class AstrologicalSubjectFactory:
 
         # Initialize location data
         location = LocationData(
-            city=city or "London",
+            city=city or "Greenwich",
             nation=nation or "GB",
             lat=lat if lat is not None else 51.5074,
             lng=lng if lng is not None else 0.0,
-            tz_str=tz_str or "Europe/London",
+            tz_str=tz_str or "Etc/GMT",
             altitude=altitude
         )
 
