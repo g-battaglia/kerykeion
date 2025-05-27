@@ -163,8 +163,8 @@ class KerykeionChartSVG:
     _TRANSIT_CHART_WITH_TABLE_VIWBOX = f"0 0 {_DEFAULT_FULL_WIDTH_WITH_TABLE} 546.0"
 
     # Set at init
-    first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
-    second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, PlanetReturnModel, None]
+    first_obj: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
+    second_obj: Union[AstrologicalSubjectModel, PlanetReturnModel, None]
     chart_type: ChartType
     new_output_directory: Union[Path, None]
     new_settings_file: Union[Path, None, KerykeionSettingsModel, dict]
@@ -198,9 +198,9 @@ class KerykeionChartSVG:
 
     def __init__(
         self,
-        first_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        first_obj: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         chart_type: ChartType = "Natal",
-        second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, PlanetReturnModel, None] = None,
+        second_obj: Union[AstrologicalSubjectModel, PlanetReturnModel, None] = None,
         new_output_directory: Union[str, None] = None,
         new_settings_file: Union[Path, None, KerykeionSettingsModel, dict] = None,
         theme: Union[KerykeionChartTheme, None] = "classic",
@@ -1824,7 +1824,7 @@ if __name__ == "__main__":
 
     ###
     ## Transit Chart
-    transit = AstrologicalSubject("Transit", 2024, 5, 23, 18, 30, "Guidizzolo", "IT")
+    transit = AstrologicalSubjectFactory.from_standard("Transit", 2024, 5, 23, 18, 30, "Guidizzolo", "IT")
     transit_chart = KerykeionChartSVG(
         first_obj=subject,
         chart_type="Transit",
@@ -1837,7 +1837,7 @@ if __name__ == "__main__":
 
     ###
     ## Synastry Chart
-    second_subject = AstrologicalSubject("Yoko Ono", 1933, 2, 18, 18, 30, "Tokyo", "JP")
+    second_subject = AstrologicalSubjectFactory.from_standard("Yoko Ono", 1933, 2, 18, 18, 30, "Tokyo", "JP")
     synastry_chart = KerykeionChartSVG(
         first_obj=subject,
         chart_type="Synastry",

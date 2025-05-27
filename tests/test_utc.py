@@ -1,16 +1,15 @@
-from kerykeion.astrological_subject import AstrologicalSubject
+from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from datetime import datetime
 
 
 def test_utc_constructor():
-    subject = AstrologicalSubject(
+    subject = AstrologicalSubjectFactory.from_standard(
         "Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", geonames_username="century.boy")
 
-    subject2 = AstrologicalSubject.get_from_iso_utc_time(
+    subject2 = AstrologicalSubjectFactory.from_iso_utc_time(
         "Johnny Depp", "1963-06-09T05:00:00+00:00", "Owensboro", "US", online=True)
 
     assert subject.julian_day == subject2.julian_day
-    assert subject._houses_list == subject2._houses_list
     assert subject.sun == subject2.sun
     assert subject.moon == subject2.moon
     assert subject.mercury == subject2.mercury

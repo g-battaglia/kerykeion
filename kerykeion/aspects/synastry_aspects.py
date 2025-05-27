@@ -8,7 +8,7 @@ from typing import Union
 from functools import cached_property
 from typing import TYPE_CHECKING
 
-from kerykeion.astrological_subject import AstrologicalSubject
+from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects.natal_aspects import NatalAspects
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
@@ -28,8 +28,8 @@ class SynastryAspects(NatalAspects):
 
     def __init__(
         self,
-        kr_object_one: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-        kr_object_two: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        kr_object_one: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        kr_object_two: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
         active_points: list[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
@@ -118,8 +118,8 @@ if __name__ == "__main__":
 
     setup_logging(level="debug")
 
-    john = AstrologicalSubject("John", 1940, 10, 9, 10, 30, "Liverpool", "GB")
-    yoko = AstrologicalSubject("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP")
+    john = AstrologicalSubjectFactory.from_standard("John", 1940, 10, 9, 10, 30, 0, "Liverpool", "GB")
+    yoko = AstrologicalSubjectFactory.from_standard("Yoko", 1933, 2, 18, 10, 30, 0, "Tokyo", "JP")
 
     synastry_aspects = SynastryAspects(john, yoko)
 

@@ -1,4 +1,4 @@
-from kerykeion import AstrologicalSubject
+from kerykeion import AstrologicalSubjectFactory
 from pytest import approx
 
 
@@ -6,7 +6,7 @@ class TestAstrologicalSubjectJyotish:
     def setup_class(self):
 
         # Johnny Depp's vedic horoscope: using sidereal zodiac, Lahiri ayanamsha and whole-sign houses
-        self.subject = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", \
+        self.subject = AstrologicalSubjectFactory.from_standard("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", \
             zodiac_type="Sidereal", sidereal_mode="LAHIRI", houses_system_identifier="W", geonames_username="century.boy")
 
         self.expected_output = {

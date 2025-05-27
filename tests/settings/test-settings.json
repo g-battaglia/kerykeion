@@ -21,6 +21,7 @@
       "planets_and_house": "Points for",
       "transit_name": "At the time of the transit",
       "lunar_phase": "Lunar phase",
+      "lunation_day": "Lunation Day",
       "day": "Day",
       "composite_chart": "Composite Chart",
       "midpoints": "Midpoints",
@@ -45,6 +46,7 @@
       "last_quarter": "Last Quarter",
       "waning_crescent": "Waning Crescent",
       "houses": "Houses",
+      "domification": "domification",
       "houses_system_A": "Equal",
       "houses_system_B": "Alcabitius",
       "houses_system_C": "Campanus",
@@ -73,7 +75,6 @@
       "Synastry": "Synastry",
       "Transit": "Transit",
       "Composite": "Composite",
-      "Return": "Return",
       "solar_return": "Solar Return",
       "lunar_return": "Lunar Return",
       "return_aspects": "Natal-Return Aspects",
@@ -83,6 +84,7 @@
       "return_point": "Return Point",
       "Return": "Return",
       "natal": "Natal",
+      "perspective_type": "Perspective",
       "celestial_points": {
         "Sun": "Sun",
         "Moon": "Moon",
@@ -127,6 +129,7 @@
       "planets_and_house": "Points pour",
       "transit_name": "Au moment de la transition",
       "lunar_phase": "Phase Lunaire",
+      "lunation_day": "Jour de Lunaison",
       "day": "Jour",
       "composite_chart": "Carte Composite",
       "midpoints": "Milieux",
@@ -151,6 +154,7 @@
       "last_quarter": "Dernier Quartier",
       "waning_crescent": "Dernier Croissant",
       "houses": "Maisons",
+      "domification": "domification",
       "houses_system_A": "Égales",
       "houses_system_B": "Alcabitius",
       "houses_system_C": "Campanus",
@@ -179,7 +183,6 @@
       "Synastry": "Synastrie",
       "Transit": "Transit",
       "Composite": "Composite",
-      "Return": "Retour",
       "solar_return": "Retour Solaire",
       "lunar_return": "Retour Lunaire",
       "return_aspects": "Aspects natal-retour",
@@ -189,6 +192,7 @@
       "return_point": "Point (rév.)",
       "Return": "Révolution",
       "natal": "Radix",
+      "perspective_type": "Perspective",
       "celestial_points": {
         "Sun": "Soleil",
         "Moon": "Lune",
@@ -233,6 +237,7 @@
       "planets_and_house": "Pontos para",
       "transit_name": "No momento do trânsito",
       "lunar_phase": "Fase lunar",
+      "lunation_day": "Dia de Lunação",
       "day": "Dia",
       "composite_chart": "Carta Composta",
       "midpoints": "Meios",
@@ -257,6 +262,7 @@
       "last_quarter": "Quarto Minguante",
       "waning_crescent": "Lua Minguante",
       "houses": "Casas",
+      "domification": "Domificação",
       "houses_system_A": "Igual",
       "houses_system_B": "Alcabítio",
       "houses_system_C": "Campanus",
@@ -293,8 +299,8 @@
       "outer_wheel": "Roda externa",
       "house_position_comparison": "Comparação das posições nas casas",
       "return_point": "Ponto (ret.)",
-      "Return": "Retorno",
       "natal": "Natal",
+      "perspective_type": "Perspectiva",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Lua",
@@ -339,6 +345,7 @@
       "planets_and_house": "Punti per",
       "transit_name": "Al momento del transito",
       "lunar_phase": "Fase lunare",
+      "lunation_day": "Giorno di Lunazione",
       "day": "Giorno",
       "composite_chart": "Tema Composito",
       "midpoints": "Punti Medi",
@@ -363,6 +370,7 @@
       "last_quarter": "Ultimo Quarto",
       "waning_crescent": "Luna Calante",
       "houses": "Domificazione",
+      "domification": "Domificazione",
       "houses_system_A": "Uguale",
       "houses_system_B": "Alcabizio",
       "houses_system_C": "Campano",
@@ -400,6 +408,7 @@
       "return_point": "Punto del rit.",
       "Return": "Ritorno",
       "natal": "Radix",
+      "perspective_type": "Prospettiva",
       "celestial_points": {
         "Sun": "Sole",
         "Moon": "Luna",
@@ -444,6 +453,7 @@
       "planets_and_house": "行星 與 宫位",
       "transit_name": "流年名稱",
       "lunar_phase": "月相",
+      "lunation_day": "朔望月日",
       "day": "日",
       "composite_chart": "合盤",
       "midpoints": "中點",
@@ -468,6 +478,7 @@
       "last_quarter": "下弦月",
       "waning_crescent": "殘月",
       "houses": "宮位系統",
+      "domification": "宫位划分",
       "houses_system_A": "等宮",
       "houses_system_B": "阿卡比提烏斯",
       "houses_system_C": "坎帕努斯",
@@ -496,7 +507,6 @@
       "Synastry": "合盤",
       "Transit": "運行",
       "Composite": "合成盤",
-      "Return": "回歸",
       "solar_return": "太陽回歸",
       "lunar_return": "月亮回歸",
       "return_aspects": "本命与回归相位",
@@ -506,6 +516,7 @@
       "return_point": "回归点",
       "Return": "回归",
       "natal": "本命",
+      "perspective_type": "视角",
       "celestial_points": {
         "Sun": "太陽",
         "Moon": "月亮",
@@ -550,6 +561,7 @@
       "planets_and_house": "Puntos para",
       "transit_name": "En el momento del tránsito",
       "lunar_phase": "Fase lunar",
+      "lunation_day": "Día de Lunación",
       "day": "Día",
       "composite_chart": "Carta Compuesta",
       "midpoints": "Puntos Medios",
@@ -574,6 +586,7 @@
       "last_quarter": "Cuarto Menguante",
       "waning_crescent": "Luna Menguante",
       "houses": "Casas",
+      "domification": "Domificación",
       "houses_system_A": "Iguales",
       "houses_system_B": "Alcabicio",
       "houses_system_C": "Campanus",
@@ -610,8 +623,8 @@
       "outer_wheel": "Rueda externa",
       "house_position_comparison": "Comparación de posiciones en casas",
       "return_point": "Punto (rev.)",
-      "Return": "Revolución",
       "natal": "Radix",
+      "perspective_type": "Perspectiva",
       "celestial_points": {
         "Sun": "Sol",
         "Moon": "Luna",
@@ -656,6 +669,7 @@
       "planets_and_house": "Пункты для",
       "transit_name": "В момент транзита",
       "lunar_phase": "Лунная фаза",
+      "lunation_day": "Лунационный день",
       "day": "День",
       "composite_chart": "Композитная карта",
       "midpoints": "Средние точки",
@@ -680,6 +694,7 @@
       "last_quarter": "Последняя Четверть",
       "waning_crescent": "Убывающий Серп",
       "houses": "Дома",
+      "domification": "Домификация",
       "houses_system_A": "Равные",
       "houses_system_B": "Алькабитиус",
       "houses_system_C": "Кампанус",
@@ -708,7 +723,6 @@
       "Synastry": "Синастрия",
       "Transit": "Транзит",
       "Composite": "Композит",
-      "Return": "Возврат",
       "solar_return": "Солнечное возвращение",
       "lunar_return": "Лунное возвращение",
       "return_aspects": "Аспекты от натала к возвращению",
@@ -718,6 +732,7 @@
       "return_point": "Точка воз.",
       "Return": "Возвращение",
       "natal": "Радикс",
+      "perspective_type": "Перспектива",
       "celestial_points": {
         "Sun": "Солнце",
         "Moon": "Луна",
@@ -762,6 +777,7 @@
       "planets_and_house": "Puanlar için",
       "transit_name": "Geçiş anında",
       "lunar_phase": "Ay Aşaması",
+      "lunation_day": "Ay Döngüsü Günü",
       "day": "Gün",
       "composite_chart": "Kompozit Harita",
       "midpoints": "Orta Noktalar",
@@ -786,6 +802,7 @@
       "last_quarter": "Son Dördün",
       "waning_crescent": "Küçülen Hilal",
       "houses": "Evler",
+      "domification": "Domifikasyon",
       "houses_system_A": "Eşit",
       "houses_system_B": "Alkabisyus",
       "houses_system_C": "Kampanus",
@@ -814,7 +831,6 @@
       "Synastry": "Sinastri",
       "Transit": "Geçiş",
       "Composite": "Kompozit",
-      "Return": "Dönüş",
       "solar_return": "Güneş Dönüşü",
       "lunar_return": "Ay Dönüşü",
       "return_aspects": "Doğumdan dönüşe açılar",
@@ -824,6 +840,7 @@
       "return_point": "Dönüş noktası",
       "Return": "Dönüş",
       "natal": "Doğum haritası",
+      "perspective_type": "Perspektif",
       "celestial_points": {
         "Sun": "Güneş",
         "Moon": "Ay",
@@ -868,6 +885,7 @@
       "planets_and_house": "Punkte für",
       "transit_name": "Zum Zeitpunkt des Transits",
       "lunar_phase": "Mondphase",
+      "lunation_day": "Lunationstag",
       "day": "Tag",
       "composite_chart": "Komposit-Chart",
       "midpoints": "Mittelpunkte",
@@ -892,6 +910,7 @@
       "last_quarter": "Letztes Viertel",
       "waning_crescent": "Abnehmende Sichel",
       "houses": "Häuser",
+      "domification": "Domifikation",
       "houses_system_A": "Gleich",
       "houses_system_B": "Alcabitius",
       "houses_system_C": "Campanus",
@@ -928,8 +947,8 @@
       "outer_wheel": "Äußerer Kreis",
       "house_position_comparison": "Vergleich der Häuserpositionen",
       "return_point": "Rückkehrpunkt",
-      "Return": "Rückkehr",
       "natal": "Radix",
+      "perspective_type": "Perspektive",
       "celestial_points": {
         "Sun": "Sonne",
         "Moon": "Mond",
@@ -974,6 +993,7 @@
       "planets_and_house": "अंक के लिए",
       "transit_name": "गोचर के समय",
       "lunar_phase": "चंद्र चरण",
+      "lunation_day": "चंद्र चक्र दिन",
       "day": "दिन",
       "composite_chart": "संयुक्त चार्ट",
       "midpoints": "मध्य बिंदु",
@@ -998,6 +1018,7 @@
       "last_quarter": "कृष्ण पक्ष सप्तमी",
       "waning_crescent": "कृष्ण पक्ष प्रथमा",
       "houses": "भावों",
+      "domification": "गृह",
       "houses_system_A": "समान",
       "houses_system_B": "अल्काबितियस",
       "houses_system_C": "कैम्पानस",
@@ -1034,8 +1055,8 @@
       "outer_wheel": "बाहरी चक्र",
       "house_position_comparison": "भाव स्थिति तुलना",
       "return_point": "पुनरागमन बिंदु",
-      "Return": "पुनरागमन",
       "natal": "जन्म कुंडली",
+      "perspective_type": "दृष्टिकोण",
       "celestial_points": {
         "Sun": "सूर्य",
         "Moon": "चंद्रमा",
@@ -1059,277 +1080,5 @@
         "Mean_Lilith": "लिलिथ"
       }
     }
-  },
-  "aspects": [
-    {
-      "degree": 0,
-      "name": "conjunction",
-      "is_major": true,
-      "color": "var(--kerykeion-chart-color-conjunction)"
-    },
-    {
-      "degree": 30,
-      "name": "semi-sextile",
-      "is_major": false,
-      "color": "var(--kerykeion-chart-color-semi-sextile)"
-    },
-    {
-      "degree": 45,
-      "name": "semi-square",
-      "is_major": false,
-      "color": "var(--kerykeion-chart-color-semi-square)"
-    },
-    {
-      "degree": 60,
-      "name": "sextile",
-      "is_major": true,
-      "color": "var(--kerykeion-chart-color-sextile)"
-    },
-    {
-      "degree": 72,
-      "name": "quintile",
-      "is_major": false,
-      "color": "var(--kerykeion-chart-color-quintile)"
-    },
-    {
-      "degree": 90,
-      "name": "square",
-      "is_major": true,
-      "color": "var(--kerykeion-chart-color-square)"
-    },
-    {
-      "degree": 120,
-      "name": "trine",
-      "is_major": true,
-      "color": "var(--kerykeion-chart-color-trine)"
-    },
-    {
-      "degree": 135,
-      "name": "sesquiquadrate",
-      "is_major": false,
-      "color": "var(--kerykeion-chart-color-sesquiquadrate)"
-    },
-    {
-      "degree": 144,
-      "name": "biquintile",
-      "is_major": false,
-      "color": "var(--kerykeion-chart-color-biquintile)"
-    },
-    {
-      "degree": 150,
-      "name": "quincunx",
-      "is_major": false,
-      "color": "var(--kerykeion-chart-color-quincunx)"
-    },
-    {
-      "degree": 180,
-      "name": "opposition",
-      "is_major": true,
-      "color": "var(--kerykeion-chart-color-opposition)"
-    }
-  ],
-  "celestial_points": [
-    {
-      "id": 0,
-      "name": "Sun",
-      "color": "var(--kerykeion-chart-color-sun)",
-      "element_points": 40,
-      "related_zodiac_signs": ["4"],
-      "label": "Sun"
-    },
-    {
-      "id": 1,
-      "name": "Moon",
-      "color": "var(--kerykeion-chart-color-moon)",
-      "element_points": 40,
-      "related_zodiac_signs": ["3"],
-      "label": "Moon"
-    },
-    {
-      "id": 2,
-      "name": "Mercury",
-      "color": "var(--kerykeion-chart-color-mercury)",
-      "element_points": 15,
-      "related_zodiac_signs": ["2", "5"],
-      "label": "Mercury"
-    },
-    {
-      "id": 3,
-      "name": "Venus",
-      "color": "var(--kerykeion-chart-color-venus)",
-      "element_points": 15,
-      "related_zodiac_signs": ["1", "6"],
-      "label": "Venus"
-    },
-    {
-      "id": 4,
-      "name": "Mars",
-      "color": "var(--kerykeion-chart-color-mars)",
-      "element_points": 15,
-      "related_zodiac_signs": ["0"],
-      "label": "Mars"
-    },
-    {
-      "id": 5,
-      "name": "Jupiter",
-      "color": "var(--kerykeion-chart-color-jupiter)",
-      "element_points": 10,
-      "related_zodiac_signs": ["8"],
-      "label": "Jupiter"
-    },
-    {
-      "id": 6,
-      "name": "Saturn",
-      "color": "var(--kerykeion-chart-color-saturn)",
-      "element_points": 10,
-      "related_zodiac_signs": ["9"],
-      "label": "Saturn"
-    },
-    {
-      "id": 7,
-      "name": "Uranus",
-      "color": "var(--kerykeion-chart-color-uranus)",
-      "element_points": 10,
-      "related_zodiac_signs": ["10"],
-      "label": "Uranus"
-    },
-    {
-      "id": 8,
-      "name": "Neptune",
-      "color": "var(--kerykeion-chart-color-neptune)",
-      "element_points": 10,
-      "related_zodiac_signs": ["11"],
-      "label": "Neptune"
-    },
-    {
-      "id": 9,
-      "name": "Pluto",
-      "color": "var(--kerykeion-chart-color-pluto)",
-      "element_points": 10,
-      "related_zodiac_signs": ["7"],
-      "label": "Pluto"
-    },
-    {
-      "id": 10,
-      "name": "Mean_Node",
-      "color": "var(--kerykeion-chart-color-mean-node)",
-      "element_points": 0,
-      "related_zodiac_signs": [],
-      "label": "Mean_Node"
-    },
-    {
-      "id": 11,
-      "name": "True_Node",
-      "color": "var(--kerykeion-chart-color-true-node)",
-      "element_points": 0,
-      "related_zodiac_signs": [],
-      "label": "True_Node"
-    },
-    {
-      "id": 12,
-      "name": "Chiron",
-      "color": "var(--kerykeion-chart-color-chiron)",
-      "element_points": 0,
-      "related_zodiac_signs": [],
-      "label": "Chiron"
-    },
-    {
-      "id": 13,
-      "name": "Ascendant",
-      "color": "var(--kerykeion-chart-color-first-house)",
-      "element_points": 40,
-      "related_zodiac_signs": [],
-      "label": "Asc"
-    },
-    {
-      "id": 14,
-      "name": "Medium_Coeli",
-      "color": "var(--kerykeion-chart-color-tenth-house)",
-      "element_points": 20,
-      "related_zodiac_signs": [],
-      "label": "Mc"
-    },
-    {
-      "id": 15,
-      "name": "Descendant",
-      "color": "var(--kerykeion-chart-color-seventh-house)",
-      "element_points": 0,
-      "related_zodiac_signs": [],
-      "label": "Dsc"
-    },
-    {
-      "id": 16,
-      "name": "Imum_Coeli",
-      "color": "var(--kerykeion-chart-color-fourth-house)",
-      "element_points": 0,
-      "related_zodiac_signs": [],
-      "label": "Ic"
-    },
-    {
-      "id": 17,
-      "name": "Mean_Lilith",
-      "color": "var(--kerykeion-chart-color-mean-lilith)",
-      "element_points": 0,
-      "related_zodiac_signs": [],
-      "label": "Mean_Lilith"
-    },
-    {
-      "id": 18,
-      "name": "Mean_South_Node",
-      "color": "var(--kerykeion-chart-color-mean-node)",
-      "element_points": 0,
-      "related_zodiac_signs": [],
-      "label": "Mean_South_Node"
-    },
-    {
-      "id": 19,
-      "name": "True_South_Node",
-      "color": "var(--kerykeion-chart-color-true-node)",
-      "element_points": 0,
-      "related_zodiac_signs": [],
-      "label": "True_South_Node"
-    }
-  ],
-  "chart_colors": {
-    "paper_0": "var(--kerykeion-chart-color-paper-0)",
-    "paper_1": "var(--kerykeion-chart-color-paper-1)",
-    "zodiac_bg_0": "var(--kerykeion-chart-color-zodiac-bg-0)",
-    "zodiac_bg_1": "var(--kerykeion-chart-color-zodiac-bg-1)",
-    "zodiac_bg_2": "var(--kerykeion-chart-color-zodiac-bg-2)",
-    "zodiac_bg_3": "var(--kerykeion-chart-color-zodiac-bg-3)",
-    "zodiac_bg_4": "var(--kerykeion-chart-color-zodiac-bg-4)",
-    "zodiac_bg_5": "var(--kerykeion-chart-color-zodiac-bg-5)",
-    "zodiac_bg_6": "var(--kerykeion-chart-color-zodiac-bg-6)",
-    "zodiac_bg_7": "var(--kerykeion-chart-color-zodiac-bg-7)",
-    "zodiac_bg_8": "var(--kerykeion-chart-color-zodiac-bg-8)",
-    "zodiac_bg_9": "var(--kerykeion-chart-color-zodiac-bg-9)",
-    "zodiac_bg_10": "var(--kerykeion-chart-color-zodiac-bg-10)",
-    "zodiac_bg_11": "var(--kerykeion-chart-color-zodiac-bg-11)",
-    "zodiac_icon_0": "var(--kerykeion-chart-color-zodiac-icon-0)",
-    "zodiac_icon_1": "var(--kerykeion-chart-color-zodiac-icon-1)",
-    "zodiac_icon_2": "var(--kerykeion-chart-color-zodiac-icon-2)",
-    "zodiac_icon_3": "var(--kerykeion-chart-color-zodiac-icon-3)",
-    "zodiac_icon_4": "var(--kerykeion-chart-color-zodiac-icon-4)",
-    "zodiac_icon_5": "var(--kerykeion-chart-color-zodiac-icon-5)",
-    "zodiac_icon_6": "var(--kerykeion-chart-color-zodiac-icon-6)",
-    "zodiac_icon_7": "var(--kerykeion-chart-color-zodiac-icon-7)",
-    "zodiac_icon_8": "var(--kerykeion-chart-color-zodiac-icon-8)",
-    "zodiac_icon_9": "var(--kerykeion-chart-color-zodiac-icon-9)",
-    "zodiac_icon_10": "var(--kerykeion-chart-color-zodiac-icon-10)",
-    "zodiac_icon_11": "var(--kerykeion-chart-color-zodiac-icon-11)",
-    "zodiac_radix_ring_0": "var(--kerykeion-chart-color-zodiac-radix-ring-0)",
-    "zodiac_radix_ring_1": "var(--kerykeion-chart-color-zodiac-radix-ring-1)",
-    "zodiac_radix_ring_2": "var(--kerykeion-chart-color-zodiac-radix-ring-2)",
-    "zodiac_transit_ring_0": "var(--kerykeion-chart-color-zodiac-transit-ring-0)",
-    "zodiac_transit_ring_1": "var(--kerykeion-chart-color-zodiac-transit-ring-1)",
-    "zodiac_transit_ring_2": "var(--kerykeion-chart-color-zodiac-transit-ring-2)",
-    "zodiac_transit_ring_3": "var(--kerykeion-chart-color-zodiac-transit-ring-3)",
-    "houses_radix_line": "var(--kerykeion-chart-color-houses-radix-line)",
-    "houses_transit_line": "var(--kerykeion-chart-color-houses-transit-line)",
-    "lunar_phase_0": "var(--kerykeion-chart-color-lunar-phase-0)",
-    "lunar_phase_1": "var(--kerykeion-chart-color-lunar-phase-1)"
-  },
-  "general_settings": {
-    "axes_orbit": 1
   }
 }

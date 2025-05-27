@@ -3,7 +3,7 @@
     This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
-from kerykeion import AstrologicalSubject
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion.aspects.synastry_aspects import SynastryAspects
 import logging
 from pathlib import Path
@@ -27,8 +27,8 @@ class RelationshipScoreFactory:
     Documentation: http://www.cirodiscepolo.it/Articoli/Discepoloele.htm
 
     Args:
-        first_subject (Union[AstrologicalSubject, AstrologicalSubjectModel]): First subject instance
-        second_subject (Union[AstrologicalSubject, AstrologicalSubjectModel]): Second subject instance
+        first_subject (Union[AstrologicalSubjectModel]): First subject instance
+        second_subject (Union[AstrologicalSubjectModel]): Second subject instance
     """
 
     SCORE_MAPPING = [
@@ -44,16 +44,13 @@ class RelationshipScoreFactory:
 
     def __init__(
         self,
-        first_subject: Union[AstrologicalSubject, AstrologicalSubjectModel],
-        second_subject: Union[AstrologicalSubject, AstrologicalSubjectModel],
+        first_subject: AstrologicalSubjectModel,
+        second_subject: AstrologicalSubjectModel,
         use_only_major_aspects: bool = True,
     ):
-        if isinstance(first_subject, AstrologicalSubject):
-            self.first_subject = first_subject.model()
-        if isinstance(second_subject, AstrologicalSubject):
-            self.second_subject = second_subject.model()
-
         self.use_only_major_aspects = use_only_major_aspects
+        self.first_subject: AstrologicalSubjectModel = first_subject
+        self.second_subject: AstrologicalSubjectModel = second_subject
 
         self.score_value = 0
         self.relationship_score_description: RelationshipScoreDescription = "Minimal"
@@ -221,8 +218,8 @@ if __name__ == "__main__":
 
     setup_logging(level="critical")
 
-    giacomo = AstrologicalSubject("Giacomo", 1993, 6, 10, 12, 15, "Montichiari", "IT")
-    yoko = AstrologicalSubject("Susie Cox", 1949, 6, 17, 9, 40, "Tucson", "US")
+    giacomo = AstrologicalSubjectFactory.from_standard("Giacomo", 1993, 6, 10, 12, 15, "Montichiari", "IT")
+    yoko = AstrologicalSubjectFactory.from_standard("Susie Cox", 1949, 6, 17, 9, 40, "Tucson", "US")
 
     factory = RelationshipScoreFactory(giacomo, yoko)
     score = factory.get_relationship_score()

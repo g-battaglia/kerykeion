@@ -1,7 +1,7 @@
 from typing import Union, TYPE_CHECKING
 
 # Fix the circular import by changing this import
-from kerykeion.astrological_subject import AstrologicalSubject
+from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.kr_types.kerykeion_exception import KerykeionException
 from kerykeion.kr_types.kr_models import CompositeSubjectModel, AstrologicalSubjectModel
 from kerykeion.kr_types.kr_literals import ZodiacType, PerspectiveType, HousesSystemIdentifier, SiderealMode, Planet, Houses, AxialCusps, CompositeChartType
@@ -10,7 +10,8 @@ from kerykeion.utilities import (
     get_planet_house,
     circular_mean,
     calculate_moon_phase,
-    circular_sort
+    circular_sort,
+    find_common_active_points
 )
 
 
@@ -43,20 +44,19 @@ class CompositeSubjectFactory:
 
     def __init__(
             self,
-            first_subject: Union["AstrologicalSubject", AstrologicalSubjectModel],
-            second_subject: Union["AstrologicalSubject", AstrologicalSubjectModel],
+            first_subject: AstrologicalSubjectModel,
+            second_subject: AstrologicalSubjectModel,
             chart_name: Union[str, None] = None
     ):
         self.model: Union[CompositeSubjectModel, None] = None
         self.composite_chart_type = "Midpoint"
 
-        # Subjects
-        if isinstance(first_subject, AstrologicalSubject) or isinstance(first_subject, AstrologicalSubjectModel):
-            self.first_subject = first_subject.model() # type: ignore
-            self.second_subject = second_subject.model() # type: ignore
-        else:
-            self.first_subject = first_subject
-            self.second_subject = second_subject
+        self.first_subject = first_subject
+        self.second_subject = second_subject
+        self.active_points = find_common_active_points(
+            first_subject.active_points,
+            second_subject.active_points
+        )
 
         # Name
         if chart_name is None:
@@ -198,10 +198,10 @@ class CompositeSubjectFactory:
 
 
 if __name__ == "__main__":
-    from kerykeion.astrological_subject import AstrologicalSubject
+    from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
-    first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-    second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+    first = AstrologicalSubjectFactory.from_standard("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    second = AstrologicalSubjectFactory.from_standard("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
     composite_chart = CompositeSubjectFactory(first, second)
     print(composite_chart.get_midpoint_composite_subject_model().model_dump_json(indent=4))

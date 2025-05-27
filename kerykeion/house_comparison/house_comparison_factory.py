@@ -2,7 +2,7 @@ from kerykeion.house_comparison.house_comparison_utils import calculate_points_i
 from typing import Union
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
 from kerykeion.house_comparison.house_comparison_models import HouseComparisonModel
-from kerykeion.astrological_subject import AstrologicalSubject
+from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.kr_types import AstrologicalSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.kr_literals import AxialCusps, Planet
 
@@ -20,16 +20,16 @@ class HouseComparisonFactory:
         second_subject (AstrologicalSubject): The second person's astrological chart
 
     Example:
-        >>> natal_chart = AstrologicalSubject("Person A", 1990, 5, 15, 10, 30, "Rome", "IT")
-        >>> partner_chart = AstrologicalSubject("Person B", 1992, 8, 23, 14, 45, "Milan", "IT")
+        >>> natal_chart = AstrologicalSubjectFactory.from_standard("Person A", 1990, 5, 15, 10, 30, "Rome", "IT")
+        >>> partner_chart = AstrologicalSubjectFactory.from_standard("Person B", 1992, 8, 23, 14, 45, "Milan", "IT")
         >>> factory = HouseComparisonFactory(natal_chart, partner_chart)
         >>> comparison = factory.get_house_comparison()
         >>> print(comparison.model_dump_json(indent=4))
 
     """
     def __init__(self,
-                 first_subject: Union["AstrologicalSubject", "AstrologicalSubjectModel", "PlanetReturnModel"],
-                 second_subject: Union["AstrologicalSubject", "AstrologicalSubjectModel", "PlanetReturnModel"],
+                 first_subject: Union["AstrologicalSubjectModel", "PlanetReturnModel"],
+                 second_subject: Union["AstrologicalSubjectModel", "PlanetReturnModel"],
                 active_points: list[Union[Planet, AxialCusps]] = DEFAULT_ACTIVE_POINTS,
 
         ):
@@ -61,8 +61,8 @@ class HouseComparisonFactory:
 
 
 if __name__ == "__main__":
-    natal_chart = AstrologicalSubject("Person A", 1990, 5, 15, 10, 30, "Rome", "IT")
-    partner_chart = AstrologicalSubject("Person B", 1992, 8, 23, 14, 45, "Milan", "IT")
+    natal_chart = AstrologicalSubjectFactory.from_standard("Person A", 1990, 5, 15, 10, 30, "Rome", "IT")
+    partner_chart = AstrologicalSubjectFactory.from_standard("Person B", 1992, 8, 23, 14, 45, "Milan", "IT")
 
     factory = HouseComparisonFactory(natal_chart, partner_chart)
     comparison = factory.get_house_comparison()

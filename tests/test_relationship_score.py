@@ -1,19 +1,19 @@
-from kerykeion import AstrologicalSubject, RelationshipScoreFactory
+from kerykeion import AstrologicalSubjectFactory, RelationshipScoreFactory
 
 
 class TestRelationshipScore:
     def setup_class(self):
-        self.john_lennon = AstrologicalSubject("John", 1940, 10, 9, 18, 30, "Liverpool", "UK")
-        self.yoko_ono = AstrologicalSubject("Yoko", 1933, 2, 18, 20, 30, "Tokyo", "JP")
+        self.john_lennon = AstrologicalSubjectFactory.from_standard("John", 1940, 10, 9, 18, 30, "Liverpool", "UK")
+        self.yoko_ono = AstrologicalSubjectFactory.from_standard("Yoko", 1933, 2, 18, 20, 30, "Tokyo", "JP")
 
-        self.freud = AstrologicalSubject("Freud", 1856, 5, 6, 18, 30, "Freiberg", "DE")
-        self.jung = AstrologicalSubject("Jung", 1875, 7, 26, 18, 30, "Kesswil", "CH")
+        self.freud = AstrologicalSubjectFactory.from_standard("Freud", 1856, 5, 6, 18, 30, "Freiberg", "DE")
+        self.jung = AstrologicalSubjectFactory.from_standard("Jung", 1875, 7, 26, 18, 30, "Kesswil", "CH")
 
-        self.richart_burton = AstrologicalSubject("Richard Burton", 1925, 11, 10, 15, 00, "Pontrhydyfen", "UK")
-        self.liz_taylor = AstrologicalSubject("Elizabeth Taylor", 1932, 2, 27, 2, 30, "London", "UK")
+        self.richart_burton = AstrologicalSubjectFactory.from_standard("Richard Burton", 1925, 11, 10, 15, 00, "Pontrhydyfen", "UK")
+        self.liz_taylor = AstrologicalSubjectFactory.from_standard("Elizabeth Taylor", 1932, 2, 27, 2, 30, "London", "UK")
 
-        self.dario_fo = AstrologicalSubject("Dario Fo", 1926, 3, 24, 12, 25, "Sangiano", "IT")
-        self.franca_rame = AstrologicalSubject("Franca Rame", 1929, 7, 18, 12, 25, "Parabiago", "IT")
+        self.dario_fo = AstrologicalSubjectFactory.from_standard("Dario Fo", 1926, 3, 24, 12, 25, "Sangiano", "IT")
+        self.franca_rame = AstrologicalSubjectFactory.from_standard("Franca Rame", 1929, 7, 18, 12, 25, "Parabiago", "IT")
 
     def test_john_lennon_yoko_ono_relationship_score(self):
         john_yoko_relationship_score_factory = RelationshipScoreFactory(self.john_lennon, self.yoko_ono)
@@ -25,7 +25,7 @@ class TestRelationshipScore:
     def test_freud_jung_relationship_score(self):
         freud_jung_relationship_score_factory = RelationshipScoreFactory(self.freud, self.jung)
         freud_jung_relationship_score = freud_jung_relationship_score_factory.get_relationship_score()
-        
+
         assert freud_jung_relationship_score.score_description == "Rare Exceptional"
         assert freud_jung_relationship_score.score_value == 32
 
@@ -49,5 +49,5 @@ if __name__ == "__main__":
 
     # Set the log level to CRITICAL
     logging.basicConfig(level=logging.CRITICAL)
-    
+
     pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

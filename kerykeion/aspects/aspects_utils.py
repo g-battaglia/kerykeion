@@ -14,7 +14,7 @@ from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_C
 
 
 if TYPE_CHECKING:
-    from kerykeion import AstrologicalSubject
+    from kerykeion import AstrologicalSubjectFactory
 
 def get_aspect_from_two_points(
     aspects_settings: Union[list[dict], list[dict]],
@@ -75,7 +75,7 @@ def planet_id_decoder(planets_settings: list[KerykeionSettingsCelestialPointMode
 
 
 def get_active_points_list(
-    subject: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+    subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
     active_points: list = [],
     *,
     celestial_points: list[dict] = DEFAULT_CELESTIAL_POINTS_SETTINGS,

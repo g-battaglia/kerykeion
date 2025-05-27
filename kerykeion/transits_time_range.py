@@ -1,6 +1,8 @@
 from typing import Optional, Union, List
 from datetime import datetime, timedelta
-from kerykeion import AstrologicalSubject, SynastryAspects
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
+from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.aspects import SynastryAspects
 from kerykeion.ephemeris_data import EphemerisDataFactory
 from kerykeion.kr_types.kr_literals import AxialCusps, Planet
 from kerykeion.kr_types.kr_models import ActiveAspect, TransitMomentModel, TransitsTimeRangeModel
@@ -27,8 +29,8 @@ class TransitsTimeRangeFactory:
 
     def __init__(
         self,
-        natal_chart: AstrologicalSubject,
-        ephemeris_data_points: List[AstrologicalSubject],
+        natal_chart: AstrologicalSubjectModel,
+        ephemeris_data_points: List[AstrologicalSubjectModel],
         active_points: List[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
@@ -91,7 +93,7 @@ class TransitsTimeRangeFactory:
 
 if __name__ == "__main__":
     # Create a natal chart for the subject
-    person = AstrologicalSubject(
+    person = AstrologicalSubjectFactory.from_standard(
         "Johnny Depp", 1963, 6, 9, 20, 15, "Owensboro", "US"
     )
 
