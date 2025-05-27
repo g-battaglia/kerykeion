@@ -15,7 +15,7 @@ from typing import Optional, Union
 from kerykeion.kr_types import KerykeionException
 from kerykeion.fetch_geonames import FetchGeonames
 from kerykeion.utilities import julian_to_datetime, datetime_to_julian
-from kerykeion.astrological_subject import (
+from kerykeion.astrological_subject_factory import (
     GEONAMES_DEFAULT_USERNAME_WARNING,
     DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
 )

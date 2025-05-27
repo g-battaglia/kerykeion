@@ -1,7 +1,7 @@
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 from kerykeion.utilities import get_houses_list, get_available_astrological_points_list
-from kerykeion.astrological_subject import DEFAULT_HOUSES_SYSTEM_IDENTIFIER, DEFAULT_PERSPECTIVE_TYPE, DEFAULT_ZODIAC_TYPE
+from kerykeion.astrological_subject_factory import DEFAULT_HOUSES_SYSTEM_IDENTIFIER, DEFAULT_PERSPECTIVE_TYPE, DEFAULT_ZODIAC_TYPE
 from kerykeion.kr_types import EphemerisDictModel
 from kerykeion.kr_types import SiderealMode, HousesSystemIdentifier, PerspectiveType, ZodiacType
 from datetime import datetime, timedelta
