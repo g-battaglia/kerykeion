@@ -8,7 +8,7 @@ from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointMo
 
 
 if TYPE_CHECKING:
-    from kerykeion import AstrologicalSubject, HouseComparisonModel
+    from kerykeion import AstrologicalSubjectFactory, HouseComparisonModel
 
 def get_decoded_kerykeion_celestial_point_name(input_planet_name: str, celestial_point_language: KerykeionLanguageCelestialPointModel) -> str:
     """
@@ -1108,7 +1108,7 @@ def format_datetime_with_timezone(iso_datetime_string: str) -> str:
 def calculate_element_points(
         planets_settings: list[KerykeionSettingsCelestialPointModel],
         celestial_points_names: list[str],
-        subject: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         planet_in_zodiac_extra_points: int = 10
     ):
     """
@@ -1160,8 +1160,8 @@ def calculate_element_points(
 def calculate_synastry_element_points(
         planets_settings: list[KerykeionSettingsCelestialPointModel],
         celestial_points_names: list[str],
-        subject1: Union["AstrologicalSubject", AstrologicalSubjectModel],
-        subject2: Union["AstrologicalSubject", AstrologicalSubjectModel],
+        subject1: Union[AstrologicalSubjectModel],
+        subject2: Union[AstrologicalSubjectModel],
         planet_in_zodiac_extra_points: int = 10
     ):
     """

@@ -1,4 +1,4 @@
-from kerykeion import AstrologicalSubject
+from kerykeion import AstrologicalSubjectFactory
 from simple_ascii_tables import AsciiTable
 from kerykeion.utilities import get_houses_list, get_available_astrological_points_list
 from typing import Union
@@ -14,7 +14,7 @@ class Report:
     planets_table: str
     houses_table: str
 
-    def __init__(self, instance: Union[AstrologicalSubject, AstrologicalSubjectModel]):
+    def __init__(self, instance: Union[AstrologicalSubjectModel]):
         self.instance = instance
 
         self.get_report_title()
@@ -89,6 +89,6 @@ if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
     setup_logging(level="debug")
 
-    john = AstrologicalSubject("John", 1975, 10, 10, 21, 15, "Roma", "IT")
+    john = AstrologicalSubjectFactory.from_standard("John", 1975, 10, 10, 21, 15, "Roma", "IT")
     report = Report(john)
     report.print_report()

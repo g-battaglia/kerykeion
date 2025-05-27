@@ -6,8 +6,8 @@ from kerykeion import (
 )
 
 # Create a natal chart for the subject
-person = AstrologicalSubject(
-    "Johnny Depp", 1963, 6, 9, 20, 15, "Owensboro", "US"
+person = AstrologicalSubjectFactory.from_standard(
+    "Johnny Depp", 1963, 6, 9, 20, 15, 0, "Owensboro", "US"
 )
 
 # Define the time period for transit calculation

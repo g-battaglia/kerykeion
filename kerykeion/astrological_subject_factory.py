@@ -39,8 +39,28 @@ from kerykeion.utilities import (
     calculate_moon_phase,
     datetime_to_julian
 )
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
-
+DEFAULT_ACTIVE_POINTS: List[Union[Planet, AxialCusps]] = [
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto",
+    "Mean_Node",
+    "True_Node",
+    "Chiron",
+    "Ascendant",
+    "Medium_Coeli",
+    "Descendant",
+    "Imum_Coeli",
+    "Mean_Lilith",
+    "Mean_South_Node",
+    "True_South_Node"
+]
 # Default configuration values
 DEFAULT_GEONAMES_USERNAME = "century.boy"
 DEFAULT_SIDEREAL_MODE: SiderealMode = "FAGAN_BRADLEY"
@@ -171,7 +191,6 @@ class AstrologicalSubjectFactory:
         day: int = NOW.day,
         hour: int = NOW.hour,
         minute: int = NOW.minute,
-        seconds: int = 0,
         city: Optional[str] = None,
         nation: Optional[str] = None,
         lng: Optional[float] = None,
@@ -186,7 +205,10 @@ class AstrologicalSubjectFactory:
         cache_expire_after_days: int = DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
         is_dst: Optional[bool] = None,
         altitude: Optional[float] = None,
-        active_points: List[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS
+        active_points: List[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS,
+        *,
+        seconds: int = 0,
+
     ) -> AstrologicalSubjectModel:
         """
         Create an astrological subject from standard birth/event details.

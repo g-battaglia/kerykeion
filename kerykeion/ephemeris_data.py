@@ -1,4 +1,5 @@
-from kerykeion import AstrologicalSubject
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 from kerykeion.utilities import get_houses_list, get_available_astrological_points_list
 from kerykeion.astrological_subject import DEFAULT_HOUSES_SYSTEM_IDENTIFIER, DEFAULT_PERSPECTIVE_TYPE, DEFAULT_ZODIAC_TYPE
 from kerykeion.kr_types import EphemerisDictModel
@@ -21,7 +22,6 @@ class EphemerisDataFactory:
     - lng: float representing the longitude. Default is 0.0005 (Greenwich).
     - tz_str: string representing the timezone. Default is "Etc/UTC".
     - is_dst: boolean representing if daylight saving time is active. Default is False.
-    - disable_chiron_and_lilith: boolean representing if Chiron and Lilith should be disabled. Default is False.
     - zodiac_type: ZodiacType object representing the zodiac type. Default is DEFAULT_ZODIAC_TYPE.
     - sidereal_mode: SiderealMode object representing the sidereal mode. Default is None.
     - houses_system_identifier: HousesSystemIdentifier object representing the houses system identifier. Default is DEFAULT_HOUSES_SYSTEM_IDENTIFIER.
@@ -48,7 +48,6 @@ class EphemerisDataFactory:
         lng: float = 0.0005,
         tz_str: str = "Etc/UTC",
         is_dst: bool = False,
-        disable_chiron_and_lilith: bool = False,
         zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
         sidereal_mode: Union[SiderealMode, None] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
@@ -65,7 +64,6 @@ class EphemerisDataFactory:
         self.lng = lng
         self.tz_str = tz_str
         self.is_dst = is_dst
-        self.disable_chiron_and_lilith = disable_chiron_and_lilith
         self.zodiac_type = zodiac_type
         self.sidereal_mode = sidereal_mode
         self.houses_system_identifier = houses_system_identifier
@@ -123,7 +121,7 @@ class EphemerisDataFactory:
         """
         ephemeris_data_list = []
         for date in self.dates_list:
-            subject = AstrologicalSubject(
+            subject = AstrologicalSubjectFactory.from_standard(
                 year=date.year,
                 month=date.month,
                 day=date.day,
@@ -135,7 +133,6 @@ class EphemerisDataFactory:
                 city="Placeholder",
                 nation="Placeholder",
                 online=False,
-                disable_chiron_and_lilith=self.disable_chiron_and_lilith,
                 zodiac_type=self.zodiac_type,
                 sidereal_mode=self.sidereal_mode,
                 houses_system_identifier=self.houses_system_identifier,
@@ -153,7 +150,7 @@ class EphemerisDataFactory:
 
         return ephemeris_data_list
 
-    def get_ephemeris_data_as_astrological_subjects(self, as_model: bool = False) -> List[AstrologicalSubject]:
+    def get_ephemeris_data_as_astrological_subjects(self, as_model: bool = False) -> List[AstrologicalSubjectModel]:
         """
         Generate ephemeris data for the specified date range as AstrologicalSubject instances.
 
@@ -175,7 +172,7 @@ class EphemerisDataFactory:
         """
         subjects_list = []
         for date in self.dates_list:
-            subject = AstrologicalSubject(
+            subject = AstrologicalSubjectFactory.from_standard(
                 year=date.year,
                 month=date.month,
                 day=date.day,
@@ -187,7 +184,6 @@ class EphemerisDataFactory:
                 city="Placeholder",
                 nation="Placeholder",
                 online=False,
-                disable_chiron_and_lilith=self.disable_chiron_and_lilith,
                 zodiac_type=self.zodiac_type,
                 sidereal_mode=self.sidereal_mode,
                 houses_system_identifier=self.houses_system_identifier,

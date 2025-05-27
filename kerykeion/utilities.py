@@ -15,7 +15,7 @@ import re
 from datetime import datetime
 
 if TYPE_CHECKING:
-    from kerykeion import AstrologicalSubject
+    from kerykeion import AstrologicalSubjectFactory
 
 
 def get_number_from_name(name: Planet) -> int:
@@ -305,7 +305,7 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
 
 
 def get_houses_list(
-    subject: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
+    subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
 ) -> list[KerykeionPointModel]:
     """
     Return the names of the houses in the order of the houses.
@@ -318,7 +318,7 @@ def get_houses_list(
 
 
 def get_available_astrological_points_list(
-    subject: Union["AstrologicalSubject", AstrologicalSubjectModel]
+    subject: Union[AstrologicalSubjectModel]
 ) -> list[KerykeionPointModel]:
     """
     Return the names of the planets in the order of the planets.

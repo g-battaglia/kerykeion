@@ -3,7 +3,7 @@
     This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
-from kerykeion import AstrologicalSubject
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion.aspects.synastry_aspects import SynastryAspects
 import logging
 from pathlib import Path
@@ -33,8 +33,8 @@ class RelationshipScore:
 
     def __init__(
         self,
-        first_subject: Union[AstrologicalSubject, AstrologicalSubjectModel],
-        second_subject: Union[AstrologicalSubject, AstrologicalSubjectModel],
+        first_subject: Union[AstrologicalSubjectModel],
+        second_subject: Union[AstrologicalSubjectModel],
         new_settings_file: Union[Path, None] = None,
     ):
         warnings.warn(

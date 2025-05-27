@@ -10,7 +10,7 @@
     preserveAspectRatio='xMidYMid'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
-    <title>Transits for 18/6/1942 | Kerykeion</title>
+    <title>Transits for 1942-06-18 15:30 [+02:00] | Kerykeion</title>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>

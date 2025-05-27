@@ -1,11 +1,11 @@
-from kerykeion import AstrologicalSubject
+from kerykeion import AstrologicalSubjectFactory
 from pytest import approx
 
 
 class TestAstrologicalSubject:
     def setup_class(self):
         # Johnny Depp
-        self.subject = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", geonames_username="century.boy")
+        self.subject = AstrologicalSubjectFactory.from_standard("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", geonames_username="century.boy")
         self.expected_output = {
             "name": "Johnny Depp",
             "year": 1963,

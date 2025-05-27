@@ -6,7 +6,7 @@
 import logging
 from dataclasses import dataclass, field
 from functools import cached_property
-from kerykeion.astrological_subject import AstrologicalSubject
+from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect, CompositeSubjectModel, PlanetReturnModel
@@ -33,7 +33,7 @@ class NatalAspects:
     Generates an object with all the aspects of a birthcart.
     """
 
-    user: Union["AstrologicalSubject", AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
+    user: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
     new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None
     active_points: List[Union[AxialCusps, Planet]] = field(default_factory=lambda: DEFAULT_ACTIVE_POINTS)
     active_aspects: List[ActiveAspect] = field(default_factory=lambda: DEFAULT_ACTIVE_ASPECTS)
@@ -160,7 +160,7 @@ if __name__ == "__main__":
 
     setup_logging(level="debug")
 
-    johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
+    johnny = AstrologicalSubjectFactory.from_standard("Johnny Depp", 1963, 6, 9, 0, 0, 0, "Owensboro", "US")
 
     # All aspects as a list of dictionaries
     aspects = NatalAspects(johnny)
