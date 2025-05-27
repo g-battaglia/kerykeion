@@ -1868,3 +1868,5 @@ if __name__ == "__main__":
         double_chart_aspect_grid_type="table"
     )
     transit_chart_with_grid.makeSVG(minify=True, remove_css_variables=True)
+    transit_chart_with_grid.makeAspectGridOnlySVG()
+    transit_chart_with_grid.makeWheelOnlySVG()
