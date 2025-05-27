@@ -1,3 +1,6 @@
+"""
+This is a legacy settings file, do not change it!
+"""
 DEFAULT_CELESTIAL_POINTS_SETTINGS = [
     {
       "id": 0,

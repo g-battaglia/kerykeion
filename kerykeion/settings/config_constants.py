@@ -14,15 +14,15 @@ DEFAULT_ACTIVE_POINTS: List[Union[Planet, AxialCusps]] = [
     "Neptune",
     "Pluto",
     "Mean_Node",
-     "True_Node",
+    # "True_Node",
     "Chiron",
     "Ascendant",
     "Medium_Coeli",
-     "Descendant",
-     "Imum_Coeli",
+    # "Descendant",
+    # "Imum_Coeli",
     "Mean_Lilith",
     "Mean_South_Node",
-     "True_South_Node"
+    # "True_South_Node"
 ]
 """
 Default list of active points in the charts or aspects calculations.

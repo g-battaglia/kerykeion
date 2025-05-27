@@ -4,7 +4,6 @@
 """
 
 import logging
-from typing import TYPE_CHECKING
 from dataclasses import dataclass, field
 from functools import cached_property
 from kerykeion.astrological_subject import AstrologicalSubject
@@ -15,6 +14,7 @@ from kerykeion.kr_types.kr_literals import AxialCusps, Planet
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
 from kerykeion.settings.default_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
+from kerykeion.settings.default_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
 from pathlib import Path
 from typing import Union, List
 
@@ -41,10 +41,10 @@ class NatalAspects:
     def __post_init__(self):
         self.settings = get_settings(self.new_settings_file)
 
-        self.aspects_settings = self.settings.aspects
         self.axes_orbit_settings = self.settings.general_settings.axes_orbit
         self.active_points = self.active_points
         self.celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
+        self.aspects_settings = DEFAULT_CHART_ASPECTS_SETTINGS
 
 
     @cached_property
