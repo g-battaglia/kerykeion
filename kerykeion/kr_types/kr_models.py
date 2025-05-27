@@ -104,24 +104,24 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     # Planets
     sun: KerykeionPointModel
     moon: KerykeionPointModel
-    mercury: KerykeionPointModel
-    venus: KerykeionPointModel
-    mars: KerykeionPointModel
-    jupiter: KerykeionPointModel
-    saturn: KerykeionPointModel
-    uranus: KerykeionPointModel
-    neptune: KerykeionPointModel
-    pluto: KerykeionPointModel
+    mercury: Optional[KerykeionPointModel] = None
+    venus: Optional[KerykeionPointModel] = None
+    mars: Optional[KerykeionPointModel] = None
+    jupiter: Optional[KerykeionPointModel] = None
+    saturn: Optional[KerykeionPointModel] = None
+    uranus: Optional[KerykeionPointModel] = None
+    neptune: Optional[KerykeionPointModel] = None
+    pluto: Optional[KerykeionPointModel] = None
 
     # Axes
-    ascendant: KerykeionPointModel
-    descendant: KerykeionPointModel
-    medium_coeli: KerykeionPointModel
-    imum_coeli: KerykeionPointModel
+    ascendant: Optional[KerykeionPointModel] = None
+    descendant: Optional[KerykeionPointModel] = None
+    medium_coeli: Optional[KerykeionPointModel] = None
+    imum_coeli: Optional[KerykeionPointModel] = None
 
     # Optional Planets:
-    chiron: Union[KerykeionPointModel, None]
-    mean_lilith: Union[KerykeionPointModel, None]
+    chiron: Optional[KerykeionPointModel] = None
+    mean_lilith: Optional[KerykeionPointModel] = None
 
     # Houses
     first_house: KerykeionPointModel
@@ -138,10 +138,10 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     twelfth_house: KerykeionPointModel
 
     # Nodes
-    mean_node: KerykeionPointModel
-    true_node: KerykeionPointModel
-    mean_south_node: KerykeionPointModel
-    true_south_node: KerykeionPointModel
+    mean_node: Optional[KerykeionPointModel] = None
+    true_node: Optional[KerykeionPointModel] = None
+    mean_south_node: Optional[KerykeionPointModel] = None
+    true_south_node: Optional[KerykeionPointModel] = None
 
     planets_names_list: list[Planet]
     """Ordered list of available planets names"""
@@ -155,6 +155,8 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     lunar_phase: LunarPhaseModel
     """Lunar phase model"""
 
+    active_points: list[Union[Planet, AxialCusps]]
+    """List of active points in the chart or aspects calculations."""
 
 class EphemerisDictModel(SubscriptableBaseModel):
     date: str
@@ -220,24 +222,24 @@ class CompositeSubjectModel(SubscriptableBaseModel):
     # Planets
     sun: KerykeionPointModel
     moon: KerykeionPointModel
-    mercury: KerykeionPointModel
-    venus: KerykeionPointModel
-    mars: KerykeionPointModel
-    jupiter: KerykeionPointModel
-    saturn: KerykeionPointModel
-    uranus: KerykeionPointModel
-    neptune: KerykeionPointModel
-    pluto: KerykeionPointModel
+    mercury: Optional[KerykeionPointModel] = None
+    venus: Optional[KerykeionPointModel] = None
+    mars: Optional[KerykeionPointModel] = None
+    jupiter: Optional[KerykeionPointModel] = None
+    saturn: Optional[KerykeionPointModel] = None
+    uranus: Optional[KerykeionPointModel] = None
+    neptune: Optional[KerykeionPointModel] = None
+    pluto: Optional[KerykeionPointModel] = None
 
     # Axes
-    ascendant: KerykeionPointModel
-    descendant: KerykeionPointModel
-    medium_coeli: KerykeionPointModel
-    imum_coeli: KerykeionPointModel
+    ascendant: Optional[KerykeionPointModel] = None
+    descendant: Optional[KerykeionPointModel] = None
+    medium_coeli: Optional[KerykeionPointModel] = None
+    imum_coeli: Optional[KerykeionPointModel] = None
 
     # Optional Planets:
-    chiron: Union[KerykeionPointModel, None]
-    mean_lilith: Union[KerykeionPointModel, None]
+    chiron: Optional[KerykeionPointModel] = None
+    mean_lilith: Optional[KerykeionPointModel] = None
 
     # Houses
     first_house: KerykeionPointModel
@@ -254,10 +256,10 @@ class CompositeSubjectModel(SubscriptableBaseModel):
     twelfth_house: KerykeionPointModel
 
     # Nodes
-    mean_node: KerykeionPointModel
-    true_node: KerykeionPointModel
-    mean_south_node: KerykeionPointModel
-    true_south_node: KerykeionPointModel
+    mean_node: Optional[KerykeionPointModel] = None
+    true_node: Optional[KerykeionPointModel] = None
+    mean_south_node: Optional[KerykeionPointModel] = None
+    true_south_node: Optional[KerykeionPointModel] = None
 
     planets_names_list: list[Planet]
     """Ordered list of available planets names"""
@@ -270,6 +272,9 @@ class CompositeSubjectModel(SubscriptableBaseModel):
 
     lunar_phase: LunarPhaseModel
     """Lunar phase model"""
+
+    active_points: list[Union[Planet, AxialCusps]]
+    """List of active points in the chart or aspects calculations."""
 
 
 class ActiveAspect(TypedDict):
@@ -346,24 +351,24 @@ class PlanetReturnModel(SubscriptableBaseModel):
     # Planets
     sun: KerykeionPointModel
     moon: KerykeionPointModel
-    mercury: KerykeionPointModel
-    venus: KerykeionPointModel
-    mars: KerykeionPointModel
-    jupiter: KerykeionPointModel
-    saturn: KerykeionPointModel
-    uranus: KerykeionPointModel
-    neptune: KerykeionPointModel
-    pluto: KerykeionPointModel
+    mercury: Optional[KerykeionPointModel] = None
+    venus: Optional[KerykeionPointModel] = None
+    mars: Optional[KerykeionPointModel] = None
+    jupiter: Optional[KerykeionPointModel] = None
+    saturn: Optional[KerykeionPointModel] = None
+    uranus: Optional[KerykeionPointModel] = None
+    neptune: Optional[KerykeionPointModel] = None
+    pluto: Optional[KerykeionPointModel] = None
 
     # Axes
-    ascendant: KerykeionPointModel
-    descendant: KerykeionPointModel
-    medium_coeli: KerykeionPointModel
-    imum_coeli: KerykeionPointModel
+    ascendant: Optional[KerykeionPointModel] = None
+    descendant: Optional[KerykeionPointModel] = None
+    medium_coeli: Optional[KerykeionPointModel] = None
+    imum_coeli: Optional[KerykeionPointModel] = None
 
     # Optional Planets:
-    chiron: Union[KerykeionPointModel, None]
-    mean_lilith: Union[KerykeionPointModel, None]
+    chiron: Optional[KerykeionPointModel] = None
+    mean_lilith: Optional[KerykeionPointModel] = None
 
     # Houses
     first_house: KerykeionPointModel
@@ -380,10 +385,10 @@ class PlanetReturnModel(SubscriptableBaseModel):
     twelfth_house: KerykeionPointModel
 
     # Nodes
-    mean_node: KerykeionPointModel
-    true_node: KerykeionPointModel
-    mean_south_node: KerykeionPointModel
-    true_south_node: KerykeionPointModel
+    mean_node: Optional[KerykeionPointModel] = None
+    true_node: Optional[KerykeionPointModel] = None
+    mean_south_node: Optional[KerykeionPointModel] = None
+    true_south_node: Optional[KerykeionPointModel] = None
 
     planets_names_list: list[Planet]
     """Ordered list of available planets names"""
@@ -396,4 +401,7 @@ class PlanetReturnModel(SubscriptableBaseModel):
 
     lunar_phase: LunarPhaseModel
     """Lunar phase model"""
+
+    active_points: list[Union[Planet, AxialCusps]]
+    """List of active points in the chart or aspects calculations."""
 

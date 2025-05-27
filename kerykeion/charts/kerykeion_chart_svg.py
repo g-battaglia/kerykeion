@@ -35,6 +35,7 @@ from kerykeion.kr_types.kr_literals import (
     AxialCusps,
     Planet,
 )
+from kerykeion.utilities import find_common_active_points
 from kerykeion.charts.charts_utils import (
     draw_zodiac_slice,
     convert_latitude_coordinate_to_string,
@@ -250,6 +251,11 @@ class KerykeionChartSVG:
         self.chart_colors_settings = colors_settings
         self.planets_settings = celestial_points_settings
         self.aspects_settings = aspects_settings
+
+        active_points = find_common_active_points(
+            active_points,
+            first_obj.active_points
+        )
 
         # Set output directory
         if new_output_directory:
@@ -1745,10 +1751,11 @@ class KerykeionChartSVG:
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
     from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+    from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
     setup_logging(level="info")
 
-    subject = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    subject = AstrologicalSubjectFactory.from_standard("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 
     return_factory = PlanetaryReturnFactory(
         subject,

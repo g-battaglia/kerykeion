@@ -16,13 +16,12 @@ from kerykeion.kr_types import KerykeionException
 from kerykeion.fetch_geonames import FetchGeonames
 from kerykeion.utilities import julian_to_datetime, datetime_to_julian
 from kerykeion.astrological_subject import (
-    AstrologicalSubject,
     GEONAMES_DEFAULT_USERNAME_WARNING,
     DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
 )
-from kerykeion.astrological_subject import DEFAULT_GEONAMES_USERNAME
+from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.kr_types.kr_literals import ReturnType
-from kerykeion.kr_types.kr_models import PlanetReturnModel
+from kerykeion.kr_types.kr_models import PlanetReturnModel, AstrologicalSubjectModel
 
 
 class PlanetaryReturnFactory:
@@ -32,7 +31,7 @@ class PlanetaryReturnFactory:
 
     def __init__(
             self,
-            subject: AstrologicalSubject,
+            subject: AstrologicalSubjectModel,
             city: Union[str, None] = None,
             nation: Union[str, None] = None,
             lng: Union[int, float, None] = None,
@@ -166,7 +165,7 @@ class PlanetaryReturnFactory:
         solar_return_date_utc = julian_to_datetime(return_julian_date)
         solar_return_date_utc = solar_return_date_utc.replace(tzinfo=timezone.utc)
 
-        solar_return_astrological_subject = AstrologicalSubject.get_from_iso_utc_time(
+        solar_return_astrological_subject = AstrologicalSubjectFactory.from_iso_utc_time(
             name=self.subject.name,
             iso_utc_time=solar_return_date_utc.isoformat(),
             lng=self.lng,       # type: ignore
@@ -178,7 +177,7 @@ class PlanetaryReturnFactory:
             altitude=self.altitude,
         )
 
-        model_data = solar_return_astrological_subject.model().model_dump()
+        model_data = solar_return_astrological_subject.model_dump()
         model_data['name'] = f"{self.subject.name} {return_type} Return"
         model_data['return_type'] = return_type
 
@@ -249,7 +248,7 @@ class PlanetaryReturnFactory:
 if __name__ == "__main__":
     import json
     # Example usage
-    subject = AstrologicalSubject(
+    subject = AstrologicalSubjectFactory.from_standard(
         name="Test Subject",
         lng=-122.4194,
         lat=37.7749,
