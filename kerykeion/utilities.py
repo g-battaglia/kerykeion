@@ -690,7 +690,5 @@ def find_common_active_points(first_points: list[Union[Planet, AxialCusps]], sec
     common_points = [point for point in second_points if point in first_points]
 
     ignored_points = set(second_points) - set(common_points)
-    if ignored_points:
-        logging.info(f"I seguenti punti non sono disponibili nel soggetto e verranno ignorati: {', '.join(ignored_points)}")
 
     return common_points
