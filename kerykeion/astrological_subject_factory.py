@@ -13,6 +13,8 @@ from pathlib import Path
 from typing import Union, Optional, List, Dict, Any, Literal, get_args, cast, TypedDict, Set
 from functools import cached_property, lru_cache
 from dataclasses import dataclass, field
+from typing import Callable
+
 
 from kerykeion.fetch_geonames import FetchGeonames
 from kerykeion.kr_types import (
@@ -37,6 +39,7 @@ from kerykeion.utilities import (
     calculate_moon_phase,
     datetime_to_julian
 )
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
 # Default configuration values
 DEFAULT_GEONAMES_USERNAME = "century.boy"
@@ -150,42 +153,18 @@ class LocationData:
         self.lat = check_and_adjust_polar_latitude(self.lat)
 
 
-class AstrologicalSubject:
+class AstrologicalSubjectFactory:
     """
-    A comprehensive astrological calculator that computes planetary positions,
+    Factory class for creating astrological subjects with planetary positions,
     houses, and other astrological information for a specific time and location.
 
-    This class handles the calculation of all astrological data and provides
-    methods to access and manipulate this data in various formats.
-
-    Attributes:
-        name (str): Name of the astrological subject
-        julian_day (float): Julian day number for the chart time
-        iso_formatted_utc_datetime (str): ISO format UTC time
-        iso_formatted_local_datetime (str): ISO format local time
-
-        Configuration attributes:
-        - zodiac_type: Type of zodiac system (Tropical or Sidereal)
-        - houses_system_identifier: House system used for calculations
-        - perspective_type: Perspective for calculations
-        - sidereal_mode: Mode for sidereal calculations
-
-        Location attributes:
-        - city, nation: Location name and country
-        - lat, lng: Coordinates
-        - tz_str: Timezone identifier
-
-        Planets and points:
-        - sun, moon, mercury, etc.: Planet positions and info
-        - ascendant, descendant, etc.: Chart angles
-        - houses: All house cusps
-
-        Calculated results:
-        - lunar_phase: Moon phase information
+    This factory creates and returns AstrologicalSubjectModel instances and provides
+    multiple creation methods for different initialization scenarios.
     """
 
-    def __init__(
-        self,
+    @classmethod
+    def from_standard(
+        cls,
         name: str = "Now",
         year: int = NOW.year,
         month: int = NOW.month,
@@ -207,10 +186,10 @@ class AstrologicalSubject:
         cache_expire_after_days: int = DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
         is_dst: Optional[bool] = None,
         altitude: Optional[float] = None,
-        active_points: Optional[Set[str]] = None
-    ) -> None:
+        active_points: List[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS
+    ) -> AstrologicalSubjectModel:
         """
-        Initialize an AstrologicalSubject with birth/event details.
+        Create an astrological subject from standard birth/event details.
 
         Args:
             name: Subject name
@@ -229,21 +208,42 @@ class AstrologicalSubject:
             is_dst: Daylight saving time flag
             altitude: Location altitude for topocentric calculations
             active_points: Set of points to calculate (optimization)
+
+        Returns:
+            An AstrologicalSubjectModel with calculated data
         """
         logging.debug("Starting Kerykeion calculation")
 
+        if "Sun" not in active_points:
+            logging.info("Automatically adding 'Sun' to active points")
+            active_points.append("Sun")
+
+        if "Moon" not in active_points:
+            logging.info("Automatically adding 'Moon' to active points")
+            active_points.append("Moon")
+
+
+        # Create a calculation data container
+        calc_data = {}
+
         # Basic identity
-        self.name = name
-        self.json_dir = Path.home()
+        calc_data["name"] = name
+        calc_data["json_dir"] = str(Path.home())
 
         # Initialize configuration
-        self.config = ChartConfiguration(
+        config = ChartConfiguration(
             zodiac_type=zodiac_type,
             sidereal_mode=sidereal_mode,
             houses_system_identifier=houses_system_identifier,
             perspective_type=perspective_type,
         )
-        self.config.validate()
+        config.validate()
+
+        # Add configuration data to calculation data
+        calc_data["zodiac_type"] = config.zodiac_type
+        calc_data["sidereal_mode"] = config.sidereal_mode
+        calc_data["houses_system_identifier"] = config.houses_system_identifier
+        calc_data["perspective_type"] = config.perspective_type
 
         # Set up geonames username if needed
         if geonames_username is None and online and (not lat or not lng or not tz_str):
@@ -251,7 +251,7 @@ class AstrologicalSubject:
             geonames_username = DEFAULT_GEONAMES_USERNAME
 
         # Initialize location data
-        self.location = LocationData(
+        location = LocationData(
             city=city or "London",
             nation=nation or "GB",
             lat=lat if lat is not None else 51.5074,
@@ -268,366 +268,48 @@ class AstrologicalSubject:
 
         # Fetch location data if needed
         if online and (not tz_str or not lat or not lng):
-            self.location.fetch_from_geonames(
+            location.fetch_from_geonames(
                 username=geonames_username or DEFAULT_GEONAMES_USERNAME,
                 cache_expire_after_days=cache_expire_after_days
             )
 
         # Prepare location for calculations
-        self.location.prepare_for_calculation()
+        location.prepare_for_calculation()
+
+        # Add location data to calculation data
+        calc_data["city"] = location.city
+        calc_data["nation"] = location.nation
+        calc_data["lat"] = location.lat
+        calc_data["lng"] = location.lng
+        calc_data["tz_str"] = location.tz_str
+        calc_data["altitude"] = location.altitude
 
         # Store calculation parameters
-        self.year = year
-        self.month = month
-        self.day = day
-        self.hour = hour
-        self.minute = minute
-        self.seconds = seconds
-        self.is_dst = is_dst
-        self.active_points = active_points
+        calc_data["year"] = year
+        calc_data["month"] = month
+        calc_data["day"] = day
+        calc_data["hour"] = hour
+        calc_data["minute"] = minute
+        calc_data["seconds"] = seconds
+        calc_data["is_dst"] = is_dst
+        calc_data["active_points"] = active_points
 
         # Calculate time conversions
-        self._calculate_time_conversions()
+        cls._calculate_time_conversions(calc_data, location)
 
-        # Initialize Swiss Ephemeris
-        self._setup_ephemeris()
-
-        # Calculate houses and planets
-        self._calculate_houses()
-        self._calculate_planets()
+        # Initialize Swiss Ephemeris and calculate houses and planets
+        cls._setup_ephemeris(calc_data, config)
+        cls._calculate_houses(calc_data, active_points)
+        cls._calculate_planets(calc_data, active_points)
 
         # Calculate lunar phase
-        self.lunar_phase = calculate_moon_phase(
-            self.moon.abs_pos,
-            self.sun.abs_pos
+        calc_data["lunar_phase"] = calculate_moon_phase(
+            calc_data["moon"].abs_pos,
+            calc_data["sun"].abs_pos
         )
 
-    def _calculate_time_conversions(self) -> None:
-        """Calculate time conversions between local time, UTC and Julian day"""
-        # Convert local time to UTC
-        local_timezone = pytz.timezone(self.location.tz_str)
-        naive_datetime = datetime(
-            self.year, self.month, self.day,
-            self.hour, self.minute, self.seconds
-        )
-
-        try:
-            local_datetime = local_timezone.localize(naive_datetime, is_dst=self.is_dst)
-        except pytz.exceptions.AmbiguousTimeError:
-            raise KerykeionException(
-                "Ambiguous time error! The time falls during a DST transition. "
-                "Please specify is_dst=True or is_dst=False to clarify."
-            )
-
-        # Store formatted times
-        utc_datetime = local_datetime.astimezone(pytz.utc)
-        self.iso_formatted_utc_datetime = utc_datetime.isoformat()
-        self.iso_formatted_local_datetime = local_datetime.isoformat()
-
-        # Calculate Julian day
-        self.julian_day = datetime_to_julian(utc_datetime)
-
-    def _setup_ephemeris(self) -> None:
-        """Set up Swiss Ephemeris with appropriate flags"""
-        # Set ephemeris path
-        swe.set_ephe_path(str(Path(__file__).parent.absolute() / "sweph"))
-
-        # Base flags
-        self._iflag = swe.FLG_SWIEPH + swe.FLG_SPEED
-
-        # Add perspective flags
-        if self.config.perspective_type == "True Geocentric":
-            self._iflag += swe.FLG_TRUEPOS
-        elif self.config.perspective_type == "Heliocentric":
-            self._iflag += swe.FLG_HELCTR
-        elif self.config.perspective_type == "Topocentric":
-            self._iflag += swe.FLG_TOPOCTR
-            # Set topocentric coordinates
-            swe.set_topo(self.location.lng, self.location.lat, self.location.altitude or 0)
-
-        # Add sidereal flag if needed
-        if self.config.zodiac_type == "Sidereal":
-            self._iflag += swe.FLG_SIDEREAL
-            # Set sidereal mode
-            mode = f"SIDM_{self.config.sidereal_mode}"
-            swe.set_sid_mode(getattr(swe, mode))
-            logging.debug(f"Using sidereal mode: {mode}")
-
-        # Save house system name
-        self.houses_system_name = swe.house_name(
-            self.config.houses_system_identifier.encode('ascii')
-        )
-
-    def _calculate_houses(self) -> None:
-        """Calculate house cusps and axis points"""
-        # Calculate houses based on zodiac type
-        if self.config.zodiac_type == "Sidereal":
-            cusps, ascmc = swe.houses_ex(
-                tjdut=self.julian_day,
-                lat=self.location.lat,
-                lon=self.location.lng,
-                hsys=str.encode(self.config.houses_system_identifier),
-                flags=swe.FLG_SIDEREAL
-            )
-        else:  # Tropical zodiac
-            cusps, ascmc = swe.houses(
-                tjdut=self.julian_day,
-                lat=self.location.lat,
-                lon=self.location.lng,
-                hsys=str.encode(self.config.houses_system_identifier)
-            )
-
-        # Store house degrees
-        self._houses_degree_ut = cusps
-
-        # Create house objects
-        point_type: PointType = "House"
-        self.first_house = get_kerykeion_point_from_degree(cusps[0], "First_House", point_type=point_type)
-        self.second_house = get_kerykeion_point_from_degree(cusps[1], "Second_House", point_type=point_type)
-        self.third_house = get_kerykeion_point_from_degree(cusps[2], "Third_House", point_type=point_type)
-        self.fourth_house = get_kerykeion_point_from_degree(cusps[3], "Fourth_House", point_type=point_type)
-        self.fifth_house = get_kerykeion_point_from_degree(cusps[4], "Fifth_House", point_type=point_type)
-        self.sixth_house = get_kerykeion_point_from_degree(cusps[5], "Sixth_House", point_type=point_type)
-        self.seventh_house = get_kerykeion_point_from_degree(cusps[6], "Seventh_House", point_type=point_type)
-        self.eighth_house = get_kerykeion_point_from_degree(cusps[7], "Eighth_House", point_type=point_type)
-        self.ninth_house = get_kerykeion_point_from_degree(cusps[8], "Ninth_House", point_type=point_type)
-        self.tenth_house = get_kerykeion_point_from_degree(cusps[9], "Tenth_House", point_type=point_type)
-        self.eleventh_house = get_kerykeion_point_from_degree(cusps[10], "Eleventh_House", point_type=point_type)
-        self.twelfth_house = get_kerykeion_point_from_degree(cusps[11], "Twelfth_House", point_type=point_type)
-
-        # Store house names
-        self.houses_names_list = list(get_args(Houses))
-
-        # Calculate axis points
-        point_type = "AxialCusps"
-        self.ascendant = get_kerykeion_point_from_degree(ascmc[0], "Ascendant", point_type=point_type)
-        self.medium_coeli = get_kerykeion_point_from_degree(ascmc[1], "Medium_Coeli", point_type=point_type)
-
-        # Calculate descendant and imum coeli (opposite to ascendant and MC)
-        dsc_deg = math.fmod(ascmc[0] + 180, 360)
-        ic_deg = math.fmod(ascmc[1] + 180, 360)
-        self.descendant = get_kerykeion_point_from_degree(dsc_deg, "Descendant", point_type=point_type)
-        self.imum_coeli = get_kerykeion_point_from_degree(ic_deg, "Imum_Coeli", point_type=point_type)
-
-        # Set houses for axis points
-        self.ascendant.house = get_planet_house(self.ascendant.abs_pos, self._houses_degree_ut)
-        self.descendant.house = get_planet_house(self.descendant.abs_pos, self._houses_degree_ut)
-        self.medium_coeli.house = get_planet_house(self.medium_coeli.abs_pos, self._houses_degree_ut)
-        self.imum_coeli.house = get_planet_house(self.imum_coeli.abs_pos, self._houses_degree_ut)
-
-        # Axis points are never retrograde
-        self.ascendant.retrograde = False
-        self.descendant.retrograde = False
-        self.medium_coeli.retrograde = False
-        self.imum_coeli.retrograde = False
-
-        # Store axis names
-        self.axial_cusps_names_list = [
-            "Ascendant", "Descendant", "Medium_Coeli", "Imum_Coeli"
-        ]
-
-        # Compatibility aliases
-        self.asc = self.ascendant
-        self.dsc = self.descendant
-        self.mc = self.medium_coeli
-        self.ic = self.imum_coeli
-
-    def _calculate_planets(self) -> None:
-        """Calculate planetary positions and related information"""
-        # Skip calculation if point is not in active_points
-        should_calculate = lambda point: not self.active_points or point in self.active_points
-
-        point_type: PointType = "Planet"
-
-        # Calculate all standard planets
-        if should_calculate("sun"):
-            sun_deg = swe.calc_ut(self.julian_day, 0, self._iflag)[0][0]
-            self.sun = get_kerykeion_point_from_degree(sun_deg, "Sun", point_type=point_type)
-            self.sun.house = get_planet_house(sun_deg, self._houses_degree_ut)
-            self.sun.retrograde = swe.calc_ut(self.julian_day, 0, self._iflag)[0][3] < 0
-
-        if should_calculate("moon"):
-            moon_deg = swe.calc_ut(self.julian_day, 1, self._iflag)[0][0]
-            self.moon = get_kerykeion_point_from_degree(moon_deg, "Moon", point_type=point_type)
-            self.moon.house = get_planet_house(moon_deg, self._houses_degree_ut)
-            self.moon.retrograde = swe.calc_ut(self.julian_day, 1, self._iflag)[0][3] < 0
-
-        if should_calculate("mercury"):
-            mercury_deg = swe.calc_ut(self.julian_day, 2, self._iflag)[0][0]
-            self.mercury = get_kerykeion_point_from_degree(mercury_deg, "Mercury", point_type=point_type)
-            self.mercury.house = get_planet_house(mercury_deg, self._houses_degree_ut)
-            self.mercury.retrograde = swe.calc_ut(self.julian_day, 2, self._iflag)[0][3] < 0
-
-        if should_calculate("venus"):
-            venus_deg = swe.calc_ut(self.julian_day, 3, self._iflag)[0][0]
-            self.venus = get_kerykeion_point_from_degree(venus_deg, "Venus", point_type=point_type)
-            self.venus.house = get_planet_house(venus_deg, self._houses_degree_ut)
-            self.venus.retrograde = swe.calc_ut(self.julian_day, 3, self._iflag)[0][3] < 0
-
-        if should_calculate("mars"):
-            mars_deg = swe.calc_ut(self.julian_day, 4, self._iflag)[0][0]
-            self.mars = get_kerykeion_point_from_degree(mars_deg, "Mars", point_type=point_type)
-            self.mars.house = get_planet_house(mars_deg, self._houses_degree_ut)
-            self.mars.retrograde = swe.calc_ut(self.julian_day, 4, self._iflag)[0][3] < 0
-
-        if should_calculate("jupiter"):
-            jupiter_deg = swe.calc_ut(self.julian_day, 5, self._iflag)[0][0]
-            self.jupiter = get_kerykeion_point_from_degree(jupiter_deg, "Jupiter", point_type=point_type)
-            self.jupiter.house = get_planet_house(jupiter_deg, self._houses_degree_ut)
-            self.jupiter.retrograde = swe.calc_ut(self.julian_day, 5, self._iflag)[0][3] < 0
-
-        if should_calculate("saturn"):
-            saturn_deg = swe.calc_ut(self.julian_day, 6, self._iflag)[0][0]
-            self.saturn = get_kerykeion_point_from_degree(saturn_deg, "Saturn", point_type=point_type)
-            self.saturn.house = get_planet_house(saturn_deg, self._houses_degree_ut)
-            self.saturn.retrograde = swe.calc_ut(self.julian_day, 6, self._iflag)[0][3] < 0
-
-        if should_calculate("uranus"):
-            uranus_deg = swe.calc_ut(self.julian_day, 7, self._iflag)[0][0]
-            self.uranus = get_kerykeion_point_from_degree(uranus_deg, "Uranus", point_type=point_type)
-            self.uranus.house = get_planet_house(uranus_deg, self._houses_degree_ut)
-            self.uranus.retrograde = swe.calc_ut(self.julian_day, 7, self._iflag)[0][3] < 0
-
-        if should_calculate("neptune"):
-            neptune_deg = swe.calc_ut(self.julian_day, 8, self._iflag)[0][0]
-            self.neptune = get_kerykeion_point_from_degree(neptune_deg, "Neptune", point_type=point_type)
-            self.neptune.house = get_planet_house(neptune_deg, self._houses_degree_ut)
-            self.neptune.retrograde = swe.calc_ut(self.julian_day, 8, self._iflag)[0][3] < 0
-
-        if should_calculate("pluto"):
-            pluto_deg = swe.calc_ut(self.julian_day, 9, self._iflag)[0][0]
-            self.pluto = get_kerykeion_point_from_degree(pluto_deg, "Pluto", point_type=point_type)
-            self.pluto.house = get_planet_house(pluto_deg, self._houses_degree_ut)
-            self.pluto.retrograde = swe.calc_ut(self.julian_day, 9, self._iflag)[0][3] < 0
-
-        # Calculate nodes
-        if should_calculate("mean_node"):
-            mean_node_deg = swe.calc_ut(self.julian_day, 10, self._iflag)[0][0]
-            self.mean_node = get_kerykeion_point_from_degree(mean_node_deg, "Mean_Node", point_type=point_type)
-            self.mean_node.house = get_planet_house(mean_node_deg, self._houses_degree_ut)
-            self.mean_node.retrograde = swe.calc_ut(self.julian_day, 10, self._iflag)[0][3] < 0
-
-        if should_calculate("true_node"):
-            true_node_deg = swe.calc_ut(self.julian_day, 11, self._iflag)[0][0]
-            self.true_node = get_kerykeion_point_from_degree(true_node_deg, "True_Node", point_type=point_type)
-            self.true_node.house = get_planet_house(true_node_deg, self._houses_degree_ut)
-            self.true_node.retrograde = swe.calc_ut(self.julian_day, 11, self._iflag)[0][3] < 0
-
-        # Calculate South Nodes (opposite to North Nodes)
-        if should_calculate("mean_south_node"):
-            mean_south_node_deg = math.fmod(self.mean_node.abs_pos + 180, 360)
-            self.mean_south_node = get_kerykeion_point_from_degree(
-                mean_south_node_deg, "Mean_South_Node", point_type=point_type
-            )
-            self.mean_south_node.house = get_planet_house(mean_south_node_deg, self._houses_degree_ut)
-            self.mean_south_node.retrograde = self.mean_node.retrograde
-
-        if should_calculate("true_south_node"):
-            true_south_node_deg = math.fmod(self.true_node.abs_pos + 180, 360)
-            self.true_south_node = get_kerykeion_point_from_degree(
-                true_south_node_deg, "True_South_Node", point_type=point_type
-            )
-            self.true_south_node.house = get_planet_house(true_south_node_deg, self._houses_degree_ut)
-            self.true_south_node.retrograde = self.true_node.retrograde
-
-        if should_calculate("chiron"):
-            chiron_deg = swe.calc_ut(self.julian_day, 15, self._iflag)[0][0]
-            self.chiron = get_kerykeion_point_from_degree(chiron_deg, "Chiron", point_type=point_type)
-            self.chiron.house = get_planet_house(chiron_deg, self._houses_degree_ut)
-            self.chiron.retrograde = swe.calc_ut(self.julian_day, 15, self._iflag)[0][3] < 0
-
-        if should_calculate("mean_lilith"):
-            mean_lilith_deg = swe.calc_ut(self.julian_day, 12, self._iflag)[0][0]
-            self.mean_lilith = get_kerykeion_point_from_degree(mean_lilith_deg, "Mean_Lilith", point_type=point_type)
-            self.mean_lilith.house = get_planet_house(mean_lilith_deg, self._houses_degree_ut)
-            self.mean_lilith.retrograde = swe.calc_ut(self.julian_day, 12, self._iflag)[0][3] < 0
-        else:
-            self.chiron = None
-            self.mean_lilith = None
-
-        # Build planets list
-        self.planets_names_list = [
-            "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
-            "Uranus", "Neptune", "Pluto", "Mean_Node", "True_Node",
-            "Mean_South_Node", "True_South_Node"
-        ]
-
-    def __str__(self) -> str:
-        return (
-            f"Astrological data for: {self.name}, {self.iso_formatted_utc_datetime} UTC\n"
-            f"Birth location: {self.location.city}, Lat {self.location.lat}, Lon {self.location.lng}"
-        )
-
-    def __repr__(self) -> str:
-        return self.__str__()
-
-    def __getitem__(self, item: str) -> Any:
-        return getattr(self, item)
-
-    def get(self, item: str, default: Any = None) -> Any:
-        return getattr(self, item, default)
-
-    def json(self, dump: bool = False, destination_folder: Optional[str] = None, indent: Optional[int] = None) -> str:
-        """
-        Convert the astrological data to JSON format.
-
-        Args:
-            dump: Whether to save the JSON to a file
-            destination_folder: Where to save the file (if dump=True)
-            indent: Indentation level for the JSON
-
-        Returns:
-            JSON string representation of the data
-        """
-        model = self.model()
-        json_string = model.model_dump_json(exclude_none=True, indent=indent)
-
-        if dump:
-            if destination_folder:
-                destination_path = Path(destination_folder)
-            else:
-                destination_path = self.json_dir
-
-            json_path = destination_path / f"{self.name}_kerykeion.json"
-
-            with open(json_path, "w", encoding="utf-8") as file:
-                file.write(json_string)
-                logging.info(f"JSON file dumped in {json_path}.")
-
-        return json_string
-
-    def model(self) -> AstrologicalSubjectModel:
-        """
-        Create a Pydantic model of the astrological data.
-
-        Returns:
-            AstrologicalSubjectModel with all calculated data
-        """
-        # Convert dataclass to dict
-        model_dict = {}
-
-        # Add all relevant attributes
-        for key, value in self.__dict__.items():
-            # Skip internal attributes
-            if key.startswith('_'):
-                continue
-
-            # Skip configuration classes
-            if key in ('config', 'location'):
-                continue
-
-            model_dict[key] = value
-
-        # Add location attributes
-        for key, value in self.location.__dict__.items():
-            if key != 'city_data':  # Skip internal storage
-                model_dict[key] = value
-
-        # Add configuration attributes
-        for key, value in self.config.__dict__.items():
-            model_dict[key] = value
-
-        return AstrologicalSubjectModel(**model_dict)
+        # Create and return the AstrologicalSubjectModel
+        return AstrologicalSubjectModel(**calc_data)
 
     @classmethod
     def from_iso_utc_time(
@@ -646,10 +328,10 @@ class AstrologicalSubject:
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
         altitude: Optional[float] = None,
-        active_points: Optional[Set[str]] = None
-    ) -> "AstrologicalSubject":
+        active_points: List[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS
+    ) -> AstrologicalSubjectModel:
         """
-        Create an AstrologicalSubject from an ISO formatted UTC time.
+        Create an astrological subject from an ISO formatted UTC time.
 
         Args:
             name: Subject name
@@ -668,7 +350,7 @@ class AstrologicalSubject:
             active_points: Set of points to calculate
 
         Returns:
-            AstrologicalSubject instance
+            AstrologicalSubjectModel instance
         """
         # Parse the ISO time
         dt = datetime.fromisoformat(iso_utc_time.replace('Z', '+00:00'))
@@ -693,7 +375,7 @@ class AstrologicalSubject:
         local_datetime = dt.astimezone(local_time)
 
         # Create the subject with local time
-        return cls(
+        return cls.from_standard(
             name=name,
             year=local_datetime.year,
             month=local_datetime.month,
@@ -731,10 +413,10 @@ class AstrologicalSubject:
         sidereal_mode: Optional[SiderealMode] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
-        active_points: Optional[Set[str]] = None
-    ) -> "AstrologicalSubject":
+        active_points: List[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS
+    ) -> AstrologicalSubjectModel:
         """
-        Create an AstrologicalSubject for the current time.
+        Create an astrological subject for the current time.
 
         Args:
             name: Subject name
@@ -751,11 +433,11 @@ class AstrologicalSubject:
             active_points: Set of points to calculate
 
         Returns:
-            AstrologicalSubject for current time
+            AstrologicalSubjectModel for current time
         """
         now = datetime.now()
 
-        return cls(
+        return cls.from_standard(
             name=name,
             year=now.year,
             month=now.month,
@@ -777,8 +459,288 @@ class AstrologicalSubject:
             active_points=active_points
         )
 
+    @classmethod
+    def _calculate_time_conversions(cls, data: Dict[str, Any], location: LocationData) -> None:
+        """Calculate time conversions between local time, UTC and Julian day"""
+        # Convert local time to UTC
+        local_timezone = pytz.timezone(location.tz_str)
+        naive_datetime = datetime(
+            data["year"], data["month"], data["day"],
+            data["hour"], data["minute"], data["seconds"]
+        )
+
+        try:
+            local_datetime = local_timezone.localize(naive_datetime, is_dst=data.get("is_dst"))
+        except pytz.exceptions.AmbiguousTimeError:
+            raise KerykeionException(
+                "Ambiguous time error! The time falls during a DST transition. "
+                "Please specify is_dst=True or is_dst=False to clarify."
+            )
+
+        # Store formatted times
+        utc_datetime = local_datetime.astimezone(pytz.utc)
+        data["iso_formatted_utc_datetime"] = utc_datetime.isoformat()
+        data["iso_formatted_local_datetime"] = local_datetime.isoformat()
+
+        # Calculate Julian day
+        data["julian_day"] = datetime_to_julian(utc_datetime)
+
+    @classmethod
+    def _setup_ephemeris(cls, data: Dict[str, Any], config: ChartConfiguration) -> None:
+        """Set up Swiss Ephemeris with appropriate flags"""
+        # Set ephemeris path
+        swe.set_ephe_path(str(Path(__file__).parent.absolute() / "sweph"))
+
+        # Base flags
+        iflag = swe.FLG_SWIEPH + swe.FLG_SPEED
+
+        # Add perspective flags
+        if config.perspective_type == "True Geocentric":
+            iflag += swe.FLG_TRUEPOS
+        elif config.perspective_type == "Heliocentric":
+            iflag += swe.FLG_HELCTR
+        elif config.perspective_type == "Topocentric":
+            iflag += swe.FLG_TOPOCTR
+            # Set topocentric coordinates
+            swe.set_topo(data["lng"], data["lat"], data["altitude"] or 0)
+
+        # Add sidereal flag if needed
+        if config.zodiac_type == "Sidereal":
+            iflag += swe.FLG_SIDEREAL
+            # Set sidereal mode
+            mode = f"SIDM_{config.sidereal_mode}"
+            swe.set_sid_mode(getattr(swe, mode))
+            logging.debug(f"Using sidereal mode: {mode}")
+
+        # Save house system name and iflag for later use
+        data["houses_system_name"] = swe.house_name(
+            config.houses_system_identifier.encode('ascii')
+        )
+        data["_iflag"] = iflag
+
+    @classmethod
+    def _calculate_houses(cls, data: Dict[str, Any], active_points: Optional[List[Union[AxialCusps, Planet]]]) -> None:
+        """Calculate house cusps and axis points"""
+        # Skip calculation if point is not in active_points
+        should_calculate: Callable[[Union[AxialCusps, Planet]], bool] = lambda point: not active_points or point in active_points
+        # Track which axial cusps are actually calculated
+        calculated_axial_cusps = []
+
+        # Calculate houses based on zodiac type
+        if data["zodiac_type"] == "Sidereal":
+            cusps, ascmc = swe.houses_ex(
+                tjdut=data["julian_day"],
+                lat=data["lat"],
+                lon=data["lng"],
+                hsys=str.encode(data["houses_system_identifier"]),
+                flags=swe.FLG_SIDEREAL
+            )
+        else:  # Tropical zodiac
+            cusps, ascmc = swe.houses(
+                tjdut=data["julian_day"],
+                lat=data["lat"],
+                lon=data["lng"],
+                hsys=str.encode(data["houses_system_identifier"])
+            )
+
+        # Store house degrees
+        data["_houses_degree_ut"] = cusps
+
+        # Create house objects
+        point_type: PointType = "House"
+        data["first_house"] = get_kerykeion_point_from_degree(cusps[0], "First_House", point_type=point_type)
+        data["second_house"] = get_kerykeion_point_from_degree(cusps[1], "Second_House", point_type=point_type)
+        data["third_house"] = get_kerykeion_point_from_degree(cusps[2], "Third_House", point_type=point_type)
+        data["fourth_house"] = get_kerykeion_point_from_degree(cusps[3], "Fourth_House", point_type=point_type)
+        data["fifth_house"] = get_kerykeion_point_from_degree(cusps[4], "Fifth_House", point_type=point_type)
+        data["sixth_house"] = get_kerykeion_point_from_degree(cusps[5], "Sixth_House", point_type=point_type)
+        data["seventh_house"] = get_kerykeion_point_from_degree(cusps[6], "Seventh_House", point_type=point_type)
+        data["eighth_house"] = get_kerykeion_point_from_degree(cusps[7], "Eighth_House", point_type=point_type)
+        data["ninth_house"] = get_kerykeion_point_from_degree(cusps[8], "Ninth_House", point_type=point_type)
+        data["tenth_house"] = get_kerykeion_point_from_degree(cusps[9], "Tenth_House", point_type=point_type)
+        data["eleventh_house"] = get_kerykeion_point_from_degree(cusps[10], "Eleventh_House", point_type=point_type)
+        data["twelfth_house"] = get_kerykeion_point_from_degree(cusps[11], "Twelfth_House", point_type=point_type)
+
+        # Store house names
+        data["houses_names_list"] = list(get_args(Houses))
+
+        # Calculate axis points
+        point_type = "AxialCusps"
+
+        # Calculate Ascendant if needed
+        if should_calculate("Ascendant"):
+            data["ascendant"] = get_kerykeion_point_from_degree(ascmc[0], "Ascendant", point_type=point_type)
+            data["ascendant"].house = get_planet_house(data["ascendant"].abs_pos, data["_houses_degree_ut"])
+            data["ascendant"].retrograde = False
+            calculated_axial_cusps.append("Ascendant")
+
+        # Calculate Medium Coeli if needed
+        if should_calculate("Medium_Coeli"):
+            data["medium_coeli"] = get_kerykeion_point_from_degree(ascmc[1], "Medium_Coeli", point_type=point_type)
+            data["medium_coeli"].house = get_planet_house(data["medium_coeli"].abs_pos, data["_houses_degree_ut"])
+            data["medium_coeli"].retrograde = False
+            calculated_axial_cusps.append("Medium_Coeli")
+
+        # Calculate Descendant if needed
+        if should_calculate("Descendant"):
+            dsc_deg = math.fmod(ascmc[0] + 180, 360)
+            data["descendant"] = get_kerykeion_point_from_degree(dsc_deg, "Descendant", point_type=point_type)
+            data["descendant"].house = get_planet_house(data["descendant"].abs_pos, data["_houses_degree_ut"])
+            data["descendant"].retrograde = False
+            calculated_axial_cusps.append("Descendant")
+
+        # Calculate Imum Coeli if needed
+        if should_calculate("Imum_Coeli"):
+            ic_deg = math.fmod(ascmc[1] + 180, 360)
+            data["imum_coeli"] = get_kerykeion_point_from_degree(ic_deg, "Imum_Coeli", point_type=point_type)
+            data["imum_coeli"].house = get_planet_house(data["imum_coeli"].abs_pos, data["_houses_degree_ut"])
+            data["imum_coeli"].retrograde = False
+            calculated_axial_cusps.append("Imum_Coeli")
+
+        # Store only the axial cusps that were actually calculated
+        data["axial_cusps_names_list"] = calculated_axial_cusps
+
+    @classmethod
+    def _calculate_planets(cls, data: Dict[str, Any], active_points: List[Union[AxialCusps, Planet]]) -> None:
+        """Calculate planetary positions and related information"""
+        # Skip calculation if point is not in active_points
+        should_calculate: Callable[[Union[AxialCusps, Planet]], bool] = lambda point: not active_points or point in active_points
+
+        point_type: PointType = "Planet"
+        julian_day = data["julian_day"]
+        iflag = data["_iflag"]
+        houses_degree_ut = data["_houses_degree_ut"]
+
+        # Track which planets are actually calculated
+        calculated_planets = []
+
+        # Calculate all standard planets
+        if should_calculate("Sun"):
+            sun_deg = swe.calc_ut(julian_day, 0, iflag)[0][0]
+            data["sun"] = get_kerykeion_point_from_degree(sun_deg, "Sun", point_type=point_type)
+            data["sun"].house = get_planet_house(sun_deg, houses_degree_ut)
+            data["sun"].retrograde = swe.calc_ut(julian_day, 0, iflag)[0][3] < 0
+            calculated_planets.append("Sun")
+
+        if should_calculate("Moon"):
+            moon_deg = swe.calc_ut(julian_day, 1, iflag)[0][0]
+            data["moon"] = get_kerykeion_point_from_degree(moon_deg, "Moon", point_type=point_type)
+            data["moon"].house = get_planet_house(moon_deg, houses_degree_ut)
+            data["moon"].retrograde = swe.calc_ut(julian_day, 1, iflag)[0][3] < 0
+            calculated_planets.append("Moon")
+
+        if should_calculate("Mercury"):
+            mercury_deg = swe.calc_ut(julian_day, 2, iflag)[0][0]
+            data["mercury"] = get_kerykeion_point_from_degree(mercury_deg, "Mercury", point_type=point_type)
+            data["mercury"].house = get_planet_house(mercury_deg, houses_degree_ut)
+            data["mercury"].retrograde = swe.calc_ut(julian_day, 2, iflag)[0][3] < 0
+            calculated_planets.append("Mercury")
+
+        if should_calculate("Venus"):
+            venus_deg = swe.calc_ut(julian_day, 3, iflag)[0][0]
+            data["venus"] = get_kerykeion_point_from_degree(venus_deg, "Venus", point_type=point_type)
+            data["venus"].house = get_planet_house(venus_deg, houses_degree_ut)
+            data["venus"].retrograde = swe.calc_ut(julian_day, 3, iflag)[0][3] < 0
+            calculated_planets.append("Venus")
+
+        if should_calculate("Mars"):
+            mars_deg = swe.calc_ut(julian_day, 4, iflag)[0][0]
+            data["mars"] = get_kerykeion_point_from_degree(mars_deg, "Mars", point_type=point_type)
+            data["mars"].house = get_planet_house(mars_deg, houses_degree_ut)
+            data["mars"].retrograde = swe.calc_ut(julian_day, 4, iflag)[0][3] < 0
+            calculated_planets.append("Mars")
+
+        if should_calculate("Jupiter"):
+            jupiter_deg = swe.calc_ut(julian_day, 5, iflag)[0][0]
+            data["jupiter"] = get_kerykeion_point_from_degree(jupiter_deg, "Jupiter", point_type=point_type)
+            data["jupiter"].house = get_planet_house(jupiter_deg, houses_degree_ut)
+            data["jupiter"].retrograde = swe.calc_ut(julian_day, 5, iflag)[0][3] < 0
+            calculated_planets.append("Jupiter")
+
+        if should_calculate("Saturn"):
+            saturn_deg = swe.calc_ut(julian_day, 6, iflag)[0][0]
+            data["saturn"] = get_kerykeion_point_from_degree(saturn_deg, "Saturn", point_type=point_type)
+            data["saturn"].house = get_planet_house(saturn_deg, houses_degree_ut)
+            data["saturn"].retrograde = swe.calc_ut(julian_day, 6, iflag)[0][3] < 0
+            calculated_planets.append("Saturn")
+
+        if should_calculate("Uranus"):
+            uranus_deg = swe.calc_ut(julian_day, 7, iflag)[0][0]
+            data["uranus"] = get_kerykeion_point_from_degree(uranus_deg, "Uranus", point_type=point_type)
+            data["uranus"].house = get_planet_house(uranus_deg, houses_degree_ut)
+            data["uranus"].retrograde = swe.calc_ut(julian_day, 7, iflag)[0][3] < 0
+            calculated_planets.append("Uranus")
+
+        if should_calculate("Neptune"):
+            neptune_deg = swe.calc_ut(julian_day, 8, iflag)[0][0]
+            data["neptune"] = get_kerykeion_point_from_degree(neptune_deg, "Neptune", point_type=point_type)
+            data["neptune"].house = get_planet_house(neptune_deg, houses_degree_ut)
+            data["neptune"].retrograde = swe.calc_ut(julian_day, 8, iflag)[0][3] < 0
+            calculated_planets.append("Neptune")
+
+        if should_calculate("Pluto"):
+            pluto_deg = swe.calc_ut(julian_day, 9, iflag)[0][0]
+            data["pluto"] = get_kerykeion_point_from_degree(pluto_deg, "Pluto", point_type=point_type)
+            data["pluto"].house = get_planet_house(pluto_deg, houses_degree_ut)
+            data["pluto"].retrograde = swe.calc_ut(julian_day, 9, iflag)[0][3] < 0
+            calculated_planets.append("Pluto")
+
+        # Calculate nodes
+        if should_calculate("Mean_Node"):
+            mean_node_deg = swe.calc_ut(julian_day, 10, iflag)[0][0]
+            data["mean_node"] = get_kerykeion_point_from_degree(mean_node_deg, "Mean_Node", point_type=point_type)
+            data["mean_node"].house = get_planet_house(mean_node_deg, houses_degree_ut)
+            data["mean_node"].retrograde = swe.calc_ut(julian_day, 10, iflag)[0][3] < 0
+            calculated_planets.append("Mean_Node")
+
+        if should_calculate("True_Node"):
+            true_node_deg = swe.calc_ut(julian_day, 11, iflag)[0][0]
+            data["true_node"] = get_kerykeion_point_from_degree(true_node_deg, "True_Node", point_type=point_type)
+            data["true_node"].house = get_planet_house(true_node_deg, houses_degree_ut)
+            data["true_node"].retrograde = swe.calc_ut(julian_day, 11, iflag)[0][3] < 0
+            calculated_planets.append("True_Node")
+
+        # Calculate South Nodes (opposite to North Nodes)
+        if should_calculate("Mean_South_Node") and "mean_node" in data:
+            mean_south_node_deg = math.fmod(data["mean_node"].abs_pos + 180, 360)
+            data["mean_south_node"] = get_kerykeion_point_from_degree(
+                mean_south_node_deg, "Mean_South_Node", point_type=point_type
+            )
+            data["mean_south_node"].house = get_planet_house(mean_south_node_deg, houses_degree_ut)
+            data["mean_south_node"].retrograde = data["mean_node"].retrograde
+            calculated_planets.append("Mean_South_Node")
+
+        if should_calculate("True_South_Node") and "true_node" in data:
+            true_south_node_deg = math.fmod(data["true_node"].abs_pos + 180, 360)
+            data["true_south_node"] = get_kerykeion_point_from_degree(
+                true_south_node_deg, "True_South_Node", point_type=point_type
+            )
+            data["true_south_node"].house = get_planet_house(true_south_node_deg, houses_degree_ut)
+            data["true_south_node"].retrograde = data["true_node"].retrograde
+            calculated_planets.append("True_South_Node")
+
+        if should_calculate("Chiron"):
+            chiron_deg = swe.calc_ut(julian_day, 15, iflag)[0][0]
+            data["chiron"] = get_kerykeion_point_from_degree(chiron_deg, "Chiron", point_type=point_type)
+            data["chiron"].house = get_planet_house(chiron_deg, houses_degree_ut)
+            data["chiron"].retrograde = swe.calc_ut(julian_day, 15, iflag)[0][3] < 0
+            calculated_planets.append("Chiron")
+
+        if should_calculate("Mean_Lilith"):
+            mean_lilith_deg = swe.calc_ut(julian_day, 12, iflag)[0][0]
+            data["mean_lilith"] = get_kerykeion_point_from_degree(mean_lilith_deg, "Mean_Lilith", point_type=point_type)
+            data["mean_lilith"].house = get_planet_house(mean_lilith_deg, houses_degree_ut)
+            data["mean_lilith"].retrograde = swe.calc_ut(julian_day, 12, iflag)[0][3] < 0
+            calculated_planets.append("Mean_Lilith")
+
+        # Store only the planets that were actually calculated
+        data["planets_names_list"] = calculated_planets
+
+
 if __name__ == "__main__":
     # Example usage
-    subject = AstrologicalSubject.from_current_time(name="Test Subject")
-    print(subject)
-    print(subject.json(dump=True, destination_folder=".", indent=2))
+    subject = AstrologicalSubjectFactory.from_current_time(name="Test Subject")
+    print(subject.sun)
+
+    # Create JSON output
+    json_string = subject.model_dump_json(exclude_none=True, indent=2)
