@@ -25,8 +25,31 @@ HouseNumbers = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 """Literal type for House Numbers, starting from the First House (1) to the Twelfth House (12)"""
 
 
-Planet = Literal["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Mean_Node", "True_Node", "Mean_South_Node", "True_South_Node", "Chiron", "Mean_Lilith"]
-"""Literal type for Planets"""
+Planet = Literal[
+    # Main Planets
+    "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
+
+    # Nodes
+    "Mean_Node", "True_Node", "Mean_South_Node", "True_South_Node",
+
+    # Special Points
+    "Chiron", "Mean_Lilith", "True_Lilith", "Earth", "Pholus",
+
+    # Asteroids
+    "Ceres", "Pallas", "Juno", "Vesta",
+
+    # Trans-Neptunian Objects
+    "Eris", "Sedna", "Haumea", "Makemake", "Ixion", "Orcus", "Quaoar",
+
+    # Fixed Stars
+    "Regulus", "Spica",
+
+    # Arabic Parts
+    "Pars_Fortunae", "Pars_Spiritus", "Pars_Amoris", "Pars_Fidei",
+
+    # Special Points
+    "Vertex", "Anti_Vertex"
+]
 
 AxialCusps = Literal["Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
 """Literal type for Axial Cusps"""
