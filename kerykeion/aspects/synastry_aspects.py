@@ -14,7 +14,7 @@ from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
 from kerykeion.settings.default_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.default_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
 from kerykeion.kr_types.kr_literals import AxialCusps, Planet
@@ -44,7 +44,7 @@ class SynastryAspects(NatalAspects):
 
         self.celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
         self.aspects_settings = DEFAULT_CHART_ASPECTS_SETTINGS
-        self.axes_orbit_settings = self.settings.general_settings.axes_orbit
+        self.axes_orbit_settings = DEFAULT_AXIS_ORBIT
         self.active_points = active_points
         self.active_aspects = active_aspects
 

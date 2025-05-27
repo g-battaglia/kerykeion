@@ -45,3 +45,8 @@ DEFAULT_ACTIVE_ASPECTS: List[ActiveAspect] = [
 Default list of active aspects in the aspects calculations.
 The full list of aspects is available in the `kr_types.kr_literals.AspectName` literal.
 """
+
+DEFAULT_AXIS_ORBIT: int = 1
+"""
+Default orbit for the axes aspects.
+"""
