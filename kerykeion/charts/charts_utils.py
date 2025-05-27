@@ -510,7 +510,7 @@ def draw_aspect_grid(
     box_size = 14
 
     # Filter active planets
-    active_planets = [planet for planet in available_planets if planet.is_active]
+    active_planets = [planet for planet in available_planets if planet["is_active"]]
 
     # Reverse the list of active planets for the first iteration
     reversed_planets = active_planets[::-1]
@@ -1016,7 +1016,7 @@ def draw_transit_aspect_grid(
     y_start = y_indent
 
     # Filter active planets
-    active_planets = [planet for planet in available_planets if planet.is_active]
+    active_planets = [planet for planet in available_planets if planet["is_active"]]
 
     # Reverse the list of active planets for the first iteration
     reversed_planets = active_planets[::-1]

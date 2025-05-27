@@ -7,18 +7,16 @@ import logging
 from typing import TYPE_CHECKING
 from dataclasses import dataclass, field
 from functools import cached_property
+from kerykeion.astrological_subject import AstrologicalSubject
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.kr_literals import AxialCusps, Planet
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
+from kerykeion.settings.default_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from pathlib import Path
 from typing import Union, List
-
-if TYPE_CHECKING:
-    from kerykeion import AstrologicalSubject
-
 
 
 AXES_LIST = [
@@ -43,10 +41,11 @@ class NatalAspects:
     def __post_init__(self):
         self.settings = get_settings(self.new_settings_file)
 
-        self.celestial_points = self.settings.celestial_points
         self.aspects_settings = self.settings.aspects
         self.axes_orbit_settings = self.settings.general_settings.axes_orbit
         self.active_points = self.active_points
+        self.celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
+
 
     @cached_property
     def all_aspects(self):
@@ -56,7 +55,7 @@ class NatalAspects:
         without repetitions.
         """
 
-        active_points_list = get_active_points_list(self.user, self.settings, self.active_points)
+        active_points_list = get_active_points_list(self.user, self.active_points)
 
         # ---> TODO: Clean this up
         filtered_settings = []
