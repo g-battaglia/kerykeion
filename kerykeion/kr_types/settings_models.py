@@ -21,16 +21,6 @@ class KerykeionSettingsCelestialPointModel(SubscriptableBaseModel):
     label: str = Field(title="Celestial Point Label", description="The name of the celestial point in the chart, it can be different from the name")
     is_active: Optional[bool] = Field(title="Celestial Point is Active", description="Indicates if the celestial point is active in the chart", default=None)
 
-# Aspect Settings
-class KerykeionSettingsAspectModel(SubscriptableBaseModel):
-    """
-    Defines the model for an aspect.
-    """
-
-    degree: int = Field(title="Aspect Degrees", description="The degree of the aspect")
-    name: str = Field(title="Aspect Name", description="The name of the aspect")
-    color: str = Field(title="Aspect Color", description="The color of the aspect")
-    orb: Optional[int] = Field(title="Aspect Orb", description="The orb of the aspect", default=None)
 
 # Language Settings
 class KerykeionLanguageCelestialPointModel(SubscriptableBaseModel):
@@ -59,7 +49,6 @@ class KerykeionLanguageCelestialPointModel(SubscriptableBaseModel):
     Mean_Lilith: str = Field(title="Mean Lilith", description="The name of Mean Lilith in the chart, in the language")
     True_South_Node: str = Field(title="True South Node", description="The name of True South Node in the chart, in the language")
     Mean_South_Node: str = Field(title="Mean South Node", description="The name of Mean South Node in the chart, in the language")
-
 
 class KerykeionLanguageModel(SubscriptableBaseModel):
     """
@@ -162,6 +151,5 @@ class KerykeionSettingsModel(SubscriptableBaseModel):
     """
     This class is used to define the global settings for the Kerykeion.
     """
-    aspects: List[KerykeionSettingsAspectModel] = Field(title="Aspects", description="The list of the aspects of the chart")
     language_settings: dict[str, KerykeionLanguageModel] = Field(title="Language Settings", description="The language settings of the chart")
     general_settings: KerykeionGeneralSettingsModel = Field(title="General Settings", description="The general settings of the chart")

@@ -4,7 +4,7 @@ from kerykeion.kr_types import KerykeionException, ChartType
 from kerykeion.kr_types.kr_literals import Planet, AxialCusps
 from typing import Union, Literal, TYPE_CHECKING
 from kerykeion.kr_types.kr_models import AspectModel, KerykeionPointModel, CompositeSubjectModel, PlanetReturnModel, AstrologicalSubjectModel
-from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsAspectModel, KerykeionSettingsCelestialPointModel
+from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsCelestialPointModel
 
 
 if TYPE_CHECKING:
@@ -662,7 +662,7 @@ def draw_transit_aspect_list(
     grid_title: str,
     aspects_list: Union[list[AspectModel], list[dict]],
     celestial_point_language: Union[KerykeionLanguageCelestialPointModel, dict],
-    aspects_settings: Union[KerykeionSettingsAspectModel, dict],
+    aspects_settings: dict,
     *,
     aspects_per_column: int = 14,
     column_width: int = 100,
@@ -688,9 +688,6 @@ def draw_transit_aspect_list(
 
     if isinstance(celestial_point_language, dict):
         celestial_point_language = KerykeionLanguageCelestialPointModel(**celestial_point_language)
-
-    if isinstance(aspects_settings, dict):
-        aspects_settings = KerykeionSettingsAspectModel(**aspects_settings)
 
     # If not instance of AspectModel, convert to AspectModel
     if aspects_list and isinstance(aspects_list[0], dict):

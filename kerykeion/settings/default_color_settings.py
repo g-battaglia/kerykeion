@@ -1,3 +1,6 @@
+"""
+This is a legacy settings file, do not change it!
+"""
 DEFAULT_CHART_COLORS = {
     "paper_0": "var(--kerykeion-chart-color-paper-0)",
     "paper_1": "var(--kerykeion-chart-color-paper-1)",
