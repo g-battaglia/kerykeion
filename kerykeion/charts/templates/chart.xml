@@ -296,6 +296,101 @@ OpenAstro.org -->
         <symbol id="Imum_Coeli">
             <text y="20" style="font-size: 22px; fill: $planets_color_15">Ic</text>
         </symbol>
+
+        <!-- Asteroids and additional points -->
+        <symbol id="Ceres">
+            <g transform="translate(1,2)">
+                <path d="M 11.5,0.5 L 11.5,21.5 M 7.5,4 L 15.5,4 M 5,10 L 17,10"
+                    style="stroke: $planets_color_17; stroke-width: 2px; fill: none;" />
+                <circle cx="11.5" cy="15" r="5"
+                    style="stroke: $planets_color_17; stroke-width: 2px; fill: none;" />
+            </g>
+        </symbol>
+
+        <symbol id="Pallas">
+            <g transform="translate(1,2)">
+                <path d="M 11,0.5 L 11,21.5 M 6,6 L 16,6 M 4,12 L 18,12"
+                    style="stroke: $planets_color_18; stroke-width: 2px; fill: none;" />
+            </g>
+        </symbol>
+
+        <symbol id="Juno">
+            <g transform="translate(1,2)">
+                <path d="M 5,5 C 5,2 11,0 11,0 C 11,0 17,2 17,5 C 17,9 13,9 11,15 C 9,9 5,9 5,5 z M 7,18 L 15,18 M 11,15 L 11,21"
+                    style="stroke: $planets_color_19; stroke-width: 2px; fill: none;" />
+            </g>
+        </symbol>
+
+        <symbol id="Vesta">
+            <g transform="translate(1,2)">
+                <path d="M 7,0.5 L 15,0.5 M 11,0.5 L 11,13 M 6,6 L 16,6 M 7,20 C 7,16 15,16 15,20 C 15,24 7,24 7,20 z"
+                    style="stroke: $planets_color_20; stroke-width: 2px; fill: none;" />
+            </g>
+        </symbol>
+
+        <symbol id="Vertex">
+            <text y="20" style="font-size: 22px; fill: $planets_color_22">Vx</text>
+        </symbol>
+
+        <symbol id="East_Point">
+            <text y="20" style="font-size: 22px; fill: $planets_color_23">EP</text>
+        </symbol>
+
+        <symbol id="True_Lilith">
+            <g transform="translate(1,2)">
+                <path
+                    d="M 5.2255055,0.5001842 C 4.5318761,0.5265765 3.8737679,0.6459111 3.2335607,0.83217502 C 6.682099,1.8494555 9.2093951,5.0469634 9.2093951,8.8236674 C 9.2093953,12.600373 6.682099,15.797873 3.2335607,16.815161 C 3.9722573,17.030079 4.7497456,17.147152 5.5574963,17.147152 C 6.4110015,17.147152 7.2245796,17.006704 8,16.767734 L 8,19.803079 L 4.490383,19.803079 L 4.490383,21.629028 L 8,21.629028 L 8,23.739541 L 9.7785222,23.739541 L 9.7785222,21.629028 L 13.430421,21.629028 L 13.430421,19.803079 L 9.7785222,19.803079 L 9.7785222,15.985184 C 12.226487,14.535184 13.88098,11.873186 13.88098,8.8236674 C 13.88098,4.2284374 10.152727,0.5001842 5.5574963,0.5001842 C 5.4497948,0.5001842 5.3322206,0.4961168 5.2255055,0.5001842 z"
+                    style="fill: $planets_color_24;" />
+            </g>
+        </symbol>
+
+        <symbol id="Eris">
+            <g transform="translate(1,2)">
+                <path d="M 8,4 L 14,4 M 6,8 L 16,8 M 4,12 L 18,12 M 6,16 L 16,16 M 8,20 L 14,20"
+                    style="stroke: $planets_color_25; stroke-width: 2px; fill: none;" />
+                <circle cx="11" cy="11" r="10"
+                    style="fill: none; stroke: $planets_color_25; stroke-width: 2px" />
+            </g>
+        </symbol>
+
+        <symbol id="Pars_Fortunae">
+            <g transform="translate(1,2)">
+                <circle cx="11" cy="11" r="9"
+                    style="fill: none; stroke: $planets_color_21; stroke-width: 2px" />
+                <path d="M 11,2 L 11,20 M 2,11 L 20,11"
+                    style="stroke: $planets_color_21; stroke-width: 2px; fill: none;" />
+            </g>
+        </symbol>
+
+        <symbol id="Pars_Spiritus">
+            <g transform="translate(1,2)">
+                <circle cx="11" cy="11" r="9"
+                    style="fill: none; stroke: $planets_color_26; stroke-width: 2px" />
+                <path d="M 7,11 L 15,11 M 11,7 L 11,15"
+                    style="stroke: $planets_color_26; stroke-width: 2px; fill: none;" />
+                <path d="M 7,7 L 15,15 M 7,15 L 15,7"
+                    style="stroke: $planets_color_26; stroke-width: 2px; fill: none;" />
+            </g>
+        </symbol>
+
+        <symbol id="Pars_Amoris">
+            <g transform="translate(1,2)">
+                <circle cx="11" cy="11" r="9"
+                    style="fill: none; stroke: $planets_color_28; stroke-width: 2px" />
+                <path d="M 7,7 C 9,5 13,5 15,7 C 17,9 17,13 15,15 C 13,17 9,17 7,15 C 5,13 5,9 7,7 Z"
+                    style="stroke: $planets_color_28; stroke-width: 2px; fill: none;" />
+            </g>
+        </symbol>
+
+        <symbol id="Pars_Fidei">
+            <g transform="translate(1,2)">
+                <circle cx="11" cy="11" r="9"
+                    style="fill: none; stroke: $planets_color_32; stroke-width: 2px" />
+                <path d="M 6,11 L 16,11 M 11,6 L 11,16 M 8,8 L 14,14"
+                    style="stroke: $planets_color_32; stroke-width: 2px; fill: none;" />
+            </g>
+        </symbol>
+
         <!-- Zodiac -->
         <symbol id="Ari">
             <path

@@ -918,9 +918,9 @@ def draw_planet_grid(
     end_of_line = "</g>"
 
     for i, planet in enumerate(available_kerykeion_celestial_points):
-        if i == 27:
+        if i == 22:
             line_height = 10
-            offset = -120
+            offset = -125
 
         decoded_name = get_decoded_kerykeion_celestial_point_name(planet["name"], celestial_point_language)
         svg_output += (
