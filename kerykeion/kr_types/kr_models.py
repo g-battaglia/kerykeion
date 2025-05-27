@@ -3,10 +3,9 @@
     This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
-
-from typing import Union, Optional
+from typing import Union, Optional, List
 from typing_extensions import TypedDict
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from kerykeion.kr_types.kr_literals import AspectName
 
 from kerykeion.kr_types import (
@@ -23,7 +22,6 @@ from kerykeion.kr_types import (
     PointType,
     SiderealMode,
     HousesSystemIdentifier,
-    Houses,
     SignsEmoji,
     RelationshipScoreDescription,
     PerspectiveType,
@@ -75,33 +73,34 @@ class KerykeionPointModel(SubscriptableBaseModel):
     retrograde: Optional[bool] = None
 
 
-class AstrologicalSubjectModel(SubscriptableBaseModel):
+class AstrologicalBaseModel(SubscriptableBaseModel):
     """
-    Pydantic Model for Astrological Subject
+    Base Model with common fields for all astrological subjects
     """
-
-    # Data
+    # Common identification data
     name: str
-    year: int
-    month: int
-    day: int
-    hour: int
-    minute: int
+
+    # Common location data
     city: str
     nation: str
     lng: float
     lat: float
     tz_str: str
+
+    # Common time data
+    iso_formatted_local_datetime: str
+    iso_formatted_utc_datetime: str
+    julian_day: float
+
+    # Common configuration
     zodiac_type: ZodiacType
     sidereal_mode: Union[SiderealMode, None]
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
     perspective_type: PerspectiveType
-    iso_formatted_local_datetime: str
-    iso_formatted_utc_datetime: str
-    julian_day: float
 
-    # Planets
+    # Common celestial points
+    # Main planets
     sun: KerykeionPointModel
     moon: KerykeionPointModel
     mercury: Optional[KerykeionPointModel] = None
@@ -113,17 +112,51 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     neptune: Optional[KerykeionPointModel] = None
     pluto: Optional[KerykeionPointModel] = None
 
-    # Axes
+    # Common axes
     ascendant: Optional[KerykeionPointModel] = None
     descendant: Optional[KerykeionPointModel] = None
     medium_coeli: Optional[KerykeionPointModel] = None
     imum_coeli: Optional[KerykeionPointModel] = None
 
-    # Optional Planets:
+    # Common optional planets
     chiron: Optional[KerykeionPointModel] = None
-    mean_lilith: Optional[KerykeionPointModel] = None
+    earth: Optional[KerykeionPointModel] = None
+    pholus: Optional[KerykeionPointModel] = None
 
-    # Houses
+    # Lilith Points
+    mean_lilith: Optional[KerykeionPointModel] = None
+    true_lilith: Optional[KerykeionPointModel] = None
+
+    # Asteroids
+    ceres: Optional[KerykeionPointModel] = None
+    pallas: Optional[KerykeionPointModel] = None
+    juno: Optional[KerykeionPointModel] = None
+    vesta: Optional[KerykeionPointModel] = None
+
+    # Trans-Neptunian Objects
+    eris: Optional[KerykeionPointModel] = None
+    sedna: Optional[KerykeionPointModel] = None
+    haumea: Optional[KerykeionPointModel] = None
+    makemake: Optional[KerykeionPointModel] = None
+    ixion: Optional[KerykeionPointModel] = None
+    orcus: Optional[KerykeionPointModel] = None
+    quaoar: Optional[KerykeionPointModel] = None
+
+    # Fixed Stars
+    regulus: Optional[KerykeionPointModel] = None
+    spica: Optional[KerykeionPointModel] = None
+
+    # Arabic Parts
+    pars_fortunae: Optional[KerykeionPointModel] = None
+    pars_spiritus: Optional[KerykeionPointModel] = None
+    pars_amoris: Optional[KerykeionPointModel] = None
+    pars_fidei: Optional[KerykeionPointModel] = None
+
+    # Special Points
+    vertex: Optional[KerykeionPointModel] = None
+    anti_vertex: Optional[KerykeionPointModel] = None
+
+    # Common houses
     first_house: KerykeionPointModel
     second_house: KerykeionPointModel
     third_house: KerykeionPointModel
@@ -137,31 +170,56 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     eleventh_house: KerykeionPointModel
     twelfth_house: KerykeionPointModel
 
-    # Nodes
+    # Common nodes
     mean_node: Optional[KerykeionPointModel] = None
     true_node: Optional[KerykeionPointModel] = None
     mean_south_node: Optional[KerykeionPointModel] = None
     true_south_node: Optional[KerykeionPointModel] = None
 
-    planets_names_list: list[Planet]
-    """Ordered list of available planets names"""
+    # Common lists and settings
+    planets_names_list: List[Planet] = Field(description="Ordered list of available planets names")
+    axial_cusps_names_list: List[AxialCusps] = Field(description="Ordered list of available axes names")
+    houses_names_list: List[Houses] = Field(description="Ordered list of houses names")
+    active_points: List[Union[Planet, AxialCusps]] = Field(description="List of active points in the chart or aspects calculations.")
 
-    axial_cusps_names_list: list[AxialCusps]
-    """Ordered list of available axes names"""
+    # Common lunar phase data
+    lunar_phase: LunarPhaseModel = Field(description="Lunar phase model")
 
-    houses_names_list: list[Houses]
-    """Ordered list of houses names"""
 
-    lunar_phase: LunarPhaseModel
-    """Lunar phase model"""
+class AstrologicalSubjectModel(AstrologicalBaseModel):
+    """
+    Pydantic Model for Astrological Subject
+    """
+    # Specific birth/event data
+    year: int
+    month: int
+    day: int
+    hour: int
+    minute: int
 
-    active_points: list[Union[Planet, AxialCusps]]
-    """List of active points in the chart or aspects calculations."""
+
+class CompositeSubjectModel(AstrologicalBaseModel):
+    """
+    Pydantic Model for Composite Subject
+    """
+    # Specific composite data
+    first_subject: AstrologicalSubjectModel
+    second_subject: AstrologicalSubjectModel
+    composite_chart_type: str
+
+
+class PlanetReturnModel(AstrologicalBaseModel):
+    """
+    Pydantic Model for Planet Return
+    """
+    # Specific return data
+    return_type: ReturnType = Field(description="Type of return: Solar or Lunar")
+
 
 class EphemerisDictModel(SubscriptableBaseModel):
     date: str
-    planets: list[KerykeionPointModel]
-    houses: list[KerykeionPointModel]
+    planets: List[KerykeionPointModel]
+    houses: List[KerykeionPointModel]
 
 
 class AspectModel(SubscriptableBaseModel):
@@ -198,83 +256,8 @@ class RelationshipScoreModel(SubscriptableBaseModel):
     score_value: int
     score_description: RelationshipScoreDescription
     is_destiny_sign: bool
-    aspects: list[RelationshipScoreAspectModel]
-    subjects: list[AstrologicalSubjectModel]
-
-
-class CompositeSubjectModel(SubscriptableBaseModel):
-    """
-    Pydantic Model for Composite Subject
-    """
-
-    # Data
-    name: str
-    first_subject: AstrologicalSubjectModel
-    second_subject: AstrologicalSubjectModel
-    composite_chart_type: str
-
-    zodiac_type: ZodiacType
-    sidereal_mode: Union[SiderealMode, None]
-    houses_system_identifier: HousesSystemIdentifier
-    houses_system_name: str
-    perspective_type: PerspectiveType
-
-    # Planets
-    sun: KerykeionPointModel
-    moon: KerykeionPointModel
-    mercury: Optional[KerykeionPointModel] = None
-    venus: Optional[KerykeionPointModel] = None
-    mars: Optional[KerykeionPointModel] = None
-    jupiter: Optional[KerykeionPointModel] = None
-    saturn: Optional[KerykeionPointModel] = None
-    uranus: Optional[KerykeionPointModel] = None
-    neptune: Optional[KerykeionPointModel] = None
-    pluto: Optional[KerykeionPointModel] = None
-
-    # Axes
-    ascendant: Optional[KerykeionPointModel] = None
-    descendant: Optional[KerykeionPointModel] = None
-    medium_coeli: Optional[KerykeionPointModel] = None
-    imum_coeli: Optional[KerykeionPointModel] = None
-
-    # Optional Planets:
-    chiron: Optional[KerykeionPointModel] = None
-    mean_lilith: Optional[KerykeionPointModel] = None
-
-    # Houses
-    first_house: KerykeionPointModel
-    second_house: KerykeionPointModel
-    third_house: KerykeionPointModel
-    fourth_house: KerykeionPointModel
-    fifth_house: KerykeionPointModel
-    sixth_house: KerykeionPointModel
-    seventh_house: KerykeionPointModel
-    eighth_house: KerykeionPointModel
-    ninth_house: KerykeionPointModel
-    tenth_house: KerykeionPointModel
-    eleventh_house: KerykeionPointModel
-    twelfth_house: KerykeionPointModel
-
-    # Nodes
-    mean_node: Optional[KerykeionPointModel] = None
-    true_node: Optional[KerykeionPointModel] = None
-    mean_south_node: Optional[KerykeionPointModel] = None
-    true_south_node: Optional[KerykeionPointModel] = None
-
-    planets_names_list: list[Planet]
-    """Ordered list of available planets names"""
-
-    axial_cusps_names_list: list[AxialCusps]
-    """Ordered list of available axes names"""
-
-    houses_names_list: list[Houses]
-    """Ordered list of houses names"""
-
-    lunar_phase: LunarPhaseModel
-    """Lunar phase model"""
-
-    active_points: list[Union[Planet, AxialCusps]]
-    """List of active points in the chart or aspects calculations."""
+    aspects: List[RelationshipScoreAspectModel]
+    subjects: List[AstrologicalSubjectModel]
 
 
 class ActiveAspect(TypedDict):
@@ -288,17 +271,9 @@ class TransitMomentModel(SubscriptableBaseModel):
 
     Captures all active aspects between moving celestial bodies and
     the fixed positions in a person's natal chart at a specific date and time.
-
-    Attributes:
-        date: ISO 8601 formatted date and time of the transit moment.
-        aspects: List of astrological aspects active at this specific moment.
     """
-
-    date: str
-    """ISO 8601 formatted date and time of the transit moment."""
-
-    aspects: list[AspectModel]
-    """List of aspects active at this specific moment."""
+    date: str = Field(description="ISO 8601 formatted date and time of the transit moment.")
+    aspects: List[AspectModel] = Field(description="List of aspects active at this specific moment.")
 
 
 class TransitsTimeRangeModel(SubscriptableBaseModel):
@@ -307,101 +282,7 @@ class TransitsTimeRangeModel(SubscriptableBaseModel):
 
     This model holds a time series of transit snapshots, allowing analysis of
     planetary movements and their aspects to a natal chart over a period of time.
-
-    Attributes:
-        transits: List of transit moments occurring during the specified time period.
-        subject: The astrological subject model for whom the transits are calculated.
-        dates: List of all dates in ISO 8601 format for which transits were calculated.
     """
-
-    transits: list[TransitMomentModel]
-    """List of transit moments."""
-
-    subject: Optional[AstrologicalSubjectModel]
-    """Astrological subject data."""
-
-    dates: Optional[list[str]]
-    """ISO 8601 formatted dates of all transit moments."""
-
-
-class PlanetReturnModel(SubscriptableBaseModel):
-    """
-    Pydantic Model for Astrological Subject
-    """
-    name: str
-    return_type: ReturnType
-    """Type of return: Solar or Lunar"""
-
-    iso_formatted_local_datetime: str
-    iso_formatted_utc_datetime: str
-    julian_day: float
-
-    # Data
-    city: str
-    nation: str
-    lng: float
-    lat: float
-    tz_str: str
-    zodiac_type: ZodiacType
-    sidereal_mode: Union[SiderealMode, None]
-    houses_system_identifier: HousesSystemIdentifier
-    houses_system_name: str
-    perspective_type: PerspectiveType
-
-    # Planets
-    sun: KerykeionPointModel
-    moon: KerykeionPointModel
-    mercury: Optional[KerykeionPointModel] = None
-    venus: Optional[KerykeionPointModel] = None
-    mars: Optional[KerykeionPointModel] = None
-    jupiter: Optional[KerykeionPointModel] = None
-    saturn: Optional[KerykeionPointModel] = None
-    uranus: Optional[KerykeionPointModel] = None
-    neptune: Optional[KerykeionPointModel] = None
-    pluto: Optional[KerykeionPointModel] = None
-
-    # Axes
-    ascendant: Optional[KerykeionPointModel] = None
-    descendant: Optional[KerykeionPointModel] = None
-    medium_coeli: Optional[KerykeionPointModel] = None
-    imum_coeli: Optional[KerykeionPointModel] = None
-
-    # Optional Planets:
-    chiron: Optional[KerykeionPointModel] = None
-    mean_lilith: Optional[KerykeionPointModel] = None
-
-    # Houses
-    first_house: KerykeionPointModel
-    second_house: KerykeionPointModel
-    third_house: KerykeionPointModel
-    fourth_house: KerykeionPointModel
-    fifth_house: KerykeionPointModel
-    sixth_house: KerykeionPointModel
-    seventh_house: KerykeionPointModel
-    eighth_house: KerykeionPointModel
-    ninth_house: KerykeionPointModel
-    tenth_house: KerykeionPointModel
-    eleventh_house: KerykeionPointModel
-    twelfth_house: KerykeionPointModel
-
-    # Nodes
-    mean_node: Optional[KerykeionPointModel] = None
-    true_node: Optional[KerykeionPointModel] = None
-    mean_south_node: Optional[KerykeionPointModel] = None
-    true_south_node: Optional[KerykeionPointModel] = None
-
-    planets_names_list: list[Planet]
-    """Ordered list of available planets names"""
-
-    axial_cusps_names_list: list[AxialCusps]
-    """Ordered list of available axes names"""
-
-    houses_names_list: list[Houses]
-    """Ordered list of houses names"""
-
-    lunar_phase: LunarPhaseModel
-    """Lunar phase model"""
-
-    active_points: list[Union[Planet, AxialCusps]]
-    """List of active points in the chart or aspects calculations."""
-
+    transits: List[TransitMomentModel] = Field(description="List of transit moments.")
+    subject: Optional[AstrologicalSubjectModel] = Field(description="Astrological subject data.")
+    dates: Optional[List[str]] = Field(description="ISO 8601 formatted dates of all transit moments.")

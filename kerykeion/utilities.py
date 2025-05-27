@@ -83,8 +83,11 @@ def get_kerykeion_point_from_degree(
     Returns:
         KerykeionPointModel: The model representing the celestial point.
     """
+    # If - single degree is given, convert it to a positive degree
+    if degree < 0:
+        degree = degree % 360
 
-    if degree < 0 or degree >= 360:
+    if degree >= 360:
         raise KerykeionException(f"Error in calculating positions! Degrees: {degree}")
 
     ZODIAC_SIGNS = {

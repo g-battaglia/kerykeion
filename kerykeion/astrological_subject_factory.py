@@ -37,7 +37,8 @@ from kerykeion.utilities import (
     get_planet_house,
     check_and_adjust_polar_latitude,
     calculate_moon_phase,
-    datetime_to_julian
+    datetime_to_julian,
+    get_house_number
 )
 DEFAULT_ACTIVE_POINTS: List[Union[Planet, AxialCusps]] = [
     "Sun",
@@ -59,8 +60,12 @@ DEFAULT_ACTIVE_POINTS: List[Union[Planet, AxialCusps]] = [
     "Imum_Coeli",
     "Mean_Lilith",
     "Mean_South_Node",
-    "True_South_Node"
+    "True_South_Node",
+    "Pars_Fortunae",
+    "Pars_Spiritus",
+    "Vertex"
 ]
+
 # Default configuration values
 DEFAULT_GEONAMES_USERNAME = "century.boy"
 DEFAULT_SIDEREAL_MODE: SiderealMode = "FAGAN_BRADLEY"
@@ -244,6 +249,33 @@ class AstrologicalSubjectFactory:
             logging.info("Automatically adding 'Moon' to active points")
             active_points.append("Moon")
 
+        if "Ascendant" not in active_points:
+            logging.info("Automatically adding 'Ascendant' to active points")
+            active_points.append("Ascendant")
+
+        if "Medium_Coeli" not in active_points:
+            logging.info("Automatically adding 'Medium_Coeli' to active points")
+            active_points.append("Medium_Coeli")
+
+        if "Mercury" not in active_points:
+            logging.info("Automatically adding 'Mercury' to active points")
+            active_points.append("Mercury")
+
+        if "Venus" not in active_points:
+            logging.info("Automatically adding 'Venus' to active points")
+            active_points.append("Venus")
+
+        if "Mars" not in active_points:
+            logging.info("Automatically adding 'Mars' to active points")
+            active_points.append("Mars")
+
+        if "Jupiter" not in active_points:
+            logging.info("Automatically adding 'Jupiter' to active points")
+            active_points.append("Jupiter")
+
+        if "Saturn" not in active_points:
+            logging.info("Automatically adding 'Saturn' to active points")
+            active_points.append("Saturn")
 
         # Create a calculation data container
         calc_data = {}
@@ -636,7 +668,11 @@ class AstrologicalSubjectFactory:
         # Track which planets are actually calculated
         calculated_planets = []
 
-        # Calculate all standard planets
+        # ==================
+        # MAIN PLANETS
+        # ==================
+
+        # Calculate Sun
         if should_calculate("Sun"):
             sun_deg = swe.calc_ut(julian_day, 0, iflag)[0][0]
             data["sun"] = get_kerykeion_point_from_degree(sun_deg, "Sun", point_type=point_type)
@@ -644,6 +680,7 @@ class AstrologicalSubjectFactory:
             data["sun"].retrograde = swe.calc_ut(julian_day, 0, iflag)[0][3] < 0
             calculated_planets.append("Sun")
 
+        # Calculate Moon
         if should_calculate("Moon"):
             moon_deg = swe.calc_ut(julian_day, 1, iflag)[0][0]
             data["moon"] = get_kerykeion_point_from_degree(moon_deg, "Moon", point_type=point_type)
@@ -651,6 +688,7 @@ class AstrologicalSubjectFactory:
             data["moon"].retrograde = swe.calc_ut(julian_day, 1, iflag)[0][3] < 0
             calculated_planets.append("Moon")
 
+        # Calculate Mercury
         if should_calculate("Mercury"):
             mercury_deg = swe.calc_ut(julian_day, 2, iflag)[0][0]
             data["mercury"] = get_kerykeion_point_from_degree(mercury_deg, "Mercury", point_type=point_type)
@@ -658,6 +696,7 @@ class AstrologicalSubjectFactory:
             data["mercury"].retrograde = swe.calc_ut(julian_day, 2, iflag)[0][3] < 0
             calculated_planets.append("Mercury")
 
+        # Calculate Venus
         if should_calculate("Venus"):
             venus_deg = swe.calc_ut(julian_day, 3, iflag)[0][0]
             data["venus"] = get_kerykeion_point_from_degree(venus_deg, "Venus", point_type=point_type)
@@ -665,6 +704,7 @@ class AstrologicalSubjectFactory:
             data["venus"].retrograde = swe.calc_ut(julian_day, 3, iflag)[0][3] < 0
             calculated_planets.append("Venus")
 
+        # Calculate Mars
         if should_calculate("Mars"):
             mars_deg = swe.calc_ut(julian_day, 4, iflag)[0][0]
             data["mars"] = get_kerykeion_point_from_degree(mars_deg, "Mars", point_type=point_type)
@@ -672,6 +712,7 @@ class AstrologicalSubjectFactory:
             data["mars"].retrograde = swe.calc_ut(julian_day, 4, iflag)[0][3] < 0
             calculated_planets.append("Mars")
 
+        # Calculate Jupiter
         if should_calculate("Jupiter"):
             jupiter_deg = swe.calc_ut(julian_day, 5, iflag)[0][0]
             data["jupiter"] = get_kerykeion_point_from_degree(jupiter_deg, "Jupiter", point_type=point_type)
@@ -679,6 +720,7 @@ class AstrologicalSubjectFactory:
             data["jupiter"].retrograde = swe.calc_ut(julian_day, 5, iflag)[0][3] < 0
             calculated_planets.append("Jupiter")
 
+        # Calculate Saturn
         if should_calculate("Saturn"):
             saturn_deg = swe.calc_ut(julian_day, 6, iflag)[0][0]
             data["saturn"] = get_kerykeion_point_from_degree(saturn_deg, "Saturn", point_type=point_type)
@@ -686,6 +728,7 @@ class AstrologicalSubjectFactory:
             data["saturn"].retrograde = swe.calc_ut(julian_day, 6, iflag)[0][3] < 0
             calculated_planets.append("Saturn")
 
+        # Calculate Uranus
         if should_calculate("Uranus"):
             uranus_deg = swe.calc_ut(julian_day, 7, iflag)[0][0]
             data["uranus"] = get_kerykeion_point_from_degree(uranus_deg, "Uranus", point_type=point_type)
@@ -693,6 +736,7 @@ class AstrologicalSubjectFactory:
             data["uranus"].retrograde = swe.calc_ut(julian_day, 7, iflag)[0][3] < 0
             calculated_planets.append("Uranus")
 
+        # Calculate Neptune
         if should_calculate("Neptune"):
             neptune_deg = swe.calc_ut(julian_day, 8, iflag)[0][0]
             data["neptune"] = get_kerykeion_point_from_degree(neptune_deg, "Neptune", point_type=point_type)
@@ -700,6 +744,7 @@ class AstrologicalSubjectFactory:
             data["neptune"].retrograde = swe.calc_ut(julian_day, 8, iflag)[0][3] < 0
             calculated_planets.append("Neptune")
 
+        # Calculate Pluto
         if should_calculate("Pluto"):
             pluto_deg = swe.calc_ut(julian_day, 9, iflag)[0][0]
             data["pluto"] = get_kerykeion_point_from_degree(pluto_deg, "Pluto", point_type=point_type)
@@ -707,7 +752,11 @@ class AstrologicalSubjectFactory:
             data["pluto"].retrograde = swe.calc_ut(julian_day, 9, iflag)[0][3] < 0
             calculated_planets.append("Pluto")
 
-        # Calculate nodes
+        # ==================
+        # LUNAR NODES
+        # ==================
+
+        # Calculate Mean Lunar Node
         if should_calculate("Mean_Node"):
             mean_node_deg = swe.calc_ut(julian_day, 10, iflag)[0][0]
             data["mean_node"] = get_kerykeion_point_from_degree(mean_node_deg, "Mean_Node", point_type=point_type)
@@ -715,6 +764,7 @@ class AstrologicalSubjectFactory:
             data["mean_node"].retrograde = swe.calc_ut(julian_day, 10, iflag)[0][3] < 0
             calculated_planets.append("Mean_Node")
 
+        # Calculate True Lunar Node
         if should_calculate("True_Node"):
             true_node_deg = swe.calc_ut(julian_day, 11, iflag)[0][0]
             data["true_node"] = get_kerykeion_point_from_degree(true_node_deg, "True_Node", point_type=point_type)
@@ -722,7 +772,7 @@ class AstrologicalSubjectFactory:
             data["true_node"].retrograde = swe.calc_ut(julian_day, 11, iflag)[0][3] < 0
             calculated_planets.append("True_Node")
 
-        # Calculate South Nodes (opposite to North Nodes)
+        # Calculate Mean South Node (opposite to Mean North Node)
         if should_calculate("Mean_South_Node") and "mean_node" in data:
             mean_south_node_deg = math.fmod(data["mean_node"].abs_pos + 180, 360)
             data["mean_south_node"] = get_kerykeion_point_from_degree(
@@ -732,6 +782,7 @@ class AstrologicalSubjectFactory:
             data["mean_south_node"].retrograde = data["mean_node"].retrograde
             calculated_planets.append("Mean_South_Node")
 
+        # Calculate True South Node (opposite to True North Node)
         if should_calculate("True_South_Node") and "true_node" in data:
             true_south_node_deg = math.fmod(data["true_node"].abs_pos + 180, 360)
             data["true_south_node"] = get_kerykeion_point_from_degree(
@@ -741,6 +792,39 @@ class AstrologicalSubjectFactory:
             data["true_south_node"].retrograde = data["true_node"].retrograde
             calculated_planets.append("True_South_Node")
 
+        # ==================
+        # LILITH POINTS
+        # ==================
+
+        # Calculate Mean Lilith (Mean Black Moon)
+        if should_calculate("Mean_Lilith"):
+            mean_lilith_deg = swe.calc_ut(julian_day, 12, iflag)[0][0]
+            data["mean_lilith"] = get_kerykeion_point_from_degree(mean_lilith_deg, "Mean_Lilith", point_type=point_type)
+            data["mean_lilith"].house = get_planet_house(mean_lilith_deg, houses_degree_ut)
+            data["mean_lilith"].retrograde = swe.calc_ut(julian_day, 12, iflag)[0][3] < 0
+            calculated_planets.append("Mean_Lilith")
+
+        # Calculate True Lilith (Osculating Black Moon)
+        if should_calculate("True_Lilith"):
+            true_lilith_deg = swe.calc_ut(julian_day, 13, iflag)[0][0]
+            data["true_lilith"] = get_kerykeion_point_from_degree(true_lilith_deg, "True_Lilith", point_type=point_type)
+            data["true_lilith"].house = get_planet_house(true_lilith_deg, houses_degree_ut)
+            data["true_lilith"].retrograde = swe.calc_ut(julian_day, 13, iflag)[0][3] < 0
+            calculated_planets.append("True_Lilith")
+
+        # ==================
+        # SPECIAL POINTS
+        # ==================
+
+        # Calculate Earth - useful for heliocentric charts
+        if should_calculate("Earth"):
+            earth_deg = swe.calc_ut(julian_day, 14, iflag)[0][0]
+            data["earth"] = get_kerykeion_point_from_degree(earth_deg, "Earth", point_type=point_type)
+            data["earth"].house = get_planet_house(earth_deg, houses_degree_ut)
+            data["earth"].retrograde = swe.calc_ut(julian_day, 14, iflag)[0][3] < 0
+            calculated_planets.append("Earth")
+
+        # Calculate Chiron
         if should_calculate("Chiron"):
             chiron_deg = swe.calc_ut(julian_day, 15, iflag)[0][0]
             data["chiron"] = get_kerykeion_point_from_degree(chiron_deg, "Chiron", point_type=point_type)
@@ -748,12 +832,261 @@ class AstrologicalSubjectFactory:
             data["chiron"].retrograde = swe.calc_ut(julian_day, 15, iflag)[0][3] < 0
             calculated_planets.append("Chiron")
 
-        if should_calculate("Mean_Lilith"):
-            mean_lilith_deg = swe.calc_ut(julian_day, 12, iflag)[0][0]
-            data["mean_lilith"] = get_kerykeion_point_from_degree(mean_lilith_deg, "Mean_Lilith", point_type=point_type)
-            data["mean_lilith"].house = get_planet_house(mean_lilith_deg, houses_degree_ut)
-            data["mean_lilith"].retrograde = swe.calc_ut(julian_day, 12, iflag)[0][3] < 0
-            calculated_planets.append("Mean_Lilith")
+        # Calculate Pholus
+        if should_calculate("Pholus"):
+            pholus_deg = swe.calc_ut(julian_day, 16, iflag)[0][0]
+            data["pholus"] = get_kerykeion_point_from_degree(pholus_deg, "Pholus", point_type=point_type)
+            data["pholus"].house = get_planet_house(pholus_deg, houses_degree_ut)
+            data["pholus"].retrograde = swe.calc_ut(julian_day, 16, iflag)[0][3] < 0
+            calculated_planets.append("Pholus")
+
+        # ==================
+        # ASTEROIDS
+        # ==================
+
+        # Calculate Ceres
+        if should_calculate("Ceres"):
+            ceres_deg = swe.calc_ut(julian_day, 17, iflag)[0][0]
+            data["ceres"] = get_kerykeion_point_from_degree(ceres_deg, "Ceres", point_type=point_type)
+            data["ceres"].house = get_planet_house(ceres_deg, houses_degree_ut)
+            data["ceres"].retrograde = swe.calc_ut(julian_day, 17, iflag)[0][3] < 0
+            calculated_planets.append("Ceres")
+
+        # Calculate Pallas
+        if should_calculate("Pallas"):
+            pallas_deg = swe.calc_ut(julian_day, 18, iflag)[0][0]
+            data["pallas"] = get_kerykeion_point_from_degree(pallas_deg, "Pallas", point_type=point_type)
+            data["pallas"].house = get_planet_house(pallas_deg, houses_degree_ut)
+            data["pallas"].retrograde = swe.calc_ut(julian_day, 18, iflag)[0][3] < 0
+            calculated_planets.append("Pallas")
+
+        # Calculate Juno
+        if should_calculate("Juno"):
+            juno_deg = swe.calc_ut(julian_day, 19, iflag)[0][0]
+            data["juno"] = get_kerykeion_point_from_degree(juno_deg, "Juno", point_type=point_type)
+            data["juno"].house = get_planet_house(juno_deg, houses_degree_ut)
+            data["juno"].retrograde = swe.calc_ut(julian_day, 19, iflag)[0][3] < 0
+            calculated_planets.append("Juno")
+
+        # Calculate Vesta
+        if should_calculate("Vesta"):
+            vesta_deg = swe.calc_ut(julian_day, 20, iflag)[0][0]
+            data["vesta"] = get_kerykeion_point_from_degree(vesta_deg, "Vesta", point_type=point_type)
+            data["vesta"].house = get_planet_house(vesta_deg, houses_degree_ut)
+            data["vesta"].retrograde = swe.calc_ut(julian_day, 20, iflag)[0][3] < 0
+            calculated_planets.append("Vesta")
+
+        # ==================
+        # TRANS-NEPTUNIAN OBJECTS
+        # ==================
+
+        # Calculate Eris
+        if should_calculate("Eris"):
+            try:
+                eris_deg = swe.calc_ut(julian_day, swe.AST_OFFSET + 136199, iflag)[0][0]
+                data["eris"] = get_kerykeion_point_from_degree(eris_deg, "Eris", point_type=point_type)
+                data["eris"].house = get_planet_house(eris_deg, houses_degree_ut)
+                data["eris"].retrograde = swe.calc_ut(julian_day, swe.AST_OFFSET + 136199, iflag)[0][3] < 0
+                calculated_planets.append("Eris")
+            except:
+                logging.warning("Could not calculate Eris position")
+
+        # Calculate Sedna
+        if should_calculate("Sedna"):
+            try:
+                sedna_deg = swe.calc_ut(julian_day, swe.AST_OFFSET + 90377, iflag)[0][0]
+                data["sedna"] = get_kerykeion_point_from_degree(sedna_deg, "Sedna", point_type=point_type)
+                data["sedna"].house = get_planet_house(sedna_deg, houses_degree_ut)
+                data["sedna"].retrograde = swe.calc_ut(julian_day, swe.AST_OFFSET + 90377, iflag)[0][3] < 0
+                calculated_planets.append("Sedna")
+            except:
+                logging.warning("Could not calculate Sedna position")
+
+        # Calculate Haumea
+        if should_calculate("Haumea"):
+            try:
+                haumea_deg = swe.calc_ut(julian_day, swe.AST_OFFSET + 136108, iflag)[0][0]
+                data["haumea"] = get_kerykeion_point_from_degree(haumea_deg, "Haumea", point_type=point_type)
+                data["haumea"].house = get_planet_house(haumea_deg, houses_degree_ut)
+                data["haumea"].retrograde = swe.calc_ut(julian_day, swe.AST_OFFSET + 136108, iflag)[0][3] < 0
+                calculated_planets.append("Haumea")
+            except:
+                logging.warning("Could not calculate Haumea position")
+
+        # Calculate Makemake
+        if should_calculate("Makemake"):
+            try:
+                makemake_deg = swe.calc_ut(julian_day, swe.AST_OFFSET + 136472, iflag)[0][0]
+                data["makemake"] = get_kerykeion_point_from_degree(makemake_deg, "Makemake", point_type=point_type)
+                data["makemake"].house = get_planet_house(makemake_deg, houses_degree_ut)
+                data["makemake"].retrograde = swe.calc_ut(julian_day, swe.AST_OFFSET + 136472, iflag)[0][3] < 0
+                calculated_planets.append("Makemake")
+            except:
+                logging.warning("Could not calculate Makemake position")
+
+        # Calculate Ixion
+        if should_calculate("Ixion"):
+            try:
+                ixion_deg = swe.calc_ut(julian_day, swe.AST_OFFSET + 28978, iflag)[0][0]
+                data["ixion"] = get_kerykeion_point_from_degree(ixion_deg, "Ixion", point_type=point_type)
+                data["ixion"].house = get_planet_house(ixion_deg, houses_degree_ut)
+                data["ixion"].retrograde = swe.calc_ut(julian_day, swe.AST_OFFSET + 28978, iflag)[0][3] < 0
+                calculated_planets.append("Ixion")
+            except:
+                logging.warning("Could not calculate Ixion position")
+
+        # Calculate Orcus
+        if should_calculate("Orcus"):
+            try:
+                orcus_deg = swe.calc_ut(julian_day, swe.AST_OFFSET + 90482, iflag)[0][0]
+                data["orcus"] = get_kerykeion_point_from_degree(orcus_deg, "Orcus", point_type=point_type)
+                data["orcus"].house = get_planet_house(orcus_deg, houses_degree_ut)
+                data["orcus"].retrograde = swe.calc_ut(julian_day, swe.AST_OFFSET + 90482, iflag)[0][3] < 0
+                calculated_planets.append("Orcus")
+            except:
+                logging.warning("Could not calculate Orcus position")
+
+        # Calculate Quaoar
+        if should_calculate("Quaoar"):
+            try:
+                quaoar_deg = swe.calc_ut(julian_day, swe.AST_OFFSET + 50000, iflag)[0][0]
+                data["quaoar"] = get_kerykeion_point_from_degree(quaoar_deg, "Quaoar", point_type=point_type)
+                data["quaoar"].house = get_planet_house(quaoar_deg, houses_degree_ut)
+                data["quaoar"].retrograde = swe.calc_ut(julian_day, swe.AST_OFFSET + 50000, iflag)[0][3] < 0
+                calculated_planets.append("Quaoar")
+            except:
+                logging.warning("Could not calculate Quaoar position")
+
+        # ==================
+        # FIXED STARS
+        # ==================
+
+        # Calculate Regulus (example fixed star)
+        if should_calculate("Regulus"):
+            try:
+                star_name = b"Regulus"
+                swe.fixstar_ut(star_name, julian_day, iflag)
+                regulus_deg = swe.fixstar_ut(star_name, julian_day, iflag)[0][0]
+                data["regulus"] = get_kerykeion_point_from_degree(regulus_deg, "Regulus", point_type=point_type)
+                data["regulus"].house = get_planet_house(regulus_deg, houses_degree_ut)
+                data["regulus"].retrograde = False  # Fixed stars are never retrograde
+                calculated_planets.append("Regulus")
+            except:
+                logging.warning("Could not calculate Regulus position")
+
+        # Calculate Spica (example fixed star)
+        if should_calculate("Spica"):
+            try:
+                star_name = b"Spica"
+                swe.fixstar_ut(star_name, julian_day, iflag)
+                spica_deg = swe.fixstar_ut(star_name, julian_day, iflag)[0][0]
+                data["spica"] = get_kerykeion_point_from_degree(spica_deg, "Spica", point_type=point_type)
+                data["spica"].house = get_planet_house(spica_deg, houses_degree_ut)
+                data["spica"].retrograde = False  # Fixed stars are never retrograde
+                calculated_planets.append("Spica")
+            except:
+                logging.warning("Could not calculate Spica position")
+
+        # ==================
+        # ARABIC PARTS / LOTS
+        # ==================
+
+        # Calculate Pars Fortunae (Part of Fortune)
+        if should_calculate("Pars_Fortunae"):
+            # Check if required points are available
+            if all(k in data for k in ["ascendant", "sun", "moon"]):
+                # Different calculation for day and night charts
+                # Day birth (Sun above horizon): ASC + Moon - Sun
+                # Night birth (Sun below horizon): ASC + Sun - Moon
+                is_day_chart = get_house_number(data["sun"].house) < 7  # Houses 1-6 are above horizon
+
+                if is_day_chart:
+                    fortune_deg = math.fmod(data["ascendant"].abs_pos + data["moon"].abs_pos - data["sun"].abs_pos, 360)
+                else:
+                    fortune_deg = math.fmod(data["ascendant"].abs_pos + data["sun"].abs_pos - data["moon"].abs_pos, 360)
+
+                data["pars_fortunae"] = get_kerykeion_point_from_degree(fortune_deg, "Pars_Fortunae", point_type=point_type)
+                data["pars_fortunae"].house = get_planet_house(fortune_deg, houses_degree_ut)
+                data["pars_fortunae"].retrograde = False  # Parts are never retrograde
+                calculated_planets.append("Pars_Fortunae")
+
+        # Calculate Pars Spiritus (Part of Spirit)
+        if should_calculate("Pars_Spiritus"):
+            # Check if required points are available
+            if all(k in data for k in ["ascendant", "sun", "moon"]):
+                # Day birth: ASC + Sun - Moon
+                # Night birth: ASC + Moon - Sun
+                is_day_chart = get_house_number(data["sun"].house) < 7
+
+                if is_day_chart:
+                    spirit_deg = math.fmod(data["ascendant"].abs_pos + data["sun"].abs_pos - data["moon"].abs_pos, 360)
+                else:
+                    spirit_deg = math.fmod(data["ascendant"].abs_pos + data["moon"].abs_pos - data["sun"].abs_pos, 360)
+
+                data["pars_spiritus"] = get_kerykeion_point_from_degree(spirit_deg, "Pars_Spiritus", point_type=point_type)
+                data["pars_spiritus"].house = get_planet_house(spirit_deg, houses_degree_ut)
+                data["pars_spiritus"].retrograde = False
+                calculated_planets.append("Pars_Spiritus")
+
+        # Calculate Pars Amoris (Part of Eros/Love)
+        if should_calculate("Pars_Amoris"):
+            # Check if required points are available
+            if all(k in data for k in ["ascendant", "venus"]):
+                # ASC + Venus - Sun
+                if "sun" in data:
+                    amoris_deg = math.fmod(data["ascendant"].abs_pos + data["venus"].abs_pos - data["sun"].abs_pos, 360)
+
+                    data["pars_amoris"] = get_kerykeion_point_from_degree(amoris_deg, "Pars_Amoris", point_type=point_type)
+                    data["pars_amoris"].house = get_planet_house(amoris_deg, houses_degree_ut)
+                    data["pars_amoris"].retrograde = False
+                    calculated_planets.append("Pars_Amoris")
+
+        # Calculate Pars Fidei (Part of Faith)
+        if should_calculate("Pars_Fidei"):
+            # Check if required points are available
+            if all(k in data for k in ["ascendant", "jupiter", "saturn"]):
+                # ASC + Jupiter - Saturn
+                fidei_deg = math.fmod(data["ascendant"].abs_pos + data["jupiter"].abs_pos - data["saturn"].abs_pos, 360)
+
+                data["pars_fidei"] = get_kerykeion_point_from_degree(fidei_deg, "Pars_Fidei", point_type=point_type)
+                data["pars_fidei"].house = get_planet_house(fidei_deg, houses_degree_ut)
+                data["pars_fidei"].retrograde = False
+                calculated_planets.append("Pars_Fidei")
+
+        # Calculate Vertex (a sort of auxiliary Descendant)
+        if should_calculate("Vertex"):
+            try:
+                # Vertex is at ascmc[3] in Swiss Ephemeris
+                if data["zodiac_type"] == "Sidereal":
+                    _, ascmc = swe.houses_ex(
+                        tjdut=data["julian_day"],
+                        lat=data["lat"],
+                        lon=data["lng"],
+                        hsys=str.encode("V"),  # Vertex works best with Vehlow system
+                        flags=swe.FLG_SIDEREAL
+                    )
+                else:
+                    _, ascmc = swe.houses(
+                        tjdut=data["julian_day"],
+                        lat=data["lat"],
+                        lon=data["lng"],
+                        hsys=str.encode("V")
+                    )
+
+                vertex_deg = ascmc[3]
+                data["vertex"] = get_kerykeion_point_from_degree(vertex_deg, "Vertex", point_type=point_type)
+                data["vertex"].house = get_planet_house(vertex_deg, houses_degree_ut)
+                data["vertex"].retrograde = False
+                calculated_planets.append("Vertex")
+
+                # Calculate Anti-Vertex (opposite to Vertex)
+                anti_vertex_deg = math.fmod(vertex_deg + 180, 360)
+                data["anti_vertex"] = get_kerykeion_point_from_degree(anti_vertex_deg, "Anti_Vertex", point_type=point_type)
+                data["anti_vertex"].house = get_planet_house(anti_vertex_deg, houses_degree_ut)
+                data["anti_vertex"].retrograde = False
+                calculated_planets.append("Anti_Vertex")
+            except:
+                logging.warning("Could not calculate Vertex position")
 
         # Store only the planets that were actually calculated
         data["planets_names_list"] = calculated_planets
@@ -763,6 +1096,7 @@ if __name__ == "__main__":
     # Example usage
     subject = AstrologicalSubjectFactory.from_current_time(name="Test Subject")
     print(subject.sun)
+    print(subject.pars_amoris)
 
     # Create JSON output
     json_string = subject.model_dump_json(exclude_none=True, indent=2)
