@@ -101,12 +101,6 @@ class AstrologicalSubjectModel(SubscriptableBaseModel):
     iso_formatted_utc_datetime: str
     julian_day: float
 
-    # Deprecated properties -->
-    utc_time: float
-    local_time: float
-    # <-- Deprecated properties
-
-
     # Planets
     sun: KerykeionPointModel
     moon: KerykeionPointModel
