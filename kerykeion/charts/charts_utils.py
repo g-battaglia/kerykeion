@@ -1160,8 +1160,8 @@ def calculate_element_points(
 def calculate_synastry_element_points(
         planets_settings: list[KerykeionSettingsCelestialPointModel],
         celestial_points_names: list[str],
-        subject1: Union[AstrologicalSubjectModel],
-        subject2: Union[AstrologicalSubjectModel],
+        subject1: AstrologicalSubjectModel,
+        subject2: AstrologicalSubjectModel,
         planet_in_zodiac_extra_points: int = 10
     ):
     """
