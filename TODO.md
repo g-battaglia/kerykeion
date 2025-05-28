@@ -19,7 +19,7 @@
 ### 🟥 High Priority
 
 - [ ] Fix labels  (eg. "Aspetti Tra [...]")  
-- [ ] Refactor structure using the new `AstrologicalSubjectModel` and a factory class to instantiate objects in multiple ways:
+- [x] Refactor structure using the new `AstrologicalSubjectModel` and a factory class to instantiate objects in multiple ways:
   - [ ] Online  
   - [ ] Offline  
   - [ ] With UTC ISO 8601 string  
@@ -32,6 +32,7 @@
 - [ ] More "air space" around objects in the chart
 - [ ] More colorful themes (eg. "strawberry")
 - [ ] Correct the displayed file name (browser tab/title)
+- [ ] NatalAspects and SynatryAspect with inheritance of ActivePoints
 
 
 ### 🟧 Medium Priority

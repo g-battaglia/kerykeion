@@ -6,7 +6,7 @@
 
 import logging
 import swisseph as swe
-from typing import get_args
+from typing import get_args, Union, Optional
 
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.synastry_aspects import SynastryAspects
@@ -61,7 +61,7 @@ from kerykeion.charts.charts_utils import (
 )
 from kerykeion.charts.draw_planets_v2 import draw_planets_v2 as draw_planets
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 from kerykeion.settings.legacy.legacy_color_settings import DEFAULT_CHART_COLORS
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
@@ -205,7 +205,7 @@ class KerykeionChartSVG:
         double_chart_aspect_grid_type: Literal["list", "table"] = "list",
         chart_language: KerykeionChartLanguage = "EN",
         active_points: List[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
-        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_aspects: Optional[list[ActiveAspect]]= None,
         *,
         colors_settings: dict = DEFAULT_CHART_COLORS,
         celestial_points_settings: list[dict] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
@@ -250,19 +250,19 @@ class KerykeionChartSVG:
         self.planets_settings = celestial_points_settings
         self.aspects_settings = aspects_settings
 
-        active_points = find_common_active_points(
-            active_points,
-            first_obj.active_points
-        )
+        if not active_points:
+            active_points = first_obj.active_points
+        else:
+            active_points = find_common_active_points(
+                active_points,
+                first_obj.active_points
+            )
 
         if second_obj:
             active_points = find_common_active_points(
                 active_points,
                 second_obj.active_points
             )
-
-        # FIXME!
-        active_points = first_obj.active_points
 
         # Set output directory
         if new_output_directory:
@@ -1780,6 +1780,7 @@ if __name__ == "__main__":
         first_obj=subject,
         chart_language="IT",
         theme="strawberry",
+        active_points=["Mercury", "Venus", "Jupiter", "Saturn", "Ascendant"],
     )
     birth_chart.makeSVG(minify=True, remove_css_variables=True)
 
