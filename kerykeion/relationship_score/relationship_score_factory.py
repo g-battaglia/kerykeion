@@ -27,8 +27,8 @@ class RelationshipScoreFactory:
     Documentation: http://www.cirodiscepolo.it/Articoli/Discepoloele.htm
 
     Args:
-        first_subject (Union[AstrologicalSubjectModel]): First subject instance
-        second_subject (Union[AstrologicalSubjectModel]): Second subject instance
+        first_subject (AstrologicalSubjectModel): First subject instance
+        second_subject (AstrologicalSubjectModel): Second subject instance
     """
 
     SCORE_MAPPING = [

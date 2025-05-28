@@ -14,7 +14,7 @@ class Report:
     planets_table: str
     houses_table: str
 
-    def __init__(self, instance: Union[AstrologicalSubjectModel]):
+    def __init__(self, instance: AstrologicalSubjectModel):
         self.instance = instance
 
         self.get_report_title()

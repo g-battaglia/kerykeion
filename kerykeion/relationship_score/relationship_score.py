@@ -33,8 +33,8 @@ class RelationshipScore:
 
     def __init__(
         self,
-        first_subject: Union[AstrologicalSubjectModel],
-        second_subject: Union[AstrologicalSubjectModel],
+        first_subject: AstrologicalSubjectModel,
+        second_subject: AstrologicalSubjectModel,
         new_settings_file: Union[Path, None] = None,
     ):
         warnings.warn(

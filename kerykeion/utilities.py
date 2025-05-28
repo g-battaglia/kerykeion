@@ -321,7 +321,7 @@ def get_houses_list(
 
 
 def get_available_astrological_points_list(
-    subject: Union[AstrologicalSubjectModel]
+    subject: AstrologicalSubjectModel
 ) -> list[KerykeionPointModel]:
     """
     Return the names of the planets in the order of the planets.
