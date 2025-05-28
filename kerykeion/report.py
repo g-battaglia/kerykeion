@@ -46,7 +46,7 @@ class Report:
         Creates the planets table.
         """
 
-        planets_data = [["Planet", "Sign", "Pos.", "Ret.", "House"]] + [
+        planets_data = [["AstrologicalPoint", "Sign", "Pos.", "Ret.", "House"]] + [
             [
                 planet.name,
                 planet.sign,

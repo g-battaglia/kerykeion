@@ -669,16 +669,13 @@ class AstrologicalSubjectFactory:
             data["imum_coeli"].retrograde = False
             calculated_axial_cusps.append("Imum_Coeli")
 
-        # Store only the axial cusps that were actually calculated
-        data["axial_cusps_names_list"] = calculated_axial_cusps
-
     @classmethod
     def _calculate_planets(cls, data: Dict[str, Any], active_points: List[AstrologicalPoint]) -> None:
         """Calculate planetary positions and related information"""
         # Skip calculation if point is not in active_points
         should_calculate: Callable[[AstrologicalPoint], bool] = lambda point: not active_points or point in active_points
 
-        point_type: PointType = "Planet"
+        point_type: PointType = "AstrologicalPoint"
         julian_day = data["julian_day"]
         iflag = data["_iflag"]
         houses_degree_ut = data["_houses_degree_ut"]
@@ -1154,7 +1151,7 @@ class AstrologicalSubjectFactory:
                 active_points.remove("Vertex")
 
         # Store only the planets that were actually calculated
-        data["planets_names_list"] = calculated_planets
+        data["active_points"] = calculated_planets
 
 
 if __name__ == "__main__":

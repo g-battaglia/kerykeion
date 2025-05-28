@@ -40,7 +40,7 @@ def test_utc_constructor():
     assert subject.lunar_phase == subject2.lunar_phase
 
 
-    assert subject.planets_names_list == subject2.planets_names_list
+    assert subject.active_points == subject2.active_points
     assert subject.houses_names_list == subject2.houses_names_list
 
 
