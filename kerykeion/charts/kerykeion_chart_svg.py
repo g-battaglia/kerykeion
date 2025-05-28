@@ -61,7 +61,7 @@ from kerykeion.charts.charts_utils import (
 )
 from kerykeion.charts.draw_planets_v2 import draw_planets_v2 as draw_planets
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
 from kerykeion.settings.legacy.legacy_color_settings import DEFAULT_CHART_COLORS
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
@@ -204,8 +204,8 @@ class KerykeionChartSVG:
         theme: Union[KerykeionChartTheme, None] = "classic",
         double_chart_aspect_grid_type: Literal["list", "table"] = "list",
         chart_language: KerykeionChartLanguage = "EN",
-        active_points: List[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
-        active_aspects: Optional[list[ActiveAspect]]= None,
+        active_points: Optional[list[AstrologicalPoint]] = None,
+        active_aspects: list[ActiveAspect]= DEFAULT_ACTIVE_ASPECTS,
         *,
         colors_settings: dict = DEFAULT_CHART_COLORS,
         celestial_points_settings: list[dict] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
