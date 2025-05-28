@@ -4,7 +4,7 @@ from typing import Union, TYPE_CHECKING
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.kr_types.kerykeion_exception import KerykeionException
 from kerykeion.kr_types.kr_models import CompositeSubjectModel, AstrologicalSubjectModel
-from kerykeion.kr_types.kr_literals import ZodiacType, PerspectiveType, HousesSystemIdentifier, SiderealMode, Planet, Houses, AxialCusps, CompositeChartType
+from kerykeion.kr_types.kr_literals import ZodiacType, PerspectiveType, HousesSystemIdentifier, SiderealMode, AstrologicalPoint, Houses, CompositeChartType
 from kerykeion.utilities import (
     get_kerykeion_point_from_degree,
     get_planet_house,
@@ -38,9 +38,8 @@ class CompositeSubjectFactory:
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
     perspective_type: PerspectiveType
-    planets_names_list: list[Planet]
     houses_names_list: list[Houses]
-    axial_cusps_names_list: list[AxialCusps]
+    active_points: list[AstrologicalPoint]
 
     def __init__(
             self,
@@ -178,7 +177,7 @@ class CompositeSubjectFactory:
                     self.second_subject[cusp_lower]["abs_pos"]
                 ),
                 cusp,
-                "AxialCusps"
+                "AstrologicalPoint"
             )
             self[cusp_lower]["house"] = get_planet_house(self[cusp_lower]['abs_pos'], house_degree_list_ut)
 

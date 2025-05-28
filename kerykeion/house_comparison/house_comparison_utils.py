@@ -1,6 +1,6 @@
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, PlanetReturnModel
-from kerykeion.kr_types.kr_literals import AxialCusps, Planet
+from kerykeion.kr_types.kr_literals import AstrologicalPoint
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 from kerykeion.utilities import get_planet_house, get_house_number
 from kerykeion.house_comparison.house_comparison_models import PointInHouseModel
@@ -10,7 +10,7 @@ from typing import Union
 def calculate_points_in_reciprocal_houses(
     point_subject: Union[AstrologicalSubjectModel, PlanetReturnModel],
     house_subject: Union[AstrologicalSubjectModel, PlanetReturnModel],
-    active_points: list[Union[Planet, AxialCusps]] = DEFAULT_ACTIVE_POINTS,
+    active_points: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
 ) -> list[PointInHouseModel]:
     """
     Calculates which houses of the house_subject the points of point_subject fall into.

@@ -27,9 +27,8 @@ from kerykeion.kr_types import (
     SiderealMode,
     HousesSystemIdentifier,
     PerspectiveType,
-    Planet,
+    AstrologicalPoint,
     Houses,
-    AxialCusps,
 )
 from kerykeion.utilities import (
     get_number_from_name,
@@ -40,7 +39,7 @@ from kerykeion.utilities import (
     datetime_to_julian,
     get_house_number
 )
-DEFAULT_ACTIVE_POINTS: List[Union[Planet, AxialCusps]] = [
+DEFAULT_ACTIVE_POINTS: List[AstrologicalPoint] = [
     "Sun",
     "Moon",
     "Mercury",
@@ -229,7 +228,7 @@ class AstrologicalSubjectFactory:
         cache_expire_after_days: int = DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
         is_dst: Optional[bool] = None,
         altitude: Optional[float] = None,
-        active_points: List[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS,
+        active_points: List[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
         *,
         seconds: int = 0,
 
@@ -401,7 +400,7 @@ class AstrologicalSubjectFactory:
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
         altitude: Optional[float] = None,
-        active_points: List[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS
+        active_points: List[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS
     ) -> AstrologicalSubjectModel:
         """
         Create an astrological subject from an ISO formatted UTC time.
@@ -486,7 +485,7 @@ class AstrologicalSubjectFactory:
         sidereal_mode: Optional[SiderealMode] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
-        active_points: List[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS
+        active_points: List[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS
     ) -> AstrologicalSubjectModel:
         """
         Create an astrological subject for the current time.
@@ -592,10 +591,10 @@ class AstrologicalSubjectFactory:
         data["_iflag"] = iflag
 
     @classmethod
-    def _calculate_houses(cls, data: Dict[str, Any], active_points: Optional[List[Union[AxialCusps, Planet]]]) -> None:
+    def _calculate_houses(cls, data: Dict[str, Any], active_points: Optional[List[AstrologicalPoint]]) -> None:
         """Calculate house cusps and axis points"""
         # Skip calculation if point is not in active_points
-        should_calculate: Callable[[Union[AxialCusps, Planet]], bool] = lambda point: not active_points or point in active_points
+        should_calculate: Callable[[AstrologicalPoint], bool] = lambda point: not active_points or point in active_points
         # Track which axial cusps are actually calculated
         calculated_axial_cusps = []
 
@@ -638,7 +637,7 @@ class AstrologicalSubjectFactory:
         data["houses_names_list"] = list(get_args(Houses))
 
         # Calculate axis points
-        point_type = "AxialCusps"
+        point_type = "AstrologicalPoint"
 
         # Calculate Ascendant if needed
         if should_calculate("Ascendant"):
@@ -674,10 +673,10 @@ class AstrologicalSubjectFactory:
         data["axial_cusps_names_list"] = calculated_axial_cusps
 
     @classmethod
-    def _calculate_planets(cls, data: Dict[str, Any], active_points: List[Union[AxialCusps, Planet]]) -> None:
+    def _calculate_planets(cls, data: Dict[str, Any], active_points: List[AstrologicalPoint]) -> None:
         """Calculate planetary positions and related information"""
         # Skip calculation if point is not in active_points
-        should_calculate: Callable[[Union[AxialCusps, Planet]], bool] = lambda point: not active_points or point in active_points
+        should_calculate: Callable[[AstrologicalPoint], bool] = lambda point: not active_points or point in active_points
 
         point_type: PointType = "Planet"
         julian_day = data["julian_day"]

@@ -4,7 +4,7 @@ from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects import SynastryAspects
 from kerykeion.ephemeris_data import EphemerisDataFactory
-from kerykeion.kr_types.kr_literals import AxialCusps, Planet
+from kerykeion.kr_types.kr_literals import AstrologicalPoint
 from kerykeion.kr_types.kr_models import ActiveAspect, TransitMomentModel, TransitsTimeRangeModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
@@ -31,7 +31,7 @@ class TransitsTimeRangeFactory:
         self,
         natal_chart: AstrologicalSubjectModel,
         ephemeris_data_points: List[AstrologicalSubjectModel],
-        active_points: List[Union[AxialCusps, Planet]] = DEFAULT_ACTIVE_POINTS,
+        active_points: List[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
     ):

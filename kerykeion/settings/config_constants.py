@@ -1,8 +1,8 @@
-from kerykeion.kr_types.kr_literals import Planet, AxialCusps, AspectName
+from kerykeion.kr_types.kr_literals import AstrologicalPoint, AspectName
 from kerykeion.kr_types.kr_models import ActiveAspect
 from typing import List, Union
 
-DEFAULT_ACTIVE_POINTS: List[Union[Planet, AxialCusps]] = [
+DEFAULT_ACTIVE_POINTS: List[AstrologicalPoint] = [
     "Sun",
     "Moon",
     "Mercury",

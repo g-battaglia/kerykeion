@@ -1,7 +1,7 @@
 import math
 import datetime
 from kerykeion.kr_types import KerykeionException, ChartType
-from kerykeion.kr_types.kr_literals import Planet, AxialCusps
+from kerykeion.kr_types.kr_literals import AstrologicalPoint
 from typing import Union, Literal, TYPE_CHECKING
 from kerykeion.kr_types.kr_models import AspectModel, KerykeionPointModel, CompositeSubjectModel, PlanetReturnModel, AstrologicalSubjectModel
 from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsCelestialPointModel
@@ -1230,7 +1230,7 @@ def calculate_synastry_element_points(
 def draw_house_comparison_grid(
         house_comparison: "HouseComparisonModel",
         celestial_point_language: KerykeionLanguageCelestialPointModel,
-        active_points: list[Planet | AxialCusps],
+        active_points: list[AstrologicalPoint],
         *,
         points_owner_subject_number: Literal[1, 2] = 1,
         text_color: str = "var(--kerykeion-color-neutral-content)",
@@ -1310,7 +1310,7 @@ def draw_house_comparison_grid(
 def draw_single_house_comparison_grid(
         house_comparison: "HouseComparisonModel",
         celestial_point_language: KerykeionLanguageCelestialPointModel,
-        active_points: list[Planet | AxialCusps],
+        active_points: list[AstrologicalPoint],
         *,
         points_owner_subject_number: Literal[1, 2] = 1,
         text_color: str = "var(--kerykeion-color-neutral-content)",
@@ -1327,7 +1327,7 @@ def draw_single_house_comparison_grid(
     - house_comparison ("HouseComparisonModel"): Model containing house comparison data,
       including first_subject_name, second_subject_name, and points in houses.
     - celestial_point_language (KerykeionLanguageCelestialPointModel): Language model for celestial points
-    - active_points (list[Planet | AxialCusps]): List of active celestial points to display
+    - active_points (list[AstrologicalPoint]): List of active celestial points to display
     - points_owner_subject_number (Literal[1, 2]): Which subject's points to display (1 for first, 2 for second)
     - text_color (str): Color for the text elements
     - house_position_comparison_label (str): Label for the house position comparison grid
