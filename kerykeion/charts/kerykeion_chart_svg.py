@@ -31,8 +31,7 @@ from kerykeion.kr_types.settings_models import (
 from kerykeion.kr_types.kr_literals import (
     KerykeionChartTheme,
     KerykeionChartLanguage,
-    AxialCusps,
-    Planet,
+    AstrologicalPoint,
 )
 from kerykeion.utilities import find_common_active_points
 from kerykeion.charts.charts_utils import (
@@ -105,7 +104,7 @@ class KerykeionChartSVG:
             Specifies rendering style for double-chart aspect grids. Defaults to 'list'.
         chart_language (KerykeionChartLanguage, optional):
             Language code for chart labels. Defaults to 'EN'.
-        active_points (list[Planet | AxialCusps], optional):
+        active_points (list[AstrologicalPoint], optional):
             List of celestial points and angles to include. Defaults to DEFAULT_ACTIVE_POINTS.
             Example:
             ["Sun", "Moon", "Mercury", "Venus"]
@@ -172,7 +171,7 @@ class KerykeionChartSVG:
     theme: Union[KerykeionChartTheme, None]
     double_chart_aspect_grid_type: Literal["list", "table"]
     chart_language: KerykeionChartLanguage
-    active_points: List[Union[Planet, AxialCusps]]
+    active_points: List[AstrologicalPoint]
     active_aspects: List[ActiveAspect]
 
     # Internal properties
@@ -205,7 +204,7 @@ class KerykeionChartSVG:
         theme: Union[KerykeionChartTheme, None] = "classic",
         double_chart_aspect_grid_type: Literal["list", "table"] = "list",
         chart_language: KerykeionChartLanguage = "EN",
-        active_points: List[Union[Planet, AxialCusps]] = DEFAULT_ACTIVE_POINTS,
+        active_points: List[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         *,
         colors_settings: dict = DEFAULT_CHART_COLORS,
@@ -232,7 +231,7 @@ class KerykeionChartSVG:
                 Layout style for double-chart aspect grids ('list' or 'table').
             chart_language (KerykeionChartLanguage, optional):
                 Language code for chart labels (e.g., 'EN', 'IT').
-            active_points (List[Planet or AxialCusps], optional):
+            active_points (List[AstrologicalPoint], optional):
                 Celestial points to include in the chart visualization.
             active_aspects (List[ActiveAspect], optional):
                 Aspects to calculate, each defined by name and orb.

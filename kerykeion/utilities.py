@@ -7,7 +7,7 @@ from kerykeion.kr_types import (
     CompositeSubjectModel,
     PlanetReturnModel,
 )
-from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, Planet, Houses, AxialCusps
+from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, AstrologicalPoint, Houses
 from typing import Union, get_args, TYPE_CHECKING
 import logging
 import math
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from kerykeion import AstrologicalSubjectFactory
 
 
-def get_number_from_name(name: Planet) -> int:
+def get_number_from_name(name: AstrologicalPoint) -> int:
     """Utility function, gets planet id from the name."""
 
     if name == "Sun":
@@ -67,7 +67,7 @@ def get_number_from_name(name: Planet) -> int:
 
 
 def get_kerykeion_point_from_degree(
-    degree: Union[int, float], name: Union[Planet, Houses, AxialCusps], point_type: PointType
+    degree: Union[int, float], name: Union[AstrologicalPoint, Houses], point_type: PointType
 ) -> KerykeionPointModel:
     """
     Returns a KerykeionPointModel object based on the given degree.
@@ -678,7 +678,7 @@ def get_house_number(house_name: Houses) -> int:
     return number
 
 
-def find_common_active_points(first_points: list[Union[Planet, AxialCusps]], second_points: list[Union[Planet, AxialCusps]]) -> list[Union[Planet, AxialCusps]]:
+def find_common_active_points(first_points: list[AstrologicalPoint], second_points: list[AstrologicalPoint]) -> list[AstrologicalPoint]:
     """
         Find the common astrological points between those available in the subject and those requested.
 
@@ -689,7 +689,7 @@ def find_common_active_points(first_points: list[Union[Planet, AxialCusps]], sec
         Returns:
             List containing only the requested points that are also available in the subject
     """
-    common_points: list[Union[Planet, AxialCusps]]
+    common_points: list[AstrologicalPoint]
     common_points = [point for point in second_points if point in first_points]
 
     ignored_points = set(second_points) - set(common_points)

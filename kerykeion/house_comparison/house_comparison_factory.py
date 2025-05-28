@@ -4,7 +4,7 @@ from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_A
 from kerykeion.house_comparison.house_comparison_models import HouseComparisonModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.kr_types import AstrologicalSubjectModel, PlanetReturnModel
-from kerykeion.kr_types.kr_literals import AxialCusps, Planet
+from kerykeion.kr_types.kr_literals import AstrologicalPoint
 
 
 class HouseComparisonFactory:
@@ -30,7 +30,7 @@ class HouseComparisonFactory:
     def __init__(self,
                  first_subject: Union["AstrologicalSubjectModel", "PlanetReturnModel"],
                  second_subject: Union["AstrologicalSubjectModel", "PlanetReturnModel"],
-                active_points: list[Union[Planet, AxialCusps]] = DEFAULT_ACTIVE_POINTS,
+                active_points: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
 
         ):
         self.first_subject = first_subject

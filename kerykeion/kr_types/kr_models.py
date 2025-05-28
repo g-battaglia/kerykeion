@@ -9,10 +9,9 @@ from pydantic import BaseModel, Field
 from kerykeion.kr_types.kr_literals import AspectName
 
 from kerykeion.kr_types import (
-    AxialCusps,
     LunarPhaseEmoji,
     LunarPhaseName,
-    Planet,
+    AstrologicalPoint,
     Houses,
     Quality,
     Element,
@@ -60,7 +59,7 @@ class KerykeionPointModel(SubscriptableBaseModel):
     Kerykeion Point Model
     """
 
-    name: Union[Planet, Houses, AxialCusps]
+    name: Union[AstrologicalPoint, Houses]
     quality: Quality
     element: Element
     sign: Sign
@@ -177,10 +176,8 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     true_south_node: Optional[KerykeionPointModel] = None
 
     # Common lists and settings
-    planets_names_list: List[Planet] = Field(description="Ordered list of available planets names")
-    axial_cusps_names_list: List[AxialCusps] = Field(description="Ordered list of available axes names")
     houses_names_list: List[Houses] = Field(description="Ordered list of houses names")
-    active_points: List[Union[Planet, AxialCusps]] = Field(description="List of active points in the chart or aspects calculations.")
+    active_points: List[AstrologicalPoint] = Field(description="List of active points in the chart or aspects calculations.")
 
     # Common lunar phase data
     lunar_phase: LunarPhaseModel = Field(description="Lunar phase model")

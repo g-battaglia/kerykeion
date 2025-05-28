@@ -25,7 +25,7 @@ HouseNumbers = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 """Literal type for House Numbers, starting from the First House (1) to the Twelfth House (12)"""
 
 
-Planet = Literal[
+AstrologicalPoint = Literal[
     # Main Planets
     "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
 
@@ -48,10 +48,12 @@ Planet = Literal[
     "Pars_Fortunae", "Pars_Spiritus", "Pars_Amoris", "Pars_Fidei",
 
     # Special Points
-    "Vertex", "Anti_Vertex"
+    "Vertex", "Anti_Vertex",
+
+    # Axial Cusps
+    "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli",
 ]
 
-AxialCusps = Literal["Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
 """Literal type for Axial Cusps"""
 
 
@@ -67,7 +69,7 @@ ChartType = Literal["Natal", "ExternalNatal", "Synastry", "Transit", "Composite"
 """Literal type for Chart Types"""
 
 
-PointType = Literal["Planet", "House", "AxialCusps"]
+PointType = Literal["AstrologicalPoint", "House"]
 """Literal type for Point Types"""
 
 
