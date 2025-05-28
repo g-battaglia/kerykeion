@@ -28,21 +28,13 @@ def calculate_points_in_reciprocal_houses(
     # List of points to consider
     celestial_points = []
 
-    for point in point_subject.planets_names_list:
+    for point in point_subject.active_points:
         if point not in active_points:
             continue
 
         point_obj = getattr(point_subject, point.lower())
         if point_obj is not None:
             celestial_points.append(point_obj)
-
-    for axis in point_subject.axial_cusps_names_list:
-        if axis not in active_points:
-            continue
-
-        axis_obj = getattr(point_subject, axis.lower())
-        if axis_obj is not None:
-            celestial_points.append(axis_obj)
 
     # Ordered list of house cusps degrees for house_subject
     house_cusps = [

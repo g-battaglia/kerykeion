@@ -93,16 +93,13 @@ class CompositeSubjectFactory:
         self.perspective_type = first_subject.perspective_type
 
         # Planets Names List
-        self.planets_names_list = []
-        for planet in first_subject.planets_names_list:
-            if planet in second_subject.planets_names_list:
-                self.planets_names_list.append(planet)
+        self.active_points = []
+        for planet in first_subject.active_points:
+            if planet in second_subject.active_points:
+                self.active_points.append(planet)
 
         # Houses Names List
         self.houses_names_list = self.first_subject.houses_names_list
-
-        # Axial Cusps Names List
-        self.axial_cusps_names_list = self.first_subject.axial_cusps_names_list
 
     def __str__(self):
         return f"Composite Chart Data for {self.name}"
@@ -152,8 +149,8 @@ class CompositeSubjectFactory:
 
         # Planets
         common_planets = []
-        for planet in self.first_subject.planets_names_list:
-            if planet in self.second_subject.planets_names_list:
+        for planet in self.first_subject.active_points:
+            if planet in self.second_subject.active_points:
                 common_planets.append(planet)
 
         planets = {}
@@ -164,22 +161,8 @@ class CompositeSubjectFactory:
                 self.first_subject[planet_lower]["abs_pos"],
                 self.second_subject[planet_lower]["abs_pos"]
             )
-            self[planet_lower] = get_kerykeion_point_from_degree(planets[planet_lower]["abs_pos"], planet, "Planet")
+            self[planet_lower] = get_kerykeion_point_from_degree(planets[planet_lower]["abs_pos"], planet, "AstrologicalPoint")
             self[planet_lower]["house"] = get_planet_house(self[planet_lower]['abs_pos'], house_degree_list_ut)
-
-
-        # Axial Cusps
-        for cusp in self.first_subject.axial_cusps_names_list:
-            cusp_lower = cusp.lower()
-            self[cusp_lower] = get_kerykeion_point_from_degree(
-                circular_mean(
-                    self.first_subject[cusp_lower]["abs_pos"],
-                    self.second_subject[cusp_lower]["abs_pos"]
-                ),
-                cusp,
-                "AstrologicalPoint"
-            )
-            self[cusp_lower]["house"] = get_planet_house(self[cusp_lower]['abs_pos'], house_degree_list_ut)
 
     def _calculate_composite_lunar_phase(self):
         self.lunar_phase = calculate_moon_phase(

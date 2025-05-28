@@ -328,11 +328,8 @@ def get_available_astrological_points_list(
     The names can be used to access the planets from the AstrologicalSubject object with the __getitem__ method or the [] operator.
     """
     planets_absolute_position_list = []
-    for planet in subject.planets_names_list:
+    for planet in subject.active_points:
         planets_absolute_position_list.append(subject[planet.lower()])
-
-    for axis in subject.axial_cusps_names_list:
-        planets_absolute_position_list.append(subject[axis.lower()])
 
     return planets_absolute_position_list
 
