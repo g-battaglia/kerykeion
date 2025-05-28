@@ -1,6 +1,7 @@
-from kerykeion.kr_types.kr_literals import AstrologicalPoint, AspectName
+from kerykeion.kr_types.kr_literals import AstrologicalPoint
 from kerykeion.kr_types.kr_models import ActiveAspect
-from typing import List, Union
+from typing import List
+
 
 DEFAULT_ACTIVE_POINTS: List[AstrologicalPoint] = [
     "Sun",
@@ -15,17 +16,40 @@ DEFAULT_ACTIVE_POINTS: List[AstrologicalPoint] = [
     "Pluto",
     "Mean_Node",
     # "True_Node",
+    "Mean_South_Node",
+    # "True_South_Node",
     "Chiron",
+    "Mean_Lilith",
+    # "True_Lilith",
+    # "Earth",
+    # "Pholus",
+    # "Ceres",
+    # "Pallas",
+    # "Juno",
+    # "Vesta",
+    # "Eris",
+    # "Sedna",
+    # "Haumea",
+    # "Makemake",
+    # "Ixion",
+    # "Orcus",
+    # "Quaoar",
+    # "Regulus",
+    # "Spica",
     "Ascendant",
     "Medium_Coeli",
     # "Descendant",
     # "Imum_Coeli",
-    "Mean_Lilith",
-    "Mean_South_Node",
-    # "True_South_Node"
+    # "Vertex",
+    # "Anti_Vertex",
+    # "Pars_Fortunae",
+    # "Pars_Spiritus",
+    # "Pars_Amoris",
+    # "Pars_Fidei"
 ]
 """
 Default list of active points in the charts or aspects calculations.
+The full list of points is available in the `kr_types.kr_literals.AstrologicalPoint` literal.
 """
 
 DEFAULT_ACTIVE_ASPECTS: List[ActiveAspect] = [

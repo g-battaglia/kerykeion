@@ -32,6 +32,7 @@ class SynastryAspects(NatalAspects):
         kr_object_two: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
         active_points: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
+        # FIXME: Should be inherited from the User and merged
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
     ):
         # Subjects

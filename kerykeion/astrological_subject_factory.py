@@ -39,50 +39,7 @@ from kerykeion.utilities import (
     datetime_to_julian,
     get_house_number
 )
-DEFAULT_ACTIVE_POINTS: List[AstrologicalPoint] = [
-    "Sun",
-    "Moon",
-    "Mercury",
-    "Venus",
-    "Mars",
-    "Jupiter",
-    "Saturn",
-    "Uranus",
-    "Neptune",
-    "Pluto",
-    "Mean_Node",
-    "True_Node",
-    "Mean_South_Node",
-    "True_South_Node",
-    "Chiron",
-    "Mean_Lilith",
-    "True_Lilith",
-    "Earth",
-    "Pholus",
-    "Ceres",
-    "Pallas",
-    "Juno",
-    "Vesta",
-    "Eris",
-    "Sedna",
-    "Haumea",
-    "Makemake",
-    "Ixion",
-    "Orcus",
-    "Quaoar",
-    "Regulus",
-    "Spica",
-    "Ascendant",
-    "Medium_Coeli",
-    "Descendant",
-    "Imum_Coeli",
-    "Vertex",
-    "Anti_Vertex",
-    "Pars_Fortunae",
-    "Pars_Spiritus",
-    "Pars_Amoris",
-    "Pars_Fidei"
-]
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
 # Default configuration values
 DEFAULT_GEONAMES_USERNAME = "century.boy"
