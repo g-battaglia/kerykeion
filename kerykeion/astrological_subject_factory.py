@@ -330,6 +330,7 @@ class AstrologicalSubjectFactory:
         cls._setup_ephemeris(calc_data, config)
         cls._calculate_houses(calc_data, active_points)
         cls._calculate_planets(calc_data, active_points)
+        cls._calculate_day_of_week(calc_data)
 
         # Calculate lunar phase
         calc_data["lunar_phase"] = calculate_moon_phase(
@@ -1110,6 +1111,14 @@ class AstrologicalSubjectFactory:
         # Store only the planets that were actually calculated
         data["active_points"] = calculated_planets
 
+    @classmethod
+    def _calculate_day_of_week(cls, data: Dict[str, Any]) -> None:
+        """Calculate the day of the week for the given Julian Day"""
+        # Calculate the day of the week (0=Sunday, 1=Monday, ..., 6=Saturday)
+        day_of_week = swe.day_of_week(data["julian_day"])
+        # Map to human-readable names
+        days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        data["day_of_week"] = days_of_week[day_of_week]
 
 if __name__ == "__main__":
     # Example usage

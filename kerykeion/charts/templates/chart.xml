@@ -18,13 +18,9 @@ OpenAstro.org -->
         $color_style_tag
     </style>
 
-    <!---
-    Main Chart -->
+    <!--- Main Chart -->
     <g kr:node="Main_Chart">
-
-        <g kr:node="Main_Text">
-            <rect class="background-rectangle" x="0" y="0" width="$chart_width"
-                height="$chart_height" style="fill: $paper_color_1" />
+        <g kr:node="Top_Left_Text">
             <text x="20" y="22" style="fill: $paper_color_0; font-size: 24px">$stringTitle</text>
             <text x="20" y="50" style="fill: $paper_color_0; font-size: 10px">$top_left_0</text>
             <text x="20" y="62" style="fill: $paper_color_0; font-size: 10px">$top_left_1</text>
@@ -32,6 +28,26 @@ OpenAstro.org -->
             <text x="20" y="86" style="fill: $paper_color_0; font-size: 10px">$top_left_3</text>
             <text x="20" y="98" style="fill: $paper_color_0; font-size: 10px">$top_left_4</text>
             <text x="20" y="110" style="fill: $paper_color_0; font-size: 10px">$top_left_5</text>
+        </g>
+
+        <!-- Elements -->
+        <g kr:node="Elements_Percentages">
+            <text x="20" y="130" style="fill: $paper_color_0; font-size: 10px;">$elements_string</text>
+            <text x="20" y="144" style="fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;">$fire_string</text>
+            <text x="20" y="156" style="fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;">$earth_string</text>
+            <text x="20" y="168" style="fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;">$air_string</text>
+            <text x="20" y="180" style="fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;">$water_string</text>
+        </g>
+
+        <!-- Qualities -->
+        <g kr:node="Qualities_Percentages">
+            <text x="20" y="200" style="fill: $paper_color_0; font-size: 10px;">$qualities_string</text>
+            <text x="20" y="214" style="fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;">$cardinal_string</text>
+            <text x="20" y="226" style="fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;">$fixed_string</text>
+            <text x="20" y="238" style="fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;">$mutable_string</text>
+        </g>
+
+        <g kr:node="Bottom_Left_Text">
             <text x="20" y="452" style="fill: $paper_color_0; font-size: 10px">$bottom_left_0</text>
             <text x="20" y="466" style="fill: $paper_color_0; font-size: 10px">$bottom_left_1</text>
             <text x="20" y="480" style="fill: $paper_color_0; font-size: 10px">$bottom_left_2</text>
@@ -44,100 +60,76 @@ OpenAstro.org -->
             $makeLunarPhase
         </g>
 
-        <g kr:node="Main_Content" transform="translate(50,50)">
-            <!-- Full Wheel -->
-            <g kr:node="Full_Wheel" transform="translate(50,0)">
-                <!-- Zodiac -->
-                <g kr:node="Zodiac">
-                    $makeZodiac
-                </g>
-
-                <!-- First Circle -->
-                <g kr:node="First_Circle">
-                    $first_circle
-                </g>
-
-                <!-- Second Circle -->
-                <g kr:node="Second_Circle">
-                    $second_circle
-                </g>
-
-                <!-- Third Circle -->
-                <g kr:node="Third_Circle">
-                    $third_circle
-                </g>
-
-                <!-- Transit_Ring -->
-                <g kr:node="Transint_Ring">
-                    $transitRing
-                </g>
-
-                <!-- Degree Ring -->
-                <g kr:node="Degree_Ring">
-                    $degreeRing
-                </g>
-
-                <!-- Houses -->
-                <g kr:node="Houses_Wheel">
-                    $makeHouses
-                </g>
-
-                <!-- Planets -->
-                <g kr:node="Planets_Wheel">
-                    $makePlanets
-                </g>
-
-                <!-- Aspects -->
-                <g kr:node="Aspects_Wheel">
-                    $makeAspects
-                </g>
+        <!-- Full Wheel -->
+        <g kr:node="Full_Wheel" transform="translate(100,50)">
+            <!-- Zodiac -->
+            <g kr:node="Zodiac">
+                $makeZodiac
             </g>
 
-            <!-- AspectGrid -->
-            <g kr:node="Aspect_Grid">
-                $makeAspectGrid
+            <!-- First Circle -->
+            <g kr:node="First_Circle">
+                $first_circle
             </g>
 
-            <!-- Elements -->
-            <g kr:node="Elements_Percentages">
-                <g transform="translate(-30,80)">
-                <text y="0" style="fill: $paper_color_0; font-size: 10px;">$elements_string</text>
-                <text y="14" style="fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;">$fire_string</text>
-                <text y="26" style="fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;">$earth_string</text>
-                <text y="38" style="fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;">$air_string</text>
-                <text y="50" style="fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;">$water_string</text>
-                </g>"
+            <!-- Second Circle -->
+            <g kr:node="Second_Circle">
+                $second_circle
             </g>
 
-            <!-- Qualities -->
-            <g kr:node="Qualities_Percentages">
-                <g transform="translate(-30,150)">
-                <text y="0" style="fill: $paper_color_0; font-size: 10px;">$qualities_string</text>
-                <text y="14" style="fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;">$cardinal_string</text>
-                <text y="26" style="fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;">$fixed_string</text>
-                <text y="38" style="fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;">$mutable_string</text>
-                </g>"
+            <!-- Third Circle -->
+            <g kr:node="Third_Circle">
+                $third_circle
             </g>
 
-            <!-- Houses_And_Planets_Grid -->
-            <g kr:node="Houses_And_Planets_Grid">
-                <!-- Planet Grid -->
-                <g kr:node="Planet_Grid" transform="translate(590,-20)">
-                    $makePlanetGrid
-                </g>
+            <!-- Transit_Ring -->
+            <g kr:node="Transint_Ring">
+                $transitRing
+            </g>
 
-                <!-- Houses Grid -->
-                <g kr:node="Houses_Grid">
-                    $makeHousesGrid
-                </g>
+            <!-- Degree Ring -->
+            <g kr:node="Degree_Ring">
+                $degreeRing
+            </g>
 
-                <!-- House Comparison Grid -->
-                <g kr:node="House_Comparison_Table">
-                    $makeHouseComparisonGrid
-                </g>
+            <!-- Houses -->
+            <g kr:node="Houses_Wheel">
+                $makeHouses
+            </g>
+
+            <!-- Planets -->
+            <g kr:node="Planets_Wheel">
+                $makePlanets
+            </g>
+
+            <!-- Aspects -->
+            <g kr:node="Aspects_Wheel">
+                $makeAspects
             </g>
         </g>
 
+        <!-- Houses_And_Planets_Grid -->
+        <g kr:node="Houses_And_Planets_Grid">
+            <!-- Planet Grid -->
+            <g kr:node="Planet_Grid" transform="translate(590,50)">
+                $makePlanetGrid
+            </g>
+
+            <!-- Houses Grid -->
+            <g kr:node="Houses_Grid" transform="translate(0,50)">
+                $makeHousesGrid
+            </g>
+
+            <!-- House Comparison Grid -->
+            <g kr:node="House_Comparison_Table" transform="translate(0,50)">
+                $makeHouseComparisonGrid
+            </g>
+        </g>
+
+        <!-- AspectGrid -->
+        <g kr:node="Aspect_Grid">
+            $makeAspectGrid
+        </g>
     </g>
 
     <!-- Symbols Definitions -->

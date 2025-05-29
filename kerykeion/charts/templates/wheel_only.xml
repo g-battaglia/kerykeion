@@ -20,48 +20,49 @@
     <!--- Main Chart -->
     <g kr:node="Main_Chart">
 
-        <g kr:node="Main_Content" transform="translate(50,50)">
-                <!-- Zodiac -->
+        <!-- Full Wheel -->
+        <g kr:node="Full_Wheel" transform="translate(100,50)">
+            <!-- Zodiac -->
             <g kr:node="Zodiac">
                 $makeZodiac
             </g>
 
-                <!-- First Circle -->
+            <!-- First Circle -->
             <g kr:node="First_Circle">
                 $first_circle
             </g>
 
-                <!-- Second Circle -->
+            <!-- Second Circle -->
             <g kr:node="Second_Circle">
                 $second_circle
             </g>
 
-                <!-- Third Circle -->
+            <!-- Third Circle -->
             <g kr:node="Third_Circle">
                 $third_circle
             </g>
 
-                <!-- Transit_Ring -->
+            <!-- Transit_Ring -->
             <g kr:node="Transint_Ring">
                 $transitRing
             </g>
 
-                <!-- Degree Ring -->
+            <!-- Degree Ring -->
             <g kr:node="Degree_Ring">
                 $degreeRing
             </g>
 
-                <!-- Houses -->
+            <!-- Houses -->
             <g kr:node="Houses_Wheel">
                 $makeHouses
             </g>
 
-                <!-- Planets -->
+            <!-- Planets -->
             <g kr:node="Planets_Wheel">
                 $makePlanets
             </g>
 
-                <!-- Aspects -->
+            <!-- Aspects -->
             <g kr:node="Aspects_Wheel">
                 $makeAspects
             </g>
@@ -69,9 +70,9 @@
 
     </g>
 
-        <!-- Symbols Definitions -->
+    <!-- Symbols Definitions -->
     <defs>
-            <!-- Planets (24x24) -->
+        <!-- Planets (24x24) -->
         <symbol id="Sun">
             <g transform="translate(1,4)">
                 <circle cx="10" cy="10" r="9"
