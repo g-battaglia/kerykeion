@@ -8,7 +8,7 @@ from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointMo
 
 
 if TYPE_CHECKING:
-    from kerykeion import AstrologicalSubjectFactory, HouseComparisonModel
+    from kerykeion import HouseComparisonModel
 
 def get_decoded_kerykeion_celestial_point_name(input_planet_name: str, celestial_point_language: KerykeionLanguageCelestialPointModel) -> str:
     """
@@ -292,6 +292,7 @@ def draw_aspect_line(
         f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
         f"</g>"
     )
+
 
 def convert_decimal_to_degree_string(dec: float, format_type: Literal["1", "2", "3"] = "3") -> str:
     """
@@ -741,6 +742,7 @@ def draw_transit_aspect_list(
 
     return out
 
+
 def calculate_moon_phase_chart_params(
     degrees_between_sun_and_moon: float,
     latitude: float
@@ -803,6 +805,7 @@ def calculate_moon_phase_chart_params(
         "lunar_phase_rotate": lunar_phase_rotate,
     }
 
+
 def draw_house_grid(
         main_subject_houses_list: list[KerykeionPointModel],
         chart_type: ChartType,
@@ -827,7 +830,7 @@ def draw_house_grid(
     if chart_type in ["Synastry", "Transit", "Return"] and secondary_subject_houses_list is None:
         raise KerykeionException("secondary_houses is None")
 
-    svg_output = '<g transform="translate(700,-20)">'
+    svg_output = '<g transform="translate(700,0)">'
 
     line_increment = 10
     for i, house in enumerate(main_subject_houses_list):
@@ -845,7 +848,7 @@ def draw_house_grid(
 
     if chart_type == "Synastry" or chart_type == "Return":
         svg_output += '<!-- Synastry Houses -->'
-        svg_output += '<g transform="translate(910, -20)">'
+        svg_output += '<g transform="translate(950, 0)">'
         line_increment = 10
 
         for i, house in enumerate(secondary_subject_houses_list): # type: ignore
@@ -896,20 +899,20 @@ def draw_planet_grid(
 
     if chart_type == "Synastry":
         svg_output = (
-            f'<g transform="translate(120, -15)">'
-            f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
+            f'<g transform="translate(0, -15)">'
+            f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
             f'</g>'
         )
     elif chart_type == "Transit":
         svg_output = (
-            f'<g transform="translate(120, -15)">'
-            f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
+            f'<g transform="translate(0, -15)">'
+            f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
             f'</g>'
         )
     elif chart_type == "Return":
         svg_output = (
-            f'<g transform="translate(150, -15)">'
-            f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
+            f'<g transform="translate(0, -15)">'
+            f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
             f'</g>'
         )
     else:
@@ -943,18 +946,18 @@ def draw_planet_grid(
 
         if chart_type == "Transit":
             svg_output += (
-                f'<g transform="translate(320, -15)">'
-                f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{second_subject_name}</text>'
+                f'<g transform="translate(200, -15)">'
+                f'<text style="fill:{text_color}; font-size: 14px;">{second_subject_name}</text>'
             )
         elif chart_type == "Return":
             svg_output += (
-                f'<g transform="translate(425, -15)">'
-                f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}</text>'
+                f'<g transform="translate(250, -15)">'
+                f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}</text>'
             )
         else:
             svg_output += (
-                f'<g transform="translate(405, -15)">'
-                f'<text text-anchor="end" style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}</text>'
+                f'<g transform="translate(250, -15)">'
+                f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}</text>'
             )
 
         svg_output += end_of_line
@@ -1235,7 +1238,7 @@ def draw_house_comparison_grid(
         return_label: str = "Return",
         radix_label: str = "Radix",
         x_position: int = 1030,
-        y_position: int = -20,
+        y_position: int = 0,
 ) -> str:
     """
     Generate SVG code for displaying a comparison of points across houses between two charts.
@@ -1314,7 +1317,7 @@ def draw_single_house_comparison_grid(
         return_point_label: str = "Return Point",
         natal_house_label: str = "Natal House",
         x_position: int = 1030,
-        y_position: int = -20,
+        y_position: int = 0,
 ) -> str:
     """
     Generate SVG code for displaying celestial points and their house positions.
