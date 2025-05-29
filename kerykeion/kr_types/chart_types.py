@@ -92,4 +92,9 @@ class ChartTemplateDictionary(TypedDict):
     air_string: str
     water_string: str
 
+    quality_string: str
+    cardinal_string: str
+    fixed_string: str
+    mutable_string: str
+
     makeLunarPhase: str
