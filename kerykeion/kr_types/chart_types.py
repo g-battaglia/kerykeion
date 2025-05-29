@@ -9,6 +9,7 @@ class ChartTemplateDictionary(TypedDict):
     third_circle: str
     makeAspects: str
     makeAspectGrid: str
+    makeDoubleChartAspectList: str
     makeHouseComparisonGrid: str
     chart_height: float
     chart_width: float

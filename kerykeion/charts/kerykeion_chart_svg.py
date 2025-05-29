@@ -796,6 +796,7 @@ class KerykeionChartSVG:
             )
 
             # Aspects
+            template_dict["makeDoubleChartAspectList"] = ""
             template_dict["makeAspectGrid"] = draw_aspect_grid(
                 self.chart_colors_settings["paper_0"],
                 self.available_planets_setting,
@@ -909,6 +910,7 @@ class KerykeionChartSVG:
             )
 
             # Aspects
+            template_dict["makeDoubleChartAspectList"] = ""
             template_dict["makeAspectGrid"] = draw_aspect_grid(
                 self.chart_colors_settings["paper_0"],
                 self.available_planets_setting,
@@ -1020,6 +1022,12 @@ class KerykeionChartSVG:
             template_dict["air_string"] = ""
             template_dict["water_string"] = ""
 
+            # Transit has no Qualities Percentages
+            template_dict["qualities_string"] = ""
+            template_dict["cardinal_string"] = ""
+            template_dict["fixed_string"] = ""
+            template_dict["mutable_string"] = ""
+
             # Set viewbox
             if self.double_chart_aspect_grid_type == "table":
                 template_dict["viewbox"] = self._TRANSIT_CHART_WITH_TABLE_VIWBOX
@@ -1058,9 +1066,11 @@ class KerykeionChartSVG:
             # Aspects
             if self.double_chart_aspect_grid_type == "list":
                 title = f"{self.first_obj.name} - {self.language_settings.get("transit_aspects", "Transit Aspects")}"
-                template_dict["makeAspectGrid"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings)
+                template_dict["makeAspectGrid"] = ""
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings)
             else:
-                template_dict["makeAspectGrid"] = draw_transit_aspect_grid(
+                template_dict["makeAspectGrid"] = ""
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     self.chart_colors_settings["paper_0"],
                     self.available_planets_setting,
                     self.aspects_list,
@@ -1205,14 +1215,16 @@ class KerykeionChartSVG:
 
             # Aspects
             if self.double_chart_aspect_grid_type == "list":
-                template_dict["makeAspectGrid"] = draw_transit_aspect_list(
+                template_dict["makeAspectGrid"] = ""
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
                     f"{self.first_obj.name} - {self.second_obj.name} {self.language_settings.get('synastry_aspects', 'Synastry Aspects')}", # type: ignore
                     self.aspects_list,
                     self.planets_settings,
                     self.aspects_settings
                 )
             else:
-                template_dict["makeAspectGrid"] = draw_transit_aspect_grid(
+                template_dict["makeAspectGrid"] = ""
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     self.chart_colors_settings["paper_0"],
                     self.available_planets_setting,
                     self.aspects_list,
@@ -1334,9 +1346,11 @@ class KerykeionChartSVG:
             # Aspects
             if self.double_chart_aspect_grid_type == "list":
                 title = self.language_settings.get("return_aspects", "Natal to Return Aspects")
-                template_dict["makeAspectGrid"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings, max_columns=7)
+                template_dict["makeAspectGrid"] = ""
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings, max_columns=7)
             else:
-                template_dict["makeAspectGrid"] = draw_transit_aspect_grid(
+                template_dict["makeAspectGrid"] = ""
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     self.chart_colors_settings["paper_0"],
                     self.available_planets_setting,
                     self.aspects_list,
@@ -1494,6 +1508,7 @@ class KerykeionChartSVG:
             )
 
             # Aspects
+            template_dict["makeDoubleChartAspectList"] = ""
             template_dict["makeAspectGrid"] = draw_aspect_grid(
                 self.chart_colors_settings["paper_0"],
                 self.available_planets_setting,
