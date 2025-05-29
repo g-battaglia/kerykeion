@@ -1109,7 +1109,6 @@ def calculate_element_points(
         planets_settings: list[KerykeionSettingsCelestialPointModel],
         celestial_points_names: list[str],
         subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-        planet_in_zodiac_extra_points: int = 10
     ):
     """
     Calculate elemental point totals based on planetary positions.
@@ -1118,7 +1117,6 @@ def calculate_element_points(
         planets_settings (list): List of planet configuration dictionaries
         celestial_points_names (list): List of celestial point names to process
         subject: Astrological subject with get() method for accessing planet data
-        planet_in_zodiac_extra_points (int): Extra points awarded for planets in their home sign
 
     Returns:
         dict: Dictionary with element point totals for 'fire', 'earth', 'air', and 'water'
@@ -1162,7 +1160,6 @@ def calculate_synastry_element_points(
         celestial_points_names: list[str],
         subject1: AstrologicalSubjectModel,
         subject2: AstrologicalSubjectModel,
-        planet_in_zodiac_extra_points: int = 10
     ):
     """
     Calculate elemental point totals for both subjects in a synastry chart.
@@ -1172,7 +1169,6 @@ def calculate_synastry_element_points(
         celestial_points_names (list): List of celestial point names to process
         subject1: First astrological subject with get() method for accessing planet data
         subject2: Second astrological subject with get() method for accessing planet data
-        planet_in_zodiac_extra_points (int): Extra points awarded for planets in their home sign
 
     Returns:
         dict: Dictionary with element point totals as percentages, where the sum equals 100%
@@ -1422,3 +1418,120 @@ def makeLunarPhase(degrees_between_sun_and_moon: float, latitude: float) -> str:
     )
 
     return svg
+
+
+def calculate_quality_points(
+        planets_settings: list[KerykeionSettingsCelestialPointModel],
+        celestial_points_names: list[str],
+        subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+    ):
+    """
+    Calculate quality point totals based on planetary positions.
+
+    Args:
+        planets_settings (list): List of planet configuration dictionaries
+        celestial_points_names (list): List of celestial point names to process
+        subject: Astrological subject with get() method for accessing planet data
+        planet_in_zodiac_extra_points (int): Extra points awarded for planets in their home sign
+
+    Returns:
+        dict: Dictionary with quality point totals for 'cardinal', 'fixed', and 'mutable'
+    """
+    ZODIAC = (
+        {"name": "Ari", "quality": "cardinal"},
+        {"name": "Tau", "quality": "fixed"},
+        {"name": "Gem", "quality": "mutable"},
+        {"name": "Can", "quality": "cardinal"},
+        {"name": "Leo", "quality": "fixed"},
+        {"name": "Vir", "quality": "mutable"},
+        {"name": "Lib", "quality": "cardinal"},
+        {"name": "Sco", "quality": "fixed"},
+        {"name": "Sag", "quality": "mutable"},
+        {"name": "Cap", "quality": "cardinal"},
+        {"name": "Aqu", "quality": "fixed"},
+        {"name": "Pis", "quality": "mutable"},
+    )
+
+    # Initialize quality point totals
+    quality_totals = {
+        "cardinal": 0.0,
+        "fixed": 0.0,
+        "mutable": 0.0
+    }
+
+    # Make list of the points sign
+    points_sign = [subject.get(planet).sign_num for planet in celestial_points_names]
+
+    for i in range(len(planets_settings)):
+        # Add points to appropriate quality
+        quality = ZODIAC[points_sign[i]]["quality"]
+        quality_totals[quality] += planets_settings[i]["element_points"]
+
+    return quality_totals
+
+
+def calculate_synastry_quality_points(
+        planets_settings: list[KerykeionSettingsCelestialPointModel],
+        celestial_points_names: list[str],
+        subject1: AstrologicalSubjectModel,
+        subject2: AstrologicalSubjectModel,
+    ):
+    """
+    Calculate quality point totals for both subjects in a synastry chart.
+
+    Args:
+        planets_settings (list): List of planet configuration dictionaries
+        celestial_points_names (list): List of celestial point names to process
+        subject1: First astrological subject with get() method for accessing planet data
+        subject2: Second astrological subject with get() method for accessing planet data
+
+    Returns:
+        dict: Dictionary with quality point totals as percentages, where the sum equals 100%
+    """
+    ZODIAC = (
+        {"name": "Ari", "quality": "cardinal"},
+        {"name": "Tau", "quality": "fixed"},
+        {"name": "Gem", "quality": "mutable"},
+        {"name": "Can", "quality": "cardinal"},
+        {"name": "Leo", "quality": "fixed"},
+        {"name": "Vir", "quality": "mutable"},
+        {"name": "Lib", "quality": "cardinal"},
+        {"name": "Sco", "quality": "fixed"},
+        {"name": "Sag", "quality": "mutable"},
+        {"name": "Cap", "quality": "cardinal"},
+        {"name": "Aqu", "quality": "fixed"},
+        {"name": "Pis", "quality": "mutable"},
+    )
+
+    # Initialize combined quality point totals
+    combined_totals = {
+        "cardinal": 0.0,
+        "fixed": 0.0,
+        "mutable": 0.0
+    }
+
+    # Make list of the points sign for both subjects
+    subject1_points_sign = [subject1.get(planet).sign_num for planet in celestial_points_names]
+    subject2_points_sign = [subject2.get(planet).sign_num for planet in celestial_points_names]
+
+    # Calculate quality points for subject 1
+    for i in range(len(planets_settings)):
+        # Add points to appropriate quality
+        quality1 = ZODIAC[subject1_points_sign[i]]["quality"]
+        combined_totals[quality1] += planets_settings[i]["element_points"]
+
+    # Calculate quality points for subject 2
+    for i in range(len(planets_settings)):
+        # Add points to appropriate quality
+        quality2 = ZODIAC[subject2_points_sign[i]]["quality"]
+        combined_totals[quality2] += planets_settings[i]["element_points"]
+
+    # Calculate total points across all qualities
+    total_points = sum(combined_totals.values())
+
+    # Convert to percentages (total = 100%)
+    if total_points > 0:
+        for quality in combined_totals:
+            combined_totals[quality] = (combined_totals[quality] / total_points) * 100.0
+
+    return combined_totals

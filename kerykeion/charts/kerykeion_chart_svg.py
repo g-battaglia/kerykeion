@@ -57,7 +57,9 @@ from kerykeion.charts.charts_utils import (
     format_location_string,
     format_datetime_with_timezone,
     calculate_element_points,
-    calculate_synastry_element_points
+    calculate_synastry_element_points,
+    calculate_quality_points,
+    calculate_synastry_quality_points
 )
 from kerykeion.charts.draw_planets_v2 import draw_planets_v2 as draw_planets
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg
@@ -153,7 +155,6 @@ class KerykeionChartSVG:
     _DEFAULT_NATAL_WIDTH = 870
     _DEFAULT_FULL_WIDTH_WITH_TABLE = 1200
     _DEFAULT_ULTRA_WIDE_WIDTH = 1270
-    _PLANET_IN_ZODIAC_EXTRA_POINTS = 10
 
     _BASIC_CHART_VIEWBOX = f"0 0 {_DEFAULT_NATAL_WIDTH} {_DEFAULT_HEIGHT}"
     _WIDE_CHART_VIEWBOX = f"0 0 {_DEFAULT_FULL_WIDTH} 546.0"
@@ -535,20 +536,37 @@ class KerykeionChartSVG:
                 celestial_points_names,
                 self.first_obj,
                 self.second_obj,
-                self._PLANET_IN_ZODIAC_EXTRA_POINTS,
             )
         else:
             element_totals = calculate_element_points(
                 self.available_planets_setting,
                 celestial_points_names,
                 self.first_obj,
-                self._PLANET_IN_ZODIAC_EXTRA_POINTS,
             )
 
         self.fire = element_totals["fire"]
         self.earth = element_totals["earth"]
         self.air = element_totals["air"]
         self.water = element_totals["water"]
+
+        # Calculate qualities points
+        if self.chart_type == "Synastry":
+            qualities_totals = calculate_synastry_quality_points(
+                self.available_planets_setting,
+                celestial_points_names,
+                self.first_obj,
+                self.second_obj,
+            )
+        else:
+            qualities_totals = calculate_quality_points(
+                self.available_planets_setting,
+                celestial_points_names,
+                self.first_obj,
+            )
+
+        self.cardinal = qualities_totals["cardinal"]
+        self.fixed = qualities_totals["fixed"]
+        self.mutable = qualities_totals["mutable"]
 
         # Set up theme
         if theme not in get_args(KerykeionChartTheme) and theme is not None:
@@ -712,11 +730,11 @@ class KerykeionChartSVG:
         template_dict["makeZodiac"] = self._draw_zodiac_circle_slices(self.main_radius)
 
         # Calculate element percentages
-        total = self.fire + self.water + self.earth + self.air
-        fire_percentage = int(round(100 * self.fire / total))
-        earth_percentage = int(round(100 * self.earth / total))
-        air_percentage = int(round(100 * self.air / total))
-        water_percentage = int(round(100 * self.water / total))
+        total_elements = self.fire + self.water + self.earth + self.air
+        fire_percentage = int(round(100 * self.fire / total_elements))
+        earth_percentage = int(round(100 * self.earth / total_elements))
+        air_percentage = int(round(100 * self.air / total_elements))
+        water_percentage = int(round(100 * self.water / total_elements))
 
         # Element Percentages
         template_dict["elements_string"] = f"{self.language_settings.get('elements', 'Elements')}:"
@@ -724,6 +742,18 @@ class KerykeionChartSVG:
         template_dict["earth_string"] = f"{self.language_settings['earth']} {earth_percentage}%"
         template_dict["air_string"] = f"{self.language_settings['air']} {air_percentage}%"
         template_dict["water_string"] = f"{self.language_settings['water']} {water_percentage}%"
+
+
+        # Qualities Percentages
+        total_qualities = self.cardinal + self.fixed + self.mutable
+        cardinal_percentage = int(round(100 * self.cardinal / total_qualities))
+        fixed_percentage = int(round(100 * self.fixed / total_qualities))
+        mutable_percentage = int(round(100 * self.mutable / total_qualities))
+
+        template_dict["qualities_string"] = f"{self.language_settings.get('qualities', 'Qualities')}:"
+        template_dict["cardinal_string"] = f"{self.language_settings.get('cardinal', 'Cardinal')} {cardinal_percentage}%"
+        template_dict["fixed_string"] = f"{self.language_settings.get('fixed', 'Fixed')} {fixed_percentage}%"
+        template_dict["mutable_string"] = f"{self.language_settings.get('mutable', 'Mutable')} {mutable_percentage}%"
 
         # Get houses list for main subject
         first_subject_houses_list = get_houses_list(self.first_obj)
@@ -780,12 +810,12 @@ class KerykeionChartSVG:
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings["north"], self.language_settings["south"])
             longitude_string = convert_longitude_coordinate_to_string(self.geolon, self.language_settings["east"], self.language_settings["west"])
 
-            template_dict["top_left_0"] = f'{self.language_settings["info"]}:'
-            template_dict["top_left_1"] = format_location_string(self.location)
+            template_dict["top_left_0"] = f'{self.language_settings.get("location", "Location")}:'
+            template_dict["top_left_1"] = f"{self.first_obj.city}, {self.first_obj.nation}"
             template_dict["top_left_2"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime) # type: ignore
             template_dict["top_left_3"] = f"{self.language_settings['latitude']}: {latitude_string}"
             template_dict["top_left_4"] = f"{self.language_settings['longitude']}: {longitude_string}"
-            template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings.get(self.chart_type, self.chart_type)}"
+            template_dict["top_left_5"] = f"{self.language_settings.get('time_zone', 'Time Zone')}: {self.first_obj.tz_str}" # type: ignore
 
             # Bottom left section
             if self.first_obj.zodiac_type == "Tropic":
@@ -1781,7 +1811,7 @@ if __name__ == "__main__":
         chart_language="IT",
         theme="strawberry",
     )
-    birth_chart.makeSVG(minify=True, remove_css_variables=True)
+    birth_chart.makeSVG() # minify=True, remove_css_variables=True)
 
     ###
     ## Solar Return Chart
@@ -1797,7 +1827,7 @@ if __name__ == "__main__":
         active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant"],
     )
 
-    solar_return_chart.makeSVG(minify=True, remove_css_variables=True)
+    solar_return_chart.makeSVG() # minify=True, remove_css_variables=True)
 
     ###
     ## Single wheel return
@@ -1810,7 +1840,7 @@ if __name__ == "__main__":
         active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
     )
 
-    single_wheel_return_chart.makeSVG(minify=True, remove_css_variables=True)
+    single_wheel_return_chart.makeSVG() # minify=True, remove_css_variables=True)
 
     ###
     ## Lunar return
@@ -1826,7 +1856,7 @@ if __name__ == "__main__":
         theme="dark",
         active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
     )
-    lunar_return_chart.makeSVG(minify=True, remove_css_variables=True)
+    lunar_return_chart.makeSVG() # minify=True, remove_css_variables=True)
 
     ###
     ## Transit Chart
@@ -1839,7 +1869,7 @@ if __name__ == "__main__":
         theme="dark",
         active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant"]
     )
-    transit_chart.makeSVG(minify=True, remove_css_variables=True)
+    transit_chart.makeSVG() # minify=True, remove_css_variables=True)
 
     ###
     ## Synastry Chart
@@ -1852,7 +1882,7 @@ if __name__ == "__main__":
         theme="dark",
         active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
     )
-    synastry_chart.makeSVG(minify=True, remove_css_variables=True)
+    synastry_chart.makeSVG() # minify=True, remove_css_variables=True)
 
     ##
     # Transit Chart with Grid
@@ -1866,6 +1896,6 @@ if __name__ == "__main__":
         active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant"],
         double_chart_aspect_grid_type="table"
     )
-    transit_chart_with_grid.makeSVG(minify=True, remove_css_variables=True)
+    transit_chart_with_grid.makeSVG() # minify=True, remove_css_variables=True)
     transit_chart_with_grid.makeAspectGridOnlySVG()
     transit_chart_with_grid.makeWheelOnlySVG()
