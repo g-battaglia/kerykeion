@@ -90,6 +90,7 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     iso_formatted_local_datetime: str
     iso_formatted_utc_datetime: str
     julian_day: float
+    day_of_week: str
 
     # Common configuration
     zodiac_type: ZodiacType
