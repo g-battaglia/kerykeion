@@ -14,11 +14,12 @@ from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
 from kerykeion.kr_types.kr_literals import AstrologicalPoint
-from typing import Union, List
+from kerykeion.utilities import find_common_active_points
+from typing import Union, List, Optional
 
 
 class SynastryAspects(NatalAspects):
@@ -31,8 +32,7 @@ class SynastryAspects(NatalAspects):
         kr_object_one: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         kr_object_two: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
-        active_points: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
-        # FIXME: Should be inherited from the User and merged
+        active_points: Optional[list[AstrologicalPoint]] = None,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
     ):
         # Subjects
@@ -52,6 +52,19 @@ class SynastryAspects(NatalAspects):
         # Private variables of the aspects
         self._all_aspects: Union[list, None] = None
         self._relevant_aspects: Union[list, None] = None
+
+        if not self.active_points:
+            self.active_points = self.first_user.active_points
+        else:
+            self.active_points = find_common_active_points(
+                self.first_user.active_points,
+                self.active_points,
+            )
+
+        self.active_points = find_common_active_points(
+            self.second_user.active_points,
+            self.active_points,
+        )
 
     @cached_property
     def all_aspects(self):
@@ -119,8 +132,8 @@ if __name__ == "__main__":
 
     setup_logging(level="debug")
 
-    john = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 10, 30, 0, "Liverpool", "GB")
-    yoko = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 10, 30, 0, "Tokyo", "JP")
+    john = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 10, 30, "Liverpool", "GB")
+    yoko = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP")
 
     synastry_aspects = SynastryAspects(john, yoko)
 

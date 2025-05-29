@@ -15,8 +15,9 @@ from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
+from kerykeion.utilities import find_common_active_points
 from pathlib import Path
-from typing import Union, List
+from typing import Union, List, Optional
 
 
 AXES_LIST = [
@@ -35,17 +36,23 @@ class NatalAspects:
 
     user: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
     new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None
-    active_points: List[AstrologicalPoint] = field(default_factory=lambda: DEFAULT_ACTIVE_POINTS)
-    # FIXME: Should be inherited from the User and merged
+    active_points: Optional[List[AstrologicalPoint]] = field(default_factory=lambda: None)
     active_aspects: List[ActiveAspect] = field(default_factory=lambda: DEFAULT_ACTIVE_ASPECTS)
 
     def __post_init__(self):
         self.settings = get_settings(self.new_settings_file)
 
-        self.active_points = self.active_points
         self.celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
         self.aspects_settings = DEFAULT_CHART_ASPECTS_SETTINGS
         self.axes_orbit_settings =  DEFAULT_AXIS_ORBIT
+
+        if not self.active_points:
+            self.active_points = self.user.active_points
+        else:
+            self.active_points = find_common_active_points(
+                self.user.active_points,
+                self.active_points,
+            )
 
 
     @cached_property

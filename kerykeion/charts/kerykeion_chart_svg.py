@@ -1780,7 +1780,6 @@ if __name__ == "__main__":
         first_obj=subject,
         chart_language="IT",
         theme="strawberry",
-        active_points=["Mercury", "Venus", "Jupiter", "Saturn", "Ascendant"],
     )
     birth_chart.makeSVG(minify=True, remove_css_variables=True)
 
