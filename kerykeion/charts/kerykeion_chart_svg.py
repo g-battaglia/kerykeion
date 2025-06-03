@@ -52,7 +52,8 @@ from kerykeion.charts.charts_utils import (
     draw_transit_aspect_grid,
     draw_single_house_comparison_grid,
     makeLunarPhase,
-    draw_house_grid,
+    draw_main_house_grid,
+    draw_secondary_house_grid,
     draw_main_planet_grid,
     draw_secondary_planet_grid,
     format_location_string,
@@ -837,12 +838,12 @@ class KerykeionChartSVG:
             template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
 
             # Houses and planet drawing
-            template_dict["makeHousesGrid"] = draw_house_grid(
+            template_dict["makeMainHousesGrid"] = draw_main_house_grid(
                 main_subject_houses_list=first_subject_houses_list,
-                chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self.language_settings["cusp"],
             )
+            template_dict["makeSecondaryHousesGrid"] = ""
 
             template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
                 r=self.main_radius,
@@ -973,12 +974,12 @@ class KerykeionChartSVG:
             template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
 
             # Houses and planet drawing
-            template_dict["makeHousesGrid"] = draw_house_grid(
+            template_dict["makeMainHousesGrid"] = draw_main_house_grid(
                 main_subject_houses_list=first_subject_houses_list,
-                chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self.language_settings["cusp"],
             )
+            template_dict["makeSecondaryHousesGrid"] = ""
 
             template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
                 r=self.main_radius,
@@ -1115,13 +1116,17 @@ class KerykeionChartSVG:
             template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
 
             # Houses and planet drawing
-            template_dict["makeHousesGrid"] = draw_house_grid(
+            template_dict["makeMainHousesGrid"] = draw_main_house_grid(
                 main_subject_houses_list=first_subject_houses_list,
-                secondary_subject_houses_list=second_subject_houses_list,
-                chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self.language_settings["cusp"],
             )
+            # template_dict["makeSecondaryHousesGrid"] = draw_secondary_house_grid(
+            #     secondary_subject_houses_list=second_subject_houses_list,
+            #     text_color=self.chart_colors_settings["paper_0"],
+            #     house_cusp_generale_name_label=self.language_settings["cusp"],
+            # )
+            template_dict["makeSecondaryHousesGrid"] = ""
 
             template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
                 r=self.main_radius,
@@ -1272,10 +1277,14 @@ class KerykeionChartSVG:
             template_dict["makeLunarPhase"] = ""
 
             # Houses and planet drawing
-            template_dict["makeHousesGrid"] = draw_house_grid(
+            template_dict["makeMainHousesGrid"] = draw_main_house_grid(
                 main_subject_houses_list=first_subject_houses_list,
+                text_color=self.chart_colors_settings["paper_0"],
+                house_cusp_generale_name_label=self.language_settings["cusp"],
+            )
+
+            template_dict["makeSecondaryHousesGrid"] = draw_secondary_house_grid(
                 secondary_subject_houses_list=second_subject_houses_list,
-                chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self.language_settings["cusp"],
             )
@@ -1419,10 +1428,14 @@ class KerykeionChartSVG:
             template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
 
             # Houses and planet drawing
-            template_dict["makeHousesGrid"] = draw_house_grid(
+            template_dict["makeMainHousesGrid"] = draw_main_house_grid(
                 main_subject_houses_list=first_subject_houses_list,
+                text_color=self.chart_colors_settings["paper_0"],
+                house_cusp_generale_name_label=self.language_settings["cusp"],
+            )
+
+            template_dict["makeSecondaryHousesGrid"] = draw_secondary_house_grid(
                 secondary_subject_houses_list=second_subject_houses_list,
-                chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self.language_settings["cusp"],
             )
@@ -1573,12 +1586,12 @@ class KerykeionChartSVG:
             template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
 
             # Houses and planet drawing
-            template_dict["makeHousesGrid"] = draw_house_grid(
+            template_dict["makeMainHousesGrid"] = draw_main_house_grid(
                 main_subject_houses_list=first_subject_houses_list,
-                chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self.language_settings["cusp"],
             )
+            template_dict["makeSecondaryHousesGrid"] = ""
 
             template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
                 r=self.main_radius,

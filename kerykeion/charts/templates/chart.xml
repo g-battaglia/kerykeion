@@ -110,18 +110,21 @@ OpenAstro.org -->
 
         <!-- Houses_And_Planets_Grid -->
         <g kr:node="Houses_And_Planets_Grid">
-            <!-- Planet Grid -->
+            <!-- Main Subject Grid -->
             <g kr:node="Main_Planet_Grid">
                 $makeMainPlanetGrid
+            </g>
+
+            <g kr:node="Secondary_Houses_Grid">
+                $makeSecondaryHousesGrid
             </g>
 
             <g kr:node="Secondary_Planet_Grid">
                 $makeSecondaryPlanetGrid
             </g>
 
-            <!-- Houses Grid -->
-            <g kr:node="Houses_Grid">
-                $makeHousesGrid
+            <g kr:node="Main_Houses_Grid">
+                $makeMainHousesGrid
             </g>
 
             <!-- House Comparison Grid -->
