@@ -896,27 +896,28 @@ def draw_planet_grid(
     line_height = 10
     offset = 0
     offset_between_lines = 14
+    svg_output = "<g>"  # Removed the initial translate
 
     if chart_type == "Synastry":
-        svg_output = (
-            f'<g transform="translate(0, -15)">'
+        svg_output += (
+            f'<g transform="translate(620, 15)">'  # Added the 620,30 offset (adjusted for -15)
             f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
             f'</g>'
         )
     elif chart_type == "Transit":
-        svg_output = (
-            f'<g transform="translate(0, -15)">'
+        svg_output += (
+            f'<g transform="translate(620, 15)">'  # Added the 620,30 offset (adjusted for -15)
             f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
             f'</g>'
         )
     elif chart_type == "Return":
-        svg_output = (
-            f'<g transform="translate(0, -15)">'
+        svg_output += (
+            f'<g transform="translate(620, 15)">'  # Added the 620,30 offset (adjusted for -15)
             f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
             f'</g>'
         )
     else:
-        svg_output = ""
+        svg_output += ""
 
     end_of_line = "</g>"
 
@@ -927,7 +928,7 @@ def draw_planet_grid(
 
         decoded_name = get_decoded_kerykeion_celestial_point_name(planet["name"], celestial_point_language)
         svg_output += (
-            f'<g transform="translate({offset},{line_height})">'
+            f'<g transform="translate({620 + offset},{30 + line_height})">'  # Added the 620,30 offset
             f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{decoded_name}</text>'
             f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{planet["name"]}" /></g>'
             f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(planet["position"])}</text>'
@@ -946,17 +947,17 @@ def draw_planet_grid(
 
         if chart_type == "Transit":
             svg_output += (
-                f'<g transform="translate(200, -15)">'
+                f'<g transform="translate(820, 15)">'  # 620+200, 30-15
                 f'<text style="fill:{text_color}; font-size: 14px;">{second_subject_name}</text>'
             )
         elif chart_type == "Return":
             svg_output += (
-                f'<g transform="translate(250, -15)">'
+                f'<g transform="translate(870, 15)">'  # 620+250, 30-15
                 f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}</text>'
             )
         else:
             svg_output += (
-                f'<g transform="translate(250, -15)">'
+                f'<g transform="translate(870, 15)">'  # 620+250, 30-15
                 f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}</text>'
             )
 
@@ -966,13 +967,9 @@ def draw_planet_grid(
         second_offset = 250
 
         for i, t_planet in enumerate(second_subject_available_kerykeion_celestial_points):
-            # if i == 27:
-            #     second_line_height = 10
-            #    second_offset = -120
-
             second_decoded_name = get_decoded_kerykeion_celestial_point_name(t_planet["name"], celestial_point_language)
             svg_output += (
-                f'<g transform="translate({second_offset},{second_line_height})">'
+                f'<g transform="translate({620 + second_offset},{30 + second_line_height})">'  # Added the 620,30 offset
                 f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{second_decoded_name}</text>'
                 f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{t_planet["name"]}" /></g>'
                 f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(t_planet["position"])}</text>'
@@ -985,6 +982,7 @@ def draw_planet_grid(
             svg_output += end_of_line
             second_line_height += offset_between_lines
 
+    svg_output += "</g>"
     return svg_output
 
 

@@ -25,7 +25,8 @@
   - [ ] With UTC ISO 8601 string  
   - [ ] With current UTC time  
   - [ ] With only active planets  
-- [ ] Add weekday name to the output  
+- [ ] Discepolo's Score in Synastry
+- [x] Add weekday name to the output  
 - [ ] Add planetary speed and direction  
 - [ ] Create utility function to retrieve all active planets  
 - [ ] Full documentation for the library and AstrologerAPI
