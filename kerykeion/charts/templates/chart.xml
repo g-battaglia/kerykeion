@@ -111,8 +111,12 @@ OpenAstro.org -->
         <!-- Houses_And_Planets_Grid -->
         <g kr:node="Houses_And_Planets_Grid">
             <!-- Planet Grid -->
-            <g kr:node="Planet_Grid">
-                $makePlanetGrid
+            <g kr:node="Main_Planet_Grid">
+                $makeMainPlanetGrid
+            </g>
+
+            <g kr:node="Secondary_Planet_Grid">
+                $makeSecondaryPlanetGrid
             </g>
 
             <!-- Houses Grid -->

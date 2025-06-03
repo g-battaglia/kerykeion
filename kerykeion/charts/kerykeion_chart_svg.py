@@ -53,7 +53,8 @@ from kerykeion.charts.charts_utils import (
     draw_single_house_comparison_grid,
     makeLunarPhase,
     draw_house_grid,
-    draw_planet_grid,
+    draw_main_planet_grid,
+    draw_secondary_planet_grid,
     format_location_string,
     format_datetime_with_timezone,
     calculate_element_points,
@@ -866,7 +867,7 @@ class KerykeionChartSVG:
                 main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
             )
 
-            template_dict["makePlanetGrid"] = draw_planet_grid(
+            template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
                 planets_and_houses_grid_title=self.language_settings["planets_and_house"],
                 subject_name=self.first_obj.name,
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
@@ -874,6 +875,7 @@ class KerykeionChartSVG:
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
             )
+            template_dict["makeSecondaryPlanetGrid"] = ""
             template_dict["makeHouseComparisonGrid"] = ""
 
         elif self.chart_type == "Composite":
@@ -1003,7 +1005,7 @@ class KerykeionChartSVG:
 
             subject_name = f"{self.first_obj.first_subject.name} {self.language_settings['and_word']} {self.first_obj.second_subject.name}" # type: ignore
 
-            template_dict["makePlanetGrid"] = draw_planet_grid(
+            template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
                 planets_and_houses_grid_title=self.language_settings["planets_and_house"],
                 subject_name=subject_name,
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
@@ -1011,6 +1013,7 @@ class KerykeionChartSVG:
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
             )
+            template_dict["makeSecondaryPlanetGrid"] = ""
             template_dict["makeHouseComparisonGrid"] = ""
 
         elif self.chart_type == "Transit":
@@ -1146,19 +1149,25 @@ class KerykeionChartSVG:
                 third_circle_radius=self.third_circle_radius,
             )
 
-            # Planet grid
-
+            # Planet grids
             first_return_grid_title = f"{self.first_obj.name} ({self.language_settings.get('inner_wheel', 'Inner Wheel')})"
             second_return_grid_title = f"{self.language_settings.get('Transit', 'Transit')} ({self.language_settings.get('outer_wheel', 'Outer Wheel')})"
-            template_dict["makePlanetGrid"] = draw_planet_grid(
+            template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
                 planets_and_houses_grid_title="",
                 subject_name=first_return_grid_title,
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
+            )
+
+            template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
+                planets_and_houses_grid_title="",
                 second_subject_name=second_return_grid_title,
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
+                chart_type=self.chart_type,
+                text_color=self.chart_colors_settings["paper_0"],
+                celestial_point_language=self.language_settings["celestial_points"],
             )
 
             # House comparison grid
@@ -1298,15 +1307,21 @@ class KerykeionChartSVG:
             )
 
             # Planet grid
-            template_dict["makePlanetGrid"] = draw_planet_grid(
+            template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
                 planets_and_houses_grid_title="",
                 subject_name=f"{self.first_obj.name} ({self.language_settings.get('inner_wheel', 'Inner Wheel')})",
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
+            )
+            template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
+                planets_and_houses_grid_title="",
                 second_subject_name= f"{self.second_obj.name} ({self.language_settings.get('outer_wheel', 'Outer Wheel')})", # type: ignore
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
+                chart_type=self.chart_type,
+                text_color=self.chart_colors_settings["paper_0"],
+                celestial_point_language=self.language_settings["celestial_points"],
             )
             template_dict["makeHouseComparisonGrid"] = ""
 
@@ -1445,15 +1460,21 @@ class KerykeionChartSVG:
             else:
                 first_return_grid_title = f"{self.first_obj.name} ({self.language_settings.get('inner_wheel', 'Inner Wheel')})"
                 second_return_grid_title = f"{self.language_settings.get("lunar_return", "Lunar Return")} ({self.language_settings.get("outer_wheel", "Outer Wheel")})"
-            template_dict["makePlanetGrid"] = draw_planet_grid(
+            template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
                 planets_and_houses_grid_title="",
                 subject_name=first_return_grid_title,
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
+            )
+            template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
+                planets_and_houses_grid_title="",
                 second_subject_name=second_return_grid_title,
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
+                chart_type=self.chart_type,
+                text_color=self.chart_colors_settings["paper_0"],
+                celestial_point_language=self.language_settings["celestial_points"]
             )
 
             house_comparison_factory = HouseComparisonFactory(
@@ -1582,7 +1603,7 @@ class KerykeionChartSVG:
                 main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
             )
 
-            template_dict["makePlanetGrid"] = draw_planet_grid(
+            template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
                 planets_and_houses_grid_title=self.language_settings["planets_and_house"],
                 subject_name=self.first_obj.name,
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
@@ -1590,6 +1611,7 @@ class KerykeionChartSVG:
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self.language_settings["celestial_points"],
             )
+            template_dict["makeSecondaryPlanetGrid"] = ""
             template_dict["makeHouseComparisonGrid"] = ""
 
         return ChartTemplateDictionary(**template_dict)
