@@ -120,7 +120,7 @@ OpenAstro.org -->
             </g>
 
             <!-- Houses Grid -->
-            <g kr:node="Houses_Grid" transform="translate(20,30)">
+            <g kr:node="Houses_Grid">
                 $makeHousesGrid
             </g>
 
