@@ -111,7 +111,7 @@ OpenAstro.org -->
         <!-- Houses_And_Planets_Grid -->
         <g kr:node="Houses_And_Planets_Grid">
             <!-- Planet Grid -->
-            <g kr:node="Planet_Grid" transform="translate(620,30)">
+            <g kr:node="Planet_Grid">
                 $makePlanetGrid
             </g>
 
