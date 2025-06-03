@@ -830,7 +830,7 @@ def draw_house_grid(
     if chart_type in ["Synastry", "Transit", "Return"] and secondary_subject_houses_list is None:
         raise KerykeionException("secondary_houses is None")
 
-    svg_output = '<g transform="translate(700,0)">'
+    svg_output = '<g transform="translate(720,30)">'
 
     line_increment = 10
     for i, house in enumerate(main_subject_houses_list):
@@ -848,7 +848,8 @@ def draw_house_grid(
 
     if chart_type == "Synastry" or chart_type == "Return":
         svg_output += '<!-- Synastry Houses -->'
-        svg_output += '<g transform="translate(950, 0)">'
+        # Changed from translate(950,0) to translate(970,30) to incorporate the outer translate(20,30)
+        svg_output += '<g transform="translate(970,30)">'
         line_increment = 10
 
         for i, house in enumerate(secondary_subject_houses_list): # type: ignore
