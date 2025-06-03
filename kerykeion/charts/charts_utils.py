@@ -867,18 +867,16 @@ def draw_house_grid(
     return svg_output
 
 
-def draw_planet_grid(
+def draw_main_planet_grid(
         planets_and_houses_grid_title: str,
         subject_name: str,
         available_kerykeion_celestial_points: list[KerykeionPointModel],
         chart_type: ChartType,
         celestial_point_language: KerykeionLanguageCelestialPointModel,
-        second_subject_name: Union[str, None] = None,
-        second_subject_available_kerykeion_celestial_points: Union[list[KerykeionPointModel], None] = None,
         text_color: str = "#000000",
     ) -> str:
     """
-    Draws the planet grid for the given celestial points and chart type.
+    Draws the planet grid for the main subject.
 
     Args:
         planets_and_houses_grid_title (str): Title of the grid.
@@ -886,17 +884,15 @@ def draw_planet_grid(
         available_kerykeion_celestial_points (list[KerykeionPointModel]): List of celestial points for the subject.
         chart_type (ChartType): Type of the chart.
         celestial_point_language (KerykeionLanguageCelestialPointModel): Language model for celestial points.
-        second_subject_name (str, optional): Name of the second subject. Defaults to None.
-        second_subject_available_kerykeion_celestial_points (list[KerykeionPointModel], optional): List of celestial points for the second subject. Defaults to None.
         text_color (str, optional): Color of the text. Defaults to "#000000".
 
     Returns:
-        str: The SVG output for the planet grid.
+        str: The SVG output for the main planet grid.
     """
     line_height = 10
     offset = 0
     offset_between_lines = 14
-    svg_output = "<g>"  # Removed the initial translate
+    svg_output = ""
 
     if chart_type == "Synastry":
         svg_output += (
@@ -941,48 +937,71 @@ def draw_planet_grid(
         svg_output += end_of_line
         line_height += offset_between_lines
 
-    if chart_type in ["Transit", "Synastry", "Return"]:
-        if second_subject_available_kerykeion_celestial_points is None:
-            raise KerykeionException("second_subject_available_kerykeion_celestial_points is None")
+    return svg_output
 
-        if chart_type == "Transit":
-            svg_output += (
-                f'<g transform="translate(820, 15)">'  # 620+200, 30-15
-                f'<text style="fill:{text_color}; font-size: 14px;">{second_subject_name}</text>'
-            )
-        elif chart_type == "Return":
-            svg_output += (
-                f'<g transform="translate(870, 15)">'  # 620+250, 30-15
-                f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}</text>'
-            )
-        else:
-            svg_output += (
-                f'<g transform="translate(870, 15)">'  # 620+250, 30-15
-                f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}</text>'
-            )
+
+def draw_secondary_planet_grid(
+        planets_and_houses_grid_title: str,
+        second_subject_name: str,
+        second_subject_available_kerykeion_celestial_points: list[KerykeionPointModel],
+        chart_type: ChartType,
+        celestial_point_language: KerykeionLanguageCelestialPointModel,
+        text_color: str = "#000000",
+    ) -> str:
+    """
+    Draws the planet grid for the secondary subject in Transit, Synastry, or Return charts.
+
+    Args:
+        planets_and_houses_grid_title (str): Title of the grid.
+        second_subject_name (str): Name of the second subject.
+        second_subject_available_kerykeion_celestial_points (list[KerykeionPointModel]): List of celestial points for the second subject.
+        chart_type (ChartType): Type of the chart.
+        celestial_point_language (KerykeionLanguageCelestialPointModel): Language model for celestial points.
+        text_color (str, optional): Color of the text. Defaults to "#000000".
+
+    Returns:
+        str: The SVG output for the secondary planet grid.
+    """
+    svg_output = ""
+    end_of_line = "</g>"
+
+    if chart_type == "Transit":
+        svg_output += (
+            f'<g transform="translate(820, 15)">'  # 620+200, 30-15
+            f'<text style="fill:{text_color}; font-size: 14px;">{second_subject_name}</text>'
+        )
+    elif chart_type == "Return":
+        svg_output += (
+            f'<g transform="translate(870, 15)">'  # 620+250, 30-15
+            f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}</text>'
+        )
+    else:
+        svg_output += (
+            f'<g transform="translate(870, 15)">'  # 620+250, 30-15
+            f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}</text>'
+        )
+
+    svg_output += end_of_line
+
+    line_height = 10
+    offset = 250
+
+    for i, t_planet in enumerate(second_subject_available_kerykeion_celestial_points):
+        second_decoded_name = get_decoded_kerykeion_celestial_point_name(t_planet["name"], celestial_point_language)
+        svg_output += (
+            f'<g transform="translate({620 + offset},{30 + line_height})">'  # Added the 620,30 offset
+            f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{second_decoded_name}</text>'
+            f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{t_planet["name"]}" /></g>'
+            f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(t_planet["position"])}</text>'
+            f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{t_planet["sign"]}" /></g>'
+        )
+
+        if t_planet["retrograde"]:
+            svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
 
         svg_output += end_of_line
+        line_height += 14  # Using fixed offset_between_lines value
 
-        second_line_height = 10
-        second_offset = 250
-
-        for i, t_planet in enumerate(second_subject_available_kerykeion_celestial_points):
-            second_decoded_name = get_decoded_kerykeion_celestial_point_name(t_planet["name"], celestial_point_language)
-            svg_output += (
-                f'<g transform="translate({620 + second_offset},{30 + second_line_height})">'  # Added the 620,30 offset
-                f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{second_decoded_name}</text>'
-                f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{t_planet["name"]}" /></g>'
-                f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(t_planet["position"])}</text>'
-                f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{t_planet["sign"]}" /></g>'
-            )
-
-            if t_planet["retrograde"]:
-                svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
-
-            svg_output += end_of_line
-            second_line_height += offset_between_lines
-
-    svg_output += "</g>"
     return svg_output
 
 
