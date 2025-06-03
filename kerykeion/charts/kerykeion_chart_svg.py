@@ -372,8 +372,8 @@ class KerykeionChartSVG:
 
             # Calculate aspects (transit to natal)
             synastry_aspects_instance = SynastryAspects(
-                self.second_obj,
                 self.first_obj,
+                self.second_obj,
                 new_settings_file=self.new_settings_file,
                 active_points=active_points,
                 active_aspects=active_aspects,
@@ -1875,7 +1875,7 @@ if __name__ == "__main__":
 
     ###
     ## Transit Chart
-    transit = AstrologicalSubjectFactory.from_birth_data("Transit", 2024, 5, 23, 18, 30, "Guidizzolo", "IT")
+    transit = AstrologicalSubjectFactory.from_current_time()
     transit_chart = KerykeionChartSVG(
         first_obj=subject,
         chart_type="Transit",
