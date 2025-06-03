@@ -5,10 +5,9 @@ from kerykeion.kr_types.kr_literals import AstrologicalPoint
 from typing import Union, Literal, TYPE_CHECKING
 from kerykeion.kr_types.kr_models import AspectModel, KerykeionPointModel, CompositeSubjectModel, PlanetReturnModel, AstrologicalSubjectModel
 from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsCelestialPointModel
+from kerykeion.house_comparison import HouseComparisonModel
 
 
-if TYPE_CHECKING:
-    from kerykeion import HouseComparisonModel
 
 def get_decoded_kerykeion_celestial_point_name(input_planet_name: str, celestial_point_language: KerykeionLanguageCelestialPointModel) -> str:
     """
@@ -806,31 +805,27 @@ def calculate_moon_phase_chart_params(
     }
 
 
-def draw_house_grid(
+def draw_main_house_grid(
         main_subject_houses_list: list[KerykeionPointModel],
-        chart_type: ChartType,
-        secondary_subject_houses_list: Union[list[KerykeionPointModel], None] = None,
-        text_color: str = "#000000",
         house_cusp_generale_name_label: str = "Cusp",
+        text_color: str = "#000000",
+        x_position: int = 720,
+        y_position: int = 30,
     ) -> str:
     """
-    Generate SVG code for a grid of astrological houses.
+    Generate SVG code for a grid of astrological houses for the main subject.
 
     Parameters:
-    - main_houses (list[KerykeionPointModel]): List of houses for the main subject.
-    - chart_type (ChartType): Type of the chart (e.g., Synastry, Transit).
-    - secondary_houses (list[KerykeionPointModel], optional): List of houses for the secondary subject.
-    - text_color (str): Color of the text.
-    - cusp_label (str): Label for the house cusp.
+    - main_subject_houses_list (list[KerykeionPointModel]): List of houses for the main subject.
+    - house_cusp_generale_name_label (str): Label for the house cusp. Defaults to "Cusp".
+    - text_color (str): Color of the text. Defaults to "#000000".
+    - x_position (int): X position for the grid. Defaults to 720.
+    - y_position (int): Y position for the grid. Defaults to 30.
 
     Returns:
     - str: The SVG code for the grid of houses.
     """
-
-    if chart_type in ["Synastry", "Transit", "Return"] and secondary_subject_houses_list is None:
-        raise KerykeionException("secondary_houses is None")
-
-    svg_output = '<g transform="translate(720,30)">'
+    svg_output = f'<g transform="translate({x_position},{y_position})">'
 
     line_increment = 10
     for i, house in enumerate(main_subject_houses_list):
@@ -845,26 +840,44 @@ def draw_house_grid(
         line_increment += 14
 
     svg_output += "</g>"
+    return svg_output
 
-    if chart_type == "Synastry" or chart_type == "Return":
-        svg_output += '<!-- Synastry Houses -->'
-        # Changed from translate(950,0) to translate(970,30) to incorporate the outer translate(20,30)
-        svg_output += '<g transform="translate(970,30)">'
-        line_increment = 10
 
-        for i, house in enumerate(secondary_subject_houses_list): # type: ignore
-            cusp_number = f"&#160;&#160;{i + 1}" if i < 9 else str(i + 1)
-            svg_output += (
-                f'<g transform="translate(0,{line_increment})">'
-                f'<text text-anchor="end" x="40" style="fill:{text_color}; font-size: 10px;">{house_cusp_generale_name_label} {cusp_number}:</text>'
-                f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{house["sign"]}" /></g>'
-                f'<text x="53" style="fill:{text_color}; font-size: 10px;"> {convert_decimal_to_degree_string(house["position"])}</text>'
-                f'</g>'
-            )
-            line_increment += 14
+def draw_secondary_house_grid(
+        secondary_subject_houses_list: list[KerykeionPointModel],
+        house_cusp_generale_name_label: str = "Cusp",
+        text_color: str = "#000000",
+        x_position: int = 970,
+        y_position: int = 30,
+    ) -> str:
+    """
+    Generate SVG code for a grid of astrological houses for the secondary subject.
 
-        svg_output += "</g>"
+    Parameters:
+    - secondary_subject_houses_list (list[KerykeionPointModel]): List of houses for the secondary subject.
+    - house_cusp_generale_name_label (str): Label for the house cusp. Defaults to "Cusp".
+    - text_color (str): Color of the text. Defaults to "#000000".
+    - x_position (int): X position for the grid. Defaults to 970.
+    - y_position (int): Y position for the grid. Defaults to 30.
 
+    Returns:
+    - str: The SVG code for the grid of houses.
+    """
+    svg_output = f'<g transform="translate({x_position},{y_position})">'
+
+    line_increment = 10
+    for i, house in enumerate(secondary_subject_houses_list):
+        cusp_number = f"&#160;&#160;{i + 1}" if i < 9 else str(i + 1)
+        svg_output += (
+            f'<g transform="translate(0,{line_increment})">'
+            f'<text text-anchor="end" x="40" style="fill:{text_color}; font-size: 10px;">{house_cusp_generale_name_label} {cusp_number}:</text>'
+            f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{house["sign"]}" /></g>'
+            f'<text x="53" style="fill:{text_color}; font-size: 10px;"> {convert_decimal_to_degree_string(house["position"])}</text>'
+            f'</g>'
+        )
+        line_increment += 14
+
+    svg_output += "</g>"
     return svg_output
 
 
