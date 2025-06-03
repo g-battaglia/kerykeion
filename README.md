@@ -587,3 +587,8 @@ If using Kerykeion in published or academic work, please cite as follows:
 Battaglia, G. (2025). Kerykeion: A Python Library for Astrological Calculations and Chart Generation.
 https://github.com/g-battaglia/kerykeion
 ```
+
+## Next Version (V5)
+
+The development of Kerykeion V5 is underway, with a focus on enhancing the library's capabilities and performance.
+To follow the progress and contribute, check out the [V5 branch](https://github.com/g-battaglia/kerykeion/tree/next)
