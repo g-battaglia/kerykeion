@@ -1268,7 +1268,8 @@ class KerykeionChartSVG:
                 zodiac_info = f"{self.language_settings.get('ayanamsa', 'Ayanamsa')}: {mode_name}"
 
             template_dict["bottom_left_0"] = ""
-            template_dict["bottom_left_1"] = ""
+            # FIXME!
+            template_dict["bottom_left_1"] = f"Compatibility Score: {16}/44" # type: ignore
             template_dict["bottom_left_2"] = zodiac_info
             template_dict["bottom_left_3"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
             template_dict["bottom_left_4"] = f'{self.language_settings.get("perspective_type", "Perspective")}: {self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
@@ -1559,7 +1560,7 @@ class KerykeionChartSVG:
 
             template_dict["top_left_0"] = f'{self.language_settings["info"]}:'
             template_dict["top_left_1"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime) # type: ignore
-            template_dict["top_left_2"] = format_location_string(self.location)
+            template_dict["top_left_2"] = f"{self.first_obj.city}, {self.first_obj.nation}"
             template_dict["top_left_3"] = f"{self.language_settings['latitude']}: {latitude_string}"
             template_dict["top_left_4"] = f"{self.language_settings['longitude']}: {longitude_string}"
 
