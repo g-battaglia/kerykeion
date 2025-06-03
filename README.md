@@ -49,6 +49,7 @@ If you're looking for the latest stable version, please check out the [`main`](h
 ## Table of Contents
 - [**Web API**](#web-api)
 - [**Donate**](#donate)
+- [⚠️ Development Branch Notice](#️-development-branch-notice)
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Basic Usage](#basic-usage)
@@ -96,7 +97,7 @@ pip3 install kerykeion
 Below is a simple example illustrating the creation of an astrological subject and retrieving astrological details:
 
 ```python
-from kerykeion import AstrologicalSubject
+from kerykeion import AstrologicalSubjectFactory
 
 # Create an instance of the AstrologicalSubjectFactory class.
 # Arguments: Name, year, month, day, hour, minutes, city, nation
@@ -180,7 +181,7 @@ synastry_chart.makeSVG()
 ### Transit Chart
 
 ```python
-from kerykeion import AstrologicalSubject
+from kerykeion import AstrologicalSubjectFactory
 
 transit = AstrologicalSubjectFactory.from_birth_data("Transit", 2025, 6, 8, 8, 45, "Atlanta", "US")
 subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
@@ -498,7 +499,7 @@ subject = AstrologicalSubject.get_from_iso_utc_time(
 If you set `online=True`, provide a `geonames_username` to allow city-based geolocation:
 
 ```python
-from kerykeion.astrological_subject import AstrologicalSubject
+from kerykeion.astrological_subject import AstrologicalSubjectFactory
 
 subject = AstrologicalSubject.get_from_iso_utc_time(
     "Johnny Depp", "1963-06-09T05:00:00Z", "Owensboro", "US", online=True
@@ -554,7 +555,7 @@ chart.makeSVG()
 You can serialize the astrological subject (the base data used throughout the library) to JSON:
 
 ```python
-from kerykeion import AstrologicalSubject
+from kerykeion import AstrologicalSubjectFactory
 
 johnny = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
 
