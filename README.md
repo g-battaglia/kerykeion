@@ -101,19 +101,19 @@ from kerykeion import AstrologicalSubjectFactory
 
 # Create an instance of the AstrologicalSubjectFactory class.
 # Arguments: Name, year, month, day, hour, minutes, city, nation
-kanye = AstrologicalSubjectFactory.from_birth_data("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
+john = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 
 # Retrieve information about the Sun:
-kanye.sun
-# > {'name': 'Sun', 'quality': 'Mutable', 'element': 'Air', 'sign': 'Gem', 'sign_num': 2, ...}
+print(john.sun.model_dump_json())
+# > {"name":"Sun","quality":"Cardinal","element":"Air","sign":"Lib","sign_num":6,"position":16.26789199474399,"abs_pos":196.267891994744,"emoji":"♎️","point_type":"AstrologicalPoint","house":"Sixth_House","retrograde":false}
 
 # Retrieve information about the first house:
-kanye.first_house
-# > {'name': 'First_House', 'quality': 'Cardinal', 'element': 'Water', 'sign': 'Can', ...}
+print(john.first_house.model_dump_json())
+# > {"name":"First_House","quality":"Cardinal","element":"Fire","sign":"Ari","sign_num":0,"position":19.74676624176799,"abs_pos":19.74676624176799,"emoji":"♈️","point_type":"House","house":null,"retrograde":null}
 
 # Retrieve the element of the Moon sign:
-kanye.moon.element
-# > 'Water'
+print(john.moon.element)
+# > 'Air'
 ```
 
 **To avoid using GeoNames online, specify longitude, latitude, and timezone instead of city and nation:**
