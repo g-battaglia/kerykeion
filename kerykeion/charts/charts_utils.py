@@ -1569,3 +1569,4 @@ def calculate_synastry_quality_points(
             combined_totals[quality] = (combined_totals[quality] / total_points) * 100.0
 
     return combined_totals
+

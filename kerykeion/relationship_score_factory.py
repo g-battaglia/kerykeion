@@ -218,10 +218,10 @@ if __name__ == "__main__":
 
     setup_logging(level="critical")
 
-    giacomo = AstrologicalSubjectFactory.from_birth_data("Giacomo", 1993, 6, 10, 12, 15, "Montichiari", "IT")
-    yoko = AstrologicalSubjectFactory.from_birth_data("Susie Cox", 1949, 6, 17, 9, 40, "Tucson", "US")
+    john = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    yoko = AstrologicalSubjectFactory.from_birth_data("Yoko Ono", 1933, 2, 18, 18, 30, "Tokyo", "JP")
 
-    factory = RelationshipScoreFactory(giacomo, yoko)
+    factory = RelationshipScoreFactory(john, yoko)
     score = factory.get_relationship_score()
     print(score)
 
