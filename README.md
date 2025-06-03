@@ -44,7 +44,7 @@ Maintaining this project requires substantial time and effort. The Astrologer AP
 
 This branch (`next`) is **not the stable version** of Kerykeion. It is the **development branch for the upcoming V5 release**.
 
-If you're looking for the latest stable version, please check out the [`main`](https://github.com/g-battaglia/kerykeion/tree/master) branch instead.
+If you're looking for the latest stable version, please check out the [`master`](https://github.com/g-battaglia/kerykeion/tree/master) branch instead.
 
 ## Table of Contents
 - [**Web API**](#web-api)
