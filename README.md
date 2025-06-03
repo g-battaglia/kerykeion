@@ -42,6 +42,9 @@ Maintaining this project requires substantial time and effort. The Astrologer AP
 
 
 ## Table of Contents
+- [**Web API**](#web-api)
+- [**Donate**](#donate)
+- [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Basic Usage](#basic-usage)
 - [Generate a SVG Chart](#generate-a-svg-chart)
@@ -92,7 +95,7 @@ from kerykeion import AstrologicalSubject
 
 # Create an instance of the AstrologicalSubject class.
 # Arguments: Name, year, month, day, hour, minutes, city, nation
-kanye = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
+kanye = AstrologicalSubjectFactory.from_birth_data("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
 
 # Retrieve information about the Sun:
 kanye.sun
@@ -110,7 +113,7 @@ kanye.moon.element
 **To avoid using GeoNames online, specify longitude, latitude, and timezone instead of city and nation:**
 
 ```python
-kanye = AstrologicalSubject(
+kanye = AstrologicalSubjectFactory.from_birth_data(
     "Kanye", 1977, 6, 8, 8, 45,
     lng=50,
     lat=50,
@@ -132,7 +135,7 @@ To improve compatibility across different applications, you can use the `remove_
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-john = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+john = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 birth_chart_svg = KerykeionChartSVG(john)
 birth_chart_svg.makeSVG()
 ```
@@ -148,7 +151,7 @@ The SVG file will be saved in the home directory.
 
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
-birth_chart = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 birth_chart_svg = KerykeionChartSVG(birth_chart, chart_type="ExternalNatal")
 birth_chart_svg.makeSVG()
 ```
@@ -159,8 +162,8 @@ birth_chart_svg.makeSVG()
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
 synastry_chart = KerykeionChartSVG(first, "Synastry", second)
 synastry_chart.makeSVG()
@@ -174,8 +177,8 @@ synastry_chart.makeSVG()
 ```python
 from kerykeion import AstrologicalSubject
 
-transit = AstrologicalSubject("Transit", 2025, 6, 8, 8, 45, "Atlanta", "US")
-subject = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+transit = AstrologicalSubjectFactory.from_birth_data("Transit", 2025, 6, 8, 8, 45, "Atlanta", "US")
+subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 
 transit_chart = KerykeionChartSVG(subject, "Transit", transit)
 transit_chart.makeSVG()
@@ -188,9 +191,9 @@ transit_chart.makeSVG()
 ```python
 from kerykeion import CompositeSubjectFactory, AstrologicalSubject, KerykeionChartSVG
 
-angelina = AstrologicalSubject("Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US", lng=-118.15, lat=34.03, tz_str="America/Los_Angeles")
+angelina = AstrologicalSubjectFactory.from_birth_data("Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US", lng=-118.15, lat=34.03, tz_str="America/Los_Angeles")
 
-brad = AstrologicalSubject("Brad Pitt", 1963, 12, 18, 6, 31, "Shawnee", "US", lng=-96.56, lat=35.20, tz_str="America/Chicago")
+brad = AstrologicalSubjectFactory.from_birth_data("Brad Pitt", 1963, 12, 18, 6, 31, "Shawnee", "US", lng=-96.56, lat=35.20, tz_str="America/Chicago")
 
 factory = CompositeSubjectFactory(angelina, brad)
 composite_model = factory.get_midpoint_composite_subject_model()
@@ -209,7 +212,7 @@ For *all* the charts, you can generate a wheel-only chart by using the method `m
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-birth_chart = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 birth_chart_svg = KerykeionChartSVG(birth_chart)
 birth_chart_svg.makeWheelOnlySVG()
 ```
@@ -219,7 +222,7 @@ birth_chart_svg.makeWheelOnlySVG()
 
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
-birth_chart = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 birth_chart_svg = KerykeionChartSVG(birth_chart, chart_type="ExternalNatal")
 birth_chart_svg.makeWheelOnlySVG(
     wheel_only=True,
@@ -232,8 +235,8 @@ birth_chart_svg.makeWheelOnlySVG(
 ### Synastry Chart
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
-first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 synastry_chart = KerykeionChartSVG(
     first, "Synastry", second
 )
@@ -249,8 +252,8 @@ To save the SVG file in a custom location, specify `new_output_directory`:
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-second = AstrologicalSubject("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
 synastry_chart = KerykeionChartSVG(
     first, "Synastry", second,
@@ -266,7 +269,7 @@ You can switch chart language by passing `chart_language` to the  `KerykeionChar
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 birth_chart_svg = KerykeionChartSVG(
     birth_chart,
     chart_language="IT"  # Change to Italian
@@ -293,7 +296,7 @@ To generate a minified SVG, set `minify_svg=True` in the `makeSVG()` method:
 
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
-first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 birth_chart_svg = KerykeionChartSVG(birth_chart)
 birth_chart_svg.makeSVG(
     minify=True
@@ -306,7 +309,7 @@ To generate an SVG without CSS variables, set `remove_css_variables=True` in the
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-first = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 birth_chart_svg = KerykeionChartSVG(birth_chart)
 birth_chart_svg.makeSVG(
     remove_css_variables=True
@@ -321,7 +324,7 @@ It's possible to generate a grid-only SVG, useful for creating a custom layout. 
 
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
-birth_chart = AstrologicalSubject("John Lennon - Aspect Grid Dark Synastry", 1977, 6, 8, 8, 45, "Atlanta", "US")
+birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon - Aspect Grid Dark Synastry", 1977, 6, 8, 8, 45, "Atlanta", "US")
 aspect_grid_dark_synastry_chart = KerykeionChartSVG(aspect_grid_dark_synastry_subject, "Synastry", second, theme="dark")
 aspect_grid_dark_synastry_chart.makeAspectGridOnlySVG()
 ```
@@ -332,7 +335,7 @@ aspect_grid_dark_synastry_chart.makeAspectGridOnlySVG()
 ```python
 from kerykeion import Report, AstrologicalSubject
 
-kanye = AstrologicalSubject("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
+kanye = AstrologicalSubjectFactory.from_birth_data("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
 report = Report(kanye)
 report.print_report()
 ```
@@ -393,8 +396,8 @@ python3 your_script_name.py > file.txt
 ```python
 from kerykeion import SynastryAspects, AstrologicalSubject
 
-first = AstrologicalSubject("Jack", 1990, 6, 15, 15, 15, "Roma", "IT")
-second = AstrologicalSubject("Jane", 1991, 10, 25, 21, 0, "Roma", "IT")
+first = AstrologicalSubjectFactory.from_birth_data("Jack", 1990, 6, 15, 15, 15, "Roma", "IT")
+second = AstrologicalSubjectFactory.from_birth_data("Jane", 1991, 10, 25, 21, 0, "Roma", "IT")
 
 name = SynastryAspects(first, second)
 aspect_list = name.get_relevant_aspects()
@@ -408,7 +411,7 @@ print(aspect_list[0])
 By default, the zodiac type is **Tropical**. To use **Sidereal**, specify the sidereal mode:
 
 ```python
-johnny = AstrologicalSubject(
+johnny = AstrologicalSubjectFactory.from_birth_data(
     "Johnny Depp", 1963, 6, 9, 0, 0,
     "Owensboro", "US",
     zodiac_type="Sidereal",
@@ -425,7 +428,7 @@ Full list of supported sidereal modes [here](https://www.kerykeion.net/pydocs/ke
 By default, houses are calculated using **Placidus**. Configure a different house system as follows:
 
 ```python
-johnny = AstrologicalSubject(
+johnny = AstrologicalSubjectFactory.from_birth_data(
     "Johnny Depp", 1963, 6, 9, 0, 0,
     "Owensboro", "US",
     houses_system="M"
@@ -443,7 +446,7 @@ So far all the available houses system in the Swiss Ephemeris are supported but 
 By default, Kerykeion uses the **Apparent Geocentric** perspective (the most standard in astrology). Other perspectives (e.g., **Heliocentric**) can be set this way:
 
 ```python
-johnny = AstrologicalSubject(
+johnny = AstrologicalSubjectFactory.from_birth_data(
     "Johnny Depp", 1963, 6, 9, 0, 0,
     "Owensboro", "US",
     perspective_type="Heliocentric"
@@ -470,7 +473,7 @@ Here's an example of how to set the theme:
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-dark_theme_subject = AstrologicalSubject("John Lennon - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+dark_theme_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 dark_theme_natal_chart = KerykeionChartSVG(dark_high_contrast_theme_subject, theme="dark_high_contrast")
 dark_theme_natal_chart.makeSVG()
 ```
@@ -515,7 +518,7 @@ Example:
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-subject = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 
 chart = KerykeionChartSVG(
     subject,
@@ -550,7 +553,7 @@ You can serialize the astrological subject (the base data used throughout the li
 ```python
 from kerykeion import AstrologicalSubject
 
-johnny = AstrologicalSubject("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
+johnny = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
 
 print(johnny.json(dump=False, indent=2))
 ```
