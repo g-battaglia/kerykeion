@@ -119,12 +119,12 @@ print(john.moon.element)
 **To avoid using GeoNames online, specify longitude, latitude, and timezone instead of city and nation:**
 
 ```python
-kanye = AstrologicalSubjectFactory.from_birth_data(
-    "Kanye", 1977, 6, 8, 8, 45,
-    lng=50,
-    lat=50,
-    tz_str="Europe/Rome",
-    city="Rome"
+john = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,  # Longitude for Liverpool
+    lat=53.4000,  # Latitude for Liverpool
+    tz_str="Europe/London",  # Timezone for Liverpool
+    city="Liverpool", 
 )
 ```
 
@@ -339,57 +339,62 @@ aspect_grid_dark_synastry_chart.makeAspectGridOnlySVG()
 ## Report
 
 ```python
-from kerykeion import Report, AstrologicalSubject
+from kerykeion import Report, AstrologicalSubjectFactory
 
-kanye = AstrologicalSubjectFactory.from_birth_data("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US")
-report = Report(kanye)
+john = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,  # Longitude for Liverpool
+    lat=53.4000,  # Latitude for Liverpool
+    tz_str="Europe/London",  # Timezone for Liverpool
+    city="Liverpool",
+)
+report = Report(john)
 report.print_report()
 ```
 
-Returns:
-
-```txt
-+- Kerykeion report for Kanye -+
-+----------+------+-------------+-----------+----------+
-| Date     | Time | Location    | Longitude | Latitude |
-+----------+------+-------------+-----------+----------+
-| 8/6/1977 | 8:45 | Atlanta, US | -84.38798 | 33.749   |
-+----------+------+-------------+-----------+----------+
-+-----------------+------+-------+------+----------------+
-| Planet          | Sign | Pos.  | Ret. | House          |
-+-----------------+------+-------+------+----------------+
-| Sun             | Gem  | 17.6  | -    | Twelfth_House  |
-| Moon            | Pis  | 16.43 | -    | Ninth_House    |
-| Mercury         | Tau  | 26.29 | -    | Eleventh_House |
-| Venus           | Tau  | 2.03  | -    | Tenth_House    |
-| Mars            | Tau  | 1.79  | -    | Tenth_House    |
-| Jupiter         | Gem  | 14.61 | -    | Eleventh_House |
-| Saturn          | Leo  | 12.8  | -    | Second_House   |
-| Uranus          | Sco  | 8.27  | R    | Fourth_House   |
-| Neptune         | Sag  | 14.69 | R    | Fifth_House    |
-| Pluto           | Lib  | 11.45 | R    | Fourth_House   |
-| Mean_Node       | Lib  | 21.49 | R    | Fourth_House   |
-| True_Node       | Lib  | 22.82 | R    | Fourth_House   |
-| Mean_South_Node | Ari  | 21.49 | R    | Tenth_House    |
-| True_South_Node | Ari  | 22.82 | R    | Tenth_House    |
-| Chiron          | Tau  | 4.17  | -    | Tenth_House    |
-+-----------------+------+-------+------+----------------+
+Report output:
+```plaintext
++- Kerykeion report for John Lennon -+
++-----------+-------+---------------+-----------+----------+
+| Date      | Time  | Location      | Longitude | Latitude |
++-----------+-------+---------------+-----------+----------+
+| 9/10/1940 | 18:30 | Liverpool, GB | -2.9833   | 53.4     |
++-----------+-------+---------------+-----------+----------+
++-------------------+------+-------+------+----------------+
+| AstrologicalPoint | Sign | Pos.  | Ret. | House          |
++-------------------+------+-------+------+----------------+
+| Sun               | Lib  | 16.27 | -    | Sixth_House    |
+| Moon              | Aqu  | 3.55  | -    | Eleventh_House |
+| Mercury           | Sco  | 8.56  | -    | Seventh_House  |
+| Venus             | Vir  | 3.22  | -    | Sixth_House    |
+| Mars              | Lib  | 2.66  | -    | Sixth_House    |
+| Jupiter           | Tau  | 13.69 | R    | First_House    |
+| Saturn            | Tau  | 13.22 | R    | First_House    |
+| Uranus            | Tau  | 25.55 | R    | First_House    |
+| Neptune           | Vir  | 26.03 | -    | Sixth_House    |
+| Pluto             | Leo  | 4.19  | -    | Fifth_House    |
+| Mean_Node         | Lib  | 10.58 | R    | Sixth_House    |
+| Mean_South_Node   | Ari  | 10.58 | R    | Twelfth_House  |
+| Mean_Lilith       | Ari  | 13.37 | -    | Twelfth_House  |
+| Chiron            | Leo  | 0.57  | -    | Fifth_House    |
++-------------------+------+-------+------+----------------+
 +----------------+------+----------+
 | House          | Sign | Position |
 +----------------+------+----------+
-| First_House    | Can  | 18.0     |
-| Second_House   | Leo  | 9.51     |
-| Third_House    | Vir  | 4.02     |
-| Fourth_House   | Lib  | 3.98     |
-| Fifth_House    | Sco  | 9.39     |
-| Sixth_House    | Sag  | 15.68    |
-| Seventh_House  | Cap  | 18.0     |
-| Eighth_House   | Aqu  | 9.51     |
-| Ninth_House    | Pis  | 4.02     |
-| Tenth_House    | Ari  | 3.98     |
-| Eleventh_House | Tau  | 9.39     |
-| Twelfth_House  | Gem  | 15.68    |
+| First_House    | Ari  | 19.72    |
+| Second_House   | Tau  | 29.52    |
+| Third_House    | Gem  | 20.23    |
+| Fourth_House   | Can  | 7.07     |
+| Fifth_House    | Can  | 25.31    |
+| Sixth_House    | Leo  | 22.11    |
+| Seventh_House  | Lib  | 19.72    |
+| Eighth_House   | Sco  | 29.52    |
+| Ninth_House    | Sag  | 20.23    |
+| Tenth_House    | Cap  | 7.07     |
+| Eleventh_House | Cap  | 25.31    |
+| Twelfth_House  | Aqu  | 22.11    |
 +----------------+------+----------+
+```
 
 To export to a file:
 
