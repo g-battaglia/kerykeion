@@ -807,7 +807,7 @@ class KerykeionChartSVG:
             template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - self.third_circle_radius)
 
             # Chart title
-            template_dict["stringTitle"] = f"{self.first_obj.name} - {self.language_settings.get("Birth Chart", "Birth Chart")}"
+            template_dict["stringTitle"] = f'{self.first_obj.name} - {self.language_settings.get("Birth Chart", "Birth Chart")}'
 
             # Top left section
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings["north"], self.language_settings["south"])
@@ -1269,7 +1269,7 @@ class KerykeionChartSVG:
 
             template_dict["bottom_left_0"] = ""
             # FIXME!
-            template_dict["bottom_left_1"] = f"Compatibility Score: {16}/44" # type: ignore
+            template_dict["bottom_left_1"] = "" # f"Compatibility Score: {16}/44" # type: ignore
             template_dict["bottom_left_2"] = zodiac_info
             template_dict["bottom_left_3"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
             template_dict["bottom_left_4"] = f'{self.language_settings.get("perspective_type", "Perspective")}: {self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
