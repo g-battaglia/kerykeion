@@ -966,7 +966,7 @@ class KerykeionChartSVG:
 
             template_dict["bottom_left_0"] = zodiac_info
             template_dict["bottom_left_1"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
-            template_dict["bottom_left_2"] = f"{self.language_settings.get("perspective_type", "Perspective")}: {self.first_obj.first_subject.perspective_type}" # type: ignore
+            template_dict["bottom_left_2"] = f'{self.language_settings.get("perspective_type", "Perspective")}: {self.first_obj.first_subject.perspective_type}' # type: ignore
             template_dict["bottom_left_3"] = f'{self.language_settings.get("composite_chart", "Composite Chart")} - {self.language_settings.get("midpoints", "Midpoints")}'
             template_dict["bottom_left_4"] = ""
 
@@ -1069,7 +1069,7 @@ class KerykeionChartSVG:
 
             # Aspects
             if self.double_chart_aspect_grid_type == "list":
-                title = f"{self.first_obj.name} - {self.language_settings.get("transit_aspects", "Transit Aspects")}"
+                title = f'{self.first_obj.name} - {self.language_settings.get("transit_aspects", "Transit Aspects")}'
                 template_dict["makeAspectGrid"] = ""
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings)
             else:
@@ -1473,7 +1473,7 @@ class KerykeionChartSVG:
                 second_return_grid_title = f"{self.language_settings.get('solar_return', 'Solar Return')} ({self.language_settings.get('outer_wheel', 'Outer Wheel')})"
             else:
                 first_return_grid_title = f"{self.first_obj.name} ({self.language_settings.get('inner_wheel', 'Inner Wheel')})"
-                second_return_grid_title = f"{self.language_settings.get("lunar_return", "Lunar Return")} ({self.language_settings.get("outer_wheel", "Outer Wheel")})"
+                second_return_grid_title = f'{self.language_settings.get("lunar_return", "Lunar Return")} ({self.language_settings.get("outer_wheel", "Outer Wheel")})'
             template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
                 planets_and_houses_grid_title="",
                 subject_name=first_return_grid_title,
