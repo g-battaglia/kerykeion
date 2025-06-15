@@ -677,18 +677,16 @@ def get_house_number(house_name: Houses) -> int:
 
 def find_common_active_points(first_points: list[AstrologicalPoint], second_points: list[AstrologicalPoint]) -> list[AstrologicalPoint]:
     """
-        Find the common astrological points between those available in the subject and those requested.
+    Find only the elements that are present in both lists.
 
-        Args:
-            first_points: List of points available in the astrological subject
-            second_points: List of points requested by the user
+    Args:
+        first_points: List of astrological points
+        second_points: List of astrological points
 
-        Returns:
-            List containing only the requested points that are also available in the subject
+    Returns:
+        List of elements common to both lists (without duplicates, order not guaranteed).
     """
-    common_points: list[AstrologicalPoint]
-    common_points = [point for point in second_points if point in first_points]
-
-    ignored_points = set(second_points) - set(common_points)
+    print(f"Finding common active points between {first_points} and {second_points}")
+    common_points = list(set(first_points) & set(second_points))
 
     return common_points

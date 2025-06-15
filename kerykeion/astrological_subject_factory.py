@@ -214,50 +214,54 @@ class AstrologicalSubjectFactory:
         Returns:
             An AstrologicalSubjectModel with calculated data
         """
-        logging.debug("Starting Kerykeion calculation")
-
-        if "Sun" not in active_points:
-            logging.info("Automatically adding 'Sun' to active points")
-            active_points.append("Sun")
-
-        if "Moon" not in active_points:
-            logging.info("Automatically adding 'Moon' to active points")
-            active_points.append("Moon")
-
-        if "Ascendant" not in active_points:
-            logging.info("Automatically adding 'Ascendant' to active points")
-            active_points.append("Ascendant")
-
-        if "Medium_Coeli" not in active_points:
-            logging.info("Automatically adding 'Medium_Coeli' to active points")
-            active_points.append("Medium_Coeli")
-
-        if "Mercury" not in active_points:
-            logging.info("Automatically adding 'Mercury' to active points")
-            active_points.append("Mercury")
-
-        if "Venus" not in active_points:
-            logging.info("Automatically adding 'Venus' to active points")
-            active_points.append("Venus")
-
-        if "Mars" not in active_points:
-            logging.info("Automatically adding 'Mars' to active points")
-            active_points.append("Mars")
-
-        if "Jupiter" not in active_points:
-            logging.info("Automatically adding 'Jupiter' to active points")
-            active_points.append("Jupiter")
-
-        if "Saturn" not in active_points:
-            logging.info("Automatically adding 'Saturn' to active points")
-            active_points.append("Saturn")
-
         # Create a calculation data container
         calc_data = {}
 
         # Basic identity
         calc_data["name"] = name
         calc_data["json_dir"] = str(Path.home())
+
+        # Create a deep copy of active points to avoid modifying the original list
+        active_points = list(active_points)
+
+        calc_data["active_points"] = active_points
+
+
+        if "Sun" not in calc_data["active_points"]:
+            logging.info("Automatically adding 'Sun' to active points")
+            calc_data["active_points"].append("Sun")
+
+        if "Moon" not in calc_data["active_points"]:
+            logging.info("Automatically adding 'Moon' to active points")
+            calc_data["active_points"].append("Moon")
+
+        if "Ascendant" not in calc_data["active_points"]:
+            logging.info("Automatically adding 'Ascendant' to active points")
+            calc_data["active_points"].append("Ascendant")
+
+        if "Medium_Coeli" not in calc_data["active_points"]:
+            logging.info("Automatically adding 'Medium_Coeli' to active points")
+            calc_data["active_points"].append("Medium_Coeli")
+
+        if "Mercury" not in calc_data["active_points"]:
+            logging.info("Automatically adding 'Mercury' to active points")
+            calc_data["active_points"].append("Mercury")
+
+        if "Venus" not in calc_data["active_points"]:
+            logging.info("Automatically adding 'Venus' to active points")
+            calc_data["active_points"].append("Venus")
+
+        if "Mars" not in calc_data["active_points"]:
+            logging.info("Automatically adding 'Mars' to active points")
+            calc_data["active_points"].append("Mars")
+
+        if "Jupiter" not in calc_data["active_points"]:
+            logging.info("Automatically adding 'Jupiter' to active points")
+            calc_data["active_points"].append("Jupiter")
+
+        if "Saturn" not in calc_data["active_points"]:
+            logging.info("Automatically adding 'Saturn' to active points")
+            calc_data["active_points"].append("Saturn")
 
         # Initialize configuration
         config = ChartConfiguration(
@@ -321,15 +325,14 @@ class AstrologicalSubjectFactory:
         calc_data["minute"] = minute
         calc_data["seconds"] = seconds
         calc_data["is_dst"] = is_dst
-        calc_data["active_points"] = active_points
 
         # Calculate time conversions
         cls._calculate_time_conversions(calc_data, location)
 
         # Initialize Swiss Ephemeris and calculate houses and planets
         cls._setup_ephemeris(calc_data, config)
-        cls._calculate_houses(calc_data, active_points)
-        cls._calculate_planets(calc_data, active_points)
+        cls._calculate_houses(calc_data, calc_data["active_points"])
+        cls._calculate_planets(calc_data, calc_data["active_points"])
         cls._calculate_day_of_week(calc_data)
 
         # Calculate lunar phase
