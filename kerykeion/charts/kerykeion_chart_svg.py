@@ -245,7 +245,6 @@ class KerykeionChartSVG:
         home_directory = Path.home()
         self.new_settings_file = new_settings_file
         self.chart_language = chart_language
-        self.active_points = active_points
         self.active_aspects = active_aspects
         self.chart_type = chart_type
         self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
@@ -254,16 +253,16 @@ class KerykeionChartSVG:
         self.aspects_settings = aspects_settings
 
         if not active_points:
-            active_points = first_obj.active_points
+            self.active_points = first_obj.active_points
         else:
-            active_points = find_common_active_points(
+            self.active_points = find_common_active_points(
                 active_points,
                 first_obj.active_points
             )
 
         if second_obj:
-            active_points = find_common_active_points(
-                active_points,
+            self.active_points = find_common_active_points(
+                self.active_points,
                 second_obj.active_points
             )
 
@@ -1842,7 +1841,7 @@ if __name__ == "__main__":
     from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
     ACTIVE_PLANETS: list[AstrologicalPoint] = [
-        "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant", "Medium_Coeli", "Pars_Fortunae"
+        "Sun", "Moon"
     ]
 
     setup_logging(level="info")
@@ -1865,6 +1864,7 @@ if __name__ == "__main__":
         first_obj=subject,
         chart_language="IT",
         theme="strawberry",
+        active_points=ACTIVE_PLANETS,
     )
     birth_chart.makeSVG() # minify=True, remove_css_variables=True)
 
