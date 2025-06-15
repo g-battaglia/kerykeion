@@ -686,7 +686,6 @@ def find_common_active_points(first_points: list[AstrologicalPoint], second_poin
     Returns:
         List of elements common to both lists (without duplicates, order not guaranteed).
     """
-    print(f"Finding common active points between {first_points} and {second_points}")
     common_points = list(set(first_points) & set(second_points))
 
     return common_points
