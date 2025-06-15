@@ -284,7 +284,7 @@ class KerykeionChartSVG:
         # Configure available planets
         self.available_planets_setting = []
         for body in self.planets_settings:
-            if body["name"] in active_points:
+            if body["name"] in self.active_points:
                 body["is_active"] = True
                 self.available_planets_setting.append(body)
 
@@ -309,7 +309,7 @@ class KerykeionChartSVG:
             natal_aspects_instance = NatalAspects(
                 self.first_obj,
                 new_settings_file=self.new_settings_file,
-                active_points=active_points,
+                active_points=self.active_points,
                 active_aspects=active_aspects,
             )
             self.aspects_list = natal_aspects_instance.relevant_aspects
@@ -341,7 +341,7 @@ class KerykeionChartSVG:
                 raise KerykeionException("First object must be a CompositeSubjectModel instance.")
 
             # Calculate aspects
-            self.aspects_list = NatalAspects(self.first_obj, new_settings_file=self.new_settings_file, active_points=active_points).relevant_aspects
+            self.aspects_list = NatalAspects(self.first_obj, new_settings_file=self.new_settings_file, active_points=self.active_points).relevant_aspects
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
@@ -376,15 +376,13 @@ class KerykeionChartSVG:
                 self.first_obj,
                 self.second_obj,
                 new_settings_file=self.new_settings_file,
-                active_points=active_points,
+                active_points=self.active_points,
                 active_aspects=active_aspects,
             )
             self.aspects_list = synastry_aspects_instance.relevant_aspects
 
             # Secondary subject available points
-            self.t_available_kerykeion_celestial_points = []
-            for body in available_celestial_points_names:
-                self.t_available_kerykeion_celestial_points.append(self.second_obj.get(body))
+            self.t_available_kerykeion_celestial_points = self.available_kerykeion_celestial_points
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
@@ -423,15 +421,13 @@ class KerykeionChartSVG:
                 self.first_obj,
                 self.second_obj,
                 new_settings_file=self.new_settings_file,
-                active_points=active_points,
+                active_points=self.active_points,
                 active_aspects=active_aspects,
             )
             self.aspects_list = synastry_aspects_instance.relevant_aspects
 
             # Secondary subject available points
-            self.t_available_kerykeion_celestial_points = []
-            for body in available_celestial_points_names:
-                self.t_available_kerykeion_celestial_points.append(self.second_obj.get(body))
+            self.t_available_kerykeion_celestial_points = self.available_kerykeion_celestial_points
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
@@ -466,15 +462,13 @@ class KerykeionChartSVG:
                 self.first_obj,
                 self.second_obj,
                 new_settings_file=self.new_settings_file,
-                active_points=active_points,
+                active_points=self.active_points,
                 active_aspects=active_aspects,
             )
             self.aspects_list = synastry_aspects_instance.relevant_aspects
 
             # Secondary subject available points
-            self.t_available_kerykeion_celestial_points = []
-            for body in available_celestial_points_names:
-                self.t_available_kerykeion_celestial_points.append(self.second_obj.get(body))
+            self.t_available_kerykeion_celestial_points = self.available_kerykeion_celestial_points
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
@@ -501,7 +495,7 @@ class KerykeionChartSVG:
             natal_aspects_instance = NatalAspects(
                 self.first_obj,
                 new_settings_file=self.new_settings_file,
-                active_points=active_points,
+                active_points=self.active_points,
                 active_aspects=active_aspects,
             )
             self.aspects_list = natal_aspects_instance.relevant_aspects
@@ -1841,7 +1835,7 @@ if __name__ == "__main__":
     from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
     ACTIVE_PLANETS: list[AstrologicalPoint] = [
-        "Sun", "Moon"
+        "Sun", "Moon", "Pars_Fortunae"
     ]
 
     setup_logging(level="info")
