@@ -349,7 +349,7 @@ class AstrologicalSubjectFactory:
         city: str = "Greenwich",
         nation: str = "GB",
         tz_str: str = "Etc/GMT",
-        online: bool = False,
+        online: bool = True,
         lng: float = 0.0,
         lat: float = 51.5074,
         geonames_username: str = DEFAULT_GEONAMES_USERNAME,
