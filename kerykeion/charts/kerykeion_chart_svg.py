@@ -1841,6 +1841,10 @@ if __name__ == "__main__":
     from kerykeion.planetary_return_factory import PlanetaryReturnFactory
     from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
+    ACTIVE_PLANETS: list[AstrologicalPoint] = [
+        "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant", "Medium_Coeli", "Pars_Fortunae"
+    ]
+
     setup_logging(level="info")
 
     subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
@@ -1852,7 +1856,7 @@ if __name__ == "__main__":
         lng=-118.2437,
         lat=34.0522,
         tz_str="America/Los_Angeles",
-        altitude=0,
+        altitude=0
     )
 
     ###
@@ -1875,7 +1879,7 @@ if __name__ == "__main__":
         second_obj=solar_return,
         chart_language="IT",
         theme="classic",
-        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant"],
+        active_points=ACTIVE_PLANETS,
     )
 
     solar_return_chart.makeSVG() # minify=True, remove_css_variables=True)
@@ -1888,7 +1892,7 @@ if __name__ == "__main__":
         second_obj=solar_return,
         chart_language="IT",
         theme="dark",
-        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
+        active_points=ACTIVE_PLANETS,
     )
 
     single_wheel_return_chart.makeSVG() # minify=True, remove_css_variables=True)
@@ -1905,20 +1909,23 @@ if __name__ == "__main__":
         second_obj=lunar_return,
         chart_language="IT",
         theme="dark",
-        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
+        active_points=ACTIVE_PLANETS,
     )
     lunar_return_chart.makeSVG() # minify=True, remove_css_variables=True)
 
     ###
     ## Transit Chart
-    transit = AstrologicalSubjectFactory.from_current_time()
+    transit = AstrologicalSubjectFactory.from_iso_utc_time(
+        "Transit",
+        "2021-10-04T18:30:00+01:00",
+    )
     transit_chart = KerykeionChartSVG(
         first_obj=subject,
         chart_type="Transit",
         second_obj=transit,
         chart_language="IT",
         theme="dark",
-        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant"]
+        active_points=ACTIVE_PLANETS
     )
     transit_chart.makeSVG() # minify=True, remove_css_variables=True)
 
@@ -1931,7 +1938,7 @@ if __name__ == "__main__":
         second_obj=second_subject,
         chart_language="IT",
         theme="dark",
-        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
+        active_points=ACTIVE_PLANETS
     )
     synastry_chart.makeSVG() # minify=True, remove_css_variables=True)
 
@@ -1944,7 +1951,7 @@ if __name__ == "__main__":
         second_obj=transit,
         chart_language="IT",
         theme="dark",
-        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant"],
+        active_points=ACTIVE_PLANETS,
         double_chart_aspect_grid_type="table"
     )
     transit_chart_with_grid.makeSVG() # minify=True, remove_css_variables=True)

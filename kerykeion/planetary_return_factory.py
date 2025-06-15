@@ -175,6 +175,7 @@ class PlanetaryReturnFactory:
             nation=self.nation, # type: ignore
             online=False,
             altitude=self.altitude,
+            active_points=self.subject.active_points,
         )
 
         model_data = solar_return_astrological_subject.model_dump()
