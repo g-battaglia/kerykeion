@@ -135,6 +135,11 @@
     --kerykeion-chart-color-fire-percentage: var(--kerykeion-color-accent);
     --kerykeion-chart-color-water-percentage: var(--kerykeion-color-secondary);
 
+    /* Modalities Percentage */
+    --kerykeion-chart-color-cardinal-percentage: var(--kerykeion-color-success);
+    --kerykeion-chart-color-fixed-percentage: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-mutable-percentage: var(--kerykeion-color-error);
+
     /* Aspects */
     --kerykeion-chart-color-lunar-phase-0: var(--kerykeion-color-black);
     --kerykeion-chart-color-lunar-phase-1: var(--kerykeion-color-white);

@@ -92,6 +92,11 @@
     --kerykeion-chart-color-fire-percentage: #ff6600;
     --kerykeion-chart-color-water-percentage: #630e73;
 
+    /* Modalities Percentage */
+    --kerykeion-chart-color-cardinal-percentage: var(--kerykeion-color-success);
+    --kerykeion-chart-color-fixed-percentage: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-mutable-percentage: var(--kerykeion-color-error);
+
     /* Other */
     --kerykeion-chart-color-house-number: #f00;
 }
