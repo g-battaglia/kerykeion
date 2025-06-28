@@ -14,7 +14,7 @@
 <p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
 &nbsp;
 
-Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects, and generates SVG charts—including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
+Kerykeion is a Python library for astrology, supporting both Western (tropical) and sidereal systems. It computes planetary and house positions, detects aspects, and generates SVG charts—including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
 
 The main goal of this project is to offer a clean, data-driven approach to astrology, making it accessible and programmable.
 
