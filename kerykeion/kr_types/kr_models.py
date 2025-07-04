@@ -100,9 +100,9 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     perspective_type: PerspectiveType
 
     # Common celestial points
-    # Main planets
-    sun: KerykeionPointModel
-    moon: KerykeionPointModel
+    # Main planets (all optional to support selective calculations)
+    sun: Optional[KerykeionPointModel] = None
+    moon: Optional[KerykeionPointModel] = None
     mercury: Optional[KerykeionPointModel] = None
     venus: Optional[KerykeionPointModel] = None
     mars: Optional[KerykeionPointModel] = None
@@ -180,8 +180,8 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     houses_names_list: List[Houses] = Field(description="Ordered list of houses names")
     active_points: List[AstrologicalPoint] = Field(description="List of active points in the chart or aspects calculations.")
 
-    # Common lunar phase data
-    lunar_phase: LunarPhaseModel = Field(description="Lunar phase model")
+    # Common lunar phase data (optional)
+    lunar_phase: Optional[LunarPhaseModel] = Field(default=None, description="Lunar phase model")
 
 
 class AstrologicalSubjectModel(AstrologicalBaseModel):

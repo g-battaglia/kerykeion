@@ -823,12 +823,22 @@ class KerykeionChartSVG:
 
             template_dict["bottom_left_0"] = zodiac_info
             template_dict["bottom_left_1"] = f"{self.language_settings.get('domification', 'Domification')}: {self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)}"
-            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
-            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
+
+            # Lunar phase information (optional)
+            if self.first_obj.lunar_phase is not None:
+                template_dict["bottom_left_2"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
+                template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
+            else:
+                template_dict["bottom_left_2"] = ""
+                template_dict["bottom_left_3"] = ""
+
             template_dict["bottom_left_4"] = f'{self.language_settings.get("perspective_type", "Perspective")}: {self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
 
             # Moon phase section calculations
-            template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
+            if self.first_obj.lunar_phase is not None:
+                template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
+            else:
+                template_dict["makeLunarPhase"] = ""
 
             # Houses and planet drawing
             template_dict["makeMainHousesGrid"] = draw_main_house_grid(
@@ -964,7 +974,10 @@ class KerykeionChartSVG:
             template_dict["bottom_left_4"] = ""
 
             # Moon phase section calculations
-            template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
+            if self.first_obj.lunar_phase is not None:
+                template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
+            else:
+                template_dict["makeLunarPhase"] = ""
 
             # Houses and planet drawing
             template_dict["makeMainHousesGrid"] = draw_main_house_grid(
@@ -1101,12 +1114,22 @@ class KerykeionChartSVG:
 
             template_dict["bottom_left_0"] = zodiac_info
             template_dict["bottom_left_1"] = f"{self.language_settings.get('domification', 'Domification')}: {self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)}"
-            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.second_obj.lunar_phase.get("moon_phase", "")}' # type: ignore
-            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.second_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
+
+            # Lunar phase information from second object (Transit) (optional)
+            if self.second_obj is not None and hasattr(self.second_obj, 'lunar_phase') and self.second_obj.lunar_phase is not None:
+                template_dict["bottom_left_2"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.second_obj.lunar_phase.get("moon_phase", "")}' # type: ignore
+                template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.second_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.second_obj.lunar_phase.moon_phase_name)}'
+            else:
+                template_dict["bottom_left_2"] = ""
+                template_dict["bottom_left_3"] = ""
+
             template_dict["bottom_left_4"] = f'{self.language_settings.get("perspective_type", "Perspective")}: {self.language_settings.get(self.second_obj.perspective_type.lower().replace(" ", "_"), self.second_obj.perspective_type)}' # type: ignore
 
-            # Moon phase section calculations
-            template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
+            # Moon phase section calculations - use first_obj for visualization
+            if self.first_obj.lunar_phase is not None:
+                template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
+            else:
+                template_dict["makeLunarPhase"] = ""
 
             # Houses and planet drawing
             template_dict["makeMainHousesGrid"] = draw_main_house_grid(
@@ -1379,7 +1402,7 @@ class KerykeionChartSVG:
             template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(self.main_radius, self.main_radius - 160)
 
             # Chart title
-            if self.second_obj.return_type == "Solar":
+            if self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
                 template_dict["stringTitle"] = f"{self.first_obj.name} - {self.language_settings.get('solar_return', 'Solar Return')}"
             else:
                 template_dict["stringTitle"] = f"{self.first_obj.name} - {self.language_settings.get('lunar_return', 'Lunar Return')}"
@@ -1394,7 +1417,7 @@ class KerykeionChartSVG:
             return_latitude_string = convert_latitude_coordinate_to_string(self.second_obj.lat, self.language_settings["north"], self.language_settings["south"]) # type: ignore
             return_longitude_string = convert_longitude_coordinate_to_string(self.second_obj.lng, self.language_settings["east"], self.language_settings["west"]) # type: ignore
 
-            if self.second_obj.return_type == "Solar":
+            if self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
                 template_dict["top_left_0"] = f"{self.language_settings.get('solar_return', 'Solar Return')}:"
             else:
                 template_dict["top_left_0"] = f"{self.language_settings.get('lunar_return', 'Lunar Return')}:"
@@ -1414,12 +1437,22 @@ class KerykeionChartSVG:
 
             template_dict["bottom_left_0"] = zodiac_info
             template_dict["bottom_left_1"] = f"{self.language_settings.get('domification', 'Domification')}: {self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)}"
-            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
-            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
+
+            # Lunar phase information (optional)
+            if self.first_obj.lunar_phase is not None:
+                template_dict["bottom_left_2"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
+                template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
+            else:
+                template_dict["bottom_left_2"] = ""
+                template_dict["bottom_left_3"] = ""
+
             template_dict["bottom_left_4"] = f'{self.language_settings.get("perspective_type", "Perspective")}: {self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
 
             # Moon phase section calculations
-            template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
+            if self.first_obj.lunar_phase is not None:
+                template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
+            else:
+                template_dict["makeLunarPhase"] = ""
 
             # Houses and planet drawing
             template_dict["makeMainHousesGrid"] = draw_main_house_grid(
@@ -1461,7 +1494,7 @@ class KerykeionChartSVG:
             )
 
             # Planet grid
-            if self.second_obj.return_type == "Solar":
+            if self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
                 first_return_grid_title = f"{self.first_obj.name} ({self.language_settings.get('inner_wheel', 'Inner Wheel')})"
                 second_return_grid_title = f"{self.language_settings.get('solar_return', 'Solar Return')} ({self.language_settings.get('outer_wheel', 'Outer Wheel')})"
             else:
@@ -1481,7 +1514,7 @@ class KerykeionChartSVG:
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
-                celestial_point_language=self.language_settings["celestial_points"]
+                celestial_point_language=self.language_settings["celestial_points"],
             )
 
             house_comparison_factory = HouseComparisonFactory(
@@ -1557,7 +1590,7 @@ class KerykeionChartSVG:
             template_dict["top_left_3"] = f"{self.language_settings['latitude']}: {latitude_string}"
             template_dict["top_left_4"] = f"{self.language_settings['longitude']}: {longitude_string}"
 
-            if self.first_obj.return_type == "Solar":
+            if hasattr(self.first_obj, 'return_type') and self.first_obj.return_type == "Solar":
                 template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings.get('solar_return', 'Solar Return')}"
             else:
                 template_dict["top_left_5"] = f"{self.language_settings['type']}: {self.language_settings.get('lunar_return', 'Lunar Return')}"
@@ -1572,12 +1605,22 @@ class KerykeionChartSVG:
 
             template_dict["bottom_left_0"] = zodiac_info
             template_dict["bottom_left_1"] = f"{self.language_settings.get('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self.language_settings.get('houses', 'Houses')}"
-            template_dict["bottom_left_2"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
-            template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
+
+            # Lunar phase information (optional)
+            if self.first_obj.lunar_phase is not None:
+                template_dict["bottom_left_2"] = f'{self.language_settings.get("lunation_day", "Lunation Day")}: {self.first_obj.lunar_phase.get("moon_phase", "")}'
+                template_dict["bottom_left_3"] = f'{self.language_settings.get("lunar_phase", "Lunar Phase")}: {self.language_settings.get(self.first_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.first_obj.lunar_phase.moon_phase_name)}'
+            else:
+                template_dict["bottom_left_2"] = ""
+                template_dict["bottom_left_3"] = ""
+
             template_dict["bottom_left_4"] = f'{self.language_settings.get("perspective_type", "Perspective")}: {self.language_settings.get(self.first_obj.perspective_type.lower().replace(" ", "_"), self.first_obj.perspective_type)}'
 
             # Moon phase section calculations
-            template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
+            if self.first_obj.lunar_phase is not None:
+                template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
+            else:
+                template_dict["makeLunarPhase"] = ""
 
             # Houses and planet drawing
             template_dict["makeMainHousesGrid"] = draw_main_house_grid(
@@ -1680,9 +1723,9 @@ class KerykeionChartSVG:
 
         self.template = self.makeTemplate(minify, remove_css_variables)
 
-        if self.chart_type == "Return" and self.second_obj.return_type == "Lunar":
+        if self.chart_type == "Return" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Lunar":
             chartname = self.output_directory / f"{self.first_obj.name} - {self.chart_type} Chart - Lunar Return.svg"
-        elif self.chart_type == "Return" and self.second_obj.return_type == "Solar":
+        elif self.chart_type == "Return" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
             chartname = self.output_directory / f"{self.first_obj.name} - {self.chart_type} Chart - Solar Return.svg"
         else:
             chartname = self.output_directory / f"{self.first_obj.name} - {self.chart_type} Chart.svg"
@@ -1835,7 +1878,7 @@ if __name__ == "__main__":
     from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
     ACTIVE_PLANETS: list[AstrologicalPoint] = [
-        "Sun", "Moon", "Pars_Fortunae"
+        "Sun", "Moon", "Pars_Fortunae", "Mercury", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron", "True_Node"
     ]
 
     setup_logging(level="info")
