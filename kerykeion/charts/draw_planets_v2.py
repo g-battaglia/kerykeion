@@ -96,7 +96,12 @@ def draw_planets_v2(
         point_idx = position_index_map[abs_position]
 
         # Find previous and next point positions for distance calculations
-        if position_idx == 0:
+        # Handle special case when there's only one planet
+        if len(sorted_positions) == 1:
+            # With only one planet, there are no adjacent planets
+            prev_position = main_points_abs_positions[point_idx]
+            next_position = main_points_abs_positions[point_idx]
+        elif position_idx == 0:
             prev_position = main_points_abs_positions[position_index_map[sorted_positions[-1]]]
             next_position = main_points_abs_positions[position_index_map[sorted_positions[1]]]
         elif position_idx == len(sorted_positions) - 1:
@@ -107,8 +112,13 @@ def draw_planets_v2(
             next_position = main_points_abs_positions[position_index_map[sorted_positions[position_idx + 1]]]
 
         # Calculate distance to adjacent points
-        distance_to_prev = degreeDiff(prev_position, main_points_abs_positions[point_idx])
-        distance_to_next = degreeDiff(next_position, main_points_abs_positions[point_idx])
+        # When there's only one planet, set distances to a large value to prevent grouping
+        if len(sorted_positions) == 1:
+            distance_to_prev = 360.0  # Maximum possible distance
+            distance_to_next = 360.0  # Maximum possible distance
+        else:
+            distance_to_prev = degreeDiff(prev_position, main_points_abs_positions[point_idx])
+            distance_to_next = degreeDiff(next_position, main_points_abs_positions[point_idx])
 
         # Store position and distance information
         planets_by_position[position_idx] = [point_idx, distance_to_prev, distance_to_next]
