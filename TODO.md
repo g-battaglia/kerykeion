@@ -31,9 +31,11 @@
 - [ ] Create utility function to retrieve all active planets  
 - [ ] Full documentation for the library and AstrologerAPI
 - [ ] More "air space" around objects in the chart
-- [ ] More colorful themes (eg. "strawberry")
+- [x] More colorful themes (eg. "strawberry")
 - [ ] Correct the displayed file name (browser tab/title)
 - [ ] NatalAspects and SynatryAspect with inheritance of ActivePoints
+- [ ] Fix unit tests
+- [ ] Complete all the arab parts and other points in the chart
 
 
 ### 🟧 Medium Priority
