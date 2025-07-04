@@ -1,11 +1,17 @@
 from kerykeion import AstrologicalSubjectFactory
+from kerykeion.kr_types import AstrologicalPoint
+from typing import get_args
 from pytest import approx
 
 
 class TestAstrologicalSubject:
     def setup_class(self):
-        # Johnny Depp
-        self.subject = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", geonames_username="century.boy")
+        # Johnny Depp - including all astrological points for complete testing
+        all_points = list(get_args(AstrologicalPoint))
+        self.subject = AstrologicalSubjectFactory.from_birth_data(
+            "Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US",
+            geonames_username="century.boy", active_points=all_points
+        )
         self.expected_output = {
             "name": "Johnny Depp",
             "year": 1963,
