@@ -870,7 +870,9 @@ class KerykeionChartSVG:
             output_file.write(self.template)
 
         print(f"SVG Generated Correctly in: {chartname}")
-
+        
+        return self.template # it will return the SVG element which easy to render
+    
     def makeWheelOnlyTemplate(self, minify: bool = False, remove_css_variables = False):
         """
         Render the wheel-only chart SVG as a string.
