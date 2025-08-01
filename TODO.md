@@ -18,6 +18,7 @@
 
 ### 🟥 High Priority
 
+- [ ] FIX WHEEL ONLY CHARTS!
 - [ ] Fix labels  (eg. "Aspetti Tra [...]")  
 - [x] Refactor structure using the new `AstrologicalSubjectModel` and a factory class to instantiate objects in multiple ways:
   - [ ] Online  
@@ -40,11 +41,11 @@
 
 ### 🟧 Medium Priority
 
-- [ ] Implement Gauquelin Sector as an additional house system mode (`G`)
 - [ ] Finalize and integrate new examples into the documentation  
 
 ### 🟨 Low Priority
 
+- [ ] Implement Gauquelin Sector as an additional house system mode (`G`)
 - [ ] Create unit tests for polar circle edge cases
 - [ ] `get_trasnlation` function for multiple languages
 
