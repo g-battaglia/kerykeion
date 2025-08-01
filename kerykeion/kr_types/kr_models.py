@@ -79,18 +79,18 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     # Common identification data
     name: str
 
-    # Common location data
-    city: str
-    nation: str
-    lng: float
-    lat: float
-    tz_str: str
+    # Common location data (optional for composite charts)
+    city: Optional[str] = None
+    nation: Optional[str] = None
+    lng: Optional[float] = None
+    lat: Optional[float] = None
+    tz_str: Optional[str] = None
 
-    # Common time data
-    iso_formatted_local_datetime: str
-    iso_formatted_utc_datetime: str
-    julian_day: float
-    day_of_week: str
+    # Common time data (optional for composite charts)
+    iso_formatted_local_datetime: Optional[str] = None
+    iso_formatted_utc_datetime: Optional[str] = None
+    julian_day: Optional[float] = None
+    day_of_week: Optional[str] = None
 
     # Common configuration
     zodiac_type: ZodiacType
@@ -188,6 +188,17 @@ class AstrologicalSubjectModel(AstrologicalBaseModel):
     """
     Pydantic Model for Astrological Subject
     """
+    # Override base model to make location and time data required for subjects
+    city: str
+    nation: str
+    lng: float
+    lat: float
+    tz_str: str
+    iso_formatted_local_datetime: str
+    iso_formatted_utc_datetime: str
+    julian_day: float
+    day_of_week: str
+
     # Specific birth/event data
     year: int
     month: int
