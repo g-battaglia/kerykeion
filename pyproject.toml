@@ -1,11 +1,12 @@
-[tool.poetry]
+[project]
 name = "kerykeion"
 version = "5.0.0a8"
-authors = ["Giacomo Battaglia <kerykeion.astrology@gmail.com>"]
+authors = [
+    { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
+]
 description = "A python library for astrology."
-license = "AGPL-3.0"
-homepage = "https://www.kerykeion.net/"
-repository = "https://github.com/g-battaglia/kerykeion"
+license = { text = "AGPL-3.0" }
+readme = "README.md"
 keywords = [
     "astrology",
     "ephemeris",
@@ -18,8 +19,6 @@ keywords = [
     "synastry",
     "astrology-calculator",
 ]
-readme = "README.md"
-include = ["LICENSE"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Information Technology",
@@ -36,32 +35,31 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Astronomy",
     "Typing :: Typed",
 ]
+requires-python = ">=3.9"
+dependencies = [
+    "pyswisseph>=2.10.3.1",
+    "pydantic>=2.5",
+    "scour>=0.38.2",
+    "requests-cache>=1.2.1",
+    "requests>=2.32.3",
+    "simple-ascii-tables>=1.0.0",
+    "pytz>=2024.2",
+    "typing-extensions>=4.12.2",
+]
 
-# To include Kerykeion itself
-packages = [{ include = "kerykeion" }]
+[project.urls]
+Homepage = "https://www.kerykeion.net/"
+Repository = "https://github.com/g-battaglia/kerykeion"
 
-[tool.poetry.dependencies]
-python = "^3.9"
-pyswisseph = "^2.10.3.1"
-pydantic = "^2.5"
-scour = "^0.38.2"
-requests-cache = "^1.2.1"
-requests = "^2.32.3"
-simple-ascii-tables = "^1.0.0"
-pytz = "^2024.2"
-typing-extensions = "^4.12.2"
-
-[tool.poetry.scripts]
+[project.scripts]
 create-docs = "scripts.docs:main"
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.2.0"
-mypy = "^0.991"
-black = "^24.4.2"
-pdoc = "^14.5.0"
-types-requests = "^2.28.11.7"
-types-pytz = "^2022.7.0.0"
-poethepoet = "^0.19.0"
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["kerykeion"]
 
 # MyPy Static Analysis
 [tool.mypy]
@@ -73,7 +71,7 @@ files = "kerykeion"
 [tool.pytest.ini_options]
 log_cli_level = 20
 
-log_cli = "True"
+log_cli = true
 testpaths = "tests"
 
 log_level = 20
@@ -93,3 +91,14 @@ analize = "mypy"
 docs = "pdoc kerykeion -o ./docs"
 format = "black --line-length 120"
 "format:all" = "black kerykeion tests --line-length 120"
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "mypy>=1.17.1",
+    "pdoc>=15.0.4",
+    "poethepoet>=0.36.0",
+    "pytest>=8.4.1",
+    "types-pytz>=2025.2.0.20250516",
+    "types-requests>=2.32.4.20250611",
+]
