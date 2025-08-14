@@ -42,6 +42,7 @@ from kerykeion.charts.charts_utils import (
     draw_transit_ring_degree_steps,
     draw_degree_ring,
     draw_transit_ring,
+    draw_background_circle,
     draw_first_circle,
     draw_house_comparison_grid,
     draw_second_circle,
@@ -769,6 +770,11 @@ class KerykeionChartSVG:
                 self.first_obj.seventh_house.abs_pos,
                 self.chart_colors_settings["paper_0"],
             )
+            template_dict["background_circle"] = draw_background_circle(
+                self.main_radius,
+                self.chart_colors_settings["paper_1"],
+                self.chart_colors_settings["paper_1"],
+            )
             template_dict["first_circle"] = draw_first_circle(
                 self.main_radius,
                 self.chart_colors_settings["zodiac_radix_ring_2"],
@@ -893,6 +899,11 @@ class KerykeionChartSVG:
                 self.first_circle_radius,
                 self.first_obj.seventh_house.abs_pos,
                 self.chart_colors_settings["paper_0"],
+            )
+            template_dict["background_circle"] = draw_background_circle(
+                self.main_radius,
+                self.chart_colors_settings["paper_1"],
+                self.chart_colors_settings["paper_1"],
             )
             template_dict["first_circle"] = draw_first_circle(
                 self.main_radius,
@@ -1054,6 +1065,11 @@ class KerykeionChartSVG:
                 self.chart_colors_settings["zodiac_transit_ring_3"],
             )
             template_dict["degreeRing"] = draw_transit_ring_degree_steps(self.main_radius, self.first_obj.seventh_house.abs_pos)
+            template_dict["background_circle"] = draw_background_circle(
+                self.main_radius,
+                self.chart_colors_settings["paper_1"],
+                self.chart_colors_settings["paper_1"],
+            )
             template_dict["first_circle"] = draw_first_circle(
                 self.main_radius,
                 self.chart_colors_settings["zodiac_transit_ring_2"],
@@ -1224,6 +1240,11 @@ class KerykeionChartSVG:
                 self.chart_colors_settings["zodiac_transit_ring_3"],
             )
             template_dict["degreeRing"] = draw_transit_ring_degree_steps(self.main_radius, self.first_obj.seventh_house.abs_pos)
+            template_dict["background_circle"] = draw_background_circle(
+                self.main_radius,
+                self.chart_colors_settings["paper_1"],
+                self.chart_colors_settings["paper_1"],
+            )
             template_dict["first_circle"] = draw_first_circle(
                 self.main_radius,
                 self.chart_colors_settings["zodiac_transit_ring_2"],
@@ -1365,6 +1386,11 @@ class KerykeionChartSVG:
                 self.chart_colors_settings["zodiac_transit_ring_3"],
             )
             template_dict["degreeRing"] = draw_transit_ring_degree_steps(self.main_radius, self.first_obj.seventh_house.abs_pos)
+            template_dict["background_circle"] = draw_background_circle(
+                self.main_radius,
+                self.chart_colors_settings["paper_1"],
+                self.chart_colors_settings["paper_1"],
+            )
             template_dict["first_circle"] = draw_first_circle(
                 self.main_radius,
                 self.chart_colors_settings["zodiac_transit_ring_2"],
@@ -1546,6 +1572,11 @@ class KerykeionChartSVG:
                 self.first_circle_radius,
                 self.first_obj.seventh_house.abs_pos,
                 self.chart_colors_settings["paper_0"],
+            )
+            template_dict["background_circle"] = draw_background_circle(
+                self.main_radius,
+                self.chart_colors_settings["paper_1"],
+                self.chart_colors_settings["paper_1"],
             )
             template_dict["first_circle"] = draw_first_circle(
                 self.main_radius,

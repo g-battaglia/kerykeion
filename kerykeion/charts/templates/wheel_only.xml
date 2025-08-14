@@ -21,6 +21,12 @@
 
         <!-- Full Wheel -->
         <g kr:node="Full_Wheel" transform="translate(100,50)">
+
+            <!-- Background Circle -->
+            <g kr:node='Background_Circle'>
+                $background_circle
+            </g>
+
             <!-- Zodiac -->
             <g kr:node="Zodiac">
                 $makeZodiac
