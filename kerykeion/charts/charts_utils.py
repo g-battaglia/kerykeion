@@ -430,6 +430,21 @@ def draw_first_circle(
         )
 
 
+def draw_background_circle(r: Union[int, float], stroke_color: str, fill_color: str) -> str:
+    """
+    Draws the background circle.
+
+    Args:
+        - r (Union[int, float]): The value of r.
+        - stroke_color (str): The color of the stroke.
+        - fill_color (str): The color of the fill.
+
+    Returns:
+        str: The SVG path of the background circle.
+    """
+    return f'<circle cx="{r}" cy="{r}" r="{r}" style="fill: {fill_color}; stroke: {stroke_color}; stroke-width: 1px;" />'
+
+
 def draw_second_circle(
     r: Union[int, float], stroke_color: str, fill_color: str, chart_type: ChartType, c2: Union[int, float, None] = None
 ) -> str:
