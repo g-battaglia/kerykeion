@@ -32,6 +32,8 @@ class ChartTemplateDictionary(TypedDict):
     paper_color_0: str
     # Background color of the chart
     paper_color_1: str
+    # Dynamic background color (can be transparent or theme color)
+    background_color: str
 
     # Planets colors, from 0 to 16 (0 is the Sun)
     planets_color_0: str

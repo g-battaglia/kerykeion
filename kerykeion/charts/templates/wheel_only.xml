@@ -7,7 +7,7 @@
     height="100%"
     viewBox="40 40 500 500"
     preserveAspectRatio="xMidYMid"
-    style="background-color: $paper_color_1"
+    style="background-color: $background_color"
 >
     <title>$stringTitle | Kerykeion</title>
 

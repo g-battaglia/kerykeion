@@ -7,7 +7,7 @@
     height="100%"
     viewBox="$viewbox"
     preserveAspectRatio="xMidYMid"
-    style="background-color: $paper_color_1"
+    style="background-color: $background_color"
 >
     <title>$stringTitle</title>
 
