@@ -177,6 +177,7 @@ class KerykeionChartSVG:
     chart_language: KerykeionChartLanguage
     active_points: List[AstrologicalPoint]
     active_aspects: List[ActiveAspect]
+    transparent_background: bool
 
     # Internal properties
     fire: float
@@ -211,6 +212,7 @@ class KerykeionChartSVG:
         active_points: Optional[list[AstrologicalPoint]] = None,
         active_aspects: list[ActiveAspect]= DEFAULT_ACTIVE_ASPECTS,
         *,
+        transparent_background: bool = False,
         colors_settings: dict = DEFAULT_CHART_COLORS,
         celestial_points_settings: list[dict] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
         aspects_settings: list[dict] = DEFAULT_CHART_ASPECTS_SETTINGS,
@@ -239,6 +241,8 @@ class KerykeionChartSVG:
                 Celestial points to include in the chart visualization.
             active_aspects (List[ActiveAspect], optional):
                 Aspects to calculate, each defined by name and orb.
+            transparent_background (bool, optional):
+                Whether to use a transparent background instead of the theme color. Defaults to False.
         """
         # --------------------
         # COMMON INITIALIZATION
@@ -249,6 +253,7 @@ class KerykeionChartSVG:
         self.active_aspects = active_aspects
         self.chart_type = chart_type
         self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
+        self.transparent_background = transparent_background
         self.chart_colors_settings = colors_settings
         self.planets_settings = celestial_points_settings
         self.aspects_settings = aspects_settings
@@ -708,6 +713,12 @@ class KerykeionChartSVG:
         # Set paper colors
         template_dict["paper_color_0"] = self.chart_colors_settings["paper_0"]
         template_dict["paper_color_1"] = self.chart_colors_settings["paper_1"]
+
+        # Set background color based on transparent_background setting
+        if self.transparent_background:
+            template_dict["background_color"] = "transparent"
+        else:
+            template_dict["background_color"] = self.chart_colors_settings["paper_1"]
 
         # Set planet colors
         for planet in self.planets_settings:

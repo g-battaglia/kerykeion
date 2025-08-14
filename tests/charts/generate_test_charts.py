@@ -230,6 +230,13 @@ composite_subject_model = composite_subject_factory.get_midpoint_composite_subje
 composite_chart = KerykeionChartSVG(composite_subject_model, "Composite")
 composite_chart.makeSVG()
 
+## TO IMPLEMENT (Or check)
+
 # Solar Return Chart
 
 # Single Solar Return Chart
+
+## Transparent Background
+transparent_background_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Transparent Background", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+transparent_background_chart = KerykeionChartSVG(transparent_background_subject, transparent_background=True)
+transparent_background_chart.makeSVG()
