@@ -14,6 +14,12 @@ class Report:
     houses_table: str
 
     def __init__(self, instance: AstrologicalSubjectModel):
+        """
+        Initialize a new Report instance.
+
+        Args:
+            instance: The astrological subject model to create a report for.
+        """
         self.instance = instance
 
         self.get_report_title()
@@ -22,6 +28,7 @@ class Report:
         self.get_houses_table()
 
     def get_report_title(self) -> None:
+        """Generate the report title based on the subject's name."""
         self.report_title = f"\n+- Kerykeion report for {self.instance.name} -+"
 
     def get_data_table(self) -> None:

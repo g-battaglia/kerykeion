@@ -124,6 +124,7 @@ def draw_planets(
             group_open = False
 
     def zero(x):
+        """Helper function that always returns 0, used for initializing arrays."""
         return 0
 
     planets_delta = list(map(zero, range(len(available_planets_setting))))

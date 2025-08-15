@@ -34,19 +34,33 @@ class SubscriptableBaseModel(BaseModel):
     """
 
     def __getitem__(self, key):
+        """Get an attribute using dictionary-style access."""
         return getattr(self, key)
 
     def __setitem__(self, key, value):
+        """Set an attribute using dictionary-style access."""
         setattr(self, key, value)
 
     def __delitem__(self, key):
+        """Delete an attribute using dictionary-style access."""
         delattr(self, key)
 
     def get(self, key, default = None):
+        """Get an attribute with a default value if not found."""
         return getattr(self, key, default)
 
 
 class LunarPhaseModel(SubscriptableBaseModel):
+    """
+    Model representing lunar phase information.
+    
+    Attributes:
+        degrees_between_s_m: Angular separation between Sun and Moon in degrees.
+        moon_phase: Numerical phase identifier for the Moon.
+        sun_phase: Numerical phase identifier for the Sun.
+        moon_emoji: Emoji representation of the lunar phase.
+        moon_phase_name: Text name of the lunar phase.
+    """
     degrees_between_s_m: Union[float, int]
     moon_phase: int
     sun_phase: int
@@ -56,7 +70,24 @@ class LunarPhaseModel(SubscriptableBaseModel):
 
 class KerykeionPointModel(SubscriptableBaseModel):
     """
-    Kerykeion Point Model
+    Model representing an astrological celestial point or house cusp.
+    
+    This model contains comprehensive information about celestial objects
+    (planets, points) or house cusps including their zodiacal position,
+    sign placement, and metadata.
+    
+    Attributes:
+        name: The name of the celestial point or house.
+        quality: Astrological quality (Cardinal, Fixed, Mutable).
+        element: Astrological element (Fire, Earth, Air, Water).
+        sign: The zodiac sign the point is located in.
+        sign_num: Numerical identifier for the zodiac sign (0-11).
+        position: Position within the sign (0-30 degrees).
+        abs_pos: Absolute position in the zodiac (0-360 degrees).
+        emoji: Unicode emoji representing the point or sign.
+        point_type: Type of the celestial point (Planet, House, etc.).
+        house: House placement of the point (optional).
+        retrograde: Whether the point is in retrograde motion (optional).
     """
 
     name: Union[AstrologicalPoint, Houses]
@@ -74,7 +105,29 @@ class KerykeionPointModel(SubscriptableBaseModel):
 
 class AstrologicalBaseModel(SubscriptableBaseModel):
     """
-    Base Model with common fields for all astrological subjects
+    Base model containing common fields for all astrological subjects.
+    
+    This model serves as the foundation for all astrological chart types,
+    providing standard location, time, and configuration data. It supports
+    both complete charts (with full location/time data) and composite charts
+    (where some fields may be optional).
+    
+    Attributes:
+        name: Subject identifier or name.
+        city: Location city (optional for composite charts).
+        nation: Country code (optional for composite charts).
+        lng: Longitude coordinate (optional for composite charts).
+        lat: Latitude coordinate (optional for composite charts).
+        tz_str: Timezone string (optional for composite charts).
+        iso_formatted_local_datetime: Local datetime in ISO format (optional).
+        iso_formatted_utc_datetime: UTC datetime in ISO format (optional).
+        julian_day: Julian day number for astronomical calculations (optional).
+        day_of_week: Day of the week (optional).
+        zodiac_type: Type of zodiac system used (Tropical or Sidereal).
+        sidereal_mode: Sidereal calculation mode (if applicable).
+        houses_system_identifier: House system used for calculations.
+        perspective_type: Astrological perspective (geocentric, heliocentric, etc.).
+        active_points: List of celestial points included in calculations.
     """
     # Common identification data
     name: str
