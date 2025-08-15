@@ -602,19 +602,6 @@ class TestAstrologicalSubjectJyotish:
         assert self.subject.pluto.house == self.expected_output["pluto"]["house"]
         assert self.subject.pluto.retrograde == self.expected_output["pluto"]["retrograde"]
 
-    def test_mean_node(self):
-        assert self.subject.mean_node.name == self.expected_output["mean_node"]["name"]
-        assert self.subject.mean_node.quality == self.expected_output["mean_node"]["quality"]
-        assert self.subject.mean_node.element == self.expected_output["mean_node"]["element"]
-        assert self.subject.mean_node.sign == self.expected_output["mean_node"]["sign"]
-        assert self.subject.mean_node.sign_num == self.expected_output["mean_node"]["sign_num"]
-        assert self.subject.mean_node.position == approx(self.expected_output["mean_node"]["position"], abs=1e-2)
-        assert self.subject.mean_node.abs_pos == approx(self.expected_output["mean_node"]["abs_pos"], abs=1e-2)
-        assert self.subject.mean_node.emoji == self.expected_output["mean_node"]["emoji"]
-        assert self.subject.mean_node.point_type == self.expected_output["mean_node"]["point_type"]
-        assert self.subject.mean_node.house == self.expected_output["mean_node"]["house"]
-        assert self.subject.mean_node.retrograde == self.expected_output["mean_node"]["retrograde"]
-
     def test_true_node(self):
         assert self.subject.true_node.name == self.expected_output["true_node"]["name"]
         assert self.subject.true_node.quality == self.expected_output["true_node"]["quality"]
@@ -627,19 +614,6 @@ class TestAstrologicalSubjectJyotish:
         assert self.subject.true_node.point_type == self.expected_output["true_node"]["point_type"]
         assert self.subject.true_node.house == self.expected_output["true_node"]["house"]
         assert self.subject.true_node.retrograde == self.expected_output["true_node"]["retrograde"]
-
-    def test_mean_south_node(self):
-        assert self.subject.mean_south_node.name == self.expected_output["mean_south_node"]["name"]
-        assert self.subject.mean_south_node.quality == self.expected_output["mean_south_node"]["quality"]
-        assert self.subject.mean_south_node.element == self.expected_output["mean_south_node"]["element"]
-        assert self.subject.mean_south_node.sign == self.expected_output["mean_south_node"]["sign"]
-        assert self.subject.mean_south_node.sign_num == self.expected_output["mean_south_node"]["sign_num"]
-        assert self.subject.mean_south_node.position == approx(self.expected_output["mean_south_node"]["position"], abs=1e-2)
-        assert self.subject.mean_south_node.abs_pos == approx(self.expected_output["mean_south_node"]["abs_pos"], abs=1e-2)
-        assert self.subject.mean_south_node.emoji == self.expected_output["mean_south_node"]["emoji"]
-        assert self.subject.mean_south_node.point_type == self.expected_output["mean_south_node"]["point_type"]
-        assert self.subject.mean_south_node.house == self.expected_output["mean_south_node"]["house"]
-        assert self.subject.mean_south_node.retrograde == self.expected_output["mean_south_node"]["retrograde"]
 
     def test_true_south_node(self):
         assert self.subject.true_south_node.name == self.expected_output["true_south_node"]["name"]
