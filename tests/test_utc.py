@@ -1,5 +1,4 @@
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from datetime import datetime
 
 
 def test_utc_constructor():

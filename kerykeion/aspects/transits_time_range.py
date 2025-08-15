@@ -2,12 +2,12 @@ from datetime import datetime, timedelta
 from kerykeion import (
     TransitsTimeRangeFactory,
     EphemerisDataFactory,
-    AstrologicalSubject,
+    AstrologicalSubjectFactory,
 )
 
 # Create a natal chart for the subject
 person = AstrologicalSubjectFactory.from_birth_data(
-    "Johnny Depp", 1963, 6, 9, 20, 15, 0, "Owensboro", "US"
+    "Johnny Depp", 1963, 6, 9, 20, 15, city="Owensboro", nation="US"
 )
 
 # Define the time period for transit calculation

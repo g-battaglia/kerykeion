@@ -10,7 +10,7 @@ import logging
 import swisseph as swe
 
 from datetime import datetime, timezone
-from typing import Optional, Union
+from typing import Union
 
 from kerykeion.kr_types import KerykeionException
 from kerykeion.fetch_geonames import FetchGeonames
@@ -18,6 +18,7 @@ from kerykeion.utilities import julian_to_datetime, datetime_to_julian
 from kerykeion.astrological_subject_factory import (
     GEONAMES_DEFAULT_USERNAME_WARNING,
     DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
+    DEFAULT_GEONAMES_USERNAME,
 )
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.kr_types.kr_literals import ReturnType
@@ -118,10 +119,10 @@ class PlanetaryReturnFactory:
             self.city_data: dict[str, str] = geonames.get_serialized_data()
 
             if (
-                not "countryCode" in self.city_data
-                or not "timezonestr" in self.city_data
-                or not "lat" in self.city_data
-                or not "lng" in self.city_data
+                "countryCode" not in self.city_data
+                or "timezonestr" not in self.city_data
+                or "lat" not in self.city_data
+                or "lng" not in self.city_data
             ):
                 raise KerykeionException("No data found for this city, try again! Maybe check your connection?")
 

@@ -2,7 +2,7 @@ import math
 import datetime
 from kerykeion.kr_types import KerykeionException, ChartType
 from kerykeion.kr_types.kr_literals import AstrologicalPoint
-from typing import Union, Literal, TYPE_CHECKING
+from typing import Union, Literal
 from kerykeion.kr_types.kr_models import AspectModel, KerykeionPointModel, CompositeSubjectModel, PlanetReturnModel, AstrologicalSubjectModel
 from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsCelestialPointModel
 from kerykeion.house_comparison import HouseComparisonModel
@@ -645,15 +645,15 @@ def draw_houses_cusps_and_text_number(
 
             # Add the house number text for the second subject
             fill_opacity = "0" if chart_type == "Transit" else ".4"
-            path += f'<g kr:node="HouseNumber">'
+            path += '<g kr:node="HouseNumber">'
             path += f'<text style="fill: var(--kerykeion-chart-color-house-number); fill-opacity: {fill_opacity}; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
-            path += f"</g>"
+            path += "</g>"
 
             # Add the house cusp line for the second subject
             stroke_opacity = "0" if chart_type == "Transit" else ".3"
-            path += f'<g kr:node="Cusp">'
+            path += '<g kr:node="Cusp">'
             path += f"<line x1='{t_x1}' y1='{t_y1}' x2='{t_x2}' y2='{t_y2}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:{stroke_opacity};'/>"
-            path += f"</g>"
+            path += "</g>"
 
         # Adjust dropin based on chart type
         dropin = {"Transit": 84, "Synastry": 84, "Return": 84, "ExternalNatal": 100}.get(chart_type, 48)
@@ -661,14 +661,14 @@ def draw_houses_cusps_and_text_number(
         ytext = sliceToY(0, (r - dropin), text_offset) + dropin
 
         # Add the house cusp line for the first subject
-        path += f'<g kr:node="Cusp">'
+        path += '<g kr:node="Cusp">'
         path += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {linecolor}; stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;"/>'
-        path += f"</g>"
+        path += "</g>"
 
         # Add the house number text for the first subject
-        path += f'<g kr:node="HouseNumber">'
+        path += '<g kr:node="HouseNumber">'
         path += f'<text style="fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
-        path += f"</g>"
+        path += "</g>"
 
     return path
 
@@ -740,14 +740,14 @@ def draw_transit_aspect_list(
         inner_path += f'<use x="15" y="0" xlink:href="#orb{id_value}" />'
 
         # Second planet symbol
-        inner_path += f'<g transform="translate(30,0)">'
+        inner_path += '<g transform="translate(30,0)">'
         inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspect["p2"]]["name"]}" />'
-        inner_path += f"</g>"
+        inner_path += "</g>"
 
         # Difference in degrees
         inner_path += f'<text y="8" x="45" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;">{convert_decimal_to_degree_string(aspect["orbit"])}</text>'
 
-        inner_path += f"</g>"
+        inner_path += "</g>"
 
     out = '<g transform="translate(565,273)">'
     out += f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{grid_title}:</text>'

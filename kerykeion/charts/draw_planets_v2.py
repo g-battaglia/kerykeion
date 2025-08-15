@@ -50,15 +50,15 @@ def draw_planets_v2(
     # 1. Validate inputs and prepare data
     # -----------------------------------------------------------
     if chart_type == "Transit" and second_subject_available_kerykeion_celestial_points is None:
-        raise KerykeionException(f"Secondary celestial points are required for Transit charts")
+        raise KerykeionException("Secondary celestial points are required for Transit charts")
     elif chart_type == "Synastry" and second_subject_available_kerykeion_celestial_points is None:
-        raise KerykeionException(f"Secondary celestial points are required for Synastry charts")
+        raise KerykeionException("Secondary celestial points are required for Synastry charts")
     elif chart_type == "Return" and second_subject_available_kerykeion_celestial_points is None:
-        raise KerykeionException(f"Secondary celestial points are required for Return charts")
+        raise KerykeionException("Secondary celestial points are required for Return charts")
 
     # Extract absolute and relative positions for main celestial points
     main_points_abs_positions = [planet.abs_pos for planet in available_kerykeion_celestial_points]
-    main_points_rel_positions = [planet.position for planet in available_kerykeion_celestial_points]
+    [planet.position for planet in available_kerykeion_celestial_points]
 
     # Extract absolute and relative positions for secondary celestial points if needed
     secondary_points_abs_positions = []
@@ -87,7 +87,6 @@ def draw_planets_v2(
     # 3. Identify groups of celestial points that are close to each other
     # -----------------------------------------------------------
     point_groups = []
-    current_group = []
     is_group_open = False
     planets_by_position = [None] * len(position_index_map)
 
@@ -573,7 +572,7 @@ def draw_secondary_points(
         # Draw point symbol
         point_x = sliceToX(0, radius - point_radius, point_offset) + point_radius
         point_y = sliceToY(0, radius - point_radius, point_offset) + point_radius
-        output += f'<g class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)">'
+        output += '<g class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)">'
         output += f'<use x="{point_x*2}" y="{point_y*2}" xlink:href="#{points_settings[point_idx]["name"]}" /></g></g>'
 
         # Draw connecting line

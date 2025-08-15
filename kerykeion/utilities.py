@@ -15,7 +15,7 @@ import re
 from datetime import datetime
 
 if TYPE_CHECKING:
-    from kerykeion import AstrologicalSubjectFactory
+    pass
 
 
 def get_number_from_name(name: AstrologicalPoint) -> int:

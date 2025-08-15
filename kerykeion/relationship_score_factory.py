@@ -6,8 +6,6 @@
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.aspects.synastry_aspects import SynastryAspects
 import logging
-from pathlib import Path
-from typing import Union
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, RelationshipScoreAspectModel, RelationshipScoreModel
 from kerykeion.kr_types.kr_literals import RelationshipScoreDescription
 

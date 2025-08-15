@@ -1,7 +1,6 @@
 from kerykeion import AstrologicalSubjectFactory
 from simple_ascii_tables import AsciiTable
 from kerykeion.utilities import get_houses_list, get_available_astrological_points_list
-from typing import Union
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 
 class Report:

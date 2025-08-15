@@ -6,14 +6,11 @@
 import pytz
 import swisseph as swe
 import logging
-import warnings
 import math
 from datetime import datetime
 from pathlib import Path
-from typing import Union, Optional, List, Dict, Any, Literal, get_args, cast, TypedDict, Set
-from functools import cached_property, lru_cache
+from typing import Optional, List, Dict, Any, get_args, cast
 from dataclasses import dataclass, field
-from typing import Callable
 
 
 from kerykeion.fetch_geonames import FetchGeonames
@@ -21,8 +18,6 @@ from kerykeion.kr_types import (
     KerykeionException,
     ZodiacType,
     AstrologicalSubjectModel,
-    LunarPhaseModel,
-    KerykeionPointModel,
     PointType,
     SiderealMode,
     HousesSystemIdentifier,
@@ -31,7 +26,6 @@ from kerykeion.kr_types import (
     Houses,
 )
 from kerykeion.utilities import (
-    get_number_from_name,
     get_kerykeion_point_from_degree,
     get_planet_house,
     check_and_adjust_polar_latitude,
@@ -527,7 +521,8 @@ class AstrologicalSubjectFactory:
     def _calculate_houses(cls, data: Dict[str, Any], active_points: Optional[List[AstrologicalPoint]]) -> None:
         """Calculate house cusps and axis points"""
         # Skip calculation if point is not in active_points
-        should_calculate: Callable[[AstrologicalPoint], bool] = lambda point: not active_points or point in active_points
+        def should_calculate(point: AstrologicalPoint) -> bool:
+            return not active_points or point in active_points
         # Track which axial cusps are actually calculated
         calculated_axial_cusps = []
 
@@ -656,7 +651,8 @@ class AstrologicalSubjectFactory:
     def _calculate_planets(cls, data: Dict[str, Any], active_points: List[AstrologicalPoint]) -> None:
         """Calculate planetary positions and related information"""
         # Skip calculation if point is not in active_points
-        should_calculate: Callable[[AstrologicalPoint], bool] = lambda point: not active_points or point in active_points
+        def should_calculate(point: AstrologicalPoint) -> bool:
+            return not active_points or point in active_points
 
         point_type: PointType = "AstrologicalPoint"
         julian_day = data["julian_day"]

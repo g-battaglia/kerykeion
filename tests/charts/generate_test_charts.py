@@ -1,5 +1,4 @@
 
-from kerykeion.utilities import setup_logging
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.charts.kerykeion_chart_svg import KerykeionChartSVG
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory

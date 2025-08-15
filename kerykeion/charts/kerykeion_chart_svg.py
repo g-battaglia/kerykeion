@@ -73,7 +73,7 @@ from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHAR
 from pathlib import Path
 from scour.scour import scourString
 from string import Template
-from typing import Union, List, Literal
+from typing import List, Literal
 from datetime import datetime
 
 

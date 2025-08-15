@@ -12,7 +12,7 @@ from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_t
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.kr_literals import AstrologicalPoint
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
 from kerykeion.utilities import find_common_active_points
@@ -106,7 +106,7 @@ class NatalAspects:
                 aspect_degrees = aspect["aspect_degrees"]
                 diff = aspect["diff"]
 
-                if verdict == True:
+                if verdict:
                     aspect_model = AspectModel(
                         p1_name=active_points_list[first]["name"],
                         p1_owner=self.user.name,
