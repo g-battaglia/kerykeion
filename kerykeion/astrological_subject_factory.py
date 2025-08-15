@@ -1,6 +1,33 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2025 Giacomo Battaglia
+Astrological Subject Factory Module
+
+This module provides factory classes for creating astrological subjects with comprehensive
+astrological calculations including planetary positions, house cusps, aspects, and various
+astrological points.
+
+The main factory class AstrologicalSubjectFactory offers multiple creation methods for
+different initialization scenarios, supporting both online and offline calculation modes,
+various zodiac systems (Tropical/Sidereal), house systems, and coordinate perspectives.
+
+Key Features:
+    - Planetary position calculations for all traditional and modern planets
+    - House cusp calculations with multiple house systems
+    - Lunar nodes, Lilith points, asteroids, and trans-Neptunian objects
+    - Arabic parts (lots) calculations
+    - Fixed star positions
+    - Automatic location data fetching via GeoNames API
+    - Comprehensive timezone and coordinate handling
+    - Flexible point selection for performance optimization
+
+Classes:
+    ChartConfiguration: Configuration settings for astrological calculations
+    LocationData: Geographical location information and utilities
+    AstrologicalSubjectFactory: Main factory for creating astrological subjects
+
+Author: Giacomo Battaglia
+Copyright: (C) 2025 Kerykeion Project
+License: See LICENSE file for details
 """
 
 import pytz
@@ -59,14 +86,62 @@ NOW = datetime.now()
 
 @dataclass
 class ChartConfiguration:
-    """Configuration settings for astrological chart calculations"""
+    """
+    Configuration settings for astrological chart calculations.
+
+    This class encapsulates all the configuration parameters needed for astrological
+    calculations, including zodiac type, coordinate systems, house systems, and
+    calculation perspectives. It provides validation to ensure compatible settings
+    combinations.
+
+    Attributes:
+        zodiac_type (ZodiacType): The zodiac system to use ('Tropic' or 'Sidereal').
+            Defaults to 'Tropic'.
+        sidereal_mode (Optional[SiderealMode]): The sidereal calculation mode when using
+            sidereal zodiac. Only required/used when zodiac_type is 'Sidereal'.
+            Defaults to None (auto-set to FAGAN_BRADLEY for sidereal).
+        houses_system_identifier (HousesSystemIdentifier): The house system to use for
+            house cusp calculations. Defaults to 'P' (Placidus).
+        perspective_type (PerspectiveType): The coordinate perspective for calculations.
+            Options include 'Apparent Geocentric', 'True Geocentric', 'Heliocentric',
+            or 'Topocentric'. Defaults to 'Apparent Geocentric'.
+
+    Raises:
+        KerykeionException: When invalid configuration combinations are detected,
+            such as setting sidereal_mode with tropical zodiac, or using invalid
+            enumeration values.
+
+    Example:
+        >>> config = ChartConfiguration(
+        ...     zodiac_type="Sidereal",
+        ...     sidereal_mode="LAHIRI",
+        ...     houses_system_identifier="K",
+        ...     perspective_type="Topocentric"
+        ... )
+        >>> config.validate()
+    """
     zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE
     sidereal_mode: Optional[SiderealMode] = None
     houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER
     perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE
 
     def validate(self) -> None:
-        """Validate configuration settings"""
+        """
+        Validate configuration settings for internal consistency.
+
+        Performs comprehensive validation of all configuration parameters to ensure
+        they form a valid, compatible combination. This includes checking enumeration
+        values, zodiac/sidereal mode compatibility, and setting defaults where needed.
+
+        Raises:
+            KerykeionException: If any configuration parameter is invalid or if
+                incompatible parameter combinations are detected.
+
+        Side Effects:
+            - Sets default sidereal_mode to FAGAN_BRADLEY if zodiac_type is Sidereal
+              and no sidereal_mode is specified
+            - Logs informational message when setting default sidereal mode
+        """
         # Validate zodiac type
         if self.zodiac_type not in get_args(ZodiacType):
             raise KerykeionException(
@@ -101,7 +176,39 @@ class ChartConfiguration:
 
 @dataclass
 class LocationData:
-    """Information about a geographical location"""
+    """
+    Information about a geographical location for astrological calculations.
+
+    This class handles all location-related data including coordinates, timezone
+    information, and interaction with the GeoNames API for automatic location
+    data retrieval. It provides methods for fetching location data online and
+    preparing coordinates for astrological calculations.
+
+    Attributes:
+        city (str): Name of the city or location. Defaults to "Greenwich".
+        nation (str): ISO country code (2-letter). Defaults to "GB" (United Kingdom).
+        lat (float): Latitude in decimal degrees. Positive for North, negative for South.
+            Defaults to 51.5074 (Greenwich).
+        lng (float): Longitude in decimal degrees. Positive for East, negative for West.
+            Defaults to 0.0 (Greenwich).
+        tz_str (str): IANA timezone identifier (e.g., 'Europe/London', 'America/New_York').
+            Defaults to "Etc/GMT".
+        altitude (Optional[float]): Altitude above sea level in meters. Used for
+            topocentric calculations. Defaults to None (sea level assumed).
+        city_data (Dict[str, str]): Raw data retrieved from GeoNames API. Used internally
+            for caching and validation. Defaults to empty dictionary.
+
+    Note:
+        When using online mode, the initial coordinate and timezone values may be
+        overridden by data fetched from the GeoNames API based on city and nation.
+        For polar regions, latitude values are automatically adjusted to prevent
+        calculation errors.
+
+    Example:
+        >>> location = LocationData(city="Rome", nation="IT")
+        >>> location.fetch_from_geonames("your_username", 30)
+        >>> location.prepare_for_calculation()
+    """
     city: str = "Greenwich"
     nation: str = "GB"
     lat: float = 51.5074
@@ -113,7 +220,32 @@ class LocationData:
     city_data: Dict[str, str] = field(default_factory=dict)
 
     def fetch_from_geonames(self, username: str, cache_expire_after_days: int) -> None:
-        """Fetch location data from geonames API"""
+        """
+        Fetch location data from GeoNames API.
+
+        Retrieves accurate coordinates, timezone, and country code information
+        for the specified city and country from the GeoNames web service.
+        Updates the instance attributes with the fetched data.
+
+        Args:
+            username (str): GeoNames API username. Must be registered at geonames.org.
+                Free accounts are limited to 2000 requests per hour.
+            cache_expire_after_days (int): Number of days to cache the location data
+                locally before refreshing from the API.
+
+        Raises:
+            KerykeionException: If required data is missing from the API response,
+                typically due to network issues, invalid location names, or API limits.
+
+        Side Effects:
+            - Updates city_data with raw API response
+            - Updates nation, lng, lat, and tz_str with fetched values
+            - May create or update local cache files
+
+        Note:
+            The method validates that all required fields (countryCode, timezonestr,
+            lat, lng) are present in the API response before updating instance attributes.
+        """
         logging.info(f"Fetching timezone/coordinates for {self.city}, {self.nation} from geonames")
 
         geonames = FetchGeonames(
@@ -142,18 +274,90 @@ class LocationData:
         self.tz_str = self.city_data["timezonestr"]
 
     def prepare_for_calculation(self) -> None:
-        """Prepare location data for astrological calculations"""
+        """
+        Prepare location data for astrological calculations.
+
+        Performs final adjustments to location data to ensure compatibility
+        with Swiss Ephemeris calculations. This includes handling special cases
+        like polar regions where extreme latitudes can cause calculation errors.
+
+        Side Effects:
+            - Adjusts latitude values for polar regions (beyond ±66.5°) to
+              prevent Swiss Ephemeris calculation failures
+            - May log warnings about latitude adjustments
+
+        Note:
+            This method should be called after all location data has been set,
+            either manually or via fetch_from_geonames(), and before performing
+            any astrological calculations.
+        """
         # Adjust latitude for polar regions
         self.lat = check_and_adjust_polar_latitude(self.lat)
 
 
 class AstrologicalSubjectFactory:
     """
-    Factory class for creating astrological subjects with planetary positions,
-    houses, and other astrological information for a specific time and location.
+    Factory class for creating comprehensive astrological subjects.
 
-    This factory creates and returns AstrologicalSubjectModel instances and provides
-    multiple creation methods for different initialization scenarios.
+    This factory creates AstrologicalSubjectModel instances with complete astrological
+    information including planetary positions, house cusps, aspects, lunar phases, and
+    various specialized astrological points. It provides multiple class methods for
+    different initialization scenarios and supports both online and offline calculation modes.
+
+    The factory handles complex astrological calculations using the Swiss Ephemeris library,
+    supports multiple coordinate systems and house systems, and can automatically fetch
+    location data from online sources.
+
+    Supported Astrological Points:
+        - Traditional Planets: Sun through Pluto
+        - Lunar Nodes: Mean and True North/South Nodes
+        - Lilith Points: Mean and True Black Moon
+        - Asteroids: Ceres, Pallas, Juno, Vesta
+        - Centaurs: Chiron, Pholus
+        - Trans-Neptunian Objects: Eris, Sedna, Haumea, Makemake, Ixion, Orcus, Quaoar
+        - Fixed Stars: Regulus, Spica (extensible)
+        - Arabic Parts: Pars Fortunae, Pars Spiritus, Pars Amoris, Pars Fidei
+        - Special Points: Vertex, Anti-Vertex, Earth (for heliocentric charts)
+        - House Cusps: All 12 houses with configurable house systems
+        - Angles: Ascendant, Medium Coeli, Descendant, Imum Coeli
+
+    Supported Features:
+        - Multiple zodiac systems (Tropical/Sidereal with various ayanamshas)
+        - Multiple house systems (Placidus, Koch, Equal, Whole Sign, etc.)
+        - Multiple coordinate perspectives (Geocentric, Heliocentric, Topocentric)
+        - Automatic timezone and coordinate resolution via GeoNames API
+        - Lunar phase calculations
+        - Day/night chart detection for Arabic parts
+        - Performance optimization through selective point calculation
+        - Comprehensive error handling and validation
+
+    Class Methods:
+        from_birth_data: Create subject from standard birth data (most flexible)
+        from_iso_utc_time: Create subject from ISO UTC timestamp
+        from_current_time: Create subject for current moment
+
+    Example:
+        >>> # Create natal chart
+        >>> subject = AstrologicalSubjectFactory.from_birth_data(
+        ...     name="John Doe",
+        ...     year=1990, month=6, day=15,
+        ...     hour=14, minute=30,
+        ...     city="Rome", nation="IT",
+        ...     online=True
+        ... )
+        >>> print(f"Sun: {subject.sun.sign} {subject.sun.degree_ut}°")
+        >>> print(f"Active points: {len(subject.active_points)}")
+
+        >>> # Create chart for current time
+        >>> now_subject = AstrologicalSubjectFactory.from_current_time(
+        ...     name="Current Moment",
+        ...     city="London", nation="GB"
+        ... )
+
+    Thread Safety:
+        This factory is not thread-safe due to its use of the Swiss Ephemeris library
+        which maintains global state. Use separate instances in multi-threaded applications
+        or implement appropriate locking mechanisms.
     """
 
     @classmethod
@@ -186,29 +390,110 @@ class AstrologicalSubjectFactory:
 
     ) -> AstrologicalSubjectModel:
         """
-        Create an astrological subject from standard birth/event details.
+        Create an astrological subject from standard birth or event data.
+
+        This is the most flexible and commonly used factory method. It creates a complete
+        astrological subject with planetary positions, house cusps, and specialized points
+        for a specific date, time, and location. Supports both online location resolution
+        and offline calculation modes.
 
         Args:
-            name: Subject name
-            year, month, day, hour, minute, seconds: Time components
-            city: Location name
-            nation: Country code
-            lng, lat: Coordinates (optional if online=True)
-            tz_str: Timezone string (optional if online=True)
-            geonames_username: Username for geonames API
-            online: Whether to fetch location data online
-            zodiac_type: Type of zodiac (Tropical or Sidereal)
-            sidereal_mode: Mode for sidereal calculations
-            houses_system_identifier: House system for calculations
-            perspective_type: Perspective for calculations
-            cache_expire_after_days: Cache duration for geonames data
-            is_dst: Daylight saving time flag
-            altitude: Location altitude for topocentric calculations
-            active_points: Set of points to calculate (optimization)
-            calculate_lunar_phase: Whether to calculate lunar phase (requires Sun and Moon)
+            name (str, optional): Name or identifier for the subject. Defaults to "Now".
+            year (int, optional): Year of birth/event. Defaults to current year.
+            month (int, optional): Month of birth/event (1-12). Defaults to current month.
+            day (int, optional): Day of birth/event (1-31). Defaults to current day.
+            hour (int, optional): Hour of birth/event (0-23). Defaults to current hour.
+            minute (int, optional): Minute of birth/event (0-59). Defaults to current minute.
+            seconds (int, optional): Seconds of birth/event (0-59). Defaults to 0.
+            city (str, optional): City name for location lookup. Used with online=True.
+                Defaults to None (Greenwich if not specified).
+            nation (str, optional): ISO country code (e.g., 'US', 'GB', 'IT'). Used with
+                online=True. Defaults to None ('GB' if not specified).
+            lng (float, optional): Longitude in decimal degrees. East is positive, West
+                is negative. If not provided and online=True, fetched from GeoNames.
+            lat (float, optional): Latitude in decimal degrees. North is positive, South
+                is negative. If not provided and online=True, fetched from GeoNames.
+            tz_str (str, optional): IANA timezone identifier (e.g., 'Europe/London').
+                If not provided and online=True, fetched from GeoNames.
+            geonames_username (str, optional): Username for GeoNames API. Required for
+                online location lookup. Get one free at geonames.org.
+            online (bool, optional): Whether to fetch location data online. If False,
+                lng, lat, and tz_str must be provided. Defaults to True.
+            zodiac_type (ZodiacType, optional): Zodiac system - 'Tropic' or 'Sidereal'.
+                Defaults to 'Tropic'.
+            sidereal_mode (SiderealMode, optional): Sidereal calculation mode (e.g.,
+                'FAGAN_BRADLEY', 'LAHIRI'). Only used with zodiac_type='Sidereal'.
+            houses_system_identifier (HousesSystemIdentifier, optional): House system
+                for cusp calculations (e.g., 'P'=Placidus, 'K'=Koch, 'E'=Equal).
+                Defaults to 'P' (Placidus).
+            perspective_type (PerspectiveType, optional): Calculation perspective:
+                - 'Apparent Geocentric': Standard geocentric with light-time correction
+                - 'True Geocentric': Geometric geocentric positions
+                - 'Heliocentric': Sun-centered coordinates
+                - 'Topocentric': Earth surface perspective (requires altitude)
+                Defaults to 'Apparent Geocentric'.
+            cache_expire_after_days (int, optional): Days to cache GeoNames data locally.
+                Defaults to 30.
+            is_dst (bool, optional): Daylight Saving Time flag for ambiguous times.
+                If None, pytz attempts automatic detection. Set explicitly for
+                times during DST transitions.
+            altitude (float, optional): Altitude above sea level in meters. Used for
+                topocentric calculations and atmospheric corrections. Defaults to None
+                (sea level assumed).
+            active_points (List[AstrologicalPoint], optional): List of astrological
+                points to calculate. Omitting points can improve performance for
+                specialized applications. Defaults to DEFAULT_ACTIVE_POINTS.
+            calculate_lunar_phase (bool, optional): Whether to calculate lunar phase.
+                Requires Sun and Moon in active_points. Defaults to True.
 
         Returns:
-            An AstrologicalSubjectModel with calculated data
+            AstrologicalSubjectModel: Complete astrological subject with calculated
+                positions, houses, and metadata. Access planetary positions via
+                attributes like .sun, .moon, .mercury, etc.
+
+        Raises:
+            KerykeionException:
+                - If offline mode is used without required location data
+                - If invalid zodiac/sidereal mode combinations are specified
+                - If GeoNames data is missing or invalid
+                - If timezone localization fails (ambiguous DST times)
+
+        Examples:
+            >>> # Basic natal chart with online location lookup
+            >>> chart = AstrologicalSubjectFactory.from_birth_data(
+            ...     name="Jane Doe",
+            ...     year=1985, month=3, day=21,
+            ...     hour=15, minute=30,
+            ...     city="Paris", nation="FR",
+            ...     geonames_username="your_username"
+            ... )
+
+            >>> # Offline calculation with manual coordinates
+            >>> chart = AstrologicalSubjectFactory.from_birth_data(
+            ...     name="John Smith",
+            ...     year=1990, month=12, day=25,
+            ...     hour=0, minute=0,
+            ...     lng=-74.006, lat=40.7128, tz_str="America/New_York",
+            ...     online=False
+            ... )
+
+            >>> # Sidereal chart with specific points
+            >>> chart = AstrologicalSubjectFactory.from_birth_data(
+            ...     name="Vedic Chart",
+            ...     year=2000, month=6, day=15, hour=12,
+            ...     city="Mumbai", nation="IN",
+            ...     zodiac_type="Sidereal",
+            ...     sidereal_mode="LAHIRI",
+            ...     active_points=["Sun", "Moon", "Mercury", "Venus", "Mars",
+            ...                   "Jupiter", "Saturn", "Ascendant"]
+            ... )
+
+        Note:
+            - For high-precision calculations, consider providing seconds parameter
+            - Use topocentric perspective for observer-specific calculations
+            - Some Arabic parts automatically activate required base points
+            - The method handles polar regions by adjusting extreme latitudes
+            - Time zones are handled with full DST awareness via pytz
         """
         # Create a calculation data container
         calc_data = {}
@@ -325,27 +610,78 @@ class AstrologicalSubjectFactory:
         calculate_lunar_phase: bool = True
     ) -> AstrologicalSubjectModel:
         """
-        Create an astrological subject from an ISO formatted UTC time.
+        Create an astrological subject from an ISO formatted UTC timestamp.
+
+        This method is ideal for creating astrological subjects from standardized
+        time formats, such as those stored in databases or received from APIs.
+        It automatically handles timezone conversion from UTC to the specified
+        local timezone.
 
         Args:
-            name: Subject name
-            iso_utc_time: ISO formatted UTC time string
-            city: Location name
-            nation: Country code
-            tz_str: Timezone string
-            online: Whether to fetch location data online
-            lng, lat: Coordinates
-            geonames_username: Username for geonames API
-            zodiac_type: Type of zodiac
-            sidereal_mode: Mode for sidereal calculations
-            houses_system_identifier: House system
-            perspective_type: Perspective for calculations
-            altitude: Location altitude
-            active_points: Set of points to calculate
-            calculate_lunar_phase: Whether to calculate lunar phase
+            name (str): Name or identifier for the subject.
+            iso_utc_time (str): ISO 8601 formatted UTC timestamp. Supported formats:
+                - "2023-06-15T14:30:00Z" (with Z suffix)
+                - "2023-06-15T14:30:00+00:00" (with UTC offset)
+                - "2023-06-15T14:30:00.123Z" (with milliseconds)
+            city (str, optional): City name for location. Defaults to "Greenwich".
+            nation (str, optional): ISO country code. Defaults to "GB".
+            tz_str (str, optional): IANA timezone identifier for result conversion.
+                The ISO time is assumed to be in UTC and will be converted to this
+                timezone. Defaults to "Etc/GMT".
+            online (bool, optional): Whether to fetch coordinates online. If True,
+                coordinates are fetched via GeoNames API. Defaults to True.
+            lng (float, optional): Longitude in decimal degrees. Used when online=False
+                or as fallback. Defaults to 0.0 (Greenwich).
+            lat (float, optional): Latitude in decimal degrees. Used when online=False
+                or as fallback. Defaults to 51.5074 (Greenwich).
+            geonames_username (str, optional): GeoNames API username. Required when
+                online=True. Defaults to DEFAULT_GEONAMES_USERNAME.
+            zodiac_type (ZodiacType, optional): Zodiac system. Defaults to 'Tropic'.
+            sidereal_mode (SiderealMode, optional): Sidereal mode when zodiac_type
+                is 'Sidereal'. Defaults to None.
+            houses_system_identifier (HousesSystemIdentifier, optional): House system.
+                Defaults to 'P' (Placidus).
+            perspective_type (PerspectiveType, optional): Calculation perspective.
+                Defaults to 'Apparent Geocentric'.
+            altitude (float, optional): Altitude in meters for topocentric calculations.
+                Defaults to None (sea level).
+            active_points (List[AstrologicalPoint], optional): Points to calculate.
+                Defaults to DEFAULT_ACTIVE_POINTS.
+            calculate_lunar_phase (bool, optional): Whether to calculate lunar phase.
+                Defaults to True.
 
         Returns:
-            AstrologicalSubjectModel instance
+            AstrologicalSubjectModel: Astrological subject with positions calculated
+                for the specified UTC time converted to local timezone.
+
+        Raises:
+            ValueError: If the ISO timestamp format is invalid or cannot be parsed.
+            KerykeionException: If location data cannot be fetched or is invalid.
+
+        Examples:
+            >>> # From API timestamp with online location lookup
+            >>> subject = AstrologicalSubjectFactory.from_iso_utc_time(
+            ...     name="Event Chart",
+            ...     iso_utc_time="2023-12-25T12:00:00Z",
+            ...     city="Tokyo", nation="JP",
+            ...     tz_str="Asia/Tokyo",
+            ...     geonames_username="your_username"
+            ... )
+
+            >>> # From database timestamp with manual coordinates
+            >>> subject = AstrologicalSubjectFactory.from_iso_utc_time(
+            ...     name="Historical Event",
+            ...     iso_utc_time="1969-07-20T20:17:00Z",
+            ...     lng=-95.0969, lat=37.4419,  # Houston
+            ...     tz_str="America/Chicago",
+            ...     online=False
+            ... )
+
+        Note:
+            - The method assumes the input timestamp is in UTC
+            - Local time conversion respects DST rules for the target timezone
+            - Milliseconds in the timestamp are supported but truncated to seconds
+            - When online=True, the city/nation parameters override lng/lat
         """
         # Parse the ISO time
         dt = datetime.fromisoformat(iso_utc_time.replace('Z', '+00:00'))
@@ -413,25 +749,79 @@ class AstrologicalSubjectFactory:
         calculate_lunar_phase: bool = True
     ) -> AstrologicalSubjectModel:
         """
-        Create an astrological subject for the current time.
+        Create an astrological subject for the current moment in time.
+
+        This convenience method creates a "now" chart, capturing the current
+        astrological conditions at the moment of execution. Useful for horary
+        astrology, electional astrology, or real-time astrological monitoring.
 
         Args:
-            name: Subject name
-            city: Location name
-            nation: Country code
-            lng, lat: Coordinates
-            tz_str: Timezone string
-            geonames_username: Username for geonames API
-            online: Whether to fetch location data online
-            zodiac_type: Type of zodiac
-            sidereal_mode: Mode for sidereal calculations
-            houses_system_identifier: House system
-            perspective_type: Perspective for calculations
-            active_points: Set of points to calculate
-            calculate_lunar_phase: Whether to calculate lunar phase
+            name (str, optional): Name for the current moment chart.
+                Defaults to "Now".
+            city (str, optional): City name for location lookup. If not provided
+                and online=True, defaults to Greenwich.
+            nation (str, optional): ISO country code. If not provided and
+                online=True, defaults to 'GB'.
+            lng (float, optional): Longitude in decimal degrees. If not provided
+                and online=True, fetched from GeoNames API.
+            lat (float, optional): Latitude in decimal degrees. If not provided
+                and online=True, fetched from GeoNames API.
+            tz_str (str, optional): IANA timezone identifier. If not provided
+                and online=True, fetched from GeoNames API.
+            geonames_username (str, optional): GeoNames API username for location
+                lookup. Required when online=True and location is not fully specified.
+            online (bool, optional): Whether to fetch location data online.
+                Defaults to True.
+            zodiac_type (ZodiacType, optional): Zodiac system to use.
+                Defaults to 'Tropic'.
+            sidereal_mode (SiderealMode, optional): Sidereal calculation mode.
+                Only used when zodiac_type is 'Sidereal'. Defaults to None.
+            houses_system_identifier (HousesSystemIdentifier, optional): House
+                system for calculations. Defaults to 'P' (Placidus).
+            perspective_type (PerspectiveType, optional): Calculation perspective.
+                Defaults to 'Apparent Geocentric'.
+            active_points (List[AstrologicalPoint], optional): Astrological points
+                to calculate. Defaults to DEFAULT_ACTIVE_POINTS.
+            calculate_lunar_phase (bool, optional): Whether to calculate lunar phase.
+                Defaults to True.
 
         Returns:
-            AstrologicalSubjectModel for current time
+            AstrologicalSubjectModel: Astrological subject representing current
+                astrological conditions at the specified or default location.
+
+        Raises:
+            KerykeionException: If online location lookup fails or if offline mode
+                is used without sufficient location data.
+
+        Examples:
+            >>> # Current moment for your location
+            >>> now_chart = AstrologicalSubjectFactory.from_current_time(
+            ...     name="Current Transits",
+            ...     city="New York", nation="US",
+            ...     geonames_username="your_username"
+            ... )
+
+            >>> # Horary chart with specific coordinates
+            >>> horary = AstrologicalSubjectFactory.from_current_time(
+            ...     name="Horary Question",
+            ...     lng=-0.1278, lat=51.5074,  # London
+            ...     tz_str="Europe/London",
+            ...     online=False
+            ... )
+
+            >>> # Current sidereal positions
+            >>> sidereal_now = AstrologicalSubjectFactory.from_current_time(
+            ...     name="Sidereal Now",
+            ...     city="Mumbai", nation="IN",
+            ...     zodiac_type="Sidereal",
+            ...     sidereal_mode="LAHIRI"
+            ... )
+
+        Note:
+            - The exact time is captured at method execution, including seconds
+            - For horary astrology, consider the moment of understanding the question
+            - System clock accuracy affects precision; ensure accurate system time
+            - Time zone detection is automatic when using online location lookup
         """
         now = datetime.now()
 
@@ -460,7 +850,32 @@ class AstrologicalSubjectFactory:
 
     @classmethod
     def _calculate_time_conversions(cls, data: Dict[str, Any], location: LocationData) -> None:
-        """Calculate time conversions between local time, UTC and Julian day"""
+        """
+        Calculate time conversions between local time, UTC, and Julian Day Number.
+
+        Handles timezone-aware conversion from local civil time to UTC and astronomical
+        Julian Day Number, including proper DST handling and timezone localization.
+
+        Args:
+            data (Dict[str, Any]): Calculation data dictionary containing time components
+                (year, month, day, hour, minute, seconds) and optional DST flag.
+            location (LocationData): Location data containing timezone information.
+
+        Raises:
+            KerykeionException: If DST ambiguity occurs during timezone transitions
+                and is_dst parameter is not explicitly set to resolve the ambiguity.
+
+        Side Effects:
+            Updates data dictionary with:
+            - iso_formatted_utc_datetime: ISO 8601 UTC timestamp
+            - iso_formatted_local_datetime: ISO 8601 local timestamp
+            - julian_day: Julian Day Number for astronomical calculations
+
+        Note:
+            During DST transitions, times may be ambiguous (fall back) or non-existent
+            (spring forward). The method raises an exception for ambiguous times unless
+            the is_dst parameter is explicitly set to True or False.
+        """
         # Convert local time to UTC
         local_timezone = pytz.timezone(location.tz_str)
         naive_datetime = datetime(
@@ -486,7 +901,37 @@ class AstrologicalSubjectFactory:
 
     @classmethod
     def _setup_ephemeris(cls, data: Dict[str, Any], config: ChartConfiguration) -> None:
-        """Set up Swiss Ephemeris with appropriate flags"""
+        """
+        Configure Swiss Ephemeris with appropriate calculation flags and settings.
+
+        Sets up the Swiss Ephemeris library with the correct ephemeris data path,
+        calculation flags for the specified perspective type, and sidereal mode
+        configuration if applicable.
+
+        Args:
+            data (Dict[str, Any]): Calculation data dictionary to store configuration.
+            config (ChartConfiguration): Validated chart configuration settings.
+
+        Side Effects:
+            - Sets Swiss Ephemeris data path to bundled ephemeris files
+            - Configures calculation flags (SWIEPH, SPEED, perspective flags)
+            - Sets sidereal mode for sidereal zodiac calculations
+            - Sets topocentric observer coordinates for topocentric perspective
+            - Updates data dictionary with houses_system_name and _iflag
+
+        Calculation Flags Set:
+            - FLG_SWIEPH: Use Swiss Ephemeris data files
+            - FLG_SPEED: Calculate planetary velocities
+            - FLG_TRUEPOS: True geometric positions (True Geocentric)
+            - FLG_HELCTR: Heliocentric coordinates (Heliocentric perspective)
+            - FLG_TOPOCTR: Topocentric coordinates (Topocentric perspective)
+            - FLG_SIDEREAL: Sidereal calculations (Sidereal zodiac)
+
+        Note:
+            The method assumes the Swiss Ephemeris data files are located in the
+            'sweph' subdirectory relative to this module. For topocentric calculations,
+            observer coordinates must be set via longitude, latitude, and altitude.
+        """
         # Set ephemeris path
         swe.set_ephe_path(str(Path(__file__).parent.absolute() / "sweph"))
 
@@ -519,7 +964,42 @@ class AstrologicalSubjectFactory:
 
     @classmethod
     def _calculate_houses(cls, data: Dict[str, Any], active_points: Optional[List[AstrologicalPoint]]) -> None:
-        """Calculate house cusps and axis points"""
+        """
+        Calculate house cusps and angular points (Ascendant, MC, etc.).
+
+        Computes the 12 house cusps using the specified house system and calculates
+        the four main angles of the chart. Only calculates angular points that are
+        included in the active_points list for performance optimization.
+
+        Args:
+            data (Dict[str, Any]): Calculation data dictionary containing configuration
+                and location information. Updated with calculated house and angle data.
+            active_points (Optional[List[AstrologicalPoint]]): List of points to calculate.
+                If None, all points are calculated. Angular points not in this list
+                are skipped for performance.
+
+        Side Effects:
+            Updates data dictionary with:
+            - House cusp objects: first_house through twelfth_house
+            - Angular points: ascendant, medium_coeli, descendant, imum_coeli
+            - houses_names_list: List of all house names
+            - _houses_degree_ut: Raw house cusp degrees for internal use
+
+        House Systems Supported:
+            All systems supported by Swiss Ephemeris including Placidus, Koch,
+            Equal House, Whole Sign, Regiomontanus, Campanus, Topocentric, etc.
+
+        Angular Points Calculated:
+            - Ascendant: Eastern horizon point (1st house cusp)
+            - Medium Coeli (Midheaven): Southern meridian point (10th house cusp)
+            - Descendant: Western horizon point (opposite Ascendant)
+            - Imum Coeli: Northern meridian point (opposite Medium Coeli)
+
+        Note:
+            House calculations respect the zodiac type (Tropical/Sidereal) and use
+            the appropriate Swiss Ephemeris function. Angular points include house
+            position and retrograde status (always False for angles).
+        """
         # Skip calculation if point is not in active_points
         def should_calculate(point: AstrologicalPoint) -> bool:
             return not active_points or point in active_points
@@ -611,18 +1091,45 @@ class AstrologicalSubjectFactory:
         active_points: List[AstrologicalPoint]
     ) -> None:
         """
-        Calculate a single planet's position with error handling and store it in the data dictionary.
+        Calculate a single celestial body's position with comprehensive error handling.
+
+        Computes the position of a single planet, asteroid, or other celestial object
+        using Swiss Ephemeris, creates a Kerykeion point object, determines house
+        position, and assesses retrograde status. Handles calculation errors gracefully
+        by logging and removing failed points from the active list.
 
         Args:
-            data: The data dictionary to store the planet information
-            planet_name: Name of the planet
-            planet_id: Swiss Ephemeris planet ID
-            julian_day: Julian day for the calculation
-            iflag: Swiss Ephemeris calculation flags
-            houses_degree_ut: House degrees for house calculation
-            point_type: Type of point being calculated
-            calculated_planets: List to track calculated planets
-            active_points: List of active points to modify if error occurs
+            data (Dict[str, Any]): Main calculation data dictionary to store results.
+            planet_name (AstrologicalPoint): Name identifier for the celestial body.
+            planet_id (int): Swiss Ephemeris numerical identifier for the object.
+            julian_day (float): Julian Day Number for the calculation moment.
+            iflag (int): Swiss Ephemeris calculation flags (perspective, zodiac, etc.).
+            houses_degree_ut (List[float]): House cusp degrees for house determination.
+            point_type (PointType): Classification of the point type for the object.
+            calculated_planets (List[str]): Running list of successfully calculated objects.
+            active_points (List[AstrologicalPoint]): Active points list (modified on error).
+
+        Side Effects:
+            - Adds calculated object to data dictionary using lowercase planet_name as key
+            - Appends planet_name to calculated_planets list on success
+            - Removes planet_name from active_points list on calculation failure
+            - Logs error messages for calculation failures
+
+        Calculated Properties:
+            - Zodiacal position (longitude) in degrees
+            - House position based on house cusp positions
+            - Retrograde status based on velocity (negative = retrograde)
+            - Sign, degree, and minute components
+
+        Error Handling:
+            If Swiss Ephemeris calculation fails (e.g., for distant asteroids outside
+            ephemeris range), the method logs the error and removes the object from
+            active_points to prevent cascade failures.
+
+        Note:
+            The method uses the Swiss Ephemeris calc_ut function which returns position
+            and velocity data. Retrograde determination is based on the velocity
+            component being negative (element index 3).
         """
         try:
             # Calculate planet position using Swiss Ephemeris
@@ -649,7 +1156,88 @@ class AstrologicalSubjectFactory:
 
     @classmethod
     def _calculate_planets(cls, data: Dict[str, Any], active_points: List[AstrologicalPoint]) -> None:
-        """Calculate planetary positions and related information"""
+        """
+        Calculate positions for all requested celestial bodies and special points.
+
+        This comprehensive method calculates positions for a wide range of astrological
+        points including traditional planets, lunar nodes, asteroids, trans-Neptunian
+        objects, fixed stars, Arabic parts, and specialized points like Vertex.
+
+        The calculation is performed selectively based on the active_points list for
+        performance optimization. Some Arabic parts automatically activate their
+        prerequisite points if needed.
+
+        Args:
+            data (Dict[str, Any]): Main calculation data dictionary. Updated with all
+                calculated planetary positions and related metadata.
+            active_points (List[AstrologicalPoint]): Mutable list of points to calculate.
+                Modified during execution to remove failed calculations and add
+                automatically required points for Arabic parts.
+
+        Celestial Bodies Calculated:
+            Traditional Planets:
+                - Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn
+                - Uranus, Neptune, Pluto
+
+            Lunar Nodes:
+                - Mean Node, True Node (North nodes)
+                - Mean South Node, True South Node (calculated as opposites)
+
+            Lilith Points:
+                - Mean Lilith (Mean Black Moon Lilith)
+                - True Lilith (Osculating Black Moon Lilith)
+
+            Asteroids:
+                - Ceres, Pallas, Juno, Vesta (main belt asteroids)
+
+            Centaurs:
+                - Chiron, Pholus
+
+            Trans-Neptunian Objects:
+                - Eris, Sedna, Haumea, Makemake
+                - Ixion, Orcus, Quaoar
+
+            Fixed Stars:
+                - Regulus, Spica (examples, extensible)
+
+            Arabic Parts (Lots):
+                - Pars Fortunae (Part of Fortune)
+                - Pars Spiritus (Part of Spirit)
+                - Pars Amoris (Part of Love/Eros)
+                - Pars Fidei (Part of Faith)
+
+            Special Points:
+                - Earth (for heliocentric perspectives)
+                - Vertex and Anti-Vertex
+
+        Side Effects:
+            - Updates data dictionary with all calculated positions
+            - Modifies active_points list by removing failed calculations
+            - Adds prerequisite points for Arabic parts calculations
+            - Updates data["active_points"] with successfully calculated objects
+
+        Error Handling:
+            Individual calculation failures (e.g., asteroids outside ephemeris range)
+            are handled gracefully with logging and removal from active_points.
+            This prevents cascade failures while maintaining calculation integrity.
+
+        Arabic Parts Logic:
+            - Day/night birth detection based on Sun's house position
+            - Automatic activation of required base points (Sun, Moon, Ascendant, etc.)
+            - Classical formulae with day/night variations where applicable
+            - All parts marked as non-retrograde (conceptual points)
+
+        Performance Notes:
+            - Only points in active_points are calculated (selective computation)
+            - Failed calculations are removed to prevent repeated attempts
+            - Some expensive calculations (like distant TNOs) may timeout
+            - Fixed stars use different calculation methods than planets
+
+        Note:
+            The method maintains a running list of successfully calculated planets
+            and updates the active_points list to reflect actual availability.
+            This ensures that dependent calculations and aspects only use valid data.
+        """
         # Skip calculation if point is not in active_points
         def should_calculate(point: AstrologicalPoint) -> bool:
             return not active_points or point in active_points
@@ -1121,7 +1709,25 @@ class AstrologicalSubjectFactory:
 
     @classmethod
     def _calculate_day_of_week(cls, data: Dict[str, Any]) -> None:
-        """Calculate the day of the week for the given Julian Day"""
+        """
+        Calculate the day of the week for the given astronomical event.
+
+        Determines the day of the week corresponding to the Julian Day Number
+        of the astrological event using Swiss Ephemeris calendar functions.
+
+        Args:
+            data (Dict[str, Any]): Calculation data dictionary containing julian_day.
+                Updated with the calculated day_of_week string.
+
+        Side Effects:
+            Updates data dictionary with:
+            - day_of_week: Human-readable day name (e.g., "Monday", "Tuesday")
+
+        Note:
+            The Swiss Ephemeris day_of_week function returns an integer where
+            0=Monday, 1=Tuesday, ..., 6=Sunday. This is converted to readable
+            day names for user convenience.
+        """
         # Calculate the day of the week (0=Sunday, 1=Monday, ..., 6=Saturday)
         day_of_week = swe.day_of_week(data["julian_day"])
         # Map to human-readable names
