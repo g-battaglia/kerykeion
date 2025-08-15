@@ -5,7 +5,7 @@
     xmlns:kr="https://www.kerykeion.net/"
     width="100%"
     height="100%"
-    viewBox="40 40 500 500"
+    viewBox="85 40 500 500"
     preserveAspectRatio="xMidYMid"
     style="background-color: $background_color"
 >
