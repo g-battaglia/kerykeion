@@ -285,6 +285,35 @@ class TransitMomentModel(SubscriptableBaseModel):
     aspects: List[AspectModel] = Field(description="List of aspects active at this specific moment.")
 
 
+class NatalAspectsModel(SubscriptableBaseModel):
+    """
+    Model representing all aspects in a natal chart.
+
+    Contains both all calculated aspects and the filtered relevant aspects
+    for an astrological subject.
+    """
+    subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The astrological subject for which aspects were calculated.")
+    all_aspects: List[AspectModel] = Field(description="Complete list of all calculated aspects.")
+    relevant_aspects: List[AspectModel] = Field(description="Filtered list of relevant aspects based on orb settings.")
+    active_points: List[AstrologicalPoint] = Field(description="List of active points used in the calculation.")
+    active_aspects: List["ActiveAspect"] = Field(description="List of active aspects with their orb settings.")
+
+
+class SynastryAspectsModel(SubscriptableBaseModel):
+    """
+    Model representing all aspects between two astrological subjects.
+
+    Contains both all calculated synastry aspects and the filtered relevant aspects
+    between two charts.
+    """
+    first_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The first astrological subject.")
+    second_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The second astrological subject.")
+    all_aspects: List[AspectModel] = Field(description="Complete list of all calculated synastry aspects.")
+    relevant_aspects: List[AspectModel] = Field(description="Filtered list of relevant synastry aspects based on orb settings.")
+    active_points: List[AstrologicalPoint] = Field(description="List of active points used in the calculation.")
+    active_aspects: List["ActiveAspect"] = Field(description="List of active aspects with their orb settings.")
+
+
 class TransitsTimeRangeModel(SubscriptableBaseModel):
     """
     Model representing a collection of transit moments for an astrological subject.

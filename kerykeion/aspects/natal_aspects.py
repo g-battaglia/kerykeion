@@ -4,22 +4,21 @@
 """
 
 import logging
-from dataclasses import dataclass, field
-from functools import cached_property
+from pathlib import Path
+from typing import Union, List, Optional
+
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.settings.kerykeion_settings import get_settings
-from kerykeion.aspects.aspects_utils import planet_id_decoder, get_aspect_from_two_points, get_active_points_list
-from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect, CompositeSubjectModel, PlanetReturnModel
+from kerykeion.aspects.aspects_utils import get_aspect_from_two_points, get_active_points_list
+from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect, CompositeSubjectModel, PlanetReturnModel, NatalAspectsModel
 from kerykeion.kr_types.kr_literals import AstrologicalPoint
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
 from kerykeion.utilities import find_common_active_points
-from pathlib import Path
-from typing import Union, List, Optional
 
-
+# Axes constants for orb filtering
 AXES_LIST = [
     "Ascendant",
     "Medium_Coeli",
@@ -28,139 +27,201 @@ AXES_LIST = [
 ]
 
 
-@dataclass
-class NatalAspects:
+class NatalAspectsFactory:
     """
-    Generates an object with all the aspects of a birthcart.
+    Factory class for creating natal aspects analysis.
+
+    This factory calculates all aspects in a birth chart and provides both
+    comprehensive and filtered aspect lists based on orb settings and relevance.
     """
 
-    user: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
-    new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None
-    active_points: Optional[List[AstrologicalPoint]] = field(default_factory=lambda: None)
-    active_aspects: List[ActiveAspect] = field(default_factory=lambda: DEFAULT_ACTIVE_ASPECTS)
+    @staticmethod
+    def from_subject(
+        user: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
+        active_points: Optional[List[AstrologicalPoint]] = None,
+        active_aspects: Optional[List[ActiveAspect]] = None,
+    ) -> NatalAspectsModel:
+        """
+        Create natal aspects analysis from an existing astrological subject.
 
-    def __post_init__(self):
-        self.settings = get_settings(self.new_settings_file)
+        Args:
+            user: The astrological subject for aspect calculation
+            new_settings_file: Custom settings file or settings model
+            active_points: List of points to include in calculations
+            active_aspects: List of aspects with their orb settings
 
-        self.celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
-        self.aspects_settings = DEFAULT_CHART_ASPECTS_SETTINGS
-        self.axes_orbit_settings =  DEFAULT_AXIS_ORBIT
+        Returns:
+            NatalAspectsModel containing all calculated aspects data
+        """
+        # Initialize settings and configurations
+        settings = get_settings(new_settings_file)
+        celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
+        aspects_settings = DEFAULT_CHART_ASPECTS_SETTINGS
+        axes_orbit_settings = DEFAULT_AXIS_ORBIT
 
-        if not self.active_points:
-            self.active_points = self.user.active_points
+        # Set active aspects with default fallback
+        active_aspects_resolved = active_aspects if active_aspects is not None else DEFAULT_ACTIVE_ASPECTS
+
+        # Determine active points to use
+        if active_points is None:
+            active_points_resolved = user.active_points
         else:
-            self.active_points = find_common_active_points(
-                self.user.active_points,
-                self.active_points,
+            active_points_resolved = find_common_active_points(
+                user.active_points,
+                active_points,
             )
 
+        return NatalAspectsFactory._create_natal_aspects_model(
+            user, active_points_resolved, active_aspects_resolved,
+            aspects_settings, axes_orbit_settings, celestial_points
+        )
 
-    @cached_property
-    def all_aspects(self):
+    @staticmethod
+    def _create_natal_aspects_model(
+        user: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        active_points_resolved: List[AstrologicalPoint],
+        active_aspects_resolved: List[ActiveAspect],
+        aspects_settings: List[dict],
+        axes_orbit_settings: float,
+        celestial_points: List[dict]
+    ) -> NatalAspectsModel:
         """
-        Return all the aspects of the points in the natal chart in a dictionary,
-        first all the individual aspects of each planet, second the aspects
-        without repetitions.
+        Create the complete natal aspects model with all calculations.
+
+        Returns:
+            NatalAspectsModel containing all aspects data
         """
+        all_aspects = NatalAspectsFactory._calculate_all_aspects(
+            user, active_points_resolved, active_aspects_resolved, aspects_settings, celestial_points
+        )
+        relevant_aspects = NatalAspectsFactory._filter_relevant_aspects(all_aspects, axes_orbit_settings)
 
-        active_points_list = get_active_points_list(self.user, self.active_points)
+        return NatalAspectsModel(
+            subject=user,
+            all_aspects=all_aspects,
+            relevant_aspects=relevant_aspects,
+            active_points=active_points_resolved,
+            active_aspects=active_aspects_resolved,
+        )
 
-        # ---> TODO: Clean this up
+    @staticmethod
+    def _calculate_all_aspects(
+        user: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        active_points: List[AstrologicalPoint],
+        active_aspects: List[ActiveAspect],
+        aspects_settings: List[dict],
+        celestial_points: List[dict]
+    ) -> List[AspectModel]:
+        """
+        Calculate all aspects between active points in the natal chart.
+
+        This method handles all aspect calculations including settings updates,
+        opposite pair filtering, and planet ID resolution in a single comprehensive method.
+
+        Returns:
+            List of all calculated AspectModel instances
+        """
+        active_points_list = get_active_points_list(user, active_points)
+
+        # Update aspects settings with active aspects orbs
         filtered_settings = []
-        for a in self.aspects_settings:
-            for aspect in self.active_aspects:
-                if a["name"] == aspect["name"]:
-                    a["orb"] = aspect["orb"]  # Assign the aspect's orb
-                    filtered_settings.append(a)
-                    break  # Exit the inner loop once a match is found
-        self.aspects_settings = filtered_settings
-        # <--- TODO: Clean this up
+        for aspect_setting in aspects_settings:
+            for active_aspect in active_aspects:
+                if aspect_setting["name"] == active_aspect["name"]:
+                    aspect_setting = aspect_setting.copy()  # Don't modify original
+                    aspect_setting["orb"] = active_aspect["orb"]
+                    filtered_settings.append(aspect_setting)
+                    break
 
-        self.all_aspects_list = []
+        # Define opposite pairs that should be skipped
+        opposite_pairs = {
+            ("Ascendant", "Descendant"),
+            ("Descendant", "Ascendant"),
+            ("Medium_Coeli", "Imum_Coeli"),
+            ("Imum_Coeli", "Medium_Coeli"),
+            ("True_Node", "True_South_Node"),
+            ("Mean_Node", "Mean_South_Node"),
+            ("True_South_Node", "True_Node"),
+            ("Mean_South_Node", "Mean_Node"),
+        }
+
+        all_aspects_list = []
+
         for first in range(len(active_points_list)):
-            # Generates the aspects list without repetitions
+            # Generate aspects list without repetitions
             for second in range(first + 1, len(active_points_list)):
-                # AC/DC, MC/IC and North/South nodes are always in opposition
-                opposite_pairs = {
-                    ("Ascendant", "Descendant"),
-                    ("Descendant", "Ascendant"),
-                    ("Medium_Coeli", "Imum_Coeli"),
-                    ("Imum_Coeli", "Medium_Coeli"),
-                    ("True_Node", "True_South_Node"),
-                    ("Mean_Node", "Mean_South_Node"),
-                    ("True_South_Node", "True_Node"),
-                    ("Mean_South_Node", "Mean_Node"),
-                }
-                if (active_points_list[first]["name"], active_points_list[second]["name"]) in opposite_pairs:
+                # Skip predefined opposite pairs (AC/DC, MC/IC, North/South nodes)
+                first_name = active_points_list[first]["name"]
+                second_name = active_points_list[second]["name"]
+
+                if (first_name, second_name) in opposite_pairs:
                     continue
 
                 aspect = get_aspect_from_two_points(
-                    self.aspects_settings,
+                    filtered_settings,
                     active_points_list[first]["abs_pos"],
                     active_points_list[second]["abs_pos"]
                 )
 
-                verdict = aspect["verdict"]
-                name = aspect["name"]
-                orbit = aspect["orbit"]
-                aspect_degrees = aspect["aspect_degrees"]
-                diff = aspect["diff"]
+                if aspect["verdict"]:
+                    # Get planet IDs directly from celestial points settings
+                    first_planet_id = 0
+                    second_planet_id = 0
 
-                if verdict:
+                    for planet in celestial_points:
+                        if planet["name"] == first_name:
+                            first_planet_id = planet["id"]
+                        if planet["name"] == second_name:
+                            second_planet_id = planet["id"]
+
                     aspect_model = AspectModel(
-                        p1_name=active_points_list[first]["name"],
-                        p1_owner=self.user.name,
+                        p1_name=first_name,
+                        p1_owner=user.name,
                         p1_abs_pos=active_points_list[first]["abs_pos"],
-                        p2_name=active_points_list[second]["name"],
-                        p2_owner=self.user.name,
+                        p2_name=second_name,
+                        p2_owner=user.name,
                         p2_abs_pos=active_points_list[second]["abs_pos"],
-                        aspect=name,
-                        orbit=orbit,
-                        aspect_degrees=aspect_degrees,
-                        diff=diff,
-                        p1=planet_id_decoder(self.celestial_points, active_points_list[first]["name"]),
-                        p2=planet_id_decoder(self.celestial_points, active_points_list[second]["name"]),
+                        aspect=aspect["name"],
+                        orbit=aspect["orbit"],
+                        aspect_degrees=aspect["aspect_degrees"],
+                        diff=aspect["diff"],
+                        p1=first_planet_id,
+                        p2=second_planet_id,
                     )
-                    self.all_aspects_list.append(aspect_model)
+                    all_aspects_list.append(aspect_model)
 
-        return self.all_aspects_list
+        return all_aspects_list
 
-    @cached_property
-    def relevant_aspects(self):
+    @staticmethod
+    def _filter_relevant_aspects(all_aspects: List[AspectModel], axes_orbit_settings: float) -> List[AspectModel]:
         """
-        Filters the aspects list with the desired points, in this case
-        the most important are hardcoded.
-        Set the list with set_points and creating a list with the names
-        or the numbers of the houses.
-        The relevant aspects are the ones that are set as looping in the available_aspects list.
+        Filter aspects based on orb thresholds for axes and other comprehensive criteria.
+
+        This method consolidates all filtering logic including axes checks and orb thresholds
+        into a single comprehensive filtering method.
+
+        Args:
+            all_aspects: Complete list of calculated aspects
+            axes_orbit_settings: Orb threshold for axes aspects
+
+        Returns:
+            Filtered list of relevant aspects
         """
+        logging.debug("Calculating relevant aspects by filtering orbs...")
 
-        logging.debug("Relevant aspects not already calculated, calculating now...")
-        self.all_aspects
+        relevant_aspects = []
 
-        axes_list = AXES_LIST
-        counter = 0
+        for aspect in all_aspects:
+            # Check if aspect involves any of the chart axes and apply stricter orb limits
+            aspect_involves_axes = (aspect.p1_name in AXES_LIST or aspect.p2_name in AXES_LIST)
 
-        # Remove aspects where the orbits exceed the maximum orb thresholds specified in the settings
-        # (specified usually in kr.config.json file)
-        aspects_filtered = self.all_aspects
-        aspects_list_subtract = []
-        for a in aspects_filtered:
-            counter += 1
-            name_p1 = str(a["p1_name"])
-            name_p2 = str(a["p2_name"])
+            if aspect_involves_axes and abs(aspect.orbit) >= axes_orbit_settings:
+                continue
 
-            if name_p1 in axes_list:
-                if abs(a["orbit"]) >= self.axes_orbit_settings:
-                    aspects_list_subtract.append(a)
+            relevant_aspects.append(aspect)
 
-            elif name_p2 in axes_list:
-                if abs(a["orbit"]) >= self.axes_orbit_settings:
-                    aspects_list_subtract.append(a)
-
-        self.aspects = [item for item in aspects_filtered if item not in aspects_list_subtract]
-
-        return self.aspects
+        return relevant_aspects
 
 
 if __name__ == "__main__":
@@ -168,14 +229,10 @@ if __name__ == "__main__":
 
     setup_logging(level="debug")
 
-    johnny = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 0, 0, 0, "Owensboro", "US")
+    # Create subject using AstrologicalSubjectFactory
+    johnny = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 0, 0, city="Owensboro", nation="US")
 
-    # All aspects as a list of dictionaries
-    aspects = NatalAspects(johnny)
-    #print([a.model_dump() for a in aspects.all_aspects])
-
-    print("\n")
-
-    # Relevant aspects as a list of dictionaries
-    aspects = NatalAspects(johnny)
-    print([a.model_dump() for a in aspects.relevant_aspects])
+    # Create aspects analysis from subject
+    natal_aspects = NatalAspectsFactory.from_subject(johnny)
+    print(f"All aspects count: {len(natal_aspects.all_aspects)}")
+    print(f"Relevant aspects count: {len(natal_aspects.relevant_aspects)}")

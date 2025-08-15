@@ -4,7 +4,8 @@ Script to regenerate expected aspects files
 with new active points (Descendant, Imum_Coeli, both node types)
 """
 
-from kerykeion import AstrologicalSubjectFactory, NatalAspects, SynastryAspects
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.aspects import NatalAspectsFactory, SynastryAspectsFactory
 import json
 from pathlib import Path
 
@@ -16,7 +17,7 @@ def regenerate_natal_aspects():
         geonames_username="century.boy"
     )
 
-    natal_aspects = NatalAspects(subject)
+    natal_aspects = NatalAspectsFactory.from_subject(subject)
 
     # Convert to dict format
     relevant_aspects = [a.model_dump() for a in natal_aspects.relevant_aspects]
@@ -32,6 +33,12 @@ EXPECTED_RELEVANT_ASPECTS = {json.dumps(relevant_aspects, indent=4)}
 """
 
     # Use relative path
+    output_path = Path(__file__).parent.parent / "tests" / "aspects" / "expected_natal_aspects.py"
+    with open(output_path, "w") as f:
+        f.write(content)
+
+    print("✓ Created expected_natal_aspects.py")
+
 def regenerate_synastry_aspects():
     print("Regenerating synastry aspects...")
 
@@ -45,7 +52,7 @@ def regenerate_synastry_aspects():
         geonames_username="century.boy"
     )
 
-    synastry_aspects = SynastryAspects(john, yoko)
+    synastry_aspects = SynastryAspectsFactory.from_subjects(john, yoko)
 
     # Convert to dict format with p1/p2 fields
     relevant_aspects = []
