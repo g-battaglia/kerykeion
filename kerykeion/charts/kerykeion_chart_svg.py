@@ -314,7 +314,6 @@ class KerykeionChartSVG:
             # Calculate aspects
             natal_aspects_instance = NatalAspectsFactory.from_subject(
                 self.first_obj,
-                new_settings_file=self.new_settings_file,
                 active_points=self.active_points,
                 active_aspects=active_aspects,
             )
@@ -347,7 +346,7 @@ class KerykeionChartSVG:
                 raise KerykeionException("First object must be a CompositeSubjectModel instance.")
 
             # Calculate aspects
-            self.aspects_list = NatalAspectsFactory.from_subject(self.first_obj, new_settings_file=self.new_settings_file, active_points=self.active_points).relevant_aspects
+            self.aspects_list = NatalAspectsFactory.from_subject(self.first_obj, active_points=self.active_points).relevant_aspects
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
@@ -381,7 +380,6 @@ class KerykeionChartSVG:
             synastry_aspects_instance = SynastryAspectsFactory.from_subjects(
                 self.first_obj,
                 self.second_obj,
-                new_settings_file=self.new_settings_file,
                 active_points=self.active_points,
                 active_aspects=active_aspects,
             )
@@ -426,7 +424,6 @@ class KerykeionChartSVG:
             synastry_aspects_instance = SynastryAspectsFactory.from_subjects(
                 self.first_obj,
                 self.second_obj,
-                new_settings_file=self.new_settings_file,
                 active_points=self.active_points,
                 active_aspects=active_aspects,
             )
@@ -467,7 +464,6 @@ class KerykeionChartSVG:
             synastry_aspects_instance = SynastryAspectsFactory.from_subjects(
                 self.first_obj,
                 self.second_obj,
-                new_settings_file=self.new_settings_file,
                 active_points=self.active_points,
                 active_aspects=active_aspects,
             )
@@ -500,7 +496,6 @@ class KerykeionChartSVG:
             # Calculate aspects
             natal_aspects_instance = NatalAspectsFactory.from_subject(
                 self.first_obj,
-                new_settings_file=self.new_settings_file,
                 active_points=self.active_points,
                 active_aspects=active_aspects,
             )

@@ -72,7 +72,6 @@ class TransitsTimeRangeFactory:
                 self.natal_chart,
                 active_points=self.active_points,
                 active_aspects=self.active_aspects,
-                new_settings_file=self.settings_file,
             ).relevant_aspects
 
             # Create a transit moment for this point in time
