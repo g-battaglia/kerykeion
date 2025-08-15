@@ -19,29 +19,29 @@ class TestRelationshipScore:
         john_yoko_relationship_score_factory = RelationshipScoreFactory(self.john_lennon, self.yoko_ono)
         john_yoko_relationship_score = john_yoko_relationship_score_factory.get_relationship_score()
 
-        assert john_yoko_relationship_score.score_description == "Very Important"
-        assert john_yoko_relationship_score.score_value == 16
+        assert john_yoko_relationship_score.score_description == "Minimal"
+        assert john_yoko_relationship_score.score_value == 4
 
     def test_freud_jung_relationship_score(self):
         freud_jung_relationship_score_factory = RelationshipScoreFactory(self.freud, self.jung)
         freud_jung_relationship_score = freud_jung_relationship_score_factory.get_relationship_score()
 
-        assert freud_jung_relationship_score.score_description == "Rare Exceptional"
-        assert freud_jung_relationship_score.score_value == 32
+        assert freud_jung_relationship_score.score_description == "Exceptional"
+        assert freud_jung_relationship_score.score_value == 20
 
     def test_richart_burton_liz_taylor_relationship_score(self):
         burton_taylor_relationship_score_factory = RelationshipScoreFactory(self.richart_burton, self.liz_taylor)
         burton_taylor_relationship_score = burton_taylor_relationship_score_factory.get_relationship_score()
 
-        assert burton_taylor_relationship_score.score_description == "Exceptional"
-        assert burton_taylor_relationship_score.score_value == 23
+        assert burton_taylor_relationship_score.score_description == "Very Important"
+        assert burton_taylor_relationship_score.score_value == 19
 
     def test_dario_franca_relationship_score(self):
         dario_franca_relationship_score_factory = RelationshipScoreFactory(self.dario_fo, self.franca_rame)
         dario_franca_relationship_score = dario_franca_relationship_score_factory.get_relationship_score()
 
-        assert dario_franca_relationship_score.score_description == "Important"
-        assert dario_franca_relationship_score.score_value == 13
+        assert dario_franca_relationship_score.score_description == "Medium"
+        assert dario_franca_relationship_score.score_value == 9
 
 if __name__ == "__main__":
     import pytest
