@@ -9,7 +9,7 @@
     preserveAspectRatio='xMidYMid'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
-    <title>Sophia Loren - Birth Chart</title>
+    <title>Sophia Loren - Tema Natale</title>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>
@@ -121,18 +121,18 @@
     <!--- Main Chart -->
     <g kr:node='Main_Chart'>
         <g kr:node='Top_Left_Text'>
-            <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Sophia Loren - Birth Chart</text>
-            <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Location:</text>
+            <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Sophia Loren - Tema Natale</text>
+            <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Località:</text>
             <text x='20' y='62' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Rome, IT</text>
             <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Latitudine: 41°53'31' Nord</text>
             <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Longitudine: 12°30'41' Est</text>
             <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1934-09-20 02:00 [+01:00]</text>
-            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Day of Week: Thursday</text>
+            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Giorno della settimana: Thursday</text>
         </g>
 
         <!-- Elements -->
         <g kr:node='Elements_Percentages'>
-            <text x='20' y='130' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Elements:</text>
+            <text x='20' y='130' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Elementi:</text>
             <text x='20' y='144' style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>Fuoco 9%</text>
             <text x='20' y='156' style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>Terra 43%</text>
             <text x='20' y='168' style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>Aria 43%</text>
@@ -141,10 +141,10 @@
 
         <!-- Qualities -->
         <g kr:node='Qualities_Percentages'>
-            <text x='20' y='200' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Qualities:</text>
-            <text x='20' y='214' style='fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;'>Cardinal 20%</text>
-            <text x='20' y='226' style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>Fixed 43%</text>
-            <text x='20' y='238' style='fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;'>Mutable 37%</text>
+            <text x='20' y='200' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Qualità:</text>
+            <text x='20' y='214' style='fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;'>Cardinale 20%</text>
+            <text x='20' y='226' style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>Fisso 43%</text>
+            <text x='20' y='238' style='fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;'>Mutevole 37%</text>
         </g>
 
         <g kr:node='Bottom_Left_Text'>

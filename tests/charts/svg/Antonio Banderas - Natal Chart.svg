@@ -9,7 +9,7 @@
     preserveAspectRatio='xMidYMid'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
-    <title>Antonio Banderas - Birth Chart</title>
+    <title>Antonio Banderas - Carta Natal</title>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>
@@ -121,18 +121,18 @@
     <!--- Main Chart -->
     <g kr:node='Main_Chart'>
         <g kr:node='Top_Left_Text'>
-            <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Antonio Banderas - Birth Chart</text>
-            <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Location:</text>
+            <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Antonio Banderas - Carta Natal</text>
+            <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Ubicación:</text>
             <text x='20' y='62' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Malaga, ES</text>
             <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Latitud: 36°43'13' Norte</text>
             <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Longitud: 4°25'13' Oeste</text>
             <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1960-08-10 12:00 [+01:00]</text>
-            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Day of Week: Wednesday</text>
+            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Día de la semana: Wednesday</text>
         </g>
 
         <!-- Elements -->
         <g kr:node='Elements_Percentages'>
-            <text x='20' y='130' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Elements:</text>
+            <text x='20' y='130' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Elementos:</text>
             <text x='20' y='144' style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>Fuego 57%</text>
             <text x='20' y='156' style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>Tierra 20%</text>
             <text x='20' y='168' style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>Aire 9%</text>
@@ -141,9 +141,9 @@
 
         <!-- Qualities -->
         <g kr:node='Qualities_Percentages'>
-            <text x='20' y='200' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Qualities:</text>
+            <text x='20' y='200' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Cualidades:</text>
             <text x='20' y='214' style='fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;'>Cardinal 37%</text>
-            <text x='20' y='226' style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>Fixed 34%</text>
+            <text x='20' y='226' style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>Fijo 34%</text>
             <text x='20' y='238' style='fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;'>Mutable 29%</text>
         </g>
 
