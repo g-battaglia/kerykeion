@@ -70,6 +70,20 @@ Default list of active aspects in the aspects calculations.
 The full list of aspects is available in the `kr_types.kr_literals.AspectName` literal.
 """
 
+DISCEPOLO_SCORE_ACTIVE_ASPECTS: List[ActiveAspect] = [
+    {"name": "conjunction", "orb": 8},
+    {"name": "semi-sextile", "orb": 2},
+    {"name": "semi-square", "orb": 2},
+    {"name": "sextile", "orb": 4},
+    {"name": "square", "orb": 5},
+    {"name": "trine", "orb": 7},
+    {"name": "sesquiquadrate", "orb": 2},
+    {"name": "opposition", "orb": 8},
+]
+"""
+List of active aspects with their orbs according to Ciro Discepolo's affinity scoring methodology.
+"""
+
 DEFAULT_AXIS_ORBIT: int = 1
 """
 Default orbit for the axes aspects.
