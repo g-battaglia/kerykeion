@@ -817,7 +817,7 @@ class KerykeionChartSVG:
             template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - self.third_circle_radius)
 
             # Chart title
-            template_dict["stringTitle"] = f'{self.first_obj.name} - {self.language_settings.get("Birth Chart", "Birth Chart")}'
+            template_dict["stringTitle"] = f'{self.first_obj.name} - {self.language_settings.get("birth_chart", "Birth Chart")}'
 
             # Top left section
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings["north"], self.language_settings["south"])

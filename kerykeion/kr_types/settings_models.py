@@ -163,6 +163,14 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     return_point: str = Field(title="Return Point", description="The return point label in the chart, in the language")
     natal: str = Field(title="Natal", description="The natal label in the chart, in the language")
     perspective_type: str = Field(title="Perspective Type", description="The perspective type label in the chart, in the language")
+    location: str = Field(title="Location", description="The location label in the chart, in the language")
+    day_of_week: str = Field(title="Day of Week", description="The day of week label in the chart, in the language")
+    elements: str = Field(title="Elements", description="The elements label in the chart, in the language")
+    qualities: str = Field(title="Qualities", description="The qualities label in the chart, in the language")
+    cardinal: str = Field(title="Cardinal", description="The cardinal quality label in the chart, in the language")
+    fixed: str = Field(title="Fixed", description="The fixed quality label in the chart, in the language")
+    mutable: str = Field(title="Mutable", description="The mutable quality label in the chart, in the language")
+    birth_chart: str = Field(title="Birth Chart", description="The birth chart label in the chart, in the language")
 
 # Settings Model
 class KerykeionSettingsModel(SubscriptableBaseModel):

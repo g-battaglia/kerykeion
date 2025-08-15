@@ -9,7 +9,7 @@
     preserveAspectRatio='xMidYMid'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
-    <title>Hua Chenyu - Birth Chart</title>
+    <title>Hua Chenyu - 出生图</title>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>
@@ -121,18 +121,18 @@
     <!--- Main Chart -->
     <g kr:node='Main_Chart'>
         <g kr:node='Top_Left_Text'>
-            <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Hua Chenyu - Birth Chart</text>
-            <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Location:</text>
+            <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Hua Chenyu - 出生图</text>
+            <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>位置:</text>
             <text x='20' y='62' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Hunan, CN</text>
             <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>緯度: 28°11'55' 北</text>
             <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>經度: 112°58'15' 東</text>
             <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1990-02-07 12:00 [+08:00]</text>
-            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Day of Week: Wednesday</text>
+            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>星期: Wednesday</text>
         </g>
 
         <!-- Elements -->
         <g kr:node='Elements_Percentages'>
-            <text x='20' y='130' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Elements:</text>
+            <text x='20' y='130' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>元素:</text>
             <text x='20' y='144' style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>火 0%</text>
             <text x='20' y='156' style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>土 43%</text>
             <text x='20' y='168' style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>風 23%</text>
@@ -141,10 +141,10 @@
 
         <!-- Qualities -->
         <g kr:node='Qualities_Percentages'>
-            <text x='20' y='200' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Qualities:</text>
-            <text x='20' y='214' style='fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;'>Cardinal 71%</text>
-            <text x='20' y='226' style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>Fixed 29%</text>
-            <text x='20' y='238' style='fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;'>Mutable 0%</text>
+            <text x='20' y='200' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>性质:</text>
+            <text x='20' y='214' style='fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;'>本位 71%</text>
+            <text x='20' y='226' style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>固定 29%</text>
+            <text x='20' y='238' style='fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;'>变动 0%</text>
         </g>
 
         <g kr:node='Bottom_Left_Text'>
