@@ -221,10 +221,10 @@ if __name__ == "__main__":
 
     setup_logging(level="critical")
 
-    giacomo = AstrologicalSubject("Giacomo", 1993, 6, 10, 12, 15, "Montichiari", "IT")
-    yoko = AstrologicalSubject("Susie Cox", 1949, 6, 17, 9, 40, "Tucson", "US")
+    john = AstrologicalSubject("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", lng=53.416666, lat=-3, tz_str="Europe/London")
+    yoko = AstrologicalSubject("Yoko Ono", 1933, 2, 18, 20, 30, "Tokyo", "JP", lng=35.68611, lat=139.7525, tz_str="Asia/Tokyo")
 
-    factory = RelationshipScoreFactory(giacomo, yoko)
+    factory = RelationshipScoreFactory(john, yoko)
     score = factory.get_relationship_score()
     print(score)
 
