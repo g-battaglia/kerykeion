@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2025 Giacomo Battaglia
+Author: Giacomo Battaglia
+Copyright: (C) 2025 Kerykeion Project
+License: AGPL-3.0
 """
 
 
