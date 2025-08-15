@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
-"""Rigenera synastry aspects (versione alternativa con Yoko ora=20)"""
+"""Regenerate synastry aspects (alternative version with Yoko hour=20)"""
 from kerykeion import AstrologicalSubjectFactory, SynastryAspects
 import json
 from pathlib import Path
 
-# Crea test subjects (come nei test)
+# Create test subjects (as in tests)
 john = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 10, 30, "Liverpool", "GB", geonames_username="century.boy")
 yoko = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 20, 30, "Tokyo", "JP", geonames_username="century.boy")
 
-# Crea synastry aspects
+# Create synastry aspects
 synastry = SynastryAspects(john, yoko)
 
-# Genera aspects rilevanti
+# Generate relevant aspects
 relevant = synastry.relevant_aspects
 
-# Converti in formato dict come il file expected
+# Convert to dict format like expected file
 synastry_aspects = []
 for aspect in relevant:
     synastry_aspects.append({
@@ -30,14 +30,14 @@ for aspect in relevant:
         "p2": getattr(aspect, 'p2', 0)
     })
 
-print(f"Aspects rilevanti: {len(synastry_aspects)}")
+print(f"Relevant aspects: {len(synastry_aspects)}")
 
-# Scrivi il file
+# Write file
 content = f"EXPECTED_RELEVANT_ASPECTS = {json.dumps(synastry_aspects, indent=4)}\n\n"
-content += f"EXPECTED_ALL_ASPECTS = {json.dumps(synastry_aspects, indent=4)}\n"  # Per ora, usa gli stessi
+content += f"EXPECTED_ALL_ASPECTS = {json.dumps(synastry_aspects, indent=4)}\n"  # For now, use same
 
 output_path = Path(__file__).parent.parent / "tests" / "aspects" / "expected_synastry_aspects.py"
 with open(output_path, "w") as f:
     f.write(content)
 
-print("File expected synastry aspects rigenerato con successo!")
+print("Expected synastry aspects file regenerated successfully!")
