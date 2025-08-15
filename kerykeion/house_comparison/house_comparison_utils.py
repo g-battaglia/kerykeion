@@ -1,3 +1,15 @@
+"""
+House Comparison Utilities
+
+Utility functions for calculating house placement relationships between astrological subjects.
+Provides core calculation logic for determining where points from one subject fall within
+another subject's house system.
+
+Author: Giacomo Battaglia
+Copyright: (C) 2025 Kerykeion Project
+License: AGPL-3.0
+"""
+
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.kr_literals import AstrologicalPoint
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
@@ -12,15 +24,33 @@ def calculate_points_in_reciprocal_houses(
     active_points: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
 ) -> list[PointInHouseModel]:
     """
-    Calculates which houses of the house_subject the points of point_subject fall into.
+    Calculate house placements of one subject's points within another subject's house system.
+
+    Analyzes where each astrological point from the point_subject falls within the
+    house structure of the house_subject. Creates detailed mapping including both
+    the point's original house position and its projected house placement.
 
     Args:
-        point_subject: Subject whose points are being analyzed
-        house_subject: Subject whose houses are being considered
-        active_points: Optional list of point names to process. If None, all points are processed.
+        point_subject: Subject whose astrological points are being analyzed
+        house_subject: Subject whose house system provides the projection framework
+        active_points: List of astrological points to include in the analysis.
+                      Defaults to standard active points configuration.
 
     Returns:
-        List of PointInHouseModel objects
+        list[PointInHouseModel]: List of point placement models containing detailed
+                                information about each point's house relationships,
+                                including original and projected house positions.
+
+    Note:
+        Only processes points that exist in both the point_subject's active_points
+        and the provided active_points list. Points with None values are skipped.
+
+    Example:
+        >>> points_in_houses = calculate_points_in_reciprocal_houses(
+        ...     natal_chart, partner_chart, [AstrologicalPoint.SUN, AstrologicalPoint.MOON]
+        ... )
+        >>> sun_placement = points_in_houses[0]  # Assuming Sun is first
+        >>> print(f"Sun falls in house: {sun_placement.projected_house_name}")
     """
     points_in_houses: list[PointInHouseModel] = []
 

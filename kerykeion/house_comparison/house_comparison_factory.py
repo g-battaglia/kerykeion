@@ -1,3 +1,14 @@
+"""
+House Comparison Factory Module
+
+Provides factory class for house comparison analysis between astrological subjects.
+Enables bidirectional analysis of astrological point placements in house systems.
+
+Author: Giacomo Battaglia
+Copyright: (C) 2025 Kerykeion Project
+License: AGPL-3.0
+"""
+
 from kerykeion.house_comparison.house_comparison_utils import calculate_points_in_reciprocal_houses
 from typing import Union
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
@@ -9,22 +20,26 @@ from kerykeion.kr_types.kr_literals import AstrologicalPoint
 
 class HouseComparisonFactory:
     """
-    Factory class for creating house comparison analyses between two astrological charts.
+    Factory for creating house comparison analyses between two astrological subjects.
 
-    This class handles the generation of house comparison data, calculating how planets
-    from one chart interact with the house system of another chart (and vice versa).
-    This is useful for synastry analysis and other forms of relationship astrology.
+    Analyzes placement of astrological points from one subject within the house system
+    of another subject, performing bidirectional analysis for synastry studies and
+    subject comparisons. Supports both natal subjects and planetary return subjects.
 
     Attributes:
-        first_subject (AstrologicalSubject): The first person's astrological chart
-        second_subject (AstrologicalSubject): The second person's astrological chart
+        first_subject: First astrological subject (natal or return subject)
+        second_subject: Second astrological subject (natal or return subject)
+        active_points: List of astrological points to include in analysis
 
     Example:
-        >>> natal_chart = AstrologicalSubjectFactory.from_birth_data("Person A", 1990, 5, 15, 10, 30, "Rome", "IT")
-        >>> partner_chart = AstrologicalSubjectFactory.from_birth_data("Person B", 1992, 8, 23, 14, 45, "Milan", "IT")
+        >>> natal_chart = AstrologicalSubjectFactory.from_birth_data(
+        ...     "Person A", 1990, 5, 15, 10, 30, "Rome", "IT"
+        ... )
+        >>> partner_chart = AstrologicalSubjectFactory.from_birth_data(
+        ...     "Person B", 1992, 8, 23, 14, 45, "Milan", "IT"
+        ... )
         >>> factory = HouseComparisonFactory(natal_chart, partner_chart)
         >>> comparison = factory.get_house_comparison()
-        >>> print(comparison.model_dump_json(indent=4))
 
     """
     def __init__(self,
@@ -33,21 +48,39 @@ class HouseComparisonFactory:
                 active_points: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
 
         ):
+        """
+        Initialize the house comparison factory.
+
+        Args:
+            first_subject: First astrological subject for comparison
+            second_subject: Second astrological subject for comparison
+            active_points: List of astrological points to include in analysis.
+                          Defaults to standard active points.
+
+        Note:
+            Both subjects must have valid house system data for accurate analysis.
+        """
         self.first_subject = first_subject
         self.second_subject = second_subject
         self.active_points = active_points
 
     def get_house_comparison(self) -> "HouseComparisonModel":
         """
-        Creates a house comparison model for two astrological subjects.
+        Generate bidirectional house comparison analysis between the two subjects.
 
-        Args:
-            chart1: First astrological subject
-            chart2: Second astrological subject
-            description: Description of the comparison
+        Calculates where each active astrological point from one subject falls within
+        the house system of the other subject, and vice versa.
 
         Returns:
-            "HouseComparisonModel": Model containing the comparison data.
+            HouseComparisonModel: Model containing:
+                - first_subject_name: Name of the first subject
+                - second_subject_name: Name of the second subject
+                - first_points_in_second_houses: First subject's points in second subject's houses
+                - second_points_in_first_houses: Second subject's points in first subject's houses
+
+        Note:
+            Analysis scope is determined by the active_points list. Only specified
+            points will be included in the results.
         """
         first_points_in_second_houses = calculate_points_in_reciprocal_houses(self.first_subject, self.second_subject, self.active_points)
         second_points_in_first_houses = calculate_points_in_reciprocal_houses(self.second_subject, self.first_subject, self.active_points)
