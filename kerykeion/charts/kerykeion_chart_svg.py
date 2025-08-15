@@ -9,8 +9,8 @@ import swisseph as swe
 from typing import get_args, Union, Optional
 
 from kerykeion.settings.kerykeion_settings import get_settings
-from kerykeion.aspects.synastry_aspects import SynastryAspectsFactory
-from kerykeion.aspects.natal_aspects import NatalAspectsFactory
+from kerykeion.aspects.synastry_aspects_factory import SynastryAspectsFactory
+from kerykeion.aspects.natal_aspects_factory import NatalAspectsFactory
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
 from kerykeion.kr_types import (
     KerykeionException,

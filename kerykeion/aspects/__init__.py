@@ -7,8 +7,8 @@ The aspects module contains the classes and functions for calculating
 """
 
 
-from .synastry_aspects import SynastryAspectsFactory
-from .natal_aspects import NatalAspectsFactory
+from .synastry_aspects_factory import SynastryAspectsFactory
+from .natal_aspects_factory import NatalAspectsFactory
 
 __all__ = [
     "SynastryAspectsFactory",

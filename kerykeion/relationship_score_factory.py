@@ -4,7 +4,7 @@
 """
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.aspects.synastry_aspects import SynastryAspectsFactory
+from kerykeion.aspects.synastry_aspects_factory import SynastryAspectsFactory
 import logging
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, RelationshipScoreAspectModel, RelationshipScoreModel
 from kerykeion.kr_types.kr_literals import RelationshipScoreDescription
