@@ -4,14 +4,12 @@
 """
 
 import logging
-from pathlib import Path
 from typing import Union, List, Optional
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points, get_active_points_list
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect, CompositeSubjectModel, PlanetReturnModel, NatalAspectsModel
 from kerykeion.kr_types.kr_literals import AstrologicalPoint
-from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
@@ -37,7 +35,7 @@ class NatalAspectsFactory:
     @staticmethod
     def from_subject(
         user: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-        new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
+        *,
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: Optional[List[ActiveAspect]] = None,
     ) -> NatalAspectsModel:
@@ -46,7 +44,8 @@ class NatalAspectsFactory:
 
         Args:
             user: The astrological subject for aspect calculation
-            new_settings_file: Custom settings file or settings model
+
+        Kwargs:
             active_points: List of points to include in calculations
             active_aspects: List of aspects with their orb settings
 

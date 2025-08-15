@@ -4,13 +4,11 @@
 """
 
 import logging
-from pathlib import Path
 from typing import Union, List, Optional
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points, get_active_points_list
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect, CompositeSubjectModel, PlanetReturnModel, SynastryAspectsModel
-from kerykeion.kr_types.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
@@ -29,32 +27,60 @@ AXES_LIST = [
 
 class SynastryAspectsFactory:
     """
-    Factory class for creating synastry aspects analysis between two subjects.
+    Factory class for creating synastry aspects analysis between two astrological subjects.
 
-    This factory calculates all aspects between two charts and provides both
-    comprehensive and filtered aspect lists based on orb settings and relevance.
+    This factory calculates all astrological aspects (angular relationships) between 
+    planets and points in two different charts. It's primarily used for relationship 
+    compatibility analysis, transit calculations, and comparative astrology.
+
+    The factory provides both comprehensive aspect lists and filtered relevant aspects
+    based on orb settings and chart axes considerations.
+
+    Key Features:
+        - Calculates all aspects between two subjects
+        - Filters aspects based on orb thresholds
+        - Applies stricter orb limits for chart axes (ASC, MC, DSC, IC)
+        - Supports multiple subject types (natal, composite, planetary returns)
+
+    Example:
+        >>> john = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
+        >>> jane = AstrologicalSubjectFactory.from_birth_data("Jane", 1992, 6, 15, 14, 30, "Paris", "FR")
+        >>> synastry = SynastryAspectsFactory.from_subjects(john, jane)
+        >>> print(f"Found {len(synastry.relevant_aspects)} relevant aspects")
     """
 
     @staticmethod
     def from_subjects(
         first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         second_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-        new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
+        *,
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: Optional[List[ActiveAspect]] = None,
     ) -> SynastryAspectsModel:
         """
-        Create synastry aspects analysis from two existing astrological subjects.
+        Create synastry aspects analysis between two astrological subjects.
+
+        This method calculates all astrological aspects (angular relationships)
+        between planets and points in two different birth charts, commonly used
+        for relationship compatibility analysis.
 
         Args:
-            first_subject: The first astrological subject
-            second_subject: The second astrological subject
-            new_settings_file: Custom settings file or settings model
-            active_points: List of points to include in calculations
-            active_aspects: List of aspects with their orb settings
+            first_subject: The first astrological subject (person, composite chart, or planetary return)
+            second_subject: The second astrological subject to compare with the first
+            active_points: Optional list of celestial points to include in calculations.
+                          If None, uses common points between both subjects.
+            active_aspects: Optional list of aspect types with their orb settings.
+                           If None, uses default aspect configuration.
 
         Returns:
-            SynastryAspectsModel containing all calculated aspects data
+            SynastryAspectsModel: Complete model containing all calculated aspects data,
+                                 including both comprehensive and filtered relevant aspects.
+
+        Example:
+            >>> john = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
+            >>> jane = AstrologicalSubjectFactory.from_birth_data("Jane", 1992, 6, 15, 14, 30, "Paris", "FR")
+            >>> synastry = SynastryAspectsFactory.from_subjects(john, jane)
+            >>> print(f"Found {len(synastry.relevant_aspects)} relevant aspects")
         """
         # Initialize settings and configurations
         celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
@@ -97,8 +123,17 @@ class SynastryAspectsFactory:
         """
         Create the complete synastry aspects model with all calculations.
 
+        Args:
+            first_subject: First astrological subject
+            second_subject: Second astrological subject  
+            active_points_resolved: Resolved list of active celestial points
+            active_aspects_resolved: Resolved list of active aspects with orbs
+            aspects_settings: Chart aspect configuration settings
+            axes_orbit_settings: Orb threshold for chart axes
+            celestial_points: Celestial points configuration
+
         Returns:
-            SynastryAspectsModel containing all aspects data
+            SynastryAspectsModel: Complete model containing all aspects data
         """
         all_aspects = SynastryAspectsFactory._calculate_all_aspects(
             first_subject, second_subject, active_points_resolved, active_aspects_resolved,
@@ -127,15 +162,27 @@ class SynastryAspectsFactory:
         """
         Calculate all synastry aspects between two subjects.
 
-        This method handles all aspect calculations including settings updates
-        and planet ID resolution in a single comprehensive method.
+        This method performs comprehensive aspect calculations between all active points
+        of both subjects, applying the specified orb settings and creating detailed
+        aspect models with planet IDs and positional information.
+
+        Args:
+            first_subject: First astrological subject
+            second_subject: Second astrological subject
+            active_points: List of celestial points to include in calculations
+            active_aspects: List of aspect types with their orb settings
+            aspects_settings: Base aspect configuration settings
+            celestial_points: Celestial points configuration with IDs
 
         Returns:
-            List of all calculated AspectModel instances
+            List[AspectModel]: Complete list of all calculated aspect instances
         """
         # Get active points lists for both subjects
         first_active_points_list = get_active_points_list(first_subject, active_points)
         second_active_points_list = get_active_points_list(second_subject, active_points)
+
+        # Create a lookup dictionary for planet IDs to optimize performance
+        planet_id_lookup = {planet["name"]: planet["id"] for planet in celestial_points}
 
         # Update aspects settings with active aspects orbs
         filtered_settings = []
@@ -158,18 +205,12 @@ class SynastryAspectsFactory:
                 )
 
                 if aspect["verdict"]:
-                    # Get planet IDs directly from celestial points settings
-                    first_planet_id = 0
-                    second_planet_id = 0
-
                     first_name = first_active_points_list[first]["name"]
                     second_name = second_active_points_list[second]["name"]
-
-                    for planet in celestial_points:
-                        if planet["name"] == first_name:
-                            first_planet_id = planet["id"]
-                        if planet["name"] == second_name:
-                            second_planet_id = planet["id"]
+                    
+                    # Get planet IDs using lookup dictionary for better performance
+                    first_planet_id = planet_id_lookup.get(first_name, 0)
+                    second_planet_id = planet_id_lookup.get(second_name, 0)
 
                     aspect_model = AspectModel(
                         p1_name=first_name,
