@@ -53,7 +53,7 @@ class SubscriptableBaseModel(BaseModel):
 class LunarPhaseModel(SubscriptableBaseModel):
     """
     Model representing lunar phase information.
-    
+
     Attributes:
         degrees_between_s_m: Angular separation between Sun and Moon in degrees.
         moon_phase: Numerical phase identifier for the Moon.
@@ -71,11 +71,11 @@ class LunarPhaseModel(SubscriptableBaseModel):
 class KerykeionPointModel(SubscriptableBaseModel):
     """
     Model representing an astrological celestial point or house cusp.
-    
+
     This model contains comprehensive information about celestial objects
     (planets, points) or house cusps including their zodiacal position,
     sign placement, and metadata.
-    
+
     Attributes:
         name: The name of the celestial point or house.
         quality: Astrological quality (Cardinal, Fixed, Mutable).
@@ -106,12 +106,12 @@ class KerykeionPointModel(SubscriptableBaseModel):
 class AstrologicalBaseModel(SubscriptableBaseModel):
     """
     Base model containing common fields for all astrological subjects.
-    
+
     This model serves as the foundation for all astrological chart types,
     providing standard location, time, and configuration data. It supports
     both complete charts (with full location/time data) and composite charts
     (where some fields may be optional).
-    
+
     Attributes:
         name: Subject identifier or name.
         city: Location city (optional for composite charts).

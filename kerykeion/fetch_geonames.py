@@ -14,10 +14,10 @@ from typing import Union
 class FetchGeonames:
     """
     Class to handle requests to the GeoNames API for location data and timezone information.
-    
+
     This class provides cached access to the GeoNames API to retrieve location coordinates,
     timezone information, and other geographical data for astrological calculations.
-    
+
     Args:
         city_name: Name of the city to search for.
         country_code: Two-letter country code (ISO 3166-1 alpha-2).
@@ -47,11 +47,11 @@ class FetchGeonames:
     def __get_timezone(self, lat: Union[str, float, int], lon: Union[str, float, int]) -> dict[str, str]:
         """
         Get timezone information for a given latitude and longitude.
-        
+
         Args:
             lat: Latitude coordinate.
             lon: Longitude coordinate.
-            
+
         Returns:
             dict: Timezone data including timezone string and cache status.
         """
@@ -86,11 +86,11 @@ class FetchGeonames:
     def __get_contry_data(self, city_name: str, country_code: str) -> dict[str, str]:
         """
         Get city location data without timezone for a given city and country.
-        
+
         Args:
             city_name: Name of the city to search for.
             country_code: Two-letter country code.
-            
+
         Returns:
             dict: City location data excluding timezone information.
         """
