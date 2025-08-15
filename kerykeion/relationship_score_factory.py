@@ -1,6 +1,44 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2025 Giacomo Battaglia
+Relationship Score Factory Module
+
+This module calculates relationship scores between two astrological subjects using the
+Ciro Discepolo method. It analyzes synastry aspects to generate numerical compatibility
+scores with descriptive categories.
+
+Key Features:
+    - Point-based scoring system using synastry aspects
+    - Configurable major/minor aspect filtering
+    - Orbital precision weighting
+    - Categorical score descriptions
+
+Score Categories:
+    - 0-5: Minimal relationship
+    - 5-10: Medium relationship
+    - 10-15: Important relationship
+    - 15-20: Very important relationship
+    - 20-30: Exceptional relationship
+    - 30+: Rare exceptional relationship
+
+Classes:
+    RelationshipScoreFactory: Main factory for calculating relationship scores
+
+Example:
+    >>> from kerykeion import AstrologicalSubjectFactory
+    >>> from kerykeion.relationship_score_factory import RelationshipScoreFactory
+    >>>
+    >>> person1 = AstrologicalSubjectFactory.from_birth_data("John", 1990, 5, 15, 12, 0, "New York", "US")
+    >>> person2 = AstrologicalSubjectFactory.from_birth_data("Jane", 1988, 8, 22, 14, 30, "London", "GB")
+    >>> factory = RelationshipScoreFactory(person1, person2)
+    >>> score = factory.get_relationship_score()
+    >>> print(f"Score: {score.score_value} ({score.score_description})")
+
+Reference:
+    Ciro Discepolo Method: http://www.cirodiscepolo.it/Articoli/Discepoloele.htm
+
+Author: Giacomo Battaglia
+Copyright: (C) 2025 Kerykeion Project
+License: AGPL-3.0
 """
 
 from kerykeion import AstrologicalSubjectFactory
@@ -22,21 +60,26 @@ VENUS_MARS_ASPECT_POINTS = 4
 
 class RelationshipScoreFactory:
     """
-    Calculates the relevance of the relationship between two subjects using the Ciro Discepolo method.
+    Calculates relationship scores between two subjects using the Ciro Discepolo method.
 
-    Results:
-        - 0 to 5: Minimal relationship
-        - 5 to 10: Medium relationship
-        - 10 to 15: Important relationship
-        - 15 to 20: Very important relationship
-        - 20 to 35: Exceptional relationship
-        - 30 and above: Rare Exceptional relationship
+    The scoring system evaluates synastry aspects between planetary positions to generate
+    numerical compatibility scores with categorical descriptions.
 
-    Documentation: http://www.cirodiscepolo.it/Articoli/Discepoloele.htm
+    Score Ranges:
+        - 0-5: Minimal relationship
+        - 5-10: Medium relationship
+        - 10-15: Important relationship
+        - 15-20: Very important relationship
+        - 20-30: Exceptional relationship
+        - 30+: Rare exceptional relationship
 
     Args:
-        first_subject (AstrologicalSubjectModel): First subject instance
-        second_subject (AstrologicalSubjectModel): Second subject instance
+        first_subject (AstrologicalSubjectModel): First astrological subject
+        second_subject (AstrologicalSubjectModel): Second astrological subject
+        use_only_major_aspects (bool, optional): Filter to major aspects only. Defaults to True.
+
+    Reference:
+        http://www.cirodiscepolo.it/Articoli/Discepoloele.htm
     """
 
     SCORE_MAPPING = [
@@ -68,7 +111,10 @@ class RelationshipScoreFactory:
 
     def _evaluate_destiny_sign(self):
         """
-        Evaluates if the subjects share the same sun sign quality and adds points if true.
+        Checks if subjects share the same sun sign quality and adds points.
+
+        Adds 5 points if both subjects have sun signs with matching quality
+        (cardinal, fixed, or mutable).
         """
         if self.first_subject.sun["quality"] == self.second_subject.sun["quality"]: # type: ignore
             self.is_destiny_sign = True
@@ -77,11 +123,11 @@ class RelationshipScoreFactory:
 
     def _evaluate_aspect(self, aspect, points):
         """
-        Evaluates an aspect and adds points to the score.
+        Processes an aspect and adds points to the total score.
 
         Args:
-            aspect (dict): Aspect information.
-            points (int): Points to add.
+            aspect (dict): Aspect data containing planetary positions and geometry
+            points (int): Points to add to the total score
         """
         if self.use_only_major_aspects and aspect["aspect"] not in self.MAJOR_ASPECTS:
             return
@@ -99,12 +145,12 @@ class RelationshipScoreFactory:
 
     def _evaluate_sun_sun_main_aspect(self, aspect):
         """
-        Evaluates Sun-Sun main aspects and adds points accordingly:
-        - 8 points for conjunction/opposition/square
-        - 11 points if the aspect's orbit is <= 2 degrees
+        Evaluates Sun-Sun conjunction, opposition, or square aspects.
+
+        Adds 8 points for standard orbs, 11 points for tight orbs (≤2°).
 
         Args:
-            aspect (dict): Aspect information.
+            aspect (dict): Aspect data
         """
         if aspect["p1_name"] == "Sun" and aspect["p2_name"] == "Sun" and aspect["aspect"] in {"conjunction", "opposition", "square"}:
             points = MAJOR_ASPECT_POINTS_HIGH_PRECISION if aspect["orbit"] <= HIGH_PRECISION_ORBIT_THRESHOLD else MAJOR_ASPECT_POINTS_STANDARD
@@ -112,12 +158,12 @@ class RelationshipScoreFactory:
 
     def _evaluate_sun_moon_conjunction(self, aspect):
         """
-        Evaluates Sun-Moon conjunctions and adds points accordingly:
-        - 8 points for conjunction
-        - 11 points if the aspect's orbit is <= 2 degrees
+        Evaluates Sun-Moon conjunction aspects.
+
+        Adds 8 points for standard orbs, 11 points for tight orbs (≤2°).
 
         Args:
-            aspect (dict): Aspect information.
+            aspect (dict): Aspect data
         """
         if {aspect["p1_name"], aspect["p2_name"]} == {"Moon", "Sun"} and aspect["aspect"] == "conjunction":
             points = MAJOR_ASPECT_POINTS_HIGH_PRECISION if aspect["orbit"] <= HIGH_PRECISION_ORBIT_THRESHOLD else MAJOR_ASPECT_POINTS_STANDARD
@@ -125,11 +171,12 @@ class RelationshipScoreFactory:
 
     def _evaluate_sun_sun_other_aspects(self, aspect):
         """
-        Evaluates Sun-Sun aspects that are not conjunctions and adds points accordingly:
-        - 4 points for other aspects
+        Evaluates Sun-Sun aspects other than conjunction, opposition, or square.
+
+        Adds 4 points for any qualifying aspect.
 
         Args:
-            aspect (dict): Aspect information.
+            aspect (dict): Aspect data
         """
         if aspect["p1_name"] == "Sun" and aspect["p2_name"] == "Sun" and aspect["aspect"] not in {"conjunction", "opposition", "square"}:
             points = MINOR_ASPECT_POINTS
@@ -137,11 +184,12 @@ class RelationshipScoreFactory:
 
     def _evaluate_sun_moon_other_aspects(self, aspect):
         """
-        Evaluates Sun-Moon aspects that are not conjunctions and adds points accordingly:
-        - 4 points for other aspects
+        Evaluates Sun-Moon aspects other than conjunctions.
+
+        Adds 4 points for any qualifying aspect.
 
         Args:
-            aspect (dict): Aspect information.
+            aspect (dict): Aspect data
         """
         if {aspect["p1_name"], aspect["p2_name"]} == {"Moon", "Sun"} and aspect["aspect"] != "conjunction":
             points = MINOR_ASPECT_POINTS
@@ -149,11 +197,12 @@ class RelationshipScoreFactory:
 
     def _evaluate_sun_ascendant_aspect(self, aspect):
         """
-        Evaluates Sun-Ascendant aspects and adds points accordingly:
-        - 4 points for any aspect
+        Evaluates Sun-Ascendant aspects.
+
+        Adds 4 points for any aspect between Sun and Ascendant.
 
         Args:
-            aspect (dict): Aspect information.
+            aspect (dict): Aspect data
         """
         if {aspect["p1_name"], aspect["p2_name"]} == {"Sun", "Ascendant"}:
             points = SUN_ASCENDANT_ASPECT_POINTS
@@ -161,11 +210,12 @@ class RelationshipScoreFactory:
 
     def _evaluate_moon_ascendant_aspect(self, aspect):
         """
-        Evaluates Moon-Ascendant aspects and adds points accordingly:
-        - 4 points for any aspect
+        Evaluates Moon-Ascendant aspects.
+
+        Adds 4 points for any aspect between Moon and Ascendant.
 
         Args:
-            aspect (dict): Aspect information.
+            aspect (dict): Aspect data
         """
         if {aspect["p1_name"], aspect["p2_name"]} == {"Moon", "Ascendant"}:
             points = MOON_ASCENDANT_ASPECT_POINTS
@@ -173,11 +223,12 @@ class RelationshipScoreFactory:
 
     def _evaluate_venus_mars_aspect(self, aspect):
         """
-        Evaluates Venus-Mars aspects and adds points accordingly:
-        - 4 points for any aspect
+        Evaluates Venus-Mars aspects.
+
+        Adds 4 points for any aspect between Venus and Mars.
 
         Args:
-            aspect (dict): Aspect information.
+            aspect (dict): Aspect data
         """
         if {aspect["p1_name"], aspect["p2_name"]} == {"Venus", "Mars"}:
             points = VENUS_MARS_ASPECT_POINTS
@@ -185,7 +236,9 @@ class RelationshipScoreFactory:
 
     def _evaluate_relationship_score_description(self):
         """
-        Evaluates the relationship score description based on the total score.
+        Determines the categorical description based on the numerical score.
+
+        Maps the total score to predefined description ranges.
         """
         for description, threshold in self.SCORE_MAPPING:
             if self.score_value < threshold:
@@ -194,10 +247,11 @@ class RelationshipScoreFactory:
 
     def get_relationship_score(self):
         """
-        Calculates the relationship score based on synastry aspects.
+        Calculates the complete relationship score using all evaluation methods.
 
         Returns:
-            RelationshipScoreModel: The calculated relationship score.
+            RelationshipScoreModel: Score object containing numerical value, description,
+                destiny sign status, contributing aspects, and subject data.
         """
         self._evaluate_destiny_sign()
 
