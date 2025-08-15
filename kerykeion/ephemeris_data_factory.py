@@ -41,8 +41,9 @@ Example:
     >>> data = factory.get_ephemeris_data()
     >>> print(f"Generated {len(data)} data points")
 
-Author: Kerykeion Development Team
-License: See project LICENSE file
+Author: Giacomo Battaglia
+Copyright: (C) 2025 Kerykeion Project
+License: AGPL-3.0
 """
 
 from kerykeion import AstrologicalSubjectFactory

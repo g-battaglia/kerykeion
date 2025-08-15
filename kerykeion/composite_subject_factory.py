@@ -32,6 +32,10 @@ Example Usage:
     >>> person2 = AstrologicalSubjectFactory.from_birth_data(...)
     >>> composite = CompositeSubjectFactory(person1, person2)
     >>> composite_chart = composite.get_midpoint_composite_subject_model()
+
+Author: Giacomo Battaglia
+Copyright: (C) 2025 Kerykeion Project
+License: AGPL-3.0
 """
 
 from typing import Union
