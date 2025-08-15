@@ -32,7 +32,7 @@ class TestJsonDump:
         assert round(self.dictionary["sun"]["abs_pos"], 2) == 197.16
         assert self.dictionary["sun"]["emoji"] == "♎️"
         assert self.dictionary["sun"]["house"] == "Tenth_House"
-        assert self.dictionary["sun"]["retrograde"] == False
+        assert not self.dictionary["sun"]["retrograde"]
         assert self.dictionary["sun"]["point_type"] == "AstrologicalPoint"
 
     def test_json_dump_moon(self):

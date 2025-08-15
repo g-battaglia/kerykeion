@@ -1,4 +1,4 @@
-from typing import Union, TYPE_CHECKING
+from typing import Union
 
 # Fix the circular import by changing this import
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory

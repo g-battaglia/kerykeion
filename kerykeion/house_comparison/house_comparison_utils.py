@@ -1,4 +1,3 @@
-from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, PlanetReturnModel
 from kerykeion.kr_types.kr_literals import AstrologicalPoint
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS

@@ -2,7 +2,7 @@ from kerykeion import KerykeionException
 from kerykeion.utilities import is_point_between, julian_to_datetime, datetime_to_julian
 import pytest
 import math
-from datetime import datetime, timezone
+from datetime import datetime
 
 
 class TestUtilities:

@@ -6,7 +6,6 @@
 from pathlib import Path
 from typing import Union
 from functools import cached_property
-from typing import TYPE_CHECKING
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects.natal_aspects import NatalAspects
@@ -19,7 +18,7 @@ from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_C
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
 from kerykeion.kr_types.kr_literals import AstrologicalPoint
 from kerykeion.utilities import find_common_active_points
-from typing import Union, List, Optional
+from typing import List, Optional
 
 
 class SynastryAspects(NatalAspects):
@@ -107,7 +106,7 @@ class SynastryAspects(NatalAspects):
                 aspect_degrees = aspect["aspect_degrees"]
                 diff = aspect["diff"]
 
-                if verdict == True:
+                if verdict:
                     aspect_model = AspectModel(
                         p1_name=first_active_points_list[first]["name"],
                         p1_owner=self.first_user.name,

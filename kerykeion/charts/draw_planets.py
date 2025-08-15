@@ -88,7 +88,6 @@ def draw_planets(
     keys.sort()
     switch = 0
 
-    planets_degrouped = {}
     groups = []
     planets_by_pos = list(range(len(planets_degut)))
     planet_drange = 3.4
@@ -186,7 +185,7 @@ def draw_planets(
             # position relative to next planets
             else:
                 startA = (leftover / (xa + xb)) * xa
-                startB = (leftover / (xa + xb)) * xb
+                (leftover / (xa + xb)) * xb
 
             if available > need:
                 planets_delta[groups[a][0][0]] = startA - groups[a][0][1] + (1.5 * planet_drange)
@@ -265,7 +264,7 @@ def draw_planets(
 
         output += f'<g kr:node="ChartPoint" kr:house="{planet_details["house"]}" kr:sign="{planet_details["sign"]}" kr:slug="{planet_details["name"]}" transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">'
         output += f'<use x="{planet_x * (1/scale)}" y="{planet_y * (1/scale)}" xlink:href="#{available_planets_setting[i]["name"]}" />'
-        output += f"</g>"
+        output += "</g>"
 
     # make transit degut and display planets
     if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
@@ -373,7 +372,7 @@ def draw_planets(
                 xo = -1
             deg_x = sliceToX(0, (radius - rtext), t_offset + xo) + rtext
             deg_y = sliceToY(0, (radius - rtext), t_offset + xo) + rtext
-            degree = int(t_offset)
+            int(t_offset)
             output += f'<g transform="translate({deg_x},{deg_y})">'
             output += f'<text transform="rotate({rotate})" text-anchor="{textanchor}'
             output += f'" style="fill: {available_planets_setting[i]["color"]}; font-size: 10px;">{convert_decimal_to_degree_string(t_points_deg[i], format_type="1")}'

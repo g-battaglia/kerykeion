@@ -5,7 +5,7 @@
 
 
 from pydantic import Field
-from typing import List, Optional, Union
+from typing import Optional
 from kerykeion.kr_types.kr_models import SubscriptableBaseModel
 
 

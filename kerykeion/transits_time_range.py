@@ -1,4 +1,4 @@
-from typing import Optional, Union, List
+from typing import Union, List
 from datetime import datetime, timedelta
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
