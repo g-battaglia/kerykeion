@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Union, List, Optional
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points, get_active_points_list
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, AspectModel, ActiveAspect, CompositeSubjectModel, PlanetReturnModel, SynastryAspectsModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
@@ -58,7 +57,6 @@ class SynastryAspectsFactory:
             SynastryAspectsModel containing all calculated aspects data
         """
         # Initialize settings and configurations
-        settings = get_settings(new_settings_file)
         celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
         aspects_settings = DEFAULT_CHART_ASPECTS_SETTINGS
         axes_orbit_settings = DEFAULT_AXIS_ORBIT
