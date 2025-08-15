@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects import SynastryAspectsFactory
-from kerykeion.ephemeris_data import EphemerisDataFactory
+from kerykeion.ephemeris_data_factory import EphemerisDataFactory
 from kerykeion.kr_types.kr_literals import AstrologicalPoint
 from kerykeion.kr_types.kr_models import ActiveAspect, TransitMomentModel, TransitsTimeRangeModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsModel
