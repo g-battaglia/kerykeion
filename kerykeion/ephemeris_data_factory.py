@@ -1,3 +1,50 @@
+"""
+Ephemeris Data Factory Module
+
+This module provides the EphemerisDataFactory class for generating time-series
+astrological ephemeris data. It enables the creation of comprehensive astronomical
+and astrological datasets across specified date ranges with flexible time intervals
+and calculation parameters.
+
+Key Features:
+    - Time-series ephemeris data generation
+    - Multiple time interval support (days, hours, minutes)
+    - Configurable astrological calculation systems
+    - Built-in performance safeguards and limits
+    - Multiple output formats (dictionaries or model instances)
+    - Complete AstrologicalSubject instance generation
+
+The module supports both lightweight data extraction (via get_ephemeris_data)
+and full-featured astrological analysis (via get_ephemeris_data_as_astrological_subjects),
+making it suitable for various use cases from simple data collection to complex
+astrological research and analysis applications.
+
+Classes:
+    EphemerisDataFactory: Main factory class for generating ephemeris data
+
+Dependencies:
+    - kerykeion.AstrologicalSubjectFactory: For creating astrological subjects
+    - kerykeion.utilities: For house and planetary data extraction
+    - kerykeion.kr_types: For type definitions and model structures
+    - datetime: For date/time handling
+    - logging: For performance warnings
+
+Example:
+    Basic usage for daily ephemeris data:
+
+    >>> from datetime import datetime
+    >>> from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+    >>>
+    >>> start = datetime(2024, 1, 1)
+    >>> end = datetime(2024, 1, 31)
+    >>> factory = EphemerisDataFactory(start, end)
+    >>> data = factory.get_ephemeris_data()
+    >>> print(f"Generated {len(data)} data points")
+
+Author: Kerykeion Development Team
+License: See project LICENSE file
+"""
+
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 from kerykeion.utilities import get_houses_list, get_available_astrological_points_list
@@ -11,31 +58,80 @@ import logging
 
 class EphemerisDataFactory:
     """
-    This class is used to generate ephemeris data for a given date range.
+    A factory class for generating ephemeris data over a specified date range.
 
-    Parameters:
-    - start_datetime: datetime object representing the start date and time.
-    - end_datetime: datetime object representing the end date and time.
-    - step_type: string representing the step type. It can be "days", "hours", or "minutes". Default is "days".
-    - step: integer representing the step value. Default is 1.
-    - lat: float representing the latitude. Default is 51.4769 (Greenwich).
-    - lng: float representing the longitude. Default is 0.0005 (Greenwich).
-    - tz_str: string representing the timezone. Default is "Etc/UTC".
-    - is_dst: boolean representing if daylight saving time is active. Default is False.
-    - zodiac_type: ZodiacType object representing the zodiac type. Default is DEFAULT_ZODIAC_TYPE.
-    - sidereal_mode: SiderealMode object representing the sidereal mode. Default is None.
-    - houses_system_identifier: HousesSystemIdentifier object representing the houses system identifier. Default is DEFAULT_HOUSES_SYSTEM_IDENTIFIER.
-    - perspective_type: PerspectiveType object representing the perspective type. Default is DEFAULT_PERSPECTIVE_TYPE.
-    - max_days: integer representing the maximum number of days.
-        Set it to None to disable the check. Default is 730.
-    - max_hours: integer representing the maximum number of hours.
-        Set it to None to disable the check. Default is 8760.
-    - max_minutes: integer representing the maximum number of minutes.
-        Set it to None to disable the check. Default is 525600.
+    This class calculates astrological ephemeris data (planetary positions and house cusps)
+    for a sequence of dates, allowing for detailed astronomical calculations across time periods.
+    It supports different time intervals (days, hours, or minutes) and various astrological
+    calculation systems.
+
+    The factory creates data points at regular intervals between start and end dates,
+    with built-in safeguards to prevent excessive computational loads through configurable
+    maximum limits.
+
+    Args:
+        start_datetime (datetime): The starting date and time for ephemeris calculations.
+        end_datetime (datetime): The ending date and time for ephemeris calculations.
+        step_type (Literal["days", "hours", "minutes"], optional): The time interval unit
+            for data points. Defaults to "days".
+        step (int, optional): The number of units to advance for each data point.
+            For example, step=2 with step_type="days" creates data points every 2 days.
+            Defaults to 1.
+        lat (float, optional): Geographic latitude in decimal degrees for calculations.
+            Positive values for North, negative for South. Defaults to 51.4769 (Greenwich).
+        lng (float, optional): Geographic longitude in decimal degrees for calculations.
+            Positive values for East, negative for West. Defaults to 0.0005 (Greenwich).
+        tz_str (str, optional): Timezone identifier (e.g., "Europe/London", "America/New_York").
+            Defaults to "Etc/UTC".
+        is_dst (bool, optional): Whether daylight saving time is active for the location.
+            Only relevant for certain timezone calculations. Defaults to False.
+        zodiac_type (ZodiacType, optional): The zodiac system to use (tropical or sidereal).
+            Defaults to DEFAULT_ZODIAC_TYPE.
+        sidereal_mode (Union[SiderealMode, None], optional): The sidereal calculation mode
+            if using sidereal zodiac. Only applies when zodiac_type is sidereal.
+            Defaults to None.
+        houses_system_identifier (HousesSystemIdentifier, optional): The house system
+            for astrological house calculations (e.g., Placidus, Koch, Equal).
+            Defaults to DEFAULT_HOUSES_SYSTEM_IDENTIFIER.
+        perspective_type (PerspectiveType, optional): The calculation perspective
+            (geocentric, heliocentric, etc.). Defaults to DEFAULT_PERSPECTIVE_TYPE.
+        max_days (Union[int, None], optional): Maximum number of daily data points allowed.
+            Set to None to disable this safety check. Defaults to 730 (2 years).
+        max_hours (Union[int, None], optional): Maximum number of hourly data points allowed.
+            Set to None to disable this safety check. Defaults to 8760 (1 year).
+        max_minutes (Union[int, None], optional): Maximum number of minute-interval data points.
+            Set to None to disable this safety check. Defaults to 525600 (1 year).
 
     Raises:
-    - ValueError: if the step type is invalid.
-    - ValueError: if the number of days, hours, or minutes is greater than the maximum allowed.
+        ValueError: If step_type is not one of "days", "hours", or "minutes".
+        ValueError: If the calculated number of data points exceeds the respective maximum limit.
+        ValueError: If no valid dates are generated from the input parameters.
+
+    Examples:
+        Create daily ephemeris data for a month:
+
+        >>> from datetime import datetime
+        >>> start = datetime(2024, 1, 1)
+        >>> end = datetime(2024, 1, 31)
+        >>> factory = EphemerisDataFactory(start, end)
+        >>> data = factory.get_ephemeris_data()
+
+        Create hourly data for a specific location:
+
+        >>> factory = EphemerisDataFactory(
+        ...     start, end,
+        ...     step_type="hours",
+        ...     lat=40.7128,  # New York
+        ...     lng=-74.0060,
+        ...     tz_str="America/New_York"
+        ... )
+        >>> subjects = factory.get_ephemeris_data_as_astrological_subjects()
+
+    Note:
+        Large date ranges with small step intervals can generate thousands of data points,
+        which may require significant computation time and memory. The factory includes
+        warnings for calculations exceeding 1000 data points and enforces maximum limits
+        to prevent system overload.
     """
 
     def __init__(
@@ -102,22 +198,58 @@ class EphemerisDataFactory:
     def get_ephemeris_data(self, as_model: bool = False) -> list:
         """
         Generate ephemeris data for the specified date range.
-        The data is structured as a list of dictionaries, where each dictionary contains the date, planets, and houses data.
-        Example:
-        [
-            {
-                "date": "2020-01-01T00:00:00",
-                "planets": [{...}, {...}, ...],
-                "houses": [{...}, {...}, ...]
-            },
-            ...
-        ]
+
+        This method creates a comprehensive dataset containing planetary positions and
+        astrological house cusps for each date in the configured time series. The data
+        is structured for easy consumption by astrological applications and analysis tools.
+
+        The returned data includes all available astrological points (planets, asteroids,
+        lunar nodes, etc.) as configured by the perspective type, along with complete
+        house cusp information for each calculated moment.
 
         Args:
-        - as_model (bool): If True, the ephemeris data will be returned as model instances. Default is False.
+            as_model (bool, optional): If True, returns data as validated model instances
+                (EphemerisDictModel objects) which provide type safety and validation.
+                If False, returns raw dictionary data for maximum flexibility.
+                Defaults to False.
 
         Returns:
-        - list: A list of dictionaries representing the ephemeris data. If as_model is True, a list of EphemerisDictModel instances is returned.
+            list: A list of ephemeris data points, where each element represents one
+                calculated moment in time. The structure depends on the as_model parameter:
+
+                If as_model=False (default):
+                    List of dictionaries with keys:
+                    - "date" (str): ISO format datetime string (e.g., "2020-01-01T00:00:00")
+                    - "planets" (list): List of dictionaries, each containing planetary data
+                      with keys like 'name', 'abs_pos', 'lon', 'lat', 'dist', 'speed', etc.
+                    - "houses" (list): List of dictionaries containing house cusp data
+                      with keys like 'name', 'abs_pos', 'lon', etc.
+
+                If as_model=True:
+                    List of EphemerisDictModel instances providing the same data
+                    with type validation and structured access.
+
+        Examples:
+            Basic usage with dictionary output:
+
+            >>> factory = EphemerisDataFactory(start_date, end_date)
+            >>> data = factory.get_ephemeris_data()
+            >>> print(f"Sun position: {data[0]['planets'][0]['abs_pos']}")
+            >>> print(f"First house cusp: {data[0]['houses'][0]['abs_pos']}")
+
+            Using model instances for type safety:
+
+            >>> data_models = factory.get_ephemeris_data(as_model=True)
+            >>> first_point = data_models[0]
+            >>> print(f"Date: {first_point.date}")
+            >>> print(f"Number of planets: {len(first_point.planets)}")
+
+        Note:
+            - The calculation time is proportional to the number of data points
+            - For large datasets (>1000 points), consider using the method in batches
+            - Planet order and availability depend on the configured perspective type
+            - House system affects the house cusp calculations
+            - All positions are in the configured zodiac system (tropical/sidereal)
         """
         ephemeris_data_list = []
         for date in self.dates_list:
@@ -152,23 +284,83 @@ class EphemerisDataFactory:
 
     def get_ephemeris_data_as_astrological_subjects(self, as_model: bool = False) -> List[AstrologicalSubjectModel]:
         """
-        Generate ephemeris data for the specified date range as AstrologicalSubject instances.
+        Generate ephemeris data as complete AstrologicalSubject instances.
 
-        This method creates a complete AstrologicalSubject object for each date in the date range,
-        allowing direct access to all properties and methods of the AstrologicalSubject class.
+        This method creates fully-featured AstrologicalSubject objects for each date in the
+        configured time series, providing access to all astrological calculation methods
+        and properties. Unlike the dictionary-based approach of get_ephemeris_data(),
+        this method returns objects with the complete Kerykeion API available.
+
+        Each AstrologicalSubject instance represents a complete astrological chart for
+        the specified moment, location, and calculation settings. This allows direct
+        access to methods like get_sun(), get_all_points(), draw_chart(), calculate
+        aspects, and all other astrological analysis features.
 
         Args:
-        - as_model (bool): If True, the AstrologicalSubject instances will be returned as model instances. Default is False.
+            as_model (bool, optional): If True, returns AstrologicalSubjectModel instances
+                (Pydantic model versions) which provide serialization and validation features.
+                If False, returns raw AstrologicalSubject instances with full method access.
+                Defaults to False.
 
         Returns:
-        - List[AstrologicalSubject]: A list of AstrologicalSubject instances, one for each date in the date range.
+            List[AstrologicalSubjectModel]: A list of AstrologicalSubject or
+                AstrologicalSubjectModel instances (depending on as_model parameter).
+                Each element represents one calculated moment in time with full
+                astrological chart data and methods available.
 
-        Example usage:
-            subjects = factory.get_ephemeris_data_as_astrological_subjects()
-            # Access methods and properties of the first subject
-            sun_position = subjects[0].get_sun()
-            all_points = subjects[0].get_all_points()
-            chart_drawing = subjects[0].draw_chart()
+                Each subject contains:
+                - All planetary and astrological point positions
+                - Complete house system calculations
+                - Chart drawing capabilities
+                - Aspect calculation methods
+                - Access to all Kerykeion astrological features
+
+        Examples:
+            Basic usage for accessing individual chart features:
+
+            >>> factory = EphemerisDataFactory(start_date, end_date)
+            >>> subjects = factory.get_ephemeris_data_as_astrological_subjects()
+            >>>
+            >>> # Access specific planetary data
+            >>> sun_data = subjects[0].get_sun()
+            >>> moon_data = subjects[0].get_moon()
+            >>>
+            >>> # Get all astrological points
+            >>> all_points = subjects[0].get_all_points()
+            >>>
+            >>> # Generate chart visualization
+            >>> chart_svg = subjects[0].draw_chart()
+
+            Using model instances for serialization:
+
+            >>> subjects_models = factory.get_ephemeris_data_as_astrological_subjects(as_model=True)
+            >>> # Model instances can be easily serialized to JSON
+            >>> json_data = subjects_models[0].model_dump_json()
+
+            Batch processing for analysis:
+
+            >>> subjects = factory.get_ephemeris_data_as_astrological_subjects()
+            >>> sun_positions = [subj.sun['abs_pos'] for subj in subjects if subj.sun]
+            >>> # Analyze sun position changes over time
+
+        Use Cases:
+            - Time-series astrological analysis
+            - Planetary motion tracking
+            - Aspect pattern analysis over time
+            - Chart animation data generation
+            - Astrological research and statistics
+            - Progressive chart calculations
+
+        Performance Notes:
+            - More computationally intensive than get_ephemeris_data()
+            - Each subject performs full astrological calculations
+            - Memory usage scales with the number of data points
+            - Consider processing in batches for very large date ranges
+            - Ideal for comprehensive analysis requiring full chart features
+
+        See Also:
+            get_ephemeris_data(): For lightweight dictionary-based ephemeris data
+            AstrologicalSubject: For details on available methods and properties
         """
         subjects_list = []
         for date in self.dates_list:
