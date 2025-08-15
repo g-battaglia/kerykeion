@@ -1,6 +1,6 @@
 from kerykeion import (
     AstrologicalSubjectFactory,
-    NatalAspects,
+    NatalAspectsFactory,
 )
 from pytest import approx
 
@@ -11,10 +11,10 @@ class TestNatalAspects:
     def setup_class(self):
         self.subject = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 0 , 0, "Owensboro", "US", geonames_username="century.boy")
 
-        self.subject_relevant_aspects = NatalAspects(self.subject).relevant_aspects
+        self.subject_relevant_aspects = NatalAspectsFactory.from_subject(self.subject).relevant_aspects
         self.subject_relevant_aspects = [a.model_dump() for a in self.subject_relevant_aspects]
 
-        self.subject_all_aspects = NatalAspects(self.subject).all_aspects
+        self.subject_all_aspects = NatalAspectsFactory.from_subject(self.subject).all_aspects
         self.subject_all_aspects = [a.model_dump() for a in self.subject_all_aspects]
 
         self.expected_relevant_aspects = EXPECTED_RELEVANT_ASPECTS

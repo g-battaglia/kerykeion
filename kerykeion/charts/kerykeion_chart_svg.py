@@ -9,8 +9,8 @@ import swisseph as swe
 from typing import get_args, Union, Optional
 
 from kerykeion.settings.kerykeion_settings import get_settings
-from kerykeion.aspects.synastry_aspects import SynastryAspects
-from kerykeion.aspects.natal_aspects import NatalAspects
+from kerykeion.aspects.synastry_aspects import SynastryAspectsFactory
+from kerykeion.aspects.natal_aspects import NatalAspectsFactory
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
 from kerykeion.kr_types import (
     KerykeionException,
@@ -312,7 +312,7 @@ class KerykeionChartSVG:
                 raise KerykeionException("First object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
 
             # Calculate aspects
-            natal_aspects_instance = NatalAspects(
+            natal_aspects_instance = NatalAspectsFactory.from_subject(
                 self.first_obj,
                 new_settings_file=self.new_settings_file,
                 active_points=self.active_points,
@@ -347,7 +347,7 @@ class KerykeionChartSVG:
                 raise KerykeionException("First object must be a CompositeSubjectModel instance.")
 
             # Calculate aspects
-            self.aspects_list = NatalAspects(self.first_obj, new_settings_file=self.new_settings_file, active_points=self.active_points).relevant_aspects
+            self.aspects_list = NatalAspectsFactory.from_subject(self.first_obj, new_settings_file=self.new_settings_file, active_points=self.active_points).relevant_aspects
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
@@ -378,7 +378,7 @@ class KerykeionChartSVG:
             self.second_obj = second_obj
 
             # Calculate aspects (transit to natal)
-            synastry_aspects_instance = SynastryAspects(
+            synastry_aspects_instance = SynastryAspectsFactory.from_subjects(
                 self.first_obj,
                 self.second_obj,
                 new_settings_file=self.new_settings_file,
@@ -423,7 +423,7 @@ class KerykeionChartSVG:
             self.second_obj = second_obj
 
             # Calculate aspects (natal to partner)
-            synastry_aspects_instance = SynastryAspects(
+            synastry_aspects_instance = SynastryAspectsFactory.from_subjects(
                 self.first_obj,
                 self.second_obj,
                 new_settings_file=self.new_settings_file,
@@ -464,7 +464,7 @@ class KerykeionChartSVG:
             self.second_obj = second_obj
 
             # Calculate aspects (natal to return)
-            synastry_aspects_instance = SynastryAspects(
+            synastry_aspects_instance = SynastryAspectsFactory.from_subjects(
                 self.first_obj,
                 self.second_obj,
                 new_settings_file=self.new_settings_file,
@@ -498,7 +498,7 @@ class KerykeionChartSVG:
                 raise KerykeionException("First object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
 
             # Calculate aspects
-            natal_aspects_instance = NatalAspects(
+            natal_aspects_instance = NatalAspectsFactory.from_subject(
                 self.first_obj,
                 new_settings_file=self.new_settings_file,
                 active_points=self.active_points,

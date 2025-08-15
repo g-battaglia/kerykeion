@@ -4,7 +4,7 @@
 """
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.aspects.synastry_aspects import SynastryAspects
+from kerykeion.aspects.synastry_aspects import SynastryAspectsFactory
 import logging
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, RelationshipScoreAspectModel, RelationshipScoreModel
 from kerykeion.kr_types.kr_literals import RelationshipScoreDescription
@@ -64,7 +64,7 @@ class RelationshipScoreFactory:
         self.relationship_score_description: RelationshipScoreDescription = "Minimal"
         self.is_destiny_sign = True
         self.relationship_score_aspects: list[RelationshipScoreAspectModel] = []
-        self._synastry_aspects = SynastryAspects(self.first_subject, self.second_subject).all_aspects
+        self._synastry_aspects = SynastryAspectsFactory.from_subjects(self.first_subject, self.second_subject).all_aspects
 
     def _evaluate_destiny_sign(self):
         """

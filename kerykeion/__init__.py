@@ -6,7 +6,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 # Local
-from .aspects import SynastryAspects, NatalAspects
+from .aspects import SynastryAspectsFactory, NatalAspectsFactory
 from .astrological_subject_factory import AstrologicalSubjectFactory
 from .charts.kerykeion_chart_svg import KerykeionChartSVG
 from .composite_subject_factory import CompositeSubjectFactory
@@ -22,8 +22,8 @@ from .settings import KerykeionSettingsModel, get_settings
 from .transits_time_range import TransitsTimeRangeFactory
 
 __all__ = [
-    "SynastryAspects",
-    "NatalAspects",
+    "SynastryAspectsFactory",
+    "NatalAspectsFactory",
     "AstrologicalSubjectFactory",
     "KerykeionChartSVG",
     "CompositeSubjectFactory",

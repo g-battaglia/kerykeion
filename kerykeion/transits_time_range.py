@@ -2,7 +2,7 @@ from typing import Union, List
 from datetime import datetime, timedelta
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.aspects import SynastryAspects
+from kerykeion.aspects import SynastryAspectsFactory
 from kerykeion.ephemeris_data import EphemerisDataFactory
 from kerykeion.kr_types.kr_literals import AstrologicalPoint
 from kerykeion.kr_types.kr_models import ActiveAspect, TransitMomentModel, TransitsTimeRangeModel
@@ -67,7 +67,7 @@ class TransitsTimeRangeFactory:
 
         for ephemeris_point in self.ephemeris_data_points:
             # Calculate aspects between transit positions and natal chart
-            aspects = SynastryAspects(
+            aspects = SynastryAspectsFactory.from_subjects(
                 ephemeris_point,
                 self.natal_chart,
                 active_points=self.active_points,
@@ -86,7 +86,7 @@ class TransitsTimeRangeFactory:
         # Create and return the complete transits model
         return TransitsTimeRangeModel(
             dates=[point.iso_formatted_utc_datetime for point in self.ephemeris_data_points],
-            subject=self.natal_chart.model(),
+            subject=self.natal_chart,
             transits=transit_moments
         )
 

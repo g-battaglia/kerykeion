@@ -185,20 +185,6 @@ EXPECTED_ALL_ASPECTS = [
         "p1_name": "Mercury",
         "p1_owner": "Johnny Depp",
         "p1_abs_pos": 55.00215078213819,
-        "p2_name": "Mean_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 112.25320626376065,
-        "aspect": "sextile",
-        "orbit": -2.7489445183775274,
-        "aspect_degrees": 60,
-        "diff": 57.25105548162246,
-        "p1": 2,
-        "p2": 10
-    },
-    {
-        "p1_name": "Mercury",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.00215078213819,
         "p2_name": "True_Node",
         "p2_owner": "Johnny Depp",
         "p2_abs_pos": 110.6397110305168,
@@ -208,20 +194,6 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 55.63756024837862,
         "p1": 2,
         "p2": 11
-    },
-    {
-        "p1_name": "Mercury",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.00215078213819,
-        "p2_name": "Mean_South_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 292.25320626376066,
-        "aspect": "trine",
-        "orbit": 2.7489445183775274,
-        "aspect_degrees": 120,
-        "diff": 237.25105548162247,
-        "p1": 2,
-        "p2": 18
     },
     {
         "p1_name": "Mercury",
@@ -269,20 +241,6 @@ EXPECTED_ALL_ASPECTS = [
         "p1_name": "Venus",
         "p1_owner": "Johnny Depp",
         "p1_abs_pos": 55.604240358732646,
-        "p2_name": "Mean_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 112.25320626376065,
-        "aspect": "sextile",
-        "orbit": -3.3510340949720216,
-        "aspect_degrees": 60,
-        "diff": 56.648965905028,
-        "p1": 3,
-        "p2": 10
-    },
-    {
-        "p1_name": "Venus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.604240358732646,
         "p2_name": "True_Node",
         "p2_owner": "Johnny Depp",
         "p2_abs_pos": 110.6397110305168,
@@ -292,20 +250,6 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 55.03547067178416,
         "p1": 3,
         "p2": 11
-    },
-    {
-        "p1_name": "Venus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.604240358732646,
-        "p2_name": "Mean_South_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 292.25320626376066,
-        "aspect": "trine",
-        "orbit": 3.3510340949719932,
-        "aspect_degrees": 120,
-        "diff": 236.648965905028,
-        "p1": 3,
-        "p2": 18
     },
     {
         "p1_name": "Venus",
@@ -518,48 +462,6 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 17
     },
     {
-        "p1_name": "Mean_Node",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 112.25320626376065,
-        "p2_name": "True_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 110.6397110305168,
-        "aspect": "conjunction",
-        "orbit": 1.6134952332438388,
-        "aspect_degrees": 0,
-        "diff": 1.6134952332438388,
-        "p1": 10,
-        "p2": 11
-    },
-    {
-        "p1_name": "Mean_Node",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 112.25320626376065,
-        "p2_name": "Chiron",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 344.8739690319904,
-        "aspect": "trine",
-        "orbit": 7.379237231770276,
-        "aspect_degrees": 120,
-        "diff": 232.62076276822972,
-        "p1": 10,
-        "p2": 12
-    },
-    {
-        "p1_name": "Mean_Node",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 112.25320626376065,
-        "p2_name": "True_South_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 290.6397110305168,
-        "aspect": "opposition",
-        "orbit": -1.6134952332438388,
-        "aspect_degrees": 180,
-        "diff": 178.38650476675616,
-        "p1": 10,
-        "p2": 19
-    },
-    {
         "p1_name": "True_Node",
         "p1_owner": "Johnny Depp",
         "p1_abs_pos": 110.6397110305168,
@@ -574,20 +476,6 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 12
     },
     {
-        "p1_name": "True_Node",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 110.6397110305168,
-        "p2_name": "Mean_South_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 292.25320626376066,
-        "aspect": "opposition",
-        "orbit": -1.6134952332438388,
-        "aspect_degrees": 180,
-        "diff": 181.61349523324384,
-        "p1": 11,
-        "p2": 18
-    },
-    {
         "p1_name": "Chiron",
         "p1_owner": "Johnny Depp",
         "p1_abs_pos": 344.8739690319904,
@@ -599,20 +487,6 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 54.23425800147356,
         "p1": 12,
-        "p2": 19
-    },
-    {
-        "p1_name": "Mean_South_Node",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 292.25320626376066,
-        "p2_name": "True_South_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 290.6397110305168,
-        "aspect": "conjunction",
-        "orbit": 1.6134952332438388,
-        "aspect_degrees": 0,
-        "diff": 1.6134952332438388,
-        "p1": 18,
         "p2": 19
     }
 ]
@@ -804,20 +678,6 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1_name": "Mercury",
         "p1_owner": "Johnny Depp",
         "p1_abs_pos": 55.00215078213819,
-        "p2_name": "Mean_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 112.25320626376065,
-        "aspect": "sextile",
-        "orbit": -2.7489445183775274,
-        "aspect_degrees": 60,
-        "diff": 57.25105548162246,
-        "p1": 2,
-        "p2": 10
-    },
-    {
-        "p1_name": "Mercury",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.00215078213819,
         "p2_name": "True_Node",
         "p2_owner": "Johnny Depp",
         "p2_abs_pos": 110.6397110305168,
@@ -827,20 +687,6 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 55.63756024837862,
         "p1": 2,
         "p2": 11
-    },
-    {
-        "p1_name": "Mercury",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.00215078213819,
-        "p2_name": "Mean_South_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 292.25320626376066,
-        "aspect": "trine",
-        "orbit": 2.7489445183775274,
-        "aspect_degrees": 120,
-        "diff": 237.25105548162247,
-        "p1": 2,
-        "p2": 18
     },
     {
         "p1_name": "Mercury",
@@ -888,20 +734,6 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1_name": "Venus",
         "p1_owner": "Johnny Depp",
         "p1_abs_pos": 55.604240358732646,
-        "p2_name": "Mean_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 112.25320626376065,
-        "aspect": "sextile",
-        "orbit": -3.3510340949720216,
-        "aspect_degrees": 60,
-        "diff": 56.648965905028,
-        "p1": 3,
-        "p2": 10
-    },
-    {
-        "p1_name": "Venus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.604240358732646,
         "p2_name": "True_Node",
         "p2_owner": "Johnny Depp",
         "p2_abs_pos": 110.6397110305168,
@@ -911,20 +743,6 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 55.03547067178416,
         "p1": 3,
         "p2": 11
-    },
-    {
-        "p1_name": "Venus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.604240358732646,
-        "p2_name": "Mean_South_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 292.25320626376066,
-        "aspect": "trine",
-        "orbit": 3.3510340949719932,
-        "aspect_degrees": 120,
-        "diff": 236.648965905028,
-        "p1": 3,
-        "p2": 18
     },
     {
         "p1_name": "Venus",
@@ -1137,48 +955,6 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 17
     },
     {
-        "p1_name": "Mean_Node",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 112.25320626376065,
-        "p2_name": "True_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 110.6397110305168,
-        "aspect": "conjunction",
-        "orbit": 1.6134952332438388,
-        "aspect_degrees": 0,
-        "diff": 1.6134952332438388,
-        "p1": 10,
-        "p2": 11
-    },
-    {
-        "p1_name": "Mean_Node",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 112.25320626376065,
-        "p2_name": "Chiron",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 344.8739690319904,
-        "aspect": "trine",
-        "orbit": 7.379237231770276,
-        "aspect_degrees": 120,
-        "diff": 232.62076276822972,
-        "p1": 10,
-        "p2": 12
-    },
-    {
-        "p1_name": "Mean_Node",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 112.25320626376065,
-        "p2_name": "True_South_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 290.6397110305168,
-        "aspect": "opposition",
-        "orbit": -1.6134952332438388,
-        "aspect_degrees": 180,
-        "diff": 178.38650476675616,
-        "p1": 10,
-        "p2": 19
-    },
-    {
         "p1_name": "True_Node",
         "p1_owner": "Johnny Depp",
         "p1_abs_pos": 110.6397110305168,
@@ -1193,20 +969,6 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 12
     },
     {
-        "p1_name": "True_Node",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 110.6397110305168,
-        "p2_name": "Mean_South_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 292.25320626376066,
-        "aspect": "opposition",
-        "orbit": -1.6134952332438388,
-        "aspect_degrees": 180,
-        "diff": 181.61349523324384,
-        "p1": 11,
-        "p2": 18
-    },
-    {
         "p1_name": "Chiron",
         "p1_owner": "Johnny Depp",
         "p1_abs_pos": 344.8739690319904,
@@ -1218,20 +980,6 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 54.23425800147356,
         "p1": 12,
-        "p2": 19
-    },
-    {
-        "p1_name": "Mean_South_Node",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 292.25320626376066,
-        "p2_name": "True_South_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 290.6397110305168,
-        "aspect": "conjunction",
-        "orbit": 1.6134952332438388,
-        "aspect_degrees": 0,
-        "diff": 1.6134952332438388,
-        "p1": 18,
         "p2": 19
     }
 ]
