@@ -4,35 +4,45 @@ version = "5.0.0a9"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
-description = "A python library for astrology."
+description = "A Python library for astrological calculations, including natal charts, houses, planetary aspects, and SVG chart generation."
 license = { text = "AGPL-3.0" }
 readme = "README.md"
 keywords = [
     "astrology",
-    "ephemeris",
     "astrology library",
-    "birtchart",
-    "svg",
+    "astrology calculations",
+    "astrology calculator",
+    "natal chart",
+    "birth chart",
+    "planetary aspects",
+    "astrology transits",
+    "houses of astrology",
+    "ephemeris",
     "zodiac",
-    "zodiac-sing",
-    "astronomical-algorithms",
+    "zodiac signs",
+    "svg charts",
     "synastry",
-    "astrology-calculator",
+    "astronomical algorithms"
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Information Technology",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: GNU General Public License (GPL)",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development",
     "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Religion",
     "Typing :: Typed",
 ]
 requires-python = ">=3.9"
@@ -50,9 +60,6 @@ dependencies = [
 [project.urls]
 Homepage = "https://www.kerykeion.net/"
 Repository = "https://github.com/g-battaglia/kerykeion"
-
-[project.scripts]
-create-docs = "scripts.docs:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -78,10 +85,6 @@ log_level = 20
 log_date_format = "%Y-%m-%d %H:%M:%S"
 log_format = "%(asctime)s %(levelname)s %(message)s"
 
-# Black Code Formatter
-[tool.black]
-line-length = 120
-
 # Task Runner
 [tool.poe.tasks]
 test = "pytest"
@@ -89,16 +92,20 @@ test-no-capture = "pytest --show-capture no  "
 test-nocharts = "pytest --ignore-glob='*chart*.py'"
 analize = "mypy"
 docs = "pdoc kerykeion -o ./docs"
-format = "black --line-length 120"
-"format:all" = "black kerykeion tests --line-length 120"
+format = "ruff format"
+"format:all" = "ruff format kerykeion tests"
+lint = "ruff check"
+
+[tool.ruff]
+line-length = 120
 
 [dependency-groups]
 dev = [
-    "black>=25.1.0",
     "mypy>=1.17.1",
     "pdoc>=15.0.4",
     "poethepoet>=0.36.0",
     "pytest>=8.4.1",
+    "ruff>=0.12.9",
     "types-pytz>=2025.2.0.20250516",
     "types-requests>=2.32.4.20250611",
 ]
