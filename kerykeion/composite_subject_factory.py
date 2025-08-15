@@ -136,7 +136,7 @@ class CompositeSubjectFactory:
     def _calculate_midpoint_composite_points_and_houses(self):
         """
         Calculate midpoint positions for all planets and house cusps in the composite chart.
-        
+
         Uses circular mean to find the midpoint between corresponding points in both subjects,
         ensuring proper handling of zodiacal positions around the 360-degree boundary.
         """
@@ -188,7 +188,7 @@ class CompositeSubjectFactory:
     def get_midpoint_composite_subject_model(self):
         """
         Generate the complete composite chart model using midpoint technique.
-        
+
         Returns:
             CompositeSubjectModel: Complete composite chart data model with all
                                   calculated planetary positions and house cusps.

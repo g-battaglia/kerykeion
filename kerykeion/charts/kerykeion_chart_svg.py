@@ -64,7 +64,7 @@ from kerykeion.charts.charts_utils import (
     calculate_quality_points,
     calculate_synastry_quality_points
 )
-from kerykeion.charts.draw_planets_v2 import draw_planets_v2 as draw_planets
+from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
 from kerykeion.settings.legacy.legacy_color_settings import DEFAULT_CHART_COLORS

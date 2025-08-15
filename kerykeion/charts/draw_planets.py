@@ -1,13 +1,9 @@
-# type: ignore
-# TODO: Legacy original method extracted as function. The V2 is a heavy refactor of this code. If it's safe, delete this.
-
 from kerykeion.charts.charts_utils import degreeDiff, sliceToX, sliceToY, convert_decimal_to_degree_string
 from kerykeion.kr_types import KerykeionException, ChartType, KerykeionPointModel
 from kerykeion.kr_types.settings_models import KerykeionSettingsCelestialPointModel
 from kerykeion.kr_types.kr_literals import Houses
 import logging
 from typing import Union, get_args
-
 
 
 def draw_planets(
@@ -19,390 +15,634 @@ def draw_planets(
     main_subject_seventh_house_degree_ut: Union[int, float],
     chart_type: ChartType,
     second_subject_available_kerykeion_celestial_points: Union[list[KerykeionPointModel], None] = None,
-):
+) -> str:
     """
-    Draws the planets on a chart based on the provided parameters.
+    Draws the planets on an astrological chart based on the provided parameters.
+
+    This function calculates positions, handles overlap of celestial points, and draws SVG
+    elements for each planet/point on the chart. It supports different chart types including
+    natal charts, transits, synastry, and returns.
 
     Args:
-        radius (int): The radius of the chart.
+        radius (Union[int, float]): The radius of the chart in pixels.
         available_kerykeion_celestial_points (list[KerykeionPointModel]): List of celestial points for the main subject.
         available_planets_setting (list[KerykeionSettingsCelestialPointModel]): Settings for the celestial points.
-        third_circle_radius (Union[int, float]): Radius of the third circle.
+        third_circle_radius (Union[int, float]): Radius of the third circle in the chart.
         main_subject_first_house_degree_ut (Union[int, float]): Degree of the first house for the main subject.
         main_subject_seventh_house_degree_ut (Union[int, float]): Degree of the seventh house for the main subject.
-        chart_type (ChartType): Type of the chart (e.g., "Transit", "Synastry").
+        chart_type (ChartType): Type of the chart (e.g., "Transit", "Synastry", "Return", "ExternalNatal").
         second_subject_available_kerykeion_celestial_points (Union[list[KerykeionPointModel], None], optional):
-            List of celestial points for the second subject, required for "Transit" or "Synastry" charts. Defaults to None.
+            List of celestial points for the second subject, required for "Transit", "Synastry", or "Return" charts.
+            Defaults to None.
 
     Raises:
-        KerykeionException: If the second subject is required but not provided.
+        KerykeionException: If secondary celestial points are required but not provided.
 
     Returns:
         str: SVG output for the chart with the planets drawn.
     """
+    # Constants and initialization
+    PLANET_GROUPING_THRESHOLD = 3.4  # Distance threshold to consider planets as grouped
     TRANSIT_RING_EXCLUDE_POINTS_NAMES = get_args(Houses)
-
-    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
-        if second_subject_available_kerykeion_celestial_points is None:
-            raise KerykeionException("Second subject is required for Transit or Synastry charts")
-
-    # Make a list for the absolute degrees of the points of the graphic.
-    points_deg_ut = []
-    for planet in available_kerykeion_celestial_points:
-        points_deg_ut.append(planet.abs_pos)
-
-    # Make a list of the relative degrees of the points in the graphic.
-    points_deg = []
-    for planet in available_kerykeion_celestial_points:
-        points_deg.append(planet.position)
-
-    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
-        # Make a list for the absolute degrees of the points of the graphic.
-        t_points_deg_ut = []
-        for planet in second_subject_available_kerykeion_celestial_points:
-            t_points_deg_ut.append(planet.abs_pos)
-
-        # Make a list of the relative degrees of the points in the graphic.
-        t_points_deg = []
-        for planet in second_subject_available_kerykeion_celestial_points:
-            t_points_deg.append(planet.position)
-
-    planets_degut = {}
-    diff = range(len(available_planets_setting))
-
-    for i in range(len(available_planets_setting)):
-        # list of planets sorted by degree
-        logging.debug(f"planet: {i}, degree: {points_deg_ut[i]}")
-        planets_degut[points_deg_ut[i]] = i
-
-    """
-    FIXME: The planets_degut is a dictionary like:
-    {planet_degree: planet_index}
-    It should be replaced bu points_deg_ut
-    print(points_deg_ut)
-    print(planets_degut)
-    """
-
     output = ""
-    keys = list(planets_degut.keys())
-    keys.sort()
-    switch = 0
 
-    groups = []
-    planets_by_pos = list(range(len(planets_degut)))
-    planet_drange = 3.4
-    # get groups closely together
-    group_open = False
-    for e in range(len(keys)):
-        i = planets_degut[keys[e]]
-        # get distances between planets
-        if e == 0:
-            prev = points_deg_ut[planets_degut[keys[-1]]]
-            next = points_deg_ut[planets_degut[keys[1]]]
-        elif e == (len(keys) - 1):
-            prev = points_deg_ut[planets_degut[keys[e - 1]]]
-            next = points_deg_ut[planets_degut[keys[0]]]
-        else:
-            prev = points_deg_ut[planets_degut[keys[e - 1]]]
-            next = points_deg_ut[planets_degut[keys[e + 1]]]
-        diffa = degreeDiff(prev, points_deg_ut[i])
-        diffb = degreeDiff(next, points_deg_ut[i])
-        planets_by_pos[e] = [i, diffa, diffb]
+    # -----------------------------------------------------------
+    # 1. Validate inputs and prepare data
+    # -----------------------------------------------------------
+    if chart_type == "Transit" and second_subject_available_kerykeion_celestial_points is None:
+        raise KerykeionException("Secondary celestial points are required for Transit charts")
+    elif chart_type == "Synastry" and second_subject_available_kerykeion_celestial_points is None:
+        raise KerykeionException("Secondary celestial points are required for Synastry charts")
+    elif chart_type == "Return" and second_subject_available_kerykeion_celestial_points is None:
+        raise KerykeionException("Secondary celestial points are required for Return charts")
 
-        logging.debug(f'{available_planets_setting[i]["label"]}, {diffa}, {diffb}')
+    # Extract absolute and relative positions for main celestial points
+    main_points_abs_positions = [planet.abs_pos for planet in available_kerykeion_celestial_points]
+    [planet.position for planet in available_kerykeion_celestial_points]
 
-        if diffb < planet_drange:
-            if group_open:
-                groups[-1].append([e, diffa, diffb, available_planets_setting[planets_degut[keys[e]]]["label"]])
-            else:
-                group_open = True
-                groups.append([])
-                groups[-1].append([e, diffa, diffb, available_planets_setting[planets_degut[keys[e]]]["label"]])
-        else:
-            if group_open:
-                groups[-1].append([e, diffa, diffb, available_planets_setting[planets_degut[keys[e]]]["label"]])
-            group_open = False
-
-    def zero(x):
-        """Helper function that always returns 0, used for initializing arrays."""
-        return 0
-
-    planets_delta = list(map(zero, range(len(available_planets_setting))))
-
-    # print groups
-    # print planets_by_pos
-    for a in range(len(groups)):
-        # Two grouped planets
-        if len(groups[a]) == 2:
-            next_to_a = groups[a][0][0] - 1
-            if groups[a][1][0] == (len(planets_by_pos) - 1):
-                next_to_b = 0
-            else:
-                next_to_b = groups[a][1][0] + 1
-            # if both planets have room
-            if (groups[a][0][1] > (2 * planet_drange)) & (groups[a][1][2] > (2 * planet_drange)):
-                planets_delta[groups[a][0][0]] = -(planet_drange - groups[a][0][2]) / 2
-                planets_delta[groups[a][1][0]] = +(planet_drange - groups[a][0][2]) / 2
-            # if planet a has room
-            elif groups[a][0][1] > (2 * planet_drange):
-                planets_delta[groups[a][0][0]] = -planet_drange
-            # if planet b has room
-            elif groups[a][1][2] > (2 * planet_drange):
-                planets_delta[groups[a][1][0]] = +planet_drange
-
-            # if planets next to a and b have room move them
-            elif (planets_by_pos[next_to_a][1] > (2.4 * planet_drange)) & (
-                planets_by_pos[next_to_b][2] > (2.4 * planet_drange)
-            ):
-                planets_delta[(next_to_a)] = groups[a][0][1] - planet_drange * 2
-                planets_delta[groups[a][0][0]] = -planet_drange * 0.5
-                planets_delta[next_to_b] = -(groups[a][1][2] - planet_drange * 2)
-                planets_delta[groups[a][1][0]] = +planet_drange * 0.5
-
-            # if planet next to a has room move them
-            elif planets_by_pos[next_to_a][1] > (2 * planet_drange):
-                planets_delta[(next_to_a)] = groups[a][0][1] - planet_drange * 2.5
-                planets_delta[groups[a][0][0]] = -planet_drange * 1.2
-
-            # if planet next to b has room move them
-            elif planets_by_pos[next_to_b][2] > (2 * planet_drange):
-                planets_delta[next_to_b] = -(groups[a][1][2] - planet_drange * 2.5)
-                planets_delta[groups[a][1][0]] = +planet_drange * 1.2
-
-        # Three grouped planets or more
-        xl = len(groups[a])
-        if xl >= 3:
-            available = groups[a][0][1]
-            for f in range(xl):
-                available += groups[a][f][2]
-            need = (3 * planet_drange) + (1.2 * (xl - 1) * planet_drange)
-            leftover = available - need
-            xa = groups[a][0][1]
-            xb = groups[a][(xl - 1)][2]
-
-            # center
-            if (xa > (need * 0.5)) & (xb > (need * 0.5)):
-                startA = xa - (need * 0.5)
-            # position relative to next planets
-            else:
-                startA = (leftover / (xa + xb)) * xa
-                (leftover / (xa + xb)) * xb
-
-            if available > need:
-                planets_delta[groups[a][0][0]] = startA - groups[a][0][1] + (1.5 * planet_drange)
-                for f in range(xl - 1):
-                    planets_delta[groups[a][(f + 1)][0]] = (
-                        1.2 * planet_drange + planets_delta[groups[a][f][0]] - groups[a][f][2]
-                    )
-
-    for e in range(len(keys)):
-        i = planets_degut[keys[e]]
-
-        # coordinates
-        if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
-            if 22 < i < 27:
-                rplanet = 76
-            elif switch == 1:
-                rplanet = 110
-                switch = 0
-            else:
-                rplanet = 130
-                switch = 1
-        else:
-            # if 22 < i < 27 it is asc,mc,dsc,ic (angles of chart)
-            # put on special line (rplanet is range from outer ring)
-            amin, bmin, cmin = 0, 0, 0
-            if chart_type == "ExternalNatal":
-                amin = 74 - 10
-                bmin = 94 - 10
-                cmin = 40 - 10
-
-            if 22 < i < 27:
-                rplanet = 40 - cmin
-            elif switch == 1:
-                rplanet = 74 - amin
-                switch = 0
-            else:
-                rplanet = 94 - bmin
-                switch = 1
-
-        rtext = 45
-
-        offset = (int(main_subject_seventh_house_degree_ut) / -1) + int(points_deg_ut[i] + planets_delta[e])
-        trueoffset = (int(main_subject_seventh_house_degree_ut) / -1) + int(points_deg_ut[i])
-
-        planet_x = sliceToX(0, (radius - rplanet), offset) + rplanet
-        planet_y = sliceToY(0, (radius - rplanet), offset) + rplanet
-        if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
-            scale = 0.8
-
-        elif chart_type == "ExternalNatal":
-            scale = 0.8
-            # line1
-            x1 = sliceToX(0, (radius - third_circle_radius), trueoffset) + third_circle_radius
-            y1 = sliceToY(0, (radius - third_circle_radius), trueoffset) + third_circle_radius
-            x2 = sliceToX(0, (radius - rplanet - 30), trueoffset) + rplanet + 30
-            y2 = sliceToY(0, (radius - rplanet - 30), trueoffset) + rplanet + 30
-            color = available_planets_setting[i]["color"]
-            output += (
-                '<line x1="%s" y1="%s" x2="%s" y2="%s" style="stroke-width:1px;stroke:%s;stroke-opacity:.3;"/>\n'
-                % (x1, y1, x2, y2, color)
-            )
-            # line2
-            x1 = sliceToX(0, (radius - rplanet - 30), trueoffset) + rplanet + 30
-            y1 = sliceToY(0, (radius - rplanet - 30), trueoffset) + rplanet + 30
-            x2 = sliceToX(0, (radius - rplanet - 10), offset) + rplanet + 10
-            y2 = sliceToY(0, (radius - rplanet - 10), offset) + rplanet + 10
-            output += (
-                '<line x1="%s" y1="%s" x2="%s" y2="%s" style="stroke-width:1px;stroke:%s;stroke-opacity:.5;"/>\n'
-                % (x1, y1, x2, y2, color)
-            )
-
-        else:
-            scale = 1
-
-        planet_details = available_kerykeion_celestial_points[i]
-
-        output += f'<g kr:node="ChartPoint" kr:house="{planet_details["house"]}" kr:sign="{planet_details["sign"]}" kr:slug="{planet_details["name"]}" transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">'
-        output += f'<use x="{planet_x * (1/scale)}" y="{planet_y * (1/scale)}" xlink:href="#{available_planets_setting[i]["name"]}" />'
-        output += "</g>"
-
-    # make transit degut and display planets
+    # Extract absolute and relative positions for secondary celestial points if needed
+    secondary_points_abs_positions = []
+    secondary_points_rel_positions = []
     if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
-        group_offset = {}
-        t_planets_degut = {}
-        list_range = len(available_planets_setting)
+        secondary_points_abs_positions = [
+            planet.abs_pos for planet in second_subject_available_kerykeion_celestial_points
+        ]
+        secondary_points_rel_positions = [
+            planet.position for planet in second_subject_available_kerykeion_celestial_points
+        ]
 
-        for i in range(list_range):
-            if chart_type == "Transit" and available_planets_setting[i]["name"] in TRANSIT_RING_EXCLUDE_POINTS_NAMES:
-                continue
+    # -----------------------------------------------------------
+    # 2. Create position lookup dictionary for main celestial points
+    # -----------------------------------------------------------
+    # Map absolute degree to index in the settings array
+    position_index_map = {}
+    for i in range(len(available_planets_setting)):
+        position_index_map[main_points_abs_positions[i]] = i
+        logging.debug(f"Planet index: {i}, degree: {main_points_abs_positions[i]}")
 
-            group_offset[i] = 0
-            t_planets_degut[t_points_deg_ut[i]] = i
+    # Sort positions for ordered processing
+    sorted_positions = sorted(position_index_map.keys())
 
-        t_keys = list(t_planets_degut.keys())
-        t_keys.sort()
+    # -----------------------------------------------------------
+    # 3. Identify groups of celestial points that are close to each other
+    # -----------------------------------------------------------
+    point_groups = []
+    is_group_open = False
+    planets_by_position = [None] * len(position_index_map)
 
-        # grab closely grouped planets
-        groups = []
-        in_group = False
-        for e in range(len(t_keys)):
-            i_a = t_planets_degut[t_keys[e]]
-            if e == (len(t_keys) - 1):
-                i_b = t_planets_degut[t_keys[0]]
-            else:
-                i_b = t_planets_degut[t_keys[e + 1]]
+    # Process each celestial point to find groups
+    for position_idx, abs_position in enumerate(sorted_positions):
+        point_idx = position_index_map[abs_position]
 
-            a = t_points_deg_ut[i_a]
-            b = t_points_deg_ut[i_b]
-            diff = degreeDiff(a, b)
-            if diff <= 2.5:
-                if in_group:
-                    groups[-1].append(i_b)
-                else:
-                    groups.append([i_a])
-                    groups[-1].append(i_b)
-                    in_group = True
-            else:
-                in_group = False
-        # loop groups and set degrees display adjustment
-        for i in range(len(groups)):
-            if len(groups[i]) == 2:
-                group_offset[groups[i][0]] = -1.0
-                group_offset[groups[i][1]] = 1.0
-            elif len(groups[i]) == 3:
-                group_offset[groups[i][0]] = -1.5
-                group_offset[groups[i][1]] = 0
-                group_offset[groups[i][2]] = 1.5
-            elif len(groups[i]) == 4:
-                group_offset[groups[i][0]] = -2.0
-                group_offset[groups[i][1]] = -1.0
-                group_offset[groups[i][2]] = 1.0
-                group_offset[groups[i][3]] = 2.0
-
-        switch = 0
-
-        # Transit planets loop
-        for e in range(len(t_keys)):
-            if chart_type == "Transit" and available_planets_setting[e]["name"] in TRANSIT_RING_EXCLUDE_POINTS_NAMES:
-                continue
-
-            i = t_planets_degut[t_keys[e]]
-
-            if 22 < i < 27:
-                rplanet = 9
-            elif switch == 1:
-                rplanet = 18
-                switch = 0
-            else:
-                rplanet = 26
-                switch = 1
-
-            # Transit planet name
-            zeropoint = 360 - main_subject_seventh_house_degree_ut
-            t_offset = zeropoint + t_points_deg_ut[i]
-            if t_offset > 360:
-                t_offset = t_offset - 360
-            planet_x = sliceToX(0, (radius - rplanet), t_offset) + rplanet
-            planet_y = sliceToY(0, (radius - rplanet), t_offset) + rplanet
-            output += f'<g class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)"><use x="{planet_x*2}" y="{planet_y*2}" xlink:href="#{available_planets_setting[i]["name"]}" /></g></g>'
-
-            # Transit planet line
-            x1 = sliceToX(0, radius + 3, t_offset) - 3
-            y1 = sliceToY(0, radius + 3, t_offset) - 3
-            x2 = sliceToX(0, radius - 3, t_offset) + 3
-            y2 = sliceToY(0, radius - 3, t_offset) + 3
-            output += f'<line class="transit-planet-line" x1="{str(x1)}" y1="{str(y1)}" x2="{str(x2)}" y2="{str(y2)}" style="stroke: {available_planets_setting[i]["color"]}; stroke-width: 1px; stroke-opacity:.8;"/>'
-
-            # transit planet degree text
-            rotate = main_subject_first_house_degree_ut - t_points_deg_ut[i]
-            textanchor = "end"
-            t_offset += group_offset[i]
-            rtext = -3.0
-
-            if -90 > rotate > -270:
-                rotate = rotate + 180.0
-                textanchor = "start"
-            if 270 > rotate > 90:
-                rotate = rotate - 180.0
-                textanchor = "start"
-
-            if textanchor == "end":
-                xo = 1
-            else:
-                xo = -1
-            deg_x = sliceToX(0, (radius - rtext), t_offset + xo) + rtext
-            deg_y = sliceToY(0, (radius - rtext), t_offset + xo) + rtext
-            int(t_offset)
-            output += f'<g transform="translate({deg_x},{deg_y})">'
-            output += f'<text transform="rotate({rotate})" text-anchor="{textanchor}'
-            output += f'" style="fill: {available_planets_setting[i]["color"]}; font-size: 10px;">{convert_decimal_to_degree_string(t_points_deg[i], format_type="1")}'
-            output += "</text></g>"
-
-        # check transit
-        if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
-            dropin = 36
+        # Find previous and next point positions for distance calculations
+        # Handle special case when there's only one planet
+        if len(sorted_positions) == 1:
+            # With only one planet, there are no adjacent planets
+            prev_position = main_points_abs_positions[point_idx]
+            next_position = main_points_abs_positions[point_idx]
+        elif position_idx == 0:
+            prev_position = main_points_abs_positions[position_index_map[sorted_positions[-1]]]
+            next_position = main_points_abs_positions[position_index_map[sorted_positions[1]]]
+        elif position_idx == len(sorted_positions) - 1:
+            prev_position = main_points_abs_positions[position_index_map[sorted_positions[position_idx - 1]]]
+            next_position = main_points_abs_positions[position_index_map[sorted_positions[0]]]
         else:
-            dropin = 0
+            prev_position = main_points_abs_positions[position_index_map[sorted_positions[position_idx - 1]]]
+            next_position = main_points_abs_positions[position_index_map[sorted_positions[position_idx + 1]]]
 
-        # planet line
-        x1 = sliceToX(0, radius - (dropin + 3), offset) + (dropin + 3)
-        y1 = sliceToY(0, radius - (dropin + 3), offset) + (dropin + 3)
-        x2 = sliceToX(0, (radius - (dropin - 3)), offset) + (dropin - 3)
-        y2 = sliceToY(0, (radius - (dropin - 3)), offset) + (dropin - 3)
-
-        output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {available_planets_setting[i]["color"]}; stroke-width: 2px; stroke-opacity:.6;"/>'
-
-        # check transit
-        if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
-            dropin = 160
+        # Calculate distance to adjacent points
+        # When there's only one planet, set distances to a large value to prevent grouping
+        if len(sorted_positions) == 1:
+            distance_to_prev = 360.0  # Maximum possible distance
+            distance_to_next = 360.0  # Maximum possible distance
         else:
-            dropin = 120
+            distance_to_prev = degreeDiff(prev_position, main_points_abs_positions[point_idx])
+            distance_to_next = degreeDiff(next_position, main_points_abs_positions[point_idx])
 
-        x1 = sliceToX(0, radius - dropin, offset) + dropin
-        y1 = sliceToY(0, radius - dropin, offset) + dropin
-        x2 = sliceToX(0, (radius - (dropin - 3)), offset) + (dropin - 3)
-        y2 = sliceToY(0, (radius - (dropin - 3)), offset) + (dropin - 3)
-        output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {available_planets_setting[i]["color"]}; stroke-width: 2px; stroke-opacity:.6;"/>'
+        # Store position and distance information
+        planets_by_position[position_idx] = [point_idx, distance_to_prev, distance_to_next]
+
+        label = available_planets_setting[point_idx]["label"]
+        logging.debug(f"{label}, distance_to_prev: {distance_to_prev}, distance_to_next: {distance_to_next}")
+
+        # Group points that are close to each other
+        if distance_to_next < PLANET_GROUPING_THRESHOLD:
+            point_data = [position_idx, distance_to_prev, distance_to_next, label]
+            if is_group_open:
+                point_groups[-1].append(point_data)
+            else:
+                is_group_open = True
+                point_groups.append([point_data])
+        else:
+            if is_group_open:
+                point_data = [position_idx, distance_to_prev, distance_to_next, label]
+                point_groups[-1].append(point_data)
+            is_group_open = False
+
+    # -----------------------------------------------------------
+    # 4. Calculate position adjustments to avoid overlapping
+    # -----------------------------------------------------------
+    position_adjustments = [0] * len(available_planets_setting)
+
+    # Process each group to calculate position adjustments
+    for group in point_groups:
+        group_size = len(group)
+
+        # Handle groups of two celestial points
+        if group_size == 2:
+            _handle_two_point_group(group, planets_by_position, position_adjustments, PLANET_GROUPING_THRESHOLD)
+
+        # Handle groups of three or more celestial points
+        elif group_size >= 3:
+            _handle_multi_point_group(group, position_adjustments, PLANET_GROUPING_THRESHOLD)
+
+    # -----------------------------------------------------------
+    # 5. Draw main celestial points
+    # -----------------------------------------------------------
+    for position_idx, abs_position in enumerate(sorted_positions):
+        point_idx = position_index_map[abs_position]
+
+        # Determine radius based on chart type and point type
+        point_radius = _determine_point_radius(point_idx, chart_type, bool(position_idx % 2))
+
+        # Calculate position offset for the point
+        adjusted_offset = _calculate_point_offset(
+            main_subject_seventh_house_degree_ut,
+            main_points_abs_positions[point_idx],
+            position_adjustments[position_idx],
+        )
+
+        # Calculate true position without adjustment (used for connecting lines)
+        true_offset = _calculate_point_offset(
+            main_subject_seventh_house_degree_ut,
+            main_points_abs_positions[point_idx],
+            0
+        )
+
+        # Calculate point coordinates
+        point_x = sliceToX(0, radius - point_radius, adjusted_offset) + point_radius
+        point_y = sliceToY(0, radius - point_radius, adjusted_offset) + point_radius
+
+        # Determine scale factor based on chart type
+        scale_factor = 1.0
+        if chart_type == "Transit":
+            scale_factor = 0.8
+        elif chart_type == "Synastry":
+            scale_factor = 0.8
+        elif chart_type == "Return":
+            scale_factor = 0.8
+        elif chart_type == "ExternalNatal":
+            scale_factor = 0.8
+
+        # Draw connecting lines for ExternalNatal chart type
+        if chart_type == "ExternalNatal":
+            output = _draw_external_natal_lines(
+                output,
+                radius,
+                third_circle_radius,
+                point_radius,
+                true_offset,
+                adjusted_offset,
+                available_planets_setting[point_idx]["color"],
+            )
+
+        # Draw the celestial point SVG element
+        point_details = available_kerykeion_celestial_points[point_idx]
+        output += _generate_point_svg(
+            point_details, point_x, point_y, scale_factor, available_planets_setting[point_idx]["name"]
+        )
+
+    # -----------------------------------------------------------
+    # 6. Draw transit/secondary celestial points
+    # -----------------------------------------------------------
+    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
+        output = _draw_secondary_points(
+            output,
+            radius,
+            main_subject_first_house_degree_ut,
+            main_subject_seventh_house_degree_ut,
+            secondary_points_abs_positions,
+            secondary_points_rel_positions,
+            available_planets_setting,
+            chart_type,
+            TRANSIT_RING_EXCLUDE_POINTS_NAMES,
+            adjusted_offset,
+        )
+
+    return output
+
+
+def _handle_two_point_group(
+    group: list, planets_by_position: list, position_adjustments: list, threshold: float
+) -> None:
+    """
+    Handle positioning for a group of two celestial points that are close to each other.
+
+    Adjusts positions to prevent overlapping by calculating appropriate offsets
+    based on available space around the points.
+
+    Args:
+        group (list): A list containing data about two closely positioned points.
+        planets_by_position (list): A list with data about all planets positions.
+        position_adjustments (list): The list to store calculated position adjustments.
+        threshold (float): The minimum distance threshold for considering points as grouped.
+    """
+    next_to_a = group[0][0] - 1
+    next_to_b = 0 if group[1][0] == (len(planets_by_position) - 1) else group[1][0] + 1
+
+    # If both points have room
+    if (group[0][1] > (2 * threshold)) and (group[1][2] > (2 * threshold)):
+        position_adjustments[group[0][0]] = -(threshold - group[0][2]) / 2
+        position_adjustments[group[1][0]] = +(threshold - group[0][2]) / 2
+
+    # If only first point has room
+    elif group[0][1] > (2 * threshold):
+        position_adjustments[group[0][0]] = -threshold
+
+    # If only second point has room
+    elif group[1][2] > (2 * threshold):
+        position_adjustments[group[1][0]] = +threshold
+
+    # If points adjacent to group have room
+    elif (planets_by_position[next_to_a][1] > (2.4 * threshold)) and (planets_by_position[next_to_b][2] > (2.4 * threshold)):
+        position_adjustments[next_to_a] = group[0][1] - threshold * 2
+        position_adjustments[group[0][0]] = -threshold * 0.5
+        position_adjustments[next_to_b] = -(group[1][2] - threshold * 2)
+        position_adjustments[group[1][0]] = +threshold * 0.5
+
+    # If only point adjacent to first has room
+    elif planets_by_position[next_to_a][1] > (2 * threshold):
+        position_adjustments[next_to_a] = group[0][1] - threshold * 2.5
+        position_adjustments[group[0][0]] = -threshold * 1.2
+
+    # If only point adjacent to second has room
+    elif planets_by_position[next_to_b][2] > (2 * threshold):
+        position_adjustments[next_to_b] = -(group[1][2] - threshold * 2.5)
+        position_adjustments[group[1][0]] = +threshold * 1.2
+
+
+def _handle_multi_point_group(group: list, position_adjustments: list, threshold: float) -> None:
+    """
+    Handle positioning for a group of three or more celestial points that are close to each other.
+
+    Distributes points evenly within the available space to prevent overlapping.
+
+    Args:
+        group (list): A list containing data about grouped points.
+        position_adjustments (list): The list to store calculated position adjustments.
+        threshold (float): The minimum distance threshold for considering points as grouped.
+    """
+    group_size = len(group)
+
+    # Calculate available space
+    available_space = group[0][1]  # Distance before first point
+    for i in range(group_size):
+        available_space += group[i][2]  # Add distance after each point
+
+    # Calculate needed space
+    needed_space = (3 * threshold) + (1.2 * (group_size - 1) * threshold)
+    leftover_space = available_space - needed_space
+
+    # Get spacing before first and after last point
+    space_before_first = group[0][1]
+    space_after_last = group[group_size - 1][2]
+
+    # Position points based on available space
+    if (space_before_first > (needed_space * 0.5)) and (space_after_last > (needed_space * 0.5)):
+        # Center the group
+        start_position = space_before_first - (needed_space * 0.5)
+    else:
+        # Distribute leftover space proportionally
+        start_position = (leftover_space / (space_before_first + space_after_last)) * space_before_first
+
+    # Apply positions if there's enough space
+    if available_space > needed_space:
+        position_adjustments[group[0][0]] = start_position - group[0][1] + (1.5 * threshold)
+
+        # Position each subsequent point relative to the previous one
+        for i in range(group_size - 1):
+            position_adjustments[group[i + 1][0]] = 1.2 * threshold + position_adjustments[group[i][0]] - group[i][2]
+
+
+def _determine_point_radius(
+    point_idx: int,
+    chart_type: str,
+    is_alternate_position: bool
+) -> int:
+    """
+    Determine the radius for placing a celestial point based on its type and chart type.
+
+    Args:
+        point_idx (int): Index of the celestial point.
+        chart_type (str): Type of the chart.
+        is_alternate_position (bool): Whether to use alternate positioning.
+
+    Returns:
+        int: Radius value for the point.
+    """
+    # Check if point is an angle of the chart (ASC, MC, DSC, IC)
+    is_chart_angle = 22 < point_idx < 27
+
+    if chart_type == "Transit":
+        if is_chart_angle:
+            return 76
+        else:
+            return 110 if is_alternate_position else 130
+    elif chart_type == "Synastry":
+        if is_chart_angle:
+            return 76
+        else:
+            return 110 if is_alternate_position else 130
+    elif chart_type == "Return":
+        if is_chart_angle:
+            return 76
+        else:
+            return 110 if is_alternate_position else 130
+    else:
+        # Default natal chart and ExternalNatal handling
+        # if 22 < point_idx < 27 it is asc,mc,dsc,ic (angles of chart)
+        amin, bmin, cmin = 0, 0, 0
+        if chart_type == "ExternalNatal":
+            amin = 74 - 10
+            bmin = 94 - 10
+            cmin = 40 - 10
+
+        if is_chart_angle:
+            return 40 - cmin
+        elif is_alternate_position:
+            return 74 - amin
+        else:
+            return 94 - bmin
+
+
+def _calculate_point_offset(
+    seventh_house_degree: Union[int, float], point_degree: Union[int, float], adjustment: Union[int, float]
+) -> float:
+    """
+    Calculate the offset position of a celestial point on the chart.
+
+    Args:
+        seventh_house_degree (Union[int, float]): Degree of the seventh house.
+        point_degree (Union[int, float]): Degree of the celestial point.
+        adjustment (Union[int, float]): Adjustment value to prevent overlapping.
+
+    Returns:
+        float: The calculated offset position.
+    """
+    return (int(seventh_house_degree) / -1) + int(point_degree + adjustment)
+
+
+def _draw_external_natal_lines(
+    output: str,
+    radius: Union[int, float],
+    third_circle_radius: Union[int, float],
+    point_radius: Union[int, float],
+    true_offset: Union[int, float],
+    adjusted_offset: Union[int, float],
+    color: str,
+) -> str:
+    """
+    Draw connecting lines for the ExternalNatal chart type.
+
+    Creates two line segments: one from the circle to the original position,
+    and another from the original position to the adjusted position.
+
+    Args:
+        output (str): The SVG output string to append to.
+        radius (Union[int, float]): Chart radius.
+        third_circle_radius (Union[int, float]): Radius of the third circle.
+        point_radius (Union[int, float]): Radius of the celestial point.
+        true_offset (Union[int, float]): True position offset.
+        adjusted_offset (Union[int, float]): Adjusted position offset.
+        color (str): Line color.
+
+    Returns:
+        str: Updated SVG output with added line elements.
+    """
+    # First line - from circle to outer position
+    x1 = sliceToX(0, radius - third_circle_radius, true_offset) + third_circle_radius
+    y1 = sliceToY(0, radius - third_circle_radius, true_offset) + third_circle_radius
+    x2 = sliceToX(0, radius - point_radius - 30, true_offset) + point_radius + 30
+    y2 = sliceToY(0, radius - point_radius - 30, true_offset) + point_radius + 30
+    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke-width:1px;stroke:{color};stroke-opacity:.3;"/>\n'
+
+    # Second line - from outer position to adjusted position
+    x1 = x2
+    y1 = y2
+    x2 = sliceToX(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
+    y2 = sliceToY(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
+    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke-width:1px;stroke:{color};stroke-opacity:.5;"/>\n'
+
+    return output
+
+
+def _generate_point_svg(point_details: KerykeionPointModel, x: float, y: float, scale: float, point_name: str) -> str:
+    """
+    Generate the SVG element for a celestial point.
+
+    Args:
+        point_details (KerykeionPointModel): Details about the celestial point.
+        x (float): X-coordinate for the point.
+        y (float): Y-coordinate for the point.
+        scale (float): Scale factor for the point.
+        point_name (str): Name of the celestial point.
+
+    Returns:
+        str: SVG element for the celestial point.
+    """
+    svg = f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" kr:sign="{point_details["sign"]}" '
+    svg += f'kr:slug="{point_details["name"]}" transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">'
+    svg += f'<use x="{x * (1/scale)}" y="{y * (1/scale)}" xlink:href="#{point_name}" />'
+    svg += "</g>"
+    return svg
+
+
+def _draw_secondary_points(
+    output: str,
+    radius: Union[int, float],
+    first_house_degree: Union[int, float],
+    seventh_house_degree: Union[int, float],
+    points_abs_positions: list[Union[int, float]],
+    points_rel_positions: list[Union[int, float]],
+    points_settings: list[KerykeionSettingsCelestialPointModel],
+    chart_type: str,
+    exclude_points: list[str],
+    main_offset: float,
+) -> str:
+    """
+    Draw secondary celestial points (transit/synastry/return) on the chart.
+
+    Args:
+        output (str): Current SVG output to append to.
+        radius (Union[int, float]): Chart radius.
+        first_house_degree (Union[int, float]): Degree of the first house.
+        seventh_house_degree (Union[int, float]): Degree of the seventh house.
+        points_abs_positions (list[Union[int, float]]): Absolute positions of points.
+        points_rel_positions (list[Union[int, float]]): Relative positions of points.
+        points_settings (list[KerykeionSettingsCelestialPointModel]): Settings for points.
+        chart_type (str): Type of chart.
+        exclude_points (list[str]): List of point names to exclude.
+        main_offset (float): Offset position for the main point.
+
+    Returns:
+        str: Updated SVG output with added secondary points.
+    """
+    # Initialize position adjustments for grouped points
+    position_adjustments = {i: 0 for i in range(len(points_settings))}
+
+    # Map absolute position to point index
+    position_index_map = {}
+    for i in range(len(points_settings)):
+        if chart_type == "Transit" and points_settings[i]["name"] in exclude_points:
+            continue
+        position_index_map[points_abs_positions[i]] = i
+
+    # Sort positions
+    sorted_positions = sorted(position_index_map.keys())
+
+    # Find groups of points that are close to each other
+    point_groups = []
+    in_group = False
+
+    for pos_idx, abs_position in enumerate(sorted_positions):
+        point_a_idx = position_index_map[abs_position]
+
+        # Get next point
+        if pos_idx == len(sorted_positions) - 1:
+            point_b_idx = position_index_map[sorted_positions[0]]
+        else:
+            point_b_idx = position_index_map[sorted_positions[pos_idx + 1]]
+
+        # Check distance between points
+        position_a = points_abs_positions[point_a_idx]
+        position_b = points_abs_positions[point_b_idx]
+        distance = degreeDiff(position_a, position_b)
+
+        # Group points that are close
+        if distance <= 2.5:
+            if in_group:
+                point_groups[-1].append(point_b_idx)
+            else:
+                point_groups.append([point_a_idx])
+                point_groups[-1].append(point_b_idx)
+                in_group = True
+        else:
+            in_group = False
+
+    # Set position adjustments for grouped points
+    for group in point_groups:
+        if len(group) == 2:
+            position_adjustments[group[0]] = -1.0
+            position_adjustments[group[1]] = 1.0
+        elif len(group) == 3:
+            position_adjustments[group[0]] = -1.5
+            position_adjustments[group[1]] = 0
+            position_adjustments[group[2]] = 1.5
+        elif len(group) == 4:
+            position_adjustments[group[0]] = -2.0
+            position_adjustments[group[1]] = -1.0
+            position_adjustments[group[2]] = 1.0
+            position_adjustments[group[3]] = 2.0
+
+    # Draw each secondary point
+    alternate_position = False
+
+    for pos_idx, abs_position in enumerate(sorted_positions):
+        point_idx = position_index_map[abs_position]
+
+        if chart_type == "Transit" and points_settings[point_idx]["name"] in exclude_points:
+            continue
+
+        # Determine radius based on point type
+        if 22 < point_idx < 27:  # Chart angles
+            point_radius = 9
+        elif alternate_position:
+            point_radius = 18
+            alternate_position = False
+        else:
+            point_radius = 26
+            alternate_position = True
+
+        # Calculate position
+        zero_point = 360 - seventh_house_degree
+        point_offset = zero_point + points_abs_positions[point_idx]
+        if point_offset > 360:
+            point_offset -= 360
+
+        # Draw point symbol
+        point_x = sliceToX(0, radius - point_radius, point_offset) + point_radius
+        point_y = sliceToY(0, radius - point_radius, point_offset) + point_radius
+        output += '<g class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)">'
+        output += f'<use x="{point_x*2}" y="{point_y*2}" xlink:href="#{points_settings[point_idx]["name"]}" /></g></g>'
+
+        # Draw connecting line
+        x1 = sliceToX(0, radius + 3, point_offset) - 3
+        y1 = sliceToY(0, radius + 3, point_offset) - 3
+        x2 = sliceToX(0, radius - 3, point_offset) + 3
+        y2 = sliceToY(0, radius - 3, point_offset) + 3
+        output += f'<line class="transit-planet-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+        output += f'style="stroke: {points_settings[point_idx]["color"]}; stroke-width: 1px; stroke-opacity:.8;"/>'
+
+        # Draw degree text with rotation
+        rotation = first_house_degree - points_abs_positions[point_idx]
+        text_anchor = "end"
+
+        # Adjust text rotation and anchor for readability
+        if -90 > rotation > -270:
+            rotation += 180.0
+            text_anchor = "start"
+        if 270 > rotation > 90:
+            rotation -= 180.0
+            text_anchor = "start"
+
+        # Position the degree text
+        x_offset = 1 if text_anchor == "end" else -1
+        adjusted_point_offset = point_offset + position_adjustments[point_idx]
+        text_radius = -3.0
+
+        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset + x_offset) + text_radius
+        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset + x_offset) + text_radius
+
+        # Format and output the degree text
+        degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
+        output += f'<g transform="translate({deg_x},{deg_y})">'
+        output += f'<text transform="rotate({rotation})" text-anchor="{text_anchor}" '
+        output += f'style="fill: {points_settings[point_idx]["color"]}; font-size: 10px;">{degree_text}</text></g>'
+
+    # Draw connecting lines for the main point
+    dropin = 0
+    if chart_type == "Transit":
+        dropin = 36
+    elif chart_type == "Synastry":
+        dropin = 36
+    elif chart_type == "Return":
+        dropin = 36
+
+    # First connecting line segment
+    x1 = sliceToX(0, radius - (dropin + 3), main_offset) + (dropin + 3)
+    y1 = sliceToY(0, radius - (dropin + 3), main_offset) + (dropin + 3)
+    x2 = sliceToX(0, radius - (dropin - 3), main_offset) + (dropin - 3)
+    y2 = sliceToY(0, radius - (dropin - 3), main_offset) + (dropin - 3)
+
+    point_color = points_settings[point_idx]["color"]
+    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+    output += f'style="stroke: {point_color}; stroke-width: 2px; stroke-opacity:.6;"/>'
+
+    # Second connecting line segment
+    dropin = 120
+    if chart_type == "Transit":
+        dropin = 160
+    elif chart_type == "Synastry":
+        dropin = 160
+    elif chart_type == "Return":
+        dropin = 160
+
+    x1 = sliceToX(0, radius - dropin, main_offset) + dropin
+    y1 = sliceToY(0, radius - dropin, main_offset) + dropin
+    x2 = sliceToX(0, radius - (dropin - 3), main_offset) + (dropin - 3)
+    y2 = sliceToY(0, radius - (dropin - 3), main_offset) + (dropin - 3)
+
+    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+    output += f'style="stroke: {point_color}; stroke-width: 2px; stroke-opacity:.6;"/>'
 
     return output
