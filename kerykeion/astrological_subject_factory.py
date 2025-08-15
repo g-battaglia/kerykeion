@@ -27,7 +27,7 @@ Classes:
 
 Author: Giacomo Battaglia
 Copyright: (C) 2025 Kerykeion Project
-License: See LICENSE file for details
+License: AGPL-3.0
 """
 
 import pytz
