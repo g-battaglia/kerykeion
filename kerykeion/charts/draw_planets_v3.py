@@ -75,6 +75,12 @@ class CelestialPointGrouper:
     """Handles grouping of celestial points that are close together."""
 
     def __init__(self, threshold: float = ChartConstants.PLANET_GROUPING_THRESHOLD):
+        """
+        Initialize the celestial point grouper.
+        
+        Args:
+            threshold: Distance threshold below which points are considered grouped together.
+        """
         self.threshold = threshold
 
     def create_position_mapping(
@@ -170,6 +176,12 @@ class PositionAdjuster:
     """Calculates position adjustments to prevent overlapping points."""
 
     def __init__(self, threshold: float = ChartConstants.PLANET_GROUPING_THRESHOLD):
+        """
+        Initialize the position adjuster.
+        
+        Args:
+            threshold: Distance threshold for grouping adjustment calculations.
+        """
         self.threshold = threshold
 
     def calculate_adjustments(
@@ -269,6 +281,12 @@ class SVGRenderer:
     """Handles SVG generation for celestial points."""
 
     def __init__(self, config: ChartConfiguration):
+        """
+        Initialize the SVG renderer with chart configuration.
+        
+        Args:
+            config: Chart configuration containing radius, scale factors, and chart type.
+        """
         self.config = config
 
     def calculate_offset(self, point_degree: float, adjustment: float = 0) -> float:
@@ -330,6 +348,12 @@ class SecondaryPointsRenderer:
     """Handles rendering of secondary points (transit, synastry, return)."""
 
     def __init__(self, config: ChartConfiguration):
+        """
+        Initialize the secondary points renderer.
+        
+        Args:
+            config: Chart configuration for rendering parameters.
+        """
         self.config = config
         self.grouper = CelestialPointGrouper(ChartConstants.SECONDARY_GROUPING_THRESHOLD)
 

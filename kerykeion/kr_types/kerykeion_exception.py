@@ -10,5 +10,11 @@ class KerykeionException(Exception):
     """
 
     def __init__(self, message):
+        """
+        Initialize a new KerykeionException.
+
+        Args:
+            message: The error message to be displayed.
+        """
         # Call the base class constructor with the parameters it needs
         super().__init__(message)

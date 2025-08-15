@@ -102,30 +102,44 @@ class CompositeSubjectFactory:
         self.houses_names_list = self.first_subject.houses_names_list
 
     def __str__(self):
+        """Return string representation of the composite subject."""
         return f"Composite Chart Data for {self.name}"
 
     def __repr__(self):
+        """Return detailed string representation of the composite subject."""
         return f"Composite Chart Data for {self.name}"
 
     def __eq__(self, other):
+        """Check equality with another composite subject."""
         return self.first_subject == other.first_subject and self.second_subject == other.second_subject and self.name == other.chart_name
 
     def __ne__(self, other):
+        """Check inequality with another composite subject."""
         return not self.__eq__(other)
 
     def __hash__(self):
+        """Generate hash for the composite subject."""
         return hash((self.first_subject, self.second_subject, self.name))
 
     def __copy__(self):
+        """Create a shallow copy of the composite subject."""
         return CompositeSubjectFactory(self.first_subject, self.second_subject, self.name)
 
     def __setitem__(self, key, value):
+        """Set an attribute using dictionary-style access."""
         setattr(self, key, value)
 
     def __getitem__(self, key):
+        """Get an attribute using dictionary-style access."""
         return getattr(self, key)
 
     def _calculate_midpoint_composite_points_and_houses(self):
+        """
+        Calculate midpoint positions for all planets and house cusps in the composite chart.
+        
+        Uses circular mean to find the midpoint between corresponding points in both subjects,
+        ensuring proper handling of zodiacal positions around the 360-degree boundary.
+        """
         # Houses
         house_degree_list_ut = []
         for house in self.first_subject.houses_names_list:
@@ -165,12 +179,20 @@ class CompositeSubjectFactory:
             self[planet_lower]["house"] = get_planet_house(self[planet_lower]['abs_pos'], house_degree_list_ut)
 
     def _calculate_composite_lunar_phase(self):
+        """Calculate the lunar phase for the composite chart based on Sun-Moon midpoints."""
         self.lunar_phase = calculate_moon_phase(
             self['moon'].abs_pos,
             self['sun'].abs_pos
         )
 
     def get_midpoint_composite_subject_model(self):
+        """
+        Generate the complete composite chart model using midpoint technique.
+        
+        Returns:
+            CompositeSubjectModel: Complete composite chart data model with all
+                                  calculated planetary positions and house cusps.
+        """
         self._calculate_midpoint_composite_points_and_houses()
         self._calculate_composite_lunar_phase()
 

@@ -486,6 +486,15 @@ def inline_css_variables_in_svg(svg_content: str) -> str:
 
     # Function to replace var() references with their actual values
     def replace_css_variable_reference(match):
+        """
+        Replace CSS variable references with their actual values.
+
+        Args:
+            match: Regular expression match object containing variable name and optional fallback.
+
+        Returns:
+            str: The resolved CSS variable value or fallback value.
+        """
         variable_name = match.group(1).strip()
         fallback_value = match.group(2) if match.group(2) else None
 
