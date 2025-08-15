@@ -1,3 +1,9 @@
+"""
+Author: Giacomo Battaglia
+Copyright: (C) 2025 Kerykeion Project
+License: AGPL-3.0
+"""
+
 from kerykeion.kr_types import (
     KerykeionPointModel,
     KerykeionException,
@@ -19,7 +25,18 @@ if TYPE_CHECKING:
 
 
 def get_number_from_name(name: AstrologicalPoint) -> int:
-    """Utility function, gets planet id from the name."""
+    """
+    Convert an astrological point name to its corresponding numerical identifier.
+
+    Args:
+        name: The name of the astrological point
+
+    Returns:
+        The numerical identifier used in Swiss Ephemeris calculations
+
+    Raises:
+        KerykeionException: If the name is not recognized
+    """
 
     if name == "Sun":
         return 0
@@ -70,18 +87,18 @@ def get_kerykeion_point_from_degree(
     degree: Union[int, float], name: Union[AstrologicalPoint, Houses], point_type: PointType
 ) -> KerykeionPointModel:
     """
-    Returns a KerykeionPointModel object based on the given degree.
+    Create a KerykeionPointModel from a degree position.
 
     Args:
-        degree (Union[int, float]): The degree of the celestial point.
-        name (str): The name of the celestial point.
-        point_type (PointType): The type of the celestial point.
-
-    Raises:
-        KerykeionException: If the degree is not within the valid range (0-360).
+        degree: The degree position (0-360, negative values are converted to positive)
+        name: The name of the celestial point or house
+        point_type: The type classification of the point
 
     Returns:
-        KerykeionPointModel: The model representing the celestial point.
+        A KerykeionPointModel with calculated zodiac sign, position, and properties
+
+    Raises:
+        KerykeionException: If the degree is >= 360 after normalization
     """
     # If - single degree is given, convert it to a positive degree
     if degree < 0:
@@ -124,10 +141,10 @@ def get_kerykeion_point_from_degree(
 
 def setup_logging(level: str) -> None:
     """
-    Setup logging for testing.
+    Configure logging for the application.
 
     Args:
-        level: Log level as a string, options: debug, info, warning, error
+        level: Log level as string (debug, info, warning, error, critical)
     """
     logging_options: dict[str, int] = {
         "debug": logging.DEBUG,
@@ -145,18 +162,23 @@ def is_point_between(
     start_point: Union[int, float], end_point: Union[int, float], evaluated_point: Union[int, float]
 ) -> bool:
     """
-    Determines if a point is between two others on a circle, with additional rules:
-    - If evaluated_point == start_point, it is considered between.
-    - If evaluated_point == end_point, it is NOT considered between.
-    - The range between start_point and end_point must not exceed 180°.
+    Determine if a point lies between two other points on a circle.
+
+    Special rules:
+    - If evaluated_point equals start_point, returns True
+    - If evaluated_point equals end_point, returns False
+    - The arc between start_point and end_point must not exceed 180°
 
     Args:
-        - start_point: The first point on the circle.
-        - end_point: The second point on the circle.
-        - evaluated_point: The point to check.
+        start_point: The starting point on the circle
+        end_point: The ending point on the circle
+        evaluated_point: The point to evaluate
 
     Returns:
-        - True if evaluated_point is between start_point and end_point, False otherwise.
+        True if evaluated_point is between start_point and end_point, False otherwise
+
+    Raises:
+        KerykeionException: If the angular difference exceeds 180°
     """
 
     # Normalize angles to [0, 360)
@@ -193,17 +215,17 @@ def is_point_between(
 
 def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut_list: list) -> Houses:
     """
-    Determines the house in which a planet is located based on its position in degrees.
+    Determine which house contains a planet based on its degree position.
 
     Args:
-        planet_position_degree (Union[int, float]): The position of the planet in degrees.
-        houses_degree_ut_list (list): A list of the houses in degrees (0-360).
+        planet_position_degree: The planet's position in degrees (0-360)
+        houses_degree_ut_list: List of house cusp degrees
 
     Returns:
-        str: The house in which the planet is located.
+        The house name containing the planet
 
     Raises:
-        ValueError: If the planet's position does not fall within any house range.
+        ValueError: If the planet's position doesn't fall within any house range
     """
 
     house_names = get_args(Houses)
@@ -222,13 +244,16 @@ def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut
 
 def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
     """
-    Returns the emoji of the moon phase.
+    Get the emoji representation of a lunar phase.
 
     Args:
-        - phase: The phase of the moon (0-28)
+        phase: The lunar phase number (0-28)
 
     Returns:
-        - The emoji of the moon phase
+        The corresponding emoji for the lunar phase
+
+    Raises:
+        KerykeionException: If phase is outside valid range
     """
 
     lunar_phase_emojis = get_args(LunarPhaseEmoji)
@@ -258,13 +283,16 @@ def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
 
 def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
     """
-    Returns the name of the moon phase.
+    Get the name of a lunar phase from its numerical value.
 
     Args:
-        - phase: The phase of the moon (0-28)
+        phase: The lunar phase number (0-28)
 
     Returns:
-        - The name of the moon phase
+        The corresponding name for the lunar phase
+
+    Raises:
+        KerykeionException: If phase is outside valid range
     """
     lunar_phase_names = get_args(LunarPhaseName)
 
@@ -293,8 +321,15 @@ def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
 
 def check_and_adjust_polar_latitude(latitude: float) -> float:
     """
-    Utility function to check if the location is in the polar circle.
-    If it is, it sets the latitude to 66 or -66 degrees.
+    Adjust latitude values for polar regions to prevent calculation errors.
+
+    Latitudes beyond ±66° are clamped to ±66° for house calculations.
+
+    Args:
+        latitude: The original latitude value
+
+    Returns:
+        The adjusted latitude value, clamped between -66° and 66°
     """
     if latitude > 66.0:
         latitude = 66.0
@@ -311,7 +346,13 @@ def get_houses_list(
     subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
 ) -> list[KerykeionPointModel]:
     """
-    Return the names of the houses in the order of the houses.
+    Get a list of house objects in order from the subject.
+
+    Args:
+        subject: The astrological subject containing house data
+
+    Returns:
+        List of KerykeionPointModel objects representing the houses
     """
     houses_absolute_position_list = []
     for house in subject.houses_names_list:
@@ -324,8 +365,13 @@ def get_available_astrological_points_list(
     subject: AstrologicalSubjectModel
 ) -> list[KerykeionPointModel]:
     """
-    Return the names of the planets in the order of the planets.
-    The names can be used to access the planets from the AstrologicalSubject object with the __getitem__ method or the [] operator.
+    Get a list of active astrological point objects from the subject.
+
+    Args:
+        subject: The astrological subject containing point data
+
+    Returns:
+        List of KerykeionPointModel objects for all active points
     """
     planets_absolute_position_list = []
     for planet in subject.active_points:
@@ -336,17 +382,17 @@ def get_available_astrological_points_list(
 
 def circular_mean(first_position: Union[int, float], second_position: Union[int, float]) -> float:
     """
-    Computes the circular mean of two astrological positions (e.g., house cusps, planets).
+    Calculate the circular mean of two angular positions.
 
-    This function ensures that positions crossing 0° Aries (360°) are correctly averaged,
-    avoiding errors that occur with simple linear means.
+    This method correctly handles positions that cross the 0°/360° boundary,
+    avoiding errors that occur with simple arithmetic means.
 
     Args:
-        position1 (Union[int, float]): First position in degrees (0-360).
-        position2 (Union[int, float]): Second position in degrees (0-360).
+        first_position: First angular position in degrees (0-360)
+        second_position: Second angular position in degrees (0-360)
 
     Returns:
-        float: The circular mean position in degrees (0-360).
+        The circular mean position in degrees (0-360)
     """
     x = (math.cos(math.radians(first_position)) + math.cos(math.radians(second_position))) / 2
     y = (math.sin(math.radians(first_position)) + math.sin(math.radians(second_position))) / 2
@@ -361,14 +407,14 @@ def circular_mean(first_position: Union[int, float], second_position: Union[int,
 
 def calculate_moon_phase(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseModel:
     """
-    Calculate the lunar phase based on the positions of the moon and sun.
+    Calculate lunar phase information from Sun and Moon positions.
 
     Args:
-    - moon_abs_pos (float): The absolute position of the moon.
-    - sun_abs_pos (float): The absolute position of the sun.
+        moon_abs_pos: Absolute position of the Moon in degrees
+        sun_abs_pos: Absolute position of the Sun in degrees
 
     Returns:
-    - dict: A dictionary containing the lunar phase information.
+        LunarPhaseModel containing phase data, emoji, and name
     """
     # Initialize moon_phase and sun_phase to None in case of an error
     moon_phase, sun_phase = None, None
@@ -408,14 +454,13 @@ def calculate_moon_phase(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseM
 
 def circular_sort(degrees: list[Union[int, float]]) -> list[Union[int, float]]:
     """
-    Sort a list of degrees in a circular manner, starting from the first element
-    and progressing clockwise around the circle.
+    Sort degrees in circular clockwise progression starting from the first element.
 
     Args:
-        degrees: A list of numeric values representing degrees
+        degrees: List of numeric degree values
 
     Returns:
-        A list sorted based on circular clockwise progression from the first element
+        List sorted by clockwise distance from the first element
 
     Raises:
         ValueError: If the list is empty or contains non-numeric values
@@ -458,14 +503,16 @@ def circular_sort(degrees: list[Union[int, float]]) -> list[Union[int, float]]:
 
 def inline_css_variables_in_svg(svg_content: str) -> str:
     """
-    Process an SVG string to inline all CSS custom properties.
+    Replace CSS custom properties (variables) with their values in SVG content.
+
+    Extracts CSS variables from style blocks, replaces var() references with actual values,
+    and removes all style blocks from the SVG.
 
     Args:
-        svg_content (str): The original SVG string with CSS variables
+        svg_content: The original SVG string with CSS variables
 
     Returns:
-        str: The modified SVG with all CSS variables replaced by their values
-             and all style blocks removed
+        Modified SVG with CSS variables inlined and style blocks removed
     """
     # Find and extract CSS custom properties from style tags
     css_variable_map = {}
@@ -519,13 +566,13 @@ def inline_css_variables_in_svg(svg_content: str) -> str:
 
 def datetime_to_julian(dt: datetime) -> float:
     """
-    Converts a Python datetime object to Julian day.
+    Convert a Python datetime object to Julian Day Number.
 
     Args:
-        dt: A datetime object
+        dt: The datetime object to convert
 
     Returns:
-        float: The corresponding Julian day (JD)
+        The corresponding Julian Day Number (JD) as a float
     """
     # Extract year, month and day
     year = dt.year
@@ -557,13 +604,13 @@ def datetime_to_julian(dt: datetime) -> float:
 
 def julian_to_datetime(jd):
     """
-    Converts a Julian day to a Python datetime object.
+    Convert a Julian Day Number to a Python datetime object.
 
     Args:
-        jd: Julian day number (float)
+        jd: Julian Day Number as a float
 
     Returns:
-        datetime: The corresponding datetime object
+        The corresponding datetime object
     """
     # Add 0.5 to the Julian day to adjust for noon-based Julian day
     jd_plus = jd + 0.5
@@ -622,13 +669,16 @@ def julian_to_datetime(jd):
 
 def get_house_name(house_number: int) -> Houses:
     """
-    Returns the name of the house based on its number.
+    Convert a house number to its corresponding house name.
 
     Args:
         house_number: House number (1-12)
 
     Returns:
-        Name of the house
+        The house name
+
+    Raises:
+        ValueError: If house_number is not in range 1-12
     """
     house_names: dict[int, Houses] = {
         1: "First_House",
@@ -654,13 +704,16 @@ def get_house_name(house_number: int) -> Houses:
 
 def get_house_number(house_name: Houses) -> int:
     """
-    Returns the number of the house based on its name.
+    Convert a house name to its corresponding house number.
 
     Args:
-        house_name: Name of the house
+        house_name: The house name
 
     Returns:
         House number (1-12)
+
+    Raises:
+        ValueError: If house_name is not recognized
     """
     house_numbers: dict[Houses, int] = {
         "First_House": 1,
@@ -686,14 +739,14 @@ def get_house_number(house_name: Houses) -> int:
 
 def find_common_active_points(first_points: list[AstrologicalPoint], second_points: list[AstrologicalPoint]) -> list[AstrologicalPoint]:
     """
-    Find only the elements that are present in both lists.
+    Find astrological points that appear in both input lists.
 
     Args:
-        first_points: List of astrological points
-        second_points: List of astrological points
+        first_points: First list of astrological points
+        second_points: Second list of astrological points
 
     Returns:
-        List of elements common to both lists (without duplicates, order not guaranteed).
+        List of points common to both input lists (without duplicates)
     """
     common_points = list(set(first_points) & set(second_points))
 
