@@ -490,6 +490,8 @@ Different astrological approaches require different sets of points. Here are com
 **Essential Points Only (Fast Calculation)**
 For quick calculations when you only need the core astrological information.
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Minimal essential points for quick calculations
 essential_points = ["Sun", "Moon", "Ascendant", "Medium_Coeli"]
 
@@ -499,7 +501,7 @@ quick_chart = AstrologicalSubjectFactory.from_birth_data(
     hour=12, minute=0,
     city="London", nation="GB",
     active_points=essential_points,
-    geonames_username="your_username"
+    geonames_username="century.boy"  # Replace with your Geonames username
 )
 
 print("=== ESSENTIAL POINTS CHART ===")
@@ -512,6 +514,8 @@ for point_name in essential_points:
 **Traditional Astrology Setup**
 Classical configuration using the traditional seven planets plus essential angles and nodes, following medieval and Renaissance astrological practices.
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Classical seven planets + angles + nodes
 traditional_points = [
     "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
@@ -527,7 +531,7 @@ traditional_chart = AstrologicalSubjectFactory.from_birth_data(
     active_points=traditional_points,
     zodiac_type="Tropic",
     houses_system_identifier="W",  # Whole Sign (traditional)
-    geonames_username="your_username"
+    geonames_username="century.boy"  # Replace with your Geonames username
 )
 
 print("\n=== TRADITIONAL ASTROLOGY CHART ===")
@@ -542,6 +546,8 @@ for planet in ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]:
 **Modern Psychological Astrology**
 Comprehensive setup including modern planets, asteroids, and psychological points for depth psychology and modern astrological counseling.
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Modern planets + asteroids + psychological points
 modern_psychological = [
     # Traditional core
@@ -565,7 +571,7 @@ modern_chart = AstrologicalSubjectFactory.from_birth_data(
     city="Los Angeles", nation="US",
     active_points=modern_psychological,
     houses_system_identifier="P",  # Placidus (modern standard)
-    geonames_username="your_username"
+    geonames_username="century.boy"  # Replace with your Geonames username
 )
 
 print("\n=== MODERN PSYCHOLOGICAL ASTROLOGY ===")
@@ -583,6 +589,8 @@ print(f"Mean Lilith (shadow): {modern_chart.mean_lilith.sign} {modern_chart.mean
 **Arabic Parts Specialist Chart**
 Focused on the classical Arabic parts (lots) used in traditional and Hellenistic astrology for specific life themes and predictions.
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Focus on Arabic parts (lots)
 arabic_parts_config = [
     # Required base points for Arabic parts calculations
@@ -602,7 +610,7 @@ arabic_chart = AstrologicalSubjectFactory.from_birth_data(
     city="Baghdad", nation="IQ",
     active_points=arabic_parts_config,
     zodiac_type="Tropic",
-    geonames_username="your_username"
+    geonames_username="century.boy"  # Replace with your Geonames username
 )
 
 print("\n=== ARABIC PARTS (LOTS) ANALYSIS ===")
@@ -616,6 +624,8 @@ for part_name in parts:
 
 **Research/Statistical Analysis Setup**
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Optimized for large-scale statistical research
 research_points = [
     "Sun", "Moon",  # Luminaries
@@ -636,14 +646,14 @@ for year in birth_years:
         city="Greenwich", nation="GB",
         active_points=research_points,
         calculate_lunar_phase=False,  # Skip lunar phase for speed
-        geonames_username="your_username"
+        geonames_username="century.boy"  # Replace with your Geonames username
     )
     
     # Extract data for statistical analysis
     data_point = {
         'year': year,
         'sun_sign': chart.sun.sign,
-        'sun_degree': chart.sun.degree,
+        'sun_degree': chart.sun.abs_pos,
         'moon_sign': chart.moon.sign,
         'asc_sign': chart.ascendant.sign
     }
@@ -658,6 +668,8 @@ for i, data in enumerate(research_data[:3]):
 
 **Fixed Stars Configuration**
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Specialized chart for fixed star analysis
 fixed_star_points = [
     "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
@@ -671,13 +683,13 @@ star_chart = AstrologicalSubjectFactory.from_birth_data(
     hour=20, minute=30,
     city="Alexandria", nation="EG",
     active_points=fixed_star_points,
-    geonames_username="your_username"
+    geonames_username="century.boy"  # Replace with your Geonames username
 )
 
 print("\n=== FIXED STARS ANALYSIS ===")
 if hasattr(star_chart, 'regulus') and hasattr(star_chart, 'spica'):
-    print(f"Regulus (Royal Star): {star_chart.regulus.sign} {star_chart.regulus.abs_pos:.2f}°")
-    print(f"Spica (Wheat Sheaf): {star_chart.spica.sign} {star_chart.spica.abs_pos:.2f}°")
+    print(f"Regulus (Royal Star): {star_chart.regulus.abs_pos} {star_chart.regulus.abs_pos:.2f}°")
+    print(f"Spica (Wheat Sheaf): {star_chart.spica.abs_pos} {star_chart.spica.abs_pos:.2f}°")
     
     # Check conjunctions with planets (within 1 degree)
     print("\nFixed star conjunctions:")
