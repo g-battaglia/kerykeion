@@ -148,6 +148,8 @@ for i in range(1, 13):
 **An alternative time-based system** that uses a different mathematical approach than Placidus, often producing slightly different house cusps, especially at higher latitudes.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Koch houses comparison
 koch_chart = AstrologicalSubjectFactory.from_birth_data(
     name="Koch Houses",
@@ -157,6 +159,17 @@ koch_chart = AstrologicalSubjectFactory.from_birth_data(
     lng=10.0,
     tz_str="Europe/Oslo",
     houses_system_identifier="K",
+    online=False
+)
+
+placidus_chart = AstrologicalSubjectFactory.from_birth_data(
+    name="Placidus Houses",
+    year=1985, month=3, day=15,
+    hour=14, minute=30,
+    lat=60.0,
+    lng=10.0,
+    tz_str="Europe/Oslo",
+    houses_system_identifier="P",
     online=False
 )
 
@@ -174,10 +187,12 @@ for i, house_name in enumerate(house_names, 1):
           f"{koch_house.sign} {koch_house.abs_pos:.2f}°{'':<8} {diff:.2f}°")
 ```
 
-#### Whole Sign (`houses_system_identifier="W"`)
-**The traditional system** where each house occupies exactly one complete zodiac sign. This creates equal 30° houses and is the preferred system in Vedic astrology and ancient Western traditions.
+#### Whole/Equal Sign (`houses_system_identifier="W"`)
+**The traditional system** where each house occupies exactly one complete zodiac sign. This creates equal 30° houses and is the preferred system in Vedic astrology and ancient Western traditions. Also known as Equal.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Whole Sign houses
 whole_sign_chart = AstrologicalSubjectFactory.from_birth_data(
     name="Whole Sign Houses",
@@ -185,7 +200,7 @@ whole_sign_chart = AstrologicalSubjectFactory.from_birth_data(
     hour=14, minute=30,
     city="Athens", nation="GR",
     houses_system_identifier="W",
-    geonames_username="your_username"
+    geonames_username="century.boy"  # Replace with your Geonames username
 )
 
 print("=== WHOLE SIGN HOUSES ===")
@@ -197,30 +212,6 @@ for i in range(1, 13):
     print(f"  House {i:2d} = {house.sign} (entire sign)")
 ```
 
-#### Equal House (`houses_system_identifier="E"`)
-**A simplified system** where each house is exactly 30 degrees from the Ascendant. This creates uniform house sizes regardless of location or time, making it popular for certain astrological approaches.
-
-```python
-# Equal House system
-equal_chart = AstrologicalSubjectFactory.from_birth_data(
-    name="Equal Houses",
-    year=1985, month=3, day=15,
-    hour=14, minute=30,
-    city="Cairo", nation="EG",
-    houses_system_identifier="E",
-    geonames_username="your_username"
-)
-
-print("=== EQUAL HOUSE SYSTEM ===")
-asc_degree = equal_chart.ascendant.abs_pos
-print(f"Ascendant: {equal_chart.ascendant.sign} {equal_chart.ascendant.abs_pos:.2f}°")
-print("All houses are exactly 30° wide:")
-for i in range(1, 7):  # Show first 6 houses
-    house = getattr(equal_chart, f"{['', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth'][i]}_house")
-    expected_degree = (asc_degree + (i-1) * 30) % 360
-    print(f"  House {i}: {house.sign} {house.abs_pos:.2f}° (Expected: {expected_degree:.2f}°)")
-```
-
 ### Perspective Types
 
 The perspective type determines the reference frame for planetary calculations, offering different astronomical viewpoints for specialized astrological work.
@@ -229,6 +220,8 @@ The perspective type determines the reference frame for planetary calculations, 
 **The standard Earth-centered view** used in traditional astrology. This includes light-time correction, showing planets as they appear from Earth accounting for the time light takes to travel.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Apparent Geocentric (default)
 geocentric_chart = AstrologicalSubjectFactory.from_birth_data(
     name="Geocentric Chart",
@@ -236,7 +229,7 @@ geocentric_chart = AstrologicalSubjectFactory.from_birth_data(
     hour=12, minute=0,
     city="Greenwich", nation="GB",
     perspective_type="Apparent Geocentric",  # Default
-    geonames_username="your_username"
+    geonames_username="century.boy"  # Replace with your Geonames username
 )
 
 print("=== APPARENT GEOCENTRIC PERSPECTIVE ===")
@@ -250,6 +243,17 @@ print(f"Moon: {geocentric_chart.moon.sign} {geocentric_chart.moon.abs_pos:.4f}°
 **Geometric Earth-centered positions** without light-time correction. This shows the actual geometric position of planets at the moment of calculation, useful for precise astronomical work.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
+geocentric_chart = AstrologicalSubjectFactory.from_birth_data(
+    name="True Geocentric Chart",
+    year=2000, month=1, day=1,
+    hour=12, minute=0,
+    city="Greenwich", nation="GB",
+    perspective_type="Apparent Geocentric",
+    geonames_username="century.boy"  # Replace with your Geonames username
+)
+
 # True Geocentric comparison
 true_geocentric_chart = AstrologicalSubjectFactory.from_birth_data(
     name="True Geocentric Chart",
@@ -257,7 +261,7 @@ true_geocentric_chart = AstrologicalSubjectFactory.from_birth_data(
     hour=12, minute=0,
     city="Greenwich", nation="GB",
     perspective_type="True Geocentric",
-    geonames_username="your_username"
+    geonames_username="century.boy"  # Replace with your Geonames username
 )
 
 print("\n=== APPARENT vs TRUE GEOCENTRIC ===")
@@ -279,10 +283,24 @@ for planet_name in planets:
           f"{diff:.4f}°")
 ```
 
+Output:
+
+```plaintext
+=== APPARENT vs TRUE GEOCENTRIC ===
+Planet     Apparent             True                 Difference
+-----------------------------------------------------------------
+Sun        Cap 280.3689°      Cap 280.3747°      0.0058°
+Moon       Sco 223.3238°      Sco 223.3240°      0.0002°
+Mars       Aqu 327.9633°      Aqu 327.9716°      0.0083°
+Jupiter    Ari 25.2530°       Ari 25.2541°       0.0011°
+```
+
 #### Heliocentric (`perspective_type="Heliocentric"`)
 **Sun-centered perspective** where planetary positions are calculated from the Sun's viewpoint. In this system, Earth becomes just another planet, useful for understanding solar system dynamics.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Heliocentric perspective
 heliocentric_chart = AstrologicalSubjectFactory.from_birth_data(
     name="Heliocentric Chart",
@@ -290,12 +308,11 @@ heliocentric_chart = AstrologicalSubjectFactory.from_birth_data(
     hour=12, minute=0,
     city="Greenwich", nation="GB",
     perspective_type="Heliocentric",
-    geonames_username="your_username"
+    geonames_username="century.boy"  # Replace with your Geonames username
 )
 
 print("\n=== HELIOCENTRIC PERSPECTIVE ===")
 print("Sun-centered positions (Earth becomes a planet):")
-print(f"Earth: {heliocentric_chart.earth.sign} {heliocentric_chart.earth.abs_pos:.2f}°")
 print(f"Mercury: {heliocentric_chart.mercury.sign} {heliocentric_chart.mercury.abs_pos:.2f}°")
 print(f"Venus: {heliocentric_chart.venus.sign} {heliocentric_chart.venus.abs_pos:.2f}°")
 print(f"Mars: {heliocentric_chart.mars.sign} {heliocentric_chart.mars.abs_pos:.2f}°")
@@ -305,6 +322,8 @@ print(f"Mars: {heliocentric_chart.mars.sign} {heliocentric_chart.mars.abs_pos:.2
 **Observer-specific positions** that account for the observer's exact location on Earth's surface. This perspective considers Earth's shape and the observer's altitude, providing the most precise view for a specific location.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Topocentric perspective
 topocentric_chart = AstrologicalSubjectFactory.from_birth_data(
     name="Topocentric Chart",
@@ -331,6 +350,8 @@ The `active_points` parameter allows precise control over which astrological poi
 
 #### Default Active Points
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Check default active points
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
@@ -364,44 +385,6 @@ for category, points in categories:
         print(f"  ✗ {point}")
 ```
 
-## Core Classes
-
-### ChartConfiguration
-
-Configuration container for astrological calculations:
-
-```python
-from kerykeion.astrological_subject_factory import ChartConfiguration
-
-config = ChartConfiguration(
-    zodiac_type="Sidereal",
-    sidereal_mode="LAHIRI",
-    houses_system_identifier="K",  # Koch houses
-    perspective_type="Topocentric"
-)
-```
-
-### LocationData
-
-Geographical location information with automatic fetching capabilities:
-
-```python
-from kerykeion.astrological_subject_factory import LocationData
-
-# Manual location
-location = LocationData(
-    city="Rome",
-    nation="IT",
-    lat=41.9028,
-    lng=12.4964,
-    tz_str="Europe/Rome"
-)
-
-# Online lookup
-location = LocationData(city="Tokyo", nation="JP")
-location.fetch_from_geonames(username="your_username")
-```
-
 ## AstrologicalSubjectFactory Methods
 
 ### 1. from_birth_data() - Primary Method
@@ -419,7 +402,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     year=1990, month=6, day=15,
     hour=14, minute=30,
     city="London", nation="GB",
-    geonames_username="your_username"
+    geonames_username="century.boy",  # Replace with your Geonames username
 )
 
 print(f"Subject: {subject.name}")
@@ -443,6 +426,8 @@ Ascendant: Libra 8.76°
 #### Offline Calculation
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Offline calculation with manual coordinates
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Jane Smith",
@@ -468,6 +453,8 @@ Julian Day: 2446431.708333
 #### Sidereal Chart
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Vedic/Sidereal chart with Lahiri ayanamsha
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Vedic Chart",
@@ -477,7 +464,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI",
     houses_system_identifier="W",  # Whole Sign houses
-    geonames_username="your_username"
+    geonames_username="century.boy"  # Replace with your Geonames username
 )
 
 print(f"Zodiac: {subject.zodiac_type}")
