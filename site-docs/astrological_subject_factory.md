@@ -32,6 +32,8 @@ The **Tropical Zodiac** is aligned with Earth's seasons and is the standard in W
 - **Solar-based**: Emphasizes the Sun-Earth relationship
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Tropical zodiac example
 tropical_chart = AstrologicalSubjectFactory.from_birth_data(
     name="Tropical Chart",
@@ -43,7 +45,7 @@ tropical_chart = AstrologicalSubjectFactory.from_birth_data(
 )
 
 print(f"Zodiac Type: {tropical_chart.zodiac_type}")
-print(f"Sun at Summer Solstice: {tropical_chart.sun.sign} {tropical_chart.sun.degree:.2f}°")
+print(f"Sun at Summer Solstice: {tropical_chart.sun.sign} {tropical_chart.sun.abs_pos:.2f}°")
 print(f"Expected: Cancer 0.00° (approximately)")
 ```
 
@@ -66,6 +68,8 @@ The **Sidereal Zodiac** aligns with actual star positions and accounts for Earth
 **Available Sidereal Modes (Ayanamshas):**
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Different sidereal modes comparison
 birth_data = {
     "name": "Sidereal Comparison",
@@ -73,7 +77,7 @@ birth_data = {
     "hour": 12, "minute": 0,
     "city": "Mumbai", "nation": "IN",
     "zodiac_type": "Sidereal",
-    "geonames_username": "your_username"
+    "geonames_username": "century.boy" # Replace with your Geonames username
 }
 
 sidereal_modes = [
@@ -94,20 +98,20 @@ for mode, description in sidereal_modes:
         **birth_data,
         sidereal_mode=mode
     )
-    print(f"{mode:<15} {chart.sun.sign} {chart.sun.degree:.2f}°{'':<8} {description}")
+    print(f"{mode:<15} {chart.sun.sign} {chart.sun.abs_pos:.2f}°{'':<8} {description}")
 ```
 
 **Output:**
-```
+```plaintext
 === SIDEREAL AYANAMSHA COMPARISON ===
 Date: June 21, 1990 (Summer Solstice)
 Ayanamsha       Sun Position         Description
 -----------------------------------------------------------------
-LAHIRI          Gemini 5.45°         Most popular in Vedic astrology
-RAMAN           Gemini 5.12°         B.V. Raman's ayanamsha
-FAGAN_BRADLEY   Gemini 6.23°         Western sidereal standard
-KRISHNAMURTI    Gemini 5.67°         K.S. Krishnamurti system
-YUKTESHWAR      Gemini 4.89°         Sri Yukteshwar's calculation
+LAHIRI          Gem 65.91°         Most popular in Vedic astrology
+RAMAN           Gem 67.36°         B.V. Raman's ayanamsha
+FAGAN_BRADLEY   Gem 65.03°         Western sidereal standard
+KRISHNAMURTI    Gem 66.01°         K.S. Krishnamurti system
+YUKTESHWAR      Gem 67.29°         Sri Yukteshwar's calculation
 ```
 
 ### House Systems
@@ -118,6 +122,8 @@ House systems divide the celestial sphere into 12 sections using different mathe
 **The most widely used system in modern Western astrology.** Placidus divides the diurnal and nocturnal arcs proportionally, creating houses that vary in size based on latitude and time.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+
 # Placidus houses example
 placidus_chart = AstrologicalSubjectFactory.from_birth_data(
     name="Placidus Houses",
@@ -135,7 +141,7 @@ print(f"System: {placidus_chart.houses_system_name}")
 print("House cusps:")
 for i in range(1, 13):
     house = getattr(placidus_chart, f"{['', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth'][i]}_house")
-    print(f"  House {i:2d}: {house.sign} {house.degree:.2f}°")
+    print(f"  House {i:2d}: {house.sign} {house.abs_pos:.2f}°")
 ```
 
 #### Koch (`houses_system_identifier="K"`)
@@ -164,8 +170,8 @@ for i, house_name in enumerate(house_names, 1):
     koch_house = getattr(koch_chart, f"{house_name}_house")
     
     diff = abs(placidus_house.abs_pos - koch_house.abs_pos)
-    print(f"House {i:<3} {placidus_house.sign} {placidus_house.degree:.2f}°{'':<8} "
-          f"{koch_house.sign} {koch_house.degree:.2f}°{'':<8} {diff:.2f}°")
+    print(f"House {i:<3} {placidus_house.sign} {placidus_house.abs_pos:.2f}°{'':<8} "
+          f"{koch_house.sign} {koch_house.abs_pos:.2f}°{'':<8} {diff:.2f}°")
 ```
 
 #### Whole Sign (`houses_system_identifier="W"`)
@@ -183,7 +189,7 @@ whole_sign_chart = AstrologicalSubjectFactory.from_birth_data(
 )
 
 print("=== WHOLE SIGN HOUSES ===")
-print(f"Ascendant: {whole_sign_chart.ascendant.sign} {whole_sign_chart.ascendant.degree:.2f}°")
+print(f"Ascendant: {whole_sign_chart.ascendant.sign} {whole_sign_chart.ascendant.abs_pos:.2f}°")
 print(f"System: {whole_sign_chart.houses_system_name}")
 print("\nHouse-Sign correspondence:")
 for i in range(1, 13):
@@ -207,12 +213,12 @@ equal_chart = AstrologicalSubjectFactory.from_birth_data(
 
 print("=== EQUAL HOUSE SYSTEM ===")
 asc_degree = equal_chart.ascendant.abs_pos
-print(f"Ascendant: {equal_chart.ascendant.sign} {equal_chart.ascendant.degree:.2f}°")
+print(f"Ascendant: {equal_chart.ascendant.sign} {equal_chart.ascendant.abs_pos:.2f}°")
 print("All houses are exactly 30° wide:")
 for i in range(1, 7):  # Show first 6 houses
     house = getattr(equal_chart, f"{['', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth'][i]}_house")
     expected_degree = (asc_degree + (i-1) * 30) % 360
-    print(f"  House {i}: {house.sign} {house.degree:.2f}° (Expected: {expected_degree:.2f}°)")
+    print(f"  House {i}: {house.sign} {house.abs_pos:.2f}° (Expected: {expected_degree:.2f}°)")
 ```
 
 ### Perspective Types
@@ -236,8 +242,8 @@ geocentric_chart = AstrologicalSubjectFactory.from_birth_data(
 print("=== APPARENT GEOCENTRIC PERSPECTIVE ===")
 print(f"Perspective: {geocentric_chart.perspective_type}")
 print("Earth-centered positions with light-time correction:")
-print(f"Sun: {geocentric_chart.sun.sign} {geocentric_chart.sun.degree:.4f}°")
-print(f"Moon: {geocentric_chart.moon.sign} {geocentric_chart.moon.degree:.4f}°")
+print(f"Sun: {geocentric_chart.sun.sign} {geocentric_chart.sun.abs_pos:.4f}°")
+print(f"Moon: {geocentric_chart.moon.sign} {geocentric_chart.moon.abs_pos:.4f}°")
 ```
 
 #### True Geocentric (`perspective_type="True Geocentric"`)
@@ -268,8 +274,8 @@ for planet_name in planets:
         diff = 360 - diff
     
     print(f"{app_planet.name:<10} "
-          f"{app_planet.sign} {app_planet.degree:.4f}°{'':<5} "
-          f"{true_planet.sign} {true_planet.degree:.4f}°{'':<5} "
+          f"{app_planet.sign} {app_planet.abs_pos:.4f}°{'':<5} "
+          f"{true_planet.sign} {true_planet.abs_pos:.4f}°{'':<5} "
           f"{diff:.4f}°")
 ```
 
@@ -289,10 +295,10 @@ heliocentric_chart = AstrologicalSubjectFactory.from_birth_data(
 
 print("\n=== HELIOCENTRIC PERSPECTIVE ===")
 print("Sun-centered positions (Earth becomes a planet):")
-print(f"Earth: {heliocentric_chart.earth.sign} {heliocentric_chart.earth.degree:.2f}°")
-print(f"Mercury: {heliocentric_chart.mercury.sign} {heliocentric_chart.mercury.degree:.2f}°")
-print(f"Venus: {heliocentric_chart.venus.sign} {heliocentric_chart.venus.degree:.2f}°")
-print(f"Mars: {heliocentric_chart.mars.sign} {heliocentric_chart.mars.degree:.2f}°")
+print(f"Earth: {heliocentric_chart.earth.sign} {heliocentric_chart.earth.abs_pos:.2f}°")
+print(f"Mercury: {heliocentric_chart.mercury.sign} {heliocentric_chart.mercury.abs_pos:.2f}°")
+print(f"Venus: {heliocentric_chart.venus.sign} {heliocentric_chart.venus.abs_pos:.2f}°")
+print(f"Mars: {heliocentric_chart.mars.sign} {heliocentric_chart.mars.abs_pos:.2f}°")
 ```
 
 #### Topocentric (`perspective_type="Topocentric"`)
@@ -315,8 +321,8 @@ print("\n=== TOPOCENTRIC PERSPECTIVE ===")
 print(f"Observer at: {topocentric_chart.lat}°N, {topocentric_chart.lng}°E")
 print(f"Altitude: {topocentric_chart.altitude}m")
 print("Positions as seen from specific Earth location:")
-print(f"Moon: {topocentric_chart.moon.sign} {topocentric_chart.moon.degree:.4f}°")
-print(f"Sun: {topocentric_chart.sun.sign} {topocentric_chart.sun.degree:.4f}°")
+print(f"Moon: {topocentric_chart.moon.sign} {topocentric_chart.moon.abs_pos:.4f}°")
+print(f"Sun: {topocentric_chart.sun.sign} {topocentric_chart.sun.abs_pos:.4f}°")
 ```
 
 ### Active Points Configuration
@@ -419,9 +425,9 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 print(f"Subject: {subject.name}")
 print(f"Location: {subject.city}, {subject.nation}")
 print(f"Birth time: {subject.iso_formatted_local_datetime}")
-print(f"Sun: {subject.sun.sign} {subject.sun.degree:.2f}°")
-print(f"Moon: {subject.moon.sign} {subject.moon.degree:.2f}°")
-print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.degree:.2f}°")
+print(f"Sun: {subject.sun.sign} {subject.sun.abs_pos:.2f}°")
+print(f"Moon: {subject.moon.sign} {subject.moon.abs_pos:.2f}°")
+print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 ```
 
 **Output:**
@@ -477,8 +483,8 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 print(f"Zodiac: {subject.zodiac_type}")
 print(f"Sidereal Mode: {subject.sidereal_mode}")
 print(f"Houses System: {subject.houses_system_name}")
-print(f"Sun (Sidereal): {subject.sun.sign} {subject.sun.degree:.2f}°")
-print(f"Moon (Sidereal): {subject.moon.sign} {subject.moon.degree:.2f}°")
+print(f"Sun (Sidereal): {subject.sun.sign} {subject.sun.abs_pos:.2f}°")
+print(f"Moon (Sidereal): {subject.moon.sign} {subject.moon.abs_pos:.2f}°")
 ```
 
 **Output:**
@@ -513,7 +519,7 @@ print("=== ESSENTIAL POINTS CHART ===")
 print(f"Calculated points: {len(quick_chart.active_points)}")
 for point_name in essential_points:
     point = getattr(quick_chart, point_name.lower())
-    print(f"{point.name}: {point.sign} {point.degree:.2f}°")
+    print(f"{point.name}: {point.sign} {point.abs_pos:.2f}°")
 ```
 
 **Traditional Astrology Setup**
@@ -543,7 +549,7 @@ print(f"Points calculated: {len(traditional_chart.active_points)}")
 print("\nPlanetary positions:")
 for planet in ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]:
     p = getattr(traditional_chart, planet)
-    print(f"  {p.name}: {p.sign} {p.degree:.2f}° in House {p.house}")
+    print(f"  {p.name}: {p.sign} {p.abs_pos:.2f}° in House {p.house}")
 ```
 
 **Modern Psychological Astrology**
@@ -581,10 +587,10 @@ goddesses = ["ceres", "pallas", "juno", "vesta"]
 for goddess in goddesses:
     if hasattr(modern_chart, goddess):
         g = getattr(modern_chart, goddess)
-        print(f"  {g.name}: {g.sign} {g.degree:.2f}° (House {g.house})")
+        print(f"  {g.name}: {g.sign} {g.abs_pos:.2f}° (House {g.house})")
 
-print(f"\nChiron (wounded healer): {modern_chart.chiron.sign} {modern_chart.chiron.degree:.2f}°")
-print(f"Mean Lilith (shadow): {modern_chart.mean_lilith.sign} {modern_chart.mean_lilith.degree:.2f}°")
+print(f"\nChiron (wounded healer): {modern_chart.chiron.sign} {modern_chart.chiron.abs_pos:.2f}°")
+print(f"Mean Lilith (shadow): {modern_chart.mean_lilith.sign} {modern_chart.mean_lilith.abs_pos:.2f}°")
 ```
 
 **Arabic Parts Specialist Chart**
@@ -618,7 +624,7 @@ parts = ["pars_fortunae", "pars_spiritus", "pars_amoris", "pars_fidei"]
 for part_name in parts:
     if hasattr(arabic_chart, part_name):
         part = getattr(arabic_chart, part_name)
-        print(f"  {part.name}: {part.sign} {part.degree:.2f}° (House {part.house})")
+        print(f"  {part.name}: {part.sign} {part.abs_pos:.2f}° (House {part.house})")
 ```
 
 **Research/Statistical Analysis Setup**
@@ -683,8 +689,8 @@ star_chart = AstrologicalSubjectFactory.from_birth_data(
 
 print("\n=== FIXED STARS ANALYSIS ===")
 if hasattr(star_chart, 'regulus') and hasattr(star_chart, 'spica'):
-    print(f"Regulus (Royal Star): {star_chart.regulus.sign} {star_chart.regulus.degree:.2f}°")
-    print(f"Spica (Wheat Sheaf): {star_chart.spica.sign} {star_chart.spica.degree:.2f}°")
+    print(f"Regulus (Royal Star): {star_chart.regulus.sign} {star_chart.regulus.abs_pos:.2f}°")
+    print(f"Spica (Wheat Sheaf): {star_chart.spica.sign} {star_chart.spica.abs_pos:.2f}°")
     
     # Check conjunctions with planets (within 1 degree)
     print("\nFixed star conjunctions:")
@@ -732,7 +738,7 @@ for tno_name in tnos:
     if hasattr(tno_chart, tno_name):
         tno = getattr(tno_chart, tno_name)
         retro = "R" if tno.retrograde else "D"
-        print(f"  {tno.name}: {tno.sign} {tno.degree:.2f}° {retro}")
+        print(f"  {tno.name}: {tno.sign} {tno.abs_pos:.2f}° {retro}")
 ```
 
 #### Performance Comparison
@@ -835,9 +841,9 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 
 print(f"Perspective: {subject.perspective_type}")
 print("Heliocentric positions:")
-print(f"  Earth: {subject.earth.sign} {subject.earth.degree:.2f}°")
-print(f"  Mercury: {subject.mercury.sign} {subject.mercury.degree:.2f}°")
-print(f"  Venus: {subject.venus.sign} {subject.venus.degree:.2f}°")
+print(f"  Earth: {subject.earth.sign} {subject.earth.abs_pos:.2f}°")
+print(f"  Mercury: {subject.mercury.sign} {subject.mercury.abs_pos:.2f}°")
+print(f"  Venus: {subject.venus.sign} {subject.venus.abs_pos:.2f}°")
 ```
 
 **Output:**
@@ -867,7 +873,7 @@ subject = AstrologicalSubjectFactory.from_iso_utc_time(
 
 print(f"UTC Time: {subject.iso_formatted_utc_datetime}")
 print(f"Local Time: {subject.iso_formatted_local_datetime}")
-print(f"Sun at Solstice: {subject.sun.sign} {subject.sun.degree:.4f}°")
+print(f"Sun at Solstice: {subject.sun.sign} {subject.sun.abs_pos:.4f}°")
 ```
 
 **Output:**
@@ -891,7 +897,7 @@ subject = AstrologicalSubjectFactory.from_iso_utc_time(
 
 print(f"Historical Event: {subject.name}")
 print(f"Date: {subject.iso_formatted_local_datetime}")
-print(f"Moon position: {subject.moon.sign} {subject.moon.degree:.2f}°")
+print(f"Moon position: {subject.moon.sign} {subject.moon.abs_pos:.2f}°")
 print(f"Moon house: {subject.moon.house}")
 ```
 
@@ -944,8 +950,8 @@ subject = AstrologicalSubjectFactory.from_current_time(
 
 print(f"Horary Question: {subject.name}")
 print(f"Asked at: {subject.iso_formatted_local_datetime}")
-print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.degree:.2f}°")
-print(f"Moon: {subject.moon.sign} {subject.moon.degree:.2f}° (House {subject.moon.house})")
+print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
+print(f"Moon: {subject.moon.sign} {subject.moon.abs_pos:.2f}° (House {subject.moon.house})")
 print(f"Void of Course: {subject.moon.retrograde}")
 ```
 
@@ -1007,7 +1013,7 @@ vedic_planets = [
 
 for planet_attr, vedic_name in vedic_planets:
     planet = getattr(vedic_chart, planet_attr)
-    print(f"  {vedic_name}: {planet.sign} {planet.degree:.2f}° (House {planet.house})")
+    print(f"  {vedic_name}: {planet.sign} {planet.abs_pos:.2f}° (House {planet.house})")
 ```
 
 #### Western Psychological Astrology
@@ -1064,7 +1070,7 @@ psych_framework = [
 for planet_attr, archetype in psych_framework:
     planet = getattr(psychological_chart, planet_attr)
     retro = " (R)" if planet.retrograde else ""
-    print(f"  {archetype}: {planet.sign} {planet.degree:.2f}°{retro}")
+    print(f"  {archetype}: {planet.sign} {planet.abs_pos:.2f}°{retro}")
 
 print("\nGoddess archetypes (asteroids):")
 goddesses = [
@@ -1077,10 +1083,10 @@ goddesses = [
 for goddess_attr, archetype in goddesses:
     if hasattr(psychological_chart, goddess_attr):
         goddess = getattr(psychological_chart, goddess_attr)
-        print(f"  {archetype}: {goddess.sign} {goddess.degree:.2f}°")
+        print(f"  {archetype}: {goddess.sign} {goddess.abs_pos:.2f}°")
 
-print(f"\nWounded Healer (Chiron): {psychological_chart.chiron.sign} {psychological_chart.chiron.degree:.2f}°")
-print(f"Shadow (Lilith): {psychological_chart.mean_lilith.sign} {psychological_chart.mean_lilith.degree:.2f}°")
+print(f"\nWounded Healer (Chiron): {psychological_chart.chiron.sign} {psychological_chart.chiron.abs_pos:.2f}°")
+print(f"Shadow (Lilith): {psychological_chart.mean_lilith.sign} {psychological_chart.mean_lilith.abs_pos:.2f}°")
 ```
 
 #### Hellenistic/Traditional Western
@@ -1124,7 +1130,7 @@ classical_planets = [
 print("\nClassical planetary qualities:")
 for planet_attr, name, quality, sect in classical_planets:
     planet = getattr(hellenistic_chart, planet_attr)
-    print(f"  {name}: {planet.sign} {planet.degree:.2f}° - {quality} - {sect}")
+    print(f"  {name}: {planet.sign} {planet.abs_pos:.2f}° - {quality} - {sect}")
 ```
 
 #### Horary Astrology Configuration  
@@ -1158,7 +1164,7 @@ print(f"Location: {horary_chart.city}, {horary_chart.nation}")
 
 # Horary considerations
 print("\nHorary considerations:")
-print(f"Ascendant: {horary_chart.ascendant.sign} {horary_chart.ascendant.degree:.2f}°")
+print(f"Ascendant: {horary_chart.ascendant.sign} {horary_chart.ascendant.abs_pos:.2f}°")
 
 # Early or late degrees (traditional horary warning)
 asc_degree = horary_chart.ascendant.degree
@@ -1176,8 +1182,8 @@ if moon_aspects_coming:
 else:
     print("⚠️  Moon may be void of course (no major aspects before sign change)")
 
-print(f"\nMoon: {horary_chart.moon.sign} {horary_chart.moon.degree:.2f}°")
-print(f"Part of Fortune: {horary_chart.pars_fortunae.sign} {horary_chart.pars_fortunae.degree:.2f}°")
+print(f"\nMoon: {horary_chart.moon.sign} {horary_chart.moon.abs_pos:.2f}°")
+print(f"Part of Fortune: {horary_chart.pars_fortunae.sign} {horary_chart.pars_fortunae.abs_pos:.2f}°")
 ```
 
 #### Electional Astrology Configuration
@@ -1212,13 +1218,13 @@ print(f"Location: {electional_chart.city}")
 
 # Electional considerations for weddings
 print("\nElectional factors for wedding:")
-print(f"Venus (love/partnership): {electional_chart.venus.sign} {electional_chart.venus.degree:.2f}°")
-print(f"Jupiter (blessings/expansion): {electional_chart.jupiter.sign} {electional_chart.jupiter.degree:.2f}°")
-print(f"Moon (emotions/public): {electional_chart.moon.sign} {electional_chart.moon.degree:.2f}°")
-print(f"7th House (partnerships): {electional_chart.seventh_house.sign} {electional_chart.seventh_house.degree:.2f}°")
+print(f"Venus (love/partnership): {electional_chart.venus.sign} {electional_chart.venus.abs_pos:.2f}°")
+print(f"Jupiter (blessings/expansion): {electional_chart.jupiter.sign} {electional_chart.jupiter.abs_pos:.2f}°")
+print(f"Moon (emotions/public): {electional_chart.moon.sign} {electional_chart.moon.abs_pos:.2f}°")
+print(f"7th House (partnerships): {electional_chart.seventh_house.sign} {electional_chart.seventh_house.abs_pos:.2f}°")
 
 if hasattr(electional_chart, 'pars_amoris'):
-    print(f"Part of Love: {electional_chart.pars_amoris.sign} {electional_chart.pars_amoris.degree:.2f}°")
+    print(f"Part of Love: {electional_chart.pars_amoris.sign} {electional_chart.pars_amoris.abs_pos:.2f}°")
 
 # Check for retrograde planets (generally avoided in elections)
 retrogrades = []
@@ -1279,7 +1285,7 @@ for system_name, chart in charts.items():
     config_info += f" {chart.houses_system_name}"
     
     print(f"{system_name:<20} "
-          f"{chart.sun.sign} {chart.sun.degree:.2f}°{'':<8} "
+          f"{chart.sun.sign} {chart.sun.abs_pos:.2f}°{'':<8} "
           f"{chart.sun.house:<8} "
           f"{config_info}")
 
@@ -1290,7 +1296,7 @@ print("-" * 50)
 
 for system_name, chart in charts.items():
     print(f"{system_name:<20} "
-          f"{chart.moon.sign} {chart.moon.degree:.2f}°{'':<8} "
+          f"{chart.moon.sign} {chart.moon.abs_pos:.2f}°{'':<8} "
           f"{chart.moon.house:<8}")
 
 # Compare Ascendant (should be same across zodiac types)
@@ -1303,7 +1309,7 @@ for system_name, chart in charts.items():
     diff = abs(chart.ascendant.abs_pos - tropical_asc)
     note = "Reference" if system_name == "Western Tropical" else f"Diff: {diff:.4f}°"
     print(f"{system_name:<20} "
-          f"{chart.ascendant.sign} {chart.ascendant.degree:.2f}°{'':<8} "
+          f"{chart.ascendant.sign} {chart.ascendant.abs_pos:.2f}°{'':<8} "
           f"{note}")
 ```
 
@@ -1337,7 +1343,7 @@ traditional = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]
 for planet_name in traditional:
     planet = getattr(subject, planet_name)
     retro = "R" if planet.retrograde else "D"
-    print(f"{planet.name}: {planet.sign} {planet.degree:.2f}° {retro} (House {planet.house})")
+    print(f"{planet.name}: {planet.sign} {planet.abs_pos:.2f}° {retro} (House {planet.house})")
 
 # Modern planets
 print("\n=== MODERN PLANETS ===")
@@ -1345,7 +1351,7 @@ modern = ["uranus", "neptune", "pluto"]
 for planet_name in modern:
     planet = getattr(subject, planet_name)
     retro = "R" if planet.retrograde else "D"
-    print(f"{planet.name}: {planet.sign} {planet.degree:.2f}° {retro} (House {planet.house})")
+    print(f"{planet.name}: {planet.sign} {planet.abs_pos:.2f}° {retro} (House {planet.house})")
 
 # Lunar nodes
 print("\n=== LUNAR NODES ===")
@@ -1353,7 +1359,7 @@ nodes = ["mean_node", "true_node", "mean_south_node", "true_south_node"]
 for node_name in nodes:
     if hasattr(subject, node_name):
         node = getattr(subject, node_name)
-        print(f"{node.name}: {node.sign} {node.degree:.2f}° (House {node.house})")
+        print(f"{node.name}: {node.sign} {node.abs_pos:.2f}° (House {node.house})")
 
 # Asteroids
 print("\n=== ASTEROIDS ===")
@@ -1362,7 +1368,7 @@ for asteroid_name in asteroids:
     if hasattr(subject, asteroid_name):
         asteroid = getattr(subject, asteroid_name)
         retro = "R" if asteroid.retrograde else "D"
-        print(f"{asteroid.name}: {asteroid.sign} {asteroid.degree:.2f}° {retro} (House {asteroid.house})")
+        print(f"{asteroid.name}: {asteroid.sign} {asteroid.abs_pos:.2f}° {retro} (House {asteroid.house})")
 
 # House cusps
 print("\n=== HOUSE CUSPS ===")
@@ -1373,14 +1379,14 @@ houses = [
 ]
 for i, house_name in enumerate(houses, 1):
     house = getattr(subject, house_name)
-    print(f"House {i}: {house.sign} {house.degree:.2f}°")
+    print(f"House {i}: {house.sign} {house.abs_pos:.2f}°")
 
 # Angles
 print("\n=== ANGLES ===")
 angles = ["ascendant", "medium_coeli", "descendant", "imum_coeli"]
 for angle_name in angles:
     angle = getattr(subject, angle_name)
-    print(f"{angle.name}: {angle.sign} {angle.degree:.2f}°")
+    print(f"{angle.name}: {angle.sign} {angle.abs_pos:.2f}°")
 ```
 
 **Output:**
@@ -1456,7 +1462,7 @@ arabic_parts = ["pars_fortunae", "pars_spiritus", "pars_amoris"]
 for part_name in arabic_parts:
     if hasattr(subject, part_name):
         part = getattr(subject, part_name)
-        print(f"{part.name}: {part.sign} {part.degree:.2f}° (House {part.house})")
+        print(f"{part.name}: {part.sign} {part.abs_pos:.2f}° (House {part.house})")
 ```
 
 **Output:**
@@ -1508,8 +1514,8 @@ for planet_name in planets:
         diff = 360 - diff
     
     print(f"{trop_planet.name:<10} "
-          f"{trop_planet.sign} {trop_planet.degree:.2f}°{'':<8} "
-          f"{sid_planet.sign} {sid_planet.degree:.2f}°{'':<8} "
+          f"{trop_planet.sign} {trop_planet.abs_pos:.2f}°{'':<8} "
+          f"{sid_planet.sign} {sid_planet.abs_pos:.2f}°{'':<8} "
           f"{diff:.2f}°")
 ```
 
@@ -1655,8 +1661,8 @@ for planet_name in planets:
     p2_planet = getattr(person2, planet_name)
     
     print(f"{p1_planet.name:<10} "
-          f"{p1_planet.sign} {p1_planet.degree:.1f}°{'':<6} "
-          f"{p2_planet.sign} {p2_planet.degree:.1f}°")
+          f"{p1_planet.sign} {p1_planet.abs_pos:.1f}°{'':<6} "
+          f"{p2_planet.sign} {p2_planet.abs_pos:.1f}°")
 ```
 
 ### Transit Analysis
@@ -1688,8 +1694,8 @@ for planet_name in planets:
     transit_planet = getattr(transits, planet_name)
     
     print(f"{natal_planet.name}:")
-    print(f"  Natal: {natal_planet.sign} {natal_planet.degree:.2f}°")
-    print(f"  Transit: {transit_planet.sign} {transit_planet.degree:.2f}°")
+    print(f"  Natal: {natal_planet.sign} {natal_planet.abs_pos:.2f}°")
+    print(f"  Transit: {transit_planet.sign} {transit_planet.abs_pos:.2f}°")
     print()
 ```
 

@@ -280,7 +280,7 @@ results = transit_factory.get_transit_moments()
 
 print("=== JUPITER TRANSIT ANALYSIS 2024 ===")
 print(f"Subject: {subject.name}")
-print(f"Birth Jupiter: {subject.jupiter.sign} {subject.jupiter.degree:.2f}°")
+print(f"Birth Jupiter: {subject.jupiter.sign} {subject.jupiter.abs_pos:.2f}°")
 
 # Filter for Jupiter transits only
 jupiter_transits = []

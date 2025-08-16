@@ -47,9 +47,9 @@ composite = CompositeSubjectFactory(person1, person2)
 composite_model = composite.get_midpoint_composite_subject_model()
 
 print(f"Composite Chart: {composite_model.name}")
-print(f"Composite Sun: {composite_model.sun.sign} {composite_model.sun.degree:.2f}°")
-print(f"Composite Moon: {composite_model.moon.sign} {composite_model.moon.degree:.2f}°")
-print(f"Composite Ascendant: {composite_model.ascendant.sign} {composite_model.ascendant.degree:.2f}°")
+print(f"Composite Sun: {composite_model.sun.sign} {composite_model.sun.abs_pos:.2f}°")
+print(f"Composite Moon: {composite_model.moon.sign} {composite_model.moon.abs_pos:.2f}°")
+print(f"Composite Ascendant: {composite_model.ascendant.sign} {composite_model.ascendant.abs_pos:.2f}°")
 ```
 
 **Output:**
@@ -116,17 +116,17 @@ print(f"House System: {model.houses_system_name}")
 
 # Core relationship dynamics
 print("\n=== CORE RELATIONSHIP DYNAMICS ===")
-print(f"Composite Sun (Identity): {model.sun.sign} {model.sun.degree:.2f}° (House {model.sun.house})")
-print(f"Composite Moon (Emotions): {model.moon.sign} {model.moon.degree:.2f}° (House {model.moon.house})")
-print(f"Composite Mercury (Communication): {model.mercury.sign} {model.mercury.degree:.2f}° (House {model.mercury.house})")
-print(f"Composite Venus (Love): {model.venus.sign} {model.venus.degree:.2f}° (House {model.venus.house})")
-print(f"Composite Mars (Action): {model.mars.sign} {model.mars.degree:.2f}° (House {model.mars.house})")
+print(f"Composite Sun (Identity): {model.sun.sign} {model.sun.abs_pos:.2f}° (House {model.sun.house})")
+print(f"Composite Moon (Emotions): {model.moon.sign} {model.moon.abs_pos:.2f}° (House {model.moon.house})")
+print(f"Composite Mercury (Communication): {model.mercury.sign} {model.mercury.abs_pos:.2f}° (House {model.mercury.house})")
+print(f"Composite Venus (Love): {model.venus.sign} {model.venus.abs_pos:.2f}° (House {model.venus.house})")
+print(f"Composite Mars (Action): {model.mars.sign} {model.mars.abs_pos:.2f}° (House {model.mars.house})")
 
 # Relationship structure - how the partnership manifests in the world
 print("\n=== RELATIONSHIP STRUCTURE ===")
-print(f"Composite Ascendant (How others see the relationship): {model.ascendant.sign} {model.ascendant.degree:.2f}°")
-print(f"Composite 7th House (Partnership dynamics): {model.seventh_house.sign} {model.seventh_house.degree:.2f}°")
-print(f"Composite 10th House (Public image): {model.tenth_house.sign} {model.tenth_house.degree:.2f}°")
+print(f"Composite Ascendant (How others see the relationship): {model.ascendant.sign} {model.ascendant.abs_pos:.2f}°")
+print(f"Composite 7th House (Partnership dynamics): {model.seventh_house.sign} {model.seventh_house.abs_pos:.2f}°")
+print(f"Composite 10th House (Public image): {model.tenth_house.sign} {model.tenth_house.abs_pos:.2f}°")
 
 # Emotional cycle - the relationship's emotional rhythm and growth pattern
 print(f"\n=== EMOTIONAL DYNAMICS ===")
@@ -173,9 +173,9 @@ def compare_positions(person1, person2, composite, planet_name):
     comp_planet = getattr(composite, planet_name)
     
     print(f"{planet_name.capitalize()}:")
-    print(f"  Person 1: {p1_planet.sign} {p1_planet.degree:.2f}°")
-    print(f"  Person 2: {p2_planet.sign} {p2_planet.degree:.2f}°")
-    print(f"  Composite: {comp_planet.sign} {comp_planet.degree:.2f}°")
+    print(f"  Person 1: {p1_planet.sign} {p1_planet.abs_pos:.2f}°")
+    print(f"  Person 2: {p2_planet.sign} {p2_planet.abs_pos:.2f}°")
+    print(f"  Composite: {comp_planet.sign} {comp_planet.abs_pos:.2f}°")
     print()
 
 composite_model = composite.get_midpoint_composite_subject_model()
@@ -255,7 +255,7 @@ creative_planets = [
 for planet_attr, description in creative_planets:
     if hasattr(model, planet_attr):
         planet = getattr(model, planet_attr)
-        print(f"{description}: {planet.sign} {planet.degree:.2f}° (House {planet.house})")
+        print(f"{description}: {planet.sign} {planet.abs_pos:.2f}° (House {planet.house})")
 ```
 
 ### Sidereal Composite Chart
@@ -303,7 +303,7 @@ print("\nVedic planetary positions:")
 for planet in ["sun", "moon", "venus", "mars", "jupiter"]:
     if hasattr(vedic_model, planet):
         p = getattr(vedic_model, planet)
-        print(f"  {p.name}: {p.sign} {p.degree:.2f}°")
+        print(f"  {p.name}: {p.sign} {p.abs_pos:.2f}°")
 ```
 
 ## Error Handling
@@ -400,7 +400,7 @@ relationship_houses = [1, 5, 7, 8]  # Identity, Romance, Partnership, Intimacy
 for house_num in relationship_houses:
     house_name = f"{['', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth'][house_num]}_house"
     house = getattr(model, house_name)
-    print(f"House {house_num}: {house.sign} {house.degree:.2f}°")
+    print(f"House {house_num}: {house.sign} {house.abs_pos:.2f}°")
 ```
 
 ### 2. Business Partnerships
@@ -420,7 +420,7 @@ business_houses = [2, 6, 10]  # Resources, Work, Career/Reputation
 for house_num in business_houses:
     house_name = f"{['', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'][house_num]}_house"
     house = getattr(model, house_name)
-    print(f"House {house_num} (Business): {house.sign} {house.degree:.2f}°")
+    print(f"House {house_num} (Business): {house.sign} {house.abs_pos:.2f}°")
 ```
 
 ### 3. Family Relationships
@@ -436,7 +436,7 @@ family_houses = [4, 5]  # Home/Family, Children/Creativity
 for house_num in family_houses:
     house_name = f"{['', 'first', 'second', 'third', 'fourth', 'fifth'][house_num]}_house"
     house = getattr(model, house_name)
-    print(f"House {house_num} (Family): {house.sign} {house.degree:.2f}°")
+    print(f"House {house_num} (Family): {house.sign} {house.abs_pos:.2f}°")
 ```
 
 ## Technical Notes
