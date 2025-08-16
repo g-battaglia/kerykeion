@@ -24,7 +24,6 @@ Planetary returns occur when a planet returns to the exact degree and minute it 
 ### Basic Usage
 
 ```python
-from datetime import datetime
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
@@ -51,19 +50,29 @@ solar_return = calculator.next_return_from_year(2024, "Solar")
 
 print(f"Solar Return Date: {solar_return.iso_formatted_local_datetime}")
 print(f"Sun Position: {solar_return.sun.abs_pos:.2f}°")
-print(f"Ascendant: {solar_return.ascendant.sign} {solar_return.ascendant.abs_pos:.2f}°")
 ```
 
 **Output:**
 ```
 Solar Return Date: 2024-06-15T11:47:23-04:00
 Sun Position: 84.25°
-Ascendant: Virgo 15.43°
 ```
 
 ### Offline Mode with Manual Coordinates
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
+# Create natal subject
+subject = AstrologicalSubjectFactory.from_birth_data(
+    name="Jane Smith",
+    year=1985, month=3, day=21,
+    hour=14, minute=30,
+    lat=51.5074, lng=-0.1278,  # London birth
+    tz_str="Europe/London"
+)
+
 # Create calculator with manual coordinates (no internet required)
 calculator = PlanetaryReturnFactory(
     subject,
@@ -94,6 +103,9 @@ Lunar Return: 2024-01-03T14:22:17-05:00
 ### Solar Return Analysis
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
 # Comprehensive Solar Return analysis
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Alice Johnson",
