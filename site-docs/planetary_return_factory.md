@@ -51,7 +51,7 @@ solar_return = calculator.next_return_from_year(2024, "Solar")
 
 print(f"Solar Return Date: {solar_return.iso_formatted_local_datetime}")
 print(f"Sun Position: {solar_return.sun.abs_pos:.2f}°")
-print(f"Ascendant: {solar_return.ascendant.sign} {solar_return.ascendant.degree:.2f}°")
+print(f"Ascendant: {solar_return.ascendant.sign} {solar_return.ascendant.abs_pos:.2f}°")
 ```
 
 **Output:**
@@ -120,13 +120,13 @@ print(f"Coordinates: {solar_return_2024.lat:.4f}°, {solar_return_2024.lng:.4f}�
 
 # Analyze key return chart features
 print("\n--- PLANETARY POSITIONS ---")
-print(f"Sun: {solar_return_2024.sun.sign} {solar_return_2024.sun.degree:.2f}° (House {solar_return_2024.sun.house})")
-print(f"Moon: {solar_return_2024.moon.sign} {solar_return_2024.moon.degree:.2f}° (House {solar_return_2024.moon.house})")
-print(f"Mercury: {solar_return_2024.mercury.sign} {solar_return_2024.mercury.degree:.2f}° (House {solar_return_2024.mercury.house})")
+print(f"Sun: {solar_return_2024.sun.sign} {solar_return_2024.sun.abs_pos:.2f}° (House {solar_return_2024.sun.house})")
+print(f"Moon: {solar_return_2024.moon.sign} {solar_return_2024.moon.abs_pos:.2f}° (House {solar_return_2024.moon.house})")
+print(f"Mercury: {solar_return_2024.mercury.sign} {solar_return_2024.mercury.abs_pos:.2f}° (House {solar_return_2024.mercury.house})")
 
 print("\n--- ANGULAR POSITIONS ---")
-print(f"Ascendant: {solar_return_2024.ascendant.sign} {solar_return_2024.ascendant.degree:.2f}°")
-print(f"Midheaven: {solar_return_2024.midheaven.sign} {solar_return_2024.midheaven.degree:.2f}°")
+print(f"Ascendant: {solar_return_2024.ascendant.sign} {solar_return_2024.ascendant.abs_pos:.2f}°")
+print(f"Midheaven: {solar_return_2024.midheaven.sign} {solar_return_2024.midheaven.abs_pos:.2f}°")
 
 print("\n--- HOUSE EMPHASIS ---")
 house_count = {}
@@ -184,7 +184,7 @@ for month in range(1, 13):
             'date': lunar_return.iso_formatted_local_datetime,
             'moon_sign': lunar_return.moon.sign,
             'moon_house': lunar_return.moon.house,
-            'ascendant': f"{lunar_return.ascendant.sign} {lunar_return.ascendant.degree:.1f}°"
+            'ascendant': f"{lunar_return.ascendant.sign} {lunar_return.ascendant.abs_pos:.1f}°"
         })
     except Exception as e:
         print(f"Month {month}: Error - {e}")
@@ -254,9 +254,9 @@ for year in years:
     
     print(f"\n--- {year} SOLAR RETURN ---")
     print(f"Date: {sr.iso_formatted_local_datetime}")
-    print(f"Ascendant: {sr.ascendant.sign} {sr.ascendant.degree:.2f}°")
+    print(f"Ascendant: {sr.ascendant.sign} {sr.ascendant.abs_pos:.2f}°")
     print(f"Sun House: {sr.sun.house}")
-    print(f"Moon: {sr.moon.sign} {sr.moon.degree:.2f}° (House {sr.moon.house})")
+    print(f"Moon: {sr.moon.sign} {sr.moon.abs_pos:.2f}° (House {sr.moon.house})")
     
     # Check for retrograde planets
     retrogrades = []
@@ -387,8 +387,8 @@ for city_info in cities:
         print(f"Date/Time: {solar_return.iso_formatted_local_datetime}")
         print(f"Coordinates: {solar_return.lat:.2f}°, {solar_return.lng:.2f}°")
         print(f"Timezone: {solar_return.tz_str}")
-        print(f"Ascendant: {solar_return.ascendant.sign} {solar_return.ascendant.degree:.2f}°")
-        print(f"Midheaven: {solar_return.midheaven.sign} {solar_return.midheaven.degree:.2f}°")
+        print(f"Ascendant: {solar_return.ascendant.sign} {solar_return.ascendant.abs_pos:.2f}°")
+        print(f"Midheaven: {solar_return.midheaven.sign} {solar_return.midheaven.abs_pos:.2f}°")
         print(f"Sun House: {solar_return.sun.house}")
         print(f"Moon House: {solar_return.moon.house}")
         

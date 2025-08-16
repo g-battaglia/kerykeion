@@ -345,7 +345,7 @@ class AstrologicalSubjectFactory:
         ...     city="Rome", nation="IT",
         ...     online=True
         ... )
-        >>> print(f"Sun: {subject.sun.sign} {subject.sun.degree_ut}°")
+        >>> print(f"Sun: {subject.sun.sign} {subject.sun.abs_pos}°")
         >>> print(f"Active points: {len(subject.active_points)}")
 
         >>> # Create chart for current time

@@ -178,9 +178,9 @@ for i, subject in enumerate(subjects):
     print(f"\nDay {i+1}: {subject.iso_formatted_local_datetime[:10]}")
     
     # Access full astrological data
-    print(f"Sun: {subject.sun.sign} {subject.sun.degree:.2f}° (House {subject.sun.house})")
-    print(f"Moon: {subject.moon.sign} {subject.moon.degree:.2f}° (House {subject.moon.house})")
-    print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.degree:.2f}°")
+    print(f"Sun: {subject.sun.sign} {subject.sun.abs_pos:.2f}° (House {subject.sun.house})")
+    print(f"Moon: {subject.moon.sign} {subject.moon.abs_pos:.2f}° (House {subject.moon.house})")
+    print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
     print(f"Lunar Phase: {subject.lunar_phase.moon_phase_name}")
     
     # Check for retrograde planets
