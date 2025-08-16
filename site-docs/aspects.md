@@ -99,6 +99,15 @@ Alice's Sun square Bob's Mean_Lilith (orb: 0.34°)
 Specify which astrological points to include in aspect calculations for focused analysis or performance optimization.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.aspects import NatalAspectsFactory, SynastryAspectsFactory
+
+person = AstrologicalSubjectFactory.from_birth_data("John", 1990, 6, 15, 12, 0, "London", "GB")
+person_a = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 5, 15, 10, 30, "Rome", "IT")
+person_b = AstrologicalSubjectFactory.from_birth_data("Bob", 1992, 8, 23, 14, 45, "Milan", "IT")
+
+personal_planets = ["Sun", "Moon", "Mercury", "Venus", "Mars"]
+
 # Focus on personal planets only
 personal_planets = ["Sun", "Moon", "Mercury", "Venus", "Mars"]
 natal_aspects = NatalAspectsFactory.from_subject(person, active_points=personal_planets)
@@ -112,7 +121,10 @@ venus_aspects = []
 for aspect in synastry.relevant_aspects:
     if "Venus" in [aspect.p1_name, aspect.p2_name]:
         venus_aspects.append(aspect)
-        print(f"Venus aspect: {aspect.p1_owner}'s {aspect.p1_name} {aspect.aspect} {aspect.p2_owner}'s {aspect.p2_name}")
+
+print(f"Venus aspects in synastry: {len(venus_aspects)}")
+for aspect in venus_aspects:
+    print(f"{aspect.p1_owner}'s {aspect.p1_name} {aspect.aspect} {aspect.p2_owner}'s {aspect.p2_name} (orb: {aspect.orbit:.2f}°)")
 ```
 
 ## Custom Aspect Configuration
@@ -121,14 +133,16 @@ Configure which aspect types to calculate and their orb tolerances, including mi
 
 ```python
 from kerykeion.kr_types.kr_models import ActiveAspect
+from kerykeion.aspects import NatalAspectsFactory, SynastryAspectsFactory
+from kerykeion import AstrologicalSubjectFactory
 
 # Define custom aspects with specific orbs
 custom_aspects = [
-    ActiveAspect(name="conjunction", orb=8.0),
-    ActiveAspect(name="opposition", orb=8.0),
-    ActiveAspect(name="trine", orb=6.0),
-    ActiveAspect(name="square", orb=6.0),
-    ActiveAspect(name="sextile", orb=4.0)
+    ActiveAspect(name="conjunction", orb=8),
+    ActiveAspect(name="opposition", orb=8),
+    ActiveAspect(name="trine", orb=6),
+    ActiveAspect(name="square", orb=6),
+    ActiveAspect(name="sextile", orb=4)
 ]
 
 # Include all available aspects (major and minor) for comprehensive analysis
@@ -147,8 +161,17 @@ all_aspects = [
 ]
 
 # Use custom aspects configuration
-natal_aspects = NatalAspectsFactory.from_subject(person, active_aspects=all_aspects)
-synastry = SynastryAspectsFactory.from_subjects(person_a, person_b, active_aspects=custom_aspects)
+a_person = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 5, 15, 10, 30, "Rome", "IT")
+b_person = AstrologicalSubjectFactory.from_birth_data("Bob", 1992, 8, 23, 14, 45, "Milan", "IT")
+
+natal_aspects = NatalAspectsFactory.from_subject(a_person, active_aspects=all_aspects)
+synastry = SynastryAspectsFactory.from_subjects(b_person, a_person, active_aspects=custom_aspects)
+
+print("Natal Aspects for Alice:")
+print(natal_aspects)
+
+print("\nSynastry Aspects between Alice and Bob:")
+print(synastry)
 ```
 
 ## Data Access and Analysis
@@ -156,6 +179,13 @@ synastry = SynastryAspectsFactory.from_subjects(person_a, person_b, active_aspec
 The aspect models provide detailed information for comprehensive analysis.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.aspects import NatalAspectsFactory
+
+natal_aspects = NatalAspectsFactory.from_subject(
+    AstrologicalSubjectFactory.from_birth_data("John", 1990, 6, 15, 12, 0, "London", "GB")
+)
+
 # Access comprehensive aspect data
 aspect = natal_aspects.relevant_aspects[0]
 print(f"Aspect details:")
@@ -190,6 +220,27 @@ Each aspect result includes detailed information:
 - `orbit`: Orb difference from exact aspect
 - `aspect_degrees`: Exact degrees of the aspect type
 - `p1_abs_pos` / `p2_abs_pos`: Absolute positions of the points
+
+Example JSON output for a synastry aspect:
+```json
+[
+  {
+    "p1_name": "Sun",
+    "p1_owner": "John",
+    "p1_abs_pos": 84.08977083584041,
+    "p2_name": "Mars",
+    "p2_owner": "John",
+    "p2_abs_pos": 11.011355780195629,
+    "aspect": "quintile",
+    "orbit": 1.0784150556447827,
+    "aspect_degrees": 72,
+    "diff": 73.07841505564478,
+    "p1": 0,
+    "p2": 4
+  },
+  [...]
+]
+```
 
 ---
 
