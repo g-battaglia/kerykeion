@@ -1496,7 +1496,7 @@ class AstrologicalSubjectFactory:
         # Calculate Regulus (example fixed star)
         if should_calculate("Regulus"):
             try:
-                star_name = b"Regulus"
+                star_name = "Regulus"
                 swe.fixstar_ut(star_name, julian_day, iflag)
                 regulus_deg = swe.fixstar_ut(star_name, julian_day, iflag)[0][0]
                 data["regulus"] = get_kerykeion_point_from_degree(regulus_deg, "Regulus", point_type=point_type)
@@ -1510,7 +1510,7 @@ class AstrologicalSubjectFactory:
         # Calculate Spica (example fixed star)
         if should_calculate("Spica"):
             try:
-                star_name = b"Spica"
+                star_name = "Spica"
                 swe.fixstar_ut(star_name, julian_day, iflag)
                 spica_deg = swe.fixstar_ut(star_name, julian_day, iflag)[0][0]
                 data["spica"] = get_kerykeion_point_from_degree(spica_deg, "Spica", point_type=point_type)
