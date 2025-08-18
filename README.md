@@ -146,10 +146,6 @@ birth_chart_svg = KerykeionChartSVG(john)
 birth_chart_svg.makeSVG()
 ```
 
-```python
-birth_chart_svg.makeSVG()
-```
-
 The SVG file will be saved in the home directory.
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Natal%20Chart.svg)
 
@@ -181,7 +177,7 @@ synastry_chart.makeSVG()
 ### Transit Chart
 
 ```python
-from kerykeion import AstrologicalSubjectFactory
+from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
 
 transit = AstrologicalSubjectFactory.from_birth_data("Transit", 2025, 6, 8, 8, 45, "Atlanta", "US")
 subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
@@ -275,7 +271,7 @@ You can switch chart language by passing `chart_language` to the  `KerykeionChar
 ```python
 from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
 
-first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 birth_chart_svg = KerykeionChartSVG(
     birth_chart,
     chart_language="IT"  # Change to Italian
@@ -302,7 +298,7 @@ To generate a minified SVG, set `minify_svg=True` in the `makeSVG()` method:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
-first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 birth_chart_svg = KerykeionChartSVG(birth_chart)
 birth_chart_svg.makeSVG(
     minify=True
@@ -315,7 +311,7 @@ To generate an SVG without CSS variables, set `remove_css_variables=True` in the
 ```python
 from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
 
-first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 birth_chart_svg = KerykeionChartSVG(birth_chart)
 birth_chart_svg.makeSVG(
     remove_css_variables=True
@@ -326,13 +322,14 @@ This will inline all styles and eliminate CSS variables, resulting in an SVG tha
 
 ### Grid Only SVG
 
-It's possible to generate a grid-only SVG, useful for creating a custom layout. To do this, use the `makeGridOnlySVG()` method:
+It's possible to generate a grid-only SVG, useful for creating a custom layout. To do this, use the `makeAspectGridOnlySVG()` method:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
-birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon - Aspect Grid Dark Synastry", 1977, 6, 8, 8, 45, "Atlanta", "US")
-aspect_grid_dark_synastry_chart = KerykeionChartSVG(aspect_grid_dark_synastry_subject, "Synastry", second, theme="dark")
-aspect_grid_dark_synastry_chart.makeAspectGridOnlySVG()
+birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+aspect_grid_chart = KerykeionChartSVG(birth_chart, "Synastry", second, theme="dark")
+aspect_grid_chart.makeAspectGridOnlySVG()
 ```
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Aspect%20Grid%20Only%20-%20Natal%20Chart%20-%20Aspect%20Grid%20Only.svg)
 
@@ -404,17 +401,47 @@ python3 your_script_name.py > file.txt
 
 ## Example: Retrieving Aspects
 
+Kerykeion provides a unified `AspectsFactory` class for calculating astrological aspects within single charts or between two charts:
+
 ```python
-from kerykeion import SynastryAspects, AstrologicalSubject
+from kerykeion import AspectsFactory, AstrologicalSubjectFactory
 
-first = AstrologicalSubjectFactory.from_birth_data("Jack", 1990, 6, 15, 15, 15, "Roma", "IT")
-second = AstrologicalSubjectFactory.from_birth_data("Jane", 1991, 10, 25, 21, 0, "Roma", "IT")
+# Create astrological subjects
+jack = AstrologicalSubjectFactory.from_birth_data("Jack", 1990, 6, 15, 15, 15, "Roma", "IT")
+jane = AstrologicalSubjectFactory.from_birth_data("Jane", 1991, 10, 25, 21, 0, "Roma", "IT")
 
-name = SynastryAspects(first, second)
-aspect_list = name.get_relevant_aspects()
-print(aspect_list[0])
-#> {'p1_name': 'Sun', 'p1_abs_pos': 84.17867971515636, 'p2_name': 'Sun', 'p2_abs_pos': 211.90472999502984, 'aspect': 'trine', 'orbit': 7.726050279873476, 'aspect_degrees': 120, 'color': '#36d100', 'aid': 6, 'diff': 127.72605027987348, 'p1': 0, 'p2': 0}
+# For single chart aspects (natal, return, composite, etc.)
+single_chart_aspects = AspectsFactory.single_chart_aspects(jack)
+print(f"Found {len(single_chart_aspects)} aspects in Jack's chart")
+print(single_chart_aspects[0])
+# Output: AspectModel with details like aspect type, orb, planets involved, etc.
 
+# For dual chart aspects (synastry, transits, comparisons, etc.)
+dual_chart_aspects = AspectsFactory.dual_chart_aspects(jack, jane)
+print(f"Found {len(dual_chart_aspects)} aspects between Jack and Jane's charts")
+print(dual_chart_aspects[0])
+# Output: AspectModel with cross-chart aspect details
+
+# The factory returns structured AspectModel objects with properties like:
+# - p1_name, p2_name: Planet/point names
+# - aspect: Aspect type (conjunction, trine, square, etc.)
+# - orbit: Orb tolerance in degrees
+# - aspect_degrees: Exact degrees for the aspect (0, 60, 90, 120, 180, etc.)
+# - color: Hex color code for visualization
+```
+
+**Advanced Usage with Custom Settings:**
+
+```python
+# You can also customize aspect calculations with custom orb settings
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
+
+# Modify aspect settings if needed
+custom_aspects = DEFAULT_ACTIVE_ASPECTS.copy()
+# ... modify as needed
+
+# The factory automatically uses the configured settings for orb calculations
+# and filters aspects based on relevance and orb thresholds
 ```
 
 ## Ayanamsa (Sidereal Modes)
@@ -485,7 +512,7 @@ Here's an example of how to set the theme:
 from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
 
 dark_theme_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-dark_theme_natal_chart = KerykeionChartSVG(dark_high_contrast_theme_subject, theme="dark_high_contrast")
+dark_theme_natal_chart = KerykeionChartSVG(dark_theme_subject, theme="dark_high_contrast")
 dark_theme_natal_chart.makeSVG()
 ```
 
@@ -577,7 +604,7 @@ Clone the repository or download the ZIP via the GitHub interface.
 
 ## Integrating Kerykeion into Your Project
 
-If you would like to incorporate Kerykeion’s astrological features into your application, please reach out via [email](mailto:kerykeion.astrology@gmail.com?subject=Integration%20Request). Whether you need custom features, support, or specialized consulting, I am happy to discuss potential collaborations.
+If you would like to incorporate Kerykeion's astrological features into your application, please reach out via [email](mailto:kerykeion.astrology@gmail.com?subject=Integration%20Request). Whether you need custom features, support, or specialized consulting, I am happy to discuss potential collaborations.
 
 ## License
 
