@@ -1,6 +1,23 @@
 # -*- coding: utf-8 -*-
 """
     This is part of Kerykeion (C) 2025 Giacomo Battaglia
+    
+    ⚠️  DEPRECATION NOTICE ⚠️
+    
+    This module is deprecated and maintained for backward compatibility only.
+    
+    The functionality has been moved to the unified AspectsFactory in aspects_factory.py.
+    Please use:
+    
+    from kerykeion.aspects import AspectsFactory
+    
+    # Instead of:
+    # synastry_aspects = SynastryAspectsFactory.from_subjects(first_subject, second_subject)
+    
+    # Use:
+    # synastry_aspects = AspectsFactory.synastry_aspects(first_subject, second_subject)
+    
+    This module will be removed in a future version.
 """
 
 import logging
