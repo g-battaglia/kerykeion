@@ -2,7 +2,7 @@
 
 Calculates astrological aspects (angular relationships) between celestial points in natal charts and between two charts for synastry analysis. Essential for understanding planetary interactions and compatibility in astrological analysis.
 
-The module provides two core factory classes: **NatalAspectsFactory** for single chart analysis and **SynastryAspectsFactory** for relationship compatibility analysis between two charts.
+The module provides a unified **AspectsFactory** class with two main methods: **single_chart_aspects()** for individual chart analysis and **dual_chart_aspects()** for relationship compatibility analysis between two charts.
 
 ## How It Works
 
@@ -25,26 +25,26 @@ Aspects are geometric relationships between planets and points in astrological c
 
 Each aspect includes orb analysis (how close to exact the aspect is) and applies stricter orb limits for chart axes (Ascendant, Midheaven, Descendant, IC).
 
-## Natal Aspects Analysis
+## Single Chart Aspects Analysis
 
 Analyzes aspects within a single birth chart to understand internal planetary dynamics and personality patterns.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.aspects import NatalAspectsFactory
+from kerykeion.aspects import AspectsFactory
 
 # Create natal chart
 person = AstrologicalSubjectFactory.from_birth_data("John", 1990, 6, 15, 12, 0, "London", "GB")
 
-# Generate natal aspects analysis
-natal_aspects = NatalAspectsFactory.from_subject(person)
+# Generate single chart aspects analysis
+chart_aspects = AspectsFactory.single_chart_aspects(person)
 
 # Access all aspects
-print(f"Total aspects found: {len(natal_aspects.all_aspects)}")
-print(f"Relevant aspects: {len(natal_aspects.relevant_aspects)}")
+print(f"Total aspects found: {len(chart_aspects.all_aspects)}")
+print(f"Relevant aspects: {len(chart_aspects.relevant_aspects)}")
 
 # Examine specific aspects
-for aspect in natal_aspects.relevant_aspects[:5]:
+for aspect in chart_aspects.relevant_aspects[:5]:
     print(f"{aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb: {aspect.orbit:.2f}째)")
 ```
 
@@ -59,27 +59,27 @@ Moon sextile Uranus (orb: 6.63째)
 Moon sextile Neptune (orb: 1.08째)
 ```
 
-## Synastry Aspects Analysis
+## Dual Chart Aspects Analysis
 
 Analyzes aspects between two charts for relationship compatibility and planetary interactions between partners.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.aspects import SynastryAspectsFactory
+from kerykeion.aspects import AspectsFactory
 
 # Create two charts for comparison
 person_a = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 5, 15, 10, 30, "Rome", "IT")
 person_b = AstrologicalSubjectFactory.from_birth_data("Bob", 1992, 8, 23, 14, 45, "Milan", "IT")
 
-# Generate synastry analysis
-synastry = SynastryAspectsFactory.from_subjects(person_a, person_b)
+# Generate dual chart analysis
+dual_aspects = AspectsFactory.dual_chart_aspects(person_a, person_b)
 
 # Access synastry aspects
-print(f"Total synastry aspects: {len(synastry.all_aspects)}")
-print(f"Relevant synastry aspects: {len(synastry.relevant_aspects)}")
+print(f"Total synastry aspects: {len(dual_aspects.all_aspects)}")
+print(f"Relevant synastry aspects: {len(dual_aspects.relevant_aspects)}")
 
 # Examine relationship aspects
-for aspect in synastry.relevant_aspects[:5]:
+for aspect in dual_aspects.relevant_aspects[:5]:
     print(f"{aspect.p1_owner}'s {aspect.p1_name} {aspect.aspect} {aspect.p2_owner}'s {aspect.p2_name} (orb: {aspect.orbit:.2f}째)")
 ```
 
@@ -100,7 +100,7 @@ Specify which astrological points to include in aspect calculations for focused 
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.aspects import NatalAspectsFactory, SynastryAspectsFactory
+from kerykeion.aspects import AspectsFactory
 
 person = AstrologicalSubjectFactory.from_birth_data("John", 1990, 6, 15, 12, 0, "London", "GB")
 person_a = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 5, 15, 10, 30, "Rome", "IT")
@@ -110,15 +110,15 @@ personal_planets = ["Sun", "Moon", "Mercury", "Venus", "Mars"]
 
 # Focus on personal planets only
 personal_planets = ["Sun", "Moon", "Mercury", "Venus", "Mars"]
-natal_aspects = NatalAspectsFactory.from_subject(person, active_points=personal_planets)
+chart_aspects = AspectsFactory.single_chart_aspects(person, active_points=personal_planets)
 
 # Traditional planets for relationship analysis
 traditional_planets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"]
-synastry = SynastryAspectsFactory.from_subjects(person_a, person_b, active_points=traditional_planets)
+dual_aspects = AspectsFactory.dual_chart_aspects(person_a, person_b, active_points=traditional_planets)
 
 # Check specific planet interactions
 venus_aspects = []
-for aspect in synastry.relevant_aspects:
+for aspect in dual_aspects.relevant_aspects:
     if "Venus" in [aspect.p1_name, aspect.p2_name]:
         venus_aspects.append(aspect)
 
@@ -133,7 +133,7 @@ Configure which aspect types to calculate and their orb tolerances, including mi
 
 ```python
 from kerykeion.kr_types.kr_models import ActiveAspect
-from kerykeion.aspects import NatalAspectsFactory, SynastryAspectsFactory
+from kerykeion.aspects import AspectsFactory
 from kerykeion import AstrologicalSubjectFactory
 
 # Define custom aspects with specific orbs
@@ -164,14 +164,14 @@ all_aspects = [
 a_person = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 5, 15, 10, 30, "Rome", "IT")
 b_person = AstrologicalSubjectFactory.from_birth_data("Bob", 1992, 8, 23, 14, 45, "Milan", "IT")
 
-natal_aspects = NatalAspectsFactory.from_subject(a_person, active_aspects=all_aspects)
-synastry = SynastryAspectsFactory.from_subjects(b_person, a_person, active_aspects=custom_aspects)
+chart_aspects = AspectsFactory.single_chart_aspects(a_person, active_aspects=all_aspects)
+dual_aspects = AspectsFactory.dual_chart_aspects(b_person, a_person, active_aspects=custom_aspects)
 
-print("Natal Aspects for Alice:")
-print(natal_aspects)
+print("Single Chart Aspects for Alice:")
+print(chart_aspects)
 
-print("\nSynastry Aspects between Alice and Bob:")
-print(synastry)
+print("\nDual Chart Aspects between Alice and Bob:")
+print(dual_aspects)
 ```
 
 ## Data Access and Analysis
@@ -180,14 +180,14 @@ The aspect models provide detailed information for comprehensive analysis.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.aspects import NatalAspectsFactory
+from kerykeion.aspects import AspectsFactory
 
-natal_aspects = NatalAspectsFactory.from_subject(
+chart_aspects = AspectsFactory.single_chart_aspects(
     AstrologicalSubjectFactory.from_birth_data("John", 1990, 6, 15, 12, 0, "London", "GB")
 )
 
 # Access comprehensive aspect data
-aspect = natal_aspects.relevant_aspects[0]
+aspect = chart_aspects.relevant_aspects[0]
 print(f"Aspect details:")
 print(f"  Planets: {aspect.p1_name} {aspect.aspect} {aspect.p2_name}")
 print(f"  Orb: {aspect.orbit:.2f}째")
@@ -196,7 +196,7 @@ print(f"  Planet positions: {aspect.p1_abs_pos:.2f}째 - {aspect.p2_abs_pos:.2f}�
 
 # Group aspects by type for analysis
 aspect_types = {}
-for aspect in natal_aspects.relevant_aspects:
+for aspect in chart_aspects.relevant_aspects:
     aspect_type = aspect.aspect
     if aspect_type not in aspect_types:
         aspect_types[aspect_type] = []
@@ -208,20 +208,20 @@ for aspect_type, aspects in aspect_types.items():
 
 # Export data for further analysis
 import json
-aspects_data = [aspect.model_dump() for aspect in natal_aspects.relevant_aspects]
-with open("natal_aspects.json", "w") as f:
+aspects_data = [aspect.model_dump() for aspect in chart_aspects.relevant_aspects]
+with open("chart_aspects.json", "w") as f:
     json.dump(aspects_data, f, indent=2)
 ```
 
 Each aspect result includes detailed information:
 - `p1_name` / `p2_name`: Names of the aspected points
-- `p1_owner` / `p2_owner`: Chart owners (same for natal, different for synastry)
+- `p1_owner` / `p2_owner`: Chart owners (same for single chart, different for dual chart)
 - `aspect`: Type of aspect (Conjunction, Trine, etc.)
 - `orbit`: Orb difference from exact aspect
 - `aspect_degrees`: Exact degrees of the aspect type
 - `p1_abs_pos` / `p2_abs_pos`: Absolute positions of the points
 
-Example JSON output for a synastry aspect:
+Example JSON output for a dual chart aspect:
 ```json
 [
   {
@@ -248,9 +248,9 @@ Example JSON output for a synastry aspect:
 
 ## Use Cases
 
-- **Natal Chart Analysis**: Understand personality patterns and internal dynamics
-- **Relationship Compatibility**: Analyze planetary interactions between partners
-- **Transit Analysis**: Compare current planetary positions with natal chart
+- **Single Chart Analysis**: Understand personality patterns and internal dynamics in natal, return, and composite charts
+- **Relationship Compatibility**: Analyze planetary interactions between partners using dual chart analysis
+- **Transit Analysis**: Compare current planetary positions with natal chart using dual chart methods
 - **Psychological Astrology**: Explore psychological patterns through aspect analysis
 - **Predictive Astrology**: Assess timing and influence of planetary cycles
 

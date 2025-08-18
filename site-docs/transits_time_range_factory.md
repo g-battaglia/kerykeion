@@ -955,7 +955,7 @@ def educational_transit_demo(teaching_subject, demo_period):
 
 ### Integration Points
 - **EphemerisDataFactory**: Generates time-series planetary data
-- **SynastryAspectsFactory**: Calculates angular relationships
+- **AspectsFactory**: Calculates angular relationships
 - **AstrologicalSubjectFactory**: Creates natal and ephemeris charts
 - **Settings System**: Configures orb tolerances and calculation parameters
 
