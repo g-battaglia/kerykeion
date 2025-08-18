@@ -22,7 +22,7 @@ Classes:
 
 Dependencies:
     - kerykeion.AstrologicalSubjectFactory: For creating astrological subjects
-    - kerykeion.aspects.SynastryAspectsFactory: For calculating angular relationships
+    - kerykeion.aspects.AspectsFactory: For calculating angular relationships
     - kerykeion.ephemeris_data_factory: For generating time-series planetary positions
     - kerykeion.kr_types: For type definitions and model structures
     - datetime: For date/time handling
@@ -59,7 +59,7 @@ from typing import Union, List
 from datetime import datetime, timedelta
 from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.aspects import SynastryAspectsFactory
+from kerykeion.aspects import AspectsFactory
 from kerykeion.ephemeris_data_factory import EphemerisDataFactory
 from kerykeion.kr_types.kr_literals import AstrologicalPoint
 from kerykeion.kr_types.kr_models import ActiveAspect, TransitMomentModel, TransitsTimeRangeModel
@@ -227,13 +227,13 @@ class TransitsTimeRangeFactory:
         See Also:
             TransitMomentModel: Individual transit moment structure
             TransitsTimeRangeModel: Complete transit dataset structure
-            SynastryAspectsFactory: Underlying aspect calculation engine
+            AspectsFactory: Underlying aspect calculation engine
         """
         transit_moments = []
 
         for ephemeris_point in self.ephemeris_data_points:
             # Calculate aspects between transit positions and natal chart
-            aspects = SynastryAspectsFactory.from_subjects(
+            aspects = AspectsFactory.dual_chart_aspects(
                 ephemeris_point,
                 self.natal_chart,
                 active_points=self.active_points,

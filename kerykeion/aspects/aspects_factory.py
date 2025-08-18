@@ -497,93 +497,6 @@ class AspectsFactory:
         )
 
 
-# Legacy backward compatibility aliases
-class NatalAspectsFactory:
-    """
-    Legacy backward compatibility alias for single chart aspects functionality.
-    
-    ⚠️  DEPRECATION NOTICE ⚠️
-    
-    This class is deprecated and maintained for backward compatibility only.
-    Please use the new unified AspectsFactory with single_chart_aspects() method.
-    
-    Old usage:
-    natal_aspects = NatalAspectsFactory.from_subject(subject)
-    
-    New usage:
-    chart_aspects = AspectsFactory.single_chart_aspects(subject)
-    """
-    
-    @staticmethod
-    def from_subject(
-        user: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-        *,
-        active_points: Optional[List[AstrologicalPoint]] = None,
-        active_aspects: Optional[List[ActiveAspect]] = None,
-    ) -> NatalAspectsModel:
-        """
-        Create aspects analysis from an existing astrological subject.
-        
-        This method is kept for backward compatibility and delegates to AspectsFactory.single_chart_aspects().
-        
-        Args:
-            user: The astrological subject for aspect calculation
-
-        Kwargs:
-            active_points: List of points to include in calculations
-            active_aspects: List of aspects with their orb settings
-
-        Returns:
-            NatalAspectsModel (alias for SingleChartAspectsModel) containing all calculated aspects data
-        """
-        return AspectsFactory.single_chart_aspects(user, active_points=active_points, active_aspects=active_aspects)
-
-
-class SynastryAspectsFactory:
-    """
-    Legacy backward compatibility alias for dual chart aspects functionality.
-    
-    ⚠️  DEPRECATION NOTICE ⚠️
-    
-    This class is deprecated and maintained for backward compatibility only.
-    Please use the new unified AspectsFactory with dual_chart_aspects() method.
-    
-    Old usage:
-    synastry_aspects = SynastryAspectsFactory.from_subjects(first_subject, second_subject)
-    
-    New usage:
-    dual_aspects = AspectsFactory.dual_chart_aspects(first_subject, second_subject)
-    """
-    
-    @staticmethod
-    def from_subjects(
-        first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-        second_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-        *,
-        active_points: Optional[List[AstrologicalPoint]] = None,
-        active_aspects: Optional[List[ActiveAspect]] = None,
-    ) -> SynastryAspectsModel:
-        """
-        Create aspects analysis between two astrological subjects.
-        
-        This method is kept for backward compatibility and delegates to AspectsFactory.dual_chart_aspects().
-
-        Args:
-            first_subject: The first astrological subject
-            second_subject: The second astrological subject to compare with the first
-
-        Kwargs:
-            active_points: Optional list of celestial points to include in calculations
-            active_aspects: Optional list of aspect types with their orb settings
-
-        Returns:
-            SynastryAspectsModel (alias for DualChartAspectsModel) containing all calculated aspects data
-        """
-        return AspectsFactory.dual_chart_aspects(
-            first_subject, second_subject, active_points=active_points, active_aspects=active_aspects
-        )
-
-
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
 
@@ -599,9 +512,3 @@ if __name__ == "__main__":
     yoko = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP")
     dual_chart_aspects = AspectsFactory.dual_chart_aspects(john, yoko)
     print(f"Dual chart aspects - All: {len(dual_chart_aspects.all_aspects)}, Relevant: {len(dual_chart_aspects.relevant_aspects)}")
-
-    # Test legacy backward compatibility
-    natal_aspects_compat = NatalAspectsFactory.from_subject(johnny)
-    synastry_aspects_compat = SynastryAspectsFactory.from_subjects(john, yoko)
-    print(f"Legacy compatibility test passed: {len(natal_aspects_compat.all_aspects) == len(single_chart_aspects.all_aspects)}")
-    print(f"Legacy compatibility test passed: {len(synastry_aspects_compat.all_aspects) == len(dual_chart_aspects.all_aspects)}")
