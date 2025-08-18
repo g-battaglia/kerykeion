@@ -5,7 +5,7 @@ with new active points (Descendant, Imum_Coeli, both node types)
 """
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.aspects import NatalAspectsFactory, SynastryAspectsFactory
+from kerykeion.aspects import AspectsFactory
 import json
 from pathlib import Path
 
@@ -17,7 +17,7 @@ def regenerate_natal_aspects():
         geonames_username="century.boy"
     )
 
-    natal_aspects = NatalAspectsFactory.from_subject(subject)
+    natal_aspects = AspectsFactory.single_chart_aspects(subject)
 
     # Convert to dict format
     relevant_aspects = [a.model_dump() for a in natal_aspects.relevant_aspects]
@@ -52,7 +52,7 @@ def regenerate_synastry_aspects():
         geonames_username="century.boy"
     )
 
-    synastry_aspects = SynastryAspectsFactory.from_subjects(john, yoko)
+    synastry_aspects = AspectsFactory.dual_chart_aspects(john, yoko)
 
     # Convert to dict format with p1/p2 fields
     relevant_aspects = []
