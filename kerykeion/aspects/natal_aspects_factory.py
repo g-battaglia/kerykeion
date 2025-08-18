@@ -1,6 +1,23 @@
 # -*- coding: utf-8 -*-
 """
     This is part of Kerykeion (C) 2025 Giacomo Battaglia
+    
+    ⚠️  DEPRECATION NOTICE ⚠️
+    
+    This module is deprecated and maintained for backward compatibility only.
+    
+    The functionality has been moved to the unified AspectsFactory in aspects_factory.py.
+    Please use:
+    
+    from kerykeion.aspects import AspectsFactory
+    
+    # Instead of:
+    # natal_aspects = NatalAspectsFactory.from_subject(subject)
+    
+    # Use:
+    # natal_aspects = AspectsFactory.natal_aspects(subject)
+    
+    This module will be removed in a future version.
 """
 
 import logging
