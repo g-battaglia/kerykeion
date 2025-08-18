@@ -14,6 +14,9 @@ from kerykeion.kr_types.kr_models import (
     ActiveAspect, 
     CompositeSubjectModel, 
     PlanetReturnModel, 
+    SingleChartAspectsModel,
+    DualChartAspectsModel,
+    # Legacy aliases for backward compatibility
     NatalAspectsModel,
     SynastryAspectsModel
 )
@@ -34,46 +37,49 @@ AXES_LIST = [
 
 class AspectsFactory:
     """
-    Unified factory class for creating both natal and synastry aspects analysis.
+    Unified factory class for creating both single chart and dual chart aspects analysis.
 
-    This factory provides methods to calculate all aspects in a single birth chart (natal)
-    or between two charts (synastry). It consolidates the common functionality between
-    natal and synastry aspect calculations while providing specialized methods for each type.
+    This factory provides methods to calculate all aspects within a single chart or 
+    between two charts. It consolidates the common functionality between different 
+    types of aspect calculations while providing specialized methods for each type.
 
     The factory provides both comprehensive and filtered aspect lists based on orb settings
     and relevance criteria.
 
     Key Features:
-        - Calculates natal aspects within a single chart
-        - Calculates synastry aspects between two charts
+        - Calculates aspects within a single chart (natal, returns, composite, etc.)
+        - Calculates aspects between two charts (synastry, transits, comparisons, etc.)
         - Filters aspects based on orb thresholds
         - Applies stricter orb limits for chart axes (ASC, MC, DSC, IC)
         - Supports multiple subject types (natal, composite, planetary returns)
 
     Example:
-        >>> # For natal aspects
+        >>> # For single chart aspects (natal, returns, etc.)
         >>> johnny = AstrologicalSubjectFactory.from_birth_data("Johnny", 1963, 6, 9, 0, 0, "Owensboro", "US")
-        >>> natal_aspects = AspectsFactory.natal_aspects(johnny)
+        >>> single_chart_aspects = AspectsFactory.single_chart_aspects(johnny)
         >>> 
-        >>> # For synastry aspects
+        >>> # For dual chart aspects (synastry, comparisons, etc.)
         >>> john = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
         >>> jane = AstrologicalSubjectFactory.from_birth_data("Jane", 1992, 6, 15, 14, 30, "Paris", "FR")
-        >>> synastry_aspects = AspectsFactory.synastry_aspects(john, jane)
+        >>> dual_chart_aspects = AspectsFactory.dual_chart_aspects(john, jane)
     """
 
     @staticmethod
-    def natal_aspects(
+    def single_chart_aspects(
         subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         *,
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: Optional[List[ActiveAspect]] = None,
-    ) -> NatalAspectsModel:
+    ) -> SingleChartAspectsModel:
         """
-        Create natal aspects analysis for a single astrological subject.
+        Create aspects analysis for a single astrological chart.
 
         This method calculates all astrological aspects (angular relationships)
-        within a single birth chart, finding relationships between planets,
-        points, and axes within the same chart.
+        within a single chart. Can be used for any type of chart including:
+        - Natal charts
+        - Planetary return charts  
+        - Composite charts
+        - Any other single chart type
 
         Args:
             subject: The astrological subject for aspect calculation
@@ -83,12 +89,12 @@ class AspectsFactory:
             active_aspects: List of aspects with their orb settings
 
         Returns:
-            NatalAspectsModel containing all calculated aspects data
+            SingleChartAspectsModel containing all calculated aspects data
 
         Example:
             >>> johnny = AstrologicalSubjectFactory.from_birth_data("Johnny", 1963, 6, 9, 0, 0, "Owensboro", "US")
-            >>> natal_aspects = AspectsFactory.natal_aspects(johnny)
-            >>> print(f"Found {len(natal_aspects.relevant_aspects)} relevant aspects")
+            >>> chart_aspects = AspectsFactory.single_chart_aspects(johnny)
+            >>> print(f"Found {len(chart_aspects.relevant_aspects)} relevant aspects")
         """
         # Initialize settings and configurations
         celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
@@ -107,25 +113,28 @@ class AspectsFactory:
                 active_points,
             )
 
-        return AspectsFactory._create_natal_aspects_model(
+        return AspectsFactory._create_single_chart_aspects_model(
             subject, active_points_resolved, active_aspects_resolved,
             aspects_settings, axes_orbit_settings, celestial_points
         )
 
     @staticmethod
-    def synastry_aspects(
+    def dual_chart_aspects(
         first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         second_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         *,
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: Optional[List[ActiveAspect]] = None,
-    ) -> SynastryAspectsModel:
+    ) -> DualChartAspectsModel:
         """
-        Create synastry aspects analysis between two astrological subjects.
+        Create aspects analysis between two astrological charts.
 
         This method calculates all astrological aspects (angular relationships)
-        between planets and points in two different birth charts, commonly used
-        for relationship compatibility analysis.
+        between planets and points in two different charts. Can be used for:
+        - Synastry (relationship compatibility)
+        - Transit comparisons
+        - Composite vs natal comparisons
+        - Any other dual chart analysis
 
         Args:
             first_subject: The first astrological subject
@@ -138,13 +147,13 @@ class AspectsFactory:
                            If None, uses default aspect configuration.
 
         Returns:
-            SynastryAspectsModel: Complete model containing all calculated aspects data,
-                                 including both comprehensive and filtered relevant aspects.
+            DualChartAspectsModel: Complete model containing all calculated aspects data,
+                                  including both comprehensive and filtered relevant aspects.
 
         Example:
             >>> john = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
             >>> jane = AstrologicalSubjectFactory.from_birth_data("Jane", 1992, 6, 15, 14, 30, "Paris", "FR")
-            >>> synastry = AspectsFactory.synastry_aspects(john, jane)
+            >>> synastry = AspectsFactory.dual_chart_aspects(john, jane)
             >>> print(f"Found {len(synastry.relevant_aspects)} relevant aspects")
         """
         # Initialize settings and configurations
@@ -170,32 +179,32 @@ class AspectsFactory:
             active_points_resolved,
         )
 
-        return AspectsFactory._create_synastry_aspects_model(
+        return AspectsFactory._create_dual_chart_aspects_model(
             first_subject, second_subject, active_points_resolved, active_aspects_resolved,
             aspects_settings, axes_orbit_settings, celestial_points
         )
 
     @staticmethod
-    def _create_natal_aspects_model(
+    def _create_single_chart_aspects_model(
         subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         active_points_resolved: List[AstrologicalPoint],
         active_aspects_resolved: List[ActiveAspect],
         aspects_settings: List[dict],
         axes_orbit_settings: float,
         celestial_points: List[dict]
-    ) -> NatalAspectsModel:
+    ) -> SingleChartAspectsModel:
         """
-        Create the complete natal aspects model with all calculations.
+        Create the complete single chart aspects model with all calculations.
 
         Returns:
-            NatalAspectsModel containing all aspects data
+            SingleChartAspectsModel containing all aspects data
         """
-        all_aspects = AspectsFactory._calculate_natal_aspects(
+        all_aspects = AspectsFactory._calculate_single_chart_aspects(
             subject, active_points_resolved, active_aspects_resolved, aspects_settings, celestial_points
         )
         relevant_aspects = AspectsFactory._filter_relevant_aspects(all_aspects, axes_orbit_settings)
 
-        return NatalAspectsModel(
+        return SingleChartAspectsModel(
             subject=subject,
             all_aspects=all_aspects,
             relevant_aspects=relevant_aspects,
@@ -204,7 +213,7 @@ class AspectsFactory:
         )
 
     @staticmethod
-    def _create_synastry_aspects_model(
+    def _create_dual_chart_aspects_model(
         first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         second_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         active_points_resolved: List[AstrologicalPoint],
@@ -212,9 +221,9 @@ class AspectsFactory:
         aspects_settings: List[dict],
         axes_orbit_settings: float,
         celestial_points: List[dict]
-    ) -> SynastryAspectsModel:
+    ) -> DualChartAspectsModel:
         """
-        Create the complete synastry aspects model with all calculations.
+        Create the complete dual chart aspects model with all calculations.
 
         Args:
             first_subject: First astrological subject
@@ -226,15 +235,15 @@ class AspectsFactory:
             celestial_points: Celestial points configuration
 
         Returns:
-            SynastryAspectsModel: Complete model containing all aspects data
+            DualChartAspectsModel: Complete model containing all aspects data
         """
-        all_aspects = AspectsFactory._calculate_synastry_aspects(
+        all_aspects = AspectsFactory._calculate_dual_chart_aspects(
             first_subject, second_subject, active_points_resolved, active_aspects_resolved,
             aspects_settings, celestial_points
         )
         relevant_aspects = AspectsFactory._filter_relevant_aspects(all_aspects, axes_orbit_settings)
 
-        return SynastryAspectsModel(
+        return DualChartAspectsModel(
             first_subject=first_subject,
             second_subject=second_subject,
             all_aspects=all_aspects,
@@ -244,7 +253,7 @@ class AspectsFactory:
         )
 
     @staticmethod
-    def _calculate_natal_aspects(
+    def _calculate_single_chart_aspects(
         subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         active_points: List[AstrologicalPoint],
         active_aspects: List[ActiveAspect],
@@ -252,10 +261,11 @@ class AspectsFactory:
         celestial_points: List[dict]
     ) -> List[AspectModel]:
         """
-        Calculate all aspects within a single natal chart.
+        Calculate all aspects within a single chart.
 
         This method handles all aspect calculations including settings updates,
-        opposite pair filtering, and planet ID resolution for natal charts.
+        opposite pair filtering, and planet ID resolution for single charts.
+        Works with any chart type (natal, return, composite, etc.).
 
         Returns:
             List of all calculated AspectModel instances
@@ -268,7 +278,7 @@ class AspectsFactory:
         # Create a lookup dictionary for planet IDs to optimize performance
         planet_id_lookup = {planet["name"]: planet["id"] for planet in celestial_points}
 
-        # Define opposite pairs that should be skipped for natal aspects
+        # Define opposite pairs that should be skipped for single chart aspects
         opposite_pairs = {
             ("Ascendant", "Descendant"),
             ("Descendant", "Ascendant"),
@@ -283,7 +293,7 @@ class AspectsFactory:
         all_aspects_list = []
 
         for first in range(len(active_points_list)):
-            # Generate aspects list without repetitions (natal chart - same chart)
+            # Generate aspects list without repetitions (single chart - same chart)
             for second in range(first + 1, len(active_points_list)):
                 # Skip predefined opposite pairs (AC/DC, MC/IC, North/South nodes)
                 first_name = active_points_list[first]["name"]
@@ -322,7 +332,7 @@ class AspectsFactory:
         return all_aspects_list
 
     @staticmethod
-    def _calculate_synastry_aspects(
+    def _calculate_dual_chart_aspects(
         first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         second_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         active_points: List[AstrologicalPoint],
@@ -331,11 +341,12 @@ class AspectsFactory:
         celestial_points: List[dict]
     ) -> List[AspectModel]:
         """
-        Calculate all synastry aspects between two subjects.
+        Calculate all aspects between two charts.
 
         This method performs comprehensive aspect calculations between all active points
         of both subjects, applying the specified orb settings and creating detailed
         aspect models with planet IDs and positional information.
+        Works with any chart types (synastry, transits, comparisons, etc.).
 
         Args:
             first_subject: First astrological subject
@@ -402,7 +413,7 @@ class AspectsFactory:
         """
         Update aspects settings with active aspects orbs.
         
-        This is a common utility method used by both natal and synastry calculations.
+        This is a common utility method used by both single chart and dual chart calculations.
         
         Args:
             aspects_settings: Base aspect settings
@@ -427,7 +438,7 @@ class AspectsFactory:
         Filter aspects based on orb thresholds for axes and comprehensive criteria.
 
         This method consolidates all filtering logic including axes checks and orb thresholds
-        for both natal and synastry aspects in a single comprehensive filtering method.
+        for both single chart and dual chart aspects in a single comprehensive filtering method.
 
         Args:
             all_aspects: Complete list of calculated aspects
@@ -451,14 +462,56 @@ class AspectsFactory:
 
         return relevant_aspects
 
+    # Legacy methods for temporary backward compatibility
+    @staticmethod
+    def natal_aspects(
+        subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        *,
+        active_points: Optional[List[AstrologicalPoint]] = None,
+        active_aspects: Optional[List[ActiveAspect]] = None,
+    ) -> NatalAspectsModel:
+        """
+        Legacy method - use single_chart_aspects() instead.
+        
+        ⚠️  DEPRECATION WARNING ⚠️
+        This method is deprecated. Use AspectsFactory.single_chart_aspects() instead.
+        """
+        return AspectsFactory.single_chart_aspects(subject, active_points=active_points, active_aspects=active_aspects)
 
-# Backward compatibility aliases
+    @staticmethod
+    def synastry_aspects(
+        first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        second_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        *,
+        active_points: Optional[List[AstrologicalPoint]] = None,
+        active_aspects: Optional[List[ActiveAspect]] = None,
+    ) -> SynastryAspectsModel:
+        """
+        Legacy method - use dual_chart_aspects() instead.
+        
+        ⚠️  DEPRECATION WARNING ⚠️
+        This method is deprecated. Use AspectsFactory.dual_chart_aspects() instead.
+        """
+        return AspectsFactory.dual_chart_aspects(
+            first_subject, second_subject, active_points=active_points, active_aspects=active_aspects
+        )
+
+
+# Legacy backward compatibility aliases
 class NatalAspectsFactory:
     """
-    Backward compatibility alias for natal aspects functionality.
+    Legacy backward compatibility alias for single chart aspects functionality.
     
-    This class maintains the original API while delegating to the unified AspectsFactory.
-    All functionality has been moved to AspectsFactory.natal_aspects().
+    ⚠️  DEPRECATION NOTICE ⚠️
+    
+    This class is deprecated and maintained for backward compatibility only.
+    Please use the new unified AspectsFactory with single_chart_aspects() method.
+    
+    Old usage:
+    natal_aspects = NatalAspectsFactory.from_subject(subject)
+    
+    New usage:
+    chart_aspects = AspectsFactory.single_chart_aspects(subject)
     """
     
     @staticmethod
@@ -469,9 +522,9 @@ class NatalAspectsFactory:
         active_aspects: Optional[List[ActiveAspect]] = None,
     ) -> NatalAspectsModel:
         """
-        Create natal aspects analysis from an existing astrological subject.
+        Create aspects analysis from an existing astrological subject.
         
-        This method is kept for backward compatibility and delegates to AspectsFactory.natal_aspects().
+        This method is kept for backward compatibility and delegates to AspectsFactory.single_chart_aspects().
         
         Args:
             user: The astrological subject for aspect calculation
@@ -481,17 +534,25 @@ class NatalAspectsFactory:
             active_aspects: List of aspects with their orb settings
 
         Returns:
-            NatalAspectsModel containing all calculated aspects data
+            NatalAspectsModel (alias for SingleChartAspectsModel) containing all calculated aspects data
         """
-        return AspectsFactory.natal_aspects(user, active_points=active_points, active_aspects=active_aspects)
+        return AspectsFactory.single_chart_aspects(user, active_points=active_points, active_aspects=active_aspects)
 
 
 class SynastryAspectsFactory:
     """
-    Backward compatibility alias for synastry aspects functionality.
+    Legacy backward compatibility alias for dual chart aspects functionality.
     
-    This class maintains the original API while delegating to the unified AspectsFactory.
-    All functionality has been moved to AspectsFactory.synastry_aspects().
+    ⚠️  DEPRECATION NOTICE ⚠️
+    
+    This class is deprecated and maintained for backward compatibility only.
+    Please use the new unified AspectsFactory with dual_chart_aspects() method.
+    
+    Old usage:
+    synastry_aspects = SynastryAspectsFactory.from_subjects(first_subject, second_subject)
+    
+    New usage:
+    dual_aspects = AspectsFactory.dual_chart_aspects(first_subject, second_subject)
     """
     
     @staticmethod
@@ -503,9 +564,9 @@ class SynastryAspectsFactory:
         active_aspects: Optional[List[ActiveAspect]] = None,
     ) -> SynastryAspectsModel:
         """
-        Create synastry aspects analysis between two astrological subjects.
+        Create aspects analysis between two astrological subjects.
         
-        This method is kept for backward compatibility and delegates to AspectsFactory.synastry_aspects().
+        This method is kept for backward compatibility and delegates to AspectsFactory.dual_chart_aspects().
 
         Args:
             first_subject: The first astrological subject
@@ -516,9 +577,9 @@ class SynastryAspectsFactory:
             active_aspects: Optional list of aspect types with their orb settings
 
         Returns:
-            SynastryAspectsModel containing all calculated aspects data
+            SynastryAspectsModel (alias for DualChartAspectsModel) containing all calculated aspects data
         """
-        return AspectsFactory.synastry_aspects(
+        return AspectsFactory.dual_chart_aspects(
             first_subject, second_subject, active_points=active_points, active_aspects=active_aspects
         )
 
@@ -528,19 +589,19 @@ if __name__ == "__main__":
 
     setup_logging(level="debug")
 
-    # Test natal aspects
+    # Test single chart aspects (replaces natal aspects)
     johnny = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 0, 0, city="Owensboro", nation="US")
-    natal_aspects = AspectsFactory.natal_aspects(johnny)
-    print(f"Natal aspects - All: {len(natal_aspects.all_aspects)}, Relevant: {len(natal_aspects.relevant_aspects)}")
+    single_chart_aspects = AspectsFactory.single_chart_aspects(johnny)
+    print(f"Single chart aspects - All: {len(single_chart_aspects.all_aspects)}, Relevant: {len(single_chart_aspects.relevant_aspects)}")
 
-    # Test synastry aspects
+    # Test dual chart aspects (replaces synastry aspects)
     john = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 10, 30, "Liverpool", "GB")
     yoko = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP")
-    synastry_aspects = AspectsFactory.synastry_aspects(john, yoko)
-    print(f"Synastry aspects - All: {len(synastry_aspects.all_aspects)}, Relevant: {len(synastry_aspects.relevant_aspects)}")
+    dual_chart_aspects = AspectsFactory.dual_chart_aspects(john, yoko)
+    print(f"Dual chart aspects - All: {len(dual_chart_aspects.all_aspects)}, Relevant: {len(dual_chart_aspects.relevant_aspects)}")
 
-    # Test backward compatibility
+    # Test legacy backward compatibility
     natal_aspects_compat = NatalAspectsFactory.from_subject(johnny)
     synastry_aspects_compat = SynastryAspectsFactory.from_subjects(john, yoko)
-    print(f"Backward compatibility test passed: {len(natal_aspects_compat.all_aspects) == len(natal_aspects.all_aspects)}")
-    print(f"Backward compatibility test passed: {len(synastry_aspects_compat.all_aspects) == len(synastry_aspects.all_aspects)}")
+    print(f"Legacy compatibility test passed: {len(natal_aspects_compat.all_aspects) == len(single_chart_aspects.all_aspects)}")
+    print(f"Legacy compatibility test passed: {len(synastry_aspects_compat.all_aspects) == len(dual_chart_aspects.all_aspects)}")

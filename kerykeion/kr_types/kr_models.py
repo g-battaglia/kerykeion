@@ -338,33 +338,50 @@ class TransitMomentModel(SubscriptableBaseModel):
     aspects: List[AspectModel] = Field(description="List of aspects active at this specific moment.")
 
 
-class NatalAspectsModel(SubscriptableBaseModel):
+class SingleChartAspectsModel(SubscriptableBaseModel):
     """
-    Model representing all aspects in a natal chart.
+    Model representing all aspects within a single astrological chart.
+
+    This model can be used for any type of single chart analysis including:
+    - Natal charts
+    - Planetary return charts
+    - Composite charts
+    - Any other single chart type
 
     Contains both all calculated aspects and the filtered relevant aspects
-    for an astrological subject.
+    for the astrological subject.
     """
     subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The astrological subject for which aspects were calculated.")
-    all_aspects: List[AspectModel] = Field(description="Complete list of all calculated aspects.")
+    all_aspects: List[AspectModel] = Field(description="Complete list of all calculated aspects within the chart.")
     relevant_aspects: List[AspectModel] = Field(description="Filtered list of relevant aspects based on orb settings.")
     active_points: List[AstrologicalPoint] = Field(description="List of active points used in the calculation.")
     active_aspects: List["ActiveAspect"] = Field(description="List of active aspects with their orb settings.")
 
 
-class SynastryAspectsModel(SubscriptableBaseModel):
+class DualChartAspectsModel(SubscriptableBaseModel):
     """
-    Model representing all aspects between two astrological subjects.
+    Model representing all aspects between two astrological charts.
 
-    Contains both all calculated synastry aspects and the filtered relevant aspects
-    between two charts.
+    This model can be used for any type of dual chart analysis including:
+    - Synastry (relationship compatibility)
+    - Transit comparisons
+    - Composite vs natal comparisons
+    - Any other dual chart comparison
+
+    Contains both all calculated aspects and the filtered relevant aspects
+    between the two charts.
     """
     first_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The first astrological subject.")
     second_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The second astrological subject.")
-    all_aspects: List[AspectModel] = Field(description="Complete list of all calculated synastry aspects.")
-    relevant_aspects: List[AspectModel] = Field(description="Filtered list of relevant synastry aspects based on orb settings.")
+    all_aspects: List[AspectModel] = Field(description="Complete list of all calculated aspects between the two charts.")
+    relevant_aspects: List[AspectModel] = Field(description="Filtered list of relevant aspects based on orb settings.")
     active_points: List[AstrologicalPoint] = Field(description="List of active points used in the calculation.")
     active_aspects: List["ActiveAspect"] = Field(description="List of active aspects with their orb settings.")
+
+
+# Legacy aliases for backward compatibility
+NatalAspectsModel = SingleChartAspectsModel
+SynastryAspectsModel = DualChartAspectsModel
 
 
 class TransitsTimeRangeModel(SubscriptableBaseModel):

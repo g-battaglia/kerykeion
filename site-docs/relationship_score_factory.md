@@ -768,7 +768,7 @@ print("   - Consider relationship context")
 
 ```python
 # Combine with other Kerykeion features
-from kerykeion.aspects.synastry_aspects_factory import SynastryAspectsFactory
+from kerykeion.aspects import SynastryAspectsFactory
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 
 def comprehensive_relationship_analysis(person1, person2):
