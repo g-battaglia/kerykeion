@@ -768,7 +768,7 @@ print("   - Consider relationship context")
 
 ```python
 # Combine with other Kerykeion features
-from kerykeion.aspects import SynastryAspectsFactory
+from kerykeion.aspects import AspectsFactory
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 
 def comprehensive_relationship_analysis(person1, person2):
@@ -777,7 +777,7 @@ def comprehensive_relationship_analysis(person1, person2):
     compatibility = score_factory.get_relationship_score()
     
     # Detailed synastry aspects
-    synastry_factory = SynastryAspectsFactory.from_subjects(person1, person2)
+    synastry_factory = AspectsFactory.dual_chart_aspects(person1, person2)
     all_aspects = synastry_factory.all_aspects
     
     # Composite chart

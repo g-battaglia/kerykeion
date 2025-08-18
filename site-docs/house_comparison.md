@@ -122,10 +122,10 @@ Each point result includes detailed information:
 
 ## Synastry Integration
 
-This module is complementary to `SynastryAspectsFactory` for complete synastry analysis. While house comparison reveals where planetary energies are activated in each person's life areas, synastry aspects show how the planets interact with each other through geometric relationships.
+This module is complementary to `AspectsFactory` for complete synastry analysis. While house comparison reveals where planetary energies are activated in each person's life areas, dual chart aspects show how the planets interact with each other through geometric relationships.
 
 For a comprehensive relationship analysis, use both modules together:
 - **House Comparison**: Shows planetary placements and life area activations
-- **Synastry Aspects**: Reveals planetary interactions and compatibility patterns
+- **Dual Chart Aspects**: Reveals planetary interactions and compatibility patterns
 
-Refer to the `SynastryAspectsFactory` module documentation for details on aspect analysis.
+Refer to the `AspectsFactory` module documentation for details on aspect analysis.
