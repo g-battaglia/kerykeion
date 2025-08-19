@@ -15,8 +15,6 @@ License: AGPL-3.0
 import pytest
 import tempfile
 import json
-from typing import List, Dict, Any
-from datetime import datetime
 
 from kerykeion import (
     ChartDataFactory,

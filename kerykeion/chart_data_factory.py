@@ -29,8 +29,7 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-from typing import Union, Optional, List, Dict, Any, Literal, cast
-from pathlib import Path
+from typing import Union, Optional, List, Literal, cast
 
 from kerykeion.aspects import AspectsFactory
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
@@ -51,9 +50,6 @@ from kerykeion.schemas.kr_models import (
 )
 from kerykeion.schemas.kr_literals import (
     AstrologicalPoint,
-)
-from kerykeion.schemas.settings_models import (
-    KerykeionSettingsModel,
 )
 from kerykeion.house_comparison.house_comparison_models import HouseComparisonModel
 from kerykeion.utilities import find_common_active_points
