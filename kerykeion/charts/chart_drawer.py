@@ -6,13 +6,12 @@
 
 import logging
 import swisseph as swe
-from typing import get_args, Union, Optional, TYPE_CHECKING, cast
+from typing import get_args, Union, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from kerykeion.chart_data_factory import ChartDataModel, SingleChartDataModel, DualChartDataModel
+    from kerykeion.chart_data_factory import ChartDataModel
 
 from kerykeion.settings.kerykeion_settings import get_settings
-from kerykeion.aspects import AspectsFactory
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
 from kerykeion.schemas import (
     KerykeionException,
@@ -35,7 +34,6 @@ from kerykeion.schemas.kr_literals import (
     KerykeionChartLanguage,
     AstrologicalPoint,
 )
-from kerykeion.utilities import find_common_active_points
 from kerykeion.charts.charts_utils import (
     draw_zodiac_slice,
     convert_latitude_coordinate_to_string,
@@ -60,15 +58,10 @@ from kerykeion.charts.charts_utils import (
     draw_main_planet_grid,
     draw_secondary_planet_grid,
     format_location_string,
-    format_datetime_with_timezone,
-    calculate_element_points,
-    calculate_synastry_element_points,
-    calculate_quality_points,
-    calculate_synastry_quality_points
+    format_datetime_with_timezone
 )
 from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
 from kerykeion.settings.legacy.legacy_color_settings import DEFAULT_CHART_COLORS
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
