@@ -1872,8 +1872,7 @@ if __name__ == "__main__":
         "2025-01-09T18:30:00+01:00",  # UTC+1
         return_type="Solar",
     )
-    solar_return_chart_data = ChartDataFactory.create_chart_data(
-        "Return",
+    solar_return_chart_data = ChartDataFactory.create_return_chart_data(
         subject,
         solar_return,
         active_points=ACTIVE_PLANETS,
@@ -1888,8 +1887,7 @@ if __name__ == "__main__":
 
     ###
     ## Single wheel return - NEW APPROACH with ChartDataFactory
-    single_wheel_return_chart_data = ChartDataFactory.create_chart_data(
-        "SingleWheelReturn",
+    single_wheel_return_chart_data = ChartDataFactory.create_single_wheel_return_chart_data(
         solar_return,
         active_points=ACTIVE_PLANETS,
     )
@@ -1907,8 +1905,7 @@ if __name__ == "__main__":
         "2025-01-09T18:30:00+01:00",  # UTC+1
         return_type="Lunar",
     )
-    lunar_return_chart_data = ChartDataFactory.create_chart_data(
-        "Return",
+    lunar_return_chart_data = ChartDataFactory.create_return_chart_data(
         subject,
         lunar_return,
         active_points=ACTIVE_PLANETS,
