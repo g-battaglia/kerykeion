@@ -10,8 +10,8 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, PlanetReturnModel
-from kerykeion.kr_types.kr_literals import AstrologicalPoint
+from kerykeion.schemas.kr_models import AstrologicalSubjectModel, PlanetReturnModel
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 from kerykeion.utilities import get_planet_house, get_house_number
 from kerykeion.house_comparison.house_comparison_models import PointInHouseModel

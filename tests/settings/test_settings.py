@@ -1,5 +1,5 @@
 from kerykeion.settings import get_settings
-from kerykeion.kr_types import KerykeionSettingsModel
+from kerykeion.schemas import KerykeionSettingsModel
 import pathlib
 import json
 

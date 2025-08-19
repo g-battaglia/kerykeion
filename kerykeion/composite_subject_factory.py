@@ -42,9 +42,9 @@ from typing import Union
 
 # Fix the circular import by changing this import
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.kr_types.kerykeion_exception import KerykeionException
-from kerykeion.kr_types.kr_models import CompositeSubjectModel, AstrologicalSubjectModel
-from kerykeion.kr_types.kr_literals import ZodiacType, PerspectiveType, HousesSystemIdentifier, SiderealMode, AstrologicalPoint, Houses, CompositeChartType
+from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.kr_models import CompositeSubjectModel, AstrologicalSubjectModel
+from kerykeion.schemas.kr_literals import ZodiacType, PerspectiveType, HousesSystemIdentifier, SiderealMode, AstrologicalPoint, Houses, CompositeChartType
 from kerykeion.utilities import (
     get_kerykeion_point_from_degree,
     get_planet_house,

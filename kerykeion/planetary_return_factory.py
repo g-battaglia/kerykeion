@@ -73,7 +73,7 @@ import swisseph as swe
 from datetime import datetime, timezone
 from typing import Union
 
-from kerykeion.kr_types import KerykeionException
+from kerykeion.schemas import KerykeionException
 from kerykeion.fetch_geonames import FetchGeonames
 from kerykeion.utilities import julian_to_datetime, datetime_to_julian
 from kerykeion.astrological_subject_factory import (
@@ -82,8 +82,8 @@ from kerykeion.astrological_subject_factory import (
     DEFAULT_GEONAMES_USERNAME,
 )
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.kr_types.kr_literals import ReturnType
-from kerykeion.kr_types.kr_models import PlanetReturnModel, AstrologicalSubjectModel
+from kerykeion.schemas.kr_literals import ReturnType
+from kerykeion.schemas.kr_models import PlanetReturnModel, AstrologicalSubjectModel
 
 
 class PlanetaryReturnFactory:

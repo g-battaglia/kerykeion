@@ -8,19 +8,19 @@ from typing import Union, List, Optional
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points, get_active_points_list
-from kerykeion.kr_types.kr_models import (
-    AstrologicalSubjectModel, 
-    AspectModel, 
-    ActiveAspect, 
-    CompositeSubjectModel, 
-    PlanetReturnModel, 
+from kerykeion.schemas.kr_models import (
+    AstrologicalSubjectModel,
+    AspectModel,
+    ActiveAspect,
+    CompositeSubjectModel,
+    PlanetReturnModel,
     SingleChartAspectsModel,
     DualChartAspectsModel,
     # Legacy aliases for backward compatibility
     NatalAspectsModel,
     SynastryAspectsModel
 )
-from kerykeion.kr_types.kr_literals import AstrologicalPoint
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
@@ -39,8 +39,8 @@ class AspectsFactory:
     """
     Unified factory class for creating both single chart and dual chart aspects analysis.
 
-    This factory provides methods to calculate all aspects within a single chart or 
-    between two charts. It consolidates the common functionality between different 
+    This factory provides methods to calculate all aspects within a single chart or
+    between two charts. It consolidates the common functionality between different
     types of aspect calculations while providing specialized methods for each type.
 
     The factory provides both comprehensive and filtered aspect lists based on orb settings
@@ -57,7 +57,7 @@ class AspectsFactory:
         >>> # For single chart aspects (natal, returns, etc.)
         >>> johnny = AstrologicalSubjectFactory.from_birth_data("Johnny", 1963, 6, 9, 0, 0, "Owensboro", "US")
         >>> single_chart_aspects = AspectsFactory.single_chart_aspects(johnny)
-        >>> 
+        >>>
         >>> # For dual chart aspects (synastry, comparisons, etc.)
         >>> john = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
         >>> jane = AstrologicalSubjectFactory.from_birth_data("Jane", 1992, 6, 15, 14, 30, "Paris", "FR")
@@ -77,7 +77,7 @@ class AspectsFactory:
         This method calculates all astrological aspects (angular relationships)
         within a single chart. Can be used for any type of chart including:
         - Natal charts
-        - Planetary return charts  
+        - Planetary return charts
         - Composite charts
         - Any other single chart type
 
@@ -227,7 +227,7 @@ class AspectsFactory:
 
         Args:
             first_subject: First astrological subject
-            second_subject: Second astrological subject  
+            second_subject: Second astrological subject
             active_points_resolved: Resolved list of active celestial points
             active_aspects_resolved: Resolved list of active aspects with orbs
             aspects_settings: Chart aspect configuration settings
@@ -382,7 +382,7 @@ class AspectsFactory:
                 if aspect["verdict"]:
                     first_name = first_active_points_list[first]["name"]
                     second_name = second_active_points_list[second]["name"]
-                    
+
                     # Get planet IDs using lookup dictionary for better performance
                     first_planet_id = planet_id_lookup.get(first_name, 0)
                     second_planet_id = planet_id_lookup.get(second_name, 0)
@@ -407,18 +407,18 @@ class AspectsFactory:
 
     @staticmethod
     def _update_aspect_settings(
-        aspects_settings: List[dict], 
+        aspects_settings: List[dict],
         active_aspects: List[ActiveAspect]
     ) -> List[dict]:
         """
         Update aspects settings with active aspects orbs.
-        
+
         This is a common utility method used by both single chart and dual chart calculations.
-        
+
         Args:
             aspects_settings: Base aspect settings
             active_aspects: Active aspects with their orb configurations
-            
+
         Returns:
             List of filtered and updated aspect settings
         """
@@ -472,7 +472,7 @@ class AspectsFactory:
     ) -> NatalAspectsModel:
         """
         Legacy method - use single_chart_aspects() instead.
-        
+
         ⚠️  DEPRECATION WARNING ⚠️
         This method is deprecated. Use AspectsFactory.single_chart_aspects() instead.
         """
@@ -488,7 +488,7 @@ class AspectsFactory:
     ) -> SynastryAspectsModel:
         """
         Legacy method - use dual_chart_aspects() instead.
-        
+
         ⚠️  DEPRECATION WARNING ⚠️
         This method is deprecated. Use AspectsFactory.dual_chart_aspects() instead.
         """
