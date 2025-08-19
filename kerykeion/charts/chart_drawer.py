@@ -763,6 +763,7 @@ class ChartDrawer:
                 c1=self.first_circle_radius,
                 c3=self.third_circle_radius,
                 chart_type=self.chart_type,
+                external_view=self.external_view,
             )
 
             template_dict["makePlanets"] = draw_planets(
@@ -773,6 +774,7 @@ class ChartDrawer:
                 third_circle_radius=self.third_circle_radius,
                 main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
                 main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+                external_view=self.external_view,
             )
 
             template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
@@ -907,6 +909,7 @@ class ChartDrawer:
                 c1=self.first_circle_radius,
                 c3=self.third_circle_radius,
                 chart_type=self.chart_type,
+                external_view=self.external_view,
             )
 
             template_dict["makePlanets"] = draw_planets(
@@ -917,6 +920,7 @@ class ChartDrawer:
                 third_circle_radius=self.third_circle_radius,
                 main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
                 main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+                external_view=self.external_view,
             )
 
             subject_name = f"{self.first_obj.first_subject.name} {self.language_settings['and_word']} {self.first_obj.second_subject.name}" # type: ignore
@@ -1069,6 +1073,7 @@ class ChartDrawer:
                 c1=self.first_circle_radius,
                 c3=self.third_circle_radius,
                 chart_type=self.chart_type,
+                external_view=self.external_view,
                 second_subject_houses_list=second_subject_houses_list,
                 transit_house_cusp_color=self.chart_colors_settings["houses_transit_line"],
             )
@@ -1082,6 +1087,7 @@ class ChartDrawer:
                 main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                 chart_type=self.chart_type,
                 third_circle_radius=self.third_circle_radius,
+                external_view=self.external_view,
             )
 
             # Planet grids
@@ -1236,6 +1242,7 @@ class ChartDrawer:
                 c1=self.first_circle_radius,
                 c3=self.third_circle_radius,
                 chart_type=self.chart_type,
+                external_view=self.external_view,
                 second_subject_houses_list=second_subject_houses_list,
                 transit_house_cusp_color=self.chart_colors_settings["houses_transit_line"],
             )
@@ -1249,6 +1256,7 @@ class ChartDrawer:
                 main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                 chart_type=self.chart_type,
                 third_circle_radius=self.third_circle_radius,
+                external_view=self.external_view,
             )
 
             # Planet grid
@@ -1402,6 +1410,7 @@ class ChartDrawer:
                 c1=self.first_circle_radius,
                 c3=self.third_circle_radius,
                 chart_type=self.chart_type,
+                external_view=self.external_view,
                 second_subject_houses_list=second_subject_houses_list,
                 transit_house_cusp_color=self.chart_colors_settings["houses_transit_line"],
             )
@@ -1415,6 +1424,7 @@ class ChartDrawer:
                 main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                 chart_type=self.chart_type,
                 third_circle_radius=self.third_circle_radius,
+                external_view=self.external_view,
             )
 
             # Planet grid
@@ -1570,6 +1580,7 @@ class ChartDrawer:
                 c1=self.first_circle_radius,
                 c3=self.third_circle_radius,
                 chart_type=self.chart_type,
+                external_view=self.external_view,
             )
 
             template_dict["makePlanets"] = draw_planets(
@@ -1580,6 +1591,7 @@ class ChartDrawer:
                 third_circle_radius=self.third_circle_radius,
                 main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
                 main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+                external_view=self.external_view,
             )
 
             template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(

@@ -572,6 +572,7 @@ def draw_houses_cusps_and_text_number(
     chart_type: ChartType,
     second_subject_houses_list: Union[list[KerykeionPointModel], None] = None,
     transit_house_cusp_color: Union[str, None] = None,
+    external_view: bool = False,
 ) -> str:
     """
     Draws the houses cusps and text numbers for a given chart type.
@@ -589,9 +590,10 @@ def draw_houses_cusps_and_text_number(
     - chart_type: Type of the chart (e.g., Transit, Synastry).
     - second_subject_houses_list: List of house for the second subject (optional).
     - transit_house_cusp_color: Color for transit house cusps (optional).
+    - external_view: Whether to use external view mode for positioning (optional).
 
     Returns:
-    - A string containing the SVG path for the houses cusps and text numbers.
+    - A string containing SVG elements for house cusps and numbers.
     """
 
     path = ""
@@ -655,8 +657,12 @@ def draw_houses_cusps_and_text_number(
             path += f"<line x1='{t_x1}' y1='{t_y1}' x2='{t_x2}' y2='{t_y2}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:{stroke_opacity};'/>"
             path += "</g>"
 
-        # Adjust dropin based on chart type
-        dropin = {"Transit": 84, "Synastry": 84, "Return": 84, "ExternalNatal": 100}.get(chart_type, 48)
+        # Adjust dropin based on chart type and external view
+        dropin_map = {"Transit": 84, "Synastry": 84, "Return": 84}
+        if external_view:
+            dropin = 100
+        else:
+            dropin = dropin_map.get(chart_type, 48)
         xtext = sliceToX(0, (r - dropin), text_offset) + dropin
         ytext = sliceToY(0, (r - dropin), text_offset) + dropin
 
