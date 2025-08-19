@@ -70,15 +70,15 @@ from kerykeion.charts.charts_utils import (
 class ElementDistributionModel(SubscriptableBaseModel):
     """
     Model representing element distribution in a chart.
-    
+
     Attributes:
         fire: Fire element points total
-        earth: Earth element points total  
+        earth: Earth element points total
         air: Air element points total
         water: Water element points total
         fire_percentage: Fire element percentage
         earth_percentage: Earth element percentage
-        air_percentage: Air element percentage  
+        air_percentage: Air element percentage
         water_percentage: Water element percentage
     """
     fire: float
@@ -94,7 +94,7 @@ class ElementDistributionModel(SubscriptableBaseModel):
 class QualityDistributionModel(SubscriptableBaseModel):
     """
     Model representing quality distribution in a chart.
-    
+
     Attributes:
         cardinal: Cardinal quality points total
         fixed: Fixed quality points total
@@ -114,17 +114,17 @@ class QualityDistributionModel(SubscriptableBaseModel):
 class SingleChartDataModel(SubscriptableBaseModel):
     """
     Chart data model for single-subject astrological charts.
-    
+
     This model contains all pure data from single-subject charts including planetary
     positions, internal aspects, element/quality distributions, and location data.
     Used for chart types that analyze a single astrological subject.
-    
+
     Supported chart types:
     - Natal: Birth chart with internal planetary aspects
     - ExternalNatal: Birth chart with alternate visualization data
     - Composite: Midpoint relationship chart with internal aspects
     - SingleWheelReturn: Single planetary return with internal aspects
-    
+
     Attributes:
         chart_type: Type of single chart (Natal, ExternalNatal, Composite, SingleWheelReturn)
         subject: The astrological subject being analyzed
@@ -137,24 +137,24 @@ class SingleChartDataModel(SubscriptableBaseModel):
         latitude: Geographic latitude coordinate
         longitude: Geographic longitude coordinate
     """
-    
+
     # Chart identification
     chart_type: Literal["Natal", "ExternalNatal", "Composite", "SingleWheelReturn"]
-    
+
     # Single chart subject
     subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
-    
+
     # Internal aspects analysis
     aspects: SingleChartAspectsModel
-    
+
     # Element and quality distributions
     element_distribution: ElementDistributionModel
     quality_distribution: QualityDistributionModel
-    
+
     # Configuration and metadata
     active_points: List[AstrologicalPoint]
     active_aspects: List[ActiveAspect]
-    
+
     # Location information
     location_name: str
     latitude: float
@@ -164,17 +164,17 @@ class SingleChartDataModel(SubscriptableBaseModel):
 class DualChartDataModel(SubscriptableBaseModel):
     """
     Chart data model for dual-subject astrological charts.
-    
+
     This model contains all pure data from dual-subject charts including both subjects,
     inter-chart aspects, house comparisons, relationship analysis, and combined
     element/quality distributions. Used for chart types that compare or overlay
     two astrological subjects.
-    
+
     Supported chart types:
     - Transit: Natal chart with current planetary transits
     - Synastry: Relationship compatibility between two people
     - Return: Natal chart with planetary return comparison
-    
+
     Attributes:
         chart_type: Type of dual chart (Transit, Synastry, Return)
         first_subject: Primary astrological subject (natal, base chart)
@@ -190,31 +190,31 @@ class DualChartDataModel(SubscriptableBaseModel):
         latitude: Geographic latitude coordinate
         longitude: Geographic longitude coordinate
     """
-    
+
     # Chart identification
     chart_type: Literal["Transit", "Synastry", "Return"]
-    
+
     # Dual chart subjects
     first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
     second_subject: Union[AstrologicalSubjectModel, PlanetReturnModel]
-    
+
     # Inter-chart aspects analysis
     aspects: DualChartAspectsModel
-    
+
     # House comparison analysis
     house_comparison: Optional[HouseComparisonModel] = None
-    
+
     # Relationship analysis (synastry only)
     relationship_score: Optional[RelationshipScoreModel] = None
-    
+
     # Combined element and quality distributions
     element_distribution: ElementDistributionModel
     quality_distribution: QualityDistributionModel
-    
+
     # Configuration and metadata
     active_points: List[AstrologicalPoint]
     active_aspects: List[ActiveAspect]
-    
+
     # Location information
     location_name: str
     latitude: float
@@ -228,28 +228,28 @@ ChartDataModel = Union[SingleChartDataModel, DualChartDataModel]
 class ChartDataFactory:
     """
     Factory class for creating comprehensive chart data models.
-    
+
     This factory creates ChartDataModel instances containing all the pure data
     from astrological charts, including subjects, aspects, house comparisons,
     and analytical metrics. It provides the structured data equivalent of
     ChartDrawer's visual output.
-    
+
     The factory handles all chart types and automatically includes relevant
     analyses based on chart type (e.g., house comparison for dual charts,
     relationship scoring for synastry charts).
-    
+
     Example:
         >>> # Create natal chart data
         >>> john = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
         >>> natal_data = ChartDataFactory.create_chart_data("Natal", john)
         >>> print(f"Elements: Fire {natal_data.element_distribution.fire_percentage}%")
-        >>> 
+        >>>
         >>> # Create synastry chart data
         >>> jane = AstrologicalSubjectFactory.from_birth_data("Jane", 1992, 6, 15, 14, 30, "Paris", "FR")
         >>> synastry_data = ChartDataFactory.create_chart_data("Synastry", john, jane)
         >>> print(f"Relationship score: {synastry_data.relationship_score.score_value}")
     """
-    
+
     @staticmethod
     def create_chart_data(
         chart_type: ChartType,
@@ -262,7 +262,7 @@ class ChartDataFactory:
     ) -> ChartDataModel:
         """
         Create comprehensive chart data for the specified chart type.
-        
+
         Args:
             chart_type: Type of chart to create data for
             first_subject: Primary astrological subject
@@ -271,27 +271,27 @@ class ChartDataFactory:
             active_aspects: Aspect types and orbs to use
             include_house_comparison: Whether to include house comparison for dual charts
             include_relationship_score: Whether to include relationship scoring for synastry
-            
+
         Returns:
             ChartDataModel: Comprehensive chart data model
-            
+
         Raises:
             KerykeionException: If chart type requirements are not met
         """
-        
+
         # Validate chart type requirements
         if chart_type in ["Transit", "Synastry", "Return"] and not second_subject:
             raise KerykeionException(f"Second subject is required for {chart_type} charts.")
-            
+
         if chart_type == "Composite" and not isinstance(first_subject, CompositeSubjectModel):
             raise KerykeionException("First subject must be a CompositeSubjectModel for Composite charts.")
-            
+
         if chart_type == "Return" and not isinstance(second_subject, PlanetReturnModel):
             raise KerykeionException("Second subject must be a PlanetReturnModel for Return charts.")
-            
+
         if chart_type == "SingleWheelReturn" and not isinstance(first_subject, PlanetReturnModel):
             raise KerykeionException("First subject must be a PlanetReturnModel for SingleWheelReturn charts.")
-        
+
         # Determine active points
         if not active_points:
             effective_active_points = first_subject.active_points
@@ -300,14 +300,14 @@ class ChartDataFactory:
                 active_points,
                 first_subject.active_points
             )
-        
+
         # For dual charts, further filter by second subject's active points
         if second_subject:
             effective_active_points = find_common_active_points(
                 effective_active_points,
                 second_subject.active_points
             )
-        
+
         # Calculate aspects based on chart type
         if chart_type in ["Natal", "ExternalNatal", "Composite", "SingleWheelReturn"]:
             # Single chart aspects
@@ -326,7 +326,7 @@ class ChartDataFactory:
                 active_points=effective_active_points,
                 active_aspects=active_aspects,
             )
-        
+
         # Calculate house comparison for dual charts
         house_comparison = None
         if second_subject and include_house_comparison and chart_type in ["Transit", "Synastry", "Return"]:
@@ -337,7 +337,7 @@ class ChartDataFactory:
                     active_points=effective_active_points
                 )
                 house_comparison = house_comparison_factory.get_house_comparison()
-        
+
         # Calculate relationship score for synastry
         relationship_score = None
         if chart_type == "Synastry" and include_relationship_score and second_subject:
@@ -347,7 +347,7 @@ class ChartDataFactory:
                     second_subject
                 )
                 relationship_score = relationship_score_factory.get_relationship_score()
-        
+
         # Calculate element and quality distributions
         celestial_points_settings = DEFAULT_CELESTIAL_POINTS_SETTINGS
         available_planets_setting = []
@@ -355,9 +355,9 @@ class ChartDataFactory:
             if body["name"] in effective_active_points:
                 body["is_active"] = True
                 available_planets_setting.append(body)
-        
+
         celestial_points_names = [body["name"].lower() for body in available_planets_setting]
-        
+
         if chart_type == "Synastry" and second_subject:
             # Calculate combined element/quality points for synastry
             # Type narrowing: ensure both subjects are AstrologicalSubjectModel for synastry
@@ -398,7 +398,7 @@ class ChartDataFactory:
                 celestial_points_names,
                 first_subject,
             )
-        
+
         # Calculate percentages
         total_elements = element_totals["fire"] + element_totals["water"] + element_totals["earth"] + element_totals["air"]
         element_distribution = ElementDistributionModel(
@@ -411,7 +411,7 @@ class ChartDataFactory:
             air_percentage=int(round(100 * element_totals["air"] / total_elements)) if total_elements > 0 else 0,
             water_percentage=int(round(100 * element_totals["water"] / total_elements)) if total_elements > 0 else 0,
         )
-        
+
         total_qualities = quality_totals["cardinal"] + quality_totals["fixed"] + quality_totals["mutable"]
         quality_distribution = QualityDistributionModel(
             cardinal=quality_totals["cardinal"],
@@ -421,12 +421,12 @@ class ChartDataFactory:
             fixed_percentage=int(round(100 * quality_totals["fixed"] / total_qualities)) if total_qualities > 0 else 0,
             mutable_percentage=int(round(100 * quality_totals["mutable"] / total_qualities)) if total_qualities > 0 else 0,
         )
-        
+
         # Determine location information
         location_name: str
-        latitude: float 
+        latitude: float
         longitude: float
-        
+
         if chart_type == "Composite":
             # For composite charts, use average location of the two composite subjects
             if isinstance(first_subject, CompositeSubjectModel):
@@ -448,7 +448,7 @@ class ChartDataFactory:
             location_name = first_subject.city or "Unknown"
             latitude = first_subject.lat or 0.0
             longitude = first_subject.lng or 0.0
-        
+
         # Create and return the appropriate chart data model
         if chart_type in ["Natal", "ExternalNatal", "Composite", "SingleWheelReturn"]:
             # Single chart data model - cast types since they're already validated
@@ -483,7 +483,7 @@ class ChartDataFactory:
                 latitude=latitude,
                 longitude=longitude,
             )
-    
+
     @staticmethod
     def create_natal_chart_data(
         subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
@@ -492,12 +492,12 @@ class ChartDataFactory:
     ) -> ChartDataModel:
         """
         Convenience method for creating natal chart data.
-        
+
         Args:
             subject: Astrological subject
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
-            
+
         Returns:
             ChartDataModel: Natal chart data
         """
@@ -507,7 +507,7 @@ class ChartDataFactory:
             active_points=active_points,
             active_aspects=active_aspects,
         )
-    
+
     @staticmethod
     def create_synastry_chart_data(
         first_subject: AstrologicalSubjectModel,
@@ -519,7 +519,7 @@ class ChartDataFactory:
     ) -> ChartDataModel:
         """
         Convenience method for creating synastry chart data.
-        
+
         Args:
             first_subject: First astrological subject
             second_subject: Second astrological subject
@@ -527,7 +527,7 @@ class ChartDataFactory:
             active_aspects: Aspect types and orbs to use
             include_house_comparison: Whether to include house comparison
             include_relationship_score: Whether to include relationship scoring
-            
+
         Returns:
             ChartDataModel: Synastry chart data
         """
@@ -540,7 +540,7 @@ class ChartDataFactory:
             include_house_comparison=include_house_comparison,
             include_relationship_score=include_relationship_score,
         )
-    
+
     @staticmethod
     def create_transit_chart_data(
         natal_subject: AstrologicalSubjectModel,
@@ -551,14 +551,14 @@ class ChartDataFactory:
     ) -> ChartDataModel:
         """
         Convenience method for creating transit chart data.
-        
+
         Args:
             natal_subject: Natal astrological subject
             transit_subject: Transit astrological subject
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
             include_house_comparison: Whether to include house comparison
-            
+
         Returns:
             ChartDataModel: Transit chart data
         """
@@ -570,7 +570,7 @@ class ChartDataFactory:
             active_aspects=active_aspects,
             include_house_comparison=include_house_comparison,
         )
-    
+
     @staticmethod
     def create_composite_chart_data(
         composite_subject: CompositeSubjectModel,
@@ -579,12 +579,12 @@ class ChartDataFactory:
     ) -> ChartDataModel:
         """
         Convenience method for creating composite chart data.
-        
+
         Args:
             composite_subject: Composite astrological subject
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
-            
+
         Returns:
             ChartDataModel: Composite chart data
         """
@@ -595,15 +595,93 @@ class ChartDataFactory:
             active_aspects=active_aspects,
         )
 
+    @staticmethod
+    def create_external_natal_chart_data(
+        subject: AstrologicalSubjectModel,
+        active_points: Optional[List[AstrologicalPoint]] = None,
+        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+    ) -> ChartDataModel:
+        """
+        Convenience method for creating external natal chart data.
+
+        Args:
+            subject: Astrological subject
+            active_points: Points to include in calculations
+            active_aspects: Aspect types and orbs to use
+
+        Returns:
+            ChartDataModel: External natal chart data
+        """
+        return ChartDataFactory.create_chart_data(
+            first_subject=subject,
+            chart_type="ExternalNatal",
+            active_points=active_points,
+            active_aspects=active_aspects,
+        )
+
+    @staticmethod
+    def create_return_chart_data(
+        natal_subject: AstrologicalSubjectModel,
+        return_subject: PlanetReturnModel,
+        active_points: Optional[List[AstrologicalPoint]] = None,
+        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        include_house_comparison: bool = True,
+    ) -> ChartDataModel:
+        """
+        Convenience method for creating planetary return chart data.
+
+        Args:
+            natal_subject: Natal astrological subject
+            return_subject: Planetary return subject
+            active_points: Points to include in calculations
+            active_aspects: Aspect types and orbs to use
+            include_house_comparison: Whether to include house comparison
+
+        Returns:
+            ChartDataModel: Return chart data
+        """
+        return ChartDataFactory.create_chart_data(
+            first_subject=natal_subject,
+            chart_type="Return",
+            second_subject=return_subject,
+            active_points=active_points,
+            active_aspects=active_aspects,
+            include_house_comparison=include_house_comparison,
+        )
+
+    @staticmethod
+    def create_single_wheel_return_chart_data(
+        return_subject: PlanetReturnModel,
+        active_points: Optional[List[AstrologicalPoint]] = None,
+        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+    ) -> ChartDataModel:
+        """
+        Convenience method for creating single wheel planetary return chart data.
+
+        Args:
+            return_subject: Planetary return subject
+            active_points: Points to include in calculations
+            active_aspects: Aspect types and orbs to use
+
+        Returns:
+            ChartDataModel: Single wheel return chart data
+        """
+        return ChartDataFactory.create_chart_data(
+            first_subject=return_subject,
+            chart_type="SingleWheelReturn",
+            active_points=active_points,
+            active_aspects=active_aspects,
+        )
+
 
 if __name__ == "__main__":
     # Example usage
     from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-    
+
     # Create a natal chart data
     subject = AstrologicalSubjectFactory.from_current_time(name="Test Subject")
     natal_data = ChartDataFactory.create_natal_chart_data(subject)
-    
+
     print(f"Chart Type: {natal_data.chart_type}")
     print(f"Active Points: {len(natal_data.active_points)}")
     print(f"Aspects: {len(natal_data.aspects.relevant_aspects)}")
