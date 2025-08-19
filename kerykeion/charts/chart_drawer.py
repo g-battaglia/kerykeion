@@ -6,7 +6,10 @@
 
 import logging
 import swisseph as swe
-from typing import get_args, Union, Optional
+from typing import get_args, Union, Optional, TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    from kerykeion.chart_data_factory import ChartDataModel, SingleChartDataModel, DualChartDataModel
 
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects import AspectsFactory
@@ -78,26 +81,30 @@ from datetime import datetime
 
 class ChartDrawer:
     """
-    ChartDrawer generates astrological chart visualizations as SVG files.
+    ChartDrawer generates astrological chart visualizations as SVG files from pre-computed chart data.
 
-    This class supports creating full chart SVGs, wheel-only SVGs, and aspect-grid-only SVGs
+    This class is designed for pure visualization and requires chart data to be pre-computed using
+    ChartDataFactory. This separation ensures clean architecture where ChartDataFactory handles
+    all calculations (aspects, element/quality distributions, subjects) while ChartDrawer focuses
+    solely on rendering SVG visualizations.
+
+    ChartDrawer supports creating full chart SVGs, wheel-only SVGs, and aspect-grid-only SVGs
     for various chart types including Natal, ExternalNatal, Transit, Synastry, and Composite.
     Charts are rendered using XML templates and drawing utilities, with customizable themes,
-    language, active points, and aspects.
-    The rendered SVGs can be saved to a specified output directory or, by default, to the user's home directory.
+    language, and visual settings.
+
+    The generated SVG files are optimized for web use and can be saved to a specified output
+    directory or, by default, to the user's home directory.
 
     NOTE:
         The generated SVG files are optimized for web use, opening in browsers. If you want to
         use them in other applications, you might need to adjust the SVG settings or styles.
 
     Args:
-        first_obj (AstrologicalSubject | AstrologicalSubjectModel | CompositeSubjectModel):
-            The primary astrological subject for the chart.
-        chart_type (ChartType, optional):
-            The type of chart to generate ('Natal', 'ExternalNatal', 'Transit', 'Synastry', 'Composite').
-            Defaults to 'Natal'.
-        second_obj (AstrologicalSubject | AstrologicalSubjectModel, optional):
-            The secondary subject for Transit or Synastry charts. Not required for Natal or Composite.
+        chart_data (ChartDataModel):
+            Pre-computed chart data from ChartDataFactory containing all subjects, aspects,
+            element/quality distributions, and other analytical data. This is the ONLY source
+            of chart information - no calculations are performed by ChartDrawer.
         new_output_directory (str | Path, optional):
             Directory to write generated SVG files. Defaults to the user's home directory.
         new_settings_file (Path | dict | KerykeionSettingsModel, optional):
@@ -108,22 +115,8 @@ class ChartDrawer:
             Specifies rendering style for double-chart aspect grids. Defaults to 'list'.
         chart_language (KerykeionChartLanguage, optional):
             Language code for chart labels. Defaults to 'EN'.
-        active_points (list[AstrologicalPoint], optional):
-            List of celestial points and angles to include. Defaults to DEFAULT_ACTIVE_POINTS.
-            Example:
-            ["Sun", "Moon", "Mercury", "Venus"]
-
-        active_aspects (list[ActiveAspect], optional):
-            List of aspects (name and orb) to calculate. Defaults to DEFAULT_ACTIVE_ASPECTS.
-            Example:
-            [
-                {"name": "conjunction", "orb": 10},
-                {"name": "opposition", "orb": 10},
-                {"name": "trine", "orb": 8},
-                {"name": "sextile", "orb": 6},
-                {"name": "square", "orb": 5},
-                {"name": "quintile", "orb": 1},
-            ]
+        transparent_background (bool, optional):
+            Whether to use a transparent background instead of the theme color. Defaults to False.
 
     Public Methods:
         makeTemplate(minify=False, remove_css_variables=False) -> str:
@@ -148,6 +141,21 @@ class ChartDrawer:
         makeAspectGridOnlySVG(minify=False, remove_css_variables=False) -> None:
             Generate and write the aspect-grid-only SVG file:
             '{subject.name} - {chart_type} Chart - Aspect Grid Only.svg'.
+
+    Example:
+        >>> from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        >>> from kerykeion.chart_data_factory import ChartDataFactory
+        >>> from kerykeion.charts.chart_drawer import ChartDrawer
+        >>>
+        >>> # Step 1: Create subject
+        >>> subject = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
+        >>>
+        >>> # Step 2: Pre-compute chart data
+        >>> chart_data = ChartDataFactory.create_natal_chart_data(subject)
+        >>>
+        >>> # Step 3: Create visualization
+        >>> chart_drawer = ChartDrawer(chart_data=chart_data, theme="classic")
+        >>> chart_drawer.makeSVG()
     """
 
     # Constants
@@ -200,16 +208,12 @@ class ChartDrawer:
 
     def __init__(
         self,
-        first_obj: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-        chart_type: ChartType = "Natal",
-        second_obj: Union[AstrologicalSubjectModel, PlanetReturnModel, None] = None,
+        chart_data: "ChartDataModel",
         new_output_directory: Union[str, None] = None,
         new_settings_file: Union[Path, None, KerykeionSettingsModel, dict] = None,
         theme: Union[KerykeionChartTheme, None] = "classic",
         double_chart_aspect_grid_type: Literal["list", "table"] = "list",
         chart_language: KerykeionChartLanguage = "EN",
-        active_points: Optional[list[AstrologicalPoint]] = None,
-        active_aspects: list[ActiveAspect]= DEFAULT_ACTIVE_ASPECTS,
         *,
         transparent_background: bool = False,
         colors_settings: dict = DEFAULT_CHART_COLORS,
@@ -217,15 +221,12 @@ class ChartDrawer:
         aspects_settings: list[dict] = DEFAULT_CHART_ASPECTS_SETTINGS,
     ):
         """
-        Initialize the chart generator with subject data and configuration options.
+        Initialize the chart visualizer with pre-computed chart data.
 
         Args:
-            first_obj (AstrologicalSubjectModel, or CompositeSubjectModel):
-                Primary astrological subject instance.
-            chart_type (ChartType, optional):
-                Type of chart to generate (e.g., 'Natal', 'Transit').
-            second_obj (AstrologicalSubject, optional):
-                Secondary subject for Transit or Synastry charts.
+            chart_data (ChartDataModel):
+                Pre-computed chart data from ChartDataFactory containing all subjects,
+                aspects, element/quality distributions, and other analytical data.
             new_output_directory (str or Path, optional):
                 Base directory to save generated SVG files.
             new_settings_file (Path, dict, or KerykeionSettingsModel, optional):
@@ -236,40 +237,37 @@ class ChartDrawer:
                 Layout style for double-chart aspect grids ('list' or 'table').
             chart_language (KerykeionChartLanguage, optional):
                 Language code for chart labels (e.g., 'EN', 'IT').
-            active_points (List[AstrologicalPoint], optional):
-                Celestial points to include in the chart visualization.
-            active_aspects (List[ActiveAspect], optional):
-                Aspects to calculate, each defined by name and orb.
             transparent_background (bool, optional):
                 Whether to use a transparent background instead of the theme color. Defaults to False.
         """
         # --------------------
         # COMMON INITIALIZATION
         # --------------------
+        # COMMON INITIALIZATION
+        # --------------------
         home_directory = Path.home()
         self.new_settings_file = new_settings_file
         self.chart_language = chart_language
-        self.active_aspects = active_aspects
-        self.chart_type = chart_type
         self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
         self.transparent_background = transparent_background
         self.chart_colors_settings = colors_settings
         self.planets_settings = celestial_points_settings
         self.aspects_settings = aspects_settings
 
-        if not active_points:
-            self.active_points = first_obj.active_points
-        else:
-            self.active_points = find_common_active_points(
-                active_points,
-                first_obj.active_points
-            )
+        # Extract data from ChartDataModel
+        self.chart_data = chart_data
+        self.chart_type = chart_data.chart_type
+        self.active_points = chart_data.active_points
+        self.active_aspects = chart_data.active_aspects
 
-        if second_obj:
-            self.active_points = find_common_active_points(
-                self.active_points,
-                second_obj.active_points
-            )
+        # Extract subjects based on chart type
+        if chart_data.chart_type in ["Natal", "ExternalNatal", "Composite", "SingleWheelReturn"]:
+            # SingleChartDataModel
+            self.first_obj = getattr(chart_data, 'subject')
+            self.second_obj = None
+        else:  # DualChartDataModel for Transit, Synastry, Return
+            self.first_obj = getattr(chart_data, 'first_subject')
+            self.second_obj = getattr(chart_data, 'second_subject')
 
         # Set output directory
         if new_output_directory:
@@ -280,13 +278,10 @@ class ChartDrawer:
         # Load settings
         self.parse_json_settings(new_settings_file)
 
-        # Primary subject
-        self.first_obj = first_obj
-
         # Default radius for all charts
         self.main_radius = 240
 
-        # Configure available planets
+        # Configure available planets from chart data
         self.available_planets_setting = []
         for body in self.planets_settings:
             if body["name"] in self.active_points:
@@ -297,35 +292,27 @@ class ChartDrawer:
         available_celestial_points_names = [body["name"].lower() for body in self.available_planets_setting]
         self.available_kerykeion_celestial_points = []
         for body in available_celestial_points_names:
-            self.available_kerykeion_celestial_points.append(self.first_obj.get(body))
+            if hasattr(self.first_obj, body):
+                self.available_kerykeion_celestial_points.append(self.first_obj.get(body))
 
         # ------------------------
-        # CHART TYPE SPECIFIC SETUP
+        # CHART TYPE SPECIFIC SETUP FROM CHART DATA
         # ------------------------
 
         if self.chart_type in ["Natal", "ExternalNatal"]:
             # --- NATAL / EXTERNAL NATAL CHART SETUP ---
 
-            # Validate Subject
-            if not isinstance(self.first_obj, AstrologicalSubjectModel):
-                raise KerykeionException("First object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
-
-            # Calculate aspects
-            aspects_instance = AspectsFactory.single_chart_aspects(
-                self.first_obj,
-                active_points=self.active_points,
-                active_aspects=active_aspects,
-            )
-            self.aspects_list = aspects_instance.relevant_aspects
+            # Extract aspects from pre-computed chart data
+            self.aspects_list = chart_data.aspects.relevant_aspects
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
             self.width = self._DEFAULT_NATAL_WIDTH
 
-            # Location and coordinates
-            self.location = self.first_obj.city
-            self.geolat = self.first_obj.lat
-            self.geolon = self.first_obj.lng
+            # Location and coordinates from chart data
+            self.location = chart_data.location_name
+            self.geolat = chart_data.latitude
+            self.geolon = chart_data.longitude
 
             # Circle radii
             if self.chart_type == "ExternalNatal":
@@ -340,21 +327,17 @@ class ChartDrawer:
         elif self.chart_type == "Composite":
             # --- COMPOSITE CHART SETUP ---
 
-            # Validate Subject
-            if not isinstance(self.first_obj, CompositeSubjectModel):
-                raise KerykeionException("First object must be a CompositeSubjectModel instance.")
-
-            # Calculate aspects
-            self.aspects_list = AspectsFactory.single_chart_aspects(self.first_obj, active_points=self.active_points).relevant_aspects
+            # Extract aspects from pre-computed chart data
+            self.aspects_list = chart_data.aspects.relevant_aspects
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
             self.width = self._DEFAULT_NATAL_WIDTH
 
-            # Location and coordinates (average of both subjects)
-            self.location = ""
-            self.geolat = (self.first_obj.first_subject.lat + self.first_obj.second_subject.lat) / 2
-            self.geolon = (self.first_obj.first_subject.lng + self.first_obj.second_subject.lng) / 2
+            # Location and coordinates from chart data
+            self.location = chart_data.location_name
+            self.geolat = chart_data.latitude
+            self.geolon = chart_data.longitude
 
             # Circle radii
             self.first_circle_radius = 0
@@ -364,25 +347,8 @@ class ChartDrawer:
         elif self.chart_type == "Transit":
             # --- TRANSIT CHART SETUP ---
 
-            # Validate Subjects
-            if not second_obj:
-                raise KerykeionException("Second object is required for Transit charts.")
-            if not isinstance(self.first_obj, AstrologicalSubjectModel):
-                raise KerykeionException("First object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
-            if not isinstance(second_obj, AstrologicalSubjectModel):
-                raise KerykeionException("Second object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
-
-            # Secondary subject setup
-            self.second_obj = second_obj
-
-            # Calculate aspects (transit to natal)
-            synastry_aspects_instance = AspectsFactory.dual_chart_aspects(
-                self.first_obj,
-                self.second_obj,
-                active_points=self.active_points,
-                active_aspects=active_aspects,
-            )
-            self.aspects_list = synastry_aspects_instance.relevant_aspects
+            # Extract aspects from pre-computed chart data
+            self.aspects_list = chart_data.aspects.relevant_aspects
 
             # Secondary subject available points
             self.t_available_kerykeion_celestial_points = self.available_kerykeion_celestial_points
@@ -394,10 +360,10 @@ class ChartDrawer:
             else:
                 self.width = self._DEFAULT_FULL_WIDTH
 
-            # Location and coordinates (from transit subject)
-            self.location = self.second_obj.city
-            self.geolat = self.second_obj.lat
-            self.geolon = self.second_obj.lng
+            # Location and coordinates from chart data
+            self.location = chart_data.location_name
+            self.geolat = chart_data.latitude
+            self.geolon = chart_data.longitude
             self.t_name = self.language_settings["transit_name"]
 
             # Circle radii
@@ -408,25 +374,8 @@ class ChartDrawer:
         elif self.chart_type == "Synastry":
             # --- SYNASTRY CHART SETUP ---
 
-            # Validate Subjects
-            if not second_obj:
-                raise KerykeionException("Second object is required for Synastry charts.")
-            if not isinstance(self.first_obj, AstrologicalSubjectModel):
-                raise KerykeionException("First object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
-            if not isinstance(second_obj, AstrologicalSubjectModel):
-                raise KerykeionException("Second object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
-
-            # Secondary subject setup
-            self.second_obj = second_obj
-
-            # Calculate aspects (natal to partner)
-            synastry_aspects_instance = AspectsFactory.dual_chart_aspects(
-                self.first_obj,
-                self.second_obj,
-                active_points=self.active_points,
-                active_aspects=active_aspects,
-            )
-            self.aspects_list = synastry_aspects_instance.relevant_aspects
+            # Extract aspects from pre-computed chart data
+            self.aspects_list = chart_data.aspects.relevant_aspects
 
             # Secondary subject available points
             self.t_available_kerykeion_celestial_points = self.available_kerykeion_celestial_points
@@ -435,10 +384,10 @@ class ChartDrawer:
             self.height = self._DEFAULT_HEIGHT
             self.width = self._DEFAULT_FULL_WIDTH
 
-            # Location and coordinates (from primary subject)
-            self.location = self.first_obj.city
-            self.geolat = self.first_obj.lat
-            self.geolon = self.first_obj.lng
+            # Location and coordinates from chart data
+            self.location = chart_data.location_name
+            self.geolat = chart_data.latitude
+            self.geolon = chart_data.longitude
 
             # Circle radii
             self.first_circle_radius = 0
@@ -448,25 +397,8 @@ class ChartDrawer:
         elif self.chart_type == "Return":
             # --- RETURN CHART SETUP ---
 
-            # Validate Subjects
-            if not second_obj:
-                raise KerykeionException("Second object is required for Return charts.")
-            if not isinstance(self.first_obj, AstrologicalSubjectModel):
-                raise KerykeionException("First object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
-            if not isinstance(second_obj, PlanetReturnModel):
-                raise KerykeionException("Second object must be a PlanetReturnModel instance.")
-
-            # Secondary subject setup
-            self.second_obj = second_obj
-
-            # Calculate aspects (natal to return)
-            synastry_aspects_instance = AspectsFactory.dual_chart_aspects(
-                self.first_obj,
-                self.second_obj,
-                active_points=self.active_points,
-                active_aspects=active_aspects,
-            )
-            self.aspects_list = synastry_aspects_instance.relevant_aspects
+            # Extract aspects from pre-computed chart data
+            self.aspects_list = chart_data.aspects.relevant_aspects
 
             # Secondary subject available points
             self.t_available_kerykeion_celestial_points = self.available_kerykeion_celestial_points
@@ -475,10 +407,10 @@ class ChartDrawer:
             self.height = self._DEFAULT_HEIGHT
             self.width = self._DEFAULT_ULTRA_WIDE_WIDTH
 
-            # Location and coordinates (from natal subject)
-            self.location = self.first_obj.city
-            self.geolat = self.first_obj.lat
-            self.geolon = self.first_obj.lng
+            # Location and coordinates from chart data
+            self.location = chart_data.location_name
+            self.geolat = chart_data.latitude
+            self.geolon = chart_data.longitude
 
             # Circle radii
             self.first_circle_radius = 0
@@ -486,82 +418,38 @@ class ChartDrawer:
             self.third_circle_radius = 120
 
         elif self.chart_type == "SingleWheelReturn":
-            # --- NATAL / EXTERNAL NATAL CHART SETUP ---
+            # --- SINGLE WHEEL RETURN CHART SETUP ---
 
-            # Validate Subject
-            if not isinstance(self.first_obj, PlanetReturnModel):
-                raise KerykeionException("First object must be an AstrologicalSubjectModel or AstrologicalSubject instance.")
-
-            # Calculate aspects
-            aspects_instance = AspectsFactory.single_chart_aspects(
-                self.first_obj,
-                active_points=self.active_points,
-                active_aspects=active_aspects,
-            )
-            self.aspects_list = aspects_instance.relevant_aspects
+            # Extract aspects from pre-computed chart data
+            self.aspects_list = chart_data.aspects.relevant_aspects
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
             self.width = self._DEFAULT_NATAL_WIDTH
 
-            # Location and coordinates
-            self.location = self.first_obj.city
-            self.geolat = self.first_obj.lat
-            self.geolon = self.first_obj.lng
+            # Location and coordinates from chart data
+            self.location = chart_data.location_name
+            self.geolat = chart_data.latitude
+            self.geolon = chart_data.longitude
 
             # Circle radii
-            if self.chart_type == "ExternalNatal":
-                self.first_circle_radius = 56
-                self.second_circle_radius = 92
-                self.third_circle_radius = 112
-            else:
-                self.first_circle_radius = 0
-                self.second_circle_radius = 36
-                self.third_circle_radius = 120
+            self.first_circle_radius = 0
+            self.second_circle_radius = 36
+            self.third_circle_radius = 120
 
         # --------------------
-        # FINAL COMMON SETUP
+        # FINAL COMMON SETUP FROM CHART DATA
         # --------------------
 
-        # Calculate element points
-        celestial_points_names = [body["name"].lower() for body in self.available_planets_setting]
-        if self.chart_type == "Synastry":
-            element_totals = calculate_synastry_element_points(
-                self.available_planets_setting,
-                celestial_points_names,
-                self.first_obj,
-                self.second_obj,
-            )
-        else:
-            element_totals = calculate_element_points(
-                self.available_planets_setting,
-                celestial_points_names,
-                self.first_obj,
-            )
+        # Extract pre-computed element and quality distributions
+        self.fire = chart_data.element_distribution.fire
+        self.earth = chart_data.element_distribution.earth
+        self.air = chart_data.element_distribution.air
+        self.water = chart_data.element_distribution.water
 
-        self.fire = element_totals["fire"]
-        self.earth = element_totals["earth"]
-        self.air = element_totals["air"]
-        self.water = element_totals["water"]
-
-        # Calculate qualities points
-        if self.chart_type == "Synastry":
-            qualities_totals = calculate_synastry_quality_points(
-                self.available_planets_setting,
-                celestial_points_names,
-                self.first_obj,
-                self.second_obj,
-            )
-        else:
-            qualities_totals = calculate_quality_points(
-                self.available_planets_setting,
-                celestial_points_names,
-                self.first_obj,
-            )
-
-        self.cardinal = qualities_totals["cardinal"]
-        self.fixed = qualities_totals["fixed"]
-        self.mutable = qualities_totals["mutable"]
+        self.cardinal = chart_data.quality_distribution.cardinal
+        self.fixed = chart_data.quality_distribution.fixed
+        self.mutable = chart_data.quality_distribution.mutable
 
         # Set up theme
         if theme not in get_args(KerykeionChartTheme) and theme is not None:
@@ -1931,102 +1819,146 @@ if __name__ == "__main__":
         altitude=0
     )
 
+if __name__ == "__main__":
+    from kerykeion.utilities import setup_logging
+    from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+    from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+    from kerykeion.chart_data_factory import ChartDataFactory
+
+    ACTIVE_PLANETS: list[AstrologicalPoint] = [
+        "Sun", "Moon", "Pars_Fortunae", "Mercury", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron", "True_Node"
+    ]
+
+    setup_logging(level="info")
+
+    subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+
+    return_factory = PlanetaryReturnFactory(
+        subject,
+        city="Los Angeles",
+        nation="US",
+        lng=-118.2437,
+        lat=34.0522,
+        tz_str="America/Los_Angeles",
+        altitude=0
+    )
+
     ###
-    ## Birth Chart
+    ## Birth Chart - NEW APPROACH with ChartDataFactory
+    birth_chart_data = ChartDataFactory.create_natal_chart_data(
+        subject,
+        active_points=ACTIVE_PLANETS,
+    )
     birth_chart = ChartDrawer(
-        first_obj=subject,
+        chart_data=birth_chart_data,
         chart_language="IT",
         theme="strawberry",
-        active_points=ACTIVE_PLANETS,
     )
     birth_chart.makeSVG() # minify=True, remove_css_variables=True)
 
     ###
-    ## Solar Return Chart
+    ## Solar Return Chart - NEW APPROACH with ChartDataFactory
     solar_return = return_factory.next_return_from_iso_formatted_time(
         "2025-01-09T18:30:00+01:00",  # UTC+1
         return_type="Solar",
     )
+    solar_return_chart_data = ChartDataFactory.create_chart_data(
+        "Return",
+        subject,
+        solar_return,
+        active_points=ACTIVE_PLANETS,
+    )
     solar_return_chart = ChartDrawer(
-        first_obj=subject, chart_type="Return",
-        second_obj=solar_return,
+        chart_data=solar_return_chart_data,
         chart_language="IT",
         theme="classic",
-        active_points=ACTIVE_PLANETS,
     )
 
     solar_return_chart.makeSVG() # minify=True, remove_css_variables=True)
 
     ###
-    ## Single wheel return
+    ## Single wheel return - NEW APPROACH with ChartDataFactory
+    single_wheel_return_chart_data = ChartDataFactory.create_chart_data(
+        "SingleWheelReturn",
+        solar_return,
+        active_points=ACTIVE_PLANETS,
+    )
     single_wheel_return_chart = ChartDrawer(
-        first_obj=solar_return,
-        chart_type="SingleWheelReturn",
-        second_obj=solar_return,
+        chart_data=single_wheel_return_chart_data,
         chart_language="IT",
         theme="dark",
-        active_points=ACTIVE_PLANETS,
     )
 
     single_wheel_return_chart.makeSVG() # minify=True, remove_css_variables=True)
 
     ###
-    ## Lunar return
+    ## Lunar return - NEW APPROACH with ChartDataFactory
     lunar_return = return_factory.next_return_from_iso_formatted_time(
         "2025-01-09T18:30:00+01:00",  # UTC+1
         return_type="Lunar",
     )
+    lunar_return_chart_data = ChartDataFactory.create_chart_data(
+        "Return",
+        subject,
+        lunar_return,
+        active_points=ACTIVE_PLANETS,
+    )
     lunar_return_chart = ChartDrawer(
-        first_obj=subject,
-        chart_type="Return",
-        second_obj=lunar_return,
+        chart_data=lunar_return_chart_data,
         chart_language="IT",
         theme="dark",
-        active_points=ACTIVE_PLANETS,
     )
     lunar_return_chart.makeSVG() # minify=True, remove_css_variables=True)
 
     ###
-    ## Transit Chart
+    ## Transit Chart - NEW APPROACH with ChartDataFactory
     transit = AstrologicalSubjectFactory.from_iso_utc_time(
         "Transit",
         "2021-10-04T18:30:00+01:00",
     )
+    transit_chart_data = ChartDataFactory.create_transit_chart_data(
+        subject,
+        transit,
+        active_points=ACTIVE_PLANETS,
+    )
     transit_chart = ChartDrawer(
-        first_obj=subject,
-        chart_type="Transit",
-        second_obj=transit,
+        chart_data=transit_chart_data,
         chart_language="IT",
         theme="dark",
-        active_points=ACTIVE_PLANETS
     )
     transit_chart.makeSVG() # minify=True, remove_css_variables=True)
 
     ###
-    ## Synastry Chart
+    ## Synastry Chart - NEW APPROACH with ChartDataFactory
     second_subject = AstrologicalSubjectFactory.from_birth_data("Yoko Ono", 1933, 2, 18, 18, 30, "Tokyo", "JP")
+    synastry_chart_data = ChartDataFactory.create_synastry_chart_data(
+        subject,
+        second_subject,
+        active_points=ACTIVE_PLANETS,
+    )
     synastry_chart = ChartDrawer(
-        first_obj=subject,
-        chart_type="Synastry",
-        second_obj=second_subject,
+        chart_data=synastry_chart_data,
         chart_language="IT",
         theme="dark",
-        active_points=ACTIVE_PLANETS
     )
     synastry_chart.makeSVG() # minify=True, remove_css_variables=True)
 
     ##
-    # Transit Chart with Grid
+    # Transit Chart with Grid - NEW APPROACH with ChartDataFactory
     subject.name = "Grid"
+    transit_chart_with_grid_data = ChartDataFactory.create_transit_chart_data(
+        subject,
+        transit,
+        active_points=ACTIVE_PLANETS,
+    )
     transit_chart_with_grid = ChartDrawer(
-        first_obj=subject,
-        chart_type="Transit",
-        second_obj=transit,
+        chart_data=transit_chart_with_grid_data,
         chart_language="IT",
         theme="dark",
-        active_points=ACTIVE_PLANETS,
         double_chart_aspect_grid_type="table"
     )
     transit_chart_with_grid.makeSVG() # minify=True, remove_css_variables=True)
     transit_chart_with_grid.makeAspectGridOnlySVG()
     transit_chart_with_grid.makeWheelOnlySVG()
+
+    print("✅ All chart examples completed using ChartDataFactory + ChartDrawer architecture!")
