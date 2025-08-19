@@ -27,6 +27,7 @@ from kerykeion import (
     ElementDistributionModel,
     QualityDistributionModel,
 )
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.schemas import KerykeionException, AstrologicalSubjectModel
 
 
@@ -61,39 +62,55 @@ def test_subject_2(subject_factory):
         city="Milan", nation="IT"
     )
 
+@pytest.fixture
+def test_composite_subject(test_subject_1, test_subject_2):
+    """Composite subject for composite chart tests."""
+    composite_factory = CompositeSubjectFactory(test_subject_1, test_subject_2)
+    return composite_factory.get_midpoint_composite_subject_model()
+
+@pytest.fixture
+def test_return_subject(test_subject_1):
+    """Planet return subject for return chart tests."""
+    return_factory = PlanetaryReturnFactory(
+        test_subject_1,
+        city="Rome",
+        nation="IT"
+    )
+    return return_factory.next_return_from_year(year=2024, return_type="Solar")
+
 
 class TestSingleChartDataModel:
     """Tests for SingleChartDataModel functionality."""
-    
+
     def test_natal_chart_creation(self, factory, test_subject_1):
         """Test creation of natal chart data."""
         chart_data = factory.create_chart_data("Natal", test_subject_1)
-        
+
         # Verify model type
         assert isinstance(chart_data, SingleChartDataModel)
         assert chart_data.chart_type == "Natal"
-        
+
         # Verify subject data (only for AstrologicalSubjectModel)
         assert chart_data.subject.name == "Test Person 1"
         if isinstance(chart_data.subject, AstrologicalSubjectModel):
             assert chart_data.subject.year == 1990
             assert chart_data.subject.month == 6
             assert chart_data.subject.day == 15
-        
+
         # Verify aspects are calculated
         assert hasattr(chart_data, 'aspects')
         assert len(chart_data.aspects.relevant_aspects) > 0
-        
+
         # Verify element and quality distributions
         assert isinstance(chart_data.element_distribution, ElementDistributionModel)
         assert isinstance(chart_data.quality_distribution, QualityDistributionModel)
-        
+
         # Verify percentages sum to approximately 100 (allowing for rounding)
         elements = chart_data.element_distribution
         total_elements = (elements.fire_percentage + elements.earth_percentage +
                          elements.air_percentage + elements.water_percentage)
         assert 99 <= total_elements <= 101  # Allow for rounding errors
-        
+
         qualities = chart_data.quality_distribution
         total_qualities = (qualities.cardinal_percentage + qualities.fixed_percentage +
                           qualities.mutable_percentage)
@@ -101,26 +118,26 @@ class TestSingleChartDataModel:
         assert chart_data.location_name
         assert isinstance(chart_data.latitude, float)
         assert isinstance(chart_data.longitude, float)
-    
+
     def test_external_natal_chart_creation(self, factory, test_subject_1):
-        """Test creation of external natal chart data."""
-        chart_data = factory.create_chart_data("ExternalNatal", test_subject_1)
-        
+        """Test creation of natal chart data (external visualization is handled by ChartDrawer)."""
+        chart_data = factory.create_chart_data("Natal", test_subject_1)
+
         assert isinstance(chart_data, SingleChartDataModel)
-        assert chart_data.chart_type == "ExternalNatal"
+        assert chart_data.chart_type == "Natal"
         assert chart_data.subject.name == "Test Person 1"
-    
+
     def test_single_chart_json_serialization(self, factory, test_subject_1):
         """Test JSON serialization of SingleChartDataModel."""
         chart_data = factory.create_chart_data("Natal", test_subject_1)
-        
+
         # Convert to dictionary
         data_dict = chart_data.model_dump()
-        
+
         # Verify serializable to JSON
         json_str = json.dumps(data_dict, default=str)
         assert len(json_str) > 0
-        
+
         # Verify key fields are present
         assert data_dict["chart_type"] == "Natal"
         assert data_dict["subject"]["name"] == "Test Person 1"
@@ -131,31 +148,31 @@ class TestSingleChartDataModel:
 
 class TestDualChartDataModel:
     """Tests for DualChartDataModel functionality."""
-    
+
     def test_synastry_chart_creation(self, factory, test_subject_1, test_subject_2):
         """Test creation of synastry chart data."""
         chart_data = factory.create_chart_data("Synastry", test_subject_1, test_subject_2)
-        
+
         # Verify model type
         assert isinstance(chart_data, DualChartDataModel)
         assert chart_data.chart_type == "Synastry"
-        
+
         # Verify both subjects
         assert chart_data.first_subject.name == "Test Person 1"
         assert chart_data.second_subject.name == "Test Person 2"
-        
+
         # Verify inter-chart aspects
         assert hasattr(chart_data, 'aspects')
         assert len(chart_data.aspects.relevant_aspects) > 0
-        
+
         # Verify synastry-specific features
         assert chart_data.house_comparison is not None
         assert chart_data.relationship_score is not None
-        
+
         # Verify element and quality distributions (combined)
         assert isinstance(chart_data.element_distribution, ElementDistributionModel)
         assert isinstance(chart_data.quality_distribution, QualityDistributionModel)
-    
+
     def test_transit_chart_creation(self, factory, test_subject_1, subject_factory):
         """Test creation of transit chart data."""
         # Create transit subject (current time)
@@ -163,30 +180,30 @@ class TestDualChartDataModel:
             name="Current Transits",
             city="Rome", nation="IT"
         )
-        
+
         chart_data = factory.create_chart_data("Transit", test_subject_1, transit_subject)
-        
+
         assert isinstance(chart_data, DualChartDataModel)
         assert chart_data.chart_type == "Transit"
         assert chart_data.first_subject.name == "Test Person 1"
         assert chart_data.second_subject.name == "Current Transits"
-        
+
         # Verify house comparison for transits
         assert chart_data.house_comparison is not None
         # Relationship score should be None for transits
         assert chart_data.relationship_score is None
-    
+
     def test_dual_chart_json_serialization(self, factory, test_subject_1, test_subject_2):
         """Test JSON serialization of DualChartDataModel."""
         chart_data = factory.create_chart_data("Synastry", test_subject_1, test_subject_2)
-        
+
         # Convert to dictionary
         data_dict = chart_data.model_dump()
-        
+
         # Verify serializable to JSON
         json_str = json.dumps(data_dict, default=str)
         assert len(json_str) > 0
-        
+
         # Verify key fields are present
         assert data_dict["chart_type"] == "Synastry"
         assert data_dict["first_subject"]["name"] == "Test Person 1"
@@ -197,39 +214,39 @@ class TestDualChartDataModel:
 
 class TestFactoryParameterValidation:
     """Tests for factory parameter validation and error handling."""
-    
+
     def test_missing_second_subject_for_synastry(self, factory, test_subject_1):
         """Test error when second subject is missing for synastry."""
         with pytest.raises(KerykeionException) as exc_info:
             factory.create_chart_data("Synastry", test_subject_1)
-        
+
         assert "Second subject is required for Synastry charts" in str(exc_info.value)
-    
+
     def test_missing_second_subject_for_transit(self, factory, test_subject_1):
         """Test error when second subject is missing for transit."""
         with pytest.raises(KerykeionException) as exc_info:
             factory.create_chart_data("Transit", test_subject_1)
-        
+
         assert "Second subject is required for Transit charts" in str(exc_info.value)
-    
+
     def test_invalid_chart_type(self, factory, test_subject_1):
         """Test error with invalid chart type."""
         with pytest.raises((ValueError, KerykeionException)):
             factory.create_chart_data("InvalidType", test_subject_1)
-    
+
     def test_custom_active_points(self, factory, test_subject_1):
         """Test chart creation with custom active points."""
         custom_points = ["Sun", "Moon", "Mercury", "Venus", "Mars"]
-        
+
         chart_data = factory.create_chart_data(
             "Natal", test_subject_1,
             active_points=custom_points
         )
-        
+
         assert isinstance(chart_data, SingleChartDataModel)
         # Verify that only specified points are included
         assert len(chart_data.active_points) <= len(custom_points)
-    
+
     def test_custom_active_aspects(self, factory, test_subject_1):
         """Test chart creation with custom aspect configuration."""
         custom_aspects = [
@@ -238,32 +255,42 @@ class TestFactoryParameterValidation:
             {"name": "trine", "orb": 8},
             {"name": "square", "orb": 8}
         ]
-        
+
         chart_data = factory.create_chart_data(
             "Natal", test_subject_1,
             active_aspects=custom_aspects
         )
-        
+
         assert isinstance(chart_data, SingleChartDataModel)
         assert len(chart_data.active_aspects) == len(custom_aspects)
 
 
 class TestChartTypeMapping:
     """Tests for correct model type mapping based on chart type."""
-    
+
     def test_single_chart_types_return_single_model(self, factory, test_subject_1):
         """Test that single chart types return SingleChartDataModel."""
-        single_chart_types = ["Natal", "ExternalNatal"]
-        
-        for chart_type in single_chart_types:
-            chart_data = factory.create_chart_data(chart_type, test_subject_1)
-            assert isinstance(chart_data, SingleChartDataModel)
-            assert chart_data.chart_type == chart_type
-    
+        # Only test Natal with AstrologicalSubjectModel
+        chart_data = factory.create_chart_data("Natal", test_subject_1)
+        assert isinstance(chart_data, SingleChartDataModel)
+        assert chart_data.chart_type == "Natal"
+
+    def test_composite_chart_creation(self, factory, test_composite_subject):
+        """Test that Composite charts work with CompositeSubjectModel."""
+        chart_data = factory.create_chart_data("Composite", test_composite_subject)
+        assert isinstance(chart_data, SingleChartDataModel)
+        assert chart_data.chart_type == "Composite"
+
+    def test_single_wheel_return_chart_creation(self, factory, test_return_subject):
+        """Test that SingleWheelReturn charts work with PlanetReturnModel."""
+        chart_data = factory.create_chart_data("SingleWheelReturn", test_return_subject)
+        assert isinstance(chart_data, SingleChartDataModel)
+        assert chart_data.chart_type == "SingleWheelReturn"
+
     def test_dual_chart_types_return_dual_model(self, factory, test_subject_1, test_subject_2):
         """Test that dual chart types return DualChartDataModel."""
         dual_chart_types = ["Synastry", "Transit"]
-        
+
         for chart_type in dual_chart_types:
             chart_data = factory.create_chart_data(chart_type, test_subject_1, test_subject_2)
             assert isinstance(chart_data, DualChartDataModel)
@@ -272,70 +299,70 @@ class TestChartTypeMapping:
 
 class TestElementAndQualityDistributions:
     """Tests for element and quality distribution calculations."""
-    
+
     def test_element_distribution_values(self, factory, test_subject_1):
         """Test element distribution calculation and validation."""
         chart_data = factory.create_chart_data("Natal", test_subject_1)
         elements = chart_data.element_distribution
-        
+
         # Verify all percentages are non-negative
         assert elements.fire_percentage >= 0
         assert elements.earth_percentage >= 0
         assert elements.air_percentage >= 0
         assert elements.water_percentage >= 0
-        
+
         # Verify raw point values are non-negative
         assert elements.fire >= 0
         assert elements.earth >= 0
         assert elements.air >= 0
         assert elements.water >= 0
-        
+
         # Verify percentages sum to 100
-        total = (elements.fire_percentage + elements.earth_percentage + 
+        total = (elements.fire_percentage + elements.earth_percentage +
                 elements.air_percentage + elements.water_percentage)
         assert total == 100
-    
+
     def test_quality_distribution_values(self, factory, test_subject_1):
         """Test quality distribution calculation and validation."""
         chart_data = factory.create_chart_data("Natal", test_subject_1)
         qualities = chart_data.quality_distribution
-        
+
         # Verify all percentages are non-negative
         assert qualities.cardinal_percentage >= 0
         assert qualities.fixed_percentage >= 0
         assert qualities.mutable_percentage >= 0
-        
+
         # Verify raw point values are non-negative
         assert qualities.cardinal >= 0
         assert qualities.fixed >= 0
         assert qualities.mutable >= 0
-        
+
         # Verify percentages sum to approximately 100 (allowing for rounding)
         total = (qualities.cardinal_percentage + qualities.fixed_percentage +
                 qualities.mutable_percentage)
         assert 99 <= total <= 101  # Allow for rounding errors
 class TestAspectCalculations:
     """Tests for aspect calculations in different chart types."""
-    
+
     def test_natal_chart_aspects_are_internal(self, factory, test_subject_1):
         """Test that natal chart aspects are internal (same subject)."""
         chart_data = factory.create_chart_data("Natal", test_subject_1)
-        
+
         # Verify aspects exist
         assert len(chart_data.aspects.relevant_aspects) > 0
-        
+
         # For natal charts, all aspects should be internal
         # (this test assumes aspect structure allows checking)
         aspects = chart_data.aspects.relevant_aspects
         assert len(aspects) > 0
-    
+
     def test_synastry_aspects_are_inter_chart(self, factory, test_subject_1, test_subject_2):
         """Test that synastry aspects are between different subjects."""
         chart_data = factory.create_chart_data("Synastry", test_subject_1, test_subject_2)
-        
+
         # Verify inter-chart aspects exist
         assert len(chart_data.aspects.relevant_aspects) > 0
-        
+
         # Synastry should have aspects between the two charts
         aspects = chart_data.aspects.relevant_aspects
         assert len(aspects) > 0
@@ -343,23 +370,23 @@ class TestAspectCalculations:
 
 class TestPerformanceAndOptimization:
     """Tests for performance optimization features."""
-    
+
     def test_limited_active_points_performance(self, factory, test_subject_1):
         """Test that limiting active points reduces calculation time."""
         # Full calculation
         full_chart = factory.create_chart_data("Natal", test_subject_1)
-        
+
         # Limited calculation
         limited_points = ["Sun", "Moon", "Mercury", "Venus", "Mars"]
         limited_chart = factory.create_chart_data(
             "Natal", test_subject_1,
             active_points=limited_points
         )
-        
+
         # Limited chart should have fewer or equal aspects
         assert len(limited_chart.aspects.relevant_aspects) <= len(full_chart.aspects.relevant_aspects)
         assert len(limited_chart.active_points) <= len(full_chart.active_points)
-    
+
     def test_selective_synastry_features(self, factory, test_subject_1, test_subject_2):
         """Test selective feature loading for synastry charts."""
         # Full synastry
@@ -368,18 +395,18 @@ class TestPerformanceAndOptimization:
             include_house_comparison=True,
             include_relationship_score=True
         )
-        
+
         # Limited synastry
         limited_synastry = factory.create_chart_data(
             "Synastry", test_subject_1, test_subject_2,
             include_house_comparison=False,
             include_relationship_score=False
         )
-        
+
         # Verify feature inclusion/exclusion
         assert full_synastry.house_comparison is not None
         assert full_synastry.relationship_score is not None
-        
+
         # Limited features should be None when disabled
         assert limited_synastry.house_comparison is None
         assert limited_synastry.relationship_score is None
@@ -387,38 +414,38 @@ class TestPerformanceAndOptimization:
 
 class TestDataExportAndSerialization:
     """Tests for data export and serialization capabilities."""
-    
+
     def test_chart_data_to_dict(self, factory, test_subject_1):
         """Test conversion of chart data to dictionary."""
         chart_data = factory.create_chart_data("Natal", test_subject_1)
         data_dict = chart_data.model_dump()
-        
+
         # Verify essential keys are present
         required_keys = [
-            "chart_type", "subject", "aspects", 
+            "chart_type", "subject", "aspects",
             "element_distribution", "quality_distribution",
             "location_name", "latitude", "longitude"
         ]
-        
+
         for key in required_keys:
             assert key in data_dict
-    
+
     def test_chart_data_json_export(self, factory, test_subject_1):
         """Test JSON export functionality."""
         chart_data = factory.create_chart_data("Natal", test_subject_1)
-        
+
         # Export to JSON
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
             json.dump(chart_data.model_dump(), f, default=str, indent=2)
             json_file = f.name
-        
+
         # Verify file was created and can be read back
         with open(json_file, 'r') as f:
             loaded_data = json.load(f)
-        
+
         assert loaded_data["chart_type"] == "Natal"
         assert loaded_data["subject"]["name"] == "Test Person 1"
-    
+
     def test_batch_processing_simulation(self, factory, subject_factory):
         """Test batch processing of multiple charts."""
         # Create multiple test subjects
@@ -431,12 +458,12 @@ class TestDataExportAndSerialization:
                 city="Rome", nation="IT"
             )
             subjects.append(subject)
-        
+
         # Process all charts
         results = []
         for subject in subjects:
             chart_data = factory.create_chart_data("Natal", subject)
-            
+
             # Extract key metrics for batch analysis
             result = {
                 "name": chart_data.subject.name,
@@ -445,7 +472,7 @@ class TestDataExportAndSerialization:
                 "aspect_count": len(chart_data.aspects.relevant_aspects)
             }
             results.append(result)
-        
+
         # Verify batch processing results
         assert len(results) == 3
         for result in results:
@@ -456,7 +483,7 @@ class TestDataExportAndSerialization:
 
 class TestEdgeCasesAndRobustness:
     """Tests for edge cases and robustness."""
-    
+
     def test_birth_at_midnight(self, factory, subject_factory):
         """Test handling of midnight birth time."""
         subject = subject_factory.from_birth_data(
@@ -465,12 +492,12 @@ class TestEdgeCasesAndRobustness:
             hour=0, minute=0,
             city="London", nation="GB"
         )
-        
+
         chart_data = factory.create_chart_data("Natal", subject)
         assert isinstance(chart_data, SingleChartDataModel)
         if isinstance(chart_data.subject, AstrologicalSubjectModel):
             assert chart_data.subject.hour == 0
-    
+
     def test_leap_year_birth(self, factory, subject_factory):
         """Test handling of leap year birth date."""
         subject = subject_factory.from_birth_data(
@@ -479,20 +506,20 @@ class TestEdgeCasesAndRobustness:
             hour=12, minute=0,
             city="Paris", nation="FR"
         )
-        
+
         chart_data = factory.create_chart_data("Natal", subject)
         assert isinstance(chart_data, SingleChartDataModel)
         if isinstance(chart_data.subject, AstrologicalSubjectModel):
             assert chart_data.subject.day == 29
             assert chart_data.subject.month == 2
-    
+
     def test_same_subjects_synastry(self, factory, test_subject_1):
         """Test synastry with same subject (should work but show specific patterns)."""
         chart_data = factory.create_chart_data("Synastry", test_subject_1, test_subject_1)
-        
+
         assert isinstance(chart_data, DualChartDataModel)
         assert chart_data.first_subject.name == chart_data.second_subject.name
-        
+
         # Should have some aspects (likely many conjunctions)
         assert len(chart_data.aspects.relevant_aspects) > 0
 

@@ -21,7 +21,6 @@ This factory creates comprehensive `ChartDataModel` instances containing subject
 The `ChartDataFactory` supports all chart types available in Kerykeion, automatically including relevant analyses based on chart type:
 
 - **Natal**: Single subject with internal aspects and element/quality analysis
-- **ExternalNatal**: Single subject with internal aspects (alternative visualization data)
 - **Transit**: Natal subject with current transits, includes house comparison analysis  
 - **Synastry**: Two subjects with inter-chart aspects, relationship scoring, and house overlays
 - **Composite**: Composite subject with internal aspects and averaged location data
@@ -38,7 +37,7 @@ Used for charts analyzing a single astrological subject:
 
 ```python
 class SingleChartDataModel:
-    chart_type: Literal["Natal", "ExternalNatal", "Composite", "SingleWheelReturn"]
+    chart_type: Literal["Natal", "Composite", "SingleWheelReturn"]
     subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
     aspects: SingleChartAspectsModel                        # Internal aspects within the chart
     element_distribution: ElementDistributionModel          # Elemental distribution
@@ -51,10 +50,9 @@ class SingleChartDataModel:
 ```
 
 **Supported Chart Types:**
-- **Natal**: Birth chart with internal planetary aspects
-- **ExternalNatal**: Birth chart with alternate visualization data
-- **Composite**: Midpoint relationship chart with internal aspects
-- **SingleWheelReturn**: Single planetary return with internal aspects
+- **Natal**: Birth chart with internal aspects
+- **Composite**: Midpoint-based composite chart with internal aspects  
+- **SingleWheelReturn**: Planetary return chart with internal aspects
 
 ### DualChartDataModel
 
@@ -612,7 +610,7 @@ ChartDataFactory().create_chart_data(
 ```
 
 **Return Types:**
-- **SingleChartDataModel**: For "Natal", "ExternalNatal", "Composite", "SingleWheelReturn"
+- **SingleChartDataModel**: For "Natal", "Composite", "SingleWheelReturn"
 - **DualChartDataModel**: For "Transit", "Synastry", "Return"
 
 #### Natal Chart Data

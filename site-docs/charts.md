@@ -10,7 +10,7 @@ The SVG output ensures scalable, high-quality graphics that maintain clarity at 
 
 ## Core Features
 
-- **Chart Types**: Natal, ExternalNatal, Transit, Synastry, Composite
+- **Chart Types**: Natal, Transit, Synastry, Composite
 - **Pre-computed Data**: Requires `ChartDataModel` from `ChartDataFactory`
 - **Output Methods**: Full chart, wheel-only, aspect grid-only
 - **Themes**: classic, dark, light, strawberry, dark-high-contrast
@@ -727,26 +727,28 @@ light_transparent = ChartDrawer(
 
 # Get string content for web integration
 dark_svg = dark_transparent.makeTemplate()
-light_svg = light_transparent.makeTemplate()
 ```
 
-## ExternalNatal Charts
+## External View for Natal Charts
+
+For Natal charts, you can use the `external_view` parameter to display planets on the outer ring instead of the inner ring. This provides an alternative visualization style:
 
 ```python
-# ExternalNatal shows how external planets affect a natal chart
-# Different from Transit - shows current sky positions relative to birth chart
-# Useful for timing analysis and progressions
+# Create natal chart data
 natal_subject = AstrologicalSubjectFactory.from_birth_data(
     "John", 1990, 7, 15, 10, 30, "Rome", "IT"
 )
-external_subject = AstrologicalSubjectFactory.from_birth_data(
-    "External", 2024, 1, 15, 12, 0, "Rome", "IT"
-)
 
-chart_data = ChartDataFactory.create_external_natal_chart_data(
-    first_subject=natal_subject,    # Birth chart as reference (inner wheel)
-    second_subject=external_subject # External planetary positions (outer wheel)
-)
+chart_data = ChartDataFactory.create_natal_chart_data(natal_subject)
+
+# Standard natal chart (planets on inner ring)
+chart_drawer = ChartDrawer(chart_data=chart_data)
+chart_drawer.makeSVG()
+
+# External view natal chart (planets on outer ring)
+chart_drawer_external = ChartDrawer(chart_data=chart_data, external_view=True)
+chart_drawer_external.makeSVG()
+```
 
 chart_drawer = ChartDrawer(chart_data=chart_data)
 

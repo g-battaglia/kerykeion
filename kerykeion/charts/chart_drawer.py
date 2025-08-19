@@ -89,7 +89,7 @@ class ChartDrawer:
     solely on rendering SVG visualizations.
 
     ChartDrawer supports creating full chart SVGs, wheel-only SVGs, and aspect-grid-only SVGs
-    for various chart types including Natal, ExternalNatal, Transit, Synastry, and Composite.
+    for various chart types including Natal, Transit, Synastry, and Composite.
     Charts are rendered using XML templates and drawing utilities, with customizable themes,
     language, and visual settings.
 
@@ -185,6 +185,7 @@ class ChartDrawer:
     active_points: List[AstrologicalPoint]
     active_aspects: List[ActiveAspect]
     transparent_background: bool
+    external_view: bool
 
     # Internal properties
     fire: float
@@ -215,6 +216,7 @@ class ChartDrawer:
         double_chart_aspect_grid_type: Literal["list", "table"] = "list",
         chart_language: KerykeionChartLanguage = "EN",
         *,
+        external_view: bool = False,
         transparent_background: bool = False,
         colors_settings: dict = DEFAULT_CHART_COLORS,
         celestial_points_settings: list[dict] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
@@ -237,6 +239,8 @@ class ChartDrawer:
                 Layout style for double-chart aspect grids ('list' or 'table').
             chart_language (KerykeionChartLanguage, optional):
                 Language code for chart labels (e.g., 'EN', 'IT').
+            external_view (bool, optional):
+                Whether to use external visualization (planets on outer ring) for single-subject charts. Defaults to False.
             transparent_background (bool, optional):
                 Whether to use a transparent background instead of the theme color. Defaults to False.
         """
@@ -250,6 +254,7 @@ class ChartDrawer:
         self.chart_language = chart_language
         self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
         self.transparent_background = transparent_background
+        self.external_view = external_view
         self.chart_colors_settings = colors_settings
         self.planets_settings = celestial_points_settings
         self.aspects_settings = aspects_settings
@@ -261,7 +266,7 @@ class ChartDrawer:
         self.active_aspects = chart_data.active_aspects
 
         # Extract subjects based on chart type
-        if chart_data.chart_type in ["Natal", "ExternalNatal", "Composite", "SingleWheelReturn"]:
+        if chart_data.chart_type in ["Natal", "Composite", "SingleWheelReturn"]:
             # SingleChartDataModel
             self.first_obj = getattr(chart_data, 'subject')
             self.second_obj = None
@@ -299,8 +304,8 @@ class ChartDrawer:
         # CHART TYPE SPECIFIC SETUP FROM CHART DATA
         # ------------------------
 
-        if self.chart_type in ["Natal", "ExternalNatal"]:
-            # --- NATAL / EXTERNAL NATAL CHART SETUP ---
+        if self.chart_type == "Natal":
+            # --- NATAL CHART SETUP ---
 
             # Extract aspects from pre-computed chart data
             self.aspects_list = chart_data.aspects.relevant_aspects
@@ -314,8 +319,8 @@ class ChartDrawer:
             self.geolat = chart_data.latitude
             self.geolon = chart_data.longitude
 
-            # Circle radii
-            if self.chart_type == "ExternalNatal":
+            # Circle radii - depends on external_view
+            if self.external_view:
                 self.first_circle_radius = 56
                 self.second_circle_radius = 92
                 self.third_circle_radius = 112
@@ -651,7 +656,7 @@ class ChartDrawer:
         #  CHART TYPE SPECIFIC SETTINGS   #
         # ------------------------------- #
 
-        if self.chart_type in ["Natal", "ExternalNatal"]:
+        if self.chart_type == "Natal":
             # Set viewbox
             template_dict["viewbox"] = self._BASIC_CHART_VIEWBOX
 
