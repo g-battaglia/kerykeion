@@ -595,28 +595,28 @@ print("=== COMMON ASTROLOGICAL POINTS ===")
 
 # Example lists
 list1 = [
-    AstrologicalPoint.SUN,
-    AstrologicalPoint.MOON,
-    AstrologicalPoint.MERCURY,
-    AstrologicalPoint.VENUS,
-    AstrologicalPoint.MARS,
-    AstrologicalPoint.JUPITER
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter"
 ]
 
 list2 = [
-    AstrologicalPoint.MOON,
-    AstrologicalPoint.VENUS,
-    AstrologicalPoint.MARS,
-    AstrologicalPoint.SATURN,
-    AstrologicalPoint.URANUS,
-    AstrologicalPoint.NEPTUNE
+    "Moon",
+    "Venus",
+    "Mars",
+    "Saturn",
+    "Uranus",
+    "Neptune"
 ]
 
-print(f"List 1: {[point.value for point in list1]}")
-print(f"List 2: {[point.value for point in list2]}")
+print(f"List 1: {list1}")
+print(f"List 2: {list2}")
 
 common_points = find_common_active_points(list1, list2)
-print(f"Common points: {[point.value for point in common_points]}")
+print(f"Common points: {common_points}")
 
 # Practical example: compare configurations of two subjects
 subject1 = AstrologicalSubjectFactory.from_birth_data(

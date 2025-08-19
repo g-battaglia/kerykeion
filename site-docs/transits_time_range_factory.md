@@ -119,13 +119,13 @@ ephemeris_data = ephemeris_factory.get_ephemeris_data_as_astrological_subjects()
 
 # Focus on major planets and major aspects
 major_planets = [
-    AstrologicalPoint.SUN,
-    AstrologicalPoint.MOON,
-    AstrologicalPoint.MERCURY,
-    AstrologicalPoint.VENUS,
-    AstrologicalPoint.MARS,
-    AstrologicalPoint.JUPITER,
-    AstrologicalPoint.SATURN
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn"
 ]
 
 major_aspects = [
@@ -245,15 +245,15 @@ ephemeris_factory = EphemerisDataFactory(
 ephemeris_data = ephemeris_factory.get_ephemeris_data_as_astrological_subjects()
 
 # Focus only on Jupiter transits to major natal points
-jupiter_points = [AstrologicalPoint.JUPITER]
+jupiter_points = ["Jupiter"]
 natal_points = [
-    AstrologicalPoint.SUN,
-    AstrologicalPoint.MOON,
-    AstrologicalPoint.MERCURY,
-    AstrologicalPoint.VENUS,
-    AstrologicalPoint.MARS,
-    AstrologicalPoint.ASCENDANT,
-    AstrologicalPoint.MIDHEAVEN
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Ascendant",
+    "Medium_Coeli"
 ]
 
 # Include all aspects for comprehensive analysis
@@ -655,11 +655,11 @@ def optimized_transit_analysis(subject, start_date, end_date):
     
     # Use only major planets for speed
     fast_planets = [
-        AstrologicalPoint.SUN,
-        AstrologicalPoint.MOON,
-        AstrologicalPoint.MERCURY,
-        AstrologicalPoint.VENUS,
-        AstrologicalPoint.MARS
+        "Sun",
+        "Moon",
+        "Mercury",
+        "Venus",
+        "Mars"
     ]
     
     # Use only major aspects

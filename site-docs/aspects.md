@@ -362,34 +362,34 @@ from kerykeion.kr_types.kr_literals import AstrologicalPoint
 
 # Personal planets for core personality analysis
 personal_planets = [
-    AstrologicalPoint.SUN,
-    AstrologicalPoint.MOON,
-    AstrologicalPoint.MERCURY,
-    AstrologicalPoint.VENUS,
-    AstrologicalPoint.MARS
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars"
 ]
 
 # Traditional seven planets
 traditional_planets = personal_planets + [
-    AstrologicalPoint.JUPITER,
-    AstrologicalPoint.SATURN
+    "Jupiter",
+    "Saturn"
 ]
 
 # Modern planets including outer planets
 modern_planets = traditional_planets + [
-    AstrologicalPoint.URANUS,
-    AstrologicalPoint.NEPTUNE,
-    AstrologicalPoint.PLUTO
+    "Uranus",
+    "Neptune",
+    "Pluto"
 ]
 
 # Chart angles and nodes
 angles_and_nodes = [
-    AstrologicalPoint.ASCENDANT,
-    AstrologicalPoint.MIDHEAVEN,
-    AstrologicalPoint.DESCENDANT,
-    AstrologicalPoint.IMUM_COELI,
-    AstrologicalPoint.TRUE_NODE,
-    AstrologicalPoint.TRUE_SOUTH_NODE
+    "Ascendant",
+    "Medium_Coeli",
+    "Descendant",
+    "Imum_Coeli",
+    "True_Node",
+    "True_South_Node"
 ]
 
 # Example: Personal planets only analysis
