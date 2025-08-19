@@ -47,7 +47,7 @@ def calculate_points_in_reciprocal_houses(
 
     Example:
         >>> points_in_houses = calculate_points_in_reciprocal_houses(
-        ...     natal_chart, partner_chart, [AstrologicalPoint.SUN, AstrologicalPoint.MOON]
+        ...     natal_chart, partner_chart, ["Sun", "Moon"]
         ... )
         >>> sun_placement = points_in_houses[0]  # Assuming Sun is first
         >>> print(f"Sun falls in house: {sun_placement.projected_house_name}")
