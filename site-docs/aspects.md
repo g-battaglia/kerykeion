@@ -358,7 +358,7 @@ transit_analysis = current_transits_analysis(person)
 
 ```python
 # Focus analysis on specific planetary combinations
-from kerykeion.kr_types.kr_literals import AstrologicalPoint
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 
 # Personal planets for core personality analysis
 personal_planets = [
@@ -413,7 +413,7 @@ print(f"Traditional synastry aspects: {len(traditional_synastry.relevant_aspects
 
 ```python
 # Configure specific aspects and orb tolerances
-from kerykeion.kr_types.kr_models import ActiveAspect
+from kerykeion.schemas.kr_models import ActiveAspect
 
 # Tight orb configuration for precise analysis
 tight_aspects = [

@@ -90,7 +90,7 @@ Transits on 2024-08-15:
 
 ```python
 # Comprehensive transit analysis with filtering
-from kerykeion.kr_types import AstrologicalPoint, ActiveAspect
+from kerykeion.schemas import AstrologicalPoint, ActiveAspect
 
 # Create natal chart for analysis
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -646,7 +646,7 @@ Leo: 1 subjects, avg 184.0 aspects
 
 ```python
 # Optimize for large datasets
-from kerykeion.kr_types import AstrologicalPoint, ActiveAspect
+from kerykeion.schemas import AstrologicalPoint, ActiveAspect
 
 def optimized_transit_analysis(subject, start_date, end_date):
     """Optimized transit analysis for large time ranges"""

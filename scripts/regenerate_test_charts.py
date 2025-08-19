@@ -71,7 +71,7 @@ morinus_house_chart = KerykeionChartSVG(morinus_house_subject, new_output_direct
 morinus_house_chart.makeSVG()
 
 ## To check all the available house systems uncomment the following code:
-# from kerykeion.kr_types import HousesSystemIdentifier
+# from kerykeion.schemas import HousesSystemIdentifier
 # from typing import get_args
 # for i in get_args(HousesSystemIdentifier):
 #     alternatives_house_subject = AstrologicalSubjectFactory.from_birth_data(f"John Lennon - House System {i}", 1940, 10, 9, 18, 30, "Liverpool", "GB", houses_system=i)

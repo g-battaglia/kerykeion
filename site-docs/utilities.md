@@ -53,7 +53,7 @@ Creates a KerykeionPointModel object from a degree position, automatically calcu
 
 ```python
 from kerykeion.utilities import get_kerykeion_point_from_degree
-from kerykeion.kr_types import PointType
+from kerykeion.schemas import PointType
 
 # Create an astrological point from degrees
 sun_position = get_kerykeion_point_from_degree(
@@ -589,7 +589,7 @@ Finds common astrological points between two lists.
 
 ```python
 from kerykeion.utilities import find_common_active_points
-from kerykeion.kr_types import AstrologicalPoint
+from kerykeion.schemas import AstrologicalPoint
 
 print("=== COMMON ASTROLOGICAL POINTS ===")
 

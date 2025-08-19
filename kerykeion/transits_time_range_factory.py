@@ -24,7 +24,7 @@ Dependencies:
     - kerykeion.AstrologicalSubjectFactory: For creating astrological subjects
     - kerykeion.aspects.AspectsFactory: For calculating angular relationships
     - kerykeion.ephemeris_data_factory: For generating time-series planetary positions
-    - kerykeion.kr_types: For type definitions and model structures
+    - kerykeion.schemas: For type definitions and model structures
     - datetime: For date/time handling
 
 Example:
@@ -115,7 +115,7 @@ class TransitsTimeRangeFactory:
 
         Custom configuration:
 
-        >>> from kerykeion.kr_types import AstrologicalPoint, ActiveAspect
+        >>> from kerykeion.schemas import AstrologicalPoint, ActiveAspect
         >>> custom_points = ["Sun", "Moon"]
         >>> custom_aspects = [ActiveAspect.CONJUNCTION, ActiveAspect.OPPOSITION]
         >>> factory = TransitsTimeRangeFactory(
