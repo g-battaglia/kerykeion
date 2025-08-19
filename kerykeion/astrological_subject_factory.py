@@ -575,8 +575,8 @@ class AstrologicalSubjectFactory:
 
         # Initialize Swiss Ephemeris and calculate houses and planets
         cls._setup_ephemeris(calc_data, config)
-        cls._calculate_houses(calc_data, calc_data["active_points"])
-        cls._calculate_planets(calc_data, calc_data["active_points"])
+        calculated_axial_cusps = cls._calculate_houses(calc_data, calc_data["active_points"])
+        cls._calculate_planets(calc_data, calc_data["active_points"], calculated_axial_cusps)
         cls._calculate_day_of_week(calc_data)
 
         # Calculate lunar phase (optional - only if requested and Sun and Moon are available)
@@ -963,7 +963,7 @@ class AstrologicalSubjectFactory:
         data["_iflag"] = iflag
 
     @classmethod
-    def _calculate_houses(cls, data: Dict[str, Any], active_points: Optional[List[AstrologicalPoint]]) -> None:
+    def _calculate_houses(cls, data: Dict[str, Any], active_points: Optional[List[AstrologicalPoint]]) -> List[str]:
         """
         Calculate house cusps and angular points (Ascendant, MC, etc.).
 
@@ -1077,6 +1077,8 @@ class AstrologicalSubjectFactory:
             data["imum_coeli"].retrograde = False
             calculated_axial_cusps.append("Imum_Coeli")
 
+        return calculated_axial_cusps
+
     @classmethod
     def _calculate_single_planet(
         cls,
@@ -1155,7 +1157,7 @@ class AstrologicalSubjectFactory:
                 active_points.remove(planet_name)
 
     @classmethod
-    def _calculate_planets(cls, data: Dict[str, Any], active_points: List[AstrologicalPoint]) -> None:
+    def _calculate_planets(cls, data: Dict[str, Any], active_points: List[AstrologicalPoint], calculated_axial_cusps: Optional[List[str]] = None) -> None:
         """
         Calculate positions for all requested celestial bodies and special points.
 
@@ -1705,7 +1707,10 @@ class AstrologicalSubjectFactory:
                 active_points.remove("Vertex")
 
         # Store only the planets that were actually calculated
-        data["active_points"] = calculated_planets
+        all_calculated_points = calculated_planets.copy()
+        if calculated_axial_cusps:
+            all_calculated_points.extend(calculated_axial_cusps)
+        data["active_points"] = all_calculated_points
 
     @classmethod
     def _calculate_day_of_week(cls, data: Dict[str, Any]) -> None:
