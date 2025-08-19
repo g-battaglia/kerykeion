@@ -136,7 +136,7 @@
             <text x='20' y='144' style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>火 0%</text>
             <text x='20' y='156' style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>土 49%</text>
             <text x='20' y='168' style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>風 26%</text>
-            <text x='20' y='180' style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>水 26%</text>
+            <text x='20' y='180' style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>水 25%</text>
         </g>
 
         <!-- Qualities -->

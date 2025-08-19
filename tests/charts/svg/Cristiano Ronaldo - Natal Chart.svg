@@ -136,7 +136,7 @@
             <text x='20' y='144' style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>Fogo 34%</text>
             <text x='20' y='156' style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>Terra 26%</text>
             <text x='20' y='168' style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>Ar 32%</text>
-            <text x='20' y='180' style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>Água 9%</text>
+            <text x='20' y='180' style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>Água 8%</text>
         </g>
 
         <!-- Qualities -->

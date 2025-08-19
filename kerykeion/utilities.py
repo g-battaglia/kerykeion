@@ -751,3 +751,46 @@ def find_common_active_points(first_points: list[AstrologicalPoint], second_poin
     common_points = list(set(first_points) & set(second_points))
 
     return common_points
+
+
+def distribute_percentages_to_100(values: dict[str, float]) -> dict[str, int]:
+    """
+    Distribute percentages so they sum to exactly 100.
+    
+    This function uses a largest remainder method to ensure that
+    the percentage total equals 100 even after rounding.
+    
+    Args:
+        values: Dictionary with keys and their raw percentage values
+        
+    Returns:
+        Dictionary with the same keys and integer percentages that sum to 100
+    """
+    if not values:
+        return {}
+    
+    total = sum(values.values())
+    if total == 0:
+        return {key: 0 for key in values.keys()}
+    
+    # Calculate base percentages
+    percentages = {key: value * 100 / total for key, value in values.items()}
+    
+    # Get integer parts and remainders
+    integer_parts = {key: int(value) for key, value in percentages.items()}
+    remainders = {key: percentages[key] - integer_parts[key] for key in percentages.keys()}
+    
+    # Calculate how many we need to add to reach 100
+    current_sum = sum(integer_parts.values())
+    needed = 100 - current_sum
+    
+    # Sort by remainder (largest first) and add 1 to the largest remainders
+    sorted_by_remainder = sorted(remainders.items(), key=lambda x: x[1], reverse=True)
+    
+    result = integer_parts.copy()
+    for i in range(needed):
+        if i < len(sorted_by_remainder):
+            key = sorted_by_remainder[i][0]
+            result[key] += 1
+    
+    return result

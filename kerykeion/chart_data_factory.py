@@ -52,7 +52,7 @@ from kerykeion.schemas.kr_literals import (
     AstrologicalPoint,
 )
 from kerykeion.house_comparison.house_comparison_models import HouseComparisonModel
-from kerykeion.utilities import find_common_active_points
+from kerykeion.utilities import find_common_active_points, distribute_percentages_to_100
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.charts.charts_utils import (
@@ -396,25 +396,27 @@ class ChartDataFactory:
 
         # Calculate percentages
         total_elements = element_totals["fire"] + element_totals["water"] + element_totals["earth"] + element_totals["air"]
+        element_percentages = distribute_percentages_to_100(element_totals) if total_elements > 0 else {"fire": 0, "earth": 0, "air": 0, "water": 0}
         element_distribution = ElementDistributionModel(
             fire=element_totals["fire"],
             earth=element_totals["earth"],
             air=element_totals["air"],
             water=element_totals["water"],
-            fire_percentage=int(round(100 * element_totals["fire"] / total_elements)) if total_elements > 0 else 0,
-            earth_percentage=int(round(100 * element_totals["earth"] / total_elements)) if total_elements > 0 else 0,
-            air_percentage=int(round(100 * element_totals["air"] / total_elements)) if total_elements > 0 else 0,
-            water_percentage=int(round(100 * element_totals["water"] / total_elements)) if total_elements > 0 else 0,
+            fire_percentage=element_percentages["fire"],
+            earth_percentage=element_percentages["earth"],
+            air_percentage=element_percentages["air"],
+            water_percentage=element_percentages["water"],
         )
 
         total_qualities = quality_totals["cardinal"] + quality_totals["fixed"] + quality_totals["mutable"]
+        quality_percentages = distribute_percentages_to_100(quality_totals) if total_qualities > 0 else {"cardinal": 0, "fixed": 0, "mutable": 0}
         quality_distribution = QualityDistributionModel(
             cardinal=quality_totals["cardinal"],
             fixed=quality_totals["fixed"],
             mutable=quality_totals["mutable"],
-            cardinal_percentage=int(round(100 * quality_totals["cardinal"] / total_qualities)) if total_qualities > 0 else 0,
-            fixed_percentage=int(round(100 * quality_totals["fixed"] / total_qualities)) if total_qualities > 0 else 0,
-            mutable_percentage=int(round(100 * quality_totals["mutable"] / total_qualities)) if total_qualities > 0 else 0,
+            cardinal_percentage=quality_percentages["cardinal"],
+            fixed_percentage=quality_percentages["fixed"],
+            mutable_percentage=quality_percentages["mutable"],
         )
 
         # Determine location information
