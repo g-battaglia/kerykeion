@@ -170,6 +170,30 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Mercury",
         "p1_abs_pos": 218.1173115346941,
+        "p2_name": "Medium_Coeli",
+        "p2_abs_pos": 307.35096929368245,
+        "aspect": "square",
+        "orbit": -0.7663422410116709,
+        "aspect_degrees": 90,
+        "diff": 89.23365775898836,
+        "p1": 2,
+        "p2": 14
+    },
+    {
+        "p1_name": "Mercury",
+        "p1_abs_pos": 218.1173115346941,
+        "p2_name": "Imum_Coeli",
+        "p2_abs_pos": 127.35096929368245,
+        "aspect": "square",
+        "orbit": 0.7663422410116425,
+        "aspect_degrees": 90,
+        "diff": 90.76634224101164,
+        "p1": 2,
+        "p2": 16
+    },
+    {
+        "p1_name": "Mercury",
+        "p1_abs_pos": 218.1173115346941,
         "p2_name": "True_South_Node",
         "p2_abs_pos": 157.80046126406182,
         "aspect": "sextile",
@@ -590,6 +614,18 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Uranus",
         "p1_abs_pos": 55.56163519964787,
+        "p2_name": "Imum_Coeli",
+        "p2_abs_pos": 127.35096929368245,
+        "aspect": "quintile",
+        "orbit": -0.21066590596541346,
+        "aspect_degrees": 72,
+        "diff": 71.78933409403459,
+        "p1": 7,
+        "p2": 16
+    },
+    {
+        "p1_name": "Uranus",
+        "p1_abs_pos": 55.56163519964787,
         "p2_name": "Mean_Lilith",
         "p2_abs_pos": 62.47020499210378,
         "aspect": "conjunction",
@@ -646,6 +682,30 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 122.29037923976944,
         "p1": 8,
         "p2": 12
+    },
+    {
+        "p1_name": "Neptune",
+        "p1_abs_pos": 176.0183325081123,
+        "p2_name": "Ascendant",
+        "p2_abs_pos": 56.743000084248784,
+        "aspect": "trine",
+        "orbit": -0.7246675761364827,
+        "aspect_degrees": 120,
+        "diff": 119.27533242386352,
+        "p1": 8,
+        "p2": 13
+    },
+    {
+        "p1_name": "Neptune",
+        "p1_abs_pos": 176.0183325081123,
+        "p2_name": "Descendant",
+        "p2_abs_pos": 236.7430000842488,
+        "aspect": "sextile",
+        "orbit": 0.7246675761364827,
+        "aspect_degrees": 60,
+        "diff": 60.72466757613648,
+        "p1": 8,
+        "p2": 15
     },
     {
         "p1_name": "Neptune",
@@ -826,6 +886,54 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 58.08020985425667,
         "p1": 12,
         "p2": 17
+    },
+    {
+        "p1_name": "Ascendant",
+        "p1_abs_pos": 226.07806374063588,
+        "p2_name": "Mars",
+        "p2_abs_pos": 165.2681682017158,
+        "aspect": "sextile",
+        "orbit": 0.8098955389200739,
+        "aspect_degrees": 60,
+        "diff": 60.809895538920074,
+        "p1": 13,
+        "p2": 4
+    },
+    {
+        "p1_name": "Medium_Coeli",
+        "p1_abs_pos": 155.5650809872603,
+        "p2_name": "Moon",
+        "p2_abs_pos": 245.20633596865457,
+        "aspect": "square",
+        "orbit": -0.35874501860575947,
+        "aspect_degrees": 90,
+        "diff": 89.64125498139427,
+        "p1": 14,
+        "p2": 1
+    },
+    {
+        "p1_name": "Descendant",
+        "p1_abs_pos": 46.07806374063591,
+        "p2_name": "Mars",
+        "p2_abs_pos": 165.2681682017158,
+        "aspect": "trine",
+        "orbit": -0.8098955389201024,
+        "aspect_degrees": 120,
+        "diff": 119.1901044610799,
+        "p1": 15,
+        "p2": 4
+    },
+    {
+        "p1_name": "Imum_Coeli",
+        "p1_abs_pos": 335.56508098726033,
+        "p2_name": "Moon",
+        "p2_abs_pos": 245.20633596865457,
+        "aspect": "square",
+        "orbit": 0.35874501860575947,
+        "aspect_degrees": 90,
+        "diff": 90.35874501860576,
+        "p1": 16,
+        "p2": 1
     },
     {
         "p1_name": "Mean_Lilith",
@@ -1097,6 +1205,30 @@ EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Mercury",
         "p1_abs_pos": 218.1173115346941,
+        "p2_name": "Medium_Coeli",
+        "p2_abs_pos": 307.35096929368245,
+        "aspect": "square",
+        "orbit": -0.7663422410116709,
+        "aspect_degrees": 90,
+        "diff": 89.23365775898836,
+        "p1": 2,
+        "p2": 14
+    },
+    {
+        "p1_name": "Mercury",
+        "p1_abs_pos": 218.1173115346941,
+        "p2_name": "Imum_Coeli",
+        "p2_abs_pos": 127.35096929368245,
+        "aspect": "square",
+        "orbit": 0.7663422410116425,
+        "aspect_degrees": 90,
+        "diff": 90.76634224101164,
+        "p1": 2,
+        "p2": 16
+    },
+    {
+        "p1_name": "Mercury",
+        "p1_abs_pos": 218.1173115346941,
         "p2_name": "True_South_Node",
         "p2_abs_pos": 157.80046126406182,
         "aspect": "sextile",
@@ -1517,6 +1649,18 @@ EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Uranus",
         "p1_abs_pos": 55.56163519964787,
+        "p2_name": "Imum_Coeli",
+        "p2_abs_pos": 127.35096929368245,
+        "aspect": "quintile",
+        "orbit": -0.21066590596541346,
+        "aspect_degrees": 72,
+        "diff": 71.78933409403459,
+        "p1": 7,
+        "p2": 16
+    },
+    {
+        "p1_name": "Uranus",
+        "p1_abs_pos": 55.56163519964787,
         "p2_name": "Mean_Lilith",
         "p2_abs_pos": 62.47020499210378,
         "aspect": "conjunction",
@@ -1573,6 +1717,30 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 122.29037923976944,
         "p1": 8,
         "p2": 12
+    },
+    {
+        "p1_name": "Neptune",
+        "p1_abs_pos": 176.0183325081123,
+        "p2_name": "Ascendant",
+        "p2_abs_pos": 56.743000084248784,
+        "aspect": "trine",
+        "orbit": -0.7246675761364827,
+        "aspect_degrees": 120,
+        "diff": 119.27533242386352,
+        "p1": 8,
+        "p2": 13
+    },
+    {
+        "p1_name": "Neptune",
+        "p1_abs_pos": 176.0183325081123,
+        "p2_name": "Descendant",
+        "p2_abs_pos": 236.7430000842488,
+        "aspect": "sextile",
+        "orbit": 0.7246675761364827,
+        "aspect_degrees": 60,
+        "diff": 60.72466757613648,
+        "p1": 8,
+        "p2": 15
     },
     {
         "p1_name": "Neptune",
@@ -1753,6 +1921,54 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 58.08020985425667,
         "p1": 12,
         "p2": 17
+    },
+    {
+        "p1_name": "Ascendant",
+        "p1_abs_pos": 226.07806374063588,
+        "p2_name": "Mars",
+        "p2_abs_pos": 165.2681682017158,
+        "aspect": "sextile",
+        "orbit": 0.8098955389200739,
+        "aspect_degrees": 60,
+        "diff": 60.809895538920074,
+        "p1": 13,
+        "p2": 4
+    },
+    {
+        "p1_name": "Medium_Coeli",
+        "p1_abs_pos": 155.5650809872603,
+        "p2_name": "Moon",
+        "p2_abs_pos": 245.20633596865457,
+        "aspect": "square",
+        "orbit": -0.35874501860575947,
+        "aspect_degrees": 90,
+        "diff": 89.64125498139427,
+        "p1": 14,
+        "p2": 1
+    },
+    {
+        "p1_name": "Descendant",
+        "p1_abs_pos": 46.07806374063591,
+        "p2_name": "Mars",
+        "p2_abs_pos": 165.2681682017158,
+        "aspect": "trine",
+        "orbit": -0.8098955389201024,
+        "aspect_degrees": 120,
+        "diff": 119.1901044610799,
+        "p1": 15,
+        "p2": 4
+    },
+    {
+        "p1_name": "Imum_Coeli",
+        "p1_abs_pos": 335.56508098726033,
+        "p2_name": "Moon",
+        "p2_abs_pos": 245.20633596865457,
+        "aspect": "square",
+        "orbit": 0.35874501860575947,
+        "aspect_degrees": 90,
+        "diff": 90.35874501860576,
+        "p1": 16,
+        "p2": 1
     },
     {
         "p1_name": "Mean_Lilith",

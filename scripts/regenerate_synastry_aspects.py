@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Regenerate synastry aspects (alternative version with Yoko hour=20)"""
-from kerykeion import AstrologicalSubjectFactory, SynastryAspects
+from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.aspects.aspects_factory import AspectsFactory
 import json
 from pathlib import Path
 
@@ -8,11 +9,11 @@ from pathlib import Path
 john = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 10, 30, "Liverpool", "GB", geonames_username="century.boy")
 yoko = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 20, 30, "Tokyo", "JP", geonames_username="century.boy")
 
-# Create synastry aspects
-synastry = SynastryAspects(john, yoko)
+# Create synastry aspects using the new factory
+synastry_aspects = AspectsFactory.dual_chart_aspects(john, yoko)
 
 # Generate relevant aspects
-relevant = synastry.relevant_aspects
+relevant = synastry_aspects.relevant_aspects
 
 # Convert to dict format like expected file
 synastry_aspects = []
@@ -26,8 +27,8 @@ for aspect in relevant:
         "orbit": aspect.orbit,
         "aspect_degrees": aspect.aspect_degrees,
         "diff": aspect.diff,
-        "p1": getattr(aspect, 'p1', 0),
-        "p2": getattr(aspect, 'p2', 0)
+        "p1": aspect.p1,
+        "p2": aspect.p2
     })
 
 print(f"Relevant aspects: {len(synastry_aspects)}")

@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Regenerate synastry aspects with exact test parameters"""
-from kerykeion import AstrologicalSubjectFactory, SynastryAspects
+from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.aspects.aspects_factory import AspectsFactory
 import json
 from pathlib import Path
 
 # Setup exactly like test (note: Yoko hour is 10 not 20!)
 first_subject = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 10, 30, "Liverpool", "GB", geonames_username="century.boy")
 second_subject = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP", geonames_username="century.boy")
-synastry_aspects = SynastryAspects(first_subject, second_subject)
+synastry_aspects = AspectsFactory.dual_chart_aspects(first_subject, second_subject)
 
 synastry_relevant_aspects = synastry_aspects.relevant_aspects
 

@@ -34,9 +34,10 @@ def test_snippet(code):
         return True, "Skipped"
     
     # Add basic imports
-    full_code = """
+    project_root = str(Path(__file__).parent.parent)
+    full_code = f"""
 import sys
-sys.path.insert(0, '/Users/giacomo.battaglia/dev/kerykeion')
+sys.path.insert(0, '{project_root}')
 import warnings
 warnings.filterwarnings('ignore')
 

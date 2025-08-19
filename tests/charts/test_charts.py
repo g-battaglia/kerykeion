@@ -122,12 +122,13 @@ class TestCharts:
             compare_svg_lines(expected_line, actual_line)
 
     def test_external_natal_chart(self):
-        chart_data = ChartDataFactory.create_chart_data("Natal", self.first_subject)
-        external_natal_chart_svg = ChartDrawer(chart_data, external_view=True).makeTemplate()
+        external_natal_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - External", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
+        external_natal_chart_data = ChartDataFactory.create_natal_chart_data(external_natal_subject)
+        external_natal_chart_svg = ChartDrawer(external_natal_chart_data, external_view=True).makeTemplate()
         external_natal_chart_svg_lines = external_natal_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data, external_view=True).makeSVG()
+            ChartDrawer(external_natal_chart_data, external_view=True).makeSVG()
 
         with open(self.SVG_DIR / "John Lennon - ExternalNatal Chart.svg", "r", encoding="utf-8") as f:
             file_content = f.read()
