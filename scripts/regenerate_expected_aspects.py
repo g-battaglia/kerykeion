@@ -4,8 +4,8 @@ Script to regenerate expected aspects files
 with new active points (Descendant, Imum_Coeli, both node types)
 """
 
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.aspects import AspectsFactory
+from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.aspects.aspects_factory import AspectsFactory
 import json
 from pathlib import Path
 
