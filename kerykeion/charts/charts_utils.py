@@ -1,10 +1,10 @@
 import math
 import datetime
-from kerykeion.kr_types import KerykeionException, ChartType
-from kerykeion.kr_types.kr_literals import AstrologicalPoint
+from kerykeion.schemas import KerykeionException, ChartType
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 from typing import Union, Literal
-from kerykeion.kr_types.kr_models import AspectModel, KerykeionPointModel, CompositeSubjectModel, PlanetReturnModel, AstrologicalSubjectModel
-from kerykeion.kr_types.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsCelestialPointModel
+from kerykeion.schemas.kr_models import AspectModel, KerykeionPointModel, CompositeSubjectModel, PlanetReturnModel, AstrologicalSubjectModel
+from kerykeion.schemas.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsCelestialPointModel
 from kerykeion.house_comparison import HouseComparisonModel
 
 

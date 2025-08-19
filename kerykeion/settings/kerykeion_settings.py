@@ -8,7 +8,7 @@ from json import load
 import logging
 from pathlib import Path
 from typing import Dict, Union
-from kerykeion.kr_types import KerykeionSettingsModel
+from kerykeion.schemas import KerykeionSettingsModel
 import functools
 
 

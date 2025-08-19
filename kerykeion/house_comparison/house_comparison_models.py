@@ -9,7 +9,7 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-from kerykeion.kr_types import SubscriptableBaseModel
+from kerykeion.schemas import SubscriptableBaseModel
 from typing import Optional
 
 

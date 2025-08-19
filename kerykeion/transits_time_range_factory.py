@@ -57,13 +57,13 @@ License: AGPL-3.0
 
 from typing import Union, List
 from datetime import datetime, timedelta
-from kerykeion.kr_types.kr_models import AstrologicalSubjectModel
+from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
 from kerykeion.ephemeris_data_factory import EphemerisDataFactory
-from kerykeion.kr_types.kr_literals import AstrologicalPoint
-from kerykeion.kr_types.kr_models import ActiveAspect, TransitMomentModel, TransitsTimeRangeModel
-from kerykeion.kr_types.settings_models import KerykeionSettingsModel
+from kerykeion.schemas.kr_literals import AstrologicalPoint
+from kerykeion.schemas.kr_models import ActiveAspect, TransitMomentModel, TransitsTimeRangeModel
+from kerykeion.schemas.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
 from pathlib import Path
 

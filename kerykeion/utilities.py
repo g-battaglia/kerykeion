@@ -4,7 +4,7 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-from kerykeion.kr_types import (
+from kerykeion.schemas import (
     KerykeionPointModel,
     KerykeionException,
     ZodiacSignModel,
@@ -13,7 +13,7 @@ from kerykeion.kr_types import (
     CompositeSubjectModel,
     PlanetReturnModel,
 )
-from kerykeion.kr_types.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, AstrologicalPoint, Houses
+from kerykeion.schemas.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, AstrologicalPoint, Houses
 from typing import Union, get_args, TYPE_CHECKING
 import logging
 import math

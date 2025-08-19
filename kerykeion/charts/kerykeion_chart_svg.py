@@ -11,23 +11,23 @@ from typing import get_args, Union, Optional
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.aspects import AspectsFactory
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
-from kerykeion.kr_types import (
+from kerykeion.schemas import (
     KerykeionException,
     ChartType,
     Sign,
     ActiveAspect,
 )
-from kerykeion.kr_types import ChartTemplateDictionary
-from kerykeion.kr_types.kr_models import (
+from kerykeion.schemas import ChartTemplateDictionary
+from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     CompositeSubjectModel,
     PlanetReturnModel,
 )
-from kerykeion.kr_types.settings_models import (
+from kerykeion.schemas.settings_models import (
     KerykeionSettingsCelestialPointModel,
     KerykeionSettingsModel,
 )
-from kerykeion.kr_types.kr_literals import (
+from kerykeion.schemas.kr_literals import (
     KerykeionChartTheme,
     KerykeionChartLanguage,
     AstrologicalPoint,

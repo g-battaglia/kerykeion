@@ -6,9 +6,9 @@
 from typing import Union, Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel, Field
-from kerykeion.kr_types.kr_literals import AspectName
+from kerykeion.schemas.kr_literals import AspectName
 
-from kerykeion.kr_types import (
+from kerykeion.schemas import (
     LunarPhaseEmoji,
     LunarPhaseName,
     AstrologicalPoint,

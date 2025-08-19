@@ -13,7 +13,7 @@ from .composite_subject_factory import CompositeSubjectFactory
 from .ephemeris_data_factory import EphemerisDataFactory
 from .house_comparison.house_comparison_factory import HouseComparisonFactory
 from .house_comparison.house_comparison_models import HouseComparisonModel
-from .kr_types import *
+from .schemas import *
 from .planetary_return_factory import PlanetaryReturnFactory, PlanetReturnModel
 from .relationship_score_factory import RelationshipScoreFactory
 from .report import Report

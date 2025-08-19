@@ -14,8 +14,8 @@ from typing import Union
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 from kerykeion.house_comparison.house_comparison_models import HouseComparisonModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.kr_types import AstrologicalSubjectModel, PlanetReturnModel
-from kerykeion.kr_types.kr_literals import AstrologicalPoint
+from kerykeion.schemas import AstrologicalSubjectModel, PlanetReturnModel
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 
 
 class HouseComparisonFactory:

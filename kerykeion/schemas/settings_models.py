@@ -6,7 +6,7 @@
 
 from pydantic import Field
 from typing import Optional
-from kerykeion.kr_types.kr_models import SubscriptableBaseModel
+from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 
 class KerykeionSettingsCelestialPointModel(SubscriptableBaseModel):

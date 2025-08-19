@@ -41,7 +41,7 @@ from dataclasses import dataclass, field
 
 
 from kerykeion.fetch_geonames import FetchGeonames
-from kerykeion.kr_types import (
+from kerykeion.schemas import (
     KerykeionException,
     ZodiacType,
     AstrologicalSubjectModel,

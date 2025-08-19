@@ -1,5 +1,5 @@
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.kr_types import AstrologicalPoint
+from kerykeion.schemas import AstrologicalPoint
 from typing import get_args
 from pytest import approx
 

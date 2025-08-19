@@ -44,8 +44,8 @@ License: AGPL-3.0
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
 import logging
-from kerykeion.kr_types.kr_models import AstrologicalSubjectModel, RelationshipScoreAspectModel, RelationshipScoreModel
-from kerykeion.kr_types.kr_literals import RelationshipScoreDescription
+from kerykeion.schemas.kr_models import AstrologicalSubjectModel, RelationshipScoreAspectModel, RelationshipScoreModel
+from kerykeion.schemas.kr_literals import RelationshipScoreDescription
 
 # Scoring constants
 DESTINY_SIGN_POINTS = 5

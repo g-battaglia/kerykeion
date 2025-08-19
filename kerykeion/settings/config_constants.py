@@ -1,5 +1,5 @@
-from kerykeion.kr_types.kr_literals import AstrologicalPoint
-from kerykeion.kr_types.kr_models import ActiveAspect
+from kerykeion.schemas.kr_literals import AstrologicalPoint
+from kerykeion.schemas.kr_models import ActiveAspect
 from typing import List
 
 
