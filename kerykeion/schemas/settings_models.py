@@ -149,7 +149,6 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     houses_system_X: str = Field(title="Houses System X", description="The houses system X label in the chart, in the language")
     houses_system_Y: str = Field(title="Houses System Y", description="The houses system Y label in the chart, in the language")
     Natal: str = Field(title="Natal", description="The natal chart label in the chart, in the language")
-    ExternalNatal: str = Field(title="External Natal", description="The external natal chart label in the chart, in the language")
     Synastry: str = Field(title="Synastry", description="The synastry chart label in the chart, in the language")
     Transit: str = Field(title="Transit", description="The transit chart label in the chart, in the language")
     Composite: str = Field(title="Composite", description="The composite chart label in the chart, in the language")

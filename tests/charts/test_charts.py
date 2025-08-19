@@ -122,12 +122,12 @@ class TestCharts:
             compare_svg_lines(expected_line, actual_line)
 
     def test_external_natal_chart(self):
-        chart_data = ChartDataFactory.create_chart_data("ExternalNatal", self.first_subject)
-        external_natal_chart_svg = ChartDrawer(chart_data).makeTemplate()
+        chart_data = ChartDataFactory.create_chart_data("Natal", self.first_subject)
+        external_natal_chart_svg = ChartDrawer(chart_data, external_view=True).makeTemplate()
         external_natal_chart_svg_lines = external_natal_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeSVG()
+            ChartDrawer(chart_data, external_view=True).makeSVG()
 
         with open(self.SVG_DIR / "John Lennon - ExternalNatal Chart.svg", "r", encoding="utf-8") as f:
             file_content = f.read()
@@ -346,12 +346,12 @@ class TestCharts:
             compare_svg_lines(expected_line, actual_line)
 
     def test_dark_theme_external_natal_chart(self):
-        chart_data = ChartDataFactory.create_chart_data("ExternalNatal", self.dark_theme_external_subject)
-        external_natal_chart_svg = ChartDrawer(chart_data, theme="dark").makeTemplate()
+        chart_data = ChartDataFactory.create_chart_data("Natal", self.dark_theme_external_subject)
+        external_natal_chart_svg = ChartDrawer(chart_data, theme="dark", external_view=True).makeTemplate()
         external_natal_chart_svg_lines = external_natal_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data, theme="dark").makeSVG()
+            ChartDrawer(chart_data, theme="dark", external_view=True).makeSVG()
 
         with open(self.SVG_DIR / "John Lennon - Dark Theme External - ExternalNatal Chart.svg", "r") as f:
             file_content = f.read()
@@ -395,13 +395,13 @@ class TestCharts:
             compare_svg_lines(expected_line, actual_line)
 
     def test_wheel_external_chart(self):
-        chart_data = ChartDataFactory.create_chart_data("ExternalNatal", self.wheel_external_subject)
-        wheel_external_chart_svg = ChartDrawer(chart_data).makeWheelOnlyTemplate()
+        chart_data = ChartDataFactory.create_chart_data("Natal", self.wheel_external_subject)
+        wheel_external_chart_svg = ChartDrawer(chart_data, external_view=True).makeWheelOnlyTemplate()
 
         wheel_external_chart_svg_lines = wheel_external_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeWheelOnlySVG()
+            ChartDrawer(chart_data, external_view=True).makeWheelOnlySVG()
 
         with open(self.SVG_DIR / "John Lennon - Wheel External Only - ExternalNatal Chart - Wheel Only.svg", "r") as f:
             file_content = f.read()

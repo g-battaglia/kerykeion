@@ -121,12 +121,11 @@ class SingleChartDataModel(SubscriptableBaseModel):
 
     Supported chart types:
     - Natal: Birth chart with internal planetary aspects
-    - ExternalNatal: Birth chart with alternate visualization data
     - Composite: Midpoint relationship chart with internal aspects
     - SingleWheelReturn: Single planetary return with internal aspects
 
     Attributes:
-        chart_type: Type of single chart (Natal, ExternalNatal, Composite, SingleWheelReturn)
+        chart_type: Type of single chart (Natal, Composite, SingleWheelReturn)
         subject: The astrological subject being analyzed
         aspects: Internal aspects within the chart
         element_distribution: Distribution of elemental energies
@@ -139,7 +138,7 @@ class SingleChartDataModel(SubscriptableBaseModel):
     """
 
     # Chart identification
-    chart_type: Literal["Natal", "ExternalNatal", "Composite", "SingleWheelReturn"]
+    chart_type: Literal["Natal", "Composite", "SingleWheelReturn"]
 
     # Single chart subject
     subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
@@ -309,7 +308,7 @@ class ChartDataFactory:
             )
 
         # Calculate aspects based on chart type
-        if chart_type in ["Natal", "ExternalNatal", "Composite", "SingleWheelReturn"]:
+        if chart_type in ["Natal", "Composite", "SingleWheelReturn"]:
             # Single chart aspects
             aspects = AspectsFactory.single_chart_aspects(
                 first_subject,
@@ -450,10 +449,10 @@ class ChartDataFactory:
             longitude = first_subject.lng or 0.0
 
         # Create and return the appropriate chart data model
-        if chart_type in ["Natal", "ExternalNatal", "Composite", "SingleWheelReturn"]:
+        if chart_type in ["Natal", "Composite", "SingleWheelReturn"]:
             # Single chart data model - cast types since they're already validated
             return SingleChartDataModel(
-                chart_type=cast(Literal["Natal", "ExternalNatal", "Composite", "SingleWheelReturn"], chart_type),
+                chart_type=cast(Literal["Natal", "Composite", "SingleWheelReturn"], chart_type),
                 subject=first_subject,
                 aspects=cast(SingleChartAspectsModel, aspects),
                 element_distribution=element_distribution,
@@ -591,30 +590,6 @@ class ChartDataFactory:
         return ChartDataFactory.create_chart_data(
             first_subject=composite_subject,
             chart_type="Composite",
-            active_points=active_points,
-            active_aspects=active_aspects,
-        )
-
-    @staticmethod
-    def create_external_natal_chart_data(
-        subject: AstrologicalSubjectModel,
-        active_points: Optional[List[AstrologicalPoint]] = None,
-        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
-    ) -> ChartDataModel:
-        """
-        Convenience method for creating external natal chart data.
-
-        Args:
-            subject: Astrological subject
-            active_points: Points to include in calculations
-            active_aspects: Aspect types and orbs to use
-
-        Returns:
-            ChartDataModel: External natal chart data
-        """
-        return ChartDataFactory.create_chart_data(
-            first_subject=subject,
-            chart_type="ExternalNatal",
             active_points=active_points,
             active_aspects=active_aspects,
         )
