@@ -61,7 +61,7 @@ from kerykeion.charts.charts_utils import (
     format_datetime_with_timezone
 )
 from kerykeion.charts.draw_planets import draw_planets
-from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg
+from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg, distribute_percentages_to_100
 from kerykeion.settings.legacy.legacy_color_settings import DEFAULT_CHART_COLORS
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
@@ -618,10 +618,12 @@ class ChartDrawer:
 
         # Calculate element percentages
         total_elements = self.fire + self.water + self.earth + self.air
-        fire_percentage = int(round(100 * self.fire / total_elements))
-        earth_percentage = int(round(100 * self.earth / total_elements))
-        air_percentage = int(round(100 * self.air / total_elements))
-        water_percentage = int(round(100 * self.water / total_elements))
+        element_values = {"fire": self.fire, "earth": self.earth, "air": self.air, "water": self.water}
+        element_percentages = distribute_percentages_to_100(element_values) if total_elements > 0 else {"fire": 0, "earth": 0, "air": 0, "water": 0}
+        fire_percentage = element_percentages["fire"]
+        earth_percentage = element_percentages["earth"]
+        air_percentage = element_percentages["air"]
+        water_percentage = element_percentages["water"]
 
         # Element Percentages
         template_dict["elements_string"] = f"{self.language_settings.get('elements', 'Elements')}:"
@@ -633,9 +635,11 @@ class ChartDrawer:
 
         # Qualities Percentages
         total_qualities = self.cardinal + self.fixed + self.mutable
-        cardinal_percentage = int(round(100 * self.cardinal / total_qualities))
-        fixed_percentage = int(round(100 * self.fixed / total_qualities))
-        mutable_percentage = int(round(100 * self.mutable / total_qualities))
+        quality_values = {"cardinal": self.cardinal, "fixed": self.fixed, "mutable": self.mutable}
+        quality_percentages = distribute_percentages_to_100(quality_values) if total_qualities > 0 else {"cardinal": 0, "fixed": 0, "mutable": 0}
+        cardinal_percentage = quality_percentages["cardinal"]
+        fixed_percentage = quality_percentages["fixed"]
+        mutable_percentage = quality_percentages["mutable"]
 
         template_dict["qualities_string"] = f"{self.language_settings.get('qualities', 'Qualities')}:"
         template_dict["cardinal_string"] = f"{self.language_settings.get('cardinal', 'Cardinal')} {cardinal_percentage}%"
@@ -697,7 +701,12 @@ class ChartDrawer:
             template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - self.third_circle_radius)
 
             # Chart title
-            template_dict["stringTitle"] = f'{self.first_obj.name} - {self.language_settings.get("birth_chart", "Birth Chart")}'
+            if self.external_view and " - External" in self.first_obj.name:
+                # Remove " - External" suffix for external view charts
+                clean_name = self.first_obj.name.replace(" - External", "")
+                template_dict["stringTitle"] = f'{clean_name} - {self.language_settings.get("birth_chart", "Birth Chart")}'
+            else:
+                template_dict["stringTitle"] = f'{self.first_obj.name} - {self.language_settings.get("birth_chart", "Birth Chart")}'
 
             # Top left section
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings["north"], self.language_settings["south"])

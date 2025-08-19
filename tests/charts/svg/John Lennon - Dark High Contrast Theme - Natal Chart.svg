@@ -181,7 +181,7 @@
             <text x='20' y='130' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Elements:</text>
             <text x='20' y='144' style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>Fire 21%</text>
             <text x='20' y='156' style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>Earth 32%</text>
-            <text x='20' y='168' style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>Air 40%</text>
+            <text x='20' y='168' style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>Air 41%</text>
             <text x='20' y='180' style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>Water 6%</text>
         </g>
 
