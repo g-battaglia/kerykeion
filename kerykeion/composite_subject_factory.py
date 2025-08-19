@@ -23,7 +23,7 @@ Classes:
 
 Dependencies:
     - AstrologicalSubjectFactory: For working with individual astrological subjects
-    - Various kr_types modules: For type definitions and models
+    - Various schemas modules: For type definitions and models
     - utilities module: For astrological calculations and helper functions
 
 Example Usage:

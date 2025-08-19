@@ -91,7 +91,7 @@ kerykeion/
 │   ├── __init__.py
 │   ├── aspects/               # Astrological aspects
 │   ├── charts/                # Chart generation
-│   ├── kr_types/              # Type definitions
+│   ├── schemas/              # Type definitions
 │   ├── settings/              # Configuration
 │   └── ...
 ├── tests/                     # Test suite

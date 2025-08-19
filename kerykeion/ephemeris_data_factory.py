@@ -25,7 +25,7 @@ Classes:
 Dependencies:
     - kerykeion.AstrologicalSubjectFactory: For creating astrological subjects
     - kerykeion.utilities: For house and planetary data extraction
-    - kerykeion.kr_types: For type definitions and model structures
+    - kerykeion.schemas: For type definitions and model structures
     - datetime: For date/time handling
     - logging: For performance warnings
 

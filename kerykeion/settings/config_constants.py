@@ -49,7 +49,7 @@ DEFAULT_ACTIVE_POINTS: List[AstrologicalPoint] = [
 ]
 """
 Default list of active points in the charts or aspects calculations.
-The full list of points is available in the `kr_types.kr_literals.AstrologicalPoint` literal.
+The full list of points is available in the `schemas.kr_literals.AstrologicalPoint` literal.
 """
 
 DEFAULT_ACTIVE_ASPECTS: List[ActiveAspect] = [
@@ -67,7 +67,7 @@ DEFAULT_ACTIVE_ASPECTS: List[ActiveAspect] = [
 ]
 """
 Default list of active aspects in the aspects calculations.
-The full list of aspects is available in the `kr_types.kr_literals.AspectName` literal.
+The full list of aspects is available in the `schemas.kr_literals.AspectName` literal.
 """
 
 DISCEPOLO_SCORE_ACTIVE_ASPECTS: List[ActiveAspect] = [

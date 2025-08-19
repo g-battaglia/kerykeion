@@ -33,7 +33,7 @@ Dependencies:
     - kerykeion.AstrologicalSubjectFactory: For creating complete chart data
     - kerykeion.fetch_geonames: For online location data retrieval
     - kerykeion.utilities: For date/time conversions and astronomical functions
-    - kerykeion.kr_types: For type definitions and model structures
+    - kerykeion.schemas: For type definitions and model structures
 
 Example:
     Basic Solar Return calculation for a specific year:
