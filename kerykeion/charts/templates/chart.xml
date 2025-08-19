@@ -158,6 +158,51 @@
                 <circle cx="10" cy="10" r="2" style="fill: $planets_color_0" />
             </g>
         </symbol>
+        <!-- OTHER POINTS -->
+        <symbol id="Earth">
+            <circle cx="12" cy="12" r="10" style="stroke: #888; stroke-width: 2px; fill: none;" />
+            <text x="12" y="17" text-anchor="middle" font-size="10" fill="#888">Earth</text>
+        </symbol>
+        <symbol id="Pholus">
+            <circle cx="12" cy="12" r="10" style="stroke: #888; stroke-width: 2px; fill: none;" />
+            <text x="12" y="17" text-anchor="middle" font-size="10" fill="#888">Pholus</text>
+        </symbol>
+        <symbol id="Sedna">
+            <circle cx="12" cy="12" r="10" style="stroke: #888; stroke-width: 2px; fill: none;" />
+            <text x="12" y="17" text-anchor="middle" font-size="10" fill="#888">Sedna</text>
+        </symbol>
+        <symbol id="Haumea">
+            <circle cx="12" cy="12" r="10" style="stroke: #888; stroke-width: 2px; fill: none;" />
+            <text x="12" y="17" text-anchor="middle" font-size="10" fill="#888">Haumea</text>
+        </symbol>
+        <symbol id="Makemake">
+            <circle cx="12" cy="12" r="10" style="stroke: #888; stroke-width: 2px; fill: none;" />
+            <text x="12" y="17" text-anchor="middle" font-size="10" fill="#888">Makemake</text>
+        </symbol>
+        <symbol id="Ixion">
+            <circle cx="12" cy="12" r="10" style="stroke: #888; stroke-width: 2px; fill: none;" />
+            <text x="12" y="17" text-anchor="middle" font-size="10" fill="#888">Ixion</text>
+        </symbol>
+        <symbol id="Orcus">
+            <circle cx="12" cy="12" r="10" style="stroke: #888; stroke-width: 2px; fill: none;" />
+            <text x="12" y="17" text-anchor="middle" font-size="10" fill="#888">Orcus</text>
+        </symbol>
+        <symbol id="Quaoar">
+            <circle cx="12" cy="12" r="10" style="stroke: #888; stroke-width: 2px; fill: none;" />
+            <text x="12" y="17" text-anchor="middle" font-size="10" fill="#888">Quaoar</text>
+        </symbol>
+        <symbol id="Regulus">
+            <circle cx="12" cy="12" r="10" style="stroke: #888; stroke-width: 2px; fill: none;" />
+            <text x="12" y="17" text-anchor="middle" font-size="10" fill="#888">Regulus</text>
+        </symbol>
+        <symbol id="Spica">
+            <circle cx="12" cy="12" r="10" style="stroke: #888; stroke-width: 2px; fill: none;" />
+            <text x="12" y="17" text-anchor="middle" font-size="10" fill="#888">Spica</text>
+        </symbol>
+        <symbol id="Anti_Vertex">
+            <circle cx="12" cy="12" r="10" style="stroke: #888; stroke-width: 2px; fill: none;" />
+            <text x="12" y="17" text-anchor="middle" font-size="10" fill="#888">Anti-Vertex</text>
+        </symbol>
         <symbol id="Moon">
             <g transform="translate(4,3)">
                 <g transform="scale(.8)">
