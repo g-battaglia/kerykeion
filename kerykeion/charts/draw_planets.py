@@ -15,13 +15,15 @@ def draw_planets(
     main_subject_seventh_house_degree_ut: Union[int, float],
     chart_type: ChartType,
     second_subject_available_kerykeion_celestial_points: Union[list[KerykeionPointModel], None] = None,
+    external_view: bool = False,
 ) -> str:
     """
     Draws the planets on an astrological chart based on the provided parameters.
 
     This function calculates positions, handles overlap of celestial points, and draws SVG
     elements for each planet/point on the chart. It supports different chart types including
-    natal charts, transits, synastry, and returns.
+    natal charts, transits, synastry, and returns. For single-subject charts (Natal), it
+    can render planets in external view mode using the external_view parameter.
 
     Args:
         radius (Union[int, float]): The radius of the chart in pixels.
@@ -30,10 +32,13 @@ def draw_planets(
         third_circle_radius (Union[int, float]): Radius of the third circle in the chart.
         main_subject_first_house_degree_ut (Union[int, float]): Degree of the first house for the main subject.
         main_subject_seventh_house_degree_ut (Union[int, float]): Degree of the seventh house for the main subject.
-        chart_type (ChartType): Type of the chart (e.g., "Transit", "Synastry", "Return", "ExternalNatal").
+        chart_type (ChartType): Type of the chart (e.g., "Transit", "Synastry", "Return", "Natal").
         second_subject_available_kerykeion_celestial_points (Union[list[KerykeionPointModel], None], optional):
             List of celestial points for the second subject, required for "Transit", "Synastry", or "Return" charts.
             Defaults to None.
+        external_view (bool, optional):
+            Whether to render planets in external view mode (planets on outer ring with connecting lines).
+            Only applicable for single-subject charts. Defaults to False.
 
     Raises:
         KerykeionException: If secondary celestial points are required but not provided.
@@ -163,7 +168,7 @@ def draw_planets(
         point_idx = position_index_map[abs_position]
 
         # Determine radius based on chart type and point type
-        point_radius = _determine_point_radius(point_idx, chart_type, bool(position_idx % 2))
+        point_radius = _determine_point_radius(point_idx, chart_type, bool(position_idx % 2), external_view)
 
         # Calculate position offset for the point
         adjusted_offset = _calculate_point_offset(
@@ -191,11 +196,11 @@ def draw_planets(
             scale_factor = 0.8
         elif chart_type == "Return":
             scale_factor = 0.8
-        elif chart_type == "ExternalNatal":
+        elif external_view:
             scale_factor = 0.8
 
-        # Draw connecting lines for ExternalNatal chart type
-        if chart_type == "ExternalNatal":
+        # Draw connecting lines for external view
+        if external_view:
             output = _draw_external_natal_lines(
                 output,
                 radius,
@@ -327,7 +332,8 @@ def _handle_multi_point_group(group: list, position_adjustments: list, threshold
 def _determine_point_radius(
     point_idx: int,
     chart_type: str,
-    is_alternate_position: bool
+    is_alternate_position: bool,
+    external_view: bool = False
 ) -> int:
     """
     Determine the radius for placing a celestial point based on its type and chart type.
@@ -336,6 +342,7 @@ def _determine_point_radius(
         point_idx (int): Index of the celestial point.
         chart_type (str): Type of the chart.
         is_alternate_position (bool): Whether to use alternate positioning.
+        external_view (bool): Whether external view is enabled.
 
     Returns:
         int: Radius value for the point.
@@ -359,10 +366,10 @@ def _determine_point_radius(
         else:
             return 110 if is_alternate_position else 130
     else:
-        # Default natal chart and ExternalNatal handling
+        # Default natal chart and external view handling
         # if 22 < point_idx < 27 it is asc,mc,dsc,ic (angles of chart)
         amin, bmin, cmin = 0, 0, 0
-        if chart_type == "ExternalNatal":
+        if external_view:
             amin = 74 - 10
             bmin = 94 - 10
             cmin = 40 - 10
@@ -402,7 +409,7 @@ def _draw_external_natal_lines(
     color: str,
 ) -> str:
     """
-    Draw connecting lines for the ExternalNatal chart type.
+    Draw connecting lines for external view charts.
 
     Creates two line segments: one from the circle to the original position,
     and another from the original position to the adjusted position.
