@@ -828,10 +828,10 @@ The Aspects module works seamlessly with other Kerykeion components:
 
 ### Chart Visualization
 ```python
-from kerykeion.charts import KerykeionChartSVG
+from kerykeion.charts import ChartDrawer
 
 # Create chart with aspect lines
-chart = KerykeionChartSVG(person)
+chart = ChartDrawer(person)
 chart_svg = chart.makeTemplate()
 # Aspects are automatically calculated and displayed as lines
 ```

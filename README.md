@@ -130,7 +130,7 @@ john = AstrologicalSubjectFactory.from_birth_data(
 
 ## Generate a SVG Chart
 
-To generate a chart, use the `KerykeionChartSVG` class. You can create various types of charts, including birth, synastry, transit, and composite charts.
+To generate a chart, use the `ChartDrawer` class. You can create various types of charts, including birth, synastry, transit, and composite charts.
 
 **Tip:** 
 The optimized way to open the generated SVG files is with a web browser (e.g., Chrome, Firefox).
@@ -139,10 +139,10 @@ To improve compatibility across different applications, you can use the `remove_
 ### Birth Chart
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 
 john = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-birth_chart_svg = KerykeionChartSVG(john)
+birth_chart_svg = ChartDrawer(john)
 birth_chart_svg.makeSVG()
 ```
 
@@ -152,9 +152,9 @@ The SVG file will be saved in the home directory.
 ### External Birth Chart
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-birth_chart_svg = KerykeionChartSVG(birth_chart, chart_type="ExternalNatal")
+birth_chart_svg = ChartDrawer(birth_chart, chart_type="ExternalNatal")
 birth_chart_svg.makeSVG()
 ```
 ![John Lennon External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20ExternalNatal%20Chart.svg)
@@ -162,12 +162,12 @@ birth_chart_svg.makeSVG()
 ### Synastry Chart
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 
 first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
-synastry_chart = KerykeionChartSVG(first, "Synastry", second)
+synastry_chart = ChartDrawer(first, "Synastry", second)
 synastry_chart.makeSVG()
 ```
 
@@ -177,12 +177,12 @@ synastry_chart.makeSVG()
 ### Transit Chart
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 
 transit = AstrologicalSubjectFactory.from_birth_data("Transit", 2025, 6, 8, 8, 45, "Atlanta", "US")
 subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 
-transit_chart = KerykeionChartSVG(subject, "Transit", transit)
+transit_chart = ChartDrawer(subject, "Transit", transit)
 transit_chart.makeSVG()
 ```
 
@@ -191,7 +191,7 @@ transit_chart.makeSVG()
 ### Composite Chart
 
 ```python
-from kerykeion import CompositeSubjectFactory, AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import CompositeSubjectFactory, AstrologicalSubjectFactory, ChartDrawer
 
 angelina = AstrologicalSubjectFactory.from_birth_data("Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US", lng=-118.15, lat=34.03, tz_str="America/Los_Angeles")
 
@@ -200,7 +200,7 @@ brad = AstrologicalSubjectFactory.from_birth_data("Brad Pitt", 1963, 12, 18, 6, 
 factory = CompositeSubjectFactory(angelina, brad)
 composite_model = factory.get_midpoint_composite_subject_model()
 
-composite_chart = KerykeionChartSVG(composite_model, "Composite")
+composite_chart = ChartDrawer(composite_model, "Composite")
 composite_chart.makeSVG()
 ```
 
@@ -212,10 +212,10 @@ For *all* the charts, you can generate a wheel-only chart by using the method `m
 
 ### Birth Chart
 ```python
-from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 
 birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-birth_chart_svg = KerykeionChartSVG(birth_chart)
+birth_chart_svg = ChartDrawer(birth_chart)
 birth_chart_svg.makeWheelOnlySVG()
 ```
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Wheel%20Only%20-%20Natal%20Chart%20-%20Wheel%20Only.svg)
@@ -223,9 +223,9 @@ birth_chart_svg.makeWheelOnlySVG()
 ### Wheel Only Birth Chart (External)
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-birth_chart_svg = KerykeionChartSVG(birth_chart, chart_type="ExternalNatal")
+birth_chart_svg = ChartDrawer(birth_chart, chart_type="ExternalNatal")
 birth_chart_svg.makeWheelOnlySVG(
     wheel_only=True,
     wheel_only_external=True
@@ -236,10 +236,10 @@ birth_chart_svg.makeWheelOnlySVG(
 
 ### Synastry Chart
 ```python
-from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
-synastry_chart = KerykeionChartSVG(
+synastry_chart = ChartDrawer(
     first, "Synastry", second
 )
 synastry_chart.makeWheelOnlySVG()
@@ -252,12 +252,12 @@ synastry_chart.makeWheelOnlySVG()
 To save the SVG file in a custom location, specify `new_output_directory`:
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 
 first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
-synastry_chart = KerykeionChartSVG(
+synastry_chart = ChartDrawer(
     first, "Synastry", second,
     new_output_directory="."
 )
@@ -266,13 +266,13 @@ synastry_chart.makeSVG()
 
 ### Change Language
 
-You can switch chart language by passing `chart_language` to the  `KerykeionChartSVG` class:
+You can switch chart language by passing `chart_language` to the  `ChartDrawer` class:
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 
 birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-birth_chart_svg = KerykeionChartSVG(
+birth_chart_svg = ChartDrawer(
     birth_chart,
     chart_language="IT"  # Change to Italian
 )
@@ -297,9 +297,9 @@ The available languages are:
 To generate a minified SVG, set `minify_svg=True` in the `makeSVG()` method:
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-birth_chart_svg = KerykeionChartSVG(birth_chart)
+birth_chart_svg = ChartDrawer(birth_chart)
 birth_chart_svg.makeSVG(
     minify=True
 )
@@ -309,10 +309,10 @@ birth_chart_svg.makeSVG(
 To generate an SVG without CSS variables, set `remove_css_variables=True` in the `makeSVG()` method:
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 
 birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-birth_chart_svg = KerykeionChartSVG(birth_chart)
+birth_chart_svg = ChartDrawer(birth_chart)
 birth_chart_svg.makeSVG(
     remove_css_variables=True
 )
@@ -325,10 +325,10 @@ This will inline all styles and eliminate CSS variables, resulting in an SVG tha
 It's possible to generate a grid-only SVG, useful for creating a custom layout. To do this, use the `makeAspectGridOnlySVG()` method:
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
-aspect_grid_chart = KerykeionChartSVG(birth_chart, "Synastry", second, theme="dark")
+aspect_grid_chart = ChartDrawer(birth_chart, "Synastry", second, theme="dark")
 aspect_grid_chart.makeAspectGridOnlySVG()
 ```
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Aspect%20Grid%20Only%20-%20Natal%20Chart%20-%20Aspect%20Grid%20Only.svg)
@@ -509,10 +509,10 @@ Each theme offers a distinct visual style, allowing you to choose the one that b
 Here's an example of how to set the theme:
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 
 dark_theme_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-dark_theme_natal_chart = KerykeionChartSVG(dark_theme_subject, theme="dark_high_contrast")
+dark_theme_natal_chart = ChartDrawer(dark_theme_subject, theme="dark_high_contrast")
 dark_theme_natal_chart.makeSVG()
 ```
 
@@ -547,16 +547,16 @@ Kerykeion supports both **True** and **Mean** Lunar Nodes:
 - **Mean North Lunar Node**: `"mean_node"` (name kept without "north" for backward compatibility).
 - **Mean South Lunar Node**: `"mean_south_node"`.
 
-In instances of the classes used to generate aspects and SVG charts, only the mean nodes are active. To activate the true nodes, you need to pass the `active_points` parameter to the `KerykeionChartSVG` class.
+In instances of the classes used to generate aspects and SVG charts, only the mean nodes are active. To activate the true nodes, you need to pass the `active_points` parameter to the `ChartDrawer` class.
 
 Example:
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, KerykeionChartSVG
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 
-chart = KerykeionChartSVG(
+chart = ChartDrawer(
     subject,
     active_points=[
         "Sun", 

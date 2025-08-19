@@ -8,7 +8,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 # Local
 from .aspects import AspectsFactory
 from .astrological_subject_factory import AstrologicalSubjectFactory
-from .charts.kerykeion_chart_svg import KerykeionChartSVG
+from .charts.chart_drawer import ChartDrawer
 from .composite_subject_factory import CompositeSubjectFactory
 from .ephemeris_data_factory import EphemerisDataFactory
 from .house_comparison.house_comparison_factory import HouseComparisonFactory
@@ -23,7 +23,7 @@ from .transits_time_range_factory import TransitsTimeRangeFactory
 __all__ = [
     "AspectsFactory",
     "AstrologicalSubjectFactory",
-    "KerykeionChartSVG",
+    "ChartDrawer",
     "CompositeSubjectFactory",
     "EphemerisDataFactory",
     "HouseComparisonFactory",
