@@ -1,8 +1,8 @@
-# Charts Module - KerykeionChartSVG
+# Charts Module - ChartDrawer
 
 ## Overview
 
-The `KerykeionChartSVG` class is the core visualization engine of Kerykeion, responsible for generating professional-quality SVG astrological charts. As the primary interface for chart creation, this module transforms astronomical calculations into beautiful, customizable visual representations that can be used in web applications, printed materials, or standalone analysis tools.
+The `ChartDrawer` class is the core visualization engine of Kerykeion, responsible for generating professional-quality SVG astrological charts. As the primary interface for chart creation, this module transforms astronomical calculations into beautiful, customizable visual representations that can be used in web applications, printed materials, or standalone analysis tools.
 
 This module supports the complete spectrum of astrological chart types used in both Western and Vedic traditions, with extensive customization options for themes, languages, house systems, and zodiac types. The SVG output ensures scalable, high-quality graphics that maintain clarity at any size while remaining lightweight for web applications.
 
@@ -19,21 +19,21 @@ This module supports the complete spectrum of astrological chart types used in b
 
 ## Basic Usage
 
-The foundation of chart creation starts with defining astrological subjects and selecting appropriate chart types. The `KerykeionChartSVG` class handles all the complex calculations internally, transforming astronomical data into professional visual representations.
+The foundation of chart creation starts with defining astrological subjects and selecting appropriate chart types. The `ChartDrawer` class handles all the complex calculations internally, transforming astronomical data into professional visual representations.
 
 ### Simple Natal Chart
 
 A natal chart represents the sky at the moment of birth, showing planetary positions, house divisions, and aspects. This is the most fundamental chart type in astrology.
 
 ```python
-from kerykeion import AstrologicalSubject, KerykeionChartSVG
+from kerykeion import AstrologicalSubject, ChartDrawer
 
 # Create an astrological subject with birth data
 # Parameters: name, year, month, day, hour, minute, city, country
 subject = AstrologicalSubject("John", 1990, 7, 15, 10, 30, "Rome", "IT")
 
 # Create a chart object - this calculates all planetary positions and aspects
-chart = KerykeionChartSVG(subject)
+chart = ChartDrawer(subject)
 
 # METHOD 1: Generate and save SVG file to disk
 chart.makeSVG()  # Saves file to location specified in constructor
@@ -57,7 +57,7 @@ subject2 = AstrologicalSubject("Person2", 1985, 3, 20, 14, 15, "London", "GB")
 
 # Synastry chart shows aspects between two people's planets
 # first_obj = inner wheel, second_obj = outer wheel
-chart = KerykeionChartSVG(
+chart = ChartDrawer(
     first_obj=subject1,      # Person1's planets in inner circle
     second_obj=subject2,     # Person2's planets in outer circle
     chart_type="Synastry"    # Chart type for relationship analysis
@@ -77,7 +77,7 @@ Composite charts represent the mathematical midpoint between two people's planet
 ```python
 # Composite chart calculates the midpoint between two people's planets
 # Creates a theoretical "relationship chart" representing the union
-chart = KerykeionChartSVG(
+chart = ChartDrawer(
     first_obj=subject1,      # First person's birth data
     second_obj=subject2,     # Second person's birth data  
     chart_type="Composite"   # Midpoint calculation method
@@ -96,7 +96,7 @@ Transit charts show how current planetary movements affect an individual's natal
 # Transits show how current planets aspect natal positions
 transit_subject = AstrologicalSubject("Transit", 2024, 1, 15, 12, 0, "Rome", "IT")
 
-chart = KerykeionChartSVG(
+chart = ChartDrawer(
     first_obj=subject1,         # Natal chart (inner wheel)
     second_obj=transit_subject, # Current planetary positions (outer wheel)
     chart_type="Transit"        # Shows transiting planet aspects to natal
@@ -112,12 +112,12 @@ svg_content = chart.makeTemplate()
 - `makeSVG()` methods **save files** to the location specified in the constructor
 - `makeTemplate()` methods **return string content** without saving files
 
-The KerykeionChartSVG class offers two categories of output methods: file generation and template string generation.
+The ChartDrawer class offers two categories of output methods: file generation and template string generation.
 
 ### Full Chart with Aspects
 
 ```python
-chart = KerykeionChartSVG(subject)
+chart = ChartDrawer(subject)
 
 # makeSVG() SAVES the complete chart file to disk
 # Does NOT return content - saves to constructor's specified location
@@ -131,7 +131,7 @@ svg_string = chart.makeTemplate()  # Returns SVG content as string
 ### Wheel Only
 
 ```python
-chart = KerykeionChartSVG(subject)
+chart = ChartDrawer(subject)
 
 # makeWheelOnlySVG() SAVES wheel-only file to disk
 chart.makeWheelOnlySVG()  # File saved, no return value
@@ -143,7 +143,7 @@ wheel_string = chart.makeWheelOnlyTemplate()  # Returns SVG string
 ### Aspect Grid Only
 
 ```python
-chart = KerykeionChartSVG(subject)
+chart = ChartDrawer(subject)
 
 # makeAspectGridOnlySVG() SAVES aspect grid file to disk
 chart.makeAspectGridOnlySVG()  # File saved, no return value
@@ -154,7 +154,7 @@ aspects_string = chart.makeAspectGridOnlyTemplate()  # Returns SVG string
 
 ## Themes
 
-Visual presentation is crucial for astrological charts, and KerykeionChartSVG offers carefully designed themes to suit different contexts, from traditional printed materials to modern digital interfaces.
+Visual presentation is crucial for astrological charts, and ChartDrawer offers carefully designed themes to suit different contexts, from traditional printed materials to modern digital interfaces.
 
 ### Available Themes
 
@@ -162,27 +162,27 @@ Visual presentation is crucial for astrological charts, and KerykeionChartSVG of
 # Classic theme (default) - traditional colors and styling
 # White background, black text, traditional planet colors
 # Best for: Printed materials, traditional presentations, educational content
-chart = KerykeionChartSVG(subject, theme="classic")
+chart = ChartDrawer(subject, theme="classic")
 
 # Dark theme - modern dark interface
 # Dark background, light text, optimized for night viewing
 # Best for: Digital applications, reduced eye strain, modern aesthetics
-chart = KerykeionChartSVG(subject, theme="dark")
+chart = ChartDrawer(subject, theme="dark")
 
 # Light theme - clean minimalist appearance
 # Light background, subtle colors, modern aesthetic
 # Best for: Clean presentations, web applications, minimalist design
-chart = KerykeionChartSVG(subject, theme="light")
+chart = ChartDrawer(subject, theme="light")
 
 # Strawberry theme - elegant pink and red tones
 # Beautiful color palette with warm, inviting aesthetics
 # Best for: Modern presentations, romantic contexts, unique visual appeal
-chart = KerykeionChartSVG(subject, theme="strawberry")
+chart = ChartDrawer(subject, theme="strawberry")
 
 # High contrast dark - accessibility focused
 # Maximum contrast for visual impairments, dark background
 # Best for: Accessibility compliance, visually impaired users, high contrast needs
-chart = KerykeionChartSVG(subject, theme="dark-high-contrast")
+chart = ChartDrawer(subject, theme="dark-high-contrast")
 ```
 
 ## Language Support
@@ -192,43 +192,43 @@ Kerykeion provides comprehensive internationalization support, making charts acc
 ```python
 # Italian - all text labels, planet names, and signs in Italian
 # Includes traditional Italian astrological terminology
-chart = KerykeionChartSVG(subject, language="IT")
+chart = ChartDrawer(subject, language="IT")
 
 # English (default) - standard international astrological terms
 # Uses conventional Western astrological terminology
-chart = KerykeionChartSVG(subject, language="EN")
+chart = ChartDrawer(subject, language="EN")
 
 # French - labels and terms translated to French
 # Follows French astrological tradition and terminology
-chart = KerykeionChartSVG(subject, language="FR")
+chart = ChartDrawer(subject, language="FR")
 
 # Spanish - full Spanish localization of chart text
 # Suitable for both European and Latin American contexts
-chart = KerykeionChartSVG(subject, language="ES")
+chart = ChartDrawer(subject, language="ES")
 
 # Portuguese - Brazilian/Portuguese language support
 # Appropriate for both European and Brazilian Portuguese
-chart = KerykeionChartSVG(subject, language="PT")
+chart = ChartDrawer(subject, language="PT")
 
 # Chinese - planet names and signs in Chinese characters
 # Traditional Chinese astrological terminology
-chart = KerykeionChartSVG(subject, language="CN")
+chart = ChartDrawer(subject, language="CN")
 
 # Russian - Cyrillic text for all chart labels
 # Complete Russian localization for Cyrillic readers
-chart = KerykeionChartSVG(subject, language="RU")
+chart = ChartDrawer(subject, language="RU")
 
 # Turkish - Turkish language localization
 # Modern Turkish astrological terminology
-chart = KerykeionChartSVG(subject, language="TR")
+chart = ChartDrawer(subject, language="TR")
 
 # German - German astrological terminology
 # Traditional German astrological terms and conventions
-chart = KerykeionChartSVG(subject, language="DE")
+chart = ChartDrawer(subject, language="DE")
 
 # Hindi - Devanagari script for Indian astrology contexts
 # Supports Vedic astrology terminology in Hindi
-chart = KerykeionChartSVG(subject, language="HI")
+chart = ChartDrawer(subject, language="HI")
 ```
 
 ## Zodiac Systems
@@ -253,7 +253,7 @@ subject = AstrologicalSubject(
     ks=settings
 )
 
-chart = KerykeionChartSVG(subject)
+chart = ChartDrawer(subject)
 ```
 
 ### Sidereal Zodiac
@@ -289,7 +289,7 @@ subject = AstrologicalSubject(
 )
 
 # Chart will show sidereal positions (star-based)
-chart = KerykeionChartSVG(subject)
+chart = ChartDrawer(subject)
 svg_content = chart.makeTemplate()  # Get as string, don't save file
 ```
 
@@ -314,8 +314,8 @@ sidereal_subject = AstrologicalSubject(
 )
 
 # Generate charts for comparison
-tropical_chart = KerykeionChartSVG(tropical_subject)
-sidereal_chart = KerykeionChartSVG(sidereal_subject)
+tropical_chart = ChartDrawer(tropical_subject)
+sidereal_chart = ChartDrawer(sidereal_subject)
 
 tropical_svg = tropical_chart.makeTemplate()  # Get string content
 sidereal_svg = sidereal_chart.makeTemplate()  # Get string content
@@ -350,7 +350,7 @@ extended_points = [
     "Uranus", "Neptune", "Pluto", "Chiron", "Node", "Lilith"
 ]
 
-chart = KerykeionChartSVG(
+chart = ChartDrawer(
     subject, 
     active_points=personal_planets  # Only these planets will appear on chart
 )
@@ -382,7 +382,7 @@ minor_aspects = [
 # Combine for comprehensive analysis
 all_aspects = major_aspects + minor_aspects
 
-chart = KerykeionChartSVG(
+chart = ChartDrawer(
     subject,
     active_aspects=major_aspects  # List of strings: aspect type names
 )
@@ -395,7 +395,7 @@ chart = KerykeionChartSVG(
 relationship_points = ["Sun", "Moon", "Venus", "Mars", "Jupiter"]
 relationship_aspects = ["conjunction", "opposition", "trine", "square"]  # List of aspect type strings
 
-synastry_chart = KerykeionChartSVG(
+synastry_chart = ChartDrawer(
     first_obj=subject1,
     second_obj=subject2,
     chart_type="Synastry",
@@ -425,7 +425,7 @@ subject = AstrologicalSubject(
 )
 
 # Chart will now show sidereal positions (typically ~24° different)
-chart = KerykeionChartSVG(subject)
+chart = ChartDrawer(subject)
 svg_content = chart.makeSVG()
 ```
 
@@ -486,7 +486,7 @@ charts = {}
 for name, system in house_systems.items():
     settings = KerykeionSettingsModel(house_system=system)
     subject = AstrologicalSubject(*birth_data, ks=settings)
-    chart = KerykeionChartSVG(subject)
+    chart = ChartDrawer(subject)
     charts[name] = chart.makeTemplate()  # Get as string
     
     # Save string content to file
@@ -515,8 +515,8 @@ equatorial_subject = AstrologicalSubject(
 )
 
 # Generate charts to see latitude effects
-high_lat_chart = KerykeionChartSVG(high_lat_subject)
-equatorial_chart = KerykeionChartSVG(equatorial_subject)
+high_lat_chart = ChartDrawer(high_lat_subject)
+equatorial_chart = ChartDrawer(equatorial_subject)
 ```
 
 ## Chart Perspectives
@@ -541,7 +541,7 @@ subject = AstrologicalSubject(
     ks=settings  # Perspective affects calculation depth and display elements
 )
 
-chart = KerykeionChartSVG(subject)
+chart = ChartDrawer(subject)
 ```
 
 ### Perspective Comparison
@@ -558,8 +558,8 @@ traditional_subject = AstrologicalSubject(*birth_data, ks=traditional_settings)
 minified_subject = AstrologicalSubject(*birth_data, ks=minified_settings)
 
 # Generate both chart types
-traditional_chart = KerykeionChartSVG(traditional_subject)
-minified_chart = KerykeionChartSVG(minified_subject)
+traditional_chart = ChartDrawer(traditional_subject)
+minified_chart = ChartDrawer(minified_subject)
 
 traditional_svg = traditional_chart.makeTemplate()  # Get string content
 minified_svg = minified_chart.makeTemplate()  # Get string content
@@ -574,7 +574,7 @@ These options control the technical aspects of SVG generation, affecting file si
 Minification reduces file size by removing unnecessary whitespace and optimizing code structure, crucial for web applications and storage efficiency.
 
 ```python
-chart = KerykeionChartSVG(subject)
+chart = ChartDrawer(subject)
 
 # Get template strings with different options
 standard_svg = chart.makeTemplate(minify=False)  # Human-readable
@@ -594,20 +594,20 @@ Background transparency enables flexible integration with different design conte
 # Transparent background useful for web integration and overlays
 # Chart can be placed over other content or different backgrounds
 # Perfect for: Web applications, design compositions, layered graphics
-chart = KerykeionChartSVG(
+chart = ChartDrawer(
     subject,
     transparent_background=True  # Removes default white background
 )
 svg_content = chart.makeTemplate()  # Get as string
 
 # Combine with themes for different effects
-dark_transparent = KerykeionChartSVG(
+dark_transparent = ChartDrawer(
     subject,
     theme="dark",
     transparent_background=True
 )
 
-light_transparent = KerykeionChartSVG(
+light_transparent = ChartDrawer(
     subject, 
     theme="light",
     transparent_background=True
@@ -624,7 +624,7 @@ light_svg = light_transparent.makeTemplate()
 # ExternalNatal shows how external planets affect a natal chart
 # Different from Transit - shows current sky positions relative to birth chart
 # Useful for timing analysis and progressions
-chart = KerykeionChartSVG(
+chart = ChartDrawer(
     first_obj=natal_subject,    # Birth chart as reference (inner wheel)
     second_obj=transit_subject, # Current planetary positions (outer wheel)
     chart_type="ExternalNatal"  # External influences on natal positions
@@ -639,7 +639,7 @@ svg_content = chart.makeTemplate()
 ### Complete Configuration Example
 
 ```python
-from kerykeion import AstrologicalSubject, KerykeionChartSVG
+from kerykeion import AstrologicalSubject, ChartDrawer
 from kerykeion.settings import KerykeionSettingsModel
 
 # Advanced settings
@@ -665,7 +665,7 @@ active_points = ["Sun", "Moon", "Mercury", "Venus", "Mars"]
 active_aspects = ["conjunction", "opposition", "trine", "square"]  # List of aspect type strings
 
 # Create synastry chart
-chart = KerykeionChartSVG(
+chart = ChartDrawer(
     first_obj=subject1,
     second_obj=subject2,
     chart_type="Synastry",
@@ -691,7 +691,7 @@ chart.makeAspectGridOnlySVG()           # Save aspects only
 
 ```python
 try:
-    chart = KerykeionChartSVG(subject)
+    chart = ChartDrawer(subject)
     svg_content = chart.makeTemplate()  # Get string content
     # Process svg_content as needed
 except Exception as e:
@@ -708,7 +708,7 @@ import os
 os.makedirs("charts", exist_ok=True)
 
 # METHOD 1: Get content as string and save manually (recommended)
-chart = KerykeionChartSVG(subject, theme="dark")
+chart = ChartDrawer(subject, theme="dark")
 svg_content = chart.makeTemplate()  # Get SVG as string
 
 # Save with UTF-8 encoding to handle international characters
@@ -749,7 +749,7 @@ for chart_type, content in chart_data:
 The class provides template methods for getting SVG content as strings, perfect for web applications and custom processing:
 
 ```python
-chart = KerykeionChartSVG(subject)
+chart = ChartDrawer(subject)
 
 # Get template strings for further processing (RECOMMENDED for web apps)
 full_template = chart.makeTemplate()          # Full chart as string

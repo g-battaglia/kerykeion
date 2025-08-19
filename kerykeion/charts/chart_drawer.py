@@ -76,9 +76,9 @@ from typing import List, Literal
 from datetime import datetime
 
 
-class KerykeionChartSVG:
+class ChartDrawer:
     """
-    KerykeionChartSVG generates astrological chart visualizations as SVG files.
+    ChartDrawer generates astrological chart visualizations as SVG files.
 
     This class supports creating full chart SVGs, wheel-only SVGs, and aspect-grid-only SVGs
     for various chart types including Natal, ExternalNatal, Transit, Synastry, and Composite.
@@ -1933,7 +1933,7 @@ if __name__ == "__main__":
 
     ###
     ## Birth Chart
-    birth_chart = KerykeionChartSVG(
+    birth_chart = ChartDrawer(
         first_obj=subject,
         chart_language="IT",
         theme="strawberry",
@@ -1947,7 +1947,7 @@ if __name__ == "__main__":
         "2025-01-09T18:30:00+01:00",  # UTC+1
         return_type="Solar",
     )
-    solar_return_chart = KerykeionChartSVG(
+    solar_return_chart = ChartDrawer(
         first_obj=subject, chart_type="Return",
         second_obj=solar_return,
         chart_language="IT",
@@ -1959,7 +1959,7 @@ if __name__ == "__main__":
 
     ###
     ## Single wheel return
-    single_wheel_return_chart = KerykeionChartSVG(
+    single_wheel_return_chart = ChartDrawer(
         first_obj=solar_return,
         chart_type="SingleWheelReturn",
         second_obj=solar_return,
@@ -1976,7 +1976,7 @@ if __name__ == "__main__":
         "2025-01-09T18:30:00+01:00",  # UTC+1
         return_type="Lunar",
     )
-    lunar_return_chart = KerykeionChartSVG(
+    lunar_return_chart = ChartDrawer(
         first_obj=subject,
         chart_type="Return",
         second_obj=lunar_return,
@@ -1992,7 +1992,7 @@ if __name__ == "__main__":
         "Transit",
         "2021-10-04T18:30:00+01:00",
     )
-    transit_chart = KerykeionChartSVG(
+    transit_chart = ChartDrawer(
         first_obj=subject,
         chart_type="Transit",
         second_obj=transit,
@@ -2005,7 +2005,7 @@ if __name__ == "__main__":
     ###
     ## Synastry Chart
     second_subject = AstrologicalSubjectFactory.from_birth_data("Yoko Ono", 1933, 2, 18, 18, 30, "Tokyo", "JP")
-    synastry_chart = KerykeionChartSVG(
+    synastry_chart = ChartDrawer(
         first_obj=subject,
         chart_type="Synastry",
         second_obj=second_subject,
@@ -2018,7 +2018,7 @@ if __name__ == "__main__":
     ##
     # Transit Chart with Grid
     subject.name = "Grid"
-    transit_chart_with_grid = KerykeionChartSVG(
+    transit_chart_with_grid = ChartDrawer(
         first_obj=subject,
         chart_type="Transit",
         second_obj=transit,
