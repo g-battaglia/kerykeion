@@ -171,7 +171,6 @@ class ChartDrawer:
     new_output_directory: Union[Path, None]
     new_settings_file: Union[Path, None, KerykeionSettingsModel, dict]
     output_directory: Path
-    new_settings_file: Union[Path, None, KerykeionSettingsModel, dict]
     theme: Union[KerykeionChartTheme, None]
     double_chart_aspect_grid_type: Literal["list", "table"]
     chart_language: KerykeionChartLanguage
@@ -203,12 +202,12 @@ class ChartDrawer:
     def __init__(
         self,
         chart_data: "ChartDataModel",
+        *,
         new_output_directory: Union[str, None] = None,
         new_settings_file: Union[Path, None, KerykeionSettingsModel, dict] = None,
         theme: Union[KerykeionChartTheme, None] = "classic",
         double_chart_aspect_grid_type: Literal["list", "table"] = "list",
         chart_language: KerykeionChartLanguage = "EN",
-        *,
         external_view: bool = False,
         transparent_background: bool = False,
         colors_settings: dict = DEFAULT_CHART_COLORS,
@@ -362,7 +361,6 @@ class ChartDrawer:
             self.location = chart_data.location_name
             self.geolat = chart_data.latitude
             self.geolon = chart_data.longitude
-            self.t_name = self.language_settings["transit_name"]
 
             # Circle radii
             self.first_circle_radius = 0
