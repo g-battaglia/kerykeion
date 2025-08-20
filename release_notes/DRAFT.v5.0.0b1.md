@@ -1,6 +1,8 @@
-# Kerykeion – Changelog (master → next)
+# Kerykeion – V5 Beta
 
-**Release date:** 2025-08-20
+> **This is the first true beta release of Kerykeion version 5!**
+
+The first alpha release was essentially a transitional version between v4 and v5, with only minor differences from v4. With this beta, the API has been completely overhauled: everything changes, from data creation to calculation and chart rendering. If you have used Kerykeion before, be prepared to update your imports and the way you interact with the library—v5 introduces a new paradigm based on factories, models, and schemas, designed for greater consistency, extensibility, and modernity.
 
 ## 🚀 Highlights
 - **New factory-based API:** The library now revolves around factories and data models in `kerykeion.schemas`, making the API more consistent and easier to extend.
