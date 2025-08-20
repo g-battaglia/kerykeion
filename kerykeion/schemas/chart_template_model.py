@@ -87,9 +87,6 @@ class ChartTemplateModel(SubscriptableBaseModel):
     paper_color_0: str
     """Font color"""
 
-    paper_color_1: str
-    """Background color of the chart"""
-
     background_color: str
     """Dynamic background color (can be transparent or theme color)"""
 
@@ -287,9 +284,6 @@ class ChartTemplateModel(SubscriptableBaseModel):
 
     orb_color_180: str
     """Aspect color for opposition (180°)"""
-
-    cfgTranslate: str
-    """Configuration translation string"""
 
     makeZodiac: str
     """SVG markup for zodiac signs"""
