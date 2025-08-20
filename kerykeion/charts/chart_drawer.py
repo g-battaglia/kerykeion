@@ -306,10 +306,8 @@ class ChartDrawer:
             self.height = self._DEFAULT_HEIGHT
             self.width = self._DEFAULT_NATAL_WIDTH
 
-            # Location and coordinates from chart data
-            self.location = chart_data.location_name
-            self.geolat = chart_data.latitude
-            self.geolon = chart_data.longitude
+            # Get location and coordinates
+            self.location, self.geolat, self.geolon = self._get_location_info()
 
             # Circle radii - depends on external_view
             if self.external_view:
@@ -331,10 +329,8 @@ class ChartDrawer:
             self.height = self._DEFAULT_HEIGHT
             self.width = self._DEFAULT_NATAL_WIDTH
 
-            # Location and coordinates from chart data
-            self.location = chart_data.location_name
-            self.geolat = chart_data.latitude
-            self.geolon = chart_data.longitude
+            # Get location and coordinates
+            self.location, self.geolat, self.geolon = self._get_location_info()
 
             # Circle radii
             self.first_circle_radius = 0
@@ -357,10 +353,8 @@ class ChartDrawer:
             else:
                 self.width = self._DEFAULT_FULL_WIDTH
 
-            # Location and coordinates from chart data
-            self.location = chart_data.location_name
-            self.geolat = chart_data.latitude
-            self.geolon = chart_data.longitude
+            # Get location and coordinates
+            self.location, self.geolat, self.geolon = self._get_location_info()
 
             # Circle radii
             self.first_circle_radius = 0
@@ -380,10 +374,8 @@ class ChartDrawer:
             self.height = self._DEFAULT_HEIGHT
             self.width = self._DEFAULT_FULL_WIDTH
 
-            # Location and coordinates from chart data
-            self.location = chart_data.location_name
-            self.geolat = chart_data.latitude
-            self.geolon = chart_data.longitude
+            # Get location and coordinates
+            self.location, self.geolat, self.geolon = self._get_location_info()
 
             # Circle radii
             self.first_circle_radius = 0
@@ -403,10 +395,8 @@ class ChartDrawer:
             self.height = self._DEFAULT_HEIGHT
             self.width = self._DEFAULT_ULTRA_WIDE_WIDTH
 
-            # Location and coordinates from chart data
-            self.location = chart_data.location_name
-            self.geolat = chart_data.latitude
-            self.geolon = chart_data.longitude
+            # Get location and coordinates
+            self.location, self.geolat, self.geolon = self._get_location_info()
 
             # Circle radii
             self.first_circle_radius = 0
@@ -423,10 +413,8 @@ class ChartDrawer:
             self.height = self._DEFAULT_HEIGHT
             self.width = self._DEFAULT_NATAL_WIDTH
 
-            # Location and coordinates from chart data
-            self.location = chart_data.location_name
-            self.geolat = chart_data.latitude
-            self.geolon = chart_data.longitude
+            # Get location and coordinates
+            self.location, self.geolat, self.geolon = self._get_location_info()
 
             # Circle radii
             self.first_circle_radius = 0
@@ -452,6 +440,37 @@ class ChartDrawer:
             raise KerykeionException(f"Theme {theme} is not available. Set None for default theme.")
 
         self.set_up_theme(theme)
+
+    def _get_location_info(self) -> tuple[str, float, float]:
+        """
+        Determine location information based on chart type and subjects.
+        
+        Returns:
+            tuple: (location_name, latitude, longitude)
+        """
+        if self.chart_type == "Composite":
+            # For composite charts, use average location of the two composite subjects
+            if isinstance(self.first_obj, CompositeSubjectModel):
+                location_name = ""
+                latitude = (self.first_obj.first_subject.lat + self.first_obj.second_subject.lat) / 2
+                longitude = (self.first_obj.first_subject.lng + self.first_obj.second_subject.lng) / 2
+            else:
+                # Fallback to first subject location
+                location_name = self.first_obj.city or "Unknown"
+                latitude = self.first_obj.lat or 0.0
+                longitude = self.first_obj.lng or 0.0
+        elif self.chart_type in ["Transit", "Return"] and self.second_obj:
+            # Use location from the second subject (transit/return)
+            location_name = self.second_obj.city or "Unknown"
+            latitude = self.second_obj.lat or 0.0
+            longitude = self.second_obj.lng or 0.0
+        else:
+            # Use location from the first subject
+            location_name = self.first_obj.city or "Unknown"
+            latitude = self.first_obj.lat or 0.0
+            longitude = self.first_obj.lng or 0.0
+            
+        return location_name, latitude, longitude
 
     def set_up_theme(self, theme: Union[KerykeionChartTheme, None] = None) -> None:
         """

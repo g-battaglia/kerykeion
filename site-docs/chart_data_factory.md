@@ -553,7 +553,6 @@ def process_multiple_charts(birth_data_list: List[BirthData]) -> List[Dict[str, 
                 "fixed_percentage": chart_data.quality_distribution.fixed_percentage,
                 "mutable_percentage": chart_data.quality_distribution.mutable_percentage,
                 "aspect_count": len(chart_data.aspects.relevant_aspects),
-                "location": chart_data.location_name
             }
             
             results.append(result)
