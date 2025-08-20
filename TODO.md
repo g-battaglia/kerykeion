@@ -18,15 +18,14 @@
 
 ### 🟥 High Priority
 
+- [ ] Rename "Return" and "SingleWheelReturn"
+- [ ] Move all the models inside the schemas module
 - [~] Full documentation for the library and AstrologerAPI
-- [ ] Complete all the arab parts and other points in the chart
+- [~] Complete all the arab parts and other points in the chart 
 - [ ] Correct the displayed file name (browser tab/title)
 - [ ] Discepolo's Score in Synastry
 - [ ] More "air space" around objects in the chart
-- [ ] Create utility function to retrieve all active planets  
-- [ ] NatalAspects and SynatryAspect with inheritance of ActivePoints
 - [ ] Expand unit tests to cover all aspects of the library
-- [ ] Add planetary speed and direction  
 
 
 ### 🟧 Medium Priority
