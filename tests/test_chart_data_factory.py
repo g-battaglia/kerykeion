@@ -277,10 +277,10 @@ class TestChartTypeMapping:
         assert chart_data.chart_type == "Composite"
 
     def test_single_wheel_return_chart_creation(self, factory, test_return_subject):
-        """Test that SingleWheelReturn charts work with PlanetReturnModel."""
-        chart_data = factory.create_chart_data("SingleWheelReturn", test_return_subject)
+        """Test that SingleReturnChart charts work with PlanetReturnModel."""
+        chart_data = factory.create_chart_data("SingleReturnChart", test_return_subject)
         assert isinstance(chart_data, SingleChartDataModel)
-        assert chart_data.chart_type == "SingleWheelReturn"
+        assert chart_data.chart_type == "SingleReturnChart"
 
     def test_dual_chart_types_return_dual_model(self, factory, test_subject_1, test_subject_2):
         """Test that dual chart types return DualChartDataModel."""

@@ -514,10 +514,10 @@ class SingleChartDataModel(SubscriptableBaseModel):
     Supported chart types:
     - Natal: Birth chart with internal planetary aspects
     - Composite: Midpoint relationship chart with internal aspects
-    - SingleWheelReturn: Single planetary return with internal aspects
+    - SingleReturnChart: Single planetary return with internal aspects
 
     Attributes:
-        chart_type: Type of single chart (Natal, Composite, SingleWheelReturn)
+        chart_type: Type of single chart (Natal, Composite, SingleReturnChart)
         subject: The astrological subject being analyzed
         aspects: Internal aspects within the chart
         element_distribution: Distribution of elemental energies
@@ -527,7 +527,7 @@ class SingleChartDataModel(SubscriptableBaseModel):
     """
 
     # Chart identification
-    chart_type: Literal["Natal", "Composite", "SingleWheelReturn"]
+    chart_type: Literal["Natal", "Composite", "SingleReturnChart"]
 
     # Single chart subject
     subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"]
@@ -572,7 +572,7 @@ class DualChartDataModel(SubscriptableBaseModel):
     """
 
     # Chart identification
-    chart_type: Literal["Transit", "Synastry", "Return"]
+    chart_type: Literal["Transit", "Synastry", "DualReturnChart"]
 
     # Dual chart subjects
     first_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"]
