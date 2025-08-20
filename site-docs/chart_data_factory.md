@@ -11,7 +11,7 @@ This factory creates comprehensive `ChartDataModel` instances containing subject
 - **Comprehensive Data Extraction**: All chart data including subjects, aspects, house analysis
 - **Element & Quality Analysis**: Automatic calculation of elemental and modal distributions with percentages
 - **Relationship Analysis**: Synastry compatibility scoring and house overlay analysis
-- **Flexible Chart Support**: All chart types supported by Kerykeion (Natal, Transit, Synastry, Composite, Return)
+- **Flexible Chart Support**: All chart types supported by Kerykeion (Natal, Transit, Synastry, Composite, DualReturnChart)
 - **Data-Ready Format**: Pydantic models with JSON serialization and type validation
 - **Performance Optimized**: Calculates only requested data points and aspects
 - **Customizable Filtering**: Support for custom active points and aspect configurations
@@ -24,8 +24,8 @@ The `ChartDataFactory` supports all chart types available in Kerykeion, automati
 - **Transit**: Natal subject with current transits, includes house comparison analysis  
 - **Synastry**: Two subjects with inter-chart aspects, relationship scoring, and house overlays
 - **Composite**: Composite subject with internal aspects and averaged location data
-- **Return**: Natal subject with planetary return, includes comparative analysis
-- **SingleWheelReturn**: Single planetary return with internal aspects
+- **DualReturnChart**: Natal subject with planetary return, includes comparative analysis
+- **SingleReturnChart**: Single planetary return with internal aspects
 
 ## Data Models
 
@@ -37,7 +37,7 @@ Used for charts analyzing a single astrological subject:
 
 ```python
 class SingleChartDataModel:
-    chart_type: Literal["Natal", "Composite", "SingleWheelReturn"]
+    chart_type: Literal["Natal", "Composite", "SingleReturnChart"]
     subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
     aspects: SingleChartAspectsModel                        # Internal aspects within the chart
     element_distribution: ElementDistributionModel          # Elemental distribution
@@ -52,7 +52,7 @@ class SingleChartDataModel:
 **Supported Chart Types:**
 - **Natal**: Birth chart with internal aspects
 - **Composite**: Midpoint-based composite chart with internal aspects  
-- **SingleWheelReturn**: Planetary return chart with internal aspects
+- **SingleReturnChart**: Planetary return chart with internal aspects
 
 ### DualChartDataModel
 
@@ -60,7 +60,7 @@ Used for charts comparing or overlaying two astrological subjects:
 
 ```python
 class DualChartDataModel:
-    chart_type: Literal["Transit", "Synastry", "Return"]
+    chart_type: Literal["Transit", "Synastry", "DualReturnChart"]
     first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
     second_subject: Union[AstrologicalSubjectModel, PlanetReturnModel]
     aspects: DualChartAspectsModel                          # Inter-chart aspects between subjects
@@ -78,7 +78,7 @@ class DualChartDataModel:
 **Supported Chart Types:**
 - **Transit**: Natal chart with current planetary transits
 - **Synastry**: Relationship compatibility between two people
-- **Return**: Natal chart with planetary return comparison
+- **DualReturnChart**: Natal chart with planetary return comparison
 
 ### Union Type
 
@@ -609,8 +609,8 @@ ChartDataFactory().create_chart_data(
 ```
 
 **Return Types:**
-- **SingleChartDataModel**: For "Natal", "Composite", "SingleWheelReturn"
-- **DualChartDataModel**: For "Transit", "Synastry", "Return"
+- **SingleChartDataModel**: For "Natal", "Composite", "SingleReturnChart"
+- **DualChartDataModel**: For "Transit", "Synastry", "DualReturnChart"
 
 #### Natal Chart Data
 ```python

@@ -18,7 +18,7 @@
 
 ### 🟥 High Priority
 
-- [ ] Rename "Return" and "SingleWheelReturn"
+- [x] Rename "Return" and "SingleWheelReturn" to "DualReturnChart" and "SingleReturnChart"
 - [~] Full documentation for the library and AstrologerAPI
 - [~] Complete all the arab parts and other points in the chart 
 - [ ] Correct the displayed file name (browser tab/title)

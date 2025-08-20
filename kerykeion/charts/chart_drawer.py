@@ -258,11 +258,11 @@ class ChartDrawer:
         self.active_aspects = chart_data.active_aspects
 
         # Extract subjects based on chart type
-        if chart_data.chart_type in ["Natal", "Composite", "SingleWheelReturn"]:
+        if chart_data.chart_type in ["Natal", "Composite", "SingleReturnChart"]:
             # SingleChartDataModel
             self.first_obj = getattr(chart_data, 'subject')
             self.second_obj = None
-        else:  # DualChartDataModel for Transit, Synastry, Return
+        else:  # DualChartDataModel for Transit, Synastry, DualReturnChart
             self.first_obj = getattr(chart_data, 'first_subject')
             self.second_obj = getattr(chart_data, 'second_subject')
 
@@ -382,7 +382,7 @@ class ChartDrawer:
             self.second_circle_radius = 36
             self.third_circle_radius = 120
 
-        elif self.chart_type == "Return":
+        elif self.chart_type == "DualReturnChart":
             # --- RETURN CHART SETUP ---
 
             # Extract aspects from pre-computed chart data
@@ -403,7 +403,7 @@ class ChartDrawer:
             self.second_circle_radius = 36
             self.third_circle_radius = 120
 
-        elif self.chart_type == "SingleWheelReturn":
+        elif self.chart_type == "SingleReturnChart":
             # --- SINGLE WHEEL RETURN CHART SETUP ---
 
             # Extract aspects from pre-computed chart data
@@ -459,7 +459,7 @@ class ChartDrawer:
                 location_name = self.first_obj.city or "Unknown"
                 latitude = self.first_obj.lat or 0.0
                 longitude = self.first_obj.lng or 0.0
-        elif self.chart_type in ["Transit", "Return"] and self.second_obj:
+        elif self.chart_type in ["Transit", "DualReturnChart"] and self.second_obj:
             # Use location from the second subject (transit/return)
             location_name = self.second_obj.city or "Unknown"
             latitude = self.second_obj.lat or 0.0
@@ -1301,7 +1301,7 @@ class ChartDrawer:
             )
             template_dict["makeHouseComparisonGrid"] = ""
 
-        elif self.chart_type == "Return":
+        elif self.chart_type == "DualReturnChart":
             # Set viewbox
             template_dict["viewbox"] = self._ULTRA_WIDE_CHART_VIEWBOX
 
@@ -1488,11 +1488,11 @@ class ChartDrawer:
                 points_owner_subject_number=2, # The second subject is the Solar Return
                 house_position_comparison_label=self.language_settings.get("house_position_comparison", "House Position Comparison"),
                 return_point_label=self.language_settings.get("return_point", "Return Point"),
-                return_label=self.language_settings.get("Return", "Return"),
+                return_label=self.language_settings.get("Return", "DualReturnChart"),
                 radix_label=self.language_settings.get("Natal", "Natal"),
             )
 
-        elif self.chart_type == "SingleWheelReturn":
+        elif self.chart_type == "SingleReturnChart":
             # Set viewbox
             template_dict["viewbox"] = self._BASIC_CHART_VIEWBOX
 
@@ -1693,9 +1693,9 @@ class ChartDrawer:
         else:
             chart_type_for_filename = self.chart_type
 
-        if self.chart_type == "Return" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Lunar":
+        if self.chart_type == "DualReturnChart" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Lunar":
             chartname = self.output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Lunar Return.svg"
-        elif self.chart_type == "Return" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
+        elif self.chart_type == "DualReturnChart" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
             chartname = self.output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Solar Return.svg"
         else:
             chartname = self.output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart.svg"
@@ -1797,7 +1797,7 @@ class ChartDrawer:
 
         template_dict = self._create_template_dictionary()
 
-        if self.chart_type in ["Transit", "Synastry", "Return"]:
+        if self.chart_type in ["Transit", "Synastry", "DualReturnChart"]:
             aspects_grid = draw_transit_aspect_grid(
                 self.chart_colors_settings["paper_0"],
                 self.available_planets_setting,

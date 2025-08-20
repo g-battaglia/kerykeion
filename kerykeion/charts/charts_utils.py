@@ -188,7 +188,7 @@ def draw_zodiac_slice(
     # pie slices
     offset = 360 - seventh_house_degree_ut
     # check transit
-    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
+    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "DualReturnChart":
         dropin: Union[int, float] = 0
     else:
         dropin = c1
@@ -197,7 +197,7 @@ def draw_zodiac_slice(
     # symbols
     offset = offset + 15
     # check transit
-    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
+    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "DualReturnChart":
         dropin = 54
     else:
         dropin = 18 + c1
@@ -418,7 +418,7 @@ def draw_first_circle(
     Returns:
         str: The SVG path of the first circle.
     """
-    if chart_type == "Synastry" or chart_type == "Transit" or chart_type == "Return":
+    if chart_type == "Synastry" or chart_type == "Transit" or chart_type == "DualReturnChart":
         return f'<circle cx="{r}" cy="{r}" r="{r - 36}" style="fill: none; stroke: {stroke_color}; stroke-width: 1px; stroke-opacity:.4;" />'
     else:
         if c1 is None:
@@ -461,7 +461,7 @@ def draw_second_circle(
         str: The SVG path of the second circle.
     """
 
-    if chart_type == "Synastry" or chart_type == "Transit" or chart_type == "Return":
+    if chart_type == "Synastry" or chart_type == "Transit" or chart_type == "DualReturnChart":
         return f'<circle cx="{r}" cy="{r}" r="{r - 72}" style="fill: {fill_color}; fill-opacity:.4; stroke: {stroke_color}; stroke-opacity:.4; stroke-width: 1px" />'
 
     else:
@@ -491,7 +491,7 @@ def draw_third_circle(
     Returns:
     - str: The SVG element as a string.
     """
-    if chart_type in {"Synastry", "Transit", "Return"}:
+    if chart_type in {"Synastry", "Transit", "DualReturnChart"}:
         # For Synastry and Transit charts, use a fixed radius adjustment of 160
         return f'<circle cx="{radius}" cy="{radius}" r="{radius - 160}" style="fill: {fill_color}; fill-opacity:.8; stroke: {stroke_color}; stroke-width: 1px" />'
 
@@ -600,7 +600,7 @@ def draw_houses_cusps_and_text_number(
 
     for i in range(xr):
         # Determine offsets based on chart type
-        dropin, roff, t_roff = (160, 72, 36) if chart_type in ["Transit", "Synastry", "Return"] else (c3, c1, False)
+        dropin, roff, t_roff = (160, 72, 36) if chart_type in ["Transit", "Synastry", "DualReturnChart"] else (c3, c1, False)
 
         # Calculate the offset for the current house cusp
         offset = (int(first_subject_houses_list[int(xr / 2)].abs_pos) / -1) + int(first_subject_houses_list[i].abs_pos)
@@ -622,7 +622,7 @@ def draw_houses_cusps_and_text_number(
             i, standard_house_cusp_color
         )
 
-        if chart_type in ["Transit", "Synastry", "Return"]:
+        if chart_type in ["Transit", "Synastry", "DualReturnChart"]:
             if second_subject_houses_list is None or transit_house_cusp_color is None:
                 raise KerykeionException("second_subject_houses_list_ut or transit_house_cusp_color is None")
 
@@ -657,7 +657,7 @@ def draw_houses_cusps_and_text_number(
             path += "</g>"
 
         # Adjust dropin based on chart type and external view
-        dropin_map = {"Transit": 84, "Synastry": 84, "Return": 84}
+        dropin_map = {"Transit": 84, "Synastry": 84, "DualReturnChart": 84}
         if external_view:
             dropin = 100
         else:
@@ -940,7 +940,7 @@ def draw_main_planet_grid(
             f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
             f'</g>'
         )
-    elif chart_type == "Return":
+    elif chart_type == "DualReturnChart":
         svg_output += (
             f'<g transform="translate(620, 15)">'  # Added the 620,30 offset (adjusted for -15)
             f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
@@ -1004,7 +1004,7 @@ def draw_secondary_planet_grid(
             f'<g transform="translate(820, 15)">'  # 620+200, 30-15
             f'<text style="fill:{text_color}; font-size: 14px;">{second_subject_name}</text>'
         )
-    elif chart_type == "Return":
+    elif chart_type == "DualReturnChart":
         svg_output += (
             f'<g transform="translate(870, 15)">'  # 620+250, 30-15
             f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {second_subject_name}</text>'
@@ -1286,7 +1286,7 @@ def draw_house_comparison_grid(
         text_color: str = "var(--kerykeion-color-neutral-content)",
         house_position_comparison_label: str = "House Position Comparison",
         return_point_label: str = "Return Point",
-        return_label: str = "Return",
+        return_label: str = "DualReturnChart",
         radix_label: str = "Radix",
         x_position: int = 1030,
         y_position: int = 0,

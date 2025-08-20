@@ -124,7 +124,7 @@ class ChartDataFactory:
         """
 
         # Validate chart type requirements
-        if chart_type in ["Transit", "Synastry", "Return"] and not second_subject:
+        if chart_type in ["Transit", "Synastry", "DualReturnChart"] and not second_subject:
             raise KerykeionException(f"Second subject is required for {chart_type} charts.")
 
         if chart_type == "Composite" and not isinstance(first_subject, CompositeSubjectModel):
@@ -133,8 +133,8 @@ class ChartDataFactory:
         if chart_type == "Return" and not isinstance(second_subject, PlanetReturnModel):
             raise KerykeionException("Second subject must be a PlanetReturnModel for Return charts.")
 
-        if chart_type == "SingleWheelReturn" and not isinstance(first_subject, PlanetReturnModel):
-            raise KerykeionException("First subject must be a PlanetReturnModel for SingleWheelReturn charts.")
+        if chart_type == "SingleReturnChart" and not isinstance(first_subject, PlanetReturnModel):
+            raise KerykeionException("First subject must be a PlanetReturnModel for SingleReturnChart charts.")
 
         # Determine active points
         if not active_points:
@@ -153,7 +153,7 @@ class ChartDataFactory:
             )
 
         # Calculate aspects based on chart type
-        if chart_type in ["Natal", "Composite", "SingleWheelReturn"]:
+        if chart_type in ["Natal", "Composite", "SingleReturnChart"]:
             # Single chart aspects
             aspects = AspectsFactory.single_chart_aspects(
                 first_subject,
@@ -173,7 +173,7 @@ class ChartDataFactory:
 
         # Calculate house comparison for dual charts
         house_comparison = None
-        if second_subject and include_house_comparison and chart_type in ["Transit", "Synastry", "Return"]:
+        if second_subject and include_house_comparison and chart_type in ["Transit", "Synastry", "DualReturnChart"]:
             if isinstance(first_subject, AstrologicalSubjectModel) and isinstance(second_subject, (AstrologicalSubjectModel, PlanetReturnModel)):
                 house_comparison_factory = HouseComparisonFactory(
                     first_subject,
@@ -269,10 +269,10 @@ class ChartDataFactory:
         )
 
         # Create and return the appropriate chart data model
-        if chart_type in ["Natal", "Composite", "SingleWheelReturn"]:
+        if chart_type in ["Natal", "Composite", "SingleReturnChart"]:
             # Single chart data model - cast types since they're already validated
             return SingleChartDataModel(
-                chart_type=cast(Literal["Natal", "Composite", "SingleWheelReturn"], chart_type),
+                chart_type=cast(Literal["Natal", "Composite", "SingleReturnChart"], chart_type),
                 subject=first_subject,
                 aspects=cast(SingleChartAspectsModel, aspects),
                 element_distribution=element_distribution,
@@ -285,7 +285,7 @@ class ChartDataFactory:
             if second_subject is None:
                 raise KerykeionException(f"Second subject is required for {chart_type} charts.")
             return DualChartDataModel(
-                chart_type=cast(Literal["Transit", "Synastry", "Return"], chart_type),
+                chart_type=cast(Literal["Transit", "Synastry", "DualReturnChart"], chart_type),
                 first_subject=first_subject,
                 second_subject=second_subject,
                 aspects=cast(DualChartAspectsModel, aspects),
@@ -431,7 +431,7 @@ class ChartDataFactory:
         """
         return ChartDataFactory.create_chart_data(
             first_subject=natal_subject,
-            chart_type="Return",
+            chart_type="DualReturnChart",
             second_subject=return_subject,
             active_points=active_points,
             active_aspects=active_aspects,
@@ -457,7 +457,7 @@ class ChartDataFactory:
         """
         return ChartDataFactory.create_chart_data(
             first_subject=return_subject,
-            chart_type="SingleWheelReturn",
+            chart_type="SingleReturnChart",
             active_points=active_points,
             active_aspects=active_aspects,
         )

@@ -32,7 +32,7 @@ def draw_planets(
         third_circle_radius (Union[int, float]): Radius of the third circle in the chart.
         main_subject_first_house_degree_ut (Union[int, float]): Degree of the first house for the main subject.
         main_subject_seventh_house_degree_ut (Union[int, float]): Degree of the seventh house for the main subject.
-        chart_type (ChartType): Type of the chart (e.g., "Transit", "Synastry", "Return", "Natal").
+        chart_type (ChartType): Type of the chart (e.g., "Transit", "Synastry", "DualReturnChart", "Natal").
         second_subject_available_kerykeion_celestial_points (Union[list[KerykeionPointModel], None], optional):
             List of celestial points for the second subject, required for "Transit", "Synastry", or "Return" charts.
             Defaults to None.

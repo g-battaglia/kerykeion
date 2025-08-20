@@ -152,7 +152,7 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     Synastry: str = Field(title="Synastry", description="The synastry chart label in the chart, in the language")
     Transit: str = Field(title="Transit", description="The transit chart label in the chart, in the language")
     Composite: str = Field(title="Composite", description="The composite chart label in the chart, in the language")
-    Return: str = Field(title="Return", description="The return chart label in the chart, in the language")
+    Return: str = Field(title="DualReturnChart", description="The return chart label in the chart, in the language")
     return_aspects: str = Field(title="Return Aspects", description="The return aspects label in the chart, in the language")
     solar_return: str = Field(title="Solar Return", description="The solar return label in the chart, in the language")
     lunar_return: str = Field(title="Lunar Return", description="The lunar return label in the chart, in the language")
