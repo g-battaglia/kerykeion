@@ -32,8 +32,8 @@
         </symbol>
         <!-- OTHER POINTS -->
         <symbol id="Earth">
-            <circle cx="12" cy="12" r="10" style="stroke: #888; stroke-width: 2px; fill: none;" />
-            <text x="12" y="17" text-anchor="middle" font-size="10" fill="#888">Earth</text>
+            <circle cx="12" cy="12" r="10" style="stroke: $planets_color_21; stroke-width: 2px; fill: none;" />
+            <text x="12" y="17" text-anchor="middle" font-size="10" fill="$planets_color_21">Earth</text>
         </symbol>
         <symbol id="Pholus">
             <circle cx="12" cy="12" r="10" style="stroke: #888; stroke-width: 2px; fill: none;" />
