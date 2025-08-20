@@ -77,19 +77,54 @@ files = "kerykeion"
 # PyTest Automated Testing
 [tool.pytest.ini_options]
 log_cli_level = 20
-
 log_cli = true
 testpaths = "tests"
-
 log_level = 20
 log_date_format = "%Y-%m-%d %H:%M:%S"
 log_format = "%(asctime)s %(levelname)s %(message)s"
+addopts = "--cov=kerykeion --cov-report=html --cov-report=term --cov-report=xml"
+
+# Coverage Configuration
+[tool.coverage.run]
+source = ["kerykeion"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/sweph/*",  # Swiss Ephemeris library files
+    "setup.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+show_missing = true
+skip_covered = false
+precision = 2
+
+[tool.coverage.html]
+directory = "htmlcov"
 
 # Task Runner
 [tool.poe.tasks]
 test = "pytest"
-test-no-capture = "pytest --show-capture no  "
+test-no-capture = "pytest --show-capture no"
 test-nocharts = "pytest --ignore-glob='*chart*.py'"
+test-cov = "pytest --cov=kerykeion --cov-report=html --cov-report=term"
+test-cov-xml = "pytest --cov=kerykeion --cov-report=xml"
+coverage-report = "coverage report"
+coverage-html = "coverage html"
+coverage-erase = "coverage erase"
 analize = "mypy"
 docs = "pdoc kerykeion -o ./docs"
 format = "ruff format"
@@ -101,10 +136,12 @@ line-length = 120
 
 [dependency-groups]
 dev = [
+    "coverage>=7.6.0",
     "mypy>=1.17.1",
     "pdoc>=15.0.4",
     "poethepoet>=0.36.0",
     "pytest>=8.4.1",
+    "pytest-cov>=6.0.0",
     "ruff>=0.12.9",
     "types-pytz>=2025.2.0.20250516",
     "types-requests>=2.32.4.20250611",
