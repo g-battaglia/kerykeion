@@ -128,9 +128,6 @@ class SingleChartDataModel(SubscriptableBaseModel):
         quality_distribution: Distribution of modal qualities
         active_points: Celestial points included in calculations
         active_aspects: Aspect types and orb settings used
-        location_name: Geographic location name
-        latitude: Geographic latitude coordinate
-        longitude: Geographic longitude coordinate
     """
 
     # Chart identification
@@ -149,11 +146,6 @@ class SingleChartDataModel(SubscriptableBaseModel):
     # Configuration and metadata
     active_points: List[AstrologicalPoint]
     active_aspects: List[ActiveAspect]
-
-    # Location information
-    location_name: str
-    latitude: float
-    longitude: float
 
 
 class DualChartDataModel(SubscriptableBaseModel):
@@ -181,9 +173,6 @@ class DualChartDataModel(SubscriptableBaseModel):
         quality_distribution: Combined modal distribution
         active_points: Celestial points included in calculations
         active_aspects: Aspect types and orb settings used
-        location_name: Geographic location name
-        latitude: Geographic latitude coordinate
-        longitude: Geographic longitude coordinate
     """
 
     # Chart identification
@@ -209,11 +198,6 @@ class DualChartDataModel(SubscriptableBaseModel):
     # Configuration and metadata
     active_points: List[AstrologicalPoint]
     active_aspects: List[ActiveAspect]
-
-    # Location information
-    location_name: str
-    latitude: float
-    longitude: float
 
 
 # Union type for all chart data models
@@ -419,33 +403,6 @@ class ChartDataFactory:
             mutable_percentage=quality_percentages["mutable"],
         )
 
-        # Determine location information
-        location_name: str
-        latitude: float
-        longitude: float
-
-        if chart_type == "Composite":
-            # For composite charts, use average location of the two composite subjects
-            if isinstance(first_subject, CompositeSubjectModel):
-                location_name = ""
-                latitude = (first_subject.first_subject.lat + first_subject.second_subject.lat) / 2
-                longitude = (first_subject.first_subject.lng + first_subject.second_subject.lng) / 2
-            else:
-                # Fallback to first subject location
-                location_name = first_subject.city or "Unknown"
-                latitude = first_subject.lat or 0.0
-                longitude = first_subject.lng or 0.0
-        elif chart_type in ["Transit", "Return"] and second_subject:
-            # Use location from the second subject (transit/return)
-            location_name = second_subject.city or "Unknown"
-            latitude = second_subject.lat or 0.0
-            longitude = second_subject.lng or 0.0
-        else:
-            # Use location from the first subject
-            location_name = first_subject.city or "Unknown"
-            latitude = first_subject.lat or 0.0
-            longitude = first_subject.lng or 0.0
-
         # Create and return the appropriate chart data model
         if chart_type in ["Natal", "Composite", "SingleWheelReturn"]:
             # Single chart data model - cast types since they're already validated
@@ -457,9 +414,6 @@ class ChartDataFactory:
                 quality_distribution=quality_distribution,
                 active_points=effective_active_points,
                 active_aspects=active_aspects,
-                location_name=location_name,
-                latitude=latitude,
-                longitude=longitude,
             )
         else:
             # Dual chart data model - cast types since they're already validated
@@ -476,9 +430,6 @@ class ChartDataFactory:
                 quality_distribution=quality_distribution,
                 active_points=effective_active_points,
                 active_aspects=active_aspects,
-                location_name=location_name,
-                latitude=latitude,
-                longitude=longitude,
             )
 
     @staticmethod

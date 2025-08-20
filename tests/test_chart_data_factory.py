@@ -113,9 +113,6 @@ class TestSingleChartDataModel:
         total_qualities = (qualities.cardinal_percentage + qualities.fixed_percentage +
                           qualities.mutable_percentage)
         assert 99 <= total_qualities <= 101  # Allow for rounding errors        # Verify location data
-        assert chart_data.location_name
-        assert isinstance(chart_data.latitude, float)
-        assert isinstance(chart_data.longitude, float)
 
     def test_external_natal_chart_creation(self, factory, test_subject_1):
         """Test creation of natal chart data (external visualization is handled by ChartDrawer)."""
@@ -422,7 +419,6 @@ class TestDataExportAndSerialization:
         required_keys = [
             "chart_type", "subject", "aspects",
             "element_distribution", "quality_distribution",
-            "location_name", "latitude", "longitude"
         ]
 
         for key in required_keys:
