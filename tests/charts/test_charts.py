@@ -122,7 +122,7 @@ class TestCharts:
             compare_svg_lines(expected_line, actual_line)
 
     def test_external_natal_chart(self):
-        external_natal_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - External", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
+        external_natal_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - ExternalNatal", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
         external_natal_chart_data = ChartDataFactory.create_natal_chart_data(external_natal_subject)
         external_natal_chart_svg = ChartDrawer(external_natal_chart_data, external_view=True).makeTemplate()
         external_natal_chart_svg_lines = external_natal_chart_svg.splitlines()

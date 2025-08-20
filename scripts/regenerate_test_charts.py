@@ -36,7 +36,7 @@ internal_natal_chart = ChartDrawer(natal_chart_data, new_output_directory=OUTPUT
 internal_natal_chart.makeSVG()
 
 # External Natal Chart (using external_view parameter)
-external_natal_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - External", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
+external_natal_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - ExternalNatal", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 external_natal_chart_data = ChartDataFactory.create_natal_chart_data(external_natal_subject)
 external_natal_chart = ChartDrawer(external_natal_chart_data, new_output_directory=OUTPUT_DIR_STR, external_view=True)
 external_natal_chart.makeSVG()
@@ -133,7 +133,7 @@ light_theme_natal_chart = ChartDrawer(light_theme_natal_chart_data, theme="light
 light_theme_natal_chart.makeSVG()
 
 # Dark Theme External Natal Chart
-dark_theme_external_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Dark Theme External", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
+dark_theme_external_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Dark Theme ExternalNatal", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 dark_theme_external_chart_data = ChartDataFactory.create_natal_chart_data(dark_theme_external_subject)
 dark_theme_external_chart = ChartDrawer(dark_theme_external_chart_data, theme="dark", external_view=True, new_output_directory=OUTPUT_DIR_STR)
 dark_theme_external_chart.makeSVG()
