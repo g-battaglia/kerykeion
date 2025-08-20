@@ -19,7 +19,6 @@
 ### 🟥 High Priority
 
 - [ ] Rename "Return" and "SingleWheelReturn"
-- [ ] Move all the models inside the schemas module
 - [~] Full documentation for the library and AstrologerAPI
 - [~] Complete all the arab parts and other points in the chart 
 - [ ] Correct the displayed file name (browser tab/title)
