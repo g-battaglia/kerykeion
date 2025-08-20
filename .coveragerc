@@ -1,0 +1,11 @@
+# Coverage configuration file
+# This file provides additional configuration options for coverage.py
+# The main configuration is in pyproject.toml
+
+[run]
+# Additional run configuration can go here
+# Most configuration is already in pyproject.toml
+
+[html]
+# HTML report configuration
+title = "Kerykeion Test Coverage Report"
