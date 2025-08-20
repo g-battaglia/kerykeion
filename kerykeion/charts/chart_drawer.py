@@ -726,9 +726,9 @@ class ChartDrawer:
             template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - self.third_circle_radius)
 
             # Chart title
-            if self.external_view and " - External" in self.first_obj.name:
-                # Remove " - External" suffix for external view charts
-                clean_name = self.first_obj.name.replace(" - External", "")
+            if self.external_view and (" - ExternalNatal" in self.first_obj.name or " - External" in self.first_obj.name):
+                # Remove " - ExternalNatal" or " - External" suffix for external view charts
+                clean_name = self.first_obj.name.replace(" - ExternalNatal", "").replace(" - External", "")
                 template_dict["stringTitle"] = f'{clean_name} - {self.language_settings.get("birth_chart", "Birth Chart")}'
             else:
                 template_dict["stringTitle"] = f'{self.first_obj.name} - {self.language_settings.get("birth_chart", "Birth Chart")}'
@@ -1691,12 +1691,18 @@ class ChartDrawer:
 
         self.template = self.makeTemplate(minify, remove_css_variables)
 
-        if self.chart_type == "Return" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Lunar":
-            chartname = self.output_directory / f"{self.first_obj.name} - {self.chart_type} Chart - Lunar Return.svg"
-        elif self.chart_type == "Return" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
-            chartname = self.output_directory / f"{self.first_obj.name} - {self.chart_type} Chart - Solar Return.svg"
+        # Determine chart type for filename
+        if self.external_view and self.chart_type == "Natal":
+            chart_type_for_filename = "ExternalNatal"
         else:
-            chartname = self.output_directory / f"{self.first_obj.name} - {self.chart_type} Chart.svg"
+            chart_type_for_filename = self.chart_type
+
+        if self.chart_type == "Return" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Lunar":
+            chartname = self.output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Lunar Return.svg"
+        elif self.chart_type == "Return" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
+            chartname = self.output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Solar Return.svg"
+        else:
+            chartname = self.output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart.svg"
 
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(self.template)
@@ -1756,7 +1762,14 @@ class ChartDrawer:
         """
 
         template = self.makeWheelOnlyTemplate(minify, remove_css_variables)
-        chartname = self.output_directory / f"{self.first_obj.name} - {self.chart_type} Chart - Wheel Only.svg"
+
+        # Determine chart type for filename
+        if self.external_view and self.chart_type == "Natal":
+            chart_type_for_filename = "ExternalNatal"
+        else:
+            chart_type_for_filename = self.chart_type
+
+        chartname = self.output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Wheel Only.svg"
 
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(template)
@@ -1832,7 +1845,14 @@ class ChartDrawer:
         """
 
         template = self.makeAspectGridOnlyTemplate(minify, remove_css_variables)
-        chartname = self.output_directory / f"{self.first_obj.name} - {self.chart_type} Chart - Aspect Grid Only.svg"
+
+        # Determine chart type for filename
+        if self.external_view and self.chart_type == "Natal":
+            chart_type_for_filename = "ExternalNatal"
+        else:
+            chart_type_for_filename = self.chart_type
+
+        chartname = self.output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Aspect Grid Only.svg"
 
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(template)
