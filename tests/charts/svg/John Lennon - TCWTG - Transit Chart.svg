@@ -123,6 +123,17 @@
     --kerykeion-chart-color-vertex: var(--kerykeion-color-secondary);
     --kerykeion-chart-color-east-point: var(--kerykeion-color-primary);
     --kerykeion-chart-color-eris: var(--kerykeion-color-error);
+    --kerykeion-chart-color-earth: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-pholus: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-sedna: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-haumea: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-makemake: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-ixion: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-orcus: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-quaoar: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-regulus: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-spica: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-anti-vertex: var(--kerykeion-color-secondary);
 
     /* Arab Parts */
     --kerykeion-chart-color-pars-spiritus: var(--kerykeion-color-success);
@@ -318,48 +329,48 @@
         </symbol>
         <!-- OTHER POINTS -->
         <symbol id='Earth'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Earth</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-earth); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-earth)'>Earth</text>
         </symbol>
         <symbol id='Pholus'>
             <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
             <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Pholus</text>
         </symbol>
         <symbol id='Sedna'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Sedna</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-sedna); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-sedna)'>Sedna</text>
         </symbol>
         <symbol id='Haumea'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Haumea</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-haumea); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-haumea)'>Haumea</text>
         </symbol>
         <symbol id='Makemake'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Makemake</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-makemake); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-makemake)'>Makemake</text>
         </symbol>
         <symbol id='Ixion'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Ixion</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-ixion); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-ixion)'>Ixion</text>
         </symbol>
         <symbol id='Orcus'>
             <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
             <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Orcus</text>
         </symbol>
         <symbol id='Quaoar'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Quaoar</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-quaoar); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-quaoar)'>Quaoar</text>
         </symbol>
         <symbol id='Regulus'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Regulus</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-regulus); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-regulus)'>Regulus</text>
         </symbol>
         <symbol id='Spica'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Spica</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-spica); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-spica)'>Spica</text>
         </symbol>
         <symbol id='Anti_Vertex'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Anti-Vertex</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-anti-vertex); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-anti-vertex)'>Anti-Vertex</text>
         </symbol>
         <symbol id='Moon'>
             <g transform='translate(4,3)'>
@@ -550,7 +561,7 @@
         </symbol>
 
         <symbol id='Vertex'>
-            <text y='20' style='font-size: 22px; fill: var(--kerykeion-chart-color-pholus)'>Vx</text>
+            <text y='20' style='font-size: 22px; fill: var(--kerykeion-chart-color-vertex)'>Vx</text>
         </symbol>
 
         <symbol id='East_Point'>
@@ -586,29 +597,29 @@
         <symbol id='Pars_Spiritus'>
             <g transform='translate(1,2)'>
                 <circle cx='11' cy='11' r='9'
-                    style='fill: none; stroke: var(--kerykeion-chart-color-vesta); stroke-width: 2px' />
+                    style='fill: none; stroke: var(--kerykeion-chart-color-pars-spiritus); stroke-width: 2px' />
                 <path d='M 7,11 L 15,11 M 11,7 L 11,15'
-                    style='stroke: var(--kerykeion-chart-color-vesta); stroke-width: 2px; fill: none;' />
+                    style='stroke: var(--kerykeion-chart-color-pars-spiritus); stroke-width: 2px; fill: none;' />
                 <path d='M 7,7 L 15,15 M 7,15 L 15,7'
-                    style='stroke: var(--kerykeion-chart-color-vesta); stroke-width: 2px; fill: none;' />
+                    style='stroke: var(--kerykeion-chart-color-pars-spiritus); stroke-width: 2px; fill: none;' />
             </g>
         </symbol>
 
         <symbol id='Pars_Amoris'>
             <g transform='translate(1,2)'>
                 <circle cx='11' cy='11' r='9'
-                    style='fill: none; stroke: var(--kerykeion-chart-color-sedna); stroke-width: 2px' />
+                    style='fill: none; stroke: var(--kerykeion-chart-color-pars-amoris); stroke-width: 2px' />
                 <path d='M 7,7 C 9,5 13,5 15,7 C 17,9 17,13 15,15 C 13,17 9,17 7,15 C 5,13 5,9 7,7 Z'
-                    style='stroke: var(--kerykeion-chart-color-sedna); stroke-width: 2px; fill: none;' />
+                    style='stroke: var(--kerykeion-chart-color-pars-amoris); stroke-width: 2px; fill: none;' />
             </g>
         </symbol>
 
         <symbol id='Pars_Fidei'>
             <g transform='translate(1,2)'>
                 <circle cx='11' cy='11' r='9'
-                    style='fill: none; stroke: var(--kerykeion-chart-color-orcus); stroke-width: 2px' />
+                    style='fill: none; stroke: var(--kerykeion-chart-color-pars-fidei); stroke-width: 2px' />
                 <path d='M 6,11 L 16,11 M 11,6 L 11,16 M 8,8 L 14,14'
-                    style='stroke: var(--kerykeion-chart-color-orcus); stroke-width: 2px; fill: none;' />
+                    style='stroke: var(--kerykeion-chart-color-pars-fidei); stroke-width: 2px; fill: none;' />
             </g>
         </symbol>
 

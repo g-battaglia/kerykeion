@@ -93,6 +93,17 @@
     --kerykeion-chart-color-vertex: #52064e;
     --kerykeion-chart-color-east-point: #482b7f;
     --kerykeion-chart-color-eris: #800000;
+    --kerykeion-chart-color-earth: #6a2d04;
+    --kerykeion-chart-color-pholus: #5a5a5a;
+    --kerykeion-chart-color-sedna: #b8860b;
+    --kerykeion-chart-color-haumea: #8b4513;
+    --kerykeion-chart-color-makemake: #a0522d;
+    --kerykeion-chart-color-ixion: #556b2f;
+    --kerykeion-chart-color-orcus: #2f4f4f;
+    --kerykeion-chart-color-quaoar: #8a2be2;
+    --kerykeion-chart-color-regulus: #ffd700;
+    --kerykeion-chart-color-spica: #87ceeb;
+    --kerykeion-chart-color-anti-vertex: #4b0082;
 
     /* Arab Parts */
     --kerykeion-chart-color-pars-spiritus: #095242;
@@ -134,8 +145,8 @@
         </symbol>
         <!-- OTHER POINTS -->
         <symbol id='Earth'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Earth</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-earth); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-earth)'>Earth</text>
         </symbol>
         <symbol id='Pholus'>
             <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />

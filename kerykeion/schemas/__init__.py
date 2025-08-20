@@ -6,7 +6,7 @@
 from .kerykeion_exception import KerykeionException
 from .kr_literals import *
 from .kr_models import *
-from .chart_types import ChartTemplateDictionary
+from .chart_template_model import ChartTemplateModel
 from .settings_models import KerykeionSettingsModel
 
 __all__ = [
@@ -14,7 +14,7 @@ __all__ = [
     "KerykeionException",
 
     # Settings and Chart Types
-    "ChartTemplateDictionary",
+    "ChartTemplateModel",
     "KerykeionSettingsModel",
 
     # Main Literal Types (from kr_literals)

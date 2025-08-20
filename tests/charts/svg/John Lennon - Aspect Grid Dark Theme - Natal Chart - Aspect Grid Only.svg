@@ -122,6 +122,17 @@
     --kerykeion-chart-color-vertex: var(--kerykeion-color-secondary);
     --kerykeion-chart-color-east-point: var(--kerykeion-color-primary);
     --kerykeion-chart-color-eris: var(--kerykeion-color-error);
+    --kerykeion-chart-color-earth: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-pholus: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-sedna: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-haumea: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-makemake: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-ixion: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-orcus: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-quaoar: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-regulus: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-spica: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-anti-vertex: var(--kerykeion-color-secondary);
 
     /* Arab Parts */
     --kerykeion-chart-color-pars-spiritus: var(--kerykeion-color-success);
@@ -181,8 +192,8 @@
         </symbol>
         <!-- OTHER POINTS -->
         <symbol id='Earth'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Earth</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-earth); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-earth)'>Earth</text>
         </symbol>
         <symbol id='Pholus'>
             <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />

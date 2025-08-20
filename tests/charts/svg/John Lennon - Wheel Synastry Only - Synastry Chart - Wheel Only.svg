@@ -94,6 +94,17 @@
     --kerykeion-chart-color-vertex: #52064e;
     --kerykeion-chart-color-east-point: #482b7f;
     --kerykeion-chart-color-eris: #800000;
+    --kerykeion-chart-color-earth: #6a2d04;
+    --kerykeion-chart-color-pholus: #5a5a5a;
+    --kerykeion-chart-color-sedna: #b8860b;
+    --kerykeion-chart-color-haumea: #8b4513;
+    --kerykeion-chart-color-makemake: #a0522d;
+    --kerykeion-chart-color-ixion: #556b2f;
+    --kerykeion-chart-color-orcus: #2f4f4f;
+    --kerykeion-chart-color-quaoar: #8a2be2;
+    --kerykeion-chart-color-regulus: #ffd700;
+    --kerykeion-chart-color-spica: #87ceeb;
+    --kerykeion-chart-color-anti-vertex: #4b0082;
 
     /* Arab Parts */
     --kerykeion-chart-color-pars-spiritus: #095242;
@@ -189,48 +200,48 @@
         </symbol>
         <!-- OTHER POINTS -->
         <symbol id='Earth'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Earth</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-earth); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-earth)'>Earth</text>
         </symbol>
         <symbol id='Pholus'>
             <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
             <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Pholus</text>
         </symbol>
         <symbol id='Sedna'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Sedna</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-sedna); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-sedna)'>Sedna</text>
         </symbol>
         <symbol id='Haumea'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Haumea</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-haumea); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-haumea)'>Haumea</text>
         </symbol>
         <symbol id='Makemake'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Makemake</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-makemake); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-makemake)'>Makemake</text>
         </symbol>
         <symbol id='Ixion'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Ixion</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-ixion); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-ixion)'>Ixion</text>
         </symbol>
         <symbol id='Orcus'>
             <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
             <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Orcus</text>
         </symbol>
         <symbol id='Quaoar'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Quaoar</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-quaoar); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-quaoar)'>Quaoar</text>
         </symbol>
         <symbol id='Regulus'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Regulus</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-regulus); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-regulus)'>Regulus</text>
         </symbol>
         <symbol id='Spica'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Spica</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-spica); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-spica)'>Spica</text>
         </symbol>
         <symbol id='Anti_Vertex'>
-            <circle cx='12' cy='12' r='10' style='stroke: #888; stroke-width: 2px; fill: none;' />
-            <text x='12' y='17' text-anchor='middle' font-size='10' fill='#888'>Anti-Vertex</text>
+            <circle cx='12' cy='12' r='10' style='stroke: var(--kerykeion-chart-color-anti-vertex); stroke-width: 2px; fill: none;' />
+            <text x='12' y='17' text-anchor='middle' font-size='10' fill='var(--kerykeion-chart-color-anti-vertex)'>Anti-Vertex</text>
         </symbol>
         <symbol id='Moon'>
             <g transform='translate(4,3)'>
@@ -421,7 +432,7 @@
         </symbol>
 
         <symbol id='Vertex'>
-            <text y='20' style='font-size: 22px; fill: var(--kerykeion-chart-color-pholus)'>Vx</text>
+            <text y='20' style='font-size: 22px; fill: var(--kerykeion-chart-color-vertex)'>Vx</text>
         </symbol>
 
         <symbol id='East_Point'>

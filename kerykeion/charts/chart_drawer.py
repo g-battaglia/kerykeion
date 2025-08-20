@@ -19,7 +19,7 @@ from kerykeion.schemas import (
     Sign,
     ActiveAspect,
 )
-from kerykeion.schemas import ChartTemplateDictionary
+from kerykeion.schemas import ChartTemplateModel
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     CompositeSubjectModel,
@@ -444,7 +444,7 @@ class ChartDrawer:
     def _get_location_info(self) -> tuple[str, float, float]:
         """
         Determine location information based on chart type and subjects.
-        
+
         Returns:
             tuple: (location_name, latitude, longitude)
         """
@@ -469,7 +469,7 @@ class ChartDrawer:
             location_name = self.first_obj.city or "Unknown"
             latitude = self.first_obj.lat or 0.0
             longitude = self.first_obj.lng or 0.0
-            
+
         return location_name, latitude, longitude
 
     def set_up_theme(self, theme: Union[KerykeionChartTheme, None] = None) -> None:
@@ -585,7 +585,7 @@ class ChartDrawer:
                 )
         return out
 
-    def _create_template_dictionary(self) -> ChartTemplateDictionary:
+    def _create_template_dictionary(self) -> ChartTemplateModel:
         """
         Assemble chart data and rendering instructions into a template dictionary.
 
@@ -593,7 +593,7 @@ class ChartDrawer:
         chart type and subjects.
 
         Returns:
-            ChartTemplateDictionary: Populated structure of template variables.
+            ChartTemplateModel: Populated structure of template variables.
         """
         # Initialize template dictionary
         template_dict: dict = {}
@@ -617,7 +617,12 @@ class ChartDrawer:
         else:
             template_dict["background_color"] = self.chart_colors_settings["paper_1"]
 
-        # Set planet colors
+        # Set planet colors - initialize all possible colors first with defaults
+        default_color = "#000000"  # Default black color for unused planets
+        for i in range(42):  # Support all 42 celestial points (0-41)
+            template_dict[f"planets_color_{i}"] = default_color
+
+        # Override with actual colors from settings
         for planet in self.planets_settings:
             planet_id = planet["id"]
             template_dict[f"planets_color_{planet_id}"] = planet["color"]
@@ -662,6 +667,9 @@ class ChartDrawer:
         template_dict["cardinal_string"] = f"{self.language_settings.get('cardinal', 'Cardinal')} {cardinal_percentage}%"
         template_dict["fixed_string"] = f"{self.language_settings.get('fixed', 'Fixed')} {fixed_percentage}%"
         template_dict["mutable_string"] = f"{self.language_settings.get('mutable', 'Mutable')} {mutable_percentage}%"
+
+        # Configuration translation (legacy field)
+        template_dict["cfgTranslate"] = ""
 
         # Get houses list for main subject
         first_subject_houses_list = get_houses_list(self.first_obj)
@@ -1624,7 +1632,7 @@ class ChartDrawer:
             template_dict["makeSecondaryPlanetGrid"] = ""
             template_dict["makeHouseComparisonGrid"] = ""
 
-        return ChartTemplateDictionary(**template_dict)
+        return ChartTemplateModel(**template_dict)
 
     def makeTemplate(self, minify: bool = False, remove_css_variables=False) -> str:
         """
@@ -1647,11 +1655,11 @@ class ChartDrawer:
 
         # read template
         with open(xml_svg, "r", encoding="utf-8", errors="ignore") as f:
-            template = Template(f.read()).substitute(td)
+            template = Template(f.read()).substitute(td.model_dump())
 
         # return filename
 
-        logging.debug(f"Template dictionary keys: {td.keys()}")
+        logging.debug(f"Template dictionary has {len(td.model_dump())} fields")
 
         self._create_template_dictionary()
 
@@ -1719,7 +1727,7 @@ class ChartDrawer:
             template = f.read()
 
         template_dict = self._create_template_dictionary()
-        template = Template(template).substitute(template_dict)
+        template = Template(template).substitute(template_dict.model_dump())
 
         if remove_css_variables:
             template = inline_css_variables_in_svg(template)
@@ -1795,7 +1803,7 @@ class ChartDrawer:
                 y_start=250,
             )
 
-        template = Template(template).substitute({**template_dict, "makeAspectGrid": aspects_grid})
+        template = Template(template).substitute({**template_dict.model_dump(), "makeAspectGrid": aspects_grid})
 
         if remove_css_variables:
             template = inline_css_variables_in_svg(template)

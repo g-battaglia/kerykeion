@@ -108,6 +108,17 @@
     --kerykeion-chart-color-vertex: var(--kerykeion-color-secondary);
     --kerykeion-chart-color-east-point: var(--kerykeion-color-primary);
     --kerykeion-chart-color-eris: var(--kerykeion-color-error);
+    --kerykeion-chart-color-earth: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-pholus: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-sedna: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-haumea: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-makemake: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-ixion: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-orcus: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-quaoar: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-regulus: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-spica: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-anti-vertex: var(--kerykeion-color-secondary);
 
     /* Arab Parts */
     --kerykeion-chart-color-pars-spiritus: var(--kerykeion-color-success);
