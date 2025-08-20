@@ -3,7 +3,7 @@
     This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
-from typing import Union, Optional, List
+from typing import Union, Optional, List, Literal
 from typing_extensions import TypedDict
 from pydantic import BaseModel, Field
 from kerykeion.schemas.kr_literals import AspectName
@@ -394,3 +394,207 @@ class TransitsTimeRangeModel(SubscriptableBaseModel):
     transits: List[TransitMomentModel] = Field(description="List of transit moments.")
     subject: Optional[AstrologicalSubjectModel] = Field(description="Astrological subject data.")
     dates: Optional[List[str]] = Field(description="ISO 8601 formatted dates of all transit moments.")
+
+
+class PointInHouseModel(SubscriptableBaseModel):
+    """
+    Represents an astrological point from one subject positioned within another subject's house.
+
+    Captures point characteristics and its placement within the target subject's house system
+    for house comparison analysis.
+
+    Attributes:
+        point_name: Name of the astrological point
+        point_degree: Degree position within its sign
+        point_sign: Zodiacal sign containing the point
+        point_owner_name: Name of the subject who owns this point
+        point_owner_house_number: House number in owner's chart
+        point_owner_house_name: House name in owner's chart
+        projected_house_number: House number in target subject's chart
+        projected_house_name: House name in target subject's chart
+        projected_house_owner_name: Name of the target subject
+    """
+
+    point_name: str
+    """Name of the astrological point"""
+    point_degree: float
+    """Degree position of the point within its zodiacal sign"""
+    point_sign: str
+    """Zodiacal sign containing the point"""
+    point_owner_name: str
+    """Name of the subject who owns this point"""
+    point_owner_house_number: Optional[int]
+    """House number in owner's chart"""
+    point_owner_house_name: Optional[str]
+    """House name in owner's chart"""
+    projected_house_number: int
+    """House number in target subject's chart"""
+    projected_house_name: str
+    """House name in target subject's chart"""
+    projected_house_owner_name: str
+    """Name of the target subject"""
+
+
+class HouseComparisonModel(SubscriptableBaseModel):
+    """
+    Bidirectional house comparison analysis between two astrological subjects.
+
+    Contains results of how astrological points from each subject interact with
+    the house system of the other subject.
+
+    Attributes:
+        first_subject_name: Name of the first subject
+        second_subject_name: Name of the second subject
+        first_points_in_second_houses: First subject's points in second subject's houses
+        second_points_in_first_houses: Second subject's points in first subject's houses
+    """
+
+    first_subject_name: str
+    """Name of the first subject"""
+    second_subject_name: str
+    """Name of the second subject"""
+    first_points_in_second_houses: List[PointInHouseModel]
+    """First subject's points positioned in second subject's houses"""
+    second_points_in_first_houses: List[PointInHouseModel]
+    """Second subject's points positioned in first subject's houses"""
+
+
+class ElementDistributionModel(SubscriptableBaseModel):
+    """
+    Model representing element distribution in a chart.
+
+    Attributes:
+        fire: Fire element points total
+        earth: Earth element points total
+        air: Air element points total
+        water: Water element points total
+        fire_percentage: Fire element percentage
+        earth_percentage: Earth element percentage
+        air_percentage: Air element percentage
+        water_percentage: Water element percentage
+    """
+    fire: float
+    earth: float
+    air: float
+    water: float
+    fire_percentage: int
+    earth_percentage: int
+    air_percentage: int
+    water_percentage: int
+
+
+class QualityDistributionModel(SubscriptableBaseModel):
+    """
+    Model representing quality distribution in a chart.
+
+    Attributes:
+        cardinal: Cardinal quality points total
+        fixed: Fixed quality points total
+        mutable: Mutable quality points total
+        cardinal_percentage: Cardinal quality percentage
+        fixed_percentage: Fixed quality percentage
+        mutable_percentage: Mutable quality percentage
+    """
+    cardinal: float
+    fixed: float
+    mutable: float
+    cardinal_percentage: int
+    fixed_percentage: int
+    mutable_percentage: int
+
+
+class SingleChartDataModel(SubscriptableBaseModel):
+    """
+    Chart data model for single-subject astrological charts.
+
+    This model contains all pure data from single-subject charts including planetary
+    positions, internal aspects, element/quality distributions, and location data.
+    Used for chart types that analyze a single astrological subject.
+
+    Supported chart types:
+    - Natal: Birth chart with internal planetary aspects
+    - Composite: Midpoint relationship chart with internal aspects
+    - SingleWheelReturn: Single planetary return with internal aspects
+
+    Attributes:
+        chart_type: Type of single chart (Natal, Composite, SingleWheelReturn)
+        subject: The astrological subject being analyzed
+        aspects: Internal aspects within the chart
+        element_distribution: Distribution of elemental energies
+        quality_distribution: Distribution of modal qualities
+        active_points: Celestial points included in calculations
+        active_aspects: Aspect types and orb settings used
+    """
+
+    # Chart identification
+    chart_type: Literal["Natal", "Composite", "SingleWheelReturn"]
+
+    # Single chart subject
+    subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"]
+
+    # Internal aspects analysis
+    aspects: "SingleChartAspectsModel"
+
+    # Element and quality distributions
+    element_distribution: "ElementDistributionModel"
+    quality_distribution: "QualityDistributionModel"
+
+    # Configuration and metadata
+    active_points: List[AstrologicalPoint]
+    active_aspects: List["ActiveAspect"]
+
+
+class DualChartDataModel(SubscriptableBaseModel):
+    """
+    Chart data model for dual-subject astrological charts.
+
+    This model contains all pure data from dual-subject charts including both subjects,
+    inter-chart aspects, house comparisons, relationship analysis, and combined
+    element/quality distributions. Used for chart types that compare or overlay
+    two astrological subjects.
+
+    Supported chart types:
+    - Transit: Natal chart with current planetary transits
+    - Synastry: Relationship compatibility between two people
+    - Return: Natal chart with planetary return comparison
+
+    Attributes:
+        chart_type: Type of dual chart (Transit, Synastry, Return)
+        first_subject: Primary astrological subject (natal, base chart)
+        second_subject: Secondary astrological subject (transit, partner, return)
+        aspects: Inter-chart aspects between the two subjects
+        house_comparison: House overlay analysis between subjects
+        relationship_score: Compatibility scoring (synastry only)
+        element_distribution: Combined elemental distribution
+        quality_distribution: Combined modal distribution
+        active_points: Celestial points included in calculations
+        active_aspects: Aspect types and orb settings used
+    """
+
+    # Chart identification
+    chart_type: Literal["Transit", "Synastry", "Return"]
+
+    # Dual chart subjects
+    first_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"]
+    second_subject: Union["AstrologicalSubjectModel", "PlanetReturnModel"]
+
+    # Inter-chart aspects analysis
+    aspects: "DualChartAspectsModel"
+
+    # House comparison analysis
+    house_comparison: Optional["HouseComparisonModel"] = None
+
+    # Relationship analysis (synastry only)
+    relationship_score: Optional["RelationshipScoreModel"] = None
+
+    # Combined element and quality distributions
+    element_distribution: "ElementDistributionModel"
+    quality_distribution: "QualityDistributionModel"
+
+    # Configuration and metadata
+    active_points: List[AstrologicalPoint]
+    active_aspects: List["ActiveAspect"]
+
+
+# Union type for all chart data models
+ChartDataModel = Union[SingleChartDataModel, DualChartDataModel]

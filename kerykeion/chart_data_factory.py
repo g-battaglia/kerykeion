@@ -46,12 +46,17 @@ from kerykeion.schemas.kr_models import (
     PlanetReturnModel,
     SingleChartAspectsModel,
     DualChartAspectsModel,
-    RelationshipScoreModel
+    RelationshipScoreModel,
+    HouseComparisonModel,
+    ElementDistributionModel,
+    QualityDistributionModel,
+    SingleChartDataModel,
+    DualChartDataModel,
+    ChartDataModel
 )
 from kerykeion.schemas.kr_literals import (
     AstrologicalPoint,
 )
-from kerykeion.house_comparison.house_comparison_models import HouseComparisonModel
 from kerykeion.utilities import find_common_active_points, distribute_percentages_to_100
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
@@ -62,146 +67,6 @@ from kerykeion.charts.charts_utils import (
     calculate_synastry_quality_points,
 )
 
-
-class ElementDistributionModel(SubscriptableBaseModel):
-    """
-    Model representing element distribution in a chart.
-
-    Attributes:
-        fire: Fire element points total
-        earth: Earth element points total
-        air: Air element points total
-        water: Water element points total
-        fire_percentage: Fire element percentage
-        earth_percentage: Earth element percentage
-        air_percentage: Air element percentage
-        water_percentage: Water element percentage
-    """
-    fire: float
-    earth: float
-    air: float
-    water: float
-    fire_percentage: int
-    earth_percentage: int
-    air_percentage: int
-    water_percentage: int
-
-
-class QualityDistributionModel(SubscriptableBaseModel):
-    """
-    Model representing quality distribution in a chart.
-
-    Attributes:
-        cardinal: Cardinal quality points total
-        fixed: Fixed quality points total
-        mutable: Mutable quality points total
-        cardinal_percentage: Cardinal quality percentage
-        fixed_percentage: Fixed quality percentage
-        mutable_percentage: Mutable quality percentage
-    """
-    cardinal: float
-    fixed: float
-    mutable: float
-    cardinal_percentage: int
-    fixed_percentage: int
-    mutable_percentage: int
-
-
-class SingleChartDataModel(SubscriptableBaseModel):
-    """
-    Chart data model for single-subject astrological charts.
-
-    This model contains all pure data from single-subject charts including planetary
-    positions, internal aspects, element/quality distributions, and location data.
-    Used for chart types that analyze a single astrological subject.
-
-    Supported chart types:
-    - Natal: Birth chart with internal planetary aspects
-    - Composite: Midpoint relationship chart with internal aspects
-    - SingleWheelReturn: Single planetary return with internal aspects
-
-    Attributes:
-        chart_type: Type of single chart (Natal, Composite, SingleWheelReturn)
-        subject: The astrological subject being analyzed
-        aspects: Internal aspects within the chart
-        element_distribution: Distribution of elemental energies
-        quality_distribution: Distribution of modal qualities
-        active_points: Celestial points included in calculations
-        active_aspects: Aspect types and orb settings used
-    """
-
-    # Chart identification
-    chart_type: Literal["Natal", "Composite", "SingleWheelReturn"]
-
-    # Single chart subject
-    subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
-
-    # Internal aspects analysis
-    aspects: SingleChartAspectsModel
-
-    # Element and quality distributions
-    element_distribution: ElementDistributionModel
-    quality_distribution: QualityDistributionModel
-
-    # Configuration and metadata
-    active_points: List[AstrologicalPoint]
-    active_aspects: List[ActiveAspect]
-
-
-class DualChartDataModel(SubscriptableBaseModel):
-    """
-    Chart data model for dual-subject astrological charts.
-
-    This model contains all pure data from dual-subject charts including both subjects,
-    inter-chart aspects, house comparisons, relationship analysis, and combined
-    element/quality distributions. Used for chart types that compare or overlay
-    two astrological subjects.
-
-    Supported chart types:
-    - Transit: Natal chart with current planetary transits
-    - Synastry: Relationship compatibility between two people
-    - Return: Natal chart with planetary return comparison
-
-    Attributes:
-        chart_type: Type of dual chart (Transit, Synastry, Return)
-        first_subject: Primary astrological subject (natal, base chart)
-        second_subject: Secondary astrological subject (transit, partner, return)
-        aspects: Inter-chart aspects between the two subjects
-        house_comparison: House overlay analysis between subjects
-        relationship_score: Compatibility scoring (synastry only)
-        element_distribution: Combined elemental distribution
-        quality_distribution: Combined modal distribution
-        active_points: Celestial points included in calculations
-        active_aspects: Aspect types and orb settings used
-    """
-
-    # Chart identification
-    chart_type: Literal["Transit", "Synastry", "Return"]
-
-    # Dual chart subjects
-    first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
-    second_subject: Union[AstrologicalSubjectModel, PlanetReturnModel]
-
-    # Inter-chart aspects analysis
-    aspects: DualChartAspectsModel
-
-    # House comparison analysis
-    house_comparison: Optional[HouseComparisonModel] = None
-
-    # Relationship analysis (synastry only)
-    relationship_score: Optional[RelationshipScoreModel] = None
-
-    # Combined element and quality distributions
-    element_distribution: ElementDistributionModel
-    quality_distribution: QualityDistributionModel
-
-    # Configuration and metadata
-    active_points: List[AstrologicalPoint]
-    active_aspects: List[ActiveAspect]
-
-
-# Union type for all chart data models
-ChartDataModel = Union[SingleChartDataModel, DualChartDataModel]
 
 
 class ChartDataFactory:
