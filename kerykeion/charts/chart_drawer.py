@@ -609,7 +609,6 @@ class ChartDrawer:
 
         # Set paper colors
         template_dict["paper_color_0"] = self.chart_colors_settings["paper_0"]
-        template_dict["paper_color_1"] = self.chart_colors_settings["paper_1"]
 
         # Set background color based on transparent_background setting
         if self.transparent_background:
@@ -667,9 +666,6 @@ class ChartDrawer:
         template_dict["cardinal_string"] = f"{self.language_settings.get('cardinal', 'Cardinal')} {cardinal_percentage}%"
         template_dict["fixed_string"] = f"{self.language_settings.get('fixed', 'Fixed')} {fixed_percentage}%"
         template_dict["mutable_string"] = f"{self.language_settings.get('mutable', 'Mutable')} {mutable_percentage}%"
-
-        # Configuration translation (legacy field)
-        template_dict["cfgTranslate"] = ""
 
         # Get houses list for main subject
         first_subject_houses_list = get_houses_list(self.first_obj)
