@@ -12,7 +12,7 @@ License: AGPL-3.0
 from kerykeion.house_comparison.house_comparison_utils import calculate_points_in_reciprocal_houses
 from typing import Union
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
-from kerykeion.house_comparison.house_comparison_models import HouseComparisonModel
+from kerykeion.schemas.kr_models import HouseComparisonModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.schemas import AstrologicalSubjectModel, PlanetReturnModel
 from kerykeion.schemas.kr_literals import AstrologicalPoint
