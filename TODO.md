@@ -19,6 +19,7 @@
 ### 🟥 High Priority
 
 - [x] Rename "Return" and "SingleWheelReturn" to "DualReturnChart" and "SingleReturnChart"
+- [ ] Rename "makeSVG", "makeTemplate" and similar methods to more clear names.
 - [~] Full documentation for the library and AstrologerAPI
 - [~] Complete all the arab parts and other points in the chart 
 - [ ] Correct the displayed file name (browser tab/title)
