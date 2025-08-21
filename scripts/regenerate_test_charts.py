@@ -33,53 +33,53 @@ second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 1
 # Internal Natal Chart
 natal_chart_data = ChartDataFactory.create_natal_chart_data(first)
 internal_natal_chart = ChartDrawer(natal_chart_data, new_output_directory=OUTPUT_DIR_STR)
-internal_natal_chart.makeSVG()
+internal_natal_chart.save_full_chart_svg_file()
 
 # External Natal Chart (using external_view parameter)
 external_natal_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 external_natal_chart_data = ChartDataFactory.create_natal_chart_data(external_natal_subject)
 external_natal_chart = ChartDrawer(external_natal_chart_data, new_output_directory=OUTPUT_DIR_STR, external_view=True)
-external_natal_chart.makeSVG()
+external_natal_chart.save_full_chart_svg_file()
 
 # Synastry Chart
 synastry_chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
 synastry_chart = ChartDrawer(synastry_chart_data, new_output_directory=OUTPUT_DIR_STR)
-synastry_chart.makeSVG()
+synastry_chart.save_full_chart_svg_file()
 
 # Transits Chart
 transits_chart_data = ChartDataFactory.create_transit_chart_data(first, second)
 transits_chart = ChartDrawer(transits_chart_data, new_output_directory=OUTPUT_DIR_STR)
-transits_chart.makeSVG()
+transits_chart.save_full_chart_svg_file()
 
 # Sidereal Birth Chart (Lahiri)
 sidereal_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon Lahiri", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="LAHIRI", geonames_username="century.boy")
 sidereal_chart_data = ChartDataFactory.create_natal_chart_data(sidereal_subject)
 sidereal_chart = ChartDrawer(sidereal_chart_data, new_output_directory=OUTPUT_DIR_STR)
-sidereal_chart.makeSVG()
+sidereal_chart.save_full_chart_svg_file()
 
 # Sidereal Birth Chart (Fagan-Bradley)
 sidereal_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon Fagan-Bradley", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY", geonames_username="century.boy")
 sidereal_chart_data = ChartDataFactory.create_natal_chart_data(sidereal_subject)
 sidereal_chart = ChartDrawer(sidereal_chart_data, new_output_directory=OUTPUT_DIR_STR)
-sidereal_chart.makeSVG()
+sidereal_chart.save_full_chart_svg_file()
 
 # Sidereal Birth Chart (DeLuce)
 sidereal_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon DeLuce", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="DELUCE", geonames_username="century.boy")
 sidereal_chart_data = ChartDataFactory.create_natal_chart_data(sidereal_subject)
 sidereal_chart = ChartDrawer(sidereal_chart_data, new_output_directory=OUTPUT_DIR_STR)
-sidereal_chart.makeSVG()
+sidereal_chart.save_full_chart_svg_file()
 
 # Sidereal Birth Chart (J2000)
 sidereal_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon J2000", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="J2000", geonames_username="century.boy")
 sidereal_chart_data = ChartDataFactory.create_natal_chart_data(sidereal_subject)
 sidereal_chart = ChartDrawer(sidereal_chart_data, new_output_directory=OUTPUT_DIR_STR)
-sidereal_chart.makeSVG()
+sidereal_chart.save_full_chart_svg_file()
 
 # House System Morinus
 morinus_house_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - House System Morinus", 1940, 10, 9, 18, 30, "Liverpool", "GB", houses_system_identifier="M", geonames_username="century.boy")
 morinus_house_chart_data = ChartDataFactory.create_natal_chart_data(morinus_house_subject)
 morinus_house_chart = ChartDrawer(morinus_house_chart_data, new_output_directory=OUTPUT_DIR_STR)
-morinus_house_chart.makeSVG()
+morinus_house_chart.save_full_chart_svg_file()
 
 ## To check all the available house systems uncomment the following code:
 # from kerykeion.schemas import HousesSystemIdentifier
@@ -88,205 +88,205 @@ morinus_house_chart.makeSVG()
 #     alternatives_house_subject = AstrologicalSubjectFactory.from_birth_data(f"John Lennon - House System {i}", 1940, 10, 9, 18, 30, "Liverpool", "GB", houses_system=i)
 #     alternatives_house_chart_data = ChartDataFactory.create_natal_chart_data(alternatives_house_subject)
 #     alternatives_house_chart = ChartDrawer(alternatives_house_chart_data, new_output_directory=OUTPUT_DIR_STR)
-#     alternatives_house_chart.makeSVG()
+#     alternatives_house_chart.save_full_chart_svg_file()
 
 # With True Geocentric Perspective
 true_geocentric_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - True Geocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", perspective_type="True Geocentric", geonames_username="century.boy")
 true_geocentric_chart_data = ChartDataFactory.create_natal_chart_data(true_geocentric_subject)
 true_geocentric_chart = ChartDrawer(true_geocentric_chart_data, new_output_directory=OUTPUT_DIR_STR)
-true_geocentric_chart.makeSVG()
+true_geocentric_chart.save_full_chart_svg_file()
 
 # With Heliocentric Perspective
 heliocentric_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Heliocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", perspective_type="Heliocentric", geonames_username="century.boy")
 heliocentric_chart_data = ChartDataFactory.create_natal_chart_data(heliocentric_subject)
 heliocentric_chart = ChartDrawer(heliocentric_chart_data, new_output_directory=OUTPUT_DIR_STR)
-heliocentric_chart.makeSVG()
+heliocentric_chart.save_full_chart_svg_file()
 
 # With Topocentric Perspective
 topocentric_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Topocentric", 1940, 10, 9, 18, 30, "Liverpool", "GB", perspective_type="Topocentric", geonames_username="century.boy")
 topocentric_chart_data = ChartDataFactory.create_natal_chart_data(topocentric_subject)
 topocentric_chart = ChartDrawer(topocentric_chart_data, new_output_directory=OUTPUT_DIR_STR)
-topocentric_chart.makeSVG()
+topocentric_chart.save_full_chart_svg_file()
 
 # Minified SVG
 minified_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Minified", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 minified_chart_data = ChartDataFactory.create_natal_chart_data(minified_subject)
 minified_chart = ChartDrawer(minified_chart_data, new_output_directory=OUTPUT_DIR_STR)
-minified_chart.makeSVG(minify=True)
+minified_chart.save_full_chart_svg_file(minify=True)
 
 # Dark Theme Natal Chart
 dark_theme_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 dark_theme_natal_chart_data = ChartDataFactory.create_natal_chart_data(dark_theme_subject)
 dark_theme_natal_chart = ChartDrawer(dark_theme_natal_chart_data, theme="dark", new_output_directory=OUTPUT_DIR_STR)
-dark_theme_natal_chart.makeSVG()
+dark_theme_natal_chart.save_full_chart_svg_file()
 
 # Dark High Contrast Theme Natal Chart
 dark_high_contrast_theme_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Dark High Contrast Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 dark_high_contrast_theme_natal_chart_data = ChartDataFactory.create_natal_chart_data(dark_high_contrast_theme_subject)
 dark_high_contrast_theme_natal_chart = ChartDrawer(dark_high_contrast_theme_natal_chart_data, theme="dark-high-contrast", new_output_directory=OUTPUT_DIR_STR)
-dark_high_contrast_theme_natal_chart.makeSVG()
+dark_high_contrast_theme_natal_chart.save_full_chart_svg_file()
 
 # Light Theme Natal Chart
 light_theme_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 light_theme_natal_chart_data = ChartDataFactory.create_natal_chart_data(light_theme_subject)
 light_theme_natal_chart = ChartDrawer(light_theme_natal_chart_data, theme="light", new_output_directory=OUTPUT_DIR_STR)
-light_theme_natal_chart.makeSVG()
+light_theme_natal_chart.save_full_chart_svg_file()
 
 # Dark Theme External Natal Chart
 dark_theme_external_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Dark Theme External", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 dark_theme_external_chart_data = ChartDataFactory.create_natal_chart_data(dark_theme_external_subject)
 dark_theme_external_chart = ChartDrawer(dark_theme_external_chart_data, theme="dark", external_view=True, new_output_directory=OUTPUT_DIR_STR)
-dark_theme_external_chart.makeSVG()
+dark_theme_external_chart.save_full_chart_svg_file()
 
 # Dark Theme Synastry Chart
 dark_theme_synastry_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - DTS", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 dark_theme_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(dark_theme_synastry_subject, second)
 dark_theme_synastry_chart = ChartDrawer(dark_theme_synastry_chart_data, theme="dark", new_output_directory=OUTPUT_DIR_STR)
-dark_theme_synastry_chart.makeSVG()
+dark_theme_synastry_chart.save_full_chart_svg_file()
 
 # Wheel Natal Only Chart
 wheel_only_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Wheel Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 wheel_only_chart_data = ChartDataFactory.create_natal_chart_data(wheel_only_subject)
 wheel_only_chart = ChartDrawer(wheel_only_chart_data, new_output_directory=OUTPUT_DIR_STR)
-wheel_only_chart.makeWheelOnlySVG()
+wheel_only_chart.save_wheel_only_svg_file()
 
 # Wheel External Natal Only Chart
 wheel_external_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Wheel External Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 wheel_external_chart_data = ChartDataFactory.create_natal_chart_data(wheel_external_subject)
 wheel_external_chart = ChartDrawer(wheel_external_chart_data, external_view=True, new_output_directory=OUTPUT_DIR_STR)
-wheel_external_chart.makeWheelOnlySVG()
+wheel_external_chart.save_wheel_only_svg_file()
 
 # Wheel Synastry Only Chart
 wheel_synastry_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Wheel Synastry Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 wheel_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(wheel_synastry_subject, second)
 wheel_synastry_chart = ChartDrawer(wheel_synastry_chart_data, new_output_directory=OUTPUT_DIR_STR)
-wheel_synastry_chart.makeWheelOnlySVG()
+wheel_synastry_chart.save_wheel_only_svg_file()
 
 # Wheel Transit Only Chart
 wheel_transit_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Wheel Transit Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 wheel_transit_chart_data = ChartDataFactory.create_transit_chart_data(wheel_transit_subject, second)
 wheel_transit_chart = ChartDrawer(wheel_transit_chart_data, new_output_directory=OUTPUT_DIR_STR)
-wheel_transit_chart.makeWheelOnlySVG()
+wheel_transit_chart.save_wheel_only_svg_file()
 
 # Wheel Sidereal Birth Chart (Lahiri) Dark Theme
 sidereal_dark_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon Lahiri - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="LAHIRI", geonames_username="century.boy")
 sidereal_dark_chart_data = ChartDataFactory.create_natal_chart_data(sidereal_dark_subject)
 sidereal_dark_chart = ChartDrawer(sidereal_dark_chart_data, theme="dark", new_output_directory=OUTPUT_DIR_STR)
-sidereal_dark_chart.makeWheelOnlySVG()
+sidereal_dark_chart.save_wheel_only_svg_file()
 
 # Wheel Sidereal Birth Chart (Fagan-Bradley) Light Theme
 sidereal_light_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon Fagan-Bradley - Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY", geonames_username="century.boy")
 sidereal_light_chart_data = ChartDataFactory.create_natal_chart_data(sidereal_light_subject)
 sidereal_light_chart = ChartDrawer(sidereal_light_chart_data, theme="light", new_output_directory=OUTPUT_DIR_STR)
-sidereal_light_chart.makeWheelOnlySVG()
+sidereal_light_chart.save_wheel_only_svg_file()
 
 # Aspect Grid Only Natal Chart
 aspect_grid_only_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Aspect Grid Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 aspect_grid_only_chart_data = ChartDataFactory.create_natal_chart_data(aspect_grid_only_subject)
 aspect_grid_only_chart = ChartDrawer(aspect_grid_only_chart_data, new_output_directory=OUTPUT_DIR_STR)
-aspect_grid_only_chart.makeAspectGridOnlySVG()
+aspect_grid_only_chart.save_aspect_grid_only_svg_file()
 
 # Aspect Grid Only Dark Theme Natal Chart
 aspect_grid_dark_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Aspect Grid Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 aspect_grid_dark_chart_data = ChartDataFactory.create_natal_chart_data(aspect_grid_dark_subject)
 aspect_grid_dark_chart = ChartDrawer(aspect_grid_dark_chart_data, theme="dark", new_output_directory=OUTPUT_DIR_STR)
-aspect_grid_dark_chart.makeAspectGridOnlySVG()
+aspect_grid_dark_chart.save_aspect_grid_only_svg_file()
 
 # Aspect Grid Only Light Theme Natal Chart
 aspect_grid_light_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Aspect Grid Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 aspect_grid_light_chart_data = ChartDataFactory.create_natal_chart_data(aspect_grid_light_subject)
 aspect_grid_light_chart = ChartDrawer(aspect_grid_light_chart_data, theme="light", new_output_directory=OUTPUT_DIR_STR)
-aspect_grid_light_chart.makeAspectGridOnlySVG()
+aspect_grid_light_chart.save_aspect_grid_only_svg_file()
 
 # Synastry Chart Aspect Grid Only
 aspect_grid_synastry_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Aspect Grid Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 aspect_grid_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(aspect_grid_synastry_subject, second)
 aspect_grid_synastry_chart = ChartDrawer(aspect_grid_synastry_chart_data, new_output_directory=OUTPUT_DIR_STR)
-aspect_grid_synastry_chart.makeAspectGridOnlySVG()
+aspect_grid_synastry_chart.save_aspect_grid_only_svg_file()
 
 # Transit Chart Aspect Grid Only
 aspect_grid_transit_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Aspect Grid Transit", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 aspect_grid_transit_chart_data = ChartDataFactory.create_transit_chart_data(aspect_grid_transit_subject, second)
 aspect_grid_transit_chart = ChartDrawer(aspect_grid_transit_chart_data, new_output_directory=OUTPUT_DIR_STR)
-aspect_grid_transit_chart.makeAspectGridOnlySVG()
+aspect_grid_transit_chart.save_aspect_grid_only_svg_file()
 
 # Synastry Chart Aspect Grid Only Dark Theme
 aspect_grid_dark_synastry_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Aspect Grid Dark Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 aspect_grid_dark_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(aspect_grid_dark_synastry_subject, second)
 aspect_grid_dark_synastry_chart = ChartDrawer(aspect_grid_dark_synastry_chart_data, theme="dark", new_output_directory=OUTPUT_DIR_STR)
-aspect_grid_dark_synastry_chart.makeAspectGridOnlySVG()
+aspect_grid_dark_synastry_chart.save_aspect_grid_only_svg_file()
 
 # Synastry Chart With draw_transit_aspect_list table
 synastry_chart_with_table_list_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - SCTWL", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 synastry_chart_with_table_list_data = ChartDataFactory.create_synastry_chart_data(synastry_chart_with_table_list_subject, second)
 synastry_chart_with_table_list = ChartDrawer(synastry_chart_with_table_list_data, double_chart_aspect_grid_type="list", theme="dark", new_output_directory=OUTPUT_DIR_STR)
-synastry_chart_with_table_list.makeSVG()
+synastry_chart_with_table_list.save_full_chart_svg_file()
 
 # Transit Chart With draw_transit_aspect_grid table
 transit_chart_with_table_grid_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - TCWTG", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 transit_chart_with_table_grid_data = ChartDataFactory.create_transit_chart_data(transit_chart_with_table_grid_subject, second)
 transit_chart_with_table_grid = ChartDrawer(transit_chart_with_table_grid_data, double_chart_aspect_grid_type="table", theme="dark", new_output_directory=OUTPUT_DIR_STR)
-transit_chart_with_table_grid.makeSVG()
+transit_chart_with_table_grid.save_full_chart_svg_file()
 
 # Chinese Language Chart
 chinese_subject = AstrologicalSubjectFactory.from_birth_data("Hua Chenyu", 1990, 2, 7, 12, 0, "Hunan", "CN", geonames_username="century.boy")
 chinese_chart_data = ChartDataFactory.create_natal_chart_data(chinese_subject)
 chinese_chart = ChartDrawer(chinese_chart_data, chart_language="CN", new_output_directory=OUTPUT_DIR_STR)
-chinese_chart.makeSVG()
+chinese_chart.save_full_chart_svg_file()
 
 # French Language Chart
 french_subject = AstrologicalSubjectFactory.from_birth_data("Jeanne Moreau", 1928, 1, 23, 10, 0, "Paris", "FR", geonames_username="century.boy")
 french_chart_data = ChartDataFactory.create_natal_chart_data(french_subject)
 french_chart = ChartDrawer(french_chart_data, chart_language="FR", new_output_directory=OUTPUT_DIR_STR)
-french_chart.makeSVG()
+french_chart.save_full_chart_svg_file()
 
 # Spanish Language Chart
 spanish_subject = AstrologicalSubjectFactory.from_birth_data("Antonio Banderas", 1960, 8, 10, 12, 0, "Malaga", "ES", geonames_username="century.boy")
 spanish_chart_data = ChartDataFactory.create_natal_chart_data(spanish_subject)
 spanish_chart = ChartDrawer(spanish_chart_data, chart_language="ES", new_output_directory=OUTPUT_DIR_STR)
-spanish_chart.makeSVG()
+spanish_chart.save_full_chart_svg_file()
 
 # Portuguese Language Chart
 portuguese_subject = AstrologicalSubjectFactory.from_birth_data("Cristiano Ronaldo", 1985, 2, 5, 5, 25, "Funchal", "PT", geonames_username="century.boy")
 portuguese_chart_data = ChartDataFactory.create_natal_chart_data(portuguese_subject)
 portuguese_chart = ChartDrawer(portuguese_chart_data, chart_language="PT", new_output_directory=OUTPUT_DIR_STR)
-portuguese_chart.makeSVG()
+portuguese_chart.save_full_chart_svg_file()
 
 # Italian Language Chart
 italian_subject = AstrologicalSubjectFactory.from_birth_data("Sophia Loren", 1934, 9, 20, 2, 0, "Rome", "IT", geonames_username="century.boy")
 italian_chart_data = ChartDataFactory.create_natal_chart_data(italian_subject)
 italian_chart = ChartDrawer(italian_chart_data, chart_language="IT", new_output_directory=OUTPUT_DIR_STR)
-italian_chart.makeSVG()
+italian_chart.save_full_chart_svg_file()
 
 # Russian Language Chart
 russian_subject = AstrologicalSubjectFactory.from_birth_data("Mikhail Bulgakov", 1891, 5, 15, 12, 0, "Kiev", "UA", geonames_username="century.boy")
 russian_chart_data = ChartDataFactory.create_natal_chart_data(russian_subject)
 russian_chart = ChartDrawer(russian_chart_data, chart_language="RU", new_output_directory=OUTPUT_DIR_STR)
-russian_chart.makeSVG()
+russian_chart.save_full_chart_svg_file()
 
 # Turkish Language Chart
 turkish_subject = AstrologicalSubjectFactory.from_birth_data("Mehmet Oz", 1960, 6, 11, 12, 0, "Istanbul", "TR", geonames_username="century.boy")
 turkish_chart_data = ChartDataFactory.create_natal_chart_data(turkish_subject)
 turkish_chart = ChartDrawer(turkish_chart_data, chart_language="TR", new_output_directory=OUTPUT_DIR_STR)
-turkish_chart.makeSVG()
+turkish_chart.save_full_chart_svg_file()
 
 # German Language Chart
 german_subject = AstrologicalSubjectFactory.from_birth_data("Albert Einstein", 1879, 3, 14, 11, 30, "Ulm", "DE", geonames_username="century.boy")
 german_chart_data = ChartDataFactory.create_natal_chart_data(german_subject)
 german_chart = ChartDrawer(german_chart_data, chart_language="DE", new_output_directory=OUTPUT_DIR_STR)
-german_chart.makeSVG()
+german_chart.save_full_chart_svg_file()
 
 # Hindi Language Chart
 hindi_subject = AstrologicalSubjectFactory.from_birth_data("Amitabh Bachchan", 1942, 10, 11, 4, 0, "Allahabad", "IN", geonames_username="century.boy")
 hindi_chart_data = ChartDataFactory.create_natal_chart_data(hindi_subject)
 hindi_chart = ChartDrawer(hindi_chart_data, chart_language="HI", new_output_directory=OUTPUT_DIR_STR)
-hindi_chart.makeSVG()
+hindi_chart.save_full_chart_svg_file()
 
 # Kanye West Natal Chart
 kanye_west_subject = AstrologicalSubjectFactory.from_birth_data("Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US", geonames_username="century.boy")
 kanye_west_chart_data = ChartDataFactory.create_natal_chart_data(kanye_west_subject)
 kanye_west_chart = ChartDrawer(kanye_west_chart_data, new_output_directory=OUTPUT_DIR_STR)
-kanye_west_chart.makeSVG()
+kanye_west_chart.save_full_chart_svg_file()
 
 # Composite Chart
 angelina = AstrologicalSubjectFactory.from_birth_data("Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US", lng=-118.15, lat=34.03, tz_str="America/Los_Angeles", geonames_username="century.boy")
@@ -296,7 +296,7 @@ composite_subject_factory = CompositeSubjectFactory(angelina, brad)
 composite_subject_model = composite_subject_factory.get_midpoint_composite_subject_model()
 composite_chart_data = ChartDataFactory.create_composite_chart_data(composite_subject_model)
 composite_chart = ChartDrawer(composite_chart_data, new_output_directory=OUTPUT_DIR_STR)
-composite_chart.makeSVG()
+composite_chart.save_full_chart_svg_file()
 
 ## TO IMPLEMENT (Or check)
 
@@ -308,6 +308,6 @@ composite_chart.makeSVG()
 transparent_background_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Transparent Background", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
 transparent_background_chart_data = ChartDataFactory.create_natal_chart_data(transparent_background_subject)
 transparent_background_chart = ChartDrawer(transparent_background_chart_data, transparent_background=True, new_output_directory=OUTPUT_DIR_STR)
-transparent_background_chart.makeSVG()
+transparent_background_chart.save_full_chart_svg_file()
 
 print("All charts regenerated successfully!")

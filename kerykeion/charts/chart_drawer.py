@@ -148,7 +148,7 @@ class ChartDrawer:
         >>>
         >>> # Step 3: Create visualization
         >>> chart_drawer = ChartDrawer(chart_data=chart_data, theme="classic")
-        >>> chart_drawer.makeSVG()
+        >>> chart_drawer.save_full_chart_svg_file()
     """
 
     # Constants
@@ -1630,7 +1630,7 @@ class ChartDrawer:
 
         return ChartTemplateModel(**template_dict)
 
-    def makeTemplate(self, minify: bool = False, remove_css_variables=False) -> str:
+    def generate_full_chart_svg_string(self, minify: bool = False, remove_css_variables=False) -> str:
         """
         Render the full chart SVG as a string.
 
@@ -1670,22 +1670,22 @@ class ChartDrawer:
 
         return template
 
-    def makeSVG(self, minify: bool = False, remove_css_variables=False):
+    def save_full_chart_svg_file(self, minify: bool = False, remove_css_variables=False):
         """
         Generate and save the full chart SVG to disk.
 
-        Calls makeTemplate to render the SVG, then writes a file named
+        Calls generate_full_chart_svg_string to render the SVG, then writes a file named
         "{subject.name} - {chart_type} Chart.svg" in the output directory.
 
         Args:
-            minify (bool): Pass-through to makeTemplate for compact output.
-            remove_css_variables (bool): Pass-through to makeTemplate to embed CSS variables.
+            minify (bool): Pass-through to generate_full_chart_svg_string for compact output.
+            remove_css_variables (bool): Pass-through to generate_full_chart_svg_string to embed CSS variables.
 
         Returns:
             None
         """
 
-        self.template = self.makeTemplate(minify, remove_css_variables)
+        self.template = self.generate_full_chart_svg_string(minify, remove_css_variables)
 
         # Determine chart type for filename
         if self.external_view and self.chart_type == "Natal":
@@ -1705,7 +1705,7 @@ class ChartDrawer:
 
         print(f"SVG Generated Correctly in: {chartname}")
 
-    def makeWheelOnlyTemplate(self, minify: bool = False, remove_css_variables=False):
+    def generate_wheel_only_svg_string(self, minify: bool = False, remove_css_variables=False):
         """
         Render the wheel-only chart SVG as a string.
 
@@ -1742,22 +1742,22 @@ class ChartDrawer:
 
         return template
 
-    def makeWheelOnlySVG(self, minify: bool = False, remove_css_variables=False):
+    def save_wheel_only_svg_file(self, minify: bool = False, remove_css_variables=False):
         """
         Generate and save wheel-only chart SVG to disk.
 
-        Calls makeWheelOnlyTemplate and writes a file named
+        Calls generate_wheel_only_svg_string and writes a file named
         "{subject.name} - {chart_type} Chart - Wheel Only.svg" in the output directory.
 
         Args:
-            minify (bool): Pass-through to makeWheelOnlyTemplate for compact output.
-            remove_css_variables (bool): Pass-through to makeWheelOnlyTemplate to embed CSS variables.
+            minify (bool): Pass-through to generate_wheel_only_svg_string for compact output.
+            remove_css_variables (bool): Pass-through to generate_wheel_only_svg_string to embed CSS variables.
 
         Returns:
             None
         """
 
-        template = self.makeWheelOnlyTemplate(minify, remove_css_variables)
+        template = self.generate_wheel_only_svg_string(minify, remove_css_variables)
 
         # Determine chart type for filename
         if self.external_view and self.chart_type == "Natal":
@@ -1772,7 +1772,7 @@ class ChartDrawer:
 
         print(f"SVG Generated Correctly in: {chartname}")
 
-    def makeAspectGridOnlyTemplate(self, minify: bool = False, remove_css_variables=False):
+    def generate_aspect_grid_only_svg_string(self, minify: bool = False, remove_css_variables=False):
         """
         Render the aspect-grid-only chart SVG as a string.
 
@@ -1825,22 +1825,22 @@ class ChartDrawer:
 
         return template
 
-    def makeAspectGridOnlySVG(self, minify: bool = False, remove_css_variables=False):
+    def save_aspect_grid_only_svg_file(self, minify: bool = False, remove_css_variables=False):
         """
         Generate and save aspect-grid-only chart SVG to disk.
 
-        Calls makeAspectGridOnlyTemplate and writes a file named
+        Calls generate_aspect_grid_only_svg_string and writes a file named
         "{subject.name} - {chart_type} Chart - Aspect Grid Only.svg" in the output directory.
 
         Args:
-            minify (bool): Pass-through to makeAspectGridOnlyTemplate for compact output.
-            remove_css_variables (bool): Pass-through to makeAspectGridOnlyTemplate to embed CSS variables.
+            minify (bool): Pass-through to generate_aspect_grid_only_svg_string for compact output.
+            remove_css_variables (bool): Pass-through to generate_aspect_grid_only_svg_string to embed CSS variables.
 
         Returns:
             None
         """
 
-        template = self.makeAspectGridOnlyTemplate(minify, remove_css_variables)
+        template = self.generate_aspect_grid_only_svg_string(minify, remove_css_variables)
 
         # Determine chart type for filename
         if self.external_view and self.chart_type == "Natal":
@@ -1914,7 +1914,7 @@ if __name__ == "__main__":
         chart_language="IT",
         theme="strawberry",
     )
-    birth_chart.makeSVG() # minify=True, remove_css_variables=True)
+    birth_chart.save_full_chart_svg_file() # minify=True, remove_css_variables=True)
 
     ###
     ## Solar Return Chart - NEW APPROACH with ChartDataFactory
@@ -1933,7 +1933,7 @@ if __name__ == "__main__":
         theme="classic",
     )
 
-    solar_return_chart.makeSVG() # minify=True, remove_css_variables=True)
+    solar_return_chart.save_full_chart_svg_file() # minify=True, remove_css_variables=True)
 
     ###
     ## Single wheel return - NEW APPROACH with ChartDataFactory
@@ -1947,7 +1947,7 @@ if __name__ == "__main__":
         theme="dark",
     )
 
-    single_wheel_return_chart.makeSVG() # minify=True, remove_css_variables=True)
+    single_wheel_return_chart.save_full_chart_svg_file() # minify=True, remove_css_variables=True)
 
     ###
     ## Lunar return - NEW APPROACH with ChartDataFactory
@@ -1965,7 +1965,7 @@ if __name__ == "__main__":
         chart_language="IT",
         theme="dark",
     )
-    lunar_return_chart.makeSVG() # minify=True, remove_css_variables=True)
+    lunar_return_chart.save_full_chart_svg_file() # minify=True, remove_css_variables=True)
 
     ###
     ## Transit Chart - NEW APPROACH with ChartDataFactory
@@ -1983,7 +1983,7 @@ if __name__ == "__main__":
         chart_language="IT",
         theme="dark",
     )
-    transit_chart.makeSVG() # minify=True, remove_css_variables=True)
+    transit_chart.save_full_chart_svg_file() # minify=True, remove_css_variables=True)
 
     ###
     ## Synastry Chart - NEW APPROACH with ChartDataFactory
@@ -1998,7 +1998,7 @@ if __name__ == "__main__":
         chart_language="IT",
         theme="dark",
     )
-    synastry_chart.makeSVG() # minify=True, remove_css_variables=True)
+    synastry_chart.save_full_chart_svg_file() # minify=True, remove_css_variables=True)
 
     ##
     # Transit Chart with Grid - NEW APPROACH with ChartDataFactory
@@ -2014,8 +2014,8 @@ if __name__ == "__main__":
         theme="dark",
         double_chart_aspect_grid_type="table"
     )
-    transit_chart_with_grid.makeSVG() # minify=True, remove_css_variables=True)
-    transit_chart_with_grid.makeAspectGridOnlySVG()
-    transit_chart_with_grid.makeWheelOnlySVG()
+    transit_chart_with_grid.save_full_chart_svg_file() # minify=True, remove_css_variables=True)
+    transit_chart_with_grid.save_aspect_grid_only_svg_file()
+    transit_chart_with_grid.save_wheel_only_svg_file()
 
     print("✅ All chart examples completed using ChartDataFactory + ChartDrawer architecture!")

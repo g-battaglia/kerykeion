@@ -26,6 +26,7 @@
 - [ ] Discepolo's Score in Synastry
 - [ ] More "air space" around objects in the chart
 - [ ] Expand unit tests to cover all aspects of the library
+- [ ] Path inside the write svg method
 
 
 ### 🟧 Medium Priority

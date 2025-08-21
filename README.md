@@ -151,7 +151,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(john)
 
 # Step 3: Create visualization
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
-birth_chart_svg.makeSVG()
+birth_chart_svg.save_full_chart_svg_file()
 ```
 
 The SVG file will be saved in the home directory.
@@ -172,7 +172,7 @@ chart_data = ChartDataFactory.create_external_natal_chart_data(birth_chart)
 
 # Step 3: Create visualization
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
-birth_chart_svg.makeSVG()
+birth_chart_svg.save_full_chart_svg_file()
 ```
 ![John Lennon External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20ExternalNatal%20Chart.svg)
 
@@ -192,7 +192,7 @@ chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
 
 # Step 3: Create visualization
 synastry_chart = ChartDrawer(chart_data=chart_data)
-synastry_chart.makeSVG()
+synastry_chart.save_full_chart_svg_file()
 ```
 
 ![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/img/examples/synastry-chart.svg)
@@ -214,7 +214,7 @@ chart_data = ChartDataFactory.create_transit_chart_data(subject, transit)
 
 # Step 3: Create visualization
 transit_chart = ChartDrawer(chart_data=chart_data)
-transit_chart.makeSVG()
+transit_chart.save_full_chart_svg_file()
 ```
 
 ![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Transit%20Chart.svg)
@@ -240,7 +240,7 @@ chart_data = ChartDataFactory.create_composite_chart_data(composite_model)
 
 # Step 4: Create visualization
 composite_chart = ChartDrawer(chart_data=chart_data)
-composite_chart.makeSVG()
+composite_chart.save_full_chart_svg_file()
 ```
 
 ![Angelina Jolie and Brad Pitt Composite Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/Angelina%20Jolie%20and%20Brad%20Pitt%20Composite%20Chart%20-%20Composite%20Chart.svg)
@@ -263,7 +263,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
 
 # Step 3: Create visualization
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
-birth_chart_svg.makeWheelOnlySVG()
+birth_chart_svg.save_wheel_only_svg_file()
 ```
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Wheel%20Only%20-%20Natal%20Chart%20-%20Wheel%20Only.svg)
 
@@ -282,7 +282,7 @@ chart_data = ChartDataFactory.create_external_natal_chart_data(birth_chart)
 
 # Step 3: Create visualization
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
-birth_chart_svg.makeWheelOnlySVG(
+birth_chart_svg.save_wheel_only_svg_file(
     wheel_only=True,
     wheel_only_external=True
 )
@@ -305,7 +305,7 @@ chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
 
 # Step 3: Create visualization
 synastry_chart = ChartDrawer(chart_data=chart_data)
-synastry_chart.makeWheelOnlySVG()
+synastry_chart.save_wheel_only_svg_file()
 ```
 
 ![John Lennon and Paul McCartney Synastry](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Wheel%20Synastry%20Only%20-%20Synastry%20Chart%20-%20Wheel%20Only.svg)
@@ -331,7 +331,7 @@ synastry_chart = ChartDrawer(
     chart_data=chart_data,
     new_output_directory="."
 )
-synastry_chart.makeSVG()
+synastry_chart.save_full_chart_svg_file()
 ```
 
 ### Change Language
@@ -354,7 +354,7 @@ birth_chart_svg = ChartDrawer(
     chart_data=chart_data,
     chart_language="IT"  # Change to Italian
 )
-birth_chart_svg.makeSVG()
+birth_chart_svg.save_full_chart_svg_file()
 ```
 
 More details [here](https://www.kerykeion.net/docs/chart-language).
@@ -387,7 +387,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
 
 # Step 3: Create visualization
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
-birth_chart_svg.makeSVG(
+birth_chart_svg.save_full_chart_svg_file(
     minify=True
 )
 ```
@@ -408,7 +408,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
 
 # Step 3: Create visualization
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
-birth_chart_svg.makeSVG(
+birth_chart_svg.save_full_chart_svg_file(
     remove_css_variables=True
 )
 ```
@@ -417,7 +417,7 @@ This will inline all styles and eliminate CSS variables, resulting in an SVG tha
 
 ### Grid Only SVG
 
-It's possible to generate a grid-only SVG, useful for creating a custom layout. To do this, use the `makeAspectGridOnlySVG()` method:
+It's possible to generate a grid-only SVG, useful for creating a custom layout. To do this, use the `save_aspect_grid_only_svg_file()` method:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
@@ -433,7 +433,7 @@ chart_data = ChartDataFactory.create_synastry_chart_data(birth_chart, second)
 
 # Step 3: Create visualization with dark theme
 aspect_grid_chart = ChartDrawer(chart_data=chart_data, theme="dark")
-aspect_grid_chart.makeAspectGridOnlySVG()
+aspect_grid_chart.save_aspect_grid_only_svg_file()
 ```
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Aspect%20Grid%20Only%20-%20Natal%20Chart%20-%20Aspect%20Grid%20Only.svg)
 
@@ -625,7 +625,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(dark_theme_subject)
 
 # Step 3: Create visualization with dark high contrast theme
 dark_theme_natal_chart = ChartDrawer(chart_data=chart_data, theme="dark_high_contrast")
-dark_theme_natal_chart.makeSVG()
+dark_theme_natal_chart.save_full_chart_svg_file()
 ```
 
 ![John Lennon](https://www.kerykeion.net/img/showcase/John%20Lennon%20-%20Dark%20-%20Natal%20Chart.svg)
@@ -698,7 +698,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 
 # Step 3: Create visualization
 chart = ChartDrawer(chart_data=chart_data)
-chart.makeSVG()
+chart.save_full_chart_svg_file()
 ```
 
 ## JSON Support

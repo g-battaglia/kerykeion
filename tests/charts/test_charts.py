@@ -75,11 +75,11 @@ class TestCharts:
     def test_natal_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.first_subject)
         s = ChartDrawer(chart_data)
-        birth_chart_svg = s.makeTemplate()
+        birth_chart_svg = s.generate_full_chart_svg_string()
         birth_chart_svg_lines = birth_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeSVG()
+            ChartDrawer(chart_data).save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Natal Chart.svg", "r") as f:
             file_content = f.read()
@@ -91,11 +91,11 @@ class TestCharts:
 
     def test_synastry_chart(self):
         chart_data = ChartDataFactory.create_synastry_chart_data(self.first_subject, self.second_subject)
-        synastry_chart_svg = ChartDrawer(chart_data).makeTemplate()
+        synastry_chart_svg = ChartDrawer(chart_data).generate_full_chart_svg_string()
         synastry_chart_svg_lines = synastry_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeSVG()
+            ChartDrawer(chart_data).save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Synastry Chart.svg", "r") as f:
             file_content = f.read()
@@ -107,11 +107,11 @@ class TestCharts:
 
     def test_transit_chart(self):
         chart_data = ChartDataFactory.create_transit_chart_data(self.first_subject, self.second_subject)
-        transit_chart_svg = ChartDrawer(chart_data).makeTemplate()
+        transit_chart_svg = ChartDrawer(chart_data).generate_full_chart_svg_string()
         transit_chart_svg_lines = transit_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeSVG()
+            ChartDrawer(chart_data).save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Transit Chart.svg", "r", encoding="utf-8") as f:
             file_content = f.read()
@@ -124,11 +124,11 @@ class TestCharts:
     def test_external_natal_chart(self):
         external_natal_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - ExternalNatal", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
         external_natal_chart_data = ChartDataFactory.create_natal_chart_data(external_natal_subject)
-        external_natal_chart_svg = ChartDrawer(external_natal_chart_data, external_view=True).makeTemplate()
+        external_natal_chart_svg = ChartDrawer(external_natal_chart_data, external_view=True).generate_full_chart_svg_string()
         external_natal_chart_svg_lines = external_natal_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(external_natal_chart_data, external_view=True).makeSVG()
+            ChartDrawer(external_natal_chart_data, external_view=True).save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - ExternalNatal Chart.svg", "r", encoding="utf-8") as f:
             file_content = f.read()
@@ -140,11 +140,11 @@ class TestCharts:
 
     def test_lahiri_birth_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.lahiri_subject)
-        birth_chart_svg = ChartDrawer(chart_data).makeTemplate()
+        birth_chart_svg = ChartDrawer(chart_data).generate_full_chart_svg_string()
         birth_chart_svg_lines = birth_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeSVG()
+            ChartDrawer(chart_data).save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon Lahiri - Natal Chart.svg", "r") as f:
             file_content = f.read()
@@ -156,11 +156,11 @@ class TestCharts:
 
     def test_fagan_bradley_birth_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.fagan_bradley_subject)
-        birth_chart_svg = ChartDrawer(chart_data).makeTemplate()
+        birth_chart_svg = ChartDrawer(chart_data).generate_full_chart_svg_string()
         birth_chart_svg_lines = birth_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeSVG()
+            ChartDrawer(chart_data).save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon Fagan-Bradley - Natal Chart.svg", "r") as f:
             file_content = f.read()
@@ -172,11 +172,11 @@ class TestCharts:
 
     def test_deluce_birth_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.deluce_subject)
-        birth_chart_svg = ChartDrawer(chart_data).makeTemplate()
+        birth_chart_svg = ChartDrawer(chart_data).generate_full_chart_svg_string()
         birth_chart_svg_lines = birth_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeSVG()
+            ChartDrawer(chart_data).save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon DeLuce - Natal Chart.svg", "r") as f:
             file_content = f.read()
@@ -188,11 +188,11 @@ class TestCharts:
 
     def test_j2000_birth_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.j2000_subject)
-        birth_chart_svg = ChartDrawer(chart_data).makeTemplate()
+        birth_chart_svg = ChartDrawer(chart_data).generate_full_chart_svg_string()
         birth_chart_svg_lines = birth_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeSVG()
+            ChartDrawer(chart_data).save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon J2000 - Natal Chart.svg", "r") as f:
             file_content = f.read()
@@ -204,11 +204,11 @@ class TestCharts:
 
     def test_morinus_house_system_birth_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.morinus_house_system_subject)
-        birth_chart_svg = ChartDrawer(chart_data).makeTemplate()
+        birth_chart_svg = ChartDrawer(chart_data).generate_full_chart_svg_string()
         birth_chart_svg_lines = birth_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeSVG()
+            ChartDrawer(chart_data).save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - House System Morinus - Natal Chart.svg", "r") as f:
             file_content = f.read()
@@ -220,11 +220,11 @@ class TestCharts:
 
     def test_heliocentric_perspective_natals_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.heliocentric_perspective_natal_chart)
-        heliocentric_perspective_natals_chart_svg = ChartDrawer(chart_data).makeTemplate()
+        heliocentric_perspective_natals_chart_svg = ChartDrawer(chart_data).generate_full_chart_svg_string()
         heliocentric_perspective_natals_chart_svg_lines = heliocentric_perspective_natals_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeSVG()
+            ChartDrawer(chart_data).save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Heliocentric - Natal Chart.svg", "r") as f:
             file_content = f.read()
@@ -236,11 +236,11 @@ class TestCharts:
 
     def test_topocentric_perspective_natals_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.topocentric_perspective_natal_chart)
-        topocentric_perspective_natals_chart_svg = ChartDrawer(chart_data).makeTemplate()
+        topocentric_perspective_natals_chart_svg = ChartDrawer(chart_data).generate_full_chart_svg_string()
         topocentric_perspective_natals_chart_svg_lines = topocentric_perspective_natals_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeSVG()
+            ChartDrawer(chart_data).save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Topocentric - Natal Chart.svg", "r") as f:
             file_content = f.read()
@@ -252,11 +252,11 @@ class TestCharts:
 
     def test_true_geocentric_perspective_natals_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.true_geocentric_perspective_natal_chart)
-        true_geocentric_perspective_natals_chart_svg = ChartDrawer(chart_data).makeTemplate()
+        true_geocentric_perspective_natals_chart_svg = ChartDrawer(chart_data).generate_full_chart_svg_string()
         true_geocentric_perspective_natals_chart_svg_lines = true_geocentric_perspective_natals_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeSVG()
+            ChartDrawer(chart_data).save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - True Geocentric - Natal Chart.svg", "r") as f:
             file_content = f.read()
@@ -268,11 +268,11 @@ class TestCharts:
 
     def test_natal_chart_from_model(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.first_subject)
-        birth_chart_svg = ChartDrawer(chart_data).makeTemplate()
+        birth_chart_svg = ChartDrawer(chart_data).generate_full_chart_svg_string()
         birth_chart_svg_lines = birth_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeSVG()
+            ChartDrawer(chart_data).save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Natal Chart.svg", "r") as f:
             file_content = f.read()
@@ -284,11 +284,11 @@ class TestCharts:
 
     def test_minified_natal_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.minified_natal_chart)
-        birth_chart_svg = ChartDrawer(chart_data).makeTemplate(minify=True)
+        birth_chart_svg = ChartDrawer(chart_data).generate_full_chart_svg_string(minify=True)
         birth_chart_svg_lines = birth_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeSVG(minify=True)
+            ChartDrawer(chart_data).save_full_chart_svg_file(minify=True)
 
         with open(self.SVG_DIR / "John Lennon - Minified - Natal Chart.svg", "r") as f:
             file_content = f.read()
@@ -300,11 +300,11 @@ class TestCharts:
 
     def test_dark_theme_natal_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.dark_theme_natal_chart)
-        birth_chart_svg = ChartDrawer(chart_data, theme="dark").makeTemplate()
+        birth_chart_svg = ChartDrawer(chart_data, theme="dark").generate_full_chart_svg_string()
         birth_chart_svg_lines = birth_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data, theme="dark").makeSVG()
+            ChartDrawer(chart_data, theme="dark").save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Dark Theme - Natal Chart.svg", "r") as f:
             file_content = f.read()
@@ -316,11 +316,11 @@ class TestCharts:
 
     def test_dark_high_contrast_theme_natal_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.dark_high_contrast_theme_natal_chart)
-        birth_chart_svg = ChartDrawer(chart_data, theme="dark-high-contrast").makeTemplate()
+        birth_chart_svg = ChartDrawer(chart_data, theme="dark-high-contrast").generate_full_chart_svg_string()
         birth_chart_svg_lines = birth_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data, theme="dark-high-contrast").makeSVG()
+            ChartDrawer(chart_data, theme="dark-high-contrast").save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Dark High Contrast Theme - Natal Chart.svg", "r") as f:
             file_content = f.read()
@@ -332,11 +332,11 @@ class TestCharts:
 
     def test_light_theme_natal_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.light_theme_natal_chart)
-        birth_chart_svg = ChartDrawer(chart_data, theme="light").makeTemplate()
+        birth_chart_svg = ChartDrawer(chart_data, theme="light").generate_full_chart_svg_string()
         birth_chart_svg_lines = birth_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data, theme="light").makeSVG()
+            ChartDrawer(chart_data, theme="light").save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Light Theme - Natal Chart.svg", "r") as f:
             file_content = f.read()
@@ -348,11 +348,11 @@ class TestCharts:
 
     def test_dark_theme_external_natal_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.dark_theme_external_subject)
-        external_natal_chart_svg = ChartDrawer(chart_data, theme="dark", external_view=True).makeTemplate()
+        external_natal_chart_svg = ChartDrawer(chart_data, theme="dark", external_view=True).generate_full_chart_svg_string()
         external_natal_chart_svg_lines = external_natal_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data, theme="dark", external_view=True).makeSVG()
+            ChartDrawer(chart_data, theme="dark", external_view=True).save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Dark Theme External - ExternalNatal Chart.svg", "r") as f:
             file_content = f.read()
@@ -364,11 +364,11 @@ class TestCharts:
 
     def test_dark_theme_synastry_chart(self):
         chart_data = ChartDataFactory.create_synastry_chart_data(self.dark_theme_synastry_subject, self.second_subject)
-        synastry_chart_svg = ChartDrawer(chart_data, theme="dark").makeTemplate()
+        synastry_chart_svg = ChartDrawer(chart_data, theme="dark").generate_full_chart_svg_string()
         synastry_chart_svg_lines = synastry_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data, theme="dark").makeSVG()
+            ChartDrawer(chart_data, theme="dark").save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - DTS - Synastry Chart.svg", "r") as f:
             file_content = f.read()
@@ -380,12 +380,12 @@ class TestCharts:
 
     def test_wheel_only_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.wheel_only_subject)
-        wheel_only_chart_svg = ChartDrawer(chart_data).makeWheelOnlyTemplate()
+        wheel_only_chart_svg = ChartDrawer(chart_data).generate_wheel_only_svg_string()
 
         wheel_only_chart_svg_lines = wheel_only_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeWheelOnlySVG()
+            ChartDrawer(chart_data).save_wheel_only_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Wheel Only - Natal Chart - Wheel Only.svg", "r") as f:
             file_content = f.read()
@@ -397,12 +397,12 @@ class TestCharts:
 
     def test_wheel_external_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.wheel_external_subject)
-        wheel_external_chart_svg = ChartDrawer(chart_data, external_view=True).makeWheelOnlyTemplate()
+        wheel_external_chart_svg = ChartDrawer(chart_data, external_view=True).generate_wheel_only_svg_string()
 
         wheel_external_chart_svg_lines = wheel_external_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data, external_view=True).makeWheelOnlySVG()
+            ChartDrawer(chart_data, external_view=True).save_wheel_only_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Wheel External Only - ExternalNatal Chart - Wheel Only.svg", "r") as f:
             file_content = f.read()
@@ -414,12 +414,12 @@ class TestCharts:
 
     def test_wheel_synastry_chart(self):
         chart_data = ChartDataFactory.create_synastry_chart_data(self.wheel_synastry_subject, self.second_subject)
-        wheel_synastry_chart_svg = ChartDrawer(chart_data).makeWheelOnlyTemplate()
+        wheel_synastry_chart_svg = ChartDrawer(chart_data).generate_wheel_only_svg_string()
 
         wheel_synastry_chart_svg_lines = wheel_synastry_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeWheelOnlySVG()
+            ChartDrawer(chart_data).save_wheel_only_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Wheel Synastry Only - Synastry Chart - Wheel Only.svg", "r") as f:
             file_content = f.read()
@@ -431,12 +431,12 @@ class TestCharts:
 
     def test_wheel_transit_chart(self):
         chart_data = ChartDataFactory.create_transit_chart_data(self.wheel_transit_subject, self.second_subject)
-        wheel_transit_chart_svg = ChartDrawer(chart_data).makeWheelOnlyTemplate()
+        wheel_transit_chart_svg = ChartDrawer(chart_data).generate_wheel_only_svg_string()
 
         wheel_transit_chart_svg_lines = wheel_transit_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeWheelOnlySVG()
+            ChartDrawer(chart_data).save_wheel_only_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Wheel Transit Only - Transit Chart - Wheel Only.svg", "r") as f:
             file_content = f.read()
@@ -448,12 +448,12 @@ class TestCharts:
 
     def test_aspect_grid_only_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.aspect_grid_only_subject)
-        aspect_grid_only_chart_svg = ChartDrawer(chart_data).makeAspectGridOnlyTemplate()
+        aspect_grid_only_chart_svg = ChartDrawer(chart_data).generate_aspect_grid_only_svg_string()
 
         aspect_grid_only_chart_svg_lines = aspect_grid_only_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeAspectGridOnlySVG()
+            ChartDrawer(chart_data).save_aspect_grid_only_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Aspect Grid Only - Natal Chart - Aspect Grid Only.svg", "r") as f:
             file_content = f.read()
@@ -465,12 +465,12 @@ class TestCharts:
 
     def test_aspect_grid_dark_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.aspect_grid_dark_subject)
-        aspect_grid_dark_chart_svg = ChartDrawer(chart_data, theme="dark").makeAspectGridOnlyTemplate()
+        aspect_grid_dark_chart_svg = ChartDrawer(chart_data, theme="dark").generate_aspect_grid_only_svg_string()
 
         aspect_grid_dark_chart_svg_lines = aspect_grid_dark_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data, theme="dark").makeAspectGridOnlySVG()
+            ChartDrawer(chart_data, theme="dark").save_aspect_grid_only_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Aspect Grid Dark Theme - Natal Chart - Aspect Grid Only.svg", "r") as f:
             file_content = f.read()
@@ -482,12 +482,12 @@ class TestCharts:
 
     def test_aspect_grid_light_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.aspect_grid_light_subject)
-        aspect_grid_light_chart_svg = ChartDrawer(chart_data, theme="light").makeAspectGridOnlyTemplate()
+        aspect_grid_light_chart_svg = ChartDrawer(chart_data, theme="light").generate_aspect_grid_only_svg_string()
 
         aspect_grid_light_chart_svg_lines = aspect_grid_light_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data, theme="light").makeAspectGridOnlySVG()
+            ChartDrawer(chart_data, theme="light").save_aspect_grid_only_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Aspect Grid Light Theme - Natal Chart - Aspect Grid Only.svg", "r") as f:
             file_content = f.read()
@@ -499,12 +499,12 @@ class TestCharts:
 
     def test_aspect_grid_synastry_chart(self):
         chart_data = ChartDataFactory.create_synastry_chart_data(self.aspect_grid_synastry_subject, self.second_subject)
-        aspect_grid_synastry_chart_svg = ChartDrawer(chart_data).makeAspectGridOnlyTemplate()
+        aspect_grid_synastry_chart_svg = ChartDrawer(chart_data).generate_aspect_grid_only_svg_string()
 
         aspect_grid_synastry_chart_svg_lines = aspect_grid_synastry_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeAspectGridOnlySVG()
+            ChartDrawer(chart_data).save_aspect_grid_only_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Aspect Grid Synastry - Synastry Chart - Aspect Grid Only.svg", "r") as f:
             file_content = f.read()
@@ -516,12 +516,12 @@ class TestCharts:
 
     def test_aspect_grid_transit(self):
         chart_data = ChartDataFactory.create_transit_chart_data(self.aspect_grid_transit_subject, self.second_subject)
-        aspect_grid_transit_chart_svg = ChartDrawer(chart_data).makeAspectGridOnlyTemplate()
+        aspect_grid_transit_chart_svg = ChartDrawer(chart_data).generate_aspect_grid_only_svg_string()
 
         aspect_grid_transit_chart_svg_lines = aspect_grid_transit_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data).makeAspectGridOnlySVG()
+            ChartDrawer(chart_data).save_aspect_grid_only_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Aspect Grid Transit - Transit Chart - Aspect Grid Only.svg", "r") as f:
             file_content = f.read()
@@ -533,12 +533,12 @@ class TestCharts:
 
     def test_aspect_grid_dark_synastry(self):
         chart_data = ChartDataFactory.create_synastry_chart_data(self.aspect_grid_dark_synastry_subject, self.second_subject)
-        aspect_grid_dark_synastry_chart_svg = ChartDrawer(chart_data, theme="dark").makeAspectGridOnlyTemplate()
+        aspect_grid_dark_synastry_chart_svg = ChartDrawer(chart_data, theme="dark").generate_aspect_grid_only_svg_string()
 
         aspect_grid_dark_synastry_chart_svg_lines = aspect_grid_dark_synastry_chart_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data, theme="dark").makeAspectGridOnlySVG()
+            ChartDrawer(chart_data, theme="dark").save_aspect_grid_only_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - Aspect Grid Dark Synastry - Synastry Chart - Aspect Grid Only.svg", "r") as f:
             file_content = f.read()
@@ -550,12 +550,12 @@ class TestCharts:
 
     def test_transit_chart_with_table_grid(self):
         chart_data = ChartDataFactory.create_transit_chart_data(self.transit_chart_with_table_grid_subject, self.second_subject)
-        transit_chart_with_table_grid_svg = ChartDrawer(chart_data, double_chart_aspect_grid_type="table", theme="dark").makeTemplate()
+        transit_chart_with_table_grid_svg = ChartDrawer(chart_data, double_chart_aspect_grid_type="table", theme="dark").generate_full_chart_svg_string()
 
         transit_chart_with_table_grid_svg_lines = transit_chart_with_table_grid_svg.splitlines()
 
         if self.WRITE_TO_FILE:
-            ChartDrawer(chart_data, double_chart_aspect_grid_type="table").makeSVG()
+            ChartDrawer(chart_data, double_chart_aspect_grid_type="table").save_full_chart_svg_file()
 
         with open(self.SVG_DIR / "John Lennon - TCWTG - Transit Chart.svg", "r") as f:
             file_content = f.read()
@@ -567,54 +567,54 @@ class TestCharts:
 
     def test_chinese_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.chinese_subject)
-        chinese_chart_svg = ChartDrawer(chart_data, chart_language="CN").makeTemplate()
+        chinese_chart_svg = ChartDrawer(chart_data, chart_language="CN").generate_full_chart_svg_string()
         self._compare_chart_svg("Hua Chenyu - Natal Chart.svg", chinese_chart_svg)
 
     def test_french_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.french_subject)
-        french_chart_svg = ChartDrawer(chart_data, chart_language="FR").makeTemplate()
+        french_chart_svg = ChartDrawer(chart_data, chart_language="FR").generate_full_chart_svg_string()
         self._compare_chart_svg("Jeanne Moreau - Natal Chart.svg", french_chart_svg)
 
     def test_spanish_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.spanish_subject)
-        spanish_chart_svg = ChartDrawer(chart_data, chart_language="ES").makeTemplate()
+        spanish_chart_svg = ChartDrawer(chart_data, chart_language="ES").generate_full_chart_svg_string()
         self._compare_chart_svg("Antonio Banderas - Natal Chart.svg", spanish_chart_svg)
 
     def test_portuguese_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.portuguese_subject)
-        portuguese_chart_svg = ChartDrawer(chart_data, chart_language="PT").makeTemplate()
+        portuguese_chart_svg = ChartDrawer(chart_data, chart_language="PT").generate_full_chart_svg_string()
         self._compare_chart_svg("Cristiano Ronaldo - Natal Chart.svg", portuguese_chart_svg)
 
     def test_italian_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.italian_subject)
-        italian_chart_svg = ChartDrawer(chart_data, chart_language="IT").makeTemplate()
+        italian_chart_svg = ChartDrawer(chart_data, chart_language="IT").generate_full_chart_svg_string()
         self._compare_chart_svg("Sophia Loren - Natal Chart.svg", italian_chart_svg)
 
     def test_russian_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.russian_subject)
-        russian_chart_svg = ChartDrawer(chart_data, chart_language="RU").makeTemplate()
+        russian_chart_svg = ChartDrawer(chart_data, chart_language="RU").generate_full_chart_svg_string()
         self._compare_chart_svg("Mikhail Bulgakov - Natal Chart.svg", russian_chart_svg)
 
     def test_turkish_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.turkish_subject)
-        turkish_chart_svg = ChartDrawer(chart_data, chart_language="TR").makeTemplate()
+        turkish_chart_svg = ChartDrawer(chart_data, chart_language="TR").generate_full_chart_svg_string()
         self._compare_chart_svg("Mehmet Oz - Natal Chart.svg", turkish_chart_svg)
 
     def test_german_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.german_subject)
-        german_chart_svg = ChartDrawer(chart_data, chart_language="DE").makeTemplate()
+        german_chart_svg = ChartDrawer(chart_data, chart_language="DE").generate_full_chart_svg_string()
         self._compare_chart_svg("Albert Einstein - Natal Chart.svg", german_chart_svg)
 
     def test_hindi_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.hindi_subject)
-        hindi_chart_svg = ChartDrawer(chart_data, chart_language="HI").makeTemplate()
+        hindi_chart_svg = ChartDrawer(chart_data, chart_language="HI").generate_full_chart_svg_string()
         self._compare_chart_svg("Amitabh Bachchan - Natal Chart.svg", hindi_chart_svg)
 
     def test_composite_chart(self):
         factory = CompositeSubjectFactory(self.angelina_jolie, self.brad_pit)
         composite_subject = factory.get_midpoint_composite_subject_model()
         chart_data = ChartDataFactory.create_composite_chart_data(composite_subject)
-        composite_chart_svg = ChartDrawer(chart_data).makeTemplate()
+        composite_chart_svg = ChartDrawer(chart_data).generate_full_chart_svg_string()
         self._compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Composite Chart.svg", composite_chart_svg)
 
 
