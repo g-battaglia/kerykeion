@@ -312,7 +312,7 @@ synastry_chart.save_wheel_only_svg_file()
 
 ### Change the Output Directory
 
-To save the SVG file in a custom location, specify `new_output_directory`:
+To save the SVG file in a custom location, specify the `output_path` parameter in `save_svg()`:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
@@ -327,11 +327,8 @@ second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 1
 chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
 
 # Step 3: Create visualization with custom output directory
-synastry_chart = ChartDrawer(
-    chart_data=chart_data,
-    new_output_directory="."
-)
-synastry_chart.save_svg()
+synastry_chart = ChartDrawer(chart_data=chart_data)
+synastry_chart.save_svg(output_path=".")
 ```
 
 ### Change Language

@@ -86,8 +86,8 @@ class ChartDrawer:
     Charts are rendered using XML templates and drawing utilities, with customizable themes,
     language, and visual settings.
 
-    The generated SVG files are optimized for web use and can be saved to a specified output
-    directory or, by default, to the user's home directory.
+    The generated SVG files are optimized for web use and can be saved to any specified
+    destination path using the save_svg method.
 
     NOTE:
         The generated SVG files are optimized for web use, opening in browsers. If you want to
@@ -98,8 +98,6 @@ class ChartDrawer:
             Pre-computed chart data from ChartDataFactory containing all subjects, aspects,
             element/quality distributions, and other analytical data. This is the ONLY source
             of chart information - no calculations are performed by ChartDrawer.
-        new_output_directory (str | Path, optional):
-            Directory to write generated SVG files. Defaults to the user's home directory.
         new_settings_file (Path | dict | KerykeionSettingsModel, optional):
             Path or settings object to override default chart configuration (colors, fonts, aspects).
         theme (KerykeionChartTheme, optional):
@@ -116,24 +114,26 @@ class ChartDrawer:
             Render the full chart SVG as a string without writing to disk. Use `minify=True`
             to remove whitespace and quotes, and `remove_css_variables=True` to embed CSS vars.
 
-        makeSVG(minify=False, remove_css_variables=False) -> None:
-            Generate and write the full chart SVG file to the output directory.
-            Filenames follow the pattern:
-            '{subject.name} - {chart_type} Chart.svg'.
+        save_svg(output_path=None, filename=None, minify=False, remove_css_variables=False) -> None:
+            Generate and write the full chart SVG file to the specified path.
+            If output_path is None, saves to the user's home directory.
+            If filename is None, uses default pattern: '{subject.name} - {chart_type} Chart.svg'.
 
         makeWheelOnlyTemplate(minify=False, remove_css_variables=False) -> str:
             Render only the chart wheel (no aspect grid) as an SVG string.
 
-        makeWheelOnlySVG(minify=False, remove_css_variables=False) -> None:
-            Generate and write the wheel-only SVG file:
-            '{subject.name} - {chart_type} Chart - Wheel Only.svg'.
+        save_wheel_only_svg_file(output_path=None, filename=None, minify=False, remove_css_variables=False) -> None:
+            Generate and write the wheel-only SVG file to the specified path.
+            If output_path is None, saves to the user's home directory.
+            If filename is None, uses default pattern: '{subject.name} - {chart_type} Chart - Wheel Only.svg'.
 
         makeAspectGridOnlyTemplate(minify=False, remove_css_variables=False) -> str:
             Render only the aspect grid as an SVG string.
 
-        makeAspectGridOnlySVG(minify=False, remove_css_variables=False) -> None:
-            Generate and write the aspect-grid-only SVG file:
-            '{subject.name} - {chart_type} Chart - Aspect Grid Only.svg'.
+        save_aspect_grid_only_svg_file(output_path=None, filename=None, minify=False, remove_css_variables=False) -> None:
+            Generate and write the aspect-grid-only SVG file to the specified path.
+            If output_path is None, saves to the user's home directory.
+            If filename is None, uses default pattern: '{subject.name} - {chart_type} Chart - Aspect Grid Only.svg'.
 
     Example:
         >>> from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
@@ -148,7 +148,9 @@ class ChartDrawer:
         >>>
         >>> # Step 3: Create visualization
         >>> chart_drawer = ChartDrawer(chart_data=chart_data, theme="classic")
-        >>> chart_drawer.save_svg()
+        >>> chart_drawer.save_svg()  # Saves to home directory with default filename
+        >>> # Or specify custom path and filename:
+        >>> chart_drawer.save_svg("/path/to/output/directory", "my_custom_chart")
     """
 
     # Constants
@@ -168,9 +170,7 @@ class ChartDrawer:
     first_obj: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
     second_obj: Union[AstrologicalSubjectModel, PlanetReturnModel, None]
     chart_type: ChartType
-    new_output_directory: Union[Path, None]
     new_settings_file: Union[Path, None, KerykeionSettingsModel, dict]
-    output_directory: Path
     theme: Union[KerykeionChartTheme, None]
     double_chart_aspect_grid_type: Literal["list", "table"]
     chart_language: KerykeionChartLanguage
@@ -203,7 +203,6 @@ class ChartDrawer:
         self,
         chart_data: "ChartDataModel",
         *,
-        new_output_directory: Union[str, None] = None,
         new_settings_file: Union[Path, None, KerykeionSettingsModel, dict] = None,
         theme: Union[KerykeionChartTheme, None] = "classic",
         double_chart_aspect_grid_type: Literal["list", "table"] = "list",
@@ -221,8 +220,6 @@ class ChartDrawer:
             chart_data (ChartDataModel):
                 Pre-computed chart data from ChartDataFactory containing all subjects,
                 aspects, element/quality distributions, and other analytical data.
-            new_output_directory (str or Path, optional):
-                Base directory to save generated SVG files.
             new_settings_file (Path, dict, or KerykeionSettingsModel, optional):
                 Custom settings source for chart colors, fonts, and aspects.
             theme (KerykeionChartTheme or None, optional):
@@ -239,9 +236,6 @@ class ChartDrawer:
         # --------------------
         # COMMON INITIALIZATION
         # --------------------
-        # COMMON INITIALIZATION
-        # --------------------
-        home_directory = Path.home()
         self.new_settings_file = new_settings_file
         self.chart_language = chart_language
         self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
@@ -265,12 +259,6 @@ class ChartDrawer:
         else:  # DualChartDataModel for Transit, Synastry, DualReturnChart
             self.first_obj = getattr(chart_data, 'first_subject')
             self.second_obj = getattr(chart_data, 'second_subject')
-
-        # Set output directory
-        if new_output_directory:
-            self.output_directory = Path(new_output_directory)
-        else:
-            self.output_directory = home_directory
 
         # Load settings
         self.parse_json_settings(new_settings_file)
@@ -487,16 +475,6 @@ class ChartDrawer:
 
         with open(theme_dir / f"{theme}.css", "r") as f:
             self.color_style_tag = f.read()
-
-    def set_output_directory(self, dir_path: Path) -> None:
-        """
-        Set the directory where generated SVG files will be saved.
-
-        Args:
-            dir_path (Path): Target directory for SVG output.
-        """
-        self.output_directory = dir_path
-        logging.info(f"Output directory set to: {self.output_directory}")
 
     def parse_json_settings(self, settings_file_or_dict: Union[Path, dict, KerykeionSettingsModel, None]) -> None:
         """
@@ -1670,14 +1648,18 @@ class ChartDrawer:
 
         return template
 
-    def save_svg(self, minify: bool = False, remove_css_variables=False):
+    def save_svg(self, output_path: Union[str, Path, None] = None, filename: Union[str, None] = None, minify: bool = False, remove_css_variables=False):
         """
         Generate and save the full chart SVG to disk.
 
         Calls generate_svg_string to render the SVG, then writes a file named
-        "{subject.name} - {chart_type} Chart.svg" in the output directory.
+        "{subject.name} - {chart_type} Chart.svg" in the specified output directory.
 
         Args:
+            output_path (str, Path, or None): Directory path where the SVG file will be saved. 
+                If None, defaults to the user's home directory.
+            filename (str or None): Custom filename for the SVG file (without extension).
+                If None, uses the default pattern: "{subject.name} - {chart_type} Chart".
             minify (bool): Pass-through to generate_svg_string for compact output.
             remove_css_variables (bool): Pass-through to generate_svg_string to embed CSS variables.
 
@@ -1687,18 +1669,22 @@ class ChartDrawer:
 
         self.template = self.generate_svg_string(minify, remove_css_variables)
 
-        # Determine chart type for filename
-        if self.external_view and self.chart_type == "Natal":
-            chart_type_for_filename = "ExternalNatal"
-        else:
-            chart_type_for_filename = self.chart_type
+        # Convert output_path to Path object, default to home directory
+        output_directory = Path(output_path) if output_path is not None else Path.home()
 
-        if self.chart_type == "DualReturnChart" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Lunar":
-            chartname = self.output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Lunar Return.svg"
-        elif self.chart_type == "DualReturnChart" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
-            chartname = self.output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Solar Return.svg"
+        # Determine filename
+        if filename is not None:
+            chartname = output_directory / f"{filename}.svg"
         else:
-            chartname = self.output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart.svg"
+            # Use default filename pattern
+            chart_type_for_filename = "ExternalNatal" if self.external_view and self.chart_type == "Natal" else self.chart_type
+            
+            if self.chart_type == "DualReturnChart" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Lunar":
+                chartname = output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Lunar Return.svg"
+            elif self.chart_type == "DualReturnChart" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
+                chartname = output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Solar Return.svg"
+            else:
+                chartname = output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart.svg"
 
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(self.template)
@@ -1742,14 +1728,18 @@ class ChartDrawer:
 
         return template
 
-    def save_wheel_only_svg_file(self, minify: bool = False, remove_css_variables=False):
+    def save_wheel_only_svg_file(self, output_path: Union[str, Path, None] = None, filename: Union[str, None] = None, minify: bool = False, remove_css_variables=False):
         """
         Generate and save wheel-only chart SVG to disk.
 
         Calls generate_wheel_only_svg_string and writes a file named
-        "{subject.name} - {chart_type} Chart - Wheel Only.svg" in the output directory.
+        "{subject.name} - {chart_type} Chart - Wheel Only.svg" in the specified output directory.
 
         Args:
+            output_path (str, Path, or None): Directory path where the SVG file will be saved.
+                If None, defaults to the user's home directory.
+            filename (str or None): Custom filename for the SVG file (without extension).
+                If None, uses the default pattern: "{subject.name} - {chart_type} Chart - Wheel Only".
             minify (bool): Pass-through to generate_wheel_only_svg_string for compact output.
             remove_css_variables (bool): Pass-through to generate_wheel_only_svg_string to embed CSS variables.
 
@@ -1759,13 +1749,16 @@ class ChartDrawer:
 
         template = self.generate_wheel_only_svg_string(minify, remove_css_variables)
 
-        # Determine chart type for filename
-        if self.external_view and self.chart_type == "Natal":
-            chart_type_for_filename = "ExternalNatal"
-        else:
-            chart_type_for_filename = self.chart_type
+        # Convert output_path to Path object, default to home directory
+        output_directory = Path(output_path) if output_path is not None else Path.home()
 
-        chartname = self.output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Wheel Only.svg"
+        # Determine filename
+        if filename is not None:
+            chartname = output_directory / f"{filename}.svg"
+        else:
+            # Use default filename pattern
+            chart_type_for_filename = "ExternalNatal" if self.external_view and self.chart_type == "Natal" else self.chart_type
+            chartname = output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Wheel Only.svg"
 
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(template)
@@ -1825,14 +1818,18 @@ class ChartDrawer:
 
         return template
 
-    def save_aspect_grid_only_svg_file(self, minify: bool = False, remove_css_variables=False):
+    def save_aspect_grid_only_svg_file(self, output_path: Union[str, Path, None] = None, filename: Union[str, None] = None, minify: bool = False, remove_css_variables=False):
         """
         Generate and save aspect-grid-only chart SVG to disk.
 
         Calls generate_aspect_grid_only_svg_string and writes a file named
-        "{subject.name} - {chart_type} Chart - Aspect Grid Only.svg" in the output directory.
+        "{subject.name} - {chart_type} Chart - Aspect Grid Only.svg" in the specified output directory.
 
         Args:
+            output_path (str, Path, or None): Directory path where the SVG file will be saved.
+                If None, defaults to the user's home directory.
+            filename (str or None): Custom filename for the SVG file (without extension).
+                If None, uses the default pattern: "{subject.name} - {chart_type} Chart - Aspect Grid Only".
             minify (bool): Pass-through to generate_aspect_grid_only_svg_string for compact output.
             remove_css_variables (bool): Pass-through to generate_aspect_grid_only_svg_string to embed CSS variables.
 
@@ -1842,13 +1839,16 @@ class ChartDrawer:
 
         template = self.generate_aspect_grid_only_svg_string(minify, remove_css_variables)
 
-        # Determine chart type for filename
-        if self.external_view and self.chart_type == "Natal":
-            chart_type_for_filename = "ExternalNatal"
-        else:
-            chart_type_for_filename = self.chart_type
+        # Convert output_path to Path object, default to home directory
+        output_directory = Path(output_path) if output_path is not None else Path.home()
 
-        chartname = self.output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Aspect Grid Only.svg"
+        # Determine filename
+        if filename is not None:
+            chartname = output_directory / f"{filename}.svg"
+        else:
+            # Use default filename pattern
+            chart_type_for_filename = "ExternalNatal" if self.external_view and self.chart_type == "Natal" else self.chart_type
+            chartname = output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Aspect Grid Only.svg"
 
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(template)
