@@ -46,10 +46,10 @@ chart_data = ChartDataFactory.create_natal_chart_data(subject)
 chart_drawer = ChartDrawer(chart_data=chart_data)
 
 # METHOD 1: Generate and save SVG file to disk
-chart_drawer.save_full_chart_svg_file()  # Saves file to default location
+chart_drawer.save_svg()  # Saves file to default location
 
 # METHOD 2: Get SVG content as string (recommended for web apps)
-svg_content = chart_drawer.generate_full_chart_svg_string()  # Returns SVG as string
+svg_content = chart_drawer.generate_svg_string()  # Returns SVG as string
 
 # If you want to save the string content manually:
 with open("natal_chart.svg", "w") as f:
@@ -79,10 +79,10 @@ chart_data = ChartDataFactory.create_synastry_chart_data(
 chart_drawer = ChartDrawer(chart_data=chart_data)
 
 # Get SVG content as string (recommended)
-svg_content = chart_drawer.generate_full_chart_svg_string()
+svg_content = chart_drawer.generate_svg_string()
 
 # OR save directly to file
-chart_drawer.save_full_chart_svg_file()  # Saves to default location
+chart_drawer.save_svg()  # Saves to default location
 ```
 
 ### Composite Chart
@@ -108,7 +108,7 @@ chart_data = ChartDataFactory.create_composite_chart_data(
 chart_drawer = ChartDrawer(chart_data=chart_data)
 
 # Get the relationship chart as string
-svg_content = chart_drawer.generate_full_chart_svg_string()
+svg_content = chart_drawer.generate_svg_string()
 ```
 
 ### Transit Chart
@@ -136,7 +136,7 @@ chart_data = ChartDataFactory.create_transit_chart_data(
 chart_drawer = ChartDrawer(chart_data=chart_data)
 
 # Get the transit chart content
-svg_content = chart_drawer.generate_full_chart_svg_string()
+svg_content = chart_drawer.generate_svg_string()
 ```
 
 ## Output Methods
@@ -158,11 +158,11 @@ chart_drawer = ChartDrawer(chart_data=chart_data)
 
 # makeSVG() SAVES the complete chart file to disk
 # Does NOT return content - saves to default output directory
-chart_drawer.save_full_chart_svg_file()  # File saved, no return value
+chart_drawer.save_svg()  # File saved, no return value
 
 # makeTemplate() RETURNS the complete chart as string
 # Does NOT save file - returns SVG content for further processing
-svg_string = chart_drawer.generate_full_chart_svg_string()  # Returns SVG content as string
+svg_string = chart_drawer.generate_svg_string()  # Returns SVG content as string
 ```
 
 ### Wheel Only
@@ -331,7 +331,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 # Chart data will show sidereal positions (star-based)
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 chart_drawer = ChartDrawer(chart_data=chart_data)
-svg_content = chart_drawer.generate_full_chart_svg_string()  # Get as string, don't save file
+svg_content = chart_drawer.generate_svg_string()  # Get as string, don't save file
 ```
 
 ### Comparison Example
@@ -362,8 +362,8 @@ sidereal_chart_data = ChartDataFactory.create_natal_chart_data(sidereal_subject)
 tropical_chart_drawer = ChartDrawer(chart_data=tropical_chart_data)
 sidereal_chart_drawer = ChartDrawer(chart_data=sidereal_chart_data)
 
-tropical_svg = tropical_chart_drawer.generate_full_chart_svg_string()  # Get string content
-sidereal_svg = sidereal_chart_drawer.generate_full_chart_svg_string()  # Get string content
+tropical_svg = tropical_chart_drawer.generate_svg_string()  # Get string content
+sidereal_svg = sidereal_chart_drawer.generate_svg_string()  # Get string content
 ```
 
 ## Custom Points and Aspects
@@ -519,12 +519,12 @@ chart_drawer = ChartDrawer(
 )
 
 # Generate different outputs
-full_chart = chart_drawer.generate_full_chart_svg_string(minify=True)  # String content, minified
+full_chart = chart_drawer.generate_svg_string(minify=True)  # String content, minified
 wheel_only = chart_drawer.generate_wheel_only_svg_string()   # String content, wheel only
 aspects_only = chart_drawer.generate_aspect_grid_only_svg_string()  # String content, aspects only
 
 # Or save directly to files
-chart_drawer.save_full_chart_svg_file(minify=True)              # Save full chart
+chart_drawer.save_svg(minify=True)              # Save full chart
 chart_drawer.save_wheel_only_svg_file()                # Save wheel only
 chart_drawer.save_aspect_grid_only_svg_file()           # Save aspects only
 ```
@@ -588,7 +588,7 @@ for name, system in house_systems.items():
     subject = AstrologicalSubjectFactory.from_birth_data(*birth_data, ks=settings)
     chart_data = ChartDataFactory.create_natal_chart_data(subject)
     chart_drawer = ChartDrawer(chart_data=chart_data)
-    charts[name] = chart_drawer.generate_full_chart_svg_string()  # Get as string
+    charts[name] = chart_drawer.generate_svg_string()  # Get as string
     
     # Save string content to file
     with open(f"house_comparison_{name.lower().replace(' ', '_')}.svg", "w") as f:
@@ -671,8 +671,8 @@ minified_chart_data = ChartDataFactory.create_natal_chart_data(minified_subject)
 traditional_chart_drawer = ChartDrawer(chart_data=traditional_chart_data)
 minified_chart_drawer = ChartDrawer(chart_data=minified_chart_data)
 
-traditional_svg = traditional_chart_drawer.generate_full_chart_svg_string()  # Get string content
-minified_svg = minified_chart_drawer.generate_full_chart_svg_string()  # Get string content
+traditional_svg = traditional_chart_drawer.generate_svg_string()  # Get string content
+minified_svg = minified_chart_drawer.generate_svg_string()  # Get string content
 ```
 
 ## Output Options
@@ -688,13 +688,13 @@ chart_data = ChartDataFactory.create_natal_chart_data(subject)
 chart_drawer = ChartDrawer(chart_data=chart_data)
 
 # Get template strings with different options
-standard_svg = chart_drawer.generate_full_chart_svg_string(minify=False)  # Human-readable
-minified_svg = chart_drawer.generate_full_chart_svg_string(minify=True)   # Compressed (30-50% smaller)
-compatible_svg = chart_drawer.generate_full_chart_svg_string(remove_css_variables=True)  # Legacy browsers
-optimized_svg = chart_drawer.generate_full_chart_svg_string(minify=True, remove_css_variables=True)  # Maximum optimization
+standard_svg = chart_drawer.generate_svg_string(minify=False)  # Human-readable
+minified_svg = chart_drawer.generate_svg_string(minify=True)   # Compressed (30-50% smaller)
+compatible_svg = chart_drawer.generate_svg_string(remove_css_variables=True)  # Legacy browsers
+optimized_svg = chart_drawer.generate_svg_string(minify=True, remove_css_variables=True)  # Maximum optimization
 
 # Or save directly to files
-chart_drawer.save_full_chart_svg_file(minify=True)  # Saves minified file to disk
+chart_drawer.save_svg(minify=True)  # Saves minified file to disk
 ```
 
 ### Transparency and Background
@@ -710,7 +710,7 @@ chart_drawer = ChartDrawer(
     chart_data=chart_data,
     transparent_background=True  # Removes default white background
 )
-svg_content = chart_drawer.generate_full_chart_svg_string()  # Get as string
+svg_content = chart_drawer.generate_svg_string()  # Get as string
 
 # Combine with themes for different effects
 dark_transparent = ChartDrawer(
@@ -726,7 +726,7 @@ light_transparent = ChartDrawer(
 )
 
 # Get string content for web integration
-dark_svg = dark_transparent.generate_full_chart_svg_string()
+dark_svg = dark_transparent.generate_svg_string()
 ```
 
 ## External View for Natal Charts
@@ -743,17 +743,17 @@ chart_data = ChartDataFactory.create_natal_chart_data(natal_subject)
 
 # Standard natal chart (planets on inner ring)
 chart_drawer = ChartDrawer(chart_data=chart_data)
-chart_drawer.save_full_chart_svg_file()
+chart_drawer.save_svg()
 
 # External view natal chart (planets on outer ring)
 chart_drawer_external = ChartDrawer(chart_data=chart_data, external_view=True)
-chart_drawer_external.save_full_chart_svg_file()
+chart_drawer_external.save_svg()
 ```
 
 chart_drawer = ChartDrawer(chart_data=chart_data)
 
 # Get chart content showing activated natal planets
-svg_content = chart_drawer.generate_full_chart_svg_string()
+svg_content = chart_drawer.generate_svg_string()
 ```
 
 ## Advanced Customization
@@ -799,12 +799,12 @@ chart = ChartDrawer(
 )
 
 # Generate different outputs
-full_chart = chart.generate_full_chart_svg_string(minify=True)  # String content, minified
+full_chart = chart.generate_svg_string(minify=True)  # String content, minified
 wheel_only = chart.generate_wheel_only_svg_string()   # String content, wheel only
 aspects_only = chart.generate_aspect_grid_only_svg_string()  # String content, aspects only
 
 # Or save directly to files
-chart.save_full_chart_svg_file(minify=True)              # Save full chart
+chart.save_svg(minify=True)              # Save full chart
 chart.save_wheel_only_svg_file()                # Save wheel only
 chart.save_aspect_grid_only_svg_file()           # Save aspects only
 ```
@@ -815,7 +815,7 @@ chart.save_aspect_grid_only_svg_file()           # Save aspects only
 try:
     chart_data = ChartDataFactory.create_natal_chart_data(subject)
     chart_drawer = ChartDrawer(chart_data=chart_data)
-    svg_content = chart_drawer.generate_full_chart_svg_string()  # Get string content
+    svg_content = chart_drawer.generate_svg_string()  # Get string content
     # Process svg_content as needed
 except Exception as e:
     print(f"Chart generation failed: {e}")
@@ -833,7 +833,7 @@ os.makedirs("charts", exist_ok=True)
 # METHOD 1: Get content as string and save manually (recommended)
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 chart_drawer = ChartDrawer(chart_data=chart_data, theme="dark")
-svg_content = chart_drawer.generate_full_chart_svg_string()  # Get SVG as string
+svg_content = chart_drawer.generate_svg_string()  # Get SVG as string
 
 # Save with UTF-8 encoding to handle international characters
 # Important for charts with non-Latin language settings
@@ -841,13 +841,13 @@ with open("charts/natal_chart.svg", "w", encoding="utf-8") as f:
     f.write(svg_content)
 
 # METHOD 2: Direct file saving (saves to default output directory)
-chart_drawer.save_full_chart_svg_file()  # Saves to path specified in constructor
+chart_drawer.save_svg()  # Saves to path specified in constructor
 
 print("Chart saved successfully")
 
 # Example: Generate multiple chart versions as strings
 chart_data_items = [
-    ("full", chart_drawer.generate_full_chart_svg_string()),
+    ("full", chart_drawer.generate_svg_string()),
     ("wheel", chart_drawer.generate_wheel_only_svg_string()),
     ("aspects", chart_drawer.generate_aspect_grid_only_svg_string())
 ]
@@ -878,15 +878,15 @@ chart_data = ChartDataFactory.create_natal_chart_data(subject)
 chart_drawer = ChartDrawer(chart_data=chart_data)
 
 # Get template strings for further processing (RECOMMENDED for web apps)
-full_template = chart_drawer.generate_full_chart_svg_string()          # Full chart as string
+full_template = chart_drawer.generate_svg_string()          # Full chart as string
 wheel_template = chart_drawer.generate_wheel_only_svg_string() # Wheel only as string
 aspects_template = chart_drawer.generate_aspect_grid_only_svg_string() # Aspects only as string
 
 # Save files directly to disk (uses default output directory)
-chart_drawer.save_full_chart_svg_file()                    # Saves full chart file
+chart_drawer.save_svg()                    # Saves full chart file
 chart_drawer.save_wheel_only_svg_file()          # Saves wheel only file
 chart_drawer.save_aspect_grid_only_svg_file()     # Saves aspects only file
 
 # Template methods support minification and CSS options
-minified_template = chart_drawer.generate_full_chart_svg_string(minify=True, remove_css_variables=True)
+minified_template = chart_drawer.generate_svg_string(minify=True, remove_css_variables=True)
 ```

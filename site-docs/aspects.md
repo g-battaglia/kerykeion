@@ -832,7 +832,7 @@ from kerykeion.charts import ChartDrawer
 
 # Create chart with aspect lines
 chart = ChartDrawer(person)
-chart_svg = chart.generate_full_chart_svg_string()
+chart_svg = chart.generate_svg_string()
 # Aspects are automatically calculated and displayed as lines
 ```
 
