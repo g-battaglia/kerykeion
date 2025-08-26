@@ -178,6 +178,7 @@ class ChartDrawer:
     active_aspects: List[ActiveAspect]
     transparent_background: bool
     external_view: bool
+    custom_title: Union[str, None]
 
     # Internal properties
     fire: float
@@ -212,6 +213,7 @@ class ChartDrawer:
         colors_settings: dict = DEFAULT_CHART_COLORS,
         celestial_points_settings: list[dict] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
         aspects_settings: list[dict] = DEFAULT_CHART_ASPECTS_SETTINGS,
+        custom_title: Union[str, None] = None,
     ):
         """
         Initialize the chart visualizer with pre-computed chart data.
@@ -232,6 +234,8 @@ class ChartDrawer:
                 Whether to use external visualization (planets on outer ring) for single-subject charts. Defaults to False.
             transparent_background (bool, optional):
                 Whether to use a transparent background instead of the theme color. Defaults to False.
+            custom_title (str or None, optional):
+                Custom title for the chart. If None, the default title will be used based on chart type. Defaults to None.
         """
         # --------------------
         # COMMON INITIALIZATION
@@ -244,6 +248,7 @@ class ChartDrawer:
         self.chart_colors_settings = colors_settings
         self.planets_settings = celestial_points_settings
         self.aspects_settings = aspects_settings
+        self.custom_title = custom_title
 
         # Extract data from ChartDataModel
         self.chart_data = chart_data
@@ -563,6 +568,53 @@ class ChartDrawer:
                 )
         return out
 
+    def _get_chart_title(self) -> str:
+        """
+        Generate the chart title based on chart type and custom title settings.
+
+        If a custom title is provided, it will be used. Otherwise, generates the
+        appropriate default title based on the chart type and subjects.
+
+        Returns:
+            str: The chart title to display.
+        """
+        # If custom title is provided, use it
+        if self.custom_title is not None:
+            return self.custom_title
+
+        # Generate default title based on chart type
+        if self.chart_type == "Natal":
+            if self.external_view and (" - ExternalNatal" in self.first_obj.name or " - External" in self.first_obj.name):
+                # Remove " - ExternalNatal" or " - External" suffix for external view charts
+                clean_name = self.first_obj.name.replace(" - ExternalNatal", "").replace(" - External", "")
+                return f'{clean_name} - {self.language_settings.get("birth_chart", "Birth Chart")}'
+            else:
+                return f'{self.first_obj.name} - {self.language_settings.get("birth_chart", "Birth Chart")}'
+
+        elif self.chart_type == "Composite":
+            return f"{self.first_obj.first_subject.name} {self.language_settings['and_word']} {self.first_obj.second_subject.name}" # type: ignore
+
+        elif self.chart_type == "Transit":
+            return f"{self.language_settings['transits']} {format_datetime_with_timezone(self.second_obj.iso_formatted_local_datetime)}" # type: ignore
+
+        elif self.chart_type == "Synastry":
+            return f"{self.first_obj.name} {self.language_settings['and_word']} {self.second_obj.name}" # type: ignore
+
+        elif self.chart_type == "DualReturnChart":
+            if self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
+                return f"{self.first_obj.name} - {self.language_settings.get('solar_return', 'Solar Return')}"
+            else:
+                return f"{self.first_obj.name} - {self.language_settings.get('lunar_return', 'Lunar Return')}"
+
+        elif self.chart_type == "SingleReturnChart":
+            if hasattr(self.first_obj, 'return_type') and self.first_obj.return_type == "Solar":
+                return f"{self.first_obj.name} - {self.language_settings.get('solar_return', 'Solar Return')}"
+            else:
+                return f"{self.first_obj.name} - {self.language_settings.get('lunar_return', 'Lunar Return')}"
+
+        # Fallback for unknown chart types
+        return self.first_obj.name
+
     def _create_template_dictionary(self) -> ChartTemplateModel:
         """
         Assemble chart data and rendering instructions into a template dictionary.
@@ -648,6 +700,9 @@ class ChartDrawer:
         # Get houses list for main subject
         first_subject_houses_list = get_houses_list(self.first_obj)
 
+        # Chart title
+        template_dict["stringTitle"] = self._get_chart_title()
+
         # ------------------------------- #
         #  CHART TYPE SPECIFIC SETTINGS   #
         # ------------------------------- #
@@ -698,14 +753,6 @@ class ChartDrawer:
                 self.aspects_list,
             )
             template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - self.third_circle_radius)
-
-            # Chart title
-            if self.external_view and (" - ExternalNatal" in self.first_obj.name or " - External" in self.first_obj.name):
-                # Remove " - ExternalNatal" or " - External" suffix for external view charts
-                clean_name = self.first_obj.name.replace(" - ExternalNatal", "").replace(" - External", "")
-                template_dict["stringTitle"] = f'{clean_name} - {self.language_settings.get("birth_chart", "Birth Chart")}'
-            else:
-                template_dict["stringTitle"] = f'{self.first_obj.name} - {self.language_settings.get("birth_chart", "Birth Chart")}'
 
             # Top left section
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings["north"], self.language_settings["south"])
@@ -835,9 +882,6 @@ class ChartDrawer:
                 self.aspects_list,
             )
             template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - self.third_circle_radius)
-
-            # Chart title
-            template_dict["stringTitle"] = f"{self.first_obj.first_subject.name} {self.language_settings['and_word']} {self.first_obj.second_subject.name}" # type: ignore
 
             # Top left section
             # First subject
@@ -1008,9 +1052,6 @@ class ChartDrawer:
                 )
 
             template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(self.main_radius, self.main_radius - 160)
-
-            # Chart title
-            template_dict["stringTitle"] = f"{self.language_settings['transits']} {format_datetime_with_timezone(self.second_obj.iso_formatted_local_datetime)}" # type: ignore
 
             # Top left section
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings["north"], self.language_settings["south"])
@@ -1190,9 +1231,6 @@ class ChartDrawer:
 
             template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(self.main_radius, self.main_radius - 160)
 
-            # Chart title
-            template_dict["stringTitle"] = f"{self.first_obj.name} {self.language_settings['and_word']} {self.second_obj.name}" # type: ignore
-
             # Top left section
             template_dict["top_left_0"] = f"{self.first_obj.name}:"
             template_dict["top_left_1"] = f"{self.first_obj.city}, {self.first_obj.nation}" # type: ignore
@@ -1333,12 +1371,6 @@ class ChartDrawer:
                 )
 
             template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(self.main_radius, self.main_radius - 160)
-
-            # Chart title
-            if self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
-                template_dict["stringTitle"] = f"{self.first_obj.name} - {self.language_settings.get('solar_return', 'Solar Return')}"
-            else:
-                template_dict["stringTitle"] = f"{self.first_obj.name} - {self.language_settings.get('lunar_return', 'Lunar Return')}"
 
 
             # Top left section
@@ -1517,9 +1549,6 @@ class ChartDrawer:
             )
             template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - self.third_circle_radius)
 
-            # Chart title
-            template_dict["stringTitle"] = self.first_obj.name
-
             # Top left section
             latitude_string = convert_latitude_coordinate_to_string(self.geolat, self.language_settings["north"], self.language_settings["south"])
             longitude_string = convert_longitude_coordinate_to_string(self.geolon, self.language_settings["east"], self.language_settings["west"])
@@ -1656,7 +1685,7 @@ class ChartDrawer:
         "{subject.name} - {chart_type} Chart.svg" in the specified output directory.
 
         Args:
-            output_path (str, Path, or None): Directory path where the SVG file will be saved. 
+            output_path (str, Path, or None): Directory path where the SVG file will be saved.
                 If None, defaults to the user's home directory.
             filename (str or None): Custom filename for the SVG file (without extension).
                 If None, uses the default pattern: "{subject.name} - {chart_type} Chart".
@@ -1678,7 +1707,7 @@ class ChartDrawer:
         else:
             # Use default filename pattern
             chart_type_for_filename = "ExternalNatal" if self.external_view and self.chart_type == "Natal" else self.chart_type
-            
+
             if self.chart_type == "DualReturnChart" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Lunar":
                 chartname = output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Lunar Return.svg"
             elif self.chart_type == "DualReturnChart" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
