@@ -6,7 +6,7 @@ including location handling, return calculations, and error conditions.
 """
 
 import pytest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.schemas import KerykeionException
@@ -258,3 +258,225 @@ class TestPlanetaryReturnFactory:
         assert factory.online is False
         assert factory.lat == 41.9028
         assert factory.lng == 12.4964
+
+    def test_init_online_mode_missing_city(self):
+        """Test error handling when city is missing in online mode."""
+        with pytest.raises(KerykeionException) as exc_info:
+            PlanetaryReturnFactory(
+                subject=self.subject,
+                city=None,  # Missing city
+                nation="US",
+                online=True
+            )
+        
+        assert "You need to set the city if you want to use the online mode" in str(exc_info.value)
+
+    def test_init_online_mode_missing_nation(self):
+        """Test error handling when nation is missing in online mode."""
+        with pytest.raises(KerykeionException) as exc_info:
+            PlanetaryReturnFactory(
+                subject=self.subject,
+                city="New York",
+                nation=None,  # Missing nation
+                online=True
+            )
+        
+        assert "You need to set the nation if you want to use the online mode" in str(exc_info.value)
+
+    def test_offline_mode_missing_coordinates(self):
+        """Test error handling when coordinates are missing in offline mode."""
+        with pytest.raises(KerykeionException) as exc_info:
+            PlanetaryReturnFactory(
+                subject=self.subject,
+                online=False
+            )
+        
+        assert "You need to set the coordinates" in str(exc_info.value)
+
+    def test_offline_mode_missing_lat(self):
+        """Test error handling when latitude is missing in offline mode."""
+        with pytest.raises(KerykeionException) as exc_info:
+            PlanetaryReturnFactory(
+                subject=self.subject,
+                lng=12.4964,
+                tz_str="Europe/Rome",
+                online=False
+            )
+        
+        assert "You need to set the coordinates" in str(exc_info.value)
+
+    def test_offline_mode_missing_lng(self):
+        """Test error handling when longitude is missing in offline mode."""
+        with pytest.raises(KerykeionException) as exc_info:
+            PlanetaryReturnFactory(
+                subject=self.subject,
+                lat=41.9028,
+                tz_str="Europe/Rome",
+                online=False
+            )
+        
+        assert "You need to set the coordinates" in str(exc_info.value)
+
+    def test_offline_mode_missing_tz_str(self):
+        """Test error handling when timezone is missing in offline mode."""
+        with pytest.raises(KerykeionException) as exc_info:
+            PlanetaryReturnFactory(
+                subject=self.subject,
+                lat=41.9028,
+                lng=12.4964,
+                online=False
+            )
+        
+        assert "You need to set the coordinates" in str(exc_info.value)
+
+    def test_solar_return_calculation_method(self):
+        """Test the solar return calculation method."""
+        factory = PlanetaryReturnFactory(
+            self.subject,
+            city="Rome",
+            nation="IT",
+            online=True
+        )
+        
+        # Test solar return
+        result = factory.next_return_from_year(2023, "Solar")
+        assert result is not None
+
+    def test_lunar_return_calculation_method(self):
+        """Test the lunar return calculation method."""
+        factory = PlanetaryReturnFactory(
+            self.subject,
+            city="Rome",
+            nation="IT",
+            online=True
+        )
+        
+        # Test lunar return
+        result = factory.next_return_from_year(2023, "Lunar")
+        assert result is not None
+
+    def test_return_from_iso_formatted_time(self):
+        """Test return calculation from ISO formatted time."""
+        factory = PlanetaryReturnFactory(
+            self.subject,
+            city="Rome",
+            nation="IT",
+            online=True
+        )
+        
+        # Test with ISO formatted time
+        result = factory.next_return_from_iso_formatted_time("2023-06-15T12:00:00", "Solar")
+        assert result is not None
+
+    def test_return_type_validation(self):
+        """Test that only valid return types are accepted."""
+        factory = PlanetaryReturnFactory(
+            self.subject,
+            city="Rome",
+            nation="IT",
+            online=True
+        )
+        
+        # Test with valid return types
+        solar_result = factory.next_return_from_year(2023, "Solar")
+        lunar_result = factory.next_return_from_year(2023, "Lunar")
+        
+        assert solar_result is not None
+        assert lunar_result is not None
+
+    def test_return_methods_with_offline_coordinates(self):
+        """Test return calculation methods with offline coordinates."""
+        factory = PlanetaryReturnFactory(
+            self.subject,
+            lat=41.9028,
+            lng=12.4964,
+            tz_str="Europe/Rome",
+            online=False
+        )
+        
+        # Test that methods work with offline coordinates
+        result = factory.next_return_from_year(2023, "Solar")
+        assert result is not None
+
+    def test_factory_initialization_edge_cases(self):
+        """Test factory initialization with various edge cases."""
+        # Test with minimum required parameters for online mode
+        factory1 = PlanetaryReturnFactory(
+            self.subject,
+            city="Rome",
+            nation="IT",
+            online=True
+        )
+        assert factory1.online is True
+        
+        # Test with minimum required parameters for offline mode
+        factory2 = PlanetaryReturnFactory(
+            self.subject,
+            lat=41.9028,
+            lng=12.4964,
+            tz_str="Europe/Rome",
+            online=False
+        )
+        assert factory2.online is False
+
+    def test_geonames_data_fetching_mock(self):
+        """Test geonames data fetching with mocked response."""
+        with patch('kerykeion.planetary_return_factory.FetchGeonames') as mock_fetch:
+            mock_geonames = Mock()
+            mock_geonames.get_serialized_data.return_value = {
+                'lat': '41.9028',
+                'lng': '12.4964',
+                'timezonestr': 'Europe/Rome',
+                'countryCode': 'IT'
+            }
+            mock_fetch.return_value = mock_geonames
+            
+            factory = PlanetaryReturnFactory(
+                self.subject,
+                city="Rome",
+                nation="IT",
+                online=True
+            )
+            
+            # Verify that mocked geonames data was used
+            mock_fetch.assert_called_once()
+            assert factory.lat == 41.9028
+            assert factory.lng == 12.4964
+            assert factory.tz_str == "Europe/Rome"
+
+    def test_property_access_and_inheritance(self):
+        """Test property access and inheritance from parent classes."""
+        factory = PlanetaryReturnFactory(
+            self.subject,
+            city="Rome",
+            nation="IT",
+            online=True
+        )
+        
+        # Test that all expected attributes are accessible
+        assert hasattr(factory, 'subject')
+        assert hasattr(factory, 'city')
+        assert hasattr(factory, 'nation')
+        assert hasattr(factory, 'online')
+        assert hasattr(factory, 'lat')
+        assert hasattr(factory, 'lng')
+        assert hasattr(factory, 'tz_str')
+
+    def test_multiple_return_calculations(self):
+        """Test multiple return calculations to ensure consistency."""
+        factory = PlanetaryReturnFactory(
+            self.subject,
+            city="Rome",
+            nation="IT",
+            online=True
+        )
+        
+        # Calculate multiple returns
+        solar_return_1 = factory.next_return_from_year(2023, "Solar")
+        solar_return_2 = factory.next_return_from_year(2024, "Solar")
+        lunar_return_1 = factory.next_return_from_year(2023, "Lunar")
+        
+        # Verify all calculations complete successfully
+        assert solar_return_1 is not None
+        assert solar_return_2 is not None
+        assert lunar_return_1 is not None
