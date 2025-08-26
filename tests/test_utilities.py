@@ -6,6 +6,75 @@ from datetime import datetime
 
 
 class TestUtilities:
+    def test_get_number_from_name(self):
+        from kerykeion.utilities import get_number_from_name
+        from kerykeion.schemas.kr_literals import AstrologicalPoint
+        # Test all valid names (subset for type safety)
+        valid_names = [
+            "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
+            "Mean_Node", "True_Node", "Mean_South_Node", "True_South_Node", "Chiron", "Mean_Lilith",
+            "Ascendant", "Descendant", "Medium_Coeli", "Imum_Coeli"
+        ]
+        for name in valid_names:
+            assert isinstance(get_number_from_name(name), int)  # type: ignore
+        import pytest
+        # Type ignore for invalid name to test exception
+        with pytest.raises(Exception):
+            get_number_from_name("NotAPlanet")  # type: ignore
+
+    def test_get_kerykeion_point_from_degree(self):
+        from kerykeion.utilities import get_kerykeion_point_from_degree
+        # Use valid PointType values ("AstrologicalPoint" or "House")
+        pt = get_kerykeion_point_from_degree(45, "Sun", "AstrologicalPoint")
+        assert pt.sign == "Tau"
+        pt2 = get_kerykeion_point_from_degree(-15, "Sun", "AstrologicalPoint")
+        assert 0 <= pt2.abs_pos < 360
+        import pytest
+        with pytest.raises(Exception):
+            get_kerykeion_point_from_degree(360, "Sun", "AstrologicalPoint")
+
+    def test_get_planet_house(self):
+        from kerykeion.utilities import get_planet_house
+        # 12 houses, each 30 degrees
+        houses = [i*30 for i in range(12)]
+        # Should be in first house
+        assert get_planet_house(0, houses) == "First_House"
+        # Should be in last house  
+        assert get_planet_house(359, houses) == "Twelfth_House"
+        # Test basic functionality - no exception test needed as the function
+        # is designed to always find a house in normal usage
+
+    def test_get_moon_emoji_from_phase_int(self):
+        from kerykeion.utilities import get_moon_emoji_from_phase_int
+        # Test all valid branches
+        for phase in [1, 2, 7, 10, 14, 15, 20, 21, 23, 28]:
+            assert get_moon_emoji_from_phase_int(phase)
+        import pytest
+        with pytest.raises(Exception):
+            get_moon_emoji_from_phase_int(100)
+
+    def test_get_moon_phase_name_from_phase_int(self):
+        from kerykeion.utilities import get_moon_phase_name_from_phase_int
+        for phase in [1, 2, 7, 10, 14, 15, 20, 21, 23, 28]:
+            assert get_moon_phase_name_from_phase_int(phase)
+        import pytest
+        with pytest.raises(Exception):
+            get_moon_phase_name_from_phase_int(100)
+
+    def test_check_and_adjust_polar_latitude(self):
+        from kerykeion.utilities import check_and_adjust_polar_latitude
+        assert check_and_adjust_polar_latitude(0) == 0
+        assert check_and_adjust_polar_latitude(70) == 66.0
+        assert check_and_adjust_polar_latitude(-70) == -66.0
+
+    def test_circular_mean(self):
+        from kerykeion.utilities import circular_mean
+        # Normal mean
+        result = circular_mean(10, 20)
+        assert 0 <= result < 360
+        # Across 0/360 boundary
+        mean = circular_mean(350, 10)
+        assert 0 <= mean <= 360  # Allow 360 as edge case
 
     def setup_class(self):
         pass
