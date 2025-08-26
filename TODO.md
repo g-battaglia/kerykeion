@@ -27,6 +27,8 @@
 - [ ] More "air space" around objects in the chart
 - [ ] Expand unit tests to cover all aspects of the library
 - [ ] Path inside the write svg method
+- [ ] Better default chart title (Synastry, Transits)
+- [ ] Configurable chart title from save_svg()
 
 
 ### 🟧 Medium Priority
