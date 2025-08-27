@@ -19,16 +19,19 @@
 ### 🟥 High Priority
 
 - [x] Rename "Return" and "SingleWheelReturn" to "DualReturnChart" and "SingleReturnChart"
-- [ ] Rename "makeSVG", "makeTemplate" and similar methods to more clear names.
-- [~] Full documentation for the library and AstrologerAPI
+- [x] Rename "makeSVG", "makeTemplate" and similar methods to more clear names.
+- [x] Path inside the write svg method
+- [x] Better default chart title (Synastry, Transits)
+- [x] Configurable chart title from save_svg()
+
+- [~] Full documentation for the library
 - [~] Complete all the arab parts and other points in the chart 
+- [~] Expand unit tests to cover all aspects of the library
+
 - [ ] Correct the displayed file name (browser tab/title)
 - [ ] Discepolo's Score in Synastry
 - [ ] More "air space" around objects in the chart
-- [ ] Expand unit tests to cover all aspects of the library
-- [ ] Path inside the write svg method
-- [ ] Better default chart title (Synastry, Transits)
-- [ ] Configurable chart title from save_svg()
+
 
 
 ### 🟧 Medium Priority
