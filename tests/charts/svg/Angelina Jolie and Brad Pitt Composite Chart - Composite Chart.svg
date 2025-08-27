@@ -9,7 +9,7 @@
     preserveAspectRatio='xMidYMid'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
-    <title>Angelina Jolie and Brad Pitt</title>
+    <title>Composite Chart: Angelina Jolie and Brad Pitt</title>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>
@@ -132,7 +132,7 @@
     <!--- Main Chart -->
     <g kr:node='Main_Chart'>
         <g kr:node='Top_Left_Text'>
-            <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Angelina Jolie and Brad Pitt</text>
+            <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Composite Chart: Angelina Jolie and Brad Pitt</text>
             <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Angelina Jolie</text>
             <text x='20' y='62' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1975-06-04 09:09</text>
             <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>34°1'48' N 118°9'0' W</text>

@@ -568,6 +568,21 @@ class ChartDrawer:
                 )
         return out
 
+    def _truncate_name(self, name: str, max_length: int = 50) -> str:
+        """
+        Truncate a name if it's too long, preserving readability.
+
+        Args:
+            name (str): The name to truncate
+            max_length (int): Maximum allowed length
+
+        Returns:
+            str: Truncated name with ellipsis if needed
+        """
+        if len(name) <= max_length:
+            return name
+        return name[:max_length-1] + "…"
+
     def _get_chart_title(self) -> str:
         """
         Generate the chart title based on chart type and custom title settings.
@@ -576,7 +591,7 @@ class ChartDrawer:
         appropriate default title based on the chart type and subjects.
 
         Returns:
-            str: The chart title to display.
+            str: The chart title to display (max ~40 characters).
         """
         # If custom title is provided, use it
         if self.custom_title is not None:
@@ -584,36 +599,56 @@ class ChartDrawer:
 
         # Generate default title based on chart type
         if self.chart_type == "Natal":
-            if self.external_view and (" - ExternalNatal" in self.first_obj.name or " - External" in self.first_obj.name):
-                # Remove " - ExternalNatal" or " - External" suffix for external view charts
-                clean_name = self.first_obj.name.replace(" - ExternalNatal", "").replace(" - External", "")
-                return f'{clean_name} - {self.language_settings.get("birth_chart", "Birth Chart")}'
-            else:
-                return f'{self.first_obj.name} - {self.language_settings.get("birth_chart", "Birth Chart")}'
+            natal_label = self.language_settings.get("birth_chart", "Natal")
+            truncated_name = self._truncate_name(self.first_obj.name)
+            return f'{truncated_name} - {natal_label}'
 
         elif self.chart_type == "Composite":
-            return f"{self.first_obj.first_subject.name} {self.language_settings['and_word']} {self.first_obj.second_subject.name}" # type: ignore
+            composite_label = self.language_settings.get("composite_chart", "Composite")
+            and_word = self.language_settings.get("and_word", "&")
+            name1 = self._truncate_name(self.first_obj.first_subject.name) # type: ignore
+            name2 = self._truncate_name(self.first_obj.second_subject.name) # type: ignore
+            return f"{composite_label}: {name1} {and_word} {name2}"
 
         elif self.chart_type == "Transit":
-            return f"{self.language_settings['transits']} {format_datetime_with_timezone(self.second_obj.iso_formatted_local_datetime)}" # type: ignore
+            transit_label = self.language_settings.get("transits", "Transits")
+            from datetime import datetime
+            date_obj = datetime.fromisoformat(self.second_obj.iso_formatted_local_datetime) # type: ignore
+            date_str = date_obj.strftime("%d/%m/%y")
+            truncated_name = self._truncate_name(self.first_obj.name)
+            return f"{truncated_name} - {transit_label} {date_str}"
 
         elif self.chart_type == "Synastry":
-            return f"{self.first_obj.name} {self.language_settings['and_word']} {self.second_obj.name}" # type: ignore
+            synastry_label = self.language_settings.get("synastry_chart", "Synastry")
+            and_word = self.language_settings.get("and_word", "&")
+            name1 = self._truncate_name(self.first_obj.name)
+            name2 = self._truncate_name(self.second_obj.name) # type: ignore
+            return f"{synastry_label}: {name1} {and_word} {name2}"
 
         elif self.chart_type == "DualReturnChart":
-            if self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
-                return f"{self.first_obj.name} - {self.language_settings.get('solar_return', 'Solar Return')}"
+            from datetime import datetime
+            year = datetime.fromisoformat(self.second_obj.iso_formatted_local_datetime).year # type: ignore
+            truncated_name = self._truncate_name(self.first_obj.name)
+            if self.second_obj is not None and isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar":
+                solar_label = self.language_settings.get("solar_return", "Solar")
+                return f"{truncated_name} - {solar_label} {year}"
             else:
-                return f"{self.first_obj.name} - {self.language_settings.get('lunar_return', 'Lunar Return')}"
+                lunar_label = self.language_settings.get("lunar_return", "Lunar")
+                return f"{truncated_name} - {lunar_label} {year}"
 
         elif self.chart_type == "SingleReturnChart":
-            if hasattr(self.first_obj, 'return_type') and self.first_obj.return_type == "Solar":
-                return f"{self.first_obj.name} - {self.language_settings.get('solar_return', 'Solar Return')}"
+            from datetime import datetime
+            year = datetime.fromisoformat(self.first_obj.iso_formatted_local_datetime).year # type: ignore
+            truncated_name = self._truncate_name(self.first_obj.name)
+            if isinstance(self.first_obj, PlanetReturnModel) and self.first_obj.return_type == "Solar":
+                solar_label = self.language_settings.get("solar_return", "Solar")
+                return f"{truncated_name} - {solar_label} {year}"
             else:
-                return f"{self.first_obj.name} - {self.language_settings.get('lunar_return', 'Lunar Return')}"
+                lunar_label = self.language_settings.get("lunar_return", "Lunar")
+                return f"{truncated_name} - {lunar_label} {year}"
 
         # Fallback for unknown chart types
-        return self.first_obj.name
+        return self._truncate_name(self.first_obj.name)
 
     def _create_template_dictionary(self) -> ChartTemplateModel:
         """
@@ -1706,7 +1741,7 @@ class ChartDrawer:
             chartname = output_directory / f"{filename}.svg"
         else:
             # Use default filename pattern
-            chart_type_for_filename = "ExternalNatal" if self.external_view and self.chart_type == "Natal" else self.chart_type
+            chart_type_for_filename = self.chart_type
 
             if self.chart_type == "DualReturnChart" and self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Lunar":
                 chartname = output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Lunar Return.svg"

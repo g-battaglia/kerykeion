@@ -9,7 +9,7 @@
     preserveAspectRatio='xMidYMid'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
-    <title>Transits for 1942-06-18 15:30 [+02:00]</title>
+    <title>John Lennon - TCWTG - Transits for 18/06/42</title>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>
@@ -179,7 +179,7 @@
     <!--- Main Chart -->
     <g kr:node='Main_Chart'>
         <g kr:node='Top_Left_Text'>
-            <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Transits for 1942-06-18 15:30 [+02:00]</text>
+            <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>John Lennon - TCWTG - Transits for 18/06/42</text>
             <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>John Lennon - TCWTG</text>
             <text x='20' y='62' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Liverpool, GB</text>
             <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1940-10-09 18:30 [+01:00]</text>
