@@ -1919,30 +1919,6 @@ class ChartDrawer:
 
         print(f"SVG Generated Correctly in: {chartname}")
 
-
-if __name__ == "__main__":
-    from kerykeion.utilities import setup_logging
-    from kerykeion.planetary_return_factory import PlanetaryReturnFactory
-    from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-
-    ACTIVE_PLANETS: list[AstrologicalPoint] = [
-        "Sun", "Moon", "Pars_Fortunae", "Mercury", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron", "True_Node"
-    ]
-
-    setup_logging(level="info")
-
-    subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-
-    return_factory = PlanetaryReturnFactory(
-        subject,
-        city="Los Angeles",
-        nation="US",
-        lng=-118.2437,
-        lat=34.0522,
-        tz_str="America/Los_Angeles",
-        altitude=0
-    )
-
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
     from kerykeion.planetary_return_factory import PlanetaryReturnFactory
@@ -1950,12 +1926,12 @@ if __name__ == "__main__":
     from kerykeion.chart_data_factory import ChartDataFactory
 
     ACTIVE_PLANETS: list[AstrologicalPoint] = [
-        "Sun", "Moon", "Pars_Fortunae", "Mercury", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron", "True_Node"
+        "Sun", "Moon", "Pars_Fortunae", "Mercury", "Mars", "Uranus", "Neptune", "Pluto", "Chiron", "True_Node", "Pars_Fidei", "Pars_Amoris", "Anti_Vertex", "Pars_Spiritus","Spica"
     ]
 
     setup_logging(level="info")
 
-    subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+    subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", active_points=ACTIVE_PLANETS)
 
     return_factory = PlanetaryReturnFactory(
         subject,
