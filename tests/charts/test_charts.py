@@ -130,7 +130,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             ChartDrawer(external_natal_chart_data, external_view=True).save_svg()
 
-        with open(self.SVG_DIR / "John Lennon - ExternalNatal Chart.svg", "r", encoding="utf-8") as f:
+        with open(self.SVG_DIR / "John Lennon - ExternalNatal - Natal Chart.svg", "r", encoding="utf-8") as f:
             file_content = f.read()
 
         file_content_lines = file_content.splitlines()
@@ -354,7 +354,7 @@ class TestCharts:
         if self.WRITE_TO_FILE:
             ChartDrawer(chart_data, theme="dark", external_view=True).save_svg()
 
-        with open(self.SVG_DIR / "John Lennon - Dark Theme External - ExternalNatal Chart.svg", "r") as f:
+        with open(self.SVG_DIR / "John Lennon - Dark Theme External - Natal Chart.svg", "r") as f:
             file_content = f.read()
 
         file_content_lines = file_content.splitlines()
