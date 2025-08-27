@@ -383,7 +383,7 @@ class AstrologicalSubjectFactory:
         cache_expire_after_days: int = DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
         is_dst: Optional[bool] = None,
         altitude: Optional[float] = None,
-        active_points: List[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
+        active_points: Optional[List[AstrologicalPoint]] = None,
         calculate_lunar_phase: bool = True,
         *,
         seconds: int = 0,
@@ -440,9 +440,9 @@ class AstrologicalSubjectFactory:
             altitude (float, optional): Altitude above sea level in meters. Used for
                 topocentric calculations and atmospheric corrections. Defaults to None
                 (sea level assumed).
-            active_points (List[AstrologicalPoint], optional): List of astrological
+            active_points (Optional[List[AstrologicalPoint]], optional): List of astrological
                 points to calculate. Omitting points can improve performance for
-                specialized applications. Defaults to DEFAULT_ACTIVE_POINTS.
+                specialized applications. If None, uses DEFAULT_ACTIVE_POINTS.
             calculate_lunar_phase (bool, optional): Whether to calculate lunar phase.
                 Requires Sun and Moon in active_points. Defaults to True.
 
@@ -503,7 +503,10 @@ class AstrologicalSubjectFactory:
         calc_data["json_dir"] = str(Path.home())
 
         # Create a deep copy of active points to avoid modifying the original list
-        active_points = list(active_points)
+        if active_points is None:
+            active_points = list(DEFAULT_ACTIVE_POINTS)
+        else:
+            active_points = list(active_points)
 
         calc_data["active_points"] = active_points
 
@@ -606,7 +609,7 @@ class AstrologicalSubjectFactory:
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
         altitude: Optional[float] = None,
-        active_points: List[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
+        active_points: Optional[List[AstrologicalPoint]] = None,
         calculate_lunar_phase: bool = True
     ) -> AstrologicalSubjectModel:
         """
@@ -645,8 +648,8 @@ class AstrologicalSubjectFactory:
                 Defaults to 'Apparent Geocentric'.
             altitude (float, optional): Altitude in meters for topocentric calculations.
                 Defaults to None (sea level).
-            active_points (List[AstrologicalPoint], optional): Points to calculate.
-                Defaults to DEFAULT_ACTIVE_POINTS.
+            active_points (Optional[List[AstrologicalPoint]], optional): Points to calculate.
+                If None, uses DEFAULT_ACTIVE_POINTS.
             calculate_lunar_phase (bool, optional): Whether to calculate lunar phase.
                 Defaults to True.
 
@@ -745,7 +748,7 @@ class AstrologicalSubjectFactory:
         sidereal_mode: Optional[SiderealMode] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
-        active_points: List[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
+        active_points: Optional[List[AstrologicalPoint]] = None,
         calculate_lunar_phase: bool = True
     ) -> AstrologicalSubjectModel:
         """
@@ -780,8 +783,8 @@ class AstrologicalSubjectFactory:
                 system for calculations. Defaults to 'P' (Placidus).
             perspective_type (PerspectiveType, optional): Calculation perspective.
                 Defaults to 'Apparent Geocentric'.
-            active_points (List[AstrologicalPoint], optional): Astrological points
-                to calculate. Defaults to DEFAULT_ACTIVE_POINTS.
+            active_points (Optional[List[AstrologicalPoint]], optional): Astrological points
+                to calculate. If None, uses DEFAULT_ACTIVE_POINTS.
             calculate_lunar_phase (bool, optional): Whether to calculate lunar phase.
                 Defaults to True.
 
@@ -1537,12 +1540,32 @@ class AstrologicalSubjectFactory:
                 active_points.extend(cast(List[AstrologicalPoint], missing_points))
                 # Recalculate the missing points
                 for point in missing_points:
-                    if point == "Sun" and point not in data:
+                    if point == "Ascendant" and "ascendant" not in data:
+                        # Calculate Ascendant from houses data if needed
+                        if data["zodiac_type"] == "Sidereal":
+                            cusps, ascmc = swe.houses_ex(
+                                tjdut=data["julian_day"],
+                                lat=data["lat"],
+                                lon=data["lng"],
+                                hsys=str.encode(data["houses_system_identifier"]),
+                                flags=swe.FLG_SIDEREAL
+                            )
+                        else:
+                            cusps, ascmc = swe.houses(
+                                tjdut=data["julian_day"],
+                                lat=data["lat"],
+                                lon=data["lng"],
+                                hsys=str.encode(data["houses_system_identifier"])
+                            )
+                        data["ascendant"] = get_kerykeion_point_from_degree(ascmc[0], "Ascendant", point_type=point_type)
+                        data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
+                        data["ascendant"].retrograde = False
+                    elif point == "Sun" and "sun" not in data:
                         sun_calc = swe.calc_ut(julian_day, 0, iflag)[0]
                         data["sun"] = get_kerykeion_point_from_degree(sun_calc[0], "Sun", point_type=point_type)
                         data["sun"].house = get_planet_house(sun_calc[0], houses_degree_ut)
                         data["sun"].retrograde = sun_calc[3] < 0
-                    elif point == "Moon" and point not in data:
+                    elif point == "Moon" and "moon" not in data:
                         moon_calc = swe.calc_ut(julian_day, 1, iflag)[0]
                         data["moon"] = get_kerykeion_point_from_degree(moon_calc[0], "Moon", point_type=point_type)
                         data["moon"].house = get_planet_house(moon_calc[0], houses_degree_ut)
@@ -1578,12 +1601,32 @@ class AstrologicalSubjectFactory:
                 active_points.extend(cast(List[AstrologicalPoint], missing_points))
                 # Recalculate the missing points
                 for point in missing_points:
-                    if point == "Sun" and point not in data:
+                    if point == "Ascendant" and "ascendant" not in data:
+                        # Calculate Ascendant from houses data if needed
+                        if data["zodiac_type"] == "Sidereal":
+                            cusps, ascmc = swe.houses_ex(
+                                tjdut=data["julian_day"],
+                                lat=data["lat"],
+                                lon=data["lng"],
+                                hsys=str.encode(data["houses_system_identifier"]),
+                                flags=swe.FLG_SIDEREAL
+                            )
+                        else:
+                            cusps, ascmc = swe.houses(
+                                tjdut=data["julian_day"],
+                                lat=data["lat"],
+                                lon=data["lng"],
+                                hsys=str.encode(data["houses_system_identifier"])
+                            )
+                        data["ascendant"] = get_kerykeion_point_from_degree(ascmc[0], "Ascendant", point_type=point_type)
+                        data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
+                        data["ascendant"].retrograde = False
+                    elif point == "Sun" and "sun" not in data:
                         sun_calc = swe.calc_ut(julian_day, 0, iflag)[0]
                         data["sun"] = get_kerykeion_point_from_degree(sun_calc[0], "Sun", point_type=point_type)
                         data["sun"].house = get_planet_house(sun_calc[0], houses_degree_ut)
                         data["sun"].retrograde = sun_calc[3] < 0
-                    elif point == "Moon" and point not in data:
+                    elif point == "Moon" and "moon" not in data:
                         moon_calc = swe.calc_ut(julian_day, 1, iflag)[0]
                         data["moon"] = get_kerykeion_point_from_degree(moon_calc[0], "Moon", point_type=point_type)
                         data["moon"].house = get_planet_house(moon_calc[0], houses_degree_ut)
@@ -1618,12 +1661,32 @@ class AstrologicalSubjectFactory:
                 active_points.extend(cast(List[AstrologicalPoint], missing_points))
                 # Recalculate the missing points
                 for point in missing_points:
-                    if point == "Sun" and point not in data:
+                    if point == "Ascendant" and "ascendant" not in data:
+                        # Calculate Ascendant from houses data if needed
+                        if data["zodiac_type"] == "Sidereal":
+                            cusps, ascmc = swe.houses_ex(
+                                tjdut=data["julian_day"],
+                                lat=data["lat"],
+                                lon=data["lng"],
+                                hsys=str.encode(data["houses_system_identifier"]),
+                                flags=swe.FLG_SIDEREAL
+                            )
+                        else:
+                            cusps, ascmc = swe.houses(
+                                tjdut=data["julian_day"],
+                                lat=data["lat"],
+                                lon=data["lng"],
+                                hsys=str.encode(data["houses_system_identifier"])
+                            )
+                        data["ascendant"] = get_kerykeion_point_from_degree(ascmc[0], "Ascendant", point_type=point_type)
+                        data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
+                        data["ascendant"].retrograde = False
+                    elif point == "Sun" and "sun" not in data:
                         sun_calc = swe.calc_ut(julian_day, 0, iflag)[0]
                         data["sun"] = get_kerykeion_point_from_degree(sun_calc[0], "Sun", point_type=point_type)
                         data["sun"].house = get_planet_house(sun_calc[0], houses_degree_ut)
                         data["sun"].retrograde = sun_calc[3] < 0
-                    elif point == "Venus" and point not in data:
+                    elif point == "Venus" and "venus" not in data:
                         venus_calc = swe.calc_ut(julian_day, 3, iflag)[0]
                         data["venus"] = get_kerykeion_point_from_degree(venus_calc[0], "Venus", point_type=point_type)
                         data["venus"].house = get_planet_house(venus_calc[0], houses_degree_ut)
@@ -1649,12 +1712,32 @@ class AstrologicalSubjectFactory:
                 active_points.extend(cast(List[AstrologicalPoint], missing_points))
                 # Recalculate the missing points
                 for point in missing_points:
-                    if point == "Jupiter" and point not in data:
+                    if point == "Ascendant" and "ascendant" not in data:
+                        # Calculate Ascendant from houses data if needed
+                        if data["zodiac_type"] == "Sidereal":
+                            cusps, ascmc = swe.houses_ex(
+                                tjdut=data["julian_day"],
+                                lat=data["lat"],
+                                lon=data["lng"],
+                                hsys=str.encode(data["houses_system_identifier"]),
+                                flags=swe.FLG_SIDEREAL
+                            )
+                        else:
+                            cusps, ascmc = swe.houses(
+                                tjdut=data["julian_day"],
+                                lat=data["lat"],
+                                lon=data["lng"],
+                                hsys=str.encode(data["houses_system_identifier"])
+                            )
+                        data["ascendant"] = get_kerykeion_point_from_degree(ascmc[0], "Ascendant", point_type=point_type)
+                        data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
+                        data["ascendant"].retrograde = False
+                    elif point == "Jupiter" and "jupiter" not in data:
                         jupiter_calc = swe.calc_ut(julian_day, 5, iflag)[0]
                         data["jupiter"] = get_kerykeion_point_from_degree(jupiter_calc[0], "Jupiter", point_type=point_type)
                         data["jupiter"].house = get_planet_house(jupiter_calc[0], houses_degree_ut)
                         data["jupiter"].retrograde = jupiter_calc[3] < 0
-                    elif point == "Saturn" and point not in data:
+                    elif point == "Saturn" and "saturn" not in data:
                         saturn_calc = swe.calc_ut(julian_day, 6, iflag)[0]
                         data["saturn"] = get_kerykeion_point_from_degree(saturn_calc[0], "Saturn", point_type=point_type)
                         data["saturn"].house = get_planet_house(saturn_calc[0], houses_degree_ut)
@@ -1670,8 +1753,8 @@ class AstrologicalSubjectFactory:
                 data["pars_fidei"].retrograde = False
                 calculated_planets.append("Pars_Fidei")
 
-        # Calculate Vertex (a sort of auxiliary Descendant)
-        if should_calculate("Vertex"):
+        # Calculate Vertex and/or Anti-Vertex
+        if should_calculate("Vertex") or should_calculate("Anti_Vertex"):
             try:
                 # Vertex is at ascmc[3] in Swiss Ephemeris
                 if data["zodiac_type"] == "Sidereal":
@@ -1691,20 +1774,28 @@ class AstrologicalSubjectFactory:
                     )
 
                 vertex_deg = ascmc[3]
-                data["vertex"] = get_kerykeion_point_from_degree(vertex_deg, "Vertex", point_type=point_type)
-                data["vertex"].house = get_planet_house(vertex_deg, houses_degree_ut)
-                data["vertex"].retrograde = False
-                calculated_planets.append("Vertex")
 
-                # Calculate Anti-Vertex (opposite to Vertex)
-                anti_vertex_deg = math.fmod(vertex_deg + 180, 360)
-                data["anti_vertex"] = get_kerykeion_point_from_degree(anti_vertex_deg, "Anti_Vertex", point_type=point_type)
-                data["anti_vertex"].house = get_planet_house(anti_vertex_deg, houses_degree_ut)
-                data["anti_vertex"].retrograde = False
-                calculated_planets.append("Anti_Vertex")
+                # Calculate Vertex if requested
+                if should_calculate("Vertex"):
+                    data["vertex"] = get_kerykeion_point_from_degree(vertex_deg, "Vertex", point_type=point_type)
+                    data["vertex"].house = get_planet_house(vertex_deg, houses_degree_ut)
+                    data["vertex"].retrograde = False
+                    calculated_planets.append("Vertex")
+
+                # Calculate Anti-Vertex if requested
+                if should_calculate("Anti_Vertex"):
+                    anti_vertex_deg = math.fmod(vertex_deg + 180, 360)
+                    data["anti_vertex"] = get_kerykeion_point_from_degree(anti_vertex_deg, "Anti_Vertex", point_type=point_type)
+                    data["anti_vertex"].house = get_planet_house(anti_vertex_deg, houses_degree_ut)
+                    data["anti_vertex"].retrograde = False
+                    calculated_planets.append("Anti_Vertex")
+
             except Exception as e:
-                logging.warning("Could not calculate Vertex position, error: %s", e)
-                active_points.remove("Vertex")
+                logging.warning("Could not calculate Vertex/Anti-Vertex position, error: %s", e)
+                if "Vertex" in active_points:
+                    active_points.remove("Vertex")
+                if "Anti_Vertex" in active_points:
+                    active_points.remove("Anti_Vertex")
 
         # Store only the planets that were actually calculated
         all_calculated_points = calculated_planets.copy()
@@ -1740,12 +1831,18 @@ class AstrologicalSubjectFactory:
         data["day_of_week"] = days_of_week[day_of_week]
 
 if __name__ == "__main__":
+    from kerykeion.schemas.kr_literals import AstrologicalPoint
+
     # Example usage
-    subject = AstrologicalSubjectFactory.from_current_time(name="Test Subject")
+    new_active_points: List[AstrologicalPoint] = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'Mean_Node', 'True_Node', 'Mean_South_Node', 'True_South_Node', 'Chiron', 'Mean_Lilith', 'True_Lilith', 'Earth', 'Pholus', 'Ceres', 'Pallas', 'Juno', 'Vesta', 'Eris', 'Sedna', 'Haumea', 'Makemake', 'Ixion', 'Orcus', 'Quaoar', 'Regulus', 'Spica', 'Pars_Fortunae', 'Pars_Spiritus', 'Pars_Amoris', 'Pars_Fidei', 'Vertex', 'Anti_Vertex', 'Ascendant', 'Medium_Coeli', 'Descendant', 'Imum_Coeli']
+    subject = AstrologicalSubjectFactory.from_current_time(name="Test Subject", active_points=new_active_points)
     print(subject.sun)
     print(subject.pars_amoris)
     print(subject.eris)
     print(subject.active_points)
+    print(subject.pars_fidei)
+    print("----")
+    print(subject.anti_vertex)
 
     # Create JSON output
     json_string = subject.model_dump_json(exclude_none=True, indent=2)
