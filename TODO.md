@@ -28,6 +28,7 @@
 - [~] Complete all the arab parts and other points in the chart 
 - [~] Expand unit tests to cover all aspects of the library
 
+- [ ] Correct the ChartDataFactory: it should auto calculate the active points.
 - [ ] Correct the displayed file name (browser tab/title)
 - [ ] Discepolo's Score in Synastry
 - [ ] More "air space" around objects in the chart
