@@ -32,6 +32,8 @@
 - [ ] Correct the displayed file name (browser tab/title)
 - [ ] Discepolo's Score in Synastry
 - [ ] More "air space" around objects in the chart
+- [ ] Fix grid style synastry
+- [ ] Fix (?) many points, maybe just add a warning for max n points
 
 
 
