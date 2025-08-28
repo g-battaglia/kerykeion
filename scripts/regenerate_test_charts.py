@@ -21,6 +21,7 @@ from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
 # Set output directory for all chart SVGs
 OUTPUT_DIR = Path(__file__).parent.parent / "tests" / "charts" / "svg"
@@ -300,9 +301,34 @@ composite_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 ## TO IMPLEMENT (Or check)
 
-# Solar Return Chart
+# Solar Return Charts
+#
+# Deterministic generation of both Dual Return (Natal + Solar Return)
+# and Single Wheel Solar Return charts for testing.
+# Uses offline Liverpool coordinates to avoid any network dependency.
+return_factory = PlanetaryReturnFactory(
+    first,
+    lng=-2.9833,
+    lat=53.4000,
+    tz_str="Europe/London",
+    online=False,
+)
 
-# Single Solar Return Chart
+# Fixed starting date for reproducibility
+solar_return = return_factory.next_return_from_iso_formatted_time(
+    "2025-01-09T18:30:00+01:00",
+    return_type="Solar",
+)
+
+# Dual Return (Natal + Solar Return)
+dual_return_chart_data = ChartDataFactory.create_return_chart_data(first, solar_return)
+dual_return_chart = ChartDrawer(dual_return_chart_data)
+dual_return_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Single Wheel Solar Return
+single_return_chart_data = ChartDataFactory.create_single_wheel_return_chart_data(solar_return)
+single_return_chart = ChartDrawer(single_return_chart_data)
+single_return_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 ## Transparent Background
 transparent_background_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Transparent Background", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")

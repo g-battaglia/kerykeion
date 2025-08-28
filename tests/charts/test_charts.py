@@ -1,6 +1,7 @@
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDrawer, CompositeSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from .compare_svg_lines import compare_svg_lines
 
 
@@ -616,6 +617,56 @@ class TestCharts:
         chart_data = ChartDataFactory.create_composite_chart_data(composite_subject)
         composite_chart_svg = ChartDrawer(chart_data).generate_svg_string()
         self._compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Composite Chart.svg", composite_chart_svg)
+
+    def test_dual_return_solar_chart(self):
+        """
+        Test Dual Return Chart (Natal + Solar Return) against SVG baseline.
+        Uses offline location data to ensure determinism and no network.
+        """
+        # Create PlanetaryReturnFactory with offline Liverpool coordinates
+        return_factory = PlanetaryReturnFactory(
+            self.first_subject,
+            lng=-2.9833,
+            lat=53.4000,
+            tz_str="Europe/London",
+            online=False,
+        )
+
+        # Use a fixed starting date to get a deterministic Solar Return
+        solar_return = return_factory.next_return_from_iso_formatted_time(
+            "2025-01-09T18:30:00+01:00",
+            return_type="Solar",
+        )
+
+        # Build dual return chart (natal + return)
+        chart_data = ChartDataFactory.create_return_chart_data(self.first_subject, solar_return)
+        dual_return_chart_svg = ChartDrawer(chart_data).generate_svg_string()
+
+        # Compare with expected SVG lines
+        self._compare_chart_svg("John Lennon - DualReturnChart Chart - Solar Return.svg", dual_return_chart_svg)
+
+    def test_single_return_solar_chart(self):
+        """
+        Test Single Wheel Return Chart (Solar Return only) against SVG baseline.
+        Uses offline location data to ensure determinism and no network.
+        """
+        return_factory = PlanetaryReturnFactory(
+            self.first_subject,
+            lng=-2.9833,
+            lat=53.4000,
+            tz_str="Europe/London",
+            online=False,
+        )
+
+        solar_return = return_factory.next_return_from_iso_formatted_time(
+            "2025-01-09T18:30:00+01:00",
+            return_type="Solar",
+        )
+
+        chart_data = ChartDataFactory.create_single_wheel_return_chart_data(solar_return)
+        single_return_chart_svg = ChartDrawer(chart_data).generate_svg_string()
+
+        self._compare_chart_svg("John Lennon Solar Return - SingleReturnChart Chart.svg", single_return_chart_svg)
 
 
 if __name__ == "__main__":
