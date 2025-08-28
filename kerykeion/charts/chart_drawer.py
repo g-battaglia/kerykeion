@@ -156,10 +156,10 @@ class ChartDrawer:
     # Constants
 
     _DEFAULT_HEIGHT = 550
-    _DEFAULT_FULL_WIDTH = 1200
+    _DEFAULT_FULL_WIDTH = 1250
     _DEFAULT_NATAL_WIDTH = 870
-    _DEFAULT_FULL_WIDTH_WITH_TABLE = 1200
-    _DEFAULT_ULTRA_WIDE_WIDTH = 1270
+    _DEFAULT_FULL_WIDTH_WITH_TABLE = 1250
+    _DEFAULT_ULTRA_WIDE_WIDTH = 1320
 
     _BASIC_CHART_VIEWBOX = f"0 0 {_DEFAULT_NATAL_WIDTH} {_DEFAULT_HEIGHT}"
     _WIDE_CHART_VIEWBOX = f"0 0 {_DEFAULT_FULL_WIDTH} 546.0"
@@ -1204,7 +1204,7 @@ class ChartDrawer:
                 house_position_comparison_label=self.language_settings.get("house_position_comparison", "House Position Comparison"),
                 return_point_label=self.language_settings.get("transit_point", "Transit Point"),
                 natal_house_label=self.language_settings.get("house_position", "Natal House"),
-                x_position=930,
+                x_position=980,
             )
 
         elif self.chart_type == "Synastry":

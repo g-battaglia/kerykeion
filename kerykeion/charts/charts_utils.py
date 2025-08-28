@@ -829,7 +829,7 @@ def draw_main_house_grid(
         main_subject_houses_list: list[KerykeionPointModel],
         house_cusp_generale_name_label: str = "Cusp",
         text_color: str = "#000000",
-        x_position: int = 720,
+        x_position: int = 750,
         y_position: int = 30,
     ) -> str:
     """
@@ -867,7 +867,7 @@ def draw_secondary_house_grid(
         secondary_subject_houses_list: list[KerykeionPointModel],
         house_cusp_generale_name_label: str = "Cusp",
         text_color: str = "#000000",
-        x_position: int = 970,
+        x_position: int = 1015,
         y_position: int = 30,
     ) -> str:
     """
@@ -908,7 +908,7 @@ def draw_main_planet_grid(
         chart_type: ChartType,
         celestial_point_language: KerykeionLanguageCelestialPointModel,
         text_color: str = "#000000",
-        x_position: int = 620,
+        x_position: int = 645,
         y_position: int = 0,
     ) -> str:
     """
@@ -990,7 +990,7 @@ def draw_secondary_planet_grid(
         chart_type: ChartType,
         celestial_point_language: KerykeionLanguageCelestialPointModel,
         text_color: str = "#000000",
-        x_position: int = 870,
+        x_position: int = 910,
         y_position: int = 0,
     ) -> str:
     """
