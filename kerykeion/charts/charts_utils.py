@@ -908,57 +908,63 @@ def draw_main_planet_grid(
         chart_type: ChartType,
         celestial_point_language: KerykeionLanguageCelestialPointModel,
         text_color: str = "#000000",
+        x_position: int = 620,
+        y_position: int = 0,
     ) -> str:
     """
-    Draws the planet grid for the main subject.
+    Draw the planet grid (main subject) and optional title.
+
+    The entire output is wrapped in a single SVG group `<g>` so the
+    whole block can be repositioned by changing the group transform.
 
     Args:
-        planets_and_houses_grid_title (str): Title of the grid.
-        subject_name (str): Name of the subject.
-        available_kerykeion_celestial_points (list[KerykeionPointModel]): List of celestial points for the subject.
-        chart_type (ChartType): Type of the chart.
-        celestial_point_language (KerykeionLanguageCelestialPointModel): Language model for celestial points.
-        text_color (str, optional): Color of the text. Defaults to "#000000".
+        planets_and_houses_grid_title: Title prefix to show for eligible chart types.
+        subject_name: Subject name to append to the title.
+        available_kerykeion_celestial_points: Celestial points to render in the grid.
+        chart_type: Chart type identifier (Literal string).
+        celestial_point_language: Language model for celestial point decoding.
+        text_color: Text color for labels (default: "#000000").
+        x_position: X translation applied to the outer `<g>` (default: 620).
+        y_position: Y translation applied to the outer `<g>` (default: 0).
 
     Returns:
-        str: The SVG output for the main planet grid.
+        SVG string for the main planet grid wrapped in a `<g>`.
     """
-    line_height = 10
-    offset = 0
-    offset_between_lines = 14
-    svg_output = ""
+    # Layout constants (kept identical to previous behavior)
+    BASE_Y = 30
+    HEADER_Y = 15  # Title baseline inside the wrapper
+    LINE_START = 10
+    LINE_STEP = 14
 
-    if chart_type == "Synastry":
+    # Wrap everything inside a single group so position can be changed once
+    svg_output = f'<g transform="translate({x_position},{y_position})">'
+
+    # Add title only for specific chart types
+    if chart_type in ("Synastry", "Transit", "DualReturnChart"):
         svg_output += (
-            f'<g transform="translate(620, 15)">'  # Added the 620,30 offset (adjusted for -15)
+            f'<g transform="translate(0, {HEADER_Y})">'
             f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
             f'</g>'
         )
-    elif chart_type == "Transit":
-        svg_output += (
-            f'<g transform="translate(620, 15)">'  # Added the 620,30 offset (adjusted for -15)
-            f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
-            f'</g>'
-        )
-    elif chart_type == "DualReturnChart":
-        svg_output += (
-            f'<g transform="translate(620, 15)">'  # Added the 620,30 offset (adjusted for -15)
-            f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
-            f'</g>'
-        )
-    else:
-        svg_output += ""
+
+    line_height = LINE_START
+    offset = 0
 
     end_of_line = "</g>"
 
     for i, planet in enumerate(available_kerykeion_celestial_points):
+        # Start a second column at item 23 (index 22)
         if i == 22:
-            line_height = 10
+            line_height = LINE_START
             offset = -125
 
-        decoded_name = get_decoded_kerykeion_celestial_point_name(planet["name"], celestial_point_language)
+        decoded_name = get_decoded_kerykeion_celestial_point_name(
+            planet["name"],
+            celestial_point_language,
+        )
+
         svg_output += (
-            f'<g transform="translate({620 + offset},{30 + line_height})">'  # Added the 620,30 offset
+            f'<g transform="translate({offset},{BASE_Y + line_height})">'
             f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{decoded_name}</text>'
             f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{planet["name"]}" /></g>'
             f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(planet["position"])}</text>'
@@ -969,7 +975,10 @@ def draw_main_planet_grid(
             svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
 
         svg_output += end_of_line
-        line_height += offset_between_lines
+        line_height += LINE_STEP
+
+    # Close the wrapper group
+    svg_output += "</g>"
 
     return svg_output
 
@@ -1589,4 +1598,3 @@ def calculate_synastry_quality_points(
             combined_totals[quality] = (combined_totals[quality] / total_points) * 100.0
 
     return combined_totals
-

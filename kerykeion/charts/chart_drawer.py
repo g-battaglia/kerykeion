@@ -8,9 +8,9 @@ import logging
 import swisseph as swe
 from typing import get_args, Union, TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from kerykeion.chart_data_factory import ChartDataModel
 
+from kerykeion.schemas.kr_models import ChartDataModel
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 from kerykeion.settings.kerykeion_settings import get_settings
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
 from kerykeion.schemas import (
@@ -1928,7 +1928,6 @@ if __name__ == "__main__":
     ACTIVE_PLANETS: list[AstrologicalPoint] = [
         "Sun", "Moon", "Pars_Fortunae", "Mercury", "Mars", "Uranus", "Neptune", "Pluto", "Chiron", "True_Node", "Pars_Fidei", "Pars_Amoris", "Anti_Vertex", "Pars_Spiritus","Spica"
     ]
-
     setup_logging(level="info")
 
     subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", active_points=ACTIVE_PLANETS)
