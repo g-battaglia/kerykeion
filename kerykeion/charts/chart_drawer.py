@@ -564,9 +564,14 @@ class ChartDrawer:
                 secondary_houses_grid_right = 1015 + 120
                 extents.append(secondary_houses_grid_right)
 
-            if self.chart_type in ("Transit", "DualReturnChart"):
+            if self.chart_type == "Transit":
                 # House comparison grid at x ~ 1030
                 house_comparison_grid_right = 1030 + 180
+                extents.append(house_comparison_grid_right)
+
+            if self.chart_type == "DualReturnChart":
+                # House comparison grid at x ~ 1030
+                house_comparison_grid_right = 1030 + 320
                 extents.append(house_comparison_grid_right)
 
         # Conservative safety padding
@@ -2066,8 +2071,8 @@ if __name__ == "__main__":
     from kerykeion.chart_data_factory import ChartDataFactory
     from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, DEFAULT_ACTIVE_POINTS
 
-    # ACTIVE_PLANETS: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS
-    ACTIVE_PLANETS: list[AstrologicalPoint] = ALL_ACTIVE_POINTS
+    ACTIVE_PLANETS: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS
+    # ACTIVE_PLANETS: list[AstrologicalPoint] = ALL_ACTIVE_POINTS
     setup_logging(level="info")
 
     subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", active_points=ACTIVE_PLANETS)
