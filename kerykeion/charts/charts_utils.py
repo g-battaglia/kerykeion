@@ -727,12 +727,22 @@ def draw_transit_aspect_list(
         vertical_position = current_line * line_height
 
         # Special handling for many aspects - if we exceed max_columns
+        # Bottom-align the overflow columns so the list starts from the bottom
         if current_column >= max_columns:
-            # Calculate how many aspects will overflow beyond the max columns
-            overflow_aspects = len(aspects_list) - (aspects_per_column * max_columns)
-            if overflow_aspects > 0:
-                # Adjust the starting vertical position to move text up
-                vertical_position = vertical_position - (overflow_aspects * line_height)
+            overflow_total = len(aspects_list) - (aspects_per_column * max_columns)
+            if overflow_total > 0:
+                # Index within the overflow sequence (beyond the first row of columns)
+                overflow_index = i - (aspects_per_column * max_columns)
+                # Which overflow column we are in (0-based)
+                overflow_col_idx = overflow_index // aspects_per_column
+                # How many items go into this overflow column
+                items_in_this_column = min(
+                    aspects_per_column,
+                    max(0, overflow_total - (overflow_col_idx * aspects_per_column)),
+                )
+                # Compute extra top offset (in lines) to bottom-align this column
+                top_offset_lines = max(0, aspects_per_column - items_in_this_column)
+                vertical_position = (top_offset_lines + (i % aspects_per_column)) * line_height
 
         inner_path += f'<g transform="translate({horizontal_position},{vertical_position})">'
 
