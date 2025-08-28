@@ -22,6 +22,7 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
 
 # Set output directory for all chart SVGs
 OUTPUT_DIR = Path(__file__).parent.parent / "tests" / "charts" / "svg"
@@ -335,5 +336,17 @@ transparent_background_subject = AstrologicalSubjectFactory.from_birth_data("Joh
 transparent_background_chart_data = ChartDataFactory.create_natal_chart_data(transparent_background_subject)
 transparent_background_chart = ChartDrawer(transparent_background_chart_data, transparent_background=True)
 transparent_background_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Natal Chart with ALL_ACTIVE_POINTS
+all_points_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - All Active Points", 1940, 10, 9, 18, 30, "Liverpool", "GB",
+    geonames_username="century.boy", active_points=ALL_ACTIVE_POINTS
+)
+all_points_chart_data = ChartDataFactory.create_natal_chart_data(
+    all_points_subject,
+    active_points=ALL_ACTIVE_POINTS,
+)
+all_points_chart = ChartDrawer(all_points_chart_data)
+all_points_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 print("All charts regenerated successfully!")
