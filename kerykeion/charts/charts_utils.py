@@ -1312,7 +1312,7 @@ def draw_house_comparison_grid(
         return_point_label: str = "Return Point",
         return_label: str = "DualReturnChart",
         radix_label: str = "Radix",
-        x_position: int = 1030,
+        x_position: int = 1100,
         y_position: int = 0,
 ) -> str:
     """
