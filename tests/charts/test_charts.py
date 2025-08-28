@@ -2,6 +2,7 @@ from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDrawer, CompositeSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
 from .compare_svg_lines import compare_svg_lines
 
 
@@ -47,6 +48,11 @@ class TestCharts:
         self.wheel_external_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Wheel External Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
         self.wheel_synastry_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Wheel Synastry Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
         self.wheel_transit_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Wheel Transit Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
+        # Subject with all active points enabled
+        self.all_active_points_subject = AstrologicalSubjectFactory.from_birth_data(
+            "John Lennon - All Active Points", 1940, 10, 9, 18, 30, "Liverpool", "GB",
+            geonames_username="century.boy", active_points=ALL_ACTIVE_POINTS
+        )
         self.sidereal_dark_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon Lahiri - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="LAHIRI", geonames_username="century.boy")
         self.sidereal_light_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon Fagan-Bradley - Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY", geonames_username="century.boy")
         self.aspect_grid_only_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Aspect Grid Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", geonames_username="century.boy")
@@ -346,6 +352,15 @@ class TestCharts:
 
         for expected_line, actual_line in zip(file_content_lines, birth_chart_svg_lines):
             compare_svg_lines(expected_line, actual_line)
+
+    def test_all_active_points_natal_chart(self):
+        """Natal chart rendered with ALL_ACTIVE_POINTS should match the baseline SVG."""
+        chart_data = ChartDataFactory.create_natal_chart_data(
+            self.all_active_points_subject,
+            active_points=ALL_ACTIVE_POINTS,
+        )
+        all_points_svg = ChartDrawer(chart_data).generate_svg_string()
+        self._compare_chart_svg("John Lennon - All Active Points - Natal Chart.svg", all_points_svg)
 
     def test_dark_theme_external_natal_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.dark_theme_external_subject)
