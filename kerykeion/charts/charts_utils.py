@@ -954,7 +954,7 @@ def draw_main_planet_grid(
 
     for i, planet in enumerate(available_kerykeion_celestial_points):
         # Start a second column at item 23 (index 22)
-        if i == 22:
+        if i == 20:
             line_height = LINE_START
             offset = -125
 
