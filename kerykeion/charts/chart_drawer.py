@@ -214,6 +214,8 @@ class ChartDrawer:
         celestial_points_settings: list[dict] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
         aspects_settings: list[dict] = DEFAULT_CHART_ASPECTS_SETTINGS,
         custom_title: Union[str, None] = None,
+        auto_size: bool = True,
+        padding: int = 20,
     ):
         """
         Initialize the chart visualizer with pre-computed chart data.
@@ -249,6 +251,8 @@ class ChartDrawer:
         self.planets_settings = celestial_points_settings
         self.aspects_settings = aspects_settings
         self.custom_title = custom_title
+        self.auto_size = auto_size
+        self._padding = padding
 
         # Extract data from ChartDataModel
         self.chart_data = chart_data
@@ -433,6 +437,140 @@ class ChartDrawer:
             raise KerykeionException(f"Theme {theme} is not available. Set None for default theme.")
 
         self.set_up_theme(theme)
+
+        # Optionally expand width dynamically to fit content
+        if self.auto_size:
+            try:
+                required_width = self._estimate_required_width_full()
+                if required_width > self.width:
+                    self.width = required_width
+            except Exception as e:
+                # Keep default on any unexpected issue; do not break rendering
+                logging.debug(f"Auto-size width calculation failed: {e}")
+
+    def _count_active_planets(self) -> int:
+        """Return number of active celestial points in the current chart."""
+        return len([p for p in self.available_planets_setting if p.get("is_active")])
+
+    def _dynamic_viewbox(self) -> str:
+        """Return the viewBox string based on current width/height."""
+        return f"0 0 {int(self.width)} {int(self.height)}"
+
+    def _wheel_only_viewbox(self, margin: int = 20) -> str:
+        """Return a tight viewBox for the wheel-only template.
+
+        The wheel is drawn inside a group translated by (100, 50) and has
+        diameter 2 * main_radius. We add a small margin around it.
+        """
+        left = 100 - margin
+        top = 50 - margin
+        width = (2 * self.main_radius) + (2 * margin)
+        height = (2 * self.main_radius) + (2 * margin)
+        return f"{left} {top} {width} {height}"
+
+    def _grid_only_viewbox(self, margin: int = 10) -> str:
+        """Compute a tight viewBox for the Aspect Grid Only SVG.
+
+        The grid is rendered using fixed origins and box size:
+        - For Transit/Synastry/DualReturn charts, `draw_transit_aspect_grid`
+          uses `x_indent=50`, `y_indent=250`, `box_size=14` and draws:
+            • a header row to the right of `x_indent`
+            • a left header column at `x_indent - box_size`
+            • an N×N grid of cells above `y_indent`
+
+        - For Natal/Composite/SingleReturn charts, `draw_aspect_grid` uses
+          `x_start=50`, `y_start=250`, `box_size=14` and draws a triangular grid
+          that extends to the right (x) and upwards (y).
+
+        This function mirrors that geometry to return a snug viewBox around the
+        content, with a small configurable `margin`.
+
+        Args:
+            margin: Extra pixels to add on each side of the computed bounds.
+
+        Returns:
+            A string "minX minY width height" suitable for the SVG `viewBox`.
+        """
+        # Must match defaults used in the renderers
+        x0 = 50
+        y0 = 250
+        box = 14
+
+        n = max(len([p for p in self.available_planets_setting if p.get("is_active")]), 1)
+
+        if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+            # Full N×N grid
+            left = (x0 - box) - margin
+            top = (y0 - box * n) - margin
+            right = (x0 + box * n) + margin
+            bottom = (y0 + box) + margin
+        else:
+            # Triangular grid (no extra left column)
+            left = x0 - margin
+            top = (y0 - box * n) - margin
+            right = (x0 + box * n) + margin
+            bottom = (y0 + box) + margin
+
+        width = max(1, int(right - left))
+        height = max(1, int(bottom - top))
+
+        return f"{int(left)} {int(top)} {width} {height}"
+
+    def _estimate_required_width_full(self) -> int:
+        """Estimate minimal width to contain all rendered groups for the full chart.
+
+        The calculation is heuristic and mirrors the default x positions used in
+        the SVG templates and drawing utilities. We keep a conservative padding.
+        """
+        # Wheel footprint (translate(100,50) + diameter of 2*radius)
+        wheel_right = 100 + (2 * self.main_radius)
+        extents = [wheel_right]
+
+        n_active = max(self._count_active_planets(), 1)
+
+        # Common grids present on many chart types
+        main_planet_grid_right = 645 + 80
+        main_houses_grid_right = 750 + 120
+        extents.extend([main_planet_grid_right, main_houses_grid_right])
+
+        if self.chart_type in ("Natal", "Composite", "SingleReturnChart"):
+            # Triangular aspect grid at x_start=510, width ~ 14 * n_active
+            aspect_grid_right = 510 + 14 * n_active
+            extents.append(aspect_grid_right)
+
+        if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+            # Double-chart aspects placement
+            if self.double_chart_aspect_grid_type == "list":
+                # Columnar list placed at translate(565,273), ~100-110px per column, 14 aspects per column
+                aspects_per_column = 14
+                total_aspects = len(self.aspects_list) if hasattr(self, "aspects_list") else 0
+                columns = max((total_aspects + aspects_per_column - 1) // aspects_per_column, 1)
+                # Respect the max columns cap used in rendering: DualReturn=7, others=6
+                max_cols_cap = 7
+                columns = min(columns, max_cols_cap)
+                aspect_list_right = 565 + (columns * 110)
+                extents.append(aspect_list_right)
+            else:
+                # Grid table placed with x_indent ~550, width ~ 14px per cell across n_active+1
+                aspect_grid_table_right = 550 + (14 * (n_active + 1))
+                extents.append(aspect_grid_table_right)
+
+            # Secondary grids
+            secondary_planet_grid_right = 910 + 80
+            extents.append(secondary_planet_grid_right)
+
+            if self.chart_type == "Synastry":
+                # Secondary houses grid default x ~ 1015
+                secondary_houses_grid_right = 1015 + 120
+                extents.append(secondary_houses_grid_right)
+
+            if self.chart_type in ("Transit", "DualReturnChart"):
+                # House comparison grid at x ~ 1030
+                house_comparison_grid_right = 1030 + 180
+                extents.append(house_comparison_grid_right)
+
+        # Conservative safety padding
+        return int(max(extents) + self._padding)
 
     def _get_location_info(self) -> tuple[str, float, float]:
         """
@@ -743,8 +881,8 @@ class ChartDrawer:
         # ------------------------------- #
 
         if self.chart_type == "Natal":
-            # Set viewbox
-            template_dict["viewbox"] = self._BASIC_CHART_VIEWBOX
+            # Set viewbox dynamically
+            template_dict["viewbox"] = self._dynamic_viewbox()
 
             # Rings and circles
             template_dict["transitRing"] = ""
@@ -872,8 +1010,8 @@ class ChartDrawer:
             template_dict["makeHouseComparisonGrid"] = ""
 
         elif self.chart_type == "Composite":
-            # Set viewbox
-            template_dict["viewbox"] = self._BASIC_CHART_VIEWBOX
+            # Set viewbox dynamically
+            template_dict["viewbox"] = self._dynamic_viewbox()
 
             # Rings and circles
             template_dict["transitRing"] = ""
@@ -1031,11 +1169,8 @@ class ChartDrawer:
             template_dict["fixed_string"] = ""
             template_dict["mutable_string"] = ""
 
-            # Set viewbox
-            if self.double_chart_aspect_grid_type == "table":
-                template_dict["viewbox"] = self._TRANSIT_CHART_WITH_TABLE_VIWBOX
-            else:
-                template_dict["viewbox"] = self._WIDE_CHART_VIEWBOX
+            # Set viewbox dynamically
+            template_dict["viewbox"] = self._dynamic_viewbox()
 
             # Get houses list for secondary subject
             second_subject_houses_list = get_houses_list(self.second_obj) # type: ignore
@@ -1208,8 +1343,8 @@ class ChartDrawer:
             )
 
         elif self.chart_type == "Synastry":
-            # Set viewbox
-            template_dict["viewbox"] = self._WIDE_CHART_VIEWBOX
+            # Set viewbox dynamically
+            template_dict["viewbox"] = self._dynamic_viewbox()
 
             # Get houses list for secondary subject
             second_subject_houses_list = get_houses_list(self.second_obj) # type: ignore
@@ -1353,8 +1488,8 @@ class ChartDrawer:
             template_dict["makeHouseComparisonGrid"] = ""
 
         elif self.chart_type == "DualReturnChart":
-            # Set viewbox
-            template_dict["viewbox"] = self._ULTRA_WIDE_CHART_VIEWBOX
+            # Set viewbox dynamically
+            template_dict["viewbox"] = self._dynamic_viewbox()
 
             # Get houses list for secondary subject
             second_subject_houses_list = get_houses_list(self.second_obj) # type: ignore
@@ -1538,8 +1673,8 @@ class ChartDrawer:
             )
 
         elif self.chart_type == "SingleReturnChart":
-            # Set viewbox
-            template_dict["viewbox"] = self._BASIC_CHART_VIEWBOX
+            # Set viewbox dynamically
+            template_dict["viewbox"] = self._dynamic_viewbox()
 
             # Rings and circles
             template_dict["transitRing"] = ""
@@ -1779,7 +1914,9 @@ class ChartDrawer:
             template = f.read()
 
         template_dict = self._create_template_dictionary()
-        template = Template(template).substitute(template_dict.model_dump())
+        # Use a compact viewBox specific for the wheel-only rendering
+        wheel_viewbox = self._wheel_only_viewbox()
+        template = Template(template).substitute({**template_dict.model_dump(), "viewbox": wheel_viewbox})
 
         if remove_css_variables:
             template = inline_css_variables_in_svg(template)
@@ -1869,7 +2006,10 @@ class ChartDrawer:
                 y_start=250,
             )
 
-        template = Template(template).substitute({**template_dict.model_dump(), "makeAspectGrid": aspects_grid})
+        # Use a compact, known-good viewBox that frames the grid
+        viewbox_override = self._grid_only_viewbox()
+
+        template = Template(template).substitute({**template_dict.model_dump(), "makeAspectGrid": aspects_grid, "viewbox": viewbox_override})
 
         if remove_css_variables:
             template = inline_css_variables_in_svg(template)
@@ -1924,10 +2064,10 @@ if __name__ == "__main__":
     from kerykeion.planetary_return_factory import PlanetaryReturnFactory
     from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
     from kerykeion.chart_data_factory import ChartDataFactory
+    from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, DEFAULT_ACTIVE_POINTS
 
-    ACTIVE_PLANETS: list[AstrologicalPoint] = [
-        "Sun", "Moon", "Pars_Fortunae", "Mercury", "Mars", "Uranus", "Neptune", "Pluto", "Chiron", "True_Node", "Pars_Fidei", "Pars_Amoris", "Anti_Vertex", "Pars_Spiritus","Spica"
-    ]
+    # ACTIVE_PLANETS: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS
+    ACTIVE_PLANETS: list[AstrologicalPoint] = ALL_ACTIVE_POINTS
     setup_logging(level="info")
 
     subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", active_points=ACTIVE_PLANETS)
