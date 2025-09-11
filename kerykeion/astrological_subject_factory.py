@@ -38,6 +38,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional, List, Dict, Any, get_args, cast
 from dataclasses import dataclass, field
+from contextlib import contextmanager
 
 
 from kerykeion.fetch_geonames import FetchGeonames
@@ -81,9 +82,6 @@ GEONAMES_DEFAULT_USERNAME_WARNING = (
     "********"
 )
 
-NOW = datetime.now()
-
-
 @dataclass
 class ChartConfiguration:
     """
@@ -118,12 +116,14 @@ class ChartConfiguration:
         ...     houses_system_identifier="K",
         ...     perspective_type="Topocentric"
         ... )
-        >>> config.validate()
     """
     zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE
     sidereal_mode: Optional[SiderealMode] = None
     houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER
     perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE
+
+    def __post_init__(self) -> None:
+        self.validate()
 
     def validate(self) -> None:
         """
@@ -364,11 +364,11 @@ class AstrologicalSubjectFactory:
     def from_birth_data(
         cls,
         name: str = "Now",
-        year: int = NOW.year,
-        month: int = NOW.month,
-        day: int = NOW.day,
-        hour: int = NOW.hour,
-        minute: int = NOW.minute,
+        year: Optional[int] = None,
+        month: Optional[int] = None,
+        day: Optional[int] = None,
+        hour: Optional[int] = None,
+        minute: Optional[int] = None,
         city: Optional[str] = None,
         nation: Optional[str] = None,
         lng: Optional[float] = None,
@@ -495,6 +495,16 @@ class AstrologicalSubjectFactory:
             - The method handles polar regions by adjusting extreme latitudes
             - Time zones are handled with full DST awareness via pytz
         """
+        # Resolve time defaults using current time
+        if year is None or month is None or day is None or hour is None or minute is None or seconds is None:
+            now = datetime.now()
+            year = year if year is not None else now.year
+            month = month if month is not None else now.month
+            day = day if day is not None else now.day
+            hour = hour if hour is not None else now.hour
+            minute = minute if minute is not None else now.minute
+            seconds = seconds if seconds is not None else now.second
+
         # Create a calculation data container
         calc_data = {}
 
@@ -517,7 +527,6 @@ class AstrologicalSubjectFactory:
             houses_system_identifier=houses_system_identifier,
             perspective_type=perspective_type,
         )
-        config.validate()
 
         # Add configuration data to calculation data
         calc_data["zodiac_type"] = config.zodiac_type
@@ -574,13 +583,13 @@ class AstrologicalSubjectFactory:
         calc_data["is_dst"] = is_dst
 
         # Calculate time conversions
-        cls._calculate_time_conversions(calc_data, location)
+        AstrologicalSubjectFactory._calculate_time_conversions(calc_data, location)
 
         # Initialize Swiss Ephemeris and calculate houses and planets
-        cls._setup_ephemeris(calc_data, config)
-        calculated_axial_cusps = cls._calculate_houses(calc_data, calc_data["active_points"])
-        cls._calculate_planets(calc_data, calc_data["active_points"], calculated_axial_cusps)
-        cls._calculate_day_of_week(calc_data)
+        AstrologicalSubjectFactory._setup_ephemeris(calc_data, config)
+        calculated_axial_cusps = AstrologicalSubjectFactory._calculate_houses(calc_data, calc_data["active_points"])
+        AstrologicalSubjectFactory._calculate_planets(calc_data, calc_data["active_points"], calculated_axial_cusps)
+        AstrologicalSubjectFactory._calculate_day_of_week(calc_data)
 
         # Calculate lunar phase (optional - only if requested and Sun and Moon are available)
         if calculate_lunar_phase and "moon" in calc_data and "sun" in calc_data:
@@ -851,8 +860,8 @@ class AstrologicalSubjectFactory:
             calculate_lunar_phase=calculate_lunar_phase
         )
 
-    @classmethod
-    def _calculate_time_conversions(cls, data: Dict[str, Any], location: LocationData) -> None:
+    @staticmethod
+    def _calculate_time_conversions(data: Dict[str, Any], location: LocationData) -> None:
         """
         Calculate time conversions between local time, UTC, and Julian Day Number.
 
@@ -893,6 +902,11 @@ class AstrologicalSubjectFactory:
                 "Ambiguous time error! The time falls during a DST transition. "
                 "Please specify is_dst=True or is_dst=False to clarify."
             )
+        except pytz.exceptions.NonExistentTimeError:
+            raise KerykeionException(
+                "Non-existent time error! The time does not exist due to DST transition (spring forward). "
+                "Please specify a valid time."
+            )
 
         # Store formatted times
         utc_datetime = local_datetime.astimezone(pytz.utc)
@@ -902,8 +916,8 @@ class AstrologicalSubjectFactory:
         # Calculate Julian day
         data["julian_day"] = datetime_to_julian(utc_datetime)
 
-    @classmethod
-    def _setup_ephemeris(cls, data: Dict[str, Any], config: ChartConfiguration) -> None:
+    @staticmethod
+    def _setup_ephemeris(data: Dict[str, Any], config: ChartConfiguration) -> None:
         """
         Configure Swiss Ephemeris with appropriate calculation flags and settings.
 
@@ -965,8 +979,8 @@ class AstrologicalSubjectFactory:
         )
         data["_iflag"] = iflag
 
-    @classmethod
-    def _calculate_houses(cls, data: Dict[str, Any], active_points: Optional[List[AstrologicalPoint]]) -> List[str]:
+    @staticmethod
+    def _calculate_houses(data: Dict[str, Any], active_points: Optional[List[AstrologicalPoint]]) -> List[str]:
         """
         Calculate house cusps and angular points (Ascendant, MC, etc.).
 
@@ -1082,9 +1096,8 @@ class AstrologicalSubjectFactory:
 
         return calculated_axial_cusps
 
-    @classmethod
+    @staticmethod
     def _calculate_single_planet(
-        cls,
         data: Dict[str, Any],
         planet_name: AstrologicalPoint,
         planet_id: int,
@@ -1159,8 +1172,8 @@ class AstrologicalSubjectFactory:
             if planet_name in active_points:
                 active_points.remove(planet_name)
 
-    @classmethod
-    def _calculate_planets(cls, data: Dict[str, Any], active_points: List[AstrologicalPoint], calculated_axial_cusps: Optional[List[str]] = None) -> None:
+    @staticmethod
+    def _calculate_planets(data: Dict[str, Any], active_points: List[AstrologicalPoint], calculated_axial_cusps: Optional[List[str]] = None) -> None:
         """
         Calculate positions for all requested celestial bodies and special points.
 
@@ -1261,43 +1274,43 @@ class AstrologicalSubjectFactory:
 
         # Calculate Sun
         if should_calculate("Sun"):
-            cls._calculate_single_planet(data, "Sun", 0, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
+            AstrologicalSubjectFactory._calculate_single_planet(data, "Sun", 0, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
 
         # Calculate Moon
         if should_calculate("Moon"):
-            cls._calculate_single_planet(data, "Moon", 1, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
+            AstrologicalSubjectFactory._calculate_single_planet(data, "Moon", 1, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
 
         # Calculate Mercury
         if should_calculate("Mercury"):
-            cls._calculate_single_planet(data, "Mercury", 2, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
+            AstrologicalSubjectFactory._calculate_single_planet(data, "Mercury", 2, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
 
         # Calculate Venus
         if should_calculate("Venus"):
-            cls._calculate_single_planet(data, "Venus", 3, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
+            AstrologicalSubjectFactory._calculate_single_planet(data, "Venus", 3, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
 
         # Calculate Mars
         if should_calculate("Mars"):
-            cls._calculate_single_planet(data, "Mars", 4, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
+            AstrologicalSubjectFactory._calculate_single_planet(data, "Mars", 4, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
 
         # Calculate Jupiter
         if should_calculate("Jupiter"):
-            cls._calculate_single_planet(data, "Jupiter", 5, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
+            AstrologicalSubjectFactory._calculate_single_planet(data, "Jupiter", 5, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
 
         # Calculate Saturn
         if should_calculate("Saturn"):
-            cls._calculate_single_planet(data, "Saturn", 6, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
+            AstrologicalSubjectFactory._calculate_single_planet(data, "Saturn", 6, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
 
         # Calculate Uranus
         if should_calculate("Uranus"):
-            cls._calculate_single_planet(data, "Uranus", 7, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
+            AstrologicalSubjectFactory._calculate_single_planet(data, "Uranus", 7, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
 
         # Calculate Neptune
         if should_calculate("Neptune"):
-            cls._calculate_single_planet(data, "Neptune", 8, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
+            AstrologicalSubjectFactory._calculate_single_planet(data, "Neptune", 8, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
 
         # Calculate Pluto
         if should_calculate("Pluto"):
-            cls._calculate_single_planet(data, "Pluto", 9, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
+            AstrologicalSubjectFactory._calculate_single_planet(data, "Pluto", 9, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
 
         # ==================
         # LUNAR NODES
@@ -1305,11 +1318,11 @@ class AstrologicalSubjectFactory:
 
         # Calculate Mean Lunar Node
         if should_calculate("Mean_Node"):
-            cls._calculate_single_planet(data, "Mean_Node", 10, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
+            AstrologicalSubjectFactory._calculate_single_planet(data, "Mean_Node", 10, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
 
         # Calculate True Lunar Node
         if should_calculate("True_Node"):
-            cls._calculate_single_planet(data, "True_Node", 11, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
+            AstrologicalSubjectFactory._calculate_single_planet(data, "True_Node", 11, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
 
         # Calculate Mean South Node (opposite to Mean North Node)
         if should_calculate("Mean_South_Node") and "mean_node" in data:
@@ -1337,14 +1350,14 @@ class AstrologicalSubjectFactory:
 
         # Calculate Mean Lilith (Mean Black Moon)
         if should_calculate("Mean_Lilith"):
-            cls._calculate_single_planet(
+            AstrologicalSubjectFactory._calculate_single_planet(
                 data, "Mean_Lilith", 12, julian_day, iflag, houses_degree_ut,
                 point_type, calculated_planets, active_points
             )
 
         # Calculate True Lilith (Osculating Black Moon)
         if should_calculate("True_Lilith"):
-            cls._calculate_single_planet(
+            AstrologicalSubjectFactory._calculate_single_planet(
                 data, "True_Lilith", 13, julian_day, iflag, houses_degree_ut,
                 point_type, calculated_planets, active_points
             )
@@ -1355,21 +1368,21 @@ class AstrologicalSubjectFactory:
 
         # Calculate Earth - useful for heliocentric charts
         if should_calculate("Earth"):
-            cls._calculate_single_planet(
+            AstrologicalSubjectFactory._calculate_single_planet(
                 data, "Earth", 14, julian_day, iflag, houses_degree_ut,
                 point_type, calculated_planets, active_points
             )
 
         # Calculate Chiron
         if should_calculate("Chiron"):
-            cls._calculate_single_planet(
+            AstrologicalSubjectFactory._calculate_single_planet(
                 data, "Chiron", 15, julian_day, iflag, houses_degree_ut,
                 point_type, calculated_planets, active_points
             )
 
         # Calculate Pholus
         if should_calculate("Pholus"):
-            cls._calculate_single_planet(
+            AstrologicalSubjectFactory._calculate_single_planet(
                 data, "Pholus", 16, julian_day, iflag, houses_degree_ut,
                 point_type, calculated_planets, active_points
             )
@@ -1380,28 +1393,28 @@ class AstrologicalSubjectFactory:
 
         # Calculate Ceres
         if should_calculate("Ceres"):
-            cls._calculate_single_planet(
+            AstrologicalSubjectFactory._calculate_single_planet(
                 data, "Ceres", 17, julian_day, iflag, houses_degree_ut,
                 point_type, calculated_planets, active_points
             )
 
         # Calculate Pallas
         if should_calculate("Pallas"):
-            cls._calculate_single_planet(
+            AstrologicalSubjectFactory._calculate_single_planet(
                 data, "Pallas", 18, julian_day, iflag, houses_degree_ut,
                 point_type, calculated_planets, active_points
             )
 
         # Calculate Juno
         if should_calculate("Juno"):
-            cls._calculate_single_planet(
+            AstrologicalSubjectFactory._calculate_single_planet(
                 data, "Juno", 19, julian_day, iflag, houses_degree_ut,
                 point_type, calculated_planets, active_points
             )
 
         # Calculate Vesta
         if should_calculate("Vesta"):
-            cls._calculate_single_planet(
+            AstrologicalSubjectFactory._calculate_single_planet(
                 data, "Vesta", 20, julian_day, iflag, houses_degree_ut,
                 point_type, calculated_planets, active_points
             )
@@ -1502,8 +1515,8 @@ class AstrologicalSubjectFactory:
         if should_calculate("Regulus"):
             try:
                 star_name = "Regulus"
-                swe.fixstar_ut(star_name, julian_day, iflag)
-                regulus_deg = swe.fixstar_ut(star_name, julian_day, iflag)[0][0]
+                pos, _ = swe.fixstar_ut(star_name, julian_day, iflag)
+                regulus_deg = pos[0]
                 data["regulus"] = get_kerykeion_point_from_degree(regulus_deg, "Regulus", point_type=point_type)
                 data["regulus"].house = get_planet_house(regulus_deg, houses_degree_ut)
                 data["regulus"].retrograde = False  # Fixed stars are never retrograde
@@ -1516,8 +1529,8 @@ class AstrologicalSubjectFactory:
         if should_calculate("Spica"):
             try:
                 star_name = "Spica"
-                swe.fixstar_ut(star_name, julian_day, iflag)
-                spica_deg = swe.fixstar_ut(star_name, julian_day, iflag)[0][0]
+                pos, _ = swe.fixstar_ut(star_name, julian_day, iflag)
+                spica_deg = pos[0]
                 data["spica"] = get_kerykeion_point_from_degree(spica_deg, "Spica", point_type=point_type)
                 data["spica"].house = get_planet_house(spica_deg, houses_degree_ut)
                 data["spica"].retrograde = False  # Fixed stars are never retrograde
@@ -1803,32 +1816,24 @@ class AstrologicalSubjectFactory:
             all_calculated_points.extend(calculated_axial_cusps)
         data["active_points"] = all_calculated_points
 
-    @classmethod
-    def _calculate_day_of_week(cls, data: Dict[str, Any]) -> None:
+    @staticmethod
+    def _calculate_day_of_week(data: Dict[str, Any]) -> None:
         """
         Calculate the day of the week for the given astronomical event.
 
-        Determines the day of the week corresponding to the Julian Day Number
-        of the astrological event using Swiss Ephemeris calendar functions.
+        Determines the day of the week corresponding to the local datetime
+        using the standard library for consistency.
 
         Args:
-            data (Dict[str, Any]): Calculation data dictionary containing julian_day.
-                Updated with the calculated day_of_week string.
+            data (Dict[str, Any]): Calculation data dictionary containing
+                iso_formatted_local_datetime. Updated with the calculated day_of_week string.
 
         Side Effects:
             Updates data dictionary with:
             - day_of_week: Human-readable day name (e.g., "Monday", "Tuesday")
-
-        Note:
-            The Swiss Ephemeris day_of_week function returns an integer where
-            0=Monday, 1=Tuesday, ..., 6=Sunday. This is converted to readable
-            day names for user convenience.
         """
-        # Calculate the day of the week (0=Sunday, 1=Monday, ..., 6=Saturday)
-        day_of_week = swe.day_of_week(data["julian_day"])
-        # Map to human-readable names
-        days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-        data["day_of_week"] = days_of_week[day_of_week]
+        dt = datetime.fromisoformat(data["iso_formatted_local_datetime"])
+        data["day_of_week"] = dt.strftime("%A")
 
 if __name__ == "__main__":
     from kerykeion.schemas.kr_literals import AstrologicalPoint
