@@ -23,6 +23,7 @@
 - [x] Path inside the write svg method
 - [x] Better default chart title (Synastry, Transits)
 - [x] Configurable chart title from save_svg()
+- [x] Fix day of week translation
 
 - [~] Full documentation for the library
 - [~] Complete all the arab parts and other points in the chart 
@@ -34,7 +35,6 @@
 - [ ] More "air space" around objects in the chart
 - [ ] Fix grid style synastry
 - [ ] Fix (?) many points, maybe just add a warning for max n points
-- [ ] Fix day of week translation
 
 
 
