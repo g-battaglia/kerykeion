@@ -104,53 +104,6 @@ def ephemeris_context(path: str, config: ChartConfiguration, lng: float, lat: fl
         pass
 ```
 
-3. Points registry
-   - Requirement: replace the wall of `if`s with a name→metadata map and a single loop.
-
-```python
-PLANETS = {
-    "Sun": {"id": 0}, "Moon": {"id": 1}, "Mercury": {"id": 2}, "Venus": {"id": 3},
-    "Mars": {"id": 4}, "Jupiter": {"id": 5}, "Saturn": {"id": 6},
-    "Uranus": {"id": 7}, "Neptune": {"id": 8}, "Pluto": {"id": 9},
-    "Mean_Node": {"id": 10}, "True_Node": {"id": 11},
-    "Mean_Lilith": {"id": 12}, "True_Lilith": {"id": 13},
-    "Earth": {"id": 14}, "Chiron": {"id": 15}, "Pholus": {"id": 16},
-    "Ceres": {"id": 17}, "Pallas": {"id": 18}, "Juno": {"id": 19}, "Vesta": {"id": 20},
-}
-
-def calc_body(jd, body_id, iflag):
-    lon, lat, dist, speed = swe.calc_ut(jd, body_id, iflag)[0]
-    return lon, speed
-```
-
-4. Declarative dependencies for Parts and Axes
-   - Requirement: define dependencies and formulas declaratively and use a generic `ensure_points`.
-
-```python
-PARTS = {
-  "Pars_Fortunae": {
-    "deps": ["Ascendant", "Sun", "Moon"],
-    "formula": lambda asc, sun, moon, is_day: norm360(
-        asc + (moon if is_day else sun) - (sun if is_day else moon)
-    )
-  },
-  "Pars_Spiritus": {
-    "deps": ["Ascendant", "Sun", "Moon"],
-    "formula": lambda asc, sun, moon, is_day: norm360(
-        asc + (sun if is_day else moon) - (moon if is_day else sun)
-    )
-  },
-  "Pars_Amoris": {
-    "deps": ["Ascendant", "Venus", "Sun"],
-    "formula": lambda asc, venus, sun, _: norm360(asc + venus - sun)
-  },
-  "Pars_Fidei": {
-    "deps": ["Ascendant", "Jupiter", "Saturn"],
-    "formula": lambda asc, jup, sat, _: norm360(asc + jup - sat)
-  }
-}
-```
-
 5. Time API
    - Requirement: accept aware `datetime` inputs (UTC or local). If UTC is passed, skip localization. Expose parameters to bypass `is_dst`.
 
@@ -176,50 +129,6 @@ PARTS = {
 
 6. Vertex
    - Requirement: compute Vertex once and cache. If a different house system is required, make it explicit in the API.
-
-## Support Snippets
-
-Create a normalized point and assign its house
-```python
-def mk_point(deg: float, name: str, houses, point_type: str):
-    d = norm360(deg)
-    p = get_kerykeion_point_from_degree(d, name, point_type=point_type)
-    p.house = get_planet_house(d, houses)
-    return p
-```
-
-Ensure dependencies
-```python
-def ensure_points(names, *, jd, iflag, houses, data, active):
-    for n in names:
-        key = n.lower()
-        if key in data:
-            continue
-        meta = PLANETS.get(n)
-        if not meta:
-            raise KerykeionException(f"Unknown dependency: {n}")
-        lon, speed = calc_body(jd, meta["id"], iflag)
-        pt = mk_point(lon, n, houses, "AstrologicalPoint")
-        pt.retrograde = speed < 0
-        data[key] = pt
-        if n not in active:
-            active.append(n)
-```
-
-Loop over registry to compute points
-```python
-for name, meta in PLANETS.items():
-    if should_calc(name):
-        try:
-            lon, speed = calc_body(jd, meta["id"], iflag)
-            pt = mk_point(lon, name, houses_degree_ut, "AstrologicalPoint")
-            pt.retrograde = speed < 0
-            data[name.lower()] = pt
-            calculated.append(name)
-        except Exception as e:
-            errors.append((name, str(e)))
-            deactivate(name)
-```
 
 ## Use `@staticmethod` for Internal Helpers
 
@@ -251,6 +160,3 @@ def _setup_ephemeris(calc_data: Dict[str, Any], config: ChartConfiguration) -> N
 2. Requirement: property tests for `norm360` and Part formulas.
 3. Requirement: DST tests on changeover dates for multiple time zones.
 4. Requirement: mock `FetchGeonames` and the ephemeris path via dependency injection.
-
-## Conclusion
-The current paradigm is good but should be more modular. With a points registry, an ephemeris context manager, angle normalization, stronger time handling, and removal of recomputation, the code becomes shorter, clearer, more extensible, and easier to test—without changing the public API.
