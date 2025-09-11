@@ -34,6 +34,7 @@
 - [ ] More "air space" around objects in the chart
 - [ ] Fix grid style synastry
 - [ ] Fix (?) many points, maybe just add a warning for max n points
+- [ ] Fix day of week translation
 
 
 
