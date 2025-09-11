@@ -82,6 +82,61 @@ GEONAMES_DEFAULT_USERNAME_WARNING = (
     "********"
 )
 
+@contextmanager
+def ephemeris_context(
+    ephe_path: str,
+    config: "ChartConfiguration",
+    lng: float,
+    lat: float,
+    alt: Optional[float] = None,
+):
+    """Context manager that isolates Swiss Ephemeris configuration.
+
+    Responsibilities:
+        - Set ephemeris path and calculation flags
+        - Configure perspective (true geo / helio / topo)
+        - Configure sidereal mode when needed
+        - Apply topocentric observer only inside the with-block
+        - Yield iflag for calculations
+        - Reset topocentric coordinates afterward (defensive)
+
+    Args:
+        ephe_path: Path containing Swiss Ephemeris data files.
+        config: Validated chart configuration.
+        lng: Observer longitude (used for topocentric charts).
+        lat: Observer latitude (used for topocentric charts).
+        alt: Observer altitude (meters) for topocentric charts.
+
+    Yields:
+        int: iflag to be passed to swe.calc_ut / swe.fixstar_ut.
+    """
+    swe.set_ephe_path(ephe_path)
+    iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+
+    topo_used = False
+
+    # Perspective configuration
+    if config.perspective_type == "True Geocentric":
+        iflag |= swe.FLG_TRUEPOS
+    elif config.perspective_type == "Heliocentric":
+        iflag |= swe.FLG_HELCTR
+    elif config.perspective_type == "Topocentric":
+        iflag |= swe.FLG_TOPOCTR
+        swe.set_topo(lng, lat, alt or 0.0)
+        topo_used = True
+
+    # Sidereal configuration
+    if config.zodiac_type == "Sidereal":
+        iflag |= swe.FLG_SIDEREAL
+        swe.set_sid_mode(getattr(swe, f"SIDM_{config.sidereal_mode}"))
+
+    try:
+        yield iflag
+    finally:
+        # Defensive cleanup: reset topo if it was set
+        if topo_used:
+            swe.set_topo(0.0, 0.0, 0.0)
+
 @dataclass
 class ChartConfiguration:
     """
@@ -584,11 +639,26 @@ class AstrologicalSubjectFactory:
 
         # Calculate time conversions
         AstrologicalSubjectFactory._calculate_time_conversions(calc_data, location)
-
-        # Initialize Swiss Ephemeris and calculate houses and planets
-        AstrologicalSubjectFactory._setup_ephemeris(calc_data, config)
-        calculated_axial_cusps = AstrologicalSubjectFactory._calculate_houses(calc_data, calc_data["active_points"])
-        AstrologicalSubjectFactory._calculate_planets(calc_data, calc_data["active_points"], calculated_axial_cusps)
+        # Initialize Swiss Ephemeris and calculate houses and planets with context manager
+        ephe_path = str(Path(__file__).parent.absolute() / "sweph")
+        with ephemeris_context(
+            ephe_path=ephe_path,
+            config=config,
+            lng=calc_data["lng"],
+            lat=calc_data["lat"],
+            alt=calc_data["altitude"],
+        ) as iflag:
+            calc_data["_iflag"] = iflag
+            # House system name (previously set in _setup_ephemeris)
+            calc_data["houses_system_name"] = swe.house_name(
+                config.houses_system_identifier.encode("ascii")
+            )
+            calculated_axial_cusps = AstrologicalSubjectFactory._calculate_houses(
+                calc_data, calc_data["active_points"]
+            )
+            AstrologicalSubjectFactory._calculate_planets(
+                calc_data, calc_data["active_points"], calculated_axial_cusps
+            )
         AstrologicalSubjectFactory._calculate_day_of_week(calc_data)
 
         # Calculate lunar phase (optional - only if requested and Sun and Moon are available)
@@ -916,68 +986,6 @@ class AstrologicalSubjectFactory:
         # Calculate Julian day
         data["julian_day"] = datetime_to_julian(utc_datetime)
 
-    @staticmethod
-    def _setup_ephemeris(data: Dict[str, Any], config: ChartConfiguration) -> None:
-        """
-        Configure Swiss Ephemeris with appropriate calculation flags and settings.
-
-        Sets up the Swiss Ephemeris library with the correct ephemeris data path,
-        calculation flags for the specified perspective type, and sidereal mode
-        configuration if applicable.
-
-        Args:
-            data (Dict[str, Any]): Calculation data dictionary to store configuration.
-            config (ChartConfiguration): Validated chart configuration settings.
-
-        Side Effects:
-            - Sets Swiss Ephemeris data path to bundled ephemeris files
-            - Configures calculation flags (SWIEPH, SPEED, perspective flags)
-            - Sets sidereal mode for sidereal zodiac calculations
-            - Sets topocentric observer coordinates for topocentric perspective
-            - Updates data dictionary with houses_system_name and _iflag
-
-        Calculation Flags Set:
-            - FLG_SWIEPH: Use Swiss Ephemeris data files
-            - FLG_SPEED: Calculate planetary velocities
-            - FLG_TRUEPOS: True geometric positions (True Geocentric)
-            - FLG_HELCTR: Heliocentric coordinates (Heliocentric perspective)
-            - FLG_TOPOCTR: Topocentric coordinates (Topocentric perspective)
-            - FLG_SIDEREAL: Sidereal calculations (Sidereal zodiac)
-
-        Note:
-            The method assumes the Swiss Ephemeris data files are located in the
-            'sweph' subdirectory relative to this module. For topocentric calculations,
-            observer coordinates must be set via longitude, latitude, and altitude.
-        """
-        # Set ephemeris path
-        swe.set_ephe_path(str(Path(__file__).parent.absolute() / "sweph"))
-
-        # Base flags
-        iflag = swe.FLG_SWIEPH + swe.FLG_SPEED
-
-        # Add perspective flags
-        if config.perspective_type == "True Geocentric":
-            iflag += swe.FLG_TRUEPOS
-        elif config.perspective_type == "Heliocentric":
-            iflag += swe.FLG_HELCTR
-        elif config.perspective_type == "Topocentric":
-            iflag += swe.FLG_TOPOCTR
-            # Set topocentric coordinates
-            swe.set_topo(data["lng"], data["lat"], data["altitude"] or 0)
-
-        # Add sidereal flag if needed
-        if config.zodiac_type == "Sidereal":
-            iflag += swe.FLG_SIDEREAL
-            # Set sidereal mode
-            mode = f"SIDM_{config.sidereal_mode}"
-            swe.set_sid_mode(getattr(swe, mode))
-            logging.debug(f"Using sidereal mode: {mode}")
-
-        # Save house system name and iflag for later use
-        data["houses_system_name"] = swe.house_name(
-            config.houses_system_identifier.encode('ascii')
-        )
-        data["_iflag"] = iflag
 
     @staticmethod
     def _calculate_houses(data: Dict[str, Any], active_points: Optional[List[AstrologicalPoint]]) -> List[str]:
