@@ -170,6 +170,7 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     fixed: str = Field(title="Fixed", description="The fixed quality label in the chart, in the language")
     mutable: str = Field(title="Mutable", description="The mutable quality label in the chart, in the language")
     birth_chart: str = Field(title="Birth Chart", description="The birth chart label in the chart, in the language")
+    weekdays: Optional[dict[str, str]] = Field(default=None, title="Weekdays", description="Mapping of English weekday names to localized names")
 
 # Settings Model
 class KerykeionSettingsModel(SubscriptableBaseModel):

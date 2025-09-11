@@ -941,7 +941,8 @@ class ChartDrawer:
             template_dict["top_left_2"] = f"{self.language_settings['latitude']}: {latitude_string}"
             template_dict["top_left_3"] = f"{self.language_settings['longitude']}: {longitude_string}"
             template_dict["top_left_4"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime) # type: ignore
-            template_dict["top_left_5"] = f"{self.language_settings.get('day_of_week', 'Day of Week')}: {self.first_obj.day_of_week}" # type: ignore
+            localized_weekday = self.language_settings.get('weekdays', {}).get(self.first_obj.day_of_week, self.first_obj.day_of_week)  # type: ignore
+            template_dict["top_left_5"] = f"{self.language_settings.get('day_of_week', 'Day of Week')}: {localized_weekday}" # type: ignore
 
             # Bottom left section
             if self.first_obj.zodiac_type == "Tropic":

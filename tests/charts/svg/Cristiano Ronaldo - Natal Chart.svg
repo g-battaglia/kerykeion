@@ -138,7 +138,7 @@
             <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Latitude: 32°39'56' Norte</text>
             <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Longitude: 16°55'32' Oeste</text>
             <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1985-02-05 05:25 [+00:00]</text>
-            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Dia da semana: Tuesday</text>
+            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Dia da semana: Terça</text>
         </g>
 
         <!-- Elements -->
