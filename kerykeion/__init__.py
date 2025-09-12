@@ -10,10 +10,10 @@ from .aspects import AspectsFactory
 from .astrological_subject_factory import AstrologicalSubjectFactory
 from .chart_data_factory import ChartDataFactory
 from .schemas.kr_models import (
-    ChartDataModel, 
+    ChartDataModel,
     SingleChartDataModel,
     DualChartDataModel,
-    ElementDistributionModel, 
+    ElementDistributionModel,
     QualityDistributionModel,
     HouseComparisonModel,
     PointInHouseModel
@@ -28,6 +28,11 @@ from .relationship_score_factory import RelationshipScoreFactory
 from .report import Report
 from .settings import KerykeionSettingsModel, get_settings
 from .transits_time_range_factory import TransitsTimeRangeFactory
+from .backword import (
+    AstrologicalSubject,  # Legacy wrapper
+    KerykeionChartSVG,    # Legacy wrapper
+    SynastryAspects,      # Legacy wrapper
+)
 
 __all__ = [
     "AspectsFactory",
@@ -35,7 +40,7 @@ __all__ = [
     "ChartDataFactory",
     "ChartDataModel",
     "SingleChartDataModel",
-    "DualChartDataModel", 
+    "DualChartDataModel",
     "ElementDistributionModel",
     "QualityDistributionModel",
     "ChartDrawer",
@@ -50,4 +55,8 @@ __all__ = [
     "KerykeionSettingsModel",
     "get_settings",
     "TransitsTimeRangeFactory",
+    # Legacy (v4) exported names for backward compatibility
+    "AstrologicalSubject",
+    "KerykeionChartSVG",
+    "SynastryAspects",
 ]
