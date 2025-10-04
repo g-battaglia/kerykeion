@@ -25,14 +25,17 @@ Note: This file name is intentionally spelled 'backword.py' per user request.
 """
 from __future__ import annotations
 
-from typing import Any, Iterable, List, Optional, Sequence, Union, Literal
+from typing import Any, Iterable, List, Optional, Sequence, Union, Literal, cast
+import logging
 import warnings
+from datetime import datetime
+from functools import cached_property
 
 from .astrological_subject_factory import AstrologicalSubjectFactory
 from .chart_data_factory import ChartDataFactory
 from .charts.chart_drawer import ChartDrawer
 from .aspects import AspectsFactory
-from .settings.config_constants import DEFAULT_ACTIVE_POINTS
+from .settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
 from .schemas.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, ActiveAspect
 from .schemas.kr_literals import (
     KerykeionChartLanguage,
@@ -42,7 +45,7 @@ from .schemas.kr_literals import (
 )
 from .schemas import ZodiacType, SiderealMode, HousesSystemIdentifier, PerspectiveType
 from pathlib import Path
-from .settings import KerykeionSettingsModel
+from .settings import KerykeionSettingsModel, get_settings
 from .report import Report
 
 # ---------------------------------------------------------------------------
@@ -164,6 +167,9 @@ class AstrologicalSubject:
             is_dst=is_dst,  # type: ignore[arg-type]
         )
 
+        # Legacy filesystem attributes
+        self.json_dir = Path.home()
+
     # Provide attribute passthrough for planetary points / houses used in README
     def __getattr__(self, item: str) -> Any:  # pragma: no cover - dynamic proxy
         try:
@@ -172,40 +178,135 @@ class AstrologicalSubject:
             raise AttributeError(f"AstrologicalSubject has no attribute '{item}'") from None
 
     def __repr__(self) -> str:
-        return f"AstrologicalSubject({self._model.name!r}, {self._model.iso_formatted_utc_datetime})"
+        return self.__str__()
 
     # Provide json() similar convenience
-    def json(self, dump: bool = False, indent: int = 2) -> Any:
-        # model_dump does not support indent parameter; replicate simple formatting
-        if dump:
-            return self._model.model_dump_json()
-        return self._model.model_dump()
+    def json(
+        self,
+        dump: bool = False,
+        destination_folder: Optional[Union[str, Path]] = None,
+        indent: Optional[int] = None,
+    ) -> str:
+        """Replicate legacy json() behaviour returning a JSON string and optionally dumping to disk."""
+
+        json_string = self._model.model_dump_json(exclude_none=True, indent=indent)
+
+        if not dump:
+            return json_string
+
+        if destination_folder is not None:
+            target_dir = Path(destination_folder)
+        else:
+            target_dir = self.json_dir
+
+        target_dir.mkdir(parents=True, exist_ok=True)
+        json_path = target_dir / f"{self._model.name}_kerykeion.json"
+
+        with open(json_path, "w", encoding="utf-8") as file:
+            file.write(json_string)
+            logging.info("JSON file dumped in %s.", json_path)
+
+        return json_string
+
+    # Legacy helpers -----------------------------------------------------
+    @staticmethod
+    def _parse_iso_datetime(value: str) -> datetime:
+        if value.endswith("Z"):
+            value = value[:-1] + "+00:00"
+        return datetime.fromisoformat(value)
+
+    def model(self) -> AstrologicalSubjectModel:
+        """Return the underlying Pydantic model (legacy compatibility)."""
+
+        return self._model
+
+    def __getitem__(self, item: str) -> Any:
+        return getattr(self, item)
+
+    def get(self, item: str, default: Any = None) -> Any:
+        return getattr(self, item, default)
+
+    def __str__(self) -> str:
+        return (
+            f"Astrological data for: {self._model.name}, {self._model.iso_formatted_utc_datetime} UTC\n"
+            f"Birth location: {self._model.city}, Lat {self._model.lat}, Lon {self._model.lng}"
+        )
+
+    @cached_property
+    def utc_time(self) -> float:
+        """Backwards-compatible float UTC time value."""
+
+        dt = self._parse_iso_datetime(self._model.iso_formatted_utc_datetime)
+        return dt.hour + dt.minute / 60 + dt.second / 3600 + dt.microsecond / 3_600_000_000
+
+    @cached_property
+    def local_time(self) -> float:
+        """Backwards-compatible float local time value."""
+
+        dt = self._parse_iso_datetime(self._model.iso_formatted_local_datetime)
+        return dt.hour + dt.minute / 60 + dt.second / 3600 + dt.microsecond / 3_600_000_000
 
     # Factory method compatibility (class method in old API)
     @classmethod
     def get_from_iso_utc_time(
         cls,
         name: str,
-        iso_utc: str,
-        city: Optional[str] = None,
-        nation: Optional[str] = None,
-        *,
-        online: bool = True,
+        iso_utc_time: str,
+        city: str = "Greenwich",
+        nation: str = "GB",
+        tz_str: str = "Etc/GMT",
+        online: bool = False,
+        lng: Union[int, float] = 0.0,
+        lat: Union[int, float] = 51.5074,
         geonames_username: Optional[str] = None,
+        zodiac_type: Optional[ZodiacType] = None,
+        disable_chiron_and_lilith: bool = False,
+        sidereal_mode: Optional[SiderealMode] = None,
+        houses_system_identifier: Optional[HousesSystemIdentifier] = None,
+        perspective_type: Optional[PerspectiveType] = None,
         **kwargs: Any,
     ) -> "AstrologicalSubject":
+        from .astrological_subject_factory import (
+            DEFAULT_ZODIAC_TYPE,
+            DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
+            DEFAULT_PERSPECTIVE_TYPE,
+            DEFAULT_GEONAMES_USERNAME,
+            GEONAMES_DEFAULT_USERNAME_WARNING,
+        )
+
         _deprecated("AstrologicalSubject.get_from_iso_utc_time", "AstrologicalSubjectFactory.from_iso_utc_time")
+
+        if disable_chiron_and_lilith:
+            warnings.warn(
+                "'disable_chiron_and_lilith' is ignored by the new factory pipeline.",
+                UserWarning,
+                stacklevel=2,
+            )
+
+        resolved_geonames = geonames_username or DEFAULT_GEONAMES_USERNAME
+        if online and resolved_geonames == DEFAULT_GEONAMES_USERNAME:
+            warnings.warn(GEONAMES_DEFAULT_USERNAME_WARNING, UserWarning, stacklevel=2)
+
         model = AstrologicalSubjectFactory.from_iso_utc_time(
             name=name,
-            iso_utc_time=iso_utc,
-            city=city or "Greenwich",
-            nation=nation or "GB",
+            iso_utc_time=iso_utc_time,
+            city=city,
+            nation=nation,
+            tz_str=tz_str,
             online=online,
-            geonames_username=geonames_username or "demo",
+            lng=float(lng),
+            lat=float(lat),
+            geonames_username=resolved_geonames,
+            zodiac_type=(zodiac_type or DEFAULT_ZODIAC_TYPE),  # type: ignore[arg-type]
+            sidereal_mode=sidereal_mode,
+            houses_system_identifier=(houses_system_identifier or DEFAULT_HOUSES_SYSTEM_IDENTIFIER),  # type: ignore[arg-type]
+            perspective_type=(perspective_type or DEFAULT_PERSPECTIVE_TYPE),  # type: ignore[arg-type]
             **kwargs,
         )
-        obj = cls.__new__(cls)  # bypass __init__
+
+        obj = cls.__new__(cls)
         obj._model = model
+        obj.json_dir = Path.home()
         return obj
 
 # ---------------------------------------------------------------------------
@@ -236,101 +337,272 @@ class KerykeionChartSVG:
     ) -> None:
         _deprecated("KerykeionChartSVG", "ChartDataFactory + ChartDrawer")
 
-        # Resolve first model
         if isinstance(first_obj, AstrologicalSubject):
-            subject_model: Union[AstrologicalSubjectModel, CompositeSubjectModel] = first_obj._model  # type: ignore[assignment]
+            subject_model: Union[AstrologicalSubjectModel, CompositeSubjectModel] = first_obj.model()
         else:
             subject_model = first_obj
 
-        # Resolve second model
         if isinstance(second_obj, AstrologicalSubject):
-            second_model: Optional[Union[AstrologicalSubjectModel, CompositeSubjectModel]] = second_obj._model  # type: ignore[assignment]
+            second_model: Optional[Union[AstrologicalSubjectModel, CompositeSubjectModel]] = second_obj.model()
         else:
             second_model = second_obj
 
-        # Normalize active aspects (if None fallback to DEFAULT_ACTIVE_ASPECTS)
         if active_aspects is None:
-            from .settings.config_constants import DEFAULT_ACTIVE_ASPECTS as _DAA
-            active_aspects = list(_DAA)
+            active_aspects = list(DEFAULT_ACTIVE_ASPECTS)
+        else:
+            active_aspects = list(active_aspects)
 
-        # Assign internal state
-        self._chart_type = chart_type
+        self.chart_type = chart_type
+        self.new_settings_file = new_settings_file
+        self.theme = theme  # type: ignore[assignment]
+        self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
+        self.chart_language = chart_language  # type: ignore[assignment]
+
         self._subject_model = subject_model
         self._second_model = second_model
-        # Copy active points to avoid accidental external mutation and normalize legacy values
-        self._active_points = _normalize_active_points(list(active_points) if active_points else None)
+        self.user = subject_model
+        self.first_obj = subject_model
+        self.t_user = second_model
+        self.second_obj = second_model
+
+        self.active_points = list(active_points) if active_points is not None else list(DEFAULT_ACTIVE_POINTS)  # type: ignore[list-item]
+        self._active_points = _normalize_active_points(self.active_points)
+        self.active_aspects = active_aspects
         self._active_aspects = active_aspects
-        self._theme = theme  # type: ignore[assignment]
-        self._chart_language = chart_language  # type: ignore[assignment]
-        self._output_directory = new_output_directory
-        self._double_chart_aspect_grid_type = double_chart_aspect_grid_type
-        self._chart_drawer: Optional[ChartDrawer] = None
+
+        self.output_directory = Path(new_output_directory) if new_output_directory else Path.home()
+        self._output_directory = self.output_directory
+
+        self.template = ""
+        self.aspects_list = []
+        self.available_planets_setting = []
+        self.t_available_kerykeion_celestial_points = None
+        self.available_kerykeion_celestial_points = []
+        self.chart_colors_settings = {}
+        self.planets_settings = []
+        self.aspects_settings = []
+        self.language_settings = {}
+        self.height = None
+        self.width = None
+        self.location = None
+        self.geolat = None
+        self.geolon = None
+
+        self._chart_drawer = None
+        self._chart_data = None
+        self._external_view = False
 
     def _ensure_chart(self) -> None:
         if self._chart_drawer is not None:
             return
-        ct = self._chart_type.lower()  # type: ignore[union-attr]
+
+        if self._subject_model is None:
+            raise ValueError("First object is required to build charts.")
+
+        chart_type_normalized = str(self.chart_type).lower()
         active_points = self._active_points
-        if ct in ("natal", "birth"):
-            data = ChartDataFactory.create_natal_chart_data(self._subject_model, active_points=active_points, active_aspects=self._active_aspects)
-        elif ct in ("externalnatal", "external_natal"):
-            data = ChartDataFactory.create_natal_chart_data(self._subject_model, active_points=active_points, active_aspects=self._active_aspects)
-        elif ct == "synastry" and self._second_model is not None:
-            # Cast second model to natal subject type for synastry if composite accidentally passed
-            data = ChartDataFactory.create_synastry_chart_data(self._subject_model, self._second_model, active_points=active_points, active_aspects=self._active_aspects)  # type: ignore[arg-type]
-        elif ct == "transit" and self._second_model is not None:
-            data = ChartDataFactory.create_transit_chart_data(self._subject_model, self._second_model, active_points=active_points, active_aspects=self._active_aspects)  # type: ignore[arg-type]
-        elif ct == "composite" and isinstance(self._subject_model, CompositeSubjectModel):
-            data = ChartDataFactory.create_composite_chart_data(self._subject_model)
+        active_aspects = self._active_aspects
+        external_view = False
+
+        if chart_type_normalized in ("natal", "birth", "externalnatal", "external_natal"):
+            data = ChartDataFactory.create_natal_chart_data(
+                self._subject_model, active_points=active_points, active_aspects=active_aspects
+            )
+            if chart_type_normalized in ("externalnatal", "external_natal"):
+                external_view = True
+        elif chart_type_normalized == "synastry":
+            if self._second_model is None:
+                raise ValueError("Second object is required for Synastry charts.")
+            if not isinstance(self._subject_model, AstrologicalSubjectModel) or not isinstance(
+                self._second_model, AstrologicalSubjectModel
+            ):
+                raise ValueError("Synastry charts require two AstrologicalSubject instances.")
+            data = ChartDataFactory.create_synastry_chart_data(
+                cast(AstrologicalSubjectModel, self._subject_model),
+                cast(AstrologicalSubjectModel, self._second_model),
+                active_points=active_points,
+                active_aspects=active_aspects,
+            )
+        elif chart_type_normalized == "transit":
+            if self._second_model is None:
+                raise ValueError("Second object is required for Transit charts.")
+            if not isinstance(self._subject_model, AstrologicalSubjectModel) or not isinstance(
+                self._second_model, AstrologicalSubjectModel
+            ):
+                raise ValueError("Transit charts require natal and transit AstrologicalSubject instances.")
+            data = ChartDataFactory.create_transit_chart_data(
+                cast(AstrologicalSubjectModel, self._subject_model),
+                cast(AstrologicalSubjectModel, self._second_model),
+                active_points=active_points,
+                active_aspects=active_aspects,
+            )
+        elif chart_type_normalized == "composite":
+            if not isinstance(self._subject_model, CompositeSubjectModel):
+                raise ValueError("First object must be a CompositeSubjectModel instance for composite charts.")
+            data = ChartDataFactory.create_composite_chart_data(
+                self._subject_model, active_points=active_points, active_aspects=active_aspects
+            )
         else:
-            raise ValueError(f"Unsupported or improperly configured chart_type '{self._chart_type}'")
-        self._chart_drawer = ChartDrawer(chart_data=data, theme=self._theme, chart_language=self._chart_language)  # type: ignore[arg-type]
+            raise ValueError(f"Unsupported or improperly configured chart_type '{self.chart_type}'")
+
+        self._external_view = external_view
+        self._chart_data = data
+        self.chart_data = data
+        self._chart_drawer = ChartDrawer(
+            chart_data=data,
+            new_settings_file=self.new_settings_file,
+            theme=cast(Optional[KerykeionChartTheme], self.theme),
+            double_chart_aspect_grid_type=cast(Literal["list", "table"], self.double_chart_aspect_grid_type),
+            chart_language=cast(KerykeionChartLanguage, self.chart_language),
+            external_view=external_view,
+        )
+
+        # Mirror commonly accessed attributes from legacy class
+        drawer = self._chart_drawer
+        self.available_planets_setting = getattr(drawer, "available_planets_setting", [])
+        self.available_kerykeion_celestial_points = getattr(drawer, "available_kerykeion_celestial_points", [])
+        self.aspects_list = getattr(drawer, "aspects_list", [])
+        if hasattr(drawer, "t_available_kerykeion_celestial_points"):
+            self.t_available_kerykeion_celestial_points = getattr(drawer, "t_available_kerykeion_celestial_points")
+        self.chart_colors_settings = getattr(drawer, "chart_colors_settings", {})
+        self.planets_settings = getattr(drawer, "planets_settings", [])
+        self.aspects_settings = getattr(drawer, "aspects_settings", [])
+        self.language_settings = getattr(drawer, "language_settings", {})
+        self.height = getattr(drawer, "height", self.height)
+        self.width = getattr(drawer, "width", self.width)
+        self.location = getattr(drawer, "location", self.location)
+        self.geolat = getattr(drawer, "geolat", self.geolat)
+        self.geolon = getattr(drawer, "geolon", self.geolon)
+        for attr in ["main_radius", "first_circle_radius", "second_circle_radius", "third_circle_radius"]:
+            if hasattr(drawer, attr):
+                setattr(self, attr, getattr(drawer, attr))
 
     # Legacy method names --------------------------------------------------
-    def makeSVG(self, minify: bool = False, remove_css_variables: bool = False) -> str:
+    def makeTemplate(self, minify: bool = False, remove_css_variables: bool = False) -> str:
         self._ensure_chart()
         assert self._chart_drawer is not None
-        path = self._chart_drawer.save_svg(
-            output_path=self._output_directory,
+        template = self._chart_drawer.generate_svg_string(minify=minify, remove_css_variables=remove_css_variables)
+        self.template = template
+        return template
+
+    def makeSVG(self, minify: bool = False, remove_css_variables: bool = False) -> None:
+        self._ensure_chart()
+        assert self._chart_drawer is not None
+        self._chart_drawer.save_svg(
+            output_path=self.output_directory,
             minify=minify,
             remove_css_variables=remove_css_variables,
         )
-        return path or ""
+        self.template = getattr(self._chart_drawer, "template", self.template)
 
-    def makeWheelOnlySVG(self, wheel_only: bool = True, wheel_only_external: bool = False) -> str:
+    def makeWheelOnlyTemplate(self, minify: bool = False, remove_css_variables: bool = False) -> str:
         self._ensure_chart()
         assert self._chart_drawer is not None
-        # save_wheel_only_svg_file in v5 does not require wheel_only flag; emulate external flag by ignoring
-        path = self._chart_drawer.save_wheel_only_svg_file(output_path=self._output_directory)
-        return path or ""
+        template = self._chart_drawer.generate_wheel_only_svg_string(
+            minify=minify,
+            remove_css_variables=remove_css_variables,
+        )
+        self.template = template
+        return template
 
-    def makeGridOnlySVG(self) -> str:
+    def makeWheelOnlySVG(self, minify: bool = False, remove_css_variables: bool = False) -> None:
         self._ensure_chart()
         assert self._chart_drawer is not None
-        path = self._chart_drawer.save_aspect_grid_only_svg_file(output_path=self._output_directory)
-        return path or ""
+        self._chart_drawer.save_wheel_only_svg_file(
+            output_path=self.output_directory,
+            minify=minify,
+            remove_css_variables=remove_css_variables,
+        )
+        self.template = getattr(self._chart_drawer, "template", self.template)
+
+    def makeAspectGridOnlyTemplate(self, minify: bool = False, remove_css_variables: bool = False) -> str:
+        self._ensure_chart()
+        assert self._chart_drawer is not None
+        template = self._chart_drawer.generate_aspect_grid_only_svg_string(
+            minify=minify,
+            remove_css_variables=remove_css_variables,
+        )
+        self.template = template
+        return template
+
+    def makeAspectGridOnlySVG(self, minify: bool = False, remove_css_variables: bool = False) -> None:
+        self._ensure_chart()
+        assert self._chart_drawer is not None
+        self._chart_drawer.save_aspect_grid_only_svg_file(
+            output_path=self.output_directory,
+            minify=minify,
+            remove_css_variables=remove_css_variables,
+        )
+        self.template = getattr(self._chart_drawer, "template", self.template)
 
     # Aliases for new naming in README next (optional convenience)
     save_svg = makeSVG
     save_wheel_only_svg_file = makeWheelOnlySVG
-    save_aspect_grid_only_svg_file = makeGridOnlySVG
+    save_aspect_grid_only_svg_file = makeAspectGridOnlySVG
+    makeGridOnlySVG = makeAspectGridOnlySVG
 
 # ---------------------------------------------------------------------------
 # Legacy SynastryAspects wrapper
 # ---------------------------------------------------------------------------
 class SynastryAspects:
-    """Wrapper replicating old synastry aspects interface.
+    """Wrapper replicating the v4 synastry aspects interface."""
 
-    Replacement: AspectsFactory.dual_chart_aspects(first, second)
-    """
-
-    def __init__(self, first: Union[AstrologicalSubject, AstrologicalSubjectModel], second: Union[AstrologicalSubject, AstrologicalSubjectModel]):
+    def __init__(
+        self,
+        first: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel],
+        second: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel],
+        new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
+        active_points: Iterable[Union[str, AstrologicalPoint]] = DEFAULT_ACTIVE_POINTS,
+        active_aspects: Optional[List[ActiveAspect]] = None,
+    ) -> None:
         _deprecated("SynastryAspects", "AspectsFactory.dual_chart_aspects")
-        self._first = first._model if isinstance(first, AstrologicalSubject) else first
-        self._second = second._model if isinstance(second, AstrologicalSubject) else second
+
+        self.first_user = first.model() if isinstance(first, AstrologicalSubject) else first
+        self.second_user = second.model() if isinstance(second, AstrologicalSubject) else second
+
+        self.new_settings_file = new_settings_file
+        self.settings = get_settings(new_settings_file)
+        self.celestial_points = getattr(self.settings, "celestial_points", [])
+        self.aspects_settings = getattr(self.settings, "aspects", [])
+        general_settings = getattr(self.settings, "general_settings", None)
+        self.axes_orbit_settings = getattr(general_settings, "axes_orbit", None)
+
+        self.active_points = list(active_points)
+        self._active_points = _normalize_active_points(self.active_points)
+        if active_aspects is None:
+            active_aspects = list(DEFAULT_ACTIVE_ASPECTS)
+        else:
+            active_aspects = list(active_aspects)
+        self.active_aspects = active_aspects
+
+        self._dual_model = None
+        self._all_aspects_cache = None
+        self._relevant_aspects_cache = None
+
+    def _build_dual_model(self):
+        if self._dual_model is None:
+            self._dual_model = AspectsFactory.dual_chart_aspects(
+                self.first_user,
+                self.second_user,
+                active_points=self._active_points,
+                active_aspects=self.active_aspects,
+            )
+        return self._dual_model
+
+    @property
+    def all_aspects(self):
+        if self._all_aspects_cache is None:
+            self._all_aspects_cache = list(self._build_dual_model().all_aspects)
+        return self._all_aspects_cache
+
+    @property
+    def relevant_aspects(self):
+        if self._relevant_aspects_cache is None:
+            self._relevant_aspects_cache = list(self._build_dual_model().relevant_aspects)
+        return self._relevant_aspects_cache
 
     def get_relevant_aspects(self):
-        return AspectsFactory.dual_chart_aspects(self._first, self._second)
+        return self.relevant_aspects
 
 # ---------------------------------------------------------------------------
 # Convenience exports (mirroring old implicit surface API)
