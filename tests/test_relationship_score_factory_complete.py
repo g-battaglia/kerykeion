@@ -345,8 +345,8 @@ class TestRelationshipScoreFactory:
         """Test destiny sign flag functionality."""
         factory = RelationshipScoreFactory(self.subject1, self.subject2)
 
-        # Initially should be True (default)
-        assert factory.is_destiny_sign
+        # Initially should be false (default)
+        assert not factory.is_destiny_sign
 
         # Test evaluation
         factory._evaluate_destiny_sign()

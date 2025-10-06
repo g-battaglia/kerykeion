@@ -105,7 +105,7 @@ class RelationshipScoreFactory:
 
         self.score_value = 0
         self.relationship_score_description: RelationshipScoreDescription = "Minimal"
-        self.is_destiny_sign = True
+        self.is_destiny_sign = False
         self.relationship_score_aspects: list[RelationshipScoreAspectModel] = []
         self._synastry_aspects = AspectsFactory.dual_chart_aspects(self.first_subject, self.second_subject).all_aspects
 
