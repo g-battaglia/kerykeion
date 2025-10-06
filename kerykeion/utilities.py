@@ -84,7 +84,7 @@ def get_number_from_name(name: AstrologicalPoint) -> int:
 
 
 def get_kerykeion_point_from_degree(
-    degree: Union[int, float], name: Union[AstrologicalPoint, Houses], point_type: PointType, speed: Optional[float] = None
+    degree: Union[int, float], name: Union[AstrologicalPoint, Houses], point_type: PointType, speed: Optional[float] = None, declination: Optional[float] = None
 ) -> KerykeionPointModel:
     """
     Create a KerykeionPointModel from a degree position.
@@ -94,6 +94,7 @@ def get_kerykeion_point_from_degree(
         name: The name of the celestial point or house
         point_type: The type classification of the point
         speed: The velocity/speed of the celestial point in degrees per day (optional)
+        declination: The declination of the celestial point in degrees (optional)
 
     Returns:
         A KerykeionPointModel with calculated zodiac sign, position, and properties
@@ -138,6 +139,7 @@ def get_kerykeion_point_from_degree(
         emoji=zodiac_sign.emoji,
         point_type=point_type,
         speed=speed,
+        declination=declination,
     )
 
 

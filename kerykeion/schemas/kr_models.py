@@ -102,6 +102,7 @@ class KerykeionPointModel(SubscriptableBaseModel):
     house: Optional[Houses] = None
     retrograde: Optional[bool] = None
     speed: Optional[float] = None
+    declination: Optional[float] = None
 
 
 class AstrologicalBaseModel(SubscriptableBaseModel):
