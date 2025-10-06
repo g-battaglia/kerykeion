@@ -44,7 +44,4 @@ if __name__ == "__main__":
 
     chart_data = ChartDataFactory.create_return_chart_data(natal_subject, solar_return_subject)
     report = ReportGenerator(chart_data)
-    title = "DualChartDataModel Report (Dual Return) — John Lennon"
-    print("\n" + title)
-    print("=" * len(title))
     report.print_report()

@@ -48,7 +48,4 @@ if __name__ == "__main__":
 
     chart_data = ChartDataFactory.create_synastry_chart_data(first_subject, second_subject)
     report = ReportGenerator(chart_data)
-    title = "DualChartDataModel Report (Synastry) — John & Yoko"
-    print("\n" + title)
-    print("=" * len(title))
     report.print_report()

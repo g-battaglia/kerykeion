@@ -27,7 +27,4 @@ if __name__ == "__main__":
     )
 
     report = ReportGenerator(subject, include_aspects=False)
-    title = "AstrologicalSubjectModel Report — John Lennon"
-    print("\n" + title)
-    print("=" * len(title))
     report.print_report(include_aspects=False)

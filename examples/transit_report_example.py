@@ -48,7 +48,4 @@ if __name__ == "__main__":
 
     chart_data = ChartDataFactory.create_transit_chart_data(natal_subject, transit_subject)
     report = ReportGenerator(chart_data)
-    title = "DualChartDataModel Report (Transit) — John Lennon"
-    print("\n" + title)
-    print("=" * len(title))
     report.print_report()

@@ -55,7 +55,4 @@ if __name__ == "__main__":
 
     chart_data = ChartDataFactory.create_composite_chart_data(composite_subject)
     report = ReportGenerator(chart_data)
-    title = "SingleChartDataModel Report (Composite) — John & Yoko"
-    print("\n" + title)
-    print("=" * len(title))
     report.print_report()

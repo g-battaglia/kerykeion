@@ -28,7 +28,4 @@ if __name__ == "__main__":
 
     chart_data = ChartDataFactory.create_natal_chart_data(subject)
     report = ReportGenerator(chart_data)
-    title = "SingleChartDataModel Report (Natal) — John Lennon"
-    print("\n" + title)
-    print("=" * len(title))
     report.print_report()
