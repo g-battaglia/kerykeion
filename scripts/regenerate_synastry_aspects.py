@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 
 # Create test subjects (as in tests)
-john = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 10, 30, "Liverpool", "GB", geonames_username="century.boy")
-yoko = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 20, 30, "Tokyo", "JP", geonames_username="century.boy")
+john = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 10, 30, "Liverpool", "GB", suppress_geonames_warning=True)
+yoko = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 20, 30, "Tokyo", "JP", suppress_geonames_warning=True)
 
 # Create synastry aspects using the new factory
 synastry_aspects = AspectsFactory.dual_chart_aspects(john, yoko)

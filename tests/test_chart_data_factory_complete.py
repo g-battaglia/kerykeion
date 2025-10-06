@@ -28,7 +28,8 @@ class TestChartDataFactory:
             nation="US",
             lng=-74.006,
             lat=40.7128,
-            tz_str="America/New_York"
+            tz_str="America/New_York",
+            suppress_geonames_warning=True
         )
 
         self.subject2 = AstrologicalSubjectFactory.from_birth_data(
@@ -42,7 +43,8 @@ class TestChartDataFactory:
             nation="US",
             lng=-118.2437,
             lat=34.0522,
-            tz_str="America/Los_Angeles"
+            tz_str="America/Los_Angeles",
+            suppress_geonames_warning=True
         )
 
     def test_create_natal_chart_data(self):

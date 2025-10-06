@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 
 # Setup exactly like test (note: Yoko hour is 10 not 20!)
-first_subject = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 10, 30, "Liverpool", "GB", geonames_username="century.boy")
-second_subject = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP", geonames_username="century.boy")
+first_subject = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 10, 30, "Liverpool", "GB", suppress_geonames_warning=True)
+second_subject = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP", suppress_geonames_warning=True)
 synastry_aspects = AspectsFactory.dual_chart_aspects(first_subject, second_subject)
 
 synastry_relevant_aspects = synastry_aspects.relevant_aspects

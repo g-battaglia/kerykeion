@@ -8,7 +8,7 @@ from kerykeion import (
 def test_print_report():
     """Test that the report is generated correctly with all sections."""
     subject = AstrologicalSubjectFactory.from_birth_data(
-        "John", 1975, 10, 10, 21, 15, "Roma", "IT", geonames_username="century.boy"
+        "John", 1975, 10, 10, 21, 15, "Roma", "IT", suppress_geonames_warning=True
     )
     report = Report(subject)
 
@@ -57,7 +57,7 @@ def test_print_report():
 def test_chart_report_with_elements_and_qualities():
     """Test that chart data reports include elements, qualities, and aspects."""
     subject = AstrologicalSubjectFactory.from_birth_data(
-        "Jane", 1980, 5, 15, 14, 30, "London", "GB", geonames_username="century.boy"
+        "Jane", 1980, 5, 15, 14, 30, "London", "GB", suppress_geonames_warning=True
     )
 
     # Create chart data which includes elements, qualities, and aspects

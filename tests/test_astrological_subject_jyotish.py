@@ -7,7 +7,7 @@ class TestAstrologicalSubjectJyotish:
 
         # Johnny Depp's vedic horoscope: using sidereal zodiac, Lahiri ayanamsha and whole-sign houses
         self.subject = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", \
-            zodiac_type="Sidereal", sidereal_mode="LAHIRI", houses_system_identifier="W", geonames_username="century.boy")
+            zodiac_type="Sidereal", sidereal_mode="LAHIRI", houses_system_identifier="W", suppress_geonames_warning=True)
 
         self.expected_output = {
             "name": "Johnny Depp",

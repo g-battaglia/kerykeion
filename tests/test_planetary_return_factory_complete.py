@@ -29,7 +29,8 @@ class TestPlanetaryReturnFactory:
             nation="US",
             lng=-74.006,
             lat=40.7128,
-            tz_str="America/New_York"
+            tz_str="America/New_York",
+            suppress_geonames_warning=True
         )
 
     def test_init_online_mode_with_city_and_nation(self):

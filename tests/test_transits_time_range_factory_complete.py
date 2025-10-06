@@ -30,7 +30,8 @@ class TestTransitsTimeRangeFactory:
             lng=-74.0060,
             tz_str="America/New_York",
             city="New York",
-            nation="US"
+            nation="US",
+            suppress_geonames_warning=True
         )
 
         # Create test ephemeris data

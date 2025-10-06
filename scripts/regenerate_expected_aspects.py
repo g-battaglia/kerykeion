@@ -14,7 +14,7 @@ def regenerate_natal_aspects():
     # Use same test data
     subject = AstrologicalSubjectFactory.from_birth_data(
         "Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US",
-        geonames_username="century.boy"
+        suppress_geonames_warning=True
     )
 
     natal_aspects = AspectsFactory.single_chart_aspects(subject)
@@ -45,11 +45,11 @@ def regenerate_synastry_aspects():
     # Use same test synastry data (note: Yoko hour=10, not 20)
     john = AstrologicalSubjectFactory.from_birth_data(
         "John", 1940, 10, 9, 10, 30, "Liverpool", "GB",
-        geonames_username="century.boy"
+        suppress_geonames_warning=True
     )
     yoko = AstrologicalSubjectFactory.from_birth_data(
         "Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP",
-        geonames_username="century.boy"
+        suppress_geonames_warning=True
     )
 
     synastry_aspects = AspectsFactory.dual_chart_aspects(john, yoko)

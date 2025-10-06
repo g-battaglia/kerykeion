@@ -26,7 +26,8 @@ class TestChartDrawer:
             nation="US",
             lng=-74.006,
             lat=40.7128,
-            tz_str="America/New_York"
+            tz_str="America/New_York",
+            suppress_geonames_warning=True
         )
 
         # Create chart data for drawing
@@ -43,7 +44,8 @@ class TestChartDrawer:
             nation="US",
             lng=-118.2437,
             lat=34.0522,
-            tz_str="America/Los_Angeles"
+            tz_str="America/Los_Angeles",
+            suppress_geonames_warning=True
         )
 
     def test_basic_chart_creation(self):
@@ -218,7 +220,8 @@ class TestChartDrawer:
             nation="UT",
             lng=0,
             lat=0,
-            tz_str="UTC"
+            tz_str="UTC",
+            suppress_geonames_warning=True
         )
 
         minimal_chart_data = ChartDataFactory.create_natal_chart_data(minimal_subject)

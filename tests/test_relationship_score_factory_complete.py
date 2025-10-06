@@ -25,7 +25,8 @@ class TestRelationshipScoreFactory:
             lng=-74.0060,
             tz_str="America/New_York",
             city="New York",
-            nation="US"
+            nation="US",
+            suppress_geonames_warning=True
         )
 
         self.subject2 = AstrologicalSubjectFactory.from_birth_data(
@@ -39,7 +40,8 @@ class TestRelationshipScoreFactory:
             lng=-74.0060,
             tz_str="America/New_York",
             city="New York",
-            nation="US"
+            nation="US",
+            suppress_geonames_warning=True
         )
 
     def test_basic_relationship_score_creation(self):
@@ -90,14 +92,16 @@ class TestRelationshipScoreFactory:
             name="Same Quality 1",
             year=1990, month=3, day=21, hour=12, minute=0,  # Aries (Cardinal)
             lat=40.7128, lng=-74.0060, tz_str="America/New_York",
-            city="New York", nation="US"
+            city="New York", nation="US",
+            suppress_geonames_warning=True
         )
 
         subject_same_quality_2 = AstrologicalSubjectFactory.from_birth_data(
             name="Same Quality 2",
             year=1990, month=6, day=21, hour=12, minute=0,  # Cancer (Cardinal)
             lat=40.7128, lng=-74.0060, tz_str="America/New_York",
-            city="New York", nation="US"
+            city="New York", nation="US",
+            suppress_geonames_warning=True
         )
 
         factory = RelationshipScoreFactory(subject_same_quality_1, subject_same_quality_2)

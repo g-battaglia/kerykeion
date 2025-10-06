@@ -442,6 +442,7 @@ class AstrologicalSubjectFactory:
         calculate_lunar_phase: bool = True,
         *,
         seconds: int = 0,
+        suppress_geonames_warning: bool = False,
 
     ) -> AstrologicalSubjectModel:
         """
@@ -500,6 +501,9 @@ class AstrologicalSubjectFactory:
                 specialized applications. If None, uses DEFAULT_ACTIVE_POINTS.
             calculate_lunar_phase (bool, optional): Whether to calculate lunar phase.
                 Requires Sun and Moon in active_points. Defaults to True.
+            suppress_geonames_warning (bool, optional): If True, suppresses the warning
+                message when using the default GeoNames username. Useful for testing
+                or automated processes. Defaults to False.
 
         Returns:
             AstrologicalSubjectModel: Complete astrological subject with calculated
@@ -591,7 +595,8 @@ class AstrologicalSubjectFactory:
 
         # Set up geonames username if needed
         if geonames_username is None and online and (not lat or not lng or not tz_str):
-            logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
+            if not suppress_geonames_warning:
+                logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
             geonames_username = DEFAULT_GEONAMES_USERNAME
 
         # Initialize location data
@@ -691,7 +696,8 @@ class AstrologicalSubjectFactory:
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
         altitude: Optional[float] = None,
         active_points: Optional[List[AstrologicalPoint]] = None,
-        calculate_lunar_phase: bool = True
+        calculate_lunar_phase: bool = True,
+        suppress_geonames_warning: bool = False
     ) -> AstrologicalSubjectModel:
         """
         Create an astrological subject from an ISO formatted UTC timestamp.
@@ -773,7 +779,8 @@ class AstrologicalSubjectFactory:
         # Get location data if online mode is enabled
         if online:
             if geonames_username == DEFAULT_GEONAMES_USERNAME:
-                logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
+                if not suppress_geonames_warning:
+                    logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
 
             geonames = FetchGeonames(
                 city,
@@ -811,7 +818,8 @@ class AstrologicalSubjectFactory:
             perspective_type=perspective_type,
             altitude=altitude,
             active_points=active_points,
-            calculate_lunar_phase=calculate_lunar_phase
+            calculate_lunar_phase=calculate_lunar_phase,
+            suppress_geonames_warning=suppress_geonames_warning
         )
 
     @classmethod
@@ -830,7 +838,8 @@ class AstrologicalSubjectFactory:
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
         active_points: Optional[List[AstrologicalPoint]] = None,
-        calculate_lunar_phase: bool = True
+        calculate_lunar_phase: bool = True,
+        suppress_geonames_warning: bool = False
     ) -> AstrologicalSubjectModel:
         """
         Create an astrological subject for the current moment in time.
@@ -929,7 +938,8 @@ class AstrologicalSubjectFactory:
             houses_system_identifier=houses_system_identifier,
             perspective_type=perspective_type,
             active_points=active_points,
-            calculate_lunar_phase=calculate_lunar_phase
+            calculate_lunar_phase=calculate_lunar_phase,
+            suppress_geonames_warning=suppress_geonames_warning
         )
 
     @staticmethod

@@ -47,7 +47,8 @@ def test_subject_1(subject_factory):
         name="Test Person 1",
         year=1990, month=6, day=15,
         hour=14, minute=30,
-        city="Rome", nation="IT"
+        city="Rome", nation="IT",
+        suppress_geonames_warning=True
     )
 
 @pytest.fixture
@@ -57,7 +58,8 @@ def test_subject_2(subject_factory):
         name="Test Person 2",
         year=1992, month=12, day=25,
         hour=16, minute=45,
-        city="Milan", nation="IT"
+        city="Milan", nation="IT",
+        suppress_geonames_warning=True
     )
 
 @pytest.fixture
@@ -449,7 +451,8 @@ class TestDataExportAndSerialization:
                 name=f"Test Person {i+1}",
                 year=1990 + i, month=6, day=15,
                 hour=14, minute=30,
-                city="Rome", nation="IT"
+                city="Rome", nation="IT",
+                suppress_geonames_warning=True
             )
             subjects.append(subject)
 
@@ -484,7 +487,8 @@ class TestEdgeCasesAndRobustness:
             name="Midnight Birth",
             year=1990, month=1, day=1,
             hour=0, minute=0,
-            city="London", nation="GB"
+            city="London", nation="GB",
+            suppress_geonames_warning=True
         )
 
         chart_data = factory.create_chart_data("Natal", subject)
@@ -498,7 +502,8 @@ class TestEdgeCasesAndRobustness:
             name="Leap Year Birth",
             year=2000, month=2, day=29,
             hour=12, minute=0,
-            city="Paris", nation="FR"
+            city="Paris", nation="FR",
+            suppress_geonames_warning=True
         )
 
         chart_data = factory.create_chart_data("Natal", subject)

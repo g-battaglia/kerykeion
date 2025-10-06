@@ -27,7 +27,8 @@ class TestCompositeSubjectFactory:
             lng=-74.0060,
             tz_str="America/New_York",
             city="New York",
-            nation="US"
+            nation="US",
+            suppress_geonames_warning=True
         )
 
         self.subject2 = AstrologicalSubjectFactory.from_birth_data(
@@ -41,7 +42,8 @@ class TestCompositeSubjectFactory:
             lng=-74.0060,
             tz_str="America/New_York",
             city="New York",
-            nation="US"
+            nation="US",
+            suppress_geonames_warning=True
         )
 
     def test_basic_composite_creation(self):
@@ -91,7 +93,8 @@ class TestCompositeSubjectFactory:
             year=1990, month=6, day=15, hour=12, minute=30,
             lat=40.7128, lng=-74.0060, tz_str="America/New_York",
             city="New York", nation="US",
-            zodiac_type="Sidereal"
+            zodiac_type="Sidereal",
+            suppress_geonames_warning=True
         )
 
         with pytest.raises(KerykeionException, match="Both subjects must have the same zodiac type"):
@@ -105,7 +108,8 @@ class TestCompositeSubjectFactory:
             year=1990, month=6, day=15, hour=12, minute=30,
             lat=40.7128, lng=-74.0060, tz_str="America/New_York",
             city="New York", nation="US",
-            houses_system_identifier="K"  # Koch instead of default Placidus
+            houses_system_identifier="K",  # Koch instead of default Placidus
+            suppress_geonames_warning=True
         )
 
         with pytest.raises(KerykeionException, match="Both subjects must have the same houses system"):
@@ -119,7 +123,8 @@ class TestCompositeSubjectFactory:
             year=1990, month=6, day=15, hour=12, minute=30,
             lat=40.7128, lng=-74.0060, tz_str="America/New_York",
             city="New York", nation="US",
-            perspective_type="Heliocentric"
+            perspective_type="Heliocentric",
+            suppress_geonames_warning=True
         )
 
         with pytest.raises(KerykeionException, match="Both subjects must have the same perspective type"):
@@ -254,7 +259,8 @@ class TestCompositeSubjectFactory:
             lat=40.7128, lng=-74.0060, tz_str="America/New_York",
             city="New York", nation="US",
             zodiac_type="Sidereal",
-            sidereal_mode="LAHIRI"
+            sidereal_mode="LAHIRI",
+            suppress_geonames_warning=True
         )
 
         subject_sidereal_2 = AstrologicalSubjectFactory.from_birth_data(
@@ -263,7 +269,8 @@ class TestCompositeSubjectFactory:
             lat=40.7128, lng=-74.0060, tz_str="America/New_York",
             city="New York", nation="US",
             zodiac_type="Sidereal",
-            sidereal_mode="LAHIRI"
+            sidereal_mode="LAHIRI",
+            suppress_geonames_warning=True
         )
 
         # Should work without error
@@ -279,7 +286,8 @@ class TestCompositeSubjectFactory:
             lat=40.7128, lng=-74.0060, tz_str="America/New_York",
             city="New York", nation="US",
             zodiac_type="Sidereal",
-            sidereal_mode="LAHIRI"
+            sidereal_mode="LAHIRI",
+            suppress_geonames_warning=True
         )
 
         subject_fagan = AstrologicalSubjectFactory.from_birth_data(
@@ -288,7 +296,8 @@ class TestCompositeSubjectFactory:
             lat=40.7128, lng=-74.0060, tz_str="America/New_York",
             city="New York", nation="US",
             zodiac_type="Sidereal",
-            sidereal_mode="FAGAN_BRADLEY"
+            sidereal_mode="FAGAN_BRADLEY",
+            suppress_geonames_warning=True
         )
 
         with pytest.raises(KerykeionException, match="Both subjects must have the same sidereal mode"):

@@ -10,7 +10,7 @@ class TestAstrologicalSubject:
         all_points = list(get_args(AstrologicalPoint))
         self.subject = AstrologicalSubjectFactory.from_birth_data(
             "Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US",
-            geonames_username="century.boy", active_points=all_points
+            suppress_geonames_warning=True, active_points=all_points
         )
         self.expected_output = {
             "name": "Johnny Depp",
@@ -796,7 +796,7 @@ class TestAstrologicalSubjectFactoryMethods:
             city="London",
             nation="GB",
             tz_str="Europe/London",
-            geonames_username="century.boy",
+            suppress_geonames_warning=True,
             online=True
         )
         assert subject.name == "ISO Test"
@@ -851,7 +851,7 @@ class TestAstrologicalSubjectFactoryMethods:
             online=False,
             zodiac_type="Sidereal",
             sidereal_mode="LAHIRI",
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         assert subject.zodiac_type == "Sidereal"
         # Sidereal positions should differ from tropical
@@ -866,7 +866,7 @@ class TestAstrologicalSubjectFactoryMethods:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             houses_system_identifier="P",
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         # Koch
@@ -875,7 +875,7 @@ class TestAstrologicalSubjectFactoryMethods:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             houses_system_identifier="K",
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         # Whole Sign (W)
@@ -884,7 +884,7 @@ class TestAstrologicalSubjectFactoryMethods:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             houses_system_identifier="W",
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         # House cusps should differ between systems
@@ -899,7 +899,7 @@ class TestAstrologicalSubjectFactoryMethods:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             perspective_type="Heliocentric",
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         # In heliocentric perspective, Earth takes the place of Sun
         # Sun position should be very different or unavailable
@@ -913,7 +913,7 @@ class TestAstrologicalSubjectFactoryMethods:
             online=False,
             perspective_type="Topocentric",
             altitude=100.0,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         assert subject.name == "Topocentric Test"
 
@@ -925,7 +925,7 @@ class TestAstrologicalSubjectFactoryMethods:
             online=False,
             active_points=["Sun", "Moon", "Ascendant"],
             calculate_lunar_phase=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         # Should have Sun, Moon, Ascendant
         assert hasattr(subject, 'sun')
@@ -939,7 +939,7 @@ class TestAstrologicalSubjectFactoryMethods:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             seconds=45,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         assert subject.hour == 12
         assert subject.minute == 30
@@ -965,7 +965,7 @@ class TestAstrologicalSubjectModelMethods:
             "Test Subject", 1990, 6, 15, 12, 0,
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
     def test_model_dump(self):
@@ -994,7 +994,7 @@ class TestAstrologicalSubjectModelMethods:
             "Mutable Test", 1990, 6, 15, 12, 0,
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         subject["name"] = "Modified Name"
         assert subject["name"] == "Modified Name"
@@ -1096,7 +1096,7 @@ class TestEdgeCases:
             "Midnight", 1990, 1, 1, 0, 0,
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         assert subject.hour == 0
         assert subject.minute == 0
@@ -1107,7 +1107,7 @@ class TestEdgeCases:
             "Leap Year", 2000, 2, 29, 12, 0,
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         assert subject.year == 2000
         assert subject.month == 2
@@ -1120,7 +1120,7 @@ class TestEdgeCases:
             lng=151.2093, lat=-33.8688,  # Sydney
             tz_str="Australia/Sydney",
             online=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         assert subject.lat == approx(-33.8688, abs=1e-2)
         assert subject.lng == approx(151.2093, abs=1e-2)
@@ -1132,7 +1132,7 @@ class TestEdgeCases:
             lng=-118.2437, lat=34.0522,  # Los Angeles
             tz_str="America/Los_Angeles",
             online=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         assert subject.lat == approx(34.0522, abs=1e-2)
         assert subject.lng == approx(-118.2437, abs=1e-2)
@@ -1144,7 +1144,7 @@ class TestEdgeCases:
             lng=179.0, lat=-16.5,  # Near Fiji
             tz_str="Pacific/Fiji",
             online=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         assert subject.lng == approx(179.0, abs=1e-2)
 
@@ -1155,7 +1155,7 @@ class TestEdgeCases:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             calculate_lunar_phase=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         assert subject.lunar_phase is None
 
@@ -1170,7 +1170,7 @@ class TestRetrogradePlanets:
             "Mercury Rx", 2023, 12, 20, 12, 0,
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         # Mercury should be retrograde (negative speed)
         assert subject.mercury.speed < 0
@@ -1182,7 +1182,7 @@ class TestRetrogradePlanets:
             "Direct Test", 1990, 6, 15, 12, 0,
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         # Sun is never retrograde
         assert subject.sun.speed > 0
@@ -1198,7 +1198,7 @@ class TestDifferentYears:
             "1900s", 1920, 5, 10, 12, 0,
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         assert subject.year == 1920
         assert subject.sun.sign == "Tau"
@@ -1209,7 +1209,7 @@ class TestDifferentYears:
             "Future", 2030, 12, 25, 12, 0,
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         assert subject.year == 2030
         assert subject.sun.sign == "Cap"
@@ -1225,7 +1225,7 @@ class TestPerspectiveTypes:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             perspective_type="True Geocentric",
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         assert subject.perspective_type == "True Geocentric"
         assert hasattr(subject, 'sun')
@@ -1243,7 +1243,7 @@ class TestTimeZoneEdgeCases:
             lng=-74.006, lat=40.7128, tz_str="America/New_York",
             online=False,
             is_dst=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         assert subject.hour == 2
 
@@ -1254,7 +1254,7 @@ class TestTimeZoneEdgeCases:
             lng=-74.006, lat=40.7128, tz_str="America/New_York",
             online=False,
             is_dst=True,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         assert subject.hour == 2
 
@@ -1286,7 +1286,7 @@ class TestAdditionalPlanets:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Sun", "Moon", "Ixion", "Orcus", "Quaoar"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
         # Sun and Moon should always be calculated
         assert hasattr(subject, 'sun')
@@ -1314,7 +1314,7 @@ class TestDefaultTimeParameters:
             lat=51.5074,
             tz_str="Etc/GMT",
             online=False,
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         now = datetime.now()
@@ -1353,7 +1353,7 @@ class TestExceptionHandlingInPlanetCalculation:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Sun", "Moon", "Eris"],  # Eris will fail
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         # Sun and Moon should be calculated, Eris should fail gracefully
@@ -1372,7 +1372,7 @@ class TestArabicParts:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Pars_Fortunae", "Sun", "Moon", "Ascendant"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'pars_fortunae')
@@ -1386,7 +1386,7 @@ class TestArabicParts:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Pars_Fortunae"],  # Only Pars, should auto-add Sun, Moon, Ascendant
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'pars_fortunae')
@@ -1401,7 +1401,7 @@ class TestArabicParts:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Pars_Spiritus", "Sun", "Moon", "Ascendant"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'pars_spiritus')
@@ -1414,7 +1414,7 @@ class TestArabicParts:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Pars_Amoris", "Venus", "Sun", "Ascendant"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'pars_amoris')
@@ -1427,7 +1427,7 @@ class TestArabicParts:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Pars_Fidei", "Jupiter", "Saturn", "Ascendant"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'pars_fidei')
@@ -1444,7 +1444,7 @@ class TestVertexCalculation:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Vertex"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'vertex')
@@ -1458,7 +1458,7 @@ class TestVertexCalculation:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Anti_Vertex"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'anti_vertex')
@@ -1471,7 +1471,7 @@ class TestVertexCalculation:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Vertex", "Anti_Vertex"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'vertex')
@@ -1491,7 +1491,7 @@ class TestFixedStars:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Regulus"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'regulus')
@@ -1505,7 +1505,7 @@ class TestFixedStars:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Spica"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'spica')
@@ -1524,7 +1524,7 @@ class TestNightChartCalculations:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Pars_Fortunae", "Sun", "Moon", "Ascendant"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'pars_fortunae')
@@ -1591,7 +1591,7 @@ class TestMockErrorConditions:
                 lng=0.0, lat=51.5074, tz_str="Etc/GMT",
                 online=False,
                 active_points=["Sun", "Mercury", "Moon"],
-                geonames_username="century.boy"
+                suppress_geonames_warning=True
             )
 
             # Sun and Moon should be calculated, Mercury should fail
@@ -1617,7 +1617,7 @@ class TestMockErrorConditions:
                     "Ambiguous", 2023, 11, 5, 2, 30,
                     lng=-74.006, lat=40.7128, tz_str="America/New_York",
                     online=False,
-                    geonames_username="century.boy"
+                    suppress_geonames_warning=True
                 )
 
     def test_nonexistent_time_error(self):
@@ -1638,7 +1638,7 @@ class TestMockErrorConditions:
                     "Nonexistent", 2023, 3, 12, 2, 30,
                     lng=-74.006, lat=40.7128, tz_str="America/New_York",
                     online=False,
-                    geonames_username="century.boy"
+                    suppress_geonames_warning=True
                 )
 
     def test_day_chart_vs_night_chart(self):
@@ -1649,7 +1649,7 @@ class TestMockErrorConditions:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Pars_Fortunae", "Sun", "Moon", "Ascendant"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         # Night chart - Sun in houses 7-12
@@ -1658,7 +1658,7 @@ class TestMockErrorConditions:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Pars_Fortunae", "Sun", "Moon", "Ascendant"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         # Both should have Pars Fortunae calculated
@@ -1675,7 +1675,7 @@ class TestMockErrorConditions:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Pars_Fortunae"],  # Only this, should add Sun, Moon, Ascendant
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         # All required points should be present
@@ -1694,7 +1694,7 @@ class TestMockErrorConditions:
             zodiac_type="Sidereal",
             sidereal_mode="LAHIRI",
             active_points=["Pars_Fortunae"],  # Only this - will auto-add and trigger sidereal path
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'pars_fortunae')
@@ -1709,7 +1709,7 @@ class TestMockErrorConditions:
             zodiac_type="Sidereal",
             sidereal_mode="LAHIRI",
             active_points=["Pars_Spiritus"],  # Will trigger sidereal branch in auto-activation
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'pars_spiritus')
@@ -1723,7 +1723,7 @@ class TestMockErrorConditions:
             zodiac_type="Sidereal",
             sidereal_mode="LAHIRI",
             active_points=["Pars_Amoris"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'pars_amoris')
@@ -1737,7 +1737,7 @@ class TestMockErrorConditions:
             zodiac_type="Sidereal",
             sidereal_mode="LAHIRI",
             active_points=["Pars_Fidei"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'pars_fidei')
@@ -1751,7 +1751,7 @@ class TestMockErrorConditions:
             zodiac_type="Sidereal",
             sidereal_mode="LAHIRI",
             active_points=["Vertex", "Anti_Vertex"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'vertex')
@@ -1772,7 +1772,7 @@ class TestAllDwarfPlanetsAndFixedStars:
                 "Eris", "Sedna", "Haumea", "Makemake",
                 "Ixion", "Orcus", "Quaoar"
             ],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         # Sun and Moon should always work
@@ -1787,7 +1787,7 @@ class TestAllDwarfPlanetsAndFixedStars:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Regulus", "Spica", "Sun"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         assert hasattr(subject, 'sun')
@@ -1796,7 +1796,7 @@ class TestAllDwarfPlanetsAndFixedStars:
 
     def test_vertex_calculation_with_exception_mock(self):
         """Test Vertex exception handling (line 1836-1841)."""
-        from unittest.mock import patch, MagicMock
+        from unittest.mock import patch
 
         # First create subject normally to ensure houses work
         # Then mock only the Vertex calculation part
@@ -1814,7 +1814,7 @@ class TestAllDwarfPlanetsAndFixedStars:
                 lng=0.0, lat=51.5074, tz_str="Etc/GMT",
                 online=False,
                 active_points=["Vertex", "Anti_Vertex", "Sun"],
-                geonames_username="century.boy"
+                suppress_geonames_warning=True
             )
 
             # Vertex should be None due to exception, but subject created successfully
@@ -1842,7 +1842,7 @@ class TestAllDwarfPlanetsAndFixedStars:
                     "Geonames Error", 1990, 1, 1, 12, 0,
                     city="TestCity", nation="TestNation",
                     online=True,
-                    geonames_username="century.boy"
+                    suppress_geonames_warning=True
                 )
                 # Should raise exception before reaching here
                 assert False, "Expected KerykeionException"
@@ -1857,7 +1857,7 @@ class TestAllDwarfPlanetsAndFixedStars:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Eris", "Sedna", "Haumea", "Makemake", "Ixion", "Orcus", "Quaoar", "Sun"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         # All TNOs should be present with real ephemeris files
@@ -1892,7 +1892,7 @@ class TestAllDwarfPlanetsAndFixedStars:
             lng=0.0, lat=51.5074, tz_str="Etc/GMT",
             online=False,
             active_points=["Regulus", "Spica", "Sun"],
-            geonames_username="century.boy"
+            suppress_geonames_warning=True
         )
 
         # All fixed stars should be present with real calculations
