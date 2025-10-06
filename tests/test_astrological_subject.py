@@ -95,6 +95,8 @@ class TestAstrologicalSubject:
                 "point_type": "AstrologicalPoint",
                 "house": "Fourth_House",
                 "retrograde": False,
+                "speed": 0.955992,
+                "declination": 22.8702,
             },
             "moon": {
                 "name": "Moon",
@@ -108,6 +110,8 @@ class TestAstrologicalSubject:
                 "point_type": "AstrologicalPoint",
                 "house": "Eleventh_House",
                 "retrograde": False,
+                "speed": 12.479586,
+                "declination": -22.0821,
             },
             "mercury": {
                 "name": "Mercury",
@@ -121,6 +125,8 @@ class TestAstrologicalSubject:
                 "point_type": "AstrologicalPoint",
                 "house": "Third_House",
                 "retrograde": False,
+                "speed": 0.681694,
+                "declination": 15.2697,
             },
             "venus": {
                 "name": "Venus",
@@ -134,6 +140,8 @@ class TestAstrologicalSubject:
                 "point_type": "AstrologicalPoint",
                 "house": "Third_House",
                 "retrograde": False,
+                "speed": 1.212889,
+                "declination": 17.9459,
             },
             "mars": {
                 "name": "Mars",
@@ -147,6 +155,8 @@ class TestAstrologicalSubject:
                 "point_type": "AstrologicalPoint",
                 "house": "Seventh_House",
                 "retrograde": False,
+                "speed": 0.514563,
+                "declination": 11.5452,
             },
             "jupiter": {
                 "name": "Jupiter",
@@ -160,6 +170,8 @@ class TestAstrologicalSubject:
                 "point_type": "AstrologicalPoint",
                 "house": "Second_House",
                 "retrograde": False,
+                "speed": 0.165966,
+                "declination": 4.3749,
             },
             "saturn": {
                 "name": "Saturn",
@@ -173,6 +185,8 @@ class TestAstrologicalSubject:
                 "point_type": "AstrologicalPoint",
                 "house": "First_House",
                 "retrograde": True,
+                "speed": -0.009360,
+                "declination": -14.8430,
             },
             "uranus": {
                 "name": "Uranus",
@@ -186,6 +200,8 @@ class TestAstrologicalSubject:
                 "point_type": "AstrologicalPoint",
                 "house": "Seventh_House",
                 "retrograde": False,
+                "speed": 0.026753,
+                "declination": 11.6218,
             },
             "neptune": {
                 "name": "Neptune",
@@ -199,6 +215,8 @@ class TestAstrologicalSubject:
                 "point_type": "AstrologicalPoint",
                 "house": "Ninth_House",
                 "retrograde": True,
+                "speed": -0.021301,
+                "declination": -14.1326,
             },
             "pluto": {
                 "name": "Pluto",
@@ -212,6 +230,8 @@ class TestAstrologicalSubject:
                 "point_type": "AstrologicalPoint",
                 "house": "Seventh_House",
                 "retrograde": False,
+                "speed": 0.009451,
+                "declination": 20.4574,
             },
             "first_house": {
                 "name": "First_House",
@@ -461,6 +481,8 @@ class TestAstrologicalSubject:
         assert self.subject.sun.point_type == self.expected_output["sun"]["point_type"]
         assert self.subject.sun.house == self.expected_output["sun"]["house"]
         assert self.subject.sun.retrograde == self.expected_output["sun"]["retrograde"]
+        assert self.subject.sun.speed == approx(self.expected_output["sun"]["speed"], abs=1e-4)
+        assert self.subject.sun.declination == approx(self.expected_output["sun"]["declination"], abs=1e-2)
 
     def test_moon(self):
         assert self.subject.moon.name == self.expected_output["moon"]["name"]
@@ -474,6 +496,8 @@ class TestAstrologicalSubject:
         assert self.subject.moon.point_type == self.expected_output["moon"]["point_type"]
         assert self.subject.moon.house == self.expected_output["moon"]["house"]
         assert self.subject.moon.retrograde == self.expected_output["moon"]["retrograde"]
+        assert self.subject.moon.speed == approx(self.expected_output["moon"]["speed"], abs=1e-4)
+        assert self.subject.moon.declination == approx(self.expected_output["moon"]["declination"], abs=1e-2)
 
     def test_mercury(self):
         assert self.subject.mercury.name == self.expected_output["mercury"]["name"]
@@ -487,6 +511,8 @@ class TestAstrologicalSubject:
         assert self.subject.mercury.point_type == self.expected_output["mercury"]["point_type"]
         assert self.subject.mercury.house == self.expected_output["mercury"]["house"]
         assert self.subject.mercury.retrograde == self.expected_output["mercury"]["retrograde"]
+        assert self.subject.mercury.speed == approx(self.expected_output["mercury"]["speed"], abs=1e-4)
+        assert self.subject.mercury.declination == approx(self.expected_output["mercury"]["declination"], abs=1e-2)
 
     def test_venus(self):
         assert self.subject.venus.name == self.expected_output["venus"]["name"]
@@ -500,6 +526,8 @@ class TestAstrologicalSubject:
         assert self.subject.venus.point_type == self.expected_output["venus"]["point_type"]
         assert self.subject.venus.house == self.expected_output["venus"]["house"]
         assert self.subject.venus.retrograde == self.expected_output["venus"]["retrograde"]
+        assert self.subject.venus.speed == approx(self.expected_output["venus"]["speed"], abs=1e-4)
+        assert self.subject.venus.declination == approx(self.expected_output["venus"]["declination"], abs=1e-2)
 
     def test_mars(self):
         assert self.subject.mars.name == self.expected_output["mars"]["name"]
@@ -513,6 +541,8 @@ class TestAstrologicalSubject:
         assert self.subject.mars.point_type == self.expected_output["mars"]["point_type"]
         assert self.subject.mars.house == self.expected_output["mars"]["house"]
         assert self.subject.mars.retrograde == self.expected_output["mars"]["retrograde"]
+        assert self.subject.mars.speed == approx(self.expected_output["mars"]["speed"], abs=1e-4)
+        assert self.subject.mars.declination == approx(self.expected_output["mars"]["declination"], abs=1e-2)
 
     def test_jupiter(self):
         assert self.subject.jupiter.name == self.expected_output["jupiter"]["name"]
@@ -526,6 +556,8 @@ class TestAstrologicalSubject:
         assert self.subject.jupiter.point_type == self.expected_output["jupiter"]["point_type"]
         assert self.subject.jupiter.house == self.expected_output["jupiter"]["house"]
         assert self.subject.jupiter.retrograde == self.expected_output["jupiter"]["retrograde"]
+        assert self.subject.jupiter.speed == approx(self.expected_output["jupiter"]["speed"], abs=1e-4)
+        assert self.subject.jupiter.declination == approx(self.expected_output["jupiter"]["declination"], abs=1e-2)
 
     def test_saturn(self):
         assert self.subject.saturn.name == self.expected_output["saturn"]["name"]
@@ -539,6 +571,8 @@ class TestAstrologicalSubject:
         assert self.subject.saturn.point_type == self.expected_output["saturn"]["point_type"]
         assert self.subject.saturn.house == self.expected_output["saturn"]["house"]
         assert self.subject.saturn.retrograde == self.expected_output["saturn"]["retrograde"]
+        assert self.subject.saturn.speed == approx(self.expected_output["saturn"]["speed"], abs=1e-4)
+        assert self.subject.saturn.declination == approx(self.expected_output["saturn"]["declination"], abs=1e-2)
 
     def test_uranus(self):
         assert self.subject.uranus.name == self.expected_output["uranus"]["name"]
@@ -552,6 +586,8 @@ class TestAstrologicalSubject:
         assert self.subject.uranus.point_type == self.expected_output["uranus"]["point_type"]
         assert self.subject.uranus.house == self.expected_output["uranus"]["house"]
         assert self.subject.uranus.retrograde == self.expected_output["uranus"]["retrograde"]
+        assert self.subject.uranus.speed == approx(self.expected_output["uranus"]["speed"], abs=1e-4)
+        assert self.subject.uranus.declination == approx(self.expected_output["uranus"]["declination"], abs=1e-2)
 
     def test_neptune(self):
         assert self.subject.neptune.name == self.expected_output["neptune"]["name"]
@@ -565,6 +601,8 @@ class TestAstrologicalSubject:
         assert self.subject.neptune.point_type == self.expected_output["neptune"]["point_type"]
         assert self.subject.neptune.house == self.expected_output["neptune"]["house"]
         assert self.subject.neptune.retrograde == self.expected_output["neptune"]["retrograde"]
+        assert self.subject.neptune.speed == approx(self.expected_output["neptune"]["speed"], abs=1e-4)
+        assert self.subject.neptune.declination == approx(self.expected_output["neptune"]["declination"], abs=1e-2)
 
     def test_pluto(self):
         assert self.subject.pluto.name == self.expected_output["pluto"]["name"]
@@ -578,6 +616,8 @@ class TestAstrologicalSubject:
         assert self.subject.pluto.point_type == self.expected_output["pluto"]["point_type"]
         assert self.subject.pluto.house == self.expected_output["pluto"]["house"]
         assert self.subject.pluto.retrograde == self.expected_output["pluto"]["retrograde"]
+        assert self.subject.pluto.speed == approx(self.expected_output["pluto"]["speed"], abs=1e-4)
+        assert self.subject.pluto.declination == approx(self.expected_output["pluto"]["declination"], abs=1e-2)
 
     def test_true_node(self):
         assert self.subject.true_node.name == self.expected_output["true_node"]["name"]

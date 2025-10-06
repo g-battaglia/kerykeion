@@ -1160,7 +1160,7 @@ class AstrologicalSubjectFactory:
         try:
             # Calculate planet position using Swiss Ephemeris (ecliptic coordinates)
             planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
-            
+
             # Get declination from equatorial coordinates
             planet_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
             declination = planet_eq[1]  # Declination from equatorial coordinates
