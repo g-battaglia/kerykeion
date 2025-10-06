@@ -63,7 +63,7 @@ def calculate_aspect_movement(
     point_one_abs_pos: float,
     point_two_abs_pos: float,
     aspect_degrees: int,
-    exact_orb_threshold: float = 0.17
+    exact_orb_threshold: float = 0.05
 ) -> AspectMovementType:
     """
     Calculate whether an aspect is applying, separating, or exact.
