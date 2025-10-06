@@ -1859,3 +1859,7 @@ if __name__ == "__main__":
 
     # Create JSON output
     json_string = subject.model_dump_json(exclude_none=True, indent=2)
+
+    # Write JSON to home
+    with open(Path.home() / "kerykeion_subject_example.json", "w", encoding="utf-8") as f:
+        f.write(json_string)
