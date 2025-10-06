@@ -436,46 +436,140 @@ aspect_grid_chart.save_aspect_grid_only_svg_file()
 
 ## Report
 
+The `Report` class generates comprehensive, human-readable text reports with all astrological data including planetary positions, **speed (daily motion)**, **declination**, houses, lunar phases, and optionally **element/quality distributions** and **aspects**.
+
+### Basic Subject Report
+
+For quick inspection of astrological data:
+
 ```python
 from kerykeion import Report, AstrologicalSubjectFactory
 
 john = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,  # Longitude for Liverpool
-    lat=53.4000,  # Latitude for Liverpool
-    tz_str="Europe/London",  # Timezone for Liverpool
-    city="Liverpool",
+    "John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB"
 )
 report = Report(john)
 report.print_report()
 ```
 
-Report output:
+Output includes:
+- Birth data and settings
+- Celestial points with **speed** and **declination**
+- Houses
+- Lunar phase
+
+### Complete Chart Report (with Elements, Qualities & Aspects)
+
+For full analysis including elements, qualities, and aspects, use `ChartDataFactory`:
+
+```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, Report
+
+# Create subject
+john = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB"
+)
+
+# Create chart data (calculates elements, qualities, aspects)
+chart = ChartDataFactory.create_chart_data("Natal", first_subject=john)
+
+# Generate complete report
+report = Report(chart)
+report.print_report(include_aspects=True, max_aspects=20)
+```
+
+Report output example:
 ```plaintext
-+- Kerykeion report for John Lennon -+
-+-----------+-------+---------------+-----------+----------+
-| Date      | Time  | Location      | Longitude | Latitude |
-+-----------+-------+---------------+-----------+----------+
-| 9/10/1940 | 18:30 | Liverpool, GB | -2.9833   | 53.4     |
-+-----------+-------+---------------+-----------+----------+
-+-------------------+------+-------+------+----------------+
-| AstrologicalPoint | Sign | Pos.  | Ret. | House          |
-+-------------------+------+-------+------+----------------+
-| Sun               | Lib  | 16.27 | -    | Sixth_House    |
-| Moon              | Aqu  | 3.55  | -    | Eleventh_House |
-| Mercury           | Sco  | 8.56  | -    | Seventh_House  |
-| Venus             | Vir  | 3.22  | -    | Sixth_House    |
-| Mars              | Lib  | 2.66  | -    | Sixth_House    |
-| Jupiter           | Tau  | 13.69 | R    | First_House    |
-| Saturn            | Tau  | 13.22 | R    | First_House    |
-| Uranus            | Tau  | 25.55 | R    | First_House    |
-| Neptune           | Vir  | 26.03 | -    | Sixth_House    |
-| Pluto             | Leo  | 4.19  | -    | Fifth_House    |
-| Mean_Node         | Lib  | 10.58 | R    | Sixth_House    |
-| Mean_South_Node   | Ari  | 10.58 | R    | Twelfth_House  |
-| Mean_Lilith       | Ari  | 13.37 | -    | Twelfth_House  |
-| Chiron            | Leo  | 0.57  | -    | Fifth_House    |
-+-------------------+------+-------+------+----------------+
+=============================================
+Kerykeion Astrological Report for John Lennon
+=============================================
+
++Birth Data---------+---------------+
+| Birth Information | Value         |
++-------------------+---------------+
+| Name              | John Lennon   |
+| Date              | 09/10/1940    |
+| Time              | 18:30         |
+| City              | Liverpool     |
+| Nation            | GB            |
+| Latitude          | 53.4106°      |
+| Longitude         | -2.9779°      |
+| Timezone          | Europe/London |
+| Day of Week       | Wednesday     |
++-------------------+---------------+
+
++Celestial Points-+---------+----------+-------------+---------+------+----------------+
+| Point           | Sign    | Position | Speed       | Decl.   | Ret. | House          |
++-----------------+---------+----------+-------------+---------+------+----------------+
+| Sun             | Lib ♎️ | 16.27°   | +0.9885°/d  | -6.40°  | -    | Sixth House    |
+| Moon            | Aqu ♒️ | 3.55°    | +12.5292°/d | -14.60° | -    | Eleventh House |
+| Mercury         | Sco ♏️ | 8.56°    | +1.3195°/d  | -16.23° | -    | Seventh House  |
+| Venus           | Vir ♍️ | 3.22°    | +1.1337°/d  | +10.57° | -    | Sixth House    |
+| Mars            | Lib ♎️ | 2.66°    | +0.6449°/d  | -0.18°  | -    | Sixth House    |
+| Jupiter         | Tau ♉️ | 13.69°   | -0.1069°/d  | +14.61° | R    | First House    |
+...
++-----------------+---------+----------+-------------+---------+------+----------------+
+
++Element Distribution-----------+
+| Element  | Count | Percentage |
++----------+-------+------------+
+| Fire 🔥  | 50.0  | 21.3%      |
+| Earth 🌍 | 75.0  | 31.9%      |
+| Air 💨   | 95.0  | 40.4%      |
+| Water 💧 | 15.0  | 6.4%       |
+| Total    | 235.0 | 100%       |
++----------+-------+------------+
+
++Quality Distribution-----------+
+| Quality  | Count | Percentage |
++----------+-------+------------+
+| Cardinal | 115.0 | 48.9%      |
+| Fixed    | 95.0  | 40.4%      |
+| Mutable  | 25.0  | 10.6%      |
+| Total    | 235.0 | 100%       |
++----------+-------+------------+
+
++Aspects-----------+---------+------------+
+| Point 1 | Aspect        | Point 2  | Orb    | Type       |
++---------+---------------+----------+--------+------------+
+| Sun     | conjunction ☌ | True Node| 5.24°  | Separating |
+| Moon    | trine △       | Mars     | 0.88°  | Separating |
+| Mercury | sextile ⚹     | Venus    | 5.34°  | Separating |
+...
++---------+---------------+----------+--------+------------+
+```
+
+### Understanding Speed and Declination
+
+**Speed (Daily Motion):**
+- Shows how fast each celestial body moves per day
+- Positive values = direct motion
+- Negative values = retrograde motion
+- Example: Moon at +12.53°/d (fast), Saturn at -0.07°/d (retrograde)
+
+**Declination (Celestial Latitude):**
+- Position relative to celestial equator (-90° to +90°)
+- Shows north/south position in the sky
+- Out of bounds (>±23.44°) indicates unusual energy expression
+
+### Modular Report Sections
+
+Generate specific sections independently:
+
+```python
+# Individual sections
+print(report.get_report_title())
+print(report.get_subject_data_report())
+print(report.get_celestial_points_report())
+print(report.get_houses_report())
+print(report.get_lunar_phase_report())
+print(report.get_elements_report())
+print(report.get_qualities_report())
+print(report.get_aspects_report(max_aspects=10))
+```
+
+**See the [Report Documentation](https://www.kerykeion.net/report/) for complete details.**
+
 +----------------+------+----------+
 | House          | Sign | Position |
 +----------------+------+----------+
