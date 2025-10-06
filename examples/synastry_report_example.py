@@ -4,12 +4,22 @@ from __future__ import annotations
 
 from kerykeion import ReportGenerator, AstrologicalSubjectFactory, ChartDataFactory
 
-OFFLINE_LOCATION = {
-    "city": "Rome",
-    "nation": "IT",
-    "lat": 41.9028,
-    "lng": 12.4964,
-    "tz_str": "Europe/Rome",
+JOHN_LOCATION = {
+    "city": "Liverpool",
+    "nation": "GB",
+    "lat": 53.4084,
+    "lng": -2.9916,
+    "tz_str": "Europe/London",
+    "online": False,
+    "suppress_geonames_warning": True,
+}
+
+YOKO_LOCATION = {
+    "city": "Tokyo",
+    "nation": "JP",
+    "lat": 35.6762,
+    "lng": 139.6503,
+    "tz_str": "Asia/Tokyo",
     "online": False,
     "suppress_geonames_warning": True,
 }
@@ -17,28 +27,28 @@ OFFLINE_LOCATION = {
 
 if __name__ == "__main__":
     first_subject = AstrologicalSubjectFactory.from_birth_data(
-        name="Sample Natal Subject",
-        year=1990,
-        month=7,
-        day=21,
-        hour=14,
-        minute=45,
-        **OFFLINE_LOCATION,
+        name="John Lennon",
+        year=1940,
+        month=10,
+        day=9,
+        hour=18,
+        minute=30,
+        **JOHN_LOCATION,
     )
 
     second_subject = AstrologicalSubjectFactory.from_birth_data(
-        name="Sample Partner Subject",
-        year=1992,
-        month=11,
-        day=5,
-        hour=9,
+        name="Yoko Ono",
+        year=1933,
+        month=2,
+        day=18,
+        hour=20,
         minute=30,
-        **OFFLINE_LOCATION,
+        **YOKO_LOCATION,
     )
 
     chart_data = ChartDataFactory.create_synastry_chart_data(first_subject, second_subject)
     report = ReportGenerator(chart_data)
-    title = "DualChartDataModel Report (Synastry)"
+    title = "DualChartDataModel Report (Synastry) — John & Yoko"
     print("\n" + title)
     print("=" * len(title))
     report.print_report()

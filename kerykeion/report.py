@@ -659,11 +659,11 @@ if __name__ == "__main__":
     from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
     # Shared offline location configuration (Rome, Italy)
-    offline_city = "Rome"
-    offline_nation = "IT"
-    offline_lat = 41.9028
-    offline_lng = 12.4964
-    offline_tz = "Europe/Rome"
+    john_city = "Liverpool"
+    john_nation = "GB"
+    john_lat = 53.4084
+    john_lng = -2.9916
+    john_tz = "Europe/London"
     offline_online = False
 
     # Base natal subject (AstrologicalSubjectModel)
@@ -674,38 +674,43 @@ if __name__ == "__main__":
         day=21,
         hour=14,
         minute=45,
-        city=offline_city,
-        nation=offline_nation,
-        lat=offline_lat,
-        lng=offline_lng,
-        tz_str=offline_tz,
+        city=john_city,
+        nation=john_nation,
+        lat=john_lat,
+        lng=john_lng,
+        tz_str=john_tz,
         online=offline_online,
     )
 
     # Partner subject for synastry/composite examples
     partner_subject = AstrologicalSubjectFactory.from_birth_data(
-        name="Sample Partner Subject",
-        year=1992,
-        month=11,
-        day=5,
-        hour=9,
+        name="Yoko Ono",
+        year=1933,
+        month=2,
+        day=18,
+        hour=20,
         minute=30,
-        city=offline_city,
-        nation=offline_nation,
-        lat=offline_lat,
-        lng=offline_lng,
-        tz_str=offline_tz,
+        city="Tokyo",
+        nation="JP",
+        lat=35.6762,
+        lng=139.6503,
+        tz_str="Asia/Tokyo",
         online=offline_online,
     )
 
-    # Transit subject (current moment at the same location)
-    transit_subject = AstrologicalSubjectFactory.from_current_time(
-        name="Transit Snapshot",
-        city=offline_city,
-        nation=offline_nation,
-        lat=offline_lat,
-        lng=offline_lng,
-        tz_str=offline_tz,
+    # Transit subject (John's 1980 New York snapshot)
+    transit_subject = AstrologicalSubjectFactory.from_birth_data(
+        name="1980 Transit",
+        year=1980,
+        month=12,
+        day=8,
+        hour=22,
+        minute=50,
+        city="New York",
+        nation="US",
+        lat=40.7128,
+        lng=-74.0060,
+        tz_str="America/New_York",
         online=offline_online,
     )
 
@@ -728,7 +733,7 @@ if __name__ == "__main__":
     composite_subject = CompositeSubjectFactory(
         natal_subject,
         partner_subject,
-        chart_name="Sample Composite",
+        chart_name="John & Yoko Composite Chart",
     ).get_midpoint_composite_subject_model()
 
     # Build chart data models mirroring ChartDrawer inputs
@@ -740,37 +745,37 @@ if __name__ == "__main__":
     dual_return_chart_data = ChartDataFactory.create_return_chart_data(natal_subject, solar_return_subject)
 
     # Demonstrate each report/model type
-    print("\n" + "=" * 36)
-    print("AstrologicalSubjectModel Report")
-    print("=" * 36)
+    print("\n" + "=" * 54)
+    print("AstrologicalSubjectModel Report — John Lennon")
+    print("=" * 54)
     ReportGenerator(natal_subject, include_aspects=False).print_report(include_aspects=False)
 
-    print("\n" + "=" * 39)
-    print("SingleChartDataModel Report (Natal)")
-    print("=" * 39)
+    print("\n" + "=" * 57)
+    print("SingleChartDataModel Report (Natal) — John Lennon")
+    print("=" * 57)
     ReportGenerator(natal_chart_data).print_report()
 
-    print("\n" + "=" * 43)
-    print("SingleChartDataModel Report (Composite)")
-    print("=" * 43)
+    print("\n" + "=" * 65)
+    print("SingleChartDataModel Report (Composite) — John & Yoko")
+    print("=" * 65)
     ReportGenerator(composite_chart_data).print_report()
 
-    print("\n" + "=" * 45)
-    print("SingleChartDataModel Report (Single Return)")
-    print("=" * 45)
+    print("\n" + "=" * 63)
+    print("SingleChartDataModel Report (Single Return) — John Lennon")
+    print("=" * 63)
     ReportGenerator(single_return_chart_data).print_report()
 
-    print("\n" + "=" * 37)
-    print("DualChartDataModel Report (Transit)")
-    print("=" * 37)
+    print("\n" + "=" * 58)
+    print("DualChartDataModel Report (Transit) — John Lennon")
+    print("=" * 58)
     ReportGenerator(transit_chart_data).print_report()
 
-    print("\n" + "=" * 38)
-    print("DualChartDataModel Report (Synastry)")
-    print("=" * 38)
+    print("\n" + "=" * 60)
+    print("DualChartDataModel Report (Synastry) — John & Yoko")
+    print("=" * 60)
     ReportGenerator(synastry_chart_data).print_report()
 
-    print("\n" + "=" * 40)
-    print("DualChartDataModel Report (Dual Return)")
-    print("=" * 40)
+    print("\n" + "=" * 58)
+    print("DualChartDataModel Report (Dual Return) — John Lennon")
+    print("=" * 58)
     ReportGenerator(dual_return_chart_data).print_report()
