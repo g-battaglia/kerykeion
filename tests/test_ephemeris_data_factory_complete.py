@@ -5,7 +5,7 @@ This test suite aims to achieve 100% code coverage.
 
 import pytest
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from kerykeion import EphemerisDataFactory
 
 

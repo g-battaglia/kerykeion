@@ -4,7 +4,6 @@ This test suite aims to achieve 100% code coverage.
 """
 
 import pytest
-from unittest.mock import patch, MagicMock
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.relationship_score_factory import RelationshipScoreFactory
 

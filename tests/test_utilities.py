@@ -17,7 +17,6 @@ from kerykeion.utilities import (
 )
 import pytest
 import math
-import logging
 from datetime import datetime
 
 

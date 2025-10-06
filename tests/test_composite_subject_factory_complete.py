@@ -5,7 +5,6 @@ This test suite aims to achieve 100% code coverage.
 
 import pytest
 import copy
-from unittest.mock import patch, MagicMock
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.schemas import KerykeionException

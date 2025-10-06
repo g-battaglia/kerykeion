@@ -6,7 +6,6 @@ including chart data creation for all chart types, error handling, and data vali
 """
 
 import pytest
-from unittest.mock import Mock, patch
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.schemas import KerykeionException

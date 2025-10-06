@@ -3,7 +3,6 @@ Comprehensive tests for TransitsTimeRangeFactory module.
 This test suite aims to achieve 100% code coverage.
 """
 
-import pytest
 from datetime import datetime, timedelta
 from unittest.mock import patch, MagicMock
 from pathlib import Path
@@ -203,19 +202,10 @@ class TestTransitsTimeRangeFactory:
         if result.dates is not None:
             assert len(result.dates) == 1
 
-import pytest
-from datetime import datetime, timedelta
-from unittest.mock import patch, MagicMock
-from pathlib import Path
 from typing import List
 
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
-from kerykeion.ephemeris_data_factory import EphemerisDataFactory
 from kerykeion.schemas.kr_literals import AstrologicalPoint
-from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel, ActiveAspect
-from kerykeion.schemas.settings_models import KerykeionSettingsModel
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
+from kerykeion.schemas.kr_models import ActiveAspect
 
 
 class TestTransitsTimeRangeFactory:

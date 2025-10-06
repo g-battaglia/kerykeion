@@ -1,4 +1,3 @@
-import pytest
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory

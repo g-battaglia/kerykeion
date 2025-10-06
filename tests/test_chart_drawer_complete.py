@@ -1,6 +1,5 @@
 import pytest
-from unittest.mock import patch, Mock, MagicMock
-from pathlib import Path
+from unittest.mock import patch
 import tempfile
 import os
 
@@ -8,8 +7,6 @@ from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 
 
 class TestChartDrawer:

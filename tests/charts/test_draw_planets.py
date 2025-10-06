@@ -5,7 +5,7 @@
 """
 
 import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.schemas import KerykeionException, KerykeionPointModel
 from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel

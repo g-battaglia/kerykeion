@@ -51,7 +51,7 @@ def main() -> None:
 
     # Display element distribution
     elements = chart_data.element_distribution
-    print(f"\nElement Distribution:")
+    print("\nElement Distribution:")
     print(f"  Fire: {elements.fire_percentage:.1f}%")
     print(f"  Earth: {elements.earth_percentage:.1f}%")
     print(f"  Air: {elements.air_percentage:.1f}%")
