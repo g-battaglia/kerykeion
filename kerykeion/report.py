@@ -370,7 +370,7 @@ class Report:
 
         return "\n".join(sections)
 
-    def print_report(self, include_aspects: bool = True, max_aspects: Optional[int] = 20) -> None:
+    def print_report(self, include_aspects: bool = True, max_aspects: Optional[int] = None) -> None:
         """
         Print the complete comprehensive report.
 
@@ -433,4 +433,4 @@ if __name__ == "__main__":
     print("\n" + "="*60)
     print("EXAMPLE 3: Full Comprehensive Report")
     print("="*60)
-    report_chart.print_report(include_aspects=True, max_aspects=15)
+    report_chart.print_report(include_aspects=True)
