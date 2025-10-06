@@ -1,167 +1,382 @@
-from kerykeion import AstrologicalSubjectFactory
+from __future__ import annotations
+
+from datetime import datetime
+from typing import List, Optional, Sequence, Tuple, Union, Literal
+
 from simple_ascii_tables import AsciiTable
-from kerykeion.utilities import get_houses_list, get_available_astrological_points_list
+
+from kerykeion.utilities import get_available_astrological_points_list, get_houses_list
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
-    SingleChartDataModel,
+    ChartDataModel,
+    CompositeSubjectModel,
     DualChartDataModel,
+    PlanetReturnModel,
+    PointInHouseModel,
+    RelationshipScoreModel,
+    SingleChartDataModel,
 )
-from typing import Optional, Union
 
 
-class Report:
+ASPECT_SYMBOLS = {
+    "conjunction": "☌",
+    "opposition": "☍",
+    "trine": "△",
+    "square": "□",
+    "sextile": "⚹",
+    "quincunx": "⚻",
+    "semisquare": "∠",
+    "sesquisquare": "⚼",
+    "quintile": "Q",
+}
+
+MOVEMENT_SYMBOLS = {
+    "Applying": "→",
+    "Separating": "←",
+    "Exact": "✓",
+}
+
+
+SubjectLike = Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
+LiteralReportKind = Literal["subject", "single_chart", "dual_chart"]
+
+
+class ReportGenerator:
     """
-    Create comprehensive astrological reports for a Kerykeion instance.
+    Generate textual reports for astrological data models with a structure that mirrors the
+    chart-specific dispatch logic used in :class:`~kerykeion.charts.chart_drawer.ChartDrawer`.
 
-    This class generates multiple detailed reports including:
-    - Subject data (birth information and settings)
-    - Celestial points (planets, nodes, asteroids with positions, speed, and declination)
-    - Houses (complete house system information)
-    - Lunar phase (moon phase details)
-    - Elements and qualities distribution (for chart data models)
-    - Aspects (for chart data models)
-
-    The Report class accepts either:
-    - AstrologicalSubjectModel: Basic subject with celestial positions
-    - SingleChartDataModel: Full chart data with elements, qualities, and aspects
-    - DualChartDataModel: Comparison charts with relationship analysis
+    The generator accepts any of the chart data models handled by ``ChartDrawer`` as well as
+    raw ``AstrologicalSubjectModel`` instances. The ``print_report`` method automatically
+    selects the appropriate layout and sections depending on the underlying chart type.
     """
 
-    def __init__(self, instance: Union[AstrologicalSubjectModel, SingleChartDataModel, DualChartDataModel]):
+    def __init__(
+        self,
+        model: Union[ChartDataModel, AstrologicalSubjectModel],
+        *,
+        include_aspects: bool = True,
+        max_aspects: Optional[int] = None,
+    ) -> None:
+        self.model = model
+        self._include_aspects_default = include_aspects
+        self._max_aspects_default = max_aspects
+
+        self.chart_type: Optional[str] = None
+        self._model_kind: LiteralReportKind
+        self._chart_data: Optional[ChartDataModel] = None
+        self._primary_subject: SubjectLike
+        self._secondary_subject: Optional[SubjectLike] = None
+        self._active_points: List[str] = []
+        self._active_aspects: List[dict] = []
+
+        self._resolve_model()
+
+    # ------------------------------------------------------------------ #
+    # Public API
+    # ------------------------------------------------------------------ #
+
+    def generate_report(
+        self,
+        *,
+        include_aspects: Optional[bool] = None,
+        max_aspects: Optional[int] = None,
+    ) -> str:
         """
-        Initialize a new Report instance.
+        Build the report content without printing it.
 
         Args:
-            instance: The astrological model to create reports for. Can be:
-                - AstrologicalSubjectModel for basic subject data
-                - SingleChartDataModel for natal/composite charts with distributions
-                - DualChartDataModel for synastry/transit charts
+            include_aspects: Override the default setting for including the aspects section.
+            max_aspects: Override the default limit for the number of aspects displayed.
         """
-        self.instance = instance
+        include_aspects = self._include_aspects_default if include_aspects is None else include_aspects
+        max_aspects = self._max_aspects_default if max_aspects is None else max_aspects
 
-        # Extract the subject for data access
-        if isinstance(instance, (SingleChartDataModel, DualChartDataModel)):
-            # For chart models, get the subject from the chart
-            if hasattr(instance, 'subject'):
-                self._subject = instance.subject
-            elif hasattr(instance, 'first_subject'):
-                self._subject = instance.first_subject
-            else:
-                self._subject = instance
+        if self._model_kind == "subject":
+            sections = self._build_subject_report()
+        elif self._model_kind == "single_chart":
+            sections = self._build_single_chart_report(include_aspects=include_aspects, max_aspects=max_aspects)
         else:
-            # For subject models, use directly
-            self._subject = instance
+            sections = self._build_dual_chart_report(include_aspects=include_aspects, max_aspects=max_aspects)
 
-    def get_report_title(self) -> str:
-        """Generate the report title based on the subject's name."""
-        title = f"Kerykeion Astrological Report for {self._subject.name}"
-        separator = "=" * len(title)
-        return f"\n{separator}\n{title}\n{separator}\n"
+        title = self._build_title().strip("\n")
+        full_sections = [title, *[section for section in sections if section]]
+        return "\n\n".join(full_sections)
 
-    def get_subject_data_report(self) -> str:
+    def print_report(
+        self,
+        *,
+        include_aspects: Optional[bool] = None,
+        max_aspects: Optional[int] = None,
+    ) -> None:
         """
-        Creates a comprehensive report of the subject's birth data and settings.
-
-        Returns:
-            Formatted ASCII table with birth information and astrological settings.
+        Print the generated report to stdout.
         """
-        # Birth data section
-        birth_data = [
-            ["Birth Information", "Value"],
-            ["Name", self._subject.name],
+        print(self.generate_report(include_aspects=include_aspects, max_aspects=max_aspects))
+
+    # ------------------------------------------------------------------ #
+    # Internal initialisation helpers
+    # ------------------------------------------------------------------ #
+
+    def _resolve_model(self) -> None:
+        if isinstance(self.model, AstrologicalSubjectModel):
+            self._model_kind = "subject"
+            self.chart_type = "Subject"
+            self._primary_subject = self.model
+            self._secondary_subject = None
+            self._active_points = list(self.model.active_points)
+            self._active_aspects = []
+        elif isinstance(self.model, SingleChartDataModel):
+            self._model_kind = "single_chart"
+            self.chart_type = self.model.chart_type
+            self._chart_data = self.model
+            self._primary_subject = self.model.subject
+            self._active_points = list(self.model.active_points)
+            self._active_aspects = [dict(aspect) for aspect in self.model.active_aspects]
+        elif isinstance(self.model, DualChartDataModel):
+            self._model_kind = "dual_chart"
+            self.chart_type = self.model.chart_type
+            self._chart_data = self.model
+            self._primary_subject = self.model.first_subject
+            self._secondary_subject = self.model.second_subject
+            self._active_points = list(self.model.active_points)
+            self._active_aspects = [dict(aspect) for aspect in self.model.active_aspects]
+        else:
+            supported = (
+                "AstrologicalSubjectModel, SingleChartDataModel, DualChartDataModel"
+            )
+            raise TypeError(f"Unsupported model type {type(self.model)!r}. Supported models: {supported}.")
+
+    # ------------------------------------------------------------------ #
+    # Report builders
+    # ------------------------------------------------------------------ #
+
+    def _build_subject_report(self) -> List[str]:
+        sections = [
+            self._subject_data_report(self._primary_subject, "Astrological Subject"),
+            self._celestial_points_report(self._primary_subject, "Celestial Points"),
+            self._houses_report(self._primary_subject, "Houses"),
+            self._lunar_phase_report(self._primary_subject),
+        ]
+        return sections
+
+    def _build_single_chart_report(self, *, include_aspects: bool, max_aspects: Optional[int]) -> List[str]:
+        assert self._chart_data is not None
+        sections: List[str] = [
+            self._subject_data_report(self._primary_subject, self._primary_subject_label()),
         ]
 
-        # Add date/time if available (not all subjects have these)
-        if hasattr(self._subject, 'day') and hasattr(self._subject, 'month') and hasattr(self._subject, 'year'):
-            birth_data.append(["Date", f"{self._subject.day:02d}/{self._subject.month:02d}/{self._subject.year}"])  # type: ignore
-        if hasattr(self._subject, 'hour') and hasattr(self._subject, 'minute'):
-            birth_data.append(["Time", f"{self._subject.hour:02d}:{self._subject.minute:02d}"])  # type: ignore
-        if hasattr(self._subject, 'city'):
-            birth_data.append(["City", self._subject.city])  # type: ignore
-        if hasattr(self._subject, 'nation'):
-            birth_data.append(["Nation", self._subject.nation])  # type: ignore
-        if hasattr(self._subject, 'lat'):
-            birth_data.append(["Latitude", f"{self._subject.lat:.4f}°"])  # type: ignore
-        if hasattr(self._subject, 'lng'):
-            birth_data.append(["Longitude", f"{self._subject.lng:.4f}°"])  # type: ignore
-        if hasattr(self._subject, 'tz_str'):
-            birth_data.append(["Timezone", self._subject.tz_str])  # type: ignore
-        if hasattr(self._subject, 'day_of_week'):
-            birth_data.append(["Day of Week", self._subject.day_of_week])  # type: ignore
+        if isinstance(self._primary_subject, CompositeSubjectModel):
+            sections.append(
+                self._subject_data_report(
+                    self._primary_subject.first_subject,
+                    "Composite – First Subject",
+                )
+            )
+            sections.append(
+                self._subject_data_report(
+                    self._primary_subject.second_subject,
+                    "Composite – Second Subject",
+                )
+            )
 
-        # Settings section
-        settings_data = [
-            ["Astrological Settings", "Value"],
+        sections.extend([
+            self._celestial_points_report(self._primary_subject, f"{self._primary_subject_label()} Celestial Points"),
+            self._houses_report(self._primary_subject, f"{self._primary_subject_label()} Houses"),
+            self._lunar_phase_report(self._primary_subject),
+            self._elements_report(),
+            self._qualities_report(),
+            self._active_configuration_report(),
+        ])
+
+        if include_aspects:
+            sections.append(self._aspects_report(max_aspects=max_aspects))
+
+        return sections
+
+    def _build_dual_chart_report(self, *, include_aspects: bool, max_aspects: Optional[int]) -> List[str]:
+        assert self._chart_data is not None
+        primary_label, secondary_label = self._subject_role_labels()
+
+        sections: List[str] = [
+            self._subject_data_report(self._primary_subject, primary_label),
         ]
 
-        if hasattr(self._subject, 'zodiac_type'):
-            settings_data.append(["Zodiac Type", self._subject.zodiac_type])  # type: ignore
-        if hasattr(self._subject, 'houses_system_name'):
-            settings_data.append(["Houses System", self._subject.houses_system_name])  # type: ignore
-        if hasattr(self._subject, 'perspective_type'):
-            settings_data.append(["Perspective Type", self._subject.perspective_type])  # type: ignore
-        if hasattr(self._subject, 'julian_day'):
-            settings_data.append(["Julian Day", f"{self._subject.julian_day:.6f}"])  # type: ignore
-        if hasattr(self._subject, 'sidereal_mode') and self._subject.sidereal_mode:
-            settings_data.append(["Sidereal Mode", self._subject.sidereal_mode])  # type: ignore
+        if self._secondary_subject is not None:
+            sections.append(self._subject_data_report(self._secondary_subject, secondary_label))
 
-        birth_table = AsciiTable(birth_data, title="Birth Data")
-        settings_table = AsciiTable(settings_data, title="Settings")
+        sections.extend([
+            self._celestial_points_report(self._primary_subject, f"{primary_label} Celestial Points"),
+        ])
 
-        return f"{birth_table.table}\n\n{settings_table.table}"
+        if self._secondary_subject is not None:
+            sections.append(
+                self._celestial_points_report(self._secondary_subject, f"{secondary_label} Celestial Points")
+            )
 
-    def get_celestial_points_report(self) -> str:
-        """
-        Creates a detailed report of all celestial points (planets, nodes, asteroids, etc.).
+        sections.append(self._houses_report(self._primary_subject, f"{primary_label} Houses"))
 
-        Includes:
-        - Sign and position
-        - Speed (daily motion)
-        - Declination
-        - Retrograde status
-        - House placement
+        if self._secondary_subject is not None:
+            sections.append(self._houses_report(self._secondary_subject, f"{secondary_label} Houses"))
 
-        Returns:
-            Formatted ASCII table with complete celestial point data.
-        """
-        points = get_available_astrological_points_list(self._subject)  # type: ignore
+        sections.extend([
+            self._lunar_phase_report(self._primary_subject),
+            self._elements_report(),
+            self._qualities_report(),
+            self._active_configuration_report(),
+            self._house_comparison_report(),
+            self._relationship_score_report(),
+        ])
+
+        if include_aspects:
+            sections.append(self._aspects_report(max_aspects=max_aspects))
+
+        return sections
+
+    # ------------------------------------------------------------------ #
+    # Section helpers
+    # ------------------------------------------------------------------ #
+
+    def _build_title(self) -> str:
+        if self._model_kind == "subject":
+            base_title = f"{self._primary_subject.name} — Subject Report"
+        elif self.chart_type == "Natal":
+            base_title = f"{self._primary_subject.name} — Natal Chart Report"
+        elif self.chart_type == "Composite":
+            if isinstance(self._primary_subject, CompositeSubjectModel):
+                first = self._primary_subject.first_subject.name
+                second = self._primary_subject.second_subject.name
+                base_title = f"{first} & {second} — Composite Report"
+            else:
+                base_title = f"{self._primary_subject.name} — Composite Report"
+        elif self.chart_type == "SingleReturnChart":
+            year = self._extract_year(self._primary_subject.iso_formatted_local_datetime)
+            if isinstance(self._primary_subject, PlanetReturnModel) and self._primary_subject.return_type == "Solar":
+                base_title = f"{self._primary_subject.name} — Solar Return {year or ''}".strip()
+            else:
+                base_title = f"{self._primary_subject.name} — Lunar Return {year or ''}".strip()
+        elif self.chart_type == "Transit":
+            date_str = self._format_date(
+                self._secondary_subject.iso_formatted_local_datetime if self._secondary_subject else None
+            )
+            base_title = f"{self._primary_subject.name} — Transit {date_str}".strip()
+        elif self.chart_type == "Synastry":
+            second_name = self._secondary_subject.name if self._secondary_subject is not None else "Unknown"
+            base_title = f"{self._primary_subject.name} & {second_name} — Synastry Report"
+        elif self.chart_type == "DualReturnChart":
+            year = self._extract_year(
+                self._secondary_subject.iso_formatted_local_datetime if self._secondary_subject else None
+            )
+            if isinstance(self._secondary_subject, PlanetReturnModel) and self._secondary_subject.return_type == "Solar":
+                base_title = f"{self._primary_subject.name} — Solar Return Comparison {year or ''}".strip()
+            else:
+                base_title = f"{self._primary_subject.name} — Lunar Return Comparison {year or ''}".strip()
+        else:
+            base_title = f"{self._primary_subject.name} — Chart Report"
+
+        separator = "=" * len(base_title)
+        return f"\n{separator}\n{base_title}\n{separator}\n"
+
+    def _primary_subject_label(self) -> str:
+        if self.chart_type == "Composite":
+            return "Composite Chart"
+        if self.chart_type == "SingleReturnChart":
+            if isinstance(self._primary_subject, PlanetReturnModel) and self._primary_subject.return_type == "Solar":
+                return "Solar Return Chart"
+            return "Lunar Return Chart"
+        return f"{self.chart_type or 'Chart'}"
+
+    def _subject_role_labels(self) -> Tuple[str, str]:
+        if self.chart_type == "Transit":
+            return "Natal Subject", "Transit Subject"
+        if self.chart_type == "Synastry":
+            return "First Subject", "Second Subject"
+        if self.chart_type == "DualReturnChart":
+            return "Natal Subject", "Return Subject"
+        return "Primary Subject", "Secondary Subject"
+
+    def _subject_data_report(self, subject: SubjectLike, label: str) -> str:
+        birth_data = [["Field", "Value"], ["Name", subject.name]]
+
+        if isinstance(subject, CompositeSubjectModel):
+            composite_members = f"{subject.first_subject.name} & {subject.second_subject.name}"
+            birth_data.append(["Composite Members", composite_members])
+            birth_data.append(["Composite Type", subject.composite_chart_type])
+
+        if isinstance(subject, PlanetReturnModel):
+            birth_data.append(["Return Type", subject.return_type])
+
+        if getattr(subject, "day", None) is not None and getattr(subject, "month", None) is not None and getattr(subject, "year", None) is not None:
+            birth_data.append(
+                ["Date", f"{subject.day:02d}/{subject.month:02d}/{subject.year}"]  # type: ignore[attr-defined]
+            )
+
+        if getattr(subject, "hour", None) is not None and getattr(subject, "minute", None) is not None:
+            birth_data.append(["Time", f"{subject.hour:02d}:{subject.minute:02d}"])  # type: ignore[attr-defined]
+
+        if getattr(subject, "city", None):
+            birth_data.append(["City", str(subject.city)])
+        if getattr(subject, "nation", None):
+            birth_data.append(["Nation", str(subject.nation)])
+        if getattr(subject, "lat", None) is not None:
+            birth_data.append(["Latitude", f"{subject.lat:.4f}°"])
+        if getattr(subject, "lng", None) is not None:
+            birth_data.append(["Longitude", f"{subject.lng:.4f}°"])
+        if getattr(subject, "tz_str", None):
+            birth_data.append(["Timezone", str(subject.tz_str)])
+
+        if getattr(subject, "day_of_week", None):
+            birth_data.append(["Day of Week", str(subject.day_of_week)])
+
+        iso_local = getattr(subject, "iso_formatted_local_datetime", None)
+        if iso_local:
+            birth_data.append(["ISO Local Datetime", iso_local])
+
+        settings_data = [["Setting", "Value"]]
+        settings_data.append(["Zodiac Type", str(subject.zodiac_type)])
+        if getattr(subject, "sidereal_mode", None):
+            settings_data.append(["Sidereal Mode", str(subject.sidereal_mode)])
+        settings_data.append(["Houses System", str(subject.houses_system_name)])
+        settings_data.append(["Perspective Type", str(subject.perspective_type)])
+
+        julian_day = getattr(subject, "julian_day", None)
+        if julian_day is not None:
+            settings_data.append(["Julian Day", f"{julian_day:.6f}"])
+
+        active_points = getattr(subject, "active_points", None)
+        if active_points:
+            settings_data.append(["Active Points Count", str(len(active_points))])
+
+        birth_table = AsciiTable(birth_data, title=f"{label} — Birth Data").table
+        settings_table = AsciiTable(settings_data, title=f"{label} — Settings").table
+        return f"{birth_table}\n\n{settings_table}"
+
+    def _celestial_points_report(self, subject: SubjectLike, title: str) -> str:
+        try:
+            points = get_available_astrological_points_list(subject)  # type: ignore[arg-type]
+        except Exception:
+            return f"{title}: data unavailable."
 
         if not points:
             return "No celestial points data available."
 
-        # Main planets first, then nodes, then others
         main_planets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
         nodes = ["Mean_North_Lunar_Node", "True_North_Lunar_Node"]
         angles = ["Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
 
-        # Sort points: angles, main planets, nodes, then others
         sorted_points = []
-
-        # Add angles first
-        for name in angles:
+        for name in angles + main_planets + nodes:
             sorted_points.extend([p for p in points if p.name == name])
 
-        # Add main planets
-        for name in main_planets:
-            sorted_points.extend([p for p in points if p.name == name])
-
-        # Add nodes
-        for name in nodes:
-            sorted_points.extend([p for p in points if p.name == name])
-
-        # Add remaining points
         used_names = set(angles + main_planets + nodes)
         sorted_points.extend([p for p in points if p.name not in used_names])
 
-        # Build table
-        celestial_data = [["Point", "Sign", "Position", "Speed", "Decl.", "Ret.", "House"]]
-
+        celestial_data: List[List[str]] = [["Point", "Sign", "Position", "Speed", "Decl.", "Ret.", "House"]]
         for point in sorted_points:
             speed_str = f"{point.speed:+.4f}°/d" if point.speed is not None else "N/A"
             decl_str = f"{point.declination:+.2f}°" if point.declination is not None else "N/A"
             ret_str = "R" if point.retrograde else "-"
             house_str = point.house.replace("_", " ") if point.house else "-"
-
             celestial_data.append([
                 point.name.replace("_", " "),
                 f"{point.sign} {point.emoji}",
@@ -172,22 +387,18 @@ class Report:
                 house_str,
             ])
 
-        return AsciiTable(celestial_data, title="Celestial Points").table
+        return AsciiTable(celestial_data, title=title).table
 
-    def get_houses_report(self) -> str:
-        """
-        Creates a detailed report of the houses system.
-
-        Returns:
-            Formatted ASCII table with house cusps and their positions.
-        """
-        houses = get_houses_list(self._subject)  # type: ignore
+    def _houses_report(self, subject: SubjectLike, title: str) -> str:
+        try:
+            houses = get_houses_list(subject)  # type: ignore[arg-type]
+        except Exception:
+            return "No houses data available."
 
         if not houses:
             return "No houses data available."
 
-        houses_data = [["House", "Sign", "Position", "Absolute Position"]]
-
+        houses_data: List[List[str]] = [["House", "Sign", "Position", "Absolute Position"]]
         for house in houses:
             houses_data.append([
                 house.name.replace("_", " "),
@@ -196,48 +407,31 @@ class Report:
                 f"{house.abs_pos:.2f}°",
             ])
 
-        return AsciiTable(houses_data, title=f"Houses ({self._subject.houses_system_name})").table  # type: ignore
+        system_name = getattr(subject, "houses_system_name", "")
+        table_title = f"{title} ({system_name})" if system_name else title
+        return AsciiTable(houses_data, title=table_title).table
 
-    def get_lunar_phase_report(self) -> str:
-        """
-        Creates a report of the lunar phase information.
-
-        Returns:
-            Formatted ASCII table with lunar phase details.
-        """
-        if not hasattr(self._subject, 'lunar_phase') or not self._subject.lunar_phase:
-            return "No lunar phase data available."
-
-        lunar = self._subject.lunar_phase  # type: ignore
+    def _lunar_phase_report(self, subject: SubjectLike) -> str:
+        lunar = getattr(subject, "lunar_phase", None)
+        if not lunar:
+            return ""
 
         lunar_data = [
             ["Lunar Phase Information", "Value"],
             ["Phase Name", f"{lunar.moon_phase_name} {lunar.moon_emoji}"],
             ["Sun-Moon Angle", f"{lunar.degrees_between_s_m:.2f}°"],
-            ["Moon Phase", f"{lunar.moon_phase}"],
+            ["Moon Phase", str(lunar.moon_phase)],
         ]
-
         return AsciiTable(lunar_data, title="Lunar Phase").table
 
-    def get_elements_report(self) -> str:
-        """
-        Creates a report of element distribution (Fire, Earth, Air, Water).
+    def _elements_report(self) -> str:
+        if not self._chart_data or not getattr(self._chart_data, "element_distribution", None):
+            return ""
 
-        Note: Elements distribution is only available when using SingleChartDataModel
-        or DualChartDataModel (from ChartDataFactory). Basic AstrologicalSubjectModel
-        instances do not have element distributions calculated.
-
-        Returns:
-            Formatted ASCII table with element distribution percentages.
-        """
-        if not hasattr(self.instance, 'element_distribution') or not self.instance.element_distribution:  # type: ignore
-            return "No element distribution data available."
-
-        elem = self.instance.element_distribution  # type: ignore
+        elem = self._chart_data.element_distribution
         total = elem.fire + elem.earth + elem.air + elem.water
-
         if total == 0:
-            return "No element distribution data available."
+            return ""
 
         element_data = [
             ["Element", "Count", "Percentage"],
@@ -247,28 +441,16 @@ class Report:
             ["Water 💧", elem.water, f"{(elem.water / total * 100):.1f}%"],
             ["Total", total, "100%"],
         ]
-
         return AsciiTable(element_data, title="Element Distribution").table
 
-    def get_qualities_report(self) -> str:
-        """
-        Creates a report of quality distribution (Cardinal, Fixed, Mutable).
+    def _qualities_report(self) -> str:
+        if not self._chart_data or not getattr(self._chart_data, "quality_distribution", None):
+            return ""
 
-        Note: Quality distribution is only available when using SingleChartDataModel
-        or DualChartDataModel (from ChartDataFactory). Basic AstrologicalSubjectModel
-        instances do not have quality distributions calculated.
-
-        Returns:
-            Formatted ASCII table with quality distribution percentages.
-        """
-        if not hasattr(self.instance, 'quality_distribution') or not self.instance.quality_distribution:  # type: ignore
-            return "No quality distribution data available."
-
-        qual = self.instance.quality_distribution  # type: ignore
+        qual = self._chart_data.quality_distribution
         total = qual.cardinal + qual.fixed + qual.mutable
-
         if total == 0:
-            return "No quality distribution data available."
+            return ""
 
         quality_data = [
             ["Quality", "Count", "Percentage"],
@@ -277,166 +459,283 @@ class Report:
             ["Mutable", qual.mutable, f"{(qual.mutable / total * 100):.1f}%"],
             ["Total", total, "100%"],
         ]
-
         return AsciiTable(quality_data, title="Quality Distribution").table
 
-    def get_aspects_report(self, max_aspects: Optional[int] = None) -> str:
-        """
-        Creates a report of astrological aspects.
+    def _active_configuration_report(self) -> str:
+        if not self._active_points and not self._active_aspects:
+            return ""
 
-        Note: Aspects are only available when using SingleChartDataModel or DualChartDataModel
-        (from ChartDataFactory). The report will show relevant aspects (filtered by orb).
+        sections: List[str] = []
 
-        Args:
-            max_aspects: Maximum number of aspects to display. If None, show all.
+        if self._active_points:
+            points_table = [["#", "Active Point"]]
+            for idx, point in enumerate(self._active_points, start=1):
+                points_table.append([str(idx), str(point)])
+            sections.append(AsciiTable(points_table, title="Active Celestial Points").table)
 
-        Returns:
-            Formatted ASCII table with aspects information.
-        """
-        # Check for aspects in chart data models
-        if not hasattr(self.instance, 'aspects'):  # type: ignore
+        if self._active_aspects:
+            aspects_table = [["Aspect", "Orb (°)"]]
+            for aspect in self._active_aspects:
+                name = str(aspect.get("name", ""))
+                orb = aspect.get("orb")
+                orbit_str = f"{orb}" if orb is not None else "-"
+                aspects_table.append([name, orbit_str])
+            sections.append(AsciiTable(aspects_table, title="Active Aspects Configuration").table)
+
+        return "\n\n".join(sections)
+
+    def _aspects_report(self, *, max_aspects: Optional[int]) -> str:
+        if not self._chart_data or not getattr(self._chart_data, "aspects", None):
+            return ""
+
+        aspects_model = self._chart_data.aspects
+        relevant_aspects = list(getattr(aspects_model, "relevant_aspects", []))
+
+        if not relevant_aspects:
             return "No aspects data available."
 
-        aspects_model = self.instance.aspects  # type: ignore
+        total_aspects = len(relevant_aspects)
+        if max_aspects is not None:
+            relevant_aspects = relevant_aspects[:max_aspects]
 
-        # Get relevant aspects (filtered by orb)
-        if not hasattr(aspects_model, 'relevant_aspects') or not aspects_model.relevant_aspects:  # type: ignore
-            return "No aspects data available."
+        is_dual = isinstance(self._chart_data, DualChartDataModel)
+        if is_dual:
+            table_header: List[str] = ["Point 1", "Owner 1", "Aspect", "Point 2", "Owner 2", "Orb", "Movement"]
+        else:
+            table_header = ["Point 1", "Aspect", "Point 2", "Orb", "Movement"]
 
-        aspects = aspects_model.relevant_aspects  # type: ignore
-        total_aspects = len(aspects)
+        aspects_table: List[List[str]] = [table_header]
+        for aspect in relevant_aspects:
+            aspect_name = str(aspect.aspect)
+            symbol = ASPECT_SYMBOLS.get(aspect_name.lower(), aspect_name)
+            movement_symbol = MOVEMENT_SYMBOLS.get(aspect.aspect_movement, "")
+            movement = f"{aspect.aspect_movement} {movement_symbol}".strip()
 
-        if max_aspects:
-            aspects = aspects[:max_aspects]
+            if is_dual:
+                aspects_table.append([
+                    aspect.p1_name.replace("_", " "),
+                    aspect.p1_owner,
+                    f"{aspect.aspect} {symbol}",
+                    aspect.p2_name.replace("_", " "),
+                    aspect.p2_owner,
+                    f"{aspect.orbit:.2f}°",
+                    movement,
+                ])
+            else:
+                aspects_table.append([
+                    aspect.p1_name.replace("_", " "),
+                    f"{aspect.aspect} {symbol}",
+                    aspect.p2_name.replace("_", " "),
+                    f"{aspect.orbit:.2f}°",
+                    movement,
+                ])
 
-        aspects_data = [["Point 1", "Aspect", "Point 2", "Orb", "Movement"]]
+        suffix = f" (showing {len(relevant_aspects)} of {total_aspects})" if max_aspects is not None else ""
+        title = f"Aspects{suffix}"
+        return AsciiTable(aspects_table, title=title).table
 
-        for aspect in aspects:
-            # Format aspect type symbol
-            aspect_symbol = {
-                "conjunction": "☌",
-                "opposition": "☍",
-                "trine": "△",
-                "square": "□",
-                "sextile": "⚹",
-                "quincunx": "⚻",
-                "semisquare": "∠",
-                "sesquisquare": "⚼",
-                "quintile": "Q",
-            }.get(aspect.aspect.lower(), aspect.aspect)
+    def _house_comparison_report(self) -> str:
+        if not isinstance(self._chart_data, DualChartDataModel) or not self._chart_data.house_comparison:
+            return ""
 
-            # Format movement with symbols
-            movement_symbol = {
-                "Applying": "→",
-                "Separating": "←",
-                "Exact": "✓"
-            }.get(aspect.aspect_movement, "")
+        comparison = self._chart_data.house_comparison
+        sections = []
 
-            aspects_data.append([
-                aspect.p1_name.replace("_", " "),
-                f"{aspect.aspect} {aspect_symbol}",
-                aspect.p2_name.replace("_", " "),
-                f"{aspect.orbit:.2f}°",
-                f"{aspect.aspect_movement} {movement_symbol}",
+        sections.append(
+            self._render_point_in_house_table(
+                comparison.first_points_in_second_houses,
+                f"{comparison.first_subject_name} points in {comparison.second_subject_name} houses",
+            )
+        )
+        sections.append(
+            self._render_point_in_house_table(
+                comparison.second_points_in_first_houses,
+                f"{comparison.second_subject_name} points in {comparison.first_subject_name} houses",
+            )
+        )
+
+        return "\n\n".join(section for section in sections if section)
+
+    def _render_point_in_house_table(self, points: Sequence[PointInHouseModel], title: str) -> str:
+        if not points:
+            return ""
+
+        table_data: List[List[str]] = [["Point", "Owner House", "Projected House", "Sign", "Degree"]]
+        for point in points:
+            owner_house = "-"
+            if point.point_owner_house_number is not None or point.point_owner_house_name:
+                owner_house = f"{point.point_owner_house_number or '-'} ({point.point_owner_house_name or '-'})"
+
+            projected_house = f"{point.projected_house_number} ({point.projected_house_name})"
+            table_data.append([
+                f"{point.point_owner_name} – {point.point_name.replace('_', ' ')}",
+                owner_house,
+                projected_house,
+                point.point_sign,
+                f"{point.point_degree:.2f}°",
             ])
 
-        title = "Aspects" + (f" (showing {len(aspects)} of {total_aspects})" if max_aspects else "")
-        return AsciiTable(aspects_data, title=title).table
+        return AsciiTable(table_data, title=title).table
 
-    def get_full_report(self, include_aspects: bool = True, max_aspects: Optional[int] = 20) -> str:
-        """
-        Returns the complete comprehensive report with all sections.
+    def _relationship_score_report(self) -> str:
+        if not isinstance(self._chart_data, DualChartDataModel):
+            return ""
 
-        Args:
-            include_aspects: Whether to include the aspects report.
-            max_aspects: Maximum number of aspects to show. If None, show all.
+        score: Optional[RelationshipScoreModel] = getattr(self._chart_data, "relationship_score", None)
+        if not score:
+            return ""
 
-        Returns:
-            Complete formatted report as a string.
-        """
-        sections = [
-            self.get_report_title(),
-            self.get_subject_data_report(),
-            "\n",
-            self.get_celestial_points_report(),
-            "\n",
-            self.get_houses_report(),
-            "\n",
-            self.get_lunar_phase_report(),
-            "\n",
-            self.get_elements_report(),
-            "\n",
-            self.get_qualities_report(),
+        summary_table = [
+            ["Metric", "Value"],
+            ["Score", str(score.score_value)],
+            ["Description", str(score.score_description)],
+            ["Destiny Signature", "Yes" if score.is_destiny_sign else "No"],
         ]
 
-        if include_aspects:
-            aspects = self.get_aspects_report(max_aspects=max_aspects)
-            if aspects != "No aspects data available.":
-                sections.extend(["\n", aspects])
+        sections = [AsciiTable(summary_table, title="Relationship Score Summary").table]
 
-        return "\n".join(sections)
+        if score.aspects:
+            aspects_table: List[List[str]] = [["Point 1", "Aspect", "Point 2", "Orb"]]
+            for aspect in score.aspects:
+                aspects_table.append([
+                    aspect.p1_name.replace("_", " "),
+                    aspect.aspect,
+                    aspect.p2_name.replace("_", " "),
+                    f"{aspect.orbit:.2f}°",
+                ])
+            sections.append(AsciiTable(aspects_table, title="Score Supporting Aspects").table)
 
-    def print_report(self, include_aspects: bool = True, max_aspects: Optional[int] = None) -> None:
-        """
-        Print the complete comprehensive report.
+        return "\n\n".join(sections)
 
-        Args:
-            include_aspects: Whether to include the aspects report.
-            max_aspects: Maximum number of aspects to show. If None, show all.
-        """
-        print(self.get_full_report(include_aspects=include_aspects, max_aspects=max_aspects))
+    # ------------------------------------------------------------------ #
+    # Utility helpers
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def _extract_year(iso_datetime: Optional[str]) -> Optional[str]:
+        if not iso_datetime:
+            return None
+        try:
+            return datetime.fromisoformat(iso_datetime).strftime("%Y")
+        except ValueError:
+            return None
+
+    @staticmethod
+    def _format_date(iso_datetime: Optional[str]) -> str:
+        if not iso_datetime:
+            return ""
+        try:
+            return datetime.fromisoformat(iso_datetime).strftime("%d/%m/%Y")
+        except ValueError:
+            return iso_datetime
 
 
 if __name__ == "__main__":
-    from kerykeion.utilities import setup_logging
-    from kerykeion import ChartDataFactory
-    setup_logging(level="info")
+    from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+    from kerykeion.chart_data_factory import ChartDataFactory
+    from kerykeion.composite_subject_factory import CompositeSubjectFactory
+    from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
-    # Example 1: Basic natal chart report with subject only
-    print("\n" + "="*60)
-    print("EXAMPLE 1: Basic Subject Report (no elements/qualities)")
-    print("="*60)
+    # Shared offline location configuration (Rome, Italy)
+    offline_location_kwargs = {
+        "city": "Rome",
+        "nation": "IT",
+        "lat": 41.9028,
+        "lng": 12.4964,
+        "tz_str": "Europe/Rome",
+        "online": False,
+    }
 
-    john = AstrologicalSubjectFactory.from_birth_data(
-        "John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB"
-    )
-    report_subject = Report(john)
-
-    # You can print individual sections
-    print("\n--- Subject Data ---")
-    print(report_subject.get_subject_data_report())
-
-    print("\n--- Celestial Points (with Speed & Declination!) ---")
-    print(report_subject.get_celestial_points_report())
-
-    print("\n--- Elements (not available for subject only) ---")
-    print(report_subject.get_elements_report())
-
-    # Example 2: Full chart report with elements, qualities, and aspects
-    print("\n" + "="*60)
-    print("EXAMPLE 2: Complete Chart Report with Elements & Qualities")
-    print("="*60)
-
-    # Create chart data - this calculates elements, qualities, and aspects
-    chart = ChartDataFactory.create_chart_data(
-        "Natal",
-        first_subject=john,
+    # Base natal subject (AstrologicalSubjectModel)
+    natal_subject = AstrologicalSubjectFactory.from_birth_data(
+        name="Sample Natal Subject",
+        year=1990,
+        month=7,
+        day=21,
+        hour=14,
+        minute=45,
+        **offline_location_kwargs,
     )
 
-    # Create report with the chart (not just the subject)
-    report_chart = Report(chart)
+    # Partner subject for synastry/composite examples
+    partner_subject = AstrologicalSubjectFactory.from_birth_data(
+        name="Sample Partner Subject",
+        year=1992,
+        month=11,
+        day=5,
+        hour=9,
+        minute=30,
+        **offline_location_kwargs,
+    )
 
-    print("\n--- Elements Distribution ---")
-    print(report_chart.get_elements_report())
+    # Transit subject (current moment at the same location)
+    transit_subject = AstrologicalSubjectFactory.from_current_time(
+        name="Transit Snapshot",
+        **offline_location_kwargs,
+    )
 
-    print("\n--- Qualities Distribution ---")
-    print(report_chart.get_qualities_report())
+    # Planetary return subject (Solar Return)
+    return_factory = PlanetaryReturnFactory(
+        natal_subject,
+        city=natal_subject.city,
+        nation=natal_subject.nation,
+        lat=natal_subject.lat,
+        lng=natal_subject.lng,
+        tz_str=natal_subject.tz_str,
+        online=False,
+    )
+    solar_return_subject = return_factory.next_return_from_iso_formatted_time(
+        natal_subject.iso_formatted_local_datetime,
+        "Solar",
+    )
 
-    print("\n--- Aspects ---")
-    print(report_chart.get_aspects_report(max_aspects=10))
+    # Composite chart subject
+    composite_subject = CompositeSubjectFactory(
+        natal_subject,
+        partner_subject,
+        chart_name="Sample Composite",
+    ).get_midpoint_composite_subject_model()
 
-    # Example 3: Print complete report
-    print("\n" + "="*60)
-    print("EXAMPLE 3: Full Comprehensive Report")
-    print("="*60)
-    report_chart.print_report(include_aspects=True)
+    # Build chart data models mirroring ChartDrawer inputs
+    natal_chart_data = ChartDataFactory.create_natal_chart_data(natal_subject)
+    composite_chart_data = ChartDataFactory.create_composite_chart_data(composite_subject)
+    single_return_chart_data = ChartDataFactory.create_single_wheel_return_chart_data(solar_return_subject)
+    transit_chart_data = ChartDataFactory.create_transit_chart_data(natal_subject, transit_subject)
+    synastry_chart_data = ChartDataFactory.create_synastry_chart_data(natal_subject, partner_subject)
+    dual_return_chart_data = ChartDataFactory.create_return_chart_data(natal_subject, solar_return_subject)
+
+    # Demonstrate each report/model type
+    print("\n" + "=" * 36)
+    print("AstrologicalSubjectModel Report")
+    print("=" * 36)
+    ReportGenerator(natal_subject, include_aspects=False).print_report(include_aspects=False)
+
+    print("\n" + "=" * 39)
+    print("SingleChartDataModel Report (Natal)")
+    print("=" * 39)
+    ReportGenerator(natal_chart_data).print_report()
+
+    print("\n" + "=" * 43)
+    print("SingleChartDataModel Report (Composite)")
+    print("=" * 43)
+    ReportGenerator(composite_chart_data).print_report()
+
+    print("\n" + "=" * 45)
+    print("SingleChartDataModel Report (Single Return)")
+    print("=" * 45)
+    ReportGenerator(single_return_chart_data).print_report()
+
+    print("\n" + "=" * 37)
+    print("DualChartDataModel Report (Transit)")
+    print("=" * 37)
+    ReportGenerator(transit_chart_data).print_report()
+
+    print("\n" + "=" * 38)
+    print("DualChartDataModel Report (Synastry)")
+    print("=" * 38)
+    ReportGenerator(synastry_chart_data).print_report()
+
+    print("\n" + "=" * 40)
+    print("DualChartDataModel Report (Dual Return)")
+    print("=" * 40)
+    ReportGenerator(dual_return_chart_data).print_report()

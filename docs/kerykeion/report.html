@@ -31,43 +31,43 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#Report">Report</a>
+                    <a class="class" href="#ReportGenerator">ReportGenerator</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#Report.__init__">Report</a>
+                                <a class="function" href="#ReportGenerator.__init__">ReportGenerator</a>
                         </li>
                         <li>
-                                <a class="variable" href="#Report.report_title">report_title</a>
+                                <a class="variable" href="#ReportGenerator.report_title">report_title</a>
                         </li>
                         <li>
-                                <a class="variable" href="#Report.data_table">data_table</a>
+                                <a class="variable" href="#ReportGenerator.data_table">data_table</a>
                         </li>
                         <li>
-                                <a class="variable" href="#Report.planets_table">planets_table</a>
+                                <a class="variable" href="#ReportGenerator.planets_table">planets_table</a>
                         </li>
                         <li>
-                                <a class="variable" href="#Report.houses_table">houses_table</a>
+                                <a class="variable" href="#ReportGenerator.houses_table">houses_table</a>
                         </li>
                         <li>
-                                <a class="variable" href="#Report.instance">instance</a>
+                                <a class="variable" href="#ReportGenerator.instance">instance</a>
                         </li>
                         <li>
-                                <a class="function" href="#Report.get_report_title">get_report_title</a>
+                                <a class="function" href="#ReportGenerator.get_report_title">get_report_title</a>
                         </li>
                         <li>
-                                <a class="function" href="#Report.get_data_table">get_data_table</a>
+                                <a class="function" href="#ReportGenerator.get_data_table">get_data_table</a>
                         </li>
                         <li>
-                                <a class="function" href="#Report.get_planets_table">get_planets_table</a>
+                                <a class="function" href="#ReportGenerator.get_planets_table">get_planets_table</a>
                         </li>
                         <li>
-                                <a class="function" href="#Report.get_houses_table">get_houses_table</a>
+                                <a class="function" href="#ReportGenerator.get_houses_table">get_houses_table</a>
                         </li>
                         <li>
-                                <a class="function" href="#Report.get_full_report">get_full_report</a>
+                                <a class="function" href="#ReportGenerator.get_full_report">get_full_report</a>
                         </li>
                         <li>
-                                <a class="function" href="#Report.print_report">print_report</a>
+                                <a class="function" href="#ReportGenerator.print_report">print_report</a>
                         </li>
                 </ul>
 
@@ -99,7 +99,7 @@
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion.kr_types.kr_models</span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubjectModel</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Report</span><span class="p">:</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ReportGenerator</span><span class="p">:</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">    Create a report for a Kerykeion instance.</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -185,102 +185,102 @@
 </span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>    <span class="n">setup_logging</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>
 </span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>
 </span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>    <span class="n">john</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span><span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="mi">1975</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="s2">&quot;Roma&quot;</span><span class="p">,</span> <span class="s2">&quot;IT&quot;</span><span class="p">)</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a>    <span class="n">report</span> <span class="o">=</span> <span class="n">Report</span><span class="p">(</span><span class="n">john</span><span class="p">)</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a>    <span class="n">report</span> <span class="o">=</span> <span class="n">ReportGenerator</span><span class="p">(</span><span class="n">john</span><span class="p">)</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos">94</span></a>    <span class="n">report</span><span class="o">.</span><span class="n">print_report</span><span class="p">()</span>
 </span></pre></div>
 
 
             </section>
-                <section id="Report">
-                            <input id="Report-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="ReportGenerator">
+                            <input id="ReportGenerator-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">Report</span>:
+    <span class="name">ReportGenerator</span>:
 
-                <label class="view-source-button" for="Report-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="ReportGenerator-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#Report"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Report-8"><a href="#Report-8"><span class="linenos"> 8</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Report</span><span class="p">:</span>
-</span><span id="Report-9"><a href="#Report-9"><span class="linenos"> 9</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Report-10"><a href="#Report-10"><span class="linenos">10</span></a><span class="sd">    Create a report for a Kerykeion instance.</span>
-</span><span id="Report-11"><a href="#Report-11"><span class="linenos">11</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="Report-12"><a href="#Report-12"><span class="linenos">12</span></a>
-</span><span id="Report-13"><a href="#Report-13"><span class="linenos">13</span></a>    <span class="n">report_title</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="Report-14"><a href="#Report-14"><span class="linenos">14</span></a>    <span class="n">data_table</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="Report-15"><a href="#Report-15"><span class="linenos">15</span></a>    <span class="n">planets_table</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="Report-16"><a href="#Report-16"><span class="linenos">16</span></a>    <span class="n">houses_table</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="Report-17"><a href="#Report-17"><span class="linenos">17</span></a>
-</span><span id="Report-18"><a href="#Report-18"><span class="linenos">18</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">AstrologicalSubjectModel</span><span class="p">]):</span>
-</span><span id="Report-19"><a href="#Report-19"><span class="linenos">19</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">instance</span> <span class="o">=</span> <span class="n">instance</span>
-</span><span id="Report-20"><a href="#Report-20"><span class="linenos">20</span></a>
-</span><span id="Report-21"><a href="#Report-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_report_title</span><span class="p">()</span>
-</span><span id="Report-22"><a href="#Report-22"><span class="linenos">22</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_data_table</span><span class="p">()</span>
-</span><span id="Report-23"><a href="#Report-23"><span class="linenos">23</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_planets_table</span><span class="p">()</span>
-</span><span id="Report-24"><a href="#Report-24"><span class="linenos">24</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_houses_table</span><span class="p">()</span>
-</span><span id="Report-25"><a href="#Report-25"><span class="linenos">25</span></a>
-</span><span id="Report-26"><a href="#Report-26"><span class="linenos">26</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_report_title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Report-27"><a href="#Report-27"><span class="linenos">27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">report_title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">+- Kerykeion report for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> -+&quot;</span>
-</span><span id="Report-28"><a href="#Report-28"><span class="linenos">28</span></a>
-</span><span id="Report-29"><a href="#Report-29"><span class="linenos">29</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_data_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Report-30"><a href="#Report-30"><span class="linenos">30</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Report-31"><a href="#Report-31"><span class="linenos">31</span></a><span class="sd">        Creates the data table of the report.</span>
-</span><span id="Report-32"><a href="#Report-32"><span class="linenos">32</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Report-33"><a href="#Report-33"><span class="linenos">33</span></a>
-</span><span id="Report-34"><a href="#Report-34"><span class="linenos">34</span></a>        <span class="n">main_data</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="s2">&quot;Time&quot;</span><span class="p">,</span> <span class="s2">&quot;Location&quot;</span><span class="p">,</span> <span class="s2">&quot;Longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;Latitude&quot;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span>
-</span><span id="Report-35"><a href="#Report-35"><span class="linenos">35</span></a>            <span class="p">[</span>
-</span><span id="Report-36"><a href="#Report-36"><span class="linenos">36</span></a>                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">day</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">month</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="Report-37"><a href="#Report-37"><span class="linenos">37</span></a>                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">hour</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">minute</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="Report-38"><a href="#Report-38"><span class="linenos">38</span></a>                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">city</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">nation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="Report-39"><a href="#Report-39"><span class="linenos">39</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">lng</span><span class="p">,</span>
-</span><span id="Report-40"><a href="#Report-40"><span class="linenos">40</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
-</span><span id="Report-41"><a href="#Report-41"><span class="linenos">41</span></a>            <span class="p">]</span>
-</span><span id="Report-42"><a href="#Report-42"><span class="linenos">42</span></a>        <span class="p">]</span>
-</span><span id="Report-43"><a href="#Report-43"><span class="linenos">43</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data_table</span> <span class="o">=</span> <span class="n">AsciiTable</span><span class="p">(</span><span class="n">main_data</span><span class="p">)</span><span class="o">.</span><span class="n">table</span>
-</span><span id="Report-44"><a href="#Report-44"><span class="linenos">44</span></a>
-</span><span id="Report-45"><a href="#Report-45"><span class="linenos">45</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_planets_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Report-46"><a href="#Report-46"><span class="linenos">46</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Report-47"><a href="#Report-47"><span class="linenos">47</span></a><span class="sd">        Creates the planets table.</span>
-</span><span id="Report-48"><a href="#Report-48"><span class="linenos">48</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Report-49"><a href="#Report-49"><span class="linenos">49</span></a>
-</span><span id="Report-50"><a href="#Report-50"><span class="linenos">50</span></a>        <span class="n">planets_data</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;Planet&quot;</span><span class="p">,</span> <span class="s2">&quot;Sign&quot;</span><span class="p">,</span> <span class="s2">&quot;Pos.&quot;</span><span class="p">,</span> <span class="s2">&quot;Ret.&quot;</span><span class="p">,</span> <span class="s2">&quot;House&quot;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span>
-</span><span id="Report-51"><a href="#Report-51"><span class="linenos">51</span></a>            <span class="p">[</span>
-</span><span id="Report-52"><a href="#Report-52"><span class="linenos">52</span></a>                <span class="n">planet</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-</span><span id="Report-53"><a href="#Report-53"><span class="linenos">53</span></a>                <span class="n">planet</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span>
-</span><span id="Report-54"><a href="#Report-54"><span class="linenos">54</span></a>                <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">planet</span><span class="o">.</span><span class="n">position</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
-</span><span id="Report-55"><a href="#Report-55"><span class="linenos">55</span></a>                <span class="p">(</span><span class="s2">&quot;R&quot;</span> <span class="k">if</span> <span class="n">planet</span><span class="o">.</span><span class="n">retrograde</span> <span class="k">else</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span>
-</span><span id="Report-56"><a href="#Report-56"><span class="linenos">56</span></a>                <span class="n">planet</span><span class="o">.</span><span class="n">house</span><span class="p">,</span>
-</span><span id="Report-57"><a href="#Report-57"><span class="linenos">57</span></a>            <span class="p">]</span>
-</span><span id="Report-58"><a href="#Report-58"><span class="linenos">58</span></a>            <span class="k">for</span> <span class="n">planet</span> <span class="ow">in</span> <span class="n">get_available_astrological_points_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">)</span>
-</span><span id="Report-59"><a href="#Report-59"><span class="linenos">59</span></a>        <span class="p">]</span>
-</span><span id="Report-60"><a href="#Report-60"><span class="linenos">60</span></a>
-</span><span id="Report-61"><a href="#Report-61"><span class="linenos">61</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">planets_table</span> <span class="o">=</span> <span class="n">AsciiTable</span><span class="p">(</span><span class="n">planets_data</span><span class="p">)</span><span class="o">.</span><span class="n">table</span>
-</span><span id="Report-62"><a href="#Report-62"><span class="linenos">62</span></a>
-</span><span id="Report-63"><a href="#Report-63"><span class="linenos">63</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_houses_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Report-64"><a href="#Report-64"><span class="linenos">64</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Report-65"><a href="#Report-65"><span class="linenos">65</span></a><span class="sd">        Creates the houses table.</span>
-</span><span id="Report-66"><a href="#Report-66"><span class="linenos">66</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Report-67"><a href="#Report-67"><span class="linenos">67</span></a>
-</span><span id="Report-68"><a href="#Report-68"><span class="linenos">68</span></a>        <span class="n">houses_data</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;House&quot;</span><span class="p">,</span> <span class="s2">&quot;Sign&quot;</span><span class="p">,</span> <span class="s2">&quot;Position&quot;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span>
-</span><span id="Report-69"><a href="#Report-69"><span class="linenos">69</span></a>            <span class="p">[</span><span class="n">house</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">house</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">house</span><span class="o">.</span><span class="n">position</span><span class="p">),</span> <span class="mi">2</span><span class="p">)]</span> <span class="k">for</span> <span class="n">house</span> <span class="ow">in</span> <span class="n">get_houses_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">)</span>
-</span><span id="Report-70"><a href="#Report-70"><span class="linenos">70</span></a>        <span class="p">]</span>
-</span><span id="Report-71"><a href="#Report-71"><span class="linenos">71</span></a>
-</span><span id="Report-72"><a href="#Report-72"><span class="linenos">72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">houses_table</span> <span class="o">=</span> <span class="n">AsciiTable</span><span class="p">(</span><span class="n">houses_data</span><span class="p">)</span><span class="o">.</span><span class="n">table</span>
-</span><span id="Report-73"><a href="#Report-73"><span class="linenos">73</span></a>
-</span><span id="Report-74"><a href="#Report-74"><span class="linenos">74</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_full_report</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="Report-75"><a href="#Report-75"><span class="linenos">75</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Report-76"><a href="#Report-76"><span class="linenos">76</span></a><span class="sd">        Returns the full report.</span>
-</span><span id="Report-77"><a href="#Report-77"><span class="linenos">77</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Report-78"><a href="#Report-78"><span class="linenos">78</span></a>
-</span><span id="Report-79"><a href="#Report-79"><span class="linenos">79</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">report_title</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_table</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_table</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">houses_table</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="Report-80"><a href="#Report-80"><span class="linenos">80</span></a>
-</span><span id="Report-81"><a href="#Report-81"><span class="linenos">81</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">print_report</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Report-82"><a href="#Report-82"><span class="linenos">82</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Report-83"><a href="#Report-83"><span class="linenos">83</span></a><span class="sd">        Print the report.</span>
-</span><span id="Report-84"><a href="#Report-84"><span class="linenos">84</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Report-85"><a href="#Report-85"><span class="linenos">85</span></a>
-</span><span id="Report-86"><a href="#Report-86"><span class="linenos">86</span></a>        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_full_report</span><span class="p">())</span>
+    <a class="headerlink" href="#ReportGenerator"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ReportGenerator-8"><a href="#ReportGenerator-8"><span class="linenos"> 8</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ReportGenerator</span><span class="p">:</span>
+</span><span id="ReportGenerator-9"><a href="#ReportGenerator-9"><span class="linenos"> 9</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ReportGenerator-10"><a href="#ReportGenerator-10"><span class="linenos">10</span></a><span class="sd">    Create a report for a Kerykeion instance.</span>
+</span><span id="ReportGenerator-11"><a href="#ReportGenerator-11"><span class="linenos">11</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="ReportGenerator-12"><a href="#ReportGenerator-12"><span class="linenos">12</span></a>
+</span><span id="ReportGenerator-13"><a href="#ReportGenerator-13"><span class="linenos">13</span></a>    <span class="n">report_title</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ReportGenerator-14"><a href="#ReportGenerator-14"><span class="linenos">14</span></a>    <span class="n">data_table</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ReportGenerator-15"><a href="#ReportGenerator-15"><span class="linenos">15</span></a>    <span class="n">planets_table</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ReportGenerator-16"><a href="#ReportGenerator-16"><span class="linenos">16</span></a>    <span class="n">houses_table</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ReportGenerator-17"><a href="#ReportGenerator-17"><span class="linenos">17</span></a>
+</span><span id="ReportGenerator-18"><a href="#ReportGenerator-18"><span class="linenos">18</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">AstrologicalSubjectModel</span><span class="p">]):</span>
+</span><span id="ReportGenerator-19"><a href="#ReportGenerator-19"><span class="linenos">19</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">instance</span> <span class="o">=</span> <span class="n">instance</span>
+</span><span id="ReportGenerator-20"><a href="#ReportGenerator-20"><span class="linenos">20</span></a>
+</span><span id="ReportGenerator-21"><a href="#ReportGenerator-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_report_title</span><span class="p">()</span>
+</span><span id="ReportGenerator-22"><a href="#ReportGenerator-22"><span class="linenos">22</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_data_table</span><span class="p">()</span>
+</span><span id="ReportGenerator-23"><a href="#ReportGenerator-23"><span class="linenos">23</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_planets_table</span><span class="p">()</span>
+</span><span id="ReportGenerator-24"><a href="#ReportGenerator-24"><span class="linenos">24</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_houses_table</span><span class="p">()</span>
+</span><span id="ReportGenerator-25"><a href="#ReportGenerator-25"><span class="linenos">25</span></a>
+</span><span id="ReportGenerator-26"><a href="#ReportGenerator-26"><span class="linenos">26</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_report_title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ReportGenerator-27"><a href="#ReportGenerator-27"><span class="linenos">27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">report_title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">+- Kerykeion report for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> -+&quot;</span>
+</span><span id="ReportGenerator-28"><a href="#ReportGenerator-28"><span class="linenos">28</span></a>
+</span><span id="ReportGenerator-29"><a href="#ReportGenerator-29"><span class="linenos">29</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_data_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ReportGenerator-30"><a href="#ReportGenerator-30"><span class="linenos">30</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ReportGenerator-31"><a href="#ReportGenerator-31"><span class="linenos">31</span></a><span class="sd">        Creates the data table of the report.</span>
+</span><span id="ReportGenerator-32"><a href="#ReportGenerator-32"><span class="linenos">32</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ReportGenerator-33"><a href="#ReportGenerator-33"><span class="linenos">33</span></a>
+</span><span id="ReportGenerator-34"><a href="#ReportGenerator-34"><span class="linenos">34</span></a>        <span class="n">main_data</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="s2">&quot;Time&quot;</span><span class="p">,</span> <span class="s2">&quot;Location&quot;</span><span class="p">,</span> <span class="s2">&quot;Longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;Latitude&quot;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span>
+</span><span id="ReportGenerator-35"><a href="#ReportGenerator-35"><span class="linenos">35</span></a>            <span class="p">[</span>
+</span><span id="ReportGenerator-36"><a href="#ReportGenerator-36"><span class="linenos">36</span></a>                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">day</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">month</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="ReportGenerator-37"><a href="#ReportGenerator-37"><span class="linenos">37</span></a>                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">hour</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">minute</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="ReportGenerator-38"><a href="#ReportGenerator-38"><span class="linenos">38</span></a>                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">city</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">nation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="ReportGenerator-39"><a href="#ReportGenerator-39"><span class="linenos">39</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">lng</span><span class="p">,</span>
+</span><span id="ReportGenerator-40"><a href="#ReportGenerator-40"><span class="linenos">40</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+</span><span id="ReportGenerator-41"><a href="#ReportGenerator-41"><span class="linenos">41</span></a>            <span class="p">]</span>
+</span><span id="ReportGenerator-42"><a href="#ReportGenerator-42"><span class="linenos">42</span></a>        <span class="p">]</span>
+</span><span id="ReportGenerator-43"><a href="#ReportGenerator-43"><span class="linenos">43</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data_table</span> <span class="o">=</span> <span class="n">AsciiTable</span><span class="p">(</span><span class="n">main_data</span><span class="p">)</span><span class="o">.</span><span class="n">table</span>
+</span><span id="ReportGenerator-44"><a href="#ReportGenerator-44"><span class="linenos">44</span></a>
+</span><span id="ReportGenerator-45"><a href="#ReportGenerator-45"><span class="linenos">45</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_planets_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ReportGenerator-46"><a href="#ReportGenerator-46"><span class="linenos">46</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ReportGenerator-47"><a href="#ReportGenerator-47"><span class="linenos">47</span></a><span class="sd">        Creates the planets table.</span>
+</span><span id="ReportGenerator-48"><a href="#ReportGenerator-48"><span class="linenos">48</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ReportGenerator-49"><a href="#ReportGenerator-49"><span class="linenos">49</span></a>
+</span><span id="ReportGenerator-50"><a href="#ReportGenerator-50"><span class="linenos">50</span></a>        <span class="n">planets_data</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;Planet&quot;</span><span class="p">,</span> <span class="s2">&quot;Sign&quot;</span><span class="p">,</span> <span class="s2">&quot;Pos.&quot;</span><span class="p">,</span> <span class="s2">&quot;Ret.&quot;</span><span class="p">,</span> <span class="s2">&quot;House&quot;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span>
+</span><span id="ReportGenerator-51"><a href="#ReportGenerator-51"><span class="linenos">51</span></a>            <span class="p">[</span>
+</span><span id="ReportGenerator-52"><a href="#ReportGenerator-52"><span class="linenos">52</span></a>                <span class="n">planet</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="ReportGenerator-53"><a href="#ReportGenerator-53"><span class="linenos">53</span></a>                <span class="n">planet</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span>
+</span><span id="ReportGenerator-54"><a href="#ReportGenerator-54"><span class="linenos">54</span></a>                <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">planet</span><span class="o">.</span><span class="n">position</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+</span><span id="ReportGenerator-55"><a href="#ReportGenerator-55"><span class="linenos">55</span></a>                <span class="p">(</span><span class="s2">&quot;R&quot;</span> <span class="k">if</span> <span class="n">planet</span><span class="o">.</span><span class="n">retrograde</span> <span class="k">else</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span>
+</span><span id="ReportGenerator-56"><a href="#ReportGenerator-56"><span class="linenos">56</span></a>                <span class="n">planet</span><span class="o">.</span><span class="n">house</span><span class="p">,</span>
+</span><span id="ReportGenerator-57"><a href="#ReportGenerator-57"><span class="linenos">57</span></a>            <span class="p">]</span>
+</span><span id="ReportGenerator-58"><a href="#ReportGenerator-58"><span class="linenos">58</span></a>            <span class="k">for</span> <span class="n">planet</span> <span class="ow">in</span> <span class="n">get_available_astrological_points_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">)</span>
+</span><span id="ReportGenerator-59"><a href="#ReportGenerator-59"><span class="linenos">59</span></a>        <span class="p">]</span>
+</span><span id="ReportGenerator-60"><a href="#ReportGenerator-60"><span class="linenos">60</span></a>
+</span><span id="ReportGenerator-61"><a href="#ReportGenerator-61"><span class="linenos">61</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">planets_table</span> <span class="o">=</span> <span class="n">AsciiTable</span><span class="p">(</span><span class="n">planets_data</span><span class="p">)</span><span class="o">.</span><span class="n">table</span>
+</span><span id="ReportGenerator-62"><a href="#ReportGenerator-62"><span class="linenos">62</span></a>
+</span><span id="ReportGenerator-63"><a href="#ReportGenerator-63"><span class="linenos">63</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_houses_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ReportGenerator-64"><a href="#ReportGenerator-64"><span class="linenos">64</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ReportGenerator-65"><a href="#ReportGenerator-65"><span class="linenos">65</span></a><span class="sd">        Creates the houses table.</span>
+</span><span id="ReportGenerator-66"><a href="#ReportGenerator-66"><span class="linenos">66</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ReportGenerator-67"><a href="#ReportGenerator-67"><span class="linenos">67</span></a>
+</span><span id="ReportGenerator-68"><a href="#ReportGenerator-68"><span class="linenos">68</span></a>        <span class="n">houses_data</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;House&quot;</span><span class="p">,</span> <span class="s2">&quot;Sign&quot;</span><span class="p">,</span> <span class="s2">&quot;Position&quot;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span>
+</span><span id="ReportGenerator-69"><a href="#ReportGenerator-69"><span class="linenos">69</span></a>            <span class="p">[</span><span class="n">house</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">house</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">house</span><span class="o">.</span><span class="n">position</span><span class="p">),</span> <span class="mi">2</span><span class="p">)]</span> <span class="k">for</span> <span class="n">house</span> <span class="ow">in</span> <span class="n">get_houses_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">)</span>
+</span><span id="ReportGenerator-70"><a href="#ReportGenerator-70"><span class="linenos">70</span></a>        <span class="p">]</span>
+</span><span id="ReportGenerator-71"><a href="#ReportGenerator-71"><span class="linenos">71</span></a>
+</span><span id="ReportGenerator-72"><a href="#ReportGenerator-72"><span class="linenos">72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">houses_table</span> <span class="o">=</span> <span class="n">AsciiTable</span><span class="p">(</span><span class="n">houses_data</span><span class="p">)</span><span class="o">.</span><span class="n">table</span>
+</span><span id="ReportGenerator-73"><a href="#ReportGenerator-73"><span class="linenos">73</span></a>
+</span><span id="ReportGenerator-74"><a href="#ReportGenerator-74"><span class="linenos">74</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_full_report</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="ReportGenerator-75"><a href="#ReportGenerator-75"><span class="linenos">75</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ReportGenerator-76"><a href="#ReportGenerator-76"><span class="linenos">76</span></a><span class="sd">        Returns the full report.</span>
+</span><span id="ReportGenerator-77"><a href="#ReportGenerator-77"><span class="linenos">77</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ReportGenerator-78"><a href="#ReportGenerator-78"><span class="linenos">78</span></a>
+</span><span id="ReportGenerator-79"><a href="#ReportGenerator-79"><span class="linenos">79</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">report_title</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_table</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_table</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">houses_table</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="ReportGenerator-80"><a href="#ReportGenerator-80"><span class="linenos">80</span></a>
+</span><span id="ReportGenerator-81"><a href="#ReportGenerator-81"><span class="linenos">81</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">print_report</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ReportGenerator-82"><a href="#ReportGenerator-82"><span class="linenos">82</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ReportGenerator-83"><a href="#ReportGenerator-83"><span class="linenos">83</span></a><span class="sd">        Print the report.</span>
+</span><span id="ReportGenerator-84"><a href="#ReportGenerator-84"><span class="linenos">84</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ReportGenerator-85"><a href="#ReportGenerator-85"><span class="linenos">85</span></a>
+</span><span id="ReportGenerator-86"><a href="#ReportGenerator-86"><span class="linenos">86</span></a>        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_full_report</span><span class="p">())</span>
 </span></pre></div>
 
 
@@ -288,129 +288,129 @@
 </div>
 
 
-                            <div id="Report.__init__" class="classattr">
-                                        <input id="Report.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="ReportGenerator.__init__" class="classattr">
+                                        <input id="ReportGenerator.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">Report</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">instance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n"><a href="astrological_subject.html#AstrologicalSubject">kerykeion.astrological_subject.AstrologicalSubject</a></span><span class="p">,</span> <span class="n"><a href="kr_types/kr_models.html#AstrologicalSubjectModel">kerykeion.kr_types.kr_models.AstrologicalSubjectModel</a></span><span class="p">]</span></span>)</span>
+        <span class="name">ReportGenerator</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">instance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n"><a href="astrological_subject.html#AstrologicalSubject">kerykeion.astrological_subject.AstrologicalSubject</a></span><span class="p">,</span> <span class="n"><a href="kr_types/kr_models.html#AstrologicalSubjectModel">kerykeion.kr_types.kr_models.AstrologicalSubjectModel</a></span><span class="p">]</span></span>)</span>
 
-                <label class="view-source-button" for="Report.__init__-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="ReportGenerator.__init__-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#Report.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Report.__init__-18"><a href="#Report.__init__-18"><span class="linenos">18</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">AstrologicalSubjectModel</span><span class="p">]):</span>
-</span><span id="Report.__init__-19"><a href="#Report.__init__-19"><span class="linenos">19</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">instance</span> <span class="o">=</span> <span class="n">instance</span>
-</span><span id="Report.__init__-20"><a href="#Report.__init__-20"><span class="linenos">20</span></a>
-</span><span id="Report.__init__-21"><a href="#Report.__init__-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_report_title</span><span class="p">()</span>
-</span><span id="Report.__init__-22"><a href="#Report.__init__-22"><span class="linenos">22</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_data_table</span><span class="p">()</span>
-</span><span id="Report.__init__-23"><a href="#Report.__init__-23"><span class="linenos">23</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_planets_table</span><span class="p">()</span>
-</span><span id="Report.__init__-24"><a href="#Report.__init__-24"><span class="linenos">24</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_houses_table</span><span class="p">()</span>
+    <a class="headerlink" href="#ReportGenerator.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ReportGenerator.__init__-18"><a href="#ReportGenerator.__init__-18"><span class="linenos">18</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">AstrologicalSubjectModel</span><span class="p">]):</span>
+</span><span id="ReportGenerator.__init__-19"><a href="#ReportGenerator.__init__-19"><span class="linenos">19</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">instance</span> <span class="o">=</span> <span class="n">instance</span>
+</span><span id="ReportGenerator.__init__-20"><a href="#ReportGenerator.__init__-20"><span class="linenos">20</span></a>
+</span><span id="ReportGenerator.__init__-21"><a href="#ReportGenerator.__init__-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_report_title</span><span class="p">()</span>
+</span><span id="ReportGenerator.__init__-22"><a href="#ReportGenerator.__init__-22"><span class="linenos">22</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_data_table</span><span class="p">()</span>
+</span><span id="ReportGenerator.__init__-23"><a href="#ReportGenerator.__init__-23"><span class="linenos">23</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_planets_table</span><span class="p">()</span>
+</span><span id="ReportGenerator.__init__-24"><a href="#ReportGenerator.__init__-24"><span class="linenos">24</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">get_houses_table</span><span class="p">()</span>
 </span></pre></div>
 
 
     
 
                             </div>
-                            <div id="Report.report_title" class="classattr">
+                            <div id="ReportGenerator.report_title" class="classattr">
                                 <div class="attr variable">
             <span class="name">report_title</span><span class="annotation">: str</span>
 
         
     </div>
-    <a class="headerlink" href="#Report.report_title"></a>
+    <a class="headerlink" href="#ReportGenerator.report_title"></a>
     
     
 
                             </div>
-                            <div id="Report.data_table" class="classattr">
+                            <div id="ReportGenerator.data_table" class="classattr">
                                 <div class="attr variable">
             <span class="name">data_table</span><span class="annotation">: str</span>
 
         
     </div>
-    <a class="headerlink" href="#Report.data_table"></a>
+    <a class="headerlink" href="#ReportGenerator.data_table"></a>
     
     
 
                             </div>
-                            <div id="Report.planets_table" class="classattr">
+                            <div id="ReportGenerator.planets_table" class="classattr">
                                 <div class="attr variable">
             <span class="name">planets_table</span><span class="annotation">: str</span>
 
         
     </div>
-    <a class="headerlink" href="#Report.planets_table"></a>
+    <a class="headerlink" href="#ReportGenerator.planets_table"></a>
     
     
 
                             </div>
-                            <div id="Report.houses_table" class="classattr">
+                            <div id="ReportGenerator.houses_table" class="classattr">
                                 <div class="attr variable">
             <span class="name">houses_table</span><span class="annotation">: str</span>
 
         
     </div>
-    <a class="headerlink" href="#Report.houses_table"></a>
+    <a class="headerlink" href="#ReportGenerator.houses_table"></a>
     
     
 
                             </div>
-                            <div id="Report.instance" class="classattr">
+                            <div id="ReportGenerator.instance" class="classattr">
                                 <div class="attr variable">
             <span class="name">instance</span>
 
         
     </div>
-    <a class="headerlink" href="#Report.instance"></a>
+    <a class="headerlink" href="#ReportGenerator.instance"></a>
     
     
 
                             </div>
-                            <div id="Report.get_report_title" class="classattr">
-                                        <input id="Report.get_report_title-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="ReportGenerator.get_report_title" class="classattr">
+                                        <input id="ReportGenerator.get_report_title-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
         <span class="name">get_report_title</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
-                <label class="view-source-button" for="Report.get_report_title-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="ReportGenerator.get_report_title-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#Report.get_report_title"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Report.get_report_title-26"><a href="#Report.get_report_title-26"><span class="linenos">26</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_report_title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Report.get_report_title-27"><a href="#Report.get_report_title-27"><span class="linenos">27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">report_title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">+- Kerykeion report for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> -+&quot;</span>
+    <a class="headerlink" href="#ReportGenerator.get_report_title"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ReportGenerator.get_report_title-26"><a href="#ReportGenerator.get_report_title-26"><span class="linenos">26</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_report_title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ReportGenerator.get_report_title-27"><a href="#ReportGenerator.get_report_title-27"><span class="linenos">27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">report_title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">+- Kerykeion report for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> -+&quot;</span>
 </span></pre></div>
 
 
     
 
                             </div>
-                            <div id="Report.get_data_table" class="classattr">
-                                        <input id="Report.get_data_table-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="ReportGenerator.get_data_table" class="classattr">
+                                        <input id="ReportGenerator.get_data_table-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
         <span class="name">get_data_table</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
-                <label class="view-source-button" for="Report.get_data_table-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="ReportGenerator.get_data_table-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#Report.get_data_table"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Report.get_data_table-29"><a href="#Report.get_data_table-29"><span class="linenos">29</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_data_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Report.get_data_table-30"><a href="#Report.get_data_table-30"><span class="linenos">30</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Report.get_data_table-31"><a href="#Report.get_data_table-31"><span class="linenos">31</span></a><span class="sd">        Creates the data table of the report.</span>
-</span><span id="Report.get_data_table-32"><a href="#Report.get_data_table-32"><span class="linenos">32</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Report.get_data_table-33"><a href="#Report.get_data_table-33"><span class="linenos">33</span></a>
-</span><span id="Report.get_data_table-34"><a href="#Report.get_data_table-34"><span class="linenos">34</span></a>        <span class="n">main_data</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="s2">&quot;Time&quot;</span><span class="p">,</span> <span class="s2">&quot;Location&quot;</span><span class="p">,</span> <span class="s2">&quot;Longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;Latitude&quot;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span>
-</span><span id="Report.get_data_table-35"><a href="#Report.get_data_table-35"><span class="linenos">35</span></a>            <span class="p">[</span>
-</span><span id="Report.get_data_table-36"><a href="#Report.get_data_table-36"><span class="linenos">36</span></a>                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">day</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">month</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="Report.get_data_table-37"><a href="#Report.get_data_table-37"><span class="linenos">37</span></a>                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">hour</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">minute</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="Report.get_data_table-38"><a href="#Report.get_data_table-38"><span class="linenos">38</span></a>                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">city</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">nation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="Report.get_data_table-39"><a href="#Report.get_data_table-39"><span class="linenos">39</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">lng</span><span class="p">,</span>
-</span><span id="Report.get_data_table-40"><a href="#Report.get_data_table-40"><span class="linenos">40</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
-</span><span id="Report.get_data_table-41"><a href="#Report.get_data_table-41"><span class="linenos">41</span></a>            <span class="p">]</span>
-</span><span id="Report.get_data_table-42"><a href="#Report.get_data_table-42"><span class="linenos">42</span></a>        <span class="p">]</span>
-</span><span id="Report.get_data_table-43"><a href="#Report.get_data_table-43"><span class="linenos">43</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data_table</span> <span class="o">=</span> <span class="n">AsciiTable</span><span class="p">(</span><span class="n">main_data</span><span class="p">)</span><span class="o">.</span><span class="n">table</span>
+    <a class="headerlink" href="#ReportGenerator.get_data_table"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ReportGenerator.get_data_table-29"><a href="#ReportGenerator.get_data_table-29"><span class="linenos">29</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_data_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ReportGenerator.get_data_table-30"><a href="#ReportGenerator.get_data_table-30"><span class="linenos">30</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ReportGenerator.get_data_table-31"><a href="#ReportGenerator.get_data_table-31"><span class="linenos">31</span></a><span class="sd">        Creates the data table of the report.</span>
+</span><span id="ReportGenerator.get_data_table-32"><a href="#ReportGenerator.get_data_table-32"><span class="linenos">32</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ReportGenerator.get_data_table-33"><a href="#ReportGenerator.get_data_table-33"><span class="linenos">33</span></a>
+</span><span id="ReportGenerator.get_data_table-34"><a href="#ReportGenerator.get_data_table-34"><span class="linenos">34</span></a>        <span class="n">main_data</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="s2">&quot;Time&quot;</span><span class="p">,</span> <span class="s2">&quot;Location&quot;</span><span class="p">,</span> <span class="s2">&quot;Longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;Latitude&quot;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span>
+</span><span id="ReportGenerator.get_data_table-35"><a href="#ReportGenerator.get_data_table-35"><span class="linenos">35</span></a>            <span class="p">[</span>
+</span><span id="ReportGenerator.get_data_table-36"><a href="#ReportGenerator.get_data_table-36"><span class="linenos">36</span></a>                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">day</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">month</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="ReportGenerator.get_data_table-37"><a href="#ReportGenerator.get_data_table-37"><span class="linenos">37</span></a>                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">hour</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">minute</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="ReportGenerator.get_data_table-38"><a href="#ReportGenerator.get_data_table-38"><span class="linenos">38</span></a>                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">city</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">nation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="ReportGenerator.get_data_table-39"><a href="#ReportGenerator.get_data_table-39"><span class="linenos">39</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">lng</span><span class="p">,</span>
+</span><span id="ReportGenerator.get_data_table-40"><a href="#ReportGenerator.get_data_table-40"><span class="linenos">40</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+</span><span id="ReportGenerator.get_data_table-41"><a href="#ReportGenerator.get_data_table-41"><span class="linenos">41</span></a>            <span class="p">]</span>
+</span><span id="ReportGenerator.get_data_table-42"><a href="#ReportGenerator.get_data_table-42"><span class="linenos">42</span></a>        <span class="p">]</span>
+</span><span id="ReportGenerator.get_data_table-43"><a href="#ReportGenerator.get_data_table-43"><span class="linenos">43</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data_table</span> <span class="o">=</span> <span class="n">AsciiTable</span><span class="p">(</span><span class="n">main_data</span><span class="p">)</span><span class="o">.</span><span class="n">table</span>
 </span></pre></div>
 
 
@@ -419,34 +419,34 @@
 
 
                             </div>
-                            <div id="Report.get_planets_table" class="classattr">
-                                        <input id="Report.get_planets_table-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="ReportGenerator.get_planets_table" class="classattr">
+                                        <input id="ReportGenerator.get_planets_table-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
         <span class="name">get_planets_table</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
-                <label class="view-source-button" for="Report.get_planets_table-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="ReportGenerator.get_planets_table-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#Report.get_planets_table"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Report.get_planets_table-45"><a href="#Report.get_planets_table-45"><span class="linenos">45</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_planets_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Report.get_planets_table-46"><a href="#Report.get_planets_table-46"><span class="linenos">46</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Report.get_planets_table-47"><a href="#Report.get_planets_table-47"><span class="linenos">47</span></a><span class="sd">        Creates the planets table.</span>
-</span><span id="Report.get_planets_table-48"><a href="#Report.get_planets_table-48"><span class="linenos">48</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Report.get_planets_table-49"><a href="#Report.get_planets_table-49"><span class="linenos">49</span></a>
-</span><span id="Report.get_planets_table-50"><a href="#Report.get_planets_table-50"><span class="linenos">50</span></a>        <span class="n">planets_data</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;Planet&quot;</span><span class="p">,</span> <span class="s2">&quot;Sign&quot;</span><span class="p">,</span> <span class="s2">&quot;Pos.&quot;</span><span class="p">,</span> <span class="s2">&quot;Ret.&quot;</span><span class="p">,</span> <span class="s2">&quot;House&quot;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span>
-</span><span id="Report.get_planets_table-51"><a href="#Report.get_planets_table-51"><span class="linenos">51</span></a>            <span class="p">[</span>
-</span><span id="Report.get_planets_table-52"><a href="#Report.get_planets_table-52"><span class="linenos">52</span></a>                <span class="n">planet</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-</span><span id="Report.get_planets_table-53"><a href="#Report.get_planets_table-53"><span class="linenos">53</span></a>                <span class="n">planet</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span>
-</span><span id="Report.get_planets_table-54"><a href="#Report.get_planets_table-54"><span class="linenos">54</span></a>                <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">planet</span><span class="o">.</span><span class="n">position</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
-</span><span id="Report.get_planets_table-55"><a href="#Report.get_planets_table-55"><span class="linenos">55</span></a>                <span class="p">(</span><span class="s2">&quot;R&quot;</span> <span class="k">if</span> <span class="n">planet</span><span class="o">.</span><span class="n">retrograde</span> <span class="k">else</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span>
-</span><span id="Report.get_planets_table-56"><a href="#Report.get_planets_table-56"><span class="linenos">56</span></a>                <span class="n">planet</span><span class="o">.</span><span class="n">house</span><span class="p">,</span>
-</span><span id="Report.get_planets_table-57"><a href="#Report.get_planets_table-57"><span class="linenos">57</span></a>            <span class="p">]</span>
-</span><span id="Report.get_planets_table-58"><a href="#Report.get_planets_table-58"><span class="linenos">58</span></a>            <span class="k">for</span> <span class="n">planet</span> <span class="ow">in</span> <span class="n">get_available_astrological_points_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">)</span>
-</span><span id="Report.get_planets_table-59"><a href="#Report.get_planets_table-59"><span class="linenos">59</span></a>        <span class="p">]</span>
-</span><span id="Report.get_planets_table-60"><a href="#Report.get_planets_table-60"><span class="linenos">60</span></a>
-</span><span id="Report.get_planets_table-61"><a href="#Report.get_planets_table-61"><span class="linenos">61</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">planets_table</span> <span class="o">=</span> <span class="n">AsciiTable</span><span class="p">(</span><span class="n">planets_data</span><span class="p">)</span><span class="o">.</span><span class="n">table</span>
+    <a class="headerlink" href="#ReportGenerator.get_planets_table"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ReportGenerator.get_planets_table-45"><a href="#ReportGenerator.get_planets_table-45"><span class="linenos">45</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_planets_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ReportGenerator.get_planets_table-46"><a href="#ReportGenerator.get_planets_table-46"><span class="linenos">46</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ReportGenerator.get_planets_table-47"><a href="#ReportGenerator.get_planets_table-47"><span class="linenos">47</span></a><span class="sd">        Creates the planets table.</span>
+</span><span id="ReportGenerator.get_planets_table-48"><a href="#ReportGenerator.get_planets_table-48"><span class="linenos">48</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ReportGenerator.get_planets_table-49"><a href="#ReportGenerator.get_planets_table-49"><span class="linenos">49</span></a>
+</span><span id="ReportGenerator.get_planets_table-50"><a href="#ReportGenerator.get_planets_table-50"><span class="linenos">50</span></a>        <span class="n">planets_data</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;Planet&quot;</span><span class="p">,</span> <span class="s2">&quot;Sign&quot;</span><span class="p">,</span> <span class="s2">&quot;Pos.&quot;</span><span class="p">,</span> <span class="s2">&quot;Ret.&quot;</span><span class="p">,</span> <span class="s2">&quot;House&quot;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span>
+</span><span id="ReportGenerator.get_planets_table-51"><a href="#ReportGenerator.get_planets_table-51"><span class="linenos">51</span></a>            <span class="p">[</span>
+</span><span id="ReportGenerator.get_planets_table-52"><a href="#ReportGenerator.get_planets_table-52"><span class="linenos">52</span></a>                <span class="n">planet</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="ReportGenerator.get_planets_table-53"><a href="#ReportGenerator.get_planets_table-53"><span class="linenos">53</span></a>                <span class="n">planet</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span>
+</span><span id="ReportGenerator.get_planets_table-54"><a href="#ReportGenerator.get_planets_table-54"><span class="linenos">54</span></a>                <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">planet</span><span class="o">.</span><span class="n">position</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+</span><span id="ReportGenerator.get_planets_table-55"><a href="#ReportGenerator.get_planets_table-55"><span class="linenos">55</span></a>                <span class="p">(</span><span class="s2">&quot;R&quot;</span> <span class="k">if</span> <span class="n">planet</span><span class="o">.</span><span class="n">retrograde</span> <span class="k">else</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span>
+</span><span id="ReportGenerator.get_planets_table-56"><a href="#ReportGenerator.get_planets_table-56"><span class="linenos">56</span></a>                <span class="n">planet</span><span class="o">.</span><span class="n">house</span><span class="p">,</span>
+</span><span id="ReportGenerator.get_planets_table-57"><a href="#ReportGenerator.get_planets_table-57"><span class="linenos">57</span></a>            <span class="p">]</span>
+</span><span id="ReportGenerator.get_planets_table-58"><a href="#ReportGenerator.get_planets_table-58"><span class="linenos">58</span></a>            <span class="k">for</span> <span class="n">planet</span> <span class="ow">in</span> <span class="n">get_available_astrological_points_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">)</span>
+</span><span id="ReportGenerator.get_planets_table-59"><a href="#ReportGenerator.get_planets_table-59"><span class="linenos">59</span></a>        <span class="p">]</span>
+</span><span id="ReportGenerator.get_planets_table-60"><a href="#ReportGenerator.get_planets_table-60"><span class="linenos">60</span></a>
+</span><span id="ReportGenerator.get_planets_table-61"><a href="#ReportGenerator.get_planets_table-61"><span class="linenos">61</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">planets_table</span> <span class="o">=</span> <span class="n">AsciiTable</span><span class="p">(</span><span class="n">planets_data</span><span class="p">)</span><span class="o">.</span><span class="n">table</span>
 </span></pre></div>
 
 
@@ -455,27 +455,27 @@
 
 
                             </div>
-                            <div id="Report.get_houses_table" class="classattr">
-                                        <input id="Report.get_houses_table-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="ReportGenerator.get_houses_table" class="classattr">
+                                        <input id="ReportGenerator.get_houses_table-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
         <span class="name">get_houses_table</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
-                <label class="view-source-button" for="Report.get_houses_table-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="ReportGenerator.get_houses_table-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#Report.get_houses_table"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Report.get_houses_table-63"><a href="#Report.get_houses_table-63"><span class="linenos">63</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_houses_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Report.get_houses_table-64"><a href="#Report.get_houses_table-64"><span class="linenos">64</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Report.get_houses_table-65"><a href="#Report.get_houses_table-65"><span class="linenos">65</span></a><span class="sd">        Creates the houses table.</span>
-</span><span id="Report.get_houses_table-66"><a href="#Report.get_houses_table-66"><span class="linenos">66</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Report.get_houses_table-67"><a href="#Report.get_houses_table-67"><span class="linenos">67</span></a>
-</span><span id="Report.get_houses_table-68"><a href="#Report.get_houses_table-68"><span class="linenos">68</span></a>        <span class="n">houses_data</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;House&quot;</span><span class="p">,</span> <span class="s2">&quot;Sign&quot;</span><span class="p">,</span> <span class="s2">&quot;Position&quot;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span>
-</span><span id="Report.get_houses_table-69"><a href="#Report.get_houses_table-69"><span class="linenos">69</span></a>            <span class="p">[</span><span class="n">house</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">house</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">house</span><span class="o">.</span><span class="n">position</span><span class="p">),</span> <span class="mi">2</span><span class="p">)]</span> <span class="k">for</span> <span class="n">house</span> <span class="ow">in</span> <span class="n">get_houses_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">)</span>
-</span><span id="Report.get_houses_table-70"><a href="#Report.get_houses_table-70"><span class="linenos">70</span></a>        <span class="p">]</span>
-</span><span id="Report.get_houses_table-71"><a href="#Report.get_houses_table-71"><span class="linenos">71</span></a>
-</span><span id="Report.get_houses_table-72"><a href="#Report.get_houses_table-72"><span class="linenos">72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">houses_table</span> <span class="o">=</span> <span class="n">AsciiTable</span><span class="p">(</span><span class="n">houses_data</span><span class="p">)</span><span class="o">.</span><span class="n">table</span>
+    <a class="headerlink" href="#ReportGenerator.get_houses_table"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ReportGenerator.get_houses_table-63"><a href="#ReportGenerator.get_houses_table-63"><span class="linenos">63</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_houses_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ReportGenerator.get_houses_table-64"><a href="#ReportGenerator.get_houses_table-64"><span class="linenos">64</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ReportGenerator.get_houses_table-65"><a href="#ReportGenerator.get_houses_table-65"><span class="linenos">65</span></a><span class="sd">        Creates the houses table.</span>
+</span><span id="ReportGenerator.get_houses_table-66"><a href="#ReportGenerator.get_houses_table-66"><span class="linenos">66</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ReportGenerator.get_houses_table-67"><a href="#ReportGenerator.get_houses_table-67"><span class="linenos">67</span></a>
+</span><span id="ReportGenerator.get_houses_table-68"><a href="#ReportGenerator.get_houses_table-68"><span class="linenos">68</span></a>        <span class="n">houses_data</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;House&quot;</span><span class="p">,</span> <span class="s2">&quot;Sign&quot;</span><span class="p">,</span> <span class="s2">&quot;Position&quot;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span>
+</span><span id="ReportGenerator.get_houses_table-69"><a href="#ReportGenerator.get_houses_table-69"><span class="linenos">69</span></a>            <span class="p">[</span><span class="n">house</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">house</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">house</span><span class="o">.</span><span class="n">position</span><span class="p">),</span> <span class="mi">2</span><span class="p">)]</span> <span class="k">for</span> <span class="n">house</span> <span class="ow">in</span> <span class="n">get_houses_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">)</span>
+</span><span id="ReportGenerator.get_houses_table-70"><a href="#ReportGenerator.get_houses_table-70"><span class="linenos">70</span></a>        <span class="p">]</span>
+</span><span id="ReportGenerator.get_houses_table-71"><a href="#ReportGenerator.get_houses_table-71"><span class="linenos">71</span></a>
+</span><span id="ReportGenerator.get_houses_table-72"><a href="#ReportGenerator.get_houses_table-72"><span class="linenos">72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">houses_table</span> <span class="o">=</span> <span class="n">AsciiTable</span><span class="p">(</span><span class="n">houses_data</span><span class="p">)</span><span class="o">.</span><span class="n">table</span>
 </span></pre></div>
 
 
@@ -484,23 +484,23 @@
 
 
                             </div>
-                            <div id="Report.get_full_report" class="classattr">
-                                        <input id="Report.get_full_report-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="ReportGenerator.get_full_report" class="classattr">
+                                        <input id="ReportGenerator.get_full_report-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
         <span class="name">get_full_report</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
-                <label class="view-source-button" for="Report.get_full_report-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="ReportGenerator.get_full_report-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#Report.get_full_report"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Report.get_full_report-74"><a href="#Report.get_full_report-74"><span class="linenos">74</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_full_report</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="Report.get_full_report-75"><a href="#Report.get_full_report-75"><span class="linenos">75</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Report.get_full_report-76"><a href="#Report.get_full_report-76"><span class="linenos">76</span></a><span class="sd">        Returns the full report.</span>
-</span><span id="Report.get_full_report-77"><a href="#Report.get_full_report-77"><span class="linenos">77</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Report.get_full_report-78"><a href="#Report.get_full_report-78"><span class="linenos">78</span></a>
-</span><span id="Report.get_full_report-79"><a href="#Report.get_full_report-79"><span class="linenos">79</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">report_title</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_table</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_table</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">houses_table</span><span class="si">}</span><span class="s2">&quot;</span>
+    <a class="headerlink" href="#ReportGenerator.get_full_report"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ReportGenerator.get_full_report-74"><a href="#ReportGenerator.get_full_report-74"><span class="linenos">74</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_full_report</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="ReportGenerator.get_full_report-75"><a href="#ReportGenerator.get_full_report-75"><span class="linenos">75</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ReportGenerator.get_full_report-76"><a href="#ReportGenerator.get_full_report-76"><span class="linenos">76</span></a><span class="sd">        Returns the full report.</span>
+</span><span id="ReportGenerator.get_full_report-77"><a href="#ReportGenerator.get_full_report-77"><span class="linenos">77</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ReportGenerator.get_full_report-78"><a href="#ReportGenerator.get_full_report-78"><span class="linenos">78</span></a>
+</span><span id="ReportGenerator.get_full_report-79"><a href="#ReportGenerator.get_full_report-79"><span class="linenos">79</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">report_title</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_table</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">planets_table</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">houses_table</span><span class="si">}</span><span class="s2">&quot;</span>
 </span></pre></div>
 
 
@@ -509,23 +509,23 @@
 
 
                             </div>
-                            <div id="Report.print_report" class="classattr">
-                                        <input id="Report.print_report-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="ReportGenerator.print_report" class="classattr">
+                                        <input id="ReportGenerator.print_report-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
         <span class="name">print_report</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
-                <label class="view-source-button" for="Report.print_report-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="ReportGenerator.print_report-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#Report.print_report"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Report.print_report-81"><a href="#Report.print_report-81"><span class="linenos">81</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">print_report</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Report.print_report-82"><a href="#Report.print_report-82"><span class="linenos">82</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Report.print_report-83"><a href="#Report.print_report-83"><span class="linenos">83</span></a><span class="sd">        Print the report.</span>
-</span><span id="Report.print_report-84"><a href="#Report.print_report-84"><span class="linenos">84</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Report.print_report-85"><a href="#Report.print_report-85"><span class="linenos">85</span></a>
-</span><span id="Report.print_report-86"><a href="#Report.print_report-86"><span class="linenos">86</span></a>        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_full_report</span><span class="p">())</span>
+    <a class="headerlink" href="#ReportGenerator.print_report"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ReportGenerator.print_report-81"><a href="#ReportGenerator.print_report-81"><span class="linenos">81</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">print_report</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ReportGenerator.print_report-82"><a href="#ReportGenerator.print_report-82"><span class="linenos">82</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ReportGenerator.print_report-83"><a href="#ReportGenerator.print_report-83"><span class="linenos">83</span></a><span class="sd">        Print the report.</span>
+</span><span id="ReportGenerator.print_report-84"><a href="#ReportGenerator.print_report-84"><span class="linenos">84</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ReportGenerator.print_report-85"><a href="#ReportGenerator.print_report-85"><span class="linenos">85</span></a>
+</span><span id="ReportGenerator.print_report-86"><a href="#ReportGenerator.print_report-86"><span class="linenos">86</span></a>        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_full_report</span><span class="p">())</span>
 </span></pre></div>
 
 

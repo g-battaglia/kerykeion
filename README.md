@@ -68,11 +68,9 @@ If you're looking for the latest stable version, please check out the [`master`]
   - [Minified SVG](#minified-svg)
   - [SVG without CSS Variables](#svg-without-css-variables)
   - [Grid Only SVG](#grid-only-svg)
-- [Report](#report)
-  - [Basic Subject Report](#basic-subject-report)
-  - [Complete Chart Report (with Elements, Qualities \& Aspects)](#complete-chart-report-with-elements-qualities--aspects)
-  - [Understanding Speed and Declination](#understanding-speed-and-declination)
-  - [Modular Report Sections](#modular-report-sections)
+- [Report Generator](#report-generator)
+  - [Quick Examples](#quick-examples)
+  - [Section Access](#section-access)
 - [Example: Retrieving Aspects](#example-retrieving-aspects)
 - [Ayanamsa (Sidereal Modes)](#ayanamsa-sidereal-modes)
 - [House Systems](#house-systems)
@@ -456,165 +454,56 @@ aspect_grid_chart.save_aspect_grid_only_svg_file()
 ```
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Aspect%20Grid%20Only%20-%20Natal%20Chart%20-%20Aspect%20Grid%20Only.svg)
 
-## Report
+## Report Generator
 
-The `Report` class generates comprehensive, human-readable text reports with all astrological data including planetary positions, **speed (daily motion)**, **declination**, houses, lunar phases, and optionally **element/quality distributions** and **aspects**.
+`ReportGenerator` mirrors the chart-type dispatch of `ChartDrawer`. It accepts raw `AstrologicalSubjectModel` instances as well as any `ChartDataModel` produced by `ChartDataFactory`—including natal, composite, synastry, transit, and planetary return charts—and renders the appropriate textual report automatically.
 
-### Basic Subject Report
-
-For quick inspection of astrological data:
+### Quick Examples
 
 ```python
-from kerykeion import Report, AstrologicalSubjectFactory
+from kerykeion import ReportGenerator, AstrologicalSubjectFactory, ChartDataFactory
 
-john = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB"
+# Subject-only report
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Sample Natal", 1990, 7, 21, 14, 45, "Rome", "IT"
 )
-report = Report(john)
-report.print_report()
-```
+ReportGenerator(subject).print_report(include_aspects=False)
 
-Output includes:
-- Birth data and settings
-- Celestial points with **speed** and **declination**
-- Houses
-- Lunar phase
+# Single-chart data (elements, qualities, aspects enabled)
+natal_data = ChartDataFactory.create_natal_chart_data(subject)
+ReportGenerator(natal_data).print_report(max_aspects=10)
 
-### Complete Chart Report (with Elements, Qualities & Aspects)
-
-For full analysis including elements, qualities, and aspects, use `ChartDataFactory`:
-
-```python
-from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, Report
-
-# Create subject
-john = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB"
+# Dual-chart data (synastry, transit, dual return, …)
+partner = AstrologicalSubjectFactory.from_birth_data(
+    "Sample Partner", 1992, 11, 5, 9, 30, "Rome", "IT"
 )
-
-# Create chart data (calculates elements, qualities, aspects)
-chart = ChartDataFactory.create_chart_data("Natal", first_subject=john)
-
-# Generate complete report
-report = Report(chart)
-report.print_report(include_aspects=True, max_aspects=20)
+synastry_data = ChartDataFactory.create_synastry_chart_data(subject, partner)
+ReportGenerator(synastry_data).print_report(max_aspects=12)
 ```
 
-Report output example:
-```plaintext
-=============================================
-Kerykeion Astrological Report for John Lennon
-=============================================
+Each report contains:
+- A chart-aware title summarising the subject(s) and chart type
+- Birth/event metadata and configuration settings
+- Celestial points with sign, position, **daily motion**, **declination**, retrograde flag, and house
+- House cusp tables for every subject involved
+- Lunar phase details when available
+- Element/quality distributions and active configuration summaries (for chart data)
+- Aspect listings tailored for single or dual charts, with symbols for type and movement
+- Dual-chart extras such as house comparisons and relationship scores (when provided by the data)
 
-+Birth Data---------+---------------+
-| Birth Information | Value         |
-+-------------------+---------------+
-| Name              | John Lennon   |
-| Date              | 09/10/1940    |
-| Time              | 18:30         |
-| City              | Liverpool     |
-| Nation            | GB            |
-| Latitude          | 53.4106°      |
-| Longitude         | -2.9779°      |
-| Timezone          | Europe/London |
-| Day of Week       | Wednesday     |
-+-------------------+---------------+
+### Section Access
 
-+Celestial Points-+---------+----------+-------------+---------+------+----------------+
-| Point           | Sign    | Position | Speed       | Decl.   | Ret. | House          |
-+-----------------+---------+----------+-------------+---------+------+----------------+
-| Sun             | Lib ♎️ | 16.27°   | +0.9885°/d  | -6.40°  | -    | Sixth House    |
-| Moon            | Aqu ♒️ | 3.55°    | +12.5292°/d | -14.60° | -    | Eleventh House |
-| Mercury         | Sco ♏️ | 8.56°    | +1.3195°/d  | -16.23° | -    | Seventh House  |
-| Venus           | Vir ♍️ | 3.22°    | +1.1337°/d  | +10.57° | -    | Sixth House    |
-| Mars            | Lib ♎️ | 2.66°    | +0.6449°/d  | -0.18°  | -    | Sixth House    |
-| Jupiter         | Tau ♉️ | 13.69°   | -0.1069°/d  | +14.61° | R    | First House    |
-...
-+-----------------+---------+----------+-------------+---------+------+----------------+
-
-+Element Distribution-----------+
-| Element  | Count | Percentage |
-+----------+-------+------------+
-| Fire 🔥  | 50.0  | 21.3%      |
-| Earth 🌍 | 75.0  | 31.9%      |
-| Air 💨   | 95.0  | 40.4%      |
-| Water 💧 | 15.0  | 6.4%       |
-| Total    | 235.0 | 100%       |
-+----------+-------+------------+
-
-+Quality Distribution-----------+
-| Quality  | Count | Percentage |
-+----------+-------+------------+
-| Cardinal | 115.0 | 48.9%      |
-| Fixed    | 95.0  | 40.4%      |
-| Mutable  | 25.0  | 10.6%      |
-| Total    | 235.0 | 100%       |
-+----------+-------+------------+
-
-+Aspects-----------+---------+------------+
-| Point 1 | Aspect        | Point 2  | Orb    | Type       |
-+---------+---------------+----------+--------+------------+
-| Sun     | conjunction ☌ | True Node| 5.24°  | Separating |
-| Moon    | trine △       | Mars     | 0.88°  | Separating |
-| Mercury | sextile ⚹     | Venus    | 5.34°  | Separating |
-...
-+---------+---------------+----------+--------+------------+
-```
-
-### Understanding Speed and Declination
-
-**Speed (Daily Motion):**
-- Shows how fast each celestial body moves per day
-- Positive values = direct motion
-- Negative values = retrograde motion
-- Example: Moon at +12.53°/d (fast), Saturn at -0.07°/d (retrograde)
-
-**Declination (Celestial Latitude):**
-- Position relative to celestial equator (-90° to +90°)
-- Shows north/south position in the sky
-- Out of bounds (>±23.44°) indicates unusual energy expression
-
-### Modular Report Sections
-
-Generate specific sections independently:
+All section helpers remain available for targeted output:
 
 ```python
-# Individual sections
-print(report.get_report_title())
+report = ReportGenerator(natal_data)
 print(report.get_subject_data_report())
 print(report.get_celestial_points_report())
-print(report.get_houses_report())
-print(report.get_lunar_phase_report())
 print(report.get_elements_report())
-print(report.get_qualities_report())
-print(report.get_aspects_report(max_aspects=10))
+print(report.get_aspects_report(max_aspects=5))
 ```
 
-**See the [Report Documentation](https://www.kerykeion.net/report/) for complete details.**
-
-+----------------+------+----------+
-| House          | Sign | Position |
-+----------------+------+----------+
-| First_House    | Ari  | 19.72    |
-| Second_House   | Tau  | 29.52    |
-| Third_House    | Gem  | 20.23    |
-| Fourth_House   | Can  | 7.07     |
-| Fifth_House    | Can  | 25.31    |
-| Sixth_House    | Leo  | 22.11    |
-| Seventh_House  | Lib  | 19.72    |
-| Eighth_House   | Sco  | 29.52    |
-| Ninth_House    | Sag  | 20.23    |
-| Tenth_House    | Cap  | 7.07     |
-| Eleventh_House | Cap  | 25.31    |
-| Twelfth_House  | Aqu  | 22.11    |
-+----------------+------+----------+
-```
-
-To export to a file:
-
-```bash
-python3 your_script_name.py > file.txt
-```
+Refer to the refreshed [Report Documentation](https://www.kerykeion.net/report/) for end-to-end examples covering every supported chart model.
 
 ## Example: Retrieving Aspects
 

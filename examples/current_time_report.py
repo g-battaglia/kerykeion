@@ -1,6 +1,6 @@
 """Example of generating a full astrological report for the current time."""
 
-from kerykeion import Report
+from kerykeion import ReportGenerator
 from kerykeion import ChartDataFactory
 from kerykeion import AstrologicalSubjectFactory
 
@@ -13,5 +13,5 @@ chart = ChartDataFactory.create_chart_data(
 )
 
 # Create report with the chart (not just the subject)
-report_chart = Report(chart)
+report_chart = ReportGenerator(chart)
 report_chart.print_report(include_aspects=True)

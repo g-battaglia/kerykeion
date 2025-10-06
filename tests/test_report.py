@@ -1,98 +1,135 @@
+from __future__ import annotations
+
 from kerykeion import (
+    ReportGenerator,
     AstrologicalSubjectFactory,
     ChartDataFactory,
-    Report,
 )
+from kerykeion.composite_subject_factory import CompositeSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.schemas.kr_models import AstrologicalSubjectModel
+
+_LOCATION = {
+    "city": "Rome",
+    "nation": "IT",
+    "lat": 41.9028,
+    "lng": 12.4964,
+    "tz_str": "Europe/Rome",
+    "online": False,
+    "suppress_geonames_warning": True,
+}
 
 
-def test_print_report():
-    """Test that the report is generated correctly with all sections."""
-    subject = AstrologicalSubjectFactory.from_birth_data(
-        "John", 1975, 10, 10, 21, 15, "Roma", "IT", suppress_geonames_warning=True
-    )
-    report = Report(subject)
-
-    # Test report title
-    title = report.get_report_title()
-    assert "John" in title
-    assert "Kerykeion" in title
-
-    # Test subject data report
-    subject_data = report.get_subject_data_report()
-    assert "John" in subject_data
-    assert "Roma" in subject_data
-    assert "IT" in subject_data
-
-    # Test celestial points report (should include speed and declination)
-    celestial = report.get_celestial_points_report()
-    assert "Sun" in celestial
-    assert "Moon" in celestial
-    assert "Speed" in celestial
-    assert "Decl." in celestial
-    assert "°/d" in celestial  # Speed unit
-
-    # Test houses report
-    houses = report.get_houses_report()
-    assert "First House" in houses
-    assert "Placidus" in houses or "Houses" in houses
-
-    # Test lunar phase report
-    lunar = report.get_lunar_phase_report()
-    assert "Lunar Phase" in lunar or "moon" in lunar.lower()
-
-    # Elements and qualities should not be available for basic subject
-    elements = report.get_elements_report()
-    assert "No element distribution data available" in elements
-
-    qualities = report.get_qualities_report()
-    assert "No quality distribution data available" in qualities
-
-    # Test full report
-    full = report.get_full_report(include_aspects=False)
-    assert "John" in full
-    assert "Sun" in full
-    assert "First House" in full
-
-
-def test_chart_report_with_elements_and_qualities():
-    """Test that chart data reports include elements, qualities, and aspects."""
-    subject = AstrologicalSubjectFactory.from_birth_data(
-        "Jane", 1980, 5, 15, 14, 30, "London", "GB", suppress_geonames_warning=True
+def _make_subject(
+    name: str,
+    year: int,
+    month: int,
+    day: int,
+    hour: int,
+    minute: int,
+) -> AstrologicalSubjectModel:
+    return AstrologicalSubjectFactory.from_birth_data(
+        name=name,
+        year=year,
+        month=month,
+        day=day,
+        hour=hour,
+        minute=minute,
+        **_LOCATION,
     )
 
-    # Create chart data which includes elements, qualities, and aspects
-    chart = ChartDataFactory.create_chart_data("Natal", first_subject=subject)
-    report = Report(chart)
 
-    # Test elements report
-    elements = report.get_elements_report()
-    assert "Element Distribution" in elements
-    assert "Fire" in elements
-    assert "Earth" in elements
-    assert "Air" in elements
-    assert "Water" in elements
-    assert "%" in elements
+def test_subject_report_includes_core_sections() -> None:
+    subject = _make_subject("Subject A", 1975, 10, 10, 21, 15)
+    report = ReportGenerator(subject, include_aspects=False)
 
-    # Test qualities report
-    qualities = report.get_qualities_report()
-    assert "Quality Distribution" in qualities
-    assert "Cardinal" in qualities
-    assert "Fixed" in qualities
-    assert "Mutable" in qualities
-    assert "%" in qualities
+    text = report.generate_report(include_aspects=False)
 
-    # Test aspects report
-    aspects = report.get_aspects_report(max_aspects=5)
-    # Aspects may or may not be present depending on the chart
-    # But the report should at least not crash
-    assert isinstance(aspects, str)
+    assert subject.name in text
+    assert "Birth Data" in text
+    assert "Celestial Points" in text
+    assert "Houses (" in text
+    assert "Lunar Phase" in text
+    assert "Aspects" not in text  # include_aspects=False suppresses the section
+
+
+def test_natal_chart_report_includes_elements_and_active_configuration() -> None:
+    subject = _make_subject("Subject B", 1985, 6, 15, 8, 0)
+    chart = ChartDataFactory.create_natal_chart_data(subject)
+    report = ReportGenerator(chart)
+
+    full_text = report.generate_report(max_aspects=3)
+
+    assert "Element Distribution" in full_text
+    assert all(keyword in full_text for keyword in ("Fire", "Earth", "Air", "Water"))
+    assert "Quality Distribution" in full_text
+    assert all(keyword in full_text for keyword in ("Cardinal", "Fixed", "Mutable"))
+    assert "Aspects" in full_text
+    assert "Active Celestial Points" in full_text
+
+
+def test_composite_chart_report_lists_members() -> None:
+    first = _make_subject("Composite First", 1990, 1, 2, 9, 30)
+    second = _make_subject("Composite Second", 1992, 3, 4, 11, 45)
+
+    composite_subject = CompositeSubjectFactory(
+        first,
+        second,
+        chart_name="Sample Composite Chart",
+    ).get_midpoint_composite_subject_model()
+
+    chart = ChartDataFactory.create_composite_chart_data(composite_subject)
+    report = ReportGenerator(chart)
+    text = report.generate_report(max_aspects=3)
+
+    assert "Composite Members" in text
+    assert first.name in text and second.name in text
+    assert "Composite Chart" in text
+
+
+def test_solar_return_report_labels_return_type() -> None:
+    natal = _make_subject("Solar Return Subject", 1987, 7, 21, 14, 30)
+
+    factory = PlanetaryReturnFactory(
+        natal,
+        city=_LOCATION["city"],
+        nation=_LOCATION["nation"],
+        lat=_LOCATION["lat"],
+        lng=_LOCATION["lng"],
+        tz_str=_LOCATION["tz_str"],
+        online=False,
+    )
+    solar_return_subject = factory.next_return_from_iso_formatted_time(
+        natal.iso_formatted_local_datetime,
+        "Solar",
+    )
+
+    chart = ChartDataFactory.create_single_wheel_return_chart_data(solar_return_subject)
+    report = ReportGenerator(chart)
+    text = report.generate_report(max_aspects=3)
+
+    assert "Solar Return Chart" in text
+    assert natal.name in text
+
+
+def test_synastry_report_includes_house_comparison_and_dual_aspects() -> None:
+    first = _make_subject("Synastry First", 1980, 2, 14, 16, 20)
+    second = _make_subject("Synastry Second", 1983, 11, 6, 4, 45)
+
+    chart = ChartDataFactory.create_synastry_chart_data(first, second)
+    report = ReportGenerator(chart)
+
+    text = report.generate_report(max_aspects=5)
+    assert first.name in text and second.name in text
+    assert "points in" in text  # house comparison tables
+    assert "Active Celestial Points" in text
+    assert "Owner 1" in text and "Owner 2" in text
+    assert "Aspects" in text
 
 
 if __name__ == "__main__":
-    import pytest
     import logging
+    import pytest
 
-    # Set the log level to CRITICAL
     logging.basicConfig(level=logging.CRITICAL)
-
-    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])
+    pytest.main(["-vv", __file__])

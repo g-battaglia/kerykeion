@@ -24,7 +24,7 @@ from .ephemeris_data_factory import EphemerisDataFactory
 from .house_comparison.house_comparison_factory import HouseComparisonFactory
 from .planetary_return_factory import PlanetaryReturnFactory, PlanetReturnModel
 from .relationship_score_factory import RelationshipScoreFactory
-from .report import Report
+from .report import ReportGenerator
 from .settings import KerykeionSettingsModel, get_settings
 from .transits_time_range_factory import TransitsTimeRangeFactory
 from .backword import (
@@ -51,7 +51,7 @@ __all__ = [
     "PlanetaryReturnFactory",
     "PlanetReturnModel",
     "RelationshipScoreFactory",
-    "Report",
+    "ReportGenerator",
     "KerykeionSettingsModel",
     "get_settings",
     "TransitsTimeRangeFactory",
