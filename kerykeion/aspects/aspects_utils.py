@@ -5,7 +5,7 @@
 # TODO: Better documentation and unit tests
 
 from swisseph import difdeg2n
-from typing import Union, TYPE_CHECKING
+from typing import Union
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.schemas.kr_literals import AspectMovementType
 from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel

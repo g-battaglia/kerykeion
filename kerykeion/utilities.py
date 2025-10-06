@@ -14,7 +14,7 @@ from kerykeion.schemas import (
     PlanetReturnModel,
 )
 from kerykeion.schemas.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, AstrologicalPoint, Houses
-from typing import Union, Optional, get_args, TYPE_CHECKING
+from typing import Union, Optional, get_args
 import logging
 import math
 import re
