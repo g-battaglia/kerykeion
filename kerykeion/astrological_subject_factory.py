@@ -561,7 +561,7 @@ class AstrologicalSubjectFactory:
             seconds = seconds if seconds is not None else now.second
 
         # Create a calculation data container
-        calc_data = {}
+        calc_data: Dict[str, Any] = {}
 
         # Basic identity
         calc_data["name"] = name
@@ -571,7 +571,7 @@ class AstrologicalSubjectFactory:
         if active_points is None:
             active_points_list: List[AstrologicalPoint] = list(DEFAULT_ACTIVE_POINTS)
         else:
-            active_points_list: List[AstrologicalPoint] = list(active_points)
+            active_points_list = list(active_points)
 
         calc_data["active_points"] = active_points_list
 
@@ -664,8 +664,8 @@ class AstrologicalSubjectFactory:
         # Calculate lunar phase (optional - only if requested and Sun and Moon are available)
         if calculate_lunar_phase and "moon" in calc_data and "sun" in calc_data:
             calc_data["lunar_phase"] = calculate_moon_phase(
-                calc_data["moon"].abs_pos,  # type: ignore[union-attr]
-                calc_data["sun"].abs_pos  # type: ignore[union-attr]
+                calc_data["moon"].abs_pos,  # type: ignore[attr-defined,union-attr]
+                calc_data["sun"].abs_pos  # type: ignore[attr-defined,union-attr]
             )
         else:
             calc_data["lunar_phase"] = None
@@ -990,7 +990,7 @@ class AstrologicalSubjectFactory:
 
 
     @staticmethod
-    def _calculate_houses(data: Dict[str, Any], active_points: Optional[List[AstrologicalPoint]]) -> List[str]:
+    def _calculate_houses(data: Dict[str, Any], active_points: Optional[List[AstrologicalPoint]]) -> List[AstrologicalPoint]:
         """
         Calculate house cusps and angular points (Ascendant, MC, etc.).
 
@@ -1031,7 +1031,7 @@ class AstrologicalSubjectFactory:
         def should_calculate(point: AstrologicalPoint) -> bool:
             return not active_points or point in active_points
         # Track which axial cusps are actually calculated
-        calculated_axial_cusps = []
+        calculated_axial_cusps: List[AstrologicalPoint] = []
 
         # Calculate houses based on zodiac type
         if data["zodiac_type"] == "Sidereal":
@@ -1115,7 +1115,7 @@ class AstrologicalSubjectFactory:
         iflag: int,
         houses_degree_ut: List[float],
         point_type: PointType,
-        calculated_planets: List[str],
+        calculated_planets: List[AstrologicalPoint],
         active_points: List[AstrologicalPoint]
     ) -> None:
         """
@@ -1187,7 +1187,7 @@ class AstrologicalSubjectFactory:
                 active_points.remove(planet_name)
 
     @staticmethod
-    def _calculate_planets(data: Dict[str, Any], active_points: List[AstrologicalPoint], calculated_axial_cusps: Optional[List[str]] = None) -> None:
+    def _calculate_planets(data: Dict[str, Any], active_points: List[AstrologicalPoint], calculated_axial_cusps: Optional[List[AstrologicalPoint]] = None) -> None:
         """
         Calculate positions for all requested celestial bodies and special points.
 

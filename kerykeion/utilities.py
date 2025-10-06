@@ -420,9 +420,6 @@ def calculate_moon_phase(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseM
     Returns:
         LunarPhaseModel containing phase data, emoji, and name
     """
-    # Initialize moon_phase and sun_phase to None in case of an error
-    moon_phase, sun_phase = None, None
-
     # Calculate the anti-clockwise degrees between the sun and moon
     degrees_between = (moon_abs_pos - sun_abs_pos) % 360
 
@@ -437,6 +434,7 @@ def calculate_moon_phase(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseM
     ]
 
     # Calculate the sun phase (1-28) based on the degrees between the sun and moon
+    sun_phase = 1  # Default value
     for x in range(len(sunstep)):
         low = sunstep[x]
         high = sunstep[x + 1] if x < len(sunstep) - 1 else 360
@@ -444,16 +442,13 @@ def calculate_moon_phase(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseM
             sun_phase = x + 1
             break
 
-    # Create a dictionary with the lunar phase information
-    lunar_phase_dictionary = {
-        "degrees_between_s_m": degrees_between,
-        "moon_phase": moon_phase,
-        "sun_phase": sun_phase,
-        "moon_emoji": get_moon_emoji_from_phase_int(moon_phase),
-        "moon_phase_name": get_moon_phase_name_from_phase_int(moon_phase),
-    }
-
-    return LunarPhaseModel(**lunar_phase_dictionary)
+    return LunarPhaseModel(
+        degrees_between_s_m=degrees_between,
+        moon_phase=moon_phase,
+        sun_phase=sun_phase,
+        moon_emoji=get_moon_emoji_from_phase_int(moon_phase),
+        moon_phase_name=get_moon_phase_name_from_phase_int(moon_phase)
+    )
 
 
 def circular_sort(degrees: list[Union[int, float]]) -> list[Union[int, float]]:

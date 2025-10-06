@@ -154,6 +154,7 @@ class ChartDataFactory:
             )
 
         # Calculate aspects based on chart type
+        aspects: Union[SingleChartAspectsModel, DualChartAspectsModel]
         if chart_type in ["Natal", "Composite", "SingleReturnChart"]:
             # Single chart aspects
             aspects = AspectsFactory.single_chart_aspects(

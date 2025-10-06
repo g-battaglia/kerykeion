@@ -280,14 +280,14 @@ class ChartDrawer:
         for body in self.planets_settings:
             if body["name"] in self.active_points:
                 body["is_active"] = True
-                self.available_planets_setting.append(body)
+                self.available_planets_setting.append(body)  # type: ignore[arg-type]
 
         # Set available celestial points
         available_celestial_points_names = [body["name"].lower() for body in self.available_planets_setting]
         self.available_kerykeion_celestial_points = []
         for body in available_celestial_points_names:
             if hasattr(self.first_obj, body):
-                self.available_kerykeion_celestial_points.append(self.first_obj.get(body))
+                self.available_kerykeion_celestial_points.append(self.first_obj.get(body))  # type: ignore[arg-type]
 
         # ------------------------
         # CHART TYPE SPECIFIC SETUP FROM CHART DATA
@@ -1216,7 +1216,7 @@ class ChartDrawer:
             if self.double_chart_aspect_grid_type == "list":
                 title = f'{self.first_obj.name} - {self.language_settings.get("transit_aspects", "Transit Aspects")}'
                 template_dict["makeAspectGrid"] = ""
-                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings)
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings)  # type: ignore[arg-type]  # type: ignore[arg-type]
             else:
                 template_dict["makeAspectGrid"] = ""
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
@@ -1331,8 +1331,8 @@ class ChartDrawer:
 
             # House comparison grid
             house_comparison_factory = HouseComparisonFactory(
-                first_subject=self.first_obj,
-                second_subject=self.second_obj,
+                first_subject=self.first_obj,  # type: ignore[arg-type]
+                second_subject=self.second_obj,  # type: ignore[arg-type]
                 active_points=self.active_points,
             )
             house_comparison = house_comparison_factory.get_house_comparison()
@@ -1390,10 +1390,10 @@ class ChartDrawer:
             if self.double_chart_aspect_grid_type == "list":
                 template_dict["makeAspectGrid"] = ""
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
-                    f"{self.first_obj.name} - {self.second_obj.name} {self.language_settings.get('synastry_aspects', 'Synastry Aspects')}", # type: ignore
+                    f"{self.first_obj.name} - {self.second_obj.name} {self.language_settings.get('synastry_aspects', 'Synastry Aspects')}",  # type: ignore[union-attr]
                     self.aspects_list,
-                    self.planets_settings,
-                    self.aspects_settings
+                    self.planets_settings,  # type: ignore[arg-type]
+                    self.aspects_settings  # type: ignore[arg-type]
                 )
             else:
                 template_dict["makeAspectGrid"] = ""
@@ -1535,7 +1535,7 @@ class ChartDrawer:
             if self.double_chart_aspect_grid_type == "list":
                 title = self.language_settings.get("return_aspects", "Natal to Return Aspects")
                 template_dict["makeAspectGrid"] = ""
-                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings, max_columns=7)
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings, max_columns=7)  # type: ignore[arg-type]  # type: ignore[arg-type]
             else:
                 template_dict["makeAspectGrid"] = ""
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
@@ -1661,8 +1661,8 @@ class ChartDrawer:
             )
 
             house_comparison_factory = HouseComparisonFactory(
-                first_subject=self.first_obj,
-                second_subject=self.second_obj,
+                first_subject=self.first_obj,  # type: ignore[arg-type]
+                second_subject=self.second_obj,  # type: ignore[arg-type]
                 active_points=self.active_points,
             )
             house_comparison = house_comparison_factory.get_house_comparison()
