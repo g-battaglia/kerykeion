@@ -20,9 +20,6 @@ import math
 import re
 from datetime import datetime
 
-if TYPE_CHECKING:
-    pass
-
 
 def get_number_from_name(name: AstrologicalPoint) -> int:
     """

@@ -12,9 +12,6 @@ from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointMod
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 
 
-if TYPE_CHECKING:
-    pass
-
 def get_aspect_from_two_points(
     aspects_settings: Union[list[dict], list[dict]],
     point_one: Union[float, int],

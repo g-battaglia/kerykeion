@@ -9,3 +9,9 @@
 [html]
 # HTML report configuration
 title = "Kerykeion Test Coverage Report"
+
+[report]
+# Exclude patterns from coverage reports
+exclude_lines =
+    pragma: no cover
+    ^\s*if __name__ == ['"]__main__['"]:\s*$

@@ -393,7 +393,7 @@ class EphemerisDataFactory:
         return subjects_list
 
 
-if "__main__" == __name__:
+if __name__ == "__main__":
     start_date = datetime.fromisoformat("2020-01-01")
     end_date = datetime.fromisoformat("2020-01-03")
 
