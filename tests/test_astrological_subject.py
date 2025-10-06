@@ -1838,7 +1838,7 @@ class TestAllDwarfPlanetsAndFixedStars:
 
         with patch('kerykeion.astrological_subject_factory.FetchGeonames', return_value=mock_geonames):
             try:
-                subject = AstrologicalSubjectFactory.from_birth_data(
+                AstrologicalSubjectFactory.from_birth_data(
                     "Geonames Error", 1990, 1, 1, 12, 0,
                     city="TestCity", nation="TestNation",
                     online=True,
@@ -1902,12 +1902,12 @@ class TestAllDwarfPlanetsAndFixedStars:
         assert hasattr(subject, 'regulus')
         assert subject.regulus is not None
         assert hasattr(subject.regulus, 'abs_pos')
-        assert subject.regulus.retrograde == False  # Fixed stars are never retrograde
+        assert not subject.regulus.retrograde  # Fixed stars are never retrograde
 
         assert hasattr(subject, 'spica')
         assert subject.spica is not None
         assert hasattr(subject.spica, 'abs_pos')
-        assert subject.spica.retrograde == False
+        assert not subject.spica.retrograde
             # Vertex and Anti_Vertex removed from active_points due to error
 
 

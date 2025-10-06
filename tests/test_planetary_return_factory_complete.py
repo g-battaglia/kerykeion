@@ -269,7 +269,7 @@ class TestPlanetaryReturnFactory:
                 nation="US",
                 online=True
             )
-        
+
         assert "You need to set the city if you want to use the online mode" in str(exc_info.value)
 
     def test_init_online_mode_missing_nation(self):
@@ -281,7 +281,7 @@ class TestPlanetaryReturnFactory:
                 nation=None,  # Missing nation
                 online=True
             )
-        
+
         assert "You need to set the nation if you want to use the online mode" in str(exc_info.value)
 
     def test_offline_mode_missing_coordinates(self):
@@ -291,7 +291,7 @@ class TestPlanetaryReturnFactory:
                 subject=self.subject,
                 online=False
             )
-        
+
         assert "You need to set the coordinates" in str(exc_info.value)
 
     def test_offline_mode_missing_lat(self):
@@ -303,7 +303,7 @@ class TestPlanetaryReturnFactory:
                 tz_str="Europe/Rome",
                 online=False
             )
-        
+
         assert "You need to set the coordinates" in str(exc_info.value)
 
     def test_offline_mode_missing_lng(self):
@@ -315,7 +315,7 @@ class TestPlanetaryReturnFactory:
                 tz_str="Europe/Rome",
                 online=False
             )
-        
+
         assert "You need to set the coordinates" in str(exc_info.value)
 
     def test_offline_mode_missing_tz_str(self):
@@ -327,7 +327,7 @@ class TestPlanetaryReturnFactory:
                 lng=12.4964,
                 online=False
             )
-        
+
         assert "You need to set the coordinates" in str(exc_info.value)
 
     def test_solar_return_calculation_method(self):
@@ -338,7 +338,7 @@ class TestPlanetaryReturnFactory:
             nation="IT",
             online=True
         )
-        
+
         # Test solar return
         result = factory.next_return_from_year(2023, "Solar")
         assert result is not None
@@ -351,7 +351,7 @@ class TestPlanetaryReturnFactory:
             nation="IT",
             online=True
         )
-        
+
         # Test lunar return
         result = factory.next_return_from_year(2023, "Lunar")
         assert result is not None
@@ -364,7 +364,7 @@ class TestPlanetaryReturnFactory:
             nation="IT",
             online=True
         )
-        
+
         # Test with ISO formatted time
         result = factory.next_return_from_iso_formatted_time("2023-06-15T12:00:00", "Solar")
         assert result is not None
@@ -377,11 +377,11 @@ class TestPlanetaryReturnFactory:
             nation="IT",
             online=True
         )
-        
+
         # Test with valid return types
         solar_result = factory.next_return_from_year(2023, "Solar")
         lunar_result = factory.next_return_from_year(2023, "Lunar")
-        
+
         assert solar_result is not None
         assert lunar_result is not None
 
@@ -394,7 +394,7 @@ class TestPlanetaryReturnFactory:
             tz_str="Europe/Rome",
             online=False
         )
-        
+
         # Test that methods work with offline coordinates
         result = factory.next_return_from_year(2023, "Solar")
         assert result is not None
@@ -409,7 +409,7 @@ class TestPlanetaryReturnFactory:
             online=True
         )
         assert factory1.online is True
-        
+
         # Test with minimum required parameters for offline mode
         factory2 = PlanetaryReturnFactory(
             self.subject,
@@ -431,14 +431,14 @@ class TestPlanetaryReturnFactory:
                 'countryCode': 'IT'
             }
             mock_fetch.return_value = mock_geonames
-            
+
             factory = PlanetaryReturnFactory(
                 self.subject,
                 city="Rome",
                 nation="IT",
                 online=True
             )
-            
+
             # Verify that mocked geonames data was used
             mock_fetch.assert_called_once()
             assert factory.lat == 41.9028
@@ -453,7 +453,7 @@ class TestPlanetaryReturnFactory:
             nation="IT",
             online=True
         )
-        
+
         # Test that all expected attributes are accessible
         assert hasattr(factory, 'subject')
         assert hasattr(factory, 'city')
@@ -471,12 +471,12 @@ class TestPlanetaryReturnFactory:
             nation="IT",
             online=True
         )
-        
+
         # Calculate multiple returns
         solar_return_1 = factory.next_return_from_year(2023, "Solar")
         solar_return_2 = factory.next_return_from_year(2024, "Solar")
         lunar_return_1 = factory.next_return_from_year(2023, "Lunar")
-        
+
         # Verify all calculations complete successfully
         assert solar_return_1 is not None
         assert solar_return_2 is not None
