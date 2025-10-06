@@ -15,6 +15,7 @@ from kerykeion.schemas.kr_models import (
     PointInHouseModel,
     RelationshipScoreModel,
     SingleChartDataModel,
+    KerykeionPointModel,
 )
 
 
@@ -306,27 +307,35 @@ class ReportGenerator:
         if isinstance(subject, PlanetReturnModel):
             birth_data.append(["Return Type", subject.return_type])
 
-        if getattr(subject, "day", None) is not None and getattr(subject, "month", None) is not None and getattr(subject, "year", None) is not None:
+        if isinstance(subject, AstrologicalSubjectModel):
             birth_data.append(
-                ["Date", f"{subject.day:02d}/{subject.month:02d}/{subject.year}"]  # type: ignore[attr-defined]
+                ["Date", f"{subject.day:02d}/{subject.month:02d}/{subject.year}"]
             )
+            birth_data.append(["Time", f"{subject.hour:02d}:{subject.minute:02d}"])
 
-        if getattr(subject, "hour", None) is not None and getattr(subject, "minute", None) is not None:
-            birth_data.append(["Time", f"{subject.hour:02d}:{subject.minute:02d}"])  # type: ignore[attr-defined]
+        city = getattr(subject, "city", None)
+        if city:
+            birth_data.append(["City", str(city)])
 
-        if getattr(subject, "city", None):
-            birth_data.append(["City", str(subject.city)])
-        if getattr(subject, "nation", None):
-            birth_data.append(["Nation", str(subject.nation)])
-        if getattr(subject, "lat", None) is not None:
-            birth_data.append(["Latitude", f"{subject.lat:.4f}°"])
-        if getattr(subject, "lng", None) is not None:
-            birth_data.append(["Longitude", f"{subject.lng:.4f}°"])
-        if getattr(subject, "tz_str", None):
-            birth_data.append(["Timezone", str(subject.tz_str)])
+        nation = getattr(subject, "nation", None)
+        if nation:
+            birth_data.append(["Nation", str(nation)])
 
-        if getattr(subject, "day_of_week", None):
-            birth_data.append(["Day of Week", str(subject.day_of_week)])
+        lat = getattr(subject, "lat", None)
+        if lat is not None:
+            birth_data.append(["Latitude", f"{lat:.4f}°"])
+
+        lng = getattr(subject, "lng", None)
+        if lng is not None:
+            birth_data.append(["Longitude", f"{lng:.4f}°"])
+
+        tz_str = getattr(subject, "tz_str", None)
+        if tz_str:
+            birth_data.append(["Timezone", str(tz_str)])
+
+        day_of_week = getattr(subject, "day_of_week", None)
+        if day_of_week:
+            birth_data.append(["Day of Week", str(day_of_week)])
 
         iso_local = getattr(subject, "iso_formatted_local_datetime", None)
         if iso_local:
@@ -352,11 +361,7 @@ class ReportGenerator:
         return f"{birth_table}\n\n{settings_table}"
 
     def _celestial_points_report(self, subject: SubjectLike, title: str) -> str:
-        try:
-            points = get_available_astrological_points_list(subject)  # type: ignore[arg-type]
-        except Exception:
-            return f"{title}: data unavailable."
-
+        points = self._collect_celestial_points(subject)
         if not points:
             return "No celestial points data available."
 
@@ -388,6 +393,23 @@ class ReportGenerator:
             ])
 
         return AsciiTable(celestial_data, title=title).table
+
+    def _collect_celestial_points(self, subject: SubjectLike) -> List[KerykeionPointModel]:
+        if isinstance(subject, AstrologicalSubjectModel):
+            return get_available_astrological_points_list(subject)
+
+        points: List[KerykeionPointModel] = []
+        active_points: Optional[Sequence[str]] = getattr(subject, "active_points", None)
+        if not active_points:
+            return points
+
+        for point_name in active_points:
+            attr_name = str(point_name).lower()
+            attr = getattr(subject, attr_name, None)
+            if attr is not None:
+                points.append(attr)
+
+        return points
 
     def _houses_report(self, subject: SubjectLike, title: str) -> str:
         try:
@@ -637,14 +659,12 @@ if __name__ == "__main__":
     from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
     # Shared offline location configuration (Rome, Italy)
-    offline_location_kwargs = {
-        "city": "Rome",
-        "nation": "IT",
-        "lat": 41.9028,
-        "lng": 12.4964,
-        "tz_str": "Europe/Rome",
-        "online": False,
-    }
+    offline_city = "Rome"
+    offline_nation = "IT"
+    offline_lat = 41.9028
+    offline_lng = 12.4964
+    offline_tz = "Europe/Rome"
+    offline_online = False
 
     # Base natal subject (AstrologicalSubjectModel)
     natal_subject = AstrologicalSubjectFactory.from_birth_data(
@@ -654,7 +674,12 @@ if __name__ == "__main__":
         day=21,
         hour=14,
         minute=45,
-        **offline_location_kwargs,
+        city=offline_city,
+        nation=offline_nation,
+        lat=offline_lat,
+        lng=offline_lng,
+        tz_str=offline_tz,
+        online=offline_online,
     )
 
     # Partner subject for synastry/composite examples
@@ -665,13 +690,23 @@ if __name__ == "__main__":
         day=5,
         hour=9,
         minute=30,
-        **offline_location_kwargs,
+        city=offline_city,
+        nation=offline_nation,
+        lat=offline_lat,
+        lng=offline_lng,
+        tz_str=offline_tz,
+        online=offline_online,
     )
 
     # Transit subject (current moment at the same location)
     transit_subject = AstrologicalSubjectFactory.from_current_time(
         name="Transit Snapshot",
-        **offline_location_kwargs,
+        city=offline_city,
+        nation=offline_nation,
+        lat=offline_lat,
+        lng=offline_lng,
+        tz_str=offline_tz,
+        online=offline_online,
     )
 
     # Planetary return subject (Solar Return)
