@@ -64,3 +64,10 @@ coverage.xml
 .pytest_cache/
 
 *.patch
+
+# Personal workspace #
+######################
+# Ignore all files in workspace except README.md and main.py
+workspace/*
+!workspace/README.md
+!workspace/main.py
