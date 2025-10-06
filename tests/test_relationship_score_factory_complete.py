@@ -48,7 +48,7 @@ class TestRelationshipScoreFactory:
 
         assert factory.first_subject == self.subject1
         assert factory.second_subject == self.subject2
-        assert factory.use_only_major_aspects == True  # Default value
+        assert factory.use_only_major_aspects  # Default value
         assert factory.score_value == 0  # Initial value
 
     def test_relationship_score_with_major_aspects_only(self):
@@ -342,7 +342,7 @@ class TestRelationshipScoreFactory:
         factory = RelationshipScoreFactory(self.subject1, self.subject2)
 
         # Initially should be True (default)
-        assert factory.is_destiny_sign == True
+        assert factory.is_destiny_sign
 
         # Test evaluation
         factory._evaluate_destiny_sign()
@@ -377,7 +377,7 @@ class TestRelationshipScoreFactory:
 
     def test_score_mapping_constant(self):
         """Test score mapping constant."""
-        factory = RelationshipScoreFactory(self.subject1, self.subject2)
+        RelationshipScoreFactory(self.subject1, self.subject2)
 
         assert hasattr(RelationshipScoreFactory, 'SCORE_MAPPING')
         assert isinstance(RelationshipScoreFactory.SCORE_MAPPING, list)

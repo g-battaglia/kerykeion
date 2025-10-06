@@ -199,7 +199,7 @@ class TestEphemerisDataFactory:
         end = datetime(2027, 1, 1)  # 3+ years
 
         with caplog.at_level(logging.WARNING):
-            factory = EphemerisDataFactory(
+            EphemerisDataFactory(
                 start_datetime=start,
                 end_datetime=end,
                 step_type="days",

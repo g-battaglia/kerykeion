@@ -318,14 +318,14 @@ class TestUtilities:
     def test_is_point_between_additional_edge_cases(self):
         """Test additional edge cases for is_point_between function."""
         # Test exactly at start point
-        assert is_point_between(0, 30, 0) == True
+        assert is_point_between(0, 30, 0)
 
         # Test exactly at end point (should be False according to function docs)
-        assert is_point_between(0, 30, 30) == False
+        assert not is_point_between(0, 30, 30)
 
         # Test crossing 360/0 boundary
-        assert is_point_between(350, 20, 10) == True
-        assert is_point_between(350, 20, 350) == True
+        assert is_point_between(350, 20, 10)
+        assert is_point_between(350, 20, 350)
 
     def test_julian_datetime_conversion_additional_edge_cases(self):
         """Test Julian day number conversion edge cases."""

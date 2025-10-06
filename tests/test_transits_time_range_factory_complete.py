@@ -431,7 +431,7 @@ class TestTransitsTimeRangeFactory:
             self.ephemeris_data
         )
 
-        result = factory.get_transit_moments()
+        factory.get_transit_moments()
 
         # Verify AspectsFactory was called for each ephemeris point
         assert mock_dual_chart_aspects.call_count == len(self.ephemeris_data)
