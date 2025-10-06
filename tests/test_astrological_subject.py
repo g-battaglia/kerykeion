@@ -394,7 +394,6 @@ class TestAstrologicalSubject:
             "lunar_phase": {
                 "degrees_between_s_m": 201.07547248727332,
                 "moon_phase": 16,
-                "sun_phase": 15,
                 "moon_emoji": "🌖",
                 "moon_phase_name": "Waning Gibbous"
             },
@@ -780,7 +779,6 @@ class TestAstrologicalSubject:
     def test_lunar_phase(self):
         assert self.subject.lunar_phase.model_dump()["degrees_between_s_m"] == approx(self.expected_output["lunar_phase"]["degrees_between_s_m"], abs=1e-2)
         assert self.subject.lunar_phase.model_dump()["moon_phase"] == self.expected_output["lunar_phase"]["moon_phase"]
-        assert self.subject.lunar_phase.model_dump()["sun_phase"] == self.expected_output["lunar_phase"]["sun_phase"]
         assert self.subject.lunar_phase.model_dump()["moon_emoji"] == self.expected_output["lunar_phase"]["moon_emoji"]
         assert self.subject.lunar_phase.model_dump()["moon_phase_name"] == self.expected_output["lunar_phase"]["moon_phase_name"]
 

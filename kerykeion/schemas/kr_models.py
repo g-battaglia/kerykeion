@@ -58,13 +58,11 @@ class LunarPhaseModel(SubscriptableBaseModel):
     Attributes:
         degrees_between_s_m: Angular separation between Sun and Moon in degrees.
         moon_phase: Numerical phase identifier for the Moon.
-        sun_phase: Numerical phase identifier for the Sun.
         moon_emoji: Emoji representation of the lunar phase.
         moon_phase_name: Text name of the lunar phase.
     """
     degrees_between_s_m: Union[float, int]
     moon_phase: int
-    sun_phase: int
     moon_emoji: LunarPhaseEmoji
     moon_phase_name: LunarPhaseName
 

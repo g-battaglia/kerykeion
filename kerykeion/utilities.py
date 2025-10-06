@@ -424,25 +424,9 @@ def calculate_moon_phase(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseM
     step = 360.0 / 28.0
     moon_phase = int(degrees_between // step) + 1
 
-    # Define the sun phase steps
-    sunstep = [
-        0, 30, 40, 50, 60, 70, 80, 90, 120, 130, 140, 150, 160, 170, 180,
-        210, 220, 230, 240, 250, 260, 270, 300, 310, 320, 330, 340, 350
-    ]
-
-    # Calculate the sun phase (1-28) based on the degrees between the sun and moon
-    sun_phase = 1  # Default value
-    for x in range(len(sunstep)):
-        low = sunstep[x]
-        high = sunstep[x + 1] if x < len(sunstep) - 1 else 360
-        if low <= degrees_between < high:
-            sun_phase = x + 1
-            break
-
     return LunarPhaseModel(
         degrees_between_s_m=degrees_between,
         moon_phase=moon_phase,
-        sun_phase=sun_phase,
         moon_emoji=get_moon_emoji_from_phase_int(moon_phase),
         moon_phase_name=get_moon_phase_name_from_phase_int(moon_phase)
     )

@@ -421,7 +421,6 @@ for moon_pos, sun_pos, description in lunar_examples:
     print(f"  Moon: {moon_pos}°, Sun: {sun_pos}°")
     print(f"  Degrees of separation: {phase_info.degrees_between_s_m:.1f}°")
     print(f"  Moon phase: {phase_info.moon_phase}/28")
-    print(f"  Sun phase: {phase_info.sun_phase}/28")
     print(f"  Phase name: {phase_info.moon_phase_name}")
     print(f"  Emoji: {phase_info.moon_emoji}")
 

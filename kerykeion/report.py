@@ -215,7 +215,6 @@ class Report:
             ["Phase Name", f"{lunar.moon_phase_name} {lunar.moon_emoji}"],
             ["Sun-Moon Angle", f"{lunar.degrees_between_s_m:.2f}°"],
             ["Moon Phase", f"{lunar.moon_phase}"],
-            ["Sun Phase", f"{lunar.sun_phase}"],
         ]
 
         return AsciiTable(lunar_data, title="Lunar Phase").table
