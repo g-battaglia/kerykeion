@@ -310,7 +310,7 @@ class Report:
         if max_aspects:
             aspects = aspects[:max_aspects]
 
-        aspects_data = [["Point 1", "Aspect", "Point 2", "Orb", "Type"]]
+        aspects_data = [["Point 1", "Aspect", "Point 2", "Orb", "Movement"]]
 
         for aspect in aspects:
             # Format aspect type symbol
@@ -326,12 +326,19 @@ class Report:
                 "quintile": "Q",
             }.get(aspect.aspect.lower(), aspect.aspect)
 
+            # Format movement with symbols
+            movement_symbol = {
+                "Applying": "→",
+                "Separating": "←",
+                "Exact": "✓"
+            }.get(aspect.aspect_movement, "")
+
             aspects_data.append([
                 aspect.p1_name.replace("_", " "),
                 f"{aspect.aspect} {aspect_symbol}",
                 aspect.p2_name.replace("_", " "),
                 f"{aspect.orbit:.2f}°",
-                "Applying" if aspect.orbit < 0 else "Separating",
+                f"{aspect.aspect_movement} {movement_symbol}",
             ])
 
         title = "Aspects" + (f" (showing {len(aspects)} of {total_aspects})" if max_aspects else "")

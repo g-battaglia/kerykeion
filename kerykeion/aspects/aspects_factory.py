@@ -7,7 +7,7 @@ import logging
 from typing import Union, List, Optional
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.aspects.aspects_utils import get_aspect_from_two_points, get_active_points_list
+from kerykeion.aspects.aspects_utils import get_aspect_from_two_points, get_active_points_list, calculate_aspect_movement
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     AspectModel,
@@ -20,7 +20,7 @@ from kerykeion.schemas.kr_models import (
     NatalAspectsModel,
     SynastryAspectsModel
 )
-from kerykeion.schemas.kr_literals import AstrologicalPoint
+from kerykeion.schemas.kr_literals import AstrologicalPoint, AspectMovementType
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
@@ -313,6 +313,13 @@ class AspectsFactory:
                     first_planet_id = planet_id_lookup.get(first_name, 0)
                     second_planet_id = planet_id_lookup.get(second_name, 0)
 
+                    # Calculate aspect movement (applying/separating/exact)
+                    aspect_movement = calculate_aspect_movement(
+                        active_points_list[first]["abs_pos"],
+                        active_points_list[second]["abs_pos"],
+                        aspect["aspect_degrees"]
+                    )
+
                     aspect_model = AspectModel(
                         p1_name=first_name,
                         p1_owner=subject.name,
@@ -326,6 +333,7 @@ class AspectsFactory:
                         diff=aspect["diff"],
                         p1=first_planet_id,
                         p2=second_planet_id,
+                        aspect_movement=aspect_movement,
                     )
                     all_aspects_list.append(aspect_model)
 
@@ -387,6 +395,13 @@ class AspectsFactory:
                     first_planet_id = planet_id_lookup.get(first_name, 0)
                     second_planet_id = planet_id_lookup.get(second_name, 0)
 
+                    # Calculate aspect movement (applying/separating/exact)
+                    aspect_movement = calculate_aspect_movement(
+                        first_active_points_list[first]["abs_pos"],
+                        second_active_points_list[second]["abs_pos"],
+                        aspect["aspect_degrees"]
+                    )
+
                     aspect_model = AspectModel(
                         p1_name=first_name,
                         p1_owner=first_subject.name,
@@ -400,6 +415,7 @@ class AspectsFactory:
                         diff=aspect["diff"],
                         p1=first_planet_id,
                         p2=second_planet_id,
+                        aspect_movement=aspect_movement,
                     )
                     all_aspects_list.append(aspect_model)
 

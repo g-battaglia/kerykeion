@@ -24,7 +24,8 @@ from kerykeion.schemas import (
     SignsEmoji,
     RelationshipScoreDescription,
     PerspectiveType,
-    ReturnType
+    ReturnType,
+    AspectMovementType
 )
 
 
@@ -299,6 +300,10 @@ class AspectModel(SubscriptableBaseModel):
     diff: float
     p1: int
     p2: int
+    aspect_movement: AspectMovementType = Field(
+        description="Indicates whether the aspect is applying (planets moving toward exact aspect), "
+                    "separating (planets moving away from exact aspect), or exact (within tight orb)."
+    )
 
 
 class ZodiacSignModel(SubscriptableBaseModel):

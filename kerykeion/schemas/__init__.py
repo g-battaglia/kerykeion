@@ -21,6 +21,7 @@ __all__ = [
     "ZodiacType",
     "Sign",
     "SignNumbers",
+    "AspectMovementType",
     "Houses",
     "HouseNumbers",
     "AstrologicalPoint",

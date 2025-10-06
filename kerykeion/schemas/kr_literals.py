@@ -17,6 +17,10 @@ SignNumbers = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 """Literal type for Zodiac Sign Numbers, the signs are numbered in order starting from Aries (0) to Pis (11)"""
 
 
+AspectMovementType = Literal["Applying", "Separating", "Exact"]
+"""Literal type for Aspect Movement: Applying (planets moving toward exact aspect), Separating (planets moving away), or Exact (within tight orb)"""
+
+
 Houses = Literal["First_House", "Second_House", "Third_House", "Fourth_House", "Fifth_House", "Sixth_House", "Seventh_House", "Eighth_House", "Ninth_House", "Tenth_House", "Eleventh_House", "Twelfth_House"]
 """Literal type for Houses"""
 
