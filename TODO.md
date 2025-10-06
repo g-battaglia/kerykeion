@@ -24,17 +24,17 @@
 - [x] Better default chart title (Synastry, Transits)
 - [x] Configurable chart title from save_svg()
 - [x] Fix day of week translation
+- [x] Correct the displayed file name (browser tab/title)
+- [x] Expand unit tests to cover all aspects of the library
+- [x] Complete all the arab parts and other points in the chart
 
 - [~] Full documentation for the library
-- [~] Complete all the arab parts and other points in the chart 
-- [~] Expand unit tests to cover all aspects of the library
 
 - [ ] Correct the ChartDataFactory: it should auto calculate the active points.
-- [ ] Correct the displayed file name (browser tab/title)
 - [ ] Discepolo's Score in Synastry
 - [ ] More "air space" around objects in the chart
-- [ ] Fix grid style synastry
-- [ ] Fix (?) many points, maybe just add a warning for max n points
+- [ ] Fix: grid style synastry
+- [ ] Fix: all/many points chart, maybe just add a warning for max n points
 
 
 
