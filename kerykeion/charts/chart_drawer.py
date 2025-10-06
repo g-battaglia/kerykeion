@@ -6,7 +6,7 @@
 
 import logging
 import swisseph as swe
-from typing import get_args, Union, TYPE_CHECKING
+from typing import get_args, Union, TYPE_CHECKING, Any
 
 
 from kerykeion.schemas.kr_models import ChartDataModel
@@ -191,8 +191,8 @@ class ChartDrawer:
     width: Union[float, int]
     language_settings: dict
     chart_colors_settings: dict
-    planets_settings: dict
-    aspects_settings: dict
+    planets_settings: list[dict[Any, Any]]
+    aspects_settings: list[dict[Any, Any]]
     available_planets_setting: List[KerykeionSettingsCelestialPointModel]
     height: float
     location: str

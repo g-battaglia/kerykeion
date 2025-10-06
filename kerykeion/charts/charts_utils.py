@@ -713,9 +713,12 @@ def draw_transit_aspect_list(
     if aspects_list and isinstance(aspects_list[0], dict):
         aspects_list = [AspectModel(**aspect) for aspect in aspects_list]  # type: ignore
 
+    # Type narrowing: at this point aspects_list contains AspectModel instances
+    typed_aspects_list: list[AspectModel] = aspects_list  # type: ignore
+
     inner_path = ""
 
-    for i, aspect in enumerate(aspects_list):
+    for i, aspect in enumerate(typed_aspects_list):
         # Calculate which column this aspect belongs in
         current_column = i // aspects_per_column
 

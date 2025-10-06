@@ -16,9 +16,9 @@ synastry_aspects = AspectsFactory.dual_chart_aspects(john, yoko)
 relevant = synastry_aspects.relevant_aspects
 
 # Convert to dict format like expected file
-synastry_aspects = []
+synastry_aspects_list = []
 for aspect in relevant:
-    synastry_aspects.append({
+    synastry_aspects_list.append({
         "p1_name": aspect.p1_name,
         "p1_abs_pos": aspect.p1_abs_pos,
         "p2_name": aspect.p2_name,
@@ -31,11 +31,11 @@ for aspect in relevant:
         "p2": aspect.p2
     })
 
-print(f"Relevant aspects: {len(synastry_aspects)}")
+print(f"Relevant aspects: {len(synastry_aspects_list)}")
 
 # Write file
-content = f"EXPECTED_RELEVANT_ASPECTS = {json.dumps(synastry_aspects, indent=4)}\n\n"
-content += f"EXPECTED_ALL_ASPECTS = {json.dumps(synastry_aspects, indent=4)}\n"  # For now, use same
+content = f"EXPECTED_RELEVANT_ASPECTS = {json.dumps(synastry_aspects_list, indent=4)}\n\n"
+content += f"EXPECTED_ALL_ASPECTS = {json.dumps(synastry_aspects_list, indent=4)}\n"  # For now, use same
 
 output_path = Path(__file__).parent.parent / "tests" / "aspects" / "expected_synastry_aspects.py"
 with open(output_path, "w") as f:

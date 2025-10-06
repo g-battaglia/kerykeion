@@ -3,7 +3,7 @@ from kerykeion.schemas import KerykeionException, ChartType, KerykeionPointModel
 from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
 from kerykeion.schemas.kr_literals import Houses
 import logging
-from typing import Union, get_args
+from typing import Union, get_args, List, Optional
 
 
 def draw_planets(
@@ -48,7 +48,7 @@ def draw_planets(
     """
     # Constants and initialization
     PLANET_GROUPING_THRESHOLD = 3.4  # Distance threshold to consider planets as grouped
-    TRANSIT_RING_EXCLUDE_POINTS_NAMES = get_args(Houses)
+    TRANSIT_RING_EXCLUDE_POINTS_NAMES: List[str] = list(get_args(Houses))
     output = ""
 
     # -----------------------------------------------------------
@@ -69,12 +69,13 @@ def draw_planets(
     secondary_points_abs_positions = []
     secondary_points_rel_positions = []
     if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
-        secondary_points_abs_positions = [
-            planet.abs_pos for planet in second_subject_available_kerykeion_celestial_points
-        ]
-        secondary_points_rel_positions = [
-            planet.position for planet in second_subject_available_kerykeion_celestial_points
-        ]
+        if second_subject_available_kerykeion_celestial_points is not None:
+            secondary_points_abs_positions = [
+                planet.abs_pos for planet in second_subject_available_kerykeion_celestial_points
+            ]
+            secondary_points_rel_positions = [
+                planet.position for planet in second_subject_available_kerykeion_celestial_points
+            ]
 
     # -----------------------------------------------------------
     # 2. Create position lookup dictionary for main celestial points
@@ -91,9 +92,9 @@ def draw_planets(
     # -----------------------------------------------------------
     # 3. Identify groups of celestial points that are close to each other
     # -----------------------------------------------------------
-    point_groups = []
+    point_groups: List[List[List[Union[int, float, str]]]] = []
     is_group_open = False
-    planets_by_position = [None] * len(position_index_map)
+    planets_by_position: List[Optional[List[Union[int, float]]]] = [None] * len(position_index_map)
 
     # Process each celestial point to find groups
     for position_idx, abs_position in enumerate(sorted_positions):
@@ -147,7 +148,7 @@ def draw_planets(
     # -----------------------------------------------------------
     # 4. Calculate position adjustments to avoid overlapping
     # -----------------------------------------------------------
-    position_adjustments = [0] * len(available_planets_setting)
+    position_adjustments: List[float] = [0.0] * len(available_planets_setting)
 
     # Process each group to calculate position adjustments
     for group in point_groups:
@@ -164,6 +165,7 @@ def draw_planets(
     # -----------------------------------------------------------
     # 5. Draw main celestial points
     # -----------------------------------------------------------
+    adjusted_offset = 0.0  # Initialize for use outside loop
     for position_idx, abs_position in enumerate(sorted_positions):
         point_idx = position_index_map[abs_position]
 
@@ -495,7 +497,7 @@ def _draw_secondary_points(
         str: Updated SVG output with added secondary points.
     """
     # Initialize position adjustments for grouped points
-    position_adjustments = {i: 0 for i in range(len(points_settings))}
+    position_adjustments: dict[int, float] = {i: 0.0 for i in range(len(points_settings))}
 
     # Map absolute position to point index
     position_index_map = {}
@@ -508,7 +510,7 @@ def _draw_secondary_points(
     sorted_positions = sorted(position_index_map.keys())
 
     # Find groups of points that are close to each other
-    point_groups = []
+    point_groups: List[List[int]] = []
     in_group = False
 
     for pos_idx, abs_position in enumerate(sorted_positions):
@@ -543,7 +545,7 @@ def _draw_secondary_points(
             position_adjustments[group[1]] = 1.0
         elif len(group) == 3:
             position_adjustments[group[0]] = -1.5
-            position_adjustments[group[1]] = 0
+            position_adjustments[group[1]] = 0.0
             position_adjustments[group[2]] = 1.5
         elif len(group) == 4:
             position_adjustments[group[0]] = -2.0
@@ -553,6 +555,7 @@ def _draw_secondary_points(
 
     # Draw each secondary point
     alternate_position = False
+    point_idx = 0  # Initialize for use outside loop
 
     for pos_idx, abs_position in enumerate(sorted_positions):
         point_idx = position_index_map[abs_position]

@@ -279,7 +279,8 @@ class EphemerisDataFactory:
             ephemeris_data_list.append({"date": date.isoformat(), "planets": available_planets, "houses": houses_list})
 
         if as_model:
-            return [EphemerisDictModel(**data) for data in ephemeris_data_list]
+            # Type narrowing: at this point, the dict structure matches EphemerisDictModel
+            return [EphemerisDictModel(date=data["date"], planets=data["planets"], houses=data["houses"]) for data in ephemeris_data_list]  # type: ignore
 
         return ephemeris_data_list
 
@@ -385,7 +386,7 @@ class EphemerisDataFactory:
             )
 
             if as_model:
-                subjects_list.append(subject.model())
+                subjects_list.append(subject)
             else:
                 subjects_list.append(subject)
 
@@ -422,10 +423,12 @@ if "__main__" == __name__:
 
     # Example of accessing more data from the first subject
     first_subject = subjects[0]
-    print(f"Sun sign: {first_subject.sun['sign']}")
+    if first_subject.sun is not None:
+        print(f"Sun sign: {first_subject.sun['sign']}")
 
     # Compare sun positions from both methods
     for i in range(min(3, len(subjects))):
         print(f"Date: {ephemeris_data[i].date}")
-        print(f"Sun position from dict: {ephemeris_data[i].planets[0]['abs_pos']}")
+        if len(ephemeris_data[i].planets) > 0:
+            print(f"Sun position from dict: {ephemeris_data[i].planets[0]['abs_pos']}")
         print("---")

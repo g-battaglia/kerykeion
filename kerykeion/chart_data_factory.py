@@ -54,6 +54,7 @@ from kerykeion.schemas.kr_models import (
     DualChartDataModel,
     ChartDataModel
 )
+from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
 from kerykeion.schemas.kr_literals import (
     AstrologicalPoint,
 )
@@ -194,13 +195,18 @@ class ChartDataFactory:
 
         # Calculate element and quality distributions
         celestial_points_settings = DEFAULT_CELESTIAL_POINTS_SETTINGS
-        available_planets_setting = []
+        available_planets_setting_dicts: list[dict[str, object]] = []
         for body in celestial_points_settings:
             if body["name"] in effective_active_points:
                 body["is_active"] = True
-                available_planets_setting.append(body)
+                available_planets_setting_dicts.append(body)
 
-        celestial_points_names = [body["name"].lower() for body in available_planets_setting]
+        # Convert to models for type safety
+        available_planets_setting: list[KerykeionSettingsCelestialPointModel] = [
+            KerykeionSettingsCelestialPointModel(**body) for body in available_planets_setting_dicts  # type: ignore
+        ]
+
+        celestial_points_names = [body.name.lower() for body in available_planets_setting]
 
         if chart_type == "Synastry" and second_subject:
             # Calculate combined element/quality points for synastry

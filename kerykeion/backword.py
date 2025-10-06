@@ -36,7 +36,13 @@ from .chart_data_factory import ChartDataFactory
 from .charts.chart_drawer import ChartDrawer
 from .aspects import AspectsFactory
 from .settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
-from .schemas.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, ActiveAspect
+from .schemas.kr_models import (
+    AstrologicalSubjectModel,
+    CompositeSubjectModel,
+    ActiveAspect,
+    SingleChartDataModel,
+    DualChartDataModel,
+)
 from .schemas.kr_literals import (
     KerykeionChartLanguage,
     KerykeionChartTheme,
@@ -435,22 +441,22 @@ class KerykeionChartSVG:
         self._output_directory = self.output_directory
 
         self.template = ""
-        self.aspects_list = []
-        self.available_planets_setting = []
+        self.aspects_list: list[dict[str, Any]] = []
+        self.available_planets_setting: list[dict[str, Any]] = []
         self.t_available_kerykeion_celestial_points = None
-        self.available_kerykeion_celestial_points = []
-        self.chart_colors_settings = {}
-        self.planets_settings = []
-        self.aspects_settings = []
-        self.language_settings = {}
+        self.available_kerykeion_celestial_points: list[dict[str, Any]] = []
+        self.chart_colors_settings: dict[str, Any] = {}
+        self.planets_settings: list[dict[str, Any]] = []
+        self.aspects_settings: list[dict[str, Any]] = []
+        self.language_settings: dict[str, Any] = {}
         self.height = None
         self.width = None
         self.location = None
         self.geolat = None
         self.geolon = None
 
-        self._chart_drawer = None
-        self._chart_data = None
+        self._chart_drawer: Optional[ChartDrawer] = None
+        self._chart_data: Optional[Union[SingleChartDataModel, DualChartDataModel]] = None
         self._external_view = False
 
     def _ensure_chart(self) -> None:

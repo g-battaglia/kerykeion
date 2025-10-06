@@ -326,9 +326,13 @@ class TestEphemerisDataFactory:
             tz_str=self.tz_str
         )
 
-        # This tests a bug in the source code where model() method doesn't exist
-        with pytest.raises(AttributeError, match="object has no attribute 'model'"):
-            subjects = factory.get_ephemeris_data_as_astrological_subjects(as_model=True)
+        # Test that as_model=True returns AstrologicalSubjectModel instances
+        subjects = factory.get_ephemeris_data_as_astrological_subjects(as_model=True)
+
+        # Verify we get valid AstrologicalSubjectModel objects
+        assert len(subjects) > 0
+        assert all(hasattr(subject, 'sun') for subject in subjects)
+        assert all(hasattr(subject, 'moon') for subject in subjects)
 
     def test_edge_case_single_date(self):
         """Test edge case with single date (start equals end)."""

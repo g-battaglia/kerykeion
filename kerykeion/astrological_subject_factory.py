@@ -569,11 +569,11 @@ class AstrologicalSubjectFactory:
 
         # Create a deep copy of active points to avoid modifying the original list
         if active_points is None:
-            active_points = list(DEFAULT_ACTIVE_POINTS)
+            active_points_list: List[AstrologicalPoint] = list(DEFAULT_ACTIVE_POINTS)
         else:
-            active_points = list(active_points)
+            active_points_list: List[AstrologicalPoint] = list(active_points)
 
-        calc_data["active_points"] = active_points
+        calc_data["active_points"] = active_points_list
 
         # Initialize configuration
         config = ChartConfiguration(
@@ -654,19 +654,21 @@ class AstrologicalSubjectFactory:
                 config.houses_system_identifier.encode("ascii")
             )
             calculated_axial_cusps = AstrologicalSubjectFactory._calculate_houses(
-                calc_data, calc_data["active_points"]
+                calc_data, active_points_list
             )
             AstrologicalSubjectFactory._calculate_planets(
-                calc_data, calc_data["active_points"], calculated_axial_cusps
+                calc_data, active_points_list, calculated_axial_cusps
             )
         AstrologicalSubjectFactory._calculate_day_of_week(calc_data)
 
         # Calculate lunar phase (optional - only if requested and Sun and Moon are available)
         if calculate_lunar_phase and "moon" in calc_data and "sun" in calc_data:
             calc_data["lunar_phase"] = calculate_moon_phase(
-                calc_data["moon"].abs_pos,
-                calc_data["sun"].abs_pos
+                calc_data["moon"].abs_pos,  # type: ignore[union-attr]
+                calc_data["sun"].abs_pos  # type: ignore[union-attr]
             )
+        else:
+            calc_data["lunar_phase"] = None
 
         # Create and return the AstrologicalSubjectModel
         return AstrologicalSubjectModel(**calc_data)
@@ -1278,7 +1280,7 @@ class AstrologicalSubjectFactory:
         houses_degree_ut = data["_houses_degree_ut"]
 
         # Track which planets are actually calculated
-        calculated_planets = []
+        calculated_planets: List[AstrologicalPoint] = []
 
         # ==================
         # MAIN PLANETS
@@ -1574,8 +1576,8 @@ class AstrologicalSubjectFactory:
         # Calculate Pars Fortunae (Part of Fortune)
         if should_calculate("Pars_Fortunae"):
             # Auto-activate required points with notification
-            required_points: List[AstrologicalPoint] = ["Ascendant", "Sun", "Moon"]
-            missing_points = [point for point in required_points if point not in active_points]
+            pars_fortunae_required_points: List[AstrologicalPoint] = ["Ascendant", "Sun", "Moon"]
+            missing_points = [point for point in pars_fortunae_required_points if point not in active_points]
             if missing_points:
                 logging.info(f"Automatically adding required points for Pars_Fortunae: {missing_points}")
                 active_points.extend(cast(List[AstrologicalPoint], missing_points))
@@ -1635,8 +1637,8 @@ class AstrologicalSubjectFactory:
         # Calculate Pars Spiritus (Part of Spirit)
         if should_calculate("Pars_Spiritus"):
             # Auto-activate required points with notification
-            required_points: List[AstrologicalPoint] = ["Ascendant", "Sun", "Moon"]
-            missing_points = [point for point in required_points if point not in active_points]
+            pars_spiritus_required_points: List[AstrologicalPoint] = ["Ascendant", "Sun", "Moon"]
+            missing_points = [point for point in pars_spiritus_required_points if point not in active_points]
             if missing_points:
                 logging.info(f"Automatically adding required points for Pars_Spiritus: {missing_points}")
                 active_points.extend(cast(List[AstrologicalPoint], missing_points))
@@ -1695,8 +1697,8 @@ class AstrologicalSubjectFactory:
         # Calculate Pars Amoris (Part of Eros/Love)
         if should_calculate("Pars_Amoris"):
             # Auto-activate required points with notification
-            required_points: List[AstrologicalPoint] = ["Ascendant", "Venus", "Sun"]
-            missing_points = [point for point in required_points if point not in active_points]
+            pars_amoris_required_points: List[AstrologicalPoint] = ["Ascendant", "Venus", "Sun"]
+            missing_points = [point for point in pars_amoris_required_points if point not in active_points]
             if missing_points:
                 logging.info(f"Automatically adding required points for Pars_Amoris: {missing_points}")
                 active_points.extend(cast(List[AstrologicalPoint], missing_points))
@@ -1746,8 +1748,8 @@ class AstrologicalSubjectFactory:
         # Calculate Pars Fidei (Part of Faith)
         if should_calculate("Pars_Fidei"):
             # Auto-activate required points with notification
-            required_points: List[AstrologicalPoint] = ["Ascendant", "Jupiter", "Saturn"]
-            missing_points = [point for point in required_points if point not in active_points]
+            pars_fidei_required_points: List[AstrologicalPoint] = ["Ascendant", "Jupiter", "Saturn"]
+            missing_points = [point for point in pars_fidei_required_points if point not in active_points]
             if missing_points:
                 logging.info(f"Automatically adding required points for Pars_Fidei: {missing_points}")
                 active_points.extend(cast(List[AstrologicalPoint], missing_points))

@@ -486,11 +486,15 @@ class PlanetaryReturnFactory:
 
         return_julian_date = None
         if return_type == "Solar":
+            if self.subject.sun is None:
+                raise KerykeionException("Sun position is required for Solar return but is not available in the subject.")
             return_julian_date = swe.solcross_ut(
                 self.subject.sun.abs_pos,
                 julian_day,
             )
         elif return_type == "Lunar":
+            if self.subject.moon is None:
+                raise KerykeionException("Moon position is required for Lunar return but is not available in the subject.")
             return_julian_date = swe.mooncross_ut(
                 self.subject.moon.abs_pos,
                 julian_day,
