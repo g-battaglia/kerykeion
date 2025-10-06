@@ -29,8 +29,8 @@ AstrologicalPoint = Literal[
     # Main Planets
     "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
 
-    # Nodes
-    "Mean_Node", "True_Node", "Mean_South_Node", "True_South_Node",
+    # Lunar Nodes
+    "Mean_North_Lunar_Node", "True_North_Lunar_Node", "Mean_South_Lunar_Node", "True_South_Lunar_Node",
 
     # Special Points
     "Chiron", "Mean_Lilith", "True_Lilith", "Earth", "Pholus",

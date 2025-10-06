@@ -34,8 +34,8 @@ def test_utc_constructor():
     assert subject.tenth_house == subject2.tenth_house
     assert subject.eleventh_house == subject2.eleventh_house
     assert subject.twelfth_house == subject2.twelfth_house
-    assert subject.mean_node == subject2.mean_node
-    assert subject.true_node == subject2.true_node
+    assert subject.mean_north_lunar_node == subject2.mean_north_lunar_node
+    assert subject.true_north_lunar_node == subject2.true_north_lunar_node
     assert subject.lunar_phase == subject2.lunar_phase
 
 

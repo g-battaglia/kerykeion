@@ -74,17 +74,17 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS = [
     },
     {
       "id": 10,
-      "name": "Mean_Node",
+      "name": "Mean_North_Lunar_Node",
       "color": "var(--kerykeion-chart-color-mean-node)",
       "element_points": 0,
-      "label": "Mean_Node"
+      "label": "Mean_North_Lunar_Node"
     },
     {
       "id": 11,
-      "name": "True_Node",
+      "name": "True_North_Lunar_Node",
       "color": "var(--kerykeion-chart-color-true-node)",
       "element_points": 0,
-      "label": "True_Node"
+      "label": "True_North_Lunar_Node"
     },
     {
       "id": 12,
@@ -130,17 +130,17 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS = [
     },
     {
       "id": 18,
-      "name": "Mean_South_Node",
+      "name": "Mean_South_Lunar_Node",
       "color": "var(--kerykeion-chart-color-mean-node)",
       "element_points": 0,
-      "label": "Mean_South_Node"
+      "label": "Mean_South_Lunar_Node"
     },
     {
       "id": 19,
-      "name": "True_South_Node",
+      "name": "True_South_Lunar_Node",
       "color": "var(--kerykeion-chart-color-true-node)",
       "element_points": 0,
-      "label": "True_South_Node"
+      "label": "True_South_Lunar_Node"
     },
     {
       "id": 20,

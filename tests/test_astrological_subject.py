@@ -365,8 +365,8 @@ class TestAstrologicalSubject:
                 "emoji": "♑️",
                 "point_type": "House",
             },
-            "true_node": {
-                "name": "True_Node",
+            "true_north_lunar_node": {
+                "name": "True_North_Lunar_Node",
                 "quality": "Cardinal",
                 "element": "Water",
                 "sign": "Can",
@@ -378,8 +378,8 @@ class TestAstrologicalSubject:
                 "house": "Fifth_House",
                 "retrograde": True,
             },
-            "true_south_node": {
-                "name": "True_South_Node",
+            "true_south_lunar_node": {
+                "name": "True_South_Lunar_Node",
                 "quality": "Cardinal",
                 "element": "Earth",
                 "sign": "Cap",
@@ -619,31 +619,31 @@ class TestAstrologicalSubject:
         assert self.subject.pluto.speed == approx(self.expected_output["pluto"]["speed"], abs=1e-4)
         assert self.subject.pluto.declination == approx(self.expected_output["pluto"]["declination"], abs=1e-2)
 
-    def test_true_node(self):
-        assert self.subject.true_node.name == self.expected_output["true_node"]["name"]
-        assert self.subject.true_node.quality == self.expected_output["true_node"]["quality"]
-        assert self.subject.true_node.element == self.expected_output["true_node"]["element"]
-        assert self.subject.true_node.sign == self.expected_output["true_node"]["sign"]
-        assert self.subject.true_node.sign_num == self.expected_output["true_node"]["sign_num"]
-        assert self.subject.true_node.position == approx(self.expected_output["true_node"]["position"], abs=1e-2)
-        assert self.subject.true_node.abs_pos == approx(self.expected_output["true_node"]["abs_pos"], abs=1e-2)
-        assert self.subject.true_node.emoji == self.expected_output["true_node"]["emoji"]
-        assert self.subject.true_node.point_type == self.expected_output["true_node"]["point_type"]
-        assert self.subject.true_node.house == self.expected_output["true_node"]["house"]
-        assert self.subject.true_node.retrograde == self.expected_output["true_node"]["retrograde"]
+    def test_true_north_lunar_node(self):
+        assert self.subject.true_north_lunar_node.name == self.expected_output["true_north_lunar_node"]["name"]
+        assert self.subject.true_north_lunar_node.quality == self.expected_output["true_north_lunar_node"]["quality"]
+        assert self.subject.true_north_lunar_node.element == self.expected_output["true_north_lunar_node"]["element"]
+        assert self.subject.true_north_lunar_node.sign == self.expected_output["true_north_lunar_node"]["sign"]
+        assert self.subject.true_north_lunar_node.sign_num == self.expected_output["true_north_lunar_node"]["sign_num"]
+        assert self.subject.true_north_lunar_node.position == approx(self.expected_output["true_north_lunar_node"]["position"], abs=1e-2)
+        assert self.subject.true_north_lunar_node.abs_pos == approx(self.expected_output["true_north_lunar_node"]["abs_pos"], abs=1e-2)
+        assert self.subject.true_north_lunar_node.emoji == self.expected_output["true_north_lunar_node"]["emoji"]
+        assert self.subject.true_north_lunar_node.point_type == self.expected_output["true_north_lunar_node"]["point_type"]
+        assert self.subject.true_north_lunar_node.house == self.expected_output["true_north_lunar_node"]["house"]
+        assert self.subject.true_north_lunar_node.retrograde == self.expected_output["true_north_lunar_node"]["retrograde"]
 
-    def test_true_south_node(self):
-        assert self.subject.true_south_node.name == self.expected_output["true_south_node"]["name"]
-        assert self.subject.true_south_node.quality == self.expected_output["true_south_node"]["quality"]
-        assert self.subject.true_south_node.element == self.expected_output["true_south_node"]["element"]
-        assert self.subject.true_south_node.sign == self.expected_output["true_south_node"]["sign"]
-        assert self.subject.true_south_node.sign_num == self.expected_output["true_south_node"]["sign_num"]
-        assert self.subject.true_south_node.position == approx(self.expected_output["true_south_node"]["position"], abs=1e-2)
-        assert self.subject.true_south_node.abs_pos == approx(self.expected_output["true_south_node"]["abs_pos"], abs=1e-2)
-        assert self.subject.true_south_node.emoji == self.expected_output["true_south_node"]["emoji"]
-        assert self.subject.true_south_node.point_type == self.expected_output["true_south_node"]["point_type"]
-        assert self.subject.true_south_node.house == self.expected_output["true_south_node"]["house"]
-        assert self.subject.true_south_node.retrograde == self.expected_output["true_south_node"]["retrograde"]
+    def test_true_south_lunar_node(self):
+        assert self.subject.true_south_lunar_node.name == self.expected_output["true_south_lunar_node"]["name"]
+        assert self.subject.true_south_lunar_node.quality == self.expected_output["true_south_lunar_node"]["quality"]
+        assert self.subject.true_south_lunar_node.element == self.expected_output["true_south_lunar_node"]["element"]
+        assert self.subject.true_south_lunar_node.sign == self.expected_output["true_south_lunar_node"]["sign"]
+        assert self.subject.true_south_lunar_node.sign_num == self.expected_output["true_south_lunar_node"]["sign_num"]
+        assert self.subject.true_south_lunar_node.position == approx(self.expected_output["true_south_lunar_node"]["position"], abs=1e-2)
+        assert self.subject.true_south_lunar_node.abs_pos == approx(self.expected_output["true_south_lunar_node"]["abs_pos"], abs=1e-2)
+        assert self.subject.true_south_lunar_node.emoji == self.expected_output["true_south_lunar_node"]["emoji"]
+        assert self.subject.true_south_lunar_node.point_type == self.expected_output["true_south_lunar_node"]["point_type"]
+        assert self.subject.true_south_lunar_node.house == self.expected_output["true_south_lunar_node"]["house"]
+        assert self.subject.true_south_lunar_node.retrograde == self.expected_output["true_south_lunar_node"]["retrograde"]
 
     def test_first_house(self):
         assert self.subject.first_house.name == self.expected_output["first_house"]["name"]

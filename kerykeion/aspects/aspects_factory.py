@@ -284,10 +284,10 @@ class AspectsFactory:
             ("Descendant", "Ascendant"),
             ("Medium_Coeli", "Imum_Coeli"),
             ("Imum_Coeli", "Medium_Coeli"),
-            ("True_Node", "True_South_Node"),
-            ("Mean_Node", "Mean_South_Node"),
-            ("True_South_Node", "True_Node"),
-            ("Mean_South_Node", "Mean_Node"),
+            ("True_North_Lunar_Node", "True_South_Lunar_Node"),
+            ("Mean_North_Lunar_Node", "Mean_South_Lunar_Node"),
+            ("True_South_Lunar_Node", "True_North_Lunar_Node"),
+            ("Mean_South_Lunar_Node", "Mean_North_Lunar_Node"),
         }
 
         all_aspects_list = []

@@ -131,7 +131,7 @@ class Report:
 
         # Main planets first, then nodes, then others
         main_planets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
-        nodes = ["Mean_Node", "True_Node"]
+        nodes = ["Mean_North_Lunar_Node", "True_North_Lunar_Node"]
         angles = ["Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
 
         # Sort points: angles, main planets, nodes, then others

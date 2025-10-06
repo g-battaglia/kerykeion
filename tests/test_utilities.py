@@ -1,7 +1,7 @@
 from kerykeion import KerykeionException
 from kerykeion.utilities import (
-    is_point_between, 
-    julian_to_datetime, 
+    is_point_between,
+    julian_to_datetime,
     datetime_to_julian,
     get_number_from_name,
     get_kerykeion_point_from_degree,
@@ -35,10 +35,10 @@ class TestUtilities:
             "Uranus": 7,
             "Neptune": 8,
             "Pluto": 9,
-            "Mean_Node": 10,
-            "True_Node": 11,
-            "Mean_South_Node": 1000,
-            "True_South_Node": 1100,
+            "Mean_North_Lunar_Node": 10,
+            "True_North_Lunar_Node": 11,
+            "Mean_South_Lunar_Node": 1000,
+            "True_South_Lunar_Node": 1100,
             "Chiron": 15,
             "Mean_Lilith": 12,
             "Ascendant": 9900,
@@ -46,15 +46,15 @@ class TestUtilities:
             "Medium_Coeli": 9902,
             "Imum_Coeli": 9903,
         }
-        
+
         for name, expected_id in known_planets.items():
             result = get_number_from_name(name)
             assert result == expected_id, f"Expected {expected_id} for {name}, got {result}"
-        
+
         # Test error handling for unknown planet names
         with pytest.raises(KerykeionException) as exc_info:
             get_number_from_name("UnknownPlanet")  # type: ignore
-        
+
         assert "Error in getting number from name" in str(exc_info.value)
         assert "UnknownPlanet" in str(exc_info.value)
 
@@ -62,22 +62,22 @@ class TestUtilities:
         # Test positive degrees
         pt = get_kerykeion_point_from_degree(45, "Sun", "AstrologicalPoint")
         assert pt.sign == "Tau"
-        
+
         # Test negative degree normalization
         pt2 = get_kerykeion_point_from_degree(-30, "Sun", "AstrologicalPoint")  # type: ignore
         assert pt2.abs_pos == 330  # -30 should become 330
         assert pt2.sign == "Pis"  # Pisces sign (330-360° range)
         assert pt2.position == 0  # Position within the sign should be 0
-        
+
         # Test general negative degree case
         pt3 = get_kerykeion_point_from_degree(-15, "Sun", "AstrologicalPoint")
         assert 0 <= pt3.abs_pos < 360
-        
+
         # Test error handling for degrees >= 360
         with pytest.raises(KerykeionException) as exc_info:
             get_kerykeion_point_from_degree(360, "Sun", "AstrologicalPoint")  # type: ignore
         assert "Error in calculating positions" in str(exc_info.value)
-        
+
         # Test extreme values
         with pytest.raises((ValueError, KerykeionException)):
             get_kerykeion_point_from_degree(1000, "Sun", "AstrologicalPoint")  # type: ignore
@@ -87,9 +87,9 @@ class TestUtilities:
         houses = [i*30 for i in range(12)]
         # Should be in first house
         assert get_planet_house(0, houses) == "First_House"
-        # Should be in last house  
+        # Should be in last house
         assert get_planet_house(359, houses) == "Twelfth_House"
-        
+
         # Test planet at exact house boundary
         houses_degrees_list = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]
         house = get_planet_house(30.0, houses_degrees_list)
@@ -99,13 +99,13 @@ class TestUtilities:
         # Test all valid branches
         for phase in [1, 2, 7, 10, 14, 15, 20, 21, 23, 28]:
             assert get_moon_emoji_from_phase_int(phase)
-        
+
         # Test all possible phase integers (0-27)
         for phase in range(28):
             emoji = get_moon_emoji_from_phase_int(phase)
             assert isinstance(emoji, str)
             assert len(emoji) > 0
-        
+
         # Test error handling
         with pytest.raises(Exception):
             get_moon_emoji_from_phase_int(100)
@@ -114,13 +114,13 @@ class TestUtilities:
         # Test valid branches
         for phase in [1, 2, 7, 10, 14, 15, 20, 21, 23, 28]:
             assert get_moon_phase_name_from_phase_int(phase)
-            
+
         # Test all possible phase integers (0-27)
         for phase in range(28):
             name = get_moon_phase_name_from_phase_int(phase)
             assert isinstance(name, str)
             assert len(name) > 0
-        
+
         # Test error handling
         with pytest.raises(Exception):
             get_moon_phase_name_from_phase_int(100)
@@ -130,7 +130,7 @@ class TestUtilities:
         assert check_and_adjust_polar_latitude(0) == 0
         assert check_and_adjust_polar_latitude(70) == 66.0
         assert check_and_adjust_polar_latitude(-70) == -66.0
-        
+
         # Test edge cases
         assert check_and_adjust_polar_latitude(80.0) == 66.0
         assert check_and_adjust_polar_latitude(-80.0) == -66.0
@@ -143,7 +143,7 @@ class TestUtilities:
         # Across 0/360 boundary
         mean = circular_mean(350, 10)
         assert 0 <= mean <= 360  # Allow 360 as edge case
-        
+
         # Test crossing 0/360 boundary edge case
         result = circular_mean(350, 10)
         assert isinstance(result, float)
@@ -257,11 +257,11 @@ class TestUtilities:
         """Test logging setup with all log levels."""
         # Test all valid log levels
         valid_levels = ["debug", "info", "warning", "error", "critical"]
-        
+
         for level in valid_levels:
             setup_logging(level)
             # Just verify it doesn't raise an exception
-            
+
         # Test invalid level - should default to INFO
         setup_logging("invalid_level")
 
@@ -270,7 +270,7 @@ class TestUtilities:
         # Test different moon phases
         result = calculate_moon_phase(0, 0)  # Same position
         assert result.moon_phase_name == "New Moon"
-        
+
         result = calculate_moon_phase(180, 0)  # Opposition
         assert result.moon_phase_name == "Full Moon"
 
@@ -290,7 +290,7 @@ class TestUtilities:
             <rect class="element" />
         </svg>
         """
-        
+
         result = inline_css_variables_in_svg(svg_content)
         # Should process without error
         assert isinstance(result, str)
@@ -300,13 +300,13 @@ class TestUtilities:
         # Test with empty lists
         result = find_common_active_points([], [])
         assert result == []
-        
+
         # Test with no common points
         first_points = ["Sun", "Moon"]  # type: ignore
         second_points = ["Mars", "Venus"]  # type: ignore
         result = find_common_active_points(first_points, second_points)
         assert result == []
-        
+
         # Test with some common points
         first_points = ["Sun", "Moon", "Mars"]  # type: ignore
         second_points = ["Moon", "Mars", "Venus"]  # type: ignore
@@ -320,10 +320,10 @@ class TestUtilities:
         """Test additional edge cases for is_point_between function."""
         # Test exactly at start point
         assert is_point_between(0, 30, 0) == True
-        
+
         # Test exactly at end point (should be False according to function docs)
         assert is_point_between(0, 30, 30) == False
-        
+
         # Test crossing 360/0 boundary
         assert is_point_between(350, 20, 10) == True
         assert is_point_between(350, 20, 350) == True
@@ -334,7 +334,7 @@ class TestUtilities:
         early_date = datetime(1900, 1, 1, 0, 0, 0)
         julian = datetime_to_julian(early_date)
         converted_back = julian_to_datetime(julian)
-        
+
         # Allow small differences due to floating point precision
         assert abs((early_date - converted_back).total_seconds()) < 1
 

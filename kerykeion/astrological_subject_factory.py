@@ -1328,45 +1328,45 @@ class AstrologicalSubjectFactory:
         # LUNAR NODES
         # ==================
 
-        # Calculate Mean Lunar Node
-        if should_calculate("Mean_Node"):
-            AstrologicalSubjectFactory._calculate_single_planet(data, "Mean_Node", 10, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
+        # Calculate Mean North Lunar Node
+        if should_calculate("Mean_North_Lunar_Node"):
+            AstrologicalSubjectFactory._calculate_single_planet(data, "Mean_North_Lunar_Node", 10, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
             # Get correct declination using equatorial coordinates
-            if "mean_node" in data:
-                mean_node_eq = swe.calc_ut(julian_day, 10, iflag | swe.FLG_EQUATORIAL)[0]
-                data["mean_node"].declination = mean_node_eq[1]  # Declination from equatorial coordinates
+            if "mean_north_lunar_node" in data:
+                mean_north_lunar_node_eq = swe.calc_ut(julian_day, 10, iflag | swe.FLG_EQUATORIAL)[0]
+                data["mean_north_lunar_node"].declination = mean_north_lunar_node_eq[1]  # Declination from equatorial coordinates
 
-        # Calculate True Lunar Node
-        if should_calculate("True_Node"):
-            AstrologicalSubjectFactory._calculate_single_planet(data, "True_Node", 11, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
+        # Calculate True North Lunar Node
+        if should_calculate("True_North_Lunar_Node"):
+            AstrologicalSubjectFactory._calculate_single_planet(data, "True_North_Lunar_Node", 11, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points)
             # Get correct declination using equatorial coordinates
-            if "true_node" in data:
-                true_node_eq = swe.calc_ut(julian_day, 11, iflag | swe.FLG_EQUATORIAL)[0]
-                data["true_node"].declination = true_node_eq[1]  # Declination from equatorial coordinates
+            if "true_north_lunar_node" in data:
+                true_north_lunar_node_eq = swe.calc_ut(julian_day, 11, iflag | swe.FLG_EQUATORIAL)[0]
+                data["true_north_lunar_node"].declination = true_north_lunar_node_eq[1]  # Declination from equatorial coordinates
 
-        # Calculate Mean South Node (opposite to Mean North Node)
-        if should_calculate("Mean_South_Node") and "mean_node" in data:
-            mean_south_node_deg = math.fmod(data["mean_node"].abs_pos + 180, 360)
-            data["mean_south_node"] = get_kerykeion_point_from_degree(
-                mean_south_node_deg, "Mean_South_Node", point_type=point_type,
-                speed=-data["mean_node"].speed if data["mean_node"].speed is not None else None,
-                declination=-data["mean_node"].declination if data["mean_node"].declination is not None else None
+        # Calculate Mean South Lunar Node (opposite to Mean North Lunar Node)
+        if should_calculate("Mean_South_Lunar_Node") and "mean_north_lunar_node" in data:
+            mean_south_lunar_node_deg = math.fmod(data["mean_north_lunar_node"].abs_pos + 180, 360)
+            data["mean_south_lunar_node"] = get_kerykeion_point_from_degree(
+                mean_south_lunar_node_deg, "Mean_South_Lunar_Node", point_type=point_type,
+                speed=-data["mean_north_lunar_node"].speed if data["mean_north_lunar_node"].speed is not None else None,
+                declination=-data["mean_north_lunar_node"].declination if data["mean_north_lunar_node"].declination is not None else None
             )
-            data["mean_south_node"].house = get_planet_house(mean_south_node_deg, houses_degree_ut)
-            data["mean_south_node"].retrograde = data["mean_node"].retrograde
-            calculated_planets.append("Mean_South_Node")
+            data["mean_south_lunar_node"].house = get_planet_house(mean_south_lunar_node_deg, houses_degree_ut)
+            data["mean_south_lunar_node"].retrograde = data["mean_north_lunar_node"].retrograde
+            calculated_planets.append("Mean_South_Lunar_Node")
 
-        # Calculate True South Node (opposite to True North Node)
-        if should_calculate("True_South_Node") and "true_node" in data:
-            true_south_node_deg = math.fmod(data["true_node"].abs_pos + 180, 360)
-            data["true_south_node"] = get_kerykeion_point_from_degree(
-                true_south_node_deg, "True_South_Node", point_type=point_type,
-                speed=-data["true_node"].speed if data["true_node"].speed is not None else None,
-                declination=-data["true_node"].declination if data["true_node"].declination is not None else None
+        # Calculate True South Lunar Node (opposite to True North Lunar Node)
+        if should_calculate("True_South_Lunar_Node") and "true_north_lunar_node" in data:
+            true_south_lunar_node_deg = math.fmod(data["true_north_lunar_node"].abs_pos + 180, 360)
+            data["true_south_lunar_node"] = get_kerykeion_point_from_degree(
+                true_south_lunar_node_deg, "True_South_Lunar_Node", point_type=point_type,
+                speed=-data["true_north_lunar_node"].speed if data["true_north_lunar_node"].speed is not None else None,
+                declination=-data["true_north_lunar_node"].declination if data["true_north_lunar_node"].declination is not None else None
             )
-            data["true_south_node"].house = get_planet_house(true_south_node_deg, houses_degree_ut)
-            data["true_south_node"].retrograde = data["true_node"].retrograde
-            calculated_planets.append("True_South_Node")
+            data["true_south_lunar_node"].house = get_planet_house(true_south_lunar_node_deg, houses_degree_ut)
+            data["true_south_lunar_node"].retrograde = data["true_north_lunar_node"].retrograde
+            calculated_planets.append("True_South_Lunar_Node")
 
         # ==================
         # LILITH POINTS
@@ -1867,7 +1867,7 @@ if __name__ == "__main__":
     from kerykeion.schemas.kr_literals import AstrologicalPoint
 
     # Example usage
-    new_active_points: List[AstrologicalPoint] = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'Mean_Node', 'True_Node', 'Mean_South_Node', 'True_South_Node', 'Chiron', 'Mean_Lilith', 'True_Lilith', 'Earth', 'Pholus', 'Ceres', 'Pallas', 'Juno', 'Vesta', 'Eris', 'Sedna', 'Haumea', 'Makemake', 'Ixion', 'Orcus', 'Quaoar', 'Regulus', 'Spica', 'Pars_Fortunae', 'Pars_Spiritus', 'Pars_Amoris', 'Pars_Fidei', 'Vertex', 'Anti_Vertex', 'Ascendant', 'Medium_Coeli', 'Descendant', 'Imum_Coeli']
+    new_active_points: List[AstrologicalPoint] = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'Mean_North_Lunar_Node', 'True_North_Lunar_Node', 'Mean_South_Lunar_Node', 'True_South_Lunar_Node', 'Chiron', 'Mean_Lilith', 'True_Lilith', 'Earth', 'Pholus', 'Ceres', 'Pallas', 'Juno', 'Vesta', 'Eris', 'Sedna', 'Haumea', 'Makemake', 'Ixion', 'Orcus', 'Quaoar', 'Regulus', 'Spica', 'Pars_Fortunae', 'Pars_Spiritus', 'Pars_Amoris', 'Pars_Fidei', 'Vertex', 'Anti_Vertex', 'Ascendant', 'Medium_Coeli', 'Descendant', 'Imum_Coeli']
     subject = AstrologicalSubjectFactory.from_current_time(name="Test Subject", active_points=new_active_points)
     print(subject.sun)
     print(subject.pars_amoris)

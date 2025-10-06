@@ -58,14 +58,14 @@ def get_number_from_name(name: AstrologicalPoint) -> int:
         return 8
     elif name == "Pluto":
         return 9
-    elif name == "Mean_Node":
+    elif name == "Mean_North_Lunar_Node":
         return 10
-    elif name == "True_Node":
+    elif name == "True_North_Lunar_Node":
         return 11
     # Note: Swiss ephemeris library has no constants for south nodes. We're using integers >= 1000 for them.
-    elif name == "Mean_South_Node":
+    elif name == "Mean_South_Lunar_Node":
         return 1000
-    elif name == "True_South_Node":
+    elif name == "True_South_Lunar_Node":
         return 1100
     elif name == "Chiron":
         return 15

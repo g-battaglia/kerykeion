@@ -61,6 +61,15 @@ def _deprecated(old: str, new: str) -> None:
     )
 
 
+# Legacy node name mapping for backward compatibility
+LEGACY_NODE_NAMES_MAP = {
+    "Mean_Node": "Mean_North_Lunar_Node",
+    "True_Node": "True_North_Lunar_Node",
+    "Mean_South_Node": "Mean_South_Lunar_Node",
+    "True_South_Node": "True_South_Lunar_Node",
+}
+
+
 def _normalize_active_points(points: Optional[Iterable[Union[str, AstrologicalPoint]]]) -> Optional[List[AstrologicalPoint]]:
     """Best-effort normalization of legacy string active points list.
 
@@ -68,6 +77,7 @@ def _normalize_active_points(points: Optional[Iterable[Union[str, AstrologicalPo
     - Accepts iterable of strings / AstrologicalPoint literals
     - Filters only those present in DEFAULT_ACTIVE_POINTS to avoid invalid entries
     - Returns None if result would be empty (to let downstream use defaults)
+    - Maps old lunar node names to new names with deprecation warning
     """
     if points is None:
         return None
@@ -75,6 +85,16 @@ def _normalize_active_points(points: Optional[Iterable[Union[str, AstrologicalPo
     valid: Sequence[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS  # type: ignore[assignment]
     for p in points:
         if isinstance(p, str):
+            # Check if this is a legacy node name and map it
+            if p in LEGACY_NODE_NAMES_MAP:
+                warnings.warn(
+                    f"Active point '{p}' is deprecated in Kerykeion v5. "
+                    f"Use '{LEGACY_NODE_NAMES_MAP[p]}' instead.",
+                    DeprecationWarning,
+                    stacklevel=3,
+                )
+                p = LEGACY_NODE_NAMES_MAP[p]
+
             # Match case-insensitive exact name in default list
             match = next((vp for vp in valid if vp.lower() == p.lower()), None)  # type: ignore[attr-defined]
             if match:
@@ -169,6 +189,47 @@ class AstrologicalSubject:
 
         # Legacy filesystem attributes
         self.json_dir = Path.home()
+
+    # Backward compatibility properties for v4 lunar node names
+    @property
+    def mean_node(self):
+        """Deprecated: Use mean_north_lunar_node instead."""
+        warnings.warn(
+            "'mean_node' is deprecated in Kerykeion v5. Use 'mean_north_lunar_node' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self._model.mean_north_lunar_node
+
+    @property
+    def true_node(self):
+        """Deprecated: Use true_north_lunar_node instead."""
+        warnings.warn(
+            "'true_node' is deprecated in Kerykeion v5. Use 'true_north_lunar_node' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self._model.true_north_lunar_node
+
+    @property
+    def mean_south_node(self):
+        """Deprecated: Use mean_south_lunar_node instead."""
+        warnings.warn(
+            "'mean_south_node' is deprecated in Kerykeion v5. Use 'mean_south_lunar_node' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self._model.mean_south_lunar_node
+
+    @property
+    def true_south_node(self):
+        """Deprecated: Use true_south_lunar_node instead."""
+        warnings.warn(
+            "'true_south_node' is deprecated in Kerykeion v5. Use 'true_south_lunar_node' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self._model.true_south_lunar_node
 
     # Provide attribute passthrough for planetary points / houses used in README
     def __getattr__(self, item: str) -> Any:  # pragma: no cover - dynamic proxy

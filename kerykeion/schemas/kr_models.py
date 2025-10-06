@@ -225,11 +225,11 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     eleventh_house: KerykeionPointModel
     twelfth_house: KerykeionPointModel
 
-    # Common nodes
-    mean_node: Optional[KerykeionPointModel] = None
-    true_node: Optional[KerykeionPointModel] = None
-    mean_south_node: Optional[KerykeionPointModel] = None
-    true_south_node: Optional[KerykeionPointModel] = None
+    # Lunar Nodes
+    mean_north_lunar_node: Optional[KerykeionPointModel] = None
+    true_north_lunar_node: Optional[KerykeionPointModel] = None
+    mean_south_lunar_node: Optional[KerykeionPointModel] = None
+    true_south_lunar_node: Optional[KerykeionPointModel] = None
 
     # Common lists and settings
     houses_names_list: List[Houses] = Field(description="Ordered list of houses names")

@@ -158,7 +158,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Mercury",
         "p1_abs_pos": 218.1173115346941,
-        "p2_name": "True_Node",
+        "p2_name": "True_North_Lunar_Node",
         "p2_abs_pos": 337.8004612640619,
         "aspect": "trine",
         "orbit": -0.3168502706322158,
@@ -194,7 +194,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Mercury",
         "p1_abs_pos": 218.1173115346941,
-        "p2_name": "True_South_Node",
+        "p2_name": "True_South_Lunar_Node",
         "p2_abs_pos": 157.80046126406182,
         "aspect": "sextile",
         "orbit": 0.31685027063227267,
@@ -254,7 +254,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Venus",
         "p1_abs_pos": 152.83767867368488,
-        "p2_name": "True_Node",
+        "p2_name": "True_North_Lunar_Node",
         "p2_abs_pos": 337.8004612640619,
         "aspect": "opposition",
         "orbit": -4.962782590377003,
@@ -278,7 +278,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Venus",
         "p1_abs_pos": 152.83767867368488,
-        "p2_name": "True_South_Node",
+        "p2_name": "True_South_Lunar_Node",
         "p2_abs_pos": 157.80046126406182,
         "aspect": "conjunction",
         "orbit": 4.962782590376946,
@@ -410,7 +410,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Jupiter",
         "p1_abs_pos": 43.72717928490581,
-        "p2_name": "True_Node",
+        "p2_name": "True_North_Lunar_Node",
         "p2_abs_pos": 337.8004612640619,
         "aspect": "sextile",
         "orbit": 5.926718020843907,
@@ -434,7 +434,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Jupiter",
         "p1_abs_pos": 43.72717928490581,
-        "p2_name": "True_South_Node",
+        "p2_name": "True_South_Lunar_Node",
         "p2_abs_pos": 157.80046126406182,
         "aspect": "trine",
         "orbit": -5.9267180208439925,
@@ -518,7 +518,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Saturn",
         "p1_abs_pos": 43.237368323604954,
-        "p2_name": "True_Node",
+        "p2_name": "True_North_Lunar_Node",
         "p2_abs_pos": 337.8004612640619,
         "aspect": "sextile",
         "orbit": 5.436907059543046,
@@ -542,7 +542,7 @@ EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Saturn",
         "p1_abs_pos": 43.237368323604954,
-        "p2_name": "True_South_Node",
+        "p2_name": "True_South_Lunar_Node",
         "p2_abs_pos": 157.80046126406182,
         "aspect": "trine",
         "orbit": -5.436907059543131,
@@ -768,7 +768,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 17
     },
     {
-        "p1_name": "True_Node",
+        "p1_name": "True_North_Lunar_Node",
         "p1_abs_pos": 191.02553955990948,
         "p2_name": "Moon",
         "p2_abs_pos": 245.20633596865457,
@@ -780,7 +780,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 1
     },
     {
-        "p1_name": "True_Node",
+        "p1_name": "True_North_Lunar_Node",
         "p1_abs_pos": 191.02553955990948,
         "p2_name": "Venus",
         "p2_abs_pos": 313.265379450205,
@@ -792,7 +792,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 3
     },
     {
-        "p1_name": "True_Node",
+        "p1_name": "True_North_Lunar_Node",
         "p1_abs_pos": 191.02553955990948,
         "p2_name": "Saturn",
         "p2_abs_pos": 309.68900109535497,
@@ -804,7 +804,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 6
     },
     {
-        "p1_name": "True_Node",
+        "p1_name": "True_North_Lunar_Node",
         "p1_abs_pos": 191.02553955990948,
         "p2_name": "Uranus",
         "p2_abs_pos": 20.531046301158003,
@@ -816,7 +816,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 7
     },
     {
-        "p1_name": "True_Node",
+        "p1_name": "True_North_Lunar_Node",
         "p1_abs_pos": 191.02553955990948,
         "p2_name": "Mean_Lilith",
         "p2_abs_pos": 62.47020499210378,
@@ -984,7 +984,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 7
     },
     {
-        "p1_name": "True_South_Node",
+        "p1_name": "True_South_Lunar_Node",
         "p1_abs_pos": 11.025539559909475,
         "p2_name": "Moon",
         "p2_abs_pos": 245.20633596865457,
@@ -996,7 +996,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 1
     },
     {
-        "p1_name": "True_South_Node",
+        "p1_name": "True_South_Lunar_Node",
         "p1_abs_pos": 11.025539559909475,
         "p2_name": "Venus",
         "p2_abs_pos": 313.265379450205,
@@ -1008,7 +1008,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 3
     },
     {
-        "p1_name": "True_South_Node",
+        "p1_name": "True_South_Lunar_Node",
         "p1_abs_pos": 11.025539559909475,
         "p2_name": "Saturn",
         "p2_abs_pos": 309.68900109535497,
@@ -1020,7 +1020,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 6
     },
     {
-        "p1_name": "True_South_Node",
+        "p1_name": "True_South_Lunar_Node",
         "p1_abs_pos": 11.025539559909475,
         "p2_name": "Uranus",
         "p2_abs_pos": 20.531046301158003,
@@ -1193,7 +1193,7 @@ EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Mercury",
         "p1_abs_pos": 218.1173115346941,
-        "p2_name": "True_Node",
+        "p2_name": "True_North_Lunar_Node",
         "p2_abs_pos": 337.8004612640619,
         "aspect": "trine",
         "orbit": -0.3168502706322158,
@@ -1229,7 +1229,7 @@ EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Mercury",
         "p1_abs_pos": 218.1173115346941,
-        "p2_name": "True_South_Node",
+        "p2_name": "True_South_Lunar_Node",
         "p2_abs_pos": 157.80046126406182,
         "aspect": "sextile",
         "orbit": 0.31685027063227267,
@@ -1289,7 +1289,7 @@ EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Venus",
         "p1_abs_pos": 152.83767867368488,
-        "p2_name": "True_Node",
+        "p2_name": "True_North_Lunar_Node",
         "p2_abs_pos": 337.8004612640619,
         "aspect": "opposition",
         "orbit": -4.962782590377003,
@@ -1313,7 +1313,7 @@ EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Venus",
         "p1_abs_pos": 152.83767867368488,
-        "p2_name": "True_South_Node",
+        "p2_name": "True_South_Lunar_Node",
         "p2_abs_pos": 157.80046126406182,
         "aspect": "conjunction",
         "orbit": 4.962782590376946,
@@ -1445,7 +1445,7 @@ EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Jupiter",
         "p1_abs_pos": 43.72717928490581,
-        "p2_name": "True_Node",
+        "p2_name": "True_North_Lunar_Node",
         "p2_abs_pos": 337.8004612640619,
         "aspect": "sextile",
         "orbit": 5.926718020843907,
@@ -1469,7 +1469,7 @@ EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Jupiter",
         "p1_abs_pos": 43.72717928490581,
-        "p2_name": "True_South_Node",
+        "p2_name": "True_South_Lunar_Node",
         "p2_abs_pos": 157.80046126406182,
         "aspect": "trine",
         "orbit": -5.9267180208439925,
@@ -1553,7 +1553,7 @@ EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Saturn",
         "p1_abs_pos": 43.237368323604954,
-        "p2_name": "True_Node",
+        "p2_name": "True_North_Lunar_Node",
         "p2_abs_pos": 337.8004612640619,
         "aspect": "sextile",
         "orbit": 5.436907059543046,
@@ -1577,7 +1577,7 @@ EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Saturn",
         "p1_abs_pos": 43.237368323604954,
-        "p2_name": "True_South_Node",
+        "p2_name": "True_South_Lunar_Node",
         "p2_abs_pos": 157.80046126406182,
         "aspect": "trine",
         "orbit": -5.436907059543131,
@@ -1803,7 +1803,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 17
     },
     {
-        "p1_name": "True_Node",
+        "p1_name": "True_North_Lunar_Node",
         "p1_abs_pos": 191.02553955990948,
         "p2_name": "Moon",
         "p2_abs_pos": 245.20633596865457,
@@ -1815,7 +1815,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 1
     },
     {
-        "p1_name": "True_Node",
+        "p1_name": "True_North_Lunar_Node",
         "p1_abs_pos": 191.02553955990948,
         "p2_name": "Venus",
         "p2_abs_pos": 313.265379450205,
@@ -1827,7 +1827,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 3
     },
     {
-        "p1_name": "True_Node",
+        "p1_name": "True_North_Lunar_Node",
         "p1_abs_pos": 191.02553955990948,
         "p2_name": "Saturn",
         "p2_abs_pos": 309.68900109535497,
@@ -1839,7 +1839,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 6
     },
     {
-        "p1_name": "True_Node",
+        "p1_name": "True_North_Lunar_Node",
         "p1_abs_pos": 191.02553955990948,
         "p2_name": "Uranus",
         "p2_abs_pos": 20.531046301158003,
@@ -1851,7 +1851,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 7
     },
     {
-        "p1_name": "True_Node",
+        "p1_name": "True_North_Lunar_Node",
         "p1_abs_pos": 191.02553955990948,
         "p2_name": "Mean_Lilith",
         "p2_abs_pos": 62.47020499210378,
@@ -2019,7 +2019,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 7
     },
     {
-        "p1_name": "True_South_Node",
+        "p1_name": "True_South_Lunar_Node",
         "p1_abs_pos": 11.025539559909475,
         "p2_name": "Moon",
         "p2_abs_pos": 245.20633596865457,
@@ -2031,7 +2031,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 1
     },
     {
-        "p1_name": "True_South_Node",
+        "p1_name": "True_South_Lunar_Node",
         "p1_abs_pos": 11.025539559909475,
         "p2_name": "Venus",
         "p2_abs_pos": 313.265379450205,
@@ -2043,7 +2043,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 3
     },
     {
-        "p1_name": "True_South_Node",
+        "p1_name": "True_South_Lunar_Node",
         "p1_abs_pos": 11.025539559909475,
         "p2_name": "Saturn",
         "p2_abs_pos": 309.68900109535497,
@@ -2055,7 +2055,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 6
     },
     {
-        "p1_name": "True_South_Node",
+        "p1_name": "True_South_Lunar_Node",
         "p1_abs_pos": 11.025539559909475,
         "p2_name": "Uranus",
         "p2_abs_pos": 20.531046301158003,
