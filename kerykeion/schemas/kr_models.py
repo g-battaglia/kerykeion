@@ -24,9 +24,9 @@ from kerykeion.schemas import (
     SignsEmoji,
     RelationshipScoreDescription,
     PerspectiveType,
-    ReturnType,
     AspectMovementType
 )
+from kerykeion.schemas.kr_literals import ReturnType
 
 
 class SubscriptableBaseModel(BaseModel):

@@ -6,7 +6,7 @@
 
 import logging
 import swisseph as swe
-from typing import get_args, Union, TYPE_CHECKING, Any
+from typing import get_args, Union, Any
 
 
 from kerykeion.schemas.kr_models import ChartDataModel
@@ -2070,7 +2070,7 @@ if __name__ == "__main__":
     from kerykeion.planetary_return_factory import PlanetaryReturnFactory
     from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
     from kerykeion.chart_data_factory import ChartDataFactory
-    from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, DEFAULT_ACTIVE_POINTS
+    from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
     ACTIVE_PLANETS: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS
     # ACTIVE_PLANETS: list[AstrologicalPoint] = ALL_ACTIVE_POINTS

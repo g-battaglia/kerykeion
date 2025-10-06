@@ -52,7 +52,6 @@ from .schemas.kr_literals import (
 from .schemas import ZodiacType, SiderealMode, HousesSystemIdentifier, PerspectiveType
 from pathlib import Path
 from .settings import KerykeionSettingsModel, get_settings
-from .report import Report
 
 # ---------------------------------------------------------------------------
 # Helpers

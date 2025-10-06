@@ -37,8 +37,7 @@ from kerykeion.relationship_score_factory import RelationshipScoreFactory
 from kerykeion.schemas import (
     KerykeionException,
     ChartType,
-    ActiveAspect,
-    SubscriptableBaseModel
+    ActiveAspect
 )
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -46,8 +45,6 @@ from kerykeion.schemas.kr_models import (
     PlanetReturnModel,
     SingleChartAspectsModel,
     DualChartAspectsModel,
-    RelationshipScoreModel,
-    HouseComparisonModel,
     ElementDistributionModel,
     QualityDistributionModel,
     SingleChartDataModel,

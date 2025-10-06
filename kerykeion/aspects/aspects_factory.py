@@ -20,7 +20,7 @@ from kerykeion.schemas.kr_models import (
     NatalAspectsModel,
     SynastryAspectsModel
 )
-from kerykeion.schemas.kr_literals import AstrologicalPoint, AspectMovementType
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
