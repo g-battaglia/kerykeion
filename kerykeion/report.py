@@ -224,9 +224,9 @@ class ReportGenerator:
             self._lunar_phase_report(self._primary_subject),
             self._elements_report(),
             self._qualities_report(),
-            self._active_configuration_report(),
             self._house_comparison_report(),
             self._relationship_score_report(),
+            self._active_configuration_report(),
         ])
 
         if include_aspects:
@@ -442,7 +442,7 @@ class ReportGenerator:
             ["Lunar Phase Information", "Value"],
             ["Phase Name", f"{lunar.moon_phase_name} {lunar.moon_emoji}"],
             ["Sun-Moon Angle", f"{lunar.degrees_between_s_m:.2f}°"],
-            ["Moon Phase", str(lunar.moon_phase)],
+            ["Lunation Day", str(lunar.moon_phase)],
         ]
         return AsciiTable(lunar_data, title="Lunar Phase").table
 
