@@ -457,7 +457,7 @@ def _generate_point_svg(point_details: KerykeionPointModel, x: float, y: float, 
     Returns:
         str: SVG element for the celestial point.
     """
-    svg = f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" kr:sign="{point_details["sign"]}" '
+    svg = f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" kr:signposition="{point_details["position"]}" '
     svg += f'kr:slug="{point_details["name"]}" transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">'
     svg += f'<use x="{x * (1/scale)}" y="{y * (1/scale)}" xlink:href="#{point_name}" />'
     svg += "</g>"
