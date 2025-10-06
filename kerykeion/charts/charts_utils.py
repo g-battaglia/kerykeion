@@ -652,7 +652,7 @@ def draw_houses_cusps_and_text_number(
 
             # Add the house cusp line for the second subject
             stroke_opacity = "0" if chart_type == "Transit" else ".3"
-            path += '<g kr:node="Cusp">'
+            path += f'<g kr:node="Cusp" kr:absoluteposition="{second_subject_houses_list[i].abs_pos}" kr:signposition="{second_subject_houses_list[i].position}" kr:sing="{second_subject_houses_list[i].sign}" kr:slug="{second_subject_houses_list[i].name}">'
             path += f"<line x1='{t_x1}' y1='{t_y1}' x2='{t_x2}' y2='{t_y2}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:{stroke_opacity};'/>"
             path += "</g>"
 
@@ -666,7 +666,7 @@ def draw_houses_cusps_and_text_number(
         ytext = sliceToY(0, (r - dropin), text_offset) + dropin
 
         # Add the house cusp line for the first subject
-        path += '<g kr:node="Cusp">'
+        path += f'<g kr:node="Cusp" kr:absoluteposition="{first_subject_houses_list[i].abs_pos}" kr:signposition="{first_subject_houses_list[i].position}" kr:sing="{first_subject_houses_list[i].sign}" kr:slug="{first_subject_houses_list[i].name}">'
         path += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {linecolor}; stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;"/>'
         path += "</g>"
 
