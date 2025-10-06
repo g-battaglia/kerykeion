@@ -131,6 +131,9 @@ format = "ruff format"
 "format:all" = "ruff format kerykeion tests"
 lint = "ruff check"
 
+[tool.poe.tasks.quality]
+script = "scripts.quality_check:main"
+
 [tool.ruff]
 line-length = 120
 
