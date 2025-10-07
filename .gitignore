@@ -71,3 +71,4 @@ coverage.xml
 workspace/*
 !workspace/README.md
 !workspace/main.py
+.swp
