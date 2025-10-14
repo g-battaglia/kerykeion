@@ -8,9 +8,9 @@ from kerykeion.schemas.settings_models import KerykeionLanguageCelestialPointMod
 
 
 _SECOND_COLUMN_THRESHOLD = 20
-_THIRD_COLUMN_THRESHOLD = 31
-_FOURTH_COLUMN_THRESHOLD = 39
-_GRID_COLUMN_WIDTH = 140
+_THIRD_COLUMN_THRESHOLD = 28
+_FOURTH_COLUMN_THRESHOLD = 36
+_GRID_COLUMN_WIDTH = 125
 
 
 def _planet_grid_layout_position(index: int) -> tuple[int, int]:
