@@ -113,7 +113,7 @@
         </g>
 
         <!-- Houses_And_Planets_Grid -->
-        <g kr:node="Houses_And_Planets_Grid">
+        <g kr:node="Houses_And_Planets_Grid" transform="translate(20,0)">
             <!-- Main Subject Grid -->
             <g kr:node="Main_Planet_Grid">
                 $makeMainPlanetGrid
@@ -138,7 +138,7 @@
         </g>
 
         <!-- Single Chart Aspect -->
-        <g kr:node="Aspect_Grid"  transform="translate(0,50)">
+        <g kr:node="Aspect_Grid"  transform="translate(35,50)">
             $makeAspectGrid
         </g>
 

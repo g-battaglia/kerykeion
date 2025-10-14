@@ -340,7 +340,7 @@ transparent_background_chart.save_svg(output_path=OUTPUT_DIR_STR)
 # Natal Chart with ALL_ACTIVE_POINTS
 all_points_subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - All Active Points", 1940, 10, 9, 18, 30, "Liverpool", "GB",
-    suppress_geonames_warning=True, active_points=ALL_ACTIVE_POINTS
+    suppress_geonames_warning=True, active_points=ALL_ACTIVE_POINTS[0:]
 )
 all_points_chart_data = ChartDataFactory.create_natal_chart_data(
     all_points_subject,

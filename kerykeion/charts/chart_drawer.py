@@ -282,6 +282,13 @@ class ChartDrawer:
                 body["is_active"] = True
                 self.available_planets_setting.append(body)  # type: ignore[arg-type]
 
+        active_points_count = len(self.available_planets_setting)
+        if active_points_count > 24:
+            logging.warning(
+                "ChartDrawer detected %s active celestial points; rendering may look crowded beyond 24.",
+                active_points_count,
+            )
+
         # Set available celestial points
         available_celestial_points_names = [body["name"].lower() for body in self.available_planets_setting]
         self.available_kerykeion_celestial_points = []
@@ -476,7 +483,7 @@ class ChartDrawer:
           uses `x_indent=50`, `y_indent=250`, `box_size=14` and draws:
             • a header row to the right of `x_indent`
             • a left header column at `x_indent - box_size`
-            • an N×N grid of cells above `y_indent`
+            • an NxN grid of cells above `y_indent`
 
         - For Natal/Composite/SingleReturn charts, `draw_aspect_grid` uses
           `x_start=50`, `y_start=250`, `box_size=14` and draws a triangular grid
@@ -534,8 +541,8 @@ class ChartDrawer:
         extents.extend([main_planet_grid_right, main_houses_grid_right])
 
         if self.chart_type in ("Natal", "Composite", "SingleReturnChart"):
-            # Triangular aspect grid at x_start=510, width ~ 14 * n_active
-            aspect_grid_right = 510 + 14 * n_active
+            # Triangular aspect grid at x_start=540, width ~ 14 * n_active
+            aspect_grid_right = 560 + 14 * n_active
             extents.append(aspect_grid_right)
 
         if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
@@ -1223,8 +1230,8 @@ class ChartDrawer:
                     self.chart_colors_settings["paper_0"],
                     self.available_planets_setting,
                     self.aspects_list,
-                    550,
-                    450,
+                    600,
+                    520,
                 )
 
             template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(self.main_radius, self.main_radius - 160)
