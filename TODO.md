@@ -28,13 +28,14 @@
 - [x] Expand unit tests to cover all aspects of the library
 - [x] Complete all the arab parts and other points in the chart
 - [x] Correct the ChartDataFactory: it should auto calculate the active points.
+- [x] Fix: grid style synastry
+- [x] Fix: all/many points chart, maybe just add a warning for max n points
+- [x] Fix: file path for svg
 
 - [~] Full documentation for the library
-
 - [ ] Feat: test all poits just grid chart
-- [ ] Fix: grid style synastry
-- [ ] Fix: all/many points chart, maybe just add a warning for max n points
-- [ ] Fix: file path for svg
+- [ ] Fix: Crate correct glifs for all the points
+
 
 
 ### 🟧 Medium Priority
