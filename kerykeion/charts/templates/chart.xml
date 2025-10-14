@@ -18,7 +18,7 @@
 
     <!--- Main Chart -->
     <g kr:node="Main_Chart">
-        <g kr:node="Top_Left_Text">
+        <g kr:node="Top_Left_Text" transform="translate(0,$title_translate_y)">
             <text x="20" y="22" style="fill: $paper_color_0; font-size: 24px">$stringTitle</text>
             <text x="20" y="50" style="fill: $paper_color_0; font-size: 10px">$top_left_0</text>
             <text x="20" y="62" style="fill: $paper_color_0; font-size: 10px">$top_left_1</text>
@@ -29,7 +29,7 @@
         </g>
 
         <!-- Elements -->
-        <g kr:node="Elements_Percentages">
+        <g kr:node="Elements_Percentages" transform="translate(0,$elements_translate_y)">
             <text x="20" y="130" style="fill: $paper_color_0; font-size: 10px;">$elements_string</text>
             <text x="20" y="144" style="fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;">$fire_string</text>
             <text x="20" y="156" style="fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;">$earth_string</text>
@@ -38,14 +38,14 @@
         </g>
 
         <!-- Qualities -->
-        <g kr:node="Qualities_Percentages">
+        <g kr:node="Qualities_Percentages" transform="translate(0,$qualities_translate_y)">
             <text x="20" y="200" style="fill: $paper_color_0; font-size: 10px;">$qualities_string</text>
             <text x="20" y="214" style="fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;">$cardinal_string</text>
             <text x="20" y="226" style="fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;">$fixed_string</text>
             <text x="20" y="238" style="fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;">$mutable_string</text>
         </g>
 
-        <g kr:node="Bottom_Left_Text">
+        <g kr:node="Bottom_Left_Text" transform="translate(0,$bottom_left_translate_y)">
             <text x="20" y="452" style="fill: $paper_color_0; font-size: 10px">$bottom_left_0</text>
             <text x="20" y="466" style="fill: $paper_color_0; font-size: 10px">$bottom_left_1</text>
             <text x="20" y="480" style="fill: $paper_color_0; font-size: 10px">$bottom_left_2</text>
@@ -54,12 +54,12 @@
         </g>
 
         <!-- Lunar Phase -->
-        <g kr:node="Lunar_Phase" transform="translate(10,518)">
+        <g kr:node="Lunar_Phase" transform="translate(10,$lunar_phase_translate_y)">
             $makeLunarPhase
         </g>
 
         <!-- Full Wheel -->
-        <g kr:node="Full_Wheel" transform="translate(100,50)">
+        <g kr:node="Full_Wheel" transform="translate(100,$full_wheel_translate_y)">
 
             <!-- Background Circle -->
             <g kr:node='Background_Circle'>
@@ -113,7 +113,7 @@
         </g>
 
         <!-- Houses_And_Planets_Grid -->
-        <g kr:node="Houses_And_Planets_Grid" transform="translate(20,0)">
+        <g kr:node="Houses_And_Planets_Grid" transform="translate(20,$houses_and_planets_translate_y)">
             <!-- Main Subject Grid -->
             <g kr:node="Main_Planet_Grid">
                 $makeMainPlanetGrid
@@ -138,12 +138,12 @@
         </g>
 
         <!-- Single Chart Aspect -->
-        <g kr:node="Aspect_Grid"  transform="translate(35,50)">
+        <g kr:node="Aspect_Grid"  transform="translate(35,$aspect_grid_translate_y)">
             $makeAspectGrid
         </g>
 
         <!-- Double Chart Chart Aspects -->
-        <g kr:node="Aspect_List"  transform="translate(50,50)">
+        <g kr:node="Aspect_List"  transform="translate(50,$aspect_list_translate_y)">
             $makeDoubleChartAspectList
         </g>
     </g>

@@ -161,6 +161,21 @@ class ChartDrawer:
     _DEFAULT_FULL_WIDTH_WITH_TABLE = 1250
     _DEFAULT_ULTRA_WIDE_WIDTH = 1320
 
+    _BASE_VERTICAL_OFFSETS = {
+        "wheel": 50,
+        "grid": 0,
+        "aspect_grid": 50,
+        "aspect_list": 50,
+        "title": 0,
+        "elements": 0,
+        "qualities": 0,
+        "lunar_phase": 518,
+        "bottom_left": 0,
+    }
+    _MAX_TOP_SHIFT = 80
+    _TOP_SHIFT_FACTOR = 2
+    _ROW_HEIGHT = 8
+
     _BASIC_CHART_VIEWBOX = f"0 0 {_DEFAULT_NATAL_WIDTH} {_DEFAULT_HEIGHT}"
     _WIDE_CHART_VIEWBOX = f"0 0 {_DEFAULT_FULL_WIDTH} 546.0"
     _ULTRA_WIDE_CHART_VIEWBOX = f"0 0 {_DEFAULT_ULTRA_WIDE_WIDTH} 546.0"
@@ -253,6 +268,7 @@ class ChartDrawer:
         self.custom_title = custom_title
         self.auto_size = auto_size
         self._padding = padding
+        self._vertical_offsets: dict[str, int] = self._BASE_VERTICAL_OFFSETS.copy()
 
         # Extract data from ChartDataModel
         self.chart_data = chart_data
@@ -265,6 +281,7 @@ class ChartDrawer:
             # SingleChartDataModel
             self.first_obj = getattr(chart_data, 'subject')
             self.second_obj = None
+
         else:  # DualChartDataModel for Transit, Synastry, DualReturnChart
             self.first_obj = getattr(chart_data, 'first_subject')
             self.second_obj = getattr(chart_data, 'second_subject')
@@ -455,9 +472,48 @@ class ChartDrawer:
                 # Keep default on any unexpected issue; do not break rendering
                 logging.debug(f"Auto-size width calculation failed: {e}")
 
+        self._apply_dynamic_height_adjustment()
+
     def _count_active_planets(self) -> int:
         """Return number of active celestial points in the current chart."""
         return len([p for p in self.available_planets_setting if p.get("is_active")])
+
+    def _apply_dynamic_height_adjustment(self) -> None:
+        """Adjust chart height and vertical offsets based on active points."""
+        active_points_count = self._count_active_planets()
+
+        offsets = self._BASE_VERTICAL_OFFSETS.copy()
+
+        minimum_height = self._DEFAULT_HEIGHT
+        if active_points_count <= 20:
+            self.height = max(self.height, minimum_height)
+            self._vertical_offsets = offsets
+            return
+
+        extra_points = active_points_count - 20
+        extra_height = extra_points * self._ROW_HEIGHT
+
+        self.height = max(self.height, minimum_height + extra_height)
+
+        delta_height = max(self.height - minimum_height, 0)
+
+        # Anchor wheel, aspect grid/list, and lunar phase to the bottom
+        offsets["wheel"] += delta_height
+        offsets["aspect_grid"] += delta_height
+        offsets["aspect_list"] += delta_height
+        offsets["lunar_phase"] += delta_height
+        offsets["bottom_left"] += delta_height
+
+        # Smooth top offsets to keep breathing room near the title and grids
+        shift = min(extra_points * self._TOP_SHIFT_FACTOR, self._MAX_TOP_SHIFT)
+        top_shift = shift // 2
+
+        offsets["grid"] += shift
+        offsets["title"] += top_shift
+        offsets["elements"] += top_shift
+        offsets["qualities"] += top_shift
+
+        self._vertical_offsets = offsets
 
     def _dynamic_viewbox(self) -> str:
         """Return the viewBox string based on current width/height."""
@@ -821,6 +877,17 @@ class ChartDrawer:
         template_dict["color_style_tag"] = self.color_style_tag
         template_dict["chart_height"] = self.height
         template_dict["chart_width"] = self.width
+
+        offsets = self._vertical_offsets
+        template_dict["full_wheel_translate_y"] = offsets["wheel"]
+        template_dict["houses_and_planets_translate_y"] = offsets["grid"]
+        template_dict["aspect_grid_translate_y"] = offsets["aspect_grid"]
+        template_dict["aspect_list_translate_y"] = offsets["aspect_list"]
+        template_dict["title_translate_y"] = offsets["title"]
+        template_dict["elements_translate_y"] = offsets["elements"]
+        template_dict["qualities_translate_y"] = offsets["qualities"]
+        template_dict["lunar_phase_translate_y"] = offsets["lunar_phase"]
+        template_dict["bottom_left_translate_y"] = offsets["bottom_left"]
 
         # Set paper colors
         template_dict["paper_color_0"] = self.chart_colors_settings["paper_0"]

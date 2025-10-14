@@ -131,7 +131,7 @@
 
     <!--- Main Chart -->
     <g kr:node='Main_Chart'>
-        <g kr:node='Top_Left_Text'>
+        <g kr:node='Top_Left_Text' transform='translate(0,0)'>
             <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Albert Einstein - Geburtshoroskop</text>
             <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Ort:</text>
             <text x='20' y='62' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Ulm, DE</text>
@@ -142,7 +142,7 @@
         </g>
 
         <!-- Elements -->
-        <g kr:node='Elements_Percentages'>
+        <g kr:node='Elements_Percentages' transform='translate(0,0)'>
             <text x='20' y='130' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Elemente:</text>
             <text x='20' y='144' style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>Feuer 34%</text>
             <text x='20' y='156' style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>Erde 19%</text>
@@ -151,14 +151,14 @@
         </g>
 
         <!-- Qualities -->
-        <g kr:node='Qualities_Percentages'>
+        <g kr:node='Qualities_Percentages' transform='translate(0,0)'>
             <text x='20' y='200' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Qualitäten:</text>
             <text x='20' y='214' style='fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;'>Kardinal 40%</text>
             <text x='20' y='226' style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>Fix 13%</text>
             <text x='20' y='238' style='fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;'>Veränderlich 47%</text>
         </g>
 
-        <g kr:node='Bottom_Left_Text'>
+        <g kr:node='Bottom_Left_Text' transform='translate(0,0)'>
             <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Tierkreis: Tropisch</text>
             <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Domifikation: Placidus</text>
             <text x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Lunationstag: 21</text>

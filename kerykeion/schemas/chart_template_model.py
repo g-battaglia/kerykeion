@@ -39,6 +39,33 @@ class ChartTemplateModel(SubscriptableBaseModel):
     makeHouseComparisonGrid: str
     """SVG markup for house comparison grid"""
 
+    full_wheel_translate_y: int
+    """Vertical translation for the full wheel group"""
+
+    houses_and_planets_translate_y: int
+    """Vertical translation for the houses and planets grid group"""
+
+    aspect_grid_translate_y: int
+    """Vertical translation for the aspect grid group"""
+
+    aspect_list_translate_y: int
+    """Vertical translation for the aspect list group"""
+
+    title_translate_y: int
+    """Vertical translation for the title and top-left text block"""
+
+    elements_translate_y: int
+    """Vertical translation for the elements summary block"""
+
+    qualities_translate_y: int
+    """Vertical translation for the qualities summary block"""
+
+    lunar_phase_translate_y: int
+    """Vertical translation for the lunar phase block"""
+
+    bottom_left_translate_y: int
+    """Vertical translation for the bottom-left info block"""
+
     chart_height: float
     """Chart height in pixels"""
 

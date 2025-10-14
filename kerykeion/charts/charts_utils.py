@@ -7,6 +7,31 @@ from kerykeion.schemas.kr_models import AspectModel, KerykeionPointModel, Compos
 from kerykeion.schemas.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsCelestialPointModel
 
 
+_SECOND_COLUMN_THRESHOLD = 20
+_THIRD_COLUMN_THRESHOLD = 31
+_FOURTH_COLUMN_THRESHOLD = 39
+_GRID_COLUMN_WIDTH = 140
+
+
+def _planet_grid_layout_position(index: int) -> tuple[int, int]:
+    """Return horizontal offset and row index for planet grids."""
+    if index < _SECOND_COLUMN_THRESHOLD:
+        column = 0
+        row = index
+    elif index < _THIRD_COLUMN_THRESHOLD:
+        column = 1
+        row = index - _SECOND_COLUMN_THRESHOLD
+    elif index < _FOURTH_COLUMN_THRESHOLD:
+        column = 2
+        row = index - _THIRD_COLUMN_THRESHOLD
+    else:
+        column = 3
+        row = index - _FOURTH_COLUMN_THRESHOLD
+
+    offset = -(_GRID_COLUMN_WIDTH * column)
+    return offset, row
+
+
 
 def get_decoded_kerykeion_celestial_point_name(input_planet_name: str, celestial_point_language: KerykeionLanguageCelestialPointModel) -> str:
     """
@@ -960,16 +985,11 @@ def draw_main_planet_grid(
             f'</g>'
         )
 
-    line_height = LINE_START
-    offset = 0
-
     end_of_line = "</g>"
 
     for i, planet in enumerate(available_kerykeion_celestial_points):
-        # Start a second column at item 23 (index 22)
-        if i == 20:
-            line_height = LINE_START
-            offset = -125
+        offset, row_index = _planet_grid_layout_position(i)
+        line_height = LINE_START + (row_index * LINE_STEP)
 
         decoded_name = get_decoded_kerykeion_celestial_point_name(
             planet["name"],
@@ -988,7 +1008,6 @@ def draw_main_planet_grid(
             svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
 
         svg_output += end_of_line
-        line_height += LINE_STEP
 
     # Close the wrapper group
     svg_output += "</g>"
@@ -1051,13 +1070,16 @@ def draw_secondary_planet_grid(
     line_height = LINE_START
     end_of_line = "</g>"
 
-    for t_planet in second_subject_available_kerykeion_celestial_points:
+    for i, t_planet in enumerate(second_subject_available_kerykeion_celestial_points):
+        offset, row_index = _planet_grid_layout_position(i)
+        line_height = LINE_START + (row_index * LINE_STEP)
+
         second_decoded_name = get_decoded_kerykeion_celestial_point_name(
             t_planet["name"],
             celestial_point_language,
         )
         svg_output += (
-            f'<g transform="translate(0,{BASE_Y + line_height})">'
+            f'<g transform="translate({offset},{BASE_Y + line_height})">'
             f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{second_decoded_name}</text>'
             f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{t_planet["name"]}" /></g>'
             f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(t_planet["position"])}</text>'
@@ -1068,7 +1090,7 @@ def draw_secondary_planet_grid(
             svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
 
         svg_output += end_of_line
-        line_height += LINE_STEP
+
 
     # Close wrapper group
     svg_output += "</g>"
