@@ -34,6 +34,7 @@
 - [ ] Feat: test all poits just grid chart
 - [ ] Fix: grid style synastry
 - [ ] Fix: all/many points chart, maybe just add a warning for max n points
+- [ ] Fix: file path for svg
 
 
 ### 🟧 Medium Priority
