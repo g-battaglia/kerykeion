@@ -1011,7 +1011,7 @@ class ChartDrawer:
             str: Truncated name with ellipsis if needed
         """
         if truncate_at_space:
-            name = name.strip()
+            name = name.split(" ")[0]
 
         if len(name) <= max_length:
             return name
@@ -1642,8 +1642,10 @@ class ChartDrawer:
             )
 
             # Planet grids
-            first_return_grid_title = f"{self.first_obj.name} ({self._translate('inner_wheel', 'Inner Wheel')})"
-            second_return_grid_title = f"{self._translate('Transit', 'Transit')} ({self._translate('outer_wheel', 'Outer Wheel')})"
+            first_name_label = self._truncate_name(self.first_obj.name)
+            transit_label = self._translate("transit", "Transit")
+            first_return_grid_title = f"{first_name_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
+            second_return_grid_title = f"{transit_label} ({self._translate('outer_wheel', 'Outer Wheel')})"
             template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
                 planets_and_houses_grid_title="",
                 subject_name=first_return_grid_title,
@@ -1809,9 +1811,11 @@ class ChartDrawer:
             )
 
             # Planet grid
+            first_name_label = self._truncate_name(self.first_obj.name, 18, "…")  # type: ignore[union-attr]
+            second_name_label = self._truncate_name(self.second_obj.name, 18, "…")  # type: ignore[union-attr]
             template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
                 planets_and_houses_grid_title="",
-                subject_name=f"{self.first_obj.name} ({self._translate('inner_wheel', 'Inner Wheel')})",
+                subject_name=f"{first_name_label} ({self._translate('inner_wheel', 'Inner Wheel')})",
                 available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
@@ -1819,7 +1823,7 @@ class ChartDrawer:
             )
             template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
                 planets_and_houses_grid_title="",
-                second_subject_name= f"{self.second_obj.name} ({self._translate('outer_wheel', 'Outer Wheel')})", # type: ignore
+                second_subject_name= f"{second_name_label} ({self._translate('outer_wheel', 'Outer Wheel')})", # type: ignore
                 second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
@@ -2016,11 +2020,12 @@ class ChartDrawer:
             )
 
             # Planet grid
+            first_name_label = self._truncate_name(self.first_obj.name)
             if self.second_obj is not None and hasattr(self.second_obj, 'return_type') and self.second_obj.return_type == "Solar":
-                first_return_grid_title = f"{self.first_obj.name} ({self._translate('inner_wheel', 'Inner Wheel')})"
+                first_return_grid_title = f"{first_name_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
                 second_return_grid_title = f"{self._translate('solar_return', 'Solar Return')} ({self._translate('outer_wheel', 'Outer Wheel')})"
             else:
-                first_return_grid_title = f"{self.first_obj.name} ({self._translate('inner_wheel', 'Inner Wheel')})"
+                first_return_grid_title = f"{first_name_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
                 second_return_grid_title = f'{self._translate("lunar_return", "Lunar Return")} ({self._translate("outer_wheel", "Outer Wheel")})'
             template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
                 planets_and_houses_grid_title="",
