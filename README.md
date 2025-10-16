@@ -376,6 +376,25 @@ birth_chart_svg = ChartDrawer(
     chart_language="IT"  # Change to Italian
 )
 birth_chart_svg.save_svg()
+
+You can also provide custom labels (or introduce a brand-new language) by passing
+a dictionary to `language_pack`. Only the keys you supply are merged on top of the
+built-in strings:
+
+```python
+custom_labels = {
+    "PT": {
+        "info": "Informações",
+        "celestial_points": {"Sun": "Sol", "Moon": "Lua"},
+    }
+}
+
+birth_chart_svg = ChartDrawer(
+    chart_data=chart_data,
+    chart_language="PT",
+    language_pack=custom_labels["PT"],
+)
+```
 ```
 
 More details [here](https://www.kerykeion.net/docs/chart-language).
