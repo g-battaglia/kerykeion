@@ -952,7 +952,7 @@ def draw_transit_aspect_list(
 
     inner_path = ""
 
-    full_height_column_index = 11  # 0-based index → 12th column onward
+    full_height_column_index = 10  # 0-based index → 11th column onward
     if chart_height is not None:
         available_height = max(chart_height - translate_y - bottom_padding, line_height)
         allowed_capacity = max(aspects_per_column, int(available_height // line_height))

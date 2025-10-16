@@ -788,7 +788,7 @@ class ChartDrawer:
             return 0
 
         per_column = self._ASPECT_LIST_ASPECTS_PER_COLUMN
-        extended_start = 11  # 0-based index where tall columns begin
+        extended_start = 10  # 0-based index where tall columns begin
         base_capacity = per_column * extended_start
 
         full_height_capacity = self._calculate_full_height_column_capacity(chart_height)
