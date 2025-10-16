@@ -8,6 +8,8 @@
     <img src="https://static.pepy.tech/badge/kerykeion/month" alt="PyPI Downloads">
     <img src="https://static.pepy.tech/badge/kerykeion/week" alt="PyPI Downloads">
     <img src="https://static.pepy.tech/personalized-badge/kerykeion?period=total&units=INTERNATIONAL_SYSTEM&left_color=GREY&right_color=BLUE&left_text=downloads/total" alt="PyPI Downloads">
+</div>
+<div align="center">
     <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
     <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
 </div>
