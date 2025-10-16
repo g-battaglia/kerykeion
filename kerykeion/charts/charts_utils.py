@@ -906,7 +906,8 @@ def draw_transit_aspect_list(
     aspects_per_column: int = 14,
     column_width: int = 100,
     line_height: int = 14,
-    max_columns: int = 6
+    max_columns: int = 6,
+    chart_height: Optional[int] = None,
 ) -> str:
     """
     Generates the SVG output for the aspect transit grid.
@@ -920,6 +921,8 @@ def draw_transit_aspect_list(
     - column_width: Width in pixels for each column (default: 100).
     - line_height: Height in pixels for each line (default: 14).
     - max_columns: Maximum number of columns before vertical adjustment (default: 6).
+    - chart_height: Total chart height. When provided, columns from the 12th onward
+      leverage the taller layout capacity (default: None).
 
     Returns:
     - A string containing the SVG path data for the aspect transit grid.
@@ -935,61 +938,86 @@ def draw_transit_aspect_list(
     # Type narrowing: at this point aspects_list contains AspectModel instances
     typed_aspects_list: list[AspectModel] = aspects_list  # type: ignore
 
+    translate_x = 565
+    translate_y = 273
+    title_clearance = 18
+    top_limit_y: float = -translate_y + title_clearance
+    bottom_padding = 40
+    baseline_index = aspects_per_column - 1
+    top_limit_index = math.ceil(top_limit_y / line_height)
+    # `top_limit_index` identifies the highest row index we can reach without
+    # touching the title block. Combined with the baseline index we know how many
+    # rows a "tall" column may contain.
+    max_capacity_by_top = baseline_index - top_limit_index + 1
+
     inner_path = ""
 
-    for i, aspect in enumerate(typed_aspects_list):
-        # Calculate which column this aspect belongs in
-        current_column = i // aspects_per_column
+    full_height_column_index = 11  # 0-based index → 12th column onward
+    if chart_height is not None:
+        available_height = max(chart_height - translate_y - bottom_padding, line_height)
+        allowed_capacity = max(aspects_per_column, int(available_height // line_height))
+        full_height_capacity = max(aspects_per_column, min(allowed_capacity, max_capacity_by_top))
+    else:
+        full_height_capacity = aspects_per_column
 
-        # Calculate horizontal position based on column
-        horizontal_position = current_column * column_width
+    # Bucket aspects into columns while respecting the capacity of each column.
+    columns: list[list[AspectModel]] = []
+    column_capacities: list[int] = []
 
-        # Calculate vertical position within the column
-        current_line = i % aspects_per_column
-        vertical_position = current_line * line_height
+    for aspect in typed_aspects_list:
+        if not columns or len(columns[-1]) >= column_capacities[-1]:
+            new_col_index = len(columns)
+            capacity = aspects_per_column if new_col_index < full_height_column_index else full_height_capacity
+            capacity = max(capacity, 1)
+            columns.append([])
+            column_capacities.append(capacity)
+        columns[-1].append(aspect)
 
-        # Special handling for many aspects - if we exceed max_columns
-        # Bottom-align the overflow columns so the list starts from the bottom
-        if current_column >= max_columns:
-            overflow_total = len(aspects_list) - (aspects_per_column * max_columns)
-            if overflow_total > 0:
-                # Index within the overflow sequence (beyond the first row of columns)
-                overflow_index = i - (aspects_per_column * max_columns)
-                # Which overflow column we are in (0-based)
-                overflow_col_idx = overflow_index // aspects_per_column
-                # How many items go into this overflow column
-                items_in_this_column = min(
-                    aspects_per_column,
-                    max(0, overflow_total - (overflow_col_idx * aspects_per_column)),
-                )
-                # Compute extra top offset (in lines) to bottom-align this column
-                top_offset_lines = max(0, aspects_per_column - items_in_this_column)
-                vertical_position = (top_offset_lines + (i % aspects_per_column)) * line_height
+    for col_idx, column in enumerate(columns):
+        capacity = column_capacities[col_idx]
+        horizontal_position = col_idx * column_width
+        column_len = len(column)
 
-        inner_path += f'<g transform="translate({horizontal_position},{vertical_position})">'
+        for row_idx, aspect in enumerate(column):
+            # Default top-aligned placement
+            vertical_position = row_idx * line_height
 
-        # First planet symbol
-        inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspect["p1"]]["name"]}" />'
+            # Full-height columns reuse the shared baseline so every column
+            # finishes at the same vertical position and grows upwards.
+            if col_idx >= full_height_column_index:
+                vertical_index = baseline_index - (column_len - 1 - row_idx)
+                vertical_position = vertical_index * line_height
+            # Legacy overflow columns (before the 12th) keep the older behaviour:
+            # once we exceed the configured column count, bottom-align the content
+            # so the shorter columns do not look awkwardly padded at the top.
+            elif col_idx >= max_columns and capacity == aspects_per_column:
+                top_offset_lines = max(0, capacity - len(column))
+                vertical_position = (top_offset_lines + row_idx) * line_height
 
-        # Aspect symbol
-        aspect_name = aspect["aspect"]
-        id_value = next((a["degree"] for a in aspects_settings if a["name"] == aspect_name), None)  # type: ignore
-        inner_path += f'<use x="15" y="0" xlink:href="#orb{id_value}" />'
+            inner_path += f'<g transform="translate({horizontal_position},{vertical_position})">'
 
-        # Second planet symbol
-        inner_path += '<g transform="translate(30,0)">'
-        inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspect["p2"]]["name"]}" />'
-        inner_path += "</g>"
+            # First planet symbol
+            inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspect["p1"]]["name"]}" />'
 
-        # Difference in degrees
-        inner_path += f'<text y="8" x="45" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;">{convert_decimal_to_degree_string(aspect["orbit"])}</text>'
+            # Aspect symbol
+            aspect_name = aspect["aspect"]
+            id_value = next((a["degree"] for a in aspects_settings if a["name"] == aspect_name), None)  # type: ignore
+            inner_path += f'<use x="15" y="0" xlink:href="#orb{id_value}" />'
 
-        inner_path += "</g>"
+            # Second planet symbol
+            inner_path += '<g transform="translate(30,0)">'
+            inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspect["p2"]]["name"]}" />'
+            inner_path += "</g>"
 
-    out = '<g transform="translate(565,273)">'
+            # Difference in degrees
+            inner_path += f'<text y="8" x="45" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;">{convert_decimal_to_degree_string(aspect["orbit"])}</text>'
+
+            inner_path += "</g>"
+
+    out = f'<g transform="translate({translate_x},{translate_y})">'
     out += f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{grid_title}:</text>'
     out += inner_path
-    out += '</g>'
+    out += "</g>"
 
     return out
 

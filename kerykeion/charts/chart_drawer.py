@@ -475,17 +475,11 @@ class ChartDrawer:
 
         self.set_up_theme(theme)
 
-        # Optionally expand width dynamically to fit content
-        if self.auto_size:
-            try:
-                required_width = self._estimate_required_width_full()
-                if required_width > self.width:
-                    self.width = required_width
-            except Exception as e:
-                # Keep default on any unexpected issue; do not break rendering
-                logging.debug(f"Auto-size width calculation failed: {e}")
-
         self._apply_dynamic_height_adjustment()
+        self._adjust_height_for_extended_aspect_columns()
+        # Reconcile width with the updated layout once height adjustments are known.
+        if self.auto_size:
+            self._update_width_to_content()
 
     def _count_active_planets(self) -> int:
         """Return number of active celestial points in the current chart."""
@@ -535,6 +529,55 @@ class ChartDrawer:
         offsets["elements"] += top_shift
         offsets["qualities"] += top_shift
 
+        self._vertical_offsets = offsets
+
+    def _adjust_height_for_extended_aspect_columns(self) -> None:
+        """Ensure tall aspect columns fit within the SVG for double-chart lists."""
+        if self.double_chart_aspect_grid_type != "list":
+            return
+
+        if self.chart_type not in ("Synastry", "Transit", "DualReturnChart"):
+            return
+
+        total_aspects = len(self.aspects_list) if hasattr(self, "aspects_list") else 0
+        if total_aspects == 0:
+            return
+
+        aspects_per_column = 14
+        extended_column_start = 11  # Zero-based column index where tall columns begin
+        base_capacity = aspects_per_column * extended_column_start
+
+        if total_aspects <= base_capacity:
+            return
+
+        translate_y = 273
+        bottom_padding = 40
+        title_clearance = 18
+        line_height = 14
+        baseline_index = aspects_per_column - 1
+        top_limit_index = ceil((-translate_y + title_clearance) / line_height)
+        max_capacity_by_top = baseline_index - top_limit_index + 1
+
+        if max_capacity_by_top <= aspects_per_column:
+            return
+
+        target_capacity = max_capacity_by_top
+        required_available_height = target_capacity * line_height
+        required_height = translate_y + bottom_padding + required_available_height
+
+        if required_height <= self.height:
+            return
+
+        delta = required_height - self.height
+        self.height = required_height
+
+        offsets = self._vertical_offsets
+        # Keep bottom-anchored groups aligned after changing the overall height.
+        offsets["wheel"] += delta
+        offsets["aspect_grid"] += delta
+        offsets["aspect_list"] += delta
+        offsets["lunar_phase"] += delta
+        offsets["bottom_left"] += delta
         self._vertical_offsets = offsets
 
     def _apply_synastry_height_adjustment(
@@ -696,7 +739,8 @@ class ChartDrawer:
             # Double-chart aspects placement
             if self.double_chart_aspect_grid_type == "list":
                 total_aspects = len(self.aspects_list) if hasattr(self, "aspects_list") else 0
-                columns = max(ceil(total_aspects / self._ASPECT_LIST_ASPECTS_PER_COLUMN), 1)
+                columns = self._calculate_double_chart_aspect_columns(total_aspects, self.height)
+                columns = max(columns, 1)
                 aspect_list_right = 565 + (columns * self._ASPECT_LIST_COLUMN_WIDTH)
                 extents.append(aspect_list_right)
             else:
@@ -728,6 +772,84 @@ class ChartDrawer:
 
         # Conservative safety padding
         return int(max(extents) + self._padding)
+
+    def _calculate_double_chart_aspect_columns(
+        self,
+        total_aspects: int,
+        chart_height: Optional[int],
+    ) -> int:
+        """Return how many columns the double-chart aspect list needs.
+
+        The first 11 columns follow the legacy 14-rows layout. Starting from the
+        12th column we can fit more rows thanks to the taller chart height that
+        gets computed earlier, so we re-use the same capacity as the SVG builder.
+        """
+        if total_aspects <= 0:
+            return 0
+
+        per_column = self._ASPECT_LIST_ASPECTS_PER_COLUMN
+        extended_start = 11  # 0-based index where tall columns begin
+        base_capacity = per_column * extended_start
+
+        full_height_capacity = self._calculate_full_height_column_capacity(chart_height)
+
+        if total_aspects <= base_capacity:
+            return ceil(total_aspects / per_column)
+
+        remaining = max(total_aspects - base_capacity, 0)
+        extra_columns = ceil(remaining / full_height_capacity) if remaining > 0 else 0
+        return extended_start + extra_columns
+
+    def _calculate_full_height_column_capacity(
+        self,
+        chart_height: Optional[int],
+    ) -> int:
+        """Compute the row capacity for columns that use the tall layout."""
+        per_column = self._ASPECT_LIST_ASPECTS_PER_COLUMN
+
+        if chart_height is None:
+            return per_column
+
+        translate_y = 273
+        bottom_padding = 40
+        title_clearance = 18
+        line_height = 14
+        baseline_index = per_column - 1
+        top_limit_index = ceil((-translate_y + title_clearance) / line_height)
+        max_capacity_by_top = baseline_index - top_limit_index + 1
+
+        available_height = max(chart_height - translate_y - bottom_padding, line_height)
+        allowed_capacity = max(per_column, int(available_height // line_height))
+
+        # Respect both the physical height of the SVG and the visual limit
+        # imposed by the title area.
+        return max(per_column, min(allowed_capacity, max_capacity_by_top))
+
+    def _minimum_width_for_chart_type(self) -> int:
+        """Baseline width to avoid compressing core groups too tightly."""
+        wheel_right = 100 + (2 * self.main_radius)
+        baseline = wheel_right + self._padding
+
+        if self.chart_type in ("Natal", "Composite", "SingleReturnChart"):
+            return max(int(baseline), self._DEFAULT_NATAL_WIDTH)
+        if self.chart_type == "Synastry":
+            return max(int(baseline), self._DEFAULT_SYNASTRY_WIDTH // 2)
+        if self.chart_type == "DualReturnChart":
+            return max(int(baseline), self._DEFAULT_ULTRA_WIDE_WIDTH // 2)
+        if self.chart_type == "Transit":
+            return max(int(baseline), self._DEFAULT_FULL_WIDTH // 2)
+        return max(int(baseline), self._DEFAULT_NATAL_WIDTH)
+
+    def _update_width_to_content(self) -> None:
+        """Resize the chart width so the farthest element fits comfortably."""
+        try:
+            required_width = self._estimate_required_width_full()
+        except Exception as e:
+            logging.debug(f"Auto-size width calculation failed: {e}")
+            return
+
+        minimum_width = self._minimum_width_for_chart_type()
+        self.width = max(required_width, minimum_width)
 
     def _get_location_info(self) -> tuple[str, float, float]:
         """
@@ -1421,7 +1543,13 @@ class ChartDrawer:
             if self.double_chart_aspect_grid_type == "list":
                 title = f'{self.first_obj.name} - {self._translate("transit_aspects", "Transit Aspects")}'
                 template_dict["makeAspectGrid"] = ""
-                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings)  # type: ignore[arg-type]  # type: ignore[arg-type]
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    title,
+                    self.aspects_list,
+                    self.planets_settings,
+                    self.aspects_settings,
+                    chart_height=self.height,
+                )  # type: ignore[arg-type]
             else:
                 template_dict["makeAspectGrid"] = ""
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
@@ -1598,7 +1726,8 @@ class ChartDrawer:
                     f"{self.first_obj.name} - {self.second_obj.name} {self._translate('synastry_aspects', 'Synastry Aspects')}",  # type: ignore[union-attr]
                     self.aspects_list,
                     self.planets_settings,  # type: ignore[arg-type]
-                    self.aspects_settings  # type: ignore[arg-type]
+                    self.aspects_settings,  # type: ignore[arg-type]
+                    chart_height=self.height,
                 )
             else:
                 template_dict["makeAspectGrid"] = ""
@@ -1778,7 +1907,14 @@ class ChartDrawer:
             if self.double_chart_aspect_grid_type == "list":
                 title = self._translate("return_aspects", "Natal to Return Aspects")
                 template_dict["makeAspectGrid"] = ""
-                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(title, self.aspects_list, self.planets_settings, self.aspects_settings, max_columns=7)  # type: ignore[arg-type]  # type: ignore[arg-type]
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    title,
+                    self.aspects_list,
+                    self.planets_settings,
+                    self.aspects_settings,
+                    max_columns=7,
+                    chart_height=self.height,
+                )  # type: ignore[arg-type]
             else:
                 template_dict["makeAspectGrid"] = ""
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
