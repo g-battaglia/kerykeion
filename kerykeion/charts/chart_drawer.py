@@ -498,6 +498,15 @@ class ChartDrawer:
         offsets = self._BASE_VERTICAL_OFFSETS.copy()
 
         minimum_height = self._DEFAULT_HEIGHT
+
+        if self.chart_type == "Synastry":
+            self._apply_synastry_height_adjustment(
+                active_points_count=active_points_count,
+                offsets=offsets,
+                minimum_height=minimum_height,
+            )
+            return
+
         if active_points_count <= 20:
             self.height = max(self.height, minimum_height)
             self._vertical_offsets = offsets
@@ -519,6 +528,57 @@ class ChartDrawer:
 
         # Smooth top offsets to keep breathing room near the title and grids
         shift = min(extra_points * self._TOP_SHIFT_FACTOR, self._MAX_TOP_SHIFT)
+        top_shift = shift // 2
+
+        offsets["grid"] += shift
+        offsets["title"] += top_shift
+        offsets["elements"] += top_shift
+        offsets["qualities"] += top_shift
+
+        self._vertical_offsets = offsets
+
+    def _apply_synastry_height_adjustment(
+        self,
+        *,
+        active_points_count: int,
+        offsets: dict[str, int],
+        minimum_height: int,
+    ) -> None:
+        """Specialised dynamic height handling for Synastry charts.
+
+        With the planet grids locked to a single column, every additional active
+        point extends multiple tables vertically (planets, houses, comparisons).
+        We therefore scale the height using the actual line spacing used by those
+        tables (≈14px) and keep the bottom anchored elements aligned.
+        """
+        base_rows = 20
+        if active_points_count <= base_rows:
+            self.height = max(self.height, minimum_height)
+            self._vertical_offsets = offsets
+            return
+
+        extra_rows = active_points_count - base_rows
+
+        synastry_row_height = 15
+        comparison_padding_per_row = 4  # Keeps house comparison grids within view.
+        extra_height = extra_rows * (synastry_row_height + comparison_padding_per_row)
+
+        self.height = max(self.height, minimum_height + extra_height)
+
+        delta_height = max(self.height - minimum_height, 0)
+
+        offsets["wheel"] += delta_height
+        offsets["aspect_grid"] += delta_height
+        offsets["aspect_list"] += delta_height
+        offsets["lunar_phase"] += delta_height
+        offsets["bottom_left"] += delta_height
+
+        row_height_ratio = synastry_row_height / max(self._ROW_HEIGHT, 1)
+        synastry_top_shift_factor = max(
+            self._TOP_SHIFT_FACTOR,
+            int(ceil(self._TOP_SHIFT_FACTOR * row_height_ratio)),
+        )
+        shift = min(extra_rows * synastry_top_shift_factor, self._MAX_TOP_SHIFT)
         top_shift = shift // 2
 
         offsets["grid"] += shift
