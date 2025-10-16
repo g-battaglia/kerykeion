@@ -21,10 +21,10 @@ The first alpha release was essentially a transitional version between v4 and v5
 - Removed the `relationship_score` package and the `RelationshipScore` class → use `RelationshipScoreFactory`.
 - Legacy modules removed: `ephemeris_data.py`, `transits_time_range.py`, `charts/kerykeion_chart_svg.py`.
 - `kr_types` package moved to `schemas` → import everything from `kerykeion.schemas`.
-- New constant `DEFAULT_AXIS_ORBIT` = 1: axis orbs are now explicitly defined (results may differ if you relied on defaults).
+- Axis orbs default to the same thresholds used for planets; supply the new keyword-only `axis_orb_limit` parameter when you need the traditional 1° limit.
 
 ## ✨ Added
-- `AspectsFactory`: unified aspects calculation (`single_chart_aspects`, `dual_chart_aspects`) with filters and dedicated axis orbs.
+- `AspectsFactory`: unified aspects calculation (`single_chart_aspects`, `dual_chart_aspects`) with an optional `axis_orb_limit` keyword for traditional axis filtering.
 - `ChartDrawer`: generates SVG templates and wheels with multiple methods (`makeSVG`, `makeTemplate`, `makeWheelOnlySVG`, `makeWheelOnlyTemplate`, `makeAspectGridOnlySVG`, `makeAspectGridOnlyTemplate`).
 - `PlanetaryReturnFactory`: helpers for planetary returns (`next_return_from_year`, `next_return_from_month_and_year`, `next_return_from_iso_formatted_time`).
 - `TransitsTimeRangeFactory`: generate transits within a date range.
@@ -34,7 +34,7 @@ The first alpha release was essentially a transitional version between v4 and v5
 - Schemas package: unified home for models, literals, exceptions, and settings.
 - Backward compatibility aliases: `NatalAspectsModel` and `SynastryAspectsModel` maintained as aliases to `SingleChartAspectsModel` and `DualChartAspectsModel`.
 - Legacy settings presets: curated defaults for points, aspects and colors under `settings/legacy`.
-- New configuration constants: `DEFAULT_ACTIVE_POINTS` and `DEFAULT_AXIS_ORBIT` for consistent defaults.
+- New configuration constants: `DEFAULT_ACTIVE_POINTS` for consistent defaults.
 - Enhanced caching system with `@functools.lru_cache` for settings operations.
 
 ## 🔧 Changed
@@ -126,5 +126,5 @@ Note: `ChartDrawer` requires pre-computed chart data from `ChartDataFactory`.
 ## 📋 Notes
 - **API Stability**: Legacy type aliases (`NatalAspectsModel`, `SynastryAspectsModel`) are provided for backward compatibility during the transition period.
 - **Chart Rendering**: `ChartDrawer` requires pre-computed data from `ChartDataFactory`, promoting better separation of concerns between calculation and visualization.
-- **Orb Changes**: The new `DEFAULT_AXIS_ORBIT = 1` may produce different results than previous versions for aspects involving chart axes (ASC, MC, DSC, IC).
+- **Orb Changes**: Axes now use the same orbs as planets by default; use `axis_orb_limit` to restore a dedicated axis threshold (e.g., 1°) when needed.
 - **Settings Caching**: All settings functions now use `@functools.lru_cache` for improved performance in applications that create multiple charts.

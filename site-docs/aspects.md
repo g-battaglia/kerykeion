@@ -459,6 +459,30 @@ print(f"Precise natal aspects: {len(precise_natal.relevant_aspects)}")
 print(f"Detailed synastry aspects: {len(detailed_synastry.relevant_aspects)}")
 ```
 
+### Axis Orb Filtering
+
+By default, Kerykeion follows modern practice and evaluates chart axes (ASC, MC, DSC, IC) with the same orb used for planetary aspects. When you want to tighten the angular tolerance for axes, supply the keyword-only `axis_orb_limit` parameter.
+
+```python
+from kerykeion import AspectsFactory
+
+# Modern default: axes use the same orb as planets
+modern = AspectsFactory.single_chart_aspects(subject)
+
+# Traditional approach: enforce a 1° axis orb
+traditional = AspectsFactory.single_chart_aspects(
+    subject,
+    axis_orb_limit=1.0,
+)
+
+# Axis orb control is also available in dual-chart calculations
+traditional_synastry = AspectsFactory.dual_chart_aspects(
+    person1,
+    person2,
+    axis_orb_limit=1.0,
+)
+```
+
 ## Advanced Analysis Techniques
 
 ### Aspect Quality Assessment

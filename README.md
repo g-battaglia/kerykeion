@@ -798,6 +798,7 @@ All models support:
 -   **House Comparison**: Detailed house overlay analysis
 -   **Transit Time Ranges**: Advanced transit tracking over time periods
 -   **Report Module**: Comprehensive text reports with ASCII tables
+-   **Axis Orb Control**: Chart axes now share the same orb as planets by default; pass the keyword-only `axis_orb_limit` to return to a traditional, tighter axis filtering when you need it.
 
 ### 🚨 Breaking Changes
 
@@ -854,7 +855,11 @@ print(subject.mean_node)
 print(subject.mean_north_lunar_node)
 ```
 
-#### 4. Chart Generation Changes
+#### 4. Axis Orb Filtering
+
+Modern default orbs now treat chart axes (ASC, MC, DSC, IC) exactly like planets. If you prefer a traditional, constrained approach, every public aspect factory exposes the keyword-only `axis_orb_limit` parameter so you can set a dedicated threshold when needed.
+
+#### 5. Chart Generation Changes
 
 The two-step process (data + rendering) is now required:
 
