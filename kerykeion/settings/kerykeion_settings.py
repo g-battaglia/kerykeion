@@ -1,94 +1,51 @@
-# -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2025 Giacomo Battaglia
+Utilities for loading Kerykeion configuration settings from Python sources.
+
+The translation strings are now stored directly in :mod:`translation_strings`,
+so the loader simply wraps those dictionaries (or any user-provided overrides).
 """
 
+from __future__ import annotations
 
-from json import load
-import logging
-from pathlib import Path
-from typing import Dict, Union
-from kerykeion.schemas import KerykeionSettingsModel
-import functools
+from copy import deepcopy
+from typing import Any, Mapping, Optional, cast
+
+from .translation_strings import LANGUAGE_SETTINGS
+
+SettingsSource = Optional[Mapping[str, Any]]
 
 
-def get_settings(new_settings_file: Union[Path, None, KerykeionSettingsModel, dict] = None) -> KerykeionSettingsModel:
+def load_settings_mapping(settings_source: Optional[SettingsSource] = None) -> Mapping[str, Any]:
     """
-    This function is used to get the settings dict from the settings file.
-    If no settings file is passed as argument, or the file is not found, it will fallback to:
-    - The system wide config file, located in ~/.config/kerykeion/kr.config.json
-    - The default config file, located in the package folder
+    Resolve the configuration mapping from the provided source.
 
     Args:
-        new_settings_file (Union[Path, None], optional): The path of the settings file. Defaults to None.
+        settings_source (Mapping | None): Optional overrides for the bundled
+            language settings. When provided, keys and nested dictionaries are
+            merged on top of the default values.
 
     Returns:
-        Dict: The settings dict
+        Mapping[str, Any]: The resolved configuration dictionary.
     """
+    language_settings = deepcopy(LANGUAGE_SETTINGS)
 
-    if isinstance(new_settings_file, dict):
-        return KerykeionSettingsModel(**new_settings_file)
-    elif isinstance(new_settings_file, KerykeionSettingsModel):
-        return new_settings_file
+    if settings_source:
+        overrides = cast(Mapping[str, Any], settings_source)
+        if "language_settings" in overrides:
+            overrides = cast(Mapping[str, Any], overrides["language_settings"])
+        language_settings = _deep_merge(language_settings, overrides)
 
-    # Config path we passed as argument
-    if new_settings_file is not None:
-        settings_file = new_settings_file
-
-        if not settings_file.exists():
-            raise FileNotFoundError(f"File {settings_file} does not exist")
-
-    # System wide config path
-    else:
-        home_folder = Path.home()
-        settings_file = home_folder / ".config" / "kerykeion" / "kr.config.json"
-
-    # Fallback to the default config in the package
-    if not settings_file.exists():
-        settings_file = Path(__file__).parent / "kr.config.json"
-
-    logging.debug(f"Kerykeion config file path: {settings_file}")
-    settings_dict = load_settings_file(settings_file)
-
-    return KerykeionSettingsModel(**settings_dict)
+    return {"language_settings": language_settings}
 
 
-@functools.lru_cache
-def merge_settings(settings: KerykeionSettingsModel, new_settings: Dict) -> KerykeionSettingsModel:
-    """
-    This function is used to merge the settings file with the default settings,
-    it's useful to add new settings to the config file without breaking the old ones.
-
-    Args:
-        settings (KerykeionSettingsModel): The default settings
-        new_settings (Dict): The new settings to add to the default ones
-
-    Returns:
-        KerykeionSettingsModel: The new settings
-    """
-    new_settings_dict = settings.model_dump() | new_settings
-    return KerykeionSettingsModel(**new_settings_dict)
+def _deep_merge(base: Mapping[str, Any], overrides: Mapping[str, Any]) -> dict[str, Any]:
+    merged: dict[str, Any] = {key: deepcopy(value) for key, value in base.items()}
+    for key, value in overrides.items():
+        if key in merged and isinstance(merged[key], Mapping) and isinstance(value, Mapping):
+            merged[key] = _deep_merge(cast(Mapping[str, Any], merged[key]), cast(Mapping[str, Any], value))
+        else:
+            merged[key] = deepcopy(value)
+    return merged
 
 
-@functools.lru_cache
-def load_settings_file(settings_file_path: str) -> dict:
-    """
-    This function is used to load the settings file from a path.
-
-    Args:
-        settings_file (Path): The path of the settings file
-
-    Returns:
-        dict: The settings dict
-    """
-    with open(settings_file_path, "r", encoding="utf8") as f:
-        settings_dict = load(f)
-
-    return settings_dict
-
-
-if __name__ == "__main__":
-    from kerykeion.utilities import setup_logging
-    setup_logging(level="debug")
-
-    print(get_settings())
+__all__ = ["SettingsSource", "load_settings_mapping", "LANGUAGE_SETTINGS"]

@@ -25,7 +25,7 @@ from .house_comparison.house_comparison_factory import HouseComparisonFactory
 from .planetary_return_factory import PlanetaryReturnFactory, PlanetReturnModel
 from .relationship_score_factory import RelationshipScoreFactory
 from .report import ReportGenerator
-from .settings import KerykeionSettingsModel, get_settings
+from .settings import KerykeionSettingsModel
 from .transits_time_range_factory import TransitsTimeRangeFactory
 from .backword import (
     AstrologicalSubject,  # Legacy wrapper
@@ -53,7 +53,6 @@ __all__ = [
     "RelationshipScoreFactory",
     "ReportGenerator",
     "KerykeionSettingsModel",
-    "get_settings",
     "TransitsTimeRangeFactory",
     # Legacy (v4) exported names for backward compatibility
     "AstrologicalSubject",

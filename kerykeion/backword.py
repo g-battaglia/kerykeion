@@ -25,7 +25,7 @@ Note: This file name is intentionally spelled 'backword.py' per user request.
 """
 from __future__ import annotations
 
-from typing import Any, Iterable, List, Optional, Sequence, Union, Literal, cast
+from typing import Any, Iterable, List, Mapping, Optional, Sequence, Union, Literal, cast
 import logging
 import warnings
 from datetime import datetime
@@ -51,7 +51,6 @@ from .schemas.kr_literals import (
 )
 from .schemas import ZodiacType, SiderealMode, HousesSystemIdentifier, PerspectiveType
 from pathlib import Path
-from .settings import KerykeionSettingsModel, get_settings
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -394,14 +393,24 @@ class KerykeionChartSVG:
         chart_type: ChartType = "Natal",
         second_obj: Union[AstrologicalSubject, AstrologicalSubjectModel, None] = None,
         new_output_directory: Union[str, None] = None,
-        new_settings_file: Union[Path, None, KerykeionSettingsModel, dict] = None,  # retained for signature compatibility (unused)
+        new_settings_file: Union[Path, None, dict] = None,  # retained for signature compatibility (unused)
         theme: Union[KerykeionChartTheme, None] = "classic",
         double_chart_aspect_grid_type: Literal["list", "table"] = "list",
         chart_language: KerykeionChartLanguage = "EN",
         active_points: List[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,  # type: ignore[assignment]
         active_aspects: Optional[List[ActiveAspect]] = None,
+        *,
+        language_pack: Optional[Mapping[str, Any]] = None,
+
     ) -> None:
         _deprecated("KerykeionChartSVG", "ChartDataFactory + ChartDrawer")
+
+        if new_settings_file is not None:
+            warnings.warn(
+                "'new_settings_file' is deprecated and ignored in Kerykeion v5. Use language_pack instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
 
         if isinstance(first_obj, AstrologicalSubject):
             subject_model: Union[AstrologicalSubjectModel, CompositeSubjectModel] = first_obj.model()
@@ -419,7 +428,7 @@ class KerykeionChartSVG:
             active_aspects = list(active_aspects)
 
         self.chart_type = chart_type
-        self.new_settings_file = new_settings_file
+        self.language_pack = language_pack
         self.theme = theme  # type: ignore[assignment]
         self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
         self.chart_language = chart_language  # type: ignore[assignment]
@@ -516,10 +525,10 @@ class KerykeionChartSVG:
         self.chart_data = data
         self._chart_drawer = ChartDrawer(
             chart_data=data,
-            new_settings_file=self.new_settings_file,
             theme=cast(Optional[KerykeionChartTheme], self.theme),
             double_chart_aspect_grid_type=cast(Literal["list", "table"], self.double_chart_aspect_grid_type),
             chart_language=cast(KerykeionChartLanguage, self.chart_language),
+            language_pack=self.language_pack,
             external_view=external_view,
         )
 
@@ -617,25 +626,29 @@ class SynastryAspects:
         self,
         first: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel],
         second: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel],
-        new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
+        new_settings_file: Union[Path, None, dict] = None,  # retained for signature compatibility (unused)
         active_points: Iterable[Union[str, AstrologicalPoint]] = DEFAULT_ACTIVE_POINTS,
         active_aspects: Optional[List[ActiveAspect]] = None,
         *,
+        language_pack: Optional[Mapping[str, Any]] = None,
         axis_orb_limit: Optional[float] = None,
     ) -> None:
         _deprecated("SynastryAspects", "AspectsFactory.dual_chart_aspects")
 
+        if new_settings_file is not None:
+            warnings.warn(
+                "'new_settings_file' is deprecated and ignored in Kerykeion v5. Use language_pack instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
         self.first_user = first.model() if isinstance(first, AstrologicalSubject) else first
         self.second_user = second.model() if isinstance(second, AstrologicalSubject) else second
 
-        self.new_settings_file = new_settings_file
-        self.settings = get_settings(new_settings_file)
-        self.celestial_points = getattr(self.settings, "celestial_points", [])
-        self.aspects_settings = getattr(self.settings, "aspects", [])
-        general_settings = getattr(self.settings, "general_settings", None)
-        self.axis_orb_limit = (
-            axis_orb_limit if axis_orb_limit is not None else getattr(general_settings, "axes_orbit", None)
-        )
+        self.language_pack = language_pack
+        self.celestial_points: list[Any] = []
+        self.aspects_settings: list[Any] = []
+        self.axis_orb_limit = axis_orb_limit
 
         self.active_points = list(active_points)
         self._active_points = _normalize_active_points(self.active_points)
