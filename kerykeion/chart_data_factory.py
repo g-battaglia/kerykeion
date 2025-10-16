@@ -57,7 +57,7 @@ from kerykeion.schemas.kr_literals import (
 )
 from kerykeion.utilities import find_common_active_points, distribute_percentages_to_100
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
-from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
+from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.charts.charts_utils import (
     calculate_element_points,
     calculate_quality_points,
@@ -198,12 +198,12 @@ class ChartDataFactory:
                 relationship_score = relationship_score_factory.get_relationship_score()
 
         # Calculate element and quality distributions
-        celestial_points_settings = DEFAULT_CELESTIAL_POINTS_SETTINGS
         available_planets_setting_dicts: list[dict[str, object]] = []
-        for body in celestial_points_settings:
+        for body in DEFAULT_CELESTIAL_POINTS_SETTINGS:
             if body["name"] in effective_active_points:
-                body["is_active"] = True
-                available_planets_setting_dicts.append(body)
+                body_dict = dict(body)
+                body_dict["is_active"] = True
+                available_planets_setting_dicts.append(body_dict)
 
         # Convert to models for type safety
         available_planets_setting: list[KerykeionSettingsCelestialPointModel] = [

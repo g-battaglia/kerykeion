@@ -22,8 +22,10 @@ from kerykeion.schemas.kr_models import (
 )
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
-from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
-from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
+from kerykeion.settings.chart_defaults import (
+    DEFAULT_CELESTIAL_POINTS_SETTINGS,
+    DEFAULT_CHART_ASPECTS_SETTINGS,
+)
 from kerykeion.utilities import find_common_active_points
 
 # Axes constants for orb filtering

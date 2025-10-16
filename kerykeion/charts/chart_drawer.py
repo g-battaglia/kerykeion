@@ -5,6 +5,7 @@
 
 
 import logging
+from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 from string import Template
@@ -67,9 +68,11 @@ from kerykeion.charts.charts_utils import (
 )
 from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg, distribute_percentages_to_100
-from kerykeion.settings.legacy.legacy_color_settings import DEFAULT_CHART_COLORS
-from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
-from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
+from kerykeion.settings.chart_defaults import (
+    DEFAULT_CHART_COLORS,
+    DEFAULT_CELESTIAL_POINTS_SETTINGS,
+    DEFAULT_CHART_ASPECTS_SETTINGS,
+)
 from typing import List, Literal
 
 
@@ -267,9 +270,9 @@ class ChartDrawer:
         self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
         self.transparent_background = transparent_background
         self.external_view = external_view
-        self.chart_colors_settings = colors_settings
-        self.planets_settings = celestial_points_settings
-        self.aspects_settings = aspects_settings
+        self.chart_colors_settings = deepcopy(colors_settings)
+        self.planets_settings = [dict(body) for body in celestial_points_settings]
+        self.aspects_settings = [dict(aspect) for aspect in aspects_settings]
         self.custom_title = custom_title
         self.auto_size = auto_size
         self._padding = padding

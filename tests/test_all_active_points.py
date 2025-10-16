@@ -3,9 +3,7 @@ from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
-from kerykeion.settings.legacy.legacy_celestial_points_settings import (
-    DEFAULT_CELESTIAL_POINTS_SETTINGS,
-)
+from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.utilities import find_common_active_points
 
 

@@ -1018,7 +1018,7 @@ find . -name "*.py" -type f -exec sed -i.bak \
 
 -   **Packaging**: Migrated from Poetry to PEP 621 + Hatchling with `uv.lock`
 -   **Settings**: Centralized in `kerykeion.schemas` and `kerykeion.settings`
--   **Configuration**: Legacy presets available in `settings/legacy/`
+-   **Configuration**: Default chart presets consolidated in `kerykeion/settings/chart_defaults.py`
 -   **Type System**: All literals consolidated in `kr_literals.py`
 -   **Performance**: Caching improvements with `functools.lru_cache`
 -   **Testing**: 376 tests with 87% coverage, regenerated fixtures for v5
