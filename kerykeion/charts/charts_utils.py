@@ -183,23 +183,44 @@ def _calculate_distribution_for_subject(
 _SECOND_COLUMN_THRESHOLD = 20
 _THIRD_COLUMN_THRESHOLD = 28
 _FOURTH_COLUMN_THRESHOLD = 36
+
+_DOUBLE_CHART_TYPES: tuple[ChartType, ...] = ("Synastry", "Transit", "DualReturnChart")
 _GRID_COLUMN_WIDTH = 125
 
 
-def _planet_grid_layout_position(index: int) -> tuple[int, int]:
+def _select_planet_grid_thresholds(chart_type: ChartType) -> tuple[int, int, int]:
+    """Return column thresholds for the planet grids based on chart type."""
+    if chart_type in _DOUBLE_CHART_TYPES:
+        return (
+            1_000_000, # effectively disable first column
+            1_000_008, # effectively disable second column
+            1_000_016, # effectively disable third column
+        )
+    return _SECOND_COLUMN_THRESHOLD, _THIRD_COLUMN_THRESHOLD, _FOURTH_COLUMN_THRESHOLD
+
+
+def _planet_grid_layout_position(
+    index: int, thresholds: Optional[tuple[int, int, int]] = None
+) -> tuple[int, int]:
     """Return horizontal offset and row index for planet grids."""
-    if index < _SECOND_COLUMN_THRESHOLD:
+    second_threshold, third_threshold, fourth_threshold = (
+        thresholds
+        if thresholds is not None
+        else (_SECOND_COLUMN_THRESHOLD, _THIRD_COLUMN_THRESHOLD, _FOURTH_COLUMN_THRESHOLD)
+    )
+
+    if index < second_threshold:
         column = 0
         row = index
-    elif index < _THIRD_COLUMN_THRESHOLD:
+    elif index < third_threshold:
         column = 1
-        row = index - _SECOND_COLUMN_THRESHOLD
-    elif index < _FOURTH_COLUMN_THRESHOLD:
+        row = index - second_threshold
+    elif index < fourth_threshold:
         column = 2
-        row = index - _THIRD_COLUMN_THRESHOLD
+        row = index - third_threshold
     else:
         column = 3
-        row = index - _FOURTH_COLUMN_THRESHOLD
+        row = index - fourth_threshold
 
     offset = -(_GRID_COLUMN_WIDTH * column)
     return offset, row
@@ -1160,8 +1181,10 @@ def draw_main_planet_grid(
 
     end_of_line = "</g>"
 
+    column_thresholds = _select_planet_grid_thresholds(chart_type)
+
     for i, planet in enumerate(available_kerykeion_celestial_points):
-        offset, row_index = _planet_grid_layout_position(i)
+        offset, row_index = _planet_grid_layout_position(i, column_thresholds)
         line_height = LINE_START + (row_index * LINE_STEP)
 
         decoded_name = get_decoded_kerykeion_celestial_point_name(
@@ -1243,8 +1266,10 @@ def draw_secondary_planet_grid(
     line_height = LINE_START
     end_of_line = "</g>"
 
+    column_thresholds = _select_planet_grid_thresholds(chart_type)
+
     for i, t_planet in enumerate(second_subject_available_kerykeion_celestial_points):
-        offset, row_index = _planet_grid_layout_position(i)
+        offset, row_index = _planet_grid_layout_position(i, column_thresholds)
         line_height = LINE_START + (row_index * LINE_STEP)
 
         second_decoded_name = get_decoded_kerykeion_celestial_point_name(
