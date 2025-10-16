@@ -21,7 +21,7 @@ from kerykeion.schemas.kr_models import (
     SynastryAspectsModel
 )
 from kerykeion.schemas.kr_literals import AstrologicalPoint
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS, DEFAULT_AXIS_ORBIT
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
 from kerykeion.settings.legacy.legacy_celestial_points_settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.settings.legacy.legacy_chart_aspects_settings import DEFAULT_CHART_ASPECTS_SETTINGS
 from kerykeion.utilities import find_common_active_points
@@ -70,6 +70,7 @@ class AspectsFactory:
         *,
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: Optional[List[ActiveAspect]] = None,
+        axis_orb_limit: Optional[float] = None,
     ) -> SingleChartAspectsModel:
         """
         Create aspects analysis for a single astrological chart.
@@ -87,6 +88,7 @@ class AspectsFactory:
         Kwargs:
             active_points: List of points to include in calculations
             active_aspects: List of aspects with their orb settings
+            axis_orb_limit: Optional orb threshold applied to chart axes; when None, no special axis filter
 
         Returns:
             SingleChartAspectsModel containing all calculated aspects data
@@ -99,8 +101,6 @@ class AspectsFactory:
         # Initialize settings and configurations
         celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
         aspects_settings = DEFAULT_CHART_ASPECTS_SETTINGS
-        axes_orbit_settings = DEFAULT_AXIS_ORBIT
-
         # Set active aspects with default fallback
         active_aspects_resolved = active_aspects if active_aspects is not None else DEFAULT_ACTIVE_ASPECTS
 
@@ -114,8 +114,12 @@ class AspectsFactory:
             )
 
         return AspectsFactory._create_single_chart_aspects_model(
-            subject, active_points_resolved, active_aspects_resolved,
-            aspects_settings, axes_orbit_settings, celestial_points
+            subject,
+            active_points_resolved,
+            active_aspects_resolved,
+            aspects_settings,
+            axis_orb_limit,
+            celestial_points,
         )
 
     @staticmethod
@@ -125,6 +129,7 @@ class AspectsFactory:
         *,
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: Optional[List[ActiveAspect]] = None,
+        axis_orb_limit: Optional[float] = None,
     ) -> DualChartAspectsModel:
         """
         Create aspects analysis between two astrological charts.
@@ -145,6 +150,7 @@ class AspectsFactory:
                           If None, uses common points between both subjects.
             active_aspects: Optional list of aspect types with their orb settings.
                            If None, uses default aspect configuration.
+            axis_orb_limit: Optional orb threshold for chart axes (applied to single chart calculations only)
 
         Returns:
             DualChartAspectsModel: Complete model containing all calculated aspects data,
@@ -159,8 +165,6 @@ class AspectsFactory:
         # Initialize settings and configurations
         celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
         aspects_settings = DEFAULT_CHART_ASPECTS_SETTINGS
-        axes_orbit_settings = DEFAULT_AXIS_ORBIT
-
         # Set active aspects with default fallback
         active_aspects_resolved = active_aspects if active_aspects is not None else DEFAULT_ACTIVE_ASPECTS
 
@@ -180,8 +184,13 @@ class AspectsFactory:
         )
 
         return AspectsFactory._create_dual_chart_aspects_model(
-            first_subject, second_subject, active_points_resolved, active_aspects_resolved,
-            aspects_settings, axes_orbit_settings, celestial_points
+            first_subject,
+            second_subject,
+            active_points_resolved,
+            active_aspects_resolved,
+            aspects_settings,
+            axis_orb_limit,
+            celestial_points,
         )
 
     @staticmethod
@@ -190,7 +199,7 @@ class AspectsFactory:
         active_points_resolved: List[AstrologicalPoint],
         active_aspects_resolved: List[ActiveAspect],
         aspects_settings: List[dict],
-        axes_orbit_settings: float,
+        axis_orb_limit: Optional[float],
         celestial_points: List[dict]
     ) -> SingleChartAspectsModel:
         """
@@ -202,7 +211,11 @@ class AspectsFactory:
         all_aspects = AspectsFactory._calculate_single_chart_aspects(
             subject, active_points_resolved, active_aspects_resolved, aspects_settings, celestial_points
         )
-        relevant_aspects = AspectsFactory._filter_relevant_aspects(all_aspects, axes_orbit_settings)
+        relevant_aspects = AspectsFactory._filter_relevant_aspects(
+            all_aspects,
+            axis_orb_limit,
+            apply_axis_orb_filter=axis_orb_limit is not None,
+        )
 
         return SingleChartAspectsModel(
             subject=subject,
@@ -219,7 +232,7 @@ class AspectsFactory:
         active_points_resolved: List[AstrologicalPoint],
         active_aspects_resolved: List[ActiveAspect],
         aspects_settings: List[dict],
-        axes_orbit_settings: float,
+        axis_orb_limit: Optional[float],
         celestial_points: List[dict]
     ) -> DualChartAspectsModel:
         """
@@ -231,7 +244,7 @@ class AspectsFactory:
             active_points_resolved: Resolved list of active celestial points
             active_aspects_resolved: Resolved list of active aspects with orbs
             aspects_settings: Chart aspect configuration settings
-            axes_orbit_settings: Orb threshold for chart axes
+            axis_orb_limit: Orb threshold for chart axes
             celestial_points: Celestial points configuration
 
         Returns:
@@ -241,7 +254,11 @@ class AspectsFactory:
             first_subject, second_subject, active_points_resolved, active_aspects_resolved,
             aspects_settings, celestial_points
         )
-        relevant_aspects = AspectsFactory._filter_relevant_aspects(all_aspects, axes_orbit_settings)
+        relevant_aspects = AspectsFactory._filter_relevant_aspects(
+            all_aspects,
+            axis_orb_limit,
+            apply_axis_orb_filter=False,
+        )
 
         return DualChartAspectsModel(
             first_subject=first_subject,
@@ -449,7 +466,12 @@ class AspectsFactory:
         return filtered_settings
 
     @staticmethod
-    def _filter_relevant_aspects(all_aspects: List[AspectModel], axes_orbit_settings: float) -> List[AspectModel]:
+    def _filter_relevant_aspects(
+        all_aspects: List[AspectModel],
+        axis_orb_limit: Optional[float],
+        *,
+        apply_axis_orb_filter: bool,
+    ) -> List[AspectModel]:
         """
         Filter aspects based on orb thresholds for axes and comprehensive criteria.
 
@@ -458,7 +480,8 @@ class AspectsFactory:
 
         Args:
             all_aspects: Complete list of calculated aspects
-            axes_orbit_settings: Orb threshold for axes aspects
+            axis_orb_limit: Optional orb threshold for axes aspects
+            apply_axis_orb_filter: Whether to apply the axis-specific orb filtering logic
 
         Returns:
             Filtered list of relevant aspects
@@ -467,11 +490,14 @@ class AspectsFactory:
 
         relevant_aspects = []
 
+        if not apply_axis_orb_filter or axis_orb_limit is None:
+            return list(all_aspects)
+
         for aspect in all_aspects:
             # Check if aspect involves any of the chart axes and apply stricter orb limits
             aspect_involves_axes = (aspect.p1_name in AXES_LIST or aspect.p2_name in AXES_LIST)
 
-            if aspect_involves_axes and abs(aspect.orbit) >= axes_orbit_settings:
+            if aspect_involves_axes and abs(aspect.orbit) >= axis_orb_limit:
                 continue
 
             relevant_aspects.append(aspect)
@@ -485,6 +511,7 @@ class AspectsFactory:
         *,
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: Optional[List[ActiveAspect]] = None,
+        axis_orb_limit: Optional[float] = None,
     ) -> NatalAspectsModel:
         """
         Legacy method - use single_chart_aspects() instead.
@@ -492,7 +519,12 @@ class AspectsFactory:
         ⚠️  DEPRECATION WARNING ⚠️
         This method is deprecated. Use AspectsFactory.single_chart_aspects() instead.
         """
-        return AspectsFactory.single_chart_aspects(subject, active_points=active_points, active_aspects=active_aspects)
+        return AspectsFactory.single_chart_aspects(
+            subject,
+            active_points=active_points,
+            active_aspects=active_aspects,
+            axis_orb_limit=axis_orb_limit,
+        )
 
     @staticmethod
     def synastry_aspects(
@@ -501,6 +533,7 @@ class AspectsFactory:
         *,
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: Optional[List[ActiveAspect]] = None,
+        axis_orb_limit: Optional[float] = None,
     ) -> SynastryAspectsModel:
         """
         Legacy method - use dual_chart_aspects() instead.
@@ -509,7 +542,11 @@ class AspectsFactory:
         This method is deprecated. Use AspectsFactory.dual_chart_aspects() instead.
         """
         return AspectsFactory.dual_chart_aspects(
-            first_subject, second_subject, active_points=active_points, active_aspects=active_aspects
+            first_subject,
+            second_subject,
+            active_points=active_points,
+            active_aspects=active_aspects,
+            axis_orb_limit=axis_orb_limit,
         )
 
 

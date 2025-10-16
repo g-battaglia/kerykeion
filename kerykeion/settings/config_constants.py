@@ -150,8 +150,3 @@ DISCEPOLO_SCORE_ACTIVE_ASPECTS: List[ActiveAspect] = [
 """
 List of active aspects with their orbs according to Ciro Discepolo's affinity scoring methodology.
 """
-
-DEFAULT_AXIS_ORBIT: int = 1
-"""
-Default orbit for the axes aspects.
-"""

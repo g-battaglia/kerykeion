@@ -620,6 +620,8 @@ class SynastryAspects:
         new_settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
         active_points: Iterable[Union[str, AstrologicalPoint]] = DEFAULT_ACTIVE_POINTS,
         active_aspects: Optional[List[ActiveAspect]] = None,
+        *,
+        axis_orb_limit: Optional[float] = None,
     ) -> None:
         _deprecated("SynastryAspects", "AspectsFactory.dual_chart_aspects")
 
@@ -631,7 +633,9 @@ class SynastryAspects:
         self.celestial_points = getattr(self.settings, "celestial_points", [])
         self.aspects_settings = getattr(self.settings, "aspects", [])
         general_settings = getattr(self.settings, "general_settings", None)
-        self.axes_orbit_settings = getattr(general_settings, "axes_orbit", None)
+        self.axis_orb_limit = (
+            axis_orb_limit if axis_orb_limit is not None else getattr(general_settings, "axes_orbit", None)
+        )
 
         self.active_points = list(active_points)
         self._active_points = _normalize_active_points(self.active_points)
@@ -652,6 +656,7 @@ class SynastryAspects:
                 self.second_user,
                 active_points=self._active_points,
                 active_aspects=self.active_aspects,
+                axis_orb_limit=self.axis_orb_limit,
             )
         return self._dual_model
 

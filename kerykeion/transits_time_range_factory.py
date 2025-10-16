@@ -55,7 +55,7 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-from typing import Union, List
+from typing import Union, List, Optional
 from datetime import datetime, timedelta
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
@@ -97,6 +97,8 @@ class TransitsTimeRangeFactory:
         settings_file (Union[Path, KerykeionSettingsModel, dict, None], optional):
             Configuration settings for calculations. Can be a file path, settings
             model, dictionary, or None for defaults. Defaults to None.
+        axis_orb_limit (float | None, optional): Optional orb threshold applied to chart axes
+            during single-chart aspect calculations. Dual-chart calculations ignore this value.
 
     Attributes:
         natal_chart: The reference natal chart for transit calculations.
@@ -104,6 +106,7 @@ class TransitsTimeRangeFactory:
         active_points: Celestial bodies included in calculations.
         active_aspects: Aspect types considered for analysis.
         settings_file: Configuration settings for the calculations.
+        axis_orb_limit: Optional orb override used when calculating single-chart aspects.
 
     Examples:
         Basic transit calculation:
@@ -137,6 +140,8 @@ class TransitsTimeRangeFactory:
         active_points: List[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
+        *,
+        axis_orb_limit: Optional[float] = None,
     ):
         """
         Initialize the TransitsTimeRangeFactory with calculation parameters.
@@ -161,6 +166,8 @@ class TransitsTimeRangeFactory:
             settings_file (Union[Path, KerykeionSettingsModel, dict, None], optional):
                 Configuration settings for orb tolerances, calculation methods, and
                 other parameters. Defaults to None (uses system defaults).
+            axis_orb_limit (float | None, optional): Optional orb threshold for
+                chart axes applied during aspect calculations.
 
         Note:
             - All ephemeris data points should use the same coordinate system as the natal chart
@@ -172,6 +179,7 @@ class TransitsTimeRangeFactory:
         self.active_points = active_points
         self.active_aspects = active_aspects
         self.settings_file = settings_file
+        self.axis_orb_limit = axis_orb_limit
 
     def get_transit_moments(self) -> TransitsTimeRangeModel:
         """
@@ -238,6 +246,7 @@ class TransitsTimeRangeFactory:
                 self.natal_chart,
                 active_points=self.active_points,
                 active_aspects=self.active_aspects,
+                axis_orb_limit=self.axis_orb_limit,
             ).relevant_aspects
 
             # Create a transit moment for this point in time

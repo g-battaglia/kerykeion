@@ -101,6 +101,8 @@ class ChartDataFactory:
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         include_house_comparison: bool = True,
         include_relationship_score: bool = True,
+        *,
+        axis_orb_limit: Optional[float] = None,
     ) -> ChartDataModel:
         """
         Create comprehensive chart data for the specified chart type.
@@ -113,6 +115,7 @@ class ChartDataFactory:
             active_aspects: Aspect types and orbs to use
             include_house_comparison: Whether to include house comparison for dual charts
             include_relationship_score: Whether to include relationship scoring for synastry
+            axis_orb_limit: Optional orb threshold for chart axes (applies only to single chart aspects)
 
         Returns:
             ChartDataModel: Comprehensive chart data model
@@ -158,6 +161,7 @@ class ChartDataFactory:
                 first_subject,
                 active_points=effective_active_points,
                 active_aspects=active_aspects,
+                axis_orb_limit=axis_orb_limit,
             )
         else:
             # Dual chart aspects - second_subject is guaranteed to exist here due to validation above
@@ -168,6 +172,7 @@ class ChartDataFactory:
                 second_subject,
                 active_points=effective_active_points,
                 active_aspects=active_aspects,
+                axis_orb_limit=axis_orb_limit,
             )
 
         # Calculate house comparison for dual charts
@@ -187,7 +192,8 @@ class ChartDataFactory:
             if isinstance(first_subject, AstrologicalSubjectModel) and isinstance(second_subject, AstrologicalSubjectModel):
                 relationship_score_factory = RelationshipScoreFactory(
                     first_subject,
-                    second_subject
+                    second_subject,
+                    axis_orb_limit=axis_orb_limit,
                 )
                 relationship_score = relationship_score_factory.get_relationship_score()
 

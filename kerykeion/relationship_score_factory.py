@@ -41,9 +41,11 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
+import logging
+from typing import Optional
+
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
-import logging
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, RelationshipScoreAspectModel, RelationshipScoreModel
 from kerykeion.schemas.kr_literals import RelationshipScoreDescription
 
@@ -77,6 +79,8 @@ class RelationshipScoreFactory:
         first_subject (AstrologicalSubjectModel): First astrological subject
         second_subject (AstrologicalSubjectModel): Second astrological subject
         use_only_major_aspects (bool, optional): Filter to major aspects only. Defaults to True.
+        axis_orb_limit (float | None, optional): Optional orb threshold for chart axes
+            filtering during aspect calculation.
 
     Reference:
         http://www.cirodiscepolo.it/Articoli/Discepoloele.htm
@@ -98,6 +102,8 @@ class RelationshipScoreFactory:
         first_subject: AstrologicalSubjectModel,
         second_subject: AstrologicalSubjectModel,
         use_only_major_aspects: bool = True,
+        *,
+        axis_orb_limit: Optional[float] = None,
     ):
         self.use_only_major_aspects = use_only_major_aspects
         self.first_subject: AstrologicalSubjectModel = first_subject
@@ -107,7 +113,11 @@ class RelationshipScoreFactory:
         self.relationship_score_description: RelationshipScoreDescription = "Minimal"
         self.is_destiny_sign = False
         self.relationship_score_aspects: list[RelationshipScoreAspectModel] = []
-        self._synastry_aspects = AspectsFactory.dual_chart_aspects(self.first_subject, self.second_subject).all_aspects
+        self._synastry_aspects = AspectsFactory.dual_chart_aspects(
+            self.first_subject,
+            self.second_subject,
+            axis_orb_limit=axis_orb_limit,
+        ).all_aspects
 
     def _evaluate_destiny_sign(self):
         """
