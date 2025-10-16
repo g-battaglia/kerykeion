@@ -32,11 +32,11 @@
 -   [x] Fix: grid style synastry
 -   [x] Fix: all/many points chart, maybe just add a warning for max n points
 -   [x] Fix: file path for svg
--   [x] Fix: Crate correct glifs for all the points
+-   [x] Fix: Create correct glifs for all the points
 -   [x] Fix: Synastry charts ad Score should have more orbit for axes
+-   [x] Feat: test all points just grid chart
 
 -   [~] Full documentation for the library
--   [ ] Feat: test all points just grid chart
 
 ### 🟧 Medium Priority
 
