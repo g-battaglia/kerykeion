@@ -817,7 +817,7 @@ class ChartDrawer:
                 )
         return out
 
-    def _truncate_name(self, name: str, max_length: int = 50) -> str:
+    def _truncate_name(self, name: str, max_length: int = 50, ellipsis_symbol: str = "…", truncate_at_space: bool = False) -> str:
         """
         Truncate a name if it's too long, preserving readability.
 
@@ -828,9 +828,13 @@ class ChartDrawer:
         Returns:
             str: Truncated name with ellipsis if needed
         """
+        if truncate_at_space:
+            name = name.strip()
+
         if len(name) <= max_length:
             return name
-        return name[:max_length-1] + "…"
+
+        return name[:max_length-1] + ellipsis_symbol
 
     def _get_chart_title(self) -> str:
         """
@@ -1639,8 +1643,8 @@ class ChartDrawer:
             )
             house_comparison = house_comparison_factory.get_house_comparison()
 
-            first_subject_label = self._truncate_name(self.first_obj.name)
-            second_subject_label = self._truncate_name(self.second_obj.name)  # type: ignore[union-attr]
+            first_subject_label = self._truncate_name(self.first_obj.name, 8, "…", True)  # type: ignore[union-attr]
+            second_subject_label = self._truncate_name(self.second_obj.name, 8, "…", True)  # type: ignore[union-attr]
             point_column_label = self._translate("point", "Point")
             comparison_label = self._translate("house_position_comparison", "House Position Comparison")
 
