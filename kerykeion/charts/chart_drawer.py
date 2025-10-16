@@ -594,13 +594,8 @@ class ChartDrawer:
         We therefore scale the height using the actual line spacing used by those
         tables (≈14px) and keep the bottom anchored elements aligned.
         """
-        base_rows = 20
-        if active_points_count <= base_rows:
-            self.height = max(self.height, minimum_height)
-            self._vertical_offsets = offsets
-            return
-
-        extra_rows = active_points_count - base_rows
+        base_rows = 14  # Up to 16 active points fit without extra height
+        extra_rows = max(active_points_count - base_rows, 0)
 
         synastry_row_height = 15
         comparison_padding_per_row = 4  # Keeps house comparison grids within view.
@@ -622,9 +617,25 @@ class ChartDrawer:
             int(ceil(self._TOP_SHIFT_FACTOR * row_height_ratio)),
         )
         shift = min(extra_rows * synastry_top_shift_factor, self._MAX_TOP_SHIFT)
-        top_shift = shift // 2
 
-        offsets["grid"] += shift
+        base_grid_padding = 36
+        grid_padding_per_row = 6
+        base_header_padding = 12
+        header_padding_per_row = 4
+        min_title_to_grid_gap = 36
+
+        grid_shift = shift + base_grid_padding + (extra_rows * grid_padding_per_row)
+        grid_shift = min(grid_shift, shift + self._MAX_TOP_SHIFT)
+
+        top_shift = (shift // 2) + base_header_padding + (extra_rows * header_padding_per_row)
+
+        max_allowed_shift = shift + self._MAX_TOP_SHIFT
+        missing_gap = min_title_to_grid_gap - (grid_shift - top_shift)
+        grid_shift = min(grid_shift + missing_gap, max_allowed_shift)
+        if grid_shift - top_shift < min_title_to_grid_gap:
+            top_shift = max(0, grid_shift - min_title_to_grid_gap)
+
+        offsets["grid"] += grid_shift
         offsets["title"] += top_shift
         offsets["elements"] += top_shift
         offsets["qualities"] += top_shift
