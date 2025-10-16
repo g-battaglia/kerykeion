@@ -18,11 +18,12 @@ def find_markdown_files(directory):
     if path.is_file() and path.suffix == '.md':
         return [path]
 
-    # Ignore file with name starting with v4.*, like "release_notes/V4.23.0.md"
-    if not path.is_dir() or any(part.startswith('v4.') for part in path.parts):
+    if not path.is_dir():
         return []
 
-    return list(path.rglob("*.md"))
+    # Find all .md files and filter out files starting with v4.* (case-insensitive)
+    all_md_files = path.rglob("*.md")
+    return [f for f in all_md_files if not f.name.lower().startswith('v4.')]
 
 
 def extract_python_snippets(content):
@@ -46,6 +47,15 @@ sys.path.insert(0, '{project_root}')
 import warnings
 warnings.filterwarnings('ignore')
 
+# Common imports for kerykeion
+from typing import Literal, Union
+from kerykeion import (
+    AstrologicalSubjectFactory,
+    ChartDataFactory,
+    ChartDrawer,
+    CompositeSubjectFactory,
+    KerykeionSettingsModel,
+)
 """ + code
 
     try:
@@ -124,10 +134,6 @@ def main():
         sys.exit(1)
     else:
         print("🎉 All snippets passed!")
-
-
-if __name__ == '__main__':
-    main()
 
 
 if __name__ == '__main__':
