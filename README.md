@@ -7,6 +7,7 @@
 <div align="center">
     <img src="https://static.pepy.tech/badge/kerykeion/month" alt="PyPI Downloads">
     <img src="https://static.pepy.tech/badge/kerykeion/week" alt="PyPI Downloads">
+    <img src="https://static.pepy.tech/personalized-badge/kerykeion?period=total&units=INTERNATIONAL_SYSTEM&left_color=GREY&right_color=BLUE&left_text=downloads/total" alt="PyPI Downloads">
     <img src="https://img.shields.io/github/contributors/g-battaglia/kerykeion?color=blue&logo=github" alt="contributors">
     <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
     <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
@@ -18,14 +19,13 @@ Kerykeion is a Python library for astrology. It computes planetary and house pos
 
 The main goal of this project is to offer a clean, data-driven approach to astrology, making it accessible and programmable.
 
-Kerykeion also integrates seamlessly with LLM and AI applications. 
+Kerykeion also integrates seamlessly with LLM and AI applications.
 
 Here is an example of a birthchart:
 
 ![John Lenon Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
 
-**Web API**
----
+## **Web API**
 
 If you want to use Kerykeion in a web application, you can try the dedicated web API:
 
@@ -33,8 +33,7 @@ If you want to use Kerykeion in a web application, you can try the dedicated web
 
 It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly supports this project.
 
-**Donate**
---
+## **Donate**
 
 Maintaining this project requires substantial time and effort. The Astrologer API alone cannot cover the costs of full-time development. If you find Kerykeion valuable and would like to support further development, please consider donating:
 
@@ -47,62 +46,63 @@ This branch (`next`) is **not the stable version** of Kerykeion. It is the **dev
 If you're looking for the latest stable version, please check out the [`master`](https://github.com/g-battaglia/kerykeion/tree/master) branch instead.
 
 ## Table of Contents
-- [**Web API**](#web-api)
-- [**Donate**](#donate)
-- [⚠️ Development Branch Notice](#️-development-branch-notice)
-- [Table of Contents](#table-of-contents)
-- [Installation](#installation)
-- [Basic Usage](#basic-usage)
-- [Generate a SVG Chart](#generate-a-svg-chart)
-  - [Birth Chart](#birth-chart)
-  - [External Birth Chart](#external-birth-chart)
-  - [Synastry Chart](#synastry-chart)
-  - [Transit Chart](#transit-chart)
-  - [Composite Chart](#composite-chart)
-- [Wheel Only Charts](#wheel-only-charts)
-  - [Birth Chart](#birth-chart-1)
-  - [Wheel Only Birth Chart (External)](#wheel-only-birth-chart-external)
-  - [Synastry Chart](#synastry-chart-1)
-  - [Change the Output Directory](#change-the-output-directory)
-  - [Change Language](#change-language)
-  - [Minified SVG](#minified-svg)
-  - [SVG without CSS Variables](#svg-without-css-variables)
-  - [Grid Only SVG](#grid-only-svg)
-- [Report Generator](#report-generator)
-  - [Quick Examples](#quick-examples)
-  - [Section Access](#section-access)
-- [Example: Retrieving Aspects](#example-retrieving-aspects)
-- [Ayanamsa (Sidereal Modes)](#ayanamsa-sidereal-modes)
-- [House Systems](#house-systems)
-- [Perspective Type](#perspective-type)
-- [Themes](#themes)
-- [Alternative Initialization](#alternative-initialization)
-- [Lunar Nodes (Rahu \& Ketu)](#lunar-nodes-rahu--ketu)
-- [JSON Support](#json-support)
-- [Auto Generated Documentation](#auto-generated-documentation)
-- [Development](#development)
-- [Kerykeion v5.0 – What's New](#kerykeion-v50--whats-new)
-  - [🎯 Key Highlights](#-key-highlights)
-    - [Factory-Centered Architecture](#factory-centered-architecture)
-    - [Pydantic 2 Models \& Type Safety](#pydantic-2-models--type-safety)
-    - [Enhanced Features](#enhanced-features)
-  - [🚨 Breaking Changes](#-breaking-changes)
-    - [1. Removed Legacy Classes](#1-removed-legacy-classes)
-    - [2. Import Changes](#2-import-changes)
-    - [3. Lunar Nodes Naming](#3-lunar-nodes-naming)
-    - [4. Chart Generation Changes](#4-chart-generation-changes)
-    - [5. Aspects API Changes](#5-aspects-api-changes)
-  - [🔄 Migration Guide](#-migration-guide)
-    - [Using the Backward Compatibility Layer](#using-the-backward-compatibility-layer)
-    - [Step-by-Step Migration](#step-by-step-migration)
-    - [Automated Migration Script](#automated-migration-script)
-  - [📦 Other Notable Changes](#-other-notable-changes)
-  - [🎨 New Themes](#-new-themes)
-  - [📚 Resources](#-resources)
-- [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
-- [License](#license)
-- [Contributing](#contributing)
-- [Citations](#citations)
+
+-   [**Web API**](#web-api)
+-   [**Donate**](#donate)
+-   [⚠️ Development Branch Notice](#️-development-branch-notice)
+-   [Table of Contents](#table-of-contents)
+-   [Installation](#installation)
+-   [Basic Usage](#basic-usage)
+-   [Generate a SVG Chart](#generate-a-svg-chart)
+    -   [Birth Chart](#birth-chart)
+    -   [External Birth Chart](#external-birth-chart)
+    -   [Synastry Chart](#synastry-chart)
+    -   [Transit Chart](#transit-chart)
+    -   [Composite Chart](#composite-chart)
+-   [Wheel Only Charts](#wheel-only-charts)
+    -   [Birth Chart](#birth-chart-1)
+    -   [Wheel Only Birth Chart (External)](#wheel-only-birth-chart-external)
+    -   [Synastry Chart](#synastry-chart-1)
+    -   [Change the Output Directory](#change-the-output-directory)
+    -   [Change Language](#change-language)
+    -   [Minified SVG](#minified-svg)
+    -   [SVG without CSS Variables](#svg-without-css-variables)
+    -   [Grid Only SVG](#grid-only-svg)
+-   [Report Generator](#report-generator)
+    -   [Quick Examples](#quick-examples)
+    -   [Section Access](#section-access)
+-   [Example: Retrieving Aspects](#example-retrieving-aspects)
+-   [Ayanamsa (Sidereal Modes)](#ayanamsa-sidereal-modes)
+-   [House Systems](#house-systems)
+-   [Perspective Type](#perspective-type)
+-   [Themes](#themes)
+-   [Alternative Initialization](#alternative-initialization)
+-   [Lunar Nodes (Rahu \& Ketu)](#lunar-nodes-rahu--ketu)
+-   [JSON Support](#json-support)
+-   [Auto Generated Documentation](#auto-generated-documentation)
+-   [Development](#development)
+-   [Kerykeion v5.0 – What's New](#kerykeion-v50--whats-new)
+    -   [🎯 Key Highlights](#-key-highlights)
+        -   [Factory-Centered Architecture](#factory-centered-architecture)
+        -   [Pydantic 2 Models \& Type Safety](#pydantic-2-models--type-safety)
+        -   [Enhanced Features](#enhanced-features)
+    -   [🚨 Breaking Changes](#-breaking-changes)
+        -   [1. Removed Legacy Classes](#1-removed-legacy-classes)
+        -   [2. Import Changes](#2-import-changes)
+        -   [3. Lunar Nodes Naming](#3-lunar-nodes-naming)
+        -   [4. Chart Generation Changes](#4-chart-generation-changes)
+        -   [5. Aspects API Changes](#5-aspects-api-changes)
+    -   [🔄 Migration Guide](#-migration-guide)
+        -   [Using the Backward Compatibility Layer](#using-the-backward-compatibility-layer)
+        -   [Step-by-Step Migration](#step-by-step-migration)
+        -   [Automated Migration Script](#automated-migration-script)
+    -   [📦 Other Notable Changes](#-other-notable-changes)
+    -   [🎨 New Themes](#-new-themes)
+    -   [📚 Resources](#-resources)
+-   [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
+-   [License](#license)
+-   [Contributing](#contributing)
+-   [Citations](#citations)
 
 ## Installation
 
@@ -144,7 +144,7 @@ john = AstrologicalSubjectFactory.from_birth_data(
     lng=-2.9833,  # Longitude for Liverpool
     lat=53.4000,  # Latitude for Liverpool
     tz_str="Europe/London",  # Timezone for Liverpool
-    city="Liverpool", 
+    city="Liverpool",
 )
 ```
 
@@ -152,7 +152,7 @@ john = AstrologicalSubjectFactory.from_birth_data(
 
 To generate a chart, use the `ChartDataFactory` to pre-compute chart data, then `ChartDrawer` to create the visualization. This two-step process ensures clean separation between astrological calculations and chart rendering.
 
-**Tip:** 
+**Tip:**
 The optimized way to open the generated SVG files is with a web browser (e.g., Chrome, Firefox).
 To improve compatibility across different applications, you can use the `remove_css_variables` parameter when generating the SVG. This will inline all styles and eliminate CSS variables, resulting in an SVG that is more broadly supported.
 
@@ -194,6 +194,7 @@ chart_data = ChartDataFactory.create_external_natal_chart_data(birth_chart)
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
 birth_chart_svg.save_svg()
 ```
+
 ![John Lennon External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20ExternalNatal%20Chart.svg)
 
 ### Synastry Chart
@@ -216,7 +217,6 @@ synastry_chart.save_svg()
 ```
 
 ![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/img/examples/synastry-chart.svg)
-
 
 ### Transit Chart
 
@@ -267,9 +267,10 @@ composite_chart.save_svg()
 
 ## Wheel Only Charts
 
-For *all* the charts, you can generate a wheel-only chart by using the method `makeWheelOnlySVG()`:
+For _all_ the charts, you can generate a wheel-only chart by using the method `makeWheelOnlySVG()`:
 
 ### Birth Chart
+
 ```python
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
@@ -285,6 +286,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
 birth_chart_svg.save_wheel_only_svg_file()
 ```
+
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Wheel%20Only%20-%20Natal%20Chart%20-%20Wheel%20Only.svg)
 
 ### Wheel Only Birth Chart (External)
@@ -311,6 +313,7 @@ birth_chart_svg.save_wheel_only_svg_file(
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Wheel%20External%20Only%20-%20ExternalNatal%20Chart%20-%20Wheel%20Only.svg)
 
 ### Synastry Chart
+
 ```python
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
@@ -353,7 +356,7 @@ synastry_chart.save_svg(output_path=".")
 
 ### Change Language
 
-You can switch chart language by passing `chart_language` to the  `ChartDrawer` class:
+You can switch chart language by passing `chart_language` to the `ChartDrawer` class:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
@@ -377,18 +380,19 @@ birth_chart_svg.save_svg()
 More details [here](https://www.kerykeion.net/docs/chart-language).
 
 The available languages are:
-- EN (English)
-- FR (French)
-- PT (Portuguese)
-- ES (Spanish)
-- TR (Turkish)
-- RU (Russian)
-- IT (Italian)
-- CN (Chinese)
-- DE (German)
 
+-   EN (English)
+-   FR (French)
+-   PT (Portuguese)
+-   ES (Spanish)
+-   TR (Turkish)
+-   RU (Russian)
+-   IT (Italian)
+-   CN (Chinese)
+-   DE (German)
 
 ### Minified SVG
+
 To generate a minified SVG, set `minify_svg=True` in the `makeSVG()` method:
 
 ```python
@@ -410,6 +414,7 @@ birth_chart_svg.save_svg(
 ```
 
 ### SVG without CSS Variables
+
 To generate an SVG without CSS variables, set `remove_css_variables=True` in the `makeSVG()` method:
 
 ```python
@@ -429,8 +434,8 @@ birth_chart_svg.save_svg(
     remove_css_variables=True
 )
 ```
-This will inline all styles and eliminate CSS variables, resulting in an SVG that is more broadly supported.
 
+This will inline all styles and eliminate CSS variables, resulting in an SVG that is more broadly supported.
 
 ### Grid Only SVG
 
@@ -452,6 +457,7 @@ chart_data = ChartDataFactory.create_synastry_chart_data(birth_chart, second)
 aspect_grid_chart = ChartDrawer(chart_data=chart_data, theme="dark")
 aspect_grid_chart.save_aspect_grid_only_svg_file()
 ```
+
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Aspect%20Grid%20Only%20-%20Natal%20Chart%20-%20Aspect%20Grid%20Only.svg)
 
 ## Report Generator
@@ -482,14 +488,15 @@ ReportGenerator(synastry_data).print_report(max_aspects=12)
 ```
 
 Each report contains:
-- A chart-aware title summarising the subject(s) and chart type
-- Birth/event metadata and configuration settings
-- Celestial points with sign, position, **daily motion**, **declination**, retrograde flag, and house
-- House cusp tables for every subject involved
-- Lunar phase details when available
-- Element/quality distributions and active configuration summaries (for chart data)
-- Aspect listings tailored for single or dual charts, with symbols for type and movement
-- Dual-chart extras such as house comparisons and relationship scores (when provided by the data)
+
+-   A chart-aware title summarising the subject(s) and chart type
+-   Birth/event metadata and configuration settings
+-   Celestial points with sign, position, **daily motion**, **declination**, retrograde flag, and house
+-   House cusp tables for every subject involved
+-   Lunar phase details when available
+-   Element/quality distributions and active configuration summaries (for chart data)
+-   Aspect listings tailored for single or dual charts, with symbols for type and movement
+-   Dual-chart extras such as house comparisons and relationship scores (when provided by the data)
 
 ### Section Access
 
@@ -605,11 +612,11 @@ Full list of supported perspective types [here](https://www.kerykeion.net/pydocs
 
 Kerykeion provides several chart themes:
 
-- **Classic** (default)
-- **Dark**
-- **Dark High Contrast**
-- **Light**
-  
+-   **Classic** (default)
+-   **Dark**
+-   **Dark High Contrast**
+-   **Light**
+
 Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables. For more detailed instructions on how to apply themes, check the [documentation](https://www.kerykeion.net/docs/theming)
 
 Here's an example of how to set the theme:
@@ -656,10 +663,10 @@ subject = AstrologicalSubject.get_from_iso_utc_time(
 
 Kerykeion supports both **True** and **Mean** Lunar Nodes:
 
-- **True North Lunar Node**: `"true_node"` (name kept without "north" for backward compatibility).
-- **True South Lunar Node**: `"true_south_node"`.
-- **Mean North Lunar Node**: `"mean_node"` (name kept without "north" for backward compatibility).
-- **Mean South Lunar Node**: `"mean_south_node"`.
+-   **True North Lunar Node**: `"true_node"` (name kept without "north" for backward compatibility).
+-   **True South Lunar Node**: `"true_south_node"`.
+-   **Mean North Lunar Node**: `"mean_node"` (name kept without "north" for backward compatibility).
+-   **Mean South Lunar Node**: `"mean_south_node"`.
 
 In instances of the classes used to generate aspects and SVG charts, only the mean nodes are active. To activate the true nodes, you need to pass the `active_points` parameter to the `ChartDataFactory` methods.
 
@@ -677,23 +684,23 @@ subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9,
 chart_data = ChartDataFactory.create_natal_chart_data(
     subject,
     active_points=[
-        "Sun", 
-        "Moon", 
-        "Mercury", 
-        "Venus", 
-        "Mars", 
-        "Jupiter", 
+        "Sun",
+        "Moon",
+        "Mercury",
+        "Venus",
+        "Mars",
+        "Jupiter",
         "Saturn",
-        "Uranus", 
-        "Neptune", 
-        "Pluto", 
-        "Mean_Node", 
-        "Mean_South_Node", 
-        "True_Node",       # Activates True North Node 
+        "Uranus",
+        "Neptune",
+        "Pluto",
+        "Mean_Node",
+        "Mean_South_Node",
+        "True_Node",       # Activates True North Node
         "True_South_Node", # Activates True South Node
         "Ascendant",
-        "Medium_Coeli", 
-        "Descendant", 
+        "Medium_Coeli",
+        "Descendant",
         "Imum_Coeli"
     ]
 )
@@ -730,17 +737,19 @@ Kerykeion v5 is a **complete redesign** that modernizes the library with a data-
 ### 🎯 Key Highlights
 
 #### Factory-Centered Architecture
+
 The old class-based approach has been replaced with a modern factory pattern:
 
-- **`AstrologicalSubjectFactory`**: Replaces the old `AstrologicalSubject` class
-- **`ChartDataFactory`**: Pre-computes enriched chart data (elements, qualities, aspects)
-- **`ChartDrawer`**: Pure SVG rendering separated from calculations
-- **`AspectsFactory`**: Unified aspects calculation for natal and synastry charts
-- **`PlanetaryReturnFactory`**: Solar and Lunar returns computation
-- **`HouseComparisonFactory`**: House overlay analysis for synastry
-- **`RelationshipScoreFactory`**: Compatibility scoring between charts
+-   **`AstrologicalSubjectFactory`**: Replaces the old `AstrologicalSubject` class
+-   **`ChartDataFactory`**: Pre-computes enriched chart data (elements, qualities, aspects)
+-   **`ChartDrawer`**: Pure SVG rendering separated from calculations
+-   **`AspectsFactory`**: Unified aspects calculation for natal and synastry charts
+-   **`PlanetaryReturnFactory`**: Solar and Lunar returns computation
+-   **`HouseComparisonFactory`**: House overlay analysis for synastry
+-   **`RelationshipScoreFactory`**: Compatibility scoring between charts
 
 **Old v4 API:**
+
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
@@ -751,6 +760,7 @@ chart.makeSVG()
 ```
 
 **New v5 API:**
+
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 
@@ -762,70 +772,79 @@ drawer.save_svg()
 ```
 
 #### Pydantic 2 Models & Type Safety
+
 All data structures are now strongly typed Pydantic models:
 
-- **`AstrologicalSubjectModel`**: Subject data with full validation
-- **`ChartDataModel`**: Enriched chart data with elements, qualities, aspects
-- **`SingleChartAspectsModel` / `DualChartAspectsModel`**: Typed aspect collections
-- **`PlanetReturnModel`**: Planetary return data
-- **`ElementDistributionModel`**: Element statistics (fire, earth, air, water)
-- **`QualityDistributionModel`**: Quality statistics (cardinal, fixed, mutable)
+-   **`AstrologicalSubjectModel`**: Subject data with full validation
+-   **`ChartDataModel`**: Enriched chart data with elements, qualities, aspects
+-   **`SingleChartAspectsModel` / `DualChartAspectsModel`**: Typed aspect collections
+-   **`PlanetReturnModel`**: Planetary return data
+-   **`ElementDistributionModel`**: Element statistics (fire, earth, air, water)
+-   **`QualityDistributionModel`**: Quality statistics (cardinal, fixed, mutable)
 
 All models support:
-- JSON serialization/deserialization
-- Dictionary export
-- Subscript access
-- Full IDE autocomplete and type checking
+
+-   JSON serialization/deserialization
+-   Dictionary export
+-   Subscript access
+-   Full IDE autocomplete and type checking
 
 #### Enhanced Features
-- **Speed & Declination**: All celestial points now include daily motion speed and declination
-- **Element & Quality Analysis**: Automatic calculation of element/quality distributions
-- **Relationship Scoring**: Built-in compatibility analysis for synastry
-- **House Comparison**: Detailed house overlay analysis
-- **Transit Time Ranges**: Advanced transit tracking over time periods
-- **Report Module**: Comprehensive text reports with ASCII tables
+
+-   **Speed & Declination**: All celestial points now include daily motion speed and declination
+-   **Element & Quality Analysis**: Automatic calculation of element/quality distributions
+-   **Relationship Scoring**: Built-in compatibility analysis for synastry
+-   **House Comparison**: Detailed house overlay analysis
+-   **Transit Time Ranges**: Advanced transit tracking over time periods
+-   **Report Module**: Comprehensive text reports with ASCII tables
 
 ### 🚨 Breaking Changes
 
 #### 1. Removed Legacy Classes
+
 The following classes have been **completely removed** and must be replaced:
 
-| Removed (v4) | Replacement (v5) |
-|--------------|------------------|
-| `AstrologicalSubject` | `AstrologicalSubjectFactory.from_birth_data()` |
-| `KerykeionChartSVG` | `ChartDrawer` + `ChartDataFactory` |
-| `NatalAspects` | `AspectsFactory.single_chart_aspects()` |
-| `SynastryAspects` | `AspectsFactory.dual_chart_aspects()` |
-| `relationship_score()` | `RelationshipScoreFactory` |
+| Removed (v4)           | Replacement (v5)                               |
+| ---------------------- | ---------------------------------------------- |
+| `AstrologicalSubject`  | `AstrologicalSubjectFactory.from_birth_data()` |
+| `KerykeionChartSVG`    | `ChartDrawer` + `ChartDataFactory`             |
+| `NatalAspects`         | `AspectsFactory.single_chart_aspects()`        |
+| `SynastryAspects`      | `AspectsFactory.dual_chart_aspects()`          |
+| `relationship_score()` | `RelationshipScoreFactory`                     |
 
 **Note**: The `kerykeion.backword` module provides temporary wrappers for `AstrologicalSubject` and `KerykeionChartSVG` with deprecation warnings. These will be **removed in v6.0**.
 
 #### 2. Import Changes
+
 Module structure has been completely reorganized:
 
 **Old imports (v4):**
+
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 from kerykeion.kr_types import KerykeionException
 ```
 
 **New imports (v5):**
+
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 ```
 
 #### 3. Lunar Nodes Naming
+
 All lunar node fields have been renamed for clarity:
 
-| Old Name (v4) | New Name (v5) |
-|---------------|---------------|
-| `Mean_Node` | `Mean_North_Lunar_Node` |
-| `True_Node` | `True_North_Lunar_Node` |
+| Old Name (v4)     | New Name (v5)           |
+| ----------------- | ----------------------- |
+| `Mean_Node`       | `Mean_North_Lunar_Node` |
+| `True_Node`       | `True_North_Lunar_Node` |
 | `Mean_South_Node` | `Mean_South_Lunar_Node` |
 | `True_South_Node` | `True_South_Lunar_Node` |
 
 **Migration example:**
+
 ```python
 # v4
 print(subject.mean_node)
@@ -835,15 +854,18 @@ print(subject.mean_north_lunar_node)
 ```
 
 #### 4. Chart Generation Changes
+
 The two-step process (data + rendering) is now required:
 
 **Old v4:**
+
 ```python
 chart = KerykeionChartSVG(subject)
 chart.makeSVG()
 ```
 
 **New v5:**
+
 ```python
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(chart_data=chart_data)
@@ -851,9 +873,11 @@ drawer.save_svg()
 ```
 
 #### 5. Aspects API Changes
+
 Aspects are now calculated through the factory:
 
 **Old v4:**
+
 ```python
 from kerykeion import NatalAspects, SynastryAspects
 
@@ -862,6 +886,7 @@ synastry_aspects = SynastryAspects(subject1, subject2)
 ```
 
 **New v5:**
+
 ```python
 from kerykeion import AspectsFactory
 
@@ -890,54 +915,59 @@ print(subject.true_node)  # Maps to true_north_lunar_node
 #### Step-by-Step Migration
 
 1. **Update imports**
-   ```python
-   # Old
-   from kerykeion import AstrologicalSubject, KerykeionChartSVG
-   
-   # New
-   from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
-   ```
+
+    ```python
+    # Old
+    from kerykeion import AstrologicalSubject, KerykeionChartSVG
+
+    # New
+    from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
+    ```
 
 2. **Update subject creation**
-   ```python
-   # Old
-   subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "London", "GB")
-   
-   # New
-   subject = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
-   ```
+
+    ```python
+    # Old
+    subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "London", "GB")
+
+    # New
+    subject = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
+    ```
 
 3. **Update chart generation**
-   ```python
-   # Old
-   chart = KerykeionChartSVG(subject)
-   chart.makeSVG()
-   
-   # New
-   chart_data = ChartDataFactory.create_natal_chart_data(subject)
-   drawer = ChartDrawer(chart_data=chart_data)
-   drawer.save_svg()
-   ```
+
+    ```python
+    # Old
+    chart = KerykeionChartSVG(subject)
+    chart.makeSVG()
+
+    # New
+    chart_data = ChartDataFactory.create_natal_chart_data(subject)
+    drawer = ChartDrawer(chart_data=chart_data)
+    drawer.save_svg()
+    ```
 
 4. **Update field access** (lunar nodes)
-   ```python
-   # Old
-   print(subject.mean_node.position)
-   
-   # New
-   print(subject.mean_north_lunar_node.position)
-   ```
+
+    ```python
+    # Old
+    print(subject.mean_node.position)
+
+    # New
+    print(subject.mean_north_lunar_node.position)
+    ```
 
 5. **Update aspects**
-   ```python
-   # Old
-   from kerykeion import NatalAspects
-   aspects = NatalAspects(subject)
-   
-   # New
-   from kerykeion import AspectsFactory
-   aspects = AspectsFactory.single_chart_aspects(subject)
-   ```
+
+    ```python
+    # Old
+    from kerykeion import NatalAspects
+    aspects = NatalAspects(subject)
+
+    # New
+    from kerykeion import AspectsFactory
+    aspects = AspectsFactory.single_chart_aspects(subject)
+    ```
 
 #### Automated Migration Script
 
@@ -961,33 +991,35 @@ find . -name "*.py" -type f -exec sed -i.bak \
 
 ### 📦 Other Notable Changes
 
-- **Packaging**: Migrated from Poetry to PEP 621 + Hatchling with `uv.lock`
-- **Settings**: Centralized in `kerykeion.schemas` and `kerykeion.settings`
-- **Configuration**: Legacy presets available in `settings/legacy/`
-- **Type System**: All literals consolidated in `kr_literals.py`
-- **Performance**: Caching improvements with `functools.lru_cache`
-- **Testing**: 376 tests with 87% coverage, regenerated fixtures for v5
+-   **Packaging**: Migrated from Poetry to PEP 621 + Hatchling with `uv.lock`
+-   **Settings**: Centralized in `kerykeion.schemas` and `kerykeion.settings`
+-   **Configuration**: Legacy presets available in `settings/legacy/`
+-   **Type System**: All literals consolidated in `kr_literals.py`
+-   **Performance**: Caching improvements with `functools.lru_cache`
+-   **Testing**: 376 tests with 87% coverage, regenerated fixtures for v5
 
 ### 🎨 New Themes
 
 Additional chart themes added:
-- `classic` (default)
-- `dark`
-- `dark_high_contrast`
-- `light`
-- `strawberry`
+
+-   `classic` (default)
+-   `dark`
+-   `dark_high_contrast`
+-   `light`
+-   `strawberry`
 
 ### 📚 Resources
 
-- **Full Release Notes**: [v5.0.0.md](release_notes/v5.0.0b1.md)
-- **Documentation**: [kerykeion.readthedocs.io](https://kerykeion.readthedocs.io)
-- **API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/kerykeion.html)
-- **Examples**: See the `examples/` folder for runnable code
-- **Support**: [GitHub Discussions](https://github.com/g-battaglia/kerykeion/discussions)
+-   **Full Release Notes**: [v5.0.0.md](release_notes/v5.0.0b1.md)
+-   **Documentation**: [kerykeion.readthedocs.io](https://kerykeion.readthedocs.io)
+-   **API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/kerykeion.html)
+-   **Examples**: See the `examples/` folder for runnable code
+-   **Support**: [GitHub Discussions](https://github.com/g-battaglia/kerykeion/discussions)
 
 **Migration Timeline:**
-- **v5.0**: Current - Backward compatibility layer available
-- **v6.0**: Future - Compatibility layer will be removed
+
+-   **v5.0**: Current - Backward compatibility layer available
+-   **v6.0**: Future - Compatibility layer will be removed
 
 ## Integrating Kerykeion into Your Project
 
@@ -999,7 +1031,7 @@ This project is covered under the AGPL-3.0 License. For detailed information, pl
 
 As a rule of thumb, if you use this library in a project, you should open-source that project under a compatible license. Alternatively, if you wish to keep your source closed, consider using the [AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/), which is AGPL-3.0 compliant and also helps support the project.
 
-Since the AstrologerAPI is an external third-party service, using it does *not* require your code to be open-source.
+Since the AstrologerAPI is an external third-party service, using it does _not_ require your code to be open-source.
 
 ## Contributing
 
