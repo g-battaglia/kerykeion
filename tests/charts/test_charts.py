@@ -78,6 +78,12 @@ class TestCharts:
         self.angelina_jolie = AstrologicalSubjectFactory.from_birth_data("Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US", lng=-118.15, lat=34.03, tz_str="America/Los_Angeles", suppress_geonames_warning=True)
         self.brad_pit = AstrologicalSubjectFactory.from_birth_data("Brad Pitt", 1963, 12, 18, 6, 31, "Shawnee", "US", lng=-96.56, lat=35.20, tz_str="America/Chicago", suppress_geonames_warning=True)
 
+        # Synastry subject with all active points
+        self.all_active_points_second_subject = AstrologicalSubjectFactory.from_birth_data(
+            "Paul McCartney - All Active Points", 1942, 6, 18, 15, 30, "Liverpool", "GB",
+            suppress_geonames_warning=True, active_points=ALL_ACTIVE_POINTS
+        )
+
 
     def test_natal_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.first_subject)
@@ -462,6 +468,29 @@ class TestCharts:
         for expected_line, actual_line in zip(file_content_lines, wheel_transit_chart_svg_lines):
             compare_svg_lines(expected_line, actual_line)
 
+    def test_wheel_only_all_active_points_chart(self):
+        chart_data = ChartDataFactory.create_natal_chart_data(
+            self.all_active_points_subject,
+            active_points=ALL_ACTIVE_POINTS,
+        )
+
+        assert set(chart_data.active_points) == set(ALL_ACTIVE_POINTS)
+
+        wheel_only_chart_svg = ChartDrawer(chart_data).generate_wheel_only_svg_string()
+        self._compare_chart_svg("John Lennon - All Active Points - Natal Chart - Wheel Only.svg", wheel_only_chart_svg)
+
+    def test_wheel_only_all_active_points_synastry_chart(self):
+        chart_data = ChartDataFactory.create_synastry_chart_data(
+            self.all_active_points_subject,
+            self.all_active_points_second_subject,
+            active_points=ALL_ACTIVE_POINTS,
+        )
+
+        assert set(chart_data.active_points) == set(ALL_ACTIVE_POINTS)
+
+        wheel_only_chart_svg = ChartDrawer(chart_data).generate_wheel_only_svg_string()
+        self._compare_chart_svg("John Lennon - All Active Points - Synastry Chart - Wheel Only.svg", wheel_only_chart_svg)
+
     def test_aspect_grid_only_chart(self):
         chart_data = ChartDataFactory.create_natal_chart_data(self.aspect_grid_only_subject)
         aspect_grid_only_chart_svg = ChartDrawer(chart_data).generate_aspect_grid_only_svg_string()
@@ -546,6 +575,29 @@ class TestCharts:
 
         for expected_line, actual_line in zip(file_content_lines, aspect_grid_transit_chart_svg_lines):
             compare_svg_lines(expected_line, actual_line)
+
+    def test_aspect_grid_all_active_points_chart(self):
+        chart_data = ChartDataFactory.create_natal_chart_data(
+            self.all_active_points_subject,
+            active_points=ALL_ACTIVE_POINTS,
+        )
+
+        assert set(chart_data.active_points) == set(ALL_ACTIVE_POINTS)
+
+        aspect_grid_svg = ChartDrawer(chart_data).generate_aspect_grid_only_svg_string()
+        self._compare_chart_svg("John Lennon - All Active Points - Natal Chart - Aspect Grid Only.svg", aspect_grid_svg)
+
+    def test_aspect_grid_all_active_points_synastry_chart(self):
+        chart_data = ChartDataFactory.create_synastry_chart_data(
+            self.all_active_points_subject,
+            self.all_active_points_second_subject,
+            active_points=ALL_ACTIVE_POINTS,
+        )
+
+        assert set(chart_data.active_points) == set(ALL_ACTIVE_POINTS)
+
+        aspect_grid_svg = ChartDrawer(chart_data).generate_aspect_grid_only_svg_string()
+        self._compare_chart_svg("John Lennon - All Active Points - Synastry Chart - Aspect Grid Only.svg", aspect_grid_svg)
 
     def test_aspect_grid_dark_synastry(self):
         chart_data = ChartDataFactory.create_synastry_chart_data(self.aspect_grid_dark_synastry_subject, self.second_subject)

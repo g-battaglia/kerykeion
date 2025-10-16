@@ -348,5 +348,21 @@ all_points_chart_data = ChartDataFactory.create_natal_chart_data(
 )
 all_points_chart = ChartDrawer(all_points_chart_data)
 all_points_chart.save_svg(output_path=OUTPUT_DIR_STR)
+all_points_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
+all_points_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
+
+# Synastry charts with ALL_ACTIVE_POINTS
+all_points_second_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Paul McCartney - All Active Points", 1942, 6, 18, 15, 30, "Liverpool", "GB",
+    suppress_geonames_warning=True, active_points=ALL_ACTIVE_POINTS[0:]
+)
+all_points_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(
+    all_points_subject,
+    all_points_second_subject,
+    active_points=ALL_ACTIVE_POINTS,
+)
+all_points_synastry_chart = ChartDrawer(all_points_synastry_chart_data)
+all_points_synastry_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
+all_points_synastry_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
 
 print("All charts regenerated successfully!")
