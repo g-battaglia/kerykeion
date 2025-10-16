@@ -338,6 +338,69 @@ class TestElementAndQualityDistributions:
         total = (qualities.cardinal_percentage + qualities.fixed_percentage +
                 qualities.mutable_percentage)
         assert 99 <= total <= 101  # Allow for rounding errors
+
+    def test_pure_count_distribution_method(self, factory, test_subject_1):
+        """Pure count method should treat every active point equally."""
+        chart_data = factory.create_chart_data(
+            "Natal",
+            test_subject_1,
+            distribution_method="pure_count",
+        )
+
+        elements = chart_data.element_distribution
+        qualities = chart_data.quality_distribution
+
+        total_element_counts = elements.fire + elements.earth + elements.air + elements.water
+        total_quality_counts = qualities.cardinal + qualities.fixed + qualities.mutable
+
+        assert total_element_counts == len(chart_data.active_points)
+        assert total_quality_counts == len(chart_data.active_points)
+
+        elem_percentage_sum = (
+            elements.fire_percentage
+            + elements.earth_percentage
+            + elements.air_percentage
+            + elements.water_percentage
+        )
+        qual_percentage_sum = (
+            qualities.cardinal_percentage
+            + qualities.fixed_percentage
+            + qualities.mutable_percentage
+        )
+
+        assert elem_percentage_sum == 100
+        assert 99 <= qual_percentage_sum <= 101
+
+    def test_custom_weight_override_adjusts_totals(self, factory, test_subject_1):
+        """Custom distribution weights should override defaults."""
+        base_chart = factory.create_chart_data("Natal", test_subject_1)
+        custom_chart = factory.create_chart_data(
+            "Natal",
+            test_subject_1,
+            distribution_method="weighted",
+            custom_distribution_weights={"sun": 10.0},
+        )
+
+        base_sum = (
+            base_chart.element_distribution.fire
+            + base_chart.element_distribution.earth
+            + base_chart.element_distribution.air
+            + base_chart.element_distribution.water
+        )
+        custom_sum = (
+            custom_chart.element_distribution.fire
+            + custom_chart.element_distribution.earth
+            + custom_chart.element_distribution.air
+            + custom_chart.element_distribution.water
+        )
+
+        assert custom_sum == pytest.approx(base_sum + 8.0, abs=1e-6)
+
+        sun_element_attr = test_subject_1.sun.element.lower()
+        assert getattr(custom_chart.element_distribution, sun_element_attr) > getattr(
+            base_chart.element_distribution, sun_element_attr
+        )
+
 class TestAspectCalculations:
     """Tests for aspect calculations in different chart types."""
 

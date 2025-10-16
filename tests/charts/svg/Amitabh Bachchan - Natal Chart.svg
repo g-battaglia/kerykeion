@@ -147,16 +147,16 @@
             <text x='20' y='130' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>तत्व:</text>
             <text x='20' y='144'
                 style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>
-                अग्नि 4%</text>
+                अग्नि 13%</text>
             <text x='20' y='156'
                 style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>
-                पृथ्वी 17%</text>
+                पृथ्वी 12%</text>
             <text x='20' y='168'
                 style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>
-                वायु 75%</text>
+                वायु 58%</text>
             <text x='20' y='180'
                 style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>
-                जल 4%</text>
+                जल 17%</text>
         </g>
 
         <!-- Qualities -->
@@ -164,13 +164,13 @@
             <text x='20' y='200' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>गुण:</text>
             <text x='20' y='214'
                 style='fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;'>
-                चल 62%</text>
+                चल 51%</text>
             <text x='20' y='226'
                 style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>
-                स्थिर 4%</text>
+                स्थिर 5%</text>
             <text x='20' y='238'
                 style='fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;'>
-                द्विस्वभाव 34%</text>
+                द्विस्वभाव 44%</text>
         </g>
 
         <g kr:node='Bottom_Left_Text' transform='translate(0,0)'>

@@ -147,16 +147,16 @@
             <text x='20' y='130' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>元素:</text>
             <text x='20' y='144'
                 style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>
-                火 0%</text>
+                火 10%</text>
             <text x='20' y='156'
                 style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>
-                土 49%</text>
+                土 41%</text>
             <text x='20' y='168'
                 style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>
-                風 26%</text>
+                風 19%</text>
             <text x='20' y='180'
                 style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>
-                水 25%</text>
+                水 30%</text>
         </g>
 
         <!-- Qualities -->
@@ -164,10 +164,10 @@
             <text x='20' y='200' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>性质:</text>
             <text x='20' y='214'
                 style='fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;'>
-                本位 53%</text>
+                本位 49%</text>
             <text x='20' y='226'
                 style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>
-                固定 47%</text>
+                固定 51%</text>
             <text x='20' y='238'
                 style='fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;'>
                 变动 0%</text>

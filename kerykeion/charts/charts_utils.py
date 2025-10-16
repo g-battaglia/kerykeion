@@ -1,10 +1,183 @@
 import math
 import datetime
+from typing import Mapping, Optional, Sequence, Union, Literal
+
 from kerykeion.schemas import KerykeionException, ChartType
 from kerykeion.schemas.kr_literals import AstrologicalPoint
-from typing import Union, Literal
 from kerykeion.schemas.kr_models import AspectModel, KerykeionPointModel, CompositeSubjectModel, PlanetReturnModel, AstrologicalSubjectModel, HouseComparisonModel
 from kerykeion.schemas.settings_models import KerykeionLanguageCelestialPointModel, KerykeionSettingsCelestialPointModel
+
+
+ElementQualityDistributionMethod = Literal["pure_count", "weighted"]
+"""Supported strategies for calculating element and modality distributions."""
+
+_SIGN_TO_ELEMENT: tuple[str, ...] = (
+    "fire",    # Aries
+    "earth",   # Taurus
+    "air",     # Gemini
+    "water",   # Cancer
+    "fire",    # Leo
+    "earth",   # Virgo
+    "air",     # Libra
+    "water",   # Scorpio
+    "fire",    # Sagittarius
+    "earth",   # Capricorn
+    "air",     # Aquarius
+    "water",   # Pisces
+)
+
+_SIGN_TO_QUALITY: tuple[str, ...] = (
+    "cardinal",  # Aries
+    "fixed",     # Taurus
+    "mutable",   # Gemini
+    "cardinal",  # Cancer
+    "fixed",     # Leo
+    "mutable",   # Virgo
+    "cardinal",  # Libra
+    "fixed",     # Scorpio
+    "mutable",   # Sagittarius
+    "cardinal",  # Capricorn
+    "fixed",     # Aquarius
+    "mutable",   # Pisces
+)
+
+_ELEMENT_KEYS: tuple[str, ...] = ("fire", "earth", "air", "water")
+_QUALITY_KEYS: tuple[str, ...] = ("cardinal", "fixed", "mutable")
+
+_DEFAULT_WEIGHTED_FALLBACK = 1.0
+DEFAULT_WEIGHTED_POINT_WEIGHTS: dict[str, float] = {
+    # Core luminaries & angles
+    "sun": 2.0,
+    "moon": 2.0,
+    "ascendant": 2.0,
+    "medium_coeli": 1.5,
+    "descendant": 1.5,
+    "imum_coeli": 1.5,
+    "vertex": 0.8,
+    "anti_vertex": 0.8,
+    # Personal planets
+    "mercury": 1.5,
+    "venus": 1.5,
+    "mars": 1.5,
+    # Social planets
+    "jupiter": 1.0,
+    "saturn": 1.0,
+    # Outer/transpersonal
+    "uranus": 0.5,
+    "neptune": 0.5,
+    "pluto": 0.5,
+    # Lunar nodes (mean/true variants)
+    "mean_north_lunar_node": 0.5,
+    "true_north_lunar_node": 0.5,
+    "mean_south_lunar_node": 0.5,
+    "true_south_lunar_node": 0.5,
+    # Chiron, Lilith variants
+    "chiron": 0.6,
+    "mean_lilith": 0.5,
+    "true_lilith": 0.5,
+    # Asteroids / centaurs
+    "ceres": 0.5,
+    "pallas": 0.4,
+    "juno": 0.4,
+    "vesta": 0.4,
+    "pholus": 0.3,
+    # Dwarf planets & TNOs
+    "eris": 0.3,
+    "sedna": 0.3,
+    "haumea": 0.3,
+    "makemake": 0.3,
+    "ixion": 0.3,
+    "orcus": 0.3,
+    "quaoar": 0.3,
+    # Arabic Parts
+    "pars_fortunae": 0.8,
+    "pars_spiritus": 0.7,
+    "pars_amoris": 0.6,
+    "pars_fidei": 0.6,
+    # Fixed stars
+    "regulus": 0.2,
+    "spica": 0.2,
+    # Other
+    "earth": 0.3,
+}
+
+
+def _prepare_weight_lookup(
+    method: ElementQualityDistributionMethod,
+    custom_weights: Optional[Mapping[str, float]] = None,
+) -> tuple[dict[str, float], float]:
+    """
+    Normalize and merge default weights with any custom overrides.
+
+    Args:
+        method: Calculation strategy to use.
+        custom_weights: Optional mapping of point name (case-insensitive) to weight.
+                        Supports special key "__default__" as fallback weight.
+
+    Returns:
+        A tuple containing the weight lookup dictionary and fallback weight.
+    """
+    normalized_custom = (
+        {key.lower(): float(value) for key, value in custom_weights.items()}
+        if custom_weights
+        else {}
+    )
+
+    if method == "weighted":
+        weight_lookup: dict[str, float] = dict(DEFAULT_WEIGHTED_POINT_WEIGHTS)
+        fallback_weight = _DEFAULT_WEIGHTED_FALLBACK
+    else:
+        weight_lookup = {}
+        fallback_weight = 1.0
+
+    fallback_weight = normalized_custom.get("__default__", fallback_weight)
+
+    for key, value in normalized_custom.items():
+        if key == "__default__":
+            continue
+        weight_lookup[key] = float(value)
+
+    return weight_lookup, fallback_weight
+
+
+def _calculate_distribution_for_subject(
+    subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+    celestial_points_names: Sequence[str],
+    sign_to_group_map: Sequence[str],
+    group_keys: Sequence[str],
+    weight_lookup: Mapping[str, float],
+    fallback_weight: float,
+) -> dict[str, float]:
+    """
+    Accumulate distribution totals for a single subject.
+
+    Args:
+        subject: Subject providing planetary positions.
+        celestial_points_names: Names of celestial points to consider (lowercase).
+        sign_to_group_map: Mapping from sign index to element/modality key.
+        group_keys: Iterable of expected keys for the resulting totals.
+        weight_lookup: Precomputed mapping of weights per point.
+        fallback_weight: Default weight if point missing in lookup.
+
+    Returns:
+        Dictionary with accumulated totals keyed by element/modality.
+    """
+    totals = {key: 0.0 for key in group_keys}
+
+    for point_name in celestial_points_names:
+        point = subject.get(point_name)
+        if point is None:
+            continue
+
+        sign_index = getattr(point, "sign_num", None)
+        if sign_index is None or not (0 <= sign_index < len(sign_to_group_map)):
+            continue
+
+        group_key = sign_to_group_map[sign_index]
+        weight = weight_lookup.get(point_name, fallback_weight)
+        totals[group_key] += weight
+
+    return totals
 
 
 _SECOND_COLUMN_THRESHOLD = 20
@@ -1219,121 +1392,89 @@ def format_datetime_with_timezone(iso_datetime_string: str) -> str:
 
 
 def calculate_element_points(
-        planets_settings: list[KerykeionSettingsCelestialPointModel],
-        celestial_points_names: list[str],
-        subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-    ):
+    planets_settings: Sequence[KerykeionSettingsCelestialPointModel],
+    celestial_points_names: Sequence[str],
+    subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+    *,
+    method: ElementQualityDistributionMethod = "weighted",
+    custom_weights: Optional[Mapping[str, float]] = None,
+) -> dict[str, float]:
     """
-    Calculate elemental point totals based on planetary positions.
+    Calculate elemental totals for a subject using the selected strategy.
 
     Args:
-        planets_settings (list): List of planet configuration dictionaries
-        celestial_points_names (list): List of celestial point names to process
-        subject: Astrological subject with get() method for accessing planet data
+        planets_settings: Planet configuration list (kept for API compatibility).
+        celestial_points_names: Celestial point names to include.
+        subject: Astrological subject with planetary data.
+        method: Calculation method (pure_count or weighted). Defaults to weighted.
+        custom_weights: Optional overrides for point weights keyed by name.
 
     Returns:
-        dict: Dictionary with element point totals for 'fire', 'earth', 'air', and 'water'
+        Dictionary mapping each element to its accumulated total.
     """
-    ZODIAC = (
-        {"name": "Ari", "element": "fire"},
-        {"name": "Tau", "element": "earth"},
-        {"name": "Gem", "element": "air"},
-        {"name": "Can", "element": "water"},
-        {"name": "Leo", "element": "fire"},
-        {"name": "Vir", "element": "earth"},
-        {"name": "Lib", "element": "air"},
-        {"name": "Sco", "element": "water"},
-        {"name": "Sag", "element": "fire"},
-        {"name": "Cap", "element": "earth"},
-        {"name": "Aqu", "element": "air"},
-        {"name": "Pis", "element": "water"},
+    normalized_names = [name.lower() for name in celestial_points_names]
+    weight_lookup, fallback_weight = _prepare_weight_lookup(method, custom_weights)
+
+    return _calculate_distribution_for_subject(
+        subject,
+        normalized_names,
+        _SIGN_TO_ELEMENT,
+        _ELEMENT_KEYS,
+        weight_lookup,
+        fallback_weight,
     )
-
-    # Initialize element point totals
-    element_totals = {
-        "fire": 0.0,
-        "earth": 0.0,
-        "air": 0.0,
-        "water": 0.0
-    }
-
-    # Make list of the points sign
-    points_sign = [subject.get(planet).sign_num for planet in celestial_points_names]
-
-    for i in range(len(planets_settings)):
-        # Add points to appropriate element
-        element = ZODIAC[points_sign[i]]["element"]
-        element_totals[element] += planets_settings[i]["element_points"]
-
-    return element_totals
 
 
 def calculate_synastry_element_points(
-        planets_settings: list[KerykeionSettingsCelestialPointModel],
-        celestial_points_names: list[str],
-        subject1: AstrologicalSubjectModel,
-        subject2: AstrologicalSubjectModel,
-    ):
+    planets_settings: Sequence[KerykeionSettingsCelestialPointModel],
+    celestial_points_names: Sequence[str],
+    subject1: AstrologicalSubjectModel,
+    subject2: AstrologicalSubjectModel,
+    *,
+    method: ElementQualityDistributionMethod = "weighted",
+    custom_weights: Optional[Mapping[str, float]] = None,
+) -> dict[str, float]:
     """
-    Calculate elemental point totals for both subjects in a synastry chart.
+    Calculate combined element percentages for a synastry chart.
 
     Args:
-        planets_settings (list): List of planet configuration dictionaries
-        celestial_points_names (list): List of celestial point names to process
-        subject1: First astrological subject with get() method for accessing planet data
-        subject2: Second astrological subject with get() method for accessing planet data
+        planets_settings: Planet configuration list (unused but preserved).
+        celestial_points_names: Celestial point names to process.
+        subject1: First astrological subject.
+        subject2: Second astrological subject.
+        method: Calculation strategy (pure_count or weighted).
+        custom_weights: Optional overrides for point weights.
 
     Returns:
-        dict: Dictionary with element point totals as percentages, where the sum equals 100%
+        Dictionary with element percentages summing to 100.
     """
-    ZODIAC = (
-        {"name": "Ari", "element": "fire"},
-        {"name": "Tau", "element": "earth"},
-        {"name": "Gem", "element": "air"},
-        {"name": "Can", "element": "water"},
-        {"name": "Leo", "element": "fire"},
-        {"name": "Vir", "element": "earth"},
-        {"name": "Lib", "element": "air"},
-        {"name": "Sco", "element": "water"},
-        {"name": "Sag", "element": "fire"},
-        {"name": "Cap", "element": "earth"},
-        {"name": "Aqu", "element": "air"},
-        {"name": "Pis", "element": "water"},
+    normalized_names = [name.lower() for name in celestial_points_names]
+    weight_lookup, fallback_weight = _prepare_weight_lookup(method, custom_weights)
+
+    subject1_totals = _calculate_distribution_for_subject(
+        subject1,
+        normalized_names,
+        _SIGN_TO_ELEMENT,
+        _ELEMENT_KEYS,
+        weight_lookup,
+        fallback_weight,
+    )
+    subject2_totals = _calculate_distribution_for_subject(
+        subject2,
+        normalized_names,
+        _SIGN_TO_ELEMENT,
+        _ELEMENT_KEYS,
+        weight_lookup,
+        fallback_weight,
     )
 
-    # Initialize combined element point totals
-    combined_totals = {
-        "fire": 0.0,
-        "earth": 0.0,
-        "air": 0.0,
-        "water": 0.0
-    }
-
-    # Make list of the points sign for both subjects
-    subject1_points_sign = [subject1.get(planet).sign_num for planet in celestial_points_names]
-    subject2_points_sign = [subject2.get(planet).sign_num for planet in celestial_points_names]
-
-    # Calculate element points for subject 1
-    for i in range(len(planets_settings)):
-        # Add points to appropriate element
-        element1 = ZODIAC[subject1_points_sign[i]]["element"]
-        combined_totals[element1] += planets_settings[i]["element_points"]
-
-    # Calculate element points for subject 2
-    for i in range(len(planets_settings)):
-        # Add points to appropriate element
-        element2 = ZODIAC[subject2_points_sign[i]]["element"]
-        combined_totals[element2] += planets_settings[i]["element_points"]
-
-    # Calculate total points across all elements
+    combined_totals = {key: subject1_totals[key] + subject2_totals[key] for key in _ELEMENT_KEYS}
     total_points = sum(combined_totals.values())
 
-    # Convert to percentages (total = 100%)
-    if total_points > 0:
-        for element in combined_totals:
-            combined_totals[element] = (combined_totals[element] / total_points) * 100.0
+    if total_points == 0:
+        return {key: 0.0 for key in _ELEMENT_KEYS}
 
-    return combined_totals
+    return {key: (combined_totals[key] / total_points) * 100.0 for key in _ELEMENT_KEYS}
 
 
 def draw_house_comparison_grid(
@@ -1534,117 +1675,86 @@ def makeLunarPhase(degrees_between_sun_and_moon: float, latitude: float) -> str:
 
 
 def calculate_quality_points(
-        planets_settings: list[KerykeionSettingsCelestialPointModel],
-        celestial_points_names: list[str],
-        subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-    ):
+    planets_settings: Sequence[KerykeionSettingsCelestialPointModel],
+    celestial_points_names: Sequence[str],
+    subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+    *,
+    method: ElementQualityDistributionMethod = "weighted",
+    custom_weights: Optional[Mapping[str, float]] = None,
+) -> dict[str, float]:
     """
-    Calculate quality point totals based on planetary positions.
+    Calculate modality totals for a subject using the selected strategy.
 
     Args:
-        planets_settings (list): List of planet configuration dictionaries
-        celestial_points_names (list): List of celestial point names to process
-        subject: Astrological subject with get() method for accessing planet data
-        planet_in_zodiac_extra_points (int): Extra points awarded for planets in their home sign
+        planets_settings: Planet configuration list (kept for API compatibility).
+        celestial_points_names: Celestial point names to include.
+        subject: Astrological subject with planetary data.
+        method: Calculation method (pure_count or weighted). Defaults to weighted.
+        custom_weights: Optional overrides for point weights keyed by name.
 
     Returns:
-        dict: Dictionary with quality point totals for 'cardinal', 'fixed', and 'mutable'
+        Dictionary mapping each modality to its accumulated total.
     """
-    ZODIAC = (
-        {"name": "Ari", "quality": "cardinal"},
-        {"name": "Tau", "quality": "fixed"},
-        {"name": "Gem", "quality": "mutable"},
-        {"name": "Can", "quality": "cardinal"},
-        {"name": "Leo", "quality": "fixed"},
-        {"name": "Vir", "quality": "mutable"},
-        {"name": "Lib", "quality": "cardinal"},
-        {"name": "Sco", "quality": "fixed"},
-        {"name": "Sag", "quality": "mutable"},
-        {"name": "Cap", "quality": "cardinal"},
-        {"name": "Aqu", "quality": "fixed"},
-        {"name": "Pis", "quality": "mutable"},
+    normalized_names = [name.lower() for name in celestial_points_names]
+    weight_lookup, fallback_weight = _prepare_weight_lookup(method, custom_weights)
+
+    return _calculate_distribution_for_subject(
+        subject,
+        normalized_names,
+        _SIGN_TO_QUALITY,
+        _QUALITY_KEYS,
+        weight_lookup,
+        fallback_weight,
     )
-
-    # Initialize quality point totals
-    quality_totals = {
-        "cardinal": 0.0,
-        "fixed": 0.0,
-        "mutable": 0.0
-    }
-
-    # Make list of the points sign
-    points_sign = [subject.get(planet).sign_num for planet in celestial_points_names]
-
-    for i in range(len(planets_settings)):
-        # Add points to appropriate quality
-        quality = ZODIAC[points_sign[i]]["quality"]
-        quality_totals[quality] += planets_settings[i]["element_points"]
-
-    return quality_totals
 
 
 def calculate_synastry_quality_points(
-        planets_settings: list[KerykeionSettingsCelestialPointModel],
-        celestial_points_names: list[str],
-        subject1: AstrologicalSubjectModel,
-        subject2: AstrologicalSubjectModel,
-    ):
+    planets_settings: Sequence[KerykeionSettingsCelestialPointModel],
+    celestial_points_names: Sequence[str],
+    subject1: AstrologicalSubjectModel,
+    subject2: AstrologicalSubjectModel,
+    *,
+    method: ElementQualityDistributionMethod = "weighted",
+    custom_weights: Optional[Mapping[str, float]] = None,
+) -> dict[str, float]:
     """
-    Calculate quality point totals for both subjects in a synastry chart.
+    Calculate combined modality percentages for a synastry chart.
 
     Args:
-        planets_settings (list): List of planet configuration dictionaries
-        celestial_points_names (list): List of celestial point names to process
-        subject1: First astrological subject with get() method for accessing planet data
-        subject2: Second astrological subject with get() method for accessing planet data
+        planets_settings: Planet configuration list (unused but preserved).
+        celestial_points_names: Celestial point names to process.
+        subject1: First astrological subject.
+        subject2: Second astrological subject.
+        method: Calculation strategy (pure_count or weighted).
+        custom_weights: Optional overrides for point weights.
 
     Returns:
-        dict: Dictionary with quality point totals as percentages, where the sum equals 100%
+        Dictionary with modality percentages summing to 100.
     """
-    ZODIAC = (
-        {"name": "Ari", "quality": "cardinal"},
-        {"name": "Tau", "quality": "fixed"},
-        {"name": "Gem", "quality": "mutable"},
-        {"name": "Can", "quality": "cardinal"},
-        {"name": "Leo", "quality": "fixed"},
-        {"name": "Vir", "quality": "mutable"},
-        {"name": "Lib", "quality": "cardinal"},
-        {"name": "Sco", "quality": "fixed"},
-        {"name": "Sag", "quality": "mutable"},
-        {"name": "Cap", "quality": "cardinal"},
-        {"name": "Aqu", "quality": "fixed"},
-        {"name": "Pis", "quality": "mutable"},
+    normalized_names = [name.lower() for name in celestial_points_names]
+    weight_lookup, fallback_weight = _prepare_weight_lookup(method, custom_weights)
+
+    subject1_totals = _calculate_distribution_for_subject(
+        subject1,
+        normalized_names,
+        _SIGN_TO_QUALITY,
+        _QUALITY_KEYS,
+        weight_lookup,
+        fallback_weight,
+    )
+    subject2_totals = _calculate_distribution_for_subject(
+        subject2,
+        normalized_names,
+        _SIGN_TO_QUALITY,
+        _QUALITY_KEYS,
+        weight_lookup,
+        fallback_weight,
     )
 
-    # Initialize combined quality point totals
-    combined_totals = {
-        "cardinal": 0.0,
-        "fixed": 0.0,
-        "mutable": 0.0
-    }
-
-    # Make list of the points sign for both subjects
-    subject1_points_sign = [subject1.get(planet).sign_num for planet in celestial_points_names]
-    subject2_points_sign = [subject2.get(planet).sign_num for planet in celestial_points_names]
-
-    # Calculate quality points for subject 1
-    for i in range(len(planets_settings)):
-        # Add points to appropriate quality
-        quality1 = ZODIAC[subject1_points_sign[i]]["quality"]
-        combined_totals[quality1] += planets_settings[i]["element_points"]
-
-    # Calculate quality points for subject 2
-    for i in range(len(planets_settings)):
-        # Add points to appropriate quality
-        quality2 = ZODIAC[subject2_points_sign[i]]["quality"]
-        combined_totals[quality2] += planets_settings[i]["element_points"]
-
-    # Calculate total points across all qualities
+    combined_totals = {key: subject1_totals[key] + subject2_totals[key] for key in _QUALITY_KEYS}
     total_points = sum(combined_totals.values())
 
-    # Convert to percentages (total = 100%)
-    if total_points > 0:
-        for quality in combined_totals:
-            combined_totals[quality] = (combined_totals[quality] / total_points) * 100.0
+    if total_points == 0:
+        return {key: 0.0 for key in _QUALITY_KEYS}
 
-    return combined_totals
+    return {key: (combined_totals[key] / total_points) * 100.0 for key in _QUALITY_KEYS}

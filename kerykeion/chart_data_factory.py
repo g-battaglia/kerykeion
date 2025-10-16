@@ -29,7 +29,7 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-from typing import Union, Optional, List, Literal, cast
+from typing import Mapping, Union, Optional, List, Literal, cast
 
 from kerykeion.aspects import AspectsFactory
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
@@ -59,6 +59,7 @@ from kerykeion.utilities import find_common_active_points, distribute_percentage
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
 from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.charts.charts_utils import (
+    ElementQualityDistributionMethod,
     calculate_element_points,
     calculate_quality_points,
     calculate_synastry_element_points,
@@ -103,6 +104,8 @@ class ChartDataFactory:
         include_relationship_score: bool = True,
         *,
         axis_orb_limit: Optional[float] = None,
+        distribution_method: ElementQualityDistributionMethod = "weighted",
+        custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
         """
         Create comprehensive chart data for the specified chart type.
@@ -116,6 +119,8 @@ class ChartDataFactory:
             include_house_comparison: Whether to include house comparison for dual charts
             include_relationship_score: Whether to include relationship scoring for synastry
             axis_orb_limit: Optional orb threshold for chart axes (applies only to single chart aspects)
+            distribution_method: Strategy for element/modality weighting ("pure_count" or "weighted")
+            custom_distribution_weights: Optional overrides for the distribution weights
 
         Returns:
             ChartDataModel: Comprehensive chart data model
@@ -221,12 +226,16 @@ class ChartDataFactory:
                     celestial_points_names,
                     first_subject,
                     second_subject,
+                    method=distribution_method,
+                    custom_weights=custom_distribution_weights,
                 )
                 quality_totals = calculate_synastry_quality_points(
                     available_planets_setting,
                     celestial_points_names,
                     first_subject,
                     second_subject,
+                    method=distribution_method,
+                    custom_weights=custom_distribution_weights,
                 )
             else:
                 # Fallback to single chart calculation for incompatible types
@@ -234,11 +243,15 @@ class ChartDataFactory:
                     available_planets_setting,
                     celestial_points_names,
                     first_subject,
+                    method=distribution_method,
+                    custom_weights=custom_distribution_weights,
                 )
                 quality_totals = calculate_quality_points(
                     available_planets_setting,
                     celestial_points_names,
                     first_subject,
+                    method=distribution_method,
+                    custom_weights=custom_distribution_weights,
                 )
         else:
             # Calculate element/quality points for single chart
@@ -246,11 +259,15 @@ class ChartDataFactory:
                 available_planets_setting,
                 celestial_points_names,
                 first_subject,
+                method=distribution_method,
+                custom_weights=custom_distribution_weights,
             )
             quality_totals = calculate_quality_points(
                 available_planets_setting,
                 celestial_points_names,
                 first_subject,
+                method=distribution_method,
+                custom_weights=custom_distribution_weights,
             )
 
         # Calculate percentages
@@ -312,6 +329,9 @@ class ChartDataFactory:
         subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        *,
+        distribution_method: ElementQualityDistributionMethod = "weighted",
+        custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
         """
         Convenience method for creating natal chart data.
@@ -320,6 +340,8 @@ class ChartDataFactory:
             subject: Astrological subject
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
+            distribution_method: Strategy for element/modality weighting
+            custom_distribution_weights: Optional overrides for distribution weights
 
         Returns:
             ChartDataModel: Natal chart data
@@ -329,6 +351,8 @@ class ChartDataFactory:
             chart_type="Natal",
             active_points=active_points,
             active_aspects=active_aspects,
+            distribution_method=distribution_method,
+            custom_distribution_weights=custom_distribution_weights,
         )
 
     @staticmethod
@@ -339,6 +363,9 @@ class ChartDataFactory:
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         include_house_comparison: bool = True,
         include_relationship_score: bool = True,
+        *,
+        distribution_method: ElementQualityDistributionMethod = "weighted",
+        custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
         """
         Convenience method for creating synastry chart data.
@@ -350,6 +377,8 @@ class ChartDataFactory:
             active_aspects: Aspect types and orbs to use
             include_house_comparison: Whether to include house comparison
             include_relationship_score: Whether to include relationship scoring
+            distribution_method: Strategy for element/modality weighting
+            custom_distribution_weights: Optional overrides for distribution weights
 
         Returns:
             ChartDataModel: Synastry chart data
@@ -362,6 +391,8 @@ class ChartDataFactory:
             active_aspects=active_aspects,
             include_house_comparison=include_house_comparison,
             include_relationship_score=include_relationship_score,
+            distribution_method=distribution_method,
+            custom_distribution_weights=custom_distribution_weights,
         )
 
     @staticmethod
@@ -371,6 +402,9 @@ class ChartDataFactory:
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         include_house_comparison: bool = True,
+        *,
+        distribution_method: ElementQualityDistributionMethod = "weighted",
+        custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
         """
         Convenience method for creating transit chart data.
@@ -381,6 +415,8 @@ class ChartDataFactory:
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
             include_house_comparison: Whether to include house comparison
+            distribution_method: Strategy for element/modality weighting
+            custom_distribution_weights: Optional overrides for distribution weights
 
         Returns:
             ChartDataModel: Transit chart data
@@ -392,6 +428,8 @@ class ChartDataFactory:
             active_points=active_points,
             active_aspects=active_aspects,
             include_house_comparison=include_house_comparison,
+            distribution_method=distribution_method,
+            custom_distribution_weights=custom_distribution_weights,
         )
 
     @staticmethod
@@ -399,6 +437,9 @@ class ChartDataFactory:
         composite_subject: CompositeSubjectModel,
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        *,
+        distribution_method: ElementQualityDistributionMethod = "weighted",
+        custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
         """
         Convenience method for creating composite chart data.
@@ -407,6 +448,8 @@ class ChartDataFactory:
             composite_subject: Composite astrological subject
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
+            distribution_method: Strategy for element/modality weighting
+            custom_distribution_weights: Optional overrides for distribution weights
 
         Returns:
             ChartDataModel: Composite chart data
@@ -416,6 +459,8 @@ class ChartDataFactory:
             chart_type="Composite",
             active_points=active_points,
             active_aspects=active_aspects,
+            distribution_method=distribution_method,
+            custom_distribution_weights=custom_distribution_weights,
         )
 
     @staticmethod
@@ -425,6 +470,9 @@ class ChartDataFactory:
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         include_house_comparison: bool = True,
+        *,
+        distribution_method: ElementQualityDistributionMethod = "weighted",
+        custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
         """
         Convenience method for creating planetary return chart data.
@@ -435,6 +483,8 @@ class ChartDataFactory:
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
             include_house_comparison: Whether to include house comparison
+            distribution_method: Strategy for element/modality weighting
+            custom_distribution_weights: Optional overrides for distribution weights
 
         Returns:
             ChartDataModel: Return chart data
@@ -446,6 +496,8 @@ class ChartDataFactory:
             active_points=active_points,
             active_aspects=active_aspects,
             include_house_comparison=include_house_comparison,
+            distribution_method=distribution_method,
+            custom_distribution_weights=custom_distribution_weights,
         )
 
     @staticmethod
@@ -453,6 +505,9 @@ class ChartDataFactory:
         return_subject: PlanetReturnModel,
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        *,
+        distribution_method: ElementQualityDistributionMethod = "weighted",
+        custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
         """
         Convenience method for creating single wheel planetary return chart data.
@@ -461,6 +516,8 @@ class ChartDataFactory:
             return_subject: Planetary return subject
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
+            distribution_method: Strategy for element/modality weighting
+            custom_distribution_weights: Optional overrides for distribution weights
 
         Returns:
             ChartDataModel: Single wheel return chart data
@@ -470,6 +527,8 @@ class ChartDataFactory:
             chart_type="SingleReturnChart",
             active_points=active_points,
             active_aspects=active_aspects,
+            distribution_method=distribution_method,
+            custom_distribution_weights=custom_distribution_weights,
         )
 
 

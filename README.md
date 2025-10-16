@@ -577,6 +577,43 @@ custom_aspects = DEFAULT_ACTIVE_ASPECTS.copy()
 # and filters aspects based on relevance and orb thresholds
 ```
 
+## Element & Quality Distribution Strategies
+
+`ChartDataFactory` now offers two strategies for calculating element and modality totals. The default `"weighted"` mode leans on a curated map that emphasises core factors (for example `sun`, `moon`, and `ascendant` weight 2.0, angles such as `medium_coeli` 1.5, personal planets 1.5, social planets 1.0, outers 0.5, and minor bodies 0.3–0.8). Provide `distribution_method="pure_count"` when you want every active point to contribute equally.
+
+You can refine the weighting without rebuilding the dictionary: pass lowercase point names to `custom_distribution_weights` and use `"__default__"` to override the fallback value applied to entries that are not listed explicitly.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Sample", 1986, 4, 12, 8, 45, "Bologna", "IT"
+)
+
+# Equal weighting: every active point counts once
+pure_data = ChartDataFactory.create_natal_chart_data(
+    subject,
+    distribution_method="pure_count",
+)
+
+# Custom emphasis: boost the Sun, soften everything else
+weighted_data = ChartDataFactory.create_natal_chart_data(
+    subject,
+    distribution_method="weighted",
+    custom_distribution_weights={
+        "sun": 3.0,
+        "__default__": 0.75,
+    },
+)
+
+print(pure_data.element_distribution.fire)
+print(weighted_data.element_distribution.fire)
+```
+
+All convenience helpers (`create_synastry_chart_data`, `create_transit_chart_data`, returns, and composites) forward the same keyword-only parameters, so you can keep a consistent weighting scheme across every chart type.
+
+For an extended walkthrough (including category breakdowns of the default map), see `site-docs/element_quality_distribution.md`.
+
 ## Ayanamsa (Sidereal Modes)
 
 By default, the zodiac type is **Tropical**. To use **Sidereal**, specify the sidereal mode:
@@ -818,6 +855,7 @@ All models support:
 -   **Transit Time Ranges**: Advanced transit tracking over time periods
 -   **Report Module**: Comprehensive text reports with ASCII tables
 -   **Axis Orb Control**: Chart axes now share the same orb as planets by default; pass the keyword-only `axis_orb_limit` to return to a traditional, tighter axis filtering when you need it.
+-   **Element Weight Strategies**: Element and quality stats now default to a curated weighted balance; pass `distribution_method` or `custom_distribution_weights` when you need equal counts or bespoke weightings (including a `__default__` fallback) across any chart factory helper.
 
 ### 🚨 Breaking Changes
 

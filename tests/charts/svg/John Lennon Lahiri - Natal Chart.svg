@@ -150,13 +150,13 @@
                 Fire 24%</text>
             <text x='20' y='156'
                 style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>
-                Earth 49%</text>
+                Earth 41%</text>
             <text x='20' y='168'
                 style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>
-                Air 6%</text>
+                Air 15%</text>
             <text x='20' y='180'
                 style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>
-                Water 21%</text>
+                Water 20%</text>
         </g>
 
         <!-- Qualities -->
@@ -164,13 +164,13 @@
             <text x='20' y='200' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Qualities:</text>
             <text x='20' y='214'
                 style='fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;'>
-                Cardinal 36%</text>
+                Cardinal 32%</text>
             <text x='20' y='226'
                 style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>
-                Fixed 11%</text>
+                Fixed 10%</text>
             <text x='20' y='238'
                 style='fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;'>
-                Mutable 53%</text>
+                Mutable 58%</text>
         </g>
 
         <g kr:node='Bottom_Left_Text' transform='translate(0,0)'>
