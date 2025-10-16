@@ -165,6 +165,7 @@ class ChartDrawer:
 
     _DEFAULT_HEIGHT = 550
     _DEFAULT_FULL_WIDTH = 1250
+    _DEFAULT_SYNASTRY_WIDTH = 1570
     _DEFAULT_NATAL_WIDTH = 870
     _DEFAULT_FULL_WIDTH_WITH_TABLE = 1250
     _DEFAULT_ULTRA_WIDE_WIDTH = 1320
@@ -408,7 +409,7 @@ class ChartDrawer:
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
-            self.width = self._DEFAULT_FULL_WIDTH
+            self.width = self._DEFAULT_SYNASTRY_WIDTH
 
             # Get location and coordinates
             self.location, self.geolat, self.geolon = self._get_location_info()
@@ -651,6 +652,9 @@ class ChartDrawer:
                 # Secondary houses grid default x ~ 1015
                 secondary_houses_grid_right = 1015 + 120
                 extents.append(secondary_houses_grid_right)
+                first_house_comparison_grid_right = 1090 + 180
+                second_house_comparison_grid_right = 1290 + 180
+                extents.extend([first_house_comparison_grid_right, second_house_comparison_grid_right])
 
             if self.chart_type == "Transit":
                 # House comparison grid at x ~ 1030
@@ -1628,7 +1632,45 @@ class ChartDrawer:
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
             )
-            template_dict["makeHouseComparisonGrid"] = ""
+            house_comparison_factory = HouseComparisonFactory(
+                first_subject=self.first_obj,  # type: ignore[arg-type]
+                second_subject=self.second_obj,  # type: ignore[arg-type]
+                active_points=self.active_points,
+            )
+            house_comparison = house_comparison_factory.get_house_comparison()
+
+            first_subject_label = self._truncate_name(self.first_obj.name)
+            second_subject_label = self._truncate_name(self.second_obj.name)  # type: ignore[union-attr]
+            point_column_label = self._translate("point", "Point")
+            comparison_label = self._translate("house_position_comparison", "House Position Comparison")
+
+            first_subject_grid = draw_house_comparison_grid(
+                house_comparison,
+                celestial_point_language=self._language_model.celestial_points,
+                active_points=self.active_points,
+                points_owner_subject_number=1,
+                house_position_comparison_label=comparison_label,
+                return_point_label=first_subject_label + " " + point_column_label,
+                return_label=first_subject_label,
+                radix_label=second_subject_label,
+                x_position=1090,
+                y_position=0,
+            )
+
+            second_subject_grid = draw_house_comparison_grid(
+                house_comparison,
+                celestial_point_language=self._language_model.celestial_points,
+                active_points=self.active_points,
+                points_owner_subject_number=2,
+                house_position_comparison_label="",
+                return_point_label=second_subject_label + " " + point_column_label,
+                return_label=second_subject_label,
+                radix_label=first_subject_label,
+                x_position=1290,
+                y_position=0,
+            )
+
+            template_dict["makeHouseComparisonGrid"] = first_subject_grid + second_subject_grid
 
         elif self.chart_type == "DualReturnChart":
             # Set viewbox dynamically
