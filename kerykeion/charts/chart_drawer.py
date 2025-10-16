@@ -21,6 +21,7 @@ from kerykeion.schemas import (
     ChartType,
     Sign,
     ActiveAspect,
+    KerykeionPointModel,
 )
 from kerykeion.schemas import ChartTemplateModel
 from kerykeion.schemas.kr_models import (
@@ -320,10 +321,18 @@ class ChartDrawer:
 
         # Set available celestial points
         available_celestial_points_names = [body["name"].lower() for body in self.available_planets_setting]
-        self.available_kerykeion_celestial_points = []
-        for body in available_celestial_points_names:
-            if hasattr(self.first_obj, body):
-                self.available_kerykeion_celestial_points.append(self.first_obj.get(body))  # type: ignore[arg-type]
+        self.available_kerykeion_celestial_points = self._collect_subject_points(
+            self.first_obj,
+            available_celestial_points_names,
+        )
+
+        # Collect secondary subject points for dual charts using the same active set
+        self.t_available_kerykeion_celestial_points: list[KerykeionPointModel] = []
+        if self.second_obj is not None:
+            self.t_available_kerykeion_celestial_points = self._collect_subject_points(
+                self.second_obj,
+                available_celestial_points_names,
+            )
 
         # ------------------------
         # CHART TYPE SPECIFIC SETUP FROM CHART DATA
@@ -376,9 +385,6 @@ class ChartDrawer:
             # Extract aspects from pre-computed chart data
             self.aspects_list = chart_data.aspects.relevant_aspects
 
-            # Secondary subject available points
-            self.t_available_kerykeion_celestial_points = self.available_kerykeion_celestial_points
-
             # Screen size
             self.height = self._DEFAULT_HEIGHT
             if self.double_chart_aspect_grid_type == "table":
@@ -400,9 +406,6 @@ class ChartDrawer:
             # Extract aspects from pre-computed chart data
             self.aspects_list = chart_data.aspects.relevant_aspects
 
-            # Secondary subject available points
-            self.t_available_kerykeion_celestial_points = self.available_kerykeion_celestial_points
-
             # Screen size
             self.height = self._DEFAULT_HEIGHT
             self.width = self._DEFAULT_FULL_WIDTH
@@ -420,9 +423,6 @@ class ChartDrawer:
 
             # Extract aspects from pre-computed chart data
             self.aspects_list = chart_data.aspects.relevant_aspects
-
-            # Secondary subject available points
-            self.t_available_kerykeion_celestial_points = self.available_kerykeion_celestial_points
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
@@ -526,6 +526,24 @@ class ChartDrawer:
         offsets["qualities"] += top_shift
 
         self._vertical_offsets = offsets
+
+    def _collect_subject_points(
+        self,
+        subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        point_attribute_names: list[str],
+    ) -> list[KerykeionPointModel]:
+        """Collect ordered active celestial points for a subject."""
+
+        collected: list[KerykeionPointModel] = []
+
+        for raw_name in point_attribute_names:
+            attr_name = raw_name if hasattr(subject, raw_name) else raw_name.lower()
+            point = getattr(subject, attr_name, None)
+            if point is None:
+                continue
+            collected.append(point)
+
+        return collected
 
     def _dynamic_viewbox(self) -> str:
         """Return the viewBox string based on current width/height."""

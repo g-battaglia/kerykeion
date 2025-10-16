@@ -294,6 +294,30 @@ class TestChartDrawer:
         assert chart.chart_data is not None
         assert hasattr(chart, 'second_obj')
 
+    def test_dual_chart_preserves_second_subject_points(self):
+        """Ensure dual charts keep the second subject planet positions."""
+        synastry_data = ChartDataFactory.create_synastry_chart_data(self.subject, self.subject2)
+        chart = ChartDrawer(synastry_data)
+
+        first_points = {point.name: point.abs_pos for point in chart.available_kerykeion_celestial_points}
+        second_points = {point.name: point.abs_pos for point in chart.t_available_kerykeion_celestial_points}
+
+        assert second_points, "Expected secondary subject points to be populated"
+        assert "Sun" in second_points
+        assert chart.second_obj is not None
+        assert chart.second_obj.sun is not None
+        assert chart.first_obj.sun is not None
+        assert second_points["Sun"] == chart.second_obj.sun.abs_pos
+        assert first_points["Sun"] == chart.first_obj.sun.abs_pos
+        assert second_points["Sun"] != first_points["Sun"], "Second subject sun should not match first subject"
+
+    def test_dynamic_viewbox_tracks_dimensions(self):
+        """Chart viewbox string reflects current width/height values."""
+        chart = ChartDrawer(self.chart_data)
+
+        expected = f"0 0 {int(chart.width)} {int(chart.height)}"
+        assert chart._dynamic_viewbox() == expected
+
     def test_chart_drawer_save_svg_method(self):
         """Test the save_svg method."""
         chart_data = ChartDataFactory.create_natal_chart_data(self.subject)
