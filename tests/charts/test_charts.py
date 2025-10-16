@@ -599,6 +599,38 @@ class TestCharts:
         aspect_grid_svg = ChartDrawer(chart_data).generate_aspect_grid_only_svg_string()
         self._compare_chart_svg("John Lennon - All Active Points - Synastry Chart - Aspect Grid Only.svg", aspect_grid_svg)
 
+    def test_synastry_chart_all_active_points_list(self):
+        chart_data = ChartDataFactory.create_synastry_chart_data(
+            self.all_active_points_subject,
+            self.all_active_points_second_subject,
+            active_points=ALL_ACTIVE_POINTS,
+        )
+
+        assert set(chart_data.active_points) == set(ALL_ACTIVE_POINTS)
+
+        synastry_svg = ChartDrawer(
+            chart_data,
+            double_chart_aspect_grid_type="list",
+        ).generate_svg_string()
+
+        self._compare_chart_svg("John Lennon - All Active Points - Synastry Chart - List.svg", synastry_svg)
+
+    def test_synastry_chart_all_active_points_grid(self):
+        chart_data = ChartDataFactory.create_synastry_chart_data(
+            self.all_active_points_subject,
+            self.all_active_points_second_subject,
+            active_points=ALL_ACTIVE_POINTS,
+        )
+
+        assert set(chart_data.active_points) == set(ALL_ACTIVE_POINTS)
+
+        synastry_svg = ChartDrawer(
+            chart_data,
+            double_chart_aspect_grid_type="table",
+        ).generate_svg_string()
+
+        self._compare_chart_svg("John Lennon - All Active Points - Synastry Chart - Grid.svg", synastry_svg)
+
     def test_aspect_grid_dark_synastry(self):
         chart_data = ChartDataFactory.create_synastry_chart_data(self.aspect_grid_dark_synastry_subject, self.second_subject)
         aspect_grid_dark_synastry_chart_svg = ChartDrawer(chart_data, theme="dark").generate_aspect_grid_only_svg_string()

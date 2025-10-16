@@ -365,4 +365,23 @@ all_points_synastry_chart = ChartDrawer(all_points_synastry_chart_data)
 all_points_synastry_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
 all_points_synastry_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
 
+# Synastry charts with ALL_ACTIVE_POINTS using list and grid layouts
+all_points_synastry_chart_list = ChartDrawer(
+    all_points_synastry_chart_data,
+    double_chart_aspect_grid_type="list",
+)
+all_points_synastry_chart_list.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - All Active Points - Synastry Chart - List",
+)
+
+all_points_synastry_chart_grid = ChartDrawer(
+    all_points_synastry_chart_data,
+    double_chart_aspect_grid_type="table",
+)
+all_points_synastry_chart_grid.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - All Active Points - Synastry Chart - Grid",
+)
+
 print("All charts regenerated successfully!")
