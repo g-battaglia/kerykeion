@@ -6,6 +6,7 @@
 
 import logging
 from copy import deepcopy
+from math import ceil
 from datetime import datetime
 from pathlib import Path
 from string import Template
@@ -166,6 +167,9 @@ class ChartDrawer:
     _DEFAULT_NATAL_WIDTH = 870
     _DEFAULT_FULL_WIDTH_WITH_TABLE = 1250
     _DEFAULT_ULTRA_WIDE_WIDTH = 1320
+
+    _ASPECT_LIST_ASPECTS_PER_COLUMN = 14
+    _ASPECT_LIST_COLUMN_WIDTH = 105
 
     _BASE_VERTICAL_OFFSETS = {
         "wheel": 50,
@@ -612,14 +616,9 @@ class ChartDrawer:
         if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
             # Double-chart aspects placement
             if self.double_chart_aspect_grid_type == "list":
-                # Columnar list placed at translate(565,273), ~100-110px per column, 14 aspects per column
-                aspects_per_column = 14
                 total_aspects = len(self.aspects_list) if hasattr(self, "aspects_list") else 0
-                columns = max((total_aspects + aspects_per_column - 1) // aspects_per_column, 1)
-                # Respect the max columns cap used in rendering: DualReturn=7, others=6
-                max_cols_cap = 7
-                columns = min(columns, max_cols_cap)
-                aspect_list_right = 565 + (columns * 110)
+                columns = max(ceil(total_aspects / self._ASPECT_LIST_ASPECTS_PER_COLUMN), 1)
+                aspect_list_right = 565 + (columns * self._ASPECT_LIST_COLUMN_WIDTH)
                 extents.append(aspect_list_right)
             else:
                 # Grid table placed with x_indent ~550, width ~ 14px per cell across n_active+1
