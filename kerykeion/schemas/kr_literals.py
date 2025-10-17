@@ -136,7 +136,7 @@ Usually the standard is "Apparent Geocentric"
 SignsEmoji = Literal["♈️", "♉️", "♊️", "♋️", "♌️", "♍️", "♎️", "♏️", "♐️", "♑️", "♒️", "♓️"]
 """Literal type for Zodiac Signs Emoji"""
 
-KerykeionChartTheme = Literal["light", "dark", "dark-high-contrast", "classic", "strawberry"]
+KerykeionChartTheme = Literal["light", "dark", "dark-high-contrast", "classic", "strawberry", "black-and-white"]
 """Literal type for Kerykeion Chart Themes"""
 
 

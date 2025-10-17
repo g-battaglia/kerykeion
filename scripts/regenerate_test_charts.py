@@ -37,6 +37,13 @@ natal_chart_data = ChartDataFactory.create_natal_chart_data(first)
 internal_natal_chart = ChartDrawer(natal_chart_data)
 internal_natal_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
+# Black and White Theme Natal Chart
+black_and_white_natal_chart = ChartDrawer(natal_chart_data, theme="black-and-white")
+black_and_white_natal_chart.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Black and White Theme - Natal Chart",
+)
+
 # External Natal Chart (using external_view parameter)
 external_natal_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - ExternalNatal", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True)
 external_natal_chart_data = ChartDataFactory.create_natal_chart_data(external_natal_subject)
@@ -48,10 +55,24 @@ synastry_chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
 synastry_chart = ChartDrawer(synastry_chart_data)
 synastry_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
+# Black and White Theme Synastry Chart
+black_and_white_synastry_chart = ChartDrawer(synastry_chart_data, theme="black-and-white")
+black_and_white_synastry_chart.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Black and White Theme - Synastry Chart",
+)
+
 # Transits Chart
 transits_chart_data = ChartDataFactory.create_transit_chart_data(first, second)
 transits_chart = ChartDrawer(transits_chart_data)
 transits_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Black and White Theme Transit Chart
+black_and_white_transit_chart = ChartDrawer(transits_chart_data, theme="black-and-white")
+black_and_white_transit_chart.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Black and White Theme - Transit Chart",
+)
 
 # Sidereal Birth Chart (Lahiri)
 sidereal_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon Lahiri", 1940, 10, 9, 18, 30, "Liverpool", "GB", zodiac_type="Sidereal", sidereal_mode="LAHIRI", suppress_geonames_warning=True)
@@ -300,6 +321,13 @@ composite_chart_data = ChartDataFactory.create_composite_chart_data(composite_su
 composite_chart = ChartDrawer(composite_chart_data)
 composite_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
+# Black and White Theme Composite Chart
+black_and_white_composite_chart = ChartDrawer(composite_chart_data, theme="black-and-white")
+black_and_white_composite_chart.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="Angelina Jolie and Brad Pitt Composite Chart - Black and White Theme - Composite Chart",
+)
+
 ## TO IMPLEMENT (Or check)
 
 # Solar Return Charts
@@ -326,10 +354,24 @@ dual_return_chart_data = ChartDataFactory.create_return_chart_data(first, solar_
 dual_return_chart = ChartDrawer(dual_return_chart_data)
 dual_return_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
+# Black and White Theme Dual Return Chart
+black_and_white_dual_return_chart = ChartDrawer(dual_return_chart_data, theme="black-and-white")
+black_and_white_dual_return_chart.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Black and White Theme - DualReturnChart Chart - Solar Return",
+)
+
 # Single Wheel Solar Return
 single_return_chart_data = ChartDataFactory.create_single_wheel_return_chart_data(solar_return)
 single_return_chart = ChartDrawer(single_return_chart_data)
 single_return_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Black and White Theme Single Return Chart
+black_and_white_single_return_chart = ChartDrawer(single_return_chart_data, theme="black-and-white")
+black_and_white_single_return_chart.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon Solar Return - Black and White Theme - SingleReturnChart Chart",
+)
 
 ## Transparent Background
 transparent_background_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Transparent Background", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True)

@@ -673,6 +673,8 @@ Kerykeion provides several chart themes:
 -   **Dark**
 -   **Dark High Contrast**
 -   **Light**
+-   **Strawberry**
+-   **Black & White** (ottimizzato per la stampa monocromatica)
 
 Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables. For more detailed instructions on how to apply themes, check the [documentation](https://www.kerykeion.net/docs/theming)
 
@@ -690,7 +692,7 @@ dark_theme_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - D
 chart_data = ChartDataFactory.create_natal_chart_data(dark_theme_subject)
 
 # Step 3: Create visualization with dark high contrast theme
-dark_theme_natal_chart = ChartDrawer(chart_data=chart_data, theme="dark_high_contrast")
+dark_theme_natal_chart = ChartDrawer(chart_data=chart_data, theme="dark-high-contrast")
 dark_theme_natal_chart.save_svg()
 ```
 
@@ -1067,9 +1069,10 @@ Additional chart themes added:
 
 -   `classic` (default)
 -   `dark`
--   `dark_high_contrast`
+-   `dark-high-contrast`
 -   `light`
 -   `strawberry`
+-   `black-and-white`
 
 ### 📚 Resources
 

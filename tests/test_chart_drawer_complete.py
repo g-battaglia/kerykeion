@@ -1,7 +1,10 @@
-import pytest
-from unittest.mock import patch
 import tempfile
 import os
+import re
+from pathlib import Path
+
+import pytest
+from unittest.mock import patch
 
 from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
@@ -180,12 +183,15 @@ class TestChartDrawer:
 
     def test_chart_drawer_with_different_themes(self):
         """Test chart drawer with different themes."""
-        themes = ["classic", None]
+        themes = ["classic", "black-and-white", None]
 
         for theme in themes:
             chart = ChartDrawer(self.chart_data, theme=theme)
             # Theme processing happens during init
             assert chart.chart_data is not None
+            if theme:
+                assert chart.color_style_tag.strip() != ""
+                assert "--kerykeion-chart-color-paper-0" in chart.color_style_tag
 
     def test_chart_data_extraction(self):
         """Test that chart data is properly extracted."""
@@ -227,6 +233,19 @@ class TestChartDrawer:
         minimal_chart_data = ChartDataFactory.create_natal_chart_data(minimal_subject)
         chart = ChartDrawer(minimal_chart_data)
         assert chart.chart_data is not None
+
+    def test_black_and_white_theme_is_monochrome(self):
+        """Ensure the black and white theme only uses grayscale colors."""
+        repo_root = Path(__file__).resolve().parents[1]
+        theme_path = repo_root / "kerykeion" / "charts" / "themes" / "black-and-white.css"
+        theme_content = theme_path.read_text(encoding="utf-8")
+        hex_colors = re.findall(r"#[0-9a-fA-F]{6}", theme_content)
+        assert hex_colors, "Expected to find hexadecimal colors in the theme definition."
+        for color in hex_colors:
+            red = color[1:3].lower()
+            green = color[3:5].lower()
+            blue = color[5:7].lower()
+            assert red == green == blue, f"Color {color} is not grayscale."
 
     def test_chart_drawer_viewbox_constants(self):
         """Test chart drawer viewbox constants."""

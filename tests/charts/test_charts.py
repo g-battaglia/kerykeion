@@ -118,6 +118,11 @@ class TestCharts:
         for expected_line, actual_line in zip(file_content_lines, synastry_chart_svg_lines):
             compare_svg_lines(expected_line, actual_line)
 
+    def test_black_and_white_synastry_chart(self):
+        chart_data = ChartDataFactory.create_synastry_chart_data(self.first_subject, self.second_subject)
+        synastry_chart_svg = ChartDrawer(chart_data, theme="black-and-white").generate_svg_string()
+        self._compare_chart_svg("John Lennon - Black and White Theme - Synastry Chart.svg", synastry_chart_svg)
+
     def test_transit_chart(self):
         chart_data = ChartDataFactory.create_transit_chart_data(self.first_subject, self.second_subject)
         transit_chart_svg = ChartDrawer(chart_data).generate_svg_string()
@@ -133,6 +138,11 @@ class TestCharts:
 
         for expected_line, actual_line in zip(file_content_lines, transit_chart_svg_lines):
             compare_svg_lines(expected_line, actual_line)
+
+    def test_black_and_white_transit_chart(self):
+        chart_data = ChartDataFactory.create_transit_chart_data(self.first_subject, self.second_subject)
+        transit_chart_svg = ChartDrawer(chart_data, theme="black-and-white").generate_svg_string()
+        self._compare_chart_svg("John Lennon - Black and White Theme - Transit Chart.svg", transit_chart_svg)
 
     def test_external_natal_chart(self):
         external_natal_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - ExternalNatal", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True)
@@ -358,6 +368,11 @@ class TestCharts:
 
         for expected_line, actual_line in zip(file_content_lines, birth_chart_svg_lines):
             compare_svg_lines(expected_line, actual_line)
+
+    def test_black_and_white_natal_chart(self):
+        chart_data = ChartDataFactory.create_natal_chart_data(self.first_subject)
+        birth_chart_svg = ChartDrawer(chart_data, theme="black-and-white").generate_svg_string()
+        self._compare_chart_svg("John Lennon - Black and White Theme - Natal Chart.svg", birth_chart_svg)
 
     def test_all_active_points_natal_chart(self):
         """Natal chart rendered with ALL_ACTIVE_POINTS should match the baseline SVG."""
@@ -717,6 +732,16 @@ class TestCharts:
         composite_chart_svg = ChartDrawer(chart_data).generate_svg_string()
         self._compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Composite Chart.svg", composite_chart_svg)
 
+    def test_black_and_white_composite_chart(self):
+        factory = CompositeSubjectFactory(self.angelina_jolie, self.brad_pit)
+        composite_subject = factory.get_midpoint_composite_subject_model()
+        chart_data = ChartDataFactory.create_composite_chart_data(composite_subject)
+        composite_chart_svg = ChartDrawer(chart_data, theme="black-and-white").generate_svg_string()
+        self._compare_chart_svg(
+            "Angelina Jolie and Brad Pitt Composite Chart - Black and White Theme - Composite Chart.svg",
+            composite_chart_svg,
+        )
+
     def test_dual_return_solar_chart(self):
         """
         Test Dual Return Chart (Natal + Solar Return) against SVG baseline.
@@ -744,6 +769,27 @@ class TestCharts:
         # Compare with expected SVG lines
         self._compare_chart_svg("John Lennon - DualReturnChart Chart - Solar Return.svg", dual_return_chart_svg)
 
+    def test_black_and_white_dual_return_chart(self):
+        return_factory = PlanetaryReturnFactory(
+            self.first_subject,
+            lng=-2.9833,
+            lat=53.4000,
+            tz_str="Europe/London",
+            online=False,
+        )
+
+        solar_return = return_factory.next_return_from_iso_formatted_time(
+            "2025-01-09T18:30:00+01:00",
+            return_type="Solar",
+        )
+
+        chart_data = ChartDataFactory.create_return_chart_data(self.first_subject, solar_return)
+        dual_return_chart_svg = ChartDrawer(chart_data, theme="black-and-white").generate_svg_string()
+        self._compare_chart_svg(
+            "John Lennon - Black and White Theme - DualReturnChart Chart - Solar Return.svg",
+            dual_return_chart_svg,
+        )
+
     def test_single_return_solar_chart(self):
         """
         Test Single Wheel Return Chart (Solar Return only) against SVG baseline.
@@ -766,6 +812,27 @@ class TestCharts:
         single_return_chart_svg = ChartDrawer(chart_data).generate_svg_string()
 
         self._compare_chart_svg("John Lennon Solar Return - SingleReturnChart Chart.svg", single_return_chart_svg)
+
+    def test_black_and_white_single_return_chart(self):
+        return_factory = PlanetaryReturnFactory(
+            self.first_subject,
+            lng=-2.9833,
+            lat=53.4000,
+            tz_str="Europe/London",
+            online=False,
+        )
+
+        solar_return = return_factory.next_return_from_iso_formatted_time(
+            "2025-01-09T18:30:00+01:00",
+            return_type="Solar",
+        )
+
+        chart_data = ChartDataFactory.create_single_wheel_return_chart_data(solar_return)
+        single_return_chart_svg = ChartDrawer(chart_data, theme="black-and-white").generate_svg_string()
+        self._compare_chart_svg(
+            "John Lennon Solar Return - Black and White Theme - SingleReturnChart Chart.svg",
+            single_return_chart_svg,
+        )
 
 
 if __name__ == "__main__":

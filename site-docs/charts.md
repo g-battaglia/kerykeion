@@ -13,7 +13,7 @@ The SVG output ensures scalable, high-quality graphics that maintain clarity at 
 - **Chart Types**: Natal, Transit, Synastry, Composite
 - **Pre-computed Data**: Requires `ChartDataModel` from `ChartDataFactory`
 - **Output Methods**: Full chart, wheel-only, aspect grid-only
-- **Themes**: classic, dark, light, strawberry, dark-high-contrast
+- **Themes**: classic, dark, light, strawberry, dark-high-contrast, black-and-white
 - **Languages**: EN, IT, FR, ES, PT, CN, RU, TR, DE, HI
 - **Customization**: Themes, languages, transparency, minification
 - **Output Formats**: Standard SVG, minified SVG, template strings
