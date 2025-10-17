@@ -7,20 +7,20 @@
 
     --kerykeion-color-neutral-content: #111111;
     --kerykeion-color-base-content: #111111;
-    --kerykeion-color-primary: #111111;
-    --kerykeion-color-secondary: #363636;
-    --kerykeion-color-accent: #5c5c5c;
+    --kerykeion-color-primary: #222222;
+    --kerykeion-color-secondary: #444444;
+    --kerykeion-color-accent: #666666;
     --kerykeion-color-neutral: #1a1a1a;
     --kerykeion-color-base-100: #ffffff;
-    --kerykeion-color-info: #111111;
+    --kerykeion-color-info: #222222;
     --kerykeion-color-info-content: #ffffff;
-    --kerykeion-color-success: #262626;
-    --kerykeion-color-warning: #585858;
-    --kerykeion-color-error: #8c8c8c;
+    --kerykeion-color-success: #333333;
+    --kerykeion-color-warning: #555555;
+    --kerykeion-color-error: #777777;
 
     /* Zodiac */
-    --kerykeion-color-base-200: #f2f2f2;
-    --kerykeion-color-base-300: #dedede;
+    --kerykeion-color-base-200: #f0f0f0;
+    --kerykeion-color-base-300: #d9d9d9;
 
     /* ----------- */
     /* Chart Color */
@@ -45,104 +45,104 @@
     --kerykeion-chart-color-zodiac-bg-11: var(--kerykeion-color-base-300);
 
     /* Zodiac Sign Rings */
-    --kerykeion-chart-color-zodiac-radix-ring-0: var(--kerykeion-color-neutral);
-    --kerykeion-chart-color-zodiac-radix-ring-1: var(--kerykeion-color-neutral);
-    --kerykeion-chart-color-zodiac-radix-ring-2: var(--kerykeion-color-neutral);
-    --kerykeion-chart-color-zodiac-transit-ring-0: var(--kerykeion-color-neutral);
-    --kerykeion-chart-color-zodiac-transit-ring-1: var(--kerykeion-color-neutral);
-    --kerykeion-chart-color-zodiac-transit-ring-2: var(--kerykeion-color-neutral);
-    --kerykeion-chart-color-zodiac-transit-ring-3: var(--kerykeion-color-neutral);
+    --kerykeion-chart-color-zodiac-radix-ring-0: var(--kerykeion-color-black);
+    --kerykeion-chart-color-zodiac-radix-ring-1: var(--kerykeion-color-black);
+    --kerykeion-chart-color-zodiac-radix-ring-2: var(--kerykeion-color-black);
+    --kerykeion-chart-color-zodiac-transit-ring-0: var(--kerykeion-color-black);
+    --kerykeion-chart-color-zodiac-transit-ring-1: var(--kerykeion-color-black);
+    --kerykeion-chart-color-zodiac-transit-ring-2: var(--kerykeion-color-black);
+    --kerykeion-chart-color-zodiac-transit-ring-3: var(--kerykeion-color-black);
     --kerykeion-chart-color-houses-radix-line: var(--kerykeion-color-base-content);
     --kerykeion-chart-color-houses-transit-line: var(--kerykeion-color-base-content);
 
     /* Aspects */
-    --kerykeion-chart-color-conjunction: var(--kerykeion-color-success);
-    --kerykeion-chart-color-semi-sextile: var(--kerykeion-color-warning);
-    --kerykeion-chart-color-semi-square: var(--kerykeion-color-error);
-    --kerykeion-chart-color-sextile: var(--kerykeion-color-warning);
-    --kerykeion-chart-color-quintile: var(--kerykeion-color-accent);
-    --kerykeion-chart-color-square: var(--kerykeion-color-black);
-    --kerykeion-chart-color-trine: var(--kerykeion-color-success);
-    --kerykeion-chart-color-sesquiquadrate: var(--kerykeion-color-error);
-    --kerykeion-chart-color-biquintile: var(--kerykeion-color-accent);
-    --kerykeion-chart-color-quincunx: var(--kerykeion-color-secondary);
-    --kerykeion-chart-color-opposition: var(--kerykeion-color-black);
+    --kerykeion-chart-color-conjunction: #222222;
+    --kerykeion-chart-color-semi-sextile: #333333;
+    --kerykeion-chart-color-semi-square: #444444;
+    --kerykeion-chart-color-sextile: #333333;
+    --kerykeion-chart-color-quintile: #555555;
+    --kerykeion-chart-color-square: #000000;
+    --kerykeion-chart-color-trine: #222222;
+    --kerykeion-chart-color-sesquiquadrate: #444444;
+    --kerykeion-chart-color-biquintile: #555555;
+    --kerykeion-chart-color-quincunx: #444444;
+    --kerykeion-chart-color-opposition: #000000;
 
     /* Planets */
-    --kerykeion-chart-color-sun: #111111;
-    --kerykeion-chart-color-moon: #2a2a2a;
-    --kerykeion-chart-color-mercury: #3f3f3f;
-    --kerykeion-chart-color-venus: #515151;
-    --kerykeion-chart-color-mars: #626262;
-    --kerykeion-chart-color-jupiter: #737373;
-    --kerykeion-chart-color-saturn: #848484;
-    --kerykeion-chart-color-uranus: #969696;
-    --kerykeion-chart-color-neptune: #a7a7a7;
-    --kerykeion-chart-color-pluto: #b8b8b8;
-    --kerykeion-chart-color-true-node: #4c4c4c;
-    --kerykeion-chart-color-mean-node: #4c4c4c;
-    --kerykeion-chart-color-chiron: #5e5e5e;
-    --kerykeion-chart-color-first-house: #111111;
-    --kerykeion-chart-color-tenth-house: #323232;
-    --kerykeion-chart-color-seventh-house: #545454;
-    --kerykeion-chart-color-fourth-house: #767676;
-    --kerykeion-chart-color-mean-lilith: #5e5e5e;
-    --kerykeion-chart-color-true-lilith: #5e5e5e;
-    --kerykeion-chart-color-ceres: #656565;
-    --kerykeion-chart-color-pallas: #4b4b4b;
-    --kerykeion-chart-color-juno: #7a7a7a;
-    --kerykeion-chart-color-vesta: #8c8c8c;
-    --kerykeion-chart-color-pars-fortunae: #2f2f2f;
-    --kerykeion-chart-color-vertex: #4c4c4c;
-    --kerykeion-chart-color-east-point: #3a3a3a;
-    --kerykeion-chart-color-eris: #969696;
-    --kerykeion-chart-color-earth: #2c2c2c;
-    --kerykeion-chart-color-pholus: #6d6d6d;
-    --kerykeion-chart-color-sedna: #838383;
-    --kerykeion-chart-color-haumea: #6f6f6f;
-    --kerykeion-chart-color-makemake: #5b5b5b;
-    --kerykeion-chart-color-ixion: #7e7e7e;
-    --kerykeion-chart-color-orcus: #595959;
-    --kerykeion-chart-color-quaoar: #4a4a4a;
-    --kerykeion-chart-color-regulus: #2a2a2a;
-    --kerykeion-chart-color-spica: #444444;
-    --kerykeion-chart-color-anti-vertex: #707070;
+    --kerykeion-chart-color-sun: #000000;
+    --kerykeion-chart-color-moon: #000000;
+    --kerykeion-chart-color-mercury: #000000;
+    --kerykeion-chart-color-venus: #000000;
+    --kerykeion-chart-color-mars: #000000;
+    --kerykeion-chart-color-jupiter: #000000;
+    --kerykeion-chart-color-saturn: #000000;
+    --kerykeion-chart-color-uranus: #000000;
+    --kerykeion-chart-color-neptune: #000000;
+    --kerykeion-chart-color-pluto: #000000;
+    --kerykeion-chart-color-true-node: #000000;
+    --kerykeion-chart-color-mean-node: #000000;
+    --kerykeion-chart-color-chiron: #000000;
+    --kerykeion-chart-color-first-house: #000000;
+    --kerykeion-chart-color-tenth-house: #000000;
+    --kerykeion-chart-color-seventh-house: #000000;
+    --kerykeion-chart-color-fourth-house: #000000;
+    --kerykeion-chart-color-mean-lilith: #000000;
+    --kerykeion-chart-color-true-lilith: #000000;
+    --kerykeion-chart-color-ceres: #000000;
+    --kerykeion-chart-color-pallas: #000000;
+    --kerykeion-chart-color-juno: #000000;
+    --kerykeion-chart-color-vesta: #000000;
+    --kerykeion-chart-color-pars-fortunae: #000000;
+    --kerykeion-chart-color-vertex: #000000;
+    --kerykeion-chart-color-east-point: #000000;
+    --kerykeion-chart-color-eris: #000000;
+    --kerykeion-chart-color-earth: #000000;
+    --kerykeion-chart-color-pholus: #000000;
+    --kerykeion-chart-color-sedna: #000000;
+    --kerykeion-chart-color-haumea: #000000;
+    --kerykeion-chart-color-makemake: #000000;
+    --kerykeion-chart-color-ixion: #000000;
+    --kerykeion-chart-color-orcus: #000000;
+    --kerykeion-chart-color-quaoar: #000000;
+    --kerykeion-chart-color-regulus: #000000;
+    --kerykeion-chart-color-spica: #000000;
+    --kerykeion-chart-color-anti-vertex: #000000;
 
     /* Arab Parts */
-    --kerykeion-chart-color-pars-spiritus: #2f2f2f;
-    --kerykeion-chart-color-pars-amoris: #4f4f4f;
-    --kerykeion-chart-color-pars-fortunae: #2f2f2f;
-    --kerykeion-chart-color-pars-fidei: #6f6f6f;
+    --kerykeion-chart-color-pars-spiritus: #000000;
+    --kerykeion-chart-color-pars-amoris: #000000;
+    --kerykeion-chart-color-pars-fortunae: #000000;
+    --kerykeion-chart-color-pars-fidei: #000000;
 
     /* Zodiac Signs */
-    --kerykeion-chart-color-zodiac-icon-0: #111111;
-    --kerykeion-chart-color-zodiac-icon-1: #1f1f1f;
-    --kerykeion-chart-color-zodiac-icon-2: #2d2d2d;
-    --kerykeion-chart-color-zodiac-icon-3: #3b3b3b;
-    --kerykeion-chart-color-zodiac-icon-4: #494949;
-    --kerykeion-chart-color-zodiac-icon-5: #575757;
-    --kerykeion-chart-color-zodiac-icon-6: #656565;
-    --kerykeion-chart-color-zodiac-icon-7: #737373;
-    --kerykeion-chart-color-zodiac-icon-8: #818181;
-    --kerykeion-chart-color-zodiac-icon-9: #8f8f8f;
-    --kerykeion-chart-color-zodiac-icon-10: #9d9d9d;
-    --kerykeion-chart-color-zodiac-icon-11: #ababab;
+    --kerykeion-chart-color-zodiac-icon-0: #000000;
+    --kerykeion-chart-color-zodiac-icon-1: #000000;
+    --kerykeion-chart-color-zodiac-icon-2: #000000;
+    --kerykeion-chart-color-zodiac-icon-3: #000000;
+    --kerykeion-chart-color-zodiac-icon-4: #000000;
+    --kerykeion-chart-color-zodiac-icon-5: #000000;
+    --kerykeion-chart-color-zodiac-icon-6: #000000;
+    --kerykeion-chart-color-zodiac-icon-7: #000000;
+    --kerykeion-chart-color-zodiac-icon-8: #000000;
+    --kerykeion-chart-color-zodiac-icon-9: #000000;
+    --kerykeion-chart-color-zodiac-icon-10: #000000;
+    --kerykeion-chart-color-zodiac-icon-11: #000000;
 
     /* Elements Percentage */
     --kerykeion-chart-color-air-percentage: #111111;
-    --kerykeion-chart-color-earth-percentage: #4a4a4a;
-    --kerykeion-chart-color-fire-percentage: #707070;
-    --kerykeion-chart-color-water-percentage: #8c8c8c;
+    --kerykeion-chart-color-earth-percentage: #333333;
+    --kerykeion-chart-color-fire-percentage: #555555;
+    --kerykeion-chart-color-water-percentage: #777777;
 
     /* Modalities Percentage */
-    --kerykeion-chart-color-cardinal-percentage: #262626;
-    --kerykeion-chart-color-fixed-percentage: #555555;
-    --kerykeion-chart-color-mutable-percentage: #7a7a7a;
+    --kerykeion-chart-color-cardinal-percentage: #222222;
+    --kerykeion-chart-color-fixed-percentage: #444444;
+    --kerykeion-chart-color-mutable-percentage: #666666;
 
     /* Aspects */
     --kerykeion-chart-color-lunar-phase-0: var(--kerykeion-color-black);
     --kerykeion-chart-color-lunar-phase-1: var(--kerykeion-color-white);
 
     /* Houses Numbers */
-    --kerykeion-chart-color-house-number: var(--kerykeion-color-base-content);
+    --kerykeion-chart-color-house-number: #000000;
 }
