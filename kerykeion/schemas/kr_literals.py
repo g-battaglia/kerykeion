@@ -168,3 +168,14 @@ AspectName = Literal[
 
 ReturnType = Literal["Lunar", "Solar"]
 """Literal type for Return Types"""
+
+
+# ---------------------------------------------------------------------------
+# Deprecated aliases for backward compatibility with Kerykeion v4.x
+# ---------------------------------------------------------------------------
+# These will be removed in v6.0 - migrate to AstrologicalPoint
+Planet = AstrologicalPoint
+"""DEPRECATED: Use AstrologicalPoint instead. This alias will be removed in v6.0."""
+
+AxialCusps = AstrologicalPoint
+"""DEPRECATED: Use AstrologicalPoint instead. This alias will be removed in v6.0."""

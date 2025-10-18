@@ -886,16 +886,42 @@ Module structure has been completely reorganized:
 ```python
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 from kerykeion.kr_types import KerykeionException
+from kerykeion.kr_types.kr_literals import Planet, AxialCusps
 ```
 
 **New imports (v5):**
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas import KerykeionException
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 ```
 
-#### 3. Lunar Nodes Naming
+**Backward compatibility (v5 only, removed in v6.0):**
+
+```python
+# Old kr_types imports still work with deprecation warnings
+from kerykeion.kr_types import Planet, AxialCusps  # Shows warning
+from kerykeion.schemas import Planet, AxialCusps    # Works, no warning
+```
+
+#### 3. Type Aliases Unified
+
+**Old (v4):** `Planet` and `AxialCusps` were separate types  
+**New (v5):** Unified as `AstrologicalPoint`
+
+```python
+# v4
+from kerykeion.kr_types.kr_literals import Planet, AxialCusps
+
+# v5 (recommended)
+from kerykeion.schemas.kr_literals import AstrologicalPoint
+
+# v5 (transition, uses aliases)
+from kerykeion.schemas import Planet, AxialCusps  # Still available
+```
+
+#### 4. Lunar Nodes Naming
 
 All lunar node fields have been renamed for clarity:
 
@@ -916,11 +942,11 @@ print(subject.mean_node)
 print(subject.mean_north_lunar_node)
 ```
 
-#### 4. Axis Orb Filtering
+#### 5. Axis Orb Filtering
 
 Modern default orbs now treat chart axes (ASC, MC, DSC, IC) exactly like planets. If you prefer a traditional, constrained approach, every public aspect factory exposes the keyword-only `axis_orb_limit` parameter so you can set a dedicated threshold when needed.
 
-#### 5. Chart Generation Changes
+#### 6. Chart Generation Changes
 
 The two-step process (data + rendering) is now required:
 
@@ -939,7 +965,7 @@ drawer = ChartDrawer(chart_data=chart_data)
 drawer.save_svg()
 ```
 
-#### 5. Aspects API Changes
+#### 7. Aspects API Changes
 
 Aspects are now calculated through the factory:
 
