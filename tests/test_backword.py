@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from kerykeion.backword import AstrologicalSubject, KerykeionChartSVG, SynastryAspects
+from kerykeion.backword import AstrologicalSubject, KerykeionChartSVG, NatalAspects, SynastryAspects
 
 
 @pytest.fixture(scope="module")
@@ -160,4 +160,20 @@ class TestLegacySynastryAspects:
         assert legacy_synastry.relevant_aspects == relevant
         all_aspects = legacy_synastry.all_aspects
         assert isinstance(all_aspects, list)
+        assert len(all_aspects) >= len(relevant)
+
+
+class TestLegacyNatalAspects:
+    def test_natal_aspects_interface(self, legacy_subject: AstrologicalSubject) -> None:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            natal_aspects = NatalAspects(legacy_subject)
+
+        all_aspects = natal_aspects.all_aspects
+        assert isinstance(all_aspects, list)
+        assert all_aspects
+
+        relevant = natal_aspects.relevant_aspects
+        assert isinstance(relevant, list)
+        assert relevant
         assert len(all_aspects) >= len(relevant)

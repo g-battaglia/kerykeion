@@ -30,6 +30,7 @@ from .transits_time_range_factory import TransitsTimeRangeFactory
 from .backword import (
     AstrologicalSubject,  # Legacy wrapper
     KerykeionChartSVG,    # Legacy wrapper
+    NatalAspects,         # Legacy wrapper
     SynastryAspects,      # Legacy wrapper
 )
 
@@ -57,5 +58,6 @@ __all__ = [
     # Legacy (v4) exported names for backward compatibility
     "AstrologicalSubject",
     "KerykeionChartSVG",
+    "NatalAspects",
     "SynastryAspects",
 ]

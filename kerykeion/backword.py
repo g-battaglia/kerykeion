@@ -617,16 +617,86 @@ class KerykeionChartSVG:
     makeGridOnlySVG = makeAspectGridOnlySVG
 
 # ---------------------------------------------------------------------------
-# Legacy SynastryAspects wrapper
+# Legacy NatalAspects wrapper
 # ---------------------------------------------------------------------------
-class SynastryAspects:
-    """Wrapper replicating the v4 synastry aspects interface."""
+class NatalAspects:
+    """Wrapper replicating the master branch NatalAspects interface.
+    
+    Replacement: AspectsFactory.single_subject_aspects(subject)
+    """
 
     def __init__(
         self,
-        first: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel],
-        second: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel],
-        new_settings_file: Union[Path, None, dict] = None,  # retained for signature compatibility (unused)
+        user: Union[AstrologicalSubject, AstrologicalSubjectModel, CompositeSubjectModel],
+        new_settings_file: Union[Path, None, dict] = None,
+        active_points: Iterable[Union[str, AstrologicalPoint]] = DEFAULT_ACTIVE_POINTS,
+        active_aspects: Optional[List[ActiveAspect]] = None,
+        *,
+        language_pack: Optional[Mapping[str, Any]] = None,
+        axis_orb_limit: Optional[float] = None,
+    ) -> None:
+        _deprecated("NatalAspects", "AspectsFactory.single_chart_aspects")
+
+        if new_settings_file is not None:
+            warnings.warn(
+                "'new_settings_file' is deprecated and ignored in Kerykeion v5. Use language_pack instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
+        self.user = user.model() if isinstance(user, AstrologicalSubject) else user
+        self.new_settings_file = new_settings_file
+
+        self.language_pack = language_pack
+        self.celestial_points: list[Any] = []
+        self.aspects_settings: list[Any] = []
+        self.axes_orbit_settings = axis_orb_limit
+
+        self.active_points = list(active_points)
+        self._active_points = _normalize_active_points(self.active_points)
+        if active_aspects is None:
+            active_aspects = list(DEFAULT_ACTIVE_ASPECTS)
+        else:
+            active_aspects = list(active_aspects)
+        self.active_aspects = active_aspects
+
+        self._aspects_model = None
+        self._all_aspects_cache = None
+        self._relevant_aspects_cache = None
+
+    def _build_aspects_model(self):
+        if self._aspects_model is None:
+            self._aspects_model = AspectsFactory.single_chart_aspects(
+                self.user,
+                active_points=self._active_points,
+                active_aspects=self.active_aspects,
+                axis_orb_limit=self.axes_orbit_settings,
+            )
+        return self._aspects_model
+
+    @cached_property
+    def all_aspects(self):
+        if self._all_aspects_cache is None:
+            self._all_aspects_cache = list(self._build_aspects_model().all_aspects)
+        return self._all_aspects_cache
+
+    @cached_property
+    def relevant_aspects(self):
+        if self._relevant_aspects_cache is None:
+            self._relevant_aspects_cache = list(self._build_aspects_model().relevant_aspects)
+        return self._relevant_aspects_cache
+
+# ---------------------------------------------------------------------------
+# Legacy SynastryAspects wrapper
+# ---------------------------------------------------------------------------
+class SynastryAspects:
+    """Wrapper replicating the master branch synastry aspects interface."""
+
+    def __init__(
+        self,
+        kr_object_one: Union[AstrologicalSubject, AstrologicalSubjectModel],
+        kr_object_two: Union[AstrologicalSubject, AstrologicalSubjectModel],
+        new_settings_file: Union[Path, None, dict] = None,
         active_points: Iterable[Union[str, AstrologicalPoint]] = DEFAULT_ACTIVE_POINTS,
         active_aspects: Optional[List[ActiveAspect]] = None,
         *,
@@ -642,13 +712,14 @@ class SynastryAspects:
                 stacklevel=2,
             )
 
-        self.first_user = first.model() if isinstance(first, AstrologicalSubject) else first
-        self.second_user = second.model() if isinstance(second, AstrologicalSubject) else second
+        self.first_user = kr_object_one.model() if isinstance(kr_object_one, AstrologicalSubject) else kr_object_one
+        self.second_user = kr_object_two.model() if isinstance(kr_object_two, AstrologicalSubject) else kr_object_two
+        self.new_settings_file = new_settings_file
 
         self.language_pack = language_pack
         self.celestial_points: list[Any] = []
         self.aspects_settings: list[Any] = []
-        self.axis_orb_limit = axis_orb_limit
+        self.axes_orbit_settings = axis_orb_limit
 
         self.active_points = list(active_points)
         self._active_points = _normalize_active_points(self.active_points)
@@ -661,6 +732,8 @@ class SynastryAspects:
         self._dual_model = None
         self._all_aspects_cache = None
         self._relevant_aspects_cache = None
+        self._all_aspects: Union[list, None] = None
+        self._relevant_aspects: Union[list, None] = None
 
     def _build_dual_model(self):
         if self._dual_model is None:
@@ -669,23 +742,24 @@ class SynastryAspects:
                 self.second_user,
                 active_points=self._active_points,
                 active_aspects=self.active_aspects,
-                axis_orb_limit=self.axis_orb_limit,
+                axis_orb_limit=self.axes_orbit_settings,
             )
         return self._dual_model
 
-    @property
+    @cached_property
     def all_aspects(self):
         if self._all_aspects_cache is None:
             self._all_aspects_cache = list(self._build_dual_model().all_aspects)
         return self._all_aspects_cache
 
-    @property
+    @cached_property
     def relevant_aspects(self):
         if self._relevant_aspects_cache is None:
             self._relevant_aspects_cache = list(self._build_dual_model().relevant_aspects)
         return self._relevant_aspects_cache
 
     def get_relevant_aspects(self):
+        """Legacy method for compatibility with master branch."""
         return self.relevant_aspects
 
 # ---------------------------------------------------------------------------
@@ -694,5 +768,6 @@ class SynastryAspects:
 __all__ = [
     "AstrologicalSubject",
     "KerykeionChartSVG",
+    "NatalAspects",
     "SynastryAspects",
 ]
