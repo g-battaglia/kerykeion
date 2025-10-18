@@ -674,9 +674,11 @@ Kerykeion provides several chart themes:
 -   **Dark High Contrast**
 -   **Light**
 -   **Strawberry**
--   **Black & White** (ottimizzato per la stampa monocromatica)
+-   **Black & White** (optimized for monochrome printing)
 
 Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables. For more detailed instructions on how to apply themes, check the [documentation](https://www.kerykeion.net/docs/theming)
+
+The Black & White theme renders glyphs, rings, and aspects in solid black on light backgrounds, designed for crisp B/W prints (PDF or paper) without sacrificing legibility.
 
 Here's an example of how to set the theme:
 
