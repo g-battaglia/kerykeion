@@ -191,7 +191,7 @@ birth_chart_svg = ChartDrawer(chart_data=chart_data)
 birth_chart_svg.save_svg()
 ```
 
-![John Lennon External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20ExternalNatal%20Chart.svg)
+![John Lennon External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20ExternalNatal%20-%20Natal%20Chart.svg)
 
 ### Synastry Chart
 
