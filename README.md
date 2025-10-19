@@ -184,7 +184,7 @@ from kerykeion.charts.chart_drawer import ChartDrawer
 birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 
 # Step 2: Pre-compute chart data for external natal chart
-chart_data = ChartDataFactory.create_external_natal_chart_data(birth_chart)
+chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
 
 # Step 3: Create visualization
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
@@ -296,7 +296,7 @@ from kerykeion.charts.chart_drawer import ChartDrawer
 birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
 
 # Step 2: Pre-compute external natal chart data
-chart_data = ChartDataFactory.create_external_natal_chart_data(birth_chart)
+chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
 
 # Step 3: Create visualization
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
