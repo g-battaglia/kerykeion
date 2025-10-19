@@ -621,7 +621,7 @@ class KerykeionChartSVG:
 # ---------------------------------------------------------------------------
 class NatalAspects:
     """Wrapper replicating the master branch NatalAspects interface.
-    
+
     Replacement: AspectsFactory.single_subject_aspects(subject)
     """
 
