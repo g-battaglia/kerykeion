@@ -39,7 +39,8 @@
 - [~] Full documentation for the library
 - [ ] Fix: Spica glif
 - [ ] Fix: Dual charts
-- [ ] Doc snippets
+- [ ] Doc snippets check and fix
+- [ ] docs: Return charts
 
 ### 🟧 Medium Priority
 
