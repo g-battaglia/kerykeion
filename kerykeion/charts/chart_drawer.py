@@ -1071,24 +1071,28 @@ class ChartDrawer:
             return f"{synastry_label}: {name1} {and_word} {name2}"
 
         elif self.chart_type == "DualReturnChart":
-            year = datetime.fromisoformat(self.second_obj.iso_formatted_local_datetime).year # type: ignore
+            return_datetime = datetime.fromisoformat(self.second_obj.iso_formatted_local_datetime) # type: ignore
+            year = return_datetime.year
+            month_year = return_datetime.strftime("%m/%Y")
             truncated_name = self._truncate_name(self.first_obj.name)
             if self.second_obj is not None and isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar":
                 solar_label = self._translate("solar_return", "Solar")
                 return f"{truncated_name} - {solar_label} {year}"
             else:
                 lunar_label = self._translate("lunar_return", "Lunar")
-                return f"{truncated_name} - {lunar_label} {year}"
+                return f"{truncated_name} - {lunar_label} {month_year}"
 
         elif self.chart_type == "SingleReturnChart":
-            year = datetime.fromisoformat(self.first_obj.iso_formatted_local_datetime).year # type: ignore
+            return_datetime = datetime.fromisoformat(self.first_obj.iso_formatted_local_datetime) # type: ignore
+            year = return_datetime.year
+            month_year = return_datetime.strftime("%m/%Y")
             truncated_name = self._truncate_name(self.first_obj.name)
             if isinstance(self.first_obj, PlanetReturnModel) and self.first_obj.return_type == "Solar":
                 solar_label = self._translate("solar_return", "Solar")
                 return f"{truncated_name} - {solar_label} {year}"
             else:
                 lunar_label = self._translate("lunar_return", "Lunar")
-                return f"{truncated_name} - {lunar_label} {year}"
+                return f"{truncated_name} - {lunar_label} {month_year}"
 
         # Fallback for unknown chart types
         return self._truncate_name(self.first_obj.name)
