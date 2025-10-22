@@ -62,6 +62,7 @@ Maintaining this project requires substantial time and effort. The Astrologer AP
   - [Synastry Chart](#synastry-chart-1)
   - [Change the Output Directory](#change-the-output-directory)
   - [Change Language](#change-language)
+  - [Minified SVG](#minified-svg)
   - [SVG without CSS Variables](#svg-without-css-variables)
   - [Grid Only SVG](#grid-only-svg)
 - [Report Generator](#report-generator)
@@ -491,7 +492,6 @@ birth_chart_svg = ChartDrawer(
     chart_language="PT",
     language_pack=custom_labels["PT"],
 )
-```
 ```
 
 More details [here](https://www.kerykeion.net/docs/chart-language).
