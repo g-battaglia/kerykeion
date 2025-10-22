@@ -834,6 +834,52 @@ class TestCharts:
             single_return_chart_svg,
         )
 
+    def test_dual_return_lunar_chart(self):
+        """
+        Test Dual Return Chart (Natal + Lunar Return) against SVG baseline.
+        Uses offline location data to ensure determinism and no network.
+        """
+        return_factory = PlanetaryReturnFactory(
+            self.first_subject,
+            lng=-2.9833,
+            lat=53.4000,
+            tz_str="Europe/London",
+            online=False,
+        )
+
+        lunar_return = return_factory.next_return_from_iso_formatted_time(
+            "2025-01-09T18:30:00+01:00",
+            return_type="Lunar",
+        )
+
+        chart_data = ChartDataFactory.create_return_chart_data(self.first_subject, lunar_return)
+        dual_return_chart_svg = ChartDrawer(chart_data).generate_svg_string()
+
+        self._compare_chart_svg("John Lennon - DualReturnChart Chart - Lunar Return.svg", dual_return_chart_svg)
+
+    def test_single_return_lunar_chart(self):
+        """
+        Test Single Wheel Return Chart (Lunar Return only) against SVG baseline.
+        Uses offline location data to ensure determinism and no network.
+        """
+        return_factory = PlanetaryReturnFactory(
+            self.first_subject,
+            lng=-2.9833,
+            lat=53.4000,
+            tz_str="Europe/London",
+            online=False,
+        )
+
+        lunar_return = return_factory.next_return_from_iso_formatted_time(
+            "2025-01-09T18:30:00+01:00",
+            return_type="Lunar",
+        )
+
+        chart_data = ChartDataFactory.create_single_wheel_return_chart_data(lunar_return)
+        single_return_chart_svg = ChartDrawer(chart_data).generate_svg_string()
+
+        self._compare_chart_svg("John Lennon Lunar Return - SingleReturnChart Chart.svg", single_return_chart_svg)
+
 
 if __name__ == "__main__":
     import pytest

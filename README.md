@@ -235,6 +235,104 @@ transit_chart.save_svg()
 
 ![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Transit%20Chart.svg)
 
+### Solar Return Chart (Dual Wheel)
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+# Step 1: Create natal subject
+john = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+
+# Step 2: Calculate Solar Return subject (offline example with manual coordinates)
+return_factory = PlanetaryReturnFactory(
+    john,
+    lng=-2.9833,
+    lat=53.4000,
+    tz_str="Europe/London",
+    online=False
+)
+solar_return_subject = return_factory.next_return_from_year(1964, "Solar")
+
+# Step 3: Pre-compute return chart data (dual wheel: natal + solar return)
+chart_data = ChartDataFactory.create_return_chart_data(john, solar_return_subject)
+
+# Step 4: Create visualization
+solar_return_chart = ChartDrawer(chart_data=chart_data)
+solar_return_chart.save_svg()
+```
+
+![John Lennon Solar Return Chart (Dual Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Solar%20Return.svg)
+
+### Solar Return Chart (Single Wheel)
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+# Step 1: Create natal subject
+john = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+
+# Step 2: Calculate Solar Return subject (offline example with manual coordinates)
+return_factory = PlanetaryReturnFactory(
+    john,
+    lng=-2.9833,
+    lat=53.4000,
+    tz_str="Europe/London",
+    online=False
+)
+solar_return_subject = return_factory.next_return_from_year(1964, "Solar")
+
+# Step 3: Build a single-wheel return chart
+chart_data = ChartDataFactory.create_single_wheel_return_chart_data(solar_return_subject)
+
+# Step 4: Create visualization
+single_wheel_chart = ChartDrawer(chart_data=chart_data)
+single_wheel_chart.save_svg()
+```
+
+![John Lennon Solar Return Chart (Single Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20Solar%20Return%20-%20SingleReturnChart%20Chart.svg)
+
+### Lunar Return Chart
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+# Step 1: Create natal subject
+john = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+
+# Step 2: Calculate Lunar Return subject
+return_factory = PlanetaryReturnFactory(
+    john,
+    lng=-2.9833,
+    lat=53.4000,
+    tz_str="Europe/London",
+    online=False
+)
+lunar_return_subject = return_factory.next_return_from_year(1964, "Lunar")
+
+# Step 3: Build a dual wheel (natal + lunar return)
+lunar_return_chart_data = ChartDataFactory.create_return_chart_data(john, lunar_return_subject)
+dual_wheel_chart = ChartDrawer(chart_data=lunar_return_chart_data)
+dual_wheel_chart.save_svg()
+
+# Optional: create a single-wheel lunar return
+single_wheel_data = ChartDataFactory.create_single_wheel_return_chart_data(lunar_return_subject)
+single_wheel_chart = ChartDrawer(chart_data=single_wheel_data)
+single_wheel_chart.save_svg()
+```
+
+![John Lennon Lunar Return Chart (Dual Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Lunar%20Return.svg)
+
+![John Lennon Lunar Return Chart (Single Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20Lunar%20Return%20-%20SingleReturnChart%20Chart.svg)
+
 ### Composite Chart
 
 ```python

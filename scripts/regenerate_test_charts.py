@@ -373,6 +373,22 @@ black_and_white_single_return_chart.save_svg(
     filename="John Lennon Solar Return - Black and White Theme - SingleReturnChart Chart",
 )
 
+# Lunar Return Charts
+lunar_return = return_factory.next_return_from_iso_formatted_time(
+    "2025-01-09T18:30:00+01:00",
+    return_type="Lunar",
+)
+
+# Dual Return (Natal + Lunar Return)
+lunar_dual_return_chart_data = ChartDataFactory.create_return_chart_data(first, lunar_return)
+lunar_dual_return_chart = ChartDrawer(lunar_dual_return_chart_data)
+lunar_dual_return_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Single Wheel Lunar Return
+lunar_single_return_chart_data = ChartDataFactory.create_single_wheel_return_chart_data(lunar_return)
+lunar_single_return_chart = ChartDrawer(lunar_single_return_chart_data)
+lunar_single_return_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
 ## Transparent Background
 transparent_background_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Transparent Background", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True)
 transparent_background_chart_data = ChartDataFactory.create_natal_chart_data(transparent_background_subject)
