@@ -120,6 +120,7 @@ def main():
     parser.add_argument("-a", "--all", dest="all_files", action="store_true", help="Run snippets for every markdown file.")
     parser.add_argument("-an", "--all-no-release", dest="all_no_release", action="store_true", help="Run snippets for all markdown files excluding release notes.")
     parser.add_argument("-r", "--readme", dest="readme_only", action="store_true", help="Run snippets only for README.md.")
+    parser.add_argument("-d", "--docs", dest="docs_only", action="store_true", help="Run snippets only for site-docs folder.")
     parser.add_argument("--timeout", type=float, default=20.0, help="Per-snippet timeout in seconds (default: 20).")
     parser.add_argument("paths", nargs="*", type=Path, help="Optional paths to scan (defaults depend on flags).")
     args = parser.parse_args()
@@ -128,6 +129,10 @@ def main():
         targets = [Path("README.md")]
         exclude_release_notes = False
         mode_description = "README.md only"
+    elif args.docs_only:
+        targets = [Path("site-docs")]
+        exclude_release_notes = True
+        mode_description = "site-docs folder only"
     elif args.all_files:
         targets = args.paths or [Path(".")]
         exclude_release_notes = False
