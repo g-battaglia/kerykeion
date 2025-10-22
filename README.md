@@ -579,6 +579,19 @@ a dictionary to `language_pack`. Only the keys you supply are merged on top of t
 built-in strings:
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+birth_chart = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
+chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
+
 custom_labels = {
     "PT": {
         "info": "Informações",
@@ -586,11 +599,11 @@ custom_labels = {
     }
 }
 
-birth_chart_svg = ChartDrawer(
+ChartDrawer(
     chart_data=chart_data,
     chart_language="PT",
     language_pack=custom_labels["PT"],
-)
+).save_svg()
 ```
 
 More details [here](https://www.kerykeion.net/docs/chart-language).
@@ -751,6 +764,17 @@ Each report contains:
 All section helpers remain available for targeted output:
 
 ```python
+from kerykeion import ReportGenerator, AstrologicalSubjectFactory, ChartDataFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Sample Natal", 1990, 7, 21, 14, 45,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+natal_data = ChartDataFactory.create_natal_chart_data(subject)
+
 report = ReportGenerator(natal_data)
 print(report.get_subject_data_report())
 print(report.get_celestial_points_report())
@@ -784,18 +808,16 @@ jane = AstrologicalSubjectFactory.from_birth_data(
 )
 
 # For single chart aspects (natal, return, composite, etc.)
-single_chart_aspects = AspectsFactory.single_chart_aspects(jack)
-print(f"Found {len(single_chart_aspects)} aspects in Jack's chart")
-print(single_chart_aspects[0])
-# Output: AspectModel with details like aspect type, orb, planets involved, etc.
+single_chart_result = AspectsFactory.single_chart_aspects(jack)
+print(f"Found {len(single_chart_result.relevant_aspects)} aspects in Jack's chart")
+print(single_chart_result.relevant_aspects[0])
 
 # For dual chart aspects (synastry, transits, comparisons, etc.)
-dual_chart_aspects = AspectsFactory.dual_chart_aspects(jack, jane)
-print(f"Found {len(dual_chart_aspects)} aspects between Jack and Jane's charts")
-print(dual_chart_aspects[0])
-# Output: AspectModel with cross-chart aspect details
+dual_chart_result = AspectsFactory.dual_chart_aspects(jack, jane)
+print(f"Found {len(dual_chart_result.relevant_aspects)} aspects between Jack and Jane's charts")
+print(dual_chart_result.relevant_aspects[0])
 
-# The factory returns structured AspectModel objects with properties like:
+# Each AspectModel includes:
 # - p1_name, p2_name: Planet/point names
 # - aspect: Aspect type (conjunction, trine, square, etc.)
 # - orbit: Orb tolerance in degrees
@@ -889,7 +911,7 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
     lat=37.7719,
     tz_str="America/Chicago",
     online=False,
-    houses_system="M"
+    houses_system_identifier="M"
 )
 ```
 
@@ -961,10 +983,10 @@ dark_theme_natal_chart.save_svg()
 
 ## Alternative Initialization
 
-Create an `AstrologicalSubject` from a UTC ISO 8601 string:
+Create an `AstrologicalSubjectModel` from a UTC ISO 8601 string:
 
 ```python
-subject = AstrologicalSubject.get_from_iso_utc_time(
+subject = AstrologicalSubjectFactory.get_from_iso_utc_time(
     "Johnny Depp",
     "1963-06-09T05:00:00Z",
     city="Owensboro",
@@ -1050,7 +1072,7 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
     online=False,
 )
 
-print(johnny.json(dump=False, indent=2))
+print(johnny.model_dump_json(indent=2))
 ```
 
 ## Auto Generated Documentation
@@ -1217,10 +1239,20 @@ All lunar node fields have been renamed for clarity:
 **Migration example:**
 
 ```python
-# v4
+from kerykeion import AstrologicalSubjectFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+
+# v4 alias (still available, emits DeprecationWarning)
 print(subject.mean_node)
 
-# v5
+# v5 canonical name
 print(subject.mean_north_lunar_node)
 ```
 
@@ -1235,6 +1267,15 @@ The two-step process (data + rendering) is now required:
 **Old v4:**
 
 ```python
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
+
+subject = AstrologicalSubject(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
 chart = KerykeionChartSVG(subject)
 chart.makeSVG()
 ```
@@ -1242,6 +1283,16 @@ chart.makeSVG()
 **New v5:**
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(chart_data=chart_data)
 drawer.save_svg()
@@ -1254,7 +1305,23 @@ Aspects are now calculated through the factory:
 **Old v4:**
 
 ```python
-from kerykeion import NatalAspects, SynastryAspects
+from kerykeion import AstrologicalSubjectFactory, NatalAspects, SynastryAspects
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+subject1 = subject
+subject2 = AstrologicalSubjectFactory.from_birth_data(
+    "Jane", 1990, 6, 5, 8, 30,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
 
 natal_aspects = NatalAspects(subject)
 synastry_aspects = SynastryAspects(subject1, subject2)
@@ -1263,7 +1330,23 @@ synastry_aspects = SynastryAspects(subject1, subject2)
 **New v5:**
 
 ```python
-from kerykeion import AspectsFactory
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+subject1 = subject
+subject2 = AstrologicalSubjectFactory.from_birth_data(
+    "Jane", 1990, 6, 5, 8, 30,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
 
 natal_aspects = AspectsFactory.single_chart_aspects(subject)
 synastry_aspects = AspectsFactory.dual_chart_aspects(subject1, subject2)
@@ -1308,6 +1391,8 @@ from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 2. **Update subject creation**
 
 ```python
+from kerykeion import AstrologicalSubject, AstrologicalSubjectFactory
+
 # Old (v4)
 subject = AstrologicalSubject(
     "John", 1990, 1, 1, 12, 0,
