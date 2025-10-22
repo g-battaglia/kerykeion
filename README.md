@@ -1106,58 +1106,58 @@ print(subject.true_node)  # Maps to true_north_lunar_node
 
 1. **Update imports**
 
-    ```python
-    # Old
-    from kerykeion import AstrologicalSubject, KerykeionChartSVG
+```python
+# Old (v4)
+from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-    # New
-    from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
-    ```
+# New (v5)
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
+```
 
 2. **Update subject creation**
 
-    ```python
-    # Old
-    subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "London", "GB")
+```python
+# Old (v4)
+subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "London", "GB")
 
-    # New
-    subject = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
-    ```
+# New (v5)
+subject = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
+```
 
 3. **Update chart generation**
 
-    ```python
-    # Old
-    chart = KerykeionChartSVG(subject)
-    chart.makeSVG()
+```python
+# Old (v4)
+chart = KerykeionChartSVG(subject)
+chart.makeSVG()
 
-    # New
-    chart_data = ChartDataFactory.create_natal_chart_data(subject)
-    drawer = ChartDrawer(chart_data=chart_data)
-    drawer.save_svg()
-    ```
+# New (v5)
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
+drawer = ChartDrawer(chart_data=chart_data)
+drawer.save_svg()
+```
 
 4. **Update field access** (lunar nodes)
 
-    ```python
-    # Old
-    print(subject.mean_node.position)
+```python
+# Old (v4)
+print(subject.mean_node.position)
 
-    # New
-    print(subject.mean_north_lunar_node.position)
-    ```
+# New (v5)
+print(subject.mean_north_lunar_node.position)
+```
 
 5. **Update aspects**
 
-    ```python
-    # Old
-    from kerykeion import NatalAspects
-    aspects = NatalAspects(subject)
+```python
+# Old (v4)
+from kerykeion import NatalAspects
+aspects = NatalAspects(subject)
 
-    # New
-    from kerykeion import AspectsFactory
-    aspects = AspectsFactory.single_chart_aspects(subject)
-    ```
+# New (v5)
+from kerykeion import AspectsFactory
+aspects = AspectsFactory.single_chart_aspects(subject)
+```
 
 #### Automated Migration Script
 

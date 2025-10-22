@@ -597,15 +597,11 @@ print(f"Processed {len(results)} charts and saved to CSV")
 The unified factory method with automatic model selection:
 
 ```python
-ChartDataFactory().create_chart_data(
-    chart_type,                              # Chart type determines return model
-    first_subject,                           # Primary astrological subject
-    second_subject=None,                     # Secondary subject (dual charts only)
-    active_points=None,                      # Custom active points list
-    active_aspects=DEFAULT_ACTIVE_ASPECTS,   # Custom aspect configuration
-    include_house_comparison=True,           # Include house analysis (dual charts)
-    include_relationship_score=True,         # Include compatibility scoring (synastry)
-) -> Union[SingleChartDataModel, DualChartDataModel]
+from inspect import signature
+from kerykeion import ChartDataFactory
+
+factory = ChartDataFactory()
+print(signature(factory.create_chart_data))
 ```
 
 **Return Types:**
@@ -614,43 +610,34 @@ ChartDataFactory().create_chart_data(
 
 #### Natal Chart Data
 ```python
-ChartDataFactory.create_natal_chart_data(
-    subject,                                 # AstrologicalSubjectModel
-    active_points=None,                      # Optional: custom points list
-    active_aspects=DEFAULT_ACTIVE_ASPECTS,   # Optional: custom aspects
-) -> ChartDataModel
+from inspect import signature
+from kerykeion import ChartDataFactory
+
+print(signature(ChartDataFactory.create_natal_chart_data))
 ```
 
 #### Synastry Chart Data
 ```python
-ChartDataFactory.create_synastry_chart_data(
-    first_subject,                           # First AstrologicalSubjectModel
-    second_subject,                          # Second AstrologicalSubjectModel
-    active_points=None,                      # Optional: custom points list
-    active_aspects=DEFAULT_ACTIVE_ASPECTS,   # Optional: custom aspects
-    include_house_comparison=True,           # Include house overlay analysis
-    include_relationship_score=True,         # Include compatibility scoring
-) -> ChartDataModel
+from inspect import signature
+from kerykeion import ChartDataFactory
+
+print(signature(ChartDataFactory.create_synastry_chart_data))
 ```
 
 #### Transit Chart Data
 ```python
-ChartDataFactory.create_transit_chart_data(
-    natal_subject,                           # Natal AstrologicalSubjectModel
-    transit_subject,                         # Transit AstrologicalSubjectModel
-    active_points=None,                      # Optional: custom points list
-    active_aspects=DEFAULT_ACTIVE_ASPECTS,   # Optional: custom aspects
-    include_house_comparison=True,           # Include house activation analysis
-) -> ChartDataModel
+from inspect import signature
+from kerykeion import ChartDataFactory
+
+print(signature(ChartDataFactory.create_transit_chart_data))
 ```
 
 #### Composite Chart Data
 ```python
-ChartDataFactory.create_composite_chart_data(
-    composite_subject,                       # CompositeSubjectModel
-    active_points=None,                      # Optional: custom points list
-    active_aspects=DEFAULT_ACTIVE_ASPECTS,   # Optional: custom aspects
-) -> ChartDataModel
+from inspect import signature
+from kerykeion import ChartDataFactory
+
+print(signature(ChartDataFactory.create_composite_chart_data))
 ```
 
 ## Data Analysis Capabilities

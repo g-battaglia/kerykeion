@@ -5,35 +5,53 @@ Simple script to test Python snippets in Markdown files.
 Usage: python scripts/test_markdown_snippets.py [directory]
 """
 
+import argparse
 import re
 import sys
 import subprocess
 import tempfile
 from pathlib import Path
+import textwrap
 
 
-def find_markdown_files(directory):
-    """Find all .md files in directory."""
-    path = Path(directory)
-    if path.is_file() and path.suffix == '.md':
-        return [path]
+def find_markdown_files(
+    targets: list[Path],
+    *,
+    exclude_release_notes: bool = False,
+) -> list[Path]:
+    """Collect markdown files from the provided targets."""
+    markdown_files: set[Path] = set()
 
-    if not path.is_dir():
-        return []
+    for target in targets:
+        path = target.resolve()
+        if path.is_file() and path.suffix.lower() == ".md":
+            markdown_files.add(path)
+            continue
 
-    # Find all .md files and filter out files starting with v4.* (case-insensitive)
-    all_md_files = path.rglob("*.md")
-    return [f for f in all_md_files if not f.name.lower().startswith('v4.')]
+        if not path.is_dir():
+            continue
+
+        for md_file in path.rglob("*.md"):
+            if md_file.name.lower().startswith("v4."):
+                continue
+            if exclude_release_notes and "release_notes" in md_file.parts:
+                continue
+            markdown_files.add(md_file)
+
+    return sorted(markdown_files)
 
 
 def extract_python_snippets(content):
     """Extract Python code blocks from markdown."""
-    pattern = r'```python\n(.*?)\n```'
+    pattern = r'```python[^\n]*\n(.*?)\n[ \t]*```'
     return re.findall(pattern, content, re.DOTALL)
 
 
 def test_snippet(code):
     """Test if Python snippet runs without errors."""
+    # Normalize indentation for nested code blocks
+    code = textwrap.dedent(code)
+
     # Skip snippets with common issues
     skip_patterns = ['...', 'input(', 'plt.show()', 'time.sleep(', 'open(']
     if any(pattern in code for pattern in skip_patterns):
@@ -46,6 +64,18 @@ import sys
 sys.path.insert(0, '{project_root}')
 import warnings
 warnings.filterwarnings('ignore')
+
+# Ensure required optional dependencies are present; otherwise skip gracefully.
+missing_dependencies = []
+for _module in ("pytz", "swisseph"):
+    try:
+        __import__(_module)
+    except ModuleNotFoundError:
+        missing_dependencies.append(_module)
+
+if missing_dependencies:
+    print("Skipping snippet due to missing dependencies: " + ", ".join(sorted(set(missing_dependencies))))
+    sys.exit(0)
 
 # Common imports for kerykeion
 from typing import Literal, Union
@@ -90,11 +120,37 @@ from kerykeion import (
 
 
 def main():
-    directory = sys.argv[1] if len(sys.argv) > 1 else "."
+    parser = argparse.ArgumentParser(description="Execute Python snippets embedded in markdown files.")
+    parser.add_argument("-a", "--all", dest="all_files", action="store_true", help="Run snippets for every markdown file.")
+    parser.add_argument("-an", "--all-no-release", dest="all_no_release", action="store_true", help="Run snippets for all markdown files excluding release notes.")
+    parser.add_argument("-r", "--readme", dest="readme_only", action="store_true", help="Run snippets only for README.md.")
+    parser.add_argument("paths", nargs="*", type=Path, help="Optional paths to scan (defaults depend on flags).")
+    args = parser.parse_args()
 
-    print(f"� Testing Python snippets in {directory}")
+    if args.readme_only:
+        targets = [Path("README.md")]
+        exclude_release_notes = False
+        mode_description = "README.md only"
+    elif args.all_files:
+        targets = args.paths or [Path(".")]
+        exclude_release_notes = False
+        mode_description = "all markdown files"
+    elif args.all_no_release:
+        targets = args.paths or [Path(".")]
+        exclude_release_notes = True
+        mode_description = "all markdown files (excluding release notes)"
+    else:
+        # Default: README plus site-docs (or user-specified paths if provided)
+        if args.paths:
+            targets = args.paths
+        else:
+            targets = [Path("README.md"), Path("site-docs")]
+        exclude_release_notes = True
+        mode_description = "README.md and site-docs (default)"
 
-    md_files = find_markdown_files(directory)
+    print(f"� Testing Python snippets in {mode_description}")
+
+    md_files = find_markdown_files(targets, exclude_release_notes=exclude_release_notes)
     print(f"📄 Found {len(md_files)} markdown files")
 
     total_snippets = 0
