@@ -121,7 +121,13 @@ from kerykeion import AstrologicalSubjectFactory
 
 # Create an instance of the AstrologicalSubjectFactory class.
 # Arguments: Name, year, month, day, hour, minutes, city, nation
-john = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+john = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Retrieve information about the Sun:
 print(john.sun.model_dump_json())
@@ -164,7 +170,13 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create subject
-john = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+john = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Pre-compute chart data
 chart_data = ChartDataFactory.create_natal_chart_data(john)
@@ -185,7 +197,13 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create subject
-birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Pre-compute chart data for external natal chart
 chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
@@ -205,8 +223,20 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create subjects
-first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+first = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
+second = AstrologicalSubjectFactory.from_birth_data(
+    "Paul McCartney", 1942, 6, 18, 15, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Pre-compute synastry chart data
 chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
@@ -226,8 +256,20 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create subjects
-transit = AstrologicalSubjectFactory.from_birth_data("Transit", 2025, 6, 8, 8, 45, "Atlanta", "US")
-subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+transit = AstrologicalSubjectFactory.from_birth_data(
+    "Transit", 2025, 6, 8, 8, 45,
+    lng=-84.3880,
+    lat=33.7490,
+    tz_str="America/New_York",
+    online=False,
+)
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Pre-compute transit chart data
 chart_data = ChartDataFactory.create_transit_chart_data(subject, transit)
@@ -248,7 +290,13 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create natal subject
-john = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+john = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Calculate Solar Return subject (offline example with manual coordinates)
 return_factory = PlanetaryReturnFactory(
@@ -279,7 +327,13 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create natal subject
-john = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+john = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Calculate Solar Return subject (offline example with manual coordinates)
 return_factory = PlanetaryReturnFactory(
@@ -310,7 +364,13 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create natal subject
-john = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+john = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Calculate Lunar Return subject
 return_factory = PlanetaryReturnFactory(
@@ -375,7 +435,13 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create subject
-birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Pre-compute chart data
 chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
@@ -395,17 +461,20 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create subject
-birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Pre-compute external natal chart data
 chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
 
-# Step 3: Create visualization
-birth_chart_svg = ChartDrawer(chart_data=chart_data)
-birth_chart_svg.save_wheel_only_svg_file(
-    wheel_only=True,
-    wheel_only_external=True
-)
+# Step 3: Create visualization (external wheel view)
+birth_chart_svg = ChartDrawer(chart_data=chart_data, external_view=True)
+birth_chart_svg.save_wheel_only_svg_file()
 ```
 
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Wheel%20External%20Only%20-%20ExternalNatal%20Chart%20-%20Wheel%20Only.svg)
@@ -418,8 +487,20 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create subjects
-first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+first = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
+second = AstrologicalSubjectFactory.from_birth_data(
+    "Paul McCartney", 1942, 6, 18, 15, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Pre-compute synastry chart data
 chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
@@ -441,8 +522,20 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create subjects
-first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+first = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
+second = AstrologicalSubjectFactory.from_birth_data(
+    "Paul McCartney", 1942, 6, 18, 15, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Pre-compute synastry chart data
 chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
@@ -462,7 +555,13 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create subject
-birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Pre-compute chart data
 chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
@@ -518,7 +617,13 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create subject
-birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Pre-compute chart data
 chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
@@ -540,7 +645,13 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create subject
-birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+birth_chart = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Pre-compute chart data
 chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
@@ -564,8 +675,20 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create subjects
-birth_chart = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
-second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
+birth_chart = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
+second = AstrologicalSubjectFactory.from_birth_data(
+    "Paul McCartney", 1942, 6, 18, 15, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Pre-compute synastry chart data
 chart_data = ChartDataFactory.create_synastry_chart_data(birth_chart, second)
@@ -588,7 +711,11 @@ from kerykeion import ReportGenerator, AstrologicalSubjectFactory, ChartDataFact
 
 # Subject-only report
 subject = AstrologicalSubjectFactory.from_birth_data(
-    "Sample Natal", 1990, 7, 21, 14, 45, "Rome", "IT"
+    "Sample Natal", 1990, 7, 21, 14, 45,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 ReportGenerator(subject).print_report(include_aspects=False)
 
@@ -598,7 +725,11 @@ ReportGenerator(natal_data).print_report(max_aspects=10)
 
 # Dual-chart data (synastry, transit, dual return, …)
 partner = AstrologicalSubjectFactory.from_birth_data(
-    "Sample Partner", 1992, 11, 5, 9, 30, "Rome", "IT"
+    "Sample Partner", 1992, 11, 5, 9, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 synastry_data = ChartDataFactory.create_synastry_chart_data(subject, partner)
 ReportGenerator(synastry_data).print_report(max_aspects=12)
@@ -637,8 +768,20 @@ Kerykeion provides a unified `AspectsFactory` class for calculating astrological
 from kerykeion import AspectsFactory, AstrologicalSubjectFactory
 
 # Create astrological subjects
-jack = AstrologicalSubjectFactory.from_birth_data("Jack", 1990, 6, 15, 15, 15, "Roma", "IT")
-jane = AstrologicalSubjectFactory.from_birth_data("Jane", 1991, 10, 25, 21, 0, "Roma", "IT")
+jack = AstrologicalSubjectFactory.from_birth_data(
+    "Jack", 1990, 6, 15, 15, 15,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+jane = AstrologicalSubjectFactory.from_birth_data(
+    "Jane", 1991, 10, 25, 21, 0,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
 
 # For single chart aspects (natal, return, composite, etc.)
 single_chart_aspects = AspectsFactory.single_chart_aspects(jack)
@@ -684,7 +827,11 @@ You can refine the weighting without rebuilding the dictionary: pass lowercase p
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 
 subject = AstrologicalSubjectFactory.from_birth_data(
-    "Sample", 1986, 4, 12, 8, 45, "Bologna", "IT"
+    "Sample", 1986, 4, 12, 8, 45,
+    lng=11.3426,
+    lat=44.4949,
+    tz_str="Europe/Rome",
+    online=False,
 )
 
 # Equal weighting: every active point counts once
@@ -718,7 +865,10 @@ By default, the zodiac type is **Tropical**. To use **Sidereal**, specify the si
 ```python
 johnny = AstrologicalSubjectFactory.from_birth_data(
     "Johnny Depp", 1963, 6, 9, 0, 0,
-    "Owensboro", "US",
+    lng=-87.1112,
+    lat=37.7719,
+    tz_str="America/Chicago",
+    online=False,
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI"
 )
@@ -735,7 +885,10 @@ By default, houses are calculated using **Placidus**. Configure a different hous
 ```python
 johnny = AstrologicalSubjectFactory.from_birth_data(
     "Johnny Depp", 1963, 6, 9, 0, 0,
-    "Owensboro", "US",
+    lng=-87.1112,
+    lat=37.7719,
+    tz_str="America/Chicago",
+    online=False,
     houses_system="M"
 )
 ```
@@ -753,7 +906,10 @@ By default, Kerykeion uses the **Apparent Geocentric** perspective (the most sta
 ```python
 johnny = AstrologicalSubjectFactory.from_birth_data(
     "Johnny Depp", 1963, 6, 9, 0, 0,
-    "Owensboro", "US",
+    lng=-87.1112,
+    lat=37.7719,
+    tz_str="America/Chicago",
+    online=False,
     perspective_type="Heliocentric"
 )
 ```
@@ -785,7 +941,13 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create subject
-dark_theme_subject = AstrologicalSubjectFactory.from_birth_data("John Lennon - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+dark_theme_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Dark Theme", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Pre-compute chart data
 chart_data = ChartDataFactory.create_natal_chart_data(dark_theme_subject)
@@ -803,19 +965,18 @@ Create an `AstrologicalSubject` from a UTC ISO 8601 string:
 
 ```python
 subject = AstrologicalSubject.get_from_iso_utc_time(
-    "Johnny Depp", "1963-06-09T05:00:00Z", "Owensboro", "US"
+    "Johnny Depp",
+    "1963-06-09T05:00:00Z",
+    city="Owensboro",
+    nation="US",
+    lng=-87.1112,
+    lat=37.7719,
+    tz_str="America/Chicago",
+    online=False,
 )
 ```
 
-If you set `online=True`, provide a `geonames_username` to allow city-based geolocation:
-
-```python
-from kerykeion.astrological_subject import AstrologicalSubjectFactory
-
-subject = AstrologicalSubject.get_from_iso_utc_time(
-    "Johnny Depp", "1963-06-09T05:00:00Z", "Owensboro", "US", online=True
-)
-```
+If you prefer automatic geocoding, set `online=True` and provide your GeoNames credentials via `geonames_username`.
 
 ## Lunar Nodes (Rahu & Ketu)
 
@@ -836,7 +997,13 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create subject
-subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Step 2: Pre-compute chart data with custom active points including true nodes
 chart_data = ChartDataFactory.create_natal_chart_data(
@@ -875,7 +1042,13 @@ You can serialize the astrological subject (the base data used throughout the li
 ```python
 from kerykeion import AstrologicalSubjectFactory
 
-johnny = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US")
+johnny = AstrologicalSubjectFactory.from_birth_data(
+    "Johnny Depp", 1963, 6, 9, 0, 0,
+    lng=-87.1112,
+    lat=37.7719,
+    tz_str="America/Chicago",
+    online=False,
+)
 
 print(johnny.json(dump=False, indent=2))
 ```
@@ -912,7 +1085,13 @@ The old class-based approach has been replaced with a modern factory pattern:
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
 # v4 - Class-based approach
-subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "London", "GB")
+subject = AstrologicalSubject(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
 chart = KerykeionChartSVG(subject)
 chart.makeSVG()
 ```
@@ -923,7 +1102,13 @@ chart.makeSVG()
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 
 # v5 - Factory-based approach with separation of concerns
-subject = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(chart_data=chart_data)
 drawer.save_svg()
@@ -1093,7 +1278,13 @@ For a gradual migration, use the `kerykeion.backword` module:
 ```python
 from kerykeion import AstrologicalSubject  # Legacy wrapper
 
-subject = AstrologicalSubject("John Doe", 1990, 1, 1, 12, 0, "London", "GB")
+subject = AstrologicalSubject(
+    "John Doe", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # These still work but show DeprecationWarnings
 print(subject.mean_node)  # Maps to mean_north_lunar_node
@@ -1118,10 +1309,22 @@ from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 
 ```python
 # Old (v4)
-subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "London", "GB")
+subject = AstrologicalSubject(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # New (v5)
-subject = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
 ```
 
 3. **Update chart generation**

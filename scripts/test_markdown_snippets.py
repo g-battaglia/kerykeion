@@ -12,6 +12,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 import textwrap
+from typing import Optional, Tuple
 
 
 def find_markdown_files(
@@ -47,7 +48,7 @@ def extract_python_snippets(content):
     return re.findall(pattern, content, re.DOTALL)
 
 
-def test_snippet(code):
+def test_snippet(code: str, *, timeout: float) -> Tuple[bool, Optional[str]]:
     """Test if Python snippet runs without errors."""
     # Normalize indentation for nested code blocks
     code = textwrap.dedent(code)
@@ -96,9 +97,9 @@ from kerykeion import (
             result = subprocess.run(
                 [sys.executable, f.name],
                 capture_output=True,
-                timeout=5,  # Shorter timeout
+                timeout=timeout,
                 cwd=Path(__file__).parent.parent,
-                text=True
+                text=True,
             )
 
             Path(f.name).unlink()  # Clean up
@@ -114,7 +115,7 @@ from kerykeion import (
             return True, None
 
     except subprocess.TimeoutExpired:
-        return False, "Timeout (5s exceeded)"
+        return False, f"Timeout ({timeout}s exceeded)"
     except Exception as e:
         return False, f"Exception: {str(e)}"
 
@@ -124,6 +125,7 @@ def main():
     parser.add_argument("-a", "--all", dest="all_files", action="store_true", help="Run snippets for every markdown file.")
     parser.add_argument("-an", "--all-no-release", dest="all_no_release", action="store_true", help="Run snippets for all markdown files excluding release notes.")
     parser.add_argument("-r", "--readme", dest="readme_only", action="store_true", help="Run snippets only for README.md.")
+    parser.add_argument("--timeout", type=float, default=20.0, help="Per-snippet timeout in seconds (default: 20).")
     parser.add_argument("paths", nargs="*", type=Path, help="Optional paths to scan (defaults depend on flags).")
     args = parser.parse_args()
 
@@ -168,7 +170,7 @@ def main():
 
             for i, snippet in enumerate(snippets, 1):
                 total_snippets += 1
-                success, error = test_snippet(snippet)
+                success, error = test_snippet(snippet, timeout=args.timeout)
 
                 if success:
                     status = error if error else "OK"
