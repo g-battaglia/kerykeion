@@ -52,6 +52,9 @@ Maintaining this project requires substantial time and effort. The Astrologer AP
   - [External Birth Chart](#external-birth-chart)
   - [Synastry Chart](#synastry-chart)
   - [Transit Chart](#transit-chart)
+  - [Solar Return Chart (Dual Wheel)](#solar-return-chart-dual-wheel)
+  - [Solar Return Chart (Single Wheel)](#solar-return-chart-single-wheel)
+  - [Lunar Return Chart](#lunar-return-chart)
   - [Composite Chart](#composite-chart)
 - [Wheel Only Charts](#wheel-only-charts)
   - [Birth Chart](#birth-chart-1)
@@ -469,6 +472,7 @@ birth_chart_svg = ChartDrawer(
     chart_language="IT"  # Change to Italian
 )
 birth_chart_svg.save_svg()
+```
 
 You can also provide custom labels (or introduce a brand-new language) by passing
 a dictionary to `language_pack`. Only the keys you supply are merged on top of the
