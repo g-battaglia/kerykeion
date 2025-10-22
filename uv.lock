@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.9"
 resolution-markers = [
     "python_full_version >= '3.10'",
@@ -274,7 +274,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "5.0.0a12"
+version = "5.0.2"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },
