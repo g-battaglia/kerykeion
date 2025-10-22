@@ -53,11 +53,6 @@ def test_snippet(code: str, *, timeout: float) -> Tuple[bool, Optional[str]]:
     # Normalize indentation for nested code blocks
     code = textwrap.dedent(code)
 
-    # Skip snippets with common issues
-    skip_patterns = ['...', 'input(', 'plt.show()', 'time.sleep(', 'open(']
-    if any(pattern in code for pattern in skip_patterns):
-        return True, "Skipped"
-
     # Add basic imports
     project_root = str(Path(__file__).parent.parent)
     full_code = f"""

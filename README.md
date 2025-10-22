@@ -776,10 +776,9 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 natal_data = ChartDataFactory.create_natal_chart_data(subject)
 
 report = ReportGenerator(natal_data)
-print(report.get_subject_data_report())
-print(report.get_celestial_points_report())
-print(report.get_elements_report())
-print(report.get_aspects_report(max_aspects=5))
+sections = report.generate_report(max_aspects=5).split("\n\n")
+for section in sections[:3]:
+    print(section)
 ```
 
 Refer to the refreshed [Report Documentation](https://www.kerykeion.net/report/) for end-to-end examples covering every supported chart model.
@@ -986,9 +985,11 @@ dark_theme_natal_chart.save_svg()
 Create an `AstrologicalSubjectModel` from a UTC ISO 8601 string:
 
 ```python
-subject = AstrologicalSubjectFactory.get_from_iso_utc_time(
-    "Johnny Depp",
-    "1963-06-09T05:00:00Z",
+from kerykeion import AstrologicalSubjectFactory
+
+subject = AstrologicalSubjectFactory.from_iso_utc_time(
+    name="Johnny Depp",
+    iso_utc_time="1963-06-09T05:00:00Z",
     city="Owensboro",
     nation="US",
     lng=-87.1112,
@@ -996,6 +997,8 @@ subject = AstrologicalSubjectFactory.get_from_iso_utc_time(
     tz_str="America/Chicago",
     online=False,
 )
+
+print(subject.iso_formatted_local_datetime)
 ```
 
 If you prefer automatic geocoding, set `online=True` and provide your GeoNames credentials via `geonames_username`.
@@ -1239,21 +1242,27 @@ All lunar node fields have been renamed for clarity:
 **Migration example:**
 
 ```python
-from kerykeion import AstrologicalSubjectFactory
+from kerykeion import AstrologicalSubject, AstrologicalSubjectFactory
 
-subject = AstrologicalSubjectFactory.from_birth_data(
+# v4 alias (still available, emits DeprecationWarning)
+legacy_subject = AstrologicalSubject(
     "John", 1990, 1, 1, 12, 0,
     lng=-0.1276,
     lat=51.5074,
     tz_str="Europe/London",
     online=False,
 )
-
-# v4 alias (still available, emits DeprecationWarning)
-print(subject.mean_node)
+print(legacy_subject.mean_node)
 
 # v5 canonical name
-print(subject.mean_north_lunar_node)
+modern_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+print(modern_subject.mean_north_lunar_node)
 ```
 
 #### 5. Axis Orb Filtering
@@ -1415,12 +1424,29 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 3. **Update chart generation**
 
 ```python
+from kerykeion import AstrologicalSubject, AstrologicalSubjectFactory, ChartDataFactory, KerykeionChartSVG
+from kerykeion.charts.chart_drawer import ChartDrawer
+
 # Old (v4)
-chart = KerykeionChartSVG(subject)
+legacy_subject = AstrologicalSubject(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+chart = KerykeionChartSVG(legacy_subject)
 chart.makeSVG()
 
 # New (v5)
-chart_data = ChartDataFactory.create_natal_chart_data(subject)
+modern_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+chart_data = ChartDataFactory.create_natal_chart_data(modern_subject)
 drawer = ChartDrawer(chart_data=chart_data)
 drawer.save_svg()
 ```
@@ -1428,23 +1454,57 @@ drawer.save_svg()
 4. **Update field access** (lunar nodes)
 
 ```python
+from kerykeion import AstrologicalSubject, AstrologicalSubjectFactory
+
 # Old (v4)
-print(subject.mean_node.position)
+legacy_subject = AstrologicalSubject(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+legacy_mean_node = legacy_subject.mean_node
+print(getattr(legacy_mean_node, "position", "Legacy mean node not active"))
 
 # New (v5)
-print(subject.mean_north_lunar_node.position)
+modern_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+modern_mean_node = modern_subject.mean_north_lunar_node
+print(getattr(modern_mean_node, "position", "Modern mean node not active"))
 ```
 
 5. **Update aspects**
 
 ```python
+from kerykeion import AstrologicalSubject, AstrologicalSubjectFactory, NatalAspects, AspectsFactory
+
 # Old (v4)
-from kerykeion import NatalAspects
-aspects = NatalAspects(subject)
+legacy_subject = AstrologicalSubject(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+legacy_aspects = NatalAspects(legacy_subject)
+print(f"Legacy aspects count: {len(legacy_aspects.relevant_aspects)}")
 
 # New (v5)
-from kerykeion import AspectsFactory
-aspects = AspectsFactory.single_chart_aspects(subject)
+modern_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+modern_aspects = AspectsFactory.single_chart_aspects(modern_subject)
+print(f"Modern aspects count: {len(modern_aspects.relevant_aspects)}")
 ```
 
 #### Automated Migration Script
