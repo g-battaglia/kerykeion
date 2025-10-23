@@ -299,19 +299,33 @@ person2 = AstrologicalSubjectFactory.from_birth_data(
 
 composite_factory = CompositeSubjectFactory(person1, person2)
 composite_subject = composite_factory.get_midpoint_composite_subject_model()
-composite_data = ChartDataFactory.create_composite_chart_data(composite_subject)
+composite_chart = ChartDataFactory.create_composite_chart_data(composite_subject)
 
-print(f"Composite Chart: {composite_data.first_subject.name}")
-print(f"Internal Aspects: {len(composite_data.aspects.relevant_aspects)}")
-print(f"Average Location: {composite_data.location_name}")
-print(f"Coordinates: {composite_data.latitude:.2f}, {composite_data.longitude:.2f}")
+composite_subject_model = composite_chart.subject
+first_subject = composite_subject_model.first_subject
+second_subject = composite_subject_model.second_subject
 
-elements = composite_data.element_distribution
+print(f"Composite Chart Name: {composite_subject_model.name}")
+print(f"Members: {first_subject.name} & {second_subject.name}")
+print(f"Chart Type: {composite_chart.chart_type}")
+print(f"Relevant Aspects: {len(composite_chart.aspects.relevant_aspects)}")
+
+average_latitude = (first_subject.lat + second_subject.lat) / 2
+average_longitude = (first_subject.lng + second_subject.lng) / 2
+print(f"Approximate midpoint coordinates: {average_latitude:.2f}, {average_longitude:.2f}")
+
+elements = composite_chart.element_distribution
 print("Relationship Elements:")
 print(f"  Fire: {elements.fire_percentage}% (passion, initiative)")
 print(f"  Earth: {elements.earth_percentage}% (stability, practical)")
 print(f"  Air: {elements.air_percentage}% (communication, mental)")
 print(f"  Water: {elements.water_percentage}% (emotional, intuitive)")
+
+qualities = composite_chart.quality_distribution
+print("Modalities:")
+print(f"  Cardinal: {qualities.cardinal_percentage}%")
+print(f"  Fixed: {qualities.fixed_percentage}%")
+print(f"  Mutable: {qualities.mutable_percentage}%")
 ```
 
 ## Advanced Usage
@@ -854,13 +868,23 @@ print(f"Calculated Aspects: {len(chart_data.aspects.relevant_aspects)}")
 Reduce aspect calculations for better performance:
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Aspect Optimization", 1993, 5, 8, 7, 30,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+
 # Major aspects only (fastest)
 major_aspects = [
     {"name": "conjunction", "orb": 8},
     {"name": "opposition", "orb": 8},
     {"name": "trine", "orb": 6},
     {"name": "square", "orb": 6},
-    {"name": "sextile", "orb": 4}
+    {"name": "sextile", "orb": 4},
 ]
 
 # Traditional aspects (moderate)
@@ -871,13 +895,16 @@ traditional_aspects = [
     {"name": "square", "orb": 8},
     {"name": "sextile", "orb": 6},
     {"name": "semisextile", "orb": 3},
-    {"name": "quincunx", "orb": 3}
+    {"name": "quincunx", "orb": 3},
 ]
 
 chart_data = ChartDataFactory.create_natal_chart_data(
     subject,
-    active_aspects=major_aspects  # Use for speed
+    active_aspects=major_aspects,  # Use for speed
 )
+
+print(f"Configured {len(chart_data.active_aspects)} active aspect types")
+print(f"Resulting aspects: {len(chart_data.aspects.relevant_aspects)}")
 ```
 
 ### Selective Feature Loading
@@ -919,13 +946,22 @@ print(f"Quick analysis: {len(quick_synastry.aspects.relevant_aspects)} aspects")
 The factory includes comprehensive validation and error handling:
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.schemas import KerykeionException
+
+natal_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Validation Example", 1990, 4, 3, 12, 0,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
 
 try:
     # This will raise an error - missing second subject for synastry
     invalid_data = ChartDataFactory.create_chart_data(
-        subject,
-        chart_type="Synastry"  # Requires second_subject
+        chart_type="Synastry",  # Requires second_subject
+        first_subject=natal_subject,
     )
 except KerykeionException as e:
     print(f"Chart creation error: {e}")
@@ -933,11 +969,12 @@ except KerykeionException as e:
 try:
     # This will raise an error - wrong subject type for composite
     invalid_composite = ChartDataFactory.create_chart_data(
-        subject,  # Should be CompositeSubjectModel
-        chart_type="Composite"
+        chart_type="Composite",
+        first_subject=natal_subject,  # Should be CompositeSubjectModel
     )
 except KerykeionException as e:
     print(f"Type validation error: {e}")
+
 
 # Proper error handling in production code
 def safe_chart_creation(subject_data, chart_type="Natal"):
