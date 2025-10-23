@@ -230,25 +230,31 @@ print(f"Combined Elements - Fire: {elements.fire_percentage}%, Earth: {elements.
 Analyze current planetary transits affecting a natal chart:
 
 ```python
-# Create natal subject
-natal_person = AstrologicalSubjectFactory().from_birth_data(
-    name="Natal Person", year=1990, month=6, day=15,
-    hour=14, minute=30, city="Rome", nation="IT"
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+
+natal_person = AstrologicalSubjectFactory.from_birth_data(
+    name="Transit Natal", year=1990, month=6, day=15,
+    hour=14, minute=30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 
-# Create current transit positions
-current_transits = AstrologicalSubjectFactory().from_current_time(
+current_transits = AstrologicalSubjectFactory.from_current_time(
     name="Current Transits",
-    city="Rome", nation="IT"
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 
-# Generate transit analysis data
-transit_data = ChartDataFactory().create_chart_data(
-    "Transit", natal_person, current_transits,
-    include_house_comparison=True
+transit_data = ChartDataFactory.create_transit_chart_data(
+    natal_person,
+    current_transits,
+    include_house_comparison=True,
 )
 
-# Access transit information
 print(f"Transit Time: {transit_data.second_subject.iso_formatted_local_datetime}")
 print(f"Active Transits: {len(transit_data.aspects.relevant_aspects)}")
 
@@ -699,6 +705,17 @@ print(signature(ChartDataFactory.create_composite_chart_data))
 The element distribution provides insights into temperament and life approach:
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Element Analysis", 1994, 5, 2, 11, 20,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
+
 elements = chart_data.element_distribution
 
 # Temperament analysis
@@ -728,6 +745,17 @@ if lacking_elements:
 The quality distribution reveals life approach and change patterns:
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Quality Analysis", 1992, 3, 18, 6, 55,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
+
 qualities = chart_data.quality_distribution
 
 # Life approach analysis
@@ -755,6 +783,17 @@ if total == 100:  # Sanity check
 Identify significant aspect patterns in the data:
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Aspect Distribution", 1990, 8, 9, 4, 35,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
+
 aspects = chart_data.aspects.relevant_aspects
 
 # Count aspect types
@@ -785,27 +824,29 @@ print(f"Nearly exact aspects (< 0.5° orb): {len(exact_aspects)}")
 For high-performance applications, limit active points to only what's needed:
 
 ```python
-# Basic personality analysis (fast)
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Point Sets", 1993, 5, 8, 7, 30,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+
 basic_points = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Ascendant"]
-
-# Traditional astrology (moderate)
-traditional_points = [
-    "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
-    "Ascendant", "Medium_Coeli"
+traditional_points = basic_points + ["Jupiter", "Saturn", "Medium_Coeli"]
+modern_points = traditional_points + [
+    "Uranus", "Neptune", "Pluto", "Chiron", "Mean_North_Lunar_Node", "Vertex"
 ]
 
-# Modern comprehensive (slower but complete)
-modern_points = [
-    "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
-    "Uranus", "Neptune", "Pluto", "Chiron", "Mean_Node",
-    "Ascendant", "Medium_Coeli", "Vertex"
-]
-
-# Use appropriate point set for your use case
 chart_data = ChartDataFactory.create_natal_chart_data(
     subject,
-    active_points=basic_points  # Fastest option
+    active_points=basic_points,
 )
+
+print(f"Active Points: {len(chart_data.active_points)}")
+print(f"Calculated Aspects: {len(chart_data.aspects.relevant_aspects)}")
 ```
 
 ### Aspect Configuration Optimization
@@ -844,15 +885,30 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 Disable expensive calculations when not needed:
 
 ```python
-# Fast synastry (skip house comparison and scoring)
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+
+person1 = AstrologicalSubjectFactory.from_birth_data(
+    "Quick A", 1989, 5, 9, 9, 45,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+person2 = AstrologicalSubjectFactory.from_birth_data(
+    "Quick B", 1991, 12, 19, 20, 15,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+
 quick_synastry = ChartDataFactory.create_synastry_chart_data(
     person1, person2,
     include_house_comparison=False,
     include_relationship_score=False,
-    active_points=["Sun", "Moon", "Venus", "Mars"]  # Love planets only
+    active_points=["Sun", "Moon", "Venus", "Mars"],
 )
 
-# This is much faster than full synastry analysis
 print(f"Quick analysis: {len(quick_synastry.aspects.relevant_aspects)} aspects")
 ```
 

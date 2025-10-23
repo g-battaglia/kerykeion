@@ -103,6 +103,10 @@ chart_drawer.save_svg()  # Saves to default location
 Composite charts represent the mathematical midpoint between two people's planetary positions, creating a theoretical "relationship chart" that describes the combined energy and purpose of a partnership.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.composite_subject_factory import CompositeSubjectFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
 # Step 1: Create subjects
 subject1 = AstrologicalSubjectFactory.from_birth_data(
     name="Person1", year=1990, month=7, day=15,
@@ -122,10 +126,8 @@ subject2 = AstrologicalSubjectFactory.from_birth_data(
 )
 
 # Step 2: Pre-compute composite chart data (calculates midpoints)
-chart_data = ChartDataFactory.create_composite_chart_data(
-    first_subject=subject1,
-    second_subject=subject2
-)
+composite_subject = CompositeSubjectFactory(subject1, subject2).get_midpoint_composite_subject_model()
+chart_data = ChartDataFactory.create_composite_chart_data(composite_subject)
 
 # Step 3: Create visualization
 chart_drawer = ChartDrawer(chart_data=chart_data)
@@ -139,18 +141,20 @@ svg_content = chart_drawer.generate_svg_string()
 Transit charts show how current planetary movements affect an individual's natal chart. This is essential for timing analysis and understanding current astrological influences.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
 # Step 1: Create subjects
 natal_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John", 1990, 7, 15, 10, 30,
+    "Transit Natal", 1990, 7, 15, 10, 30,
     lng=12.4964,
     lat=41.9028,
     tz_str="Europe/Rome",
     online=False,
 )
 
-# Create a transit subject for current planetary positions
-transit_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Transit", 2024, 1, 15, 12, 0,
+transit_subject = AstrologicalSubjectFactory.from_current_time(
+    "Transit Positions",
     lng=12.4964,
     lat=41.9028,
     tz_str="Europe/Rome",
@@ -159,8 +163,9 @@ transit_subject = AstrologicalSubjectFactory.from_birth_data(
 
 # Step 2: Pre-compute transit chart data
 chart_data = ChartDataFactory.create_transit_chart_data(
-    first_subject=natal_subject,     # Natal chart (inner wheel)
-    second_subject=transit_subject   # Current planetary positions (outer wheel)
+    natal_subject,
+    transit_subject,
+    include_house_comparison=True,
 )
 
 # Step 3: Create visualization
@@ -232,6 +237,17 @@ wheel_string = chart_drawer.generate_wheel_only_svg_string()  # Returns SVG stri
 ### Aspect Grid Only
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Aspect Grid", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
 chart_drawer = ChartDrawer(chart_data=chart_data)
 
 # makeAspectGridOnlySVG() SAVES aspect grid file to disk
@@ -291,45 +307,22 @@ chart_drawer = ChartDrawer(chart_data=chart_data, theme="dark-high-contrast")
 Kerykeion provides comprehensive internationalization support, making charts accessible to astrologers and users worldwide. Each language includes localized planet names, zodiac signs, house labels, and aspect terminology.
 
 ```python
-# Italian - all text labels, planet names, and signs in Italian
-# Includes traditional Italian astrological terminology
-chart_drawer = ChartDrawer(chart_data=chart_data, chart_language="IT")
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
 
-# English (default) - standard international astrological terms
-# Uses conventional Western astrological terminology
-chart_drawer = ChartDrawer(chart_data=chart_data, chart_language="EN")
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Language Demo", 1990, 7, 15, 10, 30,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
 
-# French - labels and terms translated to French
-# Follows French astrological tradition and terminology
-chart_drawer = ChartDrawer(chart_data=chart_data, chart_language="FR")
-
-# Spanish - full Spanish localization of chart text
-# Suitable for both European and Latin American contexts
-chart_drawer = ChartDrawer(chart_data=chart_data, chart_language="ES")
-
-# Portuguese - Brazilian/Portuguese language support
-# Appropriate for both European and Brazilian Portuguese
-chart_drawer = ChartDrawer(chart_data=chart_data, chart_language="PT")
-
-# Chinese - planet names and signs in Chinese characters
-# Traditional Chinese astrological terminology
-chart_drawer = ChartDrawer(chart_data=chart_data, chart_language="CN")
-
-# Russian - Cyrillic text for all chart labels
-# Complete Russian localization for Cyrillic readers
-chart_drawer = ChartDrawer(chart_data=chart_data, chart_language="RU")
-
-# Turkish - Turkish language localization
-# Modern Turkish astrological terminology
-chart_drawer = ChartDrawer(chart_data=chart_data, chart_language="TR")
-
-# German - German astrological terminology
-# Traditional German astrological terms and conventions
-chart_drawer = ChartDrawer(chart_data=chart_data, chart_language="DE")
-
-# Hindi - Devanagari script for Indian astrology contexts
-# Supports Vedic astrology terminology in Hindi
-chart_drawer = ChartDrawer(chart_data=chart_data, chart_language="HI")
+for language in ["IT", "EN", "FR", "ES", "PT", "CN", "RU", "TR", "DE", "HI"]:
+    chart_drawer = ChartDrawer(chart_data=chart_data, chart_language=language)
+    svg_preview = chart_drawer.generate_svg_string()[:120]
+    print(f"{language}: {svg_preview}...")
 ```
 
 ## Zodiac Systems
@@ -343,28 +336,20 @@ The tropical zodiac is based on the seasons and is standard in Western astrology
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
-from kerykeion.settings import KerykeionSettingsModel
-from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
-
-# Tropical zodiac (default) - seasonal based, used in Western astrology
-# 0° Aries = vernal equinox, signs aligned with seasons
-settings = KerykeionSettingsModel(
-    language_settings=LANGUAGE_SETTINGS,
-    zodiac_type="Tropical"  # Default setting, can be omitted
-)
 
 subject = AstrologicalSubjectFactory.from_birth_data(
-    "John", 1990, 7, 15, 10, 30,
+    "Theme Demo", 1990, 7, 15, 10, 30,
     lng=12.4964,
     lat=41.9028,
     tz_str="Europe/Rome",
-    ks=settings,
     online=False,
 )
-
-# Chart data will use tropical positions
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
-chart_drawer = ChartDrawer(chart_data=chart_data)
+
+for theme in ["classic", "dark", "light", "strawberry", "dark-high-contrast"]:
+    chart = ChartDrawer(chart_data=chart_data, theme=theme)
+    svg_preview = chart.generate_svg_string()[:100]
+    print(f"Theme {theme}: {svg_preview}...")
 ```
 
 ### Sidereal Zodiac

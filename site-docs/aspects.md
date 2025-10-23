@@ -598,13 +598,33 @@ print(f"Traditional synastry axis aspects: {len(traditional_synastry.relevant_as
 ### Aspect Quality Assessment
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Quality Subject", 1991, 4, 6, 13, 5,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+partner = AstrologicalSubjectFactory.from_birth_data(
+    "Quality Partner", 1989, 10, 28, 22, 15,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+
+natal_aspects = AspectsFactory.single_chart_aspects(subject)
+synastry_aspects = AspectsFactory.dual_chart_aspects(subject, partner)
+
 def aspect_quality_analysis(aspects_result):
     """Analyze the overall quality and distribution of aspects"""
-    
+
     aspect_qualities = {
-        "conjunction": "neutral",  # Depends on planets involved
+        "conjunction": "neutral",
         "trine": "harmonious",
-        "sextile": "harmonious", 
+        "sextile": "harmonious",
         "square": "challenging",
         "opposition": "challenging",
         "quintile": "creative",
@@ -612,32 +632,20 @@ def aspect_quality_analysis(aspects_result):
         "semi-square": "mild_challenging",
         "sesquiquadrate": "mild_challenging",
         "biquintile": "creative",
-        "quincunx": "adjustment"
+        "quincunx": "adjustment",
     }
-    
-    quality_counts = {
-        "harmonious": 0,
-        "challenging": 0,
-        "neutral": 0,
-        "creative": 0,
-        "mild_harmonious": 0,
-        "mild_challenging": 0,
-        "adjustment": 0
-    }
-    
-    orb_statistics = {
-        "very_tight": 0,  # ≤ 1°
-        "tight": 0,       # 1-2°
-        "moderate": 0,    # 2-4°
-        "wide": 0         # > 4°
-    }
-    
+
+    quality_counts = {key: 0 for key in [
+        "harmonious", "challenging", "neutral", "creative",
+        "mild_harmonious", "mild_challenging", "adjustment"
+    ]}
+
+    orb_statistics = {"very_tight": 0, "tight": 0, "moderate": 0, "wide": 0}
+
     for aspect in aspects_result.relevant_aspects:
-        # Count by quality
         quality = aspect_qualities.get(aspect.aspect, "neutral")
         quality_counts[quality] += 1
-        
-        # Count by orb tightness
+
         orb = abs(aspect.orbit)
         if orb <= 1.0:
             orb_statistics["very_tight"] += 1
@@ -647,45 +655,36 @@ def aspect_quality_analysis(aspects_result):
             orb_statistics["moderate"] += 1
         else:
             orb_statistics["wide"] += 1
-    
+
     total_aspects = len(aspects_result.relevant_aspects)
-    
-    print(f"=== ASPECT QUALITY ANALYSIS ===")
+    print("=== ASPECT QUALITY ANALYSIS ===")
     print(f"Total aspects analyzed: {total_aspects}")
-    
-    print(f"\nQuality Distribution:")
+
+    print("\nQuality Distribution:")
     for quality, count in quality_counts.items():
-        if count > 0:
+        if count:
             percentage = (count / total_aspects) * 100
             print(f"  {quality.replace('_', ' ').title()}: {count} ({percentage:.1f}%)")
-    
-    print(f"\nOrb Distribution:")
+
+    print("\nOrb Distribution:")
     for orb_range, count in orb_statistics.items():
-        if count > 0:
+        if count:
             percentage = (count / total_aspects) * 100
             print(f"  {orb_range.replace('_', ' ').title()}: {count} ({percentage:.1f}%)")
-    
-    # Calculate harmony index
+
     harmonious_total = quality_counts["harmonious"] + quality_counts["mild_harmonious"]
     challenging_total = quality_counts["challenging"] + quality_counts["mild_challenging"]
-    
-    if challenging_total > 0:
+
+    if challenging_total:
         harmony_index = harmonious_total / challenging_total
         print(f"\nHarmony Index: {harmony_index:.2f}")
-        if harmony_index > 1.5:
-            print("  Assessment: Predominantly harmonious")
-        elif harmony_index > 0.7:
-            print("  Assessment: Balanced")
-        else:
-            print("  Assessment: Predominantly challenging")
     else:
-        print(f"\nHarmony Index: Perfect (no challenging aspects)")
-    
+        print("\nHarmony Index: Perfect (no challenging aspects)")
+
     return quality_counts, orb_statistics
 
-# Example quality analysis
-chart_quality = aspect_quality_analysis(chart_aspects)
-synastry_quality = aspect_quality_analysis(relationship_analysis)
+chart_quality = aspect_quality_analysis(natal_aspects)
+synastry_quality = aspect_quality_analysis(synastry_aspects)
 ```
 
 ### Aspect Pattern Recognition
@@ -772,30 +771,36 @@ partner_subject = AstrologicalSubjectFactory.from_birth_data(
 chart_aspects = AspectsFactory.single_chart_aspects(export_subject)
 relationship_analysis = AspectsFactory.dual_chart_aspects(export_subject, partner_subject)
 
+
+def serialize(aspect):
+    return aspect.model_dump() if hasattr(aspect, "model_dump") else aspect
+
+
 def export_aspects_analysis(aspects_result, filename_prefix="aspects"):
     """Export comprehensive aspects analysis to JSON"""
-    
+
     export_data = {
         "analysis_info": {
             "generated_date": datetime.now().isoformat(),
-            "chart_owner": aspects_result.subject.name if hasattr(aspects_result, 'subject') else "Synastry",
+            "chart_owner": aspects_result.subject.name if hasattr(aspects_result, "subject") else "Synastry",
             "total_aspects": len(aspects_result.all_aspects),
             "relevant_aspects": len(aspects_result.relevant_aspects),
-            "active_points": [str(point) for point in aspects_result.active_points],
-            "active_aspects": [aspect.model_dump() for aspect in aspects_result.active_aspects],
+            "active_points": list(aspects_result.active_points),
+            "active_aspects": [serialize(aspect) for aspect in aspects_result.active_aspects],
         },
         "aspects_data": {
-            "all_aspects": [aspect.model_dump() for aspect in aspects_result.all_aspects],
-            "relevant_aspects": [aspect.model_dump() for aspect in aspects_result.relevant_aspects],
+            "all_aspects": [serialize(aspect) for aspect in aspects_result.all_aspects],
+            "relevant_aspects": [serialize(aspect) for aspect in aspects_result.relevant_aspects],
         },
     }
-    
+
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"{filename_prefix}_{timestamp}.json"
-    with open(filename, 'w', encoding='utf-8') as f:
-        json.dump(export_data, f, indent=2, ensure_ascii=False)
+    with open(filename, "w", encoding="utf-8") as handle:
+        json.dump(export_data, handle, indent=2, ensure_ascii=False)
     print(f"Aspects analysis exported to: {filename}")
     return filename
+
 
 natal_export = export_aspects_analysis(chart_aspects, "natal_aspects")
 synastry_export = export_aspects_analysis(relationship_analysis, "synastry_aspects")
@@ -805,63 +810,90 @@ synastry_export = export_aspects_analysis(relationship_analysis, "synastry_aspec
 
 ```python
 import statistics
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
+
+person = AstrologicalSubjectFactory.from_birth_data(
+    "Statistical Subject", 1992, 6, 30, 6, 45,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+partner = AstrologicalSubjectFactory.from_birth_data(
+    "Statistical Partner", 1993, 9, 12, 22, 10,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+chart_aspects = AspectsFactory.single_chart_aspects(person)
+relationship_analysis = AspectsFactory.dual_chart_aspects(person, partner)
+
 
 def statistical_aspects_analysis(aspects_list):
     """Perform statistical analysis on aspects data"""
-    
+
     if not aspects_list:
         print("No aspects to analyze")
-        return
-    
+        return {}
+
     # Orb statistics
     orbs = [abs(aspect.orbit) for aspect in aspects_list]
-    
-    print(f"=== STATISTICAL ANALYSIS ===")
+
+    print("=== STATISTICAL ANALYSIS ===")
     print(f"Sample size: {len(aspects_list)} aspects")
-    
-    print(f"\nOrb Statistics:")
+
+    std_dev = statistics.stdev(orbs) if len(orbs) > 1 else 0.0
+
+    print("\nOrb Statistics:")
     print(f"  Mean orb: {statistics.mean(orbs):.2f}°")
     print(f"  Median orb: {statistics.median(orbs):.2f}°")
-    print(f"  Standard deviation: {statistics.stdev(orbs):.2f}°")
+    print(f"  Standard deviation: {std_dev:.2f}°")
     print(f"  Min orb: {min(orbs):.2f}°")
     print(f"  Max orb: {max(orbs):.2f}°")
-    
+
     # Aspect type frequency
     aspect_types = {}
     for aspect in aspects_list:
         aspect_type = aspect.aspect
         aspect_types[aspect_type] = aspect_types.get(aspect_type, 0) + 1
-    
-    print(f"\nAspect Type Frequency:")
+
+    print("\nAspect Type Frequency:")
     total = len(aspects_list)
     for aspect_type, count in sorted(aspect_types.items(), key=lambda x: x[1], reverse=True):
         percentage = (count / total) * 100
         print(f"  {aspect_type}: {count} ({percentage:.1f}%)")
-    
+
     return {
         "orb_stats": {
+            "count": len(orbs),
             "mean": statistics.mean(orbs),
             "median": statistics.median(orbs),
-            "stdev": statistics.stdev(orbs) if len(orbs) > 1 else 0,
+            "stdev": std_dev,
             "min": min(orbs),
-            "max": max(orbs)
+            "max": max(orbs),
         },
-        "type_frequency": aspect_types
+        "type_frequency": aspect_types,
     }
+
 
 # Example statistical analysis
 natal_stats = statistical_aspects_analysis(chart_aspects.relevant_aspects)
 synastry_stats = statistical_aspects_analysis(relationship_analysis.relevant_aspects)
+
+print("\nSummary:")
+print(f"  Natal aspects analyzed: {natal_stats['orb_stats']['count'] if natal_stats else 0}")
+print(f"  Synastry aspects analyzed: {synastry_stats['orb_stats']['count'] if synastry_stats else 0}")
 ```
 
 ## Practical Applications
 
 ### Professional Consultation
 
+
 ```python
 from datetime import datetime
 from kerykeion import AstrologicalSubjectFactory, AspectsFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
 
 person = AstrologicalSubjectFactory.from_birth_data(
     "Consultation Client", 1988, 7, 2, 16, 25,
@@ -870,131 +902,141 @@ person = AstrologicalSubjectFactory.from_birth_data(
     tz_str="America/Los_Angeles",
     online=False,
 )
-
-chart_aspects = AspectsFactory.single_chart_aspects(person)
-relationship_analysis = AspectsFactory.dual_chart_aspects(
-    person,
-    AstrologicalSubjectFactory.from_birth_data(
-        "Consultation Partner", 1990, 2, 18, 9, 15,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        online=False,
-    ),
+partner = AstrologicalSubjectFactory.from_birth_data(
+    "Consultation Partner", 1990, 2, 18, 9, 15,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 
+def aspect_quality_analysis(aspects_result):
+    mapping = {
+        "conjunction": "neutral",
+        "trine": "harmonious",
+        "sextile": "harmonious",
+        "square": "challenging",
+        "opposition": "challenging",
+    }
+    counts = {key: 0 for key in {"harmonious", "challenging", "neutral"}}
+    for aspect in aspects_result.relevant_aspects:
+        counts[mapping.get(aspect.aspect, "neutral")] += 1
+    return counts
+
+def identify_aspect_patterns(aspects_result):
+    return {aspect.aspect for aspect in aspects_result.relevant_aspects}
+
 def generate_consultation_report(person, report_type="comprehensive"):
-    """Generate professional astrological consultation report"""
-    
-    print(f"=== ASTROLOGICAL CONSULTATION REPORT ===")
+    print("=== ASTROLOGICAL CONSULTATION REPORT ===")
     print(f"Client: {person.name}")
-    print(f"Birth Data: {person.year}-{person.month:02d}-{person.day:02d} at {person.hour:02d}:{person.minute:02d}")
-    print(f"Location: {person.city}, {person.nation}")
-    print(f"Report Type: {report_type.title()}")
-    print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
-    print("=" * 50)
-    
-    # Single chart analysis
+    print(f"Birth Data: {person.iso_formatted_local_datetime}")
+
     chart_aspects = AspectsFactory.single_chart_aspects(person)
-    
-    print(f"\n1. NATAL CHART ASPECTS OVERVIEW")
-    print(f"   Total aspects calculated: {len(chart_aspects.all_aspects)}")
-    print(f"   Significant aspects: {len(chart_aspects.relevant_aspects)}")
-    
-    # Quality analysis
-    quality_analysis = aspect_quality_analysis(chart_aspects)
-    
-    # Pattern recognition
-    pattern_analysis = identify_aspect_patterns(chart_aspects)
-    
-    # Key aspects interpretation
-    print(f"\n2. KEY ASPECTS FOR INTERPRETATION")
-    strongest_aspects = sorted(chart_aspects.relevant_aspects, key=lambda x: abs(x.orbit))[:10]
-    
-    for i, aspect in enumerate(strongest_aspects, 1):
-        print(f"   {i:2d}. {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb: {aspect.orbit:+.2f}°)")
-    
+    quality = aspect_quality_analysis(chart_aspects)
+    patterns = identify_aspect_patterns(chart_aspects)
+
+    print("Aspect quality counts:", quality)
+    print("Patterns detected:", patterns)
+
     if report_type == "comprehensive":
-        # Additional detailed analysis for comprehensive reports
-        print(f"\n3. DETAILED PLANETARY ANALYSIS")
-        
-        # Analyze each personal planet's aspects
-        personal_planets = ["Sun", "Moon", "Mercury", "Venus", "Mars"]
-        for planet in personal_planets:
-            planet_aspects = [a for a in chart_aspects.relevant_aspects 
-                            if planet in [a.p1_name, a.p2_name]]
-            if planet_aspects:
-                print(f"\n   {planet} Aspects ({len(planet_aspects)} total):")
-                for aspect in planet_aspects[:3]:  # Show top 3 for each planet
-                    other_planet = aspect.p2_name if aspect.p1_name == planet else aspect.p1_name
-                    print(f"     • {aspect.aspect} {other_planet} (orb: {aspect.orbit:+.2f}°)")
-    
+        strongest = sorted(chart_aspects.relevant_aspects, key=lambda aspect: abs(aspect.orbit))[:5]
+        for aspect in strongest:
+            print(f"  {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb {aspect.orbit:+.2f}°)")
+
     return chart_aspects
 
-# Example consultation report
+chart_aspects = AspectsFactory.single_chart_aspects(person)
+relationship_analysis = AspectsFactory.dual_chart_aspects(person, partner)
 consultation = generate_consultation_report(person, "comprehensive")
 ```
 
+
 ### Research Applications
 
+
 ```python
+import statistics
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
+
+person1 = AstrologicalSubjectFactory.from_birth_data(
+    "Research A", 1985, 3, 12, 10, 15,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+person2 = AstrologicalSubjectFactory.from_birth_data(
+    "Research B", 1988, 8, 24, 18, 5,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+person3 = AstrologicalSubjectFactory.from_birth_data(
+    "Research C", 1991, 12, 3, 7, 40,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+
+sample_subjects = [person1, person2, person3]
+
+
+def statistical_aspects_analysis(aspects_list):
+    orbs = [abs(aspect.orbit) for aspect in aspects_list]
+    return {
+        "count": len(orbs),
+        "mean_orb": statistics.mean(orbs) if orbs else 0.0,
+    }
+
+
 def comparative_study(subjects_list, study_focus="general"):
     """Conduct comparative astrological research across multiple subjects"""
-    
-    print(f"=== COMPARATIVE ASTROLOGICAL STUDY ===")
+
+    print("=== COMPARATIVE ASTROLOGICAL STUDY ===")
     print(f"Study Focus: {study_focus.title()}")
     print(f"Sample Size: {len(subjects_list)} subjects")
     print("=" * 50)
-    
+
     all_results = []
-    
+
     for i, subject in enumerate(subjects_list, 1):
-        print(f"\nProcessing subject {i}/{len(subjects_list)}: {subject.name}")
-        
-        # Calculate aspects for each subject
+        print()
+        print(f"Processing subject {i}/{len(subjects_list)}: {subject.name}")
         chart_aspects = AspectsFactory.single_chart_aspects(subject)
         stats = statistical_aspects_analysis(chart_aspects.relevant_aspects)
-        
         result = {
             "name": subject.name,
             "birth_year": subject.year,
             "sun_sign": subject.sun.sign,
             "total_aspects": len(chart_aspects.all_aspects),
             "relevant_aspects": len(chart_aspects.relevant_aspects),
-            "stats": stats
+            "stats": stats,
         }
         all_results.append(result)
-    
-    # Aggregate analysis
-    print(f"\n=== AGGREGATE ANALYSIS ===")
-    
-    total_aspects = [r["relevant_aspects"] for r in all_results]
-    avg_aspects = statistics.mean(total_aspects)
-    
-    print(f"Average aspects per chart: {avg_aspects:.1f}")
-    print(f"Range: {min(total_aspects)} - {max(total_aspects)} aspects")
-    
-    # Analysis by sun sign
+
+    print()
+    print("=== AGGREGATE ANALYSIS ===")
+    totals = [r["relevant_aspects"] for r in all_results]
+    print(f"Average aspects per chart: {statistics.mean(totals):.1f}")
+    print(f"Range: {min(totals)} - {max(totals)} aspects")
+
     if study_focus == "sun_sign":
         sun_sign_data = {}
         for result in all_results:
-            sign = result["sun_sign"]
-            if sign not in sun_sign_data:
-                sun_sign_data[sign] = []
-            sun_sign_data[sign].append(result["relevant_aspects"])
-        
-        print(f"\nAspects by Sun Sign:")
-        for sign, aspects_counts in sun_sign_data.items():
-            if len(aspects_counts) > 1:
-                avg = statistics.mean(aspects_counts)
-                print(f"  {sign}: {len(aspects_counts)} subjects, avg {avg:.1f} aspects")
-    
+            sun_sign_data.setdefault(result["sun_sign"], []).append(result["relevant_aspects"])
+        print("\nAspects by Sun Sign:")
+        for sign, counts in sun_sign_data.items():
+            if len(counts) > 1:
+                print(f"  {sign}: {len(counts)} subjects, avg {statistics.mean(counts):.1f} aspects")
+
     return all_results
 
-# Example research study
-sample_subjects = [person1, person2, person]  # Add more subjects for real research
+
 research_results = comparative_study(sample_subjects, "sun_sign")
 ```
+
 
 ## Integration with Other Modules
 
