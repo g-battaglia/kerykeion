@@ -46,6 +46,8 @@ Maintaining this project requires substantial time and effort. The Astrologer AP
 - [**Donate**](#donate)
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Documentation Map](#documentation-map)
 - [Basic Usage](#basic-usage)
 - [Generate a SVG Chart](#generate-a-svg-chart)
   - [Birth Chart](#birth-chart)
@@ -112,6 +114,48 @@ Kerykeion requires **Python 3.9** or higher.
 pip3 install kerykeion
 ```
 
+## Quick Start
+
+```python
+from pathlib import Path
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    name="Example Person",
+    year=1990, month=7, day=15,
+    hour=10, minute=30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
+chart_drawer = ChartDrawer(chart_data=chart_data)
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+
+chart_drawer.save_svg(output_path=output_dir, filename="example-natal")
+print("Chart saved to", (output_dir / "example-natal.svg").resolve())
+```
+
+This script shows the recommended workflow:
+1. Create an `AstrologicalSubject` with explicit coordinates and timezone (offline mode).
+2. Build a `ChartDataModel` through `ChartDataFactory`.
+3. Render the SVG via `ChartDrawer`, saving it to a controlled folder (`charts_output`).
+
+Use the same pattern for synastry, composite, transit, or return charts by swapping the factory method.
+
+## Documentation Map
+
+- **README (this file):** Quick start, common recipes, and v5 migration notes.
+- **`site-docs/` (offline Markdown guides):** Deep dives for each factory (`chart_data_factory.md`, `charts.md`, `planetary_return_factory.md`, etc.) with runnable snippets. Run `python scripts/test_markdown_snippets.py site-docs` to validate them locally.
+- **[Auto-generated API Reference](https://www.kerykeion.net/pydocs/kerykeion.html):** Detailed model and function signatures straight from the codebase.
+- **[Kerykeion website](https://www.kerykeion.net/docs/):** Rendered documentation with additional context, tutorials, and showcase material.
+
 ## Basic Usage
 
 Below is a simple example illustrating the creation of an astrological subject and retrieving astrological details:
@@ -142,6 +186,9 @@ print(john.moon.element)
 # > 'Air'
 ```
 
+> **Working offline:** pass `online=False` and specify `lng`, `lat`, and `tz_str` as shown above.  
+> **Working online:** set `online=True` and provide `city`, `nation`, and a valid GeoNames username (see `AstrologicalSubjectFactory.from_birth_data()` for details).
+
 **To avoid using GeoNames online, specify longitude, latitude, and timezone instead of city and nation:**
 
 ```python
@@ -156,6 +203,8 @@ john = AstrologicalSubjectFactory.from_birth_data(
 
 ## Generate a SVG Chart
 
+All chart-rendering examples below create a local `charts_output/` folder so the tests can write without touching your home directory. Feel free to change the path when integrating into your own projects.
+
 To generate a chart, use the `ChartDataFactory` to pre-compute chart data, then `ChartDrawer` to create the visualization. This two-step process ensures clean separation between astrological calculations and chart rendering.
 
 **Tip:**
@@ -165,6 +214,7 @@ To improve compatibility across different applications, you can use the `remove_
 ### Birth Chart
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -183,15 +233,19 @@ chart_data = ChartDataFactory.create_natal_chart_data(john)
 
 # Step 3: Create visualization
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
-birth_chart_svg.save_svg()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+birth_chart_svg.save_svg(output_path=output_dir, filename="john-lennon-natal")
 ```
 
-The SVG file will be saved in the home directory.
+The SVG file is saved under `charts_output/john-lennon-natal.svg`.
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Natal%20Chart.svg)
 
 ### External Birth Chart
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -210,7 +264,10 @@ chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
 
 # Step 3: Create visualization
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
-birth_chart_svg.save_svg()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+birth_chart_svg.save_svg(output_path=output_dir, filename="john-lennon-natal-external")
 ```
 
 ![John Lennon External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20ExternalNatal%20-%20Natal%20Chart.svg)
@@ -218,6 +275,7 @@ birth_chart_svg.save_svg()
 ### Synastry Chart
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -243,7 +301,10 @@ chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
 
 # Step 3: Create visualization
 synastry_chart = ChartDrawer(chart_data=chart_data)
-synastry_chart.save_svg()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+synastry_chart.save_svg(output_path=output_dir, filename="lennon-mccartney-synastry")
 ```
 
 ![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/img/examples/synastry-chart.svg)
@@ -251,6 +312,7 @@ synastry_chart.save_svg()
 ### Transit Chart
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -276,7 +338,10 @@ chart_data = ChartDataFactory.create_transit_chart_data(subject, transit)
 
 # Step 3: Create visualization
 transit_chart = ChartDrawer(chart_data=chart_data)
-transit_chart.save_svg()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+transit_chart.save_svg(output_path=output_dir, filename="john-lennon-transit")
 ```
 
 ![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Transit%20Chart.svg)
@@ -284,6 +349,7 @@ transit_chart.save_svg()
 ### Solar Return Chart (Dual Wheel)
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.chart_data_factory import ChartDataFactory
@@ -313,7 +379,10 @@ chart_data = ChartDataFactory.create_return_chart_data(john, solar_return_subjec
 
 # Step 4: Create visualization
 solar_return_chart = ChartDrawer(chart_data=chart_data)
-solar_return_chart.save_svg()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+solar_return_chart.save_svg(output_path=output_dir, filename="john-lennon-solar-return-dual")
 ```
 
 ![John Lennon Solar Return Chart (Dual Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Solar%20Return.svg)
@@ -321,6 +390,7 @@ solar_return_chart.save_svg()
 ### Solar Return Chart (Single Wheel)
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.chart_data_factory import ChartDataFactory
@@ -350,7 +420,10 @@ chart_data = ChartDataFactory.create_single_wheel_return_chart_data(solar_return
 
 # Step 4: Create visualization
 single_wheel_chart = ChartDrawer(chart_data=chart_data)
-single_wheel_chart.save_svg()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+single_wheel_chart.save_svg(output_path=output_dir, filename="john-lennon-solar-return-single")
 ```
 
 ![John Lennon Solar Return Chart (Single Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20Solar%20Return%20-%20SingleReturnChart%20Chart.svg)
@@ -358,6 +431,7 @@ single_wheel_chart.save_svg()
 ### Lunar Return Chart
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.chart_data_factory import ChartDataFactory
@@ -385,12 +459,15 @@ lunar_return_subject = return_factory.next_return_from_year(1964, "Lunar")
 # Step 3: Build a dual wheel (natal + lunar return)
 lunar_return_chart_data = ChartDataFactory.create_return_chart_data(john, lunar_return_subject)
 dual_wheel_chart = ChartDrawer(chart_data=lunar_return_chart_data)
-dual_wheel_chart.save_svg()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+dual_wheel_chart.save_svg(output_path=output_dir, filename="john-lennon-lunar-return-dual")
 
 # Optional: create a single-wheel lunar return
 single_wheel_data = ChartDataFactory.create_single_wheel_return_chart_data(lunar_return_subject)
 single_wheel_chart = ChartDrawer(chart_data=single_wheel_data)
-single_wheel_chart.save_svg()
+single_wheel_chart.save_svg(output_path=output_dir, filename="john-lennon-lunar-return-single")
 ```
 
 ![John Lennon Lunar Return Chart (Dual Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Lunar%20Return.svg)
@@ -400,14 +477,27 @@ single_wheel_chart.save_svg()
 ### Composite Chart
 
 ```python
+from pathlib import Path
 from kerykeion import CompositeSubjectFactory, AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
-# Step 1: Create subjects
-angelina = AstrologicalSubjectFactory.from_birth_data("Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US", lng=-118.15, lat=34.03, tz_str="America/Los_Angeles")
+# Step 1: Create subjects (offline configuration)
+angelina = AstrologicalSubjectFactory.from_birth_data(
+    "Angelina Jolie", 1975, 6, 4, 9, 9,
+    lng=-118.2437,
+    lat=34.0522,
+    tz_str="America/Los_Angeles",
+    online=False,
+)
 
-brad = AstrologicalSubjectFactory.from_birth_data("Brad Pitt", 1963, 12, 18, 6, 31, "Shawnee", "US", lng=-96.56, lat=35.20, tz_str="America/Chicago")
+brad = AstrologicalSubjectFactory.from_birth_data(
+    "Brad Pitt", 1963, 12, 18, 6, 31,
+    lng=-96.7069,
+    lat=35.3273,
+    tz_str="America/Chicago",
+    online=False,
+)
 
 # Step 2: Create composite subject
 factory = CompositeSubjectFactory(angelina, brad)
@@ -418,7 +508,10 @@ chart_data = ChartDataFactory.create_composite_chart_data(composite_model)
 
 # Step 4: Create visualization
 composite_chart = ChartDrawer(chart_data=chart_data)
-composite_chart.save_svg()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+composite_chart.save_svg(output_path=output_dir, filename="jolie-pitt-composite")
 ```
 
 ![Angelina Jolie and Brad Pitt Composite Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/Angelina%20Jolie%20and%20Brad%20Pitt%20Composite%20Chart%20-%20Composite%20Chart.svg)
@@ -430,6 +523,7 @@ For _all_ the charts, you can generate a wheel-only chart by using the method `m
 ### Birth Chart
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -448,7 +542,10 @@ chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
 
 # Step 3: Create visualization
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
-birth_chart_svg.save_wheel_only_svg_file()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+birth_chart_svg.save_wheel_only_svg_file(output_path=output_dir, filename="john-lennon-natal-wheel")
 ```
 
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Wheel%20Only%20-%20Natal%20Chart%20-%20Wheel%20Only.svg)
@@ -456,6 +553,7 @@ birth_chart_svg.save_wheel_only_svg_file()
 ### Wheel Only Birth Chart (External)
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -474,7 +572,10 @@ chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
 
 # Step 3: Create visualization (external wheel view)
 birth_chart_svg = ChartDrawer(chart_data=chart_data, external_view=True)
-birth_chart_svg.save_wheel_only_svg_file()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+birth_chart_svg.save_wheel_only_svg_file(output_path=output_dir, filename="john-lennon-natal-wheel-external")
 ```
 
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Wheel%20External%20Only%20-%20ExternalNatal%20Chart%20-%20Wheel%20Only.svg)
@@ -482,6 +583,7 @@ birth_chart_svg.save_wheel_only_svg_file()
 ### Synastry Chart
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -507,7 +609,10 @@ chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
 
 # Step 3: Create visualization
 synastry_chart = ChartDrawer(chart_data=chart_data)
-synastry_chart.save_wheel_only_svg_file()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+synastry_chart.save_wheel_only_svg_file(output_path=output_dir, filename="lennon-mccartney-synastry-wheel")
 ```
 
 ![John Lennon and Paul McCartney Synastry](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Wheel%20Synastry%20Only%20-%20Synastry%20Chart%20-%20Wheel%20Only.svg)
@@ -517,6 +622,7 @@ synastry_chart.save_wheel_only_svg_file()
 To save the SVG file in a custom location, specify the `output_path` parameter in `save_svg()`:
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -542,7 +648,11 @@ chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
 
 # Step 3: Create visualization with custom output directory
 synastry_chart = ChartDrawer(chart_data=chart_data)
-synastry_chart.save_svg(output_path=".")
+
+output_dir = Path("my_charts")
+output_dir.mkdir(exist_ok=True)
+synastry_chart.save_svg(output_path=output_dir)
+print("Saved to", (output_dir / f"{synastry_chart.first_obj.name} - Synastry Chart.svg").resolve())
 ```
 
 ### Change Language
@@ -550,6 +660,7 @@ synastry_chart.save_svg(output_path=".")
 You can switch chart language by passing `chart_language` to the `ChartDrawer` class:
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -571,7 +682,10 @@ birth_chart_svg = ChartDrawer(
     chart_data=chart_data,
     chart_language="IT"  # Change to Italian
 )
-birth_chart_svg.save_svg()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+birth_chart_svg.save_svg(output_path=output_dir, filename="john-lennon-natal-it")
 ```
 
 You can also provide custom labels (or introduce a brand-new language) by passing
@@ -579,6 +693,7 @@ a dictionary to `language_pack`. Only the keys you supply are merged on top of t
 built-in strings:
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -599,11 +714,15 @@ custom_labels = {
     }
 }
 
-ChartDrawer(
+custom_chart = ChartDrawer(
     chart_data=chart_data,
     chart_language="PT",
     language_pack=custom_labels["PT"],
-).save_svg()
+)
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+custom_chart.save_svg(output_path=output_dir, filename="john-lennon-natal-pt")
 ```
 
 More details [here](https://www.kerykeion.net/docs/chart-language).
@@ -625,6 +744,7 @@ The available languages are:
 To generate a minified SVG, set `minify_svg=True` in the `makeSVG()` method:
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -643,8 +763,13 @@ chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
 
 # Step 3: Create visualization
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
 birth_chart_svg.save_svg(
-    minify=True
+    output_path=output_dir,
+    filename="john-lennon-natal-minified",
+    minify=True,
 )
 ```
 
@@ -653,6 +778,7 @@ birth_chart_svg.save_svg(
 To generate an SVG without CSS variables, set `remove_css_variables=True` in the `makeSVG()` method:
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -671,8 +797,13 @@ chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
 
 # Step 3: Create visualization
 birth_chart_svg = ChartDrawer(chart_data=chart_data)
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
 birth_chart_svg.save_svg(
-    remove_css_variables=True
+    output_path=output_dir,
+    filename="john-lennon-natal-no-css-variables",
+    remove_css_variables=True,
 )
 ```
 
@@ -683,6 +814,7 @@ This will inline all styles and eliminate CSS variables, resulting in an SVG tha
 It's possible to generate a grid-only SVG, useful for creating a custom layout. To do this, use the `save_aspect_grid_only_svg_file()` method:
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -708,7 +840,10 @@ chart_data = ChartDataFactory.create_synastry_chart_data(birth_chart, second)
 
 # Step 3: Create visualization with dark theme
 aspect_grid_chart = ChartDrawer(chart_data=chart_data, theme="dark")
-aspect_grid_chart.save_aspect_grid_only_svg_file()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+aspect_grid_chart.save_aspect_grid_only_svg_file(output_path=output_dir, filename="lennon-mccartney-aspect-grid")
 ```
 
 ![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Aspect%20Grid%20Only%20-%20Natal%20Chart%20-%20Aspect%20Grid%20Only.svg)
@@ -957,6 +1092,7 @@ The Black & White theme renders glyphs, rings, and aspects in solid black on lig
 Here's an example of how to set the theme:
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -975,7 +1111,10 @@ chart_data = ChartDataFactory.create_natal_chart_data(dark_theme_subject)
 
 # Step 3: Create visualization with dark high contrast theme
 dark_theme_natal_chart = ChartDrawer(chart_data=chart_data, theme="dark-high-contrast")
-dark_theme_natal_chart.save_svg()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+dark_theme_natal_chart.save_svg(output_path=output_dir, filename="john-lennon-natal-dark-high-contrast")
 ```
 
 ![John Lennon](https://www.kerykeion.net/img/showcase/John%20Lennon%20-%20Dark%20-%20Natal%20Chart.svg)
@@ -1017,6 +1156,7 @@ In instances of the classes used to generate aspects and SVG charts, only the me
 Example:
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -1057,7 +1197,10 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 
 # Step 3: Create visualization
 chart = ChartDrawer(chart_data=chart_data)
-chart.save_svg()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+chart.save_svg(output_path=output_dir, filename="johnny-depp-custom-points")
 ```
 
 ## JSON Support
@@ -1107,9 +1250,13 @@ The old class-based approach has been replaced with a modern factory pattern:
 **Old v4 API:**
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
 # v4 - Class-based approach
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+
 subject = AstrologicalSubject(
     "John", 1990, 1, 1, 12, 0,
     lng=-0.1276,
@@ -1117,13 +1264,14 @@ subject = AstrologicalSubject(
     tz_str="Europe/London",
     online=False,
 )
-chart = KerykeionChartSVG(subject)
+chart = KerykeionChartSVG(subject, new_output_directory=output_dir)
 chart.makeSVG()
 ```
 
 **New v5 API:**
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 
 # v5 - Factory-based approach with separation of concerns
@@ -1136,7 +1284,10 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(chart_data=chart_data)
-drawer.save_svg()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+drawer.save_svg(output_path=output_dir, filename="john-factory-demo")
 ```
 
 #### Pydantic 2 Models & Type Safety
@@ -1276,7 +1427,11 @@ The two-step process (data + rendering) is now required:
 **Old v4:**
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
 
 subject = AstrologicalSubject(
     "John", 1990, 1, 1, 12, 0,
@@ -1285,13 +1440,14 @@ subject = AstrologicalSubject(
     tz_str="Europe/London",
     online=False,
 )
-chart = KerykeionChartSVG(subject)
+chart = KerykeionChartSVG(subject, new_output_directory=output_dir)
 chart.makeSVG()
 ```
 
 **New v5:**
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
@@ -1304,7 +1460,10 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(chart_data=chart_data)
-drawer.save_svg()
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+drawer.save_svg(output_path=output_dir, filename="john-v5-demo")
 ```
 
 #### 7. Aspects API Changes
@@ -1424,6 +1583,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 3. **Update chart generation**
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubject, AstrologicalSubjectFactory, ChartDataFactory, KerykeionChartSVG
 from kerykeion.charts.chart_drawer import ChartDrawer
 
@@ -1435,7 +1595,10 @@ legacy_subject = AstrologicalSubject(
     tz_str="Europe/London",
     online=False,
 )
-chart = KerykeionChartSVG(legacy_subject)
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+
+chart = KerykeionChartSVG(legacy_subject, new_output_directory=output_dir)
 chart.makeSVG()
 
 # New (v5)
@@ -1448,7 +1611,7 @@ modern_subject = AstrologicalSubjectFactory.from_birth_data(
 )
 chart_data = ChartDataFactory.create_natal_chart_data(modern_subject)
 drawer = ChartDrawer(chart_data=chart_data)
-drawer.save_svg()
+drawer.save_svg(output_path=output_dir, filename="john-v5-migration")
 ```
 
 4. **Update field access** (lunar nodes)
