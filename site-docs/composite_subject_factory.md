@@ -328,7 +328,7 @@ person1_vedic = AstrologicalSubjectFactory.from_birth_data(
     tz_str="Asia/Kolkata",
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI",
-    houses_system_identifier="W",
+    houses_system_identifier="P",
     online=False,
 )
 
@@ -341,7 +341,7 @@ person2_vedic = AstrologicalSubjectFactory.from_birth_data(
     tz_str="Asia/Kolkata",
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI",
-    houses_system_identifier="W",
+    houses_system_identifier="P",
     online=False,
 )
 

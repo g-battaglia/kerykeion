@@ -27,6 +27,7 @@ Chart creation with `ChartDrawer` follows a two-step process: first generate cha
 A natal chart represents the sky at the moment of birth, showing planetary positions, house divisions, and aspects. Here's how to create one with the new architecture:
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -49,13 +50,15 @@ chart_data = ChartDataFactory.create_natal_chart_data(subject)
 chart_drawer = ChartDrawer(chart_data=chart_data)
 
 # METHOD 1: Generate and save SVG file to disk
-chart_drawer.save_svg()  # Saves file to default location
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+chart_drawer.save_svg(output_path=output_dir)  # Saves file to a local folder
 
 # METHOD 2: Get SVG content as string (recommended for web apps)
 svg_content = chart_drawer.generate_svg_string()  # Returns SVG as string
 
 # If you want to save the string content manually:
-with open("natal_chart.svg", "w") as f:
+with open(output_dir / "natal_chart.svg", "w", encoding="utf-8") as f:
     f.write(svg_content)
 ```
 
@@ -64,6 +67,8 @@ with open("natal_chart.svg", "w") as f:
 Synastry charts are used for relationship analysis, comparing two people's birth charts to understand compatibility and interaction patterns. The chart displays both individuals' planetary positions simultaneously, with aspects drawn between them.
 
 ```python
+from pathlib import Path
+
 # Step 1: Create two subjects for relationship compatibility analysis
 subject1 = AstrologicalSubjectFactory.from_birth_data(
     name="Person1", year=1990, month=7, day=15,
@@ -95,7 +100,9 @@ chart_drawer = ChartDrawer(chart_data=chart_data)
 svg_content = chart_drawer.generate_svg_string()
 
 # OR save directly to file
-chart_drawer.save_svg()  # Saves to default location
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+chart_drawer.save_svg(output_path=output_dir)  # Saves to local folder
 ```
 
 ### Composite Chart
@@ -103,6 +110,7 @@ chart_drawer.save_svg()  # Saves to default location
 Composite charts represent the mathematical midpoint between two people's planetary positions, creating a theoretical "relationship chart" that describes the combined energy and purpose of a partnership.
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -141,6 +149,10 @@ svg_content = chart_drawer.generate_svg_string()
 Transit charts show how current planetary movements affect an individual's natal chart. This is essential for timing analysis and understanding current astrological influences.
 
 ```python
+from pathlib import Path
+from pathlib import Path
+from pathlib import Path
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
@@ -186,6 +198,7 @@ The ChartDrawer class offers two categories of output methods: file generation a
 ### Full Chart with Aspects
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
@@ -202,9 +215,12 @@ chart_data = ChartDataFactory.create_natal_chart_data(subject)
 # Step 2: Create chart drawer
 chart_drawer = ChartDrawer(chart_data=chart_data)
 
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+
 # makeSVG() SAVES the complete chart file to disk
 # Does NOT return content - saves to default output directory
-chart_drawer.save_svg()  # File saved, no return value
+chart_drawer.save_svg(output_path=output_dir)
 
 # makeTemplate() RETURNS the complete chart as string
 # Does NOT save file - returns SVG content for further processing
@@ -214,6 +230,7 @@ svg_string = chart_drawer.generate_svg_string()  # Returns SVG content as string
 ### Wheel Only
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
@@ -228,7 +245,9 @@ chart_data = ChartDataFactory.create_natal_chart_data(subject)
 chart_drawer = ChartDrawer(chart_data=chart_data)
 
 # makeWheelOnlySVG() SAVES wheel-only file to disk
-chart_drawer.save_wheel_only_svg_file()  # File saved, no return value
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+chart_drawer.save_wheel_only_svg_file(output_path=output_dir)  # File saved locally
 
 # makeWheelOnlyTemplate() RETURNS wheel-only content as string
 wheel_string = chart_drawer.generate_wheel_only_svg_string()  # Returns SVG string
@@ -237,6 +256,7 @@ wheel_string = chart_drawer.generate_wheel_only_svg_string()  # Returns SVG stri
 ### Aspect Grid Only
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
@@ -251,7 +271,9 @@ chart_data = ChartDataFactory.create_natal_chart_data(subject)
 chart_drawer = ChartDrawer(chart_data=chart_data)
 
 # makeAspectGridOnlySVG() SAVES aspect grid file to disk
-chart_drawer.save_aspect_grid_only_svg_file()  # File saved, no return value
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+chart_drawer.save_aspect_grid_only_svg_file(output_path=output_dir)  # File saved locally
 
 # makeAspectGridOnlyTemplate() RETURNS aspect grid as string
 aspects_string = chart_drawer.generate_aspect_grid_only_svg_string()  # Returns SVG string
@@ -264,6 +286,7 @@ Visual presentation is crucial for astrological charts, and ChartDrawer offers c
 ### Available Themes
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
@@ -307,6 +330,7 @@ chart_drawer = ChartDrawer(chart_data=chart_data, theme="dark-high-contrast")
 Kerykeion provides comprehensive internationalization support, making charts accessible to astrologers and users worldwide. Each language includes localized planet names, zodiac signs, house labels, and aspect terminology.
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
@@ -334,6 +358,7 @@ Zodiac system configuration is handled by `ChartDataFactory` during chart data c
 The tropical zodiac is based on the seasons and is standard in Western astrology. It uses the vernal equinox as 0° Aries.
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
@@ -357,10 +382,9 @@ for theme in ["classic", "dark", "light", "strawberry", "dark-high-contrast"]:
 The sidereal zodiac is based on the actual position of constellations and is primarily used in Vedic (Indian) astrology. Different ayanamsas (correction factors) account for the precession of equinoxes.
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
-from kerykeion.settings import KerykeionSettingsModel
-from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
 
 sidereal_modes = [
     ("LAHIRI", "Government of India standard"),
@@ -369,19 +393,14 @@ sidereal_modes = [
 ]
 
 for mode, description in sidereal_modes:
-    settings = KerykeionSettingsModel(
-        language_settings=LANGUAGE_SETTINGS,
-        zodiac_type="Sidereal",
-        sidereal_mode=mode,
-    )
-
     subject = AstrologicalSubjectFactory.from_birth_data(
-        "John", 1990, 7, 15, 10, 30,
+        "Sidereal Demo", 1990, 7, 15, 10, 30,
         lng=12.4964,
         lat=41.9028,
         tz_str="Europe/Rome",
-        ks=settings,
         online=False,
+        zodiac_type="Sidereal",
+        sidereal_mode=mode,
     )
 
     chart_data = ChartDataFactory.create_natal_chart_data(subject)
@@ -393,38 +412,29 @@ for mode, description in sidereal_modes:
 ### Comparison Example
 
 ```python
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
-from kerykeion.settings import KerykeionSettingsModel
-from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
-
-# Generate both tropical and sidereal charts for comparison
-tropical_settings = KerykeionSettingsModel(
-    language_settings=LANGUAGE_SETTINGS,
-    zodiac_type="Tropical"
-)
-sidereal_settings = KerykeionSettingsModel(
-    language_settings=LANGUAGE_SETTINGS,
-    zodiac_type="Sidereal",
-    sidereal_mode="LAHIRI"
-)
 
 # Same birth data, different zodiac systems
-tropical_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John", 1990, 7, 15, 10, 30,
+shared_args = dict(
+    name="Comparison Demo",
+    year=1990,
+    month=7,
+    day=15,
+    hour=10,
+    minute=30,
     lng=12.4964,
     lat=41.9028,
     tz_str="Europe/Rome",
-    ks=tropical_settings,
     online=False,
 )
+
+tropical_subject = AstrologicalSubjectFactory.from_birth_data(**shared_args)
 sidereal_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John", 1990, 7, 15, 10, 30,
-    lng=12.4964,
-    lat=41.9028,
-    tz_str="Europe/Rome",
-    ks=sidereal_settings,
-    online=False,
+    **shared_args,
+    zodiac_type="Sidereal",
+    sidereal_mode="LAHIRI",
 )
 
 # Generate chart data for comparison
@@ -446,78 +456,46 @@ Active points and aspects configuration is handled by `ChartDataFactory` during 
 ### Active Points Configuration
 
 ```python
-# Limit chart to specific celestial bodies for cleaner display
-# Useful for focusing on personal planets or specific analysis
+from pathlib import Path
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
 
-# Personal planets only - for personality analysis
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Active Points Demo", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+
 personal_planets = ["Sun", "Moon", "Mercury", "Venus", "Mars"]
+classical_planets = personal_planets + ["Jupiter", "Saturn"]
+modern_planets = classical_planets + ["Uranus", "Neptune", "Pluto"]
 
-# Classical planets - traditional astrology (pre-Uranus discovery)
-classical_planets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"]
-
-# Modern planets - full contemporary set
-modern_planets = [
-    "Sun", "Moon", "Mercury", "Venus", "Mars",    # Personal planets
-    "Jupiter", "Saturn",                          # Social planets
-    "Uranus", "Neptune", "Pluto"                  # Outer/generational planets
-]
-
-# Asteroids and additional points
-extended_points = [
-    "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
-    "Uranus", "Neptune", "Pluto", "Chiron", "Node", "Lilith"
-]
-
-# Create chart data with custom active points
 chart_data = ChartDataFactory.create_natal_chart_data(
-    subject, 
-    active_points=personal_planets  # Only these planets will appear on chart
+    subject,
+    active_points=personal_planets,  # Only these planets will appear on chart
 )
 
 chart_drawer = ChartDrawer(chart_data=chart_data)
+print(f"Active points rendered: {chart_data.active_points}")
+print(f"Classical set size: {len(classical_planets)} — Modern set size: {len(modern_planets)}")
 ```
 
 ### Active Aspects Configuration
 
-```python
-# Control which aspect types are displayed for cleaner charts
-
-# Major aspects only - traditional five aspects
-major_aspects = [
-    "conjunction",  # 0° - planets in same position, unified energy
-    "opposition",   # 180° - planets opposite, tension and awareness
-    "trine",        # 120° - harmonious flow, natural talents
-    "square",       # 90° - dynamic tension, challenges and growth
-    "sextile"       # 60° - opportunities, cooperative energy
-]
-
-# Minor aspects - additional subtle influences
-minor_aspects = [
-    "semisextile",    # 30° - subtle adjustment
-    "semisquare",     # 45° - minor friction
-    "quintile",       # 72° - creative expression
-    "sesquisquare",   # 135° - persistent irritation
-    "quincunx"        # 150° - adjustment and adaptation
-]
-
-# Combine for comprehensive analysis
-all_aspects = major_aspects + minor_aspects
-
-# Create chart data with custom active aspects
-chart_data = ChartDataFactory.create_natal_chart_data(
-    subject,
-    active_aspects=major_aspects  # List of strings: aspect type names
-)
-
-chart_drawer = ChartDrawer(chart_data=chart_data)
-```
 
 ### Combined Configuration Example
 
 ```python
 # Create a focused chart for relationship counseling
 relationship_points = ["Sun", "Moon", "Venus", "Mars", "Jupiter"]
-relationship_aspects = ["conjunction", "opposition", "trine", "square"]  # List of aspect type strings
+relationship_aspects = [
+    {"name": "conjunction", "orb": 8},
+    {"name": "opposition", "orb": 8},
+    {"name": "trine", "orb": 6},
+    {"name": "square", "orb": 6},
+]  # Aspect configuration dictionaries
 
 # Create subjects
 subject1 = AstrologicalSubjectFactory.from_birth_data(
@@ -558,58 +536,65 @@ synastry_chart_drawer = ChartDrawer(
 ### Complete Configuration Example
 
 ```python
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from pathlib import Path
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
-from kerykeion.settings import KerykeionSettingsModel
 
-# Advanced settings
-settings = KerykeionSettingsModel(
-    house_system="W",  # Whole Signs
+subject1 = AstrologicalSubjectFactory.from_birth_data(
+    "Person1", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+    houses_system_identifier="W",
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI",
-    perspective_type="Traditional"
-)
-
-# Create subjects with custom settings
-subject1 = AstrologicalSubjectFactory.from_birth_data(
-    "Person1", 1990, 7, 15, 10, 30, "Rome", "IT", 
-    ks=settings
+    perspective_type="Apparent Geocentric",
 )
 subject2 = AstrologicalSubjectFactory.from_birth_data(
-    "Person2", 1985, 3, 20, 14, 15, "London", "GB", 
-    ks=settings
+    "Person2", 1985, 3, 20, 14, 15,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+    houses_system_identifier="W",
+    zodiac_type="Sidereal",
+    sidereal_mode="LAHIRI",
+    perspective_type="Apparent Geocentric",
 )
 
-# Custom points and aspects
 active_points = ["Sun", "Moon", "Mercury", "Venus", "Mars"]
-active_aspects = ["conjunction", "opposition", "trine", "square"]  # List of aspect type strings
+active_aspects = [
+    {"name": "conjunction", "orb": 8},
+    {"name": "opposition", "orb": 8},
+    {"name": "trine", "orb": 6},
+    {"name": "square", "orb": 6},
+]
 
-# Create synastry chart data
 chart_data = ChartDataFactory.create_synastry_chart_data(
     first_subject=subject1,
     second_subject=subject2,
     active_points=active_points,
-    active_aspects=active_aspects  # Pass aspect type names as strings
+    active_aspects=active_aspects,
 )
 
-# Create chart drawer with visual settings
-chart_drawer = ChartDrawer(
+chart = ChartDrawer(
     chart_data=chart_data,
     theme="dark",
     chart_language="IT",
-    transparent_background=True
+    transparent_background=True,
 )
 
-# Generate different outputs
-full_chart = chart_drawer.generate_svg_string(minify=True)  # String content, minified
-wheel_only = chart_drawer.generate_wheel_only_svg_string()   # String content, wheel only
-aspects_only = chart_drawer.generate_aspect_grid_only_svg_string()  # String content, aspects only
+full_chart = chart.generate_svg_string(minify=True)
+wheel_only = chart.generate_wheel_only_svg_string()
+aspects_only = chart.generate_aspect_grid_only_svg_string()
 
-# Or save directly to files
-chart_drawer.save_svg(minify=True)              # Save full chart
-chart_drawer.save_wheel_only_svg_file()                # Save wheel only
-chart_drawer.save_aspect_grid_only_svg_file()           # Save aspects only
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+
+chart.save_svg(output_path=output_dir, minify=True)
+chart.save_wheel_only_svg_file(output_path=output_dir)
+chart.save_aspect_grid_only_svg_file(output_path=output_dir)
 ```
 
 ## House Systems
@@ -619,63 +604,73 @@ House system configuration is handled by `ChartDataFactory` during subject creat
 ### Popular House Systems
 
 ```python
-# Placidus (default) - most common in Western astrology
-# Time-based system creating unequal houses, excellent for psychological analysis
-# Houses vary in size based on geographic latitude
-settings = KerykeionSettingsModel(house_system="P")
+from kerykeion import AstrologicalSubjectFactory
 
-# Whole Signs - each sign = one house (30° each)
-# Ancient system, simple and clear, popular in Hellenistic astrology
-# Each zodiac sign occupies exactly one house
-settings = KerykeionSettingsModel(house_system="W")
+house_systems = {
+    "P": "Placidus (default)",
+    "W": "Whole Signs",
+    "A": "Equal House",
+    "K": "Koch",
+    "C": "Campanus",
+    "R": "Regiomontanus",
+}
 
-# Equal House - 30° houses starting from Ascendant
-# Keeps Ascendant as 1st house cusp, creates equal 30° divisions
-# Good compromise between simplicity and Ascendant importance
-settings = KerykeionSettingsModel(house_system="E")
-
-# Koch - similar to Placidus but different calculation
-# Time-based system popular in some European traditions
-# Creates unequal houses with different mathematical approach
-settings = KerykeionSettingsModel(house_system="K")
-
-# Campanus - space-based system
-# Divides the prime vertical into equal parts
-# Popular in medieval astrology, creates unique house shapes
-settings = KerykeionSettingsModel(house_system="C")
-
-# Regiomontanus - another space-based system
-# Divides the celestial equator into equal parts
-# Renaissance-era system, still used by some modern astrologers
-settings = KerykeionSettingsModel(house_system="R")
+for identifier, description in house_systems.items():
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "House System Demo", 1990, 7, 15, 10, 30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        online=False,
+        houses_system_identifier=identifier,
+    )
+    print(f"{description}: {subject.houses_system_name}")
 ```
 
 ### House System Comparison
 
 ```python
-# Compare different house systems for the same birth data
-birth_data = ("John", 1990, 7, 15, 10, 30, "Rome", "IT")
+from pathlib import Path
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+birth_args = dict(
+    name="House Comparison",
+    year=1990,
+    month=7,
+    day=15,
+    hour=10,
+    minute=30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
 
 house_systems = {
     "Placidus": "P",
-    "Whole Signs": "W", 
-    "Equal House": "E",
+    "Whole Signs": "W",
+    "Equal House": "A",
     "Koch": "K",
     "Campanus": "C",
-    "Regiomontanus": "R"
+    "Regiomontanus": "R",
 }
 
 charts = {}
-for name, system in house_systems.items():
-    settings = KerykeionSettingsModel(house_system=system)
-    subject = AstrologicalSubjectFactory.from_birth_data(*birth_data, ks=settings)
+for name, identifier in house_systems.items():
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        **birth_args,
+        houses_system_identifier=identifier,
+    )
     chart_data = ChartDataFactory.create_natal_chart_data(subject)
     chart_drawer = ChartDrawer(chart_data=chart_data)
-    charts[name] = chart_drawer.generate_svg_string()  # Get as string
-    
-    # Save string content to file
-    with open(f"house_comparison_{name.lower().replace(' ', '_')}.svg", "w") as f:
-        f.write(charts[name])
+    svg_string = chart_drawer.generate_svg_string()
+    charts[name] = svg_string
+
+    file_name = f"house_comparison_{name.lower().replace(' ', '_')}.svg"
+    with open(file_name, "w", encoding="utf-8") as handle:
+        handle.write(svg_string)
+    print(f"Saved {file_name}")
 ```
 
 ### Geographic Considerations
@@ -685,17 +680,23 @@ for name, system in house_systems.items():
 # Extreme latitudes show more dramatic differences
 
 # High latitude location (Norway)
-high_lat_settings = KerykeionSettingsModel(house_system="P")
 high_lat_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Arctic", 1990, 7, 15, 12, 0, "Tromsø", "NO", 
-    ks=high_lat_settings
+    "Arctic", 1990, 7, 15, 12, 0,
+    lng=18.9553,
+    lat=69.6492,
+    tz_str="Europe/Oslo",
+    online=False,
+    houses_system_identifier="P",
 )
 
 # Equatorial location
-equatorial_settings = KerykeionSettingsModel(house_system="P")
 equatorial_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Equator", 1990, 7, 15, 12, 0, "Quito", "EC", 
-    ks=equatorial_settings
+    "Equator", 1990, 7, 15, 12, 0,
+    lng=-78.4678,
+    lat=-0.1807,
+    tz_str="America/Guayaquil",
+    online=False,
+    houses_system_identifier="P",
 )
 
 # Generate chart data to see latitude effects
@@ -714,37 +715,47 @@ Chart perspectives are handled by `ChartDataFactory` during subject creation and
 ### Perspective Configuration
 
 ```python
-# Traditional perspective (default) - comprehensive astrological approach
+# Apparent Geocentric perspective (default)
 # Includes all standard astrological elements and calculations
-# Best for: Complete analysis, traditional astrology, educational purposes
-settings = KerykeionSettingsModel(perspective_type="Traditional")
-
-# Minified perspective - streamlined approach with essential elements
-# Focuses on core planets and aspects, reduces complexity
-# Best for: Quick analysis, simplified presentations, beginner-friendly charts
-settings = KerykeionSettingsModel(perspective_type="Minified")
-
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "John", 1990, 7, 15, 10, 30, "Rome", "IT",
-    ks=settings  # Perspective affects calculation depth and display elements
+# Best for: Comprehensive analysis, standard chart production
+apparent_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Perspective Demo", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+    perspective_type="Apparent Geocentric",
 )
 
-chart_data = ChartDataFactory.create_natal_chart_data(subject)
+chart_data = ChartDataFactory.create_natal_chart_data(apparent_subject)
 chart_drawer = ChartDrawer(chart_data=chart_data)
 ```
 
 ### Perspective Comparison
 
 ```python
-# Compare traditional vs minified perspectives
-traditional_settings = KerykeionSettingsModel(perspective_type="Traditional")
-minified_settings = KerykeionSettingsModel(perspective_type="Minified")
+# Compare apparent geocentric vs topocentric perspectives
+birth_args = dict(
+    name="Perspective Comparison",
+    year=1990,
+    month=7,
+    day=15,
+    hour=10,
+    minute=30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
 
-# Same person, different perspectives
-birth_data = ("John", 1990, 7, 15, 10, 30, "Rome", "IT")
-
-traditional_subject = AstrologicalSubjectFactory.from_birth_data(*birth_data, ks=traditional_settings)
-minified_subject = AstrologicalSubjectFactory.from_birth_data(*birth_data, ks=minified_settings)
+traditional_subject = AstrologicalSubjectFactory.from_birth_data(
+    **birth_args,
+    perspective_type="Apparent Geocentric",
+)
+minified_subject = AstrologicalSubjectFactory.from_birth_data(
+    **birth_args,
+    perspective_type="Topocentric",
+)
 
 # Generate chart data for both perspectives
 traditional_chart_data = ChartDataFactory.create_natal_chart_data(traditional_subject)
@@ -767,6 +778,18 @@ These options control the technical aspects of SVG generation, affecting file si
 Minification reduces file size by removing unnecessary whitespace and optimizing code structure, crucial for web applications and storage efficiency.
 
 ```python
+from pathlib import Path
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Output Demo", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 chart_drawer = ChartDrawer(chart_data=chart_data)
 
@@ -777,7 +800,9 @@ compatible_svg = chart_drawer.generate_svg_string(remove_css_variables=True)  # 
 optimized_svg = chart_drawer.generate_svg_string(minify=True, remove_css_variables=True)  # Maximum optimization
 
 # Or save directly to files
-chart_drawer.save_svg(minify=True)  # Saves minified file to disk
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+chart_drawer.save_svg(output_path=output_dir, minify=True)  # Saves minified file to disk
 ```
 
 ### Transparency and Background
@@ -785,6 +810,18 @@ chart_drawer.save_svg(minify=True)  # Saves minified file to disk
 Background transparency enables flexible integration with different design contexts and overlay applications.
 
 ```python
+from pathlib import Path
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Transparent Demo", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+
 # Transparent background useful for web integration and overlays
 # Chart can be placed over other content or different backgrounds
 # Perfect for: Web applications, design compositions, layered graphics
@@ -817,26 +854,30 @@ dark_svg = dark_transparent.generate_svg_string()
 For Natal charts, you can use the `external_view` parameter to display planets on the outer ring instead of the inner ring. This provides an alternative visualization style:
 
 ```python
-# Create natal chart data
+from pathlib import Path
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
 natal_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John", 1990, 7, 15, 10, 30, "Rome", "IT"
+    "External View Demo", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 
 chart_data = ChartDataFactory.create_natal_chart_data(natal_subject)
 
-# Standard natal chart (planets on inner ring)
 chart_drawer = ChartDrawer(chart_data=chart_data)
-chart_drawer.save_svg()
+external_chart = ChartDrawer(chart_data=chart_data, external_view=True)
 
-# External view natal chart (planets on outer ring)
-chart_drawer_external = ChartDrawer(chart_data=chart_data, external_view=True)
-chart_drawer_external.save_svg()
-```
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
 
-chart_drawer = ChartDrawer(chart_data=chart_data)
+chart_drawer.save_svg(output_path=output_dir)
+external_chart.save_svg(output_path=output_dir)
 
-# Get chart content showing activated natal planets
-svg_content = chart_drawer.generate_svg_string()
+svg_content = external_chart.generate_svg_string()
 ```
 
 ## Advanced Customization
@@ -844,62 +885,65 @@ svg_content = chart_drawer.generate_svg_string()
 ### Complete Configuration Example
 
 ```python
-from kerykeion import AstrologicalSubject, ChartDrawer
-from kerykeion.settings import KerykeionSettingsModel
-from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
+from pathlib import Path
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
 
-# Advanced settings
-settings = KerykeionSettingsModel(
-    language_settings=LANGUAGE_SETTINGS,
-    house_system="W",  # Whole Signs
-    zodiac_type="Sidereal",
-    sidereal_mode="LAHIRI",
-    perspective_type="Traditional"
-)
-
-# Create subjects with custom settings
-subject1 = AstrologicalSubject(
+subject1 = AstrologicalSubjectFactory.from_birth_data(
     "Person1", 1990, 7, 15, 10, 30,
     lng=12.4964,
     lat=41.9028,
     tz_str="Europe/Rome",
-    ks=settings,
     online=False,
+    houses_system_identifier="W",
+    zodiac_type="Sidereal",
+    sidereal_mode="LAHIRI",
+    perspective_type="Apparent Geocentric",
 )
-subject2 = AstrologicalSubject(
+subject2 = AstrologicalSubjectFactory.from_birth_data(
     "Person2", 1985, 3, 20, 14, 15,
     lng=-0.1276,
     lat=51.5074,
     tz_str="Europe/London",
-    ks=settings,
     online=False,
+    houses_system_identifier="W",
+    zodiac_type="Sidereal",
+    sidereal_mode="LAHIRI",
+    perspective_type="Apparent Geocentric",
 )
 
-# Custom points and aspects
 active_points = ["Sun", "Moon", "Mercury", "Venus", "Mars"]
-active_aspects = ["conjunction", "opposition", "trine", "square"]  # List of aspect type strings
+active_aspects = [
+    {"name": "conjunction", "orb": 8},
+    {"name": "opposition", "orb": 8},
+    {"name": "trine", "orb": 6},
+    {"name": "square", "orb": 6},
+]
 
-# Create synastry chart
-chart = ChartDrawer(
-    first_obj=subject1,
-    second_obj=subject2,
-    chart_type="Synastry",
-    theme="dark",
-    language="IT",
+chart_data = ChartDataFactory.create_synastry_chart_data(
+    first_subject=subject1,
+    second_subject=subject2,
     active_points=active_points,
-    active_aspects=active_aspects,  # Pass aspect type names as strings
-    transparent_background=True
+    active_aspects=active_aspects,
 )
 
-# Generate different outputs
+chart = ChartDrawer(
+    chart_data=chart_data,
+    theme="dark",
+    chart_language="IT",
+    transparent_background=True,
+)
+
 full_chart = chart.generate_svg_string(minify=True)  # String content, minified
 wheel_only = chart.generate_wheel_only_svg_string()   # String content, wheel only
 aspects_only = chart.generate_aspect_grid_only_svg_string()  # String content, aspects only
 
-# Or save directly to files
-chart.save_svg(minify=True)              # Save full chart
-chart.save_wheel_only_svg_file()                # Save wheel only
-chart.save_aspect_grid_only_svg_file()           # Save aspects only
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+
+chart.save_svg(output_path=output_dir, minify=True)                     # Save full chart
+chart.save_wheel_only_svg_file(output_path=output_dir)                  # Save wheel only
+chart.save_aspect_grid_only_svg_file(output_path=output_dir)            # Save aspects only
 ```
 
 ## Error Handling
@@ -955,7 +999,7 @@ with open("charts/natal_chart.svg", "w", encoding="utf-8") as f:
     f.write(svg_content)
 
 # METHOD 2: Direct file saving (saves to default output directory)
-chart_drawer.save_svg()  # Saves to path specified in constructor
+chart_drawer.save_svg(output_path="charts")  # Saves to path specified in constructor
 
 print("Chart saved successfully")
 
@@ -1007,10 +1051,39 @@ wheel_template = chart_drawer.generate_wheel_only_svg_string() # Wheel only as s
 aspects_template = chart_drawer.generate_aspect_grid_only_svg_string() # Aspects only as string
 
 # Save files directly to disk (uses default output directory)
-chart_drawer.save_svg()                    # Saves full chart file
-chart_drawer.save_wheel_only_svg_file()          # Saves wheel only file
-chart_drawer.save_aspect_grid_only_svg_file()     # Saves aspects only file
+chart_drawer.save_svg(output_path="charts")                    # Saves full chart file
+chart_drawer.save_wheel_only_svg_file(output_path="charts")    # Saves wheel only file
+chart_drawer.save_aspect_grid_only_svg_file(output_path="charts")  # Saves aspects only file
 
 # Template methods support minification and CSS options
 minified_template = chart_drawer.generate_svg_string(minify=True, remove_css_variables=True)
+```
+```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Aspect Filter Demo", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+
+# Control which aspect types are displayed for cleaner charts
+major_aspects = [
+    {"name": "conjunction", "orb": 8},
+    {"name": "opposition", "orb": 8},
+    {"name": "trine", "orb": 6},
+    {"name": "square", "orb": 6},
+    {"name": "sextile", "orb": 4},
+]
+
+chart_data = ChartDataFactory.create_natal_chart_data(
+    subject,
+    active_aspects=major_aspects,
+)
+
+chart_drawer = ChartDrawer(chart_data=chart_data)
+print(f"Configured aspects: {[aspect['name'] for aspect in chart_data.active_aspects]}")
 ```

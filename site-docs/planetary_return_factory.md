@@ -145,7 +145,7 @@ print(f"Mercury: {solar_return_2024.mercury.sign} {solar_return_2024.mercury.abs
 
 print("\n--- ANGULAR POSITIONS ---")
 print(f"Ascendant: {solar_return_2024.ascendant.sign} {solar_return_2024.ascendant.abs_pos:.2f}°")
-print(f"Midheaven: {solar_return_2024.midheaven.sign} {solar_return_2024.midheaven.abs_pos:.2f}°")
+print(f"Midheaven: {solar_return_2024.medium_coeli.sign} {solar_return_2024.medium_coeli.abs_pos:.2f}°")
 
 print("\n--- HOUSE EMPHASIS ---")
 house_count = {}
@@ -183,6 +183,7 @@ House 6: 2 planets (emphasis)
 ### Lunar Return Tracking
 
 ```python
+from datetime import datetime
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
@@ -261,12 +262,16 @@ Moon sign distribution: Scorpio
 
 ```python
 # Compare Solar Returns across multiple years
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Research Subject",
     year=1980, month=8, day=15,
     hour=10, minute=0,
     lat=37.7749, lng=-122.4194,  # San Francisco
-    tz_str="America/Los_Angeles"
+    tz_str="America/Los_Angeles",
+    online=False,
 )
 
 calculator = PlanetaryReturnFactory(
@@ -318,13 +323,16 @@ print(f"Most common Sun house: {max(set(sun_houses), key=sun_houses.count)}")
 ```python
 # Use specific datetime for precise return calculation
 from datetime import datetime, timezone
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Timing Subject",
     year=1995, month=12, day=21,  # Winter Solstice birth
     hour=15, minute=45,
     lat=40.7128, lng=-74.0060,
-    tz_str="America/New_York"
+    tz_str="America/New_York",
+    online=False,
 )
 
 calculator = PlanetaryReturnFactory(
@@ -387,12 +395,16 @@ Julian Day: 2460658.425893
 
 ```python
 # Compare returns in different locations (relocation astrology)
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Global Nomad",
     year=1988, month=4, day=10,
     hour=16, minute=20,
     lat=51.5074, lng=-0.1278,  # Born in London
-    tz_str="Europe/London"
+    tz_str="Europe/London",
+    online=False,
 )
 
 # Calculate returns for different cities
@@ -421,7 +433,7 @@ for city_info in cities:
         print(f"Coordinates: {solar_return.lat:.2f}°, {solar_return.lng:.2f}°")
         print(f"Timezone: {solar_return.tz_str}")
         print(f"Ascendant: {solar_return.ascendant.sign} {solar_return.ascendant.abs_pos:.2f}°")
-        print(f"Midheaven: {solar_return.midheaven.sign} {solar_return.midheaven.abs_pos:.2f}°")
+        print(f"Midheaven: {solar_return.medium_coeli.sign} {solar_return.medium_coeli.abs_pos:.2f}°")
         print(f"Sun House: {solar_return.sun.house}")
         print(f"Moon House: {solar_return.moon.house}")
         
@@ -455,19 +467,22 @@ print("House emphasis changes can indicate different life themes by location")
 ```python
 # Research planetary return timing patterns
 import statistics
-from datetime import timedelta
+from datetime import datetime, timedelta
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Research Subject",
     year=1970, month=1, day=1,
     hour=12, minute=0,
-    lat=0.0, lng=0.0,  # Greenwich
-    tz_str="Etc/UTC"
+    lat=51.4779, lng=0.0015,  # Greenwich Observatory
+    tz_str="Etc/UTC",
+    online=False,
 )
 
 calculator = PlanetaryReturnFactory(
     subject,
-    lng=0.0, lat=0.0,
+    lng=0.0015, lat=51.4779,
     tz_str="Etc/UTC",
     online=False
 )
@@ -575,6 +590,9 @@ Lunar range: 29.235 - 29.632 days
 ### Common Issues and Solutions
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
 # Demonstrate error handling and validation
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Test Subject",
@@ -680,13 +698,16 @@ print(f"Offline Lunar Return: {lunar_return.iso_formatted_local_datetime}")
 
 ```python
 import time
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Performance Test",
     year=1985, month=7, day=20,
     hour=8, minute=15,
     lat=37.7749, lng=-122.4194,
-    tz_str="America/Los_Angeles"
+    tz_str="America/Los_Angeles",
+    online=False,
 )
 
 calculator = PlanetaryReturnFactory(
@@ -767,10 +788,29 @@ Return object size: 12,456 bytes
 
 ### 1. Astrological Consultation
 ```python
-# Annual Solar Return consultation
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    name="Consultation Subject",
+    year=1990, month=6, day=15,
+    hour=12, minute=0,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+
+calculator = PlanetaryReturnFactory(
+    subject,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+
 solar_return = calculator.next_return_from_year(2024, "Solar")
 
-# Key interpretation points
 print("=== SOLAR RETURN CONSULTATION POINTS ===")
 print(f"Return Date: {solar_return.iso_formatted_local_datetime}")
 print(f"Ascendant Theme: {solar_return.ascendant.sign}")
@@ -780,7 +820,27 @@ print(f"Annual Lunar Phase: {solar_return.lunar_phase.moon_phase_name}")
 
 ### 2. Monthly Timing (Electional Astrology)
 ```python
-# Find optimal monthly timing with Lunar Returns
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    name="Timing Subject",
+    year=1990, month=6, day=15,
+    hour=12, minute=0,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+
+calculator = PlanetaryReturnFactory(
+    subject,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+
 for month in range(1, 13):
     lunar_return = calculator.next_return_from_month_and_year(2024, month, "Lunar")
     print(f"Month {month}: {lunar_return.iso_formatted_local_datetime}")

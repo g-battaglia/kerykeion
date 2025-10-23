@@ -47,16 +47,20 @@ person1 = AstrologicalSubjectFactory.from_birth_data(
     name="John",
     year=1990, month=5, day=15,
     hour=12, minute=0,
-    city="New York",
-    nation="US"
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
 )
 
 person2 = AstrologicalSubjectFactory.from_birth_data(
     name="Jane", 
     year=1988, month=8, day=22,
     hour=14, minute=30,
-    city="London",
-    nation="GB"
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
 )
 
 # Calculate relationship score
@@ -80,7 +84,29 @@ Contributing Aspects: 7
 ### Detailed Score Analysis
 
 ```python
-# Create detailed analysis of relationship score
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.relationship_score_factory import RelationshipScoreFactory
+
+person1 = AstrologicalSubjectFactory.from_birth_data(
+    name="John",
+    year=1990, month=5, day=15,
+    hour=12, minute=0,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+
+person2 = AstrologicalSubjectFactory.from_birth_data(
+    name="Jane",
+    year=1988, month=8, day=22,
+    hour=14, minute=30,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+
 factory = RelationshipScoreFactory(person1, person2)
 score = factory.get_relationship_score()
 
@@ -173,6 +199,9 @@ Significant astrological indicators for a harmonious relationship.
 
 ```python
 # Analyze famous couples for comparison
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.relationship_score_factory import RelationshipScoreFactory
+
 print("=== CELEBRITY COUPLE COMPATIBILITY STUDY ===")
 
 # Example: John Lennon and Yoko Ono
@@ -181,7 +210,8 @@ john_lennon = AstrologicalSubjectFactory.from_birth_data(
     year=1940, month=10, day=9,
     hour=18, minute=30,
     lat=53.4167, lng=-3.0000,  # Liverpool
-    tz_str="Europe/London"
+    tz_str="Europe/London",
+    online=False,
 )
 
 yoko_ono = AstrologicalSubjectFactory.from_birth_data(
@@ -189,7 +219,8 @@ yoko_ono = AstrologicalSubjectFactory.from_birth_data(
     year=1933, month=2, day=18,
     hour=20, minute=30,
     lat=35.6762, lng=139.6503,  # Tokyo
-    tz_str="Asia/Tokyo"
+    tz_str="Asia/Tokyo",
+    online=False,
 )
 
 factory = RelationshipScoreFactory(john_lennon, yoko_ono)

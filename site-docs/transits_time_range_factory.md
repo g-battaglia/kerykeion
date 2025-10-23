@@ -37,8 +37,10 @@ person = AstrologicalSubjectFactory.from_birth_data(
     name="John Doe",
     year=1990, month=5, day=15,
     hour=12, minute=0,
-    city="New York",
-    nation="US"
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
 )
 
 # Define time period for transit analysis
@@ -224,6 +226,10 @@ Strongest aspects:
 ### Specific Transit Tracking
 
 ```python
+from datetime import datetime
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
 # Track specific planet transits (e.g., Jupiter transits for the year)
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Jupiter Transit Study",
@@ -263,15 +269,17 @@ natal_points = [
 
 # Include all aspects for comprehensive analysis
 all_aspects = [
-    ActiveAspect.CONJUNCTION,
-    ActiveAspect.OPPOSITION,
-    ActiveAspect.SQUARE,
-    ActiveAspect.TRINE,
-    ActiveAspect.SEXTILE,
-    ActiveAspect.QUINCUNX,
-    ActiveAspect.SEMISEXTILE,
-    ActiveAspect.SEMISQUARE,
-    ActiveAspect.SESQUIQUADRATE
+    {"name": "conjunction", "orb": 8},
+    {"name": "opposition", "orb": 8},
+    {"name": "square", "orb": 6},
+    {"name": "trine", "orb": 6},
+    {"name": "sextile", "orb": 4},
+    {"name": "quincunx", "orb": 3},
+    {"name": "semi-sextile", "orb": 3},
+    {"name": "semi-square", "orb": 3},
+    {"name": "sesquiquadrate", "orb": 3},
+    {"name": "quintile", "orb": 3},
+    {"name": "biquintile", "orb": 2}
 ]
 
 transit_factory = TransitsTimeRangeFactory(

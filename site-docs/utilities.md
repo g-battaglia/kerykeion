@@ -82,7 +82,7 @@ examples = [
 
 print(f"\n=== CONVERSION EXAMPLES ===")
 for degree, description in examples:
-    point = get_kerykeion_point_from_degree(degree, "Example", "AstrologicalPoint")
+    point = get_kerykeion_point_from_degree(degree, "Sun", "AstrologicalPoint")
     print(f"{degree:6.1f}° → {point.sign} {point.position:5.1f}° ({description})")
 ```
 
@@ -862,7 +862,7 @@ print(f"Sun-Moon midpoint: {sun_moon_midpoint:.2f}°")
 
 # Convert to zodiac sign
 midpoint_data = get_kerykeion_point_from_degree(
-    sun_moon_midpoint, "Sun_Moon_Midpoint", "AstrologicalPoint"
+    sun_moon_midpoint, "Sun", "AstrologicalPoint"
 )
 print(f"Midpoint in sign: {midpoint_data.sign} {midpoint_data.position:.2f}°")
 
