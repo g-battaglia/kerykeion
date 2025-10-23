@@ -90,15 +90,20 @@ Transits on 2024-08-15:
 
 ```python
 # Comprehensive transit analysis with filtering
-from kerykeion.schemas import AstrologicalPoint, ActiveAspect
+from datetime import datetime
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
+from kerykeion.ephemeris_data_factory import EphemerisDataFactory
 
 # Create natal chart for analysis
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Transit Subject",
     year=1985, month=3, day=21,  # Spring Equinox
     hour=14, minute=30,
-    lat=40.7128, lng=-74.0060,  # New York
-    tz_str="America/New_York"
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
 )
 
 # Generate hourly ephemeris data for detailed analysis
@@ -129,11 +134,11 @@ major_planets = [
 ]
 
 major_aspects = [
-    ActiveAspect.CONJUNCTION,
-    ActiveAspect.OPPOSITION,
-    ActiveAspect.SQUARE,
-    ActiveAspect.TRINE,
-    ActiveAspect.SEXTILE
+    {"name": "conjunction", "orb": 8},
+    {"name": "opposition", "orb": 8},
+    {"name": "square", "orb": 6},
+    {"name": "trine", "orb": 6},
+    {"name": "sextile", "orb": 4},
 ]
 
 transit_factory = TransitsTimeRangeFactory(

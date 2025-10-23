@@ -37,7 +37,11 @@ from kerykeion import ReportGenerator, AstrologicalSubjectFactory, ChartDataFact
 
 # Base subject
 subject = AstrologicalSubjectFactory.from_birth_data(
-    "Sample Natal", 1990, 7, 21, 14, 45, "Rome", "IT"
+    "Sample Natal", 1990, 7, 21, 14, 45,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 
 # Subject-only report
@@ -49,7 +53,11 @@ ReportGenerator(natal).print_report(max_aspects=10)
 
 # Synastry chart between two subjects
 partner = AstrologicalSubjectFactory.from_birth_data(
-    "Sample Partner", 1992, 11, 5, 9, 30, "Rome", "IT"
+    "Sample Partner", 1992, 11, 5, 9, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 synastry = ChartDataFactory.create_synastry_chart_data(subject, partner)
 ReportGenerator(synastry).print_report(max_aspects=12)
@@ -58,8 +66,20 @@ ReportGenerator(synastry).print_report(max_aspects=12)
 Use `generate_report()` when you need the string instead of printing directly:
 
 ```python
-text = ReportGenerator(natal).generate_report(include_aspects=True, max_aspects=6)
-Path("natal_report.txt").write_text(text, encoding="utf-8")
+from pathlib import Path
+from kerykeion import ReportGenerator, AstrologicalSubjectFactory, ChartDataFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Sample Natal", 1990, 7, 21, 14, 45,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+natal = ChartDataFactory.create_natal_chart_data(subject)
+
+text_report = ReportGenerator(natal).generate_report(include_aspects=True, max_aspects=6)
+Path("natal_report.txt").write_text(text_report, encoding="utf-8")
 ```
 
 ## Chart-specific Examples
@@ -70,8 +90,14 @@ Subject reports focus on a single `AstrologicalSubjectModel` and omit derived an
 require chart data factories.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ReportGenerator
+
 subject = AstrologicalSubjectFactory.from_birth_data(
-    "Alice", 1988, 3, 12, 8, 10, "Paris", "FR"
+    "Alice", 1988, 3, 12, 8, 10,
+    lng=2.3522,
+    lat=48.8566,
+    tz_str="Europe/Paris",
+    online=False,
 )
 ReportGenerator(subject, include_aspects=False).print_report()
 ```
@@ -88,6 +114,15 @@ Single-chart data models add aggregated analytics. The dispatcher automatically 
 the specific chart type:
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ReportGenerator
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Report Subject", 1990, 5, 10, 13, 20,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 ReportGenerator(chart_data).print_report(max_aspects=8)
 ```
@@ -95,7 +130,23 @@ ReportGenerator(chart_data).print_report(max_aspects=8)
 Composite subjects include additional member summaries:
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ReportGenerator
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Partner A", 1985, 4, 18, 9, 45,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+partner = AstrologicalSubjectFactory.from_birth_data(
+    "Partner B", 1987, 9, 2, 19, 10,
+    lng=2.3522,
+    lat=48.8566,
+    tz_str="Europe/Paris",
+    online=False,
+)
 
 composite_subject = CompositeSubjectFactory(subject, partner).get_midpoint_composite_subject_model()
 composite_data = ChartDataFactory.create_composite_chart_data(composite_subject)
@@ -107,12 +158,25 @@ Single planetary returns (solar or lunar) are equally supported:
 ```python
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
-factory = PlanetaryReturnFactory(subject, city=subject.city, nation=subject.nation,
-                                 lat=subject.lat, lng=subject.lng, tz_str=subject.tz_str,
-                                 online=False)
-return_subject = factory.next_return_from_iso_formatted_time(
-    subject.iso_formatted_local_datetime, "Solar"
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ReportGenerator
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Return Subject", 1990, 7, 21, 14, 45,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
 )
+
+factory = PlanetaryReturnFactory(
+    subject,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False
+)
+return_subject = factory.next_return_from_year(2024, "Solar")
 return_data = ChartDataFactory.create_single_wheel_return_chart_data(return_subject)
 ReportGenerator(return_data).print_report(max_aspects=4)
 ```
@@ -122,8 +186,42 @@ ReportGenerator(return_data).print_report(max_aspects=4)
 Dual chart data includes both subjects and the comparisons between them.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ReportGenerator
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Natal Subject", 1990, 7, 21, 14, 45,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+partner = AstrologicalSubjectFactory.from_birth_data(
+    "Transit Snapshot", 2024, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+transit_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Transit Chart", 2024, 1, 1, 12, 0,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+
+factory = PlanetaryReturnFactory(
+    subject,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+return_subject = factory.next_return_from_year(2024, "Solar")
+
 # Transit chart (natal subject vs snapshot of current sky)
-transit = ChartDataFactory.create_transit_chart_data(subject, partner)
+transit = ChartDataFactory.create_transit_chart_data(subject, transit_subject)
 ReportGenerator(transit).print_report(max_aspects=10)
 
 # Synastry with full house comparison and relationship score
@@ -175,8 +273,26 @@ Additional helpers invoked internally:
 Example:
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ReportGenerator
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Person A", 1990, 7, 21, 14, 45,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+partner = AstrologicalSubjectFactory.from_birth_data(
+    "Person B", 1992, 5, 10, 9, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+
+synastry = ChartDataFactory.create_synastry_chart_data(subject, partner)
 report = ReportGenerator(synastry)
-print(report.get_aspects_report(max_aspects=5))
+print(report.generate_report(max_aspects=5))
 ```
 
 ```
@@ -198,9 +314,19 @@ These metrics are already calculated by the factories; the report simply formats
 Reports are plain text, so standard Python I/O works:
 
 ```python
+from pathlib import Path
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ReportGenerator
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Export Natal", 1990, 7, 21, 14, 45,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+natal = ChartDataFactory.create_natal_chart_data(subject)
 report = ReportGenerator(natal)
-with open("natal_report.txt", "w", encoding="utf-8") as stream:
-    stream.write(report.generate_report())
+Path("natal_report.txt").write_text(report.generate_report(), encoding="utf-8")
 ```
 
 Redirecting stdout also works:

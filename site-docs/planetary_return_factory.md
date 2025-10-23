@@ -32,17 +32,19 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     name="John Doe",
     year=1990, month=6, day=15,
     hour=12, minute=30,
-    lat=40.7128, lng=-74.0060,
-    tz_str="America/New_York"
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
 )
 
 # Create return calculator for New York location
 calculator = PlanetaryReturnFactory(
     subject,
-    city="New York",
-    nation="US",
-    online=True,
-    geonames_username="your_username"
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False
 )
 
 # Calculate Solar Return for 2024
@@ -69,8 +71,10 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     name="Jane Smith",
     year=1985, month=3, day=21,
     hour=14, minute=30,
-    lat=51.5074, lng=-0.1278,  # London birth
-    tz_str="Europe/London"
+    lng=-0.1278,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
 )
 
 # Create calculator with manual coordinates (no internet required)
@@ -111,16 +115,19 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     name="Alice Johnson",
     year=1985, month=3, day=21,  # Spring Equinox birthday
     hour=14, minute=30,
-    lat=51.5074, lng=-0.1278,  # London birth
-    tz_str="Europe/London"
+    lng=-0.1278,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
 )
 
 # Calculate return for current residence (different city)
 calculator = PlanetaryReturnFactory(
     subject,
-    city="Paris",      # Living in Paris now
-    nation="FR",
-    online=True
+    lng=2.3522,
+    lat=48.8566,
+    tz_str="Europe/Paris",
+    online=False
 )
 
 solar_return_2024 = calculator.next_return_from_year(2024, "Solar")
@@ -176,12 +183,26 @@ House 6: 2 planets (emphasis)
 ### Lunar Return Tracking
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    name="Lunar Tracker",
+    year=1990, month=7, day=15,
+    hour=10, minute=30,
+    lng=-118.2437,
+    lat=34.0522,
+    tz_str="America/Los_Angeles",
+    online=False,
+)
+
 # Track monthly Lunar Returns throughout a year
 calculator = PlanetaryReturnFactory(
     subject,
-    city="Los Angeles",
-    nation="US",
-    online=True
+    lng=-118.2437,
+    lat=34.0522,
+    tz_str="America/Los_Angeles",
+    online=False
 )
 
 print("=== LUNAR RETURN CALENDAR 2024 ===")

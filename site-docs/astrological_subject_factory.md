@@ -325,20 +325,21 @@ print(f"Mars: {heliocentric_chart.mars.sign} {heliocentric_chart.mars.abs_pos:.2
 from kerykeion import AstrologicalSubjectFactory
 
 # Topocentric perspective
+observer_altitude = 100  # meters above sea level
 topocentric_chart = AstrologicalSubjectFactory.from_birth_data(
     name="Topocentric Chart",
     year=2000, month=1, day=1,
     hour=12, minute=0,
     lat=45.0, lng=0.0,  # Specific observer location
     tz_str="Europe/London",
-    altitude=100,  # 100 meters above sea level
+    altitude=observer_altitude,
     perspective_type="Topocentric",
     online=False
 )
 
 print("\n=== TOPOCENTRIC PERSPECTIVE ===")
 print(f"Observer at: {topocentric_chart.lat}°N, {topocentric_chart.lng}°E")
-print(f"Altitude: {topocentric_chart.altitude}m")
+print(f"Altitude: {observer_altitude}m")
 print("Positions as seen from specific Earth location:")
 print(f"Moon: {topocentric_chart.moon.sign} {topocentric_chart.moon.abs_pos:.4f}°")
 print(f"Sun: {topocentric_chart.sun.sign} {topocentric_chart.sun.abs_pos:.4f}°")
@@ -725,9 +726,11 @@ tno_chart = AstrologicalSubjectFactory.from_birth_data(
     name="TNO Chart",
     year=1995, month=7, day=20,
     hour=16, minute=45,
-    city="Mauna Kea", nation="US",  # Astronomical observatory location
+    lng=-155.4681,
+    lat=19.8283,
+    tz_str="Pacific/Honolulu",
     active_points=tno_points,
-    geonames_username="your_username"
+    online=False
 )
 
 print("\n=== TRANS-NEPTUNIAN OBJECTS CHART ===")

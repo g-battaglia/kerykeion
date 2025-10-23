@@ -17,8 +17,20 @@ from kerykeion import AstrologicalSubjectFactory
 from kerykeion.house_comparison import HouseComparisonFactory
 
 # Create two subjects for comparison
-person_a = AstrologicalSubjectFactory.from_birth_data("Person A", 1990, 5, 15, 10, 30, "Rome", "IT")
-person_b = AstrologicalSubjectFactory.from_birth_data("Person B", 1992, 8, 23, 14, 45, "Milan", "IT")
+person_a = AstrologicalSubjectFactory.from_birth_data(
+    "Person A", 1990, 5, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+person_b = AstrologicalSubjectFactory.from_birth_data(
+    "Person B", 1992, 8, 23, 14, 45,
+    lng=9.19,
+    lat=45.4642,
+    tz_str="Europe/Rome",
+    online=False,
+)
 
 # Generate bidirectional house comparison
 factory = HouseComparisonFactory(person_a, person_b)
@@ -48,6 +60,24 @@ Person A Mars in Person B Third_House
 You can specify which astrological points to analyze instead of using all available points. This is useful for focused analysis or performance optimization.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.house_comparison import HouseComparisonFactory
+
+person_a = AstrologicalSubjectFactory.from_birth_data(
+    "Person A", 1990, 5, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+person_b = AstrologicalSubjectFactory.from_birth_data(
+    "Person B", 1992, 8, 23, 14, 45,
+    lng=9.19,
+    lat=45.4642,
+    tz_str="Europe/Rome",
+    online=False,
+)
+
 # Use specific points only - traditional planets
 traditional_planets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"]
 factory = HouseComparisonFactory(person_a, person_b, active_points=traditional_planets)
@@ -70,6 +100,25 @@ for point in comparison_personal.first_points_in_second_houses:
 The comparison results are organized in two directions, allowing you to see both perspectives of the relationship.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.house_comparison import HouseComparisonFactory
+
+person_a = AstrologicalSubjectFactory.from_birth_data(
+    "Person A", 1990, 5, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+person_b = AstrologicalSubjectFactory.from_birth_data(
+    "Person B", 1992, 8, 23, 14, 45,
+    lng=9.19,
+    lat=45.4642,
+    tz_str="Europe/Rome",
+    online=False,
+)
+comparison = HouseComparisonFactory(person_a, person_b).get_house_comparison()
+
 # Access both directions of the analysis
 person_a_in_b = comparison.first_points_in_second_houses  # Person A points in Person B houses
 person_b_in_a = comparison.second_points_in_first_houses  # Person B points in Person A houses

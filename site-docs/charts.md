@@ -33,10 +33,13 @@ from kerykeion.charts.chart_drawer import ChartDrawer
 
 # Step 1: Create an astrological subject with birth data
 subject = AstrologicalSubjectFactory.from_birth_data(
-    name="John", 
-    year=1990, month=7, day=15, 
-    hour=10, minute=30, 
-    city="Rome", country="IT"
+    name="John",
+    year=1990, month=7, day=15,
+    hour=10, minute=30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 
 # Step 2: Pre-compute chart data (this does all the calculations)
@@ -63,10 +66,20 @@ Synastry charts are used for relationship analysis, comparing two people's birth
 ```python
 # Step 1: Create two subjects for relationship compatibility analysis
 subject1 = AstrologicalSubjectFactory.from_birth_data(
-    "Person1", 1990, 7, 15, 10, 30, "Rome", "IT"
+    name="Person1", year=1990, month=7, day=15,
+    hour=10, minute=30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 subject2 = AstrologicalSubjectFactory.from_birth_data(
-    "Person2", 1985, 3, 20, 14, 15, "London", "GB"
+    name="Person2", year=1985, month=3, day=20,
+    hour=14, minute=15,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
 )
 
 # Step 2: Pre-compute synastry chart data
@@ -92,10 +105,20 @@ Composite charts represent the mathematical midpoint between two people's planet
 ```python
 # Step 1: Create subjects
 subject1 = AstrologicalSubjectFactory.from_birth_data(
-    "Person1", 1990, 7, 15, 10, 30, "Rome", "IT"
+    name="Person1", year=1990, month=7, day=15,
+    hour=10, minute=30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 subject2 = AstrologicalSubjectFactory.from_birth_data(
-    "Person2", 1985, 3, 20, 14, 15, "London", "GB"
+    name="Person2", year=1985, month=3, day=20,
+    hour=14, minute=15,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
 )
 
 # Step 2: Pre-compute composite chart data (calculates midpoints)
@@ -118,12 +141,20 @@ Transit charts show how current planetary movements affect an individual's natal
 ```python
 # Step 1: Create subjects
 natal_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John", 1990, 7, 15, 10, 30, "Rome", "IT"
+    "John", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 
 # Create a transit subject for current planetary positions
 transit_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Transit", 2024, 1, 15, 12, 0, "Rome", "IT"
+    "Transit", 2024, 1, 15, 12, 0,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 
 # Step 2: Pre-compute transit chart data
@@ -150,7 +181,17 @@ The ChartDrawer class offers two categories of output methods: file generation a
 ### Full Chart with Aspects
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
 # Step 1: Create chart data
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Sample Subject", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 
 # Step 2: Create chart drawer
@@ -168,6 +209,17 @@ svg_string = chart_drawer.generate_svg_string()  # Returns SVG content as string
 ### Wheel Only
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Wheel Only", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
 chart_drawer = ChartDrawer(chart_data=chart_data)
 
 # makeWheelOnlySVG() SAVES wheel-only file to disk
@@ -196,10 +248,21 @@ Visual presentation is crucial for astrological charts, and ChartDrawer offers c
 ### Available Themes
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Theme Demo", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
+
 # Classic theme (default) - traditional colors and styling
 # White background, black text, traditional planet colors
 # Best for: Printed materials, traditional presentations, educational content
-chart_data = ChartDataFactory.create_natal_chart_data(subject)
 chart_drawer = ChartDrawer(chart_data=chart_data, theme="classic")
 
 # Dark theme - modern dark interface
@@ -278,17 +341,25 @@ Zodiac system configuration is handled by `ChartDataFactory` during chart data c
 The tropical zodiac is based on the seasons and is standard in Western astrology. It uses the vernal equinox as 0° Aries.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion.settings import KerykeionSettingsModel
+from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
 
 # Tropical zodiac (default) - seasonal based, used in Western astrology
 # 0° Aries = vernal equinox, signs aligned with seasons
 settings = KerykeionSettingsModel(
+    language_settings=LANGUAGE_SETTINGS,
     zodiac_type="Tropical"  # Default setting, can be omitted
 )
 
 subject = AstrologicalSubjectFactory.from_birth_data(
-    "John", 1990, 7, 15, 10, 30, "Rome", "IT",
-    ks=settings
+    "John", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    ks=settings,
+    online=False,
 )
 
 # Chart data will use tropical positions
@@ -301,57 +372,74 @@ chart_drawer = ChartDrawer(chart_data=chart_data)
 The sidereal zodiac is based on the actual position of constellations and is primarily used in Vedic (Indian) astrology. Different ayanamsas (correction factors) account for the precession of equinoxes.
 
 ```python
-# Lahiri Ayanamsa - most popular in Indian astrology
-# Official ayanamsa of the Government of India
-settings = KerykeionSettingsModel(
-    zodiac_type="Sidereal",
-    sidereal_mode="LAHIRI"  # Government of India standard
-)
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.settings import KerykeionSettingsModel
+from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
 
-# Raman Ayanamsa - traditional Indian calculation
-# Based on B.V. Raman's calculations
-settings = KerykeionSettingsModel(
-    zodiac_type="Sidereal",
-    sidereal_mode="RAMAN"  # Traditional Raman method
-)
+sidereal_modes = [
+    ("LAHIRI", "Government of India standard"),
+    ("RAMAN", "Traditional Raman method"),
+    ("KRISHNAMURTI", "KP system standard"),
+]
 
-# Krishnamurti Ayanamsa - used in KP system
-# Specific to Krishnamurti Paddhati astrology
-settings = KerykeionSettingsModel(
-    zodiac_type="Sidereal",
-    sidereal_mode="KRISHNAMURTI"  # KP system standard
-)
+for mode, description in sidereal_modes:
+    settings = KerykeionSettingsModel(
+        language_settings=LANGUAGE_SETTINGS,
+        zodiac_type="Sidereal",
+        sidereal_mode=mode,
+    )
 
-# Apply sidereal settings to subject
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "John", 1990, 7, 15, 10, 30, "Rome", "IT",
-    ks=settings  # Sidereal positions typically ~24° different from tropical
-)
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "John", 1990, 7, 15, 10, 30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        ks=settings,
+        online=False,
+    )
 
-# Chart data will show sidereal positions (star-based)
-chart_data = ChartDataFactory.create_natal_chart_data(subject)
-chart_drawer = ChartDrawer(chart_data=chart_data)
-svg_content = chart_drawer.generate_svg_string()  # Get as string, don't save file
+    chart_data = ChartDataFactory.create_natal_chart_data(subject)
+    chart_drawer = ChartDrawer(chart_data=chart_data)
+    svg_content = chart_drawer.generate_svg_string()  # Demonstration
+    print(f"Generated sidereal chart with {mode} ayanamsha ({description})")
 ```
 
 ### Comparison Example
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.settings import KerykeionSettingsModel
+from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
+
 # Generate both tropical and sidereal charts for comparison
-tropical_settings = KerykeionSettingsModel(zodiac_type="Tropical")
+tropical_settings = KerykeionSettingsModel(
+    language_settings=LANGUAGE_SETTINGS,
+    zodiac_type="Tropical"
+)
 sidereal_settings = KerykeionSettingsModel(
-    zodiac_type="Sidereal", 
+    language_settings=LANGUAGE_SETTINGS,
+    zodiac_type="Sidereal",
     sidereal_mode="LAHIRI"
 )
 
 # Same birth data, different zodiac systems
 tropical_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John", 1990, 7, 15, 10, 30, "Rome", "IT", 
-    ks=tropical_settings
+    "John", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    ks=tropical_settings,
+    online=False,
 )
 sidereal_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John", 1990, 7, 15, 10, 30, "Rome", "IT", 
-    ks=sidereal_settings
+    "John", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    ks=sidereal_settings,
+    online=False,
 )
 
 # Generate chart data for comparison
@@ -448,10 +536,20 @@ relationship_aspects = ["conjunction", "opposition", "trine", "square"]  # List 
 
 # Create subjects
 subject1 = AstrologicalSubjectFactory.from_birth_data(
-    "Person1", 1990, 7, 15, 10, 30, "Rome", "IT"
+    name="Person1", year=1990, month=7, day=15,
+    hour=10, minute=30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 subject2 = AstrologicalSubjectFactory.from_birth_data(
-    "Person2", 1985, 3, 20, 14, 15, "London", "GB"
+    name="Person2", year=1985, month=3, day=20,
+    hour=14, minute=15,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
 )
 
 # Create synastry chart data with custom points and aspects
@@ -763,9 +861,11 @@ svg_content = chart_drawer.generate_svg_string()
 ```python
 from kerykeion import AstrologicalSubject, ChartDrawer
 from kerykeion.settings import KerykeionSettingsModel
+from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
 
 # Advanced settings
 settings = KerykeionSettingsModel(
+    language_settings=LANGUAGE_SETTINGS,
     house_system="W",  # Whole Signs
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI",
@@ -774,12 +874,20 @@ settings = KerykeionSettingsModel(
 
 # Create subjects with custom settings
 subject1 = AstrologicalSubject(
-    "Person1", 1990, 7, 15, 10, 30, "Rome", "IT", 
-    ks=settings
+    "Person1", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    ks=settings,
+    online=False,
 )
 subject2 = AstrologicalSubject(
-    "Person2", 1985, 3, 20, 14, 15, "London", "GB", 
-    ks=settings
+    "Person2", 1985, 3, 20, 14, 15,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    ks=settings,
+    online=False,
 )
 
 # Custom points and aspects
@@ -812,6 +920,17 @@ chart.save_aspect_grid_only_svg_file()           # Save aspects only
 ## Error Handling
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Resilient Subject", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+
 try:
     chart_data = ChartDataFactory.create_natal_chart_data(subject)
     chart_drawer = ChartDrawer(chart_data=chart_data)
@@ -825,6 +944,16 @@ except Exception as e:
 
 ```python
 import os
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Export Subject", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
 
 # Ensure output directory exists before saving charts
 # Prevents file system errors when saving to subdirectories
@@ -874,6 +1003,16 @@ for chart_type, content in chart_data_items:
 The class provides template methods for getting SVG content as strings, perfect for web applications and custom processing:
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Template Subject", 1990, 7, 15, 10, 30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 chart_drawer = ChartDrawer(chart_data=chart_data)
 

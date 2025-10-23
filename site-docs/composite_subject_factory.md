@@ -30,16 +30,20 @@ person1 = AstrologicalSubjectFactory.from_birth_data(
     name="John",
     year=1990, month=6, day=15,
     hour=14, minute=30,
-    city="New York", nation="US",
-    geonames_username="your_username"
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
 )
 
 person2 = AstrologicalSubjectFactory.from_birth_data(
     name="Jane",
     year=1992, month=9, day=22,
     hour=18, minute=45,
-    city="Los Angeles", nation="US",
-    geonames_username="your_username"
+    lng=-118.2437,
+    lat=34.0522,
+    tz_str="America/Los_Angeles",
+    online=False,
 )
 
 # Create composite chart
@@ -65,10 +69,32 @@ Composite Ascendant: Scorpio 5.67°
 By default, the composite chart name combines both individual names. You can provide a custom name that better reflects the relationship's nature or purpose.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+
+person1 = AstrologicalSubjectFactory.from_birth_data(
+    name="Partner 1",
+    year=1990, month=6, day=15,
+    hour=14, minute=30,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+
+person2 = AstrologicalSubjectFactory.from_birth_data(
+    name="Partner 2",
+    year=1992, month=9, day=22,
+    hour=18, minute=45,
+    lng=-118.2437,
+    lat=34.0522,
+    tz_str="America/Los_Angeles",
+    online=False,
+)
+
 # Create composite with custom name
 composite = CompositeSubjectFactory(
-    person1, 
-    person2, 
+    person1,
+    person2,
     chart_name="Our Relationship Chart"
 )
 
@@ -88,21 +114,27 @@ Chart Name: Our Relationship Chart
 This example demonstrates a comprehensive relationship analysis using composite charts. The composite positions reveal how the relationship functions as a unified entity, showing its core identity, emotional patterns, and external expression.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+
 # Create detailed composite analysis
 person1 = AstrologicalSubjectFactory.from_birth_data(
     name="Partner A",
     year=1985, month=3, day=21,
     hour=10, minute=30,
-    city="London", nation="GB",
-    geonames_username="your_username"
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
 )
 
 person2 = AstrologicalSubjectFactory.from_birth_data(
     name="Partner B",
     year=1987, month=11, day=8,
     hour=16, minute=15,
-    city="Paris", nation="FR",
-    geonames_username="your_username"
+    lng=2.3522,
+    lat=48.8566,
+    tz_str="Europe/Paris",
+    online=False,
 )
 
 composite = CompositeSubjectFactory(person1, person2, "Partnership Analysis")
@@ -166,6 +198,8 @@ Emotional Pattern: Waxing Gibbous energy in the relationship
 This comparison shows how individual planetary positions combine to create the composite midpoints. Understanding these differences helps interpret how the relationship transforms individual energies into something new.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+
 # Compare individual charts with composite
 def compare_positions(person1, person2, composite, planet_name):
     p1_planet = getattr(person1, planet_name)
@@ -178,6 +212,21 @@ def compare_positions(person1, person2, composite, planet_name):
     print(f"  Composite: {comp_planet.sign} {comp_planet.abs_pos:.2f}°")
     print()
 
+person1 = AstrologicalSubjectFactory.from_birth_data(
+    "Alex", 1990, 4, 12, 9, 20,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+person2 = AstrologicalSubjectFactory.from_birth_data(
+    "Sam", 1988, 8, 5, 17, 45,
+    lng=2.3522,
+    lat=48.8566,
+    tz_str="Europe/Paris",
+    online=False,
+)
+composite = CompositeSubjectFactory(person1, person2)
 composite_model = composite.get_midpoint_composite_subject_model()
 
 print("=== INDIVIDUAL vs COMPOSITE COMPARISON ===")
@@ -220,16 +269,20 @@ john = AstrologicalSubjectFactory.from_birth_data(
     name="John Lennon",
     year=1940, month=10, day=9,
     hour=18, minute=30,
-    city="Liverpool", nation="GB",
-    geonames_username="your_username"
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
 )
 
 yoko = AstrologicalSubjectFactory.from_birth_data(
     name="Yoko Ono",
     year=1933, month=2, day=18,
     hour=20, minute=30,
-    city="Tokyo", nation="JP",
-    geonames_username="your_username"
+    lng=139.6917,
+    lat=35.6895,
+    tz_str="Asia/Tokyo",
+    online=False,
 )
 
 # Creative partnership composite
@@ -263,27 +316,33 @@ for planet_attr, description in creative_planets:
 Composite charts work with any zodiac system, provided both individual charts use the same settings. This example shows how to create a Vedic (sidereal) composite chart following traditional Indian astrological principles.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+
 # Create Vedic composite chart
 person1_vedic = AstrologicalSubjectFactory.from_birth_data(
     name="Partner A",
     year=1988, month=7, day=15,
     hour=14, minute=30,
-    city="Mumbai", nation="IN",
+    lng=72.8777,
+    lat=19.0760,
+    tz_str="Asia/Kolkata",
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI",
-    houses_system_identifier="W",  # Whole Sign
-    geonames_username="your_username"
+    houses_system_identifier="W",
+    online=False,
 )
 
 person2_vedic = AstrologicalSubjectFactory.from_birth_data(
     name="Partner B",
     year=1990, month=12, day=3,
     hour=9, minute=45,
-    city="Delhi", nation="IN",
+    lng=77.2090,
+    lat=28.6139,
+    tz_str="Asia/Kolkata",
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI",
     houses_system_identifier="W",
-    geonames_username="your_username"
+    online=False,
 )
 
 vedic_composite = CompositeSubjectFactory(
@@ -315,24 +374,30 @@ Understanding common errors helps ensure successful composite chart creation and
 The most common error occurs when trying to combine charts with different astrological settings. All calculation parameters must match between the two subjects.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+
 # Create charts with different settings
 tropical_chart = AstrologicalSubjectFactory.from_birth_data(
     name="Tropical Person",
     year=1990, month=1, day=1,
     hour=12, minute=0,
-    city="London", nation="GB",
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
     zodiac_type="Tropic",
-    geonames_username="your_username"
+    online=False,
 )
 
 sidereal_chart = AstrologicalSubjectFactory.from_birth_data(
     name="Sidereal Person",
     year=1992, month=6, day=15,
     hour=14, minute=30,
-    city="Mumbai", nation="IN",
+    lng=72.8777,
+    lat=19.0760,
+    tz_str="Asia/Kolkata",
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI",
-    geonames_username="your_username"
+    online=False,
 )
 
 # This will raise an exception
@@ -354,23 +419,28 @@ Solution: Both charts must use the same zodiac type, house system, and perspecti
 When subjects have different active points, the composite automatically uses only the points common to both charts. This ensures meaningful midpoint calculations and prevents errors from missing data.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+
 # Charts with different active points
 minimal_chart = AstrologicalSubjectFactory.from_birth_data(
     name="Essential Person",
     year=1985, month=3, day=15,
     hour=10, minute=0,
-    city="Rome", nation="IT",
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
     active_points=["Sun", "Moon", "Mercury", "Venus", "Ascendant"],
-    geonames_username="your_username"
+    online=False,
 )
 
 full_chart = AstrologicalSubjectFactory.from_birth_data(
     name="Complete Person",
     year=1987, month=8, day=20,
     hour=16, minute=30,
-    city="Milan", nation="IT",
-    # Uses default active points (all available)
-    geonames_username="your_username"
+    lng=9.19,
+    lat=45.4642,
+    tz_str="Europe/Rome",
+    online=False,
 )
 
 composite = CompositeSubjectFactory(minimal_chart, full_chart)
@@ -392,6 +462,23 @@ For romantic partnerships, focus on houses related to love, intimacy, and shared
 
 ```python
 # Relationship compatibility analysis
+from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+
+partner1 = AstrologicalSubjectFactory.from_birth_data(
+    "Partner 1", 1988, 4, 10, 9, 15,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+partner2 = AstrologicalSubjectFactory.from_birth_data(
+    "Partner 2", 1986, 9, 2, 19, 40,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+
 romantic_composite = CompositeSubjectFactory(partner1, partner2, "Love Compatibility")
 model = romantic_composite.get_midpoint_composite_subject_model()
 
@@ -408,9 +495,26 @@ Business composites emphasize practical matters: shared resources, work dynamics
 
 ```python
 # Business partnership analysis
+from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+
+business_partner1 = AstrologicalSubjectFactory.from_birth_data(
+    "Entrepreneur A", 1980, 5, 8, 8, 45,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+business_partner2 = AstrologicalSubjectFactory.from_birth_data(
+    "Entrepreneur B", 1982, 11, 19, 13, 30,
+    lng=-118.2437,
+    lat=34.0522,
+    tz_str="America/Los_Angeles",
+    online=False,
+)
+
 business_composite = CompositeSubjectFactory(
-    business_partner1, 
-    business_partner2, 
+    business_partner1,
+    business_partner2,
     "Business Partnership"
 )
 model = business_composite.get_midpoint_composite_subject_model()
@@ -428,6 +532,23 @@ Family composites (parent-child, siblings) highlight nurturing dynamics, home en
 
 ```python
 # Parent-child composite
+from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+
+parent = AstrologicalSubjectFactory.from_birth_data(
+    "Parent", 1970, 2, 18, 7, 20,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+child = AstrologicalSubjectFactory.from_birth_data(
+    "Child", 2005, 9, 12, 15, 5,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+
 family_composite = CompositeSubjectFactory(parent, child, "Family Dynamic")
 model = family_composite.get_midpoint_composite_subject_model()
 

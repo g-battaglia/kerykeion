@@ -36,17 +36,11 @@ The `ChartDataFactory` now uses **two specialized data models** for better separ
 Used for charts analyzing a single astrological subject:
 
 ```python
-class SingleChartDataModel:
-    chart_type: Literal["Natal", "Composite", "SingleReturnChart"]
-    subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
-    aspects: SingleChartAspectsModel                        # Internal aspects within the chart
-    element_distribution: ElementDistributionModel          # Elemental distribution
-    quality_distribution: QualityDistributionModel          # Modal distribution
-    active_points: List[AstrologicalPoint]                  # Points in calculations
-    active_aspects: List[ActiveAspect]                      # Aspect types and orbs
-    location_name: str                                      # Geographic location name
-    latitude: float                                         # Geographic latitude
-    longitude: float                                        # Geographic longitude
+from kerykeion.schemas.kr_models import SingleChartDataModel
+
+print("SingleChartDataModel fields:")
+for name, field in SingleChartDataModel.model_fields.items():
+    print(f"  {name:<22} {field.annotation}")
 ```
 
 **Supported Chart Types:**
@@ -59,20 +53,11 @@ class SingleChartDataModel:
 Used for charts comparing or overlaying two astrological subjects:
 
 ```python
-class DualChartDataModel:
-    chart_type: Literal["Transit", "Synastry", "DualReturnChart"]
-    first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
-    second_subject: Union[AstrologicalSubjectModel, PlanetReturnModel]
-    aspects: DualChartAspectsModel                          # Inter-chart aspects between subjects
-    house_comparison: Optional[HouseComparisonModel]         # House overlay analysis
-    relationship_score: Optional[RelationshipScoreModel]    # Compatibility scoring (synastry only)
-    element_distribution: ElementDistributionModel          # Combined elemental distribution
-    quality_distribution: QualityDistributionModel          # Combined modal distribution
-    active_points: List[AstrologicalPoint]                  # Points in calculations
-    active_aspects: List[ActiveAspect]                      # Aspect types and orbs
-    location_name: str                                      # Geographic location name
-    latitude: float                                         # Geographic latitude
-    longitude: float                                        # Geographic longitude
+from kerykeion.schemas.kr_models import DualChartDataModel
+
+print("DualChartDataModel fields:")
+for name, field in DualChartDataModel.model_fields.items():
+    print(f"  {name:<22} {field.annotation}")
 ```
 
 **Supported Chart Types:**
@@ -83,7 +68,11 @@ class DualChartDataModel:
 ### Union Type
 
 ```python
+from typing import Union
+from kerykeion.schemas.kr_models import SingleChartDataModel, DualChartDataModel
+
 ChartDataModel = Union[SingleChartDataModel, DualChartDataModel]
+print(ChartDataModel.__args__)
 ```
 
 The factory method returns the appropriate model type based on the chart type requested.
@@ -141,16 +130,18 @@ Extract comprehensive data from a natal chart for analysis use:
 
 ```python
 # Create astrological subject
-subject = AstrologicalSubjectFactory().from_birth_data(
+subject = AstrologicalSubjectFactory.from_birth_data(
     name="John Doe",
     year=1990, month=6, day=15,
     hour=14, minute=30,
-    city="Rome", nation="IT",
-    geonames_username="your_username"
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False
 )
 
 # Generate structured chart data
-chart_data = ChartDataFactory().create_chart_data("Natal", subject)
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
 
 # Returns SingleChartDataModel
 print(f"Model Type: {type(chart_data).__name__}")  # SingleChartDataModel
@@ -173,8 +164,8 @@ print(f"Fixed: {qualities.fixed_percentage}%")
 print(f"Mutable: {qualities.mutable_percentage}%")
 
 # Location information
-print(f"Location: {chart_data.location_name}")
-print(f"Coordinates: {chart_data.latitude:.2f}, {chart_data.longitude:.2f}")
+print(f"Location: {subject.city}, {subject.nation}")
+print(f"Coordinates: {subject.lat:.2f}, {subject.lng:.2f}")
 ```
 
 ### Synastry Chart Data (DualChartDataModel)
@@ -183,19 +174,27 @@ Create comprehensive relationship analysis data including compatibility scoring 
 
 ```python
 # Create two subjects for relationship analysis
-person1 = AstrologicalSubjectFactory().from_birth_data(
+person1 = AstrologicalSubjectFactory.from_birth_data(
     name="Person 1", year=1990, month=6, day=15,
-    hour=14, minute=30, city="Rome", nation="IT"
+    hour=14, minute=30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 
-person2 = AstrologicalSubjectFactory().from_birth_data(
+person2 = AstrologicalSubjectFactory.from_birth_data(
     name="Person 2", year=1992, month=12, day=25,
-    hour=16, minute=45, city="Milan", nation="IT"
+    hour=16, minute=45,
+    lng=9.19,
+    lat=45.4642,
+    tz_str="Europe/Rome",
+    online=False,
 )
 
 # Generate synastry chart data with relationship analysis
-synastry_data = ChartDataFactory().create_chart_data(
-    "Synastry", person1, person2,
+synastry_data = ChartDataFactory.create_synastry_chart_data(
+    person1, person2,
     include_house_comparison=True,
     include_relationship_score=True
 )

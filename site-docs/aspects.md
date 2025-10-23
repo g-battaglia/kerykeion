@@ -66,8 +66,10 @@ person = AstrologicalSubjectFactory.from_birth_data(
     name="Maria Garcia",
     year=1985, month=7, day=22,
     hour=14, minute=30,
-    city="Barcelona", 
-    nation="ES"
+    lng=2.1734,
+    lat=41.3851,
+    tz_str="Europe/Madrid",
+    online=False,
 )
 
 # Calculate single chart aspects
@@ -102,6 +104,21 @@ Strongest aspects:
 
 ```python
 # Analyze aspect patterns and distributions
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.aspects import AspectsFactory
+
+person = AstrologicalSubjectFactory.from_birth_data(
+    name="Pattern Explorer",
+    year=1992, month=3, day=15,
+    hour=10, minute=45,
+    lng=-73.9857,
+    lat=40.7484,
+    tz_str="America/New_York",
+    online=False,
+)
+
+chart_aspects = AspectsFactory.single_chart_aspects(person)
+
 def analyze_aspect_patterns(chart_aspects):
     """Comprehensive aspect pattern analysis"""
     
@@ -140,7 +157,6 @@ def analyze_aspect_patterns(chart_aspects):
     
     return aspect_types, planet_involvement, tight_aspects
 
-# Example usage
 patterns, involvement, tight = analyze_aspect_patterns(chart_aspects)
 ```
 
@@ -176,6 +192,29 @@ Dual chart analysis compares aspects between two different charts, essential for
 ### Synastry Analysis
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.aspects import AspectsFactory
+
+person1 = AstrologicalSubjectFactory.from_birth_data(
+    name="Alice",
+    year=1990, month=5, day=12,
+    hour=9, minute=15,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+
+person2 = AstrologicalSubjectFactory.from_birth_data(
+    name="Bob",
+    year=1992, month=11, day=3,
+    hour=18, minute=5,
+    lng=-73.935242,
+    lat=40.730610,
+    tz_str="America/New_York",
+    online=False,
+)
+
 # Comprehensive relationship compatibility analysis
 def synastry_compatibility_analysis(person1, person2):
     """Complete synastry analysis with multiple perspectives"""
@@ -349,6 +388,11 @@ def current_transits_analysis(natal_person, transit_date=None):
     return transits
 
 # Example transit analysis
+person = AstrologicalSubjectFactory.from_birth_data(
+    name="Alessandro", year=1988, month=3, day=15, hour=10, minute=45,
+    city="Rome", nation="IT"
+)
+
 transit_analysis = current_transits_analysis(person)
 ```
 
@@ -359,6 +403,7 @@ transit_analysis = current_transits_analysis(person)
 ```python
 # Focus analysis on specific planetary combinations
 from kerykeion.schemas.kr_literals import AstrologicalPoint
+from kerykeion.aspects import AspectsFactory
 
 # Personal planets for core personality analysis
 personal_planets = [
@@ -393,6 +438,11 @@ angles_and_nodes = [
 ]
 
 # Example: Personal planets only analysis
+person = AstrologicalSubjectFactory.from_birth_data(
+    name="Alessandro", year=1988, month=3, day=15, hour=10, minute=45,
+    city="Rome", nation="IT"
+)
+
 personal_aspects = AspectsFactory.single_chart_aspects(
     person, 
     active_points=personal_planets

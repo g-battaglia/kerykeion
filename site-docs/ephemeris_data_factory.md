@@ -44,6 +44,9 @@ Sun position: 280.23°
 ### Different Time Intervals
 
 ```python
+from datetime import datetime
+from kerykeion import EphemerisDataFactory
+
 # Hourly data for a specific day
 start = datetime(2024, 6, 21, 0, 0)  # Summer Solstice
 end = datetime(2024, 6, 22, 0, 0)
@@ -78,6 +81,9 @@ Generated 97 15-minute intervals
 ### Custom Location and Settings
 
 ```python
+from datetime import datetime
+from kerykeion import EphemerisDataFactory
+
 # Ephemeris for specific location with custom settings
 factory = EphemerisDataFactory(
     start_datetime=datetime(2024, 3, 20),  # Spring Equinox
@@ -115,6 +121,8 @@ for i, point in enumerate(vedic_data[:3]):  # First 3 data points
 ### Planetary Motion Analysis
 
 ```python
+from datetime import datetime
+from kerykeion import EphemerisDataFactory
 # Track Mercury's motion over a month
 start = datetime(2024, 8, 1)
 end = datetime(2024, 8, 31)
@@ -161,6 +169,8 @@ Date         Position        Sign         Status
 ### Full Astrological Subject Analysis
 
 ```python
+from datetime import datetime
+from kerykeion import EphemerisDataFactory
 # Generate complete astrological subjects for detailed analysis
 factory = EphemerisDataFactory(
     start_datetime=datetime(2024, 12, 21),  # Winter Solstice period
@@ -199,6 +209,8 @@ for i, subject in enumerate(subjects):
 ### Research Applications
 
 ```python
+from datetime import datetime
+from kerykeion import EphemerisDataFactory
 # Statistical analysis of planetary patterns
 import statistics
 
@@ -251,6 +263,8 @@ Time spent in each sign:
 ### High-Frequency Data
 
 ```python
+from datetime import datetime
+from kerykeion import EphemerisDataFactory
 # Minute-by-minute data for precise timing
 start = datetime(2024, 4, 8, 17, 0)  # Eclipse time
 end = datetime(2024, 4, 8, 21, 0)    # 4-hour window
@@ -291,6 +305,8 @@ for i, point in enumerate(eclipse_data[::12]):  # Every hour
 ### Understanding Limits
 
 ```python
+from datetime import datetime
+from kerykeion import EphemerisDataFactory
 # The factory includes safety limits to prevent excessive computation
 try:
     # This would generate too many data points
@@ -317,6 +333,8 @@ except ValueError as e:
 ### Performance Optimization
 
 ```python
+from datetime import datetime
+from kerykeion import EphemerisDataFactory
 import time
 
 # Compare performance between methods
@@ -366,6 +384,8 @@ Subject data: 45,672 bytes
 ### Common Issues and Solutions
 
 ```python
+from datetime import datetime
+from kerykeion import EphemerisDataFactory
 # Issue 1: Date range too large
 try:
     huge_factory = EphemerisDataFactory(
@@ -410,6 +430,8 @@ except ValueError as e:
 
 ### 1. Astrological Research
 ```python
+from datetime import datetime
+from kerykeion import EphemerisDataFactory
 # Planetary cycle analysis
 factory = EphemerisDataFactory(
     datetime(2020, 1, 1),
@@ -424,6 +446,8 @@ data = factory.get_ephemeris_data()
 
 ### 2. Market Timing (Financial Astrology)
 ```python
+from datetime import datetime
+from kerykeion import EphemerisDataFactory
 # Business cycle correlation
 factory = EphemerisDataFactory(
     datetime(2023, 1, 1),
@@ -440,14 +464,16 @@ market_data = factory.get_ephemeris_data()
 
 ### 3. Event Planning (Electional Astrology)
 ```python
+from datetime import datetime
+from kerykeion import EphemerisDataFactory
 # Find optimal dates for events
 factory = EphemerisDataFactory(
     datetime(2024, 6, 1),
     datetime(2024, 6, 30),
     step_type="days",
-    lat=your_latitude,
-    lng=your_longitude,
-    tz_str=your_timezone
+    lat=34.0522,
+    lng=-118.2437,
+    tz_str="America/Los_Angeles"
 )
 
 subjects = factory.get_ephemeris_data_as_astrological_subjects()
@@ -456,6 +482,8 @@ subjects = factory.get_ephemeris_data_as_astrological_subjects()
 
 ### 4. Educational/Learning
 ```python
+from datetime import datetime
+from kerykeion import EphemerisDataFactory
 # Demonstrate planetary motion
 factory = EphemerisDataFactory(
     datetime(2024, 1, 1),

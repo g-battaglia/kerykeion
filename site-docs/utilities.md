@@ -32,7 +32,7 @@ print(f"Moon: {moon_id}")       # Output: Moon: 1
 print(f"Mercury: {mercury_id}") # Output: Mercury: 2
 
 # Special points
-mean_node_id = get_number_from_name("Mean_Node")
+mean_node_id = get_number_from_name("Mean_North_Lunar_Node")
 chiron_id = get_number_from_name("Chiron")
 lilith_id = get_number_from_name("Mean_Lilith")
 
@@ -53,13 +53,12 @@ Creates a KerykeionPointModel object from a degree position, automatically calcu
 
 ```python
 from kerykeion.utilities import get_kerykeion_point_from_degree
-from kerykeion.schemas import PointType
 
 # Create an astrological point from degrees
 sun_position = get_kerykeion_point_from_degree(
     degree=120.5,  # 0° Leo + 30.5°
     name="Sun",
-    point_type=PointType.PLANET
+    point_type="AstrologicalPoint"
 )
 
 print(f"=== SUN POSITION ===")
@@ -83,7 +82,7 @@ examples = [
 
 print(f"\n=== CONVERSION EXAMPLES ===")
 for degree, description in examples:
-    point = get_kerykeion_point_from_degree(degree, "Example", PointType.PLANET)
+    point = get_kerykeion_point_from_degree(degree, "Example", "AstrologicalPoint")
     print(f"{degree:6.1f}° → {point.sign} {point.position:5.1f}° ({description})")
 ```
 
@@ -809,8 +808,10 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     name="Complete Analysis",
     year=1990, month=6, day=15,
     hour=12, minute=0,
-    city="Rome",
-    nation="IT"
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
 )
 
 print("=== COMPLETE ANALYSIS WITH UTILITIES ===")
@@ -861,7 +862,7 @@ print(f"Sun-Moon midpoint: {sun_moon_midpoint:.2f}°")
 
 # Convert to zodiac sign
 midpoint_data = get_kerykeion_point_from_degree(
-    sun_moon_midpoint, "Sun_Moon_Midpoint", PointType.CALCULATED
+    sun_moon_midpoint, "Sun_Moon_Midpoint", "AstrologicalPoint"
 )
 print(f"Midpoint in sign: {midpoint_data.sign} {midpoint_data.position:.2f}°")
 
