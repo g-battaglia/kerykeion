@@ -58,6 +58,26 @@ Single chart analysis examines aspects within one astrological chart, revealing 
 ### Basic Usage
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Quality Subject", 1991, 4, 6, 13, 5,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+partner = AstrologicalSubjectFactory.from_birth_data(
+    "Quality Partner", 1989, 10, 28, 22, 15,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+
+chart_aspects = AspectsFactory.single_chart_aspects(subject)
+relationship_analysis = AspectsFactory.dual_chart_aspects(subject, partner)
+
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
 
@@ -463,46 +483,66 @@ print(f"Traditional synastry aspects: {len(traditional_synastry.relevant_aspects
 
 ```python
 # Configure specific aspects and orb tolerances
-from kerykeion.schemas.kr_models import ActiveAspect
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
+
+person = AstrologicalSubjectFactory.from_birth_data(
+    name="Precision Test",
+    year=1991, month=9, day=12,
+    hour=8, minute=45,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+person1 = person
+person2 = AstrologicalSubjectFactory.from_birth_data(
+    name="Synastry Match",
+    year=1993, month=2, day=18,
+    hour=19, minute=20,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Tight orb configuration for precise analysis
 tight_aspects = [
-    ActiveAspect(name="conjunction", orb=6),
-    ActiveAspect(name="opposition", orb=6),
-    ActiveAspect(name="square", orb=4),
-    ActiveAspect(name="trine", orb=4),
-    ActiveAspect(name="sextile", orb=3)
+    {"name": "conjunction", "orb": 6},
+    {"name": "opposition", "orb": 6},
+    {"name": "square", "orb": 4},
+    {"name": "trine", "orb": 4},
+    {"name": "sextile", "orb": 3},
 ]
 
 # Wide orb configuration for comprehensive analysis
 wide_aspects = [
-    ActiveAspect(name="conjunction", orb=12),
-    ActiveAspect(name="opposition", orb=12),
-    ActiveAspect(name="square", orb=8),
-    ActiveAspect(name="trine", orb=8),
-    ActiveAspect(name="sextile", orb=6)
+    {"name": "conjunction", "orb": 12},
+    {"name": "opposition", "orb": 12},
+    {"name": "square", "orb": 8},
+    {"name": "trine", "orb": 8},
+    {"name": "sextile", "orb": 6},
 ]
 
 # Include minor aspects for detailed analysis
 comprehensive_aspects = tight_aspects + [
-    ActiveAspect(name="quintile", orb=2),
-    ActiveAspect(name="semi-sextile", orb=2),
-    ActiveAspect(name="semi-square", orb=2),
-    ActiveAspect(name="sesquiquadrate", orb=2),
-    ActiveAspect(name="biquintile", orb=2),
-    ActiveAspect(name="quincunx", orb=3)
+    {"name": "quintile", "orb": 2},
+    {"name": "semi-sextile", "orb": 2},
+    {"name": "semi-square", "orb": 2},
+    {"name": "sesquiquadrate", "orb": 2},
+    {"name": "biquintile", "orb": 2},
+    {"name": "quincunx", "orb": 3},
 ]
 
 # Example: Tight orb natal analysis
 precise_natal = AspectsFactory.single_chart_aspects(
     person,
-    active_aspects=tight_aspects
+    active_aspects=tight_aspects,
 )
 
 # Example: Comprehensive synastry with minor aspects
 detailed_synastry = AspectsFactory.dual_chart_aspects(
     person1, person2,
-    active_aspects=comprehensive_aspects
+    active_aspects=comprehensive_aspects,
 )
 
 print(f"Precise natal aspects: {len(precise_natal.relevant_aspects)}")
@@ -514,7 +554,23 @@ print(f"Detailed synastry aspects: {len(detailed_synastry.relevant_aspects)}")
 By default, Kerykeion follows modern practice and evaluates chart axes (ASC, MC, DSC, IC) with the same orb used for planetary aspects. When you want to tighten the angular tolerance for axes, supply the keyword-only `axis_orb_limit` parameter.
 
 ```python
-from kerykeion import AspectsFactory
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Axis Demo", 1992, 11, 5, 9, 15,
+    lng=-118.2437,
+    lat=34.0522,
+    tz_str="America/Los_Angeles",
+    online=False,
+)
+
+partner = AstrologicalSubjectFactory.from_birth_data(
+    "Axis Partner", 1994, 1, 25, 17, 40,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Modern default: axes use the same orb as planets
 modern = AspectsFactory.single_chart_aspects(subject)
@@ -527,10 +583,14 @@ traditional = AspectsFactory.single_chart_aspects(
 
 # Axis orb control is also available in dual-chart calculations
 traditional_synastry = AspectsFactory.dual_chart_aspects(
-    person1,
-    person2,
+    subject,
+    partner,
     axis_orb_limit=1.0,
 )
+
+print(f"Modern axis aspects: {len(modern.relevant_aspects)}")
+print(f"Traditional axis aspects: {len(traditional.relevant_aspects)}")
+print(f"Traditional synastry axis aspects: {len(traditional_synastry.relevant_aspects)}")
 ```
 
 ## Advanced Analysis Techniques
@@ -624,13 +684,24 @@ def aspect_quality_analysis(aspects_result):
     return quality_counts, orb_statistics
 
 # Example quality analysis
-natal_quality = aspect_quality_analysis(chart_aspects)
+chart_quality = aspect_quality_analysis(chart_aspects)
 synastry_quality = aspect_quality_analysis(relationship_analysis)
 ```
 
 ### Aspect Pattern Recognition
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
+
+detection_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Pattern Subject", 1993, 1, 4, 11, 55,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+)
+detection_aspects = AspectsFactory.single_chart_aspects(detection_subject)
+
 def identify_aspect_patterns(aspects_result):
     """Identify significant aspect patterns and configurations"""
     
@@ -644,10 +715,9 @@ def identify_aspect_patterns(aspects_result):
     
     print(f"=== ASPECT PATTERN RECOGNITION ===")
     
-    # Identify heavily aspected planets (potential focal points)
     heavily_aspected = []
     for planet, aspects in planet_aspects.items():
-        if len(aspects) >= 6:  # Threshold for "heavily aspected"
+        if len(aspects) >= 6:
             heavily_aspected.append((planet, len(aspects)))
     
     if heavily_aspected:
@@ -655,31 +725,25 @@ def identify_aspect_patterns(aspects_result):
         for planet, count in sorted(heavily_aspected, key=lambda x: x[1], reverse=True):
             print(f"  {planet}: {count} aspects")
     
-    # Look for stelliums (multiple planets in tight conjunction)
     conjunctions = [a for a in aspects_result.relevant_aspects if a.aspect == "conjunction"]
     if len(conjunctions) >= 2:
         print(f"\nConjunction Patterns:")
-        print(f"  Found {len(conjunctions)} conjunctions")
         for conj in sorted(conjunctions, key=lambda x: abs(x.orbit)):
             print(f"    {conj.p1_name} ☌ {conj.p2_name} (orb: {conj.orbit:+.2f}°)")
     
-    # Identify T-squares and Grand Trines (simplified detection)
     squares = [a for a in aspects_result.relevant_aspects if a.aspect == "square"]
     trines = [a for a in aspects_result.relevant_aspects if a.aspect == "trine"]
     oppositions = [a for a in aspects_result.relevant_aspects if a.aspect == "opposition"]
     
     if len(squares) >= 2 and len(oppositions) >= 1:
         print(f"\nPotential T-Square Configuration detected")
-        print(f"  Squares: {len(squares)}, Oppositions: {len(oppositions)}")
     
     if len(trines) >= 3:
         print(f"\nPotential Grand Trine Configuration detected")
-        print(f"  Trines: {len(trines)}")
     
     return planet_aspects, heavily_aspected
 
-# Example pattern recognition
-patterns = identify_aspect_patterns(chart_aspects)
+identify_aspect_patterns(detection_aspects)
 ```
 
 ## Data Export and Integration
@@ -689,11 +753,28 @@ patterns = identify_aspect_patterns(chart_aspects)
 ```python
 import json
 from datetime import datetime
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
+
+export_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Export Subject", 1992, 6, 30, 6, 45,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+partner_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Export Partner", 1993, 9, 12, 22, 10,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+chart_aspects = AspectsFactory.single_chart_aspects(export_subject)
+relationship_analysis = AspectsFactory.dual_chart_aspects(export_subject, partner_subject)
 
 def export_aspects_analysis(aspects_result, filename_prefix="aspects"):
     """Export comprehensive aspects analysis to JSON"""
     
-    # Prepare export data
     export_data = {
         "analysis_info": {
             "generated_date": datetime.now().isoformat(),
@@ -701,26 +782,21 @@ def export_aspects_analysis(aspects_result, filename_prefix="aspects"):
             "total_aspects": len(aspects_result.all_aspects),
             "relevant_aspects": len(aspects_result.relevant_aspects),
             "active_points": [str(point) for point in aspects_result.active_points],
-            "active_aspects": [aspect.model_dump() for aspect in aspects_result.active_aspects]
+            "active_aspects": [aspect.model_dump() for aspect in aspects_result.active_aspects],
         },
         "aspects_data": {
             "all_aspects": [aspect.model_dump() for aspect in aspects_result.all_aspects],
-            "relevant_aspects": [aspect.model_dump() for aspect in aspects_result.relevant_aspects]
-        }
+            "relevant_aspects": [aspect.model_dump() for aspect in aspects_result.relevant_aspects],
+        },
     }
     
-    # Generate filename
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"{filename_prefix}_{timestamp}.json"
-    
-    # Write to file
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(export_data, f, indent=2, ensure_ascii=False)
-    
     print(f"Aspects analysis exported to: {filename}")
     return filename
 
-# Export examples
 natal_export = export_aspects_analysis(chart_aspects, "natal_aspects")
 synastry_export = export_aspects_analysis(relationship_analysis, "synastry_aspects")
 ```
@@ -783,6 +859,30 @@ synastry_stats = statistical_aspects_analysis(relationship_analysis.relevant_asp
 ### Professional Consultation
 
 ```python
+from datetime import datetime
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+person = AstrologicalSubjectFactory.from_birth_data(
+    "Consultation Client", 1988, 7, 2, 16, 25,
+    lng=-118.2437,
+    lat=34.0522,
+    tz_str="America/Los_Angeles",
+    online=False,
+)
+
+chart_aspects = AspectsFactory.single_chart_aspects(person)
+relationship_analysis = AspectsFactory.dual_chart_aspects(
+    person,
+    AstrologicalSubjectFactory.from_birth_data(
+        "Consultation Partner", 1990, 2, 18, 9, 15,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        online=False,
+    ),
+)
+
 def generate_consultation_report(person, report_type="comprehensive"):
     """Generate professional astrological consultation report"""
     
@@ -902,17 +1002,41 @@ The Aspects module works seamlessly with other Kerykeion components:
 
 ### Chart Visualization
 ```python
-from kerykeion.charts import ChartDrawer
+from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 
-# Create chart with aspect lines
-chart = ChartDrawer(person)
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Aspect Chart", 1990, 11, 3, 18, 40,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
+chart = ChartDrawer(chart_data=chart_data)
 chart_svg = chart.generate_svg_string()
 # Aspects are automatically calculated and displayed as lines
 ```
 
 ### House Comparison
 ```python
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 from kerykeion.house_comparison import HouseComparisonFactory
+
+person1 = AstrologicalSubjectFactory.from_birth_data(
+    "House Person A", 1990, 6, 12, 8, 30,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+person2 = AstrologicalSubjectFactory.from_birth_data(
+    "House Person B", 1991, 2, 3, 19, 15,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
 
 # Combine aspects and house overlays for complete synastry
 aspects = AspectsFactory.dual_chart_aspects(person1, person2)
@@ -925,10 +1049,24 @@ print(f"  House overlays: {len(houses.first_points_in_second_houses)}")
 
 ### Transits and Returns
 ```python
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
-# Analyze return chart aspects
-solar_return = PlanetaryReturnFactory.solar_return(person, 2024)
+person = AstrologicalSubjectFactory.from_birth_data(
+    "Return Base", 1990, 7, 21, 14, 45,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+factory = PlanetaryReturnFactory(
+    person,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+solar_return = factory.next_return_from_year(2024, "Solar")
 return_aspects = AspectsFactory.single_chart_aspects(solar_return)
 
 print(f"Solar return aspects: {len(return_aspects.relevant_aspects)}")

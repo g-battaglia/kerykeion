@@ -836,9 +836,12 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     name="Heliocentric Chart",
     year=1975, month=4, day=10,
     hour=9, minute=15,
-    city="Berlin", nation="DE",
+    lng=13.4050,
+    lat=52.5200,
+    tz_str="Europe/Berlin",
     perspective_type="Heliocentric",
-    geonames_username="your_username"
+    active_points=["Sun", "Earth", "Mercury", "Venus", "Mars"],
+    online=False,
 )
 
 print(f"Perspective: {subject.perspective_type}")
@@ -980,19 +983,19 @@ vedic_chart = AstrologicalSubjectFactory.from_birth_data(
     name="Traditional Vedic Chart",
     year=1985, month=8, day=15,
     hour=6, minute=30,
-    city="Varanasi", nation="IN",
+    lng=82.9739,
+    lat=25.3176,
+    tz_str="Asia/Kolkata",
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI",           # Standard Vedic ayanamsha
     houses_system_identifier="W",      # Whole Sign houses (traditional)
     perspective_type="Apparent Geocentric",
     active_points=[
-        # Nine main planets (Navagrahas)
         "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
-        "Mean_Node", "Mean_South_Node",  # Rahu & Ketu
-        # Essential angles
+        "Mean_North_Lunar_Node", "Mean_South_Lunar_Node",
         "Ascendant", "Medium_Coeli"
     ],
-    geonames_username="your_username"
+    online=False,
 )
 
 print("=== TRADITIONAL VEDIC CONFIGURATION ===")
@@ -1009,8 +1012,8 @@ vedic_planets = [
     ("jupiter", "Guru (Jupiter)"),
     ("venus", "Shukra (Venus)"),
     ("saturn", "Shani (Saturn)"),
-    ("mean_node", "Rahu (North Node)"),
-    ("mean_south_node", "Ketu (South Node)")
+    ("mean_north_lunar_node", "Rahu (North Node)"),
+    ("mean_south_lunar_node", "Ketu (South Node)")
 ]
 
 for planet_attr, vedic_name in vedic_planets:
@@ -1141,22 +1144,19 @@ Specialized setup for answering specific questions through astrological divinati
 # Horary astrology specialized setup
 horary_chart = AstrologicalSubjectFactory.from_current_time(
     name="Horary: Will I get the promotion?",
-    city="London", nation="GB",
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
     zodiac_type="Tropic",
     houses_system_identifier="R",      # Regiomontanus (horary preference)
     active_points=[
-        # Essential planets for horary
         "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
-        # Modern planets for completeness
         "Uranus", "Neptune", "Pluto",
-        # Nodes for spiritual significance
-        "Mean_Node", "Mean_South_Node",
-        # All angles for house rulers
+        "Mean_North_Lunar_Node", "Mean_South_Lunar_Node",
         "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli",
-        # Part of Fortune for general fortune
         "Pars_Fortunae"
     ],
-    geonames_username="your_username"
+    online=False,
 )
 
 print("\n=== HORARY ASTROLOGY ===")
@@ -1169,7 +1169,7 @@ print("\nHorary considerations:")
 print(f"Ascendant: {horary_chart.ascendant.sign} {horary_chart.ascendant.abs_pos:.2f}°")
 
 # Early or late degrees (traditional horary warning)
-asc_degree = horary_chart.ascendant.degree
+asc_degree = horary_chart.ascendant.abs_pos
 if asc_degree < 3:
     print(f"⚠️  Early degree Ascendant ({asc_degree:.2f}°) - Question may be premature")
 elif asc_degree > 27:
@@ -1335,8 +1335,18 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     name="Complete Chart",
     year=1980, month=3, day=15,
     hour=6, minute=30,
-    city="Cairo", nation="EG",
-    geonames_username="your_username"
+    lng=31.2357,
+    lat=30.0444,
+    tz_str="Africa/Cairo",
+    active_points=[
+        "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
+        "Uranus", "Neptune", "Pluto",
+        "Mean_North_Lunar_Node", "Mean_South_Lunar_Node",
+        "True_North_Lunar_Node", "True_South_Lunar_Node",
+        "Ceres", "Pallas", "Juno", "Vesta", "Chiron",
+        "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"
+    ],
+    online=False,
 )
 
 # Traditional planets
@@ -1357,7 +1367,7 @@ for planet_name in modern:
 
 # Lunar nodes
 print("\n=== LUNAR NODES ===")
-nodes = ["mean_node", "true_node", "mean_south_node", "true_south_node"]
+nodes = ["mean_north_lunar_node", "true_north_lunar_node", "mean_south_lunar_node", "true_south_lunar_node"]
 for node_name in nodes:
     if hasattr(subject, node_name):
         node = getattr(subject, node_name)

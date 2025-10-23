@@ -274,24 +274,34 @@ if transit_data.house_comparison:
 Extract data from composite relationships representing the partnership itself:
 
 ```python
-from kerykeion import CompositeSubjectFactory
+from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory, ChartDataFactory
 
-# Create composite subject (midpoint method)
+person1 = AstrologicalSubjectFactory.from_birth_data(
+    "Composite Person A", 1990, 6, 15, 14, 30,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+person2 = AstrologicalSubjectFactory.from_birth_data(
+    "Composite Person B", 1992, 12, 25, 16, 45,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
+)
+
 composite_factory = CompositeSubjectFactory(person1, person2)
 composite_subject = composite_factory.get_midpoint_composite_subject_model()
-
-# Generate composite chart data
 composite_data = ChartDataFactory.create_composite_chart_data(composite_subject)
 
-# Access composite relationship data
 print(f"Composite Chart: {composite_data.first_subject.name}")
 print(f"Internal Aspects: {len(composite_data.aspects.relevant_aspects)}")
 print(f"Average Location: {composite_data.location_name}")
 print(f"Coordinates: {composite_data.latitude:.2f}, {composite_data.longitude:.2f}")
 
-# Relationship element emphasis
 elements = composite_data.element_distribution
-print(f"Relationship Elements:")
+print("Relationship Elements:")
 print(f"  Fire: {elements.fire_percentage}% (passion, initiative)")
 print(f"  Earth: {elements.earth_percentage}% (stability, practical)")
 print(f"  Air: {elements.air_percentage}% (communication, mental)")
@@ -305,16 +315,24 @@ print(f"  Water: {elements.water_percentage}% (emotional, intuitive)")
 Filter calculations to specific celestial points for performance or specialized analysis:
 
 ```python
-# Define custom active points for faster calculation
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+
+custom_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Focused Points", 1991, 3, 5, 9, 10,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+
 custom_points = [
-    "Sun", "Moon", "Mercury", "Venus", "Mars", 
-    "Jupiter", "Saturn", "Ascendant", "Medium_Coeli"
+    "Sun", "Moon", "Mercury", "Venus", "Mars",
+    "Jupiter", "Saturn", "Ascendant", "Medium_Coeli",
 ]
 
-# Create chart data with only specified points
-chart_data = ChartDataFactory().create_chart_data(
-    "Natal", subject,
-    active_points=custom_points
+chart_data = ChartDataFactory.create_natal_chart_data(
+    custom_subject,
+    active_points=custom_points,
 )
 
 print(f"Active Points: {len(chart_data.active_points)}")
@@ -326,23 +344,29 @@ print(f"Calculated Aspects: {len(chart_data.aspects.relevant_aspects)}")
 Configure which aspects to calculate and their orb tolerances:
 
 ```python
-from kerykeion.schemas.kr_models import ActiveAspect
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 
-# Define custom aspects with specific orbs
+custom_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Custom Aspects", 1992, 10, 28, 18, 15,
+    lng=2.3522,
+    lat=48.8566,
+    tz_str="Europe/Paris",
+    online=False,
+)
+
 custom_aspects = [
     {"name": "conjunction", "orb": 10},
-    {"name": "opposition", "orb": 10}, 
+    {"name": "opposition", "orb": 10},
     {"name": "trine", "orb": 8},
     {"name": "square", "orb": 8},
     {"name": "sextile", "orb": 6},
     {"name": "quintile", "orb": 2},
-    {"name": "biquintile", "orb": 2}
+    {"name": "biquintile", "orb": 2},
 ]
 
-# Create chart data with custom aspect configuration
-chart_data = ChartDataFactory().create_chart_data(
-    "Natal", subject,
-    active_aspects=custom_aspects
+chart_data = ChartDataFactory.create_natal_chart_data(
+    custom_subject,
+    active_aspects=custom_aspects,
 )
 
 print(f"Configured Aspects: {len(chart_data.active_aspects)}")
@@ -355,14 +379,30 @@ Control which analytical features to include for performance optimization:
 
 ```python
 # Create synastry data with selective features
-synastry_data = ChartDataFactory.create_synastry_chart_data(
-    person1, person2,
-    include_house_comparison=False,     # Skip house analysis for speed
-    include_relationship_score=True,    # Include compatibility scoring
-    active_points=["Sun", "Moon", "Venus", "Mars"]  # Love-focused analysis
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+
+person1 = AstrologicalSubjectFactory.from_birth_data(
+    "Love Focus A", 1989, 1, 17, 8, 30,
+    lng=-74.0060,
+    lat=40.7128,
+    tz_str="America/New_York",
+    online=False,
+)
+person2 = AstrologicalSubjectFactory.from_birth_data(
+    "Love Focus B", 1990, 3, 4, 21, 55,
+    lng=-0.1276,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
 )
 
-# Faster calculation, focused results
+synastry_data = ChartDataFactory.create_synastry_chart_data(
+    person1, person2,
+    include_house_comparison=False,
+    include_relationship_score=True,
+    active_points=["Sun", "Moon", "Venus", "Mars"],
+)
+
 print(f"Love-focused aspects: {len(synastry_data.aspects.relevant_aspects)}")
 ```
 
@@ -521,27 +561,42 @@ Process multiple charts for statistical analysis:
 
 ```python
 import csv
+from dataclasses import dataclass
 from typing import List, Dict, Any
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+
+@dataclass
+class BirthData:
+    name: str
+    year: int
+    month: int
+    day: int
+    hour: int
+    minute: int
+    city: str
+    nation: str
+
 
 def process_multiple_charts(birth_data_list: List[BirthData]) -> List[Dict[str, Any]]:
     """Process multiple natal charts for batch analysis."""
-    
+
     results = []
-    factory = ChartDataFactory()
-    subject_factory = AstrologicalSubjectFactory()
-    
     for birth_data in birth_data_list:
         try:
-            # Create subject
-            subject = subject_factory.from_birth_data(
-                birth_data.name, birth_data.year, birth_data.month, birth_data.day,
-                birth_data.hour, birth_data.minute, birth_data.city, birth_data.nation
+            subject = AstrologicalSubjectFactory.from_birth_data(
+                birth_data.name,
+                birth_data.year,
+                birth_data.month,
+                birth_data.day,
+                birth_data.hour,
+                birth_data.minute,
+                city=birth_data.city,
+                nation=birth_data.nation,
+                online=True,
             )
-            
-            # Generate chart data
-            chart_data = factory.create_chart_data("Natal", subject)
-            
-            # Extract key metrics
+
+            chart_data = ChartDataFactory.create_natal_chart_data(subject)
+
             result = {
                 "name": birth_data.name,
                 "fire_percentage": chart_data.element_distribution.fire_percentage,
@@ -553,38 +608,36 @@ def process_multiple_charts(birth_data_list: List[BirthData]) -> List[Dict[str, 
                 "mutable_percentage": chart_data.quality_distribution.mutable_percentage,
                 "aspect_count": len(chart_data.aspects.relevant_aspects),
             }
-            
+
             results.append(result)
-            
+
         except Exception as e:
             print(f"Error processing {birth_data.name}: {e}")
             continue
-    
+
     return results
+
 
 def save_to_csv(data: List[Dict[str, Any]], filename: str):
     """Save processed data to CSV file."""
     if not data:
         return
-    
+
     fieldnames = data[0].keys()
-    
-    with open(filename, 'w', newline='') as csvfile:
+
+    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(data)
 
-# Example usage
+
 birth_data_samples = [
     BirthData("Person 1", 1990, 3, 15, 10, 30, "Rome", "IT"),
     BirthData("Person 2", 1985, 7, 22, 16, 45, "Milan", "IT"),
     BirthData("Person 3", 1992, 11, 8, 8, 15, "Naples", "IT"),
 ]
 
-# Process all charts
 results = process_multiple_charts(birth_data_samples)
-
-# Save results
 save_to_csv(results, "astrological_analysis.csv")
 print(f"Processed {len(results)} charts and saved to CSV")
 ```
