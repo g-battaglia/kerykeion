@@ -247,7 +247,7 @@ class TransitsTimeRangeFactory:
                 active_points=self.active_points,
                 active_aspects=self.active_aspects,
                 axis_orb_limit=self.axis_orb_limit,
-            ).relevant_aspects
+            ).aspects
 
             # Create a transit moment for this point in time
             transit_moments.append(

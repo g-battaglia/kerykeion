@@ -353,12 +353,11 @@ class SingleChartAspectsModel(SubscriptableBaseModel):
     - Composite charts
     - Any other single chart type
 
-    Contains both all calculated aspects and the filtered relevant aspects
-    for the astrological subject.
+    Contains the filtered and relevant aspects for the astrological subject
+    based on configured orb settings.
     """
     subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The astrological subject for which aspects were calculated.")
-    all_aspects: List[AspectModel] = Field(description="Complete list of all calculated aspects within the chart.")
-    relevant_aspects: List[AspectModel] = Field(description="Filtered list of relevant aspects based on orb settings.")
+    aspects: List[AspectModel] = Field(description="List of calculated aspects within the chart, filtered based on orb settings.")
     active_points: List[AstrologicalPoint] = Field(description="List of active points used in the calculation.")
     active_aspects: List["ActiveAspect"] = Field(description="List of active aspects with their orb settings.")
 
@@ -373,13 +372,12 @@ class DualChartAspectsModel(SubscriptableBaseModel):
     - Composite vs natal comparisons
     - Any other dual chart comparison
 
-    Contains both all calculated aspects and the filtered relevant aspects
-    between the two charts.
+    Contains the filtered and relevant aspects between the two charts
+    based on configured orb settings.
     """
     first_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The first astrological subject.")
     second_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The second astrological subject.")
-    all_aspects: List[AspectModel] = Field(description="Complete list of all calculated aspects between the two charts.")
-    relevant_aspects: List[AspectModel] = Field(description="Filtered list of relevant aspects based on orb settings.")
+    aspects: List[AspectModel] = Field(description="List of calculated aspects between the two charts, filtered based on orb settings.")
     active_points: List[AstrologicalPoint] = Field(description="List of active points used in the calculation.")
     active_aspects: List["ActiveAspect"] = Field(description="List of active aspects with their orb settings.")
 

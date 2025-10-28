@@ -542,7 +542,7 @@ if __name__ == "__main__":
 
     print(f"Chart Type: {natal_data.chart_type}")
     print(f"Active Points: {len(natal_data.active_points)}")
-    print(f"Aspects: {len(natal_data.aspects.relevant_aspects)}")
+    print(f"Aspects: {len(natal_data.aspects.aspects)}")
     print(f"Fire: {natal_data.element_distribution.fire_percentage}%")
     print(f"Earth: {natal_data.element_distribution.earth_percentage}%")
     print(f"Air: {natal_data.element_distribution.air_percentage}%")

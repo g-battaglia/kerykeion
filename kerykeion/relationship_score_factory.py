@@ -117,7 +117,7 @@ class RelationshipScoreFactory:
             self.first_subject,
             self.second_subject,
             axis_orb_limit=axis_orb_limit,
-        ).all_aspects
+        ).aspects
 
     def _evaluate_destiny_sign(self):
         """

@@ -10,7 +10,7 @@ first_subject = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 
 second_subject = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP", suppress_geonames_warning=True)
 synastry_aspects = AspectsFactory.dual_chart_aspects(first_subject, second_subject)
 
-synastry_relevant_aspects = synastry_aspects.relevant_aspects
+synastry_relevant_aspects = synastry_aspects.aspects
 
 print(f"Relevant aspects count: {len(synastry_relevant_aspects)}")
 

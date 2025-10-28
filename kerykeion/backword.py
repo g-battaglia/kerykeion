@@ -676,14 +676,16 @@ class NatalAspects:
 
     @cached_property
     def all_aspects(self):
+        """Legacy property - returns the same as aspects for backwards compatibility."""
         if self._all_aspects_cache is None:
-            self._all_aspects_cache = list(self._build_aspects_model().all_aspects)
+            self._all_aspects_cache = list(self._build_aspects_model().aspects)
         return self._all_aspects_cache
 
     @cached_property
     def relevant_aspects(self):
+        """Legacy property - returns the same as aspects for backwards compatibility."""
         if self._relevant_aspects_cache is None:
-            self._relevant_aspects_cache = list(self._build_aspects_model().relevant_aspects)
+            self._relevant_aspects_cache = list(self._build_aspects_model().aspects)
         return self._relevant_aspects_cache
 
 # ---------------------------------------------------------------------------
@@ -748,14 +750,16 @@ class SynastryAspects:
 
     @cached_property
     def all_aspects(self):
+        """Legacy property - returns the same as aspects for backwards compatibility."""
         if self._all_aspects_cache is None:
-            self._all_aspects_cache = list(self._build_dual_model().all_aspects)
+            self._all_aspects_cache = list(self._build_dual_model().aspects)
         return self._all_aspects_cache
 
     @cached_property
     def relevant_aspects(self):
+        """Legacy property - returns the same as aspects for backwards compatibility."""
         if self._relevant_aspects_cache is None:
-            self._relevant_aspects_cache = list(self._build_dual_model().relevant_aspects)
+            self._relevant_aspects_cache = list(self._build_dual_model().aspects)
         return self._relevant_aspects_cache
 
     def get_relevant_aspects(self):

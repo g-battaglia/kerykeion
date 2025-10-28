@@ -44,7 +44,7 @@ def main() -> None:
 
     print("Solar return cast for:", solar_return.iso_formatted_local_datetime)
     print("Return location:", solar_return.city, solar_return.nation)
-    print("Total relevant aspects:", len(chart_data.aspects.relevant_aspects))
+    print("Total aspects:", len(chart_data.aspects.aspects))
 
 
 if __name__ == "__main__":

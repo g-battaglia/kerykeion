@@ -10,8 +10,8 @@ class TestSynastryAspects:
         print(self.first_subject.model_dump_json(indent=4))
         self.second_subject = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP", suppress_geonames_warning=True)
 
-        self.synastry_relevant_aspects = AspectsFactory.dual_chart_aspects(self.first_subject, self.second_subject).relevant_aspects
-        self.synastry_all_aspects = AspectsFactory.dual_chart_aspects(self.first_subject, self.second_subject).all_aspects
+        self.synastry_relevant_aspects = AspectsFactory.dual_chart_aspects(self.first_subject, self.second_subject).aspects
+        self.synastry_all_aspects = AspectsFactory.dual_chart_aspects(self.first_subject, self.second_subject).aspects
 
         self.expected_relevant_aspects = EXPECTED_RELEVANT_ASPECTS
         self.expected_all_aspects = EXPECTED_ALL_ASPECTS

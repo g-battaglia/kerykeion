@@ -98,7 +98,7 @@ class AspectsFactory:
         Example:
             >>> johnny = AstrologicalSubjectFactory.from_birth_data("Johnny", 1963, 6, 9, 0, 0, "Owensboro", "US")
             >>> chart_aspects = AspectsFactory.single_chart_aspects(johnny)
-            >>> print(f"Found {len(chart_aspects.relevant_aspects)} relevant aspects")
+            >>> print(f"Found {len(chart_aspects.aspects)} aspects")
         """
         # Initialize settings and configurations
         celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
@@ -162,7 +162,7 @@ class AspectsFactory:
             >>> john = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
             >>> jane = AstrologicalSubjectFactory.from_birth_data("Jane", 1992, 6, 15, 14, 30, "Paris", "FR")
             >>> synastry = AspectsFactory.dual_chart_aspects(john, jane)
-            >>> print(f"Found {len(synastry.relevant_aspects)} relevant aspects")
+            >>> print(f"Found {len(synastry.aspects)} aspects")
         """
         # Initialize settings and configurations
         celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
@@ -208,12 +208,12 @@ class AspectsFactory:
         Create the complete single chart aspects model with all calculations.
 
         Returns:
-            SingleChartAspectsModel containing all aspects data
+            SingleChartAspectsModel containing filtered aspects data
         """
         all_aspects = AspectsFactory._calculate_single_chart_aspects(
             subject, active_points_resolved, active_aspects_resolved, aspects_settings, celestial_points
         )
-        relevant_aspects = AspectsFactory._filter_relevant_aspects(
+        filtered_aspects = AspectsFactory._filter_relevant_aspects(
             all_aspects,
             axis_orb_limit,
             apply_axis_orb_filter=axis_orb_limit is not None,
@@ -221,8 +221,7 @@ class AspectsFactory:
 
         return SingleChartAspectsModel(
             subject=subject,
-            all_aspects=all_aspects,
-            relevant_aspects=relevant_aspects,
+            aspects=filtered_aspects,
             active_points=active_points_resolved,
             active_aspects=active_aspects_resolved,
         )
@@ -250,13 +249,13 @@ class AspectsFactory:
             celestial_points: Celestial points configuration
 
         Returns:
-            DualChartAspectsModel: Complete model containing all aspects data
+            DualChartAspectsModel: Complete model containing filtered aspects data
         """
         all_aspects = AspectsFactory._calculate_dual_chart_aspects(
             first_subject, second_subject, active_points_resolved, active_aspects_resolved,
             aspects_settings, celestial_points
         )
-        relevant_aspects = AspectsFactory._filter_relevant_aspects(
+        filtered_aspects = AspectsFactory._filter_relevant_aspects(
             all_aspects,
             axis_orb_limit,
             apply_axis_orb_filter=False,
@@ -265,8 +264,7 @@ class AspectsFactory:
         return DualChartAspectsModel(
             first_subject=first_subject,
             second_subject=second_subject,
-            all_aspects=all_aspects,
-            relevant_aspects=relevant_aspects,
+            aspects=filtered_aspects,
             active_points=active_points_resolved,
             active_aspects=active_aspects_resolved,
         )
@@ -560,10 +558,11 @@ if __name__ == "__main__":
     # Test single chart aspects (replaces natal aspects)
     johnny = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 0, 0, city="Owensboro", nation="US")
     single_chart_aspects = AspectsFactory.single_chart_aspects(johnny)
-    print(f"Single chart aspects - All: {len(single_chart_aspects.all_aspects)}, Relevant: {len(single_chart_aspects.relevant_aspects)}")
+    print(f"Single chart aspects: {len(single_chart_aspects.aspects)}")
 
     # Test dual chart aspects (replaces synastry aspects)
     john = AstrologicalSubjectFactory.from_birth_data("John", 1940, 10, 9, 10, 30, "Liverpool", "GB")
     yoko = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP")
     dual_chart_aspects = AspectsFactory.dual_chart_aspects(john, yoko)
-    print(f"Dual chart aspects - All: {len(dual_chart_aspects.all_aspects)}, Relevant: {len(dual_chart_aspects.relevant_aspects)}")
+    print(f"Dual chart aspects: {len(dual_chart_aspects.aspects)}")
+

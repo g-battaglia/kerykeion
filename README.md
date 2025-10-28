@@ -943,13 +943,13 @@ jane = AstrologicalSubjectFactory.from_birth_data(
 
 # For single chart aspects (natal, return, composite, etc.)
 single_chart_result = AspectsFactory.single_chart_aspects(jack)
-print(f"Found {len(single_chart_result.relevant_aspects)} aspects in Jack's chart")
-print(single_chart_result.relevant_aspects[0])
+print(f"Found {len(single_chart_result.aspects)} aspects in Jack's chart")
+print(single_chart_result.aspects[0])
 
 # For dual chart aspects (synastry, transits, comparisons, etc.)
 dual_chart_result = AspectsFactory.dual_chart_aspects(jack, jane)
-print(f"Found {len(dual_chart_result.relevant_aspects)} aspects between Jack and Jane's charts")
-print(dual_chart_result.relevant_aspects[0])
+print(f"Found {len(dual_chart_result.aspects)} aspects between Jack and Jane's charts")
+print(dual_chart_result.aspects[0])
 
 # Each AspectModel includes:
 # - p1_name, p2_name: Planet/point names
@@ -1520,6 +1520,8 @@ natal_aspects = AspectsFactory.single_chart_aspects(subject)
 synastry_aspects = AspectsFactory.dual_chart_aspects(subject1, subject2)
 ```
 
+Note (v5.1): The two lists `relevant_aspects` and `all_aspects` were unified into a single, cleaned list: `aspects`. If you previously used either property, switch to `aspects`. The legacy properties still work via the backward-compatibility layer but both return the same unified list.
+
 ### 🔄 Migration Guide
 
 #### Using the Backward Compatibility Layer
@@ -1667,7 +1669,7 @@ modern_subject = AstrologicalSubjectFactory.from_birth_data(
     online=False,
 )
 modern_aspects = AspectsFactory.single_chart_aspects(modern_subject)
-print(f"Modern aspects count: {len(modern_aspects.relevant_aspects)}")
+print(f"Modern aspects count: {len(modern_aspects.aspects)}")
 ```
 
 #### Automated Migration Script

@@ -13,7 +13,7 @@ yoko = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 20, 30, "
 synastry_aspects = AspectsFactory.dual_chart_aspects(john, yoko)
 
 # Generate relevant aspects
-relevant = synastry_aspects.relevant_aspects
+relevant = synastry_aspects.aspects
 
 # Convert to dict format like expected file
 synastry_aspects_list = []

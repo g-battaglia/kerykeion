@@ -35,13 +35,12 @@ def main() -> None:
 
     synastry = AspectsFactory.dual_chart_aspects(john, jane)
 
-    print(f"Total aspects computed: {len(synastry.all_aspects)}")
-    print(f"Relevant aspects: {len(synastry.relevant_aspects)}")
+    print(f"Total aspects: {len(synastry.aspects)}")
 
-    if synastry.relevant_aspects:
-        first = synastry.relevant_aspects[0]
+    if synastry.aspects:
+        first = synastry.aspects[0]
         print(
-            "Example relevant aspect: "
+            "Example aspect: "
             f"{first.p1_name} {first.aspect} {first.p2_name} "
             f"with orb {first.orbit:.2f}°"
         )

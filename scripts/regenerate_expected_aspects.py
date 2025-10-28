@@ -20,8 +20,8 @@ def regenerate_natal_aspects():
     natal_aspects = AspectsFactory.single_chart_aspects(subject)
 
     # Convert to dict format
-    relevant_aspects = [a.model_dump() for a in natal_aspects.relevant_aspects]
-    all_aspects = [a.model_dump() for a in natal_aspects.all_aspects]
+    relevant_aspects = [a.model_dump() for a in natal_aspects.aspects]
+    all_aspects = [a.model_dump() for a in natal_aspects.aspects]
 
     print(f"Relevant aspects: {len(relevant_aspects)}")
     print(f"All aspects: {len(all_aspects)}")
@@ -56,7 +56,7 @@ def regenerate_synastry_aspects():
 
     # Convert to dict format with p1/p2 fields
     relevant_aspects = []
-    for aspect in synastry_aspects.relevant_aspects:
+    for aspect in synastry_aspects.aspects:
         relevant_aspects.append({
             "p1_name": aspect.p1_name,
             "p1_abs_pos": aspect.p1_abs_pos,

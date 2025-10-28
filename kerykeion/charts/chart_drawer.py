@@ -343,7 +343,7 @@ class ChartDrawer:
             # --- NATAL CHART SETUP ---
 
             # Extract aspects from pre-computed chart data
-            self.aspects_list = chart_data.aspects.relevant_aspects
+            self.aspects_list = chart_data.aspects.aspects
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
@@ -366,7 +366,7 @@ class ChartDrawer:
             # --- COMPOSITE CHART SETUP ---
 
             # Extract aspects from pre-computed chart data
-            self.aspects_list = chart_data.aspects.relevant_aspects
+            self.aspects_list = chart_data.aspects.aspects
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
@@ -384,7 +384,7 @@ class ChartDrawer:
             # --- TRANSIT CHART SETUP ---
 
             # Extract aspects from pre-computed chart data
-            self.aspects_list = chart_data.aspects.relevant_aspects
+            self.aspects_list = chart_data.aspects.aspects
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
@@ -405,7 +405,7 @@ class ChartDrawer:
             # --- SYNASTRY CHART SETUP ---
 
             # Extract aspects from pre-computed chart data
-            self.aspects_list = chart_data.aspects.relevant_aspects
+            self.aspects_list = chart_data.aspects.aspects
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
@@ -423,7 +423,7 @@ class ChartDrawer:
             # --- RETURN CHART SETUP ---
 
             # Extract aspects from pre-computed chart data
-            self.aspects_list = chart_data.aspects.relevant_aspects
+            self.aspects_list = chart_data.aspects.aspects
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT
@@ -441,7 +441,7 @@ class ChartDrawer:
             # --- SINGLE WHEEL RETURN CHART SETUP ---
 
             # Extract aspects from pre-computed chart data
-            self.aspects_list = chart_data.aspects.relevant_aspects
+            self.aspects_list = chart_data.aspects.aspects
 
             # Screen size
             self.height = self._DEFAULT_HEIGHT

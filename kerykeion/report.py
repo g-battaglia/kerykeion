@@ -511,14 +511,14 @@ class ReportGenerator:
             return ""
 
         aspects_model = self._chart_data.aspects
-        relevant_aspects = list(getattr(aspects_model, "relevant_aspects", []))
+        aspects_list = list(getattr(aspects_model, "aspects", []))
 
-        if not relevant_aspects:
+        if not aspects_list:
             return "No aspects data available."
 
-        total_aspects = len(relevant_aspects)
+        total_aspects = len(aspects_list)
         if max_aspects is not None:
-            relevant_aspects = relevant_aspects[:max_aspects]
+            aspects_list = aspects_list[:max_aspects]
 
         is_dual = isinstance(self._chart_data, DualChartDataModel)
         if is_dual:
@@ -527,7 +527,7 @@ class ReportGenerator:
             table_header = ["Point 1", "Aspect", "Point 2", "Orb", "Movement"]
 
         aspects_table: List[List[str]] = [table_header]
-        for aspect in relevant_aspects:
+        for aspect in aspects_list:
             aspect_name = str(aspect.aspect)
             symbol = ASPECT_SYMBOLS.get(aspect_name.lower(), aspect_name)
             movement_symbol = MOVEMENT_SYMBOLS.get(aspect.aspect_movement, "")
@@ -552,7 +552,7 @@ class ReportGenerator:
                     movement,
                 ])
 
-        suffix = f" (showing {len(relevant_aspects)} of {total_aspects})" if max_aspects is not None else ""
+        suffix = f" (showing {len(aspects_list)} of {total_aspects})" if max_aspects is not None else ""
         title = f"Aspects{suffix}"
         return AsciiTable(aspects_table, title=title).table
 

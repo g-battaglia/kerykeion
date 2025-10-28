@@ -60,27 +60,6 @@ Single chart analysis examines aspects within one astrological chart, revealing 
 ```python
 from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "Quality Subject", 1991, 4, 6, 13, 5,
-    lng=12.4964,
-    lat=41.9028,
-    tz_str="Europe/Rome",
-    online=False,
-)
-partner = AstrologicalSubjectFactory.from_birth_data(
-    "Quality Partner", 1989, 10, 28, 22, 15,
-    lng=-0.1276,
-    lat=51.5074,
-    tz_str="Europe/London",
-    online=False,
-)
-
-chart_aspects = AspectsFactory.single_chart_aspects(subject)
-relationship_analysis = AspectsFactory.dual_chart_aspects(subject, partner)
-
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.aspects import AspectsFactory
-
 # Create a natal chart
 person = AstrologicalSubjectFactory.from_birth_data(
     name="Maria Garcia",
@@ -96,12 +75,11 @@ person = AstrologicalSubjectFactory.from_birth_data(
 chart_aspects = AspectsFactory.single_chart_aspects(person)
 
 print(f"Analyzing {person.name}'s natal chart:")
-print(f"Total aspects found: {len(chart_aspects.all_aspects)}")
-print(f"Relevant aspects: {len(chart_aspects.relevant_aspects)}")
+print(f"Aspects found: {len(chart_aspects.aspects)}")
 
 # Examine the strongest aspects (tightest orbs)
 print("\nStrongest aspects:")
-sorted_aspects = sorted(chart_aspects.relevant_aspects, key=lambda x: abs(x.orbit))
+sorted_aspects = sorted(chart_aspects.aspects, key=lambda x: abs(x.orbit))
 for i, aspect in enumerate(sorted_aspects[:5], 1):
     print(f"{i}. {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb: {aspect.orbit:+.2f}°)")
 ```
@@ -109,8 +87,7 @@ for i, aspect in enumerate(sorted_aspects[:5], 1):
 **Output example:**
 ```
 Analyzing Maria Garcia's natal chart:
-Total aspects found: 45
-Relevant aspects: 42
+Aspects found: 42
 
 Strongest aspects:
 1. Sun conjunction Mercury (orb: +0.23°)
@@ -124,8 +101,7 @@ Strongest aspects:
 
 ```python
 # Analyze aspect patterns and distributions
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.aspects import AspectsFactory
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 
 person = AstrologicalSubjectFactory.from_birth_data(
     name="Pattern Explorer",
@@ -144,7 +120,7 @@ def analyze_aspect_patterns(chart_aspects):
     
     # Group aspects by type
     aspect_types = {}
-    for aspect in chart_aspects.relevant_aspects:
+    for aspect in chart_aspects.aspects:
         aspect_type = aspect.aspect
         if aspect_type not in aspect_types:
             aspect_types[aspect_type] = []
@@ -160,7 +136,7 @@ def analyze_aspect_patterns(chart_aspects):
     
     # Analyze planetary involvement
     planet_involvement = {}
-    for aspect in chart_aspects.relevant_aspects:
+    for aspect in chart_aspects.aspects:
         for planet in [aspect.p1_name, aspect.p2_name]:
             planet_involvement[planet] = planet_involvement.get(planet, 0) + 1
     
@@ -170,7 +146,7 @@ def analyze_aspect_patterns(chart_aspects):
         print(f"  {planet}: {count} aspects")
     
     # Identify tight aspects (within 1 degree)
-    tight_aspects = [a for a in chart_aspects.relevant_aspects if abs(a.orbit) <= 1.0]
+    tight_aspects = [a for a in chart_aspects.aspects if abs(a.orbit) <= 1.0]
     print(f"\nTight Aspects (≤1°): {len(tight_aspects)}")
     for aspect in sorted(tight_aspects, key=lambda x: abs(x.orbit)):
         print(f"  {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb: {aspect.orbit:+.2f}°)")
@@ -212,8 +188,7 @@ Dual chart analysis compares aspects between two different charts, essential for
 ### Synastry Analysis
 
 ```python
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.aspects import AspectsFactory
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 
 person1 = AstrologicalSubjectFactory.from_birth_data(
     name="Alice",
@@ -244,8 +219,7 @@ def synastry_compatibility_analysis(person1, person2):
     
     print(f"=== SYNASTRY ANALYSIS ===")
     print(f"{person1.name} & {person2.name}")
-    print(f"Total aspects: {len(synastry.all_aspects)}")
-    print(f"Relevant aspects: {len(synastry.relevant_aspects)}")
+    print(f"Aspects: {len(synastry.aspects)}")
     
     # Categorize aspects by harmony
     harmonious = []
@@ -255,7 +229,7 @@ def synastry_compatibility_analysis(person1, person2):
     harmonious_aspects = ["conjunction", "trine", "sextile"]
     challenging_aspects = ["opposition", "square"]
     
-    for aspect in synastry.relevant_aspects:
+    for aspect in synastry.aspects:
         if aspect.aspect in harmonious_aspects:
             harmonious.append(aspect)
         elif aspect.aspect in challenging_aspects:
@@ -280,7 +254,7 @@ def synastry_compatibility_analysis(person1, person2):
     passion_aspects = []
     communication_aspects = []
     
-    for aspect in synastry.relevant_aspects:
+    for aspect in synastry.aspects:
         planets = {aspect.p1_name, aspect.p2_name}
         
         if "Venus" in planets or "Moon" in planets:
@@ -297,7 +271,7 @@ def synastry_compatibility_analysis(person1, person2):
     
     # Show strongest connections
     print(f"\nStrongest Connections:")
-    strongest = sorted(synastry.relevant_aspects, key=lambda x: abs(x.orbit))[:5]
+    strongest = sorted(synastry.aspects, key=lambda x: abs(x.orbit))[:5]
     for i, aspect in enumerate(strongest, 1):
         print(f"  {i}. {aspect.p1_owner}'s {aspect.p1_name} {aspect.aspect} {aspect.p2_owner}'s {aspect.p2_name} (orb: {aspect.orbit:+.2f}°)")
     
@@ -321,8 +295,7 @@ relationship_analysis = synastry_compatibility_analysis(person1, person2)
 ```
 === SYNASTRY ANALYSIS ===
 Alessandro & Sofia
-Total aspects: 78
-Relevant aspects: 73
+Total aspects: 73
 
 Aspect Quality Distribution:
   Harmonious: 32 aspects
@@ -374,11 +347,11 @@ def current_transits_analysis(natal_person, transit_date=None):
     print(f"=== CURRENT TRANSITS ANALYSIS ===")
     print(f"For: {natal_person.name}")
     print(f"Date: {transit_date.strftime('%Y-%m-%d %H:%M')}")
-    print(f"Active transits: {len(transits.relevant_aspects)}")
+    print(f"Active transits: {len(transits.aspects)}")
     
     # Group by transiting planet
     transit_planets = {}
-    for aspect in transits.relevant_aspects:
+    for aspect in transits.aspects:
         transiting_planet = aspect.p1_name  # Transit chart is first
         if transiting_planet not in transit_planets:
             transit_planets[transiting_planet] = []
@@ -396,7 +369,7 @@ def current_transits_analysis(natal_person, transit_date=None):
     significant_transits = []
     significant_planets = ["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
     
-    for aspect in transits.relevant_aspects:
+    for aspect in transits.aspects:
         if aspect.p1_name in significant_planets and abs(aspect.orbit) <= 2.0:
             significant_transits.append(aspect)
     
@@ -423,7 +396,7 @@ transit_analysis = current_transits_analysis(person)
 ```python
 # Focus analysis on specific planetary combinations
 from kerykeion.schemas.kr_literals import AstrologicalPoint
-from kerykeion.aspects import AspectsFactory
+from kerykeion import AspectsFactory
 
 # Personal planets for core personality analysis
 personal_planets = [
@@ -468,7 +441,7 @@ personal_aspects = AspectsFactory.single_chart_aspects(
     active_points=personal_planets
 )
 
-print(f"Personal planets aspects: {len(personal_aspects.relevant_aspects)}")
+print(f"Personal planets aspects: {len(personal_aspects.aspects)}")
 
 # Example: Synastry with traditional planets only
 traditional_synastry = AspectsFactory.dual_chart_aspects(
@@ -476,7 +449,7 @@ traditional_synastry = AspectsFactory.dual_chart_aspects(
     active_points=traditional_planets
 )
 
-print(f"Traditional synastry aspects: {len(traditional_synastry.relevant_aspects)}")
+print(f"Traditional synastry aspects: {len(traditional_synastry.aspects)}")
 ```
 
 ### Custom Aspect Configuration
@@ -545,8 +518,8 @@ detailed_synastry = AspectsFactory.dual_chart_aspects(
     active_aspects=comprehensive_aspects,
 )
 
-print(f"Precise natal aspects: {len(precise_natal.relevant_aspects)}")
-print(f"Detailed synastry aspects: {len(detailed_synastry.relevant_aspects)}")
+print(f"Precise natal aspects: {len(precise_natal.aspects)}")
+print(f"Detailed synastry aspects: {len(detailed_synastry.aspects)}")
 ```
 
 ### Axis Orb Filtering
@@ -588,9 +561,9 @@ traditional_synastry = AspectsFactory.dual_chart_aspects(
     axis_orb_limit=1.0,
 )
 
-print(f"Modern axis aspects: {len(modern.relevant_aspects)}")
-print(f"Traditional axis aspects: {len(traditional.relevant_aspects)}")
-print(f"Traditional synastry axis aspects: {len(traditional_synastry.relevant_aspects)}")
+print(f"Modern axis aspects: {len(modern.aspects)}")
+print(f"Traditional axis aspects: {len(traditional.aspects)}")
+print(f"Traditional synastry axis aspects: {len(traditional_synastry.aspects)}")
 ```
 
 ## Advanced Analysis Techniques
@@ -642,7 +615,7 @@ def aspect_quality_analysis(aspects_result):
 
     orb_statistics = {"very_tight": 0, "tight": 0, "moderate": 0, "wide": 0}
 
-    for aspect in aspects_result.relevant_aspects:
+    for aspect in aspects_result.aspects:
         quality = aspect_qualities.get(aspect.aspect, "neutral")
         quality_counts[quality] += 1
 
@@ -656,7 +629,7 @@ def aspect_quality_analysis(aspects_result):
         else:
             orb_statistics["wide"] += 1
 
-    total_aspects = len(aspects_result.relevant_aspects)
+    total_aspects = len(aspects_result.aspects)
     print("=== ASPECT QUALITY ANALYSIS ===")
     print(f"Total aspects analyzed: {total_aspects}")
 
@@ -706,7 +679,7 @@ def identify_aspect_patterns(aspects_result):
     
     # Group aspects by planets
     planet_aspects = {}
-    for aspect in aspects_result.relevant_aspects:
+    for aspect in aspects_result.aspects:
         for planet_name in [aspect.p1_name, aspect.p2_name]:
             if planet_name not in planet_aspects:
                 planet_aspects[planet_name] = []
@@ -724,15 +697,15 @@ def identify_aspect_patterns(aspects_result):
         for planet, count in sorted(heavily_aspected, key=lambda x: x[1], reverse=True):
             print(f"  {planet}: {count} aspects")
     
-    conjunctions = [a for a in aspects_result.relevant_aspects if a.aspect == "conjunction"]
+    conjunctions = [a for a in aspects_result.aspects if a.aspect == "conjunction"]
     if len(conjunctions) >= 2:
         print(f"\nConjunction Patterns:")
         for conj in sorted(conjunctions, key=lambda x: abs(x.orbit)):
             print(f"    {conj.p1_name} ☌ {conj.p2_name} (orb: {conj.orbit:+.2f}°)")
     
-    squares = [a for a in aspects_result.relevant_aspects if a.aspect == "square"]
-    trines = [a for a in aspects_result.relevant_aspects if a.aspect == "trine"]
-    oppositions = [a for a in aspects_result.relevant_aspects if a.aspect == "opposition"]
+    squares = [a for a in aspects_result.aspects if a.aspect == "square"]
+    trines = [a for a in aspects_result.aspects if a.aspect == "trine"]
+    oppositions = [a for a in aspects_result.aspects if a.aspect == "opposition"]
     
     if len(squares) >= 2 and len(oppositions) >= 1:
         print(f"\nPotential T-Square Configuration detected")
@@ -783,14 +756,12 @@ def export_aspects_analysis(aspects_result, filename_prefix="aspects"):
         "analysis_info": {
             "generated_date": datetime.now().isoformat(),
             "chart_owner": aspects_result.subject.name if hasattr(aspects_result, "subject") else "Synastry",
-            "total_aspects": len(aspects_result.all_aspects),
-            "relevant_aspects": len(aspects_result.relevant_aspects),
+            "aspects_count": len(aspects_result.aspects),
             "active_points": list(aspects_result.active_points),
             "active_aspects": [serialize(aspect) for aspect in aspects_result.active_aspects],
         },
         "aspects_data": {
-            "all_aspects": [serialize(aspect) for aspect in aspects_result.all_aspects],
-            "relevant_aspects": [serialize(aspect) for aspect in aspects_result.relevant_aspects],
+            "aspects": [serialize(aspect) for aspect in aspects_result.aspects],
         },
     }
 
@@ -878,8 +849,8 @@ def statistical_aspects_analysis(aspects_list):
 
 
 # Example statistical analysis
-natal_stats = statistical_aspects_analysis(chart_aspects.relevant_aspects)
-synastry_stats = statistical_aspects_analysis(relationship_analysis.relevant_aspects)
+natal_stats = statistical_aspects_analysis(chart_aspects.aspects)
+synastry_stats = statistical_aspects_analysis(relationship_analysis.aspects)
 
 print("\nSummary:")
 print(f"  Natal aspects analyzed: {natal_stats['orb_stats']['count'] if natal_stats else 0}")
@@ -919,12 +890,12 @@ def aspect_quality_analysis(aspects_result):
         "opposition": "challenging",
     }
     counts = {key: 0 for key in {"harmonious", "challenging", "neutral"}}
-    for aspect in aspects_result.relevant_aspects:
+    for aspect in aspects_result.aspects:
         counts[mapping.get(aspect.aspect, "neutral")] += 1
     return counts
 
 def identify_aspect_patterns(aspects_result):
-    return {aspect.aspect for aspect in aspects_result.relevant_aspects}
+    return {aspect.aspect for aspect in aspects_result.aspects}
 
 def generate_consultation_report(person, report_type="comprehensive"):
     print("=== ASTROLOGICAL CONSULTATION REPORT ===")
@@ -939,9 +910,9 @@ def generate_consultation_report(person, report_type="comprehensive"):
     print("Patterns detected:", patterns)
 
     if report_type == "comprehensive":
-        strongest = sorted(chart_aspects.relevant_aspects, key=lambda aspect: abs(aspect.orbit))[:5]
-        for aspect in strongest:
-            print(f"  {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb {aspect.orbit:+.2f}°)")
+        strongest = sorted(chart_aspects.aspects, key=lambda aspect: abs(aspect.orbit))[:5]
+            for aspect in strongest:
+                print(f"  {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb {aspect.orbit:+.2f}°)")
 
     return chart_aspects
 
@@ -1005,27 +976,26 @@ def comparative_study(subjects_list, study_focus="general"):
         print()
         print(f"Processing subject {i}/{len(subjects_list)}: {subject.name}")
         chart_aspects = AspectsFactory.single_chart_aspects(subject)
-        stats = statistical_aspects_analysis(chart_aspects.relevant_aspects)
-        result = {
-            "name": subject.name,
-            "birth_year": subject.year,
-            "sun_sign": subject.sun.sign,
-            "total_aspects": len(chart_aspects.all_aspects),
-            "relevant_aspects": len(chart_aspects.relevant_aspects),
-            "stats": stats,
-        }
+        stats = statistical_aspects_analysis(chart_aspects.aspects)
+            result = {
+                "name": subject.name,
+                "birth_year": subject.year,
+                "sun_sign": subject.sun.sign,
+                "aspects": len(chart_aspects.aspects),
+                "stats": stats,
+            }
         all_results.append(result)
 
     print()
     print("=== AGGREGATE ANALYSIS ===")
-    totals = [r["relevant_aspects"] for r in all_results]
+    totals = [r["aspects"] for r in all_results]
     print(f"Average aspects per chart: {statistics.mean(totals):.1f}")
     print(f"Range: {min(totals)} - {max(totals)} aspects")
 
     if study_focus == "sun_sign":
         sun_sign_data = {}
         for result in all_results:
-            sun_sign_data.setdefault(result["sun_sign"], []).append(result["relevant_aspects"])
+            sun_sign_data.setdefault(result["sun_sign"], []).append(result["aspects"])
         print("\nAspects by Sun Sign:")
         for sign, counts in sun_sign_data.items():
             if len(counts) > 1:
@@ -1085,7 +1055,7 @@ aspects = AspectsFactory.dual_chart_aspects(person1, person2)
 houses = HouseComparisonFactory(person1, person2).get_house_comparison()
 
 print("Complete relationship analysis:")
-print(f"  Aspects: {len(aspects.relevant_aspects)}")
+print(f"  Aspects: {len(aspects.aspects)}")
 print(f"  House overlays: {len(houses.first_points_in_second_houses)}")
 ```
 
@@ -1111,7 +1081,7 @@ factory = PlanetaryReturnFactory(
 solar_return = factory.next_return_from_year(2024, "Solar")
 return_aspects = AspectsFactory.single_chart_aspects(solar_return)
 
-print(f"Solar return aspects: {len(return_aspects.relevant_aspects)}")
+print(f"Solar return aspects: {len(return_aspects.aspects)}")
 ```
 
 This comprehensive aspects module provides the foundation for all astrological analysis within the Kerykeion framework, offering both simple usage for beginners and advanced features for professional astrologers and researchers.

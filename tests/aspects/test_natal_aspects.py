@@ -9,10 +9,10 @@ class TestNatalAspects:
     def setup_class(self):
         self.subject = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 0 , 0, "Owensboro", "US", suppress_geonames_warning=True)
 
-        self.subject_relevant_aspects = AspectsFactory.single_chart_aspects(self.subject).relevant_aspects
+        self.subject_relevant_aspects = AspectsFactory.single_chart_aspects(self.subject).aspects
         self.subject_relevant_aspects = [a.model_dump() for a in self.subject_relevant_aspects]
 
-        self.subject_all_aspects = AspectsFactory.single_chart_aspects(self.subject).all_aspects
+        self.subject_all_aspects = AspectsFactory.single_chart_aspects(self.subject).aspects
         self.subject_all_aspects = [a.model_dump() for a in self.subject_all_aspects]
 
         self.expected_relevant_aspects = EXPECTED_RELEVANT_ASPECTS
