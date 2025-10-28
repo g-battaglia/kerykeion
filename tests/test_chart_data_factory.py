@@ -99,7 +99,7 @@ class TestSingleChartDataModel:
 
         # Verify aspects are calculated
         assert hasattr(chart_data, 'aspects')
-        assert len(chart_data.aspects.aspects) > 0
+        assert len(chart_data.aspects) > 0
 
         # Verify element and quality distributions
         assert isinstance(chart_data.element_distribution, ElementDistributionModel)
@@ -160,7 +160,7 @@ class TestDualChartDataModel:
 
         # Verify inter-chart aspects
         assert hasattr(chart_data, 'aspects')
-        assert len(chart_data.aspects.aspects) > 0
+        assert len(chart_data.aspects) > 0
 
         # Verify synastry-specific features
         assert chart_data.house_comparison is not None
@@ -409,11 +409,11 @@ class TestAspectCalculations:
         chart_data = factory.create_chart_data("Natal", test_subject_1)
 
         # Verify aspects exist
-        assert len(chart_data.aspects.aspects) > 0
+        assert len(chart_data.aspects) > 0
 
         # For natal charts, all aspects should be internal
         # (this test assumes aspect structure allows checking)
-        aspects = chart_data.aspects.aspects
+        aspects = chart_data.aspects
         assert len(aspects) > 0
 
     def test_synastry_aspects_are_inter_chart(self, factory, test_subject_1, test_subject_2):
@@ -421,10 +421,10 @@ class TestAspectCalculations:
         chart_data = factory.create_chart_data("Synastry", test_subject_1, test_subject_2)
 
         # Verify inter-chart aspects exist
-        assert len(chart_data.aspects.aspects) > 0
+        assert len(chart_data.aspects) > 0
 
         # Synastry should have aspects between the two charts
-        aspects = chart_data.aspects.aspects
+        aspects = chart_data.aspects
         assert len(aspects) > 0
 
 
@@ -444,7 +444,7 @@ class TestPerformanceAndOptimization:
         )
 
         # Limited chart should have fewer or equal aspects
-        assert len(limited_chart.aspects.aspects) <= len(full_chart.aspects.aspects)
+        assert len(limited_chart.aspects) <= len(full_chart.aspects)
         assert len(limited_chart.active_points) <= len(full_chart.active_points)
 
     def test_selective_synastry_features(self, factory, test_subject_1, test_subject_2):
@@ -529,7 +529,7 @@ class TestDataExportAndSerialization:
                 "name": chart_data.subject.name,
                 "fire_percentage": chart_data.element_distribution.fire_percentage,
                 "earth_percentage": chart_data.element_distribution.earth_percentage,
-                "aspect_count": len(chart_data.aspects.aspects)
+                "aspect_count": len(chart_data.aspects)
             }
             results.append(result)
 
@@ -583,7 +583,7 @@ class TestEdgeCasesAndRobustness:
         assert chart_data.first_subject.name == chart_data.second_subject.name
 
         # Should have some aspects (likely many conjunctions)
-        assert len(chart_data.aspects.aspects) > 0
+        assert len(chart_data.aspects) > 0
 
 
 if __name__ == "__main__":

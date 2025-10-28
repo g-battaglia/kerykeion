@@ -510,8 +510,7 @@ class ReportGenerator:
         if not self._chart_data or not getattr(self._chart_data, "aspects", None):
             return ""
 
-        aspects_model = self._chart_data.aspects
-        aspects_list = list(getattr(aspects_model, "aspects", []))
+        aspects_list = list(self._chart_data.aspects)
 
         if not aspects_list:
             return "No aspects data available."

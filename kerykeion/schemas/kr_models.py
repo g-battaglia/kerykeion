@@ -536,7 +536,7 @@ class SingleChartDataModel(SubscriptableBaseModel):
     subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"]
 
     # Internal aspects analysis
-    aspects: "SingleChartAspectsModel"
+    aspects: List[AspectModel]
 
     # Element and quality distributions
     element_distribution: "ElementDistributionModel"
@@ -582,7 +582,7 @@ class DualChartDataModel(SubscriptableBaseModel):
     second_subject: Union["AstrologicalSubjectModel", "PlanetReturnModel"]
 
     # Inter-chart aspects analysis
-    aspects: "DualChartAspectsModel"
+    aspects: List[AspectModel]
 
     # House comparison analysis
     house_comparison: Optional["HouseComparisonModel"] = None

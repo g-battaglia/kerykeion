@@ -159,10 +159,10 @@ class ChartDataFactory:
             )
 
         # Calculate aspects based on chart type
-        aspects: Union[SingleChartAspectsModel, DualChartAspectsModel]
+        aspects_model: Union[SingleChartAspectsModel, DualChartAspectsModel]
         if chart_type in ["Natal", "Composite", "SingleReturnChart"]:
             # Single chart aspects
-            aspects = AspectsFactory.single_chart_aspects(
+            aspects_model = AspectsFactory.single_chart_aspects(
                 first_subject,
                 active_points=effective_active_points,
                 active_aspects=active_aspects,
@@ -172,7 +172,7 @@ class ChartDataFactory:
             # Dual chart aspects - second_subject is guaranteed to exist here due to validation above
             if second_subject is None:
                 raise KerykeionException(f"Second subject is required for {chart_type} charts.")
-            aspects = AspectsFactory.dual_chart_aspects(
+            aspects_model = AspectsFactory.dual_chart_aspects(
                 first_subject,
                 second_subject,
                 active_points=effective_active_points,
@@ -301,7 +301,7 @@ class ChartDataFactory:
             return SingleChartDataModel(
                 chart_type=cast(Literal["Natal", "Composite", "SingleReturnChart"], chart_type),
                 subject=first_subject,
-                aspects=cast(SingleChartAspectsModel, aspects),
+                aspects=cast(SingleChartAspectsModel, aspects_model).aspects,
                 element_distribution=element_distribution,
                 quality_distribution=quality_distribution,
                 active_points=effective_active_points,
@@ -315,7 +315,7 @@ class ChartDataFactory:
                 chart_type=cast(Literal["Transit", "Synastry", "DualReturnChart"], chart_type),
                 first_subject=first_subject,
                 second_subject=second_subject,
-                aspects=cast(DualChartAspectsModel, aspects),
+                aspects=cast(DualChartAspectsModel, aspects_model).aspects,
                 house_comparison=house_comparison,
                 relationship_score=relationship_score,
                 element_distribution=element_distribution,
@@ -542,8 +542,11 @@ if __name__ == "__main__":
 
     print(f"Chart Type: {natal_data.chart_type}")
     print(f"Active Points: {len(natal_data.active_points)}")
-    print(f"Aspects: {len(natal_data.aspects.aspects)}")
+    print(f"Aspects: {len(natal_data.aspects)}")
     print(f"Fire: {natal_data.element_distribution.fire_percentage}%")
     print(f"Earth: {natal_data.element_distribution.earth_percentage}%")
     print(f"Air: {natal_data.element_distribution.air_percentage}%")
     print(f"Water: {natal_data.element_distribution.water_percentage}%")
+
+    print("\n---\n")
+    print(natal_data.model_dump_json(indent=4))

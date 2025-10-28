@@ -911,8 +911,8 @@ def generate_consultation_report(person, report_type="comprehensive"):
 
     if report_type == "comprehensive":
         strongest = sorted(chart_aspects.aspects, key=lambda aspect: abs(aspect.orbit))[:5]
-            for aspect in strongest:
-                print(f"  {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb {aspect.orbit:+.2f}°)")
+        for aspect in strongest:
+            print(f"  {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb {aspect.orbit:+.2f}°)")
 
     return chart_aspects
 
@@ -977,13 +977,13 @@ def comparative_study(subjects_list, study_focus="general"):
         print(f"Processing subject {i}/{len(subjects_list)}: {subject.name}")
         chart_aspects = AspectsFactory.single_chart_aspects(subject)
         stats = statistical_aspects_analysis(chart_aspects.aspects)
-            result = {
-                "name": subject.name,
-                "birth_year": subject.year,
-                "sun_sign": subject.sun.sign,
-                "aspects": len(chart_aspects.aspects),
-                "stats": stats,
-            }
+        result = {
+            "name": subject.name,
+            "birth_year": subject.year,
+            "sun_sign": subject.sun.sign,
+            "aspects": len(chart_aspects.aspects),
+            "stats": stats,
+        }
         all_results.append(result)
 
     print()

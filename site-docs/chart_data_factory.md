@@ -148,7 +148,7 @@ print(f"Model Type: {type(chart_data).__name__}")  # SingleChartDataModel
 print(f"Chart Type: {chart_data.chart_type}")      # Natal
 print(f"Subject: {chart_data.subject.name}")       # John Doe
 print(f"Active Points: {len(chart_data.active_points)}")
-print(f"Aspects: {len(chart_data.aspects.aspects)}")
+print(f"Aspects: {len(chart_data.aspects)}")
 
 # Element distribution analysis
 elements = chart_data.element_distribution
@@ -204,7 +204,7 @@ print(f"Model Type: {type(synastry_data).__name__}")  # DualChartDataModel
 print(f"Chart Type: {synastry_data.chart_type}")      # Synastry
 print(f"First Subject: {synastry_data.first_subject.name}")   # Person 1
 print(f"Second Subject: {synastry_data.second_subject.name}") # Person 2
-print(f"Inter-chart Aspects: {len(synastry_data.aspects.aspects)}")
+print(f"Inter-chart Aspects: {len(synastry_data.aspects)}")
 
 # Relationship compatibility analysis
 if synastry_data.relationship_score:
@@ -256,12 +256,12 @@ transit_data = ChartDataFactory.create_transit_chart_data(
 )
 
 print(f"Transit Time: {transit_data.second_subject.iso_formatted_local_datetime}")
-print(f"Active Transits: {len(transit_data.aspects.aspects)}")
+print(f"Active Transits: {len(transit_data.aspects)}")
 
 # Analyze major transits
 major_aspects = ["conjunction", "opposition", "trine", "square", "sextile"]
 major_transits = [
-    aspect for aspect in transit_data.aspects.aspects
+    aspect for aspect in transit_data.aspects
     if aspect.aspect in major_aspects
 ]
 
@@ -308,7 +308,7 @@ second_subject = composite_subject_model.second_subject
 print(f"Composite Chart Name: {composite_subject_model.name}")
 print(f"Members: {first_subject.name} & {second_subject.name}")
 print(f"Chart Type: {composite_chart.chart_type}")
-print(f"Aspects: {len(composite_chart.aspects.aspects)}")
+print(f"Aspects: {len(composite_chart.aspects)}")
 
 average_latitude = (first_subject.lat + second_subject.lat) / 2
 average_longitude = (first_subject.lng + second_subject.lng) / 2
@@ -356,7 +356,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 )
 
 print(f"Active Points: {len(chart_data.active_points)}")
-print(f"Calculated Aspects: {len(chart_data.aspects.aspects)}")
+print(f"Calculated Aspects: {len(chart_data.aspects)}")
 ```
 
 ### Custom Aspect Configuration
@@ -390,7 +390,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 )
 
 print(f"Configured Aspects: {len(chart_data.active_aspects)}")
-print(f"Found Aspects: {len(chart_data.aspects.aspects)}")
+print(f"Found Aspects: {len(chart_data.aspects)}")
 ```
 
 ### Selective Analysis Features
@@ -423,7 +423,7 @@ synastry_data = ChartDataFactory.create_synastry_chart_data(
     active_points=["Sun", "Moon", "Venus", "Mars"],
 )
 
-print(f"Love-focused aspects: {len(synastry_data.aspects.aspects)}")
+print(f"Love-focused aspects: {len(synastry_data.aspects)}")
 ```
 
 ## Programming Integration Examples
@@ -492,8 +492,8 @@ def process_natal_chart(birth_data: BirthData) -> Dict[str, Any]:
         },
         "analysis": {
             "aspects": {
-                "total": len(chart_data.aspects.aspects),
-                "relevant": len(chart_data.aspects.aspects),
+                "total": len(chart_data.aspects),
+                "relevant": len(chart_data.aspects),
                 "list": [
                     {
                         "from": aspect.p1_name,
@@ -502,7 +502,7 @@ def process_natal_chart(birth_data: BirthData) -> Dict[str, Any]:
                         "orb": round(aspect.orbit, 2),
                         "exact_degrees": aspect.aspect_degrees
                     }
-                    for aspect in chart_data.aspects.aspects
+                    for aspect in chart_data.aspects
                 ]
             },
             "elements": {
@@ -544,7 +544,7 @@ def analyze_relationship_compatibility(person1: BirthData, person2: BirthData) -
         "compatibility": {
             "score": synastry_data.relationship_score.score_value if synastry_data.relationship_score else None,
             "description": synastry_data.relationship_score.score_description if synastry_data.relationship_score else None,
-            "aspects_count": len(synastry_data.aspects.aspects)
+            "aspects_count": len(synastry_data.aspects)
         },
         "key_aspects": [
             {
@@ -554,7 +554,7 @@ def analyze_relationship_compatibility(person1: BirthData, person2: BirthData) -
                 "orb": round(aspect.orbit, 2),
                 "strength": "strong" if aspect.orbit < 3 else "moderate" if aspect.orbit < 6 else "weak"
             }
-            for aspect in synastry_data.aspects.aspects[:10]
+            for aspect in synastry_data.aspects[:10]
         ],
         "house_overlays": {
             "person1_in_person2": len(synastry_data.house_comparison.first_points_in_second_houses) if synastry_data.house_comparison else 0,
@@ -626,7 +626,7 @@ def process_multiple_charts(birth_data_list: List[BirthData]) -> List[Dict[str, 
                 "cardinal_percentage": chart_data.quality_distribution.cardinal_percentage,
                 "fixed_percentage": chart_data.quality_distribution.fixed_percentage,
                 "mutable_percentage": chart_data.quality_distribution.mutable_percentage,
-                "aspect_count": len(chart_data.aspects.aspects),
+                "aspect_count": len(chart_data.aspects),
             }
 
             results.append(result)
@@ -808,7 +808,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 
-aspects = chart_data.aspects.aspects
+aspects = chart_data.aspects
 
 # Count aspect types
 aspect_counts = {}
@@ -860,7 +860,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 )
 
 print(f"Active Points: {len(chart_data.active_points)}")
-print(f"Calculated Aspects: {len(chart_data.aspects.aspects)}")
+print(f"Calculated Aspects: {len(chart_data.aspects)}")
 ```
 
 ### Aspect Configuration Optimization
@@ -904,7 +904,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 )
 
 print(f"Configured {len(chart_data.active_aspects)} active aspect types")
-print(f"Resulting aspects: {len(chart_data.aspects.aspects)}")
+print(f"Resulting aspects: {len(chart_data.aspects)}")
 ```
 
 ### Selective Feature Loading
@@ -936,7 +936,7 @@ quick_synastry = ChartDataFactory.create_synastry_chart_data(
     active_points=["Sun", "Moon", "Venus", "Mars"],
 )
 
-print(f"Quick analysis: {len(quick_synastry.aspects.aspects)} aspects")
+print(f"Quick analysis: {len(quick_synastry.aspects)} aspects")
 ```
 
 ## Error Handling

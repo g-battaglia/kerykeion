@@ -44,8 +44,12 @@ def test_all_active_points_used_in_chart():
     assert set(chart_data.active_points).issubset(set(ALL_ACTIVE_POINTS))
     assert len(chart_data.active_points) > 0
     assert hasattr(chart_data, "aspects") and chart_data.aspects is not None
-    aspects_active = set(getattr(chart_data.aspects, "active_points", []))
-    assert aspects_active == set(chart_data.active_points)
+    assert len(chart_data.aspects) > 0
+    aspect_points = {
+        aspect.p1_name for aspect in chart_data.aspects
+    }.union({aspect.p2_name for aspect in chart_data.aspects})
+    # Aspect point names should be limited to the active set
+    assert aspect_points.issubset(set(chart_data.active_points))
 
     # ChartDrawer should reflect the same list and enable all of them
     drawer = ChartDrawer(chart_data)

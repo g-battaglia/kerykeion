@@ -1296,7 +1296,7 @@ All data structures are now strongly typed Pydantic models:
 
 -   **`AstrologicalSubjectModel`**: Subject data with full validation
 -   **`ChartDataModel`**: Enriched chart data with elements, qualities, aspects
--   **`SingleChartAspectsModel` / `DualChartAspectsModel`**: Typed aspect collections
+-   **`AspectModel` list**: Raw aspect entries directly on `ChartDataModel.aspects`
 -   **`PlanetReturnModel`**: Planetary return data
 -   **`ElementDistributionModel`**: Element statistics (fire, earth, air, water)
 -   **`QualityDistributionModel`**: Quality statistics (cardinal, fixed, mutable)
