@@ -218,7 +218,7 @@
 
         <!-- Lunar Phase -->
         <g kr:node='Lunar_Phase' transform='translate(10,518)'>
-            <g transform='rotate(-143.41058 20 10)'>
+            <g transform='rotate(0.0 20 10)'>
     <defs>
         <clipPath id='moonPhaseCutOffCircle'>
             <circle cx='20' cy='10' r='10' />

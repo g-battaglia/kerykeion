@@ -1023,15 +1023,13 @@ def draw_transit_aspect_list(
 
 
 def calculate_moon_phase_chart_params(
-    degrees_between_sun_and_moon: float,
-    latitude: float
+    degrees_between_sun_and_moon: float
 ) -> dict:
     """
     Calculate the parameters for the moon phase chart.
 
     Parameters:
     - degrees_between_sun_and_moon (float): The degrees between the sun and the moon.
-    - latitude (float): The latitude for rotation calculation.
 
     Returns:
     - dict: The moon phase chart parameters.
@@ -1074,9 +1072,8 @@ def calculate_moon_phase_chart_params(
     else:
         raise KerykeionException(f"Invalid degree value: {deg}")
 
-
-    # Calculate rotation based on latitude
-    lunar_phase_rotate = -90.0 - latitude
+    # No artificial rotation for moon phase icon in astrological chart
+    lunar_phase_rotate = 0.0
 
     return {
         "circle_center_x": circle_center_x,
@@ -1697,13 +1694,13 @@ def makeLunarPhase(degrees_between_sun_and_moon: float, latitude: float) -> str:
 
     Parameters:
     - degrees_between_sun_and_moon (float): Angle between sun and moon in degrees
-    - latitude (float): Observer's latitude for correct orientation
+    - latitude (float): Observer's latitude (no longer used, kept for backward compatibility)
 
     Returns:
     - str: SVG representation of lunar phase
     """
     # Calculate parameters for the lunar phase visualization
-    params = calculate_moon_phase_chart_params(degrees_between_sun_and_moon, latitude)
+    params = calculate_moon_phase_chart_params(degrees_between_sun_and_moon)
 
     # Extract the calculated values
     lunar_phase_circle_center_x = params["circle_center_x"]
