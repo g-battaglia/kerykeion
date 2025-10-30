@@ -10,6 +10,7 @@ from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
+from kerykeion.charts.charts_utils import makeLunarPhase
 
 
 class TestChartDrawer:
@@ -303,6 +304,33 @@ class TestChartDrawer:
         assert chart.chart_type == "Transit"
         assert chart.chart_data is not None
         assert hasattr(chart, 'second_obj')
+
+    def test_transit_chart_uses_transit_lunar_phase(self):
+        """Transit charts should render the lunar phase of the transiting subject."""
+        transit_data = ChartDataFactory.create_transit_chart_data(self.subject, self.subject2)
+        chart = ChartDrawer(transit_data)
+        template_dict = chart._create_template_dictionary()
+
+        assert chart.second_obj is not None
+        transit_phase = chart.second_obj.lunar_phase
+        expected_svg = makeLunarPhase(transit_phase["degrees_between_s_m"], chart.geolat)
+
+        assert template_dict["makeLunarPhase"] == expected_svg
+
+        natal_phase = chart.first_obj.lunar_phase
+        if natal_phase is not None and natal_phase["degrees_between_s_m"] != transit_phase["degrees_between_s_m"]:
+            unexpected_svg = makeLunarPhase(natal_phase["degrees_between_s_m"], chart.geolat)
+            assert template_dict["makeLunarPhase"] != unexpected_svg
+
+    def test_transit_chart_without_transit_phase_shows_blank(self):
+        """If transit subject lacks lunar phase, the lunar phase icon is hidden."""
+        transit_data = ChartDataFactory.create_transit_chart_data(self.subject, self.subject2)
+        chart = ChartDrawer(transit_data)
+        assert chart.second_obj is not None
+        chart.second_obj.lunar_phase = None  # type: ignore[attr-defined]
+
+        template_dict = chart._create_template_dictionary()
+        assert template_dict["makeLunarPhase"] == ""
 
     def test_synastry_chart_drawer(self):
         """Test chart drawer with synastry chart data."""

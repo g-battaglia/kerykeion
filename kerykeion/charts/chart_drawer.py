@@ -1609,9 +1609,9 @@ class ChartDrawer:
 
             template_dict["bottom_left_4"] = f'{self._translate("perspective_type", "Perspective")}: {self._translate(self.second_obj.perspective_type.lower().replace(" ", "_"), self.second_obj.perspective_type)}' # type: ignore
 
-            # Moon phase section calculations - use first_obj for visualization
-            if self.first_obj.lunar_phase is not None:
-                template_dict["makeLunarPhase"] = makeLunarPhase(self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat)
+            # Moon phase section calculations - use transit subject data only
+            if self.second_obj is not None and getattr(self.second_obj, "lunar_phase", None):
+                template_dict["makeLunarPhase"] = makeLunarPhase(self.second_obj.lunar_phase["degrees_between_s_m"], self.geolat)
             else:
                 template_dict["makeLunarPhase"] = ""
 

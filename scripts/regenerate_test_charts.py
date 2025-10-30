@@ -20,6 +20,7 @@ from pathlib import Path
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.charts_utils import makeLunarPhase
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
@@ -29,8 +30,41 @@ OUTPUT_DIR = Path(__file__).parent.parent / "tests" / "charts" / "svg"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_DIR_STR = str(OUTPUT_DIR)
 
+
+def regenerate_lunar_phase_reference_sheet() -> None:
+    """Regenerate the reference SVG used by TestLunarPhaseSVG."""
+    phase_angles = (0, 45, 90, 135, 180, 225, 270, 315)
+    icon_groups: list[str] = []
+
+    for index, angle in enumerate(phase_angles):
+        icon_svg = makeLunarPhase(angle, 0.0)
+        unique_clip_id = f"moonPhaseCutOffCircle{index}"
+        icon_svg = icon_svg.replace("moonPhaseCutOffCircle", unique_clip_id)
+
+        icon_lines = icon_svg.splitlines()
+        translated_block = [f'    <g transform="translate({index * 40},0)">']
+        translated_block.extend(f"        {line}" for line in icon_lines)
+        translated_block.append("    </g>")
+        icon_groups.extend(translated_block)
+
+    svg_lines = [
+        '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="40" viewBox="0 0 320 40">',
+        "    <style>",
+        "        :root {",
+        "            --kerykeion-chart-color-lunar-phase-0: #000000;",
+        "            --kerykeion-chart-color-lunar-phase-1: #ffffff;",
+        "        }",
+        "    </style>",
+    ]
+    svg_lines.extend(icon_groups)
+    svg_lines.append("</svg>")
+
+    (OUTPUT_DIR / "Moon Phases.svg").write_text("\n".join(svg_lines), encoding="utf-8")
+
 first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True)
 second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB", suppress_geonames_warning=True)
+
+regenerate_lunar_phase_reference_sheet()
 
 # Internal Natal Chart
 natal_chart_data = ChartDataFactory.create_natal_chart_data(first)
