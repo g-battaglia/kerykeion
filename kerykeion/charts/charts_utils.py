@@ -1026,59 +1026,31 @@ def calculate_moon_phase_chart_params(
     degrees_between_sun_and_moon: float
 ) -> dict:
     """
-    Calculate the parameters for the moon phase chart.
+    Calculate normalized parameters used by the moon phase icon.
 
     Parameters:
-    - degrees_between_sun_and_moon (float): The degrees between the sun and the moon.
+    - degrees_between_sun_and_moon (float): The elongation between the sun and moon.
 
     Returns:
-    - dict: The moon phase chart parameters.
+    - dict: Normalized phase data (angle, illuminated fraction, shadow ellipse radius).
     """
-    deg = degrees_between_sun_and_moon
+    if not math.isfinite(degrees_between_sun_and_moon):
+        raise KerykeionException(
+            f"Invalid degree value: {degrees_between_sun_and_moon}"
+        )
 
-    # Initialize variables for lunar phase properties
-    circle_center_x = None
-    circle_radius = None
+    phase_angle = degrees_between_sun_and_moon % 360.0
+    radians = math.radians(phase_angle)
+    cosine = math.cos(radians)
+    illuminated_fraction = (1.0 - cosine) / 2.0
 
-    # Determine lunar phase properties based on the degree
-    if deg < 90.0:
-        max_radius = deg
-        if deg > 80.0:
-            max_radius = max_radius * max_radius
-        circle_center_x = 20.0 + (deg / 90.0) * (max_radius + 10.0)
-        circle_radius = 10.0 + (deg / 90.0) * max_radius
-
-    elif deg < 180.0:
-        max_radius = 180.0 - deg
-        if deg < 100.0:
-            max_radius = max_radius * max_radius
-        circle_center_x = 20.0 + ((deg - 90.0) / 90.0 * (max_radius + 10.0)) - (max_radius + 10.0)
-        circle_radius = 10.0 + max_radius - ((deg - 90.0) / 90.0 * max_radius)
-
-    elif deg < 270.0:
-        max_radius = deg - 180.0
-        if deg > 260.0:
-            max_radius = max_radius * max_radius
-        circle_center_x = 20.0 + ((deg - 180.0) / 90.0 * (max_radius + 10.0))
-        circle_radius = 10.0 + ((deg - 180.0) / 90.0 * max_radius)
-
-    elif deg < 361.0:
-        max_radius = 360.0 - deg
-        if deg < 280.0:
-            max_radius = max_radius * max_radius
-        circle_center_x = 20.0 + ((deg - 270.0) / 90.0 * (max_radius + 10.0)) - (max_radius + 10.0)
-        circle_radius = 10.0 + max_radius - ((deg - 270.0) / 90.0 * max_radius)
-
-    else:
-        raise KerykeionException(f"Invalid degree value: {deg}")
-
-    # No artificial rotation for moon phase icon in astrological chart
-    lunar_phase_rotate = 0.0
+    # Guard against floating point spillover outside [0, 1].
+    illuminated_fraction = max(0.0, min(1.0, illuminated_fraction))
 
     return {
-        "circle_center_x": circle_center_x,
-        "circle_radius": circle_radius,
-        "lunar_phase_rotate": lunar_phase_rotate,
+        "phase_angle": phase_angle,
+        "illuminated_fraction": illuminated_fraction,
+        "shadow_ellipse_rx": 10.0 * cosine,
     }
 
 
@@ -1699,29 +1671,87 @@ def makeLunarPhase(degrees_between_sun_and_moon: float, latitude: float) -> str:
     Returns:
     - str: SVG representation of lunar phase
     """
-    # Calculate parameters for the lunar phase visualization
     params = calculate_moon_phase_chart_params(degrees_between_sun_and_moon)
 
-    # Extract the calculated values
-    lunar_phase_circle_center_x = params["circle_center_x"]
-    lunar_phase_circle_radius = params["circle_radius"]
-    lunar_phase_rotate = params["lunar_phase_rotate"]
+    phase_angle = params["phase_angle"]
+    illuminated_fraction = params["illuminated_fraction"]
+    shadow_ellipse_rx = abs(params["shadow_ellipse_rx"])
 
-    # Generate the SVG for the lunar phase
-    svg = (
-        f'<g transform="rotate({lunar_phase_rotate} 20 10)">\n'
-        f'    <defs>\n'
-        f'        <clipPath id="moonPhaseCutOffCircle">\n'
-        f'            <circle cx="20" cy="10" r="10" />\n'
-        f'        </clipPath>\n'
-        f'    </defs>\n'
-        f'    <circle cx="20" cy="10" r="10" style="fill: var(--kerykeion-chart-color-lunar-phase-0)" />\n'
-        f'    <circle cx="{lunar_phase_circle_center_x}" cy="10" r="{lunar_phase_circle_radius}" style="fill: var(--kerykeion-chart-color-lunar-phase-1)" clip-path="url(#moonPhaseCutOffCircle)" />\n'
-        f'    <circle cx="20" cy="10" r="10" style="fill: none; stroke: var(--kerykeion-chart-color-lunar-phase-0); stroke-width: 0.5px; stroke-opacity: 0.5" />\n'
-        f'</g>'
+    radius = 10.0
+    center_x = 20.0
+    center_y = 10.0
+
+    bright_color = "var(--kerykeion-chart-color-lunar-phase-1)"
+    shadow_color = "var(--kerykeion-chart-color-lunar-phase-0)"
+
+    is_waxing = phase_angle <= 180.0
+
+    if illuminated_fraction <= 1e-6:
+        base_fill = shadow_color
+        overlay_path = ""
+        overlay_fill = ""
+    elif 1.0 - illuminated_fraction <= 1e-6:
+        base_fill = bright_color
+        overlay_path = ""
+        overlay_fill = ""
+    else:
+        is_lit_major = illuminated_fraction >= 0.5
+        if is_lit_major:
+            base_fill = bright_color
+            overlay_fill = shadow_color
+            overlay_side = "left" if is_waxing else "right"
+        else:
+            base_fill = shadow_color
+            overlay_fill = bright_color
+            overlay_side = "right" if is_waxing else "left"
+
+        # The illuminated limb is the orthographic projection of the lunar terminator;
+        # it appears as an ellipse with vertical radius equal to the lunar radius and
+        # horizontal radius scaled by |cos(phase)|.
+        def build_lune_path(side: str, ellipse_rx: float) -> str:
+            ellipse_rx = max(0.0, min(radius, ellipse_rx))
+            top_y = center_y - radius
+            bottom_y = center_y + radius
+            circle_sweep = 1 if side == "right" else 0
+
+            if ellipse_rx <= 1e-6:
+                return (
+                    f"M {center_x:.4f} {top_y:.4f}"
+                    f" A {radius:.4f} {radius:.4f} 0 0 {circle_sweep} {center_x:.4f} {bottom_y:.4f}"
+                    f" L {center_x:.4f} {top_y:.4f}"
+                    " Z"
+                )
+
+            return (
+                f"M {center_x:.4f} {top_y:.4f}"
+                f" A {radius:.4f} {radius:.4f} 0 0 {circle_sweep} {center_x:.4f} {bottom_y:.4f}"
+                f" A {ellipse_rx:.4f} {radius:.4f} 0 0 {circle_sweep} {center_x:.4f} {top_y:.4f}"
+                " Z"
+            )
+
+        overlay_path = build_lune_path(overlay_side, shadow_ellipse_rx)
+
+    svg_lines = [
+        '<g transform="rotate(0 20 10)">',
+        '    <defs>',
+        '        <clipPath id="moonPhaseCutOffCircle">',
+        '            <circle cx="20" cy="10" r="10" />',
+        '        </clipPath>',
+        '    </defs>',
+        f'    <circle cx="20" cy="10" r="10" style="fill: {base_fill}" />',
+    ]
+
+    if overlay_path:
+        svg_lines.append(
+            f'    <path d="{overlay_path}" style="fill: {overlay_fill}" clip-path="url(#moonPhaseCutOffCircle)" />'
+        )
+
+    svg_lines.append(
+        '    <circle cx="20" cy="10" r="10" style="fill: none; stroke: var(--kerykeion-chart-color-lunar-phase-0); stroke-width: 0.5px; stroke-opacity: 0.5" />'
     )
+    svg_lines.append('</g>')
 
-    return svg
+    return "\n".join(svg_lines)
 
 
 def calculate_quality_points(
