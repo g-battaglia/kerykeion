@@ -1674,7 +1674,7 @@ def makeLunarPhase(degrees_between_sun_and_moon: float, latitude: float) -> str:
     params = calculate_moon_phase_chart_params(degrees_between_sun_and_moon)
 
     phase_angle = params["phase_angle"]
-    illuminated_fraction = params["illuminated_fraction"]
+    illuminated_fraction = 1.0 - params["illuminated_fraction"]
     shadow_ellipse_rx = abs(params["shadow_ellipse_rx"])
 
     radius = 10.0
@@ -1684,7 +1684,7 @@ def makeLunarPhase(degrees_between_sun_and_moon: float, latitude: float) -> str:
     bright_color = "var(--kerykeion-chart-color-lunar-phase-1)"
     shadow_color = "var(--kerykeion-chart-color-lunar-phase-0)"
 
-    is_waxing = phase_angle >= 180.0
+    is_waxing = phase_angle < 180.0
 
     if illuminated_fraction <= 1e-6:
         base_fill = shadow_color
@@ -1699,11 +1699,11 @@ def makeLunarPhase(degrees_between_sun_and_moon: float, latitude: float) -> str:
         if is_lit_major:
             base_fill = bright_color
             overlay_fill = shadow_color
-            overlay_side = "right" if is_waxing else "left"
+            overlay_side = "left" if is_waxing else "right"
         else:
             base_fill = shadow_color
             overlay_fill = bright_color
-            overlay_side = "left" if is_waxing else "right"
+            overlay_side = "right" if is_waxing else "left"
 
         # The illuminated limb is the orthographic projection of the lunar terminator;
         # it appears as an ellipse with vertical radius equal to the lunar radius and
