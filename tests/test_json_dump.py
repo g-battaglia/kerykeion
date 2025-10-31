@@ -19,7 +19,7 @@ class TestJsonDump:
         assert round(self.dictionary["lat"], 2) == 51.51
         assert round(self.dictionary["lng"], 2) == -0.13
         assert self.dictionary["tz_str"] == "Europe/London"
-        assert self.dictionary["zodiac_type"] == "Tropic"
+        assert self.dictionary["zodiac_type"] == "Tropical"
         assert round(self.dictionary["julian_day"], 2) == 2449270.97
 
     def test_json_dump_sun(self):

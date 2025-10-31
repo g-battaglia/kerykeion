@@ -172,7 +172,7 @@ print(f"Emotional Pattern: {model.lunar_phase.moon_phase_name} energy in the rel
 === COMPOSITE RELATIONSHIP CHART ===
 Relationship: Partnership Analysis
 Chart Type: Midpoint
-Zodiac System: Tropic
+Zodiac System: Tropical
 House System: Placidus
 
 === CORE RELATIONSHIP DYNAMICS ===
@@ -384,7 +384,7 @@ tropical_chart = AstrologicalSubjectFactory.from_birth_data(
     lng=-0.1276,
     lat=51.5074,
     tz_str="Europe/London",
-    zodiac_type="Tropic",
+    zodiac_type="Tropical",
     online=False,
 )
 

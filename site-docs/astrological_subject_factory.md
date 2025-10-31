@@ -22,7 +22,7 @@ The `AstrologicalSubjectFactory` is the core factory class that creates comprehe
 
 The zodiac system determines how planetary positions are calculated and interpreted. Kerykeion supports both major zodiac traditions used worldwide.
 
-#### Tropical Zodiac (`zodiac_type="Tropic"`)
+#### Tropical Zodiac (`zodiac_type="Tropical"`)
 The **Tropical Zodiac** is aligned with Earth's seasons and is the standard in Western astrology. It fixes 0° Aries to the Spring Equinox, creating a stable seasonal framework regardless of stellar movement.
 
 **Characteristics:**
@@ -40,7 +40,7 @@ tropical_chart = AstrologicalSubjectFactory.from_birth_data(
     year=1990, month=6, day=21,  # Summer Solstice
     hour=12, minute=0,
     city="London", nation="GB",
-    zodiac_type="Tropic",  # Default value
+    zodiac_type="Tropical",  # Default value
     geonames_username="your_username"
 )
 
@@ -51,7 +51,7 @@ print(f"Expected: Cancer 0.00° (approximately)")
 
 **Output:**
 ```
-Zodiac Type: Tropic
+Zodiac Type: Tropical
 Sun at Summer Solstice: Cancer 0.23°
 Expected: Cancer 0.00° (approximately)
 ```
@@ -530,7 +530,7 @@ traditional_chart = AstrologicalSubjectFactory.from_birth_data(
     hour=12, minute=0,
     city="Florence", nation="IT",
     active_points=traditional_points,
-    zodiac_type="Tropic",
+    zodiac_type="Tropical",
     houses_system_identifier="W",  # Whole Sign (traditional)
     geonames_username="century.boy"  # Replace with your Geonames username
 )
@@ -610,7 +610,7 @@ arabic_chart = AstrologicalSubjectFactory.from_birth_data(
     hour=12, minute=0,
     city="Baghdad", nation="IQ",
     active_points=arabic_parts_config,
-    zodiac_type="Tropic",
+    zodiac_type="Tropical",
     geonames_username="century.boy"  # Replace with your Geonames username
 )
 
@@ -1030,7 +1030,7 @@ psychological_chart = AstrologicalSubjectFactory.from_birth_data(
     year=1975, month=12, day=25,
     hour=18, minute=45,
     city="Zurich", nation="CH",
-    zodiac_type="Tropic",
+    zodiac_type="Tropical",
     houses_system_identifier="P",      # Placidus (modern standard)
     perspective_type="Apparent Geocentric",
     active_points=[
@@ -1103,7 +1103,7 @@ hellenistic_chart = AstrologicalSubjectFactory.from_birth_data(
     year=100, month=3, day=15,  # Ancient period
     hour=12, minute=0,
     city="Alexandria", nation="EG",
-    zodiac_type="Tropic",
+    zodiac_type="Tropical",
     houses_system_identifier="W",      # Whole Sign (classical)
     perspective_type="Apparent Geocentric",
     active_points=[
@@ -1147,7 +1147,7 @@ horary_chart = AstrologicalSubjectFactory.from_current_time(
     lng=-0.1276,
     lat=51.5074,
     tz_str="Europe/London",
-    zodiac_type="Tropic",
+    zodiac_type="Tropical",
     houses_system_identifier="R",      # Regiomontanus (horary preference)
     active_points=[
         "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
@@ -1197,7 +1197,7 @@ electional_chart = AstrologicalSubjectFactory.from_birth_data(
     year=2024, month=6, day=15,  # Future date selection
     hour=16, minute=30,
     city="Paris", nation="FR",
-    zodiac_type="Tropic",
+    zodiac_type="Tropical",
     houses_system_identifier="P",
     active_points=[
         # All planets for comprehensive analysis
@@ -1257,7 +1257,7 @@ birth_info = {
 
 # Create charts with different configurations
 systems = [
-    ("Western Tropical", {"zodiac_type": "Tropic", "houses_system_identifier": "P"}),
+    ("Western Tropical", {"zodiac_type": "Tropical", "houses_system_identifier": "P"}),
     ("Vedic Lahiri", {"zodiac_type": "Sidereal", "sidereal_mode": "LAHIRI", "houses_system_identifier": "W"}),
     ("Vedic Raman", {"zodiac_type": "Sidereal", "sidereal_mode": "RAMAN", "houses_system_identifier": "W"}),
     ("Western Sidereal", {"zodiac_type": "Sidereal", "sidereal_mode": "FAGAN_BRADLEY", "houses_system_identifier": "P"})
@@ -1500,7 +1500,7 @@ birth_data = {
 # Tropical Placidus
 tropical = AstrologicalSubjectFactory.from_birth_data(
     **birth_data,
-    zodiac_type="Tropic",
+    zodiac_type="Tropical",
     houses_system_identifier="P"
 )
 

@@ -5,7 +5,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 from typing import Literal
 
 
-ZodiacType = Literal["Tropic", "Sidereal"]
+ZodiacType = Literal["Tropical", "Sidereal"]
 """Literal type for Zodiac Types"""
 
 

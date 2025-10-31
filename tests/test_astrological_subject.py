@@ -643,7 +643,7 @@ class TestChartConfiguration:
 
         with pytest.raises(KerykeionException):
             ChartConfiguration(
-                zodiac_type="Tropic",
+                zodiac_type="Tropical",
                 sidereal_mode="LAHIRI"
             )
 
@@ -655,6 +655,9 @@ class TestChartConfiguration:
 
         with pytest.raises(KerykeionException):
             ChartConfiguration(zodiac_type="InvalidType")
+
+        with pytest.raises(KerykeionException):
+            ChartConfiguration(zodiac_type="Tropic")
 
     def test_invalid_house_system_raises_error(self):
         """Test that invalid house system raises error."""
@@ -1153,7 +1156,7 @@ class TestComprehensiveCoverage:
     def test_all_perspectives_and_zodiacs(self):
         """Test all combinations to ensure full coverage."""
         perspectives = ["Apparent Geocentric", "True Geocentric", "Heliocentric", "Topocentric"]
-        zodiacs = ["Tropic", "Sidereal"]
+        zodiacs = ["Tropical", "Sidereal"]
 
         for perspective in perspectives:
             for zodiac in zodiacs:
@@ -1181,6 +1184,7 @@ class TestComprehensiveCoverage:
 
                 subject = AstrologicalSubjectFactory.from_birth_data(**kwargs)
                 assert subject.name == f"{perspective}-{zodiac}"
+                assert subject.zodiac_type == zodiac
 
 
 class TestMockErrorConditions:

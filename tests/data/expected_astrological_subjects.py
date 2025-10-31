@@ -323,7 +323,7 @@ EXPECTED_TROPICAL_SUBJECT = {'ascendant': {'abs_pos': 320.69667227209675,
            'sign_num': 1,
            'speed': 1.212889},
  'year': 1963,
- 'zodiac_type': 'Tropic'}
+ 'zodiac_type': 'Tropical'}
 
 EXPECTED_JYOTISH_SUBJECT = {'ascendant': {'abs_pos': 297.3549068025814,
                'element': 'Earth',

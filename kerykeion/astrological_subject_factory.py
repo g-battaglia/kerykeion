@@ -59,7 +59,8 @@ from kerykeion.utilities import (
     check_and_adjust_polar_latitude,
     calculate_moon_phase,
     datetime_to_julian,
-    get_house_number
+    get_house_number,
+    normalize_zodiac_type,
 )
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
@@ -67,7 +68,7 @@ from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 DEFAULT_GEONAMES_USERNAME = "century.boy"
 DEFAULT_SIDEREAL_MODE: SiderealMode = "FAGAN_BRADLEY"
 DEFAULT_HOUSES_SYSTEM_IDENTIFIER: HousesSystemIdentifier = "P"
-DEFAULT_ZODIAC_TYPE: ZodiacType = "Tropic"
+DEFAULT_ZODIAC_TYPE: ZodiacType = "Tropical"
 DEFAULT_PERSPECTIVE_TYPE: PerspectiveType = "Apparent Geocentric"
 DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS = 30
 
@@ -148,8 +149,8 @@ class ChartConfiguration:
     combinations.
 
     Attributes:
-        zodiac_type (ZodiacType): The zodiac system to use ('Tropic' or 'Sidereal').
-            Defaults to 'Tropic'.
+        zodiac_type (ZodiacType): The zodiac system to use ('Tropical' or 'Sidereal').
+            Defaults to 'Tropical'.
         sidereal_mode (Optional[SiderealMode]): The sidereal calculation mode when using
             sidereal zodiac. Only required/used when zodiac_type is 'Sidereal'.
             Defaults to None (auto-set to FAGAN_BRADLEY for sidereal).
@@ -198,14 +199,17 @@ class ChartConfiguration:
             - Logs informational message when setting default sidereal mode
         """
         # Validate zodiac type
-        if self.zodiac_type not in get_args(ZodiacType):
-            raise KerykeionException(
-                f"'{self.zodiac_type}' is not a valid zodiac type! Available types are: {get_args(ZodiacType)}"
-            )
+        try:
+            normalized_zodiac_type = normalize_zodiac_type(self.zodiac_type)
+        except ValueError as exc:
+            raise KerykeionException(str(exc)) from exc
+        else:
+            if normalized_zodiac_type != self.zodiac_type:
+                self.zodiac_type = normalized_zodiac_type
 
         # Validate sidereal mode settings
-        if self.sidereal_mode and self.zodiac_type == "Tropic":
-            raise KerykeionException("You can't set a sidereal mode with a Tropic zodiac type!")
+        if self.sidereal_mode and self.zodiac_type == "Tropical":
+            raise KerykeionException("You can't set a sidereal mode with a Tropical zodiac type!")
 
         if self.zodiac_type == "Sidereal":
             if not self.sidereal_mode:
@@ -475,8 +479,8 @@ class AstrologicalSubjectFactory:
                 online location lookup. Get one free at geonames.org.
             online (bool, optional): Whether to fetch location data online. If False,
                 lng, lat, and tz_str must be provided. Defaults to True.
-            zodiac_type (ZodiacType, optional): Zodiac system - 'Tropic' or 'Sidereal'.
-                Defaults to 'Tropic'.
+            zodiac_type (ZodiacType, optional): Zodiac system - 'Tropical' or 'Sidereal'.
+                Defaults to 'Tropical'.
             sidereal_mode (SiderealMode, optional): Sidereal calculation mode (e.g.,
                 'FAGAN_BRADLEY', 'LAHIRI'). Only used with zodiac_type='Sidereal'.
             houses_system_identifier (HousesSystemIdentifier, optional): House system
@@ -726,7 +730,7 @@ class AstrologicalSubjectFactory:
                 or as fallback. Defaults to 51.5074 (Greenwich).
             geonames_username (str, optional): GeoNames API username. Required when
                 online=True. Defaults to DEFAULT_GEONAMES_USERNAME.
-            zodiac_type (ZodiacType, optional): Zodiac system. Defaults to 'Tropic'.
+            zodiac_type (ZodiacType, optional): Zodiac system. Defaults to 'Tropical'.
             sidereal_mode (SiderealMode, optional): Sidereal mode when zodiac_type
                 is 'Sidereal'. Defaults to None.
             houses_system_identifier (HousesSystemIdentifier, optional): House system.
@@ -866,7 +870,7 @@ class AstrologicalSubjectFactory:
             online (bool, optional): Whether to fetch location data online.
                 Defaults to True.
             zodiac_type (ZodiacType, optional): Zodiac system to use.
-                Defaults to 'Tropic'.
+                Defaults to 'Tropical'.
             sidereal_mode (SiderealMode, optional): Sidereal calculation mode.
                 Only used when zodiac_type is 'Sidereal'. Defaults to None.
             houses_system_identifier (HousesSystemIdentifier, optional): House

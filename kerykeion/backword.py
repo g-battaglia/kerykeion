@@ -36,6 +36,7 @@ from .chart_data_factory import ChartDataFactory
 from .charts.chart_drawer import ChartDrawer
 from .aspects import AspectsFactory
 from .settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
+from .utilities import normalize_zodiac_type
 from .schemas.kr_models import (
     AstrologicalSubjectModel,
     CompositeSubjectModel,
@@ -72,6 +73,42 @@ LEGACY_NODE_NAMES_MAP = {
     "Mean_South_Node": "Mean_South_Lunar_Node",
     "True_South_Node": "True_South_Lunar_Node",
 }
+
+
+def _normalize_zodiac_type_with_warning(zodiac_type: Optional[Union[str, ZodiacType]]) -> Optional[ZodiacType]:
+    """Normalize legacy zodiac type values with deprecation warning.
+
+    Wraps the utilities.normalize_zodiac_type function and adds a deprecation
+    warning for legacy formats like "tropic" or case-insensitive variants.
+
+    Args:
+        zodiac_type: Input zodiac type (may be legacy format)
+
+    Returns:
+        Normalized ZodiacType or None if input was None
+    """
+    if zodiac_type is None:
+        return None
+
+    zodiac_str = str(zodiac_type)
+
+    # Check if this is a legacy format (case-insensitive "tropic" or non-canonical case)
+    zodiac_lower = zodiac_str.lower()
+    if zodiac_lower in ("tropic", "tropical", "sidereal") and zodiac_str not in ("Tropical", "Sidereal"):
+        # Normalize using the utilities function
+        normalized = normalize_zodiac_type(zodiac_str)
+
+        # Emit deprecation warning for legacy usage
+        warnings.warn(
+            f"Zodiac type '{zodiac_str}' is deprecated in Kerykeion v5. "
+            f"Use '{normalized}' instead.",
+            DeprecationWarning,
+            stacklevel=4,
+        )
+        return normalized
+
+    # Already in correct format or will be normalized by utilities function
+    return cast(ZodiacType, normalize_zodiac_type(zodiac_str))
 
 
 def _normalize_active_points(points: Optional[Iterable[Union[str, AstrologicalPoint]]]) -> Optional[List[AstrologicalPoint]]:
@@ -159,7 +196,10 @@ class AstrologicalSubject:
                 stacklevel=2,
             )
 
+        # Normalize legacy zodiac type values
+        zodiac_type = _normalize_zodiac_type_with_warning(zodiac_type)
         zodiac_type = DEFAULT_ZODIAC_TYPE if zodiac_type is None else zodiac_type
+
         houses_system_identifier = (
             DEFAULT_HOUSES_SYSTEM_IDENTIFIER if houses_system_identifier is None else houses_system_identifier
         )
@@ -352,6 +392,9 @@ class AstrologicalSubject:
         if online and resolved_geonames == DEFAULT_GEONAMES_USERNAME:
             warnings.warn(GEONAMES_DEFAULT_USERNAME_WARNING, UserWarning, stacklevel=2)
 
+        # Normalize legacy zodiac type values
+        normalized_zodiac_type = _normalize_zodiac_type_with_warning(zodiac_type)
+
         model = AstrologicalSubjectFactory.from_iso_utc_time(
             name=name,
             iso_utc_time=iso_utc_time,
@@ -362,7 +405,7 @@ class AstrologicalSubject:
             lng=float(lng),
             lat=float(lat),
             geonames_username=resolved_geonames,
-            zodiac_type=(zodiac_type or DEFAULT_ZODIAC_TYPE),  # type: ignore[arg-type]
+            zodiac_type=(normalized_zodiac_type or DEFAULT_ZODIAC_TYPE),  # type: ignore[arg-type]
             sidereal_mode=sidereal_mode,
             houses_system_identifier=(houses_system_identifier or DEFAULT_HOUSES_SYSTEM_IDENTIFIER),  # type: ignore[arg-type]
             perspective_type=(perspective_type or DEFAULT_PERSPECTIVE_TYPE),  # type: ignore[arg-type]

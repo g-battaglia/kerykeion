@@ -12,9 +12,16 @@ from kerykeion.schemas import (
     LunarPhaseModel,
     CompositeSubjectModel,
     PlanetReturnModel,
+    ZodiacType,
 )
-from kerykeion.schemas.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, AstrologicalPoint, Houses
-from typing import Union, Optional, get_args
+from kerykeion.schemas.kr_literals import (
+    LunarPhaseEmoji,
+    LunarPhaseName,
+    PointType,
+    AstrologicalPoint,
+    Houses,
+)
+from typing import Union, Optional, get_args, cast
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL, basicConfig, getLogger
 import math
 import re
@@ -22,6 +29,44 @@ from datetime import datetime
 
 
 logger = getLogger(__name__)
+
+def normalize_zodiac_type(value: str) -> ZodiacType:
+    """
+    Normalize a zodiac type string to its canonical representation.
+
+    Handles case-insensitive matching and legacy formats like "tropic" or "Tropic",
+    automatically converting them to the canonical forms "Tropical" or "Sidereal".
+
+    Args:
+        value: Input zodiac type string (case-insensitive).
+
+    Returns:
+        ZodiacType: Canonical zodiac type ("Tropical" or "Sidereal").
+
+    Raises:
+        ValueError: If `value` is not a recognized zodiac type.
+
+    Examples:
+        >>> normalize_zodiac_type("tropical")
+        'Tropical'
+        >>> normalize_zodiac_type("Tropic")
+        'Tropical'
+        >>> normalize_zodiac_type("SIDEREAL")
+        'Sidereal'
+    """
+    # Normalize to lowercase for comparison
+    value_lower = value.lower()
+
+    # Map legacy and case-insensitive variants to canonical forms
+    if value_lower in ("tropical", "tropic"):
+        return cast(ZodiacType, "Tropical")
+    elif value_lower == "sidereal":
+        return cast(ZodiacType, "Sidereal")
+    else:
+        raise ValueError(
+            "'{value}' is not a valid zodiac type. Accepted values are: Tropical, Sidereal "
+            "(case-insensitive, 'tropic' also accepted as legacy).".format(value=value)
+        )
 
 _POINT_NUMBER_MAP: dict[str, int] = {
     "Sun": 0,

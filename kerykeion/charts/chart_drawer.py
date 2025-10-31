@@ -1274,7 +1274,7 @@ class ChartDrawer:
             template_dict["top_left_5"] = f"{self._translate('day_of_week', 'Day of Week')}: {localized_weekday}" # type: ignore
 
             # Bottom left section
-            if self.first_obj.zodiac_type == "Tropic":
+            if self.first_obj.zodiac_type == "Tropical":
                 zodiac_info = f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
             else:
                 mode_const = "SIDM_" + self.first_obj.sidereal_mode # type: ignore
@@ -1436,7 +1436,7 @@ class ChartDrawer:
             template_dict["top_left_5"] = f"{latitude_string} / {longitude_string}"
 
             # Bottom left section
-            if self.first_obj.zodiac_type == "Tropic":
+            if self.first_obj.zodiac_type == "Tropical":
                 zodiac_info = f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
             else:
                 mode_const = "SIDM_" + self.first_obj.sidereal_mode # type: ignore
@@ -1592,7 +1592,7 @@ class ChartDrawer:
             template_dict["top_left_5"] = ""#f"{self._translate('type', 'Type')}: {self._translate(self.chart_type, self.chart_type)}"
 
             # Bottom left section
-            if self.first_obj.zodiac_type == "Tropic":
+            if self.first_obj.zodiac_type == "Tropical":
                 zodiac_info = f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
             else:
                 mode_const = "SIDM_" + self.first_obj.sidereal_mode # type: ignore
@@ -1770,7 +1770,7 @@ class ChartDrawer:
             template_dict["top_left_5"] = format_datetime_with_timezone(self.second_obj.iso_formatted_local_datetime) # type: ignore
 
             # Bottom left section
-            if self.first_obj.zodiac_type == "Tropic":
+            if self.first_obj.zodiac_type == "Tropical":
                 zodiac_info = f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
             else:
                 mode_const = "SIDM_" + self.first_obj.sidereal_mode # type: ignore
@@ -1970,7 +1970,7 @@ class ChartDrawer:
             template_dict["top_left_5"] = f"{latitude_string} / {longitude_string}"
 
             # Bottom left section
-            if self.first_obj.zodiac_type == "Tropic":
+            if self.first_obj.zodiac_type == "Tropical":
                 zodiac_info = f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
             else:
                 mode_const = "SIDM_" + self.first_obj.sidereal_mode # type: ignore
@@ -2143,7 +2143,7 @@ class ChartDrawer:
                 template_dict["top_left_5"] = f"{self._translate('type', 'Type')}: {self._translate('lunar_return', 'Lunar Return')}"
 
             # Bottom left section
-            if self.first_obj.zodiac_type == "Tropic":
+            if self.first_obj.zodiac_type == "Tropical":
                 zodiac_info = f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
             else:
                 mode_const = "SIDM_" + self.first_obj.sidereal_mode # type: ignore

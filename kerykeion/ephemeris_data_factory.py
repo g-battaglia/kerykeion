@@ -48,10 +48,19 @@ License: AGPL-3.0
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
-from kerykeion.utilities import get_houses_list, get_available_astrological_points_list
+from kerykeion.utilities import (
+    get_houses_list,
+    get_available_astrological_points_list,
+    normalize_zodiac_type,
+)
 from kerykeion.astrological_subject_factory import DEFAULT_HOUSES_SYSTEM_IDENTIFIER, DEFAULT_PERSPECTIVE_TYPE, DEFAULT_ZODIAC_TYPE
-from kerykeion.schemas import EphemerisDictModel
-from kerykeion.schemas import SiderealMode, HousesSystemIdentifier, PerspectiveType, ZodiacType
+from kerykeion.schemas import (
+    EphemerisDictModel,
+    SiderealMode,
+    HousesSystemIdentifier,
+    PerspectiveType,
+    ZodiacType,
+)
 from datetime import datetime, timedelta
 from typing import Literal, Union, List
 import logging
@@ -161,7 +170,7 @@ class EphemerisDataFactory:
         self.lng = lng
         self.tz_str = tz_str
         self.is_dst = is_dst
-        self.zodiac_type = zodiac_type
+        self.zodiac_type = normalize_zodiac_type(zodiac_type)
         self.sidereal_mode = sidereal_mode
         self.houses_system_identifier = houses_system_identifier
         self.perspective_type = perspective_type
