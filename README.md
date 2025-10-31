@@ -1741,6 +1741,8 @@ Since the AstrologerAPI is an external third-party service, using it does _not_ 
 
 Contributions are welcome! Feel free to submit pull requests or report issues.
 
+By submitting a contribution, you agree to assign the copyright of that contribution to the maintainer. The project stays openly available under the AGPL for everyone, while the re-licensing option helps sustain future development. Your authorship remains acknowledged in the commit history and release notes.
+
 ## Citations
 
 If using Kerykeion in published or academic work, please cite as follows:
