@@ -657,7 +657,7 @@ class TestChartConfiguration:
             ChartConfiguration(zodiac_type="InvalidType")
 
         with pytest.raises(KerykeionException):
-            ChartConfiguration(zodiac_type="Tropic")
+            ChartConfiguration(zodiac_type="Tropics")
 
     def test_invalid_house_system_raises_error(self):
         """Test that invalid house system raises error."""
