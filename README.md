@@ -28,7 +28,7 @@ Here is an example of a birthchart:
 
 ## **Web API**
 
-If you want to use Kerykeion in a web application, you can try the dedicated web API:
+If you want to use Kerykeion in a web application or for commercial or *closed-source* purposes, you can try the dedicated web API:
 
 **[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/pricing)**
 
