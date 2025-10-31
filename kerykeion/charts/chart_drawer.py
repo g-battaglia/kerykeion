@@ -78,6 +78,9 @@ from kerykeion.settings.chart_defaults import (
 from typing import List, Literal
 
 
+logger = logging.getLogger(__name__)
+
+
 class ChartDrawer:
     """
     ChartDrawer generates astrological chart visualizations as SVG files from pre-computed chart data.
@@ -315,7 +318,7 @@ class ChartDrawer:
 
         active_points_count = len(self.available_planets_setting)
         if active_points_count > 24:
-            logging.warning(
+            logger.warning(
                 "ChartDrawer detected %s active celestial points; rendering may look crowded beyond 24.",
                 active_points_count,
             )
@@ -856,7 +859,7 @@ class ChartDrawer:
         try:
             required_width = self._estimate_required_width_full()
         except Exception as e:
-            logging.debug(f"Auto-size width calculation failed: {e}")
+            logger.debug("Auto-size width calculation failed: %s", e)
             return
 
         minimum_width = self._minimum_width_for_chart_type()
@@ -2237,7 +2240,7 @@ class ChartDrawer:
 
         # return filename
 
-        logging.debug(f"Template dictionary has {len(td.model_dump())} fields")
+        logger.debug("Template dictionary includes %s fields", len(td.model_dump()))
 
         self._create_template_dictionary()
 

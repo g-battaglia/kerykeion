@@ -879,13 +879,3 @@ class TestCharts:
         single_return_chart_svg = ChartDrawer(chart_data).generate_svg_string()
 
         self._compare_chart_svg("John Lennon Lunar Return - SingleReturnChart Chart.svg", single_return_chart_svg)
-
-
-if __name__ == "__main__":
-    import pytest
-    import logging
-
-    # Set the log level to CRITICAL
-    logging.basicConfig(level=logging.CRITICAL)
-
-    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

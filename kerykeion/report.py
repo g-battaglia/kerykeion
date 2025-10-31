@@ -727,8 +727,7 @@ if __name__ == "__main__":
         natal_subject.iso_formatted_local_datetime,
         "Solar",
     )
-
-    # Composite chart subject
+    # Derive a composite subject representing the pair's midpoint configuration
     composite_subject = CompositeSubjectFactory(
         natal_subject,
         partner_subject,

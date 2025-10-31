@@ -1907,13 +1907,3 @@ class TestAllDwarfPlanetsAndFixedStars:
         assert hasattr(subject.spica, 'abs_pos')
         assert not subject.spica.retrograde
             # Vertex and Anti_Vertex removed from active_points due to error
-
-
-if __name__ == "__main__":
-    import pytest
-    import logging
-
-    # Set the log level to CRITICAL
-    logging.basicConfig(level=logging.CRITICAL)
-
-    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

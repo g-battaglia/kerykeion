@@ -764,13 +764,3 @@ class TestAstrologicalSubjectJyotish:
         assert self.subject.lunar_phase.model_dump()["moon_phase"] == self.expected_output["lunar_phase"]["moon_phase"]
         assert self.subject.lunar_phase.model_dump()["moon_emoji"] == self.expected_output["lunar_phase"]["moon_emoji"]
         assert self.subject.lunar_phase.model_dump()["moon_phase_name"] == self.expected_output["lunar_phase"]["moon_phase_name"]
-
-
-if __name__ == "__main__":
-    import pytest
-    import logging
-
-    # Set the log level to CRITICAL
-    logging.basicConfig(level=logging.CRITICAL)
-
-    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

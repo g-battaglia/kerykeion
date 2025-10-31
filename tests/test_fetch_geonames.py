@@ -38,20 +38,10 @@ def test_exception_handling():
         mock_session_instance = Mock()
         mock_session_instance.send.side_effect = Exception("Network error")
         mock_session.return_value = mock_session_instance
-        
+
         fetcher = FetchGeonames("TestCity", "TS", username="test_user")
-        
+
         # Test through public interface
         result = fetcher.get_serialized_data()
         # Should return empty dict on error
         assert result == {}
-
-
-if __name__ == "__main__":
-    import pytest
-    import logging
-
-    # Set the log level to CRITICAL
-    logging.basicConfig(level=logging.CRITICAL)
-    
-    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

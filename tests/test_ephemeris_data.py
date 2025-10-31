@@ -26,13 +26,3 @@ def test_ephemeris_data():
     assert ephemeris_data[0].houses is not None
     assert ephemeris_data[0].planets[0].name == "Sun"
     assert ephemeris_data[0].houses[0].name == "First_House"
-
-
-if __name__ == "__main__":
-    import pytest
-    import logging
-
-    # Set the log level to CRITICAL
-    logging.basicConfig(level=logging.CRITICAL)
-
-    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

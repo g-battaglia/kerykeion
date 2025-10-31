@@ -41,13 +41,3 @@ def test_utc_constructor():
 
     assert subject.active_points == subject2.active_points
     assert subject.houses_names_list == subject2.houses_names_list
-
-
-if __name__ == "__main__":
-    import pytest
-    import logging
-
-    # Set the log level to CRITICAL
-    logging.basicConfig(level=logging.CRITICAL)
-
-    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

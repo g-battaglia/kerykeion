@@ -6,11 +6,14 @@ License: AGPL-3.0
 """
 
 
-import logging
+from logging import getLogger
 from datetime import timedelta
 from requests import Request
 from requests_cache import CachedSession
 from typing import Union
+
+
+logger = getLogger(__name__)
 
 
 class FetchGeonames:
@@ -63,21 +66,21 @@ class FetchGeonames:
         params = {"lat": lat, "lng": lon, "username": self.username}
 
         prepared_request = Request("GET", self.timezone_url, params=params).prepare()
-        logging.debug(f"Requesting data from GeoName timezones: {prepared_request.url}")
+        logger.debug("GeoNames timezone lookup url=%s", prepared_request.url)
 
         try:
             response = self.session.send(prepared_request)
             response_json = response.json()
 
         except Exception as e:
-            logging.error(f"Error fetching {self.timezone_url}: {e}")
+            logger.error("GeoNames timezone request failed for %s: %s", self.timezone_url, e)
             return {}
 
         try:
             timezone_data["timezonestr"] = response_json["timezoneId"]
 
         except Exception as e:
-            logging.error(f"Error serializing data maybe wrong username? Details: {e}")
+            logger.error("GeoNames timezone payload missing expected keys: %s", e)
             return {}
 
         if hasattr(response, "from_cache"):
@@ -109,15 +112,16 @@ class FetchGeonames:
         }
 
         prepared_request = Request("GET", self.base_url, params=params).prepare()
-        logging.debug(f"Requesting data from geonames basic: {prepared_request.url}")
+        logger.debug("GeoNames search url=%s", prepared_request.url)
 
         try:
             response = self.session.send(prepared_request)
+            response.raise_for_status()
             response_json = response.json()
-            logging.debug(f"Response from GeoNames: {response_json}")
+            logger.debug("GeoNames search response: %s", response_json)
 
         except Exception as e:
-            logging.error(f"Error in fetching {self.base_url}: {e}")
+            logger.error("GeoNames search request failed for %s: %s", self.base_url, e)
             return {}
 
         try:
@@ -127,7 +131,7 @@ class FetchGeonames:
             city_data_whitout_tz["countryCode"] = response_json["geonames"][0]["countryCode"]
 
         except Exception as e:
-            logging.error(f"Error serializing data maybe wrong username? Details: {e}")
+            logger.error("GeoNames search payload missing expected keys: %s", e)
             return {}
 
         if hasattr(response, "from_cache"):
@@ -147,15 +151,16 @@ class FetchGeonames:
             timezone_response = self.__get_timezone(city_data_response["lat"], city_data_response["lng"])
 
         except Exception as e:
-            logging.error(f"Error in fetching timezone: {e}")
+            logger.error("Unable to fetch timezone details: %s", e)
             return {}
 
         return {**timezone_response, **city_data_response}
 
 
 if __name__ == "__main__":
-    from kerykeion.utilities import setup_logging
-    setup_logging(level="debug")
+    """Run a tiny demonstration when executing the module directly."""
+    from kerykeion.utilities import setup_logging as configure_logging
 
+    configure_logging("debug")
     geonames = FetchGeonames("Montichiari", "IT")
     print(geonames.get_serialized_data())

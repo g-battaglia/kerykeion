@@ -15,10 +15,58 @@ from kerykeion.schemas import (
 )
 from kerykeion.schemas.kr_literals import LunarPhaseEmoji, LunarPhaseName, PointType, AstrologicalPoint, Houses
 from typing import Union, Optional, get_args
-import logging
+from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL, basicConfig, getLogger
 import math
 import re
 from datetime import datetime
+
+
+logger = getLogger(__name__)
+
+_POINT_NUMBER_MAP: dict[str, int] = {
+    "Sun": 0,
+    "Moon": 1,
+    "Mercury": 2,
+    "Venus": 3,
+    "Mars": 4,
+    "Jupiter": 5,
+    "Saturn": 6,
+    "Uranus": 7,
+    "Neptune": 8,
+    "Pluto": 9,
+    "Mean_North_Lunar_Node": 10,
+    "True_North_Lunar_Node": 11,
+    # Swiss Ephemeris has no dedicated IDs for the south nodes; we reserve high values.
+    "Mean_South_Lunar_Node": 1000,
+    "True_South_Lunar_Node": 1100,
+    "Chiron": 15,
+    "Mean_Lilith": 12,
+    "Ascendant": 9900,
+    "Descendant": 9901,
+    "Medium_Coeli": 9902,
+    "Imum_Coeli": 9903,
+}
+
+# Logging helpers
+def setup_logging(level: str) -> None:
+    """Configure the root logger so demo scripts share the same formatting."""
+    normalized_level = (level or "").strip().lower()
+    level_map: dict[str, int] = {
+        "debug": DEBUG,
+        "info": INFO,
+        "warning": WARNING,
+        "error": ERROR,
+        "critical": CRITICAL,
+    }
+
+    selected_level = level_map.get(normalized_level, INFO)
+    basicConfig(
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        level=selected_level,
+    )
+    logger.setLevel(selected_level)
+
+
 
 
 def get_number_from_name(name: AstrologicalPoint) -> int:
@@ -35,49 +83,10 @@ def get_number_from_name(name: AstrologicalPoint) -> int:
         KerykeionException: If the name is not recognized
     """
 
-    if name == "Sun":
-        return 0
-    elif name == "Moon":
-        return 1
-    elif name == "Mercury":
-        return 2
-    elif name == "Venus":
-        return 3
-    elif name == "Mars":
-        return 4
-    elif name == "Jupiter":
-        return 5
-    elif name == "Saturn":
-        return 6
-    elif name == "Uranus":
-        return 7
-    elif name == "Neptune":
-        return 8
-    elif name == "Pluto":
-        return 9
-    elif name == "Mean_North_Lunar_Node":
-        return 10
-    elif name == "True_North_Lunar_Node":
-        return 11
-    # Note: Swiss ephemeris library has no constants for south nodes. We're using integers >= 1000 for them.
-    elif name == "Mean_South_Lunar_Node":
-        return 1000
-    elif name == "True_South_Lunar_Node":
-        return 1100
-    elif name == "Chiron":
-        return 15
-    elif name == "Mean_Lilith":
-        return 12
-    elif name == "Ascendant":  # TODO: Is this needed?
-        return 9900
-    elif name == "Descendant":  # TODO: Is this needed?
-        return 9901
-    elif name == "Medium_Coeli":  # TODO: Is this needed?
-        return 9902
-    elif name == "Imum_Coeli":  # TODO: Is this needed?
-        return 9903
-    else:
-        raise KerykeionException(f"Error in getting number from name! Name: {name}")
+    try:
+        return _POINT_NUMBER_MAP[str(name)]
+    except KeyError as exc:  # pragma: no cover - defensive branch
+        raise KerykeionException(f"Error in getting number from name! Name: {name}") from exc
 
 
 def get_kerykeion_point_from_degree(
@@ -124,7 +133,6 @@ def get_kerykeion_point_from_degree(
     sign_index = int(degree // 30)
     sign_degree = degree % 30
     zodiac_sign = ZODIAC_SIGNS[sign_index]
-
     return KerykeionPointModel(
         name=name,
         quality=zodiac_sign.quality,
@@ -139,87 +147,34 @@ def get_kerykeion_point_from_degree(
         declination=declination,
     )
 
+# Angular helpers
+def is_point_between(start_angle: Union[int, float], end_angle: Union[int, float], candidate: Union[int, float]) -> bool:
+    """Return True when ``candidate`` lies on the clockwise arc from ``start_angle`` to ``end_angle``."""
 
-def setup_logging(level: str) -> None:
-    """
-    Configure logging for the application.
+    normalize = lambda value: value % 360
 
-    Args:
-        level: Log level as string (debug, info, warning, error, critical)
-    """
-    logging_options: dict[str, int] = {
-        "debug": logging.DEBUG,
-        "info": logging.INFO,
-        "warning": logging.WARNING,
-        "error": logging.ERROR,
-        "critical": logging.CRITICAL,
-    }
-    format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    loglevel: int = logging_options.get(level, logging.INFO)
-    logging.basicConfig(format=format, level=loglevel)
-
-
-def is_point_between(
-    start_point: Union[int, float], end_point: Union[int, float], evaluated_point: Union[int, float]
-) -> bool:
-    """
-    Determine if a point lies between two other points on a circle.
-
-    Special rules:
-    - If evaluated_point equals start_point, returns True
-    - If evaluated_point equals end_point, returns False
-    - The arc between start_point and end_point must not exceed 180°
-
-    Args:
-        start_point: The starting point on the circle
-        end_point: The ending point on the circle
-        evaluated_point: The point to evaluate
-
-    Returns:
-        True if evaluated_point is between start_point and end_point, False otherwise
-
-    Raises:
-        KerykeionException: If the angular difference exceeds 180°
-    """
-
-    # Normalize angles to [0, 360)
-    start_point = start_point % 360
-    end_point = end_point % 360
-    evaluated_point = evaluated_point % 360
-
-    # Compute angular difference
-    angular_difference = math.fmod(end_point - start_point + 360, 360)
-
-    # Ensure the range is not greater than 180°. Otherwise, it is not truly defined what
-    # being located in between two points on a circle actually means.
-    if angular_difference > 180:
+    start = normalize(start_angle)
+    end = normalize(end_angle)
+    target = normalize(candidate)
+    span = (end - start) % 360
+    if span > 180:
         raise KerykeionException(
-            f"The angle between start and end point is not allowed to exceed 180°, yet is: {angular_difference}"
+            f"The angle between start and end point is not allowed to exceed 180°, yet is: {span}"
         )
-
-    # Handle explicitly when evaluated_point == start_point. Note: It may happen for mathematical
-    # reasons that evaluated_point and start_point deviate very slightly from each other, but
-    # should really be same value. This case is captured later below by the term 0 <= p1_p3.
-    if evaluated_point == start_point:
+    if target == start:
         return True
-
-    # Handle explicitly when evaluated_point == end_point
-    if evaluated_point == end_point:
+    if target == end:
         return False
+    distance_from_start = (target - start) % 360
+    return distance_from_start < span
 
-    # Compute angular differences for evaluation
-    p1_p3 = math.fmod(evaluated_point - start_point + 360, 360)
-
-    # Check if point lies in the interval
-    return (0 <= p1_p3) and (p1_p3 < angular_difference)
-
-
-def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut_list: list) -> Houses:
+# House helpers
+def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: list) -> Houses:
     """
     Determine which house contains a planet based on its degree position.
 
     Args:
-        planet_position_degree: The planet's position in degrees (0-360)
+        planet_degree: The planet's position in degrees (0-360)
         houses_degree_ut_list: List of house cusp degrees
 
     Returns:
@@ -236,11 +191,11 @@ def get_planet_house(planet_position_degree: Union[int, float], houses_degree_ut
         start_degree = houses_degree_ut_list[i]
         end_degree = houses_degree_ut_list[(i + 1) % len(houses_degree_ut_list)]
 
-        if is_point_between(start_degree, end_degree, planet_position_degree):
+        if is_point_between(start_degree, end_degree, planet_degree):
             return house_names[i]
 
     # If no house is found, raise an error
-    raise ValueError(f"Error in house calculation, planet: {planet_position_degree}, houses: {houses_degree_ut_list}")
+    raise ValueError(f"Error in house calculation, planet: {planet_degree}, houses: {houses_degree_ut_list}")
 
 
 def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
@@ -334,11 +289,11 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
     """
     if latitude > 66.0:
         latitude = 66.0
-        logging.info("Polar circle override for houses, using 66 degrees")
+        logger.info("Latitude capped at 66° to keep house calculations stable.")
 
     elif latitude < -66.0:
         latitude = -66.0
-        logging.info("Polar circle override for houses, using -66 degrees")
+        logger.info("Latitude capped at -66° to keep house calculations stable.")
 
     return latitude
 

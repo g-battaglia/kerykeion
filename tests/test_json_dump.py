@@ -100,13 +100,3 @@ class TestJsonDump:
 
     def test_lunar_phase(self):
         assert self.dictionary["lunar_phase"]["moon_emoji"] == "🌘"
-
-
-if __name__ == "__main__":
-    import pytest
-    import logging
-
-    # Set the log level to CRITICAL
-    logging.basicConfig(level=logging.CRITICAL)
-
-    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])

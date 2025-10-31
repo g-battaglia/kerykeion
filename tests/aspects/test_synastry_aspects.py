@@ -32,13 +32,3 @@ class TestSynastryAspects:
             assert self.synastry_relevant_aspects[i]["diff"] == approx(aspect["diff"], abs=1e-2)
             assert self.synastry_relevant_aspects[i]["p1"] == aspect["p1"]
             assert self.synastry_relevant_aspects[i]["p2"] == aspect["p2"]
-
-
-if __name__ == "__main__":
-    import pytest
-    import logging
-
-    # Set the log level to CRITICAL
-    logging.basicConfig(level=logging.CRITICAL)
-
-    pytest.main(["-vv", "--log-level=CRITICAL", "--log-cli-level=CRITICAL", __file__])
