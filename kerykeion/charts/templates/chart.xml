@@ -21,41 +21,41 @@
     <g kr:node="Main_Chart">
         <g kr:node="Top_Left_Text" transform="translate(0,$title_translate_y)">
             <text x="20" y="22" style="fill: $paper_color_0; font-size: 24px">$stringTitle</text>
-            <text x="20" y="50" style="fill: $paper_color_0; font-size: 10px">$top_left_0</text>
-            <text x="20" y="62" style="fill: $paper_color_0; font-size: 10px">$top_left_1</text>
-            <text x="20" y="74" style="fill: $paper_color_0; font-size: 10px">$top_left_2</text>
-            <text x="20" y="86" style="fill: $paper_color_0; font-size: 10px">$top_left_3</text>
-            <text x="20" y="98" style="fill: $paper_color_0; font-size: 10px">$top_left_4</text>
-            <text x="20" y="110" style="fill: $paper_color_0; font-size: 10px">$top_left_5</text>
+            <text x="20" y="58" style="fill: $paper_color_0; font-size: 10px">$top_left_0</text>
+            <text x="20" y="70" style="fill: $paper_color_0; font-size: 10px">$top_left_1</text>
+            <text x="20" y="82" style="fill: $paper_color_0; font-size: 10px">$top_left_2</text>
+            <text x="20" y="94" style="fill: $paper_color_0; font-size: 10px">$top_left_3</text>
+            <text x="20" y="106" style="fill: $paper_color_0; font-size: 10px">$top_left_4</text>
+            <text x="20" y="118" style="fill: $paper_color_0; font-size: 10px">$top_left_5</text>
         </g>
 
         <!-- Elements -->
         <g kr:node="Elements_Percentages" transform="translate(0,$elements_translate_y)">
-            <text x="20" y="130" style="fill: $paper_color_0; font-size: 10px;">$elements_string</text>
-            <text x="20" y="144"
+            <text x="20" y="138" style="fill: $paper_color_0; font-size: 10px;">$elements_string</text>
+            <text x="20" y="152"
                 style="fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;">
                 $fire_string</text>
-            <text x="20" y="156"
+            <text x="20" y="164"
                 style="fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;">
                 $earth_string</text>
-            <text x="20" y="168"
+            <text x="20" y="176"
                 style="fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;">
                 $air_string</text>
-            <text x="20" y="180"
+            <text x="20" y="188"
                 style="fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;">
                 $water_string</text>
         </g>
 
         <!-- Qualities -->
         <g kr:node="Qualities_Percentages" transform="translate(0,$qualities_translate_y)">
-            <text x="20" y="200" style="fill: $paper_color_0; font-size: 10px;">$qualities_string</text>
-            <text x="20" y="214"
+            <text x="20" y="208" style="fill: $paper_color_0; font-size: 10px;">$qualities_string</text>
+            <text x="20" y="222"
                 style="fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;">
                 $cardinal_string</text>
-            <text x="20" y="226"
+            <text x="20" y="234"
                 style="fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;">
                 $fixed_string</text>
-            <text x="20" y="238"
+            <text x="20" y="246"
                 style="fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;">
                 $mutable_string</text>
         </g>

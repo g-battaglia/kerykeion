@@ -5,7 +5,7 @@
     xmlns:kr='https://www.kerykeion.net/'
     width='100%'
     height='100%'
-    viewBox='0 0 890 550'
+    viewBox='0 -15 890 580'
     preserveAspectRatio='xMidYMid'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
@@ -169,41 +169,41 @@
     <g kr:node='Main_Chart'>
         <g kr:node='Top_Left_Text' transform='translate(0,0)'>
             <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Composite Chart: Angelina Jolie and Brad Pitt</text>
-            <text x='20' y='50' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Angelina Jolie</text>
-            <text x='20' y='62' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1975-06-04 09:09</text>
-            <text x='20' y='74' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>34°1'48' N 118°9'0' W</text>
-            <text x='20' y='86' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Brad Pitt</text>
-            <text x='20' y='98' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1963-12-18 06:31</text>
-            <text x='20' y='110' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>35°12'0' N / 96°33'36' W</text>
+            <text x='20' y='58' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Angelina Jolie</text>
+            <text x='20' y='70' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1975-06-04 09:09</text>
+            <text x='20' y='82' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>34°1'48' N 118°9'0' W</text>
+            <text x='20' y='94' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Brad Pitt</text>
+            <text x='20' y='106' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1963-12-18 06:31</text>
+            <text x='20' y='118' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>35°12'0' N / 96°33'36' W</text>
         </g>
 
         <!-- Elements -->
         <g kr:node='Elements_Percentages' transform='translate(0,0)'>
-            <text x='20' y='130' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Elements:</text>
-            <text x='20' y='144'
+            <text x='20' y='138' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Elements:</text>
+            <text x='20' y='152'
                 style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>
                 Fire 22%</text>
-            <text x='20' y='156'
+            <text x='20' y='164'
                 style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>
                 Earth 19%</text>
-            <text x='20' y='168'
+            <text x='20' y='176'
                 style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>
                 Air 27%</text>
-            <text x='20' y='180'
+            <text x='20' y='188'
                 style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>
                 Water 32%</text>
         </g>
 
         <!-- Qualities -->
         <g kr:node='Qualities_Percentages' transform='translate(0,0)'>
-            <text x='20' y='200' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Qualities:</text>
-            <text x='20' y='214'
+            <text x='20' y='208' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Qualities:</text>
+            <text x='20' y='222'
                 style='fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;'>
                 Cardinal 59%</text>
-            <text x='20' y='226'
+            <text x='20' y='234'
                 style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>
                 Fixed 14%</text>
-            <text x='20' y='238'
+            <text x='20' y='246'
                 style='fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;'>
                 Mutable 27%</text>
         </g>

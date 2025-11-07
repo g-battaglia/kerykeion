@@ -173,6 +173,10 @@ class ChartDrawer:
     _DEFAULT_FULL_WIDTH_WITH_TABLE = 1250
     _DEFAULT_ULTRA_WIDE_WIDTH = 1320
 
+    _VERTICAL_PADDING_TOP = 15
+    _VERTICAL_PADDING_BOTTOM = 15
+    _TITLE_SPACING = 8
+
     _ASPECT_LIST_ASPECTS_PER_COLUMN = 14
     _ASPECT_LIST_COLUMN_WIDTH = 105
 
@@ -664,8 +668,10 @@ class ChartDrawer:
         return collected
 
     def _dynamic_viewbox(self) -> str:
-        """Return the viewBox string based on current width/height."""
-        return f"0 0 {int(self.width)} {int(self.height)}"
+        """Return the viewBox string based on current width/height with vertical padding."""
+        min_y = -self._VERTICAL_PADDING_TOP
+        viewbox_height = int(self.height) + self._VERTICAL_PADDING_TOP + self._VERTICAL_PADDING_BOTTOM
+        return f"0 {min_y} {int(self.width)} {viewbox_height}"
 
     def _wheel_only_viewbox(self, margin: int = 20) -> str:
         """Return a tight viewBox for the wheel-only template.
