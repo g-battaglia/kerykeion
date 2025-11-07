@@ -8,12 +8,19 @@ License: AGPL-3.0
 
 from logging import getLogger
 from datetime import timedelta
+from os import getenv
+from pathlib import Path
+from typing import Optional, Union
+
 from requests import Request
 from requests_cache import CachedSession
-from typing import Union
 
 
 logger = getLogger(__name__)
+
+
+DEFAULT_GEONAMES_CACHE_NAME = Path("cache") / "kerykeion_geonames_cache"
+GEONAMES_CACHE_ENV_VAR = "KERYKEION_GEONAMES_CACHE_NAME"
 
 
 class FetchGeonames:
@@ -28,7 +35,13 @@ class FetchGeonames:
         country_code: Two-letter country code (ISO 3166-1 alpha-2).
         username: GeoNames username for API access, defaults to "century.boy".
         cache_expire_after_days: Number of days to cache responses, defaults to 30.
+        cache_name: Optional path (directory or filename stem) used by requests-cache.
+            Defaults to "cache/kerykeion_geonames_cache" and may also be overridden
+            via the environment variable ``KERYKEION_GEONAMES_CACHE_NAME`` or by
+            calling :meth:`FetchGeonames.set_default_cache_name`.
     """
+
+    default_cache_name: Path = DEFAULT_GEONAMES_CACHE_NAME
 
     def __init__(
         self,
@@ -36,9 +49,10 @@ class FetchGeonames:
         country_code: str,
         username: str = "century.boy",
         cache_expire_after_days=30,
+        cache_name: Optional[Union[str, Path]] = None,
     ):
         self.session = CachedSession(
-            cache_name="cache/kerykeion_geonames_cache",
+            cache_name=str(self._resolve_cache_name(cache_name)),
             backend="sqlite",
             expire_after=timedelta(days=cache_expire_after_days),
         )
@@ -48,6 +62,25 @@ class FetchGeonames:
         self.country_code = country_code
         self.base_url = "http://api.geonames.org/searchJSON"
         self.timezone_url = "http://api.geonames.org/timezoneJSON"
+
+    @classmethod
+    def set_default_cache_name(cls, cache_name: Union[str, Path]) -> None:
+        """Override the default cache name used when none is provided."""
+
+        cls.default_cache_name = Path(cache_name)
+
+    @classmethod
+    def _resolve_cache_name(cls, cache_name: Optional[Union[str, Path]]) -> Path:
+        """Return the resolved cache name applying overrides in priority order."""
+
+        if cache_name is not None:
+            return Path(cache_name)
+
+        env_override = getenv(GEONAMES_CACHE_ENV_VAR)
+        if env_override:
+            return Path(env_override)
+
+        return cls.default_cache_name
 
     def __get_timezone(self, lat: Union[str, float, int], lon: Union[str, float, int]) -> dict[str, str]:
         """

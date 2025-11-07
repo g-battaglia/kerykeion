@@ -1,5 +1,7 @@
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import patch, Mock
+
 from kerykeion.fetch_geonames import FetchGeonames
 
 
@@ -45,3 +47,27 @@ def test_exception_handling():
         result = fetcher.get_serialized_data()
         # Should return empty dict on error
         assert result == {}
+
+
+def test_custom_cache_name(monkeypatch):
+    session_mock = Mock()
+    cached_session_mock = Mock(return_value=session_mock)
+    monkeypatch.setattr("kerykeion.fetch_geonames.CachedSession", cached_session_mock)
+
+    FetchGeonames("TestCity", "TS", cache_name="custom/cache/path")
+
+    assert cached_session_mock.call_args.kwargs["cache_name"] == "custom/cache/path"
+
+
+def test_set_default_cache_name(monkeypatch, tmp_path):
+    session_mock = Mock()
+    cached_session_mock = Mock(return_value=session_mock)
+    monkeypatch.setattr("kerykeion.fetch_geonames.CachedSession", cached_session_mock)
+
+    original_default = FetchGeonames.default_cache_name
+    try:
+        FetchGeonames.set_default_cache_name(tmp_path / "geo_cache")
+        FetchGeonames("TestCity", "TS")
+        assert cached_session_mock.call_args.kwargs["cache_name"] == str(tmp_path / "geo_cache")
+    finally:
+        FetchGeonames.set_default_cache_name(original_default)
