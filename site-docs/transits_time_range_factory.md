@@ -340,7 +340,7 @@ for natal_point, transits in natal_point_transits.items():
         tightest = sorted(aspect_transits, key=lambda x: abs(x['orb']))[:3]
         for i, t in enumerate(tightest, 1):
             date_str = t['date'][:10]
-            print(f"    {i}. {date_str} (orb: {t['orb']:+.2f}°)")
+            print(f"    {i}. {date_str} (orb: {t['orb']:.2f}°)")
 ```
 
 **Output:**
@@ -354,27 +354,27 @@ Jupiter transit moments found: 34
 
 Jupiter → Natal Sun (8 aspects):
   Sextiles: 3
-    1. 2024-03-15 (orb: +0.67°)
-    2. 2024-06-22 (orb: -1.23°)
-    3. 2024-09-08 (orb: +2.01°)
+    1. 2024-03-15 (orb: 0.67°)
+    2. 2024-06-22 (orb: 1.23°)
+    3. 2024-09-08 (orb: 2.01°)
   Trines: 3
-    1. 2024-05-10 (orb: -0.45°)
-    2. 2024-07-18 (orb: +1.78°)
-    3. 2024-11-03 (orb: -2.34°)
+    1. 2024-05-10 (orb: 0.45°)
+    2. 2024-07-18 (orb: 1.78°)
+    3. 2024-11-03 (orb: 2.34°)
   Squares: 2
-    1. 2024-01-28 (orb: +1.56°)
-    2. 2024-12-14 (orb: -1.89°)
+    1. 2024-01-28 (orb: 1.56°)
+    2. 2024-12-14 (orb: 1.89°)
 
 Jupiter → Natal Moon (6 aspects):
   Conjunctions: 2
-    1. 2024-04-22 (orb: +0.34°)
-    2. 2024-08-07 (orb: -0.78°)
+    1. 2024-04-22 (orb: 0.34°)
+    2. 2024-08-07 (orb: 0.78°)
   Oppositions: 2
-    1. 2024-02-11 (orb: +1.45°)
-    2. 2024-10-26 (orb: -1.67°)
+    1. 2024-02-11 (orb: 1.45°)
+    2. 2024-10-26 (orb: 1.67°)
   Sextiles: 2
-    1. 2024-06-05 (orb: +0.92°)
-    2. 2024-09-21 (orb: -1.34°)
+    1. 2024-06-05 (orb: 0.92°)
+    2. 2024-09-21 (orb: 1.34°)
 ```
 
 ### Monthly Transit Summary
@@ -436,7 +436,7 @@ def generate_monthly_transit_summary(subject, year, month):
     print(f"\nStrongest aspects this month:")
     for i, (date, aspect) in enumerate(strongest_aspects[:10], 1):
         day = date[8:10]
-        print(f"  {i:2d}. {month_name[:3]} {day} - {aspect.p1_name} {aspect.aspect} natal {aspect.p2_name} (orb: {aspect.orbit:+.2f}°)")
+        print(f"  {i:2d}. {month_name[:3]} {day} - {aspect.p1_name} {aspect.aspect} natal {aspect.p2_name} (orb: {aspect.orbit:.2f}°)")
     
     # Daily activity levels
     daily_counts = {}
@@ -485,16 +485,16 @@ Most active transiting planets:
   5. Mars: 21 aspects
 
 Strongest aspects this month:
-   1. Aug 15 - Venus conjunction natal Sun (orb: +0.12°)
-   2. Aug 22 - Mars square natal Mars (orb: -0.18°)
-   3. Aug 08 - Mercury trine natal Mercury (orb: +0.25°)
-   4. Aug 29 - Sun opposition natal Moon (orb: -0.31°)
-   5. Aug 03 - Jupiter sextile natal Venus (orb: +0.38°)
-   6. Aug 18 - Saturn square natal Saturn (orb: -0.44°)
-   7. Aug 25 - Moon conjunction natal Ascendant (orb: +0.51°)
-   8. Aug 11 - Venus trine natal Jupiter (orb: -0.57°)
-   9. Aug 06 - Mars opposition natal Mercury (orb: +0.63°)
-  10. Aug 20 - Sun square natal Midheaven (orb: -0.69°)
+   1. Aug 15 - Venus conjunction natal Sun (orb: 0.12°)
+   2. Aug 22 - Mars square natal Mars (orb: 0.18°)
+   3. Aug 08 - Mercury trine natal Mercury (orb: 0.25°)
+   4. Aug 29 - Sun opposition natal Moon (orb: 0.31°)
+   5. Aug 03 - Jupiter sextile natal Venus (orb: 0.38°)
+   6. Aug 18 - Saturn square natal Saturn (orb: 0.44°)
+   7. Aug 25 - Moon conjunction natal Ascendant (orb: 0.51°)
+   8. Aug 11 - Venus trine natal Jupiter (orb: 0.57°)
+   9. Aug 06 - Mars opposition natal Mercury (orb: 0.63°)
+  10. Aug 20 - Sun square natal Midheaven (orb: 0.69°)
 
 Daily activity levels:
 High activity days (>5 aspects):

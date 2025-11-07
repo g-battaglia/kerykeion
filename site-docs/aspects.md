@@ -81,7 +81,7 @@ print(f"Aspects found: {len(chart_aspects.aspects)}")
 print("\nStrongest aspects:")
 sorted_aspects = sorted(chart_aspects.aspects, key=lambda x: abs(x.orbit))
 for i, aspect in enumerate(sorted_aspects[:5], 1):
-    print(f"{i}. {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb: {aspect.orbit:+.2f}°)")
+    print(f"{i}. {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb: {aspect.orbit:.2f}°)")
 ```
 
 **Output example:**
@@ -90,11 +90,11 @@ Analyzing Maria Garcia's natal chart:
 Aspects found: 42
 
 Strongest aspects:
-1. Sun conjunction Mercury (orb: +0.23°)
-2. Moon trine Jupiter (orb: -0.45°)
-3. Venus sextile Mars (orb: +0.67°)
-4. Saturn square Ascendant (orb: -0.89°)
-5. Jupiter trine Midheaven (orb: +1.12°)
+1. Sun conjunction Mercury (orb: 0.23°)
+2. Moon trine Jupiter (orb: 0.45°)
+3. Venus sextile Mars (orb: 0.67°)
+4. Saturn square Ascendant (orb: 0.89°)
+5. Jupiter trine Midheaven (orb: 1.12°)
 ```
 
 ### Aspect Pattern Analysis
@@ -149,7 +149,7 @@ def analyze_aspect_patterns(chart_aspects):
     tight_aspects = [a for a in chart_aspects.aspects if abs(a.orbit) <= 1.0]
     print(f"\nTight Aspects (≤1°): {len(tight_aspects)}")
     for aspect in sorted(tight_aspects, key=lambda x: abs(x.orbit)):
-        print(f"  {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb: {aspect.orbit:+.2f}°)")
+        print(f"  {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb: {aspect.orbit:.2f}°)")
     
     return aspect_types, planet_involvement, tight_aspects
 
@@ -175,10 +175,10 @@ Most Aspected Planets:
   Jupiter: 6 aspects
 
 Tight Aspects (≤1°): 4
-  Sun conjunction Mercury (orb: +0.23°)
-  Moon trine Jupiter (orb: -0.45°)
-  Venus sextile Mars (orb: +0.67°)
-  Saturn square Ascendant (orb: -0.89°)
+  Sun conjunction Mercury (orb: 0.23°)
+  Moon trine Jupiter (orb: 0.45°)
+  Venus sextile Mars (orb: 0.67°)
+  Saturn square Ascendant (orb: 0.89°)
 ```
 
 ## Dual Chart Aspects Analysis
@@ -273,7 +273,7 @@ def synastry_compatibility_analysis(person1, person2):
     print(f"\nStrongest Connections:")
     strongest = sorted(synastry.aspects, key=lambda x: abs(x.orbit))[:5]
     for i, aspect in enumerate(strongest, 1):
-        print(f"  {i}. {aspect.p1_owner}'s {aspect.p1_name} {aspect.aspect} {aspect.p2_owner}'s {aspect.p2_name} (orb: {aspect.orbit:+.2f}°)")
+        print(f"  {i}. {aspect.p1_owner}'s {aspect.p1_name} {aspect.aspect} {aspect.p2_owner}'s {aspect.p2_name} (orb: {aspect.orbit:.2f}°)")
     
     return synastry
 
@@ -309,11 +309,11 @@ Relationship Themes:
   Communication: 8 aspects
 
 Strongest Connections:
-  1. Alessandro's Venus conjunction Sofia's Sun (orb: +0.34°)
-  2. Sofia's Moon trine Alessandro's Jupiter (orb: -0.67°)
-  3. Alessandro's Mars sextile Sofia's Venus (orb: +0.89°)
-  4. Sofia's Mercury conjunction Alessandro's Mercury (orb: +1.12°)
-  5. Alessandro's Sun opposition Sofia's Saturn (orb: -1.45°)
+  1. Alessandro's Venus conjunction Sofia's Sun (orb: 0.34°)
+  2. Sofia's Moon trine Alessandro's Jupiter (orb: 0.67°)
+  3. Alessandro's Mars sextile Sofia's Venus (orb: 0.89°)
+  4. Sofia's Mercury conjunction Alessandro's Mercury (orb: 1.12°)
+  5. Alessandro's Sun opposition Sofia's Saturn (orb: 1.45°)
 ```
 
 ### Transit Analysis
@@ -363,7 +363,7 @@ def current_transits_analysis(natal_person, transit_date=None):
             print(f"\n  {planet} transits:")
             for aspect in sorted(aspects, key=lambda x: abs(x.orbit)):
                 natal_planet = aspect.p2_name
-                print(f"    {aspect.aspect} natal {natal_planet} (orb: {aspect.orbit:+.2f}°)")
+                print(f"    {aspect.aspect} natal {natal_planet} (orb: {aspect.orbit:.2f}°)")
     
     # Highlight significant transits
     significant_transits = []
@@ -376,7 +376,7 @@ def current_transits_analysis(natal_person, transit_date=None):
     if significant_transits:
         print(f"\nSignificant Outer Planet Transits (≤2° orb):")
         for aspect in sorted(significant_transits, key=lambda x: abs(x.orbit)):
-            print(f"  {aspect.p1_name} {aspect.aspect} natal {aspect.p2_name} (orb: {aspect.orbit:+.2f}°)")
+            print(f"  {aspect.p1_name} {aspect.aspect} natal {aspect.p2_name} (orb: {aspect.orbit:.2f}°)")
     
     return transits
 
@@ -701,7 +701,7 @@ def identify_aspect_patterns(aspects_result):
     if len(conjunctions) >= 2:
         print(f"\nConjunction Patterns:")
         for conj in sorted(conjunctions, key=lambda x: abs(x.orbit)):
-            print(f"    {conj.p1_name} ☌ {conj.p2_name} (orb: {conj.orbit:+.2f}°)")
+            print(f"    {conj.p1_name} ☌ {conj.p2_name} (orb: {conj.orbit:.2f}°)")
     
     squares = [a for a in aspects_result.aspects if a.aspect == "square"]
     trines = [a for a in aspects_result.aspects if a.aspect == "trine"]
@@ -912,7 +912,7 @@ def generate_consultation_report(person, report_type="comprehensive"):
     if report_type == "comprehensive":
         strongest = sorted(chart_aspects.aspects, key=lambda aspect: abs(aspect.orbit))[:5]
         for aspect in strongest:
-            print(f"  {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb {aspect.orbit:+.2f}°)")
+            print(f"  {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb {aspect.orbit:.2f}°)")
 
     return chart_aspects
 

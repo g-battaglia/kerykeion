@@ -49,8 +49,8 @@ def get_aspect_from_two_points(
     return {
         "verdict": verdict,
         "name": name,
-        "orbit": distance - aspect_degrees,
-        "distance": distance - aspect_degrees,
+        "orbit": abs(distance - aspect_degrees),
+        "distance": abs(distance - aspect_degrees),
         "aspect_degrees": aspect_degrees,
         "diff": diff,
     }
