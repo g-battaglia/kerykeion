@@ -800,7 +800,7 @@ class ChartDrawer:
                 # Secondary houses grid default x ~ 1015
                 secondary_houses_grid_right = 1015 + 120
                 extents.append(secondary_houses_grid_right)
-                if self.second_obj is not None:
+                if self.show_house_position_comparison and self.second_obj is not None:
                     point_column_label = self._translate("point", "Point")
                     first_subject_label = self._truncate_name(self.first_obj.name, 8, "…", True)  # type: ignore[union-attr]
                     second_subject_label = self._truncate_name(self.second_obj.name, 8, "…", True)  # type: ignore[union-attr]
@@ -833,33 +833,35 @@ class ChartDrawer:
 
             if self.chart_type == "Transit":
                 # House comparison grid at x ~ 1030
-                transit_columns = [
-                    self._translate("transit_point", "Transit Point"),
-                    self._translate("house_position", "Natal House"),
-                ]
-                transit_grid_width = self._estimate_house_comparison_grid_width(
-                    column_labels=transit_columns,
-                    include_radix_column=False,
-                    include_title=True,
-                    minimum_width=170.0,
-                )
-                house_comparison_grid_right = 980 + transit_grid_width
-                extents.append(house_comparison_grid_right)
+                if self.show_house_position_comparison:
+                    transit_columns = [
+                        self._translate("transit_point", "Transit Point"),
+                        self._translate("house_position", "Natal House"),
+                    ]
+                    transit_grid_width = self._estimate_house_comparison_grid_width(
+                        column_labels=transit_columns,
+                        include_radix_column=False,
+                        include_title=True,
+                        minimum_width=170.0,
+                    )
+                    house_comparison_grid_right = 980 + transit_grid_width
+                    extents.append(house_comparison_grid_right)
 
             if self.chart_type == "DualReturnChart":
                 # House comparison grid translated to x ~ 1100
-                dual_return_columns = [
-                    self._translate("return_point", "Return Point"),
-                    self._translate("Return", "DualReturnChart"),
-                    self._translate("Natal", "Natal"),
-                ]
-                dual_return_grid_width = self._estimate_house_comparison_grid_width(
-                    column_labels=dual_return_columns,
-                    include_radix_column=True,
-                    include_title=True,
-                )
-                house_comparison_grid_right = 1100 + dual_return_grid_width
-                extents.append(house_comparison_grid_right)
+                if self.show_house_position_comparison:
+                    dual_return_columns = [
+                        self._translate("return_point", "Return Point"),
+                        self._translate("Return", "DualReturnChart"),
+                        self._translate("Natal", "Natal"),
+                    ]
+                    dual_return_grid_width = self._estimate_house_comparison_grid_width(
+                        column_labels=dual_return_columns,
+                        include_radix_column=True,
+                        include_title=True,
+                    )
+                    house_comparison_grid_right = 1100 + dual_return_grid_width
+                    extents.append(house_comparison_grid_right)
 
         # Conservative safety padding
         return int(max(extents) + self._padding)

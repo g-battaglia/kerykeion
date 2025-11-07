@@ -353,7 +353,7 @@ class TestChartDrawer:
     def test_hide_house_position_comparison_removes_grid_and_updates_width(self):
         """Hiding the house position comparison grid should reclaim horizontal space."""
         synastry_data = ChartDataFactory.create_synastry_chart_data(self.subject, self.subject2)
-        chart = ChartDrawer(synastry_data, show_house_position_comparison=False)
+        chart = ChartDrawer(synastry_data, show_house_position_comparison=False, auto_size=False)
 
         assert chart.width == ChartDrawer._DEFAULT_FULL_WIDTH
 
@@ -378,10 +378,15 @@ class TestChartDrawer:
         assert second_points["Sun"] != first_points["Sun"], "Second subject sun should not match first subject"
 
     def test_dynamic_viewbox_tracks_dimensions(self):
-        """Chart viewbox string reflects current width/height values."""
+        """Chart viewbox string reflects current width/height values with vertical padding."""
         chart = ChartDrawer(self.chart_data)
 
-        expected = f"0 0 {int(chart.width)} {int(chart.height)}"
+        # The dynamic viewbox includes vertical padding:
+        # min_y = -_VERTICAL_PADDING_TOP
+        # viewbox_height = height + _VERTICAL_PADDING_TOP + _VERTICAL_PADDING_BOTTOM
+        min_y = -ChartDrawer._VERTICAL_PADDING_TOP
+        viewbox_height = int(chart.height) + ChartDrawer._VERTICAL_PADDING_TOP + ChartDrawer._VERTICAL_PADDING_BOTTOM
+        expected = f"0 {min_y} {int(chart.width)} {viewbox_height}"
         assert chart._dynamic_viewbox() == expected
 
     def test_chart_drawer_save_svg_method(self):
