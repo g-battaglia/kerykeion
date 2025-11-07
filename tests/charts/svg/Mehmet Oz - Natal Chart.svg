@@ -133,52 +133,52 @@
     Main Chart -->
     <g kr:node='Main_Chart'>
         <g kr:node='Top_Left_Text' transform='translate(0,0)'>
-            <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Mehmet Oz - Doğum Haritası</text>
-            <text x='20' y='58' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Konum:</text>
-            <text x='20' y='70' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Istanbul, TR</text>
-            <text x='20' y='82' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Enlem: 41°0'50' Kuzey</text>
-            <text x='20' y='94' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Boylam: 28°56'59' Doğu</text>
-            <text x='20' y='106' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1960-06-11 12:00 [+02:00]</text>
-            <text x='20' y='118' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Haftanın günü: Cumartesi</text>
+            <text kr:node='Chart_Title' x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Mehmet Oz - Doğum Haritası</text>
+            <text kr:node='Top_Left_Text_0' x='20' y='58' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Konum:</text>
+            <text kr:node='Top_Left_Text_1' x='20' y='70' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Istanbul, TR</text>
+            <text kr:node='Top_Left_Text_2' x='20' y='82' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Enlem: 41°0'50' Kuzey</text>
+            <text kr:node='Top_Left_Text_3' x='20' y='94' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Boylam: 28°56'59' Doğu</text>
+            <text kr:node='Top_Left_Text_4' x='20' y='106' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1960-06-11 12:00 [+02:00]</text>
+            <text kr:node='Top_Left_Text_5' x='20' y='118' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Haftanın günü: Cumartesi</text>
         </g>
 
         <!-- Elements -->
         <g kr:node='Elements_Percentages' transform='translate(0,0)'>
-            <text x='20' y='138' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Elementler:</text>
-            <text x='20' y='152'
+            <text kr:node='Elements_Text' x='20' y='138' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Elementler:</text>
+            <text kr:node='Fire_Text' x='20' y='152'
                 style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>
                 Ateş 22%</text>
-            <text x='20' y='164'
+            <text kr:node='Earth_Text' x='20' y='164'
                 style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>
                 Toprak 29%</text>
-            <text x='20' y='176'
+            <text kr:node='Air_Text' x='20' y='176'
                 style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>
                 Hava 24%</text>
-            <text x='20' y='188'
+            <text kr:node='Water_Text' x='20' y='188'
                 style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>
                 Su 25%</text>
         </g>
 
         <!-- Qualities -->
         <g kr:node='Qualities_Percentages' transform='translate(0,0)'>
-            <text x='20' y='208' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Nitelikler:</text>
-            <text x='20' y='222'
+            <text kr:node='Qualities_Text' x='20' y='208' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Nitelikler:</text>
+            <text kr:node='Cardinal_Text' x='20' y='222'
                 style='fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;'>
                 Kardinal 31%</text>
-            <text x='20' y='234'
+            <text kr:node='Fixed_Text' x='20' y='234'
                 style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>
                 Sabit 5%</text>
-            <text x='20' y='246'
+            <text kr:node='Mutable_Text' x='20' y='246'
                 style='fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;'>
                 Değişken 64%</text>
         </g>
 
         <g kr:node='Bottom_Left_Text' transform='translate(0,0)'>
-            <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Burçlar: Tropikal</text>
-            <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Domifikasyon: Placidus</text>
-            <text x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Ay Döngüsü Günü: 17</text>
-            <text x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Ay Aşaması: Küçülen Şişkin Ay</text>
-            <text x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Perspektif: Görünen Jeosentrik</text>
+            <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Burçlar: Tropikal</text>
+            <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Domifikasyon: Placidus</text>
+            <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Ay Döngüsü Günü: 17</text>
+            <text kr:node='Bottom_Left_Text_3' x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Ay Aşaması: Küçülen Şişkin Ay</text>
+            <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Perspektif: Görünen Jeosentrik</text>
         </g>
 
         <!-- Lunar Phase -->

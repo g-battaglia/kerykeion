@@ -179,53 +179,53 @@
     <!---
     Main Chart -->
     <g kr:node='Main_Chart'>
-        <g kr:node='Top_Left_Text' transform='translate(0,36)'>
-            <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Synastry: John Lennon - DTS and Paul McCartney</text>
-            <text x='20' y='58' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>John Lennon - DTS:</text>
-            <text x='20' y='70' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Liverpool, GB</text>
-            <text x='20' y='82' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1940-10-09 18:30 [+01:00]</text>
-            <text x='20' y='94' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Paul McCartney: </text>
-            <text x='20' y='106' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Liverpool, GB</text>
-            <text x='20' y='118' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1942-06-18 15:30 [+02:00]</text>
+        <g kr:node='Top_Left_Text' transform='translate(0,26)'>
+            <text kr:node='Chart_Title' x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Synastry: John Lennon - DTS and Paul McCartney</text>
+            <text kr:node='Top_Left_Text_0' x='20' y='58' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>John Lennon - DTS:</text>
+            <text kr:node='Top_Left_Text_1' x='20' y='70' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Liverpool, GB</text>
+            <text kr:node='Top_Left_Text_2' x='20' y='82' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1940-10-09 18:30 [+01:00]</text>
+            <text kr:node='Top_Left_Text_3' x='20' y='94' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Paul McCartney: </text>
+            <text kr:node='Top_Left_Text_4' x='20' y='106' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Liverpool, GB</text>
+            <text kr:node='Top_Left_Text_5' x='20' y='118' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1942-06-18 15:30 [+02:00]</text>
         </g>
 
         <!-- Elements -->
         <g kr:node='Elements_Percentages' transform='translate(0,36)'>
-            <text x='20' y='138' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Elements:</text>
-            <text x='20' y='152'
+            <text kr:node='Elements_Text' x='20' y='138' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Elements:</text>
+            <text kr:node='Fire_Text' x='20' y='152'
                 style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>
                 Fire 25%</text>
-            <text x='20' y='164'
+            <text kr:node='Earth_Text' x='20' y='164'
                 style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>
                 Earth 24%</text>
-            <text x='20' y='176'
+            <text kr:node='Air_Text' x='20' y='176'
                 style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>
                 Air 36%</text>
-            <text x='20' y='188'
+            <text kr:node='Water_Text' x='20' y='188'
                 style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>
                 Water 15%</text>
         </g>
 
         <!-- Qualities -->
         <g kr:node='Qualities_Percentages' transform='translate(0,36)'>
-            <text x='20' y='208' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Qualities:</text>
-            <text x='20' y='222'
+            <text kr:node='Qualities_Text' x='20' y='208' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Qualities:</text>
+            <text kr:node='Cardinal_Text' x='20' y='222'
                 style='fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;'>
                 Cardinal 46%</text>
-            <text x='20' y='234'
+            <text kr:node='Fixed_Text' x='20' y='234'
                 style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>
                 Fixed 32%</text>
-            <text x='20' y='246'
+            <text kr:node='Mutable_Text' x='20' y='246'
                 style='fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;'>
                 Mutable 22%</text>
         </g>
 
         <g kr:node='Bottom_Left_Text' transform='translate(0,76)'>
-            <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'></text>
-            <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'></text>
-            <text x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Zodiac: Tropical</text>
-            <text x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Placidus Houses</text>
-            <text x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Perspective: Apparent Geocentric</text>
+            <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'></text>
+            <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'></text>
+            <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Zodiac: Tropical</text>
+            <text kr:node='Bottom_Left_Text_3' x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Placidus Houses</text>
+            <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Perspective: Apparent Geocentric</text>
         </g>
 
         <!-- Lunar Phase -->

@@ -20,52 +20,52 @@
     Main Chart -->
     <g kr:node="Main_Chart">
         <g kr:node="Top_Left_Text" transform="translate(0,$title_translate_y)">
-            <text x="20" y="22" style="fill: $paper_color_0; font-size: 24px">$stringTitle</text>
-            <text x="20" y="58" style="fill: $paper_color_0; font-size: 10px">$top_left_0</text>
-            <text x="20" y="70" style="fill: $paper_color_0; font-size: 10px">$top_left_1</text>
-            <text x="20" y="82" style="fill: $paper_color_0; font-size: 10px">$top_left_2</text>
-            <text x="20" y="94" style="fill: $paper_color_0; font-size: 10px">$top_left_3</text>
-            <text x="20" y="106" style="fill: $paper_color_0; font-size: 10px">$top_left_4</text>
-            <text x="20" y="118" style="fill: $paper_color_0; font-size: 10px">$top_left_5</text>
+            <text kr:node="Chart_Title" x="20" y="22" style="fill: $paper_color_0; font-size: 24px">$stringTitle</text>
+            <text kr:node="Top_Left_Text_0" x="20" y="58" style="fill: $paper_color_0; font-size: 10px">$top_left_0</text>
+            <text kr:node="Top_Left_Text_1" x="20" y="70" style="fill: $paper_color_0; font-size: 10px">$top_left_1</text>
+            <text kr:node="Top_Left_Text_2" x="20" y="82" style="fill: $paper_color_0; font-size: 10px">$top_left_2</text>
+            <text kr:node="Top_Left_Text_3" x="20" y="94" style="fill: $paper_color_0; font-size: 10px">$top_left_3</text>
+            <text kr:node="Top_Left_Text_4" x="20" y="106" style="fill: $paper_color_0; font-size: 10px">$top_left_4</text>
+            <text kr:node="Top_Left_Text_5" x="20" y="118" style="fill: $paper_color_0; font-size: 10px">$top_left_5</text>
         </g>
 
         <!-- Elements -->
         <g kr:node="Elements_Percentages" transform="translate(0,$elements_translate_y)">
-            <text x="20" y="138" style="fill: $paper_color_0; font-size: 10px;">$elements_string</text>
-            <text x="20" y="152"
+            <text kr:node="Elements_Text" x="20" y="138" style="fill: $paper_color_0; font-size: 10px;">$elements_string</text>
+            <text kr:node="Fire_Text" x="20" y="152"
                 style="fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;">
                 $fire_string</text>
-            <text x="20" y="164"
+            <text kr:node="Earth_Text" x="20" y="164"
                 style="fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;">
                 $earth_string</text>
-            <text x="20" y="176"
+            <text kr:node="Air_Text" x="20" y="176"
                 style="fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;">
                 $air_string</text>
-            <text x="20" y="188"
+            <text kr:node="Water_Text" x="20" y="188"
                 style="fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;">
                 $water_string</text>
         </g>
 
         <!-- Qualities -->
         <g kr:node="Qualities_Percentages" transform="translate(0,$qualities_translate_y)">
-            <text x="20" y="208" style="fill: $paper_color_0; font-size: 10px;">$qualities_string</text>
-            <text x="20" y="222"
+            <text kr:node="Qualities_Text" x="20" y="208" style="fill: $paper_color_0; font-size: 10px;">$qualities_string</text>
+            <text kr:node="Cardinal_Text" x="20" y="222"
                 style="fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;">
                 $cardinal_string</text>
-            <text x="20" y="234"
+            <text kr:node="Fixed_Text" x="20" y="234"
                 style="fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;">
                 $fixed_string</text>
-            <text x="20" y="246"
+            <text kr:node="Mutable_Text" x="20" y="246"
                 style="fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;">
                 $mutable_string</text>
         </g>
 
         <g kr:node="Bottom_Left_Text" transform="translate(0,$bottom_left_translate_y)">
-            <text x="20" y="452" style="fill: $paper_color_0; font-size: 10px">$bottom_left_0</text>
-            <text x="20" y="466" style="fill: $paper_color_0; font-size: 10px">$bottom_left_1</text>
-            <text x="20" y="480" style="fill: $paper_color_0; font-size: 10px">$bottom_left_2</text>
-            <text x="20" y="494" style="fill: $paper_color_0; font-size: 10px">$bottom_left_3</text>
-            <text x="20" y="508" style="fill: $paper_color_0; font-size: 10px">$bottom_left_4</text>
+            <text kr:node="Bottom_Left_Text_0" x="20" y="452" style="fill: $paper_color_0; font-size: 10px">$bottom_left_0</text>
+            <text kr:node="Bottom_Left_Text_1" x="20" y="466" style="fill: $paper_color_0; font-size: 10px">$bottom_left_1</text>
+            <text kr:node="Bottom_Left_Text_2" x="20" y="480" style="fill: $paper_color_0; font-size: 10px">$bottom_left_2</text>
+            <text kr:node="Bottom_Left_Text_3" x="20" y="494" style="fill: $paper_color_0; font-size: 10px">$bottom_left_3</text>
+            <text kr:node="Bottom_Left_Text_4" x="20" y="508" style="fill: $paper_color_0; font-size: 10px">$bottom_left_4</text>
         </g>
 
         <!-- Lunar Phase -->

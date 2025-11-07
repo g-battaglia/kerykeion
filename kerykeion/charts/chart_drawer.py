@@ -614,7 +614,7 @@ class ChartDrawer:
 
         # Move title up for synastry charts
         offsets["title"] = -10
-        
+
         offsets["wheel"] += delta_height
         offsets["aspect_grid"] += delta_height
         offsets["aspect_list"] += delta_height
@@ -1168,17 +1168,24 @@ class ChartDrawer:
 
         return name[:max_length-1] + ellipsis_symbol
 
-    def _get_chart_title(self) -> str:
+    def _get_chart_title(self, custom_title_override: Union[str, None] = None) -> str:
         """
         Generate the chart title based on chart type and custom title settings.
 
         If a custom title is provided, it will be used. Otherwise, generates the
         appropriate default title based on the chart type and subjects.
 
+        Args:
+            custom_title_override (str | None): Explicit override supplied at render time.
+
         Returns:
             str: The chart title to display (max ~40 characters).
         """
-        # If custom title is provided, use it
+        # If a kwarg override is provided, use it
+        if custom_title_override is not None:
+            return custom_title_override
+
+        # If custom title is provided at initialization, use it
         if self.custom_title is not None:
             return self.custom_title
 
@@ -1236,12 +1243,15 @@ class ChartDrawer:
         # Fallback for unknown chart types
         return self._truncate_name(self.first_obj.name)
 
-    def _create_template_dictionary(self) -> ChartTemplateModel:
+    def _create_template_dictionary(self, *, custom_title: Union[str, None] = None) -> ChartTemplateModel:
         """
         Assemble chart data and rendering instructions into a template dictionary.
 
         Gathers styling, dimensions, and SVG fragments for chart components based on
         chart type and subjects.
+
+        Args:
+            custom_title (str | None): Optional runtime override for the chart title.
 
         Returns:
             ChartTemplateModel: Populated structure of template variables.
@@ -1333,7 +1343,7 @@ class ChartDrawer:
         first_subject_houses_list = get_houses_list(self.first_obj)
 
         # Chart title
-        template_dict["stringTitle"] = self._get_chart_title()
+        template_dict["stringTitle"] = self._get_chart_title(custom_title_override=custom_title)
 
         # ------------------------------- #
         #  CHART TYPE SPECIFIC SETTINGS   #
@@ -2404,7 +2414,7 @@ class ChartDrawer:
 
         return ChartTemplateModel(**template_dict)
 
-    def generate_svg_string(self, minify: bool = False, remove_css_variables=False) -> str:
+    def generate_svg_string(self, minify: bool = False, remove_css_variables=False, *, custom_title: Union[str, None] = None) -> str:
         """
         Render the full chart SVG as a string.
 
@@ -2414,11 +2424,12 @@ class ChartDrawer:
         Args:
             minify (bool): Remove whitespace and quotes for compactness.
             remove_css_variables (bool): Embed CSS variable definitions.
+            custom_title (str or None): Optional override for the SVG title.
 
         Returns:
             str: SVG markup as a string.
         """
-        td = self._create_template_dictionary()
+        td = self._create_template_dictionary(custom_title=custom_title)
 
         DATA_DIR = Path(__file__).parent
         xml_svg = DATA_DIR / "templates" / "chart.xml"
@@ -2431,8 +2442,6 @@ class ChartDrawer:
 
         logger.debug("Template dictionary includes %s fields", len(td.model_dump()))
 
-        self._create_template_dictionary()
-
         if remove_css_variables:
             template = inline_css_variables_in_svg(template)
 
@@ -2444,7 +2453,7 @@ class ChartDrawer:
 
         return template
 
-    def save_svg(self, output_path: Union[str, Path, None] = None, filename: Union[str, None] = None, minify: bool = False, remove_css_variables=False):
+    def save_svg(self, output_path: Union[str, Path, None] = None, filename: Union[str, None] = None, minify: bool = False, remove_css_variables=False, *, custom_title: Union[str, None] = None):
         """
         Generate and save the full chart SVG to disk.
 
@@ -2458,12 +2467,13 @@ class ChartDrawer:
                 If None, uses the default pattern: "{subject.name} - {chart_type} Chart".
             minify (bool): Pass-through to generate_svg_string for compact output.
             remove_css_variables (bool): Pass-through to generate_svg_string to embed CSS variables.
+            custom_title (str or None): Optional override for the SVG title.
 
         Returns:
             None
         """
 
-        self.template = self.generate_svg_string(minify, remove_css_variables)
+        self.template = self.generate_svg_string(minify, remove_css_variables, custom_title=custom_title)
 
         # Convert output_path to Path object, default to home directory
         output_directory = Path(output_path) if output_path is not None else Path.home()

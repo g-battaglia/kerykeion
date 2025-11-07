@@ -101,6 +101,15 @@ class TestChartDrawer:
         expected_default = f'{self.subject.name} - Birth Chart'  # Using English as default
         assert template_dict["stringTitle"] == expected_default
 
+    def test_generate_svg_string_with_kwarg_custom_title(self):
+        """ChartDrawer.generate_svg_string should accept a custom title kwarg."""
+        chart = ChartDrawer(self.chart_data)
+        custom_title = "Override Title"
+
+        svg_output = chart.generate_svg_string(custom_title=custom_title)
+
+        assert custom_title in svg_output
+
     def test_chart_drawer_properties(self):
         """Test chart drawer has all expected properties."""
         chart = ChartDrawer(self.chart_data)

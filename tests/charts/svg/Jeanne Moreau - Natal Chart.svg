@@ -133,52 +133,52 @@
     Main Chart -->
     <g kr:node='Main_Chart'>
         <g kr:node='Top_Left_Text' transform='translate(0,0)'>
-            <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Jeanne Moreau - Thème Natal</text>
-            <text x='20' y='58' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Lieu:</text>
-            <text x='20' y='70' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Paris, FR</text>
-            <text x='20' y='82' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Latitude: 48°51'12' Nord</text>
-            <text x='20' y='94' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Longitude: 2°20'56' Est</text>
-            <text x='20' y='106' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1928-01-23 10:00 [+00:00]</text>
-            <text x='20' y='118' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Jour de la semaine: Lundi</text>
+            <text kr:node='Chart_Title' x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Jeanne Moreau - Thème Natal</text>
+            <text kr:node='Top_Left_Text_0' x='20' y='58' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Lieu:</text>
+            <text kr:node='Top_Left_Text_1' x='20' y='70' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Paris, FR</text>
+            <text kr:node='Top_Left_Text_2' x='20' y='82' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Latitude: 48°51'12' Nord</text>
+            <text kr:node='Top_Left_Text_3' x='20' y='94' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Longitude: 2°20'56' Est</text>
+            <text kr:node='Top_Left_Text_4' x='20' y='106' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>1928-01-23 10:00 [+00:00]</text>
+            <text kr:node='Top_Left_Text_5' x='20' y='118' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Jour de la semaine: Lundi</text>
         </g>
 
         <!-- Elements -->
         <g kr:node='Elements_Percentages' transform='translate(0,0)'>
-            <text x='20' y='138' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Éléments:</text>
-            <text x='20' y='152'
+            <text kr:node='Elements_Text' x='20' y='138' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Éléments:</text>
+            <text kr:node='Fire_Text' x='20' y='152'
                 style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>
                 Feu 34%</text>
-            <text x='20' y='164'
+            <text kr:node='Earth_Text' x='20' y='164'
                 style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>
                 Terre 18%</text>
-            <text x='20' y='176'
+            <text kr:node='Air_Text' x='20' y='176'
                 style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>
                 Air 36%</text>
-            <text x='20' y='188'
+            <text kr:node='Water_Text' x='20' y='188'
                 style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>
                 Eau 12%</text>
         </g>
 
         <!-- Qualities -->
         <g kr:node='Qualities_Percentages' transform='translate(0,0)'>
-            <text x='20' y='208' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Qualités:</text>
-            <text x='20' y='222'
+            <text kr:node='Qualities_Text' x='20' y='208' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'>Qualités:</text>
+            <text kr:node='Cardinal_Text' x='20' y='222'
                 style='fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;'>
                 Cardinal 49%</text>
-            <text x='20' y='234'
+            <text kr:node='Fixed_Text' x='20' y='234'
                 style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>
                 Fixe 34%</text>
-            <text x='20' y='246'
+            <text kr:node='Mutable_Text' x='20' y='246'
                 style='fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;'>
                 Mutable 17%</text>
         </g>
 
         <g kr:node='Bottom_Left_Text' transform='translate(0,0)'>
-            <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Zodiaque: Tropical</text>
-            <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Domification: Placidus</text>
-            <text x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Jour de Lunaison: 1</text>
-            <text x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Phase Lunaire: Nouvelle Lune</text>
-            <text x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Perspective: Géocentrique Apparent</text>
+            <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Zodiaque: Tropical</text>
+            <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Domification: Placidus</text>
+            <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Jour de Lunaison: 1</text>
+            <text kr:node='Bottom_Left_Text_3' x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Phase Lunaire: Nouvelle Lune</text>
+            <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Perspective: Géocentrique Apparent</text>
         </g>
 
         <!-- Lunar Phase -->

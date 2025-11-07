@@ -168,52 +168,52 @@
     Main Chart -->
     <g kr:node='Main_Chart'>
         <g kr:node='Top_Left_Text' transform='translate(0,0)'>
-            <text x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>John Lennon - Transits for 18/06/42</text>
-            <text x='20' y='58' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Natal: 1940-10-09 18:30 [+01:00]</text>
-            <text x='20' y='70' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Liverpool, GB</text>
-            <text x='20' y='82' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>53°24'38' N  ·  2°58'41' W</text>
-            <text x='20' y='94' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Transit: 1942-06-18 15:30 [+02:00]</text>
-            <text x='20' y='106' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Liverpool, GB</text>
-            <text x='20' y='118' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>53°24'38' N  ·  2°58'41' W</text>
+            <text kr:node='Chart_Title' x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>John Lennon - Transits for 18/06/42</text>
+            <text kr:node='Top_Left_Text_0' x='20' y='58' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Natal: 1940-10-09 18:30 [+01:00]</text>
+            <text kr:node='Top_Left_Text_1' x='20' y='70' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Liverpool, GB</text>
+            <text kr:node='Top_Left_Text_2' x='20' y='82' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>53°24'38' N  ·  2°58'41' W</text>
+            <text kr:node='Top_Left_Text_3' x='20' y='94' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Transit: 1942-06-18 15:30 [+02:00]</text>
+            <text kr:node='Top_Left_Text_4' x='20' y='106' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Liverpool, GB</text>
+            <text kr:node='Top_Left_Text_5' x='20' y='118' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>53°24'38' N  ·  2°58'41' W</text>
         </g>
 
         <!-- Elements -->
         <g kr:node='Elements_Percentages' transform='translate(0,0)'>
-            <text x='20' y='138' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'></text>
-            <text x='20' y='152'
+            <text kr:node='Elements_Text' x='20' y='138' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'></text>
+            <text kr:node='Fire_Text' x='20' y='152'
                 style='fill: var(--kerykeion-chart-color-fire-percentage); font-size: 10px;'>
                 </text>
-            <text x='20' y='164'
+            <text kr:node='Earth_Text' x='20' y='164'
                 style='fill: var(--kerykeion-chart-color-earth-percentage); font-size: 10px;'>
                 </text>
-            <text x='20' y='176'
+            <text kr:node='Air_Text' x='20' y='176'
                 style='fill: var(--kerykeion-chart-color-air-percentage); font-size: 10px;'>
                 </text>
-            <text x='20' y='188'
+            <text kr:node='Water_Text' x='20' y='188'
                 style='fill: var(--kerykeion-chart-color-water-percentage); font-size: 10px;'>
                 </text>
         </g>
 
         <!-- Qualities -->
         <g kr:node='Qualities_Percentages' transform='translate(0,0)'>
-            <text x='20' y='208' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'></text>
-            <text x='20' y='222'
+            <text kr:node='Qualities_Text' x='20' y='208' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;'></text>
+            <text kr:node='Cardinal_Text' x='20' y='222'
                 style='fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 10px;'>
                 </text>
-            <text x='20' y='234'
+            <text kr:node='Fixed_Text' x='20' y='234'
                 style='fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 10px;'>
                 </text>
-            <text x='20' y='246'
+            <text kr:node='Mutable_Text' x='20' y='246'
                 style='fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 10px;'>
                 </text>
         </g>
 
         <g kr:node='Bottom_Left_Text' transform='translate(0,0)'>
-            <text x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Zodiac: Tropical</text>
-            <text x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Domification: Placidus</text>
-            <text x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Perspective: Apparent Geocentric</text>
-            <text x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Transit Lunation Day: 5</text>
-            <text x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Transit Lunar phase: Waxing Crescent</text>
+            <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Zodiac: Tropical</text>
+            <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Domification: Placidus</text>
+            <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Perspective: Apparent Geocentric</text>
+            <text kr:node='Bottom_Left_Text_3' x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Transit Lunation Day: 5</text>
+            <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Transit Lunar phase: Waxing Crescent</text>
         </g>
 
         <!-- Lunar Phase -->
