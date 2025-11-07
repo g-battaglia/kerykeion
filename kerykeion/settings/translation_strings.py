@@ -108,6 +108,8 @@ LANGUAGE_SETTINGS = {
         "fixed": "Fixed",
         "mutable": "Mutable",
         "birth_chart": "Birth Chart",
+        "chart_info_natal_label": "Natal",
+        "chart_info_transit_label": "Transit",
         "celestial_points": {
             "Sun": "Sun",
             "Moon": "Moon",
@@ -255,6 +257,8 @@ LANGUAGE_SETTINGS = {
         "fixed": "Fixe",
         "mutable": "Mutable",
         "birth_chart": "Thème Natal",
+        "chart_info_natal_label": "Natal",
+        "chart_info_transit_label": "Transit",
         "celestial_points": {
             "Sun": "Soleil",
             "Moon": "Lune",
@@ -402,6 +406,8 @@ LANGUAGE_SETTINGS = {
         "fixed": "Fixo",
         "mutable": "Mutável",
         "birth_chart": "Mapa Natal",
+        "chart_info_natal_label": "Natal",
+        "chart_info_transit_label": "Trânsito",
         "celestial_points": {
             "Sun": "Sol",
             "Moon": "Lua",
@@ -549,6 +555,8 @@ LANGUAGE_SETTINGS = {
         "fixed": "Fisso",
         "mutable": "Mutevole",
         "birth_chart": "Tema Natale",
+        "chart_info_natal_label": "Natale",
+        "chart_info_transit_label": "Transito",
         "celestial_points": {
             "Sun": "Sole",
             "Moon": "Luna",
@@ -696,6 +704,8 @@ LANGUAGE_SETTINGS = {
         "fixed": "固定",
         "mutable": "变动",
         "birth_chart": "出生图",
+        "chart_info_natal_label": "本命盤",
+        "chart_info_transit_label": "運行",
         "celestial_points": {
             "Sun": "太陽",
             "Moon": "月亮",
@@ -843,6 +853,8 @@ LANGUAGE_SETTINGS = {
         "fixed": "Fijo",
         "mutable": "Mutable",
         "birth_chart": "Carta Natal",
+        "chart_info_natal_label": "Natal",
+        "chart_info_transit_label": "Tránsito",
         "celestial_points": {
             "Sun": "Sol",
             "Moon": "Luna",
@@ -990,6 +1002,8 @@ LANGUAGE_SETTINGS = {
         "fixed": "Фиксированный",
         "mutable": "Мутабельный",
         "birth_chart": "Натальная Карта",
+        "chart_info_natal_label": "Натальная",
+        "chart_info_transit_label": "Транзит",
         "celestial_points": {
             "Sun": "Солнце",
             "Moon": "Луна",
@@ -1137,6 +1151,8 @@ LANGUAGE_SETTINGS = {
         "fixed": "Sabit",
         "mutable": "Değişken",
         "birth_chart": "Doğum Haritası",
+        "chart_info_natal_label": "Doğum",
+        "chart_info_transit_label": "Geçiş",
         "celestial_points": {
             "Sun": "Güneş",
             "Moon": "Ay",
@@ -1284,6 +1300,8 @@ LANGUAGE_SETTINGS = {
         "fixed": "Fix",
         "mutable": "Veränderlich",
         "birth_chart": "Geburtshoroskop",
+        "chart_info_natal_label": "Radix",
+        "chart_info_transit_label": "Transit",
         "celestial_points": {
             "Sun": "Sonne",
             "Moon": "Mond",
@@ -1431,6 +1449,8 @@ LANGUAGE_SETTINGS = {
         "fixed": "स्थिर",
         "mutable": "द्विस्वभाव",
         "birth_chart": "जन्म चार्ट",
+        "chart_info_natal_label": "जन्म",
+        "chart_info_transit_label": "गोचर",
         "celestial_points": {
             "Sun": "सूर्य",
             "Moon": "चंद्रमा",

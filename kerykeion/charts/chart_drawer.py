@@ -1580,16 +1580,61 @@ class ChartDrawer:
 
             template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(self.main_radius, self.main_radius - 160)
 
-            # Top left section
-            latitude_string = convert_latitude_coordinate_to_string(self.geolat, self._translate("north", "North"), self._translate("south", "South"))
-            longitude_string = convert_longitude_coordinate_to_string(self.geolon, self._translate("east", "East"), self._translate("west", "West"))
+            # Top left section (clear separation of Natal vs Transit details)
+            natal_latitude_string = (
+                convert_latitude_coordinate_to_string(
+                    self.first_obj.lat,  # type: ignore[arg-type]
+                    self._translate("north_letter", "N"),
+                    self._translate("south_letter", "S"),
+                )
+                if getattr(self.first_obj, "lat", None) is not None
+                else ""
+            )
+            natal_longitude_string = (
+                convert_longitude_coordinate_to_string(
+                    self.first_obj.lng,  # type: ignore[arg-type]
+                    self._translate("east_letter", "E"),
+                    self._translate("west_letter", "W"),
+                )
+                if getattr(self.first_obj, "lng", None) is not None
+                else ""
+            )
 
-            template_dict["top_left_0"] = f"{self.first_obj.name}"
-            template_dict["top_left_1"] = f"{format_location_string(self.first_obj.city)}, {self.first_obj.nation}" # type: ignore
-            template_dict["top_left_2"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime) # type: ignore
-            template_dict["top_left_3"] = f"{self._translate('latitude', 'Latitude')}: {latitude_string}"
-            template_dict["top_left_4"] = f"{self._translate('longitude', 'Longitude')}: {longitude_string}"
-            template_dict["top_left_5"] = ""#f"{self._translate('type', 'Type')}: {self._translate(self.chart_type, self.chart_type)}"
+            transit_latitude_string = ""
+            transit_longitude_string = ""
+            if self.second_obj is not None:
+                if getattr(self.second_obj, "lat", None) is not None:
+                    transit_latitude_string = convert_latitude_coordinate_to_string(
+                        self.second_obj.lat,  # type: ignore[arg-type]
+                        self._translate("north_letter", "N"),
+                        self._translate("south_letter", "S"),
+                    )
+                if getattr(self.second_obj, "lng", None) is not None:
+                    transit_longitude_string = convert_longitude_coordinate_to_string(
+                        self.second_obj.lng,  # type: ignore[arg-type]
+                        self._translate("east_letter", "E"),
+                        self._translate("west_letter", "W"),
+                    )
+
+            natal_dt = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime)  # type: ignore[arg-type]
+            natal_place = f"{format_location_string(self.first_obj.city)}, {self.first_obj.nation}"  # type: ignore[arg-type]
+            transit_dt = (
+                format_datetime_with_timezone(self.second_obj.iso_formatted_local_datetime)  # type: ignore[arg-type]
+                if self.second_obj is not None and getattr(self.second_obj, "iso_formatted_local_datetime", None) is not None
+                else ""
+            )
+            transit_place = (
+                f"{format_location_string(self.second_obj.city)}, {self.second_obj.nation}"  # type: ignore[arg-type]
+                if self.second_obj is not None
+                else ""
+            )
+
+            template_dict["top_left_0"] = f"{self._translate('chart_info_natal_label', 'Natal')}: {natal_dt}"
+            template_dict["top_left_1"] = natal_place
+            template_dict["top_left_2"] = f"{natal_latitude_string}  ·  {natal_longitude_string}"
+            template_dict["top_left_3"] = f"{self._translate('chart_info_transit_label', 'Transit')}: {transit_dt}"
+            template_dict["top_left_4"] = transit_place
+            template_dict["top_left_5"] = f"{transit_latitude_string}  ·  {transit_longitude_string}"
 
             # Bottom left section
             if self.first_obj.zodiac_type == "Tropical":
@@ -1604,13 +1649,21 @@ class ChartDrawer:
 
             # Lunar phase information from second object (Transit) (optional)
             if self.second_obj is not None and hasattr(self.second_obj, 'lunar_phase') and self.second_obj.lunar_phase is not None:
-                template_dict["bottom_left_2"] = f'{self._translate("lunation_day", "Lunation Day")}: {self.second_obj.lunar_phase.get("moon_phase", "")}' # type: ignore
-                template_dict["bottom_left_3"] = f'{self._translate("lunar_phase", "Lunar Phase")}: {self._translate(self.second_obj.lunar_phase.moon_phase_name.lower().replace(" ", "_"), self.second_obj.lunar_phase.moon_phase_name)}'
+                template_dict["bottom_left_3"] = (
+                    f"{self._translate('Transit', 'Transit')} "
+                    f"{self._translate('lunation_day', 'Lunation Day')}: "
+                    f"{self.second_obj.lunar_phase.get('moon_phase', '')}"
+                )  # type: ignore
+                template_dict["bottom_left_4"] = (
+                    f"{self._translate('Transit', 'Transit')} "
+                    f"{self._translate('lunar_phase', 'Lunar Phase')}: "
+                    f"{self._translate(self.second_obj.lunar_phase.moon_phase_name.lower().replace(' ', '_'), self.second_obj.lunar_phase.moon_phase_name)}"
+                )
             else:
-                template_dict["bottom_left_2"] = ""
                 template_dict["bottom_left_3"] = ""
+                template_dict["bottom_left_4"] = ""
 
-            template_dict["bottom_left_4"] = f'{self._translate("perspective_type", "Perspective")}: {self._translate(self.second_obj.perspective_type.lower().replace(" ", "_"), self.second_obj.perspective_type)}' # type: ignore
+            template_dict["bottom_left_2"] = f'{self._translate("perspective_type", "Perspective")}: {self._translate(self.second_obj.perspective_type.lower().replace(" ", "_"), self.second_obj.perspective_type)}' # type: ignore
 
             # Moon phase section calculations - use transit subject data only
             if self.second_obj is not None and getattr(self.second_obj, "lunar_phase", None):
