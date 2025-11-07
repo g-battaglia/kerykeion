@@ -612,6 +612,9 @@ class ChartDrawer:
 
         delta_height = max(self.height - minimum_height, 0)
 
+        # Move title up for synastry charts
+        offsets["title"] = -10
+        
         offsets["wheel"] += delta_height
         offsets["aspect_grid"] += delta_height
         offsets["aspect_list"] += delta_height
