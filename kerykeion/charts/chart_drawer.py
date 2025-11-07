@@ -10,7 +10,7 @@ from math import ceil
 from datetime import datetime
 from pathlib import Path
 from string import Template
-from typing import Any, Mapping, Optional, Union, get_args
+from typing import Any, Mapping, Optional, Sequence, Union, get_args
 
 import swisseph as swe
 from scour.scour import scourString
@@ -770,18 +770,65 @@ class ChartDrawer:
                 # Secondary houses grid default x ~ 1015
                 secondary_houses_grid_right = 1015 + 120
                 extents.append(secondary_houses_grid_right)
-                first_house_comparison_grid_right = 1090 + 180
-                second_house_comparison_grid_right = 1290 + 180
-                extents.extend([first_house_comparison_grid_right, second_house_comparison_grid_right])
+                if self.second_obj is not None:
+                    point_column_label = self._translate("point", "Point")
+                    first_subject_label = self._truncate_name(self.first_obj.name, 8, "…", True)  # type: ignore[union-attr]
+                    second_subject_label = self._truncate_name(self.second_obj.name, 8, "…", True)  # type: ignore[union-attr]
+
+                    first_columns = [
+                        f"{first_subject_label} {point_column_label}",
+                        first_subject_label,
+                        second_subject_label,
+                    ]
+                    second_columns = [
+                        f"{second_subject_label} {point_column_label}",
+                        second_subject_label,
+                        first_subject_label,
+                    ]
+
+                    first_grid_width = self._estimate_house_comparison_grid_width(
+                        column_labels=first_columns,
+                        include_radix_column=True,
+                        include_title=True,
+                    )
+                    second_grid_width = self._estimate_house_comparison_grid_width(
+                        column_labels=second_columns,
+                        include_radix_column=True,
+                        include_title=False,
+                    )
+
+                    first_house_comparison_grid_right = 1090 + first_grid_width
+                    second_house_comparison_grid_right = 1290 + second_grid_width
+                    extents.extend([first_house_comparison_grid_right, second_house_comparison_grid_right])
 
             if self.chart_type == "Transit":
                 # House comparison grid at x ~ 1030
-                house_comparison_grid_right = 1030 + 180
+                transit_columns = [
+                    self._translate("transit_point", "Transit Point"),
+                    self._translate("house_position", "Natal House"),
+                ]
+                transit_grid_width = self._estimate_house_comparison_grid_width(
+                    column_labels=transit_columns,
+                    include_radix_column=False,
+                    include_title=True,
+                    minimum_width=170.0,
+                )
+                house_comparison_grid_right = 980 + transit_grid_width
                 extents.append(house_comparison_grid_right)
 
             if self.chart_type == "DualReturnChart":
-                # House comparison grid at x ~ 1030
-                house_comparison_grid_right = 1030 + 320
+                # House comparison grid translated to x ~ 1100
+                dual_return_columns = [
+                    self._translate("return_point", "Return Point"),
+                    self._translate("Return", "DualReturnChart"),
+                    self._translate("Natal", "Natal"),
+                ]
+                dual_return_grid_width = self._estimate_house_comparison_grid_width(
+                    column_labels=dual_return_columns,
+                    include_radix_column=True,
+                    include_title=True,
+                )
+                house_comparison_grid_right = 1100 + dual_return_grid_width
                 extents.append(house_comparison_grid_right)
 
         # Conservative safety padding
@@ -839,6 +886,86 @@ class ChartDrawer:
         # imposed by the title area.
         return max(per_column, min(allowed_capacity, max_capacity_by_top))
 
+    @staticmethod
+    def _estimate_text_width(text: str, font_size: int) -> float:
+        """Very rough text width estimation in pixels based on font size."""
+        if not text:
+            return 0.0
+        average_char_width = float(font_size)
+        return max(float(font_size), len(text) * average_char_width)
+
+    def _get_active_point_display_names(self) -> list[str]:
+        """Return localized labels for the currently active celestial points."""
+        language_map = {}
+        fallback_map = {}
+
+        if hasattr(self, "_language_model"):
+            language_map = self._language_model.celestial_points.model_dump()
+        if hasattr(self, "_fallback_language_model"):
+            fallback_map = self._fallback_language_model.celestial_points.model_dump()
+
+        display_names: list[str] = []
+        for point in self.active_points:
+            key = str(point)
+            label = language_map.get(key) or fallback_map.get(key) or key
+            display_names.append(str(label))
+        return display_names
+
+    def _estimate_house_comparison_grid_width(
+        self,
+        *,
+        column_labels: Sequence[str],
+        include_radix_column: bool,
+        include_title: bool,
+        minimum_width: float = 250.0,
+    ) -> int:
+        """
+        Approximate the rendered width for a house comparison grid in the current locale.
+
+        Args:
+            column_labels: Ordered labels for the header row.
+            include_radix_column: Whether a third numeric column is rendered.
+            include_title: Include the localized title in the width estimation.
+            minimum_width: Absolute lower bound to prevent extreme shrinking.
+        """
+        font_size_body = 10
+        font_size_title = 14
+        minimum_grid_width = float(minimum_width)
+
+        active_names = self._get_active_point_display_names()
+        max_name_width = max(
+            (self._estimate_text_width(name, font_size_body) for name in active_names),
+            default=self._estimate_text_width("Sun", font_size_body),
+        )
+        width_candidates: list[float] = []
+
+        name_start = 15
+        width_candidates.append(name_start + max_name_width)
+
+        value_offsets = [90]
+        if include_radix_column:
+            value_offsets.append(140)
+        value_samples = ("12", "-", "0")
+        max_value_width = max((self._estimate_text_width(sample, font_size_body) for sample in value_samples))
+        for offset in value_offsets:
+            width_candidates.append(offset + max_value_width)
+
+        header_offsets = [0, 77]
+        if include_radix_column:
+            header_offsets.append(132)
+        for idx, offset in enumerate(header_offsets):
+            label = column_labels[idx] if idx < len(column_labels) else ""
+            if not label:
+                continue
+            width_candidates.append(offset + self._estimate_text_width(label, font_size_body))
+
+        if include_title:
+            title_label = self._translate("house_position_comparison", "House Position Comparison")
+            width_candidates.append(self._estimate_text_width(title_label, font_size_title))
+
+        grid_width = max(width_candidates, default=minimum_grid_width)
+        return int(max(grid_width, minimum_grid_width))
+
     def _minimum_width_for_chart_type(self) -> int:
         """Baseline width to avoid compressing core groups too tightly."""
         wheel_right = 100 + (2 * self.main_radius)
@@ -851,7 +978,7 @@ class ChartDrawer:
         if self.chart_type == "DualReturnChart":
             return max(int(baseline), self._DEFAULT_ULTRA_WIDE_WIDTH // 2)
         if self.chart_type == "Transit":
-            return max(int(baseline), self._DEFAULT_FULL_WIDTH // 2)
+            return max(int(baseline), 450)
         return max(int(baseline), self._DEFAULT_NATAL_WIDTH)
 
     def _update_width_to_content(self) -> None:
