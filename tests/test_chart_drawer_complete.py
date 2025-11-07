@@ -350,6 +350,16 @@ class TestChartDrawer:
         assert chart.chart_data is not None
         assert hasattr(chart, 'second_obj')
 
+    def test_hide_house_position_comparison_removes_grid_and_updates_width(self):
+        """Hiding the house position comparison grid should reclaim horizontal space."""
+        synastry_data = ChartDataFactory.create_synastry_chart_data(self.subject, self.subject2)
+        chart = ChartDrawer(synastry_data, show_house_position_comparison=False)
+
+        assert chart.width == ChartDrawer._DEFAULT_FULL_WIDTH
+
+        template_dict = chart._create_template_dictionary()
+        assert template_dict["makeHouseComparisonGrid"] == ""
+
     def test_dual_chart_preserves_second_subject_points(self):
         """Ensure dual charts keep the second subject planet positions."""
         synastry_data = ChartDataFactory.create_synastry_chart_data(self.subject, self.subject2)

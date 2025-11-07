@@ -89,6 +89,16 @@ synastry_chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
 synastry_chart = ChartDrawer(synastry_chart_data)
 synastry_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
+# Synastry Chart without House Comparison grid
+synastry_chart_no_house_comparison = ChartDrawer(
+    synastry_chart_data,
+    show_house_position_comparison=False,
+)
+synastry_chart_no_house_comparison.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Synastry Chart - No House Comparison",
+)
+
 # Black and White Theme Synastry Chart
 black_and_white_synastry_chart = ChartDrawer(synastry_chart_data, theme="black-and-white")
 black_and_white_synastry_chart.save_svg(
@@ -100,6 +110,16 @@ black_and_white_synastry_chart.save_svg(
 transits_chart_data = ChartDataFactory.create_transit_chart_data(first, second)
 transits_chart = ChartDrawer(transits_chart_data)
 transits_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Transit Chart without House Comparison grid
+transits_chart_no_house_comparison = ChartDrawer(
+    transits_chart_data,
+    show_house_position_comparison=False,
+)
+transits_chart_no_house_comparison.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Transit Chart - No House Comparison",
+)
 
 # Black and White Theme Transit Chart
 black_and_white_transit_chart = ChartDrawer(transits_chart_data, theme="black-and-white")
@@ -388,6 +408,16 @@ dual_return_chart_data = ChartDataFactory.create_return_chart_data(first, solar_
 dual_return_chart = ChartDrawer(dual_return_chart_data)
 dual_return_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
+# Dual Return (Solar) without House Comparison grid
+dual_return_chart_no_house_comparison = ChartDrawer(
+    dual_return_chart_data,
+    show_house_position_comparison=False,
+)
+dual_return_chart_no_house_comparison.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - DualReturnChart Chart - Solar Return - No House Comparison",
+)
+
 # Black and White Theme Dual Return Chart
 black_and_white_dual_return_chart = ChartDrawer(dual_return_chart_data, theme="black-and-white")
 black_and_white_dual_return_chart.save_svg(
@@ -417,6 +447,16 @@ lunar_return = return_factory.next_return_from_iso_formatted_time(
 lunar_dual_return_chart_data = ChartDataFactory.create_return_chart_data(first, lunar_return)
 lunar_dual_return_chart = ChartDrawer(lunar_dual_return_chart_data)
 lunar_dual_return_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Dual Return (Lunar) without House Comparison grid
+lunar_dual_return_chart_no_house_comparison = ChartDrawer(
+    lunar_dual_return_chart_data,
+    show_house_position_comparison=False,
+)
+lunar_dual_return_chart_no_house_comparison.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - DualReturnChart Chart - Lunar Return - No House Comparison",
+)
 
 # Single Wheel Lunar Return
 lunar_single_return_chart_data = ChartDataFactory.create_single_wheel_return_chart_data(lunar_return)
