@@ -71,7 +71,7 @@ out_dir.mkdir(exist_ok=True)
 chart.save_svg(output_path=out_dir)
 ```
 
-![John Lennon - Natal Chart](/img/examples/themes/John%20Lennon%20-%20Natal%20Chart.svg)
+![John Lennon - Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Natal%20Chart.svg)
 
 #### Dark Theme
 
@@ -86,14 +86,14 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     lng=-2.9833, lat=53.4, tz_str="Europe/London", online=False,
 )
 data = ChartDataFactory.create_natal_chart_data(subject)
-chart = ChartDrawer(data, theme="dark-high-contrast")
+chart = ChartDrawer(data, theme="dark")
 
 out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
 chart.save_svg(output_path=out_dir)
 ```
 
-![John Lennon - Dark - Natal Chart](/img/examples/themes/John%20Lennon%20-%20Dark%20-%20Natal%20Chart.svg)
+![John Lennon - Dark - Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
 
 #### Light Theme
 
@@ -115,7 +115,7 @@ out_dir.mkdir(exist_ok=True)
 chart.save_svg(output_path=out_dir)
 ```
 
-![John Lennon - Light - Natal Chart](/img/examples/themes/John%20Lennon%20-%20Light%20-%20Natal%20Chart.svg)
+![John Lennon - Light - Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Light%20Theme%20-%20Natal%20Chart.svg)
 
 ### Overriding Default CSS Variables
 

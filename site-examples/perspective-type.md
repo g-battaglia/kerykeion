@@ -30,7 +30,7 @@ chart.save_svg(output_path=Path("charts_output"), filename="lennon-heliocentric"
 
 The output will be:
 
-![John Lennon Heliocentric](/img/examples/birth-chart-heliocentric.svg)
+![John Lennon Heliocentric](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Heliocentric%20-%20Natal%20Chart.svg)
 
 ## Helio AstrologicalSubject
 

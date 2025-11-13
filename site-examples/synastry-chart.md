@@ -35,7 +35,7 @@ drawer.save_svg(output_path=out_dir, filename="lennon-mccartney-synastry")
 Note: If you want to save the output in a different directory, pass the `output_path` parameter to `save_svg()`.
 
 The output will be:
-![John Lennon and Paul McCartney Synastry](/img/examples/synastry-chart.svg)
+![John Lennon and Paul McCartney Synastry](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Synastry%20Chart.svg)
 
 ## New Synastry Chart Features
 

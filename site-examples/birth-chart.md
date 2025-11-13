@@ -40,7 +40,7 @@ drawer.save_svg(output_path=out_dir, filename="kanye-natal")
 
 The output will be a SVG file in `charts_output/kanye-natal.svg`.
 
-![Birth Chart](/img/examples/birth-chart.svg)
+![Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/Kanye%20-%20Natal%20Chart.svg)
 
 ## External Birth Chart
 
@@ -51,10 +51,10 @@ from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
-    "Kanye", 1977, 6, 8, 8, 45,
-    lng=-84.38798,
-    lat=33.7490,
-    tz_str="America/New_York",
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
     online=False,
 )
 
@@ -64,9 +64,9 @@ chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(chart_data=chart_data, external_view=True)
 out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
-drawer.save_svg(output_path=out_dir, filename="kanye-external-natal")
+drawer.save_svg(output_path=out_dir, filename="john-lennon-external-natal")
 ```
 
 The output will be a SVG file in `charts_output/kanye-external-natal.svg`.
 
-![External Birth Chart](/img/examples/external-birth-chart.svg)
+![External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20ExternalNatal%20-%20Natal%20Chart.svg)

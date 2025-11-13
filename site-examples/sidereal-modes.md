@@ -32,7 +32,7 @@ ChartDrawer(data).save_svg(output_path=Path("charts_output"), filename="lennon-l
 
 The output will be:
 
-![John Lennon Lahiri](/img/examples/birth-chart-lahiri.svg)
+![John Lennon Lahiri](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20Lahiri%20-%20Natal%20Chart.svg)
 
 ## Lahiri AstrologicalSubject
 
