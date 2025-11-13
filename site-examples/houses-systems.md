@@ -70,8 +70,10 @@ from kerykeion import AstrologicalSubjectFactory
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Johnny Depp", 1963, 6, 9, 0, 0,
-    city="Owensboro", nation="US",
-    online=True, geonames_username="your_geonames_user",
+    lng=-87.1112,
+    lat=37.7719,
+    tz_str="America/Chicago",
+    online=False,
     houses_system_identifier="P",  # Placidus
 )
 
