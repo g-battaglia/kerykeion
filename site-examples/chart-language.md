@@ -1,0 +1,48 @@
+---
+layout: ../../layouts/DocLayout.astro
+title: 'Chart Language'
+---
+
+# Chart Language
+
+In `ChartDrawer`, you can set the language for the chart using the `chart_language` parameter. This makes charts accessible and user-friendly for non‑English speakers. The default language is English (EN).
+
+## Available Languages:
+
+- EN (English)
+- FR (French)
+- PT (Portuguese)
+- ES (Spanish)
+- TR (Turkish)
+- RU (Russian)
+- IT (Italian)
+- CN (Chinese)
+- DE (German)
+- HI (Hindi)
+
+To set the language for your chart, use the `chart_language` parameter when creating a `ChartDrawer`.
+
+## Example Usage
+
+```python
+from pathlib import Path
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+# Russian Language Chart
+ru_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mikhail Bulgakov", 1891, 5, 15, 12, 0, city="Kiev", nation="UA", online=True, geonames_username="your_geonames_user"
+)
+ru_data = ChartDataFactory.create_natal_chart_data(ru_subject)
+ru_chart = ChartDrawer(ru_data, chart_language="RU")
+ru_chart.save_svg(output_path=Path("charts_output"), filename="bulgakov-ru")
+
+# Italian Language Chart
+it_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Sofia Loren", 1934, 9, 20, 4, 30, city="Rome", nation="IT", online=True, geonames_username="your_geonames_user"
+)
+it_data = ChartDataFactory.create_natal_chart_data(it_subject)
+it_chart = ChartDrawer(it_data, chart_language="IT")
+it_chart.save_svg(output_path=Path("charts_output"), filename="loren-it")
+```
