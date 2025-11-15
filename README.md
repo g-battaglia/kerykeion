@@ -649,7 +649,7 @@ chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
 # Step 3: Create visualization with custom output directory
 synastry_chart = ChartDrawer(chart_data=chart_data)
 
-output_dir = Path("my_charts")
+output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
 synastry_chart.save_svg(output_path=output_dir)
 print("Saved to", (output_dir / f"{synastry_chart.first_obj.name} - Synastry Chart.svg").resolve())
