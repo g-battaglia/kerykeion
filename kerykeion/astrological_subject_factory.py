@@ -1088,16 +1088,24 @@ class AstrologicalSubjectFactory:
         # Calculate axis points
         point_type = "AstrologicalPoint"
 
+        # NOTE: Swiss Ephemeris does not provide direct speeds for angles (ASC/MC),
+        # but in realtà si muovono molto velocemente rispetto ai pianeti.
+        # Per rappresentare questo in modo coerente, assegniamo ai quattro assi
+        # una speed sintetica fissa, molto più alta di quella planetaria tipica.
+        # Questo permette a calculate_aspect_movement di considerarli sempre come
+        # "più veloci" rispetto ai pianeti quando serve.
+        axis_speed = 360.0  # gradi/giorno, valore simbolico ma coerente
+
         # Calculate Ascendant if needed
         if should_calculate("Ascendant"):
-            data["ascendant"] = get_kerykeion_point_from_degree(ascmc[0], "Ascendant", point_type=point_type)
+            data["ascendant"] = get_kerykeion_point_from_degree(ascmc[0], "Ascendant", point_type=point_type, speed=axis_speed)
             data["ascendant"].house = get_planet_house(data["ascendant"].abs_pos, data["_houses_degree_ut"])
             data["ascendant"].retrograde = False
             calculated_axial_cusps.append("Ascendant")
 
         # Calculate Medium Coeli if needed
         if should_calculate("Medium_Coeli"):
-            data["medium_coeli"] = get_kerykeion_point_from_degree(ascmc[1], "Medium_Coeli", point_type=point_type)
+            data["medium_coeli"] = get_kerykeion_point_from_degree(ascmc[1], "Medium_Coeli", point_type=point_type, speed=axis_speed)
             data["medium_coeli"].house = get_planet_house(data["medium_coeli"].abs_pos, data["_houses_degree_ut"])
             data["medium_coeli"].retrograde = False
             calculated_axial_cusps.append("Medium_Coeli")
@@ -1105,7 +1113,7 @@ class AstrologicalSubjectFactory:
         # Calculate Descendant if needed
         if should_calculate("Descendant"):
             dsc_deg = math.fmod(ascmc[0] + 180, 360)
-            data["descendant"] = get_kerykeion_point_from_degree(dsc_deg, "Descendant", point_type=point_type)
+            data["descendant"] = get_kerykeion_point_from_degree(dsc_deg, "Descendant", point_type=point_type, speed=axis_speed)
             data["descendant"].house = get_planet_house(data["descendant"].abs_pos, data["_houses_degree_ut"])
             data["descendant"].retrograde = False
             calculated_axial_cusps.append("Descendant")
@@ -1113,7 +1121,7 @@ class AstrologicalSubjectFactory:
         # Calculate Imum Coeli if needed
         if should_calculate("Imum_Coeli"):
             ic_deg = math.fmod(ascmc[1] + 180, 360)
-            data["imum_coeli"] = get_kerykeion_point_from_degree(ic_deg, "Imum_Coeli", point_type=point_type)
+            data["imum_coeli"] = get_kerykeion_point_from_degree(ic_deg, "Imum_Coeli", point_type=point_type, speed=axis_speed)
             data["imum_coeli"].house = get_planet_house(data["imum_coeli"].abs_pos, data["_houses_degree_ut"])
             data["imum_coeli"].retrograde = False
             calculated_axial_cusps.append("Imum_Coeli")

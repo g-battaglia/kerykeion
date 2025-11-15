@@ -330,11 +330,17 @@ class AspectsFactory:
                     first_planet_id = planet_id_lookup.get(first_name, 0)
                     second_planet_id = planet_id_lookup.get(second_name, 0)
 
+                    # Get speeds, fall back to 0.0 only if missing/None
+                    first_speed = active_points_list[first].get("speed") or 0.0
+                    second_speed = active_points_list[second].get("speed") or 0.0
+
                     # Calculate aspect movement (applying/separating/exact)
                     aspect_movement = calculate_aspect_movement(
                         active_points_list[first]["abs_pos"],
                         active_points_list[second]["abs_pos"],
-                        aspect["aspect_degrees"]
+                        aspect["aspect_degrees"],
+                        first_speed,
+                        second_speed
                     )
 
                     aspect_model = AspectModel(
@@ -412,11 +418,17 @@ class AspectsFactory:
                     first_planet_id = planet_id_lookup.get(first_name, 0)
                     second_planet_id = planet_id_lookup.get(second_name, 0)
 
+                    # Get speeds, fall back to 0.0 only if missing/None
+                    first_speed = first_active_points_list[first].get("speed") or 0.0
+                    second_speed = second_active_points_list[second].get("speed") or 0.0
+
                     # Calculate aspect movement (applying/separating/exact)
                     aspect_movement = calculate_aspect_movement(
                         first_active_points_list[first]["abs_pos"],
                         second_active_points_list[second]["abs_pos"],
-                        aspect["aspect_degrees"]
+                        aspect["aspect_degrees"],
+                        first_speed,
+                        second_speed
                     )
 
                     aspect_model = AspectModel(
