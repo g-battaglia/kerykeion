@@ -330,18 +330,25 @@ class AspectsFactory:
                     first_planet_id = planet_id_lookup.get(first_name, 0)
                     second_planet_id = planet_id_lookup.get(second_name, 0)
 
-                    # Get speeds, fall back to 0.0 only if missing/None
-                    first_speed = active_points_list[first].get("speed") or 0.0
-                    second_speed = active_points_list[second].get("speed") or 0.0
+                    # Determine aspect movement.
+                    # If both points are chart axes, there is no meaningful
+                    # dynamic movement between them, so we mark the aspect as
+                    # "Fixed" regardless of any synthetic speeds.
+                    if first_name in AXES_LIST and second_name in AXES_LIST:
+                        aspect_movement = "Fixed"
+                    else:
+                        # Get speeds, fall back to 0.0 only if missing/None
+                        first_speed = active_points_list[first].get("speed") or 0.0
+                        second_speed = active_points_list[second].get("speed") or 0.0
 
-                    # Calculate aspect movement (applying/separating/exact)
-                    aspect_movement = calculate_aspect_movement(
-                        active_points_list[first]["abs_pos"],
-                        active_points_list[second]["abs_pos"],
-                        aspect["aspect_degrees"],
-                        first_speed,
-                        second_speed
-                    )
+                        # Calculate aspect movement (applying/separating/exact/fixed)
+                        aspect_movement = calculate_aspect_movement(
+                            active_points_list[first]["abs_pos"],
+                            active_points_list[second]["abs_pos"],
+                            aspect["aspect_degrees"],
+                            first_speed,
+                            second_speed
+                        )
 
                     aspect_model = AspectModel(
                         p1_name=first_name,
@@ -418,18 +425,24 @@ class AspectsFactory:
                     first_planet_id = planet_id_lookup.get(first_name, 0)
                     second_planet_id = planet_id_lookup.get(second_name, 0)
 
-                    # Get speeds, fall back to 0.0 only if missing/None
-                    first_speed = first_active_points_list[first].get("speed") or 0.0
-                    second_speed = second_active_points_list[second].get("speed") or 0.0
+                    # For aspects between axes (ASC, MC, DSC, IC) in different charts
+                    # there is no meaningful dynamic movement between two house systems,
+                    # so we mark the movement as "Fixed".
+                    if first_name in AXES_LIST and second_name in AXES_LIST:
+                        aspect_movement = "Fixed"
+                    else:
+                        # Get speeds, fall back to 0.0 only if missing/None
+                        first_speed = first_active_points_list[first].get("speed") or 0.0
+                        second_speed = second_active_points_list[second].get("speed") or 0.0
 
-                    # Calculate aspect movement (applying/separating/exact)
-                    aspect_movement = calculate_aspect_movement(
-                        first_active_points_list[first]["abs_pos"],
-                        second_active_points_list[second]["abs_pos"],
-                        aspect["aspect_degrees"],
-                        first_speed,
-                        second_speed
-                    )
+                        # Calculate aspect movement (applying/separating/exact/fixed)
+                        aspect_movement = calculate_aspect_movement(
+                            first_active_points_list[first]["abs_pos"],
+                            second_active_points_list[second]["abs_pos"],
+                            aspect["aspect_degrees"],
+                            first_speed,
+                            second_speed
+                        )
 
                     aspect_model = AspectModel(
                         p1_name=first_name,

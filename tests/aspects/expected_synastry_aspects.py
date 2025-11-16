@@ -1,4 +1,4 @@
-EXPECTED_ALL_ASPECTS = [
+EXPECTED_RELEVANT_ASPECTS = [
     {
         "p1_name": "Sun",
         "p1_abs_pos": 195.93842490123362,
@@ -1633,7 +1633,7 @@ EXPECTED_ALL_ASPECTS = [
     }
 ]
 
-EXPECTED_RELEVANT_ASPECTS = [
+EXPECTED_ALL_ASPECTS = [
     {
         "p1_name": "Sun",
         "p1_abs_pos": 195.93842490123362,

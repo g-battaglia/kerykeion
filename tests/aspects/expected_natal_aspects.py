@@ -27,7 +27,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 245.423422573446,
         "p1": 0,
         "p2": 6,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Sun",
@@ -87,7 +87,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 63.03658760416275,
         "p1": 0,
         "p2": 15,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Moon",
@@ -147,7 +147,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 55.316712384501415,
         "p1": 1,
         "p2": 8,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Moon",
@@ -162,7 +162,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 119.11454009076883,
         "p1": 1,
         "p2": 9,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Moon",
@@ -207,7 +207,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 0.6020895765944587,
         "p1": 2,
         "p2": 3,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Mercury",
@@ -237,7 +237,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 55.63756024837862,
         "p1": 2,
         "p2": 11,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Mercury",
@@ -252,7 +252,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 265.69452148995856,
         "p1": 2,
         "p2": 13,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Mercury",
@@ -327,7 +327,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 55.03547067178416,
         "p1": 3,
         "p2": 11,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Venus",
@@ -342,7 +342,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 265.0924319133641,
         "p1": 3,
         "p2": 13,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Venus",
@@ -372,7 +372,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 10.983508535146179,
         "p1": 3,
         "p2": 16,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Venus",
@@ -402,7 +402,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 170.07163073599312,
         "p1": 4,
         "p2": 6,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Mars",
@@ -447,7 +447,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 93.57587238849194,
         "p1": 4,
         "p2": 14,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Mars",
@@ -492,7 +492,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 232.67673002744635,
         "p1": 5,
         "p2": 14,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Jupiter",
@@ -507,7 +507,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 126.78565340566428,
         "p1": 5,
         "p2": 15,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Saturn",
@@ -522,7 +522,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 171.51685917146787,
         "p1": 6,
         "p2": 7,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Saturn",
@@ -537,7 +537,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 2.3868349692832567,
         "p1": 6,
         "p2": 13,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Saturn",
@@ -567,7 +567,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 71.85682479461008,
         "p1": 7,
         "p2": 8,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Uranus",
@@ -597,7 +597,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 95.02110082396669,
         "p1": 7,
         "p2": 14,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Uranus",
@@ -612,7 +612,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 10.869975797815385,
         "p1": 7,
         "p2": 15,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Uranus",
@@ -627,7 +627,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 64.00592714016832,
         "p1": 7,
         "p2": 17,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Neptune",
@@ -642,7 +642,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 63.79782770626741,
         "p1": 8,
         "p2": 9,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Neptune",
@@ -657,7 +657,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 112.7837618340054,
         "p1": 8,
         "p2": 11,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Neptune",
@@ -672,7 +672,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 121.45049616746817,
         "p1": 8,
         "p2": 12,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Neptune",
@@ -687,7 +687,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 7.850897654441752,
         "p1": 8,
         "p2": 17,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Pluto",
@@ -732,7 +732,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 93.03789626437597,
         "p1": 9,
         "p2": 16,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Pluto",
@@ -762,7 +762,7 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 234.23425800147356,
         "p1": 11,
         "p2": 12,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Chiron",
@@ -810,7 +810,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 245.423422573446,
         "p1": 0,
         "p2": 6,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Sun",
@@ -870,7 +870,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 63.03658760416275,
         "p1": 0,
         "p2": 15,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Moon",
@@ -930,7 +930,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 55.316712384501415,
         "p1": 1,
         "p2": 8,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Moon",
@@ -945,7 +945,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 119.11454009076883,
         "p1": 1,
         "p2": 9,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Moon",
@@ -990,7 +990,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 0.6020895765944587,
         "p1": 2,
         "p2": 3,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Mercury",
@@ -1020,7 +1020,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 55.63756024837862,
         "p1": 2,
         "p2": 11,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Mercury",
@@ -1035,7 +1035,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 265.69452148995856,
         "p1": 2,
         "p2": 13,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Mercury",
@@ -1110,7 +1110,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 55.03547067178416,
         "p1": 3,
         "p2": 11,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Venus",
@@ -1125,7 +1125,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 265.0924319133641,
         "p1": 3,
         "p2": 13,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Venus",
@@ -1155,7 +1155,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 10.983508535146179,
         "p1": 3,
         "p2": 16,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Venus",
@@ -1185,7 +1185,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 170.07163073599312,
         "p1": 4,
         "p2": 6,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Mars",
@@ -1230,7 +1230,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 93.57587238849194,
         "p1": 4,
         "p2": 14,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Mars",
@@ -1275,7 +1275,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 232.67673002744635,
         "p1": 5,
         "p2": 14,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Jupiter",
@@ -1290,7 +1290,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 126.78565340566428,
         "p1": 5,
         "p2": 15,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Saturn",
@@ -1305,7 +1305,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 171.51685917146787,
         "p1": 6,
         "p2": 7,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Saturn",
@@ -1320,7 +1320,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 2.3868349692832567,
         "p1": 6,
         "p2": 13,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Saturn",
@@ -1350,7 +1350,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 71.85682479461008,
         "p1": 7,
         "p2": 8,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Uranus",
@@ -1380,7 +1380,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 95.02110082396669,
         "p1": 7,
         "p2": 14,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Uranus",
@@ -1395,7 +1395,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 10.869975797815385,
         "p1": 7,
         "p2": 15,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Uranus",
@@ -1410,7 +1410,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 64.00592714016832,
         "p1": 7,
         "p2": 17,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Neptune",
@@ -1425,7 +1425,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 63.79782770626741,
         "p1": 8,
         "p2": 9,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Neptune",
@@ -1440,7 +1440,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 112.7837618340054,
         "p1": 8,
         "p2": 11,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Neptune",
@@ -1455,7 +1455,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 121.45049616746817,
         "p1": 8,
         "p2": 12,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Separating"
     },
     {
         "p1_name": "Neptune",
@@ -1470,7 +1470,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 7.850897654441752,
         "p1": 8,
         "p2": 17,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Pluto",
@@ -1515,7 +1515,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 93.03789626437597,
         "p1": 9,
         "p2": 16,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Pluto",
@@ -1545,7 +1545,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "diff": 234.23425800147356,
         "p1": 11,
         "p2": 12,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Applying"
     },
     {
         "p1_name": "Chiron",
