@@ -76,7 +76,6 @@ def calculate_aspect_movement(
     aspect_degrees: float,
     point_one_speed: float,
     point_two_speed: float,
-    exact_orb_threshold: float = 0.05,
 ) -> AspectMovementType:
     """
         Determine whether an aspect is applying, separating, or fixed.
@@ -141,7 +140,6 @@ def calculate_aspect_movement(
                 aspect_degrees: Nominal aspect angle (e.g. 0, 60, 90, 120, 180).
                 point_one_speed: Speed of the first point in degrees/day (signed).
                 point_two_speed: Speed of the second point in degrees/day (signed).
-                exact_orb_threshold: Maximum orb to be considered exact.
 
         Returns:
                 AspectMovementType: ``"Applying"``, ``"Separating"`` or ``"Fixed"``.
@@ -218,17 +216,6 @@ def calculate_aspect_movement(
         moving_speed = point_two_speed - point_one_speed
 
     sep_abs = abs(sep)
-
-    # Compute the current orb with respect to the target aspect
-    orb = abs(sep_abs - aspect)
-
-    # If we are effectively exact, choose the direction based on how
-    # the separation would evolve next (tie-breaker without "Exact").
-    # Use the instantaneous trend: sign(sep) * sign(moving_speed).
-    if orb <= exact_orb_threshold:
-        sign_sep = _sign(sep)
-        sign_rel = _sign(moving_speed)
-        return "Applying" if (sign_sep * sign_rel) < 0 else "Separating"
 
     # If the (relative or absolute) speed is zero, the orb does not change
     if moving_speed == 0:
