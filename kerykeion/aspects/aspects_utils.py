@@ -79,16 +79,16 @@ def calculate_aspect_movement(
     exact_orb_threshold: float = 0.05,
 ) -> AspectMovementType:
     """
-        Determine whether an aspect is applying, separating, or exact.
+        Determine whether an aspect is applying, separating, or fixed.
 
         This implementation uses a dynamic definition based on the time evolution
         of the orb:
 
-        - "Exact": the current orb is within a given threshold of the exact aspect.
         - "Applying": the orb is decreasing with time (the aspect is moving toward
             exactness).
         - "Separating": the orb is increasing with time (the aspect has already
             perfected in the past, or will not perfect given the current motion).
+        - "Fixed": both points are effectively fixed so the orb does not change.
 
         Motion direction (direct or retrograde) is taken from the sign of the
         speed values:
@@ -122,18 +122,17 @@ def calculate_aspect_movement(
                      sep_abs = abs(sep)
                      orb = abs(sep_abs - aspect)
 
-        4. If ``orb <= exact_orb_threshold``, return ``"Exact"``.
-        5. Compute the relevant speed:
+        4. Compute the relevant speed:
              - if both points move: ``moving_speed = point_two_speed - point_one_speed``
              - if one point is fixed (speed == 0): use the moving point speed
                  against the fixed point.
-        6. The qualitative sign of the orb derivative is::
+        5. The qualitative sign of the orb derivative is::
 
                      sign_d_orb = sign(sep_abs - aspect) * sign(sep) * sign(moving_speed)
 
              If ``sign_d_orb < 0`` the orb decreases (applying), if
              ``sign_d_orb > 0`` the orb increases (separating).
-        7. If the relevant speed is exactly zero, the orb does not change over
+        6. If the relevant speed is exactly zero, the orb does not change over
              time; if it is not exact, it is considered separating by convention.
 
         Args:
@@ -145,7 +144,7 @@ def calculate_aspect_movement(
                 exact_orb_threshold: Maximum orb to be considered exact.
 
         Returns:
-                AspectMovementType: ``"Applying"``, ``"Separating"``, ``"Exact"`` or ``"Fixed"``.
+                AspectMovementType: ``"Applying"``, ``"Separating"`` or ``"Fixed"``.
 
         Raises:
                 ValueError: If any of the speeds is ``None``.
@@ -223,9 +222,13 @@ def calculate_aspect_movement(
     # Compute the current orb with respect to the target aspect
     orb = abs(sep_abs - aspect)
 
-    # If we are within the threshold, treat the aspect as "Exact"
+    # If we are effectively exact, choose the direction based on how
+    # the separation would evolve next (tie-breaker without "Exact").
+    # Use the instantaneous trend: sign(sep) * sign(moving_speed).
     if orb <= exact_orb_threshold:
-        return "Exact"
+        sign_sep = _sign(sep)
+        sign_rel = _sign(moving_speed)
+        return "Applying" if (sign_sep * sign_rel) < 0 else "Separating"
 
     # If the (relative or absolute) speed is zero, the orb does not change
     if moving_speed == 0:

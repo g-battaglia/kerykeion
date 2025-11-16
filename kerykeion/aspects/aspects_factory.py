@@ -341,7 +341,7 @@ class AspectsFactory:
                         first_speed = active_points_list[first].get("speed") or 0.0
                         second_speed = active_points_list[second].get("speed") or 0.0
 
-                        # Calculate aspect movement (applying/separating/exact/fixed)
+                        # Calculate aspect movement (applying/separating/fixed)
                         aspect_movement = calculate_aspect_movement(
                             active_points_list[first]["abs_pos"],
                             active_points_list[second]["abs_pos"],
@@ -435,7 +435,7 @@ class AspectsFactory:
                         first_speed = first_active_points_list[first].get("speed") or 0.0
                         second_speed = second_active_points_list[second].get("speed") or 0.0
 
-                        # Calculate aspect movement (applying/separating/exact/fixed)
+                        # Calculate aspect movement (applying/separating/fixed)
                         aspect_movement = calculate_aspect_movement(
                             first_active_points_list[first]["abs_pos"],
                             second_active_points_list[second]["abs_pos"],
@@ -590,4 +590,3 @@ if __name__ == "__main__":
     yoko = AstrologicalSubjectFactory.from_birth_data("Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP")
     dual_chart_aspects = AspectsFactory.dual_chart_aspects(john, yoko)
     print(f"Dual chart aspects: {len(dual_chart_aspects.aspects)}")
-

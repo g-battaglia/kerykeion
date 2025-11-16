@@ -299,8 +299,8 @@ class AspectModel(SubscriptableBaseModel):
     p1: int
     p2: int
     aspect_movement: AspectMovementType = Field(
-        description="Indicates whether the aspect is applying (planets moving toward exact aspect), "
-                    "separating (planets moving away from exact aspect), or exact (within tight orb)."
+        description="Indicates whether the aspect is applying (orb decreasing), "
+                    "separating (orb increasing), or fixed (no relative motion)."
     )
 
 
