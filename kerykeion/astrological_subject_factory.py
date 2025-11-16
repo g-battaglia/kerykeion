@@ -1471,89 +1471,92 @@ class AstrologicalSubjectFactory:
         # TRANS-NEPTUNIAN OBJECTS
         # ==================
 
+        # For TNOs we compute ecliptic longitude for zodiac placement and
+        # declination from equatorial coordinates, same as other bodies.
+
         # Calculate Eris
         if should_calculate("Eris"):
             try:
-                eris_calc = swe.calc_ut(julian_day, swe.AST_OFFSET + 136199, iflag)[0]
-                data["eris"] = get_kerykeion_point_from_degree(eris_calc[0], "Eris", point_type=point_type, speed=eris_calc[3], declination=eris_calc[1])
-                data["eris"].house = get_planet_house(eris_calc[0], houses_degree_ut)
-                data["eris"].retrograde = eris_calc[3] < 0
-                calculated_planets.append("Eris")
+                AstrologicalSubjectFactory._calculate_single_planet(
+                    data, "Eris", swe.AST_OFFSET + 136199, julian_day, iflag,
+                    houses_degree_ut, point_type, calculated_planets, active_points
+                )
             except Exception as e:
                 logging.warning(f"Could not calculate Eris position: {e}")
-                active_points.remove("Eris")  # Remove if not calculated
+                if "Eris" in active_points:
+                    active_points.remove("Eris")  # Remove if not calculated
 
         # Calculate Sedna
         if should_calculate("Sedna"):
             try:
-                sedna_calc = swe.calc_ut(julian_day, swe.AST_OFFSET + 90377, iflag)[0]
-                data["sedna"] = get_kerykeion_point_from_degree(sedna_calc[0], "Sedna", point_type=point_type, speed=sedna_calc[3], declination=sedna_calc[1])
-                data["sedna"].house = get_planet_house(sedna_calc[0], houses_degree_ut)
-                data["sedna"].retrograde = sedna_calc[3] < 0
-                calculated_planets.append("Sedna")
+                AstrologicalSubjectFactory._calculate_single_planet(
+                    data, "Sedna", swe.AST_OFFSET + 90377, julian_day, iflag,
+                    houses_degree_ut, point_type, calculated_planets, active_points
+                )
             except Exception as e:
                 logging.warning(f"Could not calculate Sedna position: {e}")
-                active_points.remove("Sedna")
+                if "Sedna" in active_points:
+                    active_points.remove("Sedna")
 
         # Calculate Haumea
         if should_calculate("Haumea"):
             try:
-                haumea_calc = swe.calc_ut(julian_day, swe.AST_OFFSET + 136108, iflag)[0]
-                data["haumea"] = get_kerykeion_point_from_degree(haumea_calc[0], "Haumea", point_type=point_type, speed=haumea_calc[3], declination=haumea_calc[1])
-                data["haumea"].house = get_planet_house(haumea_calc[0], houses_degree_ut)
-                data["haumea"].retrograde = haumea_calc[3] < 0
-                calculated_planets.append("Haumea")
+                AstrologicalSubjectFactory._calculate_single_planet(
+                    data, "Haumea", swe.AST_OFFSET + 136108, julian_day, iflag,
+                    houses_degree_ut, point_type, calculated_planets, active_points
+                )
             except Exception as e:
                 logging.warning(f"Could not calculate Haumea position: {e}")
-                active_points.remove("Haumea")  # Remove if not calculated
+                if "Haumea" in active_points:
+                    active_points.remove("Haumea")  # Remove if not calculated
 
         # Calculate Makemake
         if should_calculate("Makemake"):
             try:
-                makemake_calc = swe.calc_ut(julian_day, swe.AST_OFFSET + 136472, iflag)[0]
-                data["makemake"] = get_kerykeion_point_from_degree(makemake_calc[0], "Makemake", point_type=point_type, speed=makemake_calc[3], declination=makemake_calc[1])
-                data["makemake"].house = get_planet_house(makemake_calc[0], houses_degree_ut)
-                data["makemake"].retrograde = makemake_calc[3] < 0
-                calculated_planets.append("Makemake")
+                AstrologicalSubjectFactory._calculate_single_planet(
+                    data, "Makemake", swe.AST_OFFSET + 136472, julian_day, iflag,
+                    houses_degree_ut, point_type, calculated_planets, active_points
+                )
             except Exception as e:
                 logging.warning(f"Could not calculate Makemake position: {e}")
-                active_points.remove("Makemake")  # Remove if not calculated
+                if "Makemake" in active_points:
+                    active_points.remove("Makemake")  # Remove if not calculated
 
         # Calculate Ixion
         if should_calculate("Ixion"):
             try:
-                ixion_calc = swe.calc_ut(julian_day, swe.AST_OFFSET + 28978, iflag)[0]
-                data["ixion"] = get_kerykeion_point_from_degree(ixion_calc[0], "Ixion", point_type=point_type, speed=ixion_calc[3], declination=ixion_calc[1])
-                data["ixion"].house = get_planet_house(ixion_calc[0], houses_degree_ut)
-                data["ixion"].retrograde = ixion_calc[3] < 0
-                calculated_planets.append("Ixion")
+                AstrologicalSubjectFactory._calculate_single_planet(
+                    data, "Ixion", swe.AST_OFFSET + 28978, julian_day, iflag,
+                    houses_degree_ut, point_type, calculated_planets, active_points
+                )
             except Exception as e:
                 logging.warning(f"Could not calculate Ixion position: {e}")
-                active_points.remove("Ixion")  # Remove if not calculated
+                if "Ixion" in active_points:
+                    active_points.remove("Ixion")  # Remove if not calculated
 
         # Calculate Orcus
         if should_calculate("Orcus"):
             try:
-                orcus_calc = swe.calc_ut(julian_day, swe.AST_OFFSET + 90482, iflag)[0]
-                data["orcus"] = get_kerykeion_point_from_degree(orcus_calc[0], "Orcus", point_type=point_type, speed=orcus_calc[3], declination=orcus_calc[1])
-                data["orcus"].house = get_planet_house(orcus_calc[0], houses_degree_ut)
-                data["orcus"].retrograde = orcus_calc[3] < 0
-                calculated_planets.append("Orcus")
+                AstrologicalSubjectFactory._calculate_single_planet(
+                    data, "Orcus", swe.AST_OFFSET + 90482, julian_day, iflag,
+                    houses_degree_ut, point_type, calculated_planets, active_points
+                )
             except Exception as e:
                 logging.warning(f"Could not calculate Orcus position: {e}")
-                active_points.remove("Orcus")  # Remove if not calculated
+                if "Orcus" in active_points:
+                    active_points.remove("Orcus")  # Remove if not calculated
 
         # Calculate Quaoar
         if should_calculate("Quaoar"):
             try:
-                quaoar_calc = swe.calc_ut(julian_day, swe.AST_OFFSET + 50000, iflag)[0]
-                data["quaoar"] = get_kerykeion_point_from_degree(quaoar_calc[0], "Quaoar", point_type=point_type, speed=quaoar_calc[3], declination=quaoar_calc[1])
-                data["quaoar"].house = get_planet_house(quaoar_calc[0], houses_degree_ut)
-                data["quaoar"].retrograde = quaoar_calc[3] < 0
-                calculated_planets.append("Quaoar")
+                AstrologicalSubjectFactory._calculate_single_planet(
+                    data, "Quaoar", swe.AST_OFFSET + 50000, julian_day, iflag,
+                    houses_degree_ut, point_type, calculated_planets, active_points
+                )
             except Exception as e:
                 logging.warning(f"Could not calculate Quaoar position: {e}")
-                active_points.remove("Quaoar")  # Remove if not calculated
+                if "Quaoar" in active_points:
+                    active_points.remove("Quaoar")  # Remove if not calculated
 
         # ==================
         # FIXED STARS
@@ -1563,33 +1566,41 @@ class AstrologicalSubjectFactory:
         if should_calculate("Regulus"):
             try:
                 star_name = "Regulus"
-                pos = swe.fixstar_ut(star_name, julian_day, iflag)[0]
-                regulus_deg = pos[0]
-                regulus_speed = pos[3] if len(pos) > 3 else 0.0  # Fixed stars have very slow speed
-                regulus_dec = pos[1] if len(pos) > 1 else None  # Declination
+                # Ecliptic longitude for zodiac placement
+                pos_ecl = swe.fixstar_ut(star_name, julian_day, iflag)[0]
+                regulus_deg = pos_ecl[0]
+                regulus_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0  # Fixed stars have very slow speed
+                # Equatorial coordinates for true declination
+                pos_eq = swe.fixstar_ut(star_name, julian_day, iflag | swe.FLG_EQUATORIAL)[0]
+                regulus_dec = pos_eq[1] if len(pos_eq) > 1 else None
                 data["regulus"] = get_kerykeion_point_from_degree(regulus_deg, "Regulus", point_type=point_type, speed=regulus_speed, declination=regulus_dec)
                 data["regulus"].house = get_planet_house(regulus_deg, houses_degree_ut)
                 data["regulus"].retrograde = False  # Fixed stars are never retrograde
                 calculated_planets.append("Regulus")
             except Exception as e:
                 logging.warning(f"Could not calculate Regulus position: {e}")
-                active_points.remove("Regulus")  # Remove if not calculated
+                if "Regulus" in active_points:
+                    active_points.remove("Regulus")  # Remove if not calculated
 
         # Calculate Spica (example fixed star)
         if should_calculate("Spica"):
             try:
                 star_name = "Spica"
-                pos = swe.fixstar_ut(star_name, julian_day, iflag)[0]
-                spica_deg = pos[0]
-                spica_speed = pos[3] if len(pos) > 3 else 0.0  # Fixed stars have very slow speed
-                spica_dec = pos[1] if len(pos) > 1 else None  # Declination
+                # Ecliptic longitude for zodiac placement
+                pos_ecl = swe.fixstar_ut(star_name, julian_day, iflag)[0]
+                spica_deg = pos_ecl[0]
+                spica_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0  # Fixed stars have very slow speed
+                # Equatorial coordinates for true declination
+                pos_eq = swe.fixstar_ut(star_name, julian_day, iflag | swe.FLG_EQUATORIAL)[0]
+                spica_dec = pos_eq[1] if len(pos_eq) > 1 else None
                 data["spica"] = get_kerykeion_point_from_degree(spica_deg, "Spica", point_type=point_type, speed=spica_speed, declination=spica_dec)
                 data["spica"].house = get_planet_house(spica_deg, houses_degree_ut)
                 data["spica"].retrograde = False  # Fixed stars are never retrograde
                 calculated_planets.append("Spica")
             except Exception as e:
                 logging.warning(f"Could not calculate Spica position: {e}")
-                active_points.remove("Spica")  # Remove if not calculated
+                if "Spica" in active_points:
+                    active_points.remove("Spica")  # Remove if not calculated
 
         # ==================
         # ARABIC PARTS / LOTS
