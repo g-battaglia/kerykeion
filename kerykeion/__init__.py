@@ -11,6 +11,7 @@ from .astrological_subject_factory import AstrologicalSubjectFactory
 from .chart_data_factory import ChartDataFactory
 from .schemas import KerykeionException
 from .schemas.kr_models import (
+    MoonPhaseOverviewModel,
     ChartDataModel,
     SingleChartDataModel,
     DualChartDataModel,
@@ -23,6 +24,7 @@ from .composite_subject_factory import CompositeSubjectFactory
 from .ephemeris_data_factory import EphemerisDataFactory
 from .house_comparison.house_comparison_factory import HouseComparisonFactory
 from .planetary_return_factory import PlanetaryReturnFactory, PlanetReturnModel
+from .moon_phase_details import MoonPhaseDetailsFactory
 from .relationship_score_factory import RelationshipScoreFactory
 from .report import ReportGenerator
 from .settings import KerykeionSettingsModel
@@ -38,6 +40,7 @@ __all__ = [
     "AspectsFactory",
     "AstrologicalSubjectFactory",
     "ChartDataFactory",
+    "MoonPhaseDetailsFactory",
     "ChartDataModel",
     "SingleChartDataModel",
     "DualChartDataModel",
@@ -51,6 +54,7 @@ __all__ = [
     "KerykeionException",
     "PlanetaryReturnFactory",
     "PlanetReturnModel",
+    "MoonPhaseOverviewModel",
     "RelationshipScoreFactory",
     "ReportGenerator",
     "KerykeionSettingsModel",

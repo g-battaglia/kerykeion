@@ -67,6 +67,257 @@ class LunarPhaseModel(SubscriptableBaseModel):
     moon_phase_name: LunarPhaseName
 
 
+class MoonPhaseSunPositionModel(SubscriptableBaseModel):
+    """
+    Apparent solar position details for a given moment.
+
+    Attributes:
+        altitude: Sun altitude above the horizon in degrees.
+        azimuth: Sun azimuth angle in degrees.
+        distance: Distance from Earth to Sun in kilometers.
+    """
+
+    altitude: Optional[float] = None
+    azimuth: Optional[float] = None
+    distance: Optional[float] = None
+
+
+class MoonPhaseSolarEclipseModel(SubscriptableBaseModel):
+    """
+    Information about a solar eclipse event relative to the current moment.
+
+    This model is intentionally generic so it can be populated either by
+    internal calculations or external services.
+    """
+
+    timestamp: Optional[int] = None
+    datestamp: Optional[str] = None
+    type: Optional[str] = None
+    visibility_regions: Optional[str] = None
+
+
+class MoonPhaseSunInfoModel(SubscriptableBaseModel):
+    """
+    Summary information about the Sun for the lunar phase context.
+
+    All fields are optional and can be incrementally populated as more
+    advanced calculations become available.
+    """
+
+    sunrise: Optional[int] = None
+    sunrise_timestamp: Optional[str] = None
+    sunset: Optional[int] = None
+    sunset_timestamp: Optional[str] = None
+    solar_noon: Optional[str] = None
+    day_length: Optional[str] = None
+    position: Optional[MoonPhaseSunPositionModel] = None
+    next_solar_eclipse: Optional[MoonPhaseSolarEclipseModel] = None
+
+
+class MoonPhaseZodiacModel(SubscriptableBaseModel):
+    """
+    Simple zodiac snapshot for the current Sun–Moon configuration.
+
+    Attributes:
+        sun_sign: Zodiac sign of the Sun.
+        moon_sign: Zodiac sign of the Moon.
+    """
+
+    sun_sign: Sign
+    moon_sign: Sign
+
+
+class MoonPhaseMoonPositionModel(SubscriptableBaseModel):
+    """
+    Apparent lunar position details for a given moment.
+
+    Attributes:
+        altitude: Moon altitude above the horizon in degrees.
+        azimuth: Moon azimuth angle in degrees.
+        distance: Distance from Earth to Moon (kilometers).
+        parallactic_angle: Parallactic angle in degrees.
+        phase_angle: Phase angle Sun–Moon in degrees.
+    """
+
+    altitude: Optional[float] = None
+    azimuth: Optional[float] = None
+    distance: Optional[float] = None
+    parallactic_angle: Optional[float] = None
+    phase_angle: Optional[float] = None
+
+
+class MoonPhaseViewingEquipmentModel(SubscriptableBaseModel):
+    """
+    Recommended observing equipment for the current lunar phase.
+    """
+
+    filters: Optional[str] = None
+    telescope: Optional[str] = None
+    best_magnification: Optional[str] = None
+
+
+class MoonPhaseViewingConditionsModel(SubscriptableBaseModel):
+    """
+    Qualitative viewing conditions and equipment recommendations.
+    """
+
+    phase_quality: Optional[str] = None
+    recommended_equipment: Optional[MoonPhaseViewingEquipmentModel] = None
+
+
+class MoonPhaseVisibilityModel(SubscriptableBaseModel):
+    """
+    Visibility information for the current Moon.
+    """
+
+    visible_hours: Optional[float] = None
+    best_viewing_time: Optional[str] = None
+    visibility_rating: Optional[str] = None
+    illumination: Optional[str] = None
+    viewing_conditions: Optional[MoonPhaseViewingConditionsModel] = None
+
+
+class MoonPhaseEventMomentModel(SubscriptableBaseModel):
+    """
+    Generic representation of a key lunar event (e.g. last / next Full Moon).
+    """
+
+    timestamp: Optional[int] = None
+    datestamp: Optional[str] = None
+    days_ago: Optional[int] = None
+    days_ahead: Optional[int] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+
+
+class MoonPhaseMajorPhaseWindowModel(SubscriptableBaseModel):
+    """
+    Container for the last and next occurrence of a major lunar phase.
+    """
+
+    last: Optional[MoonPhaseEventMomentModel] = None
+    next: Optional[MoonPhaseEventMomentModel] = None
+
+
+class MoonPhaseUpcomingPhasesModel(SubscriptableBaseModel):
+    """
+    Overview of surrounding major lunar phases (new, first quarter, full, last quarter).
+    """
+
+    new_moon: Optional[MoonPhaseMajorPhaseWindowModel] = None
+    first_quarter: Optional[MoonPhaseMajorPhaseWindowModel] = None
+    full_moon: Optional[MoonPhaseMajorPhaseWindowModel] = None
+    last_quarter: Optional[MoonPhaseMajorPhaseWindowModel] = None
+
+
+class MoonPhaseIlluminationDetailsModel(SubscriptableBaseModel):
+    """
+    Numeric illumination details for the Moon at the given moment.
+    """
+
+    percentage: Optional[float] = None
+    visible_fraction: Optional[float] = None
+    phase_angle: Optional[float] = None
+
+
+class MoonPhaseMoonDetailedModel(SubscriptableBaseModel):
+    """
+    Detailed Moon information grouped under a single node.
+    """
+
+    position: Optional[MoonPhaseMoonPositionModel] = None
+    visibility: Optional[MoonPhaseVisibilityModel] = None
+    upcoming_phases: Optional[MoonPhaseUpcomingPhasesModel] = None
+    illumination_details: Optional[MoonPhaseIlluminationDetailsModel] = None
+
+
+class MoonPhaseOptimalViewingPeriodModel(SubscriptableBaseModel):
+    """
+    Suggested optimal viewing window for the Moon.
+    """
+
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
+    duration_hours: Optional[float] = None
+    viewing_quality: Optional[str] = None
+    recommendations: Optional[List[str]] = None
+
+
+class MoonPhaseEventsModel(SubscriptableBaseModel):
+    """
+    Convenience container for event-style lunar information.
+    """
+
+    moonrise_visible: Optional[bool] = None
+    moonset_visible: Optional[bool] = None
+    optimal_viewing_period: Optional[MoonPhaseOptimalViewingPeriodModel] = None
+
+
+class MoonPhaseEclipseModel(SubscriptableBaseModel):
+    """
+    Information about a lunar eclipse event relative to the current moment.
+    """
+
+    timestamp: Optional[int] = None
+    datestamp: Optional[str] = None
+    type: Optional[str] = None
+    visibility_regions: Optional[str] = None
+
+
+class MoonPhaseMoonSummaryModel(SubscriptableBaseModel):
+    """
+    High-level summary of the current lunar phase and basic context.
+
+    This model mirrors the structure used by web APIs for moon phase
+    information and is designed to be populated by MoonPhaseDetailsFactory.
+    """
+
+    phase: Optional[float] = None
+    phase_name: Optional[LunarPhaseName] = None
+    major_phase: Optional[str] = None
+    stage: Optional[str] = None
+    illumination: Optional[str] = None
+    age_days: Optional[int] = None
+    lunar_cycle: Optional[str] = None
+    emoji: Optional[LunarPhaseEmoji] = None
+    zodiac: Optional[MoonPhaseZodiacModel] = None
+    moonrise: Optional[str] = None
+    moonrise_timestamp: Optional[int] = None
+    moonset: Optional[str] = None
+    moonset_timestamp: Optional[int] = None
+    next_lunar_eclipse: Optional[MoonPhaseEclipseModel] = None
+    detailed: Optional[MoonPhaseMoonDetailedModel] = None
+    events: Optional[MoonPhaseEventsModel] = None
+
+
+class MoonPhaseLocationModel(SubscriptableBaseModel):
+    """
+    Location metadata for lunar phase context.
+    """
+
+    latitude: Optional[str] = None
+    longitude: Optional[str] = None
+    precision: Optional[int] = None
+    using_default_location: Optional[bool] = None
+    note: Optional[str] = None
+
+
+class MoonPhaseOverviewModel(SubscriptableBaseModel):
+    """
+    Top-level lunar phase context model.
+
+    This model groups together timestamp information, Sun summary, Moon summary,
+    and basic location data into a single structure suitable for API responses
+    or serialization.
+    """
+
+    timestamp: int
+    datestamp: str
+    sun: Optional[MoonPhaseSunInfoModel] = None
+    moon: MoonPhaseMoonSummaryModel
+    location: Optional[MoonPhaseLocationModel] = None
+
+
 class KerykeionPointModel(SubscriptableBaseModel):
     """
     Model representing an astrological celestial point or house cusp.
