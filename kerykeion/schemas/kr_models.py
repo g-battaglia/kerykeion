@@ -298,6 +298,8 @@ class AspectModel(SubscriptableBaseModel):
     diff: float
     p1: int
     p2: int
+    p1_speed: float = Field(default=0.0, description="Speed of the first point")
+    p2_speed: float = Field(default=0.0, description="Speed of the second point")
     aspect_movement: AspectMovementType = Field(
         description="Indicates whether the aspect is applying (orb decreasing), "
                     "separating (orb increasing), or fixed (no relative motion)."

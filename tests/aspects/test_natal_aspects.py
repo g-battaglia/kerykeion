@@ -34,3 +34,5 @@ class TestNatalAspects:
             assert self.subject_relevant_aspects[i]["diff"] == approx(aspect["diff"], abs=1e-2)
             assert self.subject_relevant_aspects[i]["p1"] == aspect["p1"]
             assert self.subject_relevant_aspects[i]["p2"] == aspect["p2"]
+            assert self.subject_relevant_aspects[i]["p1_speed"] == approx(aspect["p1_speed"], abs=1e-2)
+            assert self.subject_relevant_aspects[i]["p2_speed"] == approx(aspect["p2_speed"], abs=1e-2)

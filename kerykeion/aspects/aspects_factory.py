@@ -364,6 +364,8 @@ class AspectsFactory:
                         p1=first_planet_id,
                         p2=second_planet_id,
                         aspect_movement=aspect_movement,
+                        p1_speed=first_speed,
+                        p2_speed=second_speed,
                     )
                     all_aspects_list.append(aspect_model)
 
@@ -458,6 +460,8 @@ class AspectsFactory:
                         p1=first_planet_id,
                         p2=second_planet_id,
                         aspect_movement=aspect_movement,
+                        p1_speed=first_speed,
+                        p2_speed=second_speed,
                     )
                     all_aspects_list.append(aspect_model)
 

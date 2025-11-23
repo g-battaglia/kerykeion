@@ -12,6 +12,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 63.74906580150152,
         "p1": 0,
         "p2": 5,
+        "p1_speed": 0.9559924053002768,
+        "p2_speed": 0.16596584822652763,
         "aspect_movement": "Separating"
     },
     {
@@ -27,6 +29,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 245.423422573446,
         "p1": 0,
         "p2": 6,
+        "p1_speed": 0.9559924053002768,
+        "p2_speed": -0.009359634559211957,
         "aspect_movement": "Applying"
     },
     {
@@ -42,6 +46,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 73.90656340197813,
         "p1": 0,
         "p2": 7,
+        "p1_speed": 0.9559924053002768,
+        "p2_speed": 0.026752537805246276,
         "aspect_movement": "Applying"
     },
     {
@@ -57,6 +63,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 267.2138843640564,
         "p1": 0,
         "p2": 12,
+        "p1_speed": 0.9559924053002768,
+        "p2_speed": 0.008560110654844546,
         "aspect_movement": "Separating"
     },
     {
@@ -72,6 +80,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 243.03658760416275,
         "p1": 0,
         "p2": 13,
+        "p1_speed": 0.9559924053002768,
+        "p2_speed": 360.0,
         "aspect_movement": "Separating"
     },
     {
@@ -87,6 +97,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 63.03658760416275,
         "p1": 0,
         "p2": 15,
+        "p1_speed": 0.9559924053002768,
+        "p2_speed": 360.0,
         "aspect_movement": "Separating"
     },
     {
@@ -102,6 +114,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 125.72830874363675,
         "p1": 1,
         "p2": 4,
+        "p1_speed": 12.479586089602364,
+        "p2_speed": 0.5145625530092075,
         "aspect_movement": "Separating"
     },
     {
@@ -117,6 +131,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 264.82916638259115,
         "p1": 1,
         "p2": 5,
+        "p1_speed": 12.479586089602364,
+        "p2_speed": 0.16596584822652763,
         "aspect_movement": "Applying"
     },
     {
@@ -132,6 +148,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 127.17353717911149,
         "p1": 1,
         "p2": 7,
+        "p1_speed": 12.479586089602364,
+        "p2_speed": 0.026752537805246276,
         "aspect_movement": "Separating"
     },
     {
@@ -147,6 +165,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 55.316712384501415,
         "p1": 1,
         "p2": 8,
+        "p1_speed": 12.479586089602364,
+        "p2_speed": -0.021301230232221954,
         "aspect_movement": "Applying"
     },
     {
@@ -162,6 +182,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 119.11454009076883,
         "p1": 1,
         "p2": 9,
+        "p1_speed": 12.479586089602364,
+        "p2_speed": 0.009451475823694603,
         "aspect_movement": "Applying"
     },
     {
@@ -177,6 +199,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 66.13378378296676,
         "p1": 1,
         "p2": 12,
+        "p1_speed": 12.479586089602364,
+        "p2_speed": 0.008560110654844546,
         "aspect_movement": "Applying"
     },
     {
@@ -192,6 +216,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 63.16761003894317,
         "p1": 1,
         "p2": 17,
+        "p1_speed": 12.479586089602364,
+        "p2_speed": 0.11203086949392896,
         "aspect_movement": "Separating"
     },
     {
@@ -207,6 +233,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 0.6020895765944587,
         "p1": 2,
         "p2": 3,
+        "p1_speed": 0.681693845370607,
+        "p2_speed": 1.212888811694299,
         "aspect_movement": "Separating"
     },
     {
@@ -222,6 +250,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 268.0813564592418,
         "p1": 2,
         "p2": 6,
+        "p1_speed": 0.681693845370607,
+        "p2_speed": -0.009359634559211957,
         "aspect_movement": "Separating"
     },
     {
@@ -237,6 +267,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 55.63756024837862,
         "p1": 2,
         "p2": 11,
+        "p1_speed": 0.681693845370607,
+        "p2_speed": -0.023066718457837504,
         "aspect_movement": "Separating"
     },
     {
@@ -252,6 +284,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 265.69452148995856,
         "p1": 2,
         "p2": 13,
+        "p1_speed": 0.681693845370607,
+        "p2_speed": 360.0,
         "aspect_movement": "Applying"
     },
     {
@@ -267,6 +301,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 85.69452148995856,
         "p1": 2,
         "p2": 15,
+        "p1_speed": 0.681693845370607,
+        "p2_speed": 360.0,
         "aspect_movement": "Applying"
     },
     {
@@ -282,6 +318,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 235.63756024837863,
         "p1": 2,
         "p2": 19,
+        "p1_speed": 0.681693845370607,
+        "p2_speed": 0.023066718457837504,
         "aspect_movement": "Separating"
     },
     {
@@ -297,6 +335,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 267.4792668826474,
         "p1": 3,
         "p2": 6,
+        "p1_speed": 1.212888811694299,
+        "p2_speed": -0.009359634559211957,
         "aspect_movement": "Separating"
     },
     {
@@ -312,6 +352,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 95.96240771117948,
         "p1": 3,
         "p2": 7,
+        "p1_speed": 1.212888811694299,
+        "p2_speed": 0.026752537805246276,
         "aspect_movement": "Applying"
     },
     {
@@ -327,6 +369,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 55.03547067178416,
         "p1": 3,
         "p2": 11,
+        "p1_speed": 1.212888811694299,
+        "p2_speed": -0.023066718457837504,
         "aspect_movement": "Separating"
     },
     {
@@ -342,6 +386,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 265.0924319133641,
         "p1": 3,
         "p2": 13,
+        "p1_speed": 1.212888811694299,
+        "p2_speed": 360.0,
         "aspect_movement": "Applying"
     },
     {
@@ -357,6 +403,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 85.0924319133641,
         "p1": 3,
         "p2": 15,
+        "p1_speed": 1.212888811694299,
+        "p2_speed": 360.0,
         "aspect_movement": "Applying"
     },
     {
@@ -372,6 +420,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 10.983508535146179,
         "p1": 3,
         "p2": 16,
+        "p1_speed": 1.212888811694299,
+        "p2_speed": 360.0,
         "aspect_movement": "Separating"
     },
     {
@@ -387,6 +437,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 235.03547067178417,
         "p1": 3,
         "p2": 19,
+        "p1_speed": 1.212888811694299,
+        "p2_speed": 0.023066718457837504,
         "aspect_movement": "Separating"
     },
     {
@@ -402,6 +454,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 170.07163073599312,
         "p1": 4,
         "p2": 6,
+        "p1_speed": 0.5145625530092075,
+        "p2_speed": -0.009359634559211957,
         "aspect_movement": "Separating"
     },
     {
@@ -417,6 +471,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 1.4452284354747462,
         "p1": 4,
         "p2": 7,
+        "p1_speed": 0.5145625530092075,
+        "p2_speed": 0.026752537805246276,
         "aspect_movement": "Separating"
     },
     {
@@ -432,6 +488,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 6.613768652867918,
         "p1": 4,
         "p2": 9,
+        "p1_speed": 0.5145625530092075,
+        "p2_speed": 0.009451475823694603,
         "aspect_movement": "Applying"
     },
     {
@@ -447,6 +505,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 93.57587238849194,
         "p1": 4,
         "p2": 14,
+        "p1_speed": 0.5145625530092075,
+        "p2_speed": 360.0,
         "aspect_movement": "Separating"
     },
     {
@@ -462,6 +522,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 86.42412761150806,
         "p1": 4,
         "p2": 16,
+        "p1_speed": 0.5145625530092075,
+        "p2_speed": 360.0,
         "aspect_movement": "Separating"
     },
     {
@@ -477,6 +539,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 62.56069870469358,
         "p1": 4,
         "p2": 17,
+        "p1_speed": 0.5145625530092075,
+        "p2_speed": 0.11203086949392896,
         "aspect_movement": "Applying"
     },
     {
@@ -492,6 +556,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 232.67673002744635,
         "p1": 5,
         "p2": 14,
+        "p1_speed": 0.16596584822652763,
+        "p2_speed": 360.0,
         "aspect_movement": "Applying"
     },
     {
@@ -507,6 +573,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 126.78565340566428,
         "p1": 5,
         "p2": 15,
+        "p1_speed": 0.16596584822652763,
+        "p2_speed": 360.0,
         "aspect_movement": "Separating"
     },
     {
@@ -522,6 +590,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 171.51685917146787,
         "p1": 6,
         "p2": 7,
+        "p1_speed": -0.009359634559211957,
+        "p2_speed": 0.026752537805246276,
         "aspect_movement": "Separating"
     },
     {
@@ -537,6 +607,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 2.3868349692832567,
         "p1": 6,
         "p2": 13,
+        "p1_speed": -0.009359634559211957,
+        "p2_speed": 360.0,
         "aspect_movement": "Applying"
     },
     {
@@ -552,6 +624,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 182.38683496928326,
         "p1": 6,
         "p2": 15,
+        "p1_speed": -0.009359634559211957,
+        "p2_speed": 360.0,
         "aspect_movement": "Applying"
     },
     {
@@ -567,6 +641,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 71.85682479461008,
         "p1": 7,
         "p2": 8,
+        "p1_speed": 0.026752537805246276,
+        "p2_speed": -0.021301230232221954,
         "aspect_movement": "Separating"
     },
     {
@@ -582,6 +658,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 8.058997088342664,
         "p1": 7,
         "p2": 9,
+        "p1_speed": 0.026752537805246276,
+        "p2_speed": 0.009451475823694603,
         "aspect_movement": "Applying"
     },
     {
@@ -597,6 +675,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 95.02110082396669,
         "p1": 7,
         "p2": 14,
+        "p1_speed": 0.026752537805246276,
+        "p2_speed": 360.0,
         "aspect_movement": "Separating"
     },
     {
@@ -612,6 +692,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 10.869975797815385,
         "p1": 7,
         "p2": 15,
+        "p1_speed": 0.026752537805246276,
+        "p2_speed": 360.0,
         "aspect_movement": "Applying"
     },
     {
@@ -627,6 +709,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 64.00592714016832,
         "p1": 7,
         "p2": 17,
+        "p1_speed": 0.026752537805246276,
+        "p2_speed": 0.11203086949392896,
         "aspect_movement": "Separating"
     },
     {
@@ -642,6 +726,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 63.79782770626741,
         "p1": 8,
         "p2": 9,
+        "p1_speed": -0.021301230232221954,
+        "p2_speed": 0.009451475823694603,
         "aspect_movement": "Applying"
     },
     {
@@ -657,6 +743,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 112.7837618340054,
         "p1": 8,
         "p2": 11,
+        "p1_speed": -0.021301230232221954,
+        "p2_speed": -0.023066718457837504,
         "aspect_movement": "Applying"
     },
     {
@@ -672,6 +760,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 121.45049616746817,
         "p1": 8,
         "p2": 12,
+        "p1_speed": -0.021301230232221954,
+        "p2_speed": 0.008560110654844546,
         "aspect_movement": "Separating"
     },
     {
@@ -687,6 +777,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 7.850897654441752,
         "p1": 8,
         "p2": 17,
+        "p1_speed": -0.021301230232221954,
+        "p2_speed": 0.11203086949392896,
         "aspect_movement": "Applying"
     },
     {
@@ -702,6 +794,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 185.2483238737356,
         "p1": 9,
         "p2": 12,
+        "p1_speed": 0.009451475823694603,
+        "p2_speed": 0.008560110654844546,
         "aspect_movement": "Applying"
     },
     {
@@ -717,6 +811,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 86.96210373562403,
         "p1": 9,
         "p2": 14,
+        "p1_speed": 0.009451475823694603,
+        "p2_speed": 360.0,
         "aspect_movement": "Applying"
     },
     {
@@ -732,6 +828,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 93.03789626437597,
         "p1": 9,
         "p2": 16,
+        "p1_speed": 0.009451475823694603,
+        "p2_speed": 360.0,
         "aspect_movement": "Applying"
     },
     {
@@ -747,6 +845,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 55.94693005182566,
         "p1": 9,
         "p2": 17,
+        "p1_speed": 0.009451475823694603,
+        "p2_speed": 0.11203086949392896,
         "aspect_movement": "Applying"
     },
     {
@@ -762,6 +862,8 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 234.23425800147356,
         "p1": 11,
         "p2": 12,
+        "p1_speed": -0.023066718457837504,
+        "p2_speed": 0.008560110654844546,
         "aspect_movement": "Applying"
     },
     {
@@ -777,789 +879,10 @@ EXPECTED_ALL_ASPECTS = [
         "diff": 54.23425800147356,
         "p1": 12,
         "p2": 19,
+        "p1_speed": 0.008560110654844546,
+        "p2_speed": 0.023066718457837504,
         "aspect_movement": "Separating"
     }
 ]
 
-EXPECTED_RELEVANT_ASPECTS = [
-    {
-        "p1_name": "Sun",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 77.660084667934,
-        "p2_name": "Jupiter",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 13.911018866432478,
-        "aspect": "sextile",
-        "orbit": 3.749065801501523,
-        "aspect_degrees": 60,
-        "diff": 63.74906580150152,
-        "p1": 0,
-        "p2": 5,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Sun",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 77.660084667934,
-        "p2_name": "Saturn",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 323.08350724138,
-        "aspect": "trine",
-        "orbit": 5.423422573446004,
-        "aspect_degrees": 120,
-        "diff": 245.423422573446,
-        "p1": 0,
-        "p2": 6,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Sun",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 77.660084667934,
-        "p2_name": "Uranus",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 151.56664806991213,
-        "aspect": "quintile",
-        "orbit": 1.9065634019781328,
-        "aspect_degrees": 72,
-        "diff": 73.90656340197813,
-        "p1": 0,
-        "p2": 7,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Sun",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 77.660084667934,
-        "p2_name": "Chiron",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 344.8739690319904,
-        "aspect": "square",
-        "orbit": 2.786115635943588,
-        "aspect_degrees": 90,
-        "diff": 267.2138843640564,
-        "p1": 0,
-        "p2": 12,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Sun",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 77.660084667934,
-        "p2_name": "Ascendant",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 320.69667227209675,
-        "aspect": "trine",
-        "orbit": 3.0365876041627473,
-        "aspect_degrees": 120,
-        "diff": 243.03658760416275,
-        "p1": 0,
-        "p2": 13,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Sun",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 77.660084667934,
-        "p2_name": "Descendant",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 140.69667227209675,
-        "aspect": "sextile",
-        "orbit": 3.036587604162719,
-        "aspect_degrees": 60,
-        "diff": 63.03658760416275,
-        "p1": 0,
-        "p2": 15,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Moon",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 278.7401852490236,
-        "p2_name": "Mars",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 153.01187650538688,
-        "aspect": "trine",
-        "orbit": 5.728308743636745,
-        "aspect_degrees": 120,
-        "diff": 125.72830874363675,
-        "p1": 1,
-        "p2": 4,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Moon",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 278.7401852490236,
-        "p2_name": "Jupiter",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 13.911018866432478,
-        "aspect": "square",
-        "orbit": 5.170833617408846,
-        "aspect_degrees": 90,
-        "diff": 264.82916638259115,
-        "p1": 1,
-        "p2": 5,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Moon",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 278.7401852490236,
-        "p2_name": "Uranus",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 151.56664806991213,
-        "aspect": "trine",
-        "orbit": 7.1735371791114915,
-        "aspect_degrees": 120,
-        "diff": 127.17353717911149,
-        "p1": 1,
-        "p2": 7,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Moon",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 278.7401852490236,
-        "p2_name": "Neptune",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 223.4234728645222,
-        "aspect": "sextile",
-        "orbit": 4.683287615498585,
-        "aspect_degrees": 60,
-        "diff": 55.316712384501415,
-        "p1": 1,
-        "p2": 8,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Moon",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 278.7401852490236,
-        "p2_name": "Pluto",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 159.6256451582548,
-        "aspect": "trine",
-        "orbit": 0.885459909231173,
-        "aspect_degrees": 120,
-        "diff": 119.11454009076883,
-        "p1": 1,
-        "p2": 9,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Moon",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 278.7401852490236,
-        "p2_name": "Chiron",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 344.8739690319904,
-        "aspect": "sextile",
-        "orbit": 6.133783782966759,
-        "aspect_degrees": 60,
-        "diff": 66.13378378296676,
-        "p1": 1,
-        "p2": 12,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Moon",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 278.7401852490236,
-        "p2_name": "Mean_Lilith",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 215.57257521008046,
-        "aspect": "sextile",
-        "orbit": 3.1676100389431667,
-        "aspect_degrees": 60,
-        "diff": 63.16761003894317,
-        "p1": 1,
-        "p2": 17,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Mercury",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.00215078213819,
-        "p2_name": "Venus",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 55.604240358732646,
-        "aspect": "conjunction",
-        "orbit": 0.6020895765944374,
-        "aspect_degrees": 0,
-        "diff": 0.6020895765944587,
-        "p1": 2,
-        "p2": 3,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Mercury",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.00215078213819,
-        "p2_name": "Saturn",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 323.08350724138,
-        "aspect": "square",
-        "orbit": 1.9186435407581826,
-        "aspect_degrees": 90,
-        "diff": 268.0813564592418,
-        "p1": 2,
-        "p2": 6,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Mercury",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.00215078213819,
-        "p2_name": "True_North_Lunar_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 110.6397110305168,
-        "aspect": "sextile",
-        "orbit": 4.362439751621366,
-        "aspect_degrees": 60,
-        "diff": 55.63756024837862,
-        "p1": 2,
-        "p2": 11,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Mercury",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.00215078213819,
-        "p2_name": "Ascendant",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 320.69667227209675,
-        "aspect": "square",
-        "orbit": 4.305478510041439,
-        "aspect_degrees": 90,
-        "diff": 265.69452148995856,
-        "p1": 2,
-        "p2": 13,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Mercury",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.00215078213819,
-        "p2_name": "Descendant",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 140.69667227209675,
-        "aspect": "square",
-        "orbit": 4.305478510041439,
-        "aspect_degrees": 90,
-        "diff": 85.69452148995856,
-        "p1": 2,
-        "p2": 15,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Mercury",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.00215078213819,
-        "p2_name": "True_South_Lunar_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 290.6397110305168,
-        "aspect": "trine",
-        "orbit": 4.362439751621366,
-        "aspect_degrees": 120,
-        "diff": 235.63756024837863,
-        "p1": 2,
-        "p2": 19,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Venus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.604240358732646,
-        "p2_name": "Saturn",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 323.08350724138,
-        "aspect": "square",
-        "orbit": 2.52073311735262,
-        "aspect_degrees": 90,
-        "diff": 267.4792668826474,
-        "p1": 3,
-        "p2": 6,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Venus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.604240358732646,
-        "p2_name": "Uranus",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 151.56664806991213,
-        "aspect": "square",
-        "orbit": 5.96240771117948,
-        "aspect_degrees": 90,
-        "diff": 95.96240771117948,
-        "p1": 3,
-        "p2": 7,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Venus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.604240358732646,
-        "p2_name": "True_North_Lunar_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 110.6397110305168,
-        "aspect": "sextile",
-        "orbit": 4.9645293282158605,
-        "aspect_degrees": 60,
-        "diff": 55.03547067178416,
-        "p1": 3,
-        "p2": 11,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Venus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.604240358732646,
-        "p2_name": "Ascendant",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 320.69667227209675,
-        "aspect": "square",
-        "orbit": 4.907568086635877,
-        "aspect_degrees": 90,
-        "diff": 265.0924319133641,
-        "p1": 3,
-        "p2": 13,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Venus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.604240358732646,
-        "p2_name": "Descendant",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 140.69667227209675,
-        "aspect": "square",
-        "orbit": 4.9075680866359335,
-        "aspect_degrees": 90,
-        "diff": 85.0924319133641,
-        "p1": 3,
-        "p2": 15,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Venus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.604240358732646,
-        "p2_name": "Imum_Coeli",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 66.58774889387882,
-        "aspect": "conjunction",
-        "orbit": 10.9835085351462,
-        "aspect_degrees": 0,
-        "diff": 10.983508535146179,
-        "p1": 3,
-        "p2": 16,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Venus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 55.604240358732646,
-        "p2_name": "True_South_Lunar_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 290.6397110305168,
-        "aspect": "trine",
-        "orbit": 4.964529328215832,
-        "aspect_degrees": 120,
-        "diff": 235.03547067178417,
-        "p1": 3,
-        "p2": 19,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Mars",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 153.01187650538688,
-        "p2_name": "Saturn",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 323.08350724138,
-        "aspect": "opposition",
-        "orbit": 9.928369264006875,
-        "aspect_degrees": 180,
-        "diff": 170.07163073599312,
-        "p1": 4,
-        "p2": 6,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Mars",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 153.01187650538688,
-        "p2_name": "Uranus",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 151.56664806991213,
-        "aspect": "conjunction",
-        "orbit": 1.4452284354747462,
-        "aspect_degrees": 0,
-        "diff": 1.4452284354747462,
-        "p1": 4,
-        "p2": 7,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Mars",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 153.01187650538688,
-        "p2_name": "Pluto",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 159.6256451582548,
-        "aspect": "conjunction",
-        "orbit": 6.613768652867918,
-        "aspect_degrees": 0,
-        "diff": 6.613768652867918,
-        "p1": 4,
-        "p2": 9,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Mars",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 153.01187650538688,
-        "p2_name": "Medium_Coeli",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 246.58774889387882,
-        "aspect": "square",
-        "orbit": 3.5758723884919164,
-        "aspect_degrees": 90,
-        "diff": 93.57587238849194,
-        "p1": 4,
-        "p2": 14,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Mars",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 153.01187650538688,
-        "p2_name": "Imum_Coeli",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 66.58774889387882,
-        "aspect": "square",
-        "orbit": 3.5758723884919448,
-        "aspect_degrees": 90,
-        "diff": 86.42412761150806,
-        "p1": 4,
-        "p2": 16,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Mars",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 153.01187650538688,
-        "p2_name": "Mean_Lilith",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 215.57257521008046,
-        "aspect": "sextile",
-        "orbit": 2.56069870469355,
-        "aspect_degrees": 60,
-        "diff": 62.56069870469358,
-        "p1": 4,
-        "p2": 17,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Jupiter",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 13.911018866432478,
-        "p2_name": "Medium_Coeli",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 246.58774889387882,
-        "aspect": "trine",
-        "orbit": 7.323269972553646,
-        "aspect_degrees": 120,
-        "diff": 232.67673002744635,
-        "p1": 5,
-        "p2": 14,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Jupiter",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 13.911018866432478,
-        "p2_name": "Descendant",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 140.69667227209675,
-        "aspect": "trine",
-        "orbit": 6.785653405664277,
-        "aspect_degrees": 120,
-        "diff": 126.78565340566428,
-        "p1": 5,
-        "p2": 15,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Saturn",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 323.08350724138,
-        "p2_name": "Uranus",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 151.56664806991213,
-        "aspect": "opposition",
-        "orbit": 8.483140828532129,
-        "aspect_degrees": 180,
-        "diff": 171.51685917146787,
-        "p1": 6,
-        "p2": 7,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Saturn",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 323.08350724138,
-        "p2_name": "Ascendant",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 320.69667227209675,
-        "aspect": "conjunction",
-        "orbit": 2.3868349692832567,
-        "aspect_degrees": 0,
-        "diff": 2.3868349692832567,
-        "p1": 6,
-        "p2": 13,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Saturn",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 323.08350724138,
-        "p2_name": "Descendant",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 140.69667227209675,
-        "aspect": "opposition",
-        "orbit": 2.3868349692832567,
-        "aspect_degrees": 180,
-        "diff": 182.38683496928326,
-        "p1": 6,
-        "p2": 15,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Uranus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 151.56664806991213,
-        "p2_name": "Neptune",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 223.4234728645222,
-        "aspect": "quintile",
-        "orbit": 0.14317520538992312,
-        "aspect_degrees": 72,
-        "diff": 71.85682479461008,
-        "p1": 7,
-        "p2": 8,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Uranus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 151.56664806991213,
-        "p2_name": "Pluto",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 159.6256451582548,
-        "aspect": "conjunction",
-        "orbit": 8.058997088342664,
-        "aspect_degrees": 0,
-        "diff": 8.058997088342664,
-        "p1": 7,
-        "p2": 9,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Uranus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 151.56664806991213,
-        "p2_name": "Medium_Coeli",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 246.58774889387882,
-        "aspect": "square",
-        "orbit": 5.021100823966663,
-        "aspect_degrees": 90,
-        "diff": 95.02110082396669,
-        "p1": 7,
-        "p2": 14,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Uranus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 151.56664806991213,
-        "p2_name": "Descendant",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 140.69667227209675,
-        "aspect": "conjunction",
-        "orbit": 10.869975797815385,
-        "aspect_degrees": 0,
-        "diff": 10.869975797815385,
-        "p1": 7,
-        "p2": 15,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Uranus",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 151.56664806991213,
-        "p2_name": "Mean_Lilith",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 215.57257521008046,
-        "aspect": "sextile",
-        "orbit": 4.005927140168296,
-        "aspect_degrees": 60,
-        "diff": 64.00592714016832,
-        "p1": 7,
-        "p2": 17,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Neptune",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 223.4234728645222,
-        "p2_name": "Pluto",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 159.6256451582548,
-        "aspect": "sextile",
-        "orbit": 3.7978277062674124,
-        "aspect_degrees": 60,
-        "diff": 63.79782770626741,
-        "p1": 8,
-        "p2": 9,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Neptune",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 223.4234728645222,
-        "p2_name": "True_North_Lunar_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 110.6397110305168,
-        "aspect": "trine",
-        "orbit": 7.216238165994596,
-        "aspect_degrees": 120,
-        "diff": 112.7837618340054,
-        "p1": 8,
-        "p2": 11,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Neptune",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 223.4234728645222,
-        "p2_name": "Chiron",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 344.8739690319904,
-        "aspect": "trine",
-        "orbit": 1.4504961674681738,
-        "aspect_degrees": 120,
-        "diff": 121.45049616746817,
-        "p1": 8,
-        "p2": 12,
-        "aspect_movement": "Separating"
-    },
-    {
-        "p1_name": "Neptune",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 223.4234728645222,
-        "p2_name": "Mean_Lilith",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 215.57257521008046,
-        "aspect": "conjunction",
-        "orbit": 7.850897654441752,
-        "aspect_degrees": 0,
-        "diff": 7.850897654441752,
-        "p1": 8,
-        "p2": 17,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Pluto",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 159.6256451582548,
-        "p2_name": "Chiron",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 344.8739690319904,
-        "aspect": "opposition",
-        "orbit": 5.248323873735586,
-        "aspect_degrees": 180,
-        "diff": 185.2483238737356,
-        "p1": 9,
-        "p2": 12,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Pluto",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 159.6256451582548,
-        "p2_name": "Medium_Coeli",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 246.58774889387882,
-        "aspect": "square",
-        "orbit": 3.037896264375945,
-        "aspect_degrees": 90,
-        "diff": 86.96210373562403,
-        "p1": 9,
-        "p2": 14,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Pluto",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 159.6256451582548,
-        "p2_name": "Imum_Coeli",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 66.58774889387882,
-        "aspect": "square",
-        "orbit": 3.0378962643759735,
-        "aspect_degrees": 90,
-        "diff": 93.03789626437597,
-        "p1": 9,
-        "p2": 16,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Pluto",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 159.6256451582548,
-        "p2_name": "Mean_Lilith",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 215.57257521008046,
-        "aspect": "sextile",
-        "orbit": 4.053069948174311,
-        "aspect_degrees": 60,
-        "diff": 55.94693005182566,
-        "p1": 9,
-        "p2": 17,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "True_North_Lunar_Node",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 110.6397110305168,
-        "p2_name": "Chiron",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 344.8739690319904,
-        "aspect": "trine",
-        "orbit": 5.765741998526437,
-        "aspect_degrees": 120,
-        "diff": 234.23425800147356,
-        "p1": 11,
-        "p2": 12,
-        "aspect_movement": "Applying"
-    },
-    {
-        "p1_name": "Chiron",
-        "p1_owner": "Johnny Depp",
-        "p1_abs_pos": 344.8739690319904,
-        "p2_name": "True_South_Lunar_Node",
-        "p2_owner": "Johnny Depp",
-        "p2_abs_pos": 290.6397110305168,
-        "aspect": "sextile",
-        "orbit": 5.765741998526437,
-        "aspect_degrees": 60,
-        "diff": 54.23425800147356,
-        "p1": 12,
-        "p2": 19,
-        "aspect_movement": "Separating"
-    }
-]
+EXPECTED_RELEVANT_ASPECTS = EXPECTED_ALL_ASPECTS
