@@ -788,6 +788,8 @@ class SynastryAspects:
                 active_points=self._active_points,
                 active_aspects=self.active_aspects,
                 axis_orb_limit=self.axes_orbit_settings,
+                first_subject_is_fixed=True,
+                second_subject_is_fixed=True,
             )
         return self._dual_model
 

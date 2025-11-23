@@ -132,6 +132,8 @@ class AspectsFactory:
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: Optional[List[ActiveAspect]] = None,
         axis_orb_limit: Optional[float] = None,
+        first_subject_is_fixed: bool = False,
+        second_subject_is_fixed: bool = False,
     ) -> DualChartAspectsModel:
         """
         Create aspects analysis between two astrological charts.
@@ -193,6 +195,8 @@ class AspectsFactory:
             aspects_settings,
             axis_orb_limit,
             celestial_points,
+            first_subject_is_fixed=first_subject_is_fixed,
+            second_subject_is_fixed=second_subject_is_fixed,
         )
 
     @staticmethod
@@ -234,7 +238,9 @@ class AspectsFactory:
         active_aspects_resolved: List[ActiveAspect],
         aspects_settings: List[dict],
         axis_orb_limit: Optional[float],
-        celestial_points: List[dict]
+        celestial_points: List[dict],
+        first_subject_is_fixed: bool,
+        second_subject_is_fixed: bool,
     ) -> DualChartAspectsModel:
         """
         Create the complete dual chart aspects model with all calculations.
@@ -253,7 +259,9 @@ class AspectsFactory:
         """
         all_aspects = AspectsFactory._calculate_dual_chart_aspects(
             first_subject, second_subject, active_points_resolved, active_aspects_resolved,
-            aspects_settings, celestial_points
+            aspects_settings, celestial_points,
+            first_subject_is_fixed=first_subject_is_fixed,
+            second_subject_is_fixed=second_subject_is_fixed,
         )
         filtered_aspects = AspectsFactory._filter_relevant_aspects(
             all_aspects,
@@ -378,7 +386,9 @@ class AspectsFactory:
         active_points: List[AstrologicalPoint],
         active_aspects: List[ActiveAspect],
         aspects_settings: List[dict],
-        celestial_points: List[dict]
+        celestial_points: List[dict],
+        first_subject_is_fixed: bool,
+        second_subject_is_fixed: bool,
     ) -> List[AspectModel]:
         """
         Calculate all aspects between two charts.
@@ -436,6 +446,12 @@ class AspectsFactory:
                         # Get speeds, fall back to 0.0 only if missing/None
                         first_speed = first_active_points_list[first].get("speed") or 0.0
                         second_speed = second_active_points_list[second].get("speed") or 0.0
+
+                        # Override speeds if subjects are fixed
+                        if first_subject_is_fixed:
+                            first_speed = 0.0
+                        if second_subject_is_fixed:
+                            second_speed = 0.0
 
                         # Calculate aspect movement (applying/separating/fixed)
                         aspect_movement = calculate_aspect_movement(

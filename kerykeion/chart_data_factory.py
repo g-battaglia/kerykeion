@@ -172,12 +172,29 @@ class ChartDataFactory:
             # Dual chart aspects - second_subject is guaranteed to exist here due to validation above
             if second_subject is None:
                 raise KerykeionException(f"Second subject is required for {chart_type} charts.")
+
+            # Determine if subjects are fixed based on chart type
+            first_subject_is_fixed = False
+            second_subject_is_fixed = False
+
+            if chart_type == "Synastry":
+                first_subject_is_fixed = True
+                second_subject_is_fixed = True
+            elif chart_type == "Transit":
+                first_subject_is_fixed = True  # Natal chart is fixed
+                second_subject_is_fixed = False # Transit chart is moving
+            elif chart_type == "DualReturnChart":
+                first_subject_is_fixed = True
+                second_subject_is_fixed = True
+
             aspects_model = AspectsFactory.dual_chart_aspects(
                 first_subject,
                 second_subject,
                 active_points=effective_active_points,
                 active_aspects=active_aspects,
                 axis_orb_limit=axis_orb_limit,
+                first_subject_is_fixed=first_subject_is_fixed,
+                second_subject_is_fixed=second_subject_is_fixed,
             )
 
         # Calculate house comparison for dual charts
