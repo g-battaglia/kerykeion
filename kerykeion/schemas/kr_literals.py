@@ -17,13 +17,13 @@ SignNumbers = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 """Literal type for Zodiac Sign Numbers, the signs are numbered in order starting from Aries (0) to Pis (11)"""
 
 
-AspectMovementType = Literal["Applying", "Separating", "Fixed"]
+AspectMovementType = Literal["Applying", "Separating", "Static"]
 """Literal type for Aspect Movement.
 
 Values:
     - "Applying": planets are moving toward the exact aspect (orb decreasing).
     - "Separating": planets are moving away from the exact aspect (orb increasing).
-    - "Fixed": both points are effectively fixed so the orb does not change over time.
+    - "Static": both points are effectively motionless relative to one another, so the orb does not change over time.
 """
 
 

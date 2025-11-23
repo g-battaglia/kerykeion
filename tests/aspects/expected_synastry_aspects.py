@@ -1714,7 +1714,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 15,
         "p1_speed": 360.0,
         "p2_speed": 0.018745581105805164,
-        "aspect_movement": "Fixed"
+        "aspect_movement": "Static"
     },
     {
         "p1_name": "Medium_Coeli",
@@ -1969,7 +1969,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 13,
         "p1_speed": 360.0,
         "p2_speed": 0.018745581105805164,
-        "aspect_movement": "Fixed"
+        "aspect_movement": "Static"
     },
     {
         "p1_name": "Imum_Coeli",

@@ -302,7 +302,7 @@ class AspectModel(SubscriptableBaseModel):
     p2_speed: float = Field(default=0.0, description="Speed of the second point")
     aspect_movement: AspectMovementType = Field(
         description="Indicates whether the aspect is applying (orb decreasing), "
-                    "separating (orb increasing), or fixed (no relative motion)."
+                    "separating (orb increasing), or static (no relative motion)."
     )
 
 

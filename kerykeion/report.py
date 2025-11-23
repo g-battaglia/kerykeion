@@ -34,6 +34,7 @@ ASPECT_SYMBOLS = {
 MOVEMENT_SYMBOLS = {
     "Applying": "→",
     "Separating": "←",
+    "Static": "=",
 }
 
 

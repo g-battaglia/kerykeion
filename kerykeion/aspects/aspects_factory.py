@@ -333,9 +333,9 @@ class AspectsFactory:
                     # Determine aspect movement.
                     # If both points are chart axes, there is no meaningful
                     # dynamic movement between them, so we mark the aspect as
-                    # "Fixed" regardless of any synthetic speeds.
+                    # "Static" regardless of any synthetic speeds.
                     if first_name in AXES_LIST and second_name in AXES_LIST:
-                        aspect_movement = "Fixed"
+                        aspect_movement = "Static"
                     else:
                         # Get speeds, fall back to 0.0 only if missing/None
                         first_speed = active_points_list[first].get("speed") or 0.0
@@ -429,9 +429,9 @@ class AspectsFactory:
 
                     # For aspects between axes (ASC, MC, DSC, IC) in different charts
                     # there is no meaningful dynamic movement between two house systems,
-                    # so we mark the movement as "Fixed".
+                    # so we mark the movement as "Static".
                     if first_name in AXES_LIST and second_name in AXES_LIST:
-                        aspect_movement = "Fixed"
+                        aspect_movement = "Static"
                     else:
                         # Get speeds, fall back to 0.0 only if missing/None
                         first_speed = first_active_points_list[first].get("speed") or 0.0
