@@ -201,12 +201,12 @@ New Moon - Test — Natal Chart Report
 | True North Lunar Node | conjunction ☌ | Descendant            | 7.44°  | Separating ← |
 | Chiron                | sextile ⚹     | Medium Coeli          | 1.66°  | Applying →   |
 | Chiron                | trine △       | Imum Coeli            | 1.66°  | Applying →   |
-| Ascendant             | square □      | Medium Coeli          | 1.10°  | Fixed        |
-| Ascendant             | square □      | Imum Coeli            | 1.10°  | Fixed        |
+| Ascendant             | square □      | Medium Coeli          | 1.10°  | Static =     |
+| Ascendant             | square □      | Imum Coeli            | 1.10°  | Static =     |
 | Ascendant             | sextile ⚹     | Mean Lilith           | 3.71°  | Applying →   |
 | Ascendant             | conjunction ☌ | True South Lunar Node | 7.44°  | Separating ← |
-| Medium Coeli          | square □      | Descendant            | 1.10°  | Fixed        |
-| Descendant            | square □      | Imum Coeli            | 1.10°  | Fixed        |
+| Medium Coeli          | square □      | Descendant            | 1.10°  | Static =     |
+| Descendant            | square □      | Imum Coeli            | 1.10°  | Static =     |
 | Descendant            | trine △       | Mean Lilith           | 3.71°  | Applying →   |
 | Descendant            | opposition ☍  | True South Lunar Node | 7.44°  | Separating ← |
 | Mean Lilith           | quintile Q    | True South Lunar Node | 0.85°  | Separating ← |

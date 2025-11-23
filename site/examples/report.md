@@ -190,13 +190,13 @@ Kanye — Natal Chart Report
 +----------+-------+------------+
 
 +Quality Distribution-----------+
-| Quality  | Count | Percentage |
-+----------+-------+------------+
-| Cardinal | 8.0   | 38.8%      |
-| Fixed    | 6.6   | 32.0%      |
-| Mutable  | 6.0   | 29.1%      |
-| Total    | 20.6  | 100%       |
-+----------+-------+------------+
+| Quality   | Count | Percentage |
++-----------+-------+------------+
+| Cardinal  | 8.0   | 38.8%      |
+| Static    | 6.6   | 32.0%      |
+| Mutable   | 6.0   | 29.1%      |
+| Total     | 20.6  | 100%       |
++-----------+-------+------------+
 
 +Active Celestial Points-----+
 | #  | Active Point          |

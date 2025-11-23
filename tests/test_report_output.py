@@ -30,4 +30,3 @@ def test_report_output_exact_match(capsys):
 
     # print() adds a trailing newline; enforce exact output match including that newline
     assert captured == expected + "\n"
-

@@ -56,20 +56,6 @@ def get_aspect_from_two_points(
     }
 
 
-def _sign(x: float) -> int:
-    """
-    Return the sign of ``x``.
-
-    Returns +1 if ``x`` > 0, -1 if ``x`` < 0, and 0 if ``x`` == 0.
-    """
-    if x > 0:
-        return 1
-    elif x < 0:
-        return -1
-    else:
-        return 0
-
-
 def calculate_aspect_movement(
     point_one_abs_pos: float,
     point_two_abs_pos: float,
@@ -81,21 +67,21 @@ def calculate_aspect_movement(
     Determine whether the aspect orb is decreasing (Applying), increasing
     (Separating), or not changing (Static).
 
-    How it works:
-    - The point with the largest absolute speed is treated as the "faster" one
-      (retrograde included).
-    - We measure the signed separation from the slower point to the faster one
-      using ``difdeg2n`` and compare it to the exact aspect angle.
-    - The product of three signs tells us whether the orb shrinks or grows:
-        1. sign of the separation (is the faster point ahead or behind?)
-        2. sign of the distance from exactness (inside orb vs beyond)
-        3. sign of the relative speed (direction of the faster point w.r.t. slower)
-      A negative product => Applying; positive => Separating.
-    - If both points are effectively motionless, or their relative speed is
-      zero, we return "Static".
+    This implementation uses a "lookahead" approach:
+    1. Calculate the current orb (deviation from exact aspect).
+    2. Project positions forward by a small time step (dt).
+    3. Calculate the future orb.
+    4. Compare: if future_orb < current_orb => Applying, else Separating.
 
-    Speeds are signed (direct > 0, retrograde < 0). Longitudes are normalized to
-    [0, 360) and aspect angles are mirrored to [0, 180].
+    Args:
+        point_one_abs_pos (float): Absolute position of point 1 (0-360).
+        point_two_abs_pos (float): Absolute position of point 2 (0-360).
+        aspect_degrees (float): The exact aspect angle (e.g., 0, 60, 90, 120, 180).
+        point_one_speed (float): Speed of point 1 in degrees/day (negative for retrograde).
+        point_two_speed (float): Speed of point 2 in degrees/day (negative for retrograde).
+
+    Returns:
+        AspectMovementType: "Applying", "Separating", or "Static".
     """
 
     if point_one_speed is None or point_two_speed is None:
@@ -105,40 +91,44 @@ def calculate_aspect_movement(
             "cannot be None."
         )
 
-    # Normalize longitudes to [0, 360)
-    p1 = point_one_abs_pos % 360.0
-    p2 = point_two_abs_pos % 360.0
+    # If relative speed is effectively zero, the aspect is static.
+    if abs(point_one_speed - point_two_speed) < 1e-9:
+        return "Static"
+    
+    # Helper to calculate the orb (distance from exact aspect)
+    def get_orb(p1: float, p2: float, aspect: float) -> float:
+        # Calculate shortest distance between points on the circle
+        diff = abs(difdeg2n(p1, p2))
+        # The orb is the absolute difference between the actual separation and the aspect angle
+        return abs(diff - aspect)
 
     # Normalize aspect to [0, 360) and then to [0, 180]
-    aspect = aspect_degrees % 360.0
-    if aspect > 180.0:
-        aspect = 360.0 - aspect  # es. 240 -> 120
+    # This is necessary because difdeg2n returns the shortest distance (<= 180)
+    aspect_norm = aspect_degrees % 360.0
+    if aspect_norm > 180.0:
+        aspect_norm = 360.0 - aspect_norm
 
-    if point_one_speed == 0 and point_two_speed == 0:
-        return "Static"
+    # 1. Current state
+    current_orb = get_orb(point_one_abs_pos, point_two_abs_pos, aspect_norm)
 
-    # Identify the faster point by absolute speed.
-    if abs(point_one_speed) > abs(point_two_speed):
-        fast_pos, fast_speed = p1, point_one_speed
-        slow_pos, slow_speed = p2, point_two_speed
+    # 2. Future state (lookahead)
+    # We use a small time step. Since speed is deg/day, dt=0.001 days is ~1.4 minutes.
+    # Small enough to be linear, large enough to avoid float precision issues if speeds are reasonable.
+    dt = 0.001
+    p1_future = (point_one_abs_pos + point_one_speed * dt) % 360.0
+    p2_future = (point_two_abs_pos + point_two_speed * dt) % 360.0
+    
+    future_orb = get_orb(p1_future, p2_future, aspect_norm)
+
+    # 3. Compare
+    if future_orb < current_orb:
+        return "Applying"
+    elif future_orb > current_orb:
+        return "Separating"
     else:
-        fast_pos, fast_speed = p2, point_two_speed
-        slow_pos, slow_speed = p1, point_one_speed
-
-    # Signed separation from slow -> fast and relative speed of fast vs slow.
-    separation = difdeg2n(fast_pos, slow_pos)
-    relative_speed = fast_speed - slow_speed
-
-    # If their relative motion is zero, the orb stays unchanged.
-    if relative_speed == 0:
+        # Should be rare with floats, but technically possible if moving exactly parallel to the aspect circle?
+        # Or if speeds are 0.
         return "Static"
-
-    sign_sep = _sign(separation)                  # fast ahead of slow (+) or behind (-)
-    sign_delta = _sign(abs(separation) - aspect)  # are we inside or beyond the exact angle
-    sign_rel = _sign(relative_speed)              # direction of fast relative to slow
-
-    orb_trend = sign_delta * sign_sep * sign_rel
-    return "Applying" if orb_trend < 0 else "Separating"
 
 
 def planet_id_decoder(planets_settings: list[KerykeionSettingsCelestialPointModel], name: str) -> int:
