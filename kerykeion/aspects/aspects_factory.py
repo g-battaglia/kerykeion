@@ -338,6 +338,10 @@ class AspectsFactory:
                     first_planet_id = planet_id_lookup.get(first_name, 0)
                     second_planet_id = planet_id_lookup.get(second_name, 0)
 
+                    # Get speeds first, fall back to 0.0 only if missing/None
+                    first_speed = active_points_list[first].get("speed") or 0.0
+                    second_speed = active_points_list[second].get("speed") or 0.0
+
                     # Determine aspect movement.
                     # If both points are chart axes, there is no meaningful
                     # dynamic movement between them, so we mark the aspect as
@@ -345,10 +349,6 @@ class AspectsFactory:
                     if first_name in AXES_LIST and second_name in AXES_LIST:
                         aspect_movement = "Static"
                     else:
-                        # Get speeds, fall back to 0.0 only if missing/None
-                        first_speed = active_points_list[first].get("speed") or 0.0
-                        second_speed = active_points_list[second].get("speed") or 0.0
-
                         # Calculate aspect movement (applying/separating/fixed)
                         aspect_movement = calculate_aspect_movement(
                             active_points_list[first]["abs_pos"],
