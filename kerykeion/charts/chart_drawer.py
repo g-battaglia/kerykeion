@@ -1228,7 +1228,7 @@ class ChartDrawer:
         elif self.chart_type == "Transit":
             transit_label = self._translate("transits", "Transits")
             date_obj = datetime.fromisoformat(self.second_obj.iso_formatted_local_datetime) # type: ignore
-            date_str = date_obj.strftime("%d/%m/%y")
+            date_str = date_obj.strftime("%Y-%m-%d")
             truncated_name = self._truncate_name(self.first_obj.name)
             return f"{truncated_name} - {transit_label} {date_str}"
 
@@ -1242,7 +1242,7 @@ class ChartDrawer:
         elif self.chart_type == "DualReturnChart":
             return_datetime = datetime.fromisoformat(self.second_obj.iso_formatted_local_datetime) # type: ignore
             year = return_datetime.year
-            month_year = return_datetime.strftime("%m/%Y")
+            month_year = return_datetime.strftime("%Y-%m")
             truncated_name = self._truncate_name(self.first_obj.name)
             if self.second_obj is not None and isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar":
                 solar_label = self._translate("solar_return", "Solar")
@@ -1254,7 +1254,7 @@ class ChartDrawer:
         elif self.chart_type == "SingleReturnChart":
             return_datetime = datetime.fromisoformat(self.first_obj.iso_formatted_local_datetime) # type: ignore
             year = return_datetime.year
-            month_year = return_datetime.strftime("%m/%Y")
+            month_year = return_datetime.strftime("%Y-%m")
             truncated_name = self._truncate_name(self.first_obj.name)
             if isinstance(self.first_obj, PlanetReturnModel) and self.first_obj.return_type == "Solar":
                 solar_label = self._translate("solar_return", "Solar")

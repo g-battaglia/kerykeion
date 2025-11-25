@@ -257,7 +257,7 @@ class ReportGenerator:
             else:
                 base_title = f"{self._primary_subject.name} — Lunar Return {year or ''}".strip()
         elif self.chart_type == "Transit":
-            date_str = self._format_date(
+            date_str = self._format_date_iso(
                 self._secondary_subject.iso_formatted_local_datetime if self._secondary_subject else None
             )
             base_title = f"{self._primary_subject.name} — Transit {date_str}".strip()
@@ -643,10 +643,30 @@ class ReportGenerator:
 
     @staticmethod
     def _format_date(iso_datetime: Optional[str]) -> str:
+        """
+        Format datetime in dd/mm/yyyy format.
+        
+        .. deprecated::
+            Use _format_date_iso() for internationally unambiguous date formatting.
+        """
         if not iso_datetime:
             return ""
         try:
             return datetime.fromisoformat(iso_datetime).strftime("%d/%m/%Y")
+        except ValueError:
+            return iso_datetime
+
+    @staticmethod
+    def _format_date_iso(iso_datetime: Optional[str]) -> str:
+        """
+        Format datetime in ISO 8601 format (YYYY-MM-DD).
+        
+        This format is internationally unambiguous and follows the ISO 8601 standard.
+        """
+        if not iso_datetime:
+            return ""
+        try:
+            return datetime.fromisoformat(iso_datetime).strftime("%Y-%m-%d")
         except ValueError:
             return iso_datetime
 
