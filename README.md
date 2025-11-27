@@ -22,13 +22,16 @@ The main goal of this project is to offer a clean, data-driven approach to astro
 
 Kerykeion also integrates seamlessly with LLM and AI applications.
 
+> **📘 For AI Agents & LLMs**  
+> If you're an AI agent or building LLM-powered applications, see [`AI_AGENT_GUIDE.md`](./AI_AGENT_GUIDE.md) for a comprehensive, concise reference optimized for programmatic use and AI context.
+
 Here is an example of a birthchart:
 
 ![John Lenon Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
 
 ## **Web API**
 
-If you want to use Kerykeion in a web application or for commercial or *closed-source* purposes, you can try the dedicated web API:
+If you want to use Kerykeion in a web application or for commercial or _closed-source_ purposes, you can try the dedicated web API:
 
 **[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/pricing)**
 
@@ -42,57 +45,58 @@ Maintaining this project requires substantial time and effort. The Astrologer AP
 
 ## Table of Contents
 
-- [**Web API**](#web-api)
-- [**Donate**](#donate)
-- [Table of Contents](#table-of-contents)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Documentation Map](#documentation-map)
-- [Basic Usage](#basic-usage)
-- [Generate a SVG Chart](#generate-a-svg-chart)
-  - [Birth Chart](#birth-chart)
-  - [External Birth Chart](#external-birth-chart)
-  - [Synastry Chart](#synastry-chart)
-  - [Transit Chart](#transit-chart)
-  - [Solar Return Chart (Dual Wheel)](#solar-return-chart-dual-wheel)
-  - [Solar Return Chart (Single Wheel)](#solar-return-chart-single-wheel)
-  - [Lunar Return Chart](#lunar-return-chart)
-  - [Composite Chart](#composite-chart)
-- [Wheel Only Charts](#wheel-only-charts)
-  - [Birth Chart](#birth-chart-1)
-  - [Wheel Only Birth Chart (External)](#wheel-only-birth-chart-external)
-  - [Synastry Chart](#synastry-chart-1)
-  - [Change the Output Directory](#change-the-output-directory)
-  - [Change Language](#change-language)
-  - [Minified SVG](#minified-svg)
-  - [SVG without CSS Variables](#svg-without-css-variables)
-  - [Grid Only SVG](#grid-only-svg)
-- [Report Generator](#report-generator)
-  - [Quick Examples](#quick-examples)
-  - [Section Access](#section-access)
-- [Example: Retrieving Aspects](#example-retrieving-aspects)
-- [Element \& Quality Distribution Strategies](#element--quality-distribution-strategies)
-- [Ayanamsa (Sidereal Modes)](#ayanamsa-sidereal-modes)
-- [House Systems](#house-systems)
-- [Perspective Type](#perspective-type)
-- [Themes](#themes)
-- [Alternative Initialization](#alternative-initialization)
-- [Lunar Nodes (Rahu \& Ketu)](#lunar-nodes-rahu--ketu)
-- [JSON Support](#json-support)
-- [Auto Generated Documentation](#auto-generated-documentation)
-- [Development](#development)
-- [Kerykeion v5.0 – What's New](#kerykeion-v50--whats-new)
-  - [🎯 Key Highlights](#-key-highlights)
-    - [Factory-Centered Architecture](#factory-centered-architecture)
-    - [Pydantic 2 Models \& Type Safety](#pydantic-2-models--type-safety)
-    - [Enhanced Features](#enhanced-features)
-  - [📦 Other Notable Changes](#-other-notable-changes)
-  - [🎨 New Themes](#-new-themes)
-  - [📚 Resources](#-resources)
-- [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
-- [License](#license)
-- [Contributing](#contributing)
-- [Citations](#citations)
+-   [**Web API**](#web-api)
+-   [**Donate**](#donate)
+-   [Table of Contents](#table-of-contents)
+-   [Installation](#installation)
+-   [Quick Start](#quick-start)
+-   [Documentation Map](#documentation-map)
+-   [Basic Usage](#basic-usage)
+-   [Generate a SVG Chart](#generate-a-svg-chart)
+    -   [Birth Chart](#birth-chart)
+    -   [External Birth Chart](#external-birth-chart)
+    -   [Synastry Chart](#synastry-chart)
+    -   [Transit Chart](#transit-chart)
+    -   [Solar Return Chart (Dual Wheel)](#solar-return-chart-dual-wheel)
+    -   [Solar Return Chart (Single Wheel)](#solar-return-chart-single-wheel)
+    -   [Lunar Return Chart](#lunar-return-chart)
+    -   [Composite Chart](#composite-chart)
+-   [Wheel Only Charts](#wheel-only-charts)
+    -   [Birth Chart](#birth-chart-1)
+    -   [Wheel Only Birth Chart (External)](#wheel-only-birth-chart-external)
+    -   [Synastry Chart](#synastry-chart-1)
+    -   [Change the Output Directory](#change-the-output-directory)
+    -   [Change Language](#change-language)
+    -   [Minified SVG](#minified-svg)
+    -   [SVG without CSS Variables](#svg-without-css-variables)
+    -   [Grid Only SVG](#grid-only-svg)
+-   [Report Generator](#report-generator)
+-   [AI Context Serializer](#ai-context-serializer)
+    -   [Quick Examples](#quick-examples)
+    -   [Section Access](#section-access)
+-   [Example: Retrieving Aspects](#example-retrieving-aspects)
+-   [Element \& Quality Distribution Strategies](#element--quality-distribution-strategies)
+-   [Ayanamsa (Sidereal Modes)](#ayanamsa-sidereal-modes)
+-   [House Systems](#house-systems)
+-   [Perspective Type](#perspective-type)
+-   [Themes](#themes)
+-   [Alternative Initialization](#alternative-initialization)
+-   [Lunar Nodes (Rahu \& Ketu)](#lunar-nodes-rahu--ketu)
+-   [JSON Support](#json-support)
+-   [Auto Generated Documentation](#auto-generated-documentation)
+-   [Development](#development)
+-   [Kerykeion v5.0 – What's New](#kerykeion-v50--whats-new)
+    -   [🎯 Key Highlights](#-key-highlights)
+        -   [Factory-Centered Architecture](#factory-centered-architecture)
+        -   [Pydantic 2 Models \& Type Safety](#pydantic-2-models--type-safety)
+        -   [Enhanced Features](#enhanced-features)
+    -   [📦 Other Notable Changes](#-other-notable-changes)
+    -   [🎨 New Themes](#-new-themes)
+    -   [📚 Resources](#-resources)
+-   [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
+-   [License](#license)
+-   [Contributing](#contributing)
+-   [Citations](#citations)
 
 ## Installation
 
@@ -131,6 +135,7 @@ print("Chart saved to", (output_dir / "example-natal.svg").resolve())
 ```
 
 This script shows the recommended workflow:
+
 1. Create an `AstrologicalSubject` with explicit coordinates and timezone (offline mode).
 2. Build a `ChartDataModel` through `ChartDataFactory`.
 3. Render the SVG via `ChartDrawer`, saving it to a controlled folder (`charts_output`).
@@ -139,10 +144,10 @@ Use the same pattern for synastry, composite, transit, or return charts by swapp
 
 ## Documentation Map
 
-- **README (this file):** Quick start, common recipes, and v5 overview. Full migration guide: [MIGRATION_V4_TO_V5.md](MIGRATION_V4_TO_V5.md).
-- **`site-docs/` (offline Markdown guides):** Deep dives for each factory (`chart_data_factory.md`, `charts.md`, `planetary_return_factory.md`, etc.) with runnable snippets. Run `python scripts/test_markdown_snippets.py site-docs` to validate them locally.
-- **[Auto-generated API Reference](https://www.kerykeion.net/pydocs/kerykeion.html):** Detailed model and function signatures straight from the codebase.
-- **[Kerykeion website](https://www.kerykeion.net/docs/):** Rendered documentation with additional context, tutorials, and showcase material.
+-   **README (this file):** Quick start, common recipes, and v5 overview. Full migration guide: [MIGRATION_V4_TO_V5.md](MIGRATION_V4_TO_V5.md).
+-   **`site-docs/` (offline Markdown guides):** Deep dives for each factory (`chart_data_factory.md`, `charts.md`, `planetary_return_factory.md`, etc.) with runnable snippets. Run `python scripts/test_markdown_snippets.py site-docs` to validate them locally.
+-   **[Auto-generated API Reference](https://www.kerykeion.net/pydocs/kerykeion.html):** Detailed model and function signatures straight from the codebase.
+-   **[Kerykeion website](https://www.kerykeion.net/docs/):** Rendered documentation with additional context, tutorials, and showcase material.
 
 ## Basic Usage
 
@@ -906,6 +911,44 @@ for section in sections[:3]:
 
 Refer to the refreshed [Report Documentation](https://www.kerykeion.net/report/) for end-to-end examples covering every supported chart model.
 
+## AI Context Serializer
+
+The `context_serializer` module transforms Kerykeion data models into precise, non-qualitative text optimized for LLM consumption. It provides the essential "ground truth" data needed for AI agents to generate accurate astrological interpretations.
+
+### Quick Example
+
+```python
+from kerykeion import AstrologicalSubjectFactory, to_context
+
+# Create a subject
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Doe", 1990, 1, 1, 12, 0, "London", "GB"
+)
+
+# Generate AI-ready context
+context = to_context(subject)
+print(context)
+```
+
+**Output:**
+
+```text
+Chart for John Doe
+Birth data: 1990-01-01 12:00, London, GB
+...
+Celestial Points:
+  - Sun at 10.81° in Capricorn in Tenth House, quality: Cardinal, element: Earth...
+  - Moon at 25.60° in Aquarius in Eleventh House, quality: Fixed, element: Air...
+```
+
+**Key Features:**
+
+-   **Standardized Output:** Consistent format for Natal, Synastry, Composite, and Return charts.
+-   **Non-Qualitative:** Provides raw data (positions, aspects) without interpretive bias.
+-   **Prompt-Ready:** Designed to be injected directly into system prompts.
+
+For comprehensive documentation and examples, see [site/docs/context_serializer.md](site/docs/context_serializer.md).
+
 ## Example: Retrieving Aspects
 
 Kerykeion provides a unified `AspectsFactory` class for calculating astrological aspects within single charts or between two charts:
@@ -1339,7 +1382,7 @@ Additional chart themes added:
 -   **API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/kerykeion.html)
 -   **Examples**: See the `examples/` folder for runnable code
 -   **Support**: [GitHub Discussions](https://github.com/g-battaglia/kerykeion/discussions)
--   
+-
 
 ## Integrating Kerykeion into Your Project
 

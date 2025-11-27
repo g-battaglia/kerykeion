@@ -9,6 +9,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 from .aspects import AspectsFactory
 from .astrological_subject_factory import AstrologicalSubjectFactory
 from .chart_data_factory import ChartDataFactory
+from .context_serializer import to_context
 from .schemas import KerykeionException
 from .schemas.kr_models import (
     ChartDataModel,
@@ -55,6 +56,7 @@ __all__ = [
     "ReportGenerator",
     "KerykeionSettingsModel",
     "TransitsTimeRangeFactory",
+    "to_context",
     # Legacy (v4) exported names for backward compatibility
     "AstrologicalSubject",
     "KerykeionChartSVG",
