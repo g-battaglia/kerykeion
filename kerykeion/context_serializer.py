@@ -25,6 +25,8 @@ from kerykeion.schemas.kr_models import (
     RelationshipScoreModel,
     TransitMomentModel,
     TransitsTimeRangeModel,
+    PointInHouseModel,
+    HouseComparisonModel,
 )
 
 
@@ -165,6 +167,83 @@ def aspect_to_context(aspect: AspectModel, is_synastry: bool = False, is_transit
         parts.append(f"movement: {aspect.aspect_movement.lower()}")
 
     return ", ".join(parts)
+
+
+def point_in_house_to_context(point_in_house: PointInHouseModel) -> str:
+    """
+    Transform a PointInHouseModel into textual context.
+
+    Describes where an astrological point from one subject falls within
+    another subject's house system.
+
+    Args:
+        point_in_house: A PointInHouseModel representing a point's house placement.
+
+    Returns:
+        A string describing the point's house placement.
+
+    Example:
+        >>> point_in_house_to_context(point_data)
+        '"John"\'s Sun at 15.32° Aries (in John\'s First House) falls in "Jane"\'s Seventh House'
+    """
+    parts = []
+
+    # Point owner and point information
+    parts.append(f'"{point_in_house.point_owner_name}"\'s {point_in_house.point_name}')
+    parts.append(f'at {point_in_house.point_degree:.2f}° {point_in_house.point_sign}')
+
+    # Original house position (if available)
+    if point_in_house.point_owner_house_name:
+        parts.append(f'(in {point_in_house.point_owner_name}\'s {point_in_house.point_owner_house_name})')
+
+    # Projected house position
+    parts.append(f'falls in "{point_in_house.projected_house_owner_name}"\'s {point_in_house.projected_house_name}')
+
+    return ' '.join(parts)
+
+
+def house_comparison_to_context(house_comparison: HouseComparisonModel, is_transit: bool = False) -> str:
+    """
+    Transform a HouseComparisonModel into textual context.
+
+    Provides bidirectional house overlay analysis between two subjects,
+    showing how each subject's planets fall within the other's house system.
+
+    Args:
+        house_comparison: A HouseComparisonModel with bidirectional house placements.
+        is_transit: If True, handles transit chart logic (transit subject has no houses).
+
+    Returns:
+        A multi-line string describing the house comparison.
+
+    Example:
+        >>> house_comparison_to_context(comparison, is_transit=False)
+        'House Overlay Analysis:\\n\\n"John"\'s points in "Jane"\'s houses:\\n  - ...'
+    """
+    lines = []
+
+    lines.append("House Overlay Analysis:")
+
+    # First subject's points in second subject's houses
+    if house_comparison.first_points_in_second_houses:
+        lines.append(f'\n"{house_comparison.first_subject_name}"\'s points in "{house_comparison.second_subject_name}"\'s houses:')
+        for point in house_comparison.first_points_in_second_houses:
+            lines.append(f"  - {point_in_house_to_context(point)}")
+
+    # Second subject's points in first subject's houses
+    # For transit charts, the transit subject has no houses, so we handle this differently
+    if house_comparison.second_points_in_first_houses:
+        if is_transit:
+            # Transit case: "Transit's planets in John's houses"
+            lines.append(f'\nTransit planets in "{house_comparison.first_subject_name}"\'s houses:')
+        else:
+            # Normal synastry case: bidirectional
+            lines.append(f'\n"{house_comparison.second_subject_name}"\'s points in "{house_comparison.first_subject_name}"\'s houses:')
+
+        for point in house_comparison.second_points_in_first_houses:
+            lines.append(f"  - {point_in_house_to_context(point)}")
+
+    return '\n'.join(lines)
 
 
 def element_distribution_to_context(distribution: ElementDistributionModel) -> str:
@@ -398,6 +477,11 @@ def dual_chart_data_to_context(chart_data: DualChartDataModel) -> str:
         for aspect in chart_data.aspects:
             lines.append(f"  - {aspect_to_context(aspect, is_synastry=True, is_transit=is_transit)}")
 
+    # House comparison analysis
+    if chart_data.house_comparison is not None:
+        lines.append("\n" + "=" * 50)
+        lines.append(house_comparison_to_context(chart_data.house_comparison, is_transit=is_transit))
+
     # Relationship score (for synastry)
     if chart_data.relationship_score is not None:
         score = chart_data.relationship_score
@@ -485,6 +569,8 @@ def to_context(model: Union[
     QualityDistributionModel,
     TransitMomentModel,
     TransitsTimeRangeModel,
+    PointInHouseModel,
+    HouseComparisonModel,
 ]) -> str:
     """
     Main dispatcher function to convert any Kerykeion model to textual context.
@@ -527,6 +613,10 @@ def to_context(model: Union[
         return element_distribution_to_context(model)
     elif isinstance(model, QualityDistributionModel):
         return quality_distribution_to_context(model)
+    elif isinstance(model, PointInHouseModel):
+        return point_in_house_to_context(model)
+    elif isinstance(model, HouseComparisonModel):
+        return house_comparison_to_context(model)
     else:
         raise TypeError(
             f"Unsupported model type: {type(model).__name__}. "
@@ -534,7 +624,8 @@ def to_context(model: Union[
             f"AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel, "
             f"AspectModel, SingleChartDataModel, DualChartDataModel, "
             f"ElementDistributionModel, QualityDistributionModel, "
-            f"TransitMomentModel, TransitsTimeRangeModel"
+            f"TransitMomentModel, TransitsTimeRangeModel, "
+            f"PointInHouseModel, HouseComparisonModel"
         )
 
 
@@ -543,6 +634,8 @@ __all__ = [
     'kerykeion_point_to_context',
     'lunar_phase_to_context',
     'aspect_to_context',
+    'point_in_house_to_context',
+    'house_comparison_to_context',
     'element_distribution_to_context',
     'quality_distribution_to_context',
     'astrological_subject_to_context',
