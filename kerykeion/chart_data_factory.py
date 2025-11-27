@@ -101,7 +101,7 @@ class ChartDataFactory:
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         include_house_comparison: bool = True,
-        include_relationship_score: bool = True,
+        include_relationship_score: bool = False,
         *,
         axis_orb_limit: Optional[float] = None,
         distribution_method: ElementQualityDistributionMethod = "weighted",
