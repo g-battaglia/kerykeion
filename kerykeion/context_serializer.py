@@ -430,7 +430,7 @@ def single_chart_data_to_context(chart_data: SingleChartDataModel) -> str:
 
     # Active configuration
     lines.append(f"\nActive points: {', '.join(chart_data.active_points)}")
-    lines.append(f"Active aspects: {', '.join([f'{a['name']} ({a['orb']}°)' for a in chart_data.active_aspects])}")
+    lines.append(f"Active aspects: {', '.join([a['name'] + ' (' + str(a['orb']) + '°)' for a in chart_data.active_aspects])}")
 
     return "\n".join(lines)
 
@@ -497,7 +497,7 @@ def dual_chart_data_to_context(chart_data: DualChartDataModel) -> str:
 
     # Active configuration
     lines.append(f"\nActive points: {', '.join(chart_data.active_points)}")
-    lines.append(f"Active aspects: {', '.join([f'{a['name']} ({a['orb']}°)' for a in chart_data.active_aspects])}")
+    lines.append(f"Active aspects: {', '.join([a['name'] + ' (' + str(a['orb']) + '°)' for a in chart_data.active_aspects])}")
 
     return "\n".join(lines)
 
