@@ -173,6 +173,11 @@ class ChartDrawer:
     _DEFAULT_FULL_WIDTH_WITH_TABLE = 1250
     _DEFAULT_ULTRA_WIDE_WIDTH = 1320
 
+    # Vertical chart constants (A4 portrait: 794px × 1123px at 96 DPI)
+    _VERTICAL_DEFAULT_WIDTH = 794
+    _VERTICAL_DEFAULT_HEIGHT = 1123
+    _VERTICAL_VIEWBOX = f"0 0 {_VERTICAL_DEFAULT_WIDTH} {_VERTICAL_DEFAULT_HEIGHT}"
+
     _VERTICAL_PADDING_TOP = 15
     _VERTICAL_PADDING_BOTTOM = 15
     _TITLE_SPACING = 8
@@ -190,6 +195,19 @@ class ChartDrawer:
         "qualities": 0,
         "lunar_phase": 518,
         "bottom_left": 0,
+    }
+    
+    # Vertical chart specific offsets for A4 portrait layout
+    _BASE_VERTICAL_CHART_OFFSETS = {
+        "wheel": 200,           # Wheel positioned after title
+        "grid": 700,            # Grids after wheel
+        "aspect_grid": 700,     # Aspect grid level with grids
+        "aspect_list": 700,     # Aspect list level with grids
+        "title": 20,            # Title at top
+        "elements": 150,        # Elements below title, left of wheel
+        "qualities": 150,       # Qualities below title, right of wheel
+        "lunar_phase": 1050,    # Lunar phase near bottom
+        "bottom_left": 1000,    # Bottom info at bottom
     }
     _MAX_TOP_SHIFT = 80
     _TOP_SHIFT_FACTOR = 2
@@ -253,6 +271,7 @@ class ChartDrawer:
         show_house_position_comparison: bool = True,
         auto_size: bool = True,
         padding: int = 20,
+        orientation: Literal["horizontal", "vertical"] = "horizontal",
     ):
         """
         Initialize the chart visualizer with pre-computed chart data.
@@ -280,6 +299,9 @@ class ChartDrawer:
             show_house_position_comparison (bool, optional):
                 Whether to render the house position comparison grid (when supported by the chart type).
                 Defaults to True. Set to False to hide the table and reclaim horizontal space.
+            orientation (Literal['horizontal', 'vertical'], optional):
+                Chart orientation. Use 'horizontal' for landscape layout or 'vertical' for A4 portrait layout.
+                Defaults to 'horizontal'.
         """
         # --------------------
         # COMMON INITIALIZATION
@@ -288,6 +310,7 @@ class ChartDrawer:
         self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
         self.transparent_background = transparent_background
         self.external_view = external_view
+        self.orientation = orientation
         self.chart_colors_settings = deepcopy(colors_settings)
         self.planets_settings = [dict(body) for body in celestial_points_settings]
         self.aspects_settings = [dict(aspect) for aspect in aspects_settings]
@@ -490,6 +513,15 @@ class ChartDrawer:
 
         self.set_up_theme(theme)
 
+        # Override dimensions and offsets for vertical orientation
+        if self.orientation == "vertical":
+            self.width = self._VERTICAL_DEFAULT_WIDTH
+            self.height = self._VERTICAL_DEFAULT_HEIGHT
+            # Use vertical-specific offsets
+            self._vertical_offsets = self._BASE_VERTICAL_CHART_OFFSETS.copy()
+            # Disable auto-size for vertical charts to maintain A4 dimensions
+            self.auto_size = False
+
         self._apply_dynamic_height_adjustment()
         self._adjust_height_for_extended_aspect_columns()
         # Reconcile width with the updated layout once height adjustments are known.
@@ -502,6 +534,9 @@ class ChartDrawer:
 
     def _apply_dynamic_height_adjustment(self) -> None:
         """Adjust chart height and vertical offsets based on active points."""
+        if not self.auto_size:
+            return
+
         active_points_count = self._count_active_planets()
 
         offsets = self._BASE_VERTICAL_OFFSETS.copy()
@@ -693,9 +728,15 @@ class ChartDrawer:
 
     def _dynamic_viewbox(self) -> str:
         """Return the viewBox string based on current width/height with vertical padding."""
+        if self.orientation == "vertical":
+            return self._vertical_viewbox()
         min_y = -self._VERTICAL_PADDING_TOP
         viewbox_height = int(self.height) + self._VERTICAL_PADDING_TOP + self._VERTICAL_PADDING_BOTTOM
         return f"0 {min_y} {int(self.width)} {viewbox_height}"
+
+    def _vertical_viewbox(self) -> str:
+        """Return the viewBox string for vertical A4 portrait orientation."""
+        return self._VERTICAL_VIEWBOX
 
     def _wheel_only_viewbox(self, margin: int = 20) -> str:
         """Return a tight viewBox for the wheel-only template.
@@ -1412,10 +1453,22 @@ class ChartDrawer:
 
             # Aspects
             template_dict["makeDoubleChartAspectList"] = ""
+            
+            # Calculate aspect grid dimensions for vertical layout
+            if self.orientation == "vertical":
+                active_planets_count = len([p for p in self.available_planets_setting if p["is_active"]])
+                aspect_grid_y_start = (active_planets_count - 1) * 14
+                aspect_grid_x_start = 0
+            else:
+                aspect_grid_y_start = 468
+                aspect_grid_x_start = 510
+
             template_dict["makeAspectGrid"] = draw_aspect_grid(
                 self.chart_colors_settings["paper_0"],
                 self.available_planets_setting,
                 self.aspects_list,
+                x_start=aspect_grid_x_start,
+                y_start=aspect_grid_y_start,
             )
             template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - self.third_circle_radius)
 
@@ -1486,6 +1539,8 @@ class ChartDrawer:
                 main_subject_houses_list=first_subject_houses_list,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
+                x_position=0 if self.orientation == "vertical" else 750,
+                y_position=0 if self.orientation == "vertical" else 30,
             )
             template_dict["makeSecondaryHousesGrid"] = ""
 
@@ -1521,6 +1576,8 @@ class ChartDrawer:
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
+                x_position=0 if self.orientation == "vertical" else 645,
+                y_position=0 if self.orientation == "vertical" else 0,
             )
             template_dict["makeSecondaryPlanetGrid"] = ""
             template_dict["makeHouseComparisonGrid"] = ""
@@ -2405,6 +2462,8 @@ class ChartDrawer:
                 main_subject_houses_list=first_subject_houses_list,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
+                x_position=0 if self.orientation == "vertical" else 750,
+                y_position=0 if self.orientation == "vertical" else 30,
             )
             template_dict["makeSecondaryHousesGrid"] = ""
 
@@ -2433,6 +2492,7 @@ class ChartDrawer:
                 external_view=self.external_view,
             )
 
+            print(f"DEBUG: Orientation is {self.orientation}")
             template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
                 planets_and_houses_grid_title=self._translate("planets_and_house", "Points for"),
                 subject_name=self.first_obj.name,
@@ -2440,6 +2500,8 @@ class ChartDrawer:
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
+                x_position=0,
+                y_position=0,
             )
             template_dict["makeSecondaryPlanetGrid"] = ""
             template_dict["makeHouseComparisonGrid"] = ""
@@ -2464,7 +2526,11 @@ class ChartDrawer:
         td = self._create_template_dictionary(custom_title=custom_title)
 
         DATA_DIR = Path(__file__).parent
-        xml_svg = DATA_DIR / "templates" / "chart.xml"
+        # Load appropriate template based on orientation
+        if self.orientation == "vertical":
+            xml_svg = DATA_DIR / "templates" / "chart_vertical.xml"
+        else:
+            xml_svg = DATA_DIR / "templates" / "chart.xml"
 
         # read template
         with open(xml_svg, "r", encoding="utf-8", errors="ignore") as f:
