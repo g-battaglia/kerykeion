@@ -5,12 +5,14 @@
 
 
 import logging
+import math
 from copy import deepcopy
 from math import ceil
 from datetime import datetime
 from pathlib import Path
+from shutil import copyfile
 from string import Template
-from typing import Any, Mapping, Optional, Sequence, Union, get_args
+from typing import Any, Mapping, Literal, Optional, Sequence, Union, get_args
 
 import swisseph as swe
 from scour.scour import scourString
@@ -173,9 +175,9 @@ class ChartDrawer:
     _DEFAULT_FULL_WIDTH_WITH_TABLE = 1250
     _DEFAULT_ULTRA_WIDE_WIDTH = 1320
 
-    # Vertical chart constants (A4 portrait: 794px × 1123px at 96 DPI)
+    # Vertical chart constants (A4 portrait layout, extended height for full content)
     _VERTICAL_DEFAULT_WIDTH = 794
-    _VERTICAL_DEFAULT_HEIGHT = 1123
+    _VERTICAL_DEFAULT_HEIGHT = 1800  # Extended height for grids + aspect list
     _VERTICAL_VIEWBOX = f"0 0 {_VERTICAL_DEFAULT_WIDTH} {_VERTICAL_DEFAULT_HEIGHT}"
 
     _VERTICAL_PADDING_TOP = 15
@@ -198,16 +200,18 @@ class ChartDrawer:
     }
     
     # Vertical chart specific offsets for A4 portrait layout
+    # Layout order: Title -> Wheel -> Elements/Qualities -> Grids (2 rows) -> House Comparison -> Aspect List -> Bottom
     _BASE_VERTICAL_CHART_OFFSETS = {
-        "wheel": 200,           # Wheel positioned after title
-        "grid": 700,            # Grids after wheel
-        "aspect_grid": 700,     # Aspect grid level with grids
-        "aspect_list": 700,     # Aspect list level with grids
-        "title": 20,            # Title at top
-        "elements": 150,        # Elements below title, left of wheel
-        "qualities": 150,       # Qualities below title, right of wheel
-        "lunar_phase": 1050,    # Lunar phase near bottom
-        "bottom_left": 1000,    # Bottom info at bottom
+        "wheel": 150,               # Wheel starts after title (title ends ~130)
+        "grid": 720,                # Grids row 1 (wheel ends ~630, elements end ~700)
+        "house_comparison": 1160,   # House comparison after 2 grid rows (720 + 220 + 220)
+        "aspect_grid": 720,         # Single chart aspect grid (same as grids for Natal)
+        "aspect_list": 1400,        # Aspect list after house comparison
+        "title": 20,                # Title at top
+        "elements": 640,            # Elements after wheel, on left side
+        "qualities": 640,           # Qualities after wheel, on right side  
+        "lunar_phase": 1800,        # Lunar phase near bottom (dynamic)
+        "bottom_left": 1750,        # Bottom info after aspect list (dynamic)
     }
     _MAX_TOP_SHIFT = 80
     _TOP_SHIFT_FACTOR = 2
@@ -516,10 +520,49 @@ class ChartDrawer:
         # Override dimensions and offsets for vertical orientation
         if self.orientation == "vertical":
             self.width = self._VERTICAL_DEFAULT_WIDTH
-            self.height = self._VERTICAL_DEFAULT_HEIGHT
-            # Use vertical-specific offsets
-            self._vertical_offsets = self._BASE_VERTICAL_CHART_OFFSETS.copy()
-            # Disable auto-size for vertical charts to maintain A4 dimensions
+            
+            # Dynamic height calculation for vertical charts
+            if self.chart_type in ("Natal", "SingleReturnChart", "Composite"):
+                # Single Chart Vertical Layout
+                self.height = 1350  # Increased height for single charts
+                self._vertical_offsets = self._BASE_VERTICAL_CHART_OFFSETS.copy()
+                self._vertical_offsets["wheel"] = 150
+                self._vertical_offsets["elements"] = 720
+                self._vertical_offsets["qualities"] = 720
+                self._vertical_offsets["grid"] = 860
+                self._vertical_offsets["aspect_grid"] = 860
+                self._vertical_offsets["lunar_phase"] = 1260  # Moved down
+                self._vertical_offsets["bottom_left"] = 1200  # Moved down
+                self._vertical_offsets["house_comparison"] = 0
+                self._vertical_offsets["aspect_list"] = 0
+            else:
+                # Double Chart Vertical Layout (Synastry, Transit, etc.)
+                base_height = 2200  # Increased base height
+                
+                # Calculate aspect list height
+                total_aspects = len(self.aspects_list) if hasattr(self, "aspects_list") else 0
+                cols = 4
+                rows = math.ceil(total_aspects / cols) if total_aspects > 0 else 0
+                line_height = 14
+                list_padding = 60 # Title + padding
+                aspect_list_height = (rows * line_height) + list_padding
+
+                # Total height
+                self.height = base_height + aspect_list_height + 150 # + Bottom padding
+
+                # Update offsets for 2x2 layout
+                self._vertical_offsets = self._BASE_VERTICAL_CHART_OFFSETS.copy()
+                self._vertical_offsets["wheel"] = 150
+                self._vertical_offsets["elements"] = 640
+                self._vertical_offsets["qualities"] = 640
+                self._vertical_offsets["grid"] = 860
+                self._vertical_offsets["aspect_grid"] = 860
+                self._vertical_offsets["house_comparison"] = 1550  # Moved down
+                self._vertical_offsets["aspect_list"] = 1850  # Moved down
+                self._vertical_offsets["lunar_phase"] = self.height - 100
+                self._vertical_offsets["bottom_left"] = self.height - 150
+
+            # Disable auto-size for vertical charts as we handle it manually above
             self.auto_size = False
 
         self._apply_dynamic_height_adjustment()
@@ -735,8 +778,8 @@ class ChartDrawer:
         return f"0 {min_y} {int(self.width)} {viewbox_height}"
 
     def _vertical_viewbox(self) -> str:
-        """Return the viewBox string for vertical A4 portrait orientation."""
-        return self._VERTICAL_VIEWBOX
+        """Return the viewBox string for vertical A4 portrait orientation using dynamic height."""
+        return f"0 0 {int(self.width)} {int(self.height)}"
 
     def _wheel_only_viewbox(self, margin: int = 20) -> str:
         """Return a tight viewBox for the wheel-only template.
@@ -1335,6 +1378,7 @@ class ChartDrawer:
         offsets = self._vertical_offsets
         template_dict["full_wheel_translate_y"] = offsets["wheel"]
         template_dict["houses_and_planets_translate_y"] = offsets["grid"]
+        template_dict["house_comparison_translate_y"] = offsets.get("house_comparison", 1160)
         template_dict["aspect_grid_translate_y"] = offsets["aspect_grid"]
         template_dict["aspect_list_translate_y"] = offsets["aspect_list"]
         template_dict["title_translate_y"] = offsets["title"]
@@ -1686,6 +1730,8 @@ class ChartDrawer:
                 main_subject_houses_list=first_subject_houses_list,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
+                x_position=0 if self.orientation == "vertical" else 750,
+                y_position=0 if self.orientation == "vertical" else 30,
             )
             template_dict["makeSecondaryHousesGrid"] = ""
 
@@ -1727,6 +1773,7 @@ class ChartDrawer:
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
+                x_position=0 if self.orientation == "vertical" else 645,
             )
             template_dict["makeSecondaryPlanetGrid"] = ""
             template_dict["makeHouseComparisonGrid"] = ""
@@ -1793,6 +1840,7 @@ class ChartDrawer:
                     self.planets_settings,
                     self.aspects_settings,
                     chart_height=self.height,
+                    orientation=self.orientation,
                 )  # type: ignore[arg-type]
             else:
                 template_dict["makeAspectGrid"] = ""
@@ -1902,6 +1950,8 @@ class ChartDrawer:
                 main_subject_houses_list=first_subject_houses_list,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
+                x_position=0 if self.orientation == "vertical" else 750,
+                y_position=0 if self.orientation == "vertical" else 30,
             )
             # template_dict["makeSecondaryHousesGrid"] = draw_secondary_house_grid(
             #     secondary_subject_houses_list=second_subject_houses_list,
@@ -1950,6 +2000,7 @@ class ChartDrawer:
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
+                x_position=0 if self.orientation == "vertical" else 645,
             )
 
             template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
@@ -1959,6 +2010,7 @@ class ChartDrawer:
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
+                x_position=0 if self.orientation == "vertical" else 910,
             )
 
             # House comparison grid
@@ -1978,7 +2030,7 @@ class ChartDrawer:
                     house_position_comparison_label=self._translate("house_position_comparison", "House Position Comparison"),
                     return_point_label=self._translate("transit_point", "Transit Point"),
                     natal_house_label=self._translate("house_position", "Natal House"),
-                    x_position=980,
+                    x_position=250 if self.orientation == "vertical" else 980,
                 )
             else:
                 template_dict["makeHouseComparisonGrid"] = ""
@@ -2030,6 +2082,7 @@ class ChartDrawer:
                     self.planets_settings,  # type: ignore[arg-type]
                     self.aspects_settings,  # type: ignore[arg-type]
                     chart_height=self.height,
+                    orientation=self.orientation,
                 )
             else:
                 template_dict["makeAspectGrid"] = ""
@@ -2074,12 +2127,16 @@ class ChartDrawer:
                 main_subject_houses_list=first_subject_houses_list,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
+                x_position=0 if self.orientation == "vertical" else 750,
+                y_position=0 if self.orientation == "vertical" else 30,
             )
 
             template_dict["makeSecondaryHousesGrid"] = draw_secondary_house_grid(
                 secondary_subject_houses_list=second_subject_houses_list,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
+                x_position=0 if self.orientation == "vertical" else 1015,
+                y_position=0 if self.orientation == "vertical" else 30,
             )
 
             template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
@@ -2120,6 +2177,7 @@ class ChartDrawer:
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
+                x_position=0 if self.orientation == "vertical" else 645,
             )
             template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
                 planets_and_houses_grid_title="",
@@ -2128,6 +2186,7 @@ class ChartDrawer:
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
+                x_position=0 if self.orientation == "vertical" else 910,
             )
             if self.show_house_position_comparison:
                 house_comparison_factory = HouseComparisonFactory(
@@ -2151,7 +2210,7 @@ class ChartDrawer:
                     return_point_label=first_subject_label + " " + point_column_label,
                     return_label=first_subject_label,
                     radix_label=second_subject_label,
-                    x_position=1090,
+                    x_position=0 if self.orientation == "vertical" else 1090,
                     y_position=0,
                 )
 
@@ -2164,7 +2223,7 @@ class ChartDrawer:
                     return_point_label=second_subject_label + " " + point_column_label,
                     return_label=second_subject_label,
                     radix_label=first_subject_label,
-                    x_position=1290,
+                    x_position=200 if self.orientation == "vertical" else 1290,
                     y_position=0,
                 )
 
@@ -2221,6 +2280,7 @@ class ChartDrawer:
                     self.aspects_settings,
                     max_columns=7,
                     chart_height=self.height,
+                    orientation=self.orientation,
                 )  # type: ignore[arg-type]
             else:
                 template_dict["makeAspectGrid"] = ""
@@ -2286,12 +2346,16 @@ class ChartDrawer:
                 main_subject_houses_list=first_subject_houses_list,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
+                x_position=0 if self.orientation == "vertical" else 750,
+                y_position=0 if self.orientation == "vertical" else 30,
             )
 
             template_dict["makeSecondaryHousesGrid"] = draw_secondary_house_grid(
                 secondary_subject_houses_list=second_subject_houses_list,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
+                x_position=0 if self.orientation == "vertical" else 1015,
+                y_position=0 if self.orientation == "vertical" else 30,
             )
 
             template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
@@ -2337,6 +2401,7 @@ class ChartDrawer:
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
+                x_position=0 if self.orientation == "vertical" else 645,
             )
             template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
                 planets_and_houses_grid_title="",
@@ -2345,6 +2410,7 @@ class ChartDrawer:
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
+                x_position=0 if self.orientation == "vertical" else 910,
             )
 
             if self.show_house_position_comparison:
@@ -2364,6 +2430,7 @@ class ChartDrawer:
                     return_point_label=self._translate("return_point", "Return Point"),
                     return_label=self._translate("Return", "DualReturnChart"),
                     radix_label=self._translate("Natal", "Natal"),
+                    x_position=250 if self.orientation == "vertical" else 1100,
                 )
             else:
                 template_dict["makeHouseComparisonGrid"] = ""

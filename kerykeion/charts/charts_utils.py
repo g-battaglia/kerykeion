@@ -908,6 +908,7 @@ def draw_transit_aspect_list(
     line_height: int = 14,
     max_columns: int = 6,
     chart_height: Optional[int] = None,
+    orientation: str = "horizontal",
 ) -> str:
     """
     Generates the SVG output for the aspect transit grid.
@@ -923,6 +924,7 @@ def draw_transit_aspect_list(
     - max_columns: Maximum number of columns before vertical adjustment (default: 6).
     - chart_height: Total chart height. When provided, columns from the 12th onward
       leverage the taller layout capacity (default: None).
+    - orientation: Chart orientation, "horizontal" or "vertical" (default: "horizontal").
 
     Returns:
     - A string containing the SVG path data for the aspect transit grid.
@@ -938,6 +940,59 @@ def draw_transit_aspect_list(
     # Type narrowing: at this point aspects_list contains AspectModel instances
     typed_aspects_list: list[AspectModel] = aspects_list  # type: ignore
 
+    # Vertical orientation: 4 columns fitting within 795px canvas
+    if orientation == "vertical":
+        vertical_num_columns = 4
+        vertical_column_width = 180  # 4 * 180 = 720px, fits in 795px
+        translate_x = 0
+        translate_y = 0
+        
+        # Calculate aspects per column to fill columns evenly
+        total_aspects = len(typed_aspects_list)
+        aspects_per_col = math.ceil(total_aspects / vertical_num_columns) if total_aspects > 0 else 1
+        
+        inner_path = ""
+        
+        for idx, aspect in enumerate(typed_aspects_list):
+            col_idx = idx // aspects_per_col
+            row_idx = idx % aspects_per_col
+            
+            # Ensure we don't exceed 4 columns
+            if col_idx >= vertical_num_columns:
+                col_idx = vertical_num_columns - 1
+                row_idx = idx - (col_idx * aspects_per_col)
+            
+            horizontal_position = col_idx * vertical_column_width
+            vertical_position = row_idx * line_height + 20  # +20 for title clearance
+            
+            inner_path += f'<g transform="translate({horizontal_position},{vertical_position})">'
+            
+            # First planet symbol
+            inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspect["p1"]]["name"]}" />'
+            
+            # Aspect symbol
+            aspect_name = aspect["aspect"]
+            id_value = next((a["degree"] for a in aspects_settings if a["name"] == aspect_name), None)  # type: ignore
+            inner_path += f'<use x="15" y="0" xlink:href="#orb{id_value}" />'
+            
+            # Second planet symbol
+            inner_path += '<g transform="translate(30,0)">'
+            inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspect["p2"]]["name"]}" />'
+            inner_path += "</g>"
+            
+            # Difference in degrees
+            inner_path += f'<text y="8" x="45" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;">{convert_decimal_to_degree_string(aspect["orbit"])}</text>'
+            
+            inner_path += "</g>"
+        
+        out = f'<g transform="translate({translate_x},{translate_y})">'
+        out += f'<text y="12" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 12px; font-weight: bold;">{grid_title}:</text>'
+        out += inner_path
+        out += "</g>"
+        
+        return out
+
+    # Horizontal orientation (original logic)
     translate_x = 565
     translate_y = 273
     title_clearance = 18

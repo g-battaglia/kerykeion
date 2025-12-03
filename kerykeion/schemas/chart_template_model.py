@@ -45,6 +45,9 @@ class ChartTemplateModel(SubscriptableBaseModel):
     houses_and_planets_translate_y: int
     """Vertical translation for the houses and planets grid group"""
 
+    house_comparison_translate_y: int
+    """Vertical translation for the house comparison grid group"""
+
     aspect_grid_translate_y: int
     """Vertical translation for the aspect grid group"""
 

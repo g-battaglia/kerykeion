@@ -73,51 +73,53 @@
             </g>
         </g>
 
-        <!-- Elements Left Side -->
-        <g kr:node="Elements_Percentages" transform="translate(0,$elements_translate_y)">
-            <text kr:node="Elements_Text" x="30" y="0" style="fill: $paper_color_0; font-size: 9px; font-weight: bold">$elements_string</text>
-            <text kr:node="Fire_Text" x="30" y="14" style="fill: var(--kerykeion-chart-color-fire-percentage); font-size: 9px;">$fire_string</text>
-            <text kr:node="Earth_Text" x="30" y="26" style="fill: var(--kerykeion-chart-color-earth-percentage); font-size: 9px;">$earth_string</text>
-            <text kr:node="Air_Text" x="30" y="38" style="fill: var(--kerykeion-chart-color-air-percentage); font-size: 9px;">$air_string</text>
-            <text kr:node="Water_Text" x="30" y="50" style="fill: var(--kerykeion-chart-color-water-percentage); font-size: 9px;">$water_string</text>
+        <!-- Elements - Left Side below wheel -->
+        <g kr:node="Elements_Percentages" transform="translate(40,$elements_translate_y)">
+            <text kr:node="Elements_Text" x="0" y="0" style="fill: $paper_color_0; font-size: 9px; font-weight: bold">$elements_string</text>
+            <text kr:node="Fire_Text" x="0" y="14" style="fill: var(--kerykeion-chart-color-fire-percentage); font-size: 9px;">$fire_string</text>
+            <text kr:node="Earth_Text" x="0" y="26" style="fill: var(--kerykeion-chart-color-earth-percentage); font-size: 9px;">$earth_string</text>
+            <text kr:node="Air_Text" x="0" y="38" style="fill: var(--kerykeion-chart-color-air-percentage); font-size: 9px;">$air_string</text>
+            <text kr:node="Water_Text" x="0" y="50" style="fill: var(--kerykeion-chart-color-water-percentage); font-size: 9px;">$water_string</text>
         </g>
 
-        <!-- Qualities Right Side -->
-        <g kr:node="Qualities_Percentages" transform="translate(0,$qualities_translate_y)">
-            <text kr:node="Qualities_Text" x="590" y="0" style="fill: $paper_color_0; font-size: 9px; font-weight: bold">$qualities_string</text>
-            <text kr:node="Cardinal_Text" x="590" y="14" style="fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 9px;">$cardinal_string</text>
-            <text kr:node="Fixed_Text" x="590" y="26" style="fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 9px;">$fixed_string</text>
-            <text kr:node="Mutable_Text" x="590" y="38" style="fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 9px;">$mutable_string</text>
+        <!-- Qualities - Right Side below wheel -->
+        <g kr:node="Qualities_Percentages" transform="translate(650,$qualities_translate_y)">
+            <text kr:node="Qualities_Text" x="0" y="0" style="fill: $paper_color_0; font-size: 9px; font-weight: bold">$qualities_string</text>
+            <text kr:node="Cardinal_Text" x="0" y="14" style="fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 9px;">$cardinal_string</text>
+            <text kr:node="Fixed_Text" x="0" y="26" style="fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 9px;">$fixed_string</text>
+            <text kr:node="Mutable_Text" x="0" y="38" style="fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 9px;">$mutable_string</text>
         </g>
 
-        <!-- Houses and Planets Grid - Stacked Vertically -->
-        <g kr:node="Houses_And_Planets_Grid" transform="translate(20,$houses_and_planets_translate_y)">
-            <!-- Main Subject Grid -->
-            <g kr:node="Main_Planet_Grid">
+        <!-- Houses and Planets Grid - 2x2 Layout for Vertical -->
+        <g kr:node="Houses_And_Planets_Grid" transform="translate(0,$houses_and_planets_translate_y)">
+            <!-- Row 1: Main Planet Grid (left) + Main Houses Grid (right) -->
+            <g kr:node="Main_Planet_Grid" transform="translate(30,0)">
                 $makeMainPlanetGrid
             </g>
-            <g kr:node="Main_Houses_Grid" transform="translate(200,0)">
+            <g kr:node="Main_Houses_Grid" transform="translate(410,0)">
                 $makeMainHousesGrid
             </g>
-            <g kr:node="Secondary_Planet_Grid" transform="translate(0,220)">
+            <!-- Row 2: Secondary Planet Grid (left) + Secondary Houses Grid (right) - offset by 340px -->
+            <g kr:node="Secondary_Planet_Grid" transform="translate(30,340)">
                 $makeSecondaryPlanetGrid
             </g>
-            <g kr:node="Secondary_Houses_Grid" transform="translate(250,220)">
+            <g kr:node="Secondary_Houses_Grid" transform="translate(410,340)">
                 $makeSecondaryHousesGrid
             </g>
-            <!-- House Comparison Grid -->
-            <g kr:node="House_Comparison_Table" transform="translate(500,0)">
-                $makeHouseComparisonGrid
-            </g>
+        </g>
+        
+        <!-- House Comparison Grid - Below main grids -->
+        <g kr:node="House_Comparison_Table" transform="translate(250,$house_comparison_translate_y)">
+            $makeHouseComparisonGrid
         </g>
 
         <!-- Single Chart Aspect Grid -->
-        <g kr:node="Aspect_Grid" transform="translate(450,$aspect_grid_translate_y)">
+        <g kr:node="Aspect_Grid" transform="translate(500,$aspect_grid_translate_y)">
             $makeAspectGrid
         </g>
 
-        <!-- Double Chart Aspects -->
-        <g kr:node="Aspect_List" transform="translate(50,$aspect_list_translate_y)">
+        <!-- Double Chart Aspects List -->
+        <g kr:node="Aspect_List" transform="translate(37,$aspect_list_translate_y)">
             $makeDoubleChartAspectList
         </g>
 
