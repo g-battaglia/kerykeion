@@ -365,3 +365,10 @@ class ChartTemplateModel(SubscriptableBaseModel):
 
     makeLunarPhase: str
     """SVG markup for lunar phase"""
+
+    # Vertical layout fields (optional, with defaults for horizontal templates)
+    symbol_definitions: str = ""
+    """SVG defs section for symbol definitions (used in vertical template)"""
+
+    house_comparison_translate_y: int = 0
+    """Vertical translation for house comparison grid (used in vertical template)"""

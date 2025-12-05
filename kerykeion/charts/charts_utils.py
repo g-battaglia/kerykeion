@@ -1838,3 +1838,96 @@ def calculate_synastry_quality_points(
         return {key: 0.0 for key in _QUALITY_KEYS}
 
     return {key: (combined_totals[key] / total_points) * 100.0 for key in _QUALITY_KEYS}
+
+
+def draw_vertical_transit_aspect_list(
+    grid_title: str,
+    aspects_list: Union[list[AspectModel], list[dict]],
+    celestial_point_language: Union[KerykeionLanguageCelestialPointModel, dict],
+    aspects_settings: list[dict],
+    *,
+    row_height: int = 14,
+    column_width: int = 240,
+    max_columns: int = 3,
+    max_rows_per_column: int = 20,
+) -> str:
+    """
+    Generates SVG output for aspects in a vertical multi-column layout for A4 portrait.
+
+    This function arranges aspects in a vertical layout suitable for A4 portrait orientation,
+    with multiple columns that flow from left to right, then wrap to the next row of columns.
+
+    Parameters:
+    - grid_title: Title of the aspects section.
+    - aspects_list: List of aspects.
+    - celestial_point_language: Dictionary containing the celestial point language data.
+    - aspects_settings: Dictionary containing the aspect settings.
+    - row_height: Height in pixels for each row (default: 14).
+    - column_width: Width in pixels for each column (default: 240).
+    - max_columns: Maximum number of columns before wrapping (default: 3).
+    - max_rows_per_column: Maximum rows per column before starting new column (default: 20).
+
+    Returns:
+    - A string containing the SVG path data for the vertical aspect list.
+    """
+    if isinstance(celestial_point_language, dict):
+        celestial_point_language = KerykeionLanguageCelestialPointModel(**celestial_point_language)
+
+    if aspects_list and isinstance(aspects_list[0], dict):
+        aspects_list = [AspectModel(**aspect) for aspect in aspects_list]
+
+    typed_aspects_list: list[AspectModel] = aspects_list  # type: ignore
+
+    inner_path = ""
+
+    # Title
+    inner_path += f'<text x="0" y="-5" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 12px; font-weight: bold;">{grid_title}</text>'
+
+    y_base = 12  # Start below title
+    current_column = 0
+    row_in_column = 0
+    column_rows_base_y = y_base  # Track base Y for each row of columns
+
+    for i, aspect in enumerate(typed_aspects_list):
+        x_pos = current_column * column_width
+        y_pos = column_rows_base_y + (row_in_column * row_height)
+
+        inner_path += f'<g transform="translate({x_pos},{y_pos})">'
+
+        # First planet symbol - use p1_name to look up the symbol name
+        # The celestial_point_language is keyed by names like "Sun", "Moon" etc.
+        p1_symbol_name = aspect["p1_name"]  # e.g. "Sun", "Moon"
+        inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{p1_symbol_name}" />'
+
+        # Aspect symbol
+        aspect_name = aspect["aspect"]
+        id_value = next((a["degree"] for a in aspects_settings if a["name"] == aspect_name), None)
+        inner_path += f'<use x="15" y="0" xlink:href="#orb{id_value}" />'
+
+        # Second planet symbol - use p2_name
+        inner_path += '<g transform="translate(30,0)">'
+        p2_symbol_name = aspect["p2_name"]
+        inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{p2_symbol_name}" />'
+        inner_path += "</g>"
+
+        # Orb value (difference in degrees)
+        inner_path += f'<text y="8" x="48" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 9px;">{convert_decimal_to_degree_string(aspect["orbit"])}</text>'
+
+        inner_path += '</g>'
+
+        # Move to next position
+        row_in_column += 1
+        if row_in_column >= max_rows_per_column:
+            row_in_column = 0
+            current_column += 1
+            if current_column >= max_columns:
+                current_column = 0
+                column_rows_base_y += max_rows_per_column * row_height + 15  # New row of columns
+
+    # Calculate total height needed
+    total_columns_used = (len(typed_aspects_list) // max_rows_per_column) + 1
+    full_column_rows = total_columns_used // max_columns
+    total_height = column_rows_base_y + (row_in_column * row_height if row_in_column > 0 else 0)
+
+    return inner_path
+

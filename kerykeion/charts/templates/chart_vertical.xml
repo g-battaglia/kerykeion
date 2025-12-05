@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--- This file is part of Kerykeion - Vertical A4 Portrait Layout -->
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:kr="https://www.kerykeion.net/"
+    width="100%"
+    height="100%"
+    viewBox="$viewbox"
+    preserveAspectRatio="xMidYMid"
+    style="background-color: $background_color"
+>
+    <title>$stringTitle</title>
+
+    <!-- Colors -->
+    <style kr:node="Theme_Colors_Tag">
+        $color_style_tag
+    </style>
+
+    <!-- Main Chart - Vertical Layout for A4 Portrait -->
+    <g kr:node="Main_Chart">
+        <!-- Title and Subject Info at Top - Centered -->
+        <g kr:node="Top_Text" transform="translate(0,$title_translate_y)">
+            <text kr:node="Chart_Title" x="397" y="30" text-anchor="middle" style="fill: $paper_color_0; font-size: 22px">$stringTitle</text>
+            <text kr:node="Top_Text_0" x="397" y="55" text-anchor="middle" style="fill: $paper_color_0; font-size: 9px">$top_left_0</text>
+            <text kr:node="Top_Text_1" x="397" y="67" text-anchor="middle" style="fill: $paper_color_0; font-size: 9px">$top_left_1</text>
+            <text kr:node="Top_Text_2" x="397" y="79" text-anchor="middle" style="fill: $paper_color_0; font-size: 9px">$top_left_2</text>
+            <text kr:node="Top_Text_3" x="397" y="91" text-anchor="middle" style="fill: $paper_color_0; font-size: 9px">$top_left_3</text>
+            <text kr:node="Top_Text_4" x="397" y="103" text-anchor="middle" style="fill: $paper_color_0; font-size: 9px">$top_left_4</text>
+            <text kr:node="Top_Text_5" x="397" y="115" text-anchor="middle" style="fill: $paper_color_0; font-size: 9px">$top_left_5</text>
+        </g>
+
+        <!-- Full Wheel - Centered in upper portion -->
+        <g kr:node="Full_Wheel" transform="translate(157,$full_wheel_translate_y)">
+            <!-- Background Circle -->
+            <g kr:node='Background_Circle'>
+                $background_circle
+            </g>
+            <!-- Zodiac -->
+            <g kr:node="Zodiac">
+                $makeZodiac
+            </g>
+            <!-- First Circle -->
+            <g kr:node="First_Circle">
+                $first_circle
+            </g>
+            <!-- Second Circle -->
+            <g kr:node="Second_Circle">
+                $second_circle
+            </g>
+            <!-- Third Circle -->
+            <g kr:node="Third_Circle">
+                $third_circle
+            </g>
+            <!-- Transit Ring -->
+            <g kr:node="Transint_Ring">
+                $transitRing
+            </g>
+            <!-- Degree Ring -->
+            <g kr:node="Degree_Ring">
+                $degreeRing
+            </g>
+            <!-- Houses -->
+            <g kr:node="Houses_Wheel">
+                $makeHouses
+            </g>
+            <!-- Planets -->
+            <g kr:node="Planets_Wheel">
+                $makePlanets
+            </g>
+            <!-- Aspects -->
+            <g kr:node="Aspects_Wheel">
+                $makeAspects
+            </g>
+        </g>
+
+        <!-- Elements - Left Side below wheel -->
+        <g kr:node="Elements_Percentages" transform="translate(40,$elements_translate_y)">
+            <text kr:node="Elements_Text" x="0" y="0" style="fill: $paper_color_0; font-size: 9px; font-weight: bold">$elements_string</text>
+            <text kr:node="Fire_Text" x="0" y="14" style="fill: var(--kerykeion-chart-color-fire-percentage); font-size: 9px;">$fire_string</text>
+            <text kr:node="Earth_Text" x="0" y="26" style="fill: var(--kerykeion-chart-color-earth-percentage); font-size: 9px;">$earth_string</text>
+            <text kr:node="Air_Text" x="0" y="38" style="fill: var(--kerykeion-chart-color-air-percentage); font-size: 9px;">$air_string</text>
+            <text kr:node="Water_Text" x="0" y="50" style="fill: var(--kerykeion-chart-color-water-percentage); font-size: 9px;">$water_string</text>
+        </g>
+
+        <!-- Qualities - Right Side below wheel -->
+        <g kr:node="Qualities_Percentages" transform="translate(650,$qualities_translate_y)">
+            <text kr:node="Qualities_Text" x="0" y="0" style="fill: $paper_color_0; font-size: 9px; font-weight: bold">$qualities_string</text>
+            <text kr:node="Cardinal_Text" x="0" y="14" style="fill: var(--kerykeion-chart-color-cardinal-percentage); font-size: 9px;">$cardinal_string</text>
+            <text kr:node="Fixed_Text" x="0" y="26" style="fill: var(--kerykeion-chart-color-fixed-percentage); font-size: 9px;">$fixed_string</text>
+            <text kr:node="Mutable_Text" x="0" y="38" style="fill: var(--kerykeion-chart-color-mutable-percentage); font-size: 9px;">$mutable_string</text>
+        </g>
+
+        <!-- Houses and Planets Grids - Side by side layout -->
+        <g kr:node="Houses_And_Planets_Grid" transform="translate(0,$houses_and_planets_translate_y)">
+            <!-- Main Planet Grid (left side) -->
+            <g kr:node="Main_Planet_Grid" transform="translate(30,0)">
+                $makeMainPlanetGrid
+            </g>
+            <!-- Main Houses Grid (right side) -->
+            <g kr:node="Main_Houses_Grid" transform="translate(410,0)">
+                $makeMainHousesGrid
+            </g>
+            <!-- Secondary Planet Grid (left side, below main) -->
+            <g kr:node="Secondary_Planet_Grid" transform="translate(30,260)">
+                $makeSecondaryPlanetGrid
+            </g>
+            <!-- Secondary Houses Grid (right side, below main) -->
+            <g kr:node="Secondary_Houses_Grid" transform="translate(410,260)">
+                $makeSecondaryHousesGrid
+            </g>
+        </g>
+        
+        <!-- House Comparison Grid - Below grids -->
+        <g kr:node="House_Comparison_Table" transform="translate(250,$house_comparison_translate_y)">
+            $makeHouseComparisonGrid
+        </g>
+
+        <!-- Single Chart Aspect Grid - positioned with negative translate to compensate for internal coords (x=510, y=468) -->
+        <g kr:node="Aspect_Grid" transform="translate(-470,$aspect_grid_translate_y)">
+            $makeAspectGrid
+        </g>
+
+        <!-- Double Chart Aspects List -->
+        <g kr:node="Aspect_List" transform="translate(37,$aspect_list_translate_y)">
+            $makeDoubleChartAspectList
+        </g>
+
+        <!-- Bottom Info - Centered -->
+        <g kr:node="Bottom_Text" transform="translate(0,$bottom_left_translate_y)">
+            <text kr:node="Bottom_Text_0" x="397" y="0" text-anchor="middle" style="fill: $paper_color_0; font-size: 8px">$bottom_left_0</text>
+            <text kr:node="Bottom_Text_1" x="397" y="12" text-anchor="middle" style="fill: $paper_color_0; font-size: 8px">$bottom_left_1</text>
+            <text kr:node="Bottom_Text_2" x="397" y="24" text-anchor="middle" style="fill: $paper_color_0; font-size: 8px">$bottom_left_2</text>
+            <text kr:node="Bottom_Text_3" x="397" y="36" text-anchor="middle" style="fill: $paper_color_0; font-size: 8px">$bottom_left_3</text>
+            <text kr:node="Bottom_Text_4" x="397" y="48" text-anchor="middle" style="fill: $paper_color_0; font-size: 8px">$bottom_left_4</text>
+        </g>
+
+        <!-- Lunar Phase - Bottom center -->
+        <g kr:node="Lunar_Phase" transform="translate(350,$lunar_phase_translate_y)">
+            $makeLunarPhase
+        </g>
+    </g>
+
+    $symbol_definitions
+</svg>

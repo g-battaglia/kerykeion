@@ -66,8 +66,10 @@ from kerykeion.charts.charts_utils import (
     draw_main_planet_grid,
     draw_secondary_planet_grid,
     format_location_string,
-    format_datetime_with_timezone
+    format_datetime_with_timezone,
+    draw_vertical_transit_aspect_list,
 )
+
 from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg, distribute_percentages_to_100
 from kerykeion.settings.chart_defaults import (
@@ -2697,6 +2699,252 @@ class ChartDrawer:
             output_file.write(template)
 
         print(f"SVG Generated Correctly in: {chartname}")
+
+    # ==========================================
+    # VERTICAL A4 PORTRAIT CHART METHODS
+    # ==========================================
+
+    # Constants for vertical A4 layout
+    _VERTICAL_WIDTH = 794   # A4 width at 96 DPI
+    _VERTICAL_BASE_HEIGHT = 1122  # A4 height at 96 DPI (base, may be extended)
+    _VERTICAL_ASPECT_ROW_HEIGHT = 14  # Height per aspect row
+
+    def _calculate_vertical_dynamic_height(self) -> int:
+        """
+        Calculate dynamic height for vertical chart based on content.
+        
+        For double wheel charts, height extends to accommodate:
+        - aspect_list mode: multi-column aspect list
+        - aspect_grid mode: secondary planet/house grids + house comparison
+        
+        Returns:
+            int: The calculated height for the vertical chart.
+        """
+        base_height = self._VERTICAL_BASE_HEIGHT
+        
+        # For double wheel charts, we need extra height
+        if self.chart_type in ("Synastry", "Transit", "DualReturnChart"):
+            if self.double_chart_aspect_grid_type == "list":
+                # Aspect list mode - height based on number of aspects
+                aspects_count = len(self.aspects_list)
+                # 3 columns x 20 rows = 60 aspects per "row of columns"
+                max_columns = 3
+                max_rows_per_column = 20
+                aspects_per_column_row = max_columns * max_rows_per_column
+                
+                full_column_rows = aspects_count // aspects_per_column_row
+                remaining_aspects = aspects_count % aspects_per_column_row
+                
+                # Each row of columns takes about 300px (20 rows * 14px + 20px margin)
+                column_row_height = max_rows_per_column * self._VERTICAL_ASPECT_ROW_HEIGHT + 20
+                
+                aspects_base_y = 700
+                aspects_height = (full_column_rows + (1 if remaining_aspects > 0 else 0)) * column_row_height
+                
+                # Add margin for bottom text
+                content_end = aspects_base_y + aspects_height + 120
+                return max(base_height, content_end)
+            else:
+                # Aspect grid mode - need extra height for double grids and house comparison
+                # Main grids: ~260px, Secondary grids: ~260px, House comparison: ~140px, margin: ~100px
+                # Total needed from y=700: ~760px → ends at ~1460px
+                return max(base_height, 1500)
+        
+        return base_height
+
+    def _vertical_viewbox(self, height: int = None) -> str:
+        """Return the viewBox string for vertical A4 portrait layout."""
+        h = height if height is not None else self._VERTICAL_BASE_HEIGHT
+        return f"0 0 {self._VERTICAL_WIDTH} {h}"
+
+    def _create_vertical_template_dictionary(self, *, custom_title: Union[str, None] = None) -> "ChartTemplateModel":
+        """
+        Create template dictionary with vertical-specific offsets for A4 portrait layout.
+
+        This method handles all chart types (Natal, Composite, Transit, Synastry,
+        DualReturnChart, SingleReturnChart) with proper positioning for vertical layout.
+        For double wheel charts, it supports both 'list' and 'table' aspect display modes.
+
+        Returns:
+            ChartTemplateModel: Template variables with vertical positioning.
+        """
+        # Get base template dictionary
+        td = self._create_template_dictionary(custom_title=custom_title)
+        td_dict = td.model_dump()
+
+        # Calculate dynamic height for vertical layout
+        chart_height = self._calculate_vertical_dynamic_height()
+        
+        # Override with vertical-specific offsets
+        td_dict["viewbox"] = self._vertical_viewbox(chart_height)
+
+        # Title at top, centered
+        td_dict["title_translate_y"] = 0
+
+        # Wheel positioned below title (centered horizontally at x=157 in template)
+        td_dict["full_wheel_translate_y"] = 130
+
+        # Elements and qualities below wheel
+        td_dict["elements_translate_y"] = 620
+        td_dict["qualities_translate_y"] = 620
+
+        # Chart-type specific positioning
+        if self.chart_type in ("Natal", "Composite", "SingleReturnChart"):
+            # Single wheel charts - aspect grid below wheel
+            td_dict["houses_and_planets_translate_y"] = 700
+            td_dict["house_comparison_translate_y"] = 980
+            
+            # Aspect grid for single charts uses internal x_start=510, y_start=468
+            # To center it horizontally in 794px width, we adjust the translate
+            # The grid draws from x=510 internally, so we move it left by about 510-140=370
+            td_dict["aspect_grid_translate_y"] = 450
+            
+            # No aspect list for single charts
+            td_dict["aspect_list_translate_y"] = 0
+            td_dict["makeDoubleChartAspectList"] = ""
+            
+            # Bottom text positioning
+            td_dict["bottom_left_translate_y"] = 1050
+            td_dict["lunar_phase_translate_y"] = 1070
+
+        elif self.chart_type in ("Synastry", "Transit", "DualReturnChart"):
+            # Double wheel charts - need more vertical space
+            td_dict["houses_and_planets_translate_y"] = 700
+            # House comparison moved down to avoid overlap with secondary grids
+            # Secondary grids end around y=700+260+260=1220, so start comparison at y=1240
+            td_dict["house_comparison_translate_y"] = 1240
+            
+            if self.double_chart_aspect_grid_type == "list":
+                # Vertical aspect list mode (dynamic height)
+                td_dict["aspect_grid_translate_y"] = 0
+                td_dict["makeAspectGrid"] = ""
+                td_dict["aspect_list_translate_y"] = 700
+                
+                # Generate vertical aspect list
+                td_dict["makeDoubleChartAspectList"] = draw_vertical_transit_aspect_list(
+                    grid_title=self._translate("aspects", "Aspects"),
+                    aspects_list=self.aspects_list,
+                    celestial_point_language=self._language_model.celestial_points,
+                    aspects_settings=self.aspects_settings,
+                )
+            else:
+                # Aspect grid (table) mode
+                # The transit aspect grid uses x_indent=50, y_indent=250 by default
+                # We need to reposition for vertical layout
+                td_dict["aspect_grid_translate_y"] = 450
+                td_dict["aspect_list_translate_y"] = 0
+                td_dict["makeDoubleChartAspectList"] = ""
+                
+                # Regenerate aspect grid for vertical layout position
+                td_dict["makeAspectGrid"] = draw_transit_aspect_grid(
+                    self.chart_colors_settings["paper_0"],
+                    self.available_planets_setting,
+                    self.aspects_list,
+                    x_indent=150,  # Centered for 794px width
+                    y_indent=250,
+                )
+            
+            # Bottom text - position at end of content
+            td_dict["bottom_left_translate_y"] = max(1050, chart_height - 70)
+            td_dict["lunar_phase_translate_y"] = max(1070, chart_height - 50)
+
+        # Load symbol definitions from chart.xml to include in vertical template
+        DATA_DIR = Path(__file__).parent
+        with open(DATA_DIR / "templates" / "chart.xml", "r", encoding="utf-8", errors="ignore") as f:
+            chart_xml = f.read()
+
+        # Extract defs section
+        defs_start = chart_xml.find("<defs>")
+        defs_end = chart_xml.find("</defs>") + len("</defs>")
+        if defs_start != -1 and defs_end > defs_start:
+            td_dict["symbol_definitions"] = chart_xml[defs_start:defs_end]
+        else:
+            td_dict["symbol_definitions"] = ""
+
+        return ChartTemplateModel(**td_dict)
+
+
+    def generate_vertical_svg_string(self, minify: bool = False, remove_css_variables: bool = False, *, custom_title: Union[str, None] = None) -> str:
+        """
+        Render the vertical A4 portrait chart SVG as a string.
+
+        Reads the vertical XML template, substitutes variables with vertical-specific
+        positioning, and optionally inlines CSS variables and minifies the output.
+
+        Args:
+            minify (bool): Remove whitespace and quotes for compactness.
+            remove_css_variables (bool): Embed CSS variable definitions.
+            custom_title (str or None): Optional override for the SVG title.
+
+        Returns:
+            str: SVG markup as a string in A4 portrait orientation.
+        """
+        td = self._create_vertical_template_dictionary(custom_title=custom_title)
+
+        DATA_DIR = Path(__file__).parent
+        xml_svg = DATA_DIR / "templates" / "chart_vertical.xml"
+
+        # read template
+        with open(xml_svg, "r", encoding="utf-8", errors="ignore") as f:
+            template = Template(f.read()).substitute(td.model_dump())
+
+        logger.debug("Vertical template dictionary includes %s fields", len(td.model_dump()))
+
+        if remove_css_variables:
+            template = inline_css_variables_in_svg(template)
+
+        if minify:
+            template = scourString(template).replace('"', "'").replace("\n", "").replace("\t", "").replace("    ", "").replace("  ", "")
+        else:
+            template = template.replace('"', "'")
+
+        return template
+
+    def save_vertical_svg(self, output_path: Union[str, Path, None] = None, filename: Union[str, None] = None, minify: bool = False, remove_css_variables: bool = False, *, custom_title: Union[str, None] = None):
+        """
+        Generate and save the vertical A4 portrait chart SVG to disk.
+
+        Calls generate_vertical_svg_string to render the SVG, then writes a file named
+        "{subject.name} - {chart_type} Chart - Vertical.svg" in the specified output directory.
+
+        Args:
+            output_path (str, Path, or None): Directory path where the SVG file will be saved.
+                If None, defaults to the user's home directory.
+            filename (str or None): Custom filename for the SVG file (without extension).
+                If None, uses the default pattern: "{subject.name} - {chart_type} Chart - Vertical".
+            minify (bool): Pass-through to generate_vertical_svg_string for compact output.
+            remove_css_variables (bool): Pass-through to generate_vertical_svg_string to embed CSS variables.
+            custom_title (str or None): Optional override for the SVG title.
+
+        Returns:
+            None
+        """
+        template = self.generate_vertical_svg_string(minify, remove_css_variables, custom_title=custom_title)
+
+        # Convert output_path to Path object, default to home directory
+        output_directory = Path(output_path) if output_path is not None else Path.home()
+
+        # Determine filename
+        if filename is not None:
+            chartname = output_directory / f"{filename}.svg"
+        else:
+            # Use default filename pattern
+            chart_type_for_filename = self.chart_type
+            if self.chart_type == "DualReturnChart" and self.second_obj is not None and hasattr(self.second_obj, 'return_type'):
+                if self.second_obj.return_type == "Lunar":
+                    chartname = output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Lunar Return - Vertical.svg"
+                elif self.second_obj.return_type == "Solar":
+                    chartname = output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Solar Return - Vertical.svg"
+                else:
+                    chartname = output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Vertical.svg"
+            else:
+                chartname = output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Vertical.svg"
+
+        with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
+            output_file.write(template)
+
+        print(f"Vertical SVG Generated Correctly in: {chartname}")
+
 
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
