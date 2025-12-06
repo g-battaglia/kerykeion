@@ -52,3 +52,5 @@ kr_venv
 request_cache
 Pipfile
 .mypy_cache
+workspace
+coverage.xml
