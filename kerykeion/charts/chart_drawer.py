@@ -256,6 +256,7 @@ class ChartDrawer:
         show_cusp_position_comparison: bool = True,
         auto_size: bool = True,
         padding: int = 20,
+        show_degree_indicators: bool = True,
     ):
         """
         Initialize the chart visualizer with pre-computed chart data.
@@ -300,6 +301,7 @@ class ChartDrawer:
         self.custom_title = custom_title
         self.show_house_position_comparison = show_house_position_comparison
         self.show_cusp_position_comparison = show_cusp_position_comparison
+        self.show_degree_indicators = show_degree_indicators
         self.auto_size = auto_size
         self._padding = padding
         self._vertical_offsets: dict[str, int] = self._BASE_VERTICAL_OFFSETS.copy()
@@ -1578,6 +1580,7 @@ class ChartDrawer:
                 main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                 external_view=self.external_view,
                 first_circle_radius=self.first_circle_radius,
+                show_degree_indicators=self.show_degree_indicators,
             )
 
             template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
@@ -1722,6 +1725,7 @@ class ChartDrawer:
                 main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                 external_view=self.external_view,
                 first_circle_radius=self.first_circle_radius,
+                show_degree_indicators=self.show_degree_indicators,
             )
 
             subject_name = (
@@ -1947,6 +1951,7 @@ class ChartDrawer:
                 third_circle_radius=self.third_circle_radius,
                 external_view=self.external_view,
                 second_circle_radius=self.second_circle_radius,
+                show_degree_indicators=self.show_degree_indicators,
             )
 
             # Planet grids
@@ -2147,6 +2152,7 @@ class ChartDrawer:
                 third_circle_radius=self.third_circle_radius,
                 external_view=self.external_view,
                 second_circle_radius=self.second_circle_radius,
+                show_degree_indicators=self.show_degree_indicators,
             )
 
             # Planet grid
@@ -2423,6 +2429,7 @@ class ChartDrawer:
                 third_circle_radius=self.third_circle_radius,
                 external_view=self.external_view,
                 second_circle_radius=self.second_circle_radius,
+                show_degree_indicators=self.show_degree_indicators,
             )
 
             # Planet grid
@@ -2681,6 +2688,7 @@ class ChartDrawer:
                 main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                 external_view=self.external_view,
                 first_circle_radius=self.first_circle_radius,
+                show_degree_indicators=self.show_degree_indicators,
             )
 
             template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(

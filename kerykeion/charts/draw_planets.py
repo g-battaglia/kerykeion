@@ -18,6 +18,7 @@ def draw_planets(
     external_view: bool = False,
     first_circle_radius: Union[int, float, None] = None,
     second_circle_radius: Union[int, float, None] = None,
+    show_degree_indicators: bool = True,
 ) -> str:
     """
     Draws the planets on an astrological chart based on the provided parameters.
@@ -225,7 +226,7 @@ def draw_planets(
     if chart_type in ("Natal", "Composite", "SingleReturnChart"):
         # Draw degree indicators for single charts (if first_circle_radius is provided)
         # Skip when external_view is enabled (external view has its own connecting lines)
-        if first_circle_radius is not None and not external_view:
+        if show_degree_indicators and first_circle_radius is not None and not external_view:
             main_points_rel_positions = [planet.position for planet in available_kerykeion_celestial_points]
             output = _draw_primary_point_indicators(
                 output=output,
@@ -235,35 +236,37 @@ def draw_planets(
                 first_house_degree=main_subject_first_house_degree_ut,
                 seventh_house_degree=main_subject_seventh_house_degree_ut,
                 points_abs_positions=main_points_abs_positions,
-                points_rel_positions=main_points_rel_positions,
+                points_rel_positions=[p.position for p in available_kerykeion_celestial_points],
                 points_settings=available_planets_setting,
             )
     elif chart_type in ("Transit", "Synastry", "Return", "DualReturnChart"):
-        # Draw degree indicators for secondary/outer planets
-        output = _draw_secondary_points(
-            output,
-            radius,
-            main_subject_first_house_degree_ut,
-            main_subject_seventh_house_degree_ut,
-            secondary_points_abs_positions,
-            secondary_points_rel_positions,
-            available_planets_setting,
-            chart_type,
-            TRANSIT_RING_EXCLUDE_POINTS_NAMES,
-            adjusted_offset,
-        )
-        # Draw degree indicators for primary/inner planets
-        main_points_rel_positions = [planet.position for planet in available_kerykeion_celestial_points]
-        output = _draw_inner_point_indicators(
-            output=output,
-            radius=radius,
-            third_circle_radius=third_circle_radius,
-            first_house_degree=main_subject_first_house_degree_ut,
-            seventh_house_degree=main_subject_seventh_house_degree_ut,
-            points_abs_positions=main_points_abs_positions,
-            points_rel_positions=main_points_rel_positions,
-            points_settings=available_planets_setting,
-        )
+        # Draw degree indicators if enabled
+        if show_degree_indicators:
+            # Draw degree indicators for secondary/outer planets
+            output = _draw_secondary_points(
+                output,
+                radius,
+                main_subject_first_house_degree_ut,
+                main_subject_seventh_house_degree_ut,
+                secondary_points_abs_positions,
+                secondary_points_rel_positions,
+                available_planets_setting,
+                chart_type,
+                TRANSIT_RING_EXCLUDE_POINTS_NAMES,
+                adjusted_offset,
+            )
+            # Draw degree indicators for primary/inner planets
+            main_points_rel_positions = [planet.position for planet in available_kerykeion_celestial_points]
+            output = _draw_inner_point_indicators(
+                output=output,
+                radius=radius,
+                third_circle_radius=third_circle_radius,
+                first_house_degree=main_subject_first_house_degree_ut,
+                seventh_house_degree=main_subject_seventh_house_degree_ut,
+                points_abs_positions=main_points_abs_positions,
+                points_rel_positions=main_points_rel_positions,
+                points_settings=available_planets_setting,
+            )
 
     return output
 

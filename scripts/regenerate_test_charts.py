@@ -516,4 +516,34 @@ all_points_synastry_chart_grid.save_svg(
     filename="John Lennon - All Active Points - Synastry Chart - Grid",
 )
 
+# Natal Chart without Degree Indicators
+natal_chart_no_indicators = ChartDrawer(
+    natal_chart_data,
+    show_degree_indicators=False,
+)
+natal_chart_no_indicators.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Natal Chart - No Degree Indicators",
+)
+
+# Synastry Chart without Degree Indicators
+synastry_chart_no_indicators = ChartDrawer(
+    synastry_chart_data,
+    show_degree_indicators=False,
+)
+synastry_chart_no_indicators.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Synastry Chart - No Degree Indicators",
+)
+
+# Transit Chart without Degree Indicators
+transit_chart_no_indicators = ChartDrawer(
+    transits_chart_data,
+    show_degree_indicators=False,
+)
+transit_chart_no_indicators.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Transit Chart - No Degree Indicators",
+)
+
 print("All charts regenerated successfully!")
