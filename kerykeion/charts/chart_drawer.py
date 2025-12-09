@@ -1577,6 +1577,7 @@ class ChartDrawer:
                 main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
                 main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                 external_view=self.external_view,
+                first_circle_radius=self.first_circle_radius,
             )
 
             template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
@@ -1720,6 +1721,7 @@ class ChartDrawer:
                 main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
                 main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                 external_view=self.external_view,
+                first_circle_radius=self.first_circle_radius,
             )
 
             subject_name = (
@@ -2675,6 +2677,7 @@ class ChartDrawer:
                 main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
                 main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                 external_view=self.external_view,
+                first_circle_radius=self.first_circle_radius,
             )
 
             template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
