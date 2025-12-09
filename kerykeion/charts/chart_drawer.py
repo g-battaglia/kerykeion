@@ -1946,6 +1946,7 @@ class ChartDrawer:
                 chart_type=self.chart_type,
                 third_circle_radius=self.third_circle_radius,
                 external_view=self.external_view,
+                second_circle_radius=self.second_circle_radius,
             )
 
             # Planet grids
@@ -2145,6 +2146,7 @@ class ChartDrawer:
                 chart_type=self.chart_type,
                 third_circle_radius=self.third_circle_radius,
                 external_view=self.external_view,
+                second_circle_radius=self.second_circle_radius,
             )
 
             # Planet grid
@@ -2420,6 +2422,7 @@ class ChartDrawer:
                 chart_type=self.chart_type,
                 third_circle_radius=self.third_circle_radius,
                 external_view=self.external_view,
+                second_circle_radius=self.second_circle_radius,
             )
 
             # Planet grid
