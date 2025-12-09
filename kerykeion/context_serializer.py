@@ -243,6 +243,31 @@ def house_comparison_to_context(house_comparison: HouseComparisonModel, is_trans
         for point in house_comparison.second_points_in_first_houses:
             lines.append(f"  - {point_in_house_to_context(point)}")
 
+    # First subject's cusps in second subject's houses
+    if house_comparison.first_cusps_in_second_houses:
+        if is_transit:
+            # Transit case: "John's cusps in Transit's houses" (less common but included)
+            lines.append(f'\n"{house_comparison.first_subject_name}"\'s cusps in Transit\'s houses:')
+        else:
+            # Normal synastry case: bidirectional
+            lines.append(f'\n"{house_comparison.first_subject_name}"\'s cusps in "{house_comparison.second_subject_name}"\'s houses:')
+
+        for cusp in house_comparison.first_cusps_in_second_houses:
+            lines.append(f"  - {point_in_house_to_context(cusp)}")
+
+    # Second subject's cusps in first subject's houses
+    # For transit charts, the transit subject has no houses, so we handle this differently
+    if house_comparison.second_cusps_in_first_houses:
+        if is_transit:
+            # Transit case: "Transit's cusps in John's houses"
+            lines.append(f'\nTransit cusps in "{house_comparison.first_subject_name}"\'s houses:')
+        else:
+            # Normal synastry case: bidirectional
+            lines.append(f'\n"{house_comparison.second_subject_name}"\'s cusps in "{house_comparison.first_subject_name}"\'s houses:')
+
+        for cusp in house_comparison.second_cusps_in_first_houses:
+            lines.append(f"  - {point_in_house_to_context(cusp)}")
+
     return '\n'.join(lines)
 
 

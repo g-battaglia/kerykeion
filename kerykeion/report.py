@@ -575,6 +575,23 @@ class ReportGenerator:
             )
         )
 
+        # Add cusp comparison sections
+        if comparison.first_cusps_in_second_houses:
+            sections.append(
+                self._render_point_in_house_table(
+                    comparison.first_cusps_in_second_houses,
+                    f"{comparison.first_subject_name} cusps in {comparison.second_subject_name} houses",
+                )
+            )
+
+        if comparison.second_cusps_in_first_houses:
+            sections.append(
+                self._render_point_in_house_table(
+                    comparison.second_cusps_in_first_houses,
+                    f"{comparison.second_subject_name} cusps in {comparison.first_subject_name} houses",
+                )
+            )
+
         return "\n\n".join(section for section in sections if section)
 
     def _render_point_in_house_table(self, points: Sequence[PointInHouseModel], title: str) -> str:
@@ -645,7 +662,7 @@ class ReportGenerator:
     def _format_date(iso_datetime: Optional[str]) -> str:
         """
         Format datetime in dd/mm/yyyy format.
-        
+
         .. deprecated::
             Use _format_date_iso() for internationally unambiguous date formatting.
         """
@@ -660,7 +677,7 @@ class ReportGenerator:
     def _format_date_iso(iso_datetime: Optional[str]) -> str:
         """
         Format datetime in ISO 8601 format (YYYY-MM-DD).
-        
+
         This format is internationally unambiguous and follows the ISO 8601 standard.
         """
         if not iso_datetime:

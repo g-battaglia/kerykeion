@@ -1660,6 +1660,125 @@ def draw_single_house_comparison_grid(
     return svg_output
 
 
+def draw_cusp_comparison_grid(
+        house_comparison: "HouseComparisonModel",
+        celestial_point_language: "KerykeionLanguageCelestialPointModel",
+        *,
+        cusps_owner_subject_number: Literal[1, 2] = 1,
+        text_color: str = "var(--kerykeion-color-neutral-content)",
+        cusp_position_comparison_label: str = "Cusp Position Comparison",
+        owner_cusp_label: str = "Owner Cusp",
+        projected_house_label: str = "Projected House",
+        x_position: int = 1030,
+        y_position: int = 0,
+) -> str:
+    """
+    Generate SVG code for displaying house cusps and their positions in reciprocal houses.
+
+    Parameters:
+    - house_comparison (HouseComparisonModel): House comparison data
+    - celestial_point_language (KerykeionLanguageCelestialPointModel): Language settings
+    - cusps_owner_subject_number (int): Which subject's cusps to display (1 or 2)
+    - text_color (str): Color for text elements
+    - cusp_position_comparison_label (str): Label for the comparison section
+    - owner_cusp_label (str): Label for owner cusp column
+    - projected_house_label (str): Label for projected house column
+    - x_position (int): X position for the grid
+    - y_position (int): Y position for the grid
+
+    Returns:
+    - str: SVG representation of the cusp comparison grid
+    """
+    # Select the appropriate cusp data based on subject number
+    if cusps_owner_subject_number == 1:
+        cusps_data = house_comparison.first_cusps_in_second_houses
+        subject_name = house_comparison.first_subject_name
+    else:
+        cusps_data = house_comparison.second_cusps_in_first_houses
+        subject_name = house_comparison.second_subject_name
+
+    if not cusps_data:
+        return ""
+
+    svg_output = (
+        f'<g transform="translate({x_position},{y_position})">'
+        f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 12px; font-weight: bold;">{cusp_position_comparison_label}</text>'
+    )
+
+    # Add column headers with the same vertical spacing pattern as draw_house_comparison_grid
+    line_increment = 10
+    svg_output += (
+        f'<g transform="translate(0,{line_increment})">'
+        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{owner_cusp_label}</text>'
+        f'<text text-anchor="start" x="70" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{projected_house_label}</text>'
+        f'</g>'
+    )
+    line_increment += 15
+
+    # Derive a short cusp label (e.g. "Cusp", "Cuspide") from the owner column header.
+    cusp_cell_label = owner_cusp_label.split()[-1] if owner_cusp_label else "Cusp"
+
+    for cusp in cusps_data:
+        # Use numeric house identifiers to avoid exposing internal names like "First_House".
+        owner_house_number = cusp.point_owner_house_number or 0
+        owner_house_display = f"{cusp_cell_label} {owner_house_number}" if owner_house_number else "-"
+        projected_house_display = str(cusp.projected_house_number)
+
+        svg_output += (
+            f'<g transform="translate(0,{line_increment})">'
+            f'<text text-anchor="start" x="0" style="fill:{text_color}; font-size: 10px;">{owner_house_display}</text>'
+            f'<text text-anchor="start" x="70" style="fill:{text_color}; font-size: 10px;">{projected_house_display}</text>'
+            f'</g>'
+        )
+        line_increment += 12
+
+    svg_output += "</g>"
+
+    return svg_output
+
+
+def draw_single_cusp_comparison_grid(
+        house_comparison: "HouseComparisonModel",
+        celestial_point_language: "KerykeionLanguageCelestialPointModel",
+        *,
+        cusps_owner_subject_number: Literal[1, 2] = 1,
+        text_color: str = "var(--kerykeion-color-neutral-content)",
+        cusp_position_comparison_label: str = "Cusp Position Comparison",
+        owner_cusp_label: str = "Owner Cusp",
+        projected_house_label: str = "Projected House",
+        x_position: int = 1030,
+        y_position: int = 0,
+) -> str:
+    """
+    Generate SVG code for displaying house cusps and their positions in reciprocal houses (single grid).
+
+    Parameters:
+    - house_comparison (HouseComparisonModel): House comparison data
+    - celestial_point_language (KerykeionLanguageCelestialPointModel): Language settings
+    - cusps_owner_subject_number (int): Which subject's cusps to display (1 or 2)
+    - text_color (str): Color for text elements
+    - cusp_position_comparison_label (str): Label for the comparison section
+    - owner_cusp_label (str): Label for owner cusp column
+    - projected_house_label (str): Label for projected house column
+    - x_position (int): X position for the grid
+    - y_position (int): Y position for the grid
+
+    Returns:
+    - str: SVG representation of the cusp comparison grid
+    """
+    return draw_cusp_comparison_grid(
+        house_comparison=house_comparison,
+        celestial_point_language=celestial_point_language,
+        cusps_owner_subject_number=cusps_owner_subject_number,
+        text_color=text_color,
+        cusp_position_comparison_label=cusp_position_comparison_label,
+        owner_cusp_label=owner_cusp_label,
+        projected_house_label=projected_house_label,
+        x_position=x_position,
+        y_position=y_position,
+    )
+
+
 def makeLunarPhase(degrees_between_sun_and_moon: float, latitude: float) -> str:
     """
     Generate SVG representation of lunar phase.

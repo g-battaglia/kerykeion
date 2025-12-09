@@ -462,6 +462,10 @@ class HouseComparisonModel(SubscriptableBaseModel):
     """First subject's points positioned in second subject's houses"""
     second_points_in_first_houses: List[PointInHouseModel]
     """Second subject's points positioned in first subject's houses"""
+    first_cusps_in_second_houses: List[PointInHouseModel] = Field(default_factory=list)
+    """First subject's house cusps positioned in second subject's houses"""
+    second_cusps_in_first_houses: List[PointInHouseModel] = Field(default_factory=list)
+    """Second subject's house cusps positioned in first subject's houses"""
 
 
 class ElementDistributionModel(SubscriptableBaseModel):

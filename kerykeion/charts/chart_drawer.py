@@ -60,6 +60,8 @@ from kerykeion.charts.charts_utils import (
     draw_transit_aspect_list,
     draw_transit_aspect_grid,
     draw_single_house_comparison_grid,
+    draw_cusp_comparison_grid,
+    draw_single_cusp_comparison_grid,
     makeLunarPhase,
     draw_main_house_grid,
     draw_secondary_house_grid,
@@ -251,6 +253,7 @@ class ChartDrawer:
         aspects_settings: list[dict] = DEFAULT_CHART_ASPECTS_SETTINGS,
         custom_title: Union[str, None] = None,
         show_house_position_comparison: bool = True,
+        show_cusp_position_comparison: bool = True,
         auto_size: bool = True,
         padding: int = 20,
     ):
@@ -280,6 +283,9 @@ class ChartDrawer:
             show_house_position_comparison (bool, optional):
                 Whether to render the house position comparison grid (when supported by the chart type).
                 Defaults to True. Set to False to hide the table and reclaim horizontal space.
+            show_cusp_position_comparison (bool, optional):
+                Whether to render the cusp position comparison grid alongside the house comparison.
+                Defaults to False to preserve legacy layout; set to True to enable the new cusp table.
         """
         # --------------------
         # COMMON INITIALIZATION
@@ -293,6 +299,7 @@ class ChartDrawer:
         self.aspects_settings = [dict(aspect) for aspect in aspects_settings]
         self.custom_title = custom_title
         self.show_house_position_comparison = show_house_position_comparison
+        self.show_cusp_position_comparison = show_cusp_position_comparison
         self.auto_size = auto_size
         self._padding = padding
         self._vertical_offsets: dict[str, int] = self._BASE_VERTICAL_OFFSETS.copy()
@@ -827,9 +834,27 @@ class ChartDrawer:
                         include_title=False,
                     )
 
-                    first_house_comparison_grid_right = 1090 + first_grid_width
-                    second_house_comparison_grid_right = 1290 + second_grid_width
+                    first_house_comparison_grid_right = 1000 + first_grid_width
+                    second_house_comparison_grid_right = 1190 + second_grid_width
                     extents.extend([first_house_comparison_grid_right, second_house_comparison_grid_right])
+
+                    if self.show_cusp_position_comparison:
+                        # Cusp comparison block positioned to the right of both point grids.
+                        # In Synastry we render two cusp grids side by side; reserve
+                        # enough horizontal space for both tables plus a small gap.
+                        max_house_comparison_right = max(
+                            first_house_comparison_grid_right,
+                            second_house_comparison_grid_right,
+                        )
+                        cusp_grid_width = 160.0
+                        inter_cusp_gap = 0.0
+                        cusp_block_width = (cusp_grid_width * 2.0) + inter_cusp_gap
+                        # Place cusp block slightly to the right of the house comparison tables
+                        # and ensure the overall SVG width comfortably contains it, including
+                        # the rightmost text of the second cusp table.
+                        extra_cusp_margin = 45.0
+                        cusp_block_right = max_house_comparison_right + 50.0 + cusp_block_width + extra_cusp_margin
+                        extents.append(cusp_block_right)
 
             if self.chart_type == "Transit":
                 # House comparison grid at x ~ 1030
@@ -847,21 +872,61 @@ class ChartDrawer:
                     house_comparison_grid_right = 980 + transit_grid_width
                     extents.append(house_comparison_grid_right)
 
+                    if self.show_cusp_position_comparison:
+                        # Cusp comparison block placed to the right of the transit house grid
+                        cusp_block_width = 260.0
+                        cusp_block_right = house_comparison_grid_right + 40.0 + cusp_block_width
+                        extents.append(cusp_block_right)
+
             if self.chart_type == "DualReturnChart":
-                # House comparison grid translated to x ~ 1100
+                # House and cusp comparison grids laid out similarly to Synastry.
                 if self.show_house_position_comparison:
-                    dual_return_columns = [
-                        self._translate("return_point", "Return Point"),
-                        self._translate("Return", "DualReturnChart"),
-                        self._translate("Natal", "Natal"),
+                    # Use localized labels for the natal subject and the return.
+                    first_subject_label = self._translate("Natal", "Natal")
+                    if self.second_obj is not None and hasattr(self.second_obj, "return_type") and self.second_obj.return_type == "Solar":
+                        second_subject_label = self._translate("solar_return", "Solar Return")
+                    else:
+                        second_subject_label = self._translate("lunar_return", "Lunar Return")
+                    point_column_label = self._translate("point", "Point")
+
+                    first_columns = [
+                        f"{first_subject_label} {point_column_label}",
+                        first_subject_label,
+                        second_subject_label,
                     ]
-                    dual_return_grid_width = self._estimate_house_comparison_grid_width(
-                        column_labels=dual_return_columns,
+                    second_columns = [
+                        f"{second_subject_label} {point_column_label}",
+                        second_subject_label,
+                        first_subject_label,
+                    ]
+
+                    first_grid_width = self._estimate_house_comparison_grid_width(
+                        column_labels=first_columns,
                         include_radix_column=True,
                         include_title=True,
                     )
-                    house_comparison_grid_right = 1100 + dual_return_grid_width
-                    extents.append(house_comparison_grid_right)
+                    second_grid_width = self._estimate_house_comparison_grid_width(
+                        column_labels=second_columns,
+                        include_radix_column=True,
+                        include_title=False,
+                    )
+
+                    first_house_comparison_grid_right = 1000 + first_grid_width
+                    second_house_comparison_grid_right = 1190 + second_grid_width
+                    extents.extend([first_house_comparison_grid_right, second_house_comparison_grid_right])
+
+                    if self.show_cusp_position_comparison:
+                        # Cusp comparison block positioned to the right of both house grids.
+                        max_house_comparison_right = max(
+                            first_house_comparison_grid_right,
+                            second_house_comparison_grid_right,
+                        )
+                        cusp_grid_width = 160.0
+                        inter_cusp_gap = 0.0
+                        cusp_block_width = (cusp_grid_width * 2.0) + inter_cusp_gap
+                        extra_cusp_margin = 45.0
+                        cusp_block_right = max_house_comparison_right + 50.0 + cusp_block_width + extra_cusp_margin
+                        extents.append(cusp_block_right)
 
         # Conservative safety padding
         return int(max(extents) + self._padding)
@@ -1917,12 +1982,39 @@ class ChartDrawer:
                     house_comparison,
                     celestial_point_language=self._language_model.celestial_points,
                     active_points=self.active_points,
-                    points_owner_subject_number=2, # The second subject is the Transit
+                    points_owner_subject_number=2,  # The second subject is the Transit
                     house_position_comparison_label=self._translate("house_position_comparison", "House Position Comparison"),
                     return_point_label=self._translate("transit_point", "Transit Point"),
                     natal_house_label=self._translate("house_position", "Natal House"),
                     x_position=980,
                 )
+
+                if self.show_cusp_position_comparison:
+                    # Compute dynamic x position for the cusp comparison grid so it appears
+                    # to the right of the transit house comparison table.
+                    transit_columns = [
+                        self._translate("transit_point", "Transit Point"),
+                        self._translate("house_position", "Natal House"),
+                    ]
+                    transit_grid_width = self._estimate_house_comparison_grid_width(
+                        column_labels=transit_columns,
+                        include_radix_column=False,
+                        include_title=True,
+                        minimum_width=170.0,
+                    )
+                    cusp_x_position = 980 + transit_grid_width + 30.0
+
+                    cusp_grid = draw_single_cusp_comparison_grid(
+                        house_comparison,
+                        celestial_point_language=self._language_model.celestial_points,
+                        cusps_owner_subject_number=2,  # Transit cusps in natal houses
+                        cusp_position_comparison_label=self._translate("cusp_position_comparison", "Cusp Position Comparison"),
+                        owner_cusp_label=self._translate("transit_cusp", "Transit Cusp"),
+                        projected_house_label=self._translate("natal_house", "Natal House"),
+                        x_position=int(cusp_x_position),
+                        y_position=0,
+                    )
+                    template_dict["makeHouseComparisonGrid"] += cusp_grid
             else:
                 template_dict["makeHouseComparisonGrid"] = ""
 
@@ -2111,7 +2203,70 @@ class ChartDrawer:
                     y_position=0,
                 )
 
-                template_dict["makeHouseComparisonGrid"] = first_subject_grid + second_subject_grid
+                if self.show_cusp_position_comparison:
+                    # Estimate house comparison grid widths to place cusp comparison at the far right
+                    first_columns = [
+                        f"{first_subject_label} {point_column_label}",
+                        first_subject_label,
+                        second_subject_label,
+                    ]
+                    second_columns = [
+                        f"{second_subject_label} {point_column_label}",
+                        second_subject_label,
+                        first_subject_label,
+                    ]
+
+                    first_grid_width = self._estimate_house_comparison_grid_width(
+                        column_labels=first_columns,
+                        include_radix_column=True,
+                        include_title=True,
+                    )
+                    second_grid_width = self._estimate_house_comparison_grid_width(
+                        column_labels=second_columns,
+                        include_radix_column=True,
+                        include_title=False,
+                    )
+
+                    first_house_comparison_grid_right = 1000 + first_grid_width
+                    second_house_comparison_grid_right = 1190 + second_grid_width
+                    max_house_comparison_right = max(
+                        first_house_comparison_grid_right,
+                        second_house_comparison_grid_right,
+                    )
+                    cusp_x_position = max_house_comparison_right + 50.0
+
+                    # Place cusp comparison grids for Synastry side by side on the far right,
+                    # keeping them as close together as possible and slightly shifted left.
+                    cusp_grid_width = 160.0
+                    inter_cusp_gap = 0.0
+                    first_cusp_x = int(cusp_x_position)
+                    second_cusp_x = int(cusp_x_position + cusp_grid_width + inter_cusp_gap)
+
+                    first_cusp_grid = draw_cusp_comparison_grid(
+                        house_comparison,
+                        celestial_point_language=self._language_model.celestial_points,
+                        cusps_owner_subject_number=1,
+                        cusp_position_comparison_label=self._translate("cusp_position_comparison", "Cusp Position Comparison"),
+                        owner_cusp_label=first_subject_label + " " + self._translate("cusp", "Cusp"),
+                        projected_house_label=second_subject_label + " " + self._translate("house", "House"),
+                        x_position=first_cusp_x,
+                        y_position=0,
+                    )
+
+                    second_cusp_grid = draw_cusp_comparison_grid(
+                        house_comparison,
+                        celestial_point_language=self._language_model.celestial_points,
+                        cusps_owner_subject_number=2,
+                        cusp_position_comparison_label="",
+                        owner_cusp_label=second_subject_label + " " + self._translate("cusp", "Cusp"),
+                        projected_house_label=first_subject_label + " " + self._translate("house", "House"),
+                        x_position=second_cusp_x,
+                        y_position=0,
+                    )
+
+                    template_dict["makeHouseComparisonGrid"] = first_subject_grid + second_subject_grid + first_cusp_grid + second_cusp_grid
+                else:
+                    template_dict["makeHouseComparisonGrid"] = first_subject_grid + second_subject_grid
             else:
                 template_dict["makeHouseComparisonGrid"] = ""
 
@@ -2298,16 +2453,105 @@ class ChartDrawer:
                 )
                 house_comparison = house_comparison_factory.get_house_comparison()
 
-                template_dict["makeHouseComparisonGrid"] = draw_house_comparison_grid(
+                # Use generic, localized labels (Natal vs Return) so the DualReturn
+                # comparison layout mirrors the Synastry layout.
+                natal_label = self._translate("Natal", "Natal")
+                if self.second_obj is not None and hasattr(self.second_obj, "return_type") and self.second_obj.return_type == "Solar":
+                    return_label_text = self._translate("Return", "Return")
+                else:
+                    return_label_text = self._translate("Return", "Return")
+                point_column_label = self._translate("point", "Point")
+
+                # Two house comparison grids side by side, like Synastry.
+                first_house_grid = draw_house_comparison_grid(
                     house_comparison,
                     celestial_point_language=self._language_model.celestial_points,
                     active_points=self.active_points,
-                    points_owner_subject_number=2, # The second subject is the Solar Return
+                    points_owner_subject_number=1,
                     house_position_comparison_label=self._translate("house_position_comparison", "House Position Comparison"),
-                    return_point_label=self._translate("return_point", "Return Point"),
-                    return_label=self._translate("Return", "DualReturnChart"),
-                    radix_label=self._translate("Natal", "Natal"),
+                    return_point_label=f"{natal_label} {point_column_label}",
+                    return_label=natal_label,
+                    radix_label=return_label_text,
+                    x_position=1090,
+                    y_position=0,
                 )
+
+                second_house_grid = draw_house_comparison_grid(
+                    house_comparison,
+                    celestial_point_language=self._language_model.celestial_points,
+                    active_points=self.active_points,
+                    points_owner_subject_number=2,
+                    house_position_comparison_label="",
+                    return_point_label=point_column_label,
+                    return_label=return_label_text,
+                    radix_label=natal_label,
+                    x_position=1290,
+                    y_position=0,
+                )
+
+                if self.show_cusp_position_comparison:
+                    # Match the Synastry spacing: estimate widths to place cusp
+                    # comparison grids immediately to the right of both house grids.
+                    first_columns = [
+                        f"{natal_label} {point_column_label}",
+                        natal_label,
+                        return_label_text,
+                    ]
+                    second_columns = [
+                        f"{return_label_text} {point_column_label}",
+                        return_label_text,
+                        natal_label,
+                    ]
+
+                    first_grid_width = self._estimate_house_comparison_grid_width(
+                        column_labels=first_columns,
+                        include_radix_column=True,
+                        include_title=True,
+                    )
+                    second_grid_width = self._estimate_house_comparison_grid_width(
+                        column_labels=second_columns,
+                        include_radix_column=True,
+                        include_title=False,
+                    )
+
+                    first_house_comparison_grid_right = 1000 + first_grid_width
+                    second_house_comparison_grid_right = 1190 + second_grid_width
+                    max_house_comparison_right = max(
+                        first_house_comparison_grid_right,
+                        second_house_comparison_grid_right,
+                    )
+                    cusp_x_position = max_house_comparison_right + 50.0
+
+                    cusp_grid_width = 160.0
+                    inter_cusp_gap = 0.0
+                    first_cusp_x = int(cusp_x_position)
+                    second_cusp_x = int(cusp_x_position + cusp_grid_width + inter_cusp_gap)
+
+                    first_cusp_grid = draw_cusp_comparison_grid(
+                        house_comparison,
+                        celestial_point_language=self._language_model.celestial_points,
+                        cusps_owner_subject_number=1,
+                        cusp_position_comparison_label=self._translate("cusp_position_comparison", "Cusp Position Comparison"),
+                        owner_cusp_label=f"{natal_label} " + self._translate("cusp", "Cusp"),
+                        projected_house_label=self._translate("Return", "Return") + " " + self._translate("house", "House"),
+                        x_position=first_cusp_x,
+                        y_position=0,
+                    )
+
+                    second_cusp_grid = draw_cusp_comparison_grid(
+                        house_comparison,
+                        celestial_point_language=self._language_model.celestial_points,
+                        cusps_owner_subject_number=2,
+                        cusp_position_comparison_label="",
+                        owner_cusp_label=self._translate("return_cusp", "Return Cusp"),
+                        projected_house_label=f"{natal_label} " + self._translate("house", "House"),
+                        x_position=second_cusp_x,
+                        y_position=0,
+                    )
+
+                    template_dict["makeHouseComparisonGrid"] = first_house_grid + second_house_grid + first_cusp_grid + second_cusp_grid
+                else:
+                    template_dict["makeHouseComparisonGrid"] = first_house_grid + second_house_grid
             else:
                 template_dict["makeHouseComparisonGrid"] = ""
 

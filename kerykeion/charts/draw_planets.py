@@ -60,6 +60,8 @@ def draw_planets(
         raise KerykeionException("Secondary celestial points are required for Synastry charts")
     elif chart_type == "Return" and second_subject_available_kerykeion_celestial_points is None:
         raise KerykeionException("Secondary celestial points are required for Return charts")
+    elif chart_type == "DualReturnChart" and second_subject_available_kerykeion_celestial_points is None:
+        raise KerykeionException("Secondary celestial points are required for DualReturn charts")
 
     # Extract absolute and relative positions for main celestial points
     main_points_abs_positions = [planet.abs_pos for planet in available_kerykeion_celestial_points]
@@ -68,7 +70,7 @@ def draw_planets(
     # Extract absolute and relative positions for secondary celestial points if needed
     secondary_points_abs_positions = []
     secondary_points_rel_positions = []
-    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
+    if chart_type in ("Transit", "Synastry", "Return", "DualReturnChart"):
         if second_subject_available_kerykeion_celestial_points is not None:
             secondary_points_abs_positions = [
                 planet.abs_pos for planet in second_subject_available_kerykeion_celestial_points
@@ -192,11 +194,7 @@ def draw_planets(
 
         # Determine scale factor based on chart type
         scale_factor = 1.0
-        if chart_type == "Transit":
-            scale_factor = 0.8
-        elif chart_type == "Synastry":
-            scale_factor = 0.8
-        elif chart_type == "Return":
+        if chart_type in ("Transit", "Synastry", "Return", "DualReturnChart"):
             scale_factor = 0.8
         elif external_view:
             scale_factor = 0.8
@@ -222,7 +220,7 @@ def draw_planets(
     # -----------------------------------------------------------
     # 6. Draw transit/secondary celestial points
     # -----------------------------------------------------------
-    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
+    if chart_type in ("Transit", "Synastry", "Return", "DualReturnChart"):
         output = _draw_secondary_points(
             output,
             radius,
@@ -362,7 +360,7 @@ def _determine_point_radius(
             return 76
         else:
             return 110 if is_alternate_position else 130
-    elif chart_type == "Return":
+    elif chart_type in ("Return", "DualReturnChart"):
         if is_chart_angle:
             return 76
         else:
@@ -621,11 +619,7 @@ def _draw_secondary_points(
 
     # Draw connecting lines for the main point
     dropin = 0
-    if chart_type == "Transit":
-        dropin = 36
-    elif chart_type == "Synastry":
-        dropin = 36
-    elif chart_type == "Return":
+    if chart_type in ("Transit", "Synastry", "Return", "DualReturnChart"):
         dropin = 36
 
     # First connecting line segment
@@ -640,11 +634,7 @@ def _draw_secondary_points(
 
     # Second connecting line segment
     dropin = 120
-    if chart_type == "Transit":
-        dropin = 160
-    elif chart_type == "Synastry":
-        dropin = 160
-    elif chart_type == "Return":
+    if chart_type in ("Transit", "Synastry", "Return", "DualReturnChart"):
         dropin = 160
 
     x1 = sliceToX(0, radius - dropin, main_offset) + dropin
