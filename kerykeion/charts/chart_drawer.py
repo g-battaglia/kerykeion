@@ -1998,19 +1998,10 @@ class ChartDrawer:
                 )
 
                 if self.show_cusp_position_comparison:
-                    # Compute dynamic x position for the cusp comparison grid so it appears
-                    # to the right of the transit house comparison table.
-                    transit_columns = [
-                        self._translate("transit_point", "Transit Point"),
-                        self._translate("house_position", "Natal House"),
-                    ]
-                    transit_grid_width = self._estimate_house_comparison_grid_width(
-                        column_labels=transit_columns,
-                        include_radix_column=False,
-                        include_title=True,
-                        minimum_width=170.0,
-                    )
-                    cusp_x_position = 980 + transit_grid_width + 30.0
+                    # Position the cusp comparison grid to the left, occupying the space
+                    # where the second house comparison table would be in a dual chart.
+                    # Fixed position alignment: 980 (start) + ~200 (table width + gap) = 1180
+                    cusp_x_position = 1180
 
                     cusp_grid = draw_single_cusp_comparison_grid(
                         house_comparison,
