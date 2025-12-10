@@ -63,8 +63,6 @@ def draw_planets(
         raise KerykeionException("Secondary celestial points are required for Synastry charts")
     elif chart_type == "Return" and second_subject_available_kerykeion_celestial_points is None:
         raise KerykeionException("Secondary celestial points are required for Return charts")
-    elif chart_type == "DualReturnChart" and second_subject_available_kerykeion_celestial_points is None:
-        raise KerykeionException("Secondary celestial points are required for DualReturn charts")
 
     # Extract absolute and relative positions for main celestial points
     main_points_abs_positions = [planet.abs_pos for planet in available_kerykeion_celestial_points]
@@ -243,18 +241,19 @@ def draw_planets(
         # Draw degree indicators if enabled
         if show_degree_indicators:
             # Draw degree indicators for secondary/outer planets
-            output = _draw_secondary_points(
-                output,
-                radius,
-                main_subject_first_house_degree_ut,
-                main_subject_seventh_house_degree_ut,
-                secondary_points_abs_positions,
-                secondary_points_rel_positions,
-                available_planets_setting,
-                chart_type,
-                TRANSIT_RING_EXCLUDE_POINTS_NAMES,
-                adjusted_offset,
-            )
+            if secondary_points_abs_positions and secondary_points_rel_positions:
+                output = _draw_secondary_points(
+                    output,
+                    radius,
+                    main_subject_first_house_degree_ut,
+                    main_subject_seventh_house_degree_ut,
+                    secondary_points_abs_positions,
+                    secondary_points_rel_positions,
+                    available_planets_setting,
+                    chart_type,
+                    TRANSIT_RING_EXCLUDE_POINTS_NAMES,
+                    adjusted_offset,
+                )
             # Draw degree indicators for primary/inner planets
             main_points_rel_positions = [planet.position for planet in available_kerykeion_celestial_points]
             output = _draw_inner_point_indicators(

@@ -77,6 +77,9 @@ def kerykeion_point_to_context(point: KerykeionPointModel) -> str:
     # Now build the parts list starting with the complete position string
     parts = [position_str]
 
+    # Absolute position in the zodiac
+    parts.append(f"absolute position {point.abs_pos:.2f}°")
+
     # Element and quality with explicit labels
     parts.append(f"quality: {point.quality}, element: {point.element}")
 
@@ -154,15 +157,15 @@ def aspect_to_context(aspect: AspectModel, is_synastry: bool = False, is_transit
         else:
             p2_owner = f"\"{aspect.p2_owner}\""
 
-        # Synastry/Transit format: show clear ownership, no movement, no aspect angle
+        # Synastry/Transit format: show clear ownership, with orb and aspect angle, no movement
         parts.append(f"{aspect.aspect} between \"{aspect.p1_owner}\"'s {aspect.p1_name} and {p2_owner}'s {aspect.p2_name}")
-        # Orb
-        parts.append(f"orb {aspect.orbit:.2f}°")
+        # Orb and aspect angle
+        parts.append(f"orb {aspect.orbit:.2f}°, aspect angle {aspect.aspect_degrees}°")
     else:
-        # Natal format: no owner (same subject), with movement, no aspect angle
+        # Natal format: no owner (same subject), with orb, aspect angle and movement
         parts.append(f"{aspect.aspect} between {aspect.p1_name} and {aspect.p2_name}")
-        # Orb
-        parts.append(f"orb {aspect.orbit:.2f}°")
+        # Orb and aspect angle
+        parts.append(f"orb {aspect.orbit:.2f}°, aspect angle {aspect.aspect_degrees}°")
         # Movement (only for natal charts)
         parts.append(f"movement: {aspect.aspect_movement.lower()}")
 
@@ -371,8 +374,8 @@ def astrological_subject_to_context(subject: Union[AstrologicalSubjectModel, Com
     if isinstance(subject, PlanetReturnModel):
         lines.append(f"Return type: {subject.return_type}")
 
-    # Celestial Points (unified section for planets and important points)
-    lines.append("\nCelestial Points:")
+    # Celestial Points (unified section for planets)
+    lines.append("\nPlanetary positions:")
     # All celestial points in one list
     celestial_point_names = [
         'sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn',
@@ -384,19 +387,23 @@ def astrological_subject_to_context(subject: Union[AstrologicalSubjectModel, Com
         if point is not None:
             lines.append(f"  - {kerykeion_point_to_context(point)}")
 
-    # Axes and Angles
+    # Important points (axes and lunar nodes)
     axes = ['ascendant', 'descendant', 'medium_coeli', 'imum_coeli', 'vertex', 'anti_vertex']
     axes_present = [getattr(subject, axis, None) for axis in axes if getattr(subject, axis, None) is not None]
-    if axes_present:
-        lines.append("\nAxes and Angles:")
+    lunar_nodes_present = (
+        subject.true_north_lunar_node is not None or
+        subject.mean_north_lunar_node is not None or
+        subject.true_south_lunar_node is not None or
+        subject.mean_south_lunar_node is not None
+    )
+
+    if axes_present or lunar_nodes_present:
+        lines.append("\nImportant points:")
         for axis_name in axes:
             axis = getattr(subject, axis_name, None)
             if axis is not None:
                 lines.append(f"  - {kerykeion_point_to_context(axis)}")
 
-    # Lunar nodes (if present)
-    if subject.true_north_lunar_node is not None or subject.mean_north_lunar_node is not None:
-        lines.append("\nLunar Nodes:")
         if subject.true_north_lunar_node is not None:
             lines.append(f"  - {kerykeion_point_to_context(subject.true_north_lunar_node)}")
         if subject.true_south_lunar_node is not None:
