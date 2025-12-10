@@ -252,7 +252,7 @@ class ChartDrawer:
         celestial_points_settings: list[dict] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
         aspects_settings: list[dict] = DEFAULT_CHART_ASPECTS_SETTINGS,
         custom_title: Union[str, None] = None,
-        show_house_position_comparison: bool = False,
+        show_house_position_comparison: bool = True,
         show_cusp_position_comparison: bool = False,
         auto_size: bool = True,
         padding: int = 20,
@@ -1073,10 +1073,24 @@ class ChartDrawer:
         if self.chart_type in ("Natal", "Composite", "SingleReturnChart"):
             return max(int(baseline), self._DEFAULT_NATAL_WIDTH)
         if self.chart_type == "Synastry":
-            return max(int(baseline), self._DEFAULT_SYNASTRY_WIDTH // 2)
+            # Synastry always needs extra width for dual grids; add more when house comparison is active
+            base_width = self._DEFAULT_SYNASTRY_WIDTH // 2
+            if self.show_house_position_comparison:
+                base_width = max(base_width, self._DEFAULT_SYNASTRY_WIDTH)
+            return max(int(baseline), base_width)
         if self.chart_type == "DualReturnChart":
-            return max(int(baseline), self._DEFAULT_ULTRA_WIDE_WIDTH // 2)
+            # DualReturnChart needs extra width when house comparison tables are rendered
+            # Tables are positioned at x=1090 and x=1290, each ~250px wide
+            base_width = self._DEFAULT_ULTRA_WIDE_WIDTH // 2
+            if self.show_house_position_comparison:
+                # 1290 (second table x) + 250 (table width) + padding = ~1560
+                base_width = max(base_width, 1560)
+            return max(int(baseline), base_width)
         if self.chart_type == "Transit":
+            # Transit charts need enough width when house comparison table is shown
+            # Table positioned at x=980 with ~200px width (single column)
+            if self.show_house_position_comparison:
+                return max(int(baseline), 1200)
             return max(int(baseline), 450)
         return max(int(baseline), self._DEFAULT_NATAL_WIDTH)
 
