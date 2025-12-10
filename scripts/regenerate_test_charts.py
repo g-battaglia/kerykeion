@@ -99,6 +99,17 @@ synastry_chart_no_house_comparison.save_svg(
     filename="John Lennon - Synastry Chart - No House Comparison",
 )
 
+# Synastry Chart with House Comparison only
+synastry_chart_house_only = ChartDrawer(
+    synastry_chart_data,
+    show_house_position_comparison=True,
+    show_cusp_position_comparison=False,
+)
+synastry_chart_house_only.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Synastry Chart - House Comparison Only",
+)
+
 # Synastry Chart with Cusp Comparison only
 synastry_chart_cusp_only = ChartDrawer(
     synastry_chart_data,
@@ -108,6 +119,17 @@ synastry_chart_cusp_only = ChartDrawer(
 synastry_chart_cusp_only.save_svg(
     output_path=OUTPUT_DIR_STR,
     filename="John Lennon - Synastry Chart - Cusp Comparison Only",
+)
+
+# Synastry Chart with both House and Cusp Comparison grids
+synastry_chart_house_and_cusp = ChartDrawer(
+    synastry_chart_data,
+    show_house_position_comparison=True,
+    show_cusp_position_comparison=True,
+)
+synastry_chart_house_and_cusp.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Synastry Chart - House and Cusp Comparison",
 )
 
 # Black and White Theme Synastry Chart
@@ -132,6 +154,17 @@ transits_chart_no_house_comparison.save_svg(
     filename="John Lennon - Transit Chart - No House Comparison",
 )
 
+# Transit Chart with House Comparison only
+transits_chart_house_only = ChartDrawer(
+    transits_chart_data,
+    show_house_position_comparison=True,
+    show_cusp_position_comparison=False,
+)
+transits_chart_house_only.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Transit Chart - House Comparison Only",
+)
+
 # Transit Chart with Cusp Comparison only
 transits_chart_cusp_only = ChartDrawer(
     transits_chart_data,
@@ -141,6 +174,17 @@ transits_chart_cusp_only = ChartDrawer(
 transits_chart_cusp_only.save_svg(
     output_path=OUTPUT_DIR_STR,
     filename="John Lennon - Transit Chart - Cusp Comparison Only",
+)
+
+# Transit Chart with both House and Cusp Comparison grids
+transits_chart_house_and_cusp = ChartDrawer(
+    transits_chart_data,
+    show_house_position_comparison=True,
+    show_cusp_position_comparison=True,
+)
+transits_chart_house_and_cusp.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Transit Chart - House and Cusp Comparison",
 )
 
 # Black and White Theme Transit Chart
@@ -440,6 +484,17 @@ dual_return_chart_no_house_comparison.save_svg(
     filename="John Lennon - DualReturnChart Chart - Solar Return - No House Comparison",
 )
 
+# Dual Return (Solar) with House Comparison only
+dual_return_chart_house_only = ChartDrawer(
+    dual_return_chart_data,
+    show_house_position_comparison=True,
+    show_cusp_position_comparison=False,
+)
+dual_return_chart_house_only.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - DualReturnChart Chart - Solar Return - House Comparison Only",
+)
+
 # Dual Return (Solar) with Cusp Comparison only
 dual_return_chart_cusp_only = ChartDrawer(
     dual_return_chart_data,
@@ -449,6 +504,17 @@ dual_return_chart_cusp_only = ChartDrawer(
 dual_return_chart_cusp_only.save_svg(
     output_path=OUTPUT_DIR_STR,
     filename="John Lennon - DualReturnChart Chart - Solar Return - Cusp Comparison Only",
+)
+
+# Dual Return (Solar) with both House and Cusp Comparison grids
+dual_return_chart_house_and_cusp = ChartDrawer(
+    dual_return_chart_data,
+    show_house_position_comparison=True,
+    show_cusp_position_comparison=True,
+)
+dual_return_chart_house_and_cusp.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - DualReturnChart Chart - Solar Return - House and Cusp Comparison",
 )
 
 # Black and White Theme Dual Return Chart
@@ -491,6 +557,17 @@ lunar_dual_return_chart_no_house_comparison.save_svg(
     filename="John Lennon - DualReturnChart Chart - Lunar Return - No House Comparison",
 )
 
+# Dual Return (Lunar) with House Comparison only
+lunar_dual_return_chart_house_only = ChartDrawer(
+    lunar_dual_return_chart_data,
+    show_house_position_comparison=True,
+    show_cusp_position_comparison=False,
+)
+lunar_dual_return_chart_house_only.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - DualReturnChart Chart - Lunar Return - House Comparison Only",
+)
+
 # Dual Return (Lunar) with Cusp Comparison only
 lunar_dual_return_chart_cusp_only = ChartDrawer(
     lunar_dual_return_chart_data,
@@ -500,6 +577,17 @@ lunar_dual_return_chart_cusp_only = ChartDrawer(
 lunar_dual_return_chart_cusp_only.save_svg(
     output_path=OUTPUT_DIR_STR,
     filename="John Lennon - DualReturnChart Chart - Lunar Return - Cusp Comparison Only",
+)
+
+# Dual Return (Lunar) with both House and Cusp Comparison grids
+lunar_dual_return_chart_house_and_cusp = ChartDrawer(
+    lunar_dual_return_chart_data,
+    show_house_position_comparison=True,
+    show_cusp_position_comparison=True,
+)
+lunar_dual_return_chart_house_and_cusp.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - DualReturnChart Chart - Lunar Return - House and Cusp Comparison",
 )
 
 # Single Wheel Lunar Return

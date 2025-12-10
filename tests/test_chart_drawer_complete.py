@@ -190,6 +190,8 @@ class TestChartDrawer:
         assert chart.transparent_background is False
         assert chart.external_view is False
         assert chart.double_chart_aspect_grid_type == "list"
+        assert chart.show_house_position_comparison is True
+        assert chart.show_cusp_position_comparison is False
 
     def test_chart_drawer_with_different_themes(self):
         """Test chart drawer with different themes."""

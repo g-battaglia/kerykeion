@@ -285,8 +285,8 @@ class ChartDrawer:
                 Whether to render the house position comparison grid (when supported by the chart type).
                 Defaults to True. Set to False to hide the table and reclaim horizontal space.
             show_cusp_position_comparison (bool, optional):
-                Whether to render the cusp position comparison grid alongside the house comparison.
-                Defaults to False to preserve legacy layout; set to True to enable the new cusp table.
+                Whether to render the cusp position comparison grid alongside or in place of the house comparison.
+                Defaults to False so cusp tables are only shown when explicitly requested.
         """
         # --------------------
         # COMMON INITIALIZATION
