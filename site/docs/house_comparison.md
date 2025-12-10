@@ -1,12 +1,14 @@
 # House Comparison Module
 
-Analyzes placement of astrological points from one subject within another subject's house system. Essential for synastry analysis and chart comparisons.
+Analyzes placement of astrological points and house cusps from one subject within another subject's house system. Essential for synastry analysis, dual charts, and detailed chart comparisons.
 
-The module performs **bidirectional analysis**: it calculates where each subject's planets fall in the other subject's houses, providing insights into how planetary energies interact with different life areas between two people.
+The module performs **bidirectional analysis**: it calculates where each subject's planets and cusps fall in the other subject's houses, providing insights into how planetary energies and house angles interact with different life areas between two people.
 
 ## How It Works
 
 The house comparison takes the planetary positions of one subject and projects them onto the house system of another subject. This reveals which areas of life (houses) are activated by each person's planetary influences in a relationship or comparison.
+
+In addition to planets, Kerykeion also includes **cusp projection**: each house cusp of one subject is projected into the house system of the other subject. This allows you to see how angular structure and house boundaries themselves overlay between charts.
 
 For example, if Person A's Venus falls in Person B's 7th house, it suggests that Person A's love nature activates Person B's partnership sector.
 
@@ -97,7 +99,7 @@ for point in comparison_personal.first_points_in_second_houses:
 
 ## Data Access
 
-The comparison results are organized in two directions, allowing you to see both perspectives of the relationship.
+The comparison results are organized in two directions, allowing you to see both perspectives of the relationship. Each direction includes **planet placements** and, from onward, **cusp placements**.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
@@ -119,9 +121,13 @@ person_b = AstrologicalSubjectFactory.from_birth_data(
 )
 comparison = HouseComparisonFactory(person_a, person_b).get_house_comparison()
 
-# Access both directions of the analysis
+# Access both directions of the analysis (planets)
 person_a_in_b = comparison.first_points_in_second_houses  # Person A points in Person B houses
 person_b_in_a = comparison.second_points_in_first_houses  # Person B points in Person A houses
+
+# Access cusp overlays between house systems
+cusps_a_in_b = comparison.first_cusps_in_second_houses   # Person A cusps in Person B houses
+cusps_b_in_a = comparison.second_cusps_in_first_houses   # Person B cusps in Person A houses
 
 # Group planets by house for easier analysis
 house_activations = {}
@@ -134,6 +140,14 @@ for point in person_a_in_b:
 print("Person A planets grouped by Person B houses:")
 for house, planets in house_activations.items():
     print(f"{house}: {', '.join(planets)}")
+
+print("\nPerson A cusps projected into Person B houses:")
+for cusp in cusps_a_in_b:
+    print(
+        f"A {cusp.point_name} (house {cusp.owner_house_number}) "
+        f"falls in B {cusp.projected_house_name} "
+        f"(owner: {cusp.projected_house_owner_name})"
+    )
 
 # Export all data to JSON for further analysis
 json_data = comparison.model_dump_json(indent=2)

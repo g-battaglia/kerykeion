@@ -10,7 +10,7 @@ The SVG output ensures scalable, high-quality graphics that maintain clarity at 
 
 ## Core Features
 
-- **Chart Types**: Natal, Transit, Synastry, Composite
+- **Chart Types**: Natal, Transit, Synastry, Composite, Return (Sigle and Dual Wheels)
 - **Pre-computed Data**: Requires `ChartDataModel` from `ChartDataFactory`
 - **Output Methods**: Full chart, wheel-only, aspect grid-only
 - **Themes**: classic, dark, light, strawberry, dark-high-contrast, black-and-white
@@ -190,10 +190,10 @@ svg_content = chart_drawer.generate_svg_string()
 ## Output Methods
 
 ⚠️ **IMPORTANT DISTINCTION**: 
-- `makeSVG()` methods **save files** to the location specified in the constructor
-- `makeTemplate()` methods **return string content** without saving files
+- `save_*svg*` methods **save files** to the location specified in the call
+- `generate_*svg_string` methods **return string content** without saving files
 
-The ChartDrawer class offers two categories of output methods: file generation and template string generation.
+The `ChartDrawer` class offers two categories of output methods: file generation and template string generation.
 
 ### Full Chart with Aspects
 

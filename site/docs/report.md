@@ -28,7 +28,7 @@ Every model comes with its own context and optional sections:
 |-------------|----------------------|-------------------|-------------------------|
 | `AstrologicalSubjectModel` | `"Subject"` | – | Birth/event data, celestial points, houses, lunar phase |
 | `SingleChartDataModel` | `"Natal"`, `"Composite"`, `"SingleReturnChart"` | Optional composite members | Elements, qualities, active configuration, aspects |
-| `DualChartDataModel` | `"Transit"`, `"Synastry"`, `"DualReturnChart"` | Required | House comparison, relationship score, dual-aspect layout |
+| `DualChartDataModel` | `"Transit"`, `"Synastry"`, `"DualReturnChart"` | Required | House & cusp comparison, relationship score, dual-aspect layout |
 
 ## Quickstart
 
@@ -228,8 +228,12 @@ ReportGenerator(transit).print_report(max_aspects=10)
 synastry = ChartDataFactory.create_synastry_chart_data(subject, partner)
 ReportGenerator(synastry).print_report(max_aspects=12)
 
-# Dual return (natal vs solar return subject)
-dual_return = ChartDataFactory.create_return_chart_data(subject, return_subject)
+# Dual return (natal vs solar return subject) with house & cusp comparison
+dual_return = ChartDataFactory.create_return_chart_data(
+    subject,
+    return_subject,
+    include_house_comparison=True,
+)
 ReportGenerator(dual_return).print_report(max_aspects=6)
 ```
 
@@ -238,6 +242,7 @@ Dual reports add:
 - two celestial-points tables (one per subject)
 - house lists for both subjects
 - optional house comparison grids (points projected into partner houses)
+- optional cusp comparison grids (cusps projected into partner houses)
 - optional relationship score summary with supporting aspects
 - aspect tables showing point owners for each side
 

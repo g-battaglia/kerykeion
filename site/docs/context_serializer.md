@@ -10,7 +10,8 @@ The module provides a single main entry point, the `to_context` function, which 
 
 -   **Standardized Output:** Consistent formatting for all astrological data.
 -   **Non-Qualitative:** Provides raw data (positions, aspects, etc.) without interpretive text (e.g., "good", "bad", "lucky").
--   **Comprehensive Support:** Handles Natal, Synastry, Composite, Transit, Solar/Lunar Return charts, and individual components.
+-   **Comprehensive Support:** Handles Natal, Synastry, Composite, Transit, Solar/Lunar Return, Dual Return charts, and individual components.
+-   **House & Cusp Comparison:** Serializes both planetary overlays and cusp-in-house overlays for dual charts.
 -   **Type-Safe:** Built on Kerykeion's Pydantic v2 models.
 
 ## Basic Usage
@@ -55,7 +56,7 @@ The `to_context` function supports the following Kerykeion models:
 | :------------------------- | :----------------------------------------------------- |
 | `AstrologicalSubjectModel` | Basic natal chart information (planets, houses, axes). |
 | `SingleChartDataModel`     | Natal chart with calculated aspects.                   |
-| `DualChartDataModel`       | Synastry chart (two subjects and their inter-aspects). |
+| `DualChartDataModel`       | Dual charts (Transit, Synastry, DualReturnChart) with inter-aspects and house comparison. |
 | `CompositeSubjectModel`    | Composite chart (midpoint or other methods).           |
 | `PlanetReturnModel`        | Solar and Lunar Return charts.                         |
 | `KerykeionPointModel`      | Individual celestial points (e.g., just the Sun).      |
