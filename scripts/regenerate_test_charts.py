@@ -99,6 +99,17 @@ synastry_chart_no_house_comparison.save_svg(
     filename="John Lennon - Synastry Chart - No House Comparison",
 )
 
+# Synastry Chart with Cusp Comparison only
+synastry_chart_cusp_only = ChartDrawer(
+    synastry_chart_data,
+    show_house_position_comparison=False,
+    show_cusp_position_comparison=True,
+)
+synastry_chart_cusp_only.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Synastry Chart - Cusp Comparison Only",
+)
+
 # Black and White Theme Synastry Chart
 black_and_white_synastry_chart = ChartDrawer(synastry_chart_data, theme="black-and-white")
 black_and_white_synastry_chart.save_svg(
@@ -119,6 +130,17 @@ transits_chart_no_house_comparison = ChartDrawer(
 transits_chart_no_house_comparison.save_svg(
     output_path=OUTPUT_DIR_STR,
     filename="John Lennon - Transit Chart - No House Comparison",
+)
+
+# Transit Chart with Cusp Comparison only
+transits_chart_cusp_only = ChartDrawer(
+    transits_chart_data,
+    show_house_position_comparison=False,
+    show_cusp_position_comparison=True,
+)
+transits_chart_cusp_only.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - Transit Chart - Cusp Comparison Only",
 )
 
 # Black and White Theme Transit Chart
@@ -418,6 +440,17 @@ dual_return_chart_no_house_comparison.save_svg(
     filename="John Lennon - DualReturnChart Chart - Solar Return - No House Comparison",
 )
 
+# Dual Return (Solar) with Cusp Comparison only
+dual_return_chart_cusp_only = ChartDrawer(
+    dual_return_chart_data,
+    show_house_position_comparison=False,
+    show_cusp_position_comparison=True,
+)
+dual_return_chart_cusp_only.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - DualReturnChart Chart - Solar Return - Cusp Comparison Only",
+)
+
 # Black and White Theme Dual Return Chart
 black_and_white_dual_return_chart = ChartDrawer(dual_return_chart_data, theme="black-and-white")
 black_and_white_dual_return_chart.save_svg(
@@ -456,6 +489,17 @@ lunar_dual_return_chart_no_house_comparison = ChartDrawer(
 lunar_dual_return_chart_no_house_comparison.save_svg(
     output_path=OUTPUT_DIR_STR,
     filename="John Lennon - DualReturnChart Chart - Lunar Return - No House Comparison",
+)
+
+# Dual Return (Lunar) with Cusp Comparison only
+lunar_dual_return_chart_cusp_only = ChartDrawer(
+    lunar_dual_return_chart_data,
+    show_house_position_comparison=False,
+    show_cusp_position_comparison=True,
+)
+lunar_dual_return_chart_cusp_only.save_svg(
+    output_path=OUTPUT_DIR_STR,
+    filename="John Lennon - DualReturnChart Chart - Lunar Return - Cusp Comparison Only",
 )
 
 # Single Wheel Lunar Return
