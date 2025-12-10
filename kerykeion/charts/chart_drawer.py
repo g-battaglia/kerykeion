@@ -836,8 +836,8 @@ class ChartDrawer:
                         include_title=False,
                     )
 
-                    first_house_comparison_grid_right = 1000 + first_grid_width
-                    second_house_comparison_grid_right = 1190 + second_grid_width
+                    first_house_comparison_grid_right = 1090 + first_grid_width
+                    second_house_comparison_grid_right = 1290 + second_grid_width
                     extents.extend([first_house_comparison_grid_right, second_house_comparison_grid_right])
 
                     if self.show_cusp_position_comparison:
@@ -913,8 +913,8 @@ class ChartDrawer:
                         include_title=False,
                     )
 
-                    first_house_comparison_grid_right = 1000 + first_grid_width
-                    second_house_comparison_grid_right = 1190 + second_grid_width
+                    first_house_comparison_grid_right = 1090 + first_grid_width
+                    second_house_comparison_grid_right = 1290 + second_grid_width
                     extents.extend([first_house_comparison_grid_right, second_house_comparison_grid_right])
 
                     if self.show_cusp_position_comparison:
@@ -985,12 +985,11 @@ class ChartDrawer:
         # imposed by the title area.
         return max(per_column, min(allowed_capacity, max_capacity_by_top))
 
-    @staticmethod
-    def _estimate_text_width(text: str, font_size: int) -> float:
+    def _estimate_text_width(self, text: str, font_size: float = 12) -> float:
         """Very rough text width estimation in pixels based on font size."""
         if not text:
             return 0.0
-        average_char_width = float(font_size)
+        average_char_width = float(font_size) * 0.7
         return max(float(font_size), len(text) * average_char_width)
 
     def _get_active_point_display_names(self) -> list[str]:
@@ -1073,24 +1072,10 @@ class ChartDrawer:
         if self.chart_type in ("Natal", "Composite", "SingleReturnChart"):
             return max(int(baseline), self._DEFAULT_NATAL_WIDTH)
         if self.chart_type == "Synastry":
-            # Synastry always needs extra width for dual grids; add more when house comparison is active
-            base_width = self._DEFAULT_SYNASTRY_WIDTH // 2
-            if self.show_house_position_comparison:
-                base_width = max(base_width, self._DEFAULT_SYNASTRY_WIDTH)
-            return max(int(baseline), base_width)
+            return max(int(baseline), self._DEFAULT_SYNASTRY_WIDTH // 2)
         if self.chart_type == "DualReturnChart":
-            # DualReturnChart needs extra width when house comparison tables are rendered
-            # Tables are positioned at x=1090 and x=1290, each ~250px wide
-            base_width = self._DEFAULT_ULTRA_WIDE_WIDTH // 2
-            if self.show_house_position_comparison:
-                # 1290 (second table x) + 250 (table width) + padding = ~1560
-                base_width = max(base_width, 1560)
-            return max(int(baseline), base_width)
+            return max(int(baseline), self._DEFAULT_ULTRA_WIDE_WIDTH // 2)
         if self.chart_type == "Transit":
-            # Transit charts need enough width when house comparison table is shown
-            # Table positioned at x=980 with ~200px width (single column)
-            if self.show_house_position_comparison:
-                return max(int(baseline), 1200)
             return max(int(baseline), 450)
         return max(int(baseline), self._DEFAULT_NATAL_WIDTH)
 
