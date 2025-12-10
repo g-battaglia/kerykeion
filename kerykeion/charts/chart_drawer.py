@@ -706,7 +706,7 @@ class ChartDrawer:
         viewbox_height = int(self.height) + self._VERTICAL_PADDING_TOP + self._VERTICAL_PADDING_BOTTOM
         return f"0 {min_y} {int(self.width)} {viewbox_height}"
 
-    def _wheel_only_viewbox(self, margin: int = 20) -> str:
+    def _wheel_only_viewbox(self, margin: int = 25) -> str:
         """Return a tight viewBox for the wheel-only template.
 
         The wheel is drawn inside a group translated by (100, 50) and has
