@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Dual Return Chart'
+tags: ['examples', 'charts', 'returns', 'dual', 'kerykeion']
+order: 5
 ---
 
 # Dual Return Chart

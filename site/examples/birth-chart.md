@@ -1,10 +1,9 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Birth Chart'
-pubDate: 2025-01-01
 description: 'How to create a birth chart with Kerykeion'
 author: 'Giacomo Battaglia'
-tags: ['astrology', 'birth chart', 'kerykeion', 'python']
+tags: ['examples', 'charts', 'birth chart', 'kerykeion', 'python']
+order: 1
 ---
 
 # Birth Chart

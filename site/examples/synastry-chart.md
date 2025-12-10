@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Synastry Chart'
+tags: ['examples', 'charts', 'synastry', 'relationships', 'kerykeion']
+order: 4
 ---
 
 # Synastry Chart

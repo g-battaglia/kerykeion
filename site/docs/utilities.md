@@ -1,3 +1,9 @@
+---
+title: 'Utilities Module'
+tags: ['docs', 'utilities', 'math', 'kerykeion']
+order: 14
+---
+
 # Utilities Module
 
 The `utilities` module provides a comprehensive set of utility functions for astrological calculations, coordinate conversions, data management, and astronomical information processing. These functions support the fundamental operations of the entire Kerykeion framework.

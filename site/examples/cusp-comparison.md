@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Cusp Comparison Grids'
+tags: ['examples', 'charts', 'houses', 'cusps', 'synastry', 'kerykeion']
+order: 13
 ---
 
 # Cusp Comparison Grids

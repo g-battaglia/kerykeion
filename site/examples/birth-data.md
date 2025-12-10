@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Birth Data'
+tags: ['examples', 'subjects', 'birth data', 'kerykeion', 'python']
+order: 2
 ---
 
 # Birth Data

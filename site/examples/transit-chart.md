@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Transit Chart'
+tags: ['examples', 'charts', 'transits', 'forecasting', 'kerykeion']
+order: 3
 ---
 
 # Transit Chart

@@ -1,3 +1,9 @@
+---
+title: 'Charts Module - ChartDrawer'
+tags: ['docs', 'charts', 'svg', 'visual', 'kerykeion']
+order: 3
+---
+
 # Charts Module - ChartDrawer
 
 ## Overview

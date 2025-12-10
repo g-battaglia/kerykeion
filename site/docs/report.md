@@ -1,3 +1,9 @@
+---
+title: 'Report Module'
+tags: ['docs', 'reports', 'cli', 'kerykeion']
+order: 12
+---
+
 # Report Module
 
 ## Overview

@@ -1,3 +1,9 @@
+---
+title: 'Ephemeris Data Factory'
+tags: ['docs', 'ephemeris', 'data', 'kerykeion']
+order: 11
+---
+
 # Ephemeris Data Factory
 
 The `ephemeris_data_factory` module generates time-series astrological ephemeris data across specified date ranges with flexible intervals and calculation parameters.

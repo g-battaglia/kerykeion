@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Perspective Type'
+tags: ['examples', 'charts', 'perspective', 'heliocentric', 'kerykeion']
+order: 8
 ---
 
 # Perspective Type

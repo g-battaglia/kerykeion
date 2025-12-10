@@ -1,3 +1,9 @@
+---
+title: 'Planetary Return Factory'
+tags: ['docs', 'returns', 'forecasting', 'kerykeion']
+order: 9
+---
+
 # Planetary Return Factory
 
 The `planetary_return_factory` module provides the `PlanetaryReturnFactory` class for calculating precise planetary return charts, specifically Solar and Lunar returns. It leverages Swiss Ephemeris for astronomical calculations to determine exact return moments and create complete astrological charts.

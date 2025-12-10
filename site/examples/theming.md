@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Theming'
+tags: ['examples', 'charts', 'theming', 'css', 'kerykeion']
+order: 11
 ---
 
 # Theming

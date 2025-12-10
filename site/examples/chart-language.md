@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Chart Language'
+tags: ['examples', 'charts', 'language', 'i18n', 'kerykeion']
+order: 12
 ---
 
 # Chart Language

@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Relationship Score'
+tags: ['examples', 'relationships', 'synastry', 'scores', 'kerykeion']
+order: 6
 ---
 
 # Relationship

@@ -1,3 +1,9 @@
+---
+title: 'Composite Subject Factory'
+tags: ['docs', 'composite', 'relationships', 'kerykeion']
+order: 8
+---
+
 # Composite Subject Factory
 
 The `composite_subject_factory` module creates composite astrological charts from two individual subjects, representing the relationship between two people through midpoint calculations.

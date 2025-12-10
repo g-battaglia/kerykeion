@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Report'
+tags: ['examples', 'reports', 'cli', 'kerykeion']
+order: 14
 ---
 
 # Generate a text Report

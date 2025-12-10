@@ -1,3 +1,9 @@
+---
+title: 'Element & Quality Distribution'
+tags: ['docs', 'elements', 'qualities', 'statistics', 'kerykeion']
+order: 5
+---
+
 # Element & Quality Distribution
 
 Kerykeion v5 introduces a flexible weighting system for the element (fire/earth/air/water) and quality (cardinal/fixed/mutable) statistics that every `ChartDataModel` exposes. The feature is available through `ChartDataFactory` and all of its convenience helpers, letting you pick between an observationally driven weighted balance or an even, point-per-body approach.

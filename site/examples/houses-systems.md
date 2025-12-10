@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Houses Systems'
+tags: ['examples', 'houses', 'systems', 'charts', 'kerykeion']
+order: 7
 ---
 
 # Houses Systems

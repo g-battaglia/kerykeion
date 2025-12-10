@@ -1,3 +1,9 @@
+---
+title: 'Transits Time Range Factory'
+tags: ['docs', 'transits', 'forecasting', 'kerykeion']
+order: 10
+---
+
 # Transits Time Range Factory
 
 The `transits_time_range_factory` module provides the `TransitsTimeRangeFactory` class for calculating astrological transits over specified time periods. It analyzes angular relationships (aspects) between transiting celestial bodies and natal chart positions across multiple time points.

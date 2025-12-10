@@ -1,3 +1,9 @@
+---
+title: 'Relationship Score Factory'
+tags: ['docs', 'relationships', 'synastry', 'scores', 'kerykeion']
+order: 7
+---
+
 # Relationship Score Factory
 
 The `relationship_score_factory` module provides the `RelationshipScoreFactory` class for calculating numerical relationship compatibility scores between two astrological subjects using the Ciro Discepolo method. It analyzes synastry aspects to generate quantitative compatibility assessments with descriptive categories.

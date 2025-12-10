@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Minimalist Charts & Aspect Table'
+tags: ['examples', 'charts', 'minimal', 'wheel', 'aspects', 'kerykeion']
+order: 10
 ---
 
 # Minimalist Charts & Aspect Table

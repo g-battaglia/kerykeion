@@ -1,3 +1,9 @@
+---
+title: 'Astrological Subject Factory'
+tags: ['docs', 'subjects', 'core', 'astrology', 'kerykeion']
+order: 1
+---
+
 # Astrological Subject Factory
 
 The `astrological_subject_factory` module is the **central core** of Kerykeion, containing the `AstrologicalSubjectFactory` class that creates comprehensive astrological subjects with complete planetary positions, house cusps, and specialized astrological points.

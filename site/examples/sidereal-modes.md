@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Sidereal Modes'
+tags: ['examples', 'sidereal', 'charts', 'zodiac', 'kerykeion']
+order: 9
 ---
 
 # Sidereal Modes

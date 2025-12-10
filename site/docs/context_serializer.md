@@ -1,3 +1,9 @@
+---
+title: 'AI Context Serializer'
+tags: ['docs', 'ai', 'context', 'kerykeion']
+order: 13
+---
+
 # AI Context Serializer
 
 The `context_serializer` module is designed to convert Kerykeion's astrological data models into precise, non-qualitative, and non-repetitive textual descriptions. This output is optimized for consumption by Large Language Models (LLMs) and AI applications, providing them with the essential data context needed to generate interpretations or answer astrological questions.

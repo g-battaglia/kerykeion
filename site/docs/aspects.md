@@ -1,3 +1,9 @@
+---
+title: 'Aspects Module'
+tags: ['docs', 'aspects', 'analysis', 'kerykeion']
+order: 4
+---
+
 # Aspects Module
 
 The Aspects module provides comprehensive astrological aspect analysis through a unified `AspectsFactory` class. It calculates angular relationships between celestial points within individual charts or between multiple charts, making it essential for understanding planetary interactions, compatibility analysis, and timing in astrological practice.

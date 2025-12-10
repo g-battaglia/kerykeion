@@ -1,3 +1,9 @@
+---
+title: 'House Comparison Module'
+tags: ['docs', 'houses', 'synastry', 'comparison', 'kerykeion']
+order: 6
+---
+
 # House Comparison Module
 
 Analyzes placement of astrological points and house cusps from one subject within another subject's house system. Essential for synastry analysis, dual charts, and detailed chart comparisons.
