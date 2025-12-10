@@ -578,7 +578,7 @@ class ReportGenerator:
         # Add cusp comparison sections
         if comparison.first_cusps_in_second_houses:
             sections.append(
-                self._render_point_in_house_table(
+                self._render_cusp_in_house_table(
                     comparison.first_cusps_in_second_houses,
                     f"{comparison.first_subject_name} cusps in {comparison.second_subject_name} houses",
                 )
@@ -586,7 +586,7 @@ class ReportGenerator:
 
         if comparison.second_cusps_in_first_houses:
             sections.append(
-                self._render_point_in_house_table(
+                self._render_cusp_in_house_table(
                     comparison.second_cusps_in_first_houses,
                     f"{comparison.second_subject_name} cusps in {comparison.first_subject_name} houses",
                 )
@@ -608,6 +608,22 @@ class ReportGenerator:
             table_data.append([
                 f"{point.point_owner_name} – {point.point_name.replace('_', ' ')}",
                 owner_house,
+                projected_house,
+                point.point_sign,
+                f"{point.point_degree:.2f}°",
+            ])
+
+        return AsciiTable(table_data, title=title).table
+
+    def _render_cusp_in_house_table(self, points: Sequence[PointInHouseModel], title: str) -> str:
+        if not points:
+            return ""
+
+        table_data: List[List[str]] = [["Point", "Projected House", "Sign", "Degree"]]
+        for point in points:
+            projected_house = f"{point.projected_house_number} ({point.projected_house_name})"
+            table_data.append([
+                f"{point.point_owner_name} – {point.point_name.replace('_', ' ')}",
                 projected_house,
                 point.point_sign,
                 f"{point.point_degree:.2f}°",
