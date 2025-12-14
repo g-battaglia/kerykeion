@@ -75,8 +75,8 @@ class TestPlanetaryReturnFactory:
                 online=False
             )
 
-    def test_next_return_from_year_solar(self):
-        """Test solar return calculation from year."""
+    def test_next_return_from_date_solar(self):
+        """Test solar return calculation from date."""
         factory = PlanetaryReturnFactory(
             self.subject,
             city="Rome",
@@ -84,13 +84,13 @@ class TestPlanetaryReturnFactory:
             online=True
         )
 
-        return_subject = factory.next_return_from_year(2023, "Solar")
+        return_subject = factory.next_return_from_date(2023, 1, 1, return_type="Solar")
         assert return_subject is not None
         assert hasattr(return_subject, 'sun')
         assert hasattr(return_subject, 'moon')
 
-    def test_next_return_from_year_lunar(self):
-        """Test lunar return calculation from year."""
+    def test_next_return_from_date_lunar(self):
+        """Test lunar return calculation from date."""
         factory = PlanetaryReturnFactory(
             self.subject,
             city="Rome",
@@ -98,13 +98,13 @@ class TestPlanetaryReturnFactory:
             online=True
         )
 
-        return_subject = factory.next_return_from_year(2023, "Lunar")
+        return_subject = factory.next_return_from_date(2023, 1, 1, return_type="Lunar")
         assert return_subject is not None
         assert hasattr(return_subject, 'sun')
         assert hasattr(return_subject, 'moon')
 
-    def test_next_return_from_month_and_year(self):
-        """Test return calculation from month and year."""
+    def test_next_return_from_date(self):
+        """Test return calculation from date."""
         factory = PlanetaryReturnFactory(
             self.subject,
             city="Rome",
@@ -112,8 +112,8 @@ class TestPlanetaryReturnFactory:
             online=True
         )
 
-        # Correct parameter order: year, month, return_type
-        return_subject = factory.next_return_from_month_and_year(2023, 6, "Solar")
+        # Test with year, month, day and return_type
+        return_subject = factory.next_return_from_date(2023, 6, 1, return_type="Solar")
         assert return_subject is not None
         assert hasattr(return_subject, 'sun')
         assert hasattr(return_subject, 'moon')
@@ -206,10 +206,10 @@ class TestPlanetaryReturnFactory:
         )
 
         # Test with valid types first
-        solar_return = factory.next_return_from_year(2023, "Solar")
+        solar_return = factory.next_return_from_date(2023, 1, 1, return_type="Solar")
         assert solar_return is not None
 
-        lunar_return = factory.next_return_from_year(2023, "Lunar")
+        lunar_return = factory.next_return_from_date(2023, 1, 1, return_type="Lunar")
         assert lunar_return is not None
 
     def test_factory_subject_preservation(self):
@@ -235,7 +235,7 @@ class TestPlanetaryReturnFactory:
         )
 
         assert hasattr(factory, 'next_return_from_year')
-        assert hasattr(factory, 'next_return_from_month_and_year')
+        assert hasattr(factory, 'next_return_from_date')
         assert hasattr(factory, 'next_return_from_iso_formatted_time')
 
     def test_coordinates_validation(self):
@@ -340,7 +340,7 @@ class TestPlanetaryReturnFactory:
         )
 
         # Test solar return
-        result = factory.next_return_from_year(2023, "Solar")
+        result = factory.next_return_from_date(2023, 1, 1, return_type="Solar")
         assert result is not None
 
     def test_lunar_return_calculation_method(self):
@@ -353,7 +353,7 @@ class TestPlanetaryReturnFactory:
         )
 
         # Test lunar return
-        result = factory.next_return_from_year(2023, "Lunar")
+        result = factory.next_return_from_date(2023, 1, 1, return_type="Lunar")
         assert result is not None
 
     def test_return_from_iso_formatted_time(self):
@@ -379,8 +379,8 @@ class TestPlanetaryReturnFactory:
         )
 
         # Test with valid return types
-        solar_result = factory.next_return_from_year(2023, "Solar")
-        lunar_result = factory.next_return_from_year(2023, "Lunar")
+        solar_result = factory.next_return_from_date(2023, 1, 1, return_type="Solar")
+        lunar_result = factory.next_return_from_date(2023, 1, 1, return_type="Lunar")
 
         assert solar_result is not None
         assert lunar_result is not None
@@ -396,7 +396,7 @@ class TestPlanetaryReturnFactory:
         )
 
         # Test that methods work with offline coordinates
-        result = factory.next_return_from_year(2023, "Solar")
+        result = factory.next_return_from_date(2023, 1, 1, return_type="Solar")
         assert result is not None
 
     def test_factory_initialization_edge_cases(self):
@@ -473,11 +473,71 @@ class TestPlanetaryReturnFactory:
         )
 
         # Calculate multiple returns
-        solar_return_1 = factory.next_return_from_year(2023, "Solar")
-        solar_return_2 = factory.next_return_from_year(2024, "Solar")
-        lunar_return_1 = factory.next_return_from_year(2023, "Lunar")
+        solar_return_1 = factory.next_return_from_date(2023, 1, 1, return_type="Solar")
+        solar_return_2 = factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+        lunar_return_1 = factory.next_return_from_date(2023, 1, 1, return_type="Lunar")
 
         # Verify all calculations complete successfully
         assert solar_return_1 is not None
         assert solar_return_2 is not None
         assert lunar_return_1 is not None
+
+    def test_next_return_from_date_with_day(self):
+        """Test next_return_from_date with specific day parameter."""
+        factory = PlanetaryReturnFactory(
+            self.subject,
+            lat=41.9028,
+            lng=12.4964,
+            tz_str="Europe/Rome",
+            online=False
+        )
+
+        # Find lunar return starting from January 15
+        return_subject = factory.next_return_from_date(2024, 1, 15, return_type="Lunar")
+        assert return_subject is not None
+        assert hasattr(return_subject, 'moon')
+
+    def test_two_lunar_returns_same_month(self):
+        """Test that different start days find different lunar returns in same month."""
+        factory = PlanetaryReturnFactory(
+            self.subject,
+            lat=41.9028,
+            lng=12.4964,
+            tz_str="Europe/Rome",
+            online=False
+        )
+
+        # First lunar return from start of month
+        first_return = factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
+        # Second lunar return from middle of month (after first one likely occurred)
+        second_return = factory.next_return_from_date(2024, 1, 20, return_type="Lunar")
+
+        # They should be different dates (lunar cycle ~27 days)
+        assert first_return.iso_formatted_utc_datetime != second_return.iso_formatted_utc_datetime
+
+    def test_next_return_from_date_invalid_day(self):
+        """Test that invalid day raises exception."""
+        factory = PlanetaryReturnFactory(
+            self.subject,
+            lat=41.9028,
+            lng=12.4964,
+            tz_str="Europe/Rome",
+            online=False
+        )
+
+        with pytest.raises(KerykeionException) as exc_info:
+            factory.next_return_from_date(2024, 2, 30, return_type="Lunar")
+
+        assert "Invalid day 30" in str(exc_info.value)
+
+    def test_next_return_from_date_method_exists(self):
+        """Test that next_return_from_date method exists."""
+        factory = PlanetaryReturnFactory(
+            self.subject,
+            lat=41.9028,
+            lng=12.4964,
+            tz_str="Europe/Rome",
+            online=False
+        )
+
+        assert hasattr(factory, 'next_return_from_date')

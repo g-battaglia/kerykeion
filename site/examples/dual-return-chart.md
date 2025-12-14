@@ -36,7 +36,7 @@ factory = PlanetaryReturnFactory(
     tz_str=natal_subject.tz_str,
     online=False,
 )
-solar_return_subject = factory.next_return_from_year(2025, "Solar")
+solar_return_subject = factory.next_return_from_date(2025, 7, 1, return_type="Solar")
 
 # Build dual return chart data (DualReturnChart)
 chart_data = ChartDataFactory.create_return_chart_data(
@@ -62,10 +62,10 @@ drawer.save_svg(
 
 This will generate a dual-wheel chart where:
 
-- the inner wheel shows the natal positions  
-- the outer wheel shows the Solar Return positions  
-- two house-comparison tables show natal points in return houses and return points in natal houses  
-- two cusp-comparison tables show how cusps fall into each other's house systems  
+-   the inner wheel shows the natal positions
+-   the outer wheel shows the Solar Return positions
+-   two house-comparison tables show natal points in return houses and return points in natal houses
+-   two cusp-comparison tables show how cusps fall into each other's house systems
 
 ## Toggling Degree Indicators
 
@@ -82,4 +82,3 @@ svg_content = drawer.generate_svg_string()
 ```
 
 Set `show_degree_indicators=True` (the default) to keep the indicators for both single and dual wheels.
-

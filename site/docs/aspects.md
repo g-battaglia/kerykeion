@@ -13,8 +13,9 @@ The Aspects module provides comprehensive astrological aspect analysis through a
 Astrological aspects are geometric relationships between planets and points measured in degrees along the zodiac. These angular relationships reveal how planetary energies interact, creating harmonious or challenging dynamics that influence personality traits, life events, and relationships.
 
 The `AspectsFactory` provides a unified approach to aspect calculation with two primary methods:
-- **`single_chart_aspects()`**: Analyzes aspects within one chart (natal, return, composite, etc.)
-- **`dual_chart_aspects()`**: Analyzes aspects between two charts (synastry, transits, comparisons, etc.)
+
+-   **`single_chart_aspects()`**: Analyzes aspects within one chart (natal, return, composite, etc.)
+-   **`dual_chart_aspects()`**: Analyzes aspects between two charts (synastry, transits, comparisons, etc.)
 
 This unified design eliminates the complexity of managing separate classes while providing specialized functionality for different types of astrological analysis.
 
@@ -25,37 +26,40 @@ This unified design eliminates the complexity of managing separate classes while
 The module calculates both major and minor aspects with customizable orb tolerances:
 
 **Major Aspects** (Traditional):
-- **Conjunction (0°)**: Planetary energies blend and intensify
-- **Opposition (180°)**: Polarized energies creating tension or balance
-- **Trine (120°)**: Harmonious flow of energies
-- **Square (90°)**: Dynamic tension and challenge
-- **Sextile (60°)**: Cooperative and supportive energies
+
+-   **Conjunction (0°)**: Planetary energies blend and intensify
+-   **Opposition (180°)**: Polarized energies creating tension or balance
+-   **Trine (120°)**: Harmonious flow of energies
+-   **Square (90°)**: Dynamic tension and challenge
+-   **Sextile (60°)**: Cooperative and supportive energies
 
 **Minor Aspects** (Extended Analysis):
-- **Semi-sextile (30°)**: Subtle supportive connection
-- **Semi-square (45°)**: Minor friction requiring adjustment
-- **Quintile (72°)**: Creative and spiritual talents
-- **Sesquiquadrate (135°)**: Persistent challenge requiring resolution
-- **Biquintile (144°)**: Enhanced creative expression
-- **Quincunx/Inconjunct (150°)**: Adjustment and integration needed
+
+-   **Semi-sextile (30°)**: Subtle supportive connection
+-   **Semi-square (45°)**: Minor friction requiring adjustment
+-   **Quintile (72°)**: Creative and spiritual talents
+-   **Sesquiquadrate (135°)**: Persistent challenge requiring resolution
+-   **Biquintile (144°)**: Enhanced creative expression
+-   **Quincunx/Inconjunct (150°)**: Adjustment and integration needed
 
 ### Orb Tolerances
 
 Orbs determine how close to exact an aspect needs to be to be considered valid:
 
-- **Standard Orbs**: Vary by aspect type (typically 6-10° for major aspects, 1-3° for minor)
-- **Axes Orbs**: Stricter limits for chart angles (Ascendant, Midheaven, Descendant, IC)
-- **Tight Aspects**: Aspects within 1-2° are considered particularly significant
-- **Custom Orbs**: Configurable for specialized analysis needs
+-   **Standard Orbs**: Vary by aspect type (typically 6-10° for major aspects, 1-3° for minor)
+-   **Axes Orbs**: Stricter limits for chart angles (Ascendant, Midheaven, Descendant, IC)
+-   **Tight Aspects**: Aspects within 1-2° are considered particularly significant
+-   **Custom Orbs**: Configurable for specialized analysis needs
 
 ### Chart Types Supported
 
 The unified factory works with all chart types:
-- **Natal Charts**: Birth chart aspects revealing personality dynamics
-- **Planetary Returns**: Solar, lunar, and other planetary return charts
-- **Composite Charts**: Blended relationship charts
-- **Transit Charts**: Current planetary positions
-- **Progressed Charts**: Evolved natal positions over time
+
+-   **Natal Charts**: Birth chart aspects revealing personality dynamics
+-   **Planetary Returns**: Solar, lunar, and other planetary return charts
+-   **Composite Charts**: Blended relationship charts
+-   **Transit Charts**: Current planetary positions
+-   **Progressed Charts**: Evolved natal positions over time
 
 ## Single Chart Aspects Analysis
 
@@ -91,6 +95,7 @@ for i, aspect in enumerate(sorted_aspects[:5], 1):
 ```
 
 **Output example:**
+
 ```
 Analyzing Maria Garcia's natal chart:
 Aspects found: 42
@@ -123,7 +128,7 @@ chart_aspects = AspectsFactory.single_chart_aspects(person)
 
 def analyze_aspect_patterns(chart_aspects):
     """Comprehensive aspect pattern analysis"""
-    
+
     # Group aspects by type
     aspect_types = {}
     for aspect in chart_aspects.aspects:
@@ -131,38 +136,39 @@ def analyze_aspect_patterns(chart_aspects):
         if aspect_type not in aspect_types:
             aspect_types[aspect_type] = []
         aspect_types[aspect_type].append(aspect)
-    
+
     print("=== ASPECT PATTERN ANALYSIS ===")
-    
+
     # Count by aspect type
     print("\nAspect Distribution:")
     for aspect_type, aspects in sorted(aspect_types.items()):
         avg_orb = sum(abs(a.orbit) for a in aspects) / len(aspects)
         print(f"  {aspect_type}: {len(aspects)} aspects (avg orb: {avg_orb:.2f}°)")
-    
+
     # Analyze planetary involvement
     planet_involvement = {}
     for aspect in chart_aspects.aspects:
         for planet in [aspect.p1_name, aspect.p2_name]:
             planet_involvement[planet] = planet_involvement.get(planet, 0) + 1
-    
+
     print("\nMost Aspected Planets:")
     sorted_planets = sorted(planet_involvement.items(), key=lambda x: x[1], reverse=True)
     for planet, count in sorted_planets[:5]:
         print(f"  {planet}: {count} aspects")
-    
+
     # Identify tight aspects (within 1 degree)
     tight_aspects = [a for a in chart_aspects.aspects if abs(a.orbit) <= 1.0]
     print(f"\nTight Aspects (≤1°): {len(tight_aspects)}")
     for aspect in sorted(tight_aspects, key=lambda x: abs(x.orbit)):
         print(f"  {aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb: {aspect.orbit:.2f}°)")
-    
+
     return aspect_types, planet_involvement, tight_aspects
 
 patterns, involvement, tight = analyze_aspect_patterns(chart_aspects)
 ```
 
 **Output example:**
+
 ```
 === ASPECT PATTERN ANALYSIS ===
 
@@ -219,22 +225,22 @@ person2 = AstrologicalSubjectFactory.from_birth_data(
 # Comprehensive relationship compatibility analysis
 def synastry_compatibility_analysis(person1, person2):
     """Complete synastry analysis with multiple perspectives"""
-    
+
     # Calculate dual chart aspects
     synastry = AspectsFactory.dual_chart_aspects(person1, person2)
-    
+
     print(f"=== SYNASTRY ANALYSIS ===")
     print(f"{person1.name} & {person2.name}")
     print(f"Aspects: {len(synastry.aspects)}")
-    
+
     # Categorize aspects by harmony
     harmonious = []
     challenging = []
     neutral = []
-    
+
     harmonious_aspects = ["conjunction", "trine", "sextile"]
     challenging_aspects = ["opposition", "square"]
-    
+
     for aspect in synastry.aspects:
         if aspect.aspect in harmonious_aspects:
             harmonious.append(aspect)
@@ -242,45 +248,45 @@ def synastry_compatibility_analysis(person1, person2):
             challenging.append(aspect)
         else:
             neutral.append(aspect)
-    
+
     print(f"\nAspect Quality Distribution:")
     print(f"  Harmonious: {len(harmonious)} aspects")
     print(f"  Challenging: {len(challenging)} aspects")
     print(f"  Neutral/Mixed: {len(neutral)} aspects")
-    
+
     # Compatibility ratio
     if len(challenging) > 0:
         harmony_ratio = len(harmonious) / len(challenging)
         print(f"  Harmony Ratio: {harmony_ratio:.2f}")
     else:
         print(f"  Harmony Ratio: Perfect (no challenging aspects)")
-    
+
     # Analyze by planetary combinations
     love_aspects = []
     passion_aspects = []
     communication_aspects = []
-    
+
     for aspect in synastry.aspects:
         planets = {aspect.p1_name, aspect.p2_name}
-        
+
         if "Venus" in planets or "Moon" in planets:
             love_aspects.append(aspect)
         if "Mars" in planets or "Pluto" in planets:
             passion_aspects.append(aspect)
         if "Mercury" in planets:
             communication_aspects.append(aspect)
-    
+
     print(f"\nRelationship Themes:")
     print(f"  Love & Emotional Connection: {len(love_aspects)} aspects")
     print(f"  Passion & Energy: {len(passion_aspects)} aspects")
     print(f"  Communication: {len(communication_aspects)} aspects")
-    
+
     # Show strongest connections
     print(f"\nStrongest Connections:")
     strongest = sorted(synastry.aspects, key=lambda x: abs(x.orbit))[:5]
     for i, aspect in enumerate(strongest, 1):
         print(f"  {i}. {aspect.p1_owner}'s {aspect.p1_name} {aspect.aspect} {aspect.p2_owner}'s {aspect.p2_name} (orb: {aspect.orbit:.2f}°)")
-    
+
     return synastry
 
 # Example relationship analysis
@@ -298,6 +304,7 @@ relationship_analysis = synastry_compatibility_analysis(person1, person2)
 ```
 
 **Output example:**
+
 ```
 === SYNASTRY ANALYSIS ===
 Alessandro & Sofia
@@ -330,10 +337,10 @@ from datetime import datetime
 
 def current_transits_analysis(natal_person, transit_date=None):
     """Analyze current planetary transits to natal chart"""
-    
+
     if transit_date is None:
         transit_date = datetime.now()
-    
+
     # Create transit chart for current moment
     transit_chart = AstrologicalSubjectFactory.from_birth_data(
         name=f"Transits_{transit_date.strftime('%Y%m%d')}",
@@ -346,15 +353,15 @@ def current_transits_analysis(natal_person, transit_date=None):
         lng=natal_person.lng,
         tz_str=natal_person.tz_str
     )
-    
+
     # Calculate transits (dual chart aspects)
     transits = AspectsFactory.dual_chart_aspects(transit_chart, natal_person)
-    
+
     print(f"=== CURRENT TRANSITS ANALYSIS ===")
     print(f"For: {natal_person.name}")
     print(f"Date: {transit_date.strftime('%Y-%m-%d %H:%M')}")
     print(f"Active transits: {len(transits.aspects)}")
-    
+
     # Group by transiting planet
     transit_planets = {}
     for aspect in transits.aspects:
@@ -362,7 +369,7 @@ def current_transits_analysis(natal_person, transit_date=None):
         if transiting_planet not in transit_planets:
             transit_planets[transiting_planet] = []
         transit_planets[transiting_planet].append(aspect)
-    
+
     print("\nTransits by Planet:")
     for planet, aspects in sorted(transit_planets.items()):
         if len(aspects) > 0:
@@ -370,20 +377,20 @@ def current_transits_analysis(natal_person, transit_date=None):
             for aspect in sorted(aspects, key=lambda x: abs(x.orbit)):
                 natal_planet = aspect.p2_name
                 print(f"    {aspect.aspect} natal {natal_planet} (orb: {aspect.orbit:.2f}°)")
-    
+
     # Highlight significant transits
     significant_transits = []
     significant_planets = ["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
-    
+
     for aspect in transits.aspects:
         if aspect.p1_name in significant_planets and abs(aspect.orbit) <= 2.0:
             significant_transits.append(aspect)
-    
+
     if significant_transits:
         print(f"\nSignificant Outer Planet Transits (≤2° orb):")
         for aspect in sorted(significant_transits, key=lambda x: abs(x.orbit)):
             print(f"  {aspect.p1_name} {aspect.aspect} natal {aspect.p2_name} (orb: {aspect.orbit:.2f}°)")
-    
+
     return transits
 
 # Example transit analysis
@@ -443,7 +450,7 @@ person = AstrologicalSubjectFactory.from_birth_data(
 )
 
 personal_aspects = AspectsFactory.single_chart_aspects(
-    person, 
+    person,
     active_points=personal_planets
 )
 
@@ -682,7 +689,7 @@ detection_aspects = AspectsFactory.single_chart_aspects(detection_subject)
 
 def identify_aspect_patterns(aspects_result):
     """Identify significant aspect patterns and configurations"""
-    
+
     # Group aspects by planets
     planet_aspects = {}
     for aspect in aspects_result.aspects:
@@ -690,35 +697,35 @@ def identify_aspect_patterns(aspects_result):
             if planet_name not in planet_aspects:
                 planet_aspects[planet_name] = []
             planet_aspects[planet_name].append(aspect)
-    
+
     print(f"=== ASPECT PATTERN RECOGNITION ===")
-    
+
     heavily_aspected = []
     for planet, aspects in planet_aspects.items():
         if len(aspects) >= 6:
             heavily_aspected.append((planet, len(aspects)))
-    
+
     if heavily_aspected:
         print(f"\nHeavily Aspected Planets (Focal Points):")
         for planet, count in sorted(heavily_aspected, key=lambda x: x[1], reverse=True):
             print(f"  {planet}: {count} aspects")
-    
+
     conjunctions = [a for a in aspects_result.aspects if a.aspect == "conjunction"]
     if len(conjunctions) >= 2:
         print(f"\nConjunction Patterns:")
         for conj in sorted(conjunctions, key=lambda x: abs(x.orbit)):
             print(f"    {conj.p1_name} ☌ {conj.p2_name} (orb: {conj.orbit:.2f}°)")
-    
+
     squares = [a for a in aspects_result.aspects if a.aspect == "square"]
     trines = [a for a in aspects_result.aspects if a.aspect == "trine"]
     oppositions = [a for a in aspects_result.aspects if a.aspect == "opposition"]
-    
+
     if len(squares) >= 2 and len(oppositions) >= 1:
         print(f"\nPotential T-Square Configuration detected")
-    
+
     if len(trines) >= 3:
         print(f"\nPotential Grand Trine Configuration detected")
-    
+
     return planet_aspects, heavily_aspected
 
 identify_aspect_patterns(detection_aspects)
@@ -867,7 +874,6 @@ print(f"  Synastry aspects analyzed: {synastry_stats['orb_stats']['count'] if sy
 
 ### Professional Consultation
 
-
 ```python
 from datetime import datetime
 from kerykeion import AstrologicalSubjectFactory, AspectsFactory
@@ -927,9 +933,7 @@ relationship_analysis = AspectsFactory.dual_chart_aspects(person, partner)
 consultation = generate_consultation_report(person, "comprehensive")
 ```
 
-
 ### Research Applications
-
 
 ```python
 import statistics
@@ -1013,12 +1017,12 @@ def comparative_study(subjects_list, study_focus="general"):
 research_results = comparative_study(sample_subjects, "sun_sign")
 ```
 
-
 ## Integration with Other Modules
 
 The Aspects module works seamlessly with other Kerykeion components:
 
 ### Chart Visualization
+
 ```python
 from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
@@ -1037,6 +1041,7 @@ chart_svg = chart.generate_svg_string()
 ```
 
 ### House Comparison
+
 ```python
 from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 from kerykeion.house_comparison import HouseComparisonFactory
@@ -1066,6 +1071,7 @@ print(f"  House overlays: {len(houses.first_points_in_second_houses)}")
 ```
 
 ### Transits and Returns
+
 ```python
 from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
@@ -1084,7 +1090,7 @@ factory = PlanetaryReturnFactory(
     tz_str="Europe/London",
     online=False,
 )
-solar_return = factory.next_return_from_year(2024, "Solar")
+solar_return = factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 return_aspects = AspectsFactory.single_chart_aspects(solar_return)
 
 print(f"Solar return aspects: {len(return_aspects.aspects)}")

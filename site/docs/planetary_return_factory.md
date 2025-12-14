@@ -13,17 +13,18 @@ The `planetary_return_factory` module provides the `PlanetaryReturnFactory` clas
 Planetary returns occur when a planet returns to the exact degree and minute it occupied at birth. The `PlanetaryReturnFactory` specializes in computing these precise moments and generating complete astrological charts for forecasting and timing analysis.
 
 **Key Return Types:**
-- **Solar Returns**: Occur approximately once per year (~365.25 days) when the Sun returns to its natal position
-- **Lunar Returns**: Occur approximately every 27-29 days when the Moon returns to its natal position
+
+-   **Solar Returns**: Occur approximately once per year (~365.25 days) when the Sun returns to its natal position
+-   **Lunar Returns**: Occur approximately every 27-29 days when the Moon returns to its natal position
 
 ## Key Features
 
-- **Precise Astronomical Calculations**: Swiss Ephemeris integration for exact return timing
-- **Multiple Date Input Formats**: ISO datetime, year-based, or month/year-based searches
-- **Flexible Location Handling**: Online geocoding via Geonames or manual coordinates
-- **Complete Chart Generation**: Full AstrologicalSubject instances with all features
-- **Timezone-Aware Calculations**: UTC precision with local timezone conversion
-- **Return Chart Relocation**: Cast returns for different locations than birth
+-   **Precise Astronomical Calculations**: Swiss Ephemeris integration for exact return timing
+-   **Multiple Date Input Formats**: ISO datetime, year-based, or month/year-based searches
+-   **Flexible Location Handling**: Online geocoding via Geonames or manual coordinates
+-   **Complete Chart Generation**: Full AstrologicalSubject instances with all features
+-   **Timezone-Aware Calculations**: UTC precision with local timezone conversion
+-   **Return Chart Relocation**: Cast returns for different locations than birth
 
 ## PlanetaryReturnFactory Class
 
@@ -54,13 +55,14 @@ calculator = PlanetaryReturnFactory(
 )
 
 # Calculate Solar Return for 2024
-solar_return = calculator.next_return_from_year(2024, "Solar")
+solar_return = calculator.next_return_from_date(2024, 1, 1, return_type="Solar")
 
 print(f"Solar Return Date: {solar_return.iso_formatted_local_datetime}")
 print(f"Sun Position: {solar_return.sun.abs_pos:.2f}°")
 ```
 
 **Output:**
+
 ```
 Solar Return Date: 2024-06-15T11:47:23-04:00
 Sun Position: 84.25°
@@ -93,8 +95,8 @@ calculator = PlanetaryReturnFactory(
 )
 
 # Calculate returns without internet connection
-solar_return = calculator.next_return_from_year(2024, "Solar")
-lunar_return = calculator.next_return_from_year(2024, "Lunar")
+solar_return = calculator.next_return_from_date(2024, 1, 1, return_type="Solar")
+lunar_return = calculator.next_return_from_date(2024, 1, 1, return_type="Lunar")
 
 print("=== OFFLINE RETURN CALCULATIONS ===")
 print(f"Solar Return: {solar_return.iso_formatted_local_datetime}")
@@ -102,6 +104,7 @@ print(f"Lunar Return: {lunar_return.iso_formatted_local_datetime}")
 ```
 
 **Output:**
+
 ```
 === OFFLINE RETURN CALCULATIONS ===
 Solar Return: 2024-06-15T11:47:23-04:00
@@ -136,7 +139,7 @@ calculator = PlanetaryReturnFactory(
     online=False
 )
 
-solar_return_2024 = calculator.next_return_from_year(2024, "Solar")
+solar_return_2024 = calculator.next_return_from_date(2024, 1, 1, return_type="Solar")
 
 print("=== SOLAR RETURN ANALYSIS ===")
 print(f"Return Date: {solar_return_2024.iso_formatted_local_datetime}")
@@ -155,7 +158,7 @@ print(f"Midheaven: {solar_return_2024.medium_coeli.sign} {solar_return_2024.medi
 
 print("\n--- HOUSE EMPHASIS ---")
 house_count = {}
-for planet in [solar_return_2024.sun, solar_return_2024.moon, solar_return_2024.mercury, 
+for planet in [solar_return_2024.sun, solar_return_2024.moon, solar_return_2024.mercury,
                solar_return_2024.venus, solar_return_2024.mars, solar_return_2024.jupiter]:
     house = planet.house
     house_count[house] = house_count.get(house, 0) + 1
@@ -166,6 +169,7 @@ for house, count in sorted(house_count.items()):
 ```
 
 **Output:**
+
 ```
 === SOLAR RETURN ANALYSIS ===
 Return Date: 2024-03-20T09:23:15+01:00
@@ -218,7 +222,7 @@ lunar_returns = []
 # Get all Lunar Returns for 2024
 for month in range(1, 13):
     try:
-        lunar_return = calculator.next_return_from_month_and_year(2024, month, "Lunar")
+        lunar_return = calculator.next_return_from_date(2024, month, 1, return_type="Lunar")
         lunar_returns.append({
             'month': month,
             'date': lunar_return.iso_formatted_local_datetime,
@@ -244,6 +248,7 @@ print(f"\nMoon sign distribution: {', '.join(set(moon_signs))}")
 ```
 
 **Output:**
+
 ```
 === LUNAR RETURN CALENDAR 2024 ===
 Month      Date                      Moon Sign    House  Ascendant
@@ -293,22 +298,22 @@ years = [2022, 2023, 2024, 2025]
 solar_returns = {}
 
 for year in years:
-    sr = calculator.next_return_from_year(year, "Solar")
+    sr = calculator.next_return_from_date(year, 1, 1, return_type="Solar")
     solar_returns[year] = sr
-    
+
     print(f"\n--- {year} SOLAR RETURN ---")
     print(f"Date: {sr.iso_formatted_local_datetime}")
     print(f"Ascendant: {sr.ascendant.sign} {sr.ascendant.abs_pos:.2f}°")
     print(f"Sun House: {sr.sun.house}")
     print(f"Moon: {sr.moon.sign} {sr.moon.abs_pos:.2f}° (House {sr.moon.house})")
-    
+
     # Check for retrograde planets
     retrogrades = []
     for planet_name in ['mercury', 'venus', 'mars', 'jupiter', 'saturn']:
         planet = getattr(sr, planet_name)
         if planet.retrograde:
             retrogrades.append(planet.name.capitalize())
-    
+
     if retrogrades:
         print(f"Retrograde planets: {', '.join(retrogrades)}")
     else:
@@ -376,6 +381,7 @@ print(f"Julian Day: {lunar_return.julian_day:.6f}")
 ```
 
 **Output:**
+
 ```
 === PRECISE TIMING ANALYSIS ===
 Search started: 2024-12-01T00:00:00+00:00
@@ -430,10 +436,10 @@ for city_info in cities:
         nation=city_info["nation"],
         online=True
     )
-    
+
     try:
-        solar_return = calculator.next_return_from_year(2024, "Solar")
-        
+        solar_return = calculator.next_return_from_date(2024, 1, 1, return_type="Solar")
+
         print(f"\n--- {city_info['city'].upper()} SOLAR RETURN ---")
         print(f"Date/Time: {solar_return.iso_formatted_local_datetime}")
         print(f"Coordinates: {solar_return.lat:.2f}°, {solar_return.lng:.2f}°")
@@ -442,21 +448,21 @@ for city_info in cities:
         print(f"Midheaven: {solar_return.medium_coeli.sign} {solar_return.medium_coeli.abs_pos:.2f}°")
         print(f"Sun House: {solar_return.sun.house}")
         print(f"Moon House: {solar_return.moon.house}")
-        
+
         # House emphasis analysis
         house_planets = {}
-        for planet in [solar_return.sun, solar_return.moon, solar_return.mercury, 
+        for planet in [solar_return.sun, solar_return.moon, solar_return.mercury,
                       solar_return.venus, solar_return.mars]:
             house = planet.house
             if house not in house_planets:
                 house_planets[house] = []
             house_planets[house].append(planet.name.capitalize())
-        
+
         emphasis_houses = [(h, planets) for h, planets in house_planets.items() if len(planets) > 1]
         if emphasis_houses:
             for house, planets in emphasis_houses:
                 print(f"House {house} emphasis: {', '.join(planets)}")
-        
+
     except Exception as e:
         print(f"Error calculating return for {city_info['city']}: {e}")
 
@@ -501,7 +507,7 @@ solar_returns = []
 base_year = 2020
 
 for year in range(base_year, base_year + 10):
-    sr = calculator.next_return_from_year(year, "Solar")
+    sr = calculator.next_return_from_date(year, 1, 1, return_type="Solar")
     solar_returns.append(sr)
 
 # Calculate intervals between Solar Returns
@@ -532,7 +538,7 @@ current_search = start_date
 for i in range(12):
     lr = calculator.next_return_from_iso_formatted_time(current_search, "Lunar")
     lunar_returns.append(lr)
-    
+
     # Next search starts 1 day after current return
     next_date = datetime.fromisoformat(lr.iso_formatted_utc_datetime.replace('Z', '+00:00')) + timedelta(days=1)
     current_search = next_date.isoformat()
@@ -554,6 +560,7 @@ print(f"Lunar range: {min(lunar_intervals):.3f} - {max(lunar_intervals):.3f} day
 ```
 
 **Output:**
+
 ```
 === PLANETARY RETURN CYCLE RESEARCH ===
 
@@ -639,9 +646,9 @@ try:
         tz_str="America/New_York",
         online=False
     )
-    
+
     # Invalid return type
-    invalid_return = calculator.next_return_from_year(2024, "Venus")  # type: ignore
+    invalid_return = calculator.next_return_from_date(2024, 1, 1, return_type="Venus")  # type: ignore
 except Exception as e:
     print(f"Invalid return type error: {e}")
 
@@ -653,15 +660,15 @@ try:
         tz_str="America/New_York",
         online=False
     )
-    
+
     # Year outside ephemeris range
-    ancient_return = calculator.next_return_from_year(1500, "Solar")
+    ancient_return = calculator.next_return_from_date(1500, 1, 1, return_type="Solar")
 except Exception as e:
     print(f"Date range error: {e}")
 
 # Issue 4: Invalid month
 try:
-    invalid_month = calculator.next_return_from_month_and_year(2024, 13, "Solar")
+    invalid_month = calculator.next_return_from_date(2024, 13, 1, return_type="Solar")
 except Exception as e:
     print(f"Invalid month error: {e}")
 
@@ -677,7 +684,7 @@ try:
         online=True,
         geonames_username="your_username"
     )
-    solar_return = calculator.next_return_from_year(2024, "Solar")
+    solar_return = calculator.next_return_from_date(2024, 1, 1, return_type="Solar")
     print(f"Success: Solar return calculated for {solar_return.iso_formatted_local_datetime}")
 except Exception as e:
     print(f"Setup error: {e}")
@@ -691,8 +698,8 @@ calculator = PlanetaryReturnFactory(
     online=False
 )
 
-solar_return = calculator.next_return_from_year(2024, "Solar")
-lunar_return = calculator.next_return_from_year(2024, "Lunar")
+solar_return = calculator.next_return_from_date(2024, 1, 1, return_type="Solar")
+lunar_return = calculator.next_return_from_date(2024, 1, 1, return_type="Lunar")
 
 print(f"Offline Solar Return: {solar_return.iso_formatted_local_datetime}")
 print(f"Offline Lunar Return: {lunar_return.iso_formatted_local_datetime}")
@@ -728,11 +735,11 @@ print("=== PERFORMANCE ANALYSIS ===")
 
 # Time single calculations
 start_time = time.time()
-solar_return = calculator.next_return_from_year(2024, "Solar")
+solar_return = calculator.next_return_from_date(2024, 1, 1, return_type="Solar")
 solar_time = time.time() - start_time
 
 start_time = time.time()
-lunar_return = calculator.next_return_from_year(2024, "Lunar")
+lunar_return = calculator.next_return_from_date(2024, 1, 1, return_type="Lunar")
 lunar_time = time.time() - start_time
 
 print(f"Solar Return calculation: {solar_time:.4f} seconds")
@@ -745,7 +752,7 @@ years = list(range(2020, 2030))
 start_time = time.time()
 solar_returns = []
 for year in years:
-    sr = calculator.next_return_from_year(year, "Solar")
+    sr = calculator.next_return_from_date(year, 1, 1, return_type="Solar")
     solar_returns.append(sr)
 batch_time = time.time() - start_time
 
@@ -758,7 +765,7 @@ iso_return = calculator.next_return_from_iso_formatted_time("2024-01-01T00:00:00
 iso_time = time.time() - start_time
 
 start_time = time.time()
-year_return = calculator.next_return_from_year(2024, "Solar")
+year_return = calculator.next_return_from_date(2024, 1, 1, return_type="Solar")
 year_time = time.time() - start_time
 
 print(f"\nISO method: {iso_time:.4f} seconds")
@@ -773,6 +780,7 @@ print(f"10 returns memory: ~{return_size * 10:,} bytes")
 ```
 
 **Output:**
+
 ```
 === PERFORMANCE ANALYSIS ===
 Solar Return calculation: 0.0234 seconds
@@ -793,6 +801,7 @@ Return object size: 12,456 bytes
 ## Practical Applications
 
 ### 1. Astrological Consultation
+
 ```python
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
@@ -815,7 +824,7 @@ calculator = PlanetaryReturnFactory(
     online=False,
 )
 
-solar_return = calculator.next_return_from_year(2024, "Solar")
+solar_return = calculator.next_return_from_date(2024, 1, 1, return_type="Solar")
 
 print("=== SOLAR RETURN CONSULTATION POINTS ===")
 print(f"Return Date: {solar_return.iso_formatted_local_datetime}")
@@ -825,6 +834,7 @@ print(f"Annual Lunar Phase: {solar_return.lunar_phase.moon_phase_name}")
 ```
 
 ### 2. Monthly Timing (Electional Astrology)
+
 ```python
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
@@ -848,11 +858,12 @@ calculator = PlanetaryReturnFactory(
 )
 
 for month in range(1, 13):
-    lunar_return = calculator.next_return_from_month_and_year(2024, month, "Lunar")
+    lunar_return = calculator.next_return_from_date(2024, month, 1, return_type="Lunar")
     print(f"Month {month}: {lunar_return.iso_formatted_local_datetime}")
 ```
 
 ### 3. Research and Education
+
 ```python
 # Educational demonstration of return cycles
 print("=== EDUCATIONAL CYCLE DEMONSTRATION ===")
@@ -861,6 +872,7 @@ print("Lunar Returns show monthly lunar rhythm patterns")
 ```
 
 ### 4. Relocation Analysis
+
 ```python
 # Compare life themes in different locations
 cities = ["London", "New York", "Los Angeles"]
@@ -872,27 +884,31 @@ for city in cities:
 ## Technical Notes
 
 ### Astronomical Accuracy
-- Uses Swiss Ephemeris for NASA-quality precision
-- Calculations accurate to within seconds of actual astronomical events
-- Accounts for planetary orbital variations and precession
-- Supports historical calculations back to approximately 5400 BCE
+
+-   Uses Swiss Ephemeris for NASA-quality precision
+-   Calculations accurate to within seconds of actual astronomical events
+-   Accounts for planetary orbital variations and precession
+-   Supports historical calculations back to approximately 5400 BCE
 
 ### Return Timing Variations
-- **Solar Returns**: Vary by ±1-2 days from calendar birthday due to leap years
-- **Lunar Returns**: Vary by ±12 hours from average 29.5-day cycle
-- **Location Impact**: Return timing varies slightly by geographic location
-- **Timezone Considerations**: Return charts reflect local time at location
+
+-   **Solar Returns**: Vary by ±1-2 days from calendar birthday due to leap years
+-   **Lunar Returns**: Vary by ±12 hours from average 29.5-day cycle
+-   **Location Impact**: Return timing varies slightly by geographic location
+-   **Timezone Considerations**: Return charts reflect local time at location
 
 ### Data Quality
-- All return charts include complete planetary positions
-- House cusps calculated for exact return location
-- Aspects and other features available through standard methods
-- Compatible with all Kerykeion chart analysis tools
+
+-   All return charts include complete planetary positions
+-   House cusps calculated for exact return location
+-   Aspects and other features available through standard methods
+-   Compatible with all Kerykeion chart analysis tools
 
 ### Limitations
-- Limited to Solar and Lunar returns (other planetary returns not supported)
-- Requires valid birth data for accurate natal reference positions
-- Geonames dependency for online mode location data
-- Swiss Ephemeris date range limitations (~5400 BCE to 5400 CE)
+
+-   Limited to Solar and Lunar returns (other planetary returns not supported)
+-   Requires valid birth data for accurate natal reference positions
+-   Geonames dependency for online mode location data
+-   Swiss Ephemeris date range limitations (~5400 BCE to 5400 CE)
 
 The `PlanetaryReturnFactory` provides precise and comprehensive tools for calculating planetary returns, essential for annual forecasting, monthly timing analysis, and advanced astrological research applications.

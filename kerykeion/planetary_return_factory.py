@@ -67,6 +67,7 @@ Author: Giacomo Battaglia
 Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
+import calendar
 import logging
 import swisseph as swe
 
@@ -478,7 +479,7 @@ class PlanetaryReturnFactory:
 
         See Also:
             next_return_from_year(): Simplified interface for yearly calculations
-            next_return_from_month_and_year(): Monthly calculation interface
+            next_return_from_date(): Date-based calculation interface
         """
 
         date = datetime.fromisoformat(iso_formatted_time)
@@ -608,11 +609,85 @@ class PlanetaryReturnFactory:
             - Astrological consultation preparation
 
         See Also:
-            next_return_from_month_and_year(): For more specific monthly searches
+            next_return_from_date(): For more specific date-based searches
             next_return_from_iso_formatted_time(): For custom starting dates
         """
-        # Create datetime for January 1st of the specified year (UTC)
-        start_date = datetime(year, 1, 1, 0, 0, tzinfo=timezone.utc)
+        import warnings
+        warnings.warn(
+            "next_return_from_year is deprecated, use next_return_from_date instead",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self.next_return_from_date(year, 1, 1, return_type=return_type)
+
+    def next_return_from_date(
+        self,
+        year: int,
+        month: int,
+        day: int = 1,
+        *,
+        return_type: ReturnType
+    ) -> PlanetReturnModel:
+        """
+        Calculate the first planetary return occurring on or after a specified date.
+
+        This method provides precise timing control for planetary return calculations by
+        searching from a specific day, month, and year. It's particularly useful for
+        finding Lunar Returns when multiple returns occur within a single month
+        (approximately every 27.3 days).
+
+        The method searches from midnight (00:00:00 UTC) of the specified date,
+        finding the next return that occurs from that point forward.
+
+        Args:
+            year (int): The calendar year to search within. Must be a valid year
+                within the ephemeris data range (typically 1800-2200).
+            month (int): The month to start the search from. Must be between 1 and 12.
+            day (int): The day to start the search from. Must be a valid day for the
+                specified month (1-28/29/30/31 depending on month). Defaults to 1.
+            return_type (ReturnType): The type of planetary return to calculate.
+                Must be either "Solar" for Sun returns or "Lunar" for Moon returns.
+
+        Returns:
+            PlanetReturnModel: Comprehensive return chart data for the first return
+                found on or after the specified date.
+
+        Raises:
+            KerykeionException: If month is not between 1 and 12.
+            KerykeionException: If day is not valid for the given month/year.
+            KerykeionException: If return_type is not "Solar" or "Lunar".
+
+        Examples:
+            Find first Lunar Return after January 15, 2024:
+
+            >>> lunar_return = factory.next_return_from_date(
+            ...     2024, 1, 15, return_type="Lunar"
+            ... )
+
+            Find second Lunar Return in a month (after the first one):
+
+            >>> # First return from start of month
+            >>> first_lr = factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
+            >>> # Second return from middle of month
+            >>> second_lr = factory.next_return_from_date(2024, 1, 15, return_type="Lunar")
+
+        See Also:
+            next_return_from_year(): For annual return calculations
+            next_return_from_iso_formatted_time(): For custom datetime searches
+        """
+        # Validate month input
+        if month < 1 or month > 12:
+            raise KerykeionException(f"Invalid month {month}. Month must be between 1 and 12.")
+
+        # Validate day input
+        max_day = calendar.monthrange(year, month)[1]
+        if day < 1 or day > max_day:
+            raise KerykeionException(
+                f"Invalid day {day} for {year}-{month:02d}. Day must be between 1 and {max_day}."
+            )
+
+        # Create datetime for the specified date (UTC)
+        start_date = datetime(year, month, day, 0, 0, tzinfo=timezone.utc)
 
         # Get the return using the existing method
         return self.next_return_from_iso_formatted_time(
@@ -627,129 +702,26 @@ class PlanetaryReturnFactory:
         return_type: ReturnType
     ) -> PlanetReturnModel:
         """
+        DEPRECATED: Use next_return_from_date() instead.
+
         Calculate the first planetary return occurring in or after a specified month and year.
-
-        This method provides precise timing control for planetary return calculations by
-        searching from the first day of a specific month and year. It's particularly
-        useful for finding Lunar Returns in specific months or for Solar Return timing
-        when you need to focus on a particular time period within a year.
-
-        The method searches from the first moment (00:00:00 UTC) of the specified month
-        and year, finding the next return that occurs from that point forward. This is
-        especially valuable for Lunar Return work, where multiple returns occur per year
-        and you need to isolate specific monthly periods.
+        This method is kept for backward compatibility and will be removed in a future version.
 
         Args:
-            year (int): The calendar year to search within. Must be a valid year
-                within the ephemeris data range (typically 1800-2200).
-                Examples: 2024, 2025, 1990.
-            month (int): The month to start the search from. Must be between 1 and 12,
-                where 1=January, 2=February, ..., 12=December.
-            return_type (ReturnType): The type of planetary return to calculate.
-                Must be either "Solar" for Sun returns or "Lunar" for Moon returns.
+            year (int): The calendar year to search within.
+            month (int): The month to start the search from (1-12).
+            return_type (ReturnType): "Solar" or "Lunar".
 
         Returns:
-            PlanetReturnModel: Comprehensive return chart data for the first return
-                found on or after the first day of the specified month and year.
-                Contains complete astrological chart information including:
-                - Precise return datetime in UTC and local timezone
-                - All planetary positions at the return moment
-                - House cusps for the factory's configured location
-                - Complete astrological subject data with all calculated features
-                - Return type identifier and naming information
-
-        Raises:
-            KerykeionException: If month is not between 1 and 12.
-            KerykeionException: If return_type is not "Solar" or "Lunar".
-            ValueError: If year is outside valid ephemeris calculation range.
-            SwissEphException: If astronomical calculations fail.
-
-        Examples:
-            Find Solar Return in birth month:
-
-            >>> factory = PlanetaryReturnFactory(subject, ...)
-            >>> # Subject born in June, find 2024 Solar Return in June
-            >>> solar_return = factory.next_return_from_month_and_year(
-            ...     2024, 6, "Solar"
-            ... )
-            >>> print(f"Solar Return: {solar_return.iso_formatted_local_datetime}")
-
-            Find specific Lunar Return:
-
-            >>> # Find first Lunar Return in March 2024
-            >>> lunar_return = factory.next_return_from_month_and_year(
-            ...     2024, 3, "Lunar"
-            ... )
-            >>> print(f"March 2024 Lunar Return: {lunar_return.iso_formatted_local_datetime}")
-
-            Monthly Lunar Return tracking:
-
-            >>> lunar_returns_2024 = []
-            >>> for month in range(1, 13):
-            ...     lunar_return = factory.next_return_from_month_and_year(
-            ...         2024, month, "Lunar"
-            ...     )
-            ...     lunar_returns_2024.append(lunar_return)
-            ...     print(f"Month {month}: {lunar_return.iso_formatted_local_datetime}")
-
-            Seasonal analysis:
-
-            >>> # Spring Solar Return (if birthday is in spring)
-            >>> spring_return = factory.next_return_from_month_and_year(
-            ...     2024, 3, "Solar"
-            ... )
-            >>> # Compare with autumn energy
-            >>> autumn_lunar = factory.next_return_from_month_and_year(
-            ...     2024, 9, "Lunar"
-            ... )
-
-        Practical Applications:
-            - Monthly Lunar Return consultation scheduling
-            - Seasonal astrological analysis and timing
-            - Comparative study of returns across different months
-            - Precise timing for astrological interventions
-            - Educational demonstrations of monthly astrological cycles
-            - Research into seasonal patterns in planetary returns
-
-        Technical Notes:
-            - Search begins at 00:00:00 UTC on the 1st day of the specified month
-            - For Solar Returns, may find the return in a subsequent month if
-              the birthday falls late in the specified month of the previous year
-            - Lunar Returns typically occur within the specified month due to
-              their ~27-day cycle
-            - Month validation prevents common input errors
-            - All calculations maintain second-level precision
-
-        Timing Considerations:
-            - Solar Returns: Usually occur within 1-2 days of the natal birthday
-            - Lunar Returns: Occur approximately every 27.3 days
-            - The method finds the chronologically first return from the start date
-            - Timezone differences can affect which calendar day the return occurs
-
-        Use Cases:
-            - Monthly return chart consultations
-            - Timing specific astrological work or rituals
-            - Research into monthly astrological patterns
-            - Educational calendar planning for astrological courses
-            - Comparative return chart analysis
-
-        See Also:
-            next_return_from_year(): For annual return calculations
-            next_return_from_iso_formatted_time(): For custom date searches
+            PlanetReturnModel: Return chart data for the first return found.
         """
-        # Validate month input
-        if month < 1 or month > 12:
-            raise KerykeionException(f"Invalid month {month}. Month must be between 1 and 12.")
-
-        # Create datetime for the first day of the specified month and year (UTC)
-        start_date = datetime(year, month, 1, 0, 0, tzinfo=timezone.utc)
-
-        # Get the return using the existing method
-        return self.next_return_from_iso_formatted_time(
-            start_date.isoformat(),
-            return_type
+        import warnings
+        warnings.warn(
+            "next_return_from_month_and_year is deprecated, use next_return_from_date instead",
+            DeprecationWarning,
+            stacklevel=2
         )
-
+        return self.next_return_from_date(year, month, 1, return_type=return_type)
 
 if __name__ == "__main__":
     import json
@@ -784,22 +756,26 @@ if __name__ == "__main__":
     print(f"Solar Return Julian Data:       {solar_return.julian_day}")
     print(f"ISO UTC:                        {solar_return.iso_formatted_utc_datetime}")
 
-    ## From Year
+    ## From Date (year, month, day)
     print("=== Planet Return Calculator ===")
-    solar_return = calculator.next_return_from_year(
+    solar_return = calculator.next_return_from_date(
         2026,
+        1,
+        1,
         return_type="Lunar",
     )
-    print("--- From Year ---")
+    print("--- From Date (Jan 1) ---")
     print(f"Solar Return Julian Data:       {solar_return.julian_day}")
     print(f"Solar Return Date UTC:          {solar_return.iso_formatted_utc_datetime}")
     ## From Month and Year
     print("=== Planet Return Calculator ===")
-    solar_return = calculator.next_return_from_month_and_year(
+    solar_return = calculator.next_return_from_date(
         2026,
         1,
+        15,  # Start from January 15
         return_type="Lunar",
     )
-    print("--- From Month and Year ---")
+    print("--- From Date ---")
     print(f"Solar Return Julian Data:       {solar_return.julian_day}")
     print(f"Solar Return Date UTC:          {solar_return.iso_formatted_utc_datetime}")
+

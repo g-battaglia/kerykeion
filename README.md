@@ -365,7 +365,7 @@ return_factory = PlanetaryReturnFactory(
     tz_str="Europe/London",
     online=False
 )
-solar_return_subject = return_factory.next_return_from_year(1964, "Solar")
+solar_return_subject = return_factory.next_return_from_date(1964, 10, 1, return_type="Solar")
 
 # Step 3: Pre-compute return chart data (dual wheel: natal + solar return)
 chart_data = ChartDataFactory.create_return_chart_data(john, solar_return_subject)
@@ -406,7 +406,7 @@ return_factory = PlanetaryReturnFactory(
     tz_str="Europe/London",
     online=False
 )
-solar_return_subject = return_factory.next_return_from_year(1964, "Solar")
+solar_return_subject = return_factory.next_return_from_date(1964, 10, 1, return_type="Solar")
 
 # Step 3: Build a single-wheel return chart
 chart_data = ChartDataFactory.create_single_wheel_return_chart_data(solar_return_subject)
@@ -447,7 +447,7 @@ return_factory = PlanetaryReturnFactory(
     tz_str="Europe/London",
     online=False
 )
-lunar_return_subject = return_factory.next_return_from_year(1964, "Lunar")
+lunar_return_subject = return_factory.next_return_from_date(1964, 1, 1, return_type="Lunar")
 
 # Step 3: Build a dual wheel (natal + lunar return)
 lunar_return_chart_data = ChartDataFactory.create_return_chart_data(john, lunar_return_subject)

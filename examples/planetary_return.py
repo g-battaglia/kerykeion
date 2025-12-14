@@ -36,7 +36,7 @@ def main() -> None:
         online=False,
     )
 
-    solar_return = factory.next_return_from_year(2025, "Solar")
+    solar_return = factory.next_return_from_date(2025, 12, 1, return_type="Solar")
 
     chart_data = ChartDataFactory.create_return_chart_data(natal, solar_return)
     drawer = ChartDrawer(chart_data=chart_data, theme="light")

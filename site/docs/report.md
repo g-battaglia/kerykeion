@@ -13,10 +13,11 @@ The new `ReportGenerator` class mirrors the chart dispatching logic of `ChartDra
 the supplied model, detects its chart type, and assembles the relevant sections automatically.
 
 Reports are designed for:
-- human-readable exports (terminal, log files, chatbots)
-- quick inspection during development
-- debugging pipelines that produce chart data models
-- educational walkthroughs of chart contents
+
+-   human-readable exports (terminal, log files, chatbots)
+-   quick inspection during development
+-   debugging pipelines that produce chart data models
+-   educational walkthroughs of chart contents
 
 Each report is made up of ASCII tables and prose headers, making it easy to read or redirect
 into text files without additional formatting libraries.
@@ -24,17 +25,18 @@ into text files without additional formatting libraries.
 ## Supported Inputs
 
 `ReportGenerator` accepts:
-- `AstrologicalSubjectModel` — raw subject data (natal event, return subject, transit moment, …)
-- `SingleChartDataModel` — natal, composite, or single return data produced by `ChartDataFactory`
-- `DualChartDataModel` — synastry, transit, or dual return data produced by `ChartDataFactory`
+
+-   `AstrologicalSubjectModel` — raw subject data (natal event, return subject, transit moment, …)
+-   `SingleChartDataModel` — natal, composite, or single return data produced by `ChartDataFactory`
+-   `DualChartDataModel` — synastry, transit, or dual return data produced by `ChartDataFactory`
 
 Every model comes with its own context and optional sections:
 
-| Input model | Detected chart types | Secondary subject | Chart-specific sections |
-|-------------|----------------------|-------------------|-------------------------|
-| `AstrologicalSubjectModel` | `"Subject"` | – | Birth/event data, celestial points, houses, lunar phase |
-| `SingleChartDataModel` | `"Natal"`, `"Composite"`, `"SingleReturnChart"` | Optional composite members | Elements, qualities, active configuration, aspects |
-| `DualChartDataModel` | `"Transit"`, `"Synastry"`, `"DualReturnChart"` | Required | House & cusp comparison, relationship score, dual-aspect layout |
+| Input model                | Detected chart types                            | Secondary subject          | Chart-specific sections                                         |
+| -------------------------- | ----------------------------------------------- | -------------------------- | --------------------------------------------------------------- |
+| `AstrologicalSubjectModel` | `"Subject"`                                     | –                          | Birth/event data, celestial points, houses, lunar phase         |
+| `SingleChartDataModel`     | `"Natal"`, `"Composite"`, `"SingleReturnChart"` | Optional composite members | Elements, qualities, active configuration, aspects              |
+| `DualChartDataModel`       | `"Transit"`, `"Synastry"`, `"DualReturnChart"`  | Required                   | House & cusp comparison, relationship score, dual-aspect layout |
 
 ## Quickstart
 
@@ -109,10 +111,11 @@ ReportGenerator(subject, include_aspects=False).print_report()
 ```
 
 Sections produced:
-- subject metadata (birth data, location, configuration)
-- celestial points with sign, position, daily motion, declination, retrograde flag, and house
-- house cusps for the subject’s house system
-- lunar phase summary if available
+
+-   subject metadata (birth data, location, configuration)
+-   celestial points with sign, position, daily motion, declination, retrograde flag, and house
+-   house cusps for the subject’s house system
+-   lunar phase summary if available
 
 ### SingleChartDataModel reports
 
@@ -182,7 +185,7 @@ factory = PlanetaryReturnFactory(
     tz_str="Europe/London",
     online=False
 )
-return_subject = factory.next_return_from_year(2024, "Solar")
+return_subject = factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 return_data = ChartDataFactory.create_single_wheel_return_chart_data(return_subject)
 ReportGenerator(return_data).print_report(max_aspects=4)
 ```
@@ -224,7 +227,7 @@ factory = PlanetaryReturnFactory(
     tz_str="Europe/London",
     online=False,
 )
-return_subject = factory.next_return_from_year(2024, "Solar")
+return_subject = factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 
 # Transit chart (natal subject vs snapshot of current sky)
 transit = ChartDataFactory.create_transit_chart_data(subject, transit_subject)
@@ -244,42 +247,44 @@ ReportGenerator(dual_return).print_report(max_aspects=6)
 ```
 
 Dual reports add:
-- duplicated subject data (one table per participant)
-- two celestial-points tables (one per subject)
-- house lists for both subjects
-- optional house comparison grids (points projected into partner houses)
-- optional cusp comparison grids (cusps projected into partner houses)
-- optional relationship score summary with supporting aspects
-- aspect tables showing point owners for each side
+
+-   duplicated subject data (one table per participant)
+-   two celestial-points tables (one per subject)
+-   house lists for both subjects
+-   optional house comparison grids (points projected into partner houses)
+-   optional cusp comparison grids (cusps projected into partner houses)
+-   optional relationship score summary with supporting aspects
+-   aspect tables showing point owners for each side
 
 ## Section reference
 
 All helper methods remain accessible so you can assemble custom outputs.
 
-| Method | Description |
-|--------|-------------|
-| `get_report_title()` | Returns the chart-aware heading (with separators). |
-| `get_subject_data_report()` | Core metadata table(s) for the relevant subject. |
-| `get_celestial_points_report()` | ASCII table of active celestial points. |
-| `get_houses_report()` | House cusp table for the supplied subject. |
-| `get_lunar_phase_report()` | Lunar phase table when data is present. Empty string otherwise. |
-| `get_elements_report()` | Element distribution table (single/dual chart data only). |
-| `get_qualities_report()` | Quality distribution table (single/dual chart data only). |
-| `get_aspects_report(max_aspects=None)` | Aspect table with symbols for type and movement. |
-| `generate_report()` | Constructs the full report as a string. |
-| `print_report()` | Prints the report to stdout. |
+| Method                                 | Description                                                     |
+| -------------------------------------- | --------------------------------------------------------------- |
+| `get_report_title()`                   | Returns the chart-aware heading (with separators).              |
+| `get_subject_data_report()`            | Core metadata table(s) for the relevant subject.                |
+| `get_celestial_points_report()`        | ASCII table of active celestial points.                         |
+| `get_houses_report()`                  | House cusp table for the supplied subject.                      |
+| `get_lunar_phase_report()`             | Lunar phase table when data is present. Empty string otherwise. |
+| `get_elements_report()`                | Element distribution table (single/dual chart data only).       |
+| `get_qualities_report()`               | Quality distribution table (single/dual chart data only).       |
+| `get_aspects_report(max_aspects=None)` | Aspect table with symbols for type and movement.                |
+| `generate_report()`                    | Constructs the full report as a string.                         |
+| `print_report()`                       | Prints the report to stdout.                                    |
 
 Additional helpers invoked internally:
-- `ReportGenerator._active_configuration_report()` — active points and aspect settings
-- `ReportGenerator._house_comparison_report()` — dual-chart house overlays
-- `ReportGenerator._relationship_score_report()` — synastry scoring details
+
+-   `ReportGenerator._active_configuration_report()` — active points and aspect settings
+-   `ReportGenerator._house_comparison_report()` — dual-chart house overlays
+-   `ReportGenerator._relationship_score_report()` — synastry scoring details
 
 ## Working with aspects
 
-- `include_aspects=False` suppresses the aspect section entirely.
-- `max_aspects=<int>` limits the number of rows (handy for dense transit charts).
-- Dual chart tables include owner columns so you can distinguish which subject each point belongs to.
-- Aspect names map to unicode symbols (`☌`, `☍`, `△`, `□`, `⚹`, …) and movement arrows (`→`, `←`, `✓`).
+-   `include_aspects=False` suppresses the aspect section entirely.
+-   `max_aspects=<int>` limits the number of rows (handy for dense transit charts).
+-   Dual chart tables include owner columns so you can distinguish which subject each point belongs to.
+-   Aspect names map to unicode symbols (`☌`, `☍`, `△`, `□`, `⚹`, …) and movement arrows (`→`, `←`, `✓`).
 
 Example:
 
@@ -314,9 +319,9 @@ print(report.generate_report(max_aspects=5))
 
 ## Understanding motion and declination columns
 
-- **Speed (daily motion)** expresses the rate of change in degrees per day. Negative values indicate retrograde motion.
-- **Declination** is the angular distance north/south of the celestial equator. Values beyond ±23.44° highlight out‑of‑bounds behaviour.
-- **Ret.** is a shorthand retrograde flag (`R` or `-`).
+-   **Speed (daily motion)** expresses the rate of change in degrees per day. Negative values indicate retrograde motion.
+-   **Declination** is the angular distance north/south of the celestial equator. Values beyond ±23.44° highlight out‑of‑bounds behaviour.
+-   **Ret.** is a shorthand retrograde flag (`R` or `-`).
 
 These metrics are already calculated by the factories; the report simply formats them.
 
@@ -358,9 +363,9 @@ The script prints complete reports (one per model type) using offline birth data
 
 ## Migrating from older versions
 
-- Update imports to `from kerykeion import ReportGenerator`.
-- Ensure your code now instantiates `ReportGenerator(...)` everywhere.
-- New keyword arguments (`include_aspects`, `max_aspects`) behave exactly as before.
-- To access the raw string, prefer `generate_report()` rather than capturing stdout.
+-   Update imports to `from kerykeion import ReportGenerator`.
+-   Ensure your code now instantiates `ReportGenerator(...)` everywhere.
+-   New keyword arguments (`include_aspects`, `max_aspects`) behave exactly as before.
+-   To access the raw string, prefer `generate_report()` rather than capturing stdout.
 
 With these updates the report system stays fully compatible with earlier code while gaining support for every chart type that Kerykeion can produce.

@@ -76,7 +76,7 @@ def test_return_subject(test_subject_1):
         city="Rome",
         nation="IT"
     )
-    return return_factory.next_return_from_year(year=2024, return_type="Solar")
+    return return_factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 
 
 class TestSingleChartDataModel:

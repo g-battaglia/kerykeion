@@ -58,18 +58,18 @@ Celestial Points:
 
 The `to_context` function supports the following Kerykeion models:
 
-| Model Type                 | Description                                            |
-| :------------------------- | :----------------------------------------------------- |
-| `AstrologicalSubjectModel` | Basic natal chart information (planets, houses, axes). |
-| `SingleChartDataModel`     | Natal chart with calculated aspects.                   |
+| Model Type                 | Description                                                                               |
+| :------------------------- | :---------------------------------------------------------------------------------------- |
+| `AstrologicalSubjectModel` | Basic natal chart information (planets, houses, axes).                                    |
+| `SingleChartDataModel`     | Natal chart with calculated aspects.                                                      |
 | `DualChartDataModel`       | Dual charts (Transit, Synastry, DualReturnChart) with inter-aspects and house comparison. |
-| `CompositeSubjectModel`    | Composite chart (midpoint or other methods).           |
-| `PlanetReturnModel`        | Solar and Lunar Return charts.                         |
-| `KerykeionPointModel`      | Individual celestial points (e.g., just the Sun).      |
-| `LunarPhaseModel`          | Lunar phase information.                               |
-| `AspectModel`              | Individual planetary aspects.                          |
-| `ElementDistributionModel` | Element balance (Fire, Earth, Air, Water).             |
-| `QualityDistributionModel` | Quality balance (Cardinal, Fixed, Mutable).            |
+| `CompositeSubjectModel`    | Composite chart (midpoint or other methods).                                              |
+| `PlanetReturnModel`        | Solar and Lunar Return charts.                                                            |
+| `KerykeionPointModel`      | Individual celestial points (e.g., just the Sun).                                         |
+| `LunarPhaseModel`          | Lunar phase information.                                                                  |
+| `AspectModel`              | Individual planetary aspects.                                                             |
+| `ElementDistributionModel` | Element balance (Fire, Earth, Air, Water).                                                |
+| `QualityDistributionModel` | Quality balance (Cardinal, Fixed, Mutable).                                               |
 
 ## Advanced Examples
 
@@ -112,7 +112,7 @@ from kerykeion import AstrologicalSubjectFactory, PlanetaryReturnFactory, to_con
 
 subject = AstrologicalSubjectFactory.from_birth_data("Alice", ...)
 factory = PlanetaryReturnFactory(subject, online=False, lng=subject.lng, lat=subject.lat, tz_str=subject.tz_str)
-solar_return = factory.next_return_from_year(2024, "Solar")
+solar_return = factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 
 print(to_context(solar_return))
 ```

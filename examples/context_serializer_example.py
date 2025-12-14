@@ -86,7 +86,7 @@ solar_return_factory = PlanetaryReturnFactory(
     lat=subject.lat,
     tz_str=subject.tz_str
 )
-solar_return = solar_return_factory.next_return_from_year(2024, "Solar")
+solar_return = solar_return_factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 
 solar_return_context = to_context(solar_return)
 print(solar_return_context)
@@ -103,7 +103,7 @@ lunar_return_factory = PlanetaryReturnFactory(
     lat=subject.lat,
     tz_str=subject.tz_str
 )
-lunar_return = lunar_return_factory.next_return_from_month_and_year(2024, 1, "Lunar")
+lunar_return = lunar_return_factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
 
 lunar_return_context = to_context(lunar_return)
 print(lunar_return_context)
