@@ -479,6 +479,9 @@ def draw_aspect_line(
     aspect: Union[AspectModel, dict],
     color: str,
     seventh_house_degree_ut: Union[int, float],
+    show_aspect_icon: bool = True,
+    rendered_icon_positions: Optional[list[tuple[float, float]]] = None,
+    icon_collision_threshold: float = 16.0,
 ) -> str:
     """Draws svg aspects: ring, aspect ring, degreeA degreeB
 
@@ -488,6 +491,10 @@ def draw_aspect_line(
         - aspect_dict (dict): The aspect dictionary.
         - color (str): The color of the aspect.
         - seventh_house_degree_ut (Union[int, float]): The degree of the seventh house.
+        - show_aspect_icon (bool): Whether to show the aspect icon at the center of the line.
+        - rendered_icon_positions (list | None): List to track rendered icon positions for collision detection.
+            If provided, the function will append the icon's position if rendered, and skip if too close to existing ones.
+        - icon_collision_threshold (float): Minimum distance in pixels between icons to avoid overlap.
 
     Returns:
         str: The SVG line element as a string.
@@ -504,9 +511,47 @@ def draw_aspect_line(
     x2 = sliceToX(0, ar, second_offset) + (r - ar)
     y2 = sliceToY(0, ar, second_offset) + (r - ar)
 
+    # Build the aspect icon SVG element if enabled
+    aspect_icon_svg = ""
+    if show_aspect_icon:
+        # Calculate icon position
+        if aspect["aspect_degrees"] == 0:
+            # For conjunctions, place on the same angle but at a slightly larger radius
+            # Use the average position of the two planets
+            avg_pos = (aspect["p1_abs_pos"] + aspect["p2_abs_pos"]) / 2
+            offset = (int(seventh_house_degree_ut) / -1) + avg_pos
+            # Place at radius ar + 3 pixels outward
+            icon_radius = ar + 4
+            mid_x = sliceToX(0, icon_radius, offset) + (r - icon_radius)
+            mid_y = sliceToY(0, icon_radius, offset) + (r - icon_radius)
+        else:
+            # For other aspects, use the midpoint of the line
+            mid_x = (x1 + x2) / 2
+            mid_y = (y1 + y2) / 2
+
+        # Check for collision with previously rendered icons
+        should_render_icon = True
+        if rendered_icon_positions is not None:
+            for existing_x, existing_y in rendered_icon_positions:
+                distance = math.sqrt((mid_x - existing_x) ** 2 + (mid_y - existing_y) ** 2)
+                if distance < icon_collision_threshold:
+                    should_render_icon = False
+                    break
+
+        if should_render_icon:
+            # The aspect icon symbol ID is "orb" followed by the aspect degrees
+            aspect_symbol_id = f"orb{aspect['aspect_degrees']}"
+            # Center the icon (symbols are roughly 12x12, so offset by -6)
+            icon_offset = 6
+            aspect_icon_svg = f'<use x="{mid_x - icon_offset}" y="{mid_y - icon_offset}" xlink:href="#{aspect_symbol_id}" />'
+            # Track this position for future collision detection
+            if rendered_icon_positions is not None:
+                rendered_icon_positions.append((mid_x, mid_y))
+
     return (
         f'<g kr:node="Aspect" kr:aspectname="{aspect["aspect"]}" kr:to="{aspect["p1_name"]}" kr:tooriginaldegrees="{aspect["p1_abs_pos"]}" kr:from="{aspect["p2_name"]}" kr:fromoriginaldegrees="{aspect["p2_abs_pos"]}" kr:orb="{aspect["orbit"]}" kr:aspectdegrees="{aspect["aspect_degrees"]}" kr:planetsdiff="{aspect["diff"]}" kr:aspectmovement="{aspect["aspect_movement"]}">'
         f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
+        f"{aspect_icon_svg}"
         f"</g>"
     )
 

@@ -257,6 +257,7 @@ class ChartDrawer:
         auto_size: bool = True,
         padding: int = 20,
         show_degree_indicators: bool = True,
+        show_aspect_icons: bool = True,
     ):
         """
         Initialize the chart visualizer with pre-computed chart data.
@@ -302,6 +303,7 @@ class ChartDrawer:
         self.show_house_position_comparison = show_house_position_comparison
         self.show_cusp_position_comparison = show_cusp_position_comparison
         self.show_degree_indicators = show_degree_indicators
+        self.show_aspect_icons = show_aspect_icons
         self.auto_size = auto_size
         self._padding = padding
         self._vertical_offsets: dict[str, int] = self._BASE_VERTICAL_OFFSETS.copy()
@@ -1208,6 +1210,8 @@ class ChartDrawer:
             str: SVG markup for all aspect lines.
         """
         out = ""
+        # Track rendered icon positions to avoid overlapping symbols
+        rendered_icon_positions: list[tuple[float, float]] = []
         for aspect in self.aspects_list:
             aspect_name = aspect["aspect"]
             aspect_color = next((a["color"] for a in self.aspects_settings if a["name"] == aspect_name), None)
@@ -1218,6 +1222,8 @@ class ChartDrawer:
                     aspect=aspect,
                     color=aspect_color,
                     seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+                    show_aspect_icon=self.show_aspect_icons,
+                    rendered_icon_positions=rendered_icon_positions,
                 )
         return out
 
@@ -1233,6 +1239,8 @@ class ChartDrawer:
             str: SVG markup for all transit aspect lines.
         """
         out = ""
+        # Track rendered icon positions to avoid overlapping symbols
+        rendered_icon_positions: list[tuple[float, float]] = []
         for aspect in self.aspects_list:
             aspect_name = aspect["aspect"]
             aspect_color = next((a["color"] for a in self.aspects_settings if a["name"] == aspect_name), None)
@@ -1243,6 +1251,8 @@ class ChartDrawer:
                     aspect=aspect,
                     color=aspect_color,
                     seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+                    show_aspect_icon=self.show_aspect_icons,
+                    rendered_icon_positions=rendered_icon_positions,
                 )
         return out
 
