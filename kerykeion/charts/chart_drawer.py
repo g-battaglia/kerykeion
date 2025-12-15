@@ -1210,8 +1210,8 @@ class ChartDrawer:
             str: SVG markup for all aspect lines.
         """
         out = ""
-        # Track rendered icon positions to avoid overlapping symbols
-        rendered_icon_positions: list[tuple[float, float]] = []
+        # Track rendered icon positions (x, y, aspect_degrees) to avoid overlapping symbols of same type
+        rendered_icon_positions: list[tuple[float, float, int]] = []
         for aspect in self.aspects_list:
             aspect_name = aspect["aspect"]
             aspect_color = next((a["color"] for a in self.aspects_settings if a["name"] == aspect_name), None)
@@ -1239,8 +1239,8 @@ class ChartDrawer:
             str: SVG markup for all transit aspect lines.
         """
         out = ""
-        # Track rendered icon positions to avoid overlapping symbols
-        rendered_icon_positions: list[tuple[float, float]] = []
+        # Track rendered icon positions (x, y, aspect_degrees) to avoid overlapping symbols of same type
+        rendered_icon_positions: list[tuple[float, float, int]] = []
         for aspect in self.aspects_list:
             aspect_name = aspect["aspect"]
             aspect_color = next((a["color"] for a in self.aspects_settings if a["name"] == aspect_name), None)

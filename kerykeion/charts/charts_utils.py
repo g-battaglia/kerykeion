@@ -480,7 +480,7 @@ def draw_aspect_line(
     color: str,
     seventh_house_degree_ut: Union[int, float],
     show_aspect_icon: bool = True,
-    rendered_icon_positions: Optional[list[tuple[float, float]]] = None,
+    rendered_icon_positions: Optional[list[tuple[float, float, int]]] = None,
     icon_collision_threshold: float = 16.0,
 ) -> str:
     """Draws svg aspects: ring, aspect ring, degreeA degreeB
@@ -492,8 +492,8 @@ def draw_aspect_line(
         - color (str): The color of the aspect.
         - seventh_house_degree_ut (Union[int, float]): The degree of the seventh house.
         - show_aspect_icon (bool): Whether to show the aspect icon at the center of the line.
-        - rendered_icon_positions (list | None): List to track rendered icon positions for collision detection.
-            If provided, the function will append the icon's position if rendered, and skip if too close to existing ones.
+        - rendered_icon_positions (list | None): List to track rendered icon positions (x, y, aspect_degrees)
+            for collision detection. Only icons of the same aspect type will be checked for collision.
         - icon_collision_threshold (float): Minimum distance in pixels between icons to avoid overlap.
 
     Returns:
@@ -529,14 +529,18 @@ def draw_aspect_line(
             mid_x = (x1 + x2) / 2
             mid_y = (y1 + y2) / 2
 
-        # Check for collision with previously rendered icons
+        # Check for collision with previously rendered icons OF THE SAME ASPECT TYPE
+        # Different aspect types (e.g., opposition vs quincunx) are allowed to overlap
         should_render_icon = True
+        current_aspect_degrees = aspect["aspect_degrees"]
         if rendered_icon_positions is not None:
-            for existing_x, existing_y in rendered_icon_positions:
-                distance = math.sqrt((mid_x - existing_x) ** 2 + (mid_y - existing_y) ** 2)
-                if distance < icon_collision_threshold:
-                    should_render_icon = False
-                    break
+            for existing_x, existing_y, existing_aspect_degrees in rendered_icon_positions:
+                # Only check collision for same aspect type
+                if existing_aspect_degrees == current_aspect_degrees:
+                    distance = math.sqrt((mid_x - existing_x) ** 2 + (mid_y - existing_y) ** 2)
+                    if distance < icon_collision_threshold:
+                        should_render_icon = False
+                        break
 
         if should_render_icon:
             # The aspect icon symbol ID is "orb" followed by the aspect degrees
@@ -544,9 +548,9 @@ def draw_aspect_line(
             # Center the icon (symbols are roughly 12x12, so offset by -6)
             icon_offset = 6
             aspect_icon_svg = f'<use x="{mid_x - icon_offset}" y="{mid_y - icon_offset}" xlink:href="#{aspect_symbol_id}" />'
-            # Track this position for future collision detection
+            # Track this position and aspect type for future collision detection
             if rendered_icon_positions is not None:
-                rendered_icon_positions.append((mid_x, mid_y))
+                rendered_icon_positions.append((mid_x, mid_y, current_aspect_degrees))
 
     return (
         f'<g kr:node="Aspect" kr:aspectname="{aspect["aspect"]}" kr:to="{aspect["p1_name"]}" kr:tooriginaldegrees="{aspect["p1_abs_pos"]}" kr:from="{aspect["p2_name"]}" kr:fromoriginaldegrees="{aspect["p2_abs_pos"]}" kr:orb="{aspect["orbit"]}" kr:aspectdegrees="{aspect["aspect_degrees"]}" kr:planetsdiff="{aspect["diff"]}" kr:aspectmovement="{aspect["aspect_movement"]}">'
