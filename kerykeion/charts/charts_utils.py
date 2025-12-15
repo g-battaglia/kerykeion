@@ -517,10 +517,15 @@ def draw_aspect_line(
         # Calculate icon position
         if aspect["aspect_degrees"] == 0:
             # For conjunctions, place on the same angle but at a slightly larger radius
-            # Use the average position of the two planets
-            avg_pos = (aspect["p1_abs_pos"] + aspect["p2_abs_pos"]) / 2
+            # Use circular mean to handle wrap-around at 0°/360° correctly
+            p1_rad = math.radians(aspect["p1_abs_pos"])
+            p2_rad = math.radians(aspect["p2_abs_pos"])
+            avg_sin = (math.sin(p1_rad) + math.sin(p2_rad)) / 2
+            avg_cos = (math.cos(p1_rad) + math.cos(p2_rad)) / 2
+            avg_pos = math.degrees(math.atan2(avg_sin, avg_cos)) % 360
+            
             offset = (int(seventh_house_degree_ut) / -1) + avg_pos
-            # Place at radius ar + 3 pixels outward
+            # Place at radius ar + 4 pixels outward
             icon_radius = ar + 4
             mid_x = sliceToX(0, icon_radius, offset) + (r - icon_radius)
             mid_y = sliceToY(0, icon_radius, offset) + (r - icon_radius)
