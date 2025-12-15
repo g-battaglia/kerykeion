@@ -184,8 +184,8 @@ class ChartDataFactory:
                 first_subject_is_fixed = True  # Natal chart is fixed
                 second_subject_is_fixed = False # Transit chart is moving
             elif chart_type == "DualReturnChart":
-                first_subject_is_fixed = True
-                second_subject_is_fixed = True
+                first_subject_is_fixed = True  # Natal chart is fixed
+                second_subject_is_fixed = False  # Return chart is moving (like transits)
 
             aspects_model = AspectsFactory.dual_chart_aspects(
                 first_subject,
