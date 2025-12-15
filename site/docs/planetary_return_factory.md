@@ -20,7 +20,7 @@ Planetary returns occur when a planet returns to the exact degree and minute it 
 ## Key Features
 
 -   **Precise Astronomical Calculations**: Swiss Ephemeris integration for exact return timing
--   **Multiple Date Input Formats**: ISO datetime, year-based, or month/year-based searches
+-   **Multiple Date Input Formats**: ISO datetime or date-based searches
 -   **Flexible Location Handling**: Online geocoding via Geonames or manual coordinates
 -   **Complete Chart Generation**: Full AstrologicalSubject instances with all features
 -   **Timezone-Aware Calculations**: UTC precision with local timezone conversion

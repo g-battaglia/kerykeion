@@ -21,7 +21,7 @@ The SVG output ensures scalable, high-quality graphics that maintain clarity at 
 - **Output Methods**: Full chart, wheel-only, aspect grid-only
 - **Themes**: classic, dark, light, strawberry, dark-high-contrast, black-and-white
 - **Languages**: EN, IT, FR, ES, PT, CN, RU, TR, DE, HI
-- **Customization**: Themes, languages, transparency, minification
+- **Customization**: Themes, languages, transparency, minification, aspect-line icons (`show_aspect_icons`, default `True`)
 - **Output Formats**: Standard SVG, minified SVG, template strings
 
 ## Basic Usage
@@ -219,7 +219,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 
 # Step 2: Create chart drawer
-chart_drawer = ChartDrawer(chart_data=chart_data)
+chart_drawer = ChartDrawer(chart_data=chart_data)  # show_aspect_icons=True by default
 
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
