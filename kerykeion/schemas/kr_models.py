@@ -321,11 +321,20 @@ class RelationshipScoreAspectModel(SubscriptableBaseModel):
     orbit: float
 
 
+class ScoreBreakdownItemModel(SubscriptableBaseModel):
+    """Single breakdown item explaining how points were earned."""
+    rule: str = Field(description="Rule identifier (e.g., 'destiny_sign', 'sun_sun_major')")
+    description: str = Field(description="Human-readable description of the rule")
+    points: int = Field(description="Points awarded for this rule")
+    details: Optional[str] = Field(default=None, description="Optional details (e.g., 'orbit: 1.5°')")
+
+
 class RelationshipScoreModel(SubscriptableBaseModel):
     score_value: int
     score_description: RelationshipScoreDescription
     is_destiny_sign: bool
     aspects: List[RelationshipScoreAspectModel]
+    score_breakdown: List[ScoreBreakdownItemModel] = Field(default_factory=list, description="Detailed breakdown of how the score was calculated")
     subjects: List[AstrologicalSubjectModel]
 
 

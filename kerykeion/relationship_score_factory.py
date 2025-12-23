@@ -11,6 +11,7 @@ Key Features:
     - Configurable major/minor aspect filtering
     - Orbital precision weighting
     - Categorical score descriptions
+    - Detailed score breakdown for transparency
 
 Score Categories:
     - 0-5: Minimal relationship
@@ -46,7 +47,7 @@ from typing import Optional
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel, RelationshipScoreAspectModel, RelationshipScoreModel
+from kerykeion.schemas.kr_models import AstrologicalSubjectModel, RelationshipScoreAspectModel, RelationshipScoreModel, ScoreBreakdownItemModel
 from kerykeion.schemas.kr_literals import RelationshipScoreDescription
 
 # Scoring constants
@@ -113,6 +114,7 @@ class RelationshipScoreFactory:
         self.relationship_score_description: RelationshipScoreDescription = "Minimal"
         self.is_destiny_sign = False
         self.relationship_score_aspects: list[RelationshipScoreAspectModel] = []
+        self.score_breakdown: list[ScoreBreakdownItemModel] = []
         self._synastry_aspects = AspectsFactory.dual_chart_aspects(
             self.first_subject,
             self.second_subject,
@@ -131,15 +133,26 @@ class RelationshipScoreFactory:
         if self.first_subject.sun["quality"] == self.second_subject.sun["quality"]: # type: ignore
             self.is_destiny_sign = True
             self.score_value += DESTINY_SIGN_POINTS
+            quality = self.first_subject.sun["quality"] # type: ignore
+            self.score_breakdown.append(
+                ScoreBreakdownItemModel(
+                    rule="destiny_sign",
+                    description=f"Both Sun signs share {quality} quality",
+                    points=DESTINY_SIGN_POINTS,
+                    details=f"{self.first_subject.sun['sign']} - {self.second_subject.sun['sign']}"  # type: ignore
+                )
+            )
             logging.debug(f"Destiny sign found, adding {DESTINY_SIGN_POINTS} points, total score: {self.score_value}")
 
-    def _evaluate_aspect(self, aspect, points):
+    def _evaluate_aspect(self, aspect, points, rule: str, description: str):
         """
         Processes an aspect and adds points to the total score.
 
         Args:
             aspect (dict): Aspect data containing planetary positions and geometry
             points (int): Points to add to the total score
+            rule (str): Rule identifier for the breakdown
+            description (str): Human-readable description for the breakdown
         """
         if self.use_only_major_aspects and aspect["aspect"] not in self.MAJOR_ASPECTS:
             return
@@ -151,6 +164,14 @@ class RelationshipScoreFactory:
                 p2_name=aspect["p2_name"],
                 aspect=aspect["aspect"],
                 orbit=aspect["orbit"],
+            )
+        )
+        self.score_breakdown.append(
+            ScoreBreakdownItemModel(
+                rule=rule,
+                description=description,
+                points=points,
+                details=f"{aspect['p1_name']}-{aspect['p2_name']} {aspect['aspect']} (orbit: {aspect['orbit']:.2f}°)"
             )
         )
         logging.debug(f"{aspect['p1_name']}-{aspect['p2_name']} aspect: {aspect['aspect']} with orbit {aspect['orbit']} degrees, adding {points} points, total score: {self.score_value}, total aspects: {len(self.relationship_score_aspects)}")
@@ -165,8 +186,14 @@ class RelationshipScoreFactory:
             aspect (dict): Aspect data
         """
         if aspect["p1_name"] == "Sun" and aspect["p2_name"] == "Sun" and aspect["aspect"] in {"conjunction", "opposition", "square"}:
-            points = MAJOR_ASPECT_POINTS_HIGH_PRECISION if aspect["orbit"] <= HIGH_PRECISION_ORBIT_THRESHOLD else MAJOR_ASPECT_POINTS_STANDARD
-            self._evaluate_aspect(aspect, points)
+            is_high_precision = aspect["orbit"] <= HIGH_PRECISION_ORBIT_THRESHOLD
+            points = MAJOR_ASPECT_POINTS_HIGH_PRECISION if is_high_precision else MAJOR_ASPECT_POINTS_STANDARD
+            precision = "high precision (≤2°)" if is_high_precision else "standard"
+            self._evaluate_aspect(
+                aspect, points,
+                rule="sun_sun_major",
+                description=f"Sun-Sun {aspect['aspect']} ({precision})"
+            )
 
     def _evaluate_sun_moon_conjunction(self, aspect):
         """
@@ -178,8 +205,14 @@ class RelationshipScoreFactory:
             aspect (dict): Aspect data
         """
         if {aspect["p1_name"], aspect["p2_name"]} == {"Moon", "Sun"} and aspect["aspect"] == "conjunction":
-            points = MAJOR_ASPECT_POINTS_HIGH_PRECISION if aspect["orbit"] <= HIGH_PRECISION_ORBIT_THRESHOLD else MAJOR_ASPECT_POINTS_STANDARD
-            self._evaluate_aspect(aspect, points)
+            is_high_precision = aspect["orbit"] <= HIGH_PRECISION_ORBIT_THRESHOLD
+            points = MAJOR_ASPECT_POINTS_HIGH_PRECISION if is_high_precision else MAJOR_ASPECT_POINTS_STANDARD
+            precision = "high precision (≤2°)" if is_high_precision else "standard"
+            self._evaluate_aspect(
+                aspect, points,
+                rule="sun_moon_conjunction",
+                description=f"Sun-Moon conjunction ({precision})"
+            )
 
     def _evaluate_sun_sun_other_aspects(self, aspect):
         """
@@ -191,8 +224,11 @@ class RelationshipScoreFactory:
             aspect (dict): Aspect data
         """
         if aspect["p1_name"] == "Sun" and aspect["p2_name"] == "Sun" and aspect["aspect"] not in {"conjunction", "opposition", "square"}:
-            points = MINOR_ASPECT_POINTS
-            self._evaluate_aspect(aspect, points)
+            self._evaluate_aspect(
+                aspect, MINOR_ASPECT_POINTS,
+                rule="sun_sun_minor",
+                description=f"Sun-Sun {aspect['aspect']}"
+            )
 
     def _evaluate_sun_moon_other_aspects(self, aspect):
         """
@@ -204,8 +240,11 @@ class RelationshipScoreFactory:
             aspect (dict): Aspect data
         """
         if {aspect["p1_name"], aspect["p2_name"]} == {"Moon", "Sun"} and aspect["aspect"] != "conjunction":
-            points = MINOR_ASPECT_POINTS
-            self._evaluate_aspect(aspect, points)
+            self._evaluate_aspect(
+                aspect, MINOR_ASPECT_POINTS,
+                rule="sun_moon_other",
+                description=f"Sun-Moon {aspect['aspect']}"
+            )
 
     def _evaluate_sun_ascendant_aspect(self, aspect):
         """
@@ -217,8 +256,11 @@ class RelationshipScoreFactory:
             aspect (dict): Aspect data
         """
         if {aspect["p1_name"], aspect["p2_name"]} == {"Sun", "Ascendant"}:
-            points = SUN_ASCENDANT_ASPECT_POINTS
-            self._evaluate_aspect(aspect, points)
+            self._evaluate_aspect(
+                aspect, SUN_ASCENDANT_ASPECT_POINTS,
+                rule="sun_ascendant",
+                description=f"Sun-Ascendant {aspect['aspect']}"
+            )
 
     def _evaluate_moon_ascendant_aspect(self, aspect):
         """
@@ -230,8 +272,11 @@ class RelationshipScoreFactory:
             aspect (dict): Aspect data
         """
         if {aspect["p1_name"], aspect["p2_name"]} == {"Moon", "Ascendant"}:
-            points = MOON_ASCENDANT_ASPECT_POINTS
-            self._evaluate_aspect(aspect, points)
+            self._evaluate_aspect(
+                aspect, MOON_ASCENDANT_ASPECT_POINTS,
+                rule="moon_ascendant",
+                description=f"Moon-Ascendant {aspect['aspect']}"
+            )
 
     def _evaluate_venus_mars_aspect(self, aspect):
         """
@@ -243,8 +288,11 @@ class RelationshipScoreFactory:
             aspect (dict): Aspect data
         """
         if {aspect["p1_name"], aspect["p2_name"]} == {"Venus", "Mars"}:
-            points = VENUS_MARS_ASPECT_POINTS
-            self._evaluate_aspect(aspect, points)
+            self._evaluate_aspect(
+                aspect, VENUS_MARS_ASPECT_POINTS,
+                rule="venus_mars",
+                description=f"Venus-Mars {aspect['aspect']}"
+            )
 
     def _evaluate_relationship_score_description(self):
         """
@@ -283,6 +331,7 @@ class RelationshipScoreFactory:
             score_description=self.relationship_score_description,
             is_destiny_sign=self.is_destiny_sign,
             aspects=self.relationship_score_aspects,
+            score_breakdown=self.score_breakdown,
             subjects=[self.first_subject, self.second_subject],
         )
 

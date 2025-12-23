@@ -239,7 +239,7 @@ class TestRelationshipScoreFactory:
         }
 
         initial_score = factory.score_value
-        factory._evaluate_aspect(major_aspect, 5)
+        factory._evaluate_aspect(major_aspect, 5, rule="test_rule", description="Test description")
         assert factory.score_value == initial_score + 5
 
         # Test minor aspect - should be ignored with major_only=True
@@ -251,7 +251,7 @@ class TestRelationshipScoreFactory:
         }
 
         score_before_minor = factory.score_value
-        factory._evaluate_aspect(minor_aspect, 3)
+        factory._evaluate_aspect(minor_aspect, 3, rule="test_rule", description="Test description")
         assert factory.score_value == score_before_minor  # Should not change
 
     def test_evaluate_aspect_with_all_aspects(self):
@@ -271,7 +271,7 @@ class TestRelationshipScoreFactory:
         }
 
         initial_score = factory.score_value
-        factory._evaluate_aspect(minor_aspect, 3)
+        factory._evaluate_aspect(minor_aspect, 3, rule="test_rule", description="Test description")
         assert factory.score_value == initial_score + 3
 
     def test_high_precision_vs_standard_orb(self):
@@ -317,7 +317,7 @@ class TestRelationshipScoreFactory:
         }
 
         initial_count = len(factory.relationship_score_aspects)
-        factory._evaluate_aspect(mock_aspect, 4)
+        factory._evaluate_aspect(mock_aspect, 4, rule="test_rule", description="Test description")
 
         # Should add aspect to the list
         assert len(factory.relationship_score_aspects) == initial_count + 1
@@ -386,6 +386,93 @@ class TestRelationshipScoreFactory:
         assert hasattr(RelationshipScoreFactory, 'SCORE_MAPPING')
         assert isinstance(RelationshipScoreFactory.SCORE_MAPPING, list)
         assert len(RelationshipScoreFactory.SCORE_MAPPING) == 6  # 6 categories
+
+    def test_score_breakdown_structure(self):
+        """Test that score_breakdown has the correct structure."""
+        factory = RelationshipScoreFactory(self.subject1, self.subject2)
+        score = factory.get_relationship_score()
+
+        # Should have score_breakdown attribute
+        assert hasattr(score, 'score_breakdown')
+        assert isinstance(score.score_breakdown, list)
+
+        # If there are any breakdown items, check their structure
+        for item in score.score_breakdown:
+            assert hasattr(item, 'rule')
+            assert hasattr(item, 'description')
+            assert hasattr(item, 'points')
+            assert hasattr(item, 'details')
+            assert isinstance(item.rule, str)
+            assert isinstance(item.description, str)
+            assert isinstance(item.points, int)
+            assert item.points > 0
+
+    def test_score_breakdown_sum_matches_total(self):
+        """Test that the sum of breakdown points equals the total score."""
+        factory = RelationshipScoreFactory(self.subject1, self.subject2)
+        score = factory.get_relationship_score()
+
+        # Sum of all breakdown points should equal score_value
+        breakdown_sum = sum(item.points for item in score.score_breakdown)
+        assert breakdown_sum == score.score_value
+
+    def test_destiny_sign_in_breakdown(self):
+        """Test that destiny sign appears in breakdown when present."""
+        # Create subjects with same sun sign quality (Cardinal)
+        subject_cardinal_1 = AstrologicalSubjectFactory.from_birth_data(
+            name="Cardinal 1",
+            year=1990, month=3, day=21, hour=12, minute=0,  # Aries (Cardinal)
+            lat=40.7128, lng=-74.0060, tz_str="America/New_York",
+            city="New York", nation="US",
+            suppress_geonames_warning=True
+        )
+
+        subject_cardinal_2 = AstrologicalSubjectFactory.from_birth_data(
+            name="Cardinal 2",
+            year=1990, month=6, day=25, hour=12, minute=0,  # Cancer (Cardinal)
+            lat=40.7128, lng=-74.0060, tz_str="America/New_York",
+            city="New York", nation="US",
+            suppress_geonames_warning=True
+        )
+
+        factory = RelationshipScoreFactory(subject_cardinal_1, subject_cardinal_2)
+        score = factory.get_relationship_score()
+
+        # If destiny sign is true, it should be in the breakdown
+        if score.is_destiny_sign:
+            destiny_items = [item for item in score.score_breakdown if item.rule == "destiny_sign"]
+            assert len(destiny_items) == 1
+            assert destiny_items[0].points == 5  # DESTINY_SIGN_POINTS constant
+
+    def test_breakdown_details_for_aspects(self):
+        """Test that aspect breakdown items have proper details."""
+        factory = RelationshipScoreFactory(self.subject1, self.subject2)
+        score = factory.get_relationship_score()
+
+        # All non-destiny-sign items should have orbit details
+        for item in score.score_breakdown:
+            if item.rule != "destiny_sign":
+                assert item.details is not None
+                assert "orbit:" in item.details.lower()
+
+    def test_breakdown_rules_match_evaluation_methods(self):
+        """Test that breakdown rules correspond to known evaluation methods."""
+        valid_rules = {
+            "destiny_sign",
+            "sun_sun_major",
+            "sun_moon_conjunction",
+            "sun_sun_minor",
+            "sun_moon_other",
+            "sun_ascendant",
+            "moon_ascendant",
+            "venus_mars"
+        }
+
+        factory = RelationshipScoreFactory(self.subject1, self.subject2)
+        score = factory.get_relationship_score()
+
+        for item in score.score_breakdown:
+            assert item.rule in valid_rules, f"Unknown rule: {item.rule}"
 
 
 if __name__ == "__main__":
