@@ -50,7 +50,6 @@ Maintaining this project requires substantial time and effort. The Astrologer AP
 -   [Table of Contents](#table-of-contents)
 -   [Installation](#installation)
 -   [Quick Start](#quick-start)
--   [Documentation Map](#documentation-map)
 -   [Basic Usage](#basic-usage)
 -   [Generate a SVG Chart](#generate-a-svg-chart)
     -   [Birth Chart](#birth-chart)
@@ -142,12 +141,6 @@ This script shows the recommended workflow:
 
 Use the same pattern for synastry, composite, transit, or return charts by swapping the factory method.
 
-## Documentation Map
-
--   **README (this file):** Quick start, common recipes, and v5 overview. Full migration guide: [MIGRATION_V4_TO_V5.md](MIGRATION_V4_TO_V5.md).
--   **`site-docs/` (offline Markdown guides):** Deep dives for each factory (`chart_data_factory.md`, `charts.md`, `planetary_return_factory.md`, etc.) with runnable snippets. Run `python scripts/test_markdown_snippets.py site-docs` to validate them locally.
--   **[Auto-generated API Reference](https://www.kerykeion.net/pydocs/kerykeion.html):** Detailed model and function signatures straight from the codebase.
--   **[Kerykeion website](https://www.kerykeion.net/docs/):** Rendered documentation with additional context, tutorials, and showcase material.
 
 ## Basic Usage
 
