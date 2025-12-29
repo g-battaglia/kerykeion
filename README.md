@@ -75,7 +75,7 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
 -   [Alternative Initialization](#alternative-initialization)
 -   [Lunar Nodes (Rahu \& Ketu)](#lunar-nodes-rahu--ketu)
 -   [JSON Support](#json-support)
--   [Auto Generated Documentation](#auto-generated-documentation)
+-   [Documentation](#documentation)
 -   [Development](#development)
 -   [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
 -   [License](#license)
@@ -125,7 +125,6 @@ This script shows the recommended workflow:
 3. Render the SVG via `ChartDrawer`, saving it to a controlled folder (`charts_output`).
 
 Use the same pattern for synastry, composite, transit, or return charts by swapping the factory method.
-
 
 ## Basic Usage
 
@@ -1230,19 +1229,15 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 print(johnny.model_dump_json(indent=2))
 ```
 
-## Auto Generated Documentation
+## 📚 Documentation
 
-You can find auto-generated documentation [here](https://www.kerykeion.net/pydocs/kerykeion.html). Most classes and functions include docstrings.
+-   **Docs**: [kerykeion.net/docs](https://www.kerykeion.net/content/docs/)
+-   **Examples**: See the `examples/` folder for runnable code
+-   ** Auto Generated API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/)
 
 ## Development
 
 Clone the repository or download the ZIP via the GitHub interface.
-
-### 📚 Resources
-
-- Docs: [kerykeion.net/docs](https://www.kerykeion.net/content/docs/)
--   **API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/kerykeion.html)
--   **Examples**: See the `examples/` folder for runnable code
 
 ## Integrating Kerykeion into Your Project
 
