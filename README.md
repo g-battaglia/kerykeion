@@ -37,16 +37,9 @@ If you want to use Kerykeion in a web application or for commercial or _closed-s
 
 It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly supports this project.
 
-## **Donate**
-
-Maintaining this project requires substantial time and effort. The Astrologer API alone cannot cover the costs of full-time development. If you find Kerykeion valuable and would like to support further development, please consider donating:
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/kerykeion)
-
 ## Table of Contents
 
 -   [**Web API**](#web-api)
--   [**Donate**](#donate)
 -   [Table of Contents](#table-of-contents)
 -   [Installation](#installation)
 -   [Quick Start](#quick-start)
