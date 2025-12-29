@@ -1229,11 +1229,11 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 print(johnny.model_dump_json(indent=2))
 ```
 
-## 📚 Documentation
+## Documentation
 
 -   **Docs**: [kerykeion.net/docs](https://www.kerykeion.net/content/docs/)
 -   **Examples**: See the `examples/` folder for runnable code
--   ** Auto Generated API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/)
+-   **Auto Generated API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/)
 
 ## Development
 
