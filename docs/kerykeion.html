@@ -22,16 +22,13 @@
             <h2>Contents</h2>
             <ul>
   <li><a href="#web-api"><strong>Web"></a></li>
-  <li><a href="#donate"><strong>Donate</strong"></a></li>
 </ul></li>
 <li><a href="#kerykeion">Kerykeion</a>
 <ul>
   <li><a href="#web-api"><strong>Web API</strong></a></li>
-  <li><a href="#donate"><strong>Donate</strong></a></li>
   <li><a href="#table-of-contents">Table of Contents</a></li>
   <li><a href="#installation">Installation</a></li>
   <li><a href="#quick-start">Quick Start</a></li>
-  <li><a href="#documentation-map">Documentation Map</a></li>
   <li><a href="#basic-usage">Basic Usage</a></li>
   <li><a href="#generate-a-svg-chart">Generate a SVG Chart</a></li>
   <li><a href="#wheel-only-charts">Wheel Only Charts</a></li>
@@ -46,9 +43,8 @@
   <li><a href="#alternative-initialization">Alternative Initialization</a></li>
   <li><a href="#lunar-nodes-rahu-ketu">Lunar Nodes (Rahu &amp; Ketu)</a></li>
   <li><a href="#json-support">JSON Support</a></li>
-  <li><a href="#auto-generated-documentation">Auto Generated Documentation</a></li>
+  <li><a href="#documentation">Documentation</a></li>
   <li><a href="#development">Development</a></li>
-  <li><a href="#kerykeion-v50-whats-new">Kerykeion v5.0 – What's New</a></li>
   <li><a href="#integrating-kerykeion-into-your-project">Integrating Kerykeion into Your Project</a></li>
   <li><a href="#license">License</a></li>
   <li><a href="#contributing">Contributing</a></li>
@@ -1034,21 +1030,13 @@ kerykeion    </h1>
 
 <p>It is <a href="https://github.com/g-battaglia/Astrologer-API">open source</a> and directly supports this project.</p>
 
-<h2 id="donate"><strong>Donate</strong></h2>
-
-<p>Maintaining this project requires substantial time and effort. The Astrologer API alone cannot cover the costs of full-time development. If you find Kerykeion valuable and would like to support further development, please consider donating:</p>
-
-<p><a href="https://ko-fi.com/kerykeion"><img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="ko-fi" /></a></p>
-
 <h2 id="table-of-contents">Table of Contents</h2>
 
 <ul>
 <li><a href="#web-api"><strong>Web API</strong></a></li>
-<li><a href="#donate"><strong>Donate</strong></a></li>
 <li><a href="#table-of-contents">Table of Contents</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#quick-start">Quick Start</a></li>
-<li><a href="#documentation-map">Documentation Map</a></li>
 <li><a href="#basic-usage">Basic Usage</a></li>
 <li><a href="#generate-a-svg-chart">Generate a SVG Chart</a>
 <ul>
@@ -1087,20 +1075,8 @@ kerykeion    </h1>
 <li><a href="#alternative-initialization">Alternative Initialization</a></li>
 <li><a href="#lunar-nodes-rahu--ketu">Lunar Nodes (Rahu \&amp; Ketu)</a></li>
 <li><a href="#json-support">JSON Support</a></li>
-<li><a href="#auto-generated-documentation">Auto Generated Documentation</a></li>
+<li><a href="#documentation">Documentation</a></li>
 <li><a href="#development">Development</a></li>
-<li><a href="#kerykeion-v50--whats-new">Kerykeion v5.0 – What's New</a>
-<ul>
-<li><a href="#-key-highlights">🎯 Key Highlights</a>
-<ul>
-<li><a href="#factory-centered-architecture">Factory-Centered Architecture</a></li>
-<li><a href="#pydantic-2-models--type-safety">Pydantic 2 Models \&amp; Type Safety</a></li>
-<li><a href="#enhanced-features">Enhanced Features</a></li>
-</ul></li>
-<li><a href="#-other-notable-changes">📦 Other Notable Changes</a></li>
-<li><a href="#-new-themes">🎨 New Themes</a></li>
-<li><a href="#-resources">📚 Resources</a></li>
-</ul></li>
 <li><a href="#integrating-kerykeion-into-your-project">Integrating Kerykeion into Your Project</a></li>
 <li><a href="#license">License</a></li>
 <li><a href="#contributing">Contributing</a></li>
@@ -1154,15 +1130,6 @@ kerykeion    </h1>
 </ol>
 
 <p>Use the same pattern for synastry, composite, transit, or return charts by swapping the factory method.</p>
-
-<h2 id="documentation-map">Documentation Map</h2>
-
-<ul>
-<li><strong>README (this file):</strong> Quick start, common recipes, and v5 overview. Full migration guide: <a href="MIGRATION_V4_TO_V5.md">MIGRATION_V4_TO_V5.md</a>.</li>
-<li><strong><code>site-docs/</code> (offline Markdown guides):</strong> Deep dives for each factory (<code>chart_data_factory.md</code>, <code>charts.md</code>, <code>planetary_return_factory.md</code>, etc.) with runnable snippets. Run <code>python scripts/test_markdown_snippets.py site-docs</code> to validate them locally.</li>
-<li><strong><a href="https://www.kerykeion.net/pydocs/kerykeion.html">Auto-generated API Reference</a>:</strong> Detailed model and function signatures straight from the codebase.</li>
-<li><strong><a href="https://www.kerykeion.net/docs/">Kerykeion website</a>:</strong> Rendered documentation with additional context, tutorials, and showcase material.</li>
-</ul>
 
 <h2 id="basic-usage">Basic Usage</h2>
 
@@ -2312,153 +2279,17 @@ Celestial Points:
 </code></pre>
 </div>
 
-<h2 id="auto-generated-documentation">Auto Generated Documentation</h2>
+<h2 id="documentation">Documentation</h2>
 
-<p>You can find auto-generated documentation <a href="https://www.kerykeion.net/pydocs/kerykeion.html">here</a>. Most classes and functions include docstrings.</p>
+<ul>
+<li><strong>Docs</strong>: <a href="https://www.kerykeion.net/content/docs/">kerykeion.net/docs</a></li>
+<li><strong>Examples</strong>: See the <code>examples/</code> folder for runnable code</li>
+<li><strong>Auto Generated API Reference</strong>: <a href="https://www.kerykeion.net/pydocs/">kerykeion.net/pydocs</a></li>
+</ul>
 
 <h2 id="development">Development</h2>
 
 <p>Clone the repository or download the ZIP via the GitHub interface.</p>
-
-<h2 id="kerykeion-v50-whats-new">Kerykeion v5.0 – What's New</h2>
-
-<p>Kerykeion v5 is a <strong>complete redesign</strong> that modernizes the library with a data-first approach, factory-based architecture, and Pydantic 2 models. This version brings significant improvements in API design, type safety, and extensibility.</p>
-
-<p>Looking to upgrade from v4? See the dedicated migration guide: <a href="MIGRATION_V4_TO_V5.md">MIGRATION_V4_TO_V5.md</a>.</p>
-
-<h3 id="key-highlights">🎯 Key Highlights</h3>
-
-<h4 id="factory-centered-architecture">Factory-Centered Architecture</h4>
-
-<p>The old class-based approach has been replaced with a modern factory pattern:</p>
-
-<ul>
-<li><strong><code><a href="#AstrologicalSubjectFactory">AstrologicalSubjectFactory</a></code></strong>: Replaces the old <code><a href="#AstrologicalSubject">AstrologicalSubject</a></code> class</li>
-<li><strong><code><a href="#ChartDataFactory">ChartDataFactory</a></code></strong>: Pre-computes enriched chart data (elements, qualities, aspects)</li>
-<li><strong><code><a href="#ChartDrawer">ChartDrawer</a></code></strong>: Pure SVG rendering separated from calculations</li>
-<li><strong><code><a href="#AspectsFactory">AspectsFactory</a></code></strong>: Unified aspects calculation for natal and synastry charts</li>
-<li><strong><code><a href="#PlanetaryReturnFactory">PlanetaryReturnFactory</a></code></strong>: Solar and Lunar returns computation</li>
-<li><strong><code><a href="#HouseComparisonFactory">HouseComparisonFactory</a></code></strong>: House overlay analysis for synastry</li>
-<li><strong><code><a href="#RelationshipScoreFactory">RelationshipScoreFactory</a></code></strong>: Compatibility scoring between charts</li>
-</ul>
-
-<p><strong>Old v4 API:</strong></p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubject</span><span class="p">,</span> <span class="n">KerykeionChartSVG</span>
-
-<span class="c1"># v4 - Class-based approach</span>
-<span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;charts_output&quot;</span><span class="p">)</span>
-<span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="n">subject</span> <span class="o">=</span> <span class="n">AstrologicalSubject</span><span class="p">(</span>
-    <span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="mi">1990</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="n">lng</span><span class="o">=-</span><span class="mf">0.1276</span><span class="p">,</span>
-    <span class="n">lat</span><span class="o">=</span><span class="mf">51.5074</span><span class="p">,</span>
-    <span class="n">tz_str</span><span class="o">=</span><span class="s2">&quot;Europe/London&quot;</span><span class="p">,</span>
-    <span class="n">online</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">chart</span> <span class="o">=</span> <span class="n">KerykeionChartSVG</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">new_output_directory</span><span class="o">=</span><span class="n">output_dir</span><span class="p">)</span>
-<span class="n">chart</span><span class="o">.</span><span class="n">makeSVG</span><span class="p">()</span>
-</code></pre>
-</div>
-
-<p><strong>New v5 API:</strong></p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubjectFactory</span><span class="p">,</span> <span class="n">ChartDataFactory</span><span class="p">,</span> <span class="n">ChartDrawer</span>
-
-<span class="c1"># v5 - Factory-based approach with separation of concerns</span>
-<span class="n">subject</span> <span class="o">=</span> <span class="n"><a href="#AstrologicalSubjectFactory.from_birth_data">AstrologicalSubjectFactory.from_birth_data</a></span><span class="p">(</span>
-    <span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="mi">1990</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="n">lng</span><span class="o">=-</span><span class="mf">0.1276</span><span class="p">,</span>
-    <span class="n">lat</span><span class="o">=</span><span class="mf">51.5074</span><span class="p">,</span>
-    <span class="n">tz_str</span><span class="o">=</span><span class="s2">&quot;Europe/London&quot;</span><span class="p">,</span>
-    <span class="n">online</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">chart_data</span> <span class="o">=</span> <span class="n"><a href="#ChartDataFactory.create_natal_chart_data">ChartDataFactory.create_natal_chart_data</a></span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
-<span class="n">drawer</span> <span class="o">=</span> <span class="n">ChartDrawer</span><span class="p">(</span><span class="n">chart_data</span><span class="o">=</span><span class="n">chart_data</span><span class="p">)</span>
-
-<span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;charts_output&quot;</span><span class="p">)</span>
-<span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">drawer</span><span class="o">.</span><span class="n">save_svg</span><span class="p">(</span><span class="n">output_path</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;john-factory-demo&quot;</span><span class="p">)</span>
-</code></pre>
-</div>
-
-<h4 id="pydantic-2-models-type-safety">Pydantic 2 Models &amp; Type Safety</h4>
-
-<p>All data structures are now strongly typed Pydantic models:</p>
-
-<ul>
-<li><strong><code>AstrologicalSubjectModel</code></strong>: Subject data with full validation</li>
-<li><strong><code><a href="#ChartDataModel">ChartDataModel</a></code></strong>: Enriched chart data with elements, qualities, aspects</li>
-<li><strong><code>AspectModel</code> list</strong>: Raw aspect entries directly on <code>ChartDataModel.aspects</code></li>
-<li><strong><code><a href="#PlanetReturnModel">PlanetReturnModel</a></code></strong>: Planetary return data</li>
-<li><strong><code><a href="#ElementDistributionModel">ElementDistributionModel</a></code></strong>: Element statistics (fire, earth, air, water)</li>
-<li><strong><code><a href="#QualityDistributionModel">QualityDistributionModel</a></code></strong>: Quality statistics (cardinal, fixed, mutable)</li>
-</ul>
-
-<p>All models support:</p>
-
-<ul>
-<li>JSON serialization/deserialization</li>
-<li>Dictionary export</li>
-<li>Subscript access</li>
-<li>Full IDE autocomplete and type checking</li>
-</ul>
-
-<h4 id="enhanced-features">Enhanced Features</h4>
-
-<ul>
-<li><strong>Speed &amp; Declination</strong>: All celestial points now include daily motion speed and declination</li>
-<li><strong>Element &amp; Quality Analysis</strong>: Automatic calculation of element/quality distributions</li>
-<li><strong>Relationship Scoring</strong>: Built-in compatibility analysis for synastry</li>
-<li><strong>House Comparison</strong>: Detailed house overlay analysis</li>
-<li><strong>Transit Time Ranges</strong>: Advanced transit tracking over time periods</li>
-<li><strong>Report Module</strong>: Comprehensive text reports with ASCII tables</li>
-<li><strong>Axis Orb Control</strong>: Chart axes now share the same orb as planets by default; pass the keyword-only <code>axis_orb_limit</code> to return to a traditional, tighter axis filtering when you need it.</li>
-<li><strong>Element Weight Strategies</strong>: Element and quality stats now default to a curated weighted balance; pass <code>distribution_method</code> or <code>custom_distribution_weights</code> when you need equal counts or bespoke weightings (including a <code>__default__</code> fallback) across any chart factory helper.</li>
-</ul>
-
-<!-- Migration details moved to MIGRATION_V4_TO_V5.md -->
-
-<h3 id="other-notable-changes">📦 Other Notable Changes</h3>
-
-<ul>
-<li><strong>Packaging</strong>: Migrated from Poetry to PEP 621 + Hatchling with <code>uv.lock</code></li>
-<li><strong>Settings</strong>: Centralized in <code>kerykeion.schemas</code> and <code>kerykeion.settings</code></li>
-<li><strong>Configuration</strong>: Default chart presets consolidated in <code>kerykeion/settings/chart_defaults.py</code></li>
-<li><strong>Type System</strong>: All literals consolidated in <code>kr_literals.py</code></li>
-<li><strong>Performance</strong>: Caching improvements with <code>functools.lru_cache</code></li>
-<li><strong>Testing</strong>: 376 tests with 87% coverage, regenerated fixtures for v5</li>
-</ul>
-
-<h3 id="new-themes">🎨 New Themes</h3>
-
-<p>Additional chart themes added:</p>
-
-<ul>
-<li><code>classic</code> (default)</li>
-<li><code>dark</code></li>
-<li><code>dark-high-contrast</code></li>
-<li><code>light</code></li>
-<li><code>strawberry</code></li>
-<li><code>black-and-white</code></li>
-</ul>
-
-<h3 id="resources">📚 Resources</h3>
-
-<ul>
-<li><strong>Full Release Notes</strong>: <a href="release_notes/v5.0.0b1.md">v5.0.0.md</a></li>
-<li><strong>Migration Guide (v4 → v5)</strong>: <a href="MIGRATION_V4_TO_V5.md">MIGRATION_V4_TO_V5.md</a></li>
-<li><strong>Documentation</strong>: <a href="https://kerykeion.readthedocs.io">kerykeion.readthedocs.io</a></li>
-<li><strong>API Reference</strong>: <a href="https://www.kerykeion.net/pydocs/kerykeion.html">kerykeion.net/pydocs</a></li>
-<li><strong>Examples</strong>: See the <code>examples/</code> folder for runnable code</li>
-<li><strong>Support</strong>: <a href="https://github.com/g-battaglia/kerykeion/discussions">GitHub Discussions</a>
--</li>
-</ul>
 
 <h2 id="integrating-kerykeion-into-your-project">Integrating Kerykeion into Your Project</h2>
 
@@ -16557,7 +16388,7 @@ numerical compatibility scores with categorical descriptions.</p>
                             <div id="RelationshipScoreFactory.MAJOR_ASPECTS" class="classattr">
                                 <div class="attr variable">
             <span class="name">MAJOR_ASPECTS</span>        =
-<span class="default_value">{&#39;square&#39;, &#39;trine&#39;, &#39;sextile&#39;, &#39;opposition&#39;, &#39;conjunction&#39;}</span>
+<span class="default_value">{&#39;conjunction&#39;, &#39;opposition&#39;, &#39;square&#39;, &#39;sextile&#39;, &#39;trine&#39;}</span>
 
         
     </div>
@@ -18576,7 +18407,7 @@ appropriate transformer function.</p>
                                         <input id="AstrologicalSubject.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">AstrologicalSubject</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Now&#39;</span>,</span><span class="param">	<span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2025</span>,</span><span class="param">	<span class="n">month</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span>,</span><span class="param">	<span class="n">day</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">29</span>,</span><span class="param">	<span class="n">hour</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">22</span>,</span><span class="param">	<span class="n">minute</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span>,</span><span class="param">	<span class="n">city</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">nation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">lng</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">lat</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">tz_str</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">geonames_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">zodiac_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;Tropical&#39;</span><span class="p">,</span> <span class="s1">&#39;Sidereal&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">online</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">disable_chiron</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">sidereal_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;FAGAN_BRADLEY&#39;</span><span class="p">,</span> <span class="s1">&#39;LAHIRI&#39;</span><span class="p">,</span> <span class="s1">&#39;DELUCE&#39;</span><span class="p">,</span> <span class="s1">&#39;RAMAN&#39;</span><span class="p">,</span> <span class="s1">&#39;USHASHASHI&#39;</span><span class="p">,</span> <span class="s1">&#39;KRISHNAMURTI&#39;</span><span class="p">,</span> <span class="s1">&#39;DJWHAL_KHUL&#39;</span><span class="p">,</span> <span class="s1">&#39;YUKTESHWAR&#39;</span><span class="p">,</span> <span class="s1">&#39;JN_BHASIN&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_KUGLER1&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_KUGLER2&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_KUGLER3&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_HUBER&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_ETPSC&#39;</span><span class="p">,</span> <span class="s1">&#39;ALDEBARAN_15TAU&#39;</span><span class="p">,</span> <span class="s1">&#39;HIPPARCHOS&#39;</span><span class="p">,</span> <span class="s1">&#39;SASSANIAN&#39;</span><span class="p">,</span> <span class="s1">&#39;J2000&#39;</span><span class="p">,</span> <span class="s1">&#39;J1900&#39;</span><span class="p">,</span> <span class="s1">&#39;B1950&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">houses_system_identifier</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="s1">&#39;U&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">perspective_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;Apparent Geocentric&#39;</span><span class="p">,</span> <span class="s1">&#39;Heliocentric&#39;</span><span class="p">,</span> <span class="s1">&#39;Topocentric&#39;</span><span class="p">,</span> <span class="s1">&#39;True Geocentric&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">cache_expire_after_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">is_dst</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">disable_chiron_and_lilith</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span>)</span>
+        <span class="name">AstrologicalSubject</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Now&#39;</span>,</span><span class="param">	<span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2025</span>,</span><span class="param">	<span class="n">month</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span>,</span><span class="param">	<span class="n">day</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">29</span>,</span><span class="param">	<span class="n">hour</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">23</span>,</span><span class="param">	<span class="n">minute</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9</span>,</span><span class="param">	<span class="n">city</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">nation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">lng</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">lat</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">tz_str</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">geonames_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">zodiac_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;Tropical&#39;</span><span class="p">,</span> <span class="s1">&#39;Sidereal&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">online</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">disable_chiron</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">sidereal_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;FAGAN_BRADLEY&#39;</span><span class="p">,</span> <span class="s1">&#39;LAHIRI&#39;</span><span class="p">,</span> <span class="s1">&#39;DELUCE&#39;</span><span class="p">,</span> <span class="s1">&#39;RAMAN&#39;</span><span class="p">,</span> <span class="s1">&#39;USHASHASHI&#39;</span><span class="p">,</span> <span class="s1">&#39;KRISHNAMURTI&#39;</span><span class="p">,</span> <span class="s1">&#39;DJWHAL_KHUL&#39;</span><span class="p">,</span> <span class="s1">&#39;YUKTESHWAR&#39;</span><span class="p">,</span> <span class="s1">&#39;JN_BHASIN&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_KUGLER1&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_KUGLER2&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_KUGLER3&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_HUBER&#39;</span><span class="p">,</span> <span class="s1">&#39;BABYL_ETPSC&#39;</span><span class="p">,</span> <span class="s1">&#39;ALDEBARAN_15TAU&#39;</span><span class="p">,</span> <span class="s1">&#39;HIPPARCHOS&#39;</span><span class="p">,</span> <span class="s1">&#39;SASSANIAN&#39;</span><span class="p">,</span> <span class="s1">&#39;J2000&#39;</span><span class="p">,</span> <span class="s1">&#39;J1900&#39;</span><span class="p">,</span> <span class="s1">&#39;B1950&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">houses_system_identifier</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="s1">&#39;U&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">perspective_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;Apparent Geocentric&#39;</span><span class="p">,</span> <span class="s1">&#39;Heliocentric&#39;</span><span class="p">,</span> <span class="s1">&#39;Topocentric&#39;</span><span class="p">,</span> <span class="s1">&#39;True Geocentric&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">cache_expire_after_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">is_dst</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">disable_chiron_and_lilith</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span>)</span>
 
                 <label class="view-source-button" for="AstrologicalSubject.__init__-view-source"><span>View Source</span></label>
 
@@ -18670,7 +18501,7 @@ appropriate transformer function.</p>
                             <div id="AstrologicalSubject.NOW" class="classattr">
                                 <div class="attr variable">
             <span class="name">NOW</span>        =
-<span class="default_value">datetime.datetime(2025, 12, 29, 22, 15, 6, 439339)</span>
+<span class="default_value">datetime.datetime(2025, 12, 29, 23, 9, 23, 659445)</span>
 
         
     </div>
