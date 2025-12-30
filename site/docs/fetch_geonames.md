@@ -1,6 +1,6 @@
 ---
 title: 'Fetch Geonames'
-category: 'Data & Utilities'
+category: 'Data'
 description: 'Utility to fetch location and timezone data from GeoNames API'
 tags: ['docs', 'utility', 'geonames', 'location', 'timezone']
 order: 11

@@ -1,6 +1,6 @@
 ---
 title: 'Settings'
-category: 'Settings'
+category: 'Core'
 description: 'Global configuration settings for Kerykeion'
 tags: ['docs', 'settings', 'config']
 order: 13

@@ -1,6 +1,6 @@
 ---
 title: 'AI Context Serializer'
-category: 'Data & Utilities'
+category: 'Data'
 tags: ['docs', 'ai', 'context', 'kerykeion']
 order: 13
 ---

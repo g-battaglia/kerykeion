@@ -1,6 +1,7 @@
 ---
 title: 'Index'
 description: 'Welcome to the Kerykeion documentation'
+category: 'Getting Started'
 order: 0
 ---
 

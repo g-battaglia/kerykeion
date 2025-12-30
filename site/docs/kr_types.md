@@ -1,6 +1,6 @@
 ---
 title: 'Types & Models'
-category: 'Types & Enums'
+category: 'Reference'
 description: 'Core data models and type definitions'
 tags: ['docs', 'types', 'models', 'pydantic', 'kerykeion']
 order: 12

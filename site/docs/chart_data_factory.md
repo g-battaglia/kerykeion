@@ -1,6 +1,6 @@
 ---
 title: 'Chart Data Factory'
-category: 'Core Concepts'
+category: 'Core'
 tags: ['docs', 'chart data', 'analysis', 'kerykeion']
 order: 2
 ---

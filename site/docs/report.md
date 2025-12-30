@@ -1,6 +1,6 @@
 ---
 title: 'Report Module'
-category: 'Reports'
+category: 'Core'
 tags: ['docs', 'reports', 'cli', 'kerykeion']
 order: 12
 ---

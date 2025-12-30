@@ -1,6 +1,6 @@
 ---
 title: 'Enums'
-category: 'Types & Enums'
+category: 'Reference'
 description: 'Enumerations used throughout Kerykeion'
 tags: ['docs', 'enums', 'constants', 'planets', 'signs', 'aspects']
 order: 10

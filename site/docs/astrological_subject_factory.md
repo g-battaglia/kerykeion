@@ -1,6 +1,6 @@
 ---
 title: 'Astrological Subject Factory'
-category: 'Core Concepts'
+category: 'Core'
 tags: ['docs', 'subjects', 'core', 'astrology', 'kerykeion']
 order: 1
 ---

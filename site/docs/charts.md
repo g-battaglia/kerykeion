@@ -1,6 +1,6 @@
 ---
 title: 'Charts Module - ChartDrawer'
-category: 'Core Concepts'
+category: 'Core'
 tags: ['docs', 'charts', 'svg', 'visual', 'kerykeion']
 order: 3
 ---

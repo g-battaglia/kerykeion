@@ -1,6 +1,6 @@
 ---
 title: 'Ephemeris Data Factory'
-category: 'Data & Utilities'
+category: 'Data'
 tags: ['docs', 'ephemeris', 'data', 'kerykeion']
 order: 11
 ---

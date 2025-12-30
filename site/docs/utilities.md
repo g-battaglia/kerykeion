@@ -1,6 +1,6 @@
 ---
 title: 'Utilities Module'
-category: 'Data & Utilities'
+category: 'Data'
 tags: ['docs', 'utilities', 'math', 'kerykeion']
 order: 14
 ---
