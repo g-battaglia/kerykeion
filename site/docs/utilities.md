@@ -1,5 +1,6 @@
 ---
 title: 'Utilities Module'
+category: 'Data & Utilities'
 tags: ['docs', 'utilities', 'math', 'kerykeion']
 order: 14
 ---
@@ -11,6 +12,7 @@ The `utilities` module provides a comprehensive set of utility functions for ast
 ## Overview
 
 The utilities module contains essential functions for:
+
 - **Coordinate conversions**: Between different coordinate systems
 - **Circular calculations**: For handling astronomical angular positions
 - **House management**: Determination of astrological houses
@@ -23,6 +25,7 @@ The utilities module contains essential functions for:
 ### 1. Coordinate and Position Conversions
 
 #### `get_number_from_name()`
+
 Converts the name of an astrological point to its numerical identifier for Swiss Ephemeris calculations.
 
 ```python
@@ -55,6 +58,7 @@ print(f"Medium Coeli: {mc_id}")        # Output: Medium Coeli: 9902
 ```
 
 #### `get_kerykeion_point_from_degree()`
+
 Creates a KerykeionPointModel object from a degree position, automatically calculating zodiac sign, element, quality, and other properties.
 
 ```python
@@ -93,6 +97,7 @@ for degree, description in examples:
 ```
 
 **Output:**
+
 ```
 === SUN POSITION ===
 Name: Sun
@@ -115,6 +120,7 @@ Emoji: ♌️
 ### 2. Circular Calculations
 
 #### `circular_mean()`
+
 Calculates the circular mean of two angular positions, correctly handling the 0°/360° boundary.
 
 ```python
@@ -152,6 +158,7 @@ for a, b in test_cases:
 ```
 
 **Output:**
+
 ```
 === CIRCULAR MEAN CALCULATIONS ===
 Mean of 10° and 20°: 15.00°
@@ -168,6 +175,7 @@ Mean of 180° and 180°: 180.00°
 ```
 
 #### `is_point_between()`
+
 Determines if a point lies between two other points on a circle, with special rules for boundaries.
 
 ```python
@@ -205,6 +213,7 @@ print(f"Point equal to end point (20°): {is_point_between(340, 20, 20)}")      
 ```
 
 **Output:**
+
 ```
 === POINT POSITION VERIFICATION ===
 Range: 10° - 50°
@@ -229,6 +238,7 @@ Point equal to end point (20°): False
 ```
 
 #### `circular_sort()`
+
 Sorts degrees in clockwise circular progression starting from the first element.
 
 ```python
@@ -265,6 +275,7 @@ for i, case in enumerate(test_cases, 1):
 ```
 
 **Output:**
+
 ```
 === CIRCULAR SORTING ===
 Original degrees: [100, 350, 50, 200, 10, 300]
@@ -288,6 +299,7 @@ Case 4: [45, 315, 135, 225] → [45, 135, 225, 315]
 ### 3. Astrological House Management
 
 #### `get_planet_house()`
+
 Determines which house a planet is in based on its position in degrees.
 
 ```python
@@ -360,6 +372,7 @@ for planet_name in planets:
 ```
 
 #### `get_house_name()` and `get_house_number()`
+
 Conversions between house numbers and names.
 
 ```python
@@ -400,6 +413,7 @@ except ValueError as e:
 ### 4. Lunar Phase Calculations
 
 #### `calculate_moon_phase()`
+
 Calculates complete lunar phase information from Sun and Moon positions.
 
 ```python
@@ -421,7 +435,7 @@ lunar_examples = [
 
 for moon_pos, sun_pos, description in lunar_examples:
     phase_info = calculate_moon_phase(moon_pos, sun_pos)
-    
+
     print(f"\n{description}:")
     print(f"  Moon: {moon_pos}°, Sun: {sun_pos}°")
     print(f"  Degrees of separation: {phase_info.degrees_between_s_m:.1f}°")
@@ -452,6 +466,7 @@ print(f"Phase: {real_phase.moon_phase_name} {real_phase.moon_emoji}")
 ```
 
 **Output:**
+
 ```
 === LUNAR PHASE CALCULATIONS ===
 
@@ -491,6 +506,7 @@ Phase: Waxing Crescent 🌒
 ### 5. Temporal Conversions
 
 #### `datetime_to_julian()` and `julian_to_datetime()`
+
 Conversions between Python datetime objects and Julian Days for astronomical calculations.
 
 ```python
@@ -541,6 +557,7 @@ print(f"Age in years: {age_days / 365.25:.2f}")
 ### 6. Astrological Data Utilities
 
 #### `get_houses_list()` and `get_available_astrological_points_list()`
+
 Extract ordered lists of houses and astrological points from a subject.
 
 ```python
@@ -589,6 +606,7 @@ for sign, count in sorted(sign_distribution.items()):
 ```
 
 #### `find_common_active_points()`
+
 Finds common astrological points between two lists.
 
 ```python
@@ -645,6 +663,7 @@ print(f"Shared points: {[point.value for point in common_active]}")
 ### 7. System Utilities
 
 #### `setup_logging()`
+
 Configures the logging system for the application.
 
 ```python
@@ -659,7 +678,7 @@ log_levels = ["debug", "info", "warning", "error", "critical"]
 for level in log_levels:
     print(f"\nConfiguration level: {level.upper()}")
     setup_logging(level)
-    
+
     # Test each level
     logging.debug(f"Debug message - level {level}")
     logging.info(f"Info message - level {level}")
@@ -676,6 +695,7 @@ logging.warning("This warning message will appear")
 ```
 
 #### `check_and_adjust_polar_latitude()`
+
 Adjusts latitude values for polar regions to prevent calculation errors.
 
 ```python
@@ -725,6 +745,7 @@ for lat, location in extreme_locations:
 ### 8. SVG Processing
 
 #### `inline_css_variables_in_svg()`
+
 Replaces custom CSS variables with their values in SVG content.
 
 ```python
@@ -754,7 +775,7 @@ svg_content = """
     </style>
     <circle class="circle" cx="50" cy="50" r="30"/>
     <text class="text" x="50" y="55">Test</text>
-    <rect fill="var(--primary-color)" stroke="var(--secondary-color)" 
+    <rect fill="var(--primary-color)" stroke="var(--secondary-color)"
           stroke-width="var(--border-width)" x="10" y="10" width="20" height="20"/>
 </svg>
 """
@@ -841,7 +862,7 @@ for point in points:
         house_num = get_house_number(house_name)
     except:
         house_num = "?"
-    
+
     print(f"{point.name:12s}: {point.abs_pos:6.2f}° {point.sign} (House {house_num})")
 
 # 3. Lunar phase
@@ -895,16 +916,19 @@ for quality, count in sorted(qualities.items()):
 ## Technical Notes
 
 ### Circular Calculation Considerations
+
 - All angular calculations correctly handle the 0°/360° boundary
 - Circular functions use trigonometry to avoid wraparound errors
 - Polar tolerances prevent errors in house calculations
 
 ### Precision and Validation
+
 - Temporal conversions maintain microsecond precision
 - Parameter validation prevents common errors
 - Astronomical calculations use proven algorithms
 
 ### Framework Integration
+
 - Utilities are designed to work with Kerykeion models
 - Support all coordinate and zodiacal systems
 - Optimized for performance in batch operations

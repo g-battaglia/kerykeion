@@ -1,5 +1,6 @@
 ---
 title: 'Planetary Return Factory'
+category: 'Analysis'
 tags: ['docs', 'returns', 'forecasting', 'kerykeion']
 order: 9
 ---
@@ -14,17 +15,17 @@ Planetary returns occur when a planet returns to the exact degree and minute it 
 
 **Key Return Types:**
 
--   **Solar Returns**: Occur approximately once per year (~365.25 days) when the Sun returns to its natal position
--   **Lunar Returns**: Occur approximately every 27-29 days when the Moon returns to its natal position
+- **Solar Returns**: Occur approximately once per year (~365.25 days) when the Sun returns to its natal position
+- **Lunar Returns**: Occur approximately every 27-29 days when the Moon returns to its natal position
 
 ## Key Features
 
--   **Precise Astronomical Calculations**: Swiss Ephemeris integration for exact return timing
--   **Multiple Date Input Formats**: ISO datetime or date-based searches
--   **Flexible Location Handling**: Online geocoding via Geonames or manual coordinates
--   **Complete Chart Generation**: Full AstrologicalSubject instances with all features
--   **Timezone-Aware Calculations**: UTC precision with local timezone conversion
--   **Return Chart Relocation**: Cast returns for different locations than birth
+- **Precise Astronomical Calculations**: Swiss Ephemeris integration for exact return timing
+- **Multiple Date Input Formats**: ISO datetime or date-based searches
+- **Flexible Location Handling**: Online geocoding via Geonames or manual coordinates
+- **Complete Chart Generation**: Full AstrologicalSubject instances with all features
+- **Timezone-Aware Calculations**: UTC precision with local timezone conversion
+- **Return Chart Relocation**: Cast returns for different locations than birth
 
 ## PlanetaryReturnFactory Class
 
@@ -885,30 +886,30 @@ for city in cities:
 
 ### Astronomical Accuracy
 
--   Uses Swiss Ephemeris for NASA-quality precision
--   Calculations accurate to within seconds of actual astronomical events
--   Accounts for planetary orbital variations and precession
--   Supports historical calculations back to approximately 5400 BCE
+- Uses Swiss Ephemeris for NASA-quality precision
+- Calculations accurate to within seconds of actual astronomical events
+- Accounts for planetary orbital variations and precession
+- Supports historical calculations back to approximately 5400 BCE
 
 ### Return Timing Variations
 
--   **Solar Returns**: Vary by ±1-2 days from calendar birthday due to leap years
--   **Lunar Returns**: Vary by ±12 hours from average 29.5-day cycle
--   **Location Impact**: Return timing varies slightly by geographic location
--   **Timezone Considerations**: Return charts reflect local time at location
+- **Solar Returns**: Vary by ±1-2 days from calendar birthday due to leap years
+- **Lunar Returns**: Vary by ±12 hours from average 29.5-day cycle
+- **Location Impact**: Return timing varies slightly by geographic location
+- **Timezone Considerations**: Return charts reflect local time at location
 
 ### Data Quality
 
--   All return charts include complete planetary positions
--   House cusps calculated for exact return location
--   Aspects and other features available through standard methods
--   Compatible with all Kerykeion chart analysis tools
+- All return charts include complete planetary positions
+- House cusps calculated for exact return location
+- Aspects and other features available through standard methods
+- Compatible with all Kerykeion chart analysis tools
 
 ### Limitations
 
--   Limited to Solar and Lunar returns (other planetary returns not supported)
--   Requires valid birth data for accurate natal reference positions
--   Geonames dependency for online mode location data
--   Swiss Ephemeris date range limitations (~5400 BCE to 5400 CE)
+- Limited to Solar and Lunar returns (other planetary returns not supported)
+- Requires valid birth data for accurate natal reference positions
+- Geonames dependency for online mode location data
+- Swiss Ephemeris date range limitations (~5400 BCE to 5400 CE)
 
 The `PlanetaryReturnFactory` provides precise and comprehensive tools for calculating planetary returns, essential for annual forecasting, monthly timing analysis, and advanced astrological research applications.

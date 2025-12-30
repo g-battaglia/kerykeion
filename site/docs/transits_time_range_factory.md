@@ -1,5 +1,6 @@
 ---
 title: 'Transits Time Range Factory'
+category: 'Analysis'
 tags: ['docs', 'transits', 'forecasting', 'kerykeion']
 order: 10
 ---
@@ -13,6 +14,7 @@ The `transits_time_range_factory` module provides the `TransitsTimeRangeFactory`
 The `TransitsTimeRangeFactory` compares ephemeris data points (planetary positions at different times) with a natal chart to identify when celestial bodies form specific angular relationships. This enables comprehensive transit analysis for forecasting, timing, and astrological research.
 
 **Core Functionality:**
+
 - Time-series transit calculations across date ranges
 - Configurable celestial points and aspect types
 - Structured output models for data analysis
@@ -82,6 +84,7 @@ for aspect in first_day.aspects:
 ```
 
 **Output:**
+
 ```
 Transit analysis for 31 days
 Total transit moments: 31
@@ -173,23 +176,23 @@ for transit_moment in results.transits:
 # Analyze each day
 for date, transits in daily_transits.items():
     print(f"\n--- {date} ---")
-    
+
     # Count aspects by type
     aspect_counts = {}
     all_aspects = []
-    
+
     for transit in transits:
         for aspect in transit.aspects:
             aspect_type = aspect.aspect
             aspect_counts[aspect_type] = aspect_counts.get(aspect_type, 0) + 1
             all_aspects.append(aspect)
-    
+
     print(f"Total aspects found: {len(all_aspects)}")
     print("Aspect distribution:", end=" ")
     for asp_type, count in sorted(aspect_counts.items()):
         print(f"{asp_type}: {count}", end=", ")
     print()
-    
+
     # Show strongest aspects (tightest orbs)
     strongest_aspects = sorted(all_aspects, key=lambda x: abs(x.orbit))[:5]
     print("Strongest aspects:")
@@ -199,6 +202,7 @@ for date, transits in daily_transits.items():
 ```
 
 **Output:**
+
 ```
 === DETAILED TRANSIT ANALYSIS ===
 Period: 2024-08-15 00:00 to 2024-08-17 00:00
@@ -206,7 +210,7 @@ Data points: 25 (every 2 hours)
 
 --- 2024-08-15 ---
 Total aspects found: 47
-Aspect distribution: conjunction: 8, opposition: 6, square: 12, trine: 11, sextile: 10, 
+Aspect distribution: conjunction: 8, opposition: 6, square: 12, trine: 11, sextile: 10,
 
 Strongest aspects:
   1. 14:00 - Venus conjunction natal Sun (orb: 0.23°)
@@ -217,7 +221,7 @@ Strongest aspects:
 
 --- 2024-08-16 ---
 Total aspects found: 52
-Aspect distribution: conjunction: 9, opposition: 8, square: 13, trine: 12, sextile: 10, 
+Aspect distribution: conjunction: 9, opposition: 8, square: 13, trine: 12, sextile: 10,
 
 Strongest aspects:
   1. 10:00 - Moon conjunction natal Mars (orb: 0.34°)
@@ -330,7 +334,7 @@ for transit in jupiter_transits:
 print(f"\n--- JUPITER TRANSITS BY NATAL POINT ---")
 for natal_point, transits in natal_point_transits.items():
     print(f"\nJupiter → Natal {natal_point} ({len(transits)} aspects):")
-    
+
     # Group by aspect type
     by_aspect = {}
     for t in transits:
@@ -338,10 +342,10 @@ for natal_point, transits in natal_point_transits.items():
         if aspect_type not in by_aspect:
             by_aspect[aspect_type] = []
         by_aspect[aspect_type].append(t)
-    
+
     for aspect_type, aspect_transits in by_aspect.items():
         print(f"  {aspect_type.capitalize()}s: {len(aspect_transits)}")
-        
+
         # Show tightest examples
         tightest = sorted(aspect_transits, key=lambda x: abs(x['orb']))[:3]
         for i, t in enumerate(tightest, 1):
@@ -350,6 +354,7 @@ for natal_point, transits in natal_point_transits.items():
 ```
 
 **Output:**
+
 ```
 === JUPITER TRANSIT ANALYSIS 2024 ===
 Subject: Jupiter Transit Study
@@ -389,14 +394,14 @@ Jupiter → Natal Moon (6 aspects):
 # Generate monthly transit summaries for consultation
 def generate_monthly_transit_summary(subject, year, month):
     """Generate comprehensive monthly transit summary"""
-    
+
     start = datetime(year, month, 1)
     # Calculate end of month
     if month == 12:
         end = datetime(year + 1, 1, 1)
     else:
         end = datetime(year, month + 1, 1)
-    
+
     ephemeris_factory = EphemerisDataFactory(
         start_datetime=start,
         end_datetime=end,
@@ -406,54 +411,54 @@ def generate_monthly_transit_summary(subject, year, month):
         lng=subject.lng,
         tz_str=subject.tz_str
     )
-    
+
     ephemeris_data = ephemeris_factory.get_ephemeris_data_as_astrological_subjects()
-    
+
     transit_factory = TransitsTimeRangeFactory(subject, ephemeris_data)
     results = transit_factory.get_transit_moments()
-    
+
     # Analyze the month
     month_name = start.strftime('%B %Y')
     print(f"=== TRANSIT SUMMARY: {month_name.upper()} ===")
     print(f"Subject: {subject.name}")
-    
+
     # Count total aspects
     total_aspects = sum(len(moment.aspects) for moment in results.transits)
     print(f"Total aspects this month: {total_aspects}")
-    
+
     # Analyze by transiting planet
     planet_activity = {}
     strongest_aspects = []
-    
+
     for moment in results.transits:
         for aspect in moment.aspects:
             planet = aspect.p1_name
             planet_activity[planet] = planet_activity.get(planet, 0) + 1
             strongest_aspects.append((moment.date, aspect))
-    
+
     # Most active planets
     print(f"\nMost active transiting planets:")
     sorted_planets = sorted(planet_activity.items(), key=lambda x: x[1], reverse=True)
     for i, (planet, count) in enumerate(sorted_planets[:5], 1):
         print(f"  {i}. {planet}: {count} aspects")
-    
+
     # Strongest aspects of the month
     strongest_aspects.sort(key=lambda x: abs(x[1].orbit))
     print(f"\nStrongest aspects this month:")
     for i, (date, aspect) in enumerate(strongest_aspects[:10], 1):
         day = date[8:10]
         print(f"  {i:2d}. {month_name[:3]} {day} - {aspect.p1_name} {aspect.aspect} natal {aspect.p2_name} (orb: {aspect.orbit:.2f}°)")
-    
+
     # Daily activity levels
     daily_counts = {}
     for moment in results.transits:
         day = moment.date[8:10]
         daily_counts[day] = len(moment.aspects)
-    
+
     print(f"\nDaily activity levels:")
     high_activity_days = [(day, count) for day, count in daily_counts.items() if count > 5]
     high_activity_days.sort(key=lambda x: x[1], reverse=True)
-    
+
     if high_activity_days:
         print("High activity days (>5 aspects):")
         for day, count in high_activity_days[:5]:
@@ -461,7 +466,7 @@ def generate_monthly_transit_summary(subject, year, month):
     else:
         avg_activity = sum(daily_counts.values()) / len(daily_counts)
         print(f"Average daily aspects: {avg_activity:.1f}")
-    
+
     return results
 
 # Example usage
@@ -478,6 +483,7 @@ august_transits = generate_monthly_transit_summary(subject, 2024, 8)
 ```
 
 **Output:**
+
 ```
 === TRANSIT SUMMARY: AUGUST 2024 ===
 Subject: Monthly Analysis
@@ -521,18 +527,18 @@ import statistics
 
 def transit_pattern_study(subjects, date_range_days=30):
     """Study transit patterns across multiple birth charts"""
-    
+
     print("=== TRANSIT PATTERN RESEARCH STUDY ===")
     print(f"Analyzing {len(subjects)} subjects over {date_range_days} days")
-    
+
     start = datetime.now()
     end = start + timedelta(days=date_range_days)
-    
+
     all_results = []
-    
+
     for i, subject in enumerate(subjects):
         print(f"Processing subject {i+1}/{len(subjects)}: {subject.name}")
-        
+
         # Generate ephemeris data
         ephemeris_factory = EphemerisDataFactory(
             start_datetime=start,
@@ -543,17 +549,17 @@ def transit_pattern_study(subjects, date_range_days=30):
             lng=subject.lng,
             tz_str=subject.tz_str
         )
-        
+
         ephemeris_data = ephemeris_factory.get_ephemeris_data_as_astrological_subjects()
-        
+
         # Calculate transits
         transit_factory = TransitsTimeRangeFactory(subject, ephemeris_data)
         results = transit_factory.get_transit_moments()
-        
+
         # Analyze this subject's transits
         total_aspects = sum(len(moment.aspects) for moment in results.transits)
         daily_averages = [len(moment.aspects) for moment in results.transits]
-        
+
         subject_analysis = {
             'name': subject.name,
             'birth_year': subject.year,
@@ -563,19 +569,19 @@ def transit_pattern_study(subjects, date_range_days=30):
             'max_daily': max(daily_averages),
             'min_daily': min(daily_averages)
         }
-        
+
         all_results.append(subject_analysis)
-    
+
     # Aggregate analysis
     print(f"\n--- AGGREGATE ANALYSIS ---")
     total_aspects_all = [r['total_aspects'] for r in all_results]
     daily_averages_all = [r['daily_average'] for r in all_results]
-    
+
     print(f"Total subjects analyzed: {len(all_results)}")
     print(f"Average aspects per subject: {statistics.mean(total_aspects_all):.1f}")
     print(f"Range: {min(total_aspects_all)} - {max(total_aspects_all)} aspects")
     print(f"Daily average range: {min(daily_averages_all):.1f} - {max(daily_averages_all):.1f}")
-    
+
     # Analysis by sun sign
     by_sun_sign = {}
     for result in all_results:
@@ -583,24 +589,24 @@ def transit_pattern_study(subjects, date_range_days=30):
         if sign not in by_sun_sign:
             by_sun_sign[sign] = []
         by_sun_sign[sign].append(result['total_aspects'])
-    
+
     print(f"\n--- ANALYSIS BY SUN SIGN ---")
     for sign, aspects_list in sorted(by_sun_sign.items()):
         if len(aspects_list) > 1:
             avg_aspects = statistics.mean(aspects_list)
             print(f"{sign}: {len(aspects_list)} subjects, avg {avg_aspects:.1f} aspects")
-    
+
     # Top and bottom activity subjects
     sorted_by_activity = sorted(all_results, key=lambda x: x['total_aspects'], reverse=True)
-    
+
     print(f"\n--- HIGHEST TRANSIT ACTIVITY ---")
     for i, subject in enumerate(sorted_by_activity[:3], 1):
         print(f"{i}. {subject['name']} ({subject['sun_sign']}): {subject['total_aspects']} aspects")
-    
+
     print(f"\n--- LOWEST TRANSIT ACTIVITY ---")
     for i, subject in enumerate(sorted_by_activity[-3:], 1):
         print(f"{i}. {subject['name']} ({subject['sun_sign']}): {subject['total_aspects']} aspects")
-    
+
     return all_results
 
 # Generate sample subjects for research
@@ -626,6 +632,7 @@ research_results = transit_pattern_study(sample_subjects, 30)
 ```
 
 **Output:**
+
 ```
 === TRANSIT PATTERN RESEARCH STUDY ===
 Analyzing 5 subjects over 30 days
@@ -669,9 +676,9 @@ from kerykeion.schemas import AstrologicalPoint, ActiveAspect
 
 def optimized_transit_analysis(subject, start_date, end_date):
     """Optimized transit analysis for large time ranges"""
-    
+
     print("=== PERFORMANCE-OPTIMIZED TRANSIT ANALYSIS ===")
-    
+
     # Use only major planets for speed
     fast_planets = [
         "Sun",
@@ -680,7 +687,7 @@ def optimized_transit_analysis(subject, start_date, end_date):
         "Venus",
         "Mars"
     ]
-    
+
     # Use only major aspects
     major_aspects = [
         ActiveAspect.CONJUNCTION,
@@ -689,16 +696,16 @@ def optimized_transit_analysis(subject, start_date, end_date):
         ActiveAspect.TRINE,
         ActiveAspect.SEXTILE
     ]
-    
+
     # Generate ephemeris data with larger steps for speed
     days_total = (end_date - start_date).days
     step_size = max(1, days_total // 50)  # Limit to ~50 data points
-    
+
     print(f"Date range: {start_date.date()} to {end_date.date()} ({days_total} days)")
     print(f"Step size: {step_size} days")
     print(f"Planets: {len(fast_planets)} major planets only")
     print(f"Aspects: {len(major_aspects)} major aspects only")
-    
+
     ephemeris_factory = EphemerisDataFactory(
         start_datetime=start_date,
         end_datetime=end_date,
@@ -708,41 +715,41 @@ def optimized_transit_analysis(subject, start_date, end_date):
         lng=subject.lng,
         tz_str=subject.tz_str
     )
-    
+
     ephemeris_data = ephemeris_factory.get_ephemeris_data_as_astrological_subjects()
-    
+
     print(f"Ephemeris data points: {len(ephemeris_data)}")
-    
+
     # Time the calculation
     import time
     start_time = time.time()
-    
+
     transit_factory = TransitsTimeRangeFactory(
         natal_chart=subject,
         ephemeris_data_points=ephemeris_data,
         active_points=fast_planets,
         active_aspects=major_aspects
     )
-    
+
     results = transit_factory.get_transit_moments()
-    
+
     calculation_time = time.time() - start_time
-    
+
     # Performance metrics
     total_aspects = sum(len(moment.aspects) for moment in results.transits)
     aspects_per_second = total_aspects / calculation_time if calculation_time > 0 else 0
-    
+
     print(f"\n--- PERFORMANCE METRICS ---")
     print(f"Calculation time: {calculation_time:.3f} seconds")
     print(f"Total aspects found: {total_aspects}")
     print(f"Processing rate: {aspects_per_second:.1f} aspects/second")
     print(f"Data points processed: {len(results.transits)}")
-    
+
     # Memory usage estimate
     import sys
     result_size = sys.getsizeof(results)
     print(f"Result object size: ~{result_size:,} bytes")
-    
+
     return results
 
 # Example: Analyze full year with optimization
@@ -761,6 +768,7 @@ optimized_results = optimized_transit_analysis(subject, start, end)
 ```
 
 **Output:**
+
 ```
 === PERFORMANCE-OPTIMIZED TRANSIT ANALYSIS ===
 Date range: 2024-01-01 to 2024-12-31 (365 days)
@@ -785,26 +793,26 @@ Result object size: ~45,672 bytes
 # Demonstrate error handling and validation
 def robust_transit_calculation(subject, start_date, end_date):
     """Robust transit calculation with comprehensive error handling"""
-    
+
     try:
         print("=== ROBUST TRANSIT CALCULATION ===")
-        
+
         # Validate date range
         if end_date <= start_date:
             raise ValueError("End date must be after start date")
-        
+
         days_span = (end_date - start_date).days
         if days_span > 1000:
             print(f"Warning: Large date range ({days_span} days) may require significant processing time")
-        
+
         # Validate subject data
         if not hasattr(subject, 'lat') or not hasattr(subject, 'lng'):
             raise ValueError("Subject must have valid latitude and longitude")
-        
+
         print(f"Subject: {subject.name}")
         print(f"Date range: {start_date.date()} to {end_date.date()}")
         print(f"Location: {subject.lat:.2f}°, {subject.lng:.2f}°")
-        
+
         # Generate ephemeris data with error handling
         try:
             ephemeris_factory = EphemerisDataFactory(
@@ -816,50 +824,50 @@ def robust_transit_calculation(subject, start_date, end_date):
                 lng=subject.lng,
                 tz_str=subject.tz_str
             )
-            
+
             ephemeris_data = ephemeris_factory.get_ephemeris_data_as_astrological_subjects()
-            
+
         except Exception as e:
             print(f"Error generating ephemeris data: {e}")
             return None
-        
+
         # Validate ephemeris data
         if not ephemeris_data:
             raise ValueError("No ephemeris data generated")
-        
+
         print(f"Generated {len(ephemeris_data)} ephemeris data points")
-        
+
         # Calculate transits with error handling
         try:
             transit_factory = TransitsTimeRangeFactory(subject, ephemeris_data)
             results = transit_factory.get_transit_moments()
-            
+
         except Exception as e:
             print(f"Error calculating transits: {e}")
             return None
-        
+
         # Validate results
         if not results.transits:
             print("Warning: No transit moments found")
             return results
-        
+
         # Quality checks
         total_aspects = sum(len(moment.aspects) for moment in results.transits)
         avg_daily_aspects = total_aspects / len(results.transits)
-        
+
         print(f"✓ Transit calculation successful")
         print(f"✓ {len(results.transits)} transit moments calculated")
         print(f"✓ {total_aspects} total aspects found")
         print(f"✓ Average {avg_daily_aspects:.1f} aspects per day")
-        
+
         # Data quality warnings
         if avg_daily_aspects < 2:
             print("⚠ Warning: Low aspect count - check active points/aspects configuration")
         elif avg_daily_aspects > 20:
             print("⚠ Warning: High aspect count - consider filtering for better performance")
-        
+
         return results
-        
+
     except ValueError as e:
         print(f"Validation error: {e}")
         return None
@@ -894,6 +902,7 @@ large_results = robust_transit_calculation(subject, large_start, large_end)
 ```
 
 **Output:**
+
 ```
 === ROBUST TRANSIT CALCULATION ===
 Subject: Valid Subject
@@ -923,23 +932,25 @@ Generated 1826 ephemeris data points
 ## Practical Applications
 
 ### 1. Astrological Consultation
+
 ```python
 # Professional transit consultation report
 def generate_consultation_report(client, consultation_date, period_days=90):
     transit_factory = create_transit_analysis(client, consultation_date, period_days)
     results = transit_factory.get_transit_moments()
-    
+
     # Generate professional report
     print("=== ASTROLOGICAL CONSULTATION REPORT ===")
     print(f"Client: {client.name}")
     print(f"Consultation Date: {consultation_date.strftime('%B %d, %Y')}")
     print(f"Analysis Period: {period_days} days")
-    
+
     # Highlight significant transits
     # Implementation would include interpretation logic
 ```
 
 ### 2. Research Applications
+
 ```python
 # Academic research into transit patterns
 def transit_research_study(subjects_list, aspect_types):
@@ -950,6 +961,7 @@ def transit_research_study(subjects_list, aspect_types):
 ```
 
 ### 3. Educational Tools
+
 ```python
 # Educational demonstration of planetary movements
 def educational_transit_demo(teaching_subject, demo_period):
@@ -961,18 +973,21 @@ def educational_transit_demo(teaching_subject, demo_period):
 ## Technical Notes
 
 ### Data Requirements
+
 - **Natal Chart**: Complete AstrologicalSubjectModel with valid birth data
 - **Ephemeris Data**: Time-ordered list of planetary positions
 - **Coordinate System**: Consistent zodiac and house systems across all data
 - **Time Zones**: Proper timezone handling for accurate timing
 
 ### Performance Considerations
+
 - **Calculation Complexity**: O(n × p × a) where n=time points, p=planets, a=aspects
 - **Memory Usage**: Scales with number of aspects found
 - **Processing Time**: Linear with ephemeris data points
 - **Optimization**: Filter active points and aspects for better performance
 
 ### Integration Points
+
 - **EphemerisDataFactory**: Generates time-series planetary data
 - **AspectsFactory**: Calculates angular relationships
 - **AstrologicalSubjectFactory**: Creates natal and ephemeris charts

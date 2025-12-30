@@ -1,5 +1,6 @@
 ---
 title: 'Charts Module - ChartDrawer'
+category: 'Core Concepts'
 tags: ['docs', 'charts', 'svg', 'visual', 'kerykeion']
 order: 3
 ---
@@ -195,7 +196,8 @@ svg_content = chart_drawer.generate_svg_string()
 
 ## Output Methods
 
-⚠️ **IMPORTANT DISTINCTION**: 
+⚠️ **IMPORTANT DISTINCTION**:
+
 - `save_*svg*` methods **save files** to the location specified in the call
 - `generate_*svg_string` methods **return string content** without saving files
 
@@ -489,7 +491,6 @@ print(f"Classical set size: {len(classical_planets)} — Modern set size: {len(m
 ```
 
 ### Active Aspects Configuration
-
 
 ### Combined Configuration Example
 
@@ -846,7 +847,7 @@ dark_transparent = ChartDrawer(
 )
 
 light_transparent = ChartDrawer(
-    chart_data=chart_data, 
+    chart_data=chart_data,
     theme="light",
     transparent_background=True
 )
@@ -1064,6 +1065,7 @@ chart_drawer.save_aspect_grid_only_svg_file(output_path="charts")  # Saves aspec
 # Template methods support minification and CSS options
 minified_template = chart_drawer.generate_svg_string(minify=True, remove_css_variables=True)
 ```
+
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer

@@ -1,5 +1,6 @@
 ---
 title: 'AI Context Serializer'
+category: 'Data & Utilities'
 tags: ['docs', 'ai', 'context', 'kerykeion']
 order: 13
 ---
@@ -14,11 +15,11 @@ The module provides a single main entry point, the `to_context` function, which 
 
 **Key Features:**
 
--   **Standardized Output:** Consistent formatting for all astrological data.
--   **Non-Qualitative:** Provides raw data (positions, aspects, etc.) without interpretive text (e.g., "good", "bad", "lucky").
--   **Comprehensive Support:** Handles Natal, Synastry, Composite, Transit, Solar/Lunar Return, Dual Return charts, and individual components.
--   **House & Cusp Comparison:** Serializes both planetary overlays and cusp-in-house overlays for dual charts.
--   **Type-Safe:** Built on Kerykeion's Pydantic v2 models.
+- **Standardized Output:** Consistent formatting for all astrological data.
+- **Non-Qualitative:** Provides raw data (positions, aspects, etc.) without interpretive text (e.g., "good", "bad", "lucky").
+- **Comprehensive Support:** Handles Natal, Synastry, Composite, Transit, Solar/Lunar Return, Dual Return charts, and individual components.
+- **House & Cusp Comparison:** Serializes both planetary overlays and cusp-in-house overlays for dual charts.
+- **Type-Safe:** Built on Kerykeion's Pydantic v2 models.
 
 ## Basic Usage
 

@@ -1,5 +1,6 @@
 ---
 title: 'Composite Subject Factory'
+category: 'Analysis'
 tags: ['docs', 'composite', 'relationships', 'kerykeion']
 order: 8
 ---
@@ -63,6 +64,7 @@ print(f"Composite Ascendant: {composite_model.ascendant.sign} {composite_model.a
 ```
 
 **Output:**
+
 ```
 Composite Chart: John and Jane Composite Chart
 Composite Sun: Leo 18.23°
@@ -109,6 +111,7 @@ print(f"Chart Name: {composite_model.name}")
 ```
 
 **Output:**
+
 ```
 Chart Name: Our Relationship Chart
 ```
@@ -174,6 +177,7 @@ print(f"Emotional Pattern: {model.lunar_phase.moon_phase_name} energy in the rel
 ```
 
 **Output:**
+
 ```
 === COMPOSITE RELATIONSHIP CHART ===
 Relationship: Partnership Analysis
@@ -211,7 +215,7 @@ def compare_positions(person1, person2, composite, planet_name):
     p1_planet = getattr(person1, planet_name)
     p2_planet = getattr(person2, planet_name)
     comp_planet = getattr(composite, planet_name)
-    
+
     print(f"{planet_name.capitalize()}:")
     print(f"  Person 1: {p1_planet.sign} {p1_planet.abs_pos:.2f}°")
     print(f"  Person 2: {p2_planet.sign} {p2_planet.abs_pos:.2f}°")
@@ -242,6 +246,7 @@ for planet in planets:
 ```
 
 **Output:**
+
 ```
 === INDIVIDUAL vs COMPOSITE COMPARISON ===
 Sun:
@@ -293,7 +298,7 @@ yoko = AstrologicalSubjectFactory.from_birth_data(
 
 # Creative partnership composite
 creative_composite = CompositeSubjectFactory(
-    john, yoko, 
+    john, yoko,
     "John & Yoko Creative Partnership"
 )
 
@@ -352,8 +357,8 @@ person2_vedic = AstrologicalSubjectFactory.from_birth_data(
 )
 
 vedic_composite = CompositeSubjectFactory(
-    person1_vedic, 
-    person2_vedic, 
+    person1_vedic,
+    person2_vedic,
     "Vedic Relationship Chart"
 )
 
@@ -415,6 +420,7 @@ except Exception as e:
 ```
 
 **Output:**
+
 ```
 Error: Both subjects must have the same zodiac type
 Solution: Both charts must use the same zodiac type, house system, and perspective
@@ -464,6 +470,7 @@ print(f"Common points used: {model.active_points}")
 Composite charts serve different purposes depending on the relationship type. Here are common applications with specific interpretive focus areas.
 
 ### 1. Romantic Relationships
+
 For romantic partnerships, focus on houses related to love, intimacy, and shared values. The composite reveals how the couple functions together emotionally and romantically.
 
 ```python
@@ -497,6 +504,7 @@ for house_num in relationship_houses:
 ```
 
 ### 2. Business Partnerships
+
 Business composites emphasize practical matters: shared resources, work dynamics, and public reputation. The focus shifts to material success and professional compatibility.
 
 ```python
@@ -534,6 +542,7 @@ for house_num in business_houses:
 ```
 
 ### 3. Family Relationships
+
 Family composites (parent-child, siblings) highlight nurturing dynamics, home environment, and generational patterns. These charts often emphasize the 4th and 5th houses.
 
 ```python
@@ -569,19 +578,24 @@ for house_num in family_houses:
 ## Technical Notes
 
 ### Midpoint Calculation Method
+
 The composite uses sophisticated circular mean calculations that properly handle zodiacal boundaries. This mathematical approach ensures accurate midpoints even when individual positions span the 0°/360° boundary. For example:
+
 - Positions at 350° and 10° correctly calculate to 0° (not 180°)
 - House cusps maintain proper sequential order after midpoint calculation
 - Only common active points between subjects are included to ensure data integrity
 
 ### Compatibility Requirements
+
 Both subjects must have identical astrological calculation settings to create a valid composite:
+
 - `zodiac_type` (Tropical or Sidereal) - Different zodiac systems cannot be meaningfully combined
-- `sidereal_mode` (if using Sidereal) - Different ayanamshas would create inconsistent results  
+- `sidereal_mode` (if using Sidereal) - Different ayanamshas would create inconsistent results
 - `houses_system_identifier` - Different house systems use incompatible mathematical divisions
 - `perspective_type` - Different perspectives (geocentric/heliocentric) represent fundamentally different viewpoints
 
 ### Performance Considerations
+
 - Composite calculation is fast (< 50ms typically) since it uses pre-calculated individual positions
 - Memory usage is minimal, similar to a single chart rather than two separate charts
 - Only common points are calculated, improving efficiency with large active point lists

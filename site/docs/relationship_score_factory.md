@@ -1,5 +1,6 @@
 ---
 title: 'Relationship Score Factory'
+category: 'Analysis'
 tags: ['docs', 'relationships', 'synastry', 'scores', 'kerykeion']
 order: 7
 ---
@@ -13,6 +14,7 @@ The `relationship_score_factory` module provides the `RelationshipScoreFactory` 
 The `RelationshipScoreFactory` implements a point-based scoring system that evaluates synastry aspects between two astrological charts. The method, developed by Ciro Discepolo, assigns specific point values to different types of planetary aspects based on their astrological significance and orbital precision.
 
 **Core Methodology:**
+
 - Analyzes synastry aspects between two birth charts
 - Assigns points based on aspect type, planets involved, and orbital precision
 - Provides categorical descriptions for numerical scores
@@ -31,14 +33,14 @@ The `RelationshipScoreFactory` implements a point-based scoring system that eval
 
 The scoring system categorizes relationships into six distinct levels:
 
-| Score Range | Category | Description |
-|-------------|----------|-------------|
-| 0-5 | Minimal | Low compatibility, few significant connections |
-| 5-10 | Medium | Moderate compatibility, some harmonious aspects |
-| 10-15 | Important | Strong compatibility, notable astrological connections |
-| 15-20 | Very Important | High compatibility, significant astrological harmony |
-| 20-30 | Exceptional | Outstanding compatibility, rare astrological alignment |
-| 30+ | Rare Exceptional | Extraordinary compatibility, exceptional cosmic connection |
+| Score Range | Category         | Description                                                |
+| ----------- | ---------------- | ---------------------------------------------------------- |
+| 0-5         | Minimal          | Low compatibility, few significant connections             |
+| 5-10        | Medium           | Moderate compatibility, some harmonious aspects            |
+| 10-15       | Important        | Strong compatibility, notable astrological connections     |
+| 15-20       | Very Important   | High compatibility, significant astrological harmony       |
+| 20-30       | Exceptional      | Outstanding compatibility, rare astrological alignment     |
+| 30+         | Rare Exceptional | Extraordinary compatibility, exceptional cosmic connection |
 
 ## RelationshipScoreFactory Class
 
@@ -60,7 +62,7 @@ person1 = AstrologicalSubjectFactory.from_birth_data(
 )
 
 person2 = AstrologicalSubjectFactory.from_birth_data(
-    name="Jane", 
+    name="Jane",
     year=1988, month=8, day=22,
     hour=14, minute=30,
     lng=-0.1276,
@@ -80,6 +82,7 @@ print(f"Contributing Aspects: {len(score.aspects)}")
 ```
 
 **Output:**
+
 ```
 Relationship Score: 18
 Category: Very Important
@@ -168,6 +171,7 @@ else:
 ```
 
 **Output:**
+
 ```
 === RELATIONSHIP COMPATIBILITY ANALYSIS ===
 Partners: John & Jane
@@ -221,7 +225,7 @@ john_lennon = AstrologicalSubjectFactory.from_birth_data(
 )
 
 yoko_ono = AstrologicalSubjectFactory.from_birth_data(
-    name="Yoko Ono", 
+    name="Yoko Ono",
     year=1933, month=2, day=18,
     hour=20, minute=30,
     lat=35.6762, lng=139.6503,  # Tokyo
@@ -251,12 +255,13 @@ print(f"Other aspects: {len(wide_aspects)}")
 ```
 
 **Output:**
+
 ```
 === CELEBRITY COUPLE COMPATIBILITY STUDY ===
 John Lennon & Yoko Ono
 Compatibility Score: 22 (Exceptional)
 Birth Details:
-  John: Libra Sun, Aquarius Moon  
+  John: Libra Sun, Aquarius Moon
   Yoko: Aquarius Sun, Sagittarius Moon
 
 Top Contributing Aspects:
@@ -289,7 +294,7 @@ partners = [
         "data": (1990, 7, 20, 14, 0, "Miami", "US")
     },
     {
-        "name": "Partner B", 
+        "name": "Partner B",
         "data": (1994, 11, 8, 16, 45, "Seattle", "US")
     },
     {
@@ -311,10 +316,10 @@ for partner_info in partners:
         city=partner_info["data"][5],
         nation=partner_info["data"][6]
     )
-    
+
     factory = RelationshipScoreFactory(main_person, partner)
     score = factory.get_relationship_score()
-    
+
     results.append({
         "name": partner_info["name"],
         "score": score.score_value,
@@ -341,7 +346,7 @@ if results:
     print(f"\n--- TOP COMPATIBILITY MATCH ---")
     print(f"Best Match: {top_match['name']} with {top_match['score']} points")
     print(f"Relationship Level: {top_match['category']}")
-    
+
     if top_match['score'] >= 20:
         print("🌟 Outstanding compatibility! This relationship shows exceptional promise.")
     elif top_match['score'] >= 15:
@@ -351,13 +356,14 @@ if results:
 ```
 
 **Output:**
+
 ```
 === COMPARATIVE RELATIONSHIP ANALYSIS ===
 Compatibility Rankings for Alex:
 Rank   Partner      Score   Category          Destiny  Aspects  Tight
 ---------------------------------------------------------------------------
 1      Partner C    19      Very Important    ✓        6        2
-2      Partner A    13      Important         ✗        5        1  
+2      Partner A    13      Important         ✗        5        1
 3      Partner B    8       Medium            ✗        3        0
 
 --- TOP COMPATIBILITY MATCH ---
@@ -417,6 +423,7 @@ print(f"  Minor aspects: {minor_count}")
 ```
 
 **Output:**
+
 ```
 === ASPECT FILTERING COMPARISON ===
 Major Aspects Only:
@@ -424,7 +431,7 @@ Major Aspects Only:
   Aspects considered: 5
 
 All Aspects (Including Minor):
-  Score: 23 (Exceptional)  
+  Score: 23 (Exceptional)
   Aspects considered: 8
 
 Difference:
@@ -475,6 +482,7 @@ for quality in qualities:
 ```
 
 **Output:**
+
 ```
 === CIRO DISCEPOLO SCORING SYSTEM ===
 Point Values by Aspect Type:
@@ -506,10 +514,10 @@ Quality Matching (Destiny Sign):
 # Manual walkthrough of score calculation
 def manual_score_analysis(subject1, subject2):
     """Demonstrate manual score calculation process"""
-    
+
     print("=== MANUAL SCORE CALCULATION WALKTHROUGH ===")
     total_points = 0
-    
+
     # Step 1: Check Destiny Sign
     print("Step 1: Destiny Sign Analysis")
     if subject1.sun.quality == subject2.sun.quality:
@@ -520,17 +528,17 @@ def manual_score_analysis(subject1, subject2):
         total_points += 5
     else:
         print(f"  ✗ Different sun qualities:")
-        print(f"  {subject1.name}: {subject1.sun.sign} ({subject1.sun.quality})")  
+        print(f"  {subject1.name}: {subject1.sun.sign} ({subject1.sun.quality})")
         print(f"  {subject2.name}: {subject2.sun.sign} ({subject2.sun.quality})")
         print(f"  Points awarded: 0")
-    
+
     print(f"  Running total: {total_points} points\n")
-    
+
     # Step 2: Analyze synastry aspects
     print("Step 2: Synastry Aspects Analysis")
     factory = RelationshipScoreFactory(subject1, subject2)
     score = factory.get_relationship_score()
-    
+
     # Group aspects by type for analysis
     aspect_analysis = {
         "Sun-Sun major": [],
@@ -540,7 +548,7 @@ def manual_score_analysis(subject1, subject2):
         "Venus-Mars": [],
         "Other": []
     }
-    
+
     for aspect in score.aspects:
         if aspect.p1_name == "Sun" and aspect.p2_name == "Sun":
             if aspect.aspect in ["conjunction", "opposition", "square"]:
@@ -557,7 +565,7 @@ def manual_score_analysis(subject1, subject2):
             aspect_analysis["Venus-Mars"].append(aspect)
         else:
             aspect_analysis["Other"].append(aspect)
-    
+
     # Display each category
     step = 2
     for category, aspects in aspect_analysis.items():
@@ -571,15 +579,15 @@ def manual_score_analysis(subject1, subject2):
                     points = 11 if aspect.orbit <= 2.0 else 8
                 else:
                     points = 4
-                
+
                 orbit_desc = "tight" if aspect.orbit <= 2.0 else "normal"
                 print(f"  • {aspect.p1_name}-{aspect.p2_name}: {aspect.aspect}")
                 print(f"    Orb: {aspect.orbit:.2f}° ({orbit_desc})")
                 print(f"    Points: +{points}")
                 total_points += points
-            
+
             print(f"  Running total: {total_points} points\n")
-    
+
     print(f"=== FINAL CALCULATION ===")
     print(f"Total Score: {score.score_value} points")
     print(f"Category: {score.score_description}")
@@ -616,7 +624,7 @@ def generate_random_subject(name):
     day = random.randint(1, 28)  # Safe day range
     hour = random.randint(0, 23)
     minute = random.randint(0, 59)
-    
+
     return AstrologicalSubjectFactory.from_birth_data(
         name=name,
         year=year, month=month, day=day,
@@ -637,36 +645,36 @@ for i in range(sample_size):
     try:
         person1 = generate_random_subject(f"Person_{i}_A")
         person2 = generate_random_subject(f"Person_{i}_B")
-        
+
         factory = RelationshipScoreFactory(person1, person2)
         score = factory.get_relationship_score()
-        
+
         scores.append(score.score_value)
         category = score.score_description
         categories[category] = categories.get(category, 0) + 1
-        
+
     except Exception as e:
         print(f"Error in sample {i}: {e}")
 
 # Statistical analysis
 if scores:
     import statistics
-    
+
     print(f"\n--- STATISTICAL RESULTS ---")
     print(f"Sample size: {len(scores)} relationships")
     print(f"Score range: {min(scores)} - {max(scores)} points")
     print(f"Average score: {statistics.mean(scores):.2f} points")
     print(f"Median score: {statistics.median(scores):.2f} points")
-    
+
     if len(scores) > 1:
         print(f"Standard deviation: {statistics.stdev(scores):.2f} points")
-    
+
     print(f"\n--- CATEGORY DISTRIBUTION ---")
     total = sum(categories.values())
     for category, count in sorted(categories.items(), key=lambda x: ["Minimal", "Medium", "Important", "Very Important", "Exceptional", "Rare Exceptional"].index(x[0])):
         percentage = (count / total) * 100
         print(f"{category}: {count} ({percentage:.1f}%)")
-    
+
     # Score histogram
     print(f"\n--- SCORE HISTOGRAM ---")
     score_ranges = [(0, 5), (5, 10), (10, 15), (15, 20), (20, 30), (30, 100)]
@@ -678,6 +686,7 @@ if scores:
 ```
 
 **Output:**
+
 ```
 === RELATIONSHIP SCORE DISTRIBUTION STUDY ===
 Analyzing 50 random relationship pairings...
@@ -686,7 +695,7 @@ Analyzing 50 random relationship pairings...
 Sample size: 50 relationships
 Score range: 0 - 27 points
 Average score: 8.64 points
-Median score: 8.00 points  
+Median score: 8.00 points
 Standard deviation: 6.23 points
 
 --- CATEGORY DISTRIBUTION ---
@@ -703,62 +712,65 @@ Rare Exceptional: 0 (0.0%)
 10-15: 12 (24.0%) ████████████
 15-20:  4 ( 8.0%) ████
 20-30:  1 ( 2.0%) █
-30-100: 0 ( 0.0%) 
+30-100: 0 ( 0.0%)
 ```
 
 ## Practical Applications
 
 ### 1. Relationship Counseling
+
 ```python
 # Professional compatibility assessment
 def relationship_consultation(person1, person2):
     factory = RelationshipScoreFactory(person1, person2)
     score = factory.get_relationship_score()
-    
+
     print("=== RELATIONSHIP CONSULTATION REPORT ===")
     print(f"Clients: {person1.name} & {person2.name}")
     print(f"Compatibility Score: {score.score_value}/30+ points")
     print(f"Relationship Category: {score.score_description}")
-    
+
     # Provide interpretation
     if score.score_value >= 20:
         print("\n🌟 EXCEPTIONAL COMPATIBILITY")
         print("Your charts show rare astrological harmony. This relationship")
         print("has outstanding cosmic support for long-term success.")
-    
+
     return score
 ```
 
 ### 2. Dating App Integration
+
 ```python
 # Compatibility matching for dating applications
 def compatibility_matcher(user_profile, potential_matches):
     user_subject = create_subject_from_profile(user_profile)
-    
+
     matches = []
     for match_profile in potential_matches:
         match_subject = create_subject_from_profile(match_profile)
-        
+
         factory = RelationshipScoreFactory(user_subject, match_subject)
         score = factory.get_relationship_score()
-        
+
         matches.append({
             'profile': match_profile,
             'score': score.score_value,
             'category': score.score_description
         })
-    
+
     # Sort by compatibility score
     return sorted(matches, key=lambda x: x['score'], reverse=True)
 ```
 
 ### 3. Research Applications
+
 ```python
 # Academic research into astrological compatibility
 def compatibility_research_study():
     print("=== ASTROLOGICAL COMPATIBILITY RESEARCH ===")
     print("Analyzing correlation between Discepolo scores and relationship outcomes")
-    
+
     # Could analyze:
     # - Correlation with relationship duration
     # - Success rates by score category
@@ -769,10 +781,11 @@ def compatibility_research_study():
 ## Technical Notes
 
 ### Methodology Reference
+
 The scoring system is based on Ciro Discepolo's research into astrological compatibility. Key principles include:
 
 - **Aspect Hierarchy**: Some aspects carry more weight than others
-- **Orbital Precision**: Tighter aspects indicate stronger connections  
+- **Orbital Precision**: Tighter aspects indicate stronger connections
 - **Planetary Significance**: Sun, Moon, and angular points are prioritized
 - **Quality Matching**: Shared cardinal, fixed, or mutable qualities enhance compatibility
 
@@ -812,15 +825,15 @@ def comprehensive_relationship_analysis(person1, person2):
     # Compatibility score
     score_factory = RelationshipScoreFactory(person1, person2)
     compatibility = score_factory.get_relationship_score()
-    
+
     # Detailed synastry aspects
     synastry_factory = AspectsFactory.dual_chart_aspects(person1, person2)
     all_aspects = synastry_factory.all_aspects
-    
+
     # Composite chart
     composite_factory = CompositeSubjectFactory(person1, person2)
     composite = composite_factory.get_composite_subject()
-    
+
     return {
         'compatibility_score': compatibility,
         'synastry_aspects': all_aspects,

@@ -1,5 +1,6 @@
 ---
 title: 'Chart Data Factory'
+category: 'Core Concepts'
 tags: ['docs', 'chart data', 'analysis', 'kerykeion']
 order: 2
 ---
@@ -27,7 +28,7 @@ This factory creates comprehensive `ChartDataModel` instances containing subject
 The `ChartDataFactory` supports all chart types available in Kerykeion, automatically including relevant analyses based on chart type:
 
 - **Natal**: Single subject with internal aspects and element/quality analysis
-- **Transit**: Natal subject with current transits, includes house comparison analysis  
+- **Transit**: Natal subject with current transits, includes house comparison analysis
 - **Synastry**: Two subjects with inter-chart aspects, relationship scoring, and house overlays
 - **Composite**: Composite subject with internal aspects and averaged location data
 - **DualReturnChart**: Natal subject with planetary return, includes comparative analysis
@@ -50,8 +51,9 @@ for name, field in SingleChartDataModel.model_fields.items():
 ```
 
 **Supported Chart Types:**
+
 - **Natal**: Birth chart with internal aspects
-- **Composite**: Midpoint-based composite chart with internal aspects  
+- **Composite**: Midpoint-based composite chart with internal aspects
 - **SingleReturnChart**: Planetary return chart with internal aspects
 
 ### DualChartDataModel
@@ -67,6 +69,7 @@ for name, field in DualChartDataModel.model_fields.items():
 ```
 
 **Supported Chart Types:**
+
 - **Transit**: Natal chart with current planetary transits
 - **Synastry**: Relationship compatibility between two people
 - **DualReturnChart**: Natal chart with planetary return comparison
@@ -82,8 +85,9 @@ print(ChartDataModel.__args__)
 ```
 
 The factory method returns the appropriate model type based on the chart type requested.
-    longitude: float                                        # Geographic longitude
-```
+longitude: float # Geographic longitude
+
+````
 
 ### ElementDistributionModel
 
@@ -99,7 +103,7 @@ class ElementDistributionModel:
     earth_percentage: int    # Earth element percentage (0-100)
     air_percentage: int      # Air element percentage (0-100)
     water_percentage: int    # Water element percentage (0-100)
-```
+````
 
 ### QualityDistributionModel
 
@@ -163,7 +167,7 @@ print(f"Earth: {elements.earth_percentage}% ({elements.earth} points)")
 print(f"Air: {elements.air_percentage}% ({elements.air} points)")
 print(f"Water: {elements.water_percentage}% ({elements.water} points)")
 
-# Quality distribution analysis  
+# Quality distribution analysis
 qualities = chart_data.quality_distribution
 print(f"Cardinal: {qualities.cardinal_percentage}%")
 print(f"Fixed: {qualities.fixed_percentage}%")
@@ -205,7 +209,7 @@ synastry_data = ChartDataFactory.create_synastry_chart_data(
     include_relationship_score=True
 )
 
-# Returns DualChartDataModel  
+# Returns DualChartDataModel
 print(f"Model Type: {type(synastry_data).__name__}")  # DualChartDataModel
 print(f"Chart Type: {synastry_data.chart_type}")      # Synastry
 print(f"First Subject: {synastry_data.first_subject.name}")   # Person 1
@@ -456,17 +460,17 @@ class BirthData:
 
 def process_natal_chart(birth_data: BirthData) -> Dict[str, Any]:
     """Process natal chart data for analysis."""
-    
+
     # Create astrological subject
     subject_factory = AstrologicalSubjectFactory()
     subject = subject_factory.from_birth_data(
         birth_data.name, birth_data.year, birth_data.month, birth_data.day,
         birth_data.hour, birth_data.minute, birth_data.city, birth_data.nation
     )
-    
+
     # Generate chart data - returns SingleChartDataModel
     chart_data = ChartDataFactory().create_chart_data("Natal", subject)
-    
+
     # Structure response data
     return {
         "chart_info": {
@@ -527,7 +531,7 @@ def process_natal_chart(birth_data: BirthData) -> Dict[str, Any]:
 
 def analyze_relationship_compatibility(person1: BirthData, person2: BirthData) -> Dict[str, Any]:
     """Analyze relationship compatibility between two people."""
-    
+
     # Create subjects
     subject_factory = AstrologicalSubjectFactory()
     subject1 = subject_factory.from_birth_data(
@@ -538,10 +542,10 @@ def analyze_relationship_compatibility(person1: BirthData, person2: BirthData) -
         person2.name, person2.year, person2.month, person2.day,
         person2.hour, person2.minute, person2.city, person2.nation
     )
-    
+
     # Generate synastry data
     synastry_data = ChartDataFactory().create_chart_data("Synastry", subject1, subject2)
-    
+
     return {
         "subjects": {
             "person1": {"name": person1.name},
@@ -573,11 +577,11 @@ if __name__ == "__main__":
     # Process a natal chart
     birth_info = BirthData("John Doe", 1990, 6, 15, 14, 30, "Rome", "IT")
     natal_analysis = process_natal_chart(birth_info)
-    
+
     # Save to JSON file
     with open("natal_analysis.json", "w") as f:
         json.dump(natal_analysis, f, indent=2)
-    
+
     print("Natal chart analysis saved to natal_analysis.json")
 ```
 
@@ -683,10 +687,12 @@ print(signature(factory.create_chart_data))
 ```
 
 **Return Types:**
+
 - **SingleChartDataModel**: For "Natal", "Composite", "SingleReturnChart"
 - **DualChartDataModel**: For "Transit", "Synastry", "DualReturnChart"
 
 #### Natal Chart Data
+
 ```python
 from inspect import signature
 from kerykeion import ChartDataFactory
@@ -695,6 +701,7 @@ print(signature(ChartDataFactory.create_natal_chart_data))
 ```
 
 #### Synastry Chart Data
+
 ```python
 from inspect import signature
 from kerykeion import ChartDataFactory
@@ -703,6 +710,7 @@ print(signature(ChartDataFactory.create_synastry_chart_data))
 ```
 
 #### Transit Chart Data
+
 ```python
 from inspect import signature
 from kerykeion import ChartDataFactory
@@ -711,6 +719,7 @@ print(signature(ChartDataFactory.create_transit_chart_data))
 ```
 
 #### Composite Chart Data
+
 ```python
 from inspect import signature
 from kerykeion import ChartDataFactory
@@ -996,38 +1005,45 @@ def safe_chart_creation(subject_data, chart_type="Natal"):
 
 ## Comparison with ChartDrawer
 
-| Feature | ChartDrawer | ChartDataFactory |
-|---------|-------------|------------------|
-| **Purpose** | Visual chart rendering | Structured data extraction |
-| **Output** | SVG files/strings | Pydantic models |
-| **Use Cases** | Charts, reports, printing | Data analysis, databases |
-| **Data Format** | Visual/graphical | JSON-serializable |
-| **Performance** | Complex rendering | Data-only calculations |
-| **Customization** | Themes, colors, fonts | Points, aspects, features |
-| **Web Integration** | SVG display | Data processing |
-| **Analysis Depth** | Visual patterns | Quantified data |
+| Feature             | ChartDrawer               | ChartDataFactory           |
+| ------------------- | ------------------------- | -------------------------- |
+| **Purpose**         | Visual chart rendering    | Structured data extraction |
+| **Output**          | SVG files/strings         | Pydantic models            |
+| **Use Cases**       | Charts, reports, printing | Data analysis, databases   |
+| **Data Format**     | Visual/graphical          | JSON-serializable          |
+| **Performance**     | Complex rendering         | Data-only calculations     |
+| **Customization**   | Themes, colors, fonts     | Points, aspects, features  |
+| **Web Integration** | SVG display               | Data processing            |
+| **Analysis Depth**  | Visual patterns           | Quantified data            |
 
 ## Use Cases and Applications
 
 ### Application Development
+
 Perfect for desktop applications, mobile backends, and data processing services providing astrological analysis.
 
 ### Mobile App Backends
+
 Structured data ideal for mobile applications requiring astrological information.
 
 ### Data Analysis
+
 Quantified astrological data for statistical analysis, research, and pattern recognition.
 
 ### Database Integration
+
 Pydantic models can be easily stored in databases or converted to other formats.
 
 ### Machine Learning
+
 Structured numerical data suitable for ML training and astrological pattern analysis.
 
 ### Third-Party Integration
+
 Clean data format for integration with other systems and services.
 
 ### Batch Processing
+
 Efficient for processing multiple charts without visual rendering overhead.
 
 The `ChartDataFactory` represents the evolution of astrological software towards data-first design, providing the same comprehensive calculations as traditional chart software but in a format optimized for modern application development and data science workflows.

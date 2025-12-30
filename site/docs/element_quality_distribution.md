@@ -1,5 +1,6 @@
 ---
 title: 'Element & Quality Distribution'
+category: 'Analysis'
 tags: ['docs', 'elements', 'qualities', 'statistics', 'kerykeion']
 order: 5
 ---

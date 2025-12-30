@@ -1,0 +1,67 @@
+---
+title: 'Fetch Geonames'
+category: 'Data & Utilities'
+description: 'Utility to fetch location and timezone data from GeoNames API'
+tags: ['docs', 'utility', 'geonames', 'location', 'timezone']
+order: 11
+---
+
+# FetchGeonames (`kerykeion.fetch_geonames`)
+
+The `FetchGeonames` class provides an interface to the GeoNames API to retrieve geographical coordinates and timezone information necessary for chart calculations.
+
+> [!NOTE]
+> This module requires internet access and valid credentials for the GeoNames API.
+
+## Usage
+
+```python
+from kerykeion.fetch_geonames import FetchGeonames
+
+# Initialize the fetcher
+geonames = FetchGeonames(
+    city_name="Rome",
+    country_code="IT",
+    username="century.boy" # Optional: defaults to "century.boy"
+)
+
+# Get serialized data
+data = geonames.get_serialized_data()
+print(data)
+```
+
+## Class `FetchGeonames`
+
+### `__init__`
+
+```python
+def __init__(
+    self,
+    city_name: str,
+    country_code: str,
+    username: str = "century.boy",
+    cache_expire_after_days: int = 30
+)
+```
+
+**Parameters:**
+
+- `city_name`: Name of the city to search for.
+- `country_code`: Two-letter ISO country code (e.g., "IT", "US").
+- `username`: GeoNames username (default: "century.boy").
+- `cache_expire_after_days`: Number of days to cache the API response (default: 30).
+
+### Methods
+
+#### `get_serialized_data()`
+
+Returns a dictionary containing the necessary data for Kerykeion calculations.
+
+**Returns:**
+`dict[str, str]`: A dictionary with keys likely including:
+
+- `name`: City name
+- `lat`: Latitude
+- `lng`: Longitude
+- `countryCode`: Country code
+- `timezonestr`: Timezone ID (e.g., "Europe/Rome")

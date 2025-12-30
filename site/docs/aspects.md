@@ -1,5 +1,6 @@
 ---
 title: 'Aspects Module'
+category: 'Analysis'
 tags: ['docs', 'aspects', 'analysis', 'kerykeion']
 order: 4
 ---
@@ -14,8 +15,8 @@ Astrological aspects are geometric relationships between planets and points meas
 
 The `AspectsFactory` provides a unified approach to aspect calculation with two primary methods:
 
--   **`single_chart_aspects()`**: Analyzes aspects within one chart (natal, return, composite, etc.)
--   **`dual_chart_aspects()`**: Analyzes aspects between two charts (synastry, transits, comparisons, etc.)
+- **`single_chart_aspects()`**: Analyzes aspects within one chart (natal, return, composite, etc.)
+- **`dual_chart_aspects()`**: Analyzes aspects between two charts (synastry, transits, comparisons, etc.)
 
 This unified design eliminates the complexity of managing separate classes while providing specialized functionality for different types of astrological analysis.
 
@@ -27,39 +28,39 @@ The module calculates both major and minor aspects with customizable orb toleran
 
 **Major Aspects** (Traditional):
 
--   **Conjunction (0°)**: Planetary energies blend and intensify
--   **Opposition (180°)**: Polarized energies creating tension or balance
--   **Trine (120°)**: Harmonious flow of energies
--   **Square (90°)**: Dynamic tension and challenge
--   **Sextile (60°)**: Cooperative and supportive energies
+- **Conjunction (0°)**: Planetary energies blend and intensify
+- **Opposition (180°)**: Polarized energies creating tension or balance
+- **Trine (120°)**: Harmonious flow of energies
+- **Square (90°)**: Dynamic tension and challenge
+- **Sextile (60°)**: Cooperative and supportive energies
 
 **Minor Aspects** (Extended Analysis):
 
--   **Semi-sextile (30°)**: Subtle supportive connection
--   **Semi-square (45°)**: Minor friction requiring adjustment
--   **Quintile (72°)**: Creative and spiritual talents
--   **Sesquiquadrate (135°)**: Persistent challenge requiring resolution
--   **Biquintile (144°)**: Enhanced creative expression
--   **Quincunx/Inconjunct (150°)**: Adjustment and integration needed
+- **Semi-sextile (30°)**: Subtle supportive connection
+- **Semi-square (45°)**: Minor friction requiring adjustment
+- **Quintile (72°)**: Creative and spiritual talents
+- **Sesquiquadrate (135°)**: Persistent challenge requiring resolution
+- **Biquintile (144°)**: Enhanced creative expression
+- **Quincunx/Inconjunct (150°)**: Adjustment and integration needed
 
 ### Orb Tolerances
 
 Orbs determine how close to exact an aspect needs to be to be considered valid:
 
--   **Standard Orbs**: Vary by aspect type (typically 6-10° for major aspects, 1-3° for minor)
--   **Axes Orbs**: Stricter limits for chart angles (Ascendant, Midheaven, Descendant, IC)
--   **Tight Aspects**: Aspects within 1-2° are considered particularly significant
--   **Custom Orbs**: Configurable for specialized analysis needs
+- **Standard Orbs**: Vary by aspect type (typically 6-10° for major aspects, 1-3° for minor)
+- **Axes Orbs**: Stricter limits for chart angles (Ascendant, Midheaven, Descendant, IC)
+- **Tight Aspects**: Aspects within 1-2° are considered particularly significant
+- **Custom Orbs**: Configurable for specialized analysis needs
 
 ### Chart Types Supported
 
 The unified factory works with all chart types:
 
--   **Natal Charts**: Birth chart aspects revealing personality dynamics
--   **Planetary Returns**: Solar, lunar, and other planetary return charts
--   **Composite Charts**: Blended relationship charts
--   **Transit Charts**: Current planetary positions
--   **Progressed Charts**: Evolved natal positions over time
+- **Natal Charts**: Birth chart aspects revealing personality dynamics
+- **Planetary Returns**: Solar, lunar, and other planetary return charts
+- **Composite Charts**: Blended relationship charts
+- **Transit Charts**: Current planetary positions
+- **Progressed Charts**: Evolved natal positions over time
 
 ## Single Chart Aspects Analysis
 

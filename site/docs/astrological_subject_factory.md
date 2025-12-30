@@ -1,5 +1,6 @@
 ---
 title: 'Astrological Subject Factory'
+category: 'Core Concepts'
 tags: ['docs', 'subjects', 'core', 'astrology', 'kerykeion']
 order: 1
 ---
@@ -29,9 +30,11 @@ The `AstrologicalSubjectFactory` is the core factory class that creates comprehe
 The zodiac system determines how planetary positions are calculated and interpreted. Kerykeion supports both major zodiac traditions used worldwide.
 
 #### Tropical Zodiac (`zodiac_type="Tropical"`)
+
 The **Tropical Zodiac** is aligned with Earth's seasons and is the standard in Western astrology. It fixes 0° Aries to the Spring Equinox, creating a stable seasonal framework regardless of stellar movement.
 
 **Characteristics:**
+
 - **Fixed to seasons**: 0° Aries always corresponds to the Spring Equinox
 - **Precession-independent**: Doesn't account for the precession of equinoxes
 - **Western standard**: Used in most Western astrological traditions
@@ -56,6 +59,7 @@ print(f"Expected: Cancer 0.00° (approximately)")
 ```
 
 **Output:**
+
 ```
 Zodiac Type: Tropical
 Sun at Summer Solstice: Cancer 0.23°
@@ -63,9 +67,11 @@ Expected: Cancer 0.00° (approximately)
 ```
 
 #### Sidereal Zodiac (`zodiac_type="Sidereal"`)
+
 The **Sidereal Zodiac** aligns with actual star positions and accounts for Earth's precession. It's the primary system in Vedic astrology and provides astronomically accurate stellar coordinates.
 
 **Characteristics:**
+
 - **Star-based**: Aligned with actual constellation positions
 - **Precession-aware**: Accounts for Earth's 26,000-year axial wobble
 - **Vedic standard**: Primary system in Indian/Vedic astrology
@@ -108,6 +114,7 @@ for mode, description in sidereal_modes:
 ```
 
 **Output:**
+
 ```plaintext
 === SIDEREAL AYANAMSHA COMPARISON ===
 Date: June 21, 1990 (Summer Solstice)
@@ -125,6 +132,7 @@ YUKTESHWAR      Gem 67.29°         Sri Yukteshwar's calculation
 House systems divide the celestial sphere into 12 sections using different mathematical approaches. Each system reflects different philosophical approaches to space and time in astrology.
 
 #### Placidus (`houses_system_identifier="P"`)
+
 **The most widely used system in modern Western astrology.** Placidus divides the diurnal and nocturnal arcs proportionally, creating houses that vary in size based on latitude and time.
 
 ```python
@@ -151,6 +159,7 @@ for i in range(1, 13):
 ```
 
 #### Koch (`houses_system_identifier="K"`)
+
 **An alternative time-based system** that uses a different mathematical approach than Placidus, often producing slightly different house cusps, especially at higher latitudes.
 
 ```python
@@ -187,13 +196,14 @@ house_names = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth']
 for i, house_name in enumerate(house_names, 1):
     placidus_house = getattr(placidus_chart, f"{house_name}_house")
     koch_house = getattr(koch_chart, f"{house_name}_house")
-    
+
     diff = abs(placidus_house.abs_pos - koch_house.abs_pos)
     print(f"House {i:<3} {placidus_house.sign} {placidus_house.abs_pos:.2f}°{'':<8} "
           f"{koch_house.sign} {koch_house.abs_pos:.2f}°{'':<8} {diff:.2f}°")
 ```
 
 #### Whole/Equal Sign (`houses_system_identifier="W"`)
+
 **The traditional system** where each house occupies exactly one complete zodiac sign. This creates equal 30° houses and is the preferred system in Vedic astrology and ancient Western traditions. Also known as Equal.
 
 ```python
@@ -223,6 +233,7 @@ for i in range(1, 13):
 The perspective type determines the reference frame for planetary calculations, offering different astronomical viewpoints for specialized astrological work.
 
 #### Apparent Geocentric (`perspective_type="Apparent Geocentric"`)
+
 **The standard Earth-centered view** used in traditional astrology. This includes light-time correction, showing planets as they appear from Earth accounting for the time light takes to travel.
 
 ```python
@@ -246,6 +257,7 @@ print(f"Moon: {geocentric_chart.moon.sign} {geocentric_chart.moon.abs_pos:.4f}°
 ```
 
 #### True Geocentric (`perspective_type="True Geocentric"`)
+
 **Geometric Earth-centered positions** without light-time correction. This shows the actual geometric position of planets at the moment of calculation, useful for precise astronomical work.
 
 ```python
@@ -278,11 +290,11 @@ planets = ["sun", "moon", "mars", "jupiter"]
 for planet_name in planets:
     app_planet = getattr(geocentric_chart, planet_name)
     true_planet = getattr(true_geocentric_chart, planet_name)
-    
+
     diff = abs(app_planet.abs_pos - true_planet.abs_pos)
     if diff > 180:
         diff = 360 - diff
-    
+
     print(f"{app_planet.name:<10} "
           f"{app_planet.sign} {app_planet.abs_pos:.4f}°{'':<5} "
           f"{true_planet.sign} {true_planet.abs_pos:.4f}°{'':<5} "
@@ -302,6 +314,7 @@ Jupiter    Ari 25.2530°       Ari 25.2541°       0.0011°
 ```
 
 #### Heliocentric (`perspective_type="Heliocentric"`)
+
 **Sun-centered perspective** where planetary positions are calculated from the Sun's viewpoint. In this system, Earth becomes just another planet, useful for understanding solar system dynamics.
 
 ```python
@@ -325,6 +338,7 @@ print(f"Mars: {heliocentric_chart.mars.sign} {heliocentric_chart.mars.abs_pos:.2
 ```
 
 #### Topocentric (`perspective_type="Topocentric"`)
+
 **Observer-specific positions** that account for the observer's exact location on Earth's surface. This perspective considers Earth's shape and the observer's altitude, providing the most precise view for a specific location.
 
 ```python
@@ -356,6 +370,7 @@ print(f"Sun: {topocentric_chart.sun.sign} {topocentric_chart.sun.abs_pos:.4f}°"
 The `active_points` parameter allows precise control over which astrological points to calculate. This is crucial for performance optimization and specializing charts for specific astrological purposes. Only requested points are calculated, significantly reducing computation time for specialized applications.
 
 #### Default Active Points
+
 ```python
 from kerykeion import AstrologicalSubjectFactory
 
@@ -421,6 +436,7 @@ print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 ```
 
 **Output:**
+
 ```
 Subject: John Doe
 Location: London, GB
@@ -451,6 +467,7 @@ print(f"Julian Day: {subject.julian_day:.6f}")
 ```
 
 **Output:**
+
 ```
 Timezone: America/New_York
 Coordinates: 40.7128°N, -74.0060°W
@@ -482,6 +499,7 @@ print(f"Moon (Sidereal): {subject.moon.sign} {subject.moon.abs_pos:.2f}°")
 ```
 
 **Output:**
+
 ```
 Zodiac: Sidereal
 Sidereal Mode: LAHIRI
@@ -496,6 +514,7 @@ Different astrological approaches require different sets of points. Here are com
 
 **Essential Points Only (Fast Calculation)**
 For quick calculations when you only need the core astrological information.
+
 ```python
 from kerykeion import AstrologicalSubjectFactory
 
@@ -520,6 +539,7 @@ for point_name in essential_points:
 
 **Traditional Astrology Setup**
 Classical configuration using the traditional seven planets plus essential angles and nodes, following medieval and Renaissance astrological practices.
+
 ```python
 from kerykeion import AstrologicalSubjectFactory
 
@@ -552,6 +572,7 @@ for planet in ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]:
 
 **Modern Psychological Astrology**
 Comprehensive setup including modern planets, asteroids, and psychological points for depth psychology and modern astrological counseling.
+
 ```python
 from kerykeion import AstrologicalSubjectFactory
 
@@ -595,6 +616,7 @@ print(f"Mean Lilith (shadow): {modern_chart.mean_lilith.sign} {modern_chart.mean
 
 **Arabic Parts Specialist Chart**
 Focused on the classical Arabic parts (lots) used in traditional and Hellenistic astrology for specific life themes and predictions.
+
 ```python
 from kerykeion import AstrologicalSubjectFactory
 
@@ -605,7 +627,7 @@ arabic_parts_config = [
     "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
     # Arabic parts
     "Pars_Fortunae",     # Part of Fortune
-    "Pars_Spiritus",     # Part of Spirit  
+    "Pars_Spiritus",     # Part of Spirit
     "Pars_Amoris",       # Part of Love
     "Pars_Fidei"         # Part of Faith
 ]
@@ -630,6 +652,7 @@ for part_name in parts:
 ```
 
 **Research/Statistical Analysis Setup**
+
 ```python
 from kerykeion import AstrologicalSubjectFactory
 
@@ -655,7 +678,7 @@ for year in birth_years:
         calculate_lunar_phase=False,  # Skip lunar phase for speed
         geonames_username="century.boy"  # Replace with your Geonames username
     )
-    
+
     # Extract data for statistical analysis
     data_point = {
         'year': year,
@@ -674,6 +697,7 @@ for i, data in enumerate(research_data[:3]):
 ```
 
 **Fixed Stars Configuration**
+
 ```python
 from kerykeion import AstrologicalSubjectFactory
 
@@ -697,24 +721,25 @@ print("\n=== FIXED STARS ANALYSIS ===")
 if hasattr(star_chart, 'regulus') and hasattr(star_chart, 'spica'):
     print(f"Regulus (Royal Star): {star_chart.regulus.abs_pos} {star_chart.regulus.abs_pos:.2f}°")
     print(f"Spica (Wheat Sheaf): {star_chart.spica.abs_pos} {star_chart.spica.abs_pos:.2f}°")
-    
+
     # Check conjunctions with planets (within 1 degree)
     print("\nFixed star conjunctions:")
     for planet_name in ["sun", "moon", "mercury", "venus", "mars"]:
         planet = getattr(star_chart, planet_name)
-        
+
         # Check Regulus conjunction
         regulus_diff = abs(planet.abs_pos - star_chart.regulus.abs_pos)
         if regulus_diff <= 1.0:
             print(f"  {planet.name} conjunct Regulus (orb: {regulus_diff:.2f}°)")
-        
-        # Check Spica conjunction  
+
+        # Check Spica conjunction
         spica_diff = abs(planet.abs_pos - star_chart.spica.abs_pos)
         if spica_diff <= 1.0:
             print(f"  {planet.name} conjunct Spica (orb: {spica_diff:.2f}°)")
 ```
 
 **Trans-Neptunian Objects (TNO) Chart**
+
 ```python
 # Specialized chart for outer solar system objects
 tno_points = [
@@ -801,10 +826,11 @@ print(f"  Traditional vs Full: {full_time/traditional_time:.1f}x faster")
 ```
 
 **Output:**
+
 ```
 === PERFORMANCE COMPARISON ===
 Full chart (45 points): 0.234s
-Essential chart (4 points): 0.087s  
+Essential chart (4 points): 0.087s
 Traditional chart (8 points): 0.125s
 
 Speed improvements:
@@ -858,6 +884,7 @@ print(f"  Venus: {subject.venus.sign} {subject.venus.abs_pos:.2f}°")
 ```
 
 **Output:**
+
 ```
 Perspective: Heliocentric
 Heliocentric positions:
@@ -888,6 +915,7 @@ print(f"Sun at Solstice: {subject.sun.sign} {subject.sun.abs_pos:.4f}°")
 ```
 
 **Output:**
+
 ```
 UTC Time: 2023-06-21T12:57:00+00:00
 Local Time: 2023-06-21T13:57:00+01:00
@@ -913,6 +941,7 @@ print(f"Moon house: {subject.moon.house}")
 ```
 
 **Output:**
+
 ```
 Historical Event: Apollo 11 Moon Landing
 Date: 1969-07-20T15:17:00-05:00
@@ -941,6 +970,7 @@ print(f"Phase name: {subject.lunar_phase.moon_phase_name}")
 ```
 
 **Output:**
+
 ```
 Current moment: Now Chart
 Timestamp: 2025-08-15T14:30:45+09:00
@@ -967,6 +997,7 @@ print(f"Void of Course: {subject.moon.retrograde}")
 ```
 
 **Output:**
+
 ```
 Horary Question: Horary: Will I get the job?
 Asked at: 2025-08-15T10:30:45+01:00
@@ -982,7 +1013,9 @@ Void of Course: False
 These examples demonstrate how to combine different configuration options for specific astrological traditions and purposes:
 
 #### Traditional Vedic Setup
+
 Authentic Vedic astrology configuration following traditional Indian astrological principles with the nine main planets (Navagrahas) and sidereal calculations.
+
 ```python
 # Complete traditional Vedic astrology configuration
 vedic_chart = AstrologicalSubjectFactory.from_birth_data(
@@ -1028,7 +1061,9 @@ for planet_attr, vedic_name in vedic_planets:
 ```
 
 #### Western Psychological Astrology
+
 Modern Western approach integrating depth psychology with astrological symbolism, including outer planets and asteroids for comprehensive personality analysis.
+
 ```python
 # Modern Western psychological astrology setup
 psychological_chart = AstrologicalSubjectFactory.from_birth_data(
@@ -1101,7 +1136,9 @@ print(f"Shadow (Lilith): {psychological_chart.mean_lilith.sign} {psychological_c
 ```
 
 #### Hellenistic/Traditional Western
+
 Classical Western astrology following ancient Greek and Roman traditions, using only the traditional seven planets and time-tested techniques.
+
 ```python
 # Classical Hellenistic astrology configuration
 hellenistic_chart = AstrologicalSubjectFactory.from_birth_data(
@@ -1144,8 +1181,10 @@ for planet_attr, name, quality, sect in classical_planets:
     print(f"  {name}: {planet.sign} {planet.abs_pos:.2f}° - {quality} - {sect}")
 ```
 
-#### Horary Astrology Configuration  
-Specialized setup for answering specific questions through astrological divination, with emphasis on timing, planetary conditions, and traditional rules.  
+#### Horary Astrology Configuration
+
+Specialized setup for answering specific questions through astrological divination, with emphasis on timing, planetary conditions, and traditional rules.
+
 ```python
 # Horary astrology specialized setup
 horary_chart = AstrologicalSubjectFactory.from_current_time(
@@ -1195,7 +1234,9 @@ print(f"Part of Fortune: {horary_chart.pars_fortunae.sign} {horary_chart.pars_fo
 ```
 
 #### Electional Astrology Configuration
+
 Optimized for selecting favorable timing for important events, considering all planetary factors and traditional electional principles.
+
 ```python
 # Electional astrology for optimal timing
 electional_chart = AstrologicalSubjectFactory.from_birth_data(
@@ -1291,7 +1332,7 @@ for system_name, chart in charts.items():
     if hasattr(chart, 'sidereal_mode') and chart.sidereal_mode:
         config_info += f"/{chart.sidereal_mode}"
     config_info += f" {chart.houses_system_name}"
-    
+
     print(f"{system_name:<20} "
           f"{chart.sun.sign} {chart.sun.abs_pos:.2f}°{'':<8} "
           f"{chart.sun.house:<8} "
@@ -1408,6 +1449,7 @@ for angle_name in angles:
 ```
 
 **Output:**
+
 ```
 === TRADITIONAL PLANETS ===
 Sun: Pisces 24.56° D (House 12)
@@ -1484,6 +1526,7 @@ for part_name in arabic_parts:
 ```
 
 **Output:**
+
 ```
 === ARABIC PARTS ===
 Pars_Fortunae: Scorpio 12.45° (House 8)
@@ -1526,11 +1569,11 @@ planets = ["sun", "moon", "mercury", "venus", "mars"]
 for planet_name in planets:
     trop_planet = getattr(tropical, planet_name)
     sid_planet = getattr(sidereal, planet_name)
-    
+
     diff = abs(trop_planet.abs_pos - sid_planet.abs_pos)
     if diff > 180:
         diff = 360 - diff
-    
+
     print(f"{trop_planet.name:<10} "
           f"{trop_planet.sign} {trop_planet.abs_pos:.2f}°{'':<8} "
           f"{sid_planet.sign} {sid_planet.abs_pos:.2f}°{'':<8} "
@@ -1538,6 +1581,7 @@ for planet_name in planets:
 ```
 
 **Output:**
+
 ```
 === TROPICAL vs SIDEREAL COMPARISON ===
 Planet     Tropical             Sidereal             Difference
@@ -1566,7 +1610,7 @@ try:
     )
 except Exception as e:
     print(f"Error: {e}")
-    
+
     # Resolve with explicit DST flag
     subject = AstrologicalSubjectFactory.from_birth_data(
         name="DST Transition Resolved",
@@ -1592,7 +1636,7 @@ try:
     )
 except Exception as e:
     print(f"Offline error: {e}")
-    
+
     # Correct offline usage
     subject = AstrologicalSubjectFactory.from_birth_data(
         name="Complete Offline",
@@ -1641,6 +1685,7 @@ print(f"Speed improvement: {full_time/essential_time:.1f}x faster")
 ```
 
 **Output:**
+
 ```
 Full calculation: 45 points in 0.234s
 Essential calculation: 4 points in 0.087s
@@ -1677,7 +1722,7 @@ planets = ["sun", "moon", "venus", "mars"]
 for planet_name in planets:
     p1_planet = getattr(person1, planet_name)
     p2_planet = getattr(person2, planet_name)
-    
+
     print(f"{p1_planet.name:<10} "
           f"{p1_planet.sign} {p1_planet.abs_pos:.1f}°{'':<6} "
           f"{p2_planet.sign} {p2_planet.abs_pos:.1f}°")
@@ -1710,7 +1755,7 @@ planets = ["sun", "moon", "mercury", "venus", "mars"]
 for planet_name in planets:
     natal_planet = getattr(natal, planet_name)
     transit_planet = getattr(transits, planet_name)
-    
+
     print(f"{natal_planet.name}:")
     print(f"  Natal: {natal_planet.sign} {natal_planet.abs_pos:.2f}°")
     print(f"  Transit: {transit_planet.sign} {transit_planet.abs_pos:.2f}°")
@@ -1720,6 +1765,7 @@ for planet_name in planets:
 ## Common Use Cases
 
 ### 1. Natal Chart Creation
+
 ```python
 natal = AstrologicalSubjectFactory.from_birth_data(
     name="Natal Chart",
@@ -1731,6 +1777,7 @@ natal = AstrologicalSubjectFactory.from_birth_data(
 ```
 
 ### 2. Event Chart (Mundane Astrology)
+
 ```python
 event = AstrologicalSubjectFactory.from_iso_utc_time(
     name="Market Opening",
@@ -1742,6 +1789,7 @@ event = AstrologicalSubjectFactory.from_iso_utc_time(
 ```
 
 ### 3. Horary Question
+
 ```python
 horary = AstrologicalSubjectFactory.from_current_time(
     name="Should I move?",
@@ -1751,6 +1799,7 @@ horary = AstrologicalSubjectFactory.from_current_time(
 ```
 
 ### 4. Electional Astrology
+
 ```python
 election = AstrologicalSubjectFactory.from_birth_data(
     name="Wedding Date",
@@ -1762,6 +1811,7 @@ election = AstrologicalSubjectFactory.from_birth_data(
 ```
 
 ### 5. Research/Statistical Analysis
+
 ```python
 # Batch processing for research
 dates = [
@@ -1787,20 +1837,24 @@ print(f"Created {len(charts)} charts for research")
 ## Technical Notes
 
 ### Thread Safety
+
 The factory is **not thread-safe** due to Swiss Ephemeris global state. Use separate instances in multi-threaded applications or implement appropriate locking.
 
 ### Memory Considerations
+
 - Full charts with all points use ~50KB memory per instance
 - Essential-only charts use ~15KB memory per instance
 - Consider using `active_points` for large batch processing
 
 ### Precision
+
 - Planetary positions: ±0.001° accuracy
 - House cusps: ±0.01° accuracy (varies by house system)
 - Time calculations: 1-second precision
 - Geographic coordinates: 4-decimal precision
 
 ### Dependencies
+
 - **Swiss Ephemeris**: Core calculation engine
 - **pytz**: Timezone handling
 - **GeoNames API**: Online location lookup

@@ -1,5 +1,6 @@
 ---
 title: 'House Comparison Module'
+category: 'Analysis'
 tags: ['docs', 'houses', 'synastry', 'comparison', 'kerykeion']
 order: 6
 ---
@@ -55,6 +56,7 @@ for point in comparison.second_points_in_first_houses:
 ```
 
 **Output example (Person A points in Person B houses):**
+
 ```
 Person A Sun in Person B Sixth_House
 Person A Moon in Person B Second_House
@@ -162,6 +164,7 @@ with open("house_comparison_results.json", "w") as f:
 ```
 
 **Example output:**
+
 ```
 Person A planets grouped by Person B houses:
 Second_House: Moon, Jupiter
@@ -173,6 +176,7 @@ Seventh_House: Saturn
 ```
 
 Each point result includes detailed information:
+
 - `point_name`: The astrological point (e.g., "Sun", "Moon")
 - `projected_house_name`: The house where the point falls
 - `point_degree`: Exact degree position
@@ -180,12 +184,12 @@ Each point result includes detailed information:
 
 ---
 
-*This module is part of the Kerykeion astrological framework.*
+_This module is part of the Kerykeion astrological framework._
 
 ## Use Cases
 
 - **Synastry Analysis**: Understand how partners influence each other's life areas
-- **Composite Charts**: Analyze blended relationship dynamics  
+- **Composite Charts**: Analyze blended relationship dynamics
 - **Transit Analysis**: See how current planetary positions affect personal houses
 - **Compatibility Studies**: Evaluate relationship potential through house overlays
 
@@ -194,6 +198,7 @@ Each point result includes detailed information:
 This module is complementary to `AspectsFactory` for complete synastry analysis. While house comparison reveals where planetary energies are activated in each person's life areas, dual chart aspects show how the planets interact with each other through geometric relationships.
 
 For a comprehensive relationship analysis, use both modules together:
+
 - **House Comparison**: Shows planetary placements and life area activations
 - **Dual Chart Aspects**: Reveals planetary interactions and compatibility patterns
 

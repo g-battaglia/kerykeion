@@ -1,5 +1,6 @@
 ---
 title: 'Ephemeris Data Factory'
+category: 'Data & Utilities'
 tags: ['docs', 'ephemeris', 'data', 'kerykeion']
 order: 11
 ---
@@ -41,6 +42,7 @@ print(f"Sun position: {data[0]['planets'][0]['abs_pos']:.2f}°")
 ```
 
 **Output:**
+
 ```
 Generated 31 daily data points
 First date: 2024-01-01T00:00:00
@@ -69,7 +71,7 @@ print(f"Generated {len(hourly_data)} hourly data points")
 # Every 15 minutes for detailed analysis
 minute_factory = EphemerisDataFactory(
     start, end,
-    step_type="minutes", 
+    step_type="minutes",
     step=15,
     max_minutes=200  # Increase limit for detailed data
 )
@@ -79,6 +81,7 @@ print(f"Generated {len(minute_data)} 15-minute intervals")
 ```
 
 **Output:**
+
 ```
 Generated 25 hourly data points
 Generated 97 15-minute intervals
@@ -115,6 +118,7 @@ for i, point in enumerate(vedic_data[:3]):  # First 3 data points
 ```
 
 **Output:**
+
 ```
 === SIDEREAL EPHEMERIS DATA ===
 2024-03-20T00:00:00: Sun at Pisces 5.45°
@@ -161,6 +165,7 @@ for i, pos in enumerate(mercury_positions[::3]):  # Every 3 days
 ```
 
 **Output:**
+
 ```
 === MERCURY MOTION TRACKING ===
 Date         Position        Sign         Status
@@ -192,20 +197,20 @@ subjects = factory.get_ephemeris_data_as_astrological_subjects()
 print("=== COMPLETE ASTROLOGICAL ANALYSIS ===")
 for i, subject in enumerate(subjects):
     print(f"\nDay {i+1}: {subject.iso_formatted_local_datetime[:10]}")
-    
+
     # Access full astrological data
     print(f"Sun: {subject.sun.sign} {subject.sun.abs_pos:.2f}° (House {subject.sun.house})")
     print(f"Moon: {subject.moon.sign} {subject.moon.abs_pos:.2f}° (House {subject.moon.house})")
     print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
     print(f"Lunar Phase: {subject.lunar_phase.moon_phase_name}")
-    
+
     # Check for retrograde planets
     retrogrades = []
     for planet_name in ['mercury', 'venus', 'mars', 'jupiter', 'saturn']:
         planet = getattr(subject, planet_name)
         if planet.retrograde:
             retrogrades.append(planet.name)
-    
+
     if retrogrades:
         print(f"Retrograde: {', '.join(retrogrades)}")
     else:
@@ -254,6 +259,7 @@ for sign, count in jupiter_signs.items():
 ```
 
 **Output:**
+
 ```
 === JUPITER RESEARCH ANALYSIS ===
 Data points analyzed: 53
@@ -293,13 +299,13 @@ print(f"Tracking {len(eclipse_data)} data points over 4 hours")
 # Find exact conjunction times (simplified example)
 for i, point in enumerate(eclipse_data[::12]):  # Every hour
     sun_pos = moon_pos = None
-    
+
     for planet in point['planets']:
         if planet['name'] == 'Sun':
             sun_pos = planet['abs_pos']
         elif planet['name'] == 'Moon':
             moon_pos = planet['abs_pos']
-    
+
     if sun_pos and moon_pos:
         difference = abs(sun_pos - moon_pos)
         time = point['date'][11:16]  # Extract time
@@ -324,7 +330,7 @@ try:
     )
 except ValueError as e:
     print(f"Error: {e}")
-    
+
     # Solution: Adjust limits or reduce range
     large_factory = EphemerisDataFactory(
         start_datetime=datetime(2020, 1, 1),
@@ -374,10 +380,11 @@ print(f"Subject data: {subjects_size:,} bytes")
 ```
 
 **Output:**
+
 ```
 === PERFORMANCE COMPARISON ===
 Dictionary method: 0.234s for 8 points
-Subjects method: 0.876s for 8 points  
+Subjects method: 0.876s for 8 points
 Speed ratio: 3.7x slower for full subjects
 
 Memory usage:
@@ -401,7 +408,7 @@ try:
     )
 except ValueError as e:
     print(f"Date range error: {e}")
-    
+
     # Solution: Use larger steps or disable limits
     manageable_factory = EphemerisDataFactory(
         datetime(2000, 1, 1),
@@ -435,6 +442,7 @@ except ValueError as e:
 ## Practical Applications
 
 ### 1. Astrological Research
+
 ```python
 from datetime import datetime
 from kerykeion import EphemerisDataFactory
@@ -451,6 +459,7 @@ data = factory.get_ephemeris_data()
 ```
 
 ### 2. Market Timing (Financial Astrology)
+
 ```python
 from datetime import datetime
 from kerykeion import EphemerisDataFactory
@@ -469,6 +478,7 @@ market_data = factory.get_ephemeris_data()
 ```
 
 ### 3. Event Planning (Electional Astrology)
+
 ```python
 from datetime import datetime
 from kerykeion import EphemerisDataFactory
@@ -487,6 +497,7 @@ subjects = factory.get_ephemeris_data_as_astrological_subjects()
 ```
 
 ### 4. Educational/Learning
+
 ```python
 from datetime import datetime
 from kerykeion import EphemerisDataFactory
@@ -504,19 +515,22 @@ educational_data = factory.get_ephemeris_data()
 ## Technical Notes
 
 ### Time Interval Guidelines
+
 - **Days**: Best for long-term analysis (months to years)
 - **Hours**: Ideal for detailed daily analysis or event timing
 - **Minutes**: Use for precise timing analysis (eclipses, exact aspects)
 
 ### Performance Recommendations
+
 - Use dictionary method for large datasets and simple analysis
 - Use subjects method when you need full astrological features
 - Consider batch processing for very large date ranges
 - Monitor memory usage with extensive datasets
 
 ### Default Limits
+
 - **max_days**: 730 (2 years of daily data)
-- **max_hours**: 8,760 (1 year of hourly data)  
+- **max_hours**: 8,760 (1 year of hourly data)
 - **max_minutes**: 525,600 (1 year of minute data)
 
 The `EphemerisDataFactory` provides a powerful and flexible system for generating time-series astrological data, supporting everything from quick planetary position lookups to comprehensive research datasets.
