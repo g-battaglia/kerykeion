@@ -1,45 +1,381 @@
 ---
-title: 'Types & Models'
+title: 'Types & Schemas'
 category: 'Reference'
-description: 'Core data models and type definitions'
-tags: ['docs', 'types', 'models', 'pydantic', 'kerykeion']
+description: 'Core data models, type definitions, and schemas'
+tags: ['docs', 'types', 'models', 'pydantic', 'kerykeion', 'schemas']
 order: 12
 ---
 
-# Kerykeion Types (`kerykeion.kr_types`)
+# Types & Schemas
 
-This module exports standard models, literals, and exception types used throughout the library to maintain type safety and data structure consistency.
+This section documents the core data structures, Pydantic models, and type definitions used throughout the Kerykeion library to ensure type safety and data consistency.
+
+> [!WARNING]
+> The `kerykeion.kr_types` module is **deprecated** and will be removed in version 6.0.
+> Please import types directly from `kerykeion.schemas` or its submodules.
 
 ## Overview
 
-The `kerykeion.kr_types` module aggregates several internal sub-modules:
+The `kerykeion.schemas` package contains all the data definitions:
 
-- **`kr_models`**: Pydantic models for astrological data structures.
-- **`kr_literals`**: Literal constants for type hinting.
-- **`kerykeion_exception`**: Custom exception class.
-- **`chart_types`**: Dictionary types used in chart generation.
-- **`settings_models`**: Settings configuration models.
+-   **`kr_models`**: Pydantic models for astrological subjects, charts, and points.
+-   **`kr_literals`**: String literals for strict type hinting (Zodiac signs, Planets, Houses, etc.).
+-   **`settings_models`**: Configuration models for library settings.
+-   **`chart_template_model`**: Models for SVG chart generation.
+-   **`kerykeion_exception`**: Standard exception class for the library.
 
-## KerykeionException
+## Core Models (`kr_models`)
+
+Import from: `kerykeion.schemas.kr_models`
+
+### AstrologicalSubjectModel
+
+Represents a person or event to be analyzed.
+
+| Field                  | Type           | Description                           |
+| :--------------------- | :------------- | :------------------------------------ |
+| `name`                 | `str`          | Name of the subject                   |
+| `year`, `month`, `day` | `int`          | Birth/Experience date                 |
+| `hour`, `minute`       | `int`          | Birth/Experience time                 |
+| `city`                 | `str`          | Location city                         |
+| `nation`               | `str`          | Country code                          |
+| `lng`, `lat`           | `float`        | Coordinates                           |
+| `tz_str`               | `str`          | Timezone string (e.g., "Europe/Rome") |
+| `zodiac_type`          | `ZodiacType`   | "Tropical" or "Sidereal"              |
+| `sidereal_mode`        | `SiderealMode` | Specific Ayanamsa if Sidereal         |
+
+### KerykeionPointModel
+
+Detailed information about a celestial body or house cusp.
+
+| Field        | Type                | Description                                  |
+| :----------- | :------------------ | :------------------------------------------- |
+| `name`       | `AstrologicalPoint` | Planet/Point name (e.g., "Sun", "Ascendant") |
+| `sign`       | `Sign`              | Zodiac sign (e.g., "Ari")                    |
+| `sign_num`   | `int`               | 0-11 index of the sign                       |
+| `position`   | `float`             | Degree within the sign (0-30)                |
+| `abs_pos`    | `float`             | Absolute zodiac degree (0-360)               |
+| `house`      | `Houses`            | House placement                              |
+| `retrograde` | `bool`              | True if retrograde                           |
+| `element`    | `Element`           | Fire, Earth, Air, or Water                   |
+| `quality`    | `Quality`           | Cardinal, Fixed, or Mutable                  |
+
+### SingleChartDataModel
+
+The complete data structure for a calculated single chart (Natal, Return, etc.).
+
+| Field                  | Type                       | Description                                 |
+| :--------------------- | :------------------------- | :------------------------------------------ |
+| `subject`              | `AstrologicalSubjectModel` | The subject of the chart                    |
+| `aspects`              | `List[AspectModel]`        | List of internal aspects                    |
+| `element_distribution` | `ElementDistributionModel` | Points/Percentage for each element          |
+| `quality_distribution` | `QualityDistributionModel` | Points/Percentage for each quality          |
+| `planets`              | `Dict`                     | Dictionary of `KerykeionPointModel` objects |
+| `houses`               | `Dict`                     | Dictionary of House cusps                   |
+
+### DualChartDataModel
+
+Data structure for comparing two charts (Synastry, Transits).
+
+| Field                | Type                       | Description                             |
+| :------------------- | :------------------------- | :-------------------------------------- |
+| `first_subject`      | `AstrologicalSubjectModel` | The primary subject (e.g., Natal)       |
+| `second_subject`     | `AstrologicalSubjectModel` | The secondary subject (e.g., Transit)   |
+| `aspects`            | `List[AspectModel]`        | Inter-chart aspects                     |
+| `house_comparison`   | `HouseComparisonModel`     | Analysis of planets in partner's houses |
+| `relationship_score` | `RelationshipScoreModel`   | Compatibility scoring (Synastry only)   |
+
+### AspectModel
+
+Represents an astrological aspect between two points.
+
+| Field                | Type                 | Description                              |
+| :------------------- | :------------------- | :--------------------------------------- |
+| `p1_name`, `p2_name` | `str`                | Names of the two points involved         |
+| `aspect`             | `AspectName`         | Name of the aspect (e.g., "conjunction") |
+| `orbit`              | `float`              | The actual orb (deviation from exact)    |
+| `aspect_degrees`     | `int`                | Theoretical angle (e.g., 120 for trine)  |
+| `aspect_movement`    | `AspectMovementType` | "Applying", "Separating", or "Static"    |
+
+---
+
+## Literals & Constants (`kr_literals`)
+
+Import from: `kerykeion.schemas.kr_literals`
+
+These Literal types define the allowed string values for various model fields, providing strict type checking and autocompletion in your IDE.
+
+---
+
+### `ZodiacType`
+
+Defines the zodiac system to use for calculations.
+
+| Value        | Description                                                                                               |
+| :----------- | :-------------------------------------------------------------------------------------------------------- |
+| `"Tropical"` | Based on the seasons and the position of the Sun at the spring equinox. Most common in Western astrology. |
+| `"Sidereal"` | Based on the fixed stars. Commonly used in Vedic (Jyotish) astrology. Requires a `SiderealMode` setting.  |
+
+---
+
+### `Sign`
+
+The 12 zodiac signs, using abbreviated 3-character names.
+
+| Value   | Full Name   | Element | Quality  |
+| :------ | :---------- | :------ | :------- |
+| `"Ari"` | Aries       | Fire    | Cardinal |
+| `"Tau"` | Taurus      | Earth   | Fixed    |
+| `"Gem"` | Gemini      | Air     | Mutable  |
+| `"Can"` | Cancer      | Water   | Cardinal |
+| `"Leo"` | Leo         | Fire    | Fixed    |
+| `"Vir"` | Virgo       | Earth   | Mutable  |
+| `"Lib"` | Libra       | Air     | Cardinal |
+| `"Sco"` | Scorpio     | Water   | Fixed    |
+| `"Sag"` | Sagittarius | Fire    | Mutable  |
+| `"Cap"` | Capricorn   | Earth   | Cardinal |
+| `"Aqu"` | Aquarius    | Air     | Fixed    |
+| `"Pis"` | Pisces      | Water   | Mutable  |
+
+---
+
+### `SignNumbers`
+
+Integer indices for zodiac signs, from `0` (Aries) to `11` (Pisces).
+
+---
+
+### `Element`
+
+The four classical elements.
+
+| Value     | Signs                    |
+| :-------- | :----------------------- |
+| `"Fire"`  | Aries, Leo, Sagittarius  |
+| `"Earth"` | Taurus, Virgo, Capricorn |
+| `"Air"`   | Gemini, Libra, Aquarius  |
+| `"Water"` | Cancer, Scorpio, Pisces  |
+
+---
+
+### `Quality`
+
+The three modalities (also called "modes" or "quadruplicities").
+
+| Value        | Description                   | Signs                              |
+| :----------- | :---------------------------- | :--------------------------------- |
+| `"Cardinal"` | Initiating energy, beginnings | Aries, Cancer, Libra, Capricorn    |
+| `"Fixed"`    | Stable, resistant to change   | Taurus, Leo, Scorpio, Aquarius     |
+| `"Mutable"`  | Adaptable, flexible           | Gemini, Virgo, Sagittarius, Pisces |
+
+---
+
+### `AstrologicalPoint`
+
+Comprehensive literal for all supported celestial points.
+
+**Main Planets:**
+`"Sun"`, `"Moon"`, `"Mercury"`, `"Venus"`, `"Mars"`, `"Jupiter"`, `"Saturn"`, `"Uranus"`, `"Neptune"`, `"Pluto"`
+
+**Lunar Nodes:**
+`"Mean_North_Lunar_Node"`, `"True_North_Lunar_Node"`, `"Mean_South_Lunar_Node"`, `"True_South_Lunar_Node"`
+
+**Special Points:**
+`"Chiron"`, `"Mean_Lilith"`, `"True_Lilith"`, `"Earth"`, `"Pholus"`, `"Vertex"`, `"Anti_Vertex"`
+
+**Asteroids:**
+`"Ceres"`, `"Pallas"`, `"Juno"`, `"Vesta"`
+
+**Trans-Neptunian Objects (TNOs):**
+`"Eris"`, `"Sedna"`, `"Haumea"`, `"Makemake"`, `"Ixion"`, `"Orcus"`, `"Quaoar"`
+
+**Fixed Stars:**
+`"Regulus"`, `"Spica"`
+
+**Arabic Parts (Lots):**
+`"Pars_Fortunae"` (Part of Fortune), `"Pars_Spiritus"` (Part of Spirit), `"Pars_Amoris"` (Part of Love), `"Pars_Fidei"` (Part of Faith)
+
+**Axial Cusps (Angles):**
+`"Ascendant"`, `"Medium_Coeli"` (MC/Midheaven), `"Descendant"`, `"Imum_Coeli"` (IC)
+
+---
+
+### `Houses`
+
+The 12 astrological houses.
+
+`"First_House"`, `"Second_House"`, `"Third_House"`, `"Fourth_House"`, `"Fifth_House"`, `"Sixth_House"`, `"Seventh_House"`, `"Eighth_House"`, `"Ninth_House"`, `"Tenth_House"`, `"Eleventh_House"`, `"Twelfth_House"`
+
+---
+
+### `HouseNumbers`
+
+Integers `1` through `12` representing the house numbers.
+
+---
+
+### `ChartType`
+
+Defines the type of chart being generated.
+
+| Value                 | Description                                               |
+| :-------------------- | :-------------------------------------------------------- |
+| `"Natal"`             | Birth chart for a single person or event.                 |
+| `"Transit"`           | Current planetary positions overlaid on a natal chart.    |
+| `"Synastry"`          | Comparison of two natal charts for relationship analysis. |
+| `"Composite"`         | A single chart derived from the midpoints of two charts.  |
+| `"SingleReturnChart"` | A Solar or Lunar return chart viewed alone.               |
+| `"DualReturnChart"`   | A return chart overlaid on the natal chart.               |
+
+---
+
+### `AspectName`
+
+The names of all supported aspects.
+
+| Value              | Degrees | Description                                         |
+| :----------------- | :------ | :-------------------------------------------------- |
+| `"conjunction"`    | 0°      | Planets at the same degree; powerful, fused energy. |
+| `"semi-sextile"`   | 30°     | Minor aspect; slight tension or adjustment.         |
+| `"semi-square"`    | 45°     | Minor hard aspect; friction.                        |
+| `"sextile"`        | 60°     | Harmonious; opportunities and talent.               |
+| `"quintile"`       | 72°     | Creative aspect; talent.                            |
+| `"square"`         | 90°     | Major hard aspect; challenge and growth.            |
+| `"trine"`          | 120°    | Major harmonious aspect; ease and flow.             |
+| `"sesquiquadrate"` | 135°    | Minor hard aspect; agitation.                       |
+| `"biquintile"`     | 144°    | Creative aspect.                                    |
+| `"quincunx"`       | 150°    | Inconjunct; requires adjustment.                    |
+| `"opposition"`     | 180°    | Major hard aspect; polarity and awareness.          |
+
+---
+
+### `AspectMovementType`
+
+Describes the phase of an aspect between two points.
+
+| Value          | Description                                                            |
+| :------------- | :--------------------------------------------------------------------- |
+| `"Applying"`   | The orb is decreasing; the aspect is forming and considered stronger.  |
+| `"Separating"` | The orb is increasing; the aspect is dissolving.                       |
+| `"Static"`     | Neither point is moving relative to the other (e.g., two fixed stars). |
+
+---
+
+### `SiderealMode`
+
+Ayanamsa values for Sidereal zodiac calculations.
+
+| Value             | Description                            |
+| :---------------- | :------------------------------------- |
+| `"LAHIRI"`        | Most common in Vedic astrology.        |
+| `"FAGAN_BRADLEY"` | Popular in Western sidereal astrology. |
+| `"RAMAN"`         | B.V. Raman's Ayanamsa.                 |
+| `"KRISHNAMURTI"`  | K.S. Krishnamurti's Ayanamsa.          |
+| `"DELUCE"`        | Robert DeLuce.                         |
+| `"YUKTESHWAR"`    | Sri Yukteswar.                         |
+| ...               | (and many more, see source code)       |
+
+---
+
+### `HousesSystemIdentifier`
+
+Single-character identifiers for different house systems.
+
+| ID    | House System              | Description                                                           |
+| :---- | :------------------------ | :-------------------------------------------------------------------- |
+| `"P"` | **Placidus**              | Most popular in modern Western astrology. Time-based.                 |
+| `"W"` | **Whole Sign**            | Each house is an entire sign. Popular in Hellenistic/Vedic astrology. |
+| `"K"` | **Koch**                  | Similar to Placidus, uses birthplace latitude.                        |
+| `"R"` | **Regiomontanus**         | Space-based system. Used in horary astrology.                         |
+| `"C"` | Campanus                  | Space-based, uses prime vertical.                                     |
+| `"A"` | Equal (Asc)               | Houses are 30° each, starting from Ascendant.                         |
+| `"O"` | Porphyry                  | Quadrant-based, equal division of quadrants.                          |
+| `"M"` | Morinus                   | Based on the equator, rarely used.                                    |
+| `"B"` | Alcabitius                | Medieval semi-arc system.                                             |
+| `"T"` | Polich/Page (Topocentric) | Similar to Placidus.                                                  |
+| ...   | ...                       | (See source code for full list: A-Y)                                  |
+
+---
+
+### `PerspectiveType`
+
+Defines the viewpoint for calculations.
+
+| Value                   | Description                                                                                |
+| :---------------------- | :----------------------------------------------------------------------------------------- |
+| `"Apparent Geocentric"` | Earth-centered, accounting for light-time and aberration. **Standard for most astrology.** |
+| `"True Geocentric"`     | Earth-centered, without light-time correction.                                             |
+| `"Heliocentric"`        | Sun-centered. Used for some esoteric techniques.                                           |
+| `"Topocentric"`         | Observer's exact location on Earth's surface. Most accurate for Moon position.             |
+
+---
+
+### `LunarPhaseName`
+
+The eight traditional names for the Moon's phases.
+
+`"New Moon"`, `"Waxing Crescent"`, `"First Quarter"`, `"Waxing Gibbous"`, `"Full Moon"`, `"Waning Gibbous"`, `"Last Quarter"`, `"Waning Crescent"`
+
+---
+
+### `LunarPhaseEmoji`
+
+Emojis corresponding to the lunar phases.
+
+`"🌑"`, `"🌒"`, `"🌓"`, `"🌔"`, `"🌕"`, `"🌖"`, `"🌗"`, `"🌘"`
+
+---
+
+### `KerykeionChartTheme`
+
+Available visual themes for chart rendering.
+
+`"light"`, `"dark"`, `"dark-high-contrast"`, `"classic"`, `"strawberry"`, `"black-and-white"`
+
+---
+
+### `KerykeionChartLanguage`
+
+Supported language codes for chart labels.
+
+`"EN"`, `"FR"`, `"PT"`, `"IT"`, `"CN"`, `"ES"`, `"RU"`, `"TR"`, `"DE"`, `"HI"`
+
+---
+
+## Settings (`settings_models`)
+
+Import from: `kerykeion.schemas.settings_models`
+
+### KerykeionSettingsModel
+
+Global configuration for the library, primarily handling internationalization.
+
+-   **`language_settings`**: A dictionary mapping language codes (e.g., "EN", "IT") to `KerykeionLanguageModel`.
+
+### KerykeionLanguageModel
+
+Defines all the string labels used in chart generation and reports.
+
+-   `Sun`, `Moon`, `Mercury`... (Planet names)
+-   `Ari`, `Tau`... (Sign names)
+-   `First_House`... (House names)
+-   `Fire`, `Earth`... (Element names)
+
+---
+
+## Exceptions (`kerykeion_exception`)
+
+Import from: `kerykeion.schemas.kerykeion_exception`
+
+### `KerykeionException`
+
+The base exception class for all library-specific errors.
 
 ```python
-from kerykeion.kr_types import KerykeionException
+from kerykeion.schemas import KerykeionException
 
 try:
-    # calculation code
+    chart = KrInstance(...)
 except KerykeionException as e:
-    print(f"Calculation error: {e}")
+    print(f"Error calculating chart: {e}")
 ```
-
-Custom exception raised when astrological calculations fail or invalid data is provided.
-
-## Pydantic Models
-
-Kerykeion uses Pydantic for data validation and structure. Key models typically include:
-
-- `AstrologicalSubjectModel`
-- `ChartDataModel`
-- `PlanetModel`
-- `HouseModel`
-
-_(Refer to `kr_models` source code for detailed schema definitions)_
