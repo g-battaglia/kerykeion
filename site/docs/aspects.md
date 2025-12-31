@@ -53,6 +53,15 @@ synastry = AspectsFactory.dual_chart_aspects(subject, subject_b)
 print(f"Synastry Aspects: {len(synastry.aspects)}")
 ```
 
+**Additional Parameters for `dual_chart_aspects`:**
+
+| Parameter                 | Type   | Default | Description                                |
+| :------------------------ | :----- | :------ | :----------------------------------------- |
+| `first_subject_is_fixed`  | `bool` | `False` | Treat first subject as stationary (natal). |
+| `second_subject_is_fixed` | `bool` | `False` | Treat second subject as stationary.        |
+
+_These parameters affect aspect movement calculation (applying/separating)._
+
 ## Configuration
 
 ### Supported Aspects
@@ -121,3 +130,24 @@ The factory returns an `AspectsModel` containing a list of `AspectModel` objects
 -   `aspect`: Name of the aspect (e.g., "conjunction").
 -   `orbit`: The exact orb (deviation from exact aspect). Negative values indicate applying aspects.
 -   `aid`: Unique aspect ID string.
+
+## Aspect Utilities
+
+Import from: `kerykeion.aspects.aspects_utils`
+
+### `calculate_aspect_movement`
+
+Determines if an aspect is Applying (orb decreasing) or Separating (orb increasing).
+
+```python
+from kerykeion.aspects.aspects_utils import calculate_aspect_movement
+
+movement = calculate_aspect_movement(
+    point_one_abs_pos=120.0,
+    point_two_abs_pos=122.0,
+    aspect_degrees=0,      # Conjunction
+    point_one_speed=1.0,   # Moving forward
+    point_two_speed=0.5    # Moving slower forward
+)
+# Returns "Separating" (Distance is 2° and increasing as faster planet is ahead)
+```

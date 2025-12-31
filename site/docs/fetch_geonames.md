@@ -52,6 +52,7 @@ def __init__(
 -   `country_code`: Two-letter ISO country code (e.g., "IT", "US").
 -   `username`: GeoNames username (default: "century.boy").
 -   `cache_expire_after_days`: Number of days to cache the API response (default: 30).
+-   `cache_name`: Optional path for the cache file. Can also be set via the `KERYKEION_GEONAMES_CACHE_NAME` environment variable.
 
 ### Methods
 
@@ -67,3 +68,12 @@ Returns a dictionary containing the necessary data for Kerykeion calculations.
 -   `lng`: Longitude
 -   `countryCode`: Country code
 -   `timezonestr`: Timezone ID (e.g., "Europe/Rome")
+
+#### `set_default_cache_name(cache_name)` (classmethod)
+
+Override the default cache path used when none is provided.
+
+```python
+from pathlib import Path
+FetchGeonames.set_default_cache_name(Path("/custom/cache/path"))
+```

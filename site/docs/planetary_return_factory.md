@@ -93,6 +93,14 @@ Finds the next return starting search from a precise ISO timestamp.
 result = calculator.next_return_from_iso_formatted_time("2024-06-15T12:00:00", "Lunar")
 ```
 
+### `next_return_from_year(...)`
+
+Finds the first return occurring in a given calendar year.
+
+```python
+result = calculator.next_return_from_year(2025, "Solar")
+```
+
 ## Relocation Astrology
 
 Planetary returns are often calculated for the subject's **current location** rather than birth location. Simply pass the current residence coordinates/city to the `PlanetaryReturnFactory` constructor to generate a relocated return chart.

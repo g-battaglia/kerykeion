@@ -20,6 +20,18 @@ The `kerykeion.schemas` package contains all the data definitions:
 -   **`chart_template_model`**: Models for SVG chart generation.
 -   **`kerykeion_exception`**: Standard exception class for the library.
 
+### Subscriptable Models
+
+All Kerykeion models inherit from `SubscriptableBaseModel`, allowing dictionary-like access to fields in addition to dot notation.
+
+```python
+subject = AstrologicalSubjectFactory(...)
+# Access as object
+print(subject.name)
+# Access as dict
+print(subject["name"])
+```
+
 ## Core Models (`kr_models`)
 
 Import from: `kerykeion.schemas.kr_models`
@@ -284,19 +296,31 @@ The Ayanamsa (precession mode) used for Sidereal calculations.
 
 Single-character identifiers for different house systems.
 
-| ID    | House System              | Description                                                           |
-| :---- | :------------------------ | :-------------------------------------------------------------------- |
-| `"P"` | **Placidus**              | Most popular in modern Western astrology. Time-based.                 |
-| `"W"` | **Whole Sign**            | Each house is an entire sign. Popular in Hellenistic/Vedic astrology. |
-| `"K"` | **Koch**                  | Similar to Placidus, uses birthplace latitude.                        |
-| `"R"` | **Regiomontanus**         | Space-based system. Used in horary astrology.                         |
-| `"C"` | Campanus                  | Space-based, uses prime vertical.                                     |
-| `"A"` | Equal (Asc)               | Houses are 30° each, starting from Ascendant.                         |
-| `"O"` | Porphyry                  | Quadrant-based, equal division of quadrants.                          |
-| `"M"` | Morinus                   | Based on the equator, rarely used.                                    |
-| `"B"` | Alcabitius                | Medieval semi-arc system.                                             |
-| `"T"` | Polich/Page (Topocentric) | Similar to Placidus.                                                  |
-| ...   | ...                       | (See source code for full list: A-Y)                                  |
+| ID    | House System                 | Description                                                        |
+| :---- | :--------------------------- | :----------------------------------------------------------------- |
+| `"A"` | Equal (from Asc)             | Houses are 30° each, starting from Ascendant.                      |
+| `"B"` | Alcabitius                   | Medieval semi-arc system.                                          |
+| `"C"` | Campanus                     | Space-based, uses prime vertical.                                  |
+| `"D"` | Equal (from MC)              | Houses are 30° each, with MC on 10th cusp.                         |
+| `"F"` | Carter Poli-Equatorial       | Rarely used system.                                                |
+| `"H"` | Horizon/Azimuth              | Based on azimuth circle.                                           |
+| `"I"` | Sunshine                     | Modern solar-based system.                                         |
+| `"i"` | Sunshine/Alternate           | Alternate Sunshine calculation.                                    |
+| `"K"` | **Koch**                     | Time-based, uses birthplace latitude. Popular in Germany.          |
+| `"L"` | Pullen SD (Sinusoidal Delta) | Modern system.                                                     |
+| `"M"` | Morinus                      | Based on the equator, rarely used.                                 |
+| `"N"` | Equal / 1st House = Aries    | Fixed house system.                                                |
+| `"O"` | Porphyry                     | Quadrant-based, equal division of quadrants.                       |
+| `"P"` | **Placidus**                 | **Default.** Most popular in modern Western astrology. Time-based. |
+| `"Q"` | Pullen SR (Sinusoidal Ratio) | Modern system.                                                     |
+| `"R"` | **Regiomontanus**            | Space-based system. Standard for Horary astrology.                 |
+| `"S"` | Sripati                      | Vedic-influenced system.                                           |
+| `"T"` | Polich/Page (Topocentric)    | Similar to Placidus, accounts for location.                        |
+| `"U"` | Krusinski-Pisa-Goelzer       | Modern system.                                                     |
+| `"V"` | Equal / Vehlow               | Equal houses with Asc in middle of 1st house.                      |
+| `"W"` | **Whole Sign**               | Each house is an entire sign. Standard in Hellenistic/Vedic.       |
+| `"X"` | Axial Rotation / Meridian    | Meridian-based system.                                             |
+| `"Y"` | APC Houses                   | Astrological PC houses.                                            |
 
 ---
 
@@ -342,6 +366,52 @@ Available visual themes for chart rendering.
 Supported language codes for chart labels.
 
 `"EN"`, `"FR"`, `"PT"`, `"IT"`, `"CN"`, `"ES"`, `"RU"`, `"TR"`, `"DE"`, `"HI"`
+
+---
+
+### `ReturnType`
+
+Types of planetary returns supported.
+
+`"Solar"`, `"Lunar"`
+
+---
+
+### `CompositeChartType`
+
+Types of composite charts.
+
+`"Midpoint"`
+
+---
+
+### `PointType`
+
+Distinguishes between celestial bodies and house cusps.
+
+`"AstrologicalPoint"`, `"House"`
+
+---
+
+### `SignsEmoji`
+
+Zodiac sign symbols.
+
+`"♈️"`, `"♉️"`, `"♊️"`, `"♋️"`, `"♌️"`, `"♍️"`, `"♎️"`, `"♏️"`, `"♐️"`, `"♑️"`, `"♒️"`, `"♓️"`
+
+---
+
+### `HouseNumbers`
+
+Integer identifiers for houses (1-12).
+
+---
+
+### `RelationshipScoreDescription`
+
+Categorical descriptions for compatibility scores.
+
+`"Minimal"`, `"Medium"`, `"Important"`, `"Very Important"`, `"Exceptional"`, `"Rare Exceptional"`
 
 ---
 

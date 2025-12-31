@@ -44,21 +44,17 @@ with open("report.txt", "w") as f:
 
 ## Configuration
 
-| Parameter         | Type   | Description                                                  |
-| :---------------- | :----- | :----------------------------------------------------------- |
-| `include_aspects` | `bool` | Include the Aspect table (default: `True` for Chart models). |
-| `max_aspects`     | `int`  | Limit the number of aspects shown (default: `None` = all).   |
+## Configuration
 
-## Helper Methods
+| Parameter         | Type                                           | Default      | Description                                                |
+| :---------------- | :--------------------------------------------- | :----------- | :--------------------------------------------------------- |
+| `model`           | `ChartDataModel` or `AstrologicalSubjectModel` | **Required** | The data model to generate the report for.                 |
+| `include_aspects` | `bool`                                         | `True`       | Include the Aspect table (default: `True`).                |
+| `max_aspects`     | `int`                                          | `None`       | Limit the number of aspects shown (default: `None` = all). |
 
-You can also retrieve specific sections of the report individually:
+## Public API
 
-| Method                            | Description                                  |
-| :-------------------------------- | :------------------------------------------- |
-| `get_subject_data_report()`       | Subject metadata (name, date, location).     |
-| `get_celestial_points_report()`   | Table of planets, signs, houses, and speeds. |
-| `get_houses_report()`             | Table of house cusps.                        |
-| `get_elements_report()`           | Element distribution table.                  |
-| `get_qualities_report()`          | Quality distribution table.                  |
-| `get_aspects_report()`            | Aspect table with symbols (`☌`, `△`, etc.).  |
-| `get_relationship_score_report()` | Synastry score details (Dual charts only).   |
+| Method                                                           | Description                             |
+| :--------------------------------------------------------------- | :-------------------------------------- |
+| `generate_report(include_aspects=None, max_aspects=None) -> str` | Build the report content as a string.   |
+| `print_report(include_aspects=None, max_aspects=None) -> None`   | Print the generated report to `stdout`. |

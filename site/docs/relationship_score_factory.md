@@ -47,6 +47,15 @@ print(f"Score: {score_model.score_value}")
 print(f"Category: {score_model.score_description}")
 ```
 
+## Constructor Parameters
+
+| Parameter                | Type    | Default  | Description                                       |
+| :----------------------- | :------ | :------- | :------------------------------------------------ |
+| `first_subject`          | Model   | Required | First astrological subject.                       |
+| `second_subject`         | Model   | Required | Second astrological subject.                      |
+| `use_only_major_aspects` | `bool`  | `True`   | Only consider major aspects (conj, opp, sq, etc). |
+| `axis_orb_limit`         | `float` | `None`   | Stricter orb for angles (Asc, MC).                |
+
 ## Score Categories
 
 | Score       | Category         | Description                                     |

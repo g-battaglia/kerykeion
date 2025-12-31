@@ -58,3 +58,28 @@ You are an expert astrologer. Analyze the following chart data:
 Focus on career potential.
 """
 ```
+
+## Helper Functions
+
+For finer control, use these individual converters:
+
+| Function                          | Input Model                | Description                             |
+| :-------------------------------- | :------------------------- | :-------------------------------------- |
+| `kerykeion_point_to_context`      | `KerykeionPointModel`      | Describes a single planet/point.        |
+| `lunar_phase_to_context`          | `LunarPhaseModel`          | Describes the lunar phase.              |
+| `aspect_to_context`               | `AspectModel`              | Describes an aspect between two points. |
+| `astrological_subject_to_context` | `AstrologicalSubjectModel` | Full subject description.               |
+| `single_chart_data_to_context`    | `SingleChartDataModel`     | Natal chart with aspects.               |
+| `dual_chart_data_to_context`      | `DualChartDataModel`       | Synastry/Transit with inter-aspects.    |
+| `element_distribution_to_context` | `ElementDistributionModel` | Element breakdown.                      |
+| `quality_distribution_to_context` | `QualityDistributionModel` | Quality breakdown.                      |
+| `house_comparison_to_context`     | `HouseComparisonModel`     | House overlay analysis.                 |
+| `transits_time_range_to_context`  | `TransitsTimeRangeModel`   | Time-range transit data.                |
+
+```python
+from kerykeion.context_serializer import kerykeion_point_to_context
+
+sun_context = kerykeion_point_to_context(subject.sun)
+print(sun_context)
+# "Sun at 10.81° in Capricorn in First House, quality: Cardinal, element: Earth..."
+```

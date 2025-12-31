@@ -49,13 +49,66 @@ if synastry_data.relationship_score:
     print(f"Compatibility Score: {synastry_data.relationship_score.score_value}")
 ```
 
+#### Parameters
+
+| Parameter                    | Type                       | Default   | Description                    |
+| :--------------------------- | :------------------------- | :-------- | :----------------------------- |
+| `first_subject`              | `AstrologicalSubjectModel` | **Req**   | Primary subject.               |
+| `second_subject`             | `AstrologicalSubjectModel` | **Req**   | Partner subject.               |
+| `active_points`              | `List[str]`                | `None`    | Custom points list.            |
+| `active_aspects`             | `List[dict]`               | `Default` | Custom aspects list.           |
+| `include_house_comparison`   | `bool`                     | `True`    | Calculate house overlays.      |
+| `include_relationship_score` | `bool`                     | `True`    | Calculate compatibility score. |
+
 ### 3. `create_transit_chart_data`
 
-Specialized for comparing a natal chart with a current/event time subject.
+Compares a natal chart against a current/event time subject.
 
 ```python
 now = AstrologicalSubjectFactory.from_current_time("Now", "London", "GB")
 transit_data = ChartDataFactory.create_transit_chart_data(subject, now)
+```
+
+#### Parameters
+
+| Parameter                  | Type                       | Default   | Description                               |
+| :------------------------- | :------------------------- | :-------- | :---------------------------------------- |
+| `natal_subject`            | `AstrologicalSubjectModel` | **Req**   | Birth chart.                              |
+| `transit_subject`          | `AstrologicalSubjectModel` | **Req**   | Current time chart.                       |
+| `active_points`            | `List[str]`                | `None`    | Custom points list.                       |
+| `active_aspects`           | `List[dict]`               | `Default` | Custom aspects list.                      |
+| `include_house_comparison` | `bool`                     | `True`    | Calculate natal points in transit houses. |
+
+### 4. `create_composite_chart_data`
+
+Creates data for a composite (midpoint) chart from a `CompositeSubjectModel`.
+
+```python
+from kerykeion import CompositeSubjectFactory
+
+composite_subject = CompositeSubjectFactory(subject_a, subject_b).get_midpoint_composite_subject_model()
+composite_data = ChartDataFactory.create_composite_chart_data(composite_subject)
+```
+
+### 5. `create_return_chart_data`
+
+Creates a dual-wheel planetary return chart (natal + return overlay).
+
+```python
+from kerykeion import PlanetaryReturnFactory
+
+return_factory = PlanetaryReturnFactory(natal_subject, city="New York", nation="US")
+solar_return = return_factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+
+return_data = ChartDataFactory.create_return_chart_data(natal_subject, solar_return)
+```
+
+### 6. `create_single_wheel_return_chart_data`
+
+Creates a single-wheel view of a planetary return (return only, no natal overlay).
+
+```python
+single_return_data = ChartDataFactory.create_single_wheel_return_chart_data(solar_return)
 ```
 
 ## Data Models

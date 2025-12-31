@@ -37,10 +37,17 @@ for point in comparison.second_points_in_first_houses:
 
 ## Data Structure
 
-The `HouseComparisonModel` contains two main lists of `HouseComparisonPointModel` objects:
+The `HouseComparisonModel` contains:
 
--   **`first_points_in_second_houses`**: Subject A's points projected into Subject B's houses.
--   **`second_points_in_first_houses`**: Subject B's points projected into Subject A's houses.
+**Point Comparisons:**
+
+-   `first_points_in_second_houses`: Subject A's points projected into Subject B's houses.
+-   `second_points_in_first_houses`: Subject B's points projected into Subject A's houses.
+
+**Cusp Comparisons:**
+
+-   `first_cusps_in_second_houses`: Subject A's house cusps projected into Subject B's houses.
+-   `second_cusps_in_first_houses`: Subject B's house cusps projected into Subject A's houses.
 
 Each point model includes:
 
@@ -48,3 +55,11 @@ Each point model includes:
 -   `projected_house_name`: Name of the house it falls into (e.g. "Seventh_House").
 -   `projected_house_number`: Number of the house (1-12).
 -   `point_abs_pos`: Absolute position of the point.
+
+## Constructor Parameters
+
+| Parameter        | Type                       | Default     | Description                    |
+| :--------------- | :------------------------- | :---------- | :----------------------------- |
+| `first_subject`  | `AstrologicalSubjectModel` | Required    | First subject for comparison.  |
+| `second_subject` | `AstrologicalSubjectModel` | Required    | Second subject for comparison. |
+| `active_points`  | `List[AstrologicalPoint]`  | All planets | Points to include in analysis. |

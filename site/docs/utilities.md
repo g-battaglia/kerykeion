@@ -94,3 +94,13 @@ General purpose tools for list management, logging, and SVG optimization.
 | `find_common_active_points(list_a, list_b)`       | Returns intersection of two point lists.              |
 | `setup_logging(level)`                            | Configures Kerykeion's internal logger.               |
 | `inline_css_variables_in_svg(svg_content)`        | Replaces CSS variables with static values for export. |
+| `normalize_zodiac_type(str)`                      | Normalizes string to "Tropical" or "Sidereal".        |
+
+## Lunar Helpers
+
+Additional moon phase formatting utilities.
+
+| Function                                    | Description                        |
+| :------------------------------------------ | :--------------------------------- |
+| `get_moon_emoji_from_phase_int(phase)`      | Returns emoji for 0-7 phase index. |
+| `get_moon_phase_name_from_phase_int(phase)` | Returns name for 0-7 phase index.  |

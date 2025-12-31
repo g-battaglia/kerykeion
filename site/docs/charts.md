@@ -158,6 +158,25 @@ drawer.save_aspect_grid_only_svg_file(Path("./output"), filename="grid_only")
 -   `generate_svg_string() -> str`
 -   `generate_wheel_only_svg_string() -> str`
 -   `generate_aspect_grid_only_svg_string() -> str`
--   `save_svg(output_path, filename)`
 -   `save_wheel_only_svg_file(output_path, filename)`
 -   `save_aspect_grid_only_svg_file(output_path, filename)`
+
+## Helper Functions (`charts_utils`)
+
+Import from: `kerykeion.charts.charts_utils`
+
+Utility functions used in SVG generation that can be helpful for custom rendering logic.
+
+| Function                     | Description                                        |
+| :--------------------------- | :------------------------------------------------- |
+| `degreeDiff(a, b)`           | Smallest difference between two angles (0-180°).   |
+| `degreeSum(a, b)`            | Sum of two angles normalized to 0-360°.            |
+| `normalizeDegree(angle)`     | Constrains any angle to 0-360° range.              |
+| `sliceToX(slice, r, offset)` | Calculates X coordinate for a circle slice (1-12). |
+| `sliceToY(slice, r, offset)` | Calculates Y coordinate for a circle slice (1-12). |
+
+```python
+from kerykeion.charts.charts_utils import degreeDiff
+
+diff = degreeDiff(350, 10) # Returns 20.0
+```

@@ -69,6 +69,8 @@ print(subjects[0].sun.sign)
 
 ## Configuration
 
+### Time Parameters
+
 | Parameter     | Description                  | Options                          |
 | :------------ | :--------------------------- | :------------------------------- |
 | `step_type`   | Unit of time step            | `"days"`, `"hours"`, `"minutes"` |
@@ -76,5 +78,23 @@ print(subjects[0].sun.sign)
 | `max_days`    | Safety limit for daily data  | Default: 730                     |
 | `max_hours`   | Safety limit for hourly data | Default: 8760                    |
 | `max_minutes` | Safety limit for minute data | Default: 525600                  |
+
+### Location Parameters
+
+| Parameter | Description               | Default            |
+| :-------- | :------------------------ | :----------------- |
+| `lat`     | Latitude for house cusps  | `51.4769` (London) |
+| `lng`     | Longitude for house cusps | `0.0005`           |
+| `tz_str`  | Timezone string           | `"Etc/UTC"`        |
+| `is_dst`  | Daylight saving time flag | `False`            |
+
+### Calculation Parameters
+
+| Parameter                  | Description                 | Default                 |
+| :------------------------- | :-------------------------- | :---------------------- |
+| `zodiac_type`              | Tropical or Sidereal        | `"Tropical"`            |
+| `sidereal_mode`            | Ayanamsa mode (if Sidereal) | `None`                  |
+| `houses_system_identifier` | House system code           | `"P"` (Placidus)        |
+| `perspective_type`         | Calculation perspective     | `"Apparent Geocentric"` |
 
 _Note: You can override safety limits by passing `None` if you need large datasets._
