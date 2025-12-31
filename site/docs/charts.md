@@ -107,28 +107,57 @@ drawer = ChartDrawer(
 
 Supported: `EN`, `IT`, `FR`, `ES`, `PT`, `CN`, `RU`, `TR`, `DE`, `HI`.
 
-## Output Methods
+## Output Methods & API Reference
 
-### 1. Generate String (For Web/API)
+### 1. Generating Strings (Web/API)
 
-Returns the SVG code as a string.
+Methods to get the raw SVG code as a string.
 
 ```python
+# Full Chart
 svg = drawer.generate_svg_string()
 
-# Variations
+# Components
 wheel_only = drawer.generate_wheel_only_svg_string()
-aspects_grid = drawer.generate_aspect_grid_only_svg_string()
+grid_only = drawer.generate_aspect_grid_only_svg_string()
 ```
 
-### 2. Save to File (For CLI/Scripts)
+### 2. Saving to File (CLI/Scripts)
 
-Writes the SVG directly to disk.
+Methods to write the SVG directly to disk.
 
 ```python
 from pathlib import Path
-output_dir = Path("./output")
 
-drawer.save_svg(output_dir)
-# Saves: ./output/Name_Type_Date.svg
+# Full Chart
+drawer.save_svg(Path("./output"), filename="natal_chart")
+
+# Components
+drawer.save_wheel_only_svg_file(Path("./output"), filename="wheel_only")
+drawer.save_aspect_grid_only_svg_file(Path("./output"), filename="grid_only")
 ```
+
+### Class `ChartDrawer`
+
+**Constructor Parameters:**
+
+| Parameter                       | Type                     | Default      | Description                                 |
+| :------------------------------ | :----------------------- | :----------- | :------------------------------------------ |
+| `chart_data`                    | `ChartDataModel`         | **Required** | Pre-computed data from a Factory.           |
+| `theme`                         | `KerykeionChartTheme`    | `"classic"`  | Visual theme (e.g. `"dark"`).               |
+| `chart_language`                | `KerykeionChartLanguage` | `"EN"`       | Label language (`"IT"`, `"ES"`, etc).       |
+| `transparent_background`        | `bool`                   | `False`      | Remove background color.                    |
+| `external_view`                 | `bool`                   | `False`      | Place planets on outer ring (Single chart). |
+| `show_aspect_icons`             | `bool`                   | `True`       | Show symbol icons in aspect grid.           |
+| `show_degree_indicators`        | `bool`                   | `True`       | Show degree ticks on the wheel.             |
+| `custom_title`                  | `str`                    | `None`       | Override the default chart title.           |
+| `double_chart_aspect_grid_type` | `"list"`, `"table"`      | `"list"`     | Grid style for Synastry/Transit.            |
+
+**Public Methods:**
+
+-   `generate_svg_string() -> str`
+-   `generate_wheel_only_svg_string() -> str`
+-   `generate_aspect_grid_only_svg_string() -> str`
+-   `save_svg(output_path, filename)`
+-   `save_wheel_only_svg_file(output_path, filename)`
+-   `save_aspect_grid_only_svg_file(output_path, filename)`

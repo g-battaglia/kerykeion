@@ -259,17 +259,24 @@ Describes the phase of an aspect between two points.
 
 ### `SiderealMode`
 
-Ayanamsa values for Sidereal zodiac calculations.
+The Ayanamsa (precession mode) used for Sidereal calculations.
 
-| Value             | Description                            |
-| :---------------- | :------------------------------------- |
-| `"LAHIRI"`        | Most common in Vedic astrology.        |
-| `"FAGAN_BRADLEY"` | Popular in Western sidereal astrology. |
-| `"RAMAN"`         | B.V. Raman's Ayanamsa.                 |
-| `"KRISHNAMURTI"`  | K.S. Krishnamurti's Ayanamsa.          |
-| `"DELUCE"`        | Robert DeLuce.                         |
-| `"YUKTESHWAR"`    | Sri Yukteswar.                         |
-| ...               | (and many more, see source code)       |
+-   `"FAGAN_BRADLEY"` (Standard Western Sidereal)
+-   `"LAHIRI"` (Standard Vedic/Jyotish)
+-   `"DELUCE"`
+-   `"RAMAN"`
+-   `"USHASHASHI"`
+-   `"KRISHNAMURTI"`
+-   `"DJWHAL_KHUL"`
+-   `"YUKTESHWAR"`
+-   `"JN_BHASIN"`
+-   `"BABYL_KUGLER1"`, `"BABYL_KUGLER2"`, `"BABYL_KUGLER3"`
+-   `"BABYL_HUBER"`
+-   `"BABYL_ETPSC"`
+-   `"ALDEBARAN_15TAU"`
+-   `"HIPPARCHOS"`
+-   `"SASSANIAN"`
+-   `"J2000"`, `"J1900"`, `"B1950"`
 
 ---
 
