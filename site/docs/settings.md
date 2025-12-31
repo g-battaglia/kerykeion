@@ -60,3 +60,39 @@ The settings are defined by a Pydantic model that controls various aspects of th
 -   `cache_dir`: Directory to store cache files (default: "cache").
 
 _(See `kerykeion.schemas.settings_models` for the full list of configurable options)_
+
+## Translation Utilities
+
+Import from: `kerykeion.settings`
+
+Helper functions to access the library's internal localization strings (planets, signs, etc.).
+
+### `get_translations`
+
+Fetches a localized string from the internal dictionary.
+
+```python
+from kerykeion.settings import get_translations
+
+# Get Italian name for Sun
+sun_it = get_translations(
+    "celestial_points.Sun",
+    default="Sole",
+    language="IT"
+)
+print(sun_it) # "Sole"
+```
+
+### `load_language_settings`
+
+Returns the entire language setting dictionary, optionally merging with overrides.
+
+```python
+# Create custom overrides
+overrides = {
+    "IT": {
+        "celestial_points": {"Sun": "Il Sole"}
+    }
+}
+settings = load_language_settings(overrides)
+```

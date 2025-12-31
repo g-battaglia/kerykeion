@@ -63,3 +63,21 @@ Each point model includes:
 | `first_subject`  | `AstrologicalSubjectModel` | Required    | First subject for comparison.  |
 | `second_subject` | `AstrologicalSubjectModel` | Required    | Second subject for comparison. |
 | `active_points`  | `List[AstrologicalPoint]`  | All planets | Points to include in analysis. |
+
+## Utility Functions
+
+Import from: `kerykeion.house_comparison.house_comparison_utils`
+
+Lower-level functions used by the factory, useful for custom analysis pipelines.
+
+| Function                                                      | Description                                          |
+| :------------------------------------------------------------ | :--------------------------------------------------- |
+| `calculate_points_in_reciprocal_houses(subject_a, subject_b)` | Calculates where A's planets fall in B's houses.     |
+| `calculate_cusps_in_reciprocal_houses(subject_a, subject_b)`  | Calculates where A's house cusps fall in B's houses. |
+
+```python
+from kerykeion.house_comparison.house_comparison_utils import calculate_points_in_reciprocal_houses
+
+# Returns List[PointInHouseModel]
+points = calculate_points_in_reciprocal_houses(person_a, person_b)
+```
