@@ -1,9 +1,9 @@
 ---
 title: 'Settings'
-category: 'Core'
+category: 'Reference'
 description: 'Global configuration settings for Kerykeion'
 tags: ['docs', 'settings', 'config']
-order: 13
+order: 17
 ---
 
 # Settings (`kerykeion.settings`)
@@ -27,8 +27,8 @@ The settings are defined by a Pydantic model that controls various aspects of th
 
 ### Key Configuration Options
 
-- **Directories**:
-  - `json_dir`: Directory to store JSON output (default: "json").
-  - `cache_dir`: Directory to store cache files (default: "cache").
+-   **Directories**:
+    -   `json_dir`: Directory to store JSON output (default: "json").
+    -   `cache_dir`: Directory to store cache files (default: "cache").
 
 _(See `settings_models` for the full list of configurable options)_
