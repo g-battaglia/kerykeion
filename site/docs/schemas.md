@@ -277,24 +277,30 @@ Quality/modality distribution in a chart.
 
 Aspects within a single chart (Natal, Composite, Return).
 
-| Field            | Type                       | Description                 |
+_Alias:_ `NatalAspectsModel`
+
+| Field | Type | Description |
+
 | :--------------- | :------------------------- | :-------------------------- |
-| `subject`        | `AstrologicalSubjectModel` | The chart subject.          |
-| `aspects`        | `List[AspectModel]`        | Internal aspects.           |
-| `active_points`  | `List[AstrologicalPoint]`  | Points used in calculation. |
-| `active_aspects` | `List[ActiveAspect]`       | Aspect configuration.       |
+| `subject` | `AstrologicalSubjectModel` | The chart subject. |
+| `aspects` | `List[AspectModel]` | Internal aspects. |
+| `active_points` | `List[AstrologicalPoint]` | Points used in calculation. |
+| `active_aspects` | `List[ActiveAspect]` | Aspect configuration. |
 
 ### DualChartAspectsModel
 
 Aspects between two charts (Synastry, Transit).
 
-| Field            | Type                       | Description           |
+_Alias:_ `SynastryAspectsModel`
+
+| Field | Type | Description |
+
 | :--------------- | :------------------------- | :-------------------- |
-| `first_subject`  | `AstrologicalSubjectModel` | Primary chart.        |
-| `second_subject` | `AstrologicalSubjectModel` | Secondary chart.      |
-| `aspects`        | `List[AspectModel]`        | Inter-chart aspects.  |
-| `active_points`  | `List[AstrologicalPoint]`  | Points used.          |
-| `active_aspects` | `List[ActiveAspect]`       | Aspect configuration. |
+| `first_subject` | `AstrologicalSubjectModel` | Primary chart. |
+| `second_subject` | `AstrologicalSubjectModel` | Secondary chart. |
+| `aspects` | `List[AspectModel]` | Inter-chart aspects. |
+| `active_points` | `List[AstrologicalPoint]` | Points used. |
+| `active_aspects` | `List[ActiveAspect]` | Aspect configuration. |
 
 ### ChartDataModel (Union)
 
@@ -400,6 +406,11 @@ Comprehensive literal for all supported celestial points.
 
 **Axial Cusps (Angles):**
 `"Ascendant"`, `"Medium_Coeli"` (MC/Midheaven), `"Descendant"`, `"Imum_Coeli"` (IC)
+
+### AxialCusps (Angles)
+
+_Alias for `AstrologicalPoint` containing only the angles._
+`"Ascendant"`, `"Medium_Coeli"`, `"Descendant"`, `"Imum_Coeli"`
 
 ---
 

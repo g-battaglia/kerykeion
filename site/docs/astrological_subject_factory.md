@@ -131,6 +131,25 @@ fast_chart = AstrologicalSubjectFactory.from_birth_data(
 )
 ```
 
+### Internal Types
+
+These `TypedDict` structures are used internally for type hinting but are exposed for reference.
+
+#### `ChartConfiguration`
+
+Configuration dictionary for chart calculation settings.
+Keys: `zodiac_type`, `sidereal_mode`, `houses_system_identifier`, `perspective_type`.
+
+#### `LocationData`
+
+Dictionary carrying raw location information.
+Keys: `city`, `nation`, `lng`, `lat`, `tz_str`.
+
+#### `ephemeris_context`
+
+Helper context manager for thread-safe Swisseph calculations.
+**Not intended for public use.**
+
 **Memory Usage**:
 
 -   Full Chart: ~50KB

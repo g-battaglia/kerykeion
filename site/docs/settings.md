@@ -48,6 +48,14 @@ aspects = AspectsFactory.single_chart_aspects(
 )
 ```
 
+### Chart Configuration Presets
+
+| Constant                            | Description                                  |
+| :---------------------------------- | :------------------------------------------- |
+| `DEFAULT_CHART_COLORS`              | Default color scheme for charts.             |
+| `DEFAULT_CELESTIAL_POINTS_SETTINGS` | Default settings for planets (colors, etc.). |
+| `DEFAULT_CHART_ASPECTS_SETTINGS`    | Default aspect configuration.                |
+
 ## Settings Model
 
 ### `KerykeionSettingsModel`
@@ -96,3 +104,25 @@ overrides = {
 }
 settings = load_language_settings(overrides)
 ```
+
+### `load_settings_mapping`
+
+Resolves the full configuration mapping, including overrides for bundled language settings.
+
+```python
+from kerykeion.settings import load_settings_mapping
+
+settings_map = load_settings_mapping()
+```
+
+### Advanced Settings Types
+
+These types are used internally for type hinting but are exported for advanced usage.
+
+#### `LANGUAGE_SETTINGS`
+
+The raw dictionary containing all built-in translations. Modifying this directly is not recommended; use `load_language_settings` with overrides instead.
+
+#### `SettingsSource`
+
+Type alias for `Optional[Mapping[str, Any]]`. Represents the structure of a settings override dictionary.
