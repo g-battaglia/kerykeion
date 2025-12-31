@@ -102,6 +102,7 @@ drawer = ChartDrawer(
 -   `"light"`: Minimalist light mode.
 -   `"strawberry"`: Pink/Red color palette.
 -   `"dark-high-contrast"`: Accessibility focused.
+-   `"black-and-white"`: High contrast monochrome for print.
 
 ### Languages
 
@@ -152,6 +153,8 @@ drawer.save_aspect_grid_only_svg_file(Path("./output"), filename="grid_only")
 | `show_degree_indicators`        | `bool`                   | `True`       | Show degree ticks on the wheel.             |
 | `custom_title`                  | `str`                    | `None`       | Override the default chart title.           |
 | `double_chart_aspect_grid_type` | `"list"`, `"table"`      | `"list"`     | Grid style for Synastry/Transit.            |
+| `auto_size`                     | `bool`                   | `True`       | Automatically adjust chart dimensions.      |
+| `padding`                       | `int`                    | `20`         | Padding around the SVG content.             |
 
 **Public Methods:**
 
