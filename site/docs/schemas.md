@@ -105,6 +105,201 @@ Represents an astrological aspect between two points.
 | `aspect_degrees`     | `int`                | Theoretical angle (e.g., 120 for trine)  |
 | `aspect_movement`    | `AspectMovementType` | "Applying", "Separating", or "Static"    |
 
+### CompositeSubjectModel
+
+Represents a composite chart derived from two subjects.
+
+| Field                  | Type                       | Description                        |
+| :--------------------- | :------------------------- | :--------------------------------- |
+| `first_subject`        | `AstrologicalSubjectModel` | First source subject.              |
+| `second_subject`       | `AstrologicalSubjectModel` | Second source subject.             |
+| `composite_chart_type` | `str`                      | Type of composite (e.g. Midpoint). |
+
+Inherits all celestial point fields from `AstrologicalBaseModel`.
+
+### PlanetReturnModel
+
+Represents a Solar or Lunar return chart.
+
+| Field         | Type         | Description             |
+| :------------ | :----------- | :---------------------- |
+| `return_type` | `ReturnType` | `"Solar"` or `"Lunar"`. |
+
+Inherits all celestial point fields from `AstrologicalBaseModel`.
+
+### AstrologicalBaseModel
+
+Base model for all astrological subjects. Contains common fields for location, time, and all celestial points.
+
+Key fields: `name`, `city`, `nation`, `lng`, `lat`, `tz_str`, `zodiac_type`, `houses_system_identifier`, `sun`, `moon`, `mercury`..., `first_house`..., `ascendant`, etc.
+
+### EphemerisDictModel
+
+Snapshot of planetary positions for a specific date.
+
+| Field     | Type                        | Description             |
+| :-------- | :-------------------------- | :---------------------- |
+| `date`    | `str`                       | ISO 8601 formatted date |
+| `planets` | `List[KerykeionPointModel]` | Planet positions        |
+| `houses`  | `List[KerykeionPointModel]` | House cusps             |
+
+### ZodiacSignModel
+
+Metadata for a zodiac sign.
+
+| Field      | Type         | Description              |
+| :--------- | :----------- | :----------------------- |
+| `sign`     | `Sign`       | e.g. `"Ari"`             |
+| `quality`  | `Quality`    | Cardinal, Fixed, Mutable |
+| `element`  | `Element`    | Fire, Earth, Air, Water  |
+| `emoji`    | `SignsEmoji` | e.g. `"♈️"`             |
+| `sign_num` | `int`        | 0-11                     |
+
+### RelationshipScoreModel
+
+Complete compatibility scoring result.
+
+| Field               | Type                                 | Description                    |
+| :------------------ | :----------------------------------- | :----------------------------- |
+| `score_value`       | `int`                                | Total numerical score.         |
+| `score_description` | `RelationshipScoreDescription`       | Category (e.g. "Exceptional"). |
+| `is_destiny_sign`   | `bool`                               | Sun-sign compatibility match.  |
+| `aspects`           | `List[RelationshipScoreAspectModel]` | Contributing aspects.          |
+| `score_breakdown`   | `List[ScoreBreakdownItemModel]`      | Detailed point explanations.   |
+| `subjects`          | `List[AstrologicalSubjectModel]`     | The two compared subjects.     |
+
+### RelationshipScoreAspectModel
+
+Aspect contributing to relationship score.
+
+| Field     | Type    | Description          |
+| :-------- | :------ | :------------------- |
+| `p1_name` | `str`   | First point name.    |
+| `p2_name` | `str`   | Second point name.   |
+| `aspect`  | `str`   | Aspect name.         |
+| `orbit`   | `float` | Actual orb distance. |
+
+### ScoreBreakdownItemModel
+
+Explains a single scoring rule.
+
+| Field         | Type  | Description                               |
+| :------------ | :---- | :---------------------------------------- |
+| `rule`        | `str` | Rule ID (e.g. "sun_sun_major").           |
+| `description` | `str` | Human-readable explanation.               |
+| `points`      | `int` | Points awarded.                           |
+| `details`     | `str` | Optional extra info (e.g. "orbit: 1.5°"). |
+
+### ActiveAspect
+
+TypedDict for configuring aspect orbs.
+
+| Field  | Type         | Description     |
+| :----- | :----------- | :-------------- |
+| `name` | `AspectName` | e.g. "trine".   |
+| `orb`  | `int`        | Orb in degrees. |
+
+### TransitMomentModel
+
+Snapshot of transits at a specific time.
+
+| Field     | Type                | Description             |
+| :-------- | :------------------ | :---------------------- |
+| `date`    | `str`               | ISO 8601 datetime.      |
+| `aspects` | `List[AspectModel]` | Active transit aspects. |
+
+### TransitsTimeRangeModel
+
+Time series of transit snapshots.
+
+| Field      | Type                       | Description               |
+| :--------- | :------------------------- | :------------------------ |
+| `transits` | `List[TransitMomentModel]` | List of moment snapshots. |
+| `subject`  | `AstrologicalSubjectModel` | The natal subject.        |
+| `dates`    | `List[str]`                | All dates in the range.   |
+
+### PointInHouseModel
+
+A point from one chart placed in another chart's house system.
+
+| Field                        | Type    | Description                   |
+| :--------------------------- | :------ | :---------------------------- |
+| `point_name`                 | `str`   | Planet/point name.            |
+| `point_degree`               | `float` | Degree within sign.           |
+| `point_sign`                 | `str`   | Zodiac sign.                  |
+| `point_owner_name`           | `str`   | Owner subject name.           |
+| `projected_house_number`     | `int`   | House in target chart (1-12). |
+| `projected_house_name`       | `str`   | House name in target chart.   |
+| `projected_house_owner_name` | `str`   | Target subject name.          |
+
+### HouseComparisonModel
+
+Bidirectional house comparison between two subjects.
+
+| Field                           | Type                      | Description                                |
+| :------------------------------ | :------------------------ | :----------------------------------------- |
+| `first_subject_name`            | `str`                     | Name of first subject.                     |
+| `second_subject_name`           | `str`                     | Name of second subject.                    |
+| `first_points_in_second_houses` | `List[PointInHouseModel]` | First subject's points in second's houses. |
+| `second_points_in_first_houses` | `List[PointInHouseModel]` | Second subject's points in first's houses. |
+| `first_cusps_in_second_houses`  | `List[PointInHouseModel]` | First subject's cusps in second's houses.  |
+| `second_cusps_in_first_houses`  | `List[PointInHouseModel]` | Second subject's cusps in first's houses.  |
+
+### ElementDistributionModel
+
+Element distribution in a chart.
+
+| Field              | Type    | Description                |
+| :----------------- | :------ | :------------------------- |
+| `fire`             | `float` | Fire element total points. |
+| `earth`            | `float` | Earth element total.       |
+| `air`              | `float` | Air element total.         |
+| `water`            | `float` | Water element total.       |
+| `fire_percentage`  | `int`   | Fire percentage.           |
+| `earth_percentage` | `int`   | Earth percentage.          |
+| `air_percentage`   | `int`   | Air percentage.            |
+| `water_percentage` | `int`   | Water percentage.          |
+
+### QualityDistributionModel
+
+Quality/modality distribution in a chart.
+
+| Field                 | Type    | Description             |
+| :-------------------- | :------ | :---------------------- |
+| `cardinal`            | `float` | Cardinal quality total. |
+| `fixed`               | `float` | Fixed quality total.    |
+| `mutable`             | `float` | Mutable quality total.  |
+| `cardinal_percentage` | `int`   | Cardinal percentage.    |
+| `fixed_percentage`    | `int`   | Fixed percentage.       |
+| `mutable_percentage`  | `int`   | Mutable percentage.     |
+
+### SingleChartAspectsModel
+
+Aspects within a single chart (Natal, Composite, Return).
+
+| Field            | Type                       | Description                 |
+| :--------------- | :------------------------- | :-------------------------- |
+| `subject`        | `AstrologicalSubjectModel` | The chart subject.          |
+| `aspects`        | `List[AspectModel]`        | Internal aspects.           |
+| `active_points`  | `List[AstrologicalPoint]`  | Points used in calculation. |
+| `active_aspects` | `List[ActiveAspect]`       | Aspect configuration.       |
+
+### DualChartAspectsModel
+
+Aspects between two charts (Synastry, Transit).
+
+| Field            | Type                       | Description           |
+| :--------------- | :------------------------- | :-------------------- |
+| `first_subject`  | `AstrologicalSubjectModel` | Primary chart.        |
+| `second_subject` | `AstrologicalSubjectModel` | Secondary chart.      |
+| `aspects`        | `List[AspectModel]`        | Inter-chart aspects.  |
+| `active_points`  | `List[AstrologicalPoint]`  | Points used.          |
+| `active_aspects` | `List[ActiveAspect]`       | Aspect configuration. |
+
+### ChartDataModel (Union)
+
+Type alias: `Union[SingleChartDataModel, DualChartDataModel]`. Represents any chart data output from `ChartDataFactory`.
+
 ---
 
 ## Literals & Constants (`kr_literals`)

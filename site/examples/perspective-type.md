@@ -9,7 +9,7 @@ order: 8
 The `PerspectiveType` class is used to define the perspective of the chart.
 
 Full list of `PerspectiveType` literals can be found here:
-https://www.kerykeion.net/pydocs/kerykeion/schemas/kr_literals.html#PerspectiveType
+[https://www.kerykeion.net/content/docs/schemas#perspectivetype](https://www.kerykeion.net/content/docs/schemas#perspectivetype)
 
 ## Heliocentric Birth Chart
 

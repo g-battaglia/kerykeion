@@ -1041,7 +1041,7 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 
 More examples [here](https://www.kerykeion.net/content/examples/sidereal-modes/).
 
-Full list of supported sidereal modes [here](https://www.kerykeion.net/pydocs/kerykeion/schemas/kr_literals.html#SiderealMode).
+Full list of supported sidereal modes [here](https://www.kerykeion.net/content/docs/schemas#siderealmode).
 
 ## House Systems
 
@@ -1060,7 +1060,7 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 
 More examples [here](https://www.kerykeion.net/content/examples/houses-systems/).
 
-Full list of supported house systems [here](https://www.kerykeion.net/pydocs/kerykeion/schemas/kr_literals.html#HousesSystem).
+Full list of supported house systems [here](https://www.kerykeion.net/content/docs/schemas#housesystemidentifier).
 
 So far all the available houses system in the Swiss Ephemeris are supported but the Gauquelin Sectors.
 
@@ -1081,7 +1081,7 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 
 More examples [here](https://www.kerykeion.net/content/examples/perspective-type/).
 
-Full list of supported perspective types [here](https://www.kerykeion.net/pydocs/kerykeion/schemas/kr_literals.html#PerspectiveType).
+Full list of supported perspective types [here](https://www.kerykeion.net/content/docs/schemas#perspectivetype).
 
 ## Themes
 
