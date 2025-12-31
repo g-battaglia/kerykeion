@@ -95,6 +95,7 @@ General purpose tools for list management, logging, and SVG optimization.
 | `setup_logging(level)`                            | Configures Kerykeion's internal logger.               |
 | `inline_css_variables_in_svg(svg_content)`        | Replaces CSS variables with static values for export. |
 | `normalize_zodiac_type(str)`                      | Normalizes string to "Tropical" or "Sidereal".        |
+| `distribute_percentages_to_100(values)`           | Rounds percentages ensuring they sum exactly to 100%. |
 
 ## Lunar Helpers
 

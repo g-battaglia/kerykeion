@@ -151,3 +151,43 @@ movement = calculate_aspect_movement(
 )
 # Returns "Separating" (Distance is 2° and increasing as faster planet is ahead)
 ```
+
+### `get_aspect_from_two_points`
+
+Low-level function to check if two points form an aspect.
+
+```python
+from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+
+aspect = get_aspect_from_two_points(
+    point_one_abs_pos=0.0,
+    point_two_abs_pos=120.5,
+    aspects_settings=[{"name": "trine", "degree": 120, "orb": 8}]
+)
+# Returns dict with aspect details if found, else None
+```
+
+### `get_active_points_list`
+
+Extracts active celestial points from a subject based on configuration.
+
+```python
+from kerykeion.aspects.aspects_utils import get_active_points_list
+
+points = get_active_points_list(
+    subject=subject,
+    active_points=["Sun", "Moon", "Mercury"],
+    planets_settings=settings.planets_settings
+)
+```
+
+### `planet_id_decoder`
+
+Converts a planet name to its Swiss Ephemeris ID.
+
+```python
+from kerykeion.aspects.aspects_utils import planet_id_decoder
+
+swe_id = planet_id_decoder(planets_settings, "Jupiter")
+# Returns 5
+```

@@ -68,12 +68,14 @@ For finer control, use these individual converters:
 | `kerykeion_point_to_context`      | `KerykeionPointModel`      | Describes a single planet/point.        |
 | `lunar_phase_to_context`          | `LunarPhaseModel`          | Describes the lunar phase.              |
 | `aspect_to_context`               | `AspectModel`              | Describes an aspect between two points. |
+| `point_in_house_to_context`       | `PointInHouseModel`        | Describes a point in another's house.   |
 | `astrological_subject_to_context` | `AstrologicalSubjectModel` | Full subject description.               |
 | `single_chart_data_to_context`    | `SingleChartDataModel`     | Natal chart with aspects.               |
 | `dual_chart_data_to_context`      | `DualChartDataModel`       | Synastry/Transit with inter-aspects.    |
 | `element_distribution_to_context` | `ElementDistributionModel` | Element breakdown.                      |
 | `quality_distribution_to_context` | `QualityDistributionModel` | Quality breakdown.                      |
 | `house_comparison_to_context`     | `HouseComparisonModel`     | House overlay analysis.                 |
+| `transit_moment_to_context`       | `TransitMomentModel`       | Single transit moment snapshot.         |
 | `transits_time_range_to_context`  | `TransitsTimeRangeModel`   | Time-range transit data.                |
 
 ```python
