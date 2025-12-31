@@ -9,6 +9,16 @@ order: 6
 
 The `AspectsFactory` provides a unified interface for calculating angular relationships between planets. It handles both single-chart analysis (natal, return) and dual-chart analysis (synastry, transits).
 
+## What Are Aspects?
+
+**Aspects** are specific angular relationships between planets in a chart. They represent how planetary energies interact:
+
+-   **Harmonious aspects** (trines 120°, sextiles 60°) indicate ease and flow between planetary energies
+-   **Challenging aspects** (squares 90°, oppositions 180°) indicate tension, conflict, or dynamic growth opportunities
+-   **Neutral/Mixed** (conjunctions 0°) blend energies intensely, for better or worse depending on the planets involved
+
+Aspects are fundamental to astrological interpretation—a chart without aspect analysis is like a musical score without chords.
+
 ## Factory Methods
 
 ### 1. `single_chart_aspects`

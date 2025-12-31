@@ -15,6 +15,8 @@ The `FetchGeonames` class provides an interface to the GeoNames API to retrieve 
 
 ## Usage
 
+Initialize the class with a city and country code to fetch its geographical data.
+
 ```python
 from kerykeion.fetch_geonames import FetchGeonames
 

@@ -19,6 +19,8 @@ The `ReportGenerator` class generates concise, human-readable text reports (tabl
 
 ### Printing to Console
 
+The simplest way to use the generator is to print the report directly to `stdout`. This is useful for CLI applications or debugging.
+
 ```python
 from kerykeion import ReportGenerator, AstrologicalSubjectFactory
 

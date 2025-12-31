@@ -10,10 +10,6 @@ order: 12
 
 This section documents the core data structures, Pydantic models, and type definitions used throughout the Kerykeion library to ensure type safety and data consistency.
 
-> [!WARNING]
-> The `kerykeion.kr_types` module is **deprecated** and will be removed in version 6.0.
-> Please import types directly from `kerykeion.schemas` or its submodules.
-
 ## Overview
 
 The `kerykeion.schemas` package contains all the data definitions:

@@ -9,7 +9,27 @@ order: 8
 
 The `RelationshipScoreFactory` calculates a quantitative compatibility score between two subjects using the **Ciro Discepolo method**. It assigns points to specific inter-chart aspects and qualities.
 
+## What Is Relationship Scoring?
+
+While most synastry analysis is qualitative (describing the nature of aspects), the **Discepolo method** provides a numerical compatibility score. This score focuses on traditional "destiny indicators":
+
+**The Method Prioritizes:**
+
+-   **Luminaries** (Sun and Moon) - Core identity and emotional nature
+-   **Angles** (Ascendant, MC) - How individuals meet the world
+-   **Venus-Mars** - Romantic and sexual compatibility
+-   **Orb Precision** - Tighter aspects score higher (±2° gets bonus points)
+-   **Quality Matching** - Same modality (Cardinal/Fixed/Mutable) adds points
+
+This numerical approach is useful for:
+
+-   Comparing multiple potential partners objectively
+-   Research into relationship longevity patterns
+-   Quick compatibility screening in dating applications
+
 ## Basic Usage
+
+To calculate a score, create two `AstrologicalSubject` instances (one for each partner) and pass them to the factory.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory

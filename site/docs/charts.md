@@ -7,7 +7,20 @@ order: 4
 
 # Charts Visualization
 
-The `ChartDrawer` class is the generic visualization engine. It renders professional SVG charts from pre-calculated data. It is decoupled from astronomical calculations — it simply draws what `ChartDataFactory` provides.
+The `ChartDrawer` class is the generic visualization engine. It renders professional SVG charts from pre-calculated data.
+
+## Design Philosophy
+
+Kerykeion follows a **separation of concerns** principle:
+
+-   **`ChartDataFactory`** handles all astronomical calculations (planetary positions, aspects, elements, etc.)
+-   **`ChartDrawer`** focuses purely on visualization (drawing wheels, aspect grids, labels)
+
+This decoupling means you can:
+
+-   Generate chart data once and render it in multiple formats/themes
+-   Perform calculations without needing visual output
+-   Swap visualization engines without touching calculation logic
 
 ## Standard Workflow
 
@@ -38,6 +51,8 @@ The drawing process is identical for all types; only the _Data Generation_ step 
 
 ### Synastry (Comparison)
 
+Synastry charts overlay two users' planetary positions to visualize their relationship. The outer wheel shows the second subject's planets.
+
 ```python
 # Create chart data for two subjects
 synastry_data = ChartDataFactory.create_synastry_chart_data(subject_a, subject_b)
@@ -46,6 +61,8 @@ drawer = ChartDrawer(synastry_data)
 
 ### Transits
 
+Transit charts compare a static natal chart (inner wheel) against the current moving sky (outer wheel) to analyze current astrological influences.
+
 ```python
 # Compare natal chart against current time
 transit_data = ChartDataFactory.create_transit_chart_data(natal_subject, current_time_subject)
@@ -53,6 +70,8 @@ drawer = ChartDrawer(transit_data)
 ```
 
 ### Composite (Midpoint)
+
+Composite charts display a single wheel calculated from the midpoints of two subjects, representing the relationship as a unified entity.
 
 ```python
 from kerykeion.composite_subject_factory import CompositeSubjectFactory

@@ -9,6 +9,31 @@ order: 11
 
 The `PlanetaryReturnFactory` calculates the precise moment when a planet returns to its natal position (e.g., Solar Returns). It uses Swiss Ephemeris for high-precision timing.
 
+## What Are Planetary Returns?
+
+A **Planetary Return** occurs when a transiting planet returns to the exact degree it occupied at birth. The return chart cast for that precise moment becomes a forecast for the cycle ahead:
+
+**Solar Return (Birthday Chart):**
+
+-   Happens once per year on or near your birthday
+-   The Sun returns to its natal position (~365.25 days)
+-   Forecasts themes and events for the coming year
+-   Traditionally cast for your current location (relocated solar return)
+
+**Lunar Return:**
+
+-   Happens approximately every 27-29 days
+-   The Moon returns to its natal position
+-   Forecasts the emotional climate for the coming month
+-   Useful for timing short-term events and emotional cycles
+
+**Other Returns:**
+
+-   **Mercury Return** (~88 days): Communication and learning cycles
+-   **Venus Return** (~225 days): Relationship and value cycles
+-   **Mars Return** (~2 years): Action and energy cycles
+-   **Jupiter/Saturn Returns**: Major life transitions (every 12 and ~29 years respectively)
+
 ## Usage
 
 Calculating a return involves the **Natal Subject** and the **Return Location** (which can differ from birth location).

@@ -11,6 +11,8 @@ The `HouseComparisonFactory` performs a bidirectional analysis of where one subj
 
 ## Usage
 
+Initialize the factory with two subjects to generate a bidirectional comparison report showing planet-in-house placements.
+
 ```python
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.house_comparison import HouseComparisonFactory

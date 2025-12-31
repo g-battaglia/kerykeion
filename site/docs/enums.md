@@ -12,6 +12,8 @@ This module (`kerykeion.enums`) defines standard enumerations for consistency.
 
 ## `Planets`
 
+Constants for all celestial bodies supported by the Swiss Ephemeris.
+
 | Planet / Point       | Enum Value                                                                    |
 | :------------------- | :---------------------------------------------------------------------------- |
 | **Luminaries**       | `SUN`, `MOON`                                                                 |
@@ -21,6 +23,8 @@ This module (`kerykeion.enums`) defines standard enumerations for consistency.
 
 ## `Signs`
 
+The 12 Zodiac signs categorized by element.
+
 | Sign      | Enum Value                                       |
 | :-------- | :----------------------------------------------- |
 | **Fire**  | `ARI` (Aries), `LEO` (Leo), `SAG` (Sagittarius)  |
@@ -29,6 +33,8 @@ This module (`kerykeion.enums`) defines standard enumerations for consistency.
 | **Water** | `CAN` (Cancer), `SCO` (Scorpio), `PIS` (Pisces)  |
 
 ## `Aspects`
+
+Standard specific angles between planets supported by Kerykeion.
 
 | Type      | Examples                                                                                 |
 | :-------- | :--------------------------------------------------------------------------------------- |

@@ -9,6 +9,18 @@ order: 12
 
 The `TransitsTimeRangeFactory` calculates transits over a period of time (days, weeks, or months) by comparing a fixed Natal chart against a series of Ephemeris data points.
 
+## What Are Transits?
+
+**Transits** are the current positions of planets in the sky as they form aspects to the planets in your natal chart. They represent the dynamic, ever-changing celestial influences affecting your birth chart at any given moment.
+
+In predictive astrology, transits are used to:
+
+-   **Forecast** upcoming periods of opportunity or challenge
+-   **Understand timing** for major life events (career changes, relationships, relocations)
+-   **Track cycles** of outer planets (Jupiter, Saturn, Uranus, Neptune, Pluto) that mark significant developmental phases
+
+For example, when transiting Jupiter (the planet of expansion) forms a trine (harmonious 120° aspect) to your natal Sun, it's traditionally considered a favorable period for growth and new opportunities.
+
 ## Usage Workflow
 
 The process involves three steps:
@@ -72,6 +84,8 @@ for moment in results.transits:
 ```
 
 ### Result Data Structure
+
+The `get_transit_moments()` method returns a specialized object simplifying access to the data.
 
 -   `results.dates`: List of all ISO timestamps checked.
 -   `results.transits`: List of objects containing:

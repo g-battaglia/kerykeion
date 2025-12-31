@@ -19,7 +19,7 @@ The `ChartDataFactory` extracts and structures all astronomical calculations int
 
 ### 1. `create_natal_chart_data`
 
-Used for simple charts (Natal, Return, Composite).
+Calculates all standard chart data (planets, houses, aspects, elements) for a single subject.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory

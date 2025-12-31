@@ -11,6 +11,8 @@ The `EphemerisDataFactory` generates time-series astrological data (ephemerides)
 
 ## Basic Usage
 
+Initialize the factory with a start and end date to generate a list of planetary positions.
+
 ```python
 from datetime import datetime
 from kerykeion import EphemerisDataFactory

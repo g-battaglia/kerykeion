@@ -11,6 +11,8 @@ The `to_context` function converts Kerykeion data models into precise, plain-tex
 
 ## Usage
 
+The primary function is `to_context()`. It takes a Kerykeion model and returns a formatted string.
+
 ```python
 from kerykeion import AstrologicalSubjectFactory, to_context
 

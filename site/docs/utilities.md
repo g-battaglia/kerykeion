@@ -71,6 +71,8 @@ jd = datetime_to_julian(datetime(2000, 1, 1, 12, 0, 0))
 
 ## Lunar Data
 
+Helper function to calculate accurate lunar phases and illumination.
+
 | Function                                  | Description                                                        |
 | :---------------------------------------- | :----------------------------------------------------------------- |
 | `calculate_moon_phase(moon_deg, sun_deg)` | Returns `MoonPhaseModel` with phase name, emoji, and illumination. |
@@ -83,6 +85,8 @@ print(f"{phase.moon_emoji} {phase.moon_phase_name}")
 ```
 
 ## Data Utilities
+
+General purpose tools for list management, logging, and SVG optimization.
 
 | Function                                          | Description                                           |
 | :------------------------------------------------ | :---------------------------------------------------- |

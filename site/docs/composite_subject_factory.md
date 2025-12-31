@@ -9,6 +9,23 @@ order: 7
 
 The `CompositeSubjectFactory` creates a new astrological subject representing the relationship between two people using the **Midpoint Method**. The resulting chart represents the relationship itself as a third entity.
 
+## What Is a Composite Chart?
+
+Unlike **Synastry** (which compares two separate charts), a **Composite Chart** creates a single unified chart that symbolizes the relationship itself. Think of it as the "birth chart" of the relationship.
+
+**How It Works:**
+
+-   Every planetary position is calculated as the midpoint between the two natal charts
+-   The Composite Sun shows the relationship's core identity and purpose
+-   The Composite Moon reveals the emotional dynamics between partners
+-   House placements show which life areas the relationship emphasizes
+
+Composite charts are especially useful for understanding:
+
+-   **Romantic partnerships**: What does this relationship want to become?
+-   **Business partnerships**: What are the shared goals and challenges?
+-   **Friendships**: What unique dynamic emerges when these two people interact?
+
 ## Basic Usage
 
 The process involves creating two individual subjects first, then generating a composite from them.
