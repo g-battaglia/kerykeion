@@ -42,16 +42,26 @@ print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 
 **Parameters:**
 
--   `name` (str): Name of the subject.
--   `year`, `month`, `day`, `hour`, `minute` (int): Birth time components.
--   `city`, `nation` (str): Location for online lookup.
--   `lng`, `lat` (float): Coordinates for offline mode (if `city`/`nation` omitted or `online=False`).
--   `tz_str` (str): Timezone string (e.g., "Europe/London") for offline mode.
--   `zodiac_type` (str): "Tropical" (default) or "Sidereal".
--   `sidereal_mode` (str): Ayanamsha mode (e.g., "LAHIRI") if `zodiac_type="Sidereal"`.
--   `houses_system_identifier` (str): House system code (default "P").
--   `perspective_type` (str): "Apparent Geocentric" (default), "True Geocentric", "Heliocentric", or "Topocentric".
--   `active_points` (list[str]): List of points to calculate (defaults to full set).
+| Parameter                  | Type                     | Default         | Description                                                            |
+| :------------------------- | :----------------------- | :-------------- | :--------------------------------------------------------------------- |
+| `name`                     | `str`                    | `"Now"`         | Name or identifier for the subject.                                    |
+| `year`, `month`, `day`     | `Optional[int]`          | `None`          | Date components. Defaults to current date if omitted.                  |
+| `hour`, `minute`           | `Optional[int]`          | `None`          | Time components. Defaults to current time if omitted.                  |
+| `seconds`                  | `int`                    | `0`             | Seconds component of the time.                                         |
+| `city`                     | `Optional[str]`          | `None`          | City name (used with `online=True`).                                   |
+| `nation`                   | `Optional[str]`          | `None`          | ISO Country code (e.g., "GB").                                         |
+| `lng`, `lat`               | `Optional[float]`        | `None`          | Coordinates (used with `online=False` or as override).                 |
+| `tz_str`                   | `Optional[str]`          | `None`          | Timezone ID (e.g., "Europe/London"). Required if `online=False`.       |
+| `geonames_username`        | `Optional[str]`          | `None`          | GeoNames username (required for `online=True`).                        |
+| `online`                   | `bool`                   | `True`          | Whether to fetch location/timezone data from GeoNames API.             |
+| `zodiac_type`              | `ZodiacType`             | `"Tropical"`    | "Tropical" or "Sidereal".                                              |
+| `sidereal_mode`            | `Optional[SiderealMode]` | `None`          | Ayanamsha mode (e.g., "LAHIRI"). Required if `zodiac_type="Sidereal"`. |
+| `houses_system_identifier` | `HousesSystemIdentifier` | `"P"`           | House system code (e.g., "P" for Placidus, "W" for Whole Sign).        |
+| `perspective_type`         | `PerspectiveType`        | `"Apparent..."` | "Apparent Geocentric", "Heliocentric", etc.                            |
+| `active_points`            | `Optional[List[str]]`    | `None`          | List of points to calculate. If `None`, calculates all.                |
+| `is_dst`                   | `Optional[bool]`         | `None`          | Explicitly set DST for ambiguous times (fold).                         |
+| `cache_expire_after_days`  | `int`                    | `30`            | Days to cache online location lookups.                                 |
+| `calculate_lunar_phase`    | `bool`                   | `True`          | Whether to calculate lunar phase details.                              |
 
 ### 2. `from_iso_utc_time`
 
