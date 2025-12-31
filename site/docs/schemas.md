@@ -407,7 +407,20 @@ Comprehensive literal for all supported celestial points.
 
 The 12 astrological houses.
 
-`"First_House"`, `"Second_House"`, `"Third_House"`, `"Fourth_House"`, `"Fifth_House"`, `"Sixth_House"`, `"Seventh_House"`, `"Eighth_House"`, `"Ninth_House"`, `"Tenth_House"`, `"Eleventh_House"`, `"Twelfth_House"`
+| Value              | Number | Description                                       |
+| :----------------- | :----- | :------------------------------------------------ |
+| `"First_House"`    | 1      | Self, identity, physical appearance, beginnings.  |
+| `"Second_House"`   | 2      | Possessions, values, self-worth, resources.       |
+| `"Third_House"`    | 3      | Communication, siblings, short trips, learning.   |
+| `"Fourth_House"`   | 4      | Home, family, roots, emotional foundation.        |
+| `"Fifth_House"`    | 5      | Creativity, romance, children, pleasure, play.    |
+| `"Sixth_House"`    | 6      | Health, daily work, service, routines.            |
+| `"Seventh_House"`  | 7      | Partnerships, marriage, open enemies, contracts.  |
+| `"Eighth_House"`   | 8      | Transformation, shared resources, death, rebirth. |
+| `"Ninth_House"`    | 9      | Philosophy, higher education, travel, expansion.  |
+| `"Tenth_House"`    | 10     | Career, public image, reputation, authority.      |
+| `"Eleventh_House"` | 11     | Friends, groups, hopes, wishes, social networks.  |
+| `"Twelfth_House"`  | 12     | Subconscious, secrets, spirituality, isolation.   |
 
 ---
 
@@ -468,22 +481,28 @@ Describes the phase of an aspect between two points.
 
 The Ayanamsa (precession mode) used for Sidereal calculations.
 
--   `"FAGAN_BRADLEY"` (Standard Western Sidereal)
--   `"LAHIRI"` (Standard Vedic/Jyotish)
--   `"DELUCE"`
--   `"RAMAN"`
--   `"USHASHASHI"`
--   `"KRISHNAMURTI"`
--   `"DJWHAL_KHUL"`
--   `"YUKTESHWAR"`
--   `"JN_BHASIN"`
--   `"BABYL_KUGLER1"`, `"BABYL_KUGLER2"`, `"BABYL_KUGLER3"`
--   `"BABYL_HUBER"`
--   `"BABYL_ETPSC"`
--   `"ALDEBARAN_15TAU"`
--   `"HIPPARCHOS"`
--   `"SASSANIAN"`
--   `"J2000"`, `"J1900"`, `"B1950"`
+| Value               | Description                                                  |
+| :------------------ | :----------------------------------------------------------- |
+| `"FAGAN_BRADLEY"`   | Standard Western Sidereal ayanamsa, widely used in the West. |
+| `"LAHIRI"`          | Standard Vedic/Jyotish ayanamsa, official in India.          |
+| `"DELUCE"`          | DeLuce ayanamsa.                                             |
+| `"RAMAN"`           | B.V. Raman's ayanamsa, popular in South India.               |
+| `"USHASHASHI"`      | Ushashashi ayanamsa.                                         |
+| `"KRISHNAMURTI"`    | K.S. Krishnamurti's ayanamsa for KP system.                  |
+| `"DJWHAL_KHUL"`     | Djwhal Khul (Theosophical) ayanamsa.                         |
+| `"YUKTESHWAR"`      | Sri Yukteshwar's ayanamsa.                                   |
+| `"JN_BHASIN"`       | J.N. Bhasin's ayanamsa.                                      |
+| `"BABYL_KUGLER1"`   | Babylonian (Kugler 1).                                       |
+| `"BABYL_KUGLER2"`   | Babylonian (Kugler 2).                                       |
+| `"BABYL_KUGLER3"`   | Babylonian (Kugler 3).                                       |
+| `"BABYL_HUBER"`     | Babylonian (Huber).                                          |
+| `"BABYL_ETPSC"`     | Babylonian (ETPSC).                                          |
+| `"ALDEBARAN_15TAU"` | Aldebaran at 15° Taurus, ancient reference point.            |
+| `"HIPPARCHOS"`      | Based on Hipparchos' observations.                           |
+| `"SASSANIAN"`       | Sassanian (Persian) ayanamsa.                                |
+| `"J2000"`           | Julian epoch J2000.0 reference frame.                        |
+| `"J1900"`           | Julian epoch J1900.0 reference frame.                        |
+| `"B1950"`           | Besselian epoch B1950.0 reference frame.                     |
 
 ---
 
@@ -536,7 +555,16 @@ Defines the viewpoint for calculations.
 
 The eight traditional names for the Moon's phases.
 
-`"New Moon"`, `"Waxing Crescent"`, `"First Quarter"`, `"Waxing Gibbous"`, `"Full Moon"`, `"Waning Gibbous"`, `"Last Quarter"`, `"Waning Crescent"`
+| Value               | Phase Index | Description                                   |
+| :------------------ | :---------- | :-------------------------------------------- |
+| `"New Moon"`        | 0           | Moon conjunct Sun; invisible, new beginnings. |
+| `"Waxing Crescent"` | 1           | First sliver visible; intention setting.      |
+| `"First Quarter"`   | 2           | Half moon; action, challenges, decisions.     |
+| `"Waxing Gibbous"`  | 3           | Building toward full; refinement, adjustment. |
+| `"Full Moon"`       | 4           | Moon opposite Sun; culmination, illumination. |
+| `"Waning Gibbous"`  | 5           | Disseminating; sharing, teaching, gratitude.  |
+| `"Last Quarter"`    | 6           | Half moon waning; release, letting go.        |
+| `"Waning Crescent"` | 7           | Final sliver; rest, surrender, preparation.   |
 
 ---
 
@@ -544,7 +572,16 @@ The eight traditional names for the Moon's phases.
 
 Emojis corresponding to the lunar phases.
 
-`"🌑"`, `"🌒"`, `"🌓"`, `"🌔"`, `"🌕"`, `"🌖"`, `"🌗"`, `"🌘"`
+| Emoji  | Phase Index | Phase Name      |
+| :----- | :---------- | :-------------- |
+| `"🌑"` | 0           | New Moon        |
+| `"🌒"` | 1           | Waxing Crescent |
+| `"🌓"` | 2           | First Quarter   |
+| `"🌔"` | 3           | Waxing Gibbous  |
+| `"🌕"` | 4           | Full Moon       |
+| `"🌖"` | 5           | Waning Gibbous  |
+| `"🌗"` | 6           | Last Quarter    |
+| `"🌘"` | 7           | Waning Crescent |
 
 ---
 
@@ -552,7 +589,14 @@ Emojis corresponding to the lunar phases.
 
 Available visual themes for chart rendering.
 
-`"light"`, `"dark"`, `"dark-high-contrast"`, `"classic"`, `"strawberry"`, `"black-and-white"`
+| Value                  | Description                                         |
+| :--------------------- | :-------------------------------------------------- |
+| `"classic"`            | Traditional white background, standard colors.      |
+| `"light"`              | Minimalist light mode with soft tones.              |
+| `"dark"`               | Modern dark mode for reduced eye strain.            |
+| `"dark-high-contrast"` | Dark mode with enhanced contrast for accessibility. |
+| `"strawberry"`         | Pink/red color palette, playful aesthetic.          |
+| `"black-and-white"`    | High contrast monochrome for print output.          |
 
 ---
 
@@ -560,7 +604,18 @@ Available visual themes for chart rendering.
 
 Supported language codes for chart labels.
 
-`"EN"`, `"FR"`, `"PT"`, `"IT"`, `"CN"`, `"ES"`, `"RU"`, `"TR"`, `"DE"`, `"HI"`
+| Code   | Language   |
+| :----- | :--------- |
+| `"EN"` | English    |
+| `"FR"` | French     |
+| `"PT"` | Portuguese |
+| `"IT"` | Italian    |
+| `"CN"` | Chinese    |
+| `"ES"` | Spanish    |
+| `"RU"` | Russian    |
+| `"TR"` | Turkish    |
+| `"DE"` | German     |
+| `"HI"` | Hindi      |
 
 ---
 
@@ -568,7 +623,10 @@ Supported language codes for chart labels.
 
 Types of planetary returns supported.
 
-`"Solar"`, `"Lunar"`
+| Value     | Description                                           |
+| :-------- | :---------------------------------------------------- |
+| `"Solar"` | Sun returns to natal position; annual birthday chart. |
+| `"Lunar"` | Moon returns to natal position; monthly cycle chart.  |
 
 ---
 
@@ -576,7 +634,9 @@ Types of planetary returns supported.
 
 Types of composite charts.
 
-`"Midpoint"`
+| Value        | Description                                       |
+| :----------- | :------------------------------------------------ |
+| `"Midpoint"` | Chart created from midpoints of two natal charts. |
 
 ---
 
@@ -584,7 +644,10 @@ Types of composite charts.
 
 Distinguishes between celestial bodies and house cusps.
 
-`"AstrologicalPoint"`, `"House"`
+| Value                 | Description                           |
+| :-------------------- | :------------------------------------ |
+| `"AstrologicalPoint"` | Planets, asteroids, angles, etc.      |
+| `"House"`             | House cusps (1st through 12th house). |
 
 ---
 
@@ -592,7 +655,20 @@ Distinguishes between celestial bodies and house cusps.
 
 Zodiac sign symbols.
 
-`"♈️"`, `"♉️"`, `"♊️"`, `"♋️"`, `"♌️"`, `"♍️"`, `"♎️"`, `"♏️"`, `"♐️"`, `"♑️"`, `"♒️"`, `"♓️"`
+| Emoji   | Sign        |
+| :------ | :---------- |
+| `"♈️"` | Aries       |
+| `"♉️"` | Taurus      |
+| `"♊️"` | Gemini      |
+| `"♋️"` | Cancer      |
+| `"♌️"` | Leo         |
+| `"♍️"` | Virgo       |
+| `"♎️"` | Libra       |
+| `"♏️"` | Scorpio     |
+| `"♐️"` | Sagittarius |
+| `"♑️"` | Capricorn   |
+| `"♒️"` | Aquarius    |
+| `"♓️"` | Pisces      |
 
 ---
 
