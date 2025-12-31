@@ -39,48 +39,49 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
 
 ## Table of Contents
 
--   [**Web API**](#web-api)
--   [Table of Contents](#table-of-contents)
--   [Installation](#installation)
--   [Quick Start](#quick-start)
--   [Basic Usage](#basic-usage)
--   [Generate a SVG Chart](#generate-a-svg-chart)
-    -   [Birth Chart](#birth-chart)
-    -   [External Birth Chart](#external-birth-chart)
-    -   [Synastry Chart](#synastry-chart)
-    -   [Transit Chart](#transit-chart)
-    -   [Solar Return Chart (Dual Wheel)](#solar-return-chart-dual-wheel)
-    -   [Solar Return Chart (Single Wheel)](#solar-return-chart-single-wheel)
-    -   [Lunar Return Chart](#lunar-return-chart)
-    -   [Composite Chart](#composite-chart)
--   [Wheel Only Charts](#wheel-only-charts)
-    -   [Birth Chart](#birth-chart-1)
-    -   [Wheel Only Birth Chart (External)](#wheel-only-birth-chart-external)
-    -   [Synastry Chart](#synastry-chart-1)
-    -   [Change the Output Directory](#change-the-output-directory)
-    -   [Change Language](#change-language)
-    -   [Minified SVG](#minified-svg)
-    -   [SVG without CSS Variables](#svg-without-css-variables)
-    -   [Grid Only SVG](#grid-only-svg)
--   [Report Generator](#report-generator)
--   [AI Context Serializer](#ai-context-serializer)
-    -   [Quick Examples](#quick-examples)
-    -   [Section Access](#section-access)
--   [Example: Retrieving Aspects](#example-retrieving-aspects)
--   [Element \& Quality Distribution Strategies](#element--quality-distribution-strategies)
--   [Ayanamsa (Sidereal Modes)](#ayanamsa-sidereal-modes)
--   [House Systems](#house-systems)
--   [Perspective Type](#perspective-type)
--   [Themes](#themes)
--   [Alternative Initialization](#alternative-initialization)
--   [Lunar Nodes (Rahu \& Ketu)](#lunar-nodes-rahu--ketu)
--   [JSON Support](#json-support)
--   [Documentation](#documentation)
--   [Development](#development)
--   [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
--   [License](#license)
--   [Contributing](#contributing)
--   [Citations](#citations)
+- [**Web API**](#web-api)
+- [Table of Contents](#table-of-contents)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Basic Usage](#basic-usage)
+- [Generate a SVG Chart](#generate-a-svg-chart)
+  - [Birth Chart](#birth-chart)
+  - [External Birth Chart](#external-birth-chart)
+  - [Synastry Chart](#synastry-chart)
+  - [Transit Chart](#transit-chart)
+  - [Solar Return Chart (Dual Wheel)](#solar-return-chart-dual-wheel)
+  - [Solar Return Chart (Single Wheel)](#solar-return-chart-single-wheel)
+  - [Lunar Return Chart](#lunar-return-chart)
+  - [Composite Chart](#composite-chart)
+- [Wheel Only Charts](#wheel-only-charts)
+  - [Birth Chart](#birth-chart-1)
+  - [Wheel Only Birth Chart (External)](#wheel-only-birth-chart-external)
+  - [Synastry Chart](#synastry-chart-1)
+  - [Change the Output Directory](#change-the-output-directory)
+  - [Change Language](#change-language)
+  - [Minified SVG](#minified-svg)
+  - [SVG without CSS Variables](#svg-without-css-variables)
+  - [Grid Only SVG](#grid-only-svg)
+- [Report Generator](#report-generator)
+  - [Quick Examples](#quick-examples)
+  - [Section Access](#section-access)
+- [AI Context Serializer](#ai-context-serializer)
+  - [Quick Example](#quick-example)
+- [Example: Retrieving Aspects](#example-retrieving-aspects)
+- [Element \& Quality Distribution Strategies](#element--quality-distribution-strategies)
+- [Ayanamsa (Sidereal Modes)](#ayanamsa-sidereal-modes)
+- [House Systems](#house-systems)
+- [Perspective Type](#perspective-type)
+- [Themes](#themes)
+- [Alternative Initialization](#alternative-initialization)
+- [Lunar Nodes (Rahu \& Ketu)](#lunar-nodes-rahu--ketu)
+- [JSON Support](#json-support)
+- [Documentation](#documentation)
+- [Development](#development)
+- [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
+- [License](#license)
+- [Contributing](#contributing)
+- [Citations](#citations)
 
 ## Installation
 
@@ -277,7 +278,7 @@ output_dir.mkdir(exist_ok=True)
 synastry_chart.save_svg(output_path=output_dir, filename="lennon-mccartney-synastry")
 ```
 
-![John Lennon and Paul McCartney Synastry](https://www.kerykeion.net/img/examples/synastry-chart.svg)
+![John Lennon and Paul McCartney Synastry](https://gitlab.com/g-battaglia/kerykeion/-/raw/main/tests/charts/svg/John%20Lennon%20-%20Synastry%20Chart.svg)
 
 ### Transit Chart
 
@@ -695,7 +696,7 @@ output_dir.mkdir(exist_ok=True)
 custom_chart.save_svg(output_path=output_dir, filename="john-lennon-natal-pt")
 ```
 
-More details [here](https://www.kerykeion.net/docs/chart-language).
+More details [here](https://www.kerykeion.net/content/examples/chart-language).
 
 The available languages are:
 
@@ -886,7 +887,7 @@ for section in sections[:3]:
     print(section)
 ```
 
-Refer to the refreshed [Report Documentation](https://www.kerykeion.net/report/) for end-to-end examples covering every supported chart model.
+Refer to the refreshed [Report Documentation](https://www.kerykeion.net/content/examples/report) for end-to-end examples covering every supported chart model.
 
 ## AI Context Serializer
 
@@ -1038,7 +1039,7 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 )
 ```
 
-More examples [here](https://www.kerykeion.net/docs//sidereal-modes/).
+More examples [here](https://www.kerykeion.net/content/examples/sidereal-modes/).
 
 Full list of supported sidereal modes [here](https://www.kerykeion.net/pydocs/kerykeion/schemas/kr_literals.html#SiderealMode).
 
@@ -1057,7 +1058,7 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 )
 ```
 
-More examples [here](https://www.kerykeion.net/docs//houses-systems/).
+More examples [here](https://www.kerykeion.net/content/examples/houses-systems/).
 
 Full list of supported house systems [here](https://www.kerykeion.net/pydocs/kerykeion/schemas/kr_literals.html#HousesSystem).
 
@@ -1078,7 +1079,7 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 )
 ```
 
-More examples [here](https://www.kerykeion.net/docs//perspective-type/).
+More examples [here](https://www.kerykeion.net/content/examples/perspective-type/).
 
 Full list of supported perspective types [here](https://www.kerykeion.net/pydocs/kerykeion/schemas/kr_literals.html#PerspectiveType).
 
@@ -1093,7 +1094,7 @@ Kerykeion provides several chart themes:
 -   **Strawberry**
 -   **Black & White** (optimized for monochrome printing)
 
-Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables. For more detailed instructions on how to apply themes, check the [documentation](https://www.kerykeion.net/docs/theming)
+Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables. For more detailed instructions on how to apply themes, check the [documentation](https://www.kerykeion.net/content/examples/theming)
 
 The Black & White theme renders glyphs, rings, and aspects in solid black on light backgrounds, designed for crisp B/W prints (PDF or paper) without sacrificing legibility.
 
@@ -1232,7 +1233,7 @@ print(johnny.model_dump_json(indent=2))
 ## Documentation
 
 -   **Docs**: [kerykeion.net/docs](https://www.kerykeion.net/content/docs/)
--   **Examples**: See the `examples/` folder for runnable code
+-   **Examples**: [kerykeion.net/examples](https://www.kerykeion.net/content/examples/)
 -   **Auto Generated API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/)
 
 ## Development
