@@ -452,3 +452,40 @@ try:
 except KerykeionException as e:
     print(f"Error calculating chart: {e}")
 ```
+
+## Internal Schemas (`chart_template_model`)
+
+These models are used internally for SVG generation but exposed for advanced customization.
+
+### `ChartTemplateModel`
+
+Variables passed to the Jinja2 template for rendering the SVG.
+
+| Field                         | Type                                         | Description                             |
+| :---------------------------- | :------------------------------------------- | :-------------------------------------- |
+| `viewBox`                     | `str`                                        | SVG viewbox string.                     |
+| `chart_width`, `chart_height` | `int`                                        | Dimensions of the chart.                |
+| `cx`, `cy`                    | `float`                                      | Center coordinates.                     |
+| `outer_radius`                | `int`                                        | Radius of the outer rim.                |
+| `inner_radius`                | `int`                                        | Radius of the inner wheel.              |
+| `planets_settings`            | `List[KerykeionSettingsCelestialPointModel]` | Configuration for each planet.          |
+| `paper_color_0`               | `str`                                        | Background color.                       |
+| `chart_name`                  | `str`                                        | Title of the chart.                     |
+| `chart_first_subject`         | `str`                                        | Name of the primary subject.            |
+| `makeLunarPhase`              | `str`                                        | SVG path data for the lunar phase icon. |
+
+_(And many more styling variables)_
+
+## Detailed Settings Models
+
+### `KerykeionLanguageCelestialPointModel`
+
+Used within `KerykeionLanguageModel` to define localized names for specific bodies.
+
+| Field                    | Description                           |
+| :----------------------- | :------------------------------------ |
+| `Sun`                    | Localized name for Sun.               |
+| `Moon`                   | Localized name for Moon.              |
+| `Mercury`, `Venus`, etc. | Localized name for respective planet. |
+| `True_North_Lunar_Node`  | Localized name for North Node.        |
+| `Pars_Fortunae`          | Localized name for Part of Fortune.   |
