@@ -23,7 +23,7 @@ The main goal of this project is to offer a clean, data-driven approach to astro
 
 Kerykeion also integrates seamlessly with LLM and AI applications.
 
-**📖 Full documentation and interactive examples: [kerykeion.net](https://www.kerykeion.net)**
+**📖 Full documentation and examples: [kerykeion.net](https://www.kerykeion.net)**
 
 Here is an example of a birthchart:
 
@@ -1321,9 +1321,8 @@ print(johnny.model_dump_json(indent=2))
 ## Documentation
 
 - **Main Website**: [kerykeion.net](https://www.kerykeion.net)
-- **Getting Started**: [kerykeion.net/docs](https://www.kerykeion.net/content/docs/)
-- **Examples Gallery**: [kerykeion.net/examples](https://www.kerykeion.net/content/examples/)
-- **API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/)
+- **Docs**: [kerykeion.net/docs](https://www.kerykeion.net/content/docs/)
+- **Examples**: [kerykeion.net/examples](https://www.kerykeion.net/content/examples/)
 - **Astrologer API Docs**: [kerykeion.net/astrologer-api](https://www.kerykeion.net/content/astrologer-api/)
 
 ## Development
