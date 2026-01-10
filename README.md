@@ -34,8 +34,9 @@ Here is an example of a birthchart:
 
 If you want to use Kerykeion in a web application or for commercial or _closed-source_ purposes, you can try the dedicated web API:
 
-**[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/)**
-It is open source and directly supports this project.
+**[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/pricing)**
+
+It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly supports this project.
 
 ## Table of Contents
 
