@@ -296,7 +296,7 @@ synastry_chart.save_svg(output_path=output_dir, filename="lennon-mccartney-synas
 
 **📖 Synastry chart guide: [Synastry Chart Examples](https://www.kerykeion.net/content/examples/synastry-chart)**
 
-![John Lennon and Paul McCartney Synastry](https://gitlab.com/g-battaglia/kerykeion/-/raw/main/tests/charts/svg/John%20Lennon%20-%20Synastry%20Chart.svg)
+![John Lennon and Paul McCartney Synastry](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/charts/svg/John%20Lennon%20-%20Synastry%20Chart.svg)
 
 ### Transit Chart
 
@@ -1319,8 +1319,9 @@ print(johnny.model_dump_json(indent=2))
 ## Documentation
 
 - **Main Website**: [kerykeion.net](https://www.kerykeion.net)
-- **Docs**: [kerykeion.net/docs](https://www.kerykeion.net/content/docs/)
-- **Examples**: [kerykeion.net/examples](https://www.kerykeion.net/content/examples/)
+- **Getting Started**: [kerykeion.net/docs](https://www.kerykeion.net/content/docs/)
+- **Examples Gallery**: [kerykeion.net/examples](https://www.kerykeion.net/content/examples/)
+- **API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/)
 - **Astrologer API Docs**: [kerykeion.net/astrologer-api](https://www.kerykeion.net/content/astrologer-api/)
 
 ## Development
@@ -1361,4 +1362,3 @@ If using Kerykeion in published or academic work, please cite as follows:
 Battaglia, G. (2025). Kerykeion: A Python Library for Astrological Calculations and Chart Generation.
 https://github.com/g-battaglia/kerykeion
 ```
-
