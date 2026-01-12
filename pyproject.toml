@@ -68,6 +68,15 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["kerykeion"]
 
+[tool.hatch.build.targets.sdist]
+include = [
+    "/kerykeion",
+    "/README.md",
+    "/LICENSE",
+    "/pyproject.toml",
+    "/MANIFEST.in",
+]
+
 # MyPy Static Analysis
 [tool.mypy]
 ignore_missing_imports = true

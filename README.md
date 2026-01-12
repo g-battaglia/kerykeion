@@ -28,62 +28,62 @@ Here is an example of a birthchart:
 ![John Lenon Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
 
 > **📘 For AI Agents & LLMs**
-> If you're building LLM-powered applications (or if you are an AI agent 🙂), see [`AI_AGENT_GUIDE.md`](./AI_AGENT_GUIDE.md) for a comprehensive, concise reference optimized for programmatic use and AI context.
+> If you're building LLM-powered applications (or if you are an AI agent 🙂), see [`LLM.txt`](./kerykeion/LLM.txt) for a comprehensive, concise reference optimized for programmatic use and AI context.
 
 ## **Web API**
 
 If you want to use Kerykeion in a web application or for commercial or _closed-source_ purposes, you can try the dedicated web API:
 
-**[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/pricing)**
+**[AstrologerAPI](https://www.kerykeion.net/astrologer-api/subscribe/)**
 
 It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly supports this project.
 
 ## Table of Contents
 
-- [**Web API**](#web-api)
-- [Table of Contents](#table-of-contents)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Basic Usage](#basic-usage)
-- [Generate a SVG Chart](#generate-a-svg-chart)
-  - [Birth Chart](#birth-chart)
-  - [External Birth Chart](#external-birth-chart)
-  - [Synastry Chart](#synastry-chart)
-  - [Transit Chart](#transit-chart)
-  - [Solar Return Chart (Dual Wheel)](#solar-return-chart-dual-wheel)
-  - [Solar Return Chart (Single Wheel)](#solar-return-chart-single-wheel)
-  - [Lunar Return Chart](#lunar-return-chart)
-  - [Composite Chart](#composite-chart)
-- [Wheel Only Charts](#wheel-only-charts)
-  - [Birth Chart](#birth-chart-1)
-  - [Wheel Only Birth Chart (External)](#wheel-only-birth-chart-external)
-  - [Synastry Chart](#synastry-chart-1)
-  - [Change the Output Directory](#change-the-output-directory)
-  - [Change Language](#change-language)
-  - [Minified SVG](#minified-svg)
-  - [SVG without CSS Variables](#svg-without-css-variables)
-  - [Grid Only SVG](#grid-only-svg)
-- [Report Generator](#report-generator)
-  - [Quick Examples](#quick-examples)
-  - [Section Access](#section-access)
-- [AI Context Serializer](#ai-context-serializer)
-  - [Quick Example](#quick-example)
-- [Example: Retrieving Aspects](#example-retrieving-aspects)
-- [Relationship Score](#relationship-score)
-- [Element \& Quality Distribution Strategies](#element--quality-distribution-strategies)
-- [Ayanamsa (Sidereal Modes)](#ayanamsa-sidereal-modes)
-- [House Systems](#house-systems)
-- [Perspective Type](#perspective-type)
-- [Themes](#themes)
-- [Alternative Initialization](#alternative-initialization)
-- [Lunar Nodes (Rahu \& Ketu)](#lunar-nodes-rahu--ketu)
-- [JSON Support](#json-support)
-- [Documentation](#documentation)
-- [Development](#development)
-- [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
-- [License](#license)
-- [Contributing](#contributing)
-- [Citations](#citations)
+-   [**Web API**](#web-api)
+-   [Table of Contents](#table-of-contents)
+-   [Installation](#installation)
+-   [Quick Start](#quick-start)
+-   [Basic Usage](#basic-usage)
+-   [Generate a SVG Chart](#generate-a-svg-chart)
+    -   [Birth Chart](#birth-chart)
+    -   [External Birth Chart](#external-birth-chart)
+    -   [Synastry Chart](#synastry-chart)
+    -   [Transit Chart](#transit-chart)
+    -   [Solar Return Chart (Dual Wheel)](#solar-return-chart-dual-wheel)
+    -   [Solar Return Chart (Single Wheel)](#solar-return-chart-single-wheel)
+    -   [Lunar Return Chart](#lunar-return-chart)
+    -   [Composite Chart](#composite-chart)
+-   [Wheel Only Charts](#wheel-only-charts)
+    -   [Birth Chart](#birth-chart-1)
+    -   [Wheel Only Birth Chart (External)](#wheel-only-birth-chart-external)
+    -   [Synastry Chart](#synastry-chart-1)
+    -   [Change the Output Directory](#change-the-output-directory)
+    -   [Change Language](#change-language)
+    -   [Minified SVG](#minified-svg)
+    -   [SVG without CSS Variables](#svg-without-css-variables)
+    -   [Grid Only SVG](#grid-only-svg)
+-   [Report Generator](#report-generator)
+    -   [Quick Examples](#quick-examples)
+    -   [Section Access](#section-access)
+-   [AI Context Serializer](#ai-context-serializer)
+    -   [Quick Example](#quick-example)
+-   [Example: Retrieving Aspects](#example-retrieving-aspects)
+-   [Relationship Score](#relationship-score)
+-   [Element \& Quality Distribution Strategies](#element--quality-distribution-strategies)
+-   [Ayanamsa (Sidereal Modes)](#ayanamsa-sidereal-modes)
+-   [House Systems](#house-systems)
+-   [Perspective Type](#perspective-type)
+-   [Themes](#themes)
+-   [Alternative Initialization](#alternative-initialization)
+-   [Lunar Nodes (Rahu \& Ketu)](#lunar-nodes-rahu--ketu)
+-   [JSON Support](#json-support)
+-   [Documentation](#documentation)
+-   [Development](#development)
+-   [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
+-   [License](#license)
+-   [Contributing](#contributing)
+-   [Citations](#citations)
 
 ## Installation
 
@@ -737,15 +737,15 @@ custom_chart.save_svg(output_path=output_dir, filename="john-lennon-natal-pt")
 
 The available languages are:
 
-- EN (English)
-- FR (French)
-- PT (Portuguese)
-- ES (Spanish)
-- TR (Turkish)
-- RU (Russian)
-- IT (Italian)
-- CN (Chinese)
-- DE (German)
+-   EN (English)
+-   FR (French)
+-   PT (Portuguese)
+-   ES (Spanish)
+-   TR (Turkish)
+-   RU (Russian)
+-   IT (Italian)
+-   CN (Chinese)
+-   DE (German)
 
 ### Minified SVG
 
@@ -895,14 +895,14 @@ ReportGenerator(synastry_data).print_report(max_aspects=12)
 
 Each report contains:
 
-- A chart-aware title summarising the subject(s) and chart type
-- Birth/event metadata and configuration settings
-- Celestial points with sign, position, **daily motion**, **declination**, retrograde flag, and house
-- House cusp tables for every subject involved
-- Lunar phase details when available
-- Element/quality distributions and active configuration summaries (for chart data)
-- Aspect listings tailored for single or dual charts, with symbols for type and movement
-- Dual-chart extras such as house comparisons and relationship scores (when provided by the data)
+-   A chart-aware title summarising the subject(s) and chart type
+-   Birth/event metadata and configuration settings
+-   Celestial points with sign, position, **daily motion**, **declination**, retrograde flag, and house
+-   House cusp tables for every subject involved
+-   Lunar phase details when available
+-   Element/quality distributions and active configuration summaries (for chart data)
+-   Aspect listings tailored for single or dual charts, with symbols for type and movement
+-   Dual-chart extras such as house comparisons and relationship scores (when provided by the data)
 
 ### Section Access
 
@@ -962,9 +962,9 @@ Celestial Points:
 
 **Key Features:**
 
-- **Standardized Output:** Consistent format for Natal, Synastry, Composite, and Return charts.
-- **Non-Qualitative:** Provides raw data (positions, aspects) without interpretive bias.
-- **Prompt-Ready:** Designed to be injected directly into system prompts.
+-   **Standardized Output:** Consistent format for Natal, Synastry, Composite, and Return charts.
+-   **Non-Qualitative:** Provides raw data (positions, aspects) without interpretive bias.
+-   **Prompt-Ready:** Designed to be injected directly into system prompts.
 
 ## Example: Retrieving Aspects
 
@@ -1166,12 +1166,12 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 
 Kerykeion provides several chart themes:
 
-- **Classic** (default)
-- **Dark**
-- **Dark High Contrast**
-- **Light**
-- **Strawberry**
-- **Black & White** (optimized for monochrome printing)
+-   **Classic** (default)
+-   **Dark**
+-   **Dark High Contrast**
+-   **Light**
+-   **Strawberry**
+-   **Black & White** (optimized for monochrome printing)
 
 Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables.
 
@@ -1238,10 +1238,10 @@ If you prefer automatic geocoding, set `online=True` and provide your GeoNames c
 
 Kerykeion supports both **True** and **Mean** Lunar Nodes:
 
-- **True North Lunar Node**: `"true_node"` (name kept without "north" for backward compatibility).
-- **True South Lunar Node**: `"true_south_node"`.
-- **Mean North Lunar Node**: `"mean_node"` (name kept without "north" for backward compatibility).
-- **Mean South Lunar Node**: `"mean_south_node"`.
+-   **True North Lunar Node**: `"true_node"` (name kept without "north" for backward compatibility).
+-   **True South Lunar Node**: `"true_south_node"`.
+-   **Mean North Lunar Node**: `"mean_node"` (name kept without "north" for backward compatibility).
+-   **Mean South Lunar Node**: `"mean_south_node"`.
 
 In instances of the classes used to generate aspects and SVG charts, only the mean nodes are active. To activate the true nodes, you need to pass the `active_points` parameter to the `ChartDataFactory` methods.
 
@@ -1319,11 +1319,11 @@ print(johnny.model_dump_json(indent=2))
 
 ## Documentation
 
-- **Main Website**: [kerykeion.net](https://www.kerykeion.net)
-- **Getting Started**: [kerykeion.net/docs](https://www.kerykeion.net/content/docs/)
-- **Examples Gallery**: [kerykeion.net/examples](https://www.kerykeion.net/content/examples/)
-- **API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/)
-- **Astrologer API Docs**: [kerykeion.net/astrologer-api](https://www.kerykeion.net/content/astrologer-api/)
+-   **Main Website**: [kerykeion.net](https://www.kerykeion.net)
+-   **Getting Started**: [kerykeion.net/docs](https://www.kerykeion.net/content/docs/)
+-   **Examples Gallery**: [kerykeion.net/examples](https://www.kerykeion.net/content/examples/)
+-   **API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/)
+-   **Astrologer API Docs**: [kerykeion.net/astrologer-api](https://www.kerykeion.net/content/astrologer-api/)
 
 ## Development
 
