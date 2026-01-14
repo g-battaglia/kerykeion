@@ -38,16 +38,18 @@ If you want to use Kerykeion in a web application or for commercial or _closed-s
 
 It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly supports this project.
 
-### Cloud Astrology App
+## **Cloud Astrology App**
 
-If you're looking for a complete cloud-based astrology application for professional astrologers and enthusiasts, check out **[AstrologerStudio](https://www.astrologerstudio.com/)**.
+If you're looking for a complete cloud-based astrology application for professional astrologers and enthusiasts, check out:
 
-It's a fully featured app, still AGPL and open source: **[github.com/g-battaglia/AstrologerStudio](https://github.com/g-battaglia/AstrologerStudio)**.
+**[AstrologerStudio](https://www.astrologerstudio.com/)**
+
+It's a fully featured **[open source](https://github.com/g-battaglia/AstrologerStudio)** app.
 
 ## Table of Contents
 
 - [**Web API**](#web-api)
-  - [Cloud Astrology App](#cloud-astrology-app)
+- [**Cloud Astrology App**](#cloud-astrology-app)
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
