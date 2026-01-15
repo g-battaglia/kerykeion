@@ -1,11 +1,6 @@
 <h1 align="center">Kerykeion</h1>
 
 <div align="center">
-    <a href="https://www.kerykeion.net"><img src="https://img.shields.io/badge/docs-kerykeion.net-blue" alt="Documentation"></a>
-    <a href="https://pypi.org/project/kerykeion/"><img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version"></a>
-    <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
-</div>
-<div align="center">
     <img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="stars">
     <img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="forks">
 </div>
@@ -13,6 +8,10 @@
     <img src="https://static.pepy.tech/badge/kerykeion/month" alt="PyPI Downloads">
     <img src="https://static.pepy.tech/badge/kerykeion/week" alt="PyPI Downloads">
     <img src="https://static.pepy.tech/personalized-badge/kerykeion?period=total&units=INTERNATIONAL_SYSTEM&left_color=GREY&right_color=BLUE&left_text=downloads/total" alt="PyPI Downloads">
+</div>
+<div align="center">
+    <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
+    <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
 </div>
 <p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
 &nbsp;
