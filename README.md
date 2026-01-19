@@ -27,7 +27,7 @@ Here is an example of a birthchart:
 ![John Lenon Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
 
 > **📘 For AI Agents & LLMs**
-> If you're building LLM-powered applications (or if you are an AI agent 🙂), see [`LLM.txt`](./kerykeion/LLM.txt) for a comprehensive, concise reference optimized for programmatic use and AI context.
+> If you're building LLM-powered applications (or if you are an AI agent 🙂), see [`llms.txt`](./kerykeion/llms.txt) for a comprehensive, concise reference optimized for programmatic use and AI context.
 
 ## **Web API**
 
