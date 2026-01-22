@@ -9,7 +9,7 @@
     preserveAspectRatio='xMidYMid'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
-    <title>John Lennon - Wheel Only - Birth Chart | Kerykeion</title>
+    <title>John Lennon - Wheel Only - Birth Chart</title>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>

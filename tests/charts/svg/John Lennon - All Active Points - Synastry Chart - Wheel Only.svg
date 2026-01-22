@@ -9,7 +9,7 @@
     preserveAspectRatio='xMidYMid'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
-    <title>Synastry: John Lennon - All Active Points and Paul McCartney - All Active Points | Kerykeion</title>
+    <title>Synastry: John Lennon - All Active Points and Paul McCartney - All Active Points</title>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>
