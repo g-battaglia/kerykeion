@@ -94,6 +94,7 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     transits: str = Field(title="Transits", description="The transits label in the chart, in the language")
     type: str = Field(title="Type", description="The type label in the chart, in the language")
     couple_aspects: str = Field(title="Couple Aspects", description="The couple aspects label in the chart, in the language")
+    synastry_aspects: str = Field(title="Synastry Aspects", description="The synastry aspects label in the chart, in the language")
     transit_aspects: str = Field(title="Transit Aspects", description="The transit aspects label in the chart, in the language")
     planets_and_house: str = Field(title="Planets and House", description="The planets and house label in the chart, in the language")
     transit_name: str = Field(title="Transit Name", description="The transit name label in the chart, in the language")
