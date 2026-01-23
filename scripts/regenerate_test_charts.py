@@ -24,7 +24,7 @@ from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion.charts.charts_utils import makeLunarPhase
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
-from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
+from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
 
 # Set output directory for all chart SVGs
 OUTPUT_DIR = Path(__file__).parent.parent / "tests" / "charts" / "svg"
@@ -468,6 +468,27 @@ sidereal_light_subject = AstrologicalSubjectFactory.from_birth_data(
 sidereal_light_chart_data = ChartDataFactory.create_natal_chart_data(sidereal_light_subject)
 sidereal_light_chart = ChartDrawer(sidereal_light_chart_data, theme="light")
 sidereal_light_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
+
+# Wheel Only Dark Transparent Natal Chart (Hero Image)
+# Uses TRADITIONAL_ASTROLOGY_ACTIVE_POINTS: Sun to Saturn + lunar nodes
+wheel_dark_transparent_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Wheel Only Dark Transparent",
+    1940,
+    10,
+    9,
+    18,
+    30,
+    "Liverpool",
+    "GB",
+    suppress_geonames_warning=True,
+    active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS,
+)
+wheel_dark_transparent_chart_data = ChartDataFactory.create_natal_chart_data(
+    wheel_dark_transparent_subject,
+    active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS,
+)
+wheel_dark_transparent_chart = ChartDrawer(wheel_dark_transparent_chart_data, theme="dark", transparent_background=True)
+wheel_dark_transparent_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
 
 # Aspect Grid Only Natal Chart
 aspect_grid_only_subject = AstrologicalSubjectFactory.from_birth_data(

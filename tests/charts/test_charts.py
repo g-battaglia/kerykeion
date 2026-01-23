@@ -51,7 +51,7 @@ from typing import Optional
 from kerykeion import AstrologicalSubjectFactory, ChartDrawer, CompositeSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
-from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
+from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
 
 from .compare_svg_lines import compare_svg_lines
 
@@ -1262,6 +1262,23 @@ class TestCharts:
         chart_data = ChartDataFactory.create_natal_chart_data(subject)
         chart_svg = ChartDrawer(chart_data, theme="dark").generate_wheel_only_svg_string()
         self._compare_chart_svg("John Lennon - Wheel Only Dark - Natal Chart - Wheel Only.svg", chart_svg)
+
+    def test_wheel_only_dark_transparent_natal(self):
+        """Test natal chart wheel-only with dark theme and transparent background (hero image).
+
+        Uses TRADITIONAL_ASTROLOGY_ACTIVE_POINTS (Sun to Saturn + lunar nodes).
+        """
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "John Lennon - Wheel Only Dark Transparent",
+            *self.JOHN_LENNON_BIRTH_DATA,
+            suppress_geonames_warning=True,
+            active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS,
+        )
+        chart_data = ChartDataFactory.create_natal_chart_data(
+            subject, active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
+        )
+        chart_svg = ChartDrawer(chart_data, theme="dark", transparent_background=True).generate_wheel_only_svg_string()
+        self._compare_chart_svg("John Lennon - Wheel Only Dark Transparent - Natal Chart - Wheel Only.svg", chart_svg)
 
     def test_wheel_only_light_natal(self):
         """Test natal chart wheel-only with light theme."""

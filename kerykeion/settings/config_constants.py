@@ -3,6 +3,22 @@ from kerykeion.schemas.kr_models import ActiveAspect
 from typing import List
 
 
+TRADITIONAL_ASTROLOGY_ACTIVE_POINTS: List[AstrologicalPoint] = [
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "True_North_Lunar_Node",
+    "True_South_Lunar_Node",
+]
+"""
+Traditional astrology active points: the seven classical planets (Sun to Saturn) plus lunar nodes.
+Excludes modern planets (Uranus, Neptune, Pluto), asteroids, and calculated points (Asc, MC, etc.).
+"""
+
 DEFAULT_ACTIVE_POINTS: List[AstrologicalPoint] = [
     "Sun",
     "Moon",
@@ -94,7 +110,7 @@ ALL_ACTIVE_POINTS: List[AstrologicalPoint] = [
     "Pars_Fortunae",
     "Pars_Spiritus",
     "Pars_Amoris",
-    "Pars_Fidei"
+    "Pars_Fidei",
 ]
 """
 Full list of active points in the charts or aspects calculations.
@@ -108,8 +124,8 @@ DEFAULT_ACTIVE_ASPECTS: List[ActiveAspect] = [
     {"name": "sextile", "orb": 6},
     {"name": "square", "orb": 5},
     {"name": "quintile", "orb": 1},
-    # {"name": "semi-sextile", "orb": 1},
-    # {"name": "semi-square", "orb": 1},
+    # {"name": "semi-sextile", "orb": 1},
+    # {"name": "semi-square", "orb": 1},
     # {"name": "sesquiquadrate", "orb": 1},
     # {"name": "biquintile", "orb": 1},
     # {"name": "quincunx", "orb": 1},
