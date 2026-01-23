@@ -490,6 +490,29 @@ wheel_dark_transparent_chart_data = ChartDataFactory.create_natal_chart_data(
 wheel_dark_transparent_chart = ChartDrawer(wheel_dark_transparent_chart_data, theme="dark", transparent_background=True)
 wheel_dark_transparent_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
 
+# Wheel Only Classic Transparent Natal Chart (Hero Image)
+# Uses TRADITIONAL_ASTROLOGY_ACTIVE_POINTS: Sun to Saturn + lunar nodes
+wheel_classic_transparent_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Wheel Only Classic Transparent",
+    1940,
+    10,
+    9,
+    18,
+    30,
+    "Liverpool",
+    "GB",
+    suppress_geonames_warning=True,
+    active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS,
+)
+wheel_classic_transparent_chart_data = ChartDataFactory.create_natal_chart_data(
+    wheel_classic_transparent_subject,
+    active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS,
+)
+wheel_classic_transparent_chart = ChartDrawer(
+    wheel_classic_transparent_chart_data, theme="classic", transparent_background=True
+)
+wheel_classic_transparent_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
+
 # Aspect Grid Only Natal Chart
 aspect_grid_only_subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Aspect Grid Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
