@@ -72,6 +72,82 @@ DEFAULT_ZODIAC_TYPE: ZodiacType = "Tropical"
 DEFAULT_PERSPECTIVE_TYPE: PerspectiveType = "Apparent Geocentric"
 DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS = 30
 
+# =============================================================================
+# PLANET CONFIGURATION MAPPINGS
+# =============================================================================
+# These mappings define the Swiss Ephemeris IDs for each celestial body.
+# Using a centralized configuration eliminates repetitive code and makes
+# it easier to add new celestial bodies in the future.
+
+# Standard planets with direct Swiss Ephemeris IDs (0-20)
+STANDARD_PLANETS: Dict[AstrologicalPoint, int] = {
+    "Sun": 0,
+    "Moon": 1,
+    "Mercury": 2,
+    "Venus": 3,
+    "Mars": 4,
+    "Jupiter": 5,
+    "Saturn": 6,
+    "Uranus": 7,
+    "Neptune": 8,
+    "Pluto": 9,
+    "Mean_North_Lunar_Node": 10,
+    "True_North_Lunar_Node": 11,
+    "Mean_Lilith": 12,
+    "True_Lilith": 13,
+    "Earth": 14,
+    "Chiron": 15,
+    "Pholus": 16,
+    "Ceres": 17,
+    "Pallas": 18,
+    "Juno": 19,
+    "Vesta": 20,
+}
+
+# Trans-Neptunian Objects requiring AST_OFFSET
+# These use Swiss Ephemeris asteroid offset + minor planet number
+TNO_PLANETS: Dict[AstrologicalPoint, int] = {
+    "Eris": 136199,
+    "Sedna": 90377,
+    "Haumea": 136108,
+    "Makemake": 136472,
+    "Ixion": 28978,
+    "Orcus": 90482,
+    "Quaoar": 50000,
+}
+
+# Fixed stars (use different calculation method)
+FIXED_STARS: List[AstrologicalPoint] = ["Regulus", "Spica"]
+
+# Opposite points derived from other calculations
+OPPOSITE_POINTS: Dict[AstrologicalPoint, AstrologicalPoint] = {
+    "Mean_South_Lunar_Node": "Mean_North_Lunar_Node",
+    "True_South_Lunar_Node": "True_North_Lunar_Node",
+}
+
+# Arabic Parts configuration: (name, required_points, formula_type)
+# formula_type: "fortune" = day/night variant, "simple" = single formula
+ARABIC_PARTS_CONFIG: Dict[AstrologicalPoint, Dict[str, Any]] = {
+    "Pars_Fortunae": {
+        "required": ["Ascendant", "Sun", "Moon"],
+        "day_formula": lambda asc, sun, moon: asc + moon - sun,
+        "night_formula": lambda asc, sun, moon: asc + sun - moon,
+    },
+    "Pars_Spiritus": {
+        "required": ["Ascendant", "Sun", "Moon"],
+        "day_formula": lambda asc, sun, moon: asc + sun - moon,
+        "night_formula": lambda asc, sun, moon: asc + moon - sun,
+    },
+    "Pars_Amoris": {
+        "required": ["Ascendant", "Venus", "Sun"],
+        "formula": lambda asc, venus, sun: asc + venus - sun,
+    },
+    "Pars_Fidei": {
+        "required": ["Ascendant", "Jupiter", "Saturn"],
+        "formula": lambda asc, jupiter, saturn: asc + jupiter - saturn,
+    },
+}
+
 # Warning messages
 GEONAMES_DEFAULT_USERNAME_WARNING = (
     "\n********\n"
@@ -1210,6 +1286,143 @@ class AstrologicalSubjectFactory:
                 active_points.remove(planet_name)
 
     @staticmethod
+    def _ensure_point_calculated(
+        point: AstrologicalPoint,
+        data: Dict[str, Any],
+        julian_day: float,
+        iflag: int,
+        houses_degree_ut: List[float],
+        point_type: PointType,
+        active_points: List[AstrologicalPoint],
+    ) -> None:
+        """
+        Ensure a required point is calculated for Arabic Parts computation.
+
+        If the point is not already in the data dictionary, calculates it using
+        the appropriate method (Swiss Ephemeris for planets, houses for Ascendant).
+
+        Args:
+            point: The point to ensure is calculated
+            data: Main calculation data dictionary
+            julian_day: Julian Day Number
+            iflag: Swiss Ephemeris calculation flags
+            houses_degree_ut: House cusp degrees
+            point_type: Classification of the point type
+            active_points: List of active points (may be modified)
+        """
+        point_key = point.lower()
+        if point_key in data:
+            return  # Already calculated
+
+        # Handle Ascendant specially (from houses calculation)
+        if point == "Ascendant":
+            if data["zodiac_type"] == "Sidereal":
+                cusps, ascmc = swe.houses_ex(
+                    tjdut=data["julian_day"],
+                    lat=data["lat"],
+                    lon=data["lng"],
+                    hsys=str.encode(data["houses_system_identifier"]),
+                    flags=swe.FLG_SIDEREAL,
+                )
+            else:
+                cusps, ascmc = swe.houses(
+                    tjdut=data["julian_day"],
+                    lat=data["lat"],
+                    lon=data["lng"],
+                    hsys=str.encode(data["houses_system_identifier"]),
+                )
+            data["ascendant"] = get_kerykeion_point_from_degree(ascmc[0], "Ascendant", point_type=point_type)
+            data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
+            data["ascendant"].retrograde = False
+            return
+
+        # For planets, use STANDARD_PLANETS mapping
+        if point in STANDARD_PLANETS:
+            planet_id = STANDARD_PLANETS[point]
+            planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
+            data[point_key] = get_kerykeion_point_from_degree(
+                planet_calc[0], point, point_type=point_type, speed=planet_calc[3], declination=planet_calc[1]
+            )
+            data[point_key].house = get_planet_house(planet_calc[0], houses_degree_ut)
+            data[point_key].retrograde = planet_calc[3] < 0
+
+    @staticmethod
+    def _calculate_arabic_part(
+        part_name: AstrologicalPoint,
+        config: Dict[str, Any],
+        data: Dict[str, Any],
+        julian_day: float,
+        iflag: int,
+        houses_degree_ut: List[float],
+        point_type: PointType,
+        active_points: List[AstrologicalPoint],
+        calculated_planets: List[AstrologicalPoint],
+    ) -> None:
+        """
+        Calculate an Arabic Part (Lot) using its configuration.
+
+        This method handles:
+        - Auto-activation of required prerequisite points
+        - Day/night chart detection for parts with day/night variants
+        - Formula application and result storage
+
+        Args:
+            part_name: Name of the Arabic Part to calculate
+            config: Configuration dict with required points and formula(s)
+            data: Main calculation data dictionary
+            julian_day: Julian Day Number
+            iflag: Swiss Ephemeris calculation flags
+            houses_degree_ut: House cusp degrees
+            point_type: Classification of the point type
+            active_points: List of active points (may be modified)
+            calculated_planets: List of successfully calculated points
+        """
+        required_points = config["required"]
+
+        # Auto-activate and calculate missing required points
+        missing_points = [p for p in required_points if p not in active_points]
+        if missing_points:
+            logging.info(f"Automatically adding required points for {part_name}: {missing_points}")
+            active_points.extend(missing_points)
+
+        # Ensure all required points are calculated
+        for point in required_points:
+            AstrologicalSubjectFactory._ensure_point_calculated(
+                point, data, julian_day, iflag, houses_degree_ut, point_type, active_points
+            )
+
+        # Verify all required points are available
+        required_keys = [p.lower() for p in required_points]
+        if not all(k in data for k in required_keys):
+            return  # Cannot calculate if missing dependencies
+
+        # Get point positions
+        positions = [data[p.lower()].abs_pos for p in required_points]
+
+        # Determine if day or night chart (for parts with day/night variants)
+        if "day_formula" in config and "night_formula" in config:
+            if data.get("sun") and data["sun"].house:
+                is_day_chart = get_house_number(data["sun"].house) < 7
+            else:
+                is_day_chart = True  # Default to day chart
+
+            formula = config["day_formula"] if is_day_chart else config["night_formula"]
+        else:
+            formula = config["formula"]
+
+        # Calculate the part degree
+        part_deg = math.fmod(formula(*positions), 360)
+        if part_deg < 0:
+            part_deg += 360
+
+        # Store the result
+        part_key = part_name.lower()
+        data[part_key] = get_kerykeion_point_from_degree(part_deg, part_name, point_type=point_type)
+        data[part_key].house = get_planet_house(part_deg, houses_degree_ut)
+        data[part_key].retrograde = False  # Arabic Parts are never retrograde
+        calculated_planets.append(part_name)
+
+    @staticmethod
     def _calculate_planets(
         data: Dict[str, Any],
         active_points: List[AstrologicalPoint],
@@ -1310,242 +1523,19 @@ class AstrologicalSubjectFactory:
         # Track which planets are actually calculated
         calculated_planets: List[AstrologicalPoint] = []
 
-        # ==================
-        # MAIN PLANETS
-        # ==================
-
-        # Calculate Sun
-        if should_calculate("Sun"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Sun", 0, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # Calculate Moon
-        if should_calculate("Moon"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Moon", 1, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # Calculate Mercury
-        if should_calculate("Mercury"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Mercury", 2, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # Calculate Venus
-        if should_calculate("Venus"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Venus", 3, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # Calculate Mars
-        if should_calculate("Mars"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Mars", 4, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # Calculate Jupiter
-        if should_calculate("Jupiter"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Jupiter", 5, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # Calculate Saturn
-        if should_calculate("Saturn"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Saturn", 6, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # Calculate Uranus
-        if should_calculate("Uranus"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Uranus", 7, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # Calculate Neptune
-        if should_calculate("Neptune"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Neptune", 8, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # Calculate Pluto
-        if should_calculate("Pluto"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Pluto", 9, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # ==================
-        # LUNAR NODES
-        # ==================
-
-        # Calculate Mean North Lunar Node
-        if should_calculate("Mean_North_Lunar_Node"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data,
-                "Mean_North_Lunar_Node",
-                10,
-                julian_day,
-                iflag,
-                houses_degree_ut,
-                point_type,
-                calculated_planets,
-                active_points,
-            )
-            # Get correct declination using equatorial coordinates
-            if "mean_north_lunar_node" in data:
-                mean_north_lunar_node_eq = swe.calc_ut(julian_day, 10, iflag | swe.FLG_EQUATORIAL)[0]
-                data["mean_north_lunar_node"].declination = mean_north_lunar_node_eq[
-                    1
-                ]  # Declination from equatorial coordinates
-
-        # Calculate True North Lunar Node
-        if should_calculate("True_North_Lunar_Node"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data,
-                "True_North_Lunar_Node",
-                11,
-                julian_day,
-                iflag,
-                houses_degree_ut,
-                point_type,
-                calculated_planets,
-                active_points,
-            )
-            # Get correct declination using equatorial coordinates
-            if "true_north_lunar_node" in data:
-                true_north_lunar_node_eq = swe.calc_ut(julian_day, 11, iflag | swe.FLG_EQUATORIAL)[0]
-                data["true_north_lunar_node"].declination = true_north_lunar_node_eq[
-                    1
-                ]  # Declination from equatorial coordinates
-
-        # Calculate Mean South Lunar Node (opposite to Mean North Lunar Node)
-        if should_calculate("Mean_South_Lunar_Node") and "mean_north_lunar_node" in data:
-            mean_south_lunar_node_deg = math.fmod(data["mean_north_lunar_node"].abs_pos + 180, 360)
-            data["mean_south_lunar_node"] = get_kerykeion_point_from_degree(
-                mean_south_lunar_node_deg,
-                "Mean_South_Lunar_Node",
-                point_type=point_type,
-                speed=-data["mean_north_lunar_node"].speed if data["mean_north_lunar_node"].speed is not None else None,
-                declination=-data["mean_north_lunar_node"].declination
-                if data["mean_north_lunar_node"].declination is not None
-                else None,
-            )
-            data["mean_south_lunar_node"].house = get_planet_house(mean_south_lunar_node_deg, houses_degree_ut)
-            data["mean_south_lunar_node"].retrograde = data["mean_north_lunar_node"].retrograde
-            calculated_planets.append("Mean_South_Lunar_Node")
-
-        # Calculate True South Lunar Node (opposite to True North Lunar Node)
-        if should_calculate("True_South_Lunar_Node") and "true_north_lunar_node" in data:
-            true_south_lunar_node_deg = math.fmod(data["true_north_lunar_node"].abs_pos + 180, 360)
-            data["true_south_lunar_node"] = get_kerykeion_point_from_degree(
-                true_south_lunar_node_deg,
-                "True_South_Lunar_Node",
-                point_type=point_type,
-                speed=-data["true_north_lunar_node"].speed if data["true_north_lunar_node"].speed is not None else None,
-                declination=-data["true_north_lunar_node"].declination
-                if data["true_north_lunar_node"].declination is not None
-                else None,
-            )
-            data["true_south_lunar_node"].house = get_planet_house(true_south_lunar_node_deg, houses_degree_ut)
-            data["true_south_lunar_node"].retrograde = data["true_north_lunar_node"].retrograde
-            calculated_planets.append("True_South_Lunar_Node")
-
-        # ==================
-        # LILITH POINTS
-        # ==================
-
-        # Calculate Mean Lilith (Mean Black Moon)
-        if should_calculate("Mean_Lilith"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data,
-                "Mean_Lilith",
-                12,
-                julian_day,
-                iflag,
-                houses_degree_ut,
-                point_type,
-                calculated_planets,
-                active_points,
-            )
-
-        # Calculate True Lilith (Osculating Black Moon)
-        if should_calculate("True_Lilith"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data,
-                "True_Lilith",
-                13,
-                julian_day,
-                iflag,
-                houses_degree_ut,
-                point_type,
-                calculated_planets,
-                active_points,
-            )
-
-        # ==================
-        # SPECIAL POINTS
-        # ==================
-
-        # Calculate Earth - useful for heliocentric charts
-        if should_calculate("Earth"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Earth", 14, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # Calculate Chiron
-        if should_calculate("Chiron"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Chiron", 15, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # Calculate Pholus
-        if should_calculate("Pholus"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Pholus", 16, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # ==================
-        # ASTEROIDS
-        # ==================
-
-        # Calculate Ceres
-        if should_calculate("Ceres"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Ceres", 17, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # Calculate Pallas
-        if should_calculate("Pallas"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Pallas", 18, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # Calculate Juno
-        if should_calculate("Juno"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Juno", 19, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # Calculate Vesta
-        if should_calculate("Vesta"):
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data, "Vesta", 20, julian_day, iflag, houses_degree_ut, point_type, calculated_planets, active_points
-            )
-
-        # ==================
-        # TRANS-NEPTUNIAN OBJECTS
-        # ==================
-
-        # For TNOs we compute ecliptic longitude for zodiac placement and
-        # declination from equatorial coordinates, same as other bodies.
-
-        # Calculate Eris
-        if should_calculate("Eris"):
-            try:
+        # =============================================================================
+        # STANDARD PLANETS (using centralized mapping)
+        # =============================================================================
+        # This loop replaces ~150 lines of repetitive individual planet calculations.
+        # All standard planets (Sun through Vesta) use the same calculation pattern.
+        # South lunar nodes are calculated after True_North_Lunar_Node to preserve
+        # the original calculation order (Mean_North, True_North, Mean_South, True_South).
+        for planet_name, planet_id in STANDARD_PLANETS.items():
+            if should_calculate(planet_name):
                 AstrologicalSubjectFactory._calculate_single_planet(
                     data,
-                    "Eris",
-                    swe.AST_OFFSET + 136199,
+                    planet_name,
+                    planet_id,
                     julian_day,
                     iflag,
                     houses_degree_ut,
@@ -1553,441 +1543,109 @@ class AstrologicalSubjectFactory:
                     calculated_planets,
                     active_points,
                 )
-            except Exception as e:
-                logging.warning(f"Could not calculate Eris position: {e}")
-                if "Eris" in active_points:
-                    active_points.remove("Eris")  # Remove if not calculated
 
-        # Calculate Sedna
-        if should_calculate("Sedna"):
-            try:
-                AstrologicalSubjectFactory._calculate_single_planet(
+                # Special handling for lunar nodes: calculate declination
+                if planet_name in ("Mean_North_Lunar_Node", "True_North_Lunar_Node"):
+                    node_key = planet_name.lower()
+                    if node_key in data:
+                        # Calculate declination using equatorial coordinates
+                        node_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
+                        data[node_key].declination = node_eq[1]
+
+                # After True_North_Lunar_Node, calculate both south nodes
+                # This preserves the original order: Mean_N, True_N, Mean_S, True_S
+                if planet_name == "True_North_Lunar_Node":
+                    for south_node_name, north_node_name in [
+                        ("Mean_South_Lunar_Node", "Mean_North_Lunar_Node"),
+                        ("True_South_Lunar_Node", "True_North_Lunar_Node"),
+                    ]:
+                        north_key = north_node_name.lower()
+                        if should_calculate(south_node_name) and north_key in data:
+                            north_data = data[north_key]
+                            south_deg = math.fmod(north_data.abs_pos + 180, 360)
+                            data[south_node_name.lower()] = get_kerykeion_point_from_degree(
+                                south_deg,
+                                south_node_name,
+                                point_type=point_type,
+                                speed=-north_data.speed if north_data.speed is not None else None,
+                                declination=-north_data.declination if north_data.declination is not None else None,
+                            )
+                            data[south_node_name.lower()].house = get_planet_house(south_deg, houses_degree_ut)
+                            data[south_node_name.lower()].retrograde = north_data.retrograde
+                            calculated_planets.append(south_node_name)
+
+        # =============================================================================
+        # TRANS-NEPTUNIAN OBJECTS (using centralized mapping)
+        # =============================================================================
+        # TNOs require AST_OFFSET and may fail for dates outside ephemeris range
+        for tno_name, asteroid_num in TNO_PLANETS.items():
+            if should_calculate(tno_name):
+                try:
+                    AstrologicalSubjectFactory._calculate_single_planet(
+                        data,
+                        tno_name,
+                        swe.AST_OFFSET + asteroid_num,
+                        julian_day,
+                        iflag,
+                        houses_degree_ut,
+                        point_type,
+                        calculated_planets,
+                        active_points,
+                    )
+                except Exception as e:
+                    logging.warning(f"Could not calculate {tno_name} position: {e}")
+                    if tno_name in active_points:
+                        active_points.remove(tno_name)
+
+        # =============================================================================
+        # FIXED STARS (using centralized list)
+        # =============================================================================
+        # Fixed stars use different calculation method (swe.fixstar_ut)
+        for star_name in FIXED_STARS:
+            if should_calculate(star_name):
+                try:
+                    # Ecliptic longitude for zodiac placement
+                    pos_ecl = swe.fixstar_ut(star_name, julian_day, iflag)[0]
+                    star_deg = pos_ecl[0]
+                    star_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0
+                    # Equatorial coordinates for true declination
+                    pos_eq = swe.fixstar_ut(star_name, julian_day, iflag | swe.FLG_EQUATORIAL)[0]
+                    star_dec = pos_eq[1] if len(pos_eq) > 1 else None
+
+                    star_key = star_name.lower()
+                    data[star_key] = get_kerykeion_point_from_degree(
+                        star_deg, star_name, point_type=point_type, speed=star_speed, declination=star_dec
+                    )
+                    data[star_key].house = get_planet_house(star_deg, houses_degree_ut)
+                    data[star_key].retrograde = False  # Fixed stars are never retrograde
+                    calculated_planets.append(star_name)
+                except Exception as e:
+                    logging.warning(f"Could not calculate {star_name} position: {e}")
+                    if star_name in active_points:
+                        active_points.remove(star_name)
+
+        # =============================================================================
+        # ARABIC PARTS / LOTS (using centralized configuration)
+        # =============================================================================
+        # This loop replaces ~260 lines of repetitive Arabic Parts calculations.
+        # Each part is configured in ARABIC_PARTS_CONFIG with its formula and requirements.
+        for part_name, part_config in ARABIC_PARTS_CONFIG.items():
+            if should_calculate(part_name):
+                AstrologicalSubjectFactory._calculate_arabic_part(
+                    part_name,
+                    part_config,
                     data,
-                    "Sedna",
-                    swe.AST_OFFSET + 90377,
                     julian_day,
                     iflag,
                     houses_degree_ut,
                     point_type,
-                    calculated_planets,
                     active_points,
-                )
-            except Exception as e:
-                logging.warning(f"Could not calculate Sedna position: {e}")
-                if "Sedna" in active_points:
-                    active_points.remove("Sedna")
-
-        # Calculate Haumea
-        if should_calculate("Haumea"):
-            try:
-                AstrologicalSubjectFactory._calculate_single_planet(
-                    data,
-                    "Haumea",
-                    swe.AST_OFFSET + 136108,
-                    julian_day,
-                    iflag,
-                    houses_degree_ut,
-                    point_type,
                     calculated_planets,
-                    active_points,
                 )
-            except Exception as e:
-                logging.warning(f"Could not calculate Haumea position: {e}")
-                if "Haumea" in active_points:
-                    active_points.remove("Haumea")  # Remove if not calculated
 
-        # Calculate Makemake
-        if should_calculate("Makemake"):
-            try:
-                AstrologicalSubjectFactory._calculate_single_planet(
-                    data,
-                    "Makemake",
-                    swe.AST_OFFSET + 136472,
-                    julian_day,
-                    iflag,
-                    houses_degree_ut,
-                    point_type,
-                    calculated_planets,
-                    active_points,
-                )
-            except Exception as e:
-                logging.warning(f"Could not calculate Makemake position: {e}")
-                if "Makemake" in active_points:
-                    active_points.remove("Makemake")  # Remove if not calculated
-
-        # Calculate Ixion
-        if should_calculate("Ixion"):
-            try:
-                AstrologicalSubjectFactory._calculate_single_planet(
-                    data,
-                    "Ixion",
-                    swe.AST_OFFSET + 28978,
-                    julian_day,
-                    iflag,
-                    houses_degree_ut,
-                    point_type,
-                    calculated_planets,
-                    active_points,
-                )
-            except Exception as e:
-                logging.warning(f"Could not calculate Ixion position: {e}")
-                if "Ixion" in active_points:
-                    active_points.remove("Ixion")  # Remove if not calculated
-
-        # Calculate Orcus
-        if should_calculate("Orcus"):
-            try:
-                AstrologicalSubjectFactory._calculate_single_planet(
-                    data,
-                    "Orcus",
-                    swe.AST_OFFSET + 90482,
-                    julian_day,
-                    iflag,
-                    houses_degree_ut,
-                    point_type,
-                    calculated_planets,
-                    active_points,
-                )
-            except Exception as e:
-                logging.warning(f"Could not calculate Orcus position: {e}")
-                if "Orcus" in active_points:
-                    active_points.remove("Orcus")  # Remove if not calculated
-
-        # Calculate Quaoar
-        if should_calculate("Quaoar"):
-            try:
-                AstrologicalSubjectFactory._calculate_single_planet(
-                    data,
-                    "Quaoar",
-                    swe.AST_OFFSET + 50000,
-                    julian_day,
-                    iflag,
-                    houses_degree_ut,
-                    point_type,
-                    calculated_planets,
-                    active_points,
-                )
-            except Exception as e:
-                logging.warning(f"Could not calculate Quaoar position: {e}")
-                if "Quaoar" in active_points:
-                    active_points.remove("Quaoar")  # Remove if not calculated
-
-        # ==================
-        # FIXED STARS
-        # ==================
-
-        # Calculate Regulus (example fixed star)
-        if should_calculate("Regulus"):
-            try:
-                star_name = "Regulus"
-                # Ecliptic longitude for zodiac placement
-                pos_ecl = swe.fixstar_ut(star_name, julian_day, iflag)[0]
-                regulus_deg = pos_ecl[0]
-                regulus_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0  # Fixed stars have very slow speed
-                # Equatorial coordinates for true declination
-                pos_eq = swe.fixstar_ut(star_name, julian_day, iflag | swe.FLG_EQUATORIAL)[0]
-                regulus_dec = pos_eq[1] if len(pos_eq) > 1 else None
-                data["regulus"] = get_kerykeion_point_from_degree(
-                    regulus_deg, "Regulus", point_type=point_type, speed=regulus_speed, declination=regulus_dec
-                )
-                data["regulus"].house = get_planet_house(regulus_deg, houses_degree_ut)
-                data["regulus"].retrograde = False  # Fixed stars are never retrograde
-                calculated_planets.append("Regulus")
-            except Exception as e:
-                logging.warning(f"Could not calculate Regulus position: {e}")
-                if "Regulus" in active_points:
-                    active_points.remove("Regulus")  # Remove if not calculated
-
-        # Calculate Spica (example fixed star)
-        if should_calculate("Spica"):
-            try:
-                star_name = "Spica"
-                # Ecliptic longitude for zodiac placement
-                pos_ecl = swe.fixstar_ut(star_name, julian_day, iflag)[0]
-                spica_deg = pos_ecl[0]
-                spica_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0  # Fixed stars have very slow speed
-                # Equatorial coordinates for true declination
-                pos_eq = swe.fixstar_ut(star_name, julian_day, iflag | swe.FLG_EQUATORIAL)[0]
-                spica_dec = pos_eq[1] if len(pos_eq) > 1 else None
-                data["spica"] = get_kerykeion_point_from_degree(
-                    spica_deg, "Spica", point_type=point_type, speed=spica_speed, declination=spica_dec
-                )
-                data["spica"].house = get_planet_house(spica_deg, houses_degree_ut)
-                data["spica"].retrograde = False  # Fixed stars are never retrograde
-                calculated_planets.append("Spica")
-            except Exception as e:
-                logging.warning(f"Could not calculate Spica position: {e}")
-                if "Spica" in active_points:
-                    active_points.remove("Spica")  # Remove if not calculated
-
-        # ==================
-        # ARABIC PARTS / LOTS
-        # ==================
-
-        # Calculate Pars Fortunae (Part of Fortune)
-        if should_calculate("Pars_Fortunae"):
-            # Auto-activate required points with notification
-            pars_fortunae_required_points: List[AstrologicalPoint] = ["Ascendant", "Sun", "Moon"]
-            missing_points = [point for point in pars_fortunae_required_points if point not in active_points]
-            if missing_points:
-                logging.info(f"Automatically adding required points for Pars_Fortunae: {missing_points}")
-                active_points.extend(cast(List[AstrologicalPoint], missing_points))
-                # Recalculate the missing points
-                for point in missing_points:
-                    if point == "Ascendant" and "ascendant" not in data:
-                        # Calculate Ascendant from houses data if needed
-                        if data["zodiac_type"] == "Sidereal":
-                            cusps, ascmc = swe.houses_ex(
-                                tjdut=data["julian_day"],
-                                lat=data["lat"],
-                                lon=data["lng"],
-                                hsys=str.encode(data["houses_system_identifier"]),
-                                flags=swe.FLG_SIDEREAL,
-                            )
-                        else:
-                            cusps, ascmc = swe.houses(
-                                tjdut=data["julian_day"],
-                                lat=data["lat"],
-                                lon=data["lng"],
-                                hsys=str.encode(data["houses_system_identifier"]),
-                            )
-                        data["ascendant"] = get_kerykeion_point_from_degree(
-                            ascmc[0], "Ascendant", point_type=point_type
-                        )
-                        data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
-                        data["ascendant"].retrograde = False
-                    elif point == "Sun" and "sun" not in data:
-                        sun_calc = swe.calc_ut(julian_day, 0, iflag)[0]
-                        data["sun"] = get_kerykeion_point_from_degree(
-                            sun_calc[0], "Sun", point_type=point_type, speed=sun_calc[3], declination=sun_calc[1]
-                        )
-                        data["sun"].house = get_planet_house(sun_calc[0], houses_degree_ut)
-                        data["sun"].retrograde = sun_calc[3] < 0
-                    elif point == "Moon" and "moon" not in data:
-                        moon_calc = swe.calc_ut(julian_day, 1, iflag)[0]
-                        data["moon"] = get_kerykeion_point_from_degree(
-                            moon_calc[0], "Moon", point_type=point_type, speed=moon_calc[3], declination=moon_calc[1]
-                        )
-                        data["moon"].house = get_planet_house(moon_calc[0], houses_degree_ut)
-                        data["moon"].retrograde = moon_calc[3] < 0
-
-            # Check if required points are available
-            if all(k in data for k in ["ascendant", "sun", "moon"]):
-                # Different calculation for day and night charts
-                # Day birth (Sun above horizon): ASC + Moon - Sun
-                # Night birth (Sun below horizon): ASC + Sun - Moon
-                if data["sun"].house:
-                    is_day_chart = get_house_number(data["sun"].house) < 7  # Houses 1-6 are above horizon
-                else:
-                    is_day_chart = True  # Default to day chart if house is None
-
-                if is_day_chart:
-                    fortune_deg = math.fmod(data["ascendant"].abs_pos + data["moon"].abs_pos - data["sun"].abs_pos, 360)
-                else:
-                    fortune_deg = math.fmod(data["ascendant"].abs_pos + data["sun"].abs_pos - data["moon"].abs_pos, 360)
-
-                data["pars_fortunae"] = get_kerykeion_point_from_degree(
-                    fortune_deg, "Pars_Fortunae", point_type=point_type
-                )
-                data["pars_fortunae"].house = get_planet_house(fortune_deg, houses_degree_ut)
-                data["pars_fortunae"].retrograde = False  # Parts are never retrograde
-                calculated_planets.append("Pars_Fortunae")
-
-        # Calculate Pars Spiritus (Part of Spirit)
-        if should_calculate("Pars_Spiritus"):
-            # Auto-activate required points with notification
-            pars_spiritus_required_points: List[AstrologicalPoint] = ["Ascendant", "Sun", "Moon"]
-            missing_points = [point for point in pars_spiritus_required_points if point not in active_points]
-            if missing_points:
-                logging.info(f"Automatically adding required points for Pars_Spiritus: {missing_points}")
-                active_points.extend(cast(List[AstrologicalPoint], missing_points))
-                # Recalculate the missing points
-                for point in missing_points:
-                    if point == "Ascendant" and "ascendant" not in data:
-                        # Calculate Ascendant from houses data if needed
-                        if data["zodiac_type"] == "Sidereal":
-                            cusps, ascmc = swe.houses_ex(
-                                tjdut=data["julian_day"],
-                                lat=data["lat"],
-                                lon=data["lng"],
-                                hsys=str.encode(data["houses_system_identifier"]),
-                                flags=swe.FLG_SIDEREAL,
-                            )
-                        else:
-                            cusps, ascmc = swe.houses(
-                                tjdut=data["julian_day"],
-                                lat=data["lat"],
-                                lon=data["lng"],
-                                hsys=str.encode(data["houses_system_identifier"]),
-                            )
-                        data["ascendant"] = get_kerykeion_point_from_degree(
-                            ascmc[0], "Ascendant", point_type=point_type
-                        )
-                        data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
-                        data["ascendant"].retrograde = False
-                    elif point == "Sun" and "sun" not in data:
-                        sun_calc = swe.calc_ut(julian_day, 0, iflag)[0]
-                        data["sun"] = get_kerykeion_point_from_degree(
-                            sun_calc[0], "Sun", point_type=point_type, speed=sun_calc[3], declination=sun_calc[1]
-                        )
-                        data["sun"].house = get_planet_house(sun_calc[0], houses_degree_ut)
-                        data["sun"].retrograde = sun_calc[3] < 0
-                    elif point == "Moon" and "moon" not in data:
-                        moon_calc = swe.calc_ut(julian_day, 1, iflag)[0]
-                        data["moon"] = get_kerykeion_point_from_degree(
-                            moon_calc[0], "Moon", point_type=point_type, speed=moon_calc[3], declination=moon_calc[1]
-                        )
-                        data["moon"].house = get_planet_house(moon_calc[0], houses_degree_ut)
-                        data["moon"].retrograde = moon_calc[3] < 0
-
-            # Check if required points are available
-            if all(k in data for k in ["ascendant", "sun", "moon"]):
-                # Day birth: ASC + Sun - Moon
-                # Night birth: ASC + Moon - Sun
-                if data["sun"].house:
-                    is_day_chart = get_house_number(data["sun"].house) < 7
-                else:
-                    is_day_chart = True  # Default to day chart if house is None
-
-                if is_day_chart:
-                    spirit_deg = math.fmod(data["ascendant"].abs_pos + data["sun"].abs_pos - data["moon"].abs_pos, 360)
-                else:
-                    spirit_deg = math.fmod(data["ascendant"].abs_pos + data["moon"].abs_pos - data["sun"].abs_pos, 360)
-
-                data["pars_spiritus"] = get_kerykeion_point_from_degree(
-                    spirit_deg, "Pars_Spiritus", point_type=point_type
-                )
-                data["pars_spiritus"].house = get_planet_house(spirit_deg, houses_degree_ut)
-                data["pars_spiritus"].retrograde = False
-                calculated_planets.append("Pars_Spiritus")
-
-        # Calculate Pars Amoris (Part of Eros/Love)
-        if should_calculate("Pars_Amoris"):
-            # Auto-activate required points with notification
-            pars_amoris_required_points: List[AstrologicalPoint] = ["Ascendant", "Venus", "Sun"]
-            missing_points = [point for point in pars_amoris_required_points if point not in active_points]
-            if missing_points:
-                logging.info(f"Automatically adding required points for Pars_Amoris: {missing_points}")
-                active_points.extend(cast(List[AstrologicalPoint], missing_points))
-                # Recalculate the missing points
-                for point in missing_points:
-                    if point == "Ascendant" and "ascendant" not in data:
-                        # Calculate Ascendant from houses data if needed
-                        if data["zodiac_type"] == "Sidereal":
-                            cusps, ascmc = swe.houses_ex(
-                                tjdut=data["julian_day"],
-                                lat=data["lat"],
-                                lon=data["lng"],
-                                hsys=str.encode(data["houses_system_identifier"]),
-                                flags=swe.FLG_SIDEREAL,
-                            )
-                        else:
-                            cusps, ascmc = swe.houses(
-                                tjdut=data["julian_day"],
-                                lat=data["lat"],
-                                lon=data["lng"],
-                                hsys=str.encode(data["houses_system_identifier"]),
-                            )
-                        data["ascendant"] = get_kerykeion_point_from_degree(
-                            ascmc[0], "Ascendant", point_type=point_type
-                        )
-                        data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
-                        data["ascendant"].retrograde = False
-                    elif point == "Sun" and "sun" not in data:
-                        sun_calc = swe.calc_ut(julian_day, 0, iflag)[0]
-                        data["sun"] = get_kerykeion_point_from_degree(
-                            sun_calc[0], "Sun", point_type=point_type, speed=sun_calc[3], declination=sun_calc[1]
-                        )
-                        data["sun"].house = get_planet_house(sun_calc[0], houses_degree_ut)
-                        data["sun"].retrograde = sun_calc[3] < 0
-                    elif point == "Venus" and "venus" not in data:
-                        venus_calc = swe.calc_ut(julian_day, 3, iflag)[0]
-                        data["venus"] = get_kerykeion_point_from_degree(
-                            venus_calc[0],
-                            "Venus",
-                            point_type=point_type,
-                            speed=venus_calc[3],
-                            declination=venus_calc[1],
-                        )
-                        data["venus"].house = get_planet_house(venus_calc[0], houses_degree_ut)
-                        data["venus"].retrograde = venus_calc[3] < 0
-
-            # Check if required points are available
-            if all(k in data for k in ["ascendant", "venus", "sun"]):
-                # ASC + Venus - Sun
-                amoris_deg = math.fmod(data["ascendant"].abs_pos + data["venus"].abs_pos - data["sun"].abs_pos, 360)
-
-                data["pars_amoris"] = get_kerykeion_point_from_degree(amoris_deg, "Pars_Amoris", point_type=point_type)
-                data["pars_amoris"].house = get_planet_house(amoris_deg, houses_degree_ut)
-                data["pars_amoris"].retrograde = False
-                calculated_planets.append("Pars_Amoris")
-
-        # Calculate Pars Fidei (Part of Faith)
-        if should_calculate("Pars_Fidei"):
-            # Auto-activate required points with notification
-            pars_fidei_required_points: List[AstrologicalPoint] = ["Ascendant", "Jupiter", "Saturn"]
-            missing_points = [point for point in pars_fidei_required_points if point not in active_points]
-            if missing_points:
-                logging.info(f"Automatically adding required points for Pars_Fidei: {missing_points}")
-                active_points.extend(cast(List[AstrologicalPoint], missing_points))
-                # Recalculate the missing points
-                for point in missing_points:
-                    if point == "Ascendant" and "ascendant" not in data:
-                        # Calculate Ascendant from houses data if needed
-                        if data["zodiac_type"] == "Sidereal":
-                            cusps, ascmc = swe.houses_ex(
-                                tjdut=data["julian_day"],
-                                lat=data["lat"],
-                                lon=data["lng"],
-                                hsys=str.encode(data["houses_system_identifier"]),
-                                flags=swe.FLG_SIDEREAL,
-                            )
-                        else:
-                            cusps, ascmc = swe.houses(
-                                tjdut=data["julian_day"],
-                                lat=data["lat"],
-                                lon=data["lng"],
-                                hsys=str.encode(data["houses_system_identifier"]),
-                            )
-                        data["ascendant"] = get_kerykeion_point_from_degree(
-                            ascmc[0], "Ascendant", point_type=point_type
-                        )
-                        data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
-                        data["ascendant"].retrograde = False
-                    elif point == "Jupiter" and "jupiter" not in data:
-                        jupiter_calc = swe.calc_ut(julian_day, 5, iflag)[0]
-                        data["jupiter"] = get_kerykeion_point_from_degree(
-                            jupiter_calc[0],
-                            "Jupiter",
-                            point_type=point_type,
-                            speed=jupiter_calc[3],
-                            declination=jupiter_calc[1],
-                        )
-                        data["jupiter"].house = get_planet_house(jupiter_calc[0], houses_degree_ut)
-                        data["jupiter"].retrograde = jupiter_calc[3] < 0
-                    elif point == "Saturn" and "saturn" not in data:
-                        saturn_calc = swe.calc_ut(julian_day, 6, iflag)[0]
-                        data["saturn"] = get_kerykeion_point_from_degree(
-                            saturn_calc[0],
-                            "Saturn",
-                            point_type=point_type,
-                            speed=saturn_calc[3],
-                            declination=saturn_calc[1],
-                        )
-                        data["saturn"].house = get_planet_house(saturn_calc[0], houses_degree_ut)
-                        data["saturn"].retrograde = saturn_calc[3] < 0
-
-            # Check if required points are available
-            if all(k in data for k in ["ascendant", "jupiter", "saturn"]):
-                # ASC + Jupiter - Saturn
-                fidei_deg = math.fmod(data["ascendant"].abs_pos + data["jupiter"].abs_pos - data["saturn"].abs_pos, 360)
-
-                data["pars_fidei"] = get_kerykeion_point_from_degree(fidei_deg, "Pars_Fidei", point_type=point_type)
-                data["pars_fidei"].house = get_planet_house(fidei_deg, houses_degree_ut)
-                data["pars_fidei"].retrograde = False
-                calculated_planets.append("Pars_Fidei")
-
-        # Calculate Vertex and/or Anti-Vertex
+        # =============================================================================
+        # VERTEX AND ANTI-VERTEX
+        # =============================================================================
         if should_calculate("Vertex") or should_calculate("Anti_Vertex"):
             try:
                 # Vertex is at ascmc[3] in Swiss Ephemeris

@@ -1,5 +1,29 @@
 # -*- coding: utf-8 -*-
 """
+Kerykeion Data Models
+=====================
+
+This module contains all Pydantic models used throughout the Kerykeion library
+for representing astrological data structures.
+
+Model Hierarchy:
+    SubscriptableBaseModel
+    ├── LunarPhaseModel - Moon phase information
+    ├── KerykeionPointModel - Celestial points (planets, houses, etc.)
+    ├── AstrologicalBaseModel - Base for all chart subjects
+    │   ├── AstrologicalSubjectModel - Individual birth/event charts
+    │   ├── CompositeSubjectModel - Composite relationship charts
+    │   └── PlanetReturnModel - Solar/Lunar return charts
+    ├── AspectModel - Planetary aspect data
+    ├── ZodiacSignModel - Zodiac sign properties
+    ├── RelationshipScoreModel - Synastry compatibility scores
+    ├── HouseComparisonModel - House overlay analysis
+    ├── SingleChartDataModel - Single chart visualization data
+    └── DualChartDataModel - Dual chart visualization data
+
+All models inherit from SubscriptableBaseModel which provides dictionary-style
+access to fields while maintaining Pydantic validation.
+
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
@@ -244,7 +268,28 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
 
 class AstrologicalSubjectModel(AstrologicalBaseModel):
     """
-    Pydantic Model for Astrological Subject
+    Complete astrological subject model for individual birth or event charts.
+
+    This model represents a fully-specified astrological chart with all required
+    location and time data. It extends AstrologicalBaseModel by making location
+    and time fields mandatory.
+
+    Used for:
+        - Natal (birth) charts
+        - Event charts
+        - Horary charts
+
+    Attributes:
+        year: Birth/event year.
+        month: Birth/event month (1-12).
+        day: Birth/event day of month.
+        hour: Birth/event hour (0-23).
+        minute: Birth/event minute (0-59).
+        city: City name (required).
+        nation: Country code (required).
+        lat: Latitude coordinate (required).
+        lng: Longitude coordinate (required).
+        tz_str: Timezone string e.g. 'Europe/Rome' (required).
     """
 
     # Override base model to make location and time data required for subjects
@@ -268,7 +313,16 @@ class AstrologicalSubjectModel(AstrologicalBaseModel):
 
 class CompositeSubjectModel(AstrologicalBaseModel):
     """
-    Pydantic Model for Composite Subject
+    Composite chart model for relationship analysis.
+
+    A composite chart is created by calculating the midpoint between
+    corresponding planets/points of two individual charts. It represents
+    the relationship as a separate entity.
+
+    Attributes:
+        first_subject: First person's astrological data.
+        second_subject: Second person's astrological data.
+        composite_chart_type: Type identifier for the composite calculation method.
     """
 
     # Specific composite data
@@ -279,7 +333,14 @@ class CompositeSubjectModel(AstrologicalBaseModel):
 
 class PlanetReturnModel(AstrologicalBaseModel):
     """
-    Pydantic Model for Planet Return
+    Planetary return chart model.
+
+    A planetary return occurs when a transiting planet returns to the exact
+    position it held in the natal chart. Solar returns (yearly) and lunar
+    returns (monthly) are the most commonly used.
+
+    Attributes:
+        return_type: Type of return - 'Solar' or 'Lunar'.
     """
 
     # Specific return data
@@ -287,12 +348,49 @@ class PlanetReturnModel(AstrologicalBaseModel):
 
 
 class EphemerisDictModel(SubscriptableBaseModel):
+    """
+    Ephemeris data for a specific date.
+
+    Contains planetary positions and house cusps for a given moment,
+    typically used for generating ephemeris tables or transit lookups.
+
+    Attributes:
+        date: ISO formatted date string.
+        planets: List of planetary positions.
+        houses: List of house cusp positions.
+    """
+
     date: str
     planets: List[KerykeionPointModel]
     houses: List[KerykeionPointModel]
 
 
 class AspectModel(SubscriptableBaseModel):
+    """
+    Model representing an astrological aspect between two celestial points.
+
+    An aspect is an angular relationship between two planets or points,
+    measured along the ecliptic. Major aspects include conjunction (0°),
+    opposition (180°), trine (120°), square (90°), and sextile (60°).
+
+    Attributes:
+        p1_name: Name of the first point (e.g., 'Sun').
+        p1_owner: Owner/chart of the first point (e.g., 'John').
+        p1_abs_pos: Absolute zodiacal position of first point (0-360°).
+        p2_name: Name of the second point.
+        p2_owner: Owner/chart of the second point.
+        p2_abs_pos: Absolute zodiacal position of second point.
+        aspect: Name of the aspect (e.g., 'conjunction', 'trine').
+        orbit: Orb (deviation from exact aspect) in degrees.
+        aspect_degrees: Exact degrees of the aspect type.
+        diff: Angular difference between the points.
+        p1: Numeric ID of first point.
+        p2: Numeric ID of second point.
+        p1_speed: Daily motion speed of first point in degrees.
+        p2_speed: Daily motion speed of second point in degrees.
+        aspect_movement: Whether aspect is applying, separating, or static.
+    """
+
     p1_name: str
     p1_owner: str
     p1_abs_pos: float
@@ -314,6 +412,21 @@ class AspectModel(SubscriptableBaseModel):
 
 
 class ZodiacSignModel(SubscriptableBaseModel):
+    """
+    Model representing a zodiac sign with its properties.
+
+    Contains the essential characteristics of a zodiac sign including
+    its quality (Cardinal, Fixed, Mutable), element (Fire, Earth, Air, Water),
+    and visual representation.
+
+    Attributes:
+        sign: Sign name (e.g., 'Ari', 'Tau', 'Gem').
+        quality: Astrological quality (Cardinal, Fixed, Mutable).
+        element: Astrological element (Fire, Earth, Air, Water).
+        emoji: Unicode emoji for the sign.
+        sign_num: Numerical position (0=Aries through 11=Pisces).
+    """
+
     sign: Sign
     quality: Quality
     element: Element
@@ -322,6 +435,19 @@ class ZodiacSignModel(SubscriptableBaseModel):
 
 
 class RelationshipScoreAspectModel(SubscriptableBaseModel):
+    """
+    Simplified aspect model for relationship scoring.
+
+    Used in synastry analysis to track which aspects contribute
+    to the compatibility score.
+
+    Attributes:
+        p1_name: First point name.
+        p2_name: Second point name.
+        aspect: Aspect type name.
+        orbit: Orb in degrees.
+    """
+
     p1_name: str
     p2_name: str
     aspect: str
