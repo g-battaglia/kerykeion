@@ -91,7 +91,7 @@ testpaths = "tests"
 log_level = 20
 log_date_format = "%Y-%m-%d %H:%M:%S"
 log_format = "%(asctime)s %(levelname)s %(message)s"
-addopts = "--cov=kerykeion --cov-report=html --cov-report=term --cov-report=xml"
+addopts = "--cov=kerykeion --cov-config=pyproject.toml --cov-report=html --cov-report=term --cov-report=xml"
 
 # Coverage Configuration
 [tool.coverage.run]
@@ -102,6 +102,8 @@ omit = [
     "*/__pycache__/*",
     "*/sweph/*",  # Swiss Ephemeris library files
     "setup.py",
+    "**/draw_planets_legacy.py",  # Legacy code, not used
+    "kerykeion/charts/draw_planets_legacy.py",  # Legacy code, not used
 ]
 
 [tool.coverage.report]
