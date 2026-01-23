@@ -1340,8 +1340,11 @@ class AstrologicalSubjectFactory:
         if point in STANDARD_PLANETS:
             planet_id = STANDARD_PLANETS[point]
             planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
+            # Get declination from equatorial coordinates (matching _calculate_single_planet)
+            planet_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
+            declination = planet_eq[1]
             data[point_key] = get_kerykeion_point_from_degree(
-                planet_calc[0], point, point_type=point_type, speed=planet_calc[3], declination=planet_calc[1]
+                planet_calc[0], point, point_type=point_type, speed=planet_calc[3], declination=declination
             )
             data[point_key].house = get_planet_house(planet_calc[0], houses_degree_ut)
             data[point_key].retrograde = planet_calc[3] < 0
@@ -1552,27 +1555,40 @@ class AstrologicalSubjectFactory:
                         node_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
                         data[node_key].declination = node_eq[1]
 
-                # After True_North_Lunar_Node, calculate both south nodes
-                # This preserves the original order: Mean_N, True_N, Mean_S, True_S
+                # Calculate corresponding south node immediately after each north node
+                if planet_name == "Mean_North_Lunar_Node":
+                    south_node: AstrologicalPoint = "Mean_South_Lunar_Node"
+                    north_key = planet_name.lower()
+                    if should_calculate(south_node) and north_key in data:
+                        north_data = data[north_key]
+                        south_deg = math.fmod(north_data.abs_pos + 180, 360)
+                        data[south_node.lower()] = get_kerykeion_point_from_degree(
+                            south_deg,
+                            south_node,
+                            point_type=point_type,
+                            speed=-north_data.speed if north_data.speed is not None else None,
+                            declination=-north_data.declination if north_data.declination is not None else None,
+                        )
+                        data[south_node.lower()].house = get_planet_house(south_deg, houses_degree_ut)
+                        data[south_node.lower()].retrograde = north_data.retrograde
+                        calculated_planets.append(south_node)
+
                 if planet_name == "True_North_Lunar_Node":
-                    for south_node_name, north_node_name in [
-                        ("Mean_South_Lunar_Node", "Mean_North_Lunar_Node"),
-                        ("True_South_Lunar_Node", "True_North_Lunar_Node"),
-                    ]:
-                        north_key = north_node_name.lower()
-                        if should_calculate(south_node_name) and north_key in data:
-                            north_data = data[north_key]
-                            south_deg = math.fmod(north_data.abs_pos + 180, 360)
-                            data[south_node_name.lower()] = get_kerykeion_point_from_degree(
-                                south_deg,
-                                south_node_name,
-                                point_type=point_type,
-                                speed=-north_data.speed if north_data.speed is not None else None,
-                                declination=-north_data.declination if north_data.declination is not None else None,
-                            )
-                            data[south_node_name.lower()].house = get_planet_house(south_deg, houses_degree_ut)
-                            data[south_node_name.lower()].retrograde = north_data.retrograde
-                            calculated_planets.append(south_node_name)
+                    south_node_true: AstrologicalPoint = "True_South_Lunar_Node"
+                    north_key = planet_name.lower()
+                    if should_calculate(south_node_true) and north_key in data:
+                        north_data = data[north_key]
+                        south_deg = math.fmod(north_data.abs_pos + 180, 360)
+                        data[south_node_true.lower()] = get_kerykeion_point_from_degree(
+                            south_deg,
+                            south_node_true,
+                            point_type=point_type,
+                            speed=-north_data.speed if north_data.speed is not None else None,
+                            declination=-north_data.declination if north_data.declination is not None else None,
+                        )
+                        data[south_node_true.lower()].house = get_planet_house(south_deg, houses_degree_ut)
+                        data[south_node_true.lower()].retrograde = north_data.retrograde
+                        calculated_planets.append(south_node_true)
 
         # =============================================================================
         # TRANS-NEPTUNIAN OBJECTS (using centralized mapping)
