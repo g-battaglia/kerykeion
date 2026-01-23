@@ -148,6 +148,32 @@ script = "scripts.quality_check:main"
 [tool.ruff]
 line-length = 120
 
+# Pyright Static Type Checking
+[tool.pyright]
+include = ["kerykeion"]
+exclude = [
+    "tests",
+    "examples",
+    "workspace",
+    "scripts",
+    "**/__pycache__",
+    ".venv",
+    "dist",
+    "build",
+    "*.egg-info"
+]
+typeCheckingMode = "basic"
+pythonVersion = "3.9"
+pythonPlatform = "All"
+venvPath = "."
+venv = ".venv"
+reportOptionalMemberAccess = "none"
+reportIncompatibleVariableOverride = "none"
+reportArgumentType = "none"
+reportInvalidTypeForm = "error"
+reportAttributeAccessIssue = "error"
+reportGeneralTypeIssues = "none"
+
 [dependency-groups]
 dev = [
     "coverage>=7.6.0",

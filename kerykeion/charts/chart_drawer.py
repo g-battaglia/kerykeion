@@ -906,11 +906,7 @@ class ChartDrawer:
                 if self.show_house_position_comparison or self.show_cusp_position_comparison:
                     # Use localized labels for the natal subject and the return.
                     first_subject_label = self._translate("Natal", "Natal")
-                    if (
-                        self.second_obj is not None
-                        and hasattr(self.second_obj, "return_type")
-                        and self.second_obj.return_type == "Solar"
-                    ):
+                    if isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar":
                         second_subject_label = self._translate("solar_return", "Solar Return")
                     else:
                         second_subject_label = self._translate("lunar_return", "Lunar Return")
@@ -2475,11 +2471,7 @@ class ChartDrawer:
                 self._translate("west", "West"),
             )
 
-            if (
-                self.second_obj is not None
-                and hasattr(self.second_obj, "return_type")
-                and self.second_obj.return_type == "Solar"
-            ):
+            if isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar":
                 template_dict["top_left_0"] = f"{self._translate('solar_return', 'Solar Return')}:"
             else:
                 template_dict["top_left_0"] = f"{self._translate('lunar_return', 'Lunar Return')}:"
@@ -2571,11 +2563,7 @@ class ChartDrawer:
 
             # Planet grid
             first_name_label = self._truncate_name(self.first_obj.name)
-            if (
-                self.second_obj is not None
-                and hasattr(self.second_obj, "return_type")
-                and self.second_obj.return_type == "Solar"
-            ):
+            if isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar":
                 first_return_grid_title = f"{first_name_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
                 second_return_grid_title = f"{self._translate('solar_return', 'Solar Return')} ({self._translate('outer_wheel', 'Outer Wheel')})"
             else:
@@ -2609,11 +2597,7 @@ class ChartDrawer:
                 # Use generic, localized labels (Natal vs Return) so the DualReturn
                 # comparison layout mirrors the Synastry layout.
                 natal_label = self._translate("Natal", "Natal")
-                if (
-                    self.second_obj is not None
-                    and hasattr(self.second_obj, "return_type")
-                    and self.second_obj.return_type == "Solar"
-                ):
+                if isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar":
                     return_label_text = self._translate("Return", "Return")
                 else:
                     return_label_text = self._translate("Return", "Return")
@@ -2791,7 +2775,7 @@ class ChartDrawer:
             template_dict["top_left_3"] = f"{self._translate('latitude', 'Latitude')}: {latitude_string}"
             template_dict["top_left_4"] = f"{self._translate('longitude', 'Longitude')}: {longitude_string}"
 
-            if hasattr(self.first_obj, "return_type") and self.first_obj.return_type == "Solar":
+            if isinstance(self.first_obj, PlanetReturnModel) and self.first_obj.return_type == "Solar":
                 template_dict["top_left_5"] = (
                     f"{self._translate('type', 'Type')}: {self._translate('solar_return', 'Solar Return')}"
                 )
@@ -2975,8 +2959,7 @@ class ChartDrawer:
 
             if (
                 self.chart_type == "DualReturnChart"
-                and self.second_obj is not None
-                and hasattr(self.second_obj, "return_type")
+                and isinstance(self.second_obj, PlanetReturnModel)
                 and self.second_obj.return_type == "Lunar"
             ):
                 chartname = (
@@ -2984,8 +2967,7 @@ class ChartDrawer:
                 )
             elif (
                 self.chart_type == "DualReturnChart"
-                and self.second_obj is not None
-                and hasattr(self.second_obj, "return_type")
+                and isinstance(self.second_obj, PlanetReturnModel)
                 and self.second_obj.return_type == "Solar"
             ):
                 chartname = (

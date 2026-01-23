@@ -4,21 +4,22 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 from typing import Literal
+from typing_extensions import TypeAlias
 
 
-ZodiacType = Literal["Tropical", "Sidereal"]
+ZodiacType: TypeAlias = Literal["Tropical", "Sidereal"]
 """Literal type for Zodiac Types"""
 
 
-Sign = Literal["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+Sign: TypeAlias = Literal["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
 """Literal type for Zodiac Signs"""
 
 
-SignNumbers = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+SignNumbers: TypeAlias = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 """Literal type for Zodiac Sign Numbers, the signs are numbered in order starting from Aries (0) to Pis (11)"""
 
 
-AspectMovementType = Literal["Applying", "Separating", "Static"]
+AspectMovementType: TypeAlias = Literal["Applying", "Separating", "Static"]
 """Literal type for Aspect Movement.
 
 Values:
@@ -28,7 +29,7 @@ Values:
 """
 
 
-Houses = Literal[
+Houses: TypeAlias = Literal[
     "First_House",
     "Second_House",
     "Third_House",
@@ -45,11 +46,11 @@ Houses = Literal[
 """Literal type for Houses"""
 
 
-HouseNumbers = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+HouseNumbers: TypeAlias = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 """Literal type for House Numbers, starting from the First House (1) to the Twelfth House (12)"""
 
 
-AstrologicalPoint = Literal[
+AstrologicalPoint: TypeAlias = Literal[
     # Main Planets
     "Sun",
     "Moon",
@@ -106,27 +107,27 @@ AstrologicalPoint = Literal[
 """Literal type for Axial Cusps"""
 
 
-Element = Literal["Air", "Fire", "Earth", "Water"]
+Element: TypeAlias = Literal["Air", "Fire", "Earth", "Water"]
 """Literal type for Elements"""
 
 
-Quality = Literal["Cardinal", "Fixed", "Mutable"]
+Quality: TypeAlias = Literal["Cardinal", "Fixed", "Mutable"]
 """Literal type for Qualities"""
 
 
-ChartType = Literal["Natal", "Synastry", "Transit", "Composite", "DualReturnChart", "SingleReturnChart"]
+ChartType: TypeAlias = Literal["Natal", "Synastry", "Transit", "Composite", "DualReturnChart", "SingleReturnChart"]
 """Literal type for Chart Types"""
 
 
-PointType = Literal["AstrologicalPoint", "House"]
+PointType: TypeAlias = Literal["AstrologicalPoint", "House"]
 """Literal type for Point Types"""
 
 
-LunarPhaseEmoji = Literal["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"]
+LunarPhaseEmoji: TypeAlias = Literal["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"]
 """Literal type for Lunar Phases Emoji"""
 
 
-LunarPhaseName = Literal[
+LunarPhaseName: TypeAlias = Literal[
     "New Moon",
     "Waxing Crescent",
     "First Quarter",
@@ -139,7 +140,7 @@ LunarPhaseName = Literal[
 """Literal type for Lunar Phases Name"""
 
 
-SiderealMode = Literal[
+SiderealMode: TypeAlias = Literal[
     "FAGAN_BRADLEY",
     "LAHIRI",
     "DELUCE",
@@ -164,7 +165,7 @@ SiderealMode = Literal[
 """Literal type for Sidereal Modes, as known as Ayanamsa"""
 
 
-HousesSystemIdentifier = Literal[
+HousesSystemIdentifier: TypeAlias = Literal[
     "A", "B", "C", "D", "F", "H", "I", "i", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y"
 ]
 """
@@ -198,7 +199,7 @@ Usually the standard is Placidus (P)
 """
 
 
-PerspectiveType = Literal["Apparent Geocentric", "Heliocentric", "Topocentric", "True Geocentric"]
+PerspectiveType: TypeAlias = Literal["Apparent Geocentric", "Heliocentric", "Topocentric", "True Geocentric"]
 """
 Literal type for perspective types.
 - "Apparent Geocentric": Earth-centered, apparent positions.
@@ -210,27 +211,29 @@ Usually the standard is "Apparent Geocentric"
 """
 
 
-SignsEmoji = Literal["♈️", "♉️", "♊️", "♋️", "♌️", "♍️", "♎️", "♏️", "♐️", "♑️", "♒️", "♓️"]
+SignsEmoji: TypeAlias = Literal["♈️", "♉️", "♊️", "♋️", "♌️", "♍️", "♎️", "♏️", "♐️", "♑️", "♒️", "♓️"]
 """Literal type for Zodiac Signs Emoji"""
 
-KerykeionChartTheme = Literal["light", "dark", "dark-high-contrast", "classic", "strawberry", "black-and-white"]
+KerykeionChartTheme: TypeAlias = Literal[
+    "light", "dark", "dark-high-contrast", "classic", "strawberry", "black-and-white"
+]
 """Literal type for Kerykeion Chart Themes"""
 
 
-KerykeionChartLanguage = Literal["EN", "FR", "PT", "IT", "CN", "ES", "RU", "TR", "DE", "HI"]
+KerykeionChartLanguage: TypeAlias = Literal["EN", "FR", "PT", "IT", "CN", "ES", "RU", "TR", "DE", "HI"]
 """Literal type for Kerykeion Chart Languages"""
 
 
-RelationshipScoreDescription = Literal[
+RelationshipScoreDescription: TypeAlias = Literal[
     "Minimal", "Medium", "Important", "Very Important", "Exceptional", "Rare Exceptional"
 ]
 """Literal type for Relationship Score Description"""
 
 
-CompositeChartType = Literal["Midpoint"]
+CompositeChartType: TypeAlias = Literal["Midpoint"]
 """Literal type for Composite Chart Types"""
 
-AspectName = Literal[
+AspectName: TypeAlias = Literal[
     "conjunction",
     "semi-sextile",
     "semi-square",
@@ -245,7 +248,7 @@ AspectName = Literal[
 ]
 """Literal type for all the available aspects names"""
 
-ReturnType = Literal["Lunar", "Solar"]
+ReturnType: TypeAlias = Literal["Lunar", "Solar"]
 """Literal type for Return Types"""
 
 
@@ -253,8 +256,8 @@ ReturnType = Literal["Lunar", "Solar"]
 # Deprecated aliases for backward compatibility with Kerykeion v4.x
 # ---------------------------------------------------------------------------
 # These will be removed in v6.0 - migrate to AstrologicalPoint
-Planet = AstrologicalPoint
+Planet: TypeAlias = AstrologicalPoint
 """DEPRECATED: Use AstrologicalPoint instead. This alias will be removed in v6.0."""
 
-AxialCusps = AstrologicalPoint
+AxialCusps: TypeAlias = AstrologicalPoint
 """DEPRECATED: Use AstrologicalPoint instead. This alias will be removed in v6.0."""
