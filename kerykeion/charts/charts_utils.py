@@ -1097,14 +1097,16 @@ def draw_houses_cusps_and_text_number(
 def draw_transit_aspect_list(
     grid_title: str,
     aspects_list: Union[list[AspectModel], list[dict]],
-    celestial_point_language: Union[KerykeionLanguageCelestialPointModel, dict],
-    aspects_settings: dict,
+    celestial_point_language: Union[
+        KerykeionLanguageCelestialPointModel, Mapping[str, Mapping[str, str]], Sequence[Mapping[str, str]]
+    ],
+    aspects_settings: Sequence[Mapping[str, str]],
     *,
     aspects_per_column: int = 14,
     column_width: int = 100,
     line_height: int = 14,
     max_columns: int = 6,
-    chart_height: Optional[int] = None,
+    chart_height: Optional[Union[int, float]] = None,
 ) -> str:
     """
     Generate SVG output for the aspect list panel in transit/synastry charts.

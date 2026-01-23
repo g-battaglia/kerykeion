@@ -220,8 +220,8 @@ class ChartDataFactory:
 
         # Convert to models for type safety
         available_planets_setting: list[KerykeionSettingsCelestialPointModel] = [
-            KerykeionSettingsCelestialPointModel(**body)
-            for body in available_planets_setting_dicts  # type: ignore
+            KerykeionSettingsCelestialPointModel(**body)  # type: ignore[arg-type]
+            for body in available_planets_setting_dicts
         ]
 
         celestial_points_names = [body.name.lower() for body in available_planets_setting]

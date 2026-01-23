@@ -40,7 +40,7 @@ DUAL_CHART_PLANET_RADIUS_A = 110  # Alternate planet radius in dual charts
 DUAL_CHART_PLANET_RADIUS_B = 130  # Default planet radius in dual charts
 
 # Chart types that display two subjects
-DUAL_CHART_TYPES: Tuple[ChartType, ...] = ("Transit", "Synastry", "Return", "DualReturnChart")
+DUAL_CHART_TYPES = ("Transit", "Synastry", "DualReturnChart")
 
 
 # =============================================================================
@@ -242,7 +242,6 @@ def _validate_dual_chart_inputs(
     error_messages = {
         "Transit": "Secondary celestial points are required for Transit charts",
         "Synastry": "Secondary celestial points are required for Synastry charts",
-        "Return": "Secondary celestial points are required for Return charts",
     }
     if chart_type in error_messages and secondary_points is None:
         raise KerykeionException(error_messages[chart_type])

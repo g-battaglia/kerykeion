@@ -75,8 +75,10 @@ from kerykeion.settings.chart_defaults import (
     DEFAULT_CHART_COLORS,
     DEFAULT_CELESTIAL_POINTS_SETTINGS,
     DEFAULT_CHART_ASPECTS_SETTINGS,
+    _CelestialPointSetting,
+    _ChartAspectSetting,
 )
-from typing import List, Literal
+from typing import List, Literal, Sequence
 
 
 logger = logging.getLogger(__name__)
@@ -181,16 +183,16 @@ class ChartDrawer:
     _ASPECT_LIST_ASPECTS_PER_COLUMN = 14
     _ASPECT_LIST_COLUMN_WIDTH = 105
 
-    _BASE_VERTICAL_OFFSETS = {
-        "wheel": 50,
-        "grid": 0,
-        "aspect_grid": 50,
-        "aspect_list": 50,
-        "title": 0,
-        "elements": 0,
-        "qualities": 0,
-        "lunar_phase": 518,
-        "bottom_left": 0,
+    _BASE_VERTICAL_OFFSETS: dict[str, float] = {
+        "wheel": 50.0,
+        "grid": 0.0,
+        "aspect_grid": 50.0,
+        "aspect_list": 50.0,
+        "title": 0.0,
+        "elements": 0.0,
+        "qualities": 0.0,
+        "lunar_phase": 518.0,
+        "bottom_left": 0.0,
     }
     _MAX_TOP_SHIFT = 80
     _TOP_SHIFT_FACTOR = 2
@@ -248,8 +250,8 @@ class ChartDrawer:
         external_view: bool = False,
         transparent_background: bool = False,
         colors_settings: dict = DEFAULT_CHART_COLORS,
-        celestial_points_settings: list[dict] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
-        aspects_settings: list[dict] = DEFAULT_CHART_ASPECTS_SETTINGS,
+        celestial_points_settings: Sequence[_CelestialPointSetting] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
+        aspects_settings: Sequence[_ChartAspectSetting] = DEFAULT_CHART_ASPECTS_SETTINGS,
         custom_title: Union[str, None] = None,
         show_house_position_comparison: bool = True,
         show_cusp_position_comparison: bool = False,
@@ -305,7 +307,7 @@ class ChartDrawer:
         self.show_aspect_icons = show_aspect_icons
         self.auto_size = auto_size
         self._padding = padding
-        self._vertical_offsets: dict[str, int] = self._BASE_VERTICAL_OFFSETS.copy()
+        self._vertical_offsets: dict[str, float] = {k: float(v) for k, v in self._BASE_VERTICAL_OFFSETS.items()}
 
         # Extract data from ChartDataModel
         self.chart_data = chart_data
@@ -609,7 +611,7 @@ class ChartDrawer:
         self,
         *,
         active_points_count: int,
-        offsets: dict[str, int],
+        offsets: dict[str, float],
         minimum_height: int,
     ) -> None:
         """Specialised dynamic height handling for Synastry charts.
@@ -783,7 +785,7 @@ class ChartDrawer:
         """
         # Wheel footprint (translate(100,50) + diameter of 2*radius)
         wheel_right = 100 + (2 * self.main_radius)
-        extents = [wheel_right]
+        extents: list[float] = [wheel_right]
 
         n_active = max(self._count_active_planets(), 1)
 
@@ -959,7 +961,7 @@ class ChartDrawer:
     def _calculate_double_chart_aspect_columns(
         self,
         total_aspects: int,
-        chart_height: Optional[int],
+        chart_height: Optional[Union[int, float]],
     ) -> int:
         """Return how many columns the double-chart aspect list needs.
 
@@ -985,7 +987,7 @@ class ChartDrawer:
 
     def _calculate_full_height_column_capacity(
         self,
-        chart_height: Optional[int],
+        chart_height: Optional[Union[int, float]],
     ) -> int:
         """Compute the row capacity for columns that use the tall layout."""
         per_column = self._ASPECT_LIST_ASPECTS_PER_COLUMN
@@ -1166,7 +1168,7 @@ class ChartDrawer:
     ) -> None:
         """Resolve language models for the requested chart language."""
         overrides = {self.chart_language: dict(language_pack)} if language_pack else None
-        languages = load_language_settings(overrides)
+        languages = load_language_settings(overrides)  # type: ignore[arg-type]
 
         fallback_data = languages.get("EN")
         if fallback_data is None:
@@ -1790,10 +1792,10 @@ class ChartDrawer:
             )
 
             subject_name = (
-                f"{self.first_obj.first_subject.name}"
+                f"{self.first_obj.first_subject.name}"  # type: ignore[union-attr]
                 f" {self._translate('and_word', '&')} "
-                f"{self.first_obj.second_subject.name}"
-            )  # type: ignore
+                f"{self.first_obj.second_subject.name}"  # type: ignore[union-attr]
+            )
 
             template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
                 planets_and_houses_grid_title=self._translate("planets_and_house", "Points for"),
@@ -1981,7 +1983,8 @@ class ChartDrawer:
             # Moon phase section calculations - use transit subject data only
             if self.second_obj is not None and getattr(self.second_obj, "lunar_phase", None):
                 template_dict["makeLunarPhase"] = makeLunarPhase(
-                    self.second_obj.lunar_phase["degrees_between_s_m"], self.geolat
+                    self.second_obj.lunar_phase["degrees_between_s_m"],  # type: ignore[index]
+                    self.geolat,
                 )
             else:
                 template_dict["makeLunarPhase"] = ""
@@ -2338,7 +2341,7 @@ class ChartDrawer:
                             first_house_comparison_grid_right,
                             second_house_comparison_grid_right,
                         )
-                        cusp_x_position = max_house_comparison_right + 50.0
+                        cusp_x_position = int(max_house_comparison_right + 50.0)
 
                         # Place cusp comparison grids for Synastry side by side on the far right,
                         # keeping them as close together as possible and slightly shifted left.
@@ -2450,19 +2453,27 @@ class ChartDrawer:
             # Top left section
             # Subject
             latitude_string = convert_latitude_coordinate_to_string(
-                self.first_obj.lat, self._translate("north", "North"), self._translate("south", "South")
-            )  # type: ignore
+                self.first_obj.lat,  # type: ignore[arg-type]
+                self._translate("north", "North"),
+                self._translate("south", "South"),
+            )
             longitude_string = convert_longitude_coordinate_to_string(
-                self.first_obj.lng, self._translate("east", "East"), self._translate("west", "West")
-            )  # type: ignore
+                self.first_obj.lng,  # type: ignore[arg-type]
+                self._translate("east", "East"),
+                self._translate("west", "West"),
+            )
 
             # Return
             return_latitude_string = convert_latitude_coordinate_to_string(
-                self.second_obj.lat, self._translate("north", "North"), self._translate("south", "South")
-            )  # type: ignore
+                self.second_obj.lat,  # type: ignore[union-attr, arg-type]
+                self._translate("north", "North"),
+                self._translate("south", "South"),
+            )
             return_longitude_string = convert_longitude_coordinate_to_string(
-                self.second_obj.lng, self._translate("east", "East"), self._translate("west", "West")
-            )  # type: ignore
+                self.second_obj.lng,  # type: ignore[union-attr, arg-type]
+                self._translate("east", "East"),
+                self._translate("west", "West"),
+            )
 
             if (
                 self.second_obj is not None
@@ -2674,7 +2685,7 @@ class ChartDrawer:
                             first_house_comparison_grid_right,
                             second_house_comparison_grid_right,
                         )
-                        cusp_x_position = max_house_comparison_right + 50.0
+                        cusp_x_position = int(max_house_comparison_right + 50.0)
 
                         cusp_grid_width = 160.0
                         inter_cusp_gap = 0.0

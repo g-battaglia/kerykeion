@@ -66,7 +66,7 @@ from kerykeion.schemas import (
     ZodiacType,
 )
 from datetime import datetime, timedelta
-from typing import Literal, Union, List
+from typing import Any, Dict, Literal, Union, List
 import logging
 
 
@@ -279,7 +279,7 @@ class EphemerisDataFactory:
             - House system affects the house cusp calculations
             - All positions are in the configured zodiac system (tropical/sidereal)
         """
-        ephemeris_data_list = []
+        ephemeris_data_list: List[Dict[str, Any]] = []
         for date in self.dates_list:
             subject = AstrologicalSubjectFactory.from_birth_data(
                 year=date.year,

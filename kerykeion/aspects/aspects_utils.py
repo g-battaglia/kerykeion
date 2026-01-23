@@ -9,7 +9,7 @@ from typing import Union
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.schemas.kr_literals import AspectMovementType
 from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
-from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
+from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS, _CelestialPointSetting
 
 
 def get_aspect_from_two_points(
@@ -201,7 +201,7 @@ def get_active_points_list(
     subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
     active_points: list = [],
     *,
-    celestial_points: list[dict] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
+    celestial_points: Union[list[_CelestialPointSetting], list[dict]] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
 ) -> list:
     """
     Given an astrological subject and the settings, return a list of the active points.
