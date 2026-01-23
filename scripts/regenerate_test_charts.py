@@ -2014,4 +2014,226 @@ relationship_score_synastry_chart.save_svg(
     filename="John Lennon - Relationship Score - Synastry Chart",
 )
 
+# ----------------------------------------------------------------------------
+# Section 11: Untested Parameters
+# ----------------------------------------------------------------------------
+
+# theme=None (no CSS theme)
+theme_none_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - No Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+theme_none_chart_data = ChartDataFactory.create_natal_chart_data(theme_none_subject)
+theme_none_chart = ChartDrawer(theme_none_chart_data, theme=None)
+theme_none_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_degree_indicators=False
+no_degree_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - No Degree Indicators", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+no_degree_chart_data = ChartDataFactory.create_natal_chart_data(no_degree_subject)
+no_degree_chart = ChartDrawer(no_degree_chart_data, show_degree_indicators=False)
+no_degree_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Custom colors_settings
+from kerykeion.settings.chart_defaults import (
+    DEFAULT_CHART_COLORS,
+    DEFAULT_CHART_ASPECTS_SETTINGS,
+    DEFAULT_CELESTIAL_POINTS_SETTINGS,
+)
+import copy
+
+custom_colors = DEFAULT_CHART_COLORS.copy()
+custom_colors["paper_0"] = "#ff0000"
+custom_colors["paper_1"] = "#00ff00"
+custom_colors_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Custom Colors", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+custom_colors_chart_data = ChartDataFactory.create_natal_chart_data(custom_colors_subject)
+custom_colors_chart = ChartDrawer(custom_colors_chart_data, colors_settings=custom_colors)
+custom_colors_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Custom aspects_settings (custom colors)
+custom_aspects = copy.deepcopy(DEFAULT_CHART_ASPECTS_SETTINGS)
+for aspect in custom_aspects:
+    if aspect["name"] == "conjunction":
+        aspect["color"] = "#FF0000"  # Red
+    elif aspect["name"] == "opposition":
+        aspect["color"] = "#0000FF"  # Blue
+custom_aspects_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Custom Aspect Colors", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+custom_aspects_chart_data = ChartDataFactory.create_natal_chart_data(custom_aspects_subject)
+custom_aspects_chart = ChartDrawer(custom_aspects_chart_data, aspects_settings=custom_aspects)
+custom_aspects_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Custom celestial_points_settings
+custom_points = copy.deepcopy(DEFAULT_CELESTIAL_POINTS_SETTINGS)
+for point in custom_points:
+    if point["name"] == "Sun":
+        point["color"] = "#FFD700"
+    elif point["name"] == "Moon":
+        point["color"] = "#C0C0C0"
+custom_points_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Custom Planet Colors", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+custom_points_chart_data = ChartDataFactory.create_natal_chart_data(custom_points_subject)
+custom_points_chart = ChartDrawer(custom_points_chart_data, celestial_points_settings=custom_points)
+custom_points_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# language_pack override
+language_pack_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Language Pack", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+language_pack_chart_data = ChartDataFactory.create_natal_chart_data(language_pack_subject)
+language_pack_chart = ChartDrawer(
+    language_pack_chart_data, chart_language="IT", language_pack={"Sun": "Sole Custom", "Moon": "Luna Custom"}
+)
+language_pack_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# ----------------------------------------------------------------------------
+# Section 12: Parameter Combinations
+# ----------------------------------------------------------------------------
+
+# Transparent + Dark theme
+transparent_dark_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Transparent Dark", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+transparent_dark_chart_data = ChartDataFactory.create_natal_chart_data(transparent_dark_subject)
+transparent_dark_chart = ChartDrawer(transparent_dark_chart_data, theme="dark", transparent_background=True)
+transparent_dark_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Transparent Synastry
+transparent_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Transparent Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+transparent_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(transparent_synastry_subject, second)
+transparent_synastry_chart = ChartDrawer(transparent_synastry_chart_data, transparent_background=True)
+transparent_synastry_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Custom title synastry
+custom_title_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Custom Title Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+custom_title_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(custom_title_synastry_subject, second)
+custom_title_synastry_chart = ChartDrawer(custom_title_synastry_chart_data, custom_title="Beatles Synastry Analysis")
+custom_title_synastry_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Custom title transit
+custom_title_transit_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Custom Title Transit", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+custom_title_transit_chart_data = ChartDataFactory.create_transit_chart_data(custom_title_transit_subject, second)
+custom_title_transit_chart = ChartDrawer(custom_title_transit_chart_data, custom_title="Transit Analysis 2024")
+custom_title_transit_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Zero padding
+zero_padding_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Zero Padding", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+zero_padding_chart_data = ChartDataFactory.create_natal_chart_data(zero_padding_subject)
+zero_padding_chart = ChartDrawer(zero_padding_chart_data, padding=0)
+zero_padding_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Large padding (100px)
+large_padding_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Large Padding", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+large_padding_chart_data = ChartDataFactory.create_natal_chart_data(large_padding_subject)
+large_padding_chart = ChartDrawer(large_padding_chart_data, padding=100)
+large_padding_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Minify + remove CSS variables combined
+minify_css_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Minify CSS", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+minify_css_chart_data = ChartDataFactory.create_natal_chart_data(minify_css_subject)
+minify_css_chart = ChartDrawer(minify_css_chart_data)
+minify_css_svg = minify_css_chart.generate_svg_string(minify=True, remove_css_variables=True)
+(OUTPUT_DIR / "John Lennon - Minify CSS - Natal Chart.svg").write_text(minify_css_svg, encoding="utf-8")
+
+# ----------------------------------------------------------------------------
+# Section 13: Edge Cases
+# ----------------------------------------------------------------------------
+
+# Very long name
+long_name_subject = AstrologicalSubjectFactory.from_birth_data(
+    "A" * 100, 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+long_name_chart_data = ChartDataFactory.create_natal_chart_data(long_name_subject)
+long_name_chart = ChartDrawer(long_name_chart_data)
+long_name_chart.save_svg(output_path=OUTPUT_DIR_STR, filename="Long Name - Natal Chart")
+
+# Extreme latitude north (Arctic)
+arctic_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Arctic Subject",
+    1990,
+    6,
+    21,
+    12,
+    0,
+    "Longyearbyen",
+    "NO",
+    lat=78.22,
+    lng=15.65,
+    tz_str="Arctic/Longyearbyen",
+    suppress_geonames_warning=True,
+)
+arctic_chart_data = ChartDataFactory.create_natal_chart_data(arctic_subject)
+arctic_chart = ChartDrawer(arctic_chart_data)
+arctic_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Extreme latitude south (Antarctica)
+antarctic_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Antarctic Subject",
+    1990,
+    12,
+    21,
+    12,
+    0,
+    "McMurdo Station",
+    "AQ",
+    lat=-77.85,
+    lng=166.67,
+    tz_str="Antarctica/McMurdo",
+    suppress_geonames_warning=True,
+)
+antarctic_chart_data = ChartDataFactory.create_natal_chart_data(antarctic_subject)
+antarctic_chart = ChartDrawer(antarctic_chart_data)
+antarctic_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Historical date (1500)
+historical_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Historical Subject", 1500, 3, 15, 12, 0, "Florence", "IT", suppress_geonames_warning=True
+)
+historical_chart_data = ChartDataFactory.create_natal_chart_data(historical_subject)
+historical_chart = ChartDrawer(historical_chart_data)
+historical_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Future date (2100)
+future_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Future Subject", 2100, 7, 4, 12, 0, "New York", "US", suppress_geonames_warning=True
+)
+future_chart_data = ChartDataFactory.create_natal_chart_data(future_subject)
+future_chart = ChartDrawer(future_chart_data)
+future_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
+# Date line crossing (Fiji)
+dateline_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Date Line Subject",
+    1990,
+    1,
+    1,
+    12,
+    0,
+    "Suva",
+    "FJ",
+    lat=-18.14,
+    lng=178.44,
+    tz_str="Pacific/Fiji",
+    suppress_geonames_warning=True,
+)
+dateline_chart_data = ChartDataFactory.create_natal_chart_data(dateline_subject)
+dateline_chart = ChartDrawer(dateline_chart_data)
+dateline_chart.save_svg(output_path=OUTPUT_DIR_STR)
+
 print("All charts regenerated successfully!")
