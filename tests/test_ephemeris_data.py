@@ -1,6 +1,7 @@
 from kerykeion import EphemerisDataFactory
 from datetime import datetime
 
+
 def test_ephemeris_data():
     start_date = datetime.fromisoformat("2020-01-01")
     end_date = datetime.fromisoformat("2020-01-03")

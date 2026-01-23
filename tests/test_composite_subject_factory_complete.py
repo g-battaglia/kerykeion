@@ -28,7 +28,7 @@ class TestCompositeSubjectFactory:
             tz_str="America/New_York",
             city="New York",
             nation="US",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
         self.subject2 = AstrologicalSubjectFactory.from_birth_data(
@@ -43,15 +43,12 @@ class TestCompositeSubjectFactory:
             tz_str="America/New_York",
             city="New York",
             nation="US",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
     def test_basic_composite_creation(self):
         """Test basic composite factory creation."""
-        composite_factory = CompositeSubjectFactory(
-            self.subject1,
-            self.subject2
-        )
+        composite_factory = CompositeSubjectFactory(self.subject1, self.subject2)
 
         assert composite_factory.first_subject == self.subject1
         assert composite_factory.second_subject == self.subject2
@@ -61,40 +58,40 @@ class TestCompositeSubjectFactory:
     def test_composite_with_custom_name(self):
         """Test composite with custom chart name."""
         custom_name = "Custom Composite Chart"
-        composite_factory = CompositeSubjectFactory(
-            self.subject1,
-            self.subject2,
-            chart_name=custom_name
-        )
+        composite_factory = CompositeSubjectFactory(self.subject1, self.subject2, chart_name=custom_name)
 
-        assert hasattr(composite_factory, 'name')
+        assert hasattr(composite_factory, "name")
 
     def test_get_midpoint_composite_subject_model(self):
         """Test generating the midpoint composite subject model."""
-        composite_factory = CompositeSubjectFactory(
-            self.subject1,
-            self.subject2
-        )
+        composite_factory = CompositeSubjectFactory(self.subject1, self.subject2)
 
         composite_model = composite_factory.get_midpoint_composite_subject_model()
 
         assert composite_model is not None
-        assert hasattr(composite_model, 'sun')
-        assert hasattr(composite_model, 'moon')
-        assert hasattr(composite_model, 'mercury')
-        assert hasattr(composite_model, 'venus')
-        assert hasattr(composite_model, 'mars')
+        assert hasattr(composite_model, "sun")
+        assert hasattr(composite_model, "moon")
+        assert hasattr(composite_model, "mercury")
+        assert hasattr(composite_model, "venus")
+        assert hasattr(composite_model, "mars")
 
     def test_incompatible_zodiac_types(self):
         """Test error when subjects have different zodiac types."""
         # Create subject with different zodiac type
         subject_sidereal = AstrologicalSubjectFactory.from_birth_data(
             name="Sidereal Subject",
-            year=1990, month=6, day=15, hour=12, minute=30,
-            lat=40.7128, lng=-74.0060, tz_str="America/New_York",
-            city="New York", nation="US",
+            year=1990,
+            month=6,
+            day=15,
+            hour=12,
+            minute=30,
+            lat=40.7128,
+            lng=-74.0060,
+            tz_str="America/New_York",
+            city="New York",
+            nation="US",
             zodiac_type="Sidereal",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
         with pytest.raises(KerykeionException, match="Both subjects must have the same zodiac type"):
@@ -105,11 +102,18 @@ class TestCompositeSubjectFactory:
         # Create subject with different house system
         subject_different_houses = AstrologicalSubjectFactory.from_birth_data(
             name="Different Houses Subject",
-            year=1990, month=6, day=15, hour=12, minute=30,
-            lat=40.7128, lng=-74.0060, tz_str="America/New_York",
-            city="New York", nation="US",
+            year=1990,
+            month=6,
+            day=15,
+            hour=12,
+            minute=30,
+            lat=40.7128,
+            lng=-74.0060,
+            tz_str="America/New_York",
+            city="New York",
+            nation="US",
             houses_system_identifier="K",  # Koch instead of default Placidus
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
         with pytest.raises(KerykeionException, match="Both subjects must have the same houses system"):
@@ -120,11 +124,18 @@ class TestCompositeSubjectFactory:
         # Create subject with different perspective type
         subject_different_perspective = AstrologicalSubjectFactory.from_birth_data(
             name="Different Perspective Subject",
-            year=1990, month=6, day=15, hour=12, minute=30,
-            lat=40.7128, lng=-74.0060, tz_str="America/New_York",
-            city="New York", nation="US",
+            year=1990,
+            month=6,
+            day=15,
+            hour=12,
+            minute=30,
+            lat=40.7128,
+            lng=-74.0060,
+            tz_str="America/New_York",
+            city="New York",
+            nation="US",
             perspective_type="Heliocentric",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
         with pytest.raises(KerykeionException, match="Both subjects must have the same perspective type"):
@@ -132,10 +143,7 @@ class TestCompositeSubjectFactory:
 
     def test_str_representation(self):
         """Test string representation of composite factory."""
-        composite_factory = CompositeSubjectFactory(
-            self.subject1,
-            self.subject2
-        )
+        composite_factory = CompositeSubjectFactory(self.subject1, self.subject2)
 
         str_repr = str(composite_factory)
         assert "Composite Chart Data" in str_repr
@@ -144,10 +152,7 @@ class TestCompositeSubjectFactory:
 
     def test_repr_representation(self):
         """Test repr representation of composite factory."""
-        composite_factory = CompositeSubjectFactory(
-            self.subject1,
-            self.subject2
-        )
+        composite_factory = CompositeSubjectFactory(self.subject1, self.subject2)
 
         repr_str = repr(composite_factory)
         assert "Composite Chart Data" in repr_str
@@ -173,18 +178,14 @@ class TestCompositeSubjectFactory:
         composite_factory = CompositeSubjectFactory(self.subject1, self.subject2)
 
         # Test that the factory object has expected attributes instead of hash
-        assert hasattr(composite_factory, 'first_subject')
-        assert hasattr(composite_factory, 'second_subject')
-        assert hasattr(composite_factory, 'name')
+        assert hasattr(composite_factory, "first_subject")
+        assert hasattr(composite_factory, "second_subject")
+        assert hasattr(composite_factory, "name")
 
     def test_copy_method(self):
         """Test copy method creates independent copy"""
         # Create composite factory for testing
-        composite_factory = CompositeSubjectFactory(
-            self.subject1,
-            self.subject2,
-            chart_name="Test Composite"
-        )
+        composite_factory = CompositeSubjectFactory(self.subject1, self.subject2, chart_name="Test Composite")
 
         # Test with copy method
         copied_factory = copy.copy(composite_factory)
@@ -209,10 +210,7 @@ class TestCompositeSubjectFactory:
 
     def test_getitem_keyerror(self):
         """Test __getitem__ with invalid key raises error"""
-        composite_factory = CompositeSubjectFactory(
-            self.subject1,
-            self.subject2
-        )
+        composite_factory = CompositeSubjectFactory(self.subject1, self.subject2)
 
         # Implementation uses getattr, so expect AttributeError, not KeyError
         with pytest.raises(AttributeError):
@@ -246,7 +244,7 @@ class TestCompositeSubjectFactory:
         """Test that common active points are correctly identified."""
         composite_factory = CompositeSubjectFactory(self.subject1, self.subject2)
 
-        assert hasattr(composite_factory, 'active_points')
+        assert hasattr(composite_factory, "active_points")
         assert isinstance(composite_factory.active_points, list)
         assert len(composite_factory.active_points) > 0
 
@@ -255,22 +253,36 @@ class TestCompositeSubjectFactory:
         # Create two subjects with same sidereal settings
         subject_sidereal_1 = AstrologicalSubjectFactory.from_birth_data(
             name="Sidereal 1",
-            year=1990, month=6, day=15, hour=12, minute=30,
-            lat=40.7128, lng=-74.0060, tz_str="America/New_York",
-            city="New York", nation="US",
+            year=1990,
+            month=6,
+            day=15,
+            hour=12,
+            minute=30,
+            lat=40.7128,
+            lng=-74.0060,
+            tz_str="America/New_York",
+            city="New York",
+            nation="US",
             zodiac_type="Sidereal",
             sidereal_mode="LAHIRI",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
         subject_sidereal_2 = AstrologicalSubjectFactory.from_birth_data(
             name="Sidereal 2",
-            year=1992, month=8, day=20, hour=14, minute=45,
-            lat=40.7128, lng=-74.0060, tz_str="America/New_York",
-            city="New York", nation="US",
+            year=1992,
+            month=8,
+            day=20,
+            hour=14,
+            minute=45,
+            lat=40.7128,
+            lng=-74.0060,
+            tz_str="America/New_York",
+            city="New York",
+            nation="US",
             zodiac_type="Sidereal",
             sidereal_mode="LAHIRI",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
         # Should work without error
@@ -282,22 +294,36 @@ class TestCompositeSubjectFactory:
         """Test error when subjects have different sidereal modes."""
         subject_lahiri = AstrologicalSubjectFactory.from_birth_data(
             name="Lahiri Subject",
-            year=1990, month=6, day=15, hour=12, minute=30,
-            lat=40.7128, lng=-74.0060, tz_str="America/New_York",
-            city="New York", nation="US",
+            year=1990,
+            month=6,
+            day=15,
+            hour=12,
+            minute=30,
+            lat=40.7128,
+            lng=-74.0060,
+            tz_str="America/New_York",
+            city="New York",
+            nation="US",
             zodiac_type="Sidereal",
             sidereal_mode="LAHIRI",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
         subject_fagan = AstrologicalSubjectFactory.from_birth_data(
             name="Fagan Subject",
-            year=1992, month=8, day=20, hour=14, minute=45,
-            lat=40.7128, lng=-74.0060, tz_str="America/New_York",
-            city="New York", nation="US",
+            year=1992,
+            month=8,
+            day=20,
+            hour=14,
+            minute=45,
+            lat=40.7128,
+            lng=-74.0060,
+            tz_str="America/New_York",
+            city="New York",
+            nation="US",
             zodiac_type="Sidereal",
             sidereal_mode="FAGAN_BRADLEY",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
         with pytest.raises(KerykeionException, match="Both subjects must have the same sidereal mode"):

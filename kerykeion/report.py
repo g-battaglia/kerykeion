@@ -143,9 +143,7 @@ class ReportGenerator:
             self._active_points = list(self.model.active_points)
             self._active_aspects = [dict(aspect) for aspect in self.model.active_aspects]
         else:
-            supported = (
-                "AstrologicalSubjectModel, SingleChartDataModel, DualChartDataModel"
-            )
+            supported = "AstrologicalSubjectModel, SingleChartDataModel, DualChartDataModel"
             raise TypeError(f"Unsupported model type {type(self.model)!r}. Supported models: {supported}.")
 
     # ------------------------------------------------------------------ #
@@ -181,14 +179,18 @@ class ReportGenerator:
                 )
             )
 
-        sections.extend([
-            self._celestial_points_report(self._primary_subject, f"{self._primary_subject_label()} Celestial Points"),
-            self._houses_report(self._primary_subject, f"{self._primary_subject_label()} Houses"),
-            self._lunar_phase_report(self._primary_subject),
-            self._elements_report(),
-            self._qualities_report(),
-            self._active_configuration_report(),
-        ])
+        sections.extend(
+            [
+                self._celestial_points_report(
+                    self._primary_subject, f"{self._primary_subject_label()} Celestial Points"
+                ),
+                self._houses_report(self._primary_subject, f"{self._primary_subject_label()} Houses"),
+                self._lunar_phase_report(self._primary_subject),
+                self._elements_report(),
+                self._qualities_report(),
+                self._active_configuration_report(),
+            ]
+        )
 
         if include_aspects:
             sections.append(self._aspects_report(max_aspects=max_aspects))
@@ -206,9 +208,11 @@ class ReportGenerator:
         if self._secondary_subject is not None:
             sections.append(self._subject_data_report(self._secondary_subject, secondary_label))
 
-        sections.extend([
-            self._celestial_points_report(self._primary_subject, f"{primary_label} Celestial Points"),
-        ])
+        sections.extend(
+            [
+                self._celestial_points_report(self._primary_subject, f"{primary_label} Celestial Points"),
+            ]
+        )
 
         if self._secondary_subject is not None:
             sections.append(
@@ -220,14 +224,16 @@ class ReportGenerator:
         if self._secondary_subject is not None:
             sections.append(self._houses_report(self._secondary_subject, f"{secondary_label} Houses"))
 
-        sections.extend([
-            self._lunar_phase_report(self._primary_subject),
-            self._elements_report(),
-            self._qualities_report(),
-            self._house_comparison_report(),
-            self._relationship_score_report(),
-            self._active_configuration_report(),
-        ])
+        sections.extend(
+            [
+                self._lunar_phase_report(self._primary_subject),
+                self._elements_report(),
+                self._qualities_report(),
+                self._house_comparison_report(),
+                self._relationship_score_report(),
+                self._active_configuration_report(),
+            ]
+        )
 
         if include_aspects:
             sections.append(self._aspects_report(max_aspects=max_aspects))
@@ -268,7 +274,10 @@ class ReportGenerator:
             year = self._extract_year(
                 self._secondary_subject.iso_formatted_local_datetime if self._secondary_subject else None
             )
-            if isinstance(self._secondary_subject, PlanetReturnModel) and self._secondary_subject.return_type == "Solar":
+            if (
+                isinstance(self._secondary_subject, PlanetReturnModel)
+                and self._secondary_subject.return_type == "Solar"
+            ):
                 base_title = f"{self._primary_subject.name} — Solar Return Comparison {year or ''}".strip()
             else:
                 base_title = f"{self._primary_subject.name} — Lunar Return Comparison {year or ''}".strip()
@@ -308,9 +317,7 @@ class ReportGenerator:
             birth_data.append(["Return Type", subject.return_type])
 
         if isinstance(subject, AstrologicalSubjectModel):
-            birth_data.append(
-                ["Date", f"{subject.day:02d}/{subject.month:02d}/{subject.year}"]
-            )
+            birth_data.append(["Date", f"{subject.day:02d}/{subject.month:02d}/{subject.year}"])
             birth_data.append(["Time", f"{subject.hour:02d}:{subject.minute:02d}"])
 
         city = getattr(subject, "city", None)
@@ -382,15 +389,17 @@ class ReportGenerator:
             decl_str = f"{point.declination:+.2f}°" if point.declination is not None else "N/A"
             ret_str = "R" if point.retrograde else "-"
             house_str = point.house.replace("_", " ") if point.house else "-"
-            celestial_data.append([
-                point.name.replace("_", " "),
-                f"{point.sign} {point.emoji}",
-                f"{point.position:.2f}°",
-                speed_str,
-                decl_str,
-                ret_str,
-                house_str,
-            ])
+            celestial_data.append(
+                [
+                    point.name.replace("_", " "),
+                    f"{point.sign} {point.emoji}",
+                    f"{point.position:.2f}°",
+                    speed_str,
+                    decl_str,
+                    ret_str,
+                    house_str,
+                ]
+            )
 
         return AsciiTable(celestial_data, title=title).table
 
@@ -422,12 +431,14 @@ class ReportGenerator:
 
         houses_data: List[List[str]] = [["House", "Sign", "Position", "Absolute Position"]]
         for house in houses:
-            houses_data.append([
-                house.name.replace("_", " "),
-                f"{house.sign} {house.emoji}",
-                f"{house.position:.2f}°",
-                f"{house.abs_pos:.2f}°",
-            ])
+            houses_data.append(
+                [
+                    house.name.replace("_", " "),
+                    f"{house.sign} {house.emoji}",
+                    f"{house.position:.2f}°",
+                    f"{house.abs_pos:.2f}°",
+                ]
+            )
 
         system_name = getattr(subject, "houses_system_name", "")
         table_title = f"{title} ({system_name})" if system_name else title
@@ -533,23 +544,27 @@ class ReportGenerator:
             movement = f"{aspect.aspect_movement} {movement_symbol}".strip()
 
             if is_dual:
-                aspects_table.append([
-                    aspect.p1_name.replace("_", " "),
-                    aspect.p1_owner,
-                    f"{aspect.aspect} {symbol}",
-                    aspect.p2_name.replace("_", " "),
-                    aspect.p2_owner,
-                    f"{aspect.orbit:.2f}°",
-                    movement,
-                ])
+                aspects_table.append(
+                    [
+                        aspect.p1_name.replace("_", " "),
+                        aspect.p1_owner,
+                        f"{aspect.aspect} {symbol}",
+                        aspect.p2_name.replace("_", " "),
+                        aspect.p2_owner,
+                        f"{aspect.orbit:.2f}°",
+                        movement,
+                    ]
+                )
             else:
-                aspects_table.append([
-                    aspect.p1_name.replace("_", " "),
-                    f"{aspect.aspect} {symbol}",
-                    aspect.p2_name.replace("_", " "),
-                    f"{aspect.orbit:.2f}°",
-                    movement,
-                ])
+                aspects_table.append(
+                    [
+                        aspect.p1_name.replace("_", " "),
+                        f"{aspect.aspect} {symbol}",
+                        aspect.p2_name.replace("_", " "),
+                        f"{aspect.orbit:.2f}°",
+                        movement,
+                    ]
+                )
 
         suffix = f" (showing {len(aspects_list)} of {total_aspects})" if max_aspects is not None else ""
         title = f"Aspects{suffix}"
@@ -605,13 +620,15 @@ class ReportGenerator:
                 owner_house = f"{point.point_owner_house_number or '-'} ({point.point_owner_house_name or '-'})"
 
             projected_house = f"{point.projected_house_number} ({point.projected_house_name})"
-            table_data.append([
-                f"{point.point_owner_name} – {point.point_name.replace('_', ' ')}",
-                owner_house,
-                projected_house,
-                point.point_sign,
-                f"{point.point_degree:.2f}°",
-            ])
+            table_data.append(
+                [
+                    f"{point.point_owner_name} – {point.point_name.replace('_', ' ')}",
+                    owner_house,
+                    projected_house,
+                    point.point_sign,
+                    f"{point.point_degree:.2f}°",
+                ]
+            )
 
         return AsciiTable(table_data, title=title).table
 
@@ -622,12 +639,14 @@ class ReportGenerator:
         table_data: List[List[str]] = [["Point", "Projected House", "Sign", "Degree"]]
         for point in points:
             projected_house = f"{point.projected_house_number} ({point.projected_house_name})"
-            table_data.append([
-                f"{point.point_owner_name} – {point.point_name.replace('_', ' ')}",
-                projected_house,
-                point.point_sign,
-                f"{point.point_degree:.2f}°",
-            ])
+            table_data.append(
+                [
+                    f"{point.point_owner_name} – {point.point_name.replace('_', ' ')}",
+                    projected_house,
+                    point.point_sign,
+                    f"{point.point_degree:.2f}°",
+                ]
+            )
 
         return AsciiTable(table_data, title=title).table
 
@@ -651,12 +670,14 @@ class ReportGenerator:
         if score.aspects:
             aspects_table: List[List[str]] = [["Point 1", "Aspect", "Point 2", "Orb"]]
             for aspect in score.aspects:
-                aspects_table.append([
-                    aspect.p1_name.replace("_", " "),
-                    aspect.aspect,
-                    aspect.p2_name.replace("_", " "),
-                    f"{aspect.orbit:.2f}°",
-                ])
+                aspects_table.append(
+                    [
+                        aspect.p1_name.replace("_", " "),
+                        aspect.aspect,
+                        aspect.p2_name.replace("_", " "),
+                        f"{aspect.orbit:.2f}°",
+                    ]
+                )
             sections.append(AsciiTable(aspects_table, title="Score Supporting Aspects").table)
 
         return "\n\n".join(sections)

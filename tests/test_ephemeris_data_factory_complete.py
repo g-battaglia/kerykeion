@@ -29,7 +29,7 @@ class TestEphemerisDataFactory:
             step=1,
             lat=self.lat,
             lng=self.lng,
-            tz_str=self.tz_str
+            tz_str=self.tz_str,
         )
 
         data = factory.get_ephemeris_data()
@@ -48,16 +48,16 @@ class TestEphemerisDataFactory:
             step=1,
             lat=self.lat,
             lng=self.lng,
-            tz_str=self.tz_str
+            tz_str=self.tz_str,
         )
 
         data = factory.get_ephemeris_data(as_model=True)
         assert isinstance(data, list)
         assert len(data) > 0
         # Check that it's a model instance
-        assert hasattr(data[0], 'date')
-        assert hasattr(data[0], 'planets')
-        assert hasattr(data[0], 'houses')
+        assert hasattr(data[0], "date")
+        assert hasattr(data[0], "planets")
+        assert hasattr(data[0], "houses")
 
     def test_hourly_ephemeris(self):
         """Test hourly ephemeris data generation."""
@@ -71,7 +71,7 @@ class TestEphemerisDataFactory:
             step=2,
             lat=self.lat,
             lng=self.lng,
-            tz_str=self.tz_str
+            tz_str=self.tz_str,
         )
 
         data = factory.get_ephemeris_data()
@@ -90,7 +90,7 @@ class TestEphemerisDataFactory:
             step=10,
             lat=self.lat,
             lng=self.lng,
-            tz_str=self.tz_str
+            tz_str=self.tz_str,
         )
 
         data = factory.get_ephemeris_data()
@@ -108,7 +108,7 @@ class TestEphemerisDataFactory:
             step=1,
             lat=self.lat,
             lng=self.lng,
-            tz_str=self.tz_str
+            tz_str=self.tz_str,
         )
 
         # Simulate invalid step_type by directly setting it
@@ -140,7 +140,7 @@ class TestEphemerisDataFactory:
                 lat=self.lat,
                 lng=self.lng,
                 tz_str=self.tz_str,
-                max_days=100
+                max_days=100,
             )
 
     def test_max_hours_limit_exceeded(self):
@@ -157,7 +157,7 @@ class TestEphemerisDataFactory:
                 lat=self.lat,
                 lng=self.lng,
                 tz_str=self.tz_str,
-                max_hours=50
+                max_hours=50,
             )
 
     def test_max_minutes_limit_exceeded(self):
@@ -174,7 +174,7 @@ class TestEphemerisDataFactory:
                 lat=self.lat,
                 lng=self.lng,
                 tz_str=self.tz_str,
-                max_minutes=100
+                max_minutes=100,
             )
 
     def test_no_dates_found_error(self):
@@ -190,7 +190,7 @@ class TestEphemerisDataFactory:
                 step=1,
                 lat=self.lat,
                 lng=self.lng,
-                tz_str=self.tz_str
+                tz_str=self.tz_str,
             )
 
     def test_large_dataset_warning(self, caplog):
@@ -207,7 +207,7 @@ class TestEphemerisDataFactory:
                 lat=self.lat,
                 lng=self.lng,
                 tz_str=self.tz_str,
-                max_days=2000
+                max_days=2000,
             )
 
         assert "Large number of dates" in caplog.text
@@ -223,7 +223,7 @@ class TestEphemerisDataFactory:
             lng=self.lng,
             tz_str=self.tz_str,
             zodiac_type="Sidereal",
-            sidereal_mode="LAHIRI"
+            sidereal_mode="LAHIRI",
         )
 
         data = factory.get_ephemeris_data()
@@ -239,7 +239,7 @@ class TestEphemerisDataFactory:
             lat=self.lat,
             lng=self.lng,
             tz_str=self.tz_str,
-            houses_system_identifier="K"  # Koch system
+            houses_system_identifier="K",  # Koch system
         )
 
         data = factory.get_ephemeris_data()
@@ -255,7 +255,7 @@ class TestEphemerisDataFactory:
             lat=self.lat,
             lng=self.lng,
             tz_str=self.tz_str,
-            perspective_type="True Geocentric"
+            perspective_type="True Geocentric",
         )
 
         data = factory.get_ephemeris_data()
@@ -271,7 +271,7 @@ class TestEphemerisDataFactory:
             lat=self.lat,
             lng=self.lng,
             tz_str=self.tz_str,
-            is_dst=True
+            is_dst=True,
         )
 
         data = factory.get_ephemeris_data()
@@ -289,7 +289,7 @@ class TestEphemerisDataFactory:
             tz_str=self.tz_str,
             max_days=None,
             max_hours=None,
-            max_minutes=None
+            max_minutes=None,
         )
 
         data = factory.get_ephemeris_data()
@@ -304,15 +304,15 @@ class TestEphemerisDataFactory:
             step=1,
             lat=self.lat,
             lng=self.lng,
-            tz_str=self.tz_str
+            tz_str=self.tz_str,
         )
 
         subjects = factory.get_ephemeris_data_as_astrological_subjects()
         assert isinstance(subjects, list)
         assert len(subjects) > 0
         # Check that it's an AstrologicalSubject instance
-        assert hasattr(subjects[0], 'sun')
-        assert hasattr(subjects[0], 'moon')
+        assert hasattr(subjects[0], "sun")
+        assert hasattr(subjects[0], "moon")
 
     def test_get_ephemeris_data_as_astrological_subjects_as_model(self):
         """Test getting ephemeris data as astrological subjects with as_model=True."""
@@ -323,7 +323,7 @@ class TestEphemerisDataFactory:
             step=1,
             lat=self.lat,
             lng=self.lng,
-            tz_str=self.tz_str
+            tz_str=self.tz_str,
         )
 
         # Test that as_model=True returns AstrologicalSubjectModel instances
@@ -331,8 +331,8 @@ class TestEphemerisDataFactory:
 
         # Verify we get valid AstrologicalSubjectModel objects
         assert len(subjects) > 0
-        assert all(hasattr(subject, 'sun') for subject in subjects)
-        assert all(hasattr(subject, 'moon') for subject in subjects)
+        assert all(hasattr(subject, "sun") for subject in subjects)
+        assert all(hasattr(subject, "moon") for subject in subjects)
 
     def test_edge_case_single_date(self):
         """Test edge case with single date (start equals end)."""
@@ -343,7 +343,7 @@ class TestEphemerisDataFactory:
             step=1,
             lat=self.lat,
             lng=self.lng,
-            tz_str=self.tz_str
+            tz_str=self.tz_str,
         )
 
         data = factory.get_ephemeris_data()
@@ -362,7 +362,7 @@ class TestEphemerisDataFactory:
             step=1,  # Every hour instead of fractional
             lat=self.lat,
             lng=self.lng,
-            tz_str=self.tz_str
+            tz_str=self.tz_str,
         )
 
         data = factory.get_ephemeris_data()

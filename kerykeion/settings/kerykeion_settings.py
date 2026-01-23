@@ -47,5 +47,6 @@ def _deep_merge(base: Mapping[str, Any], overrides: Mapping[str, Any]) -> dict[s
             merged[key] = deepcopy(value)
     return merged
 
+
 # Keep the public surface area explicit for downstream imports.
 __all__ = ["SettingsSource", "load_settings_mapping", "LANGUAGE_SETTINGS"]

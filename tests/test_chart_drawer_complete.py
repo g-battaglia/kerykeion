@@ -31,7 +31,7 @@ class TestChartDrawer:
             lng=-74.006,
             lat=40.7128,
             tz_str="America/New_York",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
         # Create chart data for drawing
@@ -49,15 +49,15 @@ class TestChartDrawer:
             lng=-118.2437,
             lat=34.0522,
             tz_str="America/Los_Angeles",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
     def test_basic_chart_creation(self):
         """Test basic chart drawer instantiation."""
         chart = ChartDrawer(self.chart_data)
         assert chart.chart_data is not None
-        assert hasattr(chart, 'chart_type')
-        assert hasattr(chart, 'first_obj')
+        assert hasattr(chart, "chart_type")
+        assert hasattr(chart, "first_obj")
 
     def test_chart_with_custom_theme(self):
         """Test chart creation with custom theme."""
@@ -98,7 +98,7 @@ class TestChartDrawer:
         # Test that the default title is used in the template
         template_dict = chart._create_template_dictionary()
         # For natal charts, default format is "Name - Birth Chart"
-        expected_default = f'{self.subject.name} - Birth Chart'  # Using English as default
+        expected_default = f"{self.subject.name} - Birth Chart"  # Using English as default
         assert template_dict["stringTitle"] == expected_default
 
     def test_generate_svg_string_with_kwarg_custom_title(self):
@@ -114,28 +114,28 @@ class TestChartDrawer:
         """Test chart drawer has all expected properties."""
         chart = ChartDrawer(self.chart_data)
 
-        assert hasattr(chart, 'chart_data')
-        assert hasattr(chart, 'chart_type')
-        assert hasattr(chart, 'first_obj')
-        assert hasattr(chart, 'chart_language')
-        assert hasattr(chart, 'active_points')
-        assert hasattr(chart, 'active_aspects')
+        assert hasattr(chart, "chart_data")
+        assert hasattr(chart, "chart_type")
+        assert hasattr(chart, "first_obj")
+        assert hasattr(chart, "chart_language")
+        assert hasattr(chart, "active_points")
+        assert hasattr(chart, "active_aspects")
 
     def test_chart_template_generation(self):
         """Test chart template generation."""
         chart = ChartDrawer(self.chart_data)
 
         # Test that template generation methods exist
-        assert hasattr(chart, 'save_svg')
+        assert hasattr(chart, "save_svg")
 
     def test_chart_save_methods(self):
         """Test chart save methods exist."""
         chart = ChartDrawer(self.chart_data)
 
         # Test that save methods exist
-        assert hasattr(chart, 'save_svg')
+        assert hasattr(chart, "save_svg")
 
-    @patch('kerykeion.charts.chart_drawer.Path')
+    @patch("kerykeion.charts.chart_drawer.Path")
     def test_chart_template_method(self, mock_path):
         """Test chart template method."""
         mock_path.return_value.exists.return_value = True
@@ -210,14 +210,14 @@ class TestChartDrawer:
         chart = ChartDrawer(self.chart_data)
 
         # Test that chart type is extracted
-        assert hasattr(chart, 'chart_type')
+        assert hasattr(chart, "chart_type")
         assert chart.chart_type is not None
 
     def test_chart_drawer_constants(self):
         """Test that ChartDrawer has expected constants."""
-        assert hasattr(ChartDrawer, '_DEFAULT_HEIGHT')
-        assert hasattr(ChartDrawer, '_DEFAULT_FULL_WIDTH')
-        assert hasattr(ChartDrawer, '_DEFAULT_NATAL_WIDTH')
+        assert hasattr(ChartDrawer, "_DEFAULT_HEIGHT")
+        assert hasattr(ChartDrawer, "_DEFAULT_FULL_WIDTH")
+        assert hasattr(ChartDrawer, "_DEFAULT_NATAL_WIDTH")
 
         # Test constants are reasonable values
         assert ChartDrawer._DEFAULT_HEIGHT > 0
@@ -239,7 +239,7 @@ class TestChartDrawer:
             lng=0,
             lat=0,
             tz_str="UTC",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
         minimal_chart_data = ChartDataFactory.create_natal_chart_data(minimal_subject)
@@ -261,16 +261,16 @@ class TestChartDrawer:
 
     def test_chart_drawer_viewbox_constants(self):
         """Test chart drawer viewbox constants."""
-        assert hasattr(ChartDrawer, '_BASIC_CHART_VIEWBOX')
-        assert hasattr(ChartDrawer, '_WIDE_CHART_VIEWBOX')
-        assert hasattr(ChartDrawer, '_ULTRA_WIDE_CHART_VIEWBOX')
+        assert hasattr(ChartDrawer, "_BASIC_CHART_VIEWBOX")
+        assert hasattr(ChartDrawer, "_WIDE_CHART_VIEWBOX")
+        assert hasattr(ChartDrawer, "_ULTRA_WIDE_CHART_VIEWBOX")
 
         # Test viewbox strings are properly formatted
         assert "0 0" in ChartDrawer._BASIC_CHART_VIEWBOX
         assert "0 0" in ChartDrawer._WIDE_CHART_VIEWBOX
         assert "0 0" in ChartDrawer._ULTRA_WIDE_CHART_VIEWBOX
 
-    @patch('kerykeion.charts.chart_drawer.logging')
+    @patch("kerykeion.charts.chart_drawer.logging")
     def test_chart_drawer_logging(self, mock_logging):
         """Test that logging is properly configured."""
         chart = ChartDrawer(self.chart_data)
@@ -288,7 +288,7 @@ class TestChartDrawer:
             self.chart_data,
             colors_settings=custom_colors,
             celestial_points_settings=custom_points,
-            aspects_settings=custom_aspects
+            aspects_settings=custom_aspects,
         )
 
         assert chart.chart_colors_settings == custom_colors
@@ -304,8 +304,8 @@ class TestChartDrawer:
 
         assert chart.chart_type == "Composite"
         assert chart.chart_data is not None
-        assert hasattr(chart, 'first_circle_radius')
-        assert hasattr(chart, 'second_circle_radius')
+        assert hasattr(chart, "first_circle_radius")
+        assert hasattr(chart, "second_circle_radius")
 
     def test_transit_chart_drawer(self):
         """Test chart drawer with transit chart data."""
@@ -314,7 +314,7 @@ class TestChartDrawer:
 
         assert chart.chart_type == "Transit"
         assert chart.chart_data is not None
-        assert hasattr(chart, 'second_obj')
+        assert hasattr(chart, "second_obj")
 
     def test_transit_chart_uses_transit_lunar_phase(self):
         """Transit charts should render the lunar phase of the transiting subject."""
@@ -350,7 +350,7 @@ class TestChartDrawer:
 
         assert chart.chart_type == "Synastry"
         assert chart.chart_data is not None
-        assert hasattr(chart, 'second_obj')
+        assert hasattr(chart, "second_obj")
 
     def test_hide_house_position_comparison_removes_grid_and_updates_width(self):
         """Hiding the house position comparison grid should reclaim horizontal space."""
@@ -408,7 +408,7 @@ class TestChartDrawer:
             except Exception:
                 # Some chart drawing might fail due to missing dependencies
                 # but the method should exist
-                assert hasattr(chart, 'save_svg')
+                assert hasattr(chart, "save_svg")
 
     def test_chart_drawer_different_settings_combinations(self):
         """Test chart drawer with various settings combinations."""
@@ -421,7 +421,7 @@ class TestChartDrawer:
             chart_language="IT",
             transparent_background=True,
             external_view=True,
-            double_chart_aspect_grid_type="table"
+            double_chart_aspect_grid_type="table",
         )
 
         assert chart1.chart_language == "IT"
@@ -442,7 +442,7 @@ class TestChartDrawer:
             chart_data,
             colors_settings=custom_colors,
             celestial_points_settings=custom_celestial,
-            aspects_settings=custom_aspects
+            aspects_settings=custom_aspects,
         )
 
         assert chart.chart_colors_settings == custom_colors
@@ -455,13 +455,13 @@ class TestChartDrawer:
         chart = ChartDrawer(chart_data)
 
         # Test property access that might trigger uncovered code
-        assert hasattr(chart, 'chart_type')
-        assert hasattr(chart, 'first_obj')
-        assert hasattr(chart, 'height')
-        assert hasattr(chart, 'width')
-        assert hasattr(chart, 'location')
-        assert hasattr(chart, 'geolat')
-        assert hasattr(chart, 'geolon')
+        assert hasattr(chart, "chart_type")
+        assert hasattr(chart, "first_obj")
+        assert hasattr(chart, "height")
+        assert hasattr(chart, "width")
+        assert hasattr(chart, "location")
+        assert hasattr(chart, "geolat")
+        assert hasattr(chart, "geolon")
 
     def test_chart_drawer_viewbox_settings(self):
         """Test chart drawer viewbox settings for different chart types."""
@@ -487,9 +487,6 @@ class TestChartDrawer:
         chart_data = ChartDataFactory.create_natal_chart_data(self.subject)
 
         # Test with minimal settings
-        chart = ChartDrawer(
-            chart_data,
-            theme=None
-        )
+        chart = ChartDrawer(chart_data, theme=None)
 
         assert chart.chart_data is not None

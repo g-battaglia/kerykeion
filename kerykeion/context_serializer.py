@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2025 Giacomo Battaglia
+This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
-    Context Serializer Module
+Context Serializer Module
 
-    This module provides functionality to transform Kerykeion Pydantic models
-    into textual English descriptions suitable for AI consumption. The output
-    is strictly non-qualitative and non-interpretive, providing factual
-    representations of astrological data.
+This module provides functionality to transform Kerykeion Pydantic models
+into textual English descriptions suitable for AI consumption. The output
+is strictly non-qualitative and non-interpretive, providing factual
+representations of astrological data.
 """
 
 from typing import Union, Optional, List
@@ -43,7 +43,7 @@ SIGN_FULL_NAMES = {
     "Sag": "Sagittarius",
     "Cap": "Capricorn",
     "Aqu": "Aquarius",
-    "Pis": "Pisces"
+    "Pis": "Pisces",
 }
 
 
@@ -71,7 +71,7 @@ def kerykeion_point_to_context(point: KerykeionPointModel) -> str:
 
     # Add house placement directly to position string (no comma)
     if point.house is not None:
-        house_name = str(point.house).replace('_', ' ')
+        house_name = str(point.house).replace("_", " ")
         position_str += f" in {house_name}"
 
     # Now build the parts list starting with the complete position string
@@ -155,10 +155,12 @@ def aspect_to_context(aspect: AspectModel, is_synastry: bool = False, is_transit
         if is_transit:
             p2_owner = "Transit"
         else:
-            p2_owner = f"\"{aspect.p2_owner}\""
+            p2_owner = f'"{aspect.p2_owner}"'
 
         # Synastry/Transit format: show clear ownership, with orb and aspect angle, no movement
-        parts.append(f"{aspect.aspect} between \"{aspect.p1_owner}\"'s {aspect.p1_name} and {p2_owner}'s {aspect.p2_name}")
+        parts.append(
+            f"{aspect.aspect} between \"{aspect.p1_owner}\"'s {aspect.p1_name} and {p2_owner}'s {aspect.p2_name}"
+        )
         # Orb and aspect angle
         parts.append(f"orb {aspect.orbit:.2f}°, aspect angle {aspect.aspect_degrees}°")
     else:
@@ -193,16 +195,16 @@ def point_in_house_to_context(point_in_house: PointInHouseModel) -> str:
 
     # Point owner and point information
     parts.append(f'"{point_in_house.point_owner_name}"\'s {point_in_house.point_name}')
-    parts.append(f'at {point_in_house.point_degree:.2f}° {point_in_house.point_sign}')
+    parts.append(f"at {point_in_house.point_degree:.2f}° {point_in_house.point_sign}")
 
     # Original house position (if available)
     if point_in_house.point_owner_house_name:
-        parts.append(f'(in {point_in_house.point_owner_name}\'s {point_in_house.point_owner_house_name})')
+        parts.append(f"(in {point_in_house.point_owner_name}'s {point_in_house.point_owner_house_name})")
 
     # Projected house position
     parts.append(f'falls in "{point_in_house.projected_house_owner_name}"\'s {point_in_house.projected_house_name}')
 
-    return ' '.join(parts)
+    return " ".join(parts)
 
 
 def house_comparison_to_context(house_comparison: HouseComparisonModel, is_transit: bool = False) -> str:
@@ -229,7 +231,9 @@ def house_comparison_to_context(house_comparison: HouseComparisonModel, is_trans
 
     # First subject's points in second subject's houses
     if house_comparison.first_points_in_second_houses:
-        lines.append(f'\n"{house_comparison.first_subject_name}"\'s points in "{house_comparison.second_subject_name}"\'s houses:')
+        lines.append(
+            f'\n"{house_comparison.first_subject_name}"\'s points in "{house_comparison.second_subject_name}"\'s houses:'
+        )
         for point in house_comparison.first_points_in_second_houses:
             lines.append(f"  - {point_in_house_to_context(point)}")
 
@@ -241,7 +245,9 @@ def house_comparison_to_context(house_comparison: HouseComparisonModel, is_trans
             lines.append(f'\nTransit planets in "{house_comparison.first_subject_name}"\'s houses:')
         else:
             # Normal synastry case: bidirectional
-            lines.append(f'\n"{house_comparison.second_subject_name}"\'s points in "{house_comparison.first_subject_name}"\'s houses:')
+            lines.append(
+                f'\n"{house_comparison.second_subject_name}"\'s points in "{house_comparison.first_subject_name}"\'s houses:'
+            )
 
         for point in house_comparison.second_points_in_first_houses:
             lines.append(f"  - {point_in_house_to_context(point)}")
@@ -250,10 +256,12 @@ def house_comparison_to_context(house_comparison: HouseComparisonModel, is_trans
     if house_comparison.first_cusps_in_second_houses:
         if is_transit:
             # Transit case: "John's cusps in Transit's houses" (less common but included)
-            lines.append(f'\n"{house_comparison.first_subject_name}"\'s cusps in Transit\'s houses:')
+            lines.append(f"\n\"{house_comparison.first_subject_name}\"'s cusps in Transit's houses:")
         else:
             # Normal synastry case: bidirectional
-            lines.append(f'\n"{house_comparison.first_subject_name}"\'s cusps in "{house_comparison.second_subject_name}"\'s houses:')
+            lines.append(
+                f'\n"{house_comparison.first_subject_name}"\'s cusps in "{house_comparison.second_subject_name}"\'s houses:'
+            )
 
         for cusp in house_comparison.first_cusps_in_second_houses:
             lines.append(f"  - {point_in_house_to_context(cusp)}")
@@ -266,12 +274,14 @@ def house_comparison_to_context(house_comparison: HouseComparisonModel, is_trans
             lines.append(f'\nTransit cusps in "{house_comparison.first_subject_name}"\'s houses:')
         else:
             # Normal synastry case: bidirectional
-            lines.append(f'\n"{house_comparison.second_subject_name}"\'s cusps in "{house_comparison.first_subject_name}"\'s houses:')
+            lines.append(
+                f'\n"{house_comparison.second_subject_name}"\'s cusps in "{house_comparison.first_subject_name}"\'s houses:'
+            )
 
         for cusp in house_comparison.second_cusps_in_first_houses:
             lines.append(f"  - {point_in_house_to_context(cusp)}")
 
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
 def element_distribution_to_context(distribution: ElementDistributionModel) -> str:
@@ -319,7 +329,9 @@ def quality_distribution_to_context(distribution: QualityDistributionModel) -> s
     )
 
 
-def astrological_subject_to_context(subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel], is_transit_subject: bool = False) -> str:
+def astrological_subject_to_context(
+    subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel], is_transit_subject: bool = False
+) -> str:
     """
     Transform an AstrologicalSubjectModel into comprehensive textual context.
 
@@ -344,7 +356,7 @@ def astrological_subject_to_context(subject: Union[AstrologicalSubjectModel, Com
 
     # Header (omit for transit subjects as it's already indicated by 'Transit Subject:')
     if not is_transit_subject:
-        lines.append(f"Chart for \"{subject.name}\"")
+        lines.append(f'Chart for "{subject.name}"')
 
     # Birth/Event data (for regular subjects)
     if isinstance(subject, AstrologicalSubjectModel):
@@ -354,7 +366,11 @@ def astrological_subject_to_context(subject: Union[AstrologicalSubjectModel, Com
             f"{data_label} {subject.year}-{subject.month:02d}-{subject.day:02d} "
             f"{subject.hour:02d}:{subject.minute:02d}, {subject.city}, {subject.nation}"
         )
-        lines.append(f"Coordinates: {subject.lat:.2f}°N, {subject.lng:.2f}°W" if subject.lng < 0 else f"Coordinates: {subject.lat:.2f}°N, {subject.lng:.2f}°E")
+        lines.append(
+            f"Coordinates: {subject.lat:.2f}°N, {subject.lng:.2f}°W"
+            if subject.lng < 0
+            else f"Coordinates: {subject.lat:.2f}°N, {subject.lng:.2f}°E"
+        )
         lines.append(f"Timezone: {subject.tz_str}")
 
     # Chart configuration
@@ -367,8 +383,8 @@ def astrological_subject_to_context(subject: Union[AstrologicalSubjectModel, Com
     # Composite chart specific info
     if isinstance(subject, CompositeSubjectModel):
         lines.append(f"Composite type: {subject.composite_chart_type}")
-        lines.append(f"First subject: \"{subject.first_subject.name}\"")
-        lines.append(f"Second subject: \"{subject.second_subject.name}\"")
+        lines.append(f'First subject: "{subject.first_subject.name}"')
+        lines.append(f'Second subject: "{subject.second_subject.name}"')
 
     # Planet Return specific info
     if isinstance(subject, PlanetReturnModel):
@@ -378,9 +394,23 @@ def astrological_subject_to_context(subject: Union[AstrologicalSubjectModel, Com
     lines.append("\nPlanetary positions:")
     # All celestial points in one list
     celestial_point_names = [
-        'sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn',
-        'uranus', 'neptune', 'pluto', 'chiron', 'mean_lilith', 'true_lilith',
-        'ceres', 'pallas', 'juno', 'vesta'
+        "sun",
+        "moon",
+        "mercury",
+        "venus",
+        "mars",
+        "jupiter",
+        "saturn",
+        "uranus",
+        "neptune",
+        "pluto",
+        "chiron",
+        "mean_lilith",
+        "true_lilith",
+        "ceres",
+        "pallas",
+        "juno",
+        "vesta",
     ]
     for point_name in celestial_point_names:
         point = getattr(subject, point_name, None)
@@ -388,13 +418,13 @@ def astrological_subject_to_context(subject: Union[AstrologicalSubjectModel, Com
             lines.append(f"  - {kerykeion_point_to_context(point)}")
 
     # Important points (axes and lunar nodes)
-    axes = ['ascendant', 'descendant', 'medium_coeli', 'imum_coeli', 'vertex', 'anti_vertex']
+    axes = ["ascendant", "descendant", "medium_coeli", "imum_coeli", "vertex", "anti_vertex"]
     axes_present = [getattr(subject, axis, None) for axis in axes if getattr(subject, axis, None) is not None]
     lunar_nodes_present = (
-        subject.true_north_lunar_node is not None or
-        subject.mean_north_lunar_node is not None or
-        subject.true_south_lunar_node is not None or
-        subject.mean_south_lunar_node is not None
+        subject.true_north_lunar_node is not None
+        or subject.mean_north_lunar_node is not None
+        or subject.true_south_lunar_node is not None
+        or subject.mean_south_lunar_node is not None
     )
 
     if axes_present or lunar_nodes_present:
@@ -412,9 +442,18 @@ def astrological_subject_to_context(subject: Union[AstrologicalSubjectModel, Com
     # House cusps
     lines.append("\nHouse cusps:")
     house_names = [
-        'first_house', 'second_house', 'third_house', 'fourth_house',
-        'fifth_house', 'sixth_house', 'seventh_house', 'eighth_house',
-        'ninth_house', 'tenth_house', 'eleventh_house', 'twelfth_house'
+        "first_house",
+        "second_house",
+        "third_house",
+        "fourth_house",
+        "fifth_house",
+        "sixth_house",
+        "seventh_house",
+        "eighth_house",
+        "ninth_house",
+        "tenth_house",
+        "eleventh_house",
+        "twelfth_house",
     ]
     for house_name in house_names:
         house = getattr(subject, house_name, None)
@@ -462,7 +501,9 @@ def single_chart_data_to_context(chart_data: SingleChartDataModel) -> str:
 
     # Active configuration
     lines.append(f"\nActive points: {', '.join(chart_data.active_points)}")
-    lines.append(f"Active aspects: {', '.join([a['name'] + ' (' + str(a['orb']) + '°)' for a in chart_data.active_aspects])}")
+    lines.append(
+        f"Active aspects: {', '.join([a['name'] + ' (' + str(a['orb']) + '°)' for a in chart_data.active_aspects])}"
+    )
 
     return "\n".join(lines)
 
@@ -529,7 +570,9 @@ def dual_chart_data_to_context(chart_data: DualChartDataModel) -> str:
 
     # Active configuration
     lines.append(f"\nActive points: {', '.join(chart_data.active_points)}")
-    lines.append(f"Active aspects: {', '.join([a['name'] + ' (' + str(a['orb']) + '°)' for a in chart_data.active_aspects])}")
+    lines.append(
+        f"Active aspects: {', '.join([a['name'] + ' (' + str(a['orb']) + '°)' for a in chart_data.active_aspects])}"
+    )
 
     return "\n".join(lines)
 
@@ -571,7 +614,7 @@ def transits_time_range_to_context(transits: TransitsTimeRangeModel) -> str:
 
     # Header
     if transits.subject:
-        lines.append(f"Transit analysis for \"{transits.subject.name}\"")
+        lines.append(f'Transit analysis for "{transits.subject.name}"')
     else:
         lines.append("Transit analysis")
 
@@ -588,22 +631,24 @@ def transits_time_range_to_context(transits: TransitsTimeRangeModel) -> str:
     return "\n".join(lines)
 
 
-def to_context(model: Union[
-    KerykeionPointModel,
-    LunarPhaseModel,
-    AstrologicalSubjectModel,
-    CompositeSubjectModel,
-    PlanetReturnModel,
-    AspectModel,
-    SingleChartDataModel,
-    DualChartDataModel,
-    ElementDistributionModel,
-    QualityDistributionModel,
-    TransitMomentModel,
-    TransitsTimeRangeModel,
-    PointInHouseModel,
-    HouseComparisonModel,
-]) -> str:
+def to_context(
+    model: Union[
+        KerykeionPointModel,
+        LunarPhaseModel,
+        AstrologicalSubjectModel,
+        CompositeSubjectModel,
+        PlanetReturnModel,
+        AspectModel,
+        SingleChartDataModel,
+        DualChartDataModel,
+        ElementDistributionModel,
+        QualityDistributionModel,
+        TransitMomentModel,
+        TransitsTimeRangeModel,
+        PointInHouseModel,
+        HouseComparisonModel,
+    ],
+) -> str:
     """
     Main dispatcher function to convert any Kerykeion model to textual context.
 
@@ -662,19 +707,19 @@ def to_context(model: Union[
 
 
 __all__ = [
-    'to_context',
-    'kerykeion_point_to_context',
-    'lunar_phase_to_context',
-    'aspect_to_context',
-    'point_in_house_to_context',
-    'house_comparison_to_context',
-    'element_distribution_to_context',
-    'quality_distribution_to_context',
-    'astrological_subject_to_context',
-    'single_chart_data_to_context',
-    'dual_chart_data_to_context',
-    'transit_moment_to_context',
-    'transits_time_range_to_context',
+    "to_context",
+    "kerykeion_point_to_context",
+    "lunar_phase_to_context",
+    "aspect_to_context",
+    "point_in_house_to_context",
+    "house_comparison_to_context",
+    "element_distribution_to_context",
+    "quality_distribution_to_context",
+    "astrological_subject_to_context",
+    "single_chart_data_to_context",
+    "dual_chart_data_to_context",
+    "transit_moment_to_context",
+    "transits_time_range_to_context",
 ]
 
 
@@ -691,9 +736,7 @@ if __name__ == "__main__":
         lng=-74.0060,
     )
 
-    chart_data = ChartDataFactory.create_natal_chart_data(
-        subject=natal_model
-    )
+    chart_data = ChartDataFactory.create_natal_chart_data(subject=natal_model)
 
     context = to_context(chart_data)
 

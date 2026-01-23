@@ -174,7 +174,8 @@ def calculate_cusps_in_reciprocal_houses(
             else:
                 # Fallback: try to extract digits from the name
                 import re
-                numbers = re.findall(r'\d+', cusp.name)
+
+                numbers = re.findall(r"\d+", cusp.name)
                 cusp_house_number = int(numbers[0]) if numbers else 1
         except (IndexError, ValueError) as e:
             # Fallback to sequential numbering if parsing fails

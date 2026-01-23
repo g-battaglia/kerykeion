@@ -53,7 +53,11 @@ from kerykeion.utilities import (
     get_available_astrological_points_list,
     normalize_zodiac_type,
 )
-from kerykeion.astrological_subject_factory import DEFAULT_HOUSES_SYSTEM_IDENTIFIER, DEFAULT_PERSPECTIVE_TYPE, DEFAULT_ZODIAC_TYPE
+from kerykeion.astrological_subject_factory import (
+    DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
+    DEFAULT_PERSPECTIVE_TYPE,
+    DEFAULT_ZODIAC_TYPE,
+)
 from kerykeion.schemas import (
     EphemerisDictModel,
     SiderealMode,
@@ -180,21 +184,35 @@ class EphemerisDataFactory:
 
         self.dates_list = []
         if self.step_type == "days":
-            self.dates_list = [self.start_datetime + timedelta(days=i * self.step) for i in range((self.end_datetime - self.start_datetime).days // self.step + 1)]
+            self.dates_list = [
+                self.start_datetime + timedelta(days=i * self.step)
+                for i in range((self.end_datetime - self.start_datetime).days // self.step + 1)
+            ]
             if max_days and (len(self.dates_list) > max_days):
-                raise ValueError(f"Too many days: {len(self.dates_list)} > {self.max_days}. To prevent this error, set max_days to a higher value or reduce the date range.")
+                raise ValueError(
+                    f"Too many days: {len(self.dates_list)} > {self.max_days}. To prevent this error, set max_days to a higher value or reduce the date range."
+                )
 
         elif self.step_type == "hours":
             hours_diff = (self.end_datetime - self.start_datetime).total_seconds() / 3600
-            self.dates_list = [self.start_datetime + timedelta(hours=i * self.step) for i in range(int(hours_diff) // self.step + 1)]
+            self.dates_list = [
+                self.start_datetime + timedelta(hours=i * self.step) for i in range(int(hours_diff) // self.step + 1)
+            ]
             if max_hours and (len(self.dates_list) > max_hours):
-                raise ValueError(f"Too many hours: {len(self.dates_list)} > {self.max_hours}. To prevent this error, set max_hours to a higher value or reduce the date range.")
+                raise ValueError(
+                    f"Too many hours: {len(self.dates_list)} > {self.max_hours}. To prevent this error, set max_hours to a higher value or reduce the date range."
+                )
 
         elif self.step_type == "minutes":
             minutes_diff = (self.end_datetime - self.start_datetime).total_seconds() / 60
-            self.dates_list = [self.start_datetime + timedelta(minutes=i * self.step) for i in range(int(minutes_diff) // self.step + 1)]
+            self.dates_list = [
+                self.start_datetime + timedelta(minutes=i * self.step)
+                for i in range(int(minutes_diff) // self.step + 1)
+            ]
             if max_minutes and (len(self.dates_list) > max_minutes):
-                raise ValueError(f"Too many minutes: {len(self.dates_list)} > {self.max_minutes}. To prevent this error, set max_minutes to a higher value or reduce the date range.")
+                raise ValueError(
+                    f"Too many minutes: {len(self.dates_list)} > {self.max_minutes}. To prevent this error, set max_minutes to a higher value or reduce the date range."
+                )
 
         else:
             raise ValueError(f"Invalid step type: {self.step_type}")
@@ -289,7 +307,10 @@ class EphemerisDataFactory:
 
         if as_model:
             # Type narrowing: at this point, the dict structure matches EphemerisDictModel
-            return [EphemerisDictModel(date=data["date"], planets=data["planets"], houses=data["houses"]) for data in ephemeris_data_list]  # type: ignore
+            return [
+                EphemerisDictModel(date=data["date"], planets=data["planets"], houses=data["houses"])
+                for data in ephemeris_data_list
+            ]  # type: ignore
 
         return ephemeris_data_list
 

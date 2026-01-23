@@ -7,7 +7,9 @@ from .expected_natal_aspects import EXPECTED_ALL_ASPECTS, EXPECTED_RELEVANT_ASPE
 
 class TestNatalAspects:
     def setup_class(self):
-        self.subject = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 0 , 0, "Owensboro", "US", suppress_geonames_warning=True)
+        self.subject = AstrologicalSubjectFactory.from_birth_data(
+            "Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", suppress_geonames_warning=True
+        )
 
         self.subject_relevant_aspects = AspectsFactory.single_chart_aspects(self.subject).aspects
         self.subject_relevant_aspects = [a.model_dump() for a in self.subject_relevant_aspects]
@@ -20,7 +22,6 @@ class TestNatalAspects:
 
     def test_relevant_aspects_length(self):
         assert len(self.expected_relevant_aspects) == len(self.subject_relevant_aspects)
-
 
     def test_relevant_aspects(self):
         for i, aspect in enumerate(self.expected_relevant_aspects):

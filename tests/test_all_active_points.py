@@ -1,4 +1,3 @@
-
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
@@ -45,9 +44,9 @@ def test_all_active_points_used_in_chart():
     assert len(chart_data.active_points) > 0
     assert hasattr(chart_data, "aspects") and chart_data.aspects is not None
     assert len(chart_data.aspects) > 0
-    aspect_points = {
-        aspect.p1_name for aspect in chart_data.aspects
-    }.union({aspect.p2_name for aspect in chart_data.aspects})
+    aspect_points = {aspect.p1_name for aspect in chart_data.aspects}.union(
+        {aspect.p2_name for aspect in chart_data.aspects}
+    )
     # Aspect point names should be limited to the active set
     assert aspect_points.issubset(set(chart_data.active_points))
 

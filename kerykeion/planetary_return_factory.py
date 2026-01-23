@@ -67,6 +67,7 @@ Author: Giacomo Battaglia
 Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
+
 import calendar
 import logging
 import swisseph as swe
@@ -205,20 +206,19 @@ class PlanetaryReturnFactory:
     """
 
     def __init__(
-            self,
-            subject: AstrologicalSubjectModel,
-            city: Union[str, None] = None,
-            nation: Union[str, None] = None,
-            lng: Union[int, float, None] = None,
-            lat: Union[int, float, None] = None,
-            tz_str: Union[str, None] = None,
-            online: bool = True,
-            geonames_username: Union[str, None] = None,
-            *,
-            cache_expire_after_days: int = DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
-            altitude: Union[float, int, None] = None,
-        ):
-
+        self,
+        subject: AstrologicalSubjectModel,
+        city: Union[str, None] = None,
+        nation: Union[str, None] = None,
+        lng: Union[int, float, None] = None,
+        lat: Union[int, float, None] = None,
+        tz_str: Union[str, None] = None,
+        online: bool = True,
+        geonames_username: Union[str, None] = None,
+        *,
+        cache_expire_after_days: int = DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
+        altitude: Union[float, int, None] = None,
+    ):
         """
         Initialize a PlanetaryReturnFactory instance with location and configuration settings.
 
@@ -325,7 +325,7 @@ class PlanetaryReturnFactory:
             logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
             self.geonames_username = DEFAULT_GEONAMES_USERNAME
         else:
-            self.geonames_username = geonames_username # type: ignore
+            self.geonames_username = geonames_username  # type: ignore
 
         # City
         if not city and online:
@@ -341,21 +341,27 @@ class PlanetaryReturnFactory:
 
         # Latitude
         if not lat and not online:
-            raise KerykeionException("You need to set the coordinates and timezone if you want to use the offline mode!")
+            raise KerykeionException(
+                "You need to set the coordinates and timezone if you want to use the offline mode!"
+            )
         else:
-            self.lat = lat # type: ignore
+            self.lat = lat  # type: ignore
 
         # Longitude
         if not lng and not online:
-            raise KerykeionException("You need to set the coordinates and timezone if you want to use the offline mode!")
+            raise KerykeionException(
+                "You need to set the coordinates and timezone if you want to use the offline mode!"
+            )
         else:
-            self.lng = lng # type: ignore
+            self.lng = lng  # type: ignore
 
         # Timezone
         if (not online) and (not tz_str):
-            raise KerykeionException("You need to set the coordinates and timezone if you want to use the offline mode!")
+            raise KerykeionException(
+                "You need to set the coordinates and timezone if you want to use the offline mode!"
+            )
         else:
-            self.tz_str = tz_str # type: ignore
+            self.tz_str = tz_str  # type: ignore
 
         # Online mode
         if (self.online) and (not self.tz_str) and (not self.lat) and (not self.lng):
@@ -368,7 +374,7 @@ class PlanetaryReturnFactory:
                 self.city,
                 self.nation,
                 username=self.geonames_username,
-                cache_expire_after_days=self.cache_expire_after_days
+                cache_expire_after_days=self.cache_expire_after_days,
             )
             self.city_data: dict[str, str] = geonames.get_serialized_data()
 
@@ -386,9 +392,7 @@ class PlanetaryReturnFactory:
             self.tz_str = self.city_data["timezonestr"]
 
     def next_return_from_iso_formatted_time(
-        self,
-        iso_formatted_time: str,
-        return_type: ReturnType
+        self, iso_formatted_time: str, return_type: ReturnType
     ) -> PlanetReturnModel:
         """
         Calculate the next planetary return occurring after a specified ISO-formatted datetime.
@@ -488,14 +492,18 @@ class PlanetaryReturnFactory:
         return_julian_date = None
         if return_type == "Solar":
             if self.subject.sun is None:
-                raise KerykeionException("Sun position is required for Solar return but is not available in the subject.")
+                raise KerykeionException(
+                    "Sun position is required for Solar return but is not available in the subject."
+                )
             return_julian_date = swe.solcross_ut(
                 self.subject.sun.abs_pos,
                 julian_day,
             )
         elif return_type == "Lunar":
             if self.subject.moon is None:
-                raise KerykeionException("Moon position is required for Lunar return but is not available in the subject.")
+                raise KerykeionException(
+                    "Moon position is required for Lunar return but is not available in the subject."
+                )
             return_julian_date = swe.mooncross_ut(
                 self.subject.moon.abs_pos,
                 julian_day,
@@ -509,29 +517,25 @@ class PlanetaryReturnFactory:
         solar_return_astrological_subject = AstrologicalSubjectFactory.from_iso_utc_time(
             name=self.subject.name,
             iso_utc_time=solar_return_date_utc.isoformat(),
-            lng=self.lng,       # type: ignore
-            lat=self.lat,       # type: ignore
-            tz_str=self.tz_str, # type: ignore
-            city=self.city,     # type: ignore
-            nation=self.nation, # type: ignore
+            lng=self.lng,  # type: ignore
+            lat=self.lat,  # type: ignore
+            tz_str=self.tz_str,  # type: ignore
+            city=self.city,  # type: ignore
+            nation=self.nation,  # type: ignore
             online=False,
             altitude=self.altitude,
             active_points=self.subject.active_points,
         )
 
         model_data = solar_return_astrological_subject.model_dump()
-        model_data['name'] = f"{self.subject.name} {return_type} Return"
-        model_data['return_type'] = return_type
+        model_data["name"] = f"{self.subject.name} {return_type} Return"
+        model_data["return_type"] = return_type
 
         return PlanetReturnModel(
             **model_data,
         )
 
-    def next_return_from_year(
-        self,
-        year: int,
-        return_type: ReturnType
-    ) -> PlanetReturnModel:
+    def next_return_from_year(self, year: int, return_type: ReturnType) -> PlanetReturnModel:
         """
         Calculate the planetary return occurring within a specified year.
 
@@ -613,20 +617,14 @@ class PlanetaryReturnFactory:
             next_return_from_iso_formatted_time(): For custom starting dates
         """
         import warnings
+
         warnings.warn(
-            "next_return_from_year is deprecated, use next_return_from_date instead",
-            DeprecationWarning,
-            stacklevel=2
+            "next_return_from_year is deprecated, use next_return_from_date instead", DeprecationWarning, stacklevel=2
         )
         return self.next_return_from_date(year, 1, 1, return_type=return_type)
 
     def next_return_from_date(
-        self,
-        year: int,
-        month: int,
-        day: int = 1,
-        *,
-        return_type: ReturnType
+        self, year: int, month: int, day: int = 1, *, return_type: ReturnType
     ) -> PlanetReturnModel:
         """
         Calculate the first planetary return occurring on or after a specified date.
@@ -682,25 +680,15 @@ class PlanetaryReturnFactory:
         # Validate day input
         max_day = calendar.monthrange(year, month)[1]
         if day < 1 or day > max_day:
-            raise KerykeionException(
-                f"Invalid day {day} for {year}-{month:02d}. Day must be between 1 and {max_day}."
-            )
+            raise KerykeionException(f"Invalid day {day} for {year}-{month:02d}. Day must be between 1 and {max_day}.")
 
         # Create datetime for the specified date (UTC)
         start_date = datetime(year, month, day, 0, 0, tzinfo=timezone.utc)
 
         # Get the return using the existing method
-        return self.next_return_from_iso_formatted_time(
-            start_date.isoformat(),
-            return_type
-        )
+        return self.next_return_from_iso_formatted_time(start_date.isoformat(), return_type)
 
-    def next_return_from_month_and_year(
-        self,
-        year: int,
-        month: int,
-        return_type: ReturnType
-    ) -> PlanetReturnModel:
+    def next_return_from_month_and_year(self, year: int, month: int, return_type: ReturnType) -> PlanetReturnModel:
         """
         DEPRECATED: Use next_return_from_date() instead.
 
@@ -716,15 +704,18 @@ class PlanetaryReturnFactory:
             PlanetReturnModel: Return chart data for the first return found.
         """
         import warnings
+
         warnings.warn(
             "next_return_from_month_and_year is deprecated, use next_return_from_date instead",
             DeprecationWarning,
-            stacklevel=2
+            stacklevel=2,
         )
         return self.next_return_from_date(year, month, 1, return_type=return_type)
 
+
 if __name__ == "__main__":
     import json
+
     # Example usage
     subject = AstrologicalSubjectFactory.from_birth_data(
         name="Test Subject",
@@ -778,4 +769,3 @@ if __name__ == "__main__":
     print("--- From Date ---")
     print(f"Solar Return Julian Data:       {solar_return.julian_day}")
     print(f"Solar Return Date UTC:          {solar_return.iso_formatted_utc_datetime}")
-

@@ -44,14 +44,22 @@ from typing import Union
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import CompositeSubjectModel, AstrologicalSubjectModel
-from kerykeion.schemas.kr_literals import ZodiacType, PerspectiveType, HousesSystemIdentifier, SiderealMode, AstrologicalPoint, Houses, CompositeChartType
+from kerykeion.schemas.kr_literals import (
+    ZodiacType,
+    PerspectiveType,
+    HousesSystemIdentifier,
+    SiderealMode,
+    AstrologicalPoint,
+    Houses,
+    CompositeChartType,
+)
 from kerykeion.utilities import (
     get_kerykeion_point_from_degree,
     get_planet_house,
     circular_mean,
     calculate_moon_phase,
     circular_sort,
-    find_common_active_points
+    find_common_active_points,
 )
 
 
@@ -115,10 +123,10 @@ class CompositeSubjectFactory:
     active_points: list[AstrologicalPoint]
 
     def __init__(
-            self,
-            first_subject: AstrologicalSubjectModel,
-            second_subject: AstrologicalSubjectModel,
-            chart_name: Union[str, None] = None
+        self,
+        first_subject: AstrologicalSubjectModel,
+        second_subject: AstrologicalSubjectModel,
+        chart_name: Union[str, None] = None,
     ):
         """
         Initialize the composite subject factory with two astrological subjects.
@@ -146,10 +154,7 @@ class CompositeSubjectFactory:
 
         self.first_subject = first_subject
         self.second_subject = second_subject
-        self.active_points = find_common_active_points(
-            first_subject.active_points,
-            second_subject.active_points
-        )
+        self.active_points = find_common_active_points(first_subject.active_points, second_subject.active_points)
 
         # Name
         if chart_name is None:
@@ -223,7 +228,11 @@ class CompositeSubjectFactory:
         Returns:
             bool: True if both subjects and chart name are identical.
         """
-        return self.first_subject == other.first_subject and self.second_subject == other.second_subject and self.name == other.chart_name
+        return (
+            self.first_subject == other.first_subject
+            and self.second_subject == other.second_subject
+            and self.name == other.chart_name
+        )
 
     def __ne__(self, other):
         """
@@ -309,21 +318,13 @@ class CompositeSubjectFactory:
         for house in self.first_subject.houses_names_list:
             house_lower = house.lower()
             house_degree_list_ut.append(
-                circular_mean(
-                    self.first_subject[house_lower]["abs_pos"],
-                    self.second_subject[house_lower]["abs_pos"]
-                )
-        )
+                circular_mean(self.first_subject[house_lower]["abs_pos"], self.second_subject[house_lower]["abs_pos"])
+            )
         house_degree_list_ut = circular_sort(house_degree_list_ut)
 
         for house_index, house_name in enumerate(self.first_subject.houses_names_list):
             house_lower = house_name.lower()
-            self[house_lower] = get_kerykeion_point_from_degree(
-                house_degree_list_ut[house_index],
-                house_name,
-                "House"
-            )
-
+            self[house_lower] = get_kerykeion_point_from_degree(house_degree_list_ut[house_index], house_name, "House")
 
         # Planets
         common_planets = []
@@ -336,11 +337,12 @@ class CompositeSubjectFactory:
             planet_lower = planet.lower()
             planets[planet_lower] = {}
             planets[planet_lower]["abs_pos"] = circular_mean(
-                self.first_subject[planet_lower]["abs_pos"],
-                self.second_subject[planet_lower]["abs_pos"]
+                self.first_subject[planet_lower]["abs_pos"], self.second_subject[planet_lower]["abs_pos"]
             )
-            self[planet_lower] = get_kerykeion_point_from_degree(planets[planet_lower]["abs_pos"], planet, "AstrologicalPoint")
-            self[planet_lower]["house"] = get_planet_house(self[planet_lower]['abs_pos'], house_degree_list_ut)
+            self[planet_lower] = get_kerykeion_point_from_degree(
+                planets[planet_lower]["abs_pos"], planet, "AstrologicalPoint"
+            )
+            self[planet_lower]["house"] = get_planet_house(self[planet_lower]["abs_pos"], house_degree_list_ut)
 
     def _calculate_composite_lunar_phase(self):
         """
@@ -356,10 +358,7 @@ class CompositeSubjectFactory:
             This method should be called after _calculate_midpoint_composite_points_and_houses()
             to ensure Sun and Moon composite positions are available.
         """
-        self.lunar_phase = calculate_moon_phase(
-            self['moon'].abs_pos,
-            self['sun'].abs_pos
-        )
+        self.lunar_phase = calculate_moon_phase(self["moon"].abs_pos, self["sun"].abs_pos)
 
     def get_midpoint_composite_subject_model(self):
         """
@@ -393,9 +392,7 @@ class CompositeSubjectFactory:
         self._calculate_midpoint_composite_points_and_houses()
         self._calculate_composite_lunar_phase()
 
-        return CompositeSubjectModel(
-            **self.__dict__
-        )
+        return CompositeSubjectModel(**self.__dict__)
 
 
 if __name__ == "__main__":

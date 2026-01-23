@@ -7,6 +7,7 @@ Please update your imports:
     OLD: from kerykeion.kr_types.settings_models import ...
     NEW: from kerykeion.schemas.settings_models import ...
 """
+
 import warnings
 
 warnings.warn(

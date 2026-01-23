@@ -7,6 +7,7 @@ Please update your imports:
     OLD: from kerykeion.kr_types.chart_template_model import ...
     NEW: from kerykeion.schemas.chart_template_model import ...
 """
+
 import warnings
 
 warnings.warn(

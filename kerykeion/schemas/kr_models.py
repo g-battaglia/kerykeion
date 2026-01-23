@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2025 Giacomo Battaglia
+This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 from typing import Union, Optional, List, Literal
@@ -24,7 +24,7 @@ from kerykeion.schemas import (
     SignsEmoji,
     RelationshipScoreDescription,
     PerspectiveType,
-    AspectMovementType
+    AspectMovementType,
 )
 from kerykeion.schemas.kr_literals import ReturnType
 
@@ -46,7 +46,7 @@ class SubscriptableBaseModel(BaseModel):
         """Delete an attribute using dictionary-style access."""
         delattr(self, key)
 
-    def get(self, key, default = None):
+    def get(self, key, default=None):
         """Get an attribute with a default value if not found."""
         return getattr(self, key, default)
 
@@ -61,6 +61,7 @@ class LunarPhaseModel(SubscriptableBaseModel):
         moon_emoji: Emoji representation of the lunar phase.
         moon_phase_name: Text name of the lunar phase.
     """
+
     degrees_between_s_m: Union[float, int]
     moon_phase: int
     moon_emoji: LunarPhaseEmoji
@@ -130,6 +131,7 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         perspective_type: Astrological perspective (geocentric, heliocentric, etc.).
         active_points: List of celestial points included in calculations.
     """
+
     # Common identification data
     name: str
 
@@ -232,7 +234,9 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
 
     # Common lists and settings
     houses_names_list: List[Houses] = Field(description="Ordered list of houses names")
-    active_points: List[AstrologicalPoint] = Field(description="List of active points in the chart or aspects calculations.")
+    active_points: List[AstrologicalPoint] = Field(
+        description="List of active points in the chart or aspects calculations."
+    )
 
     # Common lunar phase data (optional)
     lunar_phase: Optional[LunarPhaseModel] = Field(default=None, description="Lunar phase model")
@@ -242,6 +246,7 @@ class AstrologicalSubjectModel(AstrologicalBaseModel):
     """
     Pydantic Model for Astrological Subject
     """
+
     # Override base model to make location and time data required for subjects
     city: str
     nation: str
@@ -265,6 +270,7 @@ class CompositeSubjectModel(AstrologicalBaseModel):
     """
     Pydantic Model for Composite Subject
     """
+
     # Specific composite data
     first_subject: AstrologicalSubjectModel
     second_subject: AstrologicalSubjectModel
@@ -275,6 +281,7 @@ class PlanetReturnModel(AstrologicalBaseModel):
     """
     Pydantic Model for Planet Return
     """
+
     # Specific return data
     return_type: ReturnType = Field(description="Type of return: Solar or Lunar")
 
@@ -302,7 +309,7 @@ class AspectModel(SubscriptableBaseModel):
     p2_speed: float = Field(default=0.0, description="Speed of the second point")
     aspect_movement: AspectMovementType = Field(
         description="Indicates whether the aspect is applying (orb decreasing), "
-                    "separating (orb increasing), or static (no relative motion)."
+        "separating (orb increasing), or static (no relative motion)."
     )
 
 
@@ -323,6 +330,7 @@ class RelationshipScoreAspectModel(SubscriptableBaseModel):
 
 class ScoreBreakdownItemModel(SubscriptableBaseModel):
     """Single breakdown item explaining how points were earned."""
+
     rule: str = Field(description="Rule identifier (e.g., 'destiny_sign', 'sun_sun_major')")
     description: str = Field(description="Human-readable description of the rule")
     points: int = Field(description="Points awarded for this rule")
@@ -334,7 +342,9 @@ class RelationshipScoreModel(SubscriptableBaseModel):
     score_description: RelationshipScoreDescription
     is_destiny_sign: bool
     aspects: List[RelationshipScoreAspectModel]
-    score_breakdown: List[ScoreBreakdownItemModel] = Field(default_factory=list, description="Detailed breakdown of how the score was calculated")
+    score_breakdown: List[ScoreBreakdownItemModel] = Field(
+        default_factory=list, description="Detailed breakdown of how the score was calculated"
+    )
     subjects: List[AstrologicalSubjectModel]
 
 
@@ -350,6 +360,7 @@ class TransitMomentModel(SubscriptableBaseModel):
     Captures all active aspects between moving celestial bodies and
     the fixed positions in a person's natal chart at a specific date and time.
     """
+
     date: str = Field(description="ISO 8601 formatted date and time of the transit moment.")
     aspects: List[AspectModel] = Field(description="List of aspects active at this specific moment.")
 
@@ -367,8 +378,13 @@ class SingleChartAspectsModel(SubscriptableBaseModel):
     Contains the filtered and relevant aspects for the astrological subject
     based on configured orb settings.
     """
-    subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The astrological subject for which aspects were calculated.")
-    aspects: List[AspectModel] = Field(description="List of calculated aspects within the chart, filtered based on orb settings.")
+
+    subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(
+        description="The astrological subject for which aspects were calculated."
+    )
+    aspects: List[AspectModel] = Field(
+        description="List of calculated aspects within the chart, filtered based on orb settings."
+    )
     active_points: List[AstrologicalPoint] = Field(description="List of active points used in the calculation.")
     active_aspects: List["ActiveAspect"] = Field(description="List of active aspects with their orb settings.")
 
@@ -386,9 +402,16 @@ class DualChartAspectsModel(SubscriptableBaseModel):
     Contains the filtered and relevant aspects between the two charts
     based on configured orb settings.
     """
-    first_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The first astrological subject.")
-    second_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The second astrological subject.")
-    aspects: List[AspectModel] = Field(description="List of calculated aspects between the two charts, filtered based on orb settings.")
+
+    first_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(
+        description="The first astrological subject."
+    )
+    second_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(
+        description="The second astrological subject."
+    )
+    aspects: List[AspectModel] = Field(
+        description="List of calculated aspects between the two charts, filtered based on orb settings."
+    )
     active_points: List[AstrologicalPoint] = Field(description="List of active points used in the calculation.")
     active_aspects: List["ActiveAspect"] = Field(description="List of active aspects with their orb settings.")
 
@@ -405,6 +428,7 @@ class TransitsTimeRangeModel(SubscriptableBaseModel):
     This model holds a time series of transit snapshots, allowing analysis of
     planetary movements and their aspects to a natal chart over a period of time.
     """
+
     transits: List[TransitMomentModel] = Field(description="List of transit moments.")
     subject: Optional[AstrologicalSubjectModel] = Field(description="Astrological subject data.")
     dates: Optional[List[str]] = Field(description="ISO 8601 formatted dates of all transit moments.")
@@ -491,6 +515,7 @@ class ElementDistributionModel(SubscriptableBaseModel):
         air_percentage: Air element percentage
         water_percentage: Water element percentage
     """
+
     fire: float
     earth: float
     air: float
@@ -513,6 +538,7 @@ class QualityDistributionModel(SubscriptableBaseModel):
         fixed_percentage: Fixed quality percentage
         mutable_percentage: Mutable quality percentage
     """
+
     cardinal: float
     fixed: float
     mutable: float

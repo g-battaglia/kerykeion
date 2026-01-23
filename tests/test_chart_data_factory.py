@@ -35,32 +35,44 @@ def factory():
     """Factory instance for tests."""
     return ChartDataFactory()
 
+
 @pytest.fixture
 def subject_factory():
     """Subject factory instance for tests."""
     return AstrologicalSubjectFactory()
+
 
 @pytest.fixture
 def test_subject_1(subject_factory):
     """First test subject for chart calculations."""
     return subject_factory.from_birth_data(
         name="Test Person 1",
-        year=1990, month=6, day=15,
-        hour=14, minute=30,
-        city="Rome", nation="IT",
-        suppress_geonames_warning=True
+        year=1990,
+        month=6,
+        day=15,
+        hour=14,
+        minute=30,
+        city="Rome",
+        nation="IT",
+        suppress_geonames_warning=True,
     )
+
 
 @pytest.fixture
 def test_subject_2(subject_factory):
     """Second test subject for dual chart calculations."""
     return subject_factory.from_birth_data(
         name="Test Person 2",
-        year=1992, month=12, day=25,
-        hour=16, minute=45,
-        city="Milan", nation="IT",
-        suppress_geonames_warning=True
+        year=1992,
+        month=12,
+        day=25,
+        hour=16,
+        minute=45,
+        city="Milan",
+        nation="IT",
+        suppress_geonames_warning=True,
     )
+
 
 @pytest.fixture
 def test_composite_subject(test_subject_1, test_subject_2):
@@ -68,14 +80,11 @@ def test_composite_subject(test_subject_1, test_subject_2):
     composite_factory = CompositeSubjectFactory(test_subject_1, test_subject_2)
     return composite_factory.get_midpoint_composite_subject_model()
 
+
 @pytest.fixture
 def test_return_subject(test_subject_1):
     """Planet return subject for return chart tests."""
-    return_factory = PlanetaryReturnFactory(
-        test_subject_1,
-        city="Rome",
-        nation="IT"
-    )
+    return_factory = PlanetaryReturnFactory(test_subject_1, city="Rome", nation="IT")
     return return_factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 
 
@@ -98,7 +107,7 @@ class TestSingleChartDataModel:
             assert chart_data.subject.day == 15
 
         # Verify aspects are calculated
-        assert hasattr(chart_data, 'aspects')
+        assert hasattr(chart_data, "aspects")
         assert len(chart_data.aspects) > 0
 
         # Verify element and quality distributions
@@ -107,13 +116,13 @@ class TestSingleChartDataModel:
 
         # Verify percentages sum to approximately 100 (allowing for rounding)
         elements = chart_data.element_distribution
-        total_elements = (elements.fire_percentage + elements.earth_percentage +
-                         elements.air_percentage + elements.water_percentage)
+        total_elements = (
+            elements.fire_percentage + elements.earth_percentage + elements.air_percentage + elements.water_percentage
+        )
         assert 99 <= total_elements <= 101  # Allow for rounding errors
 
         qualities = chart_data.quality_distribution
-        total_qualities = (qualities.cardinal_percentage + qualities.fixed_percentage +
-                          qualities.mutable_percentage)
+        total_qualities = qualities.cardinal_percentage + qualities.fixed_percentage + qualities.mutable_percentage
         assert 99 <= total_qualities <= 101  # Allow for rounding errors        # Verify location data
 
     def test_external_natal_chart_creation(self, factory, test_subject_1):
@@ -149,7 +158,9 @@ class TestDualChartDataModel:
     def test_synastry_chart_creation(self, factory, test_subject_1, test_subject_2):
         """Test creation of synastry chart data."""
         chart_data = factory.create_chart_data(
-            "Synastry", test_subject_1, test_subject_2,
+            "Synastry",
+            test_subject_1,
+            test_subject_2,
             include_relationship_score=True,
         )
 
@@ -162,7 +173,7 @@ class TestDualChartDataModel:
         assert chart_data.second_subject.name == "Test Person 2"
 
         # Verify inter-chart aspects
-        assert hasattr(chart_data, 'aspects')
+        assert hasattr(chart_data, "aspects")
         assert len(chart_data.aspects) > 0
 
         # Verify synastry-specific features
@@ -176,10 +187,7 @@ class TestDualChartDataModel:
     def test_transit_chart_creation(self, factory, test_subject_1, subject_factory):
         """Test creation of transit chart data."""
         # Create transit subject (current time)
-        transit_subject = subject_factory.from_current_time(
-            name="Current Transits",
-            city="Rome", nation="IT"
-        )
+        transit_subject = subject_factory.from_current_time(name="Current Transits", city="Rome", nation="IT")
 
         chart_data = factory.create_chart_data("Transit", test_subject_1, transit_subject)
 
@@ -238,10 +246,7 @@ class TestFactoryParameterValidation:
         """Test chart creation with custom active points."""
         custom_points = ["Sun", "Moon", "Mercury", "Venus", "Mars"]
 
-        chart_data = factory.create_chart_data(
-            "Natal", test_subject_1,
-            active_points=custom_points
-        )
+        chart_data = factory.create_chart_data("Natal", test_subject_1, active_points=custom_points)
 
         assert isinstance(chart_data, SingleChartDataModel)
         # Verify that only specified points are included
@@ -253,13 +258,10 @@ class TestFactoryParameterValidation:
             {"name": "conjunction", "orb": 10},
             {"name": "opposition", "orb": 10},
             {"name": "trine", "orb": 8},
-            {"name": "square", "orb": 8}
+            {"name": "square", "orb": 8},
         ]
 
-        chart_data = factory.create_chart_data(
-            "Natal", test_subject_1,
-            active_aspects=custom_aspects
-        )
+        chart_data = factory.create_chart_data("Natal", test_subject_1, active_aspects=custom_aspects)
 
         assert isinstance(chart_data, SingleChartDataModel)
         assert len(chart_data.active_aspects) == len(custom_aspects)
@@ -318,8 +320,9 @@ class TestElementAndQualityDistributions:
         assert elements.water >= 0
 
         # Verify percentages sum to 100
-        total = (elements.fire_percentage + elements.earth_percentage +
-                elements.air_percentage + elements.water_percentage)
+        total = (
+            elements.fire_percentage + elements.earth_percentage + elements.air_percentage + elements.water_percentage
+        )
         assert total == 100
 
     def test_quality_distribution_values(self, factory, test_subject_1):
@@ -338,8 +341,7 @@ class TestElementAndQualityDistributions:
         assert qualities.mutable >= 0
 
         # Verify percentages sum to approximately 100 (allowing for rounding)
-        total = (qualities.cardinal_percentage + qualities.fixed_percentage +
-                qualities.mutable_percentage)
+        total = qualities.cardinal_percentage + qualities.fixed_percentage + qualities.mutable_percentage
         assert 99 <= total <= 101  # Allow for rounding errors
 
     def test_pure_count_distribution_method(self, factory, test_subject_1):
@@ -360,16 +362,9 @@ class TestElementAndQualityDistributions:
         assert total_quality_counts == len(chart_data.active_points)
 
         elem_percentage_sum = (
-            elements.fire_percentage
-            + elements.earth_percentage
-            + elements.air_percentage
-            + elements.water_percentage
+            elements.fire_percentage + elements.earth_percentage + elements.air_percentage + elements.water_percentage
         )
-        qual_percentage_sum = (
-            qualities.cardinal_percentage
-            + qualities.fixed_percentage
-            + qualities.mutable_percentage
-        )
+        qual_percentage_sum = qualities.cardinal_percentage + qualities.fixed_percentage + qualities.mutable_percentage
 
         assert elem_percentage_sum == 100
         assert 99 <= qual_percentage_sum <= 101
@@ -403,6 +398,7 @@ class TestElementAndQualityDistributions:
         assert getattr(custom_chart.element_distribution, sun_element_attr) > getattr(
             base_chart.element_distribution, sun_element_attr
         )
+
 
 class TestAspectCalculations:
     """Tests for aspect calculations in different chart types."""
@@ -441,10 +437,7 @@ class TestPerformanceAndOptimization:
 
         # Limited calculation
         limited_points = ["Sun", "Moon", "Mercury", "Venus", "Mars"]
-        limited_chart = factory.create_chart_data(
-            "Natal", test_subject_1,
-            active_points=limited_points
-        )
+        limited_chart = factory.create_chart_data("Natal", test_subject_1, active_points=limited_points)
 
         # Limited chart should have fewer or equal aspects
         assert len(limited_chart.aspects) <= len(full_chart.aspects)
@@ -454,16 +447,12 @@ class TestPerformanceAndOptimization:
         """Test selective feature loading for synastry charts."""
         # Full synastry
         full_synastry = factory.create_chart_data(
-            "Synastry", test_subject_1, test_subject_2,
-            include_house_comparison=True,
-            include_relationship_score=True
+            "Synastry", test_subject_1, test_subject_2, include_house_comparison=True, include_relationship_score=True
         )
 
         # Limited synastry
         limited_synastry = factory.create_chart_data(
-            "Synastry", test_subject_1, test_subject_2,
-            include_house_comparison=False,
-            include_relationship_score=False
+            "Synastry", test_subject_1, test_subject_2, include_house_comparison=False, include_relationship_score=False
         )
 
         # Verify feature inclusion/exclusion
@@ -485,8 +474,11 @@ class TestDataExportAndSerialization:
 
         # Verify essential keys are present
         required_keys = [
-            "chart_type", "subject", "aspects",
-            "element_distribution", "quality_distribution",
+            "chart_type",
+            "subject",
+            "aspects",
+            "element_distribution",
+            "quality_distribution",
         ]
 
         for key in required_keys:
@@ -497,12 +489,12 @@ class TestDataExportAndSerialization:
         chart_data = factory.create_chart_data("Natal", test_subject_1)
 
         # Export to JSON
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump(chart_data.model_dump(), f, default=str, indent=2)
             json_file = f.name
 
         # Verify file was created and can be read back
-        with open(json_file, 'r') as f:
+        with open(json_file, "r") as f:
             loaded_data = json.load(f)
 
         assert loaded_data["chart_type"] == "Natal"
@@ -514,11 +506,15 @@ class TestDataExportAndSerialization:
         subjects = []
         for i in range(3):
             subject = subject_factory.from_birth_data(
-                name=f"Test Person {i+1}",
-                year=1990 + i, month=6, day=15,
-                hour=14, minute=30,
-                city="Rome", nation="IT",
-                suppress_geonames_warning=True
+                name=f"Test Person {i + 1}",
+                year=1990 + i,
+                month=6,
+                day=15,
+                hour=14,
+                minute=30,
+                city="Rome",
+                nation="IT",
+                suppress_geonames_warning=True,
             )
             subjects.append(subject)
 
@@ -532,7 +528,7 @@ class TestDataExportAndSerialization:
                 "name": chart_data.subject.name,
                 "fire_percentage": chart_data.element_distribution.fire_percentage,
                 "earth_percentage": chart_data.element_distribution.earth_percentage,
-                "aspect_count": len(chart_data.aspects)
+                "aspect_count": len(chart_data.aspects),
             }
             results.append(result)
 
@@ -551,10 +547,14 @@ class TestEdgeCasesAndRobustness:
         """Test handling of midnight birth time."""
         subject = subject_factory.from_birth_data(
             name="Midnight Birth",
-            year=1990, month=1, day=1,
-            hour=0, minute=0,
-            city="London", nation="GB",
-            suppress_geonames_warning=True
+            year=1990,
+            month=1,
+            day=1,
+            hour=0,
+            minute=0,
+            city="London",
+            nation="GB",
+            suppress_geonames_warning=True,
         )
 
         chart_data = factory.create_chart_data("Natal", subject)
@@ -566,10 +566,14 @@ class TestEdgeCasesAndRobustness:
         """Test handling of leap year birth date."""
         subject = subject_factory.from_birth_data(
             name="Leap Year Birth",
-            year=2000, month=2, day=29,
-            hour=12, minute=0,
-            city="Paris", nation="FR",
-            suppress_geonames_warning=True
+            year=2000,
+            month=2,
+            day=29,
+            hour=12,
+            minute=0,
+            city="Paris",
+            nation="FR",
+            suppress_geonames_warning=True,
         )
 
         chart_data = factory.create_chart_data("Natal", subject)

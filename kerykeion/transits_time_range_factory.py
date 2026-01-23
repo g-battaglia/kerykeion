@@ -247,8 +247,8 @@ class TransitsTimeRangeFactory:
                 active_points=self.active_points,
                 active_aspects=self.active_aspects,
                 axis_orb_limit=self.axis_orb_limit,
-                first_subject_is_fixed=False, # Transit is moving
-                second_subject_is_fixed=True, # Natal is fixed
+                first_subject_is_fixed=False,  # Transit is moving
+                second_subject_is_fixed=True,  # Natal is fixed
             ).aspects
 
             # Create a transit moment for this point in time
@@ -263,15 +263,13 @@ class TransitsTimeRangeFactory:
         return TransitsTimeRangeModel(
             dates=[point.iso_formatted_utc_datetime for point in self.ephemeris_data_points],
             subject=self.natal_chart,
-            transits=transit_moments
+            transits=transit_moments,
         )
 
 
 if __name__ == "__main__":
     # Create a natal chart for the subject
-    person = AstrologicalSubjectFactory.from_birth_data(
-        "Johnny Depp", 1963, 6, 9, 20, 15, "Owensboro", "US"
-    )
+    person = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 20, 15, "Owensboro", "US")
 
     # Define the time period for transit calculation
     start_date = datetime.now()
@@ -300,5 +298,5 @@ if __name__ == "__main__":
 
     # Print example data
     print(transit_results.model_dump()["dates"][2])
-    print(transit_results.model_dump()["transits"][2]['date'])
-    print(transit_results.model_dump()["transits"][2]['aspects'][0])
+    print(transit_results.model_dump()["transits"][2]["date"])
+    print(transit_results.model_dump()["transits"][2]["aspects"][0])

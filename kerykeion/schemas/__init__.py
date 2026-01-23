@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2025 Giacomo Battaglia
+This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 from .kerykeion_exception import KerykeionException
@@ -55,11 +55,9 @@ from .settings_models import KerykeionSettingsModel
 __all__ = [
     # Exceptions
     "KerykeionException",
-
     # Settings and Chart Types
     "ChartTemplateModel",
     "KerykeionSettingsModel",
-
     # Main Literal Types (from kr_literals)
     "ZodiacType",
     "Sign",
@@ -83,11 +81,9 @@ __all__ = [
     "RelationshipScoreDescription",
     "CompositeChartType",
     "AspectName",
-
     # Deprecated aliases (for v4.x compatibility, will be removed in v6.0)
     "Planet",
     "AxialCusps",
-
     # Main Model Classes (from kr_models)
     "SubscriptableBaseModel",
     "LunarPhaseModel",

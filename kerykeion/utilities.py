@@ -30,6 +30,7 @@ from datetime import datetime
 
 logger = getLogger(__name__)
 
+
 def normalize_zodiac_type(value: str) -> ZodiacType:
     """
     Normalize a zodiac type string to its canonical representation.
@@ -68,6 +69,7 @@ def normalize_zodiac_type(value: str) -> ZodiacType:
             "(case-insensitive, 'tropic' also accepted as legacy).".format(value=value)
         )
 
+
 _POINT_NUMBER_MAP: dict[str, int] = {
     "Sun": 0,
     "Moon": 1,
@@ -92,6 +94,7 @@ _POINT_NUMBER_MAP: dict[str, int] = {
     "Imum_Coeli": 9903,
 }
 
+
 # Logging helpers
 def setup_logging(level: str) -> None:
     """Configure the root logger so demo scripts share the same formatting."""
@@ -110,8 +113,6 @@ def setup_logging(level: str) -> None:
         level=selected_level,
     )
     logger.setLevel(selected_level)
-
-
 
 
 def get_number_from_name(name: AstrologicalPoint) -> int:
@@ -135,7 +136,11 @@ def get_number_from_name(name: AstrologicalPoint) -> int:
 
 
 def get_kerykeion_point_from_degree(
-    degree: Union[int, float], name: Union[AstrologicalPoint, Houses], point_type: PointType, speed: Optional[float] = None, declination: Optional[float] = None
+    degree: Union[int, float],
+    name: Union[AstrologicalPoint, Houses],
+    point_type: PointType,
+    speed: Optional[float] = None,
+    declination: Optional[float] = None,
 ) -> KerykeionPointModel:
     """
     Create a KerykeionPointModel from a degree position.
@@ -192,8 +197,11 @@ def get_kerykeion_point_from_degree(
         declination=declination,
     )
 
+
 # Angular helpers
-def is_point_between(start_angle: Union[int, float], end_angle: Union[int, float], candidate: Union[int, float]) -> bool:
+def is_point_between(
+    start_angle: Union[int, float], end_angle: Union[int, float], candidate: Union[int, float]
+) -> bool:
     """Return True when ``candidate`` lies on the clockwise arc from ``start_angle`` to ``end_angle``."""
 
     normalize = lambda value: value % 360
@@ -203,15 +211,14 @@ def is_point_between(start_angle: Union[int, float], end_angle: Union[int, float
     target = normalize(candidate)
     span = (end - start) % 360
     if span > 180:
-        raise KerykeionException(
-            f"The angle between start and end point is not allowed to exceed 180°, yet is: {span}"
-        )
+        raise KerykeionException(f"The angle between start and end point is not allowed to exceed 180°, yet is: {span}")
     if target == start:
         return True
     if target == end:
         return False
     distance_from_start = (target - start) % 360
     return distance_from_start < span
+
 
 # House helpers
 def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: list) -> Houses:
@@ -344,7 +351,7 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
 
 
 def get_houses_list(
-    subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
+    subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
 ) -> list[KerykeionPointModel]:
     """
     Get a list of house objects in order from the subject.
@@ -362,9 +369,7 @@ def get_houses_list(
     return houses_absolute_position_list
 
 
-def get_available_astrological_points_list(
-    subject: AstrologicalSubjectModel
-) -> list[KerykeionPointModel]:
+def get_available_astrological_points_list(subject: AstrologicalSubjectModel) -> list[KerykeionPointModel]:
     """
     Get a list of active astrological point objects from the subject.
 
@@ -428,7 +433,7 @@ def calculate_moon_phase(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseM
         degrees_between_s_m=degrees_between,
         moon_phase=moon_phase,
         moon_emoji=get_moon_emoji_from_phase_int(moon_phase),
-        moon_phase_name=get_moon_phase_name_from_phase_int(moon_phase)
+        moon_phase_name=get_moon_phase_name_from_phase_int(moon_phase),
     )
 
 
@@ -717,7 +722,9 @@ def get_house_number(house_name: Houses) -> int:
     return number
 
 
-def find_common_active_points(first_points: list[AstrologicalPoint], second_points: list[AstrologicalPoint]) -> list[AstrologicalPoint]:
+def find_common_active_points(
+    first_points: list[AstrologicalPoint], second_points: list[AstrologicalPoint]
+) -> list[AstrologicalPoint]:
     """
     Find astrological points that appear in both input lists.
 

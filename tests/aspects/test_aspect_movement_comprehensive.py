@@ -1,6 +1,6 @@
-
 import pytest
 from kerykeion.aspects.aspects_utils import calculate_aspect_movement
+
 
 def test_applying_when_faster_approaches():
     result = calculate_aspect_movement(
@@ -12,6 +12,7 @@ def test_applying_when_faster_approaches():
     )
     assert result == "Applying"
 
+
 def test_separating_when_faster_moves_away():
     result = calculate_aspect_movement(
         point_one_abs_pos=55.0,
@@ -21,6 +22,7 @@ def test_separating_when_faster_moves_away():
         point_two_speed=1.0,
     )
     assert result == "Separating"
+
 
 def test_retrograde_faster_still_applying():
     result = calculate_aspect_movement(
@@ -32,6 +34,7 @@ def test_retrograde_faster_still_applying():
     )
     assert result == "Applying"
 
+
 def test_fixed_when_both_stationary():
     result = calculate_aspect_movement(
         point_one_abs_pos=10.0,
@@ -41,6 +44,7 @@ def test_fixed_when_both_stationary():
         point_two_speed=0.0,
     )
     assert result == "Static"
+
 
 def test_fixed_when_relative_speed_is_zero():
     result = calculate_aspect_movement(
@@ -52,7 +56,9 @@ def test_fixed_when_relative_speed_is_zero():
     )
     assert result == "Static"
 
+
 # Edge Cases from Reproduction Scripts
+
 
 def test_boundary_crossing_separating():
     # Sun at 359, Speed 1. Moon at 5, Speed 13. Aspect 0 (Conjunction).
@@ -61,6 +67,7 @@ def test_boundary_crossing_separating():
     # Distance 6 -> 18. Separating.
     result = calculate_aspect_movement(359, 5, 0, 1, 13)
     assert result == "Separating"
+
 
 def test_boundary_crossing_applying():
     # Sun at 359, Speed 1. Moon at 355, Speed 13. Aspect 0.
@@ -80,6 +87,7 @@ def test_boundary_crossing_applying():
     result = calculate_aspect_movement(359, 355, 0, 1, 13)
     assert result == "Applying"
 
+
 def test_aspect_greater_than_180_applying():
     # Sun 10. Moon 245. Aspect 240 (Trine).
     # 245 is 5 degrees past 240 (relative to 0).
@@ -89,6 +97,7 @@ def test_aspect_greater_than_180_applying():
     result = calculate_aspect_movement(10, 245, 240, 1, 13)
     assert result == "Applying"
 
+
 def test_retrograde_applying():
     # Sun 10 (Speed 1). Mercury 15 (Speed -1). Aspect 0.
     # Merc 15 -> 14. Sun 10 -> 11.
@@ -96,12 +105,14 @@ def test_retrograde_applying():
     result = calculate_aspect_movement(10, 15, 0, 1, -1)
     assert result == "Applying"
 
+
 def test_retrograde_separating():
     # Sun 10 (Speed 1). Mercury 5 (Speed -1). Aspect 0.
     # Merc 5 -> 4. Sun 10 -> 11.
     # Distance 5 -> 7. Separating.
     result = calculate_aspect_movement(10, 5, 0, 1, -1)
     assert result == "Separating"
+
 
 def test_retrograde_both_applying():
     # P1 10 (Speed -1). P2 15 (Speed -2). Aspect 0.
@@ -111,6 +122,7 @@ def test_retrograde_both_applying():
     result = calculate_aspect_movement(10, 15, 0, -1, -2)
     assert result == "Applying"
 
+
 def test_exact_aspect_separating():
     # Sun 10. Moon 130. Aspect 120.
     # Exact.
@@ -119,6 +131,7 @@ def test_exact_aspect_separating():
     result = calculate_aspect_movement(10, 130, 120, 1, 13)
     assert result == "Separating"
 
+
 def test_exact_aspect_retrograde_separating():
     # Sun 10. Merc 10. Aspect 0.
     # Merc -1. Sun 1.
@@ -126,6 +139,7 @@ def test_exact_aspect_retrograde_separating():
     # Separating.
     result = calculate_aspect_movement(10, 10, 0, 1, -1)
     assert result == "Separating"
+
 
 def test_180_separation_bug():
     # P1 0. P2 180. Aspect 120.

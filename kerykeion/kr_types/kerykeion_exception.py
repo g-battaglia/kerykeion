@@ -7,6 +7,7 @@ Please update your imports:
     OLD: from kerykeion.kr_types.kerykeion_exception import ...
     NEW: from kerykeion.schemas.kerykeion_exception import ...
 """
+
 import warnings
 
 warnings.warn(

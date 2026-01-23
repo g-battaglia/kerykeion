@@ -26,7 +26,7 @@ class TestRelationshipScoreFactory:
             tz_str="America/New_York",
             city="New York",
             nation="US",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
         self.subject2 = AstrologicalSubjectFactory.from_birth_data(
@@ -41,7 +41,7 @@ class TestRelationshipScoreFactory:
             tz_str="America/New_York",
             city="New York",
             nation="US",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
     def test_basic_relationship_score_creation(self):
@@ -55,34 +55,26 @@ class TestRelationshipScoreFactory:
 
     def test_relationship_score_with_major_aspects_only(self):
         """Test relationship score using only major aspects."""
-        factory = RelationshipScoreFactory(
-            self.subject1,
-            self.subject2,
-            use_only_major_aspects=True
-        )
+        factory = RelationshipScoreFactory(self.subject1, self.subject2, use_only_major_aspects=True)
 
         score = factory.get_relationship_score()
 
-        assert hasattr(score, 'score_value')
-        assert hasattr(score, 'score_description')
-        assert hasattr(score, 'is_destiny_sign')
-        assert hasattr(score, 'aspects')
-        assert hasattr(score, 'subjects')
+        assert hasattr(score, "score_value")
+        assert hasattr(score, "score_description")
+        assert hasattr(score, "is_destiny_sign")
+        assert hasattr(score, "aspects")
+        assert hasattr(score, "subjects")
         assert isinstance(score.score_value, (int, float))
         assert isinstance(score.score_description, str)
 
     def test_relationship_score_with_all_aspects(self):
         """Test relationship score using all aspects."""
-        factory = RelationshipScoreFactory(
-            self.subject1,
-            self.subject2,
-            use_only_major_aspects=False
-        )
+        factory = RelationshipScoreFactory(self.subject1, self.subject2, use_only_major_aspects=False)
 
         score = factory.get_relationship_score()
 
-        assert hasattr(score, 'score_value')
-        assert hasattr(score, 'score_description')
+        assert hasattr(score, "score_value")
+        assert hasattr(score, "score_description")
         assert isinstance(score.score_value, (int, float))
 
     def test_destiny_sign_evaluation(self):
@@ -90,18 +82,32 @@ class TestRelationshipScoreFactory:
         # Create subjects with same sun sign quality
         subject_same_quality_1 = AstrologicalSubjectFactory.from_birth_data(
             name="Same Quality 1",
-            year=1990, month=3, day=21, hour=12, minute=0,  # Aries (Cardinal)
-            lat=40.7128, lng=-74.0060, tz_str="America/New_York",
-            city="New York", nation="US",
-            suppress_geonames_warning=True
+            year=1990,
+            month=3,
+            day=21,
+            hour=12,
+            minute=0,  # Aries (Cardinal)
+            lat=40.7128,
+            lng=-74.0060,
+            tz_str="America/New_York",
+            city="New York",
+            nation="US",
+            suppress_geonames_warning=True,
         )
 
         subject_same_quality_2 = AstrologicalSubjectFactory.from_birth_data(
             name="Same Quality 2",
-            year=1990, month=6, day=21, hour=12, minute=0,  # Cancer (Cardinal)
-            lat=40.7128, lng=-74.0060, tz_str="America/New_York",
-            city="New York", nation="US",
-            suppress_geonames_warning=True
+            year=1990,
+            month=6,
+            day=21,
+            hour=12,
+            minute=0,  # Cancer (Cardinal)
+            lat=40.7128,
+            lng=-74.0060,
+            tz_str="America/New_York",
+            city="New York",
+            nation="US",
+            suppress_geonames_warning=True,
         )
 
         factory = RelationshipScoreFactory(subject_same_quality_1, subject_same_quality_2)
@@ -145,7 +151,7 @@ class TestRelationshipScoreFactory:
             "p1_name": "Sun",
             "p2_name": "Sun",
             "aspect": "conjunction",
-            "orbit": 1.5  # Tight orb
+            "orbit": 1.5,  # Tight orb
         }
 
         initial_score = factory.score_value
@@ -158,12 +164,7 @@ class TestRelationshipScoreFactory:
         """Test sun-moon conjunction evaluation."""
         factory = RelationshipScoreFactory(self.subject1, self.subject2)
 
-        mock_aspect = {
-            "p1_name": "Sun",
-            "p2_name": "Moon",
-            "aspect": "conjunction",
-            "orbit": 1.0
-        }
+        mock_aspect = {"p1_name": "Sun", "p2_name": "Moon", "aspect": "conjunction", "orbit": 1.0}
 
         initial_score = factory.score_value
         factory._evaluate_sun_moon_conjunction(mock_aspect)
@@ -175,12 +176,7 @@ class TestRelationshipScoreFactory:
         """Test sun-ascendant aspect evaluation."""
         factory = RelationshipScoreFactory(self.subject1, self.subject2)
 
-        mock_aspect = {
-            "p1_name": "Sun",
-            "p2_name": "Ascendant",
-            "aspect": "trine",
-            "orbit": 2.0
-        }
+        mock_aspect = {"p1_name": "Sun", "p2_name": "Ascendant", "aspect": "trine", "orbit": 2.0}
 
         initial_score = factory.score_value
         factory._evaluate_sun_ascendant_aspect(mock_aspect)
@@ -192,12 +188,7 @@ class TestRelationshipScoreFactory:
         """Test moon-ascendant aspect evaluation."""
         factory = RelationshipScoreFactory(self.subject1, self.subject2)
 
-        mock_aspect = {
-            "p1_name": "Moon",
-            "p2_name": "Ascendant",
-            "aspect": "sextile",
-            "orbit": 3.0
-        }
+        mock_aspect = {"p1_name": "Moon", "p2_name": "Ascendant", "aspect": "sextile", "orbit": 3.0}
 
         initial_score = factory.score_value
         factory._evaluate_moon_ascendant_aspect(mock_aspect)
@@ -209,12 +200,7 @@ class TestRelationshipScoreFactory:
         """Test venus-mars aspect evaluation."""
         factory = RelationshipScoreFactory(self.subject1, self.subject2)
 
-        mock_aspect = {
-            "p1_name": "Venus",
-            "p2_name": "Mars",
-            "aspect": "opposition",
-            "orbit": 2.5
-        }
+        mock_aspect = {"p1_name": "Venus", "p2_name": "Mars", "aspect": "opposition", "orbit": 2.5}
 
         initial_score = factory.score_value
         factory._evaluate_venus_mars_aspect(mock_aspect)
@@ -224,18 +210,14 @@ class TestRelationshipScoreFactory:
 
     def test_evaluate_aspect_with_major_aspects_only(self):
         """Test aspect evaluation with major aspects filter."""
-        factory = RelationshipScoreFactory(
-            self.subject1,
-            self.subject2,
-            use_only_major_aspects=True
-        )
+        factory = RelationshipScoreFactory(self.subject1, self.subject2, use_only_major_aspects=True)
 
         # Test major aspect - should be processed
         major_aspect = {
             "p1_name": "Mercury",
             "p2_name": "Venus",
             "aspect": "trine",  # Major aspect
-            "orbit": 2.0
+            "orbit": 2.0,
         }
 
         initial_score = factory.score_value
@@ -247,7 +229,7 @@ class TestRelationshipScoreFactory:
             "p1_name": "Jupiter",
             "p2_name": "Saturn",
             "aspect": "quintile",  # Minor aspect
-            "orbit": 1.0
+            "orbit": 1.0,
         }
 
         score_before_minor = factory.score_value
@@ -256,18 +238,14 @@ class TestRelationshipScoreFactory:
 
     def test_evaluate_aspect_with_all_aspects(self):
         """Test aspect evaluation including minor aspects."""
-        factory = RelationshipScoreFactory(
-            self.subject1,
-            self.subject2,
-            use_only_major_aspects=False
-        )
+        factory = RelationshipScoreFactory(self.subject1, self.subject2, use_only_major_aspects=False)
 
         # Test minor aspect - should be processed
         minor_aspect = {
             "p1_name": "Jupiter",
             "p2_name": "Saturn",
             "aspect": "quintile",  # Minor aspect
-            "orbit": 1.0
+            "orbit": 1.0,
         }
 
         initial_score = factory.score_value
@@ -283,7 +261,7 @@ class TestRelationshipScoreFactory:
             "p1_name": "Sun",
             "p2_name": "Sun",
             "aspect": "conjunction",
-            "orbit": 1.5  # ≤ 2°
+            "orbit": 1.5,  # ≤ 2°
         }
 
         # Standard orb (>2°)
@@ -291,7 +269,7 @@ class TestRelationshipScoreFactory:
             "p1_name": "Sun",
             "p2_name": "Sun",
             "aspect": "conjunction",
-            "orbit": 3.0  # > 2°
+            "orbit": 3.0,  # > 2°
         }
 
         # Test that tight orbs get more points
@@ -309,12 +287,7 @@ class TestRelationshipScoreFactory:
         """Test that aspects are properly recorded."""
         factory = RelationshipScoreFactory(self.subject1, self.subject2)
 
-        mock_aspect = {
-            "p1_name": "Mercury",
-            "p2_name": "Venus",
-            "aspect": "sextile",
-            "orbit": 2.0
-        }
+        mock_aspect = {"p1_name": "Mercury", "p2_name": "Venus", "aspect": "sextile", "orbit": 2.0}
 
         initial_count = len(factory.relationship_score_aspects)
         factory._evaluate_aspect(mock_aspect, 4, rule="test_rule", description="Test description")
@@ -337,8 +310,12 @@ class TestRelationshipScoreFactory:
         # Should get high score for identical subjects
         assert score.score_value > 0
         assert score.score_description in [
-            "Minimal", "Medium", "Important",
-            "Very Important", "Exceptional", "Rare Exceptional"
+            "Minimal",
+            "Medium",
+            "Important",
+            "Very Important",
+            "Exceptional",
+            "Rare Exceptional",
         ]
 
     def test_destiny_sign_flag(self):
@@ -371,7 +348,7 @@ class TestRelationshipScoreFactory:
         factory = RelationshipScoreFactory(self.subject1, self.subject2)
 
         # Should have synastry aspects computed
-        assert hasattr(factory, '_synastry_aspects')
+        assert hasattr(factory, "_synastry_aspects")
         assert isinstance(factory._synastry_aspects, list)
 
     def test_major_aspects_constant(self):
@@ -383,7 +360,7 @@ class TestRelationshipScoreFactory:
         """Test score mapping constant."""
         RelationshipScoreFactory(self.subject1, self.subject2)
 
-        assert hasattr(RelationshipScoreFactory, 'SCORE_MAPPING')
+        assert hasattr(RelationshipScoreFactory, "SCORE_MAPPING")
         assert isinstance(RelationshipScoreFactory.SCORE_MAPPING, list)
         assert len(RelationshipScoreFactory.SCORE_MAPPING) == 6  # 6 categories
 
@@ -393,15 +370,15 @@ class TestRelationshipScoreFactory:
         score = factory.get_relationship_score()
 
         # Should have score_breakdown attribute
-        assert hasattr(score, 'score_breakdown')
+        assert hasattr(score, "score_breakdown")
         assert isinstance(score.score_breakdown, list)
 
         # If there are any breakdown items, check their structure
         for item in score.score_breakdown:
-            assert hasattr(item, 'rule')
-            assert hasattr(item, 'description')
-            assert hasattr(item, 'points')
-            assert hasattr(item, 'details')
+            assert hasattr(item, "rule")
+            assert hasattr(item, "description")
+            assert hasattr(item, "points")
+            assert hasattr(item, "details")
             assert isinstance(item.rule, str)
             assert isinstance(item.description, str)
             assert isinstance(item.points, int)
@@ -421,18 +398,32 @@ class TestRelationshipScoreFactory:
         # Create subjects with same sun sign quality (Cardinal)
         subject_cardinal_1 = AstrologicalSubjectFactory.from_birth_data(
             name="Cardinal 1",
-            year=1990, month=3, day=21, hour=12, minute=0,  # Aries (Cardinal)
-            lat=40.7128, lng=-74.0060, tz_str="America/New_York",
-            city="New York", nation="US",
-            suppress_geonames_warning=True
+            year=1990,
+            month=3,
+            day=21,
+            hour=12,
+            minute=0,  # Aries (Cardinal)
+            lat=40.7128,
+            lng=-74.0060,
+            tz_str="America/New_York",
+            city="New York",
+            nation="US",
+            suppress_geonames_warning=True,
         )
 
         subject_cardinal_2 = AstrologicalSubjectFactory.from_birth_data(
             name="Cardinal 2",
-            year=1990, month=6, day=25, hour=12, minute=0,  # Cancer (Cardinal)
-            lat=40.7128, lng=-74.0060, tz_str="America/New_York",
-            city="New York", nation="US",
-            suppress_geonames_warning=True
+            year=1990,
+            month=6,
+            day=25,
+            hour=12,
+            minute=0,  # Cancer (Cardinal)
+            lat=40.7128,
+            lng=-74.0060,
+            tz_str="America/New_York",
+            city="New York",
+            nation="US",
+            suppress_geonames_warning=True,
         )
 
         factory = RelationshipScoreFactory(subject_cardinal_1, subject_cardinal_2)
@@ -465,7 +456,7 @@ class TestRelationshipScoreFactory:
             "sun_moon_other",
             "sun_ascendant",
             "moon_ascendant",
-            "venus_mars"
+            "venus_mars",
         }
 
         factory = RelationshipScoreFactory(self.subject1, self.subject2)

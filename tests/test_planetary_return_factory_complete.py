@@ -30,17 +30,12 @@ class TestPlanetaryReturnFactory:
             lng=-74.006,
             lat=40.7128,
             tz_str="America/New_York",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
     def test_init_online_mode_with_city_and_nation(self):
         """Test online initialization with city and nation."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
         assert factory.city == "Rome"
         assert factory.nation == "IT"
@@ -48,13 +43,7 @@ class TestPlanetaryReturnFactory:
 
     def test_init_with_coordinates_provided(self):
         """Test initialization with explicit coordinates."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            lat=45.4642,
-            lng=9.1900,
-            tz_str="Europe/Rome",
-            online=False
-        )
+        factory = PlanetaryReturnFactory(self.subject, lat=45.4642, lng=9.1900, tz_str="Europe/Rome", online=False)
 
         assert factory.lat == 45.4642
         assert factory.lng == 9.1900
@@ -68,79 +57,48 @@ class TestPlanetaryReturnFactory:
     def test_init_online_false_missing_coordinates(self):
         """Test initialization error when online=False but coordinates missing."""
         with pytest.raises(KerykeionException):
-            PlanetaryReturnFactory(
-                self.subject,
-                city="Rome",
-                nation="IT",
-                online=False
-            )
+            PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=False)
 
     def test_next_return_from_date_solar(self):
         """Test solar return calculation from date."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
         return_subject = factory.next_return_from_date(2023, 1, 1, return_type="Solar")
         assert return_subject is not None
-        assert hasattr(return_subject, 'sun')
-        assert hasattr(return_subject, 'moon')
+        assert hasattr(return_subject, "sun")
+        assert hasattr(return_subject, "moon")
 
     def test_next_return_from_date_lunar(self):
         """Test lunar return calculation from date."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
         return_subject = factory.next_return_from_date(2023, 1, 1, return_type="Lunar")
         assert return_subject is not None
-        assert hasattr(return_subject, 'sun')
-        assert hasattr(return_subject, 'moon')
+        assert hasattr(return_subject, "sun")
+        assert hasattr(return_subject, "moon")
 
     def test_next_return_from_date(self):
         """Test return calculation from date."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
         # Test with year, month, day and return_type
         return_subject = factory.next_return_from_date(2023, 6, 1, return_type="Solar")
         assert return_subject is not None
-        assert hasattr(return_subject, 'sun')
-        assert hasattr(return_subject, 'moon')
+        assert hasattr(return_subject, "sun")
+        assert hasattr(return_subject, "moon")
 
     def test_factory_attributes(self):
         """Test factory has all expected attributes."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
-        assert hasattr(factory, 'subject')
-        assert hasattr(factory, 'city')
-        assert hasattr(factory, 'nation')
-        assert hasattr(factory, 'online')
+        assert hasattr(factory, "subject")
+        assert hasattr(factory, "city")
+        assert hasattr(factory, "nation")
+        assert hasattr(factory, "online")
 
     def test_offline_mode_initialization(self):
         """Test offline mode with full coordinates."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
-            online=False
-        )
+        factory = PlanetaryReturnFactory(self.subject, lat=41.9028, lng=12.4964, tz_str="Europe/Rome", online=False)
 
         assert factory.online is False
         assert factory.lat == 41.9028
@@ -149,61 +107,37 @@ class TestPlanetaryReturnFactory:
     def test_factory_with_geonames_username(self):
         """Test factory initialization with geonames username."""
         factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            geonames_username="test_user",
-            online=True
+            self.subject, city="Rome", nation="IT", geonames_username="test_user", online=True
         )
 
-        assert hasattr(factory, 'geonames_username')
+        assert hasattr(factory, "geonames_username")
 
     def test_factory_with_altitude(self):
         """Test factory initialization with altitude."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            altitude=100.0,
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", altitude=100.0, online=True)
 
-        assert hasattr(factory, 'altitude')
+        assert hasattr(factory, "altitude")
 
     def test_factory_default_values(self):
         """Test factory default values."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT"
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT")
 
         # Test defaults
         assert factory.online is True
-        assert hasattr(factory, 'subject')
+        assert hasattr(factory, "subject")
 
     def test_next_return_from_iso_formatted_time(self):
         """Test return from ISO formatted time."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
         return_subject = factory.next_return_from_iso_formatted_time("2023-06-15T12:00:00", "Solar")
         assert return_subject is not None
-        assert hasattr(return_subject, 'sun')
-        assert hasattr(return_subject, 'moon')
+        assert hasattr(return_subject, "sun")
+        assert hasattr(return_subject, "moon")
 
     def test_invalid_return_type(self):
         """Test error with invalid return type."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
         # Test with valid types first
         solar_return = factory.next_return_from_date(2023, 1, 1, return_type="Solar")
@@ -214,47 +148,28 @@ class TestPlanetaryReturnFactory:
 
     def test_factory_subject_preservation(self):
         """Test that original subject is preserved."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
         assert factory.subject.name == "Test Subject"
-        assert hasattr(factory.subject, 'sun')
-        assert hasattr(factory.subject, 'moon')
+        assert hasattr(factory.subject, "sun")
+        assert hasattr(factory.subject, "moon")
 
     def test_factory_methods_exist(self):
         """Test that all expected methods exist."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
-        assert hasattr(factory, 'next_return_from_year')
-        assert hasattr(factory, 'next_return_from_date')
-        assert hasattr(factory, 'next_return_from_iso_formatted_time')
+        assert hasattr(factory, "next_return_from_year")
+        assert hasattr(factory, "next_return_from_date")
+        assert hasattr(factory, "next_return_from_iso_formatted_time")
 
     def test_coordinates_validation(self):
         """Test coordinate validation in offline mode."""
         with pytest.raises(KerykeionException):
-            PlanetaryReturnFactory(
-                self.subject,
-                online=False
-            )
+            PlanetaryReturnFactory(self.subject, online=False)
 
     def test_geonames_integration_offline(self):
         """Test that offline mode doesn't require geonames."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
-            online=False
-        )
+        factory = PlanetaryReturnFactory(self.subject, lat=41.9028, lng=12.4964, tz_str="Europe/Rome", online=False)
 
         assert factory.online is False
         assert factory.lat == 41.9028
@@ -267,7 +182,7 @@ class TestPlanetaryReturnFactory:
                 subject=self.subject,
                 city=None,  # Missing city
                 nation="US",
-                online=True
+                online=True,
             )
 
         assert "You need to set the city if you want to use the online mode" in str(exc_info.value)
@@ -279,7 +194,7 @@ class TestPlanetaryReturnFactory:
                 subject=self.subject,
                 city="New York",
                 nation=None,  # Missing nation
-                online=True
+                online=True,
             )
 
         assert "You need to set the nation if you want to use the online mode" in str(exc_info.value)
@@ -287,57 +202,34 @@ class TestPlanetaryReturnFactory:
     def test_offline_mode_missing_coordinates(self):
         """Test error handling when coordinates are missing in offline mode."""
         with pytest.raises(KerykeionException) as exc_info:
-            PlanetaryReturnFactory(
-                subject=self.subject,
-                online=False
-            )
+            PlanetaryReturnFactory(subject=self.subject, online=False)
 
         assert "You need to set the coordinates" in str(exc_info.value)
 
     def test_offline_mode_missing_lat(self):
         """Test error handling when latitude is missing in offline mode."""
         with pytest.raises(KerykeionException) as exc_info:
-            PlanetaryReturnFactory(
-                subject=self.subject,
-                lng=12.4964,
-                tz_str="Europe/Rome",
-                online=False
-            )
+            PlanetaryReturnFactory(subject=self.subject, lng=12.4964, tz_str="Europe/Rome", online=False)
 
         assert "You need to set the coordinates" in str(exc_info.value)
 
     def test_offline_mode_missing_lng(self):
         """Test error handling when longitude is missing in offline mode."""
         with pytest.raises(KerykeionException) as exc_info:
-            PlanetaryReturnFactory(
-                subject=self.subject,
-                lat=41.9028,
-                tz_str="Europe/Rome",
-                online=False
-            )
+            PlanetaryReturnFactory(subject=self.subject, lat=41.9028, tz_str="Europe/Rome", online=False)
 
         assert "You need to set the coordinates" in str(exc_info.value)
 
     def test_offline_mode_missing_tz_str(self):
         """Test error handling when timezone is missing in offline mode."""
         with pytest.raises(KerykeionException) as exc_info:
-            PlanetaryReturnFactory(
-                subject=self.subject,
-                lat=41.9028,
-                lng=12.4964,
-                online=False
-            )
+            PlanetaryReturnFactory(subject=self.subject, lat=41.9028, lng=12.4964, online=False)
 
         assert "You need to set the coordinates" in str(exc_info.value)
 
     def test_solar_return_calculation_method(self):
         """Test the solar return calculation method."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
         # Test solar return
         result = factory.next_return_from_date(2023, 1, 1, return_type="Solar")
@@ -345,12 +237,7 @@ class TestPlanetaryReturnFactory:
 
     def test_lunar_return_calculation_method(self):
         """Test the lunar return calculation method."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
         # Test lunar return
         result = factory.next_return_from_date(2023, 1, 1, return_type="Lunar")
@@ -358,12 +245,7 @@ class TestPlanetaryReturnFactory:
 
     def test_return_from_iso_formatted_time(self):
         """Test return calculation from ISO formatted time."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
         # Test with ISO formatted time
         result = factory.next_return_from_iso_formatted_time("2023-06-15T12:00:00", "Solar")
@@ -371,12 +253,7 @@ class TestPlanetaryReturnFactory:
 
     def test_return_type_validation(self):
         """Test that only valid return types are accepted."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
         # Test with valid return types
         solar_result = factory.next_return_from_date(2023, 1, 1, return_type="Solar")
@@ -387,13 +264,7 @@ class TestPlanetaryReturnFactory:
 
     def test_return_methods_with_offline_coordinates(self):
         """Test return calculation methods with offline coordinates."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
-            online=False
-        )
+        factory = PlanetaryReturnFactory(self.subject, lat=41.9028, lng=12.4964, tz_str="Europe/Rome", online=False)
 
         # Test that methods work with offline coordinates
         result = factory.next_return_from_date(2023, 1, 1, return_type="Solar")
@@ -402,42 +273,26 @@ class TestPlanetaryReturnFactory:
     def test_factory_initialization_edge_cases(self):
         """Test factory initialization with various edge cases."""
         # Test with minimum required parameters for online mode
-        factory1 = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory1 = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
         assert factory1.online is True
 
         # Test with minimum required parameters for offline mode
-        factory2 = PlanetaryReturnFactory(
-            self.subject,
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
-            online=False
-        )
+        factory2 = PlanetaryReturnFactory(self.subject, lat=41.9028, lng=12.4964, tz_str="Europe/Rome", online=False)
         assert factory2.online is False
 
     def test_geonames_data_fetching_mock(self):
         """Test geonames data fetching with mocked response."""
-        with patch('kerykeion.planetary_return_factory.FetchGeonames') as mock_fetch:
+        with patch("kerykeion.planetary_return_factory.FetchGeonames") as mock_fetch:
             mock_geonames = Mock()
             mock_geonames.get_serialized_data.return_value = {
-                'lat': '41.9028',
-                'lng': '12.4964',
-                'timezonestr': 'Europe/Rome',
-                'countryCode': 'IT'
+                "lat": "41.9028",
+                "lng": "12.4964",
+                "timezonestr": "Europe/Rome",
+                "countryCode": "IT",
             }
             mock_fetch.return_value = mock_geonames
 
-            factory = PlanetaryReturnFactory(
-                self.subject,
-                city="Rome",
-                nation="IT",
-                online=True
-            )
+            factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
             # Verify that mocked geonames data was used
             mock_fetch.assert_called_once()
@@ -447,30 +302,20 @@ class TestPlanetaryReturnFactory:
 
     def test_property_access_and_inheritance(self):
         """Test property access and inheritance from parent classes."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
         # Test that all expected attributes are accessible
-        assert hasattr(factory, 'subject')
-        assert hasattr(factory, 'city')
-        assert hasattr(factory, 'nation')
-        assert hasattr(factory, 'online')
-        assert hasattr(factory, 'lat')
-        assert hasattr(factory, 'lng')
-        assert hasattr(factory, 'tz_str')
+        assert hasattr(factory, "subject")
+        assert hasattr(factory, "city")
+        assert hasattr(factory, "nation")
+        assert hasattr(factory, "online")
+        assert hasattr(factory, "lat")
+        assert hasattr(factory, "lng")
+        assert hasattr(factory, "tz_str")
 
     def test_multiple_return_calculations(self):
         """Test multiple return calculations to ensure consistency."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            city="Rome",
-            nation="IT",
-            online=True
-        )
+        factory = PlanetaryReturnFactory(self.subject, city="Rome", nation="IT", online=True)
 
         # Calculate multiple returns
         solar_return_1 = factory.next_return_from_date(2023, 1, 1, return_type="Solar")
@@ -484,28 +329,16 @@ class TestPlanetaryReturnFactory:
 
     def test_next_return_from_date_with_day(self):
         """Test next_return_from_date with specific day parameter."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
-            online=False
-        )
+        factory = PlanetaryReturnFactory(self.subject, lat=41.9028, lng=12.4964, tz_str="Europe/Rome", online=False)
 
         # Find lunar return starting from January 15
         return_subject = factory.next_return_from_date(2024, 1, 15, return_type="Lunar")
         assert return_subject is not None
-        assert hasattr(return_subject, 'moon')
+        assert hasattr(return_subject, "moon")
 
     def test_two_lunar_returns_same_month(self):
         """Test that different start days find different lunar returns in same month."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
-            online=False
-        )
+        factory = PlanetaryReturnFactory(self.subject, lat=41.9028, lng=12.4964, tz_str="Europe/Rome", online=False)
 
         # First lunar return from start of month
         first_return = factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
@@ -517,13 +350,7 @@ class TestPlanetaryReturnFactory:
 
     def test_next_return_from_date_invalid_day(self):
         """Test that invalid day raises exception."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
-            online=False
-        )
+        factory = PlanetaryReturnFactory(self.subject, lat=41.9028, lng=12.4964, tz_str="Europe/Rome", online=False)
 
         with pytest.raises(KerykeionException) as exc_info:
             factory.next_return_from_date(2024, 2, 30, return_type="Lunar")
@@ -532,12 +359,6 @@ class TestPlanetaryReturnFactory:
 
     def test_next_return_from_date_method_exists(self):
         """Test that next_return_from_date method exists."""
-        factory = PlanetaryReturnFactory(
-            self.subject,
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
-            online=False
-        )
+        factory = PlanetaryReturnFactory(self.subject, lat=41.9028, lng=12.4964, tz_str="Europe/Rome", online=False)
 
-        assert hasattr(factory, 'next_return_from_date')
+        assert hasattr(factory, "next_return_from_date")

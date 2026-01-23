@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2025 Giacomo Battaglia
+This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import logging
 from typing import Union, List, Optional
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.aspects.aspects_utils import get_aspect_from_two_points, get_active_points_list, calculate_aspect_movement
+from kerykeion.aspects.aspects_utils import (
+    get_aspect_from_two_points,
+    get_active_points_list,
+    calculate_aspect_movement,
+)
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     AspectModel,
@@ -18,7 +22,7 @@ from kerykeion.schemas.kr_models import (
     DualChartAspectsModel,
     # Legacy aliases for backward compatibility
     NatalAspectsModel,
-    SynastryAspectsModel
+    SynastryAspectsModel,
 )
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
@@ -206,7 +210,7 @@ class AspectsFactory:
         active_aspects_resolved: List[ActiveAspect],
         aspects_settings: List[dict],
         axis_orb_limit: Optional[float],
-        celestial_points: List[dict]
+        celestial_points: List[dict],
     ) -> SingleChartAspectsModel:
         """
         Create the complete single chart aspects model with all calculations.
@@ -258,8 +262,12 @@ class AspectsFactory:
             DualChartAspectsModel: Complete model containing filtered aspects data
         """
         all_aspects = AspectsFactory._calculate_dual_chart_aspects(
-            first_subject, second_subject, active_points_resolved, active_aspects_resolved,
-            aspects_settings, celestial_points,
+            first_subject,
+            second_subject,
+            active_points_resolved,
+            active_aspects_resolved,
+            aspects_settings,
+            celestial_points,
             first_subject_is_fixed=first_subject_is_fixed,
             second_subject_is_fixed=second_subject_is_fixed,
         )
@@ -283,7 +291,7 @@ class AspectsFactory:
         active_points: List[AstrologicalPoint],
         active_aspects: List[ActiveAspect],
         aspects_settings: List[dict],
-        celestial_points: List[dict]
+        celestial_points: List[dict],
     ) -> List[AspectModel]:
         """
         Calculate all aspects within a single chart.
@@ -328,9 +336,7 @@ class AspectsFactory:
                     continue
 
                 aspect = get_aspect_from_two_points(
-                    filtered_settings,
-                    active_points_list[first]["abs_pos"],
-                    active_points_list[second]["abs_pos"]
+                    filtered_settings, active_points_list[first]["abs_pos"], active_points_list[second]["abs_pos"]
                 )
 
                 if aspect["verdict"]:
@@ -355,7 +361,7 @@ class AspectsFactory:
                             active_points_list[second]["abs_pos"],
                             aspect["aspect_degrees"],
                             first_speed,
-                            second_speed
+                            second_speed,
                         )
 
                     aspect_model = AspectModel(
@@ -459,7 +465,7 @@ class AspectsFactory:
                             second_active_points_list[second]["abs_pos"],
                             aspect["aspect_degrees"],
                             first_speed,
-                            second_speed
+                            second_speed,
                         )
 
                     aspect_model = AspectModel(
@@ -484,10 +490,7 @@ class AspectsFactory:
         return all_aspects_list
 
     @staticmethod
-    def _update_aspect_settings(
-        aspects_settings: List[dict],
-        active_aspects: List[ActiveAspect]
-    ) -> List[dict]:
+    def _update_aspect_settings(aspects_settings: List[dict], active_aspects: List[ActiveAspect]) -> List[dict]:
         """
         Update aspects settings with active aspects orbs.
 
@@ -540,7 +543,7 @@ class AspectsFactory:
 
         for aspect in all_aspects:
             # Check if aspect involves any of the chart axes and apply stricter orb limits
-            aspect_involves_axes = (aspect.p1_name in AXES_LIST or aspect.p2_name in AXES_LIST)
+            aspect_involves_axes = aspect.p1_name in AXES_LIST or aspect.p2_name in AXES_LIST
 
             if aspect_involves_axes and abs(aspect.orbit) >= axis_orb_limit:
                 continue

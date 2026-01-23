@@ -30,9 +30,9 @@ from .settings import KerykeionSettingsModel
 from .transits_time_range_factory import TransitsTimeRangeFactory
 from .backword import (
     AstrologicalSubject,  # Legacy wrapper
-    KerykeionChartSVG,    # Legacy wrapper
-    NatalAspects,         # Legacy wrapper
-    SynastryAspects,      # Legacy wrapper
+    KerykeionChartSVG,  # Legacy wrapper
+    NatalAspects,  # Legacy wrapper
+    SynastryAspects,  # Legacy wrapper
 )
 
 __all__ = [

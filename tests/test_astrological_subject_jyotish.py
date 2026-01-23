@@ -6,13 +6,23 @@ from tests.data.expected_astrological_subjects import EXPECTED_JYOTISH_SUBJECT
 
 class TestAstrologicalSubjectJyotish:
     def setup_class(self):
-
         # Johnny Depp's vedic horoscope: using sidereal zodiac, Lahiri ayanamsha and whole-sign houses
-        self.subject = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", \
-            zodiac_type="Sidereal", sidereal_mode="LAHIRI", houses_system_identifier="W", suppress_geonames_warning=True)
+        self.subject = AstrologicalSubjectFactory.from_birth_data(
+            "Johnny Depp",
+            1963,
+            6,
+            9,
+            0,
+            0,
+            "Owensboro",
+            "US",
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+            houses_system_identifier="W",
+            suppress_geonames_warning=True,
+        )
 
         self.expected_output = EXPECTED_JYOTISH_SUBJECT
-
 
     def test_basic_input_data(self):
         assert self.subject.name == self.expected_output["name"]
@@ -219,12 +229,20 @@ class TestAstrologicalSubjectJyotish:
         assert self.subject.true_north_lunar_node.element == self.expected_output["true_north_lunar_node"]["element"]
         assert self.subject.true_north_lunar_node.sign == self.expected_output["true_north_lunar_node"]["sign"]
         assert self.subject.true_north_lunar_node.sign_num == self.expected_output["true_north_lunar_node"]["sign_num"]
-        assert self.subject.true_north_lunar_node.position == approx(self.expected_output["true_north_lunar_node"]["position"], abs=1e-2)
-        assert self.subject.true_north_lunar_node.abs_pos == approx(self.expected_output["true_north_lunar_node"]["abs_pos"], abs=1e-2)
+        assert self.subject.true_north_lunar_node.position == approx(
+            self.expected_output["true_north_lunar_node"]["position"], abs=1e-2
+        )
+        assert self.subject.true_north_lunar_node.abs_pos == approx(
+            self.expected_output["true_north_lunar_node"]["abs_pos"], abs=1e-2
+        )
         assert self.subject.true_north_lunar_node.emoji == self.expected_output["true_north_lunar_node"]["emoji"]
-        assert self.subject.true_north_lunar_node.point_type == self.expected_output["true_north_lunar_node"]["point_type"]
+        assert (
+            self.subject.true_north_lunar_node.point_type == self.expected_output["true_north_lunar_node"]["point_type"]
+        )
         assert self.subject.true_north_lunar_node.house == self.expected_output["true_north_lunar_node"]["house"]
-        assert self.subject.true_north_lunar_node.retrograde == self.expected_output["true_north_lunar_node"]["retrograde"]
+        assert (
+            self.subject.true_north_lunar_node.retrograde == self.expected_output["true_north_lunar_node"]["retrograde"]
+        )
 
     def test_true_south_lunar_node(self):
         assert self.subject.true_south_lunar_node.name == self.expected_output["true_south_lunar_node"]["name"]
@@ -232,12 +250,20 @@ class TestAstrologicalSubjectJyotish:
         assert self.subject.true_south_lunar_node.element == self.expected_output["true_south_lunar_node"]["element"]
         assert self.subject.true_south_lunar_node.sign == self.expected_output["true_south_lunar_node"]["sign"]
         assert self.subject.true_south_lunar_node.sign_num == self.expected_output["true_south_lunar_node"]["sign_num"]
-        assert self.subject.true_south_lunar_node.position == approx(self.expected_output["true_south_lunar_node"]["position"], abs=1e-2)
-        assert self.subject.true_south_lunar_node.abs_pos == approx(self.expected_output["true_south_lunar_node"]["abs_pos"], abs=1e-2)
+        assert self.subject.true_south_lunar_node.position == approx(
+            self.expected_output["true_south_lunar_node"]["position"], abs=1e-2
+        )
+        assert self.subject.true_south_lunar_node.abs_pos == approx(
+            self.expected_output["true_south_lunar_node"]["abs_pos"], abs=1e-2
+        )
         assert self.subject.true_south_lunar_node.emoji == self.expected_output["true_south_lunar_node"]["emoji"]
-        assert self.subject.true_south_lunar_node.point_type == self.expected_output["true_south_lunar_node"]["point_type"]
+        assert (
+            self.subject.true_south_lunar_node.point_type == self.expected_output["true_south_lunar_node"]["point_type"]
+        )
         assert self.subject.true_south_lunar_node.house == self.expected_output["true_south_lunar_node"]["house"]
-        assert self.subject.true_south_lunar_node.retrograde == self.expected_output["true_south_lunar_node"]["retrograde"]
+        assert (
+            self.subject.true_south_lunar_node.retrograde == self.expected_output["true_south_lunar_node"]["retrograde"]
+        )
 
     def test_first_house(self):
         assert self.subject.first_house.name == self.expected_output["first_house"]["name"]
@@ -311,7 +337,9 @@ class TestAstrologicalSubjectJyotish:
         assert self.subject.seventh_house.element == self.expected_output["seventh_house"]["element"]
         assert self.subject.seventh_house.sign == self.expected_output["seventh_house"]["sign"]
         assert self.subject.seventh_house.sign_num == self.expected_output["seventh_house"]["sign_num"]
-        assert self.subject.seventh_house.position == approx(self.expected_output["seventh_house"]["position"], abs=1e-2)
+        assert self.subject.seventh_house.position == approx(
+            self.expected_output["seventh_house"]["position"], abs=1e-2
+        )
         assert self.subject.seventh_house.abs_pos == approx(self.expected_output["seventh_house"]["abs_pos"], abs=1e-2)
         assert self.subject.seventh_house.emoji == self.expected_output["seventh_house"]["emoji"]
         assert self.subject.seventh_house.point_type == self.expected_output["seventh_house"]["point_type"]
@@ -355,8 +383,12 @@ class TestAstrologicalSubjectJyotish:
         assert self.subject.eleventh_house.element == self.expected_output["eleventh_house"]["element"]
         assert self.subject.eleventh_house.sign == self.expected_output["eleventh_house"]["sign"]
         assert self.subject.eleventh_house.sign_num == self.expected_output["eleventh_house"]["sign_num"]
-        assert self.subject.eleventh_house.position == approx(self.expected_output["eleventh_house"]["position"], abs=1e-2)
-        assert self.subject.eleventh_house.abs_pos == approx(self.expected_output["eleventh_house"]["abs_pos"], abs=1e-2)
+        assert self.subject.eleventh_house.position == approx(
+            self.expected_output["eleventh_house"]["position"], abs=1e-2
+        )
+        assert self.subject.eleventh_house.abs_pos == approx(
+            self.expected_output["eleventh_house"]["abs_pos"], abs=1e-2
+        )
         assert self.subject.eleventh_house.emoji == self.expected_output["eleventh_house"]["emoji"]
         assert self.subject.eleventh_house.point_type == self.expected_output["eleventh_house"]["point_type"]
 
@@ -366,13 +398,20 @@ class TestAstrologicalSubjectJyotish:
         assert self.subject.twelfth_house.element == self.expected_output["twelfth_house"]["element"]
         assert self.subject.twelfth_house.sign == self.expected_output["twelfth_house"]["sign"]
         assert self.subject.twelfth_house.sign_num == self.expected_output["twelfth_house"]["sign_num"]
-        assert self.subject.twelfth_house.position == approx(self.expected_output["twelfth_house"]["position"], abs=1e-2)
+        assert self.subject.twelfth_house.position == approx(
+            self.expected_output["twelfth_house"]["position"], abs=1e-2
+        )
         assert self.subject.twelfth_house.abs_pos == approx(self.expected_output["twelfth_house"]["abs_pos"], abs=1e-2)
         assert self.subject.twelfth_house.emoji == self.expected_output["twelfth_house"]["emoji"]
         assert self.subject.twelfth_house.point_type == self.expected_output["twelfth_house"]["point_type"]
 
     def test_lunar_phase(self):
-        assert self.subject.lunar_phase.model_dump()["degrees_between_s_m"] == approx(self.expected_output["lunar_phase"]["degrees_between_s_m"], abs=1e-2)
+        assert self.subject.lunar_phase.model_dump()["degrees_between_s_m"] == approx(
+            self.expected_output["lunar_phase"]["degrees_between_s_m"], abs=1e-2
+        )
         assert self.subject.lunar_phase.model_dump()["moon_phase"] == self.expected_output["lunar_phase"]["moon_phase"]
         assert self.subject.lunar_phase.model_dump()["moon_emoji"] == self.expected_output["lunar_phase"]["moon_emoji"]
-        assert self.subject.lunar_phase.model_dump()["moon_phase_name"] == self.expected_output["lunar_phase"]["moon_phase_name"]
+        assert (
+            self.subject.lunar_phase.model_dump()["moon_phase_name"]
+            == self.expected_output["lunar_phase"]["moon_phase_name"]
+        )

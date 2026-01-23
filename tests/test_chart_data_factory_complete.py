@@ -29,7 +29,7 @@ class TestChartDataFactory:
             lng=-74.006,
             lat=40.7128,
             tz_str="America/New_York",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
         self.subject2 = AstrologicalSubjectFactory.from_birth_data(
@@ -44,7 +44,7 @@ class TestChartDataFactory:
             lng=-118.2437,
             lat=34.0522,
             tz_str="America/Los_Angeles",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
     def test_create_natal_chart_data(self):
@@ -52,9 +52,9 @@ class TestChartDataFactory:
         chart_data = ChartDataFactory.create_chart_data("Natal", self.subject1)
 
         assert chart_data is not None
-        assert hasattr(chart_data, 'subject')
-        assert hasattr(chart_data, 'element_distribution')
-        assert hasattr(chart_data, 'quality_distribution')
+        assert hasattr(chart_data, "subject")
+        assert hasattr(chart_data, "element_distribution")
+        assert hasattr(chart_data, "quality_distribution")
         assert chart_data.subject.name == "Test Subject 1"
 
     def test_create_synastry_chart_data(self):
@@ -62,8 +62,8 @@ class TestChartDataFactory:
         chart_data = ChartDataFactory.create_chart_data("Synastry", self.subject1, self.subject2)
 
         assert chart_data is not None
-        assert hasattr(chart_data, 'first_subject')
-        assert hasattr(chart_data, 'second_subject')
+        assert hasattr(chart_data, "first_subject")
+        assert hasattr(chart_data, "second_subject")
         assert chart_data.first_subject.name == "Test Subject 1"
         assert chart_data.second_subject.name == "Test Subject 2"
 
@@ -72,8 +72,8 @@ class TestChartDataFactory:
         chart_data = ChartDataFactory.create_chart_data("Transit", self.subject1, self.subject2)
 
         assert chart_data is not None
-        assert hasattr(chart_data, 'first_subject')
-        assert hasattr(chart_data, 'second_subject')
+        assert hasattr(chart_data, "first_subject")
+        assert hasattr(chart_data, "second_subject")
         assert chart_data.first_subject.name == "Test Subject 1"
 
     def test_synastry_missing_second_subject(self):
@@ -90,20 +90,20 @@ class TestChartDataFactory:
         """Test element distribution calculation."""
         chart_data = ChartDataFactory.create_chart_data("Natal", self.subject1)
 
-        assert hasattr(chart_data, 'element_distribution')
-        assert hasattr(chart_data.element_distribution, 'fire')
-        assert hasattr(chart_data.element_distribution, 'earth')
-        assert hasattr(chart_data.element_distribution, 'air')
-        assert hasattr(chart_data.element_distribution, 'water')
+        assert hasattr(chart_data, "element_distribution")
+        assert hasattr(chart_data.element_distribution, "fire")
+        assert hasattr(chart_data.element_distribution, "earth")
+        assert hasattr(chart_data.element_distribution, "air")
+        assert hasattr(chart_data.element_distribution, "water")
 
     def test_quality_distribution_calculation(self):
         """Test quality distribution calculation."""
         chart_data = ChartDataFactory.create_chart_data("Natal", self.subject1)
 
-        assert hasattr(chart_data, 'quality_distribution')
-        assert hasattr(chart_data.quality_distribution, 'cardinal')
-        assert hasattr(chart_data.quality_distribution, 'fixed')
-        assert hasattr(chart_data.quality_distribution, 'mutable')
+        assert hasattr(chart_data, "quality_distribution")
+        assert hasattr(chart_data.quality_distribution, "cardinal")
+        assert hasattr(chart_data.quality_distribution, "fixed")
+        assert hasattr(chart_data.quality_distribution, "mutable")
 
     def test_factory_static_method(self):
         """Test that create_chart_data is a static method."""
@@ -116,14 +116,14 @@ class TestChartDataFactory:
         chart_data = ChartDataFactory.create_chart_data("Natal", self.subject1)
 
         # Original subject should be preserved
-        assert hasattr(chart_data, 'subject')
+        assert hasattr(chart_data, "subject")
         assert chart_data.subject.name == self.subject1.name
 
     def test_aspects_calculation(self):
         """Test that aspects are calculated properly."""
         chart_data = ChartDataFactory.create_chart_data("Natal", self.subject1)
 
-        assert hasattr(chart_data, 'aspects')
+        assert hasattr(chart_data, "aspects")
         # Aspects should be a model or list
         assert chart_data.aspects is not None
 
@@ -131,7 +131,7 @@ class TestChartDataFactory:
         """Test aspects calculation for dual charts."""
         chart_data = ChartDataFactory.create_chart_data("Synastry", self.subject1, self.subject2)
 
-        assert hasattr(chart_data, 'aspects')
+        assert hasattr(chart_data, "aspects")
         assert chart_data.aspects is not None
 
     def test_factory_performance(self):

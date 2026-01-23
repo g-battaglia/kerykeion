@@ -23,6 +23,7 @@ attributes / methods from the README master branch examples are reproduced.
 
 Note: This file name is intentionally spelled 'backword.py' per user request.
 """
+
 from __future__ import annotations
 
 from typing import Any, Iterable, List, Mapping, Optional, Sequence, Union, Literal, cast
@@ -57,10 +58,10 @@ from pathlib import Path
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _deprecated(old: str, new: str) -> None:
     warnings.warn(
-        f"'{old}' is deprecated and will be removed in a future major release. "
-        f"Please migrate to: {new}",
+        f"'{old}' is deprecated and will be removed in a future major release. Please migrate to: {new}",
         DeprecationWarning,
         stacklevel=2,
     )
@@ -100,8 +101,7 @@ def _normalize_zodiac_type_with_warning(zodiac_type: Optional[Union[str, ZodiacT
 
         # Emit deprecation warning for legacy usage
         warnings.warn(
-            f"Zodiac type '{zodiac_str}' is deprecated in Kerykeion v5. "
-            f"Use '{normalized}' instead.",
+            f"Zodiac type '{zodiac_str}' is deprecated in Kerykeion v5. Use '{normalized}' instead.",
             DeprecationWarning,
             stacklevel=4,
         )
@@ -111,7 +111,9 @@ def _normalize_zodiac_type_with_warning(zodiac_type: Optional[Union[str, ZodiacT
     return cast(ZodiacType, normalize_zodiac_type(zodiac_str))
 
 
-def _normalize_active_points(points: Optional[Iterable[Union[str, AstrologicalPoint]]]) -> Optional[List[AstrologicalPoint]]:
+def _normalize_active_points(
+    points: Optional[Iterable[Union[str, AstrologicalPoint]]],
+) -> Optional[List[AstrologicalPoint]]:
     """Best-effort normalization of legacy string active points list.
 
     - Accepts None -> None
@@ -129,8 +131,7 @@ def _normalize_active_points(points: Optional[Iterable[Union[str, AstrologicalPo
             # Check if this is a legacy node name and map it
             if p in LEGACY_NODE_NAMES_MAP:
                 warnings.warn(
-                    f"Active point '{p}' is deprecated in Kerykeion v5. "
-                    f"Use '{LEGACY_NODE_NAMES_MAP[p]}' instead.",
+                    f"Active point '{p}' is deprecated in Kerykeion v5. Use '{LEGACY_NODE_NAMES_MAP[p]}' instead.",
                     DeprecationWarning,
                     stacklevel=3,
                 )
@@ -145,6 +146,7 @@ def _normalize_active_points(points: Optional[Iterable[Union[str, AstrologicalPo
                 normalized.append(p)
     return normalized or None
 
+
 # ---------------------------------------------------------------------------
 # Legacy AstrologicalSubject wrapper
 # ---------------------------------------------------------------------------
@@ -152,6 +154,7 @@ class AstrologicalSubject:
     """Backward compatible wrapper implementing the requested __init__ signature."""
 
     from datetime import datetime as _dt
+
     NOW = _dt.utcnow()
 
     def __init__(
@@ -417,6 +420,7 @@ class AstrologicalSubject:
         obj.json_dir = Path.home()
         return obj
 
+
 # ---------------------------------------------------------------------------
 # Legacy KerykeionChartSVG wrapper
 # ---------------------------------------------------------------------------
@@ -444,7 +448,6 @@ class KerykeionChartSVG:
         active_aspects: Optional[List[ActiveAspect]] = None,
         *,
         language_pack: Optional[Mapping[str, Any]] = None,
-
     ) -> None:
         _deprecated("KerykeionChartSVG", "ChartDataFactory + ChartDrawer")
 
@@ -659,6 +662,7 @@ class KerykeionChartSVG:
     save_aspect_grid_only_svg_file = makeAspectGridOnlySVG
     makeGridOnlySVG = makeAspectGridOnlySVG
 
+
 # ---------------------------------------------------------------------------
 # Legacy NatalAspects wrapper
 # ---------------------------------------------------------------------------
@@ -730,6 +734,7 @@ class NatalAspects:
         if self._relevant_aspects_cache is None:
             self._relevant_aspects_cache = list(self._build_aspects_model().aspects)
         return self._relevant_aspects_cache
+
 
 # ---------------------------------------------------------------------------
 # Legacy SynastryAspects wrapper
@@ -810,6 +815,7 @@ class SynastryAspects:
     def get_relevant_aspects(self):
         """Legacy method for compatibility with master branch."""
         return self.relevant_aspects
+
 
 # ---------------------------------------------------------------------------
 # Convenience exports (mirroring old implicit surface API)

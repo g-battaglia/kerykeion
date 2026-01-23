@@ -5,7 +5,6 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-
 from logging import getLogger
 from datetime import timedelta
 from os import getenv

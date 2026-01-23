@@ -35,7 +35,7 @@ def test_basic_functionality():
 
 def test_exception_handling():
     """Test exception handling paths."""
-    with patch('kerykeion.fetch_geonames.CachedSession') as mock_session:
+    with patch("kerykeion.fetch_geonames.CachedSession") as mock_session:
         # Mock session to raise an exception
         mock_session_instance = Mock()
         mock_session_instance.send.side_effect = Exception("Network error")

@@ -24,9 +24,7 @@ def test_report_output_exact_match(capsys):
     captured = capsys.readouterr().out
 
     # Load the expected snapshot (exactly the generated string without the final print newline)
-    expected = Path(
-        "tests/fixtures/new_moon_test_natal_report.txt"
-    ).read_text(encoding="utf-8")
+    expected = Path("tests/fixtures/new_moon_test_natal_report.txt").read_text(encoding="utf-8")
 
     # print() adds a trailing newline; enforce exact output match including that newline
     assert captured == expected + "\n"

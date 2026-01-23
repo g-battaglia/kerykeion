@@ -184,9 +184,7 @@ def draw_planets(
 
         # Calculate true position without adjustment (used for connecting lines)
         true_offset = _calculate_point_offset(
-            main_subject_seventh_house_degree_ut,
-            main_points_abs_positions[point_idx],
-            0
+            main_subject_seventh_house_degree_ut, main_points_abs_positions[point_idx], 0
         )
 
         # Calculate point coordinates
@@ -302,7 +300,9 @@ def _handle_two_point_group(
         position_adjustments[group[1][0]] = +threshold
 
     # If points adjacent to group have room
-    elif (planets_by_position[next_to_a][1] > (2.4 * threshold)) and (planets_by_position[next_to_b][2] > (2.4 * threshold)):
+    elif (planets_by_position[next_to_a][1] > (2.4 * threshold)) and (
+        planets_by_position[next_to_b][2] > (2.4 * threshold)
+    ):
         position_adjustments[next_to_a] = group[0][1] - threshold * 2
         position_adjustments[group[0][0]] = -threshold * 0.5
         position_adjustments[next_to_b] = -(group[1][2] - threshold * 2)
@@ -363,10 +363,7 @@ def _handle_multi_point_group(group: list, position_adjustments: list, threshold
 
 
 def _determine_point_radius(
-    point_idx: int,
-    chart_type: str,
-    is_alternate_position: bool,
-    external_view: bool = False
+    point_idx: int, chart_type: str, is_alternate_position: bool, external_view: bool = False
 ) -> int:
     """
     Determine the radius for placing a celestial point based on its type and chart type.
@@ -464,14 +461,18 @@ def _draw_external_natal_lines(
     y1 = sliceToY(0, radius - third_circle_radius, true_offset) + third_circle_radius
     x2 = sliceToX(0, radius - point_radius - 30, true_offset) + point_radius + 30
     y2 = sliceToY(0, radius - point_radius - 30, true_offset) + point_radius + 30
-    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke-width:1px;stroke:{color};stroke-opacity:.3;"/>\n'
+    output += (
+        f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke-width:1px;stroke:{color};stroke-opacity:.3;"/>\n'
+    )
 
     # Second line - from outer position to adjusted position
     x1 = x2
     y1 = y2
     x2 = sliceToX(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
     y2 = sliceToY(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
-    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke-width:1px;stroke:{color};stroke-opacity:.5;"/>\n'
+    output += (
+        f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke-width:1px;stroke:{color};stroke-opacity:.5;"/>\n'
+    )
 
     return output
 
@@ -492,7 +493,7 @@ def _generate_point_svg(point_details: KerykeionPointModel, x: float, y: float, 
     """
     svg = f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" kr:signposition="{point_details["position"]}" '
     svg += f'kr:slug="{point_details["name"]}" transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">'
-    svg += f'<use x="{x * (1/scale)}" y="{y * (1/scale)}" xlink:href="#{point_name}" />'
+    svg += f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{point_name}" />'
     svg += "</g>"
     return svg
 
@@ -792,6 +793,7 @@ def _draw_inner_point_indicators(
 
     return output
 
+
 def _draw_secondary_points(
     output: str,
     radius: Union[int, float],
@@ -909,7 +911,9 @@ def _draw_secondary_points(
         point_x = sliceToX(0, radius - point_radius, point_offset) + point_radius
         point_y = sliceToY(0, radius - point_radius, point_offset) + point_radius
         output += '<g class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)">'
-        output += f'<use x="{point_x*2}" y="{point_y*2}" xlink:href="#{points_settings[point_idx]["name"]}" /></g></g>'
+        output += (
+            f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{points_settings[point_idx]["name"]}" /></g></g>'
+        )
 
         # Draw connecting line
         x1 = sliceToX(0, radius + 3, point_offset) - 3

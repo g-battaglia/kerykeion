@@ -4,6 +4,7 @@ Tests for backward compatibility aliases (kr_types module and deprecated type al
 This test suite verifies that Kerykeion v5 maintains compatibility with v4 imports,
 while issuing appropriate deprecation warnings.
 """
+
 import warnings
 import pytest
 
@@ -21,9 +22,9 @@ class TestKrTypesModuleCompatibility:
 
             # Filter for kr_types specific deprecation warnings
             kr_types_warnings = [
-                warning for warning in w
-                if issubclass(warning.category, DeprecationWarning)
-                and "kr_types" in str(warning.message)
+                warning
+                for warning in w
+                if issubclass(warning.category, DeprecationWarning) and "kr_types" in str(warning.message)
             ]
             assert len(kr_types_warnings) >= 1
             assert "v6.0" in str(kr_types_warnings[0].message)

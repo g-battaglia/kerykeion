@@ -31,7 +31,7 @@ class TestTransitsTimeRangeFactory:
             tz_str="America/New_York",
             city="New York",
             nation="US",
-            suppress_geonames_warning=True
+            suppress_geonames_warning=True,
         )
 
         # Create test ephemeris data
@@ -52,10 +52,7 @@ class TestTransitsTimeRangeFactory:
 
     def test_basic_factory_initialization(self):
         """Test basic factory creation with default parameters."""
-        factory = TransitsTimeRangeFactory(
-            self.natal_chart,
-            self.ephemeris_data
-        )
+        factory = TransitsTimeRangeFactory(self.natal_chart, self.ephemeris_data)
 
         assert factory.natal_chart == self.natal_chart
         assert factory.ephemeris_data_points == self.ephemeris_data
@@ -67,11 +64,7 @@ class TestTransitsTimeRangeFactory:
         """Test factory creation with custom active points."""
         custom_points = ["Sun", "Moon"]
 
-        factory = TransitsTimeRangeFactory(
-            self.natal_chart,
-            self.ephemeris_data,
-            active_points=custom_points
-        )
+        factory = TransitsTimeRangeFactory(self.natal_chart, self.ephemeris_data, active_points=custom_points)
 
         assert factory.active_points == custom_points
 
@@ -79,11 +72,7 @@ class TestTransitsTimeRangeFactory:
         """Test factory creation with custom active aspects."""
         custom_aspects = [{"name": "conjunction", "orb": 8}, {"name": "opposition", "orb": 8}]
 
-        factory = TransitsTimeRangeFactory(
-            self.natal_chart,
-            self.ephemeris_data,
-            active_aspects=custom_aspects
-        )
+        factory = TransitsTimeRangeFactory(self.natal_chart, self.ephemeris_data, active_aspects=custom_aspects)
 
         assert factory.active_aspects == custom_aspects
 
@@ -91,11 +80,7 @@ class TestTransitsTimeRangeFactory:
         """Test factory creation with settings file path."""
         settings_path = Path("/tmp/test_settings.json")
 
-        factory = TransitsTimeRangeFactory(
-            self.natal_chart,
-            self.ephemeris_data,
-            settings_file=settings_path
-        )
+        factory = TransitsTimeRangeFactory(self.natal_chart, self.ephemeris_data, settings_file=settings_path)
 
         assert factory.settings_file == settings_path
 
@@ -103,20 +88,13 @@ class TestTransitsTimeRangeFactory:
         """Test factory creation with settings dictionary."""
         settings_dict = {"default_orb": 8.0}
 
-        factory = TransitsTimeRangeFactory(
-            self.natal_chart,
-            self.ephemeris_data,
-            settings_file=settings_dict
-        )
+        factory = TransitsTimeRangeFactory(self.natal_chart, self.ephemeris_data, settings_file=settings_dict)
 
         assert factory.settings_file == settings_dict
 
     def test_get_transit_moments_basic(self):
         """Test basic transit moments calculation."""
-        factory = TransitsTimeRangeFactory(
-            self.natal_chart,
-            self.ephemeris_data
-        )
+        factory = TransitsTimeRangeFactory(self.natal_chart, self.ephemeris_data)
 
         result = factory.get_transit_moments()
 
@@ -130,7 +108,7 @@ class TestTransitsTimeRangeFactory:
             for date_str in result.dates:
                 assert isinstance(date_str, str)
                 # Should be parseable as datetime
-                datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                datetime.fromisoformat(date_str.replace("Z", "+00:00"))
 
         assert len(result.transits) == len(self.ephemeris_data)
 
@@ -138,11 +116,7 @@ class TestTransitsTimeRangeFactory:
         """Test transit moments with custom active points."""
         custom_points = ["Sun", "Moon"]
 
-        factory = TransitsTimeRangeFactory(
-            self.natal_chart,
-            self.ephemeris_data,
-            active_points=custom_points
-        )
+        factory = TransitsTimeRangeFactory(self.natal_chart, self.ephemeris_data, active_points=custom_points)
 
         result = factory.get_transit_moments()
 
@@ -153,11 +127,7 @@ class TestTransitsTimeRangeFactory:
         """Test transit moments with custom active aspects."""
         custom_aspects = [{"name": "conjunction", "orb": 8}]
 
-        factory = TransitsTimeRangeFactory(
-            self.natal_chart,
-            self.ephemeris_data,
-            active_aspects=custom_aspects
-        )
+        factory = TransitsTimeRangeFactory(self.natal_chart, self.ephemeris_data, active_aspects=custom_aspects)
 
         result = factory.get_transit_moments()
 
@@ -168,10 +138,7 @@ class TestTransitsTimeRangeFactory:
         """Test factory with empty ephemeris data."""
         empty_ephemeris = []
 
-        factory = TransitsTimeRangeFactory(
-            self.natal_chart,
-            empty_ephemeris
-        )
+        factory = TransitsTimeRangeFactory(self.natal_chart, empty_ephemeris)
 
         result = factory.get_transit_moments()
 
@@ -187,10 +154,7 @@ class TestTransitsTimeRangeFactory:
         """Test factory with single ephemeris data point."""
         single_point = [self.ephemeris_data[0]]
 
-        factory = TransitsTimeRangeFactory(
-            self.natal_chart,
-            single_point
-        )
+        factory = TransitsTimeRangeFactory(self.natal_chart, single_point)
 
         result = factory.get_transit_moments()
 

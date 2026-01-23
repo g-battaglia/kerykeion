@@ -2,6 +2,7 @@
 """
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
+
 from typing import Literal
 
 
@@ -27,7 +28,20 @@ Values:
 """
 
 
-Houses = Literal["First_House", "Second_House", "Third_House", "Fourth_House", "Fifth_House", "Sixth_House", "Seventh_House", "Eighth_House", "Ninth_House", "Tenth_House", "Eleventh_House", "Twelfth_House"]
+Houses = Literal[
+    "First_House",
+    "Second_House",
+    "Third_House",
+    "Fourth_House",
+    "Fifth_House",
+    "Sixth_House",
+    "Seventh_House",
+    "Eighth_House",
+    "Ninth_House",
+    "Tenth_House",
+    "Eleventh_House",
+    "Twelfth_House",
+]
 """Literal type for Houses"""
 
 
@@ -37,31 +51,56 @@ HouseNumbers = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 AstrologicalPoint = Literal[
     # Main Planets
-    "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
-
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto",
     # Lunar Nodes
-    "Mean_North_Lunar_Node", "True_North_Lunar_Node", "Mean_South_Lunar_Node", "True_South_Lunar_Node",
-
+    "Mean_North_Lunar_Node",
+    "True_North_Lunar_Node",
+    "Mean_South_Lunar_Node",
+    "True_South_Lunar_Node",
     # Special Points
-    "Chiron", "Mean_Lilith", "True_Lilith", "Earth", "Pholus",
-
+    "Chiron",
+    "Mean_Lilith",
+    "True_Lilith",
+    "Earth",
+    "Pholus",
     # Asteroids
-    "Ceres", "Pallas", "Juno", "Vesta",
-
+    "Ceres",
+    "Pallas",
+    "Juno",
+    "Vesta",
     # Trans-Neptunian Objects
-    "Eris", "Sedna", "Haumea", "Makemake", "Ixion", "Orcus", "Quaoar",
-
+    "Eris",
+    "Sedna",
+    "Haumea",
+    "Makemake",
+    "Ixion",
+    "Orcus",
+    "Quaoar",
     # Fixed Stars
-    "Regulus", "Spica",
-
+    "Regulus",
+    "Spica",
     # Arabic Parts
-    "Pars_Fortunae", "Pars_Spiritus", "Pars_Amoris", "Pars_Fidei",
-
+    "Pars_Fortunae",
+    "Pars_Spiritus",
+    "Pars_Amoris",
+    "Pars_Fidei",
     # Special Points
-    "Vertex", "Anti_Vertex",
-
+    "Vertex",
+    "Anti_Vertex",
     # Axial Cusps
-    "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli",
+    "Ascendant",
+    "Medium_Coeli",
+    "Descendant",
+    "Imum_Coeli",
 ]
 
 """Literal type for Axial Cusps"""
@@ -87,15 +126,47 @@ LunarPhaseEmoji = Literal["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗"
 """Literal type for Lunar Phases Emoji"""
 
 
-LunarPhaseName = Literal["New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbous", "Full Moon", "Waning Gibbous", "Last Quarter", "Waning Crescent"]
+LunarPhaseName = Literal[
+    "New Moon",
+    "Waxing Crescent",
+    "First Quarter",
+    "Waxing Gibbous",
+    "Full Moon",
+    "Waning Gibbous",
+    "Last Quarter",
+    "Waning Crescent",
+]
 """Literal type for Lunar Phases Name"""
 
 
-SiderealMode = Literal["FAGAN_BRADLEY", "LAHIRI", "DELUCE", "RAMAN", "USHASHASHI", "KRISHNAMURTI", "DJWHAL_KHUL", "YUKTESHWAR", "JN_BHASIN", "BABYL_KUGLER1", "BABYL_KUGLER2", "BABYL_KUGLER3", "BABYL_HUBER", "BABYL_ETPSC", "ALDEBARAN_15TAU", "HIPPARCHOS", "SASSANIAN", "J2000", "J1900", "B1950"]
+SiderealMode = Literal[
+    "FAGAN_BRADLEY",
+    "LAHIRI",
+    "DELUCE",
+    "RAMAN",
+    "USHASHASHI",
+    "KRISHNAMURTI",
+    "DJWHAL_KHUL",
+    "YUKTESHWAR",
+    "JN_BHASIN",
+    "BABYL_KUGLER1",
+    "BABYL_KUGLER2",
+    "BABYL_KUGLER3",
+    "BABYL_HUBER",
+    "BABYL_ETPSC",
+    "ALDEBARAN_15TAU",
+    "HIPPARCHOS",
+    "SASSANIAN",
+    "J2000",
+    "J1900",
+    "B1950",
+]
 """Literal type for Sidereal Modes, as known as Ayanamsa"""
 
 
-HousesSystemIdentifier = Literal["A", "B", "C", "D", "F", "H", "I", "i", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y"]
+HousesSystemIdentifier = Literal[
+    "A", "B", "C", "D", "F", "H", "I", "i", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y"
+]
 """
 Literal type for Houses Systems:
 
@@ -150,7 +221,9 @@ KerykeionChartLanguage = Literal["EN", "FR", "PT", "IT", "CN", "ES", "RU", "TR",
 """Literal type for Kerykeion Chart Languages"""
 
 
-RelationshipScoreDescription = Literal["Minimal", "Medium", "Important", "Very Important", "Exceptional", "Rare Exceptional"]
+RelationshipScoreDescription = Literal[
+    "Minimal", "Medium", "Important", "Very Important", "Exceptional", "Rare Exceptional"
+]
 """Literal type for Relationship Score Description"""
 
 
@@ -168,7 +241,7 @@ AspectName = Literal[
     "sesquiquadrate",
     "biquintile",
     "quincunx",
-    "opposition"
+    "opposition",
 ]
 """Literal type for all the available aspects names"""
 

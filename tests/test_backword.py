@@ -53,7 +53,7 @@ class TestLegacyAstrologicalSubject:
 
         assert json_path.exists(), "json() should create the legacy dump file"
         assert json_output == json_path.read_text(encoding="utf-8")
-        assert "\n  \"name\": \"Legacy Subject\"" in json_output
+        assert '\n  "name": "Legacy Subject"' in json_output
 
     def test_model_and_helpers(self, legacy_subject: AstrologicalSubject) -> None:
         model = legacy_subject.model()

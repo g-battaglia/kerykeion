@@ -3,10 +3,12 @@ from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
 def test_utc_constructor():
     subject = AstrologicalSubjectFactory.from_birth_data(
-        "Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", suppress_geonames_warning=True)
+        "Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", suppress_geonames_warning=True
+    )
 
     subject2 = AstrologicalSubjectFactory.from_iso_utc_time(
-        "Johnny Depp", "1963-06-09T05:00:00+00:00", "Owensboro", "US", online=True)
+        "Johnny Depp", "1963-06-09T05:00:00+00:00", "Owensboro", "US", online=True
+    )
 
     assert subject.julian_day == subject2.julian_day
     assert subject.sun == subject2.sun
@@ -37,7 +39,6 @@ def test_utc_constructor():
     assert subject.mean_north_lunar_node == subject2.mean_north_lunar_node
     assert subject.true_north_lunar_node == subject2.true_north_lunar_node
     assert subject.lunar_phase == subject2.lunar_phase
-
 
     assert subject.active_points == subject2.active_points
     assert subject.houses_names_list == subject2.houses_names_list
