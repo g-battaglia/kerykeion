@@ -18,9 +18,6 @@ Test Categories:
 """
 
 import warnings
-import tempfile
-import os
-from pathlib import Path
 from datetime import timedelta
 
 import pytest
@@ -484,7 +481,7 @@ class TestBackwardCompatibilityEdgeCases:
             warnings.simplefilter("always")
 
             # Test with legacy node name
-            result = _normalize_active_points(["Sun", "Moon", "Mean_Node"])
+            _normalize_active_points(["Sun", "Moon", "Mean_Node"])
 
             # Check deprecation warning was raised for Mean_Node
             node_warnings = [x for x in w if "Mean_Node" in str(x.message)]

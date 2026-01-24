@@ -246,7 +246,7 @@ class TestBackwardCompatibility:
 
     def test_legacy_astrological_subject_disable_chiron_warning(self):
         """Test disable_chiron parameter emits deprecation warning."""
-        with warnings.catch_warnings(record=True) as w:
+        with warnings.catch_warnings(record=True) as _:
             warnings.simplefilter("always")
             from kerykeion.backword import AstrologicalSubject
 
@@ -267,7 +267,7 @@ class TestBackwardCompatibility:
 
     def test_legacy_astrological_subject_disable_chiron_and_lilith_warning(self):
         """Test disable_chiron_and_lilith parameter emits warning."""
-        with warnings.catch_warnings(record=True) as w:
+        with warnings.catch_warnings(record=True) as _:
             warnings.simplefilter("always")
             from kerykeion.backword import AstrologicalSubject
 
@@ -288,7 +288,7 @@ class TestBackwardCompatibility:
 
     def test_legacy_zodiac_type_normalization(self):
         """Test legacy zodiac type values are normalized with warning."""
-        with warnings.catch_warnings(record=True) as w:
+        with warnings.catch_warnings(record=True) as _:
             warnings.simplefilter("always")
             from kerykeion.backword import AstrologicalSubject
 
@@ -309,7 +309,7 @@ class TestBackwardCompatibility:
 
     def test_legacy_node_names_deprecation(self):
         """Test that legacy node property names emit deprecation warnings."""
-        with warnings.catch_warnings(record=True) as w:
+        with warnings.catch_warnings(record=True) as _:
             warnings.simplefilter("always")
             from kerykeion.backword import AstrologicalSubject
 
@@ -547,7 +547,7 @@ class TestLegacyKerykeionChartSVG:
 
     def test_legacy_kerykeion_chart_svg_with_settings_file_warning(self, basic_subject):
         """Test new_settings_file parameter emits deprecation warning."""
-        with warnings.catch_warnings(record=True) as w:
+        with warnings.catch_warnings(record=True) as _:
             warnings.simplefilter("always")
             from kerykeion.backword import KerykeionChartSVG
 
@@ -592,7 +592,7 @@ class TestKrTypesBackwardCompatibility:
         """Test importing from kr_types.chart_template_model emits warning."""
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
-            from kerykeion.kr_types import chart_template_model
+            from kerykeion.kr_types import chart_template_model  # noqa: F401
 
             deprecation_warnings = [x for x in w if issubclass(x.category, DeprecationWarning)]
             assert len(deprecation_warnings) > 0
@@ -601,7 +601,7 @@ class TestKrTypesBackwardCompatibility:
         """Test importing from kr_types.kerykeion_exception emits warning."""
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
-            from kerykeion.kr_types import kerykeion_exception
+            from kerykeion.kr_types import kerykeion_exception  # noqa: F401
 
             deprecation_warnings = [x for x in w if issubclass(x.category, DeprecationWarning)]
             assert len(deprecation_warnings) > 0
@@ -610,7 +610,7 @@ class TestKrTypesBackwardCompatibility:
         """Test importing from kr_types.settings_models emits warning."""
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
-            from kerykeion.kr_types import settings_models
+            from kerykeion.kr_types import settings_models  # noqa: F401
 
             deprecation_warnings = [x for x in w if issubclass(x.category, DeprecationWarning)]
             assert len(deprecation_warnings) > 0
@@ -1452,7 +1452,6 @@ class TestChartsUtilsEdgeCases:
         """Test chart drawer warning with many active points."""
         from kerykeion.charts.chart_drawer import ChartDrawer
         from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
-        import logging
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             name="Test",
@@ -1742,7 +1741,6 @@ class TestChartDataFactoryReturnTypes:
 
     def test_synastry_chart_with_incompatible_types(self, basic_subject):
         """Test synastry chart with incompatible types uses fallback distribution."""
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
 
         second = AstrologicalSubjectFactory.from_birth_data(
             name="Second",
@@ -1767,8 +1765,8 @@ class TestChartDataFactoryReturnTypes:
 # ============================================================================
 
 
-class TestEphemerisDataFactoryEdgeCases:
-    """Tests for EphemerisDataFactory edge cases."""
+class TestEphemerisDataFactoryStepValidation:
+    """Tests for EphemerisDataFactory step validation."""
 
     def test_invalid_step_type(self):
         """Test EphemerisDataFactory with invalid step type."""
@@ -1836,7 +1834,7 @@ class TestFetchGeonamesEdgeCases:
 
     def test_geonames_set_default_cache_name(self):
         """Test FetchGeonames set_default_cache_name class method."""
-        from kerykeion.fetch_geonames import FetchGeonames, DEFAULT_GEONAMES_CACHE_NAME
+        from kerykeion.fetch_geonames import FetchGeonames
         from pathlib import Path
 
         original = FetchGeonames.default_cache_name
@@ -1876,8 +1874,8 @@ class TestHouseComparisonUtilsEdgeCases:
 # ============================================================================
 
 
-class TestCompositeSubjectFactoryEdgeCases:
-    """Tests for CompositeSubjectFactory edge cases."""
+class TestCompositeSubjectFactoryHash:
+    """Tests for CompositeSubjectFactory hash behavior."""
 
     def test_composite_hash(self, basic_subject, second_subject):
         """Test CompositeSubjectFactory __hash__ method raises TypeError."""
@@ -2078,7 +2076,6 @@ class TestKrModelsEdgeCases:
 
     def test_subscriptable_base_model_delitem(self, basic_subject):
         """Test SubscriptableBaseModel __delitem__ method."""
-        from kerykeion.schemas.kr_models import KerykeionPointModel
 
         point = basic_subject.sun
         # Just check the method exists and doesn't crash
@@ -2111,7 +2108,7 @@ class TestBackwordAdditional:
 
     def test_legacy_normalize_zodiac_type_sidereal(self):
         """Test legacy zodiac type normalization with sidereal."""
-        with warnings.catch_warnings(record=True) as w:
+        with warnings.catch_warnings(record=True) as _:
             warnings.simplefilter("always")
             from kerykeion.backword import AstrologicalSubject
 
@@ -2737,7 +2734,6 @@ class TestBackwordChartTypeValidation:
     def test_synastry_requires_astrological_subjects(self):
         """Test synastry charts require both AstrologicalSubject instances."""
         from kerykeion.backword import KerykeionChartSVG, AstrologicalSubject
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
         import tempfile
 
         # Create two valid subjects
@@ -2851,8 +2847,8 @@ class TestBackwordIsoDatetimeParser:
 # ============================================================================
 
 
-class TestFetchGeonamesErrorHandling:
-    """Tests for FetchGeonames error handling."""
+class TestFetchGeonamesNetworkErrors:
+    """Tests for FetchGeonames network error handling."""
 
     def test_geonames_request_exception_returns_empty(self):
         """Test that request exceptions return empty dict."""
@@ -3043,8 +3039,8 @@ class TestReportMissingDataScenarios:
 # ============================================================================
 
 
-class TestHouseComparisonUtilsEdgeCases:
-    """Tests for house_comparison_utils edge cases."""
+class TestHouseComparisonUtilsMalformedData:
+    """Tests for house_comparison_utils malformed data handling."""
 
     def test_cusps_in_houses_with_malformed_cusp_name(self):
         """Test cusps_in_houses handles malformed cusp names."""

@@ -16,10 +16,9 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from kerykeion.charts.charts_utils import degreeDiff, sliceToX, sliceToY, convert_decimal_to_degree_string
 from kerykeion.schemas import KerykeionException, ChartType, KerykeionPointModel
-from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
 from kerykeion.schemas.kr_literals import Houses
 import logging
-from typing import Union, get_args, List, Optional, Tuple
+from typing import Union, get_args, List, Optional, Tuple, Sequence, Mapping, Any
 
 # =============================================================================
 # CONSTANTS
@@ -51,7 +50,7 @@ DUAL_CHART_TYPES = ("Transit", "Synastry", "DualReturnChart")
 def draw_planets(
     radius: Union[int, float],
     available_kerykeion_celestial_points: list[KerykeionPointModel],
-    available_planets_setting: list[KerykeionSettingsCelestialPointModel],
+    available_planets_setting: Sequence[Mapping[str, Any]],
     third_circle_radius: Union[int, float],
     main_subject_first_house_degree_ut: Union[int, float],
     main_subject_seventh_house_degree_ut: Union[int, float],
@@ -253,10 +252,10 @@ def _validate_dual_chart_inputs(
 
 
 def _calculate_planet_adjustments(
-    points_abs_positions: list,
-    points_settings: list,
+    points_abs_positions: Sequence[Any],
+    points_settings: Sequence[Mapping[str, Any]],
     position_index_map: dict,
-    sorted_positions: list,
+    sorted_positions: Sequence[Any],
 ) -> List[float]:
     """
     Calculate position adjustments for planets to prevent visual overlapping.
@@ -324,9 +323,9 @@ def _calculate_planet_adjustments(
 
 def _get_adjacent_positions(
     position_idx: int,
-    sorted_positions: list,
+    sorted_positions: Sequence[Any],
     position_index_map: dict,
-    points_abs_positions: list,
+    points_abs_positions: Sequence[Any],
 ) -> Tuple[float, float]:
     """Get the absolute positions of adjacent points (with wraparound)."""
     total = len(sorted_positions)
@@ -496,8 +495,8 @@ def _determine_point_radius(
 
 
 def _calculate_indicator_adjustments(
-    points_abs_positions: list,
-    points_settings: list,
+    points_abs_positions: Sequence[Any],
+    points_settings: Sequence[Mapping[str, Any]],
     chart_type: str = "",
     exclude_points: Optional[list[str]] = None,
 ) -> dict[int, float]:
@@ -622,8 +621,8 @@ def _apply_secondary_group_adjustments(group: list[int], adjustments: dict[int, 
 
 
 def _calculate_secondary_indicator_adjustments(
-    points_abs_positions: list,
-    points_settings: list,
+    points_abs_positions: Sequence[Any],
+    points_settings: Sequence[Mapping[str, Any]],
     chart_type: str = "",
     exclude_points: Optional[list[str]] = None,
 ) -> dict[int, float]:
@@ -813,7 +812,7 @@ def _draw_primary_point_indicators(
     seventh_house_degree: Union[int, float],
     points_abs_positions: list[Union[int, float]],
     points_rel_positions: list[Union[int, float]],
-    points_settings: list[KerykeionSettingsCelestialPointModel],
+    points_settings: Sequence[Mapping[str, Any]],
 ) -> str:
     """
     Draw degree indicators for primary points in single-subject charts.
@@ -879,7 +878,7 @@ def _draw_inner_point_indicators(
     seventh_house_degree: Union[int, float],
     points_abs_positions: list[Union[int, float]],
     points_rel_positions: list[Union[int, float]],
-    points_settings: list[KerykeionSettingsCelestialPointModel],
+    points_settings: Sequence[Mapping[str, Any]],
 ) -> str:
     """
     Draw degree indicators for inner/natal points in dual-subject charts.
@@ -944,7 +943,7 @@ def _draw_secondary_points(
     seventh_house_degree: Union[int, float],
     points_abs_positions: list[Union[int, float]],
     points_rel_positions: list[Union[int, float]],
-    points_settings: list[KerykeionSettingsCelestialPointModel],
+    points_settings: Sequence[Mapping[str, Any]],
     chart_type: str,
     exclude_points: list[str],
     main_offset: float,

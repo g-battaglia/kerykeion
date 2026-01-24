@@ -317,7 +317,7 @@ DEFAULT_GRID_POSITIONS = GridPositionsConfig()
 from typing import Protocol, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from kerykeion.charts.chart_drawer import ChartDrawer  # noqa: F811
+    from kerykeion.charts.chart_drawer import ChartDrawer  # type: ignore[attr-defined]  # noqa: F811
 
 
 class ChartRendererProtocol(Protocol):
@@ -1364,7 +1364,7 @@ def get_chart_renderer(chart_type: str, drawer: "ChartDrawer") -> BaseChartRende
     return renderer_class(drawer)
 
 
-class ChartDrawer:
+class ChartDrawer:  # type: ignore[no-redef]
     """
     ChartDrawer generates astrological chart visualizations as SVG files from pre-computed chart data.
 

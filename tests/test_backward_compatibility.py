@@ -6,7 +6,6 @@ while issuing appropriate deprecation warnings.
 """
 
 import warnings
-import pytest
 
 
 class TestKrTypesModuleCompatibility:

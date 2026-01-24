@@ -1,5 +1,4 @@
 from kerykeion.settings import (
-    LANGUAGE_SETTINGS,
     get_translations,
     load_language_settings,
     load_settings_mapping,

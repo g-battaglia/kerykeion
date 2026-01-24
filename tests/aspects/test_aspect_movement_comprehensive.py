@@ -1,4 +1,3 @@
-import pytest
 from kerykeion.aspects.aspects_utils import calculate_aspect_movement
 
 

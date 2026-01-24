@@ -34,7 +34,7 @@ from functools import cached_property
 
 from .astrological_subject_factory import AstrologicalSubjectFactory
 from .chart_data_factory import ChartDataFactory
-from .charts.chart_drawer import ChartDrawer
+from .charts.chart_drawer import ChartDrawer  # type: ignore[attr-defined]
 from .aspects import AspectsFactory
 from .settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
 from .utilities import normalize_zodiac_type

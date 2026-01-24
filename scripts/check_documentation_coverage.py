@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import os
 import pkgutil
 import importlib
 import inspect
@@ -126,7 +125,7 @@ def main():
                 missing_items[mod_name].append(name)
 
     # 4. Report
-    print(f"\nAudit Complete.")
+    print("\nAudit Complete.")
     print(f"Total Public Items Found: {total_count}")
     print(f"Documented Items: {documented_count}")
     print(f"Coverage: {documented_count / total_count * 100:.1f}%\n")
