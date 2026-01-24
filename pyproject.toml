@@ -91,7 +91,7 @@ testpaths = "tests"
 log_level = 20
 log_date_format = "%Y-%m-%d %H:%M:%S"
 log_format = "%(asctime)s %(levelname)s %(message)s"
-addopts = "--cov=kerykeion --cov-config=pyproject.toml --cov-report=html --cov-report=term --cov-report=xml"
+addopts = ""
 
 # Coverage Configuration
 [tool.coverage.run]
@@ -128,22 +128,73 @@ directory = "htmlcov"
 
 # Task Runner
 [tool.poe.tasks]
+# Test
 test = "pytest"
-test-no-capture = "pytest --show-capture no"
-test-nocharts = "pytest --ignore-glob='*chart*.py'"
-test-cov = "pytest --cov=kerykeion --cov-report=html --cov-report=term"
-test-cov-xml = "pytest --cov=kerykeion --cov-report=xml"
-coverage-report = "coverage report"
-coverage-html = "coverage html"
-coverage-erase = "coverage erase"
-analize = "mypy"
-docs = "pdoc kerykeion -o ./docs"
+"test:cov" = "pytest --cov=kerykeion --cov-config=pyproject.toml --cov-report=html --cov-report=term --cov-report=xml"
+"test:cov-xml" = "pytest --cov=kerykeion --cov-report=xml"
+"test:nocharts" = "pytest --ignore-glob='*chart*.py'"
+
+# Code Quality
+lint = "ruff check"
 format = "ruff format"
 "format:all" = "ruff format kerykeion tests"
-lint = "ruff check"
+analyze = "mypy"
+typecheck = "pyright"
+
+[tool.poe.tasks.check]
+sequence = ["lint", "analyze", "typecheck", "test"]
+help = "Run all quality checks (lint, analyze, typecheck, test)"
 
 [tool.poe.tasks.quality]
 script = "scripts.quality_check:main"
+help = "Run quality check script"
+
+# Documentation
+[tool.poe.tasks.docs]
+cmd = "pdoc kerykeion -o ./docs"
+help = "Generate API documentation"
+
+[tool.poe.tasks."docs:check"]
+cmd = "python scripts/check_documentation_coverage.py"
+help = "Audit documentation coverage"
+
+[tool.poe.tasks."docs:snippets"]
+cmd = "python scripts/test_markdown_snippets.py"
+help = "Test Python snippets in markdown files"
+
+# Regenerate Test Fixtures
+[tool.poe.tasks."regenerate:charts"]
+cmd = "python scripts/regenerate_test_charts.py"
+help = "Regenerate test SVG charts"
+
+[tool.poe.tasks."regenerate:aspects"]
+cmd = "python scripts/regenerate_expected_aspects.py"
+help = "Regenerate expected aspects"
+
+[tool.poe.tasks."regenerate:subjects"]
+cmd = "python scripts/regenerate_expected_subjects.py"
+help = "Regenerate expected subjects"
+
+[tool.poe.tasks."regenerate:synastry-aspects"]
+cmd = "python scripts/regenerate_synastry_aspects.py"
+help = "Regenerate synastry aspects"
+
+[tool.poe.tasks."regenerate:synastry"]
+cmd = "python scripts/regenerate_synastry_from_test.py"
+help = "Regenerate synastry from test"
+
+[tool.poe.tasks."regenerate:output"]
+cmd = "python scripts/regenerate_test_output.py"
+help = "Regenerate test output"
+
+[tool.poe.tasks."regenerate:all"]
+sequence = ["regenerate:charts", "regenerate:aspects", "regenerate:subjects", "regenerate:synastry-aspects", "regenerate:synastry", "regenerate:output"]
+help = "Regenerate all test fixtures"
+
+# Utilities
+[tool.poe.tasks.clean]
+cmd = "rm -rf dist build *.egg-info htmlcov .coverage .coverage.* coverage.xml .pytest_cache .mypy_cache .ruff_cache"
+help = "Clean build artifacts and caches"
 
 [tool.ruff]
 line-length = 120
