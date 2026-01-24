@@ -167,15 +167,66 @@ class ChartDrawer:
         >>> chart_drawer.save_svg("/path/to/output/directory", "my_custom_chart")
     """
 
-    # Constants
+    # =========================================================================
+    # CLASS CONSTANTS
+    # =========================================================================
 
-    _DEFAULT_HEIGHT = 550
-    _DEFAULT_FULL_WIDTH = 1250
-    _DEFAULT_SYNASTRY_WIDTH = 1570
-    _DEFAULT_NATAL_WIDTH = 870
-    _DEFAULT_FULL_WIDTH_WITH_TABLE = 1250
-    _DEFAULT_ULTRA_WIDE_WIDTH = 1320
+    # -------------------------------------------------------------------------
+    # CHART DIMENSIONS
+    # -------------------------------------------------------------------------
+    # These define the default SVG canvas sizes for different chart types.
+    # Width varies by chart type based on the number of grids displayed.
+    _DEFAULT_HEIGHT = 550  # Standard height for all chart types
+    _DEFAULT_NATAL_WIDTH = 870  # Single-wheel charts (Natal, Composite, SingleReturn)
+    _DEFAULT_FULL_WIDTH = 1250  # Dual-wheel charts with aspect list
+    _DEFAULT_FULL_WIDTH_WITH_TABLE = 1250  # Dual-wheel charts with aspect table
+    _DEFAULT_SYNASTRY_WIDTH = 1570  # Synastry with house comparison grids
+    _DEFAULT_ULTRA_WIDE_WIDTH = 1320  # DualReturnChart with extended grids
 
+    # -------------------------------------------------------------------------
+    # WHEEL GEOMETRY - RADII
+    # -------------------------------------------------------------------------
+    # The wheel is drawn as concentric circles. The main_radius defines the
+    # outermost boundary. Inner circles are defined as offsets from the edge.
+    #
+    # Circle layout (from outside to inside):
+    #   - Outer edge: main_radius (240px from center)
+    #   - First circle: zodiac sign symbols ring
+    #   - Second circle: degree markers ring
+    #   - Third circle: innermost boundary for aspect lines
+    #
+    # For SINGLE-WHEEL charts (Natal internal view, Composite, SingleReturn):
+    #   first_circle_radius = 0    (no outer planet ring)
+    #   second_circle_radius = 36  (zodiac boundary)
+    #   third_circle_radius = 120  (inner aspect area)
+    #
+    # For DUAL-WHEEL charts (Transit, Synastry, DualReturn):
+    #   Same radii, but outer ring used for second subject planets
+    #
+    # For EXTERNAL VIEW Natal charts:
+    #   first_circle_radius = 56   (outer planet ring)
+    #   second_circle_radius = 92  (zodiac boundary shifted inward)
+    #   third_circle_radius = 112  (inner aspect area shifted inward)
+    _MAIN_RADIUS = 240  # Distance from center to outermost wheel edge (in pixels)
+
+    # Single-wheel internal layout (planets inside zodiac ring)
+    _SINGLE_WHEEL_FIRST_CIRCLE = 0  # No outer ring needed
+    _SINGLE_WHEEL_SECOND_CIRCLE = 36  # Zodiac sign boundary
+    _SINGLE_WHEEL_THIRD_CIRCLE = 120  # Inner boundary for aspects
+
+    # Dual-wheel layout (same as single-wheel, outer ring for 2nd subject)
+    _DUAL_WHEEL_FIRST_CIRCLE = 0
+    _DUAL_WHEEL_SECOND_CIRCLE = 36
+    _DUAL_WHEEL_THIRD_CIRCLE = 120
+
+    # External view layout (planets outside zodiac ring)
+    _EXTERNAL_VIEW_FIRST_CIRCLE = 56  # Outer planet ring
+    _EXTERNAL_VIEW_SECOND_CIRCLE = 92  # Zodiac boundary (shifted inward)
+    _EXTERNAL_VIEW_THIRD_CIRCLE = 112  # Inner boundary (shifted inward)
+
+    # -------------------------------------------------------------------------
+    # LAYOUT SPACING AND POSITIONING
+    # -------------------------------------------------------------------------
     _VERTICAL_PADDING_TOP = 15
     _VERTICAL_PADDING_BOTTOM = 15
     _TITLE_SPACING = 8
@@ -184,24 +235,44 @@ class ChartDrawer:
     _ASPECT_LIST_COLUMN_WIDTH = 105
 
     _BASE_VERTICAL_OFFSETS: dict[str, float] = {
-        "wheel": 50.0,
-        "grid": 0.0,
-        "aspect_grid": 50.0,
-        "aspect_list": 50.0,
-        "title": 0.0,
-        "elements": 0.0,
-        "qualities": 0.0,
-        "lunar_phase": 518.0,
-        "bottom_left": 0.0,
+        "wheel": 50.0,  # Vertical offset for the wheel group
+        "grid": 0.0,  # Vertical offset for planet/house grids
+        "aspect_grid": 50.0,  # Vertical offset for aspect grid (table mode)
+        "aspect_list": 50.0,  # Vertical offset for aspect list
+        "title": 0.0,  # Vertical offset for chart title
+        "elements": 0.0,  # Vertical offset for element percentages
+        "qualities": 0.0,  # Vertical offset for quality percentages
+        "lunar_phase": 518.0,  # Vertical offset for lunar phase icon
+        "bottom_left": 0.0,  # Vertical offset for bottom-left info section
     }
-    _MAX_TOP_SHIFT = 80
-    _TOP_SHIFT_FACTOR = 2
-    _ROW_HEIGHT = 8
 
+    # Dynamic height adjustment parameters
+    _MAX_TOP_SHIFT = 80  # Maximum pixels to shift top elements down
+    _TOP_SHIFT_FACTOR = 2  # Pixels per extra point for top shift calculation
+    _ROW_HEIGHT = 8  # Pixels per row in planet/house grids
+
+    # -------------------------------------------------------------------------
+    # VIEWBOX PRESETS
+    # -------------------------------------------------------------------------
     _BASIC_CHART_VIEWBOX = f"0 0 {_DEFAULT_NATAL_WIDTH} {_DEFAULT_HEIGHT}"
     _WIDE_CHART_VIEWBOX = f"0 0 {_DEFAULT_FULL_WIDTH} 546.0"
     _ULTRA_WIDE_CHART_VIEWBOX = f"0 0 {_DEFAULT_ULTRA_WIDE_WIDTH} 546.0"
     _TRANSIT_CHART_WITH_TABLE_VIWBOX = f"0 0 {_DEFAULT_FULL_WIDTH_WITH_TABLE} 546.0"
+
+    # -------------------------------------------------------------------------
+    # GRID X-POSITIONS (horizontal layout)
+    # -------------------------------------------------------------------------
+    # These constants define the X-coordinate where each grid starts.
+    # Grids are placed right-to-left starting from the wheel.
+    _MAIN_PLANET_GRID_X = 645  # Primary subject planets table
+    _MAIN_HOUSES_GRID_X = 750  # Primary subject houses table
+    _SECONDARY_PLANET_GRID_X = 910  # Secondary subject planets table
+    _SECONDARY_HOUSES_GRID_X = 1015  # Secondary subject houses table
+    _HOUSE_COMPARISON_GRID_X_FIRST = 1090  # First comparison grid (Synastry)
+    _HOUSE_COMPARISON_GRID_X_SECOND = 1290  # Second comparison grid (Synastry)
+    _TRANSIT_HOUSE_COMPARISON_X = 980  # Transit house comparison position
+    _TRANSIT_ASPECT_GRID_X = 550  # Aspect grid X position (table mode)
+    _TRANSIT_ASPECT_GRID_Y = 450  # Aspect grid Y position (table mode)
 
     # Set at init
     first_obj: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
@@ -328,8 +399,8 @@ class ChartDrawer:
         # Load settings
         self._load_language_settings(language_pack)
 
-        # Default radius for all charts
-        self.main_radius = 240
+        # Main radius for all chart wheels (distance from center to outer edge)
+        self.main_radius = self._MAIN_RADIUS
 
         # Configure available planets from chart data
         self.available_planets_setting = []
@@ -352,10 +423,11 @@ class ChartDrawer:
             available_celestial_points_names,
         )
 
-        # Collect secondary subject points for dual charts using the same active set
-        self.t_available_kerykeion_celestial_points: list[KerykeionPointModel] = []
+        # Collect secondary subject points for dual charts (Transit, Synastry, DualReturnChart)
+        # These are the celestial points for the outer wheel in dual-wheel charts
+        self.second_subject_celestial_points: list[KerykeionPointModel] = []
         if self.second_obj is not None:
-            self.t_available_kerykeion_celestial_points = self._collect_subject_points(
+            self.second_subject_celestial_points = self._collect_subject_points(
                 self.second_obj,
                 available_celestial_points_names,
             )
@@ -363,122 +435,19 @@ class ChartDrawer:
         # ------------------------
         # CHART TYPE SPECIFIC SETUP FROM CHART DATA
         # ------------------------
+        # All chart types share: aspects_list, height, location/coordinates, and circle radii.
+        # Only the WIDTH varies by chart type, and only Natal external_view uses different radii.
 
-        if self.chart_type == "Natal":
-            # --- NATAL CHART SETUP ---
+        # Common setup for all chart types
+        self.aspects_list = chart_data.aspects
+        self.height = self._DEFAULT_HEIGHT
+        self.location, self.geolat, self.geolon = self._get_location_info()
 
-            # Extract aspects from pre-computed chart data
-            self.aspects_list = chart_data.aspects
+        # Determine width based on chart type and display options
+        self.width = self._get_chart_width()
 
-            # Screen size
-            self.height = self._DEFAULT_HEIGHT
-            self.width = self._DEFAULT_NATAL_WIDTH
-
-            # Get location and coordinates
-            self.location, self.geolat, self.geolon = self._get_location_info()
-
-            # Circle radii - depends on external_view
-            if self.external_view:
-                self.first_circle_radius = 56
-                self.second_circle_radius = 92
-                self.third_circle_radius = 112
-            else:
-                self.first_circle_radius = 0
-                self.second_circle_radius = 36
-                self.third_circle_radius = 120
-
-        elif self.chart_type == "Composite":
-            # --- COMPOSITE CHART SETUP ---
-
-            # Extract aspects from pre-computed chart data
-            self.aspects_list = chart_data.aspects
-
-            # Screen size
-            self.height = self._DEFAULT_HEIGHT
-            self.width = self._DEFAULT_NATAL_WIDTH
-
-            # Get location and coordinates
-            self.location, self.geolat, self.geolon = self._get_location_info()
-
-            # Circle radii
-            self.first_circle_radius = 0
-            self.second_circle_radius = 36
-            self.third_circle_radius = 120
-
-        elif self.chart_type == "Transit":
-            # --- TRANSIT CHART SETUP ---
-
-            # Extract aspects from pre-computed chart data
-            self.aspects_list = chart_data.aspects
-
-            # Screen size
-            self.height = self._DEFAULT_HEIGHT
-            if self.double_chart_aspect_grid_type == "table":
-                self.width = self._DEFAULT_FULL_WIDTH_WITH_TABLE
-            else:
-                self.width = self._DEFAULT_FULL_WIDTH
-
-            # Get location and coordinates
-            self.location, self.geolat, self.geolon = self._get_location_info()
-
-            # Circle radii
-            self.first_circle_radius = 0
-            self.second_circle_radius = 36
-            self.third_circle_radius = 120
-
-        elif self.chart_type == "Synastry":
-            # --- SYNASTRY CHART SETUP ---
-
-            # Extract aspects from pre-computed chart data
-            self.aspects_list = chart_data.aspects
-
-            # Screen size
-            self.height = self._DEFAULT_HEIGHT
-            self.width = self._DEFAULT_SYNASTRY_WIDTH
-
-            # Get location and coordinates
-            self.location, self.geolat, self.geolon = self._get_location_info()
-
-            # Circle radii
-            self.first_circle_radius = 0
-            self.second_circle_radius = 36
-            self.third_circle_radius = 120
-
-        elif self.chart_type == "DualReturnChart":
-            # --- RETURN CHART SETUP ---
-
-            # Extract aspects from pre-computed chart data
-            self.aspects_list = chart_data.aspects
-
-            # Screen size
-            self.height = self._DEFAULT_HEIGHT
-            self.width = self._DEFAULT_ULTRA_WIDE_WIDTH
-
-            # Get location and coordinates
-            self.location, self.geolat, self.geolon = self._get_location_info()
-
-            # Circle radii
-            self.first_circle_radius = 0
-            self.second_circle_radius = 36
-            self.third_circle_radius = 120
-
-        elif self.chart_type == "SingleReturnChart":
-            # --- SINGLE WHEEL RETURN CHART SETUP ---
-
-            # Extract aspects from pre-computed chart data
-            self.aspects_list = chart_data.aspects
-
-            # Screen size
-            self.height = self._DEFAULT_HEIGHT
-            self.width = self._DEFAULT_NATAL_WIDTH
-
-            # Get location and coordinates
-            self.location, self.geolat, self.geolon = self._get_location_info()
-
-            # Circle radii
-            self.first_circle_radius = 0
-            self.second_circle_radius = 36
-            self.third_circle_radius = 120
+        # Set circle radii based on chart type and view mode
+        self._setup_circle_radii()
 
         self._apply_house_comparison_width_override()
 
@@ -512,14 +481,76 @@ class ChartDrawer:
         """Return number of active celestial points in the current chart."""
         return len([p for p in self.available_planets_setting if p.get("is_active")])
 
+    def _get_chart_width(self) -> float:
+        """Determine the appropriate chart width based on chart type and display options.
+
+        Returns:
+            float: The width in pixels for the SVG canvas.
+        """
+        width_map = {
+            "Natal": self._DEFAULT_NATAL_WIDTH,
+            "Composite": self._DEFAULT_NATAL_WIDTH,
+            "SingleReturnChart": self._DEFAULT_NATAL_WIDTH,
+            "Synastry": self._DEFAULT_SYNASTRY_WIDTH,
+            "DualReturnChart": self._DEFAULT_ULTRA_WIDE_WIDTH,
+        }
+
+        if self.chart_type == "Transit":
+            # Transit width depends on aspect grid display type
+            if self.double_chart_aspect_grid_type == "table":
+                return self._DEFAULT_FULL_WIDTH_WITH_TABLE
+            return self._DEFAULT_FULL_WIDTH
+
+        return width_map.get(self.chart_type, self._DEFAULT_FULL_WIDTH)
+
+    def _setup_circle_radii(self) -> None:
+        """Configure the three concentric circle radii based on chart type and view mode.
+
+        The wheel consists of three circles:
+        - first_circle_radius: Outer boundary (0 for internal view, > 0 for external view)
+        - second_circle_radius: Zodiac sign ring boundary
+        - third_circle_radius: Inner boundary for aspect lines
+
+        For Natal charts with external_view=True, planets appear outside the zodiac ring.
+        All other configurations place planets inside the zodiac ring.
+        """
+        # Only Natal charts with external_view use the external layout
+        if self.chart_type == "Natal" and self.external_view:
+            self.first_circle_radius = self._EXTERNAL_VIEW_FIRST_CIRCLE
+            self.second_circle_radius = self._EXTERNAL_VIEW_SECOND_CIRCLE
+            self.third_circle_radius = self._EXTERNAL_VIEW_THIRD_CIRCLE
+        else:
+            # All other chart types use the standard internal/dual-wheel layout
+            self.first_circle_radius = self._SINGLE_WHEEL_FIRST_CIRCLE
+            self.second_circle_radius = self._SINGLE_WHEEL_SECOND_CIRCLE
+            self.third_circle_radius = self._SINGLE_WHEEL_THIRD_CIRCLE
+
     def _apply_dynamic_height_adjustment(self) -> None:
-        """Adjust chart height and vertical offsets based on active points."""
+        """Adjust chart height and vertical offsets based on active celestial points.
+
+        When more than 20 celestial points are active, the planet/house grids
+        extend vertically. This method increases the SVG height proportionally
+        and adjusts the vertical offsets of all chart elements to maintain
+        proper layout.
+
+        The adjustment strategy:
+        1. Bottom-anchored elements (wheel, aspect grid, lunar phase) shift down
+           by the full height increase to stay at the bottom.
+        2. Top elements (title, element/quality percentages) shift down partially
+           to maintain visual balance and breathing room.
+        3. The planet/house grid shifts down more to create space between the
+           title section and the data grids.
+
+        For Synastry charts, a specialized adjustment is used due to the
+        multiple side-by-side grids that all grow vertically together.
+        """
         active_points_count = self._count_active_planets()
 
         offsets = self._BASE_VERTICAL_OFFSETS.copy()
 
         minimum_height = self._DEFAULT_HEIGHT
 
+        # Synastry has its own height logic due to dual comparison grids
         if self.chart_type == "Synastry":
             self._apply_synastry_height_adjustment(
                 active_points_count=active_points_count,
@@ -528,28 +559,32 @@ class ChartDrawer:
             )
             return
 
+        # Up to 20 active points fit in the default height
         if active_points_count <= 20:
             self.height = max(self.height, minimum_height)
             self._vertical_offsets = offsets
             return
 
+        # Calculate extra height needed for additional points
         extra_points = active_points_count - 20
-        extra_height = extra_points * self._ROW_HEIGHT
+        extra_height = extra_points * self._ROW_HEIGHT  # 8px per additional point
 
         self.height = max(self.height, minimum_height + extra_height)
 
         delta_height = max(self.height - minimum_height, 0)
 
-        # Anchor wheel, aspect grid/list, and lunar phase to the bottom
+        # Bottom-anchored elements shift down by the full delta
+        # This keeps them "pinned" to the bottom of the SVG
         offsets["wheel"] += delta_height
         offsets["aspect_grid"] += delta_height
         offsets["aspect_list"] += delta_height
         offsets["lunar_phase"] += delta_height
         offsets["bottom_left"] += delta_height
 
-        # Smooth top offsets to keep breathing room near the title and grids
+        # Top elements get a partial shift to maintain visual balance
+        # The shift is capped at _MAX_TOP_SHIFT (80px) to prevent excessive spacing
         shift = min(extra_points * self._TOP_SHIFT_FACTOR, self._MAX_TOP_SHIFT)
-        top_shift = shift // 2
+        top_shift = shift // 2  # Title shifts less than grids
 
         offsets["grid"] += shift
         offsets["title"] += top_shift
@@ -559,7 +594,21 @@ class ChartDrawer:
         self._vertical_offsets = offsets
 
     def _adjust_height_for_extended_aspect_columns(self) -> None:
-        """Ensure tall aspect columns fit within the SVG for double-chart lists."""
+        """Ensure tall aspect columns fit within the SVG for double-chart lists.
+
+        When displaying many aspects in list mode for dual-wheel charts,
+        columns beyond the 11th one extend upward beyond the normal bounds.
+        This method calculates the required height to accommodate these
+        extended columns without clipping.
+
+        Layout constants explained:
+        - aspects_per_column (14): Standard number of aspects per column
+        - extended_column_start (11): Column index where upward extension begins
+        - translate_y (273): Y-translation of the aspect list SVG group
+        - bottom_padding (40): Space between last aspect and SVG bottom
+        - title_clearance (18): Space reserved above for column headers
+        - line_height (14): Vertical spacing between aspect entries
+        """
         if self.double_chart_aspect_grid_type != "list":
             return
 
@@ -570,17 +619,22 @@ class ChartDrawer:
         if total_aspects == 0:
             return
 
-        aspects_per_column = 14
-        extended_column_start = 11  # Zero-based column index where tall columns begin
+        # Layout parameters for aspect list rendering
+        aspects_per_column = 14  # Max aspects per column before overflow
+        extended_column_start = 11  # Columns 0-10 fit normally; 11+ extend upward
         base_capacity = aspects_per_column * extended_column_start
 
+        # If all aspects fit in the base columns, no height adjustment needed
         if total_aspects <= base_capacity:
             return
 
-        translate_y = 273
-        bottom_padding = 40
-        title_clearance = 18
-        line_height = 14
+        # Calculate how much extra height is needed for extended columns
+        translate_y = 273  # SVG group translation (aspect list starts at y=273)
+        bottom_padding = 40  # Bottom margin
+        title_clearance = 18  # Header/title space
+        line_height = 14  # Pixels per aspect row
+
+        # Calculate the maximum capacity when extending upward
         baseline_index = aspects_per_column - 1
         top_limit_index = ceil((-translate_y + title_clearance) / line_height)
         max_capacity_by_top = baseline_index - top_limit_index + 1
@@ -588,6 +642,7 @@ class ChartDrawer:
         if max_capacity_by_top <= aspects_per_column:
             return
 
+        # Calculate required SVG height to fit all extended content
         target_capacity = max_capacity_by_top
         required_available_height = target_capacity * line_height
         required_height = translate_y + bottom_padding + required_available_height
@@ -595,6 +650,7 @@ class ChartDrawer:
         if required_height <= self.height:
             return
 
+        # Increase height and shift bottom-anchored elements accordingly
         delta = required_height - self.height
         self.height = required_height
 
@@ -1184,6 +1240,446 @@ class ChartDrawer:
         fallback_value = get_translations(key, default, language_dict=self._fallback_language_dict)
         return get_translations(key, fallback_value, language_dict=self._language_dict)
 
+    def _get_zodiac_info(self) -> str:
+        """
+        Generate the zodiac/ayanamsa info string for display in bottom_left section.
+
+        Returns:
+            str: Localized zodiac type description (Tropical or Ayanamsa mode).
+        """
+        if self.first_obj.zodiac_type == "Tropical":
+            return f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
+        else:
+            mode_const = "SIDM_" + self.first_obj.sidereal_mode  # type: ignore
+            mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
+            return f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
+
+    # =========================================================================
+    # TEMPLATE HELPER METHODS
+    # =========================================================================
+    # These methods populate specific sections of the template_dict.
+    # They are designed to reduce code duplication while maintaining
+    # clear separation between chart types.
+    # =========================================================================
+
+    def _setup_radix_circles(self, template_dict: dict) -> None:
+        """
+        Populate template_dict with radix-style circle elements.
+
+        Used by single-wheel charts (Natal, Composite, SingleReturnChart) that display
+        planets inside the zodiac wheel without a transit ring.
+
+        The radix layout uses:
+        - No transit ring (empty string)
+        - Degree ring with 1-degree tick marks
+        - Three concentric circles for zodiac signs, houses, and aspects
+
+        Args:
+            template_dict: Dictionary to populate with circle SVG elements.
+        """
+        template_dict["transitRing"] = ""
+        template_dict["degreeRing"] = draw_degree_ring(
+            self.main_radius,
+            self.first_circle_radius,
+            self.first_obj.seventh_house.abs_pos,
+            self.chart_colors_settings["paper_0"],
+        )
+        template_dict["background_circle"] = draw_background_circle(
+            self.main_radius,
+            self.chart_colors_settings["paper_1"],
+            self.chart_colors_settings["paper_1"],
+        )
+        template_dict["first_circle"] = draw_first_circle(
+            self.main_radius,
+            self.chart_colors_settings["zodiac_radix_ring_2"],
+            self.chart_type,
+            self.first_circle_radius,
+        )
+        template_dict["second_circle"] = draw_second_circle(
+            self.main_radius,
+            self.chart_colors_settings["zodiac_radix_ring_1"],
+            self.chart_colors_settings["paper_1"],
+            self.chart_type,
+            self.second_circle_radius,
+        )
+        template_dict["third_circle"] = draw_third_circle(
+            self.main_radius,
+            self.chart_colors_settings["zodiac_radix_ring_0"],
+            self.chart_colors_settings["paper_1"],
+            self.chart_type,
+            self.third_circle_radius,
+        )
+
+    def _setup_transit_circles(self, template_dict: dict) -> None:
+        """
+        Populate template_dict with transit-style circle elements.
+
+        Used by dual-wheel charts (Transit, Synastry, DualReturnChart) that display
+        two sets of planets with a transit ring for the outer wheel.
+
+        The transit layout uses:
+        - Outer transit ring for secondary subject planets
+        - Degree steps ring with tick marks
+        - Three concentric circles with transit color scheme
+
+        Args:
+            template_dict: Dictionary to populate with circle SVG elements.
+        """
+        template_dict["transitRing"] = draw_transit_ring(
+            self.main_radius,
+            self.chart_colors_settings["paper_1"],
+            self.chart_colors_settings["zodiac_transit_ring_3"],
+        )
+        template_dict["degreeRing"] = draw_transit_ring_degree_steps(
+            self.main_radius, self.first_obj.seventh_house.abs_pos
+        )
+        template_dict["background_circle"] = draw_background_circle(
+            self.main_radius,
+            self.chart_colors_settings["paper_1"],
+            self.chart_colors_settings["paper_1"],
+        )
+        template_dict["first_circle"] = draw_first_circle(
+            self.main_radius,
+            self.chart_colors_settings["zodiac_transit_ring_2"],
+            self.chart_type,
+        )
+        template_dict["second_circle"] = draw_second_circle(
+            self.main_radius,
+            self.chart_colors_settings["zodiac_transit_ring_1"],
+            self.chart_colors_settings["paper_1"],
+            self.chart_type,
+        )
+        template_dict["third_circle"] = draw_third_circle(
+            self.main_radius,
+            self.chart_colors_settings["zodiac_transit_ring_0"],
+            self.chart_colors_settings["paper_1"],
+            self.chart_type,
+            self.third_circle_radius,
+        )
+
+    def _setup_single_chart_aspects(self, template_dict: dict) -> None:
+        """
+        Populate template_dict with aspect elements for single-wheel charts.
+
+        Generates the triangular aspect grid and aspect lines for charts with
+        only one subject (Natal, Composite, SingleReturnChart).
+
+        Args:
+            template_dict: Dictionary to populate with aspect SVG elements.
+        """
+        template_dict["makeDoubleChartAspectList"] = ""
+        template_dict["makeAspectGrid"] = draw_aspect_grid(
+            self.chart_colors_settings["paper_0"],
+            self.available_planets_setting,
+            self.aspects_list,
+        )
+        template_dict["makeAspects"] = self._draw_all_aspects_lines(
+            self.main_radius, self.main_radius - self.third_circle_radius
+        )
+
+    def _setup_dual_chart_aspects(self, template_dict: dict, aspect_title: str) -> None:
+        """
+        Populate template_dict with aspect elements for dual-wheel charts.
+
+        Generates either an aspect list or aspect grid based on configuration,
+        plus aspect lines for charts with two subjects (Transit, Synastry, DualReturnChart).
+
+        Args:
+            template_dict: Dictionary to populate with aspect SVG elements.
+            aspect_title: Title text to display above the aspect list.
+        """
+        if self.double_chart_aspect_grid_type == "list":
+            template_dict["makeAspectGrid"] = ""
+            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                aspect_title,
+                self.aspects_list,
+                self.planets_settings,
+                self.aspects_settings,
+                chart_height=self.height,
+            )
+        else:
+            template_dict["makeAspectGrid"] = ""
+            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                self.chart_colors_settings["paper_0"],
+                self.available_planets_setting,
+                self.aspects_list,
+                600,
+                520,
+            )
+        template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - 160)
+
+    def _setup_single_wheel_houses(self, template_dict: dict, houses_list: list) -> None:
+        """
+        Populate template_dict with house cusp drawing for single-wheel charts.
+
+        Draws house cusps and numbers for charts with only one subject.
+        Uses the radix house cusp color scheme.
+
+        The c1/c3 parameters control where house cusp lines start and end:
+        - c1 (first_circle_radius): outer boundary offset from edge
+        - c3 (third_circle_radius): inner boundary offset from edge
+
+        Args:
+            template_dict: Dictionary to populate with house SVG elements.
+            houses_list: List of house data from the subject.
+        """
+        template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
+            r=self.main_radius,
+            first_subject_houses_list=houses_list,
+            standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
+            first_house_color=self.planets_settings[12]["color"],  # ASC color
+            tenth_house_color=self.planets_settings[13]["color"],  # MC color
+            seventh_house_color=self.planets_settings[14]["color"],  # DSC color
+            fourth_house_color=self.planets_settings[15]["color"],  # IC color
+            c1=self.first_circle_radius,  # Outer boundary for cusp lines
+            c3=self.third_circle_radius,  # Inner boundary for cusp lines
+            chart_type=self.chart_type,
+            external_view=self.external_view,
+        )
+
+    def _setup_dual_wheel_houses(self, template_dict: dict, first_houses_list: list, second_houses_list: list) -> None:
+        """
+        Populate template_dict with house cusp drawing for dual-wheel charts.
+
+        Draws house cusps for both subjects with radix and transit color schemes.
+
+        The c1/c3 parameters control where house cusp lines start and end:
+        - c1 (first_circle_radius): outer boundary offset from edge
+        - c3 (third_circle_radius): inner boundary offset from edge
+
+        Args:
+            template_dict: Dictionary to populate with house SVG elements.
+            first_houses_list: List of house data from the primary subject.
+            second_houses_list: List of house data from the secondary subject.
+        """
+        template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
+            r=self.main_radius,
+            first_subject_houses_list=first_houses_list,
+            standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
+            first_house_color=self.planets_settings[12]["color"],  # ASC color
+            tenth_house_color=self.planets_settings[13]["color"],  # MC color
+            seventh_house_color=self.planets_settings[14]["color"],  # DSC color
+            fourth_house_color=self.planets_settings[15]["color"],  # IC color
+            c1=self.first_circle_radius,  # Outer boundary for cusp lines
+            c3=self.third_circle_radius,  # Inner boundary for cusp lines
+            chart_type=self.chart_type,
+            external_view=self.external_view,
+            second_subject_houses_list=second_houses_list,
+            transit_house_cusp_color=self.chart_colors_settings["houses_transit_line"],
+        )
+
+    def _setup_single_wheel_planets(self, template_dict: dict) -> None:
+        """
+        Populate template_dict with planet drawing for single-wheel charts.
+
+        Draws planet symbols and degree indicators for charts with only one subject.
+
+        Args:
+            template_dict: Dictionary to populate with planet SVG elements.
+        """
+        template_dict["makePlanets"] = draw_planets(
+            available_planets_setting=self.available_planets_setting,
+            chart_type=self.chart_type,
+            radius=self.main_radius,
+            available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
+            third_circle_radius=self.third_circle_radius,
+            main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
+            main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+            external_view=self.external_view,
+            first_circle_radius=self.first_circle_radius,
+            show_degree_indicators=self.show_degree_indicators,
+        )
+
+    def _setup_dual_wheel_planets(self, template_dict: dict) -> None:
+        """
+        Populate template_dict with planet drawing for dual-wheel charts.
+
+        Draws planet symbols for both subjects (inner and outer wheel).
+
+        Args:
+            template_dict: Dictionary to populate with planet SVG elements.
+        """
+        template_dict["makePlanets"] = draw_planets(
+            available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
+            available_planets_setting=self.available_planets_setting,
+            second_subject_available_kerykeion_celestial_points=self.second_subject_celestial_points,
+            radius=self.main_radius,
+            main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
+            main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+            chart_type=self.chart_type,
+            third_circle_radius=self.third_circle_radius,
+            external_view=self.external_view,
+            second_circle_radius=self.second_circle_radius,
+            show_degree_indicators=self.show_degree_indicators,
+        )
+
+    def _setup_lunar_phase(self, template_dict: dict, subject, latitude: float) -> None:
+        """
+        Populate template_dict with lunar phase visualization if available.
+
+        Draws the moon phase icon when lunar phase data is present on the subject.
+
+        Args:
+            template_dict: Dictionary to populate with lunar phase SVG elements.
+            subject: The subject object that may contain lunar_phase data.
+            latitude: Geographic latitude for moon phase calculation.
+        """
+        if subject.lunar_phase is not None:
+            template_dict["makeLunarPhase"] = makeLunarPhase(subject.lunar_phase["degrees_between_s_m"], latitude)
+        else:
+            template_dict["makeLunarPhase"] = ""
+
+    def _setup_main_houses_grid(self, template_dict: dict, houses_list: list) -> None:
+        """
+        Populate template_dict with the main houses grid table.
+
+        Creates the tabular display of house cusps for the primary subject.
+
+        Args:
+            template_dict: Dictionary to populate with grid SVG elements.
+            houses_list: List of house data from the subject.
+        """
+        template_dict["makeMainHousesGrid"] = draw_main_house_grid(
+            main_subject_houses_list=houses_list,
+            text_color=self.chart_colors_settings["paper_0"],
+            house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
+        )
+
+    def _setup_main_planet_grid(self, template_dict: dict, subject_name: str, title: str = "") -> None:
+        """
+        Populate template_dict with the main planet grid table.
+
+        Creates the tabular display of planet positions for the primary subject.
+
+        Args:
+            template_dict: Dictionary to populate with grid SVG elements.
+            subject_name: Name to display in the grid header.
+            title: Optional title prefix (e.g., "Points for").
+        """
+        template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
+            planets_and_houses_grid_title=title,
+            subject_name=subject_name,
+            available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
+            chart_type=self.chart_type,
+            text_color=self.chart_colors_settings["paper_0"],
+            celestial_point_language=self._language_model.celestial_points,
+        )
+
+    def _setup_secondary_planet_grid(self, template_dict: dict, subject_name: str, title: str = "") -> None:
+        """
+        Populate template_dict with the secondary planet grid table.
+
+        Creates the tabular display of planet positions for the secondary subject
+        in dual-wheel charts.
+
+        Args:
+            template_dict: Dictionary to populate with grid SVG elements.
+            subject_name: Name to display in the grid header.
+            title: Optional title prefix.
+        """
+        template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
+            planets_and_houses_grid_title=title,
+            second_subject_name=subject_name,
+            second_subject_available_kerykeion_celestial_points=self.second_subject_celestial_points,
+            chart_type=self.chart_type,
+            text_color=self.chart_colors_settings["paper_0"],
+            celestial_point_language=self._language_model.celestial_points,
+        )
+
+    def _setup_secondary_houses_grid(self, template_dict: dict, houses_list: list) -> None:
+        """
+        Populate template_dict with the secondary houses grid table.
+
+        Creates the tabular display of house cusps for the secondary subject
+        in dual-wheel charts.
+
+        Args:
+            template_dict: Dictionary to populate with grid SVG elements.
+            houses_list: List of house data from the secondary subject.
+        """
+        template_dict["makeSecondaryHousesGrid"] = draw_secondary_house_grid(
+            secondary_subject_houses_list=houses_list,
+            text_color=self.chart_colors_settings["paper_0"],
+            house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
+        )
+
+    def _clear_element_quality_strings(self, template_dict: dict) -> None:
+        """
+        Clear element and quality percentage strings from template_dict.
+
+        Used by Transit charts which don't display element/quality distributions.
+
+        Args:
+            template_dict: Dictionary to clear element/quality strings from.
+        """
+        template_dict["elements_string"] = ""
+        template_dict["fire_string"] = ""
+        template_dict["earth_string"] = ""
+        template_dict["air_string"] = ""
+        template_dict["water_string"] = ""
+        template_dict["qualities_string"] = ""
+        template_dict["cardinal_string"] = ""
+        template_dict["fixed_string"] = ""
+        template_dict["mutable_string"] = ""
+
+    def _get_perspective_string(self, subject) -> str:
+        """
+        Generate the localized perspective type string for a subject.
+
+        Args:
+            subject: The subject containing perspective_type attribute.
+
+        Returns:
+            str: Formatted perspective string (e.g., "Perspective: Geocentric").
+        """
+        perspective_key = subject.perspective_type.lower().replace(" ", "_")
+        return (
+            f"{self._translate('perspective_type', 'Perspective')}: "
+            f"{self._translate(perspective_key, subject.perspective_type)}"
+        )
+
+    def _get_domification_string(self) -> str:
+        """
+        Generate the localized domification/house system string.
+
+        Returns:
+            str: Formatted domification string (e.g., "Domification: Placidus").
+        """
+        house_key = "houses_system_" + self.first_obj.houses_system_identifier
+        return (
+            f"{self._translate('domification', 'Domification')}: "
+            f"{self._translate(house_key, self.first_obj.houses_system_name)}"
+        )
+
+    def _apply_svg_post_processing(self, template: str, minify: bool, remove_css_variables: bool) -> str:
+        """
+        Apply CSS inlining and minification to SVG template.
+
+        Args:
+            template (str): The raw SVG template string.
+            minify (bool): Remove whitespace and quotes for compactness.
+            remove_css_variables (bool): Embed CSS variable definitions inline.
+
+        Returns:
+            str: The processed SVG template.
+        """
+        if remove_css_variables:
+            template = inline_css_variables_in_svg(template)
+
+        if minify:
+            template = (
+                scourString(template)
+                .replace('"', "'")
+                .replace("\n", "")
+                .replace("\t", "")
+                .replace("    ", "")
+                .replace("  ", "")
+            )
+        else:
+            template = template.replace('"', "'")
+
+        return template
+
     def _draw_zodiac_circle_slices(self, r):
         """
         Draw zodiac circle slices for each sign.
@@ -1219,35 +1715,6 @@ class ChartDrawer:
 
         Returns:
             str: SVG markup for all aspect lines.
-        """
-        out = ""
-        # Track rendered icon positions (x, y, aspect_degrees) to avoid overlapping symbols of same type
-        rendered_icon_positions: list[tuple[float, float, int]] = []
-        for aspect in self.aspects_list:
-            aspect_name = aspect["aspect"]
-            aspect_color = next((a["color"] for a in self.aspects_settings if a["name"] == aspect_name), None)
-            if aspect_color:
-                out += draw_aspect_line(
-                    r=r,
-                    ar=ar,
-                    aspect=aspect,
-                    color=aspect_color,
-                    seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
-                    show_aspect_icon=self.show_aspect_icons,
-                    rendered_icon_positions=rendered_icon_positions,
-                )
-        return out
-
-    def _draw_all_transit_aspects_lines(self, r, ar):
-        """
-        Render SVG lines for all transit aspects in the chart.
-
-        Args:
-            r (float): Radius at which transit aspect lines originate.
-            ar (float): Radius at which transit aspect lines terminate.
-
-        Returns:
-            str: SVG markup for all transit aspect lines.
         """
         out = ""
         # Track rendered icon positions (x, y, aspect_degrees) to avoid overlapping symbols of same type
@@ -1481,55 +1948,18 @@ class ChartDrawer:
         # ------------------------------- #
 
         if self.chart_type == "Natal":
-            # Set viewbox dynamically
+            # ===== NATAL CHART =====
+            # Single-wheel chart showing birth positions with triangular aspect grid.
+
             template_dict["viewbox"] = self._dynamic_viewbox()
 
-            # Rings and circles
-            template_dict["transitRing"] = ""
-            template_dict["degreeRing"] = draw_degree_ring(
-                self.main_radius,
-                self.first_circle_radius,
-                self.first_obj.seventh_house.abs_pos,
-                self.chart_colors_settings["paper_0"],
-            )
-            template_dict["background_circle"] = draw_background_circle(
-                self.main_radius,
-                self.chart_colors_settings["paper_1"],
-                self.chart_colors_settings["paper_1"],
-            )
-            template_dict["first_circle"] = draw_first_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_radix_ring_2"],
-                self.chart_type,
-                self.first_circle_radius,
-            )
-            template_dict["second_circle"] = draw_second_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_radix_ring_1"],
-                self.chart_colors_settings["paper_1"],
-                self.chart_type,
-                self.second_circle_radius,
-            )
-            template_dict["third_circle"] = draw_third_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_radix_ring_0"],
-                self.chart_colors_settings["paper_1"],
-                self.chart_type,
-                self.third_circle_radius,
-            )
+            # Circles and rings
+            self._setup_radix_circles(template_dict)
 
             # Aspects
-            template_dict["makeDoubleChartAspectList"] = ""
-            template_dict["makeAspectGrid"] = draw_aspect_grid(
-                self.chart_colors_settings["paper_0"],
-                self.available_planets_setting,
-                self.aspects_list,
-            )
-            template_dict["makeAspects"] = self._draw_all_aspects_lines(
-                self.main_radius, self.main_radius - self.third_circle_radius
-            )
+            self._setup_single_chart_aspects(template_dict)
 
-            # Top left section
+            # Top left section - Location and birth info
             latitude_string = convert_latitude_coordinate_to_string(
                 self.geolat,
                 self._translate("north", "North"),
@@ -1540,7 +1970,6 @@ class ChartDrawer:
                 self._translate("east", "East"),
                 self._translate("west", "West"),
             )
-
             template_dict["top_left_0"] = f"{self._translate('location', 'Location')}:"
             template_dict["top_left_1"] = f"{self.first_obj.city}, {self.first_obj.nation}"
             template_dict["top_left_2"] = f"{self._translate('latitude', 'Latitude')}: {latitude_string}"
@@ -1550,23 +1979,11 @@ class ChartDrawer:
                 f"weekdays.{self.first_obj.day_of_week}",
                 self.first_obj.day_of_week,  # type: ignore[arg-type]
             )
-            template_dict["top_left_5"] = f"{self._translate('day_of_week', 'Day of Week')}: {localized_weekday}"  # type: ignore
+            template_dict["top_left_5"] = f"{self._translate('day_of_week', 'Day of Week')}: {localized_weekday}"
 
-            # Bottom left section
-            if self.first_obj.zodiac_type == "Tropical":
-                zodiac_info = f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
-            else:
-                mode_const = "SIDM_" + self.first_obj.sidereal_mode  # type: ignore
-                mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
-                zodiac_info = f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
-
-            template_dict["bottom_left_0"] = zodiac_info
-            template_dict["bottom_left_1"] = (
-                f"{self._translate('domification', 'Domification')}: "
-                f"{self._translate('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)}"
-            )
-
-            # Lunar phase information (optional)
+            # Bottom left section - Technical info
+            template_dict["bottom_left_0"] = self._get_zodiac_info()
+            template_dict["bottom_left_1"] = self._get_domification_string()
             if self.first_obj.lunar_phase is not None:
                 template_dict["bottom_left_2"] = (
                     f"{self._translate('lunation_day', 'Lunation Day')}: "
@@ -1579,135 +1996,51 @@ class ChartDrawer:
             else:
                 template_dict["bottom_left_2"] = ""
                 template_dict["bottom_left_3"] = ""
+            template_dict["bottom_left_4"] = self._get_perspective_string(self.first_obj)
 
-            template_dict["bottom_left_4"] = (
-                f"{self._translate('perspective_type', 'Perspective')}: "
-                f"{self._translate(self.first_obj.perspective_type.lower().replace(' ', '_'), self.first_obj.perspective_type)}"
-            )
+            # Lunar phase visualization
+            self._setup_lunar_phase(template_dict, self.first_obj, self.geolat)
 
-            # Moon phase section calculations
-            if self.first_obj.lunar_phase is not None:
-                template_dict["makeLunarPhase"] = makeLunarPhase(
-                    self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat
-                )
-            else:
-                template_dict["makeLunarPhase"] = ""
-
-            # Houses and planet drawing
-            template_dict["makeMainHousesGrid"] = draw_main_house_grid(
-                main_subject_houses_list=first_subject_houses_list,
-                text_color=self.chart_colors_settings["paper_0"],
-                house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
-            )
+            # Grids and drawings
+            self._setup_main_houses_grid(template_dict, first_subject_houses_list)
             template_dict["makeSecondaryHousesGrid"] = ""
-
-            template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
-                r=self.main_radius,
-                first_subject_houses_list=first_subject_houses_list,
-                standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
-                first_house_color=self.planets_settings[12]["color"],
-                tenth_house_color=self.planets_settings[13]["color"],
-                seventh_house_color=self.planets_settings[14]["color"],
-                fourth_house_color=self.planets_settings[15]["color"],
-                c1=self.first_circle_radius,
-                c3=self.third_circle_radius,
-                chart_type=self.chart_type,
-                external_view=self.external_view,
-            )
-
-            template_dict["makePlanets"] = draw_planets(
-                available_planets_setting=self.available_planets_setting,
-                chart_type=self.chart_type,
-                radius=self.main_radius,
-                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-                third_circle_radius=self.third_circle_radius,
-                main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
-                main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
-                external_view=self.external_view,
-                first_circle_radius=self.first_circle_radius,
-                show_degree_indicators=self.show_degree_indicators,
-            )
-
-            template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
-                planets_and_houses_grid_title=self._translate("planets_and_house", "Points for"),
-                subject_name=self.first_obj.name,
-                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-                chart_type=self.chart_type,
-                text_color=self.chart_colors_settings["paper_0"],
-                celestial_point_language=self._language_model.celestial_points,
+            self._setup_single_wheel_houses(template_dict, first_subject_houses_list)
+            self._setup_single_wheel_planets(template_dict)
+            self._setup_main_planet_grid(
+                template_dict,
+                self.first_obj.name,
+                self._translate("planets_and_house", "Points for"),
             )
             template_dict["makeSecondaryPlanetGrid"] = ""
             template_dict["makeHouseComparisonGrid"] = ""
 
         elif self.chart_type == "Composite":
-            # Set viewbox dynamically
+            # ===== COMPOSITE CHART =====
+            # Single-wheel chart showing midpoints between two subjects.
+
+            # Viewbox and circles (same as Natal)
             template_dict["viewbox"] = self._dynamic_viewbox()
+            self._setup_radix_circles(template_dict)
+            self._setup_single_chart_aspects(template_dict)
 
-            # Rings and circles
-            template_dict["transitRing"] = ""
-            template_dict["degreeRing"] = draw_degree_ring(
-                self.main_radius,
-                self.first_circle_radius,
-                self.first_obj.seventh_house.abs_pos,
-                self.chart_colors_settings["paper_0"],
-            )
-            template_dict["background_circle"] = draw_background_circle(
-                self.main_radius,
-                self.chart_colors_settings["paper_1"],
-                self.chart_colors_settings["paper_1"],
-            )
-            template_dict["first_circle"] = draw_first_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_radix_ring_2"],
-                self.chart_type,
-                self.first_circle_radius,
-            )
-            template_dict["second_circle"] = draw_second_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_radix_ring_1"],
-                self.chart_colors_settings["paper_1"],
-                self.chart_type,
-                self.second_circle_radius,
-            )
-            template_dict["third_circle"] = draw_third_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_radix_ring_0"],
-                self.chart_colors_settings["paper_1"],
-                self.chart_type,
-                self.third_circle_radius,
-            )
-
-            # Aspects
-            template_dict["makeDoubleChartAspectList"] = ""
-            template_dict["makeAspectGrid"] = draw_aspect_grid(
-                self.chart_colors_settings["paper_0"],
-                self.available_planets_setting,
-                self.aspects_list,
-            )
-            template_dict["makeAspects"] = self._draw_all_aspects_lines(
-                self.main_radius, self.main_radius - self.third_circle_radius
-            )
-
-            # Top left section
-            # First subject
-            latitude = convert_latitude_coordinate_to_string(
+            # Top left section - First subject info
+            first_lat = convert_latitude_coordinate_to_string(
                 self.first_obj.first_subject.lat,  # type: ignore
                 self._translate("north_letter", "N"),
                 self._translate("south_letter", "S"),
             )
-            longitude = convert_longitude_coordinate_to_string(
+            first_lng = convert_longitude_coordinate_to_string(
                 self.first_obj.first_subject.lng,  # type: ignore
                 self._translate("east_letter", "E"),
                 self._translate("west_letter", "W"),
             )
-
-            # Second subject
-            latitude_string = convert_latitude_coordinate_to_string(
+            # Second subject coordinates
+            second_lat = convert_latitude_coordinate_to_string(
                 self.first_obj.second_subject.lat,  # type: ignore
                 self._translate("north_letter", "N"),
                 self._translate("south_letter", "S"),
             )
-            longitude_string = convert_longitude_coordinate_to_string(
+            second_lng = convert_longitude_coordinate_to_string(
                 self.first_obj.second_subject.lng,  # type: ignore
                 self._translate("east_letter", "E"),
                 self._translate("west_letter", "W"),
@@ -1717,22 +2050,15 @@ class ChartDrawer:
             template_dict["top_left_1"] = (
                 f"{datetime.fromisoformat(self.first_obj.first_subject.iso_formatted_local_datetime).strftime('%Y-%m-%d %H:%M')}"  # type: ignore
             )
-            template_dict["top_left_2"] = f"{latitude} {longitude}"
+            template_dict["top_left_2"] = f"{first_lat} {first_lng}"
             template_dict["top_left_3"] = self.first_obj.second_subject.name  # type: ignore
             template_dict["top_left_4"] = (
                 f"{datetime.fromisoformat(self.first_obj.second_subject.iso_formatted_local_datetime).strftime('%Y-%m-%d %H:%M')}"  # type: ignore
             )
-            template_dict["top_left_5"] = f"{latitude_string} / {longitude_string}"
+            template_dict["top_left_5"] = f"{second_lat} / {second_lng}"
 
-            # Bottom left section
-            if self.first_obj.zodiac_type == "Tropical":
-                zodiac_info = f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
-            else:
-                mode_const = "SIDM_" + self.first_obj.sidereal_mode  # type: ignore
-                mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
-                zodiac_info = f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
-
-            template_dict["bottom_left_0"] = zodiac_info
+            # Bottom left section - Chart metadata
+            template_dict["bottom_left_0"] = self._get_zodiac_info()
             template_dict["bottom_left_1"] = (
                 f"{self._translate('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self._translate('houses', 'Houses')}"
             )
@@ -1744,79 +2070,35 @@ class ChartDrawer:
             )
             template_dict["bottom_left_4"] = ""
 
-            # Moon phase section calculations
-            if self.first_obj.lunar_phase is not None:
-                template_dict["makeLunarPhase"] = makeLunarPhase(
-                    self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat
-                )
-            else:
-                template_dict["makeLunarPhase"] = ""
+            # Lunar phase
+            self._setup_lunar_phase(template_dict, self.first_obj, self.geolat)
 
-            # Houses and planet drawing
-            template_dict["makeMainHousesGrid"] = draw_main_house_grid(
-                main_subject_houses_list=first_subject_houses_list,
-                text_color=self.chart_colors_settings["paper_0"],
-                house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
-            )
+            # Grids and drawings
+            self._setup_main_houses_grid(template_dict, first_subject_houses_list)
             template_dict["makeSecondaryHousesGrid"] = ""
+            self._setup_single_wheel_houses(template_dict, first_subject_houses_list)
+            self._setup_single_wheel_planets(template_dict)
 
-            template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
-                r=self.main_radius,
-                first_subject_houses_list=first_subject_houses_list,
-                standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
-                first_house_color=self.planets_settings[12]["color"],
-                tenth_house_color=self.planets_settings[13]["color"],
-                seventh_house_color=self.planets_settings[14]["color"],
-                fourth_house_color=self.planets_settings[15]["color"],
-                c1=self.first_circle_radius,
-                c3=self.third_circle_radius,
-                chart_type=self.chart_type,
-                external_view=self.external_view,
-            )
-
-            template_dict["makePlanets"] = draw_planets(
-                available_planets_setting=self.available_planets_setting,
-                chart_type=self.chart_type,
-                radius=self.main_radius,
-                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-                third_circle_radius=self.third_circle_radius,
-                main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
-                main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
-                external_view=self.external_view,
-                first_circle_radius=self.first_circle_radius,
-                show_degree_indicators=self.show_degree_indicators,
-            )
-
+            # Planet grid with combined subject name
             subject_name = (
                 f"{self.first_obj.first_subject.name}"  # type: ignore[union-attr]
                 f" {self._translate('and_word', '&')} "
                 f"{self.first_obj.second_subject.name}"  # type: ignore[union-attr]
             )
-
-            template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
-                planets_and_houses_grid_title=self._translate("planets_and_house", "Points for"),
-                subject_name=subject_name,
-                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-                chart_type=self.chart_type,
-                text_color=self.chart_colors_settings["paper_0"],
-                celestial_point_language=self._language_model.celestial_points,
+            self._setup_main_planet_grid(
+                template_dict,
+                subject_name,
+                self._translate("planets_and_house", "Points for"),
             )
             template_dict["makeSecondaryPlanetGrid"] = ""
             template_dict["makeHouseComparisonGrid"] = ""
 
         elif self.chart_type == "Transit":
-            # Transit has no Element Percentages
-            template_dict["elements_string"] = ""
-            template_dict["fire_string"] = ""
-            template_dict["earth_string"] = ""
-            template_dict["air_string"] = ""
-            template_dict["water_string"] = ""
+            # ===== TRANSIT CHART =====
+            # Dual-wheel chart showing natal (inner) vs transit (outer) positions.
 
-            # Transit has no Qualities Percentages
-            template_dict["qualities_string"] = ""
-            template_dict["cardinal_string"] = ""
-            template_dict["fixed_string"] = ""
-            template_dict["mutable_string"] = ""
+            # Transit has no Element/Quality Percentages
+            self._clear_element_quality_strings(template_dict)
 
             # Set viewbox dynamically
             template_dict["viewbox"] = self._dynamic_viewbox()
@@ -1824,38 +2106,8 @@ class ChartDrawer:
             # Get houses list for secondary subject
             second_subject_houses_list = get_houses_list(self.second_obj)  # type: ignore
 
-            # Rings and circles
-            template_dict["transitRing"] = draw_transit_ring(
-                self.main_radius,
-                self.chart_colors_settings["paper_1"],
-                self.chart_colors_settings["zodiac_transit_ring_3"],
-            )
-            template_dict["degreeRing"] = draw_transit_ring_degree_steps(
-                self.main_radius, self.first_obj.seventh_house.abs_pos
-            )
-            template_dict["background_circle"] = draw_background_circle(
-                self.main_radius,
-                self.chart_colors_settings["paper_1"],
-                self.chart_colors_settings["paper_1"],
-            )
-            template_dict["first_circle"] = draw_first_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_transit_ring_2"],
-                self.chart_type,
-            )
-            template_dict["second_circle"] = draw_second_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_transit_ring_1"],
-                self.chart_colors_settings["paper_1"],
-                self.chart_type,
-            )
-            template_dict["third_circle"] = draw_third_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_transit_ring_0"],
-                self.chart_colors_settings["paper_1"],
-                self.chart_type,
-                self.third_circle_radius,
-            )
+            # Rings and circles (transit style)
+            self._setup_transit_circles(template_dict)
 
             # Aspects
             if self.double_chart_aspect_grid_type == "list":
@@ -1878,9 +2130,7 @@ class ChartDrawer:
                     520,
                 )
 
-            template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(
-                self.main_radius, self.main_radius - 160
-            )
+            template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - 160)
 
             # Top left section (clear separation of Natal vs Transit details)
             natal_latitude_string = (
@@ -1940,14 +2190,7 @@ class ChartDrawer:
             template_dict["top_left_5"] = f"{transit_latitude_string}  ·  {transit_longitude_string}"
 
             # Bottom left section
-            if self.first_obj.zodiac_type == "Tropical":
-                zodiac_info = f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
-            else:
-                mode_const = "SIDM_" + self.first_obj.sidereal_mode  # type: ignore
-                mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
-                zodiac_info = f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
-
-            template_dict["bottom_left_0"] = zodiac_info
+            template_dict["bottom_left_0"] = self._get_zodiac_info()
             template_dict["bottom_left_1"] = (
                 f"{self._translate('domification', 'Domification')}: {self._translate('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)}"
             )
@@ -1986,47 +2229,11 @@ class ChartDrawer:
                 template_dict["makeLunarPhase"] = ""
 
             # Houses and planet drawing
-            template_dict["makeMainHousesGrid"] = draw_main_house_grid(
-                main_subject_houses_list=first_subject_houses_list,
-                text_color=self.chart_colors_settings["paper_0"],
-                house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
-            )
-            # template_dict["makeSecondaryHousesGrid"] = draw_secondary_house_grid(
-            #     secondary_subject_houses_list=second_subject_houses_list,
-            #     text_color=self.chart_colors_settings["paper_0"],
-            #     house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
-            # )
+            self._setup_main_houses_grid(template_dict, first_subject_houses_list)
+            # Transit charts show only the natal houses grid, not the transit houses grid
             template_dict["makeSecondaryHousesGrid"] = ""
-
-            template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
-                r=self.main_radius,
-                first_subject_houses_list=first_subject_houses_list,
-                standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
-                first_house_color=self.planets_settings[12]["color"],
-                tenth_house_color=self.planets_settings[13]["color"],
-                seventh_house_color=self.planets_settings[14]["color"],
-                fourth_house_color=self.planets_settings[15]["color"],
-                c1=self.first_circle_radius,
-                c3=self.third_circle_radius,
-                chart_type=self.chart_type,
-                external_view=self.external_view,
-                second_subject_houses_list=second_subject_houses_list,
-                transit_house_cusp_color=self.chart_colors_settings["houses_transit_line"],
-            )
-
-            template_dict["makePlanets"] = draw_planets(
-                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-                available_planets_setting=self.available_planets_setting,
-                second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
-                radius=self.main_radius,
-                main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
-                main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
-                chart_type=self.chart_type,
-                third_circle_radius=self.third_circle_radius,
-                external_view=self.external_view,
-                second_circle_radius=self.second_circle_radius,
-                show_degree_indicators=self.show_degree_indicators,
-            )
+            self._setup_dual_wheel_houses(template_dict, first_subject_houses_list, second_subject_houses_list)
+            self._setup_dual_wheel_planets(template_dict)
 
             # Planet grids
             first_name_label = self._truncate_name(self.first_obj.name)
@@ -2045,7 +2252,7 @@ class ChartDrawer:
             template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
                 planets_and_houses_grid_title="",
                 second_subject_name=second_return_grid_title,
-                second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
+                second_subject_available_kerykeion_celestial_points=self.second_subject_celestial_points,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
@@ -2073,7 +2280,7 @@ class ChartDrawer:
                         ),
                         return_point_label=self._translate("transit_point", "Transit Point"),
                         natal_house_label=self._translate("house_position", "Natal House"),
-                        x_position=980,
+                        x_position=self._TRANSIT_HOUSE_COMPARISON_X,
                     )
 
                 if self.show_cusp_position_comparison:
@@ -2107,44 +2314,17 @@ class ChartDrawer:
                 template_dict["makeHouseComparisonGrid"] = ""
 
         elif self.chart_type == "Synastry":
+            # ===== SYNASTRY CHART =====
+            # Dual-wheel chart comparing two birth charts.
+
             # Set viewbox dynamically
             template_dict["viewbox"] = self._dynamic_viewbox()
 
             # Get houses list for secondary subject
             second_subject_houses_list = get_houses_list(self.second_obj)  # type: ignore
 
-            # Rings and circles
-            template_dict["transitRing"] = draw_transit_ring(
-                self.main_radius,
-                self.chart_colors_settings["paper_1"],
-                self.chart_colors_settings["zodiac_transit_ring_3"],
-            )
-            template_dict["degreeRing"] = draw_transit_ring_degree_steps(
-                self.main_radius, self.first_obj.seventh_house.abs_pos
-            )
-            template_dict["background_circle"] = draw_background_circle(
-                self.main_radius,
-                self.chart_colors_settings["paper_1"],
-                self.chart_colors_settings["paper_1"],
-            )
-            template_dict["first_circle"] = draw_first_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_transit_ring_2"],
-                self.chart_type,
-            )
-            template_dict["second_circle"] = draw_second_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_transit_ring_1"],
-                self.chart_colors_settings["paper_1"],
-                self.chart_type,
-            )
-            template_dict["third_circle"] = draw_third_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_transit_ring_0"],
-                self.chart_colors_settings["paper_1"],
-                self.chart_type,
-                self.third_circle_radius,
-            )
+            # Rings and circles (transit style for dual-wheel)
+            self._setup_transit_circles(template_dict)
 
             # Aspects
             if self.double_chart_aspect_grid_type == "list":
@@ -2166,9 +2346,7 @@ class ChartDrawer:
                     450,
                 )
 
-            template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(
-                self.main_radius, self.main_radius - 160
-            )
+            template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - 160)
 
             # Top left section
             template_dict["top_left_0"] = f"{self.first_obj.name}:"
@@ -2179,17 +2357,10 @@ class ChartDrawer:
             template_dict["top_left_5"] = format_datetime_with_timezone(self.second_obj.iso_formatted_local_datetime)  # type: ignore
 
             # Bottom left section
-            if self.first_obj.zodiac_type == "Tropical":
-                zodiac_info = f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
-            else:
-                mode_const = "SIDM_" + self.first_obj.sidereal_mode  # type: ignore
-                mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
-                zodiac_info = f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
-
             template_dict["bottom_left_0"] = ""
             # FIXME!
             template_dict["bottom_left_1"] = ""  # f"Compatibility Score: {16}/44" # type: ignore
-            template_dict["bottom_left_2"] = zodiac_info
+            template_dict["bottom_left_2"] = self._get_zodiac_info()
             template_dict["bottom_left_3"] = (
                 f"{self._translate('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self._translate('houses', 'Houses')}"
             )
@@ -2201,47 +2372,10 @@ class ChartDrawer:
             template_dict["makeLunarPhase"] = ""
 
             # Houses and planet drawing
-            template_dict["makeMainHousesGrid"] = draw_main_house_grid(
-                main_subject_houses_list=first_subject_houses_list,
-                text_color=self.chart_colors_settings["paper_0"],
-                house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
-            )
-
-            template_dict["makeSecondaryHousesGrid"] = draw_secondary_house_grid(
-                secondary_subject_houses_list=second_subject_houses_list,
-                text_color=self.chart_colors_settings["paper_0"],
-                house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
-            )
-
-            template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
-                r=self.main_radius,
-                first_subject_houses_list=first_subject_houses_list,
-                standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
-                first_house_color=self.planets_settings[12]["color"],
-                tenth_house_color=self.planets_settings[13]["color"],
-                seventh_house_color=self.planets_settings[14]["color"],
-                fourth_house_color=self.planets_settings[15]["color"],
-                c1=self.first_circle_radius,
-                c3=self.third_circle_radius,
-                chart_type=self.chart_type,
-                external_view=self.external_view,
-                second_subject_houses_list=second_subject_houses_list,
-                transit_house_cusp_color=self.chart_colors_settings["houses_transit_line"],
-            )
-
-            template_dict["makePlanets"] = draw_planets(
-                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-                available_planets_setting=self.available_planets_setting,
-                second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
-                radius=self.main_radius,
-                main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
-                main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
-                chart_type=self.chart_type,
-                third_circle_radius=self.third_circle_radius,
-                external_view=self.external_view,
-                second_circle_radius=self.second_circle_radius,
-                show_degree_indicators=self.show_degree_indicators,
-            )
+            self._setup_main_houses_grid(template_dict, first_subject_houses_list)
+            self._setup_secondary_houses_grid(template_dict, second_subject_houses_list)
+            self._setup_dual_wheel_houses(template_dict, first_subject_houses_list, second_subject_houses_list)
+            self._setup_dual_wheel_planets(template_dict)
 
             # Planet grid
             first_name_label = self._truncate_name(self.first_obj.name, 18, "…")  # type: ignore[union-attr]
@@ -2257,7 +2391,7 @@ class ChartDrawer:
             template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
                 planets_and_houses_grid_title="",
                 second_subject_name=f"{second_name_label} ({self._translate('outer_wheel', 'Outer Wheel')})",  # type: ignore
-                second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
+                second_subject_available_kerykeion_celestial_points=self.second_subject_celestial_points,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
@@ -2287,7 +2421,7 @@ class ChartDrawer:
                         return_point_label=first_subject_label + " " + point_column_label,
                         return_label=first_subject_label,
                         radix_label=second_subject_label,
-                        x_position=1090,
+                        x_position=self._HOUSE_COMPARISON_GRID_X_FIRST,
                         y_position=0,
                     )
 
@@ -2300,7 +2434,7 @@ class ChartDrawer:
                         return_point_label=second_subject_label + " " + point_column_label,
                         return_label=second_subject_label,
                         radix_label=first_subject_label,
-                        x_position=1290,
+                        x_position=self._HOUSE_COMPARISON_GRID_X_SECOND,
                         y_position=0,
                     )
 
@@ -2381,44 +2515,17 @@ class ChartDrawer:
                 template_dict["makeHouseComparisonGrid"] = ""
 
         elif self.chart_type == "DualReturnChart":
+            # ===== DUAL RETURN CHART =====
+            # Dual-wheel chart showing natal (inner) vs return (outer) positions.
+
             # Set viewbox dynamically
             template_dict["viewbox"] = self._dynamic_viewbox()
 
             # Get houses list for secondary subject
             second_subject_houses_list = get_houses_list(self.second_obj)  # type: ignore
 
-            # Rings and circles
-            template_dict["transitRing"] = draw_transit_ring(
-                self.main_radius,
-                self.chart_colors_settings["paper_1"],
-                self.chart_colors_settings["zodiac_transit_ring_3"],
-            )
-            template_dict["degreeRing"] = draw_transit_ring_degree_steps(
-                self.main_radius, self.first_obj.seventh_house.abs_pos
-            )
-            template_dict["background_circle"] = draw_background_circle(
-                self.main_radius,
-                self.chart_colors_settings["paper_1"],
-                self.chart_colors_settings["paper_1"],
-            )
-            template_dict["first_circle"] = draw_first_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_transit_ring_2"],
-                self.chart_type,
-            )
-            template_dict["second_circle"] = draw_second_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_transit_ring_1"],
-                self.chart_colors_settings["paper_1"],
-                self.chart_type,
-            )
-            template_dict["third_circle"] = draw_third_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_transit_ring_0"],
-                self.chart_colors_settings["paper_1"],
-                self.chart_type,
-                self.third_circle_radius,
-            )
+            # Rings and circles (transit style for dual-wheel)
+            self._setup_transit_circles(template_dict)
 
             # Aspects
             if self.double_chart_aspect_grid_type == "list":
@@ -2442,9 +2549,7 @@ class ChartDrawer:
                     450,
                 )
 
-            template_dict["makeAspects"] = self._draw_all_transit_aspects_lines(
-                self.main_radius, self.main_radius - 160
-            )
+            template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - 160)
 
             # Top left section
             # Subject
@@ -2482,14 +2587,7 @@ class ChartDrawer:
             template_dict["top_left_5"] = f"{latitude_string} / {longitude_string}"
 
             # Bottom left section
-            if self.first_obj.zodiac_type == "Tropical":
-                zodiac_info = f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
-            else:
-                mode_const = "SIDM_" + self.first_obj.sidereal_mode  # type: ignore
-                mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
-                zodiac_info = f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
-
-            template_dict["bottom_left_0"] = zodiac_info
+            template_dict["bottom_left_0"] = self._get_zodiac_info()
             template_dict["bottom_left_1"] = (
                 f"{self._translate('domification', 'Domification')}: {self._translate('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)}"
             )
@@ -2511,55 +2609,13 @@ class ChartDrawer:
             )
 
             # Moon phase section calculations
-            if self.first_obj.lunar_phase is not None:
-                template_dict["makeLunarPhase"] = makeLunarPhase(
-                    self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat
-                )
-            else:
-                template_dict["makeLunarPhase"] = ""
+            self._setup_lunar_phase(template_dict, self.first_obj, self.geolat)
 
             # Houses and planet drawing
-            template_dict["makeMainHousesGrid"] = draw_main_house_grid(
-                main_subject_houses_list=first_subject_houses_list,
-                text_color=self.chart_colors_settings["paper_0"],
-                house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
-            )
-
-            template_dict["makeSecondaryHousesGrid"] = draw_secondary_house_grid(
-                secondary_subject_houses_list=second_subject_houses_list,
-                text_color=self.chart_colors_settings["paper_0"],
-                house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
-            )
-
-            template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
-                r=self.main_radius,
-                first_subject_houses_list=first_subject_houses_list,
-                standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
-                first_house_color=self.planets_settings[12]["color"],
-                tenth_house_color=self.planets_settings[13]["color"],
-                seventh_house_color=self.planets_settings[14]["color"],
-                fourth_house_color=self.planets_settings[15]["color"],
-                c1=self.first_circle_radius,
-                c3=self.third_circle_radius,
-                chart_type=self.chart_type,
-                external_view=self.external_view,
-                second_subject_houses_list=second_subject_houses_list,
-                transit_house_cusp_color=self.chart_colors_settings["houses_transit_line"],
-            )
-
-            template_dict["makePlanets"] = draw_planets(
-                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-                available_planets_setting=self.available_planets_setting,
-                second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
-                radius=self.main_radius,
-                main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
-                main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
-                chart_type=self.chart_type,
-                third_circle_radius=self.third_circle_radius,
-                external_view=self.external_view,
-                second_circle_radius=self.second_circle_radius,
-                show_degree_indicators=self.show_degree_indicators,
-            )
+            self._setup_main_houses_grid(template_dict, first_subject_houses_list)
+            self._setup_secondary_houses_grid(template_dict, second_subject_houses_list)
+            self._setup_dual_wheel_houses(template_dict, first_subject_houses_list, second_subject_houses_list)
+            self._setup_dual_wheel_planets(template_dict)
 
             # Planet grid
             first_name_label = self._truncate_name(self.first_obj.name)
@@ -2580,7 +2636,7 @@ class ChartDrawer:
             template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
                 planets_and_houses_grid_title="",
                 second_subject_name=second_return_grid_title,
-                second_subject_available_kerykeion_celestial_points=self.t_available_kerykeion_celestial_points,
+                second_subject_available_kerykeion_celestial_points=self.second_subject_celestial_points,
                 chart_type=self.chart_type,
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
@@ -2618,7 +2674,7 @@ class ChartDrawer:
                         return_point_label=f"{natal_label} {point_column_label}",
                         return_label=natal_label,
                         radix_label=return_label_text,
-                        x_position=1090,
+                        x_position=self._HOUSE_COMPARISON_GRID_X_FIRST,
                         y_position=0,
                     )
 
@@ -2631,7 +2687,7 @@ class ChartDrawer:
                         return_point_label=point_column_label,
                         return_label=return_label_text,
                         radix_label=natal_label,
-                        x_position=1290,
+                        x_position=self._HOUSE_COMPARISON_GRID_X_SECOND,
                         y_position=0,
                     )
 
@@ -2713,55 +2769,15 @@ class ChartDrawer:
                 template_dict["makeHouseComparisonGrid"] = ""
 
         elif self.chart_type == "SingleReturnChart":
-            # Set viewbox dynamically
+            # ===== SINGLE RETURN CHART =====
+            # Single-wheel chart for Solar/Lunar Return (without natal comparison).
+
+            # Viewbox and circles (same as Natal/Composite)
             template_dict["viewbox"] = self._dynamic_viewbox()
+            self._setup_radix_circles(template_dict)
+            self._setup_single_chart_aspects(template_dict)
 
-            # Rings and circles
-            template_dict["transitRing"] = ""
-            template_dict["degreeRing"] = draw_degree_ring(
-                self.main_radius,
-                self.first_circle_radius,
-                self.first_obj.seventh_house.abs_pos,
-                self.chart_colors_settings["paper_0"],
-            )
-            template_dict["background_circle"] = draw_background_circle(
-                self.main_radius,
-                self.chart_colors_settings["paper_1"],
-                self.chart_colors_settings["paper_1"],
-            )
-            template_dict["first_circle"] = draw_first_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_radix_ring_2"],
-                self.chart_type,
-                self.first_circle_radius,
-            )
-            template_dict["second_circle"] = draw_second_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_radix_ring_1"],
-                self.chart_colors_settings["paper_1"],
-                self.chart_type,
-                self.second_circle_radius,
-            )
-            template_dict["third_circle"] = draw_third_circle(
-                self.main_radius,
-                self.chart_colors_settings["zodiac_radix_ring_0"],
-                self.chart_colors_settings["paper_1"],
-                self.chart_type,
-                self.third_circle_radius,
-            )
-
-            # Aspects
-            template_dict["makeDoubleChartAspectList"] = ""
-            template_dict["makeAspectGrid"] = draw_aspect_grid(
-                self.chart_colors_settings["paper_0"],
-                self.available_planets_setting,
-                self.aspects_list,
-            )
-            template_dict["makeAspects"] = self._draw_all_aspects_lines(
-                self.main_radius, self.main_radius - self.third_circle_radius
-            )
-
-            # Top left section
+            # Top left section - Return info
             latitude_string = convert_latitude_coordinate_to_string(
                 self.geolat, self._translate("north", "North"), self._translate("south", "South")
             )
@@ -2784,15 +2800,8 @@ class ChartDrawer:
                     f"{self._translate('type', 'Type')}: {self._translate('lunar_return', 'Lunar Return')}"
                 )
 
-            # Bottom left section
-            if self.first_obj.zodiac_type == "Tropical":
-                zodiac_info = f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
-            else:
-                mode_const = "SIDM_" + self.first_obj.sidereal_mode  # type: ignore
-                mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
-                zodiac_info = f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
-
-            template_dict["bottom_left_0"] = zodiac_info
+            # Bottom left section - Chart metadata
+            template_dict["bottom_left_0"] = self._get_zodiac_info()
             template_dict["bottom_left_1"] = (
                 f"{self._translate('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self._translate('houses', 'Houses')}"
             )
@@ -2813,56 +2822,18 @@ class ChartDrawer:
                 f"{self._translate('perspective_type', 'Perspective')}: {self._translate(self.first_obj.perspective_type.lower().replace(' ', '_'), self.first_obj.perspective_type)}"
             )
 
-            # Moon phase section calculations
-            if self.first_obj.lunar_phase is not None:
-                template_dict["makeLunarPhase"] = makeLunarPhase(
-                    self.first_obj.lunar_phase["degrees_between_s_m"], self.geolat
-                )
-            else:
-                template_dict["makeLunarPhase"] = ""
+            # Lunar phase visualization
+            self._setup_lunar_phase(template_dict, self.first_obj, self.geolat)
 
-            # Houses and planet drawing
-            template_dict["makeMainHousesGrid"] = draw_main_house_grid(
-                main_subject_houses_list=first_subject_houses_list,
-                text_color=self.chart_colors_settings["paper_0"],
-                house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
-            )
+            # Grids and drawings
+            self._setup_main_houses_grid(template_dict, first_subject_houses_list)
             template_dict["makeSecondaryHousesGrid"] = ""
-
-            template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
-                r=self.main_radius,
-                first_subject_houses_list=first_subject_houses_list,
-                standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
-                first_house_color=self.planets_settings[12]["color"],
-                tenth_house_color=self.planets_settings[13]["color"],
-                seventh_house_color=self.planets_settings[14]["color"],
-                fourth_house_color=self.planets_settings[15]["color"],
-                c1=self.first_circle_radius,
-                c3=self.third_circle_radius,
-                chart_type=self.chart_type,
-                external_view=self.external_view,
-            )
-
-            template_dict["makePlanets"] = draw_planets(
-                available_planets_setting=self.available_planets_setting,
-                chart_type=self.chart_type,
-                radius=self.main_radius,
-                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-                third_circle_radius=self.third_circle_radius,
-                main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
-                main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
-                external_view=self.external_view,
-                first_circle_radius=self.first_circle_radius,
-                show_degree_indicators=self.show_degree_indicators,
-            )
-
-            template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
-                planets_and_houses_grid_title=self._translate("planets_and_house", "Points for"),
-                subject_name=self.first_obj.name,
-                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-                chart_type=self.chart_type,
-                text_color=self.chart_colors_settings["paper_0"],
-                celestial_point_language=self._language_model.celestial_points,
+            self._setup_single_wheel_houses(template_dict, first_subject_houses_list)
+            self._setup_single_wheel_planets(template_dict)
+            self._setup_main_planet_grid(
+                template_dict,
+                self.first_obj.name,
+                self._translate("planets_and_house", "Points for"),
             )
             template_dict["makeSecondaryPlanetGrid"] = ""
             template_dict["makeHouseComparisonGrid"] = ""
@@ -2899,23 +2870,65 @@ class ChartDrawer:
 
         logger.debug("Template dictionary includes %s fields", len(td.model_dump()))
 
-        if remove_css_variables:
-            template = inline_css_variables_in_svg(template)
+        return self._apply_svg_post_processing(template, minify, remove_css_variables)
 
-        if minify:
-            template = (
-                scourString(template)
-                .replace('"', "'")
-                .replace("\n", "")
-                .replace("\t", "")
-                .replace("    ", "")
-                .replace("  ", "")
-            )
+    def _get_default_filename_suffix(self, suffix: str = "") -> str:
+        """
+        Generate the default filename for SVG output based on chart type.
 
+        Args:
+            suffix (str): Optional suffix to append (e.g., " - Wheel Only", " - Aspect Grid Only").
+
+        Returns:
+            str: The default filename without extension.
+        """
+        # Handle special case for DualReturnChart with return type suffix
+        if self.chart_type == "DualReturnChart" and isinstance(self.second_obj, PlanetReturnModel):
+            if self.second_obj.return_type == "Lunar":
+                return f"{self.first_obj.name} - {self.chart_type} Chart - Lunar Return{suffix}"
+            elif self.second_obj.return_type == "Solar":
+                return f"{self.first_obj.name} - {self.chart_type} Chart - Solar Return{suffix}"
+
+        # Handle ExternalNatal renaming for wheel and grid exports
+        if suffix and self.external_view and self.chart_type == "Natal":
+            chart_type_name = "ExternalNatal"
         else:
-            template = template.replace('"', "'")
+            chart_type_name = self.chart_type
 
-        return template
+        return f"{self.first_obj.name} - {chart_type_name} Chart{suffix}"
+
+    def _write_svg_to_disk(
+        self,
+        content: str,
+        output_path: Union[str, Path, None],
+        filename: Union[str, None],
+        default_suffix: str = "",
+    ) -> Path:
+        """
+        Write SVG content to disk and return the path.
+
+        Args:
+            content (str): The SVG content to write.
+            output_path (str, Path, or None): Directory path. Defaults to home directory.
+            filename (str or None): Custom filename without extension. If None, uses default.
+            default_suffix (str): Suffix for default filename (e.g., " - Wheel Only").
+
+        Returns:
+            Path: The path where the file was saved.
+        """
+        output_directory = Path(output_path) if output_path is not None else Path.home()
+
+        if filename is not None:
+            chartname = output_directory / f"{filename}.svg"
+        else:
+            default_name = self._get_default_filename_suffix(default_suffix)
+            chartname = output_directory / f"{default_name}.svg"
+
+        with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
+            output_file.write(content)
+
+        print(f"SVG Generated Correctly in: {chartname}")
+        return chartname
 
     def save_svg(
         self,
@@ -2946,40 +2959,7 @@ class ChartDrawer:
         """
 
         self.template = self.generate_svg_string(minify, remove_css_variables, custom_title=custom_title)
-
-        # Convert output_path to Path object, default to home directory
-        output_directory = Path(output_path) if output_path is not None else Path.home()
-
-        # Determine filename
-        if filename is not None:
-            chartname = output_directory / f"{filename}.svg"
-        else:
-            # Use default filename pattern
-            chart_type_for_filename = self.chart_type
-
-            if (
-                self.chart_type == "DualReturnChart"
-                and isinstance(self.second_obj, PlanetReturnModel)
-                and self.second_obj.return_type == "Lunar"
-            ):
-                chartname = (
-                    output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Lunar Return.svg"
-                )
-            elif (
-                self.chart_type == "DualReturnChart"
-                and isinstance(self.second_obj, PlanetReturnModel)
-                and self.second_obj.return_type == "Solar"
-            ):
-                chartname = (
-                    output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Solar Return.svg"
-                )
-            else:
-                chartname = output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart.svg"
-
-        with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
-            output_file.write(self.template)
-
-        print(f"SVG Generated Correctly in: {chartname}")
+        self._write_svg_to_disk(self.template, output_path, filename, default_suffix="")
 
     def generate_wheel_only_svg_string(self, minify: bool = False, remove_css_variables=False):
         """
@@ -3009,23 +2989,7 @@ class ChartDrawer:
         wheel_viewbox = self._wheel_only_viewbox()
         template = Template(template).substitute({**template_dict.model_dump(), "viewbox": wheel_viewbox})
 
-        if remove_css_variables:
-            template = inline_css_variables_in_svg(template)
-
-        if minify:
-            template = (
-                scourString(template)
-                .replace('"', "'")
-                .replace("\n", "")
-                .replace("\t", "")
-                .replace("    ", "")
-                .replace("  ", "")
-            )
-
-        else:
-            template = template.replace('"', "'")
-
-        return template
+        return self._apply_svg_post_processing(template, minify, remove_css_variables)
 
     def save_wheel_only_svg_file(
         self,
@@ -3053,24 +3017,7 @@ class ChartDrawer:
         """
 
         template = self.generate_wheel_only_svg_string(minify, remove_css_variables)
-
-        # Convert output_path to Path object, default to home directory
-        output_directory = Path(output_path) if output_path is not None else Path.home()
-
-        # Determine filename
-        if filename is not None:
-            chartname = output_directory / f"{filename}.svg"
-        else:
-            # Use default filename pattern
-            chart_type_for_filename = (
-                "ExternalNatal" if self.external_view and self.chart_type == "Natal" else self.chart_type
-            )
-            chartname = output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Wheel Only.svg"
-
-        with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
-            output_file.write(template)
-
-        print(f"SVG Generated Correctly in: {chartname}")
+        self._write_svg_to_disk(template, output_path, filename, default_suffix=" - Wheel Only")
 
     def generate_aspect_grid_only_svg_string(self, minify: bool = False, remove_css_variables=False):
         """
@@ -3119,23 +3066,7 @@ class ChartDrawer:
             {**template_dict.model_dump(), "makeAspectGrid": aspects_grid, "viewbox": viewbox_override}
         )
 
-        if remove_css_variables:
-            template = inline_css_variables_in_svg(template)
-
-        if minify:
-            template = (
-                scourString(template)
-                .replace('"', "'")
-                .replace("\n", "")
-                .replace("\t", "")
-                .replace("    ", "")
-                .replace("  ", "")
-            )
-
-        else:
-            template = template.replace('"', "'")
-
-        return template
+        return self._apply_svg_post_processing(template, minify, remove_css_variables)
 
     def save_aspect_grid_only_svg_file(
         self,
@@ -3163,26 +3094,7 @@ class ChartDrawer:
         """
 
         template = self.generate_aspect_grid_only_svg_string(minify, remove_css_variables)
-
-        # Convert output_path to Path object, default to home directory
-        output_directory = Path(output_path) if output_path is not None else Path.home()
-
-        # Determine filename
-        if filename is not None:
-            chartname = output_directory / f"{filename}.svg"
-        else:
-            # Use default filename pattern
-            chart_type_for_filename = (
-                "ExternalNatal" if self.external_view and self.chart_type == "Natal" else self.chart_type
-            )
-            chartname = (
-                output_directory / f"{self.first_obj.name} - {chart_type_for_filename} Chart - Aspect Grid Only.svg"
-            )
-
-        with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
-            output_file.write(template)
-
-        print(f"SVG Generated Correctly in: {chartname}")
+        self._write_svg_to_disk(template, output_path, filename, default_suffix=" - Aspect Grid Only")
 
 
 if __name__ == "__main__":

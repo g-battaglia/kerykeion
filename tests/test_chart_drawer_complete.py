@@ -368,7 +368,7 @@ class TestChartDrawer:
         chart = ChartDrawer(synastry_data)
 
         first_points = {point.name: point.abs_pos for point in chart.available_kerykeion_celestial_points}
-        second_points = {point.name: point.abs_pos for point in chart.t_available_kerykeion_celestial_points}
+        second_points = {point.name: point.abs_pos for point in chart.second_subject_celestial_points}
 
         assert second_points, "Expected secondary subject points to be populated"
         assert "Sun" in second_points
