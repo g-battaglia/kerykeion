@@ -79,9 +79,233 @@ from kerykeion.settings.chart_defaults import (
     _ChartAspectSetting,
 )
 from typing import List, Literal, Sequence
+from dataclasses import dataclass, field
 
 
 logger = logging.getLogger(__name__)
+
+
+# =============================================================================
+# TYPE ALIASES
+# =============================================================================
+# These type aliases improve code readability by providing semantic meaning
+# to complex Union types used throughout the ChartDrawer class.
+# =============================================================================
+
+# Type for subjects that can be the primary (first) subject in any chart type.
+# - AstrologicalSubjectModel: Standard birth chart subject
+# - CompositeSubjectModel: Midpoint composite of two subjects
+# - PlanetReturnModel: Solar/Lunar return chart subject
+FirstSubjectType = Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
+
+# Type for subjects that can be the secondary (second) subject in dual-wheel charts.
+# Used in Transit, Synastry, and DualReturnChart types.
+# - AstrologicalSubjectModel: For Transit and Synastry charts
+# - PlanetReturnModel: For DualReturnChart (Solar/Lunar returns)
+SecondSubjectType = Union[AstrologicalSubjectModel, PlanetReturnModel, None]
+
+
+# =============================================================================
+# CONFIGURATION DATACLASSES
+# =============================================================================
+# These dataclasses encapsulate configuration values that were previously
+# scattered as class constants. They provide:
+# - Type safety and IDE autocompletion
+# - Immutability (frozen=True) where appropriate
+# - Clear documentation of related configuration groups
+# =============================================================================
+
+
+@dataclass(frozen=True)
+class ChartDimensionsConfig:
+    """
+    Immutable configuration for SVG canvas dimensions.
+
+    These dimensions define the default width and height for different chart types.
+    Width varies based on the number of grids and elements displayed alongside
+    the main wheel.
+
+    Attributes:
+        default_height: Standard height for all chart types (550px)
+        natal_width: Single-wheel charts (Natal, Composite, SingleReturn)
+        full_width: Dual-wheel charts with aspect list
+        full_width_with_table: Dual-wheel charts with aspect table grid
+        synastry_width: Synastry with house comparison grids
+        ultra_wide_width: DualReturnChart with extended grids
+    """
+
+    default_height: int = 550
+    natal_width: int = 870
+    full_width: int = 1250
+    full_width_with_table: int = 1250
+    synastry_width: int = 1570
+    ultra_wide_width: int = 1320
+
+
+@dataclass(frozen=True)
+class CircleRadiiConfig:
+    """
+    Immutable configuration for concentric circle radii.
+
+    The astrological wheel is composed of concentric circles:
+    - main_radius: Distance from center to outermost wheel edge
+    - first_circle: Outer boundary (0 for internal view, >0 for external)
+    - second_circle: Zodiac sign ring boundary
+    - third_circle: Inner boundary for aspect lines
+
+    Two layouts are supported:
+    1. Internal view (default): Planets drawn inside the zodiac ring
+    2. External view: Planets drawn outside the zodiac ring (Natal only)
+
+    Attributes:
+        main_radius: Main wheel radius (240px from center)
+        single_wheel_first: First circle for internal/single-wheel layout
+        single_wheel_second: Second circle for internal/single-wheel layout
+        single_wheel_third: Third circle for internal/single-wheel layout
+        external_view_first: First circle for external view layout
+        external_view_second: Second circle for external view layout
+        external_view_third: Third circle for external view layout
+    """
+
+    main_radius: int = 240
+    # Single-wheel and dual-wheel internal layout (planets inside zodiac ring)
+    single_wheel_first: int = 0
+    single_wheel_second: int = 36
+    single_wheel_third: int = 120
+    # External view layout (planets outside zodiac ring, Natal only)
+    external_view_first: int = 56
+    external_view_second: int = 92
+    external_view_third: int = 112
+
+
+@dataclass
+class VerticalOffsetsConfig:
+    """
+    Mutable configuration for vertical positioning of chart elements.
+
+    These offsets control the Y-translation of different SVG groups within
+    the chart. They are adjusted dynamically based on the number of active
+    celestial points to prevent content overflow.
+
+    The chart layout has two anchor strategies:
+    1. Bottom-anchored elements (wheel, aspect_grid, lunar_phase): Stay pinned
+       to the bottom of the SVG canvas.
+    2. Top elements (title, elements, qualities): Shift partially to maintain
+       visual balance.
+
+    Attributes:
+        wheel: Vertical offset for the main wheel group
+        grid: Vertical offset for planet/house data grids
+        aspect_grid: Vertical offset for aspect grid (table mode)
+        aspect_list: Vertical offset for aspect list (list mode)
+        title: Vertical offset for chart title
+        elements: Vertical offset for element percentages display
+        qualities: Vertical offset for quality percentages display
+        lunar_phase: Vertical offset for lunar phase icon
+        bottom_left: Vertical offset for bottom-left info section
+    """
+
+    wheel: float = 50.0
+    grid: float = 0.0
+    aspect_grid: float = 50.0
+    aspect_list: float = 50.0
+    title: float = 0.0
+    elements: float = 0.0
+    qualities: float = 0.0
+    lunar_phase: float = 518.0
+    bottom_left: float = 0.0
+
+    def shift_bottom_anchored_elements(self, delta: float) -> None:
+        """
+        Shift all bottom-anchored elements by the specified delta.
+
+        This method is used when the chart height increases due to additional
+        active celestial points. Bottom-anchored elements need to move down
+        by the full height increase to stay "pinned" to the SVG bottom.
+
+        Args:
+            delta: The number of pixels to shift elements down.
+        """
+        self.wheel += delta
+        self.aspect_grid += delta
+        self.aspect_list += delta
+        self.lunar_phase += delta
+        self.bottom_left += delta
+
+    def shift_top_elements(self, shift: float) -> None:
+        """
+        Shift top elements (title, elements, qualities) by the specified amount.
+
+        Top elements receive a partial shift to maintain visual balance when
+        the chart height increases. This prevents excessive spacing while
+        keeping content readable.
+
+        Args:
+            shift: The number of pixels to shift elements down.
+        """
+        top_shift = shift / 2  # Title shifts less than grids
+        self.grid += shift
+        self.title += top_shift
+        self.elements += top_shift
+        self.qualities += top_shift
+
+    def to_dict(self) -> dict[str, float]:
+        """
+        Convert offsets to a dictionary for template substitution.
+
+        Returns:
+            Dictionary mapping offset names to their float values.
+        """
+        return {
+            "wheel": self.wheel,
+            "grid": self.grid,
+            "aspect_grid": self.aspect_grid,
+            "aspect_list": self.aspect_list,
+            "title": self.title,
+            "elements": self.elements,
+            "qualities": self.qualities,
+            "lunar_phase": self.lunar_phase,
+            "bottom_left": self.bottom_left,
+        }
+
+
+@dataclass(frozen=True)
+class GridPositionsConfig:
+    """
+    Immutable configuration for horizontal grid positions.
+
+    These X-coordinates define where each data grid starts on the SVG canvas.
+    Grids are positioned right of the main wheel, with secondary grids
+    (for dual-wheel charts) placed further right.
+
+    Attributes:
+        main_planet_x: X position for primary subject planets table
+        main_houses_x: X position for primary subject houses table
+        secondary_planet_x: X position for secondary subject planets table
+        secondary_houses_x: X position for secondary subject houses table
+        house_comparison_first_x: First comparison grid (Synastry/DualReturn)
+        house_comparison_second_x: Second comparison grid (Synastry/DualReturn)
+        transit_house_comparison_x: Transit house comparison position
+        transit_aspect_grid_x: Aspect grid X position (table mode)
+        transit_aspect_grid_y: Aspect grid Y position (table mode)
+    """
+
+    main_planet_x: int = 645
+    main_houses_x: int = 750
+    secondary_planet_x: int = 910
+    secondary_houses_x: int = 1015
+    house_comparison_first_x: int = 1090
+    house_comparison_second_x: int = 1290
+    transit_house_comparison_x: int = 980
+    transit_aspect_grid_x: int = 550
+    transit_aspect_grid_y: int = 450
+
+
+# Default configuration instances
+# These are used as fallback values and can be overridden per-instance
+DEFAULT_DIMENSIONS = ChartDimensionsConfig()
+DEFAULT_RADII = CircleRadiiConfig()
+DEFAULT_GRID_POSITIONS = GridPositionsConfig()
 
 
 class ChartDrawer:
@@ -93,13 +317,43 @@ class ChartDrawer:
     all calculations (aspects, element/quality distributions, subjects) while ChartDrawer focuses
     solely on rendering SVG visualizations.
 
-    ChartDrawer supports creating full chart SVGs, wheel-only SVGs, and aspect-grid-only SVGs
-    for various chart types including Natal, Transit, Synastry, and Composite.
-    Charts are rendered using XML templates and drawing utilities, with customizable themes,
-    language, and visual settings.
+    Architecture Overview:
+    ----------------------
+    The class is organized into several logical sections:
 
-    The generated SVG files are optimized for web use and can be saved to any specified
-    destination path using the save_svg method.
+    1. **Configuration (Dataclasses)**: Immutable configuration for dimensions, radii, and
+       positions is managed through dataclasses defined at module level:
+       - ChartDimensionsConfig: SVG canvas dimensions
+       - CircleRadiiConfig: Concentric circle radii for the wheel
+       - VerticalOffsetsConfig: Vertical positioning of chart elements
+       - GridPositionsConfig: Horizontal grid positions
+
+    2. **Initialization**: The __init__ method is organized into discrete steps, each
+       delegated to a helper method for clarity:
+       - _store_basic_configuration(): Store constructor parameters
+       - _extract_chart_data(): Parse ChartDataModel
+       - _load_language_settings(): Initialize translations
+       - _configure_active_celestial_points(): Set up active planets
+       - _configure_dimensions_and_geometry(): Set width, height, radii
+       - _extract_element_quality_distributions(): Store element/quality data
+
+    3. **Template Generation**: The _create_template_dictionary() method assembles all
+       chart data into a dictionary that is substituted into XML templates. Chart-type
+       specific logic is handled through explicit if/elif branches for maximum clarity.
+
+    4. **SVG Output**: Multiple output methods support different use cases:
+       - generate_svg_string() / save_svg(): Full chart with all elements
+       - generate_wheel_only_svg_string() / save_wheel_only_svg_file(): Just the wheel
+       - generate_aspect_grid_only_svg_string() / save_aspect_grid_only_svg_file(): Just aspects
+
+    Supported Chart Types:
+    ----------------------
+    - **Natal**: Single-wheel birth chart with triangular aspect grid
+    - **Composite**: Single-wheel midpoint chart of two subjects
+    - **Transit**: Dual-wheel with natal (inner) and transit (outer) positions
+    - **Synastry**: Dual-wheel comparing two birth charts
+    - **SingleReturnChart**: Single-wheel Solar/Lunar return chart
+    - **DualReturnChart**: Dual-wheel with natal and return positions
 
     NOTE:
         The generated SVG files are optimized for web use, opening in browsers. If you want to
@@ -111,7 +365,9 @@ class ChartDrawer:
             element/quality distributions, and other analytical data. This is the ONLY source
             of chart information - no calculations are performed by ChartDrawer.
         theme (KerykeionChartTheme, optional):
-            CSS theme for the chart. If None, no default styles are applied. Defaults to 'classic'.
+            CSS theme for the chart. Available: 'classic', 'dark', 'dark_high_contrast',
+            'light', 'light_high_contrast', 'strawberry'. If None, no styles applied.
+            Defaults to 'classic'.
         double_chart_aspect_grid_type (Literal['list', 'table'], optional):
             Specifies rendering style for double-chart aspect grids. Defaults to 'list'.
         chart_language (KerykeionChartLanguage, optional):
@@ -120,34 +376,53 @@ class ChartDrawer:
             Additional translations merged over the bundled defaults for the
             selected language. Useful to introduce new languages or override
             existing labels.
+        external_view (bool, optional):
+            For Natal charts only: place planets outside the zodiac ring.
+            Defaults to False.
         transparent_background (bool, optional):
-            Whether to use a transparent background instead of the theme color. Defaults to False.
+            Whether to use a transparent background instead of the theme color.
+            Defaults to False.
+        colors_settings (dict, optional):
+            Custom color settings. Defaults to DEFAULT_CHART_COLORS.
+        celestial_points_settings (Sequence, optional):
+            Custom celestial point settings. Defaults to DEFAULT_CELESTIAL_POINTS_SETTINGS.
+        aspects_settings (Sequence, optional):
+            Custom aspect settings. Defaults to DEFAULT_CHART_ASPECTS_SETTINGS.
+        custom_title (str | None, optional):
+            Override the auto-generated chart title.
+        show_house_position_comparison (bool, optional):
+            Show house comparison grid for supported chart types. Defaults to True.
+        show_cusp_position_comparison (bool, optional):
+            Show cusp comparison grid. Defaults to False.
+        auto_size (bool, optional):
+            Automatically adjust dimensions to fit content. Defaults to True.
+        padding (int, optional):
+            Padding in pixels around chart elements. Defaults to 20.
+        show_degree_indicators (bool, optional):
+            Show degree indicators on planets. Defaults to True.
+        show_aspect_icons (bool, optional):
+            Show aspect icons on aspect lines. Defaults to True.
 
     Public Methods:
-        makeTemplate(minify=False, remove_css_variables=False) -> str:
-            Render the full chart SVG as a string without writing to disk. Use `minify=True`
-            to remove whitespace and quotes, and `remove_css_variables=True` to embed CSS vars.
+        generate_svg_string(minify=False, remove_css_variables=False) -> str:
+            Render the full chart SVG as a string without writing to disk.
 
         save_svg(output_path=None, filename=None, minify=False, remove_css_variables=False) -> None:
             Generate and write the full chart SVG file to the specified path.
             If output_path is None, saves to the user's home directory.
             If filename is None, uses default pattern: '{subject.name} - {chart_type} Chart.svg'.
 
-        makeWheelOnlyTemplate(minify=False, remove_css_variables=False) -> str:
+        generate_wheel_only_svg_string(minify=False, remove_css_variables=False) -> str:
             Render only the chart wheel (no aspect grid) as an SVG string.
 
-        save_wheel_only_svg_file(output_path=None, filename=None, minify=False, remove_css_variables=False) -> None:
+        save_wheel_only_svg_file(output_path=None, filename=None, ...) -> None:
             Generate and write the wheel-only SVG file to the specified path.
-            If output_path is None, saves to the user's home directory.
-            If filename is None, uses default pattern: '{subject.name} - {chart_type} Chart - Wheel Only.svg'.
 
-        makeAspectGridOnlyTemplate(minify=False, remove_css_variables=False) -> str:
+        generate_aspect_grid_only_svg_string(minify=False, remove_css_variables=False) -> str:
             Render only the aspect grid as an SVG string.
 
-        save_aspect_grid_only_svg_file(output_path=None, filename=None, minify=False, remove_css_variables=False) -> None:
+        save_aspect_grid_only_svg_file(output_path=None, filename=None, ...) -> None:
             Generate and write the aspect-grid-only SVG file to the specified path.
-            If output_path is None, saves to the user's home directory.
-            If filename is None, uses default pattern: '{subject.name} - {chart_type} Chart - Aspect Grid Only.svg'.
 
     Example:
         >>> from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
@@ -155,7 +430,9 @@ class ChartDrawer:
         >>> from kerykeion.charts.chart_drawer import ChartDrawer
         >>>
         >>> # Step 1: Create subject
-        >>> subject = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
+        >>> subject = AstrologicalSubjectFactory.from_birth_data(
+        ...     "John", 1990, 1, 1, 12, 0, "London", "GB"
+        ... )
         >>>
         >>> # Step 2: Pre-compute chart data
         >>> chart_data = ChartDataFactory.create_natal_chart_data(subject)
@@ -163,6 +440,7 @@ class ChartDrawer:
         >>> # Step 3: Create visualization
         >>> chart_drawer = ChartDrawer(chart_data=chart_data, theme="classic")
         >>> chart_drawer.save_svg()  # Saves to home directory with default filename
+        >>>
         >>> # Or specify custom path and filename:
         >>> chart_drawer.save_svg("/path/to/output/directory", "my_custom_chart")
     """
@@ -170,30 +448,31 @@ class ChartDrawer:
     # =========================================================================
     # CLASS CONSTANTS
     # =========================================================================
-
-    # -------------------------------------------------------------------------
-    # CHART DIMENSIONS
-    # -------------------------------------------------------------------------
-    # These define the default SVG canvas sizes for different chart types.
-    # Width varies by chart type based on the number of grids displayed.
-    _DEFAULT_HEIGHT = 550  # Standard height for all chart types
-    _DEFAULT_NATAL_WIDTH = 870  # Single-wheel charts (Natal, Composite, SingleReturn)
-    _DEFAULT_FULL_WIDTH = 1250  # Dual-wheel charts with aspect list
-    _DEFAULT_FULL_WIDTH_WITH_TABLE = 1250  # Dual-wheel charts with aspect table
-    _DEFAULT_SYNASTRY_WIDTH = 1570  # Synastry with house comparison grids
-    _DEFAULT_ULTRA_WIDE_WIDTH = 1320  # DualReturnChart with extended grids
-
-    # -------------------------------------------------------------------------
-    # WHEEL GEOMETRY - RADII
-    # -------------------------------------------------------------------------
-    # The wheel is drawn as concentric circles. The main_radius defines the
-    # outermost boundary. Inner circles are defined as offsets from the edge.
+    # Configuration values are now managed through dataclasses defined above:
+    # - ChartDimensionsConfig: SVG canvas dimensions
+    # - CircleRadiiConfig: Concentric circle radii
+    # - VerticalOffsetsConfig: Vertical positioning of chart elements
+    # - GridPositionsConfig: Horizontal grid positions
     #
-    # Circle layout (from outside to inside):
-    #   - Outer edge: main_radius (240px from center)
-    #   - First circle: zodiac sign symbols ring
-    #   - Second circle: degree markers ring
-    #   - Third circle: innermost boundary for aspect lines
+    # The following class constants reference the default dataclass instances
+    # for backward compatibility and convenience.
+    # =========================================================================
+
+    # -------------------------------------------------------------------------
+    # CHART DIMENSIONS (from ChartDimensionsConfig)
+    # -------------------------------------------------------------------------
+    _DEFAULT_HEIGHT = DEFAULT_DIMENSIONS.default_height
+    _DEFAULT_NATAL_WIDTH = DEFAULT_DIMENSIONS.natal_width
+    _DEFAULT_FULL_WIDTH = DEFAULT_DIMENSIONS.full_width
+    _DEFAULT_FULL_WIDTH_WITH_TABLE = DEFAULT_DIMENSIONS.full_width_with_table
+    _DEFAULT_SYNASTRY_WIDTH = DEFAULT_DIMENSIONS.synastry_width
+    _DEFAULT_ULTRA_WIDE_WIDTH = DEFAULT_DIMENSIONS.ultra_wide_width
+
+    # -------------------------------------------------------------------------
+    # WHEEL GEOMETRY - RADII (from CircleRadiiConfig)
+    # -------------------------------------------------------------------------
+    # The wheel is drawn as concentric circles. See CircleRadiiConfig docstring
+    # for detailed explanation of the circle layout.
     #
     # For SINGLE-WHEEL charts (Natal internal view, Composite, SingleReturn):
     #   first_circle_radius = 0    (no outer planet ring)
@@ -207,22 +486,22 @@ class ChartDrawer:
     #   first_circle_radius = 56   (outer planet ring)
     #   second_circle_radius = 92  (zodiac boundary shifted inward)
     #   third_circle_radius = 112  (inner aspect area shifted inward)
-    _MAIN_RADIUS = 240  # Distance from center to outermost wheel edge (in pixels)
+    _MAIN_RADIUS = DEFAULT_RADII.main_radius
 
     # Single-wheel internal layout (planets inside zodiac ring)
-    _SINGLE_WHEEL_FIRST_CIRCLE = 0  # No outer ring needed
-    _SINGLE_WHEEL_SECOND_CIRCLE = 36  # Zodiac sign boundary
-    _SINGLE_WHEEL_THIRD_CIRCLE = 120  # Inner boundary for aspects
+    _SINGLE_WHEEL_FIRST_CIRCLE = DEFAULT_RADII.single_wheel_first
+    _SINGLE_WHEEL_SECOND_CIRCLE = DEFAULT_RADII.single_wheel_second
+    _SINGLE_WHEEL_THIRD_CIRCLE = DEFAULT_RADII.single_wheel_third
 
     # Dual-wheel layout (same as single-wheel, outer ring for 2nd subject)
-    _DUAL_WHEEL_FIRST_CIRCLE = 0
-    _DUAL_WHEEL_SECOND_CIRCLE = 36
-    _DUAL_WHEEL_THIRD_CIRCLE = 120
+    _DUAL_WHEEL_FIRST_CIRCLE = DEFAULT_RADII.single_wheel_first
+    _DUAL_WHEEL_SECOND_CIRCLE = DEFAULT_RADII.single_wheel_second
+    _DUAL_WHEEL_THIRD_CIRCLE = DEFAULT_RADII.single_wheel_third
 
     # External view layout (planets outside zodiac ring)
-    _EXTERNAL_VIEW_FIRST_CIRCLE = 56  # Outer planet ring
-    _EXTERNAL_VIEW_SECOND_CIRCLE = 92  # Zodiac boundary (shifted inward)
-    _EXTERNAL_VIEW_THIRD_CIRCLE = 112  # Inner boundary (shifted inward)
+    _EXTERNAL_VIEW_FIRST_CIRCLE = DEFAULT_RADII.external_view_first
+    _EXTERNAL_VIEW_SECOND_CIRCLE = DEFAULT_RADII.external_view_second
+    _EXTERNAL_VIEW_THIRD_CIRCLE = DEFAULT_RADII.external_view_third
 
     # -------------------------------------------------------------------------
     # LAYOUT SPACING AND POSITIONING
@@ -234,50 +513,43 @@ class ChartDrawer:
     _ASPECT_LIST_ASPECTS_PER_COLUMN = 14
     _ASPECT_LIST_COLUMN_WIDTH = 105
 
-    _BASE_VERTICAL_OFFSETS: dict[str, float] = {
-        "wheel": 50.0,  # Vertical offset for the wheel group
-        "grid": 0.0,  # Vertical offset for planet/house grids
-        "aspect_grid": 50.0,  # Vertical offset for aspect grid (table mode)
-        "aspect_list": 50.0,  # Vertical offset for aspect list
-        "title": 0.0,  # Vertical offset for chart title
-        "elements": 0.0,  # Vertical offset for element percentages
-        "qualities": 0.0,  # Vertical offset for quality percentages
-        "lunar_phase": 518.0,  # Vertical offset for lunar phase icon
-        "bottom_left": 0.0,  # Vertical offset for bottom-left info section
-    }
-
     # Dynamic height adjustment parameters
     _MAX_TOP_SHIFT = 80  # Maximum pixels to shift top elements down
     _TOP_SHIFT_FACTOR = 2  # Pixels per extra point for top shift calculation
     _ROW_HEIGHT = 8  # Pixels per row in planet/house grids
 
     # -------------------------------------------------------------------------
-    # VIEWBOX PRESETS
+    # VIEWBOX PRESETS (computed from dimensions config)
     # -------------------------------------------------------------------------
-    _BASIC_CHART_VIEWBOX = f"0 0 {_DEFAULT_NATAL_WIDTH} {_DEFAULT_HEIGHT}"
-    _WIDE_CHART_VIEWBOX = f"0 0 {_DEFAULT_FULL_WIDTH} 546.0"
-    _ULTRA_WIDE_CHART_VIEWBOX = f"0 0 {_DEFAULT_ULTRA_WIDE_WIDTH} 546.0"
-    _TRANSIT_CHART_WITH_TABLE_VIWBOX = f"0 0 {_DEFAULT_FULL_WIDTH_WITH_TABLE} 546.0"
+    _BASIC_CHART_VIEWBOX = f"0 0 {DEFAULT_DIMENSIONS.natal_width} {DEFAULT_DIMENSIONS.default_height}"
+    _WIDE_CHART_VIEWBOX = f"0 0 {DEFAULT_DIMENSIONS.full_width} 546.0"
+    _ULTRA_WIDE_CHART_VIEWBOX = f"0 0 {DEFAULT_DIMENSIONS.ultra_wide_width} 546.0"
+    _TRANSIT_CHART_WITH_TABLE_VIWBOX = f"0 0 {DEFAULT_DIMENSIONS.full_width_with_table} 546.0"
 
     # -------------------------------------------------------------------------
-    # GRID X-POSITIONS (horizontal layout)
+    # GRID X-POSITIONS (from GridPositionsConfig)
     # -------------------------------------------------------------------------
-    # These constants define the X-coordinate where each grid starts.
-    # Grids are placed right-to-left starting from the wheel.
-    _MAIN_PLANET_GRID_X = 645  # Primary subject planets table
-    _MAIN_HOUSES_GRID_X = 750  # Primary subject houses table
-    _SECONDARY_PLANET_GRID_X = 910  # Secondary subject planets table
-    _SECONDARY_HOUSES_GRID_X = 1015  # Secondary subject houses table
-    _HOUSE_COMPARISON_GRID_X_FIRST = 1090  # First comparison grid (Synastry)
-    _HOUSE_COMPARISON_GRID_X_SECOND = 1290  # Second comparison grid (Synastry)
-    _TRANSIT_HOUSE_COMPARISON_X = 980  # Transit house comparison position
-    _TRANSIT_ASPECT_GRID_X = 550  # Aspect grid X position (table mode)
-    _TRANSIT_ASPECT_GRID_Y = 450  # Aspect grid Y position (table mode)
+    _MAIN_PLANET_GRID_X = DEFAULT_GRID_POSITIONS.main_planet_x
+    _MAIN_HOUSES_GRID_X = DEFAULT_GRID_POSITIONS.main_houses_x
+    _SECONDARY_PLANET_GRID_X = DEFAULT_GRID_POSITIONS.secondary_planet_x
+    _SECONDARY_HOUSES_GRID_X = DEFAULT_GRID_POSITIONS.secondary_houses_x
+    _HOUSE_COMPARISON_GRID_X_FIRST = DEFAULT_GRID_POSITIONS.house_comparison_first_x
+    _HOUSE_COMPARISON_GRID_X_SECOND = DEFAULT_GRID_POSITIONS.house_comparison_second_x
+    _TRANSIT_HOUSE_COMPARISON_X = DEFAULT_GRID_POSITIONS.transit_house_comparison_x
+    _TRANSIT_ASPECT_GRID_X = DEFAULT_GRID_POSITIONS.transit_aspect_grid_x
+    _TRANSIT_ASPECT_GRID_Y = DEFAULT_GRID_POSITIONS.transit_aspect_grid_y
 
-    # Set at init
-    first_obj: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
-    second_obj: Union[AstrologicalSubjectModel, PlanetReturnModel, None]
+    # -------------------------------------------------------------------------
+    # INSTANCE ATTRIBUTES (type hints)
+    # -------------------------------------------------------------------------
+    # These are set during __init__ and define the chart's runtime state.
+
+    # Subject data - the primary and optional secondary astrological subjects
+    first_obj: FirstSubjectType
+    second_obj: SecondSubjectType
     chart_type: ChartType
+
+    # Visual configuration
     theme: Union[KerykeionChartTheme, None]
     double_chart_aspect_grid_type: Literal["list", "table"]
     chart_language: KerykeionChartLanguage
@@ -303,7 +575,7 @@ class ChartDrawer:
     chart_colors_settings: dict
     planets_settings: list[dict[Any, Any]]
     aspects_settings: list[dict[Any, Any]]
-    available_planets_setting: List[KerykeionSettingsCelestialPointModel]
+    available_planets_setting: List[dict[Any, Any]]
     height: float
     location: str
     geolat: float
@@ -334,43 +606,178 @@ class ChartDrawer:
         """
         Initialize the chart visualizer with pre-computed chart data.
 
+        This constructor orchestrates the setup of all chart components through
+        a series of well-defined initialization steps. Each step is delegated
+        to a private helper method for clarity and maintainability.
+
         Args:
             chart_data (ChartDataModel):
                 Pre-computed chart data from ChartDataFactory containing all subjects,
                 aspects, element/quality distributions, and other analytical data.
             theme (KerykeionChartTheme or None, optional):
-                CSS theme to apply; None for default styling.
+                CSS theme to apply; None for default styling. Defaults to 'classic'.
             double_chart_aspect_grid_type (Literal['list','table'], optional):
-                Layout style for double-chart aspect grids ('list' or 'table').
+                Layout style for double-chart aspect grids. Defaults to 'list'.
             chart_language (KerykeionChartLanguage, optional):
-                Language code for chart labels (e.g., 'EN', 'IT').
+                Language code for chart labels (e.g., 'EN', 'IT'). Defaults to 'EN'.
             language_pack (dict | None, optional):
                 Additional translations merged over the bundled defaults for the
                 selected language. Useful to introduce new languages or override
                 existing labels.
             external_view (bool, optional):
-                Whether to use external visualization (planets on outer ring) for single-subject charts. Defaults to False.
+                Whether to use external visualization (planets on outer ring) for
+                single-subject charts. Only applies to Natal charts. Defaults to False.
             transparent_background (bool, optional):
-                Whether to use a transparent background instead of the theme color. Defaults to False.
+                Whether to use a transparent background instead of the theme color.
+                Defaults to False.
+            colors_settings (dict, optional):
+                Custom color settings for chart elements. Defaults to DEFAULT_CHART_COLORS.
+            celestial_points_settings (Sequence, optional):
+                Custom celestial point settings. Defaults to DEFAULT_CELESTIAL_POINTS_SETTINGS.
+            aspects_settings (Sequence, optional):
+                Custom aspect settings. Defaults to DEFAULT_CHART_ASPECTS_SETTINGS.
             custom_title (str or None, optional):
-                Custom title for the chart. If None, the default title will be used based on chart type. Defaults to None.
+                Custom title for the chart. If None, uses default based on chart type.
             show_house_position_comparison (bool, optional):
-                Whether to render the house position comparison grid (when supported by the chart type).
-                Defaults to True. Set to False to hide the table and reclaim horizontal space.
+                Whether to render the house position comparison grid (when supported).
+                Defaults to True. Set to False to hide and reclaim horizontal space.
             show_cusp_position_comparison (bool, optional):
-                Whether to render the cusp position comparison grid alongside or in place of the house comparison.
-                Defaults to False so cusp tables are only shown when explicitly requested.
+                Whether to render the cusp position comparison grid alongside the house
+                comparison. Defaults to False.
+            auto_size (bool, optional):
+                Whether to automatically adjust chart dimensions based on content.
+                Defaults to True.
+            padding (int, optional):
+                Padding in pixels around chart elements. Defaults to 20.
+            show_degree_indicators (bool, optional):
+                Whether to show degree indicators on planets. Defaults to True.
+            show_aspect_icons (bool, optional):
+                Whether to show aspect icons on aspect lines. Defaults to True.
         """
-        # --------------------
-        # COMMON INITIALIZATION
-        # --------------------
+        # =====================================================================
+        # STEP 1: Store basic configuration parameters
+        # =====================================================================
+        # These are direct assignments of constructor parameters to instance
+        # attributes. They form the foundation for all subsequent setup.
+        self._store_basic_configuration(
+            chart_language=chart_language,
+            double_chart_aspect_grid_type=double_chart_aspect_grid_type,
+            transparent_background=transparent_background,
+            external_view=external_view,
+            colors_settings=colors_settings,
+            celestial_points_settings=celestial_points_settings,
+            aspects_settings=aspects_settings,
+            custom_title=custom_title,
+            show_house_position_comparison=show_house_position_comparison,
+            show_cusp_position_comparison=show_cusp_position_comparison,
+            show_degree_indicators=show_degree_indicators,
+            show_aspect_icons=show_aspect_icons,
+            auto_size=auto_size,
+            padding=padding,
+        )
+
+        # =====================================================================
+        # STEP 2: Extract and store chart data
+        # =====================================================================
+        # Parse the ChartDataModel to extract subjects, aspects, and other
+        # computed data. This includes determining if we have a single or
+        # dual-wheel chart configuration.
+        self._extract_chart_data(chart_data)
+
+        # =====================================================================
+        # STEP 3: Load language settings
+        # =====================================================================
+        # Initialize the translation system with the requested language and
+        # any custom language pack overrides.
+        self._load_language_settings(language_pack)
+
+        # =====================================================================
+        # STEP 4: Configure active celestial points
+        # =====================================================================
+        # Set up the list of celestial points that will be displayed in the
+        # chart, based on what's active in the chart data.
+        self._configure_active_celestial_points()
+
+        # =====================================================================
+        # STEP 5: Configure chart dimensions and geometry
+        # =====================================================================
+        # Set up width, height, circle radii, and other geometric properties
+        # based on the chart type and display options.
+        self._configure_dimensions_and_geometry(chart_data)
+
+        # =====================================================================
+        # STEP 6: Extract element and quality distributions
+        # =====================================================================
+        # Store the pre-computed element (fire, earth, air, water) and quality
+        # (cardinal, fixed, mutable) distributions for display.
+        self._extract_element_quality_distributions(chart_data)
+
+        # =====================================================================
+        # STEP 7: Validate and set up theme
+        # =====================================================================
+        # Verify the theme is valid and load the corresponding CSS.
+        if theme not in get_args(KerykeionChartTheme) and theme is not None:
+            raise KerykeionException(f"Theme {theme} is not available. Set None for default theme.")
+        self.set_up_theme(theme)
+
+        # =====================================================================
+        # STEP 8: Apply dynamic layout adjustments
+        # =====================================================================
+        # Adjust chart dimensions based on the number of active celestial
+        # points and other dynamic factors.
+        self._apply_dynamic_height_adjustment()
+        self._adjust_height_for_extended_aspect_columns()
+
+        # Reconcile width with the updated layout once height adjustments are known
+        if self.auto_size:
+            self._update_width_to_content()
+
+    # =========================================================================
+    # INITIALIZATION HELPER METHODS
+    # =========================================================================
+    # These methods are called by __init__ to break down the initialization
+    # into logical, testable units. They are ordered by their call sequence.
+    # =========================================================================
+
+    def _store_basic_configuration(
+        self,
+        *,
+        chart_language: KerykeionChartLanguage,
+        double_chart_aspect_grid_type: Literal["list", "table"],
+        transparent_background: bool,
+        external_view: bool,
+        colors_settings: dict,
+        celestial_points_settings: Sequence[_CelestialPointSetting],
+        aspects_settings: Sequence[_ChartAspectSetting],
+        custom_title: Union[str, None],
+        show_house_position_comparison: bool,
+        show_cusp_position_comparison: bool,
+        show_degree_indicators: bool,
+        show_aspect_icons: bool,
+        auto_size: bool,
+        padding: int,
+    ) -> None:
+        """
+        Store basic configuration parameters as instance attributes.
+
+        This method handles the first step of initialization: storing all
+        constructor parameters that don't require any processing or validation.
+
+        Args:
+            See __init__ docstring for parameter descriptions.
+        """
+        # Language and display settings
         self.chart_language = chart_language
         self.double_chart_aspect_grid_type = double_chart_aspect_grid_type
         self.transparent_background = transparent_background
         self.external_view = external_view
+
+        # Color and rendering settings (deep copy to avoid mutation)
         self.chart_colors_settings = deepcopy(colors_settings)
         self.planets_settings = [dict(body) for body in celestial_points_settings]
         self.aspects_settings = [dict(aspect) for aspect in aspects_settings]
+
+        # Display options
         self.custom_title = custom_title
         self.show_house_position_comparison = show_house_position_comparison
         self.show_cusp_position_comparison = show_cusp_position_comparison
@@ -378,37 +785,61 @@ class ChartDrawer:
         self.show_aspect_icons = show_aspect_icons
         self.auto_size = auto_size
         self._padding = padding
-        self._vertical_offsets: dict[str, float] = {k: float(v) for k, v in self._BASE_VERTICAL_OFFSETS.items()}
 
-        # Extract data from ChartDataModel
+        # Initialize vertical offsets using the dataclass, then convert to dict
+        self._vertical_offsets_config = VerticalOffsetsConfig()
+        self._vertical_offsets: dict[str, float] = self._vertical_offsets_config.to_dict()
+
+    def _extract_chart_data(self, chart_data: "ChartDataModel") -> None:
+        """
+        Extract and store data from the ChartDataModel.
+
+        This method parses the chart data model to extract:
+        - Chart type (Natal, Transit, Synastry, etc.)
+        - Active celestial points and aspects
+        - Primary and secondary subjects (for dual-wheel charts)
+
+        Args:
+            chart_data: Pre-computed chart data from ChartDataFactory.
+        """
+        # Store reference to the full chart data
         self.chart_data = chart_data
         self.chart_type = chart_data.chart_type
         self.active_points = chart_data.active_points
         self.active_aspects = chart_data.active_aspects
 
         # Extract subjects based on chart type
+        # Single-wheel charts have only one subject, dual-wheel charts have two
         if chart_data.chart_type in ["Natal", "Composite", "SingleReturnChart"]:
-            # SingleChartDataModel
+            # SingleChartDataModel - only one subject
             self.first_obj = getattr(chart_data, "subject")
             self.second_obj = None
-
-        else:  # DualChartDataModel for Transit, Synastry, DualReturnChart
+        else:
+            # DualChartDataModel - two subjects (Transit, Synastry, DualReturnChart)
             self.first_obj = getattr(chart_data, "first_subject")
             self.second_obj = getattr(chart_data, "second_subject")
 
-        # Load settings
-        self._load_language_settings(language_pack)
+    def _configure_active_celestial_points(self) -> None:
+        """
+        Configure the list of active celestial points for rendering.
 
+        This method:
+        1. Filters planets_settings to only include active points
+        2. Marks each active point with is_active=True
+        3. Collects KerykeionPointModel objects for both subjects
+        4. Warns if more than 24 points are active (may cause crowding)
+        """
         # Main radius for all chart wheels (distance from center to outer edge)
         self.main_radius = self._MAIN_RADIUS
 
-        # Configure available planets from chart data
+        # Filter and mark active planets from settings
         self.available_planets_setting = []
         for body in self.planets_settings:
             if body["name"] in self.active_points:
                 body["is_active"] = True
-                self.available_planets_setting.append(body)  # type: ignore[arg-type]
+                self.available_planets_setting.append(body)
 
+        # Warn about potential crowding with many active points
         active_points_count = len(self.available_planets_setting)
         if active_points_count > 24:
             logger.warning(
@@ -416,15 +847,15 @@ class ChartDrawer:
                 active_points_count,
             )
 
-        # Set available celestial points
+        # Collect KerykeionPointModel objects for the primary subject
         available_celestial_points_names = [body["name"].lower() for body in self.available_planets_setting]
         self.available_kerykeion_celestial_points = self._collect_subject_points(
             self.first_obj,
             available_celestial_points_names,
         )
 
-        # Collect secondary subject points for dual charts (Transit, Synastry, DualReturnChart)
-        # These are the celestial points for the outer wheel in dual-wheel charts
+        # Collect points for secondary subject (dual-wheel charts only)
+        # These appear on the outer wheel in Transit, Synastry, and DualReturnChart
         self.second_subject_celestial_points: list[KerykeionPointModel] = []
         if self.second_obj is not None:
             self.second_subject_celestial_points = self._collect_subject_points(
@@ -432,15 +863,28 @@ class ChartDrawer:
                 available_celestial_points_names,
             )
 
-        # ------------------------
-        # CHART TYPE SPECIFIC SETUP FROM CHART DATA
-        # ------------------------
-        # All chart types share: aspects_list, height, location/coordinates, and circle radii.
-        # Only the WIDTH varies by chart type, and only Natal external_view uses different radii.
+    def _configure_dimensions_and_geometry(self, chart_data: "ChartDataModel") -> None:
+        """
+        Configure chart dimensions and wheel geometry.
 
-        # Common setup for all chart types
+        This method sets up:
+        - Aspects list from chart data
+        - Initial height (may be adjusted later)
+        - Location information (city, lat/lon)
+        - Chart width based on chart type
+        - Circle radii based on chart type and view mode
+        - Width adjustments for house comparison visibility
+
+        Args:
+            chart_data: Pre-computed chart data containing aspects.
+        """
+        # Store aspects list for rendering
         self.aspects_list = chart_data.aspects
+
+        # Set initial height (may be increased for many active points)
         self.height = self._DEFAULT_HEIGHT
+
+        # Extract location information for display
         self.location, self.geolat, self.geolon = self._get_location_info()
 
         # Determine width based on chart type and display options
@@ -449,33 +893,30 @@ class ChartDrawer:
         # Set circle radii based on chart type and view mode
         self._setup_circle_radii()
 
+        # Adjust width if house comparison grid is hidden
         self._apply_house_comparison_width_override()
 
-        # --------------------
-        # FINAL COMMON SETUP FROM CHART DATA
-        # --------------------
+    def _extract_element_quality_distributions(self, chart_data: "ChartDataModel") -> None:
+        """
+        Extract pre-computed element and quality distributions from chart data.
 
-        # Extract pre-computed element and quality distributions
+        These distributions show the balance of elements (Fire, Earth, Air, Water)
+        and qualities (Cardinal, Fixed, Mutable) in the chart, typically displayed
+        as percentages in the chart header.
+
+        Args:
+            chart_data: Pre-computed chart data containing distributions.
+        """
+        # Element distribution (Fire, Earth, Air, Water)
         self.fire = chart_data.element_distribution.fire
         self.earth = chart_data.element_distribution.earth
         self.air = chart_data.element_distribution.air
         self.water = chart_data.element_distribution.water
 
+        # Quality distribution (Cardinal, Fixed, Mutable)
         self.cardinal = chart_data.quality_distribution.cardinal
         self.fixed = chart_data.quality_distribution.fixed
         self.mutable = chart_data.quality_distribution.mutable
-
-        # Set up theme
-        if theme not in get_args(KerykeionChartTheme) and theme is not None:
-            raise KerykeionException(f"Theme {theme} is not available. Set None for default theme.")
-
-        self.set_up_theme(theme)
-
-        self._apply_dynamic_height_adjustment()
-        self._adjust_height_for_extended_aspect_columns()
-        # Reconcile width with the updated layout once height adjustments are known.
-        if self.auto_size:
-            self._update_width_to_content()
 
     def _count_active_planets(self) -> int:
         """Return number of active celestial points in the current chart."""
@@ -546,7 +987,8 @@ class ChartDrawer:
         """
         active_points_count = self._count_active_planets()
 
-        offsets = self._BASE_VERTICAL_OFFSETS.copy()
+        # Create fresh offsets from the default configuration
+        offsets = VerticalOffsetsConfig().to_dict()
 
         minimum_height = self._DEFAULT_HEIGHT
 
@@ -1651,6 +2093,103 @@ class ChartDrawer:
             f"{self._translate(house_key, self.first_obj.houses_system_name)}"
         )
 
+    # =========================================================================
+    # INFO SECTION HELPER METHODS
+    # =========================================================================
+    # These methods generate formatted strings for the top_left and bottom_left
+    # info sections of the chart. They encapsulate common formatting patterns
+    # and handle translation of labels.
+    # =========================================================================
+
+    def _format_latitude_string(
+        self,
+        latitude: float,
+        use_abbreviations: bool = False,
+    ) -> str:
+        """
+        Format a latitude value as a human-readable string with direction.
+
+        Args:
+            latitude: The latitude value in degrees.
+            use_abbreviations: If True, use "N"/"S" instead of "North"/"South".
+
+        Returns:
+            Formatted string like "41° 52' 12\" North" or "41° 52' 12\" N".
+        """
+        if use_abbreviations:
+            north = self._translate("north_letter", "N")
+            south = self._translate("south_letter", "S")
+        else:
+            north = self._translate("north", "North")
+            south = self._translate("south", "South")
+        return convert_latitude_coordinate_to_string(latitude, north, south)
+
+    def _format_longitude_string(
+        self,
+        longitude: float,
+        use_abbreviations: bool = False,
+    ) -> str:
+        """
+        Format a longitude value as a human-readable string with direction.
+
+        Args:
+            longitude: The longitude value in degrees.
+            use_abbreviations: If True, use "E"/"W" instead of "East"/"West".
+
+        Returns:
+            Formatted string like "12° 29' 36\" East" or "12° 29' 36\" E".
+        """
+        if use_abbreviations:
+            east = self._translate("east_letter", "E")
+            west = self._translate("west_letter", "W")
+        else:
+            east = self._translate("east", "East")
+            west = self._translate("west", "West")
+        return convert_longitude_coordinate_to_string(longitude, east, west)
+
+    def _format_lunation_day_string(self, subject: FirstSubjectType) -> str:
+        """
+        Format the lunation day string for display in bottom_left section.
+
+        Args:
+            subject: The subject containing lunar_phase data.
+
+        Returns:
+            Formatted string like "Lunation Day: 15" or empty string if no lunar phase.
+        """
+        if subject.lunar_phase is None:
+            return ""
+        return f"{self._translate('lunation_day', 'Lunation Day')}: {subject.lunar_phase.get('moon_phase', '')}"
+
+    def _format_lunar_phase_name_string(self, subject: FirstSubjectType) -> str:
+        """
+        Format the lunar phase name string for display in bottom_left section.
+
+        Args:
+            subject: The subject containing lunar_phase data.
+
+        Returns:
+            Formatted string like "Lunar Phase: Full Moon" or empty string if no lunar phase.
+        """
+        if subject.lunar_phase is None:
+            return ""
+        phase_name = subject.lunar_phase.moon_phase_name
+        phase_key = phase_name.lower().replace(" ", "_")
+        return f"{self._translate('lunar_phase', 'Lunar Phase')}: {self._translate(phase_key, phase_name)}"
+
+    def _format_houses_system_string(self, subject: FirstSubjectType) -> str:
+        """
+        Format the house system string for display (compact version without "Domification:" label).
+
+        Args:
+            subject: The subject containing house system information.
+
+        Returns:
+            Formatted string like "Placidus Houses".
+        """
+        house_key = "houses_system_" + subject.houses_system_identifier
+        return f"{self._translate(house_key, subject.houses_system_name)} {self._translate('houses', 'Houses')}"
+
     def _apply_svg_post_processing(self, template: str, minify: bool, remove_css_variables: bool) -> str:
         """
         Apply CSS inlining and minification to SVG template.
@@ -1854,11 +2393,20 @@ class ChartDrawer:
         #  COMMON SETTINGS FOR ALL CHART TYPES #
         # -------------------------------------#
 
-        # Set the color style tag and basic dimensions
+        # ---------------------------------------------------------------------
+        # STYLING: Theme CSS and basic canvas dimensions
+        # ---------------------------------------------------------------------
+        # The color_style_tag contains CSS that defines all color variables
+        # used by the SVG elements. Chart dimensions set the viewBox.
         template_dict["color_style_tag"] = self.color_style_tag
         template_dict["chart_height"] = self.height
         template_dict["chart_width"] = self.width
 
+        # ---------------------------------------------------------------------
+        # LAYOUT: Vertical offsets for SVG group translations
+        # ---------------------------------------------------------------------
+        # These offsets are applied as transform="translate(x, y)" on SVG groups.
+        # They are dynamically adjusted based on active celestial points count.
         offsets = self._vertical_offsets
         template_dict["full_wheel_translate_y"] = offsets["wheel"]
         template_dict["houses_and_planets_translate_y"] = offsets["grid"]
@@ -1870,37 +2418,52 @@ class ChartDrawer:
         template_dict["lunar_phase_translate_y"] = offsets["lunar_phase"]
         template_dict["bottom_left_translate_y"] = offsets["bottom_left"]
 
-        # Set paper colors
+        # ---------------------------------------------------------------------
+        # COLORS: Paper, background, and transparency settings
+        # ---------------------------------------------------------------------
         template_dict["paper_color_0"] = self.chart_colors_settings["paper_0"]
 
-        # Set background color based on transparent_background setting
+        # Background can be transparent for overlay/embedding use cases
         if self.transparent_background:
             template_dict["background_color"] = "transparent"
         else:
             template_dict["background_color"] = self.chart_colors_settings["paper_1"]
 
-        # Set planet colors - initialize all possible colors first with defaults
-        default_color = "#000000"  # Default black color for unused planets
+        # ---------------------------------------------------------------------
+        # COLORS: Planet colors for all 42 possible celestial points
+        # ---------------------------------------------------------------------
+        # Initialize all slots with default black, then override with settings.
+        # This ensures template substitution never fails on missing colors.
+        default_color = "#000000"
         for i in range(42):  # Support all 42 celestial points (0-41)
             template_dict[f"planets_color_{i}"] = default_color
 
-        # Override with actual colors from settings
         for planet in self.planets_settings:
             planet_id = planet["id"]
             template_dict[f"planets_color_{planet_id}"] = planet["color"]
 
-        # Set zodiac colors
+        # ---------------------------------------------------------------------
+        # COLORS: Zodiac sign colors (12 signs)
+        # ---------------------------------------------------------------------
         for i in range(12):
             template_dict[f"zodiac_color_{i}"] = self.chart_colors_settings[f"zodiac_icon_{i}"]
 
-        # Set orb colors
+        # ---------------------------------------------------------------------
+        # COLORS: Aspect orb colors (keyed by degree)
+        # ---------------------------------------------------------------------
         for aspect in self.aspects_settings:
             template_dict[f"orb_color_{aspect['degree']}"] = aspect["color"]
 
-        # Draw zodiac circle slices
+        # ---------------------------------------------------------------------
+        # SVG ELEMENTS: Zodiac circle slices (the colored background arcs)
+        # ---------------------------------------------------------------------
         template_dict["makeZodiac"] = self._draw_zodiac_circle_slices(self.main_radius)
 
-        # Calculate element percentages
+        # ---------------------------------------------------------------------
+        # STATISTICS: Element distribution percentages
+        # ---------------------------------------------------------------------
+        # Elements represent the four classical elements: Fire, Earth, Air, Water.
+        # Values are normalized to sum to 100% for display.
         total_elements = self.fire + self.water + self.earth + self.air
         element_values = {"fire": self.fire, "earth": self.earth, "air": self.air, "water": self.water}
         element_percentages = (
