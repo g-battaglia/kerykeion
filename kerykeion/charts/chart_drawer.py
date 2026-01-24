@@ -612,25 +612,25 @@ class CompositeChartRenderer(BaseChartRenderer):
 
         # First subject coordinates
         first_lat, first_lng = builder.build_location_coordinates(
-            d.first_obj.first_subject.lat,
-            d.first_obj.first_subject.lng,
+            d.first_obj.first_subject.lat,  # type: ignore[union-attr]
+            d.first_obj.first_subject.lng,  # type: ignore[union-attr]
             use_abbreviations=True,
         )
         # Second subject coordinates
         second_lat, second_lng = builder.build_location_coordinates(
-            d.first_obj.second_subject.lat,
-            d.first_obj.second_subject.lng,
+            d.first_obj.second_subject.lat,  # type: ignore[union-attr]
+            d.first_obj.second_subject.lng,  # type: ignore[union-attr]
             use_abbreviations=True,
         )
 
-        template_dict["top_left_0"] = f"{d.first_obj.first_subject.name}"
+        template_dict["top_left_0"] = f"{d.first_obj.first_subject.name}"  # type: ignore[union-attr]
         template_dict["top_left_1"] = datetime.fromisoformat(
-            d.first_obj.first_subject.iso_formatted_local_datetime
+            d.first_obj.first_subject.iso_formatted_local_datetime  # type: ignore[union-attr]
         ).strftime("%Y-%m-%d %H:%M")
         template_dict["top_left_2"] = f"{first_lat} {first_lng}"
-        template_dict["top_left_3"] = d.first_obj.second_subject.name
+        template_dict["top_left_3"] = d.first_obj.second_subject.name  # type: ignore[union-attr]
         template_dict["top_left_4"] = datetime.fromisoformat(
-            d.first_obj.second_subject.iso_formatted_local_datetime
+            d.first_obj.second_subject.iso_formatted_local_datetime  # type: ignore[union-attr]
         ).strftime("%Y-%m-%d %H:%M")
         template_dict["top_left_5"] = f"{second_lat} / {second_lng}"
 
@@ -638,7 +638,7 @@ class CompositeChartRenderer(BaseChartRenderer):
         template_dict["bottom_left_0"] = builder.build_zodiac_info()
         template_dict["bottom_left_1"] = builder.build_houses_system_info(d.first_obj)
         template_dict["bottom_left_2"] = (
-            f"{self._translate('perspective_type', 'Perspective')}: {d.first_obj.first_subject.perspective_type}"
+            f"{self._translate('perspective_type', 'Perspective')}: {d.first_obj.first_subject.perspective_type}"  # type: ignore[union-attr]
         )
         template_dict["bottom_left_3"] = (
             f"{self._translate('composite_chart', 'Composite Chart')} - {self._translate('midpoints', 'Midpoints')}"
@@ -660,7 +660,7 @@ class CompositeChartRenderer(BaseChartRenderer):
 
         # Combined subject name
         subject_name = (
-            f"{d.first_obj.first_subject.name} {self._translate('and_word', '&')} {d.first_obj.second_subject.name}"
+            f"{d.first_obj.first_subject.name} {self._translate('and_word', '&')} {d.first_obj.second_subject.name}"  # type: ignore[union-attr]
         )
         d._setup_main_planet_grid(
             template_dict,
@@ -770,7 +770,7 @@ class TransitChartRenderer(BaseChartRenderer):
         # Moon phase visualization from transit subject
         if d.second_obj is not None and getattr(d.second_obj, "lunar_phase", None):
             template_dict["makeLunarPhase"] = makeLunarPhase(
-                d.second_obj.lunar_phase["degrees_between_s_m"],
+                d.second_obj.lunar_phase["degrees_between_s_m"],  # type: ignore[index]
                 d.geolat,
             )
         else:
