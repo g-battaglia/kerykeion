@@ -1,4 +1,5 @@
 """Quickstart example for Kerykeion v5: natal chart calculation and SVG export."""
+
 from pathlib import Path
 
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer

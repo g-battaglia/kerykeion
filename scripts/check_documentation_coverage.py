@@ -9,12 +9,13 @@ import sys
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+
 def get_public_members(module):
     """
     Return a list of (name, object) for all public classes and functions in the module.
     """
     members = []
-    
+
     # If the module defines __all__, use it
     if hasattr(module, "__all__"):
         for name in module.__all__:
@@ -33,6 +34,7 @@ def get_public_members(module):
                     members.append((name, obj))
 
     return members
+
 
 def scan_package(package_name):
     """
@@ -59,6 +61,7 @@ def scan_package(package_name):
 
     return results
 
+
 def load_documentation_content(docs_dir):
     """
     Load all content from markdown files in the docs directory.
@@ -74,44 +77,45 @@ def load_documentation_content(docs_dir):
             print(f"Error reading {md_file}: {e}")
     return content
 
+
 def main():
     print("Starting Kerykeion Documentation Coverage Audit...")
-    
+
     # 1. Scan Codebase
     codebase_members = scan_package("kerykeion")
-    
+
     # 2. Load Documentation
     docs_path = Path(__file__).parent.parent / "site" / "docs"
     if not docs_path.exists():
         print(f"Error: Documentation directory not found at {docs_path}")
         return
-    
+
     docs_content = load_documentation_content(docs_path)
-    
+
     # 3. Cross-reference
     missing_items = {}
     documented_count = 0
     total_count = 0
-    
+
     # Exclude list (things we know we don't document or are implementation details)
     excludes = [
-        "settings", # Module itself
+        "settings",  # Module itself
         "schemas",  # Module itself
-        "charts",   # Module itself
-        "utilities", # Module itself
+        "charts",  # Module itself
+        "utilities",  # Module itself
         "__init__",
         "kerykeion",
-        "print_function"
+        "print_function",
     ]
-    
+
     for mod_name, members in codebase_members.items():
         for name, obj in members:
             # Skip if name is in excludes
             if name in excludes:
                 continue
-                
+
             total_count += 1
-            
+
             # Simple check: is the name present in the docs?
             # A more robust check would look for headers or backticks, but this is a good first pass
             if name in docs_content:
@@ -120,13 +124,13 @@ def main():
                 if mod_name not in missing_items:
                     missing_items[mod_name] = []
                 missing_items[mod_name].append(name)
-    
+
     # 4. Report
     print(f"\nAudit Complete.")
     print(f"Total Public Items Found: {total_count}")
     print(f"Documented Items: {documented_count}")
-    print(f"Coverage: {documented_count/total_count*100:.1f}%\n")
-    
+    print(f"Coverage: {documented_count / total_count * 100:.1f}%\n")
+
     if missing_items:
         print("MISSING DOCUMENTATION FOR:")
         print("========================")
@@ -136,6 +140,7 @@ def main():
                 print(f"  - {item}")
     else:
         print("All identified public items appear to be documented!")
+
 
 if __name__ == "__main__":
     main()

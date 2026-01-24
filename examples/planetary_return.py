@@ -1,4 +1,5 @@
 """Solar return calculation and visualization with Kerykeion v5."""
+
 from pathlib import Path
 
 from kerykeion import (

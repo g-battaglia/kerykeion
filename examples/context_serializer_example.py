@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2025 Giacomo Battaglia
+This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
-    Context Serializer Examples
+Context Serializer Examples
 
-    This example demonstrates how to use the context_serializer module
-    to transform ALL types of astrological data into AI-readable textual context.
+This example demonstrates how to use the context_serializer module
+to transform ALL types of astrological data into AI-readable textual context.
 """
 
 from kerykeion import (
-    AstrologicalSubjectFactory, 
+    AstrologicalSubjectFactory,
     ChartDataFactory,
     CompositeSubjectFactory,
     PlanetaryReturnFactory,
-    to_context
+    to_context,
 )
 
 print("=" * 80)
@@ -26,8 +26,7 @@ print("EXAMPLE 1: NATAL CHART")
 print("=" * 80)
 
 subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB",
-    suppress_geonames_warning=True
+    "John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
 )
 
 natal_context = to_context(subject)
@@ -48,14 +47,10 @@ print("EXAMPLE 3: SYNASTRY CHART")
 print("=" * 80)
 
 subject2 = AstrologicalSubjectFactory.from_birth_data(
-    "Yoko Ono", 1933, 2, 18, 20, 30, "Tokyo", "JP",
-    suppress_geonames_warning=True
+    "Yoko Ono", 1933, 2, 18, 20, 30, "Tokyo", "JP", suppress_geonames_warning=True
 )
 
-synastry_data = ChartDataFactory.create_synastry_chart_data(
-    first_subject=subject,
-    second_subject=subject2
-)
+synastry_data = ChartDataFactory.create_synastry_chart_data(first_subject=subject, second_subject=subject2)
 
 synastry_context = to_context(synastry_data)
 print(synastry_context)
@@ -65,10 +60,7 @@ print("\n" + "=" * 80)
 print("EXAMPLE 4: COMPOSITE CHART")
 print("=" * 80)
 
-composite_factory = CompositeSubjectFactory(
-    first_subject=subject,
-    second_subject=subject2
-)
+composite_factory = CompositeSubjectFactory(first_subject=subject, second_subject=subject2)
 composite_subject = composite_factory.get_midpoint_composite_subject_model()
 
 composite_context = to_context(composite_subject)
@@ -80,11 +72,7 @@ print("EXAMPLE 5: SOLAR RETURN")
 print("=" * 80)
 
 solar_return_factory = PlanetaryReturnFactory(
-    subject=subject,
-    online=False,
-    lng=subject.lng,
-    lat=subject.lat,
-    tz_str=subject.tz_str
+    subject=subject, online=False, lng=subject.lng, lat=subject.lat, tz_str=subject.tz_str
 )
 solar_return = solar_return_factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 
@@ -97,11 +85,7 @@ print("EXAMPLE 6: LUNAR RETURN")
 print("=" * 80)
 
 lunar_return_factory = PlanetaryReturnFactory(
-    subject=subject,
-    online=False,
-    lng=subject.lng,
-    lat=subject.lat,
-    tz_str=subject.tz_str
+    subject=subject, online=False, lng=subject.lng, lat=subject.lat, tz_str=subject.tz_str
 )
 lunar_return = lunar_return_factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
 
@@ -116,14 +100,10 @@ print("(Using the historic date when John Lennon met Paul McCartney: July 6, 195
 
 # Create a transit moment for when John Lennon met Paul McCartney
 transit_moment = AstrologicalSubjectFactory.from_birth_data(
-    "Transit - Lennon meets McCartney", 1957, 7, 6, 18, 0, "Liverpool", "GB",
-    suppress_geonames_warning=True
+    "Transit - Lennon meets McCartney", 1957, 7, 6, 18, 0, "Liverpool", "GB", suppress_geonames_warning=True
 )
 
-transit_data = ChartDataFactory.create_transit_chart_data(
-    natal_subject=subject,
-    transit_subject=transit_moment
-)
+transit_data = ChartDataFactory.create_transit_chart_data(natal_subject=subject, transit_subject=transit_moment)
 
 transit_context = to_context(transit_data)
 print(transit_context)

@@ -11,32 +11,18 @@ from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, to_context
 
 # Create two subjects for synastry
 john = AstrologicalSubjectFactory.from_birth_data(
-    name="John",
-    year=1990,
-    month=5,
-    day=15,
-    hour=10,
-    minute=30,
-    city="London",
-    nation="GB"
+    name="John", year=1990, month=5, day=15, hour=10, minute=30, city="London", nation="GB"
 )
 
 jane = AstrologicalSubjectFactory.from_birth_data(
-    name="Jane",
-    year=1992,
-    month=8,
-    day=23,
-    hour=14,
-    minute=45,
-    city="Paris",
-    nation="FR"
+    name="Jane", year=1992, month=8, day=23, hour=14, minute=45, city="Paris", nation="FR"
 )
 
 # Create synastry chart data with house comparison
 synastry_data = ChartDataFactory.create_synastry_chart_data(
     first_subject=john,
     second_subject=jane,
-    include_house_comparison=True  # This is the default
+    include_house_comparison=True,  # This is the default
 )
 
 # Serialize to AI-friendly text context
@@ -51,16 +37,10 @@ print(context)
 # - Jane's planets in John's houses
 
 # For transit charts, the same works but with special handling:
-transit = AstrologicalSubjectFactory.from_current_time(
-    name="Current Transit",
-    city="London",
-    nation="GB"
-)
+transit = AstrologicalSubjectFactory.from_current_time(name="Current Transit", city="London", nation="GB")
 
 transit_data = ChartDataFactory.create_transit_chart_data(
-    natal_subject=john,
-    transit_subject=transit,
-    include_house_comparison=True
+    natal_subject=john, transit_subject=transit, include_house_comparison=True
 )
 
 print("\n\nTRANSIT CHART WITH HOUSE COMPARISON:")

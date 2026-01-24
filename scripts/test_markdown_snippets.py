@@ -50,7 +50,7 @@ def find_markdown_files(
 
 def extract_python_snippets(content):
     """Extract Python code blocks from markdown."""
-    pattern = r'```python[^\n]*\n(.*?)\n[ \t]*```'
+    pattern = r"```python[^\n]*\n(.*?)\n[ \t]*```"
     return re.findall(pattern, content, re.DOTALL)
 
 
@@ -61,7 +61,8 @@ def test_snippet(code: str, *, timeout: float) -> Tuple[bool, Optional[str]]:
 
     # Add basic imports
     project_root = str(Path(__file__).parent.parent)
-    full_code = f"""
+    full_code = (
+        f"""
 import sys
 sys.path.insert(0, '{project_root}')
 import warnings
@@ -88,10 +89,12 @@ from kerykeion import (
     CompositeSubjectFactory,
     KerykeionSettingsModel,
 )
-""" + code
+"""
+        + code
+    )
 
     try:
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(full_code)
             f.flush()
 
@@ -123,12 +126,32 @@ from kerykeion import (
 
 def main():
     parser = argparse.ArgumentParser(description="Execute Python snippets embedded in markdown files.")
-    parser.add_argument("-a", "--all", dest="all_files", action="store_true", help="Run snippets for every markdown file.")
-    parser.add_argument("-an", "--all-no-release", dest="all_no_release", action="store_true", help="Run snippets for all markdown files excluding release notes.")
-    parser.add_argument("-r", "--readme", dest="readme_only", action="store_true", help="Run snippets only for README.md.")
-    parser.add_argument("-d", "--docs", dest="docs_only", action="store_true", help="Run snippets only for site-docs folder.")
-    parser.add_argument("-e", "--examples", dest="examples_only", action="store_true", help="Run snippets only for site-examples folder.")
-    parser.add_argument("-ai", "--ai-guide", dest="ai_guide_only", action="store_true", help="Run snippets only for AI_AGENT_GUIDE.md.")
+    parser.add_argument(
+        "-a", "--all", dest="all_files", action="store_true", help="Run snippets for every markdown file."
+    )
+    parser.add_argument(
+        "-an",
+        "--all-no-release",
+        dest="all_no_release",
+        action="store_true",
+        help="Run snippets for all markdown files excluding release notes.",
+    )
+    parser.add_argument(
+        "-r", "--readme", dest="readme_only", action="store_true", help="Run snippets only for README.md."
+    )
+    parser.add_argument(
+        "-d", "--docs", dest="docs_only", action="store_true", help="Run snippets only for site-docs folder."
+    )
+    parser.add_argument(
+        "-e",
+        "--examples",
+        dest="examples_only",
+        action="store_true",
+        help="Run snippets only for site-examples folder.",
+    )
+    parser.add_argument(
+        "-ai", "--ai-guide", dest="ai_guide_only", action="store_true", help="Run snippets only for AI_AGENT_GUIDE.md."
+    )
     parser.add_argument("--timeout", type=float, default=20.0, help="Per-snippet timeout in seconds (default: 20).")
     parser.add_argument("paths", nargs="*", type=Path, help="Optional paths to scan (defaults depend on flags).")
     args = parser.parse_args()
@@ -210,5 +233,5 @@ def main():
         print("🎉 All snippets passed!")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
