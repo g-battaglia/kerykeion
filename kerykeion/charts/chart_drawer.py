@@ -308,6 +308,1064 @@ DEFAULT_RADII = CircleRadiiConfig()
 DEFAULT_GRID_POSITIONS = GridPositionsConfig()
 
 
+# =============================================================================
+# CHART RENDERER PROTOCOL AND BASE CLASS
+# =============================================================================
+# The Strategy Pattern is used to separate chart-type-specific rendering logic
+# from the main ChartDrawer class. Each chart type (Natal, Transit, Synastry,
+# etc.) has its own renderer class that implements the ChartRendererProtocol.
+# =============================================================================
+
+from typing import Protocol, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from kerykeion.charts.chart_drawer import ChartDrawer
+
+
+class ChartRendererProtocol(Protocol):
+    """Protocol defining the interface for chart type-specific renderers.
+
+    Each chart type (Natal, Transit, Synastry, etc.) implements this protocol
+    to provide specialized rendering logic while sharing common infrastructure
+    from ChartDrawer.
+    """
+
+    def setup_circles(self, template_dict: dict) -> None:
+        """Configure concentric circle SVG elements for the wheel."""
+        ...
+
+    def setup_aspects(self, template_dict: dict) -> None:
+        """Configure aspect lines and grid/list display."""
+        ...
+
+    def setup_info_sections(self, template_dict: dict) -> None:
+        """Configure top_left and bottom_left informational text."""
+        ...
+
+    def setup_grids(self, template_dict: dict) -> None:
+        """Configure planet and house grid tables."""
+        ...
+
+    def setup_house_comparison(self, template_dict: dict) -> None:
+        """Configure house comparison grid (dual-wheel charts only)."""
+        ...
+
+    def render(self, template_dict: dict) -> None:
+        """Execute all setup methods in order to populate template_dict."""
+        ...
+
+
+class BaseChartRenderer:
+    """Base class providing common functionality for chart renderers.
+
+    Subclasses override specific setup methods to customize rendering
+    for their chart type while inheriting shared infrastructure.
+
+    Attributes:
+        drawer: Reference to the parent ChartDrawer instance.
+    """
+
+    def __init__(self, drawer: "ChartDrawer"):
+        """Initialize the renderer with a reference to the parent drawer.
+
+        Args:
+            drawer: The ChartDrawer instance that owns this renderer.
+        """
+        self.drawer = drawer
+
+    def render(self, template_dict: dict) -> None:
+        """Execute all setup methods to populate the template dictionary.
+
+        This is a Template Method that calls setup methods in a defined order.
+        Subclasses override individual setup methods to customize behavior.
+
+        Args:
+            template_dict: Dictionary to populate with SVG template values.
+        """
+        self.setup_circles(template_dict)
+        self.setup_aspects(template_dict)
+        self.setup_info_sections(template_dict)
+        self.setup_grids(template_dict)
+        self.setup_house_comparison(template_dict)
+
+    def setup_circles(self, template_dict: dict) -> None:
+        """Configure circle elements. Override in subclasses."""
+        raise NotImplementedError("Subclasses must implement setup_circles")
+
+    def setup_aspects(self, template_dict: dict) -> None:
+        """Configure aspect elements. Override in subclasses."""
+        raise NotImplementedError("Subclasses must implement setup_aspects")
+
+    def setup_info_sections(self, template_dict: dict) -> None:
+        """Configure info sections. Override in subclasses."""
+        raise NotImplementedError("Subclasses must implement setup_info_sections")
+
+    def setup_grids(self, template_dict: dict) -> None:
+        """Configure grid elements. Override in subclasses."""
+        raise NotImplementedError("Subclasses must implement setup_grids")
+
+    def setup_house_comparison(self, template_dict: dict) -> None:
+        """Configure house comparison. Default: no comparison grid."""
+        template_dict["makeHouseComparisonGrid"] = ""
+
+    # -------------------------------------------------------------------------
+    # SHARED HELPER METHODS
+    # -------------------------------------------------------------------------
+    # These methods provide common functionality used by multiple renderers.
+    # -------------------------------------------------------------------------
+
+    def _translate(self, key: str, default: Any) -> Any:
+        """Convenience method to access drawer's translation function."""
+        return self.drawer._translate(key, default)
+
+    def _format_latitude(self, latitude: float, use_abbreviations: bool = False) -> str:
+        """Format latitude using drawer's method."""
+        return self.drawer._format_latitude_string(latitude, use_abbreviations)
+
+    def _format_longitude(self, longitude: float, use_abbreviations: bool = False) -> str:
+        """Format longitude using drawer's method."""
+        return self.drawer._format_longitude_string(longitude, use_abbreviations)
+
+    def _get_houses_list(self, subject) -> list:
+        """Get houses list for a subject."""
+        return get_houses_list(subject)
+
+
+# =============================================================================
+# INFO SECTION BUILDER
+# =============================================================================
+# Encapsulates the logic for building top_left and bottom_left info sections.
+# Reduces code duplication across chart types.
+# =============================================================================
+
+
+class InfoSectionBuilder:
+    """Builder for top_left and bottom_left informational sections.
+
+    This class extracts common patterns for building the info sections
+    displayed in chart corners, reducing duplication across chart types.
+    """
+
+    def __init__(self, drawer: "ChartDrawer"):
+        """Initialize the builder with a drawer reference.
+
+        Args:
+            drawer: The ChartDrawer instance to build info sections for.
+        """
+        self.drawer = drawer
+
+    def _translate(self, key: str, default: Any) -> Any:
+        """Convenience method to access drawer's translation function."""
+        return self.drawer._translate(key, default)
+
+    def build_zodiac_info(self) -> str:
+        """Build the zodiac/ayanamsa info string."""
+        return self.drawer._get_zodiac_info()
+
+    def build_domification_info(self) -> str:
+        """Build the domification/house system string."""
+        return self.drawer._get_domification_string()
+
+    def build_perspective_info(self, subject) -> str:
+        """Build the perspective type string."""
+        return self.drawer._get_perspective_string(subject)
+
+    def build_houses_system_info(self, subject) -> str:
+        """Build compact house system string (without 'Domification:' label)."""
+        house_key = "houses_system_" + subject.houses_system_identifier
+        return f"{self._translate(house_key, subject.houses_system_name)} {self._translate('houses', 'Houses')}"
+
+    def build_lunar_phase_info(
+        self,
+        template_dict: dict,
+        subject,
+        prefix: str = "",
+        key_lunation: str = "bottom_left_2",
+        key_phase: str = "bottom_left_3",
+    ) -> None:
+        """Populate template_dict with lunar phase info if available.
+
+        Args:
+            template_dict: Dictionary to populate.
+            subject: Subject with potential lunar_phase data.
+            prefix: Optional prefix for labels (e.g., "Transit ").
+            key_lunation: Template key for lunation day.
+            key_phase: Template key for phase name.
+        """
+        if subject.lunar_phase is None:
+            template_dict[key_lunation] = ""
+            template_dict[key_phase] = ""
+            return
+
+        lunation_label = self._translate("lunation_day", "Lunation Day")
+        phase_label = self._translate("lunar_phase", "Lunar Phase")
+        phase_name = subject.lunar_phase.moon_phase_name
+        phase_key = phase_name.lower().replace(" ", "_")
+
+        template_dict[key_lunation] = f"{prefix}{lunation_label}: {subject.lunar_phase.get('moon_phase', '')}"
+        template_dict[key_phase] = f"{prefix}{phase_label}: {self._translate(phase_key, phase_name)}"
+
+    def build_location_coordinates(
+        self,
+        latitude: float,
+        longitude: float,
+        use_abbreviations: bool = False,
+    ) -> tuple[str, str]:
+        """Build formatted latitude and longitude strings.
+
+        Args:
+            latitude: Geographic latitude.
+            longitude: Geographic longitude.
+            use_abbreviations: Use N/S/E/W instead of full words.
+
+        Returns:
+            Tuple of (latitude_string, longitude_string).
+        """
+        lat_str = self.drawer._format_latitude_string(latitude, use_abbreviations)
+        lon_str = self.drawer._format_longitude_string(longitude, use_abbreviations)
+        return lat_str, lon_str
+
+
+# =============================================================================
+# CHART TYPE-SPECIFIC RENDERERS
+# =============================================================================
+# Each renderer implements the ChartRendererProtocol for a specific chart type.
+# This separates chart-specific logic from the main ChartDrawer class.
+# =============================================================================
+
+
+class NatalChartRenderer(BaseChartRenderer):
+    """Renderer for Natal (birth) charts.
+
+    Single-wheel chart showing birth positions with triangular aspect grid.
+    """
+
+    def setup_circles(self, template_dict: dict) -> None:
+        """Set up radix-style circles for single-wheel display."""
+        self.drawer._setup_radix_circles(template_dict)
+
+    def setup_aspects(self, template_dict: dict) -> None:
+        """Set up triangular aspect grid for single-chart aspects."""
+        self.drawer._setup_single_chart_aspects(template_dict)
+
+    def setup_info_sections(self, template_dict: dict) -> None:
+        """Set up location, birth info, and technical details."""
+        d = self.drawer
+        builder = InfoSectionBuilder(d)
+
+        # Top left section - Location and birth info
+        lat_str, lon_str = builder.build_location_coordinates(d.geolat, d.geolon)
+
+        template_dict["top_left_0"] = f"{self._translate('location', 'Location')}:"
+        template_dict["top_left_1"] = f"{d.first_obj.city}, {d.first_obj.nation}"
+        template_dict["top_left_2"] = f"{self._translate('latitude', 'Latitude')}: {lat_str}"
+        template_dict["top_left_3"] = f"{self._translate('longitude', 'Longitude')}: {lon_str}"
+        template_dict["top_left_4"] = format_datetime_with_timezone(d.first_obj.iso_formatted_local_datetime)
+
+        localized_weekday = self._translate(f"weekdays.{d.first_obj.day_of_week}", d.first_obj.day_of_week)
+        template_dict["top_left_5"] = f"{self._translate('day_of_week', 'Day of Week')}: {localized_weekday}"
+
+        # Bottom left section - Technical info
+        template_dict["bottom_left_0"] = builder.build_zodiac_info()
+        template_dict["bottom_left_1"] = builder.build_domification_info()
+        builder.build_lunar_phase_info(template_dict, d.first_obj)
+        template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
+
+        # Lunar phase visualization
+        d._setup_lunar_phase(template_dict, d.first_obj, d.geolat)
+
+    def setup_grids(self, template_dict: dict) -> None:
+        """Set up planet and house grids for single subject."""
+        d = self.drawer
+        houses_list = self._get_houses_list(d.first_obj)
+
+        d._setup_main_houses_grid(template_dict, houses_list)
+        template_dict["makeSecondaryHousesGrid"] = ""
+        d._setup_single_wheel_houses(template_dict, houses_list)
+        d._setup_single_wheel_planets(template_dict)
+        d._setup_main_planet_grid(
+            template_dict,
+            d.first_obj.name,
+            self._translate("planets_and_house", "Points for"),
+        )
+        template_dict["makeSecondaryPlanetGrid"] = ""
+
+
+class CompositeChartRenderer(BaseChartRenderer):
+    """Renderer for Composite charts.
+
+    Single-wheel chart showing midpoints between two subjects.
+    """
+
+    def setup_circles(self, template_dict: dict) -> None:
+        """Set up radix-style circles."""
+        self.drawer._setup_radix_circles(template_dict)
+
+    def setup_aspects(self, template_dict: dict) -> None:
+        """Set up triangular aspect grid."""
+        self.drawer._setup_single_chart_aspects(template_dict)
+
+    def setup_info_sections(self, template_dict: dict) -> None:
+        """Set up info for both composite subjects."""
+        d = self.drawer
+        builder = InfoSectionBuilder(d)
+
+        # First subject coordinates
+        first_lat, first_lng = builder.build_location_coordinates(
+            d.first_obj.first_subject.lat,
+            d.first_obj.first_subject.lng,
+            use_abbreviations=True,
+        )
+        # Second subject coordinates
+        second_lat, second_lng = builder.build_location_coordinates(
+            d.first_obj.second_subject.lat,
+            d.first_obj.second_subject.lng,
+            use_abbreviations=True,
+        )
+
+        template_dict["top_left_0"] = f"{d.first_obj.first_subject.name}"
+        template_dict["top_left_1"] = datetime.fromisoformat(
+            d.first_obj.first_subject.iso_formatted_local_datetime
+        ).strftime("%Y-%m-%d %H:%M")
+        template_dict["top_left_2"] = f"{first_lat} {first_lng}"
+        template_dict["top_left_3"] = d.first_obj.second_subject.name
+        template_dict["top_left_4"] = datetime.fromisoformat(
+            d.first_obj.second_subject.iso_formatted_local_datetime
+        ).strftime("%Y-%m-%d %H:%M")
+        template_dict["top_left_5"] = f"{second_lat} / {second_lng}"
+
+        # Bottom left section
+        template_dict["bottom_left_0"] = builder.build_zodiac_info()
+        template_dict["bottom_left_1"] = builder.build_houses_system_info(d.first_obj)
+        template_dict["bottom_left_2"] = (
+            f"{self._translate('perspective_type', 'Perspective')}: {d.first_obj.first_subject.perspective_type}"
+        )
+        template_dict["bottom_left_3"] = (
+            f"{self._translate('composite_chart', 'Composite Chart')} - {self._translate('midpoints', 'Midpoints')}"
+        )
+        template_dict["bottom_left_4"] = ""
+
+        # Lunar phase
+        d._setup_lunar_phase(template_dict, d.first_obj, d.geolat)
+
+    def setup_grids(self, template_dict: dict) -> None:
+        """Set up grids with combined subject name."""
+        d = self.drawer
+        houses_list = self._get_houses_list(d.first_obj)
+
+        d._setup_main_houses_grid(template_dict, houses_list)
+        template_dict["makeSecondaryHousesGrid"] = ""
+        d._setup_single_wheel_houses(template_dict, houses_list)
+        d._setup_single_wheel_planets(template_dict)
+
+        # Combined subject name
+        subject_name = (
+            f"{d.first_obj.first_subject.name} {self._translate('and_word', '&')} {d.first_obj.second_subject.name}"
+        )
+        d._setup_main_planet_grid(
+            template_dict,
+            subject_name,
+            self._translate("planets_and_house", "Points for"),
+        )
+        template_dict["makeSecondaryPlanetGrid"] = ""
+
+
+class TransitChartRenderer(BaseChartRenderer):
+    """Renderer for Transit charts.
+
+    Dual-wheel chart showing natal (inner) vs transit (outer) positions.
+    """
+
+    def setup_circles(self, template_dict: dict) -> None:
+        """Set up transit-style circles with outer ring."""
+        self.drawer._setup_transit_circles(template_dict)
+
+    def setup_aspects(self, template_dict: dict) -> None:
+        """Set up aspect list or grid for dual-wheel chart."""
+        d = self.drawer
+
+        if d.double_chart_aspect_grid_type == "list":
+            title = f"{d.first_obj.name} - {self._translate('transit_aspects', 'Transit Aspects')}"
+            template_dict["makeAspectGrid"] = ""
+            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                title,
+                d.aspects_list,
+                d.planets_settings,
+                d.aspects_settings,
+                chart_height=d.height,
+            )
+        else:
+            template_dict["makeAspectGrid"] = ""
+            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                d.chart_colors_settings["paper_0"],
+                d.available_planets_setting,
+                d.aspects_list,
+                600,
+                520,
+            )
+
+        template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
+
+    def setup_info_sections(self, template_dict: dict) -> None:
+        """Set up natal and transit info sections."""
+        d = self.drawer
+        builder = InfoSectionBuilder(d)
+
+        # Clear element/quality percentages (Transit doesn't show these)
+        d._clear_element_quality_strings(template_dict)
+
+        # Natal coordinates
+        natal_lat = ""
+        natal_lon = ""
+        if getattr(d.first_obj, "lat", None) is not None:
+            natal_lat, natal_lon = builder.build_location_coordinates(
+                d.first_obj.lat, d.first_obj.lng, use_abbreviations=True
+            )
+
+        # Transit coordinates
+        transit_lat = ""
+        transit_lon = ""
+        if d.second_obj is not None:
+            if getattr(d.second_obj, "lat", None) is not None:
+                transit_lat, transit_lon = builder.build_location_coordinates(
+                    d.second_obj.lat, d.second_obj.lng, use_abbreviations=True
+                )
+
+        natal_dt = format_datetime_with_timezone(d.first_obj.iso_formatted_local_datetime)
+        natal_place = f"{format_location_string(d.first_obj.city)}, {d.first_obj.nation}"
+
+        transit_dt = ""
+        transit_place = ""
+        if d.second_obj is not None:
+            if getattr(d.second_obj, "iso_formatted_local_datetime", None) is not None:
+                transit_dt = format_datetime_with_timezone(d.second_obj.iso_formatted_local_datetime)
+            transit_place = f"{format_location_string(d.second_obj.city)}, {d.second_obj.nation}"
+
+        template_dict["top_left_0"] = f"{self._translate('chart_info_natal_label', 'Natal')}: {natal_dt}"
+        template_dict["top_left_1"] = natal_place
+        template_dict["top_left_2"] = f"{natal_lat}  ·  {natal_lon}"
+        template_dict["top_left_3"] = f"{self._translate('chart_info_transit_label', 'Transit')}: {transit_dt}"
+        template_dict["top_left_4"] = transit_place
+        template_dict["top_left_5"] = f"{transit_lat}  ·  {transit_lon}"
+
+        # Bottom left section
+        template_dict["bottom_left_0"] = builder.build_zodiac_info()
+        template_dict["bottom_left_1"] = builder.build_domification_info()
+
+        # Lunar phase from transit subject
+        if d.second_obj is not None and hasattr(d.second_obj, "lunar_phase") and d.second_obj.lunar_phase is not None:
+            builder.build_lunar_phase_info(
+                template_dict,
+                d.second_obj,
+                prefix=f"{self._translate('Transit', 'Transit')} ",
+                key_lunation="bottom_left_3",
+                key_phase="bottom_left_4",
+            )
+        else:
+            template_dict["bottom_left_3"] = ""
+            template_dict["bottom_left_4"] = ""
+
+        template_dict["bottom_left_2"] = builder.build_perspective_info(d.second_obj)
+
+        # Moon phase visualization from transit subject
+        if d.second_obj is not None and getattr(d.second_obj, "lunar_phase", None):
+            template_dict["makeLunarPhase"] = makeLunarPhase(
+                d.second_obj.lunar_phase["degrees_between_s_m"],
+                d.geolat,
+            )
+        else:
+            template_dict["makeLunarPhase"] = ""
+
+    def setup_grids(self, template_dict: dict) -> None:
+        """Set up dual-wheel planet and house grids."""
+        d = self.drawer
+        first_houses = self._get_houses_list(d.first_obj)
+        second_houses = self._get_houses_list(d.second_obj)
+
+        d._setup_main_houses_grid(template_dict, first_houses)
+        template_dict["makeSecondaryHousesGrid"] = ""  # Transit doesn't show transit houses grid
+        d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
+        d._setup_dual_wheel_planets(template_dict)
+
+        # Planet grids with wheel labels
+        first_label = d._truncate_name(d.first_obj.name)
+        transit_label = self._translate("transit", "Transit")
+        first_grid_title = f"{first_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
+        second_grid_title = f"{transit_label} ({self._translate('outer_wheel', 'Outer Wheel')})"
+
+        template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
+            planets_and_houses_grid_title="",
+            subject_name=first_grid_title,
+            available_kerykeion_celestial_points=d.available_kerykeion_celestial_points,
+            chart_type=d.chart_type,
+            text_color=d.chart_colors_settings["paper_0"],
+            celestial_point_language=d._language_model.celestial_points,
+        )
+        template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
+            planets_and_houses_grid_title="",
+            second_subject_name=second_grid_title,
+            second_subject_available_kerykeion_celestial_points=d.second_subject_celestial_points,
+            chart_type=d.chart_type,
+            text_color=d.chart_colors_settings["paper_0"],
+            celestial_point_language=d._language_model.celestial_points,
+        )
+
+    def setup_house_comparison(self, template_dict: dict) -> None:
+        """Set up single house comparison grid for Transit."""
+        d = self.drawer
+
+        if not (d.show_house_position_comparison or d.show_cusp_position_comparison):
+            template_dict["makeHouseComparisonGrid"] = ""
+            return
+
+        house_comparison_factory = HouseComparisonFactory(
+            first_subject=d.first_obj,
+            second_subject=d.second_obj,
+            active_points=d.active_points,
+        )
+        house_comparison = house_comparison_factory.get_house_comparison()
+
+        house_comparison_svg = ""
+
+        if d.show_house_position_comparison:
+            house_comparison_svg = draw_single_house_comparison_grid(
+                house_comparison,
+                celestial_point_language=d._language_model.celestial_points,
+                active_points=d.active_points,
+                points_owner_subject_number=2,
+                house_position_comparison_label=self._translate(
+                    "house_position_comparison", "House Position Comparison"
+                ),
+                return_point_label=self._translate("transit_point", "Transit Point"),
+                natal_house_label=self._translate("house_position", "Natal House"),
+                x_position=d._TRANSIT_HOUSE_COMPARISON_X,
+            )
+
+        if d.show_cusp_position_comparison:
+            cusp_x = 1180 if d.show_house_position_comparison else 980
+
+            cusp_grid = draw_single_cusp_comparison_grid(
+                house_comparison,
+                celestial_point_language=d._language_model.celestial_points,
+                cusps_owner_subject_number=2,
+                cusp_position_comparison_label=self._translate("cusp_position_comparison", "Cusp Position Comparison"),
+                owner_cusp_label=self._translate("transit_cusp", "Transit Cusp"),
+                projected_house_label=self._translate("natal_house", "Natal House"),
+                x_position=cusp_x,
+                y_position=0,
+            )
+            house_comparison_svg += cusp_grid
+
+        template_dict["makeHouseComparisonGrid"] = house_comparison_svg
+
+
+class SynastryChartRenderer(BaseChartRenderer):
+    """Renderer for Synastry charts.
+
+    Dual-wheel chart comparing two birth charts.
+    """
+
+    def setup_circles(self, template_dict: dict) -> None:
+        """Set up transit-style circles for dual-wheel display."""
+        self.drawer._setup_transit_circles(template_dict)
+
+    def setup_aspects(self, template_dict: dict) -> None:
+        """Set up aspect list or grid for synastry."""
+        d = self.drawer
+
+        if d.double_chart_aspect_grid_type == "list":
+            template_dict["makeAspectGrid"] = ""
+            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                f"{d.first_obj.name} - {d.second_obj.name} {self._translate('synastry_aspects', 'Synastry Aspects')}",
+                d.aspects_list,
+                d.planets_settings,
+                d.aspects_settings,
+                chart_height=d.height,
+            )
+        else:
+            template_dict["makeAspectGrid"] = ""
+            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                d.chart_colors_settings["paper_0"],
+                d.available_planets_setting,
+                d.aspects_list,
+                550,
+                450,
+            )
+
+        template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
+
+    def setup_info_sections(self, template_dict: dict) -> None:
+        """Set up info for both synastry subjects."""
+        d = self.drawer
+        builder = InfoSectionBuilder(d)
+
+        template_dict["top_left_0"] = f"{d.first_obj.name}:"
+        template_dict["top_left_1"] = f"{d.first_obj.city}, {d.first_obj.nation}"
+        template_dict["top_left_2"] = format_datetime_with_timezone(d.first_obj.iso_formatted_local_datetime)
+        template_dict["top_left_3"] = f"{d.second_obj.name}: "
+        template_dict["top_left_4"] = f"{d.second_obj.city}, {d.second_obj.nation}"
+        template_dict["top_left_5"] = format_datetime_with_timezone(d.second_obj.iso_formatted_local_datetime)
+
+        # Bottom left section
+        template_dict["bottom_left_0"] = ""
+        template_dict["bottom_left_1"] = ""
+        template_dict["bottom_left_2"] = builder.build_zodiac_info()
+        template_dict["bottom_left_3"] = builder.build_houses_system_info(d.first_obj)
+        template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
+
+        template_dict["makeLunarPhase"] = ""
+
+    def setup_grids(self, template_dict: dict) -> None:
+        """Set up dual-wheel grids for both subjects."""
+        d = self.drawer
+        first_houses = self._get_houses_list(d.first_obj)
+        second_houses = self._get_houses_list(d.second_obj)
+
+        d._setup_main_houses_grid(template_dict, first_houses)
+        d._setup_secondary_houses_grid(template_dict, second_houses)
+        d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
+        d._setup_dual_wheel_planets(template_dict)
+
+        # Planet grids
+        first_label = d._truncate_name(d.first_obj.name, 18, "…")
+        second_label = d._truncate_name(d.second_obj.name, 18, "…")
+
+        template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
+            planets_and_houses_grid_title="",
+            subject_name=f"{first_label} ({self._translate('inner_wheel', 'Inner Wheel')})",
+            available_kerykeion_celestial_points=d.available_kerykeion_celestial_points,
+            chart_type=d.chart_type,
+            text_color=d.chart_colors_settings["paper_0"],
+            celestial_point_language=d._language_model.celestial_points,
+        )
+        template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
+            planets_and_houses_grid_title="",
+            second_subject_name=f"{second_label} ({self._translate('outer_wheel', 'Outer Wheel')})",
+            second_subject_available_kerykeion_celestial_points=d.second_subject_celestial_points,
+            chart_type=d.chart_type,
+            text_color=d.chart_colors_settings["paper_0"],
+            celestial_point_language=d._language_model.celestial_points,
+        )
+
+    def setup_house_comparison(self, template_dict: dict) -> None:
+        """Set up dual house comparison grids for Synastry."""
+        d = self.drawer
+
+        if not (d.show_house_position_comparison or d.show_cusp_position_comparison):
+            template_dict["makeHouseComparisonGrid"] = ""
+            return
+
+        house_comparison_factory = HouseComparisonFactory(
+            first_subject=d.first_obj,
+            second_subject=d.second_obj,
+            active_points=d.active_points,
+        )
+        house_comparison = house_comparison_factory.get_house_comparison()
+
+        first_subject_label = d._truncate_name(d.first_obj.name, 8, "…", True)
+        second_subject_label = d._truncate_name(d.second_obj.name, 8, "…", True)
+        point_column_label = self._translate("point", "Point")
+        comparison_label = self._translate("house_position_comparison", "House Position Comparison")
+
+        house_comparison_svg = ""
+
+        if d.show_house_position_comparison:
+            first_grid = draw_house_comparison_grid(
+                house_comparison,
+                celestial_point_language=d._language_model.celestial_points,
+                active_points=d.active_points,
+                points_owner_subject_number=1,
+                house_position_comparison_label=comparison_label,
+                return_point_label=first_subject_label + " " + point_column_label,
+                return_label=first_subject_label,
+                radix_label=second_subject_label,
+                x_position=d._HOUSE_COMPARISON_GRID_X_FIRST,
+                y_position=0,
+            )
+
+            second_grid = draw_house_comparison_grid(
+                house_comparison,
+                celestial_point_language=d._language_model.celestial_points,
+                active_points=d.active_points,
+                points_owner_subject_number=2,
+                house_position_comparison_label="",
+                return_point_label=second_subject_label + " " + point_column_label,
+                return_label=second_subject_label,
+                radix_label=first_subject_label,
+                x_position=d._HOUSE_COMPARISON_GRID_X_SECOND,
+                y_position=0,
+            )
+
+            house_comparison_svg = first_grid + second_grid
+
+        if d.show_cusp_position_comparison:
+            if d.show_house_position_comparison:
+                first_columns = [
+                    f"{first_subject_label} {point_column_label}",
+                    first_subject_label,
+                    second_subject_label,
+                ]
+                second_columns = [
+                    f"{second_subject_label} {point_column_label}",
+                    second_subject_label,
+                    first_subject_label,
+                ]
+
+                first_grid_width = d._estimate_house_comparison_grid_width(
+                    column_labels=first_columns,
+                    include_radix_column=True,
+                    include_title=True,
+                )
+                second_grid_width = d._estimate_house_comparison_grid_width(
+                    column_labels=second_columns,
+                    include_radix_column=True,
+                    include_title=False,
+                )
+
+                max_right = max(1000 + first_grid_width, 1190 + second_grid_width)
+                cusp_x = int(max_right + 50.0)
+                first_cusp_x = cusp_x
+                second_cusp_x = cusp_x + 160
+            else:
+                first_cusp_x = 1090
+                second_cusp_x = 1290
+
+            first_cusp = draw_cusp_comparison_grid(
+                house_comparison,
+                celestial_point_language=d._language_model.celestial_points,
+                cusps_owner_subject_number=1,
+                cusp_position_comparison_label=self._translate("cusp_position_comparison", "Cusp Position Comparison"),
+                owner_cusp_label=first_subject_label + " " + self._translate("cusp", "Cusp"),
+                projected_house_label=second_subject_label + " " + self._translate("house", "House"),
+                x_position=first_cusp_x,
+                y_position=0,
+            )
+
+            second_cusp = draw_cusp_comparison_grid(
+                house_comparison,
+                celestial_point_language=d._language_model.celestial_points,
+                cusps_owner_subject_number=2,
+                cusp_position_comparison_label="",
+                owner_cusp_label=second_subject_label + " " + self._translate("cusp", "Cusp"),
+                projected_house_label=first_subject_label + " " + self._translate("house", "House"),
+                x_position=second_cusp_x,
+                y_position=0,
+            )
+
+            house_comparison_svg += first_cusp + second_cusp
+
+        template_dict["makeHouseComparisonGrid"] = house_comparison_svg
+
+
+class SingleReturnChartRenderer(BaseChartRenderer):
+    """Renderer for SingleReturnChart (Solar/Lunar Return without natal comparison).
+
+    Single-wheel chart for the return moment only.
+    """
+
+    def setup_circles(self, template_dict: dict) -> None:
+        """Set up radix-style circles."""
+        self.drawer._setup_radix_circles(template_dict)
+
+    def setup_aspects(self, template_dict: dict) -> None:
+        """Set up triangular aspect grid."""
+        self.drawer._setup_single_chart_aspects(template_dict)
+
+    def setup_info_sections(self, template_dict: dict) -> None:
+        """Set up return info section."""
+        d = self.drawer
+        builder = InfoSectionBuilder(d)
+
+        lat_str, lon_str = builder.build_location_coordinates(d.geolat, d.geolon)
+
+        template_dict["top_left_0"] = f"{self._translate('info', 'Info')}:"
+        template_dict["top_left_1"] = format_datetime_with_timezone(d.first_obj.iso_formatted_local_datetime)
+        template_dict["top_left_2"] = f"{d.first_obj.city}, {d.first_obj.nation}"
+        template_dict["top_left_3"] = f"{self._translate('latitude', 'Latitude')}: {lat_str}"
+        template_dict["top_left_4"] = f"{self._translate('longitude', 'Longitude')}: {lon_str}"
+
+        if isinstance(d.first_obj, PlanetReturnModel) and d.first_obj.return_type == "Solar":
+            template_dict["top_left_5"] = (
+                f"{self._translate('type', 'Type')}: {self._translate('solar_return', 'Solar Return')}"
+            )
+        else:
+            template_dict["top_left_5"] = (
+                f"{self._translate('type', 'Type')}: {self._translate('lunar_return', 'Lunar Return')}"
+            )
+
+        # Bottom left section
+        template_dict["bottom_left_0"] = builder.build_zodiac_info()
+        template_dict["bottom_left_1"] = builder.build_houses_system_info(d.first_obj)
+        builder.build_lunar_phase_info(template_dict, d.first_obj)
+        template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
+
+        # Lunar phase visualization
+        d._setup_lunar_phase(template_dict, d.first_obj, d.geolat)
+
+    def setup_grids(self, template_dict: dict) -> None:
+        """Set up grids for single return chart."""
+        d = self.drawer
+        houses_list = self._get_houses_list(d.first_obj)
+
+        d._setup_main_houses_grid(template_dict, houses_list)
+        template_dict["makeSecondaryHousesGrid"] = ""
+        d._setup_single_wheel_houses(template_dict, houses_list)
+        d._setup_single_wheel_planets(template_dict)
+        d._setup_main_planet_grid(
+            template_dict,
+            d.first_obj.name,
+            self._translate("planets_and_house", "Points for"),
+        )
+        template_dict["makeSecondaryPlanetGrid"] = ""
+
+
+class DualReturnChartRenderer(BaseChartRenderer):
+    """Renderer for DualReturnChart.
+
+    Dual-wheel chart showing natal (inner) vs return (outer) positions.
+    """
+
+    def setup_circles(self, template_dict: dict) -> None:
+        """Set up transit-style circles for dual-wheel display."""
+        self.drawer._setup_transit_circles(template_dict)
+
+    def setup_aspects(self, template_dict: dict) -> None:
+        """Set up aspect list or grid for return chart."""
+        d = self.drawer
+
+        if d.double_chart_aspect_grid_type == "list":
+            title = self._translate("return_aspects", "Natal to Return Aspects")
+            template_dict["makeAspectGrid"] = ""
+            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                title,
+                d.aspects_list,
+                d.planets_settings,
+                d.aspects_settings,
+                max_columns=7,
+                chart_height=d.height,
+            )
+        else:
+            template_dict["makeAspectGrid"] = ""
+            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                d.chart_colors_settings["paper_0"],
+                d.available_planets_setting,
+                d.aspects_list,
+                550,
+                450,
+            )
+
+        template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
+
+    def setup_info_sections(self, template_dict: dict) -> None:
+        """Set up natal and return info sections."""
+        d = self.drawer
+        builder = InfoSectionBuilder(d)
+
+        # Subject (natal) coordinates
+        lat_str, lon_str = builder.build_location_coordinates(d.first_obj.lat, d.first_obj.lng)
+
+        # Return coordinates
+        return_lat, return_lon = builder.build_location_coordinates(d.second_obj.lat, d.second_obj.lng)
+
+        if isinstance(d.second_obj, PlanetReturnModel) and d.second_obj.return_type == "Solar":
+            template_dict["top_left_0"] = f"{self._translate('solar_return', 'Solar Return')}:"
+        else:
+            template_dict["top_left_0"] = f"{self._translate('lunar_return', 'Lunar Return')}:"
+
+        template_dict["top_left_1"] = format_datetime_with_timezone(d.second_obj.iso_formatted_local_datetime)
+        template_dict["top_left_2"] = f"{return_lat} / {return_lon}"
+        template_dict["top_left_3"] = f"{d.first_obj.name}"
+        template_dict["top_left_4"] = format_datetime_with_timezone(d.first_obj.iso_formatted_local_datetime)
+        template_dict["top_left_5"] = f"{lat_str} / {lon_str}"
+
+        # Bottom left section
+        template_dict["bottom_left_0"] = builder.build_zodiac_info()
+        template_dict["bottom_left_1"] = builder.build_domification_info()
+        builder.build_lunar_phase_info(template_dict, d.first_obj)
+        template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
+
+        # Lunar phase visualization
+        d._setup_lunar_phase(template_dict, d.first_obj, d.geolat)
+
+    def setup_grids(self, template_dict: dict) -> None:
+        """Set up dual-wheel grids for natal and return."""
+        d = self.drawer
+        first_houses = self._get_houses_list(d.first_obj)
+        second_houses = self._get_houses_list(d.second_obj)
+
+        d._setup_main_houses_grid(template_dict, first_houses)
+        d._setup_secondary_houses_grid(template_dict, second_houses)
+        d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
+        d._setup_dual_wheel_planets(template_dict)
+
+        # Planet grid labels
+        first_label = d._truncate_name(d.first_obj.name)
+        if isinstance(d.second_obj, PlanetReturnModel) and d.second_obj.return_type == "Solar":
+            first_grid_title = f"{first_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
+            second_grid_title = (
+                f"{self._translate('solar_return', 'Solar Return')} ({self._translate('outer_wheel', 'Outer Wheel')})"
+            )
+        else:
+            first_grid_title = f"{first_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
+            second_grid_title = (
+                f"{self._translate('lunar_return', 'Lunar Return')} ({self._translate('outer_wheel', 'Outer Wheel')})"
+            )
+
+        template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
+            planets_and_houses_grid_title="",
+            subject_name=first_grid_title,
+            available_kerykeion_celestial_points=d.available_kerykeion_celestial_points,
+            chart_type=d.chart_type,
+            text_color=d.chart_colors_settings["paper_0"],
+            celestial_point_language=d._language_model.celestial_points,
+        )
+        template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
+            planets_and_houses_grid_title="",
+            second_subject_name=second_grid_title,
+            second_subject_available_kerykeion_celestial_points=d.second_subject_celestial_points,
+            chart_type=d.chart_type,
+            text_color=d.chart_colors_settings["paper_0"],
+            celestial_point_language=d._language_model.celestial_points,
+        )
+
+    def setup_house_comparison(self, template_dict: dict) -> None:
+        """Set up dual house comparison grids for DualReturnChart."""
+        d = self.drawer
+
+        if not (d.show_house_position_comparison or d.show_cusp_position_comparison):
+            template_dict["makeHouseComparisonGrid"] = ""
+            return
+
+        house_comparison_factory = HouseComparisonFactory(
+            first_subject=d.first_obj,
+            second_subject=d.second_obj,
+            active_points=d.active_points,
+        )
+        house_comparison = house_comparison_factory.get_house_comparison()
+
+        natal_label = self._translate("Natal", "Natal")
+        return_label_text = self._translate("Return", "Return")
+        point_column_label = self._translate("point", "Point")
+
+        house_comparison_svg = ""
+
+        if d.show_house_position_comparison:
+            first_grid = draw_house_comparison_grid(
+                house_comparison,
+                celestial_point_language=d._language_model.celestial_points,
+                active_points=d.active_points,
+                points_owner_subject_number=1,
+                house_position_comparison_label=self._translate(
+                    "house_position_comparison", "House Position Comparison"
+                ),
+                return_point_label=f"{natal_label} {point_column_label}",
+                return_label=natal_label,
+                radix_label=return_label_text,
+                x_position=d._HOUSE_COMPARISON_GRID_X_FIRST,
+                y_position=0,
+            )
+
+            second_grid = draw_house_comparison_grid(
+                house_comparison,
+                celestial_point_language=d._language_model.celestial_points,
+                active_points=d.active_points,
+                points_owner_subject_number=2,
+                house_position_comparison_label="",
+                return_point_label=point_column_label,
+                return_label=return_label_text,
+                radix_label=natal_label,
+                x_position=d._HOUSE_COMPARISON_GRID_X_SECOND,
+                y_position=0,
+            )
+
+            house_comparison_svg = first_grid + second_grid
+
+        if d.show_cusp_position_comparison:
+            if d.show_house_position_comparison:
+                first_columns = [f"{natal_label} {point_column_label}", natal_label, return_label_text]
+                second_columns = [f"{return_label_text} {point_column_label}", return_label_text, natal_label]
+
+                first_grid_width = d._estimate_house_comparison_grid_width(
+                    column_labels=first_columns,
+                    include_radix_column=True,
+                    include_title=True,
+                )
+                second_grid_width = d._estimate_house_comparison_grid_width(
+                    column_labels=second_columns,
+                    include_radix_column=True,
+                    include_title=False,
+                )
+
+                max_right = max(1000 + first_grid_width, 1190 + second_grid_width)
+                cusp_x = int(max_right + 50.0)
+                first_cusp_x = cusp_x
+                second_cusp_x = cusp_x + 160
+            else:
+                first_cusp_x = 1090
+                second_cusp_x = 1290
+
+            first_cusp = draw_cusp_comparison_grid(
+                house_comparison,
+                celestial_point_language=d._language_model.celestial_points,
+                cusps_owner_subject_number=1,
+                cusp_position_comparison_label=self._translate("cusp_position_comparison", "Cusp Position Comparison"),
+                owner_cusp_label=f"{natal_label} " + self._translate("cusp", "Cusp"),
+                projected_house_label=self._translate("Return", "Return") + " " + self._translate("house", "House"),
+                x_position=first_cusp_x,
+                y_position=0,
+            )
+
+            second_cusp = draw_cusp_comparison_grid(
+                house_comparison,
+                celestial_point_language=d._language_model.celestial_points,
+                cusps_owner_subject_number=2,
+                cusp_position_comparison_label="",
+                owner_cusp_label=self._translate("return_cusp", "Return Cusp"),
+                projected_house_label=f"{natal_label} " + self._translate("house", "House"),
+                x_position=second_cusp_x,
+                y_position=0,
+            )
+
+            house_comparison_svg += first_cusp + second_cusp
+
+        template_dict["makeHouseComparisonGrid"] = house_comparison_svg
+
+
+# =============================================================================
+# RENDERER REGISTRY
+# =============================================================================
+# Maps chart type names to their corresponding renderer classes.
+# =============================================================================
+
+CHART_RENDERERS: dict[str, type[BaseChartRenderer]] = {
+    "Natal": NatalChartRenderer,
+    "Composite": CompositeChartRenderer,
+    "Transit": TransitChartRenderer,
+    "Synastry": SynastryChartRenderer,
+    "SingleReturnChart": SingleReturnChartRenderer,
+    "DualReturnChart": DualReturnChartRenderer,
+}
+
+
+def get_chart_renderer(chart_type: str, drawer: "ChartDrawer") -> BaseChartRenderer:
+    """Factory function to create the appropriate renderer for a chart type.
+
+    Args:
+        chart_type: The type of chart (e.g., "Natal", "Transit").
+        drawer: The ChartDrawer instance to render for.
+
+    Returns:
+        An instance of the appropriate renderer class.
+
+    Raises:
+        ValueError: If chart_type is not recognized.
+    """
+    renderer_class = CHART_RENDERERS.get(chart_type)
+    if renderer_class is None:
+        raise ValueError(f"Unknown chart type: {chart_type}")
+    return renderer_class(drawer)
+
+
 class ChartDrawer:
     """
     ChartDrawer generates astrological chart visualizations as SVG files from pre-computed chart data.
@@ -2500,906 +3558,19 @@ class ChartDrawer:
         template_dict["fixed_string"] = f"{self._translate('fixed', 'Fixed')} {fixed_percentage}%"
         template_dict["mutable_string"] = f"{self._translate('mutable', 'Mutable')} {mutable_percentage}%"
 
-        # Get houses list for main subject
-        first_subject_houses_list = get_houses_list(self.first_obj)
-
         # Chart title
         template_dict["stringTitle"] = self._get_chart_title(custom_title_override=custom_title)
+
+        # Set viewbox dynamically for all chart types
+        template_dict["viewbox"] = self._dynamic_viewbox()
 
         # ------------------------------- #
         #  CHART TYPE SPECIFIC SETTINGS   #
         # ------------------------------- #
-
-        if self.chart_type == "Natal":
-            # ===== NATAL CHART =====
-            # Single-wheel chart showing birth positions with triangular aspect grid.
-
-            template_dict["viewbox"] = self._dynamic_viewbox()
-
-            # Circles and rings
-            self._setup_radix_circles(template_dict)
-
-            # Aspects
-            self._setup_single_chart_aspects(template_dict)
-
-            # Top left section - Location and birth info
-            latitude_string = convert_latitude_coordinate_to_string(
-                self.geolat,
-                self._translate("north", "North"),
-                self._translate("south", "South"),
-            )
-            longitude_string = convert_longitude_coordinate_to_string(
-                self.geolon,
-                self._translate("east", "East"),
-                self._translate("west", "West"),
-            )
-            template_dict["top_left_0"] = f"{self._translate('location', 'Location')}:"
-            template_dict["top_left_1"] = f"{self.first_obj.city}, {self.first_obj.nation}"
-            template_dict["top_left_2"] = f"{self._translate('latitude', 'Latitude')}: {latitude_string}"
-            template_dict["top_left_3"] = f"{self._translate('longitude', 'Longitude')}: {longitude_string}"
-            template_dict["top_left_4"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime)  # type: ignore
-            localized_weekday = self._translate(
-                f"weekdays.{self.first_obj.day_of_week}",
-                self.first_obj.day_of_week,  # type: ignore[arg-type]
-            )
-            template_dict["top_left_5"] = f"{self._translate('day_of_week', 'Day of Week')}: {localized_weekday}"
-
-            # Bottom left section - Technical info
-            template_dict["bottom_left_0"] = self._get_zodiac_info()
-            template_dict["bottom_left_1"] = self._get_domification_string()
-            if self.first_obj.lunar_phase is not None:
-                template_dict["bottom_left_2"] = (
-                    f"{self._translate('lunation_day', 'Lunation Day')}: "
-                    f"{self.first_obj.lunar_phase.get('moon_phase', '')}"
-                )
-                template_dict["bottom_left_3"] = (
-                    f"{self._translate('lunar_phase', 'Lunar Phase')}: "
-                    f"{self._translate(self.first_obj.lunar_phase.moon_phase_name.lower().replace(' ', '_'), self.first_obj.lunar_phase.moon_phase_name)}"
-                )
-            else:
-                template_dict["bottom_left_2"] = ""
-                template_dict["bottom_left_3"] = ""
-            template_dict["bottom_left_4"] = self._get_perspective_string(self.first_obj)
-
-            # Lunar phase visualization
-            self._setup_lunar_phase(template_dict, self.first_obj, self.geolat)
-
-            # Grids and drawings
-            self._setup_main_houses_grid(template_dict, first_subject_houses_list)
-            template_dict["makeSecondaryHousesGrid"] = ""
-            self._setup_single_wheel_houses(template_dict, first_subject_houses_list)
-            self._setup_single_wheel_planets(template_dict)
-            self._setup_main_planet_grid(
-                template_dict,
-                self.first_obj.name,
-                self._translate("planets_and_house", "Points for"),
-            )
-            template_dict["makeSecondaryPlanetGrid"] = ""
-            template_dict["makeHouseComparisonGrid"] = ""
-
-        elif self.chart_type == "Composite":
-            # ===== COMPOSITE CHART =====
-            # Single-wheel chart showing midpoints between two subjects.
-
-            # Viewbox and circles (same as Natal)
-            template_dict["viewbox"] = self._dynamic_viewbox()
-            self._setup_radix_circles(template_dict)
-            self._setup_single_chart_aspects(template_dict)
-
-            # Top left section - First subject info
-            first_lat = convert_latitude_coordinate_to_string(
-                self.first_obj.first_subject.lat,  # type: ignore
-                self._translate("north_letter", "N"),
-                self._translate("south_letter", "S"),
-            )
-            first_lng = convert_longitude_coordinate_to_string(
-                self.first_obj.first_subject.lng,  # type: ignore
-                self._translate("east_letter", "E"),
-                self._translate("west_letter", "W"),
-            )
-            # Second subject coordinates
-            second_lat = convert_latitude_coordinate_to_string(
-                self.first_obj.second_subject.lat,  # type: ignore
-                self._translate("north_letter", "N"),
-                self._translate("south_letter", "S"),
-            )
-            second_lng = convert_longitude_coordinate_to_string(
-                self.first_obj.second_subject.lng,  # type: ignore
-                self._translate("east_letter", "E"),
-                self._translate("west_letter", "W"),
-            )
-
-            template_dict["top_left_0"] = f"{self.first_obj.first_subject.name}"  # type: ignore
-            template_dict["top_left_1"] = (
-                f"{datetime.fromisoformat(self.first_obj.first_subject.iso_formatted_local_datetime).strftime('%Y-%m-%d %H:%M')}"  # type: ignore
-            )
-            template_dict["top_left_2"] = f"{first_lat} {first_lng}"
-            template_dict["top_left_3"] = self.first_obj.second_subject.name  # type: ignore
-            template_dict["top_left_4"] = (
-                f"{datetime.fromisoformat(self.first_obj.second_subject.iso_formatted_local_datetime).strftime('%Y-%m-%d %H:%M')}"  # type: ignore
-            )
-            template_dict["top_left_5"] = f"{second_lat} / {second_lng}"
-
-            # Bottom left section - Chart metadata
-            template_dict["bottom_left_0"] = self._get_zodiac_info()
-            template_dict["bottom_left_1"] = (
-                f"{self._translate('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self._translate('houses', 'Houses')}"
-            )
-            template_dict["bottom_left_2"] = (
-                f"{self._translate('perspective_type', 'Perspective')}: {self.first_obj.first_subject.perspective_type}"  # type: ignore
-            )
-            template_dict["bottom_left_3"] = (
-                f"{self._translate('composite_chart', 'Composite Chart')} - {self._translate('midpoints', 'Midpoints')}"
-            )
-            template_dict["bottom_left_4"] = ""
-
-            # Lunar phase
-            self._setup_lunar_phase(template_dict, self.first_obj, self.geolat)
-
-            # Grids and drawings
-            self._setup_main_houses_grid(template_dict, first_subject_houses_list)
-            template_dict["makeSecondaryHousesGrid"] = ""
-            self._setup_single_wheel_houses(template_dict, first_subject_houses_list)
-            self._setup_single_wheel_planets(template_dict)
-
-            # Planet grid with combined subject name
-            subject_name = (
-                f"{self.first_obj.first_subject.name}"  # type: ignore[union-attr]
-                f" {self._translate('and_word', '&')} "
-                f"{self.first_obj.second_subject.name}"  # type: ignore[union-attr]
-            )
-            self._setup_main_planet_grid(
-                template_dict,
-                subject_name,
-                self._translate("planets_and_house", "Points for"),
-            )
-            template_dict["makeSecondaryPlanetGrid"] = ""
-            template_dict["makeHouseComparisonGrid"] = ""
-
-        elif self.chart_type == "Transit":
-            # ===== TRANSIT CHART =====
-            # Dual-wheel chart showing natal (inner) vs transit (outer) positions.
-
-            # Transit has no Element/Quality Percentages
-            self._clear_element_quality_strings(template_dict)
-
-            # Set viewbox dynamically
-            template_dict["viewbox"] = self._dynamic_viewbox()
-
-            # Get houses list for secondary subject
-            second_subject_houses_list = get_houses_list(self.second_obj)  # type: ignore
-
-            # Rings and circles (transit style)
-            self._setup_transit_circles(template_dict)
-
-            # Aspects
-            if self.double_chart_aspect_grid_type == "list":
-                title = f"{self.first_obj.name} - {self._translate('transit_aspects', 'Transit Aspects')}"
-                template_dict["makeAspectGrid"] = ""
-                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
-                    title,
-                    self.aspects_list,
-                    self.planets_settings,
-                    self.aspects_settings,
-                    chart_height=self.height,
-                )  # type: ignore[arg-type]
-            else:
-                template_dict["makeAspectGrid"] = ""
-                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
-                    self.chart_colors_settings["paper_0"],
-                    self.available_planets_setting,
-                    self.aspects_list,
-                    600,
-                    520,
-                )
-
-            template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - 160)
-
-            # Top left section (clear separation of Natal vs Transit details)
-            natal_latitude_string = (
-                convert_latitude_coordinate_to_string(
-                    self.first_obj.lat,  # type: ignore[arg-type]
-                    self._translate("north_letter", "N"),
-                    self._translate("south_letter", "S"),
-                )
-                if getattr(self.first_obj, "lat", None) is not None
-                else ""
-            )
-            natal_longitude_string = (
-                convert_longitude_coordinate_to_string(
-                    self.first_obj.lng,  # type: ignore[arg-type]
-                    self._translate("east_letter", "E"),
-                    self._translate("west_letter", "W"),
-                )
-                if getattr(self.first_obj, "lng", None) is not None
-                else ""
-            )
-
-            transit_latitude_string = ""
-            transit_longitude_string = ""
-            if self.second_obj is not None:
-                if getattr(self.second_obj, "lat", None) is not None:
-                    transit_latitude_string = convert_latitude_coordinate_to_string(
-                        self.second_obj.lat,  # type: ignore[arg-type]
-                        self._translate("north_letter", "N"),
-                        self._translate("south_letter", "S"),
-                    )
-                if getattr(self.second_obj, "lng", None) is not None:
-                    transit_longitude_string = convert_longitude_coordinate_to_string(
-                        self.second_obj.lng,  # type: ignore[arg-type]
-                        self._translate("east_letter", "E"),
-                        self._translate("west_letter", "W"),
-                    )
-
-            natal_dt = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime)  # type: ignore[arg-type]
-            natal_place = f"{format_location_string(self.first_obj.city)}, {self.first_obj.nation}"  # type: ignore[arg-type]
-            transit_dt = (
-                format_datetime_with_timezone(self.second_obj.iso_formatted_local_datetime)  # type: ignore[arg-type]
-                if self.second_obj is not None
-                and getattr(self.second_obj, "iso_formatted_local_datetime", None) is not None
-                else ""
-            )
-            transit_place = (
-                f"{format_location_string(self.second_obj.city)}, {self.second_obj.nation}"  # type: ignore[arg-type]
-                if self.second_obj is not None
-                else ""
-            )
-
-            template_dict["top_left_0"] = f"{self._translate('chart_info_natal_label', 'Natal')}: {natal_dt}"
-            template_dict["top_left_1"] = natal_place
-            template_dict["top_left_2"] = f"{natal_latitude_string}  ·  {natal_longitude_string}"
-            template_dict["top_left_3"] = f"{self._translate('chart_info_transit_label', 'Transit')}: {transit_dt}"
-            template_dict["top_left_4"] = transit_place
-            template_dict["top_left_5"] = f"{transit_latitude_string}  ·  {transit_longitude_string}"
-
-            # Bottom left section
-            template_dict["bottom_left_0"] = self._get_zodiac_info()
-            template_dict["bottom_left_1"] = (
-                f"{self._translate('domification', 'Domification')}: {self._translate('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)}"
-            )
-
-            # Lunar phase information from second object (Transit) (optional)
-            if (
-                self.second_obj is not None
-                and hasattr(self.second_obj, "lunar_phase")
-                and self.second_obj.lunar_phase is not None
-            ):
-                template_dict["bottom_left_3"] = (
-                    f"{self._translate('Transit', 'Transit')} "
-                    f"{self._translate('lunation_day', 'Lunation Day')}: "
-                    f"{self.second_obj.lunar_phase.get('moon_phase', '')}"
-                )  # type: ignore
-                template_dict["bottom_left_4"] = (
-                    f"{self._translate('Transit', 'Transit')} "
-                    f"{self._translate('lunar_phase', 'Lunar Phase')}: "
-                    f"{self._translate(self.second_obj.lunar_phase.moon_phase_name.lower().replace(' ', '_'), self.second_obj.lunar_phase.moon_phase_name)}"
-                )
-            else:
-                template_dict["bottom_left_3"] = ""
-                template_dict["bottom_left_4"] = ""
-
-            template_dict["bottom_left_2"] = (
-                f"{self._translate('perspective_type', 'Perspective')}: {self._translate(self.second_obj.perspective_type.lower().replace(' ', '_'), self.second_obj.perspective_type)}"  # type: ignore
-            )
-
-            # Moon phase section calculations - use transit subject data only
-            if self.second_obj is not None and getattr(self.second_obj, "lunar_phase", None):
-                template_dict["makeLunarPhase"] = makeLunarPhase(
-                    self.second_obj.lunar_phase["degrees_between_s_m"],  # type: ignore[index]
-                    self.geolat,
-                )
-            else:
-                template_dict["makeLunarPhase"] = ""
-
-            # Houses and planet drawing
-            self._setup_main_houses_grid(template_dict, first_subject_houses_list)
-            # Transit charts show only the natal houses grid, not the transit houses grid
-            template_dict["makeSecondaryHousesGrid"] = ""
-            self._setup_dual_wheel_houses(template_dict, first_subject_houses_list, second_subject_houses_list)
-            self._setup_dual_wheel_planets(template_dict)
-
-            # Planet grids
-            first_name_label = self._truncate_name(self.first_obj.name)
-            transit_label = self._translate("transit", "Transit")
-            first_return_grid_title = f"{first_name_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
-            second_return_grid_title = f"{transit_label} ({self._translate('outer_wheel', 'Outer Wheel')})"
-            template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
-                planets_and_houses_grid_title="",
-                subject_name=first_return_grid_title,
-                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-                chart_type=self.chart_type,
-                text_color=self.chart_colors_settings["paper_0"],
-                celestial_point_language=self._language_model.celestial_points,
-            )
-
-            template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
-                planets_and_houses_grid_title="",
-                second_subject_name=second_return_grid_title,
-                second_subject_available_kerykeion_celestial_points=self.second_subject_celestial_points,
-                chart_type=self.chart_type,
-                text_color=self.chart_colors_settings["paper_0"],
-                celestial_point_language=self._language_model.celestial_points,
-            )
-
-            # House comparison grid
-            if self.show_house_position_comparison or self.show_cusp_position_comparison:
-                house_comparison_factory = HouseComparisonFactory(
-                    first_subject=self.first_obj,  # type: ignore[arg-type]
-                    second_subject=self.second_obj,  # type: ignore[arg-type]
-                    active_points=self.active_points,
-                )
-                house_comparison = house_comparison_factory.get_house_comparison()
-
-                house_comparison_svg = ""
-
-                if self.show_house_position_comparison:
-                    house_comparison_svg = draw_single_house_comparison_grid(
-                        house_comparison,
-                        celestial_point_language=self._language_model.celestial_points,
-                        active_points=self.active_points,
-                        points_owner_subject_number=2,  # The second subject is the Transit
-                        house_position_comparison_label=self._translate(
-                            "house_position_comparison", "House Position Comparison"
-                        ),
-                        return_point_label=self._translate("transit_point", "Transit Point"),
-                        natal_house_label=self._translate("house_position", "Natal House"),
-                        x_position=self._TRANSIT_HOUSE_COMPARISON_X,
-                    )
-
-                if self.show_cusp_position_comparison:
-                    # When only the cusp comparison is visible, reuse the house grid slot
-                    # so the layout remains compact. When both are visible, place the cusp
-                    # table to the right of the house comparison grid.
-                    if self.show_house_position_comparison:
-                        # Classic dual-grid layout: house at x=980, cusp at a fixed offset.
-                        # Fixed position alignment: 980 (start) + ~200 (table width + gap) = 1180
-                        cusp_x_position = 1180
-                    else:
-                        # Cusp-only layout: occupy the house comparison slot directly.
-                        cusp_x_position = 980
-
-                    cusp_grid = draw_single_cusp_comparison_grid(
-                        house_comparison,
-                        celestial_point_language=self._language_model.celestial_points,
-                        cusps_owner_subject_number=2,  # Transit cusps in natal houses
-                        cusp_position_comparison_label=self._translate(
-                            "cusp_position_comparison", "Cusp Position Comparison"
-                        ),
-                        owner_cusp_label=self._translate("transit_cusp", "Transit Cusp"),
-                        projected_house_label=self._translate("natal_house", "Natal House"),
-                        x_position=int(cusp_x_position),
-                        y_position=0,
-                    )
-                    house_comparison_svg += cusp_grid
-
-                template_dict["makeHouseComparisonGrid"] = house_comparison_svg
-            else:
-                template_dict["makeHouseComparisonGrid"] = ""
-
-        elif self.chart_type == "Synastry":
-            # ===== SYNASTRY CHART =====
-            # Dual-wheel chart comparing two birth charts.
-
-            # Set viewbox dynamically
-            template_dict["viewbox"] = self._dynamic_viewbox()
-
-            # Get houses list for secondary subject
-            second_subject_houses_list = get_houses_list(self.second_obj)  # type: ignore
-
-            # Rings and circles (transit style for dual-wheel)
-            self._setup_transit_circles(template_dict)
-
-            # Aspects
-            if self.double_chart_aspect_grid_type == "list":
-                template_dict["makeAspectGrid"] = ""
-                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
-                    f"{self.first_obj.name} - {self.second_obj.name} {self._translate('synastry_aspects', 'Synastry Aspects')}",  # type: ignore[union-attr]
-                    self.aspects_list,
-                    self.planets_settings,  # type: ignore[arg-type]
-                    self.aspects_settings,  # type: ignore[arg-type]
-                    chart_height=self.height,
-                )
-            else:
-                template_dict["makeAspectGrid"] = ""
-                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
-                    self.chart_colors_settings["paper_0"],
-                    self.available_planets_setting,
-                    self.aspects_list,
-                    550,
-                    450,
-                )
-
-            template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - 160)
-
-            # Top left section
-            template_dict["top_left_0"] = f"{self.first_obj.name}:"
-            template_dict["top_left_1"] = f"{self.first_obj.city}, {self.first_obj.nation}"  # type: ignore
-            template_dict["top_left_2"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime)  # type: ignore
-            template_dict["top_left_3"] = f"{self.second_obj.name}: "  # type: ignore
-            template_dict["top_left_4"] = f"{self.second_obj.city}, {self.second_obj.nation}"  # type: ignore
-            template_dict["top_left_5"] = format_datetime_with_timezone(self.second_obj.iso_formatted_local_datetime)  # type: ignore
-
-            # Bottom left section
-            template_dict["bottom_left_0"] = ""
-            # FIXME!
-            template_dict["bottom_left_1"] = ""  # f"Compatibility Score: {16}/44" # type: ignore
-            template_dict["bottom_left_2"] = self._get_zodiac_info()
-            template_dict["bottom_left_3"] = (
-                f"{self._translate('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self._translate('houses', 'Houses')}"
-            )
-            template_dict["bottom_left_4"] = (
-                f"{self._translate('perspective_type', 'Perspective')}: {self._translate(self.first_obj.perspective_type.lower().replace(' ', '_'), self.first_obj.perspective_type)}"
-            )
-
-            # Moon phase section calculations
-            template_dict["makeLunarPhase"] = ""
-
-            # Houses and planet drawing
-            self._setup_main_houses_grid(template_dict, first_subject_houses_list)
-            self._setup_secondary_houses_grid(template_dict, second_subject_houses_list)
-            self._setup_dual_wheel_houses(template_dict, first_subject_houses_list, second_subject_houses_list)
-            self._setup_dual_wheel_planets(template_dict)
-
-            # Planet grid
-            first_name_label = self._truncate_name(self.first_obj.name, 18, "…")  # type: ignore[union-attr]
-            second_name_label = self._truncate_name(self.second_obj.name, 18, "…")  # type: ignore[union-attr]
-            template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
-                planets_and_houses_grid_title="",
-                subject_name=f"{first_name_label} ({self._translate('inner_wheel', 'Inner Wheel')})",
-                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-                chart_type=self.chart_type,
-                text_color=self.chart_colors_settings["paper_0"],
-                celestial_point_language=self._language_model.celestial_points,
-            )
-            template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
-                planets_and_houses_grid_title="",
-                second_subject_name=f"{second_name_label} ({self._translate('outer_wheel', 'Outer Wheel')})",  # type: ignore
-                second_subject_available_kerykeion_celestial_points=self.second_subject_celestial_points,
-                chart_type=self.chart_type,
-                text_color=self.chart_colors_settings["paper_0"],
-                celestial_point_language=self._language_model.celestial_points,
-            )
-            if self.show_house_position_comparison or self.show_cusp_position_comparison:
-                house_comparison_factory = HouseComparisonFactory(
-                    first_subject=self.first_obj,  # type: ignore[arg-type]
-                    second_subject=self.second_obj,  # type: ignore[arg-type]
-                    active_points=self.active_points,
-                )
-                house_comparison = house_comparison_factory.get_house_comparison()
-
-                first_subject_label = self._truncate_name(self.first_obj.name, 8, "…", True)  # type: ignore[union-attr]
-                second_subject_label = self._truncate_name(self.second_obj.name, 8, "…", True)  # type: ignore[union-attr]
-                point_column_label = self._translate("point", "Point")
-                comparison_label = self._translate("house_position_comparison", "House Position Comparison")
-
-                house_comparison_svg = ""
-
-                if self.show_house_position_comparison:
-                    first_subject_grid = draw_house_comparison_grid(
-                        house_comparison,
-                        celestial_point_language=self._language_model.celestial_points,
-                        active_points=self.active_points,
-                        points_owner_subject_number=1,
-                        house_position_comparison_label=comparison_label,
-                        return_point_label=first_subject_label + " " + point_column_label,
-                        return_label=first_subject_label,
-                        radix_label=second_subject_label,
-                        x_position=self._HOUSE_COMPARISON_GRID_X_FIRST,
-                        y_position=0,
-                    )
-
-                    second_subject_grid = draw_house_comparison_grid(
-                        house_comparison,
-                        celestial_point_language=self._language_model.celestial_points,
-                        active_points=self.active_points,
-                        points_owner_subject_number=2,
-                        house_position_comparison_label="",
-                        return_point_label=second_subject_label + " " + point_column_label,
-                        return_label=second_subject_label,
-                        radix_label=first_subject_label,
-                        x_position=self._HOUSE_COMPARISON_GRID_X_SECOND,
-                        y_position=0,
-                    )
-
-                    house_comparison_svg = first_subject_grid + second_subject_grid
-
-                if self.show_cusp_position_comparison:
-                    if self.show_house_position_comparison:
-                        # Estimate house comparison grid widths to place cusp comparison at the far right
-                        first_columns = [
-                            f"{first_subject_label} {point_column_label}",
-                            first_subject_label,
-                            second_subject_label,
-                        ]
-                        second_columns = [
-                            f"{second_subject_label} {point_column_label}",
-                            second_subject_label,
-                            first_subject_label,
-                        ]
-
-                        first_grid_width = self._estimate_house_comparison_grid_width(
-                            column_labels=first_columns,
-                            include_radix_column=True,
-                            include_title=True,
-                        )
-                        second_grid_width = self._estimate_house_comparison_grid_width(
-                            column_labels=second_columns,
-                            include_radix_column=True,
-                            include_title=False,
-                        )
-
-                        first_house_comparison_grid_right = 1000 + first_grid_width
-                        second_house_comparison_grid_right = 1190 + second_grid_width
-                        max_house_comparison_right = max(
-                            first_house_comparison_grid_right,
-                            second_house_comparison_grid_right,
-                        )
-                        cusp_x_position = int(max_house_comparison_right + 50.0)
-
-                        # Place cusp comparison grids for Synastry side by side on the far right,
-                        # keeping them as close together as possible and slightly shifted left.
-                        cusp_grid_width = 160.0
-                        inter_cusp_gap = 0.0
-                        first_cusp_x = int(cusp_x_position)
-                        second_cusp_x = int(cusp_x_position + cusp_grid_width + inter_cusp_gap)
-                    else:
-                        # Cusp-only layout: reuse the house comparison slots at x=1090 and x=1290.
-                        first_cusp_x = 1090
-                        second_cusp_x = 1290
-
-                    first_cusp_grid = draw_cusp_comparison_grid(
-                        house_comparison,
-                        celestial_point_language=self._language_model.celestial_points,
-                        cusps_owner_subject_number=1,
-                        cusp_position_comparison_label=self._translate(
-                            "cusp_position_comparison", "Cusp Position Comparison"
-                        ),
-                        owner_cusp_label=first_subject_label + " " + self._translate("cusp", "Cusp"),
-                        projected_house_label=second_subject_label + " " + self._translate("house", "House"),
-                        x_position=first_cusp_x,
-                        y_position=0,
-                    )
-
-                    second_cusp_grid = draw_cusp_comparison_grid(
-                        house_comparison,
-                        celestial_point_language=self._language_model.celestial_points,
-                        cusps_owner_subject_number=2,
-                        cusp_position_comparison_label="",
-                        owner_cusp_label=second_subject_label + " " + self._translate("cusp", "Cusp"),
-                        projected_house_label=first_subject_label + " " + self._translate("house", "House"),
-                        x_position=second_cusp_x,
-                        y_position=0,
-                    )
-
-                    house_comparison_svg += first_cusp_grid + second_cusp_grid
-
-                template_dict["makeHouseComparisonGrid"] = house_comparison_svg
-            else:
-                template_dict["makeHouseComparisonGrid"] = ""
-
-        elif self.chart_type == "DualReturnChart":
-            # ===== DUAL RETURN CHART =====
-            # Dual-wheel chart showing natal (inner) vs return (outer) positions.
-
-            # Set viewbox dynamically
-            template_dict["viewbox"] = self._dynamic_viewbox()
-
-            # Get houses list for secondary subject
-            second_subject_houses_list = get_houses_list(self.second_obj)  # type: ignore
-
-            # Rings and circles (transit style for dual-wheel)
-            self._setup_transit_circles(template_dict)
-
-            # Aspects
-            if self.double_chart_aspect_grid_type == "list":
-                title = self._translate("return_aspects", "Natal to Return Aspects")
-                template_dict["makeAspectGrid"] = ""
-                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
-                    title,
-                    self.aspects_list,
-                    self.planets_settings,
-                    self.aspects_settings,
-                    max_columns=7,
-                    chart_height=self.height,
-                )  # type: ignore[arg-type]
-            else:
-                template_dict["makeAspectGrid"] = ""
-                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
-                    self.chart_colors_settings["paper_0"],
-                    self.available_planets_setting,
-                    self.aspects_list,
-                    550,
-                    450,
-                )
-
-            template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - 160)
-
-            # Top left section
-            # Subject
-            latitude_string = convert_latitude_coordinate_to_string(
-                self.first_obj.lat,  # type: ignore[arg-type]
-                self._translate("north", "North"),
-                self._translate("south", "South"),
-            )
-            longitude_string = convert_longitude_coordinate_to_string(
-                self.first_obj.lng,  # type: ignore[arg-type]
-                self._translate("east", "East"),
-                self._translate("west", "West"),
-            )
-
-            # Return
-            return_latitude_string = convert_latitude_coordinate_to_string(
-                self.second_obj.lat,  # type: ignore[union-attr, arg-type]
-                self._translate("north", "North"),
-                self._translate("south", "South"),
-            )
-            return_longitude_string = convert_longitude_coordinate_to_string(
-                self.second_obj.lng,  # type: ignore[union-attr, arg-type]
-                self._translate("east", "East"),
-                self._translate("west", "West"),
-            )
-
-            if isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar":
-                template_dict["top_left_0"] = f"{self._translate('solar_return', 'Solar Return')}:"
-            else:
-                template_dict["top_left_0"] = f"{self._translate('lunar_return', 'Lunar Return')}:"
-            template_dict["top_left_1"] = format_datetime_with_timezone(self.second_obj.iso_formatted_local_datetime)  # type: ignore
-            template_dict["top_left_2"] = f"{return_latitude_string} / {return_longitude_string}"
-            template_dict["top_left_3"] = f"{self.first_obj.name}"
-            template_dict["top_left_4"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime)  # type: ignore
-            template_dict["top_left_5"] = f"{latitude_string} / {longitude_string}"
-
-            # Bottom left section
-            template_dict["bottom_left_0"] = self._get_zodiac_info()
-            template_dict["bottom_left_1"] = (
-                f"{self._translate('domification', 'Domification')}: {self._translate('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)}"
-            )
-
-            # Lunar phase information (optional)
-            if self.first_obj.lunar_phase is not None:
-                template_dict["bottom_left_2"] = (
-                    f"{self._translate('lunation_day', 'Lunation Day')}: {self.first_obj.lunar_phase.get('moon_phase', '')}"
-                )
-                template_dict["bottom_left_3"] = (
-                    f"{self._translate('lunar_phase', 'Lunar Phase')}: {self._translate(self.first_obj.lunar_phase.moon_phase_name.lower().replace(' ', '_'), self.first_obj.lunar_phase.moon_phase_name)}"
-                )
-            else:
-                template_dict["bottom_left_2"] = ""
-                template_dict["bottom_left_3"] = ""
-
-            template_dict["bottom_left_4"] = (
-                f"{self._translate('perspective_type', 'Perspective')}: {self._translate(self.first_obj.perspective_type.lower().replace(' ', '_'), self.first_obj.perspective_type)}"
-            )
-
-            # Moon phase section calculations
-            self._setup_lunar_phase(template_dict, self.first_obj, self.geolat)
-
-            # Houses and planet drawing
-            self._setup_main_houses_grid(template_dict, first_subject_houses_list)
-            self._setup_secondary_houses_grid(template_dict, second_subject_houses_list)
-            self._setup_dual_wheel_houses(template_dict, first_subject_houses_list, second_subject_houses_list)
-            self._setup_dual_wheel_planets(template_dict)
-
-            # Planet grid
-            first_name_label = self._truncate_name(self.first_obj.name)
-            if isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar":
-                first_return_grid_title = f"{first_name_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
-                second_return_grid_title = f"{self._translate('solar_return', 'Solar Return')} ({self._translate('outer_wheel', 'Outer Wheel')})"
-            else:
-                first_return_grid_title = f"{first_name_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
-                second_return_grid_title = f"{self._translate('lunar_return', 'Lunar Return')} ({self._translate('outer_wheel', 'Outer Wheel')})"
-            template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
-                planets_and_houses_grid_title="",
-                subject_name=first_return_grid_title,
-                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-                chart_type=self.chart_type,
-                text_color=self.chart_colors_settings["paper_0"],
-                celestial_point_language=self._language_model.celestial_points,
-            )
-            template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
-                planets_and_houses_grid_title="",
-                second_subject_name=second_return_grid_title,
-                second_subject_available_kerykeion_celestial_points=self.second_subject_celestial_points,
-                chart_type=self.chart_type,
-                text_color=self.chart_colors_settings["paper_0"],
-                celestial_point_language=self._language_model.celestial_points,
-            )
-
-            if self.show_house_position_comparison or self.show_cusp_position_comparison:
-                house_comparison_factory = HouseComparisonFactory(
-                    first_subject=self.first_obj,  # type: ignore[arg-type]
-                    second_subject=self.second_obj,  # type: ignore[arg-type]
-                    active_points=self.active_points,
-                )
-                house_comparison = house_comparison_factory.get_house_comparison()
-
-                # Use generic, localized labels (Natal vs Return) so the DualReturn
-                # comparison layout mirrors the Synastry layout.
-                natal_label = self._translate("Natal", "Natal")
-                if isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar":
-                    return_label_text = self._translate("Return", "Return")
-                else:
-                    return_label_text = self._translate("Return", "Return")
-                point_column_label = self._translate("point", "Point")
-
-                house_comparison_svg = ""
-
-                if self.show_house_position_comparison:
-                    # Two house comparison grids side by side, like Synastry.
-                    first_house_grid = draw_house_comparison_grid(
-                        house_comparison,
-                        celestial_point_language=self._language_model.celestial_points,
-                        active_points=self.active_points,
-                        points_owner_subject_number=1,
-                        house_position_comparison_label=self._translate(
-                            "house_position_comparison", "House Position Comparison"
-                        ),
-                        return_point_label=f"{natal_label} {point_column_label}",
-                        return_label=natal_label,
-                        radix_label=return_label_text,
-                        x_position=self._HOUSE_COMPARISON_GRID_X_FIRST,
-                        y_position=0,
-                    )
-
-                    second_house_grid = draw_house_comparison_grid(
-                        house_comparison,
-                        celestial_point_language=self._language_model.celestial_points,
-                        active_points=self.active_points,
-                        points_owner_subject_number=2,
-                        house_position_comparison_label="",
-                        return_point_label=point_column_label,
-                        return_label=return_label_text,
-                        radix_label=natal_label,
-                        x_position=self._HOUSE_COMPARISON_GRID_X_SECOND,
-                        y_position=0,
-                    )
-
-                    house_comparison_svg = first_house_grid + second_house_grid
-
-                if self.show_cusp_position_comparison:
-                    if self.show_house_position_comparison:
-                        # Match the Synastry spacing: estimate widths to place cusp
-                        # comparison grids immediately to the right of both house grids.
-                        first_columns = [
-                            f"{natal_label} {point_column_label}",
-                            natal_label,
-                            return_label_text,
-                        ]
-                        second_columns = [
-                            f"{return_label_text} {point_column_label}",
-                            return_label_text,
-                            natal_label,
-                        ]
-
-                        first_grid_width = self._estimate_house_comparison_grid_width(
-                            column_labels=first_columns,
-                            include_radix_column=True,
-                            include_title=True,
-                        )
-                        second_grid_width = self._estimate_house_comparison_grid_width(
-                            column_labels=second_columns,
-                            include_radix_column=True,
-                            include_title=False,
-                        )
-
-                        first_house_comparison_grid_right = 1000 + first_grid_width
-                        second_house_comparison_grid_right = 1190 + second_grid_width
-                        max_house_comparison_right = max(
-                            first_house_comparison_grid_right,
-                            second_house_comparison_grid_right,
-                        )
-                        cusp_x_position = int(max_house_comparison_right + 50.0)
-
-                        cusp_grid_width = 160.0
-                        inter_cusp_gap = 0.0
-                        first_cusp_x = int(cusp_x_position)
-                        second_cusp_x = int(cusp_x_position + cusp_grid_width + inter_cusp_gap)
-                    else:
-                        # Cusp-only layout: reuse the house comparison slots at x=1090 and x=1290.
-                        first_cusp_x = 1090
-                        second_cusp_x = 1290
-
-                    first_cusp_grid = draw_cusp_comparison_grid(
-                        house_comparison,
-                        celestial_point_language=self._language_model.celestial_points,
-                        cusps_owner_subject_number=1,
-                        cusp_position_comparison_label=self._translate(
-                            "cusp_position_comparison", "Cusp Position Comparison"
-                        ),
-                        owner_cusp_label=f"{natal_label} " + self._translate("cusp", "Cusp"),
-                        projected_house_label=self._translate("Return", "Return")
-                        + " "
-                        + self._translate("house", "House"),
-                        x_position=first_cusp_x,
-                        y_position=0,
-                    )
-
-                    second_cusp_grid = draw_cusp_comparison_grid(
-                        house_comparison,
-                        celestial_point_language=self._language_model.celestial_points,
-                        cusps_owner_subject_number=2,
-                        cusp_position_comparison_label="",
-                        owner_cusp_label=self._translate("return_cusp", "Return Cusp"),
-                        projected_house_label=f"{natal_label} " + self._translate("house", "House"),
-                        x_position=second_cusp_x,
-                        y_position=0,
-                    )
-
-                    house_comparison_svg += first_cusp_grid + second_cusp_grid
-
-                template_dict["makeHouseComparisonGrid"] = house_comparison_svg
-            else:
-                template_dict["makeHouseComparisonGrid"] = ""
-
-        elif self.chart_type == "SingleReturnChart":
-            # ===== SINGLE RETURN CHART =====
-            # Single-wheel chart for Solar/Lunar Return (without natal comparison).
-
-            # Viewbox and circles (same as Natal/Composite)
-            template_dict["viewbox"] = self._dynamic_viewbox()
-            self._setup_radix_circles(template_dict)
-            self._setup_single_chart_aspects(template_dict)
-
-            # Top left section - Return info
-            latitude_string = convert_latitude_coordinate_to_string(
-                self.geolat, self._translate("north", "North"), self._translate("south", "South")
-            )
-            longitude_string = convert_longitude_coordinate_to_string(
-                self.geolon, self._translate("east", "East"), self._translate("west", "West")
-            )
-
-            template_dict["top_left_0"] = f"{self._translate('info', 'Info')}:"
-            template_dict["top_left_1"] = format_datetime_with_timezone(self.first_obj.iso_formatted_local_datetime)  # type: ignore
-            template_dict["top_left_2"] = f"{self.first_obj.city}, {self.first_obj.nation}"
-            template_dict["top_left_3"] = f"{self._translate('latitude', 'Latitude')}: {latitude_string}"
-            template_dict["top_left_4"] = f"{self._translate('longitude', 'Longitude')}: {longitude_string}"
-
-            if isinstance(self.first_obj, PlanetReturnModel) and self.first_obj.return_type == "Solar":
-                template_dict["top_left_5"] = (
-                    f"{self._translate('type', 'Type')}: {self._translate('solar_return', 'Solar Return')}"
-                )
-            else:
-                template_dict["top_left_5"] = (
-                    f"{self._translate('type', 'Type')}: {self._translate('lunar_return', 'Lunar Return')}"
-                )
-
-            # Bottom left section - Chart metadata
-            template_dict["bottom_left_0"] = self._get_zodiac_info()
-            template_dict["bottom_left_1"] = (
-                f"{self._translate('houses_system_' + self.first_obj.houses_system_identifier, self.first_obj.houses_system_name)} {self._translate('houses', 'Houses')}"
-            )
-
-            # Lunar phase information (optional)
-            if self.first_obj.lunar_phase is not None:
-                template_dict["bottom_left_2"] = (
-                    f"{self._translate('lunation_day', 'Lunation Day')}: {self.first_obj.lunar_phase.get('moon_phase', '')}"
-                )
-                template_dict["bottom_left_3"] = (
-                    f"{self._translate('lunar_phase', 'Lunar Phase')}: {self._translate(self.first_obj.lunar_phase.moon_phase_name.lower().replace(' ', '_'), self.first_obj.lunar_phase.moon_phase_name)}"
-                )
-            else:
-                template_dict["bottom_left_2"] = ""
-                template_dict["bottom_left_3"] = ""
-
-            template_dict["bottom_left_4"] = (
-                f"{self._translate('perspective_type', 'Perspective')}: {self._translate(self.first_obj.perspective_type.lower().replace(' ', '_'), self.first_obj.perspective_type)}"
-            )
-
-            # Lunar phase visualization
-            self._setup_lunar_phase(template_dict, self.first_obj, self.geolat)
-
-            # Grids and drawings
-            self._setup_main_houses_grid(template_dict, first_subject_houses_list)
-            template_dict["makeSecondaryHousesGrid"] = ""
-            self._setup_single_wheel_houses(template_dict, first_subject_houses_list)
-            self._setup_single_wheel_planets(template_dict)
-            self._setup_main_planet_grid(
-                template_dict,
-                self.first_obj.name,
-                self._translate("planets_and_house", "Points for"),
-            )
-            template_dict["makeSecondaryPlanetGrid"] = ""
-            template_dict["makeHouseComparisonGrid"] = ""
+        # Delegate to the appropriate renderer based on chart type.
+        # This uses the Strategy Pattern to separate chart-specific logic.
+        renderer = get_chart_renderer(self.chart_type, self)
+        renderer.render(template_dict)
 
         return ChartTemplateModel(**template_dict)
 
