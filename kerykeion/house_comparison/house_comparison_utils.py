@@ -177,7 +177,7 @@ def calculate_cusps_in_reciprocal_houses(
 
                 numbers = re.findall(r"\d+", cusp.name)
                 cusp_house_number = int(numbers[0]) if numbers else 1
-        except (IndexError, ValueError) as e:
+        except (IndexError, ValueError):
             # Fallback to sequential numbering if parsing fails
             cusp_house_number = cusp_subject_houses.index(cusp) + 1
 

@@ -1945,10 +1945,8 @@ def draw_cusp_comparison_grid(
     # Select the appropriate cusp data based on subject number
     if cusps_owner_subject_number == 1:
         cusps_data = house_comparison.first_cusps_in_second_houses
-        subject_name = house_comparison.first_subject_name
     else:
         cusps_data = house_comparison.second_cusps_in_first_houses
-        subject_name = house_comparison.second_subject_name
 
     if not cusps_data:
         return ""

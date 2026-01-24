@@ -10,7 +10,7 @@ is strictly non-qualitative and non-interpretive, providing factual
 representations of astrological data.
 """
 
-from typing import Union, Optional, List
+from typing import Union
 from kerykeion.schemas.kr_models import (
     KerykeionPointModel,
     LunarPhaseModel,
@@ -22,7 +22,6 @@ from kerykeion.schemas.kr_models import (
     DualChartDataModel,
     ElementDistributionModel,
     QualityDistributionModel,
-    RelationshipScoreModel,
     TransitMomentModel,
     TransitsTimeRangeModel,
     PointInHouseModel,

@@ -29,7 +29,6 @@ from kerykeion.schemas.kr_models import (
     PlanetReturnModel,
 )
 from kerykeion.schemas.settings_models import (
-    KerykeionSettingsCelestialPointModel,
     KerykeionLanguageModel,
 )
 from kerykeion.schemas.kr_literals import (
@@ -38,7 +37,6 @@ from kerykeion.schemas.kr_literals import (
     AstrologicalPoint,
 )
 from kerykeion.schemas.kr_models import ChartDataModel
-from kerykeion.settings import LANGUAGE_SETTINGS
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 from kerykeion.settings.translations import get_translations, load_language_settings
 from kerykeion.charts.charts_utils import (
@@ -78,8 +76,8 @@ from kerykeion.settings.chart_defaults import (
     _CelestialPointSetting,
     _ChartAspectSetting,
 )
-from typing import List, Literal, Sequence
-from dataclasses import dataclass, field
+from typing import List, Literal
+from dataclasses import dataclass
 
 
 logger = logging.getLogger(__name__)
@@ -319,7 +317,7 @@ DEFAULT_GRID_POSITIONS = GridPositionsConfig()
 from typing import Protocol, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from kerykeion.charts.chart_drawer import ChartDrawer
+    from kerykeion.charts.chart_drawer import ChartDrawer  # noqa: F811
 
 
 class ChartRendererProtocol(Protocol):
@@ -3836,7 +3834,6 @@ if __name__ == "__main__":
     from kerykeion.planetary_return_factory import PlanetaryReturnFactory
     from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
     from kerykeion.chart_data_factory import ChartDataFactory
-    from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
     ACTIVE_PLANETS: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS
     # ACTIVE_PLANETS: list[AstrologicalPoint] = ALL_ACTIVE_POINTS

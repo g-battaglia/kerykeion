@@ -36,7 +36,7 @@ import logging
 import math
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, List, Dict, Any, get_args, cast
+from typing import Optional, List, Dict, Any, get_args
 from dataclasses import dataclass, field
 from contextlib import contextmanager
 

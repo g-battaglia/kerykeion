@@ -396,8 +396,6 @@ class CompositeSubjectFactory:
 
 
 if __name__ == "__main__":
-    from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-
     first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
     second = AstrologicalSubjectFactory.from_birth_data("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB")
 
