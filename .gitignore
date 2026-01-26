@@ -73,3 +73,5 @@ workspace/*
 !workspace/main.py
 .swp
 John Lennon - Synastry Chart.svg
+libephemeris
+test-refactoring-proposal.md

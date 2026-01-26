@@ -1,6 +1,8 @@
+import pytest
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
 
+@pytest.mark.xdist_group(name="geonames")
 def test_utc_constructor():
     subject = AstrologicalSubjectFactory.from_birth_data(
         "Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", suppress_geonames_warning=True

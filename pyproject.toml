@@ -137,7 +137,9 @@ test = "pytest"
 "test:aspects" = "pytest tests/aspects/ -v"
 "test:factories" = "pytest tests/factories/ -v"
 "test:charts" = "pytest tests/charts/ -v"
-"test:fast" = "pytest tests/core/ tests/aspects/ -v --ignore=tests/charts/"
+"test:quick" = "pytest tests/core/ tests/aspects/ -v --ignore=tests/charts/"
+"test:fast" = "pytest -n auto"
+"test:fast:cov" = "pytest -n auto --cov=kerykeion --cov-config=pyproject.toml --cov-report=html --cov-report=term --cov-report=xml"
 
 # Code Quality
 lint = "ruff check"
@@ -276,6 +278,7 @@ dev = [
     "pyright>=1.1.408",
     "pytest>=8.4.1",
     "pytest-cov>=6.0.0",
+    "pytest-xdist>=3.5.0",
     "ruff>=0.12.9",
     "types-pytz>=2025.2.0.20250516",
     "types-requests>=2.32.4.20250611",

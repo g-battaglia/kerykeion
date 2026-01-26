@@ -1814,36 +1814,24 @@ class TestPlanetaryReturnFactoryOnlineMode:
 class TestFetchGeonamesEdgeCases:
     """Tests for FetchGeonames edge cases."""
 
-    def test_geonames_cache_name_from_env(self):
+    def test_geonames_cache_name_from_env(self, monkeypatch):
         """Test FetchGeonames cache name resolution from environment."""
         from kerykeion.fetch_geonames import FetchGeonames
-        import os
 
-        # Set environment variable
-        original = os.environ.get("KERYKEION_GEONAMES_CACHE_NAME")
-        os.environ["KERYKEION_GEONAMES_CACHE_NAME"] = "/tmp/test_cache"
+        # Use monkeypatch for environment variable to ensure parallel test safety
+        monkeypatch.setenv("KERYKEION_GEONAMES_CACHE_NAME", "/tmp/test_cache")
 
-        try:
-            resolved = FetchGeonames._resolve_cache_name(None)
-            assert str(resolved) == "/tmp/test_cache"
-        finally:
-            if original is not None:
-                os.environ["KERYKEION_GEONAMES_CACHE_NAME"] = original
-            else:
-                os.environ.pop("KERYKEION_GEONAMES_CACHE_NAME", None)
+        resolved = FetchGeonames._resolve_cache_name(None)
+        assert str(resolved) == "/tmp/test_cache"
 
-    def test_geonames_set_default_cache_name(self):
+    def test_geonames_set_default_cache_name(self, monkeypatch):
         """Test FetchGeonames set_default_cache_name class method."""
         from kerykeion.fetch_geonames import FetchGeonames
         from pathlib import Path
 
-        original = FetchGeonames.default_cache_name
-
-        try:
-            FetchGeonames.set_default_cache_name("/custom/cache/path")
-            assert FetchGeonames.default_cache_name == Path("/custom/cache/path")
-        finally:
-            FetchGeonames.default_cache_name = original
+        # Use monkeypatch for class attribute to ensure parallel test safety
+        monkeypatch.setattr(FetchGeonames, "default_cache_name", Path("/custom/cache/path"))
+        assert FetchGeonames.default_cache_name == Path("/custom/cache/path")
 
 
 # ============================================================================

@@ -1,7 +1,11 @@
+import pytest
 from unittest.mock import Mock, patch
 
 
 from kerykeion.fetch_geonames import FetchGeonames
+
+# Serialize all tests in this module to avoid GeoNames API rate limiting
+pytestmark = pytest.mark.xdist_group(name="geonames")
 
 
 def test_geonames():
@@ -63,10 +67,7 @@ def test_set_default_cache_name(monkeypatch, tmp_path):
     cached_session_mock = Mock(return_value=session_mock)
     monkeypatch.setattr("kerykeion.fetch_geonames.CachedSession", cached_session_mock)
 
-    original_default = FetchGeonames.default_cache_name
-    try:
-        FetchGeonames.set_default_cache_name(tmp_path / "geo_cache")
-        FetchGeonames("TestCity", "TS")
-        assert cached_session_mock.call_args.kwargs["cache_name"] == str(tmp_path / "geo_cache")
-    finally:
-        FetchGeonames.set_default_cache_name(original_default)
+    # Use monkeypatch for class attribute to ensure parallel test safety
+    monkeypatch.setattr(FetchGeonames, "default_cache_name", tmp_path / "geo_cache")
+    FetchGeonames("TestCity", "TS")
+    assert cached_session_mock.call_args.kwargs["cache_name"] == str(tmp_path / "geo_cache")

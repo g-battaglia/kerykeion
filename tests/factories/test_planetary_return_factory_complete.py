@@ -15,6 +15,9 @@ from kerykeion.schemas import KerykeionException
 class TestPlanetaryReturnFactory:
     """Test cases for PlanetaryReturnFactory covering all code paths."""
 
+    # Serialize tests in this class to avoid GeoNames API rate limiting
+    pytestmark = pytest.mark.xdist_group(name="geonames")
+
     @pytest.fixture(autouse=True)
     def setup_method(self):
         """Set up test fixtures."""

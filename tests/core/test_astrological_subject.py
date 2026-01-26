@@ -1,3 +1,4 @@
+import pytest
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.schemas import AstrologicalPoint
 from typing import get_args
@@ -428,6 +429,7 @@ class TestAstrologicalSubject:
         )
 
 
+@pytest.mark.xdist_group(name="geonames")
 class TestAstrologicalSubjectFactoryMethods:
     """Test different factory methods and configurations."""
 
@@ -1133,6 +1135,7 @@ class TestDefaultTimeParameters:
         assert subject.day == now.day
 
 
+@pytest.mark.xdist_group(name="geonames")
 class TestGeonamesUsernameWarning:
     """Test geonames username warning (lines 594-595)."""
 
@@ -1735,6 +1738,7 @@ class TestMockErrorConditions:
         assert hasattr(subject, "anti_vertex")
 
 
+@pytest.mark.xdist_group(name="geonames")
 class TestAllDwarfPlanetsAndFixedStars:
     """Test all dwarf planets and fixed stars to trigger exception branches."""
 

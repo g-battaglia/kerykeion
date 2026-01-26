@@ -76,9 +76,9 @@ class TestTransitsTimeRangeFactory:
 
         assert factory.active_aspects == custom_aspects
 
-    def test_factory_with_settings_file_path(self):
+    def test_factory_with_settings_file_path(self, tmp_path):
         """Test factory creation with settings file path."""
-        settings_path = Path("/tmp/test_settings.json")
+        settings_path = tmp_path / "test_settings.json"
 
         factory = TransitsTimeRangeFactory(self.natal_chart, self.ephemeris_data, settings_file=settings_path)
 

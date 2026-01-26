@@ -484,14 +484,14 @@ class TestDataExportAndSerialization:
         for key in required_keys:
             assert key in data_dict
 
-    def test_chart_data_json_export(self, factory, test_subject_1):
+    def test_chart_data_json_export(self, factory, test_subject_1, tmp_path):
         """Test JSON export functionality."""
         chart_data = factory.create_chart_data("Natal", test_subject_1)
 
-        # Export to JSON
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+        # Export to JSON using tmp_path for parallel test safety
+        json_file = tmp_path / "chart_export.json"
+        with open(json_file, "w") as f:
             json.dump(chart_data.model_dump(), f, default=str, indent=2)
-            json_file = f.name
 
         # Verify file was created and can be read back
         with open(json_file, "r") as f:
