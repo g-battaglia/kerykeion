@@ -133,6 +133,11 @@ test = "pytest"
 "test:cov" = "pytest --cov=kerykeion --cov-config=pyproject.toml --cov-report=html --cov-report=term --cov-report=xml"
 "test:cov-xml" = "pytest --cov=kerykeion --cov-report=xml"
 "test:nocharts" = "pytest --ignore-glob='*chart*.py'"
+"test:core" = "pytest tests/core/ -v"
+"test:aspects" = "pytest tests/aspects/ -v"
+"test:factories" = "pytest tests/factories/ -v"
+"test:charts" = "pytest tests/charts/ -v"
+"test:fast" = "pytest tests/core/ tests/aspects/ -v --ignore=tests/charts/"
 
 # Code Quality
 lint = "ruff check"
@@ -187,9 +192,21 @@ help = "Regenerate synastry from test"
 cmd = "python scripts/regenerate_test_output.py"
 help = "Regenerate test output"
 
+[tool.poe.tasks."regenerate:positions"]
+cmd = "python scripts/regenerate_all.py --positions"
+help = "Regenerate expected positions from test matrix"
+
+[tool.poe.tasks."regenerate:matrix-aspects"]
+cmd = "python scripts/regenerate_all.py --aspects"
+help = "Regenerate expected aspects from test matrix"
+
 [tool.poe.tasks."regenerate:all"]
 sequence = ["regenerate:charts", "regenerate:aspects", "regenerate:subjects", "regenerate:synastry-aspects", "regenerate:synastry", "regenerate:output"]
 help = "Regenerate all test fixtures"
+
+[tool.poe.tasks."regenerate:unified"]
+cmd = "python scripts/regenerate_all.py --all"
+help = "Regenerate all test baselines using unified script"
 
 # Utilities
 [tool.poe.tasks.clean]

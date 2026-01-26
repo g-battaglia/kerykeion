@@ -248,7 +248,7 @@ class TestChartDrawer:
 
     def test_black_and_white_theme_is_monochrome(self):
         """Ensure the black and white theme only uses grayscale colors."""
-        repo_root = Path(__file__).resolve().parents[1]
+        repo_root = Path(__file__).resolve().parents[2]
         theme_path = repo_root / "kerykeion" / "charts" / "themes" / "black-and-white.css"
         theme_content = theme_path.read_text(encoding="utf-8")
         hex_colors = re.findall(r"#[0-9a-fA-F]{6}", theme_content)
