@@ -16,7 +16,7 @@
 <p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
 &nbsp;
 
-Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects, and generates SVG charts—including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
+Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects, and generates SVG charts, including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
 
 The main goal of this project is to offer a clean, data-driven approach to astrology, making it accessible and programmable.
 
@@ -532,7 +532,7 @@ composite_chart.save_svg(output_path=output_dir, filename="jolie-pitt-composite"
 
 ## Wheel Only Charts
 
-For _all_ the charts, you can generate a wheel-only chart by using the method `makeWheelOnlySVG()`:
+For _all_ the charts, you can generate a wheel-only chart by using the method `save_wheel_only_svg_file()`:
 
 **📖 Minimalist charts guide: [Wheel Only & Aspect Grid Charts](https://www.kerykeion.net/content/examples/minimalist-charts-and-spect-table)**
 
@@ -757,7 +757,7 @@ The available languages are:
 
 ### Minified SVG
 
-To generate a minified SVG, set `minify_svg=True` in the `makeSVG()` method:
+To generate a minified SVG, set `minify=True` in the `save_svg()` method:
 
 ```python
 from pathlib import Path
@@ -791,7 +791,7 @@ birth_chart_svg.save_svg(
 
 ### SVG without CSS Variables
 
-To generate an SVG without CSS variables, set `remove_css_variables=True` in the `makeSVG()` method:
+To generate an SVG without CSS variables, set `remove_css_variables=True` in the `save_svg()` method:
 
 ```python
 from pathlib import Path
@@ -1246,12 +1246,12 @@ If you prefer automatic geocoding, set `online=True` and provide your GeoNames c
 
 Kerykeion supports both **True** and **Mean** Lunar Nodes:
 
--   **True North Lunar Node**: `"true_node"` (name kept without "north" for backward compatibility).
--   **True South Lunar Node**: `"true_south_node"`.
--   **Mean North Lunar Node**: `"mean_node"` (name kept without "north" for backward compatibility).
--   **Mean South Lunar Node**: `"mean_south_node"`.
+-   **True North Lunar Node**: `"True_North_Lunar_Node"`
+-   **True South Lunar Node**: `"True_South_Lunar_Node"`
+-   **Mean North Lunar Node**: `"Mean_North_Lunar_Node"`
+-   **Mean South Lunar Node**: `"Mean_South_Lunar_Node"`
 
-In instances of the classes used to generate aspects and SVG charts, only the mean nodes are active. To activate the true nodes, you need to pass the `active_points` parameter to the `ChartDataFactory` methods.
+By default, only the **True** nodes are active in charts and aspect calculations. To include the Mean nodes (or customize which nodes appear), pass the `active_points` parameter to the `ChartDataFactory` methods.
 
 **📖 ChartDataFactory documentation: [ChartDataFactory Guide](https://www.kerykeion.net/content/docs/chart_data_factory)**
 
@@ -1286,10 +1286,10 @@ chart_data = ChartDataFactory.create_natal_chart_data(
         "Uranus",
         "Neptune",
         "Pluto",
-        "Mean_Node",
-        "Mean_South_Node",
-        "True_Node",       # Activates True North Node
-        "True_South_Node", # Activates True South Node
+        "Mean_North_Lunar_Node",
+        "Mean_South_Lunar_Node",
+        "True_North_Lunar_Node",
+        "True_South_Lunar_Node",
         "Ascendant",
         "Medium_Coeli",
         "Descendant",
