@@ -36,7 +36,7 @@ def get_aspect_from_two_points(
         aspect_degree = aspect["degree"]  # type: ignore
         aspect_orb = aspect["orb"]  # type: ignore
 
-        if (aspect_degree - aspect_orb) <= int(distance) <= (aspect_degree + aspect_orb):
+        if (aspect_degree - aspect_orb) <= distance <= (aspect_degree + aspect_orb):
             name = aspect["name"]  # type: ignore
             aspect_degrees = aspect_degree
             verdict = True
