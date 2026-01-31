@@ -31,7 +31,7 @@ License: AGPL-3.0
 """
 
 import pytz
-import swisseph as swe
+import libephemeris as swe
 import logging
 import math
 from datetime import datetime

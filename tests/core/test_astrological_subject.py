@@ -1476,7 +1476,7 @@ class TestMockErrorConditions:
     def test_planet_calculation_error_handling(self):
         """Test error handling when planet calculation fails (lines 1184-1187)."""
         from unittest.mock import patch
-        import swisseph as swe
+        import libephemeris as swe
 
         # Mock swe.calc_ut to raise an exception for a specific planet
         original_calc = swe.calc_ut
@@ -1487,7 +1487,7 @@ class TestMockErrorConditions:
                 raise Exception("Mock ephemeris error")
             return original_calc(jd, planet_num, flags)
 
-        with patch("swisseph.calc_ut", side_effect=mock_calc_ut):
+        with patch("libephemeris.calc_ut", side_effect=mock_calc_ut):
             # This should handle the error gracefully
             subject = AstrologicalSubjectFactory.from_birth_data(
                 "Error Test",
@@ -1791,7 +1791,7 @@ class TestAllDwarfPlanetsAndFixedStars:
 
         # First create subject normally to ensure houses work
         # Then mock only the Vertex calculation part
-        original_houses = __import__("swisseph").houses
+        original_houses = __import__("libephemeris").houses
 
         def conditional_mock(*args, **kwargs):
             # Check if this is being called with 'V' house system (for Vertex)
@@ -1799,7 +1799,7 @@ class TestAllDwarfPlanetsAndFixedStars:
                 raise Exception("Mock vertex error")
             return original_houses(*args, **kwargs)
 
-        with patch("swisseph.houses", side_effect=conditional_mock):
+        with patch("libephemeris.houses", side_effect=conditional_mock):
             subject = AstrologicalSubjectFactory.from_birth_data(
                 "Vertex Error",
                 1990,

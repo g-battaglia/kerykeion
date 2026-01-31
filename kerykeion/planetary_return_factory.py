@@ -70,7 +70,7 @@ License: AGPL-3.0
 
 import calendar
 import logging
-import swisseph as swe
+import libephemeris as swe
 
 from datetime import datetime, timezone
 from typing import Union

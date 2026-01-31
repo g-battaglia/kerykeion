@@ -11,7 +11,7 @@ from pathlib import Path
 from string import Template
 from typing import Any, Mapping, Optional, Sequence, Union, get_args
 
-import swisseph as swe
+import libephemeris as swe
 from scour.scour import scourString
 
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory

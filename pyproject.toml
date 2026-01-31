@@ -55,6 +55,7 @@ dependencies = [
     "simple-ascii-tables>=1.0.0",
     "pytz>=2024.2",
     "typing-extensions>=4.12.2",
+    "libephemeris>=0.4.0",
 ]
 
 [project.urls]
