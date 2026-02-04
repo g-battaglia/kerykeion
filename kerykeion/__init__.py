@@ -14,14 +14,18 @@ Kerykeion is a comprehensive astrology library that provides tools for:
 
 Quick Start
 -----------
->>> from kerykeion import AstrologicalSubject
->>> subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "Rome")
+>>> from kerykeion import AstrologicalSubjectFactory
+>>> subject = AstrologicalSubjectFactory.from_birth_data(
+...     "John", 1990, 1, 1, 12, 0,
+...     city="Rome",
+...     nation="IT",
+...     lng=12.4964,
+...     lat=41.9028,
+...     tz_str="Europe/Rome",
+...     online=False,
+... )
 >>> print(subject.sun.sign)  # Get Sun sign
 >>> print(subject.ascendant.sign)  # Get Ascendant
-
-For the new Factory-based API:
->>> from kerykeion import AstrologicalSubjectFactory
->>> subject = AstrologicalSubjectFactory.create_subject("John", 1990, 1, 1, 12, 0, "Rome", "IT")
 
 Main Classes
 ------------

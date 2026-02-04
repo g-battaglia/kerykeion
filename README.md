@@ -22,6 +22,14 @@ The main goal of this project is to offer a clean, data-driven approach to astro
 
 Kerykeion also integrates seamlessly with LLM and AI applications.
 
+## **Commercial Web API**
+
+If you want to use Kerykeion in a production web app or for commercial or _closed-source_ purposes, use the paid API:
+
+**[Astrologer API (RapidAPI plans & pricing)](https://rapidapi.com/gbattaglia/api/astrologer/pricing)**
+
+Technical docs: https://www.kerykeion.net/content/astrologer-api/
+
 Here is an example of a birthchart:
 
 ![John Lenon Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
@@ -29,26 +37,10 @@ Here is an example of a birthchart:
 > **📘 For AI Agents & LLMs**
 > If you're building LLM-powered applications (or if you are an AI agent 🙂), see [`llms.txt`](./kerykeion/llms.txt) for a comprehensive, concise reference optimized for programmatic use and AI context.
 
-## **Web API**
-
-If you want to use Kerykeion in a web application or for commercial or _closed-source_ purposes, you can try the dedicated web API:
-
-**[AstrologerAPI](https://www.kerykeion.net/astrologer-api/subscribe/)**
-
-It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly supports this project.
-
-## **Cloud Astrology App**
-
-If you're looking for a complete cloud-based astrology application for professional astrologers and enthusiasts, check out:
-
-**[AstrologerStudio](https://www.astrologerstudio.com/)**
-
-It's a fully featured **[open source](https://github.com/g-battaglia/AstrologerStudio)** app.
-
 ## Table of Contents
 
-- [**Web API**](#web-api)
-- [**Cloud Astrology App**](#cloud-astrology-app)
+- [**Commercial API (Paid)**](#commercial-api-paid)
+- [Projects built with Kerykeion](#projects-built-with-kerykeion)
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
@@ -176,15 +168,17 @@ print(john.moon.element)
 
 **📖 Full factory documentation: [AstrologicalSubjectFactory](https://www.kerykeion.net/content/docs/astrological_subject_factory)**
 
-**To avoid using GeoNames online, specify longitude, latitude, and timezone instead of city and nation:**
+**To avoid GeoNames, provide longitude, latitude, and timezone and set `online=False`:**
 
 ```python
 john = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon", 1940, 10, 9, 18, 30,
+    city="Liverpool",
+    nation="GB",
     lng=-2.9833,  # Longitude for Liverpool
     lat=53.4000,  # Latitude for Liverpool
     tz_str="Europe/London",  # Timezone for Liverpool
-    city="Liverpool",
+    online=False,
 )
 ```
 
@@ -949,7 +943,13 @@ from kerykeion import AstrologicalSubjectFactory, to_context
 
 # Create a subject
 subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Doe", 1990, 1, 1, 12, 0, "London", "GB"
+    "John Doe", 1990, 1, 1, 12, 0,
+    city="London",
+    nation="GB",
+    lng=-0.1278,
+    lat=51.5074,
+    tz_str="Europe/London",
+    online=False,
 )
 
 # Generate AI-ready context
@@ -961,7 +961,7 @@ print(context)
 
 ```text
 Chart for John Doe
-Birth data: 1990-01-01 12:00, London, GB
+ Birth data: 1990-01-01 12:00, London, GB
 ...
 Celestial Points:
   - Sun at 10.81° in Capricorn in Tenth House, quality: Cardinal, element: Earth...
@@ -1333,6 +1333,10 @@ print(johnny.model_dump_json(indent=2))
 -   **API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/)
 -   **Astrologer API Docs**: [kerykeion.net/astrologer-api](https://www.kerykeion.net/content/astrologer-api/)
 
+## Projects built with Kerykeion
+
+**[AstrologerStudio](https://www.astrologerstudio.com/)** is a cloud-based astrology app built on top of Kerykeion.
+
 ## Development
 
 Clone the repository or download the ZIP via the GitHub interface.
@@ -1347,15 +1351,15 @@ pip install -e ".[dev]"
 
 If you would like to incorporate Kerykeion's astrological features into your application, please reach out via [email](mailto:kerykeion.astrology@gmail.com?subject=Integration%20Request). Whether you need custom features, support, or specialized consulting, I am happy to discuss potential collaborations.
 
-For commercial or closed-source applications, consider using the [AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/) which provides REST endpoints for all Kerykeion functionality.
+For commercial or closed-source applications, consider using the paid [Astrologer API (RapidAPI plans & pricing)](https://rapidapi.com/gbattaglia/api/astrologer/pricing) which provides REST endpoints for all Kerykeion functionality.
 
 ## License
 
 This project is covered under the AGPL-3.0 License. For detailed information, please see the [LICENSE](LICENSE) file. If you have questions, feel free to contact me at [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com?subject=Kerykeion).
 
-As a rule of thumb, if you use this library in a project, you should open-source that project under a compatible license. Alternatively, if you wish to keep your source closed, consider using the [AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/), which is AGPL-3.0 compliant and also helps support the project.
+As a rule of thumb, if you use this library in a project, you should open-source that project under a compatible license. Alternatively, if you wish to keep your source closed, consider using the paid [Astrologer API](https://rapidapi.com/gbattaglia/api/astrologer/pricing), which is AGPL-3.0 compliant and also helps support the project.
 
-Since the AstrologerAPI is an external third-party service, using it does _not_ require your code to be open-source.
+Since the Astrologer API is an external third-party service, using it does _not_ require your code to be open-source.
 
 ## Contributing
 
