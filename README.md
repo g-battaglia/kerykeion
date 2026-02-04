@@ -22,20 +22,22 @@ The main goal of this project is to offer a clean, data-driven approach to astro
 
 Kerykeion also integrates seamlessly with LLM and AI applications.
 
-## **Commercial Web API**
-
-If you want to use Kerykeion in a production web app or for commercial or _closed-source_ purposes, use the paid API:
-
-**[Astrologer API (RapidAPI plans & pricing)](https://rapidapi.com/gbattaglia/api/astrologer/pricing)**
-
-Technical docs: https://www.kerykeion.net/content/astrologer-api/
-
 Here is an example of a birthchart:
 
 ![John Lenon Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
 
 > **📘 For AI Agents & LLMs**
 > If you're building LLM-powered applications (or if you are an AI agent 🙂), see [`llms.txt`](./kerykeion/llms.txt) for a comprehensive, concise reference optimized for programmatic use and AI context.
+
+## **Commercial Web API**
+
+For production web apps, commercial usage, or _closed-source_ projects, please **consider using** the hosted API:
+
+**[Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe)**
+
+Subscribing to the paid API **directly supports this project** and helps ensure its continued maintenance and development:
+
+Technical docs: https://www.kerykeion.net/content/astrologer-api/
 
 ## Table of Contents
 
@@ -46,28 +48,28 @@ Here is an example of a birthchart:
 - [Quick Start](#quick-start)
 - [Basic Usage](#basic-usage)
 - [Generate a SVG Chart](#generate-a-svg-chart)
-  - [Birth Chart](#birth-chart)
-  - [External Birth Chart](#external-birth-chart)
-  - [Synastry Chart](#synastry-chart)
-  - [Transit Chart](#transit-chart)
-  - [Solar Return Chart (Dual Wheel)](#solar-return-chart-dual-wheel)
-  - [Solar Return Chart (Single Wheel)](#solar-return-chart-single-wheel)
-  - [Lunar Return Chart](#lunar-return-chart)
-  - [Composite Chart](#composite-chart)
+    - [Birth Chart](#birth-chart)
+    - [External Birth Chart](#external-birth-chart)
+    - [Synastry Chart](#synastry-chart)
+    - [Transit Chart](#transit-chart)
+    - [Solar Return Chart (Dual Wheel)](#solar-return-chart-dual-wheel)
+    - [Solar Return Chart (Single Wheel)](#solar-return-chart-single-wheel)
+    - [Lunar Return Chart](#lunar-return-chart)
+    - [Composite Chart](#composite-chart)
 - [Wheel Only Charts](#wheel-only-charts)
-  - [Birth Chart](#birth-chart-1)
-  - [Wheel Only Birth Chart (External)](#wheel-only-birth-chart-external)
-  - [Synastry Chart](#synastry-chart-1)
-  - [Change the Output Directory](#change-the-output-directory)
-  - [Change Language](#change-language)
-  - [Minified SVG](#minified-svg)
-  - [SVG without CSS Variables](#svg-without-css-variables)
-  - [Grid Only SVG](#grid-only-svg)
+    - [Birth Chart](#birth-chart-1)
+    - [Wheel Only Birth Chart (External)](#wheel-only-birth-chart-external)
+    - [Synastry Chart](#synastry-chart-1)
+    - [Change the Output Directory](#change-the-output-directory)
+    - [Change Language](#change-language)
+    - [Minified SVG](#minified-svg)
+    - [SVG without CSS Variables](#svg-without-css-variables)
+    - [Grid Only SVG](#grid-only-svg)
 - [Report Generator](#report-generator)
-  - [Quick Examples](#quick-examples)
-  - [Section Access](#section-access)
+    - [Quick Examples](#quick-examples)
+    - [Section Access](#section-access)
 - [AI Context Serializer](#ai-context-serializer)
-  - [Quick Example](#quick-example)
+    - [Quick Example](#quick-example)
 - [Example: Retrieving Aspects](#example-retrieving-aspects)
 - [Relationship Score](#relationship-score)
 - [Element \& Quality Distribution Strategies](#element--quality-distribution-strategies)
@@ -739,15 +741,15 @@ custom_chart.save_svg(output_path=output_dir, filename="john-lennon-natal-pt")
 
 The available languages are:
 
--   EN (English)
--   FR (French)
--   PT (Portuguese)
--   ES (Spanish)
--   TR (Turkish)
--   RU (Russian)
--   IT (Italian)
--   CN (Chinese)
--   DE (German)
+- EN (English)
+- FR (French)
+- PT (Portuguese)
+- ES (Spanish)
+- TR (Turkish)
+- RU (Russian)
+- IT (Italian)
+- CN (Chinese)
+- DE (German)
 
 ### Minified SVG
 
@@ -897,14 +899,14 @@ ReportGenerator(synastry_data).print_report(max_aspects=12)
 
 Each report contains:
 
--   A chart-aware title summarising the subject(s) and chart type
--   Birth/event metadata and configuration settings
--   Celestial points with sign, position, **daily motion**, **declination**, retrograde flag, and house
--   House cusp tables for every subject involved
--   Lunar phase details when available
--   Element/quality distributions and active configuration summaries (for chart data)
--   Aspect listings tailored for single or dual charts, with symbols for type and movement
--   Dual-chart extras such as house comparisons and relationship scores (when provided by the data)
+- A chart-aware title summarising the subject(s) and chart type
+- Birth/event metadata and configuration settings
+- Celestial points with sign, position, **daily motion**, **declination**, retrograde flag, and house
+- House cusp tables for every subject involved
+- Lunar phase details when available
+- Element/quality distributions and active configuration summaries (for chart data)
+- Aspect listings tailored for single or dual charts, with symbols for type and movement
+- Dual-chart extras such as house comparisons and relationship scores (when provided by the data)
 
 ### Section Access
 
@@ -970,9 +972,9 @@ Celestial Points:
 
 **Key Features:**
 
--   **Standardized Output:** Consistent format for Natal, Synastry, Composite, and Return charts.
--   **Non-Qualitative:** Provides raw data (positions, aspects) without interpretive bias.
--   **Prompt-Ready:** Designed to be injected directly into system prompts.
+- **Standardized Output:** Consistent format for Natal, Synastry, Composite, and Return charts.
+- **Non-Qualitative:** Provides raw data (positions, aspects) without interpretive bias.
+- **Prompt-Ready:** Designed to be injected directly into system prompts.
 
 ## Example: Retrieving Aspects
 
@@ -1174,12 +1176,12 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 
 Kerykeion provides several chart themes:
 
--   **Classic** (default)
--   **Dark**
--   **Dark High Contrast**
--   **Light**
--   **Strawberry**
--   **Black & White** (optimized for monochrome printing)
+- **Classic** (default)
+- **Dark**
+- **Dark High Contrast**
+- **Light**
+- **Strawberry**
+- **Black & White** (optimized for monochrome printing)
 
 Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables.
 
@@ -1246,10 +1248,10 @@ If you prefer automatic geocoding, set `online=True` and provide your GeoNames c
 
 Kerykeion supports both **True** and **Mean** Lunar Nodes:
 
--   **True North Lunar Node**: `"True_North_Lunar_Node"`
--   **True South Lunar Node**: `"True_South_Lunar_Node"`
--   **Mean North Lunar Node**: `"Mean_North_Lunar_Node"`
--   **Mean South Lunar Node**: `"Mean_South_Lunar_Node"`
+- **True North Lunar Node**: `"True_North_Lunar_Node"`
+- **True South Lunar Node**: `"True_South_Lunar_Node"`
+- **Mean North Lunar Node**: `"Mean_North_Lunar_Node"`
+- **Mean South Lunar Node**: `"Mean_South_Lunar_Node"`
 
 By default, only the **True** nodes are active in charts and aspect calculations. To include the Mean nodes (or customize which nodes appear), pass the `active_points` parameter to the `ChartDataFactory` methods.
 
@@ -1327,11 +1329,11 @@ print(johnny.model_dump_json(indent=2))
 
 ## Documentation
 
--   **Main Website**: [kerykeion.net](https://www.kerykeion.net)
--   **Getting Started**: [kerykeion.net/docs](https://www.kerykeion.net/content/docs/)
--   **Examples Gallery**: [kerykeion.net/examples](https://www.kerykeion.net/content/examples/)
--   **API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/)
--   **Astrologer API Docs**: [kerykeion.net/astrologer-api](https://www.kerykeion.net/content/astrologer-api/)
+- **Main Website**: [kerykeion.net](https://www.kerykeion.net)
+- **Getting Started**: [kerykeion.net/docs](https://www.kerykeion.net/content/docs/)
+- **Examples Gallery**: [kerykeion.net/examples](https://www.kerykeion.net/content/examples/)
+- **API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/)
+- **Astrologer API Docs**: [kerykeion.net/astrologer-api](https://www.kerykeion.net/content/astrologer-api/)
 
 ## Projects built with Kerykeion
 
@@ -1351,13 +1353,13 @@ pip install -e ".[dev]"
 
 If you would like to incorporate Kerykeion's astrological features into your application, please reach out via [email](mailto:kerykeion.astrology@gmail.com?subject=Integration%20Request). Whether you need custom features, support, or specialized consulting, I am happy to discuss potential collaborations.
 
-For commercial or closed-source applications, consider using the paid [Astrologer API (RapidAPI plans & pricing)](https://rapidapi.com/gbattaglia/api/astrologer/pricing) which provides REST endpoints for all Kerykeion functionality.
+For commercial or closed-source applications, consider using the paid [Astrologer API (RapidAPI plans & pricing)](https://www.kerykeion.net/astrologer-api/subscribe) which provides REST endpoints for all Kerykeion functionality.
 
 ## License
 
 This project is covered under the AGPL-3.0 License. For detailed information, please see the [LICENSE](LICENSE) file. If you have questions, feel free to contact me at [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com?subject=Kerykeion).
 
-As a rule of thumb, if you use this library in a project, you should open-source that project under a compatible license. Alternatively, if you wish to keep your source closed, consider using the paid [Astrologer API](https://rapidapi.com/gbattaglia/api/astrologer/pricing), which is AGPL-3.0 compliant and also helps support the project.
+As a rule of thumb, if you use this library in a project, you should open-source that project under a compatible license. Alternatively, if you wish to keep your source closed, consider using the paid [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe), which is AGPL-3.0 compliant and also helps support the project.
 
 Since the Astrologer API is an external third-party service, using it does _not_ require your code to be open-source.
 
