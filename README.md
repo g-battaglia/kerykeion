@@ -15,7 +15,7 @@
 </div>
 <div align="center">
     <a href="https://www.kerykeion.net/astrologer-api/subscribe">
-        <img src="https://img.shields.io/badge/REST%20API-Astrologer%20API-0055DA?style=for-the-badge&logo=fastapi&logoColor=white" alt="Astrologer API">
+        <img src="https://img.shields.io/badge/REST%20API-Astrologer%20API-0055DA?logo=fastapi&logoColor=white" alt="Astrologer API">
     </a>
 </div>
 <p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
@@ -40,9 +40,7 @@ For production web apps, commercial usage, or _closed-source_ projects, please *
 
 **[Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe)**
 
-Subscribing to the paid API **directly supports this project** and helps ensure its continued maintenance and development:
-
-Technical docs: https://www.kerykeion.net/content/astrologer-api/
+Subscribing to the paid API **directly supports this project** and helps ensure its continued maintenance and development.
 
 ## Table of Contents
 
