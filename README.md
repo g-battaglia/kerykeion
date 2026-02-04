@@ -39,7 +39,7 @@ Here is an example of a birthchart:
 
 ## Table of Contents
 
-- [**Commercial API (Paid)**](#commercial-api-paid)
+- [**Commercial Web API**](#commercial-web-api)
 - [Projects built with Kerykeion](#projects-built-with-kerykeion)
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
@@ -164,7 +164,7 @@ print(john.moon.element)
 ```
 
 > **Working offline:** pass `online=False` and specify `lng`, `lat`, and `tz_str` as shown above.  
-> **Working online:** set `online=True` and provide `city`, `nation`, and a valid GeoNames username (see `AstrologicalSubjectFactory.from_birth_data()` for details).
+> **Working online:** set `online=True` and provide `city`, `nation`, and a valid GeoNames username. Register for free at [geonames.org](https://www.geonames.org/login).
 
 **📖 Full factory documentation: [AstrologicalSubjectFactory](https://www.kerykeion.net/content/docs/astrological_subject_factory)**
 
@@ -528,7 +528,7 @@ composite_chart.save_svg(output_path=output_dir, filename="jolie-pitt-composite"
 
 For _all_ the charts, you can generate a wheel-only chart by using the method `save_wheel_only_svg_file()`:
 
-**📖 Minimalist charts guide: [Wheel Only & Aspect Grid Charts](https://www.kerykeion.net/content/examples/minimalist-charts-and-spect-table)**
+**📖 Minimalist charts guide: [Wheel Only & Aspect Grid Charts](https://www.kerykeion.net/content/examples/minimalist-charts-and-aspect-table)**
 
 ### Birth Chart
 
@@ -1065,7 +1065,7 @@ print(f"Compatibility Score: {result.score}")
 print(f"Description: {result.description}")
 ```
 
-**📖 Relationship score guide: [Relationship Score Examples](https://www.kerykeion.net/content/examples/realationship-score)**
+**📖 Relationship score guide: [Relationship Score Examples](https://www.kerykeion.net/content/examples/relationship-score)**
 
 **📖 Factory documentation: [RelationshipScoreFactory](https://www.kerykeion.net/content/docs/relationship_score_factory)**
 

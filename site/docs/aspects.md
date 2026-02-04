@@ -40,6 +40,19 @@ for aspect in aspects_data.aspects[:5]:  # Show first 5
     print(f"{aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb: {aspect.orbit:.2f}°)")
 ```
 
+**Expected Output:**
+
+```text
+Total Aspects: 24
+Sun conjunction Mercury (orb: 3.45°)
+Sun square Mars (orb: -2.18°)
+Sun trine Jupiter (orb: 4.67°)
+Sun sextile Ascendant (orb: 1.23°)
+Moon opposition Saturn (orb: -5.89°)
+```
+
+> **Note:** Negative orb values indicate **applying** aspects (the planets are moving toward exactness).
+
 ### 2. `dual_chart_aspects`
 
 Calculates aspects between two different subjects (Synastry/Transits).
@@ -52,6 +65,12 @@ subject_b = AstrologicalSubjectFactory.from_birth_data("Bob", 1992, 8, 20, 14, 3
 synastry = AspectsFactory.dual_chart_aspects(subject, subject_b)
 
 print(f"Synastry Aspects: {len(synastry.aspects)}")
+```
+
+**Expected Output:**
+
+```text
+Synastry Aspects: 31
 ```
 
 **Additional Parameters for `dual_chart_aspects`:**
@@ -151,6 +170,12 @@ movement = calculate_aspect_movement(
     point_two_speed=0.5    # Moving slower forward
 )
 # Returns "Separating" (Distance is 2° and increasing as faster planet is ahead)
+```
+
+**Expected Output:**
+
+```text
+Separating
 ```
 
 ### `get_aspect_from_two_points`

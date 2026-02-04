@@ -25,7 +25,11 @@ Calculates all standard chart data (planets, houses, aspects, elements) for a si
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 
-subject = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 6, 15, 12, 0, "London", "GB")
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False
+)
 natal_data = ChartDataFactory.create_natal_chart_data(subject)
 
 print(f"Elements: {natal_data.element_distribution.fire_percentage}% Fire")
@@ -37,13 +41,17 @@ print(f"Qualities: {natal_data.quality_distribution.cardinal_percentage}% Cardin
 Used for comparing two subjects. Includes relationship scoring.
 
 ```python
-subject_b = AstrologicalSubjectFactory.from_birth_data("Bob", 1992, 8, 20, 14, 30, "USA", "New York")
+subject_b = AstrologicalSubjectFactory.from_birth_data(
+    "Bob", 1992, 8, 20, 14, 30,
+    lng=-74.006, lat=40.7128, tz_str="America/New_York",
+    online=False
+)
 
 synastry_data = ChartDataFactory.create_synastry_chart_data(
     subject,
     subject_b,
-    include_relationship_score=True, # Default False
-    include_house_comparison=True    # Default False
+    include_relationship_score=True,
+    include_house_comparison=True
 )
 
 if synastry_data.relationship_score:

@@ -45,8 +45,6 @@ with open("report.txt", "w") as f:
 
 ## Configuration
 
-## Configuration
-
 | Parameter         | Type                                           | Default      | Description                                                |
 | :---------------- | :--------------------------------------------- | :----------- | :--------------------------------------------------------- |
 | `model`           | `ChartDataModel` or `AstrologicalSubjectModel` | **Required** | The data model to generate the report for.                 |

@@ -67,6 +67,26 @@ This will generate a dual-wheel chart where:
 -   two house-comparison tables show natal points in return houses and return points in natal houses
 -   two cusp-comparison tables show how cusps fall into each other's house systems
 
+### Solar Return Example
+
+![Solar Return Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Solar%20Return%20-%20House%20Comparison%20Only.svg)
+
+### Lunar Return Example
+
+You can also generate **Lunar Return** charts by using `return_type="Lunar"`:
+
+```python
+lunar_return_subject = factory.next_return_from_date(2025, 7, 1, return_type="Lunar")
+
+chart_data = ChartDataFactory.create_return_chart_data(
+    natal_subject=natal_subject,
+    return_subject=lunar_return_subject,
+    include_house_comparison=False,  # No house comparison
+)
+```
+
+![Lunar Return Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Lunar%20Return%20-%20No%20House%20Comparison.svg)
+
 ## Toggling Degree Indicators
 
 All charts can display radial **degree indicators** for planets. You can disable them for a cleaner layout:

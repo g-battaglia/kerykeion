@@ -51,6 +51,14 @@ composite_subject = composite_factory.get_midpoint_composite_subject_model()
 print(f"Composite Sun: {composite_subject.sun.sign} {composite_subject.sun.abs_pos:.2f}°")
 ```
 
+**Expected Output:**
+
+```text
+Composite Sun: Leo 124.36°
+```
+
+> **Note:** The position is the midpoint between Alice's Sun (Gemini ~84°) and Bob's Sun (Virgo ~170°), yielding ~127° (Leo).
+
 ## Chart Generation
 
 The returned `composite_subject` is a standard `AstrologicalSubjectModel`. You can use it just like a natal subject to generate chart data or SVG visualizations.

@@ -95,14 +95,14 @@ The `get_transit_moments()` method returns a specialized object simplifying acce
 
 ## Constructor Parameters
 
-| Parameter               | Type                             | Default     | Description                        |
-| :---------------------- | :------------------------------- | :---------- | :--------------------------------- | ------ | -------------------------------- |
-| `natal_chart`           | `AstrologicalSubjectModel`       | Required    | Reference natal chart.             |
-| `ephemeris_data_points` | `List[AstrologicalSubjectModel]` | Required    | Time-series planetary positions.   |
-| `active_points`         | `List[AstrologicalPoint]`        | All planets | Points to include in calculation.  |
-| `active_aspects`        | `List[ActiveAspect]`             | All aspects | Aspect types and orbs to use.      |
-| `settings_file`         | `Path                            | dict        | None`                              | `None` | Custom orb/calculation settings. |
-| `axis_orb_limit`        | `float`                          | `None`      | Stricter orb for angles (Asc, MC). |
+| Parameter | Type | Default | Description |
+| :---------------------- | :------------------------------- | :---------- | :--------------------------------- |
+| `natal_chart` | `AstrologicalSubjectModel` | Required | Reference natal chart. |
+| `ephemeris_data_points` | `List[AstrologicalSubjectModel]` | Required | Time-series planetary positions. |
+| `active_points` | `List[AstrologicalPoint]` | All planets | Points to include in calculation. |
+| `active_aspects` | `List[ActiveAspect]` | All aspects | Aspect types and orbs to use. |
+| `settings_file` | `Path` or `dict` or `None` | `None` | Custom orb/calculation settings. |
+| `axis_orb_limit` | `float` | `None` | Stricter orb for angles (Asc, MC). |
 
 ## Configuration Tips
 

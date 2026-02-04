@@ -280,7 +280,6 @@ Aspects within a single chart (Natal, Composite, Return).
 _Alias:_ `NatalAspectsModel`
 
 | Field | Type | Description |
-
 | :--------------- | :------------------------- | :-------------------------- |
 | `subject` | `AstrologicalSubjectModel` | The chart subject. |
 | `aspects` | `List[AspectModel]` | Internal aspects. |
@@ -294,7 +293,6 @@ Aspects between two charts (Synastry, Transit).
 _Alias:_ `SynastryAspectsModel`
 
 | Field | Type | Description |
-
 | :--------------- | :------------------------- | :-------------------- |
 | `first_subject` | `AstrologicalSubjectModel` | Primary chart. |
 | `second_subject` | `AstrologicalSubjectModel` | Secondary chart. |
@@ -728,9 +726,14 @@ The base exception class for all library-specific errors.
 
 ```python
 from kerykeion.schemas import KerykeionException
+from kerykeion import AstrologicalSubjectFactory
 
 try:
-    chart = KrInstance(...)
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Example", 1990, 1, 1, 12, 0,
+        city="UnknownCity", nation="XX",
+        online=True
+    )
 except KerykeionException as e:
     print(f"Error calculating chart: {e}")
 ```

@@ -48,6 +48,28 @@ print(f"Score: {score_model.score_value}")
 print(f"Category: {score_model.score_description}")
 ```
 
+**Expected Output:**
+
+```text
+Score: 18.0
+Category: Very Important
+```
+
+You can also inspect which aspects contributed to the score:
+
+```python
+for aspect in score_model.aspects[:3]:
+    print(f"{aspect.p1_name} {aspect.aspect} {aspect.p2_name}: +{aspect.score_contribution} points")
+```
+
+**Expected Output:**
+
+```text
+Sun conjunction Moon: +11 points
+Venus trine Mars: +4 points
+Moon sextile Ascendant: +4 points
+```
+
 ## Constructor Parameters
 
 | Parameter                | Type    | Default  | Description                                       |

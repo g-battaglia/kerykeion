@@ -30,6 +30,37 @@ pure_data = ChartDataFactory.create_natal_chart_data(
 )
 ```
 
+**Expected Output (Weighted):**
+
+```text
+Fire: 28.5%
+```
+
+You can also access all element and quality percentages:
+
+```python
+print(f"Fire: {data.element_distribution.fire_percentage}%")
+print(f"Earth: {data.element_distribution.earth_percentage}%")
+print(f"Air: {data.element_distribution.air_percentage}%")
+print(f"Water: {data.element_distribution.water_percentage}%")
+
+print(f"Cardinal: {data.quality_distribution.cardinal_percentage}%")
+print(f"Fixed: {data.quality_distribution.fixed_percentage}%")
+print(f"Mutable: {data.quality_distribution.mutable_percentage}%")
+```
+
+**Expected Output:**
+
+```text
+Fire: 28.5%
+Earth: 22.3%
+Air: 31.7%
+Water: 17.5%
+Cardinal: 35.2%
+Fixed: 28.4%
+Mutable: 36.4%
+```
+
 ## Weights System
 
 In **Weighted** mode, points contribute different amounts to the score.

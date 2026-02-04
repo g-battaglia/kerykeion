@@ -86,3 +86,9 @@ sun_context = kerykeion_point_to_context(subject.sun)
 print(sun_context)
 # "Sun at 10.81° in Capricorn in First House, quality: Cardinal, element: Earth..."
 ```
+
+**Expected Output:**
+
+```text
+Sun at 10.81° in Capricorn (Earth) in Tenth House, speed 1.02°/day, quality: Cardinal
+```

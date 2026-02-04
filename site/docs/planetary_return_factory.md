@@ -69,6 +69,15 @@ print(f"Return Date: {solar_return.iso_formatted_local_datetime}")
 print(f"Sun Position: {solar_return.sun.abs_pos:.2f}°")
 ```
 
+**Expected Output:**
+
+```text
+Return Date: 2024-06-15T08:23:47
+Sun Position: 84.32°
+```
+
+> **Note:** The Sun position matches Alice's natal Sun position exactly (within calculation precision).
+
 ## Supported Return Types
 
 - `"Solar"` (Sun) - Yearly forecast.

@@ -7,7 +7,51 @@ order: 1
 
 # Kerykeion Documentation
 
-Welcome to the Kerykeion documentation. Here you can find detailed information about the various modules and functionalities available in the library.
+Welcome to the Kerykeion documentation. Kerykeion is a Python library for astrology that computes planetary and house positions, detects aspects, and generates SVG charts.
+
+## Installation
+
+```bash
+pip install kerykeion
+```
+
+Requires **Python 3.9** or higher.
+
+## Quick Start
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+# Create an astrological subject (offline mode with explicit coordinates)
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Doe", 1990, 7, 15, 10, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+    online=False
+)
+
+# Access planetary positions
+print(f"Sun: {subject.sun.sign} at {subject.sun.position:.2f}°")
+print(f"Moon: {subject.moon.sign} at {subject.moon.position:.2f}°")
+print(f"Ascendant: {subject.first_house.sign}")
+```
+
+**Output:**
+```
+Sun: Can at 22.54°
+Moon: Sco at 15.32°
+Ascendant: Vir
+```
+
+For more examples, see the [Examples Gallery](/content/examples/).
+
+---
+
+## Getting Started
+
+-   **[Migration Guide (v4 to v5)](/content/docs/migration)**: Step-by-step migration instructions for existing users.
+-   **[Complete Tutorial](/content/docs/tutorial)**: Build a full astrology application from scratch.
+-   **[Troubleshooting & FAQ](/content/docs/faq)**: Common issues and solutions.
+-   **[Glossary](/content/docs/glossary)**: Astrological terms explained.
 
 ## Core
 
@@ -32,11 +76,12 @@ Welcome to the Kerykeion documentation. Here you can find detailed information a
 
 ## Reference
 
--   **[Types & Schemas](/content/docs/kr_types)**: Core data models and type definitions.
--   **[Enums](/content/docs/enums)**: Constants for planets, signs, and aspects.
+-   **[Types & Schemas](/content/docs/schemas)**: Core data models and type definitions.
+-   **[Constants](/content/docs/constants)**: Constants for planets, signs, and aspects.
 -   **[Utilities](/content/docs/utilities)**: General utility functions.
 -   **[Settings](/content/docs/settings)**: Global configuration.
 -   **[Fetch Geonames](/content/docs/fetch_geonames)**: Fetching location data from GeoNames.
+-   **[Legacy API](/content/docs/legacy)**: Backward compatibility layer for v4 users.
 
 ## Integration
 

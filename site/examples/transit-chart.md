@@ -38,6 +38,10 @@ out_dir.mkdir(exist_ok=True)
 drawer.save_svg(output_path=out_dir, filename="lennon-transit")
 ```
 
+The output will be:
+
+![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20All%20Active%20Points%20-%20Transit%20Chart.svg)
+
 ## New Transit Chart Features
 
 ### Aspect Table Grid View
