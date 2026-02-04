@@ -13,6 +13,11 @@
     <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
     <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
 </div>
+<div align="center">
+    <a href="https://www.kerykeion.net/astrologer-api/subscribe">
+        <img src="https://img.shields.io/badge/REST%20API-Astrologer%20API-0055DA?style=for-the-badge&logo=fastapi&logoColor=white" alt="Astrologer API">
+    </a>
+</div>
 <p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
 &nbsp;
 
@@ -42,7 +47,6 @@ Technical docs: https://www.kerykeion.net/content/astrologer-api/
 ## Table of Contents
 
 - [**Commercial Web API**](#commercial-web-api)
-- [Projects built with Kerykeion](#projects-built-with-kerykeion)
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
@@ -81,6 +85,7 @@ Technical docs: https://www.kerykeion.net/content/astrologer-api/
 - [Lunar Nodes (Rahu \& Ketu)](#lunar-nodes-rahu--ketu)
 - [JSON Support](#json-support)
 - [Documentation](#documentation)
+- [Projects built with Kerykeion](#projects-built-with-kerykeion)
 - [Development](#development)
 - [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
 - [License](#license)

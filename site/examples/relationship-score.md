@@ -104,3 +104,7 @@ RelationshipScoreModel(
 - Logging is available for debugging purposes, with detailed messages during aspect evaluations.
 
 This class integrates seamlessly with Kerykeion v5 factories and models.
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

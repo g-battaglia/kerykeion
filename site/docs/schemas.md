@@ -774,3 +774,7 @@ Used within `KerykeionLanguageModel` to define localized names for specific bodi
 | `Mercury`, `Venus`, etc. | Localized name for respective planet. |
 | `True_North_Lunar_Node`  | Localized name for North Node.        |
 | `Pars_Fortunae`          | Localized name for Part of Fortune.   |
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

@@ -106,3 +106,7 @@ Additional moon phase formatting utilities.
 | :------------------------------------------ | :--------------------------------- |
 | `get_moon_emoji_from_phase_int(phase)`      | Returns emoji for 0-7 phase index. |
 | `get_moon_phase_name_from_phase_int(phase)` | Returns name for 0-7 phase index.  |
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

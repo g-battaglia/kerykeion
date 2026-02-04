@@ -114,3 +114,7 @@ result = calculator.next_return_from_year(2025, "Solar")
 ## Relocation Astrology
 
 Planetary returns are often calculated for the subject's **current location** rather than birth location. Simply pass the current residence coordinates/city to the `PlanetaryReturnFactory` constructor to generate a relocated return chart.
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

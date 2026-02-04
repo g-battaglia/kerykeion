@@ -184,3 +184,7 @@ from kerykeion.charts.charts_utils import degreeDiff
 
 diff = degreeDiff(350, 10) # Returns 20.0
 ```
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

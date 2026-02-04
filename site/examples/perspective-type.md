@@ -143,3 +143,7 @@ Topocentric:
 ```
 
 > **Tip:** For most astrological work, stick with the default `Apparent Geocentric`. Use `Topocentric` only when precise Moon timing is critical (e.g., for electional astrology or void-of-course Moon calculations).
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

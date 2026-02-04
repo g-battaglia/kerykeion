@@ -298,3 +298,7 @@ Different methods for calculating house cusps:
 | **Campanus** | Prime vertical | Traditional |
 
 See [House Systems](/content/examples/houses-systems) for the complete list.
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

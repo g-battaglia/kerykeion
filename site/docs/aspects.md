@@ -217,3 +217,7 @@ from kerykeion.aspects.aspects_utils import planet_id_decoder
 swe_id = planet_id_decoder(planets_settings, "Jupiter")
 # Returns 5
 ```
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

@@ -77,3 +77,7 @@ Override the default cache path used when none is provided.
 from pathlib import Path
 FetchGeonames.set_default_cache_name(Path("/custom/cache/path"))
 ```
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

@@ -99,3 +99,7 @@ drawer.save_svg(output_path=out_dir, filename="transit-example")
 ```
 
 The output will be saved in the specified directory.
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

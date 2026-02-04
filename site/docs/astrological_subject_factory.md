@@ -159,3 +159,7 @@ Helper context manager for thread-safe Swisseph calculations.
 ## Thread Safety Note
 
 The underlying Swiss Ephemeris library is **not thread-safe** by default. If using Kerykeion in a multi-threaded web server (like Gunicorn/Uvicorn workers), ensure `AstrologicalSubjectFactory` usage is process-isolated or appropriately locked if sharing state (though Kerykeion objects themselves are generally self-contained).
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

@@ -348,3 +348,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 2. Browse the [Examples Gallery](/content/examples/)
 3. Open an issue on [GitHub](https://github.com/g-battaglia/kerykeion/issues)
 4. Email: kerykeion.astrology@gmail.com
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

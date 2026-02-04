@@ -90,3 +90,7 @@ If these settings do not match, the factory will raise an error, as you cannot m
 - **Midpoints**: Positions are calculated as the shortest arc mean between the two input points (e.g., Aries 0° and Aries 20° = Aries 10°).
 - **House Cusps**: House cusps are also calculated by midpoint.
 - **Active Points**: Only points present in _both_ input subjects are included in the composite.
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)
