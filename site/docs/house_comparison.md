@@ -82,3 +82,7 @@ from kerykeion.house_comparison.house_comparison_utils import calculate_points_i
 # Returns List[PointInHouseModel]
 points = calculate_points_in_reciprocal_houses(person_a, person_b)
 ```
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

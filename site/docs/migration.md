@@ -305,3 +305,7 @@ If you encounter issues during migration:
 1. Check the [Troubleshooting & FAQ](/content/docs/faq) page
 2. Review the [API documentation](/content/docs/)
 3. Open an issue on [GitHub](https://github.com/g-battaglia/kerykeion/issues)
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

@@ -9,6 +9,8 @@ order: 1
 
 Welcome to the Kerykeion documentation. Kerykeion is a Python library for astrology that computes planetary and house positions, detects aspects, and generates SVG charts.
 
+> **Building a production app?** Skip the server setup with [**Astrologer API**](https://www.kerykeion.net/astrologer-api/subscribe) - get charts, calculations, and AI interpretations via REST API. [Learn more →](/content/docs/astrologer-api)
+
 ## Installation
 
 ```bash
@@ -48,6 +50,7 @@ For more examples, see the [Examples Gallery](/content/examples/).
 
 ## Getting Started
 
+-   **[Astrologer API](/content/docs/astrologer-api)**: Production-ready REST API for commercial projects.
 -   **[Migration Guide (v4 to v5)](/content/docs/migration)**: Step-by-step migration instructions for existing users.
 -   **[Complete Tutorial](/content/docs/tutorial)**: Build a full astrology application from scratch.
 -   **[Troubleshooting & FAQ](/content/docs/faq)**: Common issues and solutions.

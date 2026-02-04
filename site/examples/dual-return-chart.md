@@ -102,3 +102,7 @@ svg_content = drawer.generate_svg_string()
 ```
 
 Set `show_degree_indicators=True` (the default) to keep the indicators for both single and dual wheels.
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

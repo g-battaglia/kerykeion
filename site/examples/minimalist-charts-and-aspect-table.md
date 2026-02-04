@@ -61,3 +61,7 @@ out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
 drawer.save_aspect_grid_only_svg_file(output_path=out_dir)
 ```
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

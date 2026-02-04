@@ -69,3 +69,7 @@ drawer.save_svg(output_path=out_dir, filename="john-lennon-external-natal")
 The output will be a SVG file in `charts_output/john-lennon-external-natal.svg`.
 
 ![External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20ExternalNatal%20-%20Natal%20Chart.svg)
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

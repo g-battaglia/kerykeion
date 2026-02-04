@@ -62,3 +62,7 @@ aspects = NatalAspects(subject)
 for aspect in aspects.aspects:
     print(aspect)
 ```
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

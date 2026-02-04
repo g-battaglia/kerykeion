@@ -42,3 +42,7 @@ Key options include:
 - `geonames_username` and `online=True` for automatic lookup
 
 For the complete reference, see the API docs: https://www.kerykeion.net/content/docs/
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

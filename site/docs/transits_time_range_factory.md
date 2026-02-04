@@ -109,3 +109,7 @@ The `get_transit_moments()` method returns a specialized object simplifying acce
 - **Step Size**: Use larger steps (e.g., `step=7` days) for long-term outer planet transit searches (Jupiter/Saturn) to save performance.
 - **Orb**: Use standard `active_aspects` configuration to define orb tightness.
 - **Ephemeris Location**: Ideally should match the natal subject's current location, as transits are technically location-dependent for exact timing (especially angles), though global planetary positions are roughly the same.
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

@@ -92,3 +92,7 @@ print(sun_context)
 ```text
 Sun at 10.81° in Capricorn (Earth) in Tenth House, speed 1.02°/day, quality: Cardinal
 ```
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

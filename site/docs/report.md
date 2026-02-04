@@ -57,3 +57,7 @@ with open("report.txt", "w") as f:
 | :--------------------------------------------------------------- | :-------------------------------------- |
 | `generate_report(include_aspects=None, max_aspects=None) -> str` | Build the report content as a string.   |
 | `print_report(include_aspects=None, max_aspects=None) -> None`   | Print the generated report to `stdout`. |
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

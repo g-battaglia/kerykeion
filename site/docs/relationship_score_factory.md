@@ -114,3 +114,7 @@ The `get_relationship_score()` method returns a Pydantic model with:
 - `score_description` (str): The category name.
 - `aspects` (list): All the aspects that contributed to the score.
 - `is_destiny_sign` (bool): Whether the "Destiny Sign" bonus was applied.
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)
