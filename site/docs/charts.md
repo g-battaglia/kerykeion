@@ -1,5 +1,6 @@
 ---
 title: 'Charts Module - ChartDrawer'
+description: 'A complete guide to Kerykeions visualization engine. Learn how to render professional SVG astrology charts, customize themes, and export to various formats.'
 category: 'Core'
 tags: ['docs', 'charts', 'svg', 'visual', 'kerykeion']
 order: 4
@@ -13,14 +14,14 @@ The `ChartDrawer` class is the generic visualization engine. It renders professi
 
 Kerykeion follows a **separation of concerns** principle:
 
--   **`ChartDataFactory`** handles all astronomical calculations (planetary positions, aspects, elements, etc.)
--   **`ChartDrawer`** focuses purely on visualization (drawing wheels, aspect grids, labels)
+- **`ChartDataFactory`** handles all astronomical calculations (planetary positions, aspects, elements, etc.)
+- **`ChartDrawer`** focuses purely on visualization (drawing wheels, aspect grids, labels)
 
 This decoupling means you can:
 
--   Generate chart data once and render it in multiple formats/themes
--   Perform calculations without needing visual output
--   Swap visualization engines without touching calculation logic
+- Generate chart data once and render it in multiple formats/themes
+- Perform calculations without needing visual output
+- Swap visualization engines without touching calculation logic
 
 ## Standard Workflow
 
@@ -97,12 +98,12 @@ drawer = ChartDrawer(
 
 ### Themes
 
--   `"classic"` (Default): White background, traditional look.
--   `"dark"`: Modern dark mode.
--   `"light"`: Minimalist light mode.
--   `"strawberry"`: Pink/Red color palette.
--   `"dark-high-contrast"`: Accessibility focused.
--   `"black-and-white"`: High contrast monochrome for print.
+- `"classic"` (Default): White background, traditional look.
+- `"dark"`: Modern dark mode.
+- `"light"`: Minimalist light mode.
+- `"strawberry"`: Pink/Red color palette.
+- `"dark-high-contrast"`: Accessibility focused.
+- `"black-and-white"`: High contrast monochrome for print.
 
 ### Languages
 
@@ -158,11 +159,11 @@ drawer.save_aspect_grid_only_svg_file(Path("./output"), filename="grid_only")
 
 **Public Methods:**
 
--   `generate_svg_string() -> str`
--   `generate_wheel_only_svg_string() -> str`
--   `generate_aspect_grid_only_svg_string() -> str`
--   `save_wheel_only_svg_file(output_path, filename)`
--   `save_aspect_grid_only_svg_file(output_path, filename)`
+- `generate_svg_string() -> str`
+- `generate_wheel_only_svg_string() -> str`
+- `generate_aspect_grid_only_svg_string() -> str`
+- `save_wheel_only_svg_file(output_path, filename)`
+- `save_aspect_grid_only_svg_file(output_path, filename)`
 
 ## Helper Functions (`charts_utils`)
 

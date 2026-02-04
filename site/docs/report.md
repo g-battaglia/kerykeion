@@ -1,5 +1,6 @@
 ---
 title: 'Report Module'
+description: 'Generate human-readable text reports and tables from your astrological data. Ideal for CLI applications, debugging, and consolidated chart summaries.'
 category: 'Core'
 tags: ['docs', 'reports', 'cli', 'kerykeion']
 order: 5
@@ -11,9 +12,9 @@ The `ReportGenerator` class generates concise, human-readable text reports (tabl
 
 ## Supported Inputs
 
--   **`AstrologicalSubjectModel`**: Basic birth/event data, celestial points, houses.
--   **`SingleChartDataModel`**: Natal, Composite, Returns (includes elements, aspects).
--   **`DualChartDataModel`**: Synastry, Transits (includes comparison tables).
+- **`AstrologicalSubjectModel`**: Basic birth/event data, celestial points, houses.
+- **`SingleChartDataModel`**: Natal, Composite, Returns (includes elements, aspects).
+- **`DualChartDataModel`**: Synastry, Transits (includes comparison tables).
 
 ## Usage
 

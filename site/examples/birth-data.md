@@ -35,9 +35,10 @@ print(subject.moon.element)
 ```
 
 Key options include:
+
 - `houses_system_identifier` (e.g., `"P"` Placidus, `"W"` Whole Sign)
 - `zodiac_type` ("Tropical" or "Sidereal") and `sidereal_mode` (e.g., `"LAHIRI"`)
 - `perspective_type` (e.g., `"Apparent Geocentric"`, `"Heliocentric"`)
 - `geonames_username` and `online=True` for automatic lookup
 
-For the complete reference, see the API docs: https://www.kerykeion.net/pydocs/kerykeion.html
+For the complete reference, see the API docs: https://www.kerykeion.net/content/docs/

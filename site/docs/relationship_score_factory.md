@@ -1,5 +1,6 @@
 ---
 title: 'Relationship Score Factory'
+description: 'Quantify relationship compatibility with the Relationship Score Factory. Implementation of the Ciro Discepolo method for numerical synastry analysis.'
 category: 'Analysis'
 tags: ['docs', 'relationships', 'synastry', 'scores', 'kerykeion']
 order: 8
@@ -15,17 +16,17 @@ While most synastry analysis is qualitative (describing the nature of aspects), 
 
 **The Method Prioritizes:**
 
--   **Luminaries** (Sun and Moon) - Core identity and emotional nature
--   **Angles** (Ascendant, MC) - How individuals meet the world
--   **Venus-Mars** - Romantic and sexual compatibility
--   **Orb Precision** - Tighter aspects score higher (±2° gets bonus points)
--   **Quality Matching** - Same modality (Cardinal/Fixed/Mutable) adds points
+- **Luminaries** (Sun and Moon) - Core identity and emotional nature
+- **Angles** (Ascendant, MC) - How individuals meet the world
+- **Venus-Mars** - Romantic and sexual compatibility
+- **Orb Precision** - Tighter aspects score higher (±2° gets bonus points)
+- **Quality Matching** - Same modality (Cardinal/Fixed/Mutable) adds points
 
 This numerical approach is useful for:
 
--   Comparing multiple potential partners objectively
--   Research into relationship longevity patterns
--   Quick compatibility screening in dating applications
+- Comparing multiple potential partners objectively
+- Research into relationship longevity patterns
+- Quick compatibility screening in dating applications
 
 ## Basic Usage
 
@@ -87,7 +88,7 @@ _Note: The system prioritizes "Luminaries" (Sun/Moon) and Angles._
 
 The `get_relationship_score()` method returns a Pydantic model with:
 
--   `score_value` (float): The calculated number.
--   `score_description` (str): The category name.
--   `aspects` (list): All the aspects that contributed to the score.
--   `is_destiny_sign` (bool): Whether the "Destiny Sign" bonus was applied.
+- `score_value` (float): The calculated number.
+- `score_description` (str): The category name.
+- `aspects` (list): All the aspects that contributed to the score.
+- `is_destiny_sign` (bool): Whether the "Destiny Sign" bonus was applied.

@@ -1,5 +1,6 @@
 ---
 title: 'House Comparison'
+description: 'Explore house overlays and synastry dynamics with the House Comparison Factory. Bidirectional analysis of where planets fall in a partner’s houses.'
 category: 'Analysis'
 tags: ['docs', 'houses', 'synastry', 'comparison', 'kerykeion']
 order: 9
@@ -41,20 +42,20 @@ The `HouseComparisonModel` contains:
 
 **Point Comparisons:**
 
--   `first_points_in_second_houses`: Subject A's points projected into Subject B's houses.
--   `second_points_in_first_houses`: Subject B's points projected into Subject A's houses.
+- `first_points_in_second_houses`: Subject A's points projected into Subject B's houses.
+- `second_points_in_first_houses`: Subject B's points projected into Subject A's houses.
 
 **Cusp Comparisons:**
 
--   `first_cusps_in_second_houses`: Subject A's house cusps projected into Subject B's houses.
--   `second_cusps_in_first_houses`: Subject B's house cusps projected into Subject A's houses.
+- `first_cusps_in_second_houses`: Subject A's house cusps projected into Subject B's houses.
+- `second_cusps_in_first_houses`: Subject B's house cusps projected into Subject A's houses.
 
 Each point model includes:
 
--   `point_name`: Name of the planet/point (e.g. "Sun").
--   `projected_house_name`: Name of the house it falls into (e.g. "Seventh_House").
--   `projected_house_number`: Number of the house (1-12).
--   `point_abs_pos`: Absolute position of the point.
+- `point_name`: Name of the planet/point (e.g. "Sun").
+- `projected_house_name`: Name of the house it falls into (e.g. "Seventh_House").
+- `projected_house_number`: Number of the house (1-12).
+- `point_abs_pos`: Absolute position of the point.
 
 ## Constructor Parameters
 

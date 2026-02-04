@@ -1,5 +1,6 @@
 ---
 title: 'Composite Subject Factory'
+description: 'Understand the dynamics of relationships with composite charts. Learn how to calculate midpoints and generate unified relationship charts using Kerykeion.'
 category: 'Analysis'
 tags: ['docs', 'composite', 'relationships', 'kerykeion']
 order: 7
@@ -15,16 +16,16 @@ Unlike **Synastry** (which compares two separate charts), a **Composite Chart** 
 
 **How It Works:**
 
--   Every planetary position is calculated as the midpoint between the two natal charts
--   The Composite Sun shows the relationship's core identity and purpose
--   The Composite Moon reveals the emotional dynamics between partners
--   House placements show which life areas the relationship emphasizes
+- Every planetary position is calculated as the midpoint between the two natal charts
+- The Composite Sun shows the relationship's core identity and purpose
+- The Composite Moon reveals the emotional dynamics between partners
+- House placements show which life areas the relationship emphasizes
 
 Composite charts are especially useful for understanding:
 
--   **Romantic partnerships**: What does this relationship want to become?
--   **Business partnerships**: What are the shared goals and challenges?
--   **Friendships**: What unique dynamic emerges when these two people interact?
+- **Romantic partnerships**: What does this relationship want to become?
+- **Business partnerships**: What are the shared goals and challenges?
+- **Friendships**: What unique dynamic emerges when these two people interact?
 
 ## Basic Usage
 
@@ -70,14 +71,14 @@ svg = drawer.generate_svg_string()
 
 To calculate a valid composite chart, both subjects **MUST** have matching configuration:
 
--   **Zodiac System**: Both Tropical OR Both Sidereal (with same Ayanamsa).
--   **House System**: Both Placidus, Whole Sign, etc.
--   **Perspective**: Both Apparent Geocentric, etc.
+- **Zodiac System**: Both Tropical OR Both Sidereal (with same Ayanamsa).
+- **House System**: Both Placidus, Whole Sign, etc.
+- **Perspective**: Both Apparent Geocentric, etc.
 
 If these settings do not match, the factory will raise an error, as you cannot mathematically combine disparate coordinate systems.
 
 ## Methodology
 
--   **Midpoints**: Positions are calculated as the shortest arc mean between the two input points (e.g., Aries 0° and Aries 20° = Aries 10°).
--   **House Cusps**: House cusps are also calculated by midpoint.
--   **Active Points**: Only points present in _both_ input subjects are included in the composite.
+- **Midpoints**: Positions are calculated as the shortest arc mean between the two input points (e.g., Aries 0° and Aries 20° = Aries 10°).
+- **House Cusps**: House cusps are also calculated by midpoint.
+- **Active Points**: Only points present in _both_ input subjects are included in the composite.

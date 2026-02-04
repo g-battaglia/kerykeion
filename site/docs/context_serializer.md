@@ -1,5 +1,6 @@
 ---
 title: 'AI Context Serializer'
+description: 'Optimize your astrological data for Large Language Models. Learn how to use the AI Context Serializer to convert charts into precise, plain-text descriptions.'
 category: 'Integration'
 tags: ['docs', 'ai', 'context', 'kerykeion']
 order: 19
@@ -39,11 +40,11 @@ Celestial Points:
 
 You can pass almost any Kerykeion object to `to_context`:
 
--   `AstrologicalSubjectModel` (Basic chart)
--   `SingleChartDataModel` (Chart with calculated aspects)
--   `DualChartDataModel` (Synastry/Transits with inter-aspects)
--   `CompositeSubjectModel`
--   `PlanetaryReturnModel`
+- `AstrologicalSubjectModel` (Basic chart)
+- `SingleChartDataModel` (Chart with calculated aspects)
+- `DualChartDataModel` (Synastry/Transits with inter-aspects)
+- `CompositeSubjectModel`
+- `PlanetaryReturnModel`
 
 ## AI Integration Example
 

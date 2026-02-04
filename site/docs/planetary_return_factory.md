@@ -1,5 +1,6 @@
 ---
 title: 'Planetary Return Factory'
+description: 'Precisely calculate solar, lunar, and planetary returns with Kerykeion. High-precision timing for forecasting yearly and monthly astrological cycles.'
 category: 'Forecasting'
 tags: ['docs', 'returns', 'forecasting', 'kerykeion']
 order: 11
@@ -15,24 +16,24 @@ A **Planetary Return** occurs when a transiting planet returns to the exact degr
 
 **Solar Return (Birthday Chart):**
 
--   Happens once per year on or near your birthday
--   The Sun returns to its natal position (~365.25 days)
--   Forecasts themes and events for the coming year
--   Traditionally cast for your current location (relocated solar return)
+- Happens once per year on or near your birthday
+- The Sun returns to its natal position (~365.25 days)
+- Forecasts themes and events for the coming year
+- Traditionally cast for your current location (relocated solar return)
 
 **Lunar Return:**
 
--   Happens approximately every 27-29 days
--   The Moon returns to its natal position
--   Forecasts the emotional climate for the coming month
--   Useful for timing short-term events and emotional cycles
+- Happens approximately every 27-29 days
+- The Moon returns to its natal position
+- Forecasts the emotional climate for the coming month
+- Useful for timing short-term events and emotional cycles
 
 **Other Returns:**
 
--   **Mercury Return** (~88 days): Communication and learning cycles
--   **Venus Return** (~225 days): Relationship and value cycles
--   **Mars Return** (~2 years): Action and energy cycles
--   **Jupiter/Saturn Returns**: Major life transitions (every 12 and ~29 years respectively)
+- **Mercury Return** (~88 days): Communication and learning cycles
+- **Venus Return** (~225 days): Relationship and value cycles
+- **Mars Return** (~2 years): Action and energy cycles
+- **Jupiter/Saturn Returns**: Major life transitions (every 12 and ~29 years respectively)
 
 ## Usage
 
@@ -70,10 +71,10 @@ print(f"Sun Position: {solar_return.sun.abs_pos:.2f}°")
 
 ## Supported Return Types
 
--   `"Solar"` (Sun) - Yearly forecast.
--   `"Lunar"` (Moon) - Monthly forecast.
--   `"Mercury"`, `"Venus"`, `"Mars"`, `"Jupiter"`, `"Saturn"`, `"Uranus"`, `"Neptune"`, `"Pluto"`
--   `"Chiron"`
+- `"Solar"` (Sun) - Yearly forecast.
+- `"Lunar"` (Moon) - Monthly forecast.
+- `"Mercury"`, `"Venus"`, `"Mars"`, `"Jupiter"`, `"Saturn"`, `"Uranus"`, `"Neptune"`, `"Pluto"`
+- `"Chiron"`
 
 ## Methods
 

@@ -1,5 +1,6 @@
 ---
 title: 'Astrological Subject Factory'
+description: 'Master the creation of astrological subjects in Kerykeion. Detailed guide on birth data, zodiac types, house systems, and coordinate perspectives.'
 category: 'Core'
 tags: ['docs', 'subjects', 'core', 'astrology', 'kerykeion']
 order: 2
@@ -11,10 +12,10 @@ The `AstrologicalSubjectFactory` is the central mechanism in Kerykeion for creat
 
 ## Key Features
 
--   **Precision**: Uses the Swiss Ephemeris (via `pyswisseph`) for high-accuracy calculations.
--   **Flexibility**: Supports Tropical/Sidereal zodiacs, multiple House systems (Placidus, Whole Sign, etc.), and various coordinate (Geocentric/Heliocentric) perspectives.
--   **Optimization**: The `active_points` argument allows you to calculate only what you need, saving resources.
--   **Online/Offline**: Can resolve locations automatically via GeoNames (Online) or accept raw coordinates (Offline).
+- **Precision**: Uses the Swiss Ephemeris (via `pyswisseph`) for high-accuracy calculations.
+- **Flexibility**: Supports Tropical/Sidereal zodiacs, multiple House systems (Placidus, Whole Sign, etc.), and various coordinate (Geocentric/Heliocentric) perspectives.
+- **Optimization**: The `active_points` argument allows you to calculate only what you need, saving resources.
+- **Online/Offline**: Can resolve locations automatically via GeoNames (Online) or accept raw coordinates (Offline).
 
 ## Factory Methods
 
@@ -103,16 +104,16 @@ now_chart = AstrologicalSubjectFactory.from_current_time(
 
 ### Zodiac Types
 
--   **Tropical** (Default): Fixed to seasons (0° Aries = Vernal Equinox). Standard in Western astrology.
--   **Sidereal**: Fixed to constellations. Standard in Vedic astrology. Requires `sidereal_mode`.
-    -   _Common Modes_: "LAHIRI" (most common), "FAGAN_BRADLEY", "RAMAN".
+- **Tropical** (Default): Fixed to seasons (0° Aries = Vernal Equinox). Standard in Western astrology.
+- **Sidereal**: Fixed to constellations. Standard in Vedic astrology. Requires `sidereal_mode`.
+  - _Common Modes_: "LAHIRI" (most common), "FAGAN_BRADLEY", "RAMAN".
 
 ### Perspectives
 
--   **Apparent Geocentric** (Default): Earth-centered, includes light-time correction.
--   **True Geocentric**: Earth-centered, geometric position only.
--   **Heliocentric**: Sun-centered. Earth becomes a planet.
--   **Topocentric**: Observer-centered (surface of Earth), accounts for parallax.
+- **Apparent Geocentric** (Default): Earth-centered, includes light-time correction.
+- **True Geocentric**: Earth-centered, geometric position only.
+- **Heliocentric**: Sun-centered. Earth becomes a planet.
+- **Topocentric**: Observer-centered (surface of Earth), accounts for parallax.
 
 ## Performance & Optimization
 
@@ -152,8 +153,8 @@ Helper context manager for thread-safe Swisseph calculations.
 
 **Memory Usage**:
 
--   Full Chart: ~50KB
--   Minimal Chart: ~15KB
+- Full Chart: ~50KB
+- Minimal Chart: ~15KB
 
 ## Thread Safety Note
 

@@ -1,5 +1,6 @@
 ---
 title: 'Transits Time Range Factory'
+description: 'Forecast upcoming astrological influences with transits. Learn how to calculate planetary movements over time against a fixed natal chart.'
 category: 'Forecasting'
 tags: ['docs', 'transits', 'forecasting', 'kerykeion']
 order: 12
@@ -15,9 +16,9 @@ The `TransitsTimeRangeFactory` calculates transits over a period of time (days, 
 
 In predictive astrology, transits are used to:
 
--   **Forecast** upcoming periods of opportunity or challenge
--   **Understand timing** for major life events (career changes, relationships, relocations)
--   **Track cycles** of outer planets (Jupiter, Saturn, Uranus, Neptune, Pluto) that mark significant developmental phases
+- **Forecast** upcoming periods of opportunity or challenge
+- **Understand timing** for major life events (career changes, relationships, relocations)
+- **Track cycles** of outer planets (Jupiter, Saturn, Uranus, Neptune, Pluto) that mark significant developmental phases
 
 For example, when transiting Jupiter (the planet of expansion) forms a trine (harmonious 120° aspect) to your natal Sun, it's traditionally considered a favorable period for growth and new opportunities.
 
@@ -87,10 +88,10 @@ for moment in results.transits:
 
 The `get_transit_moments()` method returns a specialized object simplifying access to the data.
 
--   `results.dates`: List of all ISO timestamps checked.
--   `results.transits`: List of objects containing:
-    -   `date`: The specific timestamp.
-    -   `aspects`: List of `AspectModel` objects (Transiting Planet -> Natal Planet).
+- `results.dates`: List of all ISO timestamps checked.
+- `results.transits`: List of objects containing:
+  - `date`: The specific timestamp.
+  - `aspects`: List of `AspectModel` objects (Transiting Planet -> Natal Planet).
 
 ## Constructor Parameters
 
@@ -105,6 +106,6 @@ The `get_transit_moments()` method returns a specialized object simplifying acce
 
 ## Configuration Tips
 
--   **Step Size**: Use larger steps (e.g., `step=7` days) for long-term outer planet transit searches (Jupiter/Saturn) to save performance.
--   **Orb**: Use standard `active_aspects` configuration to define orb tightness.
--   **Ephemeris Location**: Ideally should match the natal subject's current location, as transits are technically location-dependent for exact timing (especially angles), though global planetary positions are roughly the same.
+- **Step Size**: Use larger steps (e.g., `step=7` days) for long-term outer planet transit searches (Jupiter/Saturn) to save performance.
+- **Orb**: Use standard `active_aspects` configuration to define orb tightness.
+- **Ephemeris Location**: Ideally should match the natal subject's current location, as transits are technically location-dependent for exact timing (especially angles), though global planetary positions are roughly the same.

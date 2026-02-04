@@ -1,5 +1,6 @@
 ---
 title: 'Transit Chart'
+description: 'Track current planetary influences against a natal chart. Learn how to generate transit wheels and analyze real-time astrological trends with ChartDrawer.'
 tags: ['examples', 'charts', 'transits', 'forecasting', 'kerykeion']
 order: 3
 ---

@@ -1,5 +1,6 @@
 ---
 title: 'Chart Data Factory'
+description: 'Generate structured, machine-readable astrological data with the ChartDataFactory. Supports natal, synastry, transit, and composite charts.'
 category: 'Core'
 tags: ['docs', 'chart data', 'analysis', 'kerykeion']
 order: 3
@@ -11,9 +12,9 @@ The `ChartDataFactory` extracts and structures all astronomical calculations int
 
 ## Key Features
 
--   **Structured Output**: Returns Pydantic models (`SingleChartDataModel` or `DualChartDataModel`) perfect for APIs.
--   **Automatic Analysis**: Calculates element/quality distributions and relationship scores automatically.
--   **Optimized**: Only calculates what is necessary for the requested chart type.
+- **Structured Output**: Returns Pydantic models (`SingleChartDataModel` or `DualChartDataModel`) perfect for APIs.
+- **Automatic Analysis**: Calculates element/quality distributions and relationship scores automatically.
+- **Optimized**: Only calculates what is necessary for the requested chart type.
 
 ## Factory Methods
 
@@ -117,19 +118,19 @@ single_return_data = ChartDataFactory.create_single_wheel_return_chart_data(sola
 
 Used for Natal, Composite, and Single Return charts.
 
--   `subject`: The `AstrologicalSubjectModel`.
--   `aspects`: List of internal aspects.
--   `element_distribution`: Fire/Earth/Air/Water breakdown.
--   `quality_distribution`: Cardinal/Fixed/Mutable breakdown.
+- `subject`: The `AstrologicalSubjectModel`.
+- `aspects`: List of internal aspects.
+- `element_distribution`: Fire/Earth/Air/Water breakdown.
+- `quality_distribution`: Cardinal/Fixed/Mutable breakdown.
 
 ### `DualChartDataModel`
 
 Used for Synastry, Transit, and Dual Return charts.
 
--   `first_subject`, `second_subject`: The two subjects.
--   `aspects`: Inter-chart aspects.
--   `relationship_score`: Compatibility score (if requested).
--   `house_comparison`: Planet overlays in houses (if requested).
+- `first_subject`, `second_subject`: The two subjects.
+- `aspects`: Inter-chart aspects.
+- `relationship_score`: Compatibility score (if requested).
+- `house_comparison`: Planet overlays in houses (if requested).
 
 ## Analysis Example
 

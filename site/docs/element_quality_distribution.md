@@ -1,5 +1,6 @@
 ---
 title: 'Element & Quality Distribution'
+description: 'Analyze the balance of elements and qualities in any chart. Explains weighted and pure count methods for calculating fire, earth, air, and water distribution.'
 category: 'Analysis'
 tags: ['docs', 'elements', 'qualities', 'statistics', 'kerykeion']
 order: 10

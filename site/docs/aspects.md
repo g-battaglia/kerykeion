@@ -1,5 +1,6 @@
 ---
 title: 'Aspects Module'
+description: 'Learn how to calculate and analyze astrological aspects with Kerykeion. Covers major and minor aspects, orbs, and factory methods for chart analysis.'
 category: 'Analysis'
 tags: ['docs', 'aspects', 'analysis', 'kerykeion']
 order: 6
@@ -13,11 +14,11 @@ The `AspectsFactory` provides a unified interface for calculating angular relati
 
 **Aspects** are specific angular relationships between planets in a chart. They represent how planetary energies interact:
 
--   **Harmonious aspects** (trines 120°, sextiles 60°) indicate ease and flow between planetary energies
--   **Challenging aspects** (squares 90°, oppositions 180°) indicate tension, conflict, or dynamic growth opportunities
--   **Neutral/Mixed** (conjunctions 0°) blend energies intensely, for better or worse depending on the planets involved
+- **Harmonious aspects** (trines 120°, sextiles 60°) indicate ease and flow between planetary energies
+- **Challenging aspects** (squares 90°, oppositions 180°) indicate tension, conflict, or dynamic growth opportunities
+- **Neutral/Mixed** (conjunctions 0°) blend energies intensely, for better or worse depending on the planets involved
 
-Aspects are fundamental to astrological interpretation—a chart without aspect analysis is like a musical score without chords.
+Aspects are fundamental to astrological interpretation, a chart without aspect analysis is like a musical score without chords.
 
 ## Factory Methods
 
@@ -126,10 +127,10 @@ The factory returns an `AspectsModel` containing a list of `AspectModel` objects
 
 **Key `AspectModel` Attributes:**
 
--   `p1_name`, `p2_name`: Names of the two points involved.
--   `aspect`: Name of the aspect (e.g., "conjunction").
--   `orbit`: The exact orb (deviation from exact aspect). Negative values indicate applying aspects.
--   `aid`: Unique aspect ID string.
+- `p1_name`, `p2_name`: Names of the two points involved.
+- `aspect`: Name of the aspect (e.g., "conjunction").
+- `orbit`: The exact orb (deviation from exact aspect). Negative values indicate applying aspects.
+- `aid`: Unique aspect ID string.
 
 ## Aspect Utilities
 

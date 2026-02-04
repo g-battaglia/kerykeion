@@ -10,7 +10,7 @@ You can use the `Sidereal` mode to calculate the data. This mode is useful
 for astrologers who prefer to use the sidereal zodiac instead of the tropical zodiac.
 
 There are different `sidereal_modes`, to read the full list check here:
-[Sidereal Modes Literals](https://www.kerykeion.net/pydocs/kerykeion/schemas/kr_literals.html#SiderealMode)
+[Sidereal Modes Literals](https://www.kerykeion.net/content/docs/schemas#siderealmode)
 
 Here some examples
 

@@ -1,5 +1,6 @@
 ---
 title: 'Utilities Module'
+description: 'Explore Kerykeions helper functions for coordinate conversions, house management, moon phases, and Julian date calculations.'
 category: 'Reference'
 tags: ['docs', 'utilities', 'math', 'kerykeion']
 order: 16
