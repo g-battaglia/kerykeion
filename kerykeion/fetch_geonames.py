@@ -59,6 +59,9 @@ class FetchGeonames:
         self.username = username
         self.city_name = city_name
         self.country_code = country_code
+        # NOTE: GeoNames free API does not support HTTPS (SSL certificate mismatch).
+        # See: https://forum.geonames.org/gforum/posts/list/27020.page
+        # Premium users can use secure.geonames.org instead.
         self.base_url = "http://api.geonames.org/searchJSON"
         self.timezone_url = "http://api.geonames.org/timezoneJSON"
 
