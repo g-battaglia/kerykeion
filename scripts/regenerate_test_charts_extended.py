@@ -54,6 +54,16 @@ KEY_SIDEREAL_MODES = ["LAHIRI", "FAGAN_BRADLEY", "KRISHNAMURTI", "RAMAN", "J2000
 KEY_HOUSE_SYSTEMS = ["K", "W", "R", "C", "O"]  # Koch, Whole Sign, Regiomontanus, Campanus, Porphyry
 
 
+# Subjects that are already covered by the main regenerate_test_charts.py script
+# and should be excluded from temporal subject generation to avoid file conflicts.
+SUBJECTS_COVERED_BY_MAIN_SCRIPT = {
+    "john_lennon_1940",
+    "paul_mccartney_1942",
+    "johnny_depp_1963",
+    "yoko_ono_1933",
+}
+
+
 def create_subject_from_dict(subject_dict: dict, **kwargs):
     """Create an AstrologicalSubjectModel from a subject dictionary."""
     # Geographic subjects don't have year/month/day - use default date
@@ -293,9 +303,15 @@ def generate_temporal_subject_charts():
     charts_generated = 0
 
     # Generate natal chart for each temporal subject
+    # Skip subjects that are already covered by the main regenerate_test_charts.py script
     for subject_data in TEMPORAL_SUBJECTS:
         subject_id = subject_data["id"]
         subject_name = subject_data["name"]
+
+        # Skip subjects covered by main script to avoid file conflicts
+        if subject_id in SUBJECTS_COVERED_BY_MAIN_SCRIPT:
+            print(f"  Skipping: {subject_name} (covered by main regenerate script)")
+            continue
 
         try:
             subject = create_subject_from_dict(subject_data)

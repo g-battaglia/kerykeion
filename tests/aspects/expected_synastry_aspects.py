@@ -9,7 +9,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 117.32695454842408,
         "p1": 0,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "Sun",
@@ -21,7 +21,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 113.75057619392632,
         "p1": 0,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Sun",
@@ -33,7 +33,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 175.4073786002096,
         "p1": 0,
-        "p2": 7,
+        "p2": 7
     },
     {
         "p1_name": "Moon",
@@ -45,7 +45,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 54.14693184196125,
         "p1": 1,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Moon",
@@ -57,7 +57,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 187.7178818370911,
         "p1": 1,
-        "p2": 9,
+        "p2": 9
     },
     {
         "p1_name": "Moon",
@@ -69,7 +69,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 245.62531454240406,
         "p1": 1,
-        "p2": 12,
+        "p2": 12
     },
     {
         "p1_name": "Moon",
@@ -81,7 +81,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 242.61026772869695,
         "p1": 1,
-        "p2": 13,
+        "p2": 13
     },
     {
         "p1_name": "Moon",
@@ -93,7 +93,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 7.997701481131173,
         "p1": 1,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "Moon",
@@ -105,7 +105,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 62.610267728696954,
         "p1": 1,
-        "p2": 15,
+        "p2": 15
     },
     {
         "p1_name": "Moon",
@@ -117,7 +117,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 172.00229851886883,
         "p1": 1,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "Moon",
@@ -129,7 +129,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 236.88306281862032,
         "p1": 1,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Mercury",
@@ -141,7 +141,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 119.00061526075433,
         "p1": 2,
-        "p2": 2,
+        "p2": 2
     },
     {
         "p1_name": "Mercury",
@@ -153,7 +153,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 91.57168956054721,
         "p1": 2,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Mercury",
@@ -165,7 +165,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 59.029918211925775,
         "p1": 2,
-        "p2": 8,
+        "p2": 8
     },
     {
         "p1_name": "Mercury",
@@ -177,7 +177,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 119.68315072766006,
         "p1": 2,
-        "p2": 11,
+        "p2": 11
     },
     {
         "p1_name": "Mercury",
@@ -189,7 +189,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 89.23365775724204,
         "p1": 2,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "Mercury",
@@ -201,7 +201,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 90.76634224275796,
         "p1": 2,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "Mercury",
@@ -213,7 +213,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 60.31684927233994,
         "p1": 2,
-        "p2": 19,
+        "p2": 19
     },
     {
         "p1_name": "Venus",
@@ -225,7 +225,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 176.1214536076201,
         "p1": 3,
-        "p2": 0,
+        "p2": 0
     },
     {
         "p1_name": "Venus",
@@ -237,7 +237,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 92.36865729513224,
         "p1": 3,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Venus",
@@ -249,7 +249,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 184.28024812173695,
         "p1": 3,
-        "p2": 2,
+        "p2": 2
     },
     {
         "p1_name": "Venus",
@@ -261,7 +261,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 6.249714649056841,
         "p1": 3,
-        "p2": 8,
+        "p2": 8
     },
     {
         "p1_name": "Venus",
@@ -273,7 +273,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 184.96278358864268,
         "p1": 3,
-        "p2": 11,
+        "p2": 11
     },
     {
         "p1_name": "Venus",
@@ -285,7 +285,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 90.36747368152683,
         "p1": 3,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Venus",
@@ -297,7 +297,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 4.962783588642679,
         "p1": 3,
-        "p2": 19,
+        "p2": 19
     },
     {
         "p1_name": "Mars",
@@ -309,7 +309,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 62.75879604279075,
         "p1": 4,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Mars",
@@ -321,7 +321,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 127.24146116918834,
         "p1": 4,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Mars",
@@ -333,7 +333,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 125.70453984394496,
         "p1": 4,
-        "p2": 13,
+        "p2": 13
     },
     {
         "p1_name": "Mars",
@@ -345,7 +345,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 124.90342936588317,
         "p1": 4,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "Mars",
@@ -357,7 +357,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 54.29546015605504,
         "p1": 4,
-        "p2": 15,
+        "p2": 15
     },
     {
         "p1_name": "Mars",
@@ -369,7 +369,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 55.09657063411683,
         "p1": 4,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "Mars",
@@ -381,7 +381,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 119.97733493386832,
         "p1": 4,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Jupiter",
@@ -393,7 +393,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 269.5382001646806,
         "p1": 5,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "Jupiter",
@@ -405,7 +405,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 121.5409889169695,
         "p1": 5,
-        "p2": 4,
+        "p2": 4
     },
     {
         "p1_name": "Jupiter",
@@ -417,7 +417,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 127.01553987300929,
         "p1": 5,
-        "p2": 5,
+        "p2": 5
     },
     {
         "p1_name": "Jupiter",
@@ -429,7 +429,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 265.9618218101828,
         "p1": 5,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Jupiter",
@@ -441,7 +441,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 115.36021403770985,
         "p1": 5,
-        "p2": 8,
+        "p2": 8
     },
     {
         "p1_name": "Jupiter",
@@ -453,7 +453,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 294.07328297729566,
         "p1": 5,
-        "p2": 11,
+        "p2": 11
     },
     {
         "p1_name": "Jupiter",
@@ -465,7 +465,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 114.07328297729569,
         "p1": 5,
-        "p2": 19,
+        "p2": 19
     },
     {
         "p1_name": "Saturn",
@@ -477,7 +477,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 270.02801112605647,
         "p1": 6,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "Saturn",
@@ -489,7 +489,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 122.03079987834536,
         "p1": 6,
-        "p2": 4,
+        "p2": 4
     },
     {
         "p1_name": "Saturn",
@@ -501,7 +501,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 127.50535083438515,
         "p1": 6,
-        "p2": 5,
+        "p2": 5
     },
     {
         "p1_name": "Saturn",
@@ -513,7 +513,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 266.4516327715587,
         "p1": 6,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Saturn",
@@ -525,7 +525,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 115.85002499908572,
         "p1": 6,
-        "p2": 8,
+        "p2": 8
     },
     {
         "p1_name": "Saturn",
@@ -537,7 +537,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 294.56309393867156,
         "p1": 6,
-        "p2": 11,
+        "p2": 11
     },
     {
         "p1_name": "Saturn",
@@ -549,7 +549,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 114.56309393867156,
         "p1": 6,
-        "p2": 19,
+        "p2": 19
     },
     {
         "p1_name": "Uranus",
@@ -561,7 +561,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 273.3974970816378,
         "p1": 7,
-        "p2": 0,
+        "p2": 0
     },
     {
         "p1_name": "Uranus",
@@ -573,7 +573,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 189.64470076914998,
         "p1": 7,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Uranus",
@@ -585,7 +585,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 115.18108395837402,
         "p1": 7,
-        "p2": 5,
+        "p2": 5
     },
     {
         "p1_name": "Uranus",
@@ -597,7 +597,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 56.073750774020105,
         "p1": 7,
-        "p2": 9,
+        "p2": 9
     },
     {
         "p1_name": "Uranus",
@@ -609,7 +609,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 1.8336819312928228,
         "p1": 7,
-        "p2": 12,
+        "p2": 12
     },
     {
         "p1_name": "Uranus",
@@ -621,7 +621,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 1.1813648824142575,
         "p1": 7,
-        "p2": 13,
+        "p2": 13
     },
     {
         "p1_name": "Uranus",
@@ -633,7 +633,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 181.18136488241427,
         "p1": 7,
-        "p2": 15,
+        "p2": 15
     },
     {
         "p1_name": "Uranus",
@@ -645,7 +645,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 72,
         "diff": 71.7893340922424,
         "p1": 7,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "Uranus",
@@ -657,7 +657,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 6.908569792490894,
         "p1": 7,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Neptune",
@@ -669,7 +669,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 5.2756133502147975,
         "p1": 8,
-        "p2": 5,
+        "p2": 5
     },
     {
         "p1_name": "Neptune",
@@ -681,7 +681,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 64.3829465345687,
         "p1": 8,
-        "p2": 9,
+        "p2": 9
     },
     {
         "p1_name": "Neptune",
@@ -693,7 +693,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 122.29037923988163,
         "p1": 8,
-        "p2": 12,
+        "p2": 12
     },
     {
         "p1_name": "Neptune",
@@ -705,7 +705,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 119.27533242617454,
         "p1": 8,
-        "p2": 13,
+        "p2": 13
     },
     {
         "p1_name": "Neptune",
@@ -717,7 +717,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 60.72466757382546,
         "p1": 8,
-        "p2": 15,
+        "p2": 15
     },
     {
         "p1_name": "Neptune",
@@ -729,7 +729,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 113.5481275160979,
         "p1": 8,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Pluto",
@@ -741,7 +741,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 121.02193609881952,
         "p1": 9,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Pluto",
@@ -753,7 +753,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 189.0809795797149,
         "p1": 9,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "Pluto",
@@ -765,7 +765,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 185.50460122521713,
         "p1": 9,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Pluto",
@@ -777,7 +777,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 183.16656942191196,
         "p1": 9,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "Pluto",
@@ -789,7 +789,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 112.55860021208382,
         "p1": 9,
-        "p2": 15,
+        "p2": 15
     },
     {
         "p1_name": "Pluto",
@@ -801,7 +801,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 3.1665694219119445,
         "p1": 9,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "Pluto",
@@ -813,7 +813,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 61.71419487783955,
         "p1": 9,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "True_North_Lunar_Node",
@@ -825,7 +825,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 54.18079336254303,
         "p1": 11,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "True_North_Lunar_Node",
@@ -837,7 +837,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 122.23983684343838,
         "p1": 11,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "True_North_Lunar_Node",
@@ -849,7 +849,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 118.66345848894062,
         "p1": 11,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "True_North_Lunar_Node",
@@ -861,7 +861,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 170.4944963051953,
         "p1": 11,
-        "p2": 7,
+        "p2": 7
     },
     {
         "p1_name": "True_North_Lunar_Node",
@@ -873,7 +873,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 116.32542668563545,
         "p1": 11,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "True_North_Lunar_Node",
@@ -885,7 +885,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 63.67457331436455,
         "p1": 11,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "Chiron",
@@ -897,7 +897,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 124.65592112240398,
         "p1": 12,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Chiron",
@@ -909,7 +909,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 189.13858624880157,
         "p1": 12,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Chiron",
@@ -921,7 +921,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 8.915028872725884,
         "p1": 12,
-        "p2": 9,
+        "p2": 9
     },
     {
         "p1_name": "Chiron",
@@ -933,7 +933,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 63.80741476433173,
         "p1": 12,
-        "p2": 13,
+        "p2": 13
     },
     {
         "p1_name": "Chiron",
@@ -945,7 +945,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 186.8005544454964,
         "p1": 12,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "Chiron",
@@ -957,7 +957,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 116.19258523566828,
         "p1": 12,
-        "p2": 15,
+        "p2": 15
     },
     {
         "p1_name": "Chiron",
@@ -969,7 +969,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 6.800554445496402,
         "p1": 12,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "Chiron",
@@ -981,7 +981,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 58.080209854255095,
         "p1": 12,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Ascendant",
@@ -993,7 +993,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 87.18731571029684,
         "p1": 13,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "Ascendant",
@@ -1005,7 +1005,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 60.80989553741426,
         "p1": 13,
-        "p2": 4,
+        "p2": 4
     },
     {
         "p1_name": "Ascendant",
@@ -1017,7 +1017,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 55.33534458137447,
         "p1": 13,
-        "p2": 5,
+        "p2": 5
     },
     {
         "p1_name": "Ascendant",
@@ -1029,7 +1029,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 114.44267776572838,
         "p1": 13,
-        "p2": 9,
+        "p2": 9
     },
     {
         "p1_name": "Ascendant",
@@ -1041,7 +1041,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 172.35011047104132,
         "p1": 13,
-        "p2": 12,
+        "p2": 12
     },
     {
         "p1_name": "Medium_Coeli",
@@ -1053,7 +1053,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 173.39405129596568,
         "p1": 14,
-        "p2": 0,
+        "p2": 0
     },
     {
         "p1_name": "Medium_Coeli",
@@ -1065,7 +1065,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 89.64125498347781,
         "p1": 14,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Medium_Coeli",
@@ -1077,7 +1077,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 181.55284581008252,
         "p1": 14,
-        "p2": 2,
+        "p2": 2
     },
     {
         "p1_name": "Medium_Coeli",
@@ -1089,7 +1089,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 9.703087216662055,
         "p1": 14,
-        "p2": 4,
+        "p2": 4
     },
     {
         "p1_name": "Medium_Coeli",
@@ -1101,7 +1101,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 3.5223123374024112,
         "p1": 14,
-        "p2": 8,
+        "p2": 8
     },
     {
         "p1_name": "Medium_Coeli",
@@ -1113,7 +1113,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 182.23538127698825,
         "p1": 14,
-        "p2": 11,
+        "p2": 11
     },
     {
         "p1_name": "Medium_Coeli",
@@ -1125,7 +1125,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 93.09487599318126,
         "p1": 14,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Medium_Coeli",
@@ -1137,7 +1137,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 2.2353812769882495,
         "p1": 14,
-        "p2": 19,
+        "p2": 19
     },
     {
         "p1_name": "Descendant",
@@ -1149,7 +1149,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 267.18731571029684,
         "p1": 15,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "Descendant",
@@ -1161,7 +1161,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 119.19010446258574,
         "p1": 15,
-        "p2": 4,
+        "p2": 4
     },
     {
         "p1_name": "Descendant",
@@ -1173,7 +1173,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 124.66465541862553,
         "p1": 15,
-        "p2": 5,
+        "p2": 5
     },
     {
         "p1_name": "Descendant",
@@ -1185,7 +1185,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 113.00932958332609,
         "p1": 15,
-        "p2": 8,
+        "p2": 8
     },
     {
         "p1_name": "Descendant",
@@ -1197,7 +1197,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 65.55732223427162,
         "p1": 15,
-        "p2": 9,
+        "p2": 9
     },
     {
         "p1_name": "Descendant",
@@ -1209,7 +1209,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 7.6498895289586955,
         "p1": 15,
-        "p2": 12,
+        "p2": 12
     },
     {
         "p1_name": "Imum_Coeli",
@@ -1221,7 +1221,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 6.60594870403429,
         "p1": 16,
-        "p2": 0,
+        "p2": 0
     },
     {
         "p1_name": "Imum_Coeli",
@@ -1233,7 +1233,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 90.35874501652216,
         "p1": 16,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Imum_Coeli",
@@ -1245,7 +1245,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 1.5528458100825446,
         "p1": 16,
-        "p2": 2,
+        "p2": 2
     },
     {
         "p1_name": "Imum_Coeli",
@@ -1257,7 +1257,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 170.29691278333792,
         "p1": 16,
-        "p2": 4,
+        "p2": 4
     },
     {
         "p1_name": "Imum_Coeli",
@@ -1269,7 +1269,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 176.47768766259756,
         "p1": 16,
-        "p2": 8,
+        "p2": 8
     },
     {
         "p1_name": "Imum_Coeli",
@@ -1281,7 +1281,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 2.235381276988278,
         "p1": 16,
-        "p2": 11,
+        "p2": 11
     },
     {
         "p1_name": "Imum_Coeli",
@@ -1293,7 +1293,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 273.09487599318123,
         "p1": 16,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Imum_Coeli",
@@ -1305,7 +1305,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 177.76461872301172,
         "p1": 16,
-        "p2": 19,
+        "p2": 19
     },
     {
         "p1_name": "Mean_Lilith",
@@ -1317,7 +1317,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 299.9300083344782,
         "p1": 17,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "Mean_Lilith",
@@ -1329,7 +1329,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 296.35362997998044,
         "p1": 17,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Mean_Lilith",
@@ -1341,7 +1341,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 7.195675185844532,
         "p1": 17,
-        "p2": 7,
+        "p2": 7
     },
     {
         "p1_name": "Mean_Lilith",
@@ -1353,7 +1353,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 294.01559817667527,
         "p1": 17,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "Mean_Lilith",
@@ -1365,7 +1365,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 114.01559817667527,
         "p1": 17,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "True_South_Lunar_Node",
@@ -1377,7 +1377,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 234.18079336254306,
         "p1": 19,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "True_South_Lunar_Node",
@@ -1389,7 +1389,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 302.2398368434384,
         "p1": 19,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "True_South_Lunar_Node",
@@ -1401,7 +1401,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 298.66345848894065,
         "p1": 19,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "True_South_Lunar_Node",
@@ -1413,7 +1413,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 9.505503694804741,
         "p1": 19,
-        "p2": 7,
+        "p2": 7
     },
     {
         "p1_name": "True_South_Lunar_Node",
@@ -1425,7 +1425,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 296.3254266856355,
         "p1": 19,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "True_South_Lunar_Node",
@@ -1437,8 +1437,8 @@ EXPECTED_RELEVANT_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 116.32542668563548,
         "p1": 19,
-        "p2": 16,
-    },
+        "p2": 16
+    }
 ]
 
 EXPECTED_ALL_ASPECTS = [
@@ -1452,7 +1452,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 117.32695454842408,
         "p1": 0,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "Sun",
@@ -1464,7 +1464,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 113.75057619392632,
         "p1": 0,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Sun",
@@ -1476,7 +1476,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 175.4073786002096,
         "p1": 0,
-        "p2": 7,
+        "p2": 7
     },
     {
         "p1_name": "Moon",
@@ -1488,7 +1488,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 54.14693184196125,
         "p1": 1,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Moon",
@@ -1500,7 +1500,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 187.7178818370911,
         "p1": 1,
-        "p2": 9,
+        "p2": 9
     },
     {
         "p1_name": "Moon",
@@ -1512,7 +1512,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 245.62531454240406,
         "p1": 1,
-        "p2": 12,
+        "p2": 12
     },
     {
         "p1_name": "Moon",
@@ -1524,7 +1524,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 242.61026772869695,
         "p1": 1,
-        "p2": 13,
+        "p2": 13
     },
     {
         "p1_name": "Moon",
@@ -1536,7 +1536,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 7.997701481131173,
         "p1": 1,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "Moon",
@@ -1548,7 +1548,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 62.610267728696954,
         "p1": 1,
-        "p2": 15,
+        "p2": 15
     },
     {
         "p1_name": "Moon",
@@ -1560,7 +1560,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 172.00229851886883,
         "p1": 1,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "Moon",
@@ -1572,7 +1572,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 236.88306281862032,
         "p1": 1,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Mercury",
@@ -1584,7 +1584,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 119.00061526075433,
         "p1": 2,
-        "p2": 2,
+        "p2": 2
     },
     {
         "p1_name": "Mercury",
@@ -1596,7 +1596,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 91.57168956054721,
         "p1": 2,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Mercury",
@@ -1608,7 +1608,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 59.029918211925775,
         "p1": 2,
-        "p2": 8,
+        "p2": 8
     },
     {
         "p1_name": "Mercury",
@@ -1620,7 +1620,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 119.68315072766006,
         "p1": 2,
-        "p2": 11,
+        "p2": 11
     },
     {
         "p1_name": "Mercury",
@@ -1632,7 +1632,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 89.23365775724204,
         "p1": 2,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "Mercury",
@@ -1644,7 +1644,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 90.76634224275796,
         "p1": 2,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "Mercury",
@@ -1656,7 +1656,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 60.31684927233994,
         "p1": 2,
-        "p2": 19,
+        "p2": 19
     },
     {
         "p1_name": "Venus",
@@ -1668,7 +1668,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 176.1214536076201,
         "p1": 3,
-        "p2": 0,
+        "p2": 0
     },
     {
         "p1_name": "Venus",
@@ -1680,7 +1680,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 92.36865729513224,
         "p1": 3,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Venus",
@@ -1692,7 +1692,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 184.28024812173695,
         "p1": 3,
-        "p2": 2,
+        "p2": 2
     },
     {
         "p1_name": "Venus",
@@ -1704,7 +1704,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 6.249714649056841,
         "p1": 3,
-        "p2": 8,
+        "p2": 8
     },
     {
         "p1_name": "Venus",
@@ -1716,7 +1716,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 184.96278358864268,
         "p1": 3,
-        "p2": 11,
+        "p2": 11
     },
     {
         "p1_name": "Venus",
@@ -1728,7 +1728,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 90.36747368152683,
         "p1": 3,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Venus",
@@ -1740,7 +1740,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 4.962783588642679,
         "p1": 3,
-        "p2": 19,
+        "p2": 19
     },
     {
         "p1_name": "Mars",
@@ -1752,7 +1752,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 62.75879604279075,
         "p1": 4,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Mars",
@@ -1764,7 +1764,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 127.24146116918834,
         "p1": 4,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Mars",
@@ -1776,7 +1776,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 125.70453984394496,
         "p1": 4,
-        "p2": 13,
+        "p2": 13
     },
     {
         "p1_name": "Mars",
@@ -1788,7 +1788,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 124.90342936588317,
         "p1": 4,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "Mars",
@@ -1800,7 +1800,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 54.29546015605504,
         "p1": 4,
-        "p2": 15,
+        "p2": 15
     },
     {
         "p1_name": "Mars",
@@ -1812,7 +1812,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 55.09657063411683,
         "p1": 4,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "Mars",
@@ -1824,7 +1824,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 119.97733493386832,
         "p1": 4,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Jupiter",
@@ -1836,7 +1836,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 269.5382001646806,
         "p1": 5,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "Jupiter",
@@ -1848,7 +1848,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 121.5409889169695,
         "p1": 5,
-        "p2": 4,
+        "p2": 4
     },
     {
         "p1_name": "Jupiter",
@@ -1860,7 +1860,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 127.01553987300929,
         "p1": 5,
-        "p2": 5,
+        "p2": 5
     },
     {
         "p1_name": "Jupiter",
@@ -1872,7 +1872,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 265.9618218101828,
         "p1": 5,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Jupiter",
@@ -1884,7 +1884,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 115.36021403770985,
         "p1": 5,
-        "p2": 8,
+        "p2": 8
     },
     {
         "p1_name": "Jupiter",
@@ -1896,7 +1896,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 294.07328297729566,
         "p1": 5,
-        "p2": 11,
+        "p2": 11
     },
     {
         "p1_name": "Jupiter",
@@ -1908,7 +1908,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 114.07328297729569,
         "p1": 5,
-        "p2": 19,
+        "p2": 19
     },
     {
         "p1_name": "Saturn",
@@ -1920,7 +1920,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 270.02801112605647,
         "p1": 6,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "Saturn",
@@ -1932,7 +1932,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 122.03079987834536,
         "p1": 6,
-        "p2": 4,
+        "p2": 4
     },
     {
         "p1_name": "Saturn",
@@ -1944,7 +1944,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 127.50535083438515,
         "p1": 6,
-        "p2": 5,
+        "p2": 5
     },
     {
         "p1_name": "Saturn",
@@ -1956,7 +1956,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 266.4516327715587,
         "p1": 6,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Saturn",
@@ -1968,7 +1968,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 115.85002499908572,
         "p1": 6,
-        "p2": 8,
+        "p2": 8
     },
     {
         "p1_name": "Saturn",
@@ -1980,7 +1980,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 294.56309393867156,
         "p1": 6,
-        "p2": 11,
+        "p2": 11
     },
     {
         "p1_name": "Saturn",
@@ -1992,7 +1992,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 114.56309393867156,
         "p1": 6,
-        "p2": 19,
+        "p2": 19
     },
     {
         "p1_name": "Uranus",
@@ -2004,7 +2004,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 273.3974970816378,
         "p1": 7,
-        "p2": 0,
+        "p2": 0
     },
     {
         "p1_name": "Uranus",
@@ -2016,7 +2016,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 189.64470076914998,
         "p1": 7,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Uranus",
@@ -2028,7 +2028,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 115.18108395837402,
         "p1": 7,
-        "p2": 5,
+        "p2": 5
     },
     {
         "p1_name": "Uranus",
@@ -2040,7 +2040,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 56.073750774020105,
         "p1": 7,
-        "p2": 9,
+        "p2": 9
     },
     {
         "p1_name": "Uranus",
@@ -2052,7 +2052,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 1.8336819312928228,
         "p1": 7,
-        "p2": 12,
+        "p2": 12
     },
     {
         "p1_name": "Uranus",
@@ -2064,7 +2064,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 1.1813648824142575,
         "p1": 7,
-        "p2": 13,
+        "p2": 13
     },
     {
         "p1_name": "Uranus",
@@ -2076,7 +2076,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 181.18136488241427,
         "p1": 7,
-        "p2": 15,
+        "p2": 15
     },
     {
         "p1_name": "Uranus",
@@ -2088,7 +2088,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 72,
         "diff": 71.7893340922424,
         "p1": 7,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "Uranus",
@@ -2100,7 +2100,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 6.908569792490894,
         "p1": 7,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Neptune",
@@ -2112,7 +2112,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 5.2756133502147975,
         "p1": 8,
-        "p2": 5,
+        "p2": 5
     },
     {
         "p1_name": "Neptune",
@@ -2124,7 +2124,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 64.3829465345687,
         "p1": 8,
-        "p2": 9,
+        "p2": 9
     },
     {
         "p1_name": "Neptune",
@@ -2136,7 +2136,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 122.29037923988163,
         "p1": 8,
-        "p2": 12,
+        "p2": 12
     },
     {
         "p1_name": "Neptune",
@@ -2148,7 +2148,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 119.27533242617454,
         "p1": 8,
-        "p2": 13,
+        "p2": 13
     },
     {
         "p1_name": "Neptune",
@@ -2160,7 +2160,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 60.72466757382546,
         "p1": 8,
-        "p2": 15,
+        "p2": 15
     },
     {
         "p1_name": "Neptune",
@@ -2172,7 +2172,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 113.5481275160979,
         "p1": 8,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Pluto",
@@ -2184,7 +2184,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 121.02193609881952,
         "p1": 9,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Pluto",
@@ -2196,7 +2196,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 189.0809795797149,
         "p1": 9,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "Pluto",
@@ -2208,7 +2208,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 185.50460122521713,
         "p1": 9,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Pluto",
@@ -2220,7 +2220,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 183.16656942191196,
         "p1": 9,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "Pluto",
@@ -2232,7 +2232,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 112.55860021208382,
         "p1": 9,
-        "p2": 15,
+        "p2": 15
     },
     {
         "p1_name": "Pluto",
@@ -2244,7 +2244,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 3.1665694219119445,
         "p1": 9,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "Pluto",
@@ -2256,7 +2256,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 61.71419487783955,
         "p1": 9,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "True_North_Lunar_Node",
@@ -2268,7 +2268,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 54.18079336254303,
         "p1": 11,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "True_North_Lunar_Node",
@@ -2280,7 +2280,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 122.23983684343838,
         "p1": 11,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "True_North_Lunar_Node",
@@ -2292,7 +2292,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 118.66345848894062,
         "p1": 11,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "True_North_Lunar_Node",
@@ -2304,7 +2304,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 170.4944963051953,
         "p1": 11,
-        "p2": 7,
+        "p2": 7
     },
     {
         "p1_name": "True_North_Lunar_Node",
@@ -2316,7 +2316,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 116.32542668563545,
         "p1": 11,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "True_North_Lunar_Node",
@@ -2328,7 +2328,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 63.67457331436455,
         "p1": 11,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "Chiron",
@@ -2340,7 +2340,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 124.65592112240398,
         "p1": 12,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Chiron",
@@ -2352,7 +2352,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 189.13858624880157,
         "p1": 12,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Chiron",
@@ -2364,7 +2364,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 8.915028872725884,
         "p1": 12,
-        "p2": 9,
+        "p2": 9
     },
     {
         "p1_name": "Chiron",
@@ -2376,7 +2376,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 63.80741476433173,
         "p1": 12,
-        "p2": 13,
+        "p2": 13
     },
     {
         "p1_name": "Chiron",
@@ -2388,7 +2388,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 186.8005544454964,
         "p1": 12,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "Chiron",
@@ -2400,7 +2400,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 116.19258523566828,
         "p1": 12,
-        "p2": 15,
+        "p2": 15
     },
     {
         "p1_name": "Chiron",
@@ -2412,7 +2412,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 6.800554445496402,
         "p1": 12,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "Chiron",
@@ -2424,7 +2424,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 58.080209854255095,
         "p1": 12,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Ascendant",
@@ -2436,7 +2436,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 87.18731571029684,
         "p1": 13,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "Ascendant",
@@ -2448,7 +2448,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 60.80989553741426,
         "p1": 13,
-        "p2": 4,
+        "p2": 4
     },
     {
         "p1_name": "Ascendant",
@@ -2460,7 +2460,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 55.33534458137447,
         "p1": 13,
-        "p2": 5,
+        "p2": 5
     },
     {
         "p1_name": "Ascendant",
@@ -2472,7 +2472,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 114.44267776572838,
         "p1": 13,
-        "p2": 9,
+        "p2": 9
     },
     {
         "p1_name": "Ascendant",
@@ -2484,7 +2484,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 172.35011047104132,
         "p1": 13,
-        "p2": 12,
+        "p2": 12
     },
     {
         "p1_name": "Medium_Coeli",
@@ -2496,7 +2496,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 173.39405129596568,
         "p1": 14,
-        "p2": 0,
+        "p2": 0
     },
     {
         "p1_name": "Medium_Coeli",
@@ -2508,7 +2508,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 89.64125498347781,
         "p1": 14,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Medium_Coeli",
@@ -2520,7 +2520,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 181.55284581008252,
         "p1": 14,
-        "p2": 2,
+        "p2": 2
     },
     {
         "p1_name": "Medium_Coeli",
@@ -2532,7 +2532,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 9.703087216662055,
         "p1": 14,
-        "p2": 4,
+        "p2": 4
     },
     {
         "p1_name": "Medium_Coeli",
@@ -2544,7 +2544,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 3.5223123374024112,
         "p1": 14,
-        "p2": 8,
+        "p2": 8
     },
     {
         "p1_name": "Medium_Coeli",
@@ -2556,7 +2556,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 182.23538127698825,
         "p1": 14,
-        "p2": 11,
+        "p2": 11
     },
     {
         "p1_name": "Medium_Coeli",
@@ -2568,7 +2568,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 93.09487599318126,
         "p1": 14,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Medium_Coeli",
@@ -2580,7 +2580,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 2.2353812769882495,
         "p1": 14,
-        "p2": 19,
+        "p2": 19
     },
     {
         "p1_name": "Descendant",
@@ -2592,7 +2592,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 267.18731571029684,
         "p1": 15,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "Descendant",
@@ -2604,7 +2604,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 119.19010446258574,
         "p1": 15,
-        "p2": 4,
+        "p2": 4
     },
     {
         "p1_name": "Descendant",
@@ -2616,7 +2616,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 124.66465541862553,
         "p1": 15,
-        "p2": 5,
+        "p2": 5
     },
     {
         "p1_name": "Descendant",
@@ -2628,7 +2628,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 113.00932958332609,
         "p1": 15,
-        "p2": 8,
+        "p2": 8
     },
     {
         "p1_name": "Descendant",
@@ -2640,7 +2640,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 65.55732223427162,
         "p1": 15,
-        "p2": 9,
+        "p2": 9
     },
     {
         "p1_name": "Descendant",
@@ -2652,7 +2652,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 7.6498895289586955,
         "p1": 15,
-        "p2": 12,
+        "p2": 12
     },
     {
         "p1_name": "Imum_Coeli",
@@ -2664,7 +2664,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 6.60594870403429,
         "p1": 16,
-        "p2": 0,
+        "p2": 0
     },
     {
         "p1_name": "Imum_Coeli",
@@ -2676,7 +2676,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 90.35874501652216,
         "p1": 16,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "Imum_Coeli",
@@ -2688,7 +2688,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 1.5528458100825446,
         "p1": 16,
-        "p2": 2,
+        "p2": 2
     },
     {
         "p1_name": "Imum_Coeli",
@@ -2700,7 +2700,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 170.29691278333792,
         "p1": 16,
-        "p2": 4,
+        "p2": 4
     },
     {
         "p1_name": "Imum_Coeli",
@@ -2712,7 +2712,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 176.47768766259756,
         "p1": 16,
-        "p2": 8,
+        "p2": 8
     },
     {
         "p1_name": "Imum_Coeli",
@@ -2724,7 +2724,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 2.235381276988278,
         "p1": 16,
-        "p2": 11,
+        "p2": 11
     },
     {
         "p1_name": "Imum_Coeli",
@@ -2736,7 +2736,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 90,
         "diff": 273.09487599318123,
         "p1": 16,
-        "p2": 17,
+        "p2": 17
     },
     {
         "p1_name": "Imum_Coeli",
@@ -2748,7 +2748,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 180,
         "diff": 177.76461872301172,
         "p1": 16,
-        "p2": 19,
+        "p2": 19
     },
     {
         "p1_name": "Mean_Lilith",
@@ -2760,7 +2760,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 299.9300083344782,
         "p1": 17,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "Mean_Lilith",
@@ -2772,7 +2772,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 296.35362997998044,
         "p1": 17,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "Mean_Lilith",
@@ -2784,7 +2784,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 7.195675185844532,
         "p1": 17,
-        "p2": 7,
+        "p2": 7
     },
     {
         "p1_name": "Mean_Lilith",
@@ -2796,7 +2796,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 294.01559817667527,
         "p1": 17,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "Mean_Lilith",
@@ -2808,7 +2808,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 114.01559817667527,
         "p1": 17,
-        "p2": 16,
+        "p2": 16
     },
     {
         "p1_name": "True_South_Lunar_Node",
@@ -2820,7 +2820,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 234.18079336254306,
         "p1": 19,
-        "p2": 1,
+        "p2": 1
     },
     {
         "p1_name": "True_South_Lunar_Node",
@@ -2832,7 +2832,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 302.2398368434384,
         "p1": 19,
-        "p2": 3,
+        "p2": 3
     },
     {
         "p1_name": "True_South_Lunar_Node",
@@ -2844,7 +2844,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 298.66345848894065,
         "p1": 19,
-        "p2": 6,
+        "p2": 6
     },
     {
         "p1_name": "True_South_Lunar_Node",
@@ -2856,7 +2856,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 0,
         "diff": 9.505503694804741,
         "p1": 19,
-        "p2": 7,
+        "p2": 7
     },
     {
         "p1_name": "True_South_Lunar_Node",
@@ -2868,7 +2868,7 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 60,
         "diff": 296.3254266856355,
         "p1": 19,
-        "p2": 14,
+        "p2": 14
     },
     {
         "p1_name": "True_South_Lunar_Node",
@@ -2880,6 +2880,6 @@ EXPECTED_ALL_ASPECTS = [
         "aspect_degrees": 120,
         "diff": 116.32542668563548,
         "p1": 19,
-        "p2": 16,
-    },
+        "p2": 16
+    }
 ]

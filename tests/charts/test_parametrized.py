@@ -42,6 +42,20 @@ from .compare_svg_lines import compare_svg_lines
 # CONSTANTS
 # =============================================================================
 
+# Subjects that are already covered by the main regenerate_test_charts.py script
+# and should be excluded from temporal subject tests to avoid test conflicts.
+# These subjects use proper city/nation from GeoNames in the main script,
+# while the temporal matrix uses name as city with "XX" as nation.
+SUBJECTS_COVERED_BY_MAIN_SCRIPT = {
+    "john_lennon_1940",
+    "paul_mccartney_1942",
+    "johnny_depp_1963",
+    "yoko_ono_1933",
+}
+
+# Filter temporal subjects to exclude those covered by main script
+TEMPORAL_SUBJECTS_FOR_EXTENDED_TESTS = [s for s in TEMPORAL_SUBJECTS if s["id"] not in SUBJECTS_COVERED_BY_MAIN_SCRIPT]
+
 # Sidereal × Theme combinations
 SIDEREAL_THEME_COMBOS = [
     ("LAHIRI", "strawberry"),
@@ -115,9 +129,15 @@ class TestTemporalSubjects:
     Parametrized tests for temporal subjects spanning 2700 years.
 
     Each subject from TEMPORAL_SUBJECTS is tested with a natal chart comparison.
+    Subjects covered by the main regenerate_test_charts.py script are excluded
+    to avoid conflicts between different SVG generation methods.
     """
 
-    @pytest.mark.parametrize("subject_data", TEMPORAL_SUBJECTS, ids=[s["id"] for s in TEMPORAL_SUBJECTS])
+    @pytest.mark.parametrize(
+        "subject_data",
+        TEMPORAL_SUBJECTS_FOR_EXTENDED_TESTS,
+        ids=[s["id"] for s in TEMPORAL_SUBJECTS_FOR_EXTENDED_TESTS],
+    )
     def test_temporal_subject_natal_chart(self, subject_data):
         """Test natal chart generation for each temporal subject."""
         try:

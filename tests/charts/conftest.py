@@ -206,6 +206,16 @@ def create_return_factory(first_subject):
     )
 
 
+# Subjects that are already covered by the main regenerate_test_charts.py script
+# and should be excluded from temporal subject tests to avoid test conflicts.
+SUBJECTS_COVERED_BY_MAIN_SCRIPT = {
+    "john_lennon_1940",
+    "paul_mccartney_1942",
+    "johnny_depp_1963",
+    "yoko_ono_1933",
+}
+
+
 def create_subject_from_dict(subject_dict: Dict[str, Any], **kwargs):
     """Create an AstrologicalSubjectModel from a subject dictionary."""
     # Geographic subjects don't have year/month/day - use default date
