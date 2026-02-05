@@ -1,5 +1,19 @@
 # Changelog
 
+## 5.7.2
+
+_Released 05/02/2026_
+
+**Bugfixes:**
+
+- Regenerated extended chart SVG baselines (strawberry theme, sidereal×theme combinations, house system×chart type combinations) to align with the precise orb comparison fix from v5.7.1
+- Updated relationship score test expectations to reflect stricter aspect filtering
+- Fixed `regenerate:all` task to include `regenerate_test_charts_extended.py` script, preventing future baseline drift
+
+**Maintenance:**
+
+- Added `regenerate:charts-extended` poe task for regenerating extended test charts
+
 ## 4.2.0
 
 _Released 08/01/2023_
