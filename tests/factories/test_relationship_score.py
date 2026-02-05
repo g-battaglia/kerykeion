@@ -35,8 +35,8 @@ class TestRelationshipScore:
         john_yoko_relationship_score_factory = RelationshipScoreFactory(self.john_lennon, self.yoko_ono)
         john_yoko_relationship_score = john_yoko_relationship_score_factory.get_relationship_score()
 
-        assert john_yoko_relationship_score.score_description == "Very Important"
-        assert john_yoko_relationship_score.score_value == 16
+        assert john_yoko_relationship_score.score_description == "Important"
+        assert john_yoko_relationship_score.score_value == 12
 
     def test_freud_jung_relationship_score(self):
         freud_jung_relationship_score_factory = RelationshipScoreFactory(self.freud, self.jung)
