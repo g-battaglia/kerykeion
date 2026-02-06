@@ -12,7 +12,7 @@ from os import getenv
 from pathlib import Path
 from typing import Optional, Union
 
-from requests import Request, RequestException
+from requests import Request, RequestException, Response
 from requests_cache import CachedSession
 
 
@@ -21,6 +21,51 @@ logger = getLogger(__name__)
 
 DEFAULT_GEONAMES_CACHE_NAME = Path("cache") / "kerykeion_geonames_cache"
 GEONAMES_CACHE_ENV_VAR = "KERYKEION_GEONAMES_CACHE_NAME"
+
+# GeoNames error codes that represent transient errors and should NOT be cached.
+# These errors are temporary (rate limits, timeouts, server issues) and will resolve
+# on retry, so caching them would "poison" the cache with error responses.
+# See: https://www.geonames.org/export/webservice-exception.html
+TRANSIENT_GEONAMES_ERROR_CODES = frozenset(
+    {
+        13,  # database timeout
+        18,  # daily limit of credits exceeded
+        19,  # hourly limit of credits exceeded
+        20,  # weekly limit of credits exceeded
+        22,  # server overloaded exception
+    }
+)
+
+
+def _should_cache_geonames_response(response: Response) -> bool:
+    """
+    Filter function for requests-cache to prevent caching transient error responses.
+
+    GeoNames API returns errors with HTTP 200 status code but with a 'status' key
+    in the JSON response. This function checks for transient errors (rate limits,
+    timeouts, server overload) and returns False to prevent caching them.
+
+    Args:
+        response: The HTTP response to evaluate.
+
+    Returns:
+        True if the response should be cached, False otherwise.
+    """
+    try:
+        data = response.json()
+        if "status" in data:
+            error_code = data["status"].get("value", 0)
+            if error_code in TRANSIENT_GEONAMES_ERROR_CODES:
+                logger.debug(
+                    "GeoNames transient error (code %d) will not be cached: %s",
+                    error_code,
+                    data["status"].get("message", "unknown error"),
+                )
+                return False
+        return True
+    except (ValueError, JSONDecodeError):
+        # If we can't parse the response, don't cache it
+        return False
 
 
 class FetchGeonames:
@@ -55,6 +100,7 @@ class FetchGeonames:
             cache_name=str(self._resolve_cache_name(cache_name)),
             backend="sqlite",
             expire_after=timedelta(days=cache_expire_after_days),
+            filter_fn=_should_cache_geonames_response,
         )
 
         self.username = username
