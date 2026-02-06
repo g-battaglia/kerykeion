@@ -7,11 +7,12 @@ License: AGPL-3.0
 
 from logging import getLogger
 from datetime import timedelta
+from json import JSONDecodeError
 from os import getenv
 from pathlib import Path
 from typing import Optional, Union
 
-from requests import Request
+from requests import Request, RequestException
 from requests_cache import CachedSession
 
 
@@ -107,14 +108,17 @@ class FetchGeonames:
             response = self.session.send(prepared_request)
             response_json = response.json()
 
-        except Exception as e:
-            logger.error("GeoNames timezone request failed for %s: %s", self.timezone_url, e)
+        except RequestException as e:
+            logger.error("GeoNames timezone network error for %s: %s", self.timezone_url, e)
+            return {}
+        except JSONDecodeError as e:
+            logger.error("GeoNames timezone invalid JSON response: %s", e)
             return {}
 
         try:
             timezone_data["timezonestr"] = response_json["timezoneId"]
 
-        except Exception as e:
+        except (KeyError, TypeError) as e:
             logger.error("GeoNames timezone payload missing expected keys: %s", e)
             return {}
 
@@ -123,7 +127,7 @@ class FetchGeonames:
 
         return timezone_data
 
-    def __get_contry_data(self, city_name: str, country_code: str) -> dict[str, str]:
+    def __get_country_data(self, city_name: str, country_code: str) -> dict[str, str]:
         """
         Get city location data without timezone for a given city and country.
 
@@ -135,7 +139,7 @@ class FetchGeonames:
             dict: City location data excluding timezone information.
         """
         # Dictionary that will be returned:
-        city_data_whitout_tz = {}
+        city_data_without_tz = {}
 
         params = {
             "q": city_name,
@@ -155,38 +159,45 @@ class FetchGeonames:
             response_json = response.json()
             logger.debug("GeoNames search response: %s", response_json)
 
-        except Exception as e:
-            logger.error("GeoNames search request failed for %s: %s", self.base_url, e)
+        except RequestException as e:
+            logger.error("GeoNames search network error for %s: %s", self.base_url, e)
+            return {}
+        except JSONDecodeError as e:
+            logger.error("GeoNames search invalid JSON response: %s", e)
             return {}
 
         try:
-            city_data_whitout_tz["name"] = response_json["geonames"][0]["name"]
-            city_data_whitout_tz["lat"] = response_json["geonames"][0]["lat"]
-            city_data_whitout_tz["lng"] = response_json["geonames"][0]["lng"]
-            city_data_whitout_tz["countryCode"] = response_json["geonames"][0]["countryCode"]
+            city_data_without_tz["name"] = response_json["geonames"][0]["name"]
+            city_data_without_tz["lat"] = response_json["geonames"][0]["lat"]
+            city_data_without_tz["lng"] = response_json["geonames"][0]["lng"]
+            city_data_without_tz["countryCode"] = response_json["geonames"][0]["countryCode"]
 
-        except Exception as e:
+        except (KeyError, IndexError, TypeError) as e:
             logger.error("GeoNames search payload missing expected keys: %s", e)
             return {}
 
         if hasattr(response, "from_cache"):
-            city_data_whitout_tz["from_country_cache"] = response.from_cache  # type: ignore
+            city_data_without_tz["from_country_cache"] = response.from_cache  # type: ignore
 
-        return city_data_whitout_tz
+        return city_data_without_tz
+
+    def __get_contry_data(self, city_name: str, country_code: str) -> dict[str, str]:
+        return self.__get_country_data(city_name, country_code)
 
     def get_serialized_data(self) -> dict[str, str]:
         """
         Returns all the data necessary for the Kerykeion calculation.
 
         Returns:
-            dict[str, str]: _description_
+            dict[str, str]: Dictionary containing city name, latitude, longitude,
+                country code, timezone, and cache status information.
         """
-        city_data_response = self.__get_contry_data(self.city_name, self.country_code)
+        city_data_response = self.__get_country_data(self.city_name, self.country_code)
         try:
             timezone_response = self.__get_timezone(city_data_response["lat"], city_data_response["lng"])
 
-        except Exception as e:
-            logger.error("Unable to fetch timezone details: %s", e)
+        except KeyError as e:
+            logger.error("Unable to fetch timezone details, missing key: %s", e)
             return {}
 
         return {**timezone_response, **city_data_response}

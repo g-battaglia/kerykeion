@@ -2841,12 +2841,13 @@ class TestFetchGeonamesNetworkErrors:
     def test_geonames_request_exception_returns_empty(self):
         """Test that request exceptions return empty dict."""
         from kerykeion.fetch_geonames import FetchGeonames
+        from requests import RequestException
 
         # Create a geonames instance
         geonames = FetchGeonames("Rome", "IT", username="test_user")
 
         # Mock get_serialized_data to trigger the exception path
-        with patch.object(geonames.session, "send", side_effect=Exception("Network error")):
+        with patch.object(geonames.session, "send", side_effect=RequestException("Network error")):
             result = geonames.get_serialized_data()
             # Should return empty dict on error
             assert result == {}
@@ -2866,6 +2867,18 @@ class TestFetchGeonamesNetworkErrors:
             # Should return empty dict when key is missing
             assert result == {}
 
+    def test_geonames_timezone_malformed_payload_returns_empty(self):
+        """Test that non-dict timezone payloads return empty dict."""
+        from kerykeion.fetch_geonames import FetchGeonames
+
+        timezone_response = MagicMock()
+        timezone_response.json.return_value = []
+
+        geonames = FetchGeonames("Rome", "IT", username="test_user")
+        with patch.object(geonames.session, "send", return_value=timezone_response):
+            result = getattr(geonames, "_FetchGeonames__get_timezone")("41.9", "12.5")
+            assert result == {}
+
     def test_geonames_country_missing_keys_returns_empty(self):
         """Test that missing country data keys return empty dict."""
         from kerykeion.fetch_geonames import FetchGeonames
@@ -2880,8 +2893,22 @@ class TestFetchGeonamesNetworkErrors:
             # Should return empty dict when key is missing
             assert result == {}
             # Access the private method directly
-            result = geonames._FetchGeonames__get_contry_data("Rome", "IT")
+            result = getattr(geonames, "_FetchGeonames__get_contry_data")("Rome", "IT")
             # Should return empty dict when key is missing
+            assert result == {}
+
+    def test_geonames_country_malformed_payload_returns_empty(self):
+        """Test that malformed country payloads return empty dict."""
+        from kerykeion.fetch_geonames import FetchGeonames
+
+        mock_response = MagicMock()
+        mock_response.json.return_value = {"geonames": None}
+
+        geonames = FetchGeonames("Rome", "IT", username="test_user")
+        with patch.object(geonames.session, "send", return_value=mock_response):
+            result = geonames.get_serialized_data()
+            assert result == {}
+            result = getattr(geonames, "_FetchGeonames__get_contry_data")("Rome", "IT")
             assert result == {}
 
 

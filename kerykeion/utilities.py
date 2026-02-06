@@ -405,6 +405,39 @@ def find_common_active_points(
 # =============================================================================
 
 
+def _get_lunar_phase_index(phase: int) -> int:
+    """
+    Get the index for lunar phase lookup based on phase number.
+
+    Args:
+        phase: The lunar phase number (1-28)
+
+    Returns:
+        Index (0-7) for lunar phase lookup arrays
+
+    Raises:
+        KerykeionException: If phase is outside valid range
+    """
+    if phase == 1:
+        return 0
+    elif phase < 7:
+        return 1
+    elif 7 <= phase <= 9:
+        return 2
+    elif phase < 14:
+        return 3
+    elif phase == 14:
+        return 4
+    elif phase < 20:
+        return 5
+    elif 20 <= phase <= 22:
+        return 6
+    elif phase <= 28:
+        return 7
+    else:
+        raise KerykeionException(f"Error in lunar phase calculation! Phase: {phase}")
+
+
 def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
     """
     Get the emoji representation of a lunar phase.
@@ -418,30 +451,9 @@ def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
     Raises:
         KerykeionException: If phase is outside valid range
     """
-
     lunar_phase_emojis = get_args(LunarPhaseEmoji)
-
-    if phase == 1:
-        result = lunar_phase_emojis[0]
-    elif phase < 7:
-        result = lunar_phase_emojis[1]
-    elif 7 <= phase <= 9:
-        result = lunar_phase_emojis[2]
-    elif phase < 14:
-        result = lunar_phase_emojis[3]
-    elif phase == 14:
-        result = lunar_phase_emojis[4]
-    elif phase < 20:
-        result = lunar_phase_emojis[5]
-    elif 20 <= phase <= 22:
-        result = lunar_phase_emojis[6]
-    elif phase <= 28:
-        result = lunar_phase_emojis[7]
-
-    else:
-        raise KerykeionException(f"Error in moon emoji calculation! Phase: {phase}")
-
-    return result
+    index = _get_lunar_phase_index(phase)
+    return lunar_phase_emojis[index]
 
 
 def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
@@ -458,28 +470,8 @@ def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
         KerykeionException: If phase is outside valid range
     """
     lunar_phase_names = get_args(LunarPhaseName)
-
-    if phase == 1:
-        result = lunar_phase_names[0]
-    elif phase < 7:
-        result = lunar_phase_names[1]
-    elif 7 <= phase <= 9:
-        result = lunar_phase_names[2]
-    elif phase < 14:
-        result = lunar_phase_names[3]
-    elif phase == 14:
-        result = lunar_phase_names[4]
-    elif phase < 20:
-        result = lunar_phase_names[5]
-    elif 20 <= phase <= 22:
-        result = lunar_phase_names[6]
-    elif phase <= 28:
-        result = lunar_phase_names[7]
-
-    else:
-        raise KerykeionException(f"Error in moon name calculation! Phase: {phase}")
-
-    return result
+    index = _get_lunar_phase_index(phase)
+    return lunar_phase_names[index]
 
 
 def check_and_adjust_polar_latitude(latitude: float) -> float:

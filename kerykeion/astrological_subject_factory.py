@@ -1136,20 +1136,26 @@ class AstrologicalSubjectFactory:
         # Store house degrees
         data["_houses_degree_ut"] = cusps
 
+        # House configuration: (attribute_name, house_name)
+        HOUSE_CONFIG = [
+            ("first_house", "First_House"),
+            ("second_house", "Second_House"),
+            ("third_house", "Third_House"),
+            ("fourth_house", "Fourth_House"),
+            ("fifth_house", "Fifth_House"),
+            ("sixth_house", "Sixth_House"),
+            ("seventh_house", "Seventh_House"),
+            ("eighth_house", "Eighth_House"),
+            ("ninth_house", "Ninth_House"),
+            ("tenth_house", "Tenth_House"),
+            ("eleventh_house", "Eleventh_House"),
+            ("twelfth_house", "Twelfth_House"),
+        ]
+
         # Create house objects
         point_type: PointType = "House"
-        data["first_house"] = get_kerykeion_point_from_degree(cusps[0], "First_House", point_type=point_type)
-        data["second_house"] = get_kerykeion_point_from_degree(cusps[1], "Second_House", point_type=point_type)
-        data["third_house"] = get_kerykeion_point_from_degree(cusps[2], "Third_House", point_type=point_type)
-        data["fourth_house"] = get_kerykeion_point_from_degree(cusps[3], "Fourth_House", point_type=point_type)
-        data["fifth_house"] = get_kerykeion_point_from_degree(cusps[4], "Fifth_House", point_type=point_type)
-        data["sixth_house"] = get_kerykeion_point_from_degree(cusps[5], "Sixth_House", point_type=point_type)
-        data["seventh_house"] = get_kerykeion_point_from_degree(cusps[6], "Seventh_House", point_type=point_type)
-        data["eighth_house"] = get_kerykeion_point_from_degree(cusps[7], "Eighth_House", point_type=point_type)
-        data["ninth_house"] = get_kerykeion_point_from_degree(cusps[8], "Ninth_House", point_type=point_type)
-        data["tenth_house"] = get_kerykeion_point_from_degree(cusps[9], "Tenth_House", point_type=point_type)
-        data["eleventh_house"] = get_kerykeion_point_from_degree(cusps[10], "Eleventh_House", point_type=point_type)
-        data["twelfth_house"] = get_kerykeion_point_from_degree(cusps[11], "Twelfth_House", point_type=point_type)
+        for i, (attr_name, house_name) in enumerate(HOUSE_CONFIG):
+            data[attr_name] = get_kerykeion_point_from_degree(cusps[i], house_name, point_type=point_type)
 
         # Store house names
         data["houses_names_list"] = list(get_args(Houses))
@@ -1158,12 +1164,12 @@ class AstrologicalSubjectFactory:
         point_type = "AstrologicalPoint"
 
         # NOTE: Swiss Ephemeris does not provide direct speeds for angles (ASC/MC),
-        # but in realtà si muovono molto velocemente rispetto ai pianeti.
-        # Per rappresentare questo in modo coerente, assegniamo ai quattro assi
-        # una speed sintetica fissa, molto più alta di quella planetaria tipica.
-        # Questo permette a calculate_aspect_movement di considerarli sempre come
-        # "più veloci" rispetto ai pianeti quando serve.
-        axis_speed = 360.0  # gradi/giorno, valore simbolico ma coerente
+        # but in practice they move very fast compared to planets.
+        # To represent this consistently, we assign the four angles
+        # a fixed synthetic speed, much higher than typical planetary speeds.
+        # This allows calculate_aspect_movement to consider them always as
+        # "faster" compared to planets when needed.
+        axis_speed = 360.0  # degrees/day, symbolic but consistent value
 
         # Calculate Ascendant if needed
         if should_calculate("Ascendant"):

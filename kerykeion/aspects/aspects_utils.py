@@ -5,7 +5,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 # TODO: Better documentation and unit tests
 
 from swisseph import difdeg2n
-from typing import Union
+from typing import Optional, Union
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.schemas.kr_literals import AspectMovementType
 from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
@@ -13,7 +13,7 @@ from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS,
 
 
 def get_aspect_from_two_points(
-    aspects_settings: Union[list[dict], list[dict]],
+    aspects_settings: list[dict],
     point_one: Union[float, int],
     point_two: Union[float, int],
 ):
@@ -199,19 +199,23 @@ def planet_id_decoder(planets_settings: list[KerykeionSettingsCelestialPointMode
 
 def get_active_points_list(
     subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-    active_points: list = [],
+    active_points: Optional[list] = None,
     *,
     celestial_points: Union[list[_CelestialPointSetting], list[dict]] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
 ) -> list:
     """
     Given an astrological subject and the settings, return a list of the active points.
+
     Args:
         subject (AstrologicalSubject): The astrological subject to get the active points from.
-        settings (Union[KerykeionSettingsModel, dict]): Settings model o dictionary.
+        active_points (list, optional): List of active point names to filter. Defaults to None.
+        celestial_points (Union[list[_CelestialPointSetting], list[dict]]): Settings for celestial points.
 
     Returns:
         list: List of the active points.
     """
+    if active_points is None:
+        active_points = []
     point_list = []
     for planet in celestial_points:
         if planet["name"] in active_points:
