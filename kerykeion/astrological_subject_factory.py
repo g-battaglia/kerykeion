@@ -35,6 +35,7 @@ import swisseph as swe
 import logging
 import math
 from datetime import datetime
+from os import getenv
 from pathlib import Path
 from typing import Optional, List, Dict, Any, get_args
 from dataclasses import dataclass, field
@@ -66,6 +67,7 @@ from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
 # Default configuration values
 DEFAULT_GEONAMES_USERNAME = "century.boy"
+GEONAMES_USERNAME_ENV_VAR = "KERYKEION_GEONAMES_USERNAME"
 DEFAULT_SIDEREAL_MODE: SiderealMode = "FAGAN_BRADLEY"
 DEFAULT_HOUSES_SYSTEM_IDENTIFIER: HousesSystemIdentifier = "P"
 DEFAULT_ZODIAC_TYPE: ZodiacType = "Tropical"
@@ -155,9 +157,24 @@ GEONAMES_DEFAULT_USERNAME_WARNING = (
     "Using the default geonames username is not recommended, please set a custom one!\n"
     "You can get one for free here:\n"
     "https://www.geonames.org/login\n"
+    "You can set the username via the KERYKEION_GEONAMES_USERNAME environment variable\n"
+    "or by passing the geonames_username parameter.\n"
     "Keep in mind that the default username is limited to 2000 requests per hour and is shared with everyone else using this library.\n"
     "********"
 )
+
+
+def _get_geonames_username() -> str:
+    """Get geonames username from environment variable or return default.
+
+    Priority:
+    1. Environment variable KERYKEION_GEONAMES_USERNAME
+    2. Default value (century.boy)
+
+    Returns:
+        str: The geonames username to use.
+    """
+    return getenv(GEONAMES_USERNAME_ENV_VAR) or DEFAULT_GEONAMES_USERNAME
 
 
 @contextmanager
@@ -675,9 +692,9 @@ class AstrologicalSubjectFactory:
 
         # Set up geonames username if needed
         if geonames_username is None and online and (not lat or not lng or not tz_str):
-            if not suppress_geonames_warning:
+            geonames_username = _get_geonames_username()
+            if geonames_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
                 logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
-            geonames_username = DEFAULT_GEONAMES_USERNAME
 
         # Initialize location data
         location = LocationData(
@@ -696,7 +713,7 @@ class AstrologicalSubjectFactory:
         # Fetch location data if needed
         if online and (not tz_str or lat is None or lng is None):
             location.fetch_from_geonames(
-                username=geonames_username or DEFAULT_GEONAMES_USERNAME, cache_expire_after_days=cache_expire_after_days
+                username=geonames_username or _get_geonames_username(), cache_expire_after_days=cache_expire_after_days
             )
 
         # Prepare location for calculations
@@ -849,14 +866,16 @@ class AstrologicalSubjectFactory:
 
         # Get location data if online mode is enabled
         if online:
-            if geonames_username == DEFAULT_GEONAMES_USERNAME:
-                if not suppress_geonames_warning:
-                    logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
+            resolved_username = (
+                geonames_username if geonames_username != DEFAULT_GEONAMES_USERNAME else _get_geonames_username()
+            )
+            if resolved_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
+                logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
 
             geonames = FetchGeonames(
                 city,
                 nation,
-                username=geonames_username,
+                username=resolved_username,
             )
 
             city_data = geonames.get_serialized_data()
