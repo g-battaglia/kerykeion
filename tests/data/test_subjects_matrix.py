@@ -511,7 +511,6 @@ HOUSE_SYSTEMS: List[str] = [
     "R",  # Regiomontanus
     "C",  # Campanus
     "A",  # Equal (cusp 1 is Ascendant)
-    "E",  # Equal (cusp 1 is Ascendant)
     "V",  # Vehlow Equal
     "W",  # Whole Sign
     "X",  # Axial Rotation / Meridian
@@ -520,7 +519,15 @@ HOUSE_SYSTEMS: List[str] = [
     "B",  # Alcabitius
     "M",  # Morinus
     "U",  # Krusinski-Pisa
-    "G",  # Gauquelin Sectors
+    "D",  # Equal (MC)
+    "F",  # Carter poli-equ.
+    "I",  # Sunshine
+    "i",  # Sunshine/alt.
+    "L",  # Pullen SD
+    "N",  # Equal/1=Aries
+    "Q",  # Pullen SR
+    "S",  # Sripati
+    "Y",  # APC houses
 ]
 
 
