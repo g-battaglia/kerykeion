@@ -13,15 +13,10 @@
     <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
     <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
 </div>
-<div align="center">
-    <a href="https://www.kerykeion.net/astrologer-api/subscribe">
-        <img src="https://img.shields.io/badge/REST%20API-Astrologer%20API-0055DA?logo=fastapi&logoColor=white" alt="Astrologer API">
-    </a>
-</div>
 <p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
 &nbsp;
 
-Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects, and generates SVG charts, including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
+Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects, and generates SVG charts — including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
 
 The main goal of this project is to offer a clean, data-driven approach to astrology, making it accessible and programmable.
 
@@ -31,16 +26,13 @@ Here is an example of a birthchart:
 
 ![John Lenon Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
 
-> **📘 For AI Agents & LLMs**
-> If you're building LLM-powered applications (or if you are an AI agent 🙂), see [`llms.txt`](./kerykeion/llms.txt) for a comprehensive, concise reference optimized for programmatic use and AI context.
+## **Web API**
 
-## **Commercial Web API**
+If you want to use Kerykeion in a web application or for commercial or _closed-source_ purposes, you can try the dedicated web API:
 
-For production web apps, commercial usage, or _closed-source_ projects, please **consider using** the hosted API:
+**[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/pricing)**
 
-**[Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe)**
-
-Subscribing to the paid API **directly supports this project** and helps ensure its continued maintenance and development.
+It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly supports this project.
 
 ## Table of Contents
 
