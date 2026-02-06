@@ -161,7 +161,7 @@ print(john.moon.element)
 ```
 
 > **Working offline:** pass `online=False` and specify `lng`, `lat`, and `tz_str` as shown above.  
-> **Working online:** set `online=True` and provide `city`, `nation`, and a valid GeoNames username. Register for free at [geonames.org](https://www.geonames.org/login).
+> **Working online:** set `online=True` and provide `city`, `nation`, and a valid GeoNames username. Register for free at [geonames.org](https://www.geonames.org/login). You can set the username via the `KERYKEION_GEONAMES_USERNAME` environment variable or the `geonames_username` parameter.
 
 **📖 Full factory documentation: [AstrologicalSubjectFactory](https://www.kerykeion.net/content/docs/astrological_subject_factory)**
 

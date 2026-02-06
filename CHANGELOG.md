@@ -4,6 +4,10 @@
 
 _Released 05/02/2026_
 
+**New Features:**
+
+- Added support for `KERYKEION_GEONAMES_USERNAME` environment variable to configure GeoNames API username without code changes
+
 **Bugfixes:**
 
 - Regenerated extended chart SVG baselines (strawberry theme, sidereal×theme combinations, house system×chart type combinations) to align with the precise orb comparison fix from v5.7.1

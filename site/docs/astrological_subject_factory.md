@@ -53,7 +53,7 @@ print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 | `nation`                   | `Optional[str]`          | `None`          | ISO Country code (e.g., "GB").                                         |
 | `lng`, `lat`               | `Optional[float]`        | `None`          | Coordinates (used with `online=False` or as override).                 |
 | `tz_str`                   | `Optional[str]`          | `None`          | Timezone ID (e.g., "Europe/London"). Required if `online=False`.       |
-| `geonames_username`        | `Optional[str]`          | `None`          | GeoNames username (required for `online=True`).                        |
+| `geonames_username`        | `Optional[str]`          | `None`          | GeoNames username (required for `online=True`). Can also be set via `KERYKEION_GEONAMES_USERNAME` env var. |
 | `online`                   | `bool`                   | `True`          | Whether to fetch location/timezone data from GeoNames API.             |
 | `zodiac_type`              | `ZodiacType`             | `"Tropical"`    | "Tropical" or "Sidereal".                                              |
 | `sidereal_mode`            | `Optional[SiderealMode]` | `None`          | Ayanamsha mode (e.g., "LAHIRI"). Required if `zodiac_type="Sidereal"`. |

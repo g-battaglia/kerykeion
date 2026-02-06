@@ -50,9 +50,38 @@ def __init__(
 
 -   `city_name`: Name of the city to search for.
 -   `country_code`: Two-letter ISO country code (e.g., "IT", "US").
--   `username`: GeoNames username (default: "century.boy").
+-   `username`: GeoNames username (default: "century.boy"). Can also be set via the `KERYKEION_GEONAMES_USERNAME` environment variable in `AstrologicalSubjectFactory`.
 -   `cache_expire_after_days`: Number of days to cache the API response (default: 30).
 -   `cache_name`: Optional path for the cache file. Can also be set via the `KERYKEION_GEONAMES_CACHE_NAME` environment variable.
+
+## Environment Variables
+
+The following environment variables can be used to configure GeoNames behavior:
+
+| Variable | Description |
+| :------- | :---------- |
+| `KERYKEION_GEONAMES_USERNAME` | GeoNames API username. When set, this is used as the default username in `AstrologicalSubjectFactory` instead of the built-in default. |
+| `KERYKEION_GEONAMES_CACHE_NAME` | Custom path for the cache file. Overrides the default cache location. |
+
+### Example
+
+```bash
+export KERYKEION_GEONAMES_USERNAME="your_username"
+export KERYKEION_GEONAMES_CACHE_NAME="/path/to/custom/cache"
+```
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+# Username is automatically read from KERYKEION_GEONAMES_USERNAME
+subject = AstrologicalSubjectFactory.from_birth_data(
+    name="John Doe",
+    year=1990, month=6, day=15,
+    hour=14, minute=30,
+    city="London", nation="GB",
+    online=True  # No need to pass geonames_username
+)
+```
 
 ### Methods
 
