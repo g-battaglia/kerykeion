@@ -143,12 +143,12 @@ class TestUtilitiesEdgeCases:
 
     def test_get_moon_emoji_from_phase_int_invalid_phase(self):
         """Test invalid phase raises exception."""
-        with pytest.raises(KerykeionException, match="Error in moon emoji"):
+        with pytest.raises(KerykeionException, match="Error in lunar phase calculation"):
             get_moon_emoji_from_phase_int(30)
 
     def test_get_moon_phase_name_from_phase_int_invalid_phase(self):
         """Test invalid phase raises exception."""
-        with pytest.raises(KerykeionException, match="Error in moon name"):
+        with pytest.raises(KerykeionException, match="Error in lunar phase calculation"):
             get_moon_phase_name_from_phase_int(30)
 
     def test_circular_sort_empty_list(self):

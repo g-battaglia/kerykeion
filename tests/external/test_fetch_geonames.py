@@ -1,5 +1,6 @@
 import pytest
 from unittest.mock import Mock, patch
+from requests.exceptions import RequestException
 
 
 from kerykeion.fetch_geonames import FetchGeonames
@@ -41,7 +42,7 @@ def test_exception_handling():
     with patch("kerykeion.fetch_geonames.CachedSession") as mock_session:
         # Mock session to raise an exception
         mock_session_instance = Mock()
-        mock_session_instance.send.side_effect = Exception("Network error")
+        mock_session_instance.send.side_effect = RequestException("Network error")
         mock_session.return_value = mock_session_instance
 
         fetcher = FetchGeonames("TestCity", "TS", username="test_user")
