@@ -17,3 +17,10 @@ export 'src/models/distribution.dart';
 export 'src/models/house_comparison.dart';
 export 'src/models/chart_data.dart';
 export 'src/chart_data_factory.dart';
+export 'src/return_factory.dart';
+
+// Charts (SVG drawing)
+export 'src/charts/chart_assets.generated.dart';
+export 'src/charts/charts_utils.dart';
+export 'src/charts/draw_planets.dart';
+export 'src/charts/chart_drawer.dart';

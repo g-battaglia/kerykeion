@@ -1,4 +1,4 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:kerykeion_dart/kerykeion_dart.dart';
 import 'package:sweph/sweph.dart';
 import 'dart:io';

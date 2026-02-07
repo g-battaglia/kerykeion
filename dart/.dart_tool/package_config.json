@@ -194,6 +194,12 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "mcp_dart",
+      "rootUri": "../../../saju_chat/mcp_dart",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "meta",
       "rootUri": "file:///home/chang/.pub-cache/hosted/pub.dev/meta-1.17.0",
       "packageUri": "lib/",

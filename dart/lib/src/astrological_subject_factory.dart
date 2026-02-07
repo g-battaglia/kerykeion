@@ -5,15 +5,24 @@ import 'package:kerykeion_dart/src/models/kerykeion_point.dart';
 import 'package:kerykeion_dart/src/types.dart';
 import 'package:kerykeion_dart/src/utilities.dart';
 import 'package:kerykeion_dart/src/constants.dart';
+import 'package:kerykeion_dart/src/settings/chart_defaults.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
 
 class AstrologicalSubjectFactory {
-  static Future<void> initialize() async {
+  static bool _swephInitialized = false;
+
+  /// Initialize timezone data and Sweph engine.
+  /// [ephePath] - writable directory for ephemeris files (required on mobile).
+  /// [epheAssets] - list of bundled asset paths to load.
+  /// [assetLoader] - custom asset loader (e.g. rootBundle-based for Flutter).
+  /// If Sweph has already been initialized externally, set [skipSwephInit] to true.
+  static Future<void> initialize({String? ephePath, List<String>? epheAssets, dynamic assetLoader, bool skipSwephInit = false}) async {
     tz_data.initializeTimeZones();
-    // Initialize Sweph with bundled assets (assuming correct setup)
-    // If specific path needed, pass it here. For now default.
-    await swe.Sweph.init();
+    if (!skipSwephInit && !_swephInitialized) {
+      await swe.Sweph.init(epheFilesPath: ephePath, epheAssets: epheAssets ?? [], assetLoader: assetLoader);
+      _swephInitialized = true;
+    }
   }
 
   static Future<AstrologicalSubjectModel> createSubject({
@@ -91,6 +100,7 @@ class AstrologicalSubjectFactory {
     // 5. Calculate Planets
     final calculatedPoints = <AstrologicalPoint, KerykeionPointModel>{};
     final pointsToCalc = activePoints ?? AstrologicalPoint.values;
+    final resolvedActivePoints = activePoints ?? defaultActivePoints;
 
     var iflag = swe.SwephFlag.SEFLG_SWIEPH | swe.SwephFlag.SEFLG_SPEED;
     if (zodiacType == ZodiacType.Sidereal) {
@@ -272,6 +282,32 @@ class AstrologicalSubjectFactory {
       }
     }
 
+    // Assign house placement to each calculated planet/point
+    final houseCuspDegrees = <double>[];
+    for (int i = 1; i <= 12; i++) {
+      houseCuspDegrees.add(houses[houseNames[i]!]!.absPos);
+    }
+    for (final point in calculatedPoints.values) {
+      try {
+        point.house = getPlanetHouse(point.absPos, houseCuspDegrees);
+      } catch (e) {
+        // If house can't be determined, leave as null
+      }
+    }
+    // Also assign house to axes
+    try {
+      ascendant.house = getPlanetHouse(ascendant.absPos, houseCuspDegrees);
+    } catch (_) {}
+    try {
+      mc.house = getPlanetHouse(mc.absPos, houseCuspDegrees);
+    } catch (_) {}
+    try {
+      descendant.house = getPlanetHouse(descendant.absPos, houseCuspDegrees);
+    } catch (_) {}
+    try {
+      ic.house = getPlanetHouse(ic.absPos, houseCuspDegrees);
+    } catch (_) {}
+
     return AstrologicalSubjectModel(
       name: name,
       year: year,
@@ -289,7 +325,7 @@ class AstrologicalSubjectFactory {
       julianDay: julianDay,
       zodiacType: zodiacType,
       housesNamesList: House.values,
-      activePoints: pointsToCalc,
+      activePoints: resolvedActivePoints,
       isoFormattedLocalDatetime: localTime.toIso8601String(),
       isoFormattedUtcDatetime: utcTime.toIso8601String(),
       dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][localTime.weekday - 1],

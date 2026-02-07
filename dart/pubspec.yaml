@@ -13,7 +13,7 @@ dependencies:
   intl: ^0.20.2
   path: ^1.9.1
   sweph: ^3.2.1+2.10.3
-  timezone: ^0.11.0
+  timezone: ">=0.10.0 <1.0.0"
   # path: ^1.9.0
 
 dev_dependencies:
@@ -21,6 +21,9 @@ dev_dependencies:
     sdk: flutter
   lints: ^6.0.0
   test: ^1.26.3
+  mcp_dart:
+    path: ../../saju_chat/mcp_dart
+  http: ^1.4.0
 #  test: ^1.25.6  # flutter_test replaces test
 
 flutter:

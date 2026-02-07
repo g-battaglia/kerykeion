@@ -94,22 +94,69 @@ class ChartDataFactory {
     }
   }
 
-  static ElementDistributionModel _calculateElementDistribution(AstrologicalSubjectModel subject, List<AstrologicalPoint> activePoints) {
-    int fire = 0;
-    int earth = 0;
-    int air = 0;
-    int water = 0;
-    int total = 0;
+  // =========================================================================
+  // Weighted point configuration — matches Python kerykeion's
+  // DEFAULT_WEIGHTED_POINT_WEIGHTS in charts/charts_utils.py
+  // =========================================================================
+  static const Map<AstrologicalPoint, double> _defaultWeights = {
+    // Core luminaries & angles
+    AstrologicalPoint.Sun: 2.0,
+    AstrologicalPoint.Moon: 2.0,
+    AstrologicalPoint.Ascendant: 2.0,
+    AstrologicalPoint.Medium_Coeli: 1.5,
+    AstrologicalPoint.Descendant: 1.5,
+    AstrologicalPoint.Imum_Coeli: 1.5,
+    // Personal planets
+    AstrologicalPoint.Mercury: 1.5,
+    AstrologicalPoint.Venus: 1.5,
+    AstrologicalPoint.Mars: 1.5,
+    // Social planets
+    AstrologicalPoint.Jupiter: 1.0,
+    AstrologicalPoint.Saturn: 1.0,
+    // Outer / transpersonal
+    AstrologicalPoint.Uranus: 0.5,
+    AstrologicalPoint.Neptune: 0.5,
+    AstrologicalPoint.Pluto: 0.5,
+    // Lunar nodes
+    AstrologicalPoint.Mean_North_Lunar_Node: 0.5,
+    AstrologicalPoint.True_North_Lunar_Node: 0.5,
+    AstrologicalPoint.Mean_South_Lunar_Node: 0.5,
+    AstrologicalPoint.True_South_Lunar_Node: 0.5,
+    // Chiron & Lilith
+    AstrologicalPoint.Chiron: 0.6,
+    AstrologicalPoint.Mean_Lilith: 0.5,
+    AstrologicalPoint.True_Lilith: 0.5,
+  };
 
-    void processPoint(KerykeionPointModel? point) {
-      if (point != null) {
-        if (point.element == Element.Fire) fire++;
-        if (point.element == Element.Earth) earth++;
-        if (point.element == Element.Air) air++;
-        if (point.element == Element.Water) water++;
-        total++;
-      }
+  /// Fallback weight for any point not in [_defaultWeights].
+  static const double _fallbackWeight = 1.0;
+
+  /// Largest-remainder method so percentages always sum to exactly 100.
+  /// Matches Python kerykeion's `distribute_percentages_to_100`.
+  static Map<String, int> _distributePercentagesTo100(Map<String, double> values) {
+    final total = values.values.fold(0.0, (a, b) => a + b);
+    if (total == 0) return {for (var k in values.keys) k: 0};
+
+    final percentages = {for (var e in values.entries) e.key: e.value * 100.0 / total};
+    final intParts = {for (var e in percentages.entries) e.key: e.value.floor()};
+    final remainders = {for (var e in percentages.entries) e.key: e.value - intParts[e.key]!};
+
+    final currentSum = intParts.values.fold(0, (a, b) => a + b);
+    final needed = 100 - currentSum;
+
+    final sorted = remainders.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+    final result = Map<String, int>.from(intParts);
+    for (var i = 0; i < needed && i < sorted.length; i++) {
+      result[sorted[i].key] = result[sorted[i].key]! + 1;
     }
+    return result;
+  }
+
+  static ElementDistributionModel _calculateElementDistribution(AstrologicalSubjectModel subject, List<AstrologicalPoint> activePoints) {
+    double fire = 0;
+    double earth = 0;
+    double air = 0;
+    double water = 0;
 
     final map = {
       AstrologicalPoint.Sun: subject.sun,
@@ -125,18 +172,40 @@ class ChartDataFactory {
       AstrologicalPoint.Chiron: subject.chiron,
       AstrologicalPoint.Mean_North_Lunar_Node: subject.meanNorthLunarNode,
       AstrologicalPoint.True_North_Lunar_Node: subject.trueNorthLunarNode,
+      AstrologicalPoint.Mean_South_Lunar_Node: subject.meanSouthLunarNode,
+      AstrologicalPoint.True_South_Lunar_Node: subject.trueSouthLunarNode,
+      AstrologicalPoint.Mean_Lilith: subject.meanLilith,
+      AstrologicalPoint.True_Lilith: subject.trueLilith,
       AstrologicalPoint.Ascendant: subject.ascendant,
       AstrologicalPoint.Medium_Coeli: subject.mediumCoeli,
+      AstrologicalPoint.Descendant: subject.descendant,
+      AstrologicalPoint.Imum_Coeli: subject.imumCoeli,
     };
 
     for (var entry in map.entries) {
-      if (activePoints.contains(entry.key)) {
-        processPoint(entry.value);
+      if (!activePoints.contains(entry.key)) continue;
+      final point = entry.value;
+      if (point == null) continue;
+      final weight = _defaultWeights[entry.key] ?? _fallbackWeight;
+      switch (point.element) {
+        case Element.Fire:
+          fire += weight;
+          break;
+        case Element.Earth:
+          earth += weight;
+          break;
+        case Element.Air:
+          air += weight;
+          break;
+        case Element.Water:
+          water += weight;
+          break;
       }
     }
 
+    // Determine dominant
     Element? dominant;
-    int max = 0;
+    double max = 0;
     if (fire > max) {
       max = fire;
       dominant = Element.Fire;
@@ -154,40 +223,26 @@ class ChartDataFactory {
       dominant = Element.Water;
     }
 
-    // Calculate percentages
-    int totalPoints = total == 0 ? 1 : total; // Avoid division by zero
-    int firePercentage = ((fire / totalPoints) * 100).round();
-    int earthPercentage = ((earth / totalPoints) * 100).round();
-    int airPercentage = ((air / totalPoints) * 100).round();
-    int waterPercentage = ((water / totalPoints) * 100).round();
+    // Largest-remainder percentages (sum = 100)
+    final pct = _distributePercentagesTo100({'fire': fire, 'earth': earth, 'air': air, 'water': water});
 
     return ElementDistributionModel(
-      fire: fire.toDouble(),
-      earth: earth.toDouble(),
-      air: air.toDouble(),
-      water: water.toDouble(),
-      firePercentage: firePercentage,
-      earthPercentage: earthPercentage,
-      airPercentage: airPercentage,
-      waterPercentage: waterPercentage,
+      fire: fire,
+      earth: earth,
+      air: air,
+      water: water,
+      firePercentage: pct['fire']!,
+      earthPercentage: pct['earth']!,
+      airPercentage: pct['air']!,
+      waterPercentage: pct['water']!,
       dominant: dominant,
     );
   }
 
   static QualityDistributionModel _calculateQualityDistribution(AstrologicalSubjectModel subject, List<AstrologicalPoint> activePoints) {
-    int cardinal = 0;
-    int fixed = 0;
-    int mutable = 0;
-    int total = 0;
-
-    void processPoint(KerykeionPointModel? point) {
-      if (point != null) {
-        if (point.quality == Quality.Cardinal) cardinal++;
-        if (point.quality == Quality.Fixed) fixed++;
-        if (point.quality == Quality.Mutable) mutable++;
-        total++;
-      }
-    }
+    double cardinal = 0;
+    double fixed = 0;
+    double mutable = 0;
 
     final map = {
       AstrologicalPoint.Sun: subject.sun,
@@ -203,18 +258,37 @@ class ChartDataFactory {
       AstrologicalPoint.Chiron: subject.chiron,
       AstrologicalPoint.Mean_North_Lunar_Node: subject.meanNorthLunarNode,
       AstrologicalPoint.True_North_Lunar_Node: subject.trueNorthLunarNode,
+      AstrologicalPoint.Mean_South_Lunar_Node: subject.meanSouthLunarNode,
+      AstrologicalPoint.True_South_Lunar_Node: subject.trueSouthLunarNode,
+      AstrologicalPoint.Mean_Lilith: subject.meanLilith,
+      AstrologicalPoint.True_Lilith: subject.trueLilith,
       AstrologicalPoint.Ascendant: subject.ascendant,
       AstrologicalPoint.Medium_Coeli: subject.mediumCoeli,
+      AstrologicalPoint.Descendant: subject.descendant,
+      AstrologicalPoint.Imum_Coeli: subject.imumCoeli,
     };
 
     for (var entry in map.entries) {
-      if (activePoints.contains(entry.key)) {
-        processPoint(entry.value);
+      if (!activePoints.contains(entry.key)) continue;
+      final point = entry.value;
+      if (point == null) continue;
+      final weight = _defaultWeights[entry.key] ?? _fallbackWeight;
+      switch (point.quality) {
+        case Quality.Cardinal:
+          cardinal += weight;
+          break;
+        case Quality.Fixed:
+          fixed += weight;
+          break;
+        case Quality.Mutable:
+          mutable += weight;
+          break;
       }
     }
 
+    // Determine dominant
     Quality? dominant;
-    int max = 0;
+    double max = 0;
     if (cardinal > max) {
       max = cardinal;
       dominant = Quality.Cardinal;
@@ -228,18 +302,16 @@ class ChartDataFactory {
       dominant = Quality.Mutable;
     }
 
-    int totalPoints = total == 0 ? 1 : total;
-    int cardinalPercentage = ((cardinal / totalPoints) * 100).round();
-    int fixedPercentage = ((fixed / totalPoints) * 100).round();
-    int mutablePercentage = ((mutable / totalPoints) * 100).round();
+    // Largest-remainder percentages (sum = 100)
+    final pct = _distributePercentagesTo100({'cardinal': cardinal, 'fixed': fixed, 'mutable': mutable});
 
     return QualityDistributionModel(
-      cardinal: cardinal.toDouble(),
-      fixed: fixed.toDouble(),
-      mutable: mutable.toDouble(),
-      cardinalPercentage: cardinalPercentage,
-      fixedPercentage: fixedPercentage,
-      mutablePercentage: mutablePercentage,
+      cardinal: cardinal,
+      fixed: fixed,
+      mutable: mutable,
+      cardinalPercentage: pct['cardinal']!,
+      fixedPercentage: pct['fixed']!,
+      mutablePercentage: pct['mutable']!,
       dominant: dominant,
     );
   }
