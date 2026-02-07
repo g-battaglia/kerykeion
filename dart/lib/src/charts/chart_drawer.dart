@@ -221,63 +221,66 @@ class NatalChartDrawer {
     td['color_style_tag'] = customCss ?? getThemeCss(theme);
 
     // ── Dynamic height adjustment ──
+    const verticalPaddingTop = 15;
+    const verticalPaddingBottom = 15;
+
     final pointCount = _activePointData.length;
     final extraPoints = (pointCount > 20) ? pointCount - 20 : 0;
     final heightDelta = extraPoints * 8.0;
     final height = dimensions.defaultHeight + heightDelta;
-    final width = dimensions.natalWidth;
+    // Python uses 890 for natal (main_radius*2 + side grids width)
+    final width = 890;
 
-    // Vertical offsets — bottom-anchored elements shift by full delta,
-    // top elements shift partially, capped at 80
-    final topShift = heightDelta.clamp(0.0, 80.0);
+    // Vertical offsets
+    final viewboxHeight = height.toInt() + verticalPaddingTop + verticalPaddingBottom;
 
-    td['viewbox'] = '0 0 $width $height';
+    td['viewbox'] = '0 -$verticalPaddingTop $width $viewboxHeight';
     td['background_color'] = 'var(--kerykeion-chart-color-paper-1)';
     td['paper_color_0'] = 'var(--kerykeion-chart-color-paper-0)';
 
-    // Translate-Y offsets for each section
+    // Translate-Y offsets for each section — defaults match Python
     td['title_translate_y'] = '0';
-    td['elements_translate_y'] = topShift.toStringAsFixed(0);
-    td['qualities_translate_y'] = topShift.toStringAsFixed(0);
+    td['elements_translate_y'] = '0';
+    td['qualities_translate_y'] = '0';
     td['bottom_left_translate_y'] = heightDelta.toStringAsFixed(0);
-    td['lunar_phase_translate_y'] = (420 + heightDelta).toStringAsFixed(0);
-    td['full_wheel_translate_y'] = topShift.toStringAsFixed(0);
-    td['houses_and_planets_translate_y'] = topShift.toStringAsFixed(0);
-    td['aspect_grid_translate_y'] = (250 + topShift).toStringAsFixed(0);
-    td['aspect_list_translate_y'] = (250 + topShift).toStringAsFixed(0);
+    td['lunar_phase_translate_y'] = (518 + heightDelta).toStringAsFixed(0);
+    td['full_wheel_translate_y'] = '50';
+    td['houses_and_planets_translate_y'] = '0';
+    td['aspect_grid_translate_y'] = '50';
+    td['aspect_list_translate_y'] = '50';
 
     // ── Title ──
-    td['stringTitle'] = _escapeXml(_truncateName(_subject.name, 20));
+    td['stringTitle'] = '${_escapeXml(_truncateName(_subject.name, 20))} - Birth Chart';
 
     // ── Top Left Info ──
-    td['top_left_0'] = _formatLocationLine();
-    td['top_left_1'] = _formatDateTimeLine();
-    td['top_left_2'] = _formatZodiacTypeLine();
-    td['top_left_3'] = _formatHouseSystemLine();
-    td['top_left_4'] = _formatPerspectiveLine();
-    td['top_left_5'] = '';
+    td['top_left_0'] = 'Location:';
+    td['top_left_1'] = _formatCityNation();
+    td['top_left_2'] = _formatLatitude();
+    td['top_left_3'] = _formatLongitude();
+    td['top_left_4'] = _formatDateTimeWithTimezone();
+    td['top_left_5'] = _formatDayOfWeek();
 
     // ── Elements / Qualities ──
     final elemDist = chartData.elementDistribution;
     final qualDist = chartData.qualityDistribution;
 
     td['elements_string'] = 'Elements:';
-    td['fire_string'] = 'Fire: ${elemDist.firePercentage}%';
-    td['earth_string'] = 'Earth: ${elemDist.earthPercentage}%';
-    td['air_string'] = 'Air: ${elemDist.airPercentage}%';
-    td['water_string'] = 'Water: ${elemDist.waterPercentage}%';
+    td['fire_string'] = 'Fire ${elemDist.firePercentage}%';
+    td['earth_string'] = 'Earth ${elemDist.earthPercentage}%';
+    td['air_string'] = 'Air ${elemDist.airPercentage}%';
+    td['water_string'] = 'Water ${elemDist.waterPercentage}%';
 
     td['qualities_string'] = 'Qualities:';
-    td['cardinal_string'] = 'Cardinal: ${qualDist.cardinalPercentage}%';
-    td['fixed_string'] = 'Fixed: ${qualDist.fixedPercentage}%';
-    td['mutable_string'] = 'Mutable: ${qualDist.mutablePercentage}%';
+    td['cardinal_string'] = 'Cardinal ${qualDist.cardinalPercentage}%';
+    td['fixed_string'] = 'Fixed ${qualDist.fixedPercentage}%';
+    td['mutable_string'] = 'Mutable ${qualDist.mutablePercentage}%';
 
     // ── Bottom Left Info ──
-    td['bottom_left_0'] = '';
-    td['bottom_left_1'] = '';
-    td['bottom_left_2'] = '';
-    td['bottom_left_3'] = '';
-    td['bottom_left_4'] = '';
+    td['bottom_left_0'] = _formatZodiacTypeLine();
+    td['bottom_left_1'] = _formatDomificationLine();
+    td['bottom_left_2'] = _formatLunationDay();
+    td['bottom_left_3'] = _formatLunarPhaseName();
+    td['bottom_left_4'] = _formatPerspectiveLine();
 
     // ── Lunar Phase ──
     td['makeLunarPhase'] = _buildLunarPhase();
@@ -327,7 +330,7 @@ class NatalChartDrawer {
           seventhHouseDegreeUt: _seventhHouseDeg,
           num: i,
           r: _r,
-          style: 'fill: $bgColor; fill-opacity: 0.3;',
+          style: 'fill: $bgColor; fill-opacity: 0.5;',
           type: zodiacSigns[i],
         ),
       );
@@ -336,15 +339,15 @@ class NatalChartDrawer {
   }
 
   String _buildFirstCircle() {
-    return drawFirstCircle(_r, 'var(--kerykeion-chart-color-zodiac-radix-ring-0)', 'Natal', _c1);
+    return drawFirstCircle(_r, 'var(--kerykeion-chart-color-zodiac-radix-ring-2)', 'Natal', _c1);
   }
 
   String _buildSecondCircle() {
-    return drawSecondCircle(_r, 'var(--kerykeion-chart-color-zodiac-radix-ring-1)', 'none', 'Natal', _c2);
+    return drawSecondCircle(_r, 'var(--kerykeion-chart-color-zodiac-radix-ring-1)', 'var(--kerykeion-chart-color-paper-1)', 'Natal', _c2);
   }
 
   String _buildThirdCircle() {
-    return drawThirdCircle(_r, 'var(--kerykeion-chart-color-zodiac-radix-ring-2)', 'var(--kerykeion-chart-color-paper-1)', 'Natal', _c3);
+    return drawThirdCircle(_r, 'var(--kerykeion-chart-color-zodiac-radix-ring-0)', 'var(--kerykeion-chart-color-paper-1)', 'Natal', _c3);
   }
 
   String _buildDegreeRing() {
@@ -408,7 +411,7 @@ class NatalChartDrawer {
         drawAspectLine(
           r: _r,
           ar: aspectRadius,
-          aspect: {'p1_abs_pos': aspect.p1AbsPos, 'p2_abs_pos': aspect.p2AbsPos, 'aspect_degrees': aspect.aspectDegrees},
+          aspect: aspect.toJson(),
           color: aspectSetting.color,
           seventhHouseDegreeUt: _seventhHouseDeg,
           renderedIconPositions: renderedPositions,
@@ -565,29 +568,62 @@ class NatalChartDrawer {
     return {'abs_pos': h.absPos, 'position': h.position, 'sign': h.sign.name};
   }
 
-  String _formatLocationLine() {
+  String _formatCityNation() {
     final city = _subject.city ?? '';
     final nation = _subject.nation ?? '';
-    final lat = _subject.lat;
-    final lng = _subject.lng;
-
     final parts = <String>[];
     if (city.isNotEmpty) parts.add(city);
     if (nation.isNotEmpty) parts.add(nation);
-
-    if (lat != null && lng != null) {
-      parts.add(convertLatitudeCoordinateToString(lat, 'N', 'S'));
-      parts.add(convertLongitudeCoordinateToString(lng, 'E', 'W'));
-    }
-
     return _escapeXml(parts.join(', '));
   }
 
-  String _formatDateTimeLine() {
-    final dt = _subject.isoFormattedLocalDatetime ?? '';
-    final tz = _subject.tzStr ?? '';
-    if (dt.isEmpty) return '';
-    return _escapeXml('$dt ($tz)');
+  String _formatLatitude() {
+    final lat = _subject.lat;
+    if (lat == null) return '';
+    return 'Latitude: ${convertLatitudeCoordinateToString(lat, 'North', 'South')}';
+  }
+
+  String _formatLongitude() {
+    final lng = _subject.lng;
+    if (lng == null) return '';
+    return 'Longitude: ${convertLongitudeCoordinateToString(lng, 'East', 'West')}';
+  }
+
+  String _formatDateTimeWithTimezone() {
+    // Python output format: '1990-06-15 14:30 [+09:00]'
+    // Input iso format: '1990-06-15T14:30:00+09:00'
+    final iso = _subject.isoFormattedLocalDatetime ?? '';
+    if (iso.isEmpty) return '';
+
+    // Parse the ISO datetime to extract parts
+    final dt = DateTime.tryParse(iso);
+    if (dt == null) return iso;
+
+    // Extract timezone offset from ISO string
+    String tzOffset = '';
+    final tzMatch = RegExp(r'[+-]\d{2}:\d{2}$').firstMatch(iso);
+    if (tzMatch != null) {
+      tzOffset = tzMatch.group(0)!;
+    }
+
+    final dateStr =
+        '${dt.year.toString().padLeft(4, '0')}-'
+        '${dt.month.toString().padLeft(2, '0')}-'
+        '${dt.day.toString().padLeft(2, '0')}';
+    final timeStr =
+        '${dt.hour.toString().padLeft(2, '0')}:'
+        '${dt.minute.toString().padLeft(2, '0')}';
+
+    if (tzOffset.isNotEmpty) {
+      return '$dateStr $timeStr [$tzOffset]';
+    }
+    return '$dateStr $timeStr';
+  }
+
+  String _formatDayOfWeek() {
+    final dow = _subject.dayOfWeek ?? '';
+    if (dow.isEmpty) return '';
+    return 'Day of Week: $dow';
   }
 
   String _formatZodiacTypeLine() {
@@ -595,9 +631,22 @@ class NatalChartDrawer {
     return 'Zodiac: $zt';
   }
 
-  String _formatHouseSystemLine() {
+  String _formatDomificationLine() {
     final hs = _subject.housesSystemName ?? _subject.housesSystemIdentifier.name;
-    return 'Houses: $hs';
+    return 'Domification: $hs';
+  }
+
+  String _formatLunationDay() {
+    final lp = _subject.lunarPhase;
+    if (lp == null) return '';
+    return 'Lunation Day: ${lp.moonPhase}';
+  }
+
+  String _formatLunarPhaseName() {
+    final lp = _subject.lunarPhase;
+    if (lp == null) return '';
+    final name = lp.moonPhaseName.name.replaceAll('_', ' ');
+    return 'Lunar Phase: $name';
   }
 
   String _formatPerspectiveLine() {
