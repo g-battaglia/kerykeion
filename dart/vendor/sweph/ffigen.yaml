@@ -1,0 +1,35 @@
+# Run with `dart run ffigen --config ffigen.yaml`.
+name: SwephBindings
+description: |
+  Bindings for Sweph.
+
+  Regenerate bindings with `dart run ffigen --config ffigen.yaml`.
+  Replace 'dart:ffi' with 'package:universal_ffi/ffi.dart'
+output: 'lib/src/bindings.dart'
+headers:
+  entry-points:
+    - 'native/sweph/src/swephexp.h'
+    - 'native/utils/mem_io.h'
+  include-directives:
+    - 'native/sweph/src/swephexp.h'
+    - 'native/utils/mem_io.h'
+preamble: |
+  // ignore_for_file: always_specify_types
+  // ignore_for_file: camel_case_types
+  // ignore_for_file: constant_identifier_names
+  // ignore_for_file: non_constant_identifier_names
+comments:
+  style: any
+  length: full
+functions:
+  exclude:
+    - swe_heliacal_angle
+    - swe_topo_arcus_visionis
+    - swe_set_astro_models
+    - swe_get_astro_models
+type-map:
+  'native-types':
+    'char':
+      'lib': 'ffi'
+      'c-type': 'Uint8'
+      'dart-type': 'int'

@@ -1,0 +1,419 @@
+# List of asteroids on SwissEph CD-ROM
+# ====================================
+# At the same time a brief introduction into asteroids
+# ====================================================
+# Dieter Koch
+# updated 8 Oct 2005
+#
+#
+# Ephemerides of all of the asteroids mentioned below
+# can be found on the SwissEph CD-ROM.
+# For complete Ephemerides of ALL asteroids, order our
+# special asteroid CD-ROMS.
+#
+# Literature:
+# Lutz D. Schmadel, Dictionary of Minor Planet Names,
+#   Springer, Berlin, Heidelberg, New York
+# Charles T. Kowal, Asteroids. Their Nature and Utilization,
+#   Whiley & Sons, 1996, Chichester, England
+#
+#
+# What is an asteroid?
+# --------------------
+#
+# Asteroids are small planets. Because there are too many
+# of them and because most of them are quite small,
+# astronomers did not like to call them "planets", but
+# invented names like "asteroid" (Greek "star-like",
+# because through telescopes they did not appear as planetary
+# discs but as star-like points) or "planetoid" (Greek
+# "similar to a planet"). However they are also often
+# called minor planets.
+# The minor planets can roughly be divided into two groups.
+# There are the inner asteroids, the majority of which
+# circles in the space between Mars and Jupiter, and
+# there are the outer asteroids, which have their realm
+# beyond Neptune. The first group consists of rather
+# dense, earth-like material, whereas the Transneptunians
+# mainly consist of water ice and frozen gases. Many comets
+# are descendants of the "asteroids" (or should one say
+# "comets"?) belt beyond Neptune. The first Transneptunian
+# objects (except Pluto) were discovered only after 1992
+# and none of them has been given a name as yet.
+#
+#
+# The largest main belt asteroids
+# -------------------------------
+# Most asteroids are actually only debris of collisions
+# of small planets that formed in the beginning of the
+# solar system. Only the largest ones are still more
+# or less complete and round planets.
+
+1    Ceres        # 913 km  goddess of corn and harvest
+2    Pallas       # 523 km  goddess of wisdom, war and liberal arts
+4    Vesta        # 501 km  goddess of the hearth fire
+10   Hygiea       # 429 km  goddess of health
+511  Davida       # 324 km  after an astronomer David P. Todd
+704  Interamnia   # 338 km  "between rivers", ancient name of
+                  #         its discovery place Teramo
+65   Cybele       # 308 km  Phrygian Goddess, = Rhea, wife of Kronos-Saturn
+52   Europa       # 292 km  beautiful mortal woman, mother of Minos by Zeus
+87   Sylvia       # 282 km
+451  Patientia    # 280 km  patience
+31   Euphrosyne   # 270 km  one of the three Graces, benevolence
+15   Eunomia      # 260 km  one of the Hours, order and law
+324  Bamberga     # 252 km  after a city in Bavaria
+3    Juno         # 248 km  wife of Zeus
+16   Psyche       # 248 km  "soul", name of a nymph
+
+
+# Asteroid families
+# -----------------
+# Most asteroids live in families. There are several kinds
+# of families.
+# - There are families that are separated from each other
+#   by orbital resonances with Jupiter or other major planets.
+# - Other families, the so-called Hirayama families, are the
+#   relics of asteroids that broke apart long ago when they
+#   collided with other asteroids. They still share similar
+#   orbital qualities.
+# - Third, there are the Trojan asteroids that are caught
+#   in regions 60 degrees ahead or behind a major planet
+#   (Jupiter or Mars) by the combined gravitational forces
+#   of this planet and the Sun.
+
+# Near Earth groups:
+# ------------------
+#
+# Aten family: they cross Earth; mean distance from Sun is less than Earth
+
+2062 Aten         # an Egyptian Sun god
+2100 Ra-Shalom    # Ra is an Egyptian Sun god, Shalom is Hebrew "peace"
+                  # was discovered during Camp David mid-east peace conference
+
+# Apollo family: they cross Earth; mean distance is greater than Earth
+
+1862 Apollo       # Greek Sun god
+1566 Icarus       # wanted to fly to the sky, fell into the ocean
+                  # Icarus crosses Mercury, Venus, Earth, and Mars
+                  # and has his perihelion very close to the Sun
+3200 Phaethon     # wanted to drive the solar chariot, crashed in flames
+                  # Phaethon crosses Mercury, Venus, Earth, and Mars
+                  # and has his perihelion very close to the Sun
+69230 Hermes      # Greek name of Mercury;
+		  # discovered and lost in 1937, rediscovered in 2003
+
+# Amor family: they cross Mars, approach Earth
+
+1221 Amor         # Roman love god
+433  Eros         # Greek love god
+719  Albert       # dicovered and lost in 1911 rediscovered in 2000
+
+# Mars Trojans:
+# -------------
+
+5261 Eureka       a mars Trojan
+
+# Main belt families:
+# -------------------
+
+# Hungarias: an asteroid group at 1.95 AU
+
+434  Hungaria     # after Hungary
+
+# Floras: a Hirayama family at 2.2 AU
+
+8    Flora        # goddess of flowers
+
+# Phocaeas: an asteroid group at 2.36 AU
+
+25   Phocaea      # maritime town in Ionia
+
+# Koronis family: a Hirayama family at 2.88 AU
+
+158  Koronis      # mother of Asklepios by Apollo
+
+# Eos family: a Hirayama family at 3.02 AU
+
+221  Eos          # goddess of dawn
+
+# Themis family: a Hirayama family at 3.13 AU
+
+24   Themis       # goddess of justice
+
+# Hildas: an asteroid belt at 4.0 AU, in 3:2 resonance with Jupiter
+# --------------------------------------------------------------
+# The Hildas have fairly eccentric orbits and, at their
+# aphelion, are very close to the orbit of Jupiter. However,
+# at those times, Jupiter is ALWAYS somewhere else. As
+# Jupiter approaches, the Hilda asteroids move towards
+# their perihelion points.
+
+153  Hilda        # female first name, means "heroine"
+
+# a single asteroid at 4.26 AU, in 4:3 resonance with Jupiter
+279  Thule        # mythical center of Magic in the uttermost north
+
+# Jupiter Trojans:
+# ----------------
+# Only the Trojans behind Jupiter are actually named after Trojan heroes,
+# whereas the "Trojans" ahead of Jupiter are named after Greek heroes that
+# participated in the Trojan war. However there have been made some mistakes,
+# i.e. there are some Trojan "spies" in the Greek army and some Greek "spies"
+# in the Trojan army.
+
+# Greeks ahead of Jupiter:
+624  Hector       # Trojan "spy" in the Greek army, by far the greatest
+                  # Trojan hero and the greatest Trojan asteroid
+588  Achilles     # slayer of Hector
+1143 Odysseus
+
+# Trojans behind Jupiter:
+1172 �neas
+3317 Paris
+884  Priamus
+
+# Jupiter-crossing asteroids:
+# ---------------------------
+
+3552 Don Quixote  # perihelion near Mars, aphelion beyond Jupiter;
+                  # you know Don Quixote, don't you?
+944  Hidalgo      # perihelion near Mars, aphelion near Saturn;
+                  # after a Mexican national hero
+5335 Damocles     # perihelion near Mars, aphelion near Uranus;
+                  # the man sitting below a sword suspended by a thread
+
+# Centaurs:
+# ---------
+
+2060 Chiron       # perihelion near Saturn, aphelion near Uranus;
+                  # also a member of the comets catalogue (95P Chiron)
+		  # because it has cometary activity
+                  # educator of heros, specialist in healing and war arts
+5145 Pholus       # perihelion near Saturn, aphelion near Neptune
+                  # seer of the gods, keeper of the wine of the Centaurs
+7066 Nessus       # perihelion near Saturn, aphelion in Pluto's mean distance
+                  # ferryman, killed by Hercules, kills Hercules
+
+
+# Neptune Trojans:
+# ----------------
+# none named by Feb 2004
+
+# Plutinos:
+# ---------
+# These are objects with periods similar to Pluto, i.e. objects
+# that resonate with the Neptune period in a 3:2 ratio.
+# There are no Plutinos included in Swiss Ephemeris so far, but
+# PLUTO himself can be considered a Plutino type asteroid!
+
+28978 Ixion       # 1060 km diameter
+90482 Orcus       # 1700 km, largest Plutino by Oct 2005 (besides Pluto himself)
+
+# Cubewanos:
+# ----------
+# These are non-Plutino objects with periods greater than Pluto.
+# The word "Cubewano" is derived from the preliminary designation
+# of the first-discovered Cubewano: 1992 QB1
+# to be named after creation deities
+
+15760 1992 QB1    # first-discovered Cubewano, 280 km diameter
+20000 Varuna      # 980 km
+50000 Quaoar      # largest Cubewano by Feb 2004: 1250 km
+
+# Scattered-Disk Objects:
+# ----------------------
+# Highly eccentric trans-Neptunian orbits
+90377 Sedna       # perihelion 76 = AU, aphelion = 913 AU, period = 11000 years
+                  # diameter = 1700 km
+
+# strange bodies
+# --------------------
+20461 Dioretsa	  # a retrograde asteroid at Period = 115 years (a=23.757)
+                  # perihelion = 2.4 AU aphelion = 45 AU, incl = 160
+		  # this is a rather comet-like orbit
+
+
+# Asteroids that challenge hypothetical planets astrology
+# -------------------------------------------------------
+
+42   Isis         # not identical with "Isis-Transpluto"
+                  # Egyptian lunar goddess
+763  Cupido       # different from Witte's Cupido
+                  # Roman god of sexual desire
+4341 Poseidon     # not identical with Witte's Poseidon
+                  # Greek name of Neptune
+4464 Vulcano      # compare Witte's Vulkanus
+                  # and intramercurian hypothetical Vulcanus
+                  # Roman fire god
+5731 Zeus         # different from Witte's Zeus
+                  # Greek name of Jupiter
+1862 Apollo       # different from Witte's Apollon
+                  # Greek god of the Sun
+398  Admete       # compare Witte's Admetos
+                  # "the untamed one", daughter of Eurystheus
+
+# Asteroids that challenge Dark Moon/Lilith astrology
+# --------------------------------------------
+
+1181 Lilith       # not identical with Dark Moon 'Lilith'
+                  # first evil wife of Adam
+3753 Cruithne     # also called a "second moon" of earth;
+                  # actually not a moon, but an asteroid that
+                  # orbits around the sun in a certain resonance
+                  # with the earth.
+                  # After the first Celtic group to come to the British Isles.
+
+# Also try the two points 60 degrees in front of and behind the
+# Moon, the so called Lagrange points, where the combined
+# gravitational forces of the earth and the moon might imprison
+# rocks and stones. There have been some photographic hints
+# that there are clouds of such material around these points.
+# They are called the Kordylewski clouds.
+
+
+# other asteroids
+# ---------------
+
+5    Astraea      # a goddess of justice
+6    Hebe         # goddess of youth
+7    Iris         # rainbow goddess, messenger of the gods
+8    Flora        # goddess of flowers and gardens
+9    Metis        # goddess of prudence
+10   Hygiea       # goddess of health
+14   Irene        # goddess of peace
+16   Psyche       # "soul", a nymph
+19   Fortuna      # goddess of fortune
+
+# Some frequent names:
+# --------------------
+# There are thousands of female first names in the asteroids list.
+# Very interesting for relationship charts!
+
+78   Diana
+170  Maria
+234  Barbara
+375  Ursula
+412  Elisabetha
+542  Susanna
+
+# Wisdom asteroids:
+# -----------------
+
+134  Sophrosyne   # equanimity, healthy mind and impartiality
+197  Arete        # virtue
+227  Philosophia
+251  Sophia       # wisdom (Greek)
+259  Aletheia     # truth
+275  Sapientia    # wisdom (Latin)
+423  Diotima	  # priestess, teacher of Socrates
+5450 Sokrates
+5451 Plato
+6616 Plotinos
+6617 Boethius
+6001 Thales
+6039 Parmenides
+6123 Aristoteles
+6143 Pythagoras
+6152 Empedocles
+3279 Solon
+5149 Leibniz
+7083 Kant
+7014 Nietzsche
+7015 Schopenhauer
+
+# Love asteroids:
+# ---------------
+
+344  Desiderata
+433  Eros
+499  Venusia
+763  Cupido
+1221 Amor
+1387 Kama         # Indian god of sexual desire
+1388 Aphrodite    # Greek love Goddess
+ 966 Muschi
+
+# The Nine Muses
+# --------------
+
+18   Melpomene    Muse of tragedy
+22   Kalliope     Muse of heroic poetry
+23   Thalia       Muse of comedy
+27   Euterpe      Muse of music and lyric poetry
+30   Urania       Muse of astronomy and astrology
+33   Polyhymnia   Muse of singing and rhetoric
+62   Erato        Muse of song and dance
+81   Terpsichore  Muse of choral dance and song
+84   Klio         Muse of history
+
+# Money and big busyness asteroids
+# --------------------------------
+
+19   Fortuna      # goddess of fortune
+904  Rockefellia
+1338 Duponta
+3652 Soros
+
+# Beatles asteroids:
+# ------------------
+
+4147 Lennon
+4148 McCartney
+4149 Harrison
+4150 Starr
+
+# Composer Asteroids:
+# -------------------
+
+2055 Dvorak
+1814 Bach
+1815 Beethoven
+1034 Mozartia
+3941 Haydn
+And there are many more...
+
+# Astrodienst asteroids:
+# ----------------------
+
+# programmers group:
+3045 Alois
+10847 Koch
+2968 Iliya        # Alois' dog
+
+# artists group:
+412  Elisabetha
+
+# production family:
+2569 Madeline
+517 Edith
+1716 Peter
+
+# children group
+105 Artemis
+1181 Lilith
+
+# special interest group
+564 Dudu
+349 Dembowska
+484 Pittsburghia
+
+# By the year 1997, the statistics of asteroid names looked as follows:
+
+# Men (mostly family names)           2551
+# Astronomers                         1147
+# Women (mostly first names)           684
+# Mythological terms                   542
+# Cities, harbours buildings           497
+# Scientists (no astronomers)          493
+# Relatives of asteroid discoverers    277
+# Writers                              249
+# Countries, provinces, islands        246
+# Amateur astronomers                  209
+# Historical, political figures        176
+# Composers, musicians, dancers        157
+# Figures from literature, operas      145
+# Rivers, seas, mountains              135
+# Institutes, observatories            116
+# Painters, sculptors                  101
+# Plants, trees, animals                63

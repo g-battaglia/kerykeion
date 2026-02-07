@@ -1,0 +1,29 @@
+include: package:lints/recommended.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+
+  errors:
+    missing_required_param: error
+    missing_return: error
+    parameter_assignments: warning
+
+  # exclude:
+  #   - example/
+
+linter:
+  rules:
+    - directives_ordering
+    - prefer_relative_imports
+    - prefer_single_quotes
+    - prefer_final_locals
+    - unnecessary_raw_strings
+    - parameter_assignments
+    - avoid_redundant_argument_values
+    - avoid_print
+    - cast_nullable_to_non_nullable
+    - avoid_unused_constructor_parameters
+    - combinators_ordering
+    - avoid_dynamic_calls
+    - unreachable_from_main

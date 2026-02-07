@@ -1,0 +1,29 @@
+PODS:
+  - Flutter (1.0.0)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - "sweph (3.0.0+2.10.3)":
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - sweph (from `.symlinks/plugins/sweph/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  sweph:
+    :path: ".symlinks/plugins/sweph/ios"
+
+SPEC CHECKSUMS:
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
+  sweph: f26aff66ba1899b2298eb2bd89e2531b8247a659
+
+PODFILE CHECKSUM: 1a86e7654bb8611f38728384d250276ef708ee5f
+
+COCOAPODS: 1.12.0

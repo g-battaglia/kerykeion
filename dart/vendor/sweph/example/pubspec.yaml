@@ -1,0 +1,27 @@
+name: sweph_example
+description: Demonstrates how to use the sweph plugin.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.5.1 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  sweph:
+    path: ../
+  cupertino_icons: ^1.0.2
+  path_provider: ^2.1.5
+  http: ^1.2.2
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/ephe/seorbel.txt

@@ -1,0 +1,27 @@
+name: kerykeion_dart
+description: A starting point for Dart libraries or applications.
+version: 1.0.0
+# repository: https://github.com/my_org/my_repo
+
+environment:
+  sdk: ^3.10.7
+
+# Add regular dependencies here.
+dependencies:
+  flutter:
+    sdk: flutter
+  intl: ^0.20.2
+  path: ^1.9.1
+  sweph: ^3.2.1+2.10.3
+  timezone: ^0.11.0
+  # path: ^1.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  lints: ^6.0.0
+  test: ^1.26.3
+#  test: ^1.25.6  # flutter_test replaces test
+
+flutter:
+
