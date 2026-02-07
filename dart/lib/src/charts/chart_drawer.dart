@@ -61,7 +61,7 @@ class GridPositionsConfig {
   final int secondaryPlanetX;
   final int secondaryHousesX;
 
-  const GridPositionsConfig({this.mainPlanetX = 645, this.mainHousesX = 750, this.secondaryPlanetX = 645, this.secondaryHousesX = 750});
+  const GridPositionsConfig({this.mainPlanetX = 645, this.mainHousesX = 750, this.secondaryPlanetX = 910, this.secondaryHousesX = 1015});
 }
 
 // =============================================================================
@@ -678,3 +678,976 @@ class _CelestialPointData {
 }
 
 // ChartType is defined in types.dart — use that enum throughout.
+
+// =============================================================================
+// DUAL-CHART DRAWER
+// =============================================================================
+
+/// Draws SVG dual-wheel charts (Transit, Synastry, DualReturn).
+///
+/// Usage:
+/// ```dart
+/// final drawer = DualChartDrawer(
+///   chartData: myDualChartData,
+///   theme: ChartTheme.classic,
+/// );
+/// final svgString = drawer.generateSvg();
+/// ```
+class DualChartDrawer {
+  // ── Inputs ──
+  final DualChartDataModel chartData;
+  final ChartTheme theme;
+  final String? customCss;
+
+  /// How to display aspects: 'list' (default) or 'grid'.
+  final String doubleChartAspectGridType;
+
+  // ── Config ──
+  final ChartDimensionsConfig dimensions;
+  final CircleRadiiConfig radii;
+  final GridPositionsConfig gridPositions;
+
+  // ── Derived ──
+  late final AstrologicalSubjectModel _firstSubject;
+  late final AstrologicalSubjectModel _secondSubject;
+  late final String _chartType;
+  late final List<AspectModel> _aspects;
+  late final List<_CelestialPointData> _firstActivePointData;
+  late final List<_CelestialPointData> _secondActivePointData;
+  late final List<Map<String, dynamic>> _activePointSettings;
+  late final List<Map<String, dynamic>> _firstHousesList;
+  late final List<Map<String, dynamic>> _secondHousesList;
+
+  // Circle radii
+  late final double _r;
+  late final double _c1;
+  late final double _c2;
+  late final double _c3;
+
+  // Key degrees
+  late final double _firstHouseDeg;
+  late final double _seventhHouseDeg;
+
+  DualChartDrawer({
+    required this.chartData,
+    this.theme = ChartTheme.classic,
+    this.customCss,
+    this.doubleChartAspectGridType = 'list',
+    this.dimensions = const ChartDimensionsConfig(),
+    this.radii = const CircleRadiiConfig(),
+    this.gridPositions = const GridPositionsConfig(),
+  }) {
+    _firstSubject = chartData.firstSubject;
+    _secondSubject = chartData.secondSubject;
+    _chartType = chartData.chartType;
+    _aspects = chartData.aspects;
+
+    // Dual-wheel uses c1=0 (no inner offset), c3=120 for aspect inner ring
+    _r = radii.mainRadius;
+    _c1 = 0; // Transit/Synastry always use 0 for first circle
+    _c2 = radii.singleWheelSecondCircle;
+    _c3 = radii.singleWheelThirdCircle;
+
+    _firstHouseDeg = _firstSubject.firstHouse.absPos;
+    _seventhHouseDeg = _firstSubject.seventhHouse.absPos;
+
+    _collectActivePoints();
+    _collectHouses();
+  }
+
+  void _collectActivePoints() {
+    final activePoints = chartData.activePoints;
+    _firstActivePointData = [];
+    _secondActivePointData = [];
+    _activePointSettings = [];
+
+    for (final ap in activePoints) {
+      final firstPoint = _getPointFromSubject(_firstSubject, ap);
+      final secondPoint = _getPointFromSubject(_secondSubject, ap);
+
+      final setting = _findSetting(ap);
+      if (setting == null) continue;
+
+      if (firstPoint != null) {
+        _firstActivePointData.add(_CelestialPointData(enumValue: ap, point: firstPoint, setting: setting));
+      }
+      if (secondPoint != null) {
+        _secondActivePointData.add(_CelestialPointData(enumValue: ap, point: secondPoint, setting: setting));
+      }
+
+      _activePointSettings.add({'id': setting.id, 'name': setting.name, 'color': setting.color, 'label': setting.label, 'is_active': true});
+    }
+  }
+
+  void _collectHouses() {
+    _firstHousesList = _buildHousesList(_firstSubject);
+    _secondHousesList = _buildHousesList(_secondSubject);
+  }
+
+  static List<Map<String, dynamic>> _buildHousesList(AstrologicalSubjectModel s) {
+    return [
+      NatalChartDrawer._houseMap(s.firstHouse),
+      NatalChartDrawer._houseMap(s.secondHouse),
+      NatalChartDrawer._houseMap(s.thirdHouse),
+      NatalChartDrawer._houseMap(s.fourthHouse),
+      NatalChartDrawer._houseMap(s.fifthHouse),
+      NatalChartDrawer._houseMap(s.sixthHouse),
+      NatalChartDrawer._houseMap(s.seventhHouse),
+      NatalChartDrawer._houseMap(s.eighthHouse),
+      NatalChartDrawer._houseMap(s.ninthHouse),
+      NatalChartDrawer._houseMap(s.tenthHouse),
+      NatalChartDrawer._houseMap(s.eleventhHouse),
+      NatalChartDrawer._houseMap(s.twelfthHouse),
+    ];
+  }
+
+  // ── Public API ──
+
+  /// Generate the complete SVG chart string.
+  String generateSvg() {
+    final vars = _buildTemplateDict();
+    return substituteTemplate(chartSvgTemplate, vars);
+  }
+
+  // ── Template Dictionary ──
+
+  Map<String, String> _buildTemplateDict() {
+    final td = <String, String>{};
+
+    // ── Theme CSS ──
+    td['color_style_tag'] = customCss ?? getThemeCss(theme);
+
+    // ── Dynamic sizing ──
+    const verticalPaddingTop = 15;
+    const verticalPaddingBottom = 15;
+
+    final pointCount = _firstActivePointData.length;
+    final extraPoints = (pointCount > 20) ? pointCount - 20 : 0;
+    final heightDelta = extraPoints * 8.0;
+    final height = dimensions.defaultHeight + heightDelta;
+
+    // Dual-wheel charts are wider
+    double width;
+    if (_chartType == 'Synastry') {
+      width = dimensions.synastryWidth;
+    } else {
+      width = dimensions.fullWidth;
+    }
+
+    final viewboxHeight = height.toInt() + verticalPaddingTop + verticalPaddingBottom;
+    td['viewbox'] = '0 -$verticalPaddingTop ${width.toInt()} $viewboxHeight';
+    td['background_color'] = 'var(--kerykeion-chart-color-paper-1)';
+    td['paper_color_0'] = 'var(--kerykeion-chart-color-paper-0)';
+
+    // Translate-Y offsets
+    td['title_translate_y'] = '0';
+    td['elements_translate_y'] = '0';
+    td['qualities_translate_y'] = '0';
+    td['bottom_left_translate_y'] = heightDelta.toStringAsFixed(0);
+    td['lunar_phase_translate_y'] = (518 + heightDelta).toStringAsFixed(0);
+    td['full_wheel_translate_y'] = '50';
+    td['houses_and_planets_translate_y'] = '0';
+    td['aspect_grid_translate_y'] = '50';
+    td['aspect_list_translate_y'] = '50';
+
+    // ── Title ──
+    td['stringTitle'] = '${NatalChartDrawer._escapeXml(NatalChartDrawer._truncateName(_firstSubject.name, 20))} - $_chartType Chart';
+
+    // ── Top Left Info ── (varies by chart type)
+    _setupTopLeftInfo(td);
+
+    // ── Elements / Qualities ──
+    if (_chartType == 'Transit') {
+      // Transit charts don't show element/quality distributions
+      td['elements_string'] = '';
+      td['fire_string'] = '';
+      td['earth_string'] = '';
+      td['air_string'] = '';
+      td['water_string'] = '';
+      td['qualities_string'] = '';
+      td['cardinal_string'] = '';
+      td['fixed_string'] = '';
+      td['mutable_string'] = '';
+    } else {
+      final elemDist = chartData.elementDistribution;
+      final qualDist = chartData.qualityDistribution;
+      td['elements_string'] = 'Elements:';
+      td['fire_string'] = 'Fire ${elemDist.firePercentage}%';
+      td['earth_string'] = 'Earth ${elemDist.earthPercentage}%';
+      td['air_string'] = 'Air ${elemDist.airPercentage}%';
+      td['water_string'] = 'Water ${elemDist.waterPercentage}%';
+      td['qualities_string'] = 'Qualities:';
+      td['cardinal_string'] = 'Cardinal ${qualDist.cardinalPercentage}%';
+      td['fixed_string'] = 'Fixed ${qualDist.fixedPercentage}%';
+      td['mutable_string'] = 'Mutable ${qualDist.mutablePercentage}%';
+    }
+
+    // ── Bottom Left Info ──
+    _setupBottomLeftInfo(td);
+
+    // ── Lunar Phase ──
+    td['makeLunarPhase'] = _buildLunarPhase();
+
+    // ── Wheel Components (transit-style circles) ──
+    td['background_circle'] = drawBackgroundCircle(_r, 'var(--kerykeion-chart-color-paper-1)', 'var(--kerykeion-chart-color-paper-1)');
+    td['makeZodiac'] = _buildZodiac();
+    td['transitRing'] = drawTransitRing(_r, 'var(--kerykeion-chart-color-paper-1)', 'var(--kerykeion-chart-color-zodiac-transit-ring-3)');
+    td['degreeRing'] = drawTransitRingDegreeSteps(_r, _seventhHouseDeg);
+    td['first_circle'] = drawFirstCircle(_r, 'var(--kerykeion-chart-color-zodiac-transit-ring-2)', _chartType, 0);
+    td['second_circle'] = drawSecondCircle(_r, 'var(--kerykeion-chart-color-zodiac-transit-ring-1)', 'var(--kerykeion-chart-color-paper-1)', _chartType, _c2);
+    td['third_circle'] = drawThirdCircle(_r, 'var(--kerykeion-chart-color-zodiac-transit-ring-0)', 'var(--kerykeion-chart-color-paper-1)', _chartType, _c3);
+
+    // ── Houses (dual-wheel) ──
+    td['makeHouses'] = _buildDualHouses();
+
+    // ── Planets (dual-wheel) ──
+    td['makePlanets'] = _buildDualPlanets();
+
+    // ── Aspects ──
+    td['makeAspects'] = _buildAspectLines();
+
+    // ── Grids ──
+    _setupGrids(td);
+
+    // ── Aspect Grid / List ──
+    _setupAspects(td);
+
+    // ── House comparison (Synastry only) ──
+    td['makeHouseComparisonGrid'] = '';
+
+    return td;
+  }
+
+  // ── Chart-type-specific info sections ──
+
+  void _setupTopLeftInfo(Map<String, String> td) {
+    final firstDt = _formatDateTimeForSubject(_firstSubject);
+    final secondDt = _formatDateTimeForSubject(_secondSubject);
+    final firstPlace = _formatPlaceForSubject(_firstSubject);
+    final secondPlace = _formatPlaceForSubject(_secondSubject);
+
+    switch (_chartType) {
+      case 'Transit':
+        td['top_left_0'] = 'Natal: $firstDt';
+        td['top_left_1'] = firstPlace;
+        td['top_left_2'] = _formatCoordsForSubject(_firstSubject);
+        td['top_left_3'] = 'Transit: $secondDt';
+        td['top_left_4'] = secondPlace;
+        td['top_left_5'] = _formatCoordsForSubject(_secondSubject);
+        break;
+
+      case 'Synastry':
+        td['top_left_0'] = '${_firstSubject.name}:';
+        td['top_left_1'] = firstPlace;
+        td['top_left_2'] = firstDt;
+        td['top_left_3'] = '${_secondSubject.name}:';
+        td['top_left_4'] = secondPlace;
+        td['top_left_5'] = secondDt;
+        break;
+
+      default: // DualReturnChart or other
+        td['top_left_0'] = '$_chartType:';
+        td['top_left_1'] = secondDt;
+        td['top_left_2'] = _formatCoordsForSubject(_secondSubject);
+        td['top_left_3'] = _firstSubject.name;
+        td['top_left_4'] = firstDt;
+        td['top_left_5'] = _formatCoordsForSubject(_firstSubject);
+        break;
+    }
+  }
+
+  void _setupBottomLeftInfo(Map<String, String> td) {
+    final zt = _firstSubject.zodiacType?.name ?? 'Tropical';
+    td['bottom_left_0'] = 'Zodiac: $zt';
+
+    final hs = _firstSubject.housesSystemName ?? _firstSubject.housesSystemIdentifier.name;
+    td['bottom_left_1'] = 'Domification: $hs';
+
+    // Lunar phase from second subject for transit, first for synastry
+    final phaseSubject = (_chartType == 'Transit') ? _secondSubject : _firstSubject;
+    final lp = phaseSubject.lunarPhase;
+    if (lp != null) {
+      td['bottom_left_2'] = 'Lunation Day: ${lp.moonPhase}';
+      td['bottom_left_3'] = 'Lunar Phase: ${lp.moonPhaseName.name.replaceAll('_', ' ')}';
+    } else {
+      td['bottom_left_2'] = '';
+      td['bottom_left_3'] = '';
+    }
+
+    final p = _firstSubject.perspectiveType.name.replaceAll('_', ' ');
+    td['bottom_left_4'] = 'Perspective: $p';
+  }
+
+  void _setupGrids(Map<String, String> td) {
+    // Main planet grid (first subject / inner wheel)
+    final firstPoints = _firstActivePointData
+        .map(
+          (d) => <String, dynamic>{
+            'name': d.setting.name,
+            'abs_pos': d.point.absPos,
+            'position': d.point.position,
+            'sign': d.point.sign.name,
+            'house': d.point.house?.name ?? '',
+            'retrograde': d.point.retrograde ?? false,
+          },
+        )
+        .toList();
+
+    final firstLabel = NatalChartDrawer._truncateName(_firstSubject.name, 18);
+    td['makeMainPlanetGrid'] = drawMainPlanetGrid(
+      title: '',
+      subjectName: '$firstLabel (Inner Wheel)',
+      celestialPoints: firstPoints,
+      chartType: _chartType,
+      textColor: 'var(--kerykeion-chart-color-paper-0)',
+      xPosition: gridPositions.mainPlanetX,
+    );
+
+    // Secondary planet grid (second subject / outer wheel)
+    final secondPoints = _secondActivePointData
+        .map(
+          (d) => <String, dynamic>{
+            'name': d.setting.name,
+            'abs_pos': d.point.absPos,
+            'position': d.point.position,
+            'sign': d.point.sign.name,
+            'house': d.point.house?.name ?? '',
+            'retrograde': d.point.retrograde ?? false,
+          },
+        )
+        .toList();
+
+    String secondLabel;
+    if (_chartType == 'Transit') {
+      secondLabel = 'Transit (Outer Wheel)';
+    } else {
+      secondLabel = '${NatalChartDrawer._truncateName(_secondSubject.name, 18)} (Outer Wheel)';
+    }
+
+    td['makeSecondaryPlanetGrid'] = drawSecondaryPlanetGrid(
+      title: '',
+      subjectName: secondLabel,
+      celestialPoints: secondPoints,
+      chartType: _chartType,
+      textColor: 'var(--kerykeion-chart-color-paper-0)',
+      xPosition: gridPositions.secondaryPlanetX,
+    );
+
+    // House grids
+    td['makeMainHousesGrid'] = drawMainHouseGrid(
+      housesList: _firstHousesList,
+      textColor: 'var(--kerykeion-chart-color-paper-0)',
+      xPosition: gridPositions.mainHousesX,
+    );
+
+    if (_chartType == 'Synastry') {
+      td['makeSecondaryHousesGrid'] = drawSecondaryHouseGrid(
+        housesList: _secondHousesList,
+        textColor: 'var(--kerykeion-chart-color-paper-0)',
+        xPosition: gridPositions.secondaryHousesX,
+      );
+    } else {
+      td['makeSecondaryHousesGrid'] = '';
+    }
+  }
+
+  void _setupAspects(Map<String, String> td) {
+    final aspectsAsMaps = _aspects.map((a) => a.toJson()).toList();
+
+    if (doubleChartAspectGridType == 'list') {
+      String title;
+      if (_chartType == 'Transit') {
+        title = '${_firstSubject.name} - Transit Aspects';
+      } else if (_chartType == 'Synastry') {
+        title = '${_firstSubject.name} - ${_secondSubject.name} Synastry Aspects';
+      } else {
+        title = 'Natal to Return Aspects';
+      }
+
+      td['makeAspectGrid'] = '';
+      td['makeDoubleChartAspectList'] = drawTransitAspectList(
+        title,
+        aspectsAsMaps,
+        _activePointSettings,
+        defaultChartAspectsSettings.map((s) => {'name': s.name, 'degree': s.degree, 'color': s.color}).toList(),
+        chartHeight: dimensions.defaultHeight.toDouble(),
+      );
+    } else {
+      td['makeAspectGrid'] = '';
+      td['makeDoubleChartAspectList'] = drawTransitAspectGrid(
+        'var(--kerykeion-chart-color-paper-0)',
+        _activePointSettings,
+        aspectsAsMaps,
+        xIndent: 600,
+        yIndent: 520,
+      );
+    }
+  }
+
+  // ── SVG Fragment Builders ──
+
+  String _buildZodiac() {
+    final sb = StringBuffer();
+    const zodiacSigns = ['Ari', 'Tau', 'Gem', 'Can', 'Leo', 'Vir', 'Lib', 'Sco', 'Sag', 'Cap', 'Aqu', 'Pis'];
+
+    for (int i = 0; i < 12; i++) {
+      final bgColor = 'var(--kerykeion-chart-color-zodiac-bg-$i)';
+      sb.write(
+        drawZodiacSlice(
+          c1: _c1,
+          chartType: _chartType,
+          seventhHouseDegreeUt: _seventhHouseDeg,
+          num: i,
+          r: _r,
+          style: 'fill: $bgColor; fill-opacity: 0.5;',
+          type: zodiacSigns[i],
+        ),
+      );
+    }
+    return sb.toString();
+  }
+
+  String _buildDualHouses() {
+    return drawHousesCuspsAndTextNumber(
+      r: _r,
+      firstSubjectHousesList: _firstHousesList,
+      standardHouseCuspColor: 'var(--kerykeion-chart-color-houses-radix-line)',
+      firstHouseColor: 'var(--kerykeion-chart-color-first-house)',
+      tenthHouseColor: 'var(--kerykeion-chart-color-tenth-house)',
+      seventhHouseColor: 'var(--kerykeion-chart-color-seventh-house)',
+      fourthHouseColor: 'var(--kerykeion-chart-color-fourth-house)',
+      c1: _c1,
+      c3: _c3,
+      chartType: _chartType,
+      externalView: false,
+      secondSubjectHousesList: _secondHousesList,
+      transitHouseCuspColor: 'var(--kerykeion-chart-color-houses-transit-line)',
+    );
+  }
+
+  String _buildDualPlanets() {
+    final firstPoints = _firstActivePointData
+        .map(
+          (d) => <String, dynamic>{
+            'name': d.setting.name,
+            'abs_pos': d.point.absPos,
+            'position': d.point.position,
+            'sign': d.point.sign.name,
+            'house': d.point.house?.name ?? '',
+            'retrograde': d.point.retrograde ?? false,
+          },
+        )
+        .toList();
+
+    final secondPoints = _secondActivePointData
+        .map(
+          (d) => <String, dynamic>{
+            'name': d.setting.name,
+            'abs_pos': d.point.absPos,
+            'position': d.point.position,
+            'sign': d.point.sign.name,
+            'house': d.point.house?.name ?? '',
+            'retrograde': d.point.retrograde ?? false,
+          },
+        )
+        .toList();
+
+    return drawPlanets(
+      radius: _r,
+      availableCelestialPoints: firstPoints,
+      availablePlanetsSettings: _activePointSettings,
+      secondSubjectCelestialPoints: secondPoints,
+      thirdCircleRadius: _c3,
+      firstHouseDegreeUt: _firstHouseDeg,
+      seventhHouseDegreeUt: _seventhHouseDeg,
+      chartType: _chartType,
+      externalView: false,
+      firstCircleRadius: _c1,
+      secondCircleRadius: _c2,
+    );
+  }
+
+  String _buildAspectLines() {
+    final sb = StringBuffer();
+    final List<List<double>> renderedPositions = [];
+    // Dual-wheel uses a different aspect radius: r - 160
+    final aspectRadius = _r - 160;
+
+    for (final aspect in _aspects) {
+      final aspectSetting = defaultChartAspectsSettings.firstWhere((s) => s.degree == aspect.aspectDegrees, orElse: () => defaultChartAspectsSettings.first);
+      sb.write(
+        drawAspectLine(
+          r: _r,
+          ar: aspectRadius,
+          aspect: aspect.toJson(),
+          color: aspectSetting.color,
+          seventhHouseDegreeUt: _seventhHouseDeg,
+          renderedIconPositions: renderedPositions,
+        ),
+      );
+    }
+    return sb.toString();
+  }
+
+  String _buildLunarPhase() {
+    final phaseSubject = (_chartType == 'Transit') ? _secondSubject : _firstSubject;
+    final lp = phaseSubject.lunarPhase;
+    if (lp == null) return '';
+    final lat = phaseSubject.lat ?? 0.0;
+    return makeLunarPhase(lp.degreesBetweenSunAndMoon, lat);
+  }
+
+  // ── Helpers ──
+
+  static KerykeionPointModel? _getPointFromSubject(AstrologicalSubjectModel subject, AstrologicalPoint ap) {
+    switch (ap) {
+      case AstrologicalPoint.Sun:
+        return subject.sun;
+      case AstrologicalPoint.Moon:
+        return subject.moon;
+      case AstrologicalPoint.Mercury:
+        return subject.mercury;
+      case AstrologicalPoint.Venus:
+        return subject.venus;
+      case AstrologicalPoint.Mars:
+        return subject.mars;
+      case AstrologicalPoint.Jupiter:
+        return subject.jupiter;
+      case AstrologicalPoint.Saturn:
+        return subject.saturn;
+      case AstrologicalPoint.Uranus:
+        return subject.uranus;
+      case AstrologicalPoint.Neptune:
+        return subject.neptune;
+      case AstrologicalPoint.Pluto:
+        return subject.pluto;
+      case AstrologicalPoint.Chiron:
+        return subject.chiron;
+      case AstrologicalPoint.Mean_North_Lunar_Node:
+        return subject.meanNorthLunarNode;
+      case AstrologicalPoint.True_North_Lunar_Node:
+        return subject.trueNorthLunarNode;
+      case AstrologicalPoint.Mean_South_Lunar_Node:
+        return subject.meanSouthLunarNode;
+      case AstrologicalPoint.True_South_Lunar_Node:
+        return subject.trueSouthLunarNode;
+      case AstrologicalPoint.Mean_Lilith:
+        return subject.meanLilith;
+      case AstrologicalPoint.True_Lilith:
+        return subject.trueLilith;
+      case AstrologicalPoint.Ascendant:
+        return subject.ascendant;
+      case AstrologicalPoint.Medium_Coeli:
+        return subject.mediumCoeli;
+      case AstrologicalPoint.Descendant:
+        return subject.descendant;
+      case AstrologicalPoint.Imum_Coeli:
+        return subject.imumCoeli;
+      case AstrologicalPoint.Earth:
+        return subject.earth;
+      case AstrologicalPoint.Pholus:
+        return subject.pholus;
+      case AstrologicalPoint.Ceres:
+        return subject.ceres;
+      case AstrologicalPoint.Pallas:
+        return subject.pallas;
+      case AstrologicalPoint.Juno:
+        return subject.juno;
+      case AstrologicalPoint.Vesta:
+        return subject.vesta;
+      case AstrologicalPoint.Eris:
+        return subject.eris;
+      case AstrologicalPoint.Sedna:
+        return subject.sedna;
+      case AstrologicalPoint.Haumea:
+        return subject.haumea;
+      case AstrologicalPoint.Makemake:
+        return subject.makemake;
+      case AstrologicalPoint.Ixion:
+        return subject.ixion;
+      case AstrologicalPoint.Orcus:
+        return subject.orcus;
+      case AstrologicalPoint.Quaoar:
+        return subject.quaoar;
+      case AstrologicalPoint.Regulus:
+        return subject.regulus;
+      case AstrologicalPoint.Spica:
+        return subject.spica;
+      case AstrologicalPoint.Vertex:
+        return subject.vertex;
+      case AstrologicalPoint.Anti_Vertex:
+        return subject.antiVertex;
+      case AstrologicalPoint.Pars_Fortunae:
+        return subject.parsFortunae;
+      case AstrologicalPoint.Pars_Spiritus:
+        return subject.parsSpiritus;
+      case AstrologicalPoint.Pars_Amoris:
+        return subject.parsAmoris;
+      case AstrologicalPoint.Pars_Fidei:
+        return subject.parsFidei;
+    }
+  }
+
+  CelestialPointSetting? _findSetting(AstrologicalPoint ap) {
+    final name = ap.name;
+    try {
+      return defaultCelestialPointsSettings.firstWhere((s) => s.name == name);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String _formatDateTimeForSubject(AstrologicalSubjectModel s) {
+    final iso = s.isoFormattedLocalDatetime ?? '';
+    if (iso.isEmpty) return '';
+    final dt = DateTime.tryParse(iso);
+    if (dt == null) return iso;
+
+    String tzOffset = '';
+    final tzMatch = RegExp(r'[+-]\d{2}:\d{2}$').firstMatch(iso);
+    if (tzMatch != null) tzOffset = tzMatch.group(0)!;
+
+    final dateStr = '${dt.year.toString().padLeft(4, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
+    final timeStr = '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+
+    return tzOffset.isNotEmpty ? '$dateStr $timeStr [$tzOffset]' : '$dateStr $timeStr';
+  }
+
+  String _formatPlaceForSubject(AstrologicalSubjectModel s) {
+    final city = s.city ?? '';
+    final nation = s.nation ?? '';
+    final parts = <String>[];
+    if (city.isNotEmpty) parts.add(formatLocationString(city));
+    if (nation.isNotEmpty) parts.add(nation);
+    return NatalChartDrawer._escapeXml(parts.join(', '));
+  }
+
+  String _formatCoordsForSubject(AstrologicalSubjectModel s) {
+    final lat = s.lat;
+    final lng = s.lng;
+    if (lat == null || lng == null) return '';
+    final latStr = convertLatitudeCoordinateToString(lat, 'N', 'S');
+    final lngStr = convertLongitudeCoordinateToString(lng, 'E', 'W');
+    return '$latStr  ·  $lngStr';
+  }
+}
+
+// =============================================================================
+// COMPOSITE CHART DRAWER
+// =============================================================================
+
+/// Draws SVG composite charts (single-wheel with midpoint data,
+/// showing info for both subjects).
+///
+/// Composite charts look like a natal chart (single wheel) but contain
+/// midpoint-averaged planet positions. The info sections show both subjects.
+///
+/// Usage:
+/// ```dart
+/// final drawer = CompositeChartDrawer(
+///   chartData: myDualChartData,
+///   theme: ChartTheme.classic,
+/// );
+/// final svgString = drawer.generateSvg();
+/// ```
+class CompositeChartDrawer {
+  final DualChartDataModel chartData;
+  final ChartTheme theme;
+  final String? customCss;
+
+  final ChartDimensionsConfig dimensions;
+  final CircleRadiiConfig radii;
+  final GridPositionsConfig gridPositions;
+
+  late final AstrologicalSubjectModel _firstSubject;
+  late final AstrologicalSubjectModel _secondSubject;
+  late final List<AspectModel> _aspects;
+  late final List<_CelestialPointData> _activePointData;
+  late final List<Map<String, dynamic>> _activePointSettings;
+  late final List<Map<String, dynamic>> _housesList;
+
+  // Circle radii (same as natal)
+  late final double _r;
+  late final double _c1;
+  late final double _c2;
+  late final double _c3;
+
+  late final double _firstHouseDeg;
+  late final double _seventhHouseDeg;
+
+  CompositeChartDrawer({
+    required this.chartData,
+    this.theme = ChartTheme.classic,
+    this.customCss,
+    this.dimensions = const ChartDimensionsConfig(),
+    this.radii = const CircleRadiiConfig(),
+    this.gridPositions = const GridPositionsConfig(),
+  }) {
+    _firstSubject = chartData.firstSubject;
+    _secondSubject = chartData.secondSubject;
+    _aspects = chartData.aspects;
+
+    // Composite uses natal-style radii
+    _r = radii.mainRadius;
+    _c1 = radii.singleWheelFirstCircle;
+    _c2 = radii.singleWheelSecondCircle;
+    _c3 = radii.singleWheelThirdCircle;
+
+    _firstHouseDeg = _firstSubject.firstHouse.absPos;
+    _seventhHouseDeg = _firstSubject.seventhHouse.absPos;
+
+    _collectActivePoints();
+    _collectHouses();
+  }
+
+  void _collectActivePoints() {
+    final activePoints = chartData.activePoints;
+    _activePointData = [];
+    _activePointSettings = [];
+
+    for (final ap in activePoints) {
+      final point = DualChartDrawer._getPointFromSubject(_firstSubject, ap);
+      final setting = defaultCelestialPointsSettings.cast<CelestialPointSetting?>().firstWhere((s) => s?.name == ap.name, orElse: () => null);
+      if (point == null || setting == null) continue;
+
+      _activePointData.add(_CelestialPointData(enumValue: ap, point: point, setting: setting));
+      _activePointSettings.add({'id': setting.id, 'name': setting.name, 'color': setting.color, 'label': setting.label, 'is_active': true});
+    }
+  }
+
+  void _collectHouses() {
+    _housesList = DualChartDrawer._buildHousesList(_firstSubject);
+  }
+
+  /// Generate the complete SVG chart string.
+  String generateSvg() {
+    final vars = _buildTemplateDict();
+    return substituteTemplate(chartSvgTemplate, vars);
+  }
+
+  Map<String, String> _buildTemplateDict() {
+    final td = <String, String>{};
+
+    // ── Theme ──
+    td['color_style_tag'] = customCss ?? getThemeCss(theme);
+
+    // ── Sizing ──
+    const verticalPaddingTop = 15;
+    const verticalPaddingBottom = 15;
+
+    final pointCount = _activePointData.length;
+    final extraPoints = (pointCount > 20) ? pointCount - 20 : 0;
+    final heightDelta = extraPoints * 8.0;
+    final height = dimensions.defaultHeight + heightDelta;
+
+    final viewboxHeight = height.toInt() + verticalPaddingTop + verticalPaddingBottom;
+    td['viewbox'] = '0 -$verticalPaddingTop ${dimensions.natalWidth.toInt()} $viewboxHeight';
+    td['background_color'] = 'var(--kerykeion-chart-color-paper-1)';
+    td['paper_color_0'] = 'var(--kerykeion-chart-color-paper-0)';
+
+    // Translate-Y offsets (same as natal)
+    td['title_translate_y'] = '0';
+    td['elements_translate_y'] = '0';
+    td['qualities_translate_y'] = '0';
+    td['bottom_left_translate_y'] = heightDelta.toStringAsFixed(0);
+    td['lunar_phase_translate_y'] = (518 + heightDelta).toStringAsFixed(0);
+    td['full_wheel_translate_y'] = '0';
+    td['houses_and_planets_translate_y'] = '0';
+    td['aspect_grid_translate_y'] = '0';
+    td['aspect_list_translate_y'] = '0';
+
+    // ── Title ──
+    td['stringTitle'] =
+        '${NatalChartDrawer._escapeXml(NatalChartDrawer._truncateName(_firstSubject.name, 14))} + ${NatalChartDrawer._escapeXml(NatalChartDrawer._truncateName(_secondSubject.name, 14))} Composite';
+
+    // ── Top Left Info (both subjects) ──
+    td['top_left_0'] = '${_firstSubject.name}:';
+    final dt1 = _formatDateTimeForSubject(_firstSubject);
+    final dt2 = _formatDateTimeForSubject(_secondSubject);
+    td['top_left_1'] = dt1;
+    td['top_left_2'] = _formatPlaceForSubject(_firstSubject);
+    td['top_left_3'] = '${_secondSubject.name}:';
+    td['top_left_4'] = dt2;
+    td['top_left_5'] = _formatPlaceForSubject(_secondSubject);
+
+    // ── Elements & Qualities ──
+    final elemDist = chartData.elementDistribution;
+    final qualDist = chartData.qualityDistribution;
+    td['elements_string'] = 'Elements:';
+    td['fire_string'] = 'Fire ${elemDist.firePercentage}%';
+    td['earth_string'] = 'Earth ${elemDist.earthPercentage}%';
+    td['air_string'] = 'Air ${elemDist.airPercentage}%';
+    td['water_string'] = 'Water ${elemDist.waterPercentage}%';
+    td['qualities_string'] = 'Qualities:';
+    td['cardinal_string'] = 'Cardinal ${qualDist.cardinalPercentage}%';
+    td['fixed_string'] = 'Fixed ${qualDist.fixedPercentage}%';
+    td['mutable_string'] = 'Mutable ${qualDist.mutablePercentage}%';
+
+    // ── Bottom Left ──
+    final zt = _firstSubject.zodiacType?.name ?? 'Tropical';
+    td['bottom_left_0'] = 'Zodiac: $zt';
+    final hs = _firstSubject.housesSystemName ?? _firstSubject.housesSystemIdentifier.name;
+    td['bottom_left_1'] = 'Domification: $hs';
+    final lp = _firstSubject.lunarPhase;
+    if (lp != null) {
+      td['bottom_left_2'] = 'Lunation Day: ${lp.moonPhase}';
+      td['bottom_left_3'] = 'Lunar Phase: ${lp.moonPhaseName.name.replaceAll('_', ' ')}';
+    } else {
+      td['bottom_left_2'] = '';
+      td['bottom_left_3'] = '';
+    }
+    final p = _firstSubject.perspectiveType.name.replaceAll('_', ' ');
+    td['bottom_left_4'] = 'Perspective: $p';
+
+    // ── Lunar Phase ──
+    if (lp != null) {
+      td['makeLunarPhase'] = makeLunarPhase(lp.degreesBetweenSunAndMoon, _firstSubject.lat ?? 0.0);
+    } else {
+      td['makeLunarPhase'] = '';
+    }
+
+    // ── Wheel (natal-style single wheel) ──
+    td['background_circle'] = drawBackgroundCircle(_r, 'var(--kerykeion-chart-color-paper-1)', 'var(--kerykeion-chart-color-paper-1)');
+    td['makeZodiac'] = _buildZodiac();
+    td['transitRing'] = '';
+    td['degreeRing'] = drawDegreeRing(_r, _c1, _seventhHouseDeg, 'var(--kerykeion-chart-color-zodiac-radix-ring-2)');
+    td['first_circle'] = drawFirstCircle(_r, 'var(--kerykeion-chart-color-zodiac-radix-ring-2)', 'Natal', _c1);
+    td['second_circle'] = drawSecondCircle(_r, 'var(--kerykeion-chart-color-zodiac-radix-ring-1)', 'var(--kerykeion-chart-color-paper-1)', 'Natal', _c2);
+    td['third_circle'] = drawThirdCircle(_r, 'var(--kerykeion-chart-color-zodiac-radix-ring-0)', 'var(--kerykeion-chart-color-paper-1)', 'Natal', _c3);
+
+    // ── Houses ──
+    td['makeHouses'] = drawHousesCuspsAndTextNumber(
+      r: _r,
+      firstSubjectHousesList: _housesList,
+      standardHouseCuspColor: 'var(--kerykeion-chart-color-houses-radix-line)',
+      firstHouseColor: 'var(--kerykeion-chart-color-first-house)',
+      tenthHouseColor: 'var(--kerykeion-chart-color-tenth-house)',
+      seventhHouseColor: 'var(--kerykeion-chart-color-seventh-house)',
+      fourthHouseColor: 'var(--kerykeion-chart-color-fourth-house)',
+      c1: _c1,
+      c3: _c3,
+      chartType: 'Composite',
+      externalView: false,
+    );
+
+    // ── Planets (single-wheel) ──
+    final pointMaps = _activePointData
+        .map(
+          (d) => <String, dynamic>{
+            'name': d.setting.name,
+            'abs_pos': d.point.absPos,
+            'position': d.point.position,
+            'sign': d.point.sign.name,
+            'house': d.point.house?.name ?? '',
+            'retrograde': d.point.retrograde ?? false,
+          },
+        )
+        .toList();
+
+    td['makePlanets'] = drawPlanets(
+      radius: _r,
+      availableCelestialPoints: pointMaps,
+      availablePlanetsSettings: _activePointSettings,
+      thirdCircleRadius: _c3,
+      firstHouseDegreeUt: _firstHouseDeg,
+      seventhHouseDegreeUt: _seventhHouseDeg,
+      chartType: 'Composite',
+      externalView: false,
+      firstCircleRadius: _c1,
+      secondCircleRadius: _c2,
+    );
+
+    // ── Aspects ──
+    final sb = StringBuffer();
+    final List<List<double>> renderedPositions = [];
+    final ar = _r - _c3;
+
+    for (final aspect in _aspects) {
+      final aspectSetting = defaultChartAspectsSettings.firstWhere((s) => s.degree == aspect.aspectDegrees, orElse: () => defaultChartAspectsSettings.first);
+      sb.write(
+        drawAspectLine(
+          r: _r,
+          ar: ar,
+          aspect: aspect.toJson(),
+          color: aspectSetting.color,
+          seventhHouseDegreeUt: _seventhHouseDeg,
+          renderedIconPositions: renderedPositions,
+        ),
+      );
+    }
+    td['makeAspects'] = sb.toString();
+
+    // ── Aspect Grid (natal-style triangular) ──
+    td['makeAspectGrid'] = drawAspectGrid('var(--kerykeion-chart-color-paper-0)', _activePointSettings, _aspects.map((a) => a.toJson()).toList());
+    td['makeDoubleChartAspectList'] = '';
+
+    // ── Planet & House Grids ──
+    td['makeMainPlanetGrid'] = drawMainPlanetGrid(
+      title: '',
+      subjectName: NatalChartDrawer._truncateName(_firstSubject.name, 20),
+      celestialPoints: pointMaps,
+      chartType: 'Composite',
+      textColor: 'var(--kerykeion-chart-color-paper-0)',
+      xPosition: gridPositions.mainPlanetX,
+    );
+
+    td['makeMainHousesGrid'] = drawMainHouseGrid(
+      housesList: _housesList,
+      textColor: 'var(--kerykeion-chart-color-paper-0)',
+      xPosition: gridPositions.mainHousesX,
+    );
+
+    td['makeSecondaryPlanetGrid'] = '';
+    td['makeSecondaryHousesGrid'] = '';
+    td['makeHouseComparisonGrid'] = '';
+
+    return td;
+  }
+
+  String _buildZodiac() {
+    final sb = StringBuffer();
+    const zodiacSigns = ['Ari', 'Tau', 'Gem', 'Can', 'Leo', 'Vir', 'Lib', 'Sco', 'Sag', 'Cap', 'Aqu', 'Pis'];
+
+    for (int i = 0; i < 12; i++) {
+      final bgColor = 'var(--kerykeion-chart-color-zodiac-bg-$i)';
+      sb.write(
+        drawZodiacSlice(
+          c1: _c1,
+          chartType: 'Composite',
+          seventhHouseDegreeUt: _seventhHouseDeg,
+          num: i,
+          r: _r,
+          style: 'fill: $bgColor; fill-opacity: 0.5;',
+          type: zodiacSigns[i],
+        ),
+      );
+    }
+    return sb.toString();
+  }
+
+  // Re-use the DualChartDrawer's formatting helpers
+  String _formatDateTimeForSubject(AstrologicalSubjectModel s) {
+    final iso = s.isoFormattedLocalDatetime ?? '';
+    if (iso.isEmpty) return '';
+    final dt = DateTime.tryParse(iso);
+    if (dt == null) return iso;
+
+    String tzOffset = '';
+    final tzMatch = RegExp(r'[+-]\d{2}:\d{2}$').firstMatch(iso);
+    if (tzMatch != null) tzOffset = tzMatch.group(0)!;
+
+    final dateStr = '${dt.year.toString().padLeft(4, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
+    final timeStr = '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+
+    return tzOffset.isNotEmpty ? '$dateStr $timeStr [$tzOffset]' : '$dateStr $timeStr';
+  }
+
+  String _formatPlaceForSubject(AstrologicalSubjectModel s) {
+    final city = s.city ?? '';
+    final nation = s.nation ?? '';
+    final parts = <String>[];
+    if (city.isNotEmpty) parts.add(formatLocationString(city));
+    if (nation.isNotEmpty) parts.add(nation);
+    return NatalChartDrawer._escapeXml(parts.join(', '));
+  }
+}

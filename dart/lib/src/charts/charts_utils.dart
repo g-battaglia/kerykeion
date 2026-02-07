@@ -720,6 +720,262 @@ String makeLunarPhase(double degreesBetweenSunAndMoon, double latitude) {
   return sb.toString();
 }
 
+// =============================================================================
+// DUAL-CHART UTILITY FUNCTIONS
+// =============================================================================
+
+/// Draw a rectangular aspect grid for transit/synastry charts.
+///
+/// Unlike the triangular natal grid, this shows all planet combinations
+/// in a full matrix format for comparing aspects between two subjects.
+String drawTransitAspectGrid(
+  String strokeColor,
+  List<Map<String, dynamic>> availablePlanets,
+  List<Map<String, dynamic>> aspects, {
+  int xIndent = 50,
+  int yIndent = 250,
+  int boxSize = 14,
+}) {
+  final sb = StringBuffer();
+  final style = 'stroke:$strokeColor; stroke-width: 1px; stroke-width: 0.5px; fill:none';
+
+  // Filter active planets
+  final active = availablePlanets.where((p) => p['is_active'] == true).toList();
+  final reversedPlanets = active.reversed.toList();
+
+  // Top row of planet headers
+  int xStart = xIndent;
+  int yStart = yIndent;
+  for (final planet in reversedPlanets) {
+    sb.write('<rect x="$xStart" y="$yStart" width="$boxSize" height="$boxSize" style="$style"/>');
+    sb.write('<use transform="scale(0.4)" x="${(xStart + 2) * 2.5}" y="${(yStart + 1) * 2.5}" xlink:href="#${planet['name']}" />');
+    xStart += boxSize;
+  }
+
+  // Left column of planet headers
+  xStart = xIndent - boxSize;
+  yStart = yIndent - boxSize;
+  for (final planet in reversedPlanets) {
+    sb.write('<rect x="$xStart" y="$yStart" width="$boxSize" height="$boxSize" style="$style"/>');
+    sb.write('<use transform="scale(0.4)" x="${(xStart + 2) * 2.5}" y="${(yStart + 1) * 2.5}" xlink:href="#${planet['name']}" />');
+    yStart -= boxSize;
+  }
+
+  // Grid cells
+  xStart = xIndent;
+  yStart = yIndent - boxSize;
+  for (final planetA in reversedPlanets) {
+    sb.write('<rect x="$xStart" y="$yStart" width="$boxSize" height="$boxSize" style="$style"/>');
+    yStart -= boxSize;
+
+    int xAspect = xStart;
+    final int yAspect = yStart + boxSize;
+
+    for (final planetB in reversedPlanets) {
+      sb.write('<rect x="$xAspect" y="$yAspect" width="$boxSize" height="$boxSize" style="$style"/>');
+      xAspect += boxSize;
+
+      for (final aspect in aspects) {
+        if (aspect['p1'] == planetA['id'] && aspect['p2'] == planetB['id']) {
+          sb.write('<use  x="${xAspect - boxSize + 1}" y="${yAspect + 1}" xlink:href="#orb${aspect['aspect_degrees']}" />');
+        }
+      }
+    }
+  }
+
+  return sb.toString();
+}
+
+/// Draw a multi-column aspect list for transit/synastry charts.
+///
+/// Shows all aspects between subjects with planet symbols, aspect icons, and orbs.
+String drawTransitAspectList(
+  String gridTitle,
+  List<Map<String, dynamic>> aspectsList,
+  List<Map<String, dynamic>> planetsSettings,
+  List<Map<String, dynamic>> aspectsSettings, {
+  int aspectsPerColumn = 14,
+  int columnWidth = 100,
+  int lineHeight = 14,
+  int maxColumns = 6,
+  double? chartHeight,
+}) {
+  const translateX = 565;
+  const translateY = 273;
+  const titleClearance = 18;
+  final topLimitY = -translateY + titleClearance;
+  const bottomPadding = 40;
+  const baselineIndex = 13; // aspectsPerColumn - 1
+  final topLimitIndex = (topLimitY / lineHeight).ceil();
+  final maxCapacityByTop = baselineIndex - topLimitIndex + 1;
+
+  const fullHeightColumnIndex = 10;
+  int fullHeightCapacity;
+  if (chartHeight != null) {
+    final availableHeight = math.max(chartHeight - translateY - bottomPadding, lineHeight.toDouble());
+    final allowedCapacity = math.max(aspectsPerColumn, (availableHeight / lineHeight).floor());
+    fullHeightCapacity = math.max(aspectsPerColumn, math.min(allowedCapacity, maxCapacityByTop));
+  } else {
+    fullHeightCapacity = aspectsPerColumn;
+  }
+
+  // Bucket aspects into columns
+  final columns = <List<Map<String, dynamic>>>[];
+  final columnCapacities = <int>[];
+
+  for (final aspect in aspectsList) {
+    if (columns.isEmpty || columns.last.length >= columnCapacities.last) {
+      final newColIndex = columns.length;
+      final capacity = newColIndex < fullHeightColumnIndex ? aspectsPerColumn : fullHeightCapacity;
+      columns.add([]);
+      columnCapacities.add(math.max(capacity, 1));
+    }
+    columns.last.add(aspect);
+  }
+
+  final innerSb = StringBuffer();
+
+  for (int colIdx = 0; colIdx < columns.length; colIdx++) {
+    final column = columns[colIdx];
+    final capacity = columnCapacities[colIdx];
+    final horizontalPosition = colIdx * columnWidth;
+
+    for (int rowIdx = 0; rowIdx < column.length; rowIdx++) {
+      final aspect = column[rowIdx];
+      int verticalPosition = rowIdx * lineHeight;
+
+      if (colIdx >= fullHeightColumnIndex) {
+        final verticalIndex = baselineIndex - (column.length - 1 - rowIdx);
+        verticalPosition = verticalIndex * lineHeight;
+      } else if (colIdx >= maxColumns && capacity == aspectsPerColumn) {
+        final topOffsetLines = math.max(0, capacity - column.length);
+        verticalPosition = (topOffsetLines + rowIdx) * lineHeight;
+      }
+
+      innerSb.write('<g transform="translate($horizontalPosition,$verticalPosition)">');
+
+      // First planet symbol
+      final p1Name = aspect['p1_name'] ?? _findPlanetNameById(aspect['p1'], planetsSettings);
+      innerSb.write('<use transform="scale(0.4)" x="0" y="3" xlink:href="#$p1Name" />');
+
+      // Aspect symbol
+      final aspectName = aspect['aspect'] as String;
+      final idValue = _findAspectDegreeByName(aspectName, aspectsSettings);
+      innerSb.write('<use x="15" y="0" xlink:href="#orb$idValue" />');
+
+      // Second planet symbol
+      final p2Name = aspect['p2_name'] ?? _findPlanetNameById(aspect['p2'], planetsSettings);
+      innerSb.write('<g transform="translate(30,0)">');
+      innerSb.write('<use transform="scale(0.4)" x="0" y="3" xlink:href="#$p2Name" />');
+      innerSb.write('</g>');
+
+      // Orb value
+      final orb = aspect['orbit'] as double? ?? 0.0;
+      innerSb.write('<text y="8" x="45" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 10px;">${convertDecimalToDegreeString(orb)}</text>');
+
+      innerSb.write('</g>');
+    }
+  }
+
+  final sb = StringBuffer();
+  sb.write('<g transform="translate($translateX,$translateY)">');
+  sb.write('<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">$gridTitle:</text>');
+  sb.write(innerSb);
+  sb.write('</g>');
+
+  return sb.toString();
+}
+
+/// Draw the secondary planet grid for dual-wheel charts.
+String drawSecondaryPlanetGrid({
+  required String title,
+  required String subjectName,
+  required List<Map<String, dynamic>> celestialPoints,
+  required String chartType,
+  required String textColor,
+  int xPosition = 910,
+  int yPosition = 0,
+}) {
+  final sb = StringBuffer();
+  sb.write('<g transform="translate($xPosition,$yPosition)">');
+
+  // Title
+  final headerText = (chartType == 'Transit') ? subjectName : '$title $subjectName';
+  final headerXOffset = (chartType == 'Transit') ? -50 : 0;
+  sb.write('<g transform="translate($headerXOffset, 15)">');
+  sb.write('<text style="fill:$textColor; font-size: 14px;">$headerText</text>');
+  sb.write('</g>');
+
+  int lineH = 10;
+  for (int i = 0; i < celestialPoints.length; i++) {
+    final p = celestialPoints[i];
+    final name = p['name'] as String;
+    final position = p['position'] as double;
+    final sign = p['sign'] as String;
+    final retrograde = p['retrograde'] as bool? ?? false;
+
+    sb.write('<g transform="translate(0,${30 + lineH})">');
+    sb.write('<text text-anchor="end" style="fill:$textColor; font-size: 10px;">$name</text>');
+    sb.write('<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#$name"/></g>');
+    sb.write('<text text-anchor="start" x="19" style="fill:$textColor; font-size: 10px;"> ${convertDecimalToDegreeString(position)}</text>');
+    sb.write('<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#$sign"/></g>');
+    if (retrograde) {
+      sb.write('<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde"/></g>');
+    }
+    sb.write('</g>');
+    lineH += 14;
+  }
+
+  sb.write('</g>');
+  return sb.toString();
+}
+
+/// Draw the secondary house grid for dual-wheel charts.
+String drawSecondaryHouseGrid({
+  required List<Map<String, dynamic>> housesList,
+  required String textColor,
+  String cuspLabel = 'Cusp',
+  int xPosition = 1015,
+  int yPosition = 30,
+}) {
+  final sb = StringBuffer();
+  sb.write('<g transform="translate($xPosition,$yPosition)">');
+
+  int lineH = 10;
+  for (int i = 0; i < housesList.length; i++) {
+    final h = housesList[i];
+    final cuspNum = (i < 9) ? '&#160;&#160;${i + 1}' : '${i + 1}';
+    final sign = h['sign'] as String? ?? 'Ari';
+    final pos = h['position'] as double? ?? 0.0;
+
+    sb.write('<g transform="translate(0,$lineH)">');
+    sb.write('<text text-anchor="end" x="40" style="fill:$textColor; font-size: 10px;">$cuspLabel $cuspNum:</text>');
+    sb.write('<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#$sign"/></g>');
+    sb.write('<text x="53" style="fill:$textColor; font-size: 10px;"> ${convertDecimalToDegreeString(pos)}</text>');
+    sb.write('</g>');
+    lineH += 14;
+  }
+
+  sb.write('</g>');
+  return sb.toString();
+}
+
+// Helper to find planet name by id
+String _findPlanetNameById(dynamic id, List<Map<String, dynamic>> settings) {
+  for (final s in settings) {
+    if (s['id'] == id) return s['name'] as String? ?? '';
+  }
+  return '';
+}
+
+// Helper to find aspect degree by name
+int _findAspectDegreeByName(String name, List<Map<String, dynamic>> settings) {
+  for (final s in settings) {
+    if (s['name'] == name) return s['degree'] as int? ?? 0;
+  }
+  return 0;
+}
+
 /// Get a list of house data from an astrological subject model.
 ///
 /// Returns a list of maps with 'abs_pos', 'position', and 'sign' keys.
