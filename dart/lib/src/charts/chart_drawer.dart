@@ -830,10 +830,6 @@ class DualChartDrawer {
     final heightDelta = extraPoints * 8.0;
     final height = dimensions.defaultHeight + heightDelta;
 
-    print('[TRANSIT_CHART_DEBUG] chartType=$_chartType, pointCount=$pointCount, extraPoints=$extraPoints');
-    print('[TRANSIT_CHART_DEBUG] height=$height (base=${dimensions.defaultHeight} + delta=$heightDelta)');
-    print('[TRANSIT_CHART_DEBUG] aspectCount=${_aspects.length}, aspectGridType=$doubleChartAspectGridType');
-
     // Calculate required width based on content
     double width;
     if (_chartType == 'Synastry') {
@@ -846,23 +842,19 @@ class DualChartDrawer {
         const aspectListColumnWidth = 105; // Match Python's estimation
         const padding = 20;
         final aspectListWidth = aspectListStartX + (aspectColumns * aspectListColumnWidth) + padding;
-        
+
         // Also check other content extents
         final secondaryPlanetGridRight = gridPositions.secondaryPlanetX + 80 + padding;
         final requiredWidth = math.max(aspectListWidth, secondaryPlanetGridRight);
-        
+
         width = requiredWidth.toDouble();
-        print('[TRANSIT_CHART_DEBUG] Calculated width: aspectColumns=$aspectColumns, aspectListWidth=$aspectListWidth, requiredWidth=$requiredWidth');
       } else {
         width = dimensions.fullWidth;
       }
     }
 
-    print('[TRANSIT_CHART_DEBUG] width=$width (fullWidth=${dimensions.fullWidth}, synastryWidth=${dimensions.synastryWidth})');
-
     final viewboxHeight = height.toInt() + verticalPaddingTop + verticalPaddingBottom;
     td['viewbox'] = '0 -$verticalPaddingTop ${width.toInt()} $viewboxHeight';
-    print('[TRANSIT_CHART_DEBUG] viewBox="${td['viewbox']}" (padding: top=$verticalPaddingTop, bottom=$verticalPaddingBottom)');
     td['background_color'] = 'var(--kerykeion-chart-color-paper-1)';
     td['paper_color_0'] = 'var(--kerykeion-chart-color-paper-0)';
 
@@ -876,21 +868,6 @@ class DualChartDrawer {
     td['houses_and_planets_translate_y'] = '0';
     td['aspect_grid_translate_y'] = '50';
     td['aspect_list_translate_y'] = '50';
-
-    // Log content extents for debugging
-    final wheelCenterY = 50.0; // full_wheel_translate_y
-    final wheelRadius = _r; // main radius = 240
-    final wheelTop = wheelCenterY;
-    final wheelBottom = wheelCenterY + (wheelRadius * 2); // diameter
-    final lunarPhaseY = 518 + heightDelta;
-    final lunarPhaseBottom = lunarPhaseY + 20; // lunar phase is ~20px tall
-    
-    print('[TRANSIT_CHART_DEBUG] Content Y extents:');
-    print('[TRANSIT_CHART_DEBUG]   Title: y=0 to ~22 (text at y=22)');
-    print('[TRANSIT_CHART_DEBUG]   Wheel: translate_y=$wheelCenterY, radius=$wheelRadius, bounds: y=$wheelTop to y=$wheelBottom');
-    print('[TRANSIT_CHART_DEBUG]   Lunar Phase: translate_y=$lunarPhaseY, bounds: y=$lunarPhaseY to y=$lunarPhaseBottom');
-    print('[TRANSIT_CHART_DEBUG]   Bottom text: starts at y=${452 + heightDelta} (bottom_left_translate_y + 452)');
-    print('[TRANSIT_CHART_DEBUG] Actual content should fit within: y=-15 (viewBox minY) to y=$viewboxHeight (viewBox maxY)');
 
     // ── Title ──
     td['stringTitle'] = '${NatalChartDrawer._escapeXml(NatalChartDrawer._truncateName(_firstSubject.name, 20))} - $_chartType Chart';
@@ -954,22 +931,6 @@ class DualChartDrawer {
     // ── Aspect Grid / List ──
     _setupAspects(td, height.toDouble());
 
-    // Log horizontal content extents
-    final wheelLeft = 100.0; // full_wheel translate_x
-    final wheelRight = wheelLeft + (_r * 2); // 100 + 480 = 580
-    final mainPlanetGridX = gridPositions.mainPlanetX; // 645
-    final mainHousesGridX = gridPositions.mainHousesX; // 750
-    final secondaryPlanetGridX = gridPositions.secondaryPlanetX; // 910
-    final aspectListX = 565; // from drawTransitAspectList translateX
-    
-    print('[TRANSIT_CHART_DEBUG] Content X extents:');
-    print('[TRANSIT_CHART_DEBUG]   Wheel: x=$wheelLeft to x=$wheelRight');
-    print('[TRANSIT_CHART_DEBUG]   Main Planet Grid: x=$mainPlanetGridX (~+80 width)');
-    print('[TRANSIT_CHART_DEBUG]   Main Houses Grid: x=$mainHousesGridX (~+120 width)');
-    print('[TRANSIT_CHART_DEBUG]   Secondary Planet Grid: x=$secondaryPlanetGridX (~+80 width)');
-    print('[TRANSIT_CHART_DEBUG]   Aspect List: starts at x=$aspectListX, columns=${_aspects.isNotEmpty ? 'TBD' : '0'}');
-    print('[TRANSIT_CHART_DEBUG] ViewBox width=$width should contain all content');
-
     // ── House comparison (Synastry only) ──
     td['makeHouseComparisonGrid'] = '';
 
@@ -977,7 +938,7 @@ class DualChartDrawer {
   }
 
   // ── Helper: Calculate aspect list columns ──
-  
+
   /// Calculate the number of columns needed for the aspect list.
   /// Mirrors Python's `_calculate_double_chart_aspect_columns`.
   int _calculateAspectListColumns(int totalAspects, double chartHeight) {
@@ -1439,13 +1400,17 @@ class DualChartDrawer {
 /// Usage:
 /// ```dart
 /// final drawer = CompositeChartDrawer(
-///   chartData: myDualChartData,
+///   chartData: myCompositeChartData,
+///   originalFirstSubject: person1,
+///   originalSecondSubject: person2,
 ///   theme: ChartTheme.classic,
 /// );
 /// final svgString = drawer.generateSvg();
 /// ```
 class CompositeChartDrawer {
-  final DualChartDataModel chartData;
+  final SingleChartDataModel chartData;
+  final AstrologicalSubjectModel originalFirstSubject;
+  final AstrologicalSubjectModel originalSecondSubject;
   final ChartTheme theme;
   final String? customCss;
 
@@ -1453,6 +1418,7 @@ class CompositeChartDrawer {
   final CircleRadiiConfig radii;
   final GridPositionsConfig gridPositions;
 
+  late final AstrologicalSubjectModel _compositeSubject;
   late final AstrologicalSubjectModel _firstSubject;
   late final AstrologicalSubjectModel _secondSubject;
   late final List<AspectModel> _aspects;
@@ -1471,14 +1437,17 @@ class CompositeChartDrawer {
 
   CompositeChartDrawer({
     required this.chartData,
+    required this.originalFirstSubject,
+    required this.originalSecondSubject,
     this.theme = ChartTheme.classic,
     this.customCss,
     this.dimensions = const ChartDimensionsConfig(),
     this.radii = const CircleRadiiConfig(),
     this.gridPositions = const GridPositionsConfig(),
   }) {
-    _firstSubject = chartData.firstSubject;
-    _secondSubject = chartData.secondSubject;
+    _compositeSubject = chartData.firstSubject; // The merged composite subject
+    _firstSubject = originalFirstSubject; // Original subject for display info
+    _secondSubject = originalSecondSubject; // Original subject for display info
     _aspects = chartData.aspects;
 
     // Composite uses natal-style radii
@@ -1487,8 +1456,8 @@ class CompositeChartDrawer {
     _c2 = radii.singleWheelSecondCircle;
     _c3 = radii.singleWheelThirdCircle;
 
-    _firstHouseDeg = _firstSubject.firstHouse.absPos;
-    _seventhHouseDeg = _firstSubject.seventhHouse.absPos;
+    _firstHouseDeg = _compositeSubject.firstHouse.absPos;
+    _seventhHouseDeg = _compositeSubject.seventhHouse.absPos;
 
     _collectActivePoints();
     _collectHouses();
@@ -1500,7 +1469,7 @@ class CompositeChartDrawer {
     _activePointSettings = [];
 
     for (final ap in activePoints) {
-      final point = DualChartDrawer._getPointFromSubject(_firstSubject, ap);
+      final point = DualChartDrawer._getPointFromSubject(_compositeSubject, ap);
       final setting = defaultCelestialPointsSettings.cast<CelestialPointSetting?>().firstWhere((s) => s?.name == ap.name, orElse: () => null);
       if (point == null || setting == null) continue;
 
@@ -1510,7 +1479,7 @@ class CompositeChartDrawer {
   }
 
   void _collectHouses() {
-    _housesList = DualChartDrawer._buildHousesList(_firstSubject);
+    _housesList = DualChartDrawer._buildHousesList(_compositeSubject);
   }
 
   /// Generate the complete SVG chart string.
@@ -1577,12 +1546,12 @@ class CompositeChartDrawer {
     td['fixed_string'] = 'Fixed ${qualDist.fixedPercentage}%';
     td['mutable_string'] = 'Mutable ${qualDist.mutablePercentage}%';
 
-    // ── Bottom Left ──
-    final zt = _firstSubject.zodiacType?.name ?? 'Tropical';
+    // ── Bottom Left (use composite subject data) ──
+    final zt = _compositeSubject.zodiacType?.name ?? 'Tropical';
     td['bottom_left_0'] = 'Zodiac: $zt';
-    final hs = _firstSubject.housesSystemName ?? _firstSubject.housesSystemIdentifier.name;
+    final hs = _compositeSubject.housesSystemName ?? _compositeSubject.housesSystemIdentifier.name;
     td['bottom_left_1'] = 'Domification: $hs';
-    final lp = _firstSubject.lunarPhase;
+    final lp = _compositeSubject.lunarPhase;
     if (lp != null) {
       td['bottom_left_2'] = 'Lunation Day: ${lp.moonPhase}';
       td['bottom_left_3'] = 'Lunar Phase: ${lp.moonPhaseName.name.replaceAll('_', ' ')}';
@@ -1590,12 +1559,12 @@ class CompositeChartDrawer {
       td['bottom_left_2'] = '';
       td['bottom_left_3'] = '';
     }
-    final p = _firstSubject.perspectiveType.name.replaceAll('_', ' ');
+    final p = _compositeSubject.perspectiveType.name.replaceAll('_', ' ');
     td['bottom_left_4'] = 'Perspective: $p';
 
     // ── Lunar Phase ──
     if (lp != null) {
-      td['makeLunarPhase'] = makeLunarPhase(lp.degreesBetweenSunAndMoon, _firstSubject.lat ?? 0.0);
+      td['makeLunarPhase'] = makeLunarPhase(lp.degreesBetweenSunAndMoon, _compositeSubject.lat ?? 0.0);
     } else {
       td['makeLunarPhase'] = '';
     }
