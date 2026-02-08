@@ -12,7 +12,8 @@ dependencies:
     sdk: flutter
   intl: ^0.20.2
   path: ^1.9.1
-  sweph: ^3.2.1+2.10.3
+  sweph:
+    path: ../../sweph_local
   timezone: ">=0.10.0 <1.0.0"
   # path: ^1.9.0
 
