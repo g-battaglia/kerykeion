@@ -218,14 +218,15 @@ String drawBackgroundCircle(double r, String fillColor, String strokeColor) {
 /// Draw the first (outermost structural) circle.
 String drawFirstCircle(double r, String strokeColor, String chartType, double firstCircleRadius) {
   final double radius;
-  if (chartType == 'Natal') {
+  if (chartType == 'Synastry' || chartType == 'Transit' || chartType == 'DualReturnChart') {
+    // Python: r - 36 for dual-wheel charts
+    radius = r - 36;
+    return '<circle cx="$r" cy="$r" r="$radius" '
+        'style="fill: none; stroke: $strokeColor; stroke-width: 1px; stroke-opacity:.4;" />';
+  } else {
     radius = r - firstCircleRadius;
     return '<circle cx="$r" cy="$r" r="$radius" '
         'style="fill: none; stroke: $strokeColor; stroke-width: 1px; " />';
-  } else {
-    radius = r;
-    return '<circle cx="$r" cy="$r" r="$radius" '
-        'style="fill: none; stroke: $strokeColor; stroke-width: 1px; stroke-opacity:.4;" />';
   }
 }
 
@@ -246,16 +247,27 @@ String drawSecondCircle(double r, String strokeColor, String fillColor, String c
 
 /// Draw the third (innermost) circle.
 String drawThirdCircle(double r, String strokeColor, String fillColor, String chartType, double thirdCircleRadius) {
-  final double radius = r - thirdCircleRadius;
+  final double radius;
+  if (chartType == 'Synastry' || chartType == 'Transit' || chartType == 'DualReturnChart') {
+    // Python: radius - 160 for dual-wheel charts
+    radius = r - 160;
+  } else {
+    radius = r - thirdCircleRadius;
+  }
   return '<circle cx="$r" cy="$r" r="$radius" '
       'style="fill: $fillColor; fill-opacity:.8; stroke: $strokeColor; stroke-width: 1px" />';
 }
 
 /// Draw the transit ring (outer ring for dual-wheel charts).
+/// Python: two circles — a thick stroke band at r-18 and an outline at r.
 String drawTransitRing(double r, String fillColor, String strokeColor) {
-  final double radius = r + 36.0;
-  return '<circle cx="$r" cy="$r" r="$radius" '
-      'style="fill: $fillColor; stroke: $strokeColor; stroke-width: 1px;"/>';
+  const radiusOffset = 18;
+  final out =
+      '<circle cx="$r" cy="$r" r="${r - radiusOffset}" '
+      'style="fill: none; stroke: $fillColor; stroke-width: 36px; stroke-opacity: .4;"/>'
+      '<circle cx="$r" cy="$r" r="$r" '
+      'style="fill: none; stroke: $strokeColor; stroke-width: 1px; stroke-opacity: .6;"/>';
+  return out;
 }
 
 /// Draw house cusps and house numbers on the wheel.
@@ -295,7 +307,9 @@ String drawHousesCuspsAndTextNumber({
     }
 
     // Calculate the offset for the current house cusp
-    final offset = (firstSubjectHousesList[xr ~/ 2]['abs_pos'] as double) / -1.0 + (firstSubjectHousesList[i]['abs_pos'] as double);
+    // Match Python: (int(first_subject_houses_list[int(xr / 2)].abs_pos) / -1) + int(first_subject_houses_list[i].abs_pos)
+    final offset =
+        (firstSubjectHousesList[xr ~/ 2]['abs_pos'] as double).truncateToDouble() / -1 + (firstSubjectHousesList[i]['abs_pos'] as double).truncateToDouble();
 
     // Calculate the coordinates for the house cusp lines
     final x1 = sliceToX(0, r - dropin, offset) + dropin;
@@ -305,7 +319,9 @@ String drawHousesCuspsAndTextNumber({
 
     // Calculate the text offset for the house number
     final nextIndex = (i + 1) % xr;
-    final textOffset = offset + degreeDiff(firstSubjectHousesList[nextIndex]['abs_pos'] as double, firstSubjectHousesList[i]['abs_pos'] as double) / 2;
+    // Match Python: offset + int(degreeDiff(...) / 2)
+    final textOffset =
+        offset + (degreeDiff(firstSubjectHousesList[nextIndex]['abs_pos'] as double, firstSubjectHousesList[i]['abs_pos'] as double) / 2).truncateToDouble();
 
     // Determine the line color based on the house index
     String linecolor;
@@ -334,7 +350,10 @@ String drawHousesCuspsAndTextNumber({
       final tX2 = sliceToX(0, r, tOffset);
       final tY2 = sliceToY(0, r, tOffset);
 
-      final tTextOffset = tOffset + degreeDiff(secondSubjectHousesList[nextIndex]['abs_pos'] as double, secondSubjectHousesList[i]['abs_pos'] as double) / 2;
+      // Match Python: t_text_offset = t_offset + int(degreeDiff(...) / 2)
+      final tTextOffset =
+          tOffset +
+          (degreeDiff(secondSubjectHousesList[nextIndex]['abs_pos'] as double, secondSubjectHousesList[i]['abs_pos'] as double) / 2).truncateToDouble();
       final tLinecolor = (i == 0 || i == 9 || i == 6 || i == 3) ? linecolor : transitHouseCuspColor;
       final xtext = sliceToX(0, r - 8, tTextOffset) + 8;
       final ytext = sliceToY(0, r - 8, tTextOffset) + 8;
@@ -411,11 +430,12 @@ String drawAspectLine({
   List<List<double>>? renderedIconPositions,
   double iconCollisionThreshold = 16.0,
 }) {
-  final double firstOffset = (seventhHouseDegreeUt / -1.0) + (aspect['p1_abs_pos'] as double);
+  // Match Python: (int(seventh_house_degree_ut) / -1) + int(aspect["p1_abs_pos"])
+  final double firstOffset = (seventhHouseDegreeUt.truncateToDouble() / -1) + (aspect['p1_abs_pos'] as double).truncateToDouble();
   final x1 = sliceToX(0, ar, firstOffset) + (r - ar);
   final y1 = sliceToY(0, ar, firstOffset) + (r - ar);
 
-  final double secondOffset = (seventhHouseDegreeUt / -1.0) + (aspect['p2_abs_pos'] as double);
+  final double secondOffset = (seventhHouseDegreeUt.truncateToDouble() / -1) + (aspect['p2_abs_pos'] as double).truncateToDouble();
   final x2 = sliceToX(0, ar, secondOffset) + (r - ar);
   final y2 = sliceToY(0, ar, secondOffset) + (r - ar);
 
@@ -435,7 +455,8 @@ String drawAspectLine({
       final avgCos = (math.cos(p1Rad) + math.cos(p2Rad)) / 2.0;
       final avgPos = (math.atan2(avgSin, avgCos) * 180.0 / math.pi) % 360.0;
 
-      final offset = (seventhHouseDegreeUt / -1.0) + avgPos;
+      // Match Python: (int(seventh_house_degree_ut) / -1) + avg_pos
+      final offset = (seventhHouseDegreeUt.truncateToDouble() / -1) + avgPos;
       final iconRadius = ar + 4;
       midX = sliceToX(0, iconRadius, offset) + (r - iconRadius);
       midY = sliceToY(0, iconRadius, offset) + (r - iconRadius);

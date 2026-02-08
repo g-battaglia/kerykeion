@@ -6,6 +6,8 @@
 /// [charts_utils.dart] and [draw_planets.dart].
 library;
 
+import 'dart:math' as math;
+
 import '../types.dart';
 import '../models/astrological_subject.dart';
 import '../models/chart_data.dart';
@@ -404,8 +406,10 @@ class NatalChartDrawer {
     final aspectRadius = _r - _c3;
 
     for (final aspect in _aspects) {
-      // Find color from default settings
-      final aspectSetting = defaultChartAspectsSettings.firstWhere((s) => s.degree == aspect.aspectDegrees, orElse: () => defaultChartAspectsSettings.first);
+      // Match Python: lookup aspect color by name
+      final aspectName = aspect.aspect;
+      final aspectSetting = defaultChartAspectsSettings.cast<ChartAspectSetting?>().firstWhere((s) => s!.name == aspectName, orElse: () => null);
+      if (aspectSetting == null) continue;
 
       sb.write(
         drawAspectLine(
@@ -826,16 +830,39 @@ class DualChartDrawer {
     final heightDelta = extraPoints * 8.0;
     final height = dimensions.defaultHeight + heightDelta;
 
-    // Dual-wheel charts are wider
+    print('[TRANSIT_CHART_DEBUG] chartType=$_chartType, pointCount=$pointCount, extraPoints=$extraPoints');
+    print('[TRANSIT_CHART_DEBUG] height=$height (base=${dimensions.defaultHeight} + delta=$heightDelta)');
+    print('[TRANSIT_CHART_DEBUG] aspectCount=${_aspects.length}, aspectGridType=$doubleChartAspectGridType');
+
+    // Calculate required width based on content
     double width;
     if (_chartType == 'Synastry') {
       width = dimensions.synastryWidth;
     } else {
-      width = dimensions.fullWidth;
+      // For Transit/DualReturn charts, calculate based on aspect list columns
+      if (doubleChartAspectGridType == 'list' && _aspects.isNotEmpty) {
+        final aspectColumns = _calculateAspectListColumns(_aspects.length, height);
+        const aspectListStartX = 565;
+        const aspectListColumnWidth = 105; // Match Python's estimation
+        const padding = 20;
+        final aspectListWidth = aspectListStartX + (aspectColumns * aspectListColumnWidth) + padding;
+        
+        // Also check other content extents
+        final secondaryPlanetGridRight = gridPositions.secondaryPlanetX + 80 + padding;
+        final requiredWidth = math.max(aspectListWidth, secondaryPlanetGridRight);
+        
+        width = requiredWidth.toDouble();
+        print('[TRANSIT_CHART_DEBUG] Calculated width: aspectColumns=$aspectColumns, aspectListWidth=$aspectListWidth, requiredWidth=$requiredWidth');
+      } else {
+        width = dimensions.fullWidth;
+      }
     }
+
+    print('[TRANSIT_CHART_DEBUG] width=$width (fullWidth=${dimensions.fullWidth}, synastryWidth=${dimensions.synastryWidth})');
 
     final viewboxHeight = height.toInt() + verticalPaddingTop + verticalPaddingBottom;
     td['viewbox'] = '0 -$verticalPaddingTop ${width.toInt()} $viewboxHeight';
+    print('[TRANSIT_CHART_DEBUG] viewBox="${td['viewbox']}" (padding: top=$verticalPaddingTop, bottom=$verticalPaddingBottom)');
     td['background_color'] = 'var(--kerykeion-chart-color-paper-1)';
     td['paper_color_0'] = 'var(--kerykeion-chart-color-paper-0)';
 
@@ -849,6 +876,21 @@ class DualChartDrawer {
     td['houses_and_planets_translate_y'] = '0';
     td['aspect_grid_translate_y'] = '50';
     td['aspect_list_translate_y'] = '50';
+
+    // Log content extents for debugging
+    final wheelCenterY = 50.0; // full_wheel_translate_y
+    final wheelRadius = _r; // main radius = 240
+    final wheelTop = wheelCenterY;
+    final wheelBottom = wheelCenterY + (wheelRadius * 2); // diameter
+    final lunarPhaseY = 518 + heightDelta;
+    final lunarPhaseBottom = lunarPhaseY + 20; // lunar phase is ~20px tall
+    
+    print('[TRANSIT_CHART_DEBUG] Content Y extents:');
+    print('[TRANSIT_CHART_DEBUG]   Title: y=0 to ~22 (text at y=22)');
+    print('[TRANSIT_CHART_DEBUG]   Wheel: translate_y=$wheelCenterY, radius=$wheelRadius, bounds: y=$wheelTop to y=$wheelBottom');
+    print('[TRANSIT_CHART_DEBUG]   Lunar Phase: translate_y=$lunarPhaseY, bounds: y=$lunarPhaseY to y=$lunarPhaseBottom');
+    print('[TRANSIT_CHART_DEBUG]   Bottom text: starts at y=${452 + heightDelta} (bottom_left_translate_y + 452)');
+    print('[TRANSIT_CHART_DEBUG] Actual content should fit within: y=-15 (viewBox minY) to y=$viewboxHeight (viewBox maxY)');
 
     // ── Title ──
     td['stringTitle'] = '${NatalChartDrawer._escapeXml(NatalChartDrawer._truncateName(_firstSubject.name, 20))} - $_chartType Chart';
@@ -910,12 +952,61 @@ class DualChartDrawer {
     _setupGrids(td);
 
     // ── Aspect Grid / List ──
-    _setupAspects(td);
+    _setupAspects(td, height.toDouble());
+
+    // Log horizontal content extents
+    final wheelLeft = 100.0; // full_wheel translate_x
+    final wheelRight = wheelLeft + (_r * 2); // 100 + 480 = 580
+    final mainPlanetGridX = gridPositions.mainPlanetX; // 645
+    final mainHousesGridX = gridPositions.mainHousesX; // 750
+    final secondaryPlanetGridX = gridPositions.secondaryPlanetX; // 910
+    final aspectListX = 565; // from drawTransitAspectList translateX
+    
+    print('[TRANSIT_CHART_DEBUG] Content X extents:');
+    print('[TRANSIT_CHART_DEBUG]   Wheel: x=$wheelLeft to x=$wheelRight');
+    print('[TRANSIT_CHART_DEBUG]   Main Planet Grid: x=$mainPlanetGridX (~+80 width)');
+    print('[TRANSIT_CHART_DEBUG]   Main Houses Grid: x=$mainHousesGridX (~+120 width)');
+    print('[TRANSIT_CHART_DEBUG]   Secondary Planet Grid: x=$secondaryPlanetGridX (~+80 width)');
+    print('[TRANSIT_CHART_DEBUG]   Aspect List: starts at x=$aspectListX, columns=${_aspects.isNotEmpty ? 'TBD' : '0'}');
+    print('[TRANSIT_CHART_DEBUG] ViewBox width=$width should contain all content');
 
     // ── House comparison (Synastry only) ──
     td['makeHouseComparisonGrid'] = '';
 
     return td;
+  }
+
+  // ── Helper: Calculate aspect list columns ──
+  
+  /// Calculate the number of columns needed for the aspect list.
+  /// Mirrors Python's `_calculate_double_chart_aspect_columns`.
+  int _calculateAspectListColumns(int totalAspects, double chartHeight) {
+    if (totalAspects <= 0) return 0;
+
+    const perColumn = 14;
+    const extendedStart = 10;
+    const baseCapacity = perColumn * extendedStart; // 140
+
+    if (totalAspects <= baseCapacity) {
+      return (totalAspects / perColumn).ceil();
+    }
+
+    // Calculate full height column capacity
+    const translateY = 273;
+    const bottomPadding = 40;
+    const lineHeight = 14;
+    const baselineIndex = 13;
+    const titleClearance = 18;
+    final topLimitY = -translateY + titleClearance;
+    final maxCapacityByTop = baselineIndex - (topLimitY / lineHeight).ceil() + 1;
+
+    final availableHeight = math.max(chartHeight - translateY - bottomPadding, lineHeight.toDouble());
+    final allowedCapacity = math.max(perColumn, (availableHeight / lineHeight).floor());
+    final fullHeightCapacity = math.max(perColumn, math.min(allowedCapacity, maxCapacityByTop));
+
+    final remaining = math.max(totalAspects - baseCapacity, 0);
+    final extraColumns = remaining > 0 ? (remaining / fullHeightCapacity).ceil() : 0;
+    return extendedStart + extraColumns;
   }
 
   // ── Chart-type-specific info sections ──
@@ -1051,7 +1142,7 @@ class DualChartDrawer {
     }
   }
 
-  void _setupAspects(Map<String, String> td) {
+  void _setupAspects(Map<String, String> td, double chartHeight) {
     final aspectsAsMaps = _aspects.map((a) => a.toJson()).toList();
 
     if (doubleChartAspectGridType == 'list') {
@@ -1070,7 +1161,7 @@ class DualChartDrawer {
         aspectsAsMaps,
         _activePointSettings,
         defaultChartAspectsSettings.map((s) => {'name': s.name, 'degree': s.degree, 'color': s.color}).toList(),
-        chartHeight: dimensions.defaultHeight.toDouble(),
+        chartHeight: chartHeight,
       );
     } else {
       td['makeAspectGrid'] = '';
@@ -1174,7 +1265,10 @@ class DualChartDrawer {
     final aspectRadius = _r - 160;
 
     for (final aspect in _aspects) {
-      final aspectSetting = defaultChartAspectsSettings.firstWhere((s) => s.degree == aspect.aspectDegrees, orElse: () => defaultChartAspectsSettings.first);
+      // Match Python: lookup aspect color by name, not by degree
+      final aspectName = aspect.aspect;
+      final aspectSetting = defaultChartAspectsSettings.cast<ChartAspectSetting?>().firstWhere((s) => s!.name == aspectName, orElse: () => null);
+      if (aspectSetting == null) continue; // Python skips if no color found
       sb.write(
         drawAspectLine(
           r: _r,
@@ -1563,7 +1657,10 @@ class CompositeChartDrawer {
     final ar = _r - _c3;
 
     for (final aspect in _aspects) {
-      final aspectSetting = defaultChartAspectsSettings.firstWhere((s) => s.degree == aspect.aspectDegrees, orElse: () => defaultChartAspectsSettings.first);
+      // Match Python: lookup aspect color by name
+      final aspectName = aspect.aspect;
+      final aspectSetting = defaultChartAspectsSettings.cast<ChartAspectSetting?>().firstWhere((s) => s!.name == aspectName, orElse: () => null);
+      if (aspectSetting == null) continue;
       sb.write(
         drawAspectLine(
           r: _r,

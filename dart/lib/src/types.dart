@@ -101,6 +101,6 @@ enum HousesSystemIdentifier { A, B, C, D, E, F, H, I, i, K, L, M, N, O, P, Q, R,
 
 enum PerspectiveType { Apparent_Geocentric, Heliocentric, Topocentric, True_Geocentric }
 
-enum ChartType { Natal, Synastry, Transits, Composite, SingleReturnChart }
+enum ChartType { Natal, Synastry, Transit, Composite, SingleReturnChart }
 
 enum ReturnType { Lunar, Solar }

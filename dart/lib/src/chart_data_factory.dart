@@ -43,14 +43,14 @@ class ChartDataFactory {
       );
       aspects = aspectsModel.aspects;
     } else if (secondSubject != null) {
-      if (chartType == ChartType.Synastry || chartType == ChartType.Transits) {
+      if (chartType == ChartType.Synastry || chartType == ChartType.Transit) {
         final aspectsModel = AspectsFactory.dualChartAspects(
           firstSubject,
           secondSubject,
           activePoints: activePointsResolved,
           activeAspects: activeAspectsResolved,
           axisOrbLimit: axisOrbLimit,
-          firstSubjectIsFixed: chartType == ChartType.Transits,
+          firstSubjectIsFixed: chartType == ChartType.Transit,
         );
         aspects = aspectsModel.aspects;
       }
@@ -76,7 +76,7 @@ class ChartDataFactory {
 
       HouseComparisonModel? houseComparison;
       if (includeHouseComparison) {
-        if (chartType == ChartType.Synastry || chartType == ChartType.Transits) {
+        if (chartType == ChartType.Synastry || chartType == ChartType.Transit) {
           houseComparison = _calculateHouseComparison(firstSubject, secondSubject, activePointsResolved);
         }
       }

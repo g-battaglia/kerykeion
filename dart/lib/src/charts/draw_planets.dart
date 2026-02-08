@@ -310,7 +310,8 @@ void _handleMultiPointGroup(List<List<dynamic>> group, List<double> positionAdju
 }
 
 double _calculatePointOffset(double seventhHouseDeg, double pointDeg, double adjustment) {
-  return (-seventhHouseDeg) + pointDeg + adjustment;
+  // Match Python: (int(seventh_house_degree) / -1) + int(point_degree + adjustment)
+  return (seventhHouseDeg.truncateToDouble() / -1) + (pointDeg + adjustment).truncateToDouble();
 }
 
 int _determinePointRadius(int pointIdx, String chartType, bool isAlternate, bool externalView) {
