@@ -77,6 +77,12 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
 - [Documentation](#documentation)
 - [Projects built with Kerykeion](#projects-built-with-kerykeion)
 - [Development](#development)
+- [Dart/Flutter Port (kerykeion\_dart)](#dartflutter-port-kerykeion_dart)
+    - [Dart Installation](#dart-installation)
+    - [Dart Quick Start](#dart-quick-start)
+    - [What Has Been Ported](#what-has-been-ported)
+    - [Dart Project Structure](#dart-project-structure)
+    - [AI / MCP Integration](#ai--mcp-integration)
 - [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
 - [License](#license)
 - [Contributing](#contributing)
@@ -1343,6 +1349,146 @@ git clone https://github.com/g-battaglia/kerykeion.git
 cd kerykeion
 pip install -e ".[dev]"
 ```
+
+## Dart/Flutter Port (kerykeion_dart)
+
+A complete **Dart/Flutter** port of Kerykeion lives in the `dart/` directory of this repository. It provides the same astrological calculations — natal charts, synastry, composites, transits, solar & lunar returns, and full SVG chart rendering — natively in Dart, powered by Swiss Ephemeris via FFI.
+
+### Dart Installation
+
+Add `kerykeion_dart` as a local path dependency in your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  kerykeion_dart:
+    path: kerykeion/dart
+  sweph:
+    path: sweph_local   # Swiss Ephemeris Dart bindings
+```
+
+The package depends on:
+
+| Package | Purpose |
+|---------|--------|
+| `sweph` | Swiss Ephemeris native FFI bindings |
+| `timezone` | IANA timezone database |
+| `intl` | Date/number formatting |
+| `path` | File path utilities |
+
+### Dart Quick Start
+
+```dart
+import 'package:kerykeion_dart/kerykeion_dart.dart';
+
+Future<void> main() async {
+  // Initialize Swiss Ephemeris
+  final sweph = Sweph('path/to/ephe_files');
+
+  // Create a natal chart
+  final subject = await AstrologicalSubjectFactory.createSubject(
+    sweph: sweph,
+    name: 'Example Person',
+    year: 1990, month: 7, day: 15,
+    hour: 10, minute: 30,
+    lng: 12.4964,
+    lat: 41.9028,
+    tzStr: 'Europe/Rome',
+  );
+
+  // Access planetary positions
+  print(subject.sun);   // Sun position, sign, house, etc.
+  print(subject.moon);  // Moon position, sign, house, etc.
+
+  // Calculate aspects
+  final aspects = AspectsFactory.singleChartAspects(subject);
+  print('Found ${aspects.length} aspects');
+
+  // Generate chart data with element/quality distributions
+  final chartData = ChartDataFactory.createChartData(
+    subject: subject,
+    sweph: sweph,
+  );
+
+  // Render an SVG chart
+  final drawer = NatalChartDrawer(chartData: chartData);
+  final svg = drawer.drawChart();
+}
+```
+
+### What Has Been Ported
+
+| Feature | Python | Dart | Status |
+|---------|--------|------|--------|
+| Type system (signs, houses, elements, qualities) | `kr_types/` | `types.dart`, `constants.dart` | ✅ |
+| Natal chart calculations | `astrological_subject.py` | `astrological_subject_factory.dart` | ✅ |
+| 40+ celestial points (planets, asteroids, nodes, fixed stars) | ✅ | ✅ | ✅ |
+| 23 house systems | ✅ | ✅ | ✅ |
+| 16+ sidereal/ayanamsha modes | ✅ | ✅ | ✅ |
+| Multiple perspectives (Geocentric, Heliocentric, Topocentric) | ✅ | ✅ | ✅ |
+| Aspect calculations (single & dual chart) | `aspects/` | `aspects/` | ✅ |
+| Chart data factory (element/quality distributions) | `chart_data_factory.py` | `chart_data_factory.dart` | ✅ |
+| Midpoint composite charts | `composite.py` | `composite_factory.dart` | ✅ |
+| Solar & Lunar returns | `return_charts.py` | `return_factory.dart` | ✅ |
+| SVG chart rendering (natal, synastry, transit, composite) | `charts/` | `charts/` | ✅ |
+| Progressed charts / Harmonics | ✅ | — | 🔜 |
+| Report / PDF generation | ✅ | — | 🔜 |
+
+### Dart Project Structure
+
+```
+kerykeion/dart/
+├── lib/
+│   ├── kerykeion_dart.dart              # Barrel export
+│   └── src/
+│       ├── types.dart                    # Enums: Sign, House, Element, Quality, …
+│       ├── constants.dart                # Swiss Ephemeris ID mappings
+│       ├── utilities.dart                # Julian Day, degree conversion, lunar phase
+│       ├── astrological_subject_factory.dart  # Core natal chart engine
+│       ├── composite_factory.dart        # Midpoint composite charts
+│       ├── return_factory.dart           # Solar & Lunar returns (binary search)
+│       ├── chart_data_factory.dart       # Distributions, house placements
+│       ├── aspects/
+│       │   ├── aspects_factory.dart      # Single & dual chart aspect detection
+│       │   └── aspects_utils.dart        # Orb & angle utilities
+│       ├── charts/
+│       │   ├── chart_drawer.dart         # Full SVG natal chart rendering
+│       │   ├── charts_utils.dart         # SVG geometry helpers
+│       │   └── draw_planets.dart         # Planet glyph placement
+│       ├── models/                       # Immutable data models
+│       │   ├── astrological_subject.dart
+│       │   ├── kerykeion_point.dart
+│       │   ├── aspect_model.dart
+│       │   ├── chart_data.dart
+│       │   ├── distribution.dart
+│       │   └── lunar_phase.dart
+│       └── settings/
+│           └── chart_defaults.dart       # Default orbs, active points
+├── test/                                 # Comprehensive test suite
+├── ephe_files/                           # Swiss Ephemeris data files
+└── pubspec.yaml
+```
+
+### AI / MCP Integration
+
+The Dart port is designed for seamless integration with LLM and AI applications through the **Model Context Protocol (MCP)**. A set of AI-callable tool classes are provided:
+
+| Tool | Description |
+|------|-------------|
+| `GenerateNatalChartTool` | Compute a natal chart from birth data |
+| `GetAspectsTool` | Calculate aspects for any chart |
+| `GetTransitsTool` | Current transit positions & aspects to natal |
+| `GetSynastryTool` | Two-person synastry comparison |
+| `GetSolarReturnTool` | Solar return chart for a given year |
+| `DrawNatalChartTool` | Render natal chart as SVG |
+| `DrawTransitChartTool` | Render transit overlay SVG |
+| `DrawSynastryChartTool` | Render synastry wheel SVG |
+| `DrawCompositeChartTool` | Render composite chart SVG |
+
+These tools allow AI agents to generate and interpret astrological charts programmatically within a Flutter application.
+
+**📖 Detailed conversion progress: [dart/PROGRESS.md](dart/PROGRESS.md)**
+
+**📖 Developer guide: [dart/DEVELOPER_GUIDE.md](dart/DEVELOPER_GUIDE.md)**
 
 ## Integrating Kerykeion into Your Project
 
