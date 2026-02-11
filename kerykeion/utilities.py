@@ -397,7 +397,7 @@ def find_common_active_points(
     Returns:
         List of points common to both input lists (without duplicates)
     """
-    return list(set(first_points) & set(second_points))
+    return sorted(set(first_points) & set(second_points))
 
 
 # =============================================================================
