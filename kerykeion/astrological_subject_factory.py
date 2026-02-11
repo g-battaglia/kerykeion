@@ -31,7 +31,7 @@ License: AGPL-3.0
 """
 
 import pytz
-import swisseph as swe
+import libephemeris as swe
 import logging
 import math
 from datetime import datetime
@@ -77,11 +77,11 @@ DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS = 30
 # =============================================================================
 # PLANET CONFIGURATION MAPPINGS
 # =============================================================================
-# These mappings define the Swiss Ephemeris IDs for each celestial body.
+# These mappings define the LibEphemeris IDs for each celestial body.
 # Using a centralized configuration eliminates repetitive code and makes
 # it easier to add new celestial bodies in the future.
 
-# Standard planets with direct Swiss Ephemeris IDs (0-20)
+# Standard planets with direct LibEphemeris IDs (0-20)
 STANDARD_PLANETS: Dict[AstrologicalPoint, int] = {
     "Sun": 0,
     "Moon": 1,
@@ -107,7 +107,7 @@ STANDARD_PLANETS: Dict[AstrologicalPoint, int] = {
 }
 
 # Trans-Neptunian Objects requiring AST_OFFSET
-# These use Swiss Ephemeris asteroid offset + minor planet number
+# These use LibEphemeris asteroid offset + minor planet number
 TNO_PLANETS: Dict[AstrologicalPoint, int] = {
     "Eris": 136199,
     "Sedna": 90377,
@@ -185,7 +185,7 @@ def ephemeris_context(
     lat: float,
     alt: Optional[float] = None,
 ):
-    """Context manager that isolates Swiss Ephemeris configuration.
+    """Context manager that isolates LibEphemeris configuration.
 
     Responsibilities:
         - Set ephemeris path and calculation flags
@@ -196,7 +196,7 @@ def ephemeris_context(
         - Reset topocentric coordinates afterward (defensive)
 
     Args:
-        ephe_path: Path containing Swiss Ephemeris data files.
+        ephe_path: Path containing LibEphemeris data files.
         config: Validated chart configuration.
         lng: Observer longitude (used for topocentric charts).
         lat: Observer latitude (used for topocentric charts).
@@ -431,12 +431,12 @@ class LocationData:
         Prepare location data for astrological calculations.
 
         Performs final adjustments to location data to ensure compatibility
-        with Swiss Ephemeris calculations. This includes handling special cases
+        with LibEphemeris calculations. This includes handling special cases
         like polar regions where extreme latitudes can cause calculation errors.
 
         Side Effects:
             - Adjusts latitude values for polar regions (beyond ±66.5°) to
-              prevent Swiss Ephemeris calculation failures
+              prevent LibEphemeris calculation failures
             - May log warnings about latitude adjustments
 
         Note:
@@ -457,7 +457,7 @@ class AstrologicalSubjectFactory:
     various specialized astrological points. It provides multiple class methods for
     different initialization scenarios and supports both online and offline calculation modes.
 
-    The factory handles complex astrological calculations using the Swiss Ephemeris library,
+    The factory handles complex astrological calculations using the LibEphemeris library,
     supports multiple coordinate systems and house systems, and can automatically fetch
     location data from online sources.
 
@@ -508,7 +508,7 @@ class AstrologicalSubjectFactory:
         ... )
 
     Thread Safety:
-        This factory is not thread-safe due to its use of the Swiss Ephemeris library
+        This factory is not thread-safe due to its use of the LibEphemeris library
         which maintains global state. Use separate instances in multi-threaded applications
         or implement appropriate locking mechanisms.
     """
@@ -738,7 +738,7 @@ class AstrologicalSubjectFactory:
 
         # Calculate time conversions
         AstrologicalSubjectFactory._calculate_time_conversions(calc_data, location)
-        # Initialize Swiss Ephemeris and calculate houses and planets with context manager
+        # Initialize LibEphemeris and calculate houses and planets with context manager
         ephe_path = str(Path(__file__).parent.absolute() / "sweph")
         with ephemeris_context(
             ephe_path=ephe_path,
@@ -1113,7 +1113,7 @@ class AstrologicalSubjectFactory:
             - _houses_degree_ut: Raw house cusp degrees for internal use
 
         House Systems Supported:
-            All systems supported by Swiss Ephemeris including Placidus, Koch,
+            All systems supported by LibEphemeris including Placidus, Koch,
             Equal House, Whole Sign, Regiomontanus, Campanus, Topocentric, etc.
 
         Angular Points Calculated:
@@ -1124,7 +1124,7 @@ class AstrologicalSubjectFactory:
 
         Note:
             House calculations respect the zodiac type (Tropical/Sidereal) and use
-            the appropriate Swiss Ephemeris function. Angular points include house
+            the appropriate LibEphemeris function. Angular points include house
             position and retrograde status (always False for angles).
         """
 
@@ -1182,7 +1182,7 @@ class AstrologicalSubjectFactory:
         # Calculate axis points
         point_type = "AstrologicalPoint"
 
-        # NOTE: Swiss Ephemeris does not provide direct speeds for angles (ASC/MC),
+        # NOTE: LibEphemeris does not provide direct speeds for angles (ASC/MC),
         # but in practice they move very fast compared to planets.
         # To represent this consistently, we assign the four angles
         # a fixed synthetic speed, much higher than typical planetary speeds.
@@ -1246,16 +1246,16 @@ class AstrologicalSubjectFactory:
         Calculate a single celestial body's position with comprehensive error handling.
 
         Computes the position of a single planet, asteroid, or other celestial object
-        using Swiss Ephemeris, creates a Kerykeion point object, determines house
+        using LibEphemeris, creates a Kerykeion point object, determines house
         position, and assesses retrograde status. Handles calculation errors gracefully
         by logging and removing failed points from the active list.
 
         Args:
             data (Dict[str, Any]): Main calculation data dictionary to store results.
             planet_name (AstrologicalPoint): Name identifier for the celestial body.
-            planet_id (int): Swiss Ephemeris numerical identifier for the object.
+            planet_id (int): LibEphemeris numerical identifier for the object.
             julian_day (float): Julian Day Number for the calculation moment.
-            iflag (int): Swiss Ephemeris calculation flags (perspective, zodiac, etc.).
+            iflag (int): LibEphemeris calculation flags (perspective, zodiac, etc.).
             houses_degree_ut (List[float]): House cusp degrees for house determination.
             point_type (PointType): Classification of the point type for the object.
             calculated_planets (List[str]): Running list of successfully calculated objects.
@@ -1274,17 +1274,17 @@ class AstrologicalSubjectFactory:
             - Sign, degree, and minute components
 
         Error Handling:
-            If Swiss Ephemeris calculation fails (e.g., for distant asteroids outside
+            If LibEphemeris calculation fails (e.g., for distant asteroids outside
             ephemeris range), the method logs the error and removes the object from
             active_points to prevent cascade failures.
 
         Note:
-            The method uses the Swiss Ephemeris calc_ut function which returns position
+            The method uses the LibEphemeris calc_ut function which returns position
             and velocity data. Retrograde determination is based on the velocity
             component being negative (element index 3).
         """
         try:
-            # Calculate planet position using Swiss Ephemeris (ecliptic coordinates)
+            # Calculate planet position using LibEphemeris (ecliptic coordinates)
             planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
 
             # Get declination from equatorial coordinates
@@ -1324,13 +1324,13 @@ class AstrologicalSubjectFactory:
         Ensure a required point is calculated for Arabic Parts computation.
 
         If the point is not already in the data dictionary, calculates it using
-        the appropriate method (Swiss Ephemeris for planets, houses for Ascendant).
+        the appropriate method (LibEphemeris for planets, houses for Ascendant).
 
         Args:
             point: The point to ensure is calculated
             data: Main calculation data dictionary
             julian_day: Julian Day Number
-            iflag: Swiss Ephemeris calculation flags
+            iflag: LibEphemeris calculation flags
             houses_degree_ut: House cusp degrees
             point_type: Classification of the point type
             active_points: List of active points (may be modified)
@@ -1399,7 +1399,7 @@ class AstrologicalSubjectFactory:
             config: Configuration dict with required points and formula(s)
             data: Main calculation data dictionary
             julian_day: Julian Day Number
-            iflag: Swiss Ephemeris calculation flags
+            iflag: LibEphemeris calculation flags
             houses_degree_ut: House cusp degrees
             point_type: Classification of the point type
             active_points: List of active points (may be modified)
@@ -1689,7 +1689,7 @@ class AstrologicalSubjectFactory:
         # =============================================================================
         if should_calculate("Vertex") or should_calculate("Anti_Vertex"):
             try:
-                # Vertex is at ascmc[3] in Swiss Ephemeris
+                # Vertex is at ascmc[3] in LibEphemeris
                 if data["zodiac_type"] == "Sidereal":
                     _, ascmc = swe.houses_ex(
                         tjdut=data["julian_day"],

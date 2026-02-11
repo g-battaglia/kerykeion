@@ -4,7 +4,7 @@ Planetary Return Factory Module
 
 This module provides the PlanetaryReturnFactory class for calculating and generating
 comprehensive planetary return charts, specifically Solar and Lunar returns. It leverages
-the Swiss Ephemeris library for precise astronomical calculations to determine exact
+the LibEphemeris library for precise astronomical calculations to determine exact
 return moments and create complete astrological chart data.
 
 Key Features:
@@ -29,7 +29,7 @@ Classes:
     PlanetaryReturnFactory: Main factory class for calculating planetary returns
 
 Dependencies:
-    - swisseph: Swiss Ephemeris library for astronomical calculations
+    - swisseph: LibEphemeris library for astronomical calculations
     - kerykeion.AstrologicalSubjectFactory: For creating complete chart data
     - kerykeion.fetch_geonames: For online location data retrieval
     - kerykeion.utilities: For date/time conversions and astronomical functions
@@ -70,7 +70,7 @@ License: AGPL-3.0
 
 import calendar
 import logging
-import swisseph as swe
+import libephemeris as swe
 
 from datetime import datetime, timezone
 from typing import Union
@@ -399,12 +399,12 @@ class PlanetaryReturnFactory:
 
         This method computes the exact moment when the specified planet (Sun or Moon) returns
         to its natal position, starting the search from the provided datetime. It uses precise
-        Swiss Ephemeris calculations to determine the exact return moment and generates a
+        LibEphemeris calculations to determine the exact return moment and generates a
         complete astrological chart for that calculated time.
 
         The calculation process:
         1. Converts the ISO datetime to Julian Day format for astronomical calculations
-        2. Uses Swiss Ephemeris functions (solcross_ut/mooncross_ut) to find the exact
+        2. Uses LibEphemeris functions (solcross_ut/mooncross_ut) to find the exact
            return moment when the planet reaches its natal degree and minute
         3. Creates a complete AstrologicalSubject instance for the calculated return time
         4. Returns a comprehensive PlanetReturnModel with all chart data
@@ -431,7 +431,7 @@ class PlanetaryReturnFactory:
         Raises:
             KerykeionException: If return_type is not "Solar" or "Lunar".
             ValueError: If iso_formatted_time is not a valid ISO datetime format.
-            SwissEphException: If Swiss Ephemeris calculations fail due to invalid
+            SwissEphException: If LibEphemeris calculations fail due to invalid
                 date ranges or astronomical calculation errors.
 
         Examples:

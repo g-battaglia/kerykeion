@@ -47,7 +47,7 @@ classifiers = [
 ]
 requires-python = ">=3.9"
 dependencies = [
-    "pyswisseph>=2.10.3.1",
+    "libephemeris",
     "pydantic>=2.5",
     "scour>=0.38.2",
     "requests-cache>=1.2.1",
@@ -100,7 +100,7 @@ omit = [
     "*/tests/*",
     "*/test_*",
     "*/__pycache__/*",
-    "*/sweph/*",  # Swiss Ephemeris library files
+    "*/sweph/*",  # Ephemeris library files
     "setup.py",
     "**/draw_planets_legacy.py",  # Legacy code, not used
     "kerykeion/charts/draw_planets_legacy.py",  # Legacy code, not used
@@ -272,6 +272,9 @@ reportArgumentType = "none"
 reportInvalidTypeForm = "error"
 reportAttributeAccessIssue = "error"
 reportGeneralTypeIssues = "none"
+
+[tool.uv.sources]
+libephemeris = { path = "../libephemeris" }
 
 [dependency-groups]
 dev = [

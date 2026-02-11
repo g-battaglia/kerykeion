@@ -45,7 +45,7 @@ logger = getLogger(__name__)
 # CONSTANTS AND MAPPINGS
 # =============================================================================
 
-# Mapping of astrological point names to Swiss Ephemeris IDs
+# Mapping of astrological point names to LibEphemeris IDs
 _POINT_NUMBER_MAP: dict[str, int] = {
     "Sun": 0,
     "Moon": 1,
@@ -59,7 +59,7 @@ _POINT_NUMBER_MAP: dict[str, int] = {
     "Pluto": 9,
     "Mean_North_Lunar_Node": 10,
     "True_North_Lunar_Node": 11,
-    # Swiss Ephemeris has no dedicated IDs for the south nodes; we reserve high values.
+    # LibEphemeris has no dedicated IDs for the south nodes; we reserve high values.
     "Mean_South_Lunar_Node": 1000,
     "True_South_Lunar_Node": 1100,
     "Chiron": 15,
@@ -185,7 +185,7 @@ def get_number_from_name(name: AstrologicalPoint) -> int:
         name: The name of the astrological point
 
     Returns:
-        The numerical identifier used in Swiss Ephemeris calculations
+        The numerical identifier used in LibEphemeris calculations
 
     Raises:
         KerykeionException: If the name is not recognized

@@ -13,7 +13,7 @@ class KerykeionSettingsCelestialPointModel(SubscriptableBaseModel):
     Defines the model for a celestial point data.
     """
 
-    id: int = Field(title="Celestial Point ID", description="Celestial Point ID according to Pyswisseph")
+    id: int = Field(title="Celestial Point ID", description="Celestial Point ID according to LibEphemeris")
     name: str = Field(title="Celestial Point Name", description="Celestial Point Name")
     color: str = Field(title="Celestial Point Color", description="Celestial Point Color, used in the chart")
     element_points: int = Field(

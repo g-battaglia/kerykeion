@@ -70,7 +70,7 @@ warnings.filterwarnings('ignore')
 
 # Ensure required optional dependencies are present; otherwise skip gracefully.
 missing_dependencies = []
-for _module in ("pytz", "swisseph"):
+for _module in ("pytz", "libephemeris"):
     try:
         __import__(_module)
     except ModuleNotFoundError:
