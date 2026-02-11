@@ -231,6 +231,8 @@ def ephemeris_context(
         # Defensive cleanup: reset topo if it was set
         if topo_used:
             swe.set_topo(0.0, 0.0, 0.0)
+        # Close all open ephemeris files to release file descriptors
+        swe.close()
 
 
 @dataclass
