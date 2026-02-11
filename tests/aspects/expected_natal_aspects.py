@@ -14,7 +14,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 5,
         "p1_speed": 0.9559924053023249,
         "p2_speed": 0.16596584580576004,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Sun",
@@ -31,7 +31,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 6,
         "p1_speed": 0.9559924053023249,
         "p2_speed": -0.009359637574477029,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Sun",
@@ -48,7 +48,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 12,
         "p1_speed": 0.9559924053023249,
         "p2_speed": 0.008560111211673192,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Sun",
@@ -65,7 +65,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 13,
         "p1_speed": 0.9559924053023249,
         "p2_speed": 360.0,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Sun",
@@ -82,7 +82,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 15,
         "p1_speed": 0.9559924053023249,
         "p2_speed": 360.0,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Moon",
@@ -99,7 +99,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 4,
         "p1_speed": 12.479586115917567,
         "p2_speed": 0.5145625489159472,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Moon",
@@ -116,7 +116,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 7,
         "p1_speed": 12.479586115917567,
         "p2_speed": 0.026752530360140955,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Moon",
@@ -133,7 +133,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 8,
         "p1_speed": 12.479586115917567,
         "p2_speed": -0.021301223785134694,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Moon",
@@ -150,7 +150,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 9,
         "p1_speed": 12.479586115917567,
         "p2_speed": 0.009451475288210793,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Moon",
@@ -167,7 +167,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 17,
         "p1_speed": 12.479586115917567,
         "p2_speed": 0.11203086945587216,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mercury",
@@ -184,7 +184,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 3,
         "p1_speed": 0.6816938240934752,
         "p2_speed": 1.212888796600044,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mercury",
@@ -201,7 +201,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 6,
         "p1_speed": 0.6816938240934752,
         "p2_speed": -0.009359637574477029,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mercury",
@@ -218,7 +218,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 11,
         "p1_speed": 0.6816938240934752,
         "p2_speed": -0.02305819354506586,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mercury",
@@ -235,7 +235,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 13,
         "p1_speed": 0.6816938240934752,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Mercury",
@@ -252,7 +252,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 15,
         "p1_speed": 0.6816938240934752,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Mercury",
@@ -269,7 +269,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 19,
         "p1_speed": 0.6816938240934752,
         "p2_speed": 0.02305819354506586,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Venus",
@@ -286,7 +286,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 6,
         "p1_speed": 1.212888796600044,
         "p2_speed": -0.009359637574477029,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Venus",
@@ -303,7 +303,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 11,
         "p1_speed": 1.212888796600044,
         "p2_speed": -0.02305819354506586,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Venus",
@@ -320,7 +320,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 13,
         "p1_speed": 1.212888796600044,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Venus",
@@ -337,7 +337,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 15,
         "p1_speed": 1.212888796600044,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Venus",
@@ -354,7 +354,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 19,
         "p1_speed": 1.212888796600044,
         "p2_speed": 0.02305819354506586,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mars",
@@ -371,7 +371,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 6,
         "p1_speed": 0.5145625489159472,
         "p2_speed": -0.009359637574477029,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mars",
@@ -388,7 +388,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 7,
         "p1_speed": 0.5145625489159472,
         "p2_speed": 0.026752530360140955,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mars",
@@ -405,7 +405,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 9,
         "p1_speed": 0.5145625489159472,
         "p2_speed": 0.009451475288210793,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Mars",
@@ -422,7 +422,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 14,
         "p1_speed": 0.5145625489159472,
         "p2_speed": 360.0,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mars",
@@ -439,7 +439,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 16,
         "p1_speed": 0.5145625489159472,
         "p2_speed": 360.0,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mars",
@@ -456,7 +456,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 17,
         "p1_speed": 0.5145625489159472,
         "p2_speed": 0.11203086945587216,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Jupiter",
@@ -473,7 +473,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 14,
         "p1_speed": 0.16596584580576004,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Jupiter",
@@ -490,7 +490,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 15,
         "p1_speed": 0.16596584580576004,
         "p2_speed": 360.0,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Saturn",
@@ -507,7 +507,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 7,
         "p1_speed": -0.009359637574477029,
         "p2_speed": 0.026752530360140955,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Saturn",
@@ -524,7 +524,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 13,
         "p1_speed": -0.009359637574477029,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Saturn",
@@ -541,7 +541,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 15,
         "p1_speed": -0.009359637574477029,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Uranus",
@@ -558,7 +558,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 8,
         "p1_speed": 0.026752530360140955,
         "p2_speed": -0.021301223785134694,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Uranus",
@@ -575,7 +575,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 9,
         "p1_speed": 0.026752530360140955,
         "p2_speed": 0.009451475288210793,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Uranus",
@@ -592,7 +592,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 17,
         "p1_speed": 0.026752530360140955,
         "p2_speed": 0.11203086945587216,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Neptune",
@@ -609,7 +609,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 9,
         "p1_speed": -0.021301223785134694,
         "p2_speed": 0.009451475288210793,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Neptune",
@@ -626,7 +626,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 11,
         "p1_speed": -0.021301223785134694,
         "p2_speed": -0.02305819354506586,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Neptune",
@@ -643,7 +643,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 12,
         "p1_speed": -0.021301223785134694,
         "p2_speed": 0.008560111211673192,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Neptune",
@@ -660,7 +660,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 17,
         "p1_speed": -0.021301223785134694,
         "p2_speed": 0.11203086945587216,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Pluto",
@@ -677,7 +677,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 12,
         "p1_speed": 0.009451475288210793,
         "p2_speed": 0.008560111211673192,
-        "aspect_movement": "Static"
+        "aspect_movement": "Static",
     },
     {
         "p1_name": "Pluto",
@@ -694,7 +694,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 14,
         "p1_speed": 0.009451475288210793,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Pluto",
@@ -711,7 +711,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 16,
         "p1_speed": 0.009451475288210793,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Pluto",
@@ -728,7 +728,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 17,
         "p1_speed": 0.009451475288210793,
         "p2_speed": 0.11203086945587216,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "True_North_Lunar_Node",
@@ -745,7 +745,7 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 12,
         "p1_speed": -0.02305819354506586,
         "p2_speed": 0.008560111211673192,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Chiron",
@@ -762,8 +762,8 @@ EXPECTED_ALL_ASPECTS = [
         "p2": 19,
         "p1_speed": 0.008560111211673192,
         "p2_speed": 0.02305819354506586,
-        "aspect_movement": "Separating"
-    }
+        "aspect_movement": "Separating",
+    },
 ]
 
 EXPECTED_RELEVANT_ASPECTS = [
@@ -782,7 +782,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 5,
         "p1_speed": 0.9559924053023249,
         "p2_speed": 0.16596584580576004,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Sun",
@@ -799,7 +799,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 6,
         "p1_speed": 0.9559924053023249,
         "p2_speed": -0.009359637574477029,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Sun",
@@ -816,7 +816,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 12,
         "p1_speed": 0.9559924053023249,
         "p2_speed": 0.008560111211673192,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Sun",
@@ -833,7 +833,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 13,
         "p1_speed": 0.9559924053023249,
         "p2_speed": 360.0,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Sun",
@@ -850,7 +850,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 15,
         "p1_speed": 0.9559924053023249,
         "p2_speed": 360.0,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Moon",
@@ -867,7 +867,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 4,
         "p1_speed": 12.479586115917567,
         "p2_speed": 0.5145625489159472,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Moon",
@@ -884,7 +884,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 7,
         "p1_speed": 12.479586115917567,
         "p2_speed": 0.026752530360140955,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Moon",
@@ -901,7 +901,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 8,
         "p1_speed": 12.479586115917567,
         "p2_speed": -0.021301223785134694,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Moon",
@@ -918,7 +918,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 9,
         "p1_speed": 12.479586115917567,
         "p2_speed": 0.009451475288210793,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Moon",
@@ -935,7 +935,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 17,
         "p1_speed": 12.479586115917567,
         "p2_speed": 0.11203086945587216,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mercury",
@@ -952,7 +952,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 3,
         "p1_speed": 0.6816938240934752,
         "p2_speed": 1.212888796600044,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mercury",
@@ -969,7 +969,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 6,
         "p1_speed": 0.6816938240934752,
         "p2_speed": -0.009359637574477029,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mercury",
@@ -986,7 +986,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 11,
         "p1_speed": 0.6816938240934752,
         "p2_speed": -0.02305819354506586,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mercury",
@@ -1003,7 +1003,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 13,
         "p1_speed": 0.6816938240934752,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Mercury",
@@ -1020,7 +1020,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 15,
         "p1_speed": 0.6816938240934752,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Mercury",
@@ -1037,7 +1037,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 19,
         "p1_speed": 0.6816938240934752,
         "p2_speed": 0.02305819354506586,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Venus",
@@ -1054,7 +1054,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 6,
         "p1_speed": 1.212888796600044,
         "p2_speed": -0.009359637574477029,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Venus",
@@ -1071,7 +1071,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 11,
         "p1_speed": 1.212888796600044,
         "p2_speed": -0.02305819354506586,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Venus",
@@ -1088,7 +1088,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 13,
         "p1_speed": 1.212888796600044,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Venus",
@@ -1105,7 +1105,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 15,
         "p1_speed": 1.212888796600044,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Venus",
@@ -1122,7 +1122,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 19,
         "p1_speed": 1.212888796600044,
         "p2_speed": 0.02305819354506586,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mars",
@@ -1139,7 +1139,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 6,
         "p1_speed": 0.5145625489159472,
         "p2_speed": -0.009359637574477029,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mars",
@@ -1156,7 +1156,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 7,
         "p1_speed": 0.5145625489159472,
         "p2_speed": 0.026752530360140955,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mars",
@@ -1173,7 +1173,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 9,
         "p1_speed": 0.5145625489159472,
         "p2_speed": 0.009451475288210793,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Mars",
@@ -1190,7 +1190,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 14,
         "p1_speed": 0.5145625489159472,
         "p2_speed": 360.0,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mars",
@@ -1207,7 +1207,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 16,
         "p1_speed": 0.5145625489159472,
         "p2_speed": 360.0,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Mars",
@@ -1224,7 +1224,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 17,
         "p1_speed": 0.5145625489159472,
         "p2_speed": 0.11203086945587216,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Jupiter",
@@ -1241,7 +1241,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 14,
         "p1_speed": 0.16596584580576004,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Jupiter",
@@ -1258,7 +1258,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 15,
         "p1_speed": 0.16596584580576004,
         "p2_speed": 360.0,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Saturn",
@@ -1275,7 +1275,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 7,
         "p1_speed": -0.009359637574477029,
         "p2_speed": 0.026752530360140955,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Saturn",
@@ -1292,7 +1292,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 13,
         "p1_speed": -0.009359637574477029,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Saturn",
@@ -1309,7 +1309,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 15,
         "p1_speed": -0.009359637574477029,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Uranus",
@@ -1326,7 +1326,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 8,
         "p1_speed": 0.026752530360140955,
         "p2_speed": -0.021301223785134694,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Uranus",
@@ -1343,7 +1343,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 9,
         "p1_speed": 0.026752530360140955,
         "p2_speed": 0.009451475288210793,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Uranus",
@@ -1360,7 +1360,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 17,
         "p1_speed": 0.026752530360140955,
         "p2_speed": 0.11203086945587216,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Neptune",
@@ -1377,7 +1377,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 9,
         "p1_speed": -0.021301223785134694,
         "p2_speed": 0.009451475288210793,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Neptune",
@@ -1394,7 +1394,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 11,
         "p1_speed": -0.021301223785134694,
         "p2_speed": -0.02305819354506586,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Neptune",
@@ -1411,7 +1411,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 12,
         "p1_speed": -0.021301223785134694,
         "p2_speed": 0.008560111211673192,
-        "aspect_movement": "Separating"
+        "aspect_movement": "Separating",
     },
     {
         "p1_name": "Neptune",
@@ -1428,7 +1428,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 17,
         "p1_speed": -0.021301223785134694,
         "p2_speed": 0.11203086945587216,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Pluto",
@@ -1445,7 +1445,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 12,
         "p1_speed": 0.009451475288210793,
         "p2_speed": 0.008560111211673192,
-        "aspect_movement": "Static"
+        "aspect_movement": "Static",
     },
     {
         "p1_name": "Pluto",
@@ -1462,7 +1462,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 14,
         "p1_speed": 0.009451475288210793,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Pluto",
@@ -1479,7 +1479,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 16,
         "p1_speed": 0.009451475288210793,
         "p2_speed": 360.0,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Pluto",
@@ -1496,7 +1496,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 17,
         "p1_speed": 0.009451475288210793,
         "p2_speed": 0.11203086945587216,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "True_North_Lunar_Node",
@@ -1513,7 +1513,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 12,
         "p1_speed": -0.02305819354506586,
         "p2_speed": 0.008560111211673192,
-        "aspect_movement": "Applying"
+        "aspect_movement": "Applying",
     },
     {
         "p1_name": "Chiron",
@@ -1530,6 +1530,6 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p2": 19,
         "p1_speed": 0.008560111211673192,
         "p2_speed": 0.02305819354506586,
-        "aspect_movement": "Separating"
-    }
+        "aspect_movement": "Separating",
+    },
 ]
