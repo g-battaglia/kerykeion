@@ -207,7 +207,7 @@ cmd = "python scripts/regenerate_test_charts_extended.py"
 help = "Regenerate extended test SVG charts (strawberry theme, combinations)"
 
 [tool.poe.tasks."regenerate:all"]
-sequence = ["regenerate:charts", "regenerate:charts-extended", "regenerate:aspects", "regenerate:subjects", "regenerate:synastry-aspects", "regenerate:synastry", "regenerate:output"]
+sequence = ["regenerate:unified", "regenerate:charts-extended", "regenerate:aspects", "regenerate:synastry-aspects", "regenerate:synastry", "regenerate:output"]
 help = "Regenerate all test fixtures"
 
 [tool.poe.tasks."regenerate:unified"]
