@@ -1,0 +1,315 @@
+=========================================
+Ancient Rome Subject — Natal Chart Report
+=========================================
+
++Natal — Birth Data--+---------------------------+
+| Field              | Value                     |
++--------------------+---------------------------+
+| Name               | Ancient Rome Subject      |
+| Date               | 01/01/100                 |
+| Time               | 12:00                     |
+| City               | Greenwich                 |
+| Nation             | GB                        |
+| Latitude           | 41.9028°                  |
+| Longitude          | 12.4964°                  |
+| Timezone           | Europe/Rome               |
+| Day of Week        | Friday                    |
+| ISO Local Datetime | 0100-01-01T12:00:00+00:50 |
++--------------------+---------------------------+
+
++Natal — Settings-----+---------------------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Julian Day          | 1757584.965278      |
+| Active Points Count | 29                  |
++---------------------+---------------------+
+
++Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
+| Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+| Ascendant             | Ari ♈️ | 19.16°   | +360.0000°/d | N/A     | -    | First House    |
+| Medium Coeli          | Cap ♑️ | 9.91°    | +360.0000°/d | N/A     | -    | Tenth House    |
+| Descendant            | Lib ♎️ | 19.16°   | +360.0000°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Can ♋️ | 9.91°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Sun                   | Cap ♑️ | 11.83°   | +1.0160°/d   | -23.15° | -    | Tenth House    |
+| Moon                  | Aqu ♒️ | 28.43°   | +11.9741°/d  | -11.85° | -    | Eleventh House |
+| Mercury               | Cap ♑️ | 22.77°   | +1.7455°/d   | -23.46° | -    | Tenth House    |
+| Venus                 | Aqu ♒️ | 20.96°   | +1.1971°/d   | -15.95° | -    | Eleventh House |
+| Mars                  | Cap ♑️ | 2.15°    | +0.7810°/d   | -24.52° | -    | Ninth House    |
+| Jupiter               | Cap ♑️ | 29.20°   | +0.2347°/d   | -21.29° | -    | Tenth House    |
+| Saturn                | Sco ♏️ | 2.54°    | +0.0643°/d   | -10.30° | -    | Seventh House  |
+| Uranus                | Gem ♊️ | 0.33°    | -0.0290°/d   | +20.40° | R    | Second House   |
+| Neptune               | Gem ♊️ | 26.83°   | -0.0272°/d   | +22.84° | R    | Third House    |
+| Pluto                 | Pis ♓️ | 15.41°   | +0.0124°/d   | -21.30° | -    | Twelfth House  |
+| Mean North Lunar Node | Vir ♍️ | 3.57°    | -0.0530°/d   | +10.30° | R    | Sixth House    |
+| True North Lunar Node | Vir ♍️ | 1.89°    | -0.0080°/d   | +10.91° | R    | Fifth House    |
+| Mean South Lunar Node | Pis ♓️ | 3.57°    | +0.0530°/d   | -10.30° | R    | Twelfth House  |
+| True South Lunar Node | Pis ♓️ | 1.89°    | +0.0080°/d   | -10.91° | R    | Eleventh House |
+| Mean Lilith           | Pis ♓️ | 20.08°   | +0.1109°/d   | -5.31°  | -    | Twelfth House  |
+| True Lilith           | Pis ♓️ | 25.69°   | -1.5063°/d   | -3.64°  | R    | Twelfth House  |
+| Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Twelfth House  |
+| Regulus               | Leo ♌️ | 3.52°    | +0.0001°/d   | +19.94° | -    | Fifth House    |
+| Spica                 | Vir ♍️ | 27.43°   | +0.0001°/d   | -0.73°  | -    | Sixth House    |
+| Pars Fortunae         | Pis ♓️ | 2.56°    | N/A          | N/A     | -    | Twelfth House  |
+| Pars Spiritus         | Gem ♊️ | 5.76°    | N/A          | N/A     | -    | Second House   |
+| Pars Amoris           | Tau ♉️ | 28.29°   | N/A          | N/A     | -    | Second House   |
+| Pars Fidei            | Can ♋️ | 15.81°   | N/A          | N/A     | -    | Fourth House   |
+| Vertex                | Lib ♎️ | 7.92°    | N/A          | N/A     | -    | Sixth House    |
+| Anti Vertex           | Ari ♈️ | 7.92°    | N/A          | N/A     | -    | Twelfth House  |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+
++Natal Houses (Placidus)---+----------+-------------------+
+| House          | Sign    | Position | Absolute Position |
++----------------+---------+----------+-------------------+
+| First House    | Ari ♈️ | 19.16°   | 19.16°            |
+| Second House   | Tau ♉️ | 25.40°   | 55.40°            |
+| Third House    | Gem ♊️ | 19.31°   | 79.31°            |
+| Fourth House   | Can ♋️ | 9.91°    | 99.91°            |
+| Fifth House    | Leo ♌️ | 2.18°    | 122.18°           |
+| Sixth House    | Vir ♍️ | 2.20°    | 152.20°           |
+| Seventh House  | Lib ♎️ | 19.16°   | 199.16°           |
+| Eighth House   | Sco ♏️ | 25.40°   | 235.40°           |
+| Ninth House    | Sag ♐️ | 19.31°   | 259.31°           |
+| Tenth House    | Cap ♑️ | 9.91°    | 279.91°           |
+| Eleventh House | Aqu ♒️ | 2.18°    | 302.18°           |
+| Twelfth House  | Pis ♓️ | 2.20°    | 332.20°           |
++----------------+---------+----------+-------------------+
+
++Lunar Phase--------------+--------------------+
+| Lunar Phase Information | Value              |
++-------------------------+--------------------+
+| Phase Name              | Waxing Crescent 🌒 |
+| Sun-Moon Angle          | 46.60°             |
+| Lunation Day            | 4                  |
++-------------------------+--------------------+
+
++Element Distribution-----------+------------+
+| Element  | Count              | Percentage |
++----------+--------------------+------------+
+| Fire 🔥  | 3.3                | 12.5%      |
+| Earth 🌍 | 9.299999999999999  | 35.1%      |
+| Air 💨   | 7.5                | 28.3%      |
+| Water 💧 | 6.3999999999999995 | 24.2%      |
+| Total    | 26.499999999999996 | 100%       |
++----------+--------------------+------------+
+
++Quality Distribution-----------+------------+
+| Quality  | Count              | Percentage |
++----------+--------------------+------------+
+| Cardinal | 15.000000000000002 | 56.6%      |
+| Fixed    | 5.3                | 20.0%      |
+| Mutable  | 6.2                | 23.4%      |
+| Total    | 26.5               | 100%       |
++----------+--------------------+------------+
+
++Active Celestial Points-----+
+| #  | Active Point          |
++----+-----------------------+
+| 1  | Sun                   |
+| 2  | Moon                  |
+| 3  | Mercury               |
+| 4  | Venus                 |
+| 5  | Mars                  |
+| 6  | Jupiter               |
+| 7  | Saturn                |
+| 8  | Uranus                |
+| 9  | Neptune               |
+| 10 | Pluto                 |
+| 11 | Mean_North_Lunar_Node |
+| 12 | Mean_South_Lunar_Node |
+| 13 | True_North_Lunar_Node |
+| 14 | True_South_Lunar_Node |
+| 15 | Mean_Lilith           |
+| 16 | True_Lilith           |
+| 17 | Earth                 |
+| 18 | Regulus               |
+| 19 | Spica                 |
+| 20 | Pars_Fortunae         |
+| 21 | Pars_Spiritus         |
+| 22 | Pars_Amoris           |
+| 23 | Pars_Fidei            |
+| 24 | Vertex                |
+| 25 | Anti_Vertex           |
+| 26 | Ascendant             |
+| 27 | Medium_Coeli          |
+| 28 | Descendant            |
+| 29 | Imum_Coeli            |
++----+-----------------------+
+
++----------------+---------+
+| Aspect         | Orb (°) |
++----------------+---------+
+| conjunction    | 10      |
+| opposition     | 10      |
+| trine          | 8       |
+| sextile        | 6       |
+| square         | 5       |
+| quintile       | 1       |
+| semi-sextile   | 1       |
+| semi-square    | 1       |
+| sesquiquadrate | 1       |
+| biquintile     | 1       |
+| quincunx       | 1       |
++----------------+---------+
+
++Aspects----------------+-------------------------------+-----------------------+-------+--------------+
+| Point 1               | Aspect                        | Point 2               | Orb   | Movement     |
++-----------------------+-------------------------------+-----------------------+-------+--------------+
+| Sun                   | conjunction ☌                 | Mars                  | 9.68° | Separating ← |
+| Sun                   | sextile ⚹                     | Pluto                 | 3.58° | Applying →   |
+| Sun                   | conjunction ☌                 | Medium Coeli          | 1.92° | Applying →   |
+| Sun                   | opposition ☍                  | Imum Coeli            | 1.92° | Applying →   |
+| Sun                   | biquintile biquintile         | Pars Spiritus         | 0.07° | Separating ← |
+| Sun                   | opposition ☍                  | Pars Fidei            | 3.98° | Applying →   |
+| Sun                   | square □                      | Vertex                | 3.91° | Separating ← |
+| Sun                   | square □                      | Anti Vertex           | 3.91° | Separating ← |
+| Moon                  | conjunction ☌                 | Venus                 | 7.47° | Separating ← |
+| Moon                  | sextile ⚹                     | Mars                  | 3.72° | Applying →   |
+| Moon                  | semi-sextile semi-sextile     | Jupiter               | 0.77° | Applying →   |
+| Moon                  | trine △                       | Saturn                | 4.12° | Applying →   |
+| Moon                  | square □                      | Uranus                | 1.91° | Applying →   |
+| Moon                  | trine △                       | Neptune               | 1.59° | Separating ← |
+| Moon                  | opposition ☍                  | Mean North Lunar Node | 5.14° | Applying →   |
+| Moon                  | opposition ☍                  | True North Lunar Node | 3.46° | Applying →   |
+| Moon                  | conjunction ☌                 | Mean South Lunar Node | 5.14° | Applying →   |
+| Moon                  | conjunction ☌                 | True South Lunar Node | 3.46° | Applying →   |
+| Moon                  | quincunx ⚻                    | Spica                 | 1.00° | Separating ← |
+| Moon                  | conjunction ☌                 | Pars Fortunae         | 4.13° | Applying →   |
+| Moon                  | square □                      | Pars Amoris           | 0.14° | Separating ← |
+| Mercury               | conjunction ☌                 | Jupiter               | 6.43° | Applying →   |
+| Mercury               | trine △                       | Uranus                | 7.57° | Applying →   |
+| Mercury               | square □                      | Ascendant             | 3.61° | Applying →   |
+| Mercury               | square □                      | Descendant            | 3.61° | Applying →   |
+| Mercury               | sextile ⚹                     | Mean Lilith           | 2.69° | Separating ← |
+| Mercury               | sextile ⚹                     | True Lilith           | 2.92° | Applying →   |
+| Mercury               | trine △                       | Spica                 | 4.66° | Applying →   |
+| Mercury               | trine △                       | Pars Amoris           | 5.52° | Applying →   |
+| Mercury               | opposition ☍                  | Pars Fidei            | 6.96° | Separating ← |
+| Venus                 | trine △                       | Neptune               | 5.87° | Applying →   |
+| Venus                 | sextile ⚹                     | Ascendant             | 1.80° | Applying →   |
+| Venus                 | trine △                       | Descendant            | 1.80° | Applying →   |
+| Venus                 | semi-sextile semi-sextile     | Mean Lilith           | 0.88° | Separating ← |
+| Venus                 | biquintile biquintile         | Spica                 | 0.47° | Applying →   |
+| Venus                 | biquintile biquintile         | Pars Fidei            | 0.85° | Applying →   |
+| Mars                  | sextile ⚹                     | Saturn                | 0.39° | Applying →   |
+| Mars                  | opposition ☍                  | Neptune               | 5.32° | Separating ← |
+| Mars                  | trine △                       | Mean North Lunar Node | 1.41° | Applying →   |
+| Mars                  | trine △                       | True North Lunar Node | 0.26° | Separating ← |
+| Mars                  | conjunction ☌                 | Medium Coeli          | 7.75° | Separating ← |
+| Mars                  | quintile Q                    | Descendant            | 0.99° | Applying →   |
+| Mars                  | opposition ☍                  | Imum Coeli            | 7.75° | Separating ← |
+| Mars                  | sextile ⚹                     | Mean South Lunar Node | 1.41° | Applying →   |
+| Mars                  | sextile ⚹                     | True South Lunar Node | 0.26° | Separating ← |
+| Mars                  | square □                      | Earth                 | 2.15° | Separating ← |
+| Mars                  | square □                      | Spica                 | 4.72° | Separating ← |
+| Mars                  | sextile ⚹                     | Pars Fortunae         | 0.41° | Applying →   |
+| Jupiter               | square □                      | Saturn                | 3.35° | Applying →   |
+| Jupiter               | trine △                       | Uranus                | 1.14° | Applying →   |
+| Jupiter               | sextile ⚹                     | True Lilith           | 3.51° | Separating ← |
+| Jupiter               | sextile ⚹                     | Earth                 | 0.80° | Applying →   |
+| Jupiter               | opposition ☍                  | Regulus               | 4.33° | Applying →   |
+| Jupiter               | trine △                       | Spica                 | 1.76° | Separating ← |
+| Jupiter               | trine △                       | Pars Spiritus         | 6.56° | Applying →   |
+| Jupiter               | trine △                       | Pars Amoris           | 0.91° | Separating ← |
+| Saturn                | trine △                       | Neptune               | 5.71° | Separating ← |
+| Saturn                | sextile ⚹                     | Mean North Lunar Node | 1.02° | Applying →   |
+| Saturn                | sextile ⚹                     | True North Lunar Node | 0.65° | Separating ← |
+| Saturn                | trine △                       | Imum Coeli            | 7.36° | Separating ← |
+| Saturn                | trine △                       | Mean South Lunar Node | 1.02° | Applying →   |
+| Saturn                | trine △                       | True South Lunar Node | 0.65° | Separating ← |
+| Saturn                | biquintile biquintile         | True Lilith           | 0.85° | Separating ← |
+| Saturn                | square □                      | Regulus               | 0.98° | Applying →   |
+| Saturn                | trine △                       | Pars Fortunae         | 0.02° | Applying →   |
+| Uranus                | square □                      | Mean North Lunar Node | 3.23° | Applying →   |
+| Uranus                | square □                      | True North Lunar Node | 1.56° | Separating ← |
+| Uranus                | square □                      | Mean South Lunar Node | 3.23° | Separating ← |
+| Uranus                | square □                      | True South Lunar Node | 1.56° | Separating ← |
+| Uranus                | sextile ⚹                     | True Lilith           | 4.64° | Separating ← |
+| Uranus                | sextile ⚹                     | Earth                 | 0.33° | Applying →   |
+| Uranus                | sextile ⚹                     | Regulus               | 3.19° | Separating ← |
+| Uranus                | trine △                       | Spica                 | 2.90° | Applying →   |
+| Uranus                | square □                      | Pars Fortunae         | 2.23° | Separating ← |
+| Uranus                | conjunction ☌                 | Pars Spiritus         | 5.42° | Separating ← |
+| Uranus                | conjunction ☌                 | Pars Amoris           | 2.04° | Applying →   |
+| Uranus                | semi-square semi-square       | Pars Fidei            | 0.48° | Separating ← |
+| Uranus                | trine △                       | Vertex                | 7.58° | Separating ← |
+| Neptune               | sextile ⚹                     | True North Lunar Node | 5.06° | Separating ← |
+| Neptune               | trine △                       | Descendant            | 7.67° | Applying →   |
+| Neptune               | trine △                       | Mean South Lunar Node | 6.73° | Separating ← |
+| Neptune               | trine △                       | True South Lunar Node | 5.06° | Separating ← |
+| Neptune               | square □                      | True Lilith           | 1.14° | Separating ← |
+| Neptune               | square □                      | Earth                 | 3.17° | Separating ← |
+| Neptune               | square □                      | Spica                 | 0.60° | Separating ← |
+| Neptune               | trine △                       | Pars Fortunae         | 5.73° | Separating ← |
+| Pluto                 | sextile ⚹                     | Medium Coeli          | 5.50° | Applying →   |
+| Pluto                 | trine △                       | Imum Coeli            | 5.50° | Applying →   |
+| Pluto                 | conjunction ☌                 | Mean Lilith           | 4.67° | Separating ← |
+| Pluto                 | quintile Q                    | Pars Amoris           | 0.88° | Applying →   |
+| Pluto                 | trine △                       | Pars Fidei            | 0.40° | Applying →   |
+| Mean North Lunar Node | conjunction ☌                 | True North Lunar Node | 1.68° | Applying →   |
+| Mean North Lunar Node | sesquiquadrate sesquiquadrate | Ascendant             | 0.59° | Separating ← |
+| Mean North Lunar Node | trine △                       | Medium Coeli          | 6.34° | Separating ← |
+| Mean North Lunar Node | semi-square semi-square       | Descendant            | 0.59° | Separating ← |
+| Mean North Lunar Node | opposition ☍                  | True South Lunar Node | 1.68° | Applying →   |
+| Mean North Lunar Node | semi-sextile semi-sextile     | Regulus               | 0.04° | Applying →   |
+| Mean North Lunar Node | opposition ☍                  | Pars Fortunae         | 1.01° | Applying →   |
+| Mean North Lunar Node | square □                      | Pars Spiritus         | 2.19° | Separating ← |
+| True North Lunar Node | opposition ☍                  | Mean South Lunar Node | 1.68° | Separating ← |
+| True North Lunar Node | opposition ☍                  | Pars Fortunae         | 0.67° | Separating ← |
+| True North Lunar Node | square □                      | Pars Spiritus         | 3.87° | Separating ← |
+| True North Lunar Node | square □                      | Pars Amoris           | 3.60° | Applying →   |
+| True North Lunar Node | biquintile biquintile         | Anti Vertex           | 0.03° | Separating ← |
+| Ascendant             | semi-sextile semi-sextile     | Mean Lilith           | 0.92° | Applying →   |
+| Ascendant             | semi-square semi-square       | Mean South Lunar Node | 0.59° | Separating ← |
+| Ascendant             | square □                      | Pars Fidei            | 3.35° | Separating ← |
+| Medium Coeli          | opposition ☍                  | Pars Fidei            | 5.90° | Applying →   |
+| Medium Coeli          | square □                      | Vertex                | 1.99° | Separating ← |
+| Medium Coeli          | square □                      | Anti Vertex           | 1.99° | Separating ← |
+| Descendant            | quincunx ⚻                    | Mean Lilith           | 0.92° | Applying →   |
+| Descendant            | sesquiquadrate sesquiquadrate | Mean South Lunar Node | 0.59° | Separating ← |
+| Descendant            | square □                      | Pars Fidei            | 3.35° | Separating ← |
+| Imum Coeli            | trine △                       | Mean South Lunar Node | 6.34° | Separating ← |
+| Imum Coeli            | trine △                       | Pars Fortunae         | 7.35° | Separating ← |
+| Imum Coeli            | conjunction ☌                 | Pars Fidei            | 5.90° | Applying →   |
+| Imum Coeli            | square □                      | Vertex                | 1.99° | Separating ← |
+| Imum Coeli            | square □                      | Anti Vertex           | 1.99° | Separating ← |
+| Mean Lilith           | conjunction ☌                 | True Lilith           | 5.61° | Applying →   |
+| Mean Lilith           | conjunction ☌                 | Earth                 | 9.92° | Applying →   |
+| Mean Lilith           | opposition ☍                  | Spica                 | 7.36° | Applying →   |
+| Mean Lilith           | trine △                       | Pars Fidei            | 4.26° | Separating ← |
+| Mean South Lunar Node | conjunction ☌                 | True South Lunar Node | 1.68° | Separating ← |
+| Mean South Lunar Node | quincunx ⚻                    | Regulus               | 0.04° | Separating ← |
+| Mean South Lunar Node | conjunction ☌                 | Pars Fortunae         | 1.01° | Separating ← |
+| Mean South Lunar Node | square □                      | Pars Spiritus         | 2.19° | Applying →   |
+| True South Lunar Node | conjunction ☌                 | Pars Fortunae         | 0.67° | Applying →   |
+| True South Lunar Node | square □                      | Pars Spiritus         | 3.87° | Applying →   |
+| True South Lunar Node | square □                      | Pars Amoris           | 3.60° | Separating ← |
+| True South Lunar Node | biquintile biquintile         | Vertex                | 0.03° | Applying →   |
+| True Lilith           | conjunction ☌                 | Earth                 | 4.31° | Separating ← |
+| True Lilith           | trine △                       | Regulus               | 7.83° | Separating ← |
+| True Lilith           | opposition ☍                  | Spica                 | 1.74° | Separating ← |
+| True Lilith           | sextile ⚹                     | Pars Amoris           | 2.60° | Separating ← |
+| Earth                 | trine △                       | Regulus               | 3.52° | Static =     |
+| Earth                 | opposition ☍                  | Spica                 | 2.57° | Static =     |
+| Earth                 | sextile ⚹                     | Pars Spiritus         | 5.76° | Static =     |
+| Earth                 | sextile ⚹                     | Pars Amoris           | 1.71° | Static =     |
+| Earth                 | opposition ☍                  | Vertex                | 7.92° | Static =     |
+| Earth                 | conjunction ☌                 | Anti Vertex           | 7.92° | Static =     |
+| Regulus               | quincunx ⚻                    | Pars Fortunae         | 0.97° | Static =     |
+| Regulus               | sextile ⚹                     | Pars Spiritus         | 2.23° | Static =     |
+| Regulus               | sextile ⚹                     | Pars Amoris           | 5.23° | Static =     |
+| Regulus               | sextile ⚹                     | Vertex                | 4.39° | Static =     |
+| Regulus               | trine △                       | Anti Vertex           | 4.39° | Static =     |
+| Spica                 | trine △                       | Pars Amoris           | 0.86° | Static =     |
+| Spica                 | quintile Q                    | Pars Fidei            | 0.38° | Static =     |
+| Pars Fortunae         | square □                      | Pars Spiritus         | 3.20° | Static =     |
+| Pars Fortunae         | square □                      | Pars Amoris           | 4.27° | Static =     |
+| Pars Fortunae         | biquintile biquintile         | Vertex                | 0.64° | Static =     |
+| Pars Spiritus         | conjunction ☌                 | Pars Amoris           | 7.47° | Static =     |
+| Pars Spiritus         | trine △                       | Vertex                | 2.16° | Static =     |
+| Pars Spiritus         | sextile ⚹                     | Anti Vertex           | 2.16° | Static =     |
+| Vertex                | opposition ☍                  | Anti Vertex           | 0.00° | Static =     |
++-----------------------+-------------------------------+-----------------------+-------+--------------+

@@ -1,0 +1,262 @@
+=================================================
+Sample Natal Subject & Yoko Ono — Synastry Report
+=================================================
+
++First Subject — Birth Data----------------------+
+| Field              | Value                     |
++--------------------+---------------------------+
+| Name               | Sample Natal Subject      |
+| Date               | 21/07/1990                |
+| Time               | 14:45                     |
+| City               | Liverpool                 |
+| Nation             | GB                        |
+| Latitude           | 53.4084°                  |
+| Longitude          | -2.9916°                  |
+| Timezone           | Europe/London             |
+| Day of Week        | Saturday                  |
+| ISO Local Datetime | 1990-07-21T14:45:00+01:00 |
++--------------------+---------------------------+
+
++First Subject — Settings-------------------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Julian Day          | 2448094.072917      |
+| Active Points Count | 9                   |
++---------------------+---------------------+
+
++Second Subject — Birth Data---------------------+
+| Field              | Value                     |
++--------------------+---------------------------+
+| Name               | Yoko Ono                  |
+| Date               | 18/02/1933                |
+| Time               | 20:30                     |
+| City               | Tokyo                     |
+| Nation             | JP                        |
+| Latitude           | 35.6762°                  |
+| Longitude          | 139.6503°                 |
+| Timezone           | Asia/Tokyo                |
+| Day of Week        | Saturday                  |
+| ISO Local Datetime | 1933-02-18T20:30:00+09:00 |
++--------------------+---------------------------+
+
++Second Subject — Settings------------------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Julian Day          | 2427121.979167      |
+| Active Points Count | 9                   |
++---------------------+---------------------+
+
++First Subject Celestial Points---+----------+-------------+---------+------+---------------+
+| Point                 | Sign    | Position | Speed       | Decl.   | Ret. | House         |
++-----------------------+---------+----------+-------------+---------+------+---------------+
+| Sun                   | Can ♋️ | 28.54°   | +0.9551°/d  | +20.45° | -    | Ninth House   |
+| Moon                  | Can ♋️ | 21.21°   | +14.4024°/d | +23.21° | -    | Ninth House   |
+| Mercury               | Leo ♌️ | 17.61°   | +1.6910°/d  | +16.88° | -    | Ninth House   |
+| Venus                 | Can ♋️ | 1.71°    | +1.2038°/d  | +22.74° | -    | Eighth House  |
+| Mars                  | Tau ♉️ | 5.97°    | +0.6554°/d  | +11.57° | -    | Seventh House |
+| Jupiter               | Can ♋️ | 23.91°   | +0.2240°/d  | +21.56° | -    | Ninth House   |
+| Saturn                | Cap ♑️ | 21.52°   | -0.0732°/d  | -21.66° | R    | Third House   |
+| True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0090°/d  | -18.46° | R    | Third House   |
+| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0090°/d  | +18.46° | R    | Ninth House   |
++-----------------------+---------+----------+-------------+---------+------+---------------+
+
++Second Subject Celestial Points--+----------+-------------+---------+------+----------------+
+| Point                 | Sign    | Position | Speed       | Decl.   | Ret. | House          |
++-----------------------+---------+----------+-------------+---------+------+----------------+
+| Sun                   | Aqu ♒️ | 29.38°   | +1.0085°/d  | -11.70° | -    | Fifth House    |
+| Moon                  | Sag ♐️ | 11.13°   | +14.2183°/d | -27.33° | -    | Third House    |
+| Mercury               | Pis ♓️ | 7.89°    | +1.8561°/d  | -9.86°  | -    | Fifth House    |
+| Venus                 | Aqu ♒️ | 13.79°   | +1.2483°/d  | -17.56° | -    | Fifth House    |
+| Mars                  | Vir ♍️ | 15.13°   | -0.3444°/d  | +9.78°  | R    | Twelfth House  |
+| Jupiter               | Vir ♍️ | 20.70°   | -0.1138°/d  | +5.03°  | R    | Twelfth House  |
+| Saturn                | Aqu ♒️ | 9.74°    | +0.1150°/d  | -18.38° | -    | Fourth House   |
+| True North Lunar Node | Pis ♓️ | 7.80°    | -0.0059°/d  | -8.65°  | R    | Fifth House    |
+| True South Lunar Node | Vir ♍️ | 7.80°    | +0.0059°/d  | +8.65°  | R    | Eleventh House |
++-----------------------+---------+----------+-------------+---------+------+----------------+
+
++First Subject Houses (Placidus)------+-------------------+
+| House          | Sign    | Position | Absolute Position |
++----------------+---------+----------+-------------------+
+| First House    | Sco ♏️ | 5.82°    | 215.82°           |
+| Second House   | Sag ♐️ | 3.71°    | 243.71°           |
+| Third House    | Cap ♑️ | 9.79°    | 279.79°           |
+| Fourth House   | Aqu ♒️ | 19.91°   | 319.91°           |
+| Fifth House    | Pis ♓️ | 23.00°   | 353.00°           |
+| Sixth House    | Ari ♈️ | 17.47°   | 17.47°            |
+| Seventh House  | Tau ♉️ | 5.82°    | 35.82°            |
+| Eighth House   | Gem ♊️ | 3.71°    | 63.71°            |
+| Ninth House    | Can ♋️ | 9.79°    | 99.79°            |
+| Tenth House    | Leo ♌️ | 19.91°   | 139.91°           |
+| Eleventh House | Vir ♍️ | 23.00°   | 173.00°           |
+| Twelfth House  | Lib ♎️ | 17.47°   | 197.47°           |
++----------------+---------+----------+-------------------+
+
++Second Subject Houses (Placidus)-----+-------------------+
+| House          | Sign    | Position | Absolute Position |
++----------------+---------+----------+-------------------+
+| First House    | Lib ♎️ | 8.41°    | 188.41°           |
+| Second House   | Sco ♏️ | 5.83°    | 215.83°           |
+| Third House    | Sag ♐️ | 6.53°    | 246.53°           |
+| Fourth House   | Cap ♑️ | 9.31°    | 279.31°           |
+| Fifth House    | Aqu ♒️ | 11.95°   | 311.95°           |
+| Sixth House    | Pis ♓️ | 12.11°   | 342.11°           |
+| Seventh House  | Ari ♈️ | 8.41°    | 8.41°             |
+| Eighth House   | Tau ♉️ | 5.83°    | 35.83°            |
+| Ninth House    | Gem ♊️ | 6.53°    | 66.53°            |
+| Tenth House    | Can ♋️ | 9.31°    | 99.31°            |
+| Eleventh House | Leo ♌️ | 11.95°   | 131.95°           |
+| Twelfth House  | Vir ♍️ | 12.11°   | 162.11°           |
++----------------+---------+----------+-------------------+
+
++Lunar Phase--------------+--------------------+
+| Lunar Phase Information | Value              |
++-------------------------+--------------------+
+| Phase Name              | Waning Crescent 🌘 |
+| Sun-Moon Angle          | 352.67°            |
+| Lunation Day            | 28                 |
++-------------------------+--------------------+
+
++Element Distribution-----------+------------+
+| Element  | Count              | Percentage |
++----------+--------------------+------------+
+| Fire 🔥  | 17.391304347826086 | 17.4%      |
+| Earth 🌍 | 23.91304347826087  | 23.9%      |
+| Air 💨   | 21.73913043478261  | 21.7%      |
+| Water 💧 | 36.95652173913043  | 37.0%      |
+| Total    | 100.0              | 100%       |
++----------+--------------------+------------+
+
++Quality Distribution-----------+------------+
+| Quality  | Count              | Percentage |
++----------+--------------------+------------+
+| Cardinal | 32.608695652173914 | 32.6%      |
+| Fixed    | 36.95652173913043  | 37.0%      |
+| Mutable  | 30.434782608695656 | 30.4%      |
+| Total    | 100.0              | 100%       |
++----------+--------------------+------------+
+
++Sample Natal Subject points in Yoko Ono houses+-------------------+---------------------+------+--------+
+| Point                                        | Owner House       | Projected House     | Sign | Degree |
++----------------------------------------------+-------------------+---------------------+------+--------+
+| Sample Natal Subject – Sun                   | 9 (Ninth_House)   | 10 (Tenth_House)    | Can  | 28.54° |
+| Sample Natal Subject – Moon                  | 9 (Ninth_House)   | 10 (Tenth_House)    | Can  | 21.21° |
+| Sample Natal Subject – Mercury               | 9 (Ninth_House)   | 11 (Eleventh_House) | Leo  | 17.61° |
+| Sample Natal Subject – Venus                 | 8 (Eighth_House)  | 9 (Ninth_House)     | Can  | 1.71°  |
+| Sample Natal Subject – Mars                  | 7 (Seventh_House) | 8 (Eighth_House)    | Tau  | 5.97°  |
+| Sample Natal Subject – Jupiter               | 9 (Ninth_House)   | 10 (Tenth_House)    | Can  | 23.91° |
+| Sample Natal Subject – Saturn                | 3 (Third_House)   | 4 (Fourth_House)    | Cap  | 21.52° |
+| Sample Natal Subject – True North Lunar Node | 3 (Third_House)   | 4 (Fourth_House)    | Aqu  | 7.26°  |
+| Sample Natal Subject – True South Lunar Node | 9 (Ninth_House)   | 10 (Tenth_House)    | Leo  | 7.26°  |
++----------------------------------------------+-------------------+---------------------+------+--------+
+
++Yoko Ono points in Sample Natal Subject houses----------+------------------+------+--------+
+| Point                            | Owner House         | Projected House  | Sign | Degree |
++----------------------------------+---------------------+------------------+------+--------+
+| Yoko Ono – Sun                   | 5 (Fifth_House)     | 4 (Fourth_House) | Aqu  | 29.38° |
+| Yoko Ono – Moon                  | 3 (Third_House)     | 2 (Second_House) | Sag  | 11.13° |
+| Yoko Ono – Mercury               | 5 (Fifth_House)     | 4 (Fourth_House) | Pis  | 7.89°  |
+| Yoko Ono – Venus                 | 5 (Fifth_House)     | 3 (Third_House)  | Aqu  | 13.79° |
+| Yoko Ono – Mars                  | 12 (Twelfth_House)  | 10 (Tenth_House) | Vir  | 15.13° |
+| Yoko Ono – Jupiter               | 12 (Twelfth_House)  | 10 (Tenth_House) | Vir  | 20.70° |
+| Yoko Ono – Saturn                | 4 (Fourth_House)    | 3 (Third_House)  | Aqu  | 9.74°  |
+| Yoko Ono – True North Lunar Node | 5 (Fifth_House)     | 4 (Fourth_House) | Pis  | 7.80°  |
+| Yoko Ono – True South Lunar Node | 11 (Eleventh_House) | 10 (Tenth_House) | Vir  | 7.80°  |
++----------------------------------+---------------------+------------------+------+--------+
+
++Sample Natal Subject cusps in Yoko Ono houses----------------+------+--------+
+| Point                                 | Projected House     | Sign | Degree |
++---------------------------------------+---------------------+------+--------+
+| Sample Natal Subject – First House    | 1 (First_House)     | Sco  | 5.82°  |
+| Sample Natal Subject – Second House   | 2 (Second_House)    | Sag  | 3.71°  |
+| Sample Natal Subject – Third House    | 4 (Fourth_House)    | Cap  | 9.79°  |
+| Sample Natal Subject – Fourth House   | 5 (Fifth_House)     | Aqu  | 19.91° |
+| Sample Natal Subject – Fifth House    | 6 (Sixth_House)     | Pis  | 23.00° |
+| Sample Natal Subject – Sixth House    | 7 (Seventh_House)   | Ari  | 17.47° |
+| Sample Natal Subject – Seventh House  | 7 (Seventh_House)   | Tau  | 5.82°  |
+| Sample Natal Subject – Eighth House   | 8 (Eighth_House)    | Gem  | 3.71°  |
+| Sample Natal Subject – Ninth House    | 10 (Tenth_House)    | Can  | 9.79°  |
+| Sample Natal Subject – Tenth House    | 11 (Eleventh_House) | Leo  | 19.91° |
+| Sample Natal Subject – Eleventh House | 12 (Twelfth_House)  | Vir  | 23.00° |
+| Sample Natal Subject – Twelfth House  | 1 (First_House)     | Lib  | 17.47° |
++---------------------------------------+---------------------+------+--------+
+
++Yoko Ono cusps in Sample Natal Subject houses----+------+--------+
+| Point                     | Projected House     | Sign | Degree |
++---------------------------+---------------------+------+--------+
+| Yoko Ono – First House    | 11 (Eleventh_House) | Lib  | 8.41°  |
+| Yoko Ono – Second House   | 1 (First_House)     | Sco  | 5.83°  |
+| Yoko Ono – Third House    | 2 (Second_House)    | Sag  | 6.53°  |
+| Yoko Ono – Fourth House   | 2 (Second_House)    | Cap  | 9.31°  |
+| Yoko Ono – Fifth House    | 3 (Third_House)     | Aqu  | 11.95° |
+| Yoko Ono – Sixth House    | 4 (Fourth_House)    | Pis  | 12.11° |
+| Yoko Ono – Seventh House  | 5 (Fifth_House)     | Ari  | 8.41°  |
+| Yoko Ono – Eighth House   | 7 (Seventh_House)   | Tau  | 5.83°  |
+| Yoko Ono – Ninth House    | 8 (Eighth_House)    | Gem  | 6.53°  |
+| Yoko Ono – Tenth House    | 8 (Eighth_House)    | Can  | 9.31°  |
+| Yoko Ono – Eleventh House | 9 (Ninth_House)     | Leo  | 11.95° |
+| Yoko Ono – Twelfth House  | 10 (Tenth_House)    | Vir  | 12.11° |
++---------------------------+---------------------+------+--------+
+
++Relationship Score Summary---+
+| Metric            | Value   |
++-------------------+---------+
+| Score             | 0       |
+| Description       | Minimal |
+| Destiny Signature | No      |
++-------------------+---------+
+
++Active Celestial Points----+
+| # | Active Point          |
++---+-----------------------+
+| 1 | Jupiter               |
+| 2 | Mars                  |
+| 3 | Mercury               |
+| 4 | Moon                  |
+| 5 | Saturn                |
+| 6 | Sun                   |
+| 7 | True_North_Lunar_Node |
+| 8 | True_South_Lunar_Node |
+| 9 | Venus                 |
++---+-----------------------+
+
++-------------+---------+
+| Aspect      | Orb (°) |
++-------------+---------+
+| conjunction | 10      |
+| opposition  | 10      |
+| trine       | 8       |
+| sextile     | 6       |
+| square      | 5       |
+| quintile    | 1       |
++-------------+---------+
+
++Aspects----------------+----------------------+---------------+-----------------------+----------+-------+----------+
+| Point 1               | Owner 1              | Aspect        | Point 2               | Owner 2  | Orb   | Movement |
++-----------------------+----------------------+---------------+-----------------------+----------+-------+----------+
+| Moon                  | Sample Natal Subject | sextile ⚹     | Jupiter               | Yoko Ono | 0.51° | Static = |
+| Mercury               | Sample Natal Subject | trine △       | Moon                  | Yoko Ono | 6.48° | Static = |
+| Mercury               | Sample Natal Subject | opposition ☍  | Venus                 | Yoko Ono | 3.82° | Static = |
+| Mercury               | Sample Natal Subject | opposition ☍  | Saturn                | Yoko Ono | 7.87° | Static = |
+| Venus                 | Sample Natal Subject | trine △       | Sun                   | Yoko Ono | 2.33° | Static = |
+| Venus                 | Sample Natal Subject | trine △       | Mercury               | Yoko Ono | 6.18° | Static = |
+| Venus                 | Sample Natal Subject | trine △       | True North Lunar Node | Yoko Ono | 6.09° | Static = |
+| Mars                  | Sample Natal Subject | sextile ⚹     | Mercury               | Yoko Ono | 1.92° | Static = |
+| Mars                  | Sample Natal Subject | square □      | Saturn                | Yoko Ono | 3.77° | Static = |
+| Mars                  | Sample Natal Subject | sextile ⚹     | True North Lunar Node | Yoko Ono | 1.83° | Static = |
+| Mars                  | Sample Natal Subject | trine △       | True South Lunar Node | Yoko Ono | 1.83° | Static = |
+| Jupiter               | Sample Natal Subject | sextile ⚹     | Jupiter               | Yoko Ono | 3.22° | Static = |
+| Saturn                | Sample Natal Subject | trine △       | Mars                  | Yoko Ono | 6.39° | Static = |
+| Saturn                | Sample Natal Subject | trine △       | Jupiter               | Yoko Ono | 0.82° | Static = |
+| True North Lunar Node | Sample Natal Subject | sextile ⚹     | Moon                  | Yoko Ono | 3.87° | Static = |
+| True North Lunar Node | Sample Natal Subject | conjunction ☌ | Venus                 | Yoko Ono | 6.52° | Static = |
+| True North Lunar Node | Sample Natal Subject | conjunction ☌ | Saturn                | Yoko Ono | 2.47° | Static = |
+| True South Lunar Node | Sample Natal Subject | trine △       | Moon                  | Yoko Ono | 3.87° | Static = |
+| True South Lunar Node | Sample Natal Subject | opposition ☍  | Venus                 | Yoko Ono | 6.52° | Static = |
+| True South Lunar Node | Sample Natal Subject | opposition ☍  | Saturn                | Yoko Ono | 2.47° | Static = |
++-----------------------+----------------------+---------------+-----------------------+----------+-------+----------+
