@@ -1,0 +1,127 @@
+=========================================
+Sample Natal Subject — Natal Chart Report
+=========================================
+
++Natal — Birth Data--+---------------------------+
+| Field              | Value                     |
++--------------------+---------------------------+
+| Name               | Sample Natal Subject      |
+| Date               | 21/07/1990                |
+| Time               | 14:45                     |
+| City               | Liverpool                 |
+| Nation             | GB                        |
+| Latitude           | 53.4084°                  |
+| Longitude          | -2.9916°                  |
+| Timezone           | Europe/London             |
+| Day of Week        | Saturday                  |
+| ISO Local Datetime | 1990-07-21T14:45:00+01:00 |
++--------------------+---------------------------+
+
++Natal — Settings-----+---------------------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Julian Day          | 2448094.072917      |
+| Active Points Count | 9                   |
++---------------------+---------------------+
+
++Natal Celestial Points-+---------+----------+-------------+---------+------+---------------+
+| Point                 | Sign    | Position | Speed       | Decl.   | Ret. | House         |
++-----------------------+---------+----------+-------------+---------+------+---------------+
+| Sun                   | Can ♋️ | 28.54°   | +0.9551°/d  | +20.45° | -    | Ninth House   |
+| Moon                  | Can ♋️ | 21.21°   | +14.4024°/d | +23.21° | -    | Ninth House   |
+| Mercury               | Leo ♌️ | 17.61°   | +1.6910°/d  | +16.88° | -    | Ninth House   |
+| Venus                 | Can ♋️ | 1.71°    | +1.2038°/d  | +22.74° | -    | Eighth House  |
+| Mars                  | Tau ♉️ | 5.97°    | +0.6554°/d  | +11.57° | -    | Seventh House |
+| Jupiter               | Can ♋️ | 23.91°   | +0.2240°/d  | +21.56° | -    | Ninth House   |
+| Saturn                | Cap ♑️ | 21.52°   | -0.0732°/d  | -21.66° | R    | Third House   |
+| True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0090°/d  | -18.46° | R    | Third House   |
+| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0090°/d  | +18.46° | R    | Ninth House   |
++-----------------------+---------+----------+-------------+---------+------+---------------+
+
++Natal Houses (Placidus)---+----------+-------------------+
+| House          | Sign    | Position | Absolute Position |
++----------------+---------+----------+-------------------+
+| First House    | Sco ♏️ | 5.82°    | 215.82°           |
+| Second House   | Sag ♐️ | 3.71°    | 243.71°           |
+| Third House    | Cap ♑️ | 9.79°    | 279.79°           |
+| Fourth House   | Aqu ♒️ | 19.91°   | 319.91°           |
+| Fifth House    | Pis ♓️ | 23.00°   | 353.00°           |
+| Sixth House    | Ari ♈️ | 17.47°   | 17.47°            |
+| Seventh House  | Tau ♉️ | 5.82°    | 35.82°            |
+| Eighth House   | Gem ♊️ | 3.71°    | 63.71°            |
+| Ninth House    | Can ♋️ | 9.79°    | 99.79°            |
+| Tenth House    | Leo ♌️ | 19.91°   | 139.91°           |
+| Eleventh House | Vir ♍️ | 23.00°   | 173.00°           |
+| Twelfth House  | Lib ♎️ | 17.47°   | 197.47°           |
++----------------+---------+----------+-------------------+
+
++Lunar Phase--------------+--------------------+
+| Lunar Phase Information | Value              |
++-------------------------+--------------------+
+| Phase Name              | Waning Crescent 🌘 |
+| Sun-Moon Angle          | 352.67°            |
+| Lunation Day            | 28                 |
++-------------------------+--------------------+
+
++Element Distribution-----------+
+| Element  | Count | Percentage |
++----------+-------+------------+
+| Fire 🔥  | 2.0   | 17.4%      |
+| Earth 🌍 | 2.5   | 21.7%      |
+| Air 💨   | 0.5   | 4.3%       |
+| Water 💧 | 6.5   | 56.5%      |
+| Total    | 11.5  | 100%       |
++----------+-------+------------+
+
++Quality Distribution-----------+
+| Quality  | Count | Percentage |
++----------+-------+------------+
+| Cardinal | 7.5   | 65.2%      |
+| Fixed    | 4.0   | 34.8%      |
+| Mutable  | 0.0   | 0.0%       |
+| Total    | 11.5  | 100%       |
++----------+-------+------------+
+
++Active Celestial Points----+
+| # | Active Point          |
++---+-----------------------+
+| 1 | Sun                   |
+| 2 | Moon                  |
+| 3 | Mercury               |
+| 4 | Venus                 |
+| 5 | Mars                  |
+| 6 | Jupiter               |
+| 7 | Saturn                |
+| 8 | True_North_Lunar_Node |
+| 9 | True_South_Lunar_Node |
++---+-----------------------+
+
++-------------+---------+
+| Aspect      | Orb (°) |
++-------------+---------+
+| conjunction | 10      |
+| opposition  | 10      |
+| trine       | 8       |
+| sextile     | 6       |
+| square      | 5       |
+| quintile    | 1       |
++-------------+---------+
+
++Aspects--+---------------+-----------------------+-------+--------------+
+| Point 1 | Aspect        | Point 2               | Orb   | Movement     |
++---------+---------------+-----------------------+-------+--------------+
+| Sun     | conjunction ☌ | Moon                  | 7.33° | Applying →   |
+| Sun     | conjunction ☌ | Jupiter               | 4.63° | Separating ← |
+| Sun     | opposition ☍  | Saturn                | 7.03° | Separating ← |
+| Sun     | opposition ☍  | True North Lunar Node | 8.72° | Applying →   |
+| Sun     | conjunction ☌ | True South Lunar Node | 8.72° | Applying →   |
+| Moon    | conjunction ☌ | Jupiter               | 2.70° | Applying →   |
+| Moon    | opposition ☍  | Saturn                | 0.31° | Applying →   |
+| Venus   | sextile ⚹     | Mars                  | 4.26° | Applying →   |
+| Mars    | square □      | True North Lunar Node | 1.30° | Applying →   |
+| Mars    | square □      | True South Lunar Node | 1.30° | Applying →   |
+| Jupiter | opposition ☍  | Saturn                | 2.40° | Separating ← |
++---------+---------------+-----------------------+-------+--------------+
