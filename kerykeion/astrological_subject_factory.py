@@ -1137,22 +1137,14 @@ class AstrologicalSubjectFactory:
         # Track which axial cusps are actually calculated
         calculated_axial_cusps: List[AstrologicalPoint] = []
 
-        # Calculate houses based on zodiac type
-        if data["zodiac_type"] == "Sidereal":
-            cusps, ascmc = swe.houses_ex(
-                tjdut=data["julian_day"],
-                lat=data["lat"],
-                lon=data["lng"],
-                hsys=str.encode(data["houses_system_identifier"]),
-                flags=swe.FLG_SIDEREAL,
-            )
-        else:  # Tropical zodiac
-            cusps, ascmc = swe.houses(
-                tjdut=data["julian_day"],
-                lat=data["lat"],
-                lon=data["lng"],
-                hsys=str.encode(data["houses_system_identifier"]),
-            )
+        # Calculate houses using the calculated flags (handles both Sidereal and Topocentric)
+        cusps, ascmc = swe.houses_ex(
+            tjdut=data["julian_day"],
+            lat=data["lat"],
+            lon=data["lng"],
+            hsys=str.encode(data["houses_system_identifier"]),
+            flags=data["_iflag"],
+        )
 
         # Store house degrees
         data["_houses_degree_ut"] = cusps
@@ -1343,21 +1335,13 @@ class AstrologicalSubjectFactory:
 
         # Handle Ascendant specially (from houses calculation)
         if point == "Ascendant":
-            if data["zodiac_type"] == "Sidereal":
-                cusps, ascmc = swe.houses_ex(
-                    tjdut=data["julian_day"],
-                    lat=data["lat"],
-                    lon=data["lng"],
-                    hsys=str.encode(data["houses_system_identifier"]),
-                    flags=swe.FLG_SIDEREAL,
-                )
-            else:
-                cusps, ascmc = swe.houses(
-                    tjdut=data["julian_day"],
-                    lat=data["lat"],
-                    lon=data["lng"],
-                    hsys=str.encode(data["houses_system_identifier"]),
-                )
+            cusps, ascmc = swe.houses_ex(
+                tjdut=data["julian_day"],
+                lat=data["lat"],
+                lon=data["lng"],
+                hsys=str.encode(data["houses_system_identifier"]),
+                flags=iflag,
+            )
             data["ascendant"] = get_kerykeion_point_from_degree(ascmc[0], "Ascendant", point_type=point_type)
             data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
             data["ascendant"].retrograde = False
@@ -1692,18 +1676,13 @@ class AstrologicalSubjectFactory:
         if should_calculate("Vertex") or should_calculate("Anti_Vertex"):
             try:
                 # Vertex is at ascmc[3] in Swiss Ephemeris
-                if data["zodiac_type"] == "Sidereal":
-                    _, ascmc = swe.houses_ex(
-                        tjdut=data["julian_day"],
-                        lat=data["lat"],
-                        lon=data["lng"],
-                        hsys=str.encode("V"),  # Vertex works best with Vehlow system
-                        flags=swe.FLG_SIDEREAL,
-                    )
-                else:
-                    _, ascmc = swe.houses(
-                        tjdut=data["julian_day"], lat=data["lat"], lon=data["lng"], hsys=str.encode("V")
-                    )
+                _, ascmc = swe.houses_ex(
+                    tjdut=data["julian_day"],
+                    lat=data["lat"],
+                    lon=data["lng"],
+                    hsys=str.encode("V"),  # Vertex works best with Vehlow system
+                    flags=iflag,
+                )
 
                 vertex_deg = ascmc[3]
 
