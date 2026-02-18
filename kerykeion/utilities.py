@@ -276,9 +276,9 @@ def is_point_between(
 
     if span > 180:
         raise KerykeionException(f"The angle between start and end point is not allowed to exceed 180°, yet is: {span}")
-    if target == start:
+    if math.isclose(target, start, rel_tol=1e-9, abs_tol=1e-12):
         return True
-    if target == end:
+    if math.isclose(target, end, rel_tol=1e-9, abs_tol=1e-12):
         return False
     distance_from_start = (target - start) % 360
     return distance_from_start < span
