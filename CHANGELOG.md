@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.7.3
+
+_Released 18/02/2026_
+
+**Bugfixes:**
+
+- Fixed floating point comparison in `is_point_between()` function that caused `ValueError` crashes when a planet falls exactly on a house cusp (difference ~1e-15°). The fix uses `math.isclose()` instead of exact equality (`==`). This affected Carter, Krusinski, and Uranian house systems.
+
 ## 5.7.2
 
 _Released 05/02/2026_
