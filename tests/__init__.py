@@ -1,5 +1,3 @@
-# Add to path
-import sys
-from pathlib import Path
+from dotenv import load_dotenv
 
-sys.path.append(str(Path(__file__).parent.parent))
+load_dotenv()

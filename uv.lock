@@ -829,6 +829,7 @@ source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
     { name = "pydantic" },
+    { name = "python-dotenv" },
     { name = "pytz" },
     { name = "requests" },
     { name = "requests-cache" },
@@ -855,11 +856,15 @@ dev = [
     { name = "types-pytz" },
     { name = "types-requests" },
 ]
+test = [
+    { name = "python-dotenv" },
+]
 
 [package.metadata]
 requires-dist = [
     { name = "libephemeris", directory = "../libephemeris" },
     { name = "pydantic", specifier = ">=2.5" },
+    { name = "python-dotenv", specifier = ">=1.2.1" },
     { name = "pytz", specifier = ">=2024.2" },
     { name = "requests", specifier = ">=2.32.3" },
     { name = "requests-cache", specifier = ">=1.2.1" },
@@ -882,6 +887,7 @@ dev = [
     { name = "types-pytz", specifier = ">=2025.2.0.20250516" },
     { name = "types-requests", specifier = ">=2.32.4.20250611" },
 ]
+test = [{ name = "python-dotenv", specifier = ">=1.2.1" }]
 
 [[package]]
 name = "keyring"
@@ -904,11 +910,12 @@ wheels = [
 
 [[package]]
 name = "libephemeris"
-version = "0.10.0"
+version = "0.18.0"
 source = { directory = "../libephemeris" }
 dependencies = [
     { name = "astroquery" },
     { name = "certifi" },
+    { name = "pyerfa" },
     { name = "skyfield" },
     { name = "skyfield-data" },
     { name = "spktype21" },
@@ -926,8 +933,7 @@ requires-dist = [
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0.0" },
     { name = "myst-parser", marker = "extra == 'docs'", specifier = ">=2.0.0" },
     { name = "poethepoet", marker = "extra == 'dev'", specifier = ">=0.37.0,<0.38.0" },
-    { name = "pyerfa", marker = "extra == 'all'", specifier = ">=2.0.0" },
-    { name = "pyerfa", marker = "extra == 'precision'", specifier = ">=2.0.0" },
+    { name = "pyerfa", specifier = ">=2.0.0" },
     { name = "pyswisseph", marker = "extra == 'dev'", specifier = ">=2.10.3.2" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0,<9.0.0" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.0.0" },
@@ -944,7 +950,7 @@ requires-dist = [
     { name = "spktype21", specifier = ">=0.1.0" },
     { name = "twine", marker = "extra == 'dev'", specifier = ">=5.0.0" },
 ]
-provides-extras = ["precision", "stars", "nbody", "all", "dev", "docs"]
+provides-extras = ["stars", "nbody", "all", "dev", "docs"]
 
 [[package]]
 name = "librt"
@@ -1825,6 +1831,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/78/b4/439b179d1ff526791eb921115fca8e44e596a13efeda518b9d845a619450/pytest_xdist-3.8.0.tar.gz", hash = "sha256:7e578125ec9bc6050861aa93f2d59f1d8d085595d6551c2c90b6f4fad8d3a9f1", size = 88069, upload-time = "2025-07-01T13:30:59.346Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ca/31/d4e37e9e550c2b92a9cbc2e4d0b7420a27224968580b5a447f420847c975/pytest_xdist-3.8.0-py3-none-any.whl", hash = "sha256:202ca578cfeb7370784a8c33d6d05bc6e13b4f25b5053c30a152269fd10f0b88", size = 46396, upload-time = "2025-07-01T13:30:56.632Z" },
+]
+
+[[package]]
+name = "python-dotenv"
+version = "1.2.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f0/26/19cadc79a718c5edbec86fd4919a6b6d3f681039a2f6d66d14be94e75fb9/python_dotenv-1.2.1.tar.gz", hash = "sha256:42667e897e16ab0d66954af0e60a9caa94f0fd4ecf3aaf6d2d260eec1aa36ad6", size = 44221, upload-time = "2025-10-26T15:12:10.434Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/14/1b/a298b06749107c305e1fe0f814c6c74aea7b2f1e10989cb30f544a1b3253/python_dotenv-1.2.1-py3-none-any.whl", hash = "sha256:b81ee9561e9ca4004139c6cbba3a238c32b03e4894671e181b671e8cb8425d61", size = 21230, upload-time = "2025-10-26T15:12:09.109Z" },
 ]
 
 [[package]]

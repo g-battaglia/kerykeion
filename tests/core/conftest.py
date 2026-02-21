@@ -9,10 +9,12 @@ import pytest
 from pytest import approx
 from typing import Any, Dict, Optional
 
-# Tolerance levels for position comparisons
-POSITION_TOLERANCE = 1e-2  # 0.01 degrees (about 36 arcseconds)
-SPEED_TOLERANCE = 1e-4  # For planetary speeds
-DECLINATION_TOLERANCE = 1e-2  # For declinations
+from tests.tolerance_config import POSITION_TOL, SPEED_TOL, DECLINATION_TOL
+
+# Aliases for backward compatibility
+POSITION_TOLERANCE = POSITION_TOL
+SPEED_TOLERANCE = SPEED_TOL
+DECLINATION_TOLERANCE = DECLINATION_TOL
 
 
 def assert_position_equal(actual: float, expected: float, abs_tol: float = POSITION_TOLERANCE) -> None:

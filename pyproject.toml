@@ -55,6 +55,7 @@ dependencies = [
     "simple-ascii-tables>=1.0.0",
     "pytz>=2024.2",
     "typing-extensions>=4.12.2",
+    "python-dotenv>=1.2.1",
 ]
 
 [project.urls]
@@ -289,4 +290,7 @@ dev = [
     "ruff>=0.12.9",
     "types-pytz>=2025.2.0.20250516",
     "types-requests>=2.32.4.20250611",
+]
+test = [
+    "python-dotenv>=1.2.1",
 ]

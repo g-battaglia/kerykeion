@@ -162,10 +162,13 @@ def _extract_percentages(text: str, section: str) -> List[float]:
 
 
 class TestNatalReportTemporal:
-    """Natal chart report for every temporal subject (500 BC -> 2200)."""
+    """Natal chart report for every temporal subject (1 AD -> 2200)."""
 
     @pytest.mark.parametrize("data", TEMPORAL_SUBJECTS, ids=lambda d: d["id"])
     def test_natal_report_all_sections(self, data: Dict[str, Any]) -> None:
+        if data["year"] < 1:
+            pytest.skip(f"Python datetime doesn't support years before 1 AD: {data['year']}")
+
         subject = _try_create_temporal(data)
         _skip_if_none(subject, data["id"])
 
@@ -181,6 +184,8 @@ class TestNatalReportTemporal:
 
     @pytest.mark.parametrize("data", TEMPORAL_SUBJECTS, ids=lambda d: d["id"])
     def test_natal_report_coordinates_and_timezone(self, data: Dict[str, Any]) -> None:
+        if data["year"] < 1:
+            pytest.skip(f"Python datetime doesn't support years before 1 AD: {data['year']}")
         subject = _try_create_temporal(data)
         _skip_if_none(subject, data["id"])
 

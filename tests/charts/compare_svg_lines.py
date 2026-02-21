@@ -1,16 +1,22 @@
 import re
 
+from tests.tolerance_config import SVG_REL_TOL, SVG_ABS_TOL
 
-def compare_svg_lines(expected_line: str, actual_line: str, rel_tol: float = 1e-10, abs_tol: float = 1e-10) -> None:
+
+def compare_svg_lines(expected_line: str, actual_line: str, rel_tol: float = None, abs_tol: float = None) -> None:
     """
     Compare two SVG lines allowing small floating-point differences, with additional absolute tolerance.
 
     Args:
         expected_line (str): The reference line.
         actual_line (str): The generated line.
-        rel_tol (float): Relative tolerance for numerical comparison.
-        abs_tol (float): Absolute tolerance for numerical comparison.
+        rel_tol (float): Relative tolerance for numerical comparison. Defaults to SVG_REL_TOL from config.
+        abs_tol (float): Absolute tolerance for numerical comparison. Defaults to SVG_ABS_TOL from config.
     """
+    if rel_tol is None:
+        rel_tol = SVG_REL_TOL
+    if abs_tol is None:
+        abs_tol = SVG_ABS_TOL
     # Regex to match floats (e.g., -12.34, 0.5, 6.)
     number_regex = r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?"
 

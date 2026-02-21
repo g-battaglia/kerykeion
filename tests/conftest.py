@@ -11,6 +11,10 @@ Usage:
     All fixtures are automatically available to all tests in the tests/ directory.
 """
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import pytest
 from typing import List, Dict, Any, Optional
 

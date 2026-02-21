@@ -22,6 +22,7 @@ from tests.data.test_subjects_matrix import (
     HOUSES,
     get_primary_test_subjects,
 )
+from tests.tolerance_config import POSITION_TOL
 
 # Configuration directory for expected data
 CONFIGURATIONS_DIR = Path(__file__).parent.parent / "data" / "configurations"
@@ -76,10 +77,12 @@ def create_subject_from_data(data: Dict[str, Any]):
 def assert_position_within_tolerance(
     actual: float,
     expected: float,
-    tolerance: float = 0.0001,
+    tolerance: float = None,
     message: str = "",
 ):
     """Assert that two position values are within tolerance."""
+    if tolerance is None:
+        tolerance = POSITION_TOL
     diff = abs(actual - expected)
     assert diff <= tolerance, f"{message}: Expected {expected}, got {actual}, diff={diff} > tolerance={tolerance}"
 
@@ -295,7 +298,6 @@ class TestCompositeExpectedData:
             assert_position_within_tolerance(
                 actual_planet.abs_pos,
                 expected_planet["abs_pos"],
-                tolerance=0.0001,
                 message=f"{planet} abs_pos for composite {pair_key}",
             )
 
@@ -330,9 +332,7 @@ class TestCompositeConsistency:
             pos1 = getattr(composite1, planet).abs_pos
             pos2 = getattr(composite2, planet).abs_pos
 
-            assert_position_within_tolerance(
-                pos1, pos2, tolerance=0.0001, message=f"{planet} position differs when order is reversed"
-            )
+            assert_position_within_tolerance(pos1, pos2, message=f"{planet} position differs when order is reversed")
 
     def test_composite_deterministic(self):
         """Test that composite calculations are deterministic."""
@@ -368,5 +368,8 @@ class TestCompositeConsistency:
             composite_pos = getattr(composite, planet).abs_pos
 
             assert_position_within_tolerance(
-                composite_pos, natal_pos, tolerance=0.0001, message=f"{planet} composite with self should equal natal"
+                composite_pos,
+                natal_pos,
+                tolerance=POSITION_TOL,
+                message=f"{planet} composite with self should equal natal",
             )

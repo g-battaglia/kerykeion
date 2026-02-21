@@ -36,6 +36,7 @@ from tests.data.test_subjects_matrix import (
     HOUSES,
     get_primary_test_subjects,
 )
+from tests.tolerance_config import POSITION_TOL
 
 # Configuration directory for expected data
 CONFIGURATIONS_DIR = Path(__file__).parent.parent / "data" / "configurations"
@@ -133,10 +134,12 @@ def get_subject_data_by_id(subject_id: str) -> Optional[Dict[str, Any]]:
 def assert_position_within_tolerance(
     actual: float,
     expected: float,
-    tolerance: float = 0.0001,
+    tolerance: float = None,
     message: str = "",
 ):
     """Assert that two position values are within tolerance."""
+    if tolerance is None:
+        tolerance = POSITION_TOL
     diff = abs(actual - expected)
     assert diff <= tolerance, f"{message}: Expected {expected}, got {actual}, diff={diff} > tolerance={tolerance}"
 
@@ -215,7 +218,6 @@ class TestHouseSystemConfigurations:
             assert_position_within_tolerance(
                 actual_house.abs_pos,
                 expected_house["abs_pos"],
-                tolerance=0.0001,
                 message=f"{house} abs_pos for {subject_id} with house system {house_system}",
             )
 
@@ -242,7 +244,6 @@ class TestHouseSystemConfigurations:
         assert_position_within_tolerance(
             subject.ascendant.abs_pos,
             subject.first_house.abs_pos,
-            tolerance=0.0001,
             message=f"ASC vs First House for system {house_system}",
         )
 
@@ -250,7 +251,6 @@ class TestHouseSystemConfigurations:
         assert_position_within_tolerance(
             subject.medium_coeli.abs_pos,
             subject.tenth_house.abs_pos,
-            tolerance=0.0001,
             message=f"MC vs Tenth House for system {house_system}",
         )
 
@@ -327,7 +327,6 @@ class TestSiderealModeConfigurations:
             assert_position_within_tolerance(
                 actual_planet.abs_pos,
                 expected_planet["abs_pos"],
-                tolerance=0.0001,
                 message=f"{planet} abs_pos for {subject_id} with sidereal mode {sidereal_mode}",
             )
 
@@ -437,7 +436,6 @@ class TestPerspectiveConfigurations:
             assert_position_within_tolerance(
                 actual_planet.abs_pos,
                 expected_planet["abs_pos"],
-                tolerance=0.0001,
                 message=f"{planet} abs_pos for {subject_id} with perspective {perspective_type}",
             )
 
@@ -482,29 +480,22 @@ class TestTemporalCoverage:
     )
     def test_temporal_subject_creation(self, subject_data):
         """Test that subjects can be created for all temporal periods."""
-        # Python's datetime doesn't support years before 1 AD
+        # Skip years before 1 AD (Python datetime limitation)
         if subject_data["year"] < 1:
             pytest.skip(f"Python datetime doesn't support years before 1 AD: {subject_data['year']}")
 
-        try:
-            subject = create_subject_from_data(subject_data)
+        subject = create_subject_from_data(subject_data)
 
-            assert subject is not None
-            assert subject.year == subject_data["year"]
-            assert subject.month == subject_data["month"]
-            assert subject.day == subject_data["day"]
+        assert subject is not None
+        assert subject.year == subject_data["year"]
+        assert subject.month == subject_data["month"]
+        assert subject.day == subject_data["day"]
 
-            # Verify basic planetary positions exist
-            assert subject.sun is not None
-            assert subject.moon is not None
-            assert 0 <= subject.sun.abs_pos < 360
-            assert 0 <= subject.moon.abs_pos < 360
-
-        except Exception as e:
-            # Some ancient dates may not be supported by ephemeris
-            if subject_data["year"] < -3000 or subject_data["year"] > 3000:
-                pytest.skip(f"Date outside ephemeris range: {subject_data['year']}")
-            raise
+        # Verify basic planetary positions exist
+        assert subject.sun is not None
+        assert subject.moon is not None
+        assert 0 <= subject.sun.abs_pos < 360
+        assert 0 <= subject.moon.abs_pos < 360
 
     @pytest.mark.parametrize(
         "subject_data",
@@ -678,13 +669,13 @@ class TestCrossConfigurationConsistency:
             assert_position_within_tolerance(
                 placidus.abs_pos,
                 koch.abs_pos,
-                tolerance=0.0001,
+                tolerance=POSITION_TOL,
                 message=f"{planet} position differs between Placidus and Koch",
             )
             assert_position_within_tolerance(
                 placidus.abs_pos,
                 whole_sign.abs_pos,
-                tolerance=0.0001,
+                tolerance=POSITION_TOL,
                 message=f"{planet} position differs between Placidus and Whole Sign",
             )
 

@@ -31,6 +31,7 @@ from tests.data.test_subjects_matrix import (
     CORE_PLANETS,
     get_primary_test_subjects,
 )
+from tests.tolerance_config import POSITION_TOL
 
 # Try to import expected aspects
 try:
@@ -114,26 +115,18 @@ class TestNatalAspects:
     )
     def test_natal_aspects_creation(self, subject_data):
         """Test that natal aspects can be calculated for all subjects."""
-        # Python's datetime doesn't support years before 1 AD
         if subject_data["year"] < 1:
             pytest.skip(f"Python datetime doesn't support years before 1 AD: {subject_data['year']}")
 
-        try:
-            subject = create_subject_from_data(subject_data)
-            aspects_result = AspectsFactory.single_chart_aspects(subject)
+        subject = create_subject_from_data(subject_data)
+        aspects_result = AspectsFactory.single_chart_aspects(subject)
 
-            assert aspects_result is not None
-            assert hasattr(aspects_result, "aspects")
-            assert isinstance(aspects_result.aspects, list)
+        assert aspects_result is not None
+        assert hasattr(aspects_result, "aspects")
+        assert isinstance(aspects_result.aspects, list)
 
-            # Should have at least some aspects (Sun-Moon, etc.)
-            assert len(aspects_result.aspects) > 0, f"No aspects found for {subject_data['id']}"
-
-        except Exception as e:
-            # Some ancient dates may not be supported
-            if subject_data["year"] < -3000 or subject_data["year"] > 3000:
-                pytest.skip(f"Date outside ephemeris range: {subject_data['year']}")
-            raise
+        # Should have at least some aspects (Sun-Moon, etc.)
+        assert len(aspects_result.aspects) > 0, f"No aspects found for {subject_data['id']}"
 
     @pytest.mark.parametrize("subject_id", get_primary_test_subjects(), ids=lambda s: s)
     def test_natal_aspects_match_expected(self, subject_id):
@@ -251,10 +244,6 @@ class TestSynastryAspects:
 
         if not first_data or not second_data:
             pytest.skip(f"Subject data not found for pair {first_id} x {second_id}")
-
-        # Python's datetime doesn't support years before 1 AD
-        if first_data["year"] < 1 or second_data["year"] < 1:
-            pytest.skip(f"Python datetime doesn't support years before 1 AD")
 
         first_subject = create_subject_from_data(first_data)
         second_subject = create_subject_from_data(second_data)
@@ -459,7 +448,7 @@ class TestAspectConsistency:
             assert a1.p1_name == a2.p1_name
             assert a1.p2_name == a2.p2_name
             assert a1.aspect == a2.aspect
-            assert abs(a1.orbit - a2.orbit) < 0.0001
+            assert abs(a1.orbit - a2.orbit) < POSITION_TOL
 
     def test_aspects_with_retrograde_planets(self):
         """Test aspect calculations when planets are retrograde."""

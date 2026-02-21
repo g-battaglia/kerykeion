@@ -77,3 +77,4 @@ Swiss Ephemeris
 test-refactoring-proposal.md
 sync-docs.sh
 *.bsp
+.env
