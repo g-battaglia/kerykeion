@@ -147,6 +147,7 @@ def create_subject_from_data(
     zodiac_type: str = "Tropical",
     sidereal_mode: Optional[str] = None,
     perspective_type: str = "Apparent Geocentric",
+    active_points: Optional[List[str]] = None,
 ) -> Optional[Any]:
     """Create an AstrologicalSubjectModel from subject data dictionary."""
     try:
@@ -168,6 +169,8 @@ def create_subject_from_data(
         }
         if sidereal_mode and zodiac_type == "Sidereal":
             kwargs["sidereal_mode"] = sidereal_mode
+        if active_points is not None:
+            kwargs["active_points"] = active_points
 
         return AstrologicalSubjectFactory.from_birth_data(**kwargs)
     except Exception as e:
@@ -410,6 +413,120 @@ def regenerate_positions() -> None:
         positions,
         "Expected planetary positions for test validation (default configuration).",
         "--positions",
+    )
+
+
+def regenerate_arabic_parts() -> None:
+    """
+    Regenerate expected_arabic_parts.py with Arabic Parts data for all test subjects.
+
+    This creates subjects with Arabic Parts (Pars Fortunae, Spiritus, Amoris, Fidei)
+    active, which are not included in the default configuration.
+    """
+    print("\n" + "=" * 60)
+    print("REGENERATING ARABIC PARTS")
+    print("=" * 60)
+
+    # Active points needed for Arabic Parts calculation
+    arabic_parts_active = [
+        "Sun",
+        "Moon",
+        "Mercury",
+        "Venus",
+        "Mars",
+        "Jupiter",
+        "Saturn",
+        "Uranus",
+        "Neptune",
+        "Pluto",
+        "True_North_Lunar_Node",
+        "Chiron",
+        "Mean_Lilith",
+        "Ascendant",
+        "Pars_Fortunae",
+        "Pars_Spiritus",
+        "Pars_Amoris",
+        "Pars_Fidei",
+    ]
+
+    positions: Dict[str, Dict[str, Any]] = {}
+
+    # Process temporal subjects
+    print(f"\nProcessing {len(TEMPORAL_SUBJECTS)} temporal subjects...")
+    for data in TEMPORAL_SUBJECTS:
+        subject_id = data["id"]
+        print(f"  - {subject_id}...", end=" ")
+
+        subject = create_subject_from_data(data, active_points=arabic_parts_active)
+        if subject is None:
+            print("SKIPPED (ephemeris not available)")
+            continue
+
+        extracted = extract_full_subject_positions(subject)
+
+        # Only include subjects that have Arabic Parts calculated
+        if "arabic_parts" in extracted:
+            positions[subject_id] = {
+                "metadata": {
+                    "name": data.get("name", subject_id),
+                    "year": data["year"],
+                    "month": data["month"],
+                    "day": data["day"],
+                    "hour": data["hour"],
+                    "minute": data["minute"],
+                    "lat": data["lat"],
+                    "lng": data["lng"],
+                    "tz_str": data["tz_str"],
+                    "julian_day": subject.julian_day,
+                    "is_diurnal": extracted.get("is_diurnal"),
+                },
+                "arabic_parts": extracted["arabic_parts"],
+            }
+            print(f"OK ({len(extracted['arabic_parts'])} parts)")
+        else:
+            print("SKIPPED (no Arabic Parts)")
+
+    # Process geographic subjects
+    print(f"\nProcessing {len(GEOGRAPHIC_SUBJECTS)} geographic subjects...")
+    for data in GEOGRAPHIC_SUBJECTS:
+        subject_id = data["id"]
+        print(f"  - {subject_id}...", end=" ")
+
+        full_data = {**data, "year": 1990, "month": 6, "day": 15, "hour": 12, "minute": 0}
+        subject = create_subject_from_data(full_data, active_points=arabic_parts_active)
+        if subject is None:
+            print("SKIPPED")
+            continue
+
+        extracted = extract_full_subject_positions(subject)
+
+        if "arabic_parts" in extracted:
+            positions[subject_id] = {
+                "metadata": {
+                    "name": data.get("name", subject_id),
+                    "year": 1990,
+                    "month": 6,
+                    "day": 15,
+                    "hour": 12,
+                    "minute": 0,
+                    "lat": data["lat"],
+                    "lng": data["lng"],
+                    "tz_str": data["tz_str"],
+                    "julian_day": subject.julian_day,
+                    "is_diurnal": extracted.get("is_diurnal"),
+                },
+                "arabic_parts": extracted["arabic_parts"],
+            }
+            print(f"OK ({len(extracted['arabic_parts'])} parts)")
+        else:
+            print("SKIPPED (no Arabic Parts)")
+
+    write_fixture_file(
+        OUTPUT_DIR / "expected_arabic_parts.py",
+        "EXPECTED_ARABIC_PARTS",
+        positions,
+        "Expected Arabic Parts positions for test validation.",
+        "--arabic-parts",
     )
 
 
@@ -1077,9 +1194,14 @@ def main():
         help="Regenerate ephemeris data fixtures",
     )
     parser.add_argument(
+        "--arabic-parts",
+        action="store_true",
+        help="Regenerate Arabic Parts fixtures (Pars Fortunae, Spiritus, Amoris, Fidei)",
+    )
+    parser.add_argument(
         "--configurations",
         action="store_true",
-        help="Regenerate all configuration-specific fixtures (house-systems, sidereal-modes, perspectives, returns, composite, ephemeris)",
+        help="Regenerate all configuration-specific fixtures (house-systems, sidereal-modes, perspectives, returns, composite, ephemeris, arabic-parts)",
     )
 
     args = parser.parse_args()
@@ -1098,6 +1220,7 @@ def main():
         args.returns,
         args.composite,
         args.ephemeris,
+        args.arabic_parts,
         args.configurations,
     ]
 
@@ -1146,6 +1269,9 @@ def main():
 
     if args.all or args.configurations or args.ephemeris:
         regenerate_ephemeris()
+
+    if args.all or args.configurations or args.arabic_parts:
+        regenerate_arabic_parts()
 
     print("\n" + "=" * 60)
     print("REGENERATION COMPLETE")
