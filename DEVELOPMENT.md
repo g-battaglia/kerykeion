@@ -19,12 +19,14 @@ If you don't have uv installed, follow the installation instructions at the offi
 ## 🚀 Quick Start
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/g-battaglia/kerykeion.git
    cd kerykeion
    ```
 
 2. **Install dependencies**
+
    ```bash
    # This creates a virtual environment and installs all dependencies
    uv sync --dev
@@ -41,6 +43,7 @@ If you don't have uv installed, follow the installation instructions at the offi
 Kerykeion uses [poethepoet](https://github.com/nat-n/poethepoet) as a task runner. All tasks are defined in `pyproject.toml`.
 
 ### Running Tests
+
 ```bash
 # Run all tests
 uv run poe test
@@ -52,13 +55,14 @@ uv run poe test-no-capture
 uv run poe test-nocharts
 
 # Run specific test file
-uv run pytest tests/test_astrological_subject.py
+uv run pytest tests/core/test_astrological_subject.py
 
 # Run tests with coverage
 uv run pytest --cov=kerykeion
 ```
 
 ### Code Quality
+
 ```bash
 # Format code with Black
 uv run poe format
@@ -75,6 +79,7 @@ uv run mypy kerykeion/
 ```
 
 ### Documentation
+
 ```bash
 # Generate documentation
 uv run poe docs
@@ -105,6 +110,7 @@ kerykeion/
 ## 🔧 Adding Dependencies
 
 ### Production Dependencies
+
 ```bash
 # Add a new dependency
 uv add requests
@@ -114,6 +120,7 @@ uv add "pydantic>=2.0.0"
 ```
 
 ### Development Dependencies
+
 ```bash
 # Add development dependency
 uv add --group dev pytest-mock
@@ -125,6 +132,7 @@ uv add --group test pytest-benchmark
 ## 🌟 Development Workflow
 
 1. **Create a feature branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -135,16 +143,18 @@ uv add --group test pytest-benchmark
    - Update documentation if needed
 
 3. **Test your changes**
+
    ```bash
    # Run tests
    uv run poe test
-   
+
    # Check code style
    uv run poe format
    uv run poe analize
    ```
 
 4. **Commit and push**
+
    ```bash
    git add .
    git commit -m "feat: add your feature description"
@@ -158,6 +168,7 @@ uv add --group test pytest-benchmark
 ## 🐛 Debugging
 
 ### Running Python Scripts
+
 ```bash
 # Run any Python script with the project environment
 uv run python your_script.py
@@ -169,18 +180,21 @@ uv run python
 ### Common Issues
 
 **Issue: Import errors**
+
 ```bash
 # Make sure you're using uv run
 uv run python -c "import kerykeion"
 ```
 
 **Issue: Dependencies not found**
+
 ```bash
 # Resync dependencies
 uv sync --dev
 ```
 
 **Issue: Tests failing**
+
 ```bash
 # Run tests with verbose output
 uv run pytest -v
@@ -197,17 +211,18 @@ uv run pytest tests/test_specific.py -s -vvv
 - **Testing**: Aim for >90% code coverage
 
 ### Example Function
+
 ```python
 def calculate_aspect(planet1: Planet, planet2: Planet) -> AspectData:
     """Calculate the aspect between two planets.
-    
+
     Args:
         planet1: The first planet
         planet2: The second planet
-        
+
     Returns:
         AspectData containing the calculated aspect information
-        
+
     Raises:
         ValueError: If planets are invalid
     """
