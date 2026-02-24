@@ -3364,3 +3364,44 @@ class TestDrawPlanetsGroupHandling:
         drawer = ChartDrawer(chart_data)
         svg = drawer.generate_svg_string()
         assert svg is not None
+
+
+# ============================================================================
+# Regression: floating point cusp boundary (Jhalawar Sidereal LAHIRI)
+# ============================================================================
+
+
+class TestFloatingPointCuspBoundary:
+    """Regression test for planet longitude matching a house cusp within
+    floating point noise (~5e-14), which previously caused a ValueError
+    in get_planet_house because no house arc contained the planet.
+
+    Reported with: Jhalawar (IN), 2023-03-17 14:30, Sidereal LAHIRI.
+    Fixed in commit 8fdaca7 (math.isclose in is_point_between).
+    """
+
+    def test_jhalawar_sidereal_lahiri_does_not_raise(self):
+        """End-to-end: creating the subject must not raise."""
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            name="Native",
+            year=2023,
+            month=3,
+            day=17,
+            hour=14,
+            minute=30,
+            lng=76.5221078,
+            lat=24.3132368,
+            tz_str="Asia/Kolkata",
+            city="Jhalawar",
+            nation="IN",
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+        # Subject must be fully constructed with valid house assignments
+        assert subject is not None
+        assert subject.sun is not None
+        assert subject.sun.house is not None
+        assert subject.moon is not None
+        assert subject.moon.house is not None

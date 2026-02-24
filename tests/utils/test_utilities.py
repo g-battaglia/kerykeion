@@ -75,6 +75,32 @@ def test_is_point_between_span_too_large():
         is_point_between(0, 200, 50)
 
 
+def test_is_point_between_floating_point_boundary():
+    """Regression: planet longitude nearly equal to cusp due to float rounding.
+
+    When a planet degree differs from a cusp by ~5e-14 (floating point noise),
+    the old == comparison failed silently, causing get_planet_house to raise.
+    See: Jhalawar 2023-03-17 14:30 Sidereal LAHIRI edge case.
+    """
+    # Exact values from the bug report
+    cusp_start = 278.91912462695  # 7th house cusp
+    planet = 278.91912462694995  # planet longitude (diff ~5.68e-14)
+    cusp_end = 303.5944921144874  # 8th house cusp
+
+    # Planet is essentially ON the start cusp -> should be inside this house
+    assert is_point_between(cusp_start, cusp_end, planet) is True
+
+    # The previous house ends at cusp_start; planet on the end -> should be outside
+    prev_cusp_start = 249.2337785390238  # 6th house cusp
+    assert is_point_between(prev_cusp_start, cusp_start, planet) is False
+
+
+def test_is_point_between_exact_boundary():
+    """Point exactly on start cusp belongs to that house; on end cusp does not."""
+    assert is_point_between(30, 60, 30) is True  # on start -> inside
+    assert is_point_between(0, 30, 30) is False  # on end -> outside (next house)
+
+
 # --- get_planet_house --------------------------------------------------------
 
 
@@ -88,6 +114,32 @@ def test_get_planet_house_raises_when_not_found():
     houses = [0] * 12
     with pytest.raises(ValueError):
         get_planet_house(15, houses)
+
+
+def test_get_planet_house_floating_point_cusp_boundary():
+    """Regression: planet on cusp with floating point noise must not raise.
+
+    Reproduces the exact ValueError from the bug report where planet=278.919...95
+    and house cusp 7=278.919...00, differing by ~5e-14.
+    """
+    planet = 278.91912462694995
+    houses = [
+        98.91912462694998,
+        123.59449211448738,
+        151.93854125279213,
+        184.03102407800813,
+        217.37620913190696,
+        249.2337785390238,
+        278.91912462695,
+        303.5944921144874,
+        331.93854125279216,
+        4.031024078008134,
+        37.37620913190699,
+        69.2337785390238,
+    ]
+    # Must not raise; planet is on 7th house cusp -> assigned to 7th house
+    result = get_planet_house(planet, houses)
+    assert result == "Seventh_House"
 
 
 # --- angular helpers ---------------------------------------------------------
