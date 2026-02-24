@@ -1567,7 +1567,7 @@ class TestMockErrorConditions:
 
     def test_day_chart_vs_night_chart(self):
         """Test day vs night chart calculation for Arabic Parts (line 1589)."""
-        # Day chart - Sun in houses 1-6
+        # Day chart - Sun in houses 7-12 (above the horizon)
         day_subject = AstrologicalSubjectFactory.from_birth_data(
             "Day Chart",
             1990,
@@ -1583,7 +1583,7 @@ class TestMockErrorConditions:
             suppress_geonames_warning=True,
         )
 
-        # Night chart - Sun in houses 7-12
+        # Night chart - Sun in houses 1-6 (below the horizon)
         night_subject = AstrologicalSubjectFactory.from_birth_data(
             "Night Chart",
             1990,

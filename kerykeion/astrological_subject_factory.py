@@ -1416,7 +1416,7 @@ class AstrologicalSubjectFactory:
         # Determine if day or night chart (for parts with day/night variants)
         if "day_formula" in config and "night_formula" in config:
             if data.get("sun") and data["sun"].house:
-                is_day_chart = get_house_number(data["sun"].house) < 7
+                is_day_chart = get_house_number(data["sun"].house) >= 7
             else:
                 is_day_chart = True  # Default to day chart
 
