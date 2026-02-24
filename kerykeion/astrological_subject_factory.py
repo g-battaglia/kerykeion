@@ -60,7 +60,6 @@ from kerykeion.utilities import (
     check_and_adjust_polar_latitude,
     calculate_moon_phase,
     datetime_to_julian,
-    get_house_number,
     normalize_zodiac_type,
 )
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
@@ -753,7 +752,18 @@ class AstrologicalSubjectFactory:
             # House system name (previously set in _setup_ephemeris)
             calc_data["houses_system_name"] = swe.house_name(config.houses_system_identifier.encode("ascii"))
             calculated_axial_cusps = AstrologicalSubjectFactory._calculate_houses(calc_data, active_points_list)
+
+            # Compute sect (diurnal/nocturnal) BEFORE calculating planets
+            # This is needed for Arabic Parts day/night formula selection
+            calc_data["is_diurnal"] = AstrologicalSubjectFactory._compute_is_diurnal(
+                julian_day=calc_data["julian_day"],
+                lat=calc_data["lat"],
+                lng=calc_data["lng"],
+                altitude=calc_data.get("altitude") or 0,
+            )
+
             AstrologicalSubjectFactory._calculate_planets(calc_data, active_points_list, calculated_axial_cusps)
+
         AstrologicalSubjectFactory._calculate_day_of_week(calc_data)
 
         # Calculate lunar phase (optional - only if requested and Sun and Moon are available)
@@ -1361,6 +1371,51 @@ class AstrologicalSubjectFactory:
             data[point_key].retrograde = planet_calc[3] < 0
 
     @staticmethod
+    def _compute_is_diurnal(
+        julian_day: float,
+        lat: float,
+        lng: float,
+        altitude: float,
+    ) -> bool:
+        """
+        Compute whether the chart is diurnal (day) or nocturnal (night).
+
+        Uses the Sun's geometric altitude above/below the horizon, calculated
+        from a tropical geocentric position (independent of the chart's
+        zodiac_type or perspective_type settings).
+
+        This ensures correct sect classification even for sidereal or
+        heliocentric charts, where data["sun"].abs_pos would be in a different
+        coordinate system.
+
+        Args:
+            julian_day: Julian Day Number for the chart
+            lat: Geographic latitude
+            lng: Geographic longitude
+            altitude: Geographic altitude (meters above sea level)
+
+        Returns:
+            bool: True if diurnal (Sun above horizon), False if nocturnal
+        """
+        try:
+            sun_tropical_flags = swe.FLG_SWIEPH | swe.FLG_SPEED
+            sun_calc = swe.calc_ut(julian_day, 0, sun_tropical_flags)[0]
+            sun_lon = sun_calc[0]
+            sun_lat = 0.0
+
+            geopos = (lng, lat, altitude or 0)
+            sun_ecl = (sun_lon, sun_lat, 1.0)
+            azalt = swe.azalt(julian_day, swe.ECL2HOR, geopos, 0, 0, sun_ecl)
+
+            return azalt[1] >= 0
+
+        except Exception as e:
+            logging.warning(
+                f"Could not compute Sun altitude for sect classification: {e}. Defaulting to diurnal (day chart)."
+            )
+            return True
+
+    @staticmethod
     def _calculate_arabic_part(
         part_name: AstrologicalPoint,
         config: Dict[str, Any],
@@ -1377,13 +1432,13 @@ class AstrologicalSubjectFactory:
 
         This method handles:
         - Auto-activation of required prerequisite points
-        - Day/night chart detection for parts with day/night variants
+        - Day/night chart detection using pre-computed is_diurnal value
         - Formula application and result storage
 
         Args:
             part_name: Name of the Arabic Part to calculate
             config: Configuration dict with required points and formula(s)
-            data: Main calculation data dictionary
+            data: Main calculation data dictionary (must contain is_diurnal)
             julian_day: Julian Day Number
             iflag: Swiss Ephemeris calculation flags
             houses_degree_ut: House cusp degrees
@@ -1414,30 +1469,10 @@ class AstrologicalSubjectFactory:
         positions = [data[p.lower()].abs_pos for p in required_points]
 
         # Determine if day or night chart (for parts with day/night variants)
-        # Uses the Sun's geometric altitude above/below the horizon, which is
-        # independent of the house system and astronomically precise.
+        # Uses the pre-computed is_diurnal value from the chart's sect classification
         if "day_formula" in config and "night_formula" in config:
-            if data.get("sun"):
-                try:
-                    geopos = (data["lng"], data["lat"], data.get("altitude") or 0)
-                    sun_ecl = (data["sun"].abs_pos, 0.0, 1.0)
-                    azalt = swe.azalt(julian_day, swe.ECL2HOR, geopos, 0, 0, sun_ecl)
-                    is_day_chart = azalt[1] >= 0  # true (geometric) altitude >= 0
-                except Exception:
-                    # Fallback: use house position (houses 7-12 = above horizon)
-                    if data["sun"].house:
-                        is_day_chart = get_house_number(data["sun"].house) >= 7
-                    else:
-                        is_day_chart = True
-                    logging.warning(
-                        f"Could not compute Sun altitude for {part_name}, "
-                        f"falling back to house-based day/night detection"
-                    )
-            else:
-                is_day_chart = True
-                logging.warning(f"Sun position unavailable for {part_name}, defaulting to day chart formula")
-
-            formula = config["day_formula"] if is_day_chart else config["night_formula"]
+            is_diurnal = data.get("is_diurnal", True)
+            formula = config["day_formula"] if is_diurnal else config["night_formula"]
         else:
             formula = config["formula"]
 
@@ -1525,7 +1560,8 @@ class AstrologicalSubjectFactory:
             This prevents cascade failures while maintaining calculation integrity.
 
         Arabic Parts Logic:
-            - Day/night birth detection based on Sun's geometric altitude above/below the horizon
+            - Day/night detection uses pre-computed is_diurnal from chart's sect classification
+            - Sect is computed from tropical geocentric Sun altitude (independent of chart settings)
             - Automatic activation of required base points (Sun, Moon, Ascendant, etc.)
             - Classical formulae with day/night variations where applicable
             - All parts marked as non-retrograde (conceptual points)

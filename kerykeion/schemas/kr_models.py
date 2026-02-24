@@ -310,6 +310,9 @@ class AstrologicalSubjectModel(AstrologicalBaseModel):
     hour: int
     minute: int
 
+    # Sect (diurnal/nocturnal classification)
+    is_diurnal: bool
+
 
 class CompositeSubjectModel(AstrologicalBaseModel):
     """

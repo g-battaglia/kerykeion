@@ -11,11 +11,13 @@ Covers:
 - Different geographic locations and edge cases
 - Sidereal mode
 - All parts calculated simultaneously
+- is_diurnal field on AstrologicalSubjectModel
+- is_diurnal independent of zodiac_type and perspective_type
 """
 
 import math
 import logging
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 import pytest
 from pytest import approx
@@ -310,29 +312,26 @@ class TestAutoActivation:
 class TestDayNightDetection:
     """Verify the Sun altitude-based day/night detection."""
 
-    def test_noon_is_day_chart(self):
-        """At noon the Sun is above the horizon — day chart."""
+    def test_noon_is_diurnal(self):
+        """At noon the Sun is above the horizon — diurnal chart."""
         day = _make_subject(12)
-        night = _make_subject(0)
-        # Day chart: Fortunae = Asc + Moon - Sun
-        # Night chart: Fortunae = Asc + Sun - Moon
-        # Verify by checking which formula matches
+        # Diurnal chart: Fortunae = Asc + Moon - Sun
         day_expected = _normalize(day.ascendant.abs_pos + day.moon.abs_pos - day.sun.abs_pos)
         assert day.pars_fortunae.abs_pos == approx(day_expected, abs=0.01)
 
-    def test_midnight_is_night_chart(self):
-        """At midnight the Sun is below the horizon — night chart."""
+    def test_midnight_is_nocturnal(self):
+        """At midnight the Sun is below the horizon — nocturnal chart."""
         night = _make_subject(0)
         night_expected = _normalize(night.ascendant.abs_pos + night.sun.abs_pos - night.moon.abs_pos)
         assert night.pars_fortunae.abs_pos == approx(night_expected, abs=0.01)
 
-    def test_evening_is_night_chart(self):
+    def test_evening_is_nocturnal(self):
         """At 22:00 in Rome the Sun is below the horizon in June."""
         subject = _make_subject(22, lat=41.9, lng=12.5, tz_str="Europe/Rome")
         expected = _normalize(subject.ascendant.abs_pos + subject.sun.abs_pos - subject.moon.abs_pos)
         assert subject.pars_fortunae.abs_pos == approx(expected, abs=0.01)
 
-    def test_morning_is_day_chart(self):
+    def test_morning_is_diurnal(self):
         """At 10:00 in London the Sun is above the horizon."""
         subject = _make_subject(10)
         expected = _normalize(subject.ascendant.abs_pos + subject.moon.abs_pos - subject.sun.abs_pos)
@@ -345,13 +344,10 @@ class TestDayNightDetection:
 
 
 class TestFallbackPaths:
-    """Test the fallback logic when swe.azalt fails or Sun is missing."""
+    """Test the fallback logic in _compute_is_diurnal when swe.azalt or swe.calc_ut fails."""
 
-    def test_azalt_failure_falls_back_to_house_with_warning(self, caplog):
-        """If swe.azalt raises, fall back to house-based detection with a warning."""
-        import swisseph as swe
-
-        original_azalt = swe.azalt
+    def test_azalt_failure_defaults_to_diurnal(self, caplog):
+        """If swe.azalt raises, default to diurnal."""
 
         def mock_azalt(*args, **kwargs):
             raise RuntimeError("Mock azalt failure")
@@ -360,28 +356,20 @@ class TestFallbackPaths:
             with caplog.at_level(logging.WARNING):
                 subject = _make_subject(12)
 
-        # Should still produce a result (via house fallback)
-        assert subject.pars_fortunae is not None
-        assert subject.pars_fortunae.abs_pos >= 0
-        # Should have logged a warning
-        assert any("falling back to house-based" in msg for msg in caplog.messages)
+        assert subject.is_diurnal is True
+        assert any("defaulting to diurnal" in msg.lower() for msg in caplog.messages)
 
-    def test_azalt_fallback_uses_correct_house_logic(self, caplog):
-        """House-based fallback: houses 7-12 = above horizon = day chart."""
-        import swisseph as swe
+    def test_azalt_failure_at_night_also_defaults_to_diurnal(self, caplog):
+        """When azalt fails at midnight, defaults to diurnal (conservative fallback)."""
 
         def mock_azalt(*args, **kwargs):
             raise RuntimeError("Mock azalt failure")
 
         with patch("swisseph.azalt", side_effect=mock_azalt):
             with caplog.at_level(logging.WARNING):
-                # Noon — Sun is typically in house 10 (>= 7) → day chart
-                day = _make_subject(12)
-                # Midnight — Sun is typically in house 4 (< 7) → night chart
-                night = _make_subject(0)
+                midnight = _make_subject(0)
 
-        # The values should still differ (different formulas applied)
-        assert day.pars_fortunae.abs_pos != night.pars_fortunae.abs_pos
+        assert midnight.is_diurnal is True
 
     def test_sun_calculation_failure_propagates_from_ensure_point(self):
         """If Sun calculation fails in _ensure_point_calculated, the exception propagates.
@@ -415,55 +403,24 @@ class TestFallbackPaths:
                     active_points=["Pars_Fortunae", "Moon", "Ascendant"],
                 )
 
-    def test_sun_unavailable_warning_defensive_path(self, caplog):
-        """Test the defensive 'Sun unavailable' warning path directly.
-
-        This path is unreachable for Pars Fortunae/Spiritus (Sun is a required
-        prerequisite), but exists as defensive code for potential future parts
-        that have day/night formulas without requiring Sun.
-        """
+    def test_compute_is_diurnal_direct_defensive_path(self, caplog):
+        """Test _compute_is_diurnal fallback when swe.calc_ut fails."""
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
-        # Build a real subject to get valid house cusps and point data
-        subject = _make_subject(12, active_points=["Sun", "Moon", "Ascendant"])
+        def mock_calc_ut(*args, **kwargs):
+            raise RuntimeError("Mock calc_ut failure")
 
-        # Realistic house cusps (30° apart, starting from 0°)
-        houses = tuple(i * 30.0 for i in range(12))
+        with patch("swisseph.calc_ut", side_effect=mock_calc_ut):
+            with caplog.at_level(logging.WARNING):
+                result = AstrologicalSubjectFactory._compute_is_diurnal(
+                    julian_day=2448058.0,
+                    lat=51.5074,
+                    lng=0.0,
+                    altitude=0,
+                )
 
-        # A config with day/night formulas whose required points don't include Sun
-        test_config = {
-            "required": ["Ascendant", "Moon"],
-            "day_formula": lambda asc, moon: asc + moon,
-            "night_formula": lambda asc, moon: asc - moon,
-        }
-
-        # Data dict WITHOUT "sun" to trigger the defensive path
-        data = {
-            "ascendant": subject.ascendant,
-            "moon": subject.moon,
-            "lng": 0.0,
-            "lat": 51.5074,
-            "altitude": 0,
-            "julian_day": 2448058.0,
-            "houses_system_identifier": "P",
-        }
-
-        with caplog.at_level(logging.WARNING):
-            AstrologicalSubjectFactory._calculate_arabic_part(
-                "Pars_Fortunae",
-                test_config,
-                data,
-                julian_day=2448058.0,
-                iflag=258,
-                houses_degree_ut=houses,
-                point_type="AstrologicalPoint",
-                active_points=["Ascendant", "Moon"],
-                calculated_planets=[],
-            )
-
-        assert any("Sun position unavailable" in msg for msg in caplog.messages)
-        # Should have been calculated using the day formula (default)
-        assert "pars_fortunae" in data
+        assert result is True
+        assert any("defaulting to diurnal" in msg.lower() for msg in caplog.messages)
 
 
 # ===========================================================================
@@ -584,3 +541,170 @@ class TestAllPartsTogether:
         assert subject.pars_spiritus is None
         assert subject.pars_amoris is None
         assert subject.pars_fidei is None
+
+
+# ===========================================================================
+# 10. is_diurnal field
+# ===========================================================================
+
+
+class TestIsDiurnalField:
+    """Verify the is_diurnal field on AstrologicalSubjectModel."""
+
+    def test_noon_is_diurnal_true(self):
+        """At noon the Sun is above the horizon — is_diurnal should be True."""
+        subject = _make_subject(12)
+        assert subject.is_diurnal is True
+
+    def test_midnight_is_diurnal_false(self):
+        """At midnight the Sun is below the horizon — is_diurnal should be False."""
+        subject = _make_subject(0)
+        assert subject.is_diurnal is False
+
+    def test_evening_is_diurnal_false(self):
+        """At 22:00 in June at London latitude, Sun is below horizon."""
+        subject = _make_subject(22)
+        assert subject.is_diurnal is False
+
+    def test_morning_is_diurnal_true(self):
+        """At 10:00 in June at London latitude, Sun is above horizon."""
+        subject = _make_subject(10)
+        assert subject.is_diurnal is True
+
+    def test_is_diurnal_in_model_dump(self):
+        """is_diurnal should appear in model_dump()."""
+        subject = _make_subject(12)
+        dump = subject.model_dump()
+        assert "is_diurnal" in dump
+        assert dump["is_diurnal"] is True
+
+    def test_is_diurnal_in_json_output(self):
+        """is_diurnal should appear in model_dump_json()."""
+        import json
+
+        subject = _make_subject(12)
+        json_str = subject.model_dump_json()
+        data = json.loads(json_str)
+        assert "is_diurnal" in data
+        assert data["is_diurnal"] is True
+
+    def test_sidereal_same_is_diurnal_as_tropical(self):
+        """is_diurnal should be the same for sidereal and tropical charts.
+
+        The sect classification is based on the physical position of the Sun
+        relative to the horizon, which is independent of zodiac type.
+        """
+        tropical = _make_subject(12)
+        sidereal = _make_subject(12, zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+        assert tropical.is_diurnal == sidereal.is_diurnal
+
+    def test_sidereal_midnight_same_is_diurnal_as_tropical(self):
+        """At midnight, both sidereal and tropical should be nocturnal."""
+        tropical = _make_subject(0)
+        sidereal = _make_subject(0, zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+        assert tropical.is_diurnal == sidereal.is_diurnal
+        assert tropical.is_diurnal is False
+
+    def test_heliocentric_uses_geocentric_sun(self):
+        """Heliocentric charts should still have correct is_diurnal.
+
+        The sect classification uses the geocentric position of the Sun
+        (where the observer is on Earth), regardless of chart perspective.
+        """
+        from kerykeion import AstrologicalSubjectFactory
+
+        # Heliocentric chart at noon
+        helio = AstrologicalSubjectFactory.from_birth_data(
+            name="Heliocentric",
+            year=1990,
+            month=6,
+            day=15,
+            hour=12,
+            minute=0,
+            lat=51.5074,
+            lng=0.0,
+            tz_str="Etc/GMT",
+            online=False,
+            suppress_geonames_warning=True,
+            perspective_type="Heliocentric",
+        )
+        # Should still be diurnal (noon, Sun above horizon from Earth's perspective)
+        assert helio.is_diurnal is True
+
+    def test_is_diurnal_consistent_with_arabic_parts_formula(self):
+        """is_diurnal should be consistent with the formula applied to Pars Fortunae."""
+        subject = _make_subject(12)
+        # Day chart: Pars Fortunae = Asc + Moon - Sun
+        expected = _normalize(subject.ascendant.abs_pos + subject.moon.abs_pos - subject.sun.abs_pos)
+        assert subject.pars_fortunae.abs_pos == approx(expected, abs=0.01)
+        assert subject.is_diurnal is True
+
+    def test_is_diurnal_consistent_with_night_formula(self):
+        """At night, is_diurnal should be False and night formula should apply."""
+        subject = _make_subject(0)
+        # Night chart: Pars Fortunae = Asc + Sun - Moon
+        expected = _normalize(subject.ascendant.abs_pos + subject.sun.abs_pos - subject.moon.abs_pos)
+        assert subject.pars_fortunae.abs_pos == approx(expected, abs=0.01)
+        assert subject.is_diurnal is False
+
+    def test_is_diurnal_not_on_composite(self):
+        """CompositeSubjectModel should not have is_diurnal field."""
+        from kerykeion import CompositeSubjectFactory
+
+        first = _make_subject(12, active_points=["Sun", "Moon", "Ascendant"])
+        second = _make_subject(6, active_points=["Sun", "Moon", "Ascendant"])
+
+        composite = CompositeSubjectFactory(first, second)
+        model = composite.get_midpoint_composite_subject_model()
+
+        # CompositeSubjectModel does not have is_diurnal (no meaningful sect)
+        # getattr returns None if attribute doesn't exist (Pydantic v2 behavior for missing fields)
+        assert getattr(model, "is_diurnal", None) is None
+
+    def test_southern_hemisphere_summer_day(self):
+        """In southern hemisphere summer, daytime hours should be diurnal."""
+        # Buenos Aires in December (summer) at noon
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            name="Buenos Aires Summer",
+            year=1990,
+            month=12,
+            day=15,
+            hour=12,
+            minute=0,
+            lat=-34.6,
+            lng=-58.4,
+            tz_str="America/Argentina/Buenos_Aires",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+        assert subject.is_diurnal is True
+
+    def test_southern_hemisphere_winter_night(self):
+        """In southern hemisphere winter at midnight, should be nocturnal."""
+        # Buenos Aires in June (winter) at midnight
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            name="Buenos Aires Winter",
+            year=1990,
+            month=6,
+            day=15,
+            hour=0,
+            minute=0,
+            lat=-34.6,
+            lng=-58.4,
+            tz_str="America/Argentina/Buenos_Aires",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+        assert subject.is_diurnal is False
+
+    def test_topocentric_same_as_geocentric(self):
+        """Topocentric perspective should have same is_diurnal as apparent geocentric."""
+        geocentric = _make_subject(12, active_points=["Sun"])
+        topocentric = _make_subject(
+            12,
+            perspective_type="Topocentric",
+            altitude=100.0,
+            active_points=["Sun"],
+        )
+        # The difference is negligible for the Sun (parallax ~0.002°)
+        assert geocentric.is_diurnal == topocentric.is_diurnal
