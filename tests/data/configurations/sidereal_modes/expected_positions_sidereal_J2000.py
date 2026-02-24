@@ -201,6 +201,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 7,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 129.71759744042689,
@@ -586,6 +587,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 2,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.24434211593535,
@@ -971,6 +973,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 4,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.24783387173426,
@@ -1356,6 +1359,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 3,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.2512532687386,
@@ -1741,6 +1745,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 4,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.24846745906234,
@@ -2126,6 +2131,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 6,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 221.58913238416315,
@@ -2511,6 +2517,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 11,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 292.0091706667006,
@@ -2896,6 +2903,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 5,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 320.1361992808963,
@@ -3281,6 +3289,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 2,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 304.408925012103,
@@ -3666,6 +3675,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 5,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 274.56939382167695,
@@ -4051,6 +4061,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 9,
             },
         },
+        "is_diurnal": False,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 94.23812639176496,
@@ -4436,6 +4447,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 4,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.24120803644973,
@@ -4821,6 +4833,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 6,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 227.5742478615759,
@@ -5206,6 +5219,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 10,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 329.28562444870175,
@@ -5591,6 +5605,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 5,
             },
         },
+        "is_diurnal": False,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 215.50501833596078,
@@ -5976,6 +5991,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 3,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 282.6693061554287,
@@ -6361,6 +6377,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 6,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 255.83990353468982,
@@ -6746,6 +6763,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 5,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 138.09113905475266,
@@ -7131,6 +7149,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 10,
             },
         },
+        "is_diurnal": False,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 191.85183837551926,
@@ -7516,6 +7535,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 9,
             },
         },
+        "is_diurnal": False,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 111.15503796962028,
@@ -7901,6 +7921,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 5,
             },
         },
+        "is_diurnal": False,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 114.47397957504097,
@@ -8286,6 +8307,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 3,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 349.87486648441495,
@@ -8671,6 +8693,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 4,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.24907616756724,
@@ -9056,6 +9079,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 5,
             },
         },
+        "is_diurnal": False,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 123.98268483445926,
@@ -9441,6 +9465,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 4,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.24783387173426,
@@ -9826,6 +9851,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 4,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.251730118787,
@@ -10211,6 +10237,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 6,
             },
         },
+        "is_diurnal": False,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 194.41083603751662,
@@ -10596,6 +10623,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 4,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.24846745906234,
@@ -10981,6 +11009,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 5,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 157.45084688495095,
@@ -11366,6 +11395,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 4,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.2521756193511,
@@ -11751,6 +11781,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 4,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.24966004432497,
@@ -12136,6 +12167,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 11,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 178.3232931177476,
@@ -12521,6 +12553,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 4,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.25420055396825,
@@ -12906,6 +12939,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 4,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.24434211593535,
@@ -13291,6 +13325,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 4,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.242808980152,
@@ -13676,6 +13711,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 5,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.243583426858,
@@ -14061,6 +14097,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 3,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 308.2512532687386,
@@ -14446,6 +14483,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 5,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 337.3680602821555,
@@ -14831,6 +14869,7 @@ EXPECTED_POSITIONS = {
                 "sign_num": 0,
             },
         },
+        "is_diurnal": True,
         "lunar_nodes": {
             "true_north_lunar_node": {
                 "abs_pos": 338.73236791350945,
