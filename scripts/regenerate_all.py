@@ -194,49 +194,6 @@ def get_all_subjects_data() -> List[Dict[str, Any]]:
     return all_subjects
 
 
-def extract_point_data(point) -> Dict[str, Any]:
-    """Extract relevant data from a KerykeionPointModel."""
-    if point is None:
-        return {}
-
-    data = {
-        "name": point.name,
-        "abs_pos": point.abs_pos,
-        "position": point.position,
-        "sign": point.sign,
-        "sign_num": point.sign_num,
-        "element": point.element,
-        "quality": point.quality,
-        "retrograde": getattr(point, "retrograde", None),
-    }
-
-    # Add optional attributes if present
-    if hasattr(point, "speed") and point.speed is not None:
-        data["speed"] = point.speed
-    if hasattr(point, "declination") and point.declination is not None:
-        data["declination"] = point.declination
-    if hasattr(point, "house") and point.house is not None:
-        data["house"] = point.house
-
-    return data
-
-
-def extract_house_data(house) -> Dict[str, Any]:
-    """Extract relevant data from a house cusp."""
-    if house is None:
-        return {}
-
-    return {
-        "name": house.name,
-        "abs_pos": house.abs_pos,
-        "position": house.position,
-        "sign": house.sign,
-        "sign_num": house.sign_num,
-        "element": house.element,
-        "quality": house.quality,
-    }
-
-
 def extract_aspect_data(aspect) -> Dict[str, Any]:
     """Extract relevant data from an AspectModel."""
     return {
@@ -259,36 +216,94 @@ def extract_aspect_data(aspect) -> Dict[str, Any]:
 
 
 def extract_full_subject_positions(subject) -> Dict[str, Any]:
-    """Extract all position data from a subject."""
-    positions = {
-        "planets": {},
-        "lunar_nodes": {},
-        "angles": {},
-        "houses": {},
+    """Extract all position data from a subject using model_dump.
+
+    This approach is future-proof and automatically includes new fields
+    like is_diurnal without requiring manual updates.
+    """
+    # Get the full subject dump, excluding None values and metadata fields
+    full_dump = subject.model_dump(exclude_none=True)
+
+    # Metadata fields that should not be in the position data
+    metadata_fields = {
+        "name",
+        "city",
+        "nation",
+        "tz_str",
+        "zodiac_type",
+        "houses_system_identifier",
+        "houses_system_name",
+        "perspective_type",
+        "iso_formatted_local_datetime",
+        "iso_formatted_utc_datetime",
+        "day_of_week",
+        "houses_names_list",
+        "active_points",
+        "year",
+        "month",
+        "day",
+        "hour",
+        "minute",
+        "julian_day",
+        "lat",
+        "lng",
     }
 
+    # Fields that are configuration/metadata but not position data
+    config_fields = {
+        "sidereal_mode",
+        "altitude",
+    }
+
+    # Core planets
+    planets = {}
     for planet in CORE_PLANETS:
-        point = getattr(subject, planet, None)
-        if point:
-            positions["planets"][planet] = extract_point_data(point)
+        if planet in full_dump and full_dump[planet] is not None:
+            planets[planet] = full_dump[planet]
 
+    # Lunar nodes
+    lunar_nodes = {}
     for node in LUNAR_NODES:
-        point = getattr(subject, node, None)
-        if point:
-            positions["lunar_nodes"][node] = extract_point_data(point)
+        if node in full_dump and full_dump[node] is not None:
+            lunar_nodes[node] = full_dump[node]
 
+    # Angles
+    angles = {}
     for angle in ANGLES:
-        point = getattr(subject, angle, None)
-        if point:
-            positions["angles"][angle] = extract_point_data(point)
+        if angle in full_dump and full_dump[angle] is not None:
+            angles[angle] = full_dump[angle]
 
+    # Houses
+    houses = {}
     for house in HOUSES:
-        point = getattr(subject, house, None)
-        if point:
-            positions["houses"][house] = extract_house_data(point)
+        if house in full_dump and full_dump[house] is not None:
+            houses[house] = full_dump[house]
 
-    if subject.lunar_phase:
-        positions["lunar_phase"] = subject.lunar_phase.model_dump()
+    # Build the result with the same structure as before
+    positions = {
+        "planets": planets,
+        "lunar_nodes": lunar_nodes,
+        "angles": angles,
+        "houses": houses,
+    }
+
+    # Add lunar_phase if present
+    if "lunar_phase" in full_dump and full_dump["lunar_phase"] is not None:
+        positions["lunar_phase"] = full_dump["lunar_phase"]
+
+    # Add is_diurnal if present (new field from sect classification)
+    if "is_diurnal" in full_dump and full_dump["is_diurnal"] is not None:
+        positions["is_diurnal"] = full_dump["is_diurnal"]
+
+    # Add Arabic Parts if present
+    arabic_parts = {}
+    arabic_part_names = ["pars_fortunae", "pars_spiritus", "pars_amoris", "pars_fidei"]
+    for part in arabic_part_names:
+        if part in full_dump and full_dump[part] is not None:
+            arabic_parts[part] = full_dump[part]
+
+    if arabic_parts:
+        positions["arabic_parts"] = arabic_parts
 
     return positions
 
