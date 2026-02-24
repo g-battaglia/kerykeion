@@ -1414,11 +1414,28 @@ class AstrologicalSubjectFactory:
         positions = [data[p.lower()].abs_pos for p in required_points]
 
         # Determine if day or night chart (for parts with day/night variants)
+        # Uses the Sun's geometric altitude above/below the horizon, which is
+        # independent of the house system and astronomically precise.
         if "day_formula" in config and "night_formula" in config:
-            if data.get("sun") and data["sun"].house:
-                is_day_chart = get_house_number(data["sun"].house) < 7
+            if data.get("sun"):
+                try:
+                    geopos = (data["lng"], data["lat"], data.get("altitude") or 0)
+                    sun_ecl = (data["sun"].abs_pos, 0.0, 1.0)
+                    azalt = swe.azalt(julian_day, swe.ECL2HOR, geopos, 0, 0, sun_ecl)
+                    is_day_chart = azalt[1] >= 0  # true (geometric) altitude >= 0
+                except Exception:
+                    # Fallback: use house position (houses 7-12 = above horizon)
+                    if data["sun"].house:
+                        is_day_chart = get_house_number(data["sun"].house) >= 7
+                    else:
+                        is_day_chart = True
+                    logging.warning(
+                        f"Could not compute Sun altitude for {part_name}, "
+                        f"falling back to house-based day/night detection"
+                    )
             else:
-                is_day_chart = True  # Default to day chart
+                is_day_chart = True
+                logging.warning(f"Sun position unavailable for {part_name}, defaulting to day chart formula")
 
             formula = config["day_formula"] if is_day_chart else config["night_formula"]
         else:
@@ -1508,7 +1525,7 @@ class AstrologicalSubjectFactory:
             This prevents cascade failures while maintaining calculation integrity.
 
         Arabic Parts Logic:
-            - Day/night birth detection based on Sun's house position
+            - Day/night birth detection based on Sun's geometric altitude above/below the horizon
             - Automatic activation of required base points (Sun, Moon, Ascendant, etc.)
             - Classical formulae with day/night variations where applicable
             - All parts marked as non-retrograde (conceptual points)

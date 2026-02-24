@@ -65,8 +65,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Quaoar                | Sco ♏️ | 25.34°   | -0.0066°/d   | -13.27° | R    | Tenth House   |
 | Regulus               | Leo ♌️ | 29.71°   | +0.0000°/d   | +12.01° | -    | Seventh House |
 | Spica                 | Lib ♎️ | 23.73°   | -0.0000°/d   | -11.12° | -    | Eighth House  |
-| Pars Fortunae         | Vir ♍️ | 7.73°    | N/A          | N/A     | -    | Seventh House |
-| Pars Spiritus         | Tau ♉️ | 19.91°   | N/A          | N/A     | -    | Third House   |
+| Pars Fortunae         | Tau ♉️ | 19.91°   | N/A          | N/A     | -    | Third House   |
+| Pars Spiritus         | Vir ♍️ | 7.73°    | N/A          | N/A     | -    | Seventh House |
 | Pars Amoris           | Aqu ♒️ | 20.58°   | N/A          | N/A     | -    | First House   |
 | Pars Fidei            | Can ♋️ | 28.57°   | N/A          | N/A     | -    | Seventh House |
 | Vertex                | Leo ♌️ | 26.69°   | N/A          | N/A     | -    | Seventh House |
@@ -112,8 +112,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
 | Cardinal | 12.500000000000002 | 40.1%      |
-| Fixed    | 11.9               | 38.1%      |
-| Mutable  | 6.8                | 21.8%      |
+| Fixed    | 12.000000000000002 | 38.5%      |
+| Mutable  | 6.7                | 21.5%      |
 | Total    | 31.200000000000003 | 100%       |
 +----------+--------------------+------------+
 
@@ -211,7 +211,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Moon                  | trine △                       | Orcus                 | 7.22° | Applying →   |
 | Moon                  | conjunction ☌                 | Quaoar                | 9.30° | Separating ← |
 | Moon                  | square □                      | Regulus               | 4.92° | Separating ← |
-| Moon                  | square □                      | Pars Fortunae         | 3.10° | Applying →   |
+| Moon                  | square □                      | Pars Spiritus         | 3.10° | Applying →   |
 | Moon                  | trine △                       | Pars Fidei            | 6.06° | Separating ← |
 | Mercury               | conjunction ☌                 | Venus                 | 9.99° | Applying →   |
 | Mercury               | conjunction ☌                 | Mars                  | 8.56° | Applying →   |
@@ -240,7 +240,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Venus                 | trine △                       | Sedna                 | 6.75° | Applying →   |
 | Venus                 | conjunction ☌                 | Makemake              | 0.24° | Applying →   |
 | Venus                 | conjunction ☌                 | Regulus               | 5.59° | Separating ← |
-| Venus                 | conjunction ☌                 | Pars Fortunae         | 2.43° | Applying →   |
+| Venus                 | conjunction ☌                 | Pars Spiritus         | 2.43° | Applying →   |
 | Venus                 | conjunction ☌                 | Vertex                | 8.61° | Separating ← |
 | Venus                 | opposition ☍                  | Anti Vertex           | 8.61° | Separating ← |
 | Mars                  | quincunx ⚻                    | Saturn                | 0.02° | Applying →   |
@@ -253,7 +253,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Mars                  | trine △                       | True Lilith           | 2.85° | Applying →   |
 | Mars                  | conjunction ☌                 | Makemake              | 1.67° | Applying →   |
 | Mars                  | conjunction ☌                 | Regulus               | 4.16° | Separating ← |
-| Mars                  | conjunction ☌                 | Pars Fortunae         | 3.86° | Applying →   |
+| Mars                  | conjunction ☌                 | Pars Spiritus         | 3.86° | Applying →   |
 | Mars                  | conjunction ☌                 | Vertex                | 7.18° | Separating ← |
 | Mars                  | opposition ☍                  | Anti Vertex           | 7.18° | Separating ← |
 | Jupiter               | square □                      | Pluto                 | 1.06° | Separating ← |
@@ -266,7 +266,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Jupiter               | trine △                       | Eris                  | 0.81° | Separating ← |
 | Jupiter               | conjunction ☌                 | Orcus                 | 6.79° | Separating ← |
 | Jupiter               | sextile ⚹                     | Spica                 | 5.09° | Applying →   |
-| Jupiter               | square □                      | Pars Spiritus         | 1.27° | Applying →   |
+| Jupiter               | square □                      | Pars Fortunae         | 1.27° | Applying →   |
 | Jupiter               | opposition ☍                  | Pars Amoris           | 1.95° | Applying →   |
 | Jupiter               | conjunction ☌                 | Vertex                | 8.05° | Applying →   |
 | Jupiter               | opposition ☍                  | Anti Vertex           | 8.05° | Applying →   |
@@ -289,7 +289,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Uranus                | trine △                       | Makemake              | 5.59° | Applying →   |
 | Uranus                | quincunx ⚻                    | Orcus                 | 0.72° | Separating ← |
 | Uranus                | semi-square semi-square       | Quaoar                | 0.80° | Applying →   |
-| Uranus                | trine △                       | Pars Fortunae         | 3.40° | Applying →   |
+| Uranus                | trine △                       | Pars Spiritus         | 3.40° | Applying →   |
 | Uranus                | sesquiquadrate sesquiquadrate | Vertex                | 0.56° | Separating ← |
 | Uranus                | semi-square semi-square       | Anti Vertex           | 0.56° | Separating ← |
 | Neptune               | sextile ⚹                     | Pluto                 | 2.57° | Separating ← |
@@ -307,8 +307,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Neptune               | square □                      | Eris                  | 2.82° | Separating ← |
 | Neptune               | trine △                       | Sedna                 | 2.95° | Applying →   |
 | Neptune               | sesquiquadrate sesquiquadrate | Regulus               | 0.30° | Applying →   |
-| Neptune               | trine △                       | Pars Fortunae         | 7.28° | Applying →   |
-| Neptune               | trine △                       | Pars Spiritus         | 4.90° | Separating ← |
+| Neptune               | trine △                       | Pars Fortunae         | 4.90° | Separating ← |
+| Neptune               | trine △                       | Pars Spiritus         | 7.28° | Applying →   |
 | Pluto                 | sextile ⚹                     | Mean North Lunar Node | 0.87° | Applying →   |
 | Pluto                 | sextile ⚹                     | True North Lunar Node | 1.36° | Separating ← |
 | Pluto                 | sextile ⚹                     | Ascendant             | 3.75° | Applying →   |
@@ -325,7 +325,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Pluto                 | quintile Q                    | Makemake              | 0.03° | Applying →   |
 | Pluto                 | conjunction ☌                 | Ixion                 | 6.17° | Applying →   |
 | Pluto                 | conjunction ☌                 | Quaoar                | 7.76° | Applying →   |
-| Pluto                 | opposition ☍                  | Pars Spiritus         | 2.34° | Separating ← |
+| Pluto                 | opposition ☍                  | Pars Fortunae         | 2.34° | Separating ← |
 | Pluto                 | square □                      | Pars Amoris           | 3.01° | Separating ← |
 | Mean North Lunar Node | conjunction ☌                 | True North Lunar Node | 0.49° | Separating ← |
 | Mean North Lunar Node | conjunction ☌                 | Ascendant             | 4.62° | Applying →   |
@@ -341,7 +341,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Mean North Lunar Node | square □                      | Eris                  | 0.62° | Applying →   |
 | Mean North Lunar Node | trine △                       | Sedna                 | 6.39° | Applying →   |
 | Mean North Lunar Node | sextile ⚹                     | Ixion                 | 5.30° | Separating ← |
-| Mean North Lunar Node | trine △                       | Pars Spiritus         | 1.46° | Separating ← |
+| Mean North Lunar Node | trine △                       | Pars Fortunae         | 1.46° | Separating ← |
 | True North Lunar Node | conjunction ☌                 | Ascendant             | 5.12° | Applying →   |
 | True North Lunar Node | sextile ⚹                     | Medium Coeli          | 2.83° | Separating ← |
 | True North Lunar Node | opposition ☍                  | Descendant            | 5.12° | Applying →   |
@@ -356,7 +356,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | True North Lunar Node | trine △                       | Sedna                 | 6.88° | Separating ← |
 | True North Lunar Node | sextile ⚹                     | Ixion                 | 4.80° | Applying →   |
 | True North Lunar Node | square □                      | Spica                 | 4.79° | Applying →   |
-| True North Lunar Node | trine △                       | Pars Spiritus         | 0.97° | Applying →   |
+| True North Lunar Node | trine △                       | Pars Fortunae         | 0.97° | Applying →   |
 | True North Lunar Node | opposition ☍                  | Pars Fidei            | 9.63° | Applying →   |
 | Chiron                | trine △                       | Earth                 | 0.02° | Separating ← |
 | Chiron                | conjunction ☌                 | Pholus                | 7.63° | Applying →   |
@@ -379,8 +379,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Ascendant             | square □                      | Eris                  | 4.01° | Applying →   |
 | Ascendant             | trine △                       | Sedna                 | 1.77° | Separating ← |
 | Ascendant             | sesquiquadrate sesquiquadrate | Regulus               | 0.89° | Applying →   |
-| Ascendant             | trine △                       | Pars Fortunae         | 6.09° | Separating ← |
-| Ascendant             | trine △                       | Pars Spiritus         | 6.09° | Applying →   |
+| Ascendant             | trine △                       | Pars Fortunae         | 6.09° | Applying →   |
+| Ascendant             | trine △                       | Pars Spiritus         | 6.09° | Separating ← |
 | Medium Coeli          | trine △                       | Descendant            | 7.95° | Static =     |
 | Medium Coeli          | trine △                       | Mean South Lunar Node | 3.32° | Separating ← |
 | Medium Coeli          | trine △                       | True South Lunar Node | 2.83° | Separating ← |
@@ -392,7 +392,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Medium Coeli          | sextile ⚹                     | Haumea                | 5.48° | Applying →   |
 | Medium Coeli          | conjunction ☌                 | Ixion                 | 1.97° | Applying →   |
 | Medium Coeli          | conjunction ☌                 | Quaoar                | 3.56° | Applying →   |
-| Medium Coeli          | opposition ☍                  | Pars Spiritus         | 1.86° | Separating ← |
+| Medium Coeli          | opposition ☍                  | Pars Fortunae         | 1.86° | Separating ← |
 | Medium Coeli          | square □                      | Pars Amoris           | 1.19° | Separating ← |
 | Medium Coeli          | trine △                       | Pars Fidei            | 6.80° | Applying →   |
 | Medium Coeli          | square □                      | Vertex                | 4.92° | Applying →   |
@@ -417,7 +417,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Imum Coeli            | trine △                       | Haumea                | 5.48° | Applying →   |
 | Imum Coeli            | opposition ☍                  | Ixion                 | 1.97° | Applying →   |
 | Imum Coeli            | opposition ☍                  | Quaoar                | 3.56° | Applying →   |
-| Imum Coeli            | conjunction ☌                 | Pars Spiritus         | 1.86° | Separating ← |
+| Imum Coeli            | conjunction ☌                 | Pars Fortunae         | 1.86° | Separating ← |
 | Imum Coeli            | square □                      | Pars Amoris           | 1.19° | Separating ← |
 | Imum Coeli            | square □                      | Vertex                | 4.92° | Applying →   |
 | Imum Coeli            | square □                      | Anti Vertex           | 4.92° | Applying →   |
@@ -429,7 +429,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Mean Lilith           | trine △                       | Makemake              | 4.09° | Separating ← |
 | Mean Lilith           | semi-square semi-square       | Ixion                 | 0.89° | Separating ← |
 | Mean Lilith           | semi-square semi-square       | Quaoar                | 0.70° | Applying →   |
-| Mean Lilith           | trine △                       | Pars Fortunae         | 1.90° | Separating ← |
+| Mean Lilith           | trine △                       | Pars Spiritus         | 1.90° | Separating ← |
 | Mean South Lunar Node | conjunction ☌                 | True South Lunar Node | 0.49° | Applying →   |
 | Mean South Lunar Node | conjunction ☌                 | Pholus                | 3.94° | Separating ← |
 | Mean South Lunar Node | opposition ☍                  | Juno                  | 4.32° | Applying →   |
@@ -437,7 +437,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Mean South Lunar Node | square □                      | Eris                  | 0.62° | Separating ← |
 | Mean South Lunar Node | trine △                       | Ixion                 | 5.30° | Applying →   |
 | Mean South Lunar Node | trine △                       | Quaoar                | 6.89° | Applying →   |
-| Mean South Lunar Node | sextile ⚹                     | Pars Spiritus         | 1.46° | Applying →   |
+| Mean South Lunar Node | sextile ⚹                     | Pars Fortunae         | 1.46° | Applying →   |
 | True South Lunar Node | conjunction ☌                 | Pholus                | 3.45° | Separating ← |
 | True South Lunar Node | opposition ☍                  | Juno                  | 3.83° | Applying →   |
 | True South Lunar Node | conjunction ☌                 | Vesta                 | 3.43° | Separating ← |
@@ -445,7 +445,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | True South Lunar Node | trine △                       | Ixion                 | 4.80° | Separating ← |
 | True South Lunar Node | trine △                       | Quaoar                | 6.39° | Separating ← |
 | True South Lunar Node | square □                      | Spica                 | 4.79° | Separating ← |
-| True South Lunar Node | sextile ⚹                     | Pars Spiritus         | 0.97° | Separating ← |
+| True South Lunar Node | sextile ⚹                     | Pars Fortunae         | 0.97° | Separating ← |
 | True South Lunar Node | conjunction ☌                 | Pars Fidei            | 9.63° | Separating ← |
 | True Lilith           | square □                      | Earth                 | 1.02° | Separating ← |
 | True Lilith           | sextile ⚹                     | Ceres                 | 4.23° | Separating ← |
@@ -453,7 +453,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | True Lilith           | square □                      | Haumea                | 3.78° | Separating ← |
 | True Lilith           | trine △                       | Makemake              | 4.52° | Applying →   |
 | True Lilith           | trine △                       | Regulus               | 1.31° | Separating ← |
-| True Lilith           | trine △                       | Pars Fortunae         | 6.71° | Applying →   |
+| True Lilith           | trine △                       | Pars Spiritus         | 6.71° | Applying →   |
 | True Lilith           | trine △                       | Vertex                | 4.33° | Separating ← |
 | True Lilith           | sextile ⚹                     | Anti Vertex           | 4.33° | Separating ← |
 | Earth                 | trine △                       | Pholus                | 7.61° | Applying →   |
@@ -473,8 +473,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Pholus                | trine △                       | Ixion                 | 1.35° | Applying →   |
 | Pholus                | trine △                       | Quaoar                | 2.94° | Applying →   |
 | Pholus                | square □                      | Spica                 | 1.34° | Applying →   |
-| Pholus                | semi-square semi-square       | Pars Fortunae         | 0.34° | Applying →   |
-| Pholus                | sextile ⚹                     | Pars Spiritus         | 2.48° | Separating ← |
+| Pholus                | sextile ⚹                     | Pars Fortunae         | 2.48° | Separating ← |
+| Pholus                | semi-square semi-square       | Pars Spiritus         | 0.34° | Applying →   |
 | Pholus                | conjunction ☌                 | Pars Fidei            | 6.18° | Applying →   |
 | Ceres                 | semi-sextile semi-sextile     | Pallas                | 0.55° | Separating ← |
 | Ceres                 | square □                      | Juno                  | 4.02° | Separating ← |
@@ -494,7 +494,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Pallas                | sextile ⚹                     | Ixion                 | 3.60° | Separating ← |
 | Pallas                | semi-square semi-square       | Orcus                 | 0.49° | Separating ← |
 | Pallas                | sextile ⚹                     | Quaoar                | 2.01° | Separating ← |
-| Pallas                | trine △                       | Pars Spiritus         | 7.43° | Separating ← |
+| Pallas                | trine △                       | Pars Fortunae         | 7.43° | Separating ← |
 | Pallas                | biquintile biquintile         | Pars Amoris           | 0.76° | Separating ← |
 | Pallas                | sextile ⚹                     | Pars Fidei            | 1.23° | Applying →   |
 | Pallas                | semi-sextile semi-sextile     | Vertex                | 0.65° | Separating ← |
@@ -506,16 +506,16 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Juno                  | sextile ⚹                     | Quaoar                | 2.56° | Separating ← |
 | Juno                  | biquintile biquintile         | Regulus               | 0.94° | Separating ← |
 | Juno                  | square □                      | Spica                 | 0.96° | Separating ← |
-| Juno                  | sesquiquadrate sesquiquadrate | Pars Fortunae         | 0.04° | Applying →   |
-| Juno                  | trine △                       | Pars Spiritus         | 2.86° | Applying →   |
+| Juno                  | trine △                       | Pars Fortunae         | 2.86° | Applying →   |
+| Juno                  | sesquiquadrate sesquiquadrate | Pars Spiritus         | 0.04° | Applying →   |
 | Juno                  | opposition ☍                  | Pars Fidei            | 5.80° | Separating ← |
 | Vesta                 | square □                      | Eris                  | 4.54° | Separating ← |
 | Vesta                 | sextile ⚹                     | Haumea                | 4.87° | Applying →   |
 | Vesta                 | trine △                       | Ixion                 | 1.37° | Applying →   |
 | Vesta                 | trine △                       | Quaoar                | 2.96° | Applying →   |
 | Vesta                 | square □                      | Spica                 | 1.35° | Applying →   |
-| Vesta                 | semi-square semi-square       | Pars Fortunae         | 0.36° | Applying →   |
-| Vesta                 | sextile ⚹                     | Pars Spiritus         | 2.46° | Separating ← |
+| Vesta                 | sextile ⚹                     | Pars Fortunae         | 2.46° | Separating ← |
+| Vesta                 | semi-square semi-square       | Pars Spiritus         | 0.36° | Applying →   |
 | Vesta                 | conjunction ☌                 | Pars Fidei            | 6.19° | Applying →   |
 | Eris                  | biquintile biquintile         | Ixion                 | 0.09° | Separating ← |
 | Eris                  | trine △                       | Orcus                 | 5.98° | Applying →   |
@@ -524,23 +524,23 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Sedna                 | sesquiquadrate sesquiquadrate | Haumea                | 0.19° | Separating ← |
 | Sedna                 | trine △                       | Makemake              | 6.51° | Applying →   |
 | Sedna                 | square □                      | Orcus                 | 0.21° | Applying →   |
-| Sedna                 | trine △                       | Pars Fortunae         | 4.32° | Separating ← |
-| Sedna                 | conjunction ☌                 | Pars Spiritus         | 7.86° | Applying →   |
+| Sedna                 | conjunction ☌                 | Pars Fortunae         | 7.86° | Applying →   |
+| Sedna                 | trine △                       | Pars Spiritus         | 4.32° | Separating ← |
 | Haumea                | sextile ⚹                     | Ixion                 | 3.51° | Separating ← |
 | Haumea                | semi-square semi-square       | Orcus                 | 0.40° | Applying →   |
 | Haumea                | sextile ⚹                     | Quaoar                | 1.91° | Separating ← |
-| Haumea                | trine △                       | Pars Spiritus         | 7.34° | Separating ← |
+| Haumea                | trine △                       | Pars Fortunae         | 7.34° | Separating ← |
 | Haumea                | biquintile biquintile         | Pars Amoris           | 0.66° | Separating ← |
 | Haumea                | sextile ⚹                     | Pars Fidei            | 1.32° | Applying →   |
 | Haumea                | semi-sextile semi-sextile     | Vertex                | 0.56° | Separating ← |
 | Haumea                | quincunx ⚻                    | Anti Vertex           | 0.56° | Separating ← |
 | Makemake              | conjunction ☌                 | Regulus               | 5.84° | Separating ← |
-| Makemake              | conjunction ☌                 | Pars Fortunae         | 2.19° | Applying →   |
+| Makemake              | conjunction ☌                 | Pars Spiritus         | 2.19° | Applying →   |
 | Makemake              | conjunction ☌                 | Vertex                | 8.85° | Separating ← |
 | Makemake              | opposition ☍                  | Anti Vertex           | 8.85° | Separating ← |
 | Ixion                 | conjunction ☌                 | Quaoar                | 1.59° | Static =     |
 | Ixion                 | semi-sextile semi-sextile     | Spica                 | 0.02° | Applying →   |
-| Ixion                 | opposition ☍                  | Pars Spiritus         | 3.83° | Applying →   |
+| Ixion                 | opposition ☍                  | Pars Fortunae         | 3.83° | Applying →   |
 | Ixion                 | square □                      | Pars Amoris           | 3.16° | Applying →   |
 | Ixion                 | trine △                       | Pars Fidei            | 4.83° | Separating ← |
 | Ixion                 | square □                      | Vertex                | 2.95° | Separating ← |
@@ -548,22 +548,22 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Orcus                 | quintile Q                    | Spica                 | 0.12° | Separating ← |
 | Orcus                 | opposition ☍                  | Pars Amoris           | 8.73° | Applying →   |
 | Quaoar                | square □                      | Regulus               | 4.38° | Separating ← |
-| Quaoar                | opposition ☍                  | Pars Spiritus         | 5.42° | Applying →   |
+| Quaoar                | opposition ☍                  | Pars Fortunae         | 5.42° | Applying →   |
 | Quaoar                | square □                      | Pars Amoris           | 4.75° | Applying →   |
 | Quaoar                | trine △                       | Pars Fidei            | 3.23° | Separating ← |
 | Quaoar                | square □                      | Vertex                | 1.36° | Separating ← |
 | Quaoar                | square □                      | Anti Vertex           | 1.36° | Separating ← |
 | Regulus               | sextile ⚹                     | Spica                 | 5.98° | Static =     |
-| Regulus               | conjunction ☌                 | Pars Fortunae         | 8.02° | Static =     |
+| Regulus               | conjunction ☌                 | Pars Spiritus         | 8.02° | Static =     |
 | Regulus               | opposition ☍                  | Pars Amoris           | 9.13° | Static =     |
 | Regulus               | conjunction ☌                 | Vertex                | 3.02° | Static =     |
 | Regulus               | opposition ☍                  | Anti Vertex           | 3.02° | Static =     |
-| Spica                 | semi-square semi-square       | Pars Fortunae         | 0.99° | Static =     |
+| Spica                 | semi-square semi-square       | Pars Spiritus         | 0.99° | Static =     |
 | Spica                 | trine △                       | Pars Amoris           | 3.14° | Static =     |
 | Spica                 | square □                      | Pars Fidei            | 4.84° | Static =     |
 | Spica                 | sextile ⚹                     | Vertex                | 2.97° | Static =     |
 | Spica                 | trine △                       | Anti Vertex           | 2.97° | Static =     |
-| Pars Spiritus         | square □                      | Pars Amoris           | 0.67° | Static =     |
+| Pars Fortunae         | square □                      | Pars Amoris           | 0.67° | Static =     |
 | Pars Amoris           | opposition ☍                  | Vertex                | 6.11° | Static =     |
 | Pars Amoris           | conjunction ☌                 | Anti Vertex           | 6.11° | Static =     |
 | Vertex                | opposition ☍                  | Anti Vertex           | 0.00° | Static =     |

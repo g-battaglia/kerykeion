@@ -91,8 +91,8 @@ Sample Natal Subject — Transit 1980-12-08
 | Quaoar                | Sco ♏️ | 24.08°   | -0.0062°/d   | -13.09° | R    | First House    |
 | Regulus               | Leo ♌️ | 29.70°   | +0.0000°/d   | +12.01° | -    | Tenth House    |
 | Spica                 | Lib ♎️ | 23.71°   | -0.0000°/d   | -11.11° | -    | Twelfth House  |
-| Pars Fortunae         | Sco ♏️ | 13.16°   | N/A          | N/A     | -    | First House    |
-| Pars Spiritus         | Lib ♎️ | 28.49°   | N/A          | N/A     | -    | Twelfth House  |
+| Pars Fortunae         | Lib ♎️ | 28.49°   | N/A          | N/A     | -    | Twelfth House  |
+| Pars Spiritus         | Sco ♏️ | 13.16°   | N/A          | N/A     | -    | First House    |
 | Pars Amoris           | Lib ♎️ | 8.99°    | N/A          | N/A     | -    | Eleventh House |
 | Pars Fidei            | Tau ♉️ | 8.22°    | N/A          | N/A     | -    | Seventh House  |
 | Vertex                | Gem ♊️ | 11.46°   | N/A          | N/A     | -    | Eighth House   |
@@ -138,8 +138,8 @@ Sample Natal Subject — Transit 1980-12-08
 | Quaoar                | Sco ♏️ | 14.08°   | +0.0220°/d   | -11.77° | -    | Third House    |
 | Regulus               | Leo ♌️ | 29.56°   | +0.0002°/d   | +12.06° | -    | Twelfth House  |
 | Spica                 | Lib ♎️ | 23.57°   | +0.0002°/d   | -11.06° | -    | Second House   |
-| Pars Fortunae         | Vir ♍️ | 25.29°   | N/A          | N/A     | -    | First House    |
-| Pars Spiritus         | Leo ♌️ | 19.65°   | N/A          | N/A     | -    | Twelfth House  |
+| Pars Fortunae         | Leo ♌️ | 19.65°   | N/A          | N/A     | -    | Twelfth House  |
+| Pars Spiritus         | Vir ♍️ | 25.29°   | N/A          | N/A     | -    | First House    |
 | Pars Amoris           | Leo ♌️ | 8.91°    | N/A          | N/A     | -    | Eleventh House |
 | Pars Fidei            | Vir ♍️ | 6.29°    | N/A          | N/A     | -    | Twelfth House  |
 | Vertex                | Aqu ♒️ | 5.85°    | N/A          | N/A     | -    | Fifth House    |
@@ -193,16 +193,16 @@ Sample Natal Subject — Transit 1980-12-08
 +----------+--------------------+------------+
 | Fire 🔥  | 6.8999999999999995 | 22.1%      |
 | Earth 🌍 | 6.8999999999999995 | 22.1%      |
-| Air 💨   | 4.8                | 15.4%      |
-| Water 💧 | 12.600000000000003 | 40.4%      |
+| Air 💨   | 4.8999999999999995 | 15.7%      |
+| Water 💧 | 12.500000000000002 | 40.1%      |
 | Total    | 31.200000000000003 | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 11.9               | 38.1%      |
-| Fixed    | 16.600000000000005 | 53.2%      |
+| Cardinal | 12.000000000000002 | 38.5%      |
+| Fixed    | 16.500000000000004 | 52.9%      |
 | Mutable  | 2.7                | 8.7%       |
 | Total    | 31.200000000000006 | 100%       |
 +----------+--------------------+------------+
@@ -242,8 +242,8 @@ Sample Natal Subject — Transit 1980-12-08
 | Sample Natal Subject – Quaoar                | 1 (First_House)     | 3 (Third_House)     | Sco  | 24.08° |
 | Sample Natal Subject – Regulus               | 10 (Tenth_House)    | 12 (Twelfth_House)  | Leo  | 29.70° |
 | Sample Natal Subject – Spica                 | 12 (Twelfth_House)  | 2 (Second_House)    | Lib  | 23.71° |
-| Sample Natal Subject – Pars Fortunae         | 1 (First_House)     | 3 (Third_House)     | Sco  | 13.16° |
-| Sample Natal Subject – Pars Spiritus         | 12 (Twelfth_House)  | 2 (Second_House)    | Lib  | 28.49° |
+| Sample Natal Subject – Pars Fortunae         | 12 (Twelfth_House)  | 2 (Second_House)    | Lib  | 28.49° |
+| Sample Natal Subject – Pars Spiritus         | 1 (First_House)     | 3 (Third_House)     | Sco  | 13.16° |
 | Sample Natal Subject – Pars Amoris           | 11 (Eleventh_House) | 2 (Second_House)    | Lib  | 8.99°  |
 | Sample Natal Subject – Pars Fidei            | 7 (Seventh_House)   | 9 (Ninth_House)     | Tau  | 8.22°  |
 | Sample Natal Subject – Vertex                | 8 (Eighth_House)    | 10 (Tenth_House)    | Gem  | 11.46° |
@@ -289,8 +289,8 @@ Sample Natal Subject — Transit 1980-12-08
 | 1980 Transit – Quaoar                | 3 (Third_House)     | 1 (First_House)     | Sco  | 14.08° |
 | 1980 Transit – Regulus               | 12 (Twelfth_House)  | 10 (Tenth_House)    | Leo  | 29.56° |
 | 1980 Transit – Spica                 | 2 (Second_House)    | 12 (Twelfth_House)  | Lib  | 23.57° |
-| 1980 Transit – Pars Fortunae         | 1 (First_House)     | 11 (Eleventh_House) | Vir  | 25.29° |
-| 1980 Transit – Pars Spiritus         | 12 (Twelfth_House)  | 9 (Ninth_House)     | Leo  | 19.65° |
+| 1980 Transit – Pars Fortunae         | 12 (Twelfth_House)  | 9 (Ninth_House)     | Leo  | 19.65° |
+| 1980 Transit – Pars Spiritus         | 1 (First_House)     | 11 (Eleventh_House) | Vir  | 25.29° |
 | 1980 Transit – Pars Amoris           | 11 (Eleventh_House) | 9 (Ninth_House)     | Leo  | 8.91°  |
 | 1980 Transit – Pars Fidei            | 12 (Twelfth_House)  | 10 (Tenth_House)    | Vir  | 6.29°  |
 | 1980 Transit – Vertex                | 5 (Fifth_House)     | 3 (Third_House)     | Aqu  | 5.85°  |
@@ -415,7 +415,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Sun                   | Sample Natal Subject | square □                      | Juno                  | 1980 Transit | 4.22°  | Applying →   |
 | Sun                   | Sample Natal Subject | conjunction ☌                 | Orcus                 | 1980 Transit | 3.43°  | Applying →   |
 | Sun                   | Sample Natal Subject | square □                      | Spica                 | 1980 Transit | 4.97°  | Static =     |
-| Sun                   | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | 1980 Transit | 3.25°  | Static =     |
+| Sun                   | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | 1980 Transit | 3.25°  | Static =     |
 | Sun                   | Sample Natal Subject | opposition ☍                  | Vertex                | 1980 Transit | 7.31°  | Static =     |
 | Sun                   | Sample Natal Subject | conjunction ☌                 | Anti Vertex           | 1980 Transit | 7.31°  | Static =     |
 | Moon                  | Sample Natal Subject | trine △                       | Venus                 | 1980 Transit | 2.53°  | Applying →   |
@@ -431,7 +431,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Moon                  | Sample Natal Subject | trine △                       | Ixion                 | 1980 Transit | 6.35°  | Applying →   |
 | Moon                  | Sample Natal Subject | trine △                       | Quaoar                | 1980 Transit | 7.13°  | Applying →   |
 | Moon                  | Sample Natal Subject | square □                      | Spica                 | 1980 Transit | 2.36°  | Static =     |
-| Moon                  | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | 1980 Transit | 4.08°  | Static =     |
+| Moon                  | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | 1980 Transit | 4.08°  | Static =     |
 | Moon                  | Sample Natal Subject | semi-square semi-square       | Pars Fidei            | 1980 Transit | 0.08°  | Static =     |
 | Mercury               | Sample Natal Subject | trine △                       | Sun                   | 1980 Transit | 0.37°  | Applying →   |
 | Mercury               | Sample Natal Subject | square □                      | Venus                 | 1980 Transit | 1.07°  | Separating ← |
@@ -447,7 +447,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Mercury               | Sample Natal Subject | square □                      | Ixion                 | 1980 Transit | 2.75°  | Applying →   |
 | Mercury               | Sample Natal Subject | square □                      | Quaoar                | 1980 Transit | 3.53°  | Applying →   |
 | Mercury               | Sample Natal Subject | sextile ⚹                     | Spica                 | 1980 Transit | 5.96°  | Static =     |
-| Mercury               | Sample Natal Subject | conjunction ☌                 | Pars Spiritus         | 1980 Transit | 2.04°  | Static =     |
+| Mercury               | Sample Natal Subject | conjunction ☌                 | Pars Fortunae         | 1980 Transit | 2.04°  | Static =     |
 | Mercury               | Sample Natal Subject | conjunction ☌                 | Pars Amoris           | 1980 Transit | 8.70°  | Static =     |
 | Venus                 | Sample Natal Subject | opposition ☍                  | Moon                  | 1980 Transit | 3.35°  | Separating ← |
 | Venus                 | Sample Natal Subject | opposition ☍                  | Neptune               | 1980 Transit | 9.51°  | Applying →   |
@@ -494,7 +494,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Jupiter               | Sample Natal Subject | sextile ⚹                     | Haumea                | 1980 Transit | 4.22°  | Applying →   |
 | Jupiter               | Sample Natal Subject | conjunction ☌                 | Orcus                 | 1980 Transit | 8.07°  | Applying →   |
 | Jupiter               | Sample Natal Subject | square □                      | Spica                 | 1980 Transit | 0.34°  | Static =     |
-| Jupiter               | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | 1980 Transit | 1.38°  | Static =     |
+| Jupiter               | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | 1980 Transit | 1.38°  | Static =     |
 | Saturn                | Sample Natal Subject | sextile ⚹                     | Venus                 | 1980 Transit | 2.84°  | Applying →   |
 | Saturn                | Sample Natal Subject | conjunction ☌                 | Mars                  | 1980 Transit | 8.46°  | Applying →   |
 | Saturn                | Sample Natal Subject | sextile ⚹                     | Uranus                | 1980 Transit | 5.64°  | Separating ← |
@@ -509,7 +509,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Saturn                | Sample Natal Subject | sesquiquadrate sesquiquadrate | Vesta                 | 1980 Transit | 0.78°  | Separating ← |
 | Saturn                | Sample Natal Subject | trine △                       | Haumea                | 1980 Transit | 1.83°  | Applying →   |
 | Saturn                | Sample Natal Subject | square □                      | Spica                 | 1980 Transit | 2.05°  | Static =     |
-| Saturn                | Sample Natal Subject | trine △                       | Pars Fortunae         | 1980 Transit | 3.78°  | Static =     |
+| Saturn                | Sample Natal Subject | trine △                       | Pars Spiritus         | 1980 Transit | 3.78°  | Static =     |
 | Saturn                | Sample Natal Subject | sesquiquadrate sesquiquadrate | Pars Fidei            | 1980 Transit | 0.23°  | Static =     |
 | Uranus                | Sample Natal Subject | conjunction ☌                 | Moon                  | 1980 Transit | 1.68°  | Applying →   |
 | Uranus                | Sample Natal Subject | conjunction ☌                 | Mars                  | 1980 Transit | 6.32°  | Separating ← |
@@ -548,7 +548,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Neptune               | Sample Natal Subject | trine △                       | Haumea                | 1980 Transit | 6.93°  | Separating ← |
 | Neptune               | Sample Natal Subject | sextile ⚹                     | Ixion                 | 1980 Transit | 2.10°  | Separating ← |
 | Neptune               | Sample Natal Subject | sextile ⚹                     | Quaoar                | 1980 Transit | 1.32°  | Separating ← |
-| Neptune               | Sample Natal Subject | biquintile biquintile         | Pars Spiritus         | 1980 Transit | 0.89°  | Static =     |
+| Neptune               | Sample Natal Subject | biquintile biquintile         | Pars Fortunae         | 1980 Transit | 0.89°  | Static =     |
 | Neptune               | Sample Natal Subject | trine △                       | Pars Fidei            | 1980 Transit | 6.48°  | Static =     |
 | Pluto                 | Sample Natal Subject | conjunction ☌                 | Venus                 | 1980 Transit | 3.70°  | Separating ← |
 | Pluto                 | Sample Natal Subject | sextile ⚹                     | Mars                  | 1980 Transit | 1.92°  | Applying →   |
@@ -564,7 +564,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Pluto                 | Sample Natal Subject | sextile ⚹                     | Haumea                | 1980 Transit | 4.72°  | Separating ← |
 | Pluto                 | Sample Natal Subject | conjunction ☌                 | Ixion                 | 1980 Transit | 0.11°  | Applying →   |
 | Pluto                 | Sample Natal Subject | conjunction ☌                 | Quaoar                | 1980 Transit | 0.90°  | Applying →   |
-| Pluto                 | Sample Natal Subject | square □                      | Pars Spiritus         | 1980 Transit | 4.68°  | Static =     |
+| Pluto                 | Sample Natal Subject | square □                      | Pars Fortunae         | 1980 Transit | 4.68°  | Static =     |
 | Mean North Lunar Node | Sample Natal Subject | sextile ⚹                     | Mercury               | 1980 Transit | 2.70°  | Applying →   |
 | Mean North Lunar Node | Sample Natal Subject | trine △                       | Jupiter               | 1980 Transit | 0.63°  | Applying →   |
 | Mean North Lunar Node | Sample Natal Subject | trine △                       | Saturn                | 1980 Transit | 0.56°  | Separating ← |
@@ -616,8 +616,8 @@ Sample Natal Subject — Transit 1980-12-08
 | Chiron                | Sample Natal Subject | trine △                       | Ixion                 | 1980 Transit | 5.02°  | Applying →   |
 | Chiron                | Sample Natal Subject | trine △                       | Quaoar                | 1980 Transit | 5.80°  | Applying →   |
 | Chiron                | Sample Natal Subject | square □                      | Spica                 | 1980 Transit | 3.69°  | Static =     |
-| Chiron                | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | 1980 Transit | 5.41°  | Static =     |
-| Chiron                | Sample Natal Subject | semi-sextile semi-sextile     | Pars Spiritus         | 1980 Transit | 0.23°  | Static =     |
+| Chiron                | Sample Natal Subject | semi-sextile semi-sextile     | Pars Fortunae         | 1980 Transit | 0.23°  | Static =     |
+| Chiron                | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | 1980 Transit | 5.41°  | Static =     |
 | Ascendant             | Sample Natal Subject | sextile ⚹                     | Moon                  | 1980 Transit | 0.76°  | Applying →   |
 | Ascendant             | Sample Natal Subject | semi-sextile semi-sextile     | Mercury               | 1980 Transit | 0.73°  | Applying →   |
 | Ascendant             | Sample Natal Subject | opposition ☍                  | Chiron                | 1980 Transit | 8.54°  | Applying →   |
@@ -653,7 +653,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Medium Coeli          | Sample Natal Subject | conjunction ☌                 | Makemake              | 1980 Transit | 6.22°  | Applying →   |
 | Medium Coeli          | Sample Natal Subject | conjunction ☌                 | Regulus               | 1980 Transit | 9.65°  | Static =     |
 | Medium Coeli          | Sample Natal Subject | sextile ⚹                     | Spica                 | 1980 Transit | 3.65°  | Static =     |
-| Medium Coeli          | Sample Natal Subject | conjunction ☌                 | Pars Spiritus         | 1980 Transit | 0.27°  | Static =     |
+| Medium Coeli          | Sample Natal Subject | conjunction ☌                 | Pars Fortunae         | 1980 Transit | 0.27°  | Static =     |
 | Descendant            | Sample Natal Subject | trine △                       | Moon                  | 1980 Transit | 0.76°  | Applying →   |
 | Descendant            | Sample Natal Subject | quincunx ⚻                    | Mercury               | 1980 Transit | 0.73°  | Applying →   |
 | Descendant            | Sample Natal Subject | trine △                       | Mars                  | 1980 Transit | 7.24°  | Separating ← |
@@ -689,8 +689,8 @@ Sample Natal Subject — Transit 1980-12-08
 | Imum Coeli            | Sample Natal Subject | opposition ☍                  | Makemake              | 1980 Transit | 6.22°  | Applying →   |
 | Imum Coeli            | Sample Natal Subject | opposition ☍                  | Regulus               | 1980 Transit | 9.65°  | Static =     |
 | Imum Coeli            | Sample Natal Subject | trine △                       | Spica                 | 1980 Transit | 3.65°  | Static =     |
-| Imum Coeli            | Sample Natal Subject | biquintile biquintile         | Pars Fortunae         | 1980 Transit | 0.62°  | Static =     |
-| Imum Coeli            | Sample Natal Subject | opposition ☍                  | Pars Spiritus         | 1980 Transit | 0.27°  | Static =     |
+| Imum Coeli            | Sample Natal Subject | opposition ☍                  | Pars Fortunae         | 1980 Transit | 0.27°  | Static =     |
+| Imum Coeli            | Sample Natal Subject | biquintile biquintile         | Pars Spiritus         | 1980 Transit | 0.62°  | Static =     |
 | Mean Lilith           | Sample Natal Subject | conjunction ☌                 | Mercury               | 1980 Transit | 6.10°  | Separating ← |
 | Mean Lilith           | Sample Natal Subject | semi-square semi-square       | Mars                  | 1980 Transit | 0.93°  | Applying →   |
 | Mean Lilith           | Sample Natal Subject | conjunction ☌                 | Uranus                | 1980 Transit | 1.84°  | Applying →   |
@@ -703,7 +703,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Mean Lilith           | Sample Natal Subject | square □                      | Makemake              | 1980 Transit | 2.85°  | Separating ← |
 | Mean Lilith           | Sample Natal Subject | trine △                       | Orcus                 | 1980 Transit | 2.99°  | Applying →   |
 | Mean Lilith           | Sample Natal Subject | square □                      | Regulus               | 1980 Transit | 0.57°  | Static =     |
-| Mean Lilith           | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | 1980 Transit | 3.70°  | Static =     |
+| Mean Lilith           | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | 1980 Transit | 3.70°  | Static =     |
 | Mean Lilith           | Sample Natal Subject | trine △                       | Anti Vertex           | 1980 Transit | 6.86°  | Static =     |
 | Mean South Lunar Node | Sample Natal Subject | trine △                       | Mercury               | 1980 Transit | 2.70°  | Applying →   |
 | Mean South Lunar Node | Sample Natal Subject | sextile ⚹                     | Jupiter               | 1980 Transit | 0.63°  | Applying →   |
@@ -758,7 +758,7 @@ Sample Natal Subject — Transit 1980-12-08
 | True Lilith           | Sample Natal Subject | trine △                       | Eris                  | 1980 Transit | 3.88°  | Separating ← |
 | True Lilith           | Sample Natal Subject | square □                      | Haumea                | 1980 Transit | 1.66°  | Separating ← |
 | True Lilith           | Sample Natal Subject | sextile ⚹                     | Spica                 | 1980 Transit | 5.54°  | Static =     |
-| True Lilith           | Sample Natal Subject | trine △                       | Pars Spiritus         | 1980 Transit | 1.62°  | Static =     |
+| True Lilith           | Sample Natal Subject | trine △                       | Pars Fortunae         | 1980 Transit | 1.62°  | Static =     |
 | Earth                 | Sample Natal Subject | trine △                       | Mercury               | 1980 Transit | 5.09°  | Separating ← |
 | Earth                 | Sample Natal Subject | opposition ☍                  | Jupiter               | 1980 Transit | 7.16°  | Separating ← |
 | Earth                 | Sample Natal Subject | opposition ☍                  | Saturn                | 1980 Transit | 8.35°  | Separating ← |
@@ -773,7 +773,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Earth                 | Sample Natal Subject | trine △                       | Orcus                 | 1980 Transit | 1.98°  | Applying →   |
 | Earth                 | Sample Natal Subject | sesquiquadrate sesquiquadrate | Quaoar                | 1980 Transit | 0.92°  | Applying →   |
 | Earth                 | Sample Natal Subject | quincunx ⚻                    | Regulus               | 1980 Transit | 0.44°  | Static =     |
-| Earth                 | Sample Natal Subject | opposition ☍                  | Pars Fortunae         | 1980 Transit | 4.71°  | Static =     |
+| Earth                 | Sample Natal Subject | opposition ☍                  | Pars Spiritus         | 1980 Transit | 4.71°  | Static =     |
 | Earth                 | Sample Natal Subject | sextile ⚹                     | Vertex                | 1980 Transit | 5.85°  | Static =     |
 | Earth                 | Sample Natal Subject | trine △                       | Anti Vertex           | 1980 Transit | 5.85°  | Static =     |
 | Pholus                | Sample Natal Subject | opposition ☍                  | Moon                  | 1980 Transit | 2.93°  | Applying →   |
@@ -804,7 +804,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Ceres                 | Sample Natal Subject | trine △                       | Eris                  | 1980 Transit | 0.43°  | Applying →   |
 | Ceres                 | Sample Natal Subject | square □                      | Ixion                 | 1980 Transit | 1.15°  | Separating ← |
 | Ceres                 | Sample Natal Subject | square □                      | Quaoar                | 1980 Transit | 0.36°  | Separating ← |
-| Ceres                 | Sample Natal Subject | conjunction ☌                 | Pars Spiritus         | 1980 Transit | 5.93°  | Static =     |
+| Ceres                 | Sample Natal Subject | conjunction ☌                 | Pars Fortunae         | 1980 Transit | 5.93°  | Static =     |
 | Ceres                 | Sample Natal Subject | conjunction ☌                 | Pars Amoris           | 1980 Transit | 4.80°  | Static =     |
 | Ceres                 | Sample Natal Subject | opposition ☍                  | Vertex                | 1980 Transit | 7.87°  | Static =     |
 | Ceres                 | Sample Natal Subject | conjunction ☌                 | Anti Vertex           | 1980 Transit | 7.87°  | Static =     |
@@ -837,7 +837,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Juno                  | Sample Natal Subject | opposition ☍                  | Sedna                 | 1980 Transit | 4.23°  | Separating ← |
 | Juno                  | Sample Natal Subject | conjunction ☌                 | Ixion                 | 1980 Transit | 4.77°  | Separating ← |
 | Juno                  | Sample Natal Subject | conjunction ☌                 | Quaoar                | 1980 Transit | 3.98°  | Separating ← |
-| Juno                  | Sample Natal Subject | semi-square semi-square       | Pars Fortunae         | 1980 Transit | 0.20°  | Static =     |
+| Juno                  | Sample Natal Subject | semi-square semi-square       | Pars Spiritus         | 1980 Transit | 0.20°  | Static =     |
 | Juno                  | Sample Natal Subject | square □                      | Pars Amoris           | 1980 Transit | 1.19°  | Static =     |
 | Juno                  | Sample Natal Subject | sextile ⚹                     | Pars Fidei            | 1980 Transit | 3.81°  | Static =     |
 | Juno                  | Sample Natal Subject | square □                      | Vertex                | 1980 Transit | 4.25°  | Static =     |
@@ -852,8 +852,8 @@ Sample Natal Subject — Transit 1980-12-08
 | Vesta                 | Sample Natal Subject | trine △                       | Haumea                | 1980 Transit | 1.54°  | Separating ← |
 | Vesta                 | Sample Natal Subject | opposition ☍                  | Ixion                 | 1980 Transit | 3.28°  | Applying →   |
 | Vesta                 | Sample Natal Subject | opposition ☍                  | Quaoar                | 1980 Transit | 4.07°  | Applying →   |
-| Vesta                 | Sample Natal Subject | trine △                       | Pars Fortunae         | 1980 Transit | 7.15°  | Static =     |
-| Vesta                 | Sample Natal Subject | square □                      | Pars Spiritus         | 1980 Transit | 1.50°  | Static =     |
+| Vesta                 | Sample Natal Subject | square □                      | Pars Fortunae         | 1980 Transit | 1.50°  | Static =     |
+| Vesta                 | Sample Natal Subject | trine △                       | Pars Spiritus         | 1980 Transit | 7.15°  | Static =     |
 | Eris                  | Sample Natal Subject | trine △                       | Sun                   | 1980 Transit | 0.36°  | Applying →   |
 | Eris                  | Sample Natal Subject | square □                      | Mars                  | 1980 Transit | 4.54°  | Applying →   |
 | Eris                  | Sample Natal Subject | opposition ☍                  | Saturn                | 1980 Transit | 9.25°  | Applying →   |
@@ -869,7 +869,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Eris                  | Sample Natal Subject | opposition ☍                  | Juno                  | 1980 Transit | 6.73°  | Separating ← |
 | Eris                  | Sample Natal Subject | conjunction ☌                 | Eris                  | 1980 Transit | 3.45°  | Separating ← |
 | Eris                  | Sample Natal Subject | opposition ☍                  | Spica                 | 1980 Transit | 5.97°  | Static =     |
-| Eris                  | Sample Natal Subject | trine △                       | Pars Spiritus         | 1980 Transit | 2.05°  | Static =     |
+| Eris                  | Sample Natal Subject | trine △                       | Pars Fortunae         | 1980 Transit | 2.05°  | Static =     |
 | Eris                  | Sample Natal Subject | quintile Q                    | Vertex                | 1980 Transit | 0.25°  | Static =     |
 | Sedna                 | Sample Natal Subject | biquintile biquintile         | Sun                   | 1980 Transit | 0.31°  | Applying →   |
 | Sedna                 | Sample Natal Subject | trine △                       | Moon                  | 1980 Transit | 6.49°  | Applying →   |
@@ -900,7 +900,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Haumea                | Sample Natal Subject | conjunction ☌                 | Haumea                | 1980 Transit | 6.63°  | Applying →   |
 | Haumea                | Sample Natal Subject | semi-sextile semi-sextile     | Makemake              | 1980 Transit | 0.18°  | Separating ← |
 | Haumea                | Sample Natal Subject | sextile ⚹                     | Orcus                 | 1980 Transit | 5.66°  | Applying →   |
-| Haumea                | Sample Natal Subject | conjunction ☌                 | Pars Fortunae         | 1980 Transit | 1.03°  | Static =     |
+| Haumea                | Sample Natal Subject | conjunction ☌                 | Pars Spiritus         | 1980 Transit | 1.03°  | Static =     |
 | Makemake              | Sample Natal Subject | trine △                       | Moon                  | 1980 Transit | 0.56°  | Separating ← |
 | Makemake              | Sample Natal Subject | square □                      | Mercury               | 1980 Transit | 0.59°  | Separating ← |
 | Makemake              | Sample Natal Subject | conjunction ☌                 | Ascendant             | 1980 Transit | 2.97°  | Separating ← |
@@ -929,8 +929,8 @@ Sample Natal Subject — Transit 1980-12-08
 | Ixion                 | Sample Natal Subject | conjunction ☌                 | Ixion                 | 1980 Transit | 7.84°  | Applying →   |
 | Ixion                 | Sample Natal Subject | conjunction ☌                 | Quaoar                | 1980 Transit | 8.63°  | Applying →   |
 | Ixion                 | Sample Natal Subject | semi-sextile semi-sextile     | Spica                 | 1980 Transit | 0.86°  | Static =     |
-| Ixion                 | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | 1980 Transit | 2.59°  | Static =     |
-| Ixion                 | Sample Natal Subject | square □                      | Pars Spiritus         | 1980 Transit | 3.05°  | Static =     |
+| Ixion                 | Sample Natal Subject | square □                      | Pars Fortunae         | 1980 Transit | 3.05°  | Static =     |
+| Ixion                 | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | 1980 Transit | 2.59°  | Static =     |
 | Orcus                 | Sample Natal Subject | trine △                       | Sun                   | 1980 Transit | 6.40°  | Separating ← |
 | Orcus                 | Sample Natal Subject | biquintile biquintile         | Moon                  | 1980 Transit | 0.22°  | Separating ← |
 | Orcus                 | Sample Natal Subject | trine △                       | Mercury               | 1980 Transit | 5.75°  | Applying →   |
@@ -950,8 +950,8 @@ Sample Natal Subject — Transit 1980-12-08
 | Orcus                 | Sample Natal Subject | conjunction ☌                 | Orcus                 | 1980 Transit | 8.86°  | Separating ← |
 | Orcus                 | Sample Natal Subject | square □                      | Quaoar                | 1980 Transit | 3.24°  | Separating ← |
 | Orcus                 | Sample Natal Subject | quintile Q                    | Spica                 | 1980 Transit | 0.73°  | Static =     |
-| Orcus                 | Sample Natal Subject | semi-square semi-square       | Pars Fortunae         | 1980 Transit | 0.55°  | Static =     |
-| Orcus                 | Sample Natal Subject | conjunction ☌                 | Pars Spiritus         | 1980 Transit | 8.81°  | Static =     |
+| Orcus                 | Sample Natal Subject | conjunction ☌                 | Pars Fortunae         | 1980 Transit | 8.81°  | Static =     |
+| Orcus                 | Sample Natal Subject | semi-square semi-square       | Pars Spiritus         | 1980 Transit | 0.55°  | Static =     |
 | Orcus                 | Sample Natal Subject | conjunction ☌                 | Pars Amoris           | 1980 Transit | 1.93°  | Static =     |
 | Orcus                 | Sample Natal Subject | opposition ☍                  | Vertex                | 1980 Transit | 4.99°  | Static =     |
 | Orcus                 | Sample Natal Subject | conjunction ☌                 | Anti Vertex           | 1980 Transit | 4.99°  | Static =     |
@@ -972,8 +972,8 @@ Sample Natal Subject — Transit 1980-12-08
 | Quaoar                | Sample Natal Subject | trine △                       | Orcus                 | 1980 Transit | 7.90°  | Applying →   |
 | Quaoar                | Sample Natal Subject | conjunction ☌                 | Quaoar                | 1980 Transit | 10.00° | Applying →   |
 | Quaoar                | Sample Natal Subject | semi-sextile semi-sextile     | Spica                 | 1980 Transit | 0.51°  | Static =     |
-| Quaoar                | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | 1980 Transit | 1.22°  | Static =     |
-| Quaoar                | Sample Natal Subject | square □                      | Pars Spiritus         | 1980 Transit | 4.43°  | Static =     |
+| Quaoar                | Sample Natal Subject | square □                      | Pars Fortunae         | 1980 Transit | 4.43°  | Static =     |
+| Quaoar                | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | 1980 Transit | 1.22°  | Static =     |
 | Quaoar                | Sample Natal Subject | quintile Q                    | Vertex                | 1980 Transit | 0.23°  | Static =     |
 | Regulus               | Sample Natal Subject | trine △                       | Moon                  | 1980 Transit | 5.36°  | Separating ← |
 | Regulus               | Sample Natal Subject | square □                      | Uranus                | 1980 Transit | 2.55°  | Applying →   |
@@ -1005,34 +1005,34 @@ Sample Natal Subject — Transit 1980-12-08
 | Spica                 | Sample Natal Subject | sextile ⚹                     | Makemake              | 1980 Transit | 2.42°  | Applying →   |
 | Spica                 | Sample Natal Subject | sextile ⚹                     | Regulus               | 1980 Transit | 5.85°  | Static =     |
 | Spica                 | Sample Natal Subject | conjunction ☌                 | Spica                 | 1980 Transit | 0.14°  | Static =     |
-| Spica                 | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | 1980 Transit | 4.06°  | Static =     |
-| Pars Fortunae         | Sample Natal Subject | conjunction ☌                 | Venus                 | 1980 Transit | 5.52°  | Separating ← |
-| Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Mars                  | 1980 Transit | 0.10°  | Applying →   |
-| Pars Fortunae         | Sample Natal Subject | square □                      | Mean North Lunar Node | 1980 Transit | 0.57°  | Applying →   |
-| Pars Fortunae         | Sample Natal Subject | square □                      | True North Lunar Node | 1980 Transit | 0.99°  | Separating ← |
-| Pars Fortunae         | Sample Natal Subject | opposition ☍                  | Chiron                | 1980 Transit | 1.21°  | Applying →   |
-| Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Ascendant             | 1980 Transit | 5.68°  | Applying →   |
-| Pars Fortunae         | Sample Natal Subject | trine △                       | Descendant            | 1980 Transit | 5.68°  | Applying →   |
-| Pars Fortunae         | Sample Natal Subject | square □                      | Mean South Lunar Node | 1980 Transit | 0.57°  | Separating ← |
-| Pars Fortunae         | Sample Natal Subject | square □                      | True South Lunar Node | 1980 Transit | 0.99°  | Applying →   |
-| Pars Fortunae         | Sample Natal Subject | sesquiquadrate sesquiquadrate | Pholus                | 1980 Transit | 0.78°  | Applying →   |
-| Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Vesta                 | 1980 Transit | 5.86°  | Applying →   |
-| Pars Fortunae         | Sample Natal Subject | quincunx ⚻                    | Eris                  | 1980 Transit | 0.99°  | Applying →   |
-| Pars Fortunae         | Sample Natal Subject | opposition ☍                  | Sedna                 | 1980 Transit | 7.29°  | Separating ← |
-| Pars Fortunae         | Sample Natal Subject | conjunction ☌                 | Ixion                 | 1980 Transit | 1.71°  | Separating ← |
-| Pars Fortunae         | Sample Natal Subject | conjunction ☌                 | Quaoar                | 1980 Transit | 0.92°  | Separating ← |
-| Pars Fortunae         | Sample Natal Subject | square □                      | Pars Amoris           | 1980 Transit | 4.25°  | Static =     |
-| Pars Spiritus         | Sample Natal Subject | conjunction ☌                 | Pluto                 | 1980 Transit | 4.83°  | Applying →   |
-| Pars Spiritus         | Sample Natal Subject | biquintile biquintile         | Medium Coeli          | 1980 Transit | 0.93°  | Applying →   |
-| Pars Spiritus         | Sample Natal Subject | conjunction ☌                 | Mean Lilith           | 1980 Transit | 0.83°  | Applying →   |
-| Pars Spiritus         | Sample Natal Subject | conjunction ☌                 | True Lilith           | 1980 Transit | 2.67°  | Separating ← |
-| Pars Spiritus         | Sample Natal Subject | square □                      | Ceres                 | 1980 Transit | 1.81°  | Separating ← |
-| Pars Spiritus         | Sample Natal Subject | conjunction ☌                 | Juno                  | 1980 Transit | 4.17°  | Applying →   |
-| Pars Spiritus         | Sample Natal Subject | opposition ☍                  | Sedna                 | 1980 Transit | 7.38°  | Applying →   |
-| Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Makemake              | 1980 Transit | 2.35°  | Separating ← |
-| Pars Spiritus         | Sample Natal Subject | square □                      | Orcus                 | 1980 Transit | 3.49°  | Applying →   |
-| Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Regulus               | 1980 Transit | 1.07°  | Static =     |
-| Pars Spiritus         | Sample Natal Subject | conjunction ☌                 | Spica                 | 1980 Transit | 4.92°  | Static =     |
+| Spica                 | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | 1980 Transit | 4.06°  | Static =     |
+| Pars Fortunae         | Sample Natal Subject | conjunction ☌                 | Pluto                 | 1980 Transit | 4.83°  | Applying →   |
+| Pars Fortunae         | Sample Natal Subject | biquintile biquintile         | Medium Coeli          | 1980 Transit | 0.93°  | Applying →   |
+| Pars Fortunae         | Sample Natal Subject | conjunction ☌                 | Mean Lilith           | 1980 Transit | 0.83°  | Applying →   |
+| Pars Fortunae         | Sample Natal Subject | conjunction ☌                 | True Lilith           | 1980 Transit | 2.67°  | Separating ← |
+| Pars Fortunae         | Sample Natal Subject | square □                      | Ceres                 | 1980 Transit | 1.81°  | Separating ← |
+| Pars Fortunae         | Sample Natal Subject | conjunction ☌                 | Juno                  | 1980 Transit | 4.17°  | Applying →   |
+| Pars Fortunae         | Sample Natal Subject | opposition ☍                  | Sedna                 | 1980 Transit | 7.38°  | Applying →   |
+| Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Makemake              | 1980 Transit | 2.35°  | Separating ← |
+| Pars Fortunae         | Sample Natal Subject | square □                      | Orcus                 | 1980 Transit | 3.49°  | Applying →   |
+| Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Regulus               | 1980 Transit | 1.07°  | Static =     |
+| Pars Fortunae         | Sample Natal Subject | conjunction ☌                 | Spica                 | 1980 Transit | 4.92°  | Static =     |
+| Pars Spiritus         | Sample Natal Subject | conjunction ☌                 | Venus                 | 1980 Transit | 5.52°  | Separating ← |
+| Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Mars                  | 1980 Transit | 0.10°  | Applying →   |
+| Pars Spiritus         | Sample Natal Subject | square □                      | Mean North Lunar Node | 1980 Transit | 0.57°  | Applying →   |
+| Pars Spiritus         | Sample Natal Subject | square □                      | True North Lunar Node | 1980 Transit | 0.99°  | Separating ← |
+| Pars Spiritus         | Sample Natal Subject | opposition ☍                  | Chiron                | 1980 Transit | 1.21°  | Applying →   |
+| Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Ascendant             | 1980 Transit | 5.68°  | Applying →   |
+| Pars Spiritus         | Sample Natal Subject | trine △                       | Descendant            | 1980 Transit | 5.68°  | Applying →   |
+| Pars Spiritus         | Sample Natal Subject | square □                      | Mean South Lunar Node | 1980 Transit | 0.57°  | Separating ← |
+| Pars Spiritus         | Sample Natal Subject | square □                      | True South Lunar Node | 1980 Transit | 0.99°  | Applying →   |
+| Pars Spiritus         | Sample Natal Subject | sesquiquadrate sesquiquadrate | Pholus                | 1980 Transit | 0.78°  | Applying →   |
+| Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Vesta                 | 1980 Transit | 5.86°  | Applying →   |
+| Pars Spiritus         | Sample Natal Subject | quincunx ⚻                    | Eris                  | 1980 Transit | 0.99°  | Applying →   |
+| Pars Spiritus         | Sample Natal Subject | opposition ☍                  | Sedna                 | 1980 Transit | 7.29°  | Separating ← |
+| Pars Spiritus         | Sample Natal Subject | conjunction ☌                 | Ixion                 | 1980 Transit | 1.71°  | Separating ← |
+| Pars Spiritus         | Sample Natal Subject | conjunction ☌                 | Quaoar                | 1980 Transit | 0.92°  | Separating ← |
+| Pars Spiritus         | Sample Natal Subject | square □                      | Pars Amoris           | 1980 Transit | 4.25°  | Static =     |
 | Pars Amoris           | Sample Natal Subject | square □                      | Moon                  | 1980 Transit | 3.93°  | Applying →   |
 | Pars Amoris           | Sample Natal Subject | sextile ⚹                     | Mercury               | 1980 Transit | 3.90°  | Applying →   |
 | Pars Amoris           | Sample Natal Subject | square □                      | Mars                  | 1980 Transit | 4.07°  | Separating ← |

@@ -66,8 +66,8 @@ Buenos Aires Subject — Natal Chart Report
 | Quaoar                | Sco ♏️ | 24.50°   | -0.0164°/d   | -13.15° | R    | Third House    |
 | Regulus               | Leo ♌️ | 29.70°   | -0.0001°/d   | +12.01° | -    | Twelfth House  |
 | Spica                 | Lib ♎️ | 23.71°   | -0.0001°/d   | -11.11° | -    | Second House   |
-| Pars Fortunae         | Sag ♐️ | 7.38°    | N/A          | N/A     | -    | Third House    |
-| Pars Spiritus         | Tau ♉️ | 22.94°   | N/A          | N/A     | -    | Ninth House    |
+| Pars Fortunae         | Tau ♉️ | 22.94°   | N/A          | N/A     | -    | Ninth House    |
+| Pars Spiritus         | Sag ♐️ | 7.38°    | N/A          | N/A     | -    | Third House    |
 | Pars Amoris           | Can ♋️ | 24.84°   | N/A          | N/A     | -    | Eleventh House |
 | Pars Fidei            | Aqu ♒️ | 22.05°   | N/A          | N/A     | -    | Sixth House    |
 | Vertex                | Pis ♓️ | 16.80°   | N/A          | N/A     | -    | Seventh House  |
@@ -99,22 +99,22 @@ Buenos Aires Subject — Natal Chart Report
 | Lunation Day            | 21              |
 +-------------------------+-----------------+
 
-+Element Distribution-----------+------------+
-| Element  | Count              | Percentage |
-+----------+--------------------+------------+
-| Fire 🔥  | 6.3999999999999995 | 20.5%      |
-| Earth 🌍 | 8.3                | 26.6%      |
-| Air 💨   | 7.2                | 23.1%      |
-| Water 💧 | 9.3                | 29.8%      |
-| Total    | 31.2               | 100%       |
-+----------+--------------------+------------+
++Element Distribution-----------+
+| Element  | Count | Percentage |
++----------+-------+------------+
+| Fire 🔥  | 6.3   | 20.2%      |
+| Earth 🌍 | 8.4   | 26.9%      |
+| Air 💨   | 7.2   | 23.1%      |
+| Water 💧 | 9.3   | 29.8%      |
+| Total    | 31.2  | 100%       |
++----------+-------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
 | Cardinal | 7.299999999999999  | 23.4%      |
-| Fixed    | 8.0                | 25.6%      |
-| Mutable  | 15.900000000000004 | 51.0%      |
+| Fixed    | 8.1                | 26.0%      |
+| Mutable  | 15.800000000000002 | 50.6%      |
 | Total    | 31.200000000000003 | 100%       |
 +----------+--------------------+------------+
 
@@ -216,7 +216,7 @@ Buenos Aires Subject — Natal Chart Report
 | Moon                  | biquintile biquintile         | Orcus                 | 0.94° | Separating ← |
 | Moon                  | trine △                       | Quaoar                | 7.47° | Applying →   |
 | Moon                  | biquintile biquintile         | Spica                 | 0.68° | Applying →   |
-| Moon                  | sextile ⚹                     | Pars Spiritus         | 5.91° | Applying →   |
+| Moon                  | sextile ⚹                     | Pars Fortunae         | 5.91° | Applying →   |
 | Moon                  | trine △                       | Pars Amoris           | 7.81° | Applying →   |
 | Moon                  | conjunction ☌                 | Vertex                | 0.23° | Separating ← |
 | Moon                  | opposition ☍                  | Anti Vertex           | 0.23° | Separating ← |
@@ -230,7 +230,7 @@ Buenos Aires Subject — Natal Chart Report
 | Mercury               | sextile ⚹                     | Earth                 | 5.91° | Separating ← |
 | Mercury               | square □                      | Makemake              | 1.97° | Separating ← |
 | Mercury               | sextile ⚹                     | Orcus                 | 4.18° | Applying →   |
-| Mercury               | opposition ☍                  | Pars Fortunae         | 1.47° | Applying →   |
+| Mercury               | opposition ☍                  | Pars Spiritus         | 1.47° | Applying →   |
 | Venus                 | sextile ⚹                     | Jupiter               | 3.01° | Separating ← |
 | Venus                 | trine △                       | Saturn                | 5.10° | Applying →   |
 | Venus                 | trine △                       | Neptune               | 5.21° | Separating ← |
@@ -244,7 +244,7 @@ Buenos Aires Subject — Natal Chart Report
 | Venus                 | trine △                       | Haumea                | 7.12° | Applying →   |
 | Venus                 | opposition ☍                  | Ixion                 | 4.19° | Applying →   |
 | Venus                 | opposition ☍                  | Quaoar                | 5.57° | Applying →   |
-| Venus                 | conjunction ☌                 | Pars Spiritus         | 4.02° | Applying →   |
+| Venus                 | conjunction ☌                 | Pars Fortunae         | 4.02° | Applying →   |
 | Venus                 | sextile ⚹                     | Pars Amoris           | 5.91° | Applying →   |
 | Venus                 | square □                      | Pars Fidei            | 3.13° | Applying →   |
 | Venus                 | sextile ⚹                     | Vertex                | 2.13° | Separating ← |
@@ -264,7 +264,7 @@ Buenos Aires Subject — Natal Chart Report
 | Mars                  | conjunction ☌                 | Eris                  | 6.40° | Applying →   |
 | Mars                  | semi-sextile semi-sextile     | Sedna                 | 0.18° | Applying →   |
 | Mars                  | trine △                       | Orcus                 | 1.04° | Separating ← |
-| Mars                  | trine △                       | Pars Fortunae         | 3.75° | Separating ← |
+| Mars                  | trine △                       | Pars Spiritus         | 3.75° | Separating ← |
 | Jupiter               | opposition ☍                  | Saturn                | 8.11° | Applying →   |
 | Jupiter               | opposition ☍                  | Uranus                | 7.76° | Separating ← |
 | Jupiter               | opposition ☍                  | Neptune               | 2.20° | Separating ← |
@@ -292,7 +292,7 @@ Buenos Aires Subject — Natal Chart Report
 | Saturn                | sextile ⚹                     | Quaoar                | 0.47° | Separating ← |
 | Saturn                | biquintile biquintile         | Regulus               | 0.33° | Applying →   |
 | Saturn                | square □                      | Spica                 | 0.31° | Applying →   |
-| Saturn                | trine △                       | Pars Spiritus         | 1.08° | Applying →   |
+| Saturn                | trine △                       | Pars Fortunae         | 1.08° | Applying →   |
 | Saturn                | opposition ☍                  | Pars Amoris           | 0.81° | Separating ← |
 | Saturn                | trine △                       | Anti Vertex           | 7.23° | Applying →   |
 | Uranus                | conjunction ☌                 | Neptune               | 5.55° | Separating ← |
@@ -306,8 +306,8 @@ Buenos Aires Subject — Natal Chart Report
 | Uranus                | trine △                       | Sedna                 | 3.15° | Separating ← |
 | Uranus                | trine △                       | Makemake              | 4.22° | Applying →   |
 | Uranus                | semi-square semi-square       | Ixion                 | 0.05° | Applying →   |
-| Uranus                | semi-sextile semi-sextile     | Pars Fortunae         | 0.78° | Applying →   |
-| Uranus                | sesquiquadrate sesquiquadrate | Pars Spiritus         | 0.22° | Applying →   |
+| Uranus                | sesquiquadrate sesquiquadrate | Pars Fortunae         | 0.22° | Applying →   |
+| Uranus                | semi-sextile semi-sextile     | Pars Spiritus         | 0.78° | Applying →   |
 | Neptune               | sextile ⚹                     | Pluto                 | 1.69° | Separating ← |
 | Neptune               | opposition ☍                  | Chiron                | 2.36° | Separating ← |
 | Neptune               | sextile ⚹                     | Juno                  | 3.40° | Separating ← |
@@ -325,7 +325,7 @@ Buenos Aires Subject — Natal Chart Report
 | Pluto                 | quintile Q                    | Makemake              | 0.54° | Separating ← |
 | Pluto                 | conjunction ☌                 | Ixion                 | 7.72° | Separating ← |
 | Pluto                 | conjunction ☌                 | Quaoar                | 9.10° | Separating ← |
-| Pluto                 | opposition ☍                  | Pars Spiritus         | 7.54° | Separating ← |
+| Pluto                 | opposition ☍                  | Pars Fortunae         | 7.54° | Separating ← |
 | Pluto                 | trine △                       | Vertex                | 1.40° | Separating ← |
 | Pluto                 | sextile ⚹                     | Anti Vertex           | 1.40° | Separating ← |
 | Mean North Lunar Node | conjunction ☌                 | True North Lunar Node | 1.57° | Applying →   |
@@ -338,7 +338,7 @@ Buenos Aires Subject — Natal Chart Report
 | Mean North Lunar Node | square □                      | Vesta                 | 4.83° | Applying →   |
 | Mean North Lunar Node | square □                      | Sedna                 | 1.62° | Separating ← |
 | Mean North Lunar Node | opposition ☍                  | Orcus                 | 0.40° | Separating ← |
-| Mean North Lunar Node | sextile ⚹                     | Pars Fortunae         | 2.31° | Applying →   |
+| Mean North Lunar Node | sextile ⚹                     | Pars Spiritus         | 2.31° | Applying →   |
 | True North Lunar Node | trine △                       | Medium Coeli          | 3.65° | Separating ← |
 | True North Lunar Node | sextile ⚹                     | Imum Coeli            | 3.65° | Separating ← |
 | True North Lunar Node | opposition ☍                  | Mean South Lunar Node | 1.57° | Separating ← |
@@ -348,7 +348,7 @@ Buenos Aires Subject — Natal Chart Report
 | True North Lunar Node | square □                      | Vesta                 | 3.26° | Applying →   |
 | True North Lunar Node | square □                      | Sedna                 | 3.19° | Applying →   |
 | True North Lunar Node | opposition ☍                  | Orcus                 | 1.97° | Separating ← |
-| True North Lunar Node | sextile ⚹                     | Pars Fortunae         | 0.74° | Separating ← |
+| True North Lunar Node | sextile ⚹                     | Pars Spiritus         | 0.74° | Separating ← |
 | Chiron                | semi-square semi-square       | Ascendant             | 0.91° | Applying →   |
 | Chiron                | sesquiquadrate sesquiquadrate | Descendant            | 0.91° | Applying →   |
 | Chiron                | semi-sextile semi-sextile     | Pallas                | 0.02° | Applying →   |
@@ -375,7 +375,7 @@ Buenos Aires Subject — Natal Chart Report
 | Medium Coeli          | sextile ⚹                     | Eris                  | 5.76° | Applying →   |
 | Medium Coeli          | semi-sextile semi-sextile     | Sedna                 | 0.46° | Separating ← |
 | Medium Coeli          | sextile ⚹                     | Orcus                 | 1.68° | Separating ← |
-| Medium Coeli          | opposition ☍                  | Pars Fortunae         | 4.39° | Separating ← |
+| Medium Coeli          | opposition ☍                  | Pars Spiritus         | 4.39° | Separating ← |
 | Descendant            | quintile Q                    | True Lilith           | 0.98° | Applying →   |
 | Descendant            | semi-sextile semi-sextile     | Earth                 | 0.16° | Separating ← |
 | Descendant            | trine △                       | Pholus                | 2.91° | Applying →   |
@@ -394,14 +394,14 @@ Buenos Aires Subject — Natal Chart Report
 | Imum Coeli            | trine △                       | Eris                  | 5.76° | Applying →   |
 | Imum Coeli            | quincunx ⚻                    | Sedna                 | 0.46° | Separating ← |
 | Imum Coeli            | trine △                       | Orcus                 | 1.68° | Separating ← |
-| Imum Coeli            | conjunction ☌                 | Pars Fortunae         | 4.39° | Separating ← |
+| Imum Coeli            | conjunction ☌                 | Pars Spiritus         | 4.39° | Separating ← |
 | Mean Lilith           | trine △                       | Earth                 | 5.03° | Applying →   |
 | Mean Lilith           | trine △                       | Ceres                 | 2.97° | Separating ← |
 | Mean Lilith           | sextile ⚹                     | Haumea                | 1.08° | Applying →   |
 | Mean Lilith           | conjunction ☌                 | Ixion                 | 1.85° | Separating ← |
 | Mean Lilith           | conjunction ☌                 | Quaoar                | 0.47° | Separating ← |
 | Mean Lilith           | square □                      | Regulus               | 4.73° | Applying →   |
-| Mean Lilith           | opposition ☍                  | Pars Spiritus         | 2.02° | Separating ← |
+| Mean Lilith           | opposition ☍                  | Pars Fortunae         | 2.02° | Separating ← |
 | Mean Lilith           | trine △                       | Pars Amoris           | 0.13° | Separating ← |
 | Mean Lilith           | square □                      | Pars Fidei            | 2.91° | Separating ← |
 | Mean South Lunar Node | conjunction ☌                 | True South Lunar Node | 1.57° | Separating ← |
@@ -410,12 +410,12 @@ Buenos Aires Subject — Natal Chart Report
 | Mean South Lunar Node | trine △                       | Eris                  | 7.84° | Applying →   |
 | Mean South Lunar Node | square □                      | Sedna                 | 1.62° | Applying →   |
 | Mean South Lunar Node | conjunction ☌                 | Orcus                 | 0.40° | Applying →   |
-| Mean South Lunar Node | trine △                       | Pars Fortunae         | 2.31° | Separating ← |
+| Mean South Lunar Node | trine △                       | Pars Spiritus         | 2.31° | Separating ← |
 | True South Lunar Node | square □                      | Juno                  | 2.19° | Applying →   |
 | True South Lunar Node | square □                      | Vesta                 | 3.26° | Applying →   |
 | True South Lunar Node | square □                      | Sedna                 | 3.19° | Separating ← |
 | True South Lunar Node | conjunction ☌                 | Orcus                 | 1.97° | Separating ← |
-| True South Lunar Node | trine △                       | Pars Fortunae         | 0.74° | Applying →   |
+| True South Lunar Node | trine △                       | Pars Spiritus         | 0.74° | Applying →   |
 | True Lilith           | opposition ☍                  | Pallas                | 3.09° | Separating ← |
 | True Lilith           | sesquiquadrate sesquiquadrate | Vesta                 | 0.72° | Applying →   |
 | True Lilith           | trine △                       | Eris                  | 1.61° | Separating ← |
@@ -430,7 +430,7 @@ Buenos Aires Subject — Natal Chart Report
 | Earth                 | trine △                       | Ixion                 | 6.89° | Separating ← |
 | Earth                 | trine △                       | Quaoar                | 5.50° | Separating ← |
 | Earth                 | quincunx ⚻                    | Regulus               | 0.30° | Static =     |
-| Earth                 | trine △                       | Pars Fortunae         | 7.38° | Static =     |
+| Earth                 | trine △                       | Pars Spiritus         | 7.38° | Static =     |
 | Earth                 | trine △                       | Pars Amoris           | 5.16° | Static =     |
 | Pholus                | trine △                       | Juno                  | 7.24° | Applying →   |
 | Pholus                | sextile ⚹                     | Vesta                 | 1.78° | Separating ← |
@@ -440,13 +440,13 @@ Buenos Aires Subject — Natal Chart Report
 | Ceres                 | trine △                       | Ixion                 | 4.82° | Separating ← |
 | Ceres                 | trine △                       | Quaoar                | 3.43° | Separating ← |
 | Ceres                 | square □                      | Spica                 | 4.22° | Separating ← |
-| Ceres                 | sextile ⚹                     | Pars Spiritus         | 4.99° | Separating ← |
+| Ceres                 | sextile ⚹                     | Pars Fortunae         | 4.99° | Separating ← |
 | Ceres                 | conjunction ☌                 | Pars Amoris           | 3.09° | Separating ← |
 | Pallas                | biquintile biquintile         | Juno                  | 0.26° | Applying →   |
 | Pallas                | sextile ⚹                     | Eris                  | 1.48° | Applying →   |
 | Pallas                | sextile ⚹                     | Orcus                 | 5.96° | Separating ← |
 | Pallas                | trine △                       | Spica                 | 7.66° | Applying →   |
-| Pallas                | opposition ☍                  | Pars Fortunae         | 8.67° | Separating ← |
+| Pallas                | opposition ☍                  | Pars Spiritus         | 8.67° | Separating ← |
 | Pallas                | trine △                       | Pars Fidei            | 6.00° | Applying →   |
 | Pallas                | square □                      | Vertex                | 0.75° | Applying →   |
 | Pallas                | square □                      | Anti Vertex           | 0.75° | Applying →   |
@@ -474,34 +474,34 @@ Buenos Aires Subject — Natal Chart Report
 | Haumea                | sextile ⚹                     | Ixion                 | 2.93° | Separating ← |
 | Haumea                | semi-square semi-square       | Orcus                 | 0.96° | Applying →   |
 | Haumea                | sextile ⚹                     | Quaoar                | 1.55° | Separating ← |
-| Haumea                | quintile Q                    | Pars Fortunae         | 0.66° | Separating ← |
-| Haumea                | trine △                       | Pars Spiritus         | 3.10° | Separating ← |
+| Haumea                | trine △                       | Pars Fortunae         | 3.10° | Separating ← |
+| Haumea                | quintile Q                    | Pars Spiritus         | 0.66° | Separating ← |
 | Haumea                | sextile ⚹                     | Pars Amoris           | 1.21° | Separating ← |
 | Haumea                | opposition ☍                  | Vertex                | 9.25° | Separating ← |
 | Haumea                | conjunction ☌                 | Anti Vertex           | 9.25° | Separating ← |
 | Makemake              | conjunction ☌                 | Regulus               | 4.24° | Separating ← |
-| Makemake              | square □                      | Pars Fortunae         | 3.44° | Applying →   |
+| Makemake              | square □                      | Pars Spiritus         | 3.44° | Applying →   |
 | Ixion                 | conjunction ☌                 | Quaoar                | 1.38° | Static =     |
 | Ixion                 | semi-sextile semi-sextile     | Spica                 | 0.60° | Separating ← |
-| Ixion                 | opposition ☍                  | Pars Spiritus         | 0.17° | Applying →   |
+| Ixion                 | opposition ☍                  | Pars Fortunae         | 0.17° | Applying →   |
 | Ixion                 | trine △                       | Pars Amoris           | 1.72° | Separating ← |
 | Ixion                 | square □                      | Pars Fidei            | 1.06° | Applying →   |
 | Ixion                 | trine △                       | Vertex                | 6.32° | Applying →   |
-| Orcus                 | trine △                       | Pars Fortunae         | 2.71° | Separating ← |
+| Orcus                 | trine △                       | Pars Spiritus         | 2.71° | Separating ← |
 | Orcus                 | biquintile biquintile         | Vertex                | 0.71° | Applying →   |
 | Quaoar                | semi-sextile semi-sextile     | Spica                 | 0.78° | Applying →   |
-| Quaoar                | opposition ☍                  | Pars Spiritus         | 1.55° | Applying →   |
+| Quaoar                | opposition ☍                  | Pars Fortunae         | 1.55° | Applying →   |
 | Quaoar                | trine △                       | Pars Amoris           | 0.34° | Separating ← |
 | Quaoar                | square □                      | Pars Fidei            | 2.44° | Applying →   |
 | Quaoar                | trine △                       | Vertex                | 7.70° | Applying →   |
 | Regulus               | sextile ⚹                     | Spica                 | 5.98° | Static =     |
 | Regulus               | opposition ☍                  | Pars Fidei            | 7.64° | Static =     |
-| Spica                 | quincunx ⚻                    | Pars Spiritus         | 0.77° | Static =     |
+| Spica                 | quincunx ⚻                    | Pars Fortunae         | 0.77° | Static =     |
 | Spica                 | square □                      | Pars Amoris           | 1.12° | Static =     |
 | Spica                 | trine △                       | Pars Fidei            | 1.66° | Static =     |
 | Spica                 | biquintile biquintile         | Vertex                | 0.92° | Static =     |
-| Pars Spiritus         | sextile ⚹                     | Pars Amoris           | 1.89° | Static =     |
-| Pars Spiritus         | square □                      | Pars Fidei            | 0.89° | Static =     |
-| Pars Spiritus         | trine △                       | Anti Vertex           | 6.15° | Static =     |
+| Pars Fortunae         | sextile ⚹                     | Pars Amoris           | 1.89° | Static =     |
+| Pars Fortunae         | square □                      | Pars Fidei            | 0.89° | Static =     |
+| Pars Fortunae         | trine △                       | Anti Vertex           | 6.15° | Static =     |
 | Vertex                | opposition ☍                  | Anti Vertex           | 0.00° | Static =     |
 +-----------------------+-------------------------------+-----------------------+-------+--------------+

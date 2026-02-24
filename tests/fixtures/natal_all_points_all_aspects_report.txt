@@ -66,8 +66,8 @@ Sample Natal Subject — Natal Chart Report
 | Quaoar                | Sco ♏️ | 24.08°   | -0.0062°/d   | -13.09° | R    | First House    |
 | Regulus               | Leo ♌️ | 29.70°   | +0.0000°/d   | +12.01° | -    | Tenth House    |
 | Spica                 | Lib ♎️ | 23.71°   | -0.0000°/d   | -11.11° | -    | Twelfth House  |
-| Pars Fortunae         | Sco ♏️ | 13.16°   | N/A          | N/A     | -    | First House    |
-| Pars Spiritus         | Lib ♎️ | 28.49°   | N/A          | N/A     | -    | Twelfth House  |
+| Pars Fortunae         | Lib ♎️ | 28.49°   | N/A          | N/A     | -    | Twelfth House  |
+| Pars Spiritus         | Sco ♏️ | 13.16°   | N/A          | N/A     | -    | First House    |
 | Pars Amoris           | Lib ♎️ | 8.99°    | N/A          | N/A     | -    | Eleventh House |
 | Pars Fidei            | Tau ♉️ | 8.22°    | N/A          | N/A     | -    | Seventh House  |
 | Vertex                | Gem ♊️ | 11.46°   | N/A          | N/A     | -    | Eighth House   |
@@ -104,16 +104,16 @@ Sample Natal Subject — Natal Chart Report
 +----------+--------------------+------------+
 | Fire 🔥  | 6.8999999999999995 | 22.1%      |
 | Earth 🌍 | 6.8999999999999995 | 22.1%      |
-| Air 💨   | 4.8                | 15.4%      |
-| Water 💧 | 12.600000000000003 | 40.4%      |
+| Air 💨   | 4.8999999999999995 | 15.7%      |
+| Water 💧 | 12.500000000000002 | 40.1%      |
 | Total    | 31.200000000000003 | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 11.9               | 38.1%      |
-| Fixed    | 16.600000000000005 | 53.2%      |
+| Cardinal | 12.000000000000002 | 38.5%      |
+| Fixed    | 16.500000000000004 | 52.9%      |
 | Mutable  | 2.7                | 8.7%       |
 | Total    | 31.200000000000006 | 100%       |
 +----------+--------------------+------------+
@@ -198,7 +198,7 @@ Sample Natal Subject — Natal Chart Report
 | Sun                   | trine △                       | Ixion                 | 5.84° | Separating ← |
 | Sun                   | trine △                       | Quaoar                | 4.47° | Separating ← |
 | Sun                   | square □                      | Spica                 | 4.83° | Separating ← |
-| Sun                   | square □                      | Pars Spiritus         | 0.05° | Separating ← |
+| Sun                   | square □                      | Pars Fortunae         | 0.05° | Separating ← |
 | Moon                  | conjunction ☌                 | Jupiter               | 2.70° | Applying →   |
 | Moon                  | opposition ☍                  | Saturn                | 0.31° | Applying →   |
 | Moon                  | opposition ☍                  | Neptune               | 8.45° | Separating ← |
@@ -223,7 +223,7 @@ Sample Natal Subject — Natal Chart Report
 | Mercury               | square □                      | Vesta                 | 0.54° | Applying →   |
 | Mercury               | trine △                       | Eris                  | 0.01° | Separating ← |
 | Mercury               | conjunction ☌                 | Orcus                 | 6.77° | Separating ← |
-| Mercury               | square □                      | Pars Fortunae         | 4.45° | Separating ← |
+| Mercury               | square □                      | Pars Spiritus         | 4.45° | Separating ← |
 | Mercury               | trine △                       | Anti Vertex           | 6.14° | Separating ← |
 | Venus                 | sextile ⚹                     | Mars                  | 4.26° | Applying →   |
 | Venus                 | opposition ☍                  | Uranus                | 5.03° | Applying →   |
@@ -237,7 +237,7 @@ Sample Natal Subject — Natal Chart Report
 | Venus                 | sextile ⚹                     | Makemake              | 2.79° | Applying →   |
 | Venus                 | sextile ⚹                     | Regulus               | 2.01° | Separating ← |
 | Venus                 | trine △                       | Spica                 | 8.00° | Separating ← |
-| Venus                 | trine △                       | Pars Spiritus         | 3.22° | Separating ← |
+| Venus                 | trine △                       | Pars Fortunae         | 3.22° | Separating ← |
 | Mars                  | trine △                       | Uranus                | 0.77° | Applying →   |
 | Mars                  | trine △                       | Neptune               | 6.80° | Applying →   |
 | Mars                  | opposition ☍                  | Pluto                 | 9.01° | Applying →   |
@@ -254,8 +254,8 @@ Sample Natal Subject — Natal Chart Report
 | Mars                  | trine △                       | Makemake              | 1.47° | Separating ← |
 | Mars                  | square □                      | Orcus                 | 4.87° | Applying →   |
 | Mars                  | trine △                       | Regulus               | 6.27° | Separating ← |
-| Mars                  | opposition ☍                  | Pars Fortunae         | 7.19° | Applying →   |
-| Mars                  | opposition ☍                  | Pars Spiritus         | 7.48° | Separating ← |
+| Mars                  | opposition ☍                  | Pars Fortunae         | 7.48° | Separating ← |
+| Mars                  | opposition ☍                  | Pars Spiritus         | 7.19° | Applying →   |
 | Mars                  | conjunction ☌                 | Pars Fidei            | 2.25° | Applying →   |
 | Mars                  | biquintile biquintile         | Anti Vertex           | 0.50° | Separating ← |
 | Jupiter               | opposition ☍                  | Saturn                | 2.40° | Separating ← |
@@ -269,7 +269,7 @@ Sample Natal Subject — Natal Chart Report
 | Jupiter               | trine △                       | Ixion                 | 1.21° | Separating ← |
 | Jupiter               | trine △                       | Quaoar                | 0.16° | Applying →   |
 | Jupiter               | square □                      | Spica                 | 0.20° | Separating ← |
-| Jupiter               | square □                      | Pars Spiritus         | 4.58° | Applying →   |
+| Jupiter               | square □                      | Pars Fortunae         | 4.58° | Applying →   |
 | Saturn                | conjunction ☌                 | Neptune               | 8.75° | Applying →   |
 | Saturn                | opposition ☍                  | Chiron                | 1.64° | Applying →   |
 | Saturn                | quintile Q                    | Juno                  | 0.58° | Separating ← |
@@ -304,7 +304,7 @@ Sample Natal Subject — Natal Chart Report
 | Neptune               | trine △                       | Vesta                 | 5.38° | Separating ← |
 | Neptune               | square □                      | Eris                  | 4.83° | Separating ← |
 | Neptune               | trine △                       | Sedna                 | 1.21° | Applying →   |
-| Neptune               | sextile ⚹                     | Pars Fortunae         | 0.39° | Separating ← |
+| Neptune               | sextile ⚹                     | Pars Spiritus         | 0.39° | Separating ← |
 | Neptune               | square □                      | Pars Amoris           | 3.78° | Applying →   |
 | Neptune               | trine △                       | Pars Fidei            | 4.54° | Applying →   |
 | Pluto                 | trine △                       | Chiron                | 4.91° | Separating ← |
@@ -322,7 +322,7 @@ Sample Natal Subject — Natal Chart Report
 | Pluto                 | conjunction ☌                 | Ixion                 | 7.73° | Applying →   |
 | Pluto                 | square □                      | Orcus                 | 4.13° | Applying →   |
 | Pluto                 | conjunction ☌                 | Quaoar                | 9.10° | Applying →   |
-| Pluto                 | conjunction ☌                 | Pars Fortunae         | 1.82° | Applying →   |
+| Pluto                 | conjunction ☌                 | Pars Spiritus         | 1.82° | Applying →   |
 | Pluto                 | opposition ☍                  | Pars Fidei            | 6.76° | Applying →   |
 | Mean North Lunar Node | conjunction ☌                 | True North Lunar Node | 0.52° | Applying →   |
 | Mean North Lunar Node | square □                      | Ascendant             | 1.97° | Applying →   |
@@ -359,7 +359,7 @@ Sample Natal Subject — Natal Chart Report
 | Chiron                | trine △                       | Ixion                 | 2.82° | Applying →   |
 | Chiron                | trine △                       | Quaoar                | 4.20° | Applying →   |
 | Chiron                | square □                      | Spica                 | 3.83° | Applying →   |
-| Chiron                | trine △                       | Pars Fortunae         | 6.72° | Separating ← |
+| Chiron                | trine △                       | Pars Spiritus         | 6.72° | Separating ← |
 | Chiron                | quintile Q                    | Pars Fidei            | 0.34° | Applying →   |
 | Ascendant             | square □                      | Mean South Lunar Node | 1.97° | Applying →   |
 | Ascendant             | square □                      | True South Lunar Node | 1.44° | Applying →   |
@@ -369,8 +369,8 @@ Sample Natal Subject — Natal Chart Report
 | Ascendant             | conjunction ☌                 | Juno                  | 4.27° | Applying →   |
 | Ascendant             | opposition ☍                  | Sedna                 | 5.73° | Applying →   |
 | Ascendant             | sextile ⚹                     | Makemake              | 1.32° | Separating ← |
-| Ascendant             | conjunction ☌                 | Pars Fortunae         | 7.33° | Applying →   |
-| Ascendant             | conjunction ☌                 | Pars Spiritus         | 7.33° | Separating ← |
+| Ascendant             | conjunction ☌                 | Pars Fortunae         | 7.33° | Separating ← |
+| Ascendant             | conjunction ☌                 | Pars Spiritus         | 7.33° | Applying →   |
 | Ascendant             | opposition ☍                  | Pars Fidei            | 2.40° | Applying →   |
 | Ascendant             | biquintile biquintile         | Vertex                | 0.36° | Separating ← |
 | Medium Coeli          | trine △                       | True Lilith           | 1.89° | Separating ← |
@@ -390,8 +390,8 @@ Sample Natal Subject — Natal Chart Report
 | Descendant            | conjunction ☌                 | Sedna                 | 5.73° | Applying →   |
 | Descendant            | trine △                       | Makemake              | 1.32° | Separating ← |
 | Descendant            | trine △                       | Regulus               | 6.12° | Separating ← |
-| Descendant            | opposition ☍                  | Pars Fortunae         | 7.33° | Applying →   |
-| Descendant            | opposition ☍                  | Pars Spiritus         | 7.33° | Separating ← |
+| Descendant            | opposition ☍                  | Pars Fortunae         | 7.33° | Separating ← |
+| Descendant            | opposition ☍                  | Pars Spiritus         | 7.33° | Applying →   |
 | Descendant            | conjunction ☌                 | Pars Fidei            | 2.40° | Applying →   |
 | Descendant            | biquintile biquintile         | Anti Vertex           | 0.36° | Separating ← |
 | Imum Coeli            | sextile ⚹                     | True Lilith           | 1.89° | Separating ← |
@@ -409,7 +409,7 @@ Sample Natal Subject — Natal Chart Report
 | Mean Lilith           | conjunction ☌                 | Ixion                 | 6.29° | Separating ← |
 | Mean Lilith           | conjunction ☌                 | Quaoar                | 4.91° | Separating ← |
 | Mean Lilith           | square □                      | Regulus               | 0.71° | Applying →   |
-| Mean Lilith           | semi-sextile semi-sextile     | Pars Spiritus         | 0.50° | Separating ← |
+| Mean Lilith           | semi-sextile semi-sextile     | Pars Fortunae         | 0.50° | Separating ← |
 | Mean South Lunar Node | conjunction ☌                 | True South Lunar Node | 0.52° | Separating ← |
 | Mean South Lunar Node | trine △                       | Earth                 | 7.79° | Separating ← |
 | Mean South Lunar Node | semi-sextile semi-sextile     | Pholus                | 0.20° | Separating ← |
@@ -452,7 +452,7 @@ Sample Natal Subject — Natal Chart Report
 | Pholus                | sextile ⚹                     | Sedna                 | 3.56° | Applying →   |
 | Pholus                | sextile ⚹                     | Makemake              | 3.49° | Separating ← |
 | Pholus                | sesquiquadrate sesquiquadrate | Ixion                 | 0.29° | Separating ← |
-| Pholus                | trine △                       | Pars Fortunae         | 5.16° | Applying →   |
+| Pholus                | trine △                       | Pars Spiritus         | 5.16° | Applying →   |
 | Pholus                | square □                      | Pars Amoris           | 1.00° | Applying →   |
 | Pholus                | sextile ⚹                     | Pars Fidei            | 0.23° | Applying →   |
 | Ceres                 | square □                      | Juno                  | 3.62° | Separating ← |
@@ -460,7 +460,7 @@ Sample Natal Subject — Natal Chart Report
 | Ceres                 | trine △                       | Eris                  | 3.88° | Applying →   |
 | Ceres                 | square □                      | Sedna                 | 2.17° | Separating ← |
 | Ceres                 | conjunction ☌                 | Orcus                 | 2.87° | Separating ← |
-| Ceres                 | square □                      | Pars Fortunae         | 0.56° | Separating ← |
+| Ceres                 | square □                      | Pars Spiritus         | 0.56° | Separating ← |
 | Ceres                 | sextile ⚹                     | Pars Amoris           | 4.73° | Separating ← |
 | Ceres                 | sextile ⚹                     | Vertex                | 2.25° | Separating ← |
 | Ceres                 | trine △                       | Anti Vertex           | 2.25° | Separating ← |
@@ -468,20 +468,20 @@ Sample Natal Subject — Natal Chart Report
 | Pallas                | sextile ⚹                     | Sedna                 | 4.30° | Applying →   |
 | Pallas                | sextile ⚹                     | Makemake              | 2.75° | Separating ← |
 | Pallas                | sesquiquadrate sesquiquadrate | Ixion                 | 0.45° | Applying →   |
-| Pallas                | trine △                       | Pars Fortunae         | 5.91° | Applying →   |
+| Pallas                | trine △                       | Pars Spiritus         | 5.91° | Applying →   |
 | Pallas                | square □                      | Pars Amoris           | 1.74° | Applying →   |
 | Pallas                | sextile ⚹                     | Pars Fidei            | 0.97° | Applying →   |
 | Juno                  | opposition ☍                  | Vesta                 | 8.05° | Separating ← |
 | Juno                  | opposition ☍                  | Sedna                 | 1.45° | Applying →   |
 | Juno                  | sextile ⚹                     | Makemake              | 5.60° | Separating ← |
 | Juno                  | square □                      | Orcus                 | 0.74° | Applying →   |
-| Juno                  | conjunction ☌                 | Pars Fortunae         | 3.06° | Applying →   |
+| Juno                  | conjunction ☌                 | Pars Spiritus         | 3.06° | Applying →   |
 | Juno                  | opposition ☍                  | Pars Fidei            | 1.88° | Separating ← |
 | Vesta                 | semi-sextile semi-sextile     | Eris                  | 0.55° | Separating ← |
 | Vesta                 | conjunction ☌                 | Sedna                 | 6.60° | Separating ← |
 | Vesta                 | opposition ☍                  | Ixion                 | 4.56° | Applying →   |
 | Vesta                 | opposition ☍                  | Quaoar                | 5.93° | Applying →   |
-| Vesta                 | opposition ☍                  | Pars Fortunae         | 4.99° | Separating ← |
+| Vesta                 | opposition ☍                  | Pars Spiritus         | 4.99° | Separating ← |
 | Vesta                 | conjunction ☌                 | Pars Fidei            | 9.93° | Separating ← |
 | Eris                  | biquintile biquintile         | Ixion                 | 0.89° | Separating ← |
 | Eris                  | trine △                       | Orcus                 | 6.76° | Applying →   |
@@ -492,7 +492,7 @@ Sample Natal Subject — Natal Chart Report
 | Sedna                 | sesquiquadrate sesquiquadrate | Haumea                | 0.23° | Applying →   |
 | Sedna                 | trine △                       | Makemake              | 7.05° | Applying →   |
 | Sedna                 | square □                      | Orcus                 | 0.71° | Applying →   |
-| Sedna                 | opposition ☍                  | Pars Fortunae         | 1.61° | Applying →   |
+| Sedna                 | opposition ☍                  | Pars Spiritus         | 1.61° | Applying →   |
 | Sedna                 | conjunction ☌                 | Pars Fidei            | 3.33° | Separating ← |
 | Sedna                 | semi-sextile semi-sextile     | Vertex                | 0.08° | Separating ← |
 | Sedna                 | quincunx ⚻                    | Anti Vertex           | 0.08° | Separating ← |
@@ -502,9 +502,9 @@ Sample Natal Subject — Natal Chart Report
 | Makemake              | conjunction ☌                 | Regulus               | 4.80° | Separating ← |
 | Makemake              | trine △                       | Pars Fidei            | 3.72° | Applying →   |
 | Ixion                 | conjunction ☌                 | Quaoar                | 1.37° | Static =     |
-| Ixion                 | conjunction ☌                 | Pars Fortunae         | 9.55° | Applying →   |
+| Ixion                 | conjunction ☌                 | Pars Spiritus         | 9.55° | Applying →   |
 | Orcus                 | quintile Q                    | Spica                 | 0.87° | Applying →   |
-| Orcus                 | square □                      | Pars Fortunae         | 2.32° | Applying →   |
+| Orcus                 | square □                      | Pars Spiritus         | 2.32° | Applying →   |
 | Orcus                 | sextile ⚹                     | Pars Amoris           | 1.85° | Separating ← |
 | Orcus                 | square □                      | Pars Fidei            | 2.62° | Separating ← |
 | Orcus                 | sextile ⚹                     | Vertex                | 0.63° | Applying →   |
@@ -512,10 +512,10 @@ Sample Natal Subject — Natal Chart Report
 | Quaoar                | semi-sextile semi-sextile     | Spica                 | 0.36° | Applying →   |
 | Quaoar                | semi-square semi-square       | Pars Amoris           | 0.09° | Applying →   |
 | Regulus               | sextile ⚹                     | Spica                 | 5.98° | Static =     |
-| Regulus               | sextile ⚹                     | Pars Spiritus         | 1.21° | Static =     |
-| Spica                 | conjunction ☌                 | Pars Spiritus         | 4.78° | Static =     |
-| Pars Fortunae         | opposition ☍                  | Pars Fidei            | 4.94° | Static =     |
-| Pars Spiritus         | opposition ☍                  | Pars Fidei            | 9.73° | Static =     |
+| Regulus               | sextile ⚹                     | Pars Fortunae         | 1.21° | Static =     |
+| Spica                 | conjunction ☌                 | Pars Fortunae         | 4.78° | Static =     |
+| Pars Fortunae         | opposition ☍                  | Pars Fidei            | 9.73° | Static =     |
+| Pars Spiritus         | opposition ☍                  | Pars Fidei            | 4.94° | Static =     |
 | Pars Amoris           | quincunx ⚻                    | Pars Fidei            | 0.77° | Static =     |
 | Pars Amoris           | trine △                       | Vertex                | 2.48° | Static =     |
 | Pars Amoris           | sextile ⚹                     | Anti Vertex           | 2.48° | Static =     |

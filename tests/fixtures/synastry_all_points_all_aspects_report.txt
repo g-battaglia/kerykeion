@@ -91,8 +91,8 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Quaoar                | Sco ♏️ | 24.08°   | -0.0062°/d   | -13.09° | R    | First House    |
 | Regulus               | Leo ♌️ | 29.70°   | +0.0000°/d   | +12.01° | -    | Tenth House    |
 | Spica                 | Lib ♎️ | 23.71°   | -0.0000°/d   | -11.11° | -    | Twelfth House  |
-| Pars Fortunae         | Sco ♏️ | 13.16°   | N/A          | N/A     | -    | First House    |
-| Pars Spiritus         | Lib ♎️ | 28.49°   | N/A          | N/A     | -    | Twelfth House  |
+| Pars Fortunae         | Lib ♎️ | 28.49°   | N/A          | N/A     | -    | Twelfth House  |
+| Pars Spiritus         | Sco ♏️ | 13.16°   | N/A          | N/A     | -    | First House    |
 | Pars Amoris           | Lib ♎️ | 8.99°    | N/A          | N/A     | -    | Eleventh House |
 | Pars Fidei            | Tau ♉️ | 8.22°    | N/A          | N/A     | -    | Seventh House  |
 | Vertex                | Gem ♊️ | 11.46°   | N/A          | N/A     | -    | Eighth House   |
@@ -138,8 +138,8 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Quaoar                | Vir ♍️ | 16.77°   | -0.0182°/d   | +2.44°  | R    | Twelfth House  |
 | Regulus               | Leo ♌️ | 28.91°   | +0.0001°/d   | +12.29° | -    | Eleventh House |
 | Spica                 | Lib ♎️ | 22.91°   | +0.0002°/d   | -10.82° | -    | First House    |
-| Pars Fortunae         | Can ♋️ | 20.16°   | N/A          | N/A     | -    | Tenth House    |
-| Pars Spiritus         | Sag ♐️ | 26.66°   | N/A          | N/A     | -    | Third House    |
+| Pars Fortunae         | Sag ♐️ | 26.66°   | N/A          | N/A     | -    | Third House    |
+| Pars Spiritus         | Can ♋️ | 20.16°   | N/A          | N/A     | -    | Tenth House    |
 | Pars Amoris           | Vir ♍️ | 22.82°   | N/A          | N/A     | -    | Twelfth House  |
 | Pars Fidei            | Tau ♉️ | 19.37°   | N/A          | N/A     | -    | Eighth House   |
 | Vertex                | Ari ♈️ | 26.75°   | N/A          | N/A     | -    | Seventh House  |
@@ -191,20 +191,20 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 22.115384615384613 | 22.1%      |
+| Fire 🔥  | 22.275641025641022 | 22.3%      |
 | Earth 🌍 | 25.320512820512814 | 25.3%      |
-| Air 💨   | 21.955128205128204 | 22.0%      |
-| Water 💧 | 30.60897435897436  | 30.6%      |
+| Air 💨   | 22.115384615384613 | 22.1%      |
+| Water 💧 | 30.28846153846154  | 30.3%      |
 | Total    | 100.0              | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 37.66025641025641  | 37.7%      |
-| Fixed    | 38.94230769230769  | 38.9%      |
-| Mutable  | 23.397435897435894 | 23.4%      |
-| Total    | 100.0              | 100%       |
+| Cardinal | 37.660256410256416 | 37.7%      |
+| Fixed    | 38.782051282051285 | 38.8%      |
+| Mutable  | 23.55769230769231  | 23.6%      |
+| Total    | 100.00000000000001 | 100%       |
 +----------+--------------------+------------+
 
 +Sample Natal Subject points in Yoko Ono houses+---------------------+---------------------+------+--------+
@@ -242,8 +242,8 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Sample Natal Subject – Quaoar                | 1 (First_House)     | 2 (Second_House)    | Sco  | 24.08° |
 | Sample Natal Subject – Regulus               | 10 (Tenth_House)    | 11 (Eleventh_House) | Leo  | 29.70° |
 | Sample Natal Subject – Spica                 | 12 (Twelfth_House)  | 1 (First_House)     | Lib  | 23.71° |
-| Sample Natal Subject – Pars Fortunae         | 1 (First_House)     | 2 (Second_House)    | Sco  | 13.16° |
-| Sample Natal Subject – Pars Spiritus         | 12 (Twelfth_House)  | 1 (First_House)     | Lib  | 28.49° |
+| Sample Natal Subject – Pars Fortunae         | 12 (Twelfth_House)  | 1 (First_House)     | Lib  | 28.49° |
+| Sample Natal Subject – Pars Spiritus         | 1 (First_House)     | 2 (Second_House)    | Sco  | 13.16° |
 | Sample Natal Subject – Pars Amoris           | 11 (Eleventh_House) | 1 (First_House)     | Lib  | 8.99°  |
 | Sample Natal Subject – Pars Fidei            | 7 (Seventh_House)   | 8 (Eighth_House)    | Tau  | 8.22°  |
 | Sample Natal Subject – Vertex                | 8 (Eighth_House)    | 9 (Ninth_House)     | Gem  | 11.46° |
@@ -289,8 +289,8 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Yoko Ono – Quaoar                | 12 (Twelfth_House)  | 10 (Tenth_House)    | Vir  | 16.77° |
 | Yoko Ono – Regulus               | 11 (Eleventh_House) | 10 (Tenth_House)    | Leo  | 28.91° |
 | Yoko Ono – Spica                 | 1 (First_House)     | 12 (Twelfth_House)  | Lib  | 22.91° |
-| Yoko Ono – Pars Fortunae         | 10 (Tenth_House)    | 9 (Ninth_House)     | Can  | 20.16° |
-| Yoko Ono – Pars Spiritus         | 3 (Third_House)     | 2 (Second_House)    | Sag  | 26.66° |
+| Yoko Ono – Pars Fortunae         | 3 (Third_House)     | 2 (Second_House)    | Sag  | 26.66° |
+| Yoko Ono – Pars Spiritus         | 10 (Tenth_House)    | 9 (Ninth_House)     | Can  | 20.16° |
 | Yoko Ono – Pars Amoris           | 12 (Twelfth_House)  | 10 (Tenth_House)    | Vir  | 22.82° |
 | Yoko Ono – Pars Fidei            | 8 (Eighth_House)    | 7 (Seventh_House)   | Tau  | 19.37° |
 | Yoko Ono – Vertex                | 7 (Seventh_House)   | 6 (Sixth_House)     | Ari  | 26.75° |
@@ -426,7 +426,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Sun                   | Sample Natal Subject | sextile ⚹                     | Ixion                 | Yoko Ono | 0.68° | Static = |
 | Sun                   | Sample Natal Subject | sextile ⚹                     | Orcus                 | Yoko Ono | 0.76° | Static = |
 | Sun                   | Sample Natal Subject | semi-sextile semi-sextile     | Regulus               | Yoko Ono | 0.36° | Static = |
-| Sun                   | Sample Natal Subject | conjunction ☌                 | Pars Fortunae         | Yoko Ono | 8.38° | Static = |
+| Sun                   | Sample Natal Subject | conjunction ☌                 | Pars Spiritus         | Yoko Ono | 8.38° | Static = |
 | Sun                   | Sample Natal Subject | sextile ⚹                     | Pars Amoris           | Yoko Ono | 5.72° | Static = |
 | Sun                   | Sample Natal Subject | square □                      | Vertex                | Yoko Ono | 1.79° | Static = |
 | Sun                   | Sample Natal Subject | square □                      | Anti Vertex           | Yoko Ono | 1.79° | Static = |
@@ -437,7 +437,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Moon                  | Sample Natal Subject | square □                      | Sedna                 | Yoko Ono | 4.03° | Static = |
 | Moon                  | Sample Natal Subject | sextile ⚹                     | Quaoar                | Yoko Ono | 4.44° | Static = |
 | Moon                  | Sample Natal Subject | square □                      | Spica                 | Yoko Ono | 1.70° | Static = |
-| Moon                  | Sample Natal Subject | conjunction ☌                 | Pars Fortunae         | Yoko Ono | 1.05° | Static = |
+| Moon                  | Sample Natal Subject | conjunction ☌                 | Pars Spiritus         | Yoko Ono | 1.05° | Static = |
 | Moon                  | Sample Natal Subject | sextile ⚹                     | Pars Amoris           | Yoko Ono | 1.61° | Static = |
 | Moon                  | Sample Natal Subject | sextile ⚹                     | Pars Fidei            | Yoko Ono | 1.84° | Static = |
 | Mercury               | Sample Natal Subject | trine △                       | Moon                  | Yoko Ono | 6.48° | Static = |
@@ -466,7 +466,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Venus                 | Sample Natal Subject | conjunction ☌                 | Makemake              | Yoko Ono | 0.90° | Static = |
 | Venus                 | Sample Natal Subject | square □                      | Ixion                 | Yoko Ono | 2.49° | Static = |
 | Venus                 | Sample Natal Subject | sextile ⚹                     | Regulus               | Yoko Ono | 2.80° | Static = |
-| Venus                 | Sample Natal Subject | opposition ☍                  | Pars Spiritus         | Yoko Ono | 5.05° | Static = |
+| Venus                 | Sample Natal Subject | opposition ☍                  | Pars Fortunae         | Yoko Ono | 5.05° | Static = |
 | Venus                 | Sample Natal Subject | sextile ⚹                     | Vertex                | Yoko Ono | 4.96° | Static = |
 | Venus                 | Sample Natal Subject | trine △                       | Anti Vertex           | Yoko Ono | 4.96° | Static = |
 | Mars                  | Sample Natal Subject | biquintile biquintile         | Moon                  | Yoko Ono | 0.84° | Static = |
@@ -504,7 +504,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Jupiter               | Sample Natal Subject | sextile ⚹                     | Ixion                 | Yoko Ono | 5.31° | Static = |
 | Jupiter               | Sample Natal Subject | sextile ⚹                     | Orcus                 | Yoko Ono | 3.87° | Static = |
 | Jupiter               | Sample Natal Subject | square □                      | Spica                 | Yoko Ono | 1.00° | Static = |
-| Jupiter               | Sample Natal Subject | conjunction ☌                 | Pars Fortunae         | Yoko Ono | 3.75° | Static = |
+| Jupiter               | Sample Natal Subject | conjunction ☌                 | Pars Spiritus         | Yoko Ono | 3.75° | Static = |
 | Jupiter               | Sample Natal Subject | sextile ⚹                     | Pars Amoris           | Yoko Ono | 1.09° | Static = |
 | Jupiter               | Sample Natal Subject | sextile ⚹                     | Pars Fidei            | Yoko Ono | 4.54° | Static = |
 | Jupiter               | Sample Natal Subject | square □                      | Vertex                | Yoko Ono | 2.84° | Static = |
@@ -520,7 +520,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Saturn                | Sample Natal Subject | trine △                       | Orcus                 | Yoko Ono | 6.27° | Static = |
 | Saturn                | Sample Natal Subject | trine △                       | Quaoar                | Yoko Ono | 4.75° | Static = |
 | Saturn                | Sample Natal Subject | square □                      | Spica                 | Yoko Ono | 1.40° | Static = |
-| Saturn                | Sample Natal Subject | opposition ☍                  | Pars Fortunae         | Yoko Ono | 1.35° | Static = |
+| Saturn                | Sample Natal Subject | opposition ☍                  | Pars Spiritus         | Yoko Ono | 1.35° | Static = |
 | Saturn                | Sample Natal Subject | trine △                       | Pars Amoris           | Yoko Ono | 1.30° | Static = |
 | Saturn                | Sample Natal Subject | trine △                       | Pars Fidei            | Yoko Ono | 2.14° | Static = |
 | Uranus                | Sample Natal Subject | sextile ⚹                     | Mercury               | Yoko Ono | 1.15° | Static = |
@@ -556,7 +556,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Neptune               | Sample Natal Subject | square □                      | Sedna                 | Yoko Ono | 4.42° | Static = |
 | Neptune               | Sample Natal Subject | sesquiquadrate sesquiquadrate | Orcus                 | Yoko Ono | 0.02° | Static = |
 | Neptune               | Sample Natal Subject | trine △                       | Quaoar                | Yoko Ono | 4.01° | Static = |
-| Neptune               | Sample Natal Subject | opposition ☍                  | Pars Fortunae         | Yoko Ono | 7.40° | Static = |
+| Neptune               | Sample Natal Subject | opposition ☍                  | Pars Spiritus         | Yoko Ono | 7.40° | Static = |
 | Neptune               | Sample Natal Subject | trine △                       | Pars Fidei            | Yoko Ono | 6.61° | Static = |
 | Pluto                 | Sample Natal Subject | trine △                       | Mercury               | Yoko Ono | 7.08° | Static = |
 | Pluto                 | Sample Natal Subject | square □                      | Venus                 | Yoko Ono | 1.19° | Static = |
@@ -576,7 +576,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Pluto                 | Sample Natal Subject | sesquiquadrate sesquiquadrate | Makemake              | Yoko Ono | 0.84° | Static = |
 | Pluto                 | Sample Natal Subject | semi-square semi-square       | Ixion                 | Yoko Ono | 0.75° | Static = |
 | Pluto                 | Sample Natal Subject | sextile ⚹                     | Quaoar                | Yoko Ono | 1.79° | Static = |
-| Pluto                 | Sample Natal Subject | trine △                       | Pars Fortunae         | Yoko Ono | 5.19° | Static = |
+| Pluto                 | Sample Natal Subject | trine △                       | Pars Spiritus         | Yoko Ono | 5.19° | Static = |
 | Pluto                 | Sample Natal Subject | opposition ☍                  | Pars Fidei            | Yoko Ono | 4.40° | Static = |
 | Mean North Lunar Node | Sample Natal Subject | sextile ⚹                     | Moon                  | Yoko Ono | 3.34° | Static = |
 | Mean North Lunar Node | Sample Natal Subject | semi-sextile semi-sextile     | Mercury               | Yoko Ono | 0.10° | Static = |
@@ -623,7 +623,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Chiron                | Sample Natal Subject | square □                      | Sedna                 | Yoko Ono | 2.70° | Static = |
 | Chiron                | Sample Natal Subject | sextile ⚹                     | Quaoar                | Yoko Ono | 3.11° | Static = |
 | Chiron                | Sample Natal Subject | square □                      | Spica                 | Yoko Ono | 3.03° | Static = |
-| Chiron                | Sample Natal Subject | conjunction ☌                 | Pars Fortunae         | Yoko Ono | 0.28° | Static = |
+| Chiron                | Sample Natal Subject | conjunction ☌                 | Pars Spiritus         | Yoko Ono | 0.28° | Static = |
 | Chiron                | Sample Natal Subject | sextile ⚹                     | Pars Amoris           | Yoko Ono | 2.94° | Static = |
 | Chiron                | Sample Natal Subject | sextile ⚹                     | Pars Fidei            | Yoko Ono | 0.51° | Static = |
 | Ascendant             | Sample Natal Subject | trine △                       | Sun                   | Yoko Ono | 6.44° | Static = |
@@ -656,8 +656,8 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Medium Coeli          | Sample Natal Subject | trine △                       | Sedna                 | Yoko Ono | 2.73° | Static = |
 | Medium Coeli          | Sample Natal Subject | conjunction ☌                 | Regulus               | Yoko Ono | 8.99° | Static = |
 | Medium Coeli          | Sample Natal Subject | sextile ⚹                     | Spica                 | Yoko Ono | 3.00° | Static = |
-| Medium Coeli          | Sample Natal Subject | semi-sextile semi-sextile     | Pars Fortunae         | Yoko Ono | 0.25° | Static = |
-| Medium Coeli          | Sample Natal Subject | trine △                       | Pars Spiritus         | Yoko Ono | 6.75° | Static = |
+| Medium Coeli          | Sample Natal Subject | trine △                       | Pars Fortunae         | Yoko Ono | 6.75° | Static = |
+| Medium Coeli          | Sample Natal Subject | semi-sextile semi-sextile     | Pars Spiritus         | Yoko Ono | 0.25° | Static = |
 | Medium Coeli          | Sample Natal Subject | square □                      | Pars Fidei            | Yoko Ono | 0.54° | Static = |
 | Medium Coeli          | Sample Natal Subject | trine △                       | Vertex                | Yoko Ono | 6.84° | Static = |
 | Descendant            | Sample Natal Subject | biquintile biquintile         | Moon                  | Yoko Ono | 0.69° | Static = |
@@ -690,7 +690,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Imum Coeli            | Sample Natal Subject | sextile ⚹                     | Sedna                 | Yoko Ono | 2.73° | Static = |
 | Imum Coeli            | Sample Natal Subject | opposition ☍                  | Regulus               | Yoko Ono | 8.99° | Static = |
 | Imum Coeli            | Sample Natal Subject | trine △                       | Spica                 | Yoko Ono | 3.00° | Static = |
-| Imum Coeli            | Sample Natal Subject | quincunx ⚻                    | Pars Fortunae         | Yoko Ono | 0.25° | Static = |
+| Imum Coeli            | Sample Natal Subject | quincunx ⚻                    | Pars Spiritus         | Yoko Ono | 0.25° | Static = |
 | Imum Coeli            | Sample Natal Subject | square □                      | Pars Fidei            | Yoko Ono | 0.54° | Static = |
 | Imum Coeli            | Sample Natal Subject | trine △                       | Anti Vertex           | Yoko Ono | 6.84° | Static = |
 | Mean Lilith           | Sample Natal Subject | square □                      | Sun                   | Yoko Ono | 0.39° | Static = |
@@ -755,7 +755,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | True Lilith           | Sample Natal Subject | trine △                       | Sedna                 | Yoko Ono | 0.84° | Static = |
 | True Lilith           | Sample Natal Subject | square □                      | Quaoar                | Yoko Ono | 1.26° | Static = |
 | True Lilith           | Sample Natal Subject | sextile ⚹                     | Spica                 | Yoko Ono | 4.89° | Static = |
-| True Lilith           | Sample Natal Subject | conjunction ☌                 | Pars Spiritus         | Yoko Ono | 8.63° | Static = |
+| True Lilith           | Sample Natal Subject | conjunction ☌                 | Pars Fortunae         | Yoko Ono | 8.63° | Static = |
 | True Lilith           | Sample Natal Subject | square □                      | Pars Amoris           | Yoko Ono | 4.79° | Static = |
 | Earth                 | Sample Natal Subject | semi-sextile semi-sextile     | Sun                   | Yoko Ono | 0.62° | Static = |
 | Earth                 | Sample Natal Subject | opposition ☍                  | Jupiter               | Yoko Ono | 9.30° | Static = |
@@ -771,7 +771,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Earth                 | Sample Natal Subject | square □                      | Makemake              | Yoko Ono | 0.81° | Static = |
 | Earth                 | Sample Natal Subject | opposition ☍                  | Ixion                 | Yoko Ono | 0.78° | Static = |
 | Earth                 | Sample Natal Subject | sextile ⚹                     | Orcus                 | Yoko Ono | 2.21° | Static = |
-| Earth                 | Sample Natal Subject | square □                      | Pars Spiritus         | Yoko Ono | 3.34° | Static = |
+| Earth                 | Sample Natal Subject | square □                      | Pars Fortunae         | Yoko Ono | 3.34° | Static = |
 | Earth                 | Sample Natal Subject | opposition ☍                  | Pars Amoris           | Yoko Ono | 7.18° | Static = |
 | Pholus                | Sample Natal Subject | trine △                       | Mercury               | Yoko Ono | 0.10° | Static = |
 | Pholus                | Sample Natal Subject | biquintile biquintile         | Venus                 | Yoko Ono | 0.20° | Static = |
@@ -846,7 +846,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Vesta                 | Sample Natal Subject | semi-sextile semi-sextile     | Sedna                 | Yoko Ono | 0.96° | Static = |
 | Vesta                 | Sample Natal Subject | conjunction ☌                 | Orcus                 | Yoko Ono | 9.64° | Static = |
 | Vesta                 | Sample Natal Subject | trine △                       | Quaoar                | Yoko Ono | 1.38° | Static = |
-| Vesta                 | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | Yoko Ono | 2.02° | Static = |
+| Vesta                 | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | Yoko Ono | 2.02° | Static = |
 | Vesta                 | Sample Natal Subject | trine △                       | Pars Amoris           | Yoko Ono | 4.67° | Static = |
 | Vesta                 | Sample Natal Subject | conjunction ☌                 | Pars Fidei            | Yoko Ono | 1.23° | Static = |
 | Eris                  | Sample Natal Subject | trine △                       | Moon                  | Yoko Ono | 6.47° | Static = |
@@ -859,7 +859,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Eris                  | Sample Natal Subject | conjunction ☌                 | Sedna                 | Yoko Ono | 0.41° | Static = |
 | Eris                  | Sample Natal Subject | quincunx ⚻                    | Quaoar                | Yoko Ono | 0.83° | Static = |
 | Eris                  | Sample Natal Subject | opposition ☍                  | Spica                 | Yoko Ono | 5.32° | Static = |
-| Eris                  | Sample Natal Subject | square □                      | Pars Fortunae         | Yoko Ono | 2.57° | Static = |
+| Eris                  | Sample Natal Subject | square □                      | Pars Spiritus         | Yoko Ono | 2.57° | Static = |
 | Eris                  | Sample Natal Subject | conjunction ☌                 | Vertex                | Yoko Ono | 9.16° | Static = |
 | Eris                  | Sample Natal Subject | opposition ☍                  | Anti Vertex           | Yoko Ono | 9.16° | Static = |
 | Sedna                 | Sample Natal Subject | quintile Q                    | Sun                   | Yoko Ono | 0.17° | Static = |
@@ -881,7 +881,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Sedna                 | Sample Natal Subject | square □                      | Pallas                | Yoko Ono | 1.10° | Static = |
 | Sedna                 | Sample Natal Subject | opposition ☍                  | Juno                  | Yoko Ono | 5.71° | Static = |
 | Sedna                 | Sample Natal Subject | trine △                       | Quaoar                | Yoko Ono | 5.22° | Static = |
-| Sedna                 | Sample Natal Subject | sesquiquadrate sesquiquadrate | Pars Spiritus         | Yoko Ono | 0.11° | Static = |
+| Sedna                 | Sample Natal Subject | sesquiquadrate sesquiquadrate | Pars Fortunae         | Yoko Ono | 0.11° | Static = |
 | Sedna                 | Sample Natal Subject | conjunction ☌                 | Pars Fidei            | Yoko Ono | 7.82° | Static = |
 | Haumea                | Sample Natal Subject | conjunction ☌                 | Jupiter               | Yoko Ono | 5.63° | Static = |
 | Haumea                | Sample Natal Subject | sextile ⚹                     | Pluto                 | Yoko Ono | 4.69° | Static = |
@@ -895,7 +895,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Haumea                | Sample Natal Subject | conjunction ☌                 | Ixion                 | Yoko Ono | 2.90° | Static = |
 | Haumea                | Sample Natal Subject | trine △                       | Orcus                 | Yoko Ono | 1.46° | Static = |
 | Haumea                | Sample Natal Subject | conjunction ☌                 | Quaoar                | Yoko Ono | 9.55° | Static = |
-| Haumea                | Sample Natal Subject | square □                      | Pars Spiritus         | Yoko Ono | 0.34° | Static = |
+| Haumea                | Sample Natal Subject | square □                      | Pars Fortunae         | Yoko Ono | 0.34° | Static = |
 | Haumea                | Sample Natal Subject | conjunction ☌                 | Pars Amoris           | Yoko Ono | 3.50° | Static = |
 | Haumea                | Sample Natal Subject | trine △                       | Pars Fidei            | Yoko Ono | 6.95° | Static = |
 | Haumea                | Sample Natal Subject | quincunx ⚻                    | Vertex                | Yoko Ono | 0.43° | Static = |
@@ -916,8 +916,8 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Makemake              | Sample Natal Subject | semi-sextile semi-sextile     | Haumea                | Yoko Ono | 0.52° | Static = |
 | Makemake              | Sample Natal Subject | sextile ⚹                     | Makemake              | Yoko Ono | 3.68° | Static = |
 | Makemake              | Sample Natal Subject | conjunction ☌                 | Regulus               | Yoko Ono | 5.59° | Static = |
-| Makemake              | Sample Natal Subject | semi-square semi-square       | Pars Fortunae         | Yoko Ono | 0.67° | Static = |
-| Makemake              | Sample Natal Subject | trine △                       | Pars Spiritus         | Yoko Ono | 7.83° | Static = |
+| Makemake              | Sample Natal Subject | trine △                       | Pars Fortunae         | Yoko Ono | 7.83° | Static = |
+| Makemake              | Sample Natal Subject | semi-square semi-square       | Pars Spiritus         | Yoko Ono | 0.67° | Static = |
 | Makemake              | Sample Natal Subject | trine △                       | Vertex                | Yoko Ono | 7.75° | Static = |
 | Ixion                 | Sample Natal Subject | sextile ⚹                     | Jupiter               | Yoko Ono | 2.01° | Static = |
 | Ixion                 | Sample Natal Subject | trine △                       | Pluto                 | Yoko Ono | 1.07° | Static = |
@@ -932,7 +932,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Ixion                 | Sample Natal Subject | opposition ☍                  | Orcus                 | Yoko Ono | 5.08° | Static = |
 | Ixion                 | Sample Natal Subject | sextile ⚹                     | Quaoar                | Yoko Ono | 5.93° | Static = |
 | Ixion                 | Sample Natal Subject | semi-sextile semi-sextile     | Spica                 | Yoko Ono | 0.21° | Static = |
-| Ixion                 | Sample Natal Subject | trine △                       | Pars Fortunae         | Yoko Ono | 2.54° | Static = |
+| Ixion                 | Sample Natal Subject | trine △                       | Pars Spiritus         | Yoko Ono | 2.54° | Static = |
 | Ixion                 | Sample Natal Subject | sextile ⚹                     | Pars Amoris           | Yoko Ono | 0.12° | Static = |
 | Ixion                 | Sample Natal Subject | opposition ☍                  | Pars Fidei            | Yoko Ono | 3.33° | Static = |
 | Orcus                 | Sample Natal Subject | trine △                       | Moon                  | Yoko Ono | 0.29° | Static = |
@@ -945,7 +945,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Orcus                 | Sample Natal Subject | trine △                       | Sedna                 | Yoko Ono | 6.34° | Static = |
 | Orcus                 | Sample Natal Subject | conjunction ☌                 | Haumea                | Yoko Ono | 5.82° | Static = |
 | Orcus                 | Sample Natal Subject | quintile Q                    | Spica                 | Yoko Ono | 0.07° | Static = |
-| Orcus                 | Sample Natal Subject | sesquiquadrate sesquiquadrate | Pars Spiritus         | Yoko Ono | 0.82° | Static = |
+| Orcus                 | Sample Natal Subject | sesquiquadrate sesquiquadrate | Pars Fortunae         | Yoko Ono | 0.82° | Static = |
 | Quaoar                | Sample Natal Subject | sextile ⚹                     | Jupiter               | Yoko Ono | 3.38° | Static = |
 | Quaoar                | Sample Natal Subject | trine △                       | Pluto                 | Yoko Ono | 2.45° | Static = |
 | Quaoar                | Sample Natal Subject | opposition ☍                  | Chiron                | Yoko Ono | 0.34° | Static = |
@@ -963,7 +963,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Quaoar                | Sample Natal Subject | sextile ⚹                     | Ixion                 | Yoko Ono | 5.14° | Static = |
 | Quaoar                | Sample Natal Subject | opposition ☍                  | Orcus                 | Yoko Ono | 3.71° | Static = |
 | Quaoar                | Sample Natal Subject | square □                      | Regulus               | Yoko Ono | 4.83° | Static = |
-| Quaoar                | Sample Natal Subject | trine △                       | Pars Fortunae         | Yoko Ono | 3.91° | Static = |
+| Quaoar                | Sample Natal Subject | trine △                       | Pars Spiritus         | Yoko Ono | 3.91° | Static = |
 | Quaoar                | Sample Natal Subject | sextile ⚹                     | Pars Amoris           | Yoko Ono | 1.26° | Static = |
 | Quaoar                | Sample Natal Subject | opposition ☍                  | Pars Fidei            | Yoko Ono | 4.70° | Static = |
 | Regulus               | Sample Natal Subject | opposition ☍                  | Sun                   | Yoko Ono | 0.32° | Static = |
@@ -981,7 +981,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Regulus               | Sample Natal Subject | semi-sextile semi-sextile     | Ixion                 | Yoko Ono | 0.48° | Static = |
 | Regulus               | Sample Natal Subject | square □                      | Orcus                 | Yoko Ono | 1.91° | Static = |
 | Regulus               | Sample Natal Subject | conjunction ☌                 | Regulus               | Yoko Ono | 0.79° | Static = |
-| Regulus               | Sample Natal Subject | trine △                       | Pars Spiritus         | Yoko Ono | 3.03° | Static = |
+| Regulus               | Sample Natal Subject | trine △                       | Pars Fortunae         | Yoko Ono | 3.03° | Static = |
 | Regulus               | Sample Natal Subject | trine △                       | Vertex                | Yoko Ono | 2.95° | Static = |
 | Regulus               | Sample Natal Subject | sextile ⚹                     | Anti Vertex           | Yoko Ono | 2.95° | Static = |
 | Spica                 | Sample Natal Subject | trine △                       | Sun                   | Yoko Ono | 5.67° | Static = |
@@ -999,40 +999,40 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Spica                 | Sample Natal Subject | trine △                       | Makemake              | Yoko Ono | 7.10° | Static = |
 | Spica                 | Sample Natal Subject | sextile ⚹                     | Regulus               | Yoko Ono | 5.19° | Static = |
 | Spica                 | Sample Natal Subject | conjunction ☌                 | Spica                 | Yoko Ono | 0.80° | Static = |
-| Spica                 | Sample Natal Subject | square □                      | Pars Fortunae         | Yoko Ono | 3.55° | Static = |
-| Spica                 | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | Yoko Ono | 2.95° | Static = |
+| Spica                 | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | Yoko Ono | 2.95° | Static = |
+| Spica                 | Sample Natal Subject | square □                      | Pars Spiritus         | Yoko Ono | 3.55° | Static = |
 | Spica                 | Sample Natal Subject | semi-sextile semi-sextile     | Pars Amoris           | Yoko Ono | 0.89° | Static = |
 | Spica                 | Sample Natal Subject | opposition ☍                  | Vertex                | Yoko Ono | 3.04° | Static = |
 | Spica                 | Sample Natal Subject | conjunction ☌                 | Anti Vertex           | Yoko Ono | 3.04° | Static = |
-| Pars Fortunae         | Sample Natal Subject | trine △                       | Mercury               | Yoko Ono | 5.26° | Static = |
-| Pars Fortunae         | Sample Natal Subject | square □                      | Venus                 | Yoko Ono | 0.63° | Static = |
-| Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Mars                  | Yoko Ono | 1.97° | Static = |
-| Pars Fortunae         | Sample Natal Subject | square □                      | Saturn                | Yoko Ono | 3.42° | Static = |
-| Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Neptune               | Yoko Ono | 4.08° | Static = |
-| Pars Fortunae         | Sample Natal Subject | trine △                       | Mean North Lunar Node | Yoko Ono | 4.82° | Static = |
-| Pars Fortunae         | Sample Natal Subject | trine △                       | True North Lunar Node | Yoko Ono | 5.36° | Static = |
-| Pars Fortunae         | Sample Natal Subject | trine △                       | Medium Coeli          | Yoko Ono | 3.85° | Static = |
-| Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Imum Coeli            | Yoko Ono | 3.85° | Static = |
-| Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Mean South Lunar Node | Yoko Ono | 4.82° | Static = |
-| Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | True South Lunar Node | Yoko Ono | 5.36° | Static = |
-| Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Pholus                | Yoko Ono | 4.96° | Static = |
-| Pars Fortunae         | Sample Natal Subject | square □                      | Pallas                | Yoko Ono | 2.71° | Static = |
-| Pars Fortunae         | Sample Natal Subject | conjunction ☌                 | Juno                  | Yoko Ono | 7.32° | Static = |
-| Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Quaoar                | Yoko Ono | 3.61° | Static = |
-| Pars Fortunae         | Sample Natal Subject | trine △                       | Pars Fortunae         | Yoko Ono | 7.01° | Static = |
-| Pars Fortunae         | Sample Natal Subject | opposition ☍                  | Pars Fidei            | Yoko Ono | 6.22° | Static = |
-| Pars Spiritus         | Sample Natal Subject | trine △                       | Sun                   | Yoko Ono | 0.89° | Static = |
-| Pars Spiritus         | Sample Natal Subject | opposition ☍                  | Uranus                | Yoko Ono | 7.94° | Static = |
-| Pars Spiritus         | Sample Natal Subject | trine △                       | Ceres                 | Yoko Ono | 2.00° | Static = |
-| Pars Spiritus         | Sample Natal Subject | conjunction ☌                 | Juno                  | Yoko Ono | 7.35° | Static = |
-| Pars Spiritus         | Sample Natal Subject | trine △                       | Makemake              | Yoko Ono | 2.32° | Static = |
-| Pars Spiritus         | Sample Natal Subject | semi-sextile semi-sextile     | Ixion                 | Yoko Ono | 0.73° | Static = |
-| Pars Spiritus         | Sample Natal Subject | quincunx ⚻                    | Orcus                 | Yoko Ono | 0.70° | Static = |
-| Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Regulus               | Yoko Ono | 0.42° | Static = |
-| Pars Spiritus         | Sample Natal Subject | conjunction ☌                 | Spica                 | Yoko Ono | 5.57° | Static = |
-| Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | Yoko Ono | 1.83° | Static = |
-| Pars Spiritus         | Sample Natal Subject | opposition ☍                  | Vertex                | Yoko Ono | 1.74° | Static = |
-| Pars Spiritus         | Sample Natal Subject | conjunction ☌                 | Anti Vertex           | Yoko Ono | 1.74° | Static = |
+| Pars Fortunae         | Sample Natal Subject | trine △                       | Sun                   | Yoko Ono | 0.89° | Static = |
+| Pars Fortunae         | Sample Natal Subject | opposition ☍                  | Uranus                | Yoko Ono | 7.94° | Static = |
+| Pars Fortunae         | Sample Natal Subject | trine △                       | Ceres                 | Yoko Ono | 2.00° | Static = |
+| Pars Fortunae         | Sample Natal Subject | conjunction ☌                 | Juno                  | Yoko Ono | 7.35° | Static = |
+| Pars Fortunae         | Sample Natal Subject | trine △                       | Makemake              | Yoko Ono | 2.32° | Static = |
+| Pars Fortunae         | Sample Natal Subject | semi-sextile semi-sextile     | Ixion                 | Yoko Ono | 0.73° | Static = |
+| Pars Fortunae         | Sample Natal Subject | quincunx ⚻                    | Orcus                 | Yoko Ono | 0.70° | Static = |
+| Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Regulus               | Yoko Ono | 0.42° | Static = |
+| Pars Fortunae         | Sample Natal Subject | conjunction ☌                 | Spica                 | Yoko Ono | 5.57° | Static = |
+| Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | Yoko Ono | 1.83° | Static = |
+| Pars Fortunae         | Sample Natal Subject | opposition ☍                  | Vertex                | Yoko Ono | 1.74° | Static = |
+| Pars Fortunae         | Sample Natal Subject | conjunction ☌                 | Anti Vertex           | Yoko Ono | 1.74° | Static = |
+| Pars Spiritus         | Sample Natal Subject | trine △                       | Mercury               | Yoko Ono | 5.26° | Static = |
+| Pars Spiritus         | Sample Natal Subject | square □                      | Venus                 | Yoko Ono | 0.63° | Static = |
+| Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Mars                  | Yoko Ono | 1.97° | Static = |
+| Pars Spiritus         | Sample Natal Subject | square □                      | Saturn                | Yoko Ono | 3.42° | Static = |
+| Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Neptune               | Yoko Ono | 4.08° | Static = |
+| Pars Spiritus         | Sample Natal Subject | trine △                       | Mean North Lunar Node | Yoko Ono | 4.82° | Static = |
+| Pars Spiritus         | Sample Natal Subject | trine △                       | True North Lunar Node | Yoko Ono | 5.36° | Static = |
+| Pars Spiritus         | Sample Natal Subject | trine △                       | Medium Coeli          | Yoko Ono | 3.85° | Static = |
+| Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Imum Coeli            | Yoko Ono | 3.85° | Static = |
+| Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Mean South Lunar Node | Yoko Ono | 4.82° | Static = |
+| Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | True South Lunar Node | Yoko Ono | 5.36° | Static = |
+| Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Pholus                | Yoko Ono | 4.96° | Static = |
+| Pars Spiritus         | Sample Natal Subject | square □                      | Pallas                | Yoko Ono | 2.71° | Static = |
+| Pars Spiritus         | Sample Natal Subject | conjunction ☌                 | Juno                  | Yoko Ono | 7.32° | Static = |
+| Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Quaoar                | Yoko Ono | 3.61° | Static = |
+| Pars Spiritus         | Sample Natal Subject | trine △                       | Pars Spiritus         | Yoko Ono | 7.01° | Static = |
+| Pars Spiritus         | Sample Natal Subject | opposition ☍                  | Pars Fidei            | Yoko Ono | 6.22° | Static = |
 | Pars Amoris           | Sample Natal Subject | sextile ⚹                     | Moon                  | Yoko Ono | 2.14° | Static = |
 | Pars Amoris           | Sample Natal Subject | trine △                       | Venus                 | Yoko Ono | 4.80° | Static = |
 | Pars Amoris           | Sample Natal Subject | trine △                       | Saturn                | Yoko Ono | 0.75° | Static = |
@@ -1069,7 +1069,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Pars Fidei            | Sample Natal Subject | square □                      | Pallas                | Yoko Ono | 2.23° | Static = |
 | Pars Fidei            | Sample Natal Subject | opposition ☍                  | Juno                  | Yoko Ono | 2.38° | Static = |
 | Pars Fidei            | Sample Natal Subject | square □                      | Haumea                | Yoko Ono | 3.20° | Static = |
-| Pars Fidei            | Sample Natal Subject | quintile Q                    | Pars Fortunae         | Yoko Ono | 0.05° | Static = |
+| Pars Fidei            | Sample Natal Subject | quintile Q                    | Pars Spiritus         | Yoko Ono | 0.05° | Static = |
 | Pars Fidei            | Sample Natal Subject | sesquiquadrate sesquiquadrate | Pars Amoris           | Yoko Ono | 0.40° | Static = |
 | Vertex                | Sample Natal Subject | opposition ☍                  | Moon                  | Yoko Ono | 0.34° | Static = |
 | Vertex                | Sample Natal Subject | square □                      | Mercury               | Yoko Ono | 3.57° | Static = |

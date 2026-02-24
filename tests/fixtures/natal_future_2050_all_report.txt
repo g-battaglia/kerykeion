@@ -66,8 +66,8 @@ Future 2050 Subject — Natal Chart Report
 | Quaoar                | Aqu ♒️ | 14.55°   | -0.0190°/d   | -9.99°  | R    | Fourth House   |
 | Regulus               | Vir ♍️ | 0.53°    | -0.0000°/d   | +11.72° | -    | Tenth House    |
 | Spica                 | Lib ♎️ | 24.55°   | -0.0001°/d   | -11.42° | -    | Twelfth House  |
-| Pars Fortunae         | Lib ♎️ | 13.19°   | N/A          | N/A     | -    | Twelfth House  |
-| Pars Spiritus         | Sco ♏️ | 11.01°   | N/A          | N/A     | -    | First House    |
+| Pars Fortunae         | Sco ♏️ | 11.01°   | N/A          | N/A     | -    | First House    |
+| Pars Spiritus         | Lib ♎️ | 13.19°   | N/A          | N/A     | -    | Twelfth House  |
 | Pars Amoris           | Sag ♐️ | 11.84°   | N/A          | N/A     | -    | Second House   |
 | Pars Fidei            | Tau ♉️ | 2.29°    | N/A          | N/A     | -    | Seventh House  |
 | Vertex                | Gem ♊️ | 8.07°    | N/A          | N/A     | -    | Eighth House   |
@@ -104,18 +104,18 @@ Future 2050 Subject — Natal Chart Report
 +----------+--------------------+------------+
 | Fire 🔥  | 10.3               | 33.0%      |
 | Earth 🌍 | 6.4                | 20.5%      |
-| Air 💨   | 9.3                | 29.8%      |
-| Water 💧 | 5.2                | 16.7%      |
+| Air 💨   | 9.2                | 29.5%      |
+| Water 💧 | 5.3                | 17.0%      |
 | Total    | 31.200000000000003 | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 7.5                | 24.0%      |
-| Fixed    | 16.100000000000005 | 51.6%      |
+| Cardinal | 7.4                | 23.7%      |
+| Fixed    | 16.200000000000006 | 51.9%      |
 | Mutable  | 7.6                | 24.4%      |
-| Total    | 31.200000000000003 | 100%       |
+| Total    | 31.20000000000001  | 100%       |
 +----------+--------------------+------------+
 
 +Active Celestial Points-----+
@@ -207,8 +207,8 @@ Future 2050 Subject — Natal Chart Report
 | Moon                  | opposition ☍                  | Pholus                | 0.40° | Applying →   |
 | Moon                  | sextile ⚹                     | Orcus                 | 0.39° | Applying →   |
 | Moon                  | opposition ☍                  | Quaoar                | 3.00° | Applying →   |
-| Moon                  | sextile ⚹                     | Pars Fortunae         | 1.64° | Applying →   |
-| Moon                  | square □                      | Pars Spiritus         | 0.54° | Separating ← |
+| Moon                  | square □                      | Pars Fortunae         | 0.54° | Separating ← |
+| Moon                  | sextile ⚹                     | Pars Spiritus         | 1.64° | Applying →   |
 | Moon                  | trine △                       | Pars Amoris           | 0.29° | Applying →   |
 | Moon                  | sextile ⚹                     | Vertex                | 3.48° | Separating ← |
 | Moon                  | trine △                       | Anti Vertex           | 3.48° | Separating ← |
@@ -241,8 +241,8 @@ Future 2050 Subject — Natal Chart Report
 | Venus                 | sextile ⚹                     | Pallas                | 3.00° | Separating ← |
 | Venus                 | conjunction ☌                 | Juno                  | 1.64° | Applying →   |
 | Venus                 | semi-sextile semi-sextile     | Orcus                 | 0.44° | Separating ← |
-| Venus                 | semi-sextile semi-sextile     | Pars Fortunae         | 0.82° | Applying →   |
-| Venus                 | sextile ⚹                     | Pars Spiritus         | 1.36° | Separating ← |
+| Venus                 | sextile ⚹                     | Pars Fortunae         | 1.36° | Separating ← |
+| Venus                 | semi-sextile semi-sextile     | Pars Spiritus         | 0.82° | Applying →   |
 | Venus                 | square □                      | Pars Amoris           | 0.54° | Separating ← |
 | Venus                 | square □                      | Vertex                | 4.30° | Separating ← |
 | Venus                 | square □                      | Anti Vertex           | 4.30° | Separating ← |
@@ -266,8 +266,8 @@ Future 2050 Subject — Natal Chart Report
 | Jupiter               | opposition ☍                  | Pholus                | 0.56° | Applying →   |
 | Jupiter               | sextile ⚹                     | Orcus                 | 0.55° | Applying →   |
 | Jupiter               | opposition ☍                  | Quaoar                | 3.17° | Applying →   |
-| Jupiter               | sextile ⚹                     | Pars Fortunae         | 1.80° | Applying →   |
-| Jupiter               | square □                      | Pars Spiritus         | 0.38° | Separating ← |
+| Jupiter               | square □                      | Pars Fortunae         | 0.38° | Separating ← |
+| Jupiter               | sextile ⚹                     | Pars Spiritus         | 1.80° | Applying →   |
 | Jupiter               | trine △                       | Pars Amoris           | 0.45° | Applying →   |
 | Jupiter               | sextile ⚹                     | Vertex                | 3.32° | Separating ← |
 | Jupiter               | trine △                       | Anti Vertex           | 3.32° | Separating ← |
@@ -280,8 +280,8 @@ Future 2050 Subject — Natal Chart Report
 | Saturn                | square □                      | Makemake              | 3.05° | Applying →   |
 | Saturn                | trine △                       | Orcus                 | 5.73° | Separating ← |
 | Saturn                | conjunction ☌                 | Quaoar                | 8.35° | Separating ← |
-| Saturn                | trine △                       | Pars Fortunae         | 6.99° | Separating ← |
-| Saturn                | square □                      | Pars Spiritus         | 4.81° | Separating ← |
+| Saturn                | square □                      | Pars Fortunae         | 4.81° | Separating ← |
+| Saturn                | trine △                       | Pars Spiritus         | 6.99° | Separating ← |
 | Saturn                | sextile ⚹                     | Pars Amoris           | 5.63° | Separating ← |
 | Saturn                | square □                      | Pars Fidei            | 3.92° | Applying →   |
 | Saturn                | trine △                       | Vertex                | 1.87° | Separating ← |
@@ -314,7 +314,7 @@ Future 2050 Subject — Natal Chart Report
 | Neptune               | square □                      | Ixion                 | 3.87° | Separating ← |
 | Neptune               | sesquiquadrate sesquiquadrate | Orcus                 | 0.96° | Separating ← |
 | Neptune               | square □                      | Regulus               | 2.63° | Applying →   |
-| Neptune               | sesquiquadrate sesquiquadrate | Pars Fortunae         | 0.30° | Applying →   |
+| Neptune               | sesquiquadrate sesquiquadrate | Pars Spiritus         | 0.30° | Applying →   |
 | Pluto                 | trine △                       | Mean North Lunar Node | 6.99° | Applying →   |
 | Pluto                 | trine △                       | True North Lunar Node | 7.89° | Applying →   |
 | Pluto                 | square □                      | Chiron                | 4.63° | Separating ← |
@@ -325,7 +325,7 @@ Future 2050 Subject — Natal Chart Report
 | Pluto                 | trine △                       | Makemake              | 7.24° | Applying →   |
 | Pluto                 | opposition ☍                  | Regulus               | 9.86° | Applying →   |
 | Pluto                 | sesquiquadrate sesquiquadrate | Spica                 | 0.84° | Applying →   |
-| Pluto                 | trine △                       | Pars Spiritus         | 0.62° | Separating ← |
+| Pluto                 | trine △                       | Pars Fortunae         | 0.62° | Separating ← |
 | Pluto                 | square □                      | Pars Amoris           | 1.45° | Separating ← |
 | Pluto                 | square □                      | Vertex                | 2.32° | Applying →   |
 | Pluto                 | square □                      | Anti Vertex           | 2.32° | Applying →   |
@@ -334,13 +334,13 @@ Future 2050 Subject — Natal Chart Report
 | Mean North Lunar Node | sextile ⚹                     | True Lilith           | 5.59° | Applying →   |
 | Mean North Lunar Node | sextile ⚹                     | Juno                  | 3.37° | Applying →   |
 | Mean North Lunar Node | square □                      | Quaoar                | 2.83° | Applying →   |
-| Mean North Lunar Node | conjunction ☌                 | Pars Spiritus         | 6.37° | Applying →   |
+| Mean North Lunar Node | conjunction ☌                 | Pars Fortunae         | 6.37° | Applying →   |
 | True North Lunar Node | quintile Q                    | Imum Coeli            | 0.27° | Separating ← |
 | True North Lunar Node | opposition ☍                  | Mean South Lunar Node | 0.90° | Applying →   |
 | True North Lunar Node | sextile ⚹                     | Juno                  | 4.27° | Applying →   |
 | True North Lunar Node | quincunx ⚻                    | Sedna                 | 0.50° | Separating ← |
 | True North Lunar Node | square □                      | Quaoar                | 3.73° | Applying →   |
-| True North Lunar Node | conjunction ☌                 | Pars Spiritus         | 7.27° | Applying →   |
+| True North Lunar Node | conjunction ☌                 | Pars Fortunae         | 7.27° | Applying →   |
 | Chiron                | trine △                       | Medium Coeli          | 5.21° | Applying →   |
 | Chiron                | sextile ⚹                     | Imum Coeli            | 5.21° | Applying →   |
 | Chiron                | square □                      | Mean Lilith           | 4.47° | Separating ← |
@@ -370,7 +370,7 @@ Future 2050 Subject — Natal Chart Report
 | Medium Coeli          | square □                      | Makemake              | 2.60° | Applying →   |
 | Medium Coeli          | quintile Q                    | Orcus                 | 0.62° | Separating ← |
 | Medium Coeli          | semi-sextile semi-sextile     | Regulus               | 0.02° | Separating ← |
-| Medium Coeli          | quintile Q                    | Pars Fortunae         | 0.64° | Applying →   |
+| Medium Coeli          | quintile Q                    | Pars Spiritus         | 0.64° | Applying →   |
 | Medium Coeli          | square □                      | Pars Fidei            | 1.74° | Applying →   |
 | Medium Coeli          | trine △                       | Anti Vertex           | 7.52° | Applying →   |
 | Descendant            | square □                      | Imum Coeli            | 3.45° | Static =     |
@@ -400,7 +400,7 @@ Future 2050 Subject — Natal Chart Report
 | Mean Lilith           | conjunction ☌                 | Juno                  | 3.78° | Separating ← |
 | Mean Lilith           | conjunction ☌                 | Regulus               | 9.71° | Separating ← |
 | Mean Lilith           | semi-square semi-square       | Spica                 | 0.69° | Separating ← |
-| Mean Lilith           | sextile ⚹                     | Pars Spiritus         | 0.77° | Applying →   |
+| Mean Lilith           | sextile ⚹                     | Pars Fortunae         | 0.77° | Applying →   |
 | Mean Lilith           | square □                      | Pars Amoris           | 1.60° | Applying →   |
 | Mean Lilith           | trine △                       | Pars Fidei            | 7.95° | Separating ← |
 | Mean Lilith           | square □                      | Vertex                | 2.17° | Separating ← |
@@ -410,19 +410,19 @@ Future 2050 Subject — Natal Chart Report
 | Mean South Lunar Node | trine △                       | Juno                  | 3.37° | Applying →   |
 | Mean South Lunar Node | biquintile biquintile         | Orcus                 | 0.55° | Applying →   |
 | Mean South Lunar Node | square □                      | Quaoar                | 2.83° | Separating ← |
-| Mean South Lunar Node | opposition ☍                  | Pars Spiritus         | 6.37° | Separating ← |
+| Mean South Lunar Node | opposition ☍                  | Pars Fortunae         | 6.37° | Separating ← |
 | True South Lunar Node | trine △                       | True Lilith           | 6.49° | Applying →   |
 | True South Lunar Node | trine △                       | Juno                  | 4.27° | Applying →   |
 | True South Lunar Node | semi-sextile semi-sextile     | Sedna                 | 0.50° | Applying →   |
 | True South Lunar Node | biquintile biquintile         | Orcus                 | 0.35° | Separating ← |
 | True South Lunar Node | square □                      | Quaoar                | 3.73° | Separating ← |
-| True South Lunar Node | biquintile biquintile         | Pars Fortunae         | 0.91° | Applying →   |
-| True South Lunar Node | opposition ☍                  | Pars Spiritus         | 7.27° | Separating ← |
+| True South Lunar Node | opposition ☍                  | Pars Fortunae         | 7.27° | Separating ← |
+| True South Lunar Node | biquintile biquintile         | Pars Spiritus         | 0.91° | Applying →   |
 | True Lilith           | quincunx ⚻                    | Pholus                | 0.15° | Applying →   |
 | True Lilith           | sextile ⚹                     | Pallas                | 2.42° | Separating ← |
 | True Lilith           | conjunction ☌                 | Juno                  | 2.22° | Applying →   |
 | True Lilith           | semi-sextile semi-sextile     | Orcus                 | 0.14° | Applying →   |
-| True Lilith           | sextile ⚹                     | Pars Spiritus         | 0.78° | Separating ← |
+| True Lilith           | sextile ⚹                     | Pars Fortunae         | 0.78° | Separating ← |
 | True Lilith           | square □                      | Pars Amoris           | 0.04° | Applying →   |
 | True Lilith           | square □                      | Vertex                | 3.72° | Separating ← |
 | True Lilith           | square □                      | Anti Vertex           | 3.72° | Separating ← |
@@ -436,8 +436,8 @@ Future 2050 Subject — Natal Chart Report
 | Pholus                | quintile Q                    | Haumea                | 0.73° | Applying →   |
 | Pholus                | trine △                       | Orcus                 | 0.01° | Applying →   |
 | Pholus                | conjunction ☌                 | Quaoar                | 2.61° | Separating ← |
-| Pholus                | trine △                       | Pars Fortunae         | 1.25° | Separating ← |
-| Pholus                | square □                      | Pars Spiritus         | 0.93° | Applying →   |
+| Pholus                | square □                      | Pars Fortunae         | 0.93° | Applying →   |
+| Pholus                | trine △                       | Pars Spiritus         | 1.25° | Separating ← |
 | Pholus                | sextile ⚹                     | Pars Amoris           | 0.11° | Applying →   |
 | Pholus                | trine △                       | Vertex                | 3.87° | Applying →   |
 | Pholus                | sextile ⚹                     | Anti Vertex           | 3.87° | Applying →   |
@@ -453,18 +453,18 @@ Future 2050 Subject — Natal Chart Report
 | Pallas                | sesquiquadrate sesquiquadrate | Ixion                 | 0.35° | Separating ← |
 | Pallas                | square □                      | Orcus                 | 2.56° | Applying →   |
 | Pallas                | biquintile biquintile         | Quaoar                | 0.82° | Separating ← |
-| Pallas                | square □                      | Pars Fortunae         | 3.81° | Applying →   |
-| Pallas                | trine △                       | Pars Spiritus         | 1.63° | Applying →   |
+| Pallas                | trine △                       | Pars Fortunae         | 1.63° | Applying →   |
+| Pallas                | square □                      | Pars Spiritus         | 3.81° | Applying →   |
 | Juno                  | square □                      | Sedna                 | 4.77° | Applying →   |
 | Juno                  | quincunx ⚻                    | Quaoar                | 0.53° | Applying →   |
-| Juno                  | semi-sextile semi-sextile     | Pars Fortunae         | 0.83° | Separating ← |
-| Juno                  | sextile ⚹                     | Pars Spiritus         | 3.01° | Separating ← |
+| Juno                  | sextile ⚹                     | Pars Fortunae         | 3.01° | Separating ← |
+| Juno                  | semi-sextile semi-sextile     | Pars Spiritus         | 0.83° | Separating ← |
 | Juno                  | square □                      | Pars Amoris           | 2.18° | Separating ← |
 | Vesta                 | sextile ⚹                     | Haumea                | 1.58° | Applying →   |
 | Eris                  | opposition ☍                  | Makemake              | 1.56° | Static =     |
 | Eris                  | trine △                       | Regulus               | 1.07° | Separating ← |
 | Eris                  | opposition ☍                  | Spica                 | 7.05° | Separating ← |
-| Eris                  | opposition ☍                  | Pars Spiritus         | 9.41° | Applying →   |
+| Eris                  | opposition ☍                  | Pars Fortunae         | 9.41° | Applying →   |
 | Eris                  | conjunction ☌                 | Pars Fidei            | 0.69° | Applying →   |
 | Eris                  | biquintile biquintile         | Anti Vertex           | 0.47° | Applying →   |
 | Sedna                 | sesquiquadrate sesquiquadrate | Makemake              | 0.63° | Separating ← |
@@ -473,37 +473,37 @@ Future 2050 Subject — Natal Chart Report
 | Sedna                 | trine △                       | Quaoar                | 4.23° | Separating ← |
 | Sedna                 | quintile Q                    | Regulus               | 0.25° | Separating ← |
 | Sedna                 | trine △                       | Spica                 | 5.77° | Applying →   |
-| Sedna                 | trine △                       | Pars Fortunae         | 5.59° | Separating ← |
+| Sedna                 | trine △                       | Pars Spiritus         | 5.59° | Separating ← |
 | Sedna                 | opposition ☍                  | Pars Amoris           | 6.95° | Separating ← |
 | Haumea                | square □                      | Regulus               | 1.32° | Separating ← |
 | Haumea                | opposition ☍                  | Vertex                | 8.86° | Separating ← |
 | Haumea                | conjunction ☌                 | Anti Vertex           | 8.86° | Separating ← |
 | Makemake              | sextile ⚹                     | Regulus               | 2.62° | Static =     |
 | Makemake              | conjunction ☌                 | Spica                 | 8.60° | Static =     |
-| Makemake              | conjunction ☌                 | Pars Spiritus         | 7.86° | Static =     |
+| Makemake              | conjunction ☌                 | Pars Fortunae         | 7.86° | Static =     |
 | Makemake              | opposition ☍                  | Pars Fidei            | 0.87° | Static =     |
 | Ixion                 | conjunction ☌                 | Quaoar                | 9.47° | Applying →   |
 | Ixion                 | opposition ☍                  | Regulus               | 6.51° | Separating ← |
 | Ixion                 | trine △                       | Spica                 | 0.53° | Separating ← |
 | Ixion                 | quintile Q                    | Pars Amoris           | 0.19° | Applying →   |
 | Orcus                 | trine △                       | Quaoar                | 2.62° | Applying →   |
-| Orcus                 | conjunction ☌                 | Pars Fortunae         | 1.26° | Applying →   |
-| Orcus                 | semi-sextile semi-sextile     | Pars Spiritus         | 0.92° | Separating ← |
+| Orcus                 | semi-sextile semi-sextile     | Pars Fortunae         | 0.92° | Separating ← |
+| Orcus                 | conjunction ☌                 | Pars Spiritus         | 1.26° | Applying →   |
 | Orcus                 | sextile ⚹                     | Pars Amoris           | 0.10° | Separating ← |
 | Orcus                 | trine △                       | Vertex                | 3.86° | Separating ← |
 | Orcus                 | sextile ⚹                     | Anti Vertex           | 3.86° | Separating ← |
-| Quaoar                | trine △                       | Pars Fortunae         | 1.36° | Applying →   |
-| Quaoar                | square □                      | Pars Spiritus         | 3.54° | Applying →   |
+| Quaoar                | square □                      | Pars Fortunae         | 3.54° | Applying →   |
+| Quaoar                | trine △                       | Pars Spiritus         | 1.36° | Applying →   |
 | Quaoar                | sextile ⚹                     | Pars Amoris           | 2.72° | Applying →   |
 | Quaoar                | trine △                       | Vertex                | 6.48° | Applying →   |
 | Regulus               | sextile ⚹                     | Spica                 | 5.98° | Static =     |
 | Regulus               | trine △                       | Pars Fidei            | 1.75° | Static =     |
 | Spica                 | opposition ☍                  | Pars Fidei            | 7.73° | Static =     |
-| Pars Fortunae         | sextile ⚹                     | Pars Amoris           | 1.35° | Static =     |
-| Pars Fortunae         | trine △                       | Vertex                | 5.12° | Static =     |
-| Pars Fortunae         | sextile ⚹                     | Anti Vertex           | 5.12° | Static =     |
-| Pars Spiritus         | semi-sextile semi-sextile     | Pars Amoris           | 0.83° | Static =     |
-| Pars Spiritus         | opposition ☍                  | Pars Fidei            | 8.73° | Static =     |
+| Pars Fortunae         | semi-sextile semi-sextile     | Pars Amoris           | 0.83° | Static =     |
+| Pars Fortunae         | opposition ☍                  | Pars Fidei            | 8.73° | Static =     |
+| Pars Spiritus         | sextile ⚹                     | Pars Amoris           | 1.35° | Static =     |
+| Pars Spiritus         | trine △                       | Vertex                | 5.12° | Static =     |
+| Pars Spiritus         | sextile ⚹                     | Anti Vertex           | 5.12° | Static =     |
 | Pars Amoris           | opposition ☍                  | Vertex                | 3.77° | Static =     |
 | Pars Amoris           | conjunction ☌                 | Anti Vertex           | 3.77° | Static =     |
 | Pars Fidei            | biquintile biquintile         | Anti Vertex           | 0.21° | Static =     |

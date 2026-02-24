@@ -53,8 +53,8 @@ Ancient Rome Subject — Natal Chart Report
 | Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Twelfth House  |
 | Regulus               | Leo ♌️ | 3.52°    | +0.0001°/d   | +19.94° | -    | Fifth House    |
 | Spica                 | Vir ♍️ | 27.43°   | +0.0001°/d   | -0.73°  | -    | Sixth House    |
-| Pars Fortunae         | Pis ♓️ | 2.56°    | N/A          | N/A     | -    | Twelfth House  |
-| Pars Spiritus         | Gem ♊️ | 5.76°    | N/A          | N/A     | -    | Second House   |
+| Pars Fortunae         | Gem ♊️ | 5.76°    | N/A          | N/A     | -    | Second House   |
+| Pars Spiritus         | Pis ♓️ | 2.56°    | N/A          | N/A     | -    | Twelfth House  |
 | Pars Amoris           | Tau ♉️ | 28.29°   | N/A          | N/A     | -    | Second House   |
 | Pars Fidei            | Can ♋️ | 15.81°   | N/A          | N/A     | -    | Fourth House   |
 | Vertex                | Lib ♎️ | 7.92°    | N/A          | N/A     | -    | Sixth House    |
@@ -91,8 +91,8 @@ Ancient Rome Subject — Natal Chart Report
 +----------+--------------------+------------+
 | Fire 🔥  | 3.3                | 12.5%      |
 | Earth 🌍 | 9.299999999999999  | 35.1%      |
-| Air 💨   | 7.5                | 28.3%      |
-| Water 💧 | 6.3999999999999995 | 24.2%      |
+| Air 💨   | 7.6                | 28.7%      |
+| Water 💧 | 6.3                | 23.8%      |
 | Total    | 26.499999999999996 | 100%       |
 +----------+--------------------+------------+
 
@@ -162,7 +162,7 @@ Ancient Rome Subject — Natal Chart Report
 | Sun                   | sextile ⚹                     | Pluto                 | 3.58° | Applying →   |
 | Sun                   | conjunction ☌                 | Medium Coeli          | 1.92° | Applying →   |
 | Sun                   | opposition ☍                  | Imum Coeli            | 1.92° | Applying →   |
-| Sun                   | biquintile biquintile         | Pars Spiritus         | 0.07° | Separating ← |
+| Sun                   | biquintile biquintile         | Pars Fortunae         | 0.07° | Separating ← |
 | Sun                   | opposition ☍                  | Pars Fidei            | 3.98° | Applying →   |
 | Sun                   | square □                      | Vertex                | 3.91° | Separating ← |
 | Sun                   | square □                      | Anti Vertex           | 3.91° | Separating ← |
@@ -177,7 +177,7 @@ Ancient Rome Subject — Natal Chart Report
 | Moon                  | conjunction ☌                 | Mean South Lunar Node | 5.14° | Applying →   |
 | Moon                  | conjunction ☌                 | True South Lunar Node | 3.46° | Applying →   |
 | Moon                  | quincunx ⚻                    | Spica                 | 1.00° | Separating ← |
-| Moon                  | conjunction ☌                 | Pars Fortunae         | 4.13° | Applying →   |
+| Moon                  | conjunction ☌                 | Pars Spiritus         | 4.13° | Applying →   |
 | Moon                  | square □                      | Pars Amoris           | 0.14° | Separating ← |
 | Mercury               | conjunction ☌                 | Jupiter               | 6.43° | Applying →   |
 | Mercury               | trine △                       | Uranus                | 7.57° | Applying →   |
@@ -205,14 +205,14 @@ Ancient Rome Subject — Natal Chart Report
 | Mars                  | sextile ⚹                     | True South Lunar Node | 0.26° | Separating ← |
 | Mars                  | square □                      | Earth                 | 2.15° | Separating ← |
 | Mars                  | square □                      | Spica                 | 4.72° | Separating ← |
-| Mars                  | sextile ⚹                     | Pars Fortunae         | 0.41° | Applying →   |
+| Mars                  | sextile ⚹                     | Pars Spiritus         | 0.41° | Applying →   |
 | Jupiter               | square □                      | Saturn                | 3.35° | Applying →   |
 | Jupiter               | trine △                       | Uranus                | 1.14° | Applying →   |
 | Jupiter               | sextile ⚹                     | True Lilith           | 3.51° | Separating ← |
 | Jupiter               | sextile ⚹                     | Earth                 | 0.80° | Applying →   |
 | Jupiter               | opposition ☍                  | Regulus               | 4.33° | Applying →   |
 | Jupiter               | trine △                       | Spica                 | 1.76° | Separating ← |
-| Jupiter               | trine △                       | Pars Spiritus         | 6.56° | Applying →   |
+| Jupiter               | trine △                       | Pars Fortunae         | 6.56° | Applying →   |
 | Jupiter               | trine △                       | Pars Amoris           | 0.91° | Separating ← |
 | Saturn                | trine △                       | Neptune               | 5.71° | Separating ← |
 | Saturn                | sextile ⚹                     | Mean North Lunar Node | 1.02° | Applying →   |
@@ -222,7 +222,7 @@ Ancient Rome Subject — Natal Chart Report
 | Saturn                | trine △                       | True South Lunar Node | 0.65° | Separating ← |
 | Saturn                | biquintile biquintile         | True Lilith           | 0.85° | Separating ← |
 | Saturn                | square □                      | Regulus               | 0.98° | Applying →   |
-| Saturn                | trine △                       | Pars Fortunae         | 0.02° | Applying →   |
+| Saturn                | trine △                       | Pars Spiritus         | 0.02° | Applying →   |
 | Uranus                | square □                      | Mean North Lunar Node | 3.23° | Applying →   |
 | Uranus                | square □                      | True North Lunar Node | 1.56° | Separating ← |
 | Uranus                | square □                      | Mean South Lunar Node | 3.23° | Separating ← |
@@ -231,8 +231,8 @@ Ancient Rome Subject — Natal Chart Report
 | Uranus                | sextile ⚹                     | Earth                 | 0.33° | Applying →   |
 | Uranus                | sextile ⚹                     | Regulus               | 3.19° | Separating ← |
 | Uranus                | trine △                       | Spica                 | 2.90° | Applying →   |
-| Uranus                | square □                      | Pars Fortunae         | 2.23° | Separating ← |
-| Uranus                | conjunction ☌                 | Pars Spiritus         | 5.42° | Separating ← |
+| Uranus                | conjunction ☌                 | Pars Fortunae         | 5.42° | Separating ← |
+| Uranus                | square □                      | Pars Spiritus         | 2.23° | Separating ← |
 | Uranus                | conjunction ☌                 | Pars Amoris           | 2.04° | Applying →   |
 | Uranus                | semi-square semi-square       | Pars Fidei            | 0.48° | Separating ← |
 | Uranus                | trine △                       | Vertex                | 7.58° | Separating ← |
@@ -243,7 +243,7 @@ Ancient Rome Subject — Natal Chart Report
 | Neptune               | square □                      | True Lilith           | 1.14° | Separating ← |
 | Neptune               | square □                      | Earth                 | 3.17° | Separating ← |
 | Neptune               | square □                      | Spica                 | 0.60° | Separating ← |
-| Neptune               | trine △                       | Pars Fortunae         | 5.73° | Separating ← |
+| Neptune               | trine △                       | Pars Spiritus         | 5.73° | Separating ← |
 | Pluto                 | sextile ⚹                     | Medium Coeli          | 5.50° | Applying →   |
 | Pluto                 | trine △                       | Imum Coeli            | 5.50° | Applying →   |
 | Pluto                 | conjunction ☌                 | Mean Lilith           | 4.67° | Separating ← |
@@ -255,11 +255,11 @@ Ancient Rome Subject — Natal Chart Report
 | Mean North Lunar Node | semi-square semi-square       | Descendant            | 0.59° | Separating ← |
 | Mean North Lunar Node | opposition ☍                  | True South Lunar Node | 1.68° | Applying →   |
 | Mean North Lunar Node | semi-sextile semi-sextile     | Regulus               | 0.04° | Applying →   |
-| Mean North Lunar Node | opposition ☍                  | Pars Fortunae         | 1.01° | Applying →   |
-| Mean North Lunar Node | square □                      | Pars Spiritus         | 2.19° | Separating ← |
+| Mean North Lunar Node | square □                      | Pars Fortunae         | 2.19° | Separating ← |
+| Mean North Lunar Node | opposition ☍                  | Pars Spiritus         | 1.01° | Applying →   |
 | True North Lunar Node | opposition ☍                  | Mean South Lunar Node | 1.68° | Separating ← |
-| True North Lunar Node | opposition ☍                  | Pars Fortunae         | 0.67° | Separating ← |
-| True North Lunar Node | square □                      | Pars Spiritus         | 3.87° | Separating ← |
+| True North Lunar Node | square □                      | Pars Fortunae         | 3.87° | Separating ← |
+| True North Lunar Node | opposition ☍                  | Pars Spiritus         | 0.67° | Separating ← |
 | True North Lunar Node | square □                      | Pars Amoris           | 3.60° | Applying →   |
 | True North Lunar Node | biquintile biquintile         | Anti Vertex           | 0.03° | Separating ← |
 | Ascendant             | semi-sextile semi-sextile     | Mean Lilith           | 0.92° | Applying →   |
@@ -272,7 +272,7 @@ Ancient Rome Subject — Natal Chart Report
 | Descendant            | sesquiquadrate sesquiquadrate | Mean South Lunar Node | 0.59° | Separating ← |
 | Descendant            | square □                      | Pars Fidei            | 3.35° | Separating ← |
 | Imum Coeli            | trine △                       | Mean South Lunar Node | 6.34° | Separating ← |
-| Imum Coeli            | trine △                       | Pars Fortunae         | 7.35° | Separating ← |
+| Imum Coeli            | trine △                       | Pars Spiritus         | 7.35° | Separating ← |
 | Imum Coeli            | conjunction ☌                 | Pars Fidei            | 5.90° | Applying →   |
 | Imum Coeli            | square □                      | Vertex                | 1.99° | Separating ← |
 | Imum Coeli            | square □                      | Anti Vertex           | 1.99° | Separating ← |
@@ -282,10 +282,10 @@ Ancient Rome Subject — Natal Chart Report
 | Mean Lilith           | trine △                       | Pars Fidei            | 4.26° | Separating ← |
 | Mean South Lunar Node | conjunction ☌                 | True South Lunar Node | 1.68° | Separating ← |
 | Mean South Lunar Node | quincunx ⚻                    | Regulus               | 0.04° | Separating ← |
-| Mean South Lunar Node | conjunction ☌                 | Pars Fortunae         | 1.01° | Separating ← |
-| Mean South Lunar Node | square □                      | Pars Spiritus         | 2.19° | Applying →   |
-| True South Lunar Node | conjunction ☌                 | Pars Fortunae         | 0.67° | Applying →   |
-| True South Lunar Node | square □                      | Pars Spiritus         | 3.87° | Applying →   |
+| Mean South Lunar Node | square □                      | Pars Fortunae         | 2.19° | Applying →   |
+| Mean South Lunar Node | conjunction ☌                 | Pars Spiritus         | 1.01° | Separating ← |
+| True South Lunar Node | square □                      | Pars Fortunae         | 3.87° | Applying →   |
+| True South Lunar Node | conjunction ☌                 | Pars Spiritus         | 0.67° | Applying →   |
 | True South Lunar Node | square □                      | Pars Amoris           | 3.60° | Separating ← |
 | True South Lunar Node | biquintile biquintile         | Vertex                | 0.03° | Applying →   |
 | True Lilith           | conjunction ☌                 | Earth                 | 4.31° | Separating ← |
@@ -294,22 +294,22 @@ Ancient Rome Subject — Natal Chart Report
 | True Lilith           | sextile ⚹                     | Pars Amoris           | 2.60° | Separating ← |
 | Earth                 | trine △                       | Regulus               | 3.52° | Static =     |
 | Earth                 | opposition ☍                  | Spica                 | 2.57° | Static =     |
-| Earth                 | sextile ⚹                     | Pars Spiritus         | 5.76° | Static =     |
+| Earth                 | sextile ⚹                     | Pars Fortunae         | 5.76° | Static =     |
 | Earth                 | sextile ⚹                     | Pars Amoris           | 1.71° | Static =     |
 | Earth                 | opposition ☍                  | Vertex                | 7.92° | Static =     |
 | Earth                 | conjunction ☌                 | Anti Vertex           | 7.92° | Static =     |
-| Regulus               | quincunx ⚻                    | Pars Fortunae         | 0.97° | Static =     |
-| Regulus               | sextile ⚹                     | Pars Spiritus         | 2.23° | Static =     |
+| Regulus               | sextile ⚹                     | Pars Fortunae         | 2.23° | Static =     |
+| Regulus               | quincunx ⚻                    | Pars Spiritus         | 0.97° | Static =     |
 | Regulus               | sextile ⚹                     | Pars Amoris           | 5.23° | Static =     |
 | Regulus               | sextile ⚹                     | Vertex                | 4.39° | Static =     |
 | Regulus               | trine △                       | Anti Vertex           | 4.39° | Static =     |
 | Spica                 | trine △                       | Pars Amoris           | 0.86° | Static =     |
 | Spica                 | quintile Q                    | Pars Fidei            | 0.38° | Static =     |
 | Pars Fortunae         | square □                      | Pars Spiritus         | 3.20° | Static =     |
-| Pars Fortunae         | square □                      | Pars Amoris           | 4.27° | Static =     |
-| Pars Fortunae         | biquintile biquintile         | Vertex                | 0.64° | Static =     |
-| Pars Spiritus         | conjunction ☌                 | Pars Amoris           | 7.47° | Static =     |
-| Pars Spiritus         | trine △                       | Vertex                | 2.16° | Static =     |
-| Pars Spiritus         | sextile ⚹                     | Anti Vertex           | 2.16° | Static =     |
+| Pars Fortunae         | conjunction ☌                 | Pars Amoris           | 7.47° | Static =     |
+| Pars Fortunae         | trine △                       | Vertex                | 2.16° | Static =     |
+| Pars Fortunae         | sextile ⚹                     | Anti Vertex           | 2.16° | Static =     |
+| Pars Spiritus         | square □                      | Pars Amoris           | 4.27° | Static =     |
+| Pars Spiritus         | biquintile biquintile         | Vertex                | 0.64° | Static =     |
 | Vertex                | opposition ☍                  | Anti Vertex           | 0.00° | Static =     |
 +-----------------------+-------------------------------+-----------------------+-------+--------------+

@@ -1413,7 +1413,7 @@ class TestNightChartCalculations:
 
     def test_night_chart_pars_fortunae(self):
         """Test Part of Fortune for night chart (Sun below horizon)."""
-        # Birth at night - Sun in houses 7-12
+        # Birth at night - Sun below the horizon
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Night Chart",
             1990,
@@ -1567,7 +1567,7 @@ class TestMockErrorConditions:
 
     def test_day_chart_vs_night_chart(self):
         """Test day vs night chart calculation for Arabic Parts (line 1589)."""
-        # Day chart - Sun in houses 1-6
+        # Day chart - Sun above the horizon
         day_subject = AstrologicalSubjectFactory.from_birth_data(
             "Day Chart",
             1990,
@@ -1583,7 +1583,7 @@ class TestMockErrorConditions:
             suppress_geonames_warning=True,
         )
 
-        # Night chart - Sun in houses 7-12
+        # Night chart - Sun below the horizon
         night_subject = AstrologicalSubjectFactory.from_birth_data(
             "Night Chart",
             1990,
@@ -1604,6 +1604,74 @@ class TestMockErrorConditions:
         assert hasattr(night_subject, "pars_fortunae")
         # Values should differ due to different formula
         assert day_subject.pars_fortunae.abs_pos != night_subject.pars_fortunae.abs_pos
+
+    def test_day_night_formula_correctness(self):
+        """Verify that the correct formula is applied for day and night charts.
+
+        Day formula:   Pars Fortunae = Asc + Moon - Sun
+        Night formula: Pars Fortunae = Asc + Sun - Moon
+        """
+        import math
+
+        # Noon in London on June 15, 1990 — Sun is above the horizon (day chart)
+        day_subject = AstrologicalSubjectFactory.from_birth_data(
+            "Day Formula Check",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=0.0,
+            lat=51.5074,
+            tz_str="Etc/GMT",
+            online=False,
+            active_points=["Pars_Fortunae", "Sun", "Moon", "Ascendant"],
+            suppress_geonames_warning=True,
+        )
+
+        asc = day_subject.ascendant.abs_pos
+        sun = day_subject.sun.abs_pos
+        moon = day_subject.moon.abs_pos
+
+        # Day chart: Pars Fortunae = Asc + Moon - Sun
+        expected_day = math.fmod(asc + moon - sun, 360)
+        if expected_day < 0:
+            expected_day += 360
+
+        assert day_subject.pars_fortunae.abs_pos == approx(expected_day, abs=0.01), (
+            f"Day chart formula mismatch: got {day_subject.pars_fortunae.abs_pos}, "
+            f"expected Asc({asc}) + Moon({moon}) - Sun({sun}) = {expected_day}"
+        )
+
+        # Midnight in London on June 15, 1990 — Sun is below the horizon (night chart)
+        night_subject = AstrologicalSubjectFactory.from_birth_data(
+            "Night Formula Check",
+            1990,
+            6,
+            15,
+            0,
+            0,
+            lng=0.0,
+            lat=51.5074,
+            tz_str="Etc/GMT",
+            online=False,
+            active_points=["Pars_Fortunae", "Sun", "Moon", "Ascendant"],
+            suppress_geonames_warning=True,
+        )
+
+        asc = night_subject.ascendant.abs_pos
+        sun = night_subject.sun.abs_pos
+        moon = night_subject.moon.abs_pos
+
+        # Night chart: Pars Fortunae = Asc + Sun - Moon
+        expected_night = math.fmod(asc + sun - moon, 360)
+        if expected_night < 0:
+            expected_night += 360
+
+        assert night_subject.pars_fortunae.abs_pos == approx(expected_night, abs=0.01), (
+            f"Night chart formula mismatch: got {night_subject.pars_fortunae.abs_pos}, "
+            f"expected Asc({asc}) + Sun({sun}) - Moon({moon}) = {expected_night}"
+        )
 
     def test_arabic_parts_missing_required_points_auto_activation(self):
         """Test that Arabic Parts auto-activate missing required points (line 1625)."""

@@ -108,8 +108,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Quaoar                | Lib ♎️ | 20.42°   | N/A   | N/A   | -    | Twelfth House  |
 | Regulus               | Leo ♌️ | 29.30°   | N/A   | N/A   | -    | Tenth House    |
 | Spica                 | Lib ♎️ | 23.31°   | N/A   | N/A   | -    | First House    |
-| Pars Fortunae         | Vir ♍️ | 16.66°   | N/A   | N/A   | -    | Eleventh House |
-| Pars Spiritus         | Sco ♏️ | 27.58°   | N/A   | N/A   | -    | Second House   |
+| Pars Fortunae         | Sco ♏️ | 27.58°   | N/A   | N/A   | -    | Second House   |
+| Pars Spiritus         | Vir ♍️ | 16.66°   | N/A   | N/A   | -    | Eleventh House |
 | Pars Amoris           | Lib ♎️ | 0.90°    | N/A   | N/A   | -    | Twelfth House  |
 | Pars Fidei            | Tau ♉️ | 13.79°   | N/A   | N/A   | -    | Seventh House  |
 | Vertex                | Tau ♉️ | 19.11°   | N/A   | N/A   | -    | Seventh House  |
@@ -145,9 +145,9 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Element  | Count | Percentage |
 +----------+-------+------------+
 | Fire 🔥  | 7.1   | 22.8%      |
-| Earth 🌍 | 9.4   | 30.1%      |
+| Earth 🌍 | 9.3   | 29.8%      |
 | Air 💨   | 8.5   | 27.2%      |
-| Water 💧 | 6.2   | 19.9%      |
+| Water 💧 | 6.3   | 20.2%      |
 | Total    | 31.2  | 100%       |
 +----------+-------+------------+
 
@@ -155,9 +155,9 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
 | Cardinal | 14.800000000000004 | 47.4%      |
-| Fixed    | 13.200000000000001 | 42.3%      |
-| Mutable  | 3.2                | 10.3%      |
-| Total    | 31.200000000000006 | 100%       |
+| Fixed    | 13.300000000000002 | 42.6%      |
+| Mutable  | 3.0999999999999996 | 9.9%       |
+| Total    | 31.20000000000001  | 100%       |
 +----------+--------------------+------------+
 
 +Active Celestial Points-----+
@@ -233,7 +233,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Sun                   | conjunction ☌                 | Ceres                 | 8.14° | Static = |
 | Sun                   | opposition ☍                  | Juno                  | 6.00° | Static = |
 | Sun                   | conjunction ☌                 | Vesta                 | 8.73° | Static = |
-| Sun                   | trine △                       | Pars Fortunae         | 2.70° | Static = |
+| Sun                   | trine △                       | Pars Spiritus         | 2.70° | Static = |
 | Sun                   | conjunction ☌                 | Pars Fidei            | 0.17° | Static = |
 | Sun                   | conjunction ☌                 | Vertex                | 5.15° | Static = |
 | Sun                   | opposition ☍                  | Anti Vertex           | 5.15° | Static = |
@@ -248,7 +248,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Moon                  | semi-sextile semi-sextile     | Haumea                | 0.50° | Static = |
 | Moon                  | sextile ⚹                     | Makemake              | 1.49° | Static = |
 | Moon                  | square □                      | Orcus                 | 3.14° | Static = |
-| Moon                  | sextile ⚹                     | Pars Spiritus         | 3.59° | Static = |
+| Moon                  | sextile ⚹                     | Pars Fortunae         | 3.59° | Static = |
 | Moon                  | conjunction ☌                 | Pars Amoris           | 0.27° | Static = |
 | Mercury               | trine △                       | Saturn                | 2.88° | Static = |
 | Mercury               | square □                      | Uranus                | 0.89° | Static = |
@@ -264,7 +264,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mercury               | square □                      | Haumea                | 2.92° | Static = |
 | Mercury               | sextile ⚹                     | Makemake              | 4.91° | Static = |
 | Mercury               | square □                      | Regulus               | 1.55° | Static = |
-| Mercury               | opposition ☍                  | Pars Spiritus         | 0.17° | Static = |
+| Mercury               | opposition ☍                  | Pars Fortunae         | 0.17° | Static = |
 | Mercury               | trine △                       | Pars Amoris           | 3.15° | Static = |
 | Mercury               | conjunction ☌                 | Vertex                | 8.64° | Static = |
 | Mercury               | opposition ☍                  | Anti Vertex           | 8.64° | Static = |
@@ -287,7 +287,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Venus                 | opposition ☍                  | Quaoar                | 2.32° | Static = |
 | Venus                 | trine △                       | Regulus               | 6.56° | Static = |
 | Venus                 | opposition ☍                  | Spica                 | 0.57° | Static = |
-| Venus                 | biquintile biquintile         | Pars Fortunae         | 0.09° | Static = |
+| Venus                 | biquintile biquintile         | Pars Spiritus         | 0.09° | Static = |
 | Mars                  | trine △                       | Neptune               | 0.37° | Static = |
 | Mars                  | trine △                       | True Lilith           | 3.90° | Static = |
 | Mars                  | square □                      | Pholus                | 2.45° | Static = |
@@ -326,7 +326,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Saturn                | quincunx ⚻                    | Haumea                | 0.04° | Static = |
 | Saturn                | opposition ☍                  | Makemake              | 2.03° | Static = |
 | Saturn                | square □                      | Ixion                 | 4.67° | Static = |
-| Saturn                | sextile ⚹                     | Pars Spiritus         | 3.05° | Static = |
+| Saturn                | sextile ⚹                     | Pars Fortunae         | 3.05° | Static = |
 | Saturn                | trine △                       | Pars Amoris           | 0.28° | Static = |
 | Saturn                | quintile Q                    | Anti Vertex           | 0.48° | Static = |
 | Uranus                | conjunction ☌                 | Mean North Lunar Node | 5.58° | Static = |
@@ -345,12 +345,12 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Uranus                | trine △                       | Orcus                 | 5.67° | Static = |
 | Uranus                | opposition ☍                  | Regulus               | 0.66° | Static = |
 | Uranus                | trine △                       | Spica                 | 5.33° | Static = |
-| Uranus                | square □                      | Pars Spiritus         | 1.07° | Static = |
+| Uranus                | square □                      | Pars Fortunae         | 1.07° | Static = |
 | Neptune               | trine △                       | True Lilith           | 3.52° | Static = |
 | Neptune               | conjunction ☌                 | Juno                  | 2.95° | Static = |
 | Neptune               | trine △                       | Orcus                 | 6.61° | Static = |
 | Neptune               | quintile Q                    | Regulus               | 0.38° | Static = |
-| Neptune               | sextile ⚹                     | Pars Fortunae         | 5.74° | Static = |
+| Neptune               | sextile ⚹                     | Pars Spiritus         | 5.74° | Static = |
 | Neptune               | opposition ☍                  | Pars Fidei            | 2.88° | Static = |
 | Neptune               | opposition ☍                  | Vertex                | 8.19° | Static = |
 | Neptune               | conjunction ☌                 | Anti Vertex           | 8.19° | Static = |
@@ -360,7 +360,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pluto                 | biquintile biquintile         | Pallas                | 0.45° | Static = |
 | Pluto                 | trine △                       | Vesta                 | 4.39° | Static = |
 | Pluto                 | semi-square semi-square       | Makemake              | 0.65° | Static = |
-| Pluto                 | conjunction ☌                 | Pars Fortunae         | 1.64° | Static = |
+| Pluto                 | conjunction ☌                 | Pars Spiritus         | 1.64° | Static = |
 | Pluto                 | trine △                       | Pars Fidei            | 4.51° | Static = |
 | Pluto                 | trine △                       | Vertex                | 0.81° | Static = |
 | Pluto                 | sextile ⚹                     | Anti Vertex           | 0.81° | Static = |
@@ -379,7 +379,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mean North Lunar Node | trine △                       | Quaoar                | 2.64° | Static = |
 | Mean North Lunar Node | opposition ☍                  | Regulus               | 6.24° | Static = |
 | Mean North Lunar Node | trine △                       | Spica                 | 0.25° | Static = |
-| Mean North Lunar Node | square □                      | Pars Spiritus         | 4.51° | Static = |
+| Mean North Lunar Node | square □                      | Pars Fortunae         | 4.51° | Static = |
 | Mean North Lunar Node | square □                      | Vertex                | 3.96° | Static = |
 | Mean North Lunar Node | square □                      | Anti Vertex           | 3.96° | Static = |
 | True North Lunar Node | trine △                       | Chiron                | 0.72° | Static = |
@@ -424,7 +424,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Medium Coeli          | conjunction ☌                 | Makemake              | 3.04° | Static = |
 | Medium Coeli          | square □                      | Ixion                 | 3.65° | Static = |
 | Medium Coeli          | semi-sextile semi-sextile     | Regulus               | 0.31° | Static = |
-| Medium Coeli          | trine △                       | Pars Spiritus         | 2.03° | Static = |
+| Medium Coeli          | trine △                       | Pars Fortunae         | 2.03° | Static = |
 | Medium Coeli          | sextile ⚹                     | Pars Amoris           | 1.29° | Static = |
 | Descendant            | trine △                       | Mean South Lunar Node | 0.95° | Static = |
 | Descendant            | trine △                       | True South Lunar Node | 0.41° | Static = |
@@ -447,7 +447,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Imum Coeli            | opposition ☍                  | Makemake              | 3.04° | Static = |
 | Imum Coeli            | square □                      | Ixion                 | 3.65° | Static = |
 | Imum Coeli            | quincunx ⚻                    | Regulus               | 0.31° | Static = |
-| Imum Coeli            | sextile ⚹                     | Pars Spiritus         | 2.03° | Static = |
+| Imum Coeli            | sextile ⚹                     | Pars Fortunae         | 2.03° | Static = |
 | Imum Coeli            | trine △                       | Pars Amoris           | 1.29° | Static = |
 | Mean Lilith           | conjunction ☌                 | Mean South Lunar Node | 7.69° | Static = |
 | Mean Lilith           | conjunction ☌                 | True South Lunar Node | 8.22° | Static = |
@@ -458,7 +458,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mean Lilith           | sextile ⚹                     | Ixion                 | 4.79° | Static = |
 | Mean Lilith           | sextile ⚹                     | Orcus                 | 3.56° | Static = |
 | Mean Lilith           | conjunction ☌                 | Regulus               | 1.45° | Static = |
-| Mean Lilith           | square □                      | Pars Spiritus         | 3.18° | Static = |
+| Mean Lilith           | square □                      | Pars Fortunae         | 3.18° | Static = |
 | Mean Lilith           | semi-sextile semi-sextile     | Pars Amoris           | 0.15° | Static = |
 | Mean South Lunar Node | conjunction ☌                 | True South Lunar Node | 0.53° | Static = |
 | Mean South Lunar Node | biquintile biquintile         | Earth                 | 0.94° | Static = |
@@ -472,7 +472,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mean South Lunar Node | sextile ⚹                     | Quaoar                | 2.64° | Static = |
 | Mean South Lunar Node | conjunction ☌                 | Regulus               | 6.24° | Static = |
 | Mean South Lunar Node | sextile ⚹                     | Spica                 | 0.25° | Static = |
-| Mean South Lunar Node | square □                      | Pars Spiritus         | 4.51° | Static = |
+| Mean South Lunar Node | square □                      | Pars Fortunae         | 4.51° | Static = |
 | Mean South Lunar Node | square □                      | Vertex                | 3.96° | Static = |
 | Mean South Lunar Node | square □                      | Anti Vertex           | 3.96° | Static = |
 | True South Lunar Node | sesquiquadrate sesquiquadrate | Pholus                | 0.56° | Static = |
@@ -490,7 +490,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | True Lilith           | trine △                       | Juno                  | 6.48° | Static = |
 | True Lilith           | semi-square semi-square       | Sedna                 | 0.08° | Static = |
 | True Lilith           | biquintile biquintile         | Quaoar                | 0.02° | Static = |
-| True Lilith           | opposition ☍                  | Pars Fortunae         | 2.22° | Static = |
+| True Lilith           | opposition ☍                  | Pars Spiritus         | 2.22° | Static = |
 | True Lilith           | sextile ⚹                     | Pars Fidei            | 0.65° | Static = |
 | True Lilith           | sextile ⚹                     | Vertex                | 4.66° | Static = |
 | True Lilith           | trine △                       | Anti Vertex           | 4.66° | Static = |
@@ -501,7 +501,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Earth                 | trine △                       | Makemake              | 2.66° | Static = |
 | Earth                 | square □                      | Orcus                 | 4.31° | Static = |
 | Earth                 | quincunx ⚻                    | Regulus               | 0.70° | Static = |
-| Earth                 | trine △                       | Pars Spiritus         | 2.42° | Static = |
+| Earth                 | trine △                       | Pars Fortunae         | 2.42° | Static = |
 | Earth                 | opposition ☍                  | Pars Amoris           | 0.90° | Static = |
 | Pholus                | semi-square semi-square       | Ceres                 | 0.99° | Static = |
 | Pholus                | quincunx ⚻                    | Juno                  | 0.13° | Static = |
@@ -511,8 +511,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pholus                | square □                      | Orcus                 | 3.78° | Static = |
 | Pholus                | opposition ☍                  | Pars Amoris           | 7.19° | Static = |
 | Ceres                 | conjunction ☌                 | Vesta                 | 0.59° | Static = |
-| Ceres                 | trine △                       | Pars Fortunae         | 5.44° | Static = |
-| Ceres                 | opposition ☍                  | Pars Spiritus         | 5.47° | Static = |
+| Ceres                 | opposition ☍                  | Pars Fortunae         | 5.47° | Static = |
+| Ceres                 | trine △                       | Pars Spiritus         | 5.44° | Static = |
 | Ceres                 | conjunction ☌                 | Pars Fidei            | 8.31° | Static = |
 | Ceres                 | conjunction ☌                 | Vertex                | 2.99° | Static = |
 | Ceres                 | opposition ☍                  | Anti Vertex           | 2.99° | Static = |
@@ -526,8 +526,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Juno                  | trine △                       | Orcus                 | 3.65° | Static = |
 | Juno                  | opposition ☍                  | Pars Fidei            | 5.83° | Static = |
 | Vesta                 | quincunx ⚻                    | Spica                 | 0.62° | Static = |
-| Vesta                 | trine △                       | Pars Fortunae         | 6.03° | Static = |
-| Vesta                 | opposition ☍                  | Pars Spiritus         | 4.89° | Static = |
+| Vesta                 | opposition ☍                  | Pars Fortunae         | 4.89° | Static = |
+| Vesta                 | trine △                       | Pars Spiritus         | 6.03° | Static = |
 | Vesta                 | conjunction ☌                 | Pars Fidei            | 8.89° | Static = |
 | Vesta                 | conjunction ☌                 | Vertex                | 3.58° | Static = |
 | Vesta                 | opposition ☍                  | Anti Vertex           | 3.58° | Static = |
@@ -543,29 +543,29 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Haumea                | sextile ⚹                     | Ixion                 | 4.71° | Static = |
 | Haumea                | sextile ⚹                     | Orcus                 | 3.64° | Static = |
 | Haumea                | conjunction ☌                 | Regulus               | 1.37° | Static = |
-| Haumea                | square □                      | Pars Spiritus         | 3.10° | Static = |
+| Haumea                | square □                      | Pars Fortunae         | 3.10° | Static = |
 | Haumea                | semi-sextile semi-sextile     | Pars Amoris           | 0.23° | Static = |
-| Makemake              | semi-square semi-square       | Pars Fortunae         | 1.00° | Static = |
-| Makemake              | trine △                       | Pars Spiritus         | 5.08° | Static = |
+| Makemake              | trine △                       | Pars Fortunae         | 5.08° | Static = |
+| Makemake              | semi-square semi-square       | Pars Spiritus         | 1.00° | Static = |
 | Makemake              | sextile ⚹                     | Pars Amoris           | 1.75° | Static = |
 | Ixion                 | conjunction ☌                 | Quaoar                | 5.54° | Static = |
 | Ixion                 | sextile ⚹                     | Regulus               | 3.34° | Static = |
 | Ixion                 | conjunction ☌                 | Spica                 | 2.65° | Static = |
 | Orcus                 | sextile ⚹                     | Regulus               | 5.01° | Static = |
-| Orcus                 | quintile Q                    | Pars Fortunae         | 0.35° | Static = |
-| Orcus                 | biquintile biquintile         | Pars Spiritus         | 0.74° | Static = |
+| Orcus                 | biquintile biquintile         | Pars Fortunae         | 0.74° | Static = |
+| Orcus                 | quintile Q                    | Pars Spiritus         | 0.35° | Static = |
 | Orcus                 | square □                      | Pars Amoris           | 3.41° | Static = |
 | Orcus                 | semi-square semi-square       | Vertex                | 0.20° | Static = |
 | Orcus                 | sesquiquadrate sesquiquadrate | Anti Vertex           | 0.20° | Static = |
 | Quaoar                | conjunction ☌                 | Spica                 | 2.89° | Static = |
 | Regulus               | sextile ⚹                     | Spica                 | 5.99° | Static = |
-| Regulus               | square □                      | Pars Spiritus         | 1.73° | Static = |
-| Pars Fortunae         | trine △                       | Pars Fidei            | 2.86° | Static = |
-| Pars Fortunae         | trine △                       | Vertex                | 2.45° | Static = |
-| Pars Fortunae         | sextile ⚹                     | Anti Vertex           | 2.45° | Static = |
-| Pars Spiritus         | sextile ⚹                     | Pars Amoris           | 3.33° | Static = |
-| Pars Spiritus         | opposition ☍                  | Vertex                | 8.47° | Static = |
-| Pars Spiritus         | conjunction ☌                 | Anti Vertex           | 8.47° | Static = |
+| Regulus               | square □                      | Pars Fortunae         | 1.73° | Static = |
+| Pars Fortunae         | sextile ⚹                     | Pars Amoris           | 3.33° | Static = |
+| Pars Fortunae         | opposition ☍                  | Vertex                | 8.47° | Static = |
+| Pars Fortunae         | conjunction ☌                 | Anti Vertex           | 8.47° | Static = |
+| Pars Spiritus         | trine △                       | Pars Fidei            | 2.86° | Static = |
+| Pars Spiritus         | trine △                       | Vertex                | 2.45° | Static = |
+| Pars Spiritus         | sextile ⚹                     | Anti Vertex           | 2.45° | Static = |
 | Pars Fidei            | conjunction ☌                 | Vertex                | 5.31° | Static = |
 | Pars Fidei            | opposition ☍                  | Anti Vertex           | 5.31° | Static = |
 | Vertex                | opposition ☍                  | Anti Vertex           | 0.00° | Static = |
