@@ -27,8 +27,8 @@
     --kerykeion-color-error: #fb7085;
 
     /* Zodiac */
-    --kerykeion-color-base-200: #111a2c;
-    --kerykeion-color-base-300: #233044;
+    --kerykeion-color-base-200: #131c2e;
+    --kerykeion-color-base-300: #1e293b;
 
     /* ----------- */
     /* Chart Color */
@@ -112,6 +112,7 @@
     --kerykeion-chart-color-pallas: var(--kerykeion-color-primary);
     --kerykeion-chart-color-juno: var(--kerykeion-color-accent);
     --kerykeion-chart-color-vesta: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-pars-fortunae: var(--kerykeion-color-success);
     --kerykeion-chart-color-vertex: var(--kerykeion-color-secondary);
     --kerykeion-chart-color-east-point: var(--kerykeion-color-primary);
     --kerykeion-chart-color-eris: var(--kerykeion-color-error);
