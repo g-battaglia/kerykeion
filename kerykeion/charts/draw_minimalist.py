@@ -67,8 +67,8 @@ NORMAL_STROKE_WIDTH = 0.07
 
 # Planet cluster positioning
 PLANET_CLUSTER_Y = 9.725
-PLANET_CLUSTER_SCALE = 0.16125
-PLANET_MIN_SEPARATION = 12.0  # Minimum degrees between planet clusters
+PLANET_CLUSTER_SCALE = 0.13
+PLANET_MIN_SEPARATION = 8.0  # Minimum degrees between planet clusters
 
 # Transit planet band (planets-only ring inside natal house ring)
 # This band sits between the natal house ring outer edge and the aspect core.
@@ -638,51 +638,60 @@ def _resolve_planet_collisions(
         return planets_with_angles
 
     # Cap the separation so it is physically possible to fit all planets
-    # without exceeding the 360 degree circle.
     max_possible_separation = 320.0 / len(planets_with_angles)
     sep = min(min_separation, max_possible_separation)
 
-    # Sort by angle
+    # Sort by original angle and assign initial display angles
     sorted_planets = sorted(planets_with_angles, key=lambda p: p["angle"])
-
-    # Assign initial display angles
+    n = len(sorted_planets)
     for p in sorted_planets:
         p["display_angle"] = p["angle"]
         p["needs_indicator"] = False
 
-    n = len(sorted_planets)
-
-    # Iterative relaxation: push apart adjacent planets that are too close,
-    # then re-sort to maintain angular ordering.  We use a damped push to
-    # prevent oscillation around the wrap-around boundary.
-    for iteration in range(100):
+    # ── Spreading algorithm ─────────────────────────────────────────────
+    # We run multiple passes.  Each pass:
+    #   1. Sort all planets by their current display_angle.
+    #   2. Find the largest gap — this is where we "cut" the circle into
+    #      a linear sequence so forward pushing cascades into empty space.
+    #   3. Walk forward from the planet after the gap, pushing each planet
+    #      that is too close to the previous one.
+    for _pass in range(5):
         changed = False
 
-        # Re-sort by display_angle each iteration so we always compare
-        # the correct neighbors after previous pushes.
-        sorted_planets.sort(key=lambda p: p["display_angle"])
+        # Sort indices by current display angle
+        indices = sorted(range(n), key=lambda i: sorted_planets[i]["display_angle"])
 
-        for i in range(n):
-            j = (i + 1) % n
-            a1 = sorted_planets[i]["display_angle"]
-            a2 = sorted_planets[j]["display_angle"]
+        # Find the largest gap in display order
+        best_gap = -1.0
+        best_gap_pos = 0
+        for k in range(n):
+            k_next = (k + 1) % n
+            gap = _normalize_angle(
+                sorted_planets[indices[k_next]]["display_angle"]
+                - sorted_planets[indices[k]]["display_angle"]
+            )
+            if gap > best_gap:
+                best_gap = gap
+                best_gap_pos = k
 
-            diff = _normalize_angle(a2 - a1)
-            if diff == 0.0:
-                diff = 0.001
+        # Walk forward starting after the largest gap
+        start_k = (best_gap_pos + 1) % n
+        walk = [(start_k + j) % n for j in range(n)]
 
+        for j in range(1, n):
+            prev_i = indices[walk[j - 1]]
+            curr_i = indices[walk[j]]
+            prev_a = sorted_planets[prev_i]["display_angle"]
+            curr_a = sorted_planets[curr_i]["display_angle"]
+            diff = _normalize_angle(curr_a - prev_a)
             if diff < sep:
-                push = (sep - diff) / 2
-                # Dampen the push to avoid overshooting on dense clusters
-                push *= 0.6
-                sorted_planets[i]["display_angle"] = _normalize_angle(a1 - push)
-                sorted_planets[j]["display_angle"] = _normalize_angle(a2 + push)
+                sorted_planets[curr_i]["display_angle"] = _normalize_angle(prev_a + sep)
                 changed = True
 
         if not changed:
             break
 
-    # Mark planets that were moved
+    # Mark planets that were moved significantly from their original position
     for p in sorted_planets:
         if abs(_normalize_angle(p["display_angle"] - p["angle"])) > 0.5:
             p["needs_indicator"] = True
@@ -1424,7 +1433,7 @@ def _draw_transit_planet_band(
     # Resolve collisions with a much wider separation requirement since the 
     # transit band is drawn closer to the center, so angular displacement 
     # yields less physical distance.
-    resolved = _resolve_planet_collisions(planets_with_angles, min_separation=20.0)
+    resolved = _resolve_planet_collisions(planets_with_angles, min_separation=12.0)
 
     # Draw transit planet clusters and indicators
     for p in resolved:
@@ -1681,7 +1690,7 @@ def draw_minimalist_dual_horoscope(
         planets_settings, 
         seventh_house_degree_ut, 
         inner_houses, 
-        min_separation=16.0
+        min_separation=10.0
     )
 
     if inner_show_houses:
