@@ -640,7 +640,7 @@ def _resolve_planet_collisions(
     # Cap the separation so it is physically possible to fit all planets
     # without exceeding the 360 degree circle.
     max_possible_separation = 320.0 / len(planets_with_angles)
-    actual_min_sep = min(min_separation, max_possible_separation)
+    sep = min(min_separation, max_possible_separation)
 
     # Sort by angle
     sorted_planets = sorted(planets_with_angles, key=lambda p: p["angle"])
@@ -650,29 +650,31 @@ def _resolve_planet_collisions(
         p["display_angle"] = p["angle"]
         p["needs_indicator"] = False
 
-    # Iterative relaxation to resolve overlaps
-    # Max iterations increased to ensure large clusters separate
-    for _ in range(50):
+    n = len(sorted_planets)
+
+    # Iterative relaxation: push apart adjacent planets that are too close,
+    # then re-sort to maintain angular ordering.  We use a damped push to
+    # prevent oscillation around the wrap-around boundary.
+    for iteration in range(100):
         changed = False
 
-        # Re-sort by display_angle at the start of each iteration.
-        # This prevents planets that were pushed past each other from becoming
-        # "stuck" due to angle normalization ignoring negative differences.
+        # Re-sort by display_angle each iteration so we always compare
+        # the correct neighbors after previous pushes.
         sorted_planets.sort(key=lambda p: p["display_angle"])
 
-        for i in range(len(sorted_planets)):
-            j = (i + 1) % len(sorted_planets)
+        for i in range(n):
+            j = (i + 1) % n
             a1 = sorted_planets[i]["display_angle"]
             a2 = sorted_planets[j]["display_angle"]
 
             diff = _normalize_angle(a2 - a1)
-            # If perfectly identical, diff is 0, give it a tiny value to trigger spread
             if diff == 0.0:
                 diff = 0.001
 
-            if diff < actual_min_sep:
-                # Push apart
-                push = (actual_min_sep - diff) / 2
+            if diff < sep:
+                push = (sep - diff) / 2
+                # Dampen the push to avoid overshooting on dense clusters
+                push *= 0.6
                 sorted_planets[i]["display_angle"] = _normalize_angle(a1 - push)
                 sorted_planets[j]["display_angle"] = _normalize_angle(a2 + push)
                 changed = True
