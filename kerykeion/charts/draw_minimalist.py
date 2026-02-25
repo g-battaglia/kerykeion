@@ -93,6 +93,7 @@ COLOR_TEXT = "var(--kerykeion-chart-color-paper-0, #333333)"
 COLOR_RETROGRADE = "var(--kerykeion-minimalist-retrograde, #c43a5e)"
 COLOR_INDICATOR = "var(--kerykeion-minimalist-indicator, #8a8a9e)"
 COLOR_WHITE = "var(--kerykeion-chart-color-paper-1, #ffffff)"
+COLOR_ZODIAC_BG_OPACITY = "var(--kerykeion-minimalist-zodiac-bg-opacity, 0.5)"
 
 # Font
 FONT_FAMILY = "Rubik, -apple-system, Segoe UI, Helvetica Neue, Arial, sans-serif"
@@ -331,7 +332,7 @@ def _draw_zodiac_background_ring(seventh_house_degree_ut: float) -> str:
             f'  <polygon points="{CENTER},{CENTER} '
             f'{fx1:.6f},{fy1:.6f} {fmx:.6f},{fmy:.6f} '
             f'{fx2:.6f},{fy2:.6f}" '
-            f'fill="{color}" fill-opacity="0.5" />\n'
+            f'fill="{color}" style="fill-opacity: {COLOR_ZODIAC_BG_OPACITY}" />\n'
         )
         
         # Draw the zodiac glyph centered in the wedge
