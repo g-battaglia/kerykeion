@@ -12,6 +12,13 @@
     --kerykeion-color-accent: #f68067;
     --kerykeion-color-neutral: #333c4d;
     --kerykeion-color-base-100: #ffffff;
+
+    /* Minimalist Chart */
+    --kerykeion-minimalist-planet-ring: #eaeaef;
+    --kerykeion-minimalist-house-ring: #d8d8e0;
+    --kerykeion-minimalist-stroke: #b3b3c0;
+    --kerykeion-minimalist-retrograde: #e0334f;
+    --kerykeion-minimalist-indicator: #8585a0;
     --kerykeion-color-info: #00b5ff;
     --kerykeion-color-info-content: #000000;
     --kerykeion-color-success: #00a96e;

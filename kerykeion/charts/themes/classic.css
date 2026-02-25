@@ -2,6 +2,13 @@
     /* Main Colors */
     --kerykeion-chart-color-paper-0: #000000;
     --kerykeion-chart-color-paper-1: #ffffff;
+
+    /* Minimalist Chart */
+    --kerykeion-minimalist-planet-ring: #ede8df;
+    --kerykeion-minimalist-house-ring: #d8d0c5;
+    --kerykeion-minimalist-stroke: #b5ad9f;
+    --kerykeion-minimalist-retrograde: #b03030;
+    --kerykeion-minimalist-indicator: #8a8278;
     --kerykeion-chart-color-zodiac-bg-0: #ff7200;
     --kerykeion-chart-color-zodiac-bg-1: #6b3d00;
     --kerykeion-chart-color-zodiac-bg-2: #69acf1;
@@ -104,9 +111,15 @@
     --kerykeion-chart-color-water-percentage: #630e73;
 
     /* Modalities Percentage */
-    --kerykeion-chart-color-cardinal-percentage: var(--kerykeion-chart-color-fire-percentage);
-    --kerykeion-chart-color-fixed-percentage: var(--kerykeion-chart-color-earth-percentage);
-    --kerykeion-chart-color-mutable-percentage: var(--kerykeion-chart-color-water-percentage);
+    --kerykeion-chart-color-cardinal-percentage: var(
+        --kerykeion-chart-color-fire-percentage
+    );
+    --kerykeion-chart-color-fixed-percentage: var(
+        --kerykeion-chart-color-earth-percentage
+    );
+    --kerykeion-chart-color-mutable-percentage: var(
+        --kerykeion-chart-color-water-percentage
+    );
 
     /* Other */
     --kerykeion-chart-color-house-number: #f00;

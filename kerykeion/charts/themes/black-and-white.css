@@ -12,6 +12,13 @@
     --kerykeion-color-accent: #666666;
     --kerykeion-color-neutral: #1a1a1a;
     --kerykeion-color-base-100: #ffffff;
+
+    /* Minimalist Chart */
+    --kerykeion-minimalist-planet-ring: #e8e8e8;
+    --kerykeion-minimalist-house-ring: #d0d0d0;
+    --kerykeion-minimalist-stroke: #a0a0a0;
+    --kerykeion-minimalist-retrograde: #444444;
+    --kerykeion-minimalist-indicator: #808080;
     --kerykeion-color-info: #222222;
     --kerykeion-color-info-content: #ffffff;
     --kerykeion-color-success: #333333;
@@ -52,8 +59,12 @@
     --kerykeion-chart-color-zodiac-transit-ring-1: var(--kerykeion-color-black);
     --kerykeion-chart-color-zodiac-transit-ring-2: var(--kerykeion-color-black);
     --kerykeion-chart-color-zodiac-transit-ring-3: var(--kerykeion-color-black);
-    --kerykeion-chart-color-houses-radix-line: var(--kerykeion-color-base-content);
-    --kerykeion-chart-color-houses-transit-line: var(--kerykeion-color-base-content);
+    --kerykeion-chart-color-houses-radix-line: var(
+        --kerykeion-color-base-content
+    );
+    --kerykeion-chart-color-houses-transit-line: var(
+        --kerykeion-color-base-content
+    );
 
     /* Aspects */
     --kerykeion-chart-color-conjunction: #222222;

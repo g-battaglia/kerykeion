@@ -79,3 +79,4 @@ sync-docs.sh
 *.bsp
 .env
 .opencode/plans
+task/

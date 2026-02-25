@@ -68,6 +68,7 @@ from kerykeion.charts.charts_utils import (
     format_datetime_with_timezone,
 )
 from kerykeion.charts.draw_planets import draw_planets
+from kerykeion.charts.draw_minimalist import draw_minimalist_horoscope, draw_minimalist_dual_horoscope
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg, distribute_percentages_to_100
 from kerykeion.settings.chart_defaults import (
     DEFAULT_CHART_COLORS,
@@ -3750,6 +3751,201 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         template = self.generate_wheel_only_svg_string(minify, remove_css_variables)
         self._write_svg_to_disk(template, output_path, filename, default_suffix=" - Wheel Only")
+
+    def generate_minimalist_svg_string(
+        self,
+        minify: bool = False,
+        remove_css_variables: bool = False,
+        show_zodiac_background_ring: bool = False,
+    ) -> str:
+        """
+        Render the minimalist concentric-rings wheel SVG as a string.
+
+        This generates a compact 100x100 viewBox SVG with 5 concentric rings:
+        cusp ring, ruler scale, planet band, house numbers, and aspect core.
+
+        Args:
+            minify (bool): Remove whitespace and quotes for compactness.
+            remove_css_variables (bool): Embed CSS variable definitions.
+            show_zodiac_background_ring (bool): If True, draws the colored background wedges for zodiac signs.
+
+        Returns:
+            str: SVG markup for the minimalist wheel.
+        """
+        with open(
+            Path(__file__).parent / "templates" / "minimalist_wheel.xml",
+            "r",
+            encoding="utf-8",
+            errors="ignore",
+        ) as f:
+            template = f.read()
+
+        template_dict = self._create_template_dictionary()
+
+        # Get houses list for the primary subject
+        houses_list = get_houses_list(self.first_obj)
+
+        # Generate the minimalist horoscope content
+        minimalist_content = draw_minimalist_horoscope(
+            planets=self.available_kerykeion_celestial_points,
+            houses=houses_list,
+            aspects_list=[a.model_dump() if hasattr(a, 'model_dump') else dict(a) for a in self.aspects_list],
+            seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+            planets_settings=self.available_planets_setting,
+            aspects_settings=self.aspects_settings,
+            show_zodiac_background_ring=show_zodiac_background_ring,
+        )
+
+        template = Template(template).substitute({
+            **template_dict.model_dump(),
+            "makeMinimalistHoroscope": minimalist_content,
+            "viewbox": "0 0 100 100",
+        })
+
+        return self._apply_svg_post_processing(template, minify, remove_css_variables)
+
+    def save_minimalist_svg_file(
+        self,
+        output_path: Union[str, Path, None] = None,
+        filename: Union[str, None] = None,
+        minify: bool = False,
+        remove_css_variables: bool = False,
+        show_zodiac_background_ring: bool = False,
+    ):
+        """
+        Generate and save minimalist wheel SVG to disk.
+
+        Calls generate_minimalist_svg_string and writes a file named
+        "{subject.name} - {chart_type} Chart - Minimalist.svg" in the specified output directory.
+
+        Args:
+            output_path (str, Path, or None): Directory path where the SVG file will be saved.
+                If None, defaults to the user's home directory.
+            filename (str or None): Custom filename for the SVG file (without extension).
+                If None, uses the default pattern.
+            minify (bool): Pass-through to generate_minimalist_svg_string for compact output.
+            remove_css_variables (bool): Pass-through to generate_minimalist_svg_string to embed CSS variables.
+            show_zodiac_background_ring (bool): If True, draws the colored background wedges for zodiac signs.
+
+        Returns:
+            None
+        """
+        template = self.generate_minimalist_svg_string(
+            minify=minify,
+            remove_css_variables=remove_css_variables,
+            show_zodiac_background_ring=show_zodiac_background_ring,
+        )
+        self._write_svg_to_disk(template, output_path, filename, default_suffix=" - Minimalist")
+
+    def generate_minimalist_dual_svg_string(
+        self,
+        minify: bool = False,
+        remove_css_variables: bool = False,
+        show_zodiac_background_ring: bool = True,
+        show_houses_1: bool = True,
+        show_houses_2: bool = True,
+        show_cusp_ring_1: bool = True,
+        show_cusp_ring_2: bool = True,
+        transit_style: Union[bool, None] = None,
+    ) -> str:
+        """
+        Render a dual minimalist chart SVG string (for Transit, Synastry, DualReturnChart).
+
+        Subject 1 (natal) occupies the inner rings, Subject 2 (transit/synastry) the outer.
+        Aspects shown are cross-chart only.
+
+        Args:
+            minify: Remove whitespace for compactness.
+            remove_css_variables: Embed CSS variable definitions.
+            show_zodiac_background_ring: Draw colored zodiac wedges.
+            show_houses_1: Show 1st subject house ring.
+            show_houses_2: Show 2nd subject house ring.
+            show_cusp_ring_1: Toggle 1st subject cusp ring.
+            show_cusp_ring_2: Toggle 2nd subject cusp ring.
+
+        Returns:
+            SVG markup string.
+        """
+        if self.second_obj is None:
+            raise ValueError("Dual chart requires a second subject. Use a Transit, Synastry, or DualReturnChart.")
+
+        with open(
+            Path(__file__).parent / "templates" / "minimalist_wheel.xml",
+            "r",
+            encoding="utf-8",
+            errors="ignore",
+        ) as f:
+            template = f.read()
+
+        template_dict = self._create_template_dictionary()
+
+        houses_1 = get_houses_list(self.first_obj)
+        houses_2 = get_houses_list(self.second_obj)
+
+        minimalist_content = draw_minimalist_dual_horoscope(
+            planets_1=self.available_kerykeion_celestial_points,
+            houses_1=houses_1,
+            planets_2=self.second_subject_celestial_points,
+            houses_2=houses_2,
+            aspects_list=[a.model_dump() if hasattr(a, 'model_dump') else dict(a) for a in self.aspects_list],
+            seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+            planets_settings=self.available_planets_setting,
+            aspects_settings=self.aspects_settings,
+            chart_type=self.chart_type,
+            show_houses_1=show_houses_1,
+            show_houses_2=show_houses_2,
+            show_cusp_ring_1=show_cusp_ring_1,
+            show_cusp_ring_2=show_cusp_ring_2,
+            show_zodiac_background_ring=show_zodiac_background_ring,
+            transit_style=transit_style,
+        )
+
+        template = Template(template).substitute({
+            **template_dict.model_dump(),
+            "makeMinimalistHoroscope": minimalist_content,
+            "viewbox": "0 0 100 100",
+        })
+
+        return self._apply_svg_post_processing(template, minify, remove_css_variables)
+
+    def save_minimalist_dual_svg_file(
+        self,
+        output_path: Union[str, Path, None] = None,
+        filename: Union[str, None] = None,
+        minify: bool = False,
+        remove_css_variables: bool = False,
+        show_zodiac_background_ring: bool = True,
+        show_houses_1: bool = True,
+        show_houses_2: bool = True,
+        show_cusp_ring_1: bool = True,
+        show_cusp_ring_2: bool = True,
+        transit_style: Union[bool, None] = None,
+    ):
+        """
+        Generate and save a dual minimalist chart SVG to disk.
+
+        Args:
+            output_path: Directory for the SVG file.
+            filename: Custom filename (without extension).
+            minify: Compact output.
+            remove_css_variables: Embed CSS vars.
+            show_zodiac_background_ring: Draw zodiac wedges.
+            show_houses_1: Show 1st subject house ring.
+            show_houses_2: Show 2nd subject house ring.
+            show_cusp_ring_1: Toggle 1st subject cusp ring.
+            show_cusp_ring_2: Toggle 2nd subject cusp ring.
+        """
+        template = self.generate_minimalist_dual_svg_string(
+            minify=minify,
+            remove_css_variables=remove_css_variables,
+            show_zodiac_background_ring=show_zodiac_background_ring,
+            show_houses_1=show_houses_1,
+            show_houses_2=show_houses_2,
+            show_cusp_ring_1=show_cusp_ring_1,
+            show_cusp_ring_2=show_cusp_ring_2,
+            transit_style=transit_style,
+        )
+        self._write_svg_to_disk(template, output_path, filename, default_suffix=" - Minimalist")
 
     def generate_aspect_grid_only_svg_string(self, minify: bool = False, remove_css_variables=False):
         """

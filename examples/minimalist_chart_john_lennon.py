@@ -1,0 +1,113 @@
+from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion import ChartDrawer
+from pathlib import Path
+from os import makedirs as mkdirs
+
+OUTPUT = str(Path.home() / "kerykeion_charts_output")
+mkdirs(OUTPUT, exist_ok=True)
+
+# ── Subject 1: John Lennon ──────────────────────────────────────────────────
+lennon = AstrologicalSubjectFactory.from_birth_data(
+    name="John Lennon",
+    year=1940, month=10, day=9, hour=18, minute=30,
+    city="Liverpool", nation="GB",
+    tz_str="Europe/London", lat=53.4084, lng=-2.9916,
+)
+
+# ── Subject 2: Yoko Ono (for synastry) ──────────────────────────────────────
+yoko = AstrologicalSubjectFactory.from_birth_data(
+    name="Yoko Ono",
+    year=1933, month=2, day=18, hour=20, minute=30,
+    city="Tokyo", nation="JP",
+    tz_str="Asia/Tokyo", lat=35.6762, lng=139.6503,
+)
+
+# ── Subject 3: Day Lennon met McCartney - July 6, 1957 (transit) ────────────
+transit = AstrologicalSubjectFactory.from_birth_data(
+    name="Lennon Meets McCartney",
+    year=1957, month=7, day=6, hour=16, minute=0,
+    city="Liverpool", nation="GB",
+    tz_str="Europe/London", lat=53.4084, lng=-2.9916,
+)
+
+# ════════════════════════════════════════════════════════════════════════════
+# 0. McCartney meeting event as STANDALONE natal chart (for comparison)
+# ════════════════════════════════════════════════════════════════════════════
+meeting_data = ChartDataFactory.create_natal_chart_data(transit)
+meeting_drawer = ChartDrawer(meeting_data)
+meeting_drawer.save_minimalist_svg_file(output_path=OUTPUT, filename="mccartney_meeting_natal")
+print("✅ McCartney meeting natal chart saved (standalone)")
+
+# ════════════════════════════════════════════════════════════════════════════
+# 1. NATAL CHART (single, regression check)
+# ════════════════════════════════════════════════════════════════════════════
+natal_data = ChartDataFactory.create_natal_chart_data(lennon)
+natal_drawer = ChartDrawer(natal_data)
+natal_drawer.save_minimalist_svg_file(output_path=OUTPUT)
+print("✅ Natal chart saved")
+
+# ════════════════════════════════════════════════════════════════════════════
+# 2. SYNASTRY CHART (Lennon + Yoko Ono)
+# ════════════════════════════════════════════════════════════════════════════
+synastry_data = ChartDataFactory.create_synastry_chart_data(lennon, yoko)
+synastry_drawer = ChartDrawer(synastry_data)
+
+# Default: zodiac ring ON (new default), both cusp rings, both house rings
+synastry_drawer.save_minimalist_dual_svg_file(
+    output_path=OUTPUT,
+    filename="lennon_yoko_synastry"
+)
+print("✅ Synastry chart saved (zodiac ON by default)")
+
+# Synastry configured as transit-style (only natal houses)
+synastry_drawer.save_minimalist_dual_svg_file(
+    output_path=OUTPUT,
+    show_houses_2=False,
+    filename="lennon_yoko_synastry_transit_style"
+)
+print("✅ Synastry chart (transit-style, no 2nd houses) saved")
+
+# ════════════════════════════════════════════════════════════════════════════
+# 3. TRANSIT CHART (Lennon natal + McCartney meeting date)
+# ════════════════════════════════════════════════════════════════════════════
+transit_data = ChartDataFactory.create_transit_chart_data(lennon, transit)
+transit_drawer = ChartDrawer(transit_data)
+
+# Default transit: zodiac ring ON, no 2nd subject houses
+transit_drawer.save_minimalist_dual_svg_file(
+    output_path=OUTPUT,
+    filename="lennon_mccartney_transit"
+)
+print("✅ Transit chart saved")
+
+# Transit with both houses shown (override default)
+transit_drawer.save_minimalist_dual_svg_file(
+    output_path=OUTPUT,
+    show_houses_2=True,
+    filename="lennon_mccartney_transit_both_houses"
+)
+print("✅ Transit chart (both houses override) saved")
+
+# ════════════════════════════════════════════════════════════════════════════
+# 4. SYNASTRY with cusp rings toggled off
+# ════════════════════════════════════════════════════════════════════════════
+synastry_drawer.save_minimalist_dual_svg_file(
+    output_path=OUTPUT,
+    show_cusp_ring_1=False,
+    show_cusp_ring_2=False,
+    filename="lennon_yoko_synastry_no_cusps"
+)
+print("✅ Synastry chart (no cusp rings) saved")
+
+# ════════════════════════════════════════════════════════════════════════════
+# 5. Synastry with zodiac ring explicitly OFF (override new default)
+# ════════════════════════════════════════════════════════════════════════════
+synastry_drawer.save_minimalist_dual_svg_file(
+    output_path=OUTPUT,
+    show_zodiac_background_ring=False,
+    filename="lennon_yoko_synastry_no_zodiac"
+)
+print("✅ Synastry chart (zodiac OFF) saved")
+
+print("\n🎉 All charts generated successfully!")

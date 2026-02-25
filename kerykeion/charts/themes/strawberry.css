@@ -20,6 +20,13 @@
     --kerykeion-color-base-200: #fce8f1; /* oklch(93% 0.05 330) - rosa delicato evidente */
     --kerykeion-color-base-300: #f5d1e3; /* rosa chiaro invece di grigio */
 
+    /* Minimalist Chart */
+    --kerykeion-minimalist-planet-ring: #f8dce8;
+    --kerykeion-minimalist-house-ring: #eec5d6;
+    --kerykeion-minimalist-stroke: #c8a0b3;
+    --kerykeion-minimalist-retrograde: #ff4f9a;
+    --kerykeion-minimalist-indicator: #a0788e;
+
     /* ----------- */
     /* Chart Color */
     /* ----------- */
