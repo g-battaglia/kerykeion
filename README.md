@@ -36,35 +36,34 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
 
 ## Table of Contents
 
-- [**Commercial Web API**](#commercial-web-api)
+- [**Web API**](#web-api)
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Basic Usage](#basic-usage)
 - [Generate a SVG Chart](#generate-a-svg-chart)
-    - [Birth Chart](#birth-chart)
-    - [External Birth Chart](#external-birth-chart)
-    - [Synastry Chart](#synastry-chart)
-    - [Transit Chart](#transit-chart)
-    - [Solar Return Chart (Dual Wheel)](#solar-return-chart-dual-wheel)
-    - [Solar Return Chart (Single Wheel)](#solar-return-chart-single-wheel)
-    - [Lunar Return Chart](#lunar-return-chart)
-    - [Composite Chart](#composite-chart)
+  - [Birth Chart](#birth-chart)
+  - [External Birth Chart](#external-birth-chart)
+  - [Synastry Chart](#synastry-chart)
+  - [Transit Chart](#transit-chart)
+  - [Solar Return Chart (Dual Wheel)](#solar-return-chart-dual-wheel)
+  - [Solar Return Chart (Single Wheel)](#solar-return-chart-single-wheel)
+  - [Lunar Return Chart](#lunar-return-chart)
+  - [Composite Chart](#composite-chart)
 - [Wheel Only Charts](#wheel-only-charts)
-    - [Birth Chart](#birth-chart-1)
-    - [Wheel Only Birth Chart (External)](#wheel-only-birth-chart-external)
-    - [Synastry Chart](#synastry-chart-1)
-    - [Change the Output Directory](#change-the-output-directory)
-    - [Change Language](#change-language)
-    - [Minified SVG](#minified-svg)
-    - [SVG without CSS Variables](#svg-without-css-variables)
-    - [Grid Only SVG](#grid-only-svg)
+  - [Birth Chart](#birth-chart-1)
+  - [Wheel Only Birth Chart (External)](#wheel-only-birth-chart-external)
+  - [Synastry Chart](#synastry-chart-1)
+  - [Change the Output Directory](#change-the-output-directory)
+  - [Change Language](#change-language)
+  - [Minified SVG](#minified-svg)
+  - [SVG without CSS Variables](#svg-without-css-variables)
+  - [Grid Only SVG](#grid-only-svg)
 - [Report Generator](#report-generator)
-    - [Quick Examples](#quick-examples)
-    - [Section Access](#section-access)
-- [Moon Phase Details](#moon-phase-details)
+  - [Quick Examples](#quick-examples)
+  - [Section Access](#section-access)
 - [AI Context Serializer](#ai-context-serializer)
-    - [Quick Example](#quick-example)
+  - [Quick Example](#quick-example)
 - [Example: Retrieving Aspects](#example-retrieving-aspects)
 - [Relationship Score](#relationship-score)
 - [Element \& Quality Distribution Strategies](#element--quality-distribution-strategies)
@@ -75,6 +74,7 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
 - [Alternative Initialization](#alternative-initialization)
 - [Lunar Nodes (Rahu \& Ketu)](#lunar-nodes-rahu--ketu)
 - [JSON Support](#json-support)
+- [Moon Phase Details](#moon-phase-details)
 - [Documentation](#documentation)
 - [Projects built with Kerykeion](#projects-built-with-kerykeion)
 - [Development](#development)
@@ -928,110 +928,6 @@ for section in sections[:3]:
 
 **📖 Report examples: [Report Examples](https://www.kerykeion.net/content/examples/report)**
 
-## Moon Phase Details
-
-The `MoonPhaseDetailsFactory` generates a rich lunar phase context from any astrological subject — including illumination, upcoming major phases, next eclipses (solar and lunar), sunrise/sunset, and apparent solar position. All timings use Swiss Ephemeris for ~1 second precision.
-
-```python
-from kerykeion import AstrologicalSubjectFactory, MoonPhaseDetailsFactory, ReportGenerator
-
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "Example", 2025, 4, 1, 7, 51,
-    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
-    online=False,
-)
-
-overview = MoonPhaseDetailsFactory.from_subject(subject)
-
-print(f"Phase: {overview.moon.phase_name} {overview.moon.emoji}")
-print(f"Illumination: {overview.moon.illumination}")
-print(f"Stage: {overview.moon.stage}")
-
-if overview.moon.detailed and overview.moon.detailed.upcoming_phases:
-    fm = overview.moon.detailed.upcoming_phases.full_moon
-    if fm and fm.next:
-        print(f"Next Full Moon: {fm.next.datestamp}")
-
-# Generate a formatted ASCII report
-ReportGenerator(overview).print_report()
-```
-
-**Report output (truncated):**
-
-```text
-=====================================================
-Moon Phase Overview — Tue, 01 Apr 2025 06:51:00 +0000
-=====================================================
-
-+Moon Summary--+--------------------+
-| Field        | Value              |
-+--------------+--------------------+
-| Phase Name   | Waxing Crescent 🌒 |
-| Major Phase  | New Moon           |
-| Stage        | Waxing             |
-| Illumination | 8%                 |
-| Age (days)   | 3                  |
-| Lunar Cycle  | 9.571%             |
-| Sun Sign     | Ari                |
-| Moon Sign    | Gem                |
-+--------------+--------------------+
-
-+Illumination Details-------+
-| Field            | Value  |
-+------------------+--------+
-| Percentage       | 8.0%   |
-| Visible Fraction | 0.0837 |
-| Phase Angle      | 34.46° |
-+------------------+--------+
-
-+Upcoming Phases+---------------------------------+---------------------------------+
-| Phase         | Last                            | Next                            |
-+---------------+---------------------------------+---------------------------------+
-| New Moon      | Sun, 29 Mar 2025 10:57:49 +0000 | Mon, 28 Apr 2025 00:31:07 +0000 |
-| First Quarter | ...                             | ...                             |
-| Full Moon     | ...                             | ...                             |
-| Last Quarter  | ...                             | ...                             |
-+---------------+---------------------------------+---------------------------------+
-
-...
-```
-
-You can also get the full model as JSON:
-
-```python
-print(overview.model_dump_json(exclude_none=True, indent=2))
-```
-
-**JSON output (truncated):**
-
-```json
-{
-  "timestamp": 1743490260,
-  "datestamp": "Tue, 01 Apr 2025 06:51:00 +0000",
-  "sun": {
-    "sunrise_timestamp": "06:35",
-    "sunset_timestamp": "19:34",
-    "solar_noon": "13:04",
-    "day_length": "12:59",
-    "next_solar_eclipse": { "type": "Partial Solar Eclipse", "...": "..." }
-  },
-  "moon": {
-    "phase_name": "Waxing Crescent",
-    "major_phase": "New Moon",
-    "stage": "waxing",
-    "illumination": "12%",
-    "emoji": "🌒",
-    "next_lunar_eclipse": { "type": "Total Lunar Eclipse", "...": "..." },
-    "detailed": { "upcoming_phases": { "...": "..." }, "illumination_details": { "...": "..." } }
-  },
-  "location": { "latitude": "51.5074", "longitude": "-0.1276" }
-}
-```
-
-**📖 Full documentation: [Moon Phase Details Factory](https://www.kerykeion.net/content/docs/moon_phase_details_factory)**
-
-**📖 Examples: [Moon Phase Details Examples](https://www.kerykeion.net/content/examples/moon-phase-details)**
-
 ## AI Context Serializer
 
 The `context_serializer` module transforms Kerykeion data models into precise, non-qualitative text optimized for LLM consumption. It provides the essential "ground truth" data needed for AI agents to generate accurate astrological interpretations.
@@ -1426,6 +1322,111 @@ print(johnny.model_dump_json(indent=2))
 ```
 
 **📖 Data models and schemas: [Schemas Documentation](https://www.kerykeion.net/content/docs/schemas)**
+
+## Moon Phase Details
+
+The `MoonPhaseDetailsFactory` generates a rich lunar phase context from any astrological subject — including illumination, upcoming major phases, next eclipses (solar and lunar), sunrise/sunset, and apparent solar position. All timings use Swiss Ephemeris for ~1 second precision.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, MoonPhaseDetailsFactory, ReportGenerator
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 2025, 4, 1, 7, 51,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False,
+)
+
+overview = MoonPhaseDetailsFactory.from_subject(subject)
+
+print(f"Phase: {overview.moon.phase_name} {overview.moon.emoji}")
+print(f"Illumination: {overview.moon.illumination}")
+print(f"Stage: {overview.moon.stage}")
+
+if overview.moon.detailed and overview.moon.detailed.upcoming_phases:
+    fm = overview.moon.detailed.upcoming_phases.full_moon
+    if fm and fm.next:
+        print(f"Next Full Moon: {fm.next.datestamp}")
+
+# Generate a formatted ASCII report
+ReportGenerator(overview).print_report()
+```
+
+**Report output (truncated):**
+
+```text
+=====================================================
+Moon Phase Overview — Tue, 01 Apr 2025 06:51:00 +0000
+=====================================================
+
++Moon Summary--+--------------------+
+| Field        | Value              |
++--------------+--------------------+
+| Phase Name   | Waxing Crescent 🌒 |
+| Major Phase  | New Moon           |
+| Stage        | Waxing             |
+| Illumination | 8%                 |
+| Age (days)   | 3                  |
+| Lunar Cycle  | 9.571%             |
+| Sun Sign     | Ari                |
+| Moon Sign    | Gem                |
++--------------+--------------------+
+
++Illumination Details-------+
+| Field            | Value  |
++------------------+--------+
+| Percentage       | 8.0%   |
+| Visible Fraction | 0.0837 |
+| Phase Angle      | 34.46° |
++------------------+--------+
+
++Upcoming Phases+---------------------------------+---------------------------------+
+| Phase         | Last                            | Next                            |
++---------------+---------------------------------+---------------------------------+
+| New Moon      | Sun, 29 Mar 2025 10:57:49 +0000 | Mon, 28 Apr 2025 00:31:07 +0000 |
+| First Quarter | ...                             | ...                             |
+| Full Moon     | ...                             | ...                             |
+| Last Quarter  | ...                             | ...                             |
++---------------+---------------------------------+---------------------------------+
+
+...
+```
+
+You can also get the full model as JSON:
+
+```python
+print(overview.model_dump_json(exclude_none=True, indent=2))
+```
+
+**JSON output (truncated):**
+
+```json
+{
+  "timestamp": 1743490260,
+  "datestamp": "Tue, 01 Apr 2025 06:51:00 +0000",
+  "sun": {
+    "sunrise_timestamp": "06:35",
+    "sunset_timestamp": "19:34",
+    "solar_noon": "13:04",
+    "day_length": "12:59",
+    "next_solar_eclipse": { "type": "Partial Solar Eclipse", "...": "..." }
+  },
+  "moon": {
+    "phase_name": "Waxing Crescent",
+    "major_phase": "New Moon",
+    "stage": "waxing",
+    "illumination": "12%",
+    "emoji": "🌒",
+    "next_lunar_eclipse": { "type": "Total Lunar Eclipse", "...": "..." },
+    "detailed": { "upcoming_phases": { "...": "..." }, "illumination_details": { "...": "..." } }
+  },
+  "location": { "latitude": "51.5074", "longitude": "-0.1276" }
+}
+```
+
+**📖 Full documentation: [Moon Phase Details Factory](https://www.kerykeion.net/content/docs/moon_phase_details_factory)**
+
+**📖 Examples: [Moon Phase Details Examples](https://www.kerykeion.net/content/examples/moon-phase-details)**
+
 
 ## Documentation
 
