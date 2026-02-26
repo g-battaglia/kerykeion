@@ -1,205 +1,161 @@
+"""
+Kerykeion - Draw Planets Module
+
+This module handles the rendering of celestial points (planets, angles, etc.)
+on astrological SVG charts. It supports various chart types including
+Natal, Transit, Synastry, and Return charts.
+
+Main responsibilities:
+- Calculate positions and avoid overlapping of celestial points
+- Generate SVG elements for planets with proper styling
+- Draw degree indicators and connecting lines
+- Support both internal and external view modes
+
+This is part of Kerykeion (C) 2025 Giacomo Battaglia
+"""
+
 from kerykeion.charts.charts_utils import degreeDiff, sliceToX, sliceToY, convert_decimal_to_degree_string
 from kerykeion.schemas import KerykeionException, ChartType, KerykeionPointModel
-from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
 from kerykeion.schemas.kr_literals import Houses
 import logging
-from typing import Union, get_args, List, Optional
+from typing import Union, get_args, List, Optional, Tuple, Sequence, Mapping, Any
+
+# =============================================================================
+# CONSTANTS
+# =============================================================================
+
+# Grouping thresholds (in degrees)
+PLANET_GROUPING_THRESHOLD = 3.4  # Distance to consider planets as grouped
+INDICATOR_GROUPING_THRESHOLD = 2.5  # Distance for indicator overlap detection
+
+# Chart angle indices (ASC, MC, DSC, IC are between these indices)
+CHART_ANGLE_MIN_INDEX = 22
+CHART_ANGLE_MAX_INDEX = 27
+
+# Radius offsets for different chart elements
+NATAL_INDICATOR_OFFSET = 72  # Offset for inner chart degree indicators
+DUAL_CHART_ANGLE_RADIUS = 76  # Radius for chart angles in dual charts
+DUAL_CHART_PLANET_RADIUS_A = 110  # Alternate planet radius in dual charts
+DUAL_CHART_PLANET_RADIUS_B = 130  # Default planet radius in dual charts
+
+# Chart types that display two subjects
+DUAL_CHART_TYPES = ("Transit", "Synastry", "DualReturnChart")
+
+
+# =============================================================================
+# MAIN FUNCTION
+# =============================================================================
 
 
 def draw_planets(
     radius: Union[int, float],
     available_kerykeion_celestial_points: list[KerykeionPointModel],
-    available_planets_setting: list[KerykeionSettingsCelestialPointModel],
+    available_planets_setting: Sequence[Mapping[str, Any]],
     third_circle_radius: Union[int, float],
     main_subject_first_house_degree_ut: Union[int, float],
     main_subject_seventh_house_degree_ut: Union[int, float],
     chart_type: ChartType,
     second_subject_available_kerykeion_celestial_points: Union[list[KerykeionPointModel], None] = None,
     external_view: bool = False,
+    first_circle_radius: Union[int, float, None] = None,
+    second_circle_radius: Union[int, float, None] = None,
+    show_degree_indicators: bool = True,
 ) -> str:
     """
-    Draws the planets on an astrological chart based on the provided parameters.
+    Draws celestial points on an astrological chart.
 
-    This function calculates positions, handles overlap of celestial points, and draws SVG
-    elements for each planet/point on the chart. It supports different chart types including
-    natal charts, transits, synastry, and returns. For single-subject charts (Natal), it
-    can render planets in external view mode using the external_view parameter.
+    This function orchestrates the rendering of planets and points on various
+    chart types. It handles position calculations, overlap prevention, and
+    SVG generation for the chart elements.
 
     Args:
-        radius (Union[int, float]): The radius of the chart in pixels.
-        available_kerykeion_celestial_points (list[KerykeionPointModel]): List of celestial points for the main subject.
-        available_planets_setting (list[KerykeionSettingsCelestialPointModel]): Settings for the celestial points.
-        third_circle_radius (Union[int, float]): Radius of the third circle in the chart.
-        main_subject_first_house_degree_ut (Union[int, float]): Degree of the first house for the main subject.
-        main_subject_seventh_house_degree_ut (Union[int, float]): Degree of the seventh house for the main subject.
-        chart_type (ChartType): Type of the chart (e.g., "Transit", "Synastry", "DualReturnChart", "Natal").
-        second_subject_available_kerykeion_celestial_points (Union[list[KerykeionPointModel], None], optional):
-            List of celestial points for the second subject, required for "Transit", "Synastry", or "Return" charts.
-            Defaults to None.
-        external_view (bool, optional):
-            Whether to render planets in external view mode (planets on outer ring with connecting lines).
-            Only applicable for single-subject charts. Defaults to False.
-
-    Raises:
-        KerykeionException: If secondary celestial points are required but not provided.
+        radius: The overall radius of the chart in pixels.
+        available_kerykeion_celestial_points: Celestial points for the main subject.
+        available_planets_setting: Display settings for celestial points.
+        third_circle_radius: Radius of the inner boundary circle.
+        main_subject_first_house_degree_ut: First house cusp degree (Ascendant).
+        main_subject_seventh_house_degree_ut: Seventh house cusp degree (Descendant).
+        chart_type: Type of chart (Natal, Transit, Synastry, Return, etc.).
+        second_subject_available_kerykeion_celestial_points: Points for second subject
+            (required for Transit, Synastry, Return charts).
+        external_view: If True, render planets on outer ring with connecting lines.
+        first_circle_radius: Radius of the outer zodiac ring.
+        second_circle_radius: Radius of the middle circle.
+        show_degree_indicators: If True, show degree position indicators.
 
     Returns:
-        str: SVG output for the chart with the planets drawn.
+        SVG markup string containing all rendered celestial points.
+
+    Raises:
+        KerykeionException: If secondary points are required but not provided.
     """
-    # Constants and initialization
-    PLANET_GROUPING_THRESHOLD = 3.4  # Distance threshold to consider planets as grouped
-    TRANSIT_RING_EXCLUDE_POINTS_NAMES: List[str] = list(get_args(Houses))
+    # Points to exclude from transit ring (house cusps)
+    transit_ring_exclude_points: List[str] = list(get_args(Houses))
     output = ""
 
-    # -----------------------------------------------------------
-    # 1. Validate inputs and prepare data
-    # -----------------------------------------------------------
-    if chart_type == "Transit" and second_subject_available_kerykeion_celestial_points is None:
-        raise KerykeionException("Secondary celestial points are required for Transit charts")
-    elif chart_type == "Synastry" and second_subject_available_kerykeion_celestial_points is None:
-        raise KerykeionException("Secondary celestial points are required for Synastry charts")
-    elif chart_type == "Return" and second_subject_available_kerykeion_celestial_points is None:
-        raise KerykeionException("Secondary celestial points are required for Return charts")
+    # -------------------------------------------------------------------------
+    # 1. Validate inputs for dual charts
+    # -------------------------------------------------------------------------
+    _validate_dual_chart_inputs(chart_type, second_subject_available_kerykeion_celestial_points)
 
-    # Extract absolute and relative positions for main celestial points
-    main_points_abs_positions = [planet.abs_pos for planet in available_kerykeion_celestial_points]
-    [planet.position for planet in available_kerykeion_celestial_points]
+    # -------------------------------------------------------------------------
+    # 2. Extract positions from celestial points
+    # -------------------------------------------------------------------------
+    main_points_abs_positions = [p.abs_pos for p in available_kerykeion_celestial_points]
 
-    # Extract absolute and relative positions for secondary celestial points if needed
     secondary_points_abs_positions = []
     secondary_points_rel_positions = []
-    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
-        if second_subject_available_kerykeion_celestial_points is not None:
-            secondary_points_abs_positions = [
-                planet.abs_pos for planet in second_subject_available_kerykeion_celestial_points
-            ]
-            secondary_points_rel_positions = [
-                planet.position for planet in second_subject_available_kerykeion_celestial_points
-            ]
+    if chart_type in DUAL_CHART_TYPES and second_subject_available_kerykeion_celestial_points:
+        secondary_points_abs_positions = [p.abs_pos for p in second_subject_available_kerykeion_celestial_points]
+        secondary_points_rel_positions = [p.position for p in second_subject_available_kerykeion_celestial_points]
 
-    # -----------------------------------------------------------
-    # 2. Create position lookup dictionary for main celestial points
-    # -----------------------------------------------------------
-    # Map absolute degree to index in the settings array
-    position_index_map = {}
-    for i in range(len(available_planets_setting)):
-        position_index_map[main_points_abs_positions[i]] = i
-        logging.debug(f"Planet index: {i}, degree: {main_points_abs_positions[i]}")
-
-    # Sort positions for ordered processing
+    # -------------------------------------------------------------------------
+    # 3. Build position-to-index mapping and sort for ordered processing
+    # -------------------------------------------------------------------------
+    position_index_map = {main_points_abs_positions[i]: i for i in range(len(available_planets_setting))}
     sorted_positions = sorted(position_index_map.keys())
 
-    # -----------------------------------------------------------
-    # 3. Identify groups of celestial points that are close to each other
-    # -----------------------------------------------------------
-    point_groups: List[List[List[Union[int, float, str]]]] = []
-    is_group_open = False
-    planets_by_position: List[Optional[List[Union[int, float]]]] = [None] * len(position_index_map)
+    for i, pos in enumerate(sorted_positions):
+        logging.debug(f"Planet index: {position_index_map[pos]}, degree: {pos}")
 
-    # Process each celestial point to find groups
-    for position_idx, abs_position in enumerate(sorted_positions):
-        point_idx = position_index_map[abs_position]
+    # -------------------------------------------------------------------------
+    # 4. Calculate position adjustments to prevent overlapping
+    # -------------------------------------------------------------------------
+    position_adjustments = _calculate_planet_adjustments(
+        main_points_abs_positions,
+        available_planets_setting,
+        position_index_map,
+        sorted_positions,
+    )
 
-        # Find previous and next point positions for distance calculations
-        # Handle special case when there's only one planet
-        if len(sorted_positions) == 1:
-            # With only one planet, there are no adjacent planets
-            prev_position = main_points_abs_positions[point_idx]
-            next_position = main_points_abs_positions[point_idx]
-        elif position_idx == 0:
-            prev_position = main_points_abs_positions[position_index_map[sorted_positions[-1]]]
-            next_position = main_points_abs_positions[position_index_map[sorted_positions[1]]]
-        elif position_idx == len(sorted_positions) - 1:
-            prev_position = main_points_abs_positions[position_index_map[sorted_positions[position_idx - 1]]]
-            next_position = main_points_abs_positions[position_index_map[sorted_positions[0]]]
-        else:
-            prev_position = main_points_abs_positions[position_index_map[sorted_positions[position_idx - 1]]]
-            next_position = main_points_abs_positions[position_index_map[sorted_positions[position_idx + 1]]]
-
-        # Calculate distance to adjacent points
-        # When there's only one planet, set distances to a large value to prevent grouping
-        if len(sorted_positions) == 1:
-            distance_to_prev = 360.0  # Maximum possible distance
-            distance_to_next = 360.0  # Maximum possible distance
-        else:
-            distance_to_prev = degreeDiff(prev_position, main_points_abs_positions[point_idx])
-            distance_to_next = degreeDiff(next_position, main_points_abs_positions[point_idx])
-
-        # Store position and distance information
-        planets_by_position[position_idx] = [point_idx, distance_to_prev, distance_to_next]
-
-        label = available_planets_setting[point_idx]["label"]
-        logging.debug(f"{label}, distance_to_prev: {distance_to_prev}, distance_to_next: {distance_to_next}")
-
-        # Group points that are close to each other
-        if distance_to_next < PLANET_GROUPING_THRESHOLD:
-            point_data = [position_idx, distance_to_prev, distance_to_next, label]
-            if is_group_open:
-                point_groups[-1].append(point_data)
-            else:
-                is_group_open = True
-                point_groups.append([point_data])
-        else:
-            if is_group_open:
-                point_data = [position_idx, distance_to_prev, distance_to_next, label]
-                point_groups[-1].append(point_data)
-            is_group_open = False
-
-    # -----------------------------------------------------------
-    # 4. Calculate position adjustments to avoid overlapping
-    # -----------------------------------------------------------
-    position_adjustments: List[float] = [0.0] * len(available_planets_setting)
-
-    # Process each group to calculate position adjustments
-    for group in point_groups:
-        group_size = len(group)
-
-        # Handle groups of two celestial points
-        if group_size == 2:
-            _handle_two_point_group(group, planets_by_position, position_adjustments, PLANET_GROUPING_THRESHOLD)
-
-        # Handle groups of three or more celestial points
-        elif group_size >= 3:
-            _handle_multi_point_group(group, position_adjustments, PLANET_GROUPING_THRESHOLD)
-
-    # -----------------------------------------------------------
+    # -------------------------------------------------------------------------
     # 5. Draw main celestial points
-    # -----------------------------------------------------------
-    adjusted_offset = 0.0  # Initialize for use outside loop
+    # -------------------------------------------------------------------------
+    adjusted_offset = 0.0
     for position_idx, abs_position in enumerate(sorted_positions):
         point_idx = position_index_map[abs_position]
 
         # Determine radius based on chart type and point type
         point_radius = _determine_point_radius(point_idx, chart_type, bool(position_idx % 2), external_view)
 
-        # Calculate position offset for the point
+        # Calculate position offsets
         adjusted_offset = _calculate_point_offset(
             main_subject_seventh_house_degree_ut,
             main_points_abs_positions[point_idx],
             position_adjustments[position_idx],
         )
-
-        # Calculate true position without adjustment (used for connecting lines)
         true_offset = _calculate_point_offset(
             main_subject_seventh_house_degree_ut,
             main_points_abs_positions[point_idx],
-            0
+            0,
         )
 
-        # Calculate point coordinates
+        # Calculate coordinates
         point_x = sliceToX(0, radius - point_radius, adjusted_offset) + point_radius
         point_y = sliceToY(0, radius - point_radius, adjusted_offset) + point_radius
 
-        # Determine scale factor based on chart type
-        scale_factor = 1.0
-        if chart_type == "Transit":
-            scale_factor = 0.8
-        elif chart_type == "Synastry":
-            scale_factor = 0.8
-        elif chart_type == "Return":
-            scale_factor = 0.8
-        elif external_view:
-            scale_factor = 0.8
+        # Determine scale factor
+        scale_factor = 0.8 if chart_type in DUAL_CHART_TYPES or external_view else 1.0
 
         # Draw connecting lines for external view
         if external_view:
@@ -216,189 +172,585 @@ def draw_planets(
         # Draw the celestial point SVG element
         point_details = available_kerykeion_celestial_points[point_idx]
         output += _generate_point_svg(
-            point_details, point_x, point_y, scale_factor, available_planets_setting[point_idx]["name"]
+            point_details,
+            point_x,
+            point_y,
+            scale_factor,
+            available_planets_setting[point_idx]["name"],
         )
 
-    # -----------------------------------------------------------
-    # 6. Draw transit/secondary celestial points
-    # -----------------------------------------------------------
-    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "Return":
-        output = _draw_secondary_points(
-            output,
-            radius,
-            main_subject_first_house_degree_ut,
-            main_subject_seventh_house_degree_ut,
-            secondary_points_abs_positions,
-            secondary_points_rel_positions,
-            available_planets_setting,
-            chart_type,
-            TRANSIT_RING_EXCLUDE_POINTS_NAMES,
-            adjusted_offset,
-        )
+    # -------------------------------------------------------------------------
+    # 6. Draw degree indicators based on chart type
+    # -------------------------------------------------------------------------
+    if chart_type in ("Natal", "Composite", "SingleReturnChart"):
+        # Single charts: draw indicators on outer ring
+        if show_degree_indicators and first_circle_radius is not None and not external_view:
+            output = _draw_primary_point_indicators(
+                output=output,
+                radius=radius,
+                first_circle_radius=first_circle_radius,
+                third_circle_radius=third_circle_radius,
+                first_house_degree=main_subject_first_house_degree_ut,
+                seventh_house_degree=main_subject_seventh_house_degree_ut,
+                points_abs_positions=main_points_abs_positions,
+                points_rel_positions=[p.position for p in available_kerykeion_celestial_points],
+                points_settings=available_planets_setting,
+            )
+    elif chart_type in DUAL_CHART_TYPES:
+        # Dual charts: draw indicators for both primary and secondary points
+        if show_degree_indicators:
+            # Secondary/outer points (transit planets)
+            if secondary_points_abs_positions and secondary_points_rel_positions:
+                output = _draw_secondary_points(
+                    output,
+                    radius,
+                    main_subject_first_house_degree_ut,
+                    main_subject_seventh_house_degree_ut,
+                    secondary_points_abs_positions,
+                    secondary_points_rel_positions,
+                    available_planets_setting,
+                    chart_type,
+                    transit_ring_exclude_points,
+                    adjusted_offset,
+                )
+            # Primary/inner points (natal planets)
+            output = _draw_inner_point_indicators(
+                output=output,
+                radius=radius,
+                third_circle_radius=third_circle_radius,
+                first_house_degree=main_subject_first_house_degree_ut,
+                seventh_house_degree=main_subject_seventh_house_degree_ut,
+                points_abs_positions=main_points_abs_positions,
+                points_rel_positions=[p.position for p in available_kerykeion_celestial_points],
+                points_settings=available_planets_setting,
+            )
 
     return output
 
 
-def _handle_two_point_group(
-    group: list, planets_by_position: list, position_adjustments: list, threshold: float
-) -> None:
-    """
-    Handle positioning for a group of two celestial points that are close to each other.
+# =============================================================================
+# VALIDATION HELPERS
+# =============================================================================
 
-    Adjusts positions to prevent overlapping by calculating appropriate offsets
-    based on available space around the points.
+
+def _validate_dual_chart_inputs(
+    chart_type: ChartType,
+    secondary_points: Union[list[KerykeionPointModel], None],
+) -> None:
+    """Validate that dual charts have the required secondary points."""
+    error_messages = {
+        "Transit": "Secondary celestial points are required for Transit charts",
+        "Synastry": "Secondary celestial points are required for Synastry charts",
+    }
+    if chart_type in error_messages and secondary_points is None:
+        raise KerykeionException(error_messages[chart_type])
+
+
+# =============================================================================
+# POSITION CALCULATION HELPERS
+# =============================================================================
+
+
+def _calculate_planet_adjustments(
+    points_abs_positions: Sequence[Any],
+    points_settings: Sequence[Mapping[str, Any]],
+    position_index_map: dict,
+    sorted_positions: Sequence[Any],
+) -> List[float]:
+    """
+    Calculate position adjustments for planets to prevent visual overlapping.
+
+    This function identifies groups of planets that are too close together
+    and calculates offset adjustments to spread them apart visually.
 
     Args:
-        group (list): A list containing data about two closely positioned points.
-        planets_by_position (list): A list with data about all planets positions.
-        position_adjustments (list): The list to store calculated position adjustments.
-        threshold (float): The minimum distance threshold for considering points as grouped.
+        points_abs_positions: Absolute positions of all points.
+        points_settings: Settings for all points.
+        position_index_map: Mapping of position to point index.
+        sorted_positions: Positions sorted in ascending order.
+
+    Returns:
+        List of adjustment values (in degrees) for each position.
+    """
+    planets_by_position: List[Optional[List[Union[int, float]]]] = [None] * len(position_index_map)
+    point_groups: List[List[List[Union[int, float, str]]]] = []
+    position_adjustments: List[float] = [0.0] * len(points_settings)
+    is_group_open = False
+
+    # Build position data and identify groups
+    for position_idx, abs_position in enumerate(sorted_positions):
+        point_idx = position_index_map[abs_position]
+
+        # Calculate distances to adjacent points
+        if len(sorted_positions) == 1:
+            # Single planet: no adjacent planets to consider
+            distance_to_prev = 360.0
+            distance_to_next = 360.0
+        else:
+            prev_pos, next_pos = _get_adjacent_positions(
+                position_idx, sorted_positions, position_index_map, points_abs_positions
+            )
+            distance_to_prev = degreeDiff(prev_pos, points_abs_positions[point_idx])
+            distance_to_next = degreeDiff(next_pos, points_abs_positions[point_idx])
+
+        planets_by_position[position_idx] = [point_idx, distance_to_prev, distance_to_next]
+        label = points_settings[point_idx]["label"]
+        logging.debug(f"{label}, distance_to_prev: {distance_to_prev}, distance_to_next: {distance_to_next}")
+
+        # Group points that are close to each other
+        if distance_to_next < PLANET_GROUPING_THRESHOLD:
+            point_data = [position_idx, distance_to_prev, distance_to_next, label]
+            if is_group_open:
+                point_groups[-1].append(point_data)
+            else:
+                is_group_open = True
+                point_groups.append([point_data])
+        else:
+            if is_group_open:
+                point_data = [position_idx, distance_to_prev, distance_to_next, label]
+                point_groups[-1].append(point_data)
+            is_group_open = False
+
+    # Apply adjustments for each group
+    for group in point_groups:
+        if len(group) == 2:
+            _handle_two_point_group(group, planets_by_position, position_adjustments, PLANET_GROUPING_THRESHOLD)
+        elif len(group) >= 3:
+            _handle_multi_point_group(group, position_adjustments, PLANET_GROUPING_THRESHOLD)
+
+    return position_adjustments
+
+
+def _get_adjacent_positions(
+    position_idx: int,
+    sorted_positions: Sequence[Any],
+    position_index_map: dict,
+    points_abs_positions: Sequence[Any],
+) -> Tuple[float, float]:
+    """Get the absolute positions of adjacent points (with wraparound)."""
+    total = len(sorted_positions)
+    if position_idx == 0:
+        prev_idx = position_index_map[sorted_positions[-1]]
+        next_idx = position_index_map[sorted_positions[1]]
+    elif position_idx == total - 1:
+        prev_idx = position_index_map[sorted_positions[position_idx - 1]]
+        next_idx = position_index_map[sorted_positions[0]]
+    else:
+        prev_idx = position_index_map[sorted_positions[position_idx - 1]]
+        next_idx = position_index_map[sorted_positions[position_idx + 1]]
+
+    return points_abs_positions[prev_idx], points_abs_positions[next_idx]
+
+
+def _handle_two_point_group(
+    group: list,
+    planets_by_position: list,
+    position_adjustments: list,
+    threshold: float,
+) -> None:
+    """
+    Handle positioning for a group of two celestial points that are close together.
+
+    This function adjusts the positions of two overlapping points to spread
+    them apart, using available space on either side.
+
+    Args:
+        group: Data about the two grouped points.
+        planets_by_position: Position data for all planets.
+        position_adjustments: List to store calculated adjustments.
+        threshold: Minimum distance threshold for grouping.
     """
     next_to_a = group[0][0] - 1
     next_to_b = 0 if group[1][0] == (len(planets_by_position) - 1) else group[1][0] + 1
 
-    # If both points have room
+    # Both points have room on their outer sides
     if (group[0][1] > (2 * threshold)) and (group[1][2] > (2 * threshold)):
         position_adjustments[group[0][0]] = -(threshold - group[0][2]) / 2
         position_adjustments[group[1][0]] = +(threshold - group[0][2]) / 2
-
-    # If only first point has room
+    # Only first point has room
     elif group[0][1] > (2 * threshold):
         position_adjustments[group[0][0]] = -threshold
-
-    # If only second point has room
+    # Only second point has room
     elif group[1][2] > (2 * threshold):
         position_adjustments[group[1][0]] = +threshold
-
-    # If points adjacent to group have room
-    elif (planets_by_position[next_to_a][1] > (2.4 * threshold)) and (planets_by_position[next_to_b][2] > (2.4 * threshold)):
+    # Adjacent points have room
+    elif (planets_by_position[next_to_a][1] > (2.4 * threshold)) and (
+        planets_by_position[next_to_b][2] > (2.4 * threshold)
+    ):
         position_adjustments[next_to_a] = group[0][1] - threshold * 2
         position_adjustments[group[0][0]] = -threshold * 0.5
         position_adjustments[next_to_b] = -(group[1][2] - threshold * 2)
         position_adjustments[group[1][0]] = +threshold * 0.5
-
-    # If only point adjacent to first has room
+    # Only adjacent to first has room
     elif planets_by_position[next_to_a][1] > (2 * threshold):
         position_adjustments[next_to_a] = group[0][1] - threshold * 2.5
         position_adjustments[group[0][0]] = -threshold * 1.2
-
-    # If only point adjacent to second has room
+    # Only adjacent to second has room
     elif planets_by_position[next_to_b][2] > (2 * threshold):
         position_adjustments[next_to_b] = -(group[1][2] - threshold * 2.5)
         position_adjustments[group[1][0]] = +threshold * 1.2
 
 
-def _handle_multi_point_group(group: list, position_adjustments: list, threshold: float) -> None:
+def _handle_multi_point_group(
+    group: list,
+    position_adjustments: list,
+    threshold: float,
+) -> None:
     """
-    Handle positioning for a group of three or more celestial points that are close to each other.
+    Handle positioning for a group of three or more celestial points.
 
-    Distributes points evenly within the available space to prevent overlapping.
+    Distributes points evenly within the available space.
 
     Args:
-        group (list): A list containing data about grouped points.
-        position_adjustments (list): The list to store calculated position adjustments.
-        threshold (float): The minimum distance threshold for considering points as grouped.
+        group: Data about the grouped points.
+        position_adjustments: List to store calculated adjustments.
+        threshold: Minimum distance threshold for grouping.
     """
     group_size = len(group)
 
-    # Calculate available space
+    # Calculate total available space
     available_space = group[0][1]  # Distance before first point
     for i in range(group_size):
         available_space += group[i][2]  # Add distance after each point
 
-    # Calculate needed space
+    # Calculate space needed to spread points
     needed_space = (3 * threshold) + (1.2 * (group_size - 1) * threshold)
     leftover_space = available_space - needed_space
 
-    # Get spacing before first and after last point
     space_before_first = group[0][1]
     space_after_last = group[group_size - 1][2]
 
-    # Position points based on available space
+    # Determine starting position for the group
     if (space_before_first > (needed_space * 0.5)) and (space_after_last > (needed_space * 0.5)):
-        # Center the group
         start_position = space_before_first - (needed_space * 0.5)
     else:
-        # Distribute leftover space proportionally
         start_position = (leftover_space / (space_before_first + space_after_last)) * space_before_first
 
     # Apply positions if there's enough space
     if available_space > needed_space:
         position_adjustments[group[0][0]] = start_position - group[0][1] + (1.5 * threshold)
-
-        # Position each subsequent point relative to the previous one
         for i in range(group_size - 1):
             position_adjustments[group[i + 1][0]] = 1.2 * threshold + position_adjustments[group[i][0]] - group[i][2]
+
+
+def _calculate_point_offset(
+    seventh_house_degree: Union[int, float],
+    point_degree: Union[int, float],
+    adjustment: Union[int, float],
+) -> float:
+    """Calculate the angular offset for placing a celestial point on the chart."""
+    return (int(seventh_house_degree) / -1) + int(point_degree + adjustment)
 
 
 def _determine_point_radius(
     point_idx: int,
     chart_type: str,
     is_alternate_position: bool,
-    external_view: bool = False
+    external_view: bool = False,
 ) -> int:
     """
-    Determine the radius for placing a celestial point based on its type and chart type.
+    Determine the radial distance for placing a celestial point.
+
+    Different radii are used to create visual separation between points
+    and to distinguish between chart angles and regular planets.
 
     Args:
-        point_idx (int): Index of the celestial point.
-        chart_type (str): Type of the chart.
-        is_alternate_position (bool): Whether to use alternate positioning.
-        external_view (bool): Whether external view is enabled.
+        point_idx: Index of the celestial point.
+        chart_type: Type of the chart.
+        is_alternate_position: Whether to use alternate positioning for visual separation.
+        external_view: Whether external view mode is enabled.
 
     Returns:
-        int: Radius value for the point.
+        Radius value for the point placement.
     """
-    # Check if point is an angle of the chart (ASC, MC, DSC, IC)
-    is_chart_angle = 22 < point_idx < 27
+    is_chart_angle = CHART_ANGLE_MIN_INDEX < point_idx < CHART_ANGLE_MAX_INDEX
 
-    if chart_type == "Transit":
+    # Dual charts (Transit, Synastry, Return)
+    if chart_type in DUAL_CHART_TYPES:
         if is_chart_angle:
-            return 76
-        else:
-            return 110 if is_alternate_position else 130
-    elif chart_type == "Synastry":
-        if is_chart_angle:
-            return 76
-        else:
-            return 110 if is_alternate_position else 130
-    elif chart_type == "Return":
-        if is_chart_angle:
-            return 76
-        else:
-            return 110 if is_alternate_position else 130
-    else:
-        # Default natal chart and external view handling
-        # if 22 < point_idx < 27 it is asc,mc,dsc,ic (angles of chart)
-        amin, bmin, cmin = 0, 0, 0
-        if external_view:
-            amin = 74 - 10
-            bmin = 94 - 10
-            cmin = 40 - 10
+            return DUAL_CHART_ANGLE_RADIUS
+        return DUAL_CHART_PLANET_RADIUS_A if is_alternate_position else DUAL_CHART_PLANET_RADIUS_B
 
+    # Natal chart with external view
+    # In external view, all points are placed on outer ring with small offset variations
+    # Original calculations: amin = 74-10=64, bmin = 94-10=84, cmin = 40-10=30
+    # Result: 74 - 64 = 10, 94 - 84 = 10, 40 - 30 = 10
+    if external_view:
         if is_chart_angle:
-            return 40 - cmin
+            return 40 - (40 - 10)  # = 10
         elif is_alternate_position:
-            return 74 - amin
+            return 74 - (74 - 10)  # = 10
         else:
-            return 94 - bmin
+            return 94 - (94 - 10)  # = 10
+
+    # Standard natal chart
+    if is_chart_angle:
+        return 40
+    return 74 if is_alternate_position else 94
 
 
-def _calculate_point_offset(
-    seventh_house_degree: Union[int, float], point_degree: Union[int, float], adjustment: Union[int, float]
-) -> float:
+# =============================================================================
+# INDICATOR HELPERS (Shared Logic)
+# =============================================================================
+
+
+def _calculate_indicator_adjustments(
+    points_abs_positions: Sequence[Any],
+    points_settings: Sequence[Mapping[str, Any]],
+    chart_type: str = "",
+    exclude_points: Optional[list[str]] = None,
+) -> dict[int, float]:
     """
-    Calculate the offset position of a celestial point on the chart.
+    Calculate position adjustments for degree indicators to prevent overlapping.
+
+    This helper is used by multiple indicator-drawing functions to spread
+    out degree labels that would otherwise overlap.
 
     Args:
-        seventh_house_degree (Union[int, float]): Degree of the seventh house.
-        point_degree (Union[int, float]): Degree of the celestial point.
-        adjustment (Union[int, float]): Adjustment value to prevent overlapping.
+        points_abs_positions: Absolute positions of all points.
+        points_settings: Settings for all points.
+        chart_type: Type of chart (used for filtering).
+        exclude_points: Point names to exclude from processing.
 
     Returns:
-        float: The calculated offset position.
+        Dictionary mapping point index to adjustment value.
     """
-    return (int(seventh_house_degree) / -1) + int(point_degree + adjustment)
+    position_adjustments: dict[int, float] = {i: 0.0 for i in range(len(points_settings))}
+    exclude_points = exclude_points or []
+
+    # Build position-to-index mapping (excluding filtered points)
+    position_index_map = {}
+    for i in range(len(points_settings)):
+        if chart_type == "Transit" and points_settings[i]["name"] in exclude_points:
+            continue
+        position_index_map[points_abs_positions[i]] = i
+
+    sorted_positions = sorted(position_index_map.keys())
+
+    # Identify groups of close points
+    point_groups: List[List[int]] = []
+    in_group = False
+
+    for pos_idx, abs_position in enumerate(sorted_positions):
+        point_a_idx = position_index_map[abs_position]
+        point_b_idx = position_index_map[
+            sorted_positions[0] if pos_idx == len(sorted_positions) - 1 else sorted_positions[pos_idx + 1]
+        ]
+
+        distance = degreeDiff(points_abs_positions[point_a_idx], points_abs_positions[point_b_idx])
+
+        if distance <= INDICATOR_GROUPING_THRESHOLD:
+            if in_group:
+                point_groups[-1].append(point_b_idx)
+            else:
+                point_groups.append([point_a_idx, point_b_idx])
+                in_group = True
+        else:
+            in_group = False
+
+    # Apply adjustments based on group size
+    for group in point_groups:
+        _apply_group_adjustments(group, position_adjustments)
+
+    return position_adjustments
+
+
+def _apply_group_adjustments(group: list[int], adjustments: dict[int, float]) -> None:
+    """
+    Apply position adjustments for a group of overlapping indicators.
+
+    Used for primary indicators (natal/single charts) and inner indicators (dual charts).
+    These adjustments provide wider spacing for better visual separation.
+
+    Args:
+        group: List of point indices that form an overlapping group.
+        adjustments: Dictionary to store the calculated adjustment values.
+    """
+    size = len(group)
+    if size == 2:
+        adjustments[group[0]] = -1.5
+        adjustments[group[1]] = 1.5
+    elif size == 3:
+        adjustments[group[0]] = -2.0
+        adjustments[group[1]] = 0.0
+        adjustments[group[2]] = 2.0
+    elif size == 4:
+        adjustments[group[0]] = -3.0
+        adjustments[group[1]] = -1.0
+        adjustments[group[2]] = 1.0
+        adjustments[group[3]] = 3.0
+    elif size >= 5:
+        spread = 1.5
+        mid = (size - 1) / 2
+        for i, idx in enumerate(group):
+            adjustments[idx] = (i - mid) * spread
+
+
+def _apply_secondary_group_adjustments(group: list[int], adjustments: dict[int, float]) -> None:
+    """
+    Apply position adjustments for a group of overlapping secondary/transit points.
+
+    Used specifically for secondary points (transit, synastry, return charts).
+    These adjustments use tighter spacing values that are appropriate for the
+    outer ring where transit planets are displayed.
+
+    Note: These values differ from _apply_group_adjustments to maintain
+    backward compatibility with the original chart rendering behavior.
+
+    Args:
+        group: List of point indices that form an overlapping group.
+        adjustments: Dictionary to store the calculated adjustment values.
+    """
+    size = len(group)
+    if size == 2:
+        # Tighter spacing for secondary points: -1.0/+1.0 instead of -1.5/+1.5
+        adjustments[group[0]] = -1.0
+        adjustments[group[1]] = 1.0
+    elif size == 3:
+        # Tighter spacing: -1.5/0/+1.5 instead of -2.0/0/+2.0
+        adjustments[group[0]] = -1.5
+        adjustments[group[1]] = 0.0
+        adjustments[group[2]] = 1.5
+    elif size == 4:
+        # Tighter spacing: -2.0/-1.0/+1.0/+2.0 instead of -3.0/-1.0/+1.0/+3.0
+        adjustments[group[0]] = -2.0
+        adjustments[group[1]] = -1.0
+        adjustments[group[2]] = 1.0
+        adjustments[group[3]] = 2.0
+    # Note: Groups of 5+ are not handled for secondary points in original code
+
+
+def _calculate_secondary_indicator_adjustments(
+    points_abs_positions: Sequence[Any],
+    points_settings: Sequence[Mapping[str, Any]],
+    chart_type: str = "",
+    exclude_points: Optional[list[str]] = None,
+) -> dict[int, float]:
+    """
+    Calculate position adjustments for secondary/transit point indicators.
+
+    This is similar to _calculate_indicator_adjustments but uses tighter spacing
+    values appropriate for the outer transit ring. The adjustment values match
+    the original implementation's behavior for transit/synastry/return charts.
+
+    Args:
+        points_abs_positions: Absolute positions of all points.
+        points_settings: Settings for all points.
+        chart_type: Type of chart (used for filtering).
+        exclude_points: Point names to exclude from processing.
+
+    Returns:
+        Dictionary mapping point index to adjustment value.
+    """
+    position_adjustments: dict[int, float] = {i: 0.0 for i in range(len(points_settings))}
+    exclude_points = exclude_points or []
+
+    # Build position-to-index mapping (excluding filtered points)
+    position_index_map = {}
+    for i in range(len(points_settings)):
+        if chart_type == "Transit" and points_settings[i]["name"] in exclude_points:
+            continue
+        position_index_map[points_abs_positions[i]] = i
+
+    sorted_positions = sorted(position_index_map.keys())
+
+    # Identify groups of close points
+    point_groups: List[List[int]] = []
+    in_group = False
+
+    for pos_idx, abs_position in enumerate(sorted_positions):
+        point_a_idx = position_index_map[abs_position]
+        point_b_idx = position_index_map[
+            sorted_positions[0] if pos_idx == len(sorted_positions) - 1 else sorted_positions[pos_idx + 1]
+        ]
+
+        distance = degreeDiff(points_abs_positions[point_a_idx], points_abs_positions[point_b_idx])
+
+        if distance <= INDICATOR_GROUPING_THRESHOLD:
+            if in_group:
+                point_groups[-1].append(point_b_idx)
+            else:
+                point_groups.append([point_a_idx, point_b_idx])
+                in_group = True
+        else:
+            in_group = False
+
+    # Apply secondary-specific adjustments (tighter spacing)
+    for group in point_groups:
+        _apply_secondary_group_adjustments(group, position_adjustments)
+
+    return position_adjustments
+
+
+def _calculate_text_rotation(
+    first_house_degree: float,
+    point_abs_position: float,
+) -> Tuple[float, str]:
+    """
+    Calculate text rotation angle and anchor for degree labels.
+
+    The text is rotated to follow the radial direction and flipped
+    when on the left side of the chart to ensure readability.
+
+    Args:
+        first_house_degree: Degree of the first house (Ascendant).
+        point_abs_position: Absolute position of the point.
+
+    Returns:
+        Tuple of (rotation_angle, text_anchor).
+    """
+    rotation = first_house_degree - point_abs_position
+    text_anchor = "end"
+
+    # Normalize rotation to [-180, 180] range
+    while rotation > 180:
+        rotation -= 360
+    while rotation < -180:
+        rotation += 360
+
+    # Flip text on left side of chart for readability
+    if rotation < -90 or rotation > 90:
+        rotation += 180 if rotation < 0 else -180
+        text_anchor = "start"
+
+    return rotation, text_anchor
+
+
+# =============================================================================
+# SVG RENDERING FUNCTIONS
+# =============================================================================
+
+
+def _generate_point_svg(
+    point_details: KerykeionPointModel,
+    x: float,
+    y: float,
+    scale: float,
+    point_name: str,
+) -> str:
+    """
+    Generate SVG markup for a celestial point.
+
+    Creates a group element containing the point symbol with proper
+    positioning, scaling, and metadata attributes.
+
+    Args:
+        point_details: Model containing point data.
+        x: X-coordinate for the point.
+        y: Y-coordinate for the point.
+        scale: Scale factor for the symbol.
+        point_name: Name used for the SVG symbol reference.
+
+    Returns:
+        SVG markup string for the celestial point.
+    """
+    svg = f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" '
+    svg += f'kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" '
+    svg += f'kr:signposition="{point_details["position"]}" kr:slug="{point_details["name"]}" '
+    svg += f'transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">'
+    svg += f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{point_name}" />'
+    svg += "</g>"
+    return svg
 
 
 def _draw_external_natal_lines(
@@ -411,59 +763,171 @@ def _draw_external_natal_lines(
     color: str,
 ) -> str:
     """
-    Draw connecting lines for external view charts.
+    Draw connecting lines for external view mode.
 
-    Creates two line segments: one from the circle to the original position,
-    and another from the original position to the adjusted position.
+    Creates two line segments: one from the chart circle to the true
+    position, and another from there to the adjusted (visual) position.
 
     Args:
-        output (str): The SVG output string to append to.
-        radius (Union[int, float]): Chart radius.
-        third_circle_radius (Union[int, float]): Radius of the third circle.
-        point_radius (Union[int, float]): Radius of the celestial point.
-        true_offset (Union[int, float]): True position offset.
-        adjusted_offset (Union[int, float]): Adjusted position offset.
-        color (str): Line color.
+        output: Current SVG output to append to.
+        radius: Chart radius.
+        third_circle_radius: Inner circle radius.
+        point_radius: Point placement radius.
+        true_offset: True angular position.
+        adjusted_offset: Visually adjusted position.
+        color: Line color.
 
     Returns:
-        str: Updated SVG output with added line elements.
+        Updated SVG output with added lines.
     """
-    # First line - from circle to outer position
+    # First line: from chart edge to intermediate position
     x1 = sliceToX(0, radius - third_circle_radius, true_offset) + third_circle_radius
     y1 = sliceToY(0, radius - third_circle_radius, true_offset) + third_circle_radius
     x2 = sliceToX(0, radius - point_radius - 30, true_offset) + point_radius + 30
     y2 = sliceToY(0, radius - point_radius - 30, true_offset) + point_radius + 30
-    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke-width:1px;stroke:{color};stroke-opacity:.3;"/>\n'
+    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+    output += f'style="stroke-width:1px;stroke:{color};stroke-opacity:.3;"/>\n'
 
-    # Second line - from outer position to adjusted position
-    x1 = x2
-    y1 = y2
+    # Second line: from intermediate to final adjusted position
+    x1, y1 = x2, y2
     x2 = sliceToX(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
     y2 = sliceToY(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
-    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke-width:1px;stroke:{color};stroke-opacity:.5;"/>\n'
+    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+    output += f'style="stroke-width:1px;stroke:{color};stroke-opacity:.5;"/>\n'
 
     return output
 
 
-def _generate_point_svg(point_details: KerykeionPointModel, x: float, y: float, scale: float, point_name: str) -> str:
+# =============================================================================
+# DEGREE INDICATOR FUNCTIONS
+# =============================================================================
+
+
+def _draw_primary_point_indicators(
+    output: str,
+    radius: Union[int, float],
+    first_circle_radius: Union[int, float],
+    third_circle_radius: Union[int, float],
+    first_house_degree: Union[int, float],
+    seventh_house_degree: Union[int, float],
+    points_abs_positions: list[Union[int, float]],
+    points_rel_positions: list[Union[int, float]],
+    points_settings: Sequence[Mapping[str, Any]],
+) -> str:
     """
-    Generate the SVG element for a celestial point.
+    Draw degree indicators for primary points in single-subject charts.
+
+    Each indicator consists of a radial line at the point's position
+    and a rotated text label showing the degree within the sign.
 
     Args:
-        point_details (KerykeionPointModel): Details about the celestial point.
-        x (float): X-coordinate for the point.
-        y (float): Y-coordinate for the point.
-        scale (float): Scale factor for the point.
-        point_name (str): Name of the celestial point.
+        output: Current SVG output to append to.
+        radius: Chart radius.
+        first_circle_radius: Outer zodiac ring radius.
+        third_circle_radius: Inner boundary radius.
+        first_house_degree: Ascendant degree.
+        seventh_house_degree: Descendant degree.
+        points_abs_positions: Absolute positions of points.
+        points_rel_positions: Positions within signs.
+        points_settings: Display settings for points.
 
     Returns:
-        str: SVG element for the celestial point.
+        Updated SVG output with added indicators.
     """
-    svg = f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" kr:signposition="{point_details["position"]}" '
-    svg += f'kr:slug="{point_details["name"]}" transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">'
-    svg += f'<use x="{x * (1/scale)}" y="{y * (1/scale)}" xlink:href="#{point_name}" />'
-    svg += "</g>"
-    return svg
+    # Calculate adjustments for overlapping indicators
+    position_adjustments = _calculate_indicator_adjustments(points_abs_positions, points_settings)
+    zero_point = 360 - seventh_house_degree
+
+    for point_idx in range(len(points_settings)):
+        point_offset = zero_point + points_abs_positions[point_idx]
+        if point_offset > 360:
+            point_offset -= 360
+
+        # Draw radial indicator line
+        x1 = sliceToX(0, radius - first_circle_radius + 4, point_offset) + first_circle_radius - 4
+        y1 = sliceToY(0, radius - first_circle_radius + 4, point_offset) + first_circle_radius - 4
+        x2 = sliceToX(0, radius - first_circle_radius - 4, point_offset) + first_circle_radius + 4
+        y2 = sliceToY(0, radius - first_circle_radius - 4, point_offset) + first_circle_radius + 4
+
+        point_color = points_settings[point_idx]["color"]
+        output += f'<line class="planet-degree-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+        output += f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
+
+        # Draw degree text (always horizontal for readability)
+        adjusted_point_offset = point_offset + position_adjustments[point_idx]
+        text_radius = first_circle_radius - 10.0
+
+        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
+
+        degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
+        output += f'<g transform="translate({deg_x},{deg_y})">'
+        output += f'<text text-anchor="middle" dominant-baseline="middle" '
+        output += f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
+
+    return output
+
+
+def _draw_inner_point_indicators(
+    output: str,
+    radius: Union[int, float],
+    third_circle_radius: Union[int, float],
+    first_house_degree: Union[int, float],
+    seventh_house_degree: Union[int, float],
+    points_abs_positions: list[Union[int, float]],
+    points_rel_positions: list[Union[int, float]],
+    points_settings: Sequence[Mapping[str, Any]],
+) -> str:
+    """
+    Draw degree indicators for inner/natal points in dual-subject charts.
+
+    Similar to primary indicators but positioned on the inner boundary
+    between the natal planet ring and the zodiac signs.
+
+    Args:
+        output: Current SVG output.
+        radius: Chart radius.
+        third_circle_radius: Inner boundary radius.
+        first_house_degree: Ascendant degree.
+        seventh_house_degree: Descendant degree.
+        points_abs_positions: Absolute positions.
+        points_rel_positions: Sign positions.
+        points_settings: Display settings.
+
+    Returns:
+        Updated SVG output with indicators.
+    """
+    position_adjustments = _calculate_indicator_adjustments(points_abs_positions, points_settings)
+    zero_point = 360 - seventh_house_degree
+
+    for point_idx in range(len(points_settings)):
+        point_offset = zero_point + points_abs_positions[point_idx]
+        if point_offset > 360:
+            point_offset -= 360
+
+        # Draw radial line at inner boundary
+        x1 = sliceToX(0, radius - NATAL_INDICATOR_OFFSET + 4, point_offset) + NATAL_INDICATOR_OFFSET - 4
+        y1 = sliceToY(0, radius - NATAL_INDICATOR_OFFSET + 4, point_offset) + NATAL_INDICATOR_OFFSET - 4
+        x2 = sliceToX(0, radius - NATAL_INDICATOR_OFFSET - 4, point_offset) + NATAL_INDICATOR_OFFSET + 4
+        y2 = sliceToY(0, radius - NATAL_INDICATOR_OFFSET - 4, point_offset) + NATAL_INDICATOR_OFFSET + 4
+
+        point_color = points_settings[point_idx]["color"]
+        output += f'<line class="planet-degree-line-inner" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+        output += f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
+
+        # Draw degree text (always horizontal, positioned toward center)
+        adjusted_point_offset = point_offset + position_adjustments[point_idx]
+        text_radius = NATAL_INDICATOR_OFFSET + 5.0
+
+        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
+
+        degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
+        output += f'<g transform="translate({deg_x},{deg_y})">'
+        output += f'<text text-anchor="middle" dominant-baseline="middle" '
+        output += f'style="fill: {point_color}; font-size: 8px;">{degree_text}</text></g>'
+
+    return output
 
 
 def _draw_secondary_points(
@@ -473,98 +937,60 @@ def _draw_secondary_points(
     seventh_house_degree: Union[int, float],
     points_abs_positions: list[Union[int, float]],
     points_rel_positions: list[Union[int, float]],
-    points_settings: list[KerykeionSettingsCelestialPointModel],
+    points_settings: Sequence[Mapping[str, Any]],
     chart_type: str,
     exclude_points: list[str],
     main_offset: float,
 ) -> str:
     """
-    Draw secondary celestial points (transit/synastry/return) on the chart.
+    Draw secondary celestial points for transit/synastry charts.
+
+    Renders the outer ring of planets (transit positions) with symbols,
+    connecting lines, and degree indicators.
 
     Args:
-        output (str): Current SVG output to append to.
-        radius (Union[int, float]): Chart radius.
-        first_house_degree (Union[int, float]): Degree of the first house.
-        seventh_house_degree (Union[int, float]): Degree of the seventh house.
-        points_abs_positions (list[Union[int, float]]): Absolute positions of points.
-        points_rel_positions (list[Union[int, float]]): Relative positions of points.
-        points_settings (list[KerykeionSettingsCelestialPointModel]): Settings for points.
-        chart_type (str): Type of chart.
-        exclude_points (list[str]): List of point names to exclude.
-        main_offset (float): Offset position for the main point.
+        output: Current SVG output.
+        radius: Chart radius.
+        first_house_degree: Ascendant degree.
+        seventh_house_degree: Descendant degree.
+        points_abs_positions: Absolute positions of secondary points.
+        points_rel_positions: Positions within signs.
+        points_settings: Display settings.
+        chart_type: Type of chart.
+        exclude_points: Points to exclude from rendering.
+        main_offset: Offset for connecting line drawing.
 
     Returns:
-        str: Updated SVG output with added secondary points.
+        Updated SVG output with secondary points.
     """
-    # Initialize position adjustments for grouped points
-    position_adjustments: dict[int, float] = {i: 0.0 for i in range(len(points_settings))}
+    # Calculate position adjustments using secondary-specific spacing values
+    # This differs from _calculate_indicator_adjustments which uses wider spacing
+    position_adjustments = _calculate_secondary_indicator_adjustments(
+        points_abs_positions, points_settings, chart_type, exclude_points
+    )
 
-    # Map absolute position to point index
+    # Build position map (excluding houses for Transit)
     position_index_map = {}
     for i in range(len(points_settings)):
         if chart_type == "Transit" and points_settings[i]["name"] in exclude_points:
             continue
         position_index_map[points_abs_positions[i]] = i
 
-    # Sort positions
     sorted_positions = sorted(position_index_map.keys())
-
-    # Find groups of points that are close to each other
-    point_groups: List[List[int]] = []
-    in_group = False
-
-    for pos_idx, abs_position in enumerate(sorted_positions):
-        point_a_idx = position_index_map[abs_position]
-
-        # Get next point
-        if pos_idx == len(sorted_positions) - 1:
-            point_b_idx = position_index_map[sorted_positions[0]]
-        else:
-            point_b_idx = position_index_map[sorted_positions[pos_idx + 1]]
-
-        # Check distance between points
-        position_a = points_abs_positions[point_a_idx]
-        position_b = points_abs_positions[point_b_idx]
-        distance = degreeDiff(position_a, position_b)
-
-        # Group points that are close
-        if distance <= 2.5:
-            if in_group:
-                point_groups[-1].append(point_b_idx)
-            else:
-                point_groups.append([point_a_idx])
-                point_groups[-1].append(point_b_idx)
-                in_group = True
-        else:
-            in_group = False
-
-    # Set position adjustments for grouped points
-    for group in point_groups:
-        if len(group) == 2:
-            position_adjustments[group[0]] = -1.0
-            position_adjustments[group[1]] = 1.0
-        elif len(group) == 3:
-            position_adjustments[group[0]] = -1.5
-            position_adjustments[group[1]] = 0.0
-            position_adjustments[group[2]] = 1.5
-        elif len(group) == 4:
-            position_adjustments[group[0]] = -2.0
-            position_adjustments[group[1]] = -1.0
-            position_adjustments[group[2]] = 1.0
-            position_adjustments[group[3]] = 2.0
+    zero_point = 360 - seventh_house_degree
+    alternate_position = False
+    point_idx = 0
 
     # Draw each secondary point
-    alternate_position = False
-    point_idx = 0  # Initialize for use outside loop
-
-    for pos_idx, abs_position in enumerate(sorted_positions):
+    for abs_position in sorted_positions:
         point_idx = position_index_map[abs_position]
 
         if chart_type == "Transit" and points_settings[point_idx]["name"] in exclude_points:
             continue
 
-        # Determine radius based on point type
-        if 22 < point_idx < 27:  # Chart angles
+        # Determine point radius (alternating for visual separation)
+        is_chart_angle = CHART_ANGLE_MIN_INDEX < point_idx < CHART_ANGLE_MAX_INDEX
+        if is_chart_angle:
             point_radius = 9
         elif alternate_position:
             point_radius = 18
@@ -574,7 +1000,6 @@ def _draw_secondary_points(
             alternate_position = True
 
         # Calculate position
-        zero_point = 360 - seventh_house_degree
         point_offset = zero_point + points_abs_positions[point_idx]
         if point_offset > 360:
             point_offset -= 360
@@ -583,75 +1008,47 @@ def _draw_secondary_points(
         point_x = sliceToX(0, radius - point_radius, point_offset) + point_radius
         point_y = sliceToY(0, radius - point_radius, point_offset) + point_radius
         output += '<g class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)">'
-        output += f'<use x="{point_x*2}" y="{point_y*2}" xlink:href="#{points_settings[point_idx]["name"]}" /></g></g>'
+        output += (
+            f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{points_settings[point_idx]["name"]}" /></g></g>'
+        )
 
-        # Draw connecting line
+        # Draw indicator line
         x1 = sliceToX(0, radius + 3, point_offset) - 3
         y1 = sliceToY(0, radius + 3, point_offset) - 3
         x2 = sliceToX(0, radius - 3, point_offset) + 3
         y2 = sliceToY(0, radius - 3, point_offset) + 3
+        point_color = points_settings[point_idx]["color"]
         output += f'<line class="transit-planet-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-        output += f'style="stroke: {points_settings[point_idx]["color"]}; stroke-width: 1px; stroke-opacity:.8;"/>'
+        output += f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
-        # Draw degree text with rotation
-        rotation = first_house_degree - points_abs_positions[point_idx]
-        text_anchor = "end"
-
-        # Adjust text rotation and anchor for readability
-        if -90 > rotation > -270:
-            rotation += 180.0
-            text_anchor = "start"
-        if 270 > rotation > 90:
-            rotation -= 180.0
-            text_anchor = "start"
-
-        # Position the degree text
-        x_offset = 1 if text_anchor == "end" else -1
+        # Draw degree text (always horizontal for readability)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
-        text_radius = -3.0
+        text_radius = -9.0
 
-        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset + x_offset) + text_radius
-        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset + x_offset) + text_radius
+        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
 
-        # Format and output the degree text
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
         output += f'<g transform="translate({deg_x},{deg_y})">'
-        output += f'<text transform="rotate({rotation})" text-anchor="{text_anchor}" '
-        output += f'style="fill: {points_settings[point_idx]["color"]}; font-size: 10px;">{degree_text}</text></g>'
+        output += f'<text text-anchor="middle" dominant-baseline="middle" '
+        output += f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
 
-    # Draw connecting lines for the main point
-    dropin = 0
-    if chart_type == "Transit":
-        dropin = 36
-    elif chart_type == "Synastry":
-        dropin = 36
-    elif chart_type == "Return":
-        dropin = 36
-
-    # First connecting line segment
+    # Draw connecting lines for the main reference point
+    dropin = 36 if chart_type in DUAL_CHART_TYPES else 0
     x1 = sliceToX(0, radius - (dropin + 3), main_offset) + (dropin + 3)
     y1 = sliceToY(0, radius - (dropin + 3), main_offset) + (dropin + 3)
     x2 = sliceToX(0, radius - (dropin - 3), main_offset) + (dropin - 3)
     y2 = sliceToY(0, radius - (dropin - 3), main_offset) + (dropin - 3)
-
     point_color = points_settings[point_idx]["color"]
     output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
     output += f'style="stroke: {point_color}; stroke-width: 2px; stroke-opacity:.6;"/>'
 
     # Second connecting line segment
-    dropin = 120
-    if chart_type == "Transit":
-        dropin = 160
-    elif chart_type == "Synastry":
-        dropin = 160
-    elif chart_type == "Return":
-        dropin = 160
-
+    dropin = 160 if chart_type in DUAL_CHART_TYPES else 120
     x1 = sliceToX(0, radius - dropin, main_offset) + dropin
     y1 = sliceToY(0, radius - dropin, main_offset) + dropin
     x2 = sliceToX(0, radius - (dropin - 3), main_offset) + (dropin - 3)
     y2 = sliceToY(0, radius - (dropin - 3), main_offset) + (dropin - 3)
-
     output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
     output += f'style="stroke: {point_color}; stroke-width: 2px; stroke-opacity:.6;"/>'
 

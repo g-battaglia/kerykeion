@@ -1,180 +1,88 @@
-# House Comparison Module
+---
+title: 'House Comparison'
+description: 'Explore house overlays and synastry dynamics with the House Comparison Factory. Bidirectional analysis of where planets fall in a partner’s houses.'
+category: 'Analysis'
+tags: ['docs', 'houses', 'synastry', 'comparison', 'kerykeion']
+order: 9
+---
 
-Analyzes placement of astrological points from one subject within another subject's house system. Essential for synastry analysis and chart comparisons.
+# House Comparison
 
-The module performs **bidirectional analysis**: it calculates where each subject's planets fall in the other subject's houses, providing insights into how planetary energies interact with different life areas between two people.
+The `HouseComparisonFactory` performs a bidirectional analysis of where one subject's planets fall within another subject's houses (synastry overlays).
 
-## How It Works
+## Usage
 
-The house comparison takes the planetary positions of one subject and projects them onto the house system of another subject. This reveals which areas of life (houses) are activated by each person's planetary influences in a relationship or comparison.
-
-For example, if Person A's Venus falls in Person B's 7th house, it suggests that Person A's love nature activates Person B's partnership sector.
-
-## Basic Usage
+Initialize the factory with two subjects to generate a bidirectional comparison report showing planet-in-house placements.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.house_comparison import HouseComparisonFactory
 
-# Create two subjects for comparison
-person_a = AstrologicalSubjectFactory.from_birth_data(
-    "Person A", 1990, 5, 15, 10, 30,
-    lng=12.4964,
-    lat=41.9028,
-    tz_str="Europe/Rome",
-    online=False,
-)
-person_b = AstrologicalSubjectFactory.from_birth_data(
-    "Person B", 1992, 8, 23, 14, 45,
-    lng=9.19,
-    lat=45.4642,
-    tz_str="Europe/Rome",
-    online=False,
-)
+# 1. Create Subjects
+person_a = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 5, 15, 10, 30, "Rome", "IT")
+person_b = AstrologicalSubjectFactory.from_birth_data("Bob", 1992, 8, 23, 14, 45, "Milan", "IT")
 
-# Generate bidirectional house comparison
+# 2. Generate Comparison
 factory = HouseComparisonFactory(person_a, person_b)
 comparison = factory.get_house_comparison()
 
-# Show Person A points in Person B houses
-print("Person A planets in Person B houses:")
+# 3. Access Data
+# Where Alice's planets fall in Bob's chart
 for point in comparison.first_points_in_second_houses:
-    print(f"Person A {point.point_name} in Person B {point.projected_house_name}")
+    print(f"Alice's {point.point_name} -> Bob's {point.projected_house_name}")
 
-print("\nPerson B planets in Person A houses:")
+# Where Bob's planets fall in Alice's chart
 for point in comparison.second_points_in_first_houses:
-    print(f"Person B {point.point_name} in Person A {point.projected_house_name}")
+    print(f"Bob's {point.point_name} -> Alice's {point.projected_house_name}")
 ```
 
-**Output example (Person A points in Person B houses):**
-```
-Person A Sun in Person B Sixth_House
-Person A Moon in Person B Second_House
-Person A Mercury in Person B Fifth_House
-Person A Venus in Person B Fourth_House
-Person A Mars in Person B Third_House
-```
+## Data Structure
 
-## Custom Points
+The `HouseComparisonModel` contains:
 
-You can specify which astrological points to analyze instead of using all available points. This is useful for focused analysis or performance optimization.
+**Point Comparisons:**
+
+- `first_points_in_second_houses`: Subject A's points projected into Subject B's houses.
+- `second_points_in_first_houses`: Subject B's points projected into Subject A's houses.
+
+**Cusp Comparisons:**
+
+- `first_cusps_in_second_houses`: Subject A's house cusps projected into Subject B's houses.
+- `second_cusps_in_first_houses`: Subject B's house cusps projected into Subject A's houses.
+
+Each point model includes:
+
+- `point_name`: Name of the planet/point (e.g. "Sun").
+- `projected_house_name`: Name of the house it falls into (e.g. "Seventh_House").
+- `projected_house_number`: Number of the house (1-12).
+- `point_abs_pos`: Absolute position of the point.
+
+## Constructor Parameters
+
+| Parameter        | Type                       | Default     | Description                    |
+| :--------------- | :------------------------- | :---------- | :----------------------------- |
+| `first_subject`  | `AstrologicalSubjectModel` | Required    | First subject for comparison.  |
+| `second_subject` | `AstrologicalSubjectModel` | Required    | Second subject for comparison. |
+| `active_points`  | `List[AstrologicalPoint]`  | All planets | Points to include in analysis. |
+
+## Utility Functions
+
+Import from: `kerykeion.house_comparison.house_comparison_utils`
+
+Lower-level functions used by the factory, useful for custom analysis pipelines.
+
+| Function                                                      | Description                                          |
+| :------------------------------------------------------------ | :--------------------------------------------------- |
+| `calculate_points_in_reciprocal_houses(subject_a, subject_b)` | Calculates where A's planets fall in B's houses.     |
+| `calculate_cusps_in_reciprocal_houses(subject_a, subject_b)`  | Calculates where A's house cusps fall in B's houses. |
 
 ```python
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.house_comparison import HouseComparisonFactory
+from kerykeion.house_comparison.house_comparison_utils import calculate_points_in_reciprocal_houses
 
-person_a = AstrologicalSubjectFactory.from_birth_data(
-    "Person A", 1990, 5, 15, 10, 30,
-    lng=12.4964,
-    lat=41.9028,
-    tz_str="Europe/Rome",
-    online=False,
-)
-person_b = AstrologicalSubjectFactory.from_birth_data(
-    "Person B", 1992, 8, 23, 14, 45,
-    lng=9.19,
-    lat=45.4642,
-    tz_str="Europe/Rome",
-    online=False,
-)
-
-# Use specific points only - traditional planets
-traditional_planets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"]
-factory = HouseComparisonFactory(person_a, person_b, active_points=traditional_planets)
-comparison = factory.get_house_comparison()
-
-# Focus on personal planets for relationship analysis
-personal_planets = ["Sun", "Moon", "Venus", "Mars"]
-factory_personal = HouseComparisonFactory(person_a, person_b, active_points=personal_planets)
-comparison_personal = factory_personal.get_house_comparison()
-
-# Check specific planet placements
-for point in comparison_personal.first_points_in_second_houses:
-    if point.point_name == "Venus":
-        print(f"Person A's Venus activates Person B's {point.projected_house_name}")
-        print(f"Located at {point.point_degree}° {point.point_sign}")
+# Returns List[PointInHouseModel]
+points = calculate_points_in_reciprocal_houses(person_a, person_b)
 ```
-
-## Data Access
-
-The comparison results are organized in two directions, allowing you to see both perspectives of the relationship.
-
-```python
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.house_comparison import HouseComparisonFactory
-
-person_a = AstrologicalSubjectFactory.from_birth_data(
-    "Person A", 1990, 5, 15, 10, 30,
-    lng=12.4964,
-    lat=41.9028,
-    tz_str="Europe/Rome",
-    online=False,
-)
-person_b = AstrologicalSubjectFactory.from_birth_data(
-    "Person B", 1992, 8, 23, 14, 45,
-    lng=9.19,
-    lat=45.4642,
-    tz_str="Europe/Rome",
-    online=False,
-)
-comparison = HouseComparisonFactory(person_a, person_b).get_house_comparison()
-
-# Access both directions of the analysis
-person_a_in_b = comparison.first_points_in_second_houses  # Person A points in Person B houses
-person_b_in_a = comparison.second_points_in_first_houses  # Person B points in Person A houses
-
-# Group planets by house for easier analysis
-house_activations = {}
-for point in person_a_in_b:
-    house = point.projected_house_name
-    if house not in house_activations:
-        house_activations[house] = []
-    house_activations[house].append(point.point_name)
-
-print("Person A planets grouped by Person B houses:")
-for house, planets in house_activations.items():
-    print(f"{house}: {', '.join(planets)}")
-
-# Export all data to JSON for further analysis
-json_data = comparison.model_dump_json(indent=2)
-with open("house_comparison_results.json", "w") as f:
-    f.write(json_data)
-```
-
-**Example output:**
-```
-Person A planets grouped by Person B houses:
-Second_House: Moon, Jupiter
-Third_House: Mars
-Fourth_House: Venus
-Fifth_House: Mercury
-Sixth_House: Sun
-Seventh_House: Saturn
-```
-
-Each point result includes detailed information:
-- `point_name`: The astrological point (e.g., "Sun", "Moon")
-- `projected_house_name`: The house where the point falls
-- `point_degree`: Exact degree position
-- `point_sign`: Zodiac sign of the point
 
 ---
 
-*This module is part of the Kerykeion astrological framework.*
-
-## Use Cases
-
-- **Synastry Analysis**: Understand how partners influence each other's life areas
-- **Composite Charts**: Analyze blended relationship dynamics  
-- **Transit Analysis**: See how current planetary positions affect personal houses
-- **Compatibility Studies**: Evaluate relationship potential through house overlays
-
-## Synastry Integration
-
-This module is complementary to `AspectsFactory` for complete synastry analysis. While house comparison reveals where planetary energies are activated in each person's life areas, dual chart aspects show how the planets interact with each other through geometric relationships.
-
-For a comprehensive relationship analysis, use both modules together:
-- **House Comparison**: Shows planetary placements and life area activations
-- **Dual Chart Aspects**: Reveals planetary interactions and compatibility patterns
-
-Refer to the `AspectsFactory` module documentation for details on aspect analysis.
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

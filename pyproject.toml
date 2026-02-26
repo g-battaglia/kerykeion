@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "5.1.12"
+version = "5.8.1"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -68,6 +68,15 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["kerykeion"]
 
+[tool.hatch.build.targets.sdist]
+include = [
+    "/kerykeion",
+    "/README.md",
+    "/LICENSE",
+    "/pyproject.toml",
+    "/MANIFEST.in",
+]
+
 # MyPy Static Analysis
 [tool.mypy]
 ignore_missing_imports = true
@@ -82,7 +91,7 @@ testpaths = "tests"
 log_level = 20
 log_date_format = "%Y-%m-%d %H:%M:%S"
 log_format = "%(asctime)s %(levelname)s %(message)s"
-addopts = "--cov=kerykeion --cov-report=html --cov-report=term --cov-report=xml"
+addopts = ""
 
 # Coverage Configuration
 [tool.coverage.run]
@@ -93,6 +102,8 @@ omit = [
     "*/__pycache__/*",
     "*/sweph/*",  # Swiss Ephemeris library files
     "setup.py",
+    "**/draw_planets_legacy.py",  # Legacy code, not used
+    "kerykeion/charts/draw_planets_legacy.py",  # Legacy code, not used
 ]
 
 [tool.coverage.report]
@@ -117,25 +128,150 @@ directory = "htmlcov"
 
 # Task Runner
 [tool.poe.tasks]
+# Test
 test = "pytest"
-test-no-capture = "pytest --show-capture no"
-test-nocharts = "pytest --ignore-glob='*chart*.py'"
-test-cov = "pytest --cov=kerykeion --cov-report=html --cov-report=term"
-test-cov-xml = "pytest --cov=kerykeion --cov-report=xml"
-coverage-report = "coverage report"
-coverage-html = "coverage html"
-coverage-erase = "coverage erase"
-analize = "mypy"
-docs = "pdoc kerykeion -o ./docs"
+"test:cov" = "pytest --cov=kerykeion --cov-config=pyproject.toml --cov-report=html --cov-report=term --cov-report=xml"
+"test:cov-xml" = "pytest --cov=kerykeion --cov-report=xml"
+"test:nocharts" = "pytest --ignore-glob='*chart*.py'"
+"test:core" = "pytest tests/core/ -v"
+"test:aspects" = "pytest tests/aspects/ -v"
+"test:factories" = "pytest tests/factories/ -v"
+"test:charts" = "pytest tests/charts/ -v"
+"test:quick" = "pytest tests/core/ tests/aspects/ -v --ignore=tests/charts/"
+"test:fast" = "pytest -n auto"
+"test:fast:cov" = "pytest -n auto --cov=kerykeion --cov-config=pyproject.toml --cov-report=html --cov-report=term --cov-report=xml"
+
+# Code Quality
+lint = "ruff check"
 format = "ruff format"
 "format:all" = "ruff format kerykeion tests"
-lint = "ruff check"
+analyze = "mypy"
+typecheck = "pyright"
+
+[tool.poe.tasks.check]
+sequence = ["lint", "analyze", "typecheck", "test"]
+help = "Run all quality checks (lint, analyze, typecheck, test)"
 
 [tool.poe.tasks.quality]
 script = "scripts.quality_check:main"
+help = "Run quality check script"
+
+# Documentation
+[tool.poe.tasks.docs]
+cmd = "pdoc kerykeion -o ./docs"
+help = "Generate API documentation"
+
+[tool.poe.tasks."docs:check"]
+cmd = "python scripts/check_documentation_coverage.py"
+help = "Audit documentation coverage"
+
+[tool.poe.tasks."docs:snippets"]
+cmd = "python scripts/test_markdown_snippets.py"
+help = "Test Python snippets in markdown files"
+
+# Regenerate Test Fixtures
+[tool.poe.tasks."regenerate:charts"]
+cmd = "python scripts/regenerate_test_charts.py"
+help = "Regenerate test SVG charts"
+
+[tool.poe.tasks."regenerate:aspects"]
+cmd = "python scripts/regenerate_expected_aspects.py"
+help = "Regenerate expected aspects"
+
+[tool.poe.tasks."regenerate:subjects"]
+cmd = "python scripts/regenerate_expected_subjects.py"
+help = "Regenerate expected subjects"
+
+[tool.poe.tasks."regenerate:synastry-aspects"]
+cmd = "python scripts/regenerate_synastry_aspects.py"
+help = "Regenerate synastry aspects"
+
+[tool.poe.tasks."regenerate:synastry"]
+cmd = "python scripts/regenerate_synastry_from_test.py"
+help = "Regenerate synastry from test"
+
+[tool.poe.tasks."regenerate:output"]
+cmd = "python scripts/regenerate_test_output.py"
+help = "Regenerate test output"
+
+[tool.poe.tasks."regenerate:positions"]
+cmd = "python scripts/regenerate_all.py --positions"
+help = "Regenerate expected positions from test matrix"
+
+[tool.poe.tasks."regenerate:matrix-aspects"]
+cmd = "python scripts/regenerate_all.py --aspects"
+help = "Regenerate expected aspects from test matrix"
+
+[tool.poe.tasks."regenerate:charts-extended"]
+cmd = "python scripts/regenerate_test_charts_extended.py"
+help = "Regenerate extended test SVG charts (strawberry theme, combinations)"
+
+[tool.poe.tasks."regenerate:all"]
+sequence = ["regenerate:unified", "regenerate:charts-extended", "regenerate:aspects", "regenerate:synastry-aspects", "regenerate:synastry", "regenerate:output"]
+help = "Regenerate all test fixtures"
+
+[tool.poe.tasks."regenerate:unified"]
+cmd = "python scripts/regenerate_all.py --all"
+help = "Regenerate all test baselines using unified script"
+
+# Utilities
+[tool.poe.tasks.clean]
+cmd = "rm -rf dist build *.egg-info htmlcov .coverage .coverage.* coverage.xml .pytest_cache .mypy_cache .ruff_cache"
+help = "Clean build artifacts and caches"
 
 [tool.ruff]
 line-length = 120
+
+[tool.ruff.lint]
+# Enable pyflakes (F) and pycodestyle (E, W) rules
+select = [
+    "F",      # Pyflakes - logic errors, undefined names, unused imports
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+]
+
+# Ignore rules that conflict with project structure
+ignore = [
+    "E402",   # Module level import not at top of file (needed for some modules)
+    "E501",   # Line too long (handled by line-length setting)
+    "E731",   # Do not assign a lambda expression, use a def (stylistic choice)
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Backward compatibility module uses import * intentionally
+"kerykeion/backword.py" = ["F405", "F403", "F401"]
+# Settings re-exports symbols intentionally
+"kerykeion/settings/__init__.py" = ["F401", "F403"]
+# Schemas re-exports for public API
+"kerykeion/schemas/__init__.py" = ["F401", "F403"]
+# Types re-exports for public API
+"kerykeion/kr_types/__init__.py" = ["F405", "F403", "F401"]
+
+# Pyright Static Type Checking
+[tool.pyright]
+include = ["kerykeion"]
+exclude = [
+    "tests",
+    "examples",
+    "workspace",
+    "scripts",
+    "**/__pycache__",
+    ".venv",
+    "dist",
+    "build",
+    "*.egg-info"
+]
+typeCheckingMode = "basic"
+pythonVersion = "3.9"
+pythonPlatform = "All"
+venvPath = "."
+venv = ".venv"
+reportOptionalMemberAccess = "none"
+reportIncompatibleVariableOverride = "none"
+reportArgumentType = "none"
+reportInvalidTypeForm = "error"
+reportAttributeAccessIssue = "error"
+reportGeneralTypeIssues = "none"
 
 [dependency-groups]
 dev = [
@@ -143,8 +279,10 @@ dev = [
     "mypy>=1.17.1",
     "pdoc>=15.0.4",
     "poethepoet>=0.36.0",
+    "pyright>=1.1.408",
     "pytest>=8.4.1",
     "pytest-cov>=6.0.0",
+    "pytest-xdist>=3.5.0",
     "ruff>=0.12.9",
     "types-pytz>=2025.2.0.20250516",
     "types-requests>=2.32.4.20250611",

@@ -73,3 +73,9 @@ workspace/*
 !workspace/main.py
 .swp
 John Lennon - Synastry Chart.svg
+Swiss Ephemeris
+test-refactoring-proposal.md
+sync-docs.sh
+*.bsp
+.env
+.opencode/plans

@@ -34,11 +34,7 @@ from typing import Mapping, Union, Optional, List, Literal, cast
 from kerykeion.aspects import AspectsFactory
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
 from kerykeion.relationship_score_factory import RelationshipScoreFactory
-from kerykeion.schemas import (
-    KerykeionException,
-    ChartType,
-    ActiveAspect
-)
+from kerykeion.schemas import KerykeionException, ChartType, ActiveAspect
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     CompositeSubjectModel,
@@ -49,7 +45,7 @@ from kerykeion.schemas.kr_models import (
     QualityDistributionModel,
     SingleChartDataModel,
     DualChartDataModel,
-    ChartDataModel
+    ChartDataModel,
 )
 from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
 from kerykeion.schemas.kr_literals import (
@@ -65,7 +61,6 @@ from kerykeion.charts.charts_utils import (
     calculate_synastry_element_points,
     calculate_synastry_quality_points,
 )
-
 
 
 class ChartDataFactory:
@@ -101,7 +96,7 @@ class ChartDataFactory:
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         include_house_comparison: bool = True,
-        include_relationship_score: bool = True,
+        include_relationship_score: bool = False,
         *,
         axis_orb_limit: Optional[float] = None,
         distribution_method: ElementQualityDistributionMethod = "weighted",
@@ -146,17 +141,11 @@ class ChartDataFactory:
         if not active_points:
             effective_active_points = first_subject.active_points
         else:
-            effective_active_points = find_common_active_points(
-                active_points,
-                first_subject.active_points
-            )
+            effective_active_points = find_common_active_points(active_points, first_subject.active_points)
 
         # For dual charts, further filter by second subject's active points
         if second_subject:
-            effective_active_points = find_common_active_points(
-                effective_active_points,
-                second_subject.active_points
-            )
+            effective_active_points = find_common_active_points(effective_active_points, second_subject.active_points)
 
         # Calculate aspects based on chart type
         aspects_model: Union[SingleChartAspectsModel, DualChartAspectsModel]
@@ -172,29 +161,48 @@ class ChartDataFactory:
             # Dual chart aspects - second_subject is guaranteed to exist here due to validation above
             if second_subject is None:
                 raise KerykeionException(f"Second subject is required for {chart_type} charts.")
+
+            # Determine if subjects are fixed based on chart type
+            first_subject_is_fixed = False
+            second_subject_is_fixed = False
+
+            if chart_type == "Synastry":
+                first_subject_is_fixed = True
+                second_subject_is_fixed = True
+            elif chart_type == "Transit":
+                first_subject_is_fixed = True  # Natal chart is fixed
+                second_subject_is_fixed = False  # Transit chart is moving
+            elif chart_type == "DualReturnChart":
+                first_subject_is_fixed = True  # Natal chart is fixed
+                second_subject_is_fixed = False  # Return chart is moving (like transits)
+
             aspects_model = AspectsFactory.dual_chart_aspects(
                 first_subject,
                 second_subject,
                 active_points=effective_active_points,
                 active_aspects=active_aspects,
                 axis_orb_limit=axis_orb_limit,
+                first_subject_is_fixed=first_subject_is_fixed,
+                second_subject_is_fixed=second_subject_is_fixed,
             )
 
         # Calculate house comparison for dual charts
         house_comparison = None
         if second_subject and include_house_comparison and chart_type in ["Transit", "Synastry", "DualReturnChart"]:
-            if isinstance(first_subject, AstrologicalSubjectModel) and isinstance(second_subject, (AstrologicalSubjectModel, PlanetReturnModel)):
+            if isinstance(first_subject, AstrologicalSubjectModel) and isinstance(
+                second_subject, (AstrologicalSubjectModel, PlanetReturnModel)
+            ):
                 house_comparison_factory = HouseComparisonFactory(
-                    first_subject,
-                    second_subject,
-                    active_points=effective_active_points
+                    first_subject, second_subject, active_points=effective_active_points
                 )
                 house_comparison = house_comparison_factory.get_house_comparison()
 
         # Calculate relationship score for synastry
         relationship_score = None
         if chart_type == "Synastry" and include_relationship_score and second_subject:
-            if isinstance(first_subject, AstrologicalSubjectModel) and isinstance(second_subject, AstrologicalSubjectModel):
+            if isinstance(first_subject, AstrologicalSubjectModel) and isinstance(
+                second_subject, AstrologicalSubjectModel
+            ):
                 relationship_score_factory = RelationshipScoreFactory(
                     first_subject,
                     second_subject,
@@ -212,7 +220,8 @@ class ChartDataFactory:
 
         # Convert to models for type safety
         available_planets_setting: list[KerykeionSettingsCelestialPointModel] = [
-            KerykeionSettingsCelestialPointModel(**body) for body in available_planets_setting_dicts  # type: ignore
+            KerykeionSettingsCelestialPointModel(**body)  # type: ignore[arg-type]
+            for body in available_planets_setting_dicts
         ]
 
         celestial_points_names = [body.name.lower() for body in available_planets_setting]
@@ -220,7 +229,9 @@ class ChartDataFactory:
         if chart_type == "Synastry" and second_subject:
             # Calculate combined element/quality points for synastry
             # Type narrowing: ensure both subjects are AstrologicalSubjectModel for synastry
-            if isinstance(first_subject, AstrologicalSubjectModel) and isinstance(second_subject, AstrologicalSubjectModel):
+            if isinstance(first_subject, AstrologicalSubjectModel) and isinstance(
+                second_subject, AstrologicalSubjectModel
+            ):
                 element_totals = calculate_synastry_element_points(
                     available_planets_setting,
                     celestial_points_names,
@@ -271,8 +282,14 @@ class ChartDataFactory:
             )
 
         # Calculate percentages
-        total_elements = element_totals["fire"] + element_totals["water"] + element_totals["earth"] + element_totals["air"]
-        element_percentages = distribute_percentages_to_100(element_totals) if total_elements > 0 else {"fire": 0, "earth": 0, "air": 0, "water": 0}
+        total_elements = (
+            element_totals["fire"] + element_totals["water"] + element_totals["earth"] + element_totals["air"]
+        )
+        element_percentages = (
+            distribute_percentages_to_100(element_totals)
+            if total_elements > 0
+            else {"fire": 0, "earth": 0, "air": 0, "water": 0}
+        )
         element_distribution = ElementDistributionModel(
             fire=element_totals["fire"],
             earth=element_totals["earth"],
@@ -285,7 +302,11 @@ class ChartDataFactory:
         )
 
         total_qualities = quality_totals["cardinal"] + quality_totals["fixed"] + quality_totals["mutable"]
-        quality_percentages = distribute_percentages_to_100(quality_totals) if total_qualities > 0 else {"cardinal": 0, "fixed": 0, "mutable": 0}
+        quality_percentages = (
+            distribute_percentages_to_100(quality_totals)
+            if total_qualities > 0
+            else {"cardinal": 0, "fixed": 0, "mutable": 0}
+        )
         quality_distribution = QualityDistributionModel(
             cardinal=quality_totals["cardinal"],
             fixed=quality_totals["fixed"],

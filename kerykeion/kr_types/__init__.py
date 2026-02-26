@@ -7,6 +7,7 @@ Please update your imports:
     OLD: from kerykeion.kr_types import ...
     NEW: from kerykeion.schemas import ...
 """
+
 import warnings
 
 # Issue deprecation warning when this module is imported

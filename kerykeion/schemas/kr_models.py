@@ -1,6 +1,30 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2025 Giacomo Battaglia
+Kerykeion Data Models
+=====================
+
+This module contains all Pydantic models used throughout the Kerykeion library
+for representing astrological data structures.
+
+Model Hierarchy:
+    SubscriptableBaseModel
+    ├── LunarPhaseModel - Moon phase information
+    ├── KerykeionPointModel - Celestial points (planets, houses, etc.)
+    ├── AstrologicalBaseModel - Base for all chart subjects
+    │   ├── AstrologicalSubjectModel - Individual birth/event charts
+    │   ├── CompositeSubjectModel - Composite relationship charts
+    │   └── PlanetReturnModel - Solar/Lunar return charts
+    ├── AspectModel - Planetary aspect data
+    ├── ZodiacSignModel - Zodiac sign properties
+    ├── RelationshipScoreModel - Synastry compatibility scores
+    ├── HouseComparisonModel - House overlay analysis
+    ├── SingleChartDataModel - Single chart visualization data
+    └── DualChartDataModel - Dual chart visualization data
+
+All models inherit from SubscriptableBaseModel which provides dictionary-style
+access to fields while maintaining Pydantic validation.
+
+This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 from typing import Union, Optional, List, Literal
@@ -24,7 +48,7 @@ from kerykeion.schemas import (
     SignsEmoji,
     RelationshipScoreDescription,
     PerspectiveType,
-    AspectMovementType
+    AspectMovementType,
 )
 from kerykeion.schemas.kr_literals import ReturnType
 
@@ -46,7 +70,7 @@ class SubscriptableBaseModel(BaseModel):
         """Delete an attribute using dictionary-style access."""
         delattr(self, key)
 
-    def get(self, key, default = None):
+    def get(self, key, default=None):
         """Get an attribute with a default value if not found."""
         return getattr(self, key, default)
 
@@ -61,6 +85,7 @@ class LunarPhaseModel(SubscriptableBaseModel):
         moon_emoji: Emoji representation of the lunar phase.
         moon_phase_name: Text name of the lunar phase.
     """
+
     degrees_between_s_m: Union[float, int]
     moon_phase: int
     moon_emoji: LunarPhaseEmoji
@@ -381,6 +406,7 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         perspective_type: Astrological perspective (geocentric, heliocentric, etc.).
         active_points: List of celestial points included in calculations.
     """
+
     # Common identification data
     name: str
 
@@ -483,7 +509,9 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
 
     # Common lists and settings
     houses_names_list: List[Houses] = Field(description="Ordered list of houses names")
-    active_points: List[AstrologicalPoint] = Field(description="List of active points in the chart or aspects calculations.")
+    active_points: List[AstrologicalPoint] = Field(
+        description="List of active points in the chart or aspects calculations."
+    )
 
     # Common lunar phase data (optional)
     lunar_phase: Optional[LunarPhaseModel] = Field(default=None, description="Lunar phase model")
@@ -491,8 +519,30 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
 
 class AstrologicalSubjectModel(AstrologicalBaseModel):
     """
-    Pydantic Model for Astrological Subject
+    Complete astrological subject model for individual birth or event charts.
+
+    This model represents a fully-specified astrological chart with all required
+    location and time data. It extends AstrologicalBaseModel by making location
+    and time fields mandatory.
+
+    Used for:
+        - Natal (birth) charts
+        - Event charts
+        - Horary charts
+
+    Attributes:
+        year: Birth/event year.
+        month: Birth/event month (1-12).
+        day: Birth/event day of month.
+        hour: Birth/event hour (0-23).
+        minute: Birth/event minute (0-59).
+        city: City name (required).
+        nation: Country code (required).
+        lat: Latitude coordinate (required).
+        lng: Longitude coordinate (required).
+        tz_str: Timezone string e.g. 'Europe/Rome' (required).
     """
+
     # Override base model to make location and time data required for subjects
     city: str
     nation: str
@@ -511,11 +561,24 @@ class AstrologicalSubjectModel(AstrologicalBaseModel):
     hour: int
     minute: int
 
+    # Sect (diurnal/nocturnal classification)
+    is_diurnal: bool
+
 
 class CompositeSubjectModel(AstrologicalBaseModel):
     """
-    Pydantic Model for Composite Subject
+    Composite chart model for relationship analysis.
+
+    A composite chart is created by calculating the midpoint between
+    corresponding planets/points of two individual charts. It represents
+    the relationship as a separate entity.
+
+    Attributes:
+        first_subject: First person's astrological data.
+        second_subject: Second person's astrological data.
+        composite_chart_type: Type identifier for the composite calculation method.
     """
+
     # Specific composite data
     first_subject: AstrologicalSubjectModel
     second_subject: AstrologicalSubjectModel
@@ -524,19 +587,64 @@ class CompositeSubjectModel(AstrologicalBaseModel):
 
 class PlanetReturnModel(AstrologicalBaseModel):
     """
-    Pydantic Model for Planet Return
+    Planetary return chart model.
+
+    A planetary return occurs when a transiting planet returns to the exact
+    position it held in the natal chart. Solar returns (yearly) and lunar
+    returns (monthly) are the most commonly used.
+
+    Attributes:
+        return_type: Type of return - 'Solar' or 'Lunar'.
     """
+
     # Specific return data
     return_type: ReturnType = Field(description="Type of return: Solar or Lunar")
 
 
 class EphemerisDictModel(SubscriptableBaseModel):
+    """
+    Ephemeris data for a specific date.
+
+    Contains planetary positions and house cusps for a given moment,
+    typically used for generating ephemeris tables or transit lookups.
+
+    Attributes:
+        date: ISO formatted date string.
+        planets: List of planetary positions.
+        houses: List of house cusp positions.
+    """
+
     date: str
     planets: List[KerykeionPointModel]
     houses: List[KerykeionPointModel]
 
 
 class AspectModel(SubscriptableBaseModel):
+    """
+    Model representing an astrological aspect between two celestial points.
+
+    An aspect is an angular relationship between two planets or points,
+    measured along the ecliptic. Major aspects include conjunction (0°),
+    opposition (180°), trine (120°), square (90°), and sextile (60°).
+
+    Attributes:
+        p1_name: Name of the first point (e.g., 'Sun').
+        p1_owner: Owner/chart of the first point (e.g., 'John').
+        p1_abs_pos: Absolute zodiacal position of first point (0-360°).
+        p2_name: Name of the second point.
+        p2_owner: Owner/chart of the second point.
+        p2_abs_pos: Absolute zodiacal position of second point.
+        aspect: Name of the aspect (e.g., 'conjunction', 'trine').
+        orbit: Orb (deviation from exact aspect) in degrees.
+        aspect_degrees: Exact degrees of the aspect type.
+        diff: Angular difference between the points.
+        p1: Numeric ID of first point.
+        p2: Numeric ID of second point.
+        p1_speed: Daily motion speed of first point in degrees.
+        p2_speed: Daily motion speed of second point in degrees.
+        aspect_movement: Whether aspect is applying, separating, or static.
+    """
+
     p1_name: str
     p1_owner: str
     p1_abs_pos: float
@@ -549,13 +657,30 @@ class AspectModel(SubscriptableBaseModel):
     diff: float
     p1: int
     p2: int
+    p1_speed: float = Field(default=0.0, description="Speed of the first point")
+    p2_speed: float = Field(default=0.0, description="Speed of the second point")
     aspect_movement: AspectMovementType = Field(
         description="Indicates whether the aspect is applying (orb decreasing), "
-                    "separating (orb increasing), or fixed (no relative motion)."
+        "separating (orb increasing), or static (no relative motion)."
     )
 
 
 class ZodiacSignModel(SubscriptableBaseModel):
+    """
+    Model representing a zodiac sign with its properties.
+
+    Contains the essential characteristics of a zodiac sign including
+    its quality (Cardinal, Fixed, Mutable), element (Fire, Earth, Air, Water),
+    and visual representation.
+
+    Attributes:
+        sign: Sign name (e.g., 'Ari', 'Tau', 'Gem').
+        quality: Astrological quality (Cardinal, Fixed, Mutable).
+        element: Astrological element (Fire, Earth, Air, Water).
+        emoji: Unicode emoji for the sign.
+        sign_num: Numerical position (0=Aries through 11=Pisces).
+    """
+
     sign: Sign
     quality: Quality
     element: Element
@@ -564,10 +689,32 @@ class ZodiacSignModel(SubscriptableBaseModel):
 
 
 class RelationshipScoreAspectModel(SubscriptableBaseModel):
+    """
+    Simplified aspect model for relationship scoring.
+
+    Used in synastry analysis to track which aspects contribute
+    to the compatibility score.
+
+    Attributes:
+        p1_name: First point name.
+        p2_name: Second point name.
+        aspect: Aspect type name.
+        orbit: Orb in degrees.
+    """
+
     p1_name: str
     p2_name: str
     aspect: str
     orbit: float
+
+
+class ScoreBreakdownItemModel(SubscriptableBaseModel):
+    """Single breakdown item explaining how points were earned."""
+
+    rule: str = Field(description="Rule identifier (e.g., 'destiny_sign', 'sun_sun_major')")
+    description: str = Field(description="Human-readable description of the rule")
+    points: int = Field(description="Points awarded for this rule")
+    details: Optional[str] = Field(default=None, description="Optional details (e.g., 'orbit: 1.5°')")
 
 
 class RelationshipScoreModel(SubscriptableBaseModel):
@@ -575,6 +722,9 @@ class RelationshipScoreModel(SubscriptableBaseModel):
     score_description: RelationshipScoreDescription
     is_destiny_sign: bool
     aspects: List[RelationshipScoreAspectModel]
+    score_breakdown: List[ScoreBreakdownItemModel] = Field(
+        default_factory=list, description="Detailed breakdown of how the score was calculated"
+    )
     subjects: List[AstrologicalSubjectModel]
 
 
@@ -590,6 +740,7 @@ class TransitMomentModel(SubscriptableBaseModel):
     Captures all active aspects between moving celestial bodies and
     the fixed positions in a person's natal chart at a specific date and time.
     """
+
     date: str = Field(description="ISO 8601 formatted date and time of the transit moment.")
     aspects: List[AspectModel] = Field(description="List of aspects active at this specific moment.")
 
@@ -607,8 +758,13 @@ class SingleChartAspectsModel(SubscriptableBaseModel):
     Contains the filtered and relevant aspects for the astrological subject
     based on configured orb settings.
     """
-    subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The astrological subject for which aspects were calculated.")
-    aspects: List[AspectModel] = Field(description="List of calculated aspects within the chart, filtered based on orb settings.")
+
+    subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(
+        description="The astrological subject for which aspects were calculated."
+    )
+    aspects: List[AspectModel] = Field(
+        description="List of calculated aspects within the chart, filtered based on orb settings."
+    )
     active_points: List[AstrologicalPoint] = Field(description="List of active points used in the calculation.")
     active_aspects: List["ActiveAspect"] = Field(description="List of active aspects with their orb settings.")
 
@@ -626,9 +782,16 @@ class DualChartAspectsModel(SubscriptableBaseModel):
     Contains the filtered and relevant aspects between the two charts
     based on configured orb settings.
     """
-    first_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The first astrological subject.")
-    second_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(description="The second astrological subject.")
-    aspects: List[AspectModel] = Field(description="List of calculated aspects between the two charts, filtered based on orb settings.")
+
+    first_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(
+        description="The first astrological subject."
+    )
+    second_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"] = Field(
+        description="The second astrological subject."
+    )
+    aspects: List[AspectModel] = Field(
+        description="List of calculated aspects between the two charts, filtered based on orb settings."
+    )
     active_points: List[AstrologicalPoint] = Field(description="List of active points used in the calculation.")
     active_aspects: List["ActiveAspect"] = Field(description="List of active aspects with their orb settings.")
 
@@ -645,6 +808,7 @@ class TransitsTimeRangeModel(SubscriptableBaseModel):
     This model holds a time series of transit snapshots, allowing analysis of
     planetary movements and their aspects to a natal chart over a period of time.
     """
+
     transits: List[TransitMomentModel] = Field(description="List of transit moments.")
     subject: Optional[AstrologicalSubjectModel] = Field(description="Astrological subject data.")
     dates: Optional[List[str]] = Field(description="ISO 8601 formatted dates of all transit moments.")
@@ -711,6 +875,10 @@ class HouseComparisonModel(SubscriptableBaseModel):
     """First subject's points positioned in second subject's houses"""
     second_points_in_first_houses: List[PointInHouseModel]
     """Second subject's points positioned in first subject's houses"""
+    first_cusps_in_second_houses: List[PointInHouseModel] = Field(default_factory=list)
+    """First subject's house cusps positioned in second subject's houses"""
+    second_cusps_in_first_houses: List[PointInHouseModel] = Field(default_factory=list)
+    """Second subject's house cusps positioned in first subject's houses"""
 
 
 class ElementDistributionModel(SubscriptableBaseModel):
@@ -727,6 +895,7 @@ class ElementDistributionModel(SubscriptableBaseModel):
         air_percentage: Air element percentage
         water_percentage: Water element percentage
     """
+
     fire: float
     earth: float
     air: float
@@ -749,6 +918,7 @@ class QualityDistributionModel(SubscriptableBaseModel):
         fixed_percentage: Fixed quality percentage
         mutable_percentage: Mutable quality percentage
     """
+
     cardinal: float
     fixed: float
     mutable: float

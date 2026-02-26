@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    Test suite for draw_planets function
-    This is part of Kerykeion (C) 2025 Giacomo Battaglia
+Test suite for draw_planets function
+This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import pytest
@@ -35,7 +35,7 @@ class TestDrawPlanets:
                 "sign_num": 0,
                 "emoji": "☉",
                 "point_type": "AstrologicalPoint",
-                "retrograde": False
+                "retrograde": False,
             },
             {
                 "name": "Moon",
@@ -48,7 +48,7 @@ class TestDrawPlanets:
                 "sign_num": 1,
                 "emoji": "☽",
                 "point_type": "AstrologicalPoint",
-                "retrograde": False
+                "retrograde": False,
             },
             {
                 "name": "Mercury",
@@ -61,36 +61,22 @@ class TestDrawPlanets:
                 "sign_num": 0,
                 "emoji": "☿",
                 "point_type": "AstrologicalPoint",
-                "retrograde": True
-            }
+                "retrograde": True,
+            },
         ]
 
         # Create mock planets settings
         self.mock_planets_settings = [
-            {
-                "id": 0,
-                "name": "Sun",
-                "color": "#FFA500",
-                "element_points": 5,
-                "label": "Sun",
-                "is_active": True
-            },
-            {
-                "id": 1,
-                "name": "Moon",
-                "color": "#C0C0C0",
-                "element_points": 4,
-                "label": "Moon",
-                "is_active": True
-            },
+            {"id": 0, "name": "Sun", "color": "#FFA500", "element_points": 5, "label": "Sun", "is_active": True},
+            {"id": 1, "name": "Moon", "color": "#C0C0C0", "element_points": 4, "label": "Moon", "is_active": True},
             {
                 "id": 4,
                 "name": "Mercury",
                 "color": "#87CEEB",
                 "element_points": 3,
                 "label": "Mercury",
-                "is_active": True
-            }
+                "is_active": True,
+            },
         ]
 
         # Create grouped planets for grouping tests
@@ -106,7 +92,7 @@ class TestDrawPlanets:
                 "sign_num": 0,
                 "emoji": "☉",
                 "point_type": "AstrologicalPoint",
-                "retrograde": False
+                "retrograde": False,
             },
             {
                 "name": "Mercury",
@@ -119,7 +105,7 @@ class TestDrawPlanets:
                 "sign_num": 0,
                 "emoji": "☿",
                 "point_type": "AstrologicalPoint",
-                "retrograde": False
+                "retrograde": False,
             },
             {
                 "name": "Venus",
@@ -132,35 +118,21 @@ class TestDrawPlanets:
                 "sign_num": 0,
                 "emoji": "♀",
                 "point_type": "AstrologicalPoint",
-                "retrograde": False
-            }
+                "retrograde": False,
+            },
         ]
 
         self.grouped_planets_settings = [
-            {
-                "id": 0,
-                "name": "Sun",
-                "color": "#FFA500",
-                "element_points": 5,
-                "label": "Sun",
-                "is_active": True
-            },
+            {"id": 0, "name": "Sun", "color": "#FFA500", "element_points": 5, "label": "Sun", "is_active": True},
             {
                 "id": 4,
                 "name": "Mercury",
                 "color": "#87CEEB",
                 "element_points": 3,
                 "label": "Mercury",
-                "is_active": True
+                "is_active": True,
             },
-            {
-                "id": 3,
-                "name": "Venus",
-                "color": "#FFB6C1",
-                "element_points": 4,
-                "label": "Venus",
-                "is_active": True
-            }
+            {"id": 3, "name": "Venus", "color": "#FFB6C1", "element_points": 4, "label": "Venus", "is_active": True},
         ]
 
         # Create house angles (ASC, MC, DSC, IC) for testing angle positions
@@ -176,7 +148,7 @@ class TestDrawPlanets:
                 "sign_num": 0,
                 "emoji": "AC",
                 "point_type": "House",
-                "retrograde": False
+                "retrograde": False,
             }
         ]
 
@@ -187,7 +159,7 @@ class TestDrawPlanets:
                 "color": "#000000",
                 "element_points": 0,
                 "label": "ASC",
-                "is_active": True
+                "is_active": True,
             }
         ]
 
@@ -211,7 +183,7 @@ class TestDrawPlanets:
             third_circle_radius=self.third_circle_radius,
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-            chart_type="Natal"
+            chart_type="Natal",
         )
 
         # Basic assertions
@@ -225,7 +197,7 @@ class TestDrawPlanets:
         assert 'xlink:href="#Mercury"' in result
 
         # Ensure no external view lines are present
-        assert '<line x1=' not in result
+        assert "<line x1=" not in result
 
     def test_natal_chart_with_external_view(self):
         """Test natal chart generation with external view enabled."""
@@ -240,7 +212,7 @@ class TestDrawPlanets:
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
             chart_type="Natal",
-            external_view=True
+            external_view=True,
         )
 
         # Basic assertions
@@ -251,9 +223,9 @@ class TestDrawPlanets:
         assert '<g kr:node="ChartPoint"' in result
 
         # Check for external view connecting lines
-        assert '<line x1=' in result
-        assert 'stroke-opacity:.3' in result  # First line opacity
-        assert 'stroke-opacity:.5' in result  # Second line opacity
+        assert "<line x1=" in result
+        assert "stroke-opacity:.3" in result  # First line opacity
+        assert "stroke-opacity:.5" in result  # Second line opacity
 
     def test_transit_chart(self):
         """Test transit chart generation with secondary celestial points."""
@@ -261,47 +233,49 @@ class TestDrawPlanets:
         planets_settings = self._create_settings_models(self.mock_planets_settings)
 
         # Create secondary points for transit
-        secondary_points = self._create_kerykeion_point_models([
-            {
-                "name": "Sun",
-                "abs_pos": 75.5,
-                "position": 15.5,
-                "house": "Third_House",
-                "sign": "Gem",
-                "quality": "Mutable",
-                "element": "Air",
-                "sign_num": 2,
-                "emoji": "☉",
-                "point_type": "AstrologicalPoint",
-                "retrograde": False
-            },
-            {
-                "name": "Moon",
-                "abs_pos": 105.2,
-                "position": 15.2,
-                "house": "Fourth_House",
-                "sign": "Can",
-                "quality": "Cardinal",
-                "element": "Water",
-                "sign_num": 3,
-                "emoji": "☽",
-                "point_type": "AstrologicalPoint",
-                "retrograde": False
-            },
-            {
-                "name": "Mercury",
-                "abs_pos": 80.1,
-                "position": 20.1,
-                "house": "Third_House",
-                "sign": "Gem",
-                "quality": "Mutable",
-                "element": "Air",
-                "sign_num": 2,
-                "emoji": "☿",
-                "point_type": "AstrologicalPoint",
-                "retrograde": False
-            }
-        ])
+        secondary_points = self._create_kerykeion_point_models(
+            [
+                {
+                    "name": "Sun",
+                    "abs_pos": 75.5,
+                    "position": 15.5,
+                    "house": "Third_House",
+                    "sign": "Gem",
+                    "quality": "Mutable",
+                    "element": "Air",
+                    "sign_num": 2,
+                    "emoji": "☉",
+                    "point_type": "AstrologicalPoint",
+                    "retrograde": False,
+                },
+                {
+                    "name": "Moon",
+                    "abs_pos": 105.2,
+                    "position": 15.2,
+                    "house": "Fourth_House",
+                    "sign": "Can",
+                    "quality": "Cardinal",
+                    "element": "Water",
+                    "sign_num": 3,
+                    "emoji": "☽",
+                    "point_type": "AstrologicalPoint",
+                    "retrograde": False,
+                },
+                {
+                    "name": "Mercury",
+                    "abs_pos": 80.1,
+                    "position": 20.1,
+                    "house": "Third_House",
+                    "sign": "Gem",
+                    "quality": "Mutable",
+                    "element": "Air",
+                    "sign_num": 2,
+                    "emoji": "☿",
+                    "point_type": "AstrologicalPoint",
+                    "retrograde": False,
+                },
+            ]
+        )
 
         result = draw_planets(
             radius=self.radius,
@@ -311,7 +285,7 @@ class TestDrawPlanets:
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
             chart_type="Transit",
-            second_subject_available_kerykeion_celestial_points=secondary_points
+            second_subject_available_kerykeion_celestial_points=secondary_points,
         )
 
         # Basic assertions
@@ -331,47 +305,49 @@ class TestDrawPlanets:
         planets_settings = self._create_settings_models(self.mock_planets_settings)
 
         # Create secondary points for synastry
-        secondary_points = self._create_kerykeion_point_models([
-            {
-                "name": "Sun",
-                "abs_pos": 105.3,
-                "position": 15.3,
-                "house": "Fourth_House",
-                "sign": "Can",
-                "quality": "Cardinal",
-                "element": "Water",
-                "sign_num": 3,
-                "emoji": "☉",
-                "point_type": "AstrologicalPoint",
-                "retrograde": False
-            },
-            {
-                "name": "Moon",
-                "abs_pos": 135.2,
-                "position": 15.2,
-                "house": "Fifth_House",
-                "sign": "Leo",
-                "quality": "Fixed",
-                "element": "Fire",
-                "sign_num": 4,
-                "emoji": "☽",
-                "point_type": "AstrologicalPoint",
-                "retrograde": False
-            },
-            {
-                "name": "Mercury",
-                "abs_pos": 110.1,
-                "position": 20.1,
-                "house": "Fourth_House",
-                "sign": "Can",
-                "quality": "Cardinal",
-                "element": "Water",
-                "sign_num": 3,
-                "emoji": "☿",
-                "point_type": "AstrologicalPoint",
-                "retrograde": True
-            }
-        ])
+        secondary_points = self._create_kerykeion_point_models(
+            [
+                {
+                    "name": "Sun",
+                    "abs_pos": 105.3,
+                    "position": 15.3,
+                    "house": "Fourth_House",
+                    "sign": "Can",
+                    "quality": "Cardinal",
+                    "element": "Water",
+                    "sign_num": 3,
+                    "emoji": "☉",
+                    "point_type": "AstrologicalPoint",
+                    "retrograde": False,
+                },
+                {
+                    "name": "Moon",
+                    "abs_pos": 135.2,
+                    "position": 15.2,
+                    "house": "Fifth_House",
+                    "sign": "Leo",
+                    "quality": "Fixed",
+                    "element": "Fire",
+                    "sign_num": 4,
+                    "emoji": "☽",
+                    "point_type": "AstrologicalPoint",
+                    "retrograde": False,
+                },
+                {
+                    "name": "Mercury",
+                    "abs_pos": 110.1,
+                    "position": 20.1,
+                    "house": "Fourth_House",
+                    "sign": "Can",
+                    "quality": "Cardinal",
+                    "element": "Water",
+                    "sign_num": 3,
+                    "emoji": "☿",
+                    "point_type": "AstrologicalPoint",
+                    "retrograde": True,
+                },
+            ]
+        )
 
         result = draw_planets(
             radius=self.radius,
@@ -381,7 +357,7 @@ class TestDrawPlanets:
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
             chart_type="Synastry",
-            second_subject_available_kerykeion_celestial_points=secondary_points
+            second_subject_available_kerykeion_celestial_points=secondary_points,
         )
 
         # Basic assertions
@@ -400,47 +376,49 @@ class TestDrawPlanets:
         planets_settings = self._create_settings_models(self.mock_planets_settings)
 
         # Create secondary points for return
-        secondary_points = self._create_kerykeion_point_models([
-            {
-                "name": "Sun",
-                "abs_pos": 15.5,  # Same position as natal Sun for return
-                "position": 15.5,
-                "house": "First_House",
-                "sign": "Ari",
-                "quality": "Cardinal",
-                "element": "Fire",
-                "sign_num": 0,
-                "emoji": "☉",
-                "point_type": "AstrologicalPoint",
-                "retrograde": False
-            },
-            {
-                "name": "Moon",
-                "abs_pos": 45.2,
-                "position": 15.2,
-                "house": "Second_House",
-                "sign": "Tau",
-                "quality": "Fixed",
-                "element": "Earth",
-                "sign_num": 1,
-                "emoji": "☽",
-                "point_type": "AstrologicalPoint",
-                "retrograde": False
-            },
-            {
-                "name": "Mercury",
-                "abs_pos": 20.1,
-                "position": 20.1,
-                "house": "First_House",
-                "sign": "Ari",
-                "quality": "Cardinal",
-                "element": "Fire",
-                "sign_num": 0,
-                "emoji": "☿",
-                "point_type": "AstrologicalPoint",
-                "retrograde": True
-            }
-        ])
+        secondary_points = self._create_kerykeion_point_models(
+            [
+                {
+                    "name": "Sun",
+                    "abs_pos": 15.5,  # Same position as natal Sun for return
+                    "position": 15.5,
+                    "house": "First_House",
+                    "sign": "Ari",
+                    "quality": "Cardinal",
+                    "element": "Fire",
+                    "sign_num": 0,
+                    "emoji": "☉",
+                    "point_type": "AstrologicalPoint",
+                    "retrograde": False,
+                },
+                {
+                    "name": "Moon",
+                    "abs_pos": 45.2,
+                    "position": 15.2,
+                    "house": "Second_House",
+                    "sign": "Tau",
+                    "quality": "Fixed",
+                    "element": "Earth",
+                    "sign_num": 1,
+                    "emoji": "☽",
+                    "point_type": "AstrologicalPoint",
+                    "retrograde": False,
+                },
+                {
+                    "name": "Mercury",
+                    "abs_pos": 20.1,
+                    "position": 20.1,
+                    "house": "First_House",
+                    "sign": "Ari",
+                    "quality": "Cardinal",
+                    "element": "Fire",
+                    "sign_num": 0,
+                    "emoji": "☿",
+                    "point_type": "AstrologicalPoint",
+                    "retrograde": True,
+                },
+            ]
+        )
 
         result = draw_planets(
             radius=self.radius,
@@ -450,7 +428,7 @@ class TestDrawPlanets:
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
             chart_type="SingleReturnChart",
-            second_subject_available_kerykeion_celestial_points=secondary_points
+            second_subject_available_kerykeion_celestial_points=secondary_points,
         )
 
         # Basic assertions
@@ -463,47 +441,49 @@ class TestDrawPlanets:
         planets_settings = self._create_settings_models(self.mock_planets_settings)
 
         # Create secondary points for dual return
-        secondary_points = self._create_kerykeion_point_models([
-            {
-                "name": "Sun",
-                "abs_pos": 15.5,  # Same position as natal Sun for return
-                "position": 15.5,
-                "house": "First_House",
-                "sign": "Ari",
-                "quality": "Cardinal",
-                "element": "Fire",
-                "sign_num": 0,
-                "emoji": "☉",
-                "point_type": "AstrologicalPoint",
-                "retrograde": False
-            },
-            {
-                "name": "Moon",
-                "abs_pos": 45.2,
-                "position": 15.2,
-                "house": "Second_House",
-                "sign": "Tau",
-                "quality": "Fixed",
-                "element": "Earth",
-                "sign_num": 1,
-                "emoji": "☽",
-                "point_type": "AstrologicalPoint",
-                "retrograde": False
-            },
-            {
-                "name": "Mercury",
-                "abs_pos": 20.1,
-                "position": 20.1,
-                "house": "First_House",
-                "sign": "Ari",
-                "quality": "Cardinal",
-                "element": "Fire",
-                "sign_num": 0,
-                "emoji": "☿",
-                "point_type": "AstrologicalPoint",
-                "retrograde": True
-            }
-        ])
+        secondary_points = self._create_kerykeion_point_models(
+            [
+                {
+                    "name": "Sun",
+                    "abs_pos": 15.5,  # Same position as natal Sun for return
+                    "position": 15.5,
+                    "house": "First_House",
+                    "sign": "Ari",
+                    "quality": "Cardinal",
+                    "element": "Fire",
+                    "sign_num": 0,
+                    "emoji": "☉",
+                    "point_type": "AstrologicalPoint",
+                    "retrograde": False,
+                },
+                {
+                    "name": "Moon",
+                    "abs_pos": 45.2,
+                    "position": 15.2,
+                    "house": "Second_House",
+                    "sign": "Tau",
+                    "quality": "Fixed",
+                    "element": "Earth",
+                    "sign_num": 1,
+                    "emoji": "☽",
+                    "point_type": "AstrologicalPoint",
+                    "retrograde": False,
+                },
+                {
+                    "name": "Mercury",
+                    "abs_pos": 20.1,
+                    "position": 20.1,
+                    "house": "First_House",
+                    "sign": "Ari",
+                    "quality": "Cardinal",
+                    "element": "Fire",
+                    "sign_num": 0,
+                    "emoji": "☿",
+                    "point_type": "AstrologicalPoint",
+                    "retrograde": True,
+                },
+            ]
+        )
 
         result = draw_planets(
             radius=self.radius,
@@ -513,7 +493,7 @@ class TestDrawPlanets:
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
             chart_type="DualReturnChart",
-            second_subject_available_kerykeion_celestial_points=secondary_points
+            second_subject_available_kerykeion_celestial_points=secondary_points,
         )
 
         # Basic assertions
@@ -533,7 +513,7 @@ class TestDrawPlanets:
                 third_circle_radius=self.third_circle_radius,
                 main_subject_first_house_degree_ut=self.first_house_degree,
                 main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-                chart_type="Transit"
+                chart_type="Transit",
             )
 
     def test_error_synastry_without_secondary_points(self):
@@ -549,7 +529,7 @@ class TestDrawPlanets:
                 third_circle_radius=self.third_circle_radius,
                 main_subject_first_house_degree_ut=self.first_house_degree,
                 main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-                chart_type="Synastry"
+                chart_type="Synastry",
             )
 
     def test_error_return_without_secondary_points(self):
@@ -569,7 +549,7 @@ class TestDrawPlanets:
             third_circle_radius=self.third_circle_radius,
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-            chart_type="SingleReturnChart"
+            chart_type="SingleReturnChart",
         )
         assert isinstance(result_single, str)
 
@@ -581,7 +561,7 @@ class TestDrawPlanets:
             third_circle_radius=self.third_circle_radius,
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-            chart_type="DualReturnChart"
+            chart_type="DualReturnChart",
         )
         assert isinstance(result_dual, str)
 
@@ -600,7 +580,7 @@ class TestDrawPlanets:
                 "sign_num": 0,
                 "emoji": "☉",
                 "point_type": "AstrologicalPoint",
-                "retrograde": False
+                "retrograde": False,
             },
             {
                 "name": "Mercury",
@@ -613,27 +593,20 @@ class TestDrawPlanets:
                 "sign_num": 0,
                 "emoji": "☿",
                 "point_type": "AstrologicalPoint",
-                "retrograde": False
-            }
+                "retrograde": False,
+            },
         ]
 
         grouped_settings = [
-            {
-                "id": 0,
-                "name": "Sun",
-                "color": "#FFA500",
-                "element_points": 5,
-                "label": "Sun",
-                "is_active": True
-            },
+            {"id": 0, "name": "Sun", "color": "#FFA500", "element_points": 5, "label": "Sun", "is_active": True},
             {
                 "id": 4,
                 "name": "Mercury",
                 "color": "#87CEEB",
                 "element_points": 3,
                 "label": "Mercury",
-                "is_active": True
-            }
+                "is_active": True,
+            },
         ]
 
         celestial_points = self._create_kerykeion_point_models(grouped_points)
@@ -646,7 +619,7 @@ class TestDrawPlanets:
             third_circle_radius=self.third_circle_radius,
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-            chart_type="Natal"
+            chart_type="Natal",
         )
 
         # Should successfully render grouped planets
@@ -667,7 +640,7 @@ class TestDrawPlanets:
             third_circle_radius=self.third_circle_radius,
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-            chart_type="Natal"
+            chart_type="Natal",
         )
 
         # Should successfully render grouped planets
@@ -691,19 +664,12 @@ class TestDrawPlanets:
                 "sign_num": 0,
                 "emoji": "☉",
                 "point_type": "AstrologicalPoint",
-                "retrograde": False
+                "retrograde": False,
             }
         ]
 
         single_setting = [
-            {
-                "id": 0,
-                "name": "Sun",
-                "color": "#FFA500",
-                "element_points": 5,
-                "label": "Sun",
-                "is_active": True
-            }
+            {"id": 0, "name": "Sun", "color": "#FFA500", "element_points": 5, "label": "Sun", "is_active": True}
         ]
 
         celestial_points = self._create_kerykeion_point_models(single_point)
@@ -716,7 +682,7 @@ class TestDrawPlanets:
             third_circle_radius=self.third_circle_radius,
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-            chart_type="Natal"
+            chart_type="Natal",
         )
 
         # Should successfully render single planet
@@ -736,7 +702,7 @@ class TestDrawPlanets:
             third_circle_radius=self.third_circle_radius,
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-            chart_type="Natal"
+            chart_type="Natal",
         )
 
         # Should successfully render angle
@@ -757,7 +723,7 @@ class TestDrawPlanets:
             third_circle_radius=10,
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-            chart_type="Natal"
+            chart_type="Natal",
         )
 
         # Test with large radius
@@ -768,7 +734,7 @@ class TestDrawPlanets:
             third_circle_radius=50,
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-            chart_type="Natal"
+            chart_type="Natal",
         )
 
         # Both should work
@@ -787,7 +753,7 @@ class TestDrawPlanets:
             third_circle_radius=30.25,
             main_subject_first_house_degree_ut=0.75,
             main_subject_seventh_house_degree_ut=180.33,
-            chart_type="Natal"
+            chart_type="Natal",
         )
 
         # Should handle float parameters correctly
@@ -809,7 +775,7 @@ class TestDrawPlanets:
                 "sign_num": 0,
                 "emoji": "☉",
                 "point_type": "AstrologicalPoint",
-                "retrograde": False
+                "retrograde": False,
             }
         ]
 
@@ -826,7 +792,7 @@ class TestDrawPlanets:
                 "sign_num": 11,
                 "emoji": "☽",
                 "point_type": "AstrologicalPoint",
-                "retrograde": False
+                "retrograde": False,
             }
         ]
 
@@ -843,7 +809,7 @@ class TestDrawPlanets:
             third_circle_radius=self.third_circle_radius,
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-            chart_type="Natal"
+            chart_type="Natal",
         )
 
         result_359 = draw_planets(
@@ -853,7 +819,7 @@ class TestDrawPlanets:
             third_circle_radius=self.third_circle_radius,
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-            chart_type="Natal"
+            chart_type="Natal",
         )
 
         # Both extreme positions should work
@@ -869,7 +835,7 @@ class TestDrawPlanets:
             third_circle_radius=self.third_circle_radius,
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-            chart_type="Natal"
+            chart_type="Natal",
         )
 
         # Should return empty string for no planets
@@ -891,7 +857,7 @@ class TestDrawPlanets:
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
             chart_type="Transit",
-            second_subject_available_kerykeion_celestial_points=secondary_points
+            second_subject_available_kerykeion_celestial_points=secondary_points,
         )
 
         # Test Synastry scale factor
@@ -903,7 +869,7 @@ class TestDrawPlanets:
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
             chart_type="Synastry",
-            second_subject_available_kerykeion_celestial_points=secondary_points
+            second_subject_available_kerykeion_celestial_points=secondary_points,
         )
 
         # Test SingleReturnChart scale factor
@@ -915,7 +881,7 @@ class TestDrawPlanets:
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
             chart_type="SingleReturnChart",
-            second_subject_available_kerykeion_celestial_points=secondary_points
+            second_subject_available_kerykeion_celestial_points=secondary_points,
         )
 
         # Test external view scale factor
@@ -927,7 +893,7 @@ class TestDrawPlanets:
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
             chart_type="Natal",
-            external_view=True
+            external_view=True,
         )
 
         # All should render successfully with appropriate scaling
@@ -937,9 +903,9 @@ class TestDrawPlanets:
         assert isinstance(result_external, str) and len(result_external) > 0
 
         # External view should have connecting lines
-        assert '<line x1=' in result_external
+        assert "<line x1=" in result_external
 
-    @patch('kerykeion.charts.draw_planets.logging.debug')
+    @patch("kerykeion.charts.draw_planets.logging.debug")
     def test_logging_calls(self, mock_debug):
         """Test that logging debug calls are made appropriately."""
         celestial_points = self._create_kerykeion_point_models([self.mock_celestial_points[0]])
@@ -952,7 +918,7 @@ class TestDrawPlanets:
             third_circle_radius=self.third_circle_radius,
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-            chart_type="Natal"
+            chart_type="Natal",
         )
 
         # Should have called debug logging for planet indexing
@@ -970,17 +936,17 @@ class TestDrawPlanets:
             third_circle_radius=self.third_circle_radius,
             main_subject_first_house_degree_ut=self.first_house_degree,
             main_subject_seventh_house_degree_ut=self.seventh_house_degree,
-            chart_type="Natal"
+            chart_type="Natal",
         )
 
         # Check SVG structure
         assert 'kr:node="ChartPoint"' in result
-        assert 'kr:house=' in result
-        assert 'kr:sign=' in result
-        assert 'kr:slug=' in result
-        assert 'transform=' in result
-        assert 'scale(' in result
-        assert '</g>' in result
+        assert "kr:house=" in result
+        assert "kr:sign=" in result
+        assert "kr:slug=" in result
+        assert "transform=" in result
+        assert "scale(" in result
+        assert "</g>" in result
 
         # Check that each planet appears once
         sun_count = result.count('xlink:href="#Sun"')

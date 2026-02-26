@@ -1,5 +1,6 @@
 include README.md
-include LICENSE.txt
+include LICENSE
 recursive-include kerykeion *.xml
 recursive-include kerykeion *.json
 recursive-include kerykeion *.se1
+recursive-include kerykeion *.txt

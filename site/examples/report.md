@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Report'
+tags: ['examples', 'reports', 'cli', 'kerykeion']
+order: 14
 ---
 
 # Generate a text Report
@@ -190,13 +191,13 @@ Kanye — Natal Chart Report
 +----------+-------+------------+
 
 +Quality Distribution-----------+
-| Quality  | Count | Percentage |
-+----------+-------+------------+
-| Cardinal | 8.0   | 38.8%      |
-| Fixed    | 6.6   | 32.0%      |
-| Mutable  | 6.0   | 29.1%      |
-| Total    | 20.6  | 100%       |
-+----------+-------+------------+
+| Quality   | Count | Percentage |
++-----------+-------+------------+
+| Cardinal  | 8.0   | 38.8%      |
+| Static    | 6.6   | 32.0%      |
+| Mutable   | 6.0   | 29.1%      |
+| Total     | 20.6  | 100%       |
++-----------+-------+------------+
 
 +Active Celestial Points-----+
 | #  | Active Point          |
@@ -247,3 +248,7 @@ Kanye — Natal Chart Report
 | Moon    | trine △       | Uranus                | 8.16° | Separating ← |
 +---------+---------------+-----------------------+-------+--------------+
 ```
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

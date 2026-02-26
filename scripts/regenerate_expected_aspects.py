@@ -9,12 +9,12 @@ from kerykeion.aspects.aspects_factory import AspectsFactory
 import json
 from pathlib import Path
 
+
 def regenerate_natal_aspects():
     print("Regenerating natal aspects...")
     # Use same test data
     subject = AstrologicalSubjectFactory.from_birth_data(
-        "Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US",
-        suppress_geonames_warning=True
+        "Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", suppress_geonames_warning=True
     )
 
     natal_aspects = AspectsFactory.single_chart_aspects(subject)
@@ -39,17 +39,16 @@ EXPECTED_RELEVANT_ASPECTS = {json.dumps(relevant_aspects, indent=4)}
 
     print("✓ Created expected_natal_aspects.py")
 
+
 def regenerate_synastry_aspects():
     print("Regenerating synastry aspects...")
 
     # Use same test synastry data (note: Yoko hour=10, not 20)
     john = AstrologicalSubjectFactory.from_birth_data(
-        "John", 1940, 10, 9, 10, 30, "Liverpool", "GB",
-        suppress_geonames_warning=True
+        "John", 1940, 10, 9, 10, 30, "Liverpool", "GB", suppress_geonames_warning=True
     )
     yoko = AstrologicalSubjectFactory.from_birth_data(
-        "Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP",
-        suppress_geonames_warning=True
+        "Yoko", 1933, 2, 18, 10, 30, "Tokyo", "JP", suppress_geonames_warning=True
     )
 
     synastry_aspects = AspectsFactory.dual_chart_aspects(john, yoko)
@@ -57,18 +56,20 @@ def regenerate_synastry_aspects():
     # Convert to dict format with p1/p2 fields
     relevant_aspects = []
     for aspect in synastry_aspects.aspects:
-        relevant_aspects.append({
-            "p1_name": aspect.p1_name,
-            "p1_abs_pos": aspect.p1_abs_pos,
-            "p2_name": aspect.p2_name,
-            "p2_abs_pos": aspect.p2_abs_pos,
-            "aspect": aspect.aspect,
-            "orbit": aspect.orbit,
-            "aspect_degrees": aspect.aspect_degrees,
-            "diff": aspect.diff,
-            "p1": aspect.p1,
-            "p2": aspect.p2
-        })
+        relevant_aspects.append(
+            {
+                "p1_name": aspect.p1_name,
+                "p1_abs_pos": aspect.p1_abs_pos,
+                "p2_name": aspect.p2_name,
+                "p2_abs_pos": aspect.p2_abs_pos,
+                "aspect": aspect.aspect,
+                "orbit": aspect.orbit,
+                "aspect_degrees": aspect.aspect_degrees,
+                "diff": aspect.diff,
+                "p1": aspect.p1,
+                "p2": aspect.p2,
+            }
+        )
 
     all_aspects = relevant_aspects  # Use same for both
 
@@ -87,6 +88,7 @@ EXPECTED_RELEVANT_ASPECTS = {json.dumps(relevant_aspects, indent=4)}
         f.write(content)
 
     print("✓ Created expected_synastry_aspects.py")
+
 
 if __name__ == "__main__":
     regenerate_natal_aspects()

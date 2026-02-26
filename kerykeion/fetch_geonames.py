@@ -5,14 +5,14 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-
 from logging import getLogger
 from datetime import timedelta
+from json import JSONDecodeError
 from os import getenv
 from pathlib import Path
 from typing import Optional, Union
 
-from requests import Request
+from requests import Request, RequestException, Response
 from requests_cache import CachedSession
 
 
@@ -21,6 +21,51 @@ logger = getLogger(__name__)
 
 DEFAULT_GEONAMES_CACHE_NAME = Path("cache") / "kerykeion_geonames_cache"
 GEONAMES_CACHE_ENV_VAR = "KERYKEION_GEONAMES_CACHE_NAME"
+
+# GeoNames error codes that represent transient errors and should NOT be cached.
+# These errors are temporary (rate limits, timeouts, server issues) and will resolve
+# on retry, so caching them would "poison" the cache with error responses.
+# See: https://www.geonames.org/export/webservice-exception.html
+TRANSIENT_GEONAMES_ERROR_CODES = frozenset(
+    {
+        13,  # database timeout
+        18,  # daily limit of credits exceeded
+        19,  # hourly limit of credits exceeded
+        20,  # weekly limit of credits exceeded
+        22,  # server overloaded exception
+    }
+)
+
+
+def _should_cache_geonames_response(response: Response) -> bool:
+    """
+    Filter function for requests-cache to prevent caching transient error responses.
+
+    GeoNames API returns errors with HTTP 200 status code but with a 'status' key
+    in the JSON response. This function checks for transient errors (rate limits,
+    timeouts, server overload) and returns False to prevent caching them.
+
+    Args:
+        response: The HTTP response to evaluate.
+
+    Returns:
+        True if the response should be cached, False otherwise.
+    """
+    try:
+        data = response.json()
+        if "status" in data:
+            error_code = data["status"].get("value", 0)
+            if error_code in TRANSIENT_GEONAMES_ERROR_CODES:
+                logger.debug(
+                    "GeoNames transient error (code %d) will not be cached: %s",
+                    error_code,
+                    data["status"].get("message", "unknown error"),
+                )
+                return False
+        return True
+    except (ValueError, JSONDecodeError):
+        # If we can't parse the response, don't cache it
+        return False
 
 
 class FetchGeonames:
@@ -55,11 +100,15 @@ class FetchGeonames:
             cache_name=str(self._resolve_cache_name(cache_name)),
             backend="sqlite",
             expire_after=timedelta(days=cache_expire_after_days),
+            filter_fn=_should_cache_geonames_response,
         )
 
         self.username = username
         self.city_name = city_name
         self.country_code = country_code
+        # NOTE: GeoNames free API does not support HTTPS (SSL certificate mismatch).
+        # See: https://forum.geonames.org/gforum/posts/list/27020.page
+        # Premium users can use secure.geonames.org instead.
         self.base_url = "http://api.geonames.org/searchJSON"
         self.timezone_url = "http://api.geonames.org/timezoneJSON"
 
@@ -105,14 +154,17 @@ class FetchGeonames:
             response = self.session.send(prepared_request)
             response_json = response.json()
 
-        except Exception as e:
-            logger.error("GeoNames timezone request failed for %s: %s", self.timezone_url, e)
+        except RequestException as e:
+            logger.error("GeoNames timezone network error for %s: %s", self.timezone_url, e)
+            return {}
+        except JSONDecodeError as e:
+            logger.error("GeoNames timezone invalid JSON response: %s", e)
             return {}
 
         try:
             timezone_data["timezonestr"] = response_json["timezoneId"]
 
-        except Exception as e:
+        except (KeyError, TypeError) as e:
             logger.error("GeoNames timezone payload missing expected keys: %s", e)
             return {}
 
@@ -121,7 +173,7 @@ class FetchGeonames:
 
         return timezone_data
 
-    def __get_contry_data(self, city_name: str, country_code: str) -> dict[str, str]:
+    def __get_country_data(self, city_name: str, country_code: str) -> dict[str, str]:
         """
         Get city location data without timezone for a given city and country.
 
@@ -133,7 +185,7 @@ class FetchGeonames:
             dict: City location data excluding timezone information.
         """
         # Dictionary that will be returned:
-        city_data_whitout_tz = {}
+        city_data_without_tz = {}
 
         params = {
             "q": city_name,
@@ -153,38 +205,45 @@ class FetchGeonames:
             response_json = response.json()
             logger.debug("GeoNames search response: %s", response_json)
 
-        except Exception as e:
-            logger.error("GeoNames search request failed for %s: %s", self.base_url, e)
+        except RequestException as e:
+            logger.error("GeoNames search network error for %s: %s", self.base_url, e)
+            return {}
+        except JSONDecodeError as e:
+            logger.error("GeoNames search invalid JSON response: %s", e)
             return {}
 
         try:
-            city_data_whitout_tz["name"] = response_json["geonames"][0]["name"]
-            city_data_whitout_tz["lat"] = response_json["geonames"][0]["lat"]
-            city_data_whitout_tz["lng"] = response_json["geonames"][0]["lng"]
-            city_data_whitout_tz["countryCode"] = response_json["geonames"][0]["countryCode"]
+            city_data_without_tz["name"] = response_json["geonames"][0]["name"]
+            city_data_without_tz["lat"] = response_json["geonames"][0]["lat"]
+            city_data_without_tz["lng"] = response_json["geonames"][0]["lng"]
+            city_data_without_tz["countryCode"] = response_json["geonames"][0]["countryCode"]
 
-        except Exception as e:
+        except (KeyError, IndexError, TypeError) as e:
             logger.error("GeoNames search payload missing expected keys: %s", e)
             return {}
 
         if hasattr(response, "from_cache"):
-            city_data_whitout_tz["from_country_cache"] = response.from_cache  # type: ignore
+            city_data_without_tz["from_country_cache"] = response.from_cache  # type: ignore
 
-        return city_data_whitout_tz
+        return city_data_without_tz
+
+    def __get_contry_data(self, city_name: str, country_code: str) -> dict[str, str]:
+        return self.__get_country_data(city_name, country_code)
 
     def get_serialized_data(self) -> dict[str, str]:
         """
         Returns all the data necessary for the Kerykeion calculation.
 
         Returns:
-            dict[str, str]: _description_
+            dict[str, str]: Dictionary containing city name, latitude, longitude,
+                country code, timezone, and cache status information.
         """
-        city_data_response = self.__get_contry_data(self.city_name, self.country_code)
+        city_data_response = self.__get_country_data(self.city_name, self.country_code)
         try:
             timezone_response = self.__get_timezone(city_data_response["lat"], city_data_response["lng"])
 
-        except Exception as e:
-            logger.error("Unable to fetch timezone details: %s", e)
+        except KeyError as e:
+            logger.error("Unable to fetch timezone details, missing key: %s", e)
             return {}
 
         return {**timezone_response, **city_data_response}

@@ -1,0 +1,25 @@
+{
+  "include": ["kerykeion"],
+  "exclude": [
+    "tests",
+    "examples",
+    "workspace",
+    "scripts",
+    "**/__pycache__",
+    ".venv",
+    "dist",
+    "build",
+    "*.egg-info"
+  ],
+  "typeCheckingMode": "basic",
+  "pythonVersion": "3.9",
+  "pythonPlatform": "All",
+  "venvPath": ".",
+  "venv": ".venv",
+  "reportOptionalMemberAccess": "none",
+  "reportIncompatibleVariableOverride": "none",
+  "reportArgumentType": "none",
+  "reportInvalidTypeForm": "error",
+  "reportAttributeAccessIssue": "error",
+  "reportGeneralTypeIssues": "none"
+}

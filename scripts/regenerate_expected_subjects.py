@@ -80,12 +80,7 @@ def iso_to_decimal_hours(iso_datetime: str | None) -> float:
     if not iso_datetime:
         return 0.0
     dt = datetime.fromisoformat(iso_datetime)
-    total_seconds = (
-        dt.hour * 3600
-        + dt.minute * 60
-        + dt.second
-        + dt.microsecond / 1_000_000
-    )
+    total_seconds = dt.hour * 3600 + dt.minute * 60 + dt.second + dt.microsecond / 1_000_000
     return round(total_seconds / 3600, 12)
 
 

@@ -62,11 +62,7 @@ def main() -> None:
     output_dir.mkdir(exist_ok=True)
 
     drawer = ChartDrawer(chart_data=chart_data, theme="classic")
-    drawer.save_svg(
-        output_path=output_dir,
-        filename="example_chart",
-        minify=True
-    )
+    drawer.save_svg(output_path=output_dir, filename="example_chart", minify=True)
 
     print(f"\n✓ Chart saved to: {output_dir / 'example_chart.svg'}")
     print("\nModify this script to explore Kerykeion's features!")

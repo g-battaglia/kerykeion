@@ -1,5 +1,67 @@
 # Changelog
 
+## 5.8.1
+
+_Released 26/02/2026_
+
+**Bugfixes:**
+
+- Fixed degree label rotation on SVG chart outer ring.
+
+**Maintenance:**
+
+- Removed legacy chart drawing module (`draw_planets_legacy.py`)
+
+## 5.8.0
+
+_Released 24/02/2026_
+
+**New Features:**
+
+- Added `is_diurnal` field to `AstrologicalSubjectModel` — a boolean indicating whether the chart is diurnal (Sun above horizon) or nocturnal (Sun below horizon). This sect classification is calculated using the Sun's geometric altitude via `swe.azalt()`, making it independent of house system, zodiac type, and perspective type.
+
+- Added `--arabic-parts` option to `regenerate_all.py` for generating Arabic Parts snapshots (`expected_arabic_parts.py`)
+
+**Bugfixes:**
+
+- Fixed day/night chart detection for Arabic Parts (Pars Fortunae, Spiritus). The previous logic used house position (`house < 7`) which was astronomically inverted — houses 1-6 are below the horizon (night), not above. The fix uses the Sun's geometric altitude, which is astronomically precise and house-system independent.
+
+- Fixed Arabic Parts calculation for sidereal and heliocentric charts. Previously, the day/night detection used the Sun's position from the chart's coordinate system (sidereal or heliocentric), which gave incorrect results. Now it always uses a tropical geocentric reference position.
+
+**Improvements:**
+
+- Refactored `regenerate_all.py` to use `model_dump(exclude_none=True)` instead of manual field extraction, making it future-proof for new model fields
+
+- Simplified `_compute_is_diurnal()` with a single fallback to `True` (diurnal) when calculation fails, with clear warning logging
+
+- Added comprehensive test coverage for `is_diurnal` (15 tests) and Arabic Parts (68 tests total)
+
+## 5.7.3
+
+_Released 18/02/2026_
+
+**Bugfixes:**
+
+- Fixed floating point comparison in `is_point_between()` function that caused `ValueError` crashes when a planet falls exactly on a house cusp (difference ~1e-15°). The fix uses `math.isclose()` instead of exact equality (`==`). This affected Carter, Krusinski, and Uranian house systems.
+
+## 5.7.2
+
+_Released 05/02/2026_
+
+**New Features:**
+
+- Added support for `KERYKEION_GEONAMES_USERNAME` environment variable to configure GeoNames API username without code changes
+
+**Bugfixes:**
+
+- Regenerated extended chart SVG baselines (strawberry theme, sidereal×theme combinations, house system×chart type combinations) to align with the precise orb comparison fix from v5.7.1
+- Updated relationship score test expectations to reflect stricter aspect filtering
+- Fixed `regenerate:all` task to include `regenerate_test_charts_extended.py` script, preventing future baseline drift
+
+**Maintenance:**
+
+- Added `regenerate:charts-extended` poe task for regenerating extended test charts
+
 ## 4.2.0
 
 _Released 08/01/2023_

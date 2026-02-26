@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Birth Data'
+tags: ['examples', 'subjects', 'birth data', 'kerykeion', 'python']
+order: 2
 ---
 
 # Birth Data
@@ -34,9 +35,14 @@ print(subject.moon.element)
 ```
 
 Key options include:
+
 - `houses_system_identifier` (e.g., `"P"` Placidus, `"W"` Whole Sign)
 - `zodiac_type` ("Tropical" or "Sidereal") and `sidereal_mode` (e.g., `"LAHIRI"`)
 - `perspective_type` (e.g., `"Apparent Geocentric"`, `"Heliocentric"`)
 - `geonames_username` and `online=True` for automatic lookup
 
-For the complete reference, see the API docs: https://www.kerykeion.net/pydocs/kerykeion.html
+For the complete reference, see the API docs: https://www.kerykeion.net/content/docs/
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

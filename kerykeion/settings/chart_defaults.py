@@ -11,20 +11,34 @@ from __future__ import annotations
 from typing import Final, TypedDict
 
 
-class _CelestialPointSetting(TypedDict, total=False):
+class _CelestialPointSettingRequired(TypedDict):
+    """Required fields for celestial point settings."""
+
     id: int
     name: str
     color: str
     element_points: int
     label: str
+
+
+class _CelestialPointSetting(_CelestialPointSettingRequired, total=False):
+    """Celestial point settings with optional is_active field."""
+
     is_active: bool
 
 
-class _ChartAspectSetting(TypedDict, total=False):
+class _ChartAspectSettingRequired(TypedDict):
+    """Required fields for chart aspect settings."""
+
     degree: int
     name: str
     is_major: bool
     color: str
+
+
+class _ChartAspectSetting(_ChartAspectSettingRequired, total=False):
+    """Chart aspect settings with optional orb field."""
+
     orb: int
 
 

@@ -6,6 +6,7 @@ Common usages:
   - README only:                 python scripts/test_markdown_snippets.py --readme
   - Site docs only:              python scripts/test_markdown_snippets.py --docs
   - Site examples only:          python scripts/test_markdown_snippets.py --examples
+  - AI Agent Guide only:         python scripts/test_markdown_snippets.py --ai-guide
   - All (incl. release notes):   python scripts/test_markdown_snippets.py --all
   - All (exclude release notes): python scripts/test_markdown_snippets.py --all-no-release
 """
@@ -49,7 +50,7 @@ def find_markdown_files(
 
 def extract_python_snippets(content):
     """Extract Python code blocks from markdown."""
-    pattern = r'```python[^\n]*\n(.*?)\n[ \t]*```'
+    pattern = r"```python[^\n]*\n(.*?)\n[ \t]*```"
     return re.findall(pattern, content, re.DOTALL)
 
 
@@ -60,7 +61,8 @@ def test_snippet(code: str, *, timeout: float) -> Tuple[bool, Optional[str]]:
 
     # Add basic imports
     project_root = str(Path(__file__).parent.parent)
-    full_code = f"""
+    full_code = (
+        f"""
 import sys
 sys.path.insert(0, '{project_root}')
 import warnings
@@ -87,10 +89,12 @@ from kerykeion import (
     CompositeSubjectFactory,
     KerykeionSettingsModel,
 )
-""" + code
+"""
+        + code
+    )
 
     try:
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(full_code)
             f.flush()
 
@@ -122,11 +126,32 @@ from kerykeion import (
 
 def main():
     parser = argparse.ArgumentParser(description="Execute Python snippets embedded in markdown files.")
-    parser.add_argument("-a", "--all", dest="all_files", action="store_true", help="Run snippets for every markdown file.")
-    parser.add_argument("-an", "--all-no-release", dest="all_no_release", action="store_true", help="Run snippets for all markdown files excluding release notes.")
-    parser.add_argument("-r", "--readme", dest="readme_only", action="store_true", help="Run snippets only for README.md.")
-    parser.add_argument("-d", "--docs", dest="docs_only", action="store_true", help="Run snippets only for site-docs folder.")
-    parser.add_argument("-e", "--examples", dest="examples_only", action="store_true", help="Run snippets only for site-examples folder.")
+    parser.add_argument(
+        "-a", "--all", dest="all_files", action="store_true", help="Run snippets for every markdown file."
+    )
+    parser.add_argument(
+        "-an",
+        "--all-no-release",
+        dest="all_no_release",
+        action="store_true",
+        help="Run snippets for all markdown files excluding release notes.",
+    )
+    parser.add_argument(
+        "-r", "--readme", dest="readme_only", action="store_true", help="Run snippets only for README.md."
+    )
+    parser.add_argument(
+        "-d", "--docs", dest="docs_only", action="store_true", help="Run snippets only for site-docs folder."
+    )
+    parser.add_argument(
+        "-e",
+        "--examples",
+        dest="examples_only",
+        action="store_true",
+        help="Run snippets only for site-examples folder.",
+    )
+    parser.add_argument(
+        "-ai", "--ai-guide", dest="ai_guide_only", action="store_true", help="Run snippets only for AI_AGENT_GUIDE.md."
+    )
     parser.add_argument("--timeout", type=float, default=20.0, help="Per-snippet timeout in seconds (default: 20).")
     parser.add_argument("paths", nargs="*", type=Path, help="Optional paths to scan (defaults depend on flags).")
     args = parser.parse_args()
@@ -143,6 +168,10 @@ def main():
         targets = [Path("site-examples")]
         exclude_release_notes = True
         mode_description = "site-examples folder only"
+    elif args.ai_guide_only:
+        targets = [Path("AI_AGENT_GUIDE.md")]
+        exclude_release_notes = False
+        mode_description = "AI_AGENT_GUIDE.md only"
     elif args.all_files:
         targets = args.paths or [Path(".")]
         exclude_release_notes = False
@@ -152,13 +181,13 @@ def main():
         exclude_release_notes = True
         mode_description = "all markdown files (excluding release notes)"
     else:
-        # Default: README plus site-docs (or user-specified paths if provided)
+        # Default: README, AI guide, and site-docs (or user-specified paths if provided)
         if args.paths:
             targets = args.paths
         else:
-            targets = [Path("README.md"), Path("site-docs")]
+            targets = [Path("README.md"), Path("AI_AGENT_GUIDE.md"), Path("site-docs")]
         exclude_release_notes = True
-        mode_description = "README.md and site-docs (default)"
+        mode_description = "README.md, AI_AGENT_GUIDE.md, and site-docs (default)"
 
     print(f"� Testing Python snippets in {mode_description}")
 
@@ -204,5 +233,5 @@ def main():
         print("🎉 All snippets passed!")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,6 +1,8 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Transit Chart'
+description: 'Track current planetary influences against a natal chart. Learn how to generate transit wheels and analyze real-time astrological trends with ChartDrawer.'
+tags: ['examples', 'charts', 'transits', 'forecasting', 'kerykeion']
+order: 3
 ---
 
 # Transit Chart
@@ -35,6 +37,10 @@ out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
 drawer.save_svg(output_path=out_dir, filename="lennon-transit")
 ```
+
+The output will be:
+
+![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20All%20Active%20Points%20-%20Transit%20Chart.svg)
 
 ## New Transit Chart Features
 
@@ -93,3 +99,7 @@ drawer.save_svg(output_path=out_dir, filename="transit-example")
 ```
 
 The output will be saved in the specified directory.
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

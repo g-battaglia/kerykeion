@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-    This is part of Kerykeion (C) 2025 Giacomo Battaglia
+This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 # TODO: Better documentation and unit tests
 
 from swisseph import difdeg2n
-from typing import Union
+from typing import Optional, Union
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.schemas.kr_literals import AspectMovementType
 from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
-from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
+from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS, _CelestialPointSetting
 
 
 def get_aspect_from_two_points(
-    aspects_settings: Union[list[dict], list[dict]],
+    aspects_settings: list[dict],
     point_one: Union[float, int],
     point_two: Union[float, int],
 ):
@@ -33,11 +33,11 @@ def get_aspect_from_two_points(
 
     for aid, aspect in enumerate(aspects_settings):
         # TODO: Remove the "degree" element EVERYWHERE!
-        aspect_degree = aspect["degree"] # type: ignore
-        aspect_orb = aspect["orb"] # type: ignore
+        aspect_degree = aspect["degree"]  # type: ignore
+        aspect_orb = aspect["orb"]  # type: ignore
 
-        if (aspect_degree - aspect_orb) <= int(distance) <= (aspect_degree + aspect_orb):
-            name = aspect["name"] # type: ignore
+        if (aspect_degree - aspect_orb) <= distance <= (aspect_degree + aspect_orb):
+            name = aspect["name"]  # type: ignore
             aspect_degrees = aspect_degree
             verdict = True
             break
@@ -56,20 +56,6 @@ def get_aspect_from_two_points(
     }
 
 
-def _sign(x: float) -> int:
-    """
-    Return the sign of ``x``.
-
-    Returns +1 if ``x`` > 0, -1 if ``x`` < 0, and 0 if ``x`` == 0.
-    """
-    if x > 0:
-        return 1
-    elif x < 0:
-        return -1
-    else:
-        return 0
-
-
 def calculate_aspect_movement(
     point_one_abs_pos: float,
     point_two_abs_pos: float,
@@ -78,97 +64,51 @@ def calculate_aspect_movement(
     point_two_speed: float,
 ) -> AspectMovementType:
     """
-        Determine whether an aspect is applying, separating, or fixed.
+    Determine whether the aspect orb is decreasing (Applying), increasing
+    (Separating), or not changing (Static).
 
-        This implementation uses a dynamic definition based on the time evolution
-        of the orb:
+    This implementation uses a "lookahead" approach:
+    1. Calculate the current orb (deviation from exact aspect).
+    2. Project positions forward by a small time step (dt).
+    3. Calculate the future orb.
+    4. Compare: if future_orb < current_orb => Applying, else Separating.
 
-        - "Applying": the orb is decreasing with time (the aspect is moving toward
-            exactness).
-        - "Separating": the orb is increasing with time (the aspect has already
-            perfected in the past, or will not perfect given the current motion).
-        - "Fixed": both points are effectively fixed so the orb does not change.
+    The function handles edge cases including:
+    - Retrograde motion (negative speeds)
+    - Boundary crossings at 0°/360°
+    - Aspects > 180° (normalized correctly)
+    - Extreme speed differences (e.g., Ascendant vs slow planets)
+    - Very small orbs and speed differences
 
-        Motion direction (direct or retrograde) is taken from the sign of the
-        speed values:
+    Args:
+        point_one_abs_pos (float): Absolute position of point 1 (0-360).
+        point_two_abs_pos (float): Absolute position of point 2 (0-360).
+        aspect_degrees (float): The exact aspect angle (e.g., 0, 60, 90, 120, 180).
+            Can be > 180° (will be normalized).
+        point_one_speed (float): Speed of point 1 in degrees/day (negative for retrograde).
+        point_two_speed (float): Speed of point 2 in degrees/day (negative for retrograde).
 
-        - speed > 0: direct motion (increasing longitude)
-        - speed < 0: retrograde motion (decreasing longitude)
+    Returns:
+        AspectMovementType: "Applying", "Separating", or "Static".
 
-        The algorithm does not assume which point is "faster" in absolute terms;
-        it uses the relative motion to determine whether the orb is growing or
-        shrinking.
+    Raises:
+        ValueError: If speed values are None or if positions/aspect are invalid.
 
-        Definitions:
-
-        - Longitudes are in degrees, 0 <= λ < 360 (normalized internally).
-        - ``aspect_degrees`` is the nominal angle of the aspect; values > 180
-            are made symmetric (e.g. 240° becomes 120°).
-        - The orb is defined as::
-
-                orb = abs(abs(separation) - aspect)
-
-            where ``separation`` is the minimal angular distance between the two
-            points in [-180, 180).
-
-        Logical steps:
-
-        1. Normalize longitudes to [0, 360) and the aspect to [0, 180].
-        2. Compute the signed separation ``sep`` between the two points using
-             ``difdeg2n``.
-        3. Compute the current orb::
-
-                     sep_abs = abs(sep)
-                     orb = abs(sep_abs - aspect)
-
-        4. Compute the relevant speed:
-             - if both points move: ``moving_speed = point_two_speed - point_one_speed``
-             - if one point is fixed (speed == 0): use the moving point speed
-                 against the fixed point.
-        5. The qualitative sign of the orb derivative is::
-
-                     sign_d_orb = sign(sep_abs - aspect) * sign(sep) * sign(moving_speed)
-
-             If ``sign_d_orb < 0`` the orb decreases (applying), if
-             ``sign_d_orb > 0`` the orb increases (separating).
-        6. If the relevant speed is exactly zero, the orb does not change over
-             time; if it is not exact, it is considered separating by convention.
-
-        Args:
-                point_one_abs_pos: Absolute longitude of the first point in degrees.
-                point_two_abs_pos: Absolute longitude of the second point in degrees.
-                aspect_degrees: Nominal aspect angle (e.g. 0, 60, 90, 120, 180).
-                point_one_speed: Speed of the first point in degrees/day (signed).
-                point_two_speed: Speed of the second point in degrees/day (signed).
-
-        Returns:
-                AspectMovementType: ``"Applying"``, ``"Separating"`` or ``"Fixed"``.
-
-        Raises:
-                ValueError: If any of the speeds is ``None``.
-
-        Examples:
-                >>> # Fast Moon at 45° approaching Sun at 50° (conjunction)
-                >>> calculate_aspect_movement(45, 50, 0, 12.5, 1.0)
-                'Applying'
-
-                >>> # Moon at 55° moving away from Sun at 50° (conjunction)
-                >>> calculate_aspect_movement(55, 50, 0, 12.5, 1.0)
-                'Separating'
-
-                >>> # Mercury (fast) square Mars
-                >>> calculate_aspect_movement(5, 100, 90, 1.5, 0.5)
-                'Applying'
-
-                >>> # Venus separating from a trine to Jupiter
-                >>> calculate_aspect_movement(5, 127, 120, 0.1, 1.2)
-                'Separating'
-
-                >>> # Retrograde Mars applying to a conjunction with direct Jupiter
-                >>> calculate_aspect_movement(110, 100, 0, -0.8, 0.1)
-                'Applying'
+    Notes:
+        - Static is returned when relative speed is effectively zero (< EPSILON)
+        - The function uses a small time step (dt) for numerical differentiation
+        - Precision: Changes in orb < EPSILON are considered Static
     """
+    # Constants for numerical precision
+    # EPSILON for speed comparison: very small relative speeds are considered static
+    SPEED_EPSILON = 1e-9
+    # EPSILON for orb change comparison: very small orb changes are considered static
+    ORB_EPSILON = 1e-6
+    # Time step for lookahead (0.001 days ≈ 1.44 minutes)
+    # Small enough for linear approximation, large enough to avoid precision issues
+    DT = 0.001
 
+    # Validation
     if point_one_speed is None or point_two_speed is None:
         raise ValueError(
             "Speed values for both points are required to compute aspect "
@@ -176,62 +116,71 @@ def calculate_aspect_movement(
             "cannot be None."
         )
 
-    # Normalize longitudes to [0, 360)
-    p1 = point_one_abs_pos % 360.0
-    p2 = point_two_abs_pos % 360.0
+    # Validate positions are in valid range
+    if not (0 <= point_one_abs_pos < 360) or not (0 <= point_two_abs_pos < 360):
+        raise ValueError(f"Positions must be in range [0, 360). Got p1={point_one_abs_pos}, p2={point_two_abs_pos}")
+
+    # Validate aspect degrees
+    if aspect_degrees < 0:
+        raise ValueError(f"Aspect degrees must be non-negative. Got {aspect_degrees}")
+
+    # If relative speed is effectively zero, the aspect is static.
+    # This check prevents division issues and handles the mathematical reality
+    # that if both bodies move at the same speed, the orb remains constant.
+    relative_speed = abs(point_one_speed - point_two_speed)
+    if relative_speed < SPEED_EPSILON:
+        return "Static"
+
+    # Helper to calculate the orb (distance from exact aspect)
+    def get_orb(p1: float, p2: float, aspect: float) -> float:
+        """
+        Calculate the orb (deviation from exact aspect).
+
+        Args:
+            p1: Position of first point (0-360)
+            p2: Position of second point (0-360)
+            aspect: Normalized aspect angle (0-180)
+
+        Returns:
+            Absolute orb in degrees
+        """
+        # Calculate shortest distance between points on the circle
+        diff = abs(difdeg2n(p1, p2))
+        # The orb is the absolute difference between the actual separation and the aspect angle
+        return abs(diff - aspect)
 
     # Normalize aspect to [0, 360) and then to [0, 180]
-    aspect = aspect_degrees % 360.0
-    if aspect > 180.0:
-        aspect = 360.0 - aspect  # es. 240 -> 120
+    # This is necessary because difdeg2n returns the shortest distance (<= 180)
+    # For example, aspect=240° is equivalent to 360°-240°=120° on the circle
+    aspect_norm = aspect_degrees % 360.0
+    if aspect_norm > 180.0:
+        aspect_norm = 360.0 - aspect_norm
 
-    # Special case: if one of the two points is effectively fixed (speed = 0),
-    # such as chart angles, we consider only the motion of the moving point
-    # relative to the fixed one. The order of the points must not affect
-    # the result.
-    if point_one_speed == 0 and point_two_speed == 0:
-        # Both points are fixed, the aspect never changes dynamically
-        return "Fixed"
+    # 1. Current state
+    current_orb = get_orb(point_one_abs_pos, point_two_abs_pos, aspect_norm)
 
-    # Identify which point is moving and which one is fixed/slower.
-    # To correctly handle axes we always compute with respect to the
-    # moving point.
-    if point_one_speed == 0:
-        # point_one is fixed (e.g. axis), point_two moves
-        moving_pos = p2
-        fixed_pos = p1
-        moving_speed = point_two_speed
-        sep = difdeg2n(moving_pos, fixed_pos)
+    # 2. Future state (lookahead)
+    # Project positions forward by a small time step
+    # Use modulo to handle crossing 0°/360° boundary correctly
+    p1_future = (point_one_abs_pos + point_one_speed * DT) % 360.0
+    p2_future = (point_two_abs_pos + point_two_speed * DT) % 360.0
 
-    elif point_two_speed == 0:
-        # point_two is fixed (e.g. axis), point_one moves
-        moving_pos = p1
-        fixed_pos = p2
-        moving_speed = point_one_speed
-        sep = difdeg2n(moving_pos, fixed_pos)
+    future_orb = get_orb(p1_future, p2_future, aspect_norm)
 
+    # 3. Compare with numerical precision tolerance
+    # Calculate the change in orb
+    orb_change = future_orb - current_orb
+
+    # Use epsilon for comparison to handle floating point precision issues
+    # If the change is smaller than our precision threshold, consider it static
+    if abs(orb_change) < ORB_EPSILON:
+        return "Static"
+    elif orb_change < 0:
+        # Orb is decreasing -> bodies are approaching exact aspect
+        return "Applying"
     else:
-        # Both points move: use relative speed and standard separation
-        sep = difdeg2n(p2, p1)
-        moving_speed = point_two_speed - point_one_speed
-
-    sep_abs = abs(sep)
-
-    # If the (relative or absolute) speed is zero, the orb does not change
-    if moving_speed == 0:
+        # Orb is increasing -> bodies are separating from exact aspect
         return "Separating"
-
-    # Signs used to determine whether the orb grows or shrinks
-    sign_sep = _sign(sep)                 # sign of the separation
-    sign_delta = _sign(sep_abs - aspect)  # whether we are "before" or "beyond" the exact aspect
-    sign_rel = _sign(moving_speed)        # direction in which the separation evolves
-
-    # Qualitative sign of the orb derivative (d(orb)/dt):
-    # < 0  -> orb decreases -> Applying
-    # > 0  -> orb increases -> Separating
-    orb_derivative_sign = sign_delta * sign_sep * sign_rel
-
-    return "Applying" if orb_derivative_sign < 0 else "Separating"
 
 
 def planet_id_decoder(planets_settings: list[KerykeionSettingsCelestialPointModel], name: str) -> int:
@@ -250,19 +199,23 @@ def planet_id_decoder(planets_settings: list[KerykeionSettingsCelestialPointMode
 
 def get_active_points_list(
     subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-    active_points: list = [],
+    active_points: Optional[list] = None,
     *,
-    celestial_points: list[dict] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
+    celestial_points: Union[list[_CelestialPointSetting], list[dict]] = DEFAULT_CELESTIAL_POINTS_SETTINGS,
 ) -> list:
     """
     Given an astrological subject and the settings, return a list of the active points.
+
     Args:
         subject (AstrologicalSubject): The astrological subject to get the active points from.
-        settings (Union[KerykeionSettingsModel, dict]): Settings model o dictionary.
+        active_points (list, optional): List of active point names to filter. Defaults to None.
+        celestial_points (Union[list[_CelestialPointSetting], list[dict]]): Settings for celestial points.
 
     Returns:
         list: List of the active points.
     """
+    if active_points is None:
+        active_points = []
     point_list = []
     for planet in celestial_points:
         if planet["name"] in active_points:

@@ -9,7 +9,10 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-from kerykeion.house_comparison.house_comparison_utils import calculate_points_in_reciprocal_houses
+from kerykeion.house_comparison.house_comparison_utils import (
+    calculate_points_in_reciprocal_houses,
+    calculate_cusps_in_reciprocal_houses,
+)
 from typing import Union
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 from kerykeion.schemas.kr_models import HouseComparisonModel
@@ -42,12 +45,13 @@ class HouseComparisonFactory:
         >>> comparison = factory.get_house_comparison()
 
     """
-    def __init__(self,
-                 first_subject: Union["AstrologicalSubjectModel", "PlanetReturnModel"],
-                 second_subject: Union["AstrologicalSubjectModel", "PlanetReturnModel"],
-                active_points: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
 
-        ):
+    def __init__(
+        self,
+        first_subject: Union["AstrologicalSubjectModel", "PlanetReturnModel"],
+        second_subject: Union["AstrologicalSubjectModel", "PlanetReturnModel"],
+        active_points: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
+    ):
         """
         Initialize the house comparison factory.
 
@@ -82,14 +86,24 @@ class HouseComparisonFactory:
             Analysis scope is determined by the active_points list. Only specified
             points will be included in the results.
         """
-        first_points_in_second_houses = calculate_points_in_reciprocal_houses(self.first_subject, self.second_subject, self.active_points)
-        second_points_in_first_houses = calculate_points_in_reciprocal_houses(self.second_subject, self.first_subject, self.active_points)
+        first_points_in_second_houses = calculate_points_in_reciprocal_houses(
+            self.first_subject, self.second_subject, self.active_points
+        )
+        second_points_in_first_houses = calculate_points_in_reciprocal_houses(
+            self.second_subject, self.first_subject, self.active_points
+        )
+
+        # Calculate cusp placements in reciprocal houses
+        first_cusps_in_second_houses = calculate_cusps_in_reciprocal_houses(self.first_subject, self.second_subject)
+        second_cusps_in_first_houses = calculate_cusps_in_reciprocal_houses(self.second_subject, self.first_subject)
 
         return HouseComparisonModel(
             first_subject_name=self.first_subject.name,
             second_subject_name=self.second_subject.name,
             first_points_in_second_houses=first_points_in_second_houses,
             second_points_in_first_houses=second_points_in_first_houses,
+            first_cusps_in_second_houses=first_cusps_in_second_houses,
+            second_cusps_in_first_houses=second_cusps_in_first_houses,
         )
 
 

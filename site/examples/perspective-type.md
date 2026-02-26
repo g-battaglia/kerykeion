@@ -1,16 +1,50 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Perspective Type'
+tags: ['examples', 'charts', 'perspective', 'heliocentric', 'kerykeion']
+order: 8
 ---
 
 # Perspective Type
 
-The `PerspectiveType` class is used to define the perspective of the chart.
+The `perspective_type` parameter defines the viewpoint from which planetary positions are calculated. Kerykeion supports four different perspectives.
 
-Full list of `PerspectiveType` literals can be found here:
-https://www.kerykeion.net/pydocs/kerykeion/schemas/kr_literals.html#PerspectiveType
+## Available Perspective Types
 
-## Heliocentric Birth Chart
+| Perspective | Description | Use Case |
+|:------------|:------------|:---------|
+| `Apparent Geocentric` | Earth-centered, accounting for light-time and aberration. **Default and standard for most astrology.** | Traditional natal, synastry, transit charts |
+| `True Geocentric` | Earth-centered, without light-time correction. Positions as they "truly" are at that moment. | Research, comparison with astronomical data |
+| `Heliocentric` | Sun-centered. Shows planetary positions as seen from the Sun. Earth replaces Sun in the chart. | Esoteric/cosmobiological techniques, solar system studies |
+| `Topocentric` | Observer's exact location on Earth's surface. Most accurate for Moon position. | Precise lunar work, electional astrology |
+
+## Apparent Geocentric (Default)
+
+This is the standard perspective for almost all astrological work. It accounts for the time light takes to travel from celestial bodies to Earth.
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+# Default perspective - no need to specify
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833, lat=53.4, tz_str="Europe/London",
+    online=False,
+    # perspective_type="Apparent Geocentric"  # This is the default
+)
+
+print(f"Sun: {subject.sun.sign} {subject.sun.position:.2f}°")
+print(f"Moon: {subject.moon.sign} {subject.moon.position:.2f}°")
+```
+
+**Output:**
+```
+Sun: Lib 16.27°
+Moon: Aqu 3.50°
+```
+
+## Heliocentric
+
+In heliocentric charts, we view the solar system from the Sun's perspective. The Earth appears in the chart instead of the Sun.
 
 ```python
 from pathlib import Path
@@ -21,363 +55,95 @@ from kerykeion.charts.chart_drawer import ChartDrawer
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Heliocentric", 1940, 10, 9, 18, 30,
     lng=-2.9833, lat=53.4, tz_str="Europe/London",
-    online=False, perspective_type="Heliocentric",
+    online=False,
+    perspective_type="Heliocentric",
 )
+
+# Note: In heliocentric, Earth replaces Sun
+print(f"Earth: {subject.earth.sign} {subject.earth.position:.2f}°")
+print(f"Mars: {subject.mars.sign} {subject.mars.position:.2f}°")
+
 data = ChartDataFactory.create_natal_chart_data(subject)
 chart = ChartDrawer(data)
-chart.save_svg(output_path=Path("charts_output"), filename="lennon-heliocentric")
+
+out_dir = Path("charts_output")
+out_dir.mkdir(exist_ok=True)
+chart.save_svg(output_path=out_dir, filename="lennon-heliocentric")
 ```
 
 The output will be:
 
 ![John Lennon Heliocentric](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Heliocentric%20-%20Natal%20Chart.svg)
 
-## Helio AstrologicalSubject
+> **Note:** Heliocentric charts have no houses or Ascendant since there is no observer on Earth. The house system is ignored.
+
+## True Geocentric
+
+Shows positions without light-time correction. The difference from Apparent Geocentric is typically very small (a few arcseconds for most planets).
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
 
-johnny = AstrologicalSubjectFactory.from_birth_data(
-    "Johnny Depp", 1963, 6, 9, 0, 0,
-    lng=-87.1112,
-    lat=37.7719,
-    tz_str="America/Chicago",
+# True geocentric perspective
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - True Geocentric", 1940, 10, 9, 18, 30,
+    lng=-2.9833, lat=53.4, tz_str="Europe/London",
     online=False,
-    perspective_type="Heliocentric",
+    perspective_type="True Geocentric",
 )
 
-print(johnny.model_dump_json(indent=2))
+print(f"Sun: {subject.sun.sign} {subject.sun.position:.4f}°")
 ```
 
-The output will be:
+## Topocentric
 
-```json
-{
-    "name": "Johnny Depp",
-    "year": 1963,
-    "month": 6,
-    "day": 9,
-    "hour": 0,
-    "minute": 0,
-    "city": "Owensboro",
-    "nation": "US",
-    "lng": -87.11333,
-    "lat": 37.77422,
-    "tz_str": "America/Chicago",
-    "zodiac_type": "Tropic",
-    "houses_system_identifier": "P",
-    "houses_system_name": "Placidus",
-    "perspective_type": "Heliocentric",
-    "iso_formatted_local_datetime": "1963-06-09T00:00:00-05:00",
-    "iso_formatted_utc_datetime": "1963-06-09T05:00:00+00:00",
-    "julian_day": 2438189.7083333335,
-    "sun": {
-        "name": "Sun",
-        "quality": "Cardinal",
-        "element": "Fire",
-        "sign": "Ari",
-        "sign_num": 0,
-        "position": 0.0,
-        "abs_pos": 0.0,
-        "emoji": "♈️",
-        "point_type": "Planet",
-        "house": "First_House",
-        "retrograde": false
-    },
-    "moon": {
-        "name": "Moon",
-        "quality": "Mutable",
-        "element": "Fire",
-        "sign": "Sag",
-        "sign_num": 8,
-        "position": 17.71293280048576,
-        "abs_pos": 257.71293280048576,
-        "emoji": "♐️",
-        "point_type": "Planet",
-        "house": "Tenth_House",
-        "retrograde": false
-    },
-    "mercury": {
-        "name": "Mercury",
-        "quality": "Cardinal",
-        "element": "Earth",
-        "sign": "Cap",
-        "sign_num": 9,
-        "position": 29.31965968245555,
-        "abs_pos": 299.31965968245555,
-        "emoji": "♑️",
-        "point_type": "Planet",
-        "house": "Twelfth_House",
-        "retrograde": false
-    },
-    "venus": {
-        "name": "Venus",
-        "quality": "Cardinal",
-        "element": "Fire",
-        "sign": "Ari",
-        "sign_num": 0,
-        "position": 23.843575319691585,
-        "abs_pos": 23.843575319691585,
-        "emoji": "♈️",
-        "point_type": "Planet",
-        "house": "Second_House",
-        "retrograde": false
-    },
-    "mars": {
-        "name": "Mars",
-        "quality": "Cardinal",
-        "element": "Air",
-        "sign": "Lib",
-        "sign_num": 6,
-        "position": 9.908686490882815,
-        "abs_pos": 189.90868649088281,
-        "emoji": "♎️",
-        "point_type": "Planet",
-        "house": "Eighth_House",
-        "retrograde": false
-    },
-    "jupiter": {
-        "name": "Jupiter",
-        "quality": "Cardinal",
-        "element": "Fire",
-        "sign": "Ari",
-        "sign_num": 0,
-        "position": 3.3225824822577104,
-        "abs_pos": 3.3225824822577104,
-        "emoji": "♈️",
-        "point_type": "Planet",
-        "house": "First_House",
-        "retrograde": false
-    },
-    "saturn": {
-        "name": "Saturn",
-        "quality": "Fixed",
-        "element": "Air",
-        "sign": "Aqu",
-        "sign_num": 10,
-        "position": 17.726400222248685,
-        "abs_pos": 317.7264002222487,
-        "emoji": "♒️",
-        "point_type": "Planet",
-        "house": "Twelfth_House",
-        "retrograde": false
-    },
-    "uranus": {
-        "name": "Uranus",
-        "quality": "Mutable",
-        "element": "Earth",
-        "sign": "Vir",
-        "sign_num": 5,
-        "position": 4.621984499731468,
-        "abs_pos": 154.62198449973147,
-        "emoji": "♍️",
-        "point_type": "Planet",
-        "house": "Seventh_House",
-        "retrograde": false
-    },
-    "neptune": {
-        "name": "Neptune",
-        "quality": "Fixed",
-        "element": "Water",
-        "sign": "Sco",
-        "sign_num": 7,
-        "position": 14.498716498461278,
-        "abs_pos": 224.49871649846128,
-        "emoji": "♏️",
-        "point_type": "Planet",
-        "house": "Ninth_House",
-        "retrograde": false
-    },
-    "pluto": {
-        "name": "Pluto",
-        "quality": "Mutable",
-        "element": "Earth",
-        "sign": "Vir",
-        "sign_num": 5,
-        "position": 11.420394744365211,
-        "abs_pos": 161.4203947443652,
-        "emoji": "♍️",
-        "point_type": "Planet",
-        "house": "Seventh_House",
-        "retrograde": false
-    },
-    "chiron": {
-        "name": "Chiron",
-        "quality": "Mutable",
-        "element": "Water",
-        "sign": "Pis",
-        "sign_num": 11,
-        "position": 11.572185162993549,
-        "abs_pos": 341.57218516299355,
-        "emoji": "♓️",
-        "point_type": "Planet",
-        "house": "First_House",
-        "retrograde": false
-    },
-    "first_house": {
-        "name": "First_House",
-        "quality": "Fixed",
-        "element": "Air",
-        "sign": "Aqu",
-        "sign_num": 10,
-        "position": 20.696672272096748,
-        "abs_pos": 320.69667227209675,
-        "emoji": "♒️",
-        "point_type": "House"
-    },
-    "second_house": {
-        "name": "Second_House",
-        "quality": "Cardinal",
-        "element": "Fire",
-        "sign": "Ari",
-        "sign_num": 0,
-        "position": 6.643247095515116,
-        "abs_pos": 6.643247095515116,
-        "emoji": "♈️",
-        "point_type": "House"
-    },
-    "third_house": {
-        "name": "Third_House",
-        "quality": "Fixed",
-        "element": "Earth",
-        "sign": "Tau",
-        "sign_num": 1,
-        "position": 11.215413957987053,
-        "abs_pos": 41.21541395798705,
-        "emoji": "♉️",
-        "point_type": "House"
-    },
-    "fourth_house": {
-        "name": "Fourth_House",
-        "quality": "Mutable",
-        "element": "Air",
-        "sign": "Gem",
-        "sign_num": 2,
-        "position": 6.587748893878825,
-        "abs_pos": 66.58774889387882,
-        "emoji": "♊️",
-        "point_type": "House"
-    },
-    "fifth_house": {
-        "name": "Fifth_House",
-        "quality": "Mutable",
-        "element": "Air",
-        "sign": "Gem",
-        "sign_num": 2,
-        "position": 28.34219396577589,
-        "abs_pos": 88.34219396577589,
-        "emoji": "♊️",
-        "point_type": "House"
-    },
-    "sixth_house": {
-        "name": "Sixth_House",
-        "quality": "Cardinal",
-        "element": "Water",
-        "sign": "Can",
-        "sign_num": 3,
-        "position": 20.99073151066341,
-        "abs_pos": 110.99073151066341,
-        "emoji": "♋️",
-        "point_type": "House"
-    },
-    "seventh_house": {
-        "name": "Seventh_House",
-        "quality": "Fixed",
-        "element": "Fire",
-        "sign": "Leo",
-        "sign_num": 4,
-        "position": 20.696672272096748,
-        "abs_pos": 140.69667227209675,
-        "emoji": "♌️",
-        "point_type": "House"
-    },
-    "eighth_house": {
-        "name": "Eighth_House",
-        "quality": "Cardinal",
-        "element": "Air",
-        "sign": "Lib",
-        "sign_num": 6,
-        "position": 6.6432470955151075,
-        "abs_pos": 186.6432470955151,
-        "emoji": "♎️",
-        "point_type": "House"
-    },
-    "ninth_house": {
-        "name": "Ninth_House",
-        "quality": "Fixed",
-        "element": "Water",
-        "sign": "Sco",
-        "sign_num": 7,
-        "position": 11.215413957987039,
-        "abs_pos": 221.21541395798704,
-        "emoji": "♏️",
-        "point_type": "House"
-    },
-    "tenth_house": {
-        "name": "Tenth_House",
-        "quality": "Mutable",
-        "element": "Fire",
-        "sign": "Sag",
-        "sign_num": 8,
-        "position": 6.587748893878825,
-        "abs_pos": 246.58774889387882,
-        "emoji": "♐️",
-        "point_type": "House"
-    },
-    "eleventh_house": {
-        "name": "Eleventh_House",
-        "quality": "Mutable",
-        "element": "Fire",
-        "sign": "Sag",
-        "sign_num": 8,
-        "position": 28.34219396577589,
-        "abs_pos": 268.3421939657759,
-        "emoji": "♐️",
-        "point_type": "House"
-    },
-    "twelfth_house": {
-        "name": "Twelfth_House",
-        "quality": "Cardinal",
-        "element": "Earth",
-        "sign": "Cap",
-        "sign_num": 9,
-        "position": 20.99073151066341,
-        "abs_pos": 290.9907315106634,
-        "emoji": "♑️",
-        "point_type": "House"
-    },
-    "mean_node": {
-        "name": "Mean_Node",
-        "quality": "Cardinal",
-        "element": "Fire",
-        "sign": "Ari",
-        "sign_num": 0,
-        "position": 0.0,
-        "abs_pos": 0.0,
-        "emoji": "♈️",
-        "point_type": "Planet",
-        "house": "First_House",
-        "retrograde": false
-    },
-    "true_node": {
-        "name": "True_Node",
-        "quality": "Cardinal",
-        "element": "Fire",
-        "sign": "Ari",
-        "sign_num": 0,
-        "position": 0.0,
-        "abs_pos": 0.0,
-        "emoji": "♈️",
-        "point_type": "Planet",
-        "house": "First_House",
-        "retrograde": false
-    },
-    "lunar_phase": {
-        "degrees_between_s_m": 257.71293280048576,
-        "moon_phase": 21,
-        "sun_phase": 20,
-        "moon_emoji": "🌗",
-        "moon_phase_name": "Last Quarter"
-    }
-}
+The most precise perspective for the Moon and fast-moving points. Accounts for the observer's exact location on Earth's surface (parallax correction).
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+# Topocentric for precise Moon position
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Topocentric", 1940, 10, 9, 18, 30,
+    lng=-2.9833, lat=53.4, tz_str="Europe/London",
+    online=False,
+    perspective_type="Topocentric",
+)
+
+print(f"Moon: {subject.moon.sign} {subject.moon.position:.4f}°")
+print(f"Ascendant: {subject.first_house.sign} {subject.first_house.position:.4f}°")
 ```
+
+## Comparing Perspectives
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+perspectives = ["Apparent Geocentric", "True Geocentric", "Topocentric"]
+
+for perspective in perspectives:
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Test", 1990, 6, 15, 12, 0,
+        lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+        online=False,
+        perspective_type=perspective,
+    )
+    print(f"{perspective}:")
+    print(f"  Moon: {subject.moon.position:.4f}°")
+```
+
+**Output:**
+```
+Apparent Geocentric:
+  Moon: 15.2347°
+True Geocentric:
+  Moon: 15.2348°
+Topocentric:
+  Moon: 15.1892°  # Note the larger difference due to parallax
+```
+
+> **Tip:** For most astrological work, stick with the default `Apparent Geocentric`. Use `Topocentric` only when precise Moon timing is critical (e.g., for electional astrology or void-of-course Moon calculations).
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

@@ -1,4 +1,5 @@
 """Synastry aspect calculation using the unified AspectsFactory."""
+
 from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 
 
@@ -39,11 +40,7 @@ def main() -> None:
 
     if synastry.aspects:
         first = synastry.aspects[0]
-        print(
-            "Example aspect: "
-            f"{first.p1_name} {first.aspect} {first.p2_name} "
-            f"with orb {first.orbit:.2f}°"
-        )
+        print(f"Example aspect: {first.p1_name} {first.aspect} {first.p2_name} with orb {first.orbit:.2f}°")
 
 
 if __name__ == "__main__":

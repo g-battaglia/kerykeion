@@ -1,0 +1,572 @@
+==================================================
+Sample Natal Subject & Yoko Ono — Composite Report
+==================================================
+
++Composite Chart — Birth Data-------------------------+
+| Field             | Value                           |
++-------------------+---------------------------------+
+| Name              | John & Yoko Composite Chart     |
+| Composite Members | Sample Natal Subject & Yoko Ono |
+| Composite Type    | Midpoint                        |
++-------------------+---------------------------------+
+
++Composite Chart — Settings-----------------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Active Points Count | 42                  |
++---------------------+---------------------+
+
++Composite – First Subject — Birth Data----------+
+| Field              | Value                     |
++--------------------+---------------------------+
+| Name               | Sample Natal Subject      |
+| Date               | 21/07/1990                |
+| Time               | 14:45                     |
+| City               | Liverpool                 |
+| Nation             | GB                        |
+| Latitude           | 53.4084°                  |
+| Longitude          | -2.9916°                  |
+| Timezone           | Europe/London             |
+| Day of Week        | Saturday                  |
+| ISO Local Datetime | 1990-07-21T14:45:00+01:00 |
++--------------------+---------------------------+
+
++Composite – First Subject — Settings-------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Julian Day          | 2448094.072917      |
+| Active Points Count | 42                  |
++---------------------+---------------------+
+
++Composite – Second Subject — Birth Data---------+
+| Field              | Value                     |
++--------------------+---------------------------+
+| Name               | Yoko Ono                  |
+| Date               | 18/02/1933                |
+| Time               | 20:30                     |
+| City               | Tokyo                     |
+| Nation             | JP                        |
+| Latitude           | 35.6762°                  |
+| Longitude          | 139.6503°                 |
+| Timezone           | Asia/Tokyo                |
+| Day of Week        | Saturday                  |
+| ISO Local Datetime | 1933-02-18T20:30:00+09:00 |
++--------------------+---------------------------+
+
++Composite – Second Subject — Settings------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Julian Day          | 2427121.979167      |
+| Active Points Count | 42                  |
++---------------------+---------------------+
+
++Composite Chart Celestial Points-+----------+-------+-------+------+----------------+
+| Point                 | Sign    | Position | Speed | Decl. | Ret. | House          |
++-----------------------+---------+----------+-------+-------+------+----------------+
+| Ascendant             | Lib ♎️ | 22.12°   | N/A   | N/A   | -    | First House    |
+| Medium Coeli          | Can ♋️ | 29.61°   | N/A   | N/A   | -    | Tenth House    |
+| Descendant            | Ari ♈️ | 22.12°   | N/A   | N/A   | -    | Seventh House  |
+| Imum Coeli            | Cap ♑️ | 29.61°   | N/A   | N/A   | -    | Fourth House   |
+| Sun                   | Tau ♉️ | 13.96°   | N/A   | N/A   | -    | Seventh House  |
+| Moon                  | Lib ♎️ | 1.17°    | N/A   | N/A   | -    | Twelfth House  |
+| Mercury               | Tau ♉️ | 27.75°   | N/A   | N/A   | -    | Eighth House   |
+| Venus                 | Ari ♈️ | 22.75°   | N/A   | N/A   | -    | Seventh House  |
+| Mars                  | Can ♋️ | 10.55°   | N/A   | N/A   | -    | Ninth House    |
+| Jupiter               | Leo ♌️ | 22.30°   | N/A   | N/A   | -    | Tenth House    |
+| Saturn                | Aqu ♒️ | 0.63°    | N/A   | N/A   | -    | Fourth House   |
+| Uranus                | Aqu ♒️ | 28.64°   | N/A   | N/A   | -    | Fourth House   |
+| Neptune               | Sco ♏️ | 10.92°   | N/A   | N/A   | -    | First House    |
+| Pluto                 | Vir ♍️ | 18.30°   | N/A   | N/A   | -    | Eleventh House |
+| Mean North Lunar Node | Aqu ♒️ | 23.06°   | N/A   | N/A   | -    | Fourth House   |
+| True North Lunar Node | Aqu ♒️ | 22.53°   | N/A   | N/A   | -    | Fourth House   |
+| Mean South Lunar Node | Leo ♌️ | 23.06°   | N/A   | N/A   | -    | Tenth House    |
+| True South Lunar Node | Leo ♌️ | 22.53°   | N/A   | N/A   | -    | Tenth House    |
+| Mean Lilith           | Vir ♍️ | 0.75°    | N/A   | N/A   | -    | Tenth House    |
+| True Lilith           | Pis ♓️ | 14.44°   | N/A   | N/A   | -    | Fifth House    |
+| Earth                 | Ari ♈️ | 0.00°    | N/A   | N/A   | -    | Sixth House    |
+| Chiron                | Gem ♊️ | 21.81°   | N/A   | N/A   | -    | Eighth House   |
+| Pholus                | Ari ♈️ | 8.09°    | N/A   | N/A   | -    | Sixth House    |
+| Ceres                 | Tau ♉️ | 22.10°   | N/A   | N/A   | -    | Eighth House   |
+| Pallas                | Ari ♈️ | 23.85°   | N/A   | N/A   | -    | Seventh House  |
+| Juno                  | Sco ♏️ | 7.97°    | N/A   | N/A   | -    | First House    |
+| Vesta                 | Tau ♉️ | 22.69°   | N/A   | N/A   | -    | Eighth House   |
+| Eris                  | Ari ♈️ | 9.82°    | N/A   | N/A   | -    | Sixth House    |
+| Sedna                 | Ari ♈️ | 29.37°   | N/A   | N/A   | -    | Seventh House  |
+| Haumea                | Vir ♍️ | 0.67°    | N/A   | N/A   | -    | Tenth House    |
+| Makemake              | Leo ♌️ | 2.66°    | N/A   | N/A   | -    | Tenth House    |
+| Ixion                 | Lib ♎️ | 25.96°   | N/A   | N/A   | -    | First House    |
+| Orcus                 | Can ♋️ | 4.31°    | N/A   | N/A   | -    | Ninth House    |
+| Quaoar                | Lib ♎️ | 20.42°   | N/A   | N/A   | -    | Twelfth House  |
+| Regulus               | Leo ♌️ | 29.30°   | N/A   | N/A   | -    | Tenth House    |
+| Spica                 | Lib ♎️ | 23.31°   | N/A   | N/A   | -    | First House    |
+| Pars Fortunae         | Sco ♏️ | 27.58°   | N/A   | N/A   | -    | Second House   |
+| Pars Spiritus         | Vir ♍️ | 16.66°   | N/A   | N/A   | -    | Eleventh House |
+| Pars Amoris           | Lib ♎️ | 0.90°    | N/A   | N/A   | -    | Twelfth House  |
+| Pars Fidei            | Tau ♉️ | 13.79°   | N/A   | N/A   | -    | Seventh House  |
+| Vertex                | Tau ♉️ | 19.11°   | N/A   | N/A   | -    | Seventh House  |
+| Anti Vertex           | Sco ♏️ | 19.11°   | N/A   | N/A   | -    | First House    |
++-----------------------+---------+----------+-------+-------+------+----------------+
+
++Composite Chart Houses (Placidus)----+-------------------+
+| House          | Sign    | Position | Absolute Position |
++----------------+---------+----------+-------------------+
+| First House    | Lib ♎️ | 22.12°   | 202.12°           |
+| Second House   | Sco ♏️ | 19.77°   | 229.77°           |
+| Third House    | Sag ♐️ | 23.16°   | 263.16°           |
+| Fourth House   | Cap ♑️ | 29.61°   | 299.61°           |
+| Fifth House    | Pis ♓️ | 2.47°    | 332.47°           |
+| Sixth House    | Pis ♓️ | 29.79°   | 359.79°           |
+| Seventh House  | Ari ♈️ | 22.12°   | 22.12°            |
+| Eighth House   | Tau ♉️ | 19.77°   | 49.77°            |
+| Ninth House    | Gem ♊️ | 23.16°   | 83.16°            |
+| Tenth House    | Can ♋️ | 29.61°   | 119.61°           |
+| Eleventh House | Vir ♍️ | 2.47°    | 152.47°           |
+| Twelfth House  | Vir ♍️ | 29.79°   | 179.79°           |
++----------------+---------+----------+-------------------+
+
++Lunar Phase--------------+-------------------+
+| Lunar Phase Information | Value             |
++-------------------------+-------------------+
+| Phase Name              | Waxing Gibbous 🌔 |
+| Sun-Moon Angle          | 137.21°           |
+| Lunation Day            | 11                |
++-------------------------+-------------------+
+
++Element Distribution-----------+
+| Element  | Count | Percentage |
++----------+-------+------------+
+| Fire 🔥  | 7.1   | 22.8%      |
+| Earth 🌍 | 9.3   | 29.8%      |
+| Air 💨   | 8.5   | 27.2%      |
+| Water 💧 | 6.3   | 20.2%      |
+| Total    | 31.2  | 100%       |
++----------+-------+------------+
+
++Quality Distribution-----------+------------+
+| Quality  | Count              | Percentage |
++----------+--------------------+------------+
+| Cardinal | 14.800000000000004 | 47.4%      |
+| Fixed    | 13.300000000000002 | 42.6%      |
+| Mutable  | 3.0999999999999996 | 9.9%       |
+| Total    | 31.20000000000001  | 100%       |
++----------+--------------------+------------+
+
++Active Celestial Points-----+
+| #  | Active Point          |
++----+-----------------------+
+| 1  | Sun                   |
+| 2  | Moon                  |
+| 3  | Mercury               |
+| 4  | Venus                 |
+| 5  | Mars                  |
+| 6  | Jupiter               |
+| 7  | Saturn                |
+| 8  | Uranus                |
+| 9  | Neptune               |
+| 10 | Pluto                 |
+| 11 | Mean_North_Lunar_Node |
+| 12 | Mean_South_Lunar_Node |
+| 13 | True_North_Lunar_Node |
+| 14 | True_South_Lunar_Node |
+| 15 | Mean_Lilith           |
+| 16 | True_Lilith           |
+| 17 | Earth                 |
+| 18 | Chiron                |
+| 19 | Pholus                |
+| 20 | Ceres                 |
+| 21 | Pallas                |
+| 22 | Juno                  |
+| 23 | Vesta                 |
+| 24 | Eris                  |
+| 25 | Sedna                 |
+| 26 | Haumea                |
+| 27 | Makemake              |
+| 28 | Ixion                 |
+| 29 | Orcus                 |
+| 30 | Quaoar                |
+| 31 | Regulus               |
+| 32 | Spica                 |
+| 33 | Pars_Fortunae         |
+| 34 | Pars_Spiritus         |
+| 35 | Pars_Amoris           |
+| 36 | Pars_Fidei            |
+| 37 | Vertex                |
+| 38 | Anti_Vertex           |
+| 39 | Ascendant             |
+| 40 | Medium_Coeli          |
+| 41 | Descendant            |
+| 42 | Imum_Coeli            |
++----+-----------------------+
+
++----------------+---------+
+| Aspect         | Orb (°) |
++----------------+---------+
+| conjunction    | 10      |
+| opposition     | 10      |
+| trine          | 8       |
+| sextile        | 6       |
+| square         | 5       |
+| quintile       | 1       |
+| semi-sextile   | 1       |
+| semi-square    | 1       |
+| sesquiquadrate | 1       |
+| biquintile     | 1       |
+| quincunx       | 1       |
++----------------+---------+
+
++Aspects----------------+-------------------------------+-----------------------+-------+----------+
+| Point 1               | Aspect                        | Point 2               | Orb   | Movement |
++-----------------------+-------------------------------+-----------------------+-------+----------+
+| Sun                   | sextile ⚹                     | Mars                  | 3.41° | Static = |
+| Sun                   | opposition ☍                  | Neptune               | 3.04° | Static = |
+| Sun                   | trine △                       | Pluto                 | 4.34° | Static = |
+| Sun                   | sextile ⚹                     | True Lilith           | 0.48° | Static = |
+| Sun                   | conjunction ☌                 | Ceres                 | 8.14° | Static = |
+| Sun                   | opposition ☍                  | Juno                  | 6.00° | Static = |
+| Sun                   | conjunction ☌                 | Vesta                 | 8.73° | Static = |
+| Sun                   | trine △                       | Pars Spiritus         | 2.70° | Static = |
+| Sun                   | conjunction ☌                 | Pars Fidei            | 0.17° | Static = |
+| Sun                   | conjunction ☌                 | Vertex                | 5.15° | Static = |
+| Sun                   | opposition ☍                  | Anti Vertex           | 5.15° | Static = |
+| Moon                  | trine △                       | Mercury               | 3.42° | Static = |
+| Moon                  | trine △                       | Saturn                | 0.54° | Static = |
+| Moon                  | sextile ⚹                     | Medium Coeli          | 1.56° | Static = |
+| Moon                  | trine △                       | Imum Coeli            | 1.56° | Static = |
+| Moon                  | semi-sextile semi-sextile     | Mean Lilith           | 0.42° | Static = |
+| Moon                  | opposition ☍                  | Earth                 | 1.17° | Static = |
+| Moon                  | opposition ☍                  | Pholus                | 6.93° | Static = |
+| Moon                  | opposition ☍                  | Eris                  | 8.65° | Static = |
+| Moon                  | semi-sextile semi-sextile     | Haumea                | 0.50° | Static = |
+| Moon                  | sextile ⚹                     | Makemake              | 1.49° | Static = |
+| Moon                  | square □                      | Orcus                 | 3.14° | Static = |
+| Moon                  | sextile ⚹                     | Pars Fortunae         | 3.59° | Static = |
+| Moon                  | conjunction ☌                 | Pars Amoris           | 0.27° | Static = |
+| Mercury               | trine △                       | Saturn                | 2.88° | Static = |
+| Mercury               | square □                      | Uranus                | 0.89° | Static = |
+| Mercury               | square □                      | Mean North Lunar Node | 4.69° | Static = |
+| Mercury               | biquintile biquintile         | Ascendant             | 0.37° | Static = |
+| Mercury               | sextile ⚹                     | Medium Coeli          | 1.86° | Static = |
+| Mercury               | trine △                       | Imum Coeli            | 1.86° | Static = |
+| Mercury               | square □                      | Mean Lilith           | 3.00° | Static = |
+| Mercury               | square □                      | Mean South Lunar Node | 4.69° | Static = |
+| Mercury               | sextile ⚹                     | Earth                 | 2.25° | Static = |
+| Mercury               | conjunction ☌                 | Ceres                 | 5.65° | Static = |
+| Mercury               | conjunction ☌                 | Vesta                 | 5.06° | Static = |
+| Mercury               | square □                      | Haumea                | 2.92° | Static = |
+| Mercury               | sextile ⚹                     | Makemake              | 4.91° | Static = |
+| Mercury               | square □                      | Regulus               | 1.55° | Static = |
+| Mercury               | opposition ☍                  | Pars Fortunae         | 0.17° | Static = |
+| Mercury               | trine △                       | Pars Amoris           | 3.15° | Static = |
+| Mercury               | conjunction ☌                 | Vertex                | 8.64° | Static = |
+| Mercury               | opposition ☍                  | Anti Vertex           | 8.64° | Static = |
+| Venus                 | trine △                       | Jupiter               | 0.44° | Static = |
+| Venus                 | sextile ⚹                     | Uranus                | 5.90° | Static = |
+| Venus                 | sextile ⚹                     | Mean North Lunar Node | 0.32° | Static = |
+| Venus                 | sextile ⚹                     | True North Lunar Node | 0.22° | Static = |
+| Venus                 | sextile ⚹                     | Chiron                | 0.94° | Static = |
+| Venus                 | opposition ☍                  | Ascendant             | 0.63° | Static = |
+| Venus                 | conjunction ☌                 | Descendant            | 0.63° | Static = |
+| Venus                 | trine △                       | Mean South Lunar Node | 0.32° | Static = |
+| Venus                 | trine △                       | True South Lunar Node | 0.22° | Static = |
+| Venus                 | semi-sextile semi-sextile     | Ceres                 | 0.64° | Static = |
+| Venus                 | conjunction ☌                 | Pallas                | 1.10° | Static = |
+| Venus                 | semi-sextile semi-sextile     | Vesta                 | 0.06° | Static = |
+| Venus                 | conjunction ☌                 | Sedna                 | 6.62° | Static = |
+| Venus                 | trine △                       | Haumea                | 7.92° | Static = |
+| Venus                 | opposition ☍                  | Ixion                 | 3.21° | Static = |
+| Venus                 | quintile Q                    | Orcus                 | 0.43° | Static = |
+| Venus                 | opposition ☍                  | Quaoar                | 2.32° | Static = |
+| Venus                 | trine △                       | Regulus               | 6.56° | Static = |
+| Venus                 | opposition ☍                  | Spica                 | 0.57° | Static = |
+| Venus                 | biquintile biquintile         | Pars Spiritus         | 0.09° | Static = |
+| Mars                  | trine △                       | Neptune               | 0.37° | Static = |
+| Mars                  | trine △                       | True Lilith           | 3.90° | Static = |
+| Mars                  | square □                      | Pholus                | 2.45° | Static = |
+| Mars                  | trine △                       | Juno                  | 2.58° | Static = |
+| Mars                  | square □                      | Eris                  | 0.72° | Static = |
+| Mars                  | quintile Q                    | Sedna                 | 0.82° | Static = |
+| Mars                  | conjunction ☌                 | Orcus                 | 6.23° | Static = |
+| Mars                  | sextile ⚹                     | Pars Fidei            | 3.25° | Static = |
+| Jupiter               | opposition ☍                  | Uranus                | 6.34° | Static = |
+| Jupiter               | opposition ☍                  | Mean North Lunar Node | 0.76° | Static = |
+| Jupiter               | opposition ☍                  | True North Lunar Node | 0.23° | Static = |
+| Jupiter               | sextile ⚹                     | Chiron                | 0.50° | Static = |
+| Jupiter               | sextile ⚹                     | Ascendant             | 0.19° | Static = |
+| Jupiter               | trine △                       | Descendant            | 0.19° | Static = |
+| Jupiter               | conjunction ☌                 | Mean Lilith           | 8.45° | Static = |
+| Jupiter               | conjunction ☌                 | Mean South Lunar Node | 0.76° | Static = |
+| Jupiter               | conjunction ☌                 | True South Lunar Node | 0.23° | Static = |
+| Jupiter               | sesquiquadrate sesquiquadrate | Pholus                | 0.79° | Static = |
+| Jupiter               | square □                      | Ceres                 | 0.20° | Static = |
+| Jupiter               | trine △                       | Pallas                | 1.55° | Static = |
+| Jupiter               | square □                      | Vesta                 | 0.39° | Static = |
+| Jupiter               | trine △                       | Sedna                 | 7.06° | Static = |
+| Jupiter               | conjunction ☌                 | Haumea                | 8.37° | Static = |
+| Jupiter               | sextile ⚹                     | Ixion                 | 3.66° | Static = |
+| Jupiter               | sextile ⚹                     | Quaoar                | 1.88° | Static = |
+| Jupiter               | conjunction ☌                 | Regulus               | 7.00° | Static = |
+| Jupiter               | sextile ⚹                     | Spica                 | 1.01° | Static = |
+| Jupiter               | square □                      | Vertex                | 3.20° | Static = |
+| Jupiter               | square □                      | Anti Vertex           | 3.20° | Static = |
+| Saturn                | opposition ☍                  | Medium Coeli          | 1.02° | Static = |
+| Saturn                | conjunction ☌                 | Imum Coeli            | 1.02° | Static = |
+| Saturn                | quincunx ⚻                    | Mean Lilith           | 0.13° | Static = |
+| Saturn                | sextile ⚹                     | Earth                 | 0.63° | Static = |
+| Saturn                | trine △                       | Vesta                 | 7.94° | Static = |
+| Saturn                | square □                      | Sedna                 | 1.26° | Static = |
+| Saturn                | quincunx ⚻                    | Haumea                | 0.04° | Static = |
+| Saturn                | opposition ☍                  | Makemake              | 2.03° | Static = |
+| Saturn                | square □                      | Ixion                 | 4.67° | Static = |
+| Saturn                | sextile ⚹                     | Pars Fortunae         | 3.05° | Static = |
+| Saturn                | trine △                       | Pars Amoris           | 0.28° | Static = |
+| Saturn                | quintile Q                    | Anti Vertex           | 0.48° | Static = |
+| Uranus                | conjunction ☌                 | Mean North Lunar Node | 5.58° | Static = |
+| Uranus                | conjunction ☌                 | True North Lunar Node | 6.11° | Static = |
+| Uranus                | trine △                       | Chiron                | 6.84° | Static = |
+| Uranus                | trine △                       | Ascendant             | 6.53° | Static = |
+| Uranus                | quincunx ⚻                    | Medium Coeli          | 0.97° | Static = |
+| Uranus                | semi-sextile semi-sextile     | Imum Coeli            | 0.97° | Static = |
+| Uranus                | opposition ☍                  | Mean Lilith           | 2.11° | Static = |
+| Uranus                | opposition ☍                  | Mean South Lunar Node | 5.58° | Static = |
+| Uranus                | opposition ☍                  | True South Lunar Node | 6.11° | Static = |
+| Uranus                | sextile ⚹                     | Pallas                | 4.79° | Static = |
+| Uranus                | sextile ⚹                     | Sedna                 | 0.72° | Static = |
+| Uranus                | opposition ☍                  | Haumea                | 2.03° | Static = |
+| Uranus                | trine △                       | Ixion                 | 2.68° | Static = |
+| Uranus                | trine △                       | Orcus                 | 5.67° | Static = |
+| Uranus                | opposition ☍                  | Regulus               | 0.66° | Static = |
+| Uranus                | trine △                       | Spica                 | 5.33° | Static = |
+| Uranus                | square □                      | Pars Fortunae         | 1.07° | Static = |
+| Neptune               | trine △                       | True Lilith           | 3.52° | Static = |
+| Neptune               | conjunction ☌                 | Juno                  | 2.95° | Static = |
+| Neptune               | trine △                       | Orcus                 | 6.61° | Static = |
+| Neptune               | quintile Q                    | Regulus               | 0.38° | Static = |
+| Neptune               | sextile ⚹                     | Pars Spiritus         | 5.74° | Static = |
+| Neptune               | opposition ☍                  | Pars Fidei            | 2.88° | Static = |
+| Neptune               | opposition ☍                  | Vertex                | 8.19° | Static = |
+| Neptune               | conjunction ☌                 | Anti Vertex           | 8.19° | Static = |
+| Pluto                 | square □                      | Chiron                | 3.51° | Static = |
+| Pluto                 | opposition ☍                  | True Lilith           | 3.86° | Static = |
+| Pluto                 | trine △                       | Ceres                 | 3.80° | Static = |
+| Pluto                 | biquintile biquintile         | Pallas                | 0.45° | Static = |
+| Pluto                 | trine △                       | Vesta                 | 4.39° | Static = |
+| Pluto                 | semi-square semi-square       | Makemake              | 0.65° | Static = |
+| Pluto                 | conjunction ☌                 | Pars Spiritus         | 1.64° | Static = |
+| Pluto                 | trine △                       | Pars Fidei            | 4.51° | Static = |
+| Pluto                 | trine △                       | Vertex                | 0.81° | Static = |
+| Pluto                 | sextile ⚹                     | Anti Vertex           | 0.81° | Static = |
+| Mean North Lunar Node | conjunction ☌                 | True North Lunar Node | 0.53° | Static = |
+| Mean North Lunar Node | trine △                       | Chiron                | 1.26° | Static = |
+| Mean North Lunar Node | trine △                       | Ascendant             | 0.95° | Static = |
+| Mean North Lunar Node | sextile ⚹                     | Descendant            | 0.95° | Static = |
+| Mean North Lunar Node | opposition ☍                  | Mean Lilith           | 7.69° | Static = |
+| Mean North Lunar Node | opposition ☍                  | True South Lunar Node | 0.53° | Static = |
+| Mean North Lunar Node | semi-square semi-square       | Pholus                | 0.03° | Static = |
+| Mean North Lunar Node | square □                      | Ceres                 | 0.96° | Static = |
+| Mean North Lunar Node | sextile ⚹                     | Pallas                | 0.79° | Static = |
+| Mean North Lunar Node | square □                      | Vesta                 | 0.37° | Static = |
+| Mean North Lunar Node | opposition ☍                  | Haumea                | 7.61° | Static = |
+| Mean North Lunar Node | trine △                       | Ixion                 | 2.90° | Static = |
+| Mean North Lunar Node | trine △                       | Quaoar                | 2.64° | Static = |
+| Mean North Lunar Node | opposition ☍                  | Regulus               | 6.24° | Static = |
+| Mean North Lunar Node | trine △                       | Spica                 | 0.25° | Static = |
+| Mean North Lunar Node | square □                      | Pars Fortunae         | 4.51° | Static = |
+| Mean North Lunar Node | square □                      | Vertex                | 3.96° | Static = |
+| Mean North Lunar Node | square □                      | Anti Vertex           | 3.96° | Static = |
+| True North Lunar Node | trine △                       | Chiron                | 0.72° | Static = |
+| True North Lunar Node | trine △                       | Ascendant             | 0.41° | Static = |
+| True North Lunar Node | sextile ⚹                     | Descendant            | 0.41° | Static = |
+| True North Lunar Node | opposition ☍                  | Mean Lilith           | 8.22° | Static = |
+| True North Lunar Node | opposition ☍                  | Mean South Lunar Node | 0.53° | Static = |
+| True North Lunar Node | semi-square semi-square       | Pholus                | 0.56° | Static = |
+| True North Lunar Node | square □                      | Ceres                 | 0.43° | Static = |
+| True North Lunar Node | sextile ⚹                     | Pallas                | 1.32° | Static = |
+| True North Lunar Node | square □                      | Vesta                 | 0.16° | Static = |
+| True North Lunar Node | opposition ☍                  | Haumea                | 8.14° | Static = |
+| True North Lunar Node | trine △                       | Ixion                 | 3.43° | Static = |
+| True North Lunar Node | trine △                       | Quaoar                | 2.11° | Static = |
+| True North Lunar Node | opposition ☍                  | Regulus               | 6.77° | Static = |
+| True North Lunar Node | trine △                       | Spica                 | 0.78° | Static = |
+| True North Lunar Node | square □                      | Vertex                | 3.42° | Static = |
+| True North Lunar Node | square □                      | Anti Vertex           | 3.42° | Static = |
+| Chiron                | trine △                       | Ascendant             | 0.31° | Static = |
+| Chiron                | sextile ⚹                     | Descendant            | 0.31° | Static = |
+| Chiron                | sextile ⚹                     | Mean South Lunar Node | 1.26° | Static = |
+| Chiron                | sextile ⚹                     | True South Lunar Node | 0.72° | Static = |
+| Chiron                | semi-sextile semi-sextile     | Ceres                 | 0.29° | Static = |
+| Chiron                | sextile ⚹                     | Pallas                | 2.04° | Static = |
+| Chiron                | semi-sextile semi-sextile     | Vesta                 | 0.88° | Static = |
+| Chiron                | quintile Q                    | Eris                  | 0.02° | Static = |
+| Chiron                | trine △                       | Ixion                 | 4.15° | Static = |
+| Chiron                | trine △                       | Quaoar                | 1.39° | Static = |
+| Chiron                | trine △                       | Spica                 | 1.51° | Static = |
+| Ascendant             | sextile ⚹                     | Mean South Lunar Node | 0.95° | Static = |
+| Ascendant             | sextile ⚹                     | True South Lunar Node | 0.41° | Static = |
+| Ascendant             | quincunx ⚻                    | Ceres                 | 0.02° | Static = |
+| Ascendant             | opposition ☍                  | Pallas                | 1.73° | Static = |
+| Ascendant             | quincunx ⚻                    | Vesta                 | 0.57° | Static = |
+| Ascendant             | opposition ☍                  | Sedna                 | 7.25° | Static = |
+| Ascendant             | conjunction ☌                 | Ixion                 | 3.84° | Static = |
+| Ascendant             | conjunction ☌                 | Quaoar                | 1.70° | Static = |
+| Ascendant             | conjunction ☌                 | Spica                 | 1.20° | Static = |
+| Medium Coeli          | sesquiquadrate sesquiquadrate | True Lilith           | 0.17° | Static = |
+| Medium Coeli          | trine △                       | Earth                 | 0.39° | Static = |
+| Medium Coeli          | square □                      | Sedna                 | 0.24° | Static = |
+| Medium Coeli          | conjunction ☌                 | Makemake              | 3.04° | Static = |
+| Medium Coeli          | square □                      | Ixion                 | 3.65° | Static = |
+| Medium Coeli          | semi-sextile semi-sextile     | Regulus               | 0.31° | Static = |
+| Medium Coeli          | trine △                       | Pars Fortunae         | 2.03° | Static = |
+| Medium Coeli          | sextile ⚹                     | Pars Amoris           | 1.29° | Static = |
+| Descendant            | trine △                       | Mean South Lunar Node | 0.95° | Static = |
+| Descendant            | trine △                       | True South Lunar Node | 0.41° | Static = |
+| Descendant            | semi-sextile semi-sextile     | Ceres                 | 0.02° | Static = |
+| Descendant            | conjunction ☌                 | Pallas                | 1.73° | Static = |
+| Descendant            | semi-sextile semi-sextile     | Vesta                 | 0.57° | Static = |
+| Descendant            | conjunction ☌                 | Sedna                 | 7.25° | Static = |
+| Descendant            | opposition ☍                  | Ixion                 | 3.84° | Static = |
+| Descendant            | quintile Q                    | Orcus                 | 0.20° | Static = |
+| Descendant            | opposition ☍                  | Quaoar                | 1.70° | Static = |
+| Descendant            | trine △                       | Regulus               | 7.18° | Static = |
+| Descendant            | opposition ☍                  | Spica                 | 1.20° | Static = |
+| Descendant            | biquintile biquintile         | Pars Fortunae         | 0.54° | Static = |
+| Descendant            | biquintile biquintile         | Pars Spiritus         | 0.54° | Static = |
+| Imum Coeli            | semi-square semi-square       | True Lilith           | 0.17° | Static = |
+| Imum Coeli            | sextile ⚹                     | Earth                 | 0.39° | Static = |
+| Imum Coeli            | trine △                       | Ceres                 | 7.51° | Static = |
+| Imum Coeli            | trine △                       | Vesta                 | 6.92° | Static = |
+| Imum Coeli            | square □                      | Sedna                 | 0.24° | Static = |
+| Imum Coeli            | opposition ☍                  | Makemake              | 3.04° | Static = |
+| Imum Coeli            | square □                      | Ixion                 | 3.65° | Static = |
+| Imum Coeli            | quincunx ⚻                    | Regulus               | 0.31° | Static = |
+| Imum Coeli            | sextile ⚹                     | Pars Fortunae         | 2.03° | Static = |
+| Imum Coeli            | trine △                       | Pars Amoris           | 1.29° | Static = |
+| Mean Lilith           | conjunction ☌                 | Mean South Lunar Node | 7.69° | Static = |
+| Mean Lilith           | conjunction ☌                 | True South Lunar Node | 8.22° | Static = |
+| Mean Lilith           | quincunx ⚻                    | Earth                 | 0.75° | Static = |
+| Mean Lilith           | trine △                       | Pallas                | 6.90° | Static = |
+| Mean Lilith           | trine △                       | Sedna                 | 1.39° | Static = |
+| Mean Lilith           | conjunction ☌                 | Haumea                | 0.08° | Static = |
+| Mean Lilith           | sextile ⚹                     | Ixion                 | 4.79° | Static = |
+| Mean Lilith           | sextile ⚹                     | Orcus                 | 3.56° | Static = |
+| Mean Lilith           | conjunction ☌                 | Regulus               | 1.45° | Static = |
+| Mean Lilith           | square □                      | Pars Fortunae         | 3.18° | Static = |
+| Mean Lilith           | semi-sextile semi-sextile     | Pars Amoris           | 0.15° | Static = |
+| Mean South Lunar Node | conjunction ☌                 | True South Lunar Node | 0.53° | Static = |
+| Mean South Lunar Node | biquintile biquintile         | Earth                 | 0.94° | Static = |
+| Mean South Lunar Node | sesquiquadrate sesquiquadrate | Pholus                | 0.03° | Static = |
+| Mean South Lunar Node | square □                      | Ceres                 | 0.96° | Static = |
+| Mean South Lunar Node | trine △                       | Pallas                | 0.79° | Static = |
+| Mean South Lunar Node | square □                      | Vesta                 | 0.37° | Static = |
+| Mean South Lunar Node | trine △                       | Sedna                 | 6.30° | Static = |
+| Mean South Lunar Node | conjunction ☌                 | Haumea                | 7.61° | Static = |
+| Mean South Lunar Node | sextile ⚹                     | Ixion                 | 2.90° | Static = |
+| Mean South Lunar Node | sextile ⚹                     | Quaoar                | 2.64° | Static = |
+| Mean South Lunar Node | conjunction ☌                 | Regulus               | 6.24° | Static = |
+| Mean South Lunar Node | sextile ⚹                     | Spica                 | 0.25° | Static = |
+| Mean South Lunar Node | square □                      | Pars Fortunae         | 4.51° | Static = |
+| Mean South Lunar Node | square □                      | Vertex                | 3.96° | Static = |
+| Mean South Lunar Node | square □                      | Anti Vertex           | 3.96° | Static = |
+| True South Lunar Node | sesquiquadrate sesquiquadrate | Pholus                | 0.56° | Static = |
+| True South Lunar Node | square □                      | Ceres                 | 0.43° | Static = |
+| True South Lunar Node | trine △                       | Pallas                | 1.32° | Static = |
+| True South Lunar Node | square □                      | Vesta                 | 0.16° | Static = |
+| True South Lunar Node | trine △                       | Sedna                 | 6.84° | Static = |
+| True South Lunar Node | conjunction ☌                 | Haumea                | 8.14° | Static = |
+| True South Lunar Node | sextile ⚹                     | Ixion                 | 3.43° | Static = |
+| True South Lunar Node | sextile ⚹                     | Quaoar                | 2.11° | Static = |
+| True South Lunar Node | conjunction ☌                 | Regulus               | 6.77° | Static = |
+| True South Lunar Node | sextile ⚹                     | Spica                 | 0.78° | Static = |
+| True South Lunar Node | square □                      | Vertex                | 3.42° | Static = |
+| True South Lunar Node | square □                      | Anti Vertex           | 3.42° | Static = |
+| True Lilith           | trine △                       | Juno                  | 6.48° | Static = |
+| True Lilith           | semi-square semi-square       | Sedna                 | 0.08° | Static = |
+| True Lilith           | biquintile biquintile         | Quaoar                | 0.02° | Static = |
+| True Lilith           | opposition ☍                  | Pars Spiritus         | 2.22° | Static = |
+| True Lilith           | sextile ⚹                     | Pars Fidei            | 0.65° | Static = |
+| True Lilith           | sextile ⚹                     | Vertex                | 4.66° | Static = |
+| True Lilith           | trine △                       | Anti Vertex           | 4.66° | Static = |
+| Earth                 | conjunction ☌                 | Pholus                | 8.09° | Static = |
+| Earth                 | conjunction ☌                 | Eris                  | 9.82° | Static = |
+| Earth                 | semi-sextile semi-sextile     | Sedna                 | 0.63° | Static = |
+| Earth                 | quincunx ⚻                    | Haumea                | 0.67° | Static = |
+| Earth                 | trine △                       | Makemake              | 2.66° | Static = |
+| Earth                 | square □                      | Orcus                 | 4.31° | Static = |
+| Earth                 | quincunx ⚻                    | Regulus               | 0.70° | Static = |
+| Earth                 | trine △                       | Pars Fortunae         | 2.42° | Static = |
+| Earth                 | opposition ☍                  | Pars Amoris           | 0.90° | Static = |
+| Pholus                | semi-square semi-square       | Ceres                 | 0.99° | Static = |
+| Pholus                | quincunx ⚻                    | Juno                  | 0.13° | Static = |
+| Pholus                | semi-square semi-square       | Vesta                 | 0.41° | Static = |
+| Pholus                | conjunction ☌                 | Eris                  | 1.73° | Static = |
+| Pholus                | trine △                       | Makemake              | 5.44° | Static = |
+| Pholus                | square □                      | Orcus                 | 3.78° | Static = |
+| Pholus                | opposition ☍                  | Pars Amoris           | 7.19° | Static = |
+| Ceres                 | conjunction ☌                 | Vesta                 | 0.59° | Static = |
+| Ceres                 | opposition ☍                  | Pars Fortunae         | 5.47° | Static = |
+| Ceres                 | trine △                       | Pars Spiritus         | 5.44° | Static = |
+| Ceres                 | conjunction ☌                 | Pars Fidei            | 8.31° | Static = |
+| Ceres                 | conjunction ☌                 | Vertex                | 2.99° | Static = |
+| Ceres                 | opposition ☍                  | Anti Vertex           | 2.99° | Static = |
+| Pallas                | conjunction ☌                 | Sedna                 | 5.52° | Static = |
+| Pallas                | trine △                       | Haumea                | 6.82° | Static = |
+| Pallas                | opposition ☍                  | Ixion                 | 2.11° | Static = |
+| Pallas                | opposition ☍                  | Quaoar                | 3.43° | Static = |
+| Pallas                | trine △                       | Regulus               | 5.45° | Static = |
+| Pallas                | opposition ☍                  | Spica                 | 0.54° | Static = |
+| Juno                  | opposition ☍                  | Sedna                 | 8.60° | Static = |
+| Juno                  | trine △                       | Orcus                 | 3.65° | Static = |
+| Juno                  | opposition ☍                  | Pars Fidei            | 5.83° | Static = |
+| Vesta                 | quincunx ⚻                    | Spica                 | 0.62° | Static = |
+| Vesta                 | opposition ☍                  | Pars Fortunae         | 4.89° | Static = |
+| Vesta                 | trine △                       | Pars Spiritus         | 6.03° | Static = |
+| Vesta                 | conjunction ☌                 | Pars Fidei            | 8.89° | Static = |
+| Vesta                 | conjunction ☌                 | Vertex                | 3.58° | Static = |
+| Vesta                 | opposition ☍                  | Anti Vertex           | 3.58° | Static = |
+| Eris                  | trine △                       | Makemake              | 7.17° | Static = |
+| Eris                  | opposition ☍                  | Pars Amoris           | 8.92° | Static = |
+| Sedna                 | trine △                       | Haumea                | 1.30° | Static = |
+| Sedna                 | square □                      | Makemake              | 3.29° | Static = |
+| Sedna                 | opposition ☍                  | Ixion                 | 3.40° | Static = |
+| Sedna                 | sextile ⚹                     | Orcus                 | 4.95° | Static = |
+| Sedna                 | opposition ☍                  | Quaoar                | 8.94° | Static = |
+| Sedna                 | trine △                       | Regulus               | 0.06° | Static = |
+| Sedna                 | opposition ☍                  | Spica                 | 6.05° | Static = |
+| Haumea                | sextile ⚹                     | Ixion                 | 4.71° | Static = |
+| Haumea                | sextile ⚹                     | Orcus                 | 3.64° | Static = |
+| Haumea                | conjunction ☌                 | Regulus               | 1.37° | Static = |
+| Haumea                | square □                      | Pars Fortunae         | 3.10° | Static = |
+| Haumea                | semi-sextile semi-sextile     | Pars Amoris           | 0.23° | Static = |
+| Makemake              | trine △                       | Pars Fortunae         | 5.08° | Static = |
+| Makemake              | semi-square semi-square       | Pars Spiritus         | 1.00° | Static = |
+| Makemake              | sextile ⚹                     | Pars Amoris           | 1.75° | Static = |
+| Ixion                 | conjunction ☌                 | Quaoar                | 5.54° | Static = |
+| Ixion                 | sextile ⚹                     | Regulus               | 3.34° | Static = |
+| Ixion                 | conjunction ☌                 | Spica                 | 2.65° | Static = |
+| Orcus                 | sextile ⚹                     | Regulus               | 5.01° | Static = |
+| Orcus                 | biquintile biquintile         | Pars Fortunae         | 0.74° | Static = |
+| Orcus                 | quintile Q                    | Pars Spiritus         | 0.35° | Static = |
+| Orcus                 | square □                      | Pars Amoris           | 3.41° | Static = |
+| Orcus                 | semi-square semi-square       | Vertex                | 0.20° | Static = |
+| Orcus                 | sesquiquadrate sesquiquadrate | Anti Vertex           | 0.20° | Static = |
+| Quaoar                | conjunction ☌                 | Spica                 | 2.89° | Static = |
+| Regulus               | sextile ⚹                     | Spica                 | 5.99° | Static = |
+| Regulus               | square □                      | Pars Fortunae         | 1.73° | Static = |
+| Pars Fortunae         | sextile ⚹                     | Pars Amoris           | 3.33° | Static = |
+| Pars Fortunae         | opposition ☍                  | Vertex                | 8.47° | Static = |
+| Pars Fortunae         | conjunction ☌                 | Anti Vertex           | 8.47° | Static = |
+| Pars Spiritus         | trine △                       | Pars Fidei            | 2.86° | Static = |
+| Pars Spiritus         | trine △                       | Vertex                | 2.45° | Static = |
+| Pars Spiritus         | sextile ⚹                     | Anti Vertex           | 2.45° | Static = |
+| Pars Fidei            | conjunction ☌                 | Vertex                | 5.31° | Static = |
+| Pars Fidei            | opposition ☍                  | Anti Vertex           | 5.31° | Static = |
+| Vertex                | opposition ☍                  | Anti Vertex           | 0.00° | Static = |
++-----------------------+-------------------------------+-----------------------+-------+----------+

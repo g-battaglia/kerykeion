@@ -1,4 +1,5 @@
 """Compute weekly transits for a natal chart using the new time range factory."""
+
 from datetime import datetime, timedelta, timezone
 
 from kerykeion import (

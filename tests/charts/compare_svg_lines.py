@@ -1,5 +1,6 @@
 import re
 
+
 def compare_svg_lines(expected_line: str, actual_line: str, rel_tol: float = 1e-10, abs_tol: float = 1e-10) -> None:
     """
     Compare two SVG lines allowing small floating-point differences, with additional absolute tolerance.
@@ -11,7 +12,7 @@ def compare_svg_lines(expected_line: str, actual_line: str, rel_tol: float = 1e-
         abs_tol (float): Absolute tolerance for numerical comparison.
     """
     # Regex to match floats (e.g., -12.34, 0.5, 6.)
-    number_regex = r'-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?'
+    number_regex = r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?"
 
     expected_numbers = [float(x) for x in re.findall(number_regex, expected_line)]
     actual_numbers = [float(x) for x in re.findall(number_regex, actual_line)]
@@ -32,10 +33,7 @@ def compare_svg_lines(expected_line: str, actual_line: str, rel_tol: float = 1e-
             assert False, "Numeric values exceed tolerance"
 
     # Remove numbers and replace with a placeholder to compare the non-numeric parts
-    expected_text = re.sub(number_regex, 'NUM', expected_line)
-    actual_text = re.sub(number_regex, 'NUM', actual_line)
+    expected_text = re.sub(number_regex, "NUM", expected_line)
+    actual_text = re.sub(number_regex, "NUM", actual_line)
 
-    assert expected_text == actual_text, (
-        f"Non-numeric parts differ:\nExpected: {expected_text}\nActual: {actual_text}"
-    )
-
+    assert expected_text == actual_text, f"Non-numeric parts differ:\nExpected: {expected_text}\nActual: {actual_text}"

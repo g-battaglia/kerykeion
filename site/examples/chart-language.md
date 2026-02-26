@@ -1,6 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: 'Chart Language'
+tags: ['examples', 'charts', 'language', 'i18n', 'kerykeion']
+order: 12
 ---
 
 # Chart Language
@@ -54,3 +55,21 @@ it_data = ChartDataFactory.create_natal_chart_data(it_subject)
 it_chart = ChartDrawer(it_data, chart_language="IT")
 it_chart.save_svg(output_path=Path("charts_output"), filename="loren-it")
 ```
+
+## Language Examples
+
+### English (EN) - Default
+
+![English Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20EN%20-%20Natal%20Chart.svg)
+
+### German (DE)
+
+![German Synastry Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20DE%20-%20Synastry%20Chart.svg)
+
+### Russian (RU)
+
+![Russian Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20RU%20-%20Transit%20Chart.svg)
+
+---
+
+> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

@@ -1,0 +1,5 @@
+{
+  "contributors": ["g-battaglia"],
+  "message": "We require contributors to sign our [Contributor License Agreement](https://github.com/g-battaglia/kerykeion/blob/main/CONTRIBUTING.md#contributor-license-agreement-cla--copyright-assignment) before we can merge your contribution. {{usersWithoutCLA}} — please read the CLA section in our CONTRIBUTING.md and contact @g-battaglia to get added to the approved list.",
+  "label": "cla-signed"
+}
