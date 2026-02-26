@@ -853,18 +853,16 @@ def _draw_primary_point_indicators(
         output += f'<line class="planet-degree-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
         output += f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
-        # Draw rotated degree text
-        rotation, text_anchor = _calculate_text_rotation(first_house_degree, points_abs_positions[point_idx])
-        x_offset = 1 if text_anchor == "end" else -1
+        # Draw degree text (always horizontal for readability)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
-        text_radius = first_circle_radius - 5.0
+        text_radius = first_circle_radius - 13.0
 
-        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset + x_offset) + text_radius
-        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset + x_offset) + text_radius
+        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
         output += f'<g transform="translate({deg_x},{deg_y})">'
-        output += f'<text transform="rotate({rotation})" text-anchor="{text_anchor}" '
+        output += f'<text text-anchor="middle" dominant-baseline="middle" '
         output += f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
 
     return output
@@ -917,11 +915,7 @@ def _draw_inner_point_indicators(
         output += f'<line class="planet-degree-line-inner" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
         output += f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
-        # Draw degree text (positioned toward center)
-        rotation, text_anchor = _calculate_text_rotation(first_house_degree, points_abs_positions[point_idx])
-        # Inner text uses opposite anchor
-        text_anchor = "start" if text_anchor == "end" else "end"
-
+        # Draw degree text (always horizontal, positioned toward center)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
         text_radius = NATAL_INDICATOR_OFFSET + 5.0
 
@@ -930,8 +924,8 @@ def _draw_inner_point_indicators(
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
         output += f'<g transform="translate({deg_x},{deg_y})">'
-        output += f'<text transform="rotate({rotation})" text-anchor="{text_anchor}" '
-        output += f'style="fill: {point_color}; font-size: 8px; dominant-baseline: middle;">{degree_text}</text></g>'
+        output += f'<text text-anchor="middle" dominant-baseline="middle" '
+        output += f'style="fill: {point_color}; font-size: 8px;">{degree_text}</text></g>'
 
     return output
 
@@ -1027,18 +1021,16 @@ def _draw_secondary_points(
         output += f'<line class="transit-planet-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
         output += f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
-        # Draw degree text
-        rotation, text_anchor = _calculate_text_rotation(first_house_degree, points_abs_positions[point_idx])
-        x_offset = 1 if text_anchor == "end" else -1
+        # Draw degree text (always horizontal for readability)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
-        text_radius = -3.0
+        text_radius = -13.0
 
-        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset + x_offset) + text_radius
-        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset + x_offset) + text_radius
+        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
         output += f'<g transform="translate({deg_x},{deg_y})">'
-        output += f'<text transform="rotate({rotation})" text-anchor="{text_anchor}" '
+        output += f'<text text-anchor="middle" dominant-baseline="middle" '
         output += f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
 
     # Draw connecting lines for the main reference point

@@ -612,35 +612,17 @@ def _draw_primary_point_indicators(
         output += f'<line class="planet-degree-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
         output += f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
-        # Draw rotated degree text
-        rotation = first_house_degree - points_abs_positions[point_idx]
-        text_anchor = "end"
-
-        # Normalize rotation to [-180, 180] range
-        while rotation > 180:
-            rotation -= 360
-        while rotation < -180:
-            rotation += 360
-
-        # Adjust text rotation and anchor for readability
-        # Flip text by 180° when on left side of chart so it reads correctly
-        if rotation < -90 or rotation > 90:
-            rotation += 180 if rotation < 0 else -180
-            text_anchor = "start"
-
-        # Position the degree text just outside the first circle
-        # Apply position adjustment to prevent overlapping
-        x_offset = 1 if text_anchor == "end" else -1
+        # Draw degree text (always horizontal for readability)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
-        text_radius = first_circle_radius - 5.0
+        text_radius = first_circle_radius - 13.0
 
-        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset + x_offset) + text_radius
-        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset + x_offset) + text_radius
+        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
 
         # Format and output the degree text
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
         output += f'<g transform="translate({deg_x},{deg_y})">'
-        output += f'<text transform="rotate({rotation})" text-anchor="{text_anchor}" '
+        output += f'<text text-anchor="middle" dominant-baseline="middle" '
         output += f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
 
     return output
@@ -761,24 +743,7 @@ def _draw_inner_point_indicators(
         output += f'<line class="planet-degree-line-inner" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
         output += f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
-        # Draw rotated degree text
-        rotation = first_house_degree - points_abs_positions[point_idx]
-        text_anchor = "start"  # Inner text starts from the inside
-
-        # Normalize rotation to [-180, 180] range
-        while rotation > 180:
-            rotation -= 360
-        while rotation < -180:
-            rotation += 360
-
-        # Adjust text rotation and anchor for readability
-        # Flip text by 180° when on left side of chart so it reads correctly
-        if rotation < -90 or rotation > 90:
-            rotation += 180 if rotation < 0 else -180
-            text_anchor = "end"
-
-        # Position the degree text just inside the line (toward center)
-        # Apply position adjustment to prevent overlapping
+        # Draw degree text (always horizontal, positioned toward center)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
         text_radius = natal_indicator_offset + 5.0
 
@@ -788,8 +753,8 @@ def _draw_inner_point_indicators(
         # Format and output the degree text
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
         output += f'<g transform="translate({deg_x},{deg_y})">'
-        output += f'<text transform="rotate({rotation})" text-anchor="{text_anchor}" '
-        output += f'style="fill: {point_color}; font-size: 8px; dominant-baseline: middle;">{degree_text}</text></g>'
+        output += f'<text text-anchor="middle" dominant-baseline="middle" '
+        output += f'style="fill: {point_color}; font-size: 8px;">{degree_text}</text></g>'
 
     return output
 
@@ -923,34 +888,17 @@ def _draw_secondary_points(
         output += f'<line class="transit-planet-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
         output += f'style="stroke: {points_settings[point_idx]["color"]}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
-        # Draw degree text with rotation
-        rotation = first_house_degree - points_abs_positions[point_idx]
-        text_anchor = "end"
-
-        # Normalize rotation to [-180, 180] range
-        while rotation > 180:
-            rotation -= 360
-        while rotation < -180:
-            rotation += 360
-
-        # Adjust text rotation and anchor for readability
-        # Flip text by 180° when on left side of chart so it reads correctly
-        if rotation < -90 or rotation > 90:
-            rotation += 180 if rotation < 0 else -180
-            text_anchor = "start"
-
-        # Position the degree text
-        x_offset = 1 if text_anchor == "end" else -1
+        # Draw degree text (always horizontal for readability)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
-        text_radius = -3.0
+        text_radius = -13.0
 
-        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset + x_offset) + text_radius
-        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset + x_offset) + text_radius
+        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
 
         # Format and output the degree text
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
         output += f'<g transform="translate({deg_x},{deg_y})">'
-        output += f'<text transform="rotate({rotation})" text-anchor="{text_anchor}" '
+        output += f'<text text-anchor="middle" dominant-baseline="middle" '
         output += f'style="fill: {points_settings[point_idx]["color"]}; font-size: 10px;">{degree_text}</text></g>'
 
     # Draw connecting lines for the main point
