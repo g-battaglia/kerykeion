@@ -31,7 +31,7 @@ from kerykeion import (
     ChartDrawer,
     CompositeSubjectFactory,
     PlanetaryReturnFactory,
-    to_context  # AI-readable text serializer
+    to_context  # AI-readable XML serializer
 )
 ```
 
@@ -294,10 +294,10 @@ aspects_only = drawer.generate_aspect_grid_only_svg_string()  # Just aspects
 
 ## 6. AI Context Serialization
 
-Convert any Kerykeion model to AI-readable text:
+Convert any Kerykeion model to AI-readable XML:
 
 ```python
-from kerykeion import to_context
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, MoonPhaseDetailsFactory, to_context
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Example", 1990, 6, 15, 14, 30,
@@ -305,19 +305,29 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 
-# Serialize subject
-text = to_context(subject)
+# Serialize subject → <chart name="Example">...</chart>
+xml = to_context(subject)
 
-# Serialize chart data
-text = to_context(chart_data)
+# Serialize chart data → <chart_analysis type="Natal">...</chart_analysis>
+xml = to_context(chart_data)
 
 # Serialize specific components
-text = to_context(subject.sun)
-if subject.lunar_phase:
-    text = to_context(subject.lunar_phase)
+xml = to_context(subject.sun)        # → <point name="Sun" position="..." ... />
+xml = to_context(subject.lunar_phase) # → <lunar_phase name="..." ... />
+
+# Serialize moon phase overview
+overview = MoonPhaseDetailsFactory.from_subject(subject)
+xml = to_context(overview)  # → <moon_phase_overview>...</moon_phase_overview>
 ```
 
-**Output format:** Factual, non-qualitative text descriptions optimized for AI interpretation.
+**Output format:** Semantic XML with self-closing tags for atomic data, nested tags for
+structured data. Strictly non-qualitative/non-interpretive. Optional/None fields are omitted.
+
+**Supported models:** KerykeionPointModel, LunarPhaseModel, AstrologicalSubjectModel,
+CompositeSubjectModel, PlanetReturnModel, AspectModel, SingleChartDataModel,
+DualChartDataModel, ElementDistributionModel, QualityDistributionModel,
+TransitMomentModel, TransitsTimeRangeModel, PointInHouseModel, HouseComparisonModel,
+MoonPhaseOverviewModel.
 
 ## 7. Complete Workflow Examples
 
@@ -484,7 +494,7 @@ data_dict = chart_data.model_dump()
 json_str = json.dumps(data_dict, indent=2, default=str)
 ```
 
-### AI-Readable Text
+### AI-Readable XML
 
 ```python
 from kerykeion import to_context
@@ -495,8 +505,8 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 
-ai_text = to_context(chart_data)
-# Non-qualitative, factual description for LLM processing
+ai_xml = to_context(chart_data)
+# Non-qualitative, factual XML for LLM processing
 ```
 
 ## Dependencies
@@ -523,7 +533,7 @@ export KERYKEION_GEONAMES_USERNAME="your_username"  # For online mode
 | Composite        | `CompositeSubjectFactory`      | Two subjects     |
 | Returns          | `PlanetaryReturnFactory`       | Planet type      |
 | SVG Chart        | `ChartDrawer`                  | chart_data       |
-| AI Text          | `to_context()`                 | Any model        |
+| AI XML           | `to_context()`                 | Any model        |
 
 ---
 

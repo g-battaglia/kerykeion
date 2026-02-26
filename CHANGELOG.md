@@ -1,5 +1,39 @@
 # Changelog
 
+## 5.10.0
+
+_Released 26/02/2026_
+
+**Breaking Changes:**
+
+- **Context Serializer XML Migration:** The `to_context()` function and all `*_to_context()` helper functions now produce well-formed **XML output** instead of plain text. This affects all 13 converter functions. XML uses semantic tags with attributes (e.g. `<point name="Sun" sign="Capricorn" ... />`), self-closing tags for atomic data, and nested tags for structured data. Optional/`None` fields are omitted from the output rather than rendered as empty tags. All values are properly escaped via `xml.sax.saxutils`.
+
+**New Features:**
+
+- Added `moon_phase_overview_to_context()` — serializes `MoonPhaseOverviewModel` to XML with full support for all nested fields (moon summary, sun info, location, zodiac, upcoming phases, eclipses, visibility, illumination details, events)
+- Added `MoonPhaseOverviewModel` support in the `to_context()` dispatcher
+
+**Bugfixes:**
+
+- Fixed house cusp sign abbreviation in context serializer output (e.g. `"Ari"` now correctly rendered as `"Aries"` via `SIGN_FULL_NAMES` mapping)
+- Fixed `llms.txt` import example (added missing `AstrologicalSubjectFactory`, `ChartDataFactory` imports)
+
+**Documentation:**
+
+- Updated `README.md` AI Context Serializer section with XML output examples
+- Updated `site/docs/context_serializer.md` with XML format documentation and examples
+- Updated `kerykeion/llms.txt` Section 6 to document XML output format
+- Updated `examples/context_serializer_example.py` with Element/Quality Distribution and Moon Phase Overview examples
+
+**Tests:**
+
+- Rewrote all context serializer test assertions for XML format in `tests/core/test_context_serializer.py`
+- Added 17 tests for `MoonPhaseOverviewToContext` covering all nested branches (zodiac, moonrise/moonset, eclipses, detailed position, visibility, illumination, events, sun info, extended location)
+- Extended `TestNonQualitativeOutput` to verify subject, natal chart, synastry chart, and moon phase overview outputs
+- Added synastry relationship score, transit data, house comparison, and point-in-house assertion enhancements
+- Removed 2 dead stub tests
+- Updated 7 context serializer edge case test classes for XML assertions
+
 ## 5.9.0
 
 _Released 26/02/2026_

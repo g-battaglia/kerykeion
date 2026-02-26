@@ -5,7 +5,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 Context Serializer Examples
 
 This example demonstrates how to use the context_serializer module
-to transform ALL types of astrological data into AI-readable textual context.
+to transform ALL types of astrological data into AI-readable XML context.
 """
 
 from kerykeion import (
@@ -13,11 +13,12 @@ from kerykeion import (
     ChartDataFactory,
     CompositeSubjectFactory,
     PlanetaryReturnFactory,
+    MoonPhaseDetailsFactory,
     to_context,
 )
 
 print("=" * 80)
-print("CONTEXT SERIALIZER - COMPLETE EXAMPLES FOR ALL CHART TYPES")
+print("CONTEXT SERIALIZER - COMPLETE EXAMPLES FOR ALL CHART TYPES (XML OUTPUT)")
 print("=" * 80)
 
 # Example 1: Natal Chart
@@ -134,25 +135,51 @@ if natal_chart_data.aspects:
     first_aspect_context = to_context(natal_chart_data.aspects[0])
     print(first_aspect_context)
 
+# Example 11: Element Distribution
+print("\n" + "=" * 80)
+print("EXAMPLE 11: ELEMENT DISTRIBUTION")
+print("=" * 80)
+
+element_context = to_context(natal_chart_data.element_distribution)
+print(element_context)
+
+# Example 12: Quality Distribution
+print("\n" + "=" * 80)
+print("EXAMPLE 12: QUALITY DISTRIBUTION")
+print("=" * 80)
+
+quality_context = to_context(natal_chart_data.quality_distribution)
+print(quality_context)
+
+# Example 13: Moon Phase Overview
+print("\n" + "=" * 80)
+print("EXAMPLE 13: MOON PHASE OVERVIEW")
+print("=" * 80)
+
+overview = MoonPhaseDetailsFactory.from_subject(subject)
+overview_context = to_context(overview)
+print(overview_context)
+
 # Summary
 print("\n" + "=" * 80)
 print("SUMMARY - ALL MAJOR CHART TYPES DEMONSTRATED")
 print("=" * 80)
 print("""
-The to_context() function supports all major chart types:
+The to_context() function supports all major chart types and returns XML:
 
-1. Natal Charts (AstrologicalSubjectModel)
-2. Natal Charts with Aspects (SingleChartDataModel)
-3. Synastry Charts (DualChartDataModel)
-4. Composite Charts (CompositeSubjectModel)
-5. Solar Returns (PlanetReturnModel)
-6. Lunar Returns (PlanetReturnModel)
-7. Transit Charts (DualChartDataModel)
-8. Individual Points (KerykeionPointModel)
-9. Lunar Phase (LunarPhaseModel)
+ 1. Natal Charts (AstrologicalSubjectModel)
+ 2. Natal Charts with Aspects (SingleChartDataModel)
+ 3. Synastry Charts (DualChartDataModel)
+ 4. Composite Charts (CompositeSubjectModel)
+ 5. Solar Returns (PlanetReturnModel)
+ 6. Lunar Returns (PlanetReturnModel)
+ 7. Transit Charts (DualChartDataModel)
+ 8. Individual Points (KerykeionPointModel)
+ 9. Lunar Phase (LunarPhaseModel)
 10. Individual Aspects (AspectModel)
 11. Element Distribution (ElementDistributionModel)
 12. Quality Distribution (QualityDistributionModel)
+13. Moon Phase Overview (MoonPhaseOverviewModel)
 
 Usage:
   from kerykeion import to_context

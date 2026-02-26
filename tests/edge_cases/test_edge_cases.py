@@ -835,7 +835,8 @@ class TestContextSerializerEdgeCases:
         from kerykeion.context_serializer import to_context
 
         result = to_context(basic_subject.sun)
-        assert "Sun" in result
+        assert "<point " in result
+        assert 'name="Sun"' in result
 
     def test_to_context_with_lunar_phase(self, basic_subject):
         """Test to_context with LunarPhaseModel."""
@@ -843,7 +844,7 @@ class TestContextSerializerEdgeCases:
 
         if basic_subject.lunar_phase:
             result = to_context(basic_subject.lunar_phase)
-            assert "phase" in result.lower() or "Moon" in result
+            assert "<lunar_phase " in result
 
     def test_to_context_with_element_distribution(self, basic_subject):
         """Test to_context with ElementDistributionModel."""
@@ -851,7 +852,7 @@ class TestContextSerializerEdgeCases:
 
         chart_data = ChartDataFactory.create_natal_chart_data(basic_subject)
         result = to_context(chart_data.element_distribution)
-        assert "Element" in result
+        assert "<element_distribution " in result
 
     def test_to_context_with_quality_distribution(self, basic_subject):
         """Test to_context with QualityDistributionModel."""
@@ -859,17 +860,7 @@ class TestContextSerializerEdgeCases:
 
         chart_data = ChartDataFactory.create_natal_chart_data(basic_subject)
         result = to_context(chart_data.quality_distribution)
-        assert "Quality" in result
-
-    def test_to_context_with_transit_moment(self, basic_subject):
-        """Test to_context with TransitMomentModel."""
-        # Skip this test as it requires complex setup
-        pass
-
-    def test_to_context_with_transits_time_range(self, basic_subject):
-        """Test to_context with TransitsTimeRangeModel."""
-        # Skip this test as it requires complex setup
-        pass
+        assert "<quality_distribution " in result
 
     def test_to_context_with_house_comparison(self, basic_subject, second_subject):
         """Test to_context with HouseComparisonModel."""
@@ -879,7 +870,7 @@ class TestContextSerializerEdgeCases:
         factory = HouseComparisonFactory(basic_subject, second_subject)
         comparison = factory.get_house_comparison()
         result = to_context(comparison)
-        assert "House" in result
+        assert "<house_overlay>" in result
 
     def test_to_context_with_point_in_house(self, basic_subject, second_subject):
         """Test to_context with PointInHouseModel."""
@@ -889,8 +880,15 @@ class TestContextSerializerEdgeCases:
         factory = HouseComparisonFactory(basic_subject, second_subject)
         comparison = factory.get_house_comparison()
         if comparison.first_points_in_second_houses:
-            result = to_context(comparison.first_points_in_second_houses[0])
-            assert "falls in" in result
+            point = comparison.first_points_in_second_houses[0]
+            result = to_context(point)
+            assert "<point_in_house " in result
+            assert f'point_name="{point.point_name}"' in result
+            assert f'point_owner="{point.point_owner_name}"' in result
+            assert "degree=" in result
+            assert "sign=" in result
+            assert f'projected_house="{point.projected_house_name}"' in result
+            assert f'projected_house_owner="{point.projected_house_owner_name}"' in result
 
     def test_aspect_to_context_synastry(self, basic_subject, second_subject):
         """Test aspect_to_context for synastry aspects."""
@@ -899,7 +897,8 @@ class TestContextSerializerEdgeCases:
         aspects = AspectsFactory.dual_chart_aspects(basic_subject, second_subject)
         if aspects.aspects:
             result = aspect_to_context(aspects.aspects[0], is_synastry=True)
-            assert "between" in result
+            assert "<aspect " in result
+            assert "p1_owner=" in result
 
     def test_aspect_to_context_transit(self, basic_subject, second_subject):
         """Test aspect_to_context for transit aspects."""
@@ -908,7 +907,7 @@ class TestContextSerializerEdgeCases:
         aspects = AspectsFactory.dual_chart_aspects(basic_subject, second_subject)
         if aspects.aspects:
             result = aspect_to_context(aspects.aspects[0], is_synastry=True, is_transit=True)
-            assert "Transit" in result
+            assert 'p2_owner="Transit"' in result
 
 
 # ============================================================================
@@ -927,7 +926,9 @@ class TestHouseComparisonEdgeCases:
         factory = HouseComparisonFactory(basic_subject, second_subject)
         comparison = factory.get_house_comparison()
         result = house_comparison_to_context(comparison, is_transit=True)
-        assert "House" in result
+        assert "<house_overlay>" in result
+        # Transit path should use "Transit" as subject or target in the second sections
+        assert 'subject="Transit"' in result or 'target="Transit"' in result
 
 
 # ============================================================================
@@ -1168,13 +1169,13 @@ class TestContextSerializerTransits:
         )
 
         result = transit_moment_to_context(transit_moment)
-        assert "Transit moment" in result
+        assert "<transit_moment " in result
         assert "2024-01-15" in result
-        assert "Active transits" in result
+        assert "<aspects " in result
 
         # Also test via to_context
         result2 = to_context(transit_moment)
-        assert "Transit moment" in result2
+        assert "<transit_moment " in result2
 
     def test_transit_moment_to_context_no_aspects(self):
         """Test transit_moment_to_context with no aspects."""
@@ -1187,7 +1188,8 @@ class TestContextSerializerTransits:
         )
 
         result = transit_moment_to_context(transit_moment)
-        assert "No active transits" in result
+        assert "<transit_moment " in result
+        assert 'aspects="0"' in result
 
     def test_transits_time_range_to_context(self, basic_subject):
         """Test transits_time_range_to_context function."""
@@ -1223,13 +1225,15 @@ class TestContextSerializerTransits:
         )
 
         result = transits_time_range_to_context(transits_range)
-        assert "Transit analysis" in result
-        assert basic_subject.name in result
-        assert "Time range" in result
+        assert "<transit_analysis " in result
+        assert f'subject="{basic_subject.name}"' in result
+        # Should have from_date and to_date attributes
+        assert 'from_date="2024-01-15T12:00:00"' in result
+        assert 'to_date="2024-01-15T12:00:00"' in result
 
         # Also test via to_context
         result2 = to_context(transits_range)
-        assert "Transit analysis" in result2
+        assert "<transit_analysis " in result2
 
     def test_transits_time_range_to_context_no_subject(self):
         """Test transits_time_range_to_context without subject."""
@@ -1247,7 +1251,9 @@ class TestContextSerializerTransits:
         )
 
         result = transits_time_range_to_context(transits_range)
-        assert "Transit analysis" in result
+        assert "<transit_analysis " in result
+        # Without subject, the subject= attribute should be absent
+        assert "subject=" not in result
 
 
 # ============================================================================
@@ -1925,8 +1931,8 @@ class TestContextSerializerDualChart:
 
         chart_data = ChartDataFactory.create_synastry_chart_data(basic_subject, second_subject)
         result = dual_chart_data_to_context(chart_data)
-        assert "Synastry" in result
-        assert basic_subject.name in result
+        assert '<chart_analysis type="Synastry">' in result
+        assert f'name="{basic_subject.name}"' in result
 
     def test_single_chart_data_to_context(self, basic_subject):
         """Test single_chart_data_to_context function."""
@@ -1934,8 +1940,8 @@ class TestContextSerializerDualChart:
 
         chart_data = ChartDataFactory.create_natal_chart_data(basic_subject)
         result = single_chart_data_to_context(chart_data)
-        assert "Natal" in result
-        assert basic_subject.name in result
+        assert '<chart_analysis type="Natal">' in result
+        assert f'name="{basic_subject.name}"' in result
 
     def test_to_context_with_composite_subject(self, basic_subject, second_subject):
         """Test to_context with CompositeSubjectModel."""
@@ -1945,7 +1951,7 @@ class TestContextSerializerDualChart:
         composite_factory = CompositeSubjectFactory(basic_subject, second_subject)
         composite = composite_factory.get_midpoint_composite_subject_model()
         result = to_context(composite)
-        assert "Composite" in result
+        assert "<composite_info " in result
 
 
 # ============================================================================
@@ -2271,7 +2277,7 @@ class TestContextSerializerReturnSubject:
         )
         solar_return = factory.next_return_from_date(2024, 9, 1, return_type="Solar")
         result = astrological_subject_to_context(solar_return)
-        assert "Solar" in result
+        assert '<return_info type="Solar"' in result
 
 
 class TestChartDrawerNoLunarPhase:
@@ -2449,7 +2455,7 @@ class TestContextSerializerTransitChart:
 
         chart_data = ChartDataFactory.create_transit_chart_data(basic_subject, second_subject)
         result = dual_chart_data_to_context(chart_data)
-        assert "Transit Subject" in result
+        assert "<transit_subject>" in result
 
 
 class TestToContextWithAspectModel:
@@ -2463,7 +2469,7 @@ class TestToContextWithAspectModel:
         aspects = AspectsFactory.dual_chart_aspects(basic_subject, second_subject)
         if aspects.aspects:
             result = to_context(aspects.aspects[0])
-            assert "aspect" in result.lower() or aspects.aspects[0].aspect.lower() in result.lower()
+            assert "<aspect " in result
 
 
 class TestToContextWithQualityDistribution:
@@ -2475,7 +2481,7 @@ class TestToContextWithQualityDistribution:
 
         chart_data = ChartDataFactory.create_natal_chart_data(basic_subject)
         result = to_context(chart_data.quality_distribution)
-        assert "Quality" in result or "Cardinal" in result
+        assert "<quality_distribution " in result
 
 
 # ============================================================================

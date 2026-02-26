@@ -930,7 +930,7 @@ for section in sections[:3]:
 
 ## AI Context Serializer
 
-The `context_serializer` module transforms Kerykeion data models into precise, non-qualitative text optimized for LLM consumption. It provides the essential "ground truth" data needed for AI agents to generate accurate astrological interpretations.
+The `context_serializer` module transforms Kerykeion data models into precise, non-qualitative XML optimized for LLM consumption. It provides the essential "ground truth" data needed for AI agents to generate accurate astrological interpretations.
 
 **📖 Full context serializer docs: [Context Serializer Guide](https://www.kerykeion.net/content/docs/context_serializer)**
 
@@ -957,17 +957,23 @@ print(context)
 
 **Output:**
 
-```text
-Chart for John Doe
- Birth data: 1990-01-01 12:00, London, GB
-...
-Celestial Points:
-  - Sun at 10.81° in Capricorn in Tenth House, quality: Cardinal, element: Earth...
-  - Moon at 25.60° in Aquarius in Eleventh House, quality: Fixed, element: Air...
+```xml
+<chart name="John Doe">
+  <birth_data date="1990-01-01" time="12:00" city="London" nation="GB" ... />
+  <config zodiac="Tropical" house_system="Placidus" perspective="Apparent Geocentric" />
+  <planets>
+    <point name="Sun" position="10.81" sign="Capricorn" element="Earth" quality="Cardinal" ... />
+    <point name="Moon" position="25.60" sign="Aquarius" element="Air" quality="Fixed" ... />
+    ...
+  </planets>
+  <houses>...</houses>
+  <lunar_phase name="Waning Gibbous" phase="20" degrees_between="254.32" emoji="🌖" />
+</chart>
 ```
 
 **Key Features:**
 
+- **XML Output:** Well-formed XML with semantic tags, proper escaping, and optional field omission.
 - **Standardized Output:** Consistent format for Natal, Synastry, Composite, and Return charts.
 - **Non-Qualitative:** Provides raw data (positions, aspects) without interpretive bias.
 - **Prompt-Ready:** Designed to be injected directly into system prompts.
