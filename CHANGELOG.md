@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.8.1
+
+_Released 26/02/2026_
+
+**Bugfixes:**
+
+- Fixed degree label rotation on SVG chart outer ring.
+
+**Maintenance:**
+
+- Removed legacy chart drawing module (`draw_planets_legacy.py`)
+
 ## 5.8.0
 
 _Released 24/02/2026_

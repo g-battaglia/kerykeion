@@ -855,7 +855,7 @@ def _draw_primary_point_indicators(
 
         # Draw degree text (always horizontal for readability)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
-        text_radius = first_circle_radius - 13.0
+        text_radius = first_circle_radius - 10.0
 
         deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
         deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
@@ -1023,7 +1023,7 @@ def _draw_secondary_points(
 
         # Draw degree text (always horizontal for readability)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
-        text_radius = -13.0
+        text_radius = -9.0
 
         deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
         deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
