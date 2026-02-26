@@ -3,7 +3,7 @@ title: 'Ephemeris Data Factory'
 description: 'Generate time-series astrological data with the Ephemeris Data Factory. Perfect for creating planetary positions for any date range and interval.'
 category: 'Forecasting'
 tags: ['docs', 'ephemeris', 'data', 'kerykeion']
-order: 13
+order: 14
 ---
 
 # Ephemeris Data Factory

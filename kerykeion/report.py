@@ -11,6 +11,7 @@ from kerykeion.schemas.kr_models import (
     ChartDataModel,
     CompositeSubjectModel,
     DualChartDataModel,
+    MoonPhaseOverviewModel,
     PlanetReturnModel,
     PointInHouseModel,
     RelationshipScoreModel,
@@ -39,7 +40,7 @@ MOVEMENT_SYMBOLS = {
 
 
 SubjectLike = Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
-LiteralReportKind = Literal["subject", "single_chart", "dual_chart"]
+LiteralReportKind = Literal["subject", "single_chart", "dual_chart", "moon_phase_overview"]
 
 
 class ReportGenerator:
@@ -54,7 +55,7 @@ class ReportGenerator:
 
     def __init__(
         self,
-        model: Union[ChartDataModel, AstrologicalSubjectModel],
+        model: Union[ChartDataModel, AstrologicalSubjectModel, MoonPhaseOverviewModel],
         *,
         include_aspects: bool = True,
         max_aspects: Optional[int] = None,
@@ -66,7 +67,7 @@ class ReportGenerator:
         self.chart_type: Optional[str] = None
         self._model_kind: LiteralReportKind
         self._chart_data: Optional[ChartDataModel] = None
-        self._primary_subject: SubjectLike
+        self._primary_subject: Optional[SubjectLike] = None
         self._secondary_subject: Optional[SubjectLike] = None
         self._active_points: List[str] = []
         self._active_aspects: List[dict] = []
@@ -93,7 +94,9 @@ class ReportGenerator:
         include_aspects = self._include_aspects_default if include_aspects is None else include_aspects
         max_aspects = self._max_aspects_default if max_aspects is None else max_aspects
 
-        if self._model_kind == "subject":
+        if self._model_kind == "moon_phase_overview":
+            sections = self._build_moon_phase_overview_report()
+        elif self._model_kind == "subject":
             sections = self._build_subject_report()
         elif self._model_kind == "single_chart":
             sections = self._build_single_chart_report(include_aspects=include_aspects, max_aspects=max_aspects)
@@ -120,7 +123,14 @@ class ReportGenerator:
     # ------------------------------------------------------------------ #
 
     def _resolve_model(self) -> None:
-        if isinstance(self.model, AstrologicalSubjectModel):
+        if isinstance(self.model, MoonPhaseOverviewModel):
+            self._model_kind = "moon_phase_overview"
+            self.chart_type = "MoonPhaseOverview"
+            self._primary_subject = None
+            self._secondary_subject = None
+            self._active_points = []
+            self._active_aspects = []
+        elif isinstance(self.model, AstrologicalSubjectModel):
             self._model_kind = "subject"
             self.chart_type = "Subject"
             self._primary_subject = self.model
@@ -143,7 +153,7 @@ class ReportGenerator:
             self._active_points = list(self.model.active_points)
             self._active_aspects = [dict(aspect) for aspect in self.model.active_aspects]
         else:
-            supported = "AstrologicalSubjectModel, SingleChartDataModel, DualChartDataModel"
+            supported = "AstrologicalSubjectModel, SingleChartDataModel, DualChartDataModel, MoonPhaseOverviewModel"
             raise TypeError(f"Unsupported model type {type(self.model)!r}. Supported models: {supported}.")
 
     # ------------------------------------------------------------------ #
@@ -151,6 +161,7 @@ class ReportGenerator:
     # ------------------------------------------------------------------ #
 
     def _build_subject_report(self) -> List[str]:
+        assert self._primary_subject is not None
         sections = [
             self._subject_data_report(self._primary_subject, "Astrological Subject"),
             self._celestial_points_report(self._primary_subject, "Celestial Points"),
@@ -159,8 +170,123 @@ class ReportGenerator:
         ]
         return sections
 
+    def _build_moon_phase_overview_report(self) -> List[str]:
+        """Build a detailed report from a MoonPhaseOverviewModel."""
+        assert isinstance(self.model, MoonPhaseOverviewModel)
+        overview = self.model
+        sections: List[str] = []
+
+        # -- Moon Summary --
+        moon = overview.moon
+        moon_data: List[List[str]] = [["Field", "Value"]]
+        if moon.phase_name is not None:
+            moon_data.append(["Phase Name", f"{moon.phase_name} {moon.emoji or ''}".strip()])
+        if moon.major_phase is not None:
+            moon_data.append(["Major Phase", moon.major_phase])
+        if moon.stage is not None:
+            moon_data.append(["Stage", moon.stage.capitalize()])
+        if moon.illumination is not None:
+            moon_data.append(["Illumination", moon.illumination])
+        if moon.age_days is not None:
+            moon_data.append(["Age (days)", str(moon.age_days)])
+        if moon.lunar_cycle is not None:
+            moon_data.append(["Lunar Cycle", moon.lunar_cycle])
+        if moon.zodiac is not None:
+            moon_data.append(["Sun Sign", moon.zodiac.sun_sign])
+            moon_data.append(["Moon Sign", moon.zodiac.moon_sign])
+        if len(moon_data) > 1:
+            sections.append(AsciiTable(moon_data, title="Moon Summary").table)
+
+        # -- Illumination Details --
+        if moon.detailed and moon.detailed.illumination_details:
+            illum = moon.detailed.illumination_details
+            illum_data: List[List[str]] = [["Field", "Value"]]
+            if illum.percentage is not None:
+                illum_data.append(["Percentage", f"{illum.percentage}%"])
+            if illum.visible_fraction is not None:
+                illum_data.append(["Visible Fraction", f"{illum.visible_fraction:.4f}"])
+            if illum.phase_angle is not None:
+                illum_data.append(["Phase Angle", f"{illum.phase_angle:.2f}°"])
+            if len(illum_data) > 1:
+                sections.append(AsciiTable(illum_data, title="Illumination Details").table)
+
+        # -- Upcoming Phases --
+        if moon.detailed and moon.detailed.upcoming_phases:
+            phases = moon.detailed.upcoming_phases
+            phases_data: List[List[str]] = [["Phase", "Last", "Next"]]
+            for label, window in [
+                ("New Moon", phases.new_moon),
+                ("First Quarter", phases.first_quarter),
+                ("Full Moon", phases.full_moon),
+                ("Last Quarter", phases.last_quarter),
+            ]:
+                if window is not None:
+                    last_str = window.last.datestamp if window.last and window.last.datestamp else "N/A"
+                    next_str = window.next.datestamp if window.next and window.next.datestamp else "N/A"
+                    phases_data.append([label, last_str, next_str])
+            if len(phases_data) > 1:
+                sections.append(AsciiTable(phases_data, title="Upcoming Phases").table)
+
+        # -- Next Lunar Eclipse --
+        if moon.next_lunar_eclipse:
+            eclipse = moon.next_lunar_eclipse
+            ecl_data: List[List[str]] = [["Field", "Value"]]
+            if eclipse.datestamp:
+                ecl_data.append(["Date", eclipse.datestamp])
+            if eclipse.type:
+                ecl_data.append(["Type", eclipse.type])
+            if len(ecl_data) > 1:
+                sections.append(AsciiTable(ecl_data, title="Next Lunar Eclipse").table)
+
+        # -- Sun Info --
+        sun = overview.sun
+        if sun is not None:
+            sun_data: List[List[str]] = [["Field", "Value"]]
+            if sun.sunrise_timestamp is not None:
+                sun_data.append(["Sunrise", sun.sunrise_timestamp])
+            if sun.sunset_timestamp is not None:
+                sun_data.append(["Sunset", sun.sunset_timestamp])
+            if sun.solar_noon is not None:
+                sun_data.append(["Solar Noon", sun.solar_noon])
+            if sun.day_length is not None:
+                sun_data.append(["Day Length", sun.day_length])
+            if sun.position is not None:
+                if sun.position.altitude is not None:
+                    sun_data.append(["Sun Altitude", f"{sun.position.altitude:.2f}°"])
+                if sun.position.azimuth is not None:
+                    sun_data.append(["Sun Azimuth", f"{sun.position.azimuth:.2f}°"])
+            if len(sun_data) > 1:
+                sections.append(AsciiTable(sun_data, title="Sun Info").table)
+
+            # -- Next Solar Eclipse --
+            if sun.next_solar_eclipse:
+                se = sun.next_solar_eclipse
+                se_data: List[List[str]] = [["Field", "Value"]]
+                if se.datestamp:
+                    se_data.append(["Date", se.datestamp])
+                if se.type:
+                    se_data.append(["Type", se.type])
+                if len(se_data) > 1:
+                    sections.append(AsciiTable(se_data, title="Next Solar Eclipse").table)
+
+        # -- Location --
+        loc = overview.location
+        if loc is not None:
+            loc_data: List[List[str]] = [["Field", "Value"]]
+            if loc.latitude is not None:
+                loc_data.append(["Latitude", loc.latitude])
+            if loc.longitude is not None:
+                loc_data.append(["Longitude", loc.longitude])
+            if loc.using_default_location is not None:
+                loc_data.append(["Default Location", "Yes" if loc.using_default_location else "No"])
+            if len(loc_data) > 1:
+                sections.append(AsciiTable(loc_data, title="Location").table)
+
+        return sections
+
     def _build_single_chart_report(self, *, include_aspects: bool, max_aspects: Optional[int]) -> List[str]:
         assert self._chart_data is not None
+        assert self._primary_subject is not None
         sections: List[str] = [
             self._subject_data_report(self._primary_subject, self._primary_subject_label()),
         ]
@@ -199,6 +325,7 @@ class ReportGenerator:
 
     def _build_dual_chart_report(self, *, include_aspects: bool, max_aspects: Optional[int]) -> List[str]:
         assert self._chart_data is not None
+        assert self._primary_subject is not None
         primary_label, secondary_label = self._subject_role_labels()
 
         sections: List[str] = [
@@ -245,6 +372,14 @@ class ReportGenerator:
     # ------------------------------------------------------------------ #
 
     def _build_title(self) -> str:
+        if self._model_kind == "moon_phase_overview":
+            assert isinstance(self.model, MoonPhaseOverviewModel)
+            base_title = f"Moon Phase Overview — {self.model.datestamp}"
+            separator = "=" * len(base_title)
+            return f"\n{separator}\n{base_title}\n{separator}\n"
+
+        assert self._primary_subject is not None
+
         if self._model_kind == "subject":
             base_title = f"{self._primary_subject.name} — Subject Report"
         elif self.chart_type == "Natal":

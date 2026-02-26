@@ -3,7 +3,7 @@ title: 'Transits Time Range Factory'
 description: 'Forecast upcoming astrological influences with transits. Learn how to calculate planetary movements over time against a fixed natal chart.'
 category: 'Forecasting'
 tags: ['docs', 'transits', 'forecasting', 'kerykeion']
-order: 12
+order: 13
 ---
 
 # Transits Time Range Factory

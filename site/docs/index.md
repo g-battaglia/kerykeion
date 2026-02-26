@@ -74,6 +74,7 @@ For more examples, see the [Examples Gallery](/content/examples/).
 ## Forecasting
 
 -   **[Planetary Return Factory](/content/docs/planetary_return_factory)**: Calculating solar and lunar returns.
+-   **[Moon Phase Details Factory](/content/docs/moon_phase_details_factory)**: Rich lunar phase context with illumination, upcoming phases, eclipses, and sun info.
 -   **[Transits Time Range Factory](/content/docs/transits_time_range_factory)**: Analyzing transits over a specific time range.
 -   **[Ephemeris Data Factory](/content/docs/ephemeris_data_factory)**: Generating ephemeris data.
 

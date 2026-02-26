@@ -62,6 +62,7 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
 - [Report Generator](#report-generator)
     - [Quick Examples](#quick-examples)
     - [Section Access](#section-access)
+- [Moon Phase Details](#moon-phase-details)
 - [AI Context Serializer](#ai-context-serializer)
     - [Quick Example](#quick-example)
 - [Example: Retrieving Aspects](#example-retrieving-aspects)
@@ -927,6 +928,38 @@ for section in sections[:3]:
 
 **📖 Report examples: [Report Examples](https://www.kerykeion.net/content/examples/report)**
 
+## Moon Phase Details
+
+The `MoonPhaseDetailsFactory` generates a rich lunar phase context from any astrological subject — including illumination, upcoming major phases, next eclipses (solar and lunar), sunrise/sunset, and apparent solar position. All timings use Swiss Ephemeris for ~1 second precision.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, MoonPhaseDetailsFactory, ReportGenerator
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 2025, 4, 1, 7, 51,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False,
+)
+
+overview = MoonPhaseDetailsFactory.from_subject(subject)
+
+print(f"Phase: {overview.moon.phase_name} {overview.moon.emoji}")
+print(f"Illumination: {overview.moon.illumination}")
+print(f"Stage: {overview.moon.stage}")
+
+if overview.moon.detailed and overview.moon.detailed.upcoming_phases:
+    fm = overview.moon.detailed.upcoming_phases.full_moon
+    if fm and fm.next:
+        print(f"Next Full Moon: {fm.next.datestamp}")
+
+# Generate a formatted ASCII report
+ReportGenerator(overview).print_report()
+```
+
+**📖 Full documentation: [Moon Phase Details Factory](https://www.kerykeion.net/content/docs/moon_phase_details_factory)**
+
+**📖 Examples: [Moon Phase Details Examples](https://www.kerykeion.net/content/examples/moon-phase-details)**
+
 ## AI Context Serializer
 
 The `context_serializer` module transforms Kerykeion data models into precise, non-qualitative text optimized for LLM consumption. It provides the essential "ground truth" data needed for AI agents to generate accurate astrological interpretations.
@@ -1056,10 +1089,10 @@ person2 = AstrologicalSubjectFactory.from_birth_data(
 
 # Calculate relationship score
 score_factory = RelationshipScoreFactory(person1, person2)
-result = score_factory.get_score()
+result = score_factory.get_relationship_score()
 
-print(f"Compatibility Score: {result.score}")
-print(f"Description: {result.description}")
+print(f"Compatibility Score: {result.score_value}")
+print(f"Description: {result.score_description}")
 ```
 
 **📖 Relationship score guide: [Relationship Score Examples](https://www.kerykeion.net/content/examples/relationship-score)**
