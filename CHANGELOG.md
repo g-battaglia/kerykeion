@@ -1,5 +1,40 @@
 # Changelog
 
+## 5.9.0
+
+_Released 26/02/2026_
+
+**New Features:**
+
+- Added `MoonPhaseDetailsFactory` — a new factory class that computes detailed moon phase information from an `AstrologicalSubjectModel`. Uses Swiss Ephemeris binary search (1-second precision) to find exact times of upcoming and previous New Moon, First Quarter, Full Moon, and Last Quarter. Also computes illumination percentage, waxing/waning stage, moon age, lunar cycle progress, next lunar/solar eclipses, sunrise/sunset, solar noon, day length, and Sun/Moon zodiac signs.
+
+- Added `MoonPhaseOverviewModel` report support in `ReportGenerator` — a new `"moon_phase_overview"` report kind that renders all moon phase details as a human-readable text report with sections for Moon Summary, Illumination Details, Upcoming Phases, Next Lunar Eclipse, Sun Info, Next Solar Eclipse, and Location.
+
+**Documentation:**
+
+- Added `moon_phase_details_factory.md` documentation page with API reference, nested data access patterns, JSON serialization, precision notes, and edge cases
+- Added `moon-phase-details.md` examples page with practical usage examples (basic usage, upcoming phases, eclipses, sun times, report generation, JSON export, zodiac info, location metadata)
+- Updated `report.md` with Moon Phase Overview Report section and configuration table
+- Updated `index.md` with Moon Phase Details Factory link in the Forecasting section
+- Updated `README.md` with Moon Phase Details section, code example, and links to documentation
+
+**Tests:**
+
+- Added 54 mocked unit tests for `MoonPhaseDetailsFactory` (helper functions, full `from_subject()` with mocked Swiss Ephemeris layer, null/failure edge cases, phase angle boundary tests)
+- Added 21 report tests with golden snapshot fixture for moon phase overview
+- Added 2042 historical verification tests against AstroPixels reference data (2001–2040), covering angle accuracy, phase names, emojis, factory major_phase, illumination, waxing/waning stage, upcoming phases, eclipse predictions, synodic month bounds, and 28-phase boundary mapping
+
+**Bugfixes:**
+
+- Fixed `ReportGenerator` crash when `_primary_subject` is `None` (added defensive `assert` guards in `_build_subject_report`, `_build_single_chart_report`, and `_build_dual_chart_report`)
+- Fixed pre-existing `RelationshipScoreFactory` code snippet bug in `README.md` (wrong method name and field names)
+- Fixed frontmatter ordering collision between `transits_time_range_factory.md` and `ephemeris_data_factory.md`
+
+**Maintenance:**
+
+- Added `charts_output/` to `.gitignore`
+- Added example scripts: `moon_phase_report_example.py`, `moon_phase_json_example.py`
+
 ## 5.8.1
 
 _Released 26/02/2026_
