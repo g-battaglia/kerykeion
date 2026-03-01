@@ -708,3 +708,30 @@ class TestIsDiurnalField:
         )
         # The difference is negligible for the Sun (parallax ~0.002°)
         assert geocentric.is_diurnal == topocentric.is_diurnal
+
+
+# ---------------------------------------------------------------------------
+# Missing edge-case tests (migrated from tests/edge_cases/test_edge_cases.py)
+# ---------------------------------------------------------------------------
+
+
+class TestArabicPartsOnlyActivation:
+    """Arabic Parts with only a single part in active_points (auto-activates deps)."""
+
+    def test_pars_spiritus_only(self):
+        """Requesting only Pars_Spiritus auto-adds Sun, Moon, Ascendant."""
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            name="Test",
+            year=1990,
+            month=6,
+            day=15,
+            hour=21,
+            minute=0,
+            lng=12.5,
+            lat=41.9,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
+            active_points=["Pars_Spiritus"],
+        )
+        assert subject is not None

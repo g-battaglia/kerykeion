@@ -1,0 +1,182 @@
+================================
+John Lennon — Natal Chart Report
+================================
+
++Natal — Birth Data--+---------------------------+
+| Field              | Value                     |
++--------------------+---------------------------+
+| Name               | John Lennon               |
+| Date               | 09/10/1940                |
+| Time               | 18:30                     |
+| City               | Greenwich                 |
+| Nation             | GB                        |
+| Latitude           | 53.4084°                  |
+| Longitude          | -2.9916°                  |
+| Timezone           | Europe/London             |
+| Day of Week        | Wednesday                 |
+| ISO Local Datetime | 1940-10-09T18:30:00+01:00 |
++--------------------+---------------------------+
+
++Natal — Settings-----+---------------------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Julian Day          | 2429912.229167      |
+| Active Points Count | 18                  |
++---------------------+---------------------+
+
++Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
+| Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+| Ascendant             | Ari ♈️ | 19.71°   | +360.0000°/d | N/A     | -    | First House    |
+| Medium Coeli          | Cap ♑️ | 7.06°    | +360.0000°/d | N/A     | -    | Tenth House    |
+| Descendant            | Lib ♎️ | 19.71°   | +360.0000°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Can ♋️ | 7.06°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Sun                   | Lib ♎️ | 16.27°   | +0.9885°/d   | -6.40°  | -    | Sixth House    |
+| Moon                  | Aqu ♒️ | 3.55°    | +12.5292°/d  | -14.60° | -    | Eleventh House |
+| Mercury               | Sco ♏️ | 8.56°    | +1.3195°/d   | -16.23° | -    | Seventh House  |
+| Venus                 | Vir ♍️ | 3.22°    | +1.1337°/d   | +10.57° | -    | Sixth House    |
+| Mars                  | Lib ♎️ | 2.66°    | +0.6449°/d   | -0.18°  | -    | Sixth House    |
+| Jupiter               | Tau ♉️ | 13.69°   | -0.1069°/d   | +14.61° | R    | First House    |
+| Saturn                | Tau ♉️ | 13.22°   | -0.0669°/d   | +13.30° | R    | First House    |
+| Uranus                | Tau ♉️ | 25.55°   | -0.0294°/d   | +18.88° | R    | First House    |
+| Neptune               | Vir ♍️ | 26.03°   | +0.0353°/d   | +2.68°  | -    | Sixth House    |
+| Pluto                 | Leo ♌️ | 4.19°    | +0.0114°/d   | +23.12° | -    | Fifth House    |
+| True North Lunar Node | Lib ♎️ | 11.03°   | +0.0001°/d   | -4.36°  | -    | Sixth House    |
+| True South Lunar Node | Ari ♈️ | 11.03°   | -0.0001°/d   | +4.36°  | -    | Twelfth House  |
+| Mean Lilith           | Ari ♈️ | 13.37°   | +0.1107°/d   | +5.05°  | -    | Twelfth House  |
+| Chiron                | Leo ♌️ | 0.57°    | +0.0529°/d   | +13.41° | -    | Fifth House    |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+
++Natal Houses (Placidus)---+----------+-------------------+
+| House          | Sign    | Position | Absolute Position |
++----------------+---------+----------+-------------------+
+| First House    | Ari ♈️ | 19.71°   | 19.71°            |
+| Second House   | Tau ♉️ | 29.52°   | 59.52°            |
+| Third House    | Gem ♊️ | 20.22°   | 80.22°            |
+| Fourth House   | Can ♋️ | 7.06°    | 97.06°            |
+| Fifth House    | Can ♋️ | 25.30°   | 115.30°           |
+| Sixth House    | Leo ♌️ | 22.09°   | 142.09°           |
+| Seventh House  | Lib ♎️ | 19.71°   | 199.71°           |
+| Eighth House   | Sco ♏️ | 29.52°   | 239.52°           |
+| Ninth House    | Sag ♐️ | 20.22°   | 260.22°           |
+| Tenth House    | Cap ♑️ | 7.06°    | 277.06°           |
+| Eleventh House | Cap ♑️ | 25.30°   | 295.30°           |
+| Twelfth House  | Aqu ♒️ | 22.09°   | 322.09°           |
++----------------+---------+----------+-------------------+
+
++Lunar Phase--------------+------------------+
+| Lunar Phase Information | Value            |
++-------------------------+------------------+
+| Phase Name              | First Quarter 🌓 |
+| Sun-Moon Angle          | 107.28°          |
+| Lunation Day            | 9                |
++-------------------------+------------------+
+
++Element Distribution-----------+
+| Element  | Count | Percentage |
++----------+-------+------------+
+| Fire 🔥  | 4.1   | 19.9%      |
+| Earth 🌍 | 6.0   | 29.1%      |
+| Air 💨   | 7.5   | 36.4%      |
+| Water 💧 | 3.0   | 14.6%      |
+| Total    | 20.6  | 100%       |
++----------+-------+------------+
+
++Quality Distribution-----------+
+| Quality  | Count | Percentage |
++----------+-------+------------+
+| Cardinal | 11.5  | 55.8%      |
+| Fixed    | 7.1   | 34.5%      |
+| Mutable  | 2.0   | 9.7%       |
+| Total    | 20.6  | 100%       |
++----------+-------+------------+
+
++Active Celestial Points-----+
+| #  | Active Point          |
++----+-----------------------+
+| 1  | Sun                   |
+| 2  | Moon                  |
+| 3  | Mercury               |
+| 4  | Venus                 |
+| 5  | Mars                  |
+| 6  | Jupiter               |
+| 7  | Saturn                |
+| 8  | Uranus                |
+| 9  | Neptune               |
+| 10 | Pluto                 |
+| 11 | True_North_Lunar_Node |
+| 12 | True_South_Lunar_Node |
+| 13 | Mean_Lilith           |
+| 14 | Chiron                |
+| 15 | Ascendant             |
+| 16 | Medium_Coeli          |
+| 17 | Descendant            |
+| 18 | Imum_Coeli            |
++----+-----------------------+
+
++-------------+---------+
+| Aspect      | Orb (°) |
++-------------+---------+
+| conjunction | 10      |
+| opposition  | 10      |
+| trine       | 8       |
+| sextile     | 6       |
+| square      | 5       |
+| quintile    | 1       |
++-------------+---------+
+
++Aspects----------------+---------------+-----------------------+-------+--------------+
+| Point 1               | Aspect        | Point 2               | Orb   | Movement     |
++-----------------------+---------------+-----------------------+-------+--------------+
+| Sun                   | quintile Q    | Pluto                 | 0.08° | Separating ← |
+| Sun                   | conjunction ☌ | True North Lunar Node | 5.24° | Separating ← |
+| Sun                   | opposition ☍  | Ascendant             | 3.44° | Separating ← |
+| Sun                   | conjunction ☌ | Descendant            | 3.44° | Separating ← |
+| Sun                   | opposition ☍  | Mean Lilith           | 2.90° | Separating ← |
+| Sun                   | opposition ☍  | True South Lunar Node | 5.24° | Separating ← |
+| Moon                  | trine △       | Mars                  | 0.88° | Separating ← |
+| Moon                  | trine △       | Uranus                | 7.99° | Separating ← |
+| Moon                  | trine △       | Neptune               | 7.52° | Separating ← |
+| Moon                  | opposition ☍  | Pluto                 | 0.64° | Applying →   |
+| Moon                  | trine △       | True North Lunar Node | 7.48° | Applying →   |
+| Moon                  | opposition ☍  | Chiron                | 2.98° | Separating ← |
+| Mercury               | sextile ⚹     | Venus                 | 5.34° | Separating ← |
+| Mercury               | opposition ☍  | Jupiter               | 5.13° | Applying →   |
+| Mercury               | opposition ☍  | Saturn                | 4.66° | Applying →   |
+| Mercury               | square □      | Pluto                 | 4.37° | Separating ← |
+| Mercury               | sextile ⚹     | Medium Coeli          | 1.50° | Applying →   |
+| Mercury               | trine △       | Imum Coeli            | 1.50° | Applying →   |
+| Venus                 | trine △       | Medium Coeli          | 3.84° | Separating ← |
+| Venus                 | sextile ⚹     | Imum Coeli            | 3.84° | Separating ← |
+| Mars                  | trine △       | Uranus                | 7.11° | Separating ← |
+| Mars                  | conjunction ☌ | Neptune               | 6.63° | Separating ← |
+| Mars                  | sextile ⚹     | Pluto                 | 1.53° | Applying →   |
+| Mars                  | conjunction ☌ | True North Lunar Node | 8.36° | Applying →   |
+| Mars                  | sextile ⚹     | Chiron                | 2.09° | Separating ← |
+| Mars                  | square □      | Medium Coeli          | 4.40° | Separating ← |
+| Mars                  | square □      | Imum Coeli            | 4.40° | Separating ← |
+| Mars                  | opposition ☍  | True South Lunar Node | 8.36° | Applying →   |
+| Jupiter               | conjunction ☌ | Saturn                | 0.48° | Applying →   |
+| Jupiter               | trine △       | Medium Coeli          | 6.63° | Applying →   |
+| Saturn                | trine △       | Medium Coeli          | 6.16° | Applying →   |
+| Uranus                | trine △       | Neptune               | 0.48° | Separating ← |
+| Uranus                | sextile ⚹     | Chiron                | 5.02° | Separating ← |
+| Neptune               | sextile ⚹     | Chiron                | 4.54° | Separating ← |
+| Pluto                 | conjunction ☌ | Chiron                | 3.62° | Applying →   |
+| Pluto                 | trine △       | True South Lunar Node | 6.84° | Applying →   |
+| True North Lunar Node | opposition ☍  | Ascendant             | 8.69° | Separating ← |
+| True North Lunar Node | square □      | Medium Coeli          | 3.97° | Applying →   |
+| True North Lunar Node | conjunction ☌ | Descendant            | 8.69° | Separating ← |
+| True North Lunar Node | square □      | Imum Coeli            | 3.97° | Applying →   |
+| True North Lunar Node | opposition ☍  | Mean Lilith           | 2.35° | Separating ← |
+| Ascendant             | conjunction ☌ | Mean Lilith           | 6.34° | Separating ← |
+| Ascendant             | conjunction ☌ | True South Lunar Node | 8.69° | Separating ← |
+| Medium Coeli          | square □      | True South Lunar Node | 3.97° | Applying →   |
+| Descendant            | opposition ☍  | Mean Lilith           | 6.34° | Separating ← |
+| Descendant            | opposition ☍  | True South Lunar Node | 8.69° | Separating ← |
+| Imum Coeli            | square □      | True South Lunar Node | 3.97° | Applying →   |
+| Mean Lilith           | conjunction ☌ | True South Lunar Node | 2.35° | Separating ← |
++-----------------------+---------------+-----------------------+-------+--------------+

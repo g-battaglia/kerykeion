@@ -6,9 +6,15 @@ This module provides:
 - Parametrized fixtures for house systems and sidereal modes
 - Standard fixtures for commonly used test subjects
 - Helper fixtures for chart and aspect testing
+- Tier-based filtering for ephemeris tiers (base/medium/extended)
 
 Usage:
     All fixtures are automatically available to all tests in the tests/ directory.
+
+Tier filtering:
+    pytest tests/ --tier=base     # DE440s: 1849-2150 (11 subjects)
+    pytest tests/ --tier=medium   # DE440: 1550-2650 (16 subjects, cumulative)
+    pytest tests/ --tier=extended # DE441: full range (25 subjects, cumulative)
 """
 
 import pytest
@@ -32,7 +38,42 @@ from tests.data.test_subjects_matrix import (
     ALL_POINTS,
     get_subject_by_id,
     get_primary_test_subjects,
+    get_subjects_for_tier,
 )
+
+
+# =============================================================================
+# TIER FILTERING
+# =============================================================================
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--tier",
+        action="store",
+        default=None,
+        choices=["base", "medium", "extended"],
+        help="Run only tests for the specified ephemeris tier (cumulative)",
+    )
+
+
+def pytest_collection_modifyitems(config, items):
+    tier = config.getoption("--tier")
+    if tier is None:
+        return
+
+    allowed_ids = set(get_subjects_for_tier(tier).keys())
+
+    # Build full set of all temporal subject IDs for checking
+    all_subject_ids = {s["id"] for s in TEMPORAL_SUBJECTS}
+
+    skip = pytest.mark.skip(reason=f"Subject not in tier '{tier}'")
+    for item in items:
+        node_id = item.nodeid
+        for subject_id in all_subject_ids:
+            if subject_id in node_id and subject_id not in allowed_ids:
+                item.add_marker(skip)
+                break
 
 
 # =============================================================================

@@ -1,0 +1,390 @@
+==========================================
+Johnny Depp — Solar Return Comparison 2024
+==========================================
+
++Natal Subject — Birth Data----------------------+
+| Field              | Value                     |
++--------------------+---------------------------+
+| Name               | Johnny Depp               |
+| Date               | 09/06/1963                |
+| Time               | 00:00                     |
+| City               | Greenwich                 |
+| Nation             | GB                        |
+| Latitude           | 37.7742°                  |
+| Longitude          | -87.1133°                 |
+| Timezone           | America/Chicago           |
+| Day of Week        | Sunday                    |
+| ISO Local Datetime | 1963-06-09T00:00:00-05:00 |
++--------------------+---------------------------+
+
++Natal Subject — Settings-------------------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Julian Day          | 2438189.708333      |
+| Active Points Count | 18                  |
++---------------------+---------------------+
+
++Return Subject — Birth Data---------------------+
+| Field              | Value                     |
++--------------------+---------------------------+
+| Name               | Johnny Depp Solar Return  |
+| Return Type        | Solar                     |
+| City               | Greenwich                 |
+| Nation             | GB                        |
+| Latitude           | 37.7742°                  |
+| Longitude          | -87.1133°                 |
+| Timezone           | America/Chicago           |
+| Day of Week        | Friday                    |
+| ISO Local Datetime | 2024-06-07T17:50:53-05:00 |
++--------------------+---------------------------+
+
++Return Subject — Settings------------------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Julian Day          | 2460469.452002      |
+| Active Points Count | 18                  |
++---------------------+---------------------+
+
++Natal Subject Celestial Points---+----------+--------------+---------+------+----------------+
+| Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+| Ascendant             | Aqu ♒️ | 20.70°   | +360.0000°/d | N/A     | -    | First House    |
+| Medium Coeli          | Sag ♐️ | 6.59°    | +360.0000°/d | N/A     | -    | Tenth House    |
+| Descendant            | Leo ♌️ | 20.70°   | +360.0000°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Gem ♊️ | 6.59°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Sun                   | Gem ♊️ | 17.66°   | +0.9560°/d   | +22.87° | -    | Fourth House   |
+| Moon                  | Cap ♑️ | 8.74°    | +12.4796°/d  | -22.08° | -    | Eleventh House |
+| Mercury               | Tau ♉️ | 25.00°   | +0.6817°/d   | +15.27° | -    | Third House    |
+| Venus                 | Tau ♉️ | 25.60°   | +1.2129°/d   | +17.95° | -    | Third House    |
+| Mars                  | Vir ♍️ | 3.01°    | +0.5146°/d   | +11.55° | -    | Seventh House  |
+| Jupiter               | Ari ♈️ | 13.91°   | +0.1660°/d   | +4.37°  | -    | Second House   |
+| Saturn                | Aqu ♒️ | 23.08°   | -0.0094°/d   | -14.84° | R    | First House    |
+| Uranus                | Vir ♍️ | 1.57°    | +0.0268°/d   | +11.62° | -    | Seventh House  |
+| Neptune               | Sco ♏️ | 13.42°   | -0.0213°/d   | -14.13° | R    | Ninth House    |
+| Pluto                 | Vir ♍️ | 9.63°    | +0.0095°/d   | +20.46° | -    | Seventh House  |
+| True North Lunar Node | Can ♋️ | 20.64°   | -0.0231°/d   | +21.86° | R    | Fifth House    |
+| True South Lunar Node | Cap ♑️ | 20.64°   | +0.0231°/d   | -21.86° | R    | Eleventh House |
+| Mean Lilith           | Sco ♏️ | 5.57°    | +0.1120°/d   | -8.65°  | -    | Eighth House   |
+| Chiron                | Pis ♓️ | 14.87°   | +0.0086°/d   | -1.23°  | -    | First House    |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+
++Return Subject Celestial Points--+----------+--------------+---------+------+----------------+
+| Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+| Ascendant             | Sco ♏️ | 20.42°   | +360.0000°/d | N/A     | -    | First House    |
+| Medium Coeli          | Vir ♍️ | 0.36°    | +360.0000°/d | N/A     | -    | Tenth House    |
+| Descendant            | Tau ♉️ | 20.42°   | +360.0000°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Pis ♓️ | 0.36°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Sun                   | Gem ♊️ | 17.66°   | +0.9570°/d   | +22.87° | -    | Seventh House  |
+| Moon                  | Can ♋️ | 5.70°    | +13.3855°/d  | +28.32° | -    | Eighth House   |
+| Mercury               | Gem ♊️ | 9.47°    | +2.1121°/d   | +21.68° | -    | Seventh House  |
+| Venus                 | Gem ♊️ | 18.56°   | +1.2290°/d   | +23.02° | -    | Seventh House  |
+| Mars                  | Ari ♈️ | 29.08°   | +0.7445°/d   | +10.09° | -    | Sixth House    |
+| Jupiter               | Gem ♊️ | 3.03°    | +0.2315°/d   | +20.07° | -    | Seventh House  |
+| Saturn                | Pis ♓️ | 19.03°   | +0.0358°/d   | -6.07°  | -    | Fourth House   |
+| Uranus                | Tau ♉️ | 24.56°   | +0.0546°/d   | +18.66° | -    | Seventh House  |
+| Neptune               | Pis ♓️ | 29.77°   | +0.0132°/d   | -1.25°  | -    | Fourth House   |
+| Pluto                 | Aqu ♒️ | 1.81°    | -0.0153°/d   | -22.81° | R    | Third House    |
+| True North Lunar Node | Ari ♈️ | 13.46°   | -0.1812°/d   | +5.31°  | R    | Fifth House    |
+| True South Lunar Node | Lib ♎️ | 13.46°   | +0.1812°/d   | -5.31°  | R    | Eleventh House |
+| Mean Lilith           | Vir ♍️ | 27.62°   | +0.1109°/d   | +2.16°  | -    | Tenth House    |
+| Chiron                | Ari ♈️ | 22.55°   | +0.0387°/d   | +9.82°  | -    | Fifth House    |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+
++Natal Subject Houses (Placidus)------+-------------------+
+| House          | Sign    | Position | Absolute Position |
++----------------+---------+----------+-------------------+
+| First House    | Aqu ♒️ | 20.70°   | 320.70°           |
+| Second House   | Ari ♈️ | 6.64°    | 6.64°             |
+| Third House    | Tau ♉️ | 11.22°   | 41.22°            |
+| Fourth House   | Gem ♊️ | 6.59°    | 66.59°            |
+| Fifth House    | Gem ♊️ | 28.34°   | 88.34°            |
+| Sixth House    | Can ♋️ | 20.99°   | 110.99°           |
+| Seventh House  | Leo ♌️ | 20.70°   | 140.70°           |
+| Eighth House   | Lib ♎️ | 6.64°    | 186.64°           |
+| Ninth House    | Sco ♏️ | 11.22°   | 221.22°           |
+| Tenth House    | Sag ♐️ | 6.59°    | 246.59°           |
+| Eleventh House | Sag ♐️ | 28.34°   | 268.34°           |
+| Twelfth House  | Cap ♑️ | 20.99°   | 290.99°           |
++----------------+---------+----------+-------------------+
+
++Return Subject Houses (Placidus)-----+-------------------+
+| House          | Sign    | Position | Absolute Position |
++----------------+---------+----------+-------------------+
+| First House    | Sco ♏️ | 20.42°   | 230.42°           |
+| Second House   | Sag ♐️ | 20.41°   | 260.41°           |
+| Third House    | Cap ♑️ | 24.68°   | 294.68°           |
+| Fourth House   | Pis ♓️ | 0.36°    | 330.36°           |
+| Fifth House    | Ari ♈️ | 2.38°    | 2.38°             |
+| Sixth House    | Ari ♈️ | 28.68°   | 28.68°            |
+| Seventh House  | Tau ♉️ | 20.42°   | 50.42°            |
+| Eighth House   | Gem ♊️ | 20.41°   | 80.41°            |
+| Ninth House    | Can ♋️ | 24.68°   | 114.68°           |
+| Tenth House    | Vir ♍️ | 0.36°    | 150.36°           |
+| Eleventh House | Lib ♎️ | 2.38°    | 182.38°           |
+| Twelfth House  | Lib ♎️ | 28.68°   | 208.68°           |
++----------------+---------+----------+-------------------+
+
++Lunar Phase--------------+-------------------+
+| Lunar Phase Information | Value             |
++-------------------------+-------------------+
+| Phase Name              | Waning Gibbous 🌖 |
+| Sun-Moon Angle          | 201.08°           |
+| Lunation Day            | 16                |
++-------------------------+-------------------+
+
++Element Distribution-----------+
+| Element  | Count | Percentage |
++----------+-------+------------+
+| Fire 🔥  | 4.0   | 19.4%      |
+| Earth 🌍 | 8.0   | 38.8%      |
+| Air 💨   | 6.5   | 31.6%      |
+| Water 💧 | 2.1   | 10.2%      |
+| Total    | 20.6  | 100%       |
++----------+-------+------------+
+
++Quality Distribution-----------+
+| Quality  | Count | Percentage |
++----------+-------+------------+
+| Cardinal | 4.0   | 19.4%      |
+| Fixed    | 8.5   | 41.3%      |
+| Mutable  | 8.1   | 39.3%      |
+| Total    | 20.6  | 100%       |
++----------+-------+------------+
+
++Johnny Depp points in Johnny Depp Solar Return houses------+--------------------+------+--------+
+| Point                               | Owner House         | Projected House    | Sign | Degree |
++-------------------------------------+---------------------+--------------------+------+--------+
+| Johnny Depp – Sun                   | 4 (Fourth_House)    | 7 (Seventh_House)  | Gem  | 17.66° |
+| Johnny Depp – Moon                  | 11 (Eleventh_House) | 2 (Second_House)   | Cap  | 8.74°  |
+| Johnny Depp – Mercury               | 3 (Third_House)     | 7 (Seventh_House)  | Tau  | 25.00° |
+| Johnny Depp – Venus                 | 3 (Third_House)     | 7 (Seventh_House)  | Tau  | 25.60° |
+| Johnny Depp – Mars                  | 7 (Seventh_House)   | 10 (Tenth_House)   | Vir  | 3.01°  |
+| Johnny Depp – Jupiter               | 2 (Second_House)    | 5 (Fifth_House)    | Ari  | 13.91° |
+| Johnny Depp – Saturn                | 1 (First_House)     | 3 (Third_House)    | Aqu  | 23.08° |
+| Johnny Depp – Uranus                | 7 (Seventh_House)   | 10 (Tenth_House)   | Vir  | 1.57°  |
+| Johnny Depp – Neptune               | 9 (Ninth_House)     | 12 (Twelfth_House) | Sco  | 13.42° |
+| Johnny Depp – Pluto                 | 7 (Seventh_House)   | 10 (Tenth_House)   | Vir  | 9.63°  |
+| Johnny Depp – True North Lunar Node | 5 (Fifth_House)     | 8 (Eighth_House)   | Can  | 20.64° |
+| Johnny Depp – True South Lunar Node | 11 (Eleventh_House) | 2 (Second_House)   | Cap  | 20.64° |
+| Johnny Depp – Mean Lilith           | 8 (Eighth_House)    | 12 (Twelfth_House) | Sco  | 5.57°  |
+| Johnny Depp – Chiron                | 1 (First_House)     | 4 (Fourth_House)   | Pis  | 14.87° |
+| Johnny Depp – Ascendant             | 1 (First_House)     | 3 (Third_House)    | Aqu  | 20.70° |
+| Johnny Depp – Medium Coeli          | 10 (Tenth_House)    | 1 (First_House)    | Sag  | 6.59°  |
+| Johnny Depp – Descendant            | 7 (Seventh_House)   | 9 (Ninth_House)    | Leo  | 20.70° |
+| Johnny Depp – Imum Coeli            | 4 (Fourth_House)    | 7 (Seventh_House)  | Gem  | 6.59°  |
++-------------------------------------+---------------------+--------------------+------+--------+
+
++Johnny Depp Solar Return points in Johnny Depp houses-------------------+--------------------+------+--------+
+| Point                                            | Owner House         | Projected House    | Sign | Degree |
++--------------------------------------------------+---------------------+--------------------+------+--------+
+| Johnny Depp Solar Return – Sun                   | 7 (Seventh_House)   | 4 (Fourth_House)   | Gem  | 17.66° |
+| Johnny Depp Solar Return – Moon                  | 8 (Eighth_House)    | 5 (Fifth_House)    | Can  | 5.70°  |
+| Johnny Depp Solar Return – Mercury               | 7 (Seventh_House)   | 4 (Fourth_House)   | Gem  | 9.47°  |
+| Johnny Depp Solar Return – Venus                 | 7 (Seventh_House)   | 4 (Fourth_House)   | Gem  | 18.56° |
+| Johnny Depp Solar Return – Mars                  | 6 (Sixth_House)     | 2 (Second_House)   | Ari  | 29.08° |
+| Johnny Depp Solar Return – Jupiter               | 7 (Seventh_House)   | 3 (Third_House)    | Gem  | 3.03°  |
+| Johnny Depp Solar Return – Saturn                | 4 (Fourth_House)    | 1 (First_House)    | Pis  | 19.03° |
+| Johnny Depp Solar Return – Uranus                | 7 (Seventh_House)   | 3 (Third_House)    | Tau  | 24.56° |
+| Johnny Depp Solar Return – Neptune               | 4 (Fourth_House)    | 1 (First_House)    | Pis  | 29.77° |
+| Johnny Depp Solar Return – Pluto                 | 3 (Third_House)     | 12 (Twelfth_House) | Aqu  | 1.81°  |
+| Johnny Depp Solar Return – True North Lunar Node | 5 (Fifth_House)     | 2 (Second_House)   | Ari  | 13.46° |
+| Johnny Depp Solar Return – True South Lunar Node | 11 (Eleventh_House) | 8 (Eighth_House)   | Lib  | 13.46° |
+| Johnny Depp Solar Return – Mean Lilith           | 10 (Tenth_House)    | 7 (Seventh_House)  | Vir  | 27.62° |
+| Johnny Depp Solar Return – Chiron                | 5 (Fifth_House)     | 2 (Second_House)   | Ari  | 22.55° |
+| Johnny Depp Solar Return – Ascendant             | 1 (First_House)     | 9 (Ninth_House)    | Sco  | 20.42° |
+| Johnny Depp Solar Return – Medium Coeli          | 10 (Tenth_House)    | 7 (Seventh_House)  | Vir  | 0.36°  |
+| Johnny Depp Solar Return – Descendant            | 7 (Seventh_House)   | 3 (Third_House)    | Tau  | 20.42° |
+| Johnny Depp Solar Return – Imum Coeli            | 4 (Fourth_House)    | 1 (First_House)    | Pis  | 0.36°  |
++--------------------------------------------------+---------------------+--------------------+------+--------+
+
++Johnny Depp cusps in Johnny Depp Solar Return houses+------+--------+
+| Point                        | Projected House     | Sign | Degree |
++------------------------------+---------------------+------+--------+
+| Johnny Depp – First House    | 3 (Third_House)     | Aqu  | 20.70° |
+| Johnny Depp – Second House   | 5 (Fifth_House)     | Ari  | 6.64°  |
+| Johnny Depp – Third House    | 6 (Sixth_House)     | Tau  | 11.22° |
+| Johnny Depp – Fourth House   | 7 (Seventh_House)   | Gem  | 6.59°  |
+| Johnny Depp – Fifth House    | 8 (Eighth_House)    | Gem  | 28.34° |
+| Johnny Depp – Sixth House    | 8 (Eighth_House)    | Can  | 20.99° |
+| Johnny Depp – Seventh House  | 9 (Ninth_House)     | Leo  | 20.70° |
+| Johnny Depp – Eighth House   | 11 (Eleventh_House) | Lib  | 6.64°  |
+| Johnny Depp – Ninth House    | 12 (Twelfth_House)  | Sco  | 11.22° |
+| Johnny Depp – Tenth House    | 1 (First_House)     | Sag  | 6.59°  |
+| Johnny Depp – Eleventh House | 2 (Second_House)    | Sag  | 28.34° |
+| Johnny Depp – Twelfth House  | 2 (Second_House)    | Cap  | 20.99° |
++------------------------------+---------------------+------+--------+
+
++Johnny Depp Solar Return cusps in Johnny Depp houses------------+------+--------+
+| Point                                     | Projected House    | Sign | Degree |
++-------------------------------------------+--------------------+------+--------+
+| Johnny Depp Solar Return – First House    | 9 (Ninth_House)    | Sco  | 20.42° |
+| Johnny Depp Solar Return – Second House   | 10 (Tenth_House)   | Sag  | 20.41° |
+| Johnny Depp Solar Return – Third House    | 12 (Twelfth_House) | Cap  | 24.68° |
+| Johnny Depp Solar Return – Fourth House   | 1 (First_House)    | Pis  | 0.36°  |
+| Johnny Depp Solar Return – Fifth House    | 1 (First_House)    | Ari  | 2.38°  |
+| Johnny Depp Solar Return – Sixth House    | 2 (Second_House)   | Ari  | 28.68° |
+| Johnny Depp Solar Return – Seventh House  | 3 (Third_House)    | Tau  | 20.42° |
+| Johnny Depp Solar Return – Eighth House   | 4 (Fourth_House)   | Gem  | 20.41° |
+| Johnny Depp Solar Return – Ninth House    | 6 (Sixth_House)    | Can  | 24.68° |
+| Johnny Depp Solar Return – Tenth House    | 7 (Seventh_House)  | Vir  | 0.36°  |
+| Johnny Depp Solar Return – Eleventh House | 7 (Seventh_House)  | Lib  | 2.38°  |
+| Johnny Depp Solar Return – Twelfth House  | 8 (Eighth_House)   | Lib  | 28.68° |
++-------------------------------------------+--------------------+------+--------+
+
++Active Celestial Points-----+
+| #  | Active Point          |
++----+-----------------------+
+| 1  | Ascendant             |
+| 2  | Chiron                |
+| 3  | Descendant            |
+| 4  | Imum_Coeli            |
+| 5  | Jupiter               |
+| 6  | Mars                  |
+| 7  | Mean_Lilith           |
+| 8  | Medium_Coeli          |
+| 9  | Mercury               |
+| 10 | Moon                  |
+| 11 | Neptune               |
+| 12 | Pluto                 |
+| 13 | Saturn                |
+| 14 | Sun                   |
+| 15 | True_North_Lunar_Node |
+| 16 | True_South_Lunar_Node |
+| 17 | Uranus                |
+| 18 | Venus                 |
++----+-----------------------+
+
++-------------+---------+
+| Aspect      | Orb (°) |
++-------------+---------+
+| conjunction | 10      |
+| opposition  | 10      |
+| trine       | 8       |
+| sextile     | 6       |
+| square      | 5       |
+| quintile    | 1       |
++-------------+---------+
+
++Aspects----------------+-------------+---------------+-----------------------+--------------------------+-------+--------------+
+| Point 1               | Owner 1     | Aspect        | Point 2               | Owner 2                  | Orb   | Movement     |
++-----------------------+-------------+---------------+-----------------------+--------------------------+-------+--------------+
+| Sun                   | Johnny Depp | conjunction ☌ | Sun                   | Johnny Depp Solar Return | 0.00° | Separating ← |
+| Sun                   | Johnny Depp | conjunction ☌ | Mercury               | Johnny Depp Solar Return | 8.19° | Applying →   |
+| Sun                   | Johnny Depp | conjunction ☌ | Venus                 | Johnny Depp Solar Return | 0.90° | Separating ← |
+| Sun                   | Johnny Depp | square □      | Saturn                | Johnny Depp Solar Return | 1.37° | Separating ← |
+| Sun                   | Johnny Depp | sextile ⚹     | True North Lunar Node | Johnny Depp Solar Return | 4.20° | Separating ← |
+| Sun                   | Johnny Depp | sextile ⚹     | Chiron                | Johnny Depp Solar Return | 4.89° | Separating ← |
+| Sun                   | Johnny Depp | quintile Q    | Medium Coeli          | Johnny Depp Solar Return | 0.70° | Separating ← |
+| Sun                   | Johnny Depp | trine △       | True South Lunar Node | Johnny Depp Solar Return | 4.20° | Applying →   |
+| Moon                  | Johnny Depp | opposition ☍  | Moon                  | Johnny Depp Solar Return | 3.04° | Applying →   |
+| Moon                  | Johnny Depp | square □      | True North Lunar Node | Johnny Depp Solar Return | 4.72° | Applying →   |
+| Moon                  | Johnny Depp | square □      | True South Lunar Node | Johnny Depp Solar Return | 4.72° | Separating ← |
+| Mercury               | Johnny Depp | conjunction ☌ | Jupiter               | Johnny Depp Solar Return | 8.03° | Separating ← |
+| Mercury               | Johnny Depp | sextile ⚹     | Saturn                | Johnny Depp Solar Return | 5.97° | Applying →   |
+| Mercury               | Johnny Depp | conjunction ☌ | Uranus                | Johnny Depp Solar Return | 0.44° | Applying →   |
+| Mercury               | Johnny Depp | sextile ⚹     | Neptune               | Johnny Depp Solar Return | 4.77° | Separating ← |
+| Mercury               | Johnny Depp | trine △       | Pluto                 | Johnny Depp Solar Return | 6.81° | Applying →   |
+| Mercury               | Johnny Depp | opposition ☍  | Ascendant             | Johnny Depp Solar Return | 4.59° | Applying →   |
+| Mercury               | Johnny Depp | conjunction ☌ | Descendant            | Johnny Depp Solar Return | 4.59° | Applying →   |
+| Mercury               | Johnny Depp | trine △       | Mean Lilith           | Johnny Depp Solar Return | 2.62° | Separating ← |
+| Venus                 | Johnny Depp | conjunction ☌ | Jupiter               | Johnny Depp Solar Return | 7.43° | Separating ← |
+| Venus                 | Johnny Depp | conjunction ☌ | Uranus                | Johnny Depp Solar Return | 1.05° | Applying →   |
+| Venus                 | Johnny Depp | sextile ⚹     | Neptune               | Johnny Depp Solar Return | 4.17° | Separating ← |
+| Venus                 | Johnny Depp | trine △       | Pluto                 | Johnny Depp Solar Return | 6.21° | Applying →   |
+| Venus                 | Johnny Depp | opposition ☍  | Ascendant             | Johnny Depp Solar Return | 5.19° | Applying →   |
+| Venus                 | Johnny Depp | square □      | Medium Coeli          | Johnny Depp Solar Return | 4.75° | Separating ← |
+| Venus                 | Johnny Depp | conjunction ☌ | Descendant            | Johnny Depp Solar Return | 5.19° | Applying →   |
+| Venus                 | Johnny Depp | square □      | Imum Coeli            | Johnny Depp Solar Return | 4.75° | Separating ← |
+| Venus                 | Johnny Depp | trine △       | Mean Lilith           | Johnny Depp Solar Return | 2.02° | Separating ← |
+| Mars                  | Johnny Depp | sextile ⚹     | Moon                  | Johnny Depp Solar Return | 2.69° | Separating ← |
+| Mars                  | Johnny Depp | trine △       | Mars                  | Johnny Depp Solar Return | 3.93° | Applying →   |
+| Mars                  | Johnny Depp | square □      | Jupiter               | Johnny Depp Solar Return | 0.02° | Separating ← |
+| Mars                  | Johnny Depp | conjunction ☌ | Medium Coeli          | Johnny Depp Solar Return | 2.66° | Applying →   |
+| Mars                  | Johnny Depp | opposition ☍  | Imum Coeli            | Johnny Depp Solar Return | 2.66° | Applying →   |
+| Jupiter               | Johnny Depp | sextile ⚹     | Sun                   | Johnny Depp Solar Return | 3.75° | Separating ← |
+| Jupiter               | Johnny Depp | sextile ⚹     | Mercury               | Johnny Depp Solar Return | 4.44° | Applying →   |
+| Jupiter               | Johnny Depp | sextile ⚹     | Venus                 | Johnny Depp Solar Return | 4.65° | Separating ← |
+| Jupiter               | Johnny Depp | quintile Q    | Pluto                 | Johnny Depp Solar Return | 0.10° | Separating ← |
+| Jupiter               | Johnny Depp | conjunction ☌ | True North Lunar Node | Johnny Depp Solar Return | 0.45° | Separating ← |
+| Jupiter               | Johnny Depp | conjunction ☌ | Chiron                | Johnny Depp Solar Return | 8.64° | Separating ← |
+| Jupiter               | Johnny Depp | opposition ☍  | True South Lunar Node | Johnny Depp Solar Return | 0.45° | Applying →   |
+| Saturn                | Johnny Depp | trine △       | Sun                   | Johnny Depp Solar Return | 5.42° | Applying →   |
+| Saturn                | Johnny Depp | trine △       | Venus                 | Johnny Depp Solar Return | 4.53° | Applying →   |
+| Saturn                | Johnny Depp | sextile ⚹     | Mars                  | Johnny Depp Solar Return | 5.99° | Separating ← |
+| Saturn                | Johnny Depp | square □      | Uranus                | Johnny Depp Solar Return | 1.48° | Separating ← |
+| Saturn                | Johnny Depp | sextile ⚹     | Chiron                | Johnny Depp Solar Return | 0.54° | Applying →   |
+| Saturn                | Johnny Depp | square □      | Ascendant             | Johnny Depp Solar Return | 2.67° | Applying →   |
+| Saturn                | Johnny Depp | opposition ☍  | Medium Coeli          | Johnny Depp Solar Return | 7.27° | Separating ← |
+| Saturn                | Johnny Depp | square □      | Descendant            | Johnny Depp Solar Return | 2.67° | Applying →   |
+| Saturn                | Johnny Depp | conjunction ☌ | Imum Coeli            | Johnny Depp Solar Return | 7.27° | Separating ← |
+| Uranus                | Johnny Depp | sextile ⚹     | Moon                  | Johnny Depp Solar Return | 4.13° | Separating ← |
+| Uranus                | Johnny Depp | trine △       | Mars                  | Johnny Depp Solar Return | 2.49° | Applying →   |
+| Uranus                | Johnny Depp | square □      | Jupiter               | Johnny Depp Solar Return | 1.47° | Separating ← |
+| Uranus                | Johnny Depp | conjunction ☌ | Medium Coeli          | Johnny Depp Solar Return | 1.21° | Applying →   |
+| Uranus                | Johnny Depp | opposition ☍  | Imum Coeli            | Johnny Depp Solar Return | 1.21° | Applying →   |
+| Neptune               | Johnny Depp | trine △       | Moon                  | Johnny Depp Solar Return | 7.72° | Applying →   |
+| Neptune               | Johnny Depp | trine △       | Saturn                | Johnny Depp Solar Return | 5.61° | Separating ← |
+| Neptune               | Johnny Depp | conjunction ☌ | Ascendant             | Johnny Depp Solar Return | 6.99° | Separating ← |
+| Neptune               | Johnny Depp | opposition ☍  | Descendant            | Johnny Depp Solar Return | 6.99° | Separating ← |
+| Pluto                 | Johnny Depp | sextile ⚹     | Moon                  | Johnny Depp Solar Return | 3.93° | Applying →   |
+| Pluto                 | Johnny Depp | square □      | Mercury               | Johnny Depp Solar Return | 0.16° | Applying →   |
+| Pluto                 | Johnny Depp | opposition ☍  | Saturn                | Johnny Depp Solar Return | 9.41° | Separating ← |
+| Pluto                 | Johnny Depp | conjunction ☌ | Medium Coeli          | Johnny Depp Solar Return | 9.27° | Applying →   |
+| Pluto                 | Johnny Depp | opposition ☍  | Imum Coeli            | Johnny Depp Solar Return | 9.27° | Applying →   |
+| True North Lunar Node | Johnny Depp | trine △       | Saturn                | Johnny Depp Solar Return | 1.61° | Applying →   |
+| True North Lunar Node | Johnny Depp | sextile ⚹     | Uranus                | Johnny Depp Solar Return | 3.92° | Separating ← |
+| True North Lunar Node | Johnny Depp | square □      | Chiron                | Johnny Depp Solar Return | 1.91° | Separating ← |
+| True North Lunar Node | Johnny Depp | trine △       | Ascendant             | Johnny Depp Solar Return | 0.22° | Applying →   |
+| True North Lunar Node | Johnny Depp | sextile ⚹     | Descendant            | Johnny Depp Solar Return | 0.22° | Applying →   |
+| Chiron                | Johnny Depp | square □      | Sun                   | Johnny Depp Solar Return | 2.79° | Separating ← |
+| Chiron                | Johnny Depp | square □      | Venus                 | Johnny Depp Solar Return | 3.68° | Separating ← |
+| Chiron                | Johnny Depp | conjunction ☌ | Saturn                | Johnny Depp Solar Return | 4.16° | Separating ← |
+| Chiron                | Johnny Depp | trine △       | Ascendant             | Johnny Depp Solar Return | 5.54° | Separating ← |
+| Chiron                | Johnny Depp | sextile ⚹     | Descendant            | Johnny Depp Solar Return | 5.54° | Separating ← |
+| Ascendant             | Johnny Depp | trine △       | Sun                   | Johnny Depp Solar Return | 3.04° | Applying →   |
+| Ascendant             | Johnny Depp | trine △       | Venus                 | Johnny Depp Solar Return | 2.14° | Applying →   |
+| Ascendant             | Johnny Depp | square □      | Uranus                | Johnny Depp Solar Return | 3.86° | Separating ← |
+| Ascendant             | Johnny Depp | sextile ⚹     | Chiron                | Johnny Depp Solar Return | 1.85° | Separating ← |
+| Ascendant             | Johnny Depp | square □      | Ascendant             | Johnny Depp Solar Return | 0.28° | Static =     |
+| Ascendant             | Johnny Depp | opposition ☍  | Medium Coeli          | Johnny Depp Solar Return | 9.66° | Static =     |
+| Ascendant             | Johnny Depp | square □      | Descendant            | Johnny Depp Solar Return | 0.28° | Static =     |
+| Ascendant             | Johnny Depp | conjunction ☌ | Imum Coeli            | Johnny Depp Solar Return | 9.66° | Static =     |
+| Ascendant             | Johnny Depp | trine △       | True South Lunar Node | Johnny Depp Solar Return | 7.24° | Applying →   |
+| Medium Coeli          | Johnny Depp | opposition ☍  | Mercury               | Johnny Depp Solar Return | 2.88° | Separating ← |
+| Medium Coeli          | Johnny Depp | opposition ☍  | Jupiter               | Johnny Depp Solar Return | 3.55° | Applying →   |
+| Medium Coeli          | Johnny Depp | trine △       | Neptune               | Johnny Depp Solar Return | 6.82° | Applying →   |
+| Medium Coeli          | Johnny Depp | sextile ⚹     | Pluto                 | Johnny Depp Solar Return | 4.78° | Separating ← |
+| Medium Coeli          | Johnny Depp | trine △       | True North Lunar Node | Johnny Depp Solar Return | 6.87° | Applying →   |
+| Descendant            | Johnny Depp | sextile ⚹     | Sun                   | Johnny Depp Solar Return | 3.04° | Applying →   |
+| Descendant            | Johnny Depp | quintile Q    | Mercury               | Johnny Depp Solar Return | 0.77° | Separating ← |
+| Descendant            | Johnny Depp | sextile ⚹     | Venus                 | Johnny Depp Solar Return | 2.14° | Applying →   |
+| Descendant            | Johnny Depp | square □      | Uranus                | Johnny Depp Solar Return | 3.86° | Separating ← |
+| Descendant            | Johnny Depp | trine △       | True North Lunar Node | Johnny Depp Solar Return | 7.24° | Separating ← |
+| Descendant            | Johnny Depp | trine △       | Chiron                | Johnny Depp Solar Return | 1.85° | Separating ← |
+| Descendant            | Johnny Depp | square □      | Ascendant             | Johnny Depp Solar Return | 0.28° | Static =     |
+| Descendant            | Johnny Depp | conjunction ☌ | Medium Coeli          | Johnny Depp Solar Return | 9.66° | Static =     |
+| Descendant            | Johnny Depp | square □      | Descendant            | Johnny Depp Solar Return | 0.28° | Static =     |
+| Descendant            | Johnny Depp | opposition ☍  | Imum Coeli            | Johnny Depp Solar Return | 9.66° | Static =     |
+| Imum Coeli            | Johnny Depp | conjunction ☌ | Mercury               | Johnny Depp Solar Return | 2.88° | Separating ← |
+| Imum Coeli            | Johnny Depp | conjunction ☌ | Jupiter               | Johnny Depp Solar Return | 3.55° | Applying →   |
+| Imum Coeli            | Johnny Depp | trine △       | Pluto                 | Johnny Depp Solar Return | 4.78° | Separating ← |
+| Imum Coeli            | Johnny Depp | trine △       | True South Lunar Node | Johnny Depp Solar Return | 6.87° | Separating ← |
+| Mean Lilith           | Johnny Depp | trine △       | Moon                  | Johnny Depp Solar Return | 0.13° | Separating ← |
+| Mean Lilith           | Johnny Depp | opposition ☍  | Mars                  | Johnny Depp Solar Return | 6.49° | Applying →   |
+| Mean Lilith           | Johnny Depp | square □      | Pluto                 | Johnny Depp Solar Return | 3.76° | Separating ← |
+| Mean Lilith           | Johnny Depp | sextile ⚹     | Medium Coeli          | Johnny Depp Solar Return | 5.22° | Applying →   |
+| Mean Lilith           | Johnny Depp | trine △       | Imum Coeli            | Johnny Depp Solar Return | 5.22° | Applying →   |
+| True South Lunar Node | Johnny Depp | sextile ⚹     | Saturn                | Johnny Depp Solar Return | 1.61° | Applying →   |
+| True South Lunar Node | Johnny Depp | trine △       | Uranus                | Johnny Depp Solar Return | 3.92° | Separating ← |
+| True South Lunar Node | Johnny Depp | square □      | Chiron                | Johnny Depp Solar Return | 1.91° | Separating ← |
+| True South Lunar Node | Johnny Depp | sextile ⚹     | Ascendant             | Johnny Depp Solar Return | 0.22° | Applying →   |
+| True South Lunar Node | Johnny Depp | trine △       | Descendant            | Johnny Depp Solar Return | 0.22° | Applying →   |
+| True South Lunar Node | Johnny Depp | trine △       | Mean Lilith           | Johnny Depp Solar Return | 6.98° | Separating ← |
++-----------------------+-------------+---------------+-----------------------+--------------------------+-------+--------------+

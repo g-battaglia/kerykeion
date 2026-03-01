@@ -1,0 +1,76 @@
+============================
+John Lennon — Subject Report
+============================
+
++Astrological Subject — Birth Data---------------+
+| Field              | Value                     |
++--------------------+---------------------------+
+| Name               | John Lennon               |
+| Date               | 09/10/1940                |
+| Time               | 18:30                     |
+| City               | Greenwich                 |
+| Nation             | GB                        |
+| Latitude           | 53.4084°                  |
+| Longitude          | -2.9916°                  |
+| Timezone           | Europe/London             |
+| Day of Week        | Wednesday                 |
+| ISO Local Datetime | 1940-10-09T18:30:00+01:00 |
++--------------------+---------------------------+
+
++Astrological Subject — Settings------------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Julian Day          | 2429912.229167      |
+| Active Points Count | 18                  |
++---------------------+---------------------+
+
++Celestial Points-------+---------+----------+--------------+---------+------+----------------+
+| Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+| Ascendant             | Ari ♈️ | 19.71°   | +360.0000°/d | N/A     | -    | First House    |
+| Medium Coeli          | Cap ♑️ | 7.06°    | +360.0000°/d | N/A     | -    | Tenth House    |
+| Descendant            | Lib ♎️ | 19.71°   | +360.0000°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Can ♋️ | 7.06°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Sun                   | Lib ♎️ | 16.27°   | +0.9885°/d   | -6.40°  | -    | Sixth House    |
+| Moon                  | Aqu ♒️ | 3.55°    | +12.5292°/d  | -14.60° | -    | Eleventh House |
+| Mercury               | Sco ♏️ | 8.56°    | +1.3195°/d   | -16.23° | -    | Seventh House  |
+| Venus                 | Vir ♍️ | 3.22°    | +1.1337°/d   | +10.57° | -    | Sixth House    |
+| Mars                  | Lib ♎️ | 2.66°    | +0.6449°/d   | -0.18°  | -    | Sixth House    |
+| Jupiter               | Tau ♉️ | 13.69°   | -0.1069°/d   | +14.61° | R    | First House    |
+| Saturn                | Tau ♉️ | 13.22°   | -0.0669°/d   | +13.30° | R    | First House    |
+| Uranus                | Tau ♉️ | 25.55°   | -0.0294°/d   | +18.88° | R    | First House    |
+| Neptune               | Vir ♍️ | 26.03°   | +0.0353°/d   | +2.68°  | -    | Sixth House    |
+| Pluto                 | Leo ♌️ | 4.19°    | +0.0114°/d   | +23.12° | -    | Fifth House    |
+| True North Lunar Node | Lib ♎️ | 11.03°   | +0.0001°/d   | -4.36°  | -    | Sixth House    |
+| True South Lunar Node | Ari ♈️ | 11.03°   | -0.0001°/d   | +4.36°  | -    | Twelfth House  |
+| Mean Lilith           | Ari ♈️ | 13.37°   | +0.1107°/d   | +5.05°  | -    | Twelfth House  |
+| Chiron                | Leo ♌️ | 0.57°    | +0.0529°/d   | +13.41° | -    | Fifth House    |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+
++Houses (Placidus)---------+----------+-------------------+
+| House          | Sign    | Position | Absolute Position |
++----------------+---------+----------+-------------------+
+| First House    | Ari ♈️ | 19.71°   | 19.71°            |
+| Second House   | Tau ♉️ | 29.52°   | 59.52°            |
+| Third House    | Gem ♊️ | 20.22°   | 80.22°            |
+| Fourth House   | Can ♋️ | 7.06°    | 97.06°            |
+| Fifth House    | Can ♋️ | 25.30°   | 115.30°           |
+| Sixth House    | Leo ♌️ | 22.09°   | 142.09°           |
+| Seventh House  | Lib ♎️ | 19.71°   | 199.71°           |
+| Eighth House   | Sco ♏️ | 29.52°   | 239.52°           |
+| Ninth House    | Sag ♐️ | 20.22°   | 260.22°           |
+| Tenth House    | Cap ♑️ | 7.06°    | 277.06°           |
+| Eleventh House | Cap ♑️ | 25.30°   | 295.30°           |
+| Twelfth House  | Aqu ♒️ | 22.09°   | 322.09°           |
++----------------+---------+----------+-------------------+
+
++Lunar Phase--------------+------------------+
+| Lunar Phase Information | Value            |
++-------------------------+------------------+
+| Phase Name              | First Quarter 🌓 |
+| Sun-Moon Angle          | 107.28°          |
+| Lunation Day            | 9                |
++-------------------------+------------------+

@@ -91,7 +91,14 @@ testpaths = "tests"
 log_level = 20
 log_date_format = "%Y-%m-%d %H:%M:%S"
 log_format = "%(asctime)s %(levelname)s %(message)s"
-addopts = ""
+addopts = "-n 8"
+markers = [
+    "online: tests requiring network access (GeoNames API)",
+    "core: hand-written essential tests with known values",
+    "base: DE440s tier (1849-2150)",
+    "medium: DE440 tier (1550-2650, cumulative)",
+    "extended: DE441 tier (full range, cumulative)",
+]
 
 # Coverage Configuration
 [tool.coverage.run]
@@ -133,13 +140,15 @@ test = "pytest"
 "test:cov" = "pytest --cov=kerykeion --cov-config=pyproject.toml --cov-report=html --cov-report=term --cov-report=xml"
 "test:cov-xml" = "pytest --cov=kerykeion --cov-report=xml"
 "test:nocharts" = "pytest --ignore-glob='*chart*.py'"
-"test:core" = "pytest tests/core/ -v"
-"test:aspects" = "pytest tests/aspects/ -v"
-"test:factories" = "pytest tests/factories/ -v"
-"test:charts" = "pytest tests/charts/ -v"
-"test:quick" = "pytest tests/core/ tests/aspects/ -v --ignore=tests/charts/"
-"test:fast" = "pytest -n auto"
-"test:fast:cov" = "pytest -n auto --cov=kerykeion --cov-config=pyproject.toml --cov-report=html --cov-report=term --cov-report=xml"
+"test:core" = "pytest tests/core/ -v -m 'not online'"
+"test:fast" = "pytest -n 8"
+"test:fast:cov" = "pytest -n 8 --cov=kerykeion --cov-config=pyproject.toml --cov-report=html --cov-report=term --cov-report=xml"
+
+# Tier-based testing
+"test:base" = "pytest tests/ --tier=base -v -m 'not online'"
+"test:medium" = "pytest tests/ --tier=medium -v -m 'not online'"
+"test:extended" = "pytest tests/ --tier=extended -v -m 'not online'"
+"test:online" = "pytest tests/ -v -m 'online'"
 
 # Code Quality
 lint = "ruff check"
@@ -206,8 +215,12 @@ help = "Regenerate expected aspects from test matrix"
 cmd = "python scripts/regenerate_test_charts_extended.py"
 help = "Regenerate extended test SVG charts (strawberry theme, combinations)"
 
+[tool.poe.tasks."regenerate:report-snapshots"]
+cmd = "python scripts/regenerate_report_snapshots.py"
+help = "Regenerate golden-file report snapshots for tests/core/"
+
 [tool.poe.tasks."regenerate:all"]
-sequence = ["regenerate:unified", "regenerate:charts-extended", "regenerate:aspects", "regenerate:synastry-aspects", "regenerate:synastry", "regenerate:output"]
+sequence = ["regenerate:unified", "regenerate:charts-extended", "regenerate:aspects", "regenerate:synastry-aspects", "regenerate:synastry", "regenerate:output", "regenerate:report-snapshots"]
 help = "Regenerate all test fixtures"
 
 [tool.poe.tasks."regenerate:unified"]

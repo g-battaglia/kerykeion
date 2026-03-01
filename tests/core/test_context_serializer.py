@@ -1235,3 +1235,191 @@ class TestMoonPhaseOverviewToContext:
         assert "<sun>" not in context
         assert "<location " not in context
         assert "<phase>" not in context
+
+
+# =============================================================================
+# TRANSIT / HOUSE-COMPARISON CONTEXT (from edge_cases)
+# =============================================================================
+
+
+class TestTransitMomentToContext:
+    """Tests for transit_moment_to_context function."""
+
+    def test_transit_moment_with_aspects(self):
+        from kerykeion.context_serializer import transit_moment_to_context
+        from kerykeion.schemas.kr_models import TransitMomentModel, AspectModel
+
+        aspect = AspectModel(
+            p1_name="Sun",
+            p1_owner="Test",
+            p1_abs_pos=10.5,
+            p2_name="Moon",
+            p2_owner="Test",
+            p2_abs_pos=100.5,
+            aspect="Square",
+            aspect_degrees=90,
+            orbit=0.5,
+            diff=0.5,
+            p1=0,
+            p2=1,
+            p1_speed=1.0,
+            p2_speed=12.0,
+            aspect_movement="Applying",
+        )
+        moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[aspect])
+        result = transit_moment_to_context(moment)
+        assert "<transit_moment " in result
+        assert "2024-01-15" in result
+
+    def test_transit_moment_no_aspects(self):
+        from kerykeion.context_serializer import transit_moment_to_context
+        from kerykeion.schemas.kr_models import TransitMomentModel
+
+        moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
+        result = transit_moment_to_context(moment)
+        assert "<transit_moment " in result
+
+    def test_transit_moment_via_to_context(self):
+        from kerykeion.schemas.kr_models import TransitMomentModel
+
+        moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
+        result = to_context(moment)
+        assert "<transit_moment " in result
+
+
+class TestTransitsTimeRangeToContext:
+    """Tests for transits_time_range_to_context function."""
+
+    @pytest.fixture()
+    def _subject(self):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Test",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lat=41.9,
+            lng=12.5,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+
+    def test_time_range_with_subject(self, _subject):
+        from kerykeion.context_serializer import transits_time_range_to_context
+        from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
+
+        moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
+        tr = TransitsTimeRangeModel(
+            subject=_subject,
+            transits=[moment],
+            dates=["2024-01-15T12:00:00"],
+        )
+        result = transits_time_range_to_context(tr)
+        assert "<transit_analysis " in result
+
+    def test_time_range_via_to_context(self, _subject):
+        from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
+
+        moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
+        tr = TransitsTimeRangeModel(
+            subject=_subject,
+            transits=[moment],
+            dates=["2024-01-15T12:00:00"],
+        )
+        result = to_context(tr)
+        assert "<transit_analysis " in result
+
+    def test_time_range_no_subject(self):
+        from kerykeion.context_serializer import transits_time_range_to_context
+        from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
+
+        moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
+        tr = TransitsTimeRangeModel(subject=None, transits=[moment], dates=["2024-01-15T12:00:00"])
+        result = transits_time_range_to_context(tr)
+        assert "<transit_analysis " in result
+
+
+class TestHouseComparisonContext:
+    """Tests for house_comparison_to_context and related to_context dispatches."""
+
+    @pytest.fixture()
+    def _subjects(self):
+        s1 = AstrologicalSubjectFactory.from_birth_data(
+            "Test1",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lat=41.9,
+            lng=12.5,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+        s2 = AstrologicalSubjectFactory.from_birth_data(
+            "Test2",
+            1985,
+            3,
+            20,
+            15,
+            30,
+            lat=51.5,
+            lng=0.0,
+            tz_str="Europe/London",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+        return s1, s2
+
+    def test_house_comparison_to_context(self, _subjects):
+        from kerykeion.context_serializer import house_comparison_to_context
+        from kerykeion.house_comparison import HouseComparisonFactory
+
+        s1, s2 = _subjects
+        factory = HouseComparisonFactory(s1, s2)
+        comparison = factory.get_house_comparison()
+        result = house_comparison_to_context(comparison)
+        assert "<house_overlay>" in result
+
+    def test_house_comparison_transit_context(self, _subjects):
+        from kerykeion.context_serializer import house_comparison_to_context
+        from kerykeion.house_comparison import HouseComparisonFactory
+
+        s1, s2 = _subjects
+        factory = HouseComparisonFactory(s1, s2)
+        comparison = factory.get_house_comparison()
+        result = house_comparison_to_context(comparison, is_transit=True)
+        assert "<house_overlay>" in result
+
+    def test_to_context_with_house_comparison(self, _subjects):
+        from kerykeion.house_comparison import HouseComparisonFactory
+
+        s1, s2 = _subjects
+        factory = HouseComparisonFactory(s1, s2)
+        comparison = factory.get_house_comparison()
+        result = to_context(comparison)
+        assert "<house_overlay>" in result
+
+    def test_to_context_with_point_in_house(self, _subjects):
+        from kerykeion.house_comparison import HouseComparisonFactory
+
+        s1, s2 = _subjects
+        factory = HouseComparisonFactory(s1, s2)
+        comparison = factory.get_house_comparison()
+        if comparison.first_points_in_second_houses:
+            point = comparison.first_points_in_second_houses[0]
+            result = to_context(point)
+            assert "<point_in_house " in result
+
+    def test_return_subject_to_context(self, _subjects):
+        from kerykeion.context_serializer import astrological_subject_to_context
+        from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
+        s1, _ = _subjects
+        factory = PlanetaryReturnFactory(s1, lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False)
+        solar_return = factory.next_return_from_date(2024, 9, 1, return_type="Solar")
+        result = astrological_subject_to_context(solar_return)
+        assert '<return_info type="Solar"' in result

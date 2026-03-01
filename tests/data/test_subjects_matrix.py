@@ -22,9 +22,10 @@ from typing import List, Dict, Any, Tuple
 # =============================================================================
 
 TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
-    # === ANCIENT ERA (Pre-500 AD) ===
+    # === ANCIENT ERA (Pre-500 AD) — Extended tier (DE441: -13200 to 17191) ===
     {
         "id": "ancient_500bc",
+        "tier": "extended",
         "name": "Ancient Greece 500BC",
         "year": -500,
         "month": 3,
@@ -38,6 +39,7 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
     },
     {
         "id": "ancient_200bc",
+        "tier": "extended",
         "name": "Ptolemaic Egypt 200BC",
         "year": -200,
         "month": 6,
@@ -51,6 +53,7 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
     },
     {
         "id": "roman_100ad",
+        "tier": "extended",
         "name": "Roman Empire 100AD",
         "year": 100,
         "month": 1,
@@ -64,6 +67,7 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
     },
     {
         "id": "late_antiquity_400",
+        "tier": "extended",
         "name": "Constantinople 400AD",
         "year": 400,
         "month": 12,
@@ -75,9 +79,10 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
         "tz_str": "Europe/Istanbul",
         "description": "Christmas in Constantinople",
     },
-    # === MEDIEVAL ERA (500-1450 AD) ===
+    # === MEDIEVAL ERA (500-1450 AD) — Extended tier ===
     {
         "id": "early_medieval_800",
+        "tier": "extended",
         "name": "Charlemagne Era 800AD",
         "year": 800,
         "month": 12,
@@ -91,6 +96,7 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
     },
     {
         "id": "high_medieval_1100",
+        "tier": "extended",
         "name": "Crusades Era 1100AD",
         "year": 1100,
         "month": 7,
@@ -104,6 +110,7 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
     },
     {
         "id": "late_medieval_1300",
+        "tier": "extended",
         "name": "Dante Era 1300AD",
         "year": 1300,
         "month": 4,
@@ -115,9 +122,10 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
         "tz_str": "Europe/Rome",
         "description": "Good Friday 1300 (Dante's Inferno)",
     },
-    # === RENAISSANCE ERA (1450-1600) ===
+    # === RENAISSANCE ERA (1450-1600) — Extended tier ===
     {
         "id": "early_renaissance_1450",
+        "tier": "extended",
         "name": "Early Renaissance 1450",
         "year": 1450,
         "month": 6,
@@ -131,6 +139,7 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
     },
     {
         "id": "columbus_1492",
+        "tier": "extended",
         "name": "Columbus 1492",
         "year": 1492,
         "month": 10,
@@ -142,8 +151,10 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
         "tz_str": "America/Nassau",
         "description": "Columbus landfall in Bahamas",
     },
+    # === Medium tier (DE440: 1550-2650) ===
     {
         "id": "galileo_1564",
+        "tier": "medium",
         "name": "Galileo Birth 1564",
         "year": 1564,
         "month": 2,
@@ -155,9 +166,10 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
         "tz_str": "Europe/Rome",
         "description": "Galileo Galilei birth",
     },
-    # === EARLY MODERN ERA (1600-1800) ===
+    # === EARLY MODERN ERA (1600-1800) — Medium tier ===
     {
         "id": "newton_1643",
+        "tier": "medium",
         "name": "Newton Birth 1643",
         "year": 1643,
         "month": 1,
@@ -171,6 +183,7 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
     },
     {
         "id": "enlightenment_1750",
+        "tier": "medium",
         "name": "Enlightenment 1750",
         "year": 1750,
         "month": 7,
@@ -184,6 +197,7 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
     },
     {
         "id": "american_independence_1776",
+        "tier": "medium",
         "name": "US Independence 1776",
         "year": 1776,
         "month": 7,
@@ -195,9 +209,10 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
         "tz_str": "America/New_York",
         "description": "Declaration of Independence signing",
     },
-    # === 19TH CENTURY ===
+    # === 19TH CENTURY — Base tier (DE440s: 1849-2150) ===
     {
         "id": "industrial_1850",
+        "tier": "base",
         "name": "Industrial Era 1850",
         "year": 1850,
         "month": 6,
@@ -211,6 +226,7 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
     },
     {
         "id": "einstein_1879",
+        "tier": "base",
         "name": "Einstein Birth 1879",
         "year": 1879,
         "month": 3,
@@ -222,9 +238,10 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
         "tz_str": "Europe/Berlin",
         "description": "Albert Einstein birth in Ulm",
     },
-    # === 20TH CENTURY ===
+    # === 20TH CENTURY — Base tier ===
     {
         "id": "ww1_start_1914",
+        "tier": "base",
         "name": "WW1 Start 1914",
         "year": 1914,
         "month": 7,
@@ -237,7 +254,22 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
         "description": "Archduke assassination",
     },
     {
+        "id": "yoko_ono_1933",
+        "tier": "base",
+        "name": "Yoko Ono",
+        "year": 1933,
+        "month": 2,
+        "day": 18,
+        "hour": 10,
+        "minute": 30,
+        "lat": 35.6762,
+        "lng": 139.6503,
+        "tz_str": "Asia/Tokyo",
+        "description": "Yoko Ono birth - for John+Yoko synastry",
+    },
+    {
         "id": "john_lennon_1940",
+        "tier": "base",
         "name": "John Lennon",
         "year": 1940,
         "month": 10,
@@ -251,6 +283,7 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
     },
     {
         "id": "paul_mccartney_1942",
+        "tier": "base",
         "name": "Paul McCartney",
         "year": 1942,
         "month": 6,
@@ -264,6 +297,7 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
     },
     {
         "id": "johnny_depp_1963",
+        "tier": "base",
         "name": "Johnny Depp",
         "year": 1963,
         "month": 6,
@@ -275,22 +309,10 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
         "tz_str": "America/Chicago",
         "description": "Johnny Depp birth - LEGACY TEST SUBJECT",
     },
-    {
-        "id": "yoko_ono_1933",
-        "name": "Yoko Ono",
-        "year": 1933,
-        "month": 2,
-        "day": 18,
-        "hour": 10,
-        "minute": 30,
-        "lat": 35.6762,
-        "lng": 139.6503,
-        "tz_str": "Asia/Tokyo",
-        "description": "Yoko Ono birth - for John+Yoko synastry",
-    },
-    # === 21ST CENTURY ===
+    # === 21ST CENTURY — Base tier ===
     {
         "id": "millennium_2000",
+        "tier": "base",
         "name": "Millennium 2000",
         "year": 2000,
         "month": 1,
@@ -304,6 +326,7 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
     },
     {
         "id": "equinox_2020",
+        "tier": "base",
         "name": "Spring Equinox 2020",
         "year": 2020,
         "month": 3,
@@ -315,9 +338,10 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
         "tz_str": "Europe/London",
         "description": "Vernal equinox 2020",
     },
-    # === FUTURE ===
+    # === FUTURE — Base tier ===
     {
         "id": "future_2050",
+        "tier": "base",
         "name": "Future 2050",
         "year": 2050,
         "month": 7,
@@ -331,6 +355,7 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
     },
     {
         "id": "future_2100",
+        "tier": "base",
         "name": "Future 2100",
         "year": 2100,
         "month": 12,
@@ -342,8 +367,10 @@ TEMPORAL_SUBJECTS: List[Dict[str, Any]] = [
         "tz_str": "America/New_York",
         "description": "Winter solstice 2100",
     },
+    # === FUTURE — Medium tier ===
     {
         "id": "future_2200",
+        "tier": "medium",
         "name": "Future 2200",
         "year": 2200,
         "month": 1,
@@ -718,3 +745,38 @@ def get_equatorial_subjects() -> List[str]:
         "singapore_1n",
         "nairobi_1s",
     ]
+
+
+# =============================================================================
+# TIER HELPERS — Ephemeris tier filtering for tiered test architecture
+# =============================================================================
+
+# Convert list to dict keyed by ID for tier lookups
+_TEMPORAL_SUBJECTS_BY_ID: Dict[str, Dict[str, Any]] = {s["id"]: s for s in TEMPORAL_SUBJECTS}
+
+# Pre-computed tier ID lists (cumulative)
+BASE_SUBJECT_IDS: List[str] = [k for k, v in _TEMPORAL_SUBJECTS_BY_ID.items() if v.get("tier") == "base"]
+MEDIUM_SUBJECT_IDS: List[str] = [k for k, v in _TEMPORAL_SUBJECTS_BY_ID.items() if v.get("tier") in ("base", "medium")]
+EXTENDED_SUBJECT_IDS: List[str] = list(_TEMPORAL_SUBJECTS_BY_ID.keys())  # all subjects
+
+
+def get_subjects_for_tier(tier: str) -> Dict[str, Dict[str, Any]]:
+    """Return subjects for a tier (cumulative).
+
+    Args:
+        tier: One of "base", "medium", "extended".
+
+    Returns:
+        Dictionary of subjects keyed by ID, filtered by tier.
+
+    Tier mapping:
+        - base: DE440s (1849-2150) — 11 subjects
+        - medium: DE440 (1550-2650, cumulative) — includes base + 5 = 16 subjects
+        - extended: DE441 (full range, cumulative) — all 25 subjects
+    """
+    if tier == "base":
+        return {k: v for k, v in _TEMPORAL_SUBJECTS_BY_ID.items() if v.get("tier") == "base"}
+    elif tier == "medium":
+        return {k: v for k, v in _TEMPORAL_SUBJECTS_BY_ID.items() if v.get("tier") in ("base", "medium")}
+    else:  # extended
+        return dict(_TEMPORAL_SUBJECTS_BY_ID)

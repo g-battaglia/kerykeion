@@ -1,0 +1,76 @@
+=========================
+Yoko Ono — Subject Report
+=========================
+
++Astrological Subject — Birth Data---------------+
+| Field              | Value                     |
++--------------------+---------------------------+
+| Name               | Yoko Ono                  |
+| Date               | 18/02/1933                |
+| Time               | 20:30                     |
+| City               | Greenwich                 |
+| Nation             | GB                        |
+| Latitude           | 35.6762°                  |
+| Longitude          | 139.6503°                 |
+| Timezone           | Asia/Tokyo                |
+| Day of Week        | Saturday                  |
+| ISO Local Datetime | 1933-02-18T20:30:00+09:00 |
++--------------------+---------------------------+
+
++Astrological Subject — Settings------------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Julian Day          | 2427121.979167      |
+| Active Points Count | 18                  |
++---------------------+---------------------+
+
++Celestial Points-------+---------+----------+--------------+---------+------+----------------+
+| Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+| Ascendant             | Lib ♎️ | 8.41°    | +360.0000°/d | N/A     | -    | First House    |
+| Medium Coeli          | Can ♋️ | 9.31°    | +360.0000°/d | N/A     | -    | Tenth House    |
+| Descendant            | Ari ♈️ | 8.41°    | +360.0000°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Cap ♑️ | 9.31°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Sun                   | Aqu ♒️ | 29.38°   | +1.0085°/d   | -11.70° | -    | Fifth House    |
+| Moon                  | Sag ♐️ | 11.13°   | +14.2183°/d  | -27.33° | -    | Third House    |
+| Mercury               | Pis ♓️ | 7.89°    | +1.8561°/d   | -9.86°  | -    | Fifth House    |
+| Venus                 | Aqu ♒️ | 13.79°   | +1.2483°/d   | -17.56° | -    | Fifth House    |
+| Mars                  | Vir ♍️ | 15.13°   | -0.3444°/d   | +9.78°  | R    | Twelfth House  |
+| Jupiter               | Vir ♍️ | 20.70°   | -0.1138°/d   | +5.03°  | R    | Twelfth House  |
+| Saturn                | Aqu ♒️ | 9.74°    | +0.1150°/d   | -18.38° | -    | Fourth House   |
+| Uranus                | Ari ♈️ | 20.55°   | +0.0405°/d   | +7.49°  | -    | Seventh House  |
+| Neptune               | Vir ♍️ | 9.08°    | -0.0273°/d   | +8.96°  | R    | Eleventh House |
+| Pluto                 | Can ♋️ | 21.63°   | -0.0164°/d   | +22.66° | R    | Tenth House    |
+| True North Lunar Node | Pis ♓️ | 7.80°    | -0.0059°/d   | -8.65°  | R    | Fifth House    |
+| True South Lunar Node | Vir ♍️ | 7.80°    | +0.0059°/d   | +8.65°  | R    | Eleventh House |
+| Mean Lilith           | Gem ♊️ | 2.52°    | +0.1121°/d   | +25.69° | -    | Eighth House   |
+| Chiron                | Tau ♉️ | 23.74°   | +0.0192°/d   | +15.49° | -    | Eighth House   |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+
++Houses (Placidus)---------+----------+-------------------+
+| House          | Sign    | Position | Absolute Position |
++----------------+---------+----------+-------------------+
+| First House    | Lib ♎️ | 8.41°    | 188.41°           |
+| Second House   | Sco ♏️ | 5.83°    | 215.83°           |
+| Third House    | Sag ♐️ | 6.53°    | 246.53°           |
+| Fourth House   | Cap ♑️ | 9.31°    | 279.31°           |
+| Fifth House    | Aqu ♒️ | 11.95°   | 311.95°           |
+| Sixth House    | Pis ♓️ | 12.11°   | 342.11°           |
+| Seventh House  | Ari ♈️ | 8.41°    | 8.41°             |
+| Eighth House   | Tau ♉️ | 5.83°    | 35.83°            |
+| Ninth House    | Gem ♊️ | 6.53°    | 66.53°            |
+| Tenth House    | Can ♋️ | 9.31°    | 99.31°            |
+| Eleventh House | Leo ♌️ | 11.95°   | 131.95°           |
+| Twelfth House  | Vir ♍️ | 12.11°   | 162.11°           |
++----------------+---------+----------+-------------------+
+
++Lunar Phase--------------+-----------------+
+| Lunar Phase Information | Value           |
++-------------------------+-----------------+
+| Phase Name              | Last Quarter 🌗 |
+| Sun-Moon Angle          | 281.75°         |
+| Lunation Day            | 22              |
++-------------------------+-----------------+

@@ -25,6 +25,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion.moon_phase_details.factory import (
     MoonPhaseDetailsFactory,
     _compute_major_phase_name,
@@ -613,3 +614,54 @@ class TestComputeLunarPhaseMetrics:
         expected = 0.5 * (1.0 - math.cos(math.radians(degrees)))
         assert illumination_details.visible_fraction == pytest.approx(expected)
         assert illumination_details.phase_angle == pytest.approx(degrees)
+
+
+# =============================================================================
+# INTEGRATION TEST (non-mocked, from tests/test_lunar_phase_details_factory.py)
+# =============================================================================
+
+
+class TestMoonPhaseDetailsIntegration:
+    """Integration test exercising real Swiss Ephemeris calls."""
+
+    def test_from_subject_returns_valid_overview(self):
+        from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
+        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "John Lennon",
+            1940,
+            10,
+            9,
+            18,
+            30,
+            lat=53.4084,
+            lng=-2.9916,
+            tz_str="Europe/London",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+        overview = MoonPhaseDetailsFactory.from_subject(subject)
+
+        assert isinstance(overview, MoonPhaseOverviewModel)
+        assert overview.moon is not None
+        assert overview.moon.phase is not None
+        assert overview.moon.phase_name == subject.lunar_phase.moon_phase_name
+        assert overview.moon.emoji == subject.lunar_phase.moon_emoji
+        assert overview.moon.detailed is not None
+        assert overview.moon.detailed.illumination_details is not None
+        assert overview.moon.detailed.upcoming_phases is not None
+        assert overview.moon.detailed.upcoming_phases.full_moon is not None
+        assert overview.moon.next_lunar_eclipse is not None
+        assert isinstance(overview.moon.next_lunar_eclipse.timestamp, int)
+        assert overview.moon.next_lunar_eclipse.type is not None
+        assert overview.location is not None
+        assert overview.sun is not None
+        assert overview.sun.next_solar_eclipse is not None
+        assert isinstance(overview.sun.next_solar_eclipse.timestamp, int)
+        assert overview.sun.next_solar_eclipse.type is not None
+        assert overview.sun.sunrise is not None
+        assert overview.sun.sunset is not None
+        assert overview.sun.solar_noon is not None
+        assert overview.sun.day_length is not None
+        assert overview.sun.position is not None

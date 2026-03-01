@@ -1,0 +1,380 @@
+================================
+Johnny Depp — Transit 1940-10-09
+================================
+
++Natal Subject — Birth Data----------------------+
+| Field              | Value                     |
++--------------------+---------------------------+
+| Name               | Johnny Depp               |
+| Date               | 09/06/1963                |
+| Time               | 00:00                     |
+| City               | Greenwich                 |
+| Nation             | GB                        |
+| Latitude           | 37.7742°                  |
+| Longitude          | -87.1133°                 |
+| Timezone           | America/Chicago           |
+| Day of Week        | Sunday                    |
+| ISO Local Datetime | 1963-06-09T00:00:00-05:00 |
++--------------------+---------------------------+
+
++Natal Subject — Settings-------------------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Julian Day          | 2438189.708333      |
+| Active Points Count | 18                  |
++---------------------+---------------------+
+
++Transit Subject — Birth Data--------------------+
+| Field              | Value                     |
++--------------------+---------------------------+
+| Name               | John Lennon               |
+| Date               | 09/10/1940                |
+| Time               | 18:30                     |
+| City               | Greenwich                 |
+| Nation             | GB                        |
+| Latitude           | 53.4084°                  |
+| Longitude          | -2.9916°                  |
+| Timezone           | Europe/London             |
+| Day of Week        | Wednesday                 |
+| ISO Local Datetime | 1940-10-09T18:30:00+01:00 |
++--------------------+---------------------------+
+
++Transit Subject — Settings-----------------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Julian Day          | 2429912.229167      |
+| Active Points Count | 18                  |
++---------------------+---------------------+
+
++Natal Subject Celestial Points---+----------+--------------+---------+------+----------------+
+| Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+| Ascendant             | Aqu ♒️ | 20.70°   | +360.0000°/d | N/A     | -    | First House    |
+| Medium Coeli          | Sag ♐️ | 6.59°    | +360.0000°/d | N/A     | -    | Tenth House    |
+| Descendant            | Leo ♌️ | 20.70°   | +360.0000°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Gem ♊️ | 6.59°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Sun                   | Gem ♊️ | 17.66°   | +0.9560°/d   | +22.87° | -    | Fourth House   |
+| Moon                  | Cap ♑️ | 8.74°    | +12.4796°/d  | -22.08° | -    | Eleventh House |
+| Mercury               | Tau ♉️ | 25.00°   | +0.6817°/d   | +15.27° | -    | Third House    |
+| Venus                 | Tau ♉️ | 25.60°   | +1.2129°/d   | +17.95° | -    | Third House    |
+| Mars                  | Vir ♍️ | 3.01°    | +0.5146°/d   | +11.55° | -    | Seventh House  |
+| Jupiter               | Ari ♈️ | 13.91°   | +0.1660°/d   | +4.37°  | -    | Second House   |
+| Saturn                | Aqu ♒️ | 23.08°   | -0.0094°/d   | -14.84° | R    | First House    |
+| Uranus                | Vir ♍️ | 1.57°    | +0.0268°/d   | +11.62° | -    | Seventh House  |
+| Neptune               | Sco ♏️ | 13.42°   | -0.0213°/d   | -14.13° | R    | Ninth House    |
+| Pluto                 | Vir ♍️ | 9.63°    | +0.0095°/d   | +20.46° | -    | Seventh House  |
+| True North Lunar Node | Can ♋️ | 20.64°   | -0.0231°/d   | +21.86° | R    | Fifth House    |
+| True South Lunar Node | Cap ♑️ | 20.64°   | +0.0231°/d   | -21.86° | R    | Eleventh House |
+| Mean Lilith           | Sco ♏️ | 5.57°    | +0.1120°/d   | -8.65°  | -    | Eighth House   |
+| Chiron                | Pis ♓️ | 14.87°   | +0.0086°/d   | -1.23°  | -    | First House    |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+
++Transit Subject Celestial Points-+----------+--------------+---------+------+----------------+
+| Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+| Ascendant             | Ari ♈️ | 19.71°   | +360.0000°/d | N/A     | -    | First House    |
+| Medium Coeli          | Cap ♑️ | 7.06°    | +360.0000°/d | N/A     | -    | Tenth House    |
+| Descendant            | Lib ♎️ | 19.71°   | +360.0000°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Can ♋️ | 7.06°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Sun                   | Lib ♎️ | 16.27°   | +0.9885°/d   | -6.40°  | -    | Sixth House    |
+| Moon                  | Aqu ♒️ | 3.55°    | +12.5292°/d  | -14.60° | -    | Eleventh House |
+| Mercury               | Sco ♏️ | 8.56°    | +1.3195°/d   | -16.23° | -    | Seventh House  |
+| Venus                 | Vir ♍️ | 3.22°    | +1.1337°/d   | +10.57° | -    | Sixth House    |
+| Mars                  | Lib ♎️ | 2.66°    | +0.6449°/d   | -0.18°  | -    | Sixth House    |
+| Jupiter               | Tau ♉️ | 13.69°   | -0.1069°/d   | +14.61° | R    | First House    |
+| Saturn                | Tau ♉️ | 13.22°   | -0.0669°/d   | +13.30° | R    | First House    |
+| Uranus                | Tau ♉️ | 25.55°   | -0.0294°/d   | +18.88° | R    | First House    |
+| Neptune               | Vir ♍️ | 26.03°   | +0.0353°/d   | +2.68°  | -    | Sixth House    |
+| Pluto                 | Leo ♌️ | 4.19°    | +0.0114°/d   | +23.12° | -    | Fifth House    |
+| True North Lunar Node | Lib ♎️ | 11.03°   | +0.0001°/d   | -4.36°  | -    | Sixth House    |
+| True South Lunar Node | Ari ♈️ | 11.03°   | -0.0001°/d   | +4.36°  | -    | Twelfth House  |
+| Mean Lilith           | Ari ♈️ | 13.37°   | +0.1107°/d   | +5.05°  | -    | Twelfth House  |
+| Chiron                | Leo ♌️ | 0.57°    | +0.0529°/d   | +13.41° | -    | Fifth House    |
++-----------------------+---------+----------+--------------+---------+------+----------------+
+
++Natal Subject Houses (Placidus)------+-------------------+
+| House          | Sign    | Position | Absolute Position |
++----------------+---------+----------+-------------------+
+| First House    | Aqu ♒️ | 20.70°   | 320.70°           |
+| Second House   | Ari ♈️ | 6.64°    | 6.64°             |
+| Third House    | Tau ♉️ | 11.22°   | 41.22°            |
+| Fourth House   | Gem ♊️ | 6.59°    | 66.59°            |
+| Fifth House    | Gem ♊️ | 28.34°   | 88.34°            |
+| Sixth House    | Can ♋️ | 20.99°   | 110.99°           |
+| Seventh House  | Leo ♌️ | 20.70°   | 140.70°           |
+| Eighth House   | Lib ♎️ | 6.64°    | 186.64°           |
+| Ninth House    | Sco ♏️ | 11.22°   | 221.22°           |
+| Tenth House    | Sag ♐️ | 6.59°    | 246.59°           |
+| Eleventh House | Sag ♐️ | 28.34°   | 268.34°           |
+| Twelfth House  | Cap ♑️ | 20.99°   | 290.99°           |
++----------------+---------+----------+-------------------+
+
++Transit Subject Houses (Placidus)----+-------------------+
+| House          | Sign    | Position | Absolute Position |
++----------------+---------+----------+-------------------+
+| First House    | Ari ♈️ | 19.71°   | 19.71°            |
+| Second House   | Tau ♉️ | 29.52°   | 59.52°            |
+| Third House    | Gem ♊️ | 20.22°   | 80.22°            |
+| Fourth House   | Can ♋️ | 7.06°    | 97.06°            |
+| Fifth House    | Can ♋️ | 25.30°   | 115.30°           |
+| Sixth House    | Leo ♌️ | 22.09°   | 142.09°           |
+| Seventh House  | Lib ♎️ | 19.71°   | 199.71°           |
+| Eighth House   | Sco ♏️ | 29.52°   | 239.52°           |
+| Ninth House    | Sag ♐️ | 20.22°   | 260.22°           |
+| Tenth House    | Cap ♑️ | 7.06°    | 277.06°           |
+| Eleventh House | Cap ♑️ | 25.30°   | 295.30°           |
+| Twelfth House  | Aqu ♒️ | 22.09°   | 322.09°           |
++----------------+---------+----------+-------------------+
+
++Lunar Phase--------------+-------------------+
+| Lunar Phase Information | Value             |
++-------------------------+-------------------+
+| Phase Name              | Waning Gibbous 🌖 |
+| Sun-Moon Angle          | 201.08°           |
+| Lunation Day            | 16                |
++-------------------------+-------------------+
+
++Element Distribution-----------+
+| Element  | Count | Percentage |
++----------+-------+------------+
+| Fire 🔥  | 4.0   | 19.4%      |
+| Earth 🌍 | 8.0   | 38.8%      |
+| Air 💨   | 6.5   | 31.6%      |
+| Water 💧 | 2.1   | 10.2%      |
+| Total    | 20.6  | 100%       |
++----------+-------+------------+
+
++Quality Distribution-----------+
+| Quality  | Count | Percentage |
++----------+-------+------------+
+| Cardinal | 4.0   | 19.4%      |
+| Fixed    | 8.5   | 41.3%      |
+| Mutable  | 8.1   | 39.3%      |
+| Total    | 20.6  | 100%       |
++----------+-------+------------+
+
++Johnny Depp points in John Lennon houses-------------------+---------------------+------+--------+
+| Point                               | Owner House         | Projected House     | Sign | Degree |
++-------------------------------------+---------------------+---------------------+------+--------+
+| Johnny Depp – Sun                   | 4 (Fourth_House)    | 2 (Second_House)    | Gem  | 17.66° |
+| Johnny Depp – Moon                  | 11 (Eleventh_House) | 10 (Tenth_House)    | Cap  | 8.74°  |
+| Johnny Depp – Mercury               | 3 (Third_House)     | 1 (First_House)     | Tau  | 25.00° |
+| Johnny Depp – Venus                 | 3 (Third_House)     | 1 (First_House)     | Tau  | 25.60° |
+| Johnny Depp – Mars                  | 7 (Seventh_House)   | 6 (Sixth_House)     | Vir  | 3.01°  |
+| Johnny Depp – Jupiter               | 2 (Second_House)    | 12 (Twelfth_House)  | Ari  | 13.91° |
+| Johnny Depp – Saturn                | 1 (First_House)     | 12 (Twelfth_House)  | Aqu  | 23.08° |
+| Johnny Depp – Uranus                | 7 (Seventh_House)   | 6 (Sixth_House)     | Vir  | 1.57°  |
+| Johnny Depp – Neptune               | 9 (Ninth_House)     | 7 (Seventh_House)   | Sco  | 13.42° |
+| Johnny Depp – Pluto                 | 7 (Seventh_House)   | 6 (Sixth_House)     | Vir  | 9.63°  |
+| Johnny Depp – True North Lunar Node | 5 (Fifth_House)     | 4 (Fourth_House)    | Can  | 20.64° |
+| Johnny Depp – True South Lunar Node | 11 (Eleventh_House) | 10 (Tenth_House)    | Cap  | 20.64° |
+| Johnny Depp – Mean Lilith           | 8 (Eighth_House)    | 7 (Seventh_House)   | Sco  | 5.57°  |
+| Johnny Depp – Chiron                | 1 (First_House)     | 12 (Twelfth_House)  | Pis  | 14.87° |
+| Johnny Depp – Ascendant             | 1 (First_House)     | 11 (Eleventh_House) | Aqu  | 20.70° |
+| Johnny Depp – Medium Coeli          | 10 (Tenth_House)    | 8 (Eighth_House)    | Sag  | 6.59°  |
+| Johnny Depp – Descendant            | 7 (Seventh_House)   | 5 (Fifth_House)     | Leo  | 20.70° |
+| Johnny Depp – Imum Coeli            | 4 (Fourth_House)    | 2 (Second_House)    | Gem  | 6.59°  |
++-------------------------------------+---------------------+---------------------+------+--------+
+
++John Lennon points in Johnny Depp houses-------------------+---------------------+------+--------+
+| Point                               | Owner House         | Projected House     | Sign | Degree |
++-------------------------------------+---------------------+---------------------+------+--------+
+| John Lennon – Sun                   | 6 (Sixth_House)     | 8 (Eighth_House)    | Lib  | 16.27° |
+| John Lennon – Moon                  | 11 (Eleventh_House) | 12 (Twelfth_House)  | Aqu  | 3.55°  |
+| John Lennon – Mercury               | 7 (Seventh_House)   | 8 (Eighth_House)    | Sco  | 8.56°  |
+| John Lennon – Venus                 | 6 (Sixth_House)     | 7 (Seventh_House)   | Vir  | 3.22°  |
+| John Lennon – Mars                  | 6 (Sixth_House)     | 7 (Seventh_House)   | Lib  | 2.66°  |
+| John Lennon – Jupiter               | 1 (First_House)     | 3 (Third_House)     | Tau  | 13.69° |
+| John Lennon – Saturn                | 1 (First_House)     | 3 (Third_House)     | Tau  | 13.22° |
+| John Lennon – Uranus                | 1 (First_House)     | 3 (Third_House)     | Tau  | 25.55° |
+| John Lennon – Neptune               | 6 (Sixth_House)     | 7 (Seventh_House)   | Vir  | 26.03° |
+| John Lennon – Pluto                 | 5 (Fifth_House)     | 6 (Sixth_House)     | Leo  | 4.19°  |
+| John Lennon – True North Lunar Node | 6 (Sixth_House)     | 8 (Eighth_House)    | Lib  | 11.03° |
+| John Lennon – True South Lunar Node | 12 (Twelfth_House)  | 2 (Second_House)    | Ari  | 11.03° |
+| John Lennon – Mean Lilith           | 12 (Twelfth_House)  | 2 (Second_House)    | Ari  | 13.37° |
+| John Lennon – Chiron                | 5 (Fifth_House)     | 6 (Sixth_House)     | Leo  | 0.57°  |
+| John Lennon – Ascendant             | 1 (First_House)     | 2 (Second_House)    | Ari  | 19.71° |
+| John Lennon – Medium Coeli          | 10 (Tenth_House)    | 11 (Eleventh_House) | Cap  | 7.06°  |
+| John Lennon – Descendant            | 7 (Seventh_House)   | 8 (Eighth_House)    | Lib  | 19.71° |
+| John Lennon – Imum Coeli            | 4 (Fourth_House)    | 5 (Fifth_House)     | Can  | 7.06°  |
++-------------------------------------+---------------------+---------------------+------+--------+
+
++Johnny Depp cusps in John Lennon houses-------------+------+--------+
+| Point                        | Projected House     | Sign | Degree |
++------------------------------+---------------------+------+--------+
+| Johnny Depp – First House    | 11 (Eleventh_House) | Aqu  | 20.70° |
+| Johnny Depp – Second House   | 12 (Twelfth_House)  | Ari  | 6.64°  |
+| Johnny Depp – Third House    | 1 (First_House)     | Tau  | 11.22° |
+| Johnny Depp – Fourth House   | 2 (Second_House)    | Gem  | 6.59°  |
+| Johnny Depp – Fifth House    | 3 (Third_House)     | Gem  | 28.34° |
+| Johnny Depp – Sixth House    | 4 (Fourth_House)    | Can  | 20.99° |
+| Johnny Depp – Seventh House  | 5 (Fifth_House)     | Leo  | 20.70° |
+| Johnny Depp – Eighth House   | 6 (Sixth_House)     | Lib  | 6.64°  |
+| Johnny Depp – Ninth House    | 7 (Seventh_House)   | Sco  | 11.22° |
+| Johnny Depp – Tenth House    | 8 (Eighth_House)    | Sag  | 6.59°  |
+| Johnny Depp – Eleventh House | 9 (Ninth_House)     | Sag  | 28.34° |
+| Johnny Depp – Twelfth House  | 10 (Tenth_House)    | Cap  | 20.99° |
++------------------------------+---------------------+------+--------+
+
++John Lennon cusps in Johnny Depp houses-------------+------+--------+
+| Point                        | Projected House     | Sign | Degree |
++------------------------------+---------------------+------+--------+
+| John Lennon – First House    | 2 (Second_House)    | Ari  | 19.71° |
+| John Lennon – Second House   | 3 (Third_House)     | Tau  | 29.52° |
+| John Lennon – Third House    | 4 (Fourth_House)    | Gem  | 20.22° |
+| John Lennon – Fourth House   | 5 (Fifth_House)     | Can  | 7.06°  |
+| John Lennon – Fifth House    | 6 (Sixth_House)     | Can  | 25.30° |
+| John Lennon – Sixth House    | 7 (Seventh_House)   | Leo  | 22.09° |
+| John Lennon – Seventh House  | 8 (Eighth_House)    | Lib  | 19.71° |
+| John Lennon – Eighth House   | 9 (Ninth_House)     | Sco  | 29.52° |
+| John Lennon – Ninth House    | 10 (Tenth_House)    | Sag  | 20.22° |
+| John Lennon – Tenth House    | 11 (Eleventh_House) | Cap  | 7.06°  |
+| John Lennon – Eleventh House | 12 (Twelfth_House)  | Cap  | 25.30° |
+| John Lennon – Twelfth House  | 1 (First_House)     | Aqu  | 22.09° |
++------------------------------+---------------------+------+--------+
+
++Active Celestial Points-----+
+| #  | Active Point          |
++----+-----------------------+
+| 1  | Ascendant             |
+| 2  | Chiron                |
+| 3  | Descendant            |
+| 4  | Imum_Coeli            |
+| 5  | Jupiter               |
+| 6  | Mars                  |
+| 7  | Mean_Lilith           |
+| 8  | Medium_Coeli          |
+| 9  | Mercury               |
+| 10 | Moon                  |
+| 11 | Neptune               |
+| 12 | Pluto                 |
+| 13 | Saturn                |
+| 14 | Sun                   |
+| 15 | True_North_Lunar_Node |
+| 16 | True_South_Lunar_Node |
+| 17 | Uranus                |
+| 18 | Venus                 |
++----+-----------------------+
+
++-------------+---------+
+| Aspect      | Orb (°) |
++-------------+---------+
+| conjunction | 10      |
+| opposition  | 10      |
+| trine       | 8       |
+| sextile     | 6       |
+| square      | 5       |
+| quintile    | 1       |
++-------------+---------+
+
++Aspects----------------+-------------+---------------+-----------------------+-------------+-------+--------------+
+| Point 1               | Owner 1     | Aspect        | Point 2               | Owner 2     | Orb   | Movement     |
++-----------------------+-------------+---------------+-----------------------+-------------+-------+--------------+
+| Sun                   | Johnny Depp | trine △       | Sun                   | John Lennon | 1.39° | Applying →   |
+| Sun                   | Johnny Depp | trine △       | True North Lunar Node | John Lennon | 6.63° | Static =     |
+| Sun                   | Johnny Depp | sextile ⚹     | Ascendant             | John Lennon | 2.05° | Separating ← |
+| Sun                   | Johnny Depp | trine △       | Descendant            | John Lennon | 2.05° | Separating ← |
+| Sun                   | Johnny Depp | sextile ⚹     | Mean Lilith           | John Lennon | 4.29° | Applying →   |
+| Moon                  | Johnny Depp | sextile ⚹     | Mercury               | John Lennon | 0.18° | Applying →   |
+| Moon                  | Johnny Depp | trine △       | Venus                 | John Lennon | 5.52° | Applying →   |
+| Moon                  | Johnny Depp | trine △       | Jupiter               | John Lennon | 4.95° | Applying →   |
+| Moon                  | Johnny Depp | trine △       | Saturn                | John Lennon | 4.47° | Applying →   |
+| Moon                  | Johnny Depp | square □      | True North Lunar Node | John Lennon | 2.29° | Static =     |
+| Moon                  | Johnny Depp | conjunction ☌ | Medium Coeli          | John Lennon | 1.68° | Applying →   |
+| Moon                  | Johnny Depp | opposition ☍  | Imum Coeli            | John Lennon | 1.68° | Applying →   |
+| Moon                  | Johnny Depp | square □      | Mean Lilith           | John Lennon | 4.63° | Separating ← |
+| Moon                  | Johnny Depp | square □      | True South Lunar Node | John Lennon | 2.29° | Static =     |
+| Mercury               | Johnny Depp | trine △       | Mars                  | John Lennon | 7.66° | Separating ← |
+| Mercury               | Johnny Depp | conjunction ☌ | Uranus                | John Lennon | 0.55° | Applying →   |
+| Mercury               | Johnny Depp | trine △       | Neptune               | John Lennon | 1.03° | Separating ← |
+| Mercury               | Johnny Depp | sextile ⚹     | Chiron                | John Lennon | 5.57° | Separating ← |
+| Venus                 | Johnny Depp | trine △       | Moon                  | John Lennon | 7.94° | Separating ← |
+| Venus                 | Johnny Depp | trine △       | Mars                  | John Lennon | 7.06° | Separating ← |
+| Venus                 | Johnny Depp | conjunction ☌ | Uranus                | John Lennon | 0.05° | Separating ← |
+| Venus                 | Johnny Depp | trine △       | Neptune               | John Lennon | 0.43° | Separating ← |
+| Venus                 | Johnny Depp | sextile ⚹     | Chiron                | John Lennon | 4.96° | Separating ← |
+| Mars                  | Johnny Depp | sextile ⚹     | Mercury               | John Lennon | 5.55° | Separating ← |
+| Mars                  | Johnny Depp | conjunction ☌ | Venus                 | John Lennon | 0.20° | Separating ← |
+| Mars                  | Johnny Depp | trine △       | Medium Coeli          | John Lennon | 4.05° | Separating ← |
+| Mars                  | Johnny Depp | sextile ⚹     | Imum Coeli            | John Lennon | 4.05° | Separating ← |
+| Jupiter               | Johnny Depp | opposition ☍  | Sun                   | John Lennon | 2.36° | Separating ← |
+| Jupiter               | Johnny Depp | opposition ☍  | True North Lunar Node | John Lennon | 2.89° | Static =     |
+| Jupiter               | Johnny Depp | conjunction ☌ | Ascendant             | John Lennon | 5.80° | Separating ← |
+| Jupiter               | Johnny Depp | opposition ☍  | Descendant            | John Lennon | 5.80° | Separating ← |
+| Jupiter               | Johnny Depp | conjunction ☌ | Mean Lilith           | John Lennon | 0.54° | Applying →   |
+| Jupiter               | Johnny Depp | conjunction ☌ | True South Lunar Node | John Lennon | 2.89° | Static =     |
+| Saturn                | Johnny Depp | trine △       | Sun                   | John Lennon | 6.82° | Applying →   |
+| Saturn                | Johnny Depp | square □      | Uranus                | John Lennon | 2.47° | Applying →   |
+| Saturn                | Johnny Depp | sextile ⚹     | Ascendant             | John Lennon | 3.37° | Applying →   |
+| Saturn                | Johnny Depp | trine △       | Descendant            | John Lennon | 3.37° | Applying →   |
+| Uranus                | Johnny Depp | conjunction ☌ | Venus                 | John Lennon | 1.65° | Separating ← |
+| Uranus                | Johnny Depp | trine △       | Medium Coeli          | John Lennon | 5.49° | Separating ← |
+| Uranus                | Johnny Depp | sextile ⚹     | Imum Coeli            | John Lennon | 5.49° | Separating ← |
+| Neptune               | Johnny Depp | conjunction ☌ | Mercury               | John Lennon | 4.87° | Applying →   |
+| Neptune               | Johnny Depp | opposition ☍  | Jupiter               | John Lennon | 0.27° | Applying →   |
+| Neptune               | Johnny Depp | opposition ☍  | Saturn                | John Lennon | 0.21° | Separating ← |
+| Neptune               | Johnny Depp | trine △       | Imum Coeli            | John Lennon | 6.37° | Applying →   |
+| Pluto                 | Johnny Depp | sextile ⚹     | Mercury               | John Lennon | 1.07° | Applying →   |
+| Pluto                 | Johnny Depp | conjunction ☌ | Venus                 | John Lennon | 6.41° | Applying →   |
+| Pluto                 | Johnny Depp | trine △       | Jupiter               | John Lennon | 4.07° | Applying →   |
+| Pluto                 | Johnny Depp | trine △       | Saturn                | John Lennon | 3.59° | Applying →   |
+| Pluto                 | Johnny Depp | trine △       | Medium Coeli          | John Lennon | 2.57° | Applying →   |
+| Pluto                 | Johnny Depp | sextile ⚹     | Imum Coeli            | John Lennon | 2.57° | Applying →   |
+| True North Lunar Node | Johnny Depp | square □      | Sun                   | John Lennon | 4.37° | Applying →   |
+| True North Lunar Node | Johnny Depp | quintile Q    | Mars                  | John Lennon | 0.02° | Separating ← |
+| True North Lunar Node | Johnny Depp | sextile ⚹     | Uranus                | John Lennon | 4.91° | Applying →   |
+| True North Lunar Node | Johnny Depp | sextile ⚹     | Neptune               | John Lennon | 5.39° | Separating ← |
+| True North Lunar Node | Johnny Depp | conjunction ☌ | Chiron                | John Lennon | 9.93° | Separating ← |
+| True North Lunar Node | Johnny Depp | square □      | Ascendant             | John Lennon | 0.93° | Applying →   |
+| True North Lunar Node | Johnny Depp | square □      | Descendant            | John Lennon | 0.93° | Applying →   |
+| Chiron                | Johnny Depp | trine △       | Mercury               | John Lennon | 6.32° | Applying →   |
+| Chiron                | Johnny Depp | sextile ⚹     | Jupiter               | John Lennon | 1.18° | Separating ← |
+| Chiron                | Johnny Depp | sextile ⚹     | Saturn                | John Lennon | 1.66° | Separating ← |
+| Chiron                | Johnny Depp | trine △       | Imum Coeli            | John Lennon | 7.82° | Applying →   |
+| Ascendant             | Johnny Depp | trine △       | Sun                   | John Lennon | 4.43° | Applying →   |
+| Ascendant             | Johnny Depp | square □      | Uranus                | John Lennon | 4.86° | Applying →   |
+| Ascendant             | Johnny Depp | sextile ⚹     | Ascendant             | John Lennon | 0.99° | Static =     |
+| Ascendant             | Johnny Depp | trine △       | Descendant            | John Lennon | 0.99° | Static =     |
+| Medium Coeli          | Johnny Depp | sextile ⚹     | Moon                  | John Lennon | 3.04° | Applying →   |
+| Medium Coeli          | Johnny Depp | square □      | Venus                 | John Lennon | 3.37° | Applying →   |
+| Medium Coeli          | Johnny Depp | sextile ⚹     | Mars                  | John Lennon | 3.93° | Applying →   |
+| Medium Coeli          | Johnny Depp | trine △       | Pluto                 | John Lennon | 2.40° | Applying →   |
+| Medium Coeli          | Johnny Depp | sextile ⚹     | True North Lunar Node | John Lennon | 4.44° | Static =     |
+| Medium Coeli          | Johnny Depp | trine △       | Chiron                | John Lennon | 6.02° | Applying →   |
+| Medium Coeli          | Johnny Depp | trine △       | Mean Lilith           | John Lennon | 6.78° | Separating ← |
+| Medium Coeli          | Johnny Depp | trine △       | True South Lunar Node | John Lennon | 4.44° | Static =     |
+| Descendant            | Johnny Depp | sextile ⚹     | Sun                   | John Lennon | 4.43° | Applying →   |
+| Descendant            | Johnny Depp | square □      | Uranus                | John Lennon | 4.86° | Applying →   |
+| Descendant            | Johnny Depp | trine △       | Ascendant             | John Lennon | 0.99° | Static =     |
+| Descendant            | Johnny Depp | sextile ⚹     | Descendant            | John Lennon | 0.99° | Static =     |
+| Descendant            | Johnny Depp | trine △       | Mean Lilith           | John Lennon | 7.32° | Applying →   |
+| Imum Coeli            | Johnny Depp | trine △       | Moon                  | John Lennon | 3.04° | Applying →   |
+| Imum Coeli            | Johnny Depp | square □      | Venus                 | John Lennon | 3.37° | Applying →   |
+| Imum Coeli            | Johnny Depp | trine △       | Mars                  | John Lennon | 3.93° | Applying →   |
+| Imum Coeli            | Johnny Depp | sextile ⚹     | Pluto                 | John Lennon | 2.40° | Applying →   |
+| Imum Coeli            | Johnny Depp | trine △       | True North Lunar Node | John Lennon | 4.44° | Static =     |
+| Imum Coeli            | Johnny Depp | sextile ⚹     | True South Lunar Node | John Lennon | 4.44° | Static =     |
+| Mean Lilith           | Johnny Depp | square □      | Moon                  | John Lennon | 2.03° | Applying →   |
+| Mean Lilith           | Johnny Depp | conjunction ☌ | Mercury               | John Lennon | 2.99° | Separating ← |
+| Mean Lilith           | Johnny Depp | sextile ⚹     | Venus                 | John Lennon | 2.36° | Applying →   |
+| Mean Lilith           | Johnny Depp | opposition ☍  | Jupiter               | John Lennon | 8.12° | Applying →   |
+| Mean Lilith           | Johnny Depp | opposition ☍  | Saturn                | John Lennon | 7.64° | Applying →   |
+| Mean Lilith           | Johnny Depp | square □      | Pluto                 | John Lennon | 1.38° | Applying →   |
+| Mean Lilith           | Johnny Depp | sextile ⚹     | Medium Coeli          | John Lennon | 1.49° | Separating ← |
+| Mean Lilith           | Johnny Depp | trine △       | Imum Coeli            | John Lennon | 1.49° | Separating ← |
+| True South Lunar Node | Johnny Depp | square □      | Sun                   | John Lennon | 4.37° | Applying →   |
+| True South Lunar Node | Johnny Depp | quintile Q    | Mercury               | John Lennon | 0.08° | Applying →   |
+| True South Lunar Node | Johnny Depp | trine △       | Jupiter               | John Lennon | 6.95° | Separating ← |
+| True South Lunar Node | Johnny Depp | trine △       | Saturn                | John Lennon | 7.42° | Separating ← |
+| True South Lunar Node | Johnny Depp | trine △       | Uranus                | John Lennon | 4.91° | Applying →   |
+| True South Lunar Node | Johnny Depp | trine △       | Neptune               | John Lennon | 5.39° | Separating ← |
+| True South Lunar Node | Johnny Depp | opposition ☍  | Chiron                | John Lennon | 9.93° | Separating ← |
+| True South Lunar Node | Johnny Depp | square □      | Ascendant             | John Lennon | 0.93° | Applying →   |
+| True South Lunar Node | Johnny Depp | square □      | Descendant            | John Lennon | 0.93° | Applying →   |
++-----------------------+-------------+---------------+-----------------------+-------------+-------+--------------+

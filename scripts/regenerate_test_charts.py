@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Regenerate test chart SVGs in tests/charts/svg folder
+Regenerate test chart SVGs in tests/data/svg folder
 
 This script creates all types of SVG charts used in tests:
 - Natal charts with various configurations (sidereal, house systems, perspectives)
@@ -14,7 +14,7 @@ This script creates all types of SVG charts used in tests:
 - Composite charts
 - Charts with transparent background
 
-All files are saved to tests/charts/svg/ with geonames authentication included.
+All files are saved to tests/data/svg/ with geonames authentication included.
 """
 
 from pathlib import Path

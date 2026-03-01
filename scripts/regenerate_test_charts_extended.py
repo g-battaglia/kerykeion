@@ -656,7 +656,7 @@ def main():
     print(f"TOTAL CHARTS GENERATED: {total_generated}")
     print("=" * 60)
     print("\nTo run the corresponding tests:")
-    print("  pytest tests/charts/test_charts_parametrized.py -v")
+    print("  pytest tests/core/test_chart_parametrized.py -v")
 
 
 if __name__ == "__main__":

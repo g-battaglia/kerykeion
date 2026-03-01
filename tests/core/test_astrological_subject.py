@@ -1995,3 +1995,43 @@ class TestAllDwarfPlanetsAndFixedStars:
         assert hasattr(subject.spica, "abs_pos")
         assert not subject.spica.retrograde
         # Vertex and Anti_Vertex removed from active_points due to error
+
+
+# =============================================================================
+# ISO UTC TIME EQUIVALENCE (from factories/test_utc.py)
+# =============================================================================
+
+
+class TestIsoUtcTimeEquivalence:
+    """Test that from_iso_utc_time produces identical results to from_birth_data."""
+
+    @pytest.mark.online
+    @pytest.mark.xdist_group(name="geonames")
+    def test_utc_constructor_equivalence(self):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US", suppress_geonames_warning=True
+        )
+        subject2 = AstrologicalSubjectFactory.from_iso_utc_time(
+            "Johnny Depp", "1963-06-09T05:00:00+00:00", "Owensboro", "US", online=True
+        )
+
+        assert subject.julian_day == subject2.julian_day
+        assert subject.sun == subject2.sun
+        assert subject.moon == subject2.moon
+        assert subject.mercury == subject2.mercury
+        assert subject.venus == subject2.venus
+        assert subject.mars == subject2.mars
+        assert subject.jupiter == subject2.jupiter
+        assert subject.saturn == subject2.saturn
+        assert subject.uranus == subject2.uranus
+        assert subject.neptune == subject2.neptune
+        assert subject.pluto == subject2.pluto
+        assert subject.chiron == subject2.chiron
+        assert subject.mean_lilith == subject2.mean_lilith
+        assert subject.first_house == subject2.first_house
+        assert subject.seventh_house == subject2.seventh_house
+        assert subject.tenth_house == subject2.tenth_house
+        assert subject.mean_north_lunar_node == subject2.mean_north_lunar_node
+        assert subject.true_north_lunar_node == subject2.true_north_lunar_node
+        assert subject.lunar_phase == subject2.lunar_phase
+        assert subject.active_points == subject2.active_points
