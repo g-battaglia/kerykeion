@@ -44,7 +44,7 @@ print(f"Relevant aspects: {len(synastry_aspects_list)}")
 content = f"EXPECTED_RELEVANT_ASPECTS = {json.dumps(synastry_aspects_list, indent=4)}\n\n"
 content += f"EXPECTED_ALL_ASPECTS = {json.dumps(synastry_aspects_list, indent=4)}\n"  # For now, use same
 
-output_path = Path(__file__).parent.parent / "tests" / "aspects" / "expected_synastry_aspects.py"
+output_path = Path(__file__).parent.parent / "tests" / "data" / "expected_synastry_aspects.py"
 with open(output_path, "w") as f:
     f.write(content)
 

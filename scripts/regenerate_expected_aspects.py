@@ -33,7 +33,7 @@ EXPECTED_RELEVANT_ASPECTS = {json.dumps(relevant_aspects, indent=4)}
 """
 
     # Use relative path
-    output_path = Path(__file__).parent.parent / "tests" / "aspects" / "expected_natal_aspects.py"
+    output_path = Path(__file__).parent.parent / "tests" / "data" / "expected_natal_aspects.py"
     with open(output_path, "w") as f:
         f.write(content)
 
@@ -83,7 +83,7 @@ EXPECTED_RELEVANT_ASPECTS = {json.dumps(relevant_aspects, indent=4)}
 """
 
     # Use relative path
-    output_path = Path(__file__).parent.parent / "tests" / "aspects" / "expected_synastry_aspects.py"
+    output_path = Path(__file__).parent.parent / "tests" / "data" / "expected_synastry_aspects.py"
     with open(output_path, "w") as f:
         f.write(content)
 

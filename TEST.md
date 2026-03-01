@@ -98,6 +98,7 @@ poe regenerate:svg        # SVG chart baselines (tests/data/svg/)
 poe regenerate:reports    # Report golden files (tests/fixtures/)
 poe regenerate:positions  # Expected positions & subjects (tests/data/expected_positions.py, ...)
 poe regenerate:aspects    # Expected aspects (tests/data/expected_*_aspects.py)
+poe regenerate:all        # All of the above
 ```
 
 ---
@@ -277,6 +278,7 @@ poe regenerate:svg        # SVG baselines
 poe regenerate:reports    # Report snapshots
 poe regenerate:positions  # Expected positions & subjects
 poe regenerate:aspects    # Expected aspects
+poe regenerate:all        # All of the above
 ```
 
 ---

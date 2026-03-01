@@ -27,7 +27,7 @@ from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
 
 # Set output directory for all chart SVGs
-OUTPUT_DIR = Path(__file__).parent.parent / "tests" / "charts" / "svg"
+OUTPUT_DIR = Path(__file__).parent.parent / "tests" / "data" / "svg"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_DIR_STR = str(OUTPUT_DIR)
 

@@ -36,7 +36,7 @@ from tests.data.test_subjects_matrix import (
 )
 
 # Output directory
-OUTPUT_DIR = project_root / "tests" / "charts" / "svg"
+OUTPUT_DIR = project_root / "tests" / "data" / "svg"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_DIR_STR = str(OUTPUT_DIR)
 
