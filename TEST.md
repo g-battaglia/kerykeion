@@ -87,15 +87,17 @@ pytest --cov=kerykeion --cov-config=pyproject.toml --cov-report=html --cov-repor
 ### Poe Task Runner
 
 ```bash
-poe test              # pytest (default: -n 8 parallel)
-poe test:core         # tests/core/ only, offline
-poe test:base         # tier=base
-poe test:medium       # tier=medium
-poe test:extended     # tier=extended (full)
-poe test:online       # online marker only
-poe test:fast         # -n 8 parallel
-poe test:cov          # with coverage reports
-poe test:nocharts     # skip chart-related test files
+# Test — 4 levels, hierarchy: core < base < medium < extended
+poe test:core         # ~1,750 tests — all modules, no exhaustive matrix
+poe test:base         # ~6,300 tests — includes matrix, DE440s subjects (1849-2150)
+poe test:medium       # ~7,000 tests — adds DE440 subjects (1550-2650)
+poe test:extended     # ~7,900 tests — all subjects, full ephemeris range
+
+# Regenerate golden standards — one command per category
+poe regenerate:svg        # SVG chart baselines (tests/data/svg/)
+poe regenerate:reports    # Report golden files (tests/fixtures/)
+poe regenerate:positions  # Expected positions & subjects (tests/data/expected_positions.py, ...)
+poe regenerate:aspects    # Expected aspects (tests/data/expected_*_aspects.py)
 ```
 
 ---
@@ -106,13 +108,12 @@ Tests use subjects spanning different historical periods. Each period requires a
 
 | Tier | Ephemeris | Year Range | Subjects | Passed | Skipped |
 |------|-----------|------------|----------|--------|---------|
+| `core` | — | — | — | 1,752 | 5 |
 | `base` | DE440s | 1849-2150 | 11 | 6,308 | 1,669 |
 | `medium` | DE440 | 1550-2650 | 16 | 6,976 | 1,001 |
 | `extended` | DE441 | full range | 24 | 7,917 | 60 |
 
-The tier filtering logic lives in `tests/conftest.py:pytest_collection_modifyitems`. It inspects each test's `nodeid` for temporal subject IDs and skips those outside the selected tier.
-
-The 60 skips at the `extended` tier are SVG baseline tests that gracefully skip when the expected baseline file doesn't exist (`@pytest.mark.skipif`).
+`core` runs all 22 non-matrix test files — it covers every module and code path without the exhaustive subject × planet × house parametrized combinations. The matrix files (`test_houses_positions.py`, `test_planetary_positions.py`, `test_moon_phase_historical_verification.py`, `test_subject_factory_parametrized.py`, `test_chart_parametrized.py`) are included starting from `base`.
 
 ---
 
@@ -272,9 +273,10 @@ SVG baseline files live in `tests/data/svg/` (286 files). Tests compare generate
 Report golden files live in `tests/fixtures/` (36 `.txt` files). The `assert_report_matches_snapshot` helper compares generated report output against these files. Golden files can be regenerated via:
 
 ```bash
-poe regenerate:report-snapshots
-poe regenerate:charts              # SVG baselines
-poe regenerate:all                 # everything
+poe regenerate:svg        # SVG baselines
+poe regenerate:reports    # Report snapshots
+poe regenerate:positions  # Expected positions & subjects
+poe regenerate:aspects    # Expected aspects
 ```
 
 ---

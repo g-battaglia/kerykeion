@@ -135,20 +135,11 @@ directory = "htmlcov"
 
 # Task Runner
 [tool.poe.tasks]
-# Test
-test = "pytest"
-"test:cov" = "pytest --cov=kerykeion --cov-config=pyproject.toml --cov-report=html --cov-report=term --cov-report=xml"
-"test:cov-xml" = "pytest --cov=kerykeion --cov-report=xml"
-"test:nocharts" = "pytest --ignore-glob='*chart*.py'"
-"test:core" = "pytest tests/core/ -v -m 'not online'"
-"test:fast" = "pytest -n 8"
-"test:fast:cov" = "pytest -n 8 --cov=kerykeion --cov-config=pyproject.toml --cov-report=html --cov-report=term --cov-report=xml"
-
-# Tier-based testing
-"test:base" = "pytest tests/ --tier=base -v -m 'not online'"
-"test:medium" = "pytest tests/ --tier=medium -v -m 'not online'"
-"test:extended" = "pytest tests/ --tier=extended -v -m 'not online'"
-"test:online" = "pytest tests/ -v -m 'online'"
+# Test — 4 levels, hierarchy: core < base < medium < extended
+"test:core" = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py"
+"test:base" = "pytest tests/ --tier=base -m 'not online'"
+"test:medium" = "pytest tests/ --tier=medium -m 'not online'"
+"test:extended" = "pytest tests/ -m 'not online'"
 
 # Code Quality
 lint = "ruff check"
@@ -158,8 +149,8 @@ analyze = "mypy"
 typecheck = "pyright"
 
 [tool.poe.tasks.check]
-sequence = ["lint", "analyze", "typecheck", "test"]
-help = "Run all quality checks (lint, analyze, typecheck, test)"
+sequence = ["lint", "analyze", "typecheck", "test:core"]
+help = "Run all quality checks (lint, analyze, typecheck, test:core)"
 
 [tool.poe.tasks.quality]
 script = "scripts.quality_check:main"
@@ -178,54 +169,47 @@ help = "Audit documentation coverage"
 cmd = "python scripts/test_markdown_snippets.py"
 help = "Test Python snippets in markdown files"
 
-# Regenerate Test Fixtures
-[tool.poe.tasks."regenerate:charts"]
+# Regenerate Golden Standards — one command per category
+[tool.poe.tasks."regenerate:svg"]
+sequence = ["regenerate:svg:base", "regenerate:svg:extended"]
+help = "Regenerate all SVG chart baselines (tests/data/svg/)"
+
+[tool.poe.tasks."regenerate:svg:base"]
 cmd = "python scripts/regenerate_test_charts.py"
-help = "Regenerate test SVG charts"
 
-[tool.poe.tasks."regenerate:aspects"]
-cmd = "python scripts/regenerate_expected_aspects.py"
-help = "Regenerate expected aspects"
+[tool.poe.tasks."regenerate:svg:extended"]
+cmd = "python scripts/regenerate_test_charts_extended.py"
 
-[tool.poe.tasks."regenerate:subjects"]
-cmd = "python scripts/regenerate_expected_subjects.py"
-help = "Regenerate expected subjects"
+[tool.poe.tasks."regenerate:reports"]
+sequence = ["regenerate:reports:snapshots", "regenerate:reports:output"]
+help = "Regenerate all report golden files (tests/fixtures/)"
 
-[tool.poe.tasks."regenerate:synastry-aspects"]
-cmd = "python scripts/regenerate_synastry_aspects.py"
-help = "Regenerate synastry aspects"
+[tool.poe.tasks."regenerate:reports:snapshots"]
+cmd = "python scripts/regenerate_report_snapshots.py"
 
-[tool.poe.tasks."regenerate:synastry"]
-cmd = "python scripts/regenerate_synastry_from_test.py"
-help = "Regenerate synastry from test"
-
-[tool.poe.tasks."regenerate:output"]
+[tool.poe.tasks."regenerate:reports:output"]
 cmd = "python scripts/regenerate_test_output.py"
-help = "Regenerate test output"
 
 [tool.poe.tasks."regenerate:positions"]
-cmd = "python scripts/regenerate_all.py --positions"
-help = "Regenerate expected positions from test matrix"
+cmd = "python scripts/regenerate_all.py --positions --subjects"
+help = "Regenerate expected positions and subjects (tests/data/expected_positions.py, expected_astrological_subjects.py)"
 
-[tool.poe.tasks."regenerate:matrix-aspects"]
+[tool.poe.tasks."regenerate:aspects"]
+sequence = ["regenerate:aspects:natal", "regenerate:aspects:synastry", "regenerate:aspects:matrix"]
+help = "Regenerate all expected aspects (tests/data/expected_*_aspects.py)"
+
+[tool.poe.tasks."regenerate:aspects:natal"]
+cmd = "python scripts/regenerate_expected_aspects.py"
+
+[tool.poe.tasks."regenerate:aspects:synastry"]
+cmd = "python scripts/regenerate_synastry_aspects.py"
+
+[tool.poe.tasks."regenerate:aspects:matrix"]
 cmd = "python scripts/regenerate_all.py --aspects"
-help = "Regenerate expected aspects from test matrix"
-
-[tool.poe.tasks."regenerate:charts-extended"]
-cmd = "python scripts/regenerate_test_charts_extended.py"
-help = "Regenerate extended test SVG charts (strawberry theme, combinations)"
-
-[tool.poe.tasks."regenerate:report-snapshots"]
-cmd = "python scripts/regenerate_report_snapshots.py"
-help = "Regenerate golden-file report snapshots for tests/core/"
 
 [tool.poe.tasks."regenerate:all"]
-sequence = ["regenerate:unified", "regenerate:charts-extended", "regenerate:aspects", "regenerate:synastry-aspects", "regenerate:synastry", "regenerate:output", "regenerate:report-snapshots"]
-help = "Regenerate all test fixtures"
-
-[tool.poe.tasks."regenerate:unified"]
-cmd = "python scripts/regenerate_all.py --all"
-help = "Regenerate all test baselines using unified script"
+sequence = ["regenerate:svg", "regenerate:reports", "regenerate:positions", "regenerate:aspects"]
+help = "Regenerate all golden standards"
 
 # Utilities
 [tool.poe.tasks.clean]
