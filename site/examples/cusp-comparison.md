@@ -62,11 +62,11 @@ This produces:
 
 ### Synastry Chart with House Comparison
 
-![Synastry Chart with House Comparison](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Synastry%20Chart%20-%20House%20Comparison%20Only.svg)
+![Synastry Chart with House Comparison](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Synastry%20Chart%20-%20House%20Comparison%20Only.svg)
 
 ### Transit Chart with Cusp Comparison
 
-![Transit Chart with Cusp Comparison](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Transit%20Chart%20-%20Cusp%20Comparison%20Only.svg)
+![Transit Chart with Cusp Comparison](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Transit%20Chart%20-%20Cusp%20Comparison%20Only.svg)
 
 ## Accessing Cusp Comparison in Reports
 

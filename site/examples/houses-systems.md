@@ -73,7 +73,7 @@ chart.save_svg(output_path=out_dir, filename="john-lennon-morinus")
 
 The output will be:
 
-![John Lennon - House System Morinus](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20House%20System%20Morinus%20-%20Natal%20Chart.svg)
+![John Lennon - House System Morinus](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20House%20System%20Morinus%20-%20Natal%20Chart.svg)
 
 ### Birth Chart with Whole Sign Houses
 

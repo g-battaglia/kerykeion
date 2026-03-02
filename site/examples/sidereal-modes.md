@@ -80,7 +80,7 @@ Sun (Lahiri): Vir 23.08°
 
 The chart output:
 
-![John Lennon Lahiri](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20Lahiri%20-%20Natal%20Chart.svg)
+![John Lennon Lahiri](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20Lahiri%20-%20Natal%20Chart.svg)
 
 ### Fagan-Bradley (Western Sidereal)
 

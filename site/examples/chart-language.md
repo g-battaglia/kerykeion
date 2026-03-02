@@ -60,15 +60,15 @@ it_chart.save_svg(output_path=Path("charts_output"), filename="loren-it")
 
 ### English (EN) - Default
 
-![English Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20EN%20-%20Natal%20Chart.svg)
+![English Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20EN%20-%20Natal%20Chart.svg)
 
 ### German (DE)
 
-![German Synastry Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20DE%20-%20Synastry%20Chart.svg)
+![German Synastry Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20DE%20-%20Synastry%20Chart.svg)
 
 ### Russian (RU)
 
-![Russian Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20RU%20-%20Transit%20Chart.svg)
+![Russian Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20RU%20-%20Transit%20Chart.svg)
 
 ---
 

@@ -39,7 +39,7 @@ drawer.save_svg(output_path=out_dir, filename="kanye-natal")
 
 The output will be a SVG file in `charts_output/kanye-natal.svg`.
 
-![Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/Kanye%20-%20Natal%20Chart.svg)
+![Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/Kanye%20-%20Natal%20Chart.svg)
 
 ## External Birth Chart
 
@@ -68,7 +68,7 @@ drawer.save_svg(output_path=out_dir, filename="john-lennon-external-natal")
 
 The output will be a SVG file in `charts_output/john-lennon-external-natal.svg`.
 
-![External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20ExternalNatal%20-%20Natal%20Chart.svg)
+![External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20ExternalNatal%20-%20Natal%20Chart.svg)
 
 ---
 

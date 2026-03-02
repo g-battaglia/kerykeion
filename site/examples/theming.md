@@ -72,7 +72,7 @@ out_dir.mkdir(exist_ok=True)
 chart.save_svg(output_path=out_dir)
 ```
 
-![John Lennon - Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Natal%20Chart.svg)
+![John Lennon - Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart.svg)
 
 #### Dark Theme
 
@@ -94,7 +94,7 @@ out_dir.mkdir(exist_ok=True)
 chart.save_svg(output_path=out_dir)
 ```
 
-![John Lennon - Dark - Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
+![John Lennon - Dark - Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
 
 #### Light Theme
 
@@ -116,7 +116,7 @@ out_dir.mkdir(exist_ok=True)
 chart.save_svg(output_path=out_dir)
 ```
 
-![John Lennon - Light - Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Light%20Theme%20-%20Natal%20Chart.svg)
+![John Lennon - Light - Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Light%20Theme%20-%20Natal%20Chart.svg)
 
 ### Overriding Default CSS Variables
 

@@ -73,7 +73,7 @@ chart.save_svg(output_path=out_dir, filename="lennon-heliocentric")
 
 The output will be:
 
-![John Lennon Heliocentric](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20Heliocentric%20-%20Natal%20Chart.svg)
+![John Lennon Heliocentric](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Heliocentric%20-%20Natal%20Chart.svg)
 
 > **Note:** Heliocentric charts have no houses or Ascendant since there is no observer on Earth. The house system is ignored.
 

@@ -69,7 +69,7 @@ This will generate a dual-wheel chart where:
 
 ### Solar Return Example
 
-![Solar Return Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Solar%20Return%20-%20House%20Comparison%20Only.svg)
+![Solar Return Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Solar%20Return%20-%20House%20Comparison%20Only.svg)
 
 ### Lunar Return Example
 
@@ -85,7 +85,7 @@ chart_data = ChartDataFactory.create_return_chart_data(
 )
 ```
 
-![Lunar Return Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/charts/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Lunar%20Return%20-%20No%20House%20Comparison.svg)
+![Lunar Return Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Lunar%20Return%20-%20No%20House%20Comparison.svg)
 
 ## Toggling Degree Indicators
 
