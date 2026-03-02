@@ -17,6 +17,12 @@ poe test:base         # ~6,300 tests — adds exhaustive matrix (DE440s, 1849-21
 poe test:medium       # ~7,000 tests — adds DE440 subjects (1550-2650)
 poe test:extended     # ~7,900 tests — all subjects, full ephemeris range
 
+# Coverage — same tiers with terminal + HTML report (htmlcov/)
+poe test:core:cov     # Coverage on core tier
+poe test:base:cov     # Coverage on base tier
+poe test:medium:cov   # Coverage on medium tier
+poe test:extended:cov # Coverage on extended tier (full)
+
 # Regenerate golden standards
 poe regenerate:svg        # SVG chart baselines (tests/data/svg/)
 poe regenerate:reports    # Report golden files (tests/fixtures/)
