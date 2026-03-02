@@ -27,7 +27,7 @@ SVG_DIR = Path(__file__).resolve().parent.parent / "data" / "svg"
 
 class TestLunarPhaseSVG:
     """Golden-baseline regression: compose all 8 phases into a reference sheet
-    and compare against ``tests/charts/svg/Moon Phases.svg``."""
+    and compare against ``tests/data/svg/Moon Phases.svg``."""
 
     def test_all_standard_phases_match_reference_sheet(self) -> None:
         icon_groups: list[str] = []
