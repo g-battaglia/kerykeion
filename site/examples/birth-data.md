@@ -41,7 +41,7 @@ Key options include:
 - `perspective_type` (e.g., `"Apparent Geocentric"`, `"Heliocentric"`)
 - `geonames_username` and `online=True` for automatic lookup
 
-For the complete reference, see the API docs: https://www.kerykeion.net/content/docs/
+For the complete reference, see the [API docs](/content/docs/).
 
 ---
 

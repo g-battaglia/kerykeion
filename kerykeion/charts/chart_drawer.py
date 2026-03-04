@@ -33,6 +33,7 @@ from kerykeion.schemas.settings_models import (
 )
 from kerykeion.schemas.kr_literals import (
     KerykeionChartTheme,
+    KerykeionChartStyle,
     KerykeionChartLanguage,
     AstrologicalPoint,
 )
@@ -68,6 +69,7 @@ from kerykeion.charts.charts_utils import (
     format_datetime_with_timezone,
 )
 from kerykeion.charts.draw_planets import draw_planets
+from kerykeion.charts.draw_modern import draw_modern_horoscope, draw_modern_dual_horoscope
 from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg, distribute_percentages_to_100
 from kerykeion.settings.chart_defaults import (
     DEFAULT_CHART_COLORS,
@@ -3572,8 +3574,67 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         return ChartTemplateModel(**template_dict)
 
+    def _generate_modern_content(
+        self,
+        show_zodiac_background_ring: bool = True,
+    ) -> str:
+        """Generate raw modern wheel SVG content in the 100x100 coordinate space.
+
+        Automatically dispatches to single or dual horoscope based on chart type.
+
+        Args:
+            show_zodiac_background_ring: Draw colored zodiac wedges.
+
+        Returns:
+            str: Raw SVG group content for the modern wheel.
+        """
+        houses_list = get_houses_list(self.first_obj)
+        aspects_dicts = [a.model_dump() if hasattr(a, "model_dump") else dict(a) for a in self.aspects_list]
+
+        if self.second_obj is not None and self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+            return draw_modern_dual_horoscope(
+                planets_1=self.available_kerykeion_celestial_points,
+                houses_1=houses_list,
+                planets_2=self.second_subject_celestial_points,
+                aspects_list=aspects_dicts,
+                seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+                planets_settings=self.available_planets_setting,
+                aspects_settings=self.aspects_settings,
+                chart_type=self.chart_type,
+                show_zodiac_background_ring=show_zodiac_background_ring,
+            )
+        else:
+            return draw_modern_horoscope(
+                planets=self.available_kerykeion_celestial_points,
+                houses=houses_list,
+                aspects_list=aspects_dicts,
+                seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+                planets_settings=self.available_planets_setting,
+                aspects_settings=self.aspects_settings,
+                show_zodiac_background_ring=show_zodiac_background_ring,
+            )
+
+    def _validate_chart_style(self, style: KerykeionChartStyle) -> None:
+        """Validate that the given style is a supported chart style.
+
+        Args:
+            style: The chart style to validate.
+
+        Raises:
+            KerykeionException: If the style is not in the allowed values.
+        """
+        allowed_styles = get_args(KerykeionChartStyle)
+        if style not in allowed_styles:
+            raise KerykeionException(f"Style {style!r} is not available. Allowed values: {', '.join(allowed_styles)}.")
+
     def generate_svg_string(
-        self, minify: bool = False, remove_css_variables=False, *, custom_title: Union[str, None] = None
+        self,
+        minify: bool = False,
+        remove_css_variables=False,
+        *,
+        custom_title: Union[str, None] = None,
+        style: KerykeionChartStyle = "classic",
+        show_zodiac_background_ring: bool = True,
     ) -> str:
         """
         Render the full chart SVG as a string.
@@ -3585,20 +3646,46 @@ class ChartDrawer:  # type: ignore[no-redef]
             minify (bool): Remove whitespace and quotes for compactness.
             remove_css_variables (bool): Embed CSS variable definitions.
             custom_title (str or None): Optional override for the SVG title.
+            style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
+            show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
 
         Returns:
-            str: SVG markup as a string.
         """
+        self._validate_chart_style(style)
         td = self._create_template_dictionary(custom_title=custom_title)
 
         DATA_DIR = Path(__file__).parent
         xml_svg = DATA_DIR / "templates" / "chart.xml"
 
-        # read template
         with open(xml_svg, "r", encoding="utf-8", errors="ignore") as f:
-            template = Template(f.read()).substitute(td.model_dump())
+            raw_template = f.read()
 
-        # return filename
+        if style == "modern":
+            modern_content = self._generate_modern_content(
+                show_zodiac_background_ring=show_zodiac_background_ring,
+            )
+            # Scale from 100x100 modern space into the ~480x480 classic wheel space.
+            # The wheel group in chart.xml is at translate(100, $full_wheel_translate_y),
+            # and the classic wheel has diameter 2*main_radius ≈ 480.
+            scale = (2 * self.main_radius) / 100
+            wrapped = f'<g transform="scale({scale:.4f})">\n{modern_content}\n</g>'
+
+            overrides = td.model_dump()
+            # Inject modern wheel into the background circle placeholder;
+            # blank out all other classic wheel sub-groups.
+            overrides["background_circle"] = wrapped
+            overrides["makeZodiac"] = ""
+            overrides["first_circle"] = ""
+            overrides["second_circle"] = ""
+            overrides["third_circle"] = ""
+            overrides["transitRing"] = ""
+            overrides["degreeRing"] = ""
+            overrides["makeHouses"] = ""
+            overrides["makePlanets"] = ""
+            overrides["makeAspects"] = ""
+            template = Template(raw_template).substitute(overrides)
+        else:
+            template = Template(raw_template).substitute(td.model_dump())
 
         logger.debug("Template dictionary includes %s fields", len(td.model_dump()))
 
@@ -3622,7 +3709,8 @@ class ChartDrawer:  # type: ignore[no-redef]
                 return f"{self.first_obj.name} - {self.chart_type} Chart - Solar Return{suffix}"
 
         # Handle ExternalNatal renaming for wheel and grid exports
-        if suffix and self.external_view and self.chart_type == "Natal":
+        external_alias_suffixes = {" - Wheel Only", " - Aspect Grid Only", " - Modern Wheel Only"}
+        if suffix in external_alias_suffixes and self.external_view and self.chart_type == "Natal":
             chart_type_name = "ExternalNatal"
         else:
             chart_type_name = self.chart_type
@@ -3670,6 +3758,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         remove_css_variables=False,
         *,
         custom_title: Union[str, None] = None,
+        style: KerykeionChartStyle = "classic",
+        show_zodiac_background_ring: bool = True,
     ):
         """
         Generate and save the full chart SVG to disk.
@@ -3685,15 +3775,30 @@ class ChartDrawer:  # type: ignore[no-redef]
             minify (bool): Pass-through to generate_svg_string for compact output.
             remove_css_variables (bool): Pass-through to generate_svg_string to embed CSS variables.
             custom_title (str or None): Optional override for the SVG title.
+            style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
+            show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
 
         Returns:
             None
         """
+        suffix = " - Modern" if style == "modern" else ""
+        self.template = self.generate_svg_string(
+            minify,
+            remove_css_variables,
+            custom_title=custom_title,
+            style=style,
+            show_zodiac_background_ring=show_zodiac_background_ring,
+        )
+        self._write_svg_to_disk(self.template, output_path, filename, default_suffix=suffix)
 
-        self.template = self.generate_svg_string(minify, remove_css_variables, custom_title=custom_title)
-        self._write_svg_to_disk(self.template, output_path, filename, default_suffix="")
-
-    def generate_wheel_only_svg_string(self, minify: bool = False, remove_css_variables=False):
+    def generate_wheel_only_svg_string(
+        self,
+        minify: bool = False,
+        remove_css_variables=False,
+        *,
+        style: KerykeionChartStyle = "classic",
+        show_zodiac_background_ring: bool = True,
+    ):
         """
         Render the wheel-only chart SVG as a string.
 
@@ -3703,23 +3808,47 @@ class ChartDrawer:  # type: ignore[no-redef]
         Args:
             minify (bool): Remove whitespace and quotes for compactness.
             remove_css_variables (bool): Embed CSS variable definitions.
+            style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
+            show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
 
         Returns:
             str: SVG markup for the chart wheel only.
         """
 
-        with open(
-            Path(__file__).parent / "templates" / "wheel_only.xml",
-            "r",
-            encoding="utf-8",
-            errors="ignore",
-        ) as f:
-            template = f.read()
+        self._validate_chart_style(style)
 
-        template_dict = self._create_template_dictionary()
-        # Use a compact viewBox specific for the wheel-only rendering
-        wheel_viewbox = self._wheel_only_viewbox()
-        template = Template(template).substitute({**template_dict.model_dump(), "viewbox": wheel_viewbox})
+        if style == "modern":
+            with open(
+                Path(__file__).parent / "templates" / "modern_wheel.xml",
+                "r",
+                encoding="utf-8",
+                errors="ignore",
+            ) as f:
+                raw_template = f.read()
+
+            template_dict = self._create_template_dictionary()
+            modern_content = self._generate_modern_content(
+                show_zodiac_background_ring=show_zodiac_background_ring,
+            )
+            template = Template(raw_template).substitute(
+                {
+                    **template_dict.model_dump(),
+                    "makeModernHoroscope": modern_content,
+                    "viewbox": "0 0 100 100",
+                }
+            )
+        else:
+            with open(
+                Path(__file__).parent / "templates" / "wheel_only.xml",
+                "r",
+                encoding="utf-8",
+                errors="ignore",
+            ) as f:
+                raw_template = f.read()
+
+            template_dict = self._create_template_dictionary()
+            wheel_viewbox = self._wheel_only_viewbox()
+            template = Template(raw_template).substitute({**template_dict.model_dump(), "viewbox": wheel_viewbox})
 
         return self._apply_svg_post_processing(template, minify, remove_css_variables)
 
@@ -3729,6 +3858,9 @@ class ChartDrawer:  # type: ignore[no-redef]
         filename: Union[str, None] = None,
         minify: bool = False,
         remove_css_variables=False,
+        *,
+        style: KerykeionChartStyle = "classic",
+        show_zodiac_background_ring: bool = True,
     ):
         """
         Generate and save wheel-only chart SVG to disk.
@@ -3743,13 +3875,20 @@ class ChartDrawer:  # type: ignore[no-redef]
                 If None, uses the default pattern: "{subject.name} - {chart_type} Chart - Wheel Only".
             minify (bool): Pass-through to generate_wheel_only_svg_string for compact output.
             remove_css_variables (bool): Pass-through to generate_wheel_only_svg_string to embed CSS variables.
+            style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
+            show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
 
         Returns:
             None
         """
-
-        template = self.generate_wheel_only_svg_string(minify, remove_css_variables)
-        self._write_svg_to_disk(template, output_path, filename, default_suffix=" - Wheel Only")
+        suffix = " - Modern Wheel Only" if style == "modern" else " - Wheel Only"
+        template = self.generate_wheel_only_svg_string(
+            minify,
+            remove_css_variables,
+            style=style,
+            show_zodiac_background_ring=show_zodiac_background_ring,
+        )
+        self._write_svg_to_disk(template, output_path, filename, default_suffix=suffix)
 
     def generate_aspect_grid_only_svg_string(self, minify: bool = False, remove_css_variables=False):
         """

@@ -50,6 +50,21 @@ svg_content = drawer.generate_svg_string()
 
 The drawing process is identical for all types; only the _Data Generation_ step changes.
 
+### Natal
+
+The basic birth chart. Shows planetary positions and house cusps for a single subject at the time of birth.
+
+```python
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
+drawer = ChartDrawer(chart_data)
+```
+
+To place planets on the outer ring instead of the inner ring, use `external_view=True`:
+
+```python
+drawer = ChartDrawer(chart_data, external_view=True)
+```
+
 ### Synastry (Comparison)
 
 Synastry charts overlay two users' planetary positions to visualize their relationship. The outer wheel shows the second subject's planets.
@@ -82,6 +97,68 @@ composite_sub = CompositeSubjectFactory(subject_a, subject_b).get_midpoint_compo
 composite_data = ChartDataFactory.create_composite_chart_data(composite_sub)
 drawer = ChartDrawer(composite_data)
 ```
+
+### Solar / Lunar Return (Dual Wheel)
+
+Dual return charts show the natal chart (inner wheel) alongside the return moment (outer wheel). They include house comparison grids.
+
+```python
+from kerykeion import PlanetaryReturnFactory
+
+# Calculate solar return
+return_model = PlanetaryReturnFactory.solar_return(subject, 2025)
+
+# Dual wheel: natal vs return
+return_data = ChartDataFactory.create_return_chart_data(subject, return_model)
+drawer = ChartDrawer(return_data)
+```
+
+The same works for lunar returns:
+
+```python
+return_model = PlanetaryReturnFactory.lunar_return(subject, 2025, 3)
+return_data = ChartDataFactory.create_return_chart_data(subject, return_model)
+drawer = ChartDrawer(return_data)
+```
+
+### Solar / Lunar Return (Single Wheel)
+
+Single return charts show only the return moment as a standalone chart, without the natal comparison.
+
+```python
+return_model = PlanetaryReturnFactory.solar_return(subject, 2025)
+return_data = ChartDataFactory.create_single_wheel_return_chart_data(return_model)
+drawer = ChartDrawer(return_data)
+```
+
+## Chart Styles
+
+Kerykeion supports two visual styles for chart rendering.
+
+### Classic (Default)
+
+The traditional astrological wheel layout with concentric rings for signs, houses, and planets.
+
+```python
+drawer.save_svg(output_path, filename="chart", style="classic")
+```
+
+### Modern
+
+A concentric-ring layout with graduated ruler scales, aspect lines with midpoint glyphs, and a cleaner visual hierarchy. Supports all chart types (single and dual wheel).
+
+```python
+drawer.save_svg(output_path, filename="chart", style="modern")
+drawer.save_wheel_only_svg_file(output_path, filename="wheel", style="modern")
+```
+
+**Modern-only parameters** (keyword arguments, ignored by the classic style):
+
+| Parameter                    | Type   | Default | Description                                                    |
+| :--------------------------- | :----- | :------ | :------------------------------------------------------------- |
+| `show_zodiac_background_ring`| `bool` | `True`  | Draw colored zodiac wedges behind the outer planet ring.       |
+
+The `style` parameter is available on: `generate_svg_string()`, `save_svg()`, `generate_wheel_only_svg_string()`, and `save_wheel_only_svg_file()`.
 
 ## Configuration & Customization
 

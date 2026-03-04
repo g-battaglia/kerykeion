@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "5.10.1"
+version = "5.11.0"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -177,7 +177,7 @@ help = "Test Python snippets in markdown files"
 
 # Regenerate Golden Standards — one command per category
 [tool.poe.tasks."regenerate:svg"]
-sequence = ["regenerate:svg:base", "regenerate:svg:extended"]
+sequence = ["regenerate:svg:base", "regenerate:svg:extended", "regenerate:svg:modern"]
 help = "Regenerate all SVG chart baselines (tests/data/svg/)"
 
 [tool.poe.tasks."regenerate:svg:base"]
@@ -185,6 +185,9 @@ cmd = "python scripts/regenerate_test_charts.py"
 
 [tool.poe.tasks."regenerate:svg:extended"]
 cmd = "python scripts/regenerate_test_charts_extended.py"
+
+[tool.poe.tasks."regenerate:svg:modern"]
+cmd = "python scripts/generate_modern_baselines.py"
 
 [tool.poe.tasks."regenerate:reports"]
 sequence = ["regenerate:reports:snapshots", "regenerate:reports:output"]

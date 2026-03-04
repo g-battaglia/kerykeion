@@ -2280,4 +2280,94 @@ dateline_chart_data = ChartDataFactory.create_natal_chart_data(dateline_subject)
 dateline_chart = ChartDrawer(dateline_chart_data)
 dateline_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
+# ============================================================================
+# Section 14: Modern Chart Style
+# ============================================================================
+
+# Modern Natal Chart (default theme)
+modern_natal_chart = ChartDrawer(natal_chart_data)
+modern_natal_chart.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Natal Chart - Dark Theme
+dark_theme_modern_natal = ChartDrawer(dark_theme_natal_chart_data, theme="dark")
+dark_theme_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Natal Chart - Light Theme
+light_theme_modern_natal = ChartDrawer(light_theme_natal_chart_data, theme="light")
+light_theme_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Natal Chart - Black and White Theme
+bw_modern_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Black and White Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+bw_modern_natal_data = ChartDataFactory.create_natal_chart_data(bw_modern_subject)
+bw_modern_natal = ChartDrawer(bw_modern_natal_data, theme="black-and-white")
+bw_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Natal Chart - Strawberry Theme
+strawberry_modern_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Strawberry Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+strawberry_modern_natal_data = ChartDataFactory.create_natal_chart_data(strawberry_modern_subject)
+strawberry_modern_natal = ChartDrawer(strawberry_modern_natal_data, theme="strawberry")
+strawberry_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Natal Chart - Dark High Contrast Theme
+dhc_modern_natal = ChartDrawer(dark_high_contrast_theme_natal_chart_data, theme="dark-high-contrast")
+dhc_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Synastry Chart
+modern_synastry = ChartDrawer(synastry_chart_data)
+modern_synastry.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Synastry Chart - Dark Theme
+dark_theme_modern_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Dark Theme Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+dark_theme_modern_synastry_data = ChartDataFactory.create_synastry_chart_data(
+    dark_theme_modern_synastry_subject, second
+)
+dark_theme_modern_synastry = ChartDrawer(dark_theme_modern_synastry_data, theme="dark")
+dark_theme_modern_synastry.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Transit Chart
+modern_transit = ChartDrawer(transits_chart_data)
+modern_transit.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Transit Chart - Dark Theme
+dark_theme_modern_transit_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Dark Theme Transit", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+dark_theme_modern_transit_data = ChartDataFactory.create_transit_chart_data(dark_theme_modern_transit_subject, second)
+dark_theme_modern_transit = ChartDrawer(dark_theme_modern_transit_data, theme="dark")
+dark_theme_modern_transit.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Composite Chart
+modern_composite = ChartDrawer(composite_chart_data)
+modern_composite.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Wheel Only Natal Chart (default theme)
+modern_wheel_only = ChartDrawer(natal_chart_data)
+modern_wheel_only.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Wheel Only Natal Chart - Dark Theme
+dark_modern_wheel_only = ChartDrawer(dark_theme_natal_chart_data, theme="dark")
+dark_modern_wheel_only.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Wheel Only Synastry Chart
+modern_wheel_synastry = ChartDrawer(synastry_chart_data)
+modern_wheel_synastry.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Wheel Only Transit Chart
+modern_wheel_transit = ChartDrawer(transits_chart_data)
+modern_wheel_transit.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Single Return Solar Chart
+modern_single_return = ChartDrawer(single_return_chart_data)
+modern_single_return.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Modern Dual Return Solar Chart
+modern_dual_return = ChartDrawer(dual_return_chart_data)
+modern_dual_return.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
 print("All charts regenerated successfully!")

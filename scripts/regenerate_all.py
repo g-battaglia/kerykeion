@@ -41,10 +41,10 @@ from __future__ import annotations
 import argparse
 import subprocess
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from pprint import pformat
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 # Add project root to path
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -64,6 +64,7 @@ from kerykeion.ephemeris_data_factory import EphemerisDataFactory
 OUTPUT_DIR = REPO_ROOT / "tests" / "data"
 CONFIGURATIONS_DIR = OUTPUT_DIR / "configurations"
 CHARTS_SCRIPT = REPO_ROOT / "scripts" / "regenerate_test_charts.py"
+MODERN_BASELINES_SCRIPT = REPO_ROOT / "scripts" / "generate_modern_baselines.py"
 
 # Import test subjects matrix
 try:
@@ -226,37 +227,6 @@ def extract_full_subject_positions(subject) -> Dict[str, Any]:
     """
     # Get the full subject dump, excluding None values and metadata fields
     full_dump = subject.model_dump(exclude_none=True)
-
-    # Metadata fields that should not be in the position data
-    metadata_fields = {
-        "name",
-        "city",
-        "nation",
-        "tz_str",
-        "zodiac_type",
-        "houses_system_identifier",
-        "houses_system_name",
-        "perspective_type",
-        "iso_formatted_local_datetime",
-        "iso_formatted_utc_datetime",
-        "day_of_week",
-        "houses_names_list",
-        "active_points",
-        "year",
-        "month",
-        "day",
-        "hour",
-        "minute",
-        "julian_day",
-        "lat",
-        "lng",
-    }
-
-    # Fields that are configuration/metadata but not position data
-    config_fields = {
-        "sidereal_mode",
-        "altitude",
-    }
 
     # Core planets
     planets = {}
@@ -626,6 +596,24 @@ def regenerate_charts() -> None:
     else:
         print("Error regenerating charts:")
         print(result.stderr)
+        return
+
+    # Also regenerate modern chart baselines
+    if MODERN_BASELINES_SCRIPT.exists():
+        print(f"\nRunning {MODERN_BASELINES_SCRIPT.name}...")
+        result = subprocess.run(
+            [sys.executable, str(MODERN_BASELINES_SCRIPT)],
+            capture_output=True,
+            text=True,
+            cwd=REPO_ROOT,
+        )
+        if result.returncode == 0:
+            print("✓ Modern chart baselines regenerated successfully")
+        else:
+            print("Error regenerating modern chart baselines:")
+            print(result.stderr)
+    else:
+        print(f"Warning: Modern baselines script not found at {MODERN_BASELINES_SCRIPT}")
 
 
 def regenerate_subjects() -> None:
@@ -971,7 +959,7 @@ def regenerate_ephemeris() -> None:
             "start": datetime(2023, 1, 1),
             "end": datetime(2023, 12, 31),
             "step_type": "days",
-            "step_value": 7,
+            "step": 7,
         },
         # Hourly range for one day
         {

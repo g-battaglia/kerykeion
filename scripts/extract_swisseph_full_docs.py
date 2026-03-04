@@ -21,6 +21,7 @@ th { background: #f0f0f0; }
 code { background: #eee; padding: 0.1rem 0.3rem; border-radius: 4px; font-family: monospace; }
 """
 
+
 def collect_symbols(module):
     """Collect all public attributes (functions, constants, classes, etc.) from the module."""
     symbols = {}
@@ -31,6 +32,7 @@ def collect_symbols(module):
         doc = inspect.getdoc(value)
         symbols[name] = {"type": kind, "value": value, "doc": doc}
     return symbols
+
 
 def generate_html(symbols):
     """Generate a full HTML documentation page."""
@@ -67,14 +69,15 @@ def generate_html(symbols):
 <style>{CSS}</style>
 </head>
 <body>
-<nav><h1>Index</h1>{''.join(toc)}</nav>
+<nav><h1>Index</h1>{"".join(toc)}</nav>
 <main>
 <h1>Full documentation of <code>swisseph</code></h1>
-{''.join(content)}
+{"".join(content)}
 </main>
 </body>
 </html>"""
     return html_page
+
 
 def generate_markdown(symbols):
     """Generate a Markdown version of the documentation."""
@@ -111,10 +114,9 @@ def generate_markdown(symbols):
             lines.append("")
     return "\n".join(lines)
 
+
 def main():
-    parser = argparse.ArgumentParser(
-        description="Extract all public symbols from swisseph and generate documentation."
-    )
+    parser = argparse.ArgumentParser(description="Extract all public symbols from swisseph and generate documentation.")
     parser.add_argument(
         "--markdown",
         "-m",
@@ -134,6 +136,7 @@ def main():
 
     out_path.write_text(output, encoding="utf-8")
     print(f"✅ Created {out_path} with {len(symbols)} symbols.")
+
 
 if __name__ == "__main__":
     main()

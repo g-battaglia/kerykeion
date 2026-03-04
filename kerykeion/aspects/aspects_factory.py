@@ -444,6 +444,10 @@ class AspectsFactory:
                     first_planet_id = planet_id_lookup.get(first_name, 0)
                     second_planet_id = planet_id_lookup.get(second_name, 0)
 
+                    # Get speeds first, fall back to 0.0 only if missing/None
+                    first_speed = first_active_points_list[first].get("speed") or 0.0
+                    second_speed = second_active_points_list[second].get("speed") or 0.0
+
                     # For aspects between axes (ASC, MC, DSC, IC) in different charts
                     # there is no meaningful dynamic movement between two house systems,
                     # so we mark the movement as "Static".
@@ -451,10 +455,6 @@ class AspectsFactory:
                     if first_name in AXES_LIST and second_name in AXES_LIST:
                         aspect_movement = "Static"
                     else:
-                        # Get speeds, fall back to 0.0 only if missing/None
-                        first_speed = first_active_points_list[first].get("speed") or 0.0
-                        second_speed = second_active_points_list[second].get("speed") or 0.0
-
                         # Override speeds if subjects are fixed
                         if first_subject_is_fixed:
                             first_speed = 0.0
