@@ -88,7 +88,7 @@ Distant objects beyond Neptune. Ephemeris data may not be available for all hist
 | `Orcus` | Oaths, the underworld, accountability |
 | `Quaoar` | Creation myths, primordial forces |
 
-> **Note:** Some TNOs may not have ephemeris data for very old or very future dates. If calculation fails for a point, it is silently removed from the active points for that subject.
+> **Note:** Some TNOs may not have ephemeris data for very old or far-future dates. If calculation fails for a point, it is silently removed from the active points for that subject.
 
 ### Fixed Stars (2)
 

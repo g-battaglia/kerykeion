@@ -588,6 +588,7 @@ def regenerate_charts() -> None:
         capture_output=True,
         text=True,
         cwd=REPO_ROOT,
+        timeout=600,
     )
 
     if result.returncode == 0:
@@ -605,6 +606,7 @@ def regenerate_charts() -> None:
             capture_output=True,
             text=True,
             cwd=REPO_ROOT,
+            timeout=600,
         )
         if result.returncode == 0:
             print("✓ Modern chart baselines regenerated successfully")

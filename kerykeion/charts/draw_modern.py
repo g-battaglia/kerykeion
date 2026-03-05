@@ -657,7 +657,7 @@ def _resolve_planet_collisions(
         min_separation: Minimum degrees to maintain between planets.
 
     Returns:
-        Same list with added 'display_angle' and 'needs_indicator' keys.
+        Same list with added 'display_angle' key.
     """
     if not planets_with_angles:
         return planets_with_angles

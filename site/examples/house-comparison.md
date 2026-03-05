@@ -13,8 +13,7 @@ This is a key technique in synastry interpretation — knowing that someone's Ve
 ## Basic Usage
 
 ```python
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
+from kerykeion import AstrologicalSubjectFactory, HouseComparisonFactory
 
 person_a = AstrologicalSubjectFactory.from_birth_data(
     "Alice", 1990, 6, 15, 12, 0,
@@ -72,8 +71,7 @@ for cusp in comparison.second_cusps_in_first_houses:
 `HouseComparisonFactory` is used internally by `ChartDataFactory` when generating synastry, transit, and dual return chart data. You can also use it standalone for data analysis:
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, HouseComparisonFactory
 
 alice = AstrologicalSubjectFactory.from_birth_data(
     "Alice", 1990, 6, 15, 12, 0,

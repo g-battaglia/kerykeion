@@ -9,10 +9,10 @@ Uses the same subject parameters as tests/core/conftest.py fixtures:
 Called by: poe regenerate:aspects:synastry
 """
 
-import json
 import subprocess
 import sys
 from pathlib import Path
+from pprint import pformat
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects.aspects_factory import AspectsFactory
@@ -61,8 +61,9 @@ def regenerate_synastry_aspects():
     # Generate file (EXPECTED_RELEVANT_ASPECTS first to match existing layout)
     # Note: AspectsFactory.dual_chart_aspects().aspects already returns filtered
     # (relevant) aspects, so ALL and RELEVANT are the same dataset.
-    content = f"EXPECTED_RELEVANT_ASPECTS = {json.dumps(all_aspects, indent=4)}\n\n"
-    content += f"EXPECTED_ALL_ASPECTS = {json.dumps(all_aspects, indent=4)}\n"
+    aspects_literal = pformat(all_aspects, width=100, sort_dicts=False)
+    content = f"EXPECTED_RELEVANT_ASPECTS = {aspects_literal}\n\n"
+    content += f"EXPECTED_ALL_ASPECTS = {aspects_literal}\n"
 
     output_path = Path(__file__).parent.parent / "tests" / "data" / "expected_synastry_aspects.py"
     output_path.write_text(content, encoding="utf-8")

@@ -1457,9 +1457,9 @@ class ChartDrawer:  # type: ignore[no-redef]
         padding (int, optional):
             Padding in pixels around chart elements. Defaults to 20.
         show_degree_indicators (bool, optional):
-            Show degree indicators on planets. Defaults to True.
+            Show degree indicators on planets (classic style only). Defaults to True.
         show_aspect_icons (bool, optional):
-            Show aspect icons on aspect lines. Defaults to True.
+            Show aspect icons on aspect lines (classic style only). Defaults to True.
 
     Public Methods:
         generate_svg_string(minify=False, remove_css_variables=False) -> str:
@@ -1708,9 +1708,11 @@ class ChartDrawer:  # type: ignore[no-redef]
             padding (int, optional):
                 Padding in pixels around chart elements. Defaults to 20.
             show_degree_indicators (bool, optional):
-                Whether to show degree indicators on planets. Defaults to True.
+                Whether to show degree indicators on planets (classic style only).
+                Defaults to True.
             show_aspect_icons (bool, optional):
-                Whether to show aspect icons on aspect lines. Defaults to True.
+                Whether to show aspect icons on aspect lines (classic style only).
+                Defaults to True.
         """
         # =====================================================================
         # STEP 1: Store basic configuration parameters
@@ -3660,6 +3662,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         with open(xml_svg, "r", encoding="utf-8", errors="ignore") as f:
             raw_template = f.read()
 
+        template_data = td.model_dump()
+
         if style == "modern":
             modern_content = self._generate_modern_content(
                 show_zodiac_background_ring=show_zodiac_background_ring,
@@ -3670,7 +3674,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             scale = (2 * self.main_radius) / 100
             wrapped = f'<g transform="scale({scale:.4f})">\n{modern_content}\n</g>'
 
-            overrides = td.model_dump()
+            overrides = dict(template_data)
             # Inject modern wheel into the background circle placeholder;
             # blank out all other classic wheel sub-groups.
             overrides["background_circle"] = wrapped
@@ -3685,9 +3689,9 @@ class ChartDrawer:  # type: ignore[no-redef]
             overrides["makeAspects"] = ""
             template = Template(raw_template).substitute(overrides)
         else:
-            template = Template(raw_template).substitute(td.model_dump())
+            template = Template(raw_template).substitute(template_data)
 
-        logger.debug("Template dictionary includes %s fields", len(td.model_dump()))
+        logger.debug("Template dictionary includes %s fields", len(template_data))
 
         return self._apply_svg_post_processing(template, minify, remove_css_variables)
 

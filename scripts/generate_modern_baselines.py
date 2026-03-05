@@ -36,14 +36,28 @@ RETURN_ISO = "2025-01-09T18:30:00+01:00"
 def _make_john(suffix="", **kwargs):
     name = f"John Lennon - {suffix}" if suffix else "John Lennon"
     return AstrologicalSubjectFactory.from_birth_data(
-        name, *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True, **kwargs
+        name,
+        *JOHN_LENNON_BIRTH_DATA,
+        lng=-2.9916,
+        lat=53.4084,
+        tz_str="Europe/London",
+        online=False,
+        suppress_geonames_warning=True,
+        **kwargs,
     )
 
 
 def _make_paul(suffix="", **kwargs):
     name = f"Paul McCartney - {suffix}" if suffix else "Paul McCartney"
     return AstrologicalSubjectFactory.from_birth_data(
-        name, *PAUL_MCCARTNEY_BIRTH_DATA, suppress_geonames_warning=True, **kwargs
+        name,
+        *PAUL_MCCARTNEY_BIRTH_DATA,
+        lng=-2.9916,
+        lat=53.4084,
+        tz_str="Europe/London",
+        online=False,
+        suppress_geonames_warning=True,
+        **kwargs,
     )
 
 
@@ -60,6 +74,7 @@ def _make_angelina():
         lng=-118.15,
         lat=34.03,
         tz_str="America/Los_Angeles",
+        online=False,
         suppress_geonames_warning=True,
     )
 
@@ -77,6 +92,7 @@ def _make_brad():
         lng=-96.56,
         lat=35.20,
         tz_str="America/Chicago",
+        online=False,
         suppress_geonames_warning=True,
     )
 
@@ -243,6 +259,10 @@ def generate_a8_natal():
     subj = AstrologicalSubjectFactory.from_birth_data(
         "John Lennon Sidereal LAHIRI",
         *JOHN_LENNON_BIRTH_DATA,
+        lng=-2.9916,
+        lat=53.4084,
+        tz_str="Europe/London",
+        online=False,
         zodiac_type="Sidereal",
         sidereal_mode="LAHIRI",
         suppress_geonames_warning=True,
@@ -261,6 +281,10 @@ def generate_a8_natal():
         0,
         "Paris",
         "FR",
+        lng=2.3522,
+        lat=48.8566,
+        tz_str="Europe/Paris",
+        online=False,
         suppress_geonames_warning=True,
     )
     data = ChartDataFactory.create_natal_chart_data(subj)
@@ -362,6 +386,7 @@ def generate_a10_all_points_all_aspects():
         lng=-118.15,
         lat=34.03,
         tz_str="America/Los_Angeles",
+        online=False,
         suppress_geonames_warning=True,
         active_points=ALL_ACTIVE_POINTS,
     )
@@ -377,6 +402,7 @@ def generate_a10_all_points_all_aspects():
         lng=-96.56,
         lat=35.20,
         tz_str="America/Chicago",
+        online=False,
         suppress_geonames_warning=True,
         active_points=ALL_ACTIVE_POINTS,
     )

@@ -889,7 +889,14 @@ Available `style` values: `"classic"` (default) and `"modern"`.
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `show_zodiac_background_ring` | `bool` | `True` | Draw colored zodiac wedges behind the outer planet ring |
+| `show_zodiac_background_ring` | `bool` | `True` | Draw colored zodiac wedges as the outer zodiac annulus around the cusp ring |
+
+**Classic-only constructor arguments** (ignored by the modern style):
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `show_degree_indicators` | `bool` | `True` | Show degree indicators on planets |
+| `show_aspect_icons` | `bool` | `True` | Show aspect icons on aspect lines |
 
 ### Modern Birth Chart
 
