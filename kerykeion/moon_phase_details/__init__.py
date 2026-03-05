@@ -18,4 +18,3 @@ instance.
 from .factory import MoonPhaseDetailsFactory
 
 __all__ = ["MoonPhaseDetailsFactory"]
-

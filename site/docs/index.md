@@ -81,6 +81,7 @@ For more examples, see the [Examples Gallery](/content/examples/).
 ## Reference
 
 -   **[Types & Schemas](/content/docs/schemas)**: Core data models and type definitions.
+-   **[Active Points](/content/docs/active_points)**: Complete reference for all 42 celestial points and presets.
 -   **[Constants](/content/docs/constants)**: Constants for planets, signs, and aspects.
 -   **[Utilities](/content/docs/utilities)**: General utility functions.
 -   **[Settings](/content/docs/settings)**: Global configuration.

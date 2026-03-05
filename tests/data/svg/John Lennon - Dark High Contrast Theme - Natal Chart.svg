@@ -27,6 +27,17 @@
     --kerykeion-color-accent: #f471b5;
     --kerykeion-color-neutral: #1e293b;
     --kerykeion-color-base-100: #0f172a;
+
+    /* Modern Chart */
+    --kerykeion-modern-planet-ring: #1a2540;
+    --kerykeion-modern-planet-ring-outer: #162038;
+    --kerykeion-modern-house-ring: #243050;
+    --kerykeion-modern-stroke: #384a6b;
+    --kerykeion-modern-retrograde: #fb7085;
+    --kerykeion-modern-indicator: #4e607d;
+    --kerykeion-modern-zodiac-bg-0: #0a1020;
+    --kerykeion-modern-zodiac-bg-1: #27303c;
+    --kerykeion-modern-zodiac-bg-opacity: 1;
     --kerykeion-color-info: #0ca5e9;
     --kerykeion-color-info-content: #000000;
     --kerykeion-color-success: #2dd4bf;

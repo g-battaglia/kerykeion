@@ -17,6 +17,17 @@
     /* Main Colors */
     --kerykeion-chart-color-paper-0: #000000;
     --kerykeion-chart-color-paper-1: #ffffff;
+
+    /* Modern Chart */
+    --kerykeion-modern-planet-ring: #f4f4f5;
+    --kerykeion-modern-planet-ring-outer: #e8e8ed;
+    --kerykeion-modern-house-ring: #e4e4e7;
+    --kerykeion-modern-stroke: #d4d4d8;
+    --kerykeion-modern-retrograde: #b03030;
+    --kerykeion-modern-indicator: #8a8278;
+    --kerykeion-modern-zodiac-bg-0: #ff7200;
+    --kerykeion-modern-zodiac-bg-1: #6b3d00;
+    --kerykeion-modern-zodiac-bg-opacity: 0.5;
     --kerykeion-chart-color-zodiac-bg-0: #ff7200;
     --kerykeion-chart-color-zodiac-bg-1: #6b3d00;
     --kerykeion-chart-color-zodiac-bg-2: #69acf1;
@@ -119,9 +130,15 @@
     --kerykeion-chart-color-water-percentage: #630e73;
 
     /* Modalities Percentage */
-    --kerykeion-chart-color-cardinal-percentage: var(--kerykeion-chart-color-fire-percentage);
-    --kerykeion-chart-color-fixed-percentage: var(--kerykeion-chart-color-earth-percentage);
-    --kerykeion-chart-color-mutable-percentage: var(--kerykeion-chart-color-water-percentage);
+    --kerykeion-chart-color-cardinal-percentage: var(
+        --kerykeion-chart-color-fire-percentage
+    );
+    --kerykeion-chart-color-fixed-percentage: var(
+        --kerykeion-chart-color-earth-percentage
+    );
+    --kerykeion-chart-color-mutable-percentage: var(
+        --kerykeion-chart-color-water-percentage
+    );
 
     /* Other */
     --kerykeion-chart-color-house-number: #f00;

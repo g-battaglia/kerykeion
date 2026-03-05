@@ -22,9 +22,26 @@ The main goal of this project is to offer a clean, data-driven approach to astro
 
 Kerykeion also integrates seamlessly with LLM and AI applications.
 
-Here is an example of a birthchart:
+Here are some examples of birth charts:
 
-![John Lenon Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
+<table>
+  <tr>
+    <td align="center"><strong>Classic Default</strong></td>
+    <td align="center"><strong>Classic Dark</strong></td>
+  </tr>
+  <tr>
+    <td><img src="docs/charts/classic_default_natal.svg" width="450" alt="Classic Default Natal Chart"></td>
+    <td><img src="docs/charts/classic_dark_natal.svg" width="450" alt="Classic Dark Natal Chart"></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Modern Default</strong></td>
+    <td align="center"><strong>Modern Dark</strong></td>
+  </tr>
+  <tr>
+    <td><img src="docs/charts/modern_default_natal.svg" width="450" alt="Modern Default Natal Chart"></td>
+    <td><img src="docs/charts/modern_dark_natal.svg" width="450" alt="Modern Dark Natal Chart"></td>
+  </tr>
+</table>
 
 ## **Web API**
 
@@ -59,6 +76,11 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
   - [Minified SVG](#minified-svg)
   - [SVG without CSS Variables](#svg-without-css-variables)
   - [Grid Only SVG](#grid-only-svg)
+- [Modern Chart Style](#modern-chart-style)
+  - [Modern Birth Chart](#modern-birth-chart)
+  - [Modern Synastry Chart](#modern-synastry-chart)
+  - [Modern Transit Chart](#modern-transit-chart)
+  - [Modern Wheel Only](#modern-wheel-only)
 - [Report Generator](#report-generator)
   - [Quick Examples](#quick-examples)
   - [Section Access](#section-access)
@@ -224,7 +246,7 @@ The SVG file is saved under `charts_output/john-lennon-natal.svg`.
 
 **📖 More birth chart examples: [Birth Chart Guide](https://www.kerykeion.net/content/examples/birth-chart)**
 
-![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart.svg)
+![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart.svg)
 
 ### External Birth Chart
 
@@ -256,7 +278,7 @@ output_dir.mkdir(exist_ok=True)
 birth_chart_svg.save_svg(output_path=output_dir, filename="john-lennon-natal-external")
 ```
 
-![John Lennon External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20ExternalNatal%20-%20Natal%20Chart.svg)
+![John Lennon External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20ExternalNatal%20-%20Natal%20Chart.svg)
 
 ### Synastry Chart
 
@@ -338,7 +360,7 @@ transit_chart.save_svg(output_path=output_dir, filename="john-lennon-transit")
 
 **📖 Transit chart guide: [Transit Chart Examples](https://www.kerykeion.net/content/examples/transit-chart)**
 
-![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Transit%20Chart.svg)
+![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Transit%20Chart.svg)
 
 ### Solar Return Chart (Dual Wheel)
 
@@ -383,7 +405,7 @@ solar_return_chart.save_svg(output_path=output_dir, filename="john-lennon-solar-
 
 **📖 Return chart guide: [Dual Return Chart Examples](https://www.kerykeion.net/content/examples/dual-return-chart)**
 
-![John Lennon Solar Return Chart (Dual Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Solar%20Return.svg)
+![John Lennon Solar Return Chart (Dual Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Solar%20Return.svg)
 
 ### Solar Return Chart (Single Wheel)
 
@@ -426,7 +448,7 @@ single_wheel_chart.save_svg(output_path=output_dir, filename="john-lennon-solar-
 
 **📖 Planetary return factory docs: [PlanetaryReturnFactory](https://www.kerykeion.net/content/docs/planetary_return_factory)**
 
-![John Lennon Solar Return Chart (Single Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20Solar%20Return%20-%20SingleReturnChart%20Chart.svg)
+![John Lennon Solar Return Chart (Single Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20Solar%20Return%20-%20SingleReturnChart%20Chart.svg)
 
 ### Lunar Return Chart
 
@@ -472,9 +494,9 @@ single_wheel_chart = ChartDrawer(chart_data=single_wheel_data)
 single_wheel_chart.save_svg(output_path=output_dir, filename="john-lennon-lunar-return-single")
 ```
 
-![John Lennon Lunar Return Chart (Dual Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Lunar%20Return.svg)
+![John Lennon Lunar Return Chart (Dual Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Lunar%20Return.svg)
 
-![John Lennon Lunar Return Chart (Single Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20Lunar%20Return%20-%20SingleReturnChart%20Chart.svg)
+![John Lennon Lunar Return Chart (Single Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20Lunar%20Return%20-%20SingleReturnChart%20Chart.svg)
 
 ### Composite Chart
 
@@ -520,7 +542,7 @@ composite_chart.save_svg(output_path=output_dir, filename="jolie-pitt-composite"
 
 **📖 Composite factory docs: [CompositeSubjectFactory](https://www.kerykeion.net/content/docs/composite_subject_factory)**
 
-![Angelina Jolie and Brad Pitt Composite Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/Angelina%20Jolie%20and%20Brad%20Pitt%20Composite%20Chart%20-%20Composite%20Chart.svg)
+![Angelina Jolie and Brad Pitt Composite Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/Angelina%20Jolie%20and%20Brad%20Pitt%20Composite%20Chart%20-%20Composite%20Chart.svg)
 
 ## Wheel Only Charts
 
@@ -556,7 +578,7 @@ output_dir.mkdir(exist_ok=True)
 birth_chart_svg.save_wheel_only_svg_file(output_path=output_dir, filename="john-lennon-natal-wheel")
 ```
 
-![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Wheel%20Only%20-%20Natal%20Chart%20-%20Wheel%20Only.svg)
+![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Wheel%20Only%20-%20Natal%20Chart%20-%20Wheel%20Only.svg)
 
 ### Wheel Only Birth Chart (External)
 
@@ -586,7 +608,7 @@ output_dir.mkdir(exist_ok=True)
 birth_chart_svg.save_wheel_only_svg_file(output_path=output_dir, filename="john-lennon-natal-wheel-external")
 ```
 
-![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Wheel%20External%20Only%20-%20ExternalNatal%20Chart%20-%20Wheel%20Only.svg)
+![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Wheel%20External%20Only%20-%20ExternalNatal%20Chart%20-%20Wheel%20Only.svg)
 
 ### Synastry Chart
 
@@ -623,7 +645,7 @@ output_dir.mkdir(exist_ok=True)
 synastry_chart.save_wheel_only_svg_file(output_path=output_dir, filename="lennon-mccartney-synastry-wheel")
 ```
 
-![John Lennon and Paul McCartney Synastry](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Wheel%20Synastry%20Only%20-%20Synastry%20Chart%20-%20Wheel%20Only.svg)
+![John Lennon and Paul McCartney Synastry](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Wheel%20Synastry%20Only%20-%20Synastry%20Chart%20-%20Wheel%20Only.svg)
 
 ### Change the Output Directory
 
@@ -746,6 +768,7 @@ The available languages are:
 - IT (Italian)
 - CN (Chinese)
 - DE (German)
+- HI (Hindi)
 
 ### Minified SVG
 
@@ -854,7 +877,144 @@ output_dir.mkdir(exist_ok=True)
 aspect_grid_chart.save_aspect_grid_only_svg_file(output_path=output_dir, filename="lennon-mccartney-aspect-grid")
 ```
 
-![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Aspect%20Grid%20Only%20-%20Natal%20Chart%20-%20Aspect%20Grid%20Only.svg)
+![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Aspect%20Grid%20Only%20-%20Natal%20Chart%20-%20Aspect%20Grid%20Only.svg)
+
+## Modern Chart Style
+
+All chart types support a **modern** concentric-ring layout as an alternative to the classic wheel. Pass `style="modern"` to any `save_svg()` or `save_wheel_only_svg_file()` call. The modern style works with all six themes.
+
+Available `style` values: `"classic"` (default) and `"modern"`.
+
+**Modern-only keyword arguments** (ignored by the classic style):
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `show_zodiac_background_ring` | `bool` | `True` | Draw colored zodiac wedges behind the outer planet ring |
+
+### Modern Birth Chart
+
+```python
+from pathlib import Path
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+john = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
+
+chart_data = ChartDataFactory.create_natal_chart_data(john)
+chart = ChartDrawer(chart_data=chart_data)
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+chart.save_svg(output_path=output_dir, filename="john-lennon-modern", style="modern")
+```
+
+![John Lennon Modern Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern.svg)
+
+### Modern Synastry Chart
+
+```python
+from pathlib import Path
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+john = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
+yoko = AstrologicalSubjectFactory.from_birth_data(
+    "Yoko Ono", 1933, 2, 18, 20, 30,
+    lng=139.6917,
+    lat=35.6895,
+    tz_str="Asia/Tokyo",
+    online=False,
+)
+
+chart_data = ChartDataFactory.create_synastry_chart_data(john, yoko)
+chart = ChartDrawer(chart_data=chart_data)
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+chart.save_svg(output_path=output_dir, filename="lennon-ono-synastry-modern", style="modern")
+```
+
+![John Lennon Modern Synastry Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Synastry%20Chart%20-%20Modern.svg)
+
+### Modern Transit Chart
+
+```python
+from pathlib import Path
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+john = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
+
+transit = AstrologicalSubjectFactory.from_birth_data(
+    "Transit", 2025, 3, 4, 12, 0,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
+
+chart_data = ChartDataFactory.create_transit_chart_data(john, transit)
+chart = ChartDrawer(chart_data=chart_data)
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+chart.save_svg(output_path=output_dir, filename="lennon-transit-modern", style="modern")
+```
+
+![John Lennon Modern Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Transit%20Chart%20-%20Modern.svg)
+
+### Modern Wheel Only
+
+```python
+from pathlib import Path
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+john = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
+
+chart_data = ChartDataFactory.create_natal_chart_data(john)
+chart = ChartDrawer(chart_data=chart_data, theme="dark")
+
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+chart.save_wheel_only_svg_file(
+    output_path=output_dir,
+    filename="john-lennon-modern-wheel-dark",
+    style="modern",
+)
+```
+
+![John Lennon Modern Wheel Only](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern%20Wheel%20Only.svg)
+
+**📖 Modern chart examples: [Modern Charts Guide](https://www.kerykeion.net/content/examples/modern-charts)**
 
 ## Report Generator
 
@@ -1013,10 +1173,14 @@ print(dual_chart_result.aspects[0])
 
 # Each AspectModel includes:
 # - p1_name, p2_name: Planet/point names
+# - p1_owner, p2_owner: Subject name string (e.g., "Jack", "Jane")
 # - aspect: Aspect type (conjunction, trine, square, etc.)
-# - orbit: Orb tolerance in degrees
+# - orbit: Actual orb in degrees
 # - aspect_degrees: Exact degrees for the aspect (0, 60, 90, 120, 180, etc.)
-# - color: Hex color code for visualization
+# - diff: Absolute angular difference between the two points
+# - p1_abs_pos, p2_abs_pos: Absolute ecliptic positions
+# - p1_speed, p2_speed: Daily speed of each point
+# - aspect_movement: "Applying", "Separating", or "Static"
 ```
 
 **📖 Aspects documentation: [Aspects Factory Guide](https://www.kerykeion.net/content/docs/aspects)**
@@ -1441,6 +1605,7 @@ print(overview.model_dump_json(exclude_none=True, indent=2))
 - **Examples Gallery**: [kerykeion.net/examples](https://www.kerykeion.net/content/examples/)
 - **API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/)
 - **Astrologer API Docs**: [kerykeion.net/astrologer-api](https://www.kerykeion.net/content/astrologer-api/)
+- **Migration Guide (v4 → v5)**: [Migration Guide](https://www.kerykeion.net/content/docs/migration)
 
 ## Projects built with Kerykeion
 

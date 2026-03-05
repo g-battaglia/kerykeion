@@ -318,7 +318,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 
 ```python
 chart_drawer = ChartDrawer(chart_data=chart_data)
-svg_string = chart_drawer.get_svg_string()
+svg_string = chart_drawer.generate_svg_string()
 ```
 
 ### Why are Trans-Neptunian objects missing from my chart?

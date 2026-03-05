@@ -739,7 +739,7 @@ class TestNatalChartLanguages:
     @pytest.mark.parametrize(
         "lang,name,yr,mo,dy,hr,mn,city,nation",
         LANGUAGE_SUBJECTS,
-        ids=[l[0] for l in LANGUAGE_SUBJECTS],
+        ids=[lang[0] for lang in LANGUAGE_SUBJECTS],
     )
     def test_language_natal_chart(self, lang, name, yr, mo, dy, hr, mn, city, nation):
         subj = AstrologicalSubjectFactory.from_birth_data(
@@ -1797,7 +1797,7 @@ class TestPartialViews:
 class TestChartThemes:
     """All available themes produce valid SVG."""
 
-    THEMES = ["classic", "dark", "dark-high-contrast", "light", "black-and-white", "strawberry"]
+    THEMES = ("classic", "dark", "dark-high-contrast", "light", "black-and-white", "strawberry")
 
     @pytest.mark.parametrize("theme", THEMES)
     def test_theme_produces_valid_svg(self, theme):
@@ -1938,6 +1938,882 @@ class TestOutputToFile:
 # ---------------------------------------------------------------------------
 # Missing edge-case tests (migrated from tests/edge_cases/test_edge_cases.py)
 # ---------------------------------------------------------------------------
+
+
+# =============================================================================
+# 12. TestModernChartStyle
+# =============================================================================
+
+
+class TestModernChartStyle:
+    """Modern chart style golden-file regression and feature tests."""
+
+    # --- Natal ---
+
+    def test_modern_natal_chart(self):
+        john = _make_john()
+        data = ChartDataFactory.create_natal_chart_data(john)
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Natal Chart - Modern.svg", svg)
+
+    def test_modern_natal_dark_theme(self):
+        subj = _make_john("Dark Theme")
+        data = ChartDataFactory.create_natal_chart_data(subj)
+        svg = ChartDrawer(data, theme="dark").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Dark Theme - Natal Chart - Modern.svg", svg)
+
+    def test_modern_natal_light_theme(self):
+        subj = _make_john("Light Theme")
+        data = ChartDataFactory.create_natal_chart_data(subj)
+        svg = ChartDrawer(data, theme="light").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Light Theme - Natal Chart - Modern.svg", svg)
+
+    def test_modern_natal_bw_theme(self):
+        subj = _make_john("Black and White Theme")
+        data = ChartDataFactory.create_natal_chart_data(subj)
+        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Black and White Theme - Natal Chart - Modern.svg", svg)
+
+    def test_modern_natal_strawberry_theme(self):
+        subj = _make_john("Strawberry Theme")
+        data = ChartDataFactory.create_natal_chart_data(subj)
+        svg = ChartDrawer(data, theme="strawberry").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Strawberry Theme - Natal Chart - Modern.svg", svg)
+
+    def test_modern_natal_dark_high_contrast_theme(self):
+        subj = _make_john("Dark High Contrast Theme")
+        data = ChartDataFactory.create_natal_chart_data(subj)
+        svg = ChartDrawer(data, theme="dark-high-contrast").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Dark High Contrast Theme - Natal Chart - Modern.svg", svg)
+
+    # --- Synastry ---
+
+    def test_modern_synastry_chart(self):
+        john, paul = _make_john(), _make_paul()
+        data = ChartDataFactory.create_synastry_chart_data(john, paul)
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Synastry Chart - Modern.svg", svg)
+
+    def test_modern_synastry_dark_theme(self):
+        john = _make_john("Dark Theme Synastry")
+        paul = _make_paul()
+        data = ChartDataFactory.create_synastry_chart_data(john, paul)
+        svg = ChartDrawer(data, theme="dark").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Dark Theme Synastry - Synastry Chart - Modern.svg", svg)
+
+    # --- Transit ---
+
+    def test_modern_transit_chart(self):
+        john, paul = _make_john(), _make_paul()
+        data = ChartDataFactory.create_transit_chart_data(john, paul)
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Transit Chart - Modern.svg", svg)
+
+    def test_modern_transit_dark_theme(self):
+        john = _make_john("Dark Theme Transit")
+        paul = _make_paul()
+        data = ChartDataFactory.create_transit_chart_data(john, paul)
+        svg = ChartDrawer(data, theme="dark").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Dark Theme Transit - Transit Chart - Modern.svg", svg)
+
+    # --- Composite ---
+
+    def test_modern_composite_chart(self):
+        angelina, brad = _make_angelina(), _make_brad()
+        factory = CompositeSubjectFactory(angelina, brad)
+        model = factory.get_midpoint_composite_subject_model()
+        data = ChartDataFactory.create_composite_chart_data(model)
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Modern.svg", svg)
+
+    # --- Wheel Only ---
+
+    def test_modern_wheel_only_natal(self):
+        john = _make_john()
+        data = ChartDataFactory.create_natal_chart_data(john)
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Natal Chart - Modern Wheel Only.svg", svg)
+
+    def test_modern_wheel_only_dark_natal(self):
+        subj = _make_john("Dark Theme")
+        data = ChartDataFactory.create_natal_chart_data(subj)
+        svg = ChartDrawer(data, theme="dark").generate_wheel_only_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Dark Theme - Natal Chart - Modern Wheel Only.svg", svg)
+
+    def test_modern_wheel_only_synastry(self):
+        john = _make_john()
+        paul = _make_paul()
+        data = ChartDataFactory.create_synastry_chart_data(john, paul)
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Synastry Chart - Modern Wheel Only.svg", svg)
+
+    def test_modern_wheel_only_transit(self):
+        john = _make_john()
+        paul = _make_paul()
+        data = ChartDataFactory.create_transit_chart_data(john, paul)
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Transit Chart - Modern Wheel Only.svg", svg)
+
+    # --- Modern-only parameters ---
+
+    def test_modern_no_zodiac_background_ring(self):
+        john = _make_john()
+        data = ChartDataFactory.create_natal_chart_data(john)
+        svg = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=False)
+        assert isinstance(svg, str)
+        assert "<svg" in svg
+
+    def test_modern_no_zodiac_background_ring_synastry(self):
+        john, paul = _make_john(), _make_paul()
+        data = ChartDataFactory.create_synastry_chart_data(john, paul)
+        svg = ChartDrawer(data).generate_svg_string(
+            style="modern",
+            show_zodiac_background_ring=False,
+        )
+        assert isinstance(svg, str)
+        assert "<svg" in svg
+
+    # --- Save to file ---
+
+    def test_save_modern_svg_creates_file(self, tmp_path):
+        john = _make_john()
+        data = ChartDataFactory.create_natal_chart_data(john)
+        drawer = ChartDrawer(data)
+        drawer.save_svg(output_path=str(tmp_path), filename="modern_test", style="modern")
+        expected_file = tmp_path / "modern_test.svg"
+        assert expected_file.exists()
+        content = expected_file.read_text(encoding="utf-8")
+        assert "<svg" in content
+
+    def test_save_modern_wheel_only_creates_file(self, tmp_path):
+        john = _make_john()
+        data = ChartDataFactory.create_natal_chart_data(john)
+        drawer = ChartDrawer(data)
+        drawer.save_wheel_only_svg_file(output_path=str(tmp_path), filename="modern_wheel_test", style="modern")
+        expected_file = tmp_path / "modern_wheel_test.svg"
+        assert expected_file.exists()
+        content = expected_file.read_text(encoding="utf-8")
+        assert "<svg" in content
+
+    # --- Return charts ---
+
+    def test_modern_single_return_solar(self):
+        john = _make_john()
+        factory = _make_return_factory(john)
+        sr = factory.next_return_from_iso_formatted_time("2025-01-09T18:30:00+01:00", return_type="Solar")
+        data = ChartDataFactory.create_single_wheel_return_chart_data(sr)
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon Solar Return - SingleReturnChart Chart - Modern.svg", svg)
+
+    def test_modern_dual_return_solar(self):
+        john = _make_john()
+        factory = _make_return_factory(john)
+        sr = factory.next_return_from_iso_formatted_time("2025-01-09T18:30:00+01:00", return_type="Solar")
+        data = ChartDataFactory.create_return_chart_data(john, sr)
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - DualReturnChart Chart - Solar Return - Modern.svg", svg)
+
+    # --- All themes produce valid modern SVG ---
+
+    THEMES = ("classic", "dark", "dark-high-contrast", "light", "black-and-white", "strawberry")
+
+    @pytest.mark.parametrize("theme", THEMES)
+    def test_modern_theme_produces_valid_svg(self, theme):
+        subj = _make_john()
+        data = ChartDataFactory.create_natal_chart_data(subj)
+        svg = ChartDrawer(data, theme=theme).generate_svg_string(style="modern")
+        assert isinstance(svg, str)
+        assert len(svg) > 100
+        assert "<svg" in svg
+
+    # =====================================================================
+    # A1. Synastry — additional themes + language
+    # =====================================================================
+
+    def test_modern_synastry_light_theme(self):
+        john = _make_john("Light Theme Synastry")
+        paul = _make_paul()
+        data = ChartDataFactory.create_synastry_chart_data(john, paul)
+        svg = ChartDrawer(data, theme="light").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Light Theme Synastry - Synastry Chart - Modern.svg", svg)
+
+    def test_modern_synastry_bw_theme(self):
+        john = _make_john("BW Theme Synastry")
+        paul = _make_paul()
+        data = ChartDataFactory.create_synastry_chart_data(john, paul)
+        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - BW Theme Synastry - Synastry Chart - Modern.svg", svg)
+
+    def test_modern_synastry_strawberry_theme(self):
+        john = _make_john("Strawberry Theme Synastry")
+        paul = _make_paul()
+        data = ChartDataFactory.create_synastry_chart_data(john, paul)
+        svg = ChartDrawer(data, theme="strawberry").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Strawberry Theme Synastry - Synastry Chart - Modern.svg", svg)
+
+    def test_modern_synastry_french(self):
+        john = _make_john("FR Synastry")
+        paul = _make_paul()
+        data = ChartDataFactory.create_synastry_chart_data(john, paul)
+        svg = ChartDrawer(data, chart_language="FR").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - FR Synastry - Synastry Chart - Modern.svg", svg)
+
+    # =====================================================================
+    # A2. Transit — additional themes + language
+    # =====================================================================
+
+    def test_modern_transit_light_theme(self):
+        john = _make_john("Light Theme Transit")
+        paul = _make_paul()
+        data = ChartDataFactory.create_transit_chart_data(john, paul)
+        svg = ChartDrawer(data, theme="light").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Light Theme Transit - Transit Chart - Modern.svg", svg)
+
+    def test_modern_transit_bw_theme(self):
+        john = _make_john("BW Theme Transit")
+        paul = _make_paul()
+        data = ChartDataFactory.create_transit_chart_data(john, paul)
+        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - BW Theme Transit - Transit Chart - Modern.svg", svg)
+
+    def test_modern_transit_strawberry_theme(self):
+        john = _make_john("Strawberry Theme Transit")
+        paul = _make_paul()
+        data = ChartDataFactory.create_transit_chart_data(john, paul)
+        svg = ChartDrawer(data, theme="strawberry").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Strawberry Theme Transit - Transit Chart - Modern.svg", svg)
+
+    def test_modern_transit_spanish(self):
+        john = _make_john("ES Transit")
+        paul = _make_paul()
+        data = ChartDataFactory.create_transit_chart_data(john, paul)
+        svg = ChartDrawer(data, chart_language="ES").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - ES Transit - Transit Chart - Modern.svg", svg)
+
+    # =====================================================================
+    # A3. Composite — themes, wheel-only, language
+    # =====================================================================
+
+    def test_modern_composite_dark_theme(self):
+        angelina, brad = _make_angelina(), _make_brad()
+        factory = CompositeSubjectFactory(angelina, brad)
+        model = factory.get_midpoint_composite_subject_model()
+        data = ChartDataFactory.create_composite_chart_data(model)
+        svg = ChartDrawer(data, theme="dark").generate_svg_string(style="modern")
+        compare_chart_svg(
+            "Angelina Jolie and Brad Pitt Composite Chart - Dark Theme - Composite Chart - Modern.svg", svg
+        )
+
+    def test_modern_composite_bw_theme(self):
+        angelina, brad = _make_angelina(), _make_brad()
+        factory = CompositeSubjectFactory(angelina, brad)
+        model = factory.get_midpoint_composite_subject_model()
+        data = ChartDataFactory.create_composite_chart_data(model)
+        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string(style="modern")
+        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - BW Theme - Composite Chart - Modern.svg", svg)
+
+    def test_modern_composite_strawberry_theme(self):
+        angelina, brad = _make_angelina(), _make_brad()
+        factory = CompositeSubjectFactory(angelina, brad)
+        model = factory.get_midpoint_composite_subject_model()
+        data = ChartDataFactory.create_composite_chart_data(model)
+        svg = ChartDrawer(data, theme="strawberry").generate_svg_string(style="modern")
+        compare_chart_svg(
+            "Angelina Jolie and Brad Pitt Composite Chart - Strawberry Theme - Composite Chart - Modern.svg", svg
+        )
+
+    def test_modern_composite_wheel_only(self):
+        angelina, brad = _make_angelina(), _make_brad()
+        factory = CompositeSubjectFactory(angelina, brad)
+        model = factory.get_midpoint_composite_subject_model()
+        data = ChartDataFactory.create_composite_chart_data(model)
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="modern")
+        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Modern Wheel Only.svg", svg)
+
+    def test_modern_composite_italian(self):
+        angelina, brad = _make_angelina(), _make_brad()
+        factory = CompositeSubjectFactory(angelina, brad)
+        model = factory.get_midpoint_composite_subject_model()
+        data = ChartDataFactory.create_composite_chart_data(model)
+        svg = ChartDrawer(data, chart_language="IT").generate_svg_string(style="modern")
+        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - IT - Composite Chart - Modern.svg", svg)
+
+    # =====================================================================
+    # A4. DualReturn Solar — additional themes
+    # =====================================================================
+
+    RETURN_ISO = "2025-01-09T18:30:00+01:00"
+
+    def test_modern_dual_return_solar_dark(self):
+        john = _make_john()
+        factory = _make_return_factory(john)
+        sr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Solar")
+        data = ChartDataFactory.create_return_chart_data(john, sr)
+        svg = ChartDrawer(data, theme="dark").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Dark Theme - DualReturnChart Chart - Solar Return - Modern.svg", svg)
+
+    def test_modern_dual_return_solar_bw(self):
+        john = _make_john()
+        factory = _make_return_factory(john)
+        sr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Solar")
+        data = ChartDataFactory.create_return_chart_data(john, sr)
+        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - BW Theme - DualReturnChart Chart - Solar Return - Modern.svg", svg)
+
+    # =====================================================================
+    # A5. DualReturn Lunar — chart type entirely new for modern
+    # =====================================================================
+
+    def test_modern_dual_return_lunar(self):
+        john = _make_john()
+        factory = _make_return_factory(john)
+        lr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Lunar")
+        data = ChartDataFactory.create_return_chart_data(john, lr)
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - DualReturnChart Chart - Lunar Return - Modern.svg", svg)
+
+    def test_modern_dual_return_lunar_dark(self):
+        john = _make_john()
+        factory = _make_return_factory(john)
+        lr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Lunar")
+        data = ChartDataFactory.create_return_chart_data(john, lr)
+        svg = ChartDrawer(data, theme="dark").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Dark Theme - DualReturnChart Chart - Lunar Return - Modern.svg", svg)
+
+    def test_modern_dual_return_lunar_bw(self):
+        john = _make_john()
+        factory = _make_return_factory(john)
+        lr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Lunar")
+        data = ChartDataFactory.create_return_chart_data(john, lr)
+        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - BW Theme - DualReturnChart Chart - Lunar Return - Modern.svg", svg)
+
+    # =====================================================================
+    # A6. SingleReturn Solar — additional theme + wheel-only
+    # =====================================================================
+
+    def test_modern_single_return_solar_dark(self):
+        john = _make_john()
+        factory = _make_return_factory(john)
+        sr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Solar")
+        data = ChartDataFactory.create_single_wheel_return_chart_data(sr)
+        svg = ChartDrawer(data, theme="dark").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon Solar Return - Dark Theme - SingleReturnChart Chart - Modern.svg", svg)
+
+    def test_modern_single_return_solar_wheel_only(self):
+        john = _make_john()
+        factory = _make_return_factory(john)
+        sr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Solar")
+        data = ChartDataFactory.create_single_wheel_return_chart_data(sr)
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="modern")
+        compare_chart_svg("John Lennon Solar Return - SingleReturnChart Chart - Modern Wheel Only.svg", svg)
+
+    # =====================================================================
+    # A7. SingleReturn Lunar — chart type entirely new for modern
+    # =====================================================================
+
+    def test_modern_single_return_lunar(self):
+        john = _make_john()
+        factory = _make_return_factory(john)
+        lr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Lunar")
+        data = ChartDataFactory.create_single_wheel_return_chart_data(lr)
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon Lunar Return - SingleReturnChart Chart - Modern.svg", svg)
+
+    def test_modern_single_return_lunar_dark(self):
+        john = _make_john()
+        factory = _make_return_factory(john)
+        lr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Lunar")
+        data = ChartDataFactory.create_single_wheel_return_chart_data(lr)
+        svg = ChartDrawer(data, theme="dark").generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon Lunar Return - Dark Theme - SingleReturnChart Chart - Modern.svg", svg)
+
+    def test_modern_single_return_lunar_wheel_only(self):
+        john = _make_john()
+        factory = _make_return_factory(john)
+        lr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Lunar")
+        data = ChartDataFactory.create_single_wheel_return_chart_data(lr)
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="modern")
+        compare_chart_svg("John Lennon Lunar Return - SingleReturnChart Chart - Modern Wheel Only.svg", svg)
+
+    # =====================================================================
+    # A8. Natal — sidereal + language
+    # =====================================================================
+
+    def test_modern_natal_sidereal_lahiri(self):
+        subj = _make_sidereal_subject("Sidereal LAHIRI", "LAHIRI")
+        data = ChartDataFactory.create_natal_chart_data(subj)
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - Sidereal LAHIRI - Natal Chart - Modern.svg", svg)
+
+    def test_modern_natal_french(self):
+        subj = AstrologicalSubjectFactory.from_birth_data(
+            "Jeanne Moreau",
+            1928,
+            1,
+            23,
+            10,
+            0,
+            "Paris",
+            "FR",
+            suppress_geonames_warning=True,
+        )
+        data = ChartDataFactory.create_natal_chart_data(subj)
+        svg = ChartDrawer(data, chart_language="FR").generate_svg_string(style="modern")
+        compare_chart_svg("Jeanne Moreau - Natal Chart - Modern.svg", svg)
+
+    # =====================================================================
+    # B1. Modern differs from Classic
+    # =====================================================================
+
+    def test_modern_differs_from_classic_natal(self):
+        """Modern style produces fundamentally different SVG than classic."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        classic = ChartDrawer(data).generate_svg_string(style="classic")
+        modern = ChartDrawer(data).generate_svg_string(style="modern")
+        assert classic != modern
+
+    def test_modern_differs_from_classic_synastry(self):
+        """Modern dual-chart path produces different SVG than classic."""
+        data = ChartDataFactory.create_synastry_chart_data(_make_john(), _make_paul())
+        classic = ChartDrawer(data).generate_svg_string(style="classic")
+        modern = ChartDrawer(data).generate_svg_string(style="modern")
+        assert classic != modern
+
+    # =====================================================================
+    # B2. show_zodiac_background_ring changes output
+    # =====================================================================
+
+    def test_zodiac_bg_ring_changes_output_natal(self):
+        """show_zodiac_background_ring=False produces different SVG than True."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        with_ring = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=True)
+        without_ring = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=False)
+        assert with_ring != without_ring
+
+    def test_zodiac_bg_ring_changes_output_synastry(self):
+        """show_zodiac_background_ring=False changes dual chart output too."""
+        data = ChartDataFactory.create_synastry_chart_data(_make_john(), _make_paul())
+        with_ring = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=True)
+        without_ring = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=False)
+        assert with_ring != without_ring
+
+    # =====================================================================
+    # A9. No zodiac background ring — baseline tests
+    # =====================================================================
+
+    def test_modern_natal_no_zodiac_ring_baseline(self):
+        """Natal chart without zodiac background ring."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john("No Zodiac Ring"))
+        svg = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=False)
+        compare_chart_svg("John Lennon - No Zodiac Ring - Natal Chart - Modern.svg", svg)
+
+    def test_modern_synastry_no_zodiac_ring_baseline(self):
+        """Synastry chart without zodiac background ring."""
+        john, paul = _make_john("No Zodiac Ring Synastry"), _make_paul()
+        data = ChartDataFactory.create_synastry_chart_data(john, paul)
+        svg = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=False)
+        compare_chart_svg("John Lennon - No Zodiac Ring Synastry - Synastry Chart - Modern.svg", svg)
+
+    def test_modern_composite_no_zodiac_ring_baseline(self):
+        """Composite chart without zodiac background ring."""
+        angelina, brad = _make_angelina(), _make_brad()
+        factory = CompositeSubjectFactory(angelina, brad)
+        model = factory.get_midpoint_composite_subject_model()
+        data = ChartDataFactory.create_composite_chart_data(model)
+        svg = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=False)
+        compare_chart_svg(
+            "Angelina Jolie and Brad Pitt Composite Chart - No Zodiac Ring - Composite Chart - Modern.svg", svg
+        )
+
+    def test_modern_single_return_no_zodiac_ring_baseline(self):
+        """Single return chart without zodiac background ring."""
+        john = _make_john()
+        factory = _make_return_factory(john)
+        sr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Solar")
+        data = ChartDataFactory.create_single_wheel_return_chart_data(sr)
+        svg = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=False)
+        compare_chart_svg("John Lennon Solar Return - No Zodiac Ring - SingleReturnChart Chart - Modern.svg", svg)
+
+    # =====================================================================
+    # B2b. Zodiac ring structural assertions
+    # =====================================================================
+
+    def test_no_zodiac_ring_omits_background_group(self):
+        """When zodiac ring is OFF, ZodiacBackgrounds group is absent."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        svg = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=False)
+        assert 'kr:node="ZodiacBackgrounds"' not in svg
+        assert "kr:node='ZodiacBackgrounds'" not in svg
+
+    def test_with_zodiac_ring_has_background_group(self):
+        """When zodiac ring is ON, ZodiacBackgrounds group is present."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        svg = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=True)
+        assert 'kr:node="ZodiacBackgrounds"' in svg or "kr:node='ZodiacBackgrounds'" in svg
+
+    def test_no_zodiac_ring_no_scale_wrapper(self):
+        """When zodiac ring is OFF, no scale transform wrapper is applied."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        svg_off = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=False)
+        svg_on = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=True)
+        from kerykeion.charts.draw_modern import ZODIAC_BG_SCALE
+
+        scale_pattern = f"scale({ZODIAC_BG_SCALE:.6f})"
+        assert scale_pattern not in svg_off
+        assert scale_pattern in svg_on
+
+    def test_no_zodiac_ring_smaller_svg_size(self):
+        """SVG without zodiac ring should be smaller (less content)."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        svg_with = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=True)
+        svg_without = ChartDrawer(data).generate_svg_string(style="modern", show_zodiac_background_ring=False)
+        assert len(svg_without) < len(svg_with)
+
+    # =====================================================================
+    # B3. SVG contains modern-specific markers
+    # =====================================================================
+
+    def test_modern_natal_contains_horoscope_node(self):
+        """Modern natal SVG contains kr:node='ModernHoroscope'."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        assert 'kr:node="ModernHoroscope"' in svg or "kr:node='ModernHoroscope'" in svg
+
+    def test_modern_synastry_contains_dual_node(self):
+        """Modern synastry SVG contains kr:node='ModernDualHoroscope'."""
+        data = ChartDataFactory.create_synastry_chart_data(_make_john(), _make_paul())
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        assert 'kr:node="ModernDualHoroscope"' in svg or "kr:node='ModernDualHoroscope'" in svg
+
+    def test_modern_blanks_classic_groups(self):
+        """Modern SVG contains modern node but not classic zodiac ring content."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        classic = ChartDrawer(data).generate_svg_string(style="classic")
+        modern = ChartDrawer(data).generate_svg_string(style="modern")
+        # Classic has zodiac group content; modern replaces it
+        assert 'kr:node="ModernHoroscope"' not in classic and "kr:node='ModernHoroscope'" not in classic
+        assert 'kr:node="ModernHoroscope"' in modern or "kr:node='ModernHoroscope'" in modern
+
+    # =====================================================================
+    # B4. Edge cases & robustness
+    # =====================================================================
+
+    def test_modern_kwargs_ignored_by_classic(self):
+        """show_zodiac_background_ring is silently ignored when style='classic'."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        normal = ChartDrawer(data).generate_svg_string(style="classic")
+        with_kwarg = ChartDrawer(data).generate_svg_string(style="classic", show_zodiac_background_ring=False)
+        assert normal == with_kwarg
+
+    def test_modern_all_active_points_does_not_crash(self):
+        """Modern chart with all active points generates valid SVG."""
+        from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
+
+        john = _make_john("All Active Points Modern", active_points=ALL_ACTIVE_POINTS)
+        data = ChartDataFactory.create_natal_chart_data(john, active_points=ALL_ACTIVE_POINTS)
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        assert isinstance(svg, str)
+        assert len(svg) > 100
+        assert "<svg" in svg
+
+    def test_save_svg_default_filename_modern_suffix(self, tmp_path):
+        """save_svg with style='modern' and no filename adds ' - Modern' suffix."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        drawer = ChartDrawer(data)
+        drawer.save_svg(output_path=str(tmp_path), style="modern")
+        files = list(tmp_path.glob("*Modern*.svg"))
+        assert len(files) == 1
+        assert " - Modern" in files[0].stem
+
+    def test_save_wheel_only_default_filename_modern_suffix(self, tmp_path):
+        """save_wheel_only with style='modern' adds ' - Modern Wheel Only' suffix."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        drawer = ChartDrawer(data)
+        drawer.save_wheel_only_svg_file(output_path=str(tmp_path), style="modern")
+        files = list(tmp_path.glob("*Modern Wheel Only*.svg"))
+        assert len(files) == 1
+        assert " - Modern Wheel Only" in files[0].stem
+
+    # =====================================================================
+    # A10. All active points + all active aspects — modern style baselines
+    # =====================================================================
+
+    def test_modern_all_points_all_aspects_natal(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS
+
+        john = _make_john("All Points All Aspects", active_points=ALL_ACTIVE_POINTS)
+        data = ChartDataFactory.create_natal_chart_data(
+            john,
+            active_points=ALL_ACTIVE_POINTS,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - All Points All Aspects - Natal Chart - Modern.svg", svg)
+
+    def test_modern_all_points_all_aspects_natal_wheel_only(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS
+
+        john = _make_john("All Points All Aspects", active_points=ALL_ACTIVE_POINTS)
+        data = ChartDataFactory.create_natal_chart_data(
+            john,
+            active_points=ALL_ACTIVE_POINTS,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="modern")
+        compare_chart_svg("John Lennon - All Points All Aspects - Natal Chart - Modern Wheel Only.svg", svg)
+
+    def test_modern_all_points_all_aspects_synastry(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS
+
+        john = _make_john("All Points All Aspects", active_points=ALL_ACTIVE_POINTS)
+        paul = _make_paul("All Points All Aspects", active_points=ALL_ACTIVE_POINTS)
+        data = ChartDataFactory.create_synastry_chart_data(
+            john,
+            paul,
+            active_points=ALL_ACTIVE_POINTS,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - All Points All Aspects - Synastry Chart - Modern.svg", svg)
+
+    def test_modern_all_points_all_aspects_synastry_wheel_only(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS
+
+        john = _make_john("All Points All Aspects", active_points=ALL_ACTIVE_POINTS)
+        paul = _make_paul("All Points All Aspects", active_points=ALL_ACTIVE_POINTS)
+        data = ChartDataFactory.create_synastry_chart_data(
+            john,
+            paul,
+            active_points=ALL_ACTIVE_POINTS,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="modern")
+        compare_chart_svg("John Lennon - All Points All Aspects - Synastry Chart - Modern Wheel Only.svg", svg)
+
+    def test_modern_all_points_all_aspects_transit(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS
+
+        john = _make_john("All Points All Aspects", active_points=ALL_ACTIVE_POINTS)
+        paul = _make_paul("All Points All Aspects", active_points=ALL_ACTIVE_POINTS)
+        data = ChartDataFactory.create_transit_chart_data(
+            john,
+            paul,
+            active_points=ALL_ACTIVE_POINTS,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg("John Lennon - All Points All Aspects - Transit Chart - Modern.svg", svg)
+
+    def test_modern_all_points_all_aspects_transit_wheel_only(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS
+
+        john = _make_john("All Points All Aspects", active_points=ALL_ACTIVE_POINTS)
+        paul = _make_paul("All Points All Aspects", active_points=ALL_ACTIVE_POINTS)
+        data = ChartDataFactory.create_transit_chart_data(
+            john,
+            paul,
+            active_points=ALL_ACTIVE_POINTS,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="modern")
+        compare_chart_svg("John Lennon - All Points All Aspects - Transit Chart - Modern Wheel Only.svg", svg)
+
+    def test_modern_all_points_all_aspects_composite(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS
+
+        angelina = AstrologicalSubjectFactory.from_birth_data(
+            "Angelina Jolie",
+            1975,
+            6,
+            4,
+            9,
+            9,
+            "Los Angeles",
+            "US",
+            lng=-118.15,
+            lat=34.03,
+            tz_str="America/Los_Angeles",
+            suppress_geonames_warning=True,
+            active_points=ALL_ACTIVE_POINTS,
+        )
+        brad = AstrologicalSubjectFactory.from_birth_data(
+            "Brad Pitt",
+            1963,
+            12,
+            18,
+            6,
+            31,
+            "Shawnee",
+            "US",
+            lng=-96.56,
+            lat=35.20,
+            tz_str="America/Chicago",
+            suppress_geonames_warning=True,
+            active_points=ALL_ACTIVE_POINTS,
+        )
+        factory = CompositeSubjectFactory(angelina, brad)
+        model = factory.get_midpoint_composite_subject_model()
+        data = ChartDataFactory.create_composite_chart_data(
+            model,
+            active_points=ALL_ACTIVE_POINTS,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg(
+            "Angelina Jolie and Brad Pitt Composite Chart - All Points All Aspects - Composite Chart - Modern.svg",
+            svg,
+        )
+
+    def test_modern_all_points_all_aspects_composite_wheel_only(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS
+
+        angelina = AstrologicalSubjectFactory.from_birth_data(
+            "Angelina Jolie",
+            1975,
+            6,
+            4,
+            9,
+            9,
+            "Los Angeles",
+            "US",
+            lng=-118.15,
+            lat=34.03,
+            tz_str="America/Los_Angeles",
+            suppress_geonames_warning=True,
+            active_points=ALL_ACTIVE_POINTS,
+        )
+        brad = AstrologicalSubjectFactory.from_birth_data(
+            "Brad Pitt",
+            1963,
+            12,
+            18,
+            6,
+            31,
+            "Shawnee",
+            "US",
+            lng=-96.56,
+            lat=35.20,
+            tz_str="America/Chicago",
+            suppress_geonames_warning=True,
+            active_points=ALL_ACTIVE_POINTS,
+        )
+        factory = CompositeSubjectFactory(angelina, brad)
+        model = factory.get_midpoint_composite_subject_model()
+        data = ChartDataFactory.create_composite_chart_data(
+            model,
+            active_points=ALL_ACTIVE_POINTS,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="modern")
+        compare_chart_svg(
+            "Angelina Jolie and Brad Pitt Composite Chart - All Points All Aspects - Composite Chart - Modern Wheel Only.svg",
+            svg,
+        )
+
+    def test_modern_all_points_all_aspects_dual_return_solar(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS
+
+        john = _make_john(active_points=ALL_ACTIVE_POINTS)
+        factory = _make_return_factory(john)
+        sr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Solar")
+        data = ChartDataFactory.create_return_chart_data(
+            john,
+            sr,
+            active_points=ALL_ACTIVE_POINTS,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg(
+            "John Lennon - All Points All Aspects - DualReturnChart Chart - Solar Return - Modern.svg",
+            svg,
+        )
+
+    def test_modern_all_points_all_aspects_dual_return_lunar(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS
+
+        john = _make_john(active_points=ALL_ACTIVE_POINTS)
+        factory = _make_return_factory(john)
+        lr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Lunar")
+        data = ChartDataFactory.create_return_chart_data(
+            john,
+            lr,
+            active_points=ALL_ACTIVE_POINTS,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg(
+            "John Lennon - All Points All Aspects - DualReturnChart Chart - Lunar Return - Modern.svg",
+            svg,
+        )
+
+    def test_modern_all_points_all_aspects_single_return_solar(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS
+
+        john = _make_john(active_points=ALL_ACTIVE_POINTS)
+        factory = _make_return_factory(john)
+        sr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Solar")
+        data = ChartDataFactory.create_single_wheel_return_chart_data(
+            sr,
+            active_points=ALL_ACTIVE_POINTS,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg(
+            "John Lennon Solar Return - All Points All Aspects - SingleReturnChart Chart - Modern.svg",
+            svg,
+        )
+
+    def test_modern_all_points_all_aspects_single_return_solar_wheel_only(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS
+
+        john = _make_john(active_points=ALL_ACTIVE_POINTS)
+        factory = _make_return_factory(john)
+        sr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Solar")
+        data = ChartDataFactory.create_single_wheel_return_chart_data(
+            sr,
+            active_points=ALL_ACTIVE_POINTS,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="modern")
+        compare_chart_svg(
+            "John Lennon Solar Return - All Points All Aspects - SingleReturnChart Chart - Modern Wheel Only.svg",
+            svg,
+        )
+
+    def test_modern_all_points_all_aspects_single_return_lunar(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS
+
+        john = _make_john(active_points=ALL_ACTIVE_POINTS)
+        factory = _make_return_factory(john)
+        lr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Lunar")
+        data = ChartDataFactory.create_single_wheel_return_chart_data(
+            lr,
+            active_points=ALL_ACTIVE_POINTS,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        svg = ChartDrawer(data).generate_svg_string(style="modern")
+        compare_chart_svg(
+            "John Lennon Lunar Return - All Points All Aspects - SingleReturnChart Chart - Modern.svg",
+            svg,
+        )
+
+    def test_modern_all_points_all_aspects_single_return_lunar_wheel_only(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS
+
+        john = _make_john(active_points=ALL_ACTIVE_POINTS)
+        factory = _make_return_factory(john)
+        lr = factory.next_return_from_iso_formatted_time(self.RETURN_ISO, return_type="Lunar")
+        data = ChartDataFactory.create_single_wheel_return_chart_data(
+            lr,
+            active_points=ALL_ACTIVE_POINTS,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="modern")
+        compare_chart_svg(
+            "John Lennon Lunar Return - All Points All Aspects - SingleReturnChart Chart - Modern Wheel Only.svg",
+            svg,
+        )
 
 
 class TestChartDrawerLargeAspectList:
