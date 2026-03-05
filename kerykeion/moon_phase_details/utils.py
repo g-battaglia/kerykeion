@@ -139,43 +139,43 @@ def configure_ephemeris_path() -> int:
 def _extract_eclipse_result(result: object) -> Optional[Tuple[int, float]]:
     """
     Extract (retflag, jd) from Swiss Ephemeris eclipse calculation result.
-    
+
     Swiss Ephemeris eclipse functions return (retflag, tret) or (retflag, tret, attr)
     where tret is a tuple of floats with tret[0] being the Julian Day of the eclipse.
-    
+
     Args:
         result: Raw result from swe.sol_eclipse_when_glob or swe.lun_eclipse_when.
-    
+
     Returns:
         Optional[Tuple[int, float]]: (retflag, eclipse_jd) or None if extraction fails.
     """
     if not (isinstance(result, tuple) and len(result) >= 2):
         return None
-    
+
     retflag = result[0]
     tret = result[1]
-    
+
     if not tret or not isinstance(tret[0], (float, int)):
         return None
-    
+
     return retflag, float(tret[0])
 
 
 def compute_next_solar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]]:
     """
     Compute the next global solar eclipse after the given Julian day.
-    
+
     Uses Swiss Ephemeris to find the next solar eclipse visible anywhere on Earth.
-    
+
     Args:
         jd_start: Starting Julian Day in Universal Time (UT).
-    
+
     Returns:
         Optional[Tuple[int, float]]: (retflag, eclipse_jd) where:
             - retflag: Eclipse type flags (e.g. SE_ECL_TOTAL, SE_ECL_PARTIAL)
             - eclipse_jd: Julian Day of maximum eclipse in UT
             Returns None if calculation fails or no eclipse found.
-    
+
     Examples:
         >>> from kerykeion.utilities import datetime_to_julian
         >>> jd = datetime_to_julian(datetime(2025, 1, 1, tzinfo=timezone.utc))
@@ -202,18 +202,18 @@ def compute_next_solar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]
 def compute_next_lunar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]]:
     """
     Compute the next global lunar eclipse after the given Julian day.
-    
+
     Uses Swiss Ephemeris to find the next lunar eclipse visible anywhere on Earth.
-    
+
     Args:
         jd_start: Starting Julian Day in Universal Time (UT).
-    
+
     Returns:
         Optional[Tuple[int, float]]: (retflag, eclipse_jd) where:
             - retflag: Eclipse type flags (e.g. SE_ECL_TOTAL, SE_ECL_PARTIAL)
             - eclipse_jd: Julian Day of maximum eclipse in UT
             Returns None if calculation fails or no eclipse found.
-    
+
     Examples:
         >>> from kerykeion.utilities import datetime_to_julian
         >>> jd = datetime_to_julian(datetime(2025, 1, 1, tzinfo=timezone.utc))
@@ -451,12 +451,7 @@ def greenwich_mean_sidereal_time(jd_ut: float) -> float:
     Compute Greenwich Mean Sidereal Time in hours.
     """
     T = (jd_ut - 2451545.0) / 36525.0
-    gmst_deg = (
-        280.46061837
-        + 360.98564736629 * (jd_ut - 2451545.0)
-        + 0.000387933 * (T ** 2)
-        - (T ** 3) / 38710000.0
-    )
+    gmst_deg = 280.46061837 + 360.98564736629 * (jd_ut - 2451545.0) + 0.000387933 * (T**2) - (T**3) / 38710000.0
     gmst_hours = (gmst_deg % 360.0) / 15.0
     return gmst_hours
 

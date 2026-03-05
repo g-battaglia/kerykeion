@@ -51,7 +51,7 @@ print(f"Category: {score_model.score_description}")
 **Expected Output:**
 
 ```text
-Score: 18.0
+Score: 18
 Category: Very Important
 ```
 
@@ -59,15 +59,15 @@ You can also inspect which aspects contributed to the score:
 
 ```python
 for aspect in score_model.aspects[:3]:
-    print(f"{aspect.p1_name} {aspect.aspect} {aspect.p2_name}: +{aspect.score_contribution} points")
+    print(f"{aspect.p1_name} {aspect.aspect} {aspect.p2_name} (orb: {aspect.orbit}°)")
 ```
 
 **Expected Output:**
 
 ```text
-Sun conjunction Moon: +11 points
-Venus trine Mars: +4 points
-Moon sextile Ascendant: +4 points
+Sun conjunction Moon (orb: 1.5°)
+Venus trine Mars (orb: 3.4°)
+Moon sextile Ascendant (orb: 2.1°)
 ```
 
 ## Constructor Parameters
@@ -110,10 +110,12 @@ _Note: The system prioritizes "Luminaries" (Sun/Moon) and Angles._
 
 The `get_relationship_score()` method returns a Pydantic model with:
 
-- `score_value` (float): The calculated number.
-- `score_description` (str): The category name.
-- `aspects` (list): All the aspects that contributed to the score.
-- `is_destiny_sign` (bool): Whether the "Destiny Sign" bonus was applied.
+- `score_value` (`int`): The calculated score.
+- `score_description` (`RelationshipScoreDescription`): The category name (e.g. `"Very Important"`).
+- `is_destiny_sign` (`bool`): Whether the "Destiny Sign" bonus was applied.
+- `aspects` (`list[RelationshipScoreAspectModel]`): Aspects that contributed to the score. Each has `p1_name`, `p2_name`, `aspect`, and `orbit`.
+- `score_breakdown` (`list[ScoreBreakdownItemModel]`): Detailed breakdown of how each rule contributed points.
+- `subjects` (`list[AstrologicalSubjectModel]`): The two validated subject models.
 
 ---
 

@@ -124,18 +124,18 @@ def _create_event_moment(
 ) -> MoonPhaseEventMomentModel:
     """
     Create a MoonPhaseEventMomentModel with consistent timestamp formatting.
-    
+
     Args:
         event_dt: The event datetime (aware, UTC).
         reference_dt: Reference datetime for calculating time difference (aware, UTC).
         is_past: True if event is in the past, False if in the future.
-    
+
     Returns:
         MoonPhaseEventMomentModel with timestamp, datestamp, and days_ago/days_ahead.
     """
     timestamp = int(event_dt.timestamp())
     datestamp = event_dt.strftime("%a, %d %b %Y %H:%M:%S %z")
-    
+
     if is_past:
         days_diff = (reference_dt - event_dt).total_seconds() / 86400.0
         return MoonPhaseEventMomentModel(
@@ -354,14 +354,14 @@ def _compute_lunar_phase_metrics(
 ) -> Tuple[float, str, str, str, str, str, int, str, MoonPhaseIlluminationDetailsModel]:
     """
     Compute lunar phase metrics including phase fraction, illumination, and age.
-    
+
     Args:
         lunar_phase: Lunar phase model from subject.
         sun: Sun planetary data.
         moon: Moon planetary data.
         base_dt: Current datetime in UTC.
         upcoming_phases: Model with last/next occurrences of major phases.
-    
+
     Returns:
         Tuple of (phase, phase_name, emoji, stage, major_phase, illumination_str,
                   age_days, lunar_cycle_str, illumination_details)
@@ -398,9 +398,9 @@ def _compute_lunar_phase_metrics(
     else:
         # Fallback to approximation if we don't have last new moon data
         age_days_precise = phase * SYNODIC_MONTH_DAYS
-    
-    age_days = int(round(age_days_precise))
-    
+
+    age_days = round(age_days_precise)
+
     # Lunar cycle percentage - keep high precision for this metric
     lunar_cycle_str = f"{round(phase * 100, 3)}%"
 
@@ -429,11 +429,11 @@ def _build_moon_zodiac_info(
 ) -> Optional[MoonPhaseZodiacModel]:
     """
     Build zodiac information block for Sun and Moon signs.
-    
+
     Args:
         sun: Sun planetary data with sign attribute.
         moon: Moon planetary data with sign attribute.
-    
+
     Returns:
         MoonPhaseZodiacModel or None if sign data is unavailable.
     """
@@ -512,7 +512,7 @@ class MoonPhaseDetailsFactory:
     def _build_moon_summary(subject: AstrologicalSubjectModel) -> MoonPhaseMoonSummaryModel:
         """
         Build the high-level moon summary block from the subject's state.
-        
+
         This method orchestrates the creation of moon phase information by:
         1. Extracting basic lunar phase data from the subject
         2. Computing precise phase metrics (illumination, age, stage)
@@ -540,10 +540,10 @@ class MoonPhaseDetailsFactory:
         if lunar_phase is not None and sun is not None and moon is not None:
             # Get current UTC datetime for age calculation
             base_dt = _get_utc_datetime(subject)
-            
+
             # Calculate precise upcoming phases first (needed for age calculation)
             upcoming_phases = _build_upcoming_phases(subject)
-            
+
             # Compute all phase metrics
             (
                 phase,
@@ -567,7 +567,7 @@ class MoonPhaseDetailsFactory:
 
             # Compute next lunar eclipse using Swiss Ephemeris
             next_lunar_eclipse = _compute_next_lunar_eclipse(subject)
-            
+
             # Build zodiac information
             zodiac = _build_moon_zodiac_info(sun, moon)
 

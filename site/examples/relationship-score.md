@@ -16,7 +16,7 @@ The factory assigns a "relationship score" to two astrological subjects based on
 - **5 to 10**: Medium relationship
 - **10 to 15**: Important relationship
 - **15 to 20**: Very important relationship
-- **20 to 35**: Exceptional relationship
+- **20 to 30**: Exceptional relationship
 - **30 and above**: Rare exceptional relationship
 
 The calculations consider aspects between planets (like Sun-Sun, Sun-Moon, Sun-Ascendant, etc.). Major aspects (conjunction, opposition, square, trine, sextile) are primarily used unless otherwise specified.
@@ -50,15 +50,17 @@ Constructor parameters:
 - `first_subject` (AstrologicalSubjectModel): First subject instance.
 - `second_subject` (AstrologicalSubjectModel): Second subject instance.
 - `use_only_major_aspects` (bool, default=True): Consider only major aspects when True.
+- `axis_orb_limit` (float, default=None): Stricter orb limit for angles (Ascendant, MC). When set, angular aspects must be within this orb.
 
 ### Output
 
 Returns an instance of `RelationshipScoreModel` containing:
-- `score_value`: The numerical relationship score.
-- `score_description`: The descriptive qualification.
-- `is_destiny_sign`: Whether the subjects share the same Sun sign quality.
-- `aspects`: A list of `RelationshipScoreAspectModel` detailing the synastry aspects.
-- `subjects`: The two validated subject models.
+- `score_value` (`int`): The numerical relationship score.
+- `score_description` (`RelationshipScoreDescription`): The descriptive qualification.
+- `is_destiny_sign` (`bool`): Whether the subjects share the same Sun sign quality.
+- `aspects` (`list[RelationshipScoreAspectModel]`): Synastry aspects with `p1_name`, `p2_name`, `aspect`, and `orbit`.
+- `score_breakdown` (`list[ScoreBreakdownItemModel]`): Detailed breakdown of how each scoring rule contributed points.
+- `subjects` (`list[AstrologicalSubjectModel]`): The two validated subject models.
 
 ### Example Usage
 

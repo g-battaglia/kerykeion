@@ -1,5 +1,47 @@
 # Changelog
 
+## 5.11.0
+
+_Unreleased_
+
+**New Features:**
+
+- Added **modern chart style** — a concentric-ring layout alternative to the classic wheel. Pass `style="modern"` to `save_svg()`, `generate_svg_string()`, `save_wheel_only_svg_file()`, or `generate_wheel_only_svg_string()`. The modern layout renders 5 rings: cusp/zodiac signs, graduated ruler scale, planet data clusters, house numbers, and aspect lines with midpoint glyphs. Works with all six themes and all chart types (Natal, Synastry, Transit, Lunar/Solar Return, Composite).
+
+- Added `show_zodiac_background_ring` parameter (modern style only) — when set to `False`, omits the colored zodiac wedges from the outer ring.
+
+- Added `KerykeionChartStyle` literal type (`"classic"` | `"modern"`) to `kerykeion.schemas`.
+
+- New drawing module `kerykeion.charts.draw_modern` with `draw_modern_horoscope()` and `draw_modern_dual_horoscope()` functions.
+
+- New SVG template `kerykeion/charts/templates/modern_wheel.xml` for standalone modern wheel rendering.
+
+**Bugfixes:**
+
+- Fixed ruler ring ticks to be uniformly spaced across the full 360° circle.
+- Fixed planet cluster sub-element sizes and reduced size progression for better readability.
+
+**Documentation:**
+
+- Added 2×2 chart style showcase grid (classic/modern × default/dark) to README
+- Added Modern Chart Style section to README with examples for Natal, Synastry, Transit, and Wheel-Only
+- Added `site/examples/modern-charts.md` example page
+- Added `site/docs/charts.md` documentation with modern style API reference
+- Added several new example/documentation pages (active points, ephemeris data, house comparison, transits time range)
+- Simplified `MIGRATION_V4_TO_V5.md` — content moved to main documentation site
+
+**Tests:**
+
+- Added 36+ comprehensive modern chart style tests covering all chart types, themes, and rendering modes
+- Added tests for `show_zodiac_background_ring=False` across chart types
+- Added modern SVG baselines to the regeneration pipeline (`regenerate:svg:modern` poe task)
+
+**Maintenance:**
+
+- Updated all 6 CSS themes with modern-style variables
+- Added `scripts/generate_modern_baselines.py` and `scripts/regenerate_docs_charts.py`
+- Added example script `examples/modern_chart_john_lennon.py`
+
 ## 5.10.0
 
 _Released 26/02/2026_

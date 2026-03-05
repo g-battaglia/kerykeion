@@ -35,6 +35,17 @@
     --kerykeion-color-base-200: #fce8f1; /* oklch(93% 0.05 330) - rosa delicato evidente */
     --kerykeion-color-base-300: #f5d1e3; /* rosa chiaro invece di grigio */
 
+    /* Modern Chart */
+    --kerykeion-modern-planet-ring: #f8dce8;
+    --kerykeion-modern-planet-ring-outer: #f0c8d8;
+    --kerykeion-modern-house-ring: #eec5d6;
+    --kerykeion-modern-stroke: #c8a0b3;
+    --kerykeion-modern-retrograde: #ff4f9a;
+    --kerykeion-modern-indicator: #a0788e;
+    --kerykeion-modern-zodiac-bg-0: #fce8f1;
+    --kerykeion-modern-zodiac-bg-1: #f5d1e3;
+    --kerykeion-modern-zodiac-bg-opacity: 0.5;
+
     /* ----------- */
     /* Chart Color */
     /* ----------- */

@@ -220,6 +220,10 @@ KerykeionChartTheme: TypeAlias = Literal[
 """Literal type for Kerykeion Chart Themes"""
 
 
+KerykeionChartStyle: TypeAlias = Literal["classic", "modern"]
+"""Literal type for Kerykeion Chart Styles"""
+
+
 KerykeionChartLanguage: TypeAlias = Literal["EN", "FR", "PT", "IT", "CN", "ES", "RU", "TR", "DE", "HI"]
 """Literal type for Kerykeion Chart Languages"""
 
