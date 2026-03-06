@@ -455,7 +455,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "5.11.0"
+version = "5.11.1"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },
