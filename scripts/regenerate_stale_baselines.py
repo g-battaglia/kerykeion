@@ -52,10 +52,6 @@ def regenerate_sidereal_theme_combos():
         subject = AstrologicalSubjectFactory.from_birth_data(
             f"John Lennon {sidereal_mode} - {theme.title()} Theme",
             *JOHN_LENNON_BIRTH_DATA,
-            lng=-2.9916,
-            lat=53.4084,
-            tz_str="Europe/London",
-            online=False,
             zodiac_type="Sidereal",
             sidereal_mode=sidereal_mode,
             suppress_geonames_warning=True,
@@ -75,20 +71,12 @@ def regenerate_house_system_synastry():
         first = AstrologicalSubjectFactory.from_birth_data(
             f"John Lennon - {house_name} Synastry",
             *JOHN_LENNON_BIRTH_DATA,
-            lng=-2.9916,
-            lat=53.4084,
-            tz_str="Europe/London",
-            online=False,
             houses_system_identifier=house_id,
             suppress_geonames_warning=True,
         )
         second = AstrologicalSubjectFactory.from_birth_data(
             f"Paul McCartney - {house_name}",
             *PAUL_MCCARTNEY_BIRTH_DATA,
-            lng=-2.9916,
-            lat=53.4084,
-            tz_str="Europe/London",
-            online=False,
             houses_system_identifier=house_id,
             suppress_geonames_warning=True,
         )
@@ -107,20 +95,12 @@ def regenerate_house_system_transit():
         first = AstrologicalSubjectFactory.from_birth_data(
             f"John Lennon - {house_name} Transit",
             *JOHN_LENNON_BIRTH_DATA,
-            lng=-2.9916,
-            lat=53.4084,
-            tz_str="Europe/London",
-            online=False,
             houses_system_identifier=house_id,
             suppress_geonames_warning=True,
         )
         second = AstrologicalSubjectFactory.from_birth_data(
             f"Paul McCartney - {house_name} Transit",
             *PAUL_MCCARTNEY_BIRTH_DATA,
-            lng=-2.9916,
-            lat=53.4084,
-            tz_str="Europe/London",
-            online=False,
             houses_system_identifier=house_id,
             suppress_geonames_warning=True,
         )

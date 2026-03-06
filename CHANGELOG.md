@@ -18,6 +18,7 @@ _Unreleased_
 
 **Bugfixes:**
 
+- Fixed modern chart zodiac background ring using only 2 alternating colors instead of the full per-element color cycle. The outer ring now matches the classic chart's 4-color element pattern (fire/earth/air/water) in the default theme, with all 12 `--kerykeion-modern-zodiac-bg-*` CSS variables properly defined across all 6 themes.
 - Fixed ruler ring ticks to be uniformly spaced across the full 360° circle.
 - Fixed planet cluster sub-element sizes and reduced size progression for better readability.
 

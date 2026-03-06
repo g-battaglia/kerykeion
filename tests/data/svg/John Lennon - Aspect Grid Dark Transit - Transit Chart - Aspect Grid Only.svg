@@ -36,6 +36,16 @@
     --kerykeion-modern-indicator: #4e607d;
     --kerykeion-modern-zodiac-bg-0: #131c2e;
     --kerykeion-modern-zodiac-bg-1: #1e293b;
+    --kerykeion-modern-zodiac-bg-2: #131c2e;
+    --kerykeion-modern-zodiac-bg-3: #1e293b;
+    --kerykeion-modern-zodiac-bg-4: #131c2e;
+    --kerykeion-modern-zodiac-bg-5: #1e293b;
+    --kerykeion-modern-zodiac-bg-6: #131c2e;
+    --kerykeion-modern-zodiac-bg-7: #1e293b;
+    --kerykeion-modern-zodiac-bg-8: #131c2e;
+    --kerykeion-modern-zodiac-bg-9: #1e293b;
+    --kerykeion-modern-zodiac-bg-10: #131c2e;
+    --kerykeion-modern-zodiac-bg-11: #1e293b;
     --kerykeion-modern-zodiac-bg-opacity: 1;
     --kerykeion-color-info: #0ca5e9;
     --kerykeion-color-info-content: #000000;

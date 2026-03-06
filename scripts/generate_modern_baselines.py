@@ -38,10 +38,6 @@ def _make_john(suffix="", **kwargs):
     return AstrologicalSubjectFactory.from_birth_data(
         name,
         *JOHN_LENNON_BIRTH_DATA,
-        lng=-2.9916,
-        lat=53.4084,
-        tz_str="Europe/London",
-        online=False,
         suppress_geonames_warning=True,
         **kwargs,
     )
@@ -52,10 +48,6 @@ def _make_paul(suffix="", **kwargs):
     return AstrologicalSubjectFactory.from_birth_data(
         name,
         *PAUL_MCCARTNEY_BIRTH_DATA,
-        lng=-2.9916,
-        lat=53.4084,
-        tz_str="Europe/London",
-        online=False,
         suppress_geonames_warning=True,
         **kwargs,
     )
@@ -255,14 +247,10 @@ def generate_a7_single_return_lunar():
 def generate_a8_natal():
     print("\n=== A8. Natal (2 files) ===")
 
-    # Sidereal LAHIRI — name must match _make_sidereal_subject() in tests
+    # Sidereal LAHIRI — must match _make_sidereal_subject() in tests (uses geonames)
     subj = AstrologicalSubjectFactory.from_birth_data(
         "John Lennon Sidereal LAHIRI",
         *JOHN_LENNON_BIRTH_DATA,
-        lng=-2.9916,
-        lat=53.4084,
-        tz_str="Europe/London",
-        online=False,
         zodiac_type="Sidereal",
         sidereal_mode="LAHIRI",
         suppress_geonames_warning=True,
@@ -271,7 +259,7 @@ def generate_a8_natal():
     svg = ChartDrawer(data).generate_svg_string(style="modern")
     _write("John Lennon - Sidereal LAHIRI - Natal Chart - Modern.svg", svg)
 
-    # French language
+    # French language — must match test (uses geonames)
     subj = AstrologicalSubjectFactory.from_birth_data(
         "Jeanne Moreau",
         1928,
@@ -281,10 +269,6 @@ def generate_a8_natal():
         0,
         "Paris",
         "FR",
-        lng=2.3522,
-        lat=48.8566,
-        tz_str="Europe/Paris",
-        online=False,
         suppress_geonames_warning=True,
     )
     data = ChartDataFactory.create_natal_chart_data(subj)
