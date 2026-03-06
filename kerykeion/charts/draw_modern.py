@@ -367,9 +367,7 @@ def _draw_zodiac_background_ring(seventh_house_degree_ut: float) -> str:
 
         mid_angle = _zodiac_to_wheel_angle(mid_abs, seventh_house_degree_ut)
 
-        bg_var = f"--kerykeion-modern-zodiac-bg-{sign_num}"
-        fallback = f"var(--kerykeion-chart-color-zodiac-bg-{sign_num})"
-        color = f"var({bg_var}, {fallback})"
+        color = f"var(--kerykeion-modern-zodiac-bg-{sign_num})"
 
         # Draw a polygon wedge covering the 30° sector for this sign.
         # The ring mask clips it to the annulus.

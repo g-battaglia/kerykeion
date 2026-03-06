@@ -89,73 +89,73 @@
 <g kr:node='ModernHoroscope' transform='rotate(-90 50.0 50.0)'>
 <mask id='ring-zodiac-bg'><circle fill='white' r='50.0' cx='50.0' cy='50.0'/><circle fill='black' r='46.0' cx='50.0' cy='50.0'/></mask>
 <g kr:node='ZodiacBackgrounds' mask='url(#ring-zodiac-bg)'>
-  <polygon points='50.0,50.0 83.727810,-44.140506 58.213207,-49.662145 32.138887,-48.391975' fill='#131c2e)' style='fill-opacity: 1' />
+  <polygon points='50.0,50.0 83.727810,-44.140506 58.213207,-49.662145 32.138887,-48.391975' fill='#131c2e' style='fill-opacity: 1' />
   <g transform='rotate(-355.288872 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(445.288872) scale(0.09) translate(-16 -16)'>
       <use href='#Ari' />
     </g>
   </g>
-  <polygon points='50.0,50.0 32.138887,-48.391975 7.281773,-40.416553 -14.664164,-26.279393' fill='#1e293b)' style='fill-opacity: 1' />
+  <polygon points='50.0,50.0 32.138887,-48.391975 7.281773,-40.416553 -14.664164,-26.279393' fill='#1e293b' style='fill-opacity: 1' />
   <g transform='rotate(-25.288872 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(115.288872) scale(0.09) translate(-16 -16)'>
       <use href='#Tau' />
     </g>
   </g>
-  <polygon points='50.0,50.0 -14.664164,-26.279393 -32.203346,-6.943919 -44.140506,16.272190' fill='#131c2e)' style='fill-opacity: 1' />
+  <polygon points='50.0,50.0 -14.664164,-26.279393 -32.203346,-6.943919 -44.140506,16.272190' fill='#131c2e' style='fill-opacity: 1' />
   <g transform='rotate(-55.288872 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(145.288872) scale(0.09) translate(-16 -16)'>
       <use href='#Gem' />
     </g>
   </g>
-  <polygon points='50.0,50.0 -44.140506,16.272190 -49.662145,41.786793 -48.391975,67.861113' fill='#1e293b)' style='fill-opacity: 1' />
+  <polygon points='50.0,50.0 -44.140506,16.272190 -49.662145,41.786793 -48.391975,67.861113' fill='#1e293b' style='fill-opacity: 1' />
   <g transform='rotate(-85.288872 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(175.288872) scale(0.09) translate(-16 -16)'>
       <use href='#Can' />
     </g>
   </g>
-  <polygon points='50.0,50.0 -48.391975,67.861113 -40.416553,92.718227 -26.279393,114.664164' fill='#131c2e)' style='fill-opacity: 1' />
+  <polygon points='50.0,50.0 -48.391975,67.861113 -40.416553,92.718227 -26.279393,114.664164' fill='#131c2e' style='fill-opacity: 1' />
   <g transform='rotate(-115.288872 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(205.288872) scale(0.09) translate(-16 -16)'>
       <use href='#Leo' />
     </g>
   </g>
-  <polygon points='50.0,50.0 -26.279393,114.664164 -6.943919,132.203346 16.272190,144.140506' fill='#1e293b)' style='fill-opacity: 1' />
+  <polygon points='50.0,50.0 -26.279393,114.664164 -6.943919,132.203346 16.272190,144.140506' fill='#1e293b' style='fill-opacity: 1' />
   <g transform='rotate(-145.288872 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(235.288872) scale(0.09) translate(-16 -16)'>
       <use href='#Vir' />
     </g>
   </g>
-  <polygon points='50.0,50.0 16.272190,144.140506 41.786793,149.662145 67.861113,148.391975' fill='#131c2e)' style='fill-opacity: 1' />
+  <polygon points='50.0,50.0 16.272190,144.140506 41.786793,149.662145 67.861113,148.391975' fill='#131c2e' style='fill-opacity: 1' />
   <g transform='rotate(-175.288872 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(265.288872) scale(0.09) translate(-16 -16)'>
       <use href='#Lib' />
     </g>
   </g>
-  <polygon points='50.0,50.0 67.861113,148.391975 92.718227,140.416553 114.664164,126.279393' fill='#1e293b)' style='fill-opacity: 1' />
+  <polygon points='50.0,50.0 67.861113,148.391975 92.718227,140.416553 114.664164,126.279393' fill='#1e293b' style='fill-opacity: 1' />
   <g transform='rotate(-205.288872 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(295.288872) scale(0.09) translate(-16 -16)'>
       <use href='#Sco' />
     </g>
   </g>
-  <polygon points='50.0,50.0 114.664164,126.279393 132.203346,106.943919 144.140506,83.727810' fill='#131c2e)' style='fill-opacity: 1' />
+  <polygon points='50.0,50.0 114.664164,126.279393 132.203346,106.943919 144.140506,83.727810' fill='#131c2e' style='fill-opacity: 1' />
   <g transform='rotate(-235.288872 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(325.288872) scale(0.09) translate(-16 -16)'>
       <use href='#Sag' />
     </g>
   </g>
-  <polygon points='50.0,50.0 144.140506,83.727810 149.662145,58.213207 148.391975,32.138887' fill='#1e293b)' style='fill-opacity: 1' />
+  <polygon points='50.0,50.0 144.140506,83.727810 149.662145,58.213207 148.391975,32.138887' fill='#1e293b' style='fill-opacity: 1' />
   <g transform='rotate(-265.288872 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(355.288872) scale(0.09) translate(-16 -16)'>
       <use href='#Cap' />
     </g>
   </g>
-  <polygon points='50.0,50.0 148.391975,32.138887 140.416553,7.281773 126.279393,-14.664164' fill='#131c2e)' style='fill-opacity: 1' />
+  <polygon points='50.0,50.0 148.391975,32.138887 140.416553,7.281773 126.279393,-14.664164' fill='#131c2e' style='fill-opacity: 1' />
   <g transform='rotate(-295.288872 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(385.288872) scale(0.09) translate(-16 -16)'>
       <use href='#Aqu' />
     </g>
   </g>
-  <polygon points='50.0,50.0 126.279393,-14.664164 106.943919,-32.203346 83.727810,-44.140506' fill='#1e293b)' style='fill-opacity: 1' />
+  <polygon points='50.0,50.0 126.279393,-14.664164 106.943919,-32.203346 83.727810,-44.140506' fill='#1e293b' style='fill-opacity: 1' />
   <g transform='rotate(-325.288872 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(415.288872) scale(0.09) translate(-16 -16)'>
       <use href='#Pis' />

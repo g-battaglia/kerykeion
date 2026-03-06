@@ -231,73 +231,73 @@
 <g kr:node='ModernHoroscope' transform='rotate(-90 50.0 50.0)'>
 <mask id='ring-zodiac-bg'><circle fill='white' r='50.0' cx='50.0' cy='50.0'/><circle fill='black' r='46.0' cx='50.0' cy='50.0'/></mask>
 <g kr:node='ZodiacBackgrounds' mask='url(#ring-zodiac-bg)'>
-  <polygon points='50.0,50.0 64.458646,-48.949217 38.356038,-49.319777 13.046946,-42.921859' fill='var(--kerykeion-modern-zodiac-bg-0, var(--kerykeion-chart-color-zodiac-bg-0))' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <polygon points='50.0,50.0 64.458646,-48.949217 38.356038,-49.319777 13.046946,-42.921859' fill='var(--kerykeion-modern-zodiac-bg-0)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-6.686667 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(96.686667) scale(0.09) translate(-16 -16)'>
       <use href='#Ari' />
     </g>
   </g>
-  <polygon points='50.0,50.0 13.046946,-42.921859 -9.743856,-30.191469 -28.463213,-11.996163' fill='var(--kerykeion-modern-zodiac-bg-1, var(--kerykeion-chart-color-zodiac-bg-1))' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <polygon points='50.0,50.0 13.046946,-42.921859 -9.743856,-30.191469 -28.463213,-11.996163' fill='var(--kerykeion-modern-zodiac-bg-1)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-36.686667 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(126.686667) scale(0.09) translate(-16 -16)'>
       <use href='#Tau' />
     </g>
   </g>
-  <polygon points='50.0,50.0 -28.463213,-11.996163 -41.835431,10.424079 -48.949217,35.541354' fill='var(--kerykeion-modern-zodiac-bg-2, var(--kerykeion-chart-color-zodiac-bg-2))' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <polygon points='50.0,50.0 -28.463213,-11.996163 -41.835431,10.424079 -48.949217,35.541354' fill='var(--kerykeion-modern-zodiac-bg-2)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-66.686667 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(156.686667) scale(0.09) translate(-16 -16)'>
       <use href='#Gem' />
     </g>
   </g>
-  <polygon points='50.0,50.0 -48.949217,35.541354 -49.319777,61.643962 -42.921859,86.953054' fill='var(--kerykeion-modern-zodiac-bg-3, var(--kerykeion-chart-color-zodiac-bg-3))' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <polygon points='50.0,50.0 -48.949217,35.541354 -49.319777,61.643962 -42.921859,86.953054' fill='var(--kerykeion-modern-zodiac-bg-3)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-96.686667 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(186.686667) scale(0.09) translate(-16 -16)'>
       <use href='#Can' />
     </g>
   </g>
-  <polygon points='50.0,50.0 -42.921859,86.953054 -30.191469,109.743856 -11.996163,128.463213' fill='var(--kerykeion-modern-zodiac-bg-4, var(--kerykeion-chart-color-zodiac-bg-4))' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <polygon points='50.0,50.0 -42.921859,86.953054 -30.191469,109.743856 -11.996163,128.463213' fill='var(--kerykeion-modern-zodiac-bg-4)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-126.686667 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(216.686667) scale(0.09) translate(-16 -16)'>
       <use href='#Leo' />
     </g>
   </g>
-  <polygon points='50.0,50.0 -11.996163,128.463213 10.424079,141.835431 35.541354,148.949217' fill='var(--kerykeion-modern-zodiac-bg-5, var(--kerykeion-chart-color-zodiac-bg-5))' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <polygon points='50.0,50.0 -11.996163,128.463213 10.424079,141.835431 35.541354,148.949217' fill='var(--kerykeion-modern-zodiac-bg-5)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-156.686667 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(246.686667) scale(0.09) translate(-16 -16)'>
       <use href='#Vir' />
     </g>
   </g>
-  <polygon points='50.0,50.0 35.541354,148.949217 61.643962,149.319777 86.953054,142.921859' fill='var(--kerykeion-modern-zodiac-bg-6, var(--kerykeion-chart-color-zodiac-bg-6))' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <polygon points='50.0,50.0 35.541354,148.949217 61.643962,149.319777 86.953054,142.921859' fill='var(--kerykeion-modern-zodiac-bg-6)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-186.686667 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(276.686667) scale(0.09) translate(-16 -16)'>
       <use href='#Lib' />
     </g>
   </g>
-  <polygon points='50.0,50.0 86.953054,142.921859 109.743856,130.191469 128.463213,111.996163' fill='var(--kerykeion-modern-zodiac-bg-7, var(--kerykeion-chart-color-zodiac-bg-7))' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <polygon points='50.0,50.0 86.953054,142.921859 109.743856,130.191469 128.463213,111.996163' fill='var(--kerykeion-modern-zodiac-bg-7)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-216.686667 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(306.686667) scale(0.09) translate(-16 -16)'>
       <use href='#Sco' />
     </g>
   </g>
-  <polygon points='50.0,50.0 128.463213,111.996163 141.835431,89.575921 148.949217,64.458646' fill='var(--kerykeion-modern-zodiac-bg-8, var(--kerykeion-chart-color-zodiac-bg-8))' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <polygon points='50.0,50.0 128.463213,111.996163 141.835431,89.575921 148.949217,64.458646' fill='var(--kerykeion-modern-zodiac-bg-8)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-246.686667 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(336.686667) scale(0.09) translate(-16 -16)'>
       <use href='#Sag' />
     </g>
   </g>
-  <polygon points='50.0,50.0 148.949217,64.458646 149.319777,38.356038 142.921859,13.046946' fill='var(--kerykeion-modern-zodiac-bg-9, var(--kerykeion-chart-color-zodiac-bg-9))' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <polygon points='50.0,50.0 148.949217,64.458646 149.319777,38.356038 142.921859,13.046946' fill='var(--kerykeion-modern-zodiac-bg-9)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-276.686667 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(366.686667) scale(0.09) translate(-16 -16)'>
       <use href='#Cap' />
     </g>
   </g>
-  <polygon points='50.0,50.0 142.921859,13.046946 130.191469,-9.743856 111.996163,-28.463213' fill='var(--kerykeion-modern-zodiac-bg-10, var(--kerykeion-chart-color-zodiac-bg-10))' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <polygon points='50.0,50.0 142.921859,13.046946 130.191469,-9.743856 111.996163,-28.463213' fill='var(--kerykeion-modern-zodiac-bg-10)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-306.686667 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(396.686667) scale(0.09) translate(-16 -16)'>
       <use href='#Aqu' />
     </g>
   </g>
-  <polygon points='50.0,50.0 111.996163,-28.463213 89.575921,-41.835431 64.458646,-48.949217' fill='var(--kerykeion-modern-zodiac-bg-11, var(--kerykeion-chart-color-zodiac-bg-11))' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <polygon points='50.0,50.0 111.996163,-28.463213 89.575921,-41.835431 64.458646,-48.949217' fill='var(--kerykeion-modern-zodiac-bg-11)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-336.686667 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(426.686667) scale(0.09) translate(-16 -16)'>
       <use href='#Pis' />
