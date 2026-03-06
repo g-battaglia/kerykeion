@@ -42,12 +42,12 @@ Where each person's planets fall in the other's house system:
 # Alice's planets in Bob's houses
 print("\nAlice's planets in Bob's houses:")
 for point in comparison.first_points_in_second_houses:
-    print(f"  {point.name} -> Bob's House {point.house}")
+    print(f"  {point.point_name} -> Bob's House {point.projected_house_number}")
 
 # Bob's planets in Alice's houses
 print("\nBob's planets in Alice's houses:")
 for point in comparison.second_points_in_first_houses:
-    print(f"  {point.name} -> Alice's House {point.house}")
+    print(f"  {point.point_name} -> Alice's House {point.projected_house_number}")
 ```
 
 ### Cusps in Partner's Houses
@@ -58,12 +58,12 @@ Where each person's house cusps fall in the other's system:
 # Alice's cusps in Bob's houses
 print("\nAlice's cusps in Bob's houses:")
 for cusp in comparison.first_cusps_in_second_houses:
-    print(f"  House {cusp.house_number} cusp -> Bob's House {cusp.falls_in_house}")
+    print(f"  House {cusp.point_owner_house_number} cusp -> Bob's House {cusp.projected_house_number}")
 
 # Bob's cusps in Alice's houses
 print("\nBob's cusps in Alice's houses:")
 for cusp in comparison.second_cusps_in_first_houses:
-    print(f"  House {cusp.house_number} cusp -> Alice's House {cusp.falls_in_house}")
+    print(f"  House {cusp.point_owner_house_number} cusp -> Alice's House {cusp.projected_house_number}")
 ```
 
 ## Using with Synastry Charts

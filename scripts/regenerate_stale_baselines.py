@@ -16,7 +16,6 @@ from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 from kerykeion.chart_data_factory import ChartDataFactory
 
 SVG_DIR = Path(__file__).parent.parent / "tests" / "data" / "svg"
-SVG_DIR.mkdir(parents=True, exist_ok=True)
 
 # Common birth data
 JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30, "Liverpool", "GB")
@@ -177,6 +176,7 @@ def regenerate_john_and_yoko_synastry():
 
 
 if __name__ == "__main__":
+    SVG_DIR.mkdir(parents=True, exist_ok=True)
     print(f"SVG output directory: {SVG_DIR}\n")
     regenerate_sidereal_theme_combos()
     regenerate_house_system_synastry()
