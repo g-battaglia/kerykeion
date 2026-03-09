@@ -37,6 +37,16 @@
     --kerykeion-modern-indicator: #a1a1aa;
     --kerykeion-modern-zodiac-bg-0: #d1d1d1;
     --kerykeion-modern-zodiac-bg-1: rgb(113 113 122);
+    --kerykeion-modern-zodiac-bg-2: #d1d1d1;
+    --kerykeion-modern-zodiac-bg-3: rgb(113 113 122);
+    --kerykeion-modern-zodiac-bg-4: #d1d1d1;
+    --kerykeion-modern-zodiac-bg-5: rgb(113 113 122);
+    --kerykeion-modern-zodiac-bg-6: #d1d1d1;
+    --kerykeion-modern-zodiac-bg-7: rgb(113 113 122);
+    --kerykeion-modern-zodiac-bg-8: #d1d1d1;
+    --kerykeion-modern-zodiac-bg-9: rgb(113 113 122);
+    --kerykeion-modern-zodiac-bg-10: #d1d1d1;
+    --kerykeion-modern-zodiac-bg-11: rgb(113 113 122);
     --kerykeion-modern-zodiac-bg-opacity: 0.5;
     --kerykeion-color-info: #00b5ff;
     --kerykeion-color-info-content: #000000;
