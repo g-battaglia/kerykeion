@@ -30,10 +30,10 @@ John Lennon — Natal Chart Report
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Ari ♈️ | 19.71°   | +360.0000°/d | N/A     | -    | First House    |
-| Medium Coeli          | Cap ♑️ | 7.06°    | +360.0000°/d | N/A     | -    | Tenth House    |
-| Descendant            | Lib ♎️ | 19.71°   | +360.0000°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Can ♋️ | 7.06°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Ascendant             | Ari ♈️ | 19.71°   | +886.9442°/d | N/A     | -    | First House    |
+| Medium Coeli          | Cap ♑️ | 7.06°    | +332.1251°/d | N/A     | -    | Tenth House    |
+| Descendant            | Lib ♎️ | 19.71°   | +886.9442°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Can ♋️ | 7.06°    | +332.1251°/d | N/A     | -    | Fourth House   |
 | Sun                   | Lib ♎️ | 16.27°   | +0.9885°/d   | -6.40°  | -    | Sixth House    |
 | Moon                  | Aqu ♒️ | 3.55°    | +12.5292°/d  | -14.60° | -    | Eleventh House |
 | Mercury               | Sco ♏️ | 8.56°    | +1.3195°/d   | -16.23° | -    | Seventh House  |

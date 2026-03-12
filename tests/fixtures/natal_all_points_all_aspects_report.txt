@@ -24,16 +24,16 @@ Sample Natal Subject — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448094.072917      |
-| Active Points Count | 42                  |
+| Active Points Count | 57                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Sco ♏️ | 5.82°    | +360.0000°/d | N/A     | -    | First House    |
-| Medium Coeli          | Leo ♌️ | 19.91°   | +360.0000°/d | N/A     | -    | Tenth House    |
-| Descendant            | Tau ♉️ | 5.82°    | +360.0000°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Aqu ♒️ | 19.91°   | +360.0000°/d | N/A     | -    | Fourth House   |
+| Ascendant             | Sco ♏️ | 5.82°    | +245.7250°/d | N/A     | -    | First House    |
+| Medium Coeli          | Leo ♌️ | 19.91°   | +367.6409°/d | N/A     | -    | Tenth House    |
+| Descendant            | Tau ♉️ | 5.82°    | +245.7250°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Aqu ♒️ | 19.91°   | +367.6409°/d | N/A     | -    | Fourth House   |
 | Sun                   | Can ♋️ | 28.54°   | +0.9551°/d   | +20.45° | -    | Ninth House    |
 | Moon                  | Can ♋️ | 21.21°   | +14.4024°/d  | +23.21° | -    | Ninth House    |
 | Mercury               | Leo ♌️ | 17.61°   | +1.6910°/d   | +16.88° | -    | Ninth House    |
@@ -66,6 +66,21 @@ Sample Natal Subject — Natal Chart Report
 | Quaoar                | Sco ♏️ | 24.08°   | -0.0062°/d   | -13.09° | R    | First House    |
 | Regulus               | Leo ♌️ | 29.70°   | +0.0000°/d   | +12.01° | -    | Tenth House    |
 | Spica                 | Lib ♎️ | 23.71°   | -0.0000°/d   | -11.11° | -    | Twelfth House  |
+| Aldebaran             | Gem ♊️ | 9.66°    | +0.0002°/d   | +16.49° | -    | Eighth House   |
+| Antares               | Sag ♐️ | 9.64°    | +0.0000°/d   | -26.41° | -    | Second House   |
+| Sirius                | Can ♋️ | 13.95°   | +0.0001°/d   | -16.70° | -    | Ninth House    |
+| Fomalhaut             | Pis ♓️ | 3.74°    | +0.0001°/d   | -29.67° | -    | Fourth House   |
+| Algol                 | Tau ♉️ | 26.04°   | +0.0002°/d   | +40.92° | -    | Seventh House  |
+| Betelgeuse            | Gem ♊️ | 28.62°   | +0.0001°/d   | +7.41°  | -    | Eighth House   |
+| Canopus               | Can ♋️ | 14.81°   | +0.0002°/d   | -52.69° | -    | Ninth House    |
+| Procyon               | Can ♋️ | 25.65°   | +0.0001°/d   | +5.25°  | -    | Ninth House    |
+| Arcturus              | Lib ♎️ | 24.11°   | -0.0000°/d   | +19.23° | -    | Twelfth House  |
+| Pollux                | Can ♋️ | 23.08°   | +0.0001°/d   | +28.05° | -    | Ninth House    |
+| Deneb                 | Pis ♓️ | 5.21°    | +0.0002°/d   | +45.25° | -    | Fourth House   |
+| Altair                | Aqu ♒️ | 1.65°    | +0.0001°/d   | +8.84°  | -    | Third House    |
+| Rigel                 | Gem ♊️ | 16.70°   | +0.0002°/d   | -8.21°  | -    | Eighth House   |
+| Achernar              | Pis ♓️ | 15.19°   | +0.0002°/d   | -57.28° | -    | Fourth House   |
+| Capella               | Gem ♊️ | 21.73°   | +0.0001°/d   | +45.99° | -    | Eighth House   |
 | Pars Fortunae         | Lib ♎️ | 28.49°   | N/A          | N/A     | -    | Twelfth House  |
 | Pars Spiritus         | Sco ♏️ | 13.16°   | N/A          | N/A     | -    | First House    |
 | Pars Amoris           | Lib ♎️ | 8.99°    | N/A          | N/A     | -    | Eleventh House |
@@ -153,16 +168,31 @@ Sample Natal Subject — Natal Chart Report
 | 30 | Quaoar                |
 | 31 | Regulus               |
 | 32 | Spica                 |
-| 33 | Pars_Fortunae         |
-| 34 | Pars_Spiritus         |
-| 35 | Pars_Amoris           |
-| 36 | Pars_Fidei            |
-| 37 | Vertex                |
-| 38 | Anti_Vertex           |
-| 39 | Ascendant             |
-| 40 | Medium_Coeli          |
-| 41 | Descendant            |
-| 42 | Imum_Coeli            |
+| 33 | Aldebaran             |
+| 34 | Antares               |
+| 35 | Sirius                |
+| 36 | Fomalhaut             |
+| 37 | Algol                 |
+| 38 | Betelgeuse            |
+| 39 | Canopus               |
+| 40 | Procyon               |
+| 41 | Arcturus              |
+| 42 | Pollux                |
+| 43 | Deneb                 |
+| 44 | Altair                |
+| 45 | Rigel                 |
+| 46 | Achernar              |
+| 47 | Capella               |
+| 48 | Pars_Fortunae         |
+| 49 | Pars_Spiritus         |
+| 50 | Pars_Amoris           |
+| 51 | Pars_Fidei            |
+| 52 | Vertex                |
+| 53 | Anti_Vertex           |
+| 54 | Ascendant             |
+| 55 | Medium_Coeli          |
+| 56 | Descendant            |
+| 57 | Imum_Coeli            |
 +----+-----------------------+
 
 +----------------+---------+
@@ -243,8 +273,8 @@ Sample Natal Subject — Natal Chart Report
 | Mars                  | opposition ☍                  | Pluto                 | 9.01° | Applying →   |
 | Mars                  | square □                      | Mean North Lunar Node | 1.82° | Applying →   |
 | Mars                  | square □                      | True North Lunar Node | 1.30° | Applying →   |
-| Mars                  | opposition ☍                  | Ascendant             | 0.15° | Separating ← |
-| Mars                  | conjunction ☌                 | Descendant            | 0.15° | Separating ← |
+| Mars                  | opposition ☍                  | Ascendant             | 0.15° | Applying →   |
+| Mars                  | conjunction ☌                 | Descendant            | 0.15° | Applying →   |
 | Mars                  | square □                      | Mean South Lunar Node | 1.82° | Applying →   |
 | Mars                  | square □                      | True South Lunar Node | 1.30° | Applying →   |
 | Mars                  | sextile ⚹                     | Pholus                | 2.02° | Applying →   |
@@ -363,7 +393,7 @@ Sample Natal Subject — Natal Chart Report
 | Chiron                | quintile Q                    | Pars Fidei            | 0.34° | Applying →   |
 | Ascendant             | square □                      | Mean South Lunar Node | 1.97° | Applying →   |
 | Ascendant             | square □                      | True South Lunar Node | 1.44° | Applying →   |
-| Ascendant             | biquintile biquintile         | Earth                 | 0.18° | Separating ← |
+| Ascendant             | biquintile biquintile         | Earth                 | 0.18° | Applying →   |
 | Ascendant             | trine △                       | Pholus                | 2.17° | Applying →   |
 | Ascendant             | trine △                       | Pallas                | 1.43° | Applying →   |
 | Ascendant             | conjunction ☌                 | Juno                  | 4.27° | Applying →   |

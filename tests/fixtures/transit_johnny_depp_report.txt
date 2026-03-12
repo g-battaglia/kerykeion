@@ -55,10 +55,10 @@ Johnny Depp — Transit 1940-10-09
 +Natal Subject Celestial Points---+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Aqu ♒️ | 20.70°   | +360.0000°/d | N/A     | -    | First House    |
-| Medium Coeli          | Sag ♐️ | 6.59°    | +360.0000°/d | N/A     | -    | Tenth House    |
-| Descendant            | Leo ♌️ | 20.70°   | +360.0000°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Gem ♊️ | 6.59°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Ascendant             | Aqu ♒️ | 20.70°   | +507.7877°/d | N/A     | -    | First House    |
+| Medium Coeli          | Sag ♐️ | 6.59°    | +341.0208°/d | N/A     | -    | Tenth House    |
+| Descendant            | Leo ♌️ | 20.70°   | +507.7877°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Gem ♊️ | 6.59°    | +341.0208°/d | N/A     | -    | Fourth House   |
 | Sun                   | Gem ♊️ | 17.66°   | +0.9560°/d   | +22.87° | -    | Fourth House   |
 | Moon                  | Cap ♑️ | 8.74°    | +12.4796°/d  | -22.08° | -    | Eleventh House |
 | Mercury               | Tau ♉️ | 25.00°   | +0.6817°/d   | +15.27° | -    | Third House    |
@@ -78,10 +78,10 @@ Johnny Depp — Transit 1940-10-09
 +Transit Subject Celestial Points-+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Ari ♈️ | 19.71°   | +360.0000°/d | N/A     | -    | First House    |
-| Medium Coeli          | Cap ♑️ | 7.06°    | +360.0000°/d | N/A     | -    | Tenth House    |
-| Descendant            | Lib ♎️ | 19.71°   | +360.0000°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Can ♋️ | 7.06°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Ascendant             | Ari ♈️ | 19.71°   | +886.9442°/d | N/A     | -    | First House    |
+| Medium Coeli          | Cap ♑️ | 7.06°    | +332.1251°/d | N/A     | -    | Tenth House    |
+| Descendant            | Lib ♎️ | 19.71°   | +886.9442°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Can ♋️ | 7.06°    | +332.1251°/d | N/A     | -    | Fourth House   |
 | Sun                   | Lib ♎️ | 16.27°   | +0.9885°/d   | -6.40°  | -    | Sixth House    |
 | Moon                  | Aqu ♒️ | 3.55°    | +12.5292°/d  | -14.60° | -    | Eleventh House |
 | Mercury               | Sco ♏️ | 8.56°    | +1.3195°/d   | -16.23° | -    | Seventh House  |

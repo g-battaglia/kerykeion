@@ -16,7 +16,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Zodiac Type         | Tropical            |
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
-| Active Points Count | 42                  |
+| Active Points Count | 57                  |
 +---------------------+---------------------+
 
 +Composite – First Subject — Birth Data----------+
@@ -41,7 +41,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448094.072917      |
-| Active Points Count | 42                  |
+| Active Points Count | 57                  |
 +---------------------+---------------------+
 
 +Composite – Second Subject — Birth Data---------+
@@ -66,7 +66,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2427121.979167      |
-| Active Points Count | 42                  |
+| Active Points Count | 57                  |
 +---------------------+---------------------+
 
 +Composite Chart Celestial Points-+----------+-------+-------+------+----------------+
@@ -108,6 +108,21 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Quaoar                | Lib ♎️ | 20.42°   | N/A   | N/A   | -    | Twelfth House  |
 | Regulus               | Leo ♌️ | 29.30°   | N/A   | N/A   | -    | Tenth House    |
 | Spica                 | Lib ♎️ | 23.31°   | N/A   | N/A   | -    | First House    |
+| Aldebaran             | Gem ♊️ | 9.26°    | N/A   | N/A   | -    | Eighth House   |
+| Antares               | Sag ♐️ | 9.23°    | N/A   | N/A   | -    | Second House   |
+| Sirius                | Can ♋️ | 13.56°   | N/A   | N/A   | -    | Ninth House    |
+| Fomalhaut             | Pis ♓️ | 3.33°    | N/A   | N/A   | -    | Fifth House    |
+| Algol                 | Tau ♉️ | 25.64°   | N/A   | N/A   | -    | Eighth House   |
+| Betelgeuse            | Gem ♊️ | 28.22°   | N/A   | N/A   | -    | Ninth House    |
+| Canopus               | Can ♋️ | 14.43°   | N/A   | N/A   | -    | Ninth House    |
+| Procyon               | Can ♋️ | 25.26°   | N/A   | N/A   | -    | Ninth House    |
+| Arcturus              | Lib ♎️ | 23.71°   | N/A   | N/A   | -    | First House    |
+| Pollux                | Can ♋️ | 22.69°   | N/A   | N/A   | -    | Ninth House    |
+| Deneb                 | Pis ♓️ | 4.81°    | N/A   | N/A   | -    | Fifth House    |
+| Altair                | Aqu ♒️ | 1.24°    | N/A   | N/A   | -    | Fourth House   |
+| Rigel                 | Gem ♊️ | 16.30°   | N/A   | N/A   | -    | Eighth House   |
+| Achernar              | Pis ♓️ | 14.77°   | N/A   | N/A   | -    | Fifth House    |
+| Capella               | Gem ♊️ | 21.33°   | N/A   | N/A   | -    | Eighth House   |
 | Pars Fortunae         | Sco ♏️ | 27.58°   | N/A   | N/A   | -    | Second House   |
 | Pars Spiritus         | Vir ♍️ | 16.66°   | N/A   | N/A   | -    | Eleventh House |
 | Pars Amoris           | Lib ♎️ | 0.90°    | N/A   | N/A   | -    | Twelfth House  |
@@ -195,16 +210,31 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | 30 | Quaoar                |
 | 31 | Regulus               |
 | 32 | Spica                 |
-| 33 | Pars_Fortunae         |
-| 34 | Pars_Spiritus         |
-| 35 | Pars_Amoris           |
-| 36 | Pars_Fidei            |
-| 37 | Vertex                |
-| 38 | Anti_Vertex           |
-| 39 | Ascendant             |
-| 40 | Medium_Coeli          |
-| 41 | Descendant            |
-| 42 | Imum_Coeli            |
+| 33 | Aldebaran             |
+| 34 | Antares               |
+| 35 | Sirius                |
+| 36 | Fomalhaut             |
+| 37 | Algol                 |
+| 38 | Betelgeuse            |
+| 39 | Canopus               |
+| 40 | Procyon               |
+| 41 | Arcturus              |
+| 42 | Pollux                |
+| 43 | Deneb                 |
+| 44 | Altair                |
+| 45 | Rigel                 |
+| 46 | Achernar              |
+| 47 | Capella               |
+| 48 | Pars_Fortunae         |
+| 49 | Pars_Spiritus         |
+| 50 | Pars_Amoris           |
+| 51 | Pars_Fidei            |
+| 52 | Vertex                |
+| 53 | Anti_Vertex           |
+| 54 | Ascendant             |
+| 55 | Medium_Coeli          |
+| 56 | Descendant            |
+| 57 | Imum_Coeli            |
 +----+-----------------------+
 
 +----------------+---------+

@@ -24,7 +24,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448094.072917      |
-| Active Points Count | 42                  |
+| Active Points Count | 57                  |
 +---------------------+---------------------+
 
 +Transit Subject — Birth Data--------------------+
@@ -49,16 +49,16 @@ Sample Natal Subject — Transit 1980-12-08
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2444582.659722      |
-| Active Points Count | 42                  |
+| Active Points Count | 57                  |
 +---------------------+---------------------+
 
 +Natal Subject Celestial Points---+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Sco ♏️ | 5.82°    | +360.0000°/d | N/A     | -    | First House    |
-| Medium Coeli          | Leo ♌️ | 19.91°   | +360.0000°/d | N/A     | -    | Tenth House    |
-| Descendant            | Tau ♉️ | 5.82°    | +360.0000°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Aqu ♒️ | 19.91°   | +360.0000°/d | N/A     | -    | Fourth House   |
+| Ascendant             | Sco ♏️ | 5.82°    | +245.7250°/d | N/A     | -    | First House    |
+| Medium Coeli          | Leo ♌️ | 19.91°   | +367.6409°/d | N/A     | -    | Tenth House    |
+| Descendant            | Tau ♉️ | 5.82°    | +245.7250°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Aqu ♒️ | 19.91°   | +367.6409°/d | N/A     | -    | Fourth House   |
 | Sun                   | Can ♋️ | 28.54°   | +0.9551°/d   | +20.45° | -    | Ninth House    |
 | Moon                  | Can ♋️ | 21.21°   | +14.4024°/d  | +23.21° | -    | Ninth House    |
 | Mercury               | Leo ♌️ | 17.61°   | +1.6910°/d   | +16.88° | -    | Ninth House    |
@@ -91,6 +91,21 @@ Sample Natal Subject — Transit 1980-12-08
 | Quaoar                | Sco ♏️ | 24.08°   | -0.0062°/d   | -13.09° | R    | First House    |
 | Regulus               | Leo ♌️ | 29.70°   | +0.0000°/d   | +12.01° | -    | Tenth House    |
 | Spica                 | Lib ♎️ | 23.71°   | -0.0000°/d   | -11.11° | -    | Twelfth House  |
+| Aldebaran             | Gem ♊️ | 9.66°    | +0.0002°/d   | +16.49° | -    | Eighth House   |
+| Antares               | Sag ♐️ | 9.64°    | +0.0000°/d   | -26.41° | -    | Second House   |
+| Sirius                | Can ♋️ | 13.95°   | +0.0001°/d   | -16.70° | -    | Ninth House    |
+| Fomalhaut             | Pis ♓️ | 3.74°    | +0.0001°/d   | -29.67° | -    | Fourth House   |
+| Algol                 | Tau ♉️ | 26.04°   | +0.0002°/d   | +40.92° | -    | Seventh House  |
+| Betelgeuse            | Gem ♊️ | 28.62°   | +0.0001°/d   | +7.41°  | -    | Eighth House   |
+| Canopus               | Can ♋️ | 14.81°   | +0.0002°/d   | -52.69° | -    | Ninth House    |
+| Procyon               | Can ♋️ | 25.65°   | +0.0001°/d   | +5.25°  | -    | Ninth House    |
+| Arcturus              | Lib ♎️ | 24.11°   | -0.0000°/d   | +19.23° | -    | Twelfth House  |
+| Pollux                | Can ♋️ | 23.08°   | +0.0001°/d   | +28.05° | -    | Ninth House    |
+| Deneb                 | Pis ♓️ | 5.21°    | +0.0002°/d   | +45.25° | -    | Fourth House   |
+| Altair                | Aqu ♒️ | 1.65°    | +0.0001°/d   | +8.84°  | -    | Third House    |
+| Rigel                 | Gem ♊️ | 16.70°   | +0.0002°/d   | -8.21°  | -    | Eighth House   |
+| Achernar              | Pis ♓️ | 15.19°   | +0.0002°/d   | -57.28° | -    | Fourth House   |
+| Capella               | Gem ♊️ | 21.73°   | +0.0001°/d   | +45.99° | -    | Eighth House   |
 | Pars Fortunae         | Lib ♎️ | 28.49°   | N/A          | N/A     | -    | Twelfth House  |
 | Pars Spiritus         | Sco ♏️ | 13.16°   | N/A          | N/A     | -    | First House    |
 | Pars Amoris           | Lib ♎️ | 8.99°    | N/A          | N/A     | -    | Eleventh House |
@@ -102,10 +117,10 @@ Sample Natal Subject — Transit 1980-12-08
 +Transit Subject Celestial Points-+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Vir ♍️ | 7.47°    | +360.0000°/d | N/A     | -    | First House    |
-| Medium Coeli          | Gem ♊️ | 3.56°    | +360.0000°/d | N/A     | -    | Tenth House    |
-| Descendant            | Pis ♓️ | 7.47°    | +360.0000°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Sag ♐️ | 3.56°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Ascendant             | Vir ♍️ | 7.47°    | +284.2972°/d | N/A     | -    | First House    |
+| Medium Coeli          | Gem ♊️ | 3.56°    | +343.5423°/d | N/A     | -    | Tenth House    |
+| Descendant            | Pis ♓️ | 7.47°    | +284.2972°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Sag ♐️ | 3.56°    | +343.5423°/d | N/A     | -    | Fourth House   |
 | Sun                   | Sag ♐️ | 17.24°   | +1.0165°/d   | -22.83° | -    | Fourth House   |
 | Moon                  | Cap ♑️ | 5.06°    | +12.6293°/d  | -20.27° | -    | Fourth House   |
 | Mercury               | Sag ♐️ | 5.09°    | +1.5319°/d   | -20.71° | -    | Fourth House   |
@@ -138,6 +153,21 @@ Sample Natal Subject — Transit 1980-12-08
 | Quaoar                | Sco ♏️ | 14.08°   | +0.0220°/d   | -11.77° | -    | Third House    |
 | Regulus               | Leo ♌️ | 29.56°   | +0.0002°/d   | +12.06° | -    | Twelfth House  |
 | Spica                 | Lib ♎️ | 23.57°   | +0.0002°/d   | -11.06° | -    | Second House   |
+| Aldebaran             | Gem ♊️ | 9.52°    | +0.0001°/d   | +16.47° | -    | Tenth House    |
+| Antares               | Sag ♐️ | 9.49°    | +0.0001°/d   | -26.39° | -    | Fourth House   |
+| Sirius                | Can ♋️ | 13.82°   | +0.0001°/d   | -16.69° | -    | Eleventh House |
+| Fomalhaut             | Pis ♓️ | 3.59°    | -0.0000°/d   | -29.73° | -    | Sixth House    |
+| Algol                 | Tau ♉️ | 25.90°   | +0.0000°/d   | +40.88° | -    | Ninth House    |
+| Betelgeuse            | Gem ♊️ | 28.49°   | +0.0001°/d   | +7.40°  | -    | Tenth House    |
+| Canopus               | Can ♋️ | 14.71°   | +0.0003°/d   | -52.68° | -    | Eleventh House |
+| Procyon               | Can ♋️ | 25.52°   | +0.0001°/d   | +5.27°  | -    | Eleventh House |
+| Arcturus              | Lib ♎️ | 23.96°   | +0.0002°/d   | +19.28° | -    | Second House   |
+| Pollux                | Can ♋️ | 22.95°   | +0.0001°/d   | +28.07° | -    | Eleventh House |
+| Deneb                 | Pis ♓️ | 5.06°    | -0.0001°/d   | +45.22° | -    | Sixth House    |
+| Altair                | Aqu ♒️ | 1.50°    | -0.0000°/d   | +8.82°  | -    | Fifth House    |
+| Rigel                 | Gem ♊️ | 16.57°   | +0.0001°/d   | -8.22°  | -    | Tenth House    |
+| Achernar              | Pis ♓️ | 15.04°   | -0.0001°/d   | -57.34° | -    | Seventh House  |
+| Capella               | Gem ♊️ | 21.59°   | +0.0001°/d   | +45.98° | -    | Tenth House    |
 | Pars Fortunae         | Leo ♌️ | 19.65°   | N/A          | N/A     | -    | Twelfth House  |
 | Pars Spiritus         | Vir ♍️ | 25.29°   | N/A          | N/A     | -    | First House    |
 | Pars Amoris           | Leo ♌️ | 8.91°    | N/A          | N/A     | -    | Eleventh House |
@@ -242,6 +272,21 @@ Sample Natal Subject — Transit 1980-12-08
 | Sample Natal Subject – Quaoar                | 1 (First_House)     | 3 (Third_House)     | Sco  | 24.08° |
 | Sample Natal Subject – Regulus               | 10 (Tenth_House)    | 12 (Twelfth_House)  | Leo  | 29.70° |
 | Sample Natal Subject – Spica                 | 12 (Twelfth_House)  | 2 (Second_House)    | Lib  | 23.71° |
+| Sample Natal Subject – Aldebaran             | 8 (Eighth_House)    | 10 (Tenth_House)    | Gem  | 9.66°  |
+| Sample Natal Subject – Antares               | 2 (Second_House)    | 4 (Fourth_House)    | Sag  | 9.64°  |
+| Sample Natal Subject – Sirius                | 9 (Ninth_House)     | 11 (Eleventh_House) | Can  | 13.95° |
+| Sample Natal Subject – Fomalhaut             | 4 (Fourth_House)    | 6 (Sixth_House)     | Pis  | 3.74°  |
+| Sample Natal Subject – Algol                 | 7 (Seventh_House)   | 9 (Ninth_House)     | Tau  | 26.04° |
+| Sample Natal Subject – Betelgeuse            | 8 (Eighth_House)    | 10 (Tenth_House)    | Gem  | 28.62° |
+| Sample Natal Subject – Canopus               | 9 (Ninth_House)     | 11 (Eleventh_House) | Can  | 14.81° |
+| Sample Natal Subject – Procyon               | 9 (Ninth_House)     | 11 (Eleventh_House) | Can  | 25.65° |
+| Sample Natal Subject – Arcturus              | 12 (Twelfth_House)  | 2 (Second_House)    | Lib  | 24.11° |
+| Sample Natal Subject – Pollux                | 9 (Ninth_House)     | 11 (Eleventh_House) | Can  | 23.08° |
+| Sample Natal Subject – Deneb                 | 4 (Fourth_House)    | 6 (Sixth_House)     | Pis  | 5.21°  |
+| Sample Natal Subject – Altair                | 3 (Third_House)     | 5 (Fifth_House)     | Aqu  | 1.65°  |
+| Sample Natal Subject – Rigel                 | 8 (Eighth_House)    | 10 (Tenth_House)    | Gem  | 16.70° |
+| Sample Natal Subject – Achernar              | 4 (Fourth_House)    | 7 (Seventh_House)   | Pis  | 15.19° |
+| Sample Natal Subject – Capella               | 8 (Eighth_House)    | 10 (Tenth_House)    | Gem  | 21.73° |
 | Sample Natal Subject – Pars Fortunae         | 12 (Twelfth_House)  | 2 (Second_House)    | Lib  | 28.49° |
 | Sample Natal Subject – Pars Spiritus         | 1 (First_House)     | 3 (Third_House)     | Sco  | 13.16° |
 | Sample Natal Subject – Pars Amoris           | 11 (Eleventh_House) | 2 (Second_House)    | Lib  | 8.99°  |
@@ -289,6 +334,21 @@ Sample Natal Subject — Transit 1980-12-08
 | 1980 Transit – Quaoar                | 3 (Third_House)     | 1 (First_House)     | Sco  | 14.08° |
 | 1980 Transit – Regulus               | 12 (Twelfth_House)  | 10 (Tenth_House)    | Leo  | 29.56° |
 | 1980 Transit – Spica                 | 2 (Second_House)    | 12 (Twelfth_House)  | Lib  | 23.57° |
+| 1980 Transit – Aldebaran             | 10 (Tenth_House)    | 8 (Eighth_House)    | Gem  | 9.52°  |
+| 1980 Transit – Antares               | 4 (Fourth_House)    | 2 (Second_House)    | Sag  | 9.49°  |
+| 1980 Transit – Sirius                | 11 (Eleventh_House) | 9 (Ninth_House)     | Can  | 13.82° |
+| 1980 Transit – Fomalhaut             | 6 (Sixth_House)     | 4 (Fourth_House)    | Pis  | 3.59°  |
+| 1980 Transit – Algol                 | 9 (Ninth_House)     | 7 (Seventh_House)   | Tau  | 25.90° |
+| 1980 Transit – Betelgeuse            | 10 (Tenth_House)    | 8 (Eighth_House)    | Gem  | 28.49° |
+| 1980 Transit – Canopus               | 11 (Eleventh_House) | 9 (Ninth_House)     | Can  | 14.71° |
+| 1980 Transit – Procyon               | 11 (Eleventh_House) | 9 (Ninth_House)     | Can  | 25.52° |
+| 1980 Transit – Arcturus              | 2 (Second_House)    | 12 (Twelfth_House)  | Lib  | 23.96° |
+| 1980 Transit – Pollux                | 11 (Eleventh_House) | 9 (Ninth_House)     | Can  | 22.95° |
+| 1980 Transit – Deneb                 | 6 (Sixth_House)     | 4 (Fourth_House)    | Pis  | 5.06°  |
+| 1980 Transit – Altair                | 5 (Fifth_House)     | 3 (Third_House)     | Aqu  | 1.50°  |
+| 1980 Transit – Rigel                 | 10 (Tenth_House)    | 8 (Eighth_House)    | Gem  | 16.57° |
+| 1980 Transit – Achernar              | 7 (Seventh_House)   | 4 (Fourth_House)    | Pis  | 15.04° |
+| 1980 Transit – Capella               | 10 (Tenth_House)    | 8 (Eighth_House)    | Gem  | 21.59° |
 | 1980 Transit – Pars Fortunae         | 12 (Twelfth_House)  | 9 (Ninth_House)     | Leo  | 19.65° |
 | 1980 Transit – Pars Spiritus         | 1 (First_House)     | 11 (Eleventh_House) | Vir  | 25.29° |
 | 1980 Transit – Pars Amoris           | 11 (Eleventh_House) | 9 (Ninth_House)     | Leo  | 8.91°  |
@@ -338,48 +398,63 @@ Sample Natal Subject — Transit 1980-12-08
 +Active Celestial Points-----+
 | #  | Active Point          |
 +----+-----------------------+
-| 1  | Anti_Vertex           |
-| 2  | Ascendant             |
-| 3  | Ceres                 |
-| 4  | Chiron                |
-| 5  | Descendant            |
-| 6  | Earth                 |
-| 7  | Eris                  |
-| 8  | Haumea                |
-| 9  | Imum_Coeli            |
-| 10 | Ixion                 |
-| 11 | Juno                  |
-| 12 | Jupiter               |
-| 13 | Makemake              |
-| 14 | Mars                  |
-| 15 | Mean_Lilith           |
-| 16 | Mean_North_Lunar_Node |
-| 17 | Mean_South_Lunar_Node |
-| 18 | Medium_Coeli          |
-| 19 | Mercury               |
-| 20 | Moon                  |
-| 21 | Neptune               |
-| 22 | Orcus                 |
-| 23 | Pallas                |
-| 24 | Pars_Amoris           |
-| 25 | Pars_Fidei            |
-| 26 | Pars_Fortunae         |
-| 27 | Pars_Spiritus         |
-| 28 | Pholus                |
-| 29 | Pluto                 |
-| 30 | Quaoar                |
-| 31 | Regulus               |
-| 32 | Saturn                |
-| 33 | Sedna                 |
-| 34 | Spica                 |
-| 35 | Sun                   |
-| 36 | True_Lilith           |
-| 37 | True_North_Lunar_Node |
-| 38 | True_South_Lunar_Node |
-| 39 | Uranus                |
-| 40 | Venus                 |
-| 41 | Vertex                |
-| 42 | Vesta                 |
+| 1  | Achernar              |
+| 2  | Aldebaran             |
+| 3  | Algol                 |
+| 4  | Altair                |
+| 5  | Antares               |
+| 6  | Anti_Vertex           |
+| 7  | Arcturus              |
+| 8  | Ascendant             |
+| 9  | Betelgeuse            |
+| 10 | Canopus               |
+| 11 | Capella               |
+| 12 | Ceres                 |
+| 13 | Chiron                |
+| 14 | Deneb                 |
+| 15 | Descendant            |
+| 16 | Earth                 |
+| 17 | Eris                  |
+| 18 | Fomalhaut             |
+| 19 | Haumea                |
+| 20 | Imum_Coeli            |
+| 21 | Ixion                 |
+| 22 | Juno                  |
+| 23 | Jupiter               |
+| 24 | Makemake              |
+| 25 | Mars                  |
+| 26 | Mean_Lilith           |
+| 27 | Mean_North_Lunar_Node |
+| 28 | Mean_South_Lunar_Node |
+| 29 | Medium_Coeli          |
+| 30 | Mercury               |
+| 31 | Moon                  |
+| 32 | Neptune               |
+| 33 | Orcus                 |
+| 34 | Pallas                |
+| 35 | Pars_Amoris           |
+| 36 | Pars_Fidei            |
+| 37 | Pars_Fortunae         |
+| 38 | Pars_Spiritus         |
+| 39 | Pholus                |
+| 40 | Pluto                 |
+| 41 | Pollux                |
+| 42 | Procyon               |
+| 43 | Quaoar                |
+| 44 | Regulus               |
+| 45 | Rigel                 |
+| 46 | Saturn                |
+| 47 | Sedna                 |
+| 48 | Sirius                |
+| 49 | Spica                 |
+| 50 | Sun                   |
+| 51 | True_Lilith           |
+| 52 | True_North_Lunar_Node |
+| 53 | True_South_Lunar_Node |
+| 54 | Uranus                |
+| 55 | Venus                 |
+| 56 | Vertex                |
+| 57 | Vesta                 |
 +----+-----------------------+
 
 +----------------+---------+

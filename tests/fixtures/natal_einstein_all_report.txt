@@ -24,16 +24,16 @@ Einstein Subject — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2407422.942361      |
-| Active Points Count | 42                  |
+| Active Points Count | 57                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Can ♋️ | 8.92°    | +360.0000°/d | N/A     | -    | First House    |
-| Medium Coeli          | Pis ♓️ | 9.33°    | +360.0000°/d | N/A     | -    | Tenth House    |
-| Descendant            | Cap ♑️ | 8.92°    | +360.0000°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Vir ♍️ | 9.33°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Ascendant             | Can ♋️ | 8.92°    | +304.0487°/d | N/A     | -    | First House    |
+| Medium Coeli          | Pis ♓️ | 9.33°    | +385.7376°/d | N/A     | -    | Tenth House    |
+| Descendant            | Cap ♑️ | 8.92°    | +304.0487°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Vir ♍️ | 9.33°    | +385.7376°/d | N/A     | -    | Fourth House   |
 | Sun                   | Pis ♓️ | 23.50°   | +0.9960°/d   | -2.58°  | -    | Tenth House    |
 | Moon                  | Sag ♐️ | 14.40°   | +13.9224°/d  | -26.35° | -    | Sixth House    |
 | Mercury               | Ari ♈️ | 3.13°    | +1.9520°/d   | +0.88°  | -    | Tenth House    |
@@ -66,6 +66,21 @@ Einstein Subject — Natal Chart Report
 | Quaoar                | Can ♋️ | 9.96°    | -0.0035°/d   | +15.06° | R    | First House    |
 | Regulus               | Leo ♌️ | 28.16°   | -0.0000°/d   | +12.55° | -    | Third House    |
 | Spica                 | Lib ♎️ | 22.16°   | +0.0001°/d   | -10.53° | -    | Fifth House    |
+| Aldebaran             | Gem ♊️ | 8.10°    | -0.0000°/d   | +16.27° | -    | Twelfth House  |
+| Antares               | Sag ♐️ | 8.08°    | +0.0001°/d   | -26.16° | -    | Sixth House    |
+| Sirius                | Can ♋️ | 12.42°   | -0.0001°/d   | -16.55° | -    | First House    |
+| Fomalhaut             | Pis ♓️ | 2.16°    | +0.0001°/d   | -30.26° | -    | Ninth House    |
+| Algol                 | Tau ♉️ | 24.48°   | -0.0000°/d   | +40.49° | -    | Eleventh House |
+| Betelgeuse            | Gem ♊️ | 27.07°   | -0.0000°/d   | +7.38°  | -    | Twelfth House  |
+| Canopus               | Can ♋️ | 13.30°   | -0.0004°/d   | -52.63° | -    | First House    |
+| Procyon               | Can ♋️ | 24.13°   | -0.0001°/d   | +5.53°  | -    | First House    |
+| Arcturus              | Lib ♎️ | 22.56°   | +0.0001°/d   | +19.81° | -    | Fifth House    |
+| Pollux                | Can ♋️ | 21.56°   | -0.0000°/d   | +28.32° | -    | First House    |
+| Deneb                 | Pis ♓️ | 3.66°    | +0.0002°/d   | +44.85° | -    | Ninth House    |
+| Altair                | Aqu ♒️ | 0.07°    | +0.0002°/d   | +8.55°  | -    | Eighth House   |
+| Rigel                 | Gem ♊️ | 15.14°   | -0.0000°/d   | -8.34°  | -    | Twelfth House  |
+| Achernar              | Pis ♓️ | 13.59°   | +0.0002°/d   | -57.85° | -    | Tenth House    |
+| Capella               | Gem ♊️ | 20.17°   | -0.0000°/d   | +45.88° | -    | Twelfth House  |
 | Pars Fortunae         | Pis ♓️ | 29.82°   | N/A          | N/A     | -    | Tenth House    |
 | Pars Spiritus         | Lib ♎️ | 18.02°   | N/A          | N/A     | -    | Fifth House    |
 | Pars Amoris           | Leo ♌️ | 2.40°    | N/A          | N/A     | -    | Second House   |
@@ -153,16 +168,31 @@ Einstein Subject — Natal Chart Report
 | 30 | Quaoar                |
 | 31 | Regulus               |
 | 32 | Spica                 |
-| 33 | Pars_Fortunae         |
-| 34 | Pars_Spiritus         |
-| 35 | Pars_Amoris           |
-| 36 | Pars_Fidei            |
-| 37 | Vertex                |
-| 38 | Anti_Vertex           |
-| 39 | Ascendant             |
-| 40 | Medium_Coeli          |
-| 41 | Descendant            |
-| 42 | Imum_Coeli            |
+| 33 | Aldebaran             |
+| 34 | Antares               |
+| 35 | Sirius                |
+| 36 | Fomalhaut             |
+| 37 | Algol                 |
+| 38 | Betelgeuse            |
+| 39 | Canopus               |
+| 40 | Procyon               |
+| 41 | Arcturus              |
+| 42 | Pollux                |
+| 43 | Deneb                 |
+| 44 | Altair                |
+| 45 | Rigel                 |
+| 46 | Achernar              |
+| 47 | Capella               |
+| 48 | Pars_Fortunae         |
+| 49 | Pars_Spiritus         |
+| 50 | Pars_Amoris           |
+| 51 | Pars_Fidei            |
+| 52 | Vertex                |
+| 53 | Anti_Vertex           |
+| 54 | Ascendant             |
+| 55 | Medium_Coeli          |
+| 56 | Descendant            |
+| 57 | Imum_Coeli            |
 +----+-----------------------+
 
 +----------------+---------+

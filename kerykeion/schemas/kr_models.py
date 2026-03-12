@@ -378,6 +378,7 @@ class KerykeionPointModel(SubscriptableBaseModel):
     retrograde: Optional[bool] = None
     speed: Optional[float] = None
     declination: Optional[float] = None
+    magnitude: Optional[float] = None
 
 
 class AstrologicalBaseModel(SubscriptableBaseModel):
@@ -429,6 +430,7 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
     perspective_type: PerspectiveType
+    ayanamsa_value: Optional[float] = None
 
     # Common celestial points
     # Main planets (all optional to support selective calculations)
@@ -476,6 +478,21 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     # Fixed Stars
     regulus: Optional[KerykeionPointModel] = None
     spica: Optional[KerykeionPointModel] = None
+    aldebaran: Optional[KerykeionPointModel] = None
+    antares: Optional[KerykeionPointModel] = None
+    sirius: Optional[KerykeionPointModel] = None
+    fomalhaut: Optional[KerykeionPointModel] = None
+    algol: Optional[KerykeionPointModel] = None
+    betelgeuse: Optional[KerykeionPointModel] = None
+    canopus: Optional[KerykeionPointModel] = None
+    procyon: Optional[KerykeionPointModel] = None
+    arcturus: Optional[KerykeionPointModel] = None
+    pollux: Optional[KerykeionPointModel] = None
+    deneb: Optional[KerykeionPointModel] = None
+    altair: Optional[KerykeionPointModel] = None
+    rigel: Optional[KerykeionPointModel] = None
+    achernar: Optional[KerykeionPointModel] = None
+    capella: Optional[KerykeionPointModel] = None
 
     # Arabic Parts
     pars_fortunae: Optional[KerykeionPointModel] = None
