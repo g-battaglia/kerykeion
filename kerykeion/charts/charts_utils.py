@@ -149,6 +149,21 @@ DEFAULT_WEIGHTED_POINT_WEIGHTS: dict[str, float] = {
     # Fixed stars
     "regulus": 0.2,
     "spica": 0.2,
+    "aldebaran": 0.2,
+    "antares": 0.2,
+    "sirius": 0.2,
+    "fomalhaut": 0.2,
+    "algol": 0.2,
+    "betelgeuse": 0.2,
+    "canopus": 0.2,
+    "procyon": 0.2,
+    "arcturus": 0.2,
+    "pollux": 0.2,
+    "deneb": 0.2,
+    "altair": 0.2,
+    "rigel": 0.2,
+    "achernar": 0.2,
+    "capella": 0.2,
     # Other
     "earth": 0.3,
 }

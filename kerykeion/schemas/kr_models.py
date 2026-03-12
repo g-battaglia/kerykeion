@@ -363,6 +363,18 @@ class KerykeionPointModel(SubscriptableBaseModel):
         point_type: Type of the celestial point (Planet, House, etc.).
         house: House placement of the point (optional).
         retrograde: Whether the point is in retrograde motion (optional).
+        speed: Daily motion in degrees/day along the ecliptic. Negative values
+            indicate retrograde motion. For house cusps this is the cusp
+            progression rate driven by diurnal rotation. For fixed stars this
+            is the slow drift due to precession (~50 arcsec/year). Added in v5.12.
+        declination: Declination in degrees north (+) or south (-) of the
+            celestial equator, computed from equatorial coordinates via
+            ``swe.calc_ut`` with ``FLG_EQUATORIAL``. Useful for parallel and
+            contra-parallel aspects. Added in v5.12.
+        magnitude: Apparent visual magnitude of fixed stars (lower = brighter;
+            e.g. Sirius = -1.46, Regulus = 1.35). Only populated for fixed
+            star points; ``None`` for planets and calculated points. Retrieved
+            via ``swe.fixstar2_mag``. Added in v5.12.
     """
 
     name: Union[AstrologicalPoint, Houses]
@@ -376,9 +388,16 @@ class KerykeionPointModel(SubscriptableBaseModel):
     point_type: PointType
     house: Optional[Houses] = None
     retrograde: Optional[bool] = None
-    speed: Optional[float] = None
-    declination: Optional[float] = None
-    magnitude: Optional[float] = None
+    speed: Optional[float] = Field(
+        default=None,
+        description="Daily motion in degrees/day. Negative = retrograde. Populated for planets, house cusps, and fixed stars.",
+    )
+    declination: Optional[float] = Field(
+        default=None, description="Declination in degrees north (+) or south (-) of the celestial equator."
+    )
+    magnitude: Optional[float] = Field(
+        default=None, description="Apparent visual magnitude (fixed stars only). Lower = brighter."
+    )
 
 
 class AstrologicalBaseModel(SubscriptableBaseModel):
@@ -404,8 +423,20 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         zodiac_type: Type of zodiac system used (Tropical or Sidereal).
         sidereal_mode: Sidereal calculation mode (if applicable).
         houses_system_identifier: House system used for calculations.
+        houses_system_name: Human-readable name for the house system.
         perspective_type: Astrological perspective (geocentric, heliocentric, etc.).
+        ayanamsa_value: The computed ayanamsa offset in degrees for sidereal
+            charts. This is the angular difference between tropical 0 Aries and
+            sidereal 0 Aries at the chart's date/time, as determined by the
+            selected sidereal mode. ``None`` for tropical charts. Added in v5.12.
         active_points: List of celestial points included in calculations.
+
+    Fixed Stars (v5.12 -- expanded from 2 to 17):
+        regulus, spica, aldebaran, antares, sirius, fomalhaut, algol,
+        betelgeuse, canopus, procyon, arcturus, pollux, deneb, altair,
+        rigel, achernar, capella.
+        Each is ``Optional[KerykeionPointModel]``, defaulting to ``None``
+        unless the star is included in ``active_points``.
     """
 
     # Common identification data
@@ -430,7 +461,10 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
     perspective_type: PerspectiveType
-    ayanamsa_value: Optional[float] = None
+    ayanamsa_value: Optional[float] = Field(
+        default=None,
+        description="Ayanamsa offset in degrees for sidereal charts (tropical 0 Aries minus sidereal 0 Aries). None for tropical charts.",
+    )
 
     # Common celestial points
     # Main planets (all optional to support selective calculations)

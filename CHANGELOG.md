@@ -1,5 +1,46 @@
 # Changelog
 
+## 5.12.0
+
+_Unreleased_
+
+**New Features:**
+
+- **House cusp speeds (v5.12.1):** Replaced `swe.houses_ex()` with `swe.houses_ex2()` to expose cusp velocities. All 12 house cusps and the 4 angular points (ASC, MC, DSC, IC) now carry a `speed` field (degrees/day) representing the real rate of diurnal motion. Useful for primary directions and profection techniques.
+
+- **Expanded fixed stars (v5.12.2):** Grew the fixed star catalogue from 2 to 17 stars. The 15 new stars are: Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel, Achernar, and Capella. Includes the 4 Royal Stars of Persian/Hellenistic astrology (Regulus, Aldebaran, Antares, Fomalhaut). Each fixed star now also reports apparent visual magnitude via `swe.fixstar2_mag()` and equatorial declination.
+
+- **Expanded sidereal modes (v5.12.3):** Grew supported ayanamsa systems from 20 to 48 named modes plus a `USER` mode for custom ayanamsa definitions. New mode families include additional Indian/Vedic variants (Aryabhata, Suryasiddhanta, True Citra/Pushya/Revati, Lahiri sub-variants), Babylonian systems (Britton), galactic alignment systems, and the Valens Moon ayanamsa. The `USER` mode accepts `custom_ayanamsa_t0` (reference epoch as Julian Day) and `custom_ayanamsa_ayan_t0` (ayanamsa offset in degrees at that epoch).
+
+- **Ayanamsa value exposure (v5.12.4):** Added `ayanamsa_value` field to `AstrologicalBaseModel`. For sidereal charts, this contains the computed angular offset (in degrees) between tropical and sidereal 0 Aries at the chart's date/time. `None` for tropical charts. Calculated via `swe.get_ayanamsa_ex_ut()`.
+
+- **SVG rendering for new stars:** Added SVG symbol definitions, CSS color variables (all 6 themes), chart default settings, and weighted point weights for all 15 new fixed stars. Each star has a unique icon representing its traditional astronomical/astrological character.
+
+**New Fields (all Optional, default None -- no breaking changes):**
+
+- `KerykeionPointModel.speed` -- daily motion in degrees/day
+- `KerykeionPointModel.declination` -- equatorial declination in degrees
+- `KerykeionPointModel.magnitude` -- apparent visual magnitude (fixed stars only)
+- `AstrologicalBaseModel.ayanamsa_value` -- ayanamsa offset in degrees (sidereal only)
+- `AstrologicalBaseModel.aldebaran` through `.capella` -- 15 new fixed star fields
+- `ChartConfiguration.custom_ayanamsa_t0` -- Julian Day reference epoch for USER mode
+- `ChartConfiguration.custom_ayanamsa_ayan_t0` -- ayanamsa degrees at t0 for USER mode
+
+**Documentation:**
+
+- Comprehensive docstrings for all new/modified functions explaining Indian astrology concepts (ayanamsa, sidereal zodiac, precession) for Western astrology users
+- `SiderealMode` literal now includes a full docstring with mode families, typical ayanamsa values, and USER mode usage
+- `AstrologicalPoint` literal docstring corrected and expanded with fixed star categorization (Royal Stars, navigational stars)
+- All factory methods (`from_birth_data`, `from_iso_utc_time`, `from_current_time`) document custom ayanamsa parameters
+- `_calculate_houses` docstring documents `houses_ex2` switch and cusp speed semantics
+- `_calculate_planets` fixed stars section updated for 17 stars with magnitude/declination
+- `FIXED_STARS` constant annotated with star identifications and magnitudes
+- `ALL_ACTIVE_POINTS` and `DEFAULT_ACTIVE_POINTS` organized with section comments
+
+**Tests:**
+
+- 204 dedicated v5.12 tests across 8 test classes covering house cusp speeds, expanded fixed stars, star magnitudes, sidereal modes, USER-defined ayanamsa, ayanamsa value exposure, and guiding principles (no breaking changes)
+
 ## 5.11.0
 
 _Unreleased_

@@ -237,8 +237,24 @@ DEFAULT_ACTIVE_POINTS: List[AstrologicalPoint] = [
     # "Ixion",
     # "Orcus",
     # "Quaoar",
+    # --- Fixed Stars (17 total, expanded in v5.12 from 2) ---
     # "Regulus",
     # "Spica",
+    # "Aldebaran",
+    # "Antares",
+    # "Sirius",
+    # "Fomalhaut",
+    # "Algol",
+    # "Betelgeuse",
+    # "Canopus",
+    # "Procyon",
+    # "Arcturus",
+    # "Pollux",
+    # "Deneb",
+    # "Altair",
+    # "Rigel",
+    # "Achernar",
+    # "Capella",
     "Ascendant",
     "Medium_Coeli",
     "Descendant",
@@ -256,6 +272,7 @@ The full list of points is available in the `schemas.kr_literals.AstrologicalPoi
 """
 
 ALL_ACTIVE_POINTS: List[AstrologicalPoint] = [
+    # Planets
     "Sun",
     "Moon",
     "Mercury",
@@ -266,19 +283,23 @@ ALL_ACTIVE_POINTS: List[AstrologicalPoint] = [
     "Uranus",
     "Neptune",
     "Pluto",
+    # Lunar Nodes
     "Mean_North_Lunar_Node",
     "True_North_Lunar_Node",
     "Mean_South_Lunar_Node",
     "True_South_Lunar_Node",
+    # Special Points
     "Chiron",
     "Mean_Lilith",
     "True_Lilith",
     "Earth",
     "Pholus",
+    # Asteroids
     "Ceres",
     "Pallas",
     "Juno",
     "Vesta",
+    # Trans-Neptunian Objects
     "Eris",
     "Sedna",
     "Haumea",
@@ -286,6 +307,7 @@ ALL_ACTIVE_POINTS: List[AstrologicalPoint] = [
     "Ixion",
     "Orcus",
     "Quaoar",
+    # Fixed Stars (17 total -- expanded in v5.12 from 2)
     "Regulus",
     "Spica",
     "Aldebaran",
@@ -303,12 +325,14 @@ ALL_ACTIVE_POINTS: List[AstrologicalPoint] = [
     "Rigel",
     "Achernar",
     "Capella",
+    # Angular Points
     "Ascendant",
     "Medium_Coeli",
     "Descendant",
     "Imum_Coeli",
     "Vertex",
     "Anti_Vertex",
+    # Arabic Parts (Lots)
     "Pars_Fortunae",
     "Pars_Spiritus",
     "Pars_Amoris",
