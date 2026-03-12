@@ -1933,6 +1933,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         - Location information (city, lat/lon)
         - Chart width based on chart type
         - Circle radii based on chart type and view mode
+        - Grid shift for multi-column planet grids
         - Width adjustments for house comparison visibility
 
         Args:
@@ -1953,8 +1954,63 @@ class ChartDrawer:  # type: ignore[no-redef]
         # Set circle radii based on chart type and view mode
         self._setup_circle_radii()
 
+        # Calculate horizontal shift for planet/house grids when multi-column
+        # layout would overlap the chart wheel
+        self._grid_x_shift = self._calculate_grid_x_shift()
+
         # Adjust width if house comparison grid is hidden
         self._apply_house_comparison_width_override()
+
+    def _calculate_grid_x_shift(self) -> int:
+        """Calculate horizontal shift to prevent multi-column planet grids from overlapping the wheel.
+
+        When many celestial points are active (> 20), the planet grid splits into
+        multiple columns that grow leftward from the default x position. If the
+        leftmost column would overlap the chart wheel, the entire grid block
+        (planet grid + house grid) is shifted rightward.
+
+        This only applies to single-wheel chart types (Natal, Composite, SingleReturn).
+        Double-wheel charts use a single-column layout and are not affected.
+
+        Returns:
+            Number of pixels to shift grids rightward (0 if no shift needed).
+        """
+        if self.chart_type in ("Synastry", "Transit", "DualReturnChart"):
+            return 0
+
+        from kerykeion.charts.charts_utils import (
+            _GRID_COLUMN_WIDTH,
+            _SECOND_COLUMN_THRESHOLD,
+            _select_planet_grid_thresholds,
+        )
+
+        n = self._count_active_planets()
+        if n <= _SECOND_COLUMN_THRESHOLD:
+            return 0
+
+        # Determine how many columns will be used
+        thresholds = _select_planet_grid_thresholds(self.chart_type, n)
+        if n <= thresholds[0]:
+            num_cols = 1
+        elif n <= thresholds[1]:
+            num_cols = 2
+        elif n <= thresholds[2]:
+            num_cols = 3
+        else:
+            num_cols = 4
+
+        if num_cols <= 1:
+            return 0
+
+        # Wheel right edge + gap
+        wheel_right = 100 + (2 * self.main_radius)  # 100 (translate-x) + diameter
+        gap = 20  # Minimum gap between wheel and leftmost column
+
+        # Leftmost column position without shift
+        leftmost_x = self._MAIN_PLANET_GRID_X - (num_cols - 1) * _GRID_COLUMN_WIDTH
+
+        overlap = (wheel_right + gap) - leftmost_x
+        return max(0, int(overlap))
 
     def _extract_element_quality_distributions(self, chart_data: "ChartDataModel") -> None:
         """
@@ -2061,15 +2117,33 @@ class ChartDrawer:  # type: ignore[no-redef]
             )
             return
 
-        # Up to 20 active points fit in the default height
-        if active_points_count <= 20:
+        # With balanced multi-column layout, the effective row count is the
+        # tallest column height, not the total number of points.
+        from kerykeion.charts.charts_utils import _select_planet_grid_thresholds
+        import math as _math
+
+        thresholds = _select_planet_grid_thresholds(self.chart_type, active_points_count)
+        if active_points_count <= thresholds[0]:
+            effective_rows = active_points_count
+        elif active_points_count <= thresholds[1]:
+            num_cols = 2
+            effective_rows = _math.ceil(active_points_count / num_cols)
+        elif active_points_count <= thresholds[2]:
+            num_cols = 3
+            effective_rows = _math.ceil(active_points_count / num_cols)
+        else:
+            num_cols = 4
+            effective_rows = _math.ceil(active_points_count / num_cols)
+
+        # Up to 20 effective rows fit in the default height
+        if effective_rows <= 20:
             self.height = max(self.height, minimum_height)
             self._vertical_offsets = offsets
             return
 
-        # Calculate extra height needed for additional points
-        extra_points = active_points_count - 20
-        extra_height = extra_points * self._ROW_HEIGHT  # 8px per additional point
+        # Calculate extra height needed for additional rows
+        extra_points = effective_rows - 20
+        extra_height = extra_points * self._ROW_HEIGHT  # 8px per additional row
 
         self.height = max(self.height, minimum_height + extra_height)
 
@@ -2348,8 +2422,10 @@ class ChartDrawer:  # type: ignore[no-redef]
         n_active = max(self._count_active_planets(), 1)
 
         # Common grids present on many chart types
-        main_planet_grid_right = 645 + 80
-        main_houses_grid_right = 750 + 120
+        # Apply grid shift when multi-column layout would overlap the wheel
+        grid_shift = getattr(self, "_grid_x_shift", 0)
+        main_planet_grid_right = 645 + grid_shift + 80
+        main_houses_grid_right = 750 + grid_shift + 120
         extents.extend([main_planet_grid_right, main_houses_grid_right])
 
         if self.chart_type in ("Natal", "Composite", "SingleReturnChart"):
@@ -3036,6 +3112,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         Populate template_dict with the main houses grid table.
 
         Creates the tabular display of house cusps for the primary subject.
+        Applies horizontal grid shift when multi-column planet grids would
+        overlap the chart wheel.
 
         Args:
             template_dict: Dictionary to populate with grid SVG elements.
@@ -3045,6 +3123,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             main_subject_houses_list=houses_list,
             text_color=self.chart_colors_settings["paper_0"],
             house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
+            x_position=self._MAIN_HOUSES_GRID_X + self._grid_x_shift,
         )
 
     def _setup_main_planet_grid(self, template_dict: dict, subject_name: str, title: str = "") -> None:
@@ -3052,6 +3131,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         Populate template_dict with the main planet grid table.
 
         Creates the tabular display of planet positions for the primary subject.
+        Applies horizontal grid shift when multi-column planet grids would
+        overlap the chart wheel.
 
         Args:
             template_dict: Dictionary to populate with grid SVG elements.
@@ -3065,6 +3146,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             chart_type=self.chart_type,
             text_color=self.chart_colors_settings["paper_0"],
             celestial_point_language=self._language_model.celestial_points,
+            x_position=self._MAIN_PLANET_GRID_X + self._grid_x_shift,
         )
 
     def _setup_secondary_planet_grid(self, template_dict: dict, subject_name: str, title: str = "") -> None:
