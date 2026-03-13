@@ -117,8 +117,31 @@ TNO_PLANETS: Dict[AstrologicalPoint, int] = {
     "Quaoar": 50000,
 }
 
-# Fixed stars (use different calculation method)
-FIXED_STARS: List[AstrologicalPoint] = ["Regulus", "Spica"]
+# Fixed stars -- 17 total (expanded in v5.12 from 2)
+# Includes the 4 Royal Stars (Regulus, Aldebaran, Antares, Fomalhaut) plus
+# 13 other astrologically significant bright stars.
+# Names must match Swiss Ephemeris swe.fixstar_ut() identifiers exactly.
+FIXED_STARS: List[AstrologicalPoint] = [
+    # Pre-existing (v5.11)
+    "Regulus",  # alpha Leonis, mag 1.35 -- Royal Star, Watcher of the North
+    "Spica",  # alpha Virginis, mag 0.97
+    # Added in v5.12
+    "Aldebaran",  # alpha Tauri, mag 0.87 -- Royal Star, Watcher of the East
+    "Antares",  # alpha Scorpii, mag 1.06 -- Royal Star, Watcher of the West
+    "Sirius",  # alpha Canis Majoris, mag -1.46 -- brightest star in the sky
+    "Fomalhaut",  # alpha Piscis Austrini, mag 1.16 -- Royal Star, Watcher of the South
+    "Algol",  # beta Persei, mag 2.12 -- eclipsing binary, traditionally malefic
+    "Betelgeuse",  # alpha Orionis, mag 0.42 -- red supergiant
+    "Canopus",  # alpha Carinae, mag -0.74 -- second brightest star
+    "Procyon",  # alpha Canis Minoris, mag 0.34
+    "Arcturus",  # alpha Bootis, mag -0.05
+    "Pollux",  # beta Geminorum, mag 1.14
+    "Deneb",  # alpha Cygni, mag 1.25
+    "Altair",  # alpha Aquilae, mag 0.76
+    "Rigel",  # beta Orionis, mag 0.13
+    "Achernar",  # alpha Eridani, mag 0.46
+    "Capella",  # alpha Aurigae, mag 0.08
+]
 
 # Opposite points derived from other calculations
 OPPOSITE_POINTS: Dict[AstrologicalPoint, AstrologicalPoint] = {
@@ -189,10 +212,22 @@ def ephemeris_context(
     Responsibilities:
         - Set ephemeris path and calculation flags
         - Configure perspective (true geo / helio / topo)
-        - Configure sidereal mode when needed
+        - Configure sidereal mode when needed (v5.12: 48 named modes + USER)
         - Apply topocentric observer only inside the with-block
         - Yield iflag for calculations
         - Reset topocentric coordinates afterward (defensive)
+
+    Sidereal Mode Handling (v5.12):
+        Named modes (e.g. ``LAHIRI``, ``FAGAN_BRADLEY``) are resolved via
+        ``getattr(swe, f"SIDM_{mode}")`` -- each named mode encodes its own
+        reference epoch and ayanamsa value internally.
+
+        The ``USER`` mode requires two additional parameters on the config:
+        ``custom_ayanamsa_t0`` (Julian Day of the reference epoch when the
+        tropical and sidereal zodiacs are considered to coincide) and
+        ``custom_ayanamsa_ayan_t0`` (the ayanamsa offset in degrees at that
+        epoch). The Swiss Ephemeris extrapolates for other dates using its
+        precession model.
 
     Args:
         ephe_path: Path containing Swiss Ephemeris data files.
@@ -222,7 +257,11 @@ def ephemeris_context(
     # Sidereal configuration
     if config.zodiac_type == "Sidereal":
         iflag |= swe.FLG_SIDEREAL
-        swe.set_sid_mode(getattr(swe, f"SIDM_{config.sidereal_mode}"))
+        if config.sidereal_mode == "USER":
+            # User-defined ayanamsa: requires t0 (reference epoch) and ayan_t0 (value at t0)
+            swe.set_sid_mode(swe.SIDM_USER, config.custom_ayanamsa_t0, config.custom_ayanamsa_ayan_t0)
+        else:
+            swe.set_sid_mode(getattr(swe, f"SIDM_{config.sidereal_mode}"))
 
     try:
         yield iflag
@@ -255,6 +294,10 @@ class ChartConfiguration:
         perspective_type (PerspectiveType): The coordinate perspective for calculations.
             Options include 'Apparent Geocentric', 'True Geocentric', 'Heliocentric',
             or 'Topocentric'. Defaults to 'Apparent Geocentric'.
+        custom_ayanamsa_t0 (Optional[float]): Reference epoch (Julian Day) for user-defined
+            ayanamsa. Only used when sidereal_mode is 'USER'. Defaults to None.
+        custom_ayanamsa_ayan_t0 (Optional[float]): Ayanamsa value (degrees) at the
+            reference epoch t0. Only used when sidereal_mode is 'USER'. Defaults to None.
 
     Raises:
         KerykeionException: When invalid configuration combinations are detected,
@@ -274,6 +317,8 @@ class ChartConfiguration:
     sidereal_mode: Optional[SiderealMode] = None
     houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER
     perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE
+    custom_ayanamsa_t0: Optional[float] = None
+    custom_ayanamsa_ayan_t0: Optional[float] = None
 
     def __post_init__(self) -> None:
         self.validate()
@@ -316,6 +361,14 @@ class ChartConfiguration:
                 raise KerykeionException(
                     f"'{self.sidereal_mode}' is not a valid sidereal mode! Available modes are: {get_args(SiderealMode)}"
                 )
+
+            # Validate USER mode requires custom ayanamsa parameters
+            if self.sidereal_mode == "USER":
+                if self.custom_ayanamsa_t0 is None or self.custom_ayanamsa_ayan_t0 is None:
+                    raise KerykeionException(
+                        "Sidereal mode 'USER' requires both custom_ayanamsa_t0 (reference epoch as Julian Day) "
+                        "and custom_ayanamsa_ayan_t0 (ayanamsa value in degrees at t0) to be set."
+                    )
 
         # Validate houses system
         if self.houses_system_identifier not in get_args(HousesSystemIdentifier):
@@ -539,6 +592,8 @@ class AstrologicalSubjectFactory:
         altitude: Optional[float] = None,
         active_points: Optional[List[AstrologicalPoint]] = None,
         calculate_lunar_phase: bool = True,
+        custom_ayanamsa_t0: Optional[float] = None,
+        custom_ayanamsa_ayan_t0: Optional[float] = None,
         *,
         seconds: int = 0,
         suppress_geonames_warning: bool = False,
@@ -599,6 +654,14 @@ class AstrologicalSubjectFactory:
                 specialized applications. If None, uses DEFAULT_ACTIVE_POINTS.
             calculate_lunar_phase (bool, optional): Whether to calculate lunar phase.
                 Requires Sun and Moon in active_points. Defaults to True.
+            custom_ayanamsa_t0 (float, optional): Reference epoch as a Julian Day
+                for the USER sidereal mode. This is the date when the tropical and
+                sidereal zodiacs are considered to coincide (ayanamsa = 0). Required
+                when ``sidereal_mode="USER"``. Defaults to None.
+            custom_ayanamsa_ayan_t0 (float, optional): Ayanamsa value in degrees at
+                the reference epoch ``t0`` for the USER sidereal mode. This is the
+                angular offset between tropical 0 Aries and sidereal 0 Aries at
+                ``t0``. Required when ``sidereal_mode="USER"``. Defaults to None.
             suppress_geonames_warning (bool, optional): If True, suppresses the warning
                 message when using the default GeoNames username. Useful for testing
                 or automated processes. Defaults to False.
@@ -645,6 +708,17 @@ class AstrologicalSubjectFactory:
             ...                   "Jupiter", "Saturn", "Ascendant"]
             ... )
 
+            >>> # User-defined ayanamsa (v5.12 -- custom sidereal mode)
+            >>> chart = AstrologicalSubjectFactory.from_birth_data(
+            ...     name="Custom Ayanamsa",
+            ...     year=2000, month=1, day=1, hour=0,
+            ...     lng=0.0, lat=51.5, tz_str="Etc/GMT", online=False,
+            ...     zodiac_type="Sidereal",
+            ...     sidereal_mode="USER",
+            ...     custom_ayanamsa_t0=2451545.0,   # J2000.0 epoch
+            ...     custom_ayanamsa_ayan_t0=23.5,    # 23.5 deg offset at epoch
+            ... )
+
         Note:
             - For high-precision calculations, consider providing seconds parameter
             - Use topocentric perspective for observer-specific calculations
@@ -683,6 +757,8 @@ class AstrologicalSubjectFactory:
             sidereal_mode=sidereal_mode,
             houses_system_identifier=houses_system_identifier,
             perspective_type=perspective_type,
+            custom_ayanamsa_t0=custom_ayanamsa_t0,
+            custom_ayanamsa_ayan_t0=custom_ayanamsa_ayan_t0,
         )
 
         # Add configuration data to calculation data
@@ -764,6 +840,17 @@ class AstrologicalSubjectFactory:
 
             AstrologicalSubjectFactory._calculate_planets(calc_data, active_points_list, calculated_axial_cusps)
 
+            # Calculate ayanamsa value for sidereal charts (v5.12.4)
+            if config.zodiac_type == "Sidereal":
+                try:
+                    ayan_result = swe.get_ayanamsa_ex_ut(calc_data["julian_day"], iflag)
+                    calc_data["ayanamsa_value"] = ayan_result[1]
+                except Exception as e:
+                    logging.warning(f"Could not calculate ayanamsa value: {e}")
+                    calc_data["ayanamsa_value"] = None
+            else:
+                calc_data["ayanamsa_value"] = None
+
         AstrologicalSubjectFactory._calculate_day_of_week(calc_data)
 
         # Calculate lunar phase (optional - only if requested and Sun and Moon are available)
@@ -798,6 +885,8 @@ class AstrologicalSubjectFactory:
         active_points: Optional[List[AstrologicalPoint]] = None,
         calculate_lunar_phase: bool = True,
         suppress_geonames_warning: bool = False,
+        custom_ayanamsa_t0: Optional[float] = None,
+        custom_ayanamsa_ayan_t0: Optional[float] = None,
     ) -> AstrologicalSubjectModel:
         """
         Create an astrological subject from an ISO formatted UTC timestamp.
@@ -839,6 +928,14 @@ class AstrologicalSubjectFactory:
                 If None, uses DEFAULT_ACTIVE_POINTS.
             calculate_lunar_phase (bool, optional): Whether to calculate lunar phase.
                 Defaults to True.
+            suppress_geonames_warning (bool, optional): Suppress GeoNames default
+                username warning. Defaults to False.
+            custom_ayanamsa_t0 (float, optional): Reference epoch (Julian Day) for
+                the USER sidereal mode -- the date when tropical and sidereal zodiacs
+                coincide. Required when ``sidereal_mode="USER"``. Defaults to None.
+            custom_ayanamsa_ayan_t0 (float, optional): Ayanamsa offset in degrees at
+                epoch ``t0`` for the USER sidereal mode. Required when
+                ``sidereal_mode="USER"``. Defaults to None.
 
         Returns:
             AstrologicalSubjectModel: Astrological subject with positions calculated
@@ -922,6 +1019,8 @@ class AstrologicalSubjectFactory:
             active_points=active_points,
             calculate_lunar_phase=calculate_lunar_phase,
             suppress_geonames_warning=suppress_geonames_warning,
+            custom_ayanamsa_t0=custom_ayanamsa_t0,
+            custom_ayanamsa_ayan_t0=custom_ayanamsa_ayan_t0,
         )
 
     @classmethod
@@ -942,6 +1041,8 @@ class AstrologicalSubjectFactory:
         active_points: Optional[List[AstrologicalPoint]] = None,
         calculate_lunar_phase: bool = True,
         suppress_geonames_warning: bool = False,
+        custom_ayanamsa_t0: Optional[float] = None,
+        custom_ayanamsa_ayan_t0: Optional[float] = None,
     ) -> AstrologicalSubjectModel:
         """
         Create an astrological subject for the current moment in time.
@@ -979,6 +1080,14 @@ class AstrologicalSubjectFactory:
                 to calculate. If None, uses DEFAULT_ACTIVE_POINTS.
             calculate_lunar_phase (bool, optional): Whether to calculate lunar phase.
                 Defaults to True.
+            suppress_geonames_warning (bool, optional): Suppress GeoNames default
+                username warning. Defaults to False.
+            custom_ayanamsa_t0 (float, optional): Reference epoch (Julian Day) for
+                the USER sidereal mode. Required when ``sidereal_mode="USER"``.
+                Defaults to None.
+            custom_ayanamsa_ayan_t0 (float, optional): Ayanamsa offset in degrees at
+                epoch ``t0`` for the USER sidereal mode. Required when
+                ``sidereal_mode="USER"``. Defaults to None.
 
         Returns:
             AstrologicalSubjectModel: Astrological subject representing current
@@ -1042,6 +1151,8 @@ class AstrologicalSubjectFactory:
             active_points=active_points,
             calculate_lunar_phase=calculate_lunar_phase,
             suppress_geonames_warning=suppress_geonames_warning,
+            custom_ayanamsa_t0=custom_ayanamsa_t0,
+            custom_ayanamsa_ayan_t0=custom_ayanamsa_ayan_t0,
         )
 
     @staticmethod
@@ -1110,6 +1221,19 @@ class AstrologicalSubjectFactory:
         the four main angles of the chart. Only calculates angular points that are
         included in the active_points list for performance optimization.
 
+        v5.12 Change -- House Cusp Speeds:
+            Uses ``swe.houses_ex2()`` instead of ``swe.houses_ex()`` to obtain cusp
+            velocities (degrees/day). The ``speed`` field on each house cusp and
+            angular point now contains the real rate at which that cusp moves along
+            the ecliptic per day, driven by diurnal rotation and the chart's
+            geographic latitude. Useful for primary directions and profection
+            techniques.
+
+            ``houses_ex2`` returns 4 tuples: ``(cusps, ascmc, cusps_speed,
+            ascmc_speed)``. ``cusps_speed[i]`` is the speed for the i-th house
+            cusp; ``ascmc_speed[0]`` is the ASC speed; ``ascmc_speed[1]`` is the
+            MC speed.
+
         Args:
             data (Dict[str, Any]): Calculation data dictionary containing configuration
                 and location information. Updated with calculated house and angle data.
@@ -1119,8 +1243,8 @@ class AstrologicalSubjectFactory:
 
         Side Effects:
             Updates data dictionary with:
-            - House cusp objects: first_house through twelfth_house
-            - Angular points: ascendant, medium_coeli, descendant, imum_coeli
+            - House cusp objects: first_house through twelfth_house (with ``speed``)
+            - Angular points: ascendant, medium_coeli, descendant, imum_coeli (with ``speed``)
             - houses_names_list: List of all house names
             - _houses_degree_ut: Raw house cusp degrees for internal use
 
@@ -1137,7 +1261,8 @@ class AstrologicalSubjectFactory:
         Note:
             House calculations respect the zodiac type (Tropical/Sidereal) and use
             the appropriate Swiss Ephemeris function. Angular points include house
-            position and retrograde status (always False for angles).
+            position, speed (from houses_ex2), and retrograde status (always False
+            for angles).
         """
 
         # Skip calculation if point is not in active_points
@@ -1148,7 +1273,8 @@ class AstrologicalSubjectFactory:
         calculated_axial_cusps: List[AstrologicalPoint] = []
 
         # Calculate houses using the calculated flags (handles both Sidereal and Topocentric)
-        cusps, ascmc = swe.houses_ex(
+        # houses_ex2 returns cusp speeds and ascmc speeds in addition to the standard output
+        cusps, ascmc, cusps_speed, ascmc_speed = swe.houses_ex2(
             tjdut=data["julian_day"],
             lat=data["lat"],
             lon=data["lng"],
@@ -1175,10 +1301,12 @@ class AstrologicalSubjectFactory:
             ("twelfth_house", "Twelfth_House"),
         ]
 
-        # Create house objects
+        # Create house objects (with cusp speeds from houses_ex2)
         point_type: PointType = "House"
         for i, (attr_name, house_name) in enumerate(HOUSE_CONFIG):
-            data[attr_name] = get_kerykeion_point_from_degree(cusps[i], house_name, point_type=point_type)
+            data[attr_name] = get_kerykeion_point_from_degree(
+                cusps[i], house_name, point_type=point_type, speed=cusps_speed[i]
+            )
 
         # Store house names
         data["houses_names_list"] = list(get_args(Houses))
@@ -1186,18 +1314,13 @@ class AstrologicalSubjectFactory:
         # Calculate axis points
         point_type = "AstrologicalPoint"
 
-        # NOTE: Swiss Ephemeris does not provide direct speeds for angles (ASC/MC),
-        # but in practice they move very fast compared to planets.
-        # To represent this consistently, we assign the four angles
-        # a fixed synthetic speed, much higher than typical planetary speeds.
-        # This allows calculate_aspect_movement to consider them always as
-        # "faster" compared to planets when needed.
-        axis_speed = 360.0  # degrees/day, symbolic but consistent value
+        # ascmc_speed from houses_ex2 provides real speeds for angles:
+        # ascmc_speed[0] = ASC speed, ascmc_speed[1] = MC speed
 
         # Calculate Ascendant if needed
         if should_calculate("Ascendant"):
             data["ascendant"] = get_kerykeion_point_from_degree(
-                ascmc[0], "Ascendant", point_type=point_type, speed=axis_speed
+                ascmc[0], "Ascendant", point_type=point_type, speed=ascmc_speed[0]
             )
             data["ascendant"].house = get_planet_house(data["ascendant"].abs_pos, data["_houses_degree_ut"])
             data["ascendant"].retrograde = False
@@ -1206,27 +1329,27 @@ class AstrologicalSubjectFactory:
         # Calculate Medium Coeli if needed
         if should_calculate("Medium_Coeli"):
             data["medium_coeli"] = get_kerykeion_point_from_degree(
-                ascmc[1], "Medium_Coeli", point_type=point_type, speed=axis_speed
+                ascmc[1], "Medium_Coeli", point_type=point_type, speed=ascmc_speed[1]
             )
             data["medium_coeli"].house = get_planet_house(data["medium_coeli"].abs_pos, data["_houses_degree_ut"])
             data["medium_coeli"].retrograde = False
             calculated_axial_cusps.append("Medium_Coeli")
 
-        # Calculate Descendant if needed
+        # Calculate Descendant if needed (same speed as ASC, opposite direction)
         if should_calculate("Descendant"):
             dsc_deg = math.fmod(ascmc[0] + 180, 360)
             data["descendant"] = get_kerykeion_point_from_degree(
-                dsc_deg, "Descendant", point_type=point_type, speed=axis_speed
+                dsc_deg, "Descendant", point_type=point_type, speed=ascmc_speed[0]
             )
             data["descendant"].house = get_planet_house(data["descendant"].abs_pos, data["_houses_degree_ut"])
             data["descendant"].retrograde = False
             calculated_axial_cusps.append("Descendant")
 
-        # Calculate Imum Coeli if needed
+        # Calculate Imum Coeli if needed (same speed as MC, opposite direction)
         if should_calculate("Imum_Coeli"):
             ic_deg = math.fmod(ascmc[1] + 180, 360)
             data["imum_coeli"] = get_kerykeion_point_from_degree(
-                ic_deg, "Imum_Coeli", point_type=point_type, speed=axis_speed
+                ic_deg, "Imum_Coeli", point_type=point_type, speed=ascmc_speed[1]
             )
             data["imum_coeli"].house = get_planet_house(data["imum_coeli"].abs_pos, data["_houses_degree_ut"])
             data["imum_coeli"].retrograde = False
@@ -1536,7 +1659,13 @@ class AstrologicalSubjectFactory:
                 - Ixion, Orcus, Quaoar
 
             Fixed Stars:
-                - Regulus, Spica (examples, extensible)
+                - 17 stars (expanded in v5.12 from 2): Regulus, Spica,
+                  Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse,
+                  Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel,
+                  Achernar, Capella
+                - Includes apparent visual magnitude via ``swe.fixstar2_mag``
+                - Includes equatorial declination via ``FLG_EQUATORIAL``
+                - Includes ecliptic speed (precession drift, ~50 arcsec/yr)
 
             Arabic Parts (Lots):
                 - Pars Fortunae (Part of Fortune)
@@ -1692,12 +1821,19 @@ class AstrologicalSubjectFactory:
                     pos_eq = swe.fixstar_ut(star_name, julian_day, iflag | swe.FLG_EQUATORIAL)[0]
                     star_dec = pos_eq[1] if len(pos_eq) > 1 else None
 
+                    # Apparent visual magnitude via fixstar2_mag
+                    try:
+                        star_mag = swe.fixstar2_mag(star_name)[0]
+                    except Exception:
+                        star_mag = None
+
                     star_key = star_name.lower()
                     data[star_key] = get_kerykeion_point_from_degree(
                         star_deg, star_name, point_type=point_type, speed=star_speed, declination=star_dec
                     )
                     data[star_key].house = get_planet_house(star_deg, houses_degree_ut)
                     data[star_key].retrograde = False  # Fixed stars are never retrograde
+                    data[star_key].magnitude = star_mag
                     calculated_planets.append(star_name)
                 except Exception as e:
                     logging.warning(f"Could not calculate {star_name} position: {e}")

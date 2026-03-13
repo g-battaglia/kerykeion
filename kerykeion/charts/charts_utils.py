@@ -149,6 +149,21 @@ DEFAULT_WEIGHTED_POINT_WEIGHTS: dict[str, float] = {
     # Fixed stars
     "regulus": 0.2,
     "spica": 0.2,
+    "aldebaran": 0.2,
+    "antares": 0.2,
+    "sirius": 0.2,
+    "fomalhaut": 0.2,
+    "algol": 0.2,
+    "betelgeuse": 0.2,
+    "canopus": 0.2,
+    "procyon": 0.2,
+    "arcturus": 0.2,
+    "pollux": 0.2,
+    "deneb": 0.2,
+    "altair": 0.2,
+    "rigel": 0.2,
+    "achernar": 0.2,
+    "capella": 0.2,
     # Other
     "earth": 0.3,
 }
@@ -249,15 +264,22 @@ _DOUBLE_CHART_TYPES: tuple[ChartType, ...] = ("Synastry", "Transit", "DualReturn
 _GRID_COLUMN_WIDTH: int = 125
 
 
-def _select_planet_grid_thresholds(chart_type: ChartType) -> tuple[int, int, int]:
+def _select_planet_grid_thresholds(chart_type: ChartType, num_points: int = 0) -> tuple[int, int, int]:
     """
-    Return column thresholds for the planet grids based on chart type.
+    Return column thresholds for the planet grids based on chart type and point count.
 
     For double-wheel charts (Synastry, Transit, DualReturnChart), returns very high
     thresholds to effectively disable multi-column layout.
 
+    For single-wheel charts with many active points (> 20), computes balanced
+    thresholds to distribute points evenly across columns, preventing visual
+    overlap between the planet grid and the chart wheel.
+
     Args:
         chart_type: The type of chart being rendered.
+        num_points: Total number of active celestial points. When > 20 in single-wheel
+                   charts, triggers balanced multi-column distribution instead of the
+                   fixed thresholds (20, 28, 36) which produce uneven columns.
 
     Returns:
         Tuple of (second, third, fourth) column thresholds.
@@ -268,7 +290,19 @@ def _select_planet_grid_thresholds(chart_type: ChartType) -> tuple[int, int, int
             1_000_008,  # effectively disable second column
             1_000_016,  # effectively disable third column
         )
-    return _SECOND_COLUMN_THRESHOLD, _THIRD_COLUMN_THRESHOLD, _FOURTH_COLUMN_THRESHOLD
+
+    # For <= 20 points, all fit in one column (original behavior preserved)
+    if num_points <= _SECOND_COLUMN_THRESHOLD:
+        return _SECOND_COLUMN_THRESHOLD, _THIRD_COLUMN_THRESHOLD, _FOURTH_COLUMN_THRESHOLD
+
+    # Balanced distribution: spread points evenly across columns to prevent
+    # uneven column heights and leftward overflow into the chart wheel area.
+    # Example: 57 points → 3 columns of 19 rows each, instead of 20/8/8/21.
+    max_rows = _SECOND_COLUMN_THRESHOLD  # 20 rows max per column
+    num_columns = min(4, max(1, math.ceil(num_points / max_rows)))
+    rows_per_col = math.ceil(num_points / num_columns)
+
+    return rows_per_col, rows_per_col * 2, rows_per_col * 3
 
 
 def _planet_grid_layout_position(index: int, thresholds: Optional[tuple[int, int, int]] = None) -> tuple[int, int]:
@@ -1107,6 +1141,8 @@ def draw_transit_aspect_list(
     line_height: int = 14,
     max_columns: int = 6,
     chart_height: Optional[Union[int, float]] = None,
+    x_offset: int = 565,
+    y_offset: int = 273,
 ) -> str:
     """
     Generate SVG output for the aspect list panel in transit/synastry charts.
@@ -1125,6 +1161,8 @@ def draw_transit_aspect_list(
         line_height: Vertical spacing between aspect rows in pixels.
         max_columns: Maximum columns before using vertical space optimization.
         chart_height: Total chart height for calculating extended column capacity.
+        x_offset: Horizontal origin of the aspect list group (default 565).
+        y_offset: Vertical origin of the aspect list group (default 273).
 
     Returns:
         SVG string containing the formatted aspect list with title.
@@ -1140,8 +1178,8 @@ def draw_transit_aspect_list(
     # Type narrowing: at this point aspects_list contains AspectModel instances
     typed_aspects_list: list[AspectModel] = aspects_list  # type: ignore
 
-    translate_x = 565
-    translate_y = 273
+    translate_x = x_offset
+    translate_y = y_offset
     title_clearance = 18
     top_limit_y: float = -translate_y + title_clearance
     bottom_padding = 40
@@ -1402,7 +1440,7 @@ def draw_main_planet_grid(
 
     end_of_line = "</g>"
 
-    column_thresholds = _select_planet_grid_thresholds(chart_type)
+    column_thresholds = _select_planet_grid_thresholds(chart_type, len(available_kerykeion_celestial_points))
 
     for i, planet in enumerate(available_kerykeion_celestial_points):
         offset, row_index = _planet_grid_layout_position(i, column_thresholds)
@@ -1486,7 +1524,9 @@ def draw_secondary_planet_grid(
     line_height = LINE_START
     end_of_line = "</g>"
 
-    column_thresholds = _select_planet_grid_thresholds(chart_type)
+    column_thresholds = _select_planet_grid_thresholds(
+        chart_type, len(second_subject_available_kerykeion_celestial_points)
+    )
 
     for i, t_planet in enumerate(second_subject_available_kerykeion_celestial_points):
         offset, row_index = _planet_grid_layout_position(i, column_thresholds)

@@ -30,10 +30,10 @@ Yoko Ono — Subject Report
 +Celestial Points-------+---------+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Lib ♎️ | 8.41°    | +360.0000°/d | N/A     | -    | First House    |
-| Medium Coeli          | Can ♋️ | 9.31°    | +360.0000°/d | N/A     | -    | Tenth House    |
-| Descendant            | Ari ♈️ | 8.41°    | +360.0000°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Cap ♑️ | 9.31°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Ascendant             | Lib ♎️ | 8.41°    | +299.6097°/d | N/A     | -    | First House    |
+| Medium Coeli          | Can ♋️ | 9.31°    | +332.7994°/d | N/A     | -    | Tenth House    |
+| Descendant            | Ari ♈️ | 8.41°    | +299.6097°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Cap ♑️ | 9.31°    | +332.7994°/d | N/A     | -    | Fourth House   |
 | Sun                   | Aqu ♒️ | 29.38°   | +1.0085°/d   | -11.70° | -    | Fifth House    |
 | Moon                  | Sag ♐️ | 11.13°   | +14.2183°/d  | -27.33° | -    | Third House    |
 | Mercury               | Pis ♓️ | 7.89°    | +1.8561°/d   | -9.86°  | -    | Fifth House    |

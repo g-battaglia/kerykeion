@@ -24,7 +24,7 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448094.072917      |
-| Active Points Count | 42                  |
+| Active Points Count | 57                  |
 +---------------------+---------------------+
 
 +Return Subject — Birth Data-----------------------------+
@@ -48,16 +48,16 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448459.314653      |
-| Active Points Count | 42                  |
+| Active Points Count | 57                  |
 +---------------------+---------------------+
 
 +Natal Subject Celestial Points---+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Sco ♏️ | 5.82°    | +360.0000°/d | N/A     | -    | First House    |
-| Medium Coeli          | Leo ♌️ | 19.91°   | +360.0000°/d | N/A     | -    | Tenth House    |
-| Descendant            | Tau ♉️ | 5.82°    | +360.0000°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Aqu ♒️ | 19.91°   | +360.0000°/d | N/A     | -    | Fourth House   |
+| Ascendant             | Sco ♏️ | 5.82°    | +245.7250°/d | N/A     | -    | First House    |
+| Medium Coeli          | Leo ♌️ | 19.91°   | +367.6409°/d | N/A     | -    | Tenth House    |
+| Descendant            | Tau ♉️ | 5.82°    | +245.7250°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Aqu ♒️ | 19.91°   | +367.6409°/d | N/A     | -    | Fourth House   |
 | Sun                   | Can ♋️ | 28.54°   | +0.9551°/d   | +20.45° | -    | Ninth House    |
 | Moon                  | Can ♋️ | 21.21°   | +14.4024°/d  | +23.21° | -    | Ninth House    |
 | Mercury               | Leo ♌️ | 17.61°   | +1.6910°/d   | +16.88° | -    | Ninth House    |
@@ -90,6 +90,21 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Quaoar                | Sco ♏️ | 24.08°   | -0.0062°/d   | -13.09° | R    | First House    |
 | Regulus               | Leo ♌️ | 29.70°   | +0.0000°/d   | +12.01° | -    | Tenth House    |
 | Spica                 | Lib ♎️ | 23.71°   | -0.0000°/d   | -11.11° | -    | Twelfth House  |
+| Aldebaran             | Gem ♊️ | 9.66°    | +0.0002°/d   | +16.49° | -    | Eighth House   |
+| Antares               | Sag ♐️ | 9.64°    | +0.0000°/d   | -26.41° | -    | Second House   |
+| Sirius                | Can ♋️ | 13.95°   | +0.0001°/d   | -16.70° | -    | Ninth House    |
+| Fomalhaut             | Pis ♓️ | 3.74°    | +0.0001°/d   | -29.67° | -    | Fourth House   |
+| Algol                 | Tau ♉️ | 26.04°   | +0.0002°/d   | +40.92° | -    | Seventh House  |
+| Betelgeuse            | Gem ♊️ | 28.62°   | +0.0001°/d   | +7.41°  | -    | Eighth House   |
+| Canopus               | Can ♋️ | 14.81°   | +0.0002°/d   | -52.69° | -    | Ninth House    |
+| Procyon               | Can ♋️ | 25.65°   | +0.0001°/d   | +5.25°  | -    | Ninth House    |
+| Arcturus              | Lib ♎️ | 24.11°   | -0.0000°/d   | +19.23° | -    | Twelfth House  |
+| Pollux                | Can ♋️ | 23.08°   | +0.0001°/d   | +28.05° | -    | Ninth House    |
+| Deneb                 | Pis ♓️ | 5.21°    | +0.0002°/d   | +45.25° | -    | Fourth House   |
+| Altair                | Aqu ♒️ | 1.65°    | +0.0001°/d   | +8.84°  | -    | Third House    |
+| Rigel                 | Gem ♊️ | 16.70°   | +0.0002°/d   | -8.21°  | -    | Eighth House   |
+| Achernar              | Pis ♓️ | 15.19°   | +0.0002°/d   | -57.28° | -    | Fourth House   |
+| Capella               | Gem ♊️ | 21.73°   | +0.0001°/d   | +45.99° | -    | Eighth House   |
 | Pars Fortunae         | Lib ♎️ | 28.49°   | N/A          | N/A     | -    | Twelfth House  |
 | Pars Spiritus         | Sco ♏️ | 13.16°   | N/A          | N/A     | -    | First House    |
 | Pars Amoris           | Lib ♎️ | 8.99°    | N/A          | N/A     | -    | Eleventh House |
@@ -101,10 +116,10 @@ Sample Natal Subject — Solar Return Comparison 1991
 +Return Subject Celestial Points--+----------+--------------+---------+------+---------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House         |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
-| Ascendant             | Cap ♑️ | 13.82°   | +360.0000°/d | N/A     | -    | First House   |
-| Medium Coeli          | Sco ♏️ | 21.77°   | +360.0000°/d | N/A     | -    | Tenth House   |
-| Descendant            | Can ♋️ | 13.82°   | +360.0000°/d | N/A     | -    | Seventh House |
-| Imum Coeli            | Tau ♉️ | 21.77°   | +360.0000°/d | N/A     | -    | Fourth House  |
+| Ascendant             | Cap ♑️ | 13.82°   | +409.8309°/d | N/A     | -    | First House   |
+| Medium Coeli          | Sco ♏️ | 21.77°   | +355.0355°/d | N/A     | -    | Tenth House   |
+| Descendant            | Can ♋️ | 13.82°   | +409.8309°/d | N/A     | -    | Seventh House |
+| Imum Coeli            | Tau ♉️ | 21.77°   | +355.0355°/d | N/A     | -    | Fourth House  |
 | Sun                   | Can ♋️ | 28.54°   | +0.9544°/d   | +20.45° | -    | Seventh House |
 | Moon                  | Sag ♐️ | 4.63°    | +11.9553°/d  | -24.70° | -    | Tenth House   |
 | Mercury               | Leo ♌️ | 25.32°   | +1.1015°/d   | +12.70° | -    | Seventh House |
@@ -137,6 +152,21 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Quaoar                | Sco ♏️ | 25.34°   | -0.0066°/d   | -13.27° | R    | Tenth House   |
 | Regulus               | Leo ♌️ | 29.71°   | +0.0000°/d   | +12.01° | -    | Seventh House |
 | Spica                 | Lib ♎️ | 23.73°   | -0.0000°/d   | -11.12° | -    | Eighth House  |
+| Aldebaran             | Gem ♊️ | 9.67°    | +0.0001°/d   | +16.49° | -    | Fourth House  |
+| Antares               | Sag ♐️ | 9.65°    | -0.0000°/d   | -26.42° | -    | Tenth House   |
+| Sirius                | Can ♋️ | 13.96°   | +0.0001°/d   | -16.70° | -    | Seventh House |
+| Fomalhaut             | Pis ♓️ | 3.75°    | +0.0001°/d   | -29.66° | -    | First House   |
+| Algol                 | Tau ♉️ | 26.05°   | +0.0002°/d   | +40.92° | -    | Fourth House  |
+| Betelgeuse            | Gem ♊️ | 28.64°   | +0.0001°/d   | +7.41°  | -    | Sixth House   |
+| Canopus               | Can ♋️ | 14.83°   | +0.0002°/d   | -52.69° | -    | Seventh House |
+| Procyon               | Can ♋️ | 25.67°   | +0.0001°/d   | +5.25°  | -    | Seventh House |
+| Arcturus              | Lib ♎️ | 24.12°   | -0.0001°/d   | +19.23° | -    | Eighth House  |
+| Pollux                | Can ♋️ | 23.10°   | +0.0001°/d   | +28.05° | -    | Seventh House |
+| Deneb                 | Pis ♓️ | 5.23°    | +0.0002°/d   | +45.25° | -    | First House   |
+| Altair                | Aqu ♒️ | 1.67°    | +0.0001°/d   | +8.85°  | -    | First House   |
+| Rigel                 | Gem ♊️ | 16.71°   | +0.0001°/d   | -8.21°  | -    | Fifth House   |
+| Achernar              | Pis ♓️ | 15.20°   | +0.0002°/d   | -57.27° | -    | Second House  |
+| Capella               | Gem ♊️ | 21.74°   | +0.0001°/d   | +45.99° | -    | Fifth House   |
 | Pars Fortunae         | Tau ♉️ | 19.91°   | N/A          | N/A     | -    | Third House   |
 | Pars Spiritus         | Vir ♍️ | 7.73°    | N/A          | N/A     | -    | Seventh House |
 | Pars Amoris           | Aqu ♒️ | 20.58°   | N/A          | N/A     | -    | First House   |
@@ -190,20 +220,20 @@ Sample Natal Subject — Solar Return Comparison 1991
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 6.8999999999999995 | 22.1%      |
-| Earth 🌍 | 6.8999999999999995 | 22.1%      |
-| Air 💨   | 4.8999999999999995 | 15.7%      |
-| Water 💧 | 12.500000000000002 | 40.1%      |
-| Total    | 31.200000000000003 | 100%       |
+| Fire 🔥  | 7.1                | 20.8%      |
+| Earth 🌍 | 7.1                | 20.8%      |
+| Air 💨   | 6.1000000000000005 | 17.8%      |
+| Water 💧 | 13.899999999999997 | 40.6%      |
+| Total    | 34.199999999999996 | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 12.000000000000002 | 38.5%      |
-| Fixed    | 16.500000000000004 | 52.9%      |
-| Mutable  | 2.7                | 8.7%       |
-| Total    | 31.200000000000006 | 100%       |
+| Cardinal | 12.999999999999998 | 38.0%      |
+| Fixed    | 16.900000000000002 | 49.4%      |
+| Mutable  | 4.300000000000002  | 12.6%      |
+| Total    | 34.2               | 100%       |
 +----------+--------------------+------------+
 
 +Sample Natal Subject points in Sample Natal Subject Solar Return houses-------------------+------+--------+
@@ -241,6 +271,21 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Sample Natal Subject – Quaoar                | 1 (First_House)     | 10 (Tenth_House)    | Sco  | 24.08° |
 | Sample Natal Subject – Regulus               | 10 (Tenth_House)    | 7 (Seventh_House)   | Leo  | 29.70° |
 | Sample Natal Subject – Spica                 | 12 (Twelfth_House)  | 8 (Eighth_House)    | Lib  | 23.71° |
+| Sample Natal Subject – Aldebaran             | 8 (Eighth_House)    | 4 (Fourth_House)    | Gem  | 9.66°  |
+| Sample Natal Subject – Antares               | 2 (Second_House)    | 10 (Tenth_House)    | Sag  | 9.64°  |
+| Sample Natal Subject – Sirius                | 9 (Ninth_House)     | 7 (Seventh_House)   | Can  | 13.95° |
+| Sample Natal Subject – Fomalhaut             | 4 (Fourth_House)    | 1 (First_House)     | Pis  | 3.74°  |
+| Sample Natal Subject – Algol                 | 7 (Seventh_House)   | 4 (Fourth_House)    | Tau  | 26.04° |
+| Sample Natal Subject – Betelgeuse            | 8 (Eighth_House)    | 6 (Sixth_House)     | Gem  | 28.62° |
+| Sample Natal Subject – Canopus               | 9 (Ninth_House)     | 7 (Seventh_House)   | Can  | 14.81° |
+| Sample Natal Subject – Procyon               | 9 (Ninth_House)     | 7 (Seventh_House)   | Can  | 25.65° |
+| Sample Natal Subject – Arcturus              | 12 (Twelfth_House)  | 8 (Eighth_House)    | Lib  | 24.11° |
+| Sample Natal Subject – Pollux                | 9 (Ninth_House)     | 7 (Seventh_House)   | Can  | 23.08° |
+| Sample Natal Subject – Deneb                 | 4 (Fourth_House)    | 1 (First_House)     | Pis  | 5.21°  |
+| Sample Natal Subject – Altair                | 3 (Third_House)     | 1 (First_House)     | Aqu  | 1.65°  |
+| Sample Natal Subject – Rigel                 | 8 (Eighth_House)    | 5 (Fifth_House)     | Gem  | 16.70° |
+| Sample Natal Subject – Achernar              | 4 (Fourth_House)    | 2 (Second_House)    | Pis  | 15.19° |
+| Sample Natal Subject – Capella               | 8 (Eighth_House)    | 5 (Fifth_House)     | Gem  | 21.73° |
 | Sample Natal Subject – Pars Fortunae         | 12 (Twelfth_House)  | 9 (Ninth_House)     | Lib  | 28.49° |
 | Sample Natal Subject – Pars Spiritus         | 1 (First_House)     | 9 (Ninth_House)     | Sco  | 13.16° |
 | Sample Natal Subject – Pars Amoris           | 11 (Eleventh_House) | 8 (Eighth_House)    | Lib  | 8.99°  |
@@ -288,6 +333,21 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Sample Natal Subject Solar Return – Quaoar                | 10 (Tenth_House)   | 1 (First_House)     | Sco  | 25.34° |
 | Sample Natal Subject Solar Return – Regulus               | 7 (Seventh_House)  | 10 (Tenth_House)    | Leo  | 29.71° |
 | Sample Natal Subject Solar Return – Spica                 | 8 (Eighth_House)   | 12 (Twelfth_House)  | Lib  | 23.73° |
+| Sample Natal Subject Solar Return – Aldebaran             | 4 (Fourth_House)   | 8 (Eighth_House)    | Gem  | 9.67°  |
+| Sample Natal Subject Solar Return – Antares               | 10 (Tenth_House)   | 2 (Second_House)    | Sag  | 9.65°  |
+| Sample Natal Subject Solar Return – Sirius                | 7 (Seventh_House)  | 9 (Ninth_House)     | Can  | 13.96° |
+| Sample Natal Subject Solar Return – Fomalhaut             | 1 (First_House)    | 4 (Fourth_House)    | Pis  | 3.75°  |
+| Sample Natal Subject Solar Return – Algol                 | 4 (Fourth_House)   | 7 (Seventh_House)   | Tau  | 26.05° |
+| Sample Natal Subject Solar Return – Betelgeuse            | 6 (Sixth_House)    | 8 (Eighth_House)    | Gem  | 28.64° |
+| Sample Natal Subject Solar Return – Canopus               | 7 (Seventh_House)  | 9 (Ninth_House)     | Can  | 14.83° |
+| Sample Natal Subject Solar Return – Procyon               | 7 (Seventh_House)  | 9 (Ninth_House)     | Can  | 25.67° |
+| Sample Natal Subject Solar Return – Arcturus              | 8 (Eighth_House)   | 12 (Twelfth_House)  | Lib  | 24.12° |
+| Sample Natal Subject Solar Return – Pollux                | 7 (Seventh_House)  | 9 (Ninth_House)     | Can  | 23.10° |
+| Sample Natal Subject Solar Return – Deneb                 | 1 (First_House)    | 4 (Fourth_House)    | Pis  | 5.23°  |
+| Sample Natal Subject Solar Return – Altair                | 1 (First_House)    | 3 (Third_House)     | Aqu  | 1.67°  |
+| Sample Natal Subject Solar Return – Rigel                 | 5 (Fifth_House)    | 8 (Eighth_House)    | Gem  | 16.71° |
+| Sample Natal Subject Solar Return – Achernar              | 2 (Second_House)   | 4 (Fourth_House)    | Pis  | 15.20° |
+| Sample Natal Subject Solar Return – Capella               | 5 (Fifth_House)    | 8 (Eighth_House)    | Gem  | 21.74° |
 | Sample Natal Subject Solar Return – Pars Fortunae         | 3 (Third_House)    | 7 (Seventh_House)   | Tau  | 19.91° |
 | Sample Natal Subject Solar Return – Pars Spiritus         | 7 (Seventh_House)  | 10 (Tenth_House)    | Vir  | 7.73°  |
 | Sample Natal Subject Solar Return – Pars Amoris           | 1 (First_House)    | 4 (Fourth_House)    | Aqu  | 20.58° |
@@ -337,48 +397,63 @@ Sample Natal Subject — Solar Return Comparison 1991
 +Active Celestial Points-----+
 | #  | Active Point          |
 +----+-----------------------+
-| 1  | Anti_Vertex           |
-| 2  | Ascendant             |
-| 3  | Ceres                 |
-| 4  | Chiron                |
-| 5  | Descendant            |
-| 6  | Earth                 |
-| 7  | Eris                  |
-| 8  | Haumea                |
-| 9  | Imum_Coeli            |
-| 10 | Ixion                 |
-| 11 | Juno                  |
-| 12 | Jupiter               |
-| 13 | Makemake              |
-| 14 | Mars                  |
-| 15 | Mean_Lilith           |
-| 16 | Mean_North_Lunar_Node |
-| 17 | Mean_South_Lunar_Node |
-| 18 | Medium_Coeli          |
-| 19 | Mercury               |
-| 20 | Moon                  |
-| 21 | Neptune               |
-| 22 | Orcus                 |
-| 23 | Pallas                |
-| 24 | Pars_Amoris           |
-| 25 | Pars_Fidei            |
-| 26 | Pars_Fortunae         |
-| 27 | Pars_Spiritus         |
-| 28 | Pholus                |
-| 29 | Pluto                 |
-| 30 | Quaoar                |
-| 31 | Regulus               |
-| 32 | Saturn                |
-| 33 | Sedna                 |
-| 34 | Spica                 |
-| 35 | Sun                   |
-| 36 | True_Lilith           |
-| 37 | True_North_Lunar_Node |
-| 38 | True_South_Lunar_Node |
-| 39 | Uranus                |
-| 40 | Venus                 |
-| 41 | Vertex                |
-| 42 | Vesta                 |
+| 1  | Achernar              |
+| 2  | Aldebaran             |
+| 3  | Algol                 |
+| 4  | Altair                |
+| 5  | Antares               |
+| 6  | Anti_Vertex           |
+| 7  | Arcturus              |
+| 8  | Ascendant             |
+| 9  | Betelgeuse            |
+| 10 | Canopus               |
+| 11 | Capella               |
+| 12 | Ceres                 |
+| 13 | Chiron                |
+| 14 | Deneb                 |
+| 15 | Descendant            |
+| 16 | Earth                 |
+| 17 | Eris                  |
+| 18 | Fomalhaut             |
+| 19 | Haumea                |
+| 20 | Imum_Coeli            |
+| 21 | Ixion                 |
+| 22 | Juno                  |
+| 23 | Jupiter               |
+| 24 | Makemake              |
+| 25 | Mars                  |
+| 26 | Mean_Lilith           |
+| 27 | Mean_North_Lunar_Node |
+| 28 | Mean_South_Lunar_Node |
+| 29 | Medium_Coeli          |
+| 30 | Mercury               |
+| 31 | Moon                  |
+| 32 | Neptune               |
+| 33 | Orcus                 |
+| 34 | Pallas                |
+| 35 | Pars_Amoris           |
+| 36 | Pars_Fidei            |
+| 37 | Pars_Fortunae         |
+| 38 | Pars_Spiritus         |
+| 39 | Pholus                |
+| 40 | Pluto                 |
+| 41 | Pollux                |
+| 42 | Procyon               |
+| 43 | Quaoar                |
+| 44 | Regulus               |
+| 45 | Rigel                 |
+| 46 | Saturn                |
+| 47 | Sedna                 |
+| 48 | Sirius                |
+| 49 | Spica                 |
+| 50 | Sun                   |
+| 51 | True_Lilith           |
+| 52 | True_North_Lunar_Node |
+| 53 | True_South_Lunar_Node |
+| 54 | Uranus                |
+| 55 | Venus                 |
+| 56 | Vertex                |
+| 57 | Vesta                 |
 +----+-----------------------+
 
 +----------------+---------+
@@ -418,6 +493,14 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Sun                   | Sample Natal Subject | trine △                       | Quaoar                | Sample Natal Subject Solar Return | 3.21° | Separating ← |
 | Sun                   | Sample Natal Subject | square □                      | Spica                 | Sample Natal Subject Solar Return | 4.82° | Static =     |
 | Sun                   | Sample Natal Subject | conjunction ☌                 | Pars Fidei            | Sample Natal Subject Solar Return | 0.03° | Static =     |
+| Sun                   | Sample Natal Subject | biquintile biquintile         | Fomalhaut             | Sample Natal Subject Solar Return | 0.79° | Static =     |
+| Sun                   | Sample Natal Subject | sextile ⚹                     | Algol                 | Sample Natal Subject Solar Return | 2.49° | Static =     |
+| Sun                   | Sample Natal Subject | semi-sextile semi-sextile     | Betelgeuse            | Sample Natal Subject Solar Return | 0.09° | Static =     |
+| Sun                   | Sample Natal Subject | conjunction ☌                 | Procyon               | Sample Natal Subject Solar Return | 2.88° | Static =     |
+| Sun                   | Sample Natal Subject | square □                      | Arcturus              | Sample Natal Subject Solar Return | 4.42° | Static =     |
+| Sun                   | Sample Natal Subject | conjunction ☌                 | Pollux                | Sample Natal Subject Solar Return | 5.44° | Static =     |
+| Sun                   | Sample Natal Subject | biquintile biquintile         | Deneb                 | Sample Natal Subject Solar Return | 0.68° | Static =     |
+| Sun                   | Sample Natal Subject | opposition ☍                  | Altair                | Sample Natal Subject Solar Return | 3.13° | Static =     |
 | Moon                  | Sample Natal Subject | conjunction ☌                 | Sun                   | Sample Natal Subject Solar Return | 7.33° | Separating ← |
 | Moon                  | Sample Natal Subject | semi-square semi-square       | Venus                 | Sample Natal Subject Solar Return | 0.91° | Applying →   |
 | Moon                  | Sample Natal Subject | opposition ☍                  | Neptune               | Sample Natal Subject Solar Return | 6.20° | Separating ← |
@@ -443,6 +526,15 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Moon                  | Sample Natal Subject | quincunx ⚻                    | Pars Amoris           | Sample Natal Subject Solar Return | 0.63° | Static =     |
 | Moon                  | Sample Natal Subject | conjunction ☌                 | Pars Fidei            | Sample Natal Subject Solar Return | 7.36° | Static =     |
 | Moon                  | Sample Natal Subject | biquintile biquintile         | Anti Vertex           | Sample Natal Subject Solar Return | 0.52° | Static =     |
+| Moon                  | Sample Natal Subject | conjunction ☌                 | Sirius                | Sample Natal Subject Solar Return | 7.25° | Static =     |
+| Moon                  | Sample Natal Subject | sextile ⚹                     | Algol                 | Sample Natal Subject Solar Return | 4.84° | Static =     |
+| Moon                  | Sample Natal Subject | conjunction ☌                 | Canopus               | Sample Natal Subject Solar Return | 6.38° | Static =     |
+| Moon                  | Sample Natal Subject | conjunction ☌                 | Procyon               | Sample Natal Subject Solar Return | 4.46° | Static =     |
+| Moon                  | Sample Natal Subject | square □                      | Arcturus              | Sample Natal Subject Solar Return | 2.91° | Static =     |
+| Moon                  | Sample Natal Subject | conjunction ☌                 | Pollux                | Sample Natal Subject Solar Return | 1.89° | Static =     |
+| Moon                  | Sample Natal Subject | sesquiquadrate sesquiquadrate | Deneb                 | Sample Natal Subject Solar Return | 0.98° | Static =     |
+| Moon                  | Sample Natal Subject | trine △                       | Achernar              | Sample Natal Subject Solar Return | 6.01° | Static =     |
+| Moon                  | Sample Natal Subject | semi-sextile semi-sextile     | Capella               | Sample Natal Subject Solar Return | 0.53° | Static =     |
 | Mercury               | Sample Natal Subject | conjunction ☌                 | Mercury               | Sample Natal Subject Solar Return | 7.71° | Separating ← |
 | Mercury               | Sample Natal Subject | conjunction ☌                 | Jupiter               | Sample Natal Subject Solar Return | 1.03° | Separating ← |
 | Mercury               | Sample Natal Subject | biquintile biquintile         | Uranus                | Sample Natal Subject Solar Return | 0.47° | Separating ← |
@@ -457,6 +549,9 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Mercury               | Sample Natal Subject | opposition ☍                  | Pars Amoris           | Sample Natal Subject Solar Return | 2.98° | Static =     |
 | Mercury               | Sample Natal Subject | conjunction ☌                 | Vertex                | Sample Natal Subject Solar Return | 9.08° | Static =     |
 | Mercury               | Sample Natal Subject | opposition ☍                  | Anti Vertex           | Sample Natal Subject Solar Return | 9.08° | Static =     |
+| Mercury               | Sample Natal Subject | trine △                       | Antares               | Sample Natal Subject Solar Return | 7.96° | Static =     |
+| Mercury               | Sample Natal Subject | sextile ⚹                     | Rigel                 | Sample Natal Subject Solar Return | 0.90° | Static =     |
+| Mercury               | Sample Natal Subject | sextile ⚹                     | Capella               | Sample Natal Subject Solar Return | 4.13° | Static =     |
 | Venus                 | Sample Natal Subject | sextile ⚹                     | Venus                 | Sample Natal Subject Solar Return | 3.60° | Separating ← |
 | Venus                 | Sample Natal Subject | sextile ⚹                     | Mars                  | Sample Natal Subject Solar Return | 2.17° | Separating ← |
 | Venus                 | Sample Natal Subject | opposition ☍                  | Uranus                | Sample Natal Subject Solar Return | 9.43° | Applying →   |
@@ -473,6 +568,12 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Venus                 | Sample Natal Subject | trine △                       | Spica                 | Sample Natal Subject Solar Return | 7.98° | Static =     |
 | Venus                 | Sample Natal Subject | sextile ⚹                     | Vertex                | Sample Natal Subject Solar Return | 5.02° | Static =     |
 | Venus                 | Sample Natal Subject | trine △                       | Anti Vertex           | Sample Natal Subject Solar Return | 5.02° | Static =     |
+| Venus                 | Sample Natal Subject | trine △                       | Fomalhaut             | Sample Natal Subject Solar Return | 2.04° | Static =     |
+| Venus                 | Sample Natal Subject | conjunction ☌                 | Betelgeuse            | Sample Natal Subject Solar Return | 3.07° | Static =     |
+| Venus                 | Sample Natal Subject | trine △                       | Arcturus              | Sample Natal Subject Solar Return | 7.59° | Static =     |
+| Venus                 | Sample Natal Subject | trine △                       | Deneb                 | Sample Natal Subject Solar Return | 3.52° | Static =     |
+| Venus                 | Sample Natal Subject | quincunx ⚻                    | Altair                | Sample Natal Subject Solar Return | 0.04° | Static =     |
+| Venus                 | Sample Natal Subject | conjunction ☌                 | Capella               | Sample Natal Subject Solar Return | 9.97° | Static =     |
 | Mars                  | Sample Natal Subject | trine △                       | Venus                 | Sample Natal Subject Solar Return | 0.66° | Applying →   |
 | Mars                  | Sample Natal Subject | trine △                       | Mars                  | Sample Natal Subject Solar Return | 2.09° | Applying →   |
 | Mars                  | Sample Natal Subject | square □                      | Saturn                | Sample Natal Subject Solar Return | 2.07° | Separating ← |
@@ -487,6 +588,10 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Mars                  | Sample Natal Subject | trine △                       | Makemake              | Sample Natal Subject Solar Return | 0.42° | Applying →   |
 | Mars                  | Sample Natal Subject | trine △                       | Regulus               | Sample Natal Subject Solar Return | 6.26° | Static =     |
 | Mars                  | Sample Natal Subject | trine △                       | Pars Spiritus         | Sample Natal Subject Solar Return | 1.77° | Static =     |
+| Mars                  | Sample Natal Subject | sextile ⚹                     | Fomalhaut             | Sample Natal Subject Solar Return | 2.22° | Static =     |
+| Mars                  | Sample Natal Subject | sextile ⚹                     | Deneb                 | Sample Natal Subject Solar Return | 0.74° | Static =     |
+| Mars                  | Sample Natal Subject | square □                      | Altair                | Sample Natal Subject Solar Return | 4.30° | Static =     |
+| Mars                  | Sample Natal Subject | semi-square semi-square       | Capella               | Sample Natal Subject Solar Return | 0.77° | Static =     |
 | Jupiter               | Sample Natal Subject | conjunction ☌                 | Sun                   | Sample Natal Subject Solar Return | 4.63° | Separating ← |
 | Jupiter               | Sample Natal Subject | opposition ☍                  | Saturn                | Sample Natal Subject Solar Return | 9.98° | Applying →   |
 | Jupiter               | Sample Natal Subject | opposition ☍                  | Neptune               | Sample Natal Subject Solar Return | 8.90° | Separating ← |
@@ -511,6 +616,15 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Jupiter               | Sample Natal Subject | square □                      | Spica                 | Sample Natal Subject Solar Return | 0.18° | Static =     |
 | Jupiter               | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | Sample Natal Subject Solar Return | 4.00° | Static =     |
 | Jupiter               | Sample Natal Subject | conjunction ☌                 | Pars Fidei            | Sample Natal Subject Solar Return | 4.66° | Static =     |
+| Jupiter               | Sample Natal Subject | semi-square semi-square       | Aldebaran             | Sample Natal Subject Solar Return | 0.76° | Static =     |
+| Jupiter               | Sample Natal Subject | sesquiquadrate sesquiquadrate | Antares               | Sample Natal Subject Solar Return | 0.74° | Static =     |
+| Jupiter               | Sample Natal Subject | conjunction ☌                 | Sirius                | Sample Natal Subject Solar Return | 9.95° | Static =     |
+| Jupiter               | Sample Natal Subject | sextile ⚹                     | Algol                 | Sample Natal Subject Solar Return | 2.14° | Static =     |
+| Jupiter               | Sample Natal Subject | conjunction ☌                 | Canopus               | Sample Natal Subject Solar Return | 9.08° | Static =     |
+| Jupiter               | Sample Natal Subject | conjunction ☌                 | Procyon               | Sample Natal Subject Solar Return | 1.76° | Static =     |
+| Jupiter               | Sample Natal Subject | square □                      | Arcturus              | Sample Natal Subject Solar Return | 0.21° | Static =     |
+| Jupiter               | Sample Natal Subject | conjunction ☌                 | Pollux                | Sample Natal Subject Solar Return | 0.81° | Static =     |
+| Jupiter               | Sample Natal Subject | opposition ☍                  | Altair                | Sample Natal Subject Solar Return | 7.76° | Static =     |
 | Saturn                | Sample Natal Subject | opposition ☍                  | Sun                   | Sample Natal Subject Solar Return | 7.03° | Separating ← |
 | Saturn                | Sample Natal Subject | conjunction ☌                 | Neptune               | Sample Natal Subject Solar Return | 6.50° | Separating ← |
 | Saturn                | Sample Natal Subject | sextile ⚹                     | Pluto                 | Sample Natal Subject Solar Return | 3.94° | Separating ← |
@@ -537,6 +651,13 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Saturn                | Sample Natal Subject | semi-sextile semi-sextile     | Pars Amoris           | Sample Natal Subject Solar Return | 0.93° | Static =     |
 | Saturn                | Sample Natal Subject | opposition ☍                  | Pars Fidei            | Sample Natal Subject Solar Return | 7.05° | Static =     |
 | Saturn                | Sample Natal Subject | biquintile biquintile         | Vertex                | Sample Natal Subject Solar Return | 0.82° | Static =     |
+| Saturn                | Sample Natal Subject | opposition ☍                  | Sirius                | Sample Natal Subject Solar Return | 7.55° | Static =     |
+| Saturn                | Sample Natal Subject | trine △                       | Algol                 | Sample Natal Subject Solar Return | 4.54° | Static =     |
+| Saturn                | Sample Natal Subject | opposition ☍                  | Canopus               | Sample Natal Subject Solar Return | 6.69° | Static =     |
+| Saturn                | Sample Natal Subject | opposition ☍                  | Procyon               | Sample Natal Subject Solar Return | 4.15° | Static =     |
+| Saturn                | Sample Natal Subject | square □                      | Arcturus              | Sample Natal Subject Solar Return | 2.60° | Static =     |
+| Saturn                | Sample Natal Subject | opposition ☍                  | Pollux                | Sample Natal Subject Solar Return | 1.58° | Static =     |
+| Saturn                | Sample Natal Subject | quincunx ⚻                    | Capella               | Sample Natal Subject Solar Return | 0.22° | Static =     |
 | Uranus                | Sample Natal Subject | trine △                       | Venus                 | Sample Natal Subject Solar Return | 1.43° | Applying →   |
 | Uranus                | Sample Natal Subject | trine △                       | Mars                  | Sample Natal Subject Solar Return | 2.86° | Applying →   |
 | Uranus                | Sample Natal Subject | conjunction ☌                 | Uranus                | Sample Natal Subject Solar Return | 4.40° | Applying →   |
@@ -552,6 +673,12 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Uranus                | Sample Natal Subject | biquintile biquintile         | Orcus                 | Sample Natal Subject Solar Return | 0.89° | Applying →   |
 | Uranus                | Sample Natal Subject | trine △                       | Regulus               | Sample Natal Subject Solar Return | 7.03° | Static =     |
 | Uranus                | Sample Natal Subject | trine △                       | Pars Spiritus         | Sample Natal Subject Solar Return | 1.00° | Static =     |
+| Uranus                | Sample Natal Subject | opposition ☍                  | Sirius                | Sample Natal Subject Solar Return | 7.22° | Static =     |
+| Uranus                | Sample Natal Subject | sextile ⚹                     | Fomalhaut             | Sample Natal Subject Solar Return | 2.99° | Static =     |
+| Uranus                | Sample Natal Subject | opposition ☍                  | Betelgeuse            | Sample Natal Subject Solar Return | 8.10° | Static =     |
+| Uranus                | Sample Natal Subject | opposition ☍                  | Canopus               | Sample Natal Subject Solar Return | 8.09° | Static =     |
+| Uranus                | Sample Natal Subject | quintile Q                    | Arcturus              | Sample Natal Subject Solar Return | 0.62° | Static =     |
+| Uranus                | Sample Natal Subject | sextile ⚹                     | Deneb                 | Sample Natal Subject Solar Return | 1.51° | Static =     |
 | Neptune               | Sample Natal Subject | trine △                       | Venus                 | Sample Natal Subject Solar Return | 7.46° | Applying →   |
 | Neptune               | Sample Natal Subject | biquintile biquintile         | Jupiter               | Sample Natal Subject Solar Return | 0.12° | Applying →   |
 | Neptune               | Sample Natal Subject | conjunction ☌                 | Uranus                | Sample Natal Subject Solar Return | 1.63° | Separating ← |
@@ -571,6 +698,9 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Neptune               | Sample Natal Subject | quincunx ⚻                    | Orcus                 | Sample Natal Subject Solar Return | 0.91° | Applying →   |
 | Neptune               | Sample Natal Subject | trine △                       | Pars Fortunae         | Sample Natal Subject Solar Return | 7.15° | Static =     |
 | Neptune               | Sample Natal Subject | trine △                       | Pars Spiritus         | Sample Natal Subject Solar Return | 5.03° | Static =     |
+| Neptune               | Sample Natal Subject | opposition ☍                  | Sirius                | Sample Natal Subject Solar Return | 1.20° | Static =     |
+| Neptune               | Sample Natal Subject | opposition ☍                  | Canopus               | Sample Natal Subject Solar Return | 2.06° | Static =     |
+| Neptune               | Sample Natal Subject | sextile ⚹                     | Achernar              | Sample Natal Subject Solar Return | 2.44° | Static =     |
 | Pluto                 | Sample Natal Subject | quintile Q                    | Mars                  | Sample Natal Subject Solar Return | 0.90° | Separating ← |
 | Pluto                 | Sample Natal Subject | square □                      | Jupiter               | Sample Natal Subject Solar Return | 3.66° | Separating ← |
 | Pluto                 | Sample Natal Subject | sextile ⚹                     | Uranus                | Sample Natal Subject Solar Return | 3.84° | Separating ← |
@@ -592,6 +722,10 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Pluto                 | Sample Natal Subject | conjunction ☌                 | Ixion                 | Sample Natal Subject Solar Return | 8.77° | Applying →   |
 | Pluto                 | Sample Natal Subject | square □                      | Orcus                 | Sample Natal Subject Solar Return | 3.12° | Applying →   |
 | Pluto                 | Sample Natal Subject | opposition ☍                  | Pars Fortunae         | Sample Natal Subject Solar Return | 4.94° | Static =     |
+| Pluto                 | Sample Natal Subject | trine △                       | Sirius                | Sample Natal Subject Solar Return | 1.01° | Static =     |
+| Pluto                 | Sample Natal Subject | trine △                       | Canopus               | Sample Natal Subject Solar Return | 0.15° | Static =     |
+| Pluto                 | Sample Natal Subject | trine △                       | Achernar              | Sample Natal Subject Solar Return | 0.23° | Static =     |
+| Pluto                 | Sample Natal Subject | biquintile biquintile         | Capella               | Sample Natal Subject Solar Return | 0.77° | Static =     |
 | Mean North Lunar Node | Sample Natal Subject | opposition ☍                  | Sun                   | Sample Natal Subject Solar Return | 9.25° | Applying →   |
 | Mean North Lunar Node | Sample Natal Subject | sextile ⚹                     | Moon                  | Sample Natal Subject Solar Return | 3.16° | Applying →   |
 | Mean North Lunar Node | Sample Natal Subject | conjunction ☌                 | Saturn                | Sample Natal Subject Solar Return | 3.89° | Separating ← |
@@ -601,6 +735,9 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Mean North Lunar Node | Sample Natal Subject | quintile Q                    | Quaoar                | Sample Natal Subject Solar Return | 0.45° | Separating ← |
 | Mean North Lunar Node | Sample Natal Subject | quincunx ⚻                    | Pars Spiritus         | Sample Natal Subject Solar Return | 0.05° | Static =     |
 | Mean North Lunar Node | Sample Natal Subject | opposition ☍                  | Pars Fidei            | Sample Natal Subject Solar Return | 9.22° | Static =     |
+| Mean North Lunar Node | Sample Natal Subject | trine △                       | Aldebaran             | Sample Natal Subject Solar Return | 1.88° | Static =     |
+| Mean North Lunar Node | Sample Natal Subject | sextile ⚹                     | Antares               | Sample Natal Subject Solar Return | 1.86° | Static =     |
+| Mean North Lunar Node | Sample Natal Subject | conjunction ☌                 | Altair                | Sample Natal Subject Solar Return | 6.12° | Static =     |
 | True North Lunar Node | Sample Natal Subject | opposition ☍                  | Sun                   | Sample Natal Subject Solar Return | 8.72° | Applying →   |
 | True North Lunar Node | Sample Natal Subject | sextile ⚹                     | Moon                  | Sample Natal Subject Solar Return | 2.63° | Applying →   |
 | True North Lunar Node | Sample Natal Subject | conjunction ☌                 | Saturn                | Sample Natal Subject Solar Return | 3.37° | Separating ← |
@@ -610,6 +747,10 @@ Sample Natal Subject — Solar Return Comparison 1991
 | True North Lunar Node | Sample Natal Subject | quintile Q                    | Quaoar                | Sample Natal Subject Solar Return | 0.07° | Applying →   |
 | True North Lunar Node | Sample Natal Subject | quincunx ⚻                    | Pars Spiritus         | Sample Natal Subject Solar Return | 0.47° | Static =     |
 | True North Lunar Node | Sample Natal Subject | opposition ☍                  | Pars Fidei            | Sample Natal Subject Solar Return | 8.69° | Static =     |
+| True North Lunar Node | Sample Natal Subject | trine △                       | Aldebaran             | Sample Natal Subject Solar Return | 2.41° | Static =     |
+| True North Lunar Node | Sample Natal Subject | sextile ⚹                     | Antares               | Sample Natal Subject Solar Return | 2.39° | Static =     |
+| True North Lunar Node | Sample Natal Subject | conjunction ☌                 | Altair                | Sample Natal Subject Solar Return | 5.60° | Static =     |
+| True North Lunar Node | Sample Natal Subject | sesquiquadrate sesquiquadrate | Capella               | Sample Natal Subject Solar Return | 0.52° | Static =     |
 | Chiron                | Sample Natal Subject | conjunction ☌                 | Sun                   | Sample Natal Subject Solar Return | 8.66° | Separating ← |
 | Chiron                | Sample Natal Subject | sesquiquadrate sesquiquadrate | Moon                  | Sample Natal Subject Solar Return | 0.25° | Applying →   |
 | Chiron                | Sample Natal Subject | semi-square semi-square       | Venus                 | Sample Natal Subject Solar Return | 0.42° | Separating ← |
@@ -636,6 +777,13 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Chiron                | Sample Natal Subject | quincunx ⚻                    | Pars Amoris           | Sample Natal Subject Solar Return | 0.70° | Static =     |
 | Chiron                | Sample Natal Subject | conjunction ☌                 | Pars Fidei            | Sample Natal Subject Solar Return | 8.69° | Static =     |
 | Chiron                | Sample Natal Subject | biquintile biquintile         | Anti Vertex           | Sample Natal Subject Solar Return | 0.81° | Static =     |
+| Chiron                | Sample Natal Subject | conjunction ☌                 | Sirius                | Sample Natal Subject Solar Return | 5.92° | Static =     |
+| Chiron                | Sample Natal Subject | conjunction ☌                 | Canopus               | Sample Natal Subject Solar Return | 5.05° | Static =     |
+| Chiron                | Sample Natal Subject | conjunction ☌                 | Procyon               | Sample Natal Subject Solar Return | 5.79° | Static =     |
+| Chiron                | Sample Natal Subject | square □                      | Arcturus              | Sample Natal Subject Solar Return | 4.24° | Static =     |
+| Chiron                | Sample Natal Subject | conjunction ☌                 | Pollux                | Sample Natal Subject Solar Return | 3.22° | Static =     |
+| Chiron                | Sample Natal Subject | sesquiquadrate sesquiquadrate | Deneb                 | Sample Natal Subject Solar Return | 0.35° | Static =     |
+| Chiron                | Sample Natal Subject | trine △                       | Achernar              | Sample Natal Subject Solar Return | 4.68° | Static =     |
 | Ascendant             | Sample Natal Subject | sextile ⚹                     | Venus                 | Sample Natal Subject Solar Return | 0.52° | Applying →   |
 | Ascendant             | Sample Natal Subject | sextile ⚹                     | Mars                  | Sample Natal Subject Solar Return | 1.95° | Applying →   |
 | Ascendant             | Sample Natal Subject | square □                      | Saturn                | Sample Natal Subject Solar Return | 1.93° | Separating ← |
@@ -648,6 +796,11 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Ascendant             | Sample Natal Subject | opposition ☍                  | Sedna                 | Sample Natal Subject Solar Return | 6.24° | Separating ← |
 | Ascendant             | Sample Natal Subject | sextile ⚹                     | Makemake              | Sample Natal Subject Solar Return | 0.28° | Applying →   |
 | Ascendant             | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | Sample Natal Subject Solar Return | 1.91° | Static =     |
+| Ascendant             | Sample Natal Subject | trine △                       | Fomalhaut             | Sample Natal Subject Solar Return | 2.07° | Static =     |
+| Ascendant             | Sample Natal Subject | trine △                       | Betelgeuse            | Sample Natal Subject Solar Return | 7.19° | Static =     |
+| Ascendant             | Sample Natal Subject | trine △                       | Deneb                 | Sample Natal Subject Solar Return | 0.60° | Static =     |
+| Ascendant             | Sample Natal Subject | square □                      | Altair                | Sample Natal Subject Solar Return | 4.15° | Static =     |
+| Ascendant             | Sample Natal Subject | sesquiquadrate sesquiquadrate | Capella               | Sample Natal Subject Solar Return | 0.92° | Static =     |
 | Medium Coeli          | Sample Natal Subject | conjunction ☌                 | Mercury               | Sample Natal Subject Solar Return | 5.40° | Separating ← |
 | Medium Coeli          | Sample Natal Subject | conjunction ☌                 | Jupiter               | Sample Natal Subject Solar Return | 1.28° | Applying →   |
 | Medium Coeli          | Sample Natal Subject | square □                      | Pluto                 | Sample Natal Subject Solar Return | 2.34° | Separating ← |
@@ -665,6 +818,9 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Medium Coeli          | Sample Natal Subject | opposition ☍                  | Pars Amoris           | Sample Natal Subject Solar Return | 0.67° | Static =     |
 | Medium Coeli          | Sample Natal Subject | conjunction ☌                 | Vertex                | Sample Natal Subject Solar Return | 6.78° | Static =     |
 | Medium Coeli          | Sample Natal Subject | opposition ☍                  | Anti Vertex           | Sample Natal Subject Solar Return | 6.78° | Static =     |
+| Medium Coeli          | Sample Natal Subject | sextile ⚹                     | Arcturus              | Sample Natal Subject Solar Return | 4.21° | Static =     |
+| Medium Coeli          | Sample Natal Subject | sextile ⚹                     | Rigel                 | Sample Natal Subject Solar Return | 3.20° | Static =     |
+| Medium Coeli          | Sample Natal Subject | sextile ⚹                     | Capella               | Sample Natal Subject Solar Return | 1.83° | Static =     |
 | Descendant            | Sample Natal Subject | trine △                       | Venus                 | Sample Natal Subject Solar Return | 0.52° | Applying →   |
 | Descendant            | Sample Natal Subject | trine △                       | Mars                  | Sample Natal Subject Solar Return | 1.95° | Applying →   |
 | Descendant            | Sample Natal Subject | square □                      | Saturn                | Sample Natal Subject Solar Return | 1.93° | Separating ← |
@@ -677,6 +833,10 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Descendant            | Sample Natal Subject | trine △                       | Makemake              | Sample Natal Subject Solar Return | 0.28° | Applying →   |
 | Descendant            | Sample Natal Subject | trine △                       | Regulus               | Sample Natal Subject Solar Return | 6.11° | Static =     |
 | Descendant            | Sample Natal Subject | trine △                       | Pars Spiritus         | Sample Natal Subject Solar Return | 1.91° | Static =     |
+| Descendant            | Sample Natal Subject | sextile ⚹                     | Fomalhaut             | Sample Natal Subject Solar Return | 2.07° | Static =     |
+| Descendant            | Sample Natal Subject | sextile ⚹                     | Deneb                 | Sample Natal Subject Solar Return | 0.60° | Static =     |
+| Descendant            | Sample Natal Subject | square □                      | Altair                | Sample Natal Subject Solar Return | 4.15° | Static =     |
+| Descendant            | Sample Natal Subject | semi-square semi-square       | Capella               | Sample Natal Subject Solar Return | 0.92° | Static =     |
 | Imum Coeli            | Sample Natal Subject | opposition ☍                  | Mercury               | Sample Natal Subject Solar Return | 5.40° | Separating ← |
 | Imum Coeli            | Sample Natal Subject | opposition ☍                  | Jupiter               | Sample Natal Subject Solar Return | 1.28° | Applying →   |
 | Imum Coeli            | Sample Natal Subject | square □                      | Pluto                 | Sample Natal Subject Solar Return | 2.34° | Separating ← |
@@ -695,6 +855,11 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Imum Coeli            | Sample Natal Subject | conjunction ☌                 | Pars Amoris           | Sample Natal Subject Solar Return | 0.67° | Static =     |
 | Imum Coeli            | Sample Natal Subject | opposition ☍                  | Vertex                | Sample Natal Subject Solar Return | 6.78° | Static =     |
 | Imum Coeli            | Sample Natal Subject | conjunction ☌                 | Anti Vertex           | Sample Natal Subject Solar Return | 6.78° | Static =     |
+| Imum Coeli            | Sample Natal Subject | biquintile biquintile         | Sirius                | Sample Natal Subject Solar Return | 0.05° | Static =     |
+| Imum Coeli            | Sample Natal Subject | biquintile biquintile         | Canopus               | Sample Natal Subject Solar Return | 0.91° | Static =     |
+| Imum Coeli            | Sample Natal Subject | trine △                       | Arcturus              | Sample Natal Subject Solar Return | 4.21° | Static =     |
+| Imum Coeli            | Sample Natal Subject | trine △                       | Rigel                 | Sample Natal Subject Solar Return | 3.20° | Static =     |
+| Imum Coeli            | Sample Natal Subject | trine △                       | Capella               | Sample Natal Subject Solar Return | 1.83° | Static =     |
 | Mean Lilith           | Sample Natal Subject | trine △                       | Sun                   | Sample Natal Subject Solar Return | 0.45° | Applying →   |
 | Mean Lilith           | Sample Natal Subject | conjunction ☌                 | Moon                  | Sample Natal Subject Solar Return | 5.64° | Separating ← |
 | Mean Lilith           | Sample Natal Subject | square □                      | Mercury               | Sample Natal Subject Solar Return | 3.67° | Applying →   |
@@ -717,6 +882,14 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Mean Lilith           | Sample Natal Subject | trine △                       | Pars Fidei            | Sample Natal Subject Solar Return | 0.42° | Static =     |
 | Mean Lilith           | Sample Natal Subject | square □                      | Vertex                | Sample Natal Subject Solar Return | 2.30° | Static =     |
 | Mean Lilith           | Sample Natal Subject | square □                      | Anti Vertex           | Sample Natal Subject Solar Return | 2.30° | Static =     |
+| Mean Lilith           | Sample Natal Subject | sesquiquadrate sesquiquadrate | Sirius                | Sample Natal Subject Solar Return | 0.03° | Static =     |
+| Mean Lilith           | Sample Natal Subject | square □                      | Fomalhaut             | Sample Natal Subject Solar Return | 4.76° | Static =     |
+| Mean Lilith           | Sample Natal Subject | opposition ☍                  | Algol                 | Sample Natal Subject Solar Return | 2.94° | Static =     |
+| Mean Lilith           | Sample Natal Subject | quincunx ⚻                    | Betelgeuse            | Sample Natal Subject Solar Return | 0.35° | Static =     |
+| Mean Lilith           | Sample Natal Subject | sesquiquadrate sesquiquadrate | Canopus               | Sample Natal Subject Solar Return | 0.84° | Static =     |
+| Mean Lilith           | Sample Natal Subject | trine △                       | Procyon               | Sample Natal Subject Solar Return | 3.32° | Static =     |
+| Mean Lilith           | Sample Natal Subject | trine △                       | Pollux                | Sample Natal Subject Solar Return | 5.89° | Static =     |
+| Mean Lilith           | Sample Natal Subject | sextile ⚹                     | Altair                | Sample Natal Subject Solar Return | 2.68° | Static =     |
 | Mean South Lunar Node | Sample Natal Subject | conjunction ☌                 | Sun                   | Sample Natal Subject Solar Return | 9.25° | Applying →   |
 | Mean South Lunar Node | Sample Natal Subject | trine △                       | Moon                  | Sample Natal Subject Solar Return | 3.16° | Applying →   |
 | Mean South Lunar Node | Sample Natal Subject | opposition ☍                  | Saturn                | Sample Natal Subject Solar Return | 3.89° | Separating ← |
@@ -727,6 +900,10 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Mean South Lunar Node | Sample Natal Subject | conjunction ☌                 | Orcus                 | Sample Natal Subject Solar Return | 4.06° | Separating ← |
 | Mean South Lunar Node | Sample Natal Subject | semi-sextile semi-sextile     | Pars Spiritus         | Sample Natal Subject Solar Return | 0.05° | Static =     |
 | Mean South Lunar Node | Sample Natal Subject | conjunction ☌                 | Pars Fidei            | Sample Natal Subject Solar Return | 9.22° | Static =     |
+| Mean South Lunar Node | Sample Natal Subject | sextile ⚹                     | Aldebaran             | Sample Natal Subject Solar Return | 1.88° | Static =     |
+| Mean South Lunar Node | Sample Natal Subject | trine △                       | Antares               | Sample Natal Subject Solar Return | 1.86° | Static =     |
+| Mean South Lunar Node | Sample Natal Subject | quintile Q                    | Algol                 | Sample Natal Subject Solar Return | 0.26° | Static =     |
+| Mean South Lunar Node | Sample Natal Subject | opposition ☍                  | Altair                | Sample Natal Subject Solar Return | 6.12° | Static =     |
 | True South Lunar Node | Sample Natal Subject | conjunction ☌                 | Sun                   | Sample Natal Subject Solar Return | 8.72° | Applying →   |
 | True South Lunar Node | Sample Natal Subject | trine △                       | Moon                  | Sample Natal Subject Solar Return | 2.63° | Applying →   |
 | True South Lunar Node | Sample Natal Subject | opposition ☍                  | Saturn                | Sample Natal Subject Solar Return | 3.37° | Separating ← |
@@ -737,6 +914,11 @@ Sample Natal Subject — Solar Return Comparison 1991
 | True South Lunar Node | Sample Natal Subject | conjunction ☌                 | Orcus                 | Sample Natal Subject Solar Return | 4.59° | Separating ← |
 | True South Lunar Node | Sample Natal Subject | semi-sextile semi-sextile     | Pars Spiritus         | Sample Natal Subject Solar Return | 0.47° | Static =     |
 | True South Lunar Node | Sample Natal Subject | conjunction ☌                 | Pars Fidei            | Sample Natal Subject Solar Return | 8.69° | Static =     |
+| True South Lunar Node | Sample Natal Subject | sextile ⚹                     | Aldebaran             | Sample Natal Subject Solar Return | 2.41° | Static =     |
+| True South Lunar Node | Sample Natal Subject | trine △                       | Antares               | Sample Natal Subject Solar Return | 2.39° | Static =     |
+| True South Lunar Node | Sample Natal Subject | quintile Q                    | Algol                 | Sample Natal Subject Solar Return | 0.79° | Static =     |
+| True South Lunar Node | Sample Natal Subject | opposition ☍                  | Altair                | Sample Natal Subject Solar Return | 5.60° | Static =     |
+| True South Lunar Node | Sample Natal Subject | semi-square semi-square       | Capella               | Sample Natal Subject Solar Return | 0.52° | Static =     |
 | True Lilith           | Sample Natal Subject | trine △                       | Mercury               | Sample Natal Subject Solar Return | 7.29° | Separating ← |
 | True Lilith           | Sample Natal Subject | trine △                       | Jupiter               | Sample Natal Subject Solar Return | 0.61° | Separating ← |
 | True Lilith           | Sample Natal Subject | semi-square semi-square       | Saturn                | Sample Natal Subject Solar Return | 0.87° | Applying →   |
@@ -750,6 +932,12 @@ Sample Natal Subject — Solar Return Comparison 1991
 | True Lilith           | Sample Natal Subject | trine △                       | Orcus                 | Sample Natal Subject Solar Return | 6.18° | Applying →   |
 | True Lilith           | Sample Natal Subject | sextile ⚹                     | Spica                 | Sample Natal Subject Solar Return | 5.70° | Static =     |
 | True Lilith           | Sample Natal Subject | sextile ⚹                     | Pars Amoris           | Sample Natal Subject Solar Return | 2.56° | Static =     |
+| True Lilith           | Sample Natal Subject | opposition ☍                  | Aldebaran             | Sample Natal Subject Solar Return | 8.36° | Static =     |
+| True Lilith           | Sample Natal Subject | conjunction ☌                 | Antares               | Sample Natal Subject Solar Return | 8.38° | Static =     |
+| True Lilith           | Sample Natal Subject | biquintile biquintile         | Pollux                | Sample Natal Subject Solar Return | 0.93° | Static =     |
+| True Lilith           | Sample Natal Subject | opposition ☍                  | Rigel                 | Sample Natal Subject Solar Return | 1.32° | Static =     |
+| True Lilith           | Sample Natal Subject | square □                      | Achernar              | Sample Natal Subject Solar Return | 2.82° | Static =     |
+| True Lilith           | Sample Natal Subject | opposition ☍                  | Capella               | Sample Natal Subject Solar Return | 3.71° | Static =     |
 | Earth                 | Sample Natal Subject | trine △                       | Sun                   | Sample Natal Subject Solar Return | 1.46° | Applying →   |
 | Earth                 | Sample Natal Subject | trine △                       | Moon                  | Sample Natal Subject Solar Return | 4.63° | Separating ← |
 | Earth                 | Sample Natal Subject | sextile ⚹                     | Saturn                | Sample Natal Subject Solar Return | 3.89° | Applying →   |
@@ -766,6 +954,11 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Earth                 | Sample Natal Subject | trine △                       | Quaoar                | Sample Natal Subject Solar Return | 4.66° | Separating ← |
 | Earth                 | Sample Natal Subject | quincunx ⚻                    | Regulus               | Sample Natal Subject Solar Return | 0.29° | Static =     |
 | Earth                 | Sample Natal Subject | trine △                       | Pars Fidei            | Sample Natal Subject Solar Return | 1.43° | Static =     |
+| Earth                 | Sample Natal Subject | sextile ⚹                     | Algol                 | Sample Natal Subject Solar Return | 3.95° | Static =     |
+| Earth                 | Sample Natal Subject | square □                      | Betelgeuse            | Sample Natal Subject Solar Return | 1.36° | Static =     |
+| Earth                 | Sample Natal Subject | trine △                       | Procyon               | Sample Natal Subject Solar Return | 4.33° | Static =     |
+| Earth                 | Sample Natal Subject | trine △                       | Pollux                | Sample Natal Subject Solar Return | 6.90° | Static =     |
+| Earth                 | Sample Natal Subject | sextile ⚹                     | Altair                | Sample Natal Subject Solar Return | 1.67° | Static =     |
 | Pholus                | Sample Natal Subject | sextile ⚹                     | Venus                 | Sample Natal Subject Solar Return | 2.69° | Applying →   |
 | Pholus                | Sample Natal Subject | sextile ⚹                     | Mars                  | Sample Natal Subject Solar Return | 4.12° | Applying →   |
 | Pholus                | Sample Natal Subject | opposition ☍                  | Uranus                | Sample Natal Subject Solar Return | 3.14° | Applying →   |
@@ -778,6 +971,12 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Pholus                | Sample Natal Subject | sextile ⚹                     | Makemake              | Sample Natal Subject Solar Return | 2.44° | Applying →   |
 | Pholus                | Sample Natal Subject | sesquiquadrate sesquiquadrate | Ixion                 | Sample Natal Subject Solar Return | 0.75° | Applying →   |
 | Pholus                | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | Sample Natal Subject Solar Return | 0.26° | Static =     |
+| Pholus                | Sample Natal Subject | conjunction ☌                 | Sirius                | Sample Natal Subject Solar Return | 5.97° | Static =     |
+| Pholus                | Sample Natal Subject | trine △                       | Fomalhaut             | Sample Natal Subject Solar Return | 4.24° | Static =     |
+| Pholus                | Sample Natal Subject | conjunction ☌                 | Betelgeuse            | Sample Natal Subject Solar Return | 9.35° | Static =     |
+| Pholus                | Sample Natal Subject | conjunction ☌                 | Canopus               | Sample Natal Subject Solar Return | 6.84° | Static =     |
+| Pholus                | Sample Natal Subject | trine △                       | Deneb                 | Sample Natal Subject Solar Return | 2.76° | Static =     |
+| Pholus                | Sample Natal Subject | trine △                       | Achernar              | Sample Natal Subject Solar Return | 7.21° | Static =     |
 | Ceres                 | Sample Natal Subject | conjunction ☌                 | Jupiter               | Sample Natal Subject Solar Return | 4.92° | Separating ← |
 | Ceres                 | Sample Natal Subject | opposition ☍                  | Saturn                | Sample Natal Subject Solar Return | 9.82° | Separating ← |
 | Ceres                 | Sample Natal Subject | square □                      | Pluto                 | Sample Natal Subject Solar Return | 3.86° | Applying →   |
@@ -787,6 +986,11 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Ceres                 | Sample Natal Subject | square □                      | Sedna                 | Sample Natal Subject Solar Return | 1.66° | Applying →   |
 | Ceres                 | Sample Natal Subject | conjunction ☌                 | Orcus                 | Sample Natal Subject Solar Return | 1.86° | Applying →   |
 | Ceres                 | Sample Natal Subject | opposition ☍                  | Pars Amoris           | Sample Natal Subject Solar Return | 6.87° | Static =     |
+| Ceres                 | Sample Natal Subject | sextile ⚹                     | Aldebaran             | Sample Natal Subject Solar Return | 4.04° | Static =     |
+| Ceres                 | Sample Natal Subject | trine △                       | Antares               | Sample Natal Subject Solar Return | 4.06° | Static =     |
+| Ceres                 | Sample Natal Subject | semi-sextile semi-sextile     | Sirius                | Sample Natal Subject Solar Return | 0.25° | Static =     |
+| Ceres                 | Sample Natal Subject | semi-square semi-square       | Betelgeuse            | Sample Natal Subject Solar Return | 0.08° | Static =     |
+| Ceres                 | Sample Natal Subject | sextile ⚹                     | Rigel                 | Sample Natal Subject Solar Return | 3.00° | Static =     |
 | Pallas                | Sample Natal Subject | sextile ⚹                     | Venus                 | Sample Natal Subject Solar Return | 1.95° | Applying →   |
 | Pallas                | Sample Natal Subject | sextile ⚹                     | Mars                  | Sample Natal Subject Solar Return | 3.37° | Applying →   |
 | Pallas                | Sample Natal Subject | opposition ☍                  | Uranus                | Sample Natal Subject Solar Return | 3.89° | Applying →   |
@@ -800,6 +1004,12 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Pallas                | Sample Natal Subject | sextile ⚹                     | Sedna                 | Sample Natal Subject Solar Return | 4.81° | Separating ← |
 | Pallas                | Sample Natal Subject | sextile ⚹                     | Makemake              | Sample Natal Subject Solar Return | 1.70° | Applying →   |
 | Pallas                | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | Sample Natal Subject Solar Return | 0.48° | Static =     |
+| Pallas                | Sample Natal Subject | conjunction ☌                 | Sirius                | Sample Natal Subject Solar Return | 6.71° | Static =     |
+| Pallas                | Sample Natal Subject | trine △                       | Fomalhaut             | Sample Natal Subject Solar Return | 3.50° | Static =     |
+| Pallas                | Sample Natal Subject | conjunction ☌                 | Betelgeuse            | Sample Natal Subject Solar Return | 8.61° | Static =     |
+| Pallas                | Sample Natal Subject | conjunction ☌                 | Canopus               | Sample Natal Subject Solar Return | 7.58° | Static =     |
+| Pallas                | Sample Natal Subject | trine △                       | Deneb                 | Sample Natal Subject Solar Return | 2.02° | Static =     |
+| Pallas                | Sample Natal Subject | trine △                       | Achernar              | Sample Natal Subject Solar Return | 7.95° | Static =     |
 | Juno                  | Sample Natal Subject | sextile ⚹                     | Venus                 | Sample Natal Subject Solar Return | 4.79° | Applying →   |
 | Juno                  | Sample Natal Subject | sextile ⚹                     | Uranus                | Sample Natal Subject Solar Return | 1.04° | Applying →   |
 | Juno                  | Sample Natal Subject | sextile ⚹                     | Neptune               | Sample Natal Subject Solar Return | 4.92° | Applying →   |
@@ -813,6 +1023,14 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Juno                  | Sample Natal Subject | square □                      | Orcus                 | Sample Natal Subject Solar Return | 1.75° | Separating ← |
 | Juno                  | Sample Natal Subject | opposition ☍                  | Pars Fortunae         | Sample Natal Subject Solar Return | 9.82° | Static =     |
 | Juno                  | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | Sample Natal Subject Solar Return | 2.36° | Static =     |
+| Juno                  | Sample Natal Subject | quincunx ⚻                    | Aldebaran             | Sample Natal Subject Solar Return | 0.42° | Static =     |
+| Juno                  | Sample Natal Subject | semi-sextile semi-sextile     | Antares               | Sample Natal Subject Solar Return | 0.44° | Static =     |
+| Juno                  | Sample Natal Subject | trine △                       | Sirius                | Sample Natal Subject Solar Return | 3.87° | Static =     |
+| Juno                  | Sample Natal Subject | trine △                       | Fomalhaut             | Sample Natal Subject Solar Return | 6.35° | Static =     |
+| Juno                  | Sample Natal Subject | trine △                       | Canopus               | Sample Natal Subject Solar Return | 4.73° | Static =     |
+| Juno                  | Sample Natal Subject | trine △                       | Deneb                 | Sample Natal Subject Solar Return | 4.87° | Static =     |
+| Juno                  | Sample Natal Subject | biquintile biquintile         | Rigel                 | Sample Natal Subject Solar Return | 0.62° | Static =     |
+| Juno                  | Sample Natal Subject | trine △                       | Achernar              | Sample Natal Subject Solar Return | 5.11° | Static =     |
 | Vesta                 | Sample Natal Subject | square □                      | Jupiter               | Sample Natal Subject Solar Return | 0.49° | Separating ← |
 | Vesta                 | Sample Natal Subject | trine △                       | Uranus                | Sample Natal Subject Solar Return | 7.01° | Separating ← |
 | Vesta                 | Sample Natal Subject | trine △                       | Neptune               | Sample Natal Subject Solar Return | 3.13° | Separating ← |
@@ -835,6 +1053,12 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Vesta                 | Sample Natal Subject | opposition ☍                  | Quaoar                | Sample Natal Subject Solar Return | 7.19° | Applying →   |
 | Vesta                 | Sample Natal Subject | conjunction ☌                 | Pars Fortunae         | Sample Natal Subject Solar Return | 1.77° | Static =     |
 | Vesta                 | Sample Natal Subject | square □                      | Pars Amoris           | Sample Natal Subject Solar Return | 2.44° | Static =     |
+| Vesta                 | Sample Natal Subject | sextile ⚹                     | Sirius                | Sample Natal Subject Solar Return | 4.18° | Static =     |
+| Vesta                 | Sample Natal Subject | conjunction ☌                 | Algol                 | Sample Natal Subject Solar Return | 7.91° | Static =     |
+| Vesta                 | Sample Natal Subject | sextile ⚹                     | Canopus               | Sample Natal Subject Solar Return | 3.32° | Static =     |
+| Vesta                 | Sample Natal Subject | sextile ⚹                     | Pollux                | Sample Natal Subject Solar Return | 4.95° | Static =     |
+| Vesta                 | Sample Natal Subject | quintile Q                    | Deneb                 | Sample Natal Subject Solar Return | 0.92° | Static =     |
+| Vesta                 | Sample Natal Subject | sextile ⚹                     | Achernar              | Sample Natal Subject Solar Return | 2.94° | Static =     |
 | Eris                  | Sample Natal Subject | trine △                       | Mercury               | Sample Natal Subject Solar Return | 7.72° | Separating ← |
 | Eris                  | Sample Natal Subject | trine △                       | Jupiter               | Sample Natal Subject Solar Return | 1.04° | Separating ← |
 | Eris                  | Sample Natal Subject | square □                      | Neptune               | Sample Natal Subject Solar Return | 2.58° | Separating ← |
@@ -853,6 +1077,13 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Eris                  | Sample Natal Subject | trine △                       | Orcus                 | Sample Natal Subject Solar Return | 5.75° | Applying →   |
 | Eris                  | Sample Natal Subject | opposition ☍                  | Spica                 | Sample Natal Subject Solar Return | 6.13° | Static =     |
 | Eris                  | Sample Natal Subject | sextile ⚹                     | Pars Amoris           | Sample Natal Subject Solar Return | 2.99° | Static =     |
+| Eris                  | Sample Natal Subject | trine △                       | Antares               | Sample Natal Subject Solar Return | 7.94° | Static =     |
+| Eris                  | Sample Natal Subject | square □                      | Sirius                | Sample Natal Subject Solar Return | 3.63° | Static =     |
+| Eris                  | Sample Natal Subject | quintile Q                    | Betelgeuse            | Sample Natal Subject Solar Return | 0.96° | Static =     |
+| Eris                  | Sample Natal Subject | square □                      | Canopus               | Sample Natal Subject Solar Return | 2.77° | Static =     |
+| Eris                  | Sample Natal Subject | opposition ☍                  | Arcturus              | Sample Natal Subject Solar Return | 6.52° | Static =     |
+| Eris                  | Sample Natal Subject | sextile ⚹                     | Rigel                 | Sample Natal Subject Solar Return | 0.88° | Static =     |
+| Eris                  | Sample Natal Subject | sextile ⚹                     | Capella               | Sample Natal Subject Solar Return | 4.14° | Static =     |
 | Sedna                 | Sample Natal Subject | trine △                       | Venus                 | Sample Natal Subject Solar Return | 6.24° | Applying →   |
 | Sedna                 | Sample Natal Subject | trine △                       | Mars                  | Sample Natal Subject Solar Return | 7.67° | Applying →   |
 | Sedna                 | Sample Natal Subject | trine △                       | Uranus                | Sample Natal Subject Solar Return | 0.41° | Separating ← |
@@ -870,6 +1101,10 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Sedna                 | Sample Natal Subject | square □                      | Orcus                 | Sample Natal Subject Solar Return | 0.30° | Separating ← |
 | Sedna                 | Sample Natal Subject | conjunction ☌                 | Pars Fortunae         | Sample Natal Subject Solar Return | 8.36° | Static =     |
 | Sedna                 | Sample Natal Subject | trine △                       | Pars Spiritus         | Sample Natal Subject Solar Return | 3.82° | Static =     |
+| Sedna                 | Sample Natal Subject | sextile ⚹                     | Sirius                | Sample Natal Subject Solar Return | 2.41° | Static =     |
+| Sedna                 | Sample Natal Subject | sextile ⚹                     | Canopus               | Sample Natal Subject Solar Return | 3.28° | Static =     |
+| Sedna                 | Sample Natal Subject | quintile Q                    | Pollux                | Sample Natal Subject Solar Return | 0.45° | Static =     |
+| Sedna                 | Sample Natal Subject | sextile ⚹                     | Achernar              | Sample Natal Subject Solar Return | 3.66° | Static =     |
 | Haumea                | Sample Natal Subject | sextile ⚹                     | Sun                   | Sample Natal Subject Solar Return | 2.22° | Separating ← |
 | Haumea                | Sample Natal Subject | trine △                       | Saturn                | Sample Natal Subject Solar Return | 7.57° | Applying →   |
 | Haumea                | Sample Natal Subject | trine △                       | Mean North Lunar Node | Sample Natal Subject Solar Return | 7.87° | Separating ← |
@@ -895,6 +1130,14 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Haumea                | Sample Natal Subject | sextile ⚹                     | Pars Fidei            | Sample Natal Subject Solar Return | 2.25° | Static =     |
 | Haumea                | Sample Natal Subject | semi-sextile semi-sextile     | Vertex                | Sample Natal Subject Solar Return | 0.37° | Static =     |
 | Haumea                | Sample Natal Subject | quincunx ⚻                    | Anti Vertex           | Sample Natal Subject Solar Return | 0.37° | Static =     |
+| Haumea                | Sample Natal Subject | quintile Q                    | Sirius                | Sample Natal Subject Solar Return | 0.36° | Static =     |
+| Haumea                | Sample Natal Subject | trine △                       | Algol                 | Sample Natal Subject Solar Return | 0.27° | Static =     |
+| Haumea                | Sample Natal Subject | square □                      | Betelgeuse            | Sample Natal Subject Solar Return | 2.31° | Static =     |
+| Haumea                | Sample Natal Subject | quintile Q                    | Canopus               | Sample Natal Subject Solar Return | 0.50° | Static =     |
+| Haumea                | Sample Natal Subject | sextile ⚹                     | Procyon               | Sample Natal Subject Solar Return | 0.65° | Static =     |
+| Haumea                | Sample Natal Subject | sextile ⚹                     | Pollux                | Sample Natal Subject Solar Return | 3.22° | Static =     |
+| Haumea                | Sample Natal Subject | trine △                       | Altair                | Sample Natal Subject Solar Return | 5.35° | Static =     |
+| Haumea                | Sample Natal Subject | square □                      | Capella               | Sample Natal Subject Solar Return | 4.58° | Static =     |
 | Makemake              | Sample Natal Subject | square □                      | Moon                  | Sample Natal Subject Solar Return | 0.14° | Separating ← |
 | Makemake              | Sample Natal Subject | conjunction ☌                 | Mercury               | Sample Natal Subject Solar Return | 9.18° | Applying →   |
 | Makemake              | Sample Natal Subject | conjunction ☌                 | Venus                 | Sample Natal Subject Solar Return | 0.81° | Separating ← |
@@ -911,6 +1154,10 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Makemake              | Sample Natal Subject | conjunction ☌                 | Pars Spiritus         | Sample Natal Subject Solar Return | 3.24° | Static =     |
 | Makemake              | Sample Natal Subject | conjunction ☌                 | Vertex                | Sample Natal Subject Solar Return | 7.80° | Static =     |
 | Makemake              | Sample Natal Subject | opposition ☍                  | Anti Vertex           | Sample Natal Subject Solar Return | 7.80° | Static =     |
+| Makemake              | Sample Natal Subject | opposition ☍                  | Fomalhaut             | Sample Natal Subject Solar Return | 0.75° | Static =     |
+| Makemake              | Sample Natal Subject | sextile ⚹                     | Betelgeuse            | Sample Natal Subject Solar Return | 5.86° | Static =     |
+| Makemake              | Sample Natal Subject | opposition ☍                  | Deneb                 | Sample Natal Subject Solar Return | 0.73° | Static =     |
+| Makemake              | Sample Natal Subject | quintile Q                    | Capella               | Sample Natal Subject Solar Return | 0.76° | Static =     |
 | Ixion                 | Sample Natal Subject | trine △                       | Sun                   | Sample Natal Subject Solar Return | 5.84° | Separating ← |
 | Ixion                 | Sample Natal Subject | square □                      | Mercury               | Sample Natal Subject Solar Return | 2.61° | Separating ← |
 | Ixion                 | Sample Natal Subject | square □                      | Jupiter               | Sample Natal Subject Solar Return | 4.06° | Applying →   |
@@ -936,6 +1183,13 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Ixion                 | Sample Natal Subject | trine △                       | Pars Fidei            | Sample Natal Subject Solar Return | 5.87° | Static =     |
 | Ixion                 | Sample Natal Subject | square □                      | Vertex                | Sample Natal Subject Solar Return | 3.99° | Static =     |
 | Ixion                 | Sample Natal Subject | square □                      | Anti Vertex           | Sample Natal Subject Solar Return | 3.99° | Static =     |
+| Ixion                 | Sample Natal Subject | opposition ☍                  | Algol                 | Sample Natal Subject Solar Return | 3.35° | Static =     |
+| Ixion                 | Sample Natal Subject | biquintile biquintile         | Betelgeuse            | Sample Natal Subject Solar Return | 0.07° | Static =     |
+| Ixion                 | Sample Natal Subject | trine △                       | Canopus               | Sample Natal Subject Solar Return | 7.88° | Static =     |
+| Ixion                 | Sample Natal Subject | trine △                       | Procyon               | Sample Natal Subject Solar Return | 2.96° | Static =     |
+| Ixion                 | Sample Natal Subject | trine △                       | Pollux                | Sample Natal Subject Solar Return | 0.39° | Static =     |
+| Ixion                 | Sample Natal Subject | trine △                       | Achernar              | Sample Natal Subject Solar Return | 7.50° | Static =     |
+| Ixion                 | Sample Natal Subject | quincunx ⚻                    | Capella               | Sample Natal Subject Solar Return | 0.96° | Static =     |
 | Orcus                 | Sample Natal Subject | trine △                       | Moon                  | Sample Natal Subject Solar Return | 6.21° | Applying →   |
 | Orcus                 | Sample Natal Subject | conjunction ☌                 | Jupiter               | Sample Natal Subject Solar Return | 7.80° | Separating ← |
 | Orcus                 | Sample Natal Subject | opposition ☍                  | Saturn                | Sample Natal Subject Solar Return | 6.95° | Separating ← |
@@ -945,6 +1199,10 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Orcus                 | Sample Natal Subject | conjunction ☌                 | Orcus                 | Sample Natal Subject Solar Return | 1.01° | Separating ← |
 | Orcus                 | Sample Natal Subject | quintile Q                    | Spica                 | Sample Natal Subject Solar Return | 0.89° | Static =     |
 | Orcus                 | Sample Natal Subject | opposition ☍                  | Pars Amoris           | Sample Natal Subject Solar Return | 9.74° | Static =     |
+| Orcus                 | Sample Natal Subject | sextile ⚹                     | Aldebaran             | Sample Natal Subject Solar Return | 1.17° | Static =     |
+| Orcus                 | Sample Natal Subject | trine △                       | Antares               | Sample Natal Subject Solar Return | 1.19° | Static =     |
+| Orcus                 | Sample Natal Subject | opposition ☍                  | Altair                | Sample Natal Subject Solar Return | 9.17° | Static =     |
+| Orcus                 | Sample Natal Subject | sextile ⚹                     | Rigel                 | Sample Natal Subject Solar Return | 5.87° | Static =     |
 | Quaoar                | Sample Natal Subject | trine △                       | Sun                   | Sample Natal Subject Solar Return | 4.47° | Separating ← |
 | Quaoar                | Sample Natal Subject | square □                      | Mercury               | Sample Natal Subject Solar Return | 1.24° | Separating ← |
 | Quaoar                | Sample Natal Subject | conjunction ☌                 | Pluto                 | Sample Natal Subject Solar Return | 6.50° | Separating ← |
@@ -971,6 +1229,10 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Quaoar                | Sample Natal Subject | trine △                       | Pars Fidei            | Sample Natal Subject Solar Return | 4.49° | Static =     |
 | Quaoar                | Sample Natal Subject | square □                      | Vertex                | Sample Natal Subject Solar Return | 2.62° | Static =     |
 | Quaoar                | Sample Natal Subject | square □                      | Anti Vertex           | Sample Natal Subject Solar Return | 2.62° | Static =     |
+| Quaoar                | Sample Natal Subject | opposition ☍                  | Algol                 | Sample Natal Subject Solar Return | 1.98° | Static =     |
+| Quaoar                | Sample Natal Subject | trine △                       | Procyon               | Sample Natal Subject Solar Return | 1.59° | Static =     |
+| Quaoar                | Sample Natal Subject | semi-sextile semi-sextile     | Arcturus              | Sample Natal Subject Solar Return | 0.04° | Static =     |
+| Quaoar                | Sample Natal Subject | trine △                       | Pollux                | Sample Natal Subject Solar Return | 0.98° | Static =     |
 | Regulus               | Sample Natal Subject | square □                      | Moon                  | Sample Natal Subject Solar Return | 4.94° | Separating ← |
 | Regulus               | Sample Natal Subject | conjunction ☌                 | Mercury               | Sample Natal Subject Solar Return | 4.38° | Applying →   |
 | Regulus               | Sample Natal Subject | conjunction ☌                 | Venus                 | Sample Natal Subject Solar Return | 5.61° | Separating ← |
@@ -991,6 +1253,14 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Regulus               | Sample Natal Subject | opposition ☍                  | Pars Amoris           | Sample Natal Subject Solar Return | 9.11° | Static =     |
 | Regulus               | Sample Natal Subject | conjunction ☌                 | Vertex                | Sample Natal Subject Solar Return | 3.00° | Static =     |
 | Regulus               | Sample Natal Subject | opposition ☍                  | Anti Vertex           | Sample Natal Subject Solar Return | 3.00° | Static =     |
+| Regulus               | Sample Natal Subject | semi-square semi-square       | Sirius                | Sample Natal Subject Solar Return | 0.73° | Static =     |
+| Regulus               | Sample Natal Subject | opposition ☍                  | Fomalhaut             | Sample Natal Subject Solar Return | 4.05° | Static =     |
+| Regulus               | Sample Natal Subject | square □                      | Algol                 | Sample Natal Subject Solar Return | 3.65° | Static =     |
+| Regulus               | Sample Natal Subject | sextile ⚹                     | Betelgeuse            | Sample Natal Subject Solar Return | 1.06° | Static =     |
+| Regulus               | Sample Natal Subject | semi-square semi-square       | Canopus               | Sample Natal Subject Solar Return | 0.13° | Static =     |
+| Regulus               | Sample Natal Subject | sextile ⚹                     | Arcturus              | Sample Natal Subject Solar Return | 5.58° | Static =     |
+| Regulus               | Sample Natal Subject | opposition ☍                  | Deneb                 | Sample Natal Subject Solar Return | 5.53° | Static =     |
+| Regulus               | Sample Natal Subject | quintile Q                    | Rigel                 | Sample Natal Subject Solar Return | 0.99° | Static =     |
 | Spica                 | Sample Natal Subject | square □                      | Sun                   | Sample Natal Subject Solar Return | 4.83° | Separating ← |
 | Spica                 | Sample Natal Subject | sextile ⚹                     | Mercury               | Sample Natal Subject Solar Return | 1.60° | Separating ← |
 | Spica                 | Sample Natal Subject | sextile ⚹                     | Jupiter               | Sample Natal Subject Solar Return | 5.07° | Applying →   |
@@ -1010,6 +1280,14 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Spica                 | Sample Natal Subject | square □                      | Pars Fidei            | Sample Natal Subject Solar Return | 4.86° | Static =     |
 | Spica                 | Sample Natal Subject | sextile ⚹                     | Vertex                | Sample Natal Subject Solar Return | 2.98° | Static =     |
 | Spica                 | Sample Natal Subject | trine △                       | Anti Vertex           | Sample Natal Subject Solar Return | 2.98° | Static =     |
+| Spica                 | Sample Natal Subject | sesquiquadrate sesquiquadrate | Aldebaran             | Sample Natal Subject Solar Return | 0.96° | Static =     |
+| Spica                 | Sample Natal Subject | semi-square semi-square       | Antares               | Sample Natal Subject Solar Return | 0.94° | Static =     |
+| Spica                 | Sample Natal Subject | trine △                       | Betelgeuse            | Sample Natal Subject Solar Return | 4.92° | Static =     |
+| Spica                 | Sample Natal Subject | square □                      | Procyon               | Sample Natal Subject Solar Return | 1.95° | Static =     |
+| Spica                 | Sample Natal Subject | conjunction ☌                 | Arcturus              | Sample Natal Subject Solar Return | 0.41° | Static =     |
+| Spica                 | Sample Natal Subject | square □                      | Pollux                | Sample Natal Subject Solar Return | 0.61° | Static =     |
+| Spica                 | Sample Natal Subject | trine △                       | Rigel                 | Sample Natal Subject Solar Return | 7.00° | Static =     |
+| Spica                 | Sample Natal Subject | trine △                       | Capella               | Sample Natal Subject Solar Return | 1.97° | Static =     |
 | Pars Fortunae         | Sample Natal Subject | square □                      | Sun                   | Sample Natal Subject Solar Return | 0.05° | Separating ← |
 | Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Mercury               | Sample Natal Subject Solar Return | 3.17° | Applying →   |
 | Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Mars                  | Sample Natal Subject Solar Return | 5.39° | Separating ← |
@@ -1024,6 +1302,13 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Pars Fortunae         | Sample Natal Subject | square □                      | Pars Fidei            | Sample Natal Subject Solar Return | 0.08° | Static =     |
 | Pars Fortunae         | Sample Natal Subject | sextile ⚹                     | Vertex                | Sample Natal Subject Solar Return | 1.80° | Static =     |
 | Pars Fortunae         | Sample Natal Subject | trine △                       | Anti Vertex           | Sample Natal Subject Solar Return | 1.80° | Static =     |
+| Pars Fortunae         | Sample Natal Subject | trine △                       | Fomalhaut             | Sample Natal Subject Solar Return | 5.26° | Static =     |
+| Pars Fortunae         | Sample Natal Subject | trine △                       | Betelgeuse            | Sample Natal Subject Solar Return | 0.15° | Static =     |
+| Pars Fortunae         | Sample Natal Subject | square □                      | Procyon               | Sample Natal Subject Solar Return | 2.82° | Static =     |
+| Pars Fortunae         | Sample Natal Subject | conjunction ☌                 | Arcturus              | Sample Natal Subject Solar Return | 4.37° | Static =     |
+| Pars Fortunae         | Sample Natal Subject | trine △                       | Deneb                 | Sample Natal Subject Solar Return | 6.74° | Static =     |
+| Pars Fortunae         | Sample Natal Subject | square □                      | Altair                | Sample Natal Subject Solar Return | 3.18° | Static =     |
+| Pars Fortunae         | Sample Natal Subject | trine △                       | Capella               | Sample Natal Subject Solar Return | 6.75° | Static =     |
 | Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Uranus                | Sample Natal Subject Solar Return | 2.02° | Separating ← |
 | Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Neptune               | Sample Natal Subject Solar Return | 1.86° | Applying →   |
 | Pars Spiritus         | Sample Natal Subject | conjunction ☌                 | Pluto                 | Sample Natal Subject Solar Return | 4.42° | Applying →   |
@@ -1042,6 +1327,11 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Pars Spiritus         | Sample Natal Subject | square □                      | Orcus                 | Sample Natal Subject Solar Return | 1.31° | Applying →   |
 | Pars Spiritus         | Sample Natal Subject | opposition ☍                  | Pars Fortunae         | Sample Natal Subject Solar Return | 6.76° | Static =     |
 | Pars Spiritus         | Sample Natal Subject | sextile ⚹                     | Pars Spiritus         | Sample Natal Subject Solar Return | 5.42° | Static =     |
+| Pars Spiritus         | Sample Natal Subject | trine △                       | Sirius                | Sample Natal Subject Solar Return | 0.81° | Static =     |
+| Pars Spiritus         | Sample Natal Subject | sesquiquadrate sesquiquadrate | Betelgeuse            | Sample Natal Subject Solar Return | 0.48° | Static =     |
+| Pars Spiritus         | Sample Natal Subject | trine △                       | Canopus               | Sample Natal Subject Solar Return | 1.67° | Static =     |
+| Pars Spiritus         | Sample Natal Subject | trine △                       | Deneb                 | Sample Natal Subject Solar Return | 7.93° | Static =     |
+| Pars Spiritus         | Sample Natal Subject | trine △                       | Achernar              | Sample Natal Subject Solar Return | 2.05° | Static =     |
 | Pars Amoris           | Sample Natal Subject | sextile ⚹                     | Moon                  | Sample Natal Subject Solar Return | 4.35° | Applying →   |
 | Pars Amoris           | Sample Natal Subject | trine △                       | Saturn                | Sample Natal Subject Solar Return | 5.09° | Separating ← |
 | Pars Amoris           | Sample Natal Subject | square □                      | Uranus                | Sample Natal Subject Solar Return | 2.15° | Applying →   |
@@ -1052,6 +1342,12 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Pars Amoris           | Sample Natal Subject | opposition ☍                  | Eris                  | Sample Natal Subject Solar Return | 8.84° | Applying →   |
 | Pars Amoris           | Sample Natal Subject | semi-square semi-square       | Ixion                 | Sample Natal Subject Solar Return | 0.24° | Separating ← |
 | Pars Amoris           | Sample Natal Subject | sextile ⚹                     | Orcus                 | Sample Natal Subject Solar Return | 2.86° | Separating ← |
+| Pars Amoris           | Sample Natal Subject | trine △                       | Aldebaran             | Sample Natal Subject Solar Return | 0.69° | Static =     |
+| Pars Amoris           | Sample Natal Subject | sextile ⚹                     | Antares               | Sample Natal Subject Solar Return | 0.67° | Static =     |
+| Pars Amoris           | Sample Natal Subject | square □                      | Sirius                | Sample Natal Subject Solar Return | 4.98° | Static =     |
+| Pars Amoris           | Sample Natal Subject | biquintile biquintile         | Fomalhaut             | Sample Natal Subject Solar Return | 0.76° | Static =     |
+| Pars Amoris           | Sample Natal Subject | trine △                       | Altair                | Sample Natal Subject Solar Return | 7.32° | Static =     |
+| Pars Amoris           | Sample Natal Subject | trine △                       | Rigel                 | Sample Natal Subject Solar Return | 7.72° | Static =     |
 | Pars Fidei            | Sample Natal Subject | trine △                       | Venus                 | Sample Natal Subject Solar Return | 2.91° | Applying →   |
 | Pars Fidei            | Sample Natal Subject | trine △                       | Mars                  | Sample Natal Subject Solar Return | 4.34° | Applying →   |
 | Pars Fidei            | Sample Natal Subject | square □                      | Saturn                | Sample Natal Subject Solar Return | 4.32° | Separating ← |
@@ -1067,6 +1363,9 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Pars Fidei            | Sample Natal Subject | square □                      | Orcus                 | Sample Natal Subject Solar Return | 3.63° | Separating ← |
 | Pars Fidei            | Sample Natal Subject | trine △                       | Pars Spiritus         | Sample Natal Subject Solar Return | 0.48° | Static =     |
 | Pars Fidei            | Sample Natal Subject | quintile Q                    | Anti Vertex           | Sample Natal Subject Solar Return | 0.48° | Static =     |
+| Pars Fidei            | Sample Natal Subject | sextile ⚹                     | Sirius                | Sample Natal Subject Solar Return | 5.75° | Static =     |
+| Pars Fidei            | Sample Natal Subject | sextile ⚹                     | Fomalhaut             | Sample Natal Subject Solar Return | 4.47° | Static =     |
+| Pars Fidei            | Sample Natal Subject | sextile ⚹                     | Deneb                 | Sample Natal Subject Solar Return | 2.99° | Static =     |
 | Vertex                | Sample Natal Subject | opposition ☍                  | Moon                  | Sample Natal Subject Solar Return | 6.83° | Applying →   |
 | Vertex                | Sample Natal Subject | trine △                       | Saturn                | Sample Natal Subject Solar Return | 7.57° | Separating ← |
 | Vertex                | Sample Natal Subject | quincunx ⚻                    | Uranus                | Sample Natal Subject Solar Return | 0.33° | Separating ← |
@@ -1076,6 +1375,11 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Vertex                | Sample Natal Subject | semi-sextile semi-sextile     | Sedna                 | Sample Natal Subject Solar Return | 0.59° | Separating ← |
 | Vertex                | Sample Natal Subject | sextile ⚹                     | Orcus                 | Sample Natal Subject Solar Return | 0.39° | Separating ← |
 | Vertex                | Sample Natal Subject | square □                      | Pars Spiritus         | Sample Natal Subject Solar Return | 3.73° | Static =     |
+| Vertex                | Sample Natal Subject | conjunction ☌                 | Aldebaran             | Sample Natal Subject Solar Return | 1.79° | Static =     |
+| Vertex                | Sample Natal Subject | opposition ☍                  | Antares               | Sample Natal Subject Solar Return | 1.81° | Static =     |
+| Vertex                | Sample Natal Subject | semi-square semi-square       | Procyon               | Sample Natal Subject Solar Return | 0.80° | Static =     |
+| Vertex                | Sample Natal Subject | conjunction ☌                 | Rigel                 | Sample Natal Subject Solar Return | 5.25° | Static =     |
+| Vertex                | Sample Natal Subject | square □                      | Achernar              | Sample Natal Subject Solar Return | 3.74° | Static =     |
 | Anti Vertex           | Sample Natal Subject | conjunction ☌                 | Moon                  | Sample Natal Subject Solar Return | 6.83° | Applying →   |
 | Anti Vertex           | Sample Natal Subject | trine △                       | Jupiter               | Sample Natal Subject Solar Return | 7.17° | Separating ← |
 | Anti Vertex           | Sample Natal Subject | semi-sextile semi-sextile     | Uranus                | Sample Natal Subject Solar Return | 0.33° | Separating ← |
@@ -1085,4 +1389,344 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Anti Vertex           | Sample Natal Subject | quincunx ⚻                    | Sedna                 | Sample Natal Subject Solar Return | 0.59° | Separating ← |
 | Anti Vertex           | Sample Natal Subject | trine △                       | Orcus                 | Sample Natal Subject Solar Return | 0.39° | Separating ← |
 | Anti Vertex           | Sample Natal Subject | square □                      | Pars Spiritus         | Sample Natal Subject Solar Return | 3.73° | Static =     |
+| Anti Vertex           | Sample Natal Subject | opposition ☍                  | Aldebaran             | Sample Natal Subject Solar Return | 1.79° | Static =     |
+| Anti Vertex           | Sample Natal Subject | conjunction ☌                 | Antares               | Sample Natal Subject Solar Return | 1.81° | Static =     |
+| Anti Vertex           | Sample Natal Subject | sesquiquadrate sesquiquadrate | Procyon               | Sample Natal Subject Solar Return | 0.80° | Static =     |
+| Anti Vertex           | Sample Natal Subject | opposition ☍                  | Rigel                 | Sample Natal Subject Solar Return | 5.25° | Static =     |
+| Anti Vertex           | Sample Natal Subject | square □                      | Achernar              | Sample Natal Subject Solar Return | 3.74° | Static =     |
+| Aldebaran             | Sample Natal Subject | opposition ☍                  | Moon                  | Sample Natal Subject Solar Return | 5.02° | Applying →   |
+| Aldebaran             | Sample Natal Subject | square □                      | Venus                 | Sample Natal Subject Solar Return | 4.35° | Applying →   |
+| Aldebaran             | Sample Natal Subject | trine △                       | Saturn                | Sample Natal Subject Solar Return | 5.76° | Separating ← |
+| Aldebaran             | Sample Natal Subject | biquintile biquintile         | Neptune               | Sample Natal Subject Solar Return | 0.65° | Separating ← |
+| Aldebaran             | Sample Natal Subject | quincunx ⚻                    | Mean Lilith           | Sample Natal Subject Solar Return | 0.02° | Applying →   |
+| Aldebaran             | Sample Natal Subject | square □                      | Makemake              | Sample Natal Subject Solar Return | 4.11° | Applying →   |
+| Aldebaran             | Sample Natal Subject | sextile ⚹                     | Orcus                 | Sample Natal Subject Solar Return | 2.19° | Separating ← |
+| Aldebaran             | Sample Natal Subject | sesquiquadrate sesquiquadrate | Spica                 | Sample Natal Subject Solar Return | 0.93° | Static =     |
+| Aldebaran             | Sample Natal Subject | square □                      | Pars Spiritus         | Sample Natal Subject Solar Return | 1.92° | Static =     |
+| Aldebaran             | Sample Natal Subject | conjunction ☌                 | Aldebaran             | Sample Natal Subject Solar Return | 0.01° | Static =     |
+| Aldebaran             | Sample Natal Subject | opposition ☍                  | Antares               | Sample Natal Subject Solar Return | 0.00° | Static =     |
+| Aldebaran             | Sample Natal Subject | sesquiquadrate sesquiquadrate | Arcturus              | Sample Natal Subject Solar Return | 0.54° | Static =     |
+| Aldebaran             | Sample Natal Subject | square □                      | Deneb                 | Sample Natal Subject Solar Return | 4.43° | Static =     |
+| Aldebaran             | Sample Natal Subject | trine △                       | Altair                | Sample Natal Subject Solar Return | 7.99° | Static =     |
+| Aldebaran             | Sample Natal Subject | conjunction ☌                 | Rigel                 | Sample Natal Subject Solar Return | 7.05° | Static =     |
+| Antares               | Sample Natal Subject | conjunction ☌                 | Moon                  | Sample Natal Subject Solar Return | 5.01° | Applying →   |
+| Antares               | Sample Natal Subject | square □                      | Venus                 | Sample Natal Subject Solar Return | 4.33° | Applying →   |
+| Antares               | Sample Natal Subject | sextile ⚹                     | Saturn                | Sample Natal Subject Solar Return | 5.74° | Separating ← |
+| Antares               | Sample Natal Subject | semi-sextile semi-sextile     | Mean Lilith           | Sample Natal Subject Solar Return | 0.00° | Applying →   |
+| Antares               | Sample Natal Subject | quintile Q                    | Pallas                | Sample Natal Subject Solar Return | 0.30° | Applying →   |
+| Antares               | Sample Natal Subject | quintile Q                    | Haumea                | Sample Natal Subject Solar Return | 0.39° | Applying →   |
+| Antares               | Sample Natal Subject | square □                      | Makemake              | Sample Natal Subject Solar Return | 4.09° | Applying →   |
+| Antares               | Sample Natal Subject | trine △                       | Orcus                 | Sample Natal Subject Solar Return | 2.21° | Separating ← |
+| Antares               | Sample Natal Subject | semi-square semi-square       | Spica                 | Sample Natal Subject Solar Return | 0.91° | Static =     |
+| Antares               | Sample Natal Subject | square □                      | Pars Spiritus         | Sample Natal Subject Solar Return | 1.90° | Static =     |
+| Antares               | Sample Natal Subject | opposition ☍                  | Aldebaran             | Sample Natal Subject Solar Return | 0.03° | Static =     |
+| Antares               | Sample Natal Subject | conjunction ☌                 | Antares               | Sample Natal Subject Solar Return | 0.01° | Static =     |
+| Antares               | Sample Natal Subject | biquintile biquintile         | Canopus               | Sample Natal Subject Solar Return | 0.81° | Static =     |
+| Antares               | Sample Natal Subject | semi-square semi-square       | Arcturus              | Sample Natal Subject Solar Return | 0.52° | Static =     |
+| Antares               | Sample Natal Subject | square □                      | Deneb                 | Sample Natal Subject Solar Return | 4.41° | Static =     |
+| Antares               | Sample Natal Subject | opposition ☍                  | Rigel                 | Sample Natal Subject Solar Return | 7.07° | Static =     |
+| Sirius                | Sample Natal Subject | opposition ☍                  | Uranus                | Sample Natal Subject Solar Return | 2.81° | Separating ← |
+| Sirius                | Sample Natal Subject | opposition ☍                  | Neptune               | Sample Natal Subject Solar Return | 1.06° | Applying →   |
+| Sirius                | Sample Natal Subject | trine △                       | Pluto                 | Sample Natal Subject Solar Return | 3.63° | Applying →   |
+| Sirius                | Sample Natal Subject | opposition ☍                  | Mean North Lunar Node | Sample Natal Subject Solar Return | 4.50° | Applying →   |
+| Sirius                | Sample Natal Subject | opposition ☍                  | True North Lunar Node | Sample Natal Subject Solar Return | 4.99° | Separating ← |
+| Sirius                | Sample Natal Subject | opposition ☍                  | Ascendant             | Sample Natal Subject Solar Return | 0.13° | Separating ← |
+| Sirius                | Sample Natal Subject | trine △                       | Medium Coeli          | Sample Natal Subject Solar Return | 7.82° | Separating ← |
+| Sirius                | Sample Natal Subject | conjunction ☌                 | Descendant            | Sample Natal Subject Solar Return | 0.13° | Separating ← |
+| Sirius                | Sample Natal Subject | opposition ☍                  | Mean Lilith           | Sample Natal Subject Solar Return | 4.31° | Applying →   |
+| Sirius                | Sample Natal Subject | conjunction ☌                 | Mean South Lunar Node | Sample Natal Subject Solar Return | 4.50° | Separating ← |
+| Sirius                | Sample Natal Subject | conjunction ☌                 | True South Lunar Node | Sample Natal Subject Solar Return | 4.99° | Applying →   |
+| Sirius                | Sample Natal Subject | conjunction ☌                 | Pholus                | Sample Natal Subject Solar Return | 8.44° | Separating ← |
+| Sirius                | Sample Natal Subject | opposition ☍                  | Juno                  | Sample Natal Subject Solar Return | 8.82° | Applying →   |
+| Sirius                | Sample Natal Subject | conjunction ☌                 | Vesta                 | Sample Natal Subject Solar Return | 8.43° | Separating ← |
+| Sirius                | Sample Natal Subject | square □                      | Eris                  | Sample Natal Subject Solar Return | 3.88° | Applying →   |
+| Sirius                | Sample Natal Subject | sextile ⚹                     | Sedna                 | Sample Natal Subject Solar Return | 1.89° | Applying →   |
+| Sirius                | Sample Natal Subject | semi-square semi-square       | Regulus               | Sample Natal Subject Solar Return | 0.76° | Static =     |
+| Sirius                | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | Sample Natal Subject Solar Return | 5.96° | Static =     |
+| Sirius                | Sample Natal Subject | biquintile biquintile         | Pars Amoris           | Sample Natal Subject Solar Return | 0.64° | Static =     |
+| Sirius                | Sample Natal Subject | conjunction ☌                 | Sirius                | Sample Natal Subject Solar Return | 0.01° | Static =     |
+| Sirius                | Sample Natal Subject | conjunction ☌                 | Canopus               | Sample Natal Subject Solar Return | 0.88° | Static =     |
+| Sirius                | Sample Natal Subject | conjunction ☌                 | Pollux                | Sample Natal Subject Solar Return | 9.15° | Static =     |
+| Sirius                | Sample Natal Subject | trine △                       | Achernar              | Sample Natal Subject Solar Return | 1.26° | Static =     |
+| Fomalhaut             | Sample Natal Subject | biquintile biquintile         | Sun                   | Sample Natal Subject Solar Return | 0.81° | Separating ← |
+| Fomalhaut             | Sample Natal Subject | square □                      | Moon                  | Sample Natal Subject Solar Return | 0.90° | Separating ← |
+| Fomalhaut             | Sample Natal Subject | opposition ☍                  | Mercury               | Sample Natal Subject Solar Return | 8.42° | Applying →   |
+| Fomalhaut             | Sample Natal Subject | opposition ☍                  | Venus                 | Sample Natal Subject Solar Return | 1.57° | Separating ← |
+| Fomalhaut             | Sample Natal Subject | opposition ☍                  | Mars                  | Sample Natal Subject Solar Return | 0.14° | Separating ← |
+| Fomalhaut             | Sample Natal Subject | semi-sextile semi-sextile     | Saturn                | Sample Natal Subject Solar Return | 0.16° | Applying →   |
+| Fomalhaut             | Sample Natal Subject | semi-square semi-square       | Mean North Lunar Node | Sample Natal Subject Solar Return | 0.29° | Separating ← |
+| Fomalhaut             | Sample Natal Subject | semi-square semi-square       | True North Lunar Node | Sample Natal Subject Solar Return | 0.20° | Separating ← |
+| Fomalhaut             | Sample Natal Subject | sextile ⚹                     | Mean Lilith           | Sample Natal Subject Solar Return | 5.90° | Separating ← |
+| Fomalhaut             | Sample Natal Subject | sesquiquadrate sesquiquadrate | Mean South Lunar Node | Sample Natal Subject Solar Return | 0.29° | Applying →   |
+| Fomalhaut             | Sample Natal Subject | sesquiquadrate sesquiquadrate | True South Lunar Node | Sample Natal Subject Solar Return | 0.20° | Applying →   |
+| Fomalhaut             | Sample Natal Subject | sextile ⚹                     | True Lilith           | Sample Natal Subject Solar Return | 2.71° | Applying →   |
+| Fomalhaut             | Sample Natal Subject | trine △                       | Ceres                 | Sample Natal Subject Solar Return | 6.94° | Applying →   |
+| Fomalhaut             | Sample Natal Subject | semi-square semi-square       | Eris                  | Sample Natal Subject Solar Return | 0.90° | Separating ← |
+| Fomalhaut             | Sample Natal Subject | opposition ☍                  | Makemake              | Sample Natal Subject Solar Return | 1.81° | Separating ← |
+| Fomalhaut             | Sample Natal Subject | opposition ☍                  | Regulus               | Sample Natal Subject Solar Return | 4.02° | Static =     |
+| Fomalhaut             | Sample Natal Subject | opposition ☍                  | Pars Spiritus         | Sample Natal Subject Solar Return | 4.00° | Static =     |
+| Fomalhaut             | Sample Natal Subject | biquintile biquintile         | Pars Fidei            | Sample Natal Subject Solar Return | 0.83° | Static =     |
+| Fomalhaut             | Sample Natal Subject | opposition ☍                  | Vertex                | Sample Natal Subject Solar Return | 7.04° | Static =     |
+| Fomalhaut             | Sample Natal Subject | conjunction ☌                 | Anti Vertex           | Sample Natal Subject Solar Return | 7.04° | Static =     |
+| Fomalhaut             | Sample Natal Subject | conjunction ☌                 | Fomalhaut             | Sample Natal Subject Solar Return | 0.01° | Static =     |
+| Fomalhaut             | Sample Natal Subject | trine △                       | Betelgeuse            | Sample Natal Subject Solar Return | 5.10° | Static =     |
+| Fomalhaut             | Sample Natal Subject | conjunction ☌                 | Deneb                 | Sample Natal Subject Solar Return | 1.49° | Static =     |
+| Algol                 | Sample Natal Subject | sextile ⚹                     | Sun                   | Sample Natal Subject Solar Return | 2.51° | Separating ← |
+| Algol                 | Sample Natal Subject | opposition ☍                  | Moon                  | Sample Natal Subject Solar Return | 8.60° | Separating ← |
+| Algol                 | Sample Natal Subject | square □                      | Mercury               | Sample Natal Subject Solar Return | 0.72° | Applying →   |
+| Algol                 | Sample Natal Subject | trine △                       | Saturn                | Sample Natal Subject Solar Return | 7.86° | Applying →   |
+| Algol                 | Sample Natal Subject | sesquiquadrate sesquiquadrate | Uranus                | Sample Natal Subject Solar Return | 0.10° | Applying →   |
+| Algol                 | Sample Natal Subject | opposition ☍                  | Pluto                 | Sample Natal Subject Solar Return | 8.46° | Separating ← |
+| Algol                 | Sample Natal Subject | trine △                       | Mean North Lunar Node | Sample Natal Subject Solar Return | 7.59° | Separating ← |
+| Algol                 | Sample Natal Subject | trine △                       | True North Lunar Node | Sample Natal Subject Solar Return | 7.10° | Applying →   |
+| Algol                 | Sample Natal Subject | sextile ⚹                     | Chiron                | Sample Natal Subject Solar Return | 3.98° | Separating ← |
+| Algol                 | Sample Natal Subject | opposition ☍                  | Medium Coeli          | Sample Natal Subject Solar Return | 4.27° | Applying →   |
+| Algol                 | Sample Natal Subject | conjunction ☌                 | Imum Coeli            | Sample Natal Subject Solar Return | 4.27° | Applying →   |
+| Algol                 | Sample Natal Subject | sextile ⚹                     | Earth                 | Sample Natal Subject Solar Return | 3.96° | Static =     |
+| Algol                 | Sample Natal Subject | sextile ⚹                     | Pholus                | Sample Natal Subject Solar Return | 3.64° | Applying →   |
+| Algol                 | Sample Natal Subject | quincunx ⚻                    | Ceres                 | Sample Natal Subject Solar Return | 0.76° | Separating ← |
+| Algol                 | Sample Natal Subject | trine △                       | Pallas                | Sample Natal Subject Solar Return | 1.30° | Separating ← |
+| Algol                 | Sample Natal Subject | trine △                       | Juno                  | Sample Natal Subject Solar Return | 3.27° | Separating ← |
+| Algol                 | Sample Natal Subject | sextile ⚹                     | Vesta                 | Sample Natal Subject Solar Return | 3.66° | Applying →   |
+| Algol                 | Sample Natal Subject | trine △                       | Haumea                | Sample Natal Subject Solar Return | 1.21° | Separating ← |
+| Algol                 | Sample Natal Subject | opposition ☍                  | Ixion                 | Sample Natal Subject Solar Return | 2.29° | Separating ← |
+| Algol                 | Sample Natal Subject | opposition ☍                  | Quaoar                | Sample Natal Subject Solar Return | 0.70° | Separating ← |
+| Algol                 | Sample Natal Subject | square □                      | Regulus               | Sample Natal Subject Solar Return | 3.67° | Static =     |
+| Algol                 | Sample Natal Subject | conjunction ☌                 | Pars Fortunae         | Sample Natal Subject Solar Return | 6.12° | Static =     |
+| Algol                 | Sample Natal Subject | sextile ⚹                     | Pars Fidei            | Sample Natal Subject Solar Return | 2.53° | Static =     |
+| Algol                 | Sample Natal Subject | square □                      | Vertex                | Sample Natal Subject Solar Return | 0.66° | Static =     |
+| Algol                 | Sample Natal Subject | square □                      | Anti Vertex           | Sample Natal Subject Solar Return | 0.66° | Static =     |
+| Algol                 | Sample Natal Subject | conjunction ☌                 | Algol                 | Sample Natal Subject Solar Return | 0.01° | Static =     |
+| Algol                 | Sample Natal Subject | sextile ⚹                     | Procyon               | Sample Natal Subject Solar Return | 0.37° | Static =     |
+| Algol                 | Sample Natal Subject | sextile ⚹                     | Pollux                | Sample Natal Subject Solar Return | 2.94° | Static =     |
+| Algol                 | Sample Natal Subject | trine △                       | Altair                | Sample Natal Subject Solar Return | 5.63° | Static =     |
+| Betelgeuse            | Sample Natal Subject | semi-sextile semi-sextile     | Sun                   | Sample Natal Subject Solar Return | 0.08° | Applying →   |
+| Betelgeuse            | Sample Natal Subject | sextile ⚹                     | Mercury               | Sample Natal Subject Solar Return | 3.31° | Applying →   |
+| Betelgeuse            | Sample Natal Subject | sextile ⚹                     | Mars                  | Sample Natal Subject Solar Return | 5.25° | Separating ← |
+| Betelgeuse            | Sample Natal Subject | biquintile biquintile         | Saturn                | Sample Natal Subject Solar Return | 0.73° | Separating ← |
+| Betelgeuse            | Sample Natal Subject | biquintile biquintile         | Medium Coeli          | Sample Natal Subject Solar Return | 0.85° | Applying →   |
+| Betelgeuse            | Sample Natal Subject | opposition ☍                  | True Lilith           | Sample Natal Subject Solar Return | 2.40° | Separating ← |
+| Betelgeuse            | Sample Natal Subject | square □                      | Earth                 | Sample Natal Subject Solar Return | 1.38° | Static =     |
+| Betelgeuse            | Sample Natal Subject | trine △                       | Ceres                 | Sample Natal Subject Solar Return | 1.83° | Applying →   |
+| Betelgeuse            | Sample Natal Subject | square □                      | Pallas                | Sample Natal Subject Solar Return | 1.28° | Applying →   |
+| Betelgeuse            | Sample Natal Subject | square □                      | Haumea                | Sample Natal Subject Solar Return | 1.37° | Applying →   |
+| Betelgeuse            | Sample Natal Subject | sextile ⚹                     | Regulus               | Sample Natal Subject Solar Return | 1.09° | Static =     |
+| Betelgeuse            | Sample Natal Subject | trine △                       | Spica                 | Sample Natal Subject Solar Return | 4.89° | Static =     |
+| Betelgeuse            | Sample Natal Subject | semi-sextile semi-sextile     | Pars Fidei            | Sample Natal Subject Solar Return | 0.05° | Static =     |
+| Betelgeuse            | Sample Natal Subject | sextile ⚹                     | Vertex                | Sample Natal Subject Solar Return | 1.93° | Static =     |
+| Betelgeuse            | Sample Natal Subject | trine △                       | Anti Vertex           | Sample Natal Subject Solar Return | 1.93° | Static =     |
+| Betelgeuse            | Sample Natal Subject | trine △                       | Fomalhaut             | Sample Natal Subject Solar Return | 5.13° | Static =     |
+| Betelgeuse            | Sample Natal Subject | conjunction ☌                 | Betelgeuse            | Sample Natal Subject Solar Return | 0.01° | Static =     |
+| Betelgeuse            | Sample Natal Subject | trine △                       | Arcturus              | Sample Natal Subject Solar Return | 4.50° | Static =     |
+| Betelgeuse            | Sample Natal Subject | trine △                       | Deneb                 | Sample Natal Subject Solar Return | 6.61° | Static =     |
+| Betelgeuse            | Sample Natal Subject | conjunction ☌                 | Capella               | Sample Natal Subject Solar Return | 6.88° | Static =     |
+| Canopus               | Sample Natal Subject | opposition ☍                  | Uranus                | Sample Natal Subject Solar Return | 3.68° | Separating ← |
+| Canopus               | Sample Natal Subject | opposition ☍                  | Neptune               | Sample Natal Subject Solar Return | 0.20° | Applying →   |
+| Canopus               | Sample Natal Subject | trine △                       | Pluto                 | Sample Natal Subject Solar Return | 2.77° | Applying →   |
+| Canopus               | Sample Natal Subject | opposition ☍                  | Mean North Lunar Node | Sample Natal Subject Solar Return | 3.64° | Applying →   |
+| Canopus               | Sample Natal Subject | opposition ☍                  | True North Lunar Node | Sample Natal Subject Solar Return | 4.13° | Separating ← |
+| Canopus               | Sample Natal Subject | opposition ☍                  | Ascendant             | Sample Natal Subject Solar Return | 0.99° | Applying →   |
+| Canopus               | Sample Natal Subject | trine △                       | Medium Coeli          | Sample Natal Subject Solar Return | 6.96° | Separating ← |
+| Canopus               | Sample Natal Subject | conjunction ☌                 | Descendant            | Sample Natal Subject Solar Return | 0.99° | Applying →   |
+| Canopus               | Sample Natal Subject | opposition ☍                  | Mean Lilith           | Sample Natal Subject Solar Return | 5.18° | Applying →   |
+| Canopus               | Sample Natal Subject | conjunction ☌                 | Mean South Lunar Node | Sample Natal Subject Solar Return | 3.64° | Separating ← |
+| Canopus               | Sample Natal Subject | conjunction ☌                 | True South Lunar Node | Sample Natal Subject Solar Return | 4.13° | Applying →   |
+| Canopus               | Sample Natal Subject | conjunction ☌                 | Pholus                | Sample Natal Subject Solar Return | 7.58° | Separating ← |
+| Canopus               | Sample Natal Subject | quintile Q                    | Pallas                | Sample Natal Subject Solar Return | 0.53° | Separating ← |
+| Canopus               | Sample Natal Subject | opposition ☍                  | Juno                  | Sample Natal Subject Solar Return | 7.96° | Applying →   |
+| Canopus               | Sample Natal Subject | conjunction ☌                 | Vesta                 | Sample Natal Subject Solar Return | 7.56° | Separating ← |
+| Canopus               | Sample Natal Subject | square □                      | Eris                  | Sample Natal Subject Solar Return | 3.02° | Applying →   |
+| Canopus               | Sample Natal Subject | sextile ⚹                     | Sedna                 | Sample Natal Subject Solar Return | 2.75° | Applying →   |
+| Canopus               | Sample Natal Subject | quintile Q                    | Haumea                | Sample Natal Subject Solar Return | 0.44° | Separating ← |
+| Canopus               | Sample Natal Subject | semi-square semi-square       | Regulus               | Sample Natal Subject Solar Return | 0.10° | Static =     |
+| Canopus               | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | Sample Natal Subject Solar Return | 5.10° | Static =     |
+| Canopus               | Sample Natal Subject | biquintile biquintile         | Pars Amoris           | Sample Natal Subject Solar Return | 0.23° | Static =     |
+| Canopus               | Sample Natal Subject | biquintile biquintile         | Antares               | Sample Natal Subject Solar Return | 0.84° | Static =     |
+| Canopus               | Sample Natal Subject | conjunction ☌                 | Sirius                | Sample Natal Subject Solar Return | 0.85° | Static =     |
+| Canopus               | Sample Natal Subject | conjunction ☌                 | Canopus               | Sample Natal Subject Solar Return | 0.01° | Static =     |
+| Canopus               | Sample Natal Subject | conjunction ☌                 | Pollux                | Sample Natal Subject Solar Return | 8.29° | Static =     |
+| Canopus               | Sample Natal Subject | trine △                       | Achernar              | Sample Natal Subject Solar Return | 0.39° | Static =     |
+| Procyon               | Sample Natal Subject | conjunction ☌                 | Sun                   | Sample Natal Subject Solar Return | 2.89° | Separating ← |
+| Procyon               | Sample Natal Subject | semi-sextile semi-sextile     | Mercury               | Sample Natal Subject Solar Return | 0.34° | Applying →   |
+| Procyon               | Sample Natal Subject | opposition ☍                  | Saturn                | Sample Natal Subject Solar Return | 8.24° | Applying →   |
+| Procyon               | Sample Natal Subject | opposition ☍                  | Mean North Lunar Node | Sample Natal Subject Solar Return | 7.21° | Separating ← |
+| Procyon               | Sample Natal Subject | opposition ☍                  | True North Lunar Node | Sample Natal Subject Solar Return | 6.71° | Applying →   |
+| Procyon               | Sample Natal Subject | conjunction ☌                 | Chiron                | Sample Natal Subject Solar Return | 4.36° | Separating ← |
+| Procyon               | Sample Natal Subject | trine △                       | Medium Coeli          | Sample Natal Subject Solar Return | 3.88° | Applying →   |
+| Procyon               | Sample Natal Subject | sextile ⚹                     | Imum Coeli            | Sample Natal Subject Solar Return | 3.88° | Applying →   |
+| Procyon               | Sample Natal Subject | conjunction ☌                 | Mean South Lunar Node | Sample Natal Subject Solar Return | 7.21° | Applying →   |
+| Procyon               | Sample Natal Subject | conjunction ☌                 | True South Lunar Node | Sample Natal Subject Solar Return | 6.71° | Separating ← |
+| Procyon               | Sample Natal Subject | trine △                       | Earth                 | Sample Natal Subject Solar Return | 4.35° | Static =     |
+| Procyon               | Sample Natal Subject | conjunction ☌                 | Pholus                | Sample Natal Subject Solar Return | 3.26° | Applying →   |
+| Procyon               | Sample Natal Subject | square □                      | Ceres                 | Sample Natal Subject Solar Return | 1.14° | Separating ← |
+| Procyon               | Sample Natal Subject | sextile ⚹                     | Pallas                | Sample Natal Subject Solar Return | 1.69° | Separating ← |
+| Procyon               | Sample Natal Subject | opposition ☍                  | Juno                  | Sample Natal Subject Solar Return | 2.88° | Separating ← |
+| Procyon               | Sample Natal Subject | conjunction ☌                 | Vesta                 | Sample Natal Subject Solar Return | 3.28° | Applying →   |
+| Procyon               | Sample Natal Subject | sextile ⚹                     | Haumea                | Sample Natal Subject Solar Return | 1.60° | Separating ← |
+| Procyon               | Sample Natal Subject | trine △                       | Ixion                 | Sample Natal Subject Solar Return | 1.91° | Separating ← |
+| Procyon               | Sample Natal Subject | trine △                       | Quaoar                | Sample Natal Subject Solar Return | 0.32° | Separating ← |
+| Procyon               | Sample Natal Subject | square □                      | Spica                 | Sample Natal Subject Solar Return | 1.93° | Static =     |
+| Procyon               | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | Sample Natal Subject Solar Return | 5.74° | Static =     |
+| Procyon               | Sample Natal Subject | conjunction ☌                 | Pars Fidei            | Sample Natal Subject Solar Return | 2.91° | Static =     |
+| Procyon               | Sample Natal Subject | semi-square semi-square       | Aldebaran             | Sample Natal Subject Solar Return | 0.98° | Static =     |
+| Procyon               | Sample Natal Subject | sextile ⚹                     | Algol                 | Sample Natal Subject Solar Return | 0.40° | Static =     |
+| Procyon               | Sample Natal Subject | conjunction ☌                 | Procyon               | Sample Natal Subject Solar Return | 0.01° | Static =     |
+| Procyon               | Sample Natal Subject | square □                      | Arcturus              | Sample Natal Subject Solar Return | 1.53° | Static =     |
+| Procyon               | Sample Natal Subject | conjunction ☌                 | Pollux                | Sample Natal Subject Solar Return | 2.56° | Static =     |
+| Procyon               | Sample Natal Subject | opposition ☍                  | Altair                | Sample Natal Subject Solar Return | 6.01° | Static =     |
+| Arcturus              | Sample Natal Subject | square □                      | Sun                   | Sample Natal Subject Solar Return | 4.44° | Separating ← |
+| Arcturus              | Sample Natal Subject | sextile ⚹                     | Mercury               | Sample Natal Subject Solar Return | 1.21° | Separating ← |
+| Arcturus              | Sample Natal Subject | sextile ⚹                     | Jupiter               | Sample Natal Subject Solar Return | 5.47° | Applying →   |
+| Arcturus              | Sample Natal Subject | square □                      | Pholus                | Sample Natal Subject Solar Return | 1.71° | Applying →   |
+| Arcturus              | Sample Natal Subject | conjunction ☌                 | Ceres                 | Sample Natal Subject Solar Return | 2.69° | Separating ← |
+| Arcturus              | Sample Natal Subject | square □                      | Juno                  | Sample Natal Subject Solar Return | 1.33° | Separating ← |
+| Arcturus              | Sample Natal Subject | square □                      | Vesta                 | Sample Natal Subject Solar Return | 1.73° | Applying →   |
+| Arcturus              | Sample Natal Subject | opposition ☍                  | Eris                  | Sample Natal Subject Solar Return | 6.27° | Separating ← |
+| Arcturus              | Sample Natal Subject | semi-sextile semi-sextile     | Ixion                 | Sample Natal Subject Solar Return | 0.36° | Separating ← |
+| Arcturus              | Sample Natal Subject | quintile Q                    | Orcus                 | Sample Natal Subject Solar Return | 0.26° | Applying →   |
+| Arcturus              | Sample Natal Subject | sextile ⚹                     | Regulus               | Sample Natal Subject Solar Return | 5.61° | Static =     |
+| Arcturus              | Sample Natal Subject | conjunction ☌                 | Spica                 | Sample Natal Subject Solar Return | 0.38° | Static =     |
+| Arcturus              | Sample Natal Subject | trine △                       | Pars Amoris           | Sample Natal Subject Solar Return | 3.52° | Static =     |
+| Arcturus              | Sample Natal Subject | square □                      | Pars Fidei            | Sample Natal Subject Solar Return | 4.46° | Static =     |
+| Arcturus              | Sample Natal Subject | sextile ⚹                     | Vertex                | Sample Natal Subject Solar Return | 2.59° | Static =     |
+| Arcturus              | Sample Natal Subject | trine △                       | Anti Vertex           | Sample Natal Subject Solar Return | 2.59° | Static =     |
+| Arcturus              | Sample Natal Subject | sesquiquadrate sesquiquadrate | Aldebaran             | Sample Natal Subject Solar Return | 0.57° | Static =     |
+| Arcturus              | Sample Natal Subject | semi-square semi-square       | Antares               | Sample Natal Subject Solar Return | 0.55° | Static =     |
+| Arcturus              | Sample Natal Subject | trine △                       | Betelgeuse            | Sample Natal Subject Solar Return | 4.53° | Static =     |
+| Arcturus              | Sample Natal Subject | square □                      | Procyon               | Sample Natal Subject Solar Return | 1.56° | Static =     |
+| Arcturus              | Sample Natal Subject | conjunction ☌                 | Arcturus              | Sample Natal Subject Solar Return | 0.01° | Static =     |
+| Arcturus              | Sample Natal Subject | square □                      | Pollux                | Sample Natal Subject Solar Return | 1.01° | Static =     |
+| Arcturus              | Sample Natal Subject | trine △                       | Rigel                 | Sample Natal Subject Solar Return | 7.39° | Static =     |
+| Arcturus              | Sample Natal Subject | trine △                       | Capella               | Sample Natal Subject Solar Return | 2.37° | Static =     |
+| Pollux                | Sample Natal Subject | conjunction ☌                 | Sun                   | Sample Natal Subject Solar Return | 5.46° | Separating ← |
+| Pollux                | Sample Natal Subject | opposition ☍                  | Neptune               | Sample Natal Subject Solar Return | 8.07° | Separating ← |
+| Pollux                | Sample Natal Subject | trine △                       | Pluto                 | Sample Natal Subject Solar Return | 5.51° | Separating ← |
+| Pollux                | Sample Natal Subject | opposition ☍                  | Mean North Lunar Node | Sample Natal Subject Solar Return | 4.64° | Separating ← |
+| Pollux                | Sample Natal Subject | opposition ☍                  | True North Lunar Node | Sample Natal Subject Solar Return | 4.14° | Applying →   |
+| Pollux                | Sample Natal Subject | conjunction ☌                 | Chiron                | Sample Natal Subject Solar Return | 6.93° | Separating ← |
+| Pollux                | Sample Natal Subject | opposition ☍                  | Ascendant             | Sample Natal Subject Solar Return | 9.26° | Applying →   |
+| Pollux                | Sample Natal Subject | trine △                       | Medium Coeli          | Sample Natal Subject Solar Return | 1.31° | Applying →   |
+| Pollux                | Sample Natal Subject | conjunction ☌                 | Descendant            | Sample Natal Subject Solar Return | 9.26° | Applying →   |
+| Pollux                | Sample Natal Subject | sextile ⚹                     | Imum Coeli            | Sample Natal Subject Solar Return | 1.31° | Applying →   |
+| Pollux                | Sample Natal Subject | conjunction ☌                 | Mean South Lunar Node | Sample Natal Subject Solar Return | 4.64° | Applying →   |
+| Pollux                | Sample Natal Subject | conjunction ☌                 | True South Lunar Node | Sample Natal Subject Solar Return | 4.14° | Separating ← |
+| Pollux                | Sample Natal Subject | trine △                       | Earth                 | Sample Natal Subject Solar Return | 6.92° | Static =     |
+| Pollux                | Sample Natal Subject | conjunction ☌                 | Pholus                | Sample Natal Subject Solar Return | 0.69° | Applying →   |
+| Pollux                | Sample Natal Subject | square □                      | Ceres                 | Sample Natal Subject Solar Return | 3.71° | Separating ← |
+| Pollux                | Sample Natal Subject | sextile ⚹                     | Pallas                | Sample Natal Subject Solar Return | 4.26° | Separating ← |
+| Pollux                | Sample Natal Subject | opposition ☍                  | Juno                  | Sample Natal Subject Solar Return | 0.31° | Separating ← |
+| Pollux                | Sample Natal Subject | conjunction ☌                 | Vesta                 | Sample Natal Subject Solar Return | 0.71° | Applying →   |
+| Pollux                | Sample Natal Subject | quintile Q                    | Sedna                 | Sample Natal Subject Solar Return | 0.97° | Separating ← |
+| Pollux                | Sample Natal Subject | sextile ⚹                     | Haumea                | Sample Natal Subject Solar Return | 4.16° | Separating ← |
+| Pollux                | Sample Natal Subject | trine △                       | Ixion                 | Sample Natal Subject Solar Return | 0.66° | Applying →   |
+| Pollux                | Sample Natal Subject | trine △                       | Quaoar                | Sample Natal Subject Solar Return | 2.25° | Applying →   |
+| Pollux                | Sample Natal Subject | square □                      | Spica                 | Sample Natal Subject Solar Return | 0.64° | Static =     |
+| Pollux                | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | Sample Natal Subject Solar Return | 3.17° | Static =     |
+| Pollux                | Sample Natal Subject | semi-square semi-square       | Pars Spiritus         | Sample Natal Subject Solar Return | 0.35° | Static =     |
+| Pollux                | Sample Natal Subject | conjunction ☌                 | Pars Fidei            | Sample Natal Subject Solar Return | 5.48° | Static =     |
+| Pollux                | Sample Natal Subject | conjunction ☌                 | Sirius                | Sample Natal Subject Solar Return | 9.12° | Static =     |
+| Pollux                | Sample Natal Subject | sextile ⚹                     | Algol                 | Sample Natal Subject Solar Return | 2.97° | Static =     |
+| Pollux                | Sample Natal Subject | conjunction ☌                 | Canopus               | Sample Natal Subject Solar Return | 8.26° | Static =     |
+| Pollux                | Sample Natal Subject | conjunction ☌                 | Procyon               | Sample Natal Subject Solar Return | 2.58° | Static =     |
+| Pollux                | Sample Natal Subject | square □                      | Arcturus              | Sample Natal Subject Solar Return | 1.04° | Static =     |
+| Pollux                | Sample Natal Subject | conjunction ☌                 | Pollux                | Sample Natal Subject Solar Return | 0.01° | Static =     |
+| Pollux                | Sample Natal Subject | opposition ☍                  | Altair                | Sample Natal Subject Solar Return | 8.58° | Static =     |
+| Pollux                | Sample Natal Subject | trine △                       | Achernar              | Sample Natal Subject Solar Return | 7.88° | Static =     |
+| Deneb                 | Sample Natal Subject | biquintile biquintile         | Sun                   | Sample Natal Subject Solar Return | 0.67° | Applying →   |
+| Deneb                 | Sample Natal Subject | square □                      | Moon                  | Sample Natal Subject Solar Return | 0.58° | Applying →   |
+| Deneb                 | Sample Natal Subject | opposition ☍                  | Mercury               | Sample Natal Subject Solar Return | 9.90° | Applying →   |
+| Deneb                 | Sample Natal Subject | opposition ☍                  | Venus                 | Sample Natal Subject Solar Return | 0.09° | Separating ← |
+| Deneb                 | Sample Natal Subject | opposition ☍                  | Mars                  | Sample Natal Subject Solar Return | 1.34° | Applying →   |
+| Deneb                 | Sample Natal Subject | sextile ⚹                     | Uranus                | Sample Natal Subject Solar Return | 5.92° | Applying →   |
+| Deneb                 | Sample Natal Subject | biquintile biquintile         | Chiron                | Sample Natal Subject Solar Return | 0.81° | Separating ← |
+| Deneb                 | Sample Natal Subject | sextile ⚹                     | Mean Lilith           | Sample Natal Subject Solar Return | 4.42° | Separating ← |
+| Deneb                 | Sample Natal Subject | sextile ⚹                     | True Lilith           | Sample Natal Subject Solar Return | 4.19° | Applying →   |
+| Deneb                 | Sample Natal Subject | opposition ☍                  | Makemake              | Sample Natal Subject Solar Return | 0.33° | Separating ← |
+| Deneb                 | Sample Natal Subject | opposition ☍                  | Regulus               | Sample Natal Subject Solar Return | 5.50° | Static =     |
+| Deneb                 | Sample Natal Subject | opposition ☍                  | Pars Spiritus         | Sample Natal Subject Solar Return | 2.52° | Static =     |
+| Deneb                 | Sample Natal Subject | biquintile biquintile         | Pars Fidei            | Sample Natal Subject Solar Return | 0.64° | Static =     |
+| Deneb                 | Sample Natal Subject | opposition ☍                  | Vertex                | Sample Natal Subject Solar Return | 8.52° | Static =     |
+| Deneb                 | Sample Natal Subject | conjunction ☌                 | Anti Vertex           | Sample Natal Subject Solar Return | 8.52° | Static =     |
+| Deneb                 | Sample Natal Subject | square □                      | Aldebaran             | Sample Natal Subject Solar Return | 4.46° | Static =     |
+| Deneb                 | Sample Natal Subject | square □                      | Antares               | Sample Natal Subject Solar Return | 4.44° | Static =     |
+| Deneb                 | Sample Natal Subject | conjunction ☌                 | Fomalhaut             | Sample Natal Subject Solar Return | 1.46° | Static =     |
+| Deneb                 | Sample Natal Subject | trine △                       | Betelgeuse            | Sample Natal Subject Solar Return | 6.58° | Static =     |
+| Deneb                 | Sample Natal Subject | conjunction ☌                 | Deneb                 | Sample Natal Subject Solar Return | 0.01° | Static =     |
+| Deneb                 | Sample Natal Subject | conjunction ☌                 | Achernar              | Sample Natal Subject Solar Return | 9.99° | Static =     |
+| Altair                | Sample Natal Subject | opposition ☍                  | Sun                   | Sample Natal Subject Solar Return | 3.11° | Applying →   |
+| Altair                | Sample Natal Subject | sextile ⚹                     | Moon                  | Sample Natal Subject Solar Return | 2.98° | Separating ← |
+| Altair                | Sample Natal Subject | conjunction ☌                 | Saturn                | Sample Natal Subject Solar Return | 2.24° | Applying →   |
+| Altair                | Sample Natal Subject | opposition ☍                  | Chiron                | Sample Natal Subject Solar Return | 1.64° | Applying →   |
+| Altair                | Sample Natal Subject | semi-sextile semi-sextile     | True Lilith           | Sample Natal Subject Solar Return | 0.63° | Applying →   |
+| Altair                | Sample Natal Subject | sextile ⚹                     | Earth                 | Sample Natal Subject Solar Return | 1.65° | Static =     |
+| Altair                | Sample Natal Subject | opposition ☍                  | Pholus                | Sample Natal Subject Solar Return | 9.26° | Applying →   |
+| Altair                | Sample Natal Subject | square □                      | Ceres                 | Sample Natal Subject Solar Return | 4.86° | Applying →   |
+| Altair                | Sample Natal Subject | trine △                       | Pallas                | Sample Natal Subject Solar Return | 4.31° | Applying →   |
+| Altair                | Sample Natal Subject | conjunction ☌                 | Juno                  | Sample Natal Subject Solar Return | 8.88° | Separating ← |
+| Altair                | Sample Natal Subject | opposition ☍                  | Vesta                 | Sample Natal Subject Solar Return | 9.28° | Applying →   |
+| Altair                | Sample Natal Subject | trine △                       | Haumea                | Sample Natal Subject Solar Return | 4.41° | Applying →   |
+| Altair                | Sample Natal Subject | biquintile biquintile         | Pars Spiritus         | Sample Natal Subject Solar Return | 0.08° | Static =     |
+| Altair                | Sample Natal Subject | opposition ☍                  | Pars Fidei            | Sample Natal Subject Solar Return | 3.09° | Static =     |
+| Altair                | Sample Natal Subject | trine △                       | Algol                 | Sample Natal Subject Solar Return | 5.60° | Static =     |
+| Altair                | Sample Natal Subject | opposition ☍                  | Procyon               | Sample Natal Subject Solar Return | 5.99° | Static =     |
+| Altair                | Sample Natal Subject | opposition ☍                  | Pollux                | Sample Natal Subject Solar Return | 8.56° | Static =     |
+| Altair                | Sample Natal Subject | conjunction ☌                 | Altair                | Sample Natal Subject Solar Return | 0.01° | Static =     |
+| Altair                | Sample Natal Subject | sesquiquadrate sesquiquadrate | Rigel                 | Sample Natal Subject Solar Return | 0.06° | Static =     |
+| Rigel                 | Sample Natal Subject | sextile ⚹                     | Jupiter               | Sample Natal Subject Solar Return | 1.94° | Separating ← |
+| Rigel                 | Sample Natal Subject | quincunx ⚻                    | Pluto                 | Sample Natal Subject Solar Return | 0.88° | Applying →   |
+| Rigel                 | Sample Natal Subject | biquintile biquintile         | Juno                  | Sample Natal Subject Solar Return | 0.07° | Applying →   |
+| Rigel                 | Sample Natal Subject | sextile ⚹                     | Eris                  | Sample Natal Subject Solar Return | 1.13° | Applying →   |
+| Rigel                 | Sample Natal Subject | sextile ⚹                     | Orcus                 | Sample Natal Subject Solar Return | 4.85° | Applying →   |
+| Rigel                 | Sample Natal Subject | trine △                       | Spica                 | Sample Natal Subject Solar Return | 7.03° | Static =     |
+| Rigel                 | Sample Natal Subject | trine △                       | Pars Amoris           | Sample Natal Subject Solar Return | 3.89° | Static =     |
+| Rigel                 | Sample Natal Subject | conjunction ☌                 | Aldebaran             | Sample Natal Subject Solar Return | 7.02° | Static =     |
+| Rigel                 | Sample Natal Subject | opposition ☍                  | Antares               | Sample Natal Subject Solar Return | 7.04° | Static =     |
+| Rigel                 | Sample Natal Subject | trine △                       | Arcturus              | Sample Natal Subject Solar Return | 7.42° | Static =     |
+| Rigel                 | Sample Natal Subject | sesquiquadrate sesquiquadrate | Altair                | Sample Natal Subject Solar Return | 0.03° | Static =     |
+| Rigel                 | Sample Natal Subject | conjunction ☌                 | Rigel                 | Sample Natal Subject Solar Return | 0.01° | Static =     |
+| Rigel                 | Sample Natal Subject | square □                      | Achernar              | Sample Natal Subject Solar Return | 1.49° | Static =     |
+| Rigel                 | Sample Natal Subject | conjunction ☌                 | Capella               | Sample Natal Subject Solar Return | 5.04° | Static =     |
+| Achernar              | Sample Natal Subject | opposition ☍                  | Venus                 | Sample Natal Subject Solar Return | 9.88° | Applying →   |
+| Achernar              | Sample Natal Subject | sextile ⚹                     | Uranus                | Sample Natal Subject Solar Return | 4.05° | Separating ← |
+| Achernar              | Sample Natal Subject | sextile ⚹                     | Neptune               | Sample Natal Subject Solar Return | 0.18° | Separating ← |
+| Achernar              | Sample Natal Subject | trine △                       | Pluto                 | Sample Natal Subject Solar Return | 2.39° | Applying →   |
+| Achernar              | Sample Natal Subject | sextile ⚹                     | Mean North Lunar Node | Sample Natal Subject Solar Return | 3.26° | Applying →   |
+| Achernar              | Sample Natal Subject | sextile ⚹                     | True North Lunar Node | Sample Natal Subject Solar Return | 3.75° | Separating ← |
+| Achernar              | Sample Natal Subject | sesquiquadrate sesquiquadrate | Chiron                | Sample Natal Subject Solar Return | 0.17° | Applying →   |
+| Achernar              | Sample Natal Subject | sextile ⚹                     | Ascendant             | Sample Natal Subject Solar Return | 1.37° | Applying →   |
+| Achernar              | Sample Natal Subject | trine △                       | Medium Coeli          | Sample Natal Subject Solar Return | 6.58° | Separating ← |
+| Achernar              | Sample Natal Subject | trine △                       | Descendant            | Sample Natal Subject Solar Return | 1.37° | Applying →   |
+| Achernar              | Sample Natal Subject | sextile ⚹                     | Mean Lilith           | Sample Natal Subject Solar Return | 5.55° | Applying →   |
+| Achernar              | Sample Natal Subject | trine △                       | Mean South Lunar Node | Sample Natal Subject Solar Return | 3.26° | Separating ← |
+| Achernar              | Sample Natal Subject | trine △                       | True South Lunar Node | Sample Natal Subject Solar Return | 3.75° | Applying →   |
+| Achernar              | Sample Natal Subject | trine △                       | Pholus                | Sample Natal Subject Solar Return | 7.20° | Separating ← |
+| Achernar              | Sample Natal Subject | trine △                       | Vesta                 | Sample Natal Subject Solar Return | 7.19° | Separating ← |
+| Achernar              | Sample Natal Subject | sextile ⚹                     | Sedna                 | Sample Natal Subject Solar Return | 3.13° | Applying →   |
+| Achernar              | Sample Natal Subject | opposition ☍                  | Makemake              | Sample Natal Subject Solar Return | 9.64° | Applying →   |
+| Achernar              | Sample Natal Subject | sextile ⚹                     | Pars Fortunae         | Sample Natal Subject Solar Return | 4.72° | Static =     |
+| Achernar              | Sample Natal Subject | opposition ☍                  | Pars Spiritus         | Sample Natal Subject Solar Return | 7.46° | Static =     |
+| Achernar              | Sample Natal Subject | trine △                       | Sirius                | Sample Natal Subject Solar Return | 1.23° | Static =     |
+| Achernar              | Sample Natal Subject | trine △                       | Canopus               | Sample Natal Subject Solar Return | 0.36° | Static =     |
+| Achernar              | Sample Natal Subject | trine △                       | Pollux                | Sample Natal Subject Solar Return | 7.91° | Static =     |
+| Achernar              | Sample Natal Subject | conjunction ☌                 | Deneb                 | Sample Natal Subject Solar Return | 9.96° | Static =     |
+| Achernar              | Sample Natal Subject | square □                      | Rigel                 | Sample Natal Subject Solar Return | 1.52° | Static =     |
+| Achernar              | Sample Natal Subject | conjunction ☌                 | Achernar              | Sample Natal Subject Solar Return | 0.01° | Static =     |
+| Capella               | Sample Natal Subject | sextile ⚹                     | Mercury               | Sample Natal Subject Solar Return | 3.59° | Separating ← |
+| Capella               | Sample Natal Subject | quintile Q                    | Mars                  | Sample Natal Subject Solar Return | 0.15° | Separating ← |
+| Capella               | Sample Natal Subject | sextile ⚹                     | Jupiter               | Sample Natal Subject Solar Return | 3.09° | Applying →   |
+| Capella               | Sample Natal Subject | quincunx ⚻                    | Medium Coeli          | Sample Natal Subject Solar Return | 0.05° | Separating ← |
+| Capella               | Sample Natal Subject | semi-sextile semi-sextile     | Imum Coeli            | Sample Natal Subject Solar Return | 0.05° | Separating ← |
+| Capella               | Sample Natal Subject | opposition ☍                  | True Lilith           | Sample Natal Subject Solar Return | 9.30° | Separating ← |
+| Capella               | Sample Natal Subject | semi-sextile semi-sextile     | Pholus                | Sample Natal Subject Solar Return | 0.67° | Separating ← |
+| Capella               | Sample Natal Subject | trine △                       | Ceres                 | Sample Natal Subject Solar Return | 5.07° | Separating ← |
+| Capella               | Sample Natal Subject | semi-sextile semi-sextile     | Vesta                 | Sample Natal Subject Solar Return | 0.65° | Separating ← |
+| Capella               | Sample Natal Subject | sextile ⚹                     | Eris                  | Sample Natal Subject Solar Return | 3.89° | Separating ← |
+| Capella               | Sample Natal Subject | trine △                       | Spica                 | Sample Natal Subject Solar Return | 2.00° | Static =     |
+| Capella               | Sample Natal Subject | trine △                       | Pars Amoris           | Sample Natal Subject Solar Return | 1.14° | Static =     |
+| Capella               | Sample Natal Subject | sextile ⚹                     | Vertex                | Sample Natal Subject Solar Return | 4.97° | Static =     |
+| Capella               | Sample Natal Subject | trine △                       | Anti Vertex           | Sample Natal Subject Solar Return | 4.97° | Static =     |
+| Capella               | Sample Natal Subject | conjunction ☌                 | Betelgeuse            | Sample Natal Subject Solar Return | 6.91° | Static =     |
+| Capella               | Sample Natal Subject | trine △                       | Arcturus              | Sample Natal Subject Solar Return | 2.39° | Static =     |
+| Capella               | Sample Natal Subject | conjunction ☌                 | Rigel                 | Sample Natal Subject Solar Return | 5.01° | Static =     |
+| Capella               | Sample Natal Subject | conjunction ☌                 | Capella               | Sample Natal Subject Solar Return | 0.01° | Static =     |
 +-----------------------+----------------------+-------------------------------+-----------------------+-----------------------------------+-------+--------------+

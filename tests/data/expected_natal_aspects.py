@@ -64,7 +64,7 @@ EXPECTED_ALL_ASPECTS = [
         "p1": 0,
         "p2": 13,
         "p1_speed": 0.9559924053023249,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Separating",
     },
     {
@@ -81,7 +81,7 @@ EXPECTED_ALL_ASPECTS = [
         "p1": 0,
         "p2": 15,
         "p1_speed": 0.9559924053023249,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Separating",
     },
     {
@@ -234,7 +234,7 @@ EXPECTED_ALL_ASPECTS = [
         "p1": 2,
         "p2": 13,
         "p1_speed": 0.6816938240934752,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Applying",
     },
     {
@@ -251,7 +251,7 @@ EXPECTED_ALL_ASPECTS = [
         "p1": 2,
         "p2": 15,
         "p1_speed": 0.6816938240934752,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Applying",
     },
     {
@@ -319,7 +319,7 @@ EXPECTED_ALL_ASPECTS = [
         "p1": 3,
         "p2": 13,
         "p1_speed": 1.212888796600044,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Applying",
     },
     {
@@ -336,7 +336,7 @@ EXPECTED_ALL_ASPECTS = [
         "p1": 3,
         "p2": 15,
         "p1_speed": 1.212888796600044,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Applying",
     },
     {
@@ -421,7 +421,7 @@ EXPECTED_ALL_ASPECTS = [
         "p1": 4,
         "p2": 14,
         "p1_speed": 0.5145625489159472,
-        "p2_speed": 360.0,
+        "p2_speed": 341.0208037290671,
         "aspect_movement": "Separating",
     },
     {
@@ -438,7 +438,7 @@ EXPECTED_ALL_ASPECTS = [
         "p1": 4,
         "p2": 16,
         "p1_speed": 0.5145625489159472,
-        "p2_speed": 360.0,
+        "p2_speed": 341.0208037290671,
         "aspect_movement": "Separating",
     },
     {
@@ -472,7 +472,7 @@ EXPECTED_ALL_ASPECTS = [
         "p1": 5,
         "p2": 14,
         "p1_speed": 0.16596584580576004,
-        "p2_speed": 360.0,
+        "p2_speed": 341.0208037290671,
         "aspect_movement": "Applying",
     },
     {
@@ -489,7 +489,7 @@ EXPECTED_ALL_ASPECTS = [
         "p1": 5,
         "p2": 15,
         "p1_speed": 0.16596584580576004,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Separating",
     },
     {
@@ -523,7 +523,7 @@ EXPECTED_ALL_ASPECTS = [
         "p1": 6,
         "p2": 13,
         "p1_speed": -0.009359637574477029,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Applying",
     },
     {
@@ -540,7 +540,7 @@ EXPECTED_ALL_ASPECTS = [
         "p1": 6,
         "p2": 15,
         "p1_speed": -0.009359637574477029,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Applying",
     },
     {
@@ -693,7 +693,7 @@ EXPECTED_ALL_ASPECTS = [
         "p1": 9,
         "p2": 14,
         "p1_speed": 0.009451475288210793,
-        "p2_speed": 360.0,
+        "p2_speed": 341.0208037290671,
         "aspect_movement": "Applying",
     },
     {
@@ -710,7 +710,7 @@ EXPECTED_ALL_ASPECTS = [
         "p1": 9,
         "p2": 16,
         "p1_speed": 0.009451475288210793,
-        "p2_speed": 360.0,
+        "p2_speed": 341.0208037290671,
         "aspect_movement": "Applying",
     },
     {
@@ -832,7 +832,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1": 0,
         "p2": 13,
         "p1_speed": 0.9559924053023249,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Separating",
     },
     {
@@ -849,7 +849,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1": 0,
         "p2": 15,
         "p1_speed": 0.9559924053023249,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Separating",
     },
     {
@@ -1002,7 +1002,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1": 2,
         "p2": 13,
         "p1_speed": 0.6816938240934752,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Applying",
     },
     {
@@ -1019,7 +1019,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1": 2,
         "p2": 15,
         "p1_speed": 0.6816938240934752,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Applying",
     },
     {
@@ -1087,7 +1087,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1": 3,
         "p2": 13,
         "p1_speed": 1.212888796600044,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Applying",
     },
     {
@@ -1104,7 +1104,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1": 3,
         "p2": 15,
         "p1_speed": 1.212888796600044,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Applying",
     },
     {
@@ -1189,7 +1189,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1": 4,
         "p2": 14,
         "p1_speed": 0.5145625489159472,
-        "p2_speed": 360.0,
+        "p2_speed": 341.0208037290671,
         "aspect_movement": "Separating",
     },
     {
@@ -1206,7 +1206,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1": 4,
         "p2": 16,
         "p1_speed": 0.5145625489159472,
-        "p2_speed": 360.0,
+        "p2_speed": 341.0208037290671,
         "aspect_movement": "Separating",
     },
     {
@@ -1240,7 +1240,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1": 5,
         "p2": 14,
         "p1_speed": 0.16596584580576004,
-        "p2_speed": 360.0,
+        "p2_speed": 341.0208037290671,
         "aspect_movement": "Applying",
     },
     {
@@ -1257,7 +1257,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1": 5,
         "p2": 15,
         "p1_speed": 0.16596584580576004,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Separating",
     },
     {
@@ -1291,7 +1291,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1": 6,
         "p2": 13,
         "p1_speed": -0.009359637574477029,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Applying",
     },
     {
@@ -1308,7 +1308,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1": 6,
         "p2": 15,
         "p1_speed": -0.009359637574477029,
-        "p2_speed": 360.0,
+        "p2_speed": 507.78767992880194,
         "aspect_movement": "Applying",
     },
     {
@@ -1461,7 +1461,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1": 9,
         "p2": 14,
         "p1_speed": 0.009451475288210793,
-        "p2_speed": 360.0,
+        "p2_speed": 341.0208037290671,
         "aspect_movement": "Applying",
     },
     {
@@ -1478,7 +1478,7 @@ EXPECTED_RELEVANT_ASPECTS = [
         "p1": 9,
         "p2": 16,
         "p1_speed": 0.009451475288210793,
-        "p2_speed": 360.0,
+        "p2_speed": 341.0208037290671,
         "aspect_movement": "Applying",
     },
     {

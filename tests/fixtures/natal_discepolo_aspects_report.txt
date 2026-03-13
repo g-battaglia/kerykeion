@@ -30,10 +30,10 @@ Sample Natal Subject — Natal Chart Report
 +Natal Celestial Points-+---------+----------+--------------+---------+------+---------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House         |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
-| Ascendant             | Sco ♏️ | 5.82°    | +360.0000°/d | N/A     | -    | First House   |
-| Medium Coeli          | Leo ♌️ | 19.91°   | +360.0000°/d | N/A     | -    | Tenth House   |
-| Descendant            | Tau ♉️ | 5.82°    | +360.0000°/d | N/A     | -    | Seventh House |
-| Imum Coeli            | Aqu ♒️ | 19.91°   | +360.0000°/d | N/A     | -    | Fourth House  |
+| Ascendant             | Sco ♏️ | 5.82°    | +245.7250°/d | N/A     | -    | First House   |
+| Medium Coeli          | Leo ♌️ | 19.91°   | +367.6409°/d | N/A     | -    | Tenth House   |
+| Descendant            | Tau ♉️ | 5.82°    | +245.7250°/d | N/A     | -    | Seventh House |
+| Imum Coeli            | Aqu ♒️ | 19.91°   | +367.6409°/d | N/A     | -    | Fourth House  |
 | Sun                   | Can ♋️ | 28.54°   | +0.9551°/d   | +20.45° | -    | Ninth House   |
 | Moon                  | Can ♋️ | 21.21°   | +14.4024°/d  | +23.21° | -    | Ninth House   |
 | Mercury               | Leo ♌️ | 17.61°   | +1.6910°/d   | +16.88° | -    | Ninth House   |
@@ -152,8 +152,8 @@ Sample Natal Subject — Natal Chart Report
 | Mars                  | trine △                       | Uranus                | 0.77° | Applying →   |
 | Mars                  | trine △                       | Neptune               | 6.80° | Applying →   |
 | Mars                  | square □                      | True North Lunar Node | 1.30° | Applying →   |
-| Mars                  | opposition ☍                  | Ascendant             | 0.15° | Separating ← |
-| Mars                  | conjunction ☌                 | Descendant            | 0.15° | Separating ← |
+| Mars                  | opposition ☍                  | Ascendant             | 0.15° | Applying →   |
+| Mars                  | conjunction ☌                 | Descendant            | 0.15° | Applying →   |
 | Mars                  | square □                      | True South Lunar Node | 1.30° | Applying →   |
 | Jupiter               | opposition ☍                  | Saturn                | 2.40° | Separating ← |
 | Jupiter               | conjunction ☌                 | Chiron                | 4.03° | Separating ← |
