@@ -14,7 +14,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "retrograde": False,
         "sign": "Aqu",
         "sign_num": 10,
-        "speed": 360.0,
+        "speed": 507.7876211732388,
     },
     "city": "Owensboro",
     "day": 9,
@@ -30,7 +30,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "retrograde": False,
         "sign": "Leo",
         "sign_num": 4,
-        "speed": 360.0,
+        "speed": 507.7876211732388,
     },
     "eighth_house": {
         "abs_pos": 186.6432470955151,
@@ -42,6 +42,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "quality": "Cardinal",
         "sign": "Lib",
         "sign_num": 6,
+        "speed": 505.2181119054897,
     },
     "eleventh_house": {
         "abs_pos": 268.3421939657759,
@@ -53,6 +54,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "quality": "Mutable",
         "sign": "Sag",
         "sign_num": 8,
+        "speed": 330.04690404205604,
     },
     "fifth_house": {
         "abs_pos": 88.34219396577589,
@@ -64,6 +66,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "quality": "Mutable",
         "sign": "Gem",
         "sign_num": 2,
+        "speed": 330.04690404205604,
     },
     "first_house": {
         "abs_pos": 320.69667227209675,
@@ -75,6 +78,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "quality": "Fixed",
         "sign": "Aqu",
         "sign_num": 10,
+        "speed": 507.7876211732388,
     },
     "fourth_house": {
         "abs_pos": 66.58774889387882,
@@ -86,6 +90,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "quality": "Mutable",
         "sign": "Gem",
         "sign_num": 2,
+        "speed": 341.0208261928657,
     },
     "hour": 0,
     "imum_coeli": {
@@ -100,7 +105,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "retrograde": False,
         "sign": "Gem",
         "sign_num": 2,
-        "speed": 360.0,
+        "speed": 341.0208261928657,
     },
     "julian_day": 2438189.7083333335,
     "jupiter": {
@@ -184,7 +189,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "retrograde": False,
         "sign": "Sag",
         "sign_num": 8,
-        "speed": 360.0,
+        "speed": 341.0208261928657,
     },
     "mercury": {
         "abs_pos": 55.002150782122825,
@@ -245,6 +250,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "quality": "Fixed",
         "sign": "Sco",
         "sign_num": 7,
+        "speed": 401.8373604464527,
     },
     "pluto": {
         "abs_pos": 159.62564515825318,
@@ -286,6 +292,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "quality": "Cardinal",
         "sign": "Ari",
         "sign_num": 0,
+        "speed": 505.2181119054897,
     },
     "seventh_house": {
         "abs_pos": 140.69667227209675,
@@ -297,6 +304,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "quality": "Fixed",
         "sign": "Leo",
         "sign_num": 4,
+        "speed": 507.7876211732388,
     },
     "sixth_house": {
         "abs_pos": 110.99073151066341,
@@ -308,6 +316,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "quality": "Cardinal",
         "sign": "Can",
         "sign_num": 3,
+        "speed": 372.3976226225879,
     },
     "sun": {
         "abs_pos": 77.660084667934,
@@ -334,6 +343,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "quality": "Mutable",
         "sign": "Sag",
         "sign_num": 8,
+        "speed": 341.0208261928657,
     },
     "third_house": {
         "abs_pos": 41.21541395798705,
@@ -345,6 +355,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "quality": "Fixed",
         "sign": "Tau",
         "sign_num": 1,
+        "speed": 401.8373604464527,
     },
     "true_north_lunar_node": {
         "abs_pos": 110.63971105908847,
@@ -386,6 +397,7 @@ EXPECTED_TROPICAL_SUBJECT = {
         "quality": "Cardinal",
         "sign": "Cap",
         "sign_num": 9,
+        "speed": 372.3976226225879,
     },
     "tz_str": "America/Chicago",
     "uranus": {
@@ -436,7 +448,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "retrograde": False,
         "sign": "Cap",
         "sign_num": 9,
-        "speed": 360.0,
+        "speed": 507.7876211732388,
     },
     "city": "Owensboro",
     "day": 9,
@@ -452,7 +464,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "retrograde": False,
         "sign": "Can",
         "sign_num": 3,
-        "speed": 360.0,
+        "speed": 507.7876211732388,
     },
     "eighth_house": {
         "abs_pos": 120.0,
@@ -464,6 +476,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "quality": "Fixed",
         "sign": "Leo",
         "sign_num": 4,
+        "speed": 507.7876211732388,
     },
     "eleventh_house": {
         "abs_pos": 210.0,
@@ -475,6 +488,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "quality": "Fixed",
         "sign": "Sco",
         "sign_num": 7,
+        "speed": 507.7876211732388,
     },
     "fifth_house": {
         "abs_pos": 30.0,
@@ -486,6 +500,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "quality": "Fixed",
         "sign": "Tau",
         "sign_num": 1,
+        "speed": 507.7876211732388,
     },
     "first_house": {
         "abs_pos": 270.0,
@@ -497,6 +512,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "quality": "Cardinal",
         "sign": "Cap",
         "sign_num": 9,
+        "speed": 507.7876211732388,
     },
     "fourth_house": {
         "abs_pos": 0.0,
@@ -508,6 +524,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "quality": "Cardinal",
         "sign": "Ari",
         "sign_num": 0,
+        "speed": 507.7876211732388,
     },
     "hour": 0,
     "imum_coeli": {
@@ -522,7 +539,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "retrograde": False,
         "sign": "Tau",
         "sign_num": 1,
-        "speed": 360.0,
+        "speed": 341.0208261928657,
     },
     "julian_day": 2438189.7083333335,
     "jupiter": {
@@ -576,7 +593,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "retrograde": False,
         "sign": "Sco",
         "sign_num": 7,
-        "speed": 360.0,
+        "speed": 341.0208261928657,
     },
     "mercury": {
         "abs_pos": 31.660385312607506,
@@ -637,6 +654,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "quality": "Mutable",
         "sign": "Vir",
         "sign_num": 5,
+        "speed": 507.7876211732388,
     },
     "pluto": {
         "abs_pos": 136.28387968873787,
@@ -678,6 +696,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "quality": "Fixed",
         "sign": "Aqu",
         "sign_num": 10,
+        "speed": 507.7876211732388,
     },
     "seventh_house": {
         "abs_pos": 90.0,
@@ -689,6 +708,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "quality": "Cardinal",
         "sign": "Can",
         "sign_num": 3,
+        "speed": 507.7876211732388,
     },
     "sixth_house": {
         "abs_pos": 60.0,
@@ -700,6 +720,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "quality": "Mutable",
         "sign": "Gem",
         "sign_num": 2,
+        "speed": 507.7876211732388,
     },
     "sun": {
         "abs_pos": 54.31831919841868,
@@ -726,6 +747,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "quality": "Cardinal",
         "sign": "Lib",
         "sign_num": 6,
+        "speed": 507.7876211732388,
     },
     "third_house": {
         "abs_pos": 330.0,
@@ -737,6 +759,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "quality": "Mutable",
         "sign": "Pis",
         "sign_num": 11,
+        "speed": 507.7876211732388,
     },
     "true_north_lunar_node": {
         "abs_pos": 87.29794558957313,
@@ -778,6 +801,7 @@ EXPECTED_JYOTISH_SUBJECT = {
         "quality": "Mutable",
         "sign": "Sag",
         "sign_num": 8,
+        "speed": 507.7876211732388,
     },
     "tz_str": "America/Chicago",
     "uranus": {

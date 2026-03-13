@@ -22,7 +22,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 297.7785202853341,
             },
             "descendant": {
                 "abs_pos": 71.38743245348502,
@@ -36,7 +36,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 297.7785202853341,
             },
             "imum_coeli": {
                 "abs_pos": 359.78223907937644,
@@ -50,7 +50,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 393.53318772303857,
             },
             "medium_coeli": {
                 "abs_pos": 179.78223907937644,
@@ -64,7 +64,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 393.53318772303857,
             },
         },
         "houses": {
@@ -78,6 +78,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 360.6072122957903,
             },
             "eleventh_house": {
                 "abs_pos": 208.7031428358779,
@@ -89,6 +90,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 341.90029481423096,
             },
             "fifth_house": {
                 "abs_pos": 28.703142835877884,
@@ -100,6 +102,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 341.90029481423096,
             },
             "first_house": {
                 "abs_pos": 251.38743245348502,
@@ -111,6 +114,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 297.7785202853341,
             },
             "fourth_house": {
                 "abs_pos": 359.78223907937644,
@@ -122,6 +126,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 393.53318772303857,
             },
             "ninth_house": {
                 "abs_pos": 143.5448712507839,
@@ -133,6 +138,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 413.3379115714947,
             },
             "second_house": {
                 "abs_pos": 284.8962335047216,
@@ -144,6 +150,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 360.6072122957903,
             },
             "seventh_house": {
                 "abs_pos": 71.38743245348502,
@@ -155,6 +162,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 297.7785202853341,
             },
             "sixth_house": {
                 "abs_pos": 51.583963472679386,
@@ -166,6 +174,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 305.5673989683059,
             },
             "tenth_house": {
                 "abs_pos": 179.78223907937644,
@@ -177,6 +186,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 393.53318772303857,
             },
             "third_house": {
                 "abs_pos": 323.5448712507839,
@@ -188,6 +198,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 413.3379115714947,
             },
             "twelfth_house": {
                 "abs_pos": 231.5839634726794,
@@ -199,6 +210,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 305.5673989683059,
             },
         },
         "is_diurnal": True,
@@ -419,7 +431,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 267.3052218289503,
             },
             "descendant": {
                 "abs_pos": 266.97392959057186,
@@ -433,7 +445,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 267.3052218289503,
             },
             "imum_coeli": {
                 "abs_pos": 254.50153738152068,
@@ -447,7 +459,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 335.6371917393943,
             },
             "medium_coeli": {
                 "abs_pos": 74.50153738152069,
@@ -461,7 +473,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 335.6371917393943,
             },
         },
         "houses": {
@@ -475,6 +487,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 892.4664076767625,
             },
             "eleventh_house": {
                 "abs_pos": 79.78847415705076,
@@ -486,6 +499,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 306.0291606120898,
             },
             "fifth_house": {
                 "abs_pos": 259.78847415705076,
@@ -497,6 +511,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 306.0291606120898,
             },
             "first_house": {
                 "abs_pos": 86.97392959057183,
@@ -508,6 +523,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 267.3052218289503,
             },
             "fourth_house": {
                 "abs_pos": 254.50153738152068,
@@ -519,6 +535,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 335.6371917393943,
             },
             "ninth_house": {
                 "abs_pos": 65.28100457271728,
@@ -530,6 +547,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 419.38317152580044,
             },
             "second_house": {
                 "abs_pos": 219.69227016724426,
@@ -541,6 +559,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 892.4664076767625,
             },
             "seventh_house": {
                 "abs_pos": 266.97392959057186,
@@ -552,6 +571,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 267.3052218289503,
             },
             "sixth_house": {
                 "abs_pos": 263.6263902977146,
@@ -563,6 +583,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 289.73291409607253,
             },
             "tenth_house": {
                 "abs_pos": 74.50153738152069,
@@ -574,6 +595,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 335.6371917393943,
             },
             "third_house": {
                 "abs_pos": 245.2810045727173,
@@ -585,6 +607,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 419.38317152580044,
             },
             "twelfth_house": {
                 "abs_pos": 83.62639029771458,
@@ -596,6 +619,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 289.73291409607253,
             },
         },
         "is_diurnal": True,
@@ -816,7 +840,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 197.45786875565258,
             },
             "descendant": {
                 "abs_pos": 345.3520411714022,
@@ -830,7 +854,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 197.45786875565258,
             },
             "imum_coeli": {
                 "abs_pos": 245.3134139798296,
@@ -844,7 +868,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 342.0530061586566,
             },
             "medium_coeli": {
                 "abs_pos": 65.31341397982959,
@@ -858,7 +882,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 342.0530061586566,
             },
         },
         "houses": {
@@ -872,6 +896,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 238.53337464773642,
             },
             "eleventh_house": {
                 "abs_pos": 112.46297173480139,
@@ -883,6 +908,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 290.3870501137229,
             },
             "fifth_house": {
                 "abs_pos": 292.4629717348014,
@@ -894,6 +920,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 290.3870501137229,
             },
             "first_house": {
                 "abs_pos": 165.3520411714022,
@@ -905,6 +932,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 197.45786875565258,
             },
             "fourth_house": {
                 "abs_pos": 245.3134139798296,
@@ -916,6 +944,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 342.0530061586566,
             },
             "ninth_house": {
                 "abs_pos": 27.17084551078483,
@@ -927,6 +956,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 291.569377865815,
             },
             "second_house": {
                 "abs_pos": 182.23909478114217,
@@ -938,6 +968,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 238.53337464773642,
             },
             "seventh_house": {
                 "abs_pos": 345.3520411714022,
@@ -949,6 +980,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 197.45786875565258,
             },
             "sixth_house": {
                 "abs_pos": 323.2926345719611,
@@ -960,6 +992,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 232.3387074280831,
             },
             "tenth_house": {
                 "abs_pos": 65.31341397982959,
@@ -971,6 +1004,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 342.0530061586566,
             },
             "third_house": {
                 "abs_pos": 207.17084551078483,
@@ -982,6 +1016,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 291.569377865815,
             },
             "twelfth_house": {
                 "abs_pos": 143.2926345719611,
@@ -993,6 +1028,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 232.3387074280831,
             },
         },
         "is_diurnal": True,
@@ -1213,7 +1249,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 516.000533126771,
             },
             "descendant": {
                 "abs_pos": 330.1617978183899,
@@ -1227,7 +1263,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 516.000533126771,
             },
             "imum_coeli": {
                 "abs_pos": 251.77090070560132,
@@ -1241,7 +1277,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 337.2843586342158,
             },
             "medium_coeli": {
                 "abs_pos": 71.77090070560132,
@@ -1255,7 +1291,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 337.2843586342158,
             },
         },
         "houses": {
@@ -1269,6 +1305,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 484.17526425614784,
             },
             "eleventh_house": {
                 "abs_pos": 94.10125174935756,
@@ -1280,6 +1317,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 334.1549805613132,
             },
             "fifth_house": {
                 "abs_pos": 274.1012517493576,
@@ -1291,6 +1329,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 334.1549805613132,
             },
             "first_house": {
                 "abs_pos": 150.1617978183899,
@@ -1302,6 +1341,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 516.000533126771,
             },
             "fourth_house": {
                 "abs_pos": 251.77090070560132,
@@ -1313,6 +1353,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 337.2843586342158,
             },
             "ninth_house": {
                 "abs_pos": 46.73786641608672,
@@ -1324,6 +1365,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 388.4257608944226,
             },
             "second_house": {
                 "abs_pos": 193.8907352062794,
@@ -1335,6 +1377,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 484.17526425614784,
             },
             "seventh_house": {
                 "abs_pos": 330.1617978183899,
@@ -1346,6 +1389,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 516.000533126771,
             },
             "sixth_house": {
                 "abs_pos": 298.1685943812725,
@@ -1357,6 +1401,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 384.5762087114523,
             },
             "tenth_house": {
                 "abs_pos": 71.77090070560132,
@@ -1368,6 +1413,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 337.2843586342158,
             },
             "third_house": {
                 "abs_pos": 226.73786641608675,
@@ -1379,6 +1425,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 388.4257608944226,
             },
             "twelfth_house": {
                 "abs_pos": 118.1685943812725,
@@ -1390,6 +1437,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 384.5762087114523,
             },
         },
         "is_diurnal": True,
@@ -1610,7 +1658,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 518.0509537644318,
             },
             "descendant": {
                 "abs_pos": 332.7323415004744,
@@ -1624,7 +1672,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 518.0509537644318,
             },
             "imum_coeli": {
                 "abs_pos": 253.26409766682627,
@@ -1638,7 +1686,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 336.3544630052589,
             },
             "medium_coeli": {
                 "abs_pos": 73.26409766682629,
@@ -1652,7 +1700,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 336.3544630052589,
             },
         },
         "houses": {
@@ -1666,6 +1714,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 479.01893877459406,
             },
             "eleventh_house": {
                 "abs_pos": 95.72462954804698,
@@ -1677,6 +1726,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 335.415512288802,
             },
             "fifth_house": {
                 "abs_pos": 275.724629548047,
@@ -1688,6 +1738,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 335.415512288802,
             },
             "first_house": {
                 "abs_pos": 152.73234150047438,
@@ -1699,6 +1750,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 518.0509537644318,
             },
             "fourth_house": {
                 "abs_pos": 253.26409766682627,
@@ -1710,6 +1762,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 336.3544630052589,
             },
             "ninth_house": {
                 "abs_pos": 48.34244547473378,
@@ -1721,6 +1774,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 384.9936904121866,
             },
             "second_house": {
                 "abs_pos": 195.9350879104632,
@@ -1732,6 +1786,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 479.01893877459406,
             },
             "seventh_house": {
                 "abs_pos": 332.7323415004744,
@@ -1743,6 +1798,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 518.0509537644318,
             },
             "sixth_house": {
                 "abs_pos": 300.15565719143996,
@@ -1754,6 +1810,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 388.0713197833053,
             },
             "tenth_house": {
                 "abs_pos": 73.26409766682629,
@@ -1765,6 +1822,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 336.3544630052589,
             },
             "third_house": {
                 "abs_pos": 228.34244547473378,
@@ -1776,6 +1834,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 384.9936904121866,
             },
             "twelfth_house": {
                 "abs_pos": 120.15565719143996,
@@ -1787,6 +1846,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 388.0713197833053,
             },
         },
         "is_diurnal": True,
@@ -2007,7 +2067,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 324.7569212206303,
             },
             "descendant": {
                 "abs_pos": 23.94025896466951,
@@ -2021,7 +2081,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 324.7569212206303,
             },
             "imum_coeli": {
                 "abs_pos": 294.43219341198505,
@@ -2035,7 +2095,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 341.74787731527516,
             },
             "medium_coeli": {
                 "abs_pos": 114.43219341198508,
@@ -2049,7 +2109,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 341.74787731527516,
             },
         },
         "houses": {
@@ -2063,6 +2123,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 326.6607975266482,
             },
             "eleventh_house": {
                 "abs_pos": 146.0464540895205,
@@ -2074,6 +2135,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 354.54131822443003,
             },
             "fifth_house": {
                 "abs_pos": 326.04645408952047,
@@ -2085,6 +2147,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 354.54131822443003,
             },
             "first_house": {
                 "abs_pos": 203.94025896466948,
@@ -2096,6 +2159,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 324.7569212206303,
             },
             "fourth_house": {
                 "abs_pos": 294.43219341198505,
@@ -2107,6 +2171,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 341.74787731527516,
             },
             "ninth_house": {
                 "abs_pos": 83.25531354837665,
@@ -2118,6 +2183,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 329.15427962711334,
             },
             "second_house": {
                 "abs_pos": 233.00978786187594,
@@ -2129,6 +2195,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 326.6607975266482,
             },
             "seventh_house": {
                 "abs_pos": 23.94025896466951,
@@ -2140,6 +2207,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 324.7569212206303,
             },
             "sixth_house": {
                 "abs_pos": 356.48014372029957,
@@ -2151,6 +2219,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 348.3686093247977,
             },
             "tenth_house": {
                 "abs_pos": 114.43219341198508,
@@ -2162,6 +2231,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 341.74787731527516,
             },
             "third_house": {
                 "abs_pos": 263.25531354837665,
@@ -2173,6 +2243,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 329.15427962711334,
             },
             "twelfth_house": {
                 "abs_pos": 176.48014372029957,
@@ -2184,6 +2255,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 348.3686093247977,
             },
         },
         "is_diurnal": True,
@@ -2404,7 +2476,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 814.1897221290068,
             },
             "descendant": {
                 "abs_pos": 188.90988676419028,
@@ -2418,7 +2490,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 814.1897221290068,
             },
             "imum_coeli": {
                 "abs_pos": 93.59237940260005,
@@ -2432,7 +2504,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 331.0556764820007,
             },
             "medium_coeli": {
                 "abs_pos": 273.59237940260005,
@@ -2446,7 +2518,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 331.0556764820007,
             },
         },
         "houses": {
@@ -2460,6 +2532,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 465.7214779762587,
             },
             "eleventh_house": {
                 "abs_pos": 292.6335072077817,
@@ -2471,6 +2544,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 368.0389884897827,
             },
             "fifth_house": {
                 "abs_pos": 112.63350720778169,
@@ -2482,6 +2556,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 368.0389884897827,
             },
             "first_house": {
                 "abs_pos": 8.909886764190269,
@@ -2493,6 +2568,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 814.1897221290068,
             },
             "fourth_house": {
                 "abs_pos": 93.59237940260005,
@@ -2504,6 +2580,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 331.0556764820007,
             },
             "ninth_house": {
                 "abs_pos": 255.23445924746386,
@@ -2515,6 +2592,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 352.86630839826705,
             },
             "second_house": {
                 "abs_pos": 51.96031838520026,
@@ -2526,6 +2604,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 465.7214779762587,
             },
             "seventh_house": {
                 "abs_pos": 188.90988676419028,
@@ -2537,6 +2616,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 814.1897221290068,
             },
             "sixth_house": {
                 "abs_pos": 138.72748866718388,
@@ -2548,6 +2628,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 509.56932885077987,
             },
             "tenth_house": {
                 "abs_pos": 273.59237940260005,
@@ -2559,6 +2640,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 331.0556764820007,
             },
             "third_house": {
                 "abs_pos": 75.23445924746387,
@@ -2570,6 +2652,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 352.86630839826705,
             },
             "twelfth_house": {
                 "abs_pos": 318.7274886671839,
@@ -2581,6 +2664,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 509.56932885077987,
             },
         },
         "is_diurnal": True,
@@ -2801,7 +2885,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 277.68524362448005,
             },
             "descendant": {
                 "abs_pos": 353.86810957853504,
@@ -2815,7 +2899,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 277.68524362448005,
             },
             "imum_coeli": {
                 "abs_pos": 262.68613318836407,
@@ -2829,7 +2913,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 332.03002446851116,
             },
             "medium_coeli": {
                 "abs_pos": 82.68613318836405,
@@ -2843,7 +2927,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 332.03002446851116,
             },
         },
         "houses": {
@@ -2857,6 +2941,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 305.70132175983315,
             },
             "eleventh_house": {
                 "abs_pos": 117.08403881201238,
@@ -2868,6 +2953,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 321.61424956630793,
             },
             "fifth_house": {
                 "abs_pos": 297.0840388120124,
@@ -2879,6 +2965,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 321.61424956630793,
             },
             "first_house": {
                 "abs_pos": 173.86810957853504,
@@ -2890,6 +2977,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 277.68524362448005,
             },
             "fourth_house": {
                 "abs_pos": 262.68613318836407,
@@ -2901,6 +2989,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 332.03002446851116,
             },
             "ninth_house": {
                 "abs_pos": 48.67030980950699,
@@ -2912,6 +3001,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 326.3531882411714,
             },
             "second_house": {
                 "abs_pos": 198.7488776263627,
@@ -2923,6 +3013,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 305.70132175983315,
             },
             "seventh_house": {
                 "abs_pos": 353.86810957853504,
@@ -2934,6 +3025,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 277.68524362448005,
             },
             "sixth_house": {
                 "abs_pos": 327.8467287336343,
@@ -2945,6 +3037,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 302.169459107378,
             },
             "tenth_house": {
                 "abs_pos": 82.68613318836405,
@@ -2956,6 +3049,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 332.03002446851116,
             },
             "third_house": {
                 "abs_pos": 228.670309809507,
@@ -2967,6 +3061,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 326.3531882411714,
             },
             "twelfth_house": {
                 "abs_pos": 147.84672873363428,
@@ -2978,6 +3073,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 302.169459107378,
             },
         },
         "is_diurnal": True,
@@ -3198,7 +3294,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 304.0487073259896,
             },
             "descendant": {
                 "abs_pos": 278.92268897761204,
@@ -3212,7 +3308,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 304.0487073259896,
             },
             "imum_coeli": {
                 "abs_pos": 159.33339744731597,
@@ -3226,7 +3322,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 385.73756618215435,
             },
             "medium_coeli": {
                 "abs_pos": 339.333397447316,
@@ -3240,7 +3336,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 385.73756618215435,
             },
         },
         "houses": {
@@ -3254,6 +3350,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 295.0682800349313,
             },
             "eleventh_house": {
                 "abs_pos": 14.147558529624929,
@@ -3265,6 +3362,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 463.5369977724898,
             },
             "fifth_house": {
                 "abs_pos": 194.14755852962492,
@@ -3276,6 +3374,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 463.5369977724898,
             },
             "first_house": {
                 "abs_pos": 98.92268897761204,
@@ -3287,6 +3386,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 304.0487073259896,
             },
             "fourth_house": {
                 "abs_pos": 159.33339744731597,
@@ -3298,6 +3398,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 385.73756618215435,
             },
             "ninth_house": {
                 "abs_pos": 314.88934826282025,
@@ -3309,6 +3410,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 322.63395463155007,
             },
             "second_house": {
                 "abs_pos": 115.96604698965652,
@@ -3320,6 +3422,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 295.0682800349313,
             },
             "seventh_house": {
                 "abs_pos": 278.92268897761204,
@@ -3331,6 +3434,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 304.0487073259896,
             },
             "sixth_house": {
                 "abs_pos": 239.26958060651998,
@@ -3342,6 +3446,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 427.64930954516797,
             },
             "tenth_house": {
                 "abs_pos": 339.333397447316,
@@ -3353,6 +3458,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 385.73756618215435,
             },
             "third_house": {
                 "abs_pos": 134.88934826282025,
@@ -3364,6 +3470,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 322.63395463155007,
             },
             "twelfth_house": {
                 "abs_pos": 59.269580606519966,
@@ -3375,6 +3482,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 427.64930954516797,
             },
         },
         "is_diurnal": True,
@@ -3595,7 +3703,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 262.55056974086773,
             },
             "descendant": {
                 "abs_pos": 9.07155495640933,
@@ -3609,7 +3717,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 262.55056974086773,
             },
             "imum_coeli": {
                 "abs_pos": 281.4592444017379,
@@ -3623,7 +3731,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 333.58099586960867,
             },
             "medium_coeli": {
                 "abs_pos": 101.45924440173789,
@@ -3637,7 +3745,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 333.58099586960867,
             },
         },
         "houses": {
@@ -3651,6 +3759,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 290.28580689368266,
             },
             "eleventh_house": {
                 "abs_pos": 136.3646319690897,
@@ -3662,6 +3771,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 322.6583759600073,
             },
             "fifth_house": {
                 "abs_pos": 316.3646319690897,
@@ -3673,6 +3783,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 322.6583759600073,
             },
             "first_house": {
                 "abs_pos": 189.07155495640933,
@@ -3684,6 +3795,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 262.55056974086773,
             },
             "fourth_house": {
                 "abs_pos": 281.4592444017379,
@@ -3695,6 +3807,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 333.58099586960867,
             },
             "ninth_house": {
                 "abs_pos": 65.56301357808059,
@@ -3706,6 +3819,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 317.41607750053043,
             },
             "second_house": {
                 "abs_pos": 214.49011061680446,
@@ -3717,6 +3831,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 290.28580689368266,
             },
             "seventh_house": {
                 "abs_pos": 9.07155495640933,
@@ -3728,6 +3843,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 262.55056974086773,
             },
             "sixth_house": {
                 "abs_pos": 345.6616205532647,
@@ -3739,6 +3855,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 294.3723129333264,
             },
             "tenth_house": {
                 "abs_pos": 101.45924440173789,
@@ -3750,6 +3867,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 333.58099586960867,
             },
             "third_house": {
                 "abs_pos": 245.5630135780806,
@@ -3761,6 +3879,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 317.41607750053043,
             },
             "twelfth_house": {
                 "abs_pos": 165.66162055326467,
@@ -3772,6 +3891,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 294.3723129333264,
             },
         },
         "is_diurnal": True,
@@ -3992,7 +4112,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 472.2728816042848,
             },
             "descendant": {
                 "abs_pos": 114.33757195689225,
@@ -4006,7 +4126,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 472.2728816042848,
             },
             "imum_coeli": {
                 "abs_pos": 57.77812525221697,
@@ -4020,7 +4140,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Tau",
                 "sign_num": 1,
-                "speed": 360.0,
+                "speed": 348.8994578342356,
             },
             "medium_coeli": {
                 "abs_pos": 237.77812525221697,
@@ -4034,7 +4154,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sco",
                 "sign_num": 7,
-                "speed": 360.0,
+                "speed": 348.8994578342356,
             },
         },
         "houses": {
@@ -4048,6 +4168,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 614.1638152759681,
             },
             "eleventh_house": {
                 "abs_pos": 256.119916272136,
@@ -4059,6 +4180,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 318.7411730800541,
             },
             "fifth_house": {
                 "abs_pos": 76.11991627213598,
@@ -4070,6 +4192,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 318.7411730800541,
             },
             "first_house": {
                 "abs_pos": 294.33757195689225,
@@ -4081,6 +4204,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 472.2728816042848,
             },
             "fourth_house": {
                 "abs_pos": 57.77812525221697,
@@ -4092,6 +4216,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 348.8994578342356,
             },
             "ninth_house": {
                 "abs_pos": 213.15651887176844,
@@ -4103,6 +4228,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 445.3977823792775,
             },
             "second_house": {
                 "abs_pos": 352.3331354822629,
@@ -4114,6 +4240,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 614.1638152759681,
             },
             "seventh_house": {
                 "abs_pos": 114.33757195689225,
@@ -4125,6 +4252,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 472.2728816042848,
             },
             "sixth_house": {
                 "abs_pos": 93.24716011791122,
@@ -4136,6 +4264,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 339.88489797649726,
             },
             "tenth_house": {
                 "abs_pos": 237.77812525221697,
@@ -4147,6 +4276,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 348.8994578342356,
             },
             "third_house": {
                 "abs_pos": 33.15651887176845,
@@ -4158,6 +4288,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 445.3977823792775,
             },
             "twelfth_house": {
                 "abs_pos": 273.2471601179112,
@@ -4169,6 +4300,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 339.88489797649726,
             },
         },
         "is_diurnal": False,
@@ -4389,7 +4521,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 454.9509824339809,
             },
             "descendant": {
                 "abs_pos": 349.18013911617425,
@@ -4403,7 +4535,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 454.9509824339809,
             },
             "imum_coeli": {
                 "abs_pos": 262.1562729625028,
@@ -4417,7 +4549,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 332.35072002681676,
             },
             "medium_coeli": {
                 "abs_pos": 82.15627296250278,
@@ -4431,7 +4563,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 332.35072002681676,
             },
         },
         "houses": {
@@ -4445,6 +4577,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 418.24479520800185,
             },
             "eleventh_house": {
                 "abs_pos": 107.42488151920517,
@@ -4456,6 +4589,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 342.0373799678289,
             },
             "fifth_house": {
                 "abs_pos": 287.4248815192052,
@@ -4467,6 +4601,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 342.0373799678289,
             },
             "first_house": {
                 "abs_pos": 169.18013911617425,
@@ -4478,6 +4613,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 454.9509824339809,
             },
             "fourth_house": {
                 "abs_pos": 262.1562729625028,
@@ -4489,6 +4625,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 332.35072002681676,
             },
             "ninth_house": {
                 "abs_pos": 55.97451298891133,
@@ -4500,6 +4637,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 360.8440316547089,
             },
             "second_house": {
                 "abs_pos": 205.50333373004784,
@@ -4511,6 +4649,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 418.24479520800185,
             },
             "seventh_house": {
                 "abs_pos": 349.18013911617425,
@@ -4522,6 +4661,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 454.9509824339809,
             },
             "sixth_house": {
                 "abs_pos": 315.3471802698291,
@@ -4533,6 +4673,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 390.16277766310253,
             },
             "tenth_house": {
                 "abs_pos": 82.15627296250278,
@@ -4544,6 +4685,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 332.35072002681676,
             },
             "third_house": {
                 "abs_pos": 235.97451298891136,
@@ -4555,6 +4697,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 360.8440316547089,
             },
             "twelfth_house": {
                 "abs_pos": 135.3471802698291,
@@ -4566,6 +4709,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 390.16277766310253,
             },
         },
         "is_diurnal": True,
@@ -4786,7 +4930,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 296.32174733056735,
             },
             "descendant": {
                 "abs_pos": 27.101106021470628,
@@ -4800,7 +4944,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 296.32174733056735,
             },
             "imum_coeli": {
                 "abs_pos": 300.55002082812234,
@@ -4814,7 +4958,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Aqu",
                 "sign_num": 10,
-                "speed": 360.0,
+                "speed": 347.29108165605726,
             },
             "medium_coeli": {
                 "abs_pos": 120.55002082812236,
@@ -4828,7 +4972,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Leo",
                 "sign_num": 4,
-                "speed": 360.0,
+                "speed": 347.29108165605726,
             },
         },
         "houses": {
@@ -4842,6 +4986,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 311.640469626358,
             },
             "eleventh_house": {
                 "abs_pos": 153.32014471444745,
@@ -4853,6 +4998,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 347.99583609103473,
             },
             "fifth_house": {
                 "abs_pos": 333.32014471444745,
@@ -4864,6 +5010,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 347.99583609103473,
             },
             "first_house": {
                 "abs_pos": 207.10110602147066,
@@ -4875,6 +5022,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 296.32174733056735,
             },
             "fourth_house": {
                 "abs_pos": 300.55002082812234,
@@ -4886,6 +5034,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 347.29108165605726,
             },
             "ninth_house": {
                 "abs_pos": 86.98932917696777,
@@ -4897,6 +5046,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 329.3952182666526,
             },
             "second_house": {
                 "abs_pos": 235.47706837955138,
@@ -4908,6 +5058,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 311.640469626358,
             },
             "seventh_house": {
                 "abs_pos": 27.101106021470628,
@@ -4919,6 +5070,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 296.32174733056735,
             },
             "sixth_house": {
                 "abs_pos": 2.483694828854368,
@@ -4930,6 +5082,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 325.7842602672709,
             },
             "tenth_house": {
                 "abs_pos": 120.55002082812236,
@@ -4941,6 +5094,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 347.29108165605726,
             },
             "third_house": {
                 "abs_pos": 266.9893291769678,
@@ -4952,6 +5106,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 329.3952182666526,
             },
             "twelfth_house": {
                 "abs_pos": 182.48369482885437,
@@ -4963,6 +5118,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 325.7842602672709,
             },
         },
         "is_diurnal": True,
@@ -5183,7 +5339,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 626.9563333428904,
             },
             "descendant": {
                 "abs_pos": 182.34745771279998,
@@ -5197,7 +5353,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 626.9563333428904,
             },
             "imum_coeli": {
                 "abs_pos": 91.23969679297386,
@@ -5211,7 +5367,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 331.2546331122594,
             },
             "medium_coeli": {
                 "abs_pos": 271.23969679297386,
@@ -5225,7 +5381,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 331.2546331122594,
             },
         },
         "houses": {
@@ -5239,6 +5395,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 450.83694654384857,
             },
             "eleventh_house": {
                 "abs_pos": 292.93152967774205,
@@ -5250,6 +5407,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 359.8584969631996,
             },
             "fifth_house": {
                 "abs_pos": 112.93152967774205,
@@ -5261,6 +5419,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 359.8584969631996,
             },
             "first_house": {
                 "abs_pos": 2.3474577127999674,
@@ -5272,6 +5431,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 626.9563333428904,
             },
             "fourth_house": {
                 "abs_pos": 91.23969679297386,
@@ -5283,6 +5443,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 331.2546331122594,
             },
             "ninth_house": {
                 "abs_pos": 249.75140774743812,
@@ -5294,6 +5455,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 355.58809668718254,
             },
             "second_house": {
                 "abs_pos": 43.19128399210256,
@@ -5305,6 +5467,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 450.83694654384857,
             },
             "seventh_house": {
                 "abs_pos": 182.34745771279998,
@@ -5316,6 +5479,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 626.9563333428904,
             },
             "sixth_house": {
                 "abs_pos": 140.22830852167579,
@@ -5327,6 +5491,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 460.44412742806696,
             },
             "tenth_house": {
                 "abs_pos": 271.23969679297386,
@@ -5338,6 +5503,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 331.2546331122594,
             },
             "third_house": {
                 "abs_pos": 69.75140774743814,
@@ -5349,6 +5515,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 355.58809668718254,
             },
             "twelfth_house": {
                 "abs_pos": 320.2283085216758,
@@ -5360,6 +5527,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 460.44412742806696,
             },
         },
         "is_diurnal": True,
@@ -5580,7 +5748,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 254.47842214250974,
             },
             "descendant": {
                 "abs_pos": 7.33463132348129,
@@ -5594,7 +5762,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 254.47842214250974,
             },
             "imum_coeli": {
                 "abs_pos": 279.5589464820401,
@@ -5608,7 +5776,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 332.98113121467424,
             },
             "medium_coeli": {
                 "abs_pos": 99.5589464820401,
@@ -5622,7 +5790,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 332.98113121467424,
             },
         },
         "houses": {
@@ -5636,6 +5804,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 284.25334929744326,
             },
             "eleventh_house": {
                 "abs_pos": 135.12322173703777,
@@ -5647,6 +5816,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 318.52367790330686,
             },
             "fifth_house": {
                 "abs_pos": 315.12322173703774,
@@ -5658,6 +5828,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 318.52367790330686,
             },
             "first_house": {
                 "abs_pos": 187.33463132348126,
@@ -5669,6 +5840,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 254.47842214250974,
             },
             "fourth_house": {
                 "abs_pos": 279.5589464820401,
@@ -5680,6 +5852,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 332.98113121467424,
             },
             "ninth_house": {
                 "abs_pos": 62.968798219198504,
@@ -5691,6 +5864,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 314.8871846138774,
             },
             "second_house": {
                 "abs_pos": 212.07151828492212,
@@ -5702,6 +5876,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 284.25334929744326,
             },
             "seventh_house": {
                 "abs_pos": 7.33463132348129,
@@ -5713,6 +5888,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 254.47842214250974,
             },
             "sixth_house": {
                 "abs_pos": 344.3581256379581,
@@ -5724,6 +5900,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 287.27263955729353,
             },
             "tenth_house": {
                 "abs_pos": 99.5589464820401,
@@ -5735,6 +5912,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 332.98113121467424,
             },
             "third_house": {
                 "abs_pos": 242.9687982191985,
@@ -5746,6 +5924,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 314.8871846138774,
             },
             "twelfth_house": {
                 "abs_pos": 164.35812563795812,
@@ -5757,6 +5936,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 287.27263955729353,
             },
         },
         "is_diurnal": False,
@@ -5977,7 +6157,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Leo",
                 "sign_num": 4,
-                "speed": 360.0,
+                "speed": 276.4286344333805,
             },
             "descendant": {
                 "abs_pos": 309.37176682344796,
@@ -5991,7 +6171,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Aqu",
                 "sign_num": 10,
-                "speed": 360.0,
+                "speed": 276.4286344333805,
             },
             "imum_coeli": {
                 "abs_pos": 205.8315251382425,
@@ -6005,7 +6185,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 381.7434846717745,
             },
             "medium_coeli": {
                 "abs_pos": 25.831525138242505,
@@ -6019,7 +6199,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 381.7434846717745,
             },
         },
         "houses": {
@@ -6033,6 +6213,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 303.2641131695384,
             },
             "eleventh_house": {
                 "abs_pos": 63.03332087094809,
@@ -6044,6 +6225,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 369.21548442397625,
             },
             "fifth_house": {
                 "abs_pos": 243.0333208709481,
@@ -6055,6 +6237,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 369.21548442397625,
             },
             "first_house": {
                 "abs_pos": 129.37176682344796,
@@ -6066,6 +6249,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 276.4286344333805,
             },
             "fourth_house": {
                 "abs_pos": 205.8315251382425,
@@ -6077,6 +6261,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 381.7434846717745,
             },
             "ninth_house": {
                 "abs_pos": 354.19170511178567,
@@ -6088,6 +6273,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 345.69365930471554,
             },
             "second_house": {
                 "abs_pos": 149.3711499492508,
@@ -6099,6 +6285,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 303.2641131695384,
             },
             "seventh_house": {
                 "abs_pos": 309.37176682344796,
@@ -6110,6 +6297,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 276.4286344333805,
             },
             "sixth_house": {
                 "abs_pos": 279.09715877178263,
@@ -6121,6 +6309,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 316.79530510243745,
             },
             "tenth_house": {
                 "abs_pos": 25.831525138242505,
@@ -6132,6 +6321,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 381.7434846717745,
             },
             "third_house": {
                 "abs_pos": 174.19170511178567,
@@ -6143,6 +6333,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 345.69365930471554,
             },
             "twelfth_house": {
                 "abs_pos": 99.09715877178265,
@@ -6154,6 +6345,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 316.79530510243745,
             },
         },
         "is_diurnal": True,
@@ -6374,7 +6566,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 261.6375546298703,
             },
             "descendant": {
                 "abs_pos": 16.547543112095525,
@@ -6388,7 +6580,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 261.6375546298703,
             },
             "imum_coeli": {
                 "abs_pos": 291.0453983521803,
@@ -6402,7 +6594,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 339.0182920169189,
             },
             "medium_coeli": {
                 "abs_pos": 111.04539835218033,
@@ -6416,7 +6608,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 339.0182920169189,
             },
         },
         "houses": {
@@ -6430,6 +6622,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 288.9423707275425,
             },
             "eleventh_house": {
                 "abs_pos": 145.6113771169832,
@@ -6441,6 +6634,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 326.9839192006477,
             },
             "fifth_house": {
                 "abs_pos": 325.6113771169832,
@@ -6452,6 +6646,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 326.9839192006477,
             },
             "first_house": {
                 "abs_pos": 196.54754311209552,
@@ -6463,6 +6658,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 261.6375546298703,
             },
             "fourth_house": {
                 "abs_pos": 291.0453983521803,
@@ -6474,6 +6670,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 339.0182920169189,
             },
             "ninth_house": {
                 "abs_pos": 74.58180224237935,
@@ -6485,6 +6682,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 319.25569553136154,
             },
             "second_house": {
                 "abs_pos": 222.70799124338026,
@@ -6496,6 +6694,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 288.9423707275425,
             },
             "seventh_house": {
                 "abs_pos": 16.547543112095525,
@@ -6507,6 +6706,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 261.6375546298703,
             },
             "sixth_house": {
                 "abs_pos": 354.08333462165876,
@@ -6518,6 +6718,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 295.27723046199606,
             },
             "tenth_house": {
                 "abs_pos": 111.04539835218033,
@@ -6529,6 +6730,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 339.0182920169189,
             },
             "third_house": {
                 "abs_pos": 254.58180224237935,
@@ -6540,6 +6742,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 319.25569553136154,
             },
             "twelfth_house": {
                 "abs_pos": 174.08333462165876,
@@ -6551,6 +6754,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 295.27723046199606,
             },
         },
         "is_diurnal": True,
@@ -6771,7 +6975,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 254.5018908331978,
             },
             "descendant": {
                 "abs_pos": 355.4422046999674,
@@ -6785,7 +6989,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 254.5018908331978,
             },
             "imum_coeli": {
                 "abs_pos": 264.0668237304761,
@@ -6799,7 +7003,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 331.8204100755111,
             },
             "medium_coeli": {
                 "abs_pos": 84.06682373047607,
@@ -6813,7 +7017,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 331.8204100755111,
             },
         },
         "houses": {
@@ -6827,6 +7031,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 286.6602120751512,
             },
             "eleventh_house": {
                 "abs_pos": 120.4501879079017,
@@ -6838,6 +7043,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 314.7965847413537,
             },
             "fifth_house": {
                 "abs_pos": 300.4501879079017,
@@ -6849,6 +7055,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 314.7965847413537,
             },
             "first_house": {
                 "abs_pos": 175.44220469996745,
@@ -6860,6 +7067,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 254.5018908331978,
             },
             "fourth_house": {
                 "abs_pos": 264.0668237304761,
@@ -6871,6 +7079,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 331.8204100755111,
             },
             "ninth_house": {
                 "abs_pos": 48.31700486854868,
@@ -6882,6 +7091,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 317.1915514110596,
             },
             "second_house": {
                 "abs_pos": 198.76241052943823,
@@ -6893,6 +7103,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 286.6602120751512,
             },
             "seventh_house": {
                 "abs_pos": 355.4422046999674,
@@ -6904,6 +7115,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 254.5018908331978,
             },
             "sixth_house": {
                 "abs_pos": 331.0285012062577,
@@ -6915,6 +7127,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 284.70092029299985,
             },
             "tenth_house": {
                 "abs_pos": 84.06682373047607,
@@ -6926,6 +7139,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 331.8204100755111,
             },
             "third_house": {
                 "abs_pos": 228.3170048685487,
@@ -6937,6 +7151,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 317.1915514110596,
             },
             "twelfth_house": {
                 "abs_pos": 151.02850120625772,
@@ -6948,6 +7163,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 284.70092029299985,
             },
         },
         "is_diurnal": True,
@@ -7168,7 +7384,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 886.9442126244498,
             },
             "descendant": {
                 "abs_pos": 199.71112776339493,
@@ -7182,7 +7398,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 886.9442126244498,
             },
             "imum_coeli": {
                 "abs_pos": 97.05841100455723,
@@ -7196,7 +7412,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 332.1250777562273,
             },
             "medium_coeli": {
                 "abs_pos": 277.05841100455723,
@@ -7210,7 +7426,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 332.1250777562273,
             },
         },
         "houses": {
@@ -7224,6 +7440,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 450.2463974092959,
             },
             "eleventh_house": {
                 "abs_pos": 295.30021465189316,
@@ -7235,6 +7452,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 378.44197686179945,
             },
             "fifth_house": {
                 "abs_pos": 115.30021465189316,
@@ -7246,6 +7464,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 378.44197686179945,
             },
             "first_house": {
                 "abs_pos": 19.711127763394927,
@@ -7257,6 +7476,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 886.9442126244498,
             },
             "fourth_house": {
                 "abs_pos": 97.05841100455723,
@@ -7268,6 +7488,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 332.1250777562273,
             },
             "ninth_house": {
                 "abs_pos": 260.2248200456441,
@@ -7279,6 +7500,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 346.42629593920105,
             },
             "second_house": {
                 "abs_pos": 59.519861008829764,
@@ -7290,6 +7512,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 450.2463974092959,
             },
             "seventh_house": {
                 "abs_pos": 199.71112776339493,
@@ -7301,6 +7524,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 886.9442126244498,
             },
             "sixth_house": {
                 "abs_pos": 142.08600241808227,
@@ -7312,6 +7536,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 551.4515058335547,
             },
             "tenth_house": {
                 "abs_pos": 277.05841100455723,
@@ -7323,6 +7548,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 332.1250777562273,
             },
             "third_house": {
                 "abs_pos": 80.2248200456441,
@@ -7334,6 +7560,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 346.42629593920105,
             },
             "twelfth_house": {
                 "abs_pos": 322.0860024180823,
@@ -7345,6 +7572,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 551.4515058335547,
             },
         },
         "is_diurnal": False,
@@ -7565,7 +7793,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Aqu",
                 "sign_num": 10,
-                "speed": 360.0,
+                "speed": 507.78767992880194,
             },
             "descendant": {
                 "abs_pos": 140.6967264442369,
@@ -7579,7 +7807,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Leo",
                 "sign_num": 4,
-                "speed": 360.0,
+                "speed": 507.78767992880194,
             },
             "imum_coeli": {
                 "abs_pos": 66.58777723468557,
@@ -7593,7 +7821,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 341.0208037290671,
             },
             "medium_coeli": {
                 "abs_pos": 246.58777723468557,
@@ -7607,7 +7835,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 341.0208037290671,
             },
         },
         "houses": {
@@ -7621,6 +7849,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 505.2179849439662,
             },
             "eleventh_house": {
                 "abs_pos": 268.3422258795036,
@@ -7632,6 +7861,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 330.04692583484297,
             },
             "fifth_house": {
                 "abs_pos": 88.34222587950359,
@@ -7643,6 +7873,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 330.04692583484297,
             },
             "first_house": {
                 "abs_pos": 320.6967264442369,
@@ -7654,6 +7885,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 507.78767992880194,
             },
             "fourth_house": {
                 "abs_pos": 66.58777723468557,
@@ -7665,6 +7897,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 341.0208037290671,
             },
             "ninth_house": {
                 "abs_pos": 221.21544409219425,
@@ -7676,6 +7909,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 401.8372806225168,
             },
             "second_house": {
                 "abs_pos": 6.643287707840497,
@@ -7687,6 +7921,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 505.2179849439662,
             },
             "seventh_house": {
                 "abs_pos": 140.6967264442369,
@@ -7698,6 +7933,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 507.78767992880194,
             },
             "sixth_house": {
                 "abs_pos": 110.99077179873143,
@@ -7709,6 +7945,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 372.3976912793039,
             },
             "tenth_house": {
                 "abs_pos": 246.58777723468557,
@@ -7720,6 +7957,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 341.0208037290671,
             },
             "third_house": {
                 "abs_pos": 41.21544409219425,
@@ -7731,6 +7969,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 401.8372806225168,
             },
             "twelfth_house": {
                 "abs_pos": 290.99077179873143,
@@ -7742,6 +7981,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 372.3976912793039,
             },
         },
         "is_diurnal": False,
@@ -7962,7 +8202,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 285.37302933006407,
             },
             "descendant": {
                 "abs_pos": 2.667011228767649,
@@ -7976,7 +8216,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 285.37302933006407,
             },
             "imum_coeli": {
                 "abs_pos": 273.09074081854976,
@@ -7990,7 +8230,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 330.8648926260454,
             },
             "medium_coeli": {
                 "abs_pos": 93.09074081854973,
@@ -8004,7 +8244,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 330.8648926260454,
             },
         },
         "houses": {
@@ -8018,6 +8258,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 308.7005633146673,
             },
             "eleventh_house": {
                 "abs_pos": 126.66720663219186,
@@ -8029,6 +8270,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 326.6560927262102,
             },
             "fifth_house": {
                 "abs_pos": 306.6672066321919,
@@ -8040,6 +8282,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 326.6560927262102,
             },
             "first_house": {
                 "abs_pos": 182.66701122876765,
@@ -8051,6 +8294,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 285.37302933006407,
             },
             "fourth_house": {
                 "abs_pos": 273.09074081854976,
@@ -8062,6 +8306,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 330.8648926260454,
             },
             "ninth_house": {
                 "abs_pos": 59.40159480593917,
@@ -8073,6 +8318,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 324.2954102244477,
             },
             "second_house": {
                 "abs_pos": 208.86011399288742,
@@ -8084,6 +8330,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 308.7005633146673,
             },
             "seventh_house": {
                 "abs_pos": 2.667011228767649,
@@ -8095,6 +8342,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 285.37302933006407,
             },
             "sixth_house": {
                 "abs_pos": 336.9211984498837,
@@ -8106,6 +8354,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 310.47486408408906,
             },
             "tenth_house": {
                 "abs_pos": 93.09074081854973,
@@ -8117,6 +8366,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 330.8648926260454,
             },
             "third_house": {
                 "abs_pos": 239.40159480593917,
@@ -8128,6 +8378,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 324.2954102244477,
             },
             "twelfth_house": {
                 "abs_pos": 156.9211984498837,
@@ -8139,6 +8390,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 310.47486408408906,
             },
         },
         "is_diurnal": False,
@@ -8359,7 +8611,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Leo",
                 "sign_num": 4,
-                "speed": 360.0,
+                "speed": 278.25993712299703,
             },
             "descendant": {
                 "abs_pos": 302.9469332807264,
@@ -8373,7 +8625,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Aqu",
                 "sign_num": 10,
-                "speed": 360.0,
+                "speed": 278.25993712299703,
             },
             "imum_coeli": {
                 "abs_pos": 196.65598458257398,
@@ -8387,7 +8639,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 388.5745379603987,
             },
             "medium_coeli": {
                 "abs_pos": 16.655984582573968,
@@ -8401,7 +8653,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 388.5745379603987,
             },
         },
         "houses": {
@@ -8415,6 +8667,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 300.71861832145476,
             },
             "eleventh_house": {
                 "abs_pos": 54.102317545916094,
@@ -8426,6 +8679,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 386.62343458059667,
             },
             "fifth_house": {
                 "abs_pos": 234.1023175459161,
@@ -8437,6 +8691,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 386.62343458059667,
             },
             "first_house": {
                 "abs_pos": 122.94693328072637,
@@ -8448,6 +8703,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 278.25993712299703,
             },
             "fourth_house": {
                 "abs_pos": 196.65598458257398,
@@ -8459,6 +8715,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 388.5745379603987,
             },
             "ninth_house": {
                 "abs_pos": 345.99326425201787,
@@ -8470,6 +8727,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 343.4184254871668,
             },
             "second_house": {
                 "abs_pos": 142.2711264399303,
@@ -8481,6 +8739,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 300.71861832145476,
             },
             "seventh_house": {
                 "abs_pos": 302.9469332807264,
@@ -8492,6 +8751,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 278.25993712299703,
             },
             "sixth_house": {
                 "abs_pos": 271.6210372833981,
@@ -8503,6 +8763,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 328.0280881040262,
             },
             "tenth_house": {
                 "abs_pos": 16.655984582573968,
@@ -8514,6 +8775,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 388.5745379603987,
             },
             "third_house": {
                 "abs_pos": 165.9932642520179,
@@ -8525,6 +8787,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 343.4184254871668,
             },
             "twelfth_house": {
                 "abs_pos": 91.62103728339808,
@@ -8536,6 +8799,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 328.0280881040262,
             },
         },
         "is_diurnal": True,
@@ -8756,7 +9020,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 253.73987928173221,
             },
             "descendant": {
                 "abs_pos": 344.7422868727448,
@@ -8770,7 +9034,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 253.73987928173221,
             },
             "imum_coeli": {
                 "abs_pos": 249.98272574511853,
@@ -8784,7 +9048,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 338.4872207891852,
             },
             "medium_coeli": {
                 "abs_pos": 69.98272574511853,
@@ -8798,7 +9062,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 338.4872207891852,
             },
         },
         "houses": {
@@ -8812,6 +9076,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 288.3055054488049,
             },
             "eleventh_house": {
                 "abs_pos": 107.25903296112456,
@@ -8823,6 +9088,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 317.0361907964355,
             },
             "fifth_house": {
                 "abs_pos": 287.25903296112455,
@@ -8834,6 +9100,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 317.0361907964355,
             },
             "first_house": {
                 "abs_pos": 164.7422868727448,
@@ -8845,6 +9112,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 253.73987928173221,
             },
             "fourth_house": {
                 "abs_pos": 249.98272574511853,
@@ -8856,6 +9124,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 338.4872207891852,
             },
             "ninth_house": {
                 "abs_pos": 34.92155686397916,
@@ -8867,6 +9136,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 322.7503116062796,
             },
             "second_house": {
                 "abs_pos": 186.66657632901803,
@@ -8878,6 +9148,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 288.3055054488049,
             },
             "seventh_house": {
                 "abs_pos": 344.7422868727448,
@@ -8889,6 +9160,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 253.73987928173221,
             },
             "sixth_house": {
                 "abs_pos": 319.1302851492686,
@@ -8900,6 +9172,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 283.0853503474154,
             },
             "tenth_house": {
                 "abs_pos": 69.98272574511853,
@@ -8911,6 +9184,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 338.4872207891852,
             },
             "third_house": {
                 "abs_pos": 214.92155686397916,
@@ -8922,6 +9196,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 322.7503116062796,
             },
             "twelfth_house": {
                 "abs_pos": 139.13028514926864,
@@ -8933,6 +9208,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 283.0853503474154,
             },
         },
         "is_diurnal": True,
@@ -9153,7 +9429,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 254.43635564966203,
             },
             "descendant": {
                 "abs_pos": 6.9366677473455525,
@@ -9167,7 +9443,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 254.43635564966203,
             },
             "imum_coeli": {
                 "abs_pos": 279.03885913188117,
@@ -9181,7 +9457,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 332.7382316995678,
             },
             "medium_coeli": {
                 "abs_pos": 99.03885913188114,
@@ -9195,7 +9471,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 332.7382316995678,
             },
         },
         "houses": {
@@ -9209,6 +9485,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 284.2635068229139,
             },
             "eleventh_house": {
                 "abs_pos": 134.63287414645345,
@@ -9220,6 +9497,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 318.2863001879247,
             },
             "fifth_house": {
                 "abs_pos": 314.63287414645345,
@@ -9231,6 +9509,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 318.2863001879247,
             },
             "first_house": {
                 "abs_pos": 186.93666774734555,
@@ -9242,6 +9521,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 254.43635564966203,
             },
             "fourth_house": {
                 "abs_pos": 279.03885913188117,
@@ -9253,6 +9533,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 332.7382316995678,
             },
             "ninth_house": {
                 "abs_pos": 62.47528468280825,
@@ -9264,6 +9545,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 314.7932957416341,
             },
             "second_house": {
                 "abs_pos": 211.62494654489035,
@@ -9275,6 +9557,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 284.2635068229139,
             },
             "seventh_house": {
                 "abs_pos": 6.9366677473455525,
@@ -9286,6 +9569,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 254.43635564966203,
             },
             "sixth_house": {
                 "abs_pos": 343.9136977854183,
@@ -9297,6 +9581,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 287.15405201185223,
             },
             "tenth_house": {
                 "abs_pos": 99.03885913188114,
@@ -9308,6 +9593,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 332.7382316995678,
             },
             "third_house": {
                 "abs_pos": 242.47528468280828,
@@ -9319,6 +9605,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 314.7932957416341,
             },
             "twelfth_house": {
                 "abs_pos": 163.91369778541832,
@@ -9330,6 +9617,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 287.15405201185223,
             },
         },
         "is_diurnal": False,
@@ -9550,7 +9838,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 392.31548376392254,
             },
             "descendant": {
                 "abs_pos": 343.79017063469223,
@@ -9564,7 +9852,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 392.31548376392254,
             },
             "imum_coeli": {
                 "abs_pos": 256.3835744879316,
@@ -9578,7 +9866,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 334.6421444140013,
             },
             "medium_coeli": {
                 "abs_pos": 76.38357448793157,
@@ -9592,7 +9880,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 334.6421444140013,
             },
         },
         "houses": {
@@ -9606,6 +9894,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 390.82845116715475,
             },
             "eleventh_house": {
                 "abs_pos": 103.83900361095559,
@@ -9617,6 +9906,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 335.0369211715802,
             },
             "fifth_house": {
                 "abs_pos": 283.8390036109556,
@@ -9628,6 +9918,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 335.0369211715802,
             },
             "first_house": {
                 "abs_pos": 163.7901706346922,
@@ -9639,6 +9930,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 392.31548376392254,
             },
             "fourth_house": {
                 "abs_pos": 256.3835744879316,
@@ -9650,6 +9942,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 334.6421444140013,
             },
             "ninth_house": {
                 "abs_pos": 47.80642321109394,
@@ -9661,6 +9954,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 360.10580756102695,
             },
             "second_house": {
                 "abs_pos": 196.61305873362414,
@@ -9672,6 +9966,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 390.82845116715475,
             },
             "seventh_house": {
                 "abs_pos": 343.79017063469223,
@@ -9683,6 +9978,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 392.31548376392254,
             },
             "sixth_house": {
                 "abs_pos": 312.4812560665565,
@@ -9694,6 +9990,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 361.2559587634678,
             },
             "tenth_house": {
                 "abs_pos": 76.38357448793157,
@@ -9705,6 +10002,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 334.6421444140013,
             },
             "third_house": {
                 "abs_pos": 227.80642321109397,
@@ -9716,6 +10014,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 360.10580756102695,
             },
             "twelfth_house": {
                 "abs_pos": 132.4812560665565,
@@ -9727,6 +10026,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 361.2559587634678,
             },
         },
         "is_diurnal": True,
@@ -9947,7 +10247,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 285.292080452333,
             },
             "descendant": {
                 "abs_pos": 343.88662679448055,
@@ -9961,7 +10261,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 285.292080452333,
             },
             "imum_coeli": {
                 "abs_pos": 251.22558162468425,
@@ -9975,7 +10275,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 337.64105353075144,
             },
             "medium_coeli": {
                 "abs_pos": 71.22558162468425,
@@ -9989,7 +10289,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 337.64105353075144,
             },
         },
         "houses": {
@@ -10003,6 +10303,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 314.5319441591773,
             },
             "eleventh_house": {
                 "abs_pos": 105.34481254859242,
@@ -10014,6 +10315,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 323.6950566837603,
             },
             "fifth_house": {
                 "abs_pos": 285.3448125485924,
@@ -10025,6 +10327,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 323.6950566837603,
             },
             "first_house": {
                 "abs_pos": 163.88662679448052,
@@ -10036,6 +10339,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 285.292080452333,
             },
             "fourth_house": {
                 "abs_pos": 251.22558162468425,
@@ -10047,6 +10351,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 337.64105353075144,
             },
             "ninth_house": {
                 "abs_pos": 37.86229544690127,
@@ -10058,6 +10363,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 335.6800587299934,
             },
             "second_house": {
                 "abs_pos": 188.4349788861243,
@@ -10069,6 +10375,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 314.5319441591773,
             },
             "seventh_house": {
                 "abs_pos": 343.88662679448055,
@@ -10080,6 +10387,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 285.292080452333,
             },
             "sixth_house": {
                 "abs_pos": 316.64279002627205,
@@ -10091,6 +10399,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 305.54612801578145,
             },
             "tenth_house": {
                 "abs_pos": 71.22558162468425,
@@ -10102,6 +10411,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 337.64105353075144,
             },
             "third_house": {
                 "abs_pos": 217.8622954469013,
@@ -10113,6 +10423,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 335.6800587299934,
             },
             "twelfth_house": {
                 "abs_pos": 136.64279002627205,
@@ -10124,6 +10435,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 305.54612801578145,
             },
         },
         "is_diurnal": True,
@@ -10344,7 +10656,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 247.34075492696667,
             },
             "descendant": {
                 "abs_pos": 29.748485470758283,
@@ -10358,7 +10670,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 247.34075492696667,
             },
             "imum_coeli": {
                 "abs_pos": 310.7003809733672,
@@ -10372,7 +10684,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Aqu",
                 "sign_num": 10,
-                "speed": 360.0,
+                "speed": 357.6633599523729,
             },
             "medium_coeli": {
                 "abs_pos": 130.7003809733672,
@@ -10386,7 +10698,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Leo",
                 "sign_num": 4,
-                "speed": 360.0,
+                "speed": 357.6633599523729,
             },
         },
         "houses": {
@@ -10400,6 +10712,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 282.02032099974207,
             },
             "eleventh_house": {
                 "abs_pos": 164.63802731075845,
@@ -10411,6 +10724,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 327.9357602363058,
             },
             "fifth_house": {
                 "abs_pos": 344.63802731075845,
@@ -10422,6 +10736,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 327.9357602363058,
             },
             "first_house": {
                 "abs_pos": 209.74848547075825,
@@ -10433,6 +10748,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 247.34075492696667,
             },
             "fourth_house": {
                 "abs_pos": 310.7003809733672,
@@ -10444,6 +10760,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 357.6633599523729,
             },
             "ninth_house": {
                 "abs_pos": 91.3322509839914,
@@ -10455,6 +10772,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 332.87143414047455,
             },
             "second_house": {
                 "abs_pos": 236.83204174350004,
@@ -10466,6 +10784,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 282.02032099974207,
             },
             "seventh_house": {
                 "abs_pos": 29.748485470758283,
@@ -10477,6 +10796,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 247.34075492696667,
             },
             "sixth_house": {
                 "abs_pos": 10.361966455108188,
@@ -10488,6 +10808,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 283.83552320126086,
             },
             "tenth_house": {
                 "abs_pos": 130.7003809733672,
@@ -10499,6 +10820,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 357.6633599523729,
             },
             "third_house": {
                 "abs_pos": 271.3322509839914,
@@ -10510,6 +10832,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 332.87143414047455,
             },
             "twelfth_house": {
                 "abs_pos": 190.3619664551082,
@@ -10521,6 +10844,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 283.83552320126086,
             },
         },
         "is_diurnal": False,
@@ -10741,7 +11065,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 223.74622363641683,
             },
             "descendant": {
                 "abs_pos": 343.93681492753353,
@@ -10755,7 +11079,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 223.74622363641683,
             },
             "imum_coeli": {
                 "abs_pos": 246.06440170958336,
@@ -10769,7 +11093,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 341.4405870346196,
             },
             "medium_coeli": {
                 "abs_pos": 66.06440170958338,
@@ -10783,7 +11107,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 341.4405870346196,
             },
         },
         "houses": {
@@ -10797,6 +11121,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 262.4399222480697,
             },
             "eleventh_house": {
                 "abs_pos": 107.69616531616433,
@@ -10808,6 +11133,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 308.2327279101693,
             },
             "fifth_house": {
                 "abs_pos": 287.6961653161643,
@@ -10819,6 +11145,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 308.2327279101693,
             },
             "first_house": {
                 "abs_pos": 163.93681492753353,
@@ -10830,6 +11157,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 223.74622363641683,
             },
             "fourth_house": {
                 "abs_pos": 246.06440170958336,
@@ -10841,6 +11169,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 341.4405870346196,
             },
             "ninth_house": {
                 "abs_pos": 29.521620419084,
@@ -10852,6 +11181,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 308.3278430544661,
             },
             "second_house": {
                 "abs_pos": 183.04036215239287,
@@ -10863,6 +11193,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 262.4399222480697,
             },
             "seventh_house": {
                 "abs_pos": 343.93681492753353,
@@ -10874,6 +11205,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 223.74622363641683,
             },
             "sixth_house": {
                 "abs_pos": 319.91700302884794,
@@ -10885,6 +11217,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 258.08971242382836,
             },
             "tenth_house": {
                 "abs_pos": 66.06440170958338,
@@ -10896,6 +11229,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 341.4405870346196,
             },
             "third_house": {
                 "abs_pos": 209.521620419084,
@@ -10907,6 +11241,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 308.3278430544661,
             },
             "twelfth_house": {
                 "abs_pos": 139.91700302884794,
@@ -10918,6 +11253,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 258.08971242382836,
             },
         },
         "is_diurnal": True,
@@ -11138,7 +11474,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 247.9164519375874,
             },
             "descendant": {
                 "abs_pos": 10.77116065793598,
@@ -11152,7 +11488,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 247.9164519375874,
             },
             "imum_coeli": {
                 "abs_pos": 284.42718881903306,
@@ -11166,7 +11502,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 335.0516694076918,
             },
             "medium_coeli": {
                 "abs_pos": 104.42718881903309,
@@ -11180,7 +11516,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 335.0516694076918,
             },
         },
         "houses": {
@@ -11194,6 +11530,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 278.5872571353483,
             },
             "eleventh_house": {
                 "abs_pos": 140.18540392692626,
@@ -11205,6 +11542,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 317.49122663543545,
             },
             "fifth_house": {
                 "abs_pos": 320.18540392692626,
@@ -11216,6 +11554,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 317.49122663543545,
             },
             "first_house": {
                 "abs_pos": 190.771160657936,
@@ -11227,6 +11566,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 247.9164519375874,
             },
             "fourth_house": {
                 "abs_pos": 284.42718881903306,
@@ -11238,6 +11578,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 335.0516694076918,
             },
             "ninth_house": {
                 "abs_pos": 66.84652302108753,
@@ -11249,6 +11590,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 313.33595557108487,
             },
             "second_house": {
                 "abs_pos": 215.52111677325814,
@@ -11260,6 +11602,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 278.5872571353483,
             },
             "seventh_house": {
                 "abs_pos": 10.77116065793598,
@@ -11271,6 +11614,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 247.9164519375874,
             },
             "sixth_house": {
                 "abs_pos": 348.7648877068259,
@@ -11282,6 +11626,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 282.5034166572911,
             },
             "tenth_house": {
                 "abs_pos": 104.42718881903309,
@@ -11293,6 +11638,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 335.0516694076918,
             },
             "third_house": {
                 "abs_pos": 246.84652302108753,
@@ -11304,6 +11650,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 313.33595557108487,
             },
             "twelfth_house": {
                 "abs_pos": 168.7648877068259,
@@ -11315,6 +11662,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 282.5034166572911,
             },
         },
         "is_diurnal": True,
@@ -11535,7 +11883,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 390.828959712522,
             },
             "descendant": {
                 "abs_pos": 349.4053454226623,
@@ -11549,7 +11897,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 390.828959712522,
             },
             "imum_coeli": {
                 "abs_pos": 261.0402592765409,
@@ -11563,7 +11911,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 332.7013290574328,
             },
             "medium_coeli": {
                 "abs_pos": 81.04025927654091,
@@ -11577,7 +11925,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 332.7013290574328,
             },
         },
         "houses": {
@@ -11591,6 +11939,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 384.4799689608746,
             },
             "eleventh_house": {
                 "abs_pos": 108.72146284529086,
@@ -11602,6 +11951,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 337.5527041094261,
             },
             "fifth_house": {
                 "abs_pos": 288.72146284529083,
@@ -11613,6 +11963,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 337.5527041094261,
             },
             "first_house": {
                 "abs_pos": 169.4053454226623,
@@ -11624,6 +11975,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 390.828959712522,
             },
             "fourth_house": {
                 "abs_pos": 261.0402592765409,
@@ -11635,6 +11987,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 332.7013290574328,
             },
             "ninth_house": {
                 "abs_pos": 52.63410520719475,
@@ -11646,6 +11999,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 354.02361701747486,
             },
             "second_house": {
                 "abs_pos": 201.88522645260932,
@@ -11657,6 +12011,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 384.4799689608746,
             },
             "seventh_house": {
                 "abs_pos": 349.4053454226623,
@@ -11668,6 +12023,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 390.828959712522,
             },
             "sixth_house": {
                 "abs_pos": 317.84016411674327,
@@ -11679,6 +12035,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 365.15144519220337,
             },
             "tenth_house": {
                 "abs_pos": 81.04025927654091,
@@ -11690,6 +12047,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 332.7013290574328,
             },
             "third_house": {
                 "abs_pos": 232.63410520719475,
@@ -11701,6 +12059,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 354.02361701747486,
             },
             "twelfth_house": {
                 "abs_pos": 137.8401641167433,
@@ -11712,6 +12071,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 365.15144519220337,
             },
         },
         "is_diurnal": True,
@@ -11932,7 +12292,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 205.74887745944667,
             },
             "descendant": {
                 "abs_pos": 343.6966674331139,
@@ -11946,7 +12306,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 205.74887745944667,
             },
             "imum_coeli": {
                 "abs_pos": 243.58579075115395,
@@ -11960,7 +12320,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 343.5140313715675,
             },
             "medium_coeli": {
                 "abs_pos": 63.58579075115396,
@@ -11974,7 +12334,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 343.5140313715675,
             },
         },
         "houses": {
@@ -11988,6 +12348,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 246.4362929968102,
             },
             "eleventh_house": {
                 "abs_pos": 108.97356773701561,
@@ -11999,6 +12360,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 299.2205596395911,
             },
             "fifth_house": {
                 "abs_pos": 288.9735677370156,
@@ -12010,6 +12372,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 299.2205596395911,
             },
             "first_house": {
                 "abs_pos": 163.69666743311387,
@@ -12021,6 +12384,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 205.74887745944667,
             },
             "fourth_house": {
                 "abs_pos": 243.58579075115395,
@@ -12032,6 +12396,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 343.5140313715675,
             },
             "ninth_house": {
                 "abs_pos": 26.257933873517686,
@@ -12043,6 +12408,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 297.9157469853173,
             },
             "second_house": {
                 "abs_pos": 181.07108817068678,
@@ -12054,6 +12420,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 246.4362929968102,
             },
             "seventh_house": {
                 "abs_pos": 343.6966674331139,
@@ -12065,6 +12432,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 205.74887745944667,
             },
             "sixth_house": {
                 "abs_pos": 320.79201399789787,
@@ -12076,6 +12444,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 240.98918327381662,
             },
             "tenth_house": {
                 "abs_pos": 63.58579075115396,
@@ -12087,6 +12456,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 343.5140313715675,
             },
             "third_house": {
                 "abs_pos": 206.2579338735177,
@@ -12098,6 +12468,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 297.9157469853173,
             },
             "twelfth_house": {
                 "abs_pos": 140.79201399789787,
@@ -12109,6 +12480,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 240.98918327381662,
             },
         },
         "is_diurnal": True,
@@ -12329,7 +12701,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 622.4172483352825,
             },
             "descendant": {
                 "abs_pos": 199.15904298418118,
@@ -12343,7 +12715,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 622.4172483352825,
             },
             "imum_coeli": {
                 "abs_pos": 99.90692118971998,
@@ -12357,7 +12729,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 332.4732708122851,
             },
             "medium_coeli": {
                 "abs_pos": 279.90692118972,
@@ -12371,7 +12743,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 332.4732708122851,
             },
         },
         "houses": {
@@ -12385,6 +12757,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 419.4897955768475,
             },
             "eleventh_house": {
                 "abs_pos": 302.17537903489807,
@@ -12396,6 +12769,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 377.27686267874407,
             },
             "fifth_house": {
                 "abs_pos": 122.17537903489807,
@@ -12407,6 +12781,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 377.27686267874407,
             },
             "first_house": {
                 "abs_pos": 19.159042984181195,
@@ -12418,6 +12793,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 622.4172483352825,
             },
             "fourth_house": {
                 "abs_pos": 99.90692118971998,
@@ -12429,6 +12805,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 332.4732708122851,
             },
             "ninth_house": {
                 "abs_pos": 259.3110590275729,
@@ -12440,6 +12817,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 342.13331200642585,
             },
             "second_house": {
                 "abs_pos": 55.40093569016927,
@@ -12451,6 +12829,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 419.4897955768475,
             },
             "seventh_house": {
                 "abs_pos": 199.15904298418118,
@@ -12462,6 +12841,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 622.4172483352825,
             },
             "sixth_house": {
                 "abs_pos": 152.2031557982299,
@@ -12473,6 +12853,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 499.4552385034059,
             },
             "tenth_house": {
                 "abs_pos": 279.90692118972,
@@ -12484,6 +12865,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 332.4732708122851,
             },
             "third_house": {
                 "abs_pos": 79.31105902757292,
@@ -12495,6 +12877,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 342.13331200642585,
             },
             "twelfth_house": {
                 "abs_pos": 332.2031557982299,
@@ -12506,6 +12889,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 499.4552385034059,
             },
         },
         "is_diurnal": True,
@@ -12726,7 +13110,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 433.910114583967,
             },
             "descendant": {
                 "abs_pos": 344.47570941325955,
@@ -12740,7 +13124,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 433.910114583967,
             },
             "imum_coeli": {
                 "abs_pos": 258.23799880275897,
@@ -12754,7 +13138,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 333.7784989929018,
             },
             "medium_coeli": {
                 "abs_pos": 78.237998802759,
@@ -12768,7 +13152,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 333.7784989929018,
             },
         },
         "houses": {
@@ -12782,6 +13166,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 414.1069925819752,
             },
             "eleventh_house": {
                 "abs_pos": 104.03608419173563,
@@ -12793,6 +13178,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 338.0235275340054,
             },
             "fifth_house": {
                 "abs_pos": 284.03608419173565,
@@ -12804,6 +13190,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 338.0235275340054,
             },
             "first_house": {
                 "abs_pos": 164.47570941325952,
@@ -12815,6 +13202,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 433.910114583967,
             },
             "fourth_house": {
                 "abs_pos": 258.23799880275897,
@@ -12826,6 +13214,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 333.7784989929018,
             },
             "ninth_house": {
                 "abs_pos": 51.17813749106506,
@@ -12837,6 +13226,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 364.221924956441,
             },
             "second_house": {
                 "abs_pos": 200.0454682507415,
@@ -12848,6 +13238,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 414.1069925819752,
             },
             "seventh_house": {
                 "abs_pos": 344.47570941325955,
@@ -12859,6 +13250,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 433.910114583967,
             },
             "sixth_house": {
                 "abs_pos": 311.8297162313362,
@@ -12870,6 +13262,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 377.69585912416704,
             },
             "tenth_house": {
                 "abs_pos": 78.237998802759,
@@ -12881,6 +13274,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 333.7784989929018,
             },
             "third_house": {
                 "abs_pos": 231.17813749106503,
@@ -12892,6 +13286,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 364.221924956441,
             },
             "twelfth_house": {
                 "abs_pos": 131.82971623133622,
@@ -12903,6 +13298,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 377.69585912416704,
             },
         },
         "is_diurnal": True,
@@ -13123,7 +13519,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 379.1050298383867,
             },
             "descendant": {
                 "abs_pos": 335.4153269091441,
@@ -13137,7 +13533,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 379.1050298383867,
             },
             "imum_coeli": {
                 "abs_pos": 248.72469722747036,
@@ -13151,7 +13547,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 339.3893979273431,
             },
             "medium_coeli": {
                 "abs_pos": 68.72469722747034,
@@ -13165,7 +13561,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 339.3893979273431,
             },
         },
         "houses": {
@@ -13179,6 +13575,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 389.73922653421204,
             },
             "eleventh_house": {
                 "abs_pos": 96.60820824657168,
@@ -13190,6 +13587,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 331.8737913190801,
             },
             "fifth_house": {
                 "abs_pos": 276.6082082465717,
@@ -13201,6 +13599,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 331.8737913190801,
             },
             "first_house": {
                 "abs_pos": 155.41532690914408,
@@ -13212,6 +13611,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 379.1050298383867,
             },
             "fourth_house": {
                 "abs_pos": 248.72469722747036,
@@ -13223,6 +13623,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 339.3893979273431,
             },
             "ninth_house": {
                 "abs_pos": 39.280919886034326,
@@ -13234,6 +13635,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 367.4974302757132,
             },
             "second_house": {
                 "abs_pos": 187.57420695207986,
@@ -13245,6 +13647,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 389.73922653421204,
             },
             "seventh_house": {
                 "abs_pos": 335.4153269091441,
@@ -13256,6 +13659,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 379.1050298383867,
             },
             "sixth_house": {
                 "abs_pos": 304.9638049989136,
@@ -13267,6 +13671,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 350.1917291633321,
             },
             "tenth_house": {
                 "abs_pos": 68.72469722747034,
@@ -13278,6 +13683,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 339.3893979273431,
             },
             "third_house": {
                 "abs_pos": 219.2809198860343,
@@ -13289,6 +13695,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 367.4974302757132,
             },
             "twelfth_house": {
                 "abs_pos": 124.96380499891362,
@@ -13300,6 +13707,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 350.1917291633321,
             },
         },
         "is_diurnal": True,
@@ -13520,7 +13928,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 550.9295593077086,
             },
             "descendant": {
                 "abs_pos": 351.2738388761858,
@@ -13534,7 +13942,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 550.9295593077086,
             },
             "imum_coeli": {
                 "abs_pos": 264.77706340183124,
@@ -13548,7 +13956,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 331.7069854744054,
             },
             "medium_coeli": {
                 "abs_pos": 84.77706340183126,
@@ -13562,7 +13970,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 331.7069854744054,
             },
         },
         "houses": {
@@ -13576,6 +13984,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 452.59429175501776,
             },
             "eleventh_house": {
                 "abs_pos": 107.5182260861429,
@@ -13587,6 +13996,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 347.9914606526481,
             },
             "fifth_house": {
                 "abs_pos": 287.51822608614293,
@@ -13598,6 +14008,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 347.9914606526481,
             },
             "first_house": {
                 "abs_pos": 171.2738388761858,
@@ -13609,6 +14020,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 550.9295593077086,
             },
             "fourth_house": {
                 "abs_pos": 264.77706340183124,
@@ -13620,6 +14032,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 331.7069854744054,
             },
             "ninth_house": {
                 "abs_pos": 61.260063440940826,
@@ -13631,6 +14044,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 363.9391080736508,
             },
             "second_house": {
                 "abs_pos": 212.0416113604571,
@@ -13642,6 +14056,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 452.59429175501776,
             },
             "seventh_house": {
                 "abs_pos": 351.2738388761858,
@@ -13653,6 +14068,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 550.9295593077086,
             },
             "sixth_house": {
                 "abs_pos": 314.15683516204774,
@@ -13664,6 +14080,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 421.63606417857824,
             },
             "tenth_house": {
                 "abs_pos": 84.77706340183126,
@@ -13675,6 +14092,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 331.7069854744054,
             },
             "third_house": {
                 "abs_pos": 241.26006344094083,
@@ -13686,6 +14104,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 363.9391080736508,
             },
             "twelfth_house": {
                 "abs_pos": 134.15683516204774,
@@ -13697,6 +14116,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 421.63606417857824,
             },
         },
         "is_diurnal": True,
@@ -13917,7 +14337,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Vir",
                 "sign_num": 5,
-                "speed": 360.0,
+                "speed": 300.03132451675395,
             },
             "descendant": {
                 "abs_pos": 358.1649313069272,
@@ -13931,7 +14351,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Pis",
                 "sign_num": 11,
-                "speed": 360.0,
+                "speed": 300.03132451675395,
             },
             "imum_coeli": {
                 "abs_pos": 267.9742863866086,
@@ -13945,7 +14365,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 331.2687800579316,
             },
             "medium_coeli": {
                 "abs_pos": 87.97428638660861,
@@ -13959,7 +14379,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 331.2687800579316,
             },
         },
         "houses": {
@@ -13973,6 +14393,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 320.8486030977755,
             },
             "eleventh_house": {
                 "abs_pos": 120.63860293618455,
@@ -13984,6 +14405,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 328.60238620724914,
             },
             "fifth_house": {
                 "abs_pos": 300.63860293618455,
@@ -13995,6 +14417,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 328.60238620724914,
             },
             "first_house": {
                 "abs_pos": 178.1649313069272,
@@ -14006,6 +14429,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 300.03132451675395,
             },
             "fourth_house": {
                 "abs_pos": 267.9742863866086,
@@ -14017,6 +14441,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 331.2687800579316,
             },
             "ninth_house": {
                 "abs_pos": 55.33577609189666,
@@ -14028,6 +14453,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 330.4291738946013,
             },
             "second_house": {
                 "abs_pos": 204.94764426651142,
@@ -14039,6 +14465,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 320.8486030977755,
             },
             "seventh_house": {
                 "abs_pos": 358.1649313069272,
@@ -14050,6 +14477,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 300.03132451675395,
             },
             "sixth_house": {
                 "abs_pos": 331.13842513702036,
@@ -14061,6 +14489,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 319.4216651921273,
             },
             "tenth_house": {
                 "abs_pos": 87.97428638660861,
@@ -14072,6 +14501,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 331.2687800579316,
             },
             "third_house": {
                 "abs_pos": 235.33577609189666,
@@ -14083,6 +14513,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 330.4291738946013,
             },
             "twelfth_house": {
                 "abs_pos": 151.13842513702036,
@@ -14094,6 +14525,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 319.4216651921273,
             },
         },
         "is_diurnal": True,
@@ -14314,7 +14746,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 515.353002644054,
             },
             "descendant": {
                 "abs_pos": 295.22682578630634,
@@ -14328,7 +14760,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 515.353002644054,
             },
             "imum_coeli": {
                 "abs_pos": 242.40670793103214,
@@ -14342,7 +14774,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sag",
                 "sign_num": 8,
-                "speed": 360.0,
+                "speed": 344.5507644320995,
             },
             "medium_coeli": {
                 "abs_pos": 62.40670793103216,
@@ -14356,7 +14788,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Gem",
                 "sign_num": 2,
-                "speed": 360.0,
+                "speed": 344.5507644320995,
             },
         },
         "houses": {
@@ -14370,6 +14802,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 666.6461168025494,
             },
             "eleventh_house": {
                 "abs_pos": 78.9746651296679,
@@ -14381,6 +14814,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 318.6856875088497,
             },
             "fifth_house": {
                 "abs_pos": 258.97466512966787,
@@ -14392,6 +14826,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 318.6856875088497,
             },
             "first_house": {
                 "abs_pos": 115.22682578630632,
@@ -14403,6 +14838,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 515.353002644054,
             },
             "fourth_house": {
                 "abs_pos": 242.40670793103214,
@@ -14414,6 +14850,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 344.5507644320995,
             },
             "ninth_house": {
                 "abs_pos": 40.101716941522,
@@ -14425,6 +14862,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 441.4050974657275,
             },
             "second_house": {
                 "abs_pos": 180.61265247220135,
@@ -14436,6 +14874,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 666.6461168025494,
             },
             "seventh_house": {
                 "abs_pos": 295.22682578630634,
@@ -14447,6 +14886,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 515.353002644054,
             },
             "sixth_house": {
                 "abs_pos": 274.74026736978954,
@@ -14458,6 +14898,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 346.3237790153188,
             },
             "tenth_house": {
                 "abs_pos": 62.40670793103216,
@@ -14469,6 +14910,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 344.5507644320995,
             },
             "third_house": {
                 "abs_pos": 220.10171694152197,
@@ -14480,6 +14922,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 441.4050974657275,
             },
             "twelfth_house": {
                 "abs_pos": 94.74026736978956,
@@ -14491,6 +14934,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 346.3237790153188,
             },
         },
         "is_diurnal": True,
@@ -14711,7 +15155,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Lib",
                 "sign_num": 6,
-                "speed": 360.0,
+                "speed": 276.3317848651318,
             },
             "descendant": {
                 "abs_pos": 18.154749881067175,
@@ -14725,7 +15169,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Ari",
                 "sign_num": 0,
-                "speed": 360.0,
+                "speed": 276.3317848651318,
             },
             "imum_coeli": {
                 "abs_pos": 291.8775530209052,
@@ -14739,7 +15183,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Cap",
                 "sign_num": 9,
-                "speed": 360.0,
+                "speed": 339.81843125960154,
             },
             "medium_coeli": {
                 "abs_pos": 111.8775530209052,
@@ -14753,7 +15197,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Can",
                 "sign_num": 3,
-                "speed": 360.0,
+                "speed": 339.81843125960154,
             },
         },
         "houses": {
@@ -14767,6 +15211,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 299.3910698547021,
             },
             "eleventh_house": {
                 "abs_pos": 145.64082008037548,
@@ -14778,6 +15223,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 333.9295769433258,
             },
             "fifth_house": {
                 "abs_pos": 325.6408200803755,
@@ -14789,6 +15235,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 333.9295769433258,
             },
             "first_house": {
                 "abs_pos": 198.15474988106718,
@@ -14800,6 +15247,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 276.3317848651318,
             },
             "fourth_house": {
                 "abs_pos": 291.8775530209052,
@@ -14811,6 +15259,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 339.81843125960154,
             },
             "ninth_house": {
                 "abs_pos": 76.83637438958033,
@@ -14822,6 +15271,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 322.912894856882,
             },
             "second_house": {
                 "abs_pos": 225.16092330908714,
@@ -14833,6 +15283,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 299.3910698547021,
             },
             "seventh_house": {
                 "abs_pos": 18.154749881067175,
@@ -14844,6 +15295,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 276.3317848651318,
             },
             "sixth_house": {
                 "abs_pos": 354.575445518056,
@@ -14855,6 +15307,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 307.71057648275894,
             },
             "tenth_house": {
                 "abs_pos": 111.8775530209052,
@@ -14866,6 +15319,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 339.81843125960154,
             },
             "third_house": {
                 "abs_pos": 256.8363743895803,
@@ -14877,6 +15331,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 322.912894856882,
             },
             "twelfth_house": {
                 "abs_pos": 174.57544551805597,
@@ -14888,6 +15343,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 307.71057648275894,
             },
         },
         "is_diurnal": True,
@@ -15108,7 +15564,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Tau",
                 "sign_num": 1,
-                "speed": 360.0,
+                "speed": 430.72164027328427,
             },
             "descendant": {
                 "abs_pos": 236.68483018679623,
@@ -15122,7 +15578,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Sco",
                 "sign_num": 7,
-                "speed": 360.0,
+                "speed": 430.72164027328427,
             },
             "imum_coeli": {
                 "abs_pos": 127.31035079549821,
@@ -15136,7 +15592,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Leo",
                 "sign_num": 4,
-                "speed": 360.0,
+                "speed": 354.0645295915292,
             },
             "medium_coeli": {
                 "abs_pos": 307.3103507954982,
@@ -15150,7 +15606,7 @@ EXPECTED_POSITIONS = {
                 "retrograde": False,
                 "sign": "Aqu",
                 "sign_num": 10,
-                "speed": 360.0,
+                "speed": 354.0645295915292,
             },
         },
         "houses": {
@@ -15164,6 +15620,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Sag",
                 "sign_num": 8,
+                "speed": 342.8965251615413,
             },
             "eleventh_house": {
                 "abs_pos": 335.6237293737601,
@@ -15175,6 +15632,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Pis",
                 "sign_num": 11,
+                "speed": 423.59451393367465,
             },
             "fifth_house": {
                 "abs_pos": 155.62372937376017,
@@ -15186,6 +15644,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Vir",
                 "sign_num": 5,
+                "speed": 423.59451393367465,
             },
             "first_house": {
                 "abs_pos": 56.684830186796226,
@@ -15197,6 +15656,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Tau",
                 "sign_num": 1,
+                "speed": 430.72164027328427,
             },
             "fourth_house": {
                 "abs_pos": 127.31035079549821,
@@ -15208,6 +15668,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Leo",
                 "sign_num": 4,
+                "speed": 354.0645295915292,
             },
             "ninth_house": {
                 "abs_pos": 284.30806383233073,
@@ -15219,6 +15680,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Cap",
                 "sign_num": 9,
+                "speed": 325.74494012184977,
             },
             "second_house": {
                 "abs_pos": 82.3601382866016,
@@ -15230,6 +15692,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Mutable",
                 "sign": "Gem",
                 "sign_num": 2,
+                "speed": 342.8965251615413,
             },
             "seventh_house": {
                 "abs_pos": 236.68483018679623,
@@ -15241,6 +15704,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Sco",
                 "sign_num": 7,
+                "speed": 430.72164027328427,
             },
             "sixth_house": {
                 "abs_pos": 193.30431346792582,
@@ -15252,6 +15716,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Lib",
                 "sign_num": 6,
+                "speed": 489.67883996763663,
             },
             "tenth_house": {
                 "abs_pos": 307.3103507954982,
@@ -15263,6 +15728,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Fixed",
                 "sign": "Aqu",
                 "sign_num": 10,
+                "speed": 354.0645295915292,
             },
             "third_house": {
                 "abs_pos": 104.3080638323307,
@@ -15274,6 +15740,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Can",
                 "sign_num": 3,
+                "speed": 325.74494012184977,
             },
             "twelfth_house": {
                 "abs_pos": 13.30431346792582,
@@ -15285,6 +15752,7 @@ EXPECTED_POSITIONS = {
                 "quality": "Cardinal",
                 "sign": "Ari",
                 "sign_num": 0,
+                "speed": 489.67883996763663,
             },
         },
         "is_diurnal": True,

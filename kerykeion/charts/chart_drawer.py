@@ -2117,33 +2117,18 @@ class ChartDrawer:  # type: ignore[no-redef]
             )
             return
 
-        # With balanced multi-column layout, the effective row count is the
-        # tallest column height, not the total number of points.
-        from kerykeion.charts.charts_utils import _select_planet_grid_thresholds
-        import math as _math
-
-        thresholds = _select_planet_grid_thresholds(self.chart_type, active_points_count)
-        if active_points_count <= thresholds[0]:
-            effective_rows = active_points_count
-        elif active_points_count <= thresholds[1]:
-            num_cols = 2
-            effective_rows = _math.ceil(active_points_count / num_cols)
-        elif active_points_count <= thresholds[2]:
-            num_cols = 3
-            effective_rows = _math.ceil(active_points_count / num_cols)
-        else:
-            num_cols = 4
-            effective_rows = _math.ceil(active_points_count / num_cols)
-
-        # Up to 20 effective rows fit in the default height
-        if effective_rows <= 20:
+        # Up to 20 active points fit in the default height
+        if active_points_count <= 20:
             self.height = max(self.height, minimum_height)
             self._vertical_offsets = offsets
             return
 
-        # Calculate extra height needed for additional rows
-        extra_points = effective_rows - 20
-        extra_height = extra_points * self._ROW_HEIGHT  # 8px per additional row
+        # Calculate extra height needed for additional points.
+        # Even with balanced multi-column planet grids, the triangular aspect
+        # grid (single-wheel charts) still scales with total active points,
+        # so height must accommodate the full point count.
+        extra_points = active_points_count - 20
+        extra_height = extra_points * self._ROW_HEIGHT  # 8px per additional point
 
         self.height = max(self.height, minimum_height + extra_height)
 
