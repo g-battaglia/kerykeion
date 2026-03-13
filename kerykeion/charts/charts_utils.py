@@ -1141,6 +1141,8 @@ def draw_transit_aspect_list(
     line_height: int = 14,
     max_columns: int = 6,
     chart_height: Optional[Union[int, float]] = None,
+    x_offset: int = 565,
+    y_offset: int = 273,
 ) -> str:
     """
     Generate SVG output for the aspect list panel in transit/synastry charts.
@@ -1159,6 +1161,8 @@ def draw_transit_aspect_list(
         line_height: Vertical spacing between aspect rows in pixels.
         max_columns: Maximum columns before using vertical space optimization.
         chart_height: Total chart height for calculating extended column capacity.
+        x_offset: Horizontal origin of the aspect list group (default 565).
+        y_offset: Vertical origin of the aspect list group (default 273).
 
     Returns:
         SVG string containing the formatted aspect list with title.
@@ -1174,8 +1178,8 @@ def draw_transit_aspect_list(
     # Type narrowing: at this point aspects_list contains AspectModel instances
     typed_aspects_list: list[AspectModel] = aspects_list  # type: ignore
 
-    translate_x = 565
-    translate_y = 273
+    translate_x = x_offset
+    translate_y = y_offset
     title_clearance = 18
     top_limit_y: float = -translate_y + title_clearance
     bottom_padding = 40

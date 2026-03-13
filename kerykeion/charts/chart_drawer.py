@@ -687,22 +687,52 @@ class TransitChartRenderer(BaseChartRenderer):
         if d.double_chart_aspect_grid_type == "list":
             title = f"{d.first_obj.name} - {self._translate('transit_aspects', 'Transit Aspects')}"
             template_dict["makeAspectGrid"] = ""
-            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
-                title,
-                d.aspects_list,
-                d.planets_settings,
-                d.aspects_settings,
-                chart_height=d.height,
-            )
+
+            if d._is_right_panel_mode():
+                rp = d._get_right_panel_aspect_params()
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    title,
+                    d.aspects_list,
+                    d.planets_settings,
+                    d.aspects_settings,
+                    aspects_per_column=rp["aspects_per_column"],
+                    column_width=rp["column_width"],
+                    line_height=rp["line_height"],
+                    chart_height=d.height,
+                    x_offset=rp["x_offset"],
+                    y_offset=rp["y_offset"],
+                )
+            else:
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    title,
+                    d.aspects_list,
+                    d.planets_settings,
+                    d.aspects_settings,
+                    chart_height=d.height,
+                )
         else:
             template_dict["makeAspectGrid"] = ""
-            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
-                d.chart_colors_settings["paper_0"],
-                d.available_planets_setting,
-                d.aspects_list,
-                600,
-                520,
-            )
+            if d._is_right_panel_mode():
+                rp = d._get_right_panel_aspect_params()
+                grid_x = rp["x_offset"]
+                n_active = max(d._count_active_planets(), 1)
+                grid_size = 14 * n_active
+                grid_y = int(rp["y_offset"] + grid_size + 30)
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                    d.chart_colors_settings["paper_0"],
+                    d.available_planets_setting,
+                    d.aspects_list,
+                    grid_x,
+                    grid_y,
+                )
+            else:
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                    d.chart_colors_settings["paper_0"],
+                    d.available_planets_setting,
+                    d.aspects_list,
+                    600,
+                    520,
+                )
 
         template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
 
@@ -875,22 +905,54 @@ class SynastryChartRenderer(BaseChartRenderer):
 
         if d.double_chart_aspect_grid_type == "list":
             template_dict["makeAspectGrid"] = ""
-            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
-                f"{d.first_obj.name} - {d.second_obj.name} {self._translate('synastry_aspects', 'Synastry Aspects')}",
-                d.aspects_list,
-                d.planets_settings,
-                d.aspects_settings,
-                chart_height=d.height,
-            )
+
+            if d._is_right_panel_mode():
+                rp = d._get_right_panel_aspect_params()
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    f"{d.first_obj.name} - {d.second_obj.name} {self._translate('synastry_aspects', 'Synastry Aspects')}",
+                    d.aspects_list,
+                    d.planets_settings,
+                    d.aspects_settings,
+                    aspects_per_column=rp["aspects_per_column"],
+                    column_width=rp["column_width"],
+                    line_height=rp["line_height"],
+                    chart_height=d.height,
+                    x_offset=rp["x_offset"],
+                    y_offset=rp["y_offset"],
+                )
+            else:
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    f"{d.first_obj.name} - {d.second_obj.name} {self._translate('synastry_aspects', 'Synastry Aspects')}",
+                    d.aspects_list,
+                    d.planets_settings,
+                    d.aspects_settings,
+                    chart_height=d.height,
+                )
         else:
             template_dict["makeAspectGrid"] = ""
-            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
-                d.chart_colors_settings["paper_0"],
-                d.available_planets_setting,
-                d.aspects_list,
-                550,
-                450,
-            )
+            if d._is_right_panel_mode():
+                # Position the grid to the right of left content
+                rp = d._get_right_panel_aspect_params()
+                grid_x = rp["x_offset"]
+                # Center the grid vertically; the grid grows upward from y_indent
+                n_active = max(d._count_active_planets(), 1)
+                grid_size = 14 * n_active
+                grid_y = int(rp["y_offset"] + grid_size + 30)
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                    d.chart_colors_settings["paper_0"],
+                    d.available_planets_setting,
+                    d.aspects_list,
+                    grid_x,
+                    grid_y,
+                )
+            else:
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                    d.chart_colors_settings["paper_0"],
+                    d.available_planets_setting,
+                    d.aspects_list,
+                    550,
+                    450,
+                )
 
         template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
 
@@ -1136,23 +1198,54 @@ class DualReturnChartRenderer(BaseChartRenderer):
         if d.double_chart_aspect_grid_type == "list":
             title = self._translate("return_aspects", "Natal to Return Aspects")
             template_dict["makeAspectGrid"] = ""
-            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
-                title,
-                d.aspects_list,
-                d.planets_settings,
-                d.aspects_settings,
-                max_columns=7,
-                chart_height=d.height,
-            )
+
+            if d._is_right_panel_mode():
+                rp = d._get_right_panel_aspect_params()
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    title,
+                    d.aspects_list,
+                    d.planets_settings,
+                    d.aspects_settings,
+                    max_columns=7,
+                    aspects_per_column=rp["aspects_per_column"],
+                    column_width=rp["column_width"],
+                    line_height=rp["line_height"],
+                    chart_height=d.height,
+                    x_offset=rp["x_offset"],
+                    y_offset=rp["y_offset"],
+                )
+            else:
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    title,
+                    d.aspects_list,
+                    d.planets_settings,
+                    d.aspects_settings,
+                    max_columns=7,
+                    chart_height=d.height,
+                )
         else:
             template_dict["makeAspectGrid"] = ""
-            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
-                d.chart_colors_settings["paper_0"],
-                d.available_planets_setting,
-                d.aspects_list,
-                550,
-                450,
-            )
+            if d._is_right_panel_mode():
+                rp = d._get_right_panel_aspect_params()
+                grid_x = rp["x_offset"]
+                n_active = max(d._count_active_planets(), 1)
+                grid_size = 14 * n_active
+                grid_y = int(rp["y_offset"] + grid_size + 30)
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                    d.chart_colors_settings["paper_0"],
+                    d.available_planets_setting,
+                    d.aspects_list,
+                    grid_x,
+                    grid_y,
+                )
+            else:
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                    d.chart_colors_settings["paper_0"],
+                    d.available_planets_setting,
+                    d.aspects_list,
+                    550,
+                    450,
+                )
 
         template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
 
@@ -1597,6 +1690,11 @@ class ChartDrawer:  # type: ignore[no-redef]
     _TRANSIT_ASPECT_GRID_X = DEFAULT_GRID_POSITIONS.transit_aspect_grid_x
     _TRANSIT_ASPECT_GRID_Y = DEFAULT_GRID_POSITIONS.transit_aspect_grid_y
 
+    # Right-panel layout: when more than this many points are active, the
+    # aspect list/grid is placed in a full-height right-side panel instead of
+    # below the wheel.  This prevents the SVG from becoming excessively wide.
+    _RIGHT_PANEL_POINTS_THRESHOLD = 24
+
     # -------------------------------------------------------------------------
     # INSTANCE ATTRIBUTES (type hints)
     # -------------------------------------------------------------------------
@@ -2038,6 +2136,208 @@ class ChartDrawer:  # type: ignore[no-redef]
         """Return number of active celestial points in the current chart."""
         return len([p for p in self.available_planets_setting if p.get("is_active")])
 
+    def _is_right_panel_mode(self) -> bool:
+        """Whether the aspect list/grid should be placed in a right-side panel.
+
+        Activates only for dual-wheel chart types with many active points.
+        Charts with <= _RIGHT_PANEL_POINTS_THRESHOLD points keep the standard
+        bottom-anchored layout so that default charts remain unchanged.
+        """
+        if self.chart_type not in ("Synastry", "Transit", "DualReturnChart"):
+            return False
+        return self._count_active_planets() > self._RIGHT_PANEL_POINTS_THRESHOLD
+
+    def _estimate_left_content_right_edge(self) -> float:
+        """Estimate the rightmost X extent of all content EXCEPT the aspect list.
+
+        Used to determine where the right-panel aspect list should start.
+        Returns the X coordinate in the SVG coordinate system (before viewBox halving).
+        """
+        n_active = max(self._count_active_planets(), 1)
+        grid_shift = getattr(self, "_grid_x_shift", 0)
+
+        extents: list[float] = []
+
+        # Wheel footprint: translate(100, ...) + diameter
+        wheel_right = 100 + (2 * self.main_radius)
+        extents.append(wheel_right)
+
+        # Main planet grid
+        extents.append(645 + grid_shift + 80)
+        # Main houses grid
+        extents.append(750 + grid_shift + 120)
+
+        if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+            # Secondary planet grid
+            extents.append(910 + 80)
+
+        if self.chart_type == "Synastry":
+            # Secondary houses grid
+            extents.append(1015 + 120)
+
+            if self.show_house_position_comparison or self.show_cusp_position_comparison:
+                point_column_label = self._translate("point", "Point")
+                first_subject_label = self._truncate_name(self.first_obj.name, 8, "…", True)  # type: ignore[union-attr]
+                second_subject_label = self._truncate_name(self.second_obj.name, 8, "…", True)  # type: ignore[union-attr]
+
+                first_columns = [
+                    f"{first_subject_label} {point_column_label}",
+                    first_subject_label,
+                    second_subject_label,
+                ]
+                second_columns = [
+                    f"{second_subject_label} {point_column_label}",
+                    second_subject_label,
+                    first_subject_label,
+                ]
+
+                first_grid_width = self._estimate_house_comparison_grid_width(
+                    column_labels=first_columns,
+                    include_radix_column=True,
+                    include_title=True,
+                )
+                second_grid_width = self._estimate_house_comparison_grid_width(
+                    column_labels=second_columns,
+                    include_radix_column=True,
+                    include_title=False,
+                )
+
+                extents.append(1090 + first_grid_width)
+                extents.append(1290 + second_grid_width)
+
+                if self.show_cusp_position_comparison:
+                    max_house_right = max(1090 + first_grid_width, 1290 + second_grid_width)
+                    cusp_block_width = 160.0 * 2.0
+                    extents.append(max_house_right + 50.0 + cusp_block_width + 45.0)
+
+        if self.chart_type == "Transit":
+            if self.show_house_position_comparison or self.show_cusp_position_comparison:
+                transit_columns = [
+                    self._translate("transit_point", "Transit Point"),
+                    self._translate("house_position", "Natal House"),
+                ]
+                transit_grid_width = self._estimate_house_comparison_grid_width(
+                    column_labels=transit_columns,
+                    include_radix_column=False,
+                    include_title=True,
+                    minimum_width=170.0,
+                )
+                house_right = 980 + transit_grid_width
+                if self.show_house_position_comparison:
+                    extents.append(house_right)
+                if self.show_cusp_position_comparison:
+                    if self.show_house_position_comparison:
+                        extents.append(house_right + 40.0 + 260.0)
+                    else:
+                        extents.append(house_right)
+
+        if self.chart_type == "DualReturnChart":
+            if self.show_house_position_comparison or self.show_cusp_position_comparison:
+                first_subject_label = self._translate("Natal", "Natal")
+                if isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar":
+                    second_subject_label = self._translate("solar_return", "Solar Return")
+                else:
+                    second_subject_label = self._translate("lunar_return", "Lunar Return")
+                point_column_label = self._translate("point", "Point")
+
+                first_columns = [
+                    f"{first_subject_label} {point_column_label}",
+                    first_subject_label,
+                    second_subject_label,
+                ]
+                second_columns = [
+                    f"{second_subject_label} {point_column_label}",
+                    second_subject_label,
+                    first_subject_label,
+                ]
+
+                first_grid_width = self._estimate_house_comparison_grid_width(
+                    column_labels=first_columns,
+                    include_radix_column=True,
+                    include_title=True,
+                )
+                second_grid_width = self._estimate_house_comparison_grid_width(
+                    column_labels=second_columns,
+                    include_radix_column=True,
+                    include_title=False,
+                )
+
+                extents.append(1090 + first_grid_width)
+                extents.append(1290 + second_grid_width)
+
+                if self.show_cusp_position_comparison:
+                    max_house_right = max(1090 + first_grid_width, 1290 + second_grid_width)
+                    cusp_block_width = 160.0 * 2.0
+                    extents.append(max_house_right + 50.0 + cusp_block_width + 45.0)
+
+        return max(extents)
+
+    def _get_right_panel_aspect_params(self) -> dict:
+        """Compute layout parameters for the right-panel aspect list.
+
+        When many celestial points are active, the aspect list is placed in a
+        full-height panel on the right side of the chart instead of being
+        bottom-anchored below the wheel.
+
+        Returns a dict with keys:
+            x_offset:  horizontal origin for the aspect list group
+            y_offset:  vertical origin for the aspect list group
+            aspects_per_column:  number of rows per column (uses full height)
+        """
+        # The Aspect_List SVG group is translated by:
+        #   translate(50, $aspect_list_translate_y)
+        # where aspect_list_translate_y = self._vertical_offsets["aspect_list"]
+        #
+        # Content inside draw_transit_aspect_list is wrapped in:
+        #   <g transform="translate(x_offset, y_offset)">
+        #
+        # So the absolute SVG position of the first aspect row is:
+        #   abs_x = 50 + x_offset
+        #   abs_y = aspect_list_translate_y + y_offset
+        #
+        # We want the list to start near the top of the SVG and extend to
+        # the bottom, positioned to the right of all other content.
+
+        aspect_list_translate_y = self._vertical_offsets["aspect_list"]
+
+        # Where the left content ends (in absolute SVG coords)
+        left_edge = self._estimate_left_content_right_edge()
+
+        # The Aspect_List group already has translate(50, ...) from the template
+        parent_group_x = 50.0
+        gap = 30.0  # gap between left content and aspect list
+
+        x_offset = int(left_edge - parent_group_x + gap)
+
+        # Position the aspect list near the top of the SVG.
+        # We want the title row (rendered at y_offset - 15 inside the group)
+        # to appear at about y=30 in absolute coords.
+        top_margin = 30.0
+        # abs_y = aspect_list_translate_y + y_offset  =>  y_offset = target - translate_y
+        y_offset = int(top_margin - aspect_list_translate_y)
+
+        # For shorter charts (Transit, DualReturn at ~876px) use compact spacing
+        # to avoid an excessively wide aspect list.
+        if self.height < 1000:
+            line_height = 12
+            column_width = 85
+        else:
+            line_height = 14
+            column_width = 100
+
+        # Calculate how many rows fit in the full height
+        bottom_margin = 40
+        usable_height = self.height - bottom_margin - top_margin
+        aspects_per_column = max(14, int(usable_height / line_height))
+
+        return {
+            "x_offset": x_offset,
+            "y_offset": y_offset,
+            "aspects_per_column": aspects_per_column,
+            "line_height": line_height,
+            "column_width": column_width,
+        }
+
     def _get_chart_width(self) -> float:
         """Determine the appropriate chart width based on chart type and display options.
 
@@ -2138,9 +2438,13 @@ class ChartDrawer:  # type: ignore[no-redef]
         # This keeps them "pinned" to the bottom of the SVG
         offsets["wheel"] += delta_height
         offsets["aspect_grid"] += delta_height
-        offsets["aspect_list"] += delta_height
         offsets["lunar_phase"] += delta_height
         offsets["bottom_left"] += delta_height
+
+        # In right-panel mode the aspect list is positioned at the top of the
+        # SVG (full-height right side), so it must NOT be pushed down.
+        if not self._is_right_panel_mode():
+            offsets["aspect_list"] += delta_height
 
         # Top elements get a partial shift to maintain visual balance
         # The shift is capped at _MAX_TOP_SHIFT (80px) to prevent excessive spacing
@@ -2162,6 +2466,9 @@ class ChartDrawer:  # type: ignore[no-redef]
         This method calculates the required height to accommodate these
         extended columns without clipping.
 
+        In right-panel mode the aspect list uses full chart height from the
+        top, so no additional height adjustment is necessary.
+
         Layout constants explained:
         - aspects_per_column (14): Standard number of aspects per column
         - extended_column_start (11): Column index where upward extension begins
@@ -2174,6 +2481,11 @@ class ChartDrawer:  # type: ignore[no-redef]
             return
 
         if self.chart_type not in ("Synastry", "Transit", "DualReturnChart"):
+            return
+
+        # In right-panel mode the aspect list starts near the top of the SVG
+        # and uses all the available height, so no extension adjustment needed.
+        if self._is_right_panel_mode():
             return
 
         total_aspects = len(self.aspects_list) if hasattr(self, "aspects_list") else 0
@@ -2254,9 +2566,13 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         offsets["wheel"] += delta_height
         offsets["aspect_grid"] += delta_height
-        offsets["aspect_list"] += delta_height
         offsets["lunar_phase"] += delta_height
         offsets["bottom_left"] += delta_height
+
+        # In right-panel mode the aspect list is positioned at the top of the
+        # SVG (full-height right side), so it must NOT be pushed down.
+        if not self._is_right_panel_mode():
+            offsets["aspect_list"] += delta_height
 
         row_height_ratio = synastry_row_height / max(self._ROW_HEIGHT, 1)
         synastry_top_shift_factor = max(
@@ -2420,16 +2736,32 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
             # Double-chart aspects placement
-            if self.double_chart_aspect_grid_type == "list":
-                total_aspects = len(self.aspects_list) if hasattr(self, "aspects_list") else 0
-                columns = self._calculate_double_chart_aspect_columns(total_aspects, self.height)
-                columns = max(columns, 1)
-                aspect_list_right = 565 + (columns * self._ASPECT_LIST_COLUMN_WIDTH)
-                extents.append(aspect_list_right)
+            if self._is_right_panel_mode():
+                # Right-panel mode: aspect list/grid starts after left content
+                rp = self._get_right_panel_aspect_params()
+                parent_group_x = 50.0  # Aspect_List group translate(50, ...)
+                if self.double_chart_aspect_grid_type == "list":
+                    total_aspects = len(self.aspects_list) if hasattr(self, "aspects_list") else 0
+                    per_col = max(rp["aspects_per_column"], 1)
+                    columns = max(1, ceil(total_aspects / per_col))
+                    aspect_right = parent_group_x + rp["x_offset"] + (columns * rp["column_width"])
+                    extents.append(aspect_right)
+                else:
+                    # Grid table: N×N grid at the right-panel position
+                    grid_width = 14 * (n_active + 1)
+                    aspect_right = parent_group_x + rp["x_offset"] + grid_width
+                    extents.append(aspect_right)
             else:
-                # Grid table placed with x_indent ~550, width ~ 14px per cell across n_active+1
-                aspect_grid_table_right = 550 + (14 * (n_active + 1))
-                extents.append(aspect_grid_table_right)
+                if self.double_chart_aspect_grid_type == "list":
+                    total_aspects = len(self.aspects_list) if hasattr(self, "aspects_list") else 0
+                    columns = self._calculate_double_chart_aspect_columns(total_aspects, self.height)
+                    columns = max(columns, 1)
+                    aspect_list_right = 565 + (columns * self._ASPECT_LIST_COLUMN_WIDTH)
+                    extents.append(aspect_list_right)
+                else:
+                    # Grid table placed with x_indent ~550, width ~ 14px per cell across n_active+1
+                    aspect_grid_table_right = 550 + (14 * (n_active + 1))
+                    extents.append(aspect_grid_table_right)
 
             # Secondary grids
             secondary_planet_grid_right = 910 + 80
