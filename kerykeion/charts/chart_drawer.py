@@ -931,11 +931,19 @@ class SynastryChartRenderer(BaseChartRenderer):
         else:
             template_dict["makeAspectGrid"] = ""
             if d._is_right_panel_mode():
-                # Position the grid to the right of left content
+                # Position the grid to the right of left content.
+                # draw_transit_aspect_grid uses y_indent as the BOTTOM of the
+                # grid (the header row); data cells grow UPWARD from there.
                 rp = d._get_right_panel_aspect_params()
                 grid_x = rp["x_offset"]
-                # Place grid just below the aspect title area
-                grid_y = rp["y_offset"] + 30
+                n_active = max(d._count_active_planets(), 1)
+                box_size = 14
+                grid_total_h = (n_active + 1) * box_size
+                # Place grid so its top aligns near the chart title
+                aspect_list_y = d._vertical_offsets["aspect_list"]
+                chart_title_y = d._vertical_offsets.get("title", 0.0)
+                target_top = chart_title_y + 20  # small margin below title
+                grid_y = int(target_top - aspect_list_y + grid_total_h)
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
                     d.available_planets_setting,
@@ -1226,7 +1234,13 @@ class DualReturnChartRenderer(BaseChartRenderer):
             if d._is_right_panel_mode():
                 rp = d._get_right_panel_aspect_params()
                 grid_x = rp["x_offset"]
-                grid_y = rp["y_offset"] + 30
+                n_active = max(d._count_active_planets(), 1)
+                box_size = 14
+                grid_total_h = (n_active + 1) * box_size
+                aspect_list_y = d._vertical_offsets["aspect_list"]
+                chart_title_y = d._vertical_offsets.get("title", 0.0)
+                target_top = chart_title_y + 20
+                grid_y = int(target_top - aspect_list_y + grid_total_h)
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
                     d.available_planets_setting,
