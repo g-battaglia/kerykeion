@@ -934,10 +934,8 @@ class SynastryChartRenderer(BaseChartRenderer):
                 # Position the grid to the right of left content
                 rp = d._get_right_panel_aspect_params()
                 grid_x = rp["x_offset"]
-                # Center the grid vertically; the grid grows upward from y_indent
-                n_active = max(d._count_active_planets(), 1)
-                grid_size = 14 * n_active
-                grid_y = int(rp["y_offset"] + grid_size + 30)
+                # Place grid just below the aspect title area
+                grid_y = rp["y_offset"] + 30
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
                     d.available_planets_setting,
@@ -1228,9 +1226,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
             if d._is_right_panel_mode():
                 rp = d._get_right_panel_aspect_params()
                 grid_x = rp["x_offset"]
-                n_active = max(d._count_active_planets(), 1)
-                grid_size = 14 * n_active
-                grid_y = int(rp["y_offset"] + grid_size + 30)
+                grid_y = rp["y_offset"] + 30
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
                     d.available_planets_setting,
@@ -2309,12 +2305,17 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         x_offset = int(left_edge - parent_group_x + gap)
 
-        # Position the aspect list near the top of the SVG.
-        # We want the title row (rendered at y_offset - 15 inside the group)
-        # to appear at about y=30 in absolute coords.
-        top_margin = 30.0
-        # abs_y = aspect_list_translate_y + y_offset  =>  y_offset = target - translate_y
-        y_offset = int(top_margin - aspect_list_translate_y)
+        # Align the aspect list title with the chart title.
+        # The title text inside draw_transit_aspect_list is rendered at
+        # (y_offset - 15) relative to the Aspect_List group origin.
+        # Absolute title position = aspect_list_translate_y + y_offset - 15
+        # We want this to match the chart title offset.
+        chart_title_y = self._vertical_offsets.get("title", 0.0)
+        # Add a small offset so the aspect title sits just below the chart title
+        target_title_y = chart_title_y + 18.0
+        # y_offset such that aspect_list_translate_y + y_offset - 15 = target_title_y
+        y_offset = int(target_title_y + 15 - aspect_list_translate_y)
+        top_margin = target_title_y
 
         # For shorter charts (Transit, DualReturn at ~876px) use compact spacing
         # to avoid an excessively wide aspect list.
@@ -2434,6 +2435,16 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         delta_height = max(self.height - minimum_height, 0)
 
+        # Top elements get a partial shift to maintain visual balance
+        # The shift is capped at _MAX_TOP_SHIFT (80px) to prevent excessive spacing
+        shift = min(extra_points * self._TOP_SHIFT_FACTOR, self._MAX_TOP_SHIFT)
+        top_shift = shift // 2  # Title shifts less than grids
+
+        offsets["grid"] += shift
+        offsets["title"] += top_shift
+        offsets["elements"] += top_shift
+        offsets["qualities"] += top_shift
+
         # Bottom-anchored elements shift down by the full delta
         # This keeps them "pinned" to the bottom of the SVG
         offsets["wheel"] += delta_height
@@ -2445,16 +2456,6 @@ class ChartDrawer:  # type: ignore[no-redef]
         # SVG (full-height right side), so it must NOT be pushed down.
         if not self._is_right_panel_mode():
             offsets["aspect_list"] += delta_height
-
-        # Top elements get a partial shift to maintain visual balance
-        # The shift is capped at _MAX_TOP_SHIFT (80px) to prevent excessive spacing
-        shift = min(extra_points * self._TOP_SHIFT_FACTOR, self._MAX_TOP_SHIFT)
-        top_shift = shift // 2  # Title shifts less than grids
-
-        offsets["grid"] += shift
-        offsets["title"] += top_shift
-        offsets["elements"] += top_shift
-        offsets["qualities"] += top_shift
 
         self._vertical_offsets = offsets
 
@@ -2549,31 +2550,23 @@ class ChartDrawer:  # type: ignore[no-redef]
         point extends multiple tables vertically (planets, houses, comparisons).
         We therefore scale the height using the actual line spacing used by those
         tables (≈14px) and keep the bottom anchored elements aligned.
+
+        In right-panel mode the wheel (x:100-580) and grids (x:645+) occupy
+        different horizontal ranges, so they can overlap vertically.  This
+        produces a significantly shorter chart.
         """
         base_rows = 14  # Up to 16 active points fit without extra height
         extra_rows = max(active_points_count - base_rows, 0)
 
         synastry_row_height = 15
         comparison_padding_per_row = 4  # Keeps house comparison grids within view.
-        extra_height = extra_rows * (synastry_row_height + comparison_padding_per_row)
-
-        self.height = max(self.height, minimum_height + extra_height)
-
-        delta_height = max(self.height - minimum_height, 0)
 
         # Move title up for synastry charts
         offsets["title"] = -10
 
-        offsets["wheel"] += delta_height
-        offsets["aspect_grid"] += delta_height
-        offsets["lunar_phase"] += delta_height
-        offsets["bottom_left"] += delta_height
-
-        # In right-panel mode the aspect list is positioned at the top of the
-        # SVG (full-height right side), so it must NOT be pushed down.
-        if not self._is_right_panel_mode():
-            offsets["aspect_list"] += delta_height
-
+        # -----------------------------------------------------------------
+        # Compute grid / title position shifts (identical for all modes)
+        # -----------------------------------------------------------------
         row_height_ratio = synastry_row_height / max(self._ROW_HEIGHT, 1)
         synastry_top_shift_factor = max(
             self._TOP_SHIFT_FACTOR,
@@ -2602,6 +2595,46 @@ class ChartDrawer:  # type: ignore[no-redef]
         offsets["title"] += top_shift
         offsets["elements"] += top_shift
         offsets["qualities"] += top_shift
+
+        # -----------------------------------------------------------------
+        # Right-panel mode: allow wheel / grid vertical overlap
+        # -----------------------------------------------------------------
+        if self._is_right_panel_mode():
+            # Grid content bottom (tallest grid = house comparison)
+            grid_content_bottom = offsets["grid"] + active_points_count * synastry_row_height + 50
+
+            # Wheel needs approximately 2 * radius + 30px for degree labels
+            wheel_diameter = 2 * self.main_radius + 30
+
+            # Position wheel so its bottom aligns with grid content bottom
+            wheel_offset = max(50.0, grid_content_bottom - wheel_diameter)
+            offsets["wheel"] = wheel_offset
+            offsets["aspect_grid"] = wheel_offset
+
+            # Height = tallest content + bottom margin
+            content_bottom = max(grid_content_bottom, wheel_offset + wheel_diameter)
+            self.height = max(self.height, int(content_bottom + 40))
+
+            # Position bottom-anchored elements relative to the new height
+            delta = max(self.height - minimum_height, 0)
+            offsets["lunar_phase"] = 518.0 + delta
+            offsets["bottom_left"] = delta
+
+            self._vertical_offsets = offsets
+            return
+
+        # -----------------------------------------------------------------
+        # Standard mode: stack wheel below grids
+        # -----------------------------------------------------------------
+        extra_height = extra_rows * (synastry_row_height + comparison_padding_per_row)
+        self.height = max(self.height, minimum_height + extra_height)
+        delta_height = max(self.height - minimum_height, 0)
+
+        offsets["wheel"] += delta_height
+        offsets["aspect_grid"] += delta_height
+        offsets["lunar_phase"] += delta_height
+        offsets["bottom_left"] += delta_height
+        offsets["aspect_list"] += delta_height
 
         self._vertical_offsets = offsets
 
