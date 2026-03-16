@@ -387,7 +387,7 @@ class TestUserDefinedAyanamsa:
 
     def test_user_mode_without_ayan_t0_raises(self):
         """USER mode without custom_ayanamsa_ayan_t0 must raise."""
-        with pytest.raises(KerykeionException, match="custom_ayanamsa_t0"):
+        with pytest.raises(KerykeionException, match="custom_ayanamsa_ayan_t0"):
             _make_subject(
                 zodiac_type="Sidereal",
                 sidereal_mode="USER",

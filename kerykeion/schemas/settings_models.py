@@ -83,21 +83,45 @@ class KerykeionLanguageCelestialPointModel(SubscriptableBaseModel):
     Quaoar: str = Field(title="Quaoar", description="The name of Quaoar in the chart, in the language")
     Regulus: str = Field(title="Regulus", description="The name of Regulus in the chart, in the language")
     Spica: str = Field(title="Spica", description="The name of Spica in the chart, in the language")
-    Aldebaran: str = Field(title="Aldebaran", description="The name of Aldebaran in the chart, in the language")
-    Antares: str = Field(title="Antares", description="The name of Antares in the chart, in the language")
-    Sirius: str = Field(title="Sirius", description="The name of Sirius in the chart, in the language")
-    Fomalhaut: str = Field(title="Fomalhaut", description="The name of Fomalhaut in the chart, in the language")
-    Algol: str = Field(title="Algol", description="The name of Algol in the chart, in the language")
-    Betelgeuse: str = Field(title="Betelgeuse", description="The name of Betelgeuse in the chart, in the language")
-    Canopus: str = Field(title="Canopus", description="The name of Canopus in the chart, in the language")
-    Procyon: str = Field(title="Procyon", description="The name of Procyon in the chart, in the language")
-    Arcturus: str = Field(title="Arcturus", description="The name of Arcturus in the chart, in the language")
-    Pollux: str = Field(title="Pollux", description="The name of Pollux in the chart, in the language")
-    Deneb: str = Field(title="Deneb", description="The name of Deneb in the chart, in the language")
-    Altair: str = Field(title="Altair", description="The name of Altair in the chart, in the language")
-    Rigel: str = Field(title="Rigel", description="The name of Rigel in the chart, in the language")
-    Achernar: str = Field(title="Achernar", description="The name of Achernar in the chart, in the language")
-    Capella: str = Field(title="Capella", description="The name of Capella in the chart, in the language")
+    Aldebaran: str = Field(
+        default="Aldebaran", title="Aldebaran", description="The name of Aldebaran in the chart, in the language"
+    )
+    Antares: str = Field(
+        default="Antares", title="Antares", description="The name of Antares in the chart, in the language"
+    )
+    Sirius: str = Field(
+        default="Sirius", title="Sirius", description="The name of Sirius in the chart, in the language"
+    )
+    Fomalhaut: str = Field(
+        default="Fomalhaut", title="Fomalhaut", description="The name of Fomalhaut in the chart, in the language"
+    )
+    Algol: str = Field(default="Algol", title="Algol", description="The name of Algol in the chart, in the language")
+    Betelgeuse: str = Field(
+        default="Betelgeuse", title="Betelgeuse", description="The name of Betelgeuse in the chart, in the language"
+    )
+    Canopus: str = Field(
+        default="Canopus", title="Canopus", description="The name of Canopus in the chart, in the language"
+    )
+    Procyon: str = Field(
+        default="Procyon", title="Procyon", description="The name of Procyon in the chart, in the language"
+    )
+    Arcturus: str = Field(
+        default="Arcturus", title="Arcturus", description="The name of Arcturus in the chart, in the language"
+    )
+    Pollux: str = Field(
+        default="Pollux", title="Pollux", description="The name of Pollux in the chart, in the language"
+    )
+    Deneb: str = Field(default="Deneb", title="Deneb", description="The name of Deneb in the chart, in the language")
+    Altair: str = Field(
+        default="Altair", title="Altair", description="The name of Altair in the chart, in the language"
+    )
+    Rigel: str = Field(default="Rigel", title="Rigel", description="The name of Rigel in the chart, in the language")
+    Achernar: str = Field(
+        default="Achernar", title="Achernar", description="The name of Achernar in the chart, in the language"
+    )
+    Capella: str = Field(
+        default="Capella", title="Capella", description="The name of Capella in the chart, in the language"
+    )
     Pars_Fortunae: str = Field(
         title="Part of Fortune", description="The name of Part of Fortune in the chart, in the language"
     )

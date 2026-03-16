@@ -241,7 +241,7 @@ What is Ayanamsa?
     define sidereal 0 Aries. As of 2025, most systems place the offset at roughly
     23-25 degrees.
 
-Expanded in v5.12 from 20 to 48 named modes + USER (custom ayanamsa).
+Expanded in v5.12 from 20 to 47 named modes + USER (custom ayanamsa), 48 total.
 
 Mode families:
 
