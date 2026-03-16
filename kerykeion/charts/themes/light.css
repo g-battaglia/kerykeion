@@ -139,6 +139,21 @@
     --kerykeion-chart-color-quaoar: var(--kerykeion-color-primary);
     --kerykeion-chart-color-regulus: var(--kerykeion-color-warning);
     --kerykeion-chart-color-spica: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-aldebaran: var(--kerykeion-color-error);
+    --kerykeion-chart-color-antares: var(--kerykeion-color-error);
+    --kerykeion-chart-color-sirius: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-fomalhaut: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-algol: var(--kerykeion-color-error);
+    --kerykeion-chart-color-betelgeuse: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-canopus: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-procyon: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-arcturus: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-pollux: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-deneb: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-altair: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-rigel: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-achernar: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-capella: var(--kerykeion-color-warning);
     --kerykeion-chart-color-anti-vertex: var(--kerykeion-color-secondary);
 
     /* Arab Parts */

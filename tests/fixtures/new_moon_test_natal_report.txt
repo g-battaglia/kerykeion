@@ -30,10 +30,10 @@ New Moon - Test — Natal Chart Report
 +Natal Celestial Points-+---------+----------+--------------+---------+------+---------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House         |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
-| Ascendant             | Vir ♍️ | 22.88°   | +360.0000°/d | N/A     | -    | First House   |
-| Medium Coeli          | Gem ♊️ | 21.77°   | +360.0000°/d | N/A     | -    | Tenth House   |
-| Descendant            | Pis ♓️ | 22.88°   | +360.0000°/d | N/A     | -    | Seventh House |
-| Imum Coeli            | Sag ♐️ | 21.77°   | +360.0000°/d | N/A     | -    | Fourth House  |
+| Ascendant             | Vir ♍️ | 22.88°   | +287.0322°/d | N/A     | -    | First House   |
+| Medium Coeli          | Gem ♊️ | 21.77°   | +332.4745°/d | N/A     | -    | Tenth House   |
+| Descendant            | Pis ♓️ | 22.88°   | +287.0322°/d | N/A     | -    | Seventh House |
+| Imum Coeli            | Sag ♐️ | 21.77°   | +332.4745°/d | N/A     | -    | Fourth House  |
 | Sun                   | Sco ♏️ | 28.20°   | +1.0097°/d   | -19.76° | -    | Third House   |
 | Moon                  | Sco ♏️ | 28.19°   | +11.8608°/d  | -24.41° | -    | Third House   |
 | Mercury               | Sco ♏️ | 28.46°   | -1.3593°/d   | -19.32° | R    | Third House   |

@@ -54,10 +54,10 @@ Sample Natal Subject — Solar Return Comparison 1991
 +Natal Subject Celestial Points---+----------+--------------+---------+------+---------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House         |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
-| Ascendant             | Sco ♏️ | 5.82°    | +360.0000°/d | N/A     | -    | First House   |
-| Medium Coeli          | Leo ♌️ | 19.91°   | +360.0000°/d | N/A     | -    | Tenth House   |
-| Descendant            | Tau ♉️ | 5.82°    | +360.0000°/d | N/A     | -    | Seventh House |
-| Imum Coeli            | Aqu ♒️ | 19.91°   | +360.0000°/d | N/A     | -    | Fourth House  |
+| Ascendant             | Sco ♏️ | 5.82°    | +245.7250°/d | N/A     | -    | First House   |
+| Medium Coeli          | Leo ♌️ | 19.91°   | +367.6409°/d | N/A     | -    | Tenth House   |
+| Descendant            | Tau ♉️ | 5.82°    | +245.7250°/d | N/A     | -    | Seventh House |
+| Imum Coeli            | Aqu ♒️ | 19.91°   | +367.6409°/d | N/A     | -    | Fourth House  |
 | Sun                   | Can ♋️ | 28.54°   | +0.9551°/d   | +20.45° | -    | Ninth House   |
 | Moon                  | Can ♋️ | 21.21°   | +14.4024°/d  | +23.21° | -    | Ninth House   |
 | Mercury               | Leo ♌️ | 17.61°   | +1.6910°/d   | +16.88° | -    | Ninth House   |
@@ -77,10 +77,10 @@ Sample Natal Subject — Solar Return Comparison 1991
 +Return Subject Celestial Points--+----------+--------------+---------+------+---------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House         |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
-| Ascendant             | Cap ♑️ | 13.82°   | +360.0000°/d | N/A     | -    | First House   |
-| Medium Coeli          | Sco ♏️ | 21.77°   | +360.0000°/d | N/A     | -    | Tenth House   |
-| Descendant            | Can ♋️ | 13.82°   | +360.0000°/d | N/A     | -    | Seventh House |
-| Imum Coeli            | Tau ♉️ | 21.77°   | +360.0000°/d | N/A     | -    | Fourth House  |
+| Ascendant             | Cap ♑️ | 13.82°   | +409.8309°/d | N/A     | -    | First House   |
+| Medium Coeli          | Sco ♏️ | 21.77°   | +355.0355°/d | N/A     | -    | Tenth House   |
+| Descendant            | Can ♋️ | 13.82°   | +409.8309°/d | N/A     | -    | Seventh House |
+| Imum Coeli            | Tau ♉️ | 21.77°   | +355.0355°/d | N/A     | -    | Fourth House  |
 | Sun                   | Can ♋️ | 28.54°   | +0.9544°/d   | +20.45° | -    | Seventh House |
 | Moon                  | Sag ♐️ | 4.63°    | +11.9553°/d  | -24.70° | -    | Tenth House   |
 | Mercury               | Leo ♌️ | 25.32°   | +1.1015°/d   | +12.70° | -    | Seventh House |

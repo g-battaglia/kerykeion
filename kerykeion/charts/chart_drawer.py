@@ -11,6 +11,12 @@ from pathlib import Path
 from string import Template
 from typing import Any, Mapping, Optional, Sequence, Union, get_args
 
+# Sentinel object used to distinguish "parameter not passed" from an explicit value
+# in render methods (generate_svg_string, save_svg, etc.).  When the user omits
+# style= or show_zodiac_background_ring= at render time, the instance-level
+# default set in __init__ is used instead.
+_UNSET: Any = object()
+
 import swisseph as swe
 from scour.scour import scourString
 
@@ -687,22 +693,52 @@ class TransitChartRenderer(BaseChartRenderer):
         if d.double_chart_aspect_grid_type == "list":
             title = f"{d.first_obj.name} - {self._translate('transit_aspects', 'Transit Aspects')}"
             template_dict["makeAspectGrid"] = ""
-            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
-                title,
-                d.aspects_list,
-                d.planets_settings,
-                d.aspects_settings,
-                chart_height=d.height,
-            )
+
+            if d._is_right_panel_mode():
+                rp = d._get_right_panel_aspect_params()
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    title,
+                    d.aspects_list,
+                    d.planets_settings,
+                    d.aspects_settings,
+                    aspects_per_column=rp["aspects_per_column"],
+                    column_width=rp["column_width"],
+                    line_height=rp["line_height"],
+                    chart_height=d.height,
+                    x_offset=rp["x_offset"],
+                    y_offset=rp["y_offset"],
+                )
+            else:
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    title,
+                    d.aspects_list,
+                    d.planets_settings,
+                    d.aspects_settings,
+                    chart_height=d.height,
+                )
         else:
             template_dict["makeAspectGrid"] = ""
-            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
-                d.chart_colors_settings["paper_0"],
-                d.available_planets_setting,
-                d.aspects_list,
-                600,
-                520,
-            )
+            if d._is_right_panel_mode():
+                rp = d._get_right_panel_aspect_params()
+                grid_x = rp["x_offset"]
+                n_active = max(d._count_active_planets(), 1)
+                grid_size = 14 * n_active
+                grid_y = int(rp["y_offset"] + grid_size + 30)
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                    d.chart_colors_settings["paper_0"],
+                    d.available_planets_setting,
+                    d.aspects_list,
+                    grid_x,
+                    grid_y,
+                )
+            else:
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                    d.chart_colors_settings["paper_0"],
+                    d.available_planets_setting,
+                    d.aspects_list,
+                    600,
+                    520,
+                )
 
         template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
 
@@ -875,22 +911,60 @@ class SynastryChartRenderer(BaseChartRenderer):
 
         if d.double_chart_aspect_grid_type == "list":
             template_dict["makeAspectGrid"] = ""
-            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
-                f"{d.first_obj.name} - {d.second_obj.name} {self._translate('synastry_aspects', 'Synastry Aspects')}",
-                d.aspects_list,
-                d.planets_settings,
-                d.aspects_settings,
-                chart_height=d.height,
-            )
+
+            if d._is_right_panel_mode():
+                rp = d._get_right_panel_aspect_params()
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    f"{d.first_obj.name} - {d.second_obj.name} {self._translate('synastry_aspects', 'Synastry Aspects')}",
+                    d.aspects_list,
+                    d.planets_settings,
+                    d.aspects_settings,
+                    aspects_per_column=rp["aspects_per_column"],
+                    column_width=rp["column_width"],
+                    line_height=rp["line_height"],
+                    chart_height=d.height,
+                    x_offset=rp["x_offset"],
+                    y_offset=rp["y_offset"],
+                )
+            else:
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    f"{d.first_obj.name} - {d.second_obj.name} {self._translate('synastry_aspects', 'Synastry Aspects')}",
+                    d.aspects_list,
+                    d.planets_settings,
+                    d.aspects_settings,
+                    chart_height=d.height,
+                )
         else:
             template_dict["makeAspectGrid"] = ""
-            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
-                d.chart_colors_settings["paper_0"],
-                d.available_planets_setting,
-                d.aspects_list,
-                550,
-                450,
-            )
+            if d._is_right_panel_mode():
+                # Position the grid to the right of left content.
+                # draw_transit_aspect_grid uses y_indent as the BOTTOM of the
+                # grid (the header row); data cells grow UPWARD from there.
+                rp = d._get_right_panel_aspect_params()
+                grid_x = rp["x_offset"]
+                n_active = max(d._count_active_planets(), 1)
+                box_size = 14
+                grid_total_h = (n_active + 1) * box_size
+                # Place grid so its top aligns near the chart title
+                aspect_list_y = d._vertical_offsets["aspect_list"]
+                chart_title_y = d._vertical_offsets.get("title", 0.0)
+                target_top = chart_title_y + 20  # small margin below title
+                grid_y = int(target_top - aspect_list_y + grid_total_h)
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                    d.chart_colors_settings["paper_0"],
+                    d.available_planets_setting,
+                    d.aspects_list,
+                    grid_x,
+                    grid_y,
+                )
+            else:
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                    d.chart_colors_settings["paper_0"],
+                    d.available_planets_setting,
+                    d.aspects_list,
+                    550,
+                    450,
+                )
 
         template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
 
@@ -1136,23 +1210,58 @@ class DualReturnChartRenderer(BaseChartRenderer):
         if d.double_chart_aspect_grid_type == "list":
             title = self._translate("return_aspects", "Natal to Return Aspects")
             template_dict["makeAspectGrid"] = ""
-            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
-                title,
-                d.aspects_list,
-                d.planets_settings,
-                d.aspects_settings,
-                max_columns=7,
-                chart_height=d.height,
-            )
+
+            if d._is_right_panel_mode():
+                rp = d._get_right_panel_aspect_params()
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    title,
+                    d.aspects_list,
+                    d.planets_settings,
+                    d.aspects_settings,
+                    max_columns=7,
+                    aspects_per_column=rp["aspects_per_column"],
+                    column_width=rp["column_width"],
+                    line_height=rp["line_height"],
+                    chart_height=d.height,
+                    x_offset=rp["x_offset"],
+                    y_offset=rp["y_offset"],
+                )
+            else:
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    title,
+                    d.aspects_list,
+                    d.planets_settings,
+                    d.aspects_settings,
+                    max_columns=7,
+                    chart_height=d.height,
+                )
         else:
             template_dict["makeAspectGrid"] = ""
-            template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
-                d.chart_colors_settings["paper_0"],
-                d.available_planets_setting,
-                d.aspects_list,
-                550,
-                450,
-            )
+            if d._is_right_panel_mode():
+                rp = d._get_right_panel_aspect_params()
+                grid_x = rp["x_offset"]
+                n_active = max(d._count_active_planets(), 1)
+                box_size = 14
+                grid_total_h = (n_active + 1) * box_size
+                aspect_list_y = d._vertical_offsets["aspect_list"]
+                chart_title_y = d._vertical_offsets.get("title", 0.0)
+                target_top = chart_title_y + 20
+                grid_y = int(target_top - aspect_list_y + grid_total_h)
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                    d.chart_colors_settings["paper_0"],
+                    d.available_planets_setting,
+                    d.aspects_list,
+                    grid_x,
+                    grid_y,
+                )
+            else:
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
+                    d.chart_colors_settings["paper_0"],
+                    d.available_planets_setting,
+                    d.aspects_list,
+                    550,
+                    450,
+                )
 
         template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
 
@@ -1597,6 +1706,11 @@ class ChartDrawer:  # type: ignore[no-redef]
     _TRANSIT_ASPECT_GRID_X = DEFAULT_GRID_POSITIONS.transit_aspect_grid_x
     _TRANSIT_ASPECT_GRID_Y = DEFAULT_GRID_POSITIONS.transit_aspect_grid_y
 
+    # Right-panel layout: when more than this many points are active, the
+    # aspect list/grid is placed in a full-height right-side panel instead of
+    # below the wheel.  This prevents the SVG from becoming excessively wide.
+    _RIGHT_PANEL_POINTS_THRESHOLD = 24
+
     # -------------------------------------------------------------------------
     # INSTANCE ATTRIBUTES (type hints)
     # -------------------------------------------------------------------------
@@ -1660,6 +1774,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         padding: int = 20,
         show_degree_indicators: bool = True,
         show_aspect_icons: bool = True,
+        style: "KerykeionChartStyle" = "classic",
+        show_zodiac_background_ring: bool = True,
     ):
         """
         Initialize the chart visualizer with pre-computed chart data.
@@ -1713,6 +1829,15 @@ class ChartDrawer:  # type: ignore[no-redef]
             show_aspect_icons (bool, optional):
                 Whether to show aspect icons on aspect lines (classic style only).
                 Defaults to True.
+            style (KerykeionChartStyle, optional):
+                Default chart wheel style — "classic" (traditional circles) or "modern"
+                (concentric rings).  This default is used by generate_svg_string(),
+                save_svg(), generate_wheel_only_svg_string(), and save_wheel_only_svg_file()
+                unless overridden with an explicit ``style=`` argument at render time.
+                Defaults to "classic".
+            show_zodiac_background_ring (bool, optional):
+                Default for whether to draw colored zodiac wedges (modern style only).
+                Can be overridden at render time.  Defaults to True.
         """
         # =====================================================================
         # STEP 1: Store basic configuration parameters
@@ -1734,6 +1859,8 @@ class ChartDrawer:  # type: ignore[no-redef]
             show_aspect_icons=show_aspect_icons,
             auto_size=auto_size,
             padding=padding,
+            style=style,
+            show_zodiac_background_ring=show_zodiac_background_ring,
         )
 
         # =====================================================================
@@ -1816,6 +1943,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         show_aspect_icons: bool,
         auto_size: bool,
         padding: int,
+        style: "KerykeionChartStyle",
+        show_zodiac_background_ring: bool,
     ) -> None:
         """
         Store basic configuration parameters as instance attributes.
@@ -1845,6 +1974,11 @@ class ChartDrawer:  # type: ignore[no-redef]
         self.show_aspect_icons = show_aspect_icons
         self.auto_size = auto_size
         self._padding = padding
+
+        # Chart style defaults (can be overridden per-render call)
+        self._validate_chart_style(style)
+        self._style: "KerykeionChartStyle" = style
+        self._show_zodiac_background_ring: bool = show_zodiac_background_ring
 
         # Initialize vertical offsets using the dataclass, then convert to dict
         self._vertical_offsets_config = VerticalOffsetsConfig()
@@ -1933,6 +2067,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         - Location information (city, lat/lon)
         - Chart width based on chart type
         - Circle radii based on chart type and view mode
+        - Grid shift for multi-column planet grids
         - Width adjustments for house comparison visibility
 
         Args:
@@ -1953,8 +2088,63 @@ class ChartDrawer:  # type: ignore[no-redef]
         # Set circle radii based on chart type and view mode
         self._setup_circle_radii()
 
+        # Calculate horizontal shift for planet/house grids when multi-column
+        # layout would overlap the chart wheel
+        self._grid_x_shift = self._calculate_grid_x_shift()
+
         # Adjust width if house comparison grid is hidden
         self._apply_house_comparison_width_override()
+
+    def _calculate_grid_x_shift(self) -> int:
+        """Calculate horizontal shift to prevent multi-column planet grids from overlapping the wheel.
+
+        When many celestial points are active (> 20), the planet grid splits into
+        multiple columns that grow leftward from the default x position. If the
+        leftmost column would overlap the chart wheel, the entire grid block
+        (planet grid + house grid) is shifted rightward.
+
+        This only applies to single-wheel chart types (Natal, Composite, SingleReturn).
+        Double-wheel charts use a single-column layout and are not affected.
+
+        Returns:
+            Number of pixels to shift grids rightward (0 if no shift needed).
+        """
+        if self.chart_type in ("Synastry", "Transit", "DualReturnChart"):
+            return 0
+
+        from kerykeion.charts.charts_utils import (
+            _GRID_COLUMN_WIDTH,
+            _SECOND_COLUMN_THRESHOLD,
+            _select_planet_grid_thresholds,
+        )
+
+        n = self._count_active_planets()
+        if n <= _SECOND_COLUMN_THRESHOLD:
+            return 0
+
+        # Determine how many columns will be used
+        thresholds = _select_planet_grid_thresholds(self.chart_type, n)
+        if n <= thresholds[0]:
+            num_cols = 1
+        elif n <= thresholds[1]:
+            num_cols = 2
+        elif n <= thresholds[2]:
+            num_cols = 3
+        else:
+            num_cols = 4
+
+        if num_cols <= 1:
+            return 0
+
+        # Wheel right edge + gap
+        wheel_right = 100 + (2 * self.main_radius)  # 100 (translate-x) + diameter
+        gap = 20  # Minimum gap between wheel and leftmost column
+
+        # Leftmost column position without shift
+        leftmost_x = self._MAIN_PLANET_GRID_X - (num_cols - 1) * _GRID_COLUMN_WIDTH
+
+        overlap = (wheel_right + gap) - leftmost_x
+        return max(0, int(overlap))
 
     def _extract_element_quality_distributions(self, chart_data: "ChartDataModel") -> None:
         """
@@ -1981,6 +2171,213 @@ class ChartDrawer:  # type: ignore[no-redef]
     def _count_active_planets(self) -> int:
         """Return number of active celestial points in the current chart."""
         return len([p for p in self.available_planets_setting if p.get("is_active")])
+
+    def _is_right_panel_mode(self) -> bool:
+        """Whether the aspect list/grid should be placed in a right-side panel.
+
+        Activates only for dual-wheel chart types with many active points.
+        Charts with <= _RIGHT_PANEL_POINTS_THRESHOLD points keep the standard
+        bottom-anchored layout so that default charts remain unchanged.
+        """
+        if self.chart_type not in ("Synastry", "Transit", "DualReturnChart"):
+            return False
+        return self._count_active_planets() > self._RIGHT_PANEL_POINTS_THRESHOLD
+
+    def _estimate_left_content_right_edge(self) -> float:
+        """Estimate the rightmost X extent of all content EXCEPT the aspect list.
+
+        Used to determine where the right-panel aspect list should start.
+        Returns the X coordinate in the SVG coordinate system (before viewBox halving).
+        """
+        n_active = max(self._count_active_planets(), 1)
+        grid_shift = getattr(self, "_grid_x_shift", 0)
+
+        extents: list[float] = []
+
+        # Wheel footprint: translate(100, ...) + diameter
+        wheel_right = 100 + (2 * self.main_radius)
+        extents.append(wheel_right)
+
+        # Main planet grid
+        extents.append(645 + grid_shift + 80)
+        # Main houses grid
+        extents.append(750 + grid_shift + 120)
+
+        if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+            # Secondary planet grid
+            extents.append(910 + 80)
+
+        if self.chart_type == "Synastry":
+            # Secondary houses grid
+            extents.append(1015 + 120)
+
+            if self.show_house_position_comparison or self.show_cusp_position_comparison:
+                point_column_label = self._translate("point", "Point")
+                first_subject_label = self._truncate_name(self.first_obj.name, 8, "…", True)  # type: ignore[union-attr]
+                second_subject_label = self._truncate_name(self.second_obj.name, 8, "…", True)  # type: ignore[union-attr]
+
+                first_columns = [
+                    f"{first_subject_label} {point_column_label}",
+                    first_subject_label,
+                    second_subject_label,
+                ]
+                second_columns = [
+                    f"{second_subject_label} {point_column_label}",
+                    second_subject_label,
+                    first_subject_label,
+                ]
+
+                first_grid_width = self._estimate_house_comparison_grid_width(
+                    column_labels=first_columns,
+                    include_radix_column=True,
+                    include_title=True,
+                )
+                second_grid_width = self._estimate_house_comparison_grid_width(
+                    column_labels=second_columns,
+                    include_radix_column=True,
+                    include_title=False,
+                )
+
+                extents.append(1090 + first_grid_width)
+                extents.append(1290 + second_grid_width)
+
+                if self.show_cusp_position_comparison:
+                    max_house_right = max(1090 + first_grid_width, 1290 + second_grid_width)
+                    cusp_block_width = 160.0 * 2.0
+                    extents.append(max_house_right + 50.0 + cusp_block_width + 45.0)
+
+        if self.chart_type == "Transit":
+            if self.show_house_position_comparison or self.show_cusp_position_comparison:
+                transit_columns = [
+                    self._translate("transit_point", "Transit Point"),
+                    self._translate("house_position", "Natal House"),
+                ]
+                transit_grid_width = self._estimate_house_comparison_grid_width(
+                    column_labels=transit_columns,
+                    include_radix_column=False,
+                    include_title=True,
+                    minimum_width=170.0,
+                )
+                house_right = 980 + transit_grid_width
+                if self.show_house_position_comparison:
+                    extents.append(house_right)
+                if self.show_cusp_position_comparison:
+                    if self.show_house_position_comparison:
+                        extents.append(house_right + 40.0 + 260.0)
+                    else:
+                        extents.append(house_right)
+
+        if self.chart_type == "DualReturnChart":
+            if self.show_house_position_comparison or self.show_cusp_position_comparison:
+                first_subject_label = self._translate("Natal", "Natal")
+                if isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar":
+                    second_subject_label = self._translate("solar_return", "Solar Return")
+                else:
+                    second_subject_label = self._translate("lunar_return", "Lunar Return")
+                point_column_label = self._translate("point", "Point")
+
+                first_columns = [
+                    f"{first_subject_label} {point_column_label}",
+                    first_subject_label,
+                    second_subject_label,
+                ]
+                second_columns = [
+                    f"{second_subject_label} {point_column_label}",
+                    second_subject_label,
+                    first_subject_label,
+                ]
+
+                first_grid_width = self._estimate_house_comparison_grid_width(
+                    column_labels=first_columns,
+                    include_radix_column=True,
+                    include_title=True,
+                )
+                second_grid_width = self._estimate_house_comparison_grid_width(
+                    column_labels=second_columns,
+                    include_radix_column=True,
+                    include_title=False,
+                )
+
+                extents.append(1090 + first_grid_width)
+                extents.append(1290 + second_grid_width)
+
+                if self.show_cusp_position_comparison:
+                    max_house_right = max(1090 + first_grid_width, 1290 + second_grid_width)
+                    cusp_block_width = 160.0 * 2.0
+                    extents.append(max_house_right + 50.0 + cusp_block_width + 45.0)
+
+        return max(extents)
+
+    def _get_right_panel_aspect_params(self) -> dict:
+        """Compute layout parameters for the right-panel aspect list.
+
+        When many celestial points are active, the aspect list is placed in a
+        full-height panel on the right side of the chart instead of being
+        bottom-anchored below the wheel.
+
+        Returns a dict with keys:
+            x_offset:  horizontal origin for the aspect list group
+            y_offset:  vertical origin for the aspect list group
+            aspects_per_column:  number of rows per column (uses full height)
+        """
+        # The Aspect_List SVG group is translated by:
+        #   translate(50, $aspect_list_translate_y)
+        # where aspect_list_translate_y = self._vertical_offsets["aspect_list"]
+        #
+        # Content inside draw_transit_aspect_list is wrapped in:
+        #   <g transform="translate(x_offset, y_offset)">
+        #
+        # So the absolute SVG position of the first aspect row is:
+        #   abs_x = 50 + x_offset
+        #   abs_y = aspect_list_translate_y + y_offset
+        #
+        # We want the list to start near the top of the SVG and extend to
+        # the bottom, positioned to the right of all other content.
+
+        aspect_list_translate_y = self._vertical_offsets["aspect_list"]
+
+        # Where the left content ends (in absolute SVG coords)
+        left_edge = self._estimate_left_content_right_edge()
+
+        # The Aspect_List group already has translate(50, ...) from the template
+        parent_group_x = 50.0
+        gap = 30.0  # gap between left content and aspect list
+
+        x_offset = int(left_edge - parent_group_x + gap)
+
+        # Align the aspect list title with the chart title.
+        # The title text inside draw_transit_aspect_list is rendered at
+        # (y_offset - 15) relative to the Aspect_List group origin.
+        # Absolute title position = aspect_list_translate_y + y_offset - 15
+        # We want this to match the chart title offset.
+        chart_title_y = self._vertical_offsets.get("title", 0.0)
+        # Add a small offset so the aspect title sits just below the chart title
+        target_title_y = chart_title_y + 18.0
+        # y_offset such that aspect_list_translate_y + y_offset - 15 = target_title_y
+        y_offset = int(target_title_y + 15 - aspect_list_translate_y)
+        top_margin = target_title_y
+
+        # For shorter charts (Transit, DualReturn at ~876px) use compact spacing
+        # to avoid an excessively wide aspect list.
+        if self.height < 1000:
+            line_height = 12
+            column_width = 85
+        else:
+            line_height = 14
+            column_width = 100
+
+        # Calculate how many rows fit in the full height
+        bottom_margin = 40
+        usable_height = self.height - bottom_margin - top_margin
+        aspects_per_column = max(14, int(usable_height / line_height))
+
+        return {
+            "x_offset": x_offset,
+            "y_offset": y_offset,
+            "aspects_per_column": aspects_per_column,
+            "line_height": line_height,
+            "column_width": column_width,
+        }
 
     def _get_chart_width(self) -> float:
         """Determine the appropriate chart width based on chart type and display options.
@@ -2067,21 +2464,16 @@ class ChartDrawer:  # type: ignore[no-redef]
             self._vertical_offsets = offsets
             return
 
-        # Calculate extra height needed for additional points
+        # Calculate extra height needed for additional points.
+        # Even with balanced multi-column planet grids, the triangular aspect
+        # grid (single-wheel charts) still scales with total active points,
+        # so height must accommodate the full point count.
         extra_points = active_points_count - 20
         extra_height = extra_points * self._ROW_HEIGHT  # 8px per additional point
 
         self.height = max(self.height, minimum_height + extra_height)
 
         delta_height = max(self.height - minimum_height, 0)
-
-        # Bottom-anchored elements shift down by the full delta
-        # This keeps them "pinned" to the bottom of the SVG
-        offsets["wheel"] += delta_height
-        offsets["aspect_grid"] += delta_height
-        offsets["aspect_list"] += delta_height
-        offsets["lunar_phase"] += delta_height
-        offsets["bottom_left"] += delta_height
 
         # Top elements get a partial shift to maintain visual balance
         # The shift is capped at _MAX_TOP_SHIFT (80px) to prevent excessive spacing
@@ -2093,6 +2485,18 @@ class ChartDrawer:  # type: ignore[no-redef]
         offsets["elements"] += top_shift
         offsets["qualities"] += top_shift
 
+        # Bottom-anchored elements shift down by the full delta
+        # This keeps them "pinned" to the bottom of the SVG
+        offsets["wheel"] += delta_height
+        offsets["aspect_grid"] += delta_height
+        offsets["lunar_phase"] += delta_height
+        offsets["bottom_left"] += delta_height
+
+        # In right-panel mode the aspect list is positioned at the top of the
+        # SVG (full-height right side), so it must NOT be pushed down.
+        if not self._is_right_panel_mode():
+            offsets["aspect_list"] += delta_height
+
         self._vertical_offsets = offsets
 
     def _adjust_height_for_extended_aspect_columns(self) -> None:
@@ -2102,6 +2506,9 @@ class ChartDrawer:  # type: ignore[no-redef]
         columns beyond the 11th one extend upward beyond the normal bounds.
         This method calculates the required height to accommodate these
         extended columns without clipping.
+
+        In right-panel mode the aspect list uses full chart height from the
+        top, so no additional height adjustment is necessary.
 
         Layout constants explained:
         - aspects_per_column (14): Standard number of aspects per column
@@ -2115,6 +2522,11 @@ class ChartDrawer:  # type: ignore[no-redef]
             return
 
         if self.chart_type not in ("Synastry", "Transit", "DualReturnChart"):
+            return
+
+        # In right-panel mode the aspect list starts near the top of the SVG
+        # and uses all the available height, so no extension adjustment needed.
+        if self._is_right_panel_mode():
             return
 
         total_aspects = len(self.aspects_list) if hasattr(self, "aspects_list") else 0
@@ -2178,27 +2590,23 @@ class ChartDrawer:  # type: ignore[no-redef]
         point extends multiple tables vertically (planets, houses, comparisons).
         We therefore scale the height using the actual line spacing used by those
         tables (≈14px) and keep the bottom anchored elements aligned.
+
+        In right-panel mode the wheel (x:100-580) and grids (x:645+) occupy
+        different horizontal ranges, so they can overlap vertically.  This
+        produces a significantly shorter chart.
         """
         base_rows = 14  # Up to 16 active points fit without extra height
         extra_rows = max(active_points_count - base_rows, 0)
 
         synastry_row_height = 15
         comparison_padding_per_row = 4  # Keeps house comparison grids within view.
-        extra_height = extra_rows * (synastry_row_height + comparison_padding_per_row)
-
-        self.height = max(self.height, minimum_height + extra_height)
-
-        delta_height = max(self.height - minimum_height, 0)
 
         # Move title up for synastry charts
         offsets["title"] = -10
 
-        offsets["wheel"] += delta_height
-        offsets["aspect_grid"] += delta_height
-        offsets["aspect_list"] += delta_height
-        offsets["lunar_phase"] += delta_height
-        offsets["bottom_left"] += delta_height
-
+        # -----------------------------------------------------------------
+        # Compute grid / title position shifts (identical for all modes)
+        # -----------------------------------------------------------------
         row_height_ratio = synastry_row_height / max(self._ROW_HEIGHT, 1)
         synastry_top_shift_factor = max(
             self._TOP_SHIFT_FACTOR,
@@ -2227,6 +2635,46 @@ class ChartDrawer:  # type: ignore[no-redef]
         offsets["title"] += top_shift
         offsets["elements"] += top_shift
         offsets["qualities"] += top_shift
+
+        # -----------------------------------------------------------------
+        # Right-panel mode: allow wheel / grid vertical overlap
+        # -----------------------------------------------------------------
+        if self._is_right_panel_mode():
+            # Grid content bottom (tallest grid = house comparison)
+            grid_content_bottom = offsets["grid"] + active_points_count * synastry_row_height + 50
+
+            # Wheel needs approximately 2 * radius + 30px for degree labels
+            wheel_diameter = 2 * self.main_radius + 30
+
+            # Position wheel so its bottom aligns with grid content bottom
+            wheel_offset = max(50.0, grid_content_bottom - wheel_diameter)
+            offsets["wheel"] = wheel_offset
+            offsets["aspect_grid"] = wheel_offset
+
+            # Height = tallest content + bottom margin
+            content_bottom = max(grid_content_bottom, wheel_offset + wheel_diameter)
+            self.height = max(self.height, int(content_bottom + 40))
+
+            # Position bottom-anchored elements relative to the new height
+            delta = max(self.height - minimum_height, 0)
+            offsets["lunar_phase"] = 518.0 + delta
+            offsets["bottom_left"] = delta
+
+            self._vertical_offsets = offsets
+            return
+
+        # -----------------------------------------------------------------
+        # Standard mode: stack wheel below grids
+        # -----------------------------------------------------------------
+        extra_height = extra_rows * (synastry_row_height + comparison_padding_per_row)
+        self.height = max(self.height, minimum_height + extra_height)
+        delta_height = max(self.height - minimum_height, 0)
+
+        offsets["wheel"] += delta_height
+        offsets["aspect_grid"] += delta_height
+        offsets["lunar_phase"] += delta_height
+        offsets["bottom_left"] += delta_height
+        offsets["aspect_list"] += delta_height
 
         self._vertical_offsets = offsets
 
@@ -2348,8 +2796,10 @@ class ChartDrawer:  # type: ignore[no-redef]
         n_active = max(self._count_active_planets(), 1)
 
         # Common grids present on many chart types
-        main_planet_grid_right = 645 + 80
-        main_houses_grid_right = 750 + 120
+        # Apply grid shift when multi-column layout would overlap the wheel
+        grid_shift = getattr(self, "_grid_x_shift", 0)
+        main_planet_grid_right = 645 + grid_shift + 80
+        main_houses_grid_right = 750 + grid_shift + 120
         extents.extend([main_planet_grid_right, main_houses_grid_right])
 
         if self.chart_type in ("Natal", "Composite", "SingleReturnChart"):
@@ -2359,16 +2809,32 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
             # Double-chart aspects placement
-            if self.double_chart_aspect_grid_type == "list":
-                total_aspects = len(self.aspects_list) if hasattr(self, "aspects_list") else 0
-                columns = self._calculate_double_chart_aspect_columns(total_aspects, self.height)
-                columns = max(columns, 1)
-                aspect_list_right = 565 + (columns * self._ASPECT_LIST_COLUMN_WIDTH)
-                extents.append(aspect_list_right)
+            if self._is_right_panel_mode():
+                # Right-panel mode: aspect list/grid starts after left content
+                rp = self._get_right_panel_aspect_params()
+                parent_group_x = 50.0  # Aspect_List group translate(50, ...)
+                if self.double_chart_aspect_grid_type == "list":
+                    total_aspects = len(self.aspects_list) if hasattr(self, "aspects_list") else 0
+                    per_col = max(rp["aspects_per_column"], 1)
+                    columns = max(1, ceil(total_aspects / per_col))
+                    aspect_right = parent_group_x + rp["x_offset"] + (columns * rp["column_width"])
+                    extents.append(aspect_right)
+                else:
+                    # Grid table: N×N grid at the right-panel position
+                    grid_width = 14 * (n_active + 1)
+                    aspect_right = parent_group_x + rp["x_offset"] + grid_width
+                    extents.append(aspect_right)
             else:
-                # Grid table placed with x_indent ~550, width ~ 14px per cell across n_active+1
-                aspect_grid_table_right = 550 + (14 * (n_active + 1))
-                extents.append(aspect_grid_table_right)
+                if self.double_chart_aspect_grid_type == "list":
+                    total_aspects = len(self.aspects_list) if hasattr(self, "aspects_list") else 0
+                    columns = self._calculate_double_chart_aspect_columns(total_aspects, self.height)
+                    columns = max(columns, 1)
+                    aspect_list_right = 565 + (columns * self._ASPECT_LIST_COLUMN_WIDTH)
+                    extents.append(aspect_list_right)
+                else:
+                    # Grid table placed with x_indent ~550, width ~ 14px per cell across n_active+1
+                    aspect_grid_table_right = 550 + (14 * (n_active + 1))
+                    extents.append(aspect_grid_table_right)
 
             # Secondary grids
             secondary_planet_grid_right = 910 + 80
@@ -3036,6 +3502,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         Populate template_dict with the main houses grid table.
 
         Creates the tabular display of house cusps for the primary subject.
+        Applies horizontal grid shift when multi-column planet grids would
+        overlap the chart wheel.
 
         Args:
             template_dict: Dictionary to populate with grid SVG elements.
@@ -3045,6 +3513,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             main_subject_houses_list=houses_list,
             text_color=self.chart_colors_settings["paper_0"],
             house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
+            x_position=self._MAIN_HOUSES_GRID_X + self._grid_x_shift,
         )
 
     def _setup_main_planet_grid(self, template_dict: dict, subject_name: str, title: str = "") -> None:
@@ -3052,6 +3521,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         Populate template_dict with the main planet grid table.
 
         Creates the tabular display of planet positions for the primary subject.
+        Applies horizontal grid shift when multi-column planet grids would
+        overlap the chart wheel.
 
         Args:
             template_dict: Dictionary to populate with grid SVG elements.
@@ -3065,6 +3536,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             chart_type=self.chart_type,
             text_color=self.chart_colors_settings["paper_0"],
             celestial_point_language=self._language_model.celestial_points,
+            x_position=self._MAIN_PLANET_GRID_X + self._grid_x_shift,
         )
 
     def _setup_secondary_planet_grid(self, template_dict: dict, subject_name: str, title: str = "") -> None:
@@ -3635,8 +4107,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         remove_css_variables=False,
         *,
         custom_title: Union[str, None] = None,
-        style: KerykeionChartStyle = "classic",
-        show_zodiac_background_ring: bool = True,
+        style: "Union[KerykeionChartStyle, object]" = _UNSET,
+        show_zodiac_background_ring: "Union[bool, object]" = _UNSET,
     ) -> str:
         """
         Render the full chart SVG as a string.
@@ -3649,11 +4121,20 @@ class ChartDrawer:  # type: ignore[no-redef]
             remove_css_variables (bool): Embed CSS variable definitions.
             custom_title (str or None): Optional override for the SVG title.
             style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
+                If not provided, uses the default set in the constructor.
             show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
+                If not provided, uses the default set in the constructor.
 
         Returns:
         """
-        self._validate_chart_style(style)
+        effective_style = style if style is not _UNSET else self._style
+        effective_ring = (
+            show_zodiac_background_ring
+            if show_zodiac_background_ring is not _UNSET
+            else self._show_zodiac_background_ring
+        )
+
+        self._validate_chart_style(effective_style)
         td = self._create_template_dictionary(custom_title=custom_title)
 
         DATA_DIR = Path(__file__).parent
@@ -3664,9 +4145,9 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         template_data = td.model_dump()
 
-        if style == "modern":
+        if effective_style == "modern":
             modern_content = self._generate_modern_content(
-                show_zodiac_background_ring=show_zodiac_background_ring,
+                show_zodiac_background_ring=effective_ring,
             )
             # Scale from 100x100 modern space into the ~480x480 classic wheel space.
             # The wheel group in chart.xml is at translate(100, $full_wheel_translate_y),
@@ -3762,8 +4243,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         remove_css_variables=False,
         *,
         custom_title: Union[str, None] = None,
-        style: KerykeionChartStyle = "classic",
-        show_zodiac_background_ring: bool = True,
+        style: "Union[KerykeionChartStyle, object]" = _UNSET,
+        show_zodiac_background_ring: "Union[bool, object]" = _UNSET,
     ):
         """
         Generate and save the full chart SVG to disk.
@@ -3780,12 +4261,15 @@ class ChartDrawer:  # type: ignore[no-redef]
             remove_css_variables (bool): Pass-through to generate_svg_string to embed CSS variables.
             custom_title (str or None): Optional override for the SVG title.
             style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
+                If not provided, uses the default set in the constructor.
             show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
+                If not provided, uses the default set in the constructor.
 
         Returns:
             None
         """
-        suffix = " - Modern" if style == "modern" else ""
+        effective_style = style if style is not _UNSET else self._style
+        suffix = " - Modern" if effective_style == "modern" else ""
         self.template = self.generate_svg_string(
             minify,
             remove_css_variables,
@@ -3800,8 +4284,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         minify: bool = False,
         remove_css_variables=False,
         *,
-        style: KerykeionChartStyle = "classic",
-        show_zodiac_background_ring: bool = True,
+        style: "Union[KerykeionChartStyle, object]" = _UNSET,
+        show_zodiac_background_ring: "Union[bool, object]" = _UNSET,
     ):
         """
         Render the wheel-only chart SVG as a string.
@@ -3813,15 +4297,23 @@ class ChartDrawer:  # type: ignore[no-redef]
             minify (bool): Remove whitespace and quotes for compactness.
             remove_css_variables (bool): Embed CSS variable definitions.
             style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
+                If not provided, uses the default set in the constructor.
             show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
+                If not provided, uses the default set in the constructor.
 
         Returns:
             str: SVG markup for the chart wheel only.
         """
+        effective_style = style if style is not _UNSET else self._style
+        effective_ring = (
+            show_zodiac_background_ring
+            if show_zodiac_background_ring is not _UNSET
+            else self._show_zodiac_background_ring
+        )
 
-        self._validate_chart_style(style)
+        self._validate_chart_style(effective_style)
 
-        if style == "modern":
+        if effective_style == "modern":
             with open(
                 Path(__file__).parent / "templates" / "modern_wheel.xml",
                 "r",
@@ -3832,7 +4324,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
             template_dict = self._create_template_dictionary()
             modern_content = self._generate_modern_content(
-                show_zodiac_background_ring=show_zodiac_background_ring,
+                show_zodiac_background_ring=effective_ring,
             )
             template = Template(raw_template).substitute(
                 {
@@ -3863,8 +4355,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         minify: bool = False,
         remove_css_variables=False,
         *,
-        style: KerykeionChartStyle = "classic",
-        show_zodiac_background_ring: bool = True,
+        style: "Union[KerykeionChartStyle, object]" = _UNSET,
+        show_zodiac_background_ring: "Union[bool, object]" = _UNSET,
     ):
         """
         Generate and save wheel-only chart SVG to disk.
@@ -3880,12 +4372,15 @@ class ChartDrawer:  # type: ignore[no-redef]
             minify (bool): Pass-through to generate_wheel_only_svg_string for compact output.
             remove_css_variables (bool): Pass-through to generate_wheel_only_svg_string to embed CSS variables.
             style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
+                If not provided, uses the default set in the constructor.
             show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
+                If not provided, uses the default set in the constructor.
 
         Returns:
             None
         """
-        suffix = " - Modern Wheel Only" if style == "modern" else " - Wheel Only"
+        effective_style = style if style is not _UNSET else self._style
+        suffix = " - Modern Wheel Only" if effective_style == "modern" else " - Wheel Only"
         template = self.generate_wheel_only_svg_string(
             minify,
             remove_css_variables,

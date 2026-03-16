@@ -89,6 +89,21 @@ AstrologicalPoint: TypeAlias = Literal[
     # Fixed Stars
     "Regulus",
     "Spica",
+    "Aldebaran",
+    "Antares",
+    "Sirius",
+    "Fomalhaut",
+    "Algol",
+    "Betelgeuse",
+    "Canopus",
+    "Procyon",
+    "Arcturus",
+    "Pollux",
+    "Deneb",
+    "Altair",
+    "Rigel",
+    "Achernar",
+    "Capella",
     # Arabic Parts
     "Pars_Fortunae",
     "Pars_Spiritus",
@@ -104,7 +119,30 @@ AstrologicalPoint: TypeAlias = Literal[
     "Imum_Coeli",
 ]
 
-"""Literal type for Axial Cusps"""
+"""Literal type for all astrological points supported by Kerykeion.
+
+Includes planets, lunar nodes, special points, asteroids, trans-Neptunian objects,
+fixed stars, Arabic parts (lots), angular points, and axial cusps.
+
+Fixed Stars (17 total, expanded in v5.12 from 2):
+    The original pair (Regulus, Spica) are joined by 15 additional bright stars
+    chosen for their traditional astrological significance:
+
+    Royal Stars (Watchers of the sky in Persian/Hellenistic astrology):
+        - Regulus (alpha Leonis) -- Watcher of the North, mag 1.35
+        - Aldebaran (alpha Tauri) -- Watcher of the East, mag 0.87
+        - Antares (alpha Scorpii) -- Watcher of the West, mag 1.06
+        - Fomalhaut (alpha Piscis Austrini) -- Watcher of the South, mag 1.16
+
+    Other prominent fixed stars:
+        - Spica (alpha Virginis), Sirius (alpha Canis Majoris),
+          Algol (beta Persei), Betelgeuse (alpha Orionis),
+          Canopus (alpha Carinae), Procyon (alpha Canis Minoris),
+          Arcturus (alpha Bootis), Pollux (beta Geminorum),
+          Deneb (alpha Cygni), Altair (alpha Aquilae),
+          Rigel (beta Orionis), Achernar (alpha Eridani),
+          Capella (alpha Aurigae)
+"""
 
 
 Element: TypeAlias = Literal["Air", "Fire", "Earth", "Water"]
@@ -161,8 +199,87 @@ SiderealMode: TypeAlias = Literal[
     "J2000",
     "J1900",
     "B1950",
+    # v5.12 additions
+    "ARYABHATA",
+    "ARYABHATA_522",
+    "ARYABHATA_MSUN",
+    "GALCENT_0SAG",
+    "GALCENT_COCHRANE",
+    "GALCENT_MULA_WILHELM",
+    "GALCENT_RGILBRAND",
+    "GALEQU_FIORENZA",
+    "GALEQU_IAU1958",
+    "GALEQU_MULA",
+    "GALEQU_TRUE",
+    "GALALIGN_MARDYKS",
+    "KRISHNAMURTI_VP291",
+    "LAHIRI_1940",
+    "LAHIRI_ICRC",
+    "LAHIRI_VP285",
+    "SURYASIDDHANTA",
+    "SURYASIDDHANTA_MSUN",
+    "SS_CITRA",
+    "SS_REVATI",
+    "TRUE_CITRA",
+    "TRUE_MULA",
+    "TRUE_PUSHYA",
+    "TRUE_REVATI",
+    "TRUE_SHEORAN",
+    "BABYL_BRITTON",
+    "VALENS_MOON",
+    # User-defined ayanamsa (requires custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0)
+    "USER",
 ]
-"""Literal type for Sidereal Modes, as known as Ayanamsa"""
+"""Literal type for sidereal modes, also known as ayanamsa systems.
+
+What is Ayanamsa?
+    Ayanamsa (Sanskrit: ayanamsha) is the angular difference between the tropical
+    zodiac (anchored to the vernal equinox) and the sidereal zodiac (anchored to
+    fixed star positions). Due to the precession of the equinoxes (~50.3 arcseconds
+    per year), the two zodiacs slowly diverge. Different ayanamsa systems disagree
+    on the exact offset because they use different reference stars or epochs to
+    define sidereal 0 Aries. As of 2025, most systems place the offset at roughly
+    23-25 degrees.
+
+Expanded in v5.12 from 20 to 47 named modes + USER (custom ayanamsa), 48 total.
+
+Mode families:
+
+    Indian / Vedic:
+        LAHIRI (Indian government standard, ~23.85 deg in 2025),
+        LAHIRI_1940, LAHIRI_ICRC, LAHIRI_VP285,
+        KRISHNAMURTI (KP system, ~23.76 deg), KRISHNAMURTI_VP291,
+        RAMAN, USHASHASHI, JN_BHASIN, YUKTESHWAR,
+        ARYABHATA, ARYABHATA_522, ARYABHATA_MSUN,
+        SURYASIDDHANTA, SURYASIDDHANTA_MSUN, SS_CITRA, SS_REVATI,
+        TRUE_CITRA, TRUE_MULA, TRUE_PUSHYA, TRUE_REVATI, TRUE_SHEORAN
+
+    Western sidereal:
+        FAGAN_BRADLEY (default, ~24.74 deg in 2025 -- Cyril Fagan / Donald Bradley),
+        DELUCE, DJWHAL_KHUL, HIPPARCHOS, SASSANIAN
+
+    Babylonian:
+        BABYL_KUGLER1, BABYL_KUGLER2, BABYL_KUGLER3,
+        BABYL_HUBER, BABYL_ETPSC, BABYL_BRITTON
+
+    Galactic alignment:
+        GALCENT_0SAG, GALCENT_COCHRANE, GALCENT_MULA_WILHELM, GALCENT_RGILBRAND,
+        GALEQU_FIORENZA, GALEQU_IAU1958, GALEQU_MULA, GALEQU_TRUE,
+        GALALIGN_MARDYKS
+
+    Reference frames:
+        J2000, J1900, B1950
+
+    Astronomical:
+        ALDEBARAN_15TAU (fixes Aldebaran at 15 Taurus), VALENS_MOON
+
+    User-defined:
+        USER -- define a custom ayanamsa by specifying ``custom_ayanamsa_t0``
+        (Julian Day of the reference epoch when tropical and sidereal zodiacs
+        coincide) and ``custom_ayanamsa_ayan_t0`` (the ayanamsa offset in
+        degrees at that epoch). The Swiss Ephemeris extrapolates for other
+        dates using its precession model.
+"""
 
 
 HousesSystemIdentifier: TypeAlias = Literal[

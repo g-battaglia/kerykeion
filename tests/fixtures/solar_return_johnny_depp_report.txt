@@ -54,10 +54,10 @@ Johnny Depp — Solar Return Comparison 2024
 +Natal Subject Celestial Points---+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Aqu ♒️ | 20.70°   | +360.0000°/d | N/A     | -    | First House    |
-| Medium Coeli          | Sag ♐️ | 6.59°    | +360.0000°/d | N/A     | -    | Tenth House    |
-| Descendant            | Leo ♌️ | 20.70°   | +360.0000°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Gem ♊️ | 6.59°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Ascendant             | Aqu ♒️ | 20.70°   | +507.7877°/d | N/A     | -    | First House    |
+| Medium Coeli          | Sag ♐️ | 6.59°    | +341.0208°/d | N/A     | -    | Tenth House    |
+| Descendant            | Leo ♌️ | 20.70°   | +507.7877°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Gem ♊️ | 6.59°    | +341.0208°/d | N/A     | -    | Fourth House   |
 | Sun                   | Gem ♊️ | 17.66°   | +0.9560°/d   | +22.87° | -    | Fourth House   |
 | Moon                  | Cap ♑️ | 8.74°    | +12.4796°/d  | -22.08° | -    | Eleventh House |
 | Mercury               | Tau ♉️ | 25.00°   | +0.6817°/d   | +15.27° | -    | Third House    |
@@ -77,10 +77,10 @@ Johnny Depp — Solar Return Comparison 2024
 +Return Subject Celestial Points--+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Sco ♏️ | 20.42°   | +360.0000°/d | N/A     | -    | First House    |
-| Medium Coeli          | Vir ♍️ | 0.36°    | +360.0000°/d | N/A     | -    | Tenth House    |
-| Descendant            | Tau ♉️ | 20.42°   | +360.0000°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Pis ♓️ | 0.36°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Ascendant             | Sco ♏️ | 20.42°   | +289.2855°/d | N/A     | -    | First House    |
+| Medium Coeli          | Vir ♍️ | 0.36°    | +378.2217°/d | N/A     | -    | Tenth House    |
+| Descendant            | Tau ♉️ | 20.42°   | +289.2855°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Pis ♓️ | 0.36°    | +378.2217°/d | N/A     | -    | Fourth House   |
 | Sun                   | Gem ♊️ | 17.66°   | +0.9570°/d   | +22.87° | -    | Seventh House  |
 | Moon                  | Can ♋️ | 5.70°    | +13.3855°/d  | +28.32° | -    | Eighth House   |
 | Mercury               | Gem ♊️ | 9.47°    | +2.1121°/d   | +21.68° | -    | Seventh House  |

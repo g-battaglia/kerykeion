@@ -1299,6 +1299,24 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI"
 )
+
+# The ayanamsa offset (degrees) is available on sidereal charts:
+print(johnny.ayanamsa_value)  # e.g. 23.85
+```
+
+Kerykeion supports **48 named sidereal modes** plus a **USER** mode for custom ayanamsa definitions. Mode families include Indian/Vedic (Lahiri, Krishnamurti, Raman, Aryabhata, Suryasiddhanta, True Citra/Pushya/Revati, ...), Western sidereal (Fagan-Bradley, DeLuce, Hipparchos, ...), Babylonian (Kugler, Huber, Britton, ...), galactic alignment, and astronomical reference frames (J2000, J1900, B1950).
+
+**Custom ayanamsa (USER mode):**
+
+```python
+custom = AstrologicalSubjectFactory.from_birth_data(
+    "Custom Ayanamsa", 2000, 1, 1, 0, 0,
+    lng=0.0, lat=51.5, tz_str="Etc/GMT", online=False,
+    zodiac_type="Sidereal",
+    sidereal_mode="USER",
+    custom_ayanamsa_t0=2451545.0,      # J2000.0 reference epoch
+    custom_ayanamsa_ayan_t0=23.5,       # ayanamsa offset at epoch (degrees)
+)
 ```
 
 **📖 Sidereal mode examples: [Sidereal Modes Guide](https://www.kerykeion.net/content/examples/sidereal-modes/)**

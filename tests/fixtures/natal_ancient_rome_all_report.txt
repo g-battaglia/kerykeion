@@ -24,16 +24,16 @@ Ancient Rome Subject — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 1757584.965278      |
-| Active Points Count | 29                  |
+| Active Points Count | 44                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Ari ♈️ | 19.16°   | +360.0000°/d | N/A     | -    | First House    |
-| Medium Coeli          | Cap ♑️ | 9.91°    | +360.0000°/d | N/A     | -    | Tenth House    |
-| Descendant            | Lib ♎️ | 19.16°   | +360.0000°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Can ♋️ | 9.91°    | +360.0000°/d | N/A     | -    | Fourth House   |
+| Ascendant             | Ari ♈️ | 19.16°   | +622.4172°/d | N/A     | -    | First House    |
+| Medium Coeli          | Cap ♑️ | 9.91°    | +332.4733°/d | N/A     | -    | Tenth House    |
+| Descendant            | Lib ♎️ | 19.16°   | +622.4172°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Can ♋️ | 9.91°    | +332.4733°/d | N/A     | -    | Fourth House   |
 | Sun                   | Cap ♑️ | 11.83°   | +1.0160°/d   | -23.15° | -    | Tenth House    |
 | Moon                  | Aqu ♒️ | 28.43°   | +11.9741°/d  | -11.85° | -    | Eleventh House |
 | Mercury               | Cap ♑️ | 22.77°   | +1.7455°/d   | -23.46° | -    | Tenth House    |
@@ -53,6 +53,21 @@ Ancient Rome Subject — Natal Chart Report
 | Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Twelfth House  |
 | Regulus               | Leo ♌️ | 3.52°    | +0.0001°/d   | +19.94° | -    | Fifth House    |
 | Spica                 | Vir ♍️ | 27.43°   | +0.0001°/d   | -0.73°  | -    | Sixth House    |
+| Aldebaran             | Tau ♉️ | 13.33°   | -0.0001°/d   | +10.66° | -    | First House    |
+| Antares               | Sco ♏️ | 13.34°   | +0.0001°/d   | -20.11° | -    | Seventh House  |
+| Sirius                | Gem ♊️ | 17.99°   | -0.0000°/d   | -15.91° | -    | Second House   |
+| Fomalhaut             | Aqu ♒️ | 7.20°    | +0.0000°/d   | -38.70° | -    | Eleventh House |
+| Algol                 | Ari ♈️ | 29.79°   | -0.0001°/d   | +32.08° | -    | First House    |
+| Betelgeuse            | Gem ♊️ | 2.31°    | -0.0001°/d   | +4.85°  | -    | Second House   |
+| Canopus               | Gem ♊️ | 18.79°   | -0.0002°/d   | -52.58° | -    | Second House   |
+| Procyon               | Gem ♊️ | 29.68°   | -0.0000°/d   | +8.04°  | -    | Third House    |
+| Arcturus              | Vir ♍️ | 27.81°   | +0.0002°/d   | +29.92° | -    | Sixth House    |
+| Pollux                | Gem ♊️ | 27.10°   | -0.0000°/d   | +30.18° | -    | Third House    |
+| Deneb                 | Aqu ♒️ | 9.28°    | -0.0000°/d   | +39.63° | -    | Eleventh House |
+| Altair                | Cap ♑️ | 5.05°    | +0.0001°/d   | +5.78°  | -    | Ninth House    |
+| Rigel                 | Tau ♉️ | 20.37°   | -0.0001°/d   | -12.28° | -    | First House    |
+| Achernar              | Aqu ♒️ | 18.42°   | -0.0000°/d   | -67.43° | -    | Eleventh House |
+| Capella               | Tau ♉️ | 25.42°   | -0.0001°/d   | +41.32° | -    | Second House   |
 | Pars Fortunae         | Gem ♊️ | 5.76°    | N/A          | N/A     | -    | Second House   |
 | Pars Spiritus         | Pis ♓️ | 2.56°    | N/A          | N/A     | -    | Twelfth House  |
 | Pars Amoris           | Tau ♉️ | 28.29°   | N/A          | N/A     | -    | Second House   |
@@ -89,20 +104,20 @@ Ancient Rome Subject — Natal Chart Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 3.3                | 12.5%      |
-| Earth 🌍 | 9.299999999999999  | 35.1%      |
-| Air 💨   | 7.6                | 28.7%      |
-| Water 💧 | 6.3                | 23.8%      |
-| Total    | 26.499999999999996 | 100%       |
+| Fire 🔥  | 3.5                | 11.9%      |
+| Earth 🌍 | 10.299999999999995 | 34.9%      |
+| Air 💨   | 9.199999999999996  | 31.2%      |
+| Water 💧 | 6.5                | 22.0%      |
+| Total    | 29.499999999999993 | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 15.000000000000002 | 56.6%      |
-| Fixed    | 5.3                | 20.0%      |
-| Mutable  | 6.2                | 23.4%      |
-| Total    | 26.5               | 100%       |
+| Cardinal | 15.4               | 52.2%      |
+| Fixed    | 6.700000000000001  | 22.7%      |
+| Mutable  | 7.400000000000001  | 25.1%      |
+| Total    | 29.500000000000004 | 100%       |
 +----------+--------------------+------------+
 
 +Active Celestial Points-----+
@@ -127,16 +142,31 @@ Ancient Rome Subject — Natal Chart Report
 | 17 | Earth                 |
 | 18 | Regulus               |
 | 19 | Spica                 |
-| 20 | Pars_Fortunae         |
-| 21 | Pars_Spiritus         |
-| 22 | Pars_Amoris           |
-| 23 | Pars_Fidei            |
-| 24 | Vertex                |
-| 25 | Anti_Vertex           |
-| 26 | Ascendant             |
-| 27 | Medium_Coeli          |
-| 28 | Descendant            |
-| 29 | Imum_Coeli            |
+| 20 | Aldebaran             |
+| 21 | Antares               |
+| 22 | Sirius                |
+| 23 | Fomalhaut             |
+| 24 | Algol                 |
+| 25 | Betelgeuse            |
+| 26 | Canopus               |
+| 27 | Procyon               |
+| 28 | Arcturus              |
+| 29 | Pollux                |
+| 30 | Deneb                 |
+| 31 | Altair                |
+| 32 | Rigel                 |
+| 33 | Achernar              |
+| 34 | Capella               |
+| 35 | Pars_Fortunae         |
+| 36 | Pars_Spiritus         |
+| 37 | Pars_Amoris           |
+| 38 | Pars_Fidei            |
+| 39 | Vertex                |
+| 40 | Anti_Vertex           |
+| 41 | Ascendant             |
+| 42 | Medium_Coeli          |
+| 43 | Descendant            |
+| 44 | Imum_Coeli            |
 +----+-----------------------+
 
 +----------------+---------+
@@ -166,6 +196,9 @@ Ancient Rome Subject — Natal Chart Report
 | Sun                   | opposition ☍                  | Pars Fidei            | 3.98° | Applying →   |
 | Sun                   | square □                      | Vertex                | 3.91° | Separating ← |
 | Sun                   | square □                      | Anti Vertex           | 3.91° | Separating ← |
+| Sun                   | trine △                       | Aldebaran             | 1.50° | Applying →   |
+| Sun                   | sextile ⚹                     | Antares               | 1.51° | Applying →   |
+| Sun                   | conjunction ☌                 | Altair                | 6.78° | Separating ← |
 | Moon                  | conjunction ☌                 | Venus                 | 7.47° | Separating ← |
 | Moon                  | sextile ⚹                     | Mars                  | 3.72° | Applying →   |
 | Moon                  | semi-sextile semi-sextile     | Jupiter               | 0.77° | Applying →   |
@@ -179,6 +212,12 @@ Ancient Rome Subject — Natal Chart Report
 | Moon                  | quincunx ⚻                    | Spica                 | 1.00° | Separating ← |
 | Moon                  | conjunction ☌                 | Pars Spiritus         | 4.13° | Applying →   |
 | Moon                  | square □                      | Pars Amoris           | 0.14° | Separating ← |
+| Moon                  | sextile ⚹                     | Algol                 | 1.36° | Applying →   |
+| Moon                  | square □                      | Betelgeuse            | 3.88° | Applying →   |
+| Moon                  | trine △                       | Procyon               | 1.25° | Applying →   |
+| Moon                  | quincunx ⚻                    | Arcturus              | 0.62° | Separating ← |
+| Moon                  | trine △                       | Pollux                | 1.33° | Separating ← |
+| Moon                  | square □                      | Capella               | 3.01° | Separating ← |
 | Mercury               | conjunction ☌                 | Jupiter               | 6.43° | Applying →   |
 | Mercury               | trine △                       | Uranus                | 7.57° | Applying →   |
 | Mercury               | square □                      | Ascendant             | 3.61° | Applying →   |
@@ -188,12 +227,23 @@ Ancient Rome Subject — Natal Chart Report
 | Mercury               | trine △                       | Spica                 | 4.66° | Applying →   |
 | Mercury               | trine △                       | Pars Amoris           | 5.52° | Applying →   |
 | Mercury               | opposition ☍                  | Pars Fidei            | 6.96° | Separating ← |
+| Mercury               | trine △                       | Arcturus              | 5.04° | Applying →   |
+| Mercury               | trine △                       | Rigel                 | 2.40° | Separating ← |
+| Mercury               | trine △                       | Capella               | 2.65° | Applying →   |
 | Venus                 | trine △                       | Neptune               | 5.87° | Applying →   |
 | Venus                 | sextile ⚹                     | Ascendant             | 1.80° | Applying →   |
 | Venus                 | trine △                       | Descendant            | 1.80° | Applying →   |
 | Venus                 | semi-sextile semi-sextile     | Mean Lilith           | 0.88° | Separating ← |
 | Venus                 | biquintile biquintile         | Spica                 | 0.47° | Applying →   |
 | Venus                 | biquintile biquintile         | Pars Fidei            | 0.85° | Applying →   |
+| Venus                 | trine △                       | Sirius                | 2.97° | Separating ← |
+| Venus                 | trine △                       | Canopus               | 2.17° | Separating ← |
+| Venus                 | biquintile biquintile         | Arcturus              | 0.85° | Applying →   |
+| Venus                 | trine △                       | Pollux                | 6.14° | Applying →   |
+| Venus                 | semi-square semi-square       | Altair                | 0.91° | Separating ← |
+| Venus                 | square □                      | Rigel                 | 0.59° | Separating ← |
+| Venus                 | conjunction ☌                 | Achernar              | 2.53° | Separating ← |
+| Venus                 | square □                      | Capella               | 4.46° | Applying →   |
 | Mars                  | sextile ⚹                     | Saturn                | 0.39° | Applying →   |
 | Mars                  | opposition ☍                  | Neptune               | 5.32° | Separating ← |
 | Mars                  | trine △                       | Mean North Lunar Node | 1.41° | Applying →   |
@@ -206,6 +256,13 @@ Ancient Rome Subject — Natal Chart Report
 | Mars                  | square □                      | Earth                 | 2.15° | Separating ← |
 | Mars                  | square □                      | Spica                 | 4.72° | Separating ← |
 | Mars                  | sextile ⚹                     | Pars Spiritus         | 0.41° | Applying →   |
+| Mars                  | trine △                       | Algol                 | 2.36° | Separating ← |
+| Mars                  | quincunx ⚻                    | Betelgeuse            | 0.16° | Applying →   |
+| Mars                  | opposition ☍                  | Procyon               | 2.48° | Separating ← |
+| Mars                  | square □                      | Arcturus              | 4.34° | Separating ← |
+| Mars                  | opposition ☍                  | Pollux                | 5.05° | Separating ← |
+| Mars                  | conjunction ☌                 | Altair                | 2.90° | Applying →   |
+| Mars                  | biquintile biquintile         | Capella               | 0.73° | Separating ← |
 | Jupiter               | square □                      | Saturn                | 3.35° | Applying →   |
 | Jupiter               | trine △                       | Uranus                | 1.14° | Applying →   |
 | Jupiter               | sextile ⚹                     | True Lilith           | 3.51° | Separating ← |
@@ -214,6 +271,12 @@ Ancient Rome Subject — Natal Chart Report
 | Jupiter               | trine △                       | Spica                 | 1.76° | Separating ← |
 | Jupiter               | trine △                       | Pars Fortunae         | 6.56° | Applying →   |
 | Jupiter               | trine △                       | Pars Amoris           | 0.91° | Separating ← |
+| Jupiter               | conjunction ☌                 | Fomalhaut             | 8.01° | Applying →   |
+| Jupiter               | square □                      | Algol                 | 0.60° | Applying →   |
+| Jupiter               | trine △                       | Betelgeuse            | 3.11° | Applying →   |
+| Jupiter               | quincunx ⚻                    | Procyon               | 0.48° | Applying →   |
+| Jupiter               | trine △                       | Arcturus              | 1.39° | Separating ← |
+| Jupiter               | trine △                       | Capella               | 3.78° | Separating ← |
 | Saturn                | trine △                       | Neptune               | 5.71° | Separating ← |
 | Saturn                | sextile ⚹                     | Mean North Lunar Node | 1.02° | Applying →   |
 | Saturn                | sextile ⚹                     | True North Lunar Node | 0.65° | Separating ← |
@@ -223,6 +286,13 @@ Ancient Rome Subject — Natal Chart Report
 | Saturn                | biquintile biquintile         | True Lilith           | 0.85° | Separating ← |
 | Saturn                | square □                      | Regulus               | 0.98° | Applying →   |
 | Saturn                | trine △                       | Pars Spiritus         | 0.02° | Applying →   |
+| Saturn                | sesquiquadrate sesquiquadrate | Sirius                | 0.45° | Applying →   |
+| Saturn                | square □                      | Fomalhaut             | 4.66° | Applying →   |
+| Saturn                | opposition ☍                  | Algol                 | 2.75° | Separating ← |
+| Saturn                | quincunx ⚻                    | Betelgeuse            | 0.23° | Separating ← |
+| Saturn                | trine △                       | Procyon               | 2.87° | Separating ← |
+| Saturn                | trine △                       | Pollux                | 5.44° | Separating ← |
+| Saturn                | sextile ⚹                     | Altair                | 2.51° | Applying →   |
 | Uranus                | square □                      | Mean North Lunar Node | 3.23° | Applying →   |
 | Uranus                | square □                      | True North Lunar Node | 1.56° | Separating ← |
 | Uranus                | square □                      | Mean South Lunar Node | 3.23° | Separating ← |
@@ -236,6 +306,13 @@ Ancient Rome Subject — Natal Chart Report
 | Uranus                | conjunction ☌                 | Pars Amoris           | 2.04° | Applying →   |
 | Uranus                | semi-square semi-square       | Pars Fidei            | 0.48° | Separating ← |
 | Uranus                | trine △                       | Vertex                | 7.58° | Separating ← |
+| Uranus                | trine △                       | Fomalhaut             | 6.87° | Separating ← |
+| Uranus                | semi-sextile semi-sextile     | Algol                 | 0.54° | Applying →   |
+| Uranus                | conjunction ☌                 | Betelgeuse            | 1.98° | Separating ← |
+| Uranus                | semi-sextile semi-sextile     | Procyon               | 0.66° | Applying →   |
+| Uranus                | trine △                       | Arcturus              | 2.52° | Applying →   |
+| Uranus                | conjunction ☌                 | Rigel                 | 9.97° | Applying →   |
+| Uranus                | conjunction ☌                 | Capella               | 4.91° | Applying →   |
 | Neptune               | sextile ⚹                     | True North Lunar Node | 5.06° | Separating ← |
 | Neptune               | trine △                       | Descendant            | 7.67° | Applying →   |
 | Neptune               | trine △                       | Mean South Lunar Node | 6.73° | Separating ← |
@@ -244,11 +321,24 @@ Ancient Rome Subject — Natal Chart Report
 | Neptune               | square □                      | Earth                 | 3.17° | Separating ← |
 | Neptune               | square □                      | Spica                 | 0.60° | Separating ← |
 | Neptune               | trine △                       | Pars Spiritus         | 5.73° | Separating ← |
+| Neptune               | conjunction ☌                 | Sirius                | 8.84° | Applying →   |
+| Neptune               | sextile ⚹                     | Algol                 | 2.96° | Separating ← |
+| Neptune               | conjunction ☌                 | Canopus               | 8.05° | Applying →   |
+| Neptune               | conjunction ☌                 | Procyon               | 2.84° | Separating ← |
+| Neptune               | square □                      | Arcturus              | 0.98° | Separating ← |
+| Neptune               | conjunction ☌                 | Pollux                | 0.27° | Separating ← |
+| Neptune               | opposition ☍                  | Altair                | 8.22° | Separating ← |
 | Pluto                 | sextile ⚹                     | Medium Coeli          | 5.50° | Applying →   |
 | Pluto                 | trine △                       | Imum Coeli            | 5.50° | Applying →   |
 | Pluto                 | conjunction ☌                 | Mean Lilith           | 4.67° | Separating ← |
 | Pluto                 | quintile Q                    | Pars Amoris           | 0.88° | Applying →   |
 | Pluto                 | trine △                       | Pars Fidei            | 0.40° | Applying →   |
+| Pluto                 | sextile ⚹                     | Aldebaran             | 2.08° | Separating ← |
+| Pluto                 | trine △                       | Antares               | 2.07° | Separating ← |
+| Pluto                 | square □                      | Sirius                | 2.58° | Applying →   |
+| Pluto                 | semi-square semi-square       | Algol                 | 0.62° | Separating ← |
+| Pluto                 | square □                      | Canopus               | 3.38° | Applying →   |
+| Pluto                 | sextile ⚹                     | Rigel                 | 4.96° | Applying →   |
 | Mean North Lunar Node | conjunction ☌                 | True North Lunar Node | 1.68° | Applying →   |
 | Mean North Lunar Node | sesquiquadrate sesquiquadrate | Ascendant             | 0.59° | Separating ← |
 | Mean North Lunar Node | trine △                       | Medium Coeli          | 6.34° | Separating ← |
@@ -257,59 +347,194 @@ Ancient Rome Subject — Natal Chart Report
 | Mean North Lunar Node | semi-sextile semi-sextile     | Regulus               | 0.04° | Applying →   |
 | Mean North Lunar Node | square □                      | Pars Fortunae         | 2.19° | Separating ← |
 | Mean North Lunar Node | opposition ☍                  | Pars Spiritus         | 1.01° | Applying →   |
+| Mean North Lunar Node | trine △                       | Algol                 | 3.77° | Applying →   |
+| Mean North Lunar Node | square □                      | Betelgeuse            | 1.26° | Applying →   |
+| Mean North Lunar Node | sextile ⚹                     | Procyon               | 3.89° | Applying →   |
+| Mean North Lunar Node | trine △                       | Altair                | 1.48° | Separating ← |
 | True North Lunar Node | opposition ☍                  | Mean South Lunar Node | 1.68° | Separating ← |
 | True North Lunar Node | square □                      | Pars Fortunae         | 3.87° | Separating ← |
 | True North Lunar Node | opposition ☍                  | Pars Spiritus         | 0.67° | Separating ← |
 | True North Lunar Node | square □                      | Pars Amoris           | 3.60° | Applying →   |
 | True North Lunar Node | biquintile biquintile         | Anti Vertex           | 0.03° | Separating ← |
+| True North Lunar Node | quintile Q                    | Antares               | 0.55° | Applying →   |
+| True North Lunar Node | trine △                       | Algol                 | 2.10° | Applying →   |
+| True North Lunar Node | square □                      | Betelgeuse            | 0.42° | Separating ← |
+| True North Lunar Node | sextile ⚹                     | Procyon               | 2.21° | Applying →   |
+| True North Lunar Node | sextile ⚹                     | Pollux                | 4.79° | Applying →   |
+| True North Lunar Node | trine △                       | Altair                | 3.16° | Separating ← |
 | Ascendant             | semi-sextile semi-sextile     | Mean Lilith           | 0.92° | Applying →   |
 | Ascendant             | semi-square semi-square       | Mean South Lunar Node | 0.59° | Separating ← |
 | Ascendant             | square □                      | Pars Fidei            | 3.35° | Separating ← |
+| Ascendant             | sextile ⚹                     | Sirius                | 1.17° | Separating ← |
+| Ascendant             | quintile Q                    | Fomalhaut             | 0.05° | Separating ← |
+| Ascendant             | sextile ⚹                     | Canopus               | 0.37° | Separating ← |
+| Ascendant             | sextile ⚹                     | Achernar              | 0.73° | Separating ← |
 | Medium Coeli          | opposition ☍                  | Pars Fidei            | 5.90° | Applying →   |
 | Medium Coeli          | square □                      | Vertex                | 1.99° | Separating ← |
 | Medium Coeli          | square □                      | Anti Vertex           | 1.99° | Separating ← |
+| Medium Coeli          | trine △                       | Aldebaran             | 3.43° | Applying →   |
+| Medium Coeli          | sextile ⚹                     | Antares               | 3.43° | Applying →   |
+| Medium Coeli          | semi-sextile semi-sextile     | Deneb                 | 0.63° | Separating ← |
+| Medium Coeli          | conjunction ☌                 | Altair                | 4.86° | Separating ← |
+| Medium Coeli          | sesquiquadrate sesquiquadrate | Capella               | 0.51° | Applying →   |
 | Descendant            | quincunx ⚻                    | Mean Lilith           | 0.92° | Applying →   |
 | Descendant            | sesquiquadrate sesquiquadrate | Mean South Lunar Node | 0.59° | Separating ← |
 | Descendant            | square □                      | Pars Fidei            | 3.35° | Separating ← |
+| Descendant            | trine △                       | Sirius                | 1.17° | Separating ← |
+| Descendant            | trine △                       | Canopus               | 0.37° | Separating ← |
+| Descendant            | trine △                       | Pollux                | 7.94° | Applying →   |
+| Descendant            | trine △                       | Achernar              | 0.73° | Separating ← |
+| Descendant            | biquintile biquintile         | Capella               | 0.26° | Separating ← |
 | Imum Coeli            | trine △                       | Mean South Lunar Node | 6.34° | Separating ← |
 | Imum Coeli            | trine △                       | Pars Spiritus         | 7.35° | Separating ← |
 | Imum Coeli            | conjunction ☌                 | Pars Fidei            | 5.90° | Applying →   |
 | Imum Coeli            | square □                      | Vertex                | 1.99° | Separating ← |
 | Imum Coeli            | square □                      | Anti Vertex           | 1.99° | Separating ← |
+| Imum Coeli            | sextile ⚹                     | Aldebaran             | 3.43° | Applying →   |
+| Imum Coeli            | trine △                       | Antares               | 3.43° | Applying →   |
+| Imum Coeli            | quincunx ⚻                    | Deneb                 | 0.63° | Separating ← |
+| Imum Coeli            | opposition ☍                  | Altair                | 4.86° | Separating ← |
+| Imum Coeli            | semi-square semi-square       | Capella               | 0.51° | Applying →   |
 | Mean Lilith           | conjunction ☌                 | True Lilith           | 5.61° | Applying →   |
 | Mean Lilith           | conjunction ☌                 | Earth                 | 9.92° | Applying →   |
 | Mean Lilith           | opposition ☍                  | Spica                 | 7.36° | Applying →   |
 | Mean Lilith           | trine △                       | Pars Fidei            | 4.26° | Separating ← |
+| Mean Lilith           | trine △                       | Antares               | 6.74° | Separating ← |
+| Mean Lilith           | square □                      | Sirius                | 2.08° | Separating ← |
+| Mean Lilith           | quintile Q                    | Betelgeuse            | 0.24° | Applying →   |
+| Mean Lilith           | square □                      | Canopus               | 1.29° | Separating ← |
+| Mean Lilith           | opposition ☍                  | Arcturus              | 7.73° | Applying →   |
+| Mean Lilith           | sextile ⚹                     | Rigel                 | 0.29° | Applying →   |
+| Mean Lilith           | sextile ⚹                     | Capella               | 5.34° | Applying →   |
 | Mean South Lunar Node | conjunction ☌                 | True South Lunar Node | 1.68° | Separating ← |
 | Mean South Lunar Node | quincunx ⚻                    | Regulus               | 0.04° | Separating ← |
 | Mean South Lunar Node | square □                      | Pars Fortunae         | 2.19° | Applying →   |
 | Mean South Lunar Node | conjunction ☌                 | Pars Spiritus         | 1.01° | Separating ← |
+| Mean South Lunar Node | sextile ⚹                     | Algol                 | 3.77° | Separating ← |
+| Mean South Lunar Node | square □                      | Betelgeuse            | 1.26° | Separating ← |
+| Mean South Lunar Node | trine △                       | Procyon               | 3.89° | Separating ← |
+| Mean South Lunar Node | trine △                       | Pollux                | 6.47° | Separating ← |
+| Mean South Lunar Node | sextile ⚹                     | Altair                | 1.48° | Applying →   |
 | True South Lunar Node | square □                      | Pars Fortunae         | 3.87° | Applying →   |
 | True South Lunar Node | conjunction ☌                 | Pars Spiritus         | 0.67° | Applying →   |
 | True South Lunar Node | square □                      | Pars Amoris           | 3.60° | Separating ← |
 | True South Lunar Node | biquintile biquintile         | Vertex                | 0.03° | Applying →   |
+| True South Lunar Node | quintile Q                    | Aldebaran             | 0.56° | Separating ← |
+| True South Lunar Node | sextile ⚹                     | Algol                 | 2.10° | Separating ← |
+| True South Lunar Node | square □                      | Betelgeuse            | 0.42° | Applying →   |
+| True South Lunar Node | trine △                       | Procyon               | 2.21° | Separating ← |
+| True South Lunar Node | trine △                       | Pollux                | 4.79° | Separating ← |
+| True South Lunar Node | sextile ⚹                     | Altair                | 3.16° | Applying →   |
 | True Lilith           | conjunction ☌                 | Earth                 | 4.31° | Separating ← |
 | True Lilith           | trine △                       | Regulus               | 7.83° | Separating ← |
 | True Lilith           | opposition ☍                  | Spica                 | 1.74° | Separating ← |
 | True Lilith           | sextile ⚹                     | Pars Amoris           | 2.60° | Separating ← |
+| True Lilith           | square □                      | Procyon               | 3.99° | Separating ← |
+| True Lilith           | opposition ☍                  | Arcturus              | 2.12° | Separating ← |
+| True Lilith           | square □                      | Pollux                | 1.41° | Separating ← |
+| True Lilith           | sextile ⚹                     | Rigel                 | 5.32° | Applying →   |
+| True Lilith           | sextile ⚹                     | Capella               | 0.27° | Applying →   |
 | Earth                 | trine △                       | Regulus               | 3.52° | Static =     |
 | Earth                 | opposition ☍                  | Spica                 | 2.57° | Static =     |
 | Earth                 | sextile ⚹                     | Pars Fortunae         | 5.76° | Static =     |
 | Earth                 | sextile ⚹                     | Pars Amoris           | 1.71° | Static =     |
 | Earth                 | opposition ☍                  | Vertex                | 7.92° | Static =     |
 | Earth                 | conjunction ☌                 | Anti Vertex           | 7.92° | Static =     |
+| Earth                 | semi-sextile semi-sextile     | Algol                 | 0.21° | Static =     |
+| Earth                 | sextile ⚹                     | Betelgeuse            | 2.31° | Static =     |
+| Earth                 | square □                      | Procyon               | 0.32° | Static =     |
+| Earth                 | opposition ☍                  | Arcturus              | 2.19° | Static =     |
+| Earth                 | square □                      | Pollux                | 2.90° | Static =     |
+| Earth                 | sextile ⚹                     | Capella               | 4.58° | Static =     |
 | Regulus               | sextile ⚹                     | Pars Fortunae         | 2.23° | Static =     |
 | Regulus               | quincunx ⚻                    | Pars Spiritus         | 0.97° | Static =     |
 | Regulus               | sextile ⚹                     | Pars Amoris           | 5.23° | Static =     |
 | Regulus               | sextile ⚹                     | Vertex                | 4.39° | Static =     |
 | Regulus               | trine △                       | Anti Vertex           | 4.39° | Static =     |
+| Regulus               | semi-square semi-square       | Sirius                | 0.53° | Static =     |
+| Regulus               | opposition ☍                  | Fomalhaut             | 3.68° | Static =     |
+| Regulus               | square □                      | Algol                 | 3.73° | Static =     |
+| Regulus               | sextile ⚹                     | Betelgeuse            | 1.21° | Static =     |
+| Regulus               | semi-square semi-square       | Canopus               | 0.26° | Static =     |
+| Regulus               | sextile ⚹                     | Arcturus              | 5.71° | Static =     |
+| Regulus               | opposition ☍                  | Deneb                 | 5.76° | Static =     |
 | Spica                 | trine △                       | Pars Amoris           | 0.86° | Static =     |
 | Spica                 | quintile Q                    | Pars Fidei            | 0.38° | Static =     |
+| Spica                 | sesquiquadrate sesquiquadrate | Aldebaran             | 0.90° | Static =     |
+| Spica                 | semi-square semi-square       | Antares               | 0.90° | Static =     |
+| Spica                 | trine △                       | Betelgeuse            | 4.88° | Static =     |
+| Spica                 | square □                      | Procyon               | 2.24° | Static =     |
+| Spica                 | conjunction ☌                 | Arcturus              | 0.38° | Static =     |
+| Spica                 | square □                      | Pollux                | 0.33° | Static =     |
+| Spica                 | trine △                       | Rigel                 | 7.07° | Static =     |
+| Spica                 | trine △                       | Capella               | 2.01° | Static =     |
 | Pars Fortunae         | square □                      | Pars Spiritus         | 3.20° | Static =     |
 | Pars Fortunae         | conjunction ☌                 | Pars Amoris           | 7.47° | Static =     |
 | Pars Fortunae         | trine △                       | Vertex                | 2.16° | Static =     |
 | Pars Fortunae         | sextile ⚹                     | Anti Vertex           | 2.16° | Static =     |
+| Pars Fortunae         | trine △                       | Fomalhaut             | 1.45° | Static =     |
+| Pars Fortunae         | conjunction ☌                 | Betelgeuse            | 3.45° | Static =     |
+| Pars Fortunae         | trine △                       | Arcturus              | 7.95° | Static =     |
+| Pars Fortunae         | trine △                       | Deneb                 | 3.52° | Static =     |
+| Pars Fortunae         | quincunx ⚻                    | Altair                | 0.71° | Static =     |
 | Pars Spiritus         | square □                      | Pars Amoris           | 4.27° | Static =     |
 | Pars Spiritus         | biquintile biquintile         | Vertex                | 0.64° | Static =     |
+| Pars Spiritus         | sextile ⚹                     | Algol                 | 2.77° | Static =     |
+| Pars Spiritus         | square □                      | Betelgeuse            | 0.25° | Static =     |
+| Pars Spiritus         | trine △                       | Procyon               | 2.88° | Static =     |
+| Pars Spiritus         | trine △                       | Pollux                | 5.46° | Static =     |
+| Pars Spiritus         | sextile ⚹                     | Altair                | 2.49° | Static =     |
+| Pars Amoris           | conjunction ☌                 | Betelgeuse            | 4.02° | Static =     |
+| Pars Amoris           | trine △                       | Arcturus              | 0.48° | Static =     |
+| Pars Amoris           | biquintile biquintile         | Altair                | 0.76° | Static =     |
+| Pars Amoris           | conjunction ☌                 | Rigel                 | 7.92° | Static =     |
+| Pars Amoris           | conjunction ☌                 | Capella               | 2.87° | Static =     |
+| Pars Fidei            | sextile ⚹                     | Aldebaran             | 2.48° | Static =     |
+| Pars Fidei            | trine △                       | Antares               | 2.47° | Static =     |
+| Pars Fidei            | quintile Q                    | Arcturus              | 0.00° | Static =     |
+| Pars Fidei            | sextile ⚹                     | Rigel                 | 4.56° | Static =     |
 | Vertex                | opposition ☍                  | Anti Vertex           | 0.00° | Static =     |
+| Vertex                | biquintile biquintile         | Aldebaran             | 0.58° | Static =     |
+| Vertex                | trine △                       | Fomalhaut             | 0.71° | Static =     |
+| Vertex                | trine △                       | Betelgeuse            | 5.61° | Static =     |
+| Vertex                | trine △                       | Deneb                 | 1.36° | Static =     |
+| Vertex                | square □                      | Altair                | 2.87° | Static =     |
+| Anti Vertex           | biquintile biquintile         | Antares               | 0.58° | Static =     |
+| Anti Vertex           | sextile ⚹                     | Fomalhaut             | 0.71° | Static =     |
+| Anti Vertex           | sextile ⚹                     | Betelgeuse            | 5.61° | Static =     |
+| Anti Vertex           | sextile ⚹                     | Deneb                 | 1.36° | Static =     |
+| Anti Vertex           | square □                      | Altair                | 2.87° | Static =     |
+| Aldebaran             | opposition ☍                  | Antares               | 0.01° | Static =     |
+| Aldebaran             | sesquiquadrate sesquiquadrate | Arcturus              | 0.52° | Static =     |
+| Aldebaran             | square □                      | Deneb                 | 4.05° | Static =     |
+| Aldebaran             | conjunction ☌                 | Rigel                 | 7.03° | Static =     |
+| Antares               | biquintile biquintile         | Canopus               | 0.55° | Static =     |
+| Antares               | semi-square semi-square       | Arcturus              | 0.53° | Static =     |
+| Antares               | square □                      | Deneb                 | 4.06° | Static =     |
+| Antares               | opposition ☍                  | Rigel                 | 7.03° | Static =     |
+| Sirius                | conjunction ☌                 | Canopus               | 0.79° | Static =     |
+| Sirius                | conjunction ☌                 | Pollux                | 9.11° | Static =     |
+| Sirius                | trine △                       | Achernar              | 0.43° | Static =     |
+| Fomalhaut             | trine △                       | Betelgeuse            | 4.89° | Static =     |
+| Fomalhaut             | conjunction ☌                 | Deneb                 | 2.08° | Static =     |
+| Algol                 | sextile ⚹                     | Procyon               | 0.12° | Static =     |
+| Algol                 | sextile ⚹                     | Pollux                | 2.69° | Static =     |
+| Algol                 | trine △                       | Altair                | 5.26° | Static =     |
+| Algol                 | quintile Q                    | Achernar              | 0.63° | Static =     |
+| Betelgeuse            | trine △                       | Arcturus              | 4.50° | Static =     |
+| Betelgeuse            | trine △                       | Deneb                 | 6.97° | Static =     |
+| Betelgeuse            | conjunction ☌                 | Capella               | 6.89° | Static =     |
+| Canopus               | conjunction ☌                 | Pollux                | 8.31° | Static =     |
+| Canopus               | trine △                       | Achernar              | 0.36° | Static =     |
+| Procyon               | square □                      | Arcturus              | 1.87° | Static =     |
+| Procyon               | conjunction ☌                 | Pollux                | 2.58° | Static =     |
+| Procyon               | opposition ☍                  | Altair                | 5.37° | Static =     |
+| Arcturus              | square □                      | Pollux                | 0.71° | Static =     |
+| Arcturus              | trine △                       | Rigel                 | 7.44° | Static =     |
+| Arcturus              | trine △                       | Capella               | 2.39° | Static =     |
+| Pollux                | opposition ☍                  | Altair                | 7.95° | Static =     |
+| Deneb                 | conjunction ☌                 | Achernar              | 9.14° | Static =     |
+| Altair                | sesquiquadrate sesquiquadrate | Rigel                 | 0.32° | Static =     |
+| Rigel                 | square □                      | Achernar              | 1.94° | Static =     |
+| Rigel                 | conjunction ☌                 | Capella               | 5.05° | Static =     |
 +-----------------------+-------------------------------+-----------------------+-------+--------------+

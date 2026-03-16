@@ -152,6 +152,21 @@
     --kerykeion-chart-color-quaoar: var(--kerykeion-color-primary);
     --kerykeion-chart-color-regulus: var(--kerykeion-color-warning);
     --kerykeion-chart-color-spica: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-aldebaran: var(--kerykeion-color-error);
+    --kerykeion-chart-color-antares: var(--kerykeion-color-error);
+    --kerykeion-chart-color-sirius: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-fomalhaut: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-algol: var(--kerykeion-color-error);
+    --kerykeion-chart-color-betelgeuse: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-canopus: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-procyon: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-arcturus: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-pollux: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-deneb: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-altair: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-rigel: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-achernar: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-capella: var(--kerykeion-color-warning);
     --kerykeion-chart-color-anti-vertex: var(--kerykeion-color-secondary);
 
     /* Arab Parts */
@@ -1306,6 +1321,127 @@
                             />
                         </g>
                     </g>
+                </g>
+            </g>
+        </symbol>
+        <!-- Fixed Stars (v5.12 additions) -->
+        <symbol id='Aldebaran'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M2 3 L6 8 L10 3 M6 9.5 A0.8 0.8 0 1 0 6.01 9.5'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-aldebaran); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Antares'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M6 2 L2 6 L6 10 L10 6 Z M6 4 L4 6 L6 8 L8 6 Z'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-antares); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Sirius'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M6 1 L7.2 4.5 L11 5 L8 7 L9 11 L6 8.5 L3 11 L4 7 L1 5 L4.8 4.5 Z'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-sirius); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Fomalhaut'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M2 4 Q6 11 10 4 M6 2 A1.2 1.2 0 1 0 6.01 2'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-fomalhaut); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Algol'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M6 2 A4 4 0 1 0 6.01 2 Z M6 1 V11 M1 6 H11'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-algol); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Betelgeuse'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M4 1 L8 1 L11 4 L11 8 L8 11 L4 11 L1 8 L1 4 Z'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-betelgeuse); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Canopus'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M6 1 L10 9 L2 9 Z M6 5.5 A1 1 0 1 0 6.01 5.5'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-canopus); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Procyon'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M6 2 L9 6 L6 10 L3 6 Z'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-procyon); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Arcturus'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M6 1 L10 10 H2 Z M6 4 L8 9 H4 Z'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-arcturus); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Pollux'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M4 4 A2 2 0 1 0 4.01 4 M8 4 A2 2 0 1 0 8.01 4 M4 8 H8'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-pollux); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Deneb'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M2 2 Q6 5 10 2 Q7 6 10 10 Q6 7 2 10 Q5 6 2 2 Z'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-deneb); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Altair'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M1 8 L6 2 L11 8 M3 7 L6 4 L9 7'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-altair); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Rigel'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M3 1 H9 V4 H7 V11 H5 V4 H3 Z'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-rigel); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Achernar'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M1 6 Q3 2 5.5 6 Q8 10 11 6'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-achernar); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Capella'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path d='M3 10 Q1 5 6 2 Q11 5 9 10 M6 6 A1.2 1.2 0 1 0 6.01 6'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-capella); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
                 </g>
             </g>
         </symbol>
