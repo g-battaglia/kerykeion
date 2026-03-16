@@ -11,6 +11,12 @@ from pathlib import Path
 from string import Template
 from typing import Any, Mapping, Optional, Sequence, Union, get_args
 
+# Sentinel object used to distinguish "parameter not passed" from an explicit value
+# in render methods (generate_svg_string, save_svg, etc.).  When the user omits
+# style= or show_zodiac_background_ring= at render time, the instance-level
+# default set in __init__ is used instead.
+_UNSET: Any = object()
+
 import swisseph as swe
 from scour.scour import scourString
 
@@ -1768,6 +1774,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         padding: int = 20,
         show_degree_indicators: bool = True,
         show_aspect_icons: bool = True,
+        style: "KerykeionChartStyle" = "classic",
+        show_zodiac_background_ring: bool = True,
     ):
         """
         Initialize the chart visualizer with pre-computed chart data.
@@ -1821,6 +1829,15 @@ class ChartDrawer:  # type: ignore[no-redef]
             show_aspect_icons (bool, optional):
                 Whether to show aspect icons on aspect lines (classic style only).
                 Defaults to True.
+            style (KerykeionChartStyle, optional):
+                Default chart wheel style — "classic" (traditional circles) or "modern"
+                (concentric rings).  This default is used by generate_svg_string(),
+                save_svg(), generate_wheel_only_svg_string(), and save_wheel_only_svg_file()
+                unless overridden with an explicit ``style=`` argument at render time.
+                Defaults to "classic".
+            show_zodiac_background_ring (bool, optional):
+                Default for whether to draw colored zodiac wedges (modern style only).
+                Can be overridden at render time.  Defaults to True.
         """
         # =====================================================================
         # STEP 1: Store basic configuration parameters
@@ -1842,6 +1859,8 @@ class ChartDrawer:  # type: ignore[no-redef]
             show_aspect_icons=show_aspect_icons,
             auto_size=auto_size,
             padding=padding,
+            style=style,
+            show_zodiac_background_ring=show_zodiac_background_ring,
         )
 
         # =====================================================================
@@ -1924,6 +1943,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         show_aspect_icons: bool,
         auto_size: bool,
         padding: int,
+        style: "KerykeionChartStyle",
+        show_zodiac_background_ring: bool,
     ) -> None:
         """
         Store basic configuration parameters as instance attributes.
@@ -1953,6 +1974,11 @@ class ChartDrawer:  # type: ignore[no-redef]
         self.show_aspect_icons = show_aspect_icons
         self.auto_size = auto_size
         self._padding = padding
+
+        # Chart style defaults (can be overridden per-render call)
+        self._validate_chart_style(style)
+        self._style: "KerykeionChartStyle" = style
+        self._show_zodiac_background_ring: bool = show_zodiac_background_ring
 
         # Initialize vertical offsets using the dataclass, then convert to dict
         self._vertical_offsets_config = VerticalOffsetsConfig()
@@ -4081,8 +4107,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         remove_css_variables=False,
         *,
         custom_title: Union[str, None] = None,
-        style: KerykeionChartStyle = "classic",
-        show_zodiac_background_ring: bool = True,
+        style: "Union[KerykeionChartStyle, object]" = _UNSET,
+        show_zodiac_background_ring: "Union[bool, object]" = _UNSET,
     ) -> str:
         """
         Render the full chart SVG as a string.
@@ -4095,11 +4121,20 @@ class ChartDrawer:  # type: ignore[no-redef]
             remove_css_variables (bool): Embed CSS variable definitions.
             custom_title (str or None): Optional override for the SVG title.
             style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
+                If not provided, uses the default set in the constructor.
             show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
+                If not provided, uses the default set in the constructor.
 
         Returns:
         """
-        self._validate_chart_style(style)
+        effective_style = style if style is not _UNSET else self._style
+        effective_ring = (
+            show_zodiac_background_ring
+            if show_zodiac_background_ring is not _UNSET
+            else self._show_zodiac_background_ring
+        )
+
+        self._validate_chart_style(effective_style)
         td = self._create_template_dictionary(custom_title=custom_title)
 
         DATA_DIR = Path(__file__).parent
@@ -4110,9 +4145,9 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         template_data = td.model_dump()
 
-        if style == "modern":
+        if effective_style == "modern":
             modern_content = self._generate_modern_content(
-                show_zodiac_background_ring=show_zodiac_background_ring,
+                show_zodiac_background_ring=effective_ring,
             )
             # Scale from 100x100 modern space into the ~480x480 classic wheel space.
             # The wheel group in chart.xml is at translate(100, $full_wheel_translate_y),
@@ -4208,8 +4243,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         remove_css_variables=False,
         *,
         custom_title: Union[str, None] = None,
-        style: KerykeionChartStyle = "classic",
-        show_zodiac_background_ring: bool = True,
+        style: "Union[KerykeionChartStyle, object]" = _UNSET,
+        show_zodiac_background_ring: "Union[bool, object]" = _UNSET,
     ):
         """
         Generate and save the full chart SVG to disk.
@@ -4226,12 +4261,15 @@ class ChartDrawer:  # type: ignore[no-redef]
             remove_css_variables (bool): Pass-through to generate_svg_string to embed CSS variables.
             custom_title (str or None): Optional override for the SVG title.
             style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
+                If not provided, uses the default set in the constructor.
             show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
+                If not provided, uses the default set in the constructor.
 
         Returns:
             None
         """
-        suffix = " - Modern" if style == "modern" else ""
+        effective_style = style if style is not _UNSET else self._style
+        suffix = " - Modern" if effective_style == "modern" else ""
         self.template = self.generate_svg_string(
             minify,
             remove_css_variables,
@@ -4246,8 +4284,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         minify: bool = False,
         remove_css_variables=False,
         *,
-        style: KerykeionChartStyle = "classic",
-        show_zodiac_background_ring: bool = True,
+        style: "Union[KerykeionChartStyle, object]" = _UNSET,
+        show_zodiac_background_ring: "Union[bool, object]" = _UNSET,
     ):
         """
         Render the wheel-only chart SVG as a string.
@@ -4259,15 +4297,23 @@ class ChartDrawer:  # type: ignore[no-redef]
             minify (bool): Remove whitespace and quotes for compactness.
             remove_css_variables (bool): Embed CSS variable definitions.
             style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
+                If not provided, uses the default set in the constructor.
             show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
+                If not provided, uses the default set in the constructor.
 
         Returns:
             str: SVG markup for the chart wheel only.
         """
+        effective_style = style if style is not _UNSET else self._style
+        effective_ring = (
+            show_zodiac_background_ring
+            if show_zodiac_background_ring is not _UNSET
+            else self._show_zodiac_background_ring
+        )
 
-        self._validate_chart_style(style)
+        self._validate_chart_style(effective_style)
 
-        if style == "modern":
+        if effective_style == "modern":
             with open(
                 Path(__file__).parent / "templates" / "modern_wheel.xml",
                 "r",
@@ -4278,7 +4324,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
             template_dict = self._create_template_dictionary()
             modern_content = self._generate_modern_content(
-                show_zodiac_background_ring=show_zodiac_background_ring,
+                show_zodiac_background_ring=effective_ring,
             )
             template = Template(raw_template).substitute(
                 {
@@ -4309,8 +4355,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         minify: bool = False,
         remove_css_variables=False,
         *,
-        style: KerykeionChartStyle = "classic",
-        show_zodiac_background_ring: bool = True,
+        style: "Union[KerykeionChartStyle, object]" = _UNSET,
+        show_zodiac_background_ring: "Union[bool, object]" = _UNSET,
     ):
         """
         Generate and save wheel-only chart SVG to disk.
@@ -4326,12 +4372,15 @@ class ChartDrawer:  # type: ignore[no-redef]
             minify (bool): Pass-through to generate_wheel_only_svg_string for compact output.
             remove_css_variables (bool): Pass-through to generate_wheel_only_svg_string to embed CSS variables.
             style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
+                If not provided, uses the default set in the constructor.
             show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
+                If not provided, uses the default set in the constructor.
 
         Returns:
             None
         """
-        suffix = " - Modern Wheel Only" if style == "modern" else " - Wheel Only"
+        effective_style = style if style is not _UNSET else self._style
+        suffix = " - Modern Wheel Only" if effective_style == "modern" else " - Wheel Only"
         template = self.generate_wheel_only_svg_string(
             minify,
             remove_css_variables,
