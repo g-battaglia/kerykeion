@@ -469,7 +469,7 @@
             <g transform='translate(2,2)'>
                 <g transform='scale(2)'>
                     <path d='M6 1 L7.2 4.5 L11 5 L8 7 L9 11 L6 8.5 L3 11 L4 7 L1 5 L4.8 4.5 Z'
-                        style='fill: none; stroke: #e0e8ff; stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                        style='fill: none; stroke: #4a78c7; stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
                 </g>
             </g>
         </symbol>
@@ -501,7 +501,7 @@
             <g transform='translate(2,2)'>
                 <g transform='scale(2)'>
                     <path d='M6 1 L10 9 L2 9 Z M6 5.5 A1 1 0 1 0 6.01 5.5'
-                        style='fill: none; stroke: #f0e68c; stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                        style='fill: none; stroke: #b89a00; stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
                 </g>
             </g>
         </symbol>
@@ -509,7 +509,7 @@
             <g transform='translate(2,2)'>
                 <g transform='scale(2)'>
                     <path d='M6 2 L9 6 L6 10 L3 6 Z'
-                        style='fill: none; stroke: #fffacd; stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                        style='fill: none; stroke: #c4a000; stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
                 </g>
             </g>
         </symbol>
@@ -525,7 +525,7 @@
             <g transform='translate(2,2)'>
                 <g transform='scale(2)'>
                     <path d='M4 4 A2 2 0 1 0 4.01 4 M8 4 A2 2 0 1 0 8.01 4 M4 8 H8'
-                        style='fill: none; stroke: #ffa07a; stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                        style='fill: none; stroke: #e07050; stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
                 </g>
             </g>
         </symbol>
@@ -533,7 +533,7 @@
             <g transform='translate(2,2)'>
                 <g transform='scale(2)'>
                     <path d='M2 2 Q6 5 10 2 Q7 6 10 10 Q6 7 2 10 Q5 6 2 2 Z'
-                        style='fill: none; stroke: #b0c4de; stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                        style='fill: none; stroke: #6a8db5; stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
                 </g>
             </g>
         </symbol>
@@ -541,7 +541,7 @@
             <g transform='translate(2,2)'>
                 <g transform='scale(2)'>
                     <path d='M1 8 L6 2 L11 8 M3 7 L6 4 L9 7'
-                        style='fill: none; stroke: #a0d2db; stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                        style='fill: none; stroke: #4d9eac; stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
                 </g>
             </g>
         </symbol>
@@ -565,7 +565,7 @@
             <g transform='translate(2,2)'>
                 <g transform='scale(2)'>
                     <path d='M3 10 Q1 5 6 2 Q11 5 9 10 M6 6 A1.2 1.2 0 1 0 6.01 6'
-                        style='fill: none; stroke: #ffe4b5; stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
+                        style='fill: none; stroke: #cc8800; stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
                 </g>
             </g>
         </symbol>

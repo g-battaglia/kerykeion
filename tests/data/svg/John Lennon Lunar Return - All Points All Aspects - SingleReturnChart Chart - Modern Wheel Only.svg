@@ -124,19 +124,19 @@
     --kerykeion-chart-color-spica: #87ceeb;
     --kerykeion-chart-color-aldebaran: #ff6347;
     --kerykeion-chart-color-antares: #dc143c;
-    --kerykeion-chart-color-sirius: #e0e8ff;
+    --kerykeion-chart-color-sirius: #4a78c7;
     --kerykeion-chart-color-fomalhaut: #dda0dd;
     --kerykeion-chart-color-algol: #8b0000;
     --kerykeion-chart-color-betelgeuse: #ff4500;
-    --kerykeion-chart-color-canopus: #f0e68c;
-    --kerykeion-chart-color-procyon: #fffacd;
+    --kerykeion-chart-color-canopus: #b89a00;
+    --kerykeion-chart-color-procyon: #c4a000;
     --kerykeion-chart-color-arcturus: #ff8c00;
-    --kerykeion-chart-color-pollux: #ffa07a;
-    --kerykeion-chart-color-deneb: #b0c4de;
-    --kerykeion-chart-color-altair: #a0d2db;
+    --kerykeion-chart-color-pollux: #e07050;
+    --kerykeion-chart-color-deneb: #6a8db5;
+    --kerykeion-chart-color-altair: #4d9eac;
     --kerykeion-chart-color-rigel: #7ec8e3;
     --kerykeion-chart-color-achernar: #6495ed;
-    --kerykeion-chart-color-capella: #ffe4b5;
+    --kerykeion-chart-color-capella: #cc8800;
     --kerykeion-chart-color-anti-vertex: #4b0082;
 
     /* Arab Parts */
