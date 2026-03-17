@@ -8,7 +8,7 @@ _Unreleased_
 
 - **House cusp speeds (v5.12.1):** Replaced `swe.houses_ex()` with `swe.houses_ex2()` to expose cusp velocities. All 12 house cusps and the 4 angular points (ASC, MC, DSC, IC) now carry a `speed` field (degrees/day) representing the real rate of diurnal motion. Useful for primary directions and profection techniques.
 
-- **Expanded fixed stars (v5.12.2):** Grew the fixed star catalogue from 2 to 22 stars. The 20 new stars are: Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel, Achernar, Capella, Vega, Alcyone, Alphecca, Algorab, and Deneb Algedi. The set now includes all 15 Behenian stars of the medieval/Hermetic tradition and the 4 Royal Stars of Persian/Hellenistic astrology (Regulus, Aldebaran, Antares, Fomalhaut). Each fixed star now also reports apparent visual magnitude via `swe.fixstar2_mag()` and equatorial declination.
+- **Expanded fixed stars (v5.12.2):** Grew the fixed star catalogue from 2 to 22 stars. The 20 new stars are: Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel, Achernar, Capella, Vega, Alcyone, Alphecca, Algorab, and Deneb_Algedi. The set now includes all 15 Behenian stars of the medieval/Hermetic tradition and the 4 Royal Stars of Persian/Hellenistic astrology (Regulus, Aldebaran, Antares, Fomalhaut). Each fixed star now also reports apparent visual magnitude via `swe.fixstar2_mag()` and equatorial declination.
 
 - **Expanded sidereal modes (v5.12.3):** Grew supported ayanamsa systems from 20 to 47 named modes plus a `USER` mode for custom ayanamsa definitions (48 total). New mode families include additional Indian/Vedic variants (Aryabhata, Suryasiddhanta, True Citra/Pushya/Revati, Lahiri sub-variants), Babylonian systems (Britton), galactic alignment systems, and the Valens Moon ayanamsa. The `USER` mode accepts `custom_ayanamsa_t0` (reference epoch as Julian Day) and `custom_ayanamsa_ayan_t0` (ayanamsa offset in degrees at that epoch).
 
@@ -45,7 +45,7 @@ _Unreleased_
 
 **Tests:**
 
-- 204 dedicated v5.12 tests across 8 test classes covering house cusp speeds, expanded fixed stars, star magnitudes, sidereal modes, USER-defined ayanamsa, ayanamsa value exposure, and guiding principles (no breaking changes)
+- 266 dedicated v5.12 tests across 9 test classes covering house cusp speeds, expanded fixed stars, star magnitudes, star declinations, sidereal modes, USER-defined ayanamsa, ayanamsa value exposure, and guiding principles (no breaking changes)
 
 ## 5.11.0
 
