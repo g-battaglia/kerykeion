@@ -137,11 +137,13 @@ These lists are available for quick configuration.
 
 ### `DEFAULT_ACTIVE_POINTS`
 
-Main planets, Chiron, Mean Lilith, Nodes, and Angles.
+Main planets, Chiron, Mean Lilith, Nodes, and Angles (18 points).
 
 ### `ALL_ACTIVE_POINTS`
 
-Every point listed above (62 total).
+Every point listed above plus `Earth` (62 total).
+
+> **Note:** `Earth` is only meaningful in Heliocentric perspective. It is included in `ALL_ACTIVE_POINTS` but omitted from the category lists above.
 
 ### `DEFAULT_ACTIVE_ASPECTS`
 

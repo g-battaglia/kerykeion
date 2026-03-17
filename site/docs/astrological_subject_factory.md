@@ -139,7 +139,7 @@ fast_chart = AstrologicalSubjectFactory.from_birth_data(
 
 ### Internal Types
 
-These `TypedDict` structures are used internally for type hinting but are exposed for reference.
+These `@dataclass` structures are used internally but are exposed for reference.
 
 #### `ChartConfiguration`
 
