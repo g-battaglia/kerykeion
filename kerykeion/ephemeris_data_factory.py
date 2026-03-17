@@ -429,10 +429,7 @@ class EphemerisDataFactory:
                 custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
             )
 
-            if as_model:
-                subjects_list.append(subject)
-            else:
-                subjects_list.append(subject)
+            subjects_list.append(subject)
 
         return subjects_list
 
