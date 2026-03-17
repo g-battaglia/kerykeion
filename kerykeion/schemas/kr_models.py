@@ -431,10 +431,11 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
             selected sidereal mode. ``None`` for tropical charts. Added in v5.12.
         active_points: List of celestial points included in calculations.
 
-    Fixed Stars (v5.12 -- expanded from 2 to 17):
+    Fixed Stars (v5.12 -- expanded from 2 to 22):
         regulus, spica, aldebaran, antares, sirius, fomalhaut, algol,
         betelgeuse, canopus, procyon, arcturus, pollux, deneb, altair,
-        rigel, achernar, capella.
+        rigel, achernar, capella, vega, alcyone, alphecca, algorab,
+        deneb_algedi.
         Each is ``Optional[KerykeionPointModel]``, defaulting to ``None``
         unless the star is included in ``active_points``.
     """
@@ -527,6 +528,11 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     rigel: Optional[KerykeionPointModel] = None
     achernar: Optional[KerykeionPointModel] = None
     capella: Optional[KerykeionPointModel] = None
+    vega: Optional[KerykeionPointModel] = None
+    alcyone: Optional[KerykeionPointModel] = None
+    alphecca: Optional[KerykeionPointModel] = None
+    algorab: Optional[KerykeionPointModel] = None
+    deneb_algedi: Optional[KerykeionPointModel] = None
 
     # Arabic Parts
     pars_fortunae: Optional[KerykeionPointModel] = None

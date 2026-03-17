@@ -484,6 +484,41 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS: Final[list[_CelestialPointSetting]] = [
         "element_points": 0,
         "label": "Capella",
     },
+    {
+        "id": 57,
+        "name": "Vega",
+        "color": "var(--kerykeion-chart-color-vega)",
+        "element_points": 0,
+        "label": "Vega",
+    },
+    {
+        "id": 58,
+        "name": "Alcyone",
+        "color": "var(--kerykeion-chart-color-alcyone)",
+        "element_points": 0,
+        "label": "Alcyone",
+    },
+    {
+        "id": 59,
+        "name": "Alphecca",
+        "color": "var(--kerykeion-chart-color-alphecca)",
+        "element_points": 0,
+        "label": "Alphecca",
+    },
+    {
+        "id": 60,
+        "name": "Algorab",
+        "color": "var(--kerykeion-chart-color-algorab)",
+        "element_points": 0,
+        "label": "Algorab",
+    },
+    {
+        "id": 61,
+        "name": "Deneb_Algedi",
+        "color": "var(--kerykeion-chart-color-deneb_algedi)",
+        "element_points": 0,
+        "label": "Deneb Algedi",
+    },
 ]
 
 

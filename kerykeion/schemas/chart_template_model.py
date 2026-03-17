@@ -243,6 +243,66 @@ class ChartTemplateModel(SubscriptableBaseModel):
     planets_color_41: str
     """Planet color for celestial point (index 41)"""
 
+    planets_color_42: str = "#000000"
+    """Planet color for celestial point (index 42)"""
+
+    planets_color_43: str = "#000000"
+    """Planet color for celestial point (index 43)"""
+
+    planets_color_44: str = "#000000"
+    """Planet color for celestial point (index 44)"""
+
+    planets_color_45: str = "#000000"
+    """Planet color for celestial point (index 45)"""
+
+    planets_color_46: str = "#000000"
+    """Planet color for celestial point (index 46)"""
+
+    planets_color_47: str = "#000000"
+    """Planet color for celestial point (index 47)"""
+
+    planets_color_48: str = "#000000"
+    """Planet color for celestial point (index 48)"""
+
+    planets_color_49: str = "#000000"
+    """Planet color for celestial point (index 49)"""
+
+    planets_color_50: str = "#000000"
+    """Planet color for celestial point (index 50)"""
+
+    planets_color_51: str = "#000000"
+    """Planet color for celestial point (index 51)"""
+
+    planets_color_52: str = "#000000"
+    """Planet color for celestial point (index 52)"""
+
+    planets_color_53: str = "#000000"
+    """Planet color for celestial point (index 53)"""
+
+    planets_color_54: str = "#000000"
+    """Planet color for celestial point (index 54)"""
+
+    planets_color_55: str = "#000000"
+    """Planet color for celestial point (index 55)"""
+
+    planets_color_56: str = "#000000"
+    """Planet color for celestial point (index 56)"""
+
+    planets_color_57: str = "#000000"
+    """Planet color for celestial point (index 57)"""
+
+    planets_color_58: str = "#000000"
+    """Planet color for celestial point (index 58)"""
+
+    planets_color_59: str = "#000000"
+    """Planet color for celestial point (index 59)"""
+
+    planets_color_60: str = "#000000"
+    """Planet color for celestial point (index 60)"""
+
+    planets_color_61: str = "#000000"
+    """Planet color for celestial point (index 61)"""
+
     zodiac_color_0: str
     """Zodiac color for Aries (index 0)"""
 

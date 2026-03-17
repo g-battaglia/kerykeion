@@ -117,10 +117,10 @@ TNO_PLANETS: Dict[AstrologicalPoint, int] = {
     "Quaoar": 50000,
 }
 
-# Fixed stars -- 17 total (expanded in v5.12 from 2)
-# Includes the 4 Royal Stars (Regulus, Aldebaran, Antares, Fomalhaut) plus
-# 13 other astrologically significant bright stars.
-# Names must match Swiss Ephemeris swe.fixstar_ut() identifiers exactly.
+# Fixed stars -- 22 total (expanded in v5.12 from 2)
+# Includes all 15 Behenian stars plus 7 other bright stars.
+# Names must match Swiss Ephemeris swe.fixstar_ut() identifiers exactly
+# (or have an entry in FIXED_STAR_SWE_NAMES for name mapping).
 FIXED_STARS: List[AstrologicalPoint] = [
     # Pre-existing (v5.11)
     "Regulus",  # alpha Leonis, mag 1.35 -- Royal Star, Watcher of the North
@@ -141,7 +141,18 @@ FIXED_STARS: List[AstrologicalPoint] = [
     "Rigel",  # beta Orionis, mag 0.13
     "Achernar",  # alpha Eridani, mag 0.46
     "Capella",  # alpha Aurigae, mag 0.08
+    "Vega",  # alpha Lyrae, mag 0.03 -- Behenian star, former pole star
+    "Alcyone",  # eta Tauri, mag 2.87 -- Behenian star, brightest Pleiad
+    "Alphecca",  # alpha Coronae Borealis, mag 2.22 -- Behenian star, Gemma
+    "Algorab",  # delta Corvi, mag 2.94 -- Behenian star
+    "Deneb_Algedi",  # delta Capricorni, mag 2.83 -- Behenian star, tail of the goat
 ]
+
+# Mapping from AstrologicalPoint names to Swiss Ephemeris sefstars.txt names
+# Only entries where the names differ (e.g. underscores vs spaces) need to be listed.
+FIXED_STAR_SWE_NAMES: Dict[str, str] = {
+    "Deneb_Algedi": "Deneb Algedi",
+}
 
 # Opposite points derived from other calculations
 OPPOSITE_POINTS: Dict[AstrologicalPoint, AstrologicalPoint] = {
@@ -1468,14 +1479,16 @@ class AstrologicalSubjectFactory:
 
         # Handle Ascendant specially (from houses calculation)
         if point == "Ascendant":
-            cusps, ascmc = swe.houses_ex(
+            _, ascmc, _, ascmc_speed = swe.houses_ex2(
                 tjdut=data["julian_day"],
                 lat=data["lat"],
                 lon=data["lng"],
                 hsys=str.encode(data["houses_system_identifier"]),
                 flags=iflag,
             )
-            data["ascendant"] = get_kerykeion_point_from_degree(ascmc[0], "Ascendant", point_type=point_type)
+            data["ascendant"] = get_kerykeion_point_from_degree(
+                ascmc[0], "Ascendant", point_type=point_type, speed=ascmc_speed[0]
+            )
             data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
             data["ascendant"].retrograde = False
             return
@@ -1659,10 +1672,11 @@ class AstrologicalSubjectFactory:
                 - Ixion, Orcus, Quaoar
 
             Fixed Stars:
-                - 17 stars (expanded in v5.12 from 2): Regulus, Spica,
+                - 22 stars (expanded in v5.12 from 2): Regulus, Spica,
                   Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse,
                   Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel,
-                  Achernar, Capella
+                  Achernar, Capella, Vega, Alcyone, Alphecca, Algorab,
+                  Deneb Algedi
                 - Includes apparent visual magnitude via ``swe.fixstar2_mag``
                 - Includes equatorial declination via ``FLG_EQUATORIAL``
                 - Includes ecliptic speed (precession drift, ~50 arcsec/yr)
@@ -1813,27 +1827,34 @@ class AstrologicalSubjectFactory:
         for star_name in FIXED_STARS:
             if should_calculate(star_name):
                 try:
+                    # Use Swiss Ephemeris name if different from AstrologicalPoint name
+                    swe_name = FIXED_STAR_SWE_NAMES.get(star_name, star_name)
                     # Ecliptic longitude for zodiac placement
-                    pos_ecl = swe.fixstar_ut(star_name, julian_day, iflag)[0]
+                    pos_ecl = swe.fixstar_ut(swe_name, julian_day, iflag)[0]
                     star_deg = pos_ecl[0]
                     star_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0
                     # Equatorial coordinates for true declination
-                    pos_eq = swe.fixstar_ut(star_name, julian_day, iflag | swe.FLG_EQUATORIAL)[0]
+                    pos_eq = swe.fixstar_ut(swe_name, julian_day, iflag | swe.FLG_EQUATORIAL)[0]
                     star_dec = pos_eq[1] if len(pos_eq) > 1 else None
 
                     # Apparent visual magnitude via fixstar2_mag
                     try:
-                        star_mag = swe.fixstar2_mag(star_name)[0]
-                    except Exception:
+                        star_mag = swe.fixstar2_mag(swe_name)[0]
+                    except Exception as e:
+                        logging.warning(f"Could not load fixed-star magnitude for {star_name} ({swe_name}): {e}")
                         star_mag = None
 
                     star_key = star_name.lower()
                     data[star_key] = get_kerykeion_point_from_degree(
-                        star_deg, star_name, point_type=point_type, speed=star_speed, declination=star_dec
+                        star_deg,
+                        star_name,
+                        point_type=point_type,
+                        speed=star_speed,
+                        declination=star_dec,
+                        magnitude=star_mag,
                     )
                     data[star_key].house = get_planet_house(star_deg, houses_degree_ut)
                     data[star_key].retrograde = False  # Fixed stars are never retrograde
-                    data[star_key].magnitude = star_mag
                     calculated_planets.append(star_name)
                 except Exception as e:
                     logging.warning(f"Could not calculate {star_name} position: {e}")

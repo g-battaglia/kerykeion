@@ -3,7 +3,7 @@
 Tests for v5.12.* — Foundation Enrichment features.
 
 5.12.1 — House cusp speeds (houses_ex2)
-5.12.2 — Expanded fixed stars (2 → 17) + magnitude
+5.12.2 — Expanded fixed stars (2 → 22) + magnitude
 5.12.3 — Expanded sidereal modes (20 → 48 + USER)
 5.12.4 — Ayanamsa value exposure
 """
@@ -133,7 +133,7 @@ class TestHouseCuspSpeeds:
 # =====================================================================
 
 
-# The 15 new stars (Regulus and Spica were already present)
+# The 20 new stars (Regulus and Spica were already present)
 NEW_FIXED_STARS = [
     "Aldebaran",
     "Antares",
@@ -150,13 +150,18 @@ NEW_FIXED_STARS = [
     "Rigel",
     "Achernar",
     "Capella",
+    "Vega",
+    "Alcyone",
+    "Alphecca",
+    "Algorab",
+    "Deneb_Algedi",
 ]
 
 ALL_FIXED_STARS = ["Regulus", "Spica"] + NEW_FIXED_STARS
 
 
 class TestExpandedFixedStars:
-    """Verify all 17 fixed stars calculate correctly and have magnitude."""
+    """Verify all 22 fixed stars calculate correctly and have magnitude."""
 
     @pytest.fixture(autouse=True)
     def _setup(self):
@@ -236,14 +241,14 @@ class TestFixedStarMagnitude:
         sirius_mag = self.subject.sirius.magnitude
         assert sirius_mag < 0, f"Sirius magnitude {sirius_mag} should be negative (brightest star)"
 
-    def test_algol_is_dimmest_of_set(self):
-        """Algol (mag ~+2.12) should be the dimmest star in our set."""
-        algol_mag = self.subject.algol.magnitude
+    def test_algorab_is_dimmest_of_set(self):
+        """Algorab (mag ~+2.94) should be the dimmest star in our set."""
+        algorab_mag = self.subject.algorab.magnitude
         for star_name in ALL_FIXED_STARS:
-            if star_name == "Algol":
+            if star_name == "Algorab":
                 continue
             other_mag = getattr(self.subject, star_name.lower()).magnitude
-            assert algol_mag >= other_mag, f"Algol ({algol_mag}) should be dimmer than {star_name} ({other_mag})"
+            assert algorab_mag >= other_mag, f"Algorab ({algorab_mag}) should be dimmer than {star_name} ({other_mag})"
 
     def test_known_magnitudes_approximate(self):
         """Spot-check a few well-known stellar magnitudes."""
@@ -261,8 +266,24 @@ class TestFixedStarMagnitude:
         assert self.subject.mars.magnitude is None
 
 
+class TestFixedStarDeclination:
+    """Verify the declination field on KerykeionPointModel works for fixed stars."""
+
+    @pytest.fixture(autouse=True)
+    def _setup(self):
+        self.subject = _make_subject(active_points=ALL_ACTIVE_POINTS)
+
+    @pytest.mark.parametrize("star_name", ALL_FIXED_STARS)
+    def test_star_has_declination(self, star_name):
+        """Each fixed star must have a non-None declination."""
+        star = getattr(self.subject, star_name.lower())
+        assert star.declination is not None, f"{star_name} has no declination"
+        assert isinstance(star.declination, float), f"{star_name} declination is not float"
+        assert -90 <= star.declination <= 90, f"{star_name} declination {star.declination} out of range"
+
+
 class TestFixedStarInLiterals:
-    """Verify the 15 new stars are in the AstrologicalPoint literal."""
+    """Verify the 20 new stars are in the AstrologicalPoint literal."""
 
     @pytest.mark.parametrize("star_name", NEW_FIXED_STARS)
     def test_star_in_astrological_point_literal(self, star_name):

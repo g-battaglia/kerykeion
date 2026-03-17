@@ -152,6 +152,11 @@
     --kerykeion-chart-color-rigel: var(--kerykeion-color-primary);
     --kerykeion-chart-color-achernar: var(--kerykeion-color-primary);
     --kerykeion-chart-color-capella: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-vega: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-alcyone: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-alphecca: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-algorab: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-deneb_algedi: var(--kerykeion-color-primary);
     --kerykeion-chart-color-anti-vertex: var(--kerykeion-color-secondary);
 
     /* Arab Parts */

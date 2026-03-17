@@ -2089,8 +2089,9 @@ class ChartDrawer:  # type: ignore[no-redef]
         self._setup_circle_radii()
 
         # Calculate horizontal shift for planet/house grids when multi-column
-        # layout would overlap the chart wheel
-        self._grid_x_shift = self._calculate_grid_x_shift()
+        # layout would overlap the chart wheel.
+        # Only apply in auto_size mode; fixed-width charts use preset dimensions.
+        self._grid_x_shift = self._calculate_grid_x_shift() if self.auto_size else 0
 
         # Adjust width if house comparison grid is hidden
         self._apply_house_comparison_width_override()
@@ -2449,8 +2450,11 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         minimum_height = self._DEFAULT_HEIGHT
 
-        # Synastry has its own height logic due to dual comparison grids
-        if self.chart_type == "Synastry":
+        # Double-wheel charts (Synastry, Transit, DualReturnChart) use single-column
+        # planet grids that grow vertically at ~15px per row. They share the same
+        # height/offset logic which accounts for right-panel mode and the taller
+        # row spacing. Single-wheel charts fall through to the generic logic below.
+        if self.chart_type in ("Synastry", "Transit", "DualReturnChart"):
             self._apply_synastry_height_adjustment(
                 active_points_count=active_points_count,
                 offsets=offsets,
@@ -2766,7 +2770,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         n = max(len([p for p in self.available_planets_setting if p.get("is_active")]), 1)
 
         if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
-            # Full N×N grid
+            # Full NxN grid
             left = (x0 - box) - margin
             top = (y0 - box * n) - margin
             right = (x0 + box * n) + margin
@@ -2820,7 +2824,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                     aspect_right = parent_group_x + rp["x_offset"] + (columns * rp["column_width"])
                     extents.append(aspect_right)
                 else:
-                    # Grid table: N×N grid at the right-panel position
+                    # Grid table: NxN grid at the right-panel position
                     grid_width = 14 * (n_active + 1)
                     aspect_right = parent_group_x + rp["x_offset"] + grid_width
                     extents.append(aspect_right)
@@ -3962,12 +3966,12 @@ class ChartDrawer:  # type: ignore[no-redef]
             template_dict["background_color"] = self.chart_colors_settings["paper_1"]
 
         # ---------------------------------------------------------------------
-        # COLORS: Planet colors for all 42 possible celestial points
+        # COLORS: Planet colors for all 62 possible celestial points
         # ---------------------------------------------------------------------
         # Initialize all slots with default black, then override with settings.
         # This ensures template substitution never fails on missing colors.
         default_color = "#000000"
-        for i in range(42):  # Support all 42 celestial points (0-41)
+        for i in range(62):  # Support all 62 celestial points (0-61)
             template_dict[f"planets_color_{i}"] = default_color
 
         for planet in self.planets_settings:

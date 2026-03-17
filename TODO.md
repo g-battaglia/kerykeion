@@ -41,7 +41,7 @@ does not yet surface.
 
 -   [ ] **House cusp speeds** — Populate the `speed` field (degrees/day) on house cusp points. The field already exists on `KerykeionPointModel` but is currently only populated for planets, not houses. House cusp velocities are useful for primary directions, secondary progressions, and for understanding how quickly a transiting planet crosses a house boundary.
 
--   [ ] **Expanded fixed stars (2 → 17)** — Add 15 traditional fixed stars to the calculation pipeline, plus a `magnitude` field for apparent visual brightness:
+-   [x] **Expanded fixed stars (2 → 22)** — Added 20 traditional fixed stars to the calculation pipeline, plus a `magnitude` field for apparent visual brightness (includes all 15 Behenian stars):
 
     | Star | Mag. | Tradition |
     |------|------|-----------|
@@ -61,7 +61,7 @@ does not yet surface.
     | Achernar | +0.46 | Royal honors |
     | Algol | +2.12 | Intensity, misfortune |
 
-    The four "Royal Stars of Persia" (Aldebaran, Regulus, Antares, Fomalhaut) and Algol are among the most significant points in any chart. Currently only Regulus and Spica are supported.
+    The four "Royal Stars of Persia" (Aldebaran, Regulus, Antares, Fomalhaut) and Algol are among the most significant points in any chart. All 22 fixed stars are now supported in v5.12.
 
 -   [ ] **Expanded sidereal modes (20 → 48 + custom)** — Add all remaining ayanamsa supported by Swiss Ephemeris:
 

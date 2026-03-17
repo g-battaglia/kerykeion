@@ -1,6 +1,6 @@
 ---
 title: 'Active Points Reference'
-description: 'Complete reference for all 42 celestial points available in Kerykeion: planets, asteroids, TNOs, Arabic parts, fixed stars, and special points.'
+description: 'Complete reference for all 62 celestial points available in Kerykeion: planets, asteroids, TNOs, Arabic parts, fixed stars, and special points.'
 category: 'Reference'
 tags: ['docs', 'points', 'planets', 'asteroids', 'configuration', 'kerykeion']
 order: 14
@@ -8,7 +8,7 @@ order: 14
 
 # Active Points Reference
 
-Kerykeion supports **42 celestial points** that can be individually enabled or disabled via the `active_points` parameter. This page documents every available point and the preset configurations.
+Kerykeion supports **62 celestial points** that can be individually enabled or disabled via the `active_points` parameter. This page documents every available point and the preset configurations.
 
 ## Available Points
 
@@ -90,12 +90,46 @@ Distant objects beyond Neptune. Ephemeris data may not be available for all hist
 
 > **Note:** Some TNOs may not have ephemeris data for very old or far-future dates. If calculation fails for a point, it is silently removed from the active points for that subject.
 
-### Fixed Stars (2)
+### Fixed Stars (22)
 
-| Point | Description |
-| :---- | :---------- |
-| `Regulus` | Royal star at ~0° Virgo, associated with fame and success |
-| `Spica` | Star at ~24° Libra, associated with brilliance and gifts |
+All 15 Behenian stars of the medieval/Hermetic tradition are included, plus 7 additional bright stars. Fixed stars are inactive by default.
+
+#### Royal Stars (4)
+
+| Point | Magnitude | Description |
+| :---- | :-------- | :---------- |
+| `Regulus` | ~1.4 | Royal star, fame and success |
+| `Aldebaran` | ~0.9 | Royal star, integrity and honor |
+| `Antares` | ~1.1 | Royal star, intensity and obsession |
+| `Fomalhaut` | ~1.2 | Royal star, idealism and vision |
+
+#### Behenian Stars (11, not listed above)
+
+| Point | Magnitude | Description |
+| :---- | :-------- | :---------- |
+| `Algol` | ~2.1 | Eclipsing binary, intensity and transformation |
+| `Sirius` | -1.5 | Brightest star, ambition and fame |
+| `Procyon` | 0.3 | Quick success |
+| `Capella` | 0.1 | Shepherd star |
+| `Spica` | 1.0 | Brilliance and gifts |
+| `Arcturus` | -0.05 | Guardian of the bear |
+| `Vega` | 0.0 | Artistry and charisma |
+| `Alcyone` | ~2.9 | Brightest Pleiad, mysticism |
+| `Alphecca` | ~2.2 | Gemma, the jewel in the crown |
+| `Algorab` | ~2.9 | Delta Corvi, cunning |
+| `Deneb_Algedi` | ~2.8 | Tail of the goat, law and justice |
+
+#### Other Bright Stars (7)
+
+| Point | Magnitude | Description |
+| :---- | :-------- | :---------- |
+| `Canopus` | -0.7 | Second brightest, pathfinding and navigation |
+| `Rigel` | 0.1 | Knowledge and ambition |
+| `Betelgeuse` | 0.4 | Fame and endings |
+| `Achernar` | 0.5 | End of the river, transformation |
+| `Altair` | 0.8 | Courage and daring |
+| `Pollux` | 1.1 | Subtle influence |
+| `Deneb` | 1.3 | Far-reaching impact |
 
 ### Arabic Parts / Lots (4)
 
@@ -146,7 +180,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 )
 ```
 
-### `ALL_ACTIVE_POINTS` (42 points)
+### `ALL_ACTIVE_POINTS` (62 points)
 
 Every available point enabled. Useful for research or comprehensive analysis.
 
@@ -161,7 +195,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 
 ## Custom Configuration
 
-You can build your own list by combining any of the 42 available point names:
+You can build your own list by combining any of the 62 available point names:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
