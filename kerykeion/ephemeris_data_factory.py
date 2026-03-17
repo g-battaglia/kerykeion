@@ -115,6 +115,12 @@ class EphemerisDataFactory:
             Set to None to disable this safety check. Defaults to 8760 (1 year).
         max_minutes (Union[int, None], optional): Maximum number of minute-interval data points.
             Set to None to disable this safety check. Defaults to 525600 (1 year).
+        custom_ayanamsa_t0 (Union[float, None], optional): The reference epoch (as a Julian day)
+            for a custom ayanamsa definition. Only used when sidereal_mode is "USER".
+            Defaults to None.
+        custom_ayanamsa_ayan_t0 (Union[float, None], optional): The ayanamsa value (in degrees)
+            at the reference epoch t0. Only used when sidereal_mode is "USER".
+            Defaults to None.
 
     Raises:
         ValueError: If step_type is not one of "days", "hours", or "minutes".
