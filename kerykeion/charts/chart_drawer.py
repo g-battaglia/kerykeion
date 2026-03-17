@@ -2450,8 +2450,11 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         minimum_height = self._DEFAULT_HEIGHT
 
-        # Synastry has its own height logic due to dual comparison grids
-        if self.chart_type == "Synastry":
+        # Double-wheel charts (Synastry, Transit, DualReturnChart) use single-column
+        # planet grids that grow vertically at ~15px per row. They share the same
+        # height/offset logic which accounts for right-panel mode and the taller
+        # row spacing. Single-wheel charts fall through to the generic logic below.
+        if self.chart_type in ("Synastry", "Transit", "DualReturnChart"):
             self._apply_synastry_height_adjustment(
                 active_points_count=active_points_count,
                 offsets=offsets,

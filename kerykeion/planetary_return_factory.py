@@ -218,6 +218,8 @@ class PlanetaryReturnFactory:
         *,
         cache_expire_after_days: int = DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
         altitude: Union[float, int, None] = None,
+        custom_ayanamsa_t0: Union[float, None] = None,
+        custom_ayanamsa_ayan_t0: Union[float, None] = None,
     ):
         """
         Initialize a PlanetaryReturnFactory instance with location and configuration settings.
@@ -319,6 +321,8 @@ class PlanetaryReturnFactory:
         self.online = online
         self.cache_expire_after_days = cache_expire_after_days
         self.altitude = altitude
+        self.custom_ayanamsa_t0 = custom_ayanamsa_t0
+        self.custom_ayanamsa_ayan_t0 = custom_ayanamsa_ayan_t0
 
         # Geonames username
         if geonames_username is None and online and (not lat or not lng or not tz_str):
