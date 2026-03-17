@@ -164,6 +164,11 @@ DEFAULT_WEIGHTED_POINT_WEIGHTS: dict[str, float] = {
     "rigel": 0.2,
     "achernar": 0.2,
     "capella": 0.2,
+    "vega": 0.2,
+    "alcyone": 0.2,
+    "alphecca": 0.2,
+    "algorab": 0.2,
+    "deneb_algedi": 0.2,
     # Other
     "earth": 0.3,
 }

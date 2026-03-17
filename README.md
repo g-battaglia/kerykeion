@@ -94,7 +94,8 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
 - [Perspective Type](#perspective-type)
 - [Themes](#themes)
 - [Alternative Initialization](#alternative-initialization)
-- [Lunar Nodes (Rahu \& Ketu)](#lunar-nodes-rahu--ketu)
+- [Lunar Nodes (Rahu \\& Ketu)](#lunar-nodes-rahu--ketu)
+- [Fixed Stars](#fixed-stars)
 - [JSON Support](#json-support)
 - [Moon Phase Details](#moon-phase-details)
 - [Documentation](#documentation)
@@ -881,7 +882,7 @@ aspect_grid_chart.save_aspect_grid_only_svg_file(output_path=output_dir, filenam
 
 ## Modern Chart Style
 
-All chart types support a **modern** concentric-ring layout as an alternative to the classic wheel. Pass `style="modern"` to any `save_svg()` or `save_wheel_only_svg_file()` call. The modern style works with all six themes.
+All chart types support a **modern** concentric-ring layout as an alternative to the classic wheel. You can set the style at the instance level via `ChartDrawer(chart_data=..., style="modern")` or per-render via `save_svg(style="modern")`. The modern style works with all six themes.
 
 Available `style` values: `"classic"` (default) and `"modern"`.
 
@@ -1304,7 +1305,7 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 print(johnny.ayanamsa_value)  # e.g. 23.85
 ```
 
-Kerykeion supports **48 named sidereal modes** plus a **USER** mode for custom ayanamsa definitions. Mode families include Indian/Vedic (Lahiri, Krishnamurti, Raman, Aryabhata, Suryasiddhanta, True Citra/Pushya/Revati, ...), Western sidereal (Fagan-Bradley, DeLuce, Hipparchos, ...), Babylonian (Kugler, Huber, Britton, ...), galactic alignment, and astronomical reference frames (J2000, J1900, B1950).
+Kerykeion supports **47 named sidereal modes** plus a **USER** mode for custom ayanamsa definitions (48 total). Mode families include Indian/Vedic (Lahiri, Krishnamurti, Raman, Aryabhata, Suryasiddhanta, True Citra/Pushya/Revati, ...), Western sidereal (Fagan-Bradley, DeLuce, Hipparchos, ...), Babylonian (Kugler, Huber, Britton, ...), galactic alignment, and astronomical reference frames (J2000, J1900, B1950).
 
 **Custom ayanamsa (USER mode):**
 
@@ -1497,6 +1498,40 @@ output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
 chart.save_svg(output_path=output_dir, filename="johnny-depp-custom-points")
 ```
+
+## Fixed Stars
+
+Kerykeion includes **22 fixed stars** — the 2 original stars (Regulus, Spica) plus 20 new stars added in v5.12, completing all 15 Behenian stars of the medieval/Hermetic tradition plus 7 additional bright stars. The set includes the 4 Royal Stars of Persian/Hellenistic astrology (Regulus, Aldebaran, Antares, Fomalhaut). Each star provides ecliptic longitude, daily motion (`speed`), equatorial `declination`, and apparent visual `magnitude`.
+
+Fixed stars are computed for every subject but are **inactive by default** in charts and aspect calculations. To include them, pass their names in `active_points`:
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon", 1940, 10, 9, 18, 30,
+    lng=-2.9833, lat=53.4, tz_str="Europe/London", online=False,
+)
+
+# Access fixed star data directly
+print(subject.sirius.abs_pos)        # Ecliptic longitude
+print(subject.sirius.magnitude)      # -1.44
+print(subject.sirius.declination)    # Equatorial declination
+
+# Include fixed stars in chart rendering
+chart_data = ChartDataFactory.create_natal_chart_data(
+    subject,
+    active_points=list(DEFAULT_ACTIVE_POINTS) + [
+        "Sirius", "Regulus", "Aldebaran", "Antares", "Fomalhaut",
+    ],
+)
+```
+
+Available fixed stars: Regulus, Spica, Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel, Achernar, Capella, Vega, Alcyone, Alphecca, Algorab, Deneb Algedi.
+
+**📖 Full active points list: [Active Points Documentation](https://www.kerykeion.net/content/docs/active_points)**
 
 ## JSON Support
 

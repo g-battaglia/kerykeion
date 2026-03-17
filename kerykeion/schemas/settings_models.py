@@ -122,6 +122,21 @@ class KerykeionLanguageCelestialPointModel(SubscriptableBaseModel):
     Capella: str = Field(
         default="Capella", title="Capella", description="The name of Capella in the chart, in the language"
     )
+    Vega: str = Field(default="Vega", title="Vega", description="The name of Vega in the chart, in the language")
+    Alcyone: str = Field(
+        default="Alcyone", title="Alcyone", description="The name of Alcyone in the chart, in the language"
+    )
+    Alphecca: str = Field(
+        default="Alphecca", title="Alphecca", description="The name of Alphecca in the chart, in the language"
+    )
+    Algorab: str = Field(
+        default="Algorab", title="Algorab", description="The name of Algorab in the chart, in the language"
+    )
+    Deneb_Algedi: str = Field(
+        default="Deneb Algedi",
+        title="Deneb Algedi",
+        description="The name of Deneb Algedi in the chart, in the language",
+    )
     Pars_Fortunae: str = Field(
         title="Part of Fortune", description="The name of Part of Fortune in the chart, in the language"
     )

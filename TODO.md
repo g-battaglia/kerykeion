@@ -41,7 +41,7 @@ does not yet surface.
 
 -   [ ] **House cusp speeds** — Populate the `speed` field (degrees/day) on house cusp points. The field already exists on `KerykeionPointModel` but is currently only populated for planets, not houses. House cusp velocities are useful for primary directions, secondary progressions, and for understanding how quickly a transiting planet crosses a house boundary.
 
--   [ ] **Expanded fixed stars (2 → 17)** — Add 15 traditional fixed stars to the calculation pipeline, plus a `magnitude` field for apparent visual brightness:
+-   [x] **Expanded fixed stars (2 → 22)** — Added 20 traditional fixed stars to the calculation pipeline, plus a `magnitude` field for apparent visual brightness (includes all 15 Behenian stars):
 
     | Star | Mag. | Tradition |
     |------|------|-----------|

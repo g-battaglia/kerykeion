@@ -24,7 +24,7 @@ Future 2050 Subject — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2470007.625000      |
-| Active Points Count | 57                  |
+| Active Points Count | 62                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
@@ -81,6 +81,11 @@ Future 2050 Subject — Natal Chart Report
 | Rigel                 | Gem ♊️ | 17.54°   | +0.0001°/d   | -8.15°  | -    | Eighth House   |
 | Achernar              | Pis ♓️ | 16.04°   | +0.0002°/d   | -56.98° | -    | Fifth House    |
 | Capella               | Gem ♊️ | 22.56°   | +0.0001°/d   | +46.04° | -    | Eighth House   |
+| Vega                  | Cap ♑️ | 16.04°   | +0.0000°/d   | +38.84° | -    | Third House    |
+| Alcyone               | Gem ♊️ | 0.70°    | +0.0001°/d   | +24.26° | -    | Eighth House   |
+| Alphecca              | Sco ♏️ | 13.02°   | -0.0001°/d   | +26.55° | -    | First House    |
+| Algorab               | Lib ♎️ | 14.16°   | -0.0001°/d   | -16.80° | -    | Twelfth House  |
+| Deneb Algedi          | Aqu ♒️ | 24.26°   | +0.0001°/d   | -15.89° | -    | Fourth House   |
 | Pars Fortunae         | Sco ♏️ | 11.01°   | N/A          | N/A     | -    | First House    |
 | Pars Spiritus         | Lib ♎️ | 13.19°   | N/A          | N/A     | -    | Twelfth House  |
 | Pars Amoris           | Sag ♐️ | 11.84°   | N/A          | N/A     | -    | Second House   |
@@ -117,20 +122,20 @@ Future 2050 Subject — Natal Chart Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 10.5               | 30.7%      |
-| Earth 🌍 | 6.6000000000000005 | 19.3%      |
-| Air 💨   | 10.399999999999995 | 30.4%      |
-| Water 💧 | 6.700000000000001  | 19.6%      |
-| Total    | 34.199999999999996 | 100%       |
+| Fire 🔥  | 10.5               | 29.8%      |
+| Earth 🌍 | 6.800000000000001  | 19.3%      |
+| Air 💨   | 10.999999999999993 | 31.2%      |
+| Water 💧 | 6.900000000000001  | 19.6%      |
+| Total    | 35.199999999999996 | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 8.399999999999999  | 24.6%      |
-| Fixed    | 16.600000000000005 | 48.5%      |
-| Mutable  | 9.199999999999996  | 26.9%      |
-| Total    | 34.2               | 100%       |
+| Cardinal | 8.799999999999997  | 25.0%      |
+| Fixed    | 17.000000000000004 | 48.3%      |
+| Mutable  | 9.399999999999995  | 26.7%      |
+| Total    | 35.199999999999996 | 100%       |
 +----------+--------------------+------------+
 
 +Active Celestial Points-----+
@@ -183,16 +188,21 @@ Future 2050 Subject — Natal Chart Report
 | 45 | Rigel                 |
 | 46 | Achernar              |
 | 47 | Capella               |
-| 48 | Pars_Fortunae         |
-| 49 | Pars_Spiritus         |
-| 50 | Pars_Amoris           |
-| 51 | Pars_Fidei            |
-| 52 | Vertex                |
-| 53 | Anti_Vertex           |
-| 54 | Ascendant             |
-| 55 | Medium_Coeli          |
-| 56 | Descendant            |
-| 57 | Imum_Coeli            |
+| 48 | Vega                  |
+| 49 | Alcyone               |
+| 50 | Alphecca              |
+| 51 | Algorab               |
+| 52 | Deneb_Algedi          |
+| 53 | Pars_Fortunae         |
+| 54 | Pars_Spiritus         |
+| 55 | Pars_Amoris           |
+| 56 | Pars_Fidei            |
+| 57 | Vertex                |
+| 58 | Anti_Vertex           |
+| 59 | Ascendant             |
+| 60 | Medium_Coeli          |
+| 61 | Descendant            |
+| 62 | Imum_Coeli            |
 +----+-----------------------+
 
 +----------------+---------+
@@ -235,6 +245,7 @@ Future 2050 Subject — Natal Chart Report
 | Sun                   | square □                      | Arcturus              | 2.70° | Separating ← |
 | Sun                   | conjunction ☌                 | Pollux                | 3.73° | Separating ← |
 | Sun                   | opposition ☍                  | Altair                | 4.86° | Applying →   |
+| Sun                   | sextile ⚹                     | Alcyone               | 3.06° | Applying →   |
 | Moon                  | semi-sextile semi-sextile     | Venus                 | 0.83° | Applying →   |
 | Moon                  | conjunction ☌                 | Jupiter               | 0.16° | Separating ← |
 | Moon                  | opposition ☍                  | Saturn                | 5.34° | Separating ← |
@@ -252,6 +263,8 @@ Future 2050 Subject — Natal Chart Report
 | Moon                  | trine △                       | Antares               | 1.07° | Separating ← |
 | Moon                  | opposition ☍                  | Altair                | 9.05° | Separating ← |
 | Moon                  | sextile ⚹                     | Rigel                 | 5.99° | Applying →   |
+| Moon                  | square □                      | Alphecca              | 1.47° | Applying →   |
+| Moon                  | sextile ⚹                     | Algorab               | 2.61° | Applying →   |
 | Mercury               | opposition ☍                  | Mars                  | 3.27° | Applying →   |
 | Mercury               | square □                      | Neptune               | 4.61° | Applying →   |
 | Mercury               | square □                      | True North Lunar Node | 5.00° | Separating ← |
@@ -271,6 +284,7 @@ Future 2050 Subject — Natal Chart Report
 | Mercury               | semi-sextile semi-sextile     | Pollux                | 0.63° | Applying →   |
 | Mercury               | sextile ⚹                     | Rigel                 | 5.75° | Separating ← |
 | Mercury               | sextile ⚹                     | Capella               | 0.72° | Separating ← |
+| Mercury               | opposition ☍                  | Deneb Algedi          | 0.98° | Applying →   |
 | Venus                 | semi-sextile semi-sextile     | Jupiter               | 0.99° | Separating ← |
 | Venus                 | biquintile biquintile         | Saturn                | 0.17° | Separating ← |
 | Venus                 | conjunction ☌                 | Uranus                | 5.60° | Applying →   |
@@ -301,6 +315,8 @@ Future 2050 Subject — Natal Chart Report
 | Venus                 | semi-square semi-square       | Procyon               | 0.89° | Separating ← |
 | Venus                 | opposition ☍                  | Deneb                 | 6.34° | Separating ← |
 | Venus                 | opposition ☍                  | Achernar              | 3.67° | Applying →   |
+| Venus                 | trine △                       | Vega                  | 3.67° | Applying →   |
+| Venus                 | sextile ⚹                     | Alphecca              | 0.64° | Applying →   |
 | Mars                  | square □                      | Neptune               | 1.34° | Separating ← |
 | Mars                  | trine △                       | Ascendant             | 0.55° | Separating ← |
 | Mars                  | sextile ⚹                     | Descendant            | 0.55° | Separating ← |
@@ -321,6 +337,8 @@ Future 2050 Subject — Natal Chart Report
 | Mars                  | trine △                       | Arcturus              | 1.61° | Applying →   |
 | Mars                  | conjunction ☌                 | Deneb                 | 9.49° | Separating ← |
 | Mars                  | trine △                       | Capella               | 3.99° | Applying →   |
+| Mars                  | square □                      | Alcyone               | 4.15° | Separating ← |
+| Mars                  | conjunction ☌                 | Deneb Algedi          | 2.29° | Applying →   |
 | Jupiter               | opposition ☍                  | Saturn                | 5.18° | Separating ← |
 | Jupiter               | quincunx ⚻                    | Pluto                 | 1.00° | Separating ← |
 | Jupiter               | trine △                       | Chiron                | 5.62° | Separating ← |
@@ -336,6 +354,8 @@ Future 2050 Subject — Natal Chart Report
 | Jupiter               | sextile ⚹                     | Aldebaran             | 0.89° | Separating ← |
 | Jupiter               | trine △                       | Antares               | 0.91° | Separating ← |
 | Jupiter               | opposition ☍                  | Altair                | 8.89° | Separating ← |
+| Jupiter               | square □                      | Alphecca              | 1.63° | Applying →   |
+| Jupiter               | sextile ⚹                     | Algorab               | 2.77° | Applying →   |
 | Saturn                | sextile ⚹                     | Chiron                | 0.44° | Applying →   |
 | Saturn                | opposition ☍                  | Medium Coeli          | 5.65° | Applying →   |
 | Saturn                | conjunction ☌                 | Imum Coeli            | 5.65° | Applying →   |
@@ -357,6 +377,8 @@ Future 2050 Subject — Natal Chart Report
 | Saturn                | opposition ☍                  | Procyon               | 9.72° | Applying →   |
 | Saturn                | semi-sextile semi-sextile     | Deneb                 | 0.17° | Applying →   |
 | Saturn                | conjunction ☌                 | Altair                | 3.70° | Applying →   |
+| Saturn                | trine △                       | Alcyone               | 5.50° | Applying →   |
+| Saturn                | trine △                       | Algorab               | 7.95° | Separating ← |
 | Uranus                | opposition ☍                  | Pluto                 | 7.58° | Separating ← |
 | Uranus                | sextile ⚹                     | Mean North Lunar Node | 0.59° | Separating ← |
 | Uranus                | sextile ⚹                     | True North Lunar Node | 0.31° | Applying →   |
@@ -378,6 +400,8 @@ Future 2050 Subject — Natal Chart Report
 | Uranus                | square □                      | Rigel                 | 0.44° | Separating ← |
 | Uranus                | opposition ☍                  | Achernar              | 1.93° | Separating ← |
 | Uranus                | square □                      | Capella               | 4.59° | Applying →   |
+| Uranus                | trine △                       | Vega                  | 1.93° | Separating ← |
+| Uranus                | sextile ⚹                     | Alphecca              | 4.96° | Separating ← |
 | Neptune               | opposition ☍                  | True North Lunar Node | 9.61° | Separating ← |
 | Neptune               | opposition ☍                  | Chiron                | 7.87° | Applying →   |
 | Neptune               | quincunx ⚻                    | Ascendant             | 0.80° | Applying →   |
@@ -398,6 +422,8 @@ Future 2050 Subject — Natal Chart Report
 | Neptune               | sextile ⚹                     | Pollux                | 3.98° | Separating ← |
 | Neptune               | trine △                       | Altair                | 4.60° | Applying →   |
 | Neptune               | quintile Q                    | Achernar              | 0.14° | Applying →   |
+| Neptune               | conjunction ☌                 | Alcyone               | 2.80° | Applying →   |
+| Neptune               | square □                      | Deneb Algedi          | 3.64° | Separating ← |
 | Pluto                 | trine △                       | Mean North Lunar Node | 6.99° | Applying →   |
 | Pluto                 | trine △                       | True North Lunar Node | 7.89° | Applying →   |
 | Pluto                 | square □                      | Chiron                | 4.63° | Separating ← |
@@ -420,6 +446,8 @@ Future 2050 Subject — Natal Chart Report
 | Pluto                 | sesquiquadrate sesquiquadrate | Arcturus              | 0.45° | Applying →   |
 | Pluto                 | conjunction ☌                 | Deneb                 | 4.35° | Applying →   |
 | Pluto                 | conjunction ☌                 | Achernar              | 5.65° | Separating ← |
+| Pluto                 | sextile ⚹                     | Vega                  | 5.65° | Separating ← |
+| Pluto                 | trine △                       | Alphecca              | 2.62° | Separating ← |
 | Mean North Lunar Node | conjunction ☌                 | True North Lunar Node | 0.90° | Applying →   |
 | Mean North Lunar Node | opposition ☍                  | True South Lunar Node | 0.90° | Separating ← |
 | Mean North Lunar Node | sextile ⚹                     | True Lilith           | 5.59° | Applying →   |
@@ -433,6 +461,8 @@ Future 2050 Subject — Natal Chart Report
 | Mean North Lunar Node | quincunx ⚻                    | Rigel                 | 0.15° | Separating ← |
 | Mean North Lunar Node | trine △                       | Achernar              | 1.34° | Applying →   |
 | Mean North Lunar Node | biquintile biquintile         | Capella               | 0.82° | Applying →   |
+| Mean North Lunar Node | sextile ⚹                     | Vega                  | 1.34° | Applying →   |
+| Mean North Lunar Node | conjunction ☌                 | Alphecca              | 4.37° | Applying →   |
 | True North Lunar Node | quintile Q                    | Imum Coeli            | 0.27° | Separating ← |
 | True North Lunar Node | opposition ☍                  | Mean South Lunar Node | 0.90° | Applying →   |
 | True North Lunar Node | sextile ⚹                     | Juno                  | 4.27° | Applying →   |
@@ -445,6 +475,8 @@ Future 2050 Subject — Natal Chart Report
 | True North Lunar Node | trine △                       | Pollux                | 5.63° | Separating ← |
 | True North Lunar Node | quincunx ⚻                    | Rigel                 | 0.75° | Applying →   |
 | True North Lunar Node | trine △                       | Achernar              | 2.24° | Applying →   |
+| True North Lunar Node | sextile ⚹                     | Vega                  | 2.24° | Applying →   |
+| True North Lunar Node | conjunction ☌                 | Alphecca              | 5.27° | Applying →   |
 | Chiron                | trine △                       | Medium Coeli          | 5.21° | Applying →   |
 | Chiron                | sextile ⚹                     | Imum Coeli            | 5.21° | Applying →   |
 | Chiron                | square □                      | Mean Lilith           | 4.47° | Separating ← |
@@ -459,6 +491,7 @@ Future 2050 Subject — Natal Chart Report
 | Chiron                | opposition ☍                  | Algol                 | 8.89° | Applying →   |
 | Chiron                | square □                      | Deneb                 | 0.27° | Separating ← |
 | Chiron                | sextile ⚹                     | Altair                | 3.26° | Applying →   |
+| Chiron                | opposition ☍                  | Alcyone               | 5.07° | Applying →   |
 | Ascendant             | square □                      | Medium Coeli          | 3.45° | Static =     |
 | Ascendant             | square □                      | Imum Coeli            | 3.45° | Static =     |
 | Ascendant             | semi-square semi-square       | True Lilith           | 0.31° | Separating ← |
@@ -478,6 +511,7 @@ Future 2050 Subject — Natal Chart Report
 | Ascendant             | conjunction ☌                 | Arcturus              | 2.16° | Separating ← |
 | Ascendant             | square □                      | Pollux                | 3.19° | Separating ← |
 | Ascendant             | trine △                       | Capella               | 4.54° | Separating ← |
+| Ascendant             | trine △                       | Deneb Algedi          | 2.84° | Separating ← |
 | Medium Coeli          | square □                      | Descendant            | 3.45° | Static =     |
 | Medium Coeli          | quintile Q                    | True South Lunar Node | 0.27° | Separating ← |
 | Medium Coeli          | trine △                       | Earth                 | 0.55° | Separating ← |
@@ -496,6 +530,7 @@ Future 2050 Subject — Natal Chart Report
 | Medium Coeli          | biquintile biquintile         | Deneb                 | 0.51° | Separating ← |
 | Medium Coeli          | opposition ☍                  | Altair                | 1.95° | Applying →   |
 | Medium Coeli          | sesquiquadrate sesquiquadrate | Achernar              | 0.49° | Applying →   |
+| Medium Coeli          | sextile ⚹                     | Alcyone               | 0.15° | Separating ← |
 | Descendant            | square □                      | Imum Coeli            | 3.45° | Static =     |
 | Descendant            | sesquiquadrate sesquiquadrate | True Lilith           | 0.31° | Separating ← |
 | Descendant            | trine △                       | Ceres                 | 3.41° | Separating ← |
@@ -515,6 +550,7 @@ Future 2050 Subject — Natal Chart Report
 | Descendant            | opposition ☍                  | Arcturus              | 2.16° | Separating ← |
 | Descendant            | square □                      | Pollux                | 3.19° | Separating ← |
 | Descendant            | sextile ⚹                     | Capella               | 4.54° | Separating ← |
+| Descendant            | sextile ⚹                     | Deneb Algedi          | 2.84° | Separating ← |
 | Imum Coeli            | sextile ⚹                     | Earth                 | 0.55° | Separating ← |
 | Imum Coeli            | trine △                       | Vesta                 | 2.92° | Separating ← |
 | Imum Coeli            | square □                      | Eris                  | 1.05° | Applying →   |
@@ -528,6 +564,7 @@ Future 2050 Subject — Natal Chart Report
 | Imum Coeli            | opposition ☍                  | Pollux                | 6.64° | Separating ← |
 | Imum Coeli            | conjunction ☌                 | Altair                | 1.95° | Applying →   |
 | Imum Coeli            | semi-square semi-square       | Achernar              | 0.49° | Applying →   |
+| Imum Coeli            | trine △                       | Alcyone               | 0.15° | Separating ← |
 | Mean Lilith           | trine △                       | Mean South Lunar Node | 7.14° | Applying →   |
 | Mean Lilith           | conjunction ☌                 | True Lilith           | 1.56° | Separating ← |
 | Mean Lilith           | sextile ⚹                     | Pallas                | 0.86° | Applying →   |
@@ -547,6 +584,8 @@ Future 2050 Subject — Natal Chart Report
 | Mean Lilith           | semi-square semi-square       | Arcturus              | 0.30° | Separating ← |
 | Mean Lilith           | opposition ☍                  | Deneb                 | 4.20° | Separating ← |
 | Mean Lilith           | opposition ☍                  | Achernar              | 5.80° | Applying →   |
+| Mean Lilith           | trine △                       | Vega                  | 5.80° | Applying →   |
+| Mean Lilith           | sextile ⚹                     | Alphecca              | 2.78° | Applying →   |
 | Mean South Lunar Node | conjunction ☌                 | True South Lunar Node | 0.90° | Separating ← |
 | Mean South Lunar Node | trine △                       | True Lilith           | 5.59° | Applying →   |
 | Mean South Lunar Node | trine △                       | Juno                  | 3.37° | Applying →   |
@@ -560,6 +599,8 @@ Future 2050 Subject — Natal Chart Report
 | Mean South Lunar Node | quintile Q                    | Deneb                 | 0.65° | Applying →   |
 | Mean South Lunar Node | semi-sextile semi-sextile     | Rigel                 | 0.15° | Applying →   |
 | Mean South Lunar Node | sextile ⚹                     | Achernar              | 1.34° | Separating ← |
+| Mean South Lunar Node | trine △                       | Vega                  | 1.34° | Separating ← |
+| Mean South Lunar Node | opposition ☍                  | Alphecca              | 4.37° | Separating ← |
 | True South Lunar Node | trine △                       | True Lilith           | 6.49° | Applying →   |
 | True South Lunar Node | trine △                       | Juno                  | 4.27° | Applying →   |
 | True South Lunar Node | semi-sextile semi-sextile     | Sedna                 | 0.50° | Applying →   |
@@ -574,6 +615,8 @@ Future 2050 Subject — Natal Chart Report
 | True South Lunar Node | quintile Q                    | Deneb                 | 0.25° | Separating ← |
 | True South Lunar Node | semi-sextile semi-sextile     | Rigel                 | 0.75° | Separating ← |
 | True South Lunar Node | sextile ⚹                     | Achernar              | 2.24° | Separating ← |
+| True South Lunar Node | trine △                       | Vega                  | 2.24° | Separating ← |
+| True South Lunar Node | opposition ☍                  | Alphecca              | 5.27° | Separating ← |
 | True Lilith           | quincunx ⚻                    | Pholus                | 0.15° | Applying →   |
 | True Lilith           | sextile ⚹                     | Pallas                | 2.42° | Separating ← |
 | True Lilith           | conjunction ☌                 | Juno                  | 2.22° | Applying →   |
@@ -591,6 +634,8 @@ Future 2050 Subject — Natal Chart Report
 | True Lilith           | semi-square semi-square       | Procyon               | 0.31° | Separating ← |
 | True Lilith           | opposition ☍                  | Deneb                 | 5.76° | Separating ← |
 | True Lilith           | opposition ☍                  | Achernar              | 4.25° | Applying →   |
+| True Lilith           | trine △                       | Vega                  | 4.25° | Applying →   |
+| True Lilith           | sextile ⚹                     | Alphecca              | 1.22° | Applying →   |
 | Earth                 | biquintile biquintile         | Ceres                 | 0.31° | Applying →   |
 | Earth                 | opposition ☍                  | Vesta                 | 2.37° | Applying →   |
 | Earth                 | trine △                       | Haumea                | 0.79° | Separating ← |
@@ -601,6 +646,7 @@ Future 2050 Subject — Natal Chart Report
 | Earth                 | trine △                       | Procyon               | 3.52° | Static =     |
 | Earth                 | trine △                       | Pollux                | 6.09° | Static =     |
 | Earth                 | sextile ⚹                     | Altair                | 2.50° | Static =     |
+| Earth                 | sextile ⚹                     | Alcyone               | 0.70° | Static =     |
 | Pholus                | sesquiquadrate sesquiquadrate | Vesta                 | 0.69° | Separating ← |
 | Pholus                | trine △                       | Sedna                 | 6.84° | Separating ← |
 | Pholus                | quintile Q                    | Haumea                | 0.73° | Applying →   |
@@ -615,6 +661,8 @@ Future 2050 Subject — Natal Chart Report
 | Pholus                | sextile ⚹                     | Antares               | 1.47° | Applying →   |
 | Pholus                | conjunction ☌                 | Altair                | 9.44° | Applying →   |
 | Pholus                | trine △                       | Rigel                 | 5.59° | Separating ← |
+| Pholus                | square □                      | Alphecca              | 1.07° | Separating ← |
+| Pholus                | trine △                       | Algorab               | 2.21° | Separating ← |
 | Ceres                 | semi-square semi-square       | Pallas                | 0.68° | Separating ← |
 | Ceres                 | trine △                       | Eris                  | 7.90° | Applying →   |
 | Ceres                 | sextile ⚹                     | Sedna                 | 4.91° | Separating ← |
@@ -627,6 +675,7 @@ Future 2050 Subject — Natal Chart Report
 | Ceres                 | sextile ⚹                     | Arcturus              | 1.25° | Applying →   |
 | Ceres                 | semi-sextile semi-sextile     | Pollux                | 0.22° | Applying →   |
 | Ceres                 | sextile ⚹                     | Capella               | 1.13° | Separating ← |
+| Ceres                 | opposition ☍                  | Deneb Algedi          | 0.57° | Applying →   |
 | Pallas                | sextile ⚹                     | Juno                  | 4.64° | Applying →   |
 | Pallas                | trine △                       | Makemake              | 6.22° | Separating ← |
 | Pallas                | sesquiquadrate sesquiquadrate | Ixion                 | 0.35° | Separating ← |
@@ -640,6 +689,10 @@ Future 2050 Subject — Natal Chart Report
 | Pallas                | conjunction ☌                 | Canopus               | 6.26° | Applying →   |
 | Pallas                | trine △                       | Deneb                 | 3.34° | Separating ← |
 | Pallas                | trine △                       | Achernar              | 6.66° | Applying →   |
+| Pallas                | opposition ☍                  | Vega                  | 6.66° | Applying →   |
+| Pallas                | trine △                       | Alphecca              | 3.64° | Applying →   |
+| Pallas                | square □                      | Algorab               | 4.78° | Applying →   |
+| Pallas                | sesquiquadrate sesquiquadrate | Deneb Algedi          | 0.12° | Separating ← |
 | Juno                  | square □                      | Sedna                 | 4.77° | Applying →   |
 | Juno                  | quincunx ⚻                    | Quaoar                | 0.53° | Applying →   |
 | Juno                  | sextile ⚹                     | Pars Fortunae         | 3.01° | Separating ← |
@@ -653,6 +706,9 @@ Future 2050 Subject — Natal Chart Report
 | Juno                  | opposition ☍                  | Deneb                 | 7.98° | Separating ← |
 | Juno                  | square □                      | Rigel                 | 3.52° | Applying →   |
 | Juno                  | opposition ☍                  | Achernar              | 2.02° | Applying →   |
+| Juno                  | trine △                       | Vega                  | 2.02° | Applying →   |
+| Juno                  | sextile ⚹                     | Alphecca              | 1.00° | Separating ← |
+| Juno                  | semi-sextile semi-sextile     | Algorab               | 0.14° | Applying →   |
 | Vesta                 | sextile ⚹                     | Haumea                | 1.58° | Applying →   |
 | Vesta                 | quintile Q                    | Antares               | 0.84° | Applying →   |
 | Vesta                 | quintile Q                    | Sirius                | 0.86° | Separating ← |
@@ -662,6 +718,8 @@ Future 2050 Subject — Natal Chart Report
 | Vesta                 | sextile ⚹                     | Procyon               | 1.15° | Separating ← |
 | Vesta                 | sextile ⚹                     | Pollux                | 3.72° | Separating ← |
 | Vesta                 | trine △                       | Altair                | 4.87° | Applying →   |
+| Vesta                 | trine △                       | Alcyone               | 3.06° | Applying →   |
+| Vesta                 | semi-square semi-square       | Alphecca              | 0.38° | Applying →   |
 | Eris                  | opposition ☍                  | Makemake              | 1.56° | Static =     |
 | Eris                  | trine △                       | Regulus               | 1.07° | Separating ← |
 | Eris                  | opposition ☍                  | Spica                 | 7.05° | Separating ← |
@@ -675,6 +733,7 @@ Future 2050 Subject — Natal Chart Report
 | Eris                  | square □                      | Altair                | 0.90° | Applying →   |
 | Eris                  | semi-square semi-square       | Rigel                 | 0.94° | Applying →   |
 | Eris                  | semi-square semi-square       | Achernar              | 0.56° | Separating ← |
+| Eris                  | semi-sextile semi-sextile     | Alcyone               | 0.90° | Separating ← |
 | Sedna                 | sesquiquadrate sesquiquadrate | Makemake              | 0.63° | Separating ← |
 | Sedna                 | trine △                       | Ixion                 | 5.24° | Applying →   |
 | Sedna                 | trine △                       | Orcus                 | 6.85° | Separating ← |
@@ -689,6 +748,9 @@ Future 2050 Subject — Natal Chart Report
 | Sedna                 | conjunction ☌                 | Rigel                 | 1.25° | Separating ← |
 | Sedna                 | square □                      | Achernar              | 2.74° | Separating ← |
 | Sedna                 | conjunction ☌                 | Capella               | 3.78° | Applying →   |
+| Sedna                 | biquintile biquintile         | Alphecca              | 0.23° | Applying →   |
+| Sedna                 | trine △                       | Algorab               | 4.63° | Separating ← |
+| Sedna                 | trine △                       | Deneb Algedi          | 5.48° | Applying →   |
 | Haumea                | square □                      | Regulus               | 1.32° | Separating ← |
 | Haumea                | opposition ☍                  | Vertex                | 8.86° | Separating ← |
 | Haumea                | conjunction ☌                 | Anti Vertex           | 8.86° | Separating ← |
@@ -698,6 +760,9 @@ Future 2050 Subject — Natal Chart Report
 | Haumea                | trine △                       | Procyon               | 2.73° | Applying →   |
 | Haumea                | trine △                       | Pollux                | 5.30° | Applying →   |
 | Haumea                | sextile ⚹                     | Altair                | 3.29° | Separating ← |
+| Haumea                | opposition ☍                  | Alcyone               | 1.49° | Separating ← |
+| Haumea                | semi-square semi-square       | Algorab               | 0.06° | Applying →   |
+| Haumea                | square □                      | Deneb Algedi          | 4.95° | Applying →   |
 | Makemake              | sextile ⚹                     | Regulus               | 2.62° | Static =     |
 | Makemake              | conjunction ☌                 | Spica                 | 8.60° | Static =     |
 | Makemake              | conjunction ☌                 | Pars Fortunae         | 7.86° | Static =     |
@@ -708,6 +773,8 @@ Future 2050 Subject — Natal Chart Report
 | Makemake              | trine △                       | Deneb                 | 2.88° | Static =     |
 | Makemake              | square □                      | Altair                | 0.65° | Static =     |
 | Makemake              | sesquiquadrate sesquiquadrate | Rigel                 | 0.62° | Static =     |
+| Makemake              | quintile Q                    | Vega                  | 0.89° | Static =     |
+| Makemake              | conjunction ☌                 | Alphecca              | 9.86° | Static =     |
 | Ixion                 | conjunction ☌                 | Quaoar                | 9.47° | Applying →   |
 | Ixion                 | opposition ☍                  | Regulus               | 6.51° | Separating ← |
 | Ixion                 | trine △                       | Spica                 | 0.53° | Separating ← |
@@ -718,6 +785,7 @@ Future 2050 Subject — Natal Chart Report
 | Ixion                 | quincunx ⚻                    | Pollux                | 0.11° | Applying →   |
 | Ixion                 | trine △                       | Rigel                 | 6.49° | Applying →   |
 | Ixion                 | trine △                       | Capella               | 1.46° | Applying →   |
+| Ixion                 | conjunction ☌                 | Deneb Algedi          | 0.24° | Separating ← |
 | Orcus                 | trine △                       | Quaoar                | 2.62° | Applying →   |
 | Orcus                 | semi-sextile semi-sextile     | Pars Fortunae         | 0.92° | Separating ← |
 | Orcus                 | conjunction ☌                 | Pars Spiritus         | 1.26° | Applying →   |
@@ -731,6 +799,8 @@ Future 2050 Subject — Natal Chart Report
 | Orcus                 | square □                      | Canopus               | 3.71° | Applying →   |
 | Orcus                 | biquintile biquintile         | Deneb                 | 0.10° | Applying →   |
 | Orcus                 | trine △                       | Rigel                 | 5.60° | Applying →   |
+| Orcus                 | square □                      | Vega                  | 4.11° | Applying →   |
+| Orcus                 | conjunction ☌                 | Algorab               | 2.22° | Applying →   |
 | Quaoar                | square □                      | Pars Fortunae         | 3.54° | Applying →   |
 | Quaoar                | trine △                       | Pars Spiritus         | 1.36° | Applying →   |
 | Quaoar                | sextile ⚹                     | Pars Amoris           | 2.72° | Applying →   |
@@ -740,6 +810,9 @@ Future 2050 Subject — Natal Chart Report
 | Quaoar                | quincunx ⚻                    | Sirius                | 0.22° | Separating ← |
 | Quaoar                | sesquiquadrate sesquiquadrate | Betelgeuse            | 0.09° | Applying →   |
 | Quaoar                | trine △                       | Rigel                 | 2.98° | Separating ← |
+| Quaoar                | square □                      | Alphecca              | 1.54° | Applying →   |
+| Quaoar                | trine △                       | Algorab               | 0.40° | Applying →   |
+| Quaoar                | conjunction ☌                 | Deneb Algedi          | 9.71° | Separating ← |
 | Regulus               | sextile ⚹                     | Spica                 | 5.98° | Static =     |
 | Regulus               | trine △                       | Pars Fidei            | 1.75° | Static =     |
 | Regulus               | semi-square semi-square       | Sirius                | 0.76° | Static =     |
@@ -750,6 +823,10 @@ Future 2050 Subject — Natal Chart Report
 | Regulus               | sextile ⚹                     | Arcturus              | 5.59° | Static =     |
 | Regulus               | opposition ☍                  | Deneb                 | 5.51° | Static =     |
 | Regulus               | quintile Q                    | Rigel                 | 1.00° | Static =     |
+| Regulus               | sesquiquadrate sesquiquadrate | Vega                  | 0.51° | Static =     |
+| Regulus               | square □                      | Alcyone               | 0.17° | Static =     |
+| Regulus               | quintile Q                    | Alphecca              | 0.48° | Static =     |
+| Regulus               | opposition ☍                  | Deneb Algedi          | 6.27° | Static =     |
 | Spica                 | opposition ☍                  | Pars Fidei            | 7.73° | Static =     |
 | Spica                 | sesquiquadrate sesquiquadrate | Aldebaran             | 0.95° | Static =     |
 | Spica                 | semi-square semi-square       | Antares               | 0.93° | Static =     |
@@ -759,6 +836,8 @@ Future 2050 Subject — Natal Chart Report
 | Spica                 | square □                      | Pollux                | 0.64° | Static =     |
 | Spica                 | trine △                       | Rigel                 | 7.02° | Static =     |
 | Spica                 | trine △                       | Capella               | 1.99° | Static =     |
+| Spica                 | biquintile biquintile         | Alcyone               | 0.15° | Static =     |
+| Spica                 | trine △                       | Deneb Algedi          | 0.29° | Static =     |
 | Pars Fortunae         | semi-sextile semi-sextile     | Pars Amoris           | 0.83° | Static =     |
 | Pars Fortunae         | opposition ☍                  | Pars Fidei            | 8.73° | Static =     |
 | Pars Fortunae         | quincunx ⚻                    | Aldebaran             | 0.51° | Static =     |
@@ -769,6 +848,8 @@ Future 2050 Subject — Natal Chart Report
 | Pars Fortunae         | trine △                       | Deneb                 | 4.97° | Static =     |
 | Pars Fortunae         | biquintile biquintile         | Rigel                 | 0.52° | Static =     |
 | Pars Fortunae         | trine △                       | Achernar              | 5.03° | Static =     |
+| Pars Fortunae         | sextile ⚹                     | Vega                  | 5.03° | Static =     |
+| Pars Fortunae         | conjunction ☌                 | Alphecca              | 2.00° | Static =     |
 | Pars Spiritus         | sextile ⚹                     | Pars Amoris           | 1.35° | Static =     |
 | Pars Spiritus         | trine △                       | Vertex                | 5.12° | Static =     |
 | Pars Spiritus         | sextile ⚹                     | Anti Vertex           | 5.12° | Static =     |
@@ -777,6 +858,9 @@ Future 2050 Subject — Natal Chart Report
 | Pars Spiritus         | square □                      | Sirius                | 1.58° | Static =     |
 | Pars Spiritus         | square □                      | Canopus               | 2.45° | Static =     |
 | Pars Spiritus         | trine △                       | Rigel                 | 4.34° | Static =     |
+| Pars Spiritus         | square □                      | Vega                  | 2.85° | Static =     |
+| Pars Spiritus         | semi-sextile semi-sextile     | Alphecca              | 0.18° | Static =     |
+| Pars Spiritus         | conjunction ☌                 | Algorab               | 0.97° | Static =     |
 | Pars Amoris           | opposition ☍                  | Vertex                | 3.77° | Static =     |
 | Pars Amoris           | conjunction ☌                 | Anti Vertex           | 3.77° | Static =     |
 | Pars Amoris           | opposition ☍                  | Aldebaran             | 1.34° | Static =     |
@@ -784,6 +868,8 @@ Future 2050 Subject — Natal Chart Report
 | Pars Amoris           | sesquiquadrate sesquiquadrate | Procyon               | 0.36° | Static =     |
 | Pars Amoris           | opposition ☍                  | Rigel                 | 5.70° | Static =     |
 | Pars Amoris           | square □                      | Achernar              | 4.20° | Static =     |
+| Pars Amoris           | sextile ⚹                     | Algorab               | 2.32° | Static =     |
+| Pars Amoris           | quintile Q                    | Deneb Algedi          | 0.42° | Static =     |
 | Pars Fidei            | biquintile biquintile         | Anti Vertex           | 0.21° | Static =     |
 | Pars Fidei            | quintile Q                    | Sirius                | 0.49° | Static =     |
 | Pars Fidei            | sextile ⚹                     | Fomalhaut             | 2.30° | Static =     |
@@ -800,6 +886,8 @@ Future 2050 Subject — Natal Chart Report
 | Vertex                | square □                      | Deneb                 | 2.03° | Static =     |
 | Vertex                | trine △                       | Altair                | 5.57° | Static =     |
 | Vertex                | conjunction ☌                 | Rigel                 | 9.47° | Static =     |
+| Vertex                | conjunction ☌                 | Alcyone               | 7.37° | Static =     |
+| Vertex                | trine △                       | Algorab               | 6.09° | Static =     |
 | Anti Vertex           | opposition ☍                  | Aldebaran             | 2.43° | Static =     |
 | Anti Vertex           | conjunction ☌                 | Antares               | 2.41° | Static =     |
 | Anti Vertex           | biquintile biquintile         | Sirius                | 0.71° | Static =     |
@@ -808,38 +896,71 @@ Future 2050 Subject — Natal Chart Report
 | Anti Vertex           | square □                      | Deneb                 | 2.03° | Static =     |
 | Anti Vertex           | sextile ⚹                     | Altair                | 5.57° | Static =     |
 | Anti Vertex           | opposition ☍                  | Rigel                 | 9.47° | Static =     |
+| Anti Vertex           | opposition ☍                  | Alcyone               | 7.37° | Static =     |
 | Aldebaran             | opposition ☍                  | Antares               | 0.02° | Static =     |
 | Aldebaran             | semi-square semi-square       | Procyon               | 0.99° | Static =     |
 | Aldebaran             | sesquiquadrate sesquiquadrate | Arcturus              | 0.55° | Static =     |
 | Aldebaran             | square □                      | Deneb                 | 4.46° | Static =     |
 | Aldebaran             | trine △                       | Altair                | 8.00° | Static =     |
 | Aldebaran             | conjunction ☌                 | Rigel                 | 7.04° | Static =     |
+| Aldebaran             | biquintile biquintile         | Vega                  | 0.46° | Static =     |
+| Aldebaran             | conjunction ☌                 | Alcyone               | 9.80° | Static =     |
+| Aldebaran             | trine △                       | Algorab               | 3.66° | Static =     |
 | Antares               | biquintile biquintile         | Canopus               | 0.84° | Static =     |
 | Antares               | semi-square semi-square       | Arcturus              | 0.53° | Static =     |
 | Antares               | square □                      | Deneb                 | 4.44° | Static =     |
 | Antares               | opposition ☍                  | Rigel                 | 7.06° | Static =     |
+| Antares               | opposition ☍                  | Alcyone               | 9.78° | Static =     |
+| Antares               | sextile ⚹                     | Algorab               | 3.68° | Static =     |
 | Sirius                | conjunction ☌                 | Canopus               | 0.86° | Static =     |
 | Sirius                | conjunction ☌                 | Pollux                | 9.14° | Static =     |
 | Sirius                | trine △                       | Achernar              | 1.27° | Static =     |
+| Sirius                | opposition ☍                  | Vega                  | 1.27° | Static =     |
+| Sirius                | semi-square semi-square       | Alcyone               | 0.92° | Static =     |
+| Sirius                | trine △                       | Alphecca              | 1.76° | Static =     |
+| Sirius                | square □                      | Algorab               | 0.62° | Static =     |
 | Fomalhaut             | trine △                       | Betelgeuse            | 5.12° | Static =     |
 | Fomalhaut             | conjunction ☌                 | Deneb                 | 1.46° | Static =     |
+| Fomalhaut             | square □                      | Alcyone               | 3.88° | Static =     |
 | Algol                 | sextile ⚹                     | Procyon               | 0.39° | Static =     |
 | Algol                 | sextile ⚹                     | Pollux                | 2.96° | Static =     |
 | Algol                 | trine △                       | Altair                | 5.63° | Static =     |
+| Algol                 | conjunction ☌                 | Alcyone               | 3.83° | Static =     |
+| Algol                 | square □                      | Deneb Algedi          | 2.61° | Static =     |
 | Betelgeuse            | trine △                       | Arcturus              | 4.52° | Static =     |
 | Betelgeuse            | trine △                       | Deneb                 | 6.58° | Static =     |
 | Betelgeuse            | conjunction ☌                 | Capella               | 6.90° | Static =     |
+| Betelgeuse            | trine △                       | Deneb Algedi          | 5.20° | Static =     |
 | Canopus               | conjunction ☌                 | Pollux                | 8.27° | Static =     |
 | Canopus               | trine △                       | Achernar              | 0.40° | Static =     |
+| Canopus               | opposition ☍                  | Vega                  | 0.40° | Static =     |
+| Canopus               | semi-square semi-square       | Alcyone               | 0.06° | Static =     |
+| Canopus               | trine △                       | Alphecca              | 2.63° | Static =     |
+| Canopus               | square □                      | Algorab               | 1.48° | Static =     |
 | Procyon               | square □                      | Arcturus              | 1.54° | Static =     |
 | Procyon               | conjunction ☌                 | Pollux                | 2.57° | Static =     |
 | Procyon               | opposition ☍                  | Altair                | 6.02° | Static =     |
+| Procyon               | sextile ⚹                     | Alcyone               | 4.22° | Static =     |
 | Arcturus              | square □                      | Pollux                | 1.03° | Static =     |
 | Arcturus              | trine △                       | Rigel                 | 7.41° | Static =     |
 | Arcturus              | trine △                       | Capella               | 2.38° | Static =     |
+| Arcturus              | biquintile biquintile         | Alcyone               | 0.24° | Static =     |
+| Arcturus              | trine △                       | Deneb Algedi          | 0.68° | Static =     |
 | Pollux                | opposition ☍                  | Altair                | 8.59° | Static =     |
 | Pollux                | trine △                       | Achernar              | 7.87° | Static =     |
+| Pollux                | opposition ☍                  | Vega                  | 7.87° | Static =     |
+| Pollux                | quincunx ⚻                    | Deneb Algedi          | 0.35° | Static =     |
+| Deneb                 | trine △                       | Alphecca              | 6.98° | Static =     |
 | Altair                | sesquiquadrate sesquiquadrate | Rigel                 | 0.03° | Static =     |
+| Altair                | trine △                       | Alcyone               | 1.80° | Static =     |
 | Rigel                 | square □                      | Achernar              | 1.49° | Static =     |
 | Rigel                 | conjunction ☌                 | Capella               | 5.03° | Static =     |
+| Rigel                 | trine △                       | Algorab               | 3.38° | Static =     |
+| Rigel                 | trine △                       | Deneb Algedi          | 6.72° | Static =     |
+| Achernar              | sextile ⚹                     | Vega                  | 0.00° | Static =     |
+| Achernar              | trine △                       | Alphecca              | 3.03° | Static =     |
+| Capella               | trine △                       | Deneb Algedi          | 1.70° | Static =     |
+| Vega                  | sesquiquadrate sesquiquadrate | Alcyone               | 0.34° | Static =     |
+| Vega                  | sextile ⚹                     | Alphecca              | 3.03° | Static =     |
+| Vega                  | square □                      | Algorab               | 1.88° | Static =     |
 +-----------------------+-------------------------------+-----------------------+-------+--------------+

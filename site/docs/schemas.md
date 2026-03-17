@@ -51,6 +51,7 @@ Represents a person or event to be analyzed.
 | `tz_str`               | `str`          | Timezone string (e.g., "Europe/Rome") |
 | `zodiac_type`          | `ZodiacType`   | "Tropical" or "Sidereal"              |
 | `sidereal_mode`        | `SiderealMode` | Specific Ayanamsa if Sidereal         |
+| `ayanamsa_value`       | `float \| None`| Ayanamsa offset in degrees (sidereal only) |
 
 ### KerykeionPointModel
 
@@ -67,6 +68,9 @@ Detailed information about a celestial body or house cusp.
 | `retrograde` | `bool`              | True if retrograde                           |
 | `element`    | `Element`           | Fire, Earth, Air, or Water                   |
 | `quality`    | `Quality`           | Cardinal, Fixed, or Mutable                  |
+| `speed`      | `float \| None`     | Daily motion in degrees/day                  |
+| `declination`| `float \| None`     | Equatorial declination in degrees            |
+| `magnitude`  | `float \| None`     | Apparent visual magnitude (fixed stars only) |
 
 ### SingleChartDataModel
 
@@ -132,6 +136,8 @@ Inherits all celestial point fields from `AstrologicalBaseModel`.
 Base model for all astrological subjects. Contains common fields for location, time, and all celestial points.
 
 Key fields: `name`, `city`, `nation`, `lng`, `lat`, `tz_str`, `zodiac_type`, `houses_system_identifier`, `sun`, `moon`, `mercury`..., `first_house`..., `ascendant`, etc.
+
+New in v5.12: `ayanamsa_value` (`float | None`) -- the computed ayanamsa offset in degrees for sidereal charts (`None` for tropical).
 
 ### EphemerisDictModel
 
@@ -397,7 +403,7 @@ Comprehensive literal for all supported celestial points.
 `"Eris"`, `"Sedna"`, `"Haumea"`, `"Makemake"`, `"Ixion"`, `"Orcus"`, `"Quaoar"`
 
 **Fixed Stars:**
-`"Regulus"`, `"Spica"`
+`"Regulus"`, `"Spica"`, `"Aldebaran"`, `"Antares"`, `"Sirius"`, `"Fomalhaut"`, `"Algol"`, `"Betelgeuse"`, `"Canopus"`, `"Procyon"`, `"Arcturus"`, `"Pollux"`, `"Deneb"`, `"Altair"`, `"Rigel"`, `"Achernar"`, `"Capella"`, `"Vega"`, `"Alcyone"`, `"Alphecca"`, `"Algorab"`, `"Deneb_Algedi"`
 
 **Arabic Parts (Lots):**
 `"Pars_Fortunae"` (Part of Fortune), `"Pars_Spiritus"` (Part of Spirit), `"Pars_Amoris"` (Part of Love), `"Pars_Fidei"` (Part of Faith)

@@ -104,6 +104,11 @@ AstrologicalPoint: TypeAlias = Literal[
     "Rigel",
     "Achernar",
     "Capella",
+    "Vega",
+    "Alcyone",
+    "Alphecca",
+    "Algorab",
+    "Deneb_Algedi",
     # Arabic Parts
     "Pars_Fortunae",
     "Pars_Spiritus",
@@ -124,9 +129,10 @@ AstrologicalPoint: TypeAlias = Literal[
 Includes planets, lunar nodes, special points, asteroids, trans-Neptunian objects,
 fixed stars, Arabic parts (lots), angular points, and axial cusps.
 
-Fixed Stars (17 total, expanded in v5.12 from 2):
-    The original pair (Regulus, Spica) are joined by 15 additional bright stars
-    chosen for their traditional astrological significance:
+Fixed Stars (22 total, expanded in v5.12 from 2):
+    The original pair (Regulus, Spica) are joined by 20 additional stars
+    chosen for their traditional astrological significance. The set includes
+    all 15 Behenian stars of the medieval/Hermetic tradition.
 
     Royal Stars (Watchers of the sky in Persian/Hellenistic astrology):
         - Regulus (alpha Leonis) -- Watcher of the North, mag 1.35
@@ -134,14 +140,19 @@ Fixed Stars (17 total, expanded in v5.12 from 2):
         - Antares (alpha Scorpii) -- Watcher of the West, mag 1.06
         - Fomalhaut (alpha Piscis Austrini) -- Watcher of the South, mag 1.16
 
+    Behenian stars (not listed above):
+        - Algol (beta Persei), Sirius (alpha Canis Majoris),
+          Procyon (alpha Canis Minoris), Capella (alpha Aurigae),
+          Spica (alpha Virginis), Arcturus (alpha Bootis),
+          Vega (alpha Lyrae), Alcyone (eta Tauri),
+          Alphecca (alpha Coronae Borealis), Algorab (delta Corvi),
+          Deneb Algedi (delta Capricorni)
+
     Other prominent fixed stars:
-        - Spica (alpha Virginis), Sirius (alpha Canis Majoris),
-          Algol (beta Persei), Betelgeuse (alpha Orionis),
-          Canopus (alpha Carinae), Procyon (alpha Canis Minoris),
-          Arcturus (alpha Bootis), Pollux (beta Geminorum),
-          Deneb (alpha Cygni), Altair (alpha Aquilae),
-          Rigel (beta Orionis), Achernar (alpha Eridani),
-          Capella (alpha Aurigae)
+        - Betelgeuse (alpha Orionis), Canopus (alpha Carinae),
+          Pollux (beta Geminorum), Deneb (alpha Cygni),
+          Altair (alpha Aquilae), Rigel (beta Orionis),
+          Achernar (alpha Eridani)
 """
 
 

@@ -24,7 +24,7 @@ Buenos Aires Subject — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448058.125000      |
-| Active Points Count | 57                  |
+| Active Points Count | 62                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
@@ -81,6 +81,11 @@ Buenos Aires Subject — Natal Chart Report
 | Rigel                 | Gem ♊️ | 16.69°   | +0.0000°/d   | -8.21°  | -    | Tenth House    |
 | Achernar              | Pis ♓️ | 15.18°   | +0.0002°/d   | -57.28° | -    | Seventh House  |
 | Capella               | Gem ♊️ | 21.72°   | +0.0000°/d   | +45.99° | -    | Tenth House    |
+| Vega                  | Cap ♑️ | 15.20°   | +0.0001°/d   | +38.77° | -    | Fifth House    |
+| Alcyone               | Tau ♉️ | 29.86°   | +0.0001°/d   | +24.08° | -    | Ninth House    |
+| Alphecca              | Sco ♏️ | 12.17°   | -0.0001°/d   | +26.75° | -    | Second House   |
+| Algorab               | Lib ♎️ | 13.32°   | -0.0001°/d   | -16.47° | -    | First House    |
+| Deneb Algedi          | Aqu ♒️ | 23.42°   | +0.0001°/d   | -16.17° | -    | Sixth House    |
 | Pars Fortunae         | Tau ♉️ | 22.94°   | N/A          | N/A     | -    | Ninth House    |
 | Pars Spiritus         | Sag ♐️ | 7.38°    | N/A          | N/A     | -    | Third House    |
 | Pars Amoris           | Can ♋️ | 24.84°   | N/A          | N/A     | -    | Eleventh House |
@@ -117,21 +122,21 @@ Buenos Aires Subject — Natal Chart Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 6.5                | 19.0%      |
-| Earth 🌍 | 8.6                | 25.1%      |
-| Air 💨   | 8.399999999999999  | 24.6%      |
-| Water 💧 | 10.699999999999996 | 31.3%      |
-| Total    | 34.199999999999996 | 100%       |
+| Fire 🔥  | 6.5                | 18.5%      |
+| Earth 🌍 | 8.999999999999998  | 25.6%      |
+| Air 💨   | 8.799999999999997  | 25.0%      |
+| Water 💧 | 10.899999999999995 | 31.0%      |
+| Total    | 35.19999999999999  | 100%       |
 +----------+--------------------+------------+
 
-+Quality Distribution-----------+------------+
-| Quality  | Count              | Percentage |
-+----------+--------------------+------------+
-| Cardinal | 8.299999999999999  | 24.3%      |
-| Fixed    | 8.499999999999998  | 24.9%      |
-| Mutable  | 17.4               | 50.9%      |
-| Total    | 34.199999999999996 | 100%       |
-+----------+--------------------+------------+
++Quality Distribution----------+------------+
+| Quality  | Count             | Percentage |
++----------+-------------------+------------+
+| Cardinal | 8.699999999999998 | 24.7%      |
+| Fixed    | 9.099999999999996 | 25.9%      |
+| Mutable  | 17.4              | 49.4%      |
+| Total    | 35.19999999999999 | 100%       |
++----------+-------------------+------------+
 
 +Active Celestial Points-----+
 | #  | Active Point          |
@@ -183,16 +188,21 @@ Buenos Aires Subject — Natal Chart Report
 | 45 | Rigel                 |
 | 46 | Achernar              |
 | 47 | Capella               |
-| 48 | Pars_Fortunae         |
-| 49 | Pars_Spiritus         |
-| 50 | Pars_Amoris           |
-| 51 | Pars_Fidei            |
-| 52 | Vertex                |
-| 53 | Anti_Vertex           |
-| 54 | Ascendant             |
-| 55 | Medium_Coeli          |
-| 56 | Descendant            |
-| 57 | Imum_Coeli            |
+| 48 | Vega                  |
+| 49 | Alcyone               |
+| 50 | Alphecca              |
+| 51 | Algorab               |
+| 52 | Deneb_Algedi          |
+| 53 | Pars_Fortunae         |
+| 54 | Pars_Spiritus         |
+| 55 | Pars_Amoris           |
+| 56 | Pars_Fidei            |
+| 57 | Vertex                |
+| 58 | Anti_Vertex           |
+| 59 | Ascendant             |
+| 60 | Medium_Coeli          |
+| 61 | Descendant            |
+| 62 | Imum_Coeli            |
 +----+-----------------------+
 
 +----------------+---------+
@@ -234,6 +244,7 @@ Buenos Aires Subject — Natal Chart Report
 | Sun                   | trine △                       | Arcturus              | 0.14° | Separating ← |
 | Sun                   | conjunction ☌                 | Rigel                 | 7.56° | Separating ← |
 | Sun                   | conjunction ☌                 | Capella               | 2.53° | Separating ← |
+| Sun                   | trine △                       | Deneb Algedi          | 0.83° | Separating ← |
 | Moon                  | sextile ⚹                     | Venus                 | 1.89° | Applying →   |
 | Moon                  | trine △                       | Jupiter               | 1.11° | Separating ← |
 | Moon                  | sextile ⚹                     | Neptune               | 3.32° | Separating ← |
@@ -261,6 +272,9 @@ Buenos Aires Subject — Natal Chart Report
 | Moon                  | square □                      | Rigel                 | 0.34° | Separating ← |
 | Moon                  | conjunction ☌                 | Achernar              | 1.85° | Separating ← |
 | Moon                  | square □                      | Capella               | 4.69° | Applying →   |
+| Moon                  | sextile ⚹                     | Vega                  | 1.83° | Separating ← |
+| Moon                  | quintile Q                    | Alcyone               | 0.83° | Applying →   |
+| Moon                  | trine △                       | Alphecca              | 4.86° | Separating ← |
 | Mercury               | sextile ⚹                     | Mars                  | 5.23° | Applying →   |
 | Mercury               | trine △                       | Mean North Lunar Node | 3.79° | Applying →   |
 | Mercury               | trine △                       | True North Lunar Node | 2.22° | Applying →   |
@@ -278,6 +292,8 @@ Buenos Aires Subject — Natal Chart Report
 | Mercury               | conjunction ☌                 | Algol                 | 9.87° | Separating ← |
 | Mercury               | square □                      | Deneb                 | 0.70° | Separating ← |
 | Mercury               | trine △                       | Altair                | 4.26° | Separating ← |
+| Mercury               | conjunction ☌                 | Alcyone               | 6.05° | Separating ← |
+| Mercury               | trine △                       | Algorab               | 7.42° | Applying →   |
 | Venus                 | sextile ⚹                     | Jupiter               | 3.01° | Separating ← |
 | Venus                 | trine △                       | Saturn                | 5.10° | Applying →   |
 | Venus                 | trine △                       | Neptune               | 5.21° | Separating ← |
@@ -301,6 +317,10 @@ Buenos Aires Subject — Natal Chart Report
 | Venus                 | sextile ⚹                     | Canopus               | 4.11° | Separating ← |
 | Venus                 | sextile ⚹                     | Pollux                | 4.16° | Applying →   |
 | Venus                 | sextile ⚹                     | Achernar              | 3.74° | Separating ← |
+| Venus                 | trine △                       | Vega                  | 3.73° | Separating ← |
+| Venus                 | opposition ☍                  | Alphecca              | 6.75° | Separating ← |
+| Venus                 | biquintile biquintile         | Algorab               | 0.40° | Applying →   |
+| Venus                 | square □                      | Deneb Algedi          | 4.49° | Applying →   |
 | Mars                  | square □                      | Jupiter               | 4.79° | Applying →   |
 | Mars                  | square □                      | Uranus                | 2.97° | Separating ← |
 | Mars                  | square □                      | Neptune               | 2.58° | Applying →   |
@@ -323,6 +343,8 @@ Buenos Aires Subject — Natal Chart Report
 | Mars                  | semi-square semi-square       | Algol                 | 0.10° | Separating ← |
 | Mars                  | square □                      | Canopus               | 3.68° | Applying →   |
 | Mars                  | sextile ⚹                     | Rigel                 | 5.56° | Applying →   |
+| Mars                  | square □                      | Vega                  | 4.07° | Applying →   |
+| Mars                  | opposition ☍                  | Algorab               | 2.19° | Applying →   |
 | Jupiter               | opposition ☍                  | Saturn                | 8.11° | Applying →   |
 | Jupiter               | opposition ☍                  | Uranus                | 7.76° | Separating ← |
 | Jupiter               | opposition ☍                  | Neptune               | 2.20° | Separating ← |
@@ -347,6 +369,9 @@ Buenos Aires Subject — Natal Chart Report
 | Jupiter               | conjunction ☌                 | Pollux                | 7.17° | Applying →   |
 | Jupiter               | semi-sextile semi-sextile     | Rigel                 | 0.78° | Applying →   |
 | Jupiter               | trine △                       | Achernar              | 0.74° | Separating ← |
+| Jupiter               | opposition ☍                  | Vega                  | 0.72° | Separating ← |
+| Jupiter               | trine △                       | Alphecca              | 3.75° | Separating ← |
+| Jupiter               | square □                      | Algorab               | 2.59° | Separating ← |
 | Saturn                | opposition ☍                  | Chiron                | 7.95° | Applying →   |
 | Saturn                | biquintile biquintile         | Ascendant             | 0.14° | Separating ← |
 | Saturn                | sextile ⚹                     | Mean Lilith           | 0.94° | Separating ← |
@@ -368,6 +393,10 @@ Buenos Aires Subject — Natal Chart Report
 | Saturn                | square □                      | Arcturus              | 0.08° | Separating ← |
 | Saturn                | opposition ☍                  | Pollux                | 0.94° | Applying →   |
 | Saturn                | conjunction ☌                 | Altair                | 7.63° | Separating ← |
+| Saturn                | conjunction ☌                 | Vega                  | 8.83° | Applying →   |
+| Saturn                | trine △                       | Alcyone               | 5.83° | Separating ← |
+| Saturn                | quintile Q                    | Alphecca              | 0.15° | Separating ← |
+| Saturn                | semi-sextile semi-sextile     | Deneb Algedi          | 0.61° | Applying →   |
 | Uranus                | conjunction ☌                 | Neptune               | 5.55° | Separating ← |
 | Uranus                | semi-sextile semi-sextile     | True North Lunar Node | 0.04° | Applying →   |
 | Uranus                | opposition ☍                  | Chiron                | 7.91° | Separating ← |
@@ -386,6 +415,9 @@ Buenos Aires Subject — Natal Chart Report
 | Uranus                | opposition ☍                  | Betelgeuse            | 9.54° | Applying →   |
 | Uranus                | opposition ☍                  | Canopus               | 6.65° | Separating ← |
 | Uranus                | sextile ⚹                     | Deneb                 | 2.96° | Applying →   |
+| Uranus                | conjunction ☌                 | Vega                  | 7.04° | Separating ← |
+| Uranus                | sextile ⚹                     | Alphecca              | 4.01° | Separating ← |
+| Uranus                | semi-square semi-square       | Deneb Algedi          | 0.25° | Separating ← |
 | Neptune               | sextile ⚹                     | Pluto                 | 1.69° | Separating ← |
 | Neptune               | opposition ☍                  | Chiron                | 2.36° | Separating ← |
 | Neptune               | sextile ⚹                     | Juno                  | 3.40° | Separating ← |
@@ -398,6 +430,9 @@ Buenos Aires Subject — Natal Chart Report
 | Neptune               | opposition ☍                  | Canopus               | 1.10° | Separating ← |
 | Neptune               | opposition ☍                  | Pollux                | 9.37° | Separating ← |
 | Neptune               | sextile ⚹                     | Achernar              | 1.47° | Separating ← |
+| Neptune               | conjunction ☌                 | Vega                  | 1.48° | Separating ← |
+| Neptune               | sextile ⚹                     | Alphecca              | 1.54° | Applying →   |
+| Neptune               | square □                      | Algorab               | 0.39° | Applying →   |
 | Pluto                 | trine △                       | Chiron                | 0.67° | Separating ← |
 | Pluto                 | conjunction ☌                 | Mean Lilith           | 9.57° | Separating ← |
 | Pluto                 | sesquiquadrate sesquiquadrate | Earth                 | 0.40° | Applying →   |
@@ -415,6 +450,8 @@ Buenos Aires Subject — Natal Chart Report
 | Pluto                 | trine △                       | Pollux                | 7.68° | Separating ← |
 | Pluto                 | trine △                       | Achernar              | 0.22° | Applying →   |
 | Pluto                 | biquintile biquintile         | Capella               | 0.32° | Separating ← |
+| Pluto                 | sextile ⚹                     | Vega                  | 0.20° | Applying →   |
+| Pluto                 | conjunction ☌                 | Alphecca              | 3.23° | Applying →   |
 | Mean North Lunar Node | conjunction ☌                 | True North Lunar Node | 1.57° | Applying →   |
 | Mean North Lunar Node | trine △                       | Medium Coeli          | 2.08° | Separating ← |
 | Mean North Lunar Node | sextile ⚹                     | Imum Coeli            | 2.08° | Separating ← |
@@ -430,6 +467,8 @@ Buenos Aires Subject — Natal Chart Report
 | Mean North Lunar Node | sextile ⚹                     | Antares               | 0.05° | Applying →   |
 | Mean North Lunar Node | conjunction ☌                 | Altair                | 8.04° | Applying →   |
 | Mean North Lunar Node | trine △                       | Rigel                 | 7.00° | Separating ← |
+| Mean North Lunar Node | square □                      | Alphecca              | 2.48° | Separating ← |
+| Mean North Lunar Node | trine △                       | Algorab               | 3.63° | Separating ← |
 | True North Lunar Node | trine △                       | Medium Coeli          | 3.65° | Separating ← |
 | True North Lunar Node | sextile ⚹                     | Imum Coeli            | 3.65° | Separating ← |
 | True North Lunar Node | opposition ☍                  | Mean South Lunar Node | 1.57° | Separating ← |
@@ -443,6 +482,8 @@ Buenos Aires Subject — Natal Chart Report
 | True North Lunar Node | trine △                       | Aldebaran             | 1.53° | Applying →   |
 | True North Lunar Node | sextile ⚹                     | Antares               | 1.52° | Applying →   |
 | True North Lunar Node | conjunction ☌                 | Altair                | 6.47° | Separating ← |
+| True North Lunar Node | square □                      | Alphecca              | 4.05° | Applying →   |
+| True North Lunar Node | trine △                       | Algorab               | 5.20° | Applying →   |
 | Chiron                | semi-square semi-square       | Ascendant             | 0.91° | Applying →   |
 | Chiron                | sesquiquadrate sesquiquadrate | Descendant            | 0.91° | Applying →   |
 | Chiron                | semi-sextile semi-sextile     | Pallas                | 0.02° | Applying →   |
@@ -462,6 +503,9 @@ Buenos Aires Subject — Natal Chart Report
 | Chiron                | conjunction ☌                 | Pollux                | 7.01° | Applying →   |
 | Chiron                | semi-sextile semi-sextile     | Rigel                 | 0.62° | Applying →   |
 | Chiron                | trine △                       | Achernar              | 0.89° | Separating ← |
+| Chiron                | opposition ☍                  | Vega                  | 0.88° | Separating ← |
+| Chiron                | trine △                       | Alphecca              | 3.90° | Separating ← |
+| Chiron                | square □                      | Algorab               | 2.75° | Separating ← |
 | Ascendant             | quincunx ⚻                    | Earth                 | 0.16° | Separating ← |
 | Ascendant             | sextile ⚹                     | Pholus                | 2.91° | Applying →   |
 | Ascendant             | trine △                       | Vesta                 | 4.70° | Applying →   |
@@ -473,6 +517,10 @@ Buenos Aires Subject — Natal Chart Report
 | Ascendant             | sextile ⚹                     | Betelgeuse            | 1.54° | Separating ← |
 | Ascendant             | semi-square semi-square       | Canopus               | 0.35° | Separating ← |
 | Ascendant             | opposition ☍                  | Deneb                 | 5.04° | Applying →   |
+| Ascendant             | sesquiquadrate sesquiquadrate | Vega                  | 0.04° | Separating ← |
+| Ascendant             | square □                      | Alcyone               | 0.30° | Separating ← |
+| Ascendant             | quintile Q                    | Alphecca              | 0.01° | Separating ← |
+| Ascendant             | opposition ☍                  | Deneb Algedi          | 6.75° | Separating ← |
 | Medium Coeli          | sextile ⚹                     | Mean South Lunar Node | 2.08° | Separating ← |
 | Medium Coeli          | sextile ⚹                     | True South Lunar Node | 3.65° | Separating ← |
 | Medium Coeli          | opposition ☍                  | True Lilith           | 7.37° | Applying →   |
@@ -487,6 +535,8 @@ Buenos Aires Subject — Natal Chart Report
 | Medium Coeli          | conjunction ☌                 | Rigel                 | 4.92° | Applying →   |
 | Medium Coeli          | square □                      | Achernar              | 3.41° | Applying →   |
 | Medium Coeli          | conjunction ☌                 | Capella               | 9.95° | Applying →   |
+| Medium Coeli          | quincunx ⚻                    | Alphecca              | 0.40° | Applying →   |
+| Medium Coeli          | trine △                       | Algorab               | 1.55° | Applying →   |
 | Descendant            | quintile Q                    | True Lilith           | 0.98° | Applying →   |
 | Descendant            | semi-sextile semi-sextile     | Earth                 | 0.16° | Separating ← |
 | Descendant            | trine △                       | Pholus                | 2.91° | Applying →   |
@@ -503,6 +553,9 @@ Buenos Aires Subject — Natal Chart Report
 | Descendant            | sesquiquadrate sesquiquadrate | Canopus               | 0.35° | Separating ← |
 | Descendant            | trine △                       | Arcturus              | 6.05° | Separating ← |
 | Descendant            | conjunction ☌                 | Deneb                 | 5.04° | Applying →   |
+| Descendant            | semi-square semi-square       | Vega                  | 0.04° | Separating ← |
+| Descendant            | square □                      | Alcyone               | 0.30° | Separating ← |
+| Descendant            | conjunction ☌                 | Deneb Algedi          | 6.75° | Separating ← |
 | Imum Coeli            | trine △                       | Mean South Lunar Node | 2.08° | Separating ← |
 | Imum Coeli            | trine △                       | True South Lunar Node | 3.65° | Separating ← |
 | Imum Coeli            | conjunction ☌                 | True Lilith           | 7.37° | Applying →   |
@@ -517,6 +570,9 @@ Buenos Aires Subject — Natal Chart Report
 | Imum Coeli            | opposition ☍                  | Rigel                 | 4.92° | Applying →   |
 | Imum Coeli            | square □                      | Achernar              | 3.41° | Applying →   |
 | Imum Coeli            | opposition ☍                  | Capella               | 9.95° | Applying →   |
+| Imum Coeli            | semi-sextile semi-sextile     | Alphecca              | 0.40° | Applying →   |
+| Imum Coeli            | sextile ⚹                     | Algorab               | 1.55° | Applying →   |
+| Imum Coeli            | quintile Q                    | Deneb Algedi          | 0.36° | Separating ← |
 | Mean Lilith           | trine △                       | Earth                 | 5.03° | Applying →   |
 | Mean Lilith           | trine △                       | Ceres                 | 2.97° | Separating ← |
 | Mean Lilith           | sextile ⚹                     | Haumea                | 1.08° | Applying →   |
@@ -530,6 +586,8 @@ Buenos Aires Subject — Natal Chart Report
 | Mean Lilith           | trine △                       | Procyon               | 0.69° | Applying →   |
 | Mean Lilith           | semi-sextile semi-sextile     | Arcturus              | 0.86° | Separating ← |
 | Mean Lilith           | trine △                       | Pollux                | 1.88° | Separating ← |
+| Mean Lilith           | opposition ☍                  | Alcyone               | 4.89° | Applying →   |
+| Mean Lilith           | square □                      | Deneb Algedi          | 1.55° | Separating ← |
 | Mean South Lunar Node | conjunction ☌                 | True South Lunar Node | 1.57° | Separating ← |
 | Mean South Lunar Node | square □                      | Juno                  | 0.62° | Applying →   |
 | Mean South Lunar Node | square □                      | Vesta                 | 4.83° | Applying →   |
@@ -541,6 +599,8 @@ Buenos Aires Subject — Natal Chart Report
 | Mean South Lunar Node | trine △                       | Antares               | 0.05° | Separating ← |
 | Mean South Lunar Node | opposition ☍                  | Altair                | 8.04° | Separating ← |
 | Mean South Lunar Node | biquintile biquintile         | Achernar              | 0.51° | Separating ← |
+| Mean South Lunar Node | square □                      | Alphecca              | 2.48° | Applying →   |
+| Mean South Lunar Node | sextile ⚹                     | Algorab               | 3.63° | Applying →   |
 | True South Lunar Node | square □                      | Juno                  | 2.19° | Applying →   |
 | True South Lunar Node | square □                      | Vesta                 | 3.26° | Applying →   |
 | True South Lunar Node | square □                      | Sedna                 | 3.19° | Separating ← |
@@ -550,6 +610,8 @@ Buenos Aires Subject — Natal Chart Report
 | True South Lunar Node | trine △                       | Antares               | 1.52° | Separating ← |
 | True South Lunar Node | quintile Q                    | Algol                 | 0.09° | Applying →   |
 | True South Lunar Node | opposition ☍                  | Altair                | 6.47° | Applying →   |
+| True South Lunar Node | square □                      | Alphecca              | 4.05° | Separating ← |
+| True South Lunar Node | sextile ⚹                     | Algorab               | 5.20° | Separating ← |
 | True Lilith           | opposition ☍                  | Pallas                | 3.09° | Separating ← |
 | True Lilith           | sesquiquadrate sesquiquadrate | Vesta                 | 0.72° | Applying →   |
 | True Lilith           | trine △                       | Eris                  | 1.61° | Separating ← |
@@ -566,6 +628,8 @@ Buenos Aires Subject — Natal Chart Report
 | True Lilith           | opposition ☍                  | Rigel                 | 2.44° | Separating ← |
 | True Lilith           | square □                      | Achernar              | 3.96° | Separating ← |
 | True Lilith           | opposition ☍                  | Capella               | 2.58° | Applying →   |
+| True Lilith           | sextile ⚹                     | Algorab               | 5.81° | Separating ← |
+| True Lilith           | sextile ⚹                     | Deneb Algedi          | 4.28° | Applying →   |
 | Earth                 | square □                      | Pholus                | 3.07° | Separating ← |
 | Earth                 | trine △                       | Ceres                 | 2.07° | Applying →   |
 | Earth                 | opposition ☍                  | Haumea                | 3.96° | Applying →   |
@@ -579,6 +643,7 @@ Buenos Aires Subject — Natal Chart Report
 | Earth                 | trine △                       | Procyon               | 4.35° | Static =     |
 | Earth                 | trine △                       | Pollux                | 6.92° | Static =     |
 | Earth                 | sextile ⚹                     | Altair                | 1.65° | Static =     |
+| Earth                 | sextile ⚹                     | Alcyone               | 0.14° | Static =     |
 | Pholus                | trine △                       | Juno                  | 7.24° | Applying →   |
 | Pholus                | sextile ⚹                     | Vesta                 | 1.78° | Separating ← |
 | Pholus                | sextile ⚹                     | Makemake              | 0.86° | Applying →   |
@@ -599,6 +664,7 @@ Buenos Aires Subject — Natal Chart Report
 | Ceres                 | square □                      | Arcturus              | 3.82° | Separating ← |
 | Ceres                 | conjunction ☌                 | Pollux                | 4.85° | Separating ← |
 | Ceres                 | opposition ☍                  | Altair                | 3.72° | Applying →   |
+| Ceres                 | sextile ⚹                     | Alcyone               | 1.93° | Applying →   |
 | Pallas                | biquintile biquintile         | Juno                  | 0.26° | Applying →   |
 | Pallas                | sextile ⚹                     | Eris                  | 1.48° | Applying →   |
 | Pallas                | sextile ⚹                     | Orcus                 | 5.96° | Separating ← |
@@ -613,6 +679,9 @@ Buenos Aires Subject — Natal Chart Report
 | Pallas                | conjunction ☌                 | Rigel                 | 0.64° | Applying →   |
 | Pallas                | square □                      | Achernar              | 0.87° | Separating ← |
 | Pallas                | conjunction ☌                 | Capella               | 5.67° | Applying →   |
+| Pallas                | quincunx ⚻                    | Vega                  | 0.85° | Separating ← |
+| Pallas                | trine △                       | Algorab               | 2.73° | Separating ← |
+| Pallas                | trine △                       | Deneb Algedi          | 7.37° | Applying →   |
 | Juno                  | opposition ☍                  | Vesta                 | 5.46° | Applying →   |
 | Juno                  | opposition ☍                  | Sedna                 | 1.00° | Separating ← |
 | Juno                  | semi-square semi-square       | Haumea                | 0.73° | Separating ← |
@@ -626,6 +695,8 @@ Buenos Aires Subject — Natal Chart Report
 | Juno                  | trine △                       | Deneb                 | 5.11° | Applying →   |
 | Juno                  | biquintile biquintile         | Rigel                 | 0.38° | Separating ← |
 | Juno                  | trine △                       | Achernar              | 4.87° | Separating ← |
+| Juno                  | sextile ⚹                     | Vega                  | 4.88° | Separating ← |
+| Juno                  | conjunction ☌                 | Alphecca              | 1.86° | Separating ← |
 | Vesta                 | conjunction ☌                 | Sedna                 | 6.45° | Applying →   |
 | Vesta                 | trine △                       | Makemake              | 0.92° | Separating ← |
 | Vesta                 | trine △                       | Regulus               | 5.16° | Separating ← |
@@ -633,6 +704,8 @@ Buenos Aires Subject — Natal Chart Report
 | Vesta                 | sextile ⚹                     | Fomalhaut             | 1.13° | Separating ← |
 | Vesta                 | sextile ⚹                     | Deneb                 | 0.35° | Applying →   |
 | Vesta                 | square □                      | Altair                | 3.21° | Separating ← |
+| Vesta                 | opposition ☍                  | Alphecca              | 7.31° | Applying →   |
+| Vesta                 | quintile Q                    | Deneb Algedi          | 0.56° | Applying →   |
 | Eris                  | biquintile biquintile         | Ixion                 | 0.41° | Separating ← |
 | Eris                  | trine △                       | Orcus                 | 7.44° | Applying →   |
 | Eris                  | biquintile biquintile         | Quaoar                | 0.97° | Applying →   |
@@ -647,6 +720,9 @@ Buenos Aires Subject — Natal Chart Report
 | Eris                  | opposition ☍                  | Arcturus              | 6.58° | Applying →   |
 | Eris                  | sextile ⚹                     | Rigel                 | 0.84° | Separating ← |
 | Eris                  | sextile ⚹                     | Capella               | 4.19° | Applying →   |
+| Eris                  | square □                      | Vega                  | 2.33° | Separating ← |
+| Eris                  | opposition ☍                  | Algorab               | 4.20° | Separating ← |
+| Eris                  | sextile ⚹                     | Deneb Algedi          | 5.89° | Applying →   |
 | Sedna                 | sesquiquadrate sesquiquadrate | Haumea                | 0.27° | Separating ← |
 | Sedna                 | trine △                       | Makemake              | 7.37° | Applying →   |
 | Sedna                 | square □                      | Orcus                 | 1.22° | Applying →   |
@@ -656,6 +732,8 @@ Buenos Aires Subject — Natal Chart Report
 | Sedna                 | sextile ⚹                     | Canopus               | 3.50° | Applying →   |
 | Sedna                 | quintile Q                    | Pollux                | 0.23° | Separating ← |
 | Sedna                 | sextile ⚹                     | Achernar              | 3.87° | Applying →   |
+| Sedna                 | trine △                       | Vega                  | 3.89° | Applying →   |
+| Sedna                 | opposition ☍                  | Alphecca              | 0.86° | Applying →   |
 | Haumea                | sextile ⚹                     | Ixion                 | 2.93° | Separating ← |
 | Haumea                | semi-square semi-square       | Orcus                 | 0.96° | Applying →   |
 | Haumea                | sextile ⚹                     | Quaoar                | 1.55° | Separating ← |
@@ -672,12 +750,14 @@ Buenos Aires Subject — Natal Chart Report
 | Haumea                | sextile ⚹                     | Pollux                | 2.96° | Separating ← |
 | Haumea                | trine △                       | Altair                | 5.61° | Applying →   |
 | Haumea                | square □                      | Capella               | 4.32° | Separating ← |
+| Haumea                | trine △                       | Alcyone               | 3.81° | Applying →   |
 | Makemake              | conjunction ☌                 | Regulus               | 4.24° | Separating ← |
 | Makemake              | square □                      | Pars Spiritus         | 3.44° | Applying →   |
 | Makemake              | opposition ☍                  | Fomalhaut             | 0.21° | Separating ← |
 | Makemake              | sextile ⚹                     | Betelgeuse            | 5.32° | Separating ← |
 | Makemake              | opposition ☍                  | Deneb                 | 1.27° | Applying →   |
 | Makemake              | quintile Q                    | Capella               | 0.22° | Separating ← |
+| Makemake              | square □                      | Alcyone               | 4.08° | Separating ← |
 | Ixion                 | conjunction ☌                 | Quaoar                | 1.38° | Static =     |
 | Ixion                 | semi-sextile semi-sextile     | Spica                 | 0.60° | Separating ← |
 | Ixion                 | opposition ☍                  | Pars Fortunae         | 0.17° | Applying →   |
@@ -690,12 +770,16 @@ Buenos Aires Subject — Natal Chart Report
 | Ixion                 | semi-sextile semi-sextile     | Arcturus              | 0.99° | Separating ← |
 | Ixion                 | trine △                       | Pollux                | 0.03° | Applying →   |
 | Ixion                 | trine △                       | Achernar              | 7.93° | Applying →   |
+| Ixion                 | opposition ☍                  | Alcyone               | 6.74° | Separating ← |
+| Ixion                 | square □                      | Deneb Algedi          | 0.30° | Separating ← |
 | Orcus                 | trine △                       | Pars Spiritus         | 2.71° | Separating ← |
 | Orcus                 | biquintile biquintile         | Vertex                | 0.71° | Applying →   |
 | Orcus                 | sextile ⚹                     | Aldebaran             | 0.43° | Separating ← |
 | Orcus                 | trine △                       | Antares               | 0.45° | Separating ← |
 | Orcus                 | opposition ☍                  | Altair                | 8.44° | Separating ← |
 | Orcus                 | biquintile biquintile         | Achernar              | 0.91° | Separating ← |
+| Orcus                 | square □                      | Alphecca              | 2.08° | Applying →   |
+| Orcus                 | sextile ⚹                     | Algorab               | 3.24° | Applying →   |
 | Quaoar                | semi-sextile semi-sextile     | Spica                 | 0.78° | Applying →   |
 | Quaoar                | opposition ☍                  | Pars Fortunae         | 1.55° | Applying →   |
 | Quaoar                | trine △                       | Pars Amoris           | 0.34° | Separating ← |
@@ -705,6 +789,8 @@ Buenos Aires Subject — Natal Chart Report
 | Quaoar                | trine △                       | Procyon               | 1.16° | Separating ← |
 | Quaoar                | semi-sextile semi-sextile     | Arcturus              | 0.39° | Applying →   |
 | Quaoar                | trine △                       | Pollux                | 1.41° | Applying →   |
+| Quaoar                | opposition ☍                  | Alcyone               | 5.36° | Separating ← |
+| Quaoar                | square □                      | Deneb Algedi          | 1.08° | Applying →   |
 | Regulus               | sextile ⚹                     | Spica                 | 5.98° | Static =     |
 | Regulus               | opposition ☍                  | Pars Fidei            | 7.64° | Static =     |
 | Regulus               | semi-square semi-square       | Sirius                | 0.75° | Static =     |
@@ -714,6 +800,10 @@ Buenos Aires Subject — Natal Chart Report
 | Regulus               | semi-square semi-square       | Canopus               | 0.11° | Static =     |
 | Regulus               | sextile ⚹                     | Arcturus              | 5.59° | Static =     |
 | Regulus               | opposition ☍                  | Deneb                 | 5.51° | Static =     |
+| Regulus               | sesquiquadrate sesquiquadrate | Vega                  | 0.50° | Static =     |
+| Regulus               | square □                      | Alcyone               | 0.16° | Static =     |
+| Regulus               | quintile Q                    | Alphecca              | 0.47° | Static =     |
+| Regulus               | opposition ☍                  | Deneb Algedi          | 6.28° | Static =     |
 | Spica                 | quincunx ⚻                    | Pars Fortunae         | 0.77° | Static =     |
 | Spica                 | square □                      | Pars Amoris           | 1.12° | Static =     |
 | Spica                 | trine △                       | Pars Fidei            | 1.66° | Static =     |
@@ -726,12 +816,17 @@ Buenos Aires Subject — Natal Chart Report
 | Spica                 | square □                      | Pollux                | 0.63° | Static =     |
 | Spica                 | trine △                       | Rigel                 | 7.02° | Static =     |
 | Spica                 | trine △                       | Capella               | 1.99° | Static =     |
+| Spica                 | biquintile biquintile         | Alcyone               | 0.14° | Static =     |
+| Spica                 | trine △                       | Deneb Algedi          | 0.30° | Static =     |
 | Pars Fortunae         | sextile ⚹                     | Pars Amoris           | 1.89° | Static =     |
 | Pars Fortunae         | square □                      | Pars Fidei            | 0.89° | Static =     |
 | Pars Fortunae         | trine △                       | Anti Vertex           | 6.15° | Static =     |
 | Pars Fortunae         | conjunction ☌                 | Algol                 | 3.09° | Static =     |
 | Pars Fortunae         | sextile ⚹                     | Procyon               | 2.71° | Static =     |
 | Pars Fortunae         | sextile ⚹                     | Pollux                | 0.14° | Static =     |
+| Pars Fortunae         | trine △                       | Vega                  | 7.75° | Static =     |
+| Pars Fortunae         | conjunction ☌                 | Alcyone               | 6.91° | Static =     |
+| Pars Fortunae         | square □                      | Deneb Algedi          | 0.47° | Static =     |
 | Pars Spiritus         | opposition ☍                  | Aldebaran             | 2.27° | Static =     |
 | Pars Spiritus         | conjunction ☌                 | Antares               | 2.26° | Static =     |
 | Pars Spiritus         | biquintile biquintile         | Sirius                | 0.57° | Static =     |
@@ -740,6 +835,8 @@ Buenos Aires Subject — Natal Chart Report
 | Pars Spiritus         | square □                      | Deneb                 | 2.17° | Static =     |
 | Pars Spiritus         | sextile ⚹                     | Altair                | 5.73° | Static =     |
 | Pars Spiritus         | opposition ☍                  | Rigel                 | 9.31° | Static =     |
+| Pars Spiritus         | opposition ☍                  | Alcyone               | 7.52° | Static =     |
+| Pars Spiritus         | sextile ⚹                     | Algorab               | 5.94° | Static =     |
 | Pars Amoris           | semi-square semi-square       | Aldebaran             | 0.18° | Static =     |
 | Pars Amoris           | sesquiquadrate sesquiquadrate | Antares               | 0.20° | Static =     |
 | Pars Amoris           | sextile ⚹                     | Algol                 | 1.20° | Static =     |
@@ -747,12 +844,15 @@ Buenos Aires Subject — Natal Chart Report
 | Pars Amoris           | square □                      | Arcturus              | 0.73° | Static =     |
 | Pars Amoris           | conjunction ☌                 | Pollux                | 1.75° | Static =     |
 | Pars Amoris           | opposition ☍                  | Altair                | 6.81° | Static =     |
+| Pars Amoris           | opposition ☍                  | Vega                  | 9.64° | Static =     |
+| Pars Amoris           | sextile ⚹                     | Alcyone               | 5.02° | Static =     |
 | Pars Fidei            | quintile Q                    | Antares               | 0.42° | Static =     |
 | Pars Fidei            | square □                      | Algol                 | 3.98° | Static =     |
 | Pars Fidei            | trine △                       | Betelgeuse            | 6.57° | Static =     |
 | Pars Fidei            | trine △                       | Arcturus              | 2.05° | Static =     |
 | Pars Fidei            | trine △                       | Rigel                 | 5.36° | Static =     |
 | Pars Fidei            | trine △                       | Capella               | 0.33° | Static =     |
+| Pars Fidei            | conjunction ☌                 | Deneb Algedi          | 1.36° | Static =     |
 | Vertex                | opposition ☍                  | Anti Vertex           | 0.00° | Static =     |
 | Vertex                | trine △                       | Sirius                | 2.85° | Static =     |
 | Vertex                | trine △                       | Canopus               | 1.99° | Static =     |
@@ -761,44 +861,80 @@ Buenos Aires Subject — Natal Chart Report
 | Vertex                | square □                      | Rigel                 | 0.10° | Static =     |
 | Vertex                | conjunction ☌                 | Achernar              | 1.62° | Static =     |
 | Vertex                | square □                      | Capella               | 4.93° | Static =     |
+| Vertex                | sextile ⚹                     | Vega                  | 1.60° | Static =     |
+| Vertex                | trine △                       | Alphecca              | 4.63° | Static =     |
 | Anti Vertex           | sextile ⚹                     | Sirius                | 2.85° | Static =     |
 | Anti Vertex           | sextile ⚹                     | Canopus               | 1.99° | Static =     |
 | Anti Vertex           | sesquiquadrate sesquiquadrate | Altair                | 0.15° | Static =     |
 | Anti Vertex           | square □                      | Rigel                 | 0.10° | Static =     |
 | Anti Vertex           | opposition ☍                  | Achernar              | 1.62° | Static =     |
 | Anti Vertex           | square □                      | Capella               | 4.93° | Static =     |
+| Anti Vertex           | trine △                       | Vega                  | 1.60° | Static =     |
+| Anti Vertex           | sextile ⚹                     | Alphecca              | 4.63° | Static =     |
 | Aldebaran             | opposition ☍                  | Antares               | 0.02° | Static =     |
 | Aldebaran             | semi-square semi-square       | Procyon               | 1.00° | Static =     |
 | Aldebaran             | sesquiquadrate sesquiquadrate | Arcturus              | 0.55° | Static =     |
 | Aldebaran             | square □                      | Deneb                 | 4.45° | Static =     |
 | Aldebaran             | conjunction ☌                 | Rigel                 | 7.04° | Static =     |
+| Aldebaran             | biquintile biquintile         | Vega                  | 0.46° | Static =     |
+| Aldebaran             | conjunction ☌                 | Alcyone               | 9.80° | Static =     |
+| Aldebaran             | trine △                       | Algorab               | 3.67° | Static =     |
 | Antares               | biquintile biquintile         | Canopus               | 0.83° | Static =     |
 | Antares               | semi-square semi-square       | Arcturus              | 0.53° | Static =     |
 | Antares               | square □                      | Deneb                 | 4.43° | Static =     |
 | Antares               | opposition ☍                  | Rigel                 | 7.06° | Static =     |
+| Antares               | opposition ☍                  | Alcyone               | 9.78° | Static =     |
+| Antares               | sextile ⚹                     | Algorab               | 3.69° | Static =     |
 | Sirius                | conjunction ☌                 | Canopus               | 0.86° | Static =     |
 | Sirius                | conjunction ☌                 | Pollux                | 9.14° | Static =     |
 | Sirius                | trine △                       | Achernar              | 1.23° | Static =     |
+| Sirius                | opposition ☍                  | Vega                  | 1.25° | Static =     |
+| Sirius                | semi-square semi-square       | Alcyone               | 0.91° | Static =     |
+| Sirius                | trine △                       | Alphecca              | 1.78° | Static =     |
+| Sirius                | square □                      | Algorab               | 0.62° | Static =     |
 | Fomalhaut             | trine △                       | Betelgeuse            | 5.11° | Static =     |
 | Fomalhaut             | conjunction ☌                 | Deneb                 | 1.47° | Static =     |
+| Fomalhaut             | square □                      | Alcyone               | 3.87° | Static =     |
 | Algol                 | sextile ⚹                     | Procyon               | 0.38° | Static =     |
 | Algol                 | sextile ⚹                     | Pollux                | 2.95° | Static =     |
 | Algol                 | trine △                       | Altair                | 5.62° | Static =     |
+| Algol                 | conjunction ☌                 | Alcyone               | 3.82° | Static =     |
+| Algol                 | square □                      | Deneb Algedi          | 2.62° | Static =     |
 | Betelgeuse            | trine △                       | Arcturus              | 4.51° | Static =     |
 | Betelgeuse            | trine △                       | Deneb                 | 6.59° | Static =     |
 | Betelgeuse            | conjunction ☌                 | Capella               | 6.90° | Static =     |
+| Betelgeuse            | trine △                       | Deneb Algedi          | 5.20° | Static =     |
 | Canopus               | conjunction ☌                 | Pollux                | 8.27° | Static =     |
 | Canopus               | trine △                       | Achernar              | 0.37° | Static =     |
+| Canopus               | opposition ☍                  | Vega                  | 0.39° | Static =     |
+| Canopus               | semi-square semi-square       | Alcyone               | 0.05° | Static =     |
+| Canopus               | trine △                       | Alphecca              | 2.64° | Static =     |
+| Canopus               | square □                      | Algorab               | 1.49° | Static =     |
 | Procyon               | square □                      | Arcturus              | 1.55° | Static =     |
 | Procyon               | conjunction ☌                 | Pollux                | 2.57° | Static =     |
 | Procyon               | opposition ☍                  | Altair                | 6.00° | Static =     |
+| Procyon               | sextile ⚹                     | Alcyone               | 4.21° | Static =     |
 | Arcturus              | square □                      | Pollux                | 1.02° | Static =     |
 | Arcturus              | trine △                       | Rigel                 | 7.41° | Static =     |
 | Arcturus              | trine △                       | Capella               | 2.39° | Static =     |
+| Arcturus              | biquintile biquintile         | Alcyone               | 0.25° | Static =     |
+| Arcturus              | trine △                       | Deneb Algedi          | 0.69° | Static =     |
 | Pollux                | opposition ☍                  | Altair                | 8.57° | Static =     |
 | Pollux                | trine △                       | Achernar              | 7.90° | Static =     |
+| Pollux                | opposition ☍                  | Vega                  | 7.89° | Static =     |
+| Pollux                | quincunx ⚻                    | Deneb Algedi          | 0.33° | Static =     |
 | Deneb                 | conjunction ☌                 | Achernar              | 9.98° | Static =     |
+| Deneb                 | trine △                       | Alphecca              | 6.97° | Static =     |
 | Altair                | sesquiquadrate sesquiquadrate | Rigel                 | 0.04° | Static =     |
+| Altair                | trine △                       | Alcyone               | 1.79° | Static =     |
 | Rigel                 | square □                      | Achernar              | 1.51° | Static =     |
 | Rigel                 | conjunction ☌                 | Capella               | 5.03° | Static =     |
+| Rigel                 | trine △                       | Algorab               | 3.37° | Static =     |
+| Rigel                 | trine △                       | Deneb Algedi          | 6.72° | Static =     |
+| Achernar              | sextile ⚹                     | Vega                  | 0.02° | Static =     |
+| Achernar              | trine △                       | Alphecca              | 3.01° | Static =     |
+| Capella               | trine △                       | Deneb Algedi          | 1.69° | Static =     |
+| Vega                  | sesquiquadrate sesquiquadrate | Alcyone               | 0.34° | Static =     |
+| Vega                  | sextile ⚹                     | Alphecca              | 3.03° | Static =     |
+| Vega                  | square □                      | Algorab               | 1.87° | Static =     |
 +-----------------------+-------------------------------+-----------------------+-------+--------------+

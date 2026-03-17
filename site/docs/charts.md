@@ -158,7 +158,7 @@ drawer.save_wheel_only_svg_file(output_path, filename="wheel", style="modern")
 | :--------------------------- | :----- | :------ | :------------------------------------------------------------- |
 | `show_zodiac_background_ring`| `bool` | `True`  | Draw colored zodiac wedges behind the outer planet ring.       |
 
-The `style` parameter is available on: `generate_svg_string()`, `save_svg()`, `generate_wheel_only_svg_string()`, and `save_wheel_only_svg_file()`.
+Since v5.12, `style` and `show_zodiac_background_ring` can also be set on the `ChartDrawer` constructor as per-instance defaults. Per-render overrides via the render methods still work.
 
 ## Configuration & Customization
 
@@ -233,6 +233,8 @@ drawer.save_aspect_grid_only_svg_file(Path("./output"), filename="grid_only")
 | `double_chart_aspect_grid_type` | `"list"`, `"table"`      | `"list"`     | Grid style for Synastry/Transit.            |
 | `auto_size`                     | `bool`                   | `True`       | Automatically adjust chart dimensions.      |
 | `padding`                       | `int`                    | `20`         | Padding around the SVG content.             |
+| `style`                         | `KerykeionChartStyle`    | `"classic"`  | Chart wheel layout ("classic" or "modern"). Per-instance default for all render calls. |
+| `show_zodiac_background_ring`   | `bool`                   | `True`       | Show colored zodiac wedges (modern style only). Per-instance default for all render calls. |
 
 **Public Methods:**
 

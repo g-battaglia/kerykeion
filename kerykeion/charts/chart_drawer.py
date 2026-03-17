@@ -3962,12 +3962,12 @@ class ChartDrawer:  # type: ignore[no-redef]
             template_dict["background_color"] = self.chart_colors_settings["paper_1"]
 
         # ---------------------------------------------------------------------
-        # COLORS: Planet colors for all 42 possible celestial points
+        # COLORS: Planet colors for all 62 possible celestial points
         # ---------------------------------------------------------------------
         # Initialize all slots with default black, then override with settings.
         # This ensures template substitution never fails on missing colors.
         default_color = "#000000"
-        for i in range(42):  # Support all 42 celestial points (0-41)
+        for i in range(62):  # Support all 62 celestial points (0-61)
             template_dict[f"planets_color_{i}"] = default_color
 
         for planet in self.planets_settings:
