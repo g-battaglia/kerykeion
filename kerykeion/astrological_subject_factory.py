@@ -1479,14 +1479,16 @@ class AstrologicalSubjectFactory:
 
         # Handle Ascendant specially (from houses calculation)
         if point == "Ascendant":
-            cusps, ascmc = swe.houses_ex(
+            _, ascmc, _, ascmc_speed = swe.houses_ex2(
                 tjdut=data["julian_day"],
                 lat=data["lat"],
                 lon=data["lng"],
                 hsys=str.encode(data["houses_system_identifier"]),
                 flags=iflag,
             )
-            data["ascendant"] = get_kerykeion_point_from_degree(ascmc[0], "Ascendant", point_type=point_type)
+            data["ascendant"] = get_kerykeion_point_from_degree(
+                ascmc[0], "Ascendant", point_type=point_type, speed=ascmc_speed[0]
+            )
             data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
             data["ascendant"].retrograde = False
             return
@@ -1843,11 +1845,15 @@ class AstrologicalSubjectFactory:
 
                     star_key = star_name.lower()
                     data[star_key] = get_kerykeion_point_from_degree(
-                        star_deg, star_name, point_type=point_type, speed=star_speed, declination=star_dec
+                        star_deg,
+                        star_name,
+                        point_type=point_type,
+                        speed=star_speed,
+                        declination=star_dec,
+                        magnitude=star_mag,
                     )
                     data[star_key].house = get_planet_house(star_deg, houses_degree_ut)
                     data[star_key].retrograde = False  # Fixed stars are never retrograde
-                    data[star_key].magnitude = star_mag
                     calculated_planets.append(star_name)
                 except Exception as e:
                     logging.warning(f"Could not calculate {star_name} position: {e}")

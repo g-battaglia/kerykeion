@@ -2089,8 +2089,9 @@ class ChartDrawer:  # type: ignore[no-redef]
         self._setup_circle_radii()
 
         # Calculate horizontal shift for planet/house grids when multi-column
-        # layout would overlap the chart wheel
-        self._grid_x_shift = self._calculate_grid_x_shift()
+        # layout would overlap the chart wheel.
+        # Only apply in auto_size mode; fixed-width charts use preset dimensions.
+        self._grid_x_shift = self._calculate_grid_x_shift() if self.auto_size else 0
 
         # Adjust width if house comparison grid is hidden
         self._apply_house_comparison_width_override()
@@ -2766,7 +2767,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         n = max(len([p for p in self.available_planets_setting if p.get("is_active")]), 1)
 
         if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
-            # Full N×N grid
+            # Full NxN grid
             left = (x0 - box) - margin
             top = (y0 - box * n) - margin
             right = (x0 + box * n) + margin
@@ -2820,7 +2821,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                     aspect_right = parent_group_x + rp["x_offset"] + (columns * rp["column_width"])
                     extents.append(aspect_right)
                 else:
-                    # Grid table: N×N grid at the right-panel position
+                    # Grid table: NxN grid at the right-panel position
                     grid_width = 14 * (n_active + 1)
                     aspect_right = parent_group_x + rp["x_offset"] + grid_width
                     extents.append(aspect_right)

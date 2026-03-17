@@ -165,6 +165,8 @@ class EphemerisDataFactory:
         max_days: Union[int, None] = 730,
         max_hours: Union[int, None] = 8760,
         max_minutes: Union[int, None] = 525600,
+        custom_ayanamsa_t0: Union[float, None] = None,
+        custom_ayanamsa_ayan_t0: Union[float, None] = None,
     ):
         self.start_datetime = start_datetime
         self.end_datetime = end_datetime
@@ -178,6 +180,8 @@ class EphemerisDataFactory:
         self.sidereal_mode = sidereal_mode
         self.houses_system_identifier = houses_system_identifier
         self.perspective_type = perspective_type
+        self.custom_ayanamsa_t0 = custom_ayanamsa_t0
+        self.custom_ayanamsa_ayan_t0 = custom_ayanamsa_ayan_t0
         self.max_days = max_days
         self.max_hours = max_hours
         self.max_minutes = max_minutes
@@ -298,6 +302,8 @@ class EphemerisDataFactory:
                 houses_system_identifier=self.houses_system_identifier,
                 perspective_type=self.perspective_type,
                 is_dst=self.is_dst,
+                custom_ayanamsa_t0=self.custom_ayanamsa_t0,
+                custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
             )
 
             houses_list = get_houses_list(subject)
@@ -413,6 +419,8 @@ class EphemerisDataFactory:
                 houses_system_identifier=self.houses_system_identifier,
                 perspective_type=self.perspective_type,
                 is_dst=self.is_dst,
+                custom_ayanamsa_t0=self.custom_ayanamsa_t0,
+                custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
             )
 
             if as_model:

@@ -202,6 +202,7 @@ def get_kerykeion_point_from_degree(
     point_type: PointType,
     speed: Optional[float] = None,
     declination: Optional[float] = None,
+    magnitude: Optional[float] = None,
 ) -> KerykeionPointModel:
     """
     Create a KerykeionPointModel from a degree position.
@@ -212,6 +213,7 @@ def get_kerykeion_point_from_degree(
         point_type: The type classification of the point
         speed: The velocity/speed of the celestial point in degrees per day (optional)
         declination: The declination of the celestial point in degrees (optional)
+        magnitude: The apparent visual magnitude for fixed stars (optional)
 
     Returns:
         A KerykeionPointModel with calculated zodiac sign, position, and properties
@@ -242,6 +244,7 @@ def get_kerykeion_point_from_degree(
         point_type=point_type,
         speed=speed,
         declination=declination,
+        magnitude=magnitude,
     )
 
 

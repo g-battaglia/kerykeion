@@ -514,17 +514,32 @@ class PlanetaryReturnFactory:
         solar_return_date_utc = julian_to_datetime(return_julian_date)
         solar_return_date_utc = solar_return_date_utc.replace(tzinfo=timezone.utc)
 
-        solar_return_astrological_subject = AstrologicalSubjectFactory.from_iso_utc_time(
+        # Build kwargs, propagating the source subject's zodiac/sidereal settings
+        # so that return charts use the same astrological configuration.
+        return_kwargs: dict = dict(
             name=self.subject.name,
             iso_utc_time=solar_return_date_utc.isoformat(),
-            lng=self.lng,  # type: ignore
-            lat=self.lat,  # type: ignore
-            tz_str=self.tz_str,  # type: ignore
-            city=self.city,  # type: ignore
-            nation=self.nation,  # type: ignore
+            lng=self.lng,
+            lat=self.lat,
+            tz_str=self.tz_str,
+            city=self.city,
+            nation=self.nation,
             online=False,
             altitude=self.altitude,
             active_points=self.subject.active_points,
+            zodiac_type=self.subject.zodiac_type,
+            sidereal_mode=self.subject.sidereal_mode,
+            houses_system_identifier=self.subject.houses_system_identifier,
+            perspective_type=self.subject.perspective_type,
+        )
+        # Propagate USER-mode custom ayanamsa parameters if present on the factory
+        if hasattr(self, "custom_ayanamsa_t0") and self.custom_ayanamsa_t0 is not None:
+            return_kwargs["custom_ayanamsa_t0"] = self.custom_ayanamsa_t0
+        if hasattr(self, "custom_ayanamsa_ayan_t0") and self.custom_ayanamsa_ayan_t0 is not None:
+            return_kwargs["custom_ayanamsa_ayan_t0"] = self.custom_ayanamsa_ayan_t0
+
+        solar_return_astrological_subject = AstrologicalSubjectFactory.from_iso_utc_time(
+            **return_kwargs,  # type: ignore[arg-type]
         )
 
         model_data = solar_return_astrological_subject.model_dump()
