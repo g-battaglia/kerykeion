@@ -61,7 +61,7 @@ does not yet surface.
     | Achernar | +0.46 | Royal honors |
     | Algol | +2.12 | Intensity, misfortune |
 
-    The four "Royal Stars of Persia" (Aldebaran, Regulus, Antares, Fomalhaut) and Algol are among the most significant points in any chart. Currently only Regulus and Spica are supported.
+    The four "Royal Stars of Persia" (Aldebaran, Regulus, Antares, Fomalhaut) and Algol are among the most significant points in any chart. All 22 fixed stars are now supported in v5.12.
 
 -   [ ] **Expanded sidereal modes (20 → 48 + custom)** — Add all remaining ayanamsa supported by Swiss Ephemeris:
 

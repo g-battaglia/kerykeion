@@ -266,6 +266,22 @@ class TestFixedStarMagnitude:
         assert self.subject.mars.magnitude is None
 
 
+class TestFixedStarDeclination:
+    """Verify the declination field on KerykeionPointModel works for fixed stars."""
+
+    @pytest.fixture(autouse=True)
+    def _setup(self):
+        self.subject = _make_subject(active_points=ALL_ACTIVE_POINTS)
+
+    @pytest.mark.parametrize("star_name", ALL_FIXED_STARS)
+    def test_star_has_declination(self, star_name):
+        """Each fixed star must have a non-None declination."""
+        star = getattr(self.subject, star_name.lower())
+        assert star.declination is not None, f"{star_name} has no declination"
+        assert isinstance(star.declination, float), f"{star_name} declination is not float"
+        assert -90 <= star.declination <= 90, f"{star_name} declination {star.declination} out of range"
+
+
 class TestFixedStarInLiterals:
     """Verify the 20 new stars are in the AstrologicalPoint literal."""
 

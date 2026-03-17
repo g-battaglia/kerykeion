@@ -324,6 +324,13 @@ class PlanetaryReturnFactory:
         self.custom_ayanamsa_t0 = custom_ayanamsa_t0
         self.custom_ayanamsa_ayan_t0 = custom_ayanamsa_ayan_t0
 
+        # Validate USER sidereal mode requires both custom ayanamsa values
+        if subject.sidereal_mode == "USER" and (custom_ayanamsa_t0 is None or custom_ayanamsa_ayan_t0 is None):
+            raise KerykeionException(
+                "PlanetaryReturnFactory requires both custom_ayanamsa_t0 and "
+                "custom_ayanamsa_ayan_t0 when sidereal_mode='USER'."
+            )
+
         # Geonames username
         if geonames_username is None and online and (not lat or not lng or not tz_str):
             logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)

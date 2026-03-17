@@ -1840,7 +1840,8 @@ class AstrologicalSubjectFactory:
                     # Apparent visual magnitude via fixstar2_mag
                     try:
                         star_mag = swe.fixstar2_mag(swe_name)[0]
-                    except Exception:
+                    except Exception as e:
+                        logging.warning(f"Could not load fixed-star magnitude for {star_name} ({swe_name}): {e}")
                         star_mag = None
 
                     star_key = star_name.lower()

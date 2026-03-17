@@ -1529,7 +1529,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 )
 ```
 
-Available fixed stars: Regulus, Spica, Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel, Achernar, Capella, Vega, Alcyone, Alphecca, Algorab, Deneb Algedi.
+Available fixed stars: Regulus, Spica, Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel, Achernar, Capella, Vega, Alcyone, Alphecca, Algorab, Deneb_Algedi.
 
 **📖 Full active points list: [Active Points Documentation](https://www.kerykeion.net/content/docs/active_points)**
 
