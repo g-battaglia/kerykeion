@@ -6,7 +6,7 @@ order: 16
 
 # Active Points
 
-Kerykeion supports 42 celestial points that can be individually enabled or disabled. This page shows practical examples.
+Kerykeion supports 62 celestial points that can be individually enabled or disabled. This page shows practical examples.
 
 For the full reference of all available points, see [Active Points Reference](/content/docs/active_points).
 
@@ -113,11 +113,41 @@ chart_data = ChartDataFactory.create_natal_chart_data(
     active_points=ALL_ACTIVE_POINTS,
 )
 
-# Generate a chart with all 42 points
+# Generate a chart with all 62 points
 chart = ChartDrawer(chart_data=chart_data)
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
 chart.save_svg(output_path=output_dir, filename="all-points-chart")
+```
+
+## Including Fixed Stars
+
+v5.12 added 22 fixed stars (all 15 Behenian + 4 Royal Stars + more). Fixed stars are computed for every subject but excluded from chart rendering and aspects by default. Add them to `active_points` to include them:
+
+```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "With Stars", 1990, 6, 15, 12, 0,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+)
+
+# Add the 4 Royal Stars to the default set
+points_with_stars = DEFAULT_ACTIVE_POINTS + [
+    "Regulus", "Aldebaran", "Antares", "Fomalhaut",
+]
+
+chart_data = ChartDataFactory.create_natal_chart_data(
+    subject,
+    active_points=points_with_stars,
+)
+
+# Access fixed star data (always available, even without active_points)
+print(f"Regulus: {subject.regulus.sign} at {subject.regulus.position:.2f}°")
+print(f"  Magnitude: {subject.regulus.magnitude}")
+print(f"  Declination: {subject.regulus.declination:.2f}°")
+print(f"  Speed: {subject.regulus.speed:.4f}°/day")
 ```
 
 ## Switching Between True and Mean Nodes

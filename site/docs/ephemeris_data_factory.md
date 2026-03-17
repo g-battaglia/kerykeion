@@ -97,8 +97,10 @@ print(subjects[0].sun.sign)
 | `sidereal_mode`            | Ayanamsa mode (if Sidereal) | `None`                  |
 | `houses_system_identifier` | House system code           | `"P"` (Placidus)        |
 | `perspective_type`         | Calculation perspective     | `"Apparent Geocentric"` |
+| `custom_ayanamsa_t0`      | Reference epoch (Julian Day) for USER sidereal mode | `None` |
+| `custom_ayanamsa_ayan_t0` | Ayanamsa offset in degrees at epoch (USER mode)     | `None` |
 
-_Note: You can override safety limits by passing `None` if you need large datasets._
+_Note: You can override safety limits by passing `None` if you need large datasets. Both `custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0` are required when `sidereal_mode="USER"`._
 
 ---
 

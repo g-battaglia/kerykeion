@@ -39,7 +39,7 @@ does not yet surface.
 
 🟥 High — These changes make existing data richer without changing the public API. Users write the same code as before but get more information in the models they already use.
 
--   [ ] **House cusp speeds** — Populate the `speed` field (degrees/day) on house cusp points. The field already exists on `KerykeionPointModel` but is currently only populated for planets, not houses. House cusp velocities are useful for primary directions, secondary progressions, and for understanding how quickly a transiting planet crosses a house boundary.
+-   [x] **House cusp speeds** — Populate the `speed` field (degrees/day) on house cusp points. Replaced `swe.houses_ex()` with `swe.houses_ex2()` so all 12 cusps and the 4 angular points (ASC, MC, DSC, IC) now carry a real `speed` value.
 
 -   [x] **Expanded fixed stars (2 → 22)** — Added 20 traditional fixed stars to the calculation pipeline, plus a `magnitude` field for apparent visual brightness (includes all 15 Behenian stars):
 
@@ -48,35 +48,29 @@ does not yet surface.
     | Sirius | −1.46 | Brilliance, fame |
     | Canopus | −0.74 | Navigation, pathfinding |
     | Arcturus | −0.05 | Prosperity, guard |
+    | Vega | +0.03 | Behenian — charisma, magic |
     | Capella | +0.08 | Civic honor, curiosity |
     | Rigel | +0.13 | Teaching, ambition |
     | Procyon | +0.34 | Quick success, rash action |
     | Betelgeuse | +0.42 | Military honor, fortune |
-    | Altair | +0.77 | Boldness, ambition |
-    | Aldebaran | +0.86 | Royal Star — integrity |
-    | Antares | +0.96 | Royal Star — courage |
+    | Achernar | +0.46 | Royal honors |
+    | Altair | +0.76 | Boldness, ambition |
+    | Aldebaran | +0.87 | Royal Star — integrity |
+    | Antares | +1.06 | Royal Star — courage |
     | Pollux | +1.14 | Spirited, subtle |
     | Fomalhaut | +1.16 | Royal Star — idealism |
     | Deneb | +1.25 | Ingenuity, talent |
-    | Achernar | +0.46 | Royal honors |
     | Algol | +2.12 | Intensity, misfortune |
+    | Alphecca | +2.22 | Behenian — artistry, honor |
+    | Deneb Algedi | +2.83 | Behenian — justice, law |
+    | Alcyone | +2.87 | Behenian — mysticism, vision |
+    | Algorab | +2.94 | Behenian — scavenging, cunning |
 
     The four "Royal Stars of Persia" (Aldebaran, Regulus, Antares, Fomalhaut) and Algol are among the most significant points in any chart. All 22 fixed stars are now supported in v5.12.
 
--   [ ] **Expanded sidereal modes (20 → 48 + custom)** — Add all remaining ayanamsa supported by Swiss Ephemeris:
+-   [x] **Expanded sidereal modes (20 → 48 + custom)** — Added all remaining ayanamsa systems supported by Swiss Ephemeris (47 named modes + USER for custom ayanamsa definitions, 48 total). Includes Aryabhata, Suryasiddhanta, True star-based, Galactic Center/Equator, Lahiri variants, Babylonian Britton, and Valens Moon.
 
-    | Category | Modes |
-    |----------|-------|
-    | Aryabhata school | `ARYABHATA`, `ARYABHATA_522`, `ARYABHATA_MSUN` |
-    | Galactic Center | `GALCENT_0SAG`, `GALCENT_COCHRANE`, `GALCENT_MULA_WILHELM`, `GALCENT_RGILBRAND` |
-    | Galactic Equator | `GALEQU_FIORENZA`, `GALEQU_IAU1958`, `GALEQU_MULA`, `GALEQU_TRUE` |
-    | True star-based | `TRUE_CITRA`, `TRUE_MULA`, `TRUE_PUSHYA`, `TRUE_REVATI`, `TRUE_SHEORAN` |
-    | Suryasiddhanta | `SURYASIDDHANTA`, `SURYASIDDHANTA_MSUN`, `SS_CITRA`, `SS_REVATI` |
-    | Lahiri variants | `LAHIRI_1940`, `LAHIRI_ICRC`, `LAHIRI_VP285` |
-    | Other | `BABYL_BRITTON`, `GALALIGN_MARDYKS`, `KRISHNAMURTI_VP291`, `VALENS_MOON` |
-    | User-defined | `USER` — provide a reference epoch and ayanamsa value |
-
--   [ ] **Ayanamsa value exposure** — Expose the numeric ayanamsa offset (in degrees) in the subject model. Currently only the ayanamsa name is stored. Every sidereal astrologer needs this for verification and cross-system comparison.
+-   [x] **Ayanamsa value exposure** — Added `ayanamsa_value` field to `AstrologicalBaseModel`. For sidereal charts, contains the computed angular offset (in degrees) between tropical and sidereal 0° Aries. `None` for tropical charts. Calculated via `swe.get_ayanamsa_ex_ut()`.
 
 ---
 

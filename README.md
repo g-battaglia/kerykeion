@@ -892,6 +892,12 @@ Available `style` values: `"classic"` (default) and `"modern"`.
 |---|---|---|---|
 | `show_zodiac_background_ring` | `bool` | `True` | Draw colored zodiac wedges as the outer zodiac annulus around the cusp ring |
 
+**Dual-chart keyword arguments** (Synastry, Transit, Composite, Dual Return):
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `double_chart_aspect_grid_type` | `str` | `"list"` | Aspect grid layout: `"list"` (compact vertical list) or `"table"` (traditional cross-reference grid) |
+
 **Classic-only constructor arguments** (ignored by the modern style):
 
 | Parameter | Type | Default | Description |

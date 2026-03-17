@@ -238,6 +238,7 @@ drawer.save_aspect_grid_only_svg_file(Path("./output"), filename="grid_only")
 
 **Public Methods:**
 
+- `save_svg(output_path, filename) -> None` -- Save the full chart (wheel + aspect grid) as an SVG file.
 - `generate_svg_string() -> str`
 - `generate_wheel_only_svg_string() -> str`
 - `generate_aspect_grid_only_svg_string() -> str`

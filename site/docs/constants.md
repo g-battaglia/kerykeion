@@ -75,8 +75,40 @@ When customizing `active_points`, you can use any of the following string identi
 
 ### Fixed Stars
 
--   `Regulus`
--   `Spica`
+22 fixed stars including all 15 Behenian stars and the 4 Royal Stars of Persia.
+
+**Royal Stars:**
+
+-   `Regulus` (mag +1.35, Royal Star -- Heart of Leo)
+-   `Aldebaran` (mag +0.87, Royal Star -- Eye of Taurus)
+-   `Antares` (mag +1.06, Royal Star -- Heart of Scorpio)
+-   `Fomalhaut` (mag +1.16, Royal Star -- Mouth of the Fish)
+
+**Behenian Stars:**
+
+-   `Spica` (mag +0.97)
+-   `Sirius` (mag -1.46, brightest star)
+-   `Vega` (mag +0.03)
+-   `Capella` (mag +0.08)
+-   `Procyon` (mag +0.34)
+-   `Arcturus` (mag -0.05)
+-   `Algol` (mag +2.12)
+-   `Alphecca` (mag +2.22)
+-   `Deneb_Algedi` (mag +2.83)
+-   `Alcyone` (mag +2.87)
+-   `Algorab` (mag +2.94)
+
+**Other Bright Stars:**
+
+-   `Canopus` (mag -0.74)
+-   `Rigel` (mag +0.13)
+-   `Betelgeuse` (mag +0.42)
+-   `Achernar` (mag +0.46)
+-   `Altair` (mag +0.76)
+-   `Pollux` (mag +1.14)
+-   `Deneb` (mag +1.25)
+
+Each fixed star provides `magnitude` (apparent visual brightness), `declination` (equatorial), and `speed` (daily motion) fields.
 
 ## Aspect Names (`AspectName`)
 
@@ -109,7 +141,7 @@ Main planets, Chiron, Mean Lilith, Nodes, and Angles.
 
 ### `ALL_ACTIVE_POINTS`
 
-Every point listed above.
+Every point listed above (62 total).
 
 ### `DEFAULT_ACTIVE_ASPECTS`
 

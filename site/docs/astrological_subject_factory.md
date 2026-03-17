@@ -63,6 +63,8 @@ print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 | `is_dst`                   | `Optional[bool]`         | `None`          | Explicitly set DST for ambiguous times (fold).                         |
 | `cache_expire_after_days`  | `int`                    | `30`            | Days to cache online location lookups.                                 |
 | `calculate_lunar_phase`    | `bool`                   | `True`          | Whether to calculate lunar phase details.                              |
+| `custom_ayanamsa_t0`      | `Optional[float]`        | `None`          | Reference epoch (Julian Day) for USER sidereal mode.                   |
+| `custom_ayanamsa_ayan_t0` | `Optional[float]`        | `None`          | Ayanamsa offset in degrees at the reference epoch. Required with USER. |
 
 ### 2. `from_iso_utc_time`
 
@@ -106,7 +108,10 @@ now_chart = AstrologicalSubjectFactory.from_current_time(
 
 - **Tropical** (Default): Fixed to seasons (0° Aries = Vernal Equinox). Standard in Western astrology.
 - **Sidereal**: Fixed to constellations. Standard in Vedic astrology. Requires `sidereal_mode`.
-  - _Common Modes_: "LAHIRI" (most common), "FAGAN_BRADLEY", "RAMAN".
+  - 48 modes total: 47 named + `USER` for custom ayanamsa definitions.
+  - _Common Modes_: `LAHIRI` (most common), `FAGAN_BRADLEY`, `RAMAN`.
+  - _USER mode_: Requires `custom_ayanamsa_t0` (Julian Day epoch) and `custom_ayanamsa_ayan_t0` (degrees at epoch).
+  - The computed ayanamsa offset is available via `subject.ayanamsa_value` (degrees, `None` for tropical).
 
 ### Perspectives
 
@@ -139,7 +144,7 @@ These `TypedDict` structures are used internally for type hinting but are expose
 #### `ChartConfiguration`
 
 Configuration dictionary for chart calculation settings.
-Keys: `zodiac_type`, `sidereal_mode`, `houses_system_identifier`, `perspective_type`.
+Keys: `zodiac_type`, `sidereal_mode`, `houses_system_identifier`, `perspective_type`, `custom_ayanamsa_t0`, `custom_ayanamsa_ayan_t0`.
 
 #### `LocationData`
 

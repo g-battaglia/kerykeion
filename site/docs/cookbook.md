@@ -240,7 +240,7 @@ planets = ["sun", "moon", "mercury", "venus", "mars",
 
 with open("planetary_positions.csv", "w", newline="") as f:
     writer = csv.writer(f)
-    writer.writerow(["Planet", "Sign", "Position", "House", "Retrograde"])
+    writer.writerow(["Planet", "Sign", "Position", "House", "Retrograde", "Speed", "Declination", "Magnitude"])
     
     for planet_name in planets:
         planet = getattr(subject, planet_name)
@@ -249,7 +249,10 @@ with open("planetary_positions.csv", "w", newline="") as f:
             planet.sign,
             f"{planet.position:.2f}",
             planet.house,
-            planet.retrograde
+            planet.retrograde,
+            f"{planet.speed:.4f}" if planet.speed is not None else "",
+            f"{planet.declination:.4f}" if planet.declination is not None else "",
+            f"{planet.magnitude:.2f}" if planet.magnitude is not None else "",
         ])
 
 print("Positions exported to planetary_positions.csv")
@@ -257,9 +260,9 @@ print("Positions exported to planetary_positions.csv")
 
 **Output CSV:**
 ```csv
-Planet,Sign,Position,House,Retrograde
-Sun,Can,22.54,Eleventh_House,False
-Moon,Sco,15.32,Third_House,False
+Planet,Sign,Position,House,Retrograde,Speed,Declination,Magnitude
+Sun,Can,22.54,Eleventh_House,False,0.9534,,
+Moon,Sco,15.32,Third_House,False,13.1762,,
 ...
 ```
 
@@ -290,7 +293,10 @@ for entry in data:
             "sign": planet["sign"],
             "position": planet["position"],
             "abs_pos": planet["abs_pos"],
-            "retrograde": planet["retrograde"]
+            "retrograde": planet["retrograde"],
+            "speed": planet.get("speed"),
+            "declination": planet.get("declination"),
+            "magnitude": planet.get("magnitude"),
         })
 
 df = pd.DataFrame(rows)
@@ -365,6 +371,7 @@ drawer.save_svg(output_path=output_dir, filename="traditional-planets-only")
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Example", 1990, 7, 15, 10, 30,
@@ -372,27 +379,10 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     online=False
 )
 
-# Full point list including asteroids, TNOs, etc.
-all_points = [
-    # Main planets
-    "Sun", "Moon", "Mercury", "Venus", "Mars", 
-    "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
-    # Nodes
-    "True_North_Lunar_Node", "True_South_Lunar_Node",
-    "Mean_North_Lunar_Node", "Mean_South_Lunar_Node",
-    # Special points
-    "Chiron", "Mean_Lilith", "True_Lilith",
-    # Asteroids
-    "Ceres", "Pallas", "Juno", "Vesta",
-    # Arabic parts
-    "Pars_Fortunae",
-    # Angles
-    "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli",
-]
-
+# Use the ALL_ACTIVE_POINTS preset (62 points including fixed stars, TNOs, etc.)
 chart_data = ChartDataFactory.create_natal_chart_data(
     subject,
-    active_points=all_points
+    active_points=ALL_ACTIVE_POINTS,
 )
 
 print(f"Chart includes {len(chart_data.subject.active_points)} points")

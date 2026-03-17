@@ -78,6 +78,39 @@ Sun Position: 84.32°
 
 > **Note:** The Sun position matches Alice's natal Sun position exactly (within calculation precision).
 
+### Custom Ayanamsa in Returns
+
+When using `sidereal_mode="USER"` on the natal subject, pass the custom ayanamsa parameters to `PlanetaryReturnFactory` so the return chart uses the same ayanamsa:
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
+natal = AstrologicalSubjectFactory.from_birth_data(
+    "Sidereal User", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False,
+    zodiac_type="Sidereal",
+    sidereal_mode="USER",
+    custom_ayanamsa_t0=2451545.0,
+    custom_ayanamsa_ayan_t0=23.5,
+)
+
+return_factory = PlanetaryReturnFactory(
+    natal,
+    city="London", nation="GB",
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False,
+    custom_ayanamsa_t0=2451545.0,
+    custom_ayanamsa_ayan_t0=23.5,
+)
+
+solar_return = return_factory.next_return_from_year(2024, "Solar")
+print(f"Return ayanamsa: {solar_return.ayanamsa_value:.4f}°")
+```
+
+> Both `custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0` are required when the natal subject uses `sidereal_mode="USER"`. Omitting them raises a `KerykeionException`.
+
 ## Supported Return Types
 
 - `"Solar"` (Sun) - Yearly forecast.

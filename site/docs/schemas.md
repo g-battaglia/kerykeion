@@ -496,6 +496,10 @@ Describes the phase of an aspect between two points.
 
 The Ayanamsa (precession mode) used for Sidereal calculations.
 
+48 modes total: 47 named + USER for custom ayanamsa definitions.
+
+**Classic modes (pre-v5.12):**
+
 | Value               | Description                                                  |
 | :------------------ | :----------------------------------------------------------- |
 | `"FAGAN_BRADLEY"`   | Standard Western Sidereal ayanamsa, widely used in the West. |
@@ -518,6 +522,39 @@ The Ayanamsa (precession mode) used for Sidereal calculations.
 | `"J2000"`           | Julian epoch J2000.0 reference frame.                        |
 | `"J1900"`           | Julian epoch J1900.0 reference frame.                        |
 | `"B1950"`           | Besselian epoch B1950.0 reference frame.                     |
+
+**New in v5.12:**
+
+| Value                       | Category           | Description                                          |
+| :-------------------------- | :----------------- | :--------------------------------------------------- |
+| `"ARYABHATA"`               | Indian/Vedic       | Aryabhata ayanamsa.                                  |
+| `"ARYABHATA_522"`           | Indian/Vedic       | Aryabhata (522 CE epoch).                            |
+| `"ARYABHATA_MSUN"`          | Indian/Vedic       | Aryabhata (mean Sun).                                |
+| `"SURYASIDDHANTA"`          | Indian/Vedic       | Suryasiddhanta ayanamsa.                             |
+| `"SURYASIDDHANTA_MSUN"`     | Indian/Vedic       | Suryasiddhanta (mean Sun).                           |
+| `"SS_CITRA"`                | Indian/Vedic       | Suryasiddhanta (Citra/Spica reference).              |
+| `"SS_REVATI"`               | Indian/Vedic       | Suryasiddhanta (Revati/zeta Piscium reference).      |
+| `"TRUE_CITRA"`              | True star-based    | True Citra (Spica at 0° Libra).                      |
+| `"TRUE_MULA"`               | True star-based    | True Mula (lambda Scorpii at 0° Sagittarius).        |
+| `"TRUE_PUSHYA"`             | True star-based    | True Pushya (delta Cancri reference).                |
+| `"TRUE_REVATI"`             | True star-based    | True Revati (zeta Piscium at 0° Aries).              |
+| `"TRUE_SHEORAN"`            | True star-based    | True Sheoran ayanamsa.                               |
+| `"LAHIRI_1940"`             | Lahiri variants    | Lahiri (1940 epoch).                                 |
+| `"LAHIRI_ICRC"`             | Lahiri variants    | Lahiri (ICRC standard).                              |
+| `"LAHIRI_VP285"`            | Lahiri variants    | Lahiri (VP285 variant).                              |
+| `"KRISHNAMURTI_VP291"`      | Lahiri variants    | Krishnamurti (VP291 variant).                        |
+| `"GALCENT_0SAG"`            | Galactic alignment | Galactic Center at 0° Sagittarius.                   |
+| `"GALCENT_COCHRANE"`        | Galactic alignment | Galactic Center (Cochrane).                          |
+| `"GALCENT_MULA_WILHELM"`    | Galactic alignment | Galactic Center (Mula/Wilhelm).                      |
+| `"GALCENT_RGILBRAND"`       | Galactic alignment | Galactic Center (Rgilbrand).                         |
+| `"GALEQU_FIORENZA"`         | Galactic alignment | Galactic Equator (Fiorenza).                         |
+| `"GALEQU_IAU1958"`          | Galactic alignment | Galactic Equator (IAU 1958).                         |
+| `"GALEQU_MULA"`             | Galactic alignment | Galactic Equator (Mula).                             |
+| `"GALEQU_TRUE"`             | Galactic alignment | Galactic Equator (true).                             |
+| `"GALALIGN_MARDYKS"`        | Galactic alignment | Galactic alignment (Mardyks).                        |
+| `"BABYL_BRITTON"`           | Babylonian         | Babylonian (Britton).                                |
+| `"VALENS_MOON"`             | Historical         | Vettius Valens Moon ayanamsa.                        |
+| `"USER"`                    | User-defined       | Custom ayanamsa. Requires `custom_ayanamsa_t0` (Julian Day epoch) and `custom_ayanamsa_ayan_t0` (degrees at epoch). |
 
 ---
 
