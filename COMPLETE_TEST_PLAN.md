@@ -221,7 +221,7 @@ test_modern_kwargs_ignored_by_classic
     Assert outputs are identical (kwarg is silently ignored).
 
 test_modern_all_active_points_does_not_crash
-    Create natal chart with ALL_ACTIVE_POINTS (62 points).
+    Create natal chart with ALL_ACTIVE_POINTS (63 points).
     Generate modern SVG, assert isinstance(str) and len > 100.
 
 test_save_svg_default_filename_modern_suffix

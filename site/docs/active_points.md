@@ -90,9 +90,9 @@ Distant objects beyond Neptune. Ephemeris data may not be available for all hist
 
 > **Note:** Some TNOs may not have ephemeris data for very old or far-future dates. If calculation fails for a point, it is silently removed from the active points for that subject.
 
-### Fixed Stars (22)
+### Fixed Stars (23)
 
-All 15 Behenian stars of the medieval/Hermetic tradition are included, plus 7 additional bright stars. Fixed stars are inactive by default.
+All 15 Behenian stars of the medieval/Hermetic tradition are included, plus 8 additional bright stars. Fixed stars are inactive by default.
 
 #### Royal Stars (4)
 
@@ -103,7 +103,7 @@ All 15 Behenian stars of the medieval/Hermetic tradition are included, plus 7 ad
 | `Antares` | ~1.1 | Royal star, intensity and obsession |
 | `Fomalhaut` | ~1.2 | Royal star, idealism and vision |
 
-#### Behenian Stars (11, not listed above)
+#### Behenian Stars (12, not listed above)
 
 | Point | Magnitude | Description |
 | :---- | :-------- | :---------- |
@@ -118,6 +118,7 @@ All 15 Behenian stars of the medieval/Hermetic tradition are included, plus 7 ad
 | `Alphecca` | ~2.2 | Gemma, the jewel in the crown |
 | `Algorab` | ~2.9 | Delta Corvi, cunning |
 | `Deneb_Algedi` | ~2.8 | Tail of the goat, law and justice |
+| `Alkaid` | ~1.9 | Tip of Great Bear's tail, mourning and leadership |
 
 #### Other Bright Stars (7)
 
