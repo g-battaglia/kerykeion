@@ -1,6 +1,6 @@
 ---
 title: 'Active Points Reference'
-description: 'Complete reference for all 62 celestial points available in Kerykeion: planets, asteroids, TNOs, Arabic parts, fixed stars, and special points.'
+description: 'Complete reference for all 63 celestial points available in Kerykeion: planets, asteroids, TNOs, Arabic parts, fixed stars, and special points.'
 category: 'Reference'
 tags: ['docs', 'points', 'planets', 'asteroids', 'configuration', 'kerykeion']
 order: 14
@@ -8,7 +8,7 @@ order: 14
 
 # Active Points Reference
 
-Kerykeion supports **62 celestial points** that can be individually enabled or disabled via the `active_points` parameter. This page documents every available point and the preset configurations.
+Kerykeion supports **63 celestial points** that can be individually enabled or disabled via the `active_points` parameter. This page documents every available point and the preset configurations.
 
 ## Available Points
 
@@ -180,7 +180,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 )
 ```
 
-### `ALL_ACTIVE_POINTS` (62 points)
+### `ALL_ACTIVE_POINTS` (63 points)
 
 Every available point enabled. Useful for research or comprehensive analysis.
 
@@ -195,7 +195,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 
 ## Custom Configuration
 
-You can build your own list by combining any of the 62 available point names:
+You can build your own list by combining any of the 63 available point names:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory

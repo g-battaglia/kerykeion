@@ -1507,7 +1507,7 @@ chart.save_svg(output_path=output_dir, filename="johnny-depp-custom-points")
 
 ## Fixed Stars
 
-Kerykeion includes **22 fixed stars** — the 2 original stars (Regulus, Spica) plus 20 new stars added in v5.12, completing all 15 Behenian stars of the medieval/Hermetic tradition plus 7 additional bright stars. The set includes the 4 Royal Stars of Persian/Hellenistic astrology (Regulus, Aldebaran, Antares, Fomalhaut). Each star provides ecliptic longitude, daily motion (`speed`), equatorial `declination`, and apparent visual `magnitude`.
+Kerykeion includes **23 fixed stars** — the 2 original stars (Regulus, Spica) plus 21 new stars added in v5.12, completing all 15 Behenian stars of the medieval/Hermetic tradition plus 8 additional bright stars. The set includes the 4 Royal Stars of Persian/Hellenistic astrology (Regulus, Aldebaran, Antares, Fomalhaut). Each star provides ecliptic longitude, daily motion (`speed`), equatorial `declination`, and apparent visual `magnitude`.
 
 Fixed stars are computed for every subject but are **inactive by default** in charts and aspect calculations. To include them, pass their names in `active_points`:
 
@@ -1535,7 +1535,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 )
 ```
 
-Available fixed stars: Regulus, Spica, Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel, Achernar, Capella, Vega, Alcyone, Alphecca, Algorab, Deneb_Algedi.
+Available fixed stars: Regulus, Spica, Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel, Achernar, Capella, Vega, Alcyone, Alphecca, Algorab, Deneb_Algedi, Alkaid.
 
 **📖 Full active points list: [Active Points Documentation](https://www.kerykeion.net/content/docs/active_points)**
 

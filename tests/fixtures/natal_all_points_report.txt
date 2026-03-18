@@ -24,7 +24,7 @@ Sample Natal Subject — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448094.072917      |
-| Active Points Count | 62                  |
+| Active Points Count | 63                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
@@ -86,6 +86,7 @@ Sample Natal Subject — Natal Chart Report
 | Alphecca              | Sco ♏️ | 12.17°   | -0.0000°/d   | +26.75° | -    | First House    |
 | Algorab               | Lib ♎️ | 13.32°   | -0.0000°/d   | -16.47° | -    | Eleventh House |
 | Deneb Algedi          | Aqu ♒️ | 23.42°   | +0.0001°/d   | -16.17° | -    | Fourth House   |
+| Alkaid                | Vir ♍️ | 26.80°   | -0.0000°/d   | +49.36° | -    | Eleventh House |
 | Pars Fortunae         | Lib ♎️ | 28.49°   | N/A          | N/A     | -    | Twelfth House  |
 | Pars Spiritus         | Sco ♏️ | 13.16°   | N/A          | N/A     | -    | First House    |
 | Pars Amoris           | Lib ♎️ | 8.99°    | N/A          | N/A     | -    | Eleventh House |
@@ -122,20 +123,20 @@ Sample Natal Subject — Natal Chart Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 7.1                | 20.2%      |
-| Earth 🌍 | 7.5                | 21.3%      |
-| Air 💨   | 6.500000000000001  | 18.5%      |
-| Water 💧 | 14.099999999999996 | 40.1%      |
-| Total    | 35.199999999999996 | 100%       |
+| Fire 🔥  | 7.1                | 19.6%      |
+| Earth 🌍 | 8.5                | 23.5%      |
+| Air 💨   | 6.500000000000001  | 18.0%      |
+| Water 💧 | 14.099999999999996 | 39.0%      |
+| Total    | 36.199999999999996 | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 13.399999999999997 | 38.1%      |
-| Fixed    | 17.5               | 49.7%      |
-| Mutable  | 4.300000000000002  | 12.2%      |
-| Total    | 35.2               | 100%       |
+| Cardinal | 13.399999999999997 | 37.0%      |
+| Fixed    | 17.5               | 48.3%      |
+| Mutable  | 5.300000000000002  | 14.6%      |
+| Total    | 36.2               | 100%       |
 +----------+--------------------+------------+
 
 +Active Celestial Points-----+
@@ -193,16 +194,17 @@ Sample Natal Subject — Natal Chart Report
 | 50 | Alphecca              |
 | 51 | Algorab               |
 | 52 | Deneb_Algedi          |
-| 53 | Pars_Fortunae         |
-| 54 | Pars_Spiritus         |
-| 55 | Pars_Amoris           |
-| 56 | Pars_Fidei            |
-| 57 | Vertex                |
-| 58 | Anti_Vertex           |
-| 59 | Ascendant             |
-| 60 | Medium_Coeli          |
-| 61 | Descendant            |
-| 62 | Imum_Coeli            |
+| 53 | Alkaid                |
+| 54 | Pars_Fortunae         |
+| 55 | Pars_Spiritus         |
+| 56 | Pars_Amoris           |
+| 57 | Pars_Fidei            |
+| 58 | Vertex                |
+| 59 | Anti_Vertex           |
+| 60 | Ascendant             |
+| 61 | Medium_Coeli          |
+| 62 | Descendant            |
+| 63 | Imum_Coeli            |
 +----+-----------------------+
 
 +-------------+---------+
@@ -240,6 +242,7 @@ Sample Natal Subject — Natal Chart Report
 | Sun                   | conjunction ☌ | Pollux                | 5.46° | Separating ← |
 | Sun                   | opposition ☍  | Altair                | 3.11° | Applying →   |
 | Sun                   | sextile ⚹     | Alcyone               | 1.32° | Applying →   |
+| Sun                   | sextile ⚹     | Alkaid                | 1.74° | Separating ← |
 | Moon                  | conjunction ☌ | Jupiter               | 2.70° | Applying →   |
 | Moon                  | opposition ☍  | Saturn                | 0.31° | Applying →   |
 | Moon                  | opposition ☍  | Neptune               | 8.45° | Separating ← |
@@ -261,6 +264,7 @@ Sample Natal Subject — Natal Chart Report
 | Moon                  | conjunction ☌ | Pollux                | 1.87° | Applying →   |
 | Moon                  | trine △       | Achernar              | 6.02° | Separating ← |
 | Moon                  | opposition ☍  | Vega                  | 6.01° | Separating ← |
+| Moon                  | sextile ⚹     | Alkaid                | 5.59° | Applying →   |
 | Mercury               | square □      | Pluto                 | 2.63° | Separating ← |
 | Mercury               | opposition ☍  | Mean North Lunar Node | 9.82° | Separating ← |
 | Mercury               | conjunction ☌ | Medium Coeli          | 2.31° | Separating ← |
@@ -294,6 +298,7 @@ Sample Natal Subject — Natal Chart Report
 | Venus                 | trine △       | Arcturus              | 7.60° | Separating ← |
 | Venus                 | trine △       | Deneb                 | 3.50° | Applying →   |
 | Venus                 | conjunction ☌ | Capella               | 9.98° | Separating ← |
+| Venus                 | square □      | Alkaid                | 4.91° | Separating ← |
 | Mars                  | trine △       | Uranus                | 0.77° | Applying →   |
 | Mars                  | trine △       | Neptune               | 6.80° | Applying →   |
 | Mars                  | opposition ☍  | Pluto                 | 9.01° | Applying →   |
@@ -338,6 +343,7 @@ Sample Natal Subject — Natal Chart Report
 | Jupiter               | opposition ☍  | Altair                | 7.74° | Applying →   |
 | Jupiter               | opposition ☍  | Vega                  | 8.71° | Separating ← |
 | Jupiter               | sextile ⚹     | Alcyone               | 5.95° | Applying →   |
+| Jupiter               | sextile ⚹     | Alkaid                | 2.89° | Applying →   |
 | Saturn                | conjunction ☌ | Neptune               | 8.75° | Applying →   |
 | Saturn                | opposition ☍  | Chiron                | 1.64° | Applying →   |
 | Saturn                | quintile Q    | Juno                  | 0.58° | Separating ← |
@@ -354,6 +360,7 @@ Sample Natal Subject — Natal Chart Report
 | Saturn                | square □      | Arcturus              | 2.59° | Separating ← |
 | Saturn                | opposition ☍  | Pollux                | 1.57° | Separating ← |
 | Saturn                | conjunction ☌ | Vega                  | 6.32° | Applying →   |
+| Saturn                | trine △       | Alkaid                | 5.28° | Separating ← |
 | Uranus                | conjunction ☌ | Neptune               | 6.02° | Separating ← |
 | Uranus                | sextile ⚹     | Ascendant             | 0.92° | Applying →   |
 | Uranus                | trine △       | Descendant            | 0.92° | Applying →   |
@@ -531,6 +538,7 @@ Sample Natal Subject — Natal Chart Report
 | Mean Lilith           | trine △       | Pollux                | 5.91° | Separating ← |
 | Mean Lilith           | sextile ⚹     | Altair                | 2.66° | Applying →   |
 | Mean Lilith           | opposition ☍  | Alcyone               | 0.87° | Applying →   |
+| Mean Lilith           | sextile ⚹     | Alkaid                | 2.19° | Separating ← |
 | Mean South Lunar Node | conjunction ☌ | True South Lunar Node | 0.52° | Separating ← |
 | Mean South Lunar Node | trine △       | Earth                 | 7.79° | Separating ← |
 | Mean South Lunar Node | conjunction ☌ | Ceres                 | 5.93° | Separating ← |
@@ -585,6 +593,7 @@ Sample Natal Subject — Natal Chart Report
 | Earth                 | trine △       | Pollux                | 6.92° | Static =     |
 | Earth                 | sextile ⚹     | Altair                | 1.65° | Static =     |
 | Earth                 | sextile ⚹     | Alcyone               | 0.14° | Static =     |
+| Earth                 | opposition ☍  | Alkaid                | 3.20° | Static =     |
 | Pholus                | conjunction ☌ | Pallas                | 0.74° | Applying →   |
 | Pholus                | trine △       | Juno                  | 2.11° | Applying →   |
 | Pholus                | sextile ⚹     | Sedna                 | 3.56° | Applying →   |
@@ -690,6 +699,7 @@ Sample Natal Subject — Natal Chart Report
 | Haumea                | trine △       | Altair                | 5.33° | Applying →   |
 | Haumea                | square □      | Capella               | 4.60° | Separating ← |
 | Haumea                | trine △       | Alcyone               | 3.54° | Applying →   |
+| Haumea                | conjunction ☌ | Alkaid                | 0.48° | Applying →   |
 | Makemake              | conjunction ☌ | Regulus               | 4.80° | Separating ← |
 | Makemake              | trine △       | Pars Fidei            | 3.72° | Applying →   |
 | Makemake              | opposition ☍  | Fomalhaut             | 0.76° | Separating ← |
@@ -706,6 +716,7 @@ Sample Natal Subject — Natal Chart Report
 | Ixion                 | trine △       | Achernar              | 7.51° | Applying →   |
 | Ixion                 | opposition ☍  | Alcyone               | 7.16° | Separating ← |
 | Ixion                 | square □      | Deneb Algedi          | 0.72° | Separating ← |
+| Ixion                 | sextile ⚹     | Alkaid                | 4.10° | Separating ← |
 | Orcus                 | quintile Q    | Spica                 | 0.87° | Applying →   |
 | Orcus                 | square □      | Pars Spiritus         | 2.32° | Applying →   |
 | Orcus                 | sextile ⚹     | Pars Amoris           | 1.85° | Separating ← |
@@ -723,6 +734,7 @@ Sample Natal Subject — Natal Chart Report
 | Quaoar                | trine △       | Pollux                | 0.99° | Applying →   |
 | Quaoar                | opposition ☍  | Alcyone               | 5.79° | Separating ← |
 | Quaoar                | square □      | Deneb Algedi          | 0.66° | Applying →   |
+| Quaoar                | sextile ⚹     | Alkaid                | 2.72° | Separating ← |
 | Regulus               | sextile ⚹     | Spica                 | 5.98° | Static =     |
 | Regulus               | sextile ⚹     | Pars Fortunae         | 1.21° | Static =     |
 | Regulus               | opposition ☍  | Fomalhaut             | 4.04° | Static =     |
@@ -791,12 +803,14 @@ Sample Natal Subject — Natal Chart Report
 | Antares               | opposition ☍  | Rigel                 | 7.06° | Static =     |
 | Antares               | opposition ☍  | Alcyone               | 9.78° | Static =     |
 | Antares               | sextile ⚹     | Algorab               | 3.68° | Static =     |
+| Antares               | quintile Q    | Alkaid                | 0.84° | Static =     |
 | Sirius                | conjunction ☌ | Canopus               | 0.86° | Static =     |
 | Sirius                | conjunction ☌ | Pollux                | 9.14° | Static =     |
 | Sirius                | trine △       | Achernar              | 1.24° | Static =     |
 | Sirius                | opposition ☍  | Vega                  | 1.25° | Static =     |
 | Sirius                | trine △       | Alphecca              | 1.78° | Static =     |
 | Sirius                | square □      | Algorab               | 0.63° | Static =     |
+| Sirius                | quintile Q    | Alkaid                | 0.85° | Static =     |
 | Fomalhaut             | trine △       | Betelgeuse            | 5.11° | Static =     |
 | Fomalhaut             | conjunction ☌ | Deneb                 | 1.48° | Static =     |
 | Fomalhaut             | square □      | Alcyone               | 3.87° | Static =     |
@@ -805,19 +819,23 @@ Sample Natal Subject — Natal Chart Report
 | Algol                 | trine △       | Altair                | 5.62° | Static =     |
 | Algol                 | conjunction ☌ | Alcyone               | 3.82° | Static =     |
 | Algol                 | square □      | Deneb Algedi          | 2.62° | Static =     |
+| Algol                 | trine △       | Alkaid                | 0.76° | Static =     |
 | Betelgeuse            | trine △       | Arcturus              | 4.52° | Static =     |
 | Betelgeuse            | trine △       | Deneb                 | 6.59° | Static =     |
 | Betelgeuse            | conjunction ☌ | Capella               | 6.90° | Static =     |
 | Betelgeuse            | trine △       | Deneb Algedi          | 5.20° | Static =     |
+| Betelgeuse            | square □      | Alkaid                | 1.82° | Static =     |
 | Canopus               | conjunction ☌ | Pollux                | 8.27° | Static =     |
 | Canopus               | trine △       | Achernar              | 0.38° | Static =     |
 | Canopus               | opposition ☍  | Vega                  | 0.39° | Static =     |
 | Canopus               | trine △       | Alphecca              | 2.64° | Static =     |
 | Canopus               | square □      | Algorab               | 1.49° | Static =     |
+| Canopus               | quintile Q    | Alkaid                | 0.01° | Static =     |
 | Procyon               | square □      | Arcturus              | 1.55° | Static =     |
 | Procyon               | conjunction ☌ | Pollux                | 2.57° | Static =     |
 | Procyon               | opposition ☍  | Altair                | 6.00° | Static =     |
 | Procyon               | sextile ⚹     | Alcyone               | 4.21° | Static =     |
+| Procyon               | sextile ⚹     | Alkaid                | 1.15° | Static =     |
 | Arcturus              | square □      | Pollux                | 1.02° | Static =     |
 | Arcturus              | trine △       | Rigel                 | 7.41° | Static =     |
 | Arcturus              | trine △       | Capella               | 2.38° | Static =     |
@@ -825,9 +843,11 @@ Sample Natal Subject — Natal Chart Report
 | Pollux                | opposition ☍  | Altair                | 8.57° | Static =     |
 | Pollux                | trine △       | Achernar              | 7.89° | Static =     |
 | Pollux                | opposition ☍  | Vega                  | 7.88° | Static =     |
+| Pollux                | sextile ⚹     | Alkaid                | 3.72° | Static =     |
 | Deneb                 | conjunction ☌ | Achernar              | 9.98° | Static =     |
 | Deneb                 | trine △       | Alphecca              | 6.96° | Static =     |
 | Altair                | trine △       | Alcyone               | 1.79° | Static =     |
+| Altair                | trine △       | Alkaid                | 4.85° | Static =     |
 | Rigel                 | square □      | Achernar              | 1.51° | Static =     |
 | Rigel                 | conjunction ☌ | Capella               | 5.03° | Static =     |
 | Rigel                 | trine △       | Algorab               | 3.37° | Static =     |
@@ -837,4 +857,5 @@ Sample Natal Subject — Natal Chart Report
 | Capella               | trine △       | Deneb Algedi          | 1.69° | Static =     |
 | Vega                  | sextile ⚹     | Alphecca              | 3.03° | Static =     |
 | Vega                  | square □      | Algorab               | 1.88° | Static =     |
+| Alcyone               | trine △       | Alkaid                | 3.06° | Static =     |
 +-----------------------+---------------+-----------------------+-------+--------------+

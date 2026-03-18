@@ -109,6 +109,7 @@ AstrologicalPoint: TypeAlias = Literal[
     "Alphecca",
     "Algorab",
     "Deneb_Algedi",
+    "Alkaid",
     # Arabic Parts
     "Pars_Fortunae",
     "Pars_Spiritus",
@@ -129,8 +130,8 @@ AstrologicalPoint: TypeAlias = Literal[
 Includes planets, lunar nodes, special points, asteroids, trans-Neptunian objects,
 fixed stars, Arabic parts (lots), angular points, and axial cusps.
 
-Fixed Stars (22 total, expanded in v5.12 from 2):
-    The original pair (Regulus, Spica) are joined by 20 additional stars
+Fixed Stars (23 total, expanded in v5.12 from 2):
+    The original pair (Regulus, Spica) are joined by 21 additional stars
     chosen for their traditional astrological significance. The set includes
     all 15 Behenian stars of the medieval/Hermetic tradition.
 
@@ -146,7 +147,7 @@ Fixed Stars (22 total, expanded in v5.12 from 2):
           Spica (alpha Virginis), Arcturus (alpha Bootis),
           Vega (alpha Lyrae), Alcyone (eta Tauri),
           Alphecca (alpha Coronae Borealis), Algorab (delta Corvi),
-          Deneb Algedi (delta Capricorni)
+          Deneb Algedi (delta Capricorni), Alkaid (eta Ursae Majoris)
 
     Other prominent fixed stars:
         - Betelgeuse (alpha Orionis), Canopus (alpha Carinae),

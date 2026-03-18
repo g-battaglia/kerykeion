@@ -6,7 +6,7 @@ order: 16
 
 # Active Points
 
-Kerykeion supports 62 celestial points that can be individually enabled or disabled. This page shows practical examples.
+Kerykeion supports 63 celestial points that can be individually enabled or disabled. This page shows practical examples.
 
 For the full reference of all available points, see [Active Points Reference](/content/docs/active_points).
 
@@ -113,7 +113,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
     active_points=ALL_ACTIVE_POINTS,
 )
 
-# Generate a chart with all 62 points
+# Generate a chart with all 63 points
 chart = ChartDrawer(chart_data=chart_data)
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
@@ -122,7 +122,7 @@ chart.save_svg(output_path=output_dir, filename="all-points-chart")
 
 ## Including Fixed Stars
 
-v5.12 added 22 fixed stars (all 15 Behenian + 4 Royal Stars + more). Fixed stars are computed for every subject but excluded from chart rendering and aspects by default. Add them to `active_points` to include them:
+v5.12 added 23 fixed stars (all 15 Behenian + 4 Royal Stars + more). Fixed stars are computed for every subject but excluded from chart rendering and aspects by default. Add them to `active_points` to include them:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory

@@ -379,7 +379,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     online=False
 )
 
-# Use the ALL_ACTIVE_POINTS preset (62 points including fixed stars, TNOs, etc.)
+# Use the ALL_ACTIVE_POINTS preset (63 points including fixed stars, TNOs, etc.)
 chart_data = ChartDataFactory.create_natal_chart_data(
     subject,
     active_points=ALL_ACTIVE_POINTS,

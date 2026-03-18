@@ -75,7 +75,7 @@ When customizing `active_points`, you can use any of the following string identi
 
 ### Fixed Stars
 
-22 fixed stars including all 15 Behenian stars and the 4 Royal Stars of Persia.
+23 fixed stars including all 15 Behenian stars and the 4 Royal Stars of Persia.
 
 **Royal Stars:**
 
@@ -97,6 +97,7 @@ When customizing `active_points`, you can use any of the following string identi
 -   `Deneb_Algedi` (mag +2.83)
 -   `Alcyone` (mag +2.87)
 -   `Algorab` (mag +2.94)
+-   `Alkaid` (mag +1.86)
 
 **Other Bright Stars:**
 
@@ -141,7 +142,7 @@ Main planets, Chiron, Mean Lilith, Nodes, and Angles (18 points).
 
 ### `ALL_ACTIVE_POINTS`
 
-Every point listed above plus `Earth` (62 total).
+Every point listed above plus `Earth` (63 total).
 
 > **Note:** `Earth` is only meaningful in Heliocentric perspective. It is included in `ALL_ACTIVE_POINTS` but omitted from the category lists above.
 

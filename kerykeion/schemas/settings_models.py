@@ -137,6 +137,11 @@ class KerykeionLanguageCelestialPointModel(SubscriptableBaseModel):
         title="Deneb Algedi",
         description="The name of Deneb Algedi in the chart, in the language",
     )
+    Alkaid: str = Field(
+        default="Alkaid",
+        title="Alkaid",
+        description="The name of Alkaid in the chart, in the language",
+    )
     Pars_Fortunae: str = Field(
         title="Part of Fortune", description="The name of Part of Fortune in the chart, in the language"
     )

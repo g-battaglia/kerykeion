@@ -41,7 +41,7 @@ does not yet surface.
 
 -   [x] **House cusp speeds** — Populate the `speed` field (degrees/day) on house cusp points. Replaced `swe.houses_ex()` with `swe.houses_ex2()` so all 12 cusps and the 4 angular points (ASC, MC, DSC, IC) now carry a real `speed` value.
 
--   [x] **Expanded fixed stars (2 → 22)** — Added 20 traditional fixed stars to the calculation pipeline, plus a `magnitude` field for apparent visual brightness (includes all 15 Behenian stars):
+-   [x] **Expanded fixed stars (2 → 23)** — Added 21 traditional fixed stars to the calculation pipeline, plus a `magnitude` field for apparent visual brightness (includes all 15 Behenian stars):
 
     | Star | Mag. | Tradition |
     |------|------|-----------|
@@ -65,8 +65,9 @@ does not yet surface.
     | Deneb Algedi | +2.83 | Behenian — justice, law |
     | Alcyone | +2.87 | Behenian — mysticism, vision |
     | Algorab | +2.94 | Behenian — scavenging, cunning |
+    | Alkaid | +1.86 | Behenian — mourning, leadership |
 
-    The four "Royal Stars of Persia" (Aldebaran, Regulus, Antares, Fomalhaut) and Algol are among the most significant points in any chart. All 22 fixed stars are now supported in v5.12.
+    The four "Royal Stars of Persia" (Aldebaran, Regulus, Antares, Fomalhaut) and Algol are among the most significant points in any chart. All 23 fixed stars are now supported in v5.12.
 
 -   [x] **Expanded sidereal modes (20 → 48 + custom)** — Added all remaining ayanamsa systems supported by Swiss Ephemeris (47 named modes + USER for custom ayanamsa definitions, 48 total). Includes Aryabhata, Suryasiddhanta, True star-based, Galactic Center/Equator, Lahiri variants, Babylonian Britton, and Valens Moon.
 

@@ -117,8 +117,8 @@ TNO_PLANETS: Dict[AstrologicalPoint, int] = {
     "Quaoar": 50000,
 }
 
-# Fixed stars -- 22 total (expanded in v5.12 from 2)
-# Includes all 15 Behenian stars plus 7 other bright stars.
+# Fixed stars -- 23 total (expanded in v5.12 from 2)
+# Includes all 15 Behenian stars plus 8 other bright stars.
 # Names must match Swiss Ephemeris swe.fixstar_ut() identifiers exactly
 # (or have an entry in FIXED_STAR_SWE_NAMES for name mapping).
 FIXED_STARS: List[AstrologicalPoint] = [
@@ -146,6 +146,7 @@ FIXED_STARS: List[AstrologicalPoint] = [
     "Alphecca",  # alpha Coronae Borealis, mag 2.22 -- Behenian star, Gemma
     "Algorab",  # delta Corvi, mag 2.94 -- Behenian star
     "Deneb_Algedi",  # delta Capricorni, mag 2.83 -- Behenian star, tail of the goat
+    "Alkaid",  # eta Ursae Majoris, mag 1.86 -- Behenian star, tip of Great Bear's tail
 ]
 
 # Mapping from AstrologicalPoint names to Swiss Ephemeris sefstars.txt names
@@ -533,7 +534,7 @@ class AstrologicalSubjectFactory:
         - Asteroids: Ceres, Pallas, Juno, Vesta
         - Centaurs: Chiron, Pholus
         - Trans-Neptunian Objects: Eris, Sedna, Haumea, Makemake, Ixion, Orcus, Quaoar
-        - Fixed Stars: 22 stars including Behenian stars, Royal Stars, and navigational stars
+        - Fixed Stars: 23 stars including all 15 Behenian stars, Royal Stars, and navigational stars
         - Arabic Parts: Pars Fortunae, Pars Spiritus, Pars Amoris, Pars Fidei
         - Special Points: Vertex, Anti-Vertex, Earth (for heliocentric charts)
         - House Cusps: All 12 houses with configurable house systems
@@ -1672,11 +1673,11 @@ class AstrologicalSubjectFactory:
                 - Ixion, Orcus, Quaoar
 
             Fixed Stars:
-                - 22 stars (expanded in v5.12 from 2): Regulus, Spica,
+                - 23 stars (expanded in v5.12 from 2): Regulus, Spica,
                   Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse,
                   Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel,
                   Achernar, Capella, Vega, Alcyone, Alphecca, Algorab,
-                  Deneb Algedi
+                  Deneb Algedi, Alkaid
                 - Includes apparent visual magnitude via ``swe.fixstar2_mag``
                 - Includes equatorial declination via ``FLG_EQUATORIAL``
                 - Includes ecliptic speed (precession drift, ~50 arcsec/yr)

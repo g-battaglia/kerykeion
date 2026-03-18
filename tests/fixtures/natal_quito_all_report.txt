@@ -24,7 +24,7 @@ Quito Subject — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448058.208333      |
-| Active Points Count | 62                  |
+| Active Points Count | 63                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
@@ -86,6 +86,7 @@ Quito Subject — Natal Chart Report
 | Alphecca              | Sco ♏️ | 12.17°   | -0.0001°/d   | +26.75° | -    | Second House   |
 | Algorab               | Lib ♎️ | 13.32°   | -0.0001°/d   | -16.47° | -    | First House    |
 | Deneb Algedi          | Aqu ♒️ | 23.42°   | +0.0001°/d   | -16.17° | -    | Sixth House    |
+| Alkaid                | Vir ♍️ | 26.80°   | -0.0001°/d   | +49.36° | -    | First House    |
 | Pars Fortunae         | Gem ♊️ | 13.23°   | N/A          | N/A     | -    | Ninth House    |
 | Pars Spiritus         | Sag ♐️ | 25.58°   | N/A          | N/A     | -    | Fourth House   |
 | Pars Amoris           | Leo ♌️ | 14.10°   | N/A          | N/A     | -    | Eleventh House |
@@ -122,20 +123,20 @@ Quito Subject — Natal Chart Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 7.8999999999999995 | 22.4%      |
-| Earth 🌍 | 7.4                | 21.0%      |
-| Air 💨   | 9.799999999999995  | 27.8%      |
-| Water 💧 | 10.099999999999994 | 28.7%      |
-| Total    | 35.19999999999999  | 100%       |
+| Fire 🔥  | 7.8999999999999995 | 21.8%      |
+| Earth 🌍 | 8.4                | 23.2%      |
+| Air 💨   | 9.799999999999995  | 27.1%      |
+| Water 💧 | 10.099999999999994 | 27.9%      |
+| Total    | 36.19999999999999  | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 9.699999999999994  | 27.6%      |
-| Fixed    | 8.299999999999999  | 23.6%      |
-| Mutable  | 17.199999999999996 | 48.9%      |
-| Total    | 35.19999999999999  | 100%       |
+| Cardinal | 9.699999999999994  | 26.8%      |
+| Fixed    | 8.299999999999999  | 22.9%      |
+| Mutable  | 18.199999999999996 | 50.3%      |
+| Total    | 36.19999999999999  | 100%       |
 +----------+--------------------+------------+
 
 +Active Celestial Points-----+
@@ -193,16 +194,17 @@ Quito Subject — Natal Chart Report
 | 50 | Alphecca              |
 | 51 | Algorab               |
 | 52 | Deneb_Algedi          |
-| 53 | Pars_Fortunae         |
-| 54 | Pars_Spiritus         |
-| 55 | Pars_Amoris           |
-| 56 | Pars_Fidei            |
-| 57 | Vertex                |
-| 58 | Anti_Vertex           |
-| 59 | Ascendant             |
-| 60 | Medium_Coeli          |
-| 61 | Descendant            |
-| 62 | Imum_Coeli            |
+| 53 | Alkaid                |
+| 54 | Pars_Fortunae         |
+| 55 | Pars_Spiritus         |
+| 56 | Pars_Amoris           |
+| 57 | Pars_Fidei            |
+| 58 | Vertex                |
+| 59 | Anti_Vertex           |
+| 60 | Ascendant             |
+| 61 | Medium_Coeli          |
+| 62 | Descendant            |
+| 63 | Imum_Coeli            |
 +----+-----------------------+
 
 +----------------+---------+
@@ -247,6 +249,7 @@ Quito Subject — Natal Chart Report
 | Sun                   | conjunction ☌                 | Rigel                 | 7.64° | Separating ← |
 | Sun                   | conjunction ☌                 | Capella               | 2.61° | Separating ← |
 | Sun                   | trine △                       | Deneb Algedi          | 0.91° | Separating ← |
+| Sun                   | square □                      | Alkaid                | 2.47° | Applying →   |
 | Moon                  | sextile ⚹                     | Venus                 | 0.87° | Applying →   |
 | Moon                  | trine △                       | Jupiter               | 2.21° | Separating ← |
 | Moon                  | sextile ⚹                     | Saturn                | 5.87° | Applying →   |
@@ -279,6 +282,7 @@ Quito Subject — Natal Chart Report
 | Moon                  | sextile ⚹                     | Vega                  | 2.95° | Separating ← |
 | Moon                  | quintile Q                    | Alcyone               | 0.29° | Separating ← |
 | Moon                  | trine △                       | Alphecca              | 5.98° | Separating ← |
+| Moon                  | opposition ☍                  | Alkaid                | 8.65° | Applying →   |
 | Mercury               | sextile ⚹                     | Mars                  | 5.14° | Applying →   |
 | Mercury               | trine △                       | Mean North Lunar Node | 3.64° | Applying →   |
 | Mercury               | trine △                       | True North Lunar Node | 2.07° | Applying →   |
@@ -322,6 +326,7 @@ Quito Subject — Natal Chart Report
 | Venus                 | opposition ☍                  | Alphecca              | 6.85° | Separating ← |
 | Venus                 | biquintile biquintile         | Algorab               | 0.30° | Applying →   |
 | Venus                 | square □                      | Deneb Algedi          | 4.39° | Applying →   |
+| Venus                 | trine △                       | Alkaid                | 7.78° | Applying →   |
 | Mars                  | square □                      | Jupiter               | 4.74° | Applying →   |
 | Mars                  | square □                      | Uranus                | 3.03° | Separating ← |
 | Mars                  | square □                      | Neptune               | 2.52° | Applying →   |
@@ -395,6 +400,7 @@ Quito Subject — Natal Chart Report
 | Saturn                | trine △                       | Alcyone               | 5.84° | Separating ← |
 | Saturn                | quintile Q                    | Alphecca              | 0.15° | Separating ← |
 | Saturn                | semi-sextile semi-sextile     | Deneb Algedi          | 0.60° | Applying →   |
+| Saturn                | trine △                       | Alkaid                | 2.78° | Separating ← |
 | Uranus                | conjunction ☌                 | Neptune               | 5.55° | Separating ← |
 | Uranus                | semi-sextile semi-sextile     | True North Lunar Node | 0.03° | Applying →   |
 | Uranus                | opposition ☍                  | Chiron                | 7.92° | Separating ← |
@@ -525,6 +531,7 @@ Quito Subject — Natal Chart Report
 | Ascendant             | opposition ☍                  | Achernar              | 4.22° | Separating ← |
 | Ascendant             | square □                      | Capella               | 2.32° | Applying →   |
 | Ascendant             | trine △                       | Vega                  | 4.21° | Separating ← |
+| Ascendant             | conjunction ☌                 | Alkaid                | 7.40° | Applying →   |
 | Medium Coeli          | square □                      | Descendant            | 1.63° | Static =     |
 | Medium Coeli          | opposition ☍                  | True Lilith           | 1.83° | Separating ← |
 | Medium Coeli          | conjunction ☌                 | Pallas                | 4.94° | Separating ← |
@@ -558,6 +565,7 @@ Quito Subject — Natal Chart Report
 | Descendant            | square □                      | Capella               | 2.32° | Applying →   |
 | Descendant            | sextile ⚹                     | Vega                  | 4.21° | Separating ← |
 | Descendant            | trine △                       | Alphecca              | 7.23° | Separating ← |
+| Descendant            | opposition ☍                  | Alkaid                | 7.40° | Applying →   |
 | Imum Coeli            | conjunction ☌                 | True Lilith           | 1.83° | Separating ← |
 | Imum Coeli            | biquintile biquintile         | Ceres                 | 0.93° | Applying →   |
 | Imum Coeli            | opposition ☍                  | Pallas                | 4.94° | Separating ← |
@@ -587,6 +595,7 @@ Quito Subject — Natal Chart Report
 | Mean Lilith           | trine △                       | Pollux                | 1.89° | Separating ← |
 | Mean Lilith           | opposition ☍                  | Alcyone               | 4.88° | Applying →   |
 | Mean Lilith           | square □                      | Deneb Algedi          | 1.56° | Separating ← |
+| Mean Lilith           | sextile ⚹                     | Alkaid                | 1.83° | Applying →   |
 | Mean South Lunar Node | conjunction ☌                 | True South Lunar Node | 1.56° | Separating ← |
 | Mean South Lunar Node | square □                      | Juno                  | 0.62° | Applying →   |
 | Mean South Lunar Node | square □                      | Vesta                 | 4.80° | Applying →   |
@@ -647,6 +656,7 @@ Quito Subject — Natal Chart Report
 | Earth                 | trine △                       | Pollux                | 6.92° | Static =     |
 | Earth                 | sextile ⚹                     | Altair                | 1.65° | Static =     |
 | Earth                 | sextile ⚹                     | Alcyone               | 0.14° | Static =     |
+| Earth                 | opposition ☍                  | Alkaid                | 3.20° | Static =     |
 | Pholus                | trine △                       | Juno                  | 7.22° | Applying →   |
 | Pholus                | sextile ⚹                     | Vesta                 | 1.81° | Separating ← |
 | Pholus                | sextile ⚹                     | Makemake              | 0.85° | Applying →   |
@@ -672,6 +682,7 @@ Quito Subject — Natal Chart Report
 | Ceres                 | conjunction ☌                 | Pollux                | 4.88° | Separating ← |
 | Ceres                 | opposition ☍                  | Altair                | 3.68° | Applying →   |
 | Ceres                 | sextile ⚹                     | Alcyone               | 1.89° | Applying →   |
+| Ceres                 | sextile ⚹                     | Alkaid                | 1.16° | Separating ← |
 | Pallas                | biquintile biquintile         | Juno                  | 0.21° | Applying →   |
 | Pallas                | sextile ⚹                     | Eris                  | 1.43° | Applying →   |
 | Pallas                | trine △                       | Spica                 | 7.62° | Applying →   |
@@ -741,6 +752,7 @@ Quito Subject — Natal Chart Report
 | Sedna                 | sextile ⚹                     | Achernar              | 3.87° | Applying →   |
 | Sedna                 | trine △                       | Vega                  | 3.89° | Applying →   |
 | Sedna                 | opposition ☍                  | Alphecca              | 0.86° | Applying →   |
+| Sedna                 | sesquiquadrate sesquiquadrate | Alkaid                | 0.49° | Applying →   |
 | Haumea                | sextile ⚹                     | Ixion                 | 2.93° | Separating ← |
 | Haumea                | semi-square semi-square       | Orcus                 | 0.95° | Applying →   |
 | Haumea                | sextile ⚹                     | Quaoar                | 1.55° | Separating ← |
@@ -756,6 +768,7 @@ Quito Subject — Natal Chart Report
 | Haumea                | trine △                       | Altair                | 5.61° | Applying →   |
 | Haumea                | square □                      | Capella               | 4.32° | Separating ← |
 | Haumea                | trine △                       | Alcyone               | 3.81° | Applying →   |
+| Haumea                | conjunction ☌                 | Alkaid                | 0.76° | Applying →   |
 | Makemake              | conjunction ☌                 | Regulus               | 4.24° | Separating ← |
 | Makemake              | opposition ☍                  | Pars Fidei            | 7.38° | Applying →   |
 | Makemake              | opposition ☍                  | Fomalhaut             | 0.21° | Separating ← |
@@ -774,6 +787,7 @@ Quito Subject — Natal Chart Report
 | Ixion                 | trine △                       | Achernar              | 7.93° | Applying →   |
 | Ixion                 | opposition ☍                  | Alcyone               | 6.74° | Separating ← |
 | Ixion                 | square □                      | Deneb Algedi          | 0.30° | Separating ← |
+| Ixion                 | sextile ⚹                     | Alkaid                | 3.69° | Separating ← |
 | Orcus                 | sextile ⚹                     | Pars Fortunae         | 3.14° | Applying →   |
 | Orcus                 | sesquiquadrate sesquiquadrate | Pars Spiritus         | 0.50° | Applying →   |
 | Orcus                 | conjunction ☌                 | Pars Amoris           | 4.01° | Applying →   |
@@ -792,6 +806,7 @@ Quito Subject — Natal Chart Report
 | Quaoar                | trine △                       | Pollux                | 1.41° | Applying →   |
 | Quaoar                | opposition ☍                  | Alcyone               | 5.36° | Separating ← |
 | Quaoar                | square □                      | Deneb Algedi          | 1.08° | Applying →   |
+| Quaoar                | sextile ⚹                     | Alkaid                | 2.31° | Separating ← |
 | Regulus               | sextile ⚹                     | Spica                 | 5.98° | Static =     |
 | Regulus               | trine △                       | Pars Spiritus         | 4.11° | Static =     |
 | Regulus               | quincunx ⚻                    | Vertex                | 0.38° | Static =     |
@@ -837,6 +852,7 @@ Quito Subject — Natal Chart Report
 | Pars Spiritus         | opposition ☍                  | Capella               | 3.86° | Static =     |
 | Pars Spiritus         | quintile Q                    | Algorab               | 0.26° | Static =     |
 | Pars Spiritus         | sextile ⚹                     | Deneb Algedi          | 2.17° | Static =     |
+| Pars Spiritus         | square □                      | Alkaid                | 1.22° | Static =     |
 | Pars Amoris           | sesquiquadrate sesquiquadrate | Vertex                | 0.98° | Static =     |
 | Pars Amoris           | semi-square semi-square       | Anti Vertex           | 0.98° | Static =     |
 | Pars Amoris           | sextile ⚹                     | Aldebaran             | 4.45° | Static =     |
@@ -865,12 +881,14 @@ Quito Subject — Natal Chart Report
 | Vertex                | trine △                       | Pollux                | 7.00° | Static =     |
 | Vertex                | sextile ⚹                     | Altair                | 1.57° | Static =     |
 | Vertex                | sextile ⚹                     | Alcyone               | 0.22° | Static =     |
+| Vertex                | opposition ☍                  | Alkaid                | 3.27° | Static =     |
 | Anti Vertex           | trine △                       | Algol                 | 4.04° | Static =     |
 | Anti Vertex           | square □                      | Betelgeuse            | 1.46° | Static =     |
 | Anti Vertex           | sextile ⚹                     | Procyon               | 4.43° | Static =     |
 | Anti Vertex           | trine △                       | Altair                | 1.57° | Static =     |
 | Anti Vertex           | trine △                       | Alcyone               | 0.22° | Static =     |
 | Anti Vertex           | biquintile biquintile         | Deneb Algedi          | 0.66° | Static =     |
+| Anti Vertex           | conjunction ☌                 | Alkaid                | 3.27° | Static =     |
 | Aldebaran             | opposition ☍                  | Antares               | 0.02° | Static =     |
 | Aldebaran             | semi-square semi-square       | Procyon               | 1.00° | Static =     |
 | Aldebaran             | sesquiquadrate sesquiquadrate | Arcturus              | 0.55° | Static =     |
@@ -885,6 +903,7 @@ Quito Subject — Natal Chart Report
 | Antares               | opposition ☍                  | Rigel                 | 7.06° | Static =     |
 | Antares               | opposition ☍                  | Alcyone               | 9.78° | Static =     |
 | Antares               | sextile ⚹                     | Algorab               | 3.69° | Static =     |
+| Antares               | quintile Q                    | Alkaid                | 0.84° | Static =     |
 | Sirius                | conjunction ☌                 | Canopus               | 0.86° | Static =     |
 | Sirius                | conjunction ☌                 | Pollux                | 9.14° | Static =     |
 | Sirius                | trine △                       | Achernar              | 1.23° | Static =     |
@@ -892,6 +911,7 @@ Quito Subject — Natal Chart Report
 | Sirius                | semi-square semi-square       | Alcyone               | 0.91° | Static =     |
 | Sirius                | trine △                       | Alphecca              | 1.78° | Static =     |
 | Sirius                | square □                      | Algorab               | 0.62° | Static =     |
+| Sirius                | quintile Q                    | Alkaid                | 0.86° | Static =     |
 | Fomalhaut             | trine △                       | Betelgeuse            | 5.11° | Static =     |
 | Fomalhaut             | conjunction ☌                 | Deneb                 | 1.47° | Static =     |
 | Fomalhaut             | square □                      | Alcyone               | 3.87° | Static =     |
@@ -900,20 +920,24 @@ Quito Subject — Natal Chart Report
 | Algol                 | trine △                       | Altair                | 5.62° | Static =     |
 | Algol                 | conjunction ☌                 | Alcyone               | 3.82° | Static =     |
 | Algol                 | square □                      | Deneb Algedi          | 2.62° | Static =     |
+| Algol                 | trine △                       | Alkaid                | 0.77° | Static =     |
 | Betelgeuse            | trine △                       | Arcturus              | 4.51° | Static =     |
 | Betelgeuse            | trine △                       | Deneb                 | 6.59° | Static =     |
 | Betelgeuse            | conjunction ☌                 | Capella               | 6.90° | Static =     |
 | Betelgeuse            | trine △                       | Deneb Algedi          | 5.20° | Static =     |
+| Betelgeuse            | square □                      | Alkaid                | 1.82° | Static =     |
 | Canopus               | conjunction ☌                 | Pollux                | 8.27° | Static =     |
 | Canopus               | trine △                       | Achernar              | 0.37° | Static =     |
 | Canopus               | opposition ☍                  | Vega                  | 0.39° | Static =     |
 | Canopus               | semi-square semi-square       | Alcyone               | 0.05° | Static =     |
 | Canopus               | trine △                       | Alphecca              | 2.64° | Static =     |
 | Canopus               | square □                      | Algorab               | 1.49° | Static =     |
+| Canopus               | quintile Q                    | Alkaid                | 0.01° | Static =     |
 | Procyon               | square □                      | Arcturus              | 1.55° | Static =     |
 | Procyon               | conjunction ☌                 | Pollux                | 2.57° | Static =     |
 | Procyon               | opposition ☍                  | Altair                | 6.00° | Static =     |
 | Procyon               | sextile ⚹                     | Alcyone               | 4.21° | Static =     |
+| Procyon               | sextile ⚹                     | Alkaid                | 1.15° | Static =     |
 | Arcturus              | square □                      | Pollux                | 1.02° | Static =     |
 | Arcturus              | trine △                       | Rigel                 | 7.41° | Static =     |
 | Arcturus              | trine △                       | Capella               | 2.39° | Static =     |
@@ -923,10 +947,12 @@ Quito Subject — Natal Chart Report
 | Pollux                | trine △                       | Achernar              | 7.90° | Static =     |
 | Pollux                | opposition ☍                  | Vega                  | 7.89° | Static =     |
 | Pollux                | quincunx ⚻                    | Deneb Algedi          | 0.33° | Static =     |
+| Pollux                | sextile ⚹                     | Alkaid                | 3.72° | Static =     |
 | Deneb                 | conjunction ☌                 | Achernar              | 9.98° | Static =     |
 | Deneb                 | trine △                       | Alphecca              | 6.97° | Static =     |
 | Altair                | sesquiquadrate sesquiquadrate | Rigel                 | 0.04° | Static =     |
 | Altair                | trine △                       | Alcyone               | 1.79° | Static =     |
+| Altair                | trine △                       | Alkaid                | 4.85° | Static =     |
 | Rigel                 | square □                      | Achernar              | 1.51° | Static =     |
 | Rigel                 | conjunction ☌                 | Capella               | 5.03° | Static =     |
 | Rigel                 | trine △                       | Algorab               | 3.37° | Static =     |
@@ -937,4 +963,6 @@ Quito Subject — Natal Chart Report
 | Vega                  | sesquiquadrate sesquiquadrate | Alcyone               | 0.34° | Static =     |
 | Vega                  | sextile ⚹                     | Alphecca              | 3.03° | Static =     |
 | Vega                  | square □                      | Algorab               | 1.87° | Static =     |
+| Alcyone               | trine △                       | Alkaid                | 3.05° | Static =     |
+| Alphecca              | semi-square semi-square       | Alkaid                | 0.37° | Static =     |
 +-----------------------+-------------------------------+-----------------------+-------+--------------+

@@ -519,6 +519,13 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS: Final[list[_CelestialPointSetting]] = [
         "element_points": 0,
         "label": "Deneb Algedi",
     },
+    {
+        "id": 62,
+        "name": "Alkaid",
+        "color": "var(--kerykeion-chart-color-alkaid)",
+        "element_points": 0,
+        "label": "Alkaid",
+    },
 ]
 
 
