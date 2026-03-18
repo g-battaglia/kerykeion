@@ -533,7 +533,7 @@ class AstrologicalSubjectFactory:
         - Asteroids: Ceres, Pallas, Juno, Vesta
         - Centaurs: Chiron, Pholus
         - Trans-Neptunian Objects: Eris, Sedna, Haumea, Makemake, Ixion, Orcus, Quaoar
-        - Fixed Stars: Regulus, Spica (extensible)
+        - Fixed Stars: 22 stars including Behenian stars, Royal Stars, and navigational stars
         - Arabic Parts: Pars Fortunae, Pars Spiritus, Pars Amoris, Pars Fidei
         - Special Points: Vertex, Anti-Vertex, Earth (for heliocentric charts)
         - House Cusps: All 12 houses with configurable house systems

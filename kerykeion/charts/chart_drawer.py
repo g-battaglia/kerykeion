@@ -1532,8 +1532,8 @@ class ChartDrawer:  # type: ignore[no-redef]
             element/quality distributions, and other analytical data. This is the ONLY source
             of chart information - no calculations are performed by ChartDrawer.
         theme (KerykeionChartTheme, optional):
-            CSS theme for the chart. Available: 'classic', 'dark', 'dark_high_contrast',
-            'light', 'light_high_contrast', 'strawberry'. If None, no styles applied.
+            CSS theme for the chart. Available: 'classic', 'dark', 'dark-high-contrast',
+            'light', 'strawberry', 'black-and-white'. If None, no styles applied.
             Defaults to 'classic'.
         double_chart_aspect_grid_type (Literal['list', 'table'], optional):
             Specifies rendering style for double-chart aspect grids. Defaults to 'list'.
