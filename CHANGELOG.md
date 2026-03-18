@@ -2,7 +2,7 @@
 
 ## 5.12.0
 
-_Unreleased_
+_2026-03-18_
 
 **New Features:**
 
@@ -49,7 +49,7 @@ _Unreleased_
 
 ## 5.11.0
 
-_Unreleased_
+_2026-03-18_
 
 **New Features:**
 

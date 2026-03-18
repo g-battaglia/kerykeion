@@ -260,6 +260,7 @@ DEFAULT_ACTIVE_POINTS: List[AstrologicalPoint] = [
     # "Alphecca",
     # "Algorab",
     # "Deneb_Algedi",
+    # "Alkaid",
     "Ascendant",
     "Medium_Coeli",
     "Descendant",
