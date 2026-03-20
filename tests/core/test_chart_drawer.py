@@ -510,6 +510,26 @@ class TestNatalChart:
         svg = ChartDrawer(data).generate_svg_string(minify=True)
         compare_chart_svg("John Lennon - Minified - Natal Chart.svg", svg)
 
+    def test_minified_transit_chart(self):
+        subj = _make_john("Minified Transit")
+        subj2 = _make_paul("Minified Transit")
+        data = ChartDataFactory.create_transit_chart_data(subj, subj2)
+        svg = ChartDrawer(data).generate_svg_string(minify=True)
+        assert svg.startswith("<"), "Minified SVG must start with an XML/SVG tag"
+        assert "<svgxmlns" not in svg, "SVG tag name must not merge with attributes"
+        assert "xmlns=" in svg, "SVG must contain xmlns attribute"
+        compare_chart_svg("John Lennon - Minified Transit - Transit Chart.svg", svg)
+
+    def test_minified_synastry_chart(self):
+        subj = _make_john("Minified Synastry")
+        subj2 = _make_paul("Minified Synastry")
+        data = ChartDataFactory.create_synastry_chart_data(subj, subj2)
+        svg = ChartDrawer(data).generate_svg_string(minify=True)
+        assert svg.startswith("<"), "Minified SVG must start with an XML/SVG tag"
+        assert "<svgxmlns" not in svg, "SVG tag name must not merge with attributes"
+        assert "xmlns=" in svg, "SVG must contain xmlns attribute"
+        compare_chart_svg("John Lennon - Minified Synastry - Synastry Chart.svg", svg)
+
     def test_dark_theme_natal_chart(self):
         subj = _make_john("Dark Theme")
         data = ChartDataFactory.create_natal_chart_data(subj)

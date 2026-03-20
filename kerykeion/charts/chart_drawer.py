@@ -4,6 +4,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import logging
+import re
 from copy import deepcopy
 from math import ceil
 from datetime import datetime
@@ -3738,7 +3739,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         Returns:
             str: The processed SVG template.
         """
-        if remove_css_variables or minify:
+        if remove_css_variables:
             template = inline_css_variables_in_svg(template)
 
         if minify:
@@ -3750,9 +3751,10 @@ class ChartDrawer:  # type: ignore[no-redef]
                 # attributes).  Fall back to string-only minification.
                 pass
 
-            template = (
-                template.replace('"', "'").replace("\n", "").replace("\t", "").replace("    ", "").replace("  ", "")
-            )
+            template = template.replace('"', "'")
+            template = re.sub(r"\s+", " ", template)
+            template = re.sub(r">\s+<", "><", template)
+            template = template.strip()
         else:
             template = template.replace('"', "'")
 
