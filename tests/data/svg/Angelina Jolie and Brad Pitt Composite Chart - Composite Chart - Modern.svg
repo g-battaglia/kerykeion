@@ -249,75 +249,74 @@
             <g kr:node='Background_Circle'>
                 <g transform='scale(4.8000)'>
 <g kr:node='ModernHoroscope' transform='rotate(-90 50.0 50.0)'>
-<mask id='ring-zodiac-bg'><circle fill='white' r='50.0' cx='50.0' cy='50.0'/><circle fill='black' r='46.0' cx='50.0' cy='50.0'/></mask>
-<g kr:node='ZodiacBackgrounds' mask='url(#ring-zodiac-bg)'>
-  <polygon points='50.0,50.0 40.204714,149.519106 66.295920,148.663281 91.276586,141.083717' fill='var(--kerykeion-modern-zodiac-bg-0)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+<g kr:node='ZodiacBackgrounds'>
+  <path d='M 45.102357,99.759553 A 50.0,50.0 0 0,0 70.638293,95.541858 L 68.987229,91.898510 A 46.0,46.0 0 0,1 45.494168,95.778789 Z' fill='var(--kerykeion-modern-zodiac-bg-0)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-189.378701 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(279.378701) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Ari' />
     </g>
   </g>
-  <polygon points='50.0,50.0 91.276586,141.083717 113.444321,127.296948 131.288430,108.242520' fill='var(--kerykeion-modern-zodiac-bg-1)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <path d='M 70.638293,95.541858 A 50.0,50.0 0 0,0 90.644215,79.121260 L 87.392678,76.791559 A 46.0,46.0 0 0,1 68.987229,91.898510 Z' fill='var(--kerykeion-modern-zodiac-bg-1)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-219.378701 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(309.378701) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Tau' />
     </g>
   </g>
-  <polygon points='50.0,50.0 131.288430,108.242520 143.592868,85.218960 149.519106,59.795286' fill='var(--kerykeion-modern-zodiac-bg-2)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <path d='M 90.644215,79.121260 A 50.0,50.0 0 0,0 99.759553,54.897643 L 95.778789,54.505832 A 46.0,46.0 0 0,1 87.392678,76.791559 Z' fill='var(--kerykeion-modern-zodiac-bg-2)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-249.378701 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(339.378701) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Gem' />
     </g>
   </g>
-  <polygon points='50.0,50.0 149.519106,59.795286 148.663281,33.704080 141.083717,8.723414' fill='var(--kerykeion-modern-zodiac-bg-3)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <path d='M 99.759553,54.897643 A 50.0,50.0 0 0,0 95.541858,29.361707 L 91.898510,31.012771 A 46.0,46.0 0 0,1 95.778789,54.505832 Z' fill='var(--kerykeion-modern-zodiac-bg-3)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-279.378701 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(369.378701) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Can' />
     </g>
   </g>
-  <polygon points='50.0,50.0 141.083717,8.723414 127.296948,-13.444321 108.242520,-31.288430' fill='var(--kerykeion-modern-zodiac-bg-4)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <path d='M 95.541858,29.361707 A 50.0,50.0 0 0,0 79.121260,9.355785 L 76.791559,12.607322 A 46.0,46.0 0 0,1 91.898510,31.012771 Z' fill='var(--kerykeion-modern-zodiac-bg-4)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-309.378701 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(399.378701) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Leo' />
     </g>
   </g>
-  <polygon points='50.0,50.0 108.242520,-31.288430 85.218960,-43.592868 59.795286,-49.519106' fill='var(--kerykeion-modern-zodiac-bg-5)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <path d='M 79.121260,9.355785 A 50.0,50.0 0 0,0 54.897643,0.240447 L 54.505832,4.221211 A 46.0,46.0 0 0,1 76.791559,12.607322 Z' fill='var(--kerykeion-modern-zodiac-bg-5)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-339.378701 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(429.378701) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Vir' />
     </g>
   </g>
-  <polygon points='50.0,50.0 59.795286,-49.519106 33.704080,-48.663281 8.723414,-41.083717' fill='var(--kerykeion-modern-zodiac-bg-6)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <path d='M 54.897643,0.240447 A 50.0,50.0 0 0,0 29.361707,4.458142 L 31.012771,8.101490 A 46.0,46.0 0 0,1 54.505832,4.221211 Z' fill='var(--kerykeion-modern-zodiac-bg-6)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-9.378701 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(99.378701) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Lib' />
     </g>
   </g>
-  <polygon points='50.0,50.0 8.723414,-41.083717 -13.444321,-27.296948 -31.288430,-8.242520' fill='var(--kerykeion-modern-zodiac-bg-7)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <path d='M 29.361707,4.458142 A 50.0,50.0 0 0,0 9.355785,20.878740 L 12.607322,23.208441 A 46.0,46.0 0 0,1 31.012771,8.101490 Z' fill='var(--kerykeion-modern-zodiac-bg-7)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-39.378701 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(129.378701) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Sco' />
     </g>
   </g>
-  <polygon points='50.0,50.0 -31.288430,-8.242520 -43.592868,14.781040 -49.519106,40.204714' fill='var(--kerykeion-modern-zodiac-bg-8)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <path d='M 9.355785,20.878740 A 50.0,50.0 0 0,0 0.240447,45.102357 L 4.221211,45.494168 A 46.0,46.0 0 0,1 12.607322,23.208441 Z' fill='var(--kerykeion-modern-zodiac-bg-8)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-69.378701 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(159.378701) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Sag' />
     </g>
   </g>
-  <polygon points='50.0,50.0 -49.519106,40.204714 -48.663281,66.295920 -41.083717,91.276586' fill='var(--kerykeion-modern-zodiac-bg-9)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <path d='M 0.240447,45.102357 A 50.0,50.0 0 0,0 4.458142,70.638293 L 8.101490,68.987229 A 46.0,46.0 0 0,1 4.221211,45.494168 Z' fill='var(--kerykeion-modern-zodiac-bg-9)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-99.378701 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(189.378701) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Cap' />
     </g>
   </g>
-  <polygon points='50.0,50.0 -41.083717,91.276586 -27.296948,113.444321 -8.242520,131.288430' fill='var(--kerykeion-modern-zodiac-bg-10)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <path d='M 4.458142,70.638293 A 50.0,50.0 0 0,0 20.878740,90.644215 L 23.208441,87.392678 A 46.0,46.0 0 0,1 8.101490,68.987229 Z' fill='var(--kerykeion-modern-zodiac-bg-10)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-129.378701 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(219.378701) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Aqu' />
     </g>
   </g>
-  <polygon points='50.0,50.0 -8.242520,131.288430 14.781040,143.592868 40.204714,149.519106' fill='var(--kerykeion-modern-zodiac-bg-11)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
+  <path d='M 20.878740,90.644215 A 50.0,50.0 0 0,0 45.102357,99.759553 L 45.494168,95.778789 A 46.0,46.0 0 0,1 23.208441,87.392678 Z' fill='var(--kerykeion-modern-zodiac-bg-11)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-159.378701 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(249.378701) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Pis' />
@@ -327,14 +326,9 @@
   <circle r='50.0' cx='50.0' cy='50.0' fill='none' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.15'/>
 </g>
 <g transform='translate(4.000000 4.000000) scale(0.920000)'>
-<mask id='ring-0-19.5'><circle fill='white' r='19.5' cx='50.0' cy='50.0'/><circle fill='black' r='0' cx='50.0' cy='50.0'/></mask>
-<mask id='ring-19.5-22'><circle fill='white' r='22.0' cx='50.0' cy='50.0'/><circle fill='black' r='19.5' cx='50.0' cy='50.0'/></mask>
-<mask id='ring-22-43.5'><circle fill='white' r='43.5' cx='50.0' cy='50.0'/><circle fill='black' r='22.0' cx='50.0' cy='50.0'/></mask>
-<mask id='ring-43.5-44.5'><circle fill='white' r='44.5' cx='50.0' cy='50.0'/><circle fill='black' r='43.5' cx='50.0' cy='50.0'/></mask>
-<mask id='ring-44.5-50'><circle fill='white' r='50.0' cx='50.0' cy='50.0'/><circle fill='black' r='44.5' cx='50.0' cy='50.0'/></mask>
 <circle fill='var(--kerykeion-chart-color-paper-1, #ffffff)' r='50.0' cx='50.0' cy='50.0' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.15'/>
 <g kr:node='CuspRing'>
-<circle r='50.0' cx='50.0' cy='50.0' fill='var(--kerykeion-chart-color-paper-1, #ffffff)' mask='url(#ring-44.5-50)'/>
+<path d='M 0.0,50.0 A 50.0,50.0 0 1,1 100.0,50.0 A 50.0,50.0 0 1,1 0.0,50.0 M 5.5,50.0 A 44.5,44.5 0 1,1 94.5,50.0 A 44.5,44.5 0 1,1 5.5,50.0 Z' fill='var(--kerykeion-chart-color-paper-1, #ffffff)' fill-rule='evenodd'/>
   <g kr:node='Cusp' kr:absoluteposition='185.62129946761763' kr:signposition='5.621299467617632' kr:sign='Lib' kr:slug='First_House' transform='rotate(-0.000000 50.0 50.0)'>
     <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='var(--kerykeion-chart-color-paper-0, #333333)' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(94.669000 50.0 2.75)'>37'</text>
     <g transform='translate(50.0 2.75) rotate(90.000000) scale(0.108) translate(-16 -16)'>
@@ -421,13 +415,13 @@
   </g>
 </g>
 <g kr:node='RulerRing'>
-<circle r='44.5' cx='50.0' cy='50.0' fill='var(--kerykeion-chart-color-paper-1, #ffffff)' mask='url(#ring-43.5-44.5)' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.2'/>
+<path d='M 5.5,50.0 A 44.5,44.5 0 1,1 94.5,50.0 A 44.5,44.5 0 1,1 5.5,50.0 M 6.5,50.0 A 43.5,43.5 0 1,1 93.5,50.0 A 43.5,43.5 0 1,1 6.5,50.0 Z' fill='var(--kerykeion-chart-color-paper-1, #ffffff)' fill-rule='evenodd' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.2'/>
 <circle r='43.65' cx='50.0' cy='50.0' fill='none' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-dasharray='0.0975 0.664336' stroke-width='0.3'/>
 <circle r='43.85' cx='50.0' cy='50.0' fill='none' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-dasharray='0.1300 3.696634' stroke-width='0.7'/>
 <circle r='44.0' cx='50.0' cy='50.0' fill='none' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-dasharray='0.2600 7.419449' stroke-width='1'/>
 </g>
 <g kr:node='PlanetRing'>
-<circle r='43.5' cx='50.0' cy='50.0' fill='var(--kerykeion-modern-planet-ring, #e8e8ed)' mask='url(#ring-22-43.5)' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.25'/>
+<path d='M 6.5,50.0 A 43.5,43.5 0 1,1 93.5,50.0 A 43.5,43.5 0 1,1 6.5,50.0 M 28.0,50.0 A 22.0,22.0 0 1,1 72.0,50.0 A 22.0,22.0 0 1,1 28.0,50.0 Z' fill='var(--kerykeion-modern-planet-ring, #e8e8ed)' fill-rule='evenodd' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.25'/>
 <line x1='50.0' y1='6.5' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
 <line x1='50.0' y1='6.5' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-27.295435 50.0 50.0)'/>
 <line x1='50.0' y1='6.5' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-58.618643 50.0 50.0)'/>
@@ -676,7 +670,7 @@
 </g>
 </g>
 <g kr:node='HouseRing'>
-<circle r='22.0' cx='50.0' cy='50.0' fill='var(--kerykeion-modern-house-ring, #d5d5dd)' mask='url(#ring-19.5-22)'/>
+<path d='M 28.0,50.0 A 22.0,22.0 0 1,1 72.0,50.0 A 22.0,22.0 0 1,1 28.0,50.0 M 30.5,50.0 A 19.5,19.5 0 1,1 69.5,50.0 A 19.5,19.5 0 1,1 30.5,50.0 Z' fill='var(--kerykeion-modern-house-ring, #d5d5dd)' fill-rule='evenodd'/>
 <line x1='50.0' y1='28.0' x2='50.0' y2='31.5' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
 <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='var(--kerykeion-chart-color-paper-0, #333333)' font-weight='500' transform='rotate(-13.647717 50.0 50.0) rotate(103.647717 50.0 29.25)'>1</text>
 <line x1='50.0' y1='28.0' x2='50.0' y2='31.5' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-27.295435 50.0 50.0)'/>
@@ -703,7 +697,7 @@
 <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='var(--kerykeion-chart-color-paper-0, #333333)' font-weight='500' transform='rotate(-347.002543 50.0 50.0) rotate(437.002543 50.0 29.25)'>12</text>
 </g>
 <g kr:node='AspectCore'>
-<circle r='19.5' cx='50.0' cy='50.0' fill='var(--kerykeion-chart-color-paper-1, #ffffff)' mask='url(#ring-0-19.5)'/>
+<path d='M 30.5,50.0 A 19.5,19.5 0 1,1 69.5,50.0 A 19.5,19.5 0 1,1 30.5,50.0 Z' fill='var(--kerykeion-chart-color-paper-1, #ffffff)' fill-rule='evenodd'/>
 <g kr:node='Aspect' kr:aspectname='opposition' kr:to='Sun' kr:tooriginaldegrees='349.64198904468236' kr:from='Pluto' kr:fromoriginaldegrees='175.37595955472713' kr:orb='5.73397051004477' kr:aspectdegrees='180' kr:planetsdiff='174.26602948995523' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='35.491461' y1='100.666332' x2='59.373888' y2='-1.862367' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
   <g transform='translate(47.432674 49.401982) rotate(90) scale(0.45) translate(-5 -5)'>

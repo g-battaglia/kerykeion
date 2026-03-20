@@ -241,14 +241,8 @@
                 <g transform='scale(4.8000)'>
 <g kr:node='ModernDualHoroscope' kr:charttype='Synastry' transform='rotate(-90 50.0 50.0)'>
 <circle fill='var(--kerykeion-chart-color-paper-1, #ffffff)' r='50.0' cx='50.0' cy='50.0' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.15'/>
-<mask id='ring-0-12.5'><circle fill='white' r='12.5' cx='50.0' cy='50.0'/><circle fill='black' r='0' cx='50.0' cy='50.0'/></mask>
-<mask id='ring-12.5-15.5'><circle fill='white' r='15.5' cx='50.0' cy='50.0'/><circle fill='black' r='12.5' cx='50.0' cy='50.0'/></mask>
-<mask id='ring-15.5-29.5'><circle fill='white' r='29.5' cx='50.0' cy='50.0'/><circle fill='black' r='15.5' cx='50.0' cy='50.0'/></mask>
-<mask id='ring-29.5-43.5'><circle fill='white' r='43.5' cx='50.0' cy='50.0'/><circle fill='black' r='29.5' cx='50.0' cy='50.0'/></mask>
-<mask id='ring-43.5-44.5'><circle fill='white' r='44.5' cx='50.0' cy='50.0'/><circle fill='black' r='43.5' cx='50.0' cy='50.0'/></mask>
-<mask id='ring-44.5-50'><circle fill='white' r='50.0' cx='50.0' cy='50.0'/><circle fill='black' r='44.5' cx='50.0' cy='50.0'/></mask>
 <g kr:node='CuspRing'>
-<circle r='50.0' cx='50.0' cy='50.0' fill='var(--kerykeion-chart-color-paper-1, #ffffff)' mask='url(#ring-44.5-50)'/>
+<path d='M 0.0,50.0 A 50.0,50.0 0 1,1 100.0,50.0 A 50.0,50.0 0 1,1 0.0,50.0 M 5.5,50.0 A 44.5,44.5 0 1,1 94.5,50.0 A 44.5,44.5 0 1,1 5.5,50.0 Z' fill='var(--kerykeion-chart-color-paper-1, #ffffff)' fill-rule='evenodd'/>
   <g kr:node='Cusp' kr:absoluteposition='19.746766239480017' kr:signposition='19.746766239480017' kr:sign='Ari' kr:slug='First_House' transform='rotate(-0.000000 50.0 50.0)'>
     <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='var(--kerykeion-chart-color-paper-0, #333333)' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(94.669000 50.0 2.75)'>44'</text>
     <g transform='translate(50.0 2.75) rotate(90.000000) scale(0.108) translate(-16 -16)'>
@@ -341,13 +335,13 @@
 </g>
 </g>
 <g kr:node='RulerRing'>
-<circle r='44.5' cx='50.0' cy='50.0' fill='var(--kerykeion-chart-color-paper-1, #ffffff)' mask='url(#ring-43.5-44.5)' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.2'/>
+<path d='M 5.5,50.0 A 44.5,44.5 0 1,1 94.5,50.0 A 44.5,44.5 0 1,1 5.5,50.0 M 6.5,50.0 A 43.5,43.5 0 1,1 93.5,50.0 A 43.5,43.5 0 1,1 6.5,50.0 Z' fill='var(--kerykeion-chart-color-paper-1, #ffffff)' fill-rule='evenodd' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.2'/>
 <circle r='43.65' cx='50.0' cy='50.0' fill='none' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-dasharray='0.0975 0.664336' stroke-width='0.3'/>
 <circle r='43.85' cx='50.0' cy='50.0' fill='none' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-dasharray='0.1300 3.696634' stroke-width='0.7'/>
 <circle r='44.0' cx='50.0' cy='50.0' fill='none' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-dasharray='0.2600 7.419449' stroke-width='1'/>
 </g>
 <g kr:node='PlanetRing' kr:horoscope='1'>
-<circle r='43.5' cx='50.0' cy='50.0' fill='var(--kerykeion-modern-planet-ring-outer, #d8d9e4)' mask='url(#ring-29.5-43.5)' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.25'/>
+<path d='M 6.5,50.0 A 43.5,43.5 0 1,1 93.5,50.0 A 43.5,43.5 0 1,1 6.5,50.0 M 20.5,50.0 A 29.5,29.5 0 1,1 79.5,50.0 A 29.5,29.5 0 1,1 20.5,50.0 Z' fill='var(--kerykeion-modern-planet-ring-outer, #d8d9e4)' fill-rule='evenodd' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.25'/>
 <line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
 <line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-39.792589 50.0 50.0)'/>
 <line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-60.492259 50.0 50.0)'/>
@@ -599,7 +593,7 @@
 </g>
 </g>
 <g kr:node='PlanetRing' kr:horoscope='0'>
-<circle r='29.5' cx='50.0' cy='50.0' fill='var(--kerykeion-modern-planet-ring, #e8e8ed)' mask='url(#ring-15.5-29.5)' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.25'/>
+<path d='M 20.5,50.0 A 29.5,29.5 0 1,1 79.5,50.0 A 29.5,29.5 0 1,1 20.5,50.0 M 34.5,50.0 A 15.5,15.5 0 1,1 65.5,50.0 A 15.5,15.5 0 1,1 34.5,50.0 Z' fill='var(--kerykeion-modern-planet-ring, #e8e8ed)' fill-rule='evenodd' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.25'/>
 <line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
 <line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-39.792589 50.0 50.0)'/>
 <line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-60.492259 50.0 50.0)'/>
@@ -851,7 +845,7 @@
 </g>
 </g>
 <g kr:node='HouseRing'>
-<circle r='15.5' cx='50.0' cy='50.0' fill='var(--kerykeion-modern-house-ring, #d5d5dd)' mask='url(#ring-12.5-15.5)'/>
+<path d='M 34.5,50.0 A 15.5,15.5 0 1,1 65.5,50.0 A 15.5,15.5 0 1,1 34.5,50.0 M 37.5,50.0 A 12.5,12.5 0 1,1 62.5,50.0 A 12.5,12.5 0 1,1 37.5,50.0 Z' fill='var(--kerykeion-modern-house-ring, #d5d5dd)' fill-rule='evenodd'/>
 <line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
 <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='var(--kerykeion-chart-color-paper-0, #333333)' font-weight='500' transform='rotate(-19.896294 50.0 50.0) rotate(109.896294 50.0 36.0)'>1</text>
 <line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-39.792589 50.0 50.0)'/>
@@ -878,7 +872,7 @@
 <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='var(--kerykeion-chart-color-paper-0, #333333)' font-weight='500' transform='rotate(-331.179327 50.0 50.0) rotate(421.179327 50.0 36.0)'>12</text>
 </g>
 <g kr:node='AspectCore'>
-<circle r='12.5' cx='50.0' cy='50.0' fill='var(--kerykeion-chart-color-paper-1, #ffffff)' mask='url(#ring-0-12.5)'/>
+<path d='M 37.5,50.0 A 12.5,12.5 0 1,1 62.5,50.0 A 12.5,12.5 0 1,1 37.5,50.0 Z' fill='var(--kerykeion-chart-color-paper-1, #ffffff)' fill-rule='evenodd'/>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Sun' kr:tooriginaldegrees='196.26789199498288' kr:from='Moon' kr:fromoriginaldegrees='138.2002264527915' kr:orb='1.9323344578086221' kr:aspectdegrees='60' kr:planetsdiff='58.06766554219138' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='47.949983' y1='83.721528' x2='20.297148' y2='66.096107' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
   <g transform='translate(34.123566 74.908818) rotate(90) scale(0.45) translate(-5 -5)'>

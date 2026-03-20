@@ -263,58 +263,31 @@ def _zodiac_to_wheel_angle(
 
 
 # =============================================================================
-# RING MASK DEFINITIONS
+# ANNULUS PATH HELPER (replaces SVG masks for CSS-transform compatibility)
 # =============================================================================
 
 
-def _draw_ring_masks() -> str:
-    """Generate SVG mask definitions for all concentric rings."""
-    masks = [
-        (0, R_ASPECT),  # Aspect core
-        (R_HOUSE_INNER, R_HOUSE_OUTER),  # House ring
-        (R_PLANET_INNER, R_PLANET_OUTER),  # Planet ring
-        (R_RULER_INNER, R_RULER_OUTER),  # Ruler ring
-        (R_CUSP_INNER, R_CUSP_OUTER),  # Cusp ring
-    ]
-    out = ""
-    for inner_r, outer_r in masks:
-        out += (
-            f'<mask id="ring-{inner_r:g}-{outer_r:g}">'
-            f'<circle fill="white" r="{outer_r}" cx="{CENTER}" cy="{CENTER}"/>'
-            f'<circle fill="black" r="{inner_r}" cx="{CENTER}" cy="{CENTER}"/>'
-            f"</mask>\n"
-        )
-    return out
+def _annulus_path(outer_r: float, inner_r: float) -> str:
+    """Return SVG path data for an annulus (donut) centered at CENTER.
 
-
-def _draw_synastry_ring_masks() -> str:
-    """Generate SVG mask definitions for the flat synastry dual-ring layout.
-
-    Six concentric rings instead of the natal five:
-        ring-0-12.5       Aspect core
-        ring-12.5-15.5    House number ring
-        ring-15.5-29.5    Inner planet ring (Subject 1)
-        ring-29.5-43.5    Outer planet ring (Subject 2)
-        ring-43.5-44.5    Ruler ring
-        ring-44.5-50      Cusp ring
+    Uses two concentric circle subpaths with fill-rule='evenodd' to create
+    the ring shape geometrically, without SVG masks.
     """
-    masks = [
-        (0, SYN_R_ASPECT),  # ring-0-12.5
-        (SYN_R_HOUSE_INNER, SYN_R_HOUSE_OUTER),  # ring-12.5-15.5
-        (SYN_R_INNER_PLANET_INNER, SYN_R_INNER_PLANET_OUTER),  # ring-15.5-29.5
-        (SYN_R_OUTER_PLANET_INNER, SYN_R_OUTER_PLANET_OUTER),  # ring-29.5-43.5
-        (R_RULER_INNER, R_RULER_OUTER),  # ring-43.5-44.5
-        (R_CUSP_INNER, R_CUSP_OUTER),  # ring-44.5-50
-    ]
-    out = ""
-    for inner_r, outer_r in masks:
-        out += (
-            f'<mask id="ring-{inner_r:g}-{outer_r:g}">'
-            f'<circle fill="white" r="{outer_r}" cx="{CENTER}" cy="{CENTER}"/>'
-            f'<circle fill="black" r="{inner_r}" cx="{CENTER}" cy="{CENTER}"/>'
-            f"</mask>\n"
+    # Outer circle: two semicircular arcs
+    d = (
+        f"M {CENTER - outer_r},{CENTER} "
+        f"A {outer_r},{outer_r} 0 1,1 {CENTER + outer_r},{CENTER} "
+        f"A {outer_r},{outer_r} 0 1,1 {CENTER - outer_r},{CENTER} "
+    )
+    if inner_r > 0:
+        # Inner circle: two semicircular arcs (evenodd punches the hole)
+        d += (
+            f"M {CENTER - inner_r},{CENTER} "
+            f"A {inner_r},{inner_r} 0 1,1 {CENTER + inner_r},{CENTER} "
+            f"A {inner_r},{inner_r} 0 1,1 {CENTER - inner_r},{CENTER} "
         )
-    return out
+    d += "Z"
+    return d
 
 
 # =============================================================================
@@ -342,20 +315,13 @@ def _draw_zodiac_background_ring(seventh_house_degree_ut: float) -> str:
     Draw the fully colored zodiac background wedges in the outermost ring,
     with zodiac sign glyphs centered in each wedge.
 
-    These are 12 pie slices corresponding to the 12 zodiac signs,
-    masked to the R_ZODIAC_BG_INNER to R_ZODIAC_BG_OUTER annulus.
+    Each wedge is an annular sector <path> (arc from R_ZODIAC_BG_INNER to
+    R_ZODIAC_BG_OUTER), geometrically confined to the ring without masks.
     Each slice is colored using the CSS variable --kerykeion-chart-color-zodiac-bg-N.
     Each wedge also gets a zodiac sign glyph at its center.
     """
-    # Mask definition for the outer ring
-    out = (
-        f'<mask id="ring-zodiac-bg">'
-        f'<circle fill="white" r="{R_ZODIAC_BG_OUTER}" cx="{CENTER}" cy="{CENTER}"/>'
-        f'<circle fill="black" r="{R_ZODIAC_BG_INNER}" cx="{CENTER}" cy="{CENTER}"/>'
-        f"</mask>\n"
-    )
-
-    out += '<g kr:node="ZodiacBackgrounds" mask="url(#ring-zodiac-bg)">\n'
+    # No mask — each wedge is geometrically confined to the annulus
+    out = '<g kr:node="ZodiacBackgrounds">\n'
 
     # Midpoint radius for glyph placement
     r_mid = (R_ZODIAC_BG_INNER + R_ZODIAC_BG_OUTER) / 2.0
@@ -363,33 +329,44 @@ def _draw_zodiac_background_ring(seventh_house_degree_ut: float) -> str:
 
     for sign_num in range(12):
         start_abs = sign_num * 30.0
+        end_abs = start_abs + 30.0
         mid_abs = start_abs + 15.0  # Center of the 30° wedge
 
+        # Angles converted to wheel coordinates
+        start_angle = _zodiac_to_wheel_angle(start_abs, seventh_house_degree_ut)
+        end_angle = _zodiac_to_wheel_angle(end_abs, seventh_house_degree_ut)
         mid_angle = _zodiac_to_wheel_angle(mid_abs, seventh_house_degree_ut)
 
         color = f"var(--kerykeion-modern-zodiac-bg-{sign_num})"
 
-        # Draw a polygon wedge covering the 30° sector for this sign.
-        # The ring mask clips it to the annulus.
-        #
-        # IMPORTANT: SVG rotate() treats 0° as 12 o'clock (top), but
-        # cos/sin put 0° at 3 o'clock. Subtract 90° to align the polygon
-        # coordinates with the SVG rotation used by the glyphs.
-        half = 15.0
-        a1_rad = math.radians(-(mid_angle - half) - 90)
-        a2_rad = math.radians(-(mid_angle + half) - 90)
-        mid_rad = math.radians(-mid_angle - 90)
-        far = R_ZODIAC_BG_OUTER * 2  # overshoot; mask clips it
-        fx1 = CENTER + far * math.cos(a1_rad)
-        fy1 = CENTER + far * math.sin(a1_rad)
-        fx2 = CENTER + far * math.cos(a2_rad)
-        fy2 = CENTER + far * math.sin(a2_rad)
-        fmx = CENTER + far * math.cos(mid_rad)
-        fmy = CENTER + far * math.sin(mid_rad)
+        # Convert wheel angles to radians for cos/sin.
+        # The parent group has rotate(-90), so we subtract 90 to align.
+        a_start_rad = math.radians(-start_angle - 90)
+        a_end_rad = math.radians(-end_angle - 90)
+
+        # 4 points of the annular sector
+        ox1 = CENTER + R_ZODIAC_BG_OUTER * math.cos(a_start_rad)  # outer start
+        oy1 = CENTER + R_ZODIAC_BG_OUTER * math.sin(a_start_rad)
+        ox2 = CENTER + R_ZODIAC_BG_OUTER * math.cos(a_end_rad)  # outer end
+        oy2 = CENTER + R_ZODIAC_BG_OUTER * math.sin(a_end_rad)
+        ix1 = CENTER + R_ZODIAC_BG_INNER * math.cos(a_end_rad)  # inner end (reversed)
+        iy1 = CENTER + R_ZODIAC_BG_INNER * math.sin(a_end_rad)
+        ix2 = CENTER + R_ZODIAC_BG_INNER * math.cos(a_start_rad)  # inner start
+        iy2 = CENTER + R_ZODIAC_BG_INNER * math.sin(a_start_rad)
+
+        # SVG arc path: annular sector of 30 degrees
+        # M  outer_start
+        # A  outer arc (r=R_ZODIAC_BG_OUTER) 30deg, sweep clockwise
+        # L  inner_end
+        # A  inner arc (r=R_ZODIAC_BG_INNER) 30deg, sweep counter-clockwise
+        # Z  close
         out += (
-            f'  <polygon points="{CENTER},{CENTER} '
-            f"{fx1:.6f},{fy1:.6f} {fmx:.6f},{fmy:.6f} "
-            f'{fx2:.6f},{fy2:.6f}" '
+            f'  <path d="'
+            f"M {ox1:.6f},{oy1:.6f} "
+            f"A {R_ZODIAC_BG_OUTER},{R_ZODIAC_BG_OUTER} 0 0,0 {ox2:.6f},{oy2:.6f} "
+            f"L {ix1:.6f},{iy1:.6f} "
+            f"A {R_ZODIAC_BG_INNER},{R_ZODIAC_BG_INNER} 0 0,1 {ix2:.6f},{iy2:.6f} "
+            f'Z" '
             f'fill="{color}" style="fill-opacity: {COLOR_ZODIAC_BG_OPACITY}" />\n'
         )
 
@@ -448,10 +425,7 @@ def _draw_cusp_ring(
     """
     out = '<g kr:node="CuspRing">\n'
 
-    out += (
-        f'<circle r="{R_CUSP_OUTER}" cx="{CENTER}" cy="{CENTER}" '
-        f'fill="{COLOR_BACKGROUND}" mask="url(#ring-{R_CUSP_INNER:g}-{R_CUSP_OUTER:g})"/>\n'
-    )
+    out += f'<path d="{_annulus_path(R_CUSP_OUTER, R_CUSP_INNER)}" fill="{COLOR_BACKGROUND}" fill-rule="evenodd"/>\n'
 
     for house in houses:
         cusp_angle = _zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut)
@@ -584,8 +558,8 @@ def _draw_ruler_ring() -> str:
     out = '<g kr:node="RulerRing">\n'
 
     out += (
-        f'<circle r="{R_RULER_OUTER}" cx="{CENTER}" cy="{CENTER}" '
-        f'fill="{COLOR_WHITE}" mask="url(#ring-{R_RULER_INNER:g}-{R_RULER_OUTER:g})" '
+        f'<path d="{_annulus_path(R_RULER_OUTER, R_RULER_INNER)}" '
+        f'fill="{COLOR_WHITE}" fill-rule="evenodd" '
         f'stroke="{COLOR_STROKE}" stroke-width="0.2"/>\n'
     )
 
@@ -824,8 +798,8 @@ def _draw_planet_ring(
     out = f'<g kr:node="PlanetRing"{horoscope_attr}>\n'
 
     out += (
-        f'<circle r="{ring_outer_r}" cx="{CENTER}" cy="{CENTER}" '
-        f'fill="{ring_fill_color}" mask="url(#ring-{ring_inner_r:g}-{ring_outer_r:g})" '
+        f'<path d="{_annulus_path(ring_outer_r, ring_inner_r)}" '
+        f'fill="{ring_fill_color}" fill-rule="evenodd" '
         f'stroke="{COLOR_STROKE}" stroke-width="0.25"/>\n'
     )
 
@@ -1088,10 +1062,7 @@ def _draw_house_ring(
     """
     out = '<g kr:node="HouseRing">\n'
 
-    out += (
-        f'<circle r="{house_outer_r}" cx="{CENTER}" cy="{CENTER}" '
-        f'fill="{COLOR_HOUSE_RING}" mask="url(#ring-{house_inner_r:g}-{house_outer_r:g})"/>\n'
-    )
+    out += f'<path d="{_annulus_path(house_outer_r, house_inner_r)}" fill="{COLOR_HOUSE_RING}" fill-rule="evenodd"/>\n'
 
     for i, house in enumerate(houses):
         house_num = i + 1
@@ -1179,10 +1150,7 @@ def _draw_aspect_core(
     """
     out = '<g kr:node="AspectCore">\n'
 
-    out += (
-        f'<circle r="{core_radius}" cx="{CENTER}" cy="{CENTER}" '
-        f'fill="{COLOR_BACKGROUND}" mask="url(#ring-0-{core_radius:g})"/>\n'
-    )
+    out += f'<path d="{_annulus_path(core_radius, 0)}" fill="{COLOR_BACKGROUND}" fill-rule="evenodd"/>\n'
 
     # Aspect color lookup
     color_map = {}
@@ -1328,7 +1296,6 @@ def draw_modern_horoscope(
         out += f'<g transform="translate({tx:.6f} {ty:.6f}) scale({s:.6f})">\n'
 
     # Full background circle
-    out += _draw_ring_masks()
     out += (
         f'<circle fill="{COLOR_BACKGROUND}" r="{R_CUSP_OUTER}" cx="{CENTER}" cy="{CENTER}" '
         f'stroke="{COLOR_STROKE}" stroke-width="0.15"/>\n'
@@ -1402,9 +1369,6 @@ def draw_modern_dual_horoscope(
 
     # Background circle
     out += f'<circle fill="{COLOR_BACKGROUND}" r="{R_CUSP_OUTER}" cx="{CENTER}" cy="{CENTER}" stroke="{COLOR_STROKE}" stroke-width="0.15"/>\n'
-
-    # Synastry-specific ring masks (6 rings instead of natal 5)
-    out += _draw_synastry_ring_masks()
 
     # ─── CUSP RING (Subject 1's houses — shared, not duplicated) ────
     out += _draw_cusp_ring(houses_1, seventh_house_degree_ut, show_zodiac_background_ring)
