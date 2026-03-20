@@ -3745,11 +3745,14 @@ class ChartDrawer:  # type: ignore[no-redef]
         if minify:
             try:
                 template = scourString(template)
-            except Exception:
+            except Exception as exc:
                 # scour may crash on complex SVG structures (e.g. NotFoundErr
                 # when moveCommonAttributesToParentGroup encounters style-based
                 # attributes).  Fall back to string-only minification.
-                pass
+                logging.warning(
+                    "scour failed on SVG minification, falling back to string-based minification: %s",
+                    exc,
+                )
 
             template = template.replace('"', "'")
             template = re.sub(r"\s+", " ", template)
