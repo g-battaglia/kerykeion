@@ -404,7 +404,7 @@ def _draw_zodiac_background_ring(seventh_house_degree_ut: float) -> str:
             f'    <g transform="translate({CENTER} {CENTER - r_mid}) '
             f"rotate({counter_rot:.6f}) "
             f'scale({glyph_scale}) translate(-16 -16)">\n'
-            f'      <use href="#{sign_id}" />\n'
+            f'      <use xlink:href="#{sign_id}" />\n'
             f"    </g>\n"
             f"  </g>\n"
         )
@@ -493,7 +493,7 @@ def _draw_cusp_ring(
             final_scale = 0.12 * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
             out += (
                 f'    <g transform="translate({CENTER} 2.75) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
-                f'      <use href="#{sign_abbrev}" fill="{COLOR_TEXT}" />\n'
+                f'      <use xlink:href="#{sign_abbrev}" fill="{COLOR_TEXT}" />\n'
                 f"    </g>\n"
             )
 
@@ -522,7 +522,7 @@ def _draw_cusp_ring(
             final_scale = 0.12 * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
             out += (
                 f'    <g transform="translate({CENTER} 2.75) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
-                f'      <use href="#{sign_abbrev}" fill="{COLOR_TEXT}" />\n'
+                f'      <use xlink:href="#{sign_abbrev}" fill="{COLOR_TEXT}" />\n'
                 f"    </g>\n"
             )
 
@@ -558,7 +558,7 @@ def _draw_cusp_ring(
                 out += (
                     f'<g transform="rotate(-{sign_angle:.6f} {CENTER} {CENTER}) '
                     f'translate({CENTER} 2.75) rotate({upright_angle:.6f}) scale({final_scale}) translate(-16 -16)">\n'
-                    f'  <use href="#{sign_abbrev}" fill="{COLOR_TEXT}"/>\n'
+                    f'  <use xlink:href="#{sign_abbrev}" fill="{COLOR_TEXT}"/>\n'
                     f"</g>\n"
                 )
 
@@ -975,7 +975,7 @@ def _draw_single_planet_in_ring(
     planet_scale = planet_scale_base * GLYPH_SCALE_MAP.get(planet_id, 1.0)
     out += (
         f'  <g transform="translate({CENTER} {glyph_y}) rotate({counter_rotation:.6f}) scale({planet_scale}) translate(-14 -14)">\n'
-        f'    <use href="#{planet_id}" kr:slug="{planet_id}" kr:node="Glyph" fill="{fill_color}" />\n'
+        f'    <use xlink:href="#{planet_id}" kr:slug="{planet_id}" kr:node="Glyph" fill="{fill_color}" />\n'
         f"  </g>\n"
     )
 
@@ -991,7 +991,7 @@ def _draw_single_planet_in_ring(
     sign_scale = sign_scale_base * ZODIAC_INNER_SCALE_MAP.get(sign, 1.0)
     out += (
         f'  <g transform="translate({CENTER} {sign_y}) rotate({counter_rotation:.6f}) scale({sign_scale}) translate(-16 -16)">\n'
-        f'    <use href="#{sign}" fill="{fill_color}" />\n'
+        f'    <use xlink:href="#{sign}" fill="{fill_color}" />\n'
         f"  </g>\n"
     )
 
@@ -1269,7 +1269,7 @@ def _draw_aspect_core(
             if should_render_icon:
                 out += (
                     f'  <g transform="translate({mx:.6f} {my:.6f}) rotate(90) scale(0.45) translate(-5 -5)">\n'
-                    f'    <use href="#{symbol_id}" fill="{color}"/>\n'
+                    f'    <use xlink:href="#{symbol_id}" fill="{color}"/>\n'
                     f"  </g>\n"
                 )
                 rendered_icon_positions.append((mx, my, aspect_degrees))
