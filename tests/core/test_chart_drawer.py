@@ -505,29 +505,32 @@ class TestNatalChart:
         compare_chart_svg("John Lennon - ExternalNatal - Natal Chart.svg", svg)
 
     def test_minified_natal_chart(self):
+        from tests.core.conftest import assert_svg_wellformed
+
         subj = _make_john("Minified")
         data = ChartDataFactory.create_natal_chart_data(subj)
         svg = ChartDrawer(data).generate_svg_string(minify=True)
+        assert_svg_wellformed(svg)
         compare_chart_svg("John Lennon - Minified - Natal Chart.svg", svg)
 
     def test_minified_transit_chart(self):
+        from tests.core.conftest import assert_svg_wellformed
+
         subj = _make_john("Minified Transit")
         subj2 = _make_paul("Minified Transit")
         data = ChartDataFactory.create_transit_chart_data(subj, subj2)
         svg = ChartDrawer(data).generate_svg_string(minify=True)
-        assert svg.startswith("<"), "Minified SVG must start with an XML/SVG tag"
-        assert "<svgxmlns" not in svg, "SVG tag name must not merge with attributes"
-        assert "xmlns=" in svg, "SVG must contain xmlns attribute"
+        assert_svg_wellformed(svg)
         compare_chart_svg("John Lennon - Minified Transit - Transit Chart.svg", svg)
 
     def test_minified_synastry_chart(self):
+        from tests.core.conftest import assert_svg_wellformed
+
         subj = _make_john("Minified Synastry")
         subj2 = _make_paul("Minified Synastry")
         data = ChartDataFactory.create_synastry_chart_data(subj, subj2)
         svg = ChartDrawer(data).generate_svg_string(minify=True)
-        assert svg.startswith("<"), "Minified SVG must start with an XML/SVG tag"
-        assert "<svgxmlns" not in svg, "SVG tag name must not merge with attributes"
-        assert "xmlns=" in svg, "SVG must contain xmlns attribute"
+        assert_svg_wellformed(svg)
         compare_chart_svg("John Lennon - Minified Synastry - Synastry Chart.svg", svg)
 
     def test_dark_theme_natal_chart(self):
@@ -2982,3 +2985,260 @@ class TestChartDrawerOverlappingPlanets:
         drawer = ChartDrawer(chart_data)
         svg = drawer.generate_svg_string()
         assert svg is not None
+
+
+# =============================================================================
+# SVG STRUCTURAL VALIDATION & ANTI-REGRESSION
+# =============================================================================
+
+
+class TestSvgWellformedness:
+    """Validate that every chart type produces well-formed, parseable SVG.
+
+    These tests exist specifically to prevent regressions like the
+    minification bug (commit b5e7013) that collapsed XML attribute spacing
+    and the CSS variable stripping (commit e288003) that broke consumer
+    restyling.  The key assertion — ``ElementTree.fromstring()`` — catches
+    any malformed XML regardless of the specific failure mode.
+
+    Each test covers:
+    1. Normal (non-minified) output
+    2. Minified output (where scour may crash on complex SVGs and the
+       string-based fallback must preserve attribute separation)
+    3. Minified + remove_css_variables output
+    """
+
+    @classmethod
+    def setup_class(cls):
+        cls.john = _make_john("SVG Validation")
+        cls.paul = _make_paul("SVG Validation")
+
+    # -- helpers --------------------------------------------------------------
+
+    @staticmethod
+    def _assert_wellformed(svg: str, *, expect_css_variables: bool = True) -> None:
+        from tests.core.conftest import assert_svg_wellformed
+
+        assert_svg_wellformed(svg, expect_css_variables=expect_css_variables)
+
+    def _get_drawer(self, chart_data):
+        return ChartDrawer(chart_data)
+
+    # ── Natal ────────────────────────────────────────────────────────────
+
+    def test_natal_normal_is_valid_xml(self):
+        data = ChartDataFactory.create_natal_chart_data(self.john)
+        svg = self._get_drawer(data).generate_svg_string()
+        self._assert_wellformed(svg)
+
+    def test_natal_minified_is_valid_xml(self):
+        data = ChartDataFactory.create_natal_chart_data(self.john)
+        svg = self._get_drawer(data).generate_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    def test_natal_minified_no_css_vars_is_valid_xml(self):
+        data = ChartDataFactory.create_natal_chart_data(self.john)
+        svg = self._get_drawer(data).generate_svg_string(minify=True, remove_css_variables=True)
+        self._assert_wellformed(svg, expect_css_variables=False)
+
+    # ── Transit (dual-wheel — scour fallback path) ───────────────────────
+
+    def test_transit_normal_is_valid_xml(self):
+        data = ChartDataFactory.create_transit_chart_data(self.john, self.paul)
+        svg = self._get_drawer(data).generate_svg_string()
+        self._assert_wellformed(svg)
+
+    def test_transit_minified_is_valid_xml(self):
+        data = ChartDataFactory.create_transit_chart_data(self.john, self.paul)
+        svg = self._get_drawer(data).generate_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    def test_transit_minified_no_css_vars_is_valid_xml(self):
+        data = ChartDataFactory.create_transit_chart_data(self.john, self.paul)
+        svg = self._get_drawer(data).generate_svg_string(minify=True, remove_css_variables=True)
+        self._assert_wellformed(svg, expect_css_variables=False)
+
+    # ── Synastry (dual-wheel — scour fallback path) ──────────────────────
+
+    def test_synastry_normal_is_valid_xml(self):
+        data = ChartDataFactory.create_synastry_chart_data(self.john, self.paul)
+        svg = self._get_drawer(data).generate_svg_string()
+        self._assert_wellformed(svg)
+
+    def test_synastry_minified_is_valid_xml(self):
+        data = ChartDataFactory.create_synastry_chart_data(self.john, self.paul)
+        svg = self._get_drawer(data).generate_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    def test_synastry_minified_no_css_vars_is_valid_xml(self):
+        data = ChartDataFactory.create_synastry_chart_data(self.john, self.paul)
+        svg = self._get_drawer(data).generate_svg_string(minify=True, remove_css_variables=True)
+        self._assert_wellformed(svg, expect_css_variables=False)
+
+    # ── Composite ────────────────────────────────────────────────────────
+
+    def test_composite_normal_is_valid_xml(self):
+        factory = CompositeSubjectFactory(self.john, self.paul)
+        composite = factory.get_midpoint_composite_subject_model()
+        data = ChartDataFactory.create_composite_chart_data(composite)
+        svg = self._get_drawer(data).generate_svg_string()
+        self._assert_wellformed(svg)
+
+    def test_composite_minified_is_valid_xml(self):
+        factory = CompositeSubjectFactory(self.john, self.paul)
+        composite = factory.get_midpoint_composite_subject_model()
+        data = ChartDataFactory.create_composite_chart_data(composite)
+        svg = self._get_drawer(data).generate_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    # ── Solar Return (dual-wheel) ────────────────────────────────────────
+
+    def test_solar_return_normal_is_valid_xml(self):
+        factory = _make_return_factory(self.john)
+        solar = factory.next_return_from_iso_formatted_time("2025-01-09T18:30:00+01:00", return_type="Solar")
+        data = ChartDataFactory.create_return_chart_data(self.john, solar)
+        svg = self._get_drawer(data).generate_svg_string()
+        self._assert_wellformed(svg)
+
+    def test_solar_return_minified_is_valid_xml(self):
+        factory = _make_return_factory(self.john)
+        solar = factory.next_return_from_iso_formatted_time("2025-01-09T18:30:00+01:00", return_type="Solar")
+        data = ChartDataFactory.create_return_chart_data(self.john, solar)
+        svg = self._get_drawer(data).generate_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    # ── Lunar Return (dual-wheel) ────────────────────────────────────────
+
+    def test_lunar_return_normal_is_valid_xml(self):
+        factory = _make_return_factory(self.john)
+        lunar = factory.next_return_from_iso_formatted_time("2025-01-09T18:30:00+01:00", return_type="Lunar")
+        data = ChartDataFactory.create_return_chart_data(self.john, lunar)
+        svg = self._get_drawer(data).generate_svg_string()
+        self._assert_wellformed(svg)
+
+    def test_lunar_return_minified_is_valid_xml(self):
+        factory = _make_return_factory(self.john)
+        lunar = factory.next_return_from_iso_formatted_time("2025-01-09T18:30:00+01:00", return_type="Lunar")
+        data = ChartDataFactory.create_return_chart_data(self.john, lunar)
+        svg = self._get_drawer(data).generate_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    # ── Partial views (wheel-only, aspect-grid-only) ─────────────────────
+
+    def test_wheel_only_natal_is_valid_xml(self):
+        data = ChartDataFactory.create_natal_chart_data(self.john)
+        svg = self._get_drawer(data).generate_wheel_only_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    def test_aspect_grid_only_natal_is_valid_xml(self):
+        data = ChartDataFactory.create_natal_chart_data(self.john)
+        svg = self._get_drawer(data).generate_aspect_grid_only_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    def test_wheel_only_transit_is_valid_xml(self):
+        data = ChartDataFactory.create_transit_chart_data(self.john, self.paul)
+        svg = self._get_drawer(data).generate_wheel_only_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    def test_aspect_grid_only_transit_is_valid_xml(self):
+        data = ChartDataFactory.create_transit_chart_data(self.john, self.paul)
+        svg = self._get_drawer(data).generate_aspect_grid_only_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    # ── Modern style ─────────────────────────────────────────────────────
+
+    def test_modern_natal_is_valid_xml(self):
+        data = ChartDataFactory.create_natal_chart_data(self.john)
+        svg = ChartDrawer(data, style="modern").generate_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    def test_modern_synastry_is_valid_xml(self):
+        data = ChartDataFactory.create_synastry_chart_data(self.john, self.paul)
+        svg = ChartDrawer(data, style="modern").generate_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    # ── Themes ───────────────────────────────────────────────────────────
+
+    def test_dark_theme_is_valid_xml(self):
+        data = ChartDataFactory.create_natal_chart_data(self.john)
+        svg = ChartDrawer(data, theme="dark").generate_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    def test_dark_high_contrast_theme_is_valid_xml(self):
+        data = ChartDataFactory.create_natal_chart_data(self.john)
+        svg = ChartDrawer(data, theme="dark-high-contrast").generate_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    def test_black_and_white_theme_is_valid_xml(self):
+        data = ChartDataFactory.create_natal_chart_data(self.john)
+        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+
+class TestCssVariablesContract:
+    """Ensure CSS custom properties are preserved or removed as requested.
+
+    CSS variables (``var(--kerykeion-…)``) are the public styling API for
+    consumers who embed the SVG in their pages.  Accidental removal breaks
+    their ability to restyle charts.
+    """
+
+    @classmethod
+    def setup_class(cls):
+        cls.john = _make_john("CSS Vars")
+        cls.paul = _make_paul("CSS Vars")
+
+    # ── Default (CSS variables preserved) ────────────────────────────────
+
+    def test_natal_default_has_css_variables(self):
+        data = ChartDataFactory.create_natal_chart_data(self.john)
+        svg = ChartDrawer(data).generate_svg_string()
+        assert "var(--" in svg, "Default SVG must contain CSS custom properties"
+        assert "<style" in svg, "Default SVG must contain <style> block"
+
+    def test_natal_minified_has_css_variables(self):
+        data = ChartDataFactory.create_natal_chart_data(self.john)
+        svg = ChartDrawer(data).generate_svg_string(minify=True)
+        assert "var(--" in svg, "Minified SVG must preserve CSS custom properties"
+        assert "<style" in svg, "Minified SVG must preserve <style> block"
+
+    def test_transit_minified_has_css_variables(self):
+        data = ChartDataFactory.create_transit_chart_data(self.john, self.paul)
+        svg = ChartDrawer(data).generate_svg_string(minify=True)
+        assert "var(--" in svg, "Minified transit SVG must preserve CSS custom properties"
+
+    def test_synastry_minified_has_css_variables(self):
+        data = ChartDataFactory.create_synastry_chart_data(self.john, self.paul)
+        svg = ChartDrawer(data).generate_svg_string(minify=True)
+        assert "var(--" in svg, "Minified synastry SVG must preserve CSS custom properties"
+
+    # ── Explicit removal ─────────────────────────────────────────────────
+
+    def test_natal_remove_css_variables(self):
+        data = ChartDataFactory.create_natal_chart_data(self.john)
+        svg = ChartDrawer(data).generate_svg_string(remove_css_variables=True)
+        assert "var(--" not in svg, "SVG should not contain CSS variables when remove_css_variables=True"
+
+    def test_natal_minify_and_remove_css_variables(self):
+        data = ChartDataFactory.create_natal_chart_data(self.john)
+        svg = ChartDrawer(data).generate_svg_string(minify=True, remove_css_variables=True)
+        assert "var(--" not in svg, "SVG should not contain CSS variables when remove_css_variables=True"
+
+    # ── minify=True alone must NOT strip CSS variables ───────────────────
+
+    def test_minify_alone_does_not_strip_css_variables(self):
+        """Regression test: minify=True must not force CSS variable inlining."""
+        data = ChartDataFactory.create_natal_chart_data(self.john)
+        svg_default = ChartDrawer(data).generate_svg_string()
+        svg_minified = ChartDrawer(data).generate_svg_string(minify=True)
+
+        default_var_count = svg_default.count("var(--")
+        minified_var_count = svg_minified.count("var(--")
+
+        assert minified_var_count > 0, "Minified SVG must contain CSS custom properties"
+        # scour may legitimately reduce var() count by optimizing duplicate
+        # style attributes, but it should never drop below ~50% of the
+        # original count (a complete strip would leave 0).
+        assert minified_var_count >= default_var_count * 0.5, (
+            f"Minification stripped too many CSS variables: default={default_var_count}, minified={minified_var_count}"
+        )

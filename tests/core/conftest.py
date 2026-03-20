@@ -170,6 +170,66 @@ def assert_positions_match(actual_point: Any, expected_data: Dict[str, Any]) -> 
 
 
 # =============================================================================
+# SVG WELL-FORMEDNESS HELPER
+# =============================================================================
+
+
+def assert_svg_wellformed(svg: str, *, expect_css_variables: bool = True) -> None:
+    """Validate that an SVG string is structurally sound and parseable.
+
+    This is the primary guard against SVG generation regressions such as:
+    - Attribute merging during minification (``<svgxmlns=...``)
+    - Missing XML namespace declarations
+    - Malformed XML due to incorrect string processing
+    - Accidental removal of CSS custom properties
+
+    Args:
+        svg: The SVG string to validate.
+        expect_css_variables: When True (default), assert that CSS custom
+            properties (``var(--…)``) and a ``<style>`` block are present.
+            Set to False when ``remove_css_variables=True`` was used.
+    """
+    from xml.etree import ElementTree
+
+    assert isinstance(svg, str), f"SVG must be a string, got {type(svg).__name__}"
+    assert len(svg) > 100, f"SVG suspiciously short ({len(svg)} chars)"
+
+    # ── XML well-formedness ─────────────────────────────────────────────
+    # This single check would have caught the <svgxmlns> attribute-merging
+    # bug: ElementTree.fromstring() raises ParseError on malformed XML.
+    try:
+        tree = ElementTree.fromstring(svg)
+    except ElementTree.ParseError as exc:
+        # Show first 500 chars for debugging
+        preview = svg[:500]
+        raise AssertionError(f"SVG is not valid XML: {exc}\nFirst 500 chars:\n{preview}") from exc
+
+    # ── Root element must be <svg> ──────────────────────────────────────
+    # ElementTree expands namespaces, so tag is {ns}svg
+    local_name = tree.tag.rsplit("}", 1)[-1] if "}" in tree.tag else tree.tag
+    assert local_name == "svg", f"Expected <svg> root element, got <{local_name}>"
+
+    # ── Namespace declarations ──────────────────────────────────────────
+    assert "http://www.w3.org/2000/svg" in tree.tag or tree.attrib.get("xmlns") == "http://www.w3.org/2000/svg", (
+        "SVG must declare xmlns='http://www.w3.org/2000/svg'"
+    )
+
+    # ── String-level anti-regression checks ─────────────────────────────
+    # These catch issues that XML parsing alone might not flag
+    assert "<svgxmlns" not in svg, "SVG tag name merged with attributes — minification broke attribute spacing"
+
+    # ── CSS custom properties ───────────────────────────────────────────
+    if expect_css_variables:
+        assert "var(--" in svg, (
+            "SVG must contain CSS custom properties (var(--…)) for consumer restyling. "
+            "If remove_css_variables=True was intended, pass expect_css_variables=False."
+        )
+        assert "<style" in svg, "SVG must contain a <style> block with CSS custom property definitions."
+    else:
+        assert "var(--" not in svg, "SVG should NOT contain CSS custom properties when remove_css_variables=True"
+
+
+# =============================================================================
 # SVG COMPARISON HELPER
 # =============================================================================
 
