@@ -3738,17 +3738,20 @@ class ChartDrawer:  # type: ignore[no-redef]
         Returns:
             str: The processed SVG template.
         """
-        if remove_css_variables:
+        if remove_css_variables or minify:
             template = inline_css_variables_in_svg(template)
 
         if minify:
+            try:
+                template = scourString(template)
+            except Exception:
+                # scour may crash on complex SVG structures (e.g. NotFoundErr
+                # when moveCommonAttributesToParentGroup encounters style-based
+                # attributes).  Fall back to string-only minification.
+                pass
+
             template = (
-                scourString(template)
-                .replace('"', "'")
-                .replace("\n", "")
-                .replace("\t", "")
-                .replace("    ", "")
-                .replace("  ", "")
+                template.replace('"', "'").replace("\n", "").replace("\t", "").replace("    ", "").replace("  ", "")
             )
         else:
             template = template.replace('"', "'")
