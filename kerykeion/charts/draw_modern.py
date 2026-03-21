@@ -1039,7 +1039,7 @@ def _draw_house_division_lines(
 def _draw_house_ring(
     houses: list[KerykeionPointModel],
     seventh_house_degree_ut: float,
-    line_inner_radius: float = R_HOUSE_INNER - 1.0,  # default extends just below the house numbers
+    line_inner_radius: float = R_HOUSE_INNER,  # stop exactly at the aspect core boundary
     show_numbers: bool = True,
     house_inner_r: float = R_HOUSE_INNER,
     house_outer_r: float = R_HOUSE_OUTER,
