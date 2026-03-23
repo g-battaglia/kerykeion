@@ -53,17 +53,22 @@ The `HouseComparisonModel` contains:
 Each point model includes:
 
 - `point_name`: Name of the planet/point (e.g. "Sun").
+- `point_degree`: Degree within the sign.
+- `point_sign`: Zodiac sign.
+- `point_owner_name`: Owner subject name.
 - `projected_house_name`: Name of the house it falls into (e.g. "Seventh_House").
 - `projected_house_number`: Number of the house (1-12).
-- `point_abs_pos`: Absolute position of the point.
+- `projected_house_owner_name`: Target subject name.
+- `point_owner_house_number`: House number in owner's chart (optional).
+- `point_owner_house_name`: House name in owner's chart (optional).
 
 ## Constructor Parameters
 
 | Parameter        | Type                       | Default     | Description                    |
 | :--------------- | :------------------------- | :---------- | :----------------------------- |
-| `first_subject`  | `AstrologicalSubjectModel` | Required    | First subject for comparison.  |
-| `second_subject` | `AstrologicalSubjectModel` | Required    | Second subject for comparison. |
-| `active_points`  | `List[AstrologicalPoint]`  | All planets | Points to include in analysis. |
+| `first_subject`  | `AstrologicalSubjectModel` or `PlanetReturnModel` | Required    | First subject for comparison.  |
+| `second_subject` | `AstrologicalSubjectModel` or `PlanetReturnModel` | Required    | Second subject for comparison. |
+| `active_points`  | `List[AstrologicalPoint]`  | `DEFAULT_ACTIVE_POINTS` | Points to include in analysis. |
 
 ## Utility Functions
 
@@ -71,16 +76,17 @@ Import from: `kerykeion.house_comparison.house_comparison_utils`
 
 Lower-level functions used by the factory, useful for custom analysis pipelines.
 
-| Function                                                      | Description                                          |
-| :------------------------------------------------------------ | :--------------------------------------------------- |
-| `calculate_points_in_reciprocal_houses(subject_a, subject_b)` | Calculates where A's planets fall in B's houses.     |
-| `calculate_cusps_in_reciprocal_houses(subject_a, subject_b)`  | Calculates where A's house cusps fall in B's houses. |
+| Function                                                                              | Description                                          |
+| :------------------------------------------------------------------------------------ | :--------------------------------------------------- |
+| `calculate_points_in_reciprocal_houses(point_subject, house_subject, active_points=...)` | Calculates where one subject's planets fall in the other's houses. |
+| `calculate_cusps_in_reciprocal_houses(cusp_subject, house_subject)`                    | Calculates where one subject's house cusps fall in the other's houses. |
 
 ```python
 from kerykeion.house_comparison.house_comparison_utils import calculate_points_in_reciprocal_houses
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
 # Returns List[PointInHouseModel]
-points = calculate_points_in_reciprocal_houses(person_a, person_b)
+points = calculate_points_in_reciprocal_houses(person_a, person_b, active_points=DEFAULT_ACTIVE_POINTS)
 ```
 
 ---

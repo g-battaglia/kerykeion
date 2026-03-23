@@ -3,7 +3,7 @@ title: 'Chart Internals'
 category: 'Reference'
 description: 'Internal utilities for SVG rendering and coordinate conversion.'
 tags: ['docs', 'charts', 'svg', 'internal', 'kerykeion']
-order: 18
+order: 20
 ---
 
 # Chart Internals
@@ -56,9 +56,9 @@ These functions return SVG string elements.
 | `convert_latitude_coordinate_to_string(lat)`       | Converts a latitude coordinate to a readable string.                |
 | `decHourJoin(h, m, s)`                             | Combines hours, minutes, seconds into a decimal hour.               |
 | `format_datetime_with_timezone(dt, tz)`            | Formats a datetime object with timezone info.                       |
-| `format_location_string(city, nation)`             | Standardizes location display strings.                              |
+| `format_location_string(location, max_length=35)` | Truncates a location string to fit within a max length. |
 | `get_decoded_kerykeion_celestial_point_name(name)` | Decodes internal point names to human names.                        |
-| `offsetToTz(offset)`                               | Converts a time offset (int) to a timezone string.                  |
+| `offsetToTz(datetime_offset)`                      | Converts a `timedelta` offset to a float in hours.                  |
 
 ---
 
@@ -70,16 +70,7 @@ Import from: `kerykeion.charts.draw_planets`
 
 The main function for rendering planetary glyphs on the chart wheel. It handles collision detection and placement adjustment to prevent overlapping symbols.
 
-```python
-from kerykeion.charts.draw_planets import draw_planets
-
-svg_elements = draw_planets(
-    planets=chart_data.planets,
-    r=200,                # Radius
-    cx=300, cy=300,      # Center
-    classic_chart=True   # Style flag
-)
-```
+> **Note:** This function has a complex internal signature with many positional parameters (radius, celestial points settings, circle radii, house degree references, chart type, etc.). It is intended for internal use by `ChartDrawer`. Refer to the source code at `kerykeion/charts/draw_planets.py` for the full parameter list if building custom renderers.
 
 ---
 

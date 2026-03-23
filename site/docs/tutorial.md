@@ -334,12 +334,12 @@ for aspect in transit_aspects.aspects[:10]:
 ```python
 from kerykeion.ephemeris_data_factory import EphemerisDataFactory
 from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
-from datetime import date
+from datetime import datetime
 
 # Generate ephemeris data for a date range
 ephemeris = EphemerisDataFactory(
-    start_date=date(2024, 7, 1),
-    end_date=date(2024, 7, 31),
+    start_datetime=datetime(2024, 7, 1),
+    end_datetime=datetime(2024, 7, 31),
     step_type="days",
     step=1,
     lng=-0.1276, lat=51.5074, tz_str="Europe/London"

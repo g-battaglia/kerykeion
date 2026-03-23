@@ -77,7 +77,7 @@ Moon sextile Ascendant (orb: 2.1°)
 | `first_subject`          | Model   | Required | First astrological subject.                       |
 | `second_subject`         | Model   | Required | Second astrological subject.                      |
 | `use_only_major_aspects` | `bool`  | `True`   | Only consider major aspects (conj, opp, sq, etc). |
-| `axis_orb_limit`         | `float` | `None`   | Stricter orb for angles (Asc, MC).                |
+| `axis_orb_limit`         | `float` | `None`   | Stricter orb for angles (Asc, MC). Keyword-only.  |
 
 ## Score Categories
 

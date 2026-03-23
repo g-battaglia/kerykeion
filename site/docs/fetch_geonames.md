@@ -3,7 +3,7 @@ title: 'Fetch Geonames'
 category: 'Reference'
 description: 'Utility to fetch location and timezone data from GeoNames API'
 tags: ['docs', 'utility', 'geonames', 'location', 'timezone']
-order: 18
+order: 21
 ---
 
 # FetchGeonames (`kerykeion.fetch_geonames`)
@@ -42,7 +42,8 @@ def __init__(
     city_name: str,
     country_code: str,
     username: str = "century.boy",
-    cache_expire_after_days: int = 30
+    cache_expire_after_days: int = 30,
+    cache_name: Optional[Union[str, Path]] = None
 )
 ```
 

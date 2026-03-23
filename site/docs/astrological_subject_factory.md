@@ -58,13 +58,15 @@ print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 | `zodiac_type`              | `ZodiacType`             | `"Tropical"`    | "Tropical" or "Sidereal".                                              |
 | `sidereal_mode`            | `Optional[SiderealMode]` | `None`          | Ayanamsha mode (e.g., "LAHIRI"). Required if `zodiac_type="Sidereal"`. |
 | `houses_system_identifier` | `HousesSystemIdentifier` | `"P"`           | House system code (e.g., "P" for Placidus, "W" for Whole Sign).        |
-| `perspective_type`         | `PerspectiveType`        | `"Apparent..."` | "Apparent Geocentric", "Heliocentric", etc.                            |
-| `active_points`            | `Optional[List[str]]`    | `None`          | List of points to calculate. If `None`, calculates all.                |
-| `is_dst`                   | `Optional[bool]`         | `None`          | Explicitly set DST for ambiguous times (fold).                         |
-| `cache_expire_after_days`  | `int`                    | `30`            | Days to cache online location lookups.                                 |
-| `calculate_lunar_phase`    | `bool`                   | `True`          | Whether to calculate lunar phase details.                              |
-| `custom_ayanamsa_t0`      | `Optional[float]`        | `None`          | Reference epoch (Julian Day) for USER sidereal mode.                   |
-| `custom_ayanamsa_ayan_t0` | `Optional[float]`        | `None`          | Ayanamsa offset in degrees at the reference epoch. Required with USER. |
+| `perspective_type`         | `PerspectiveType`        | `"Apparent Geocentric"` | `"Apparent Geocentric"`, `"True Geocentric"`, `"Heliocentric"`, or `"Topocentric"`. |
+| `active_points`            | `Optional[List[str]]`    | `None`          | List of points to calculate. If `None`, uses `DEFAULT_ACTIVE_POINTS` (18 points).  |
+| `is_dst`                   | `Optional[bool]`         | `None`          | Explicitly set DST for ambiguous times (see [FAQ](/content/docs/faq)).              |
+| `cache_expire_after_days`  | `int`                    | `30`            | Days to cache online location lookups.                                              |
+| `calculate_lunar_phase`    | `bool`                   | `True`          | Whether to calculate lunar phase details.                                           |
+| `altitude`                 | `Optional[float]`        | `None`          | Altitude in meters (used with Topocentric perspective).                              |
+| `suppress_geonames_warning`| `bool`                   | `False`         | Suppress the warning about using the default shared GeoNames username. Keyword-only.|
+| `custom_ayanamsa_t0`      | `Optional[float]`        | `None`          | Reference epoch (Julian Day) for USER sidereal mode.                                |
+| `custom_ayanamsa_ayan_t0` | `Optional[float]`        | `None`          | Ayanamsa offset in degrees at the reference epoch. Required with USER.              |
 
 ### 2. `from_iso_utc_time`
 
@@ -79,9 +81,30 @@ subject = AstrologicalSubjectFactory.from_iso_utc_time(
 )
 ```
 
-### 3. `from_current_time`
+**Parameters:**
 
-Creates a subject for the current moment ("Now"), useful for Horary astrology or transits.
+| Parameter                  | Type                     | Default                 | Description                                                            |
+| :------------------------- | :----------------------- | :---------------------- | :--------------------------------------------------------------------- |
+| `name`                     | `str`                    | **Required**            | Name or identifier for the subject.                                    |
+| `iso_utc_time`             | `str`                    | **Required**            | UTC timestamp in ISO 8601 format (e.g., `"2023-06-21T12:00:00Z"`).    |
+| `city`                     | `str`                    | `"Greenwich"`           | City name.                                                             |
+| `nation`                   | `str`                    | `"GB"`                  | ISO Country code.                                                      |
+| `tz_str`                   | `str`                    | `"Etc/GMT"`             | Timezone string.                                                       |
+| `lng`, `lat`               | `float`                  | `0.0`, `51.5074`        | Coordinates (defaults to Greenwich).                                   |
+| `online`                   | `bool`                   | `True`                  | Whether to resolve location via GeoNames API.                          |
+| `zodiac_type`              | `ZodiacType`             | `"Tropical"`            | `"Tropical"` or `"Sidereal"`.                                          |
+| `sidereal_mode`            | `Optional[SiderealMode]` | `None`                  | Ayanamsha mode. Required if `zodiac_type="Sidereal"`.                  |
+| `houses_system_identifier` | `HousesSystemIdentifier` | `"P"`                   | House system code.                                                     |
+| `perspective_type`         | `PerspectiveType`        | `"Apparent Geocentric"` | Calculation perspective.                                               |
+| `active_points`            | `Optional[List[str]]`    | `None`                  | Points to calculate.                                                   |
+| `suppress_geonames_warning`| `bool`                   | `False`                 | Suppress the default GeoNames username warning.                        |
+| `altitude`                 | `Optional[float]`        | `None`                  | Altitude in meters above sea level.                                    |
+| `calculate_lunar_phase`    | `bool`                   | `True`                  | Whether to calculate lunar phase data.                                 |
+| `custom_ayanamsa_t0`       | `Optional[float]`        | `None`                  | Julian Day epoch for custom ayanamsa (requires `sidereal_mode="USER"`). |
+| `custom_ayanamsa_ayan_t0`  | `Optional[float]`        | `None`                  | Ayanamsa degrees at epoch (requires `sidereal_mode="USER"`).           |
+| `geonames_username`        | `str`                    | `"century.boy"`         | GeoNames API username.                                                 |
+
+Creates a subject for the current moment ("Now"), useful for Horary astrology or transits. Uses the system clock -- does **not** accept `year`/`month`/`day`/`hour`/`minute` parameters.
 
 ```python
 now_chart = AstrologicalSubjectFactory.from_current_time(
@@ -90,6 +113,38 @@ now_chart = AstrologicalSubjectFactory.from_current_time(
     geonames_username="your_username"
 )
 ```
+
+**Parameters:**
+
+| Parameter                  | Type                     | Default                 | Description                                                            |
+| :------------------------- | :----------------------- | :---------------------- | :--------------------------------------------------------------------- |
+| `name`                     | `str`                    | `"Now"`                 | Name or identifier.                                                    |
+| `city`                     | `Optional[str]`          | `None`                  | City name (used with `online=True`).                                   |
+| `nation`                   | `Optional[str]`          | `None`                  | ISO Country code.                                                      |
+| `lng`, `lat`               | `Optional[float]`        | `None`                  | Coordinates (used with `online=False`).                                |
+| `tz_str`                   | `Optional[str]`          | `None`                  | Timezone string. Required if `online=False`.                           |
+| `online`                   | `bool`                   | `True`                  | Whether to resolve location via GeoNames API.                          |
+| `zodiac_type`              | `ZodiacType`             | `"Tropical"`            | `"Tropical"` or `"Sidereal"`.                                          |
+| `sidereal_mode`            | `Optional[SiderealMode]` | `None`                  | Ayanamsha mode. Required if `zodiac_type="Sidereal"`.                  |
+| `houses_system_identifier` | `HousesSystemIdentifier` | `"P"`                   | House system code.                                                     |
+| `perspective_type`         | `PerspectiveType`        | `"Apparent Geocentric"` | Calculation perspective.                                               |
+| `active_points`            | `Optional[List[str]]`    | `None`                  | Points to calculate.                                                   |
+| `suppress_geonames_warning`| `bool`                   | `False`                 | Suppress the default GeoNames username warning.                        |
+| `geonames_username`        | `Optional[str]`          | `None`                  | GeoNames API username.                                                 |
+| `calculate_lunar_phase`    | `bool`                   | `True`                  | Whether to calculate lunar phase data.                                 |
+| `custom_ayanamsa_t0`       | `Optional[float]`        | `None`                  | Julian Day epoch for custom ayanamsa (requires `sidereal_mode="USER"`). |
+| `custom_ayanamsa_ayan_t0`  | `Optional[float]`        | `None`                  | Ayanamsa degrees at epoch (requires `sidereal_mode="USER"`).           |
+
+## Understanding Position Fields
+
+Every `KerykeionPointModel` (planet, angle, etc.) has two position fields:
+
+| Field      | Range     | Description                                                |
+| :--------- | :-------- | :--------------------------------------------------------- |
+| `position` | 0° - 30°  | Degree within the sign (e.g., 22.54° of Cancer).           |
+| `abs_pos`  | 0° - 360° | Absolute ecliptic longitude (e.g., 112.54° on the zodiac). |
+
+Use `position` for display purposes and `abs_pos` for calculations (aspect detection, midpoints, etc.).
 
 ## Configuration Options
 
@@ -143,13 +198,13 @@ These `@dataclass` structures are used internally but are exposed for reference.
 
 #### `ChartConfiguration`
 
-Configuration dictionary for chart calculation settings.
-Keys: `zodiac_type`, `sidereal_mode`, `houses_system_identifier`, `perspective_type`, `custom_ayanamsa_t0`, `custom_ayanamsa_ayan_t0`.
+Dataclass holding chart calculation settings.
+Fields: `zodiac_type`, `sidereal_mode`, `houses_system_identifier`, `perspective_type`, `custom_ayanamsa_t0`, `custom_ayanamsa_ayan_t0`.
 
 #### `LocationData`
 
-Dictionary carrying raw location information.
-Keys: `city`, `nation`, `lng`, `lat`, `tz_str`.
+Dataclass carrying raw location information.
+Fields: `city`, `nation`, `lng`, `lat`, `tz_str`, `altitude`, `city_data`.
 
 #### `ephemeris_context`
 

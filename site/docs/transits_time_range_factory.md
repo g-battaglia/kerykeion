@@ -48,7 +48,7 @@ end_date = start_date + timedelta(days=30)
 ephemeris_factory = EphemerisDataFactory(
     start_datetime=start_date,
     end_datetime=end_date,
-    step_type="days",  # "days", "hours", "months"
+    step_type="days",  # "days", "hours", "minutes"
     step=1,            # Interval size
     lat=natal_subject.lat,
     lng=natal_subject.lng,
@@ -99,9 +99,9 @@ The `get_transit_moments()` method returns a specialized object simplifying acce
 | :---------------------- | :------------------------------- | :---------- | :--------------------------------- |
 | `natal_chart` | `AstrologicalSubjectModel` | Required | Reference natal chart. |
 | `ephemeris_data_points` | `List[AstrologicalSubjectModel]` | Required | Time-series planetary positions. |
-| `active_points` | `List[AstrologicalPoint]` | All planets | Points to include in calculation. |
-| `active_aspects` | `List[ActiveAspect]` | All aspects | Aspect types and orbs to use. |
-| `settings_file` | `Path` or `dict` or `None` | `None` | Custom orb/calculation settings. |
+| `active_points` | `List[AstrologicalPoint]` | `DEFAULT_ACTIVE_POINTS` | Points to include in calculation. |
+| `active_aspects` | `List[ActiveAspect]` | `DEFAULT_ACTIVE_ASPECTS` | Aspect types and orbs to use. |
+| `settings_file` | `Path`, `KerykeionSettingsModel`, `dict`, or `None` | `None` | Custom orb/calculation settings. |
 | `axis_orb_limit` | `float` | `None` | Stricter orb for angles (Asc, MC). |
 
 ## Configuration Tips

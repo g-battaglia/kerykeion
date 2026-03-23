@@ -28,12 +28,7 @@ A **Planetary Return** occurs when a transiting planet returns to the exact degr
 - Forecasts the emotional climate for the coming month
 - Useful for timing short-term events and emotional cycles
 
-**Other Returns:**
-
-- **Mercury Return** (~88 days): Communication and learning cycles
-- **Venus Return** (~225 days): Relationship and value cycles
-- **Mars Return** (~2 years): Action and energy cycles
-- **Jupiter/Saturn Returns**: Major life transitions (every 12 and ~29 years respectively)
+> Kerykeion currently supports **Solar** and **Lunar** returns. Other planetary return types (Mercury, Venus, Mars, Jupiter, Saturn) are not yet implemented.
 
 ## Usage
 
@@ -113,22 +108,46 @@ print(f"Return ayanamsa: {solar_return.ayanamsa_value:.4f}°")
 
 ## Supported Return Types
 
-- `"Solar"` (Sun) - Yearly forecast.
-- `"Lunar"` (Moon) - Monthly forecast.
-- `"Mercury"`, `"Venus"`, `"Mars"`, `"Jupiter"`, `"Saturn"`, `"Uranus"`, `"Neptune"`, `"Pluto"`
-- `"Chiron"`
+- `"Solar"` (Sun) -- Yearly forecast.
+- `"Lunar"` (Moon) -- Monthly forecast.
+
+> **Note:** The `return_type` parameter is case-sensitive. Use exactly `"Solar"` or `"Lunar"`.
+
+## Constructor Parameters
+
+| Parameter                  | Type                     | Default     | Description                                                        |
+| :------------------------- | :----------------------- | :---------- | :----------------------------------------------------------------- |
+| `subject`                  | `AstrologicalSubjectModel` | **Required** | The natal subject whose return is being calculated.              |
+| `city`                     | `Optional[str]`          | `None`      | City name for the return location.                                 |
+| `nation`                   | `Optional[str]`          | `None`      | ISO country code for the return location.                          |
+| `lng`                      | `Optional[float]`        | `None`      | Longitude of the return location.                                  |
+| `lat`                      | `Optional[float]`        | `None`      | Latitude of the return location.                                   |
+| `tz_str`                   | `Optional[str]`          | `None`      | Timezone string for the return location.                           |
+| `online`                   | `bool`                   | `True`      | Whether to resolve location via GeoNames API.                      |
+| `geonames_username`        | `Optional[str]`          | `None`      | GeoNames username for online mode.                                 |
+| `cache_expire_after_days`  | `int`                    | `30`        | Days to cache online location lookups.                             |
+| `altitude`                 | `Optional[float]`        | `None`      | Altitude in meters for the return location.                        |
+| `custom_ayanamsa_t0`       | `Optional[float]`        | `None`      | Reference epoch (Julian Day) for USER sidereal mode.               |
+| `custom_ayanamsa_ayan_t0`  | `Optional[float]`        | `None`      | Ayanamsa offset at epoch (required with USER sidereal mode).       |
 
 ## Methods
 
-### `next_return_from_date(...)`
+### `next_return_from_date(year, month, day, *, return_type)`
 
-Finds the next return starting search from a specific year/month/day.
+Finds the next return starting search from a specific year/month/day. This is the **primary method**.
 
 ```python
-result = calculator.next_return_from_date(2025, 1, 1, return_type="Saturn")
+result = calculator.next_return_from_date(2025, 1, 1, return_type="Solar")
 ```
 
-### `next_return_from_iso_formatted_time(...)`
+| Parameter     | Type         | Default     | Description                              |
+| :------------ | :----------- | :---------- | :--------------------------------------- |
+| `year`        | `int`        | **Required** | Year to start searching from.           |
+| `month`       | `int`        | **Required** | Month to start searching from.          |
+| `day`         | `int`        | `1`          | Day to start searching from.            |
+| `return_type` | `ReturnType` | **Required** | `"Solar"` or `"Lunar"` (keyword-only).  |
+
+### `next_return_from_iso_formatted_time(iso_formatted_time, return_type)`
 
 Finds the next return starting search from a precise ISO timestamp.
 
@@ -136,12 +155,13 @@ Finds the next return starting search from a precise ISO timestamp.
 result = calculator.next_return_from_iso_formatted_time("2024-06-15T12:00:00", "Lunar")
 ```
 
-### `next_return_from_year(...)`
+### `next_return_from_year(year, return_type)` _(Deprecated)_
 
-Finds the first return occurring in a given calendar year.
+Finds the first return occurring in a given calendar year. **Deprecated** -- use `next_return_from_date` instead.
 
 ```python
-result = calculator.next_return_from_year(2025, "Solar")
+result = calculator.next_return_from_year(2025, "Solar")  # Deprecated
+result = calculator.next_return_from_date(2025, 1, 1, return_type="Solar")  # Preferred
 ```
 
 ## Relocation Astrology

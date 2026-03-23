@@ -3,7 +3,7 @@ title: 'Types & Schemas'
 category: 'Reference'
 description: 'Core data models, type definitions, and schemas'
 tags: ['docs', 'types', 'models', 'pydantic', 'kerykeion', 'schemas']
-order: 12
+order: 13
 ---
 
 # Types & Schemas
@@ -50,27 +50,30 @@ Represents a person or event to be analyzed.
 | `lng`, `lat`           | `float`        | Coordinates                           |
 | `tz_str`               | `str`          | Timezone string (e.g., "Europe/Rome") |
 | `zodiac_type`          | `ZodiacType`   | "Tropical" or "Sidereal"              |
-| `sidereal_mode`        | `SiderealMode` | Specific Ayanamsa if Sidereal         |
+| `sidereal_mode`        | `SiderealMode \| None` | Specific Ayanamsa if Sidereal         |
 | `ayanamsa_value`       | `float \| None`| Ayanamsa offset in degrees (sidereal only) |
+| `is_diurnal`           | `bool`         | Whether the chart is diurnal (Sun above horizon) |
 
 ### KerykeionPointModel
 
 Detailed information about a celestial body or house cusp.
 
-| Field        | Type                | Description                                  |
-| :----------- | :------------------ | :------------------------------------------- |
-| `name`       | `AstrologicalPoint` | Planet/Point name (e.g., "Sun", "Ascendant") |
-| `sign`       | `Sign`              | Zodiac sign (e.g., "Ari")                    |
-| `sign_num`   | `int`               | 0-11 index of the sign                       |
-| `position`   | `float`             | Degree within the sign (0-30)                |
-| `abs_pos`    | `float`             | Absolute zodiac degree (0-360)               |
-| `house`      | `Houses`            | House placement                              |
-| `retrograde` | `bool`              | True if retrograde                           |
-| `element`    | `Element`           | Fire, Earth, Air, or Water                   |
-| `quality`    | `Quality`           | Cardinal, Fixed, or Mutable                  |
-| `speed`      | `float \| None`     | Daily motion in degrees/day                  |
-| `declination`| `float \| None`     | Equatorial declination in degrees            |
-| `magnitude`  | `float \| None`     | Apparent visual magnitude (fixed stars only) |
+| Field        | Type                              | Description                                  |
+| :----------- | :-------------------------------- | :------------------------------------------- |
+| `name`       | `AstrologicalPoint \| Houses`     | Planet/Point/House name (e.g., "Sun", "First_House") |
+| `sign`       | `Sign`                            | Zodiac sign (e.g., "Ari")                    |
+| `sign_num`   | `SignNumbers`                     | 0-11 index of the sign                       |
+| `position`   | `float`                           | Degree within the sign (0-30)                |
+| `abs_pos`    | `float`                           | Absolute zodiac degree (0-360)               |
+| `emoji`      | `str`                             | Unicode emoji for the sign                   |
+| `point_type` | `PointType`                       | `"AstrologicalPoint"` or `"House"`           |
+| `house`      | `Houses \| None`                  | House placement (None for house cusps)       |
+| `retrograde` | `bool \| None`                    | True if retrograde (None for house cusps)    |
+| `element`    | `Element`                         | Fire, Earth, Air, or Water                   |
+| `quality`    | `Quality`                         | Cardinal, Fixed, or Mutable                  |
+| `speed`      | `float \| None`                   | Daily motion in degrees/day                  |
+| `declination`| `float \| None`                   | Equatorial declination in degrees            |
+| `magnitude`  | `float \| None`                   | Apparent visual magnitude (fixed stars only) |
 
 ### SingleChartDataModel
 
@@ -78,24 +81,30 @@ The complete data structure for a calculated single chart (Natal, Return, etc.).
 
 | Field                  | Type                       | Description                                 |
 | :--------------------- | :------------------------- | :------------------------------------------ |
-| `subject`              | `AstrologicalSubjectModel` | The subject of the chart                    |
+| `chart_type`           | `Literal`                  | `"Natal"`, `"Composite"`, or `"SingleReturnChart"` |
+| `subject`              | Subject Model              | The subject (`AstrologicalSubjectModel`, `CompositeSubjectModel`, or `PlanetReturnModel`) |
 | `aspects`              | `List[AspectModel]`        | List of internal aspects                    |
 | `element_distribution` | `ElementDistributionModel` | Points/Percentage for each element          |
 | `quality_distribution` | `QualityDistributionModel` | Points/Percentage for each quality          |
-| `planets`              | `Dict`                     | Dictionary of `KerykeionPointModel` objects |
-| `houses`               | `Dict`                     | Dictionary of House cusps                   |
+| `active_points`        | `List[AstrologicalPoint]`  | Points used in calculation                  |
+| `active_aspects`       | `List[ActiveAspect]`       | Aspect configuration used                   |
 
 ### DualChartDataModel
 
 Data structure for comparing two charts (Synastry, Transits).
 
-| Field                | Type                       | Description                             |
-| :------------------- | :------------------------- | :-------------------------------------- |
-| `first_subject`      | `AstrologicalSubjectModel` | The primary subject (e.g., Natal)       |
-| `second_subject`     | `AstrologicalSubjectModel` | The secondary subject (e.g., Transit)   |
-| `aspects`            | `List[AspectModel]`        | Inter-chart aspects                     |
-| `house_comparison`   | `HouseComparisonModel`     | Analysis of planets in partner's houses |
-| `relationship_score` | `RelationshipScoreModel`   | Compatibility scoring (Synastry only)   |
+| Field                  | Type                       | Description                             |
+| :--------------------- | :------------------------- | :-------------------------------------- |
+| `chart_type`           | `Literal`                  | `"Transit"`, `"Synastry"`, or `"DualReturnChart"` |
+| `first_subject`        | `AstrologicalSubjectModel \| CompositeSubjectModel \| PlanetReturnModel` | The primary subject (e.g., Natal) |
+| `second_subject`       | `AstrologicalSubjectModel \| PlanetReturnModel` | The secondary subject (e.g., Transit) |
+| `aspects`              | `List[AspectModel]`        | Inter-chart aspects                     |
+| `house_comparison`     | `HouseComparisonModel \| None` | Analysis of planets in partner's houses (optional) |
+| `relationship_score`   | `RelationshipScoreModel \| None` | Compatibility scoring (optional, synastry only) |
+| `element_distribution` | `ElementDistributionModel` | Points/Percentage for each element      |
+| `quality_distribution` | `QualityDistributionModel` | Points/Percentage for each quality      |
+| `active_points`        | `List[AstrologicalPoint]`  | Points used in calculation              |
+| `active_aspects`       | `List[ActiveAspect]`       | Aspect configuration used               |
 
 ### AspectModel
 
@@ -104,10 +113,16 @@ Represents an astrological aspect between two points.
 | Field                | Type                 | Description                              |
 | :------------------- | :------------------- | :--------------------------------------- |
 | `p1_name`, `p2_name` | `str`                | Names of the two points involved         |
-| `aspect`             | `AspectName`         | Name of the aspect (e.g., "conjunction") |
-| `orbit`              | `float`              | The actual orb (deviation from exact)    |
+| `p1_owner`, `p2_owner` | `str`              | Owner subject names (same for single chart, different for dual) |
+| `aspect`             | `str`                | Name of the aspect (e.g., "conjunction") |
+| `orbit`              | `float`              | The actual orb (deviation from exact, always non-negative) |
 | `aspect_degrees`     | `int`                | Theoretical angle (e.g., 120 for trine)  |
 | `aspect_movement`    | `AspectMovementType` | "Applying", "Separating", or "Static"    |
+| `p1_abs_pos`         | `float`              | Absolute position of first point         |
+| `p2_abs_pos`         | `float`              | Absolute position of second point        |
+| `diff`               | `float`              | Angular difference between the points    |
+| `p1`, `p2`           | `int`                | Swiss Ephemeris IDs of the points        |
+| `p1_speed`, `p2_speed` | `float`            | Speed (degrees/day) of each point        |
 
 ### CompositeSubjectModel
 
@@ -149,6 +164,50 @@ Snapshot of planetary positions for a specific date.
 | `planets` | `List[KerykeionPointModel]` | Planet positions        |
 | `houses`  | `List[KerykeionPointModel]` | House cusps             |
 
+### LunarPhaseModel
+
+Compact lunar phase information attached to every `AstrologicalSubjectModel` (via the `lunar_phase` field).
+
+| Field                 | Type              | Description                                              |
+| :-------------------- | :---------------- | :------------------------------------------------------- |
+| `degrees_between_s_m` | `float \| int`    | Angular separation between the Sun and Moon in degrees.  |
+| `moon_phase`          | `int`             | Phase index (0-7, matching `LunarPhaseName` order).      |
+| `moon_emoji`          | `LunarPhaseEmoji` | Emoji representation of the phase (e.g. `"🌕"`).        |
+| `moon_phase_name`     | `LunarPhaseName`  | Text name (e.g. `"Full Moon"`, `"Waxing Crescent"`).    |
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(...)
+print(subject.lunar_phase.moon_phase_name)   # "Waxing Gibbous"
+print(subject.lunar_phase.moon_emoji)         # "🌔"
+print(subject.lunar_phase.degrees_between_s_m)  # 135.7
+```
+
+### MoonPhaseOverviewModel
+
+Top-level model returned by `MoonPhaseDetailsFactory`. Groups timestamp, Sun summary, Moon summary, and location data into a single structure suitable for API responses or serialization.
+
+| Field       | Type                              | Description                                                |
+| :---------- | :-------------------------------- | :--------------------------------------------------------- |
+| `timestamp` | `int`                             | Unix timestamp of the observation moment.                  |
+| `datestamp`  | `str`                             | ISO 8601 formatted date string.                            |
+| `sun`       | `MoonPhaseSunInfoModel \| None`   | Sun rise/set times, position, next solar eclipse info.     |
+| `moon`      | `MoonPhaseMoonSummaryModel`       | Phase name, illumination, zodiac signs, moonrise/set, etc. |
+| `location`  | `MoonPhaseLocationModel \| None`  | Latitude, longitude, and precision metadata.               |
+
+**Nested models** (all fields optional unless noted):
+
+| Model                              | Key Fields                                                                      |
+| :--------------------------------- | :------------------------------------------------------------------------------ |
+| `MoonPhaseSunInfoModel`            | `sunrise`, `sunset`, `solar_noon`, `day_length`, `position`, `next_solar_eclipse` |
+| `MoonPhaseSunPositionModel`        | `altitude`, `azimuth`, `distance`                                               |
+| `MoonPhaseMoonSummaryModel`        | `phase`, `phase_name`, `major_phase`, `stage`, `illumination`, `age_days`, `emoji`, `zodiac`, `moonrise`, `moonset`, `detailed`, `events` |
+| `MoonPhaseMoonPositionModel`       | `altitude`, `azimuth`, `distance`, `parallactic_angle`, `phase_angle`           |
+| `MoonPhaseMoonDetailedModel`       | `position`, `visibility`, `upcoming_phases`, `illumination_details`             |
+| `MoonPhaseUpcomingPhasesModel`     | `new_moon`, `first_quarter`, `full_moon`, `last_quarter` (each a `MoonPhaseMajorPhaseWindowModel`) |
+| `MoonPhaseIlluminationDetailsModel`| `percentage`, `visible_fraction`, `phase_angle`                                 |
+| `MoonPhaseZodiacModel`             | `sun_sign`, `moon_sign`                                                         |
+| `MoonPhaseLocationModel`           | `latitude`, `longitude`, `precision`, `using_default_location`, `note`          |
+
 ### ZodiacSignModel
 
 Metadata for a zodiac sign.
@@ -159,7 +218,7 @@ Metadata for a zodiac sign.
 | `quality`  | `Quality`    | Cardinal, Fixed, Mutable |
 | `element`  | `Element`    | Fire, Earth, Air, Water  |
 | `emoji`    | `SignsEmoji` | e.g. `"♈️"`             |
-| `sign_num` | `int`        | 0-11                     |
+| `sign_num` | `SignNumbers`| 0-11                     |
 
 ### RelationshipScoreModel
 
@@ -194,7 +253,7 @@ Explains a single scoring rule.
 | `rule`        | `str` | Rule ID (e.g. "sun_sun_major").           |
 | `description` | `str` | Human-readable explanation.               |
 | `points`      | `int` | Points awarded.                           |
-| `details`     | `str` | Optional extra info (e.g. "orbit: 1.5°"). |
+| `details`     | `Optional[str]` | Optional extra info (e.g. "orbit: 1.5°"). Defaults to `None`. |
 
 ### ActiveAspect
 
@@ -221,8 +280,8 @@ Time series of transit snapshots.
 | Field      | Type                       | Description               |
 | :--------- | :------------------------- | :------------------------ |
 | `transits` | `List[TransitMomentModel]` | List of moment snapshots. |
-| `subject`  | `AstrologicalSubjectModel` | The natal subject.        |
-| `dates`    | `List[str]`                | All dates in the range.   |
+| `subject`  | `AstrologicalSubjectModel \| None` | The natal subject.        |
+| `dates`    | `List[str] \| None`                | All dates in the range.   |
 
 ### PointInHouseModel
 
@@ -237,6 +296,8 @@ A point from one chart placed in another chart's house system.
 | `projected_house_number`     | `int`   | House in target chart (1-12). |
 | `projected_house_name`       | `str`   | House name in target chart.   |
 | `projected_house_owner_name` | `str`   | Target subject name.          |
+| `point_owner_house_number`   | `Optional[int]` | House number in owner's chart. |
+| `point_owner_house_name`     | `Optional[str]` | House name in owner's chart.  |
 
 ### HouseComparisonModel
 
@@ -287,7 +348,7 @@ _Alias:_ `NatalAspectsModel`
 
 | Field | Type | Description |
 | :--------------- | :------------------------- | :-------------------------- |
-| `subject` | `AstrologicalSubjectModel` | The chart subject. |
+| `subject` | Subject Model | The chart subject (`AstrologicalSubjectModel`, `CompositeSubjectModel`, or `PlanetReturnModel`). |
 | `aspects` | `List[AspectModel]` | Internal aspects. |
 | `active_points` | `List[AstrologicalPoint]` | Points used in calculation. |
 | `active_aspects` | `List[ActiveAspect]` | Aspect configuration. |
@@ -300,8 +361,8 @@ _Alias:_ `SynastryAspectsModel`
 
 | Field | Type | Description |
 | :--------------- | :------------------------- | :-------------------- |
-| `first_subject` | `AstrologicalSubjectModel` | Primary chart. |
-| `second_subject` | `AstrologicalSubjectModel` | Secondary chart. |
+| `first_subject` | Subject Model | Primary chart (`AstrologicalSubjectModel`, `CompositeSubjectModel`, or `PlanetReturnModel`). |
+| `second_subject` | Subject Model | Secondary chart (`AstrologicalSubjectModel`, `CompositeSubjectModel`, or `PlanetReturnModel`). |
 | `aspects` | `List[AspectModel]` | Inter-chart aspects. |
 | `active_points` | `List[AstrologicalPoint]` | Points used. |
 | `active_aspects` | `List[ActiveAspect]` | Aspect configuration. |
@@ -403,7 +464,7 @@ Comprehensive literal for all supported celestial points.
 `"Eris"`, `"Sedna"`, `"Haumea"`, `"Makemake"`, `"Ixion"`, `"Orcus"`, `"Quaoar"`
 
 **Fixed Stars:**
-`"Regulus"`, `"Spica"`, `"Aldebaran"`, `"Antares"`, `"Sirius"`, `"Fomalhaut"`, `"Algol"`, `"Betelgeuse"`, `"Canopus"`, `"Procyon"`, `"Arcturus"`, `"Pollux"`, `"Deneb"`, `"Altair"`, `"Rigel"`, `"Achernar"`, `"Capella"`, `"Vega"`, `"Alcyone"`, `"Alphecca"`, `"Algorab"`, `"Deneb_Algedi"`
+`"Regulus"`, `"Spica"`, `"Aldebaran"`, `"Antares"`, `"Sirius"`, `"Fomalhaut"`, `"Algol"`, `"Betelgeuse"`, `"Canopus"`, `"Procyon"`, `"Arcturus"`, `"Pollux"`, `"Deneb"`, `"Altair"`, `"Rigel"`, `"Achernar"`, `"Capella"`, `"Vega"`, `"Alcyone"`, `"Alphecca"`, `"Algorab"`, `"Deneb_Algedi"`, `"Alkaid"`
 
 **Arabic Parts (Lots):**
 `"Pars_Fortunae"` (Part of Fortune), `"Pars_Spiritus"` (Part of Spirit), `"Pars_Amoris"` (Part of Love), `"Pars_Fidei"` (Part of Faith)
@@ -413,8 +474,7 @@ Comprehensive literal for all supported celestial points.
 
 ### AxialCusps (Angles)
 
-_Alias for `AstrologicalPoint` containing only the angles._
-`"Ascendant"`, `"Medium_Coeli"`, `"Descendant"`, `"Imum_Coeli"`
+_Deprecated alias for `AstrologicalPoint`. Will be removed in v6.0 -- use `AstrologicalPoint` instead._
 
 ---
 
@@ -750,12 +810,11 @@ Global configuration for the library, primarily handling internationalization.
 
 ### KerykeionLanguageModel
 
-Defines all the string labels used in chart generation and reports.
+Defines all the string labels used in chart generation and reports. Planet/point names are accessed via the nested `celestial_points` field (`KerykeionLanguageCelestialPointModel`), not directly on the model.
 
--   `Sun`, `Moon`, `Mercury`... (Planet names)
--   `Ari`, `Tau`... (Sign names)
--   `First_House`... (House names)
--   `Fire`, `Earth`... (Element names)
+-   `celestial_points`: `KerykeionLanguageCelestialPointModel` — localized names for Sun, Moon, Mercury, etc.
+-   `fire`, `earth`, `air`, `water` (Element names, lowercase keys)
+-   Additional layout/formatting strings used in chart rendering.
 
 ---
 

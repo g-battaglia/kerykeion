@@ -105,8 +105,11 @@ Dual return charts show the natal chart (inner wheel) alongside the return momen
 ```python
 from kerykeion import PlanetaryReturnFactory
 
-# Calculate solar return
-return_model = PlanetaryReturnFactory.solar_return(subject, 2025)
+# Initialize the return factory with the return location
+return_factory = PlanetaryReturnFactory(subject, city="London", nation="GB")
+
+# Calculate solar return (search from Jan 1, 2025)
+return_model = return_factory.next_return_from_date(2025, 1, 1, return_type="Solar")
 
 # Dual wheel: natal vs return
 return_data = ChartDataFactory.create_return_chart_data(subject, return_model)
@@ -116,7 +119,8 @@ drawer = ChartDrawer(return_data)
 The same works for lunar returns:
 
 ```python
-return_model = PlanetaryReturnFactory.lunar_return(subject, 2025, 3)
+return_factory = PlanetaryReturnFactory(subject, city="London", nation="GB")
+return_model = return_factory.next_return_from_date(2025, 3, 1, return_type="Lunar")
 return_data = ChartDataFactory.create_return_chart_data(subject, return_model)
 drawer = ChartDrawer(return_data)
 ```
@@ -126,7 +130,8 @@ drawer = ChartDrawer(return_data)
 Single return charts show only the return moment as a standalone chart, without the natal comparison.
 
 ```python
-return_model = PlanetaryReturnFactory.solar_return(subject, 2025)
+return_factory = PlanetaryReturnFactory(subject, city="London", nation="GB")
+return_model = return_factory.next_return_from_date(2025, 1, 1, return_type="Solar")
 return_data = ChartDataFactory.create_single_wheel_return_chart_data(return_model)
 drawer = ChartDrawer(return_data)
 ```
@@ -235,6 +240,12 @@ drawer.save_aspect_grid_only_svg_file(Path("./output"), filename="grid_only")
 | `padding`                       | `int`                    | `20`         | Padding around the SVG content.             |
 | `style`                         | `KerykeionChartStyle`    | `"classic"`  | Chart wheel layout ("classic" or "modern"). Per-instance default for all render calls. |
 | `show_zodiac_background_ring`   | `bool`                   | `True`       | Show colored zodiac wedges (modern style only). Per-instance default for all render calls. |
+| `show_house_position_comparison`| `bool`                   | `True`       | Render the house position comparison grid (dual charts). |
+| `show_cusp_position_comparison` | `bool`                   | `False`      | Render the cusp position comparison grid alongside house comparison. |
+| `colors_settings`               | `dict`                   | `DEFAULT_CHART_COLORS` | Custom color settings for chart elements. |
+| `celestial_points_settings`     | `Sequence`               | `DEFAULT_CELESTIAL_POINTS_SETTINGS` | Custom celestial point display settings. |
+| `aspects_settings`              | `Sequence`               | `DEFAULT_CHART_ASPECTS_SETTINGS` | Custom aspect display settings. |
+| `language_pack`                 | `Mapping \| None`        | `None`       | Additional translations merged over bundled defaults. |
 
 **Public Methods:**
 

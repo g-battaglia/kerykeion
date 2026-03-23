@@ -16,18 +16,29 @@ Import from: `kerykeion.settings.config_constants`
 
 ### Active Points Presets
 
-| Constant                | Description                                                        |
-| :---------------------- | :----------------------------------------------------------------- |
-| `DEFAULT_ACTIVE_POINTS` | Standard points: Sun, Moon, planets, Chiron, Lilith, 4 angles      |
-| `ALL_ACTIVE_POINTS`     | Complete list including asteroids, TNOs, Arabic parts, fixed stars |
+| Constant                               | Description                                                        |
+| :------------------------------------- | :----------------------------------------------------------------- |
+| `DEFAULT_ACTIVE_POINTS`                | Standard points: Sun, Moon, planets, True Lunar Nodes, Chiron, Lilith, 4 angles (18 points) |
+| `TRADITIONAL_ASTROLOGY_ACTIVE_POINTS`  | Classical planets (Sun-Saturn) + True Lunar Nodes (9 points)       |
+| `ALL_ACTIVE_POINTS`                    | Complete list including asteroids, TNOs, Arabic parts, fixed stars |
 
 ```python
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, ALL_ACTIVE_POINTS
+from kerykeion.settings.config_constants import (
+    DEFAULT_ACTIVE_POINTS,
+    TRADITIONAL_ASTROLOGY_ACTIVE_POINTS,
+    ALL_ACTIVE_POINTS,
+)
 
 # Use extended point set
 subject = AstrologicalSubjectFactory.from_birth_data(
     ...,
     active_points=ALL_ACTIVE_POINTS
+)
+
+# Use classical planets only (traditional/Hellenistic astrology)
+subject = AstrologicalSubjectFactory.from_birth_data(
+    ...,
+    active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
 )
 ```
 
@@ -35,7 +46,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 
 | Constant                         | Description                                                      |
 | :------------------------------- | :--------------------------------------------------------------- |
-| `DEFAULT_ACTIVE_ASPECTS`         | Major aspects only (conj, opp, trine, sextile, square, quintile) |
+| `DEFAULT_ACTIVE_ASPECTS`         | Core aspects (conj, opp, trine, sextile, square) plus quintile     |
 | `ALL_ACTIVE_ASPECTS`             | Includes minor aspects (semi-sextile, quincunx, etc.)            |
 | `DISCEPOLO_SCORE_ACTIVE_ASPECTS` | Orbs per Ciro Discepolo scoring methodology                      |
 
@@ -50,6 +61,8 @@ aspects = AspectsFactory.single_chart_aspects(
 
 ### Chart Configuration Presets
 
+Import from: `kerykeion.settings.chart_defaults` (also re-exported from `kerykeion.settings`)
+
 | Constant                            | Description                                  |
 | :---------------------------------- | :------------------------------------------- |
 | `DEFAULT_CHART_COLORS`              | Default color scheme for charts.             |
@@ -60,14 +73,13 @@ aspects = AspectsFactory.single_chart_aspects(
 
 ### `KerykeionSettingsModel`
 
-The settings are defined by a Pydantic model that controls various aspects of the library's behavior.
+The settings are defined by a Pydantic model that controls the library's language/localization behavior.
 
 **Key Configuration Options:**
 
--   `json_dir`: Directory to store JSON output (default: "json").
--   `cache_dir`: Directory to store cache files (default: "cache").
+-   `language_settings`: A dictionary mapping language codes (e.g., `"EN"`, `"IT"`) to `KerykeionLanguageModel` instances containing localized strings for planet names, signs, houses, etc.
 
-_(See `kerykeion.schemas.settings_models` for the full list of configurable options)_
+_(See `kerykeion.schemas.settings_models` for the full model definition)_
 
 ## Translation Utilities
 

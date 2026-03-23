@@ -3,7 +3,7 @@ title: 'Legacy API'
 category: 'Reference'
 description: 'Documentation for deprecated classes and backward compatibility layers.'
 tags: ['docs', 'legacy', 'v4', 'backwards-compatibility']
-order: 20
+order: 23
 ---
 
 # Legacy API (Backward Compatibility)
@@ -23,7 +23,7 @@ from kerykeion import AstrologicalSubject
 
 subject = AstrologicalSubject(
     "Alice", 1990, 5, 15, 10, 30,
-    city="London", nat="GB"
+    city="London", nation="GB"
 )
 print(subject.sun["sign"])
 ```
@@ -36,7 +36,7 @@ The constructor signature attempts to match v4, forwarding arguments to `Astrolo
 -   `year`, `month`, `day`, `hour`, `minute` (int)
 -   `lng`, `lat` (float, optional)
 -   `tz_str` (str, optional)
--   `city`, `nat` (str, optional): `nat` is mapped to `nation`.
+-   `city`, `nation` (str, optional)
 -   `online` (bool)
 
 ## `KerykeionChartSVG` (Legacy Wrapper)
@@ -48,7 +48,7 @@ from kerykeion import KerykeionChartSVG
 
 chart = KerykeionChartSVG(subject)
 chart.makeSVG()
-print(chart.content)
+print(chart.template)
 ```
 
 ## `NatalAspects` & `SynastryAspects`
@@ -59,7 +59,7 @@ Wrappers for `AspectsFactory`.
 from kerykeion import NatalAspects
 
 aspects = NatalAspects(subject)
-for aspect in aspects.aspects:
+for aspect in aspects.relevant_aspects:
     print(aspect)
 ```
 

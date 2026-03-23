@@ -12,18 +12,22 @@ Kerykeion calculates a balance report for Elements (Fire/Earth/Air/Water) and Qu
 
 ## Usage
 
-Configure the distribution method when creating chart data.
+Configure the distribution method when creating chart data via `ChartDataFactory`. Both `distribution_method` and `custom_distribution_weights` are **keyword-only** parameters available on all `ChartDataFactory` methods.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 
-subject = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 6, 15, 12, 0, "London", "GB")
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False
+)
 
 # Default: Weighted
 data = ChartDataFactory.create_natal_chart_data(subject)
 print(f"Fire: {data.element_distribution.fire_percentage}%")
 
-# Option: Pure Count (1 point per planet)
+# Option: Pure Count (1 point per planet, regardless of importance)
 pure_data = ChartDataFactory.create_natal_chart_data(
     subject,
     distribution_method="pure_count"
@@ -70,10 +74,10 @@ In **Weighted** mode, points contribute different amounts to the score.
 | `Sun`, `Moon`, `Ascendant`                     | **2.0** |
 | `Mercury`, `Venus`, `Mars`, `MC`, `Desc`, `IC` | **1.5** |
 | `Jupiter`, `Saturn`                            | **1.0** |
-| `Vertex`, `Fortuna`, `Nodes`                   | **0.8** |
+| `Vertex`, `Pars_Fortunae`                      | **0.8** |
 | `Chiron`                                       | **0.6** |
-| `Uranus`, `Neptune`, `Pluto`                   | **0.5** |
-| `Asteroids`                                    | **0.4** |
+| `Ceres`, `Uranus`, `Neptune`, `Pluto`, `Lunar Nodes` | **0.5** |
+| `Pallas`, `Juno`, `Vesta` (other asteroids)    | **0.4** |
 
 ## Custom Weights
 

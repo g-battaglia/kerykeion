@@ -61,7 +61,7 @@ Composite Sun: Leo 124.36°
 
 ## Chart Generation
 
-The returned `composite_subject` is a standard `AstrologicalSubjectModel`. You can use it just like a natal subject to generate chart data or SVG visualizations.
+The returned `composite_subject` is a `CompositeSubjectModel` (which inherits from `AstrologicalBaseModel`, not `AstrologicalSubjectModel`). You can use it with `ChartDataFactory` to generate chart data or SVG visualizations.
 
 ```python
 from kerykeion import ChartDataFactory
@@ -75,6 +75,16 @@ drawer = ChartDrawer(composite_data)
 svg = drawer.generate_svg_string()
 ```
 
+## Constructor Parameters
+
+| Parameter        | Type                       | Default     | Description                                                                        |
+| :--------------- | :------------------------- | :---------- | :--------------------------------------------------------------------------------- |
+| `first_subject`  | `AstrologicalSubjectModel` | **Required** | First person's natal subject.                                                     |
+| `second_subject` | `AstrologicalSubjectModel` | **Required** | Second person's natal subject.                                                    |
+| `chart_name`     | `Optional[str]`            | `None`       | Custom name for the composite chart. If `None`, auto-generates as `"{name1} and {name2} Composite Chart"`. |
+
+**Method:** Call `get_midpoint_composite_subject_model()` on the factory instance to get the `CompositeSubjectModel`.
+
 ## Requirements
 
 To calculate a valid composite chart, both subjects **MUST** have matching configuration:
@@ -83,7 +93,15 @@ To calculate a valid composite chart, both subjects **MUST** have matching confi
 - **House System**: Both Placidus, Whole Sign, etc.
 - **Perspective**: Both Apparent Geocentric, etc.
 
-If these settings do not match, the factory will raise an error, as you cannot mathematically combine disparate coordinate systems.
+If these settings do not match, the factory will raise a `KerykeionException` with one of these messages:
+
+```text
+KerykeionException: Both subjects must have the same zodiac type
+KerykeionException: Both subjects must have the same sidereal mode
+KerykeionException: Both subjects must have the same houses system
+KerykeionException: Both subjects must have the same houses system name
+KerykeionException: Both subjects must have the same perspective type
+```
 
 ## Methodology
 

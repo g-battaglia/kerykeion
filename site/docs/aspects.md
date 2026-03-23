@@ -45,13 +45,13 @@ for aspect in aspects_data.aspects[:5]:  # Show first 5
 ```text
 Total Aspects: 24
 Sun conjunction Mercury (orb: 3.45°)
-Sun square Mars (orb: -2.18°)
+Sun square Mars (orb: 2.18°)
 Sun trine Jupiter (orb: 4.67°)
 Sun sextile Ascendant (orb: 1.23°)
-Moon opposition Saturn (orb: -5.89°)
+Moon opposition Saturn (orb: 5.89°)
 ```
 
-> **Note:** Negative orb values indicate **applying** aspects (the planets are moving toward exactness).
+> **Note:** Orb values are always non-negative (absolute deviation from exact aspect). To determine whether an aspect is applying or separating, check the `aspect_movement` field (`"Applying"`, `"Separating"`, or `"Static"`).
 
 ### 2. `dual_chart_aspects`
 
@@ -88,19 +88,21 @@ _These parameters affect aspect movement calculation (applying/separating)._
 
 Kerykeion calculates both major and minor aspects. Orbs can be customized.
 
-| Aspect             | Angle | Default Orb | Type  |
-| :----------------- | :---- | :---------- | :---- |
-| **Conjunction**    | 0°    | 8°          | Major |
-| **Opposition**     | 180°  | 8°          | Major |
-| **Trine**          | 120°  | 8°          | Major |
-| **Square**         | 90°   | 8°          | Major |
-| **Sextile**        | 60°   | 6°          | Major |
-| **Quincunx**       | 150°  | 3°          | Minor |
-| **Semi-sextile**   | 30°   | 3°          | Minor |
-| **Semi-square**    | 45°   | 3°          | Minor |
-| **Sesquiquadrate** | 135°  | 3°          | Minor |
-| **Quintile**       | 72°   | 3°          | Minor |
-| **Biquintile**     | 144°  | 3°          | Minor |
+| Aspect             | Angle | Default Orb | Active by Default | Type  |
+| :----------------- | :---- | :---------- | :---------------- | :---- |
+| **Conjunction**    | 0°    | 10°         | Yes               | Major |
+| **Opposition**     | 180°  | 10°         | Yes               | Major |
+| **Trine**          | 120°  | 8°          | Yes               | Major |
+| **Sextile**        | 60°   | 6°          | Yes               | Major |
+| **Square**         | 90°   | 5°          | Yes               | Major |
+| **Quintile**       | 72°   | 1°          | Yes               | Minor |
+| **Semi-sextile**   | 30°   | 1°          | No                | Minor |
+| **Semi-square**    | 45°   | 1°          | No                | Minor |
+| **Sesquiquadrate** | 135°  | 1°          | No                | Minor |
+| **Biquintile**     | 144°  | 1°          | No                | Minor |
+| **Quincunx**       | 150°  | 1°          | No                | Minor |
+
+> The orb values shown above are the defaults from `ALL_ACTIVE_ASPECTS`. The `DEFAULT_ACTIVE_ASPECTS` preset includes only the first 6 aspects (Conjunction through Quintile). To enable all 11 aspects, pass `active_aspects=ALL_ACTIVE_ASPECTS` from `kerykeion.settings.config_constants`.
 
 ### Filtering Options
 
@@ -142,14 +144,15 @@ aspects = AspectsFactory.single_chart_aspects(subject, axis_orb_limit=2.0)
 
 ## Return Data Structure
 
-The factory returns an `AspectsModel` containing a list of `AspectModel` objects.
+The factory returns a `SingleChartAspectsModel` (for single charts) or `DualChartAspectsModel` (for dual charts) containing a list of `AspectModel` objects.
 
 **Key `AspectModel` Attributes:**
 
 - `p1_name`, `p2_name`: Names of the two points involved.
-- `aspect`: Name of the aspect (e.g., "conjunction").
-- `orbit`: The exact orb (deviation from exact aspect). Negative values indicate applying aspects.
-- `aid`: Unique aspect ID string.
+- `aspect`: Name of the aspect (e.g., `"conjunction"`).
+- `orbit`: The exact orb (absolute deviation from exact aspect, always non-negative).
+- `aspect_degrees`: The theoretical angle (e.g., 120 for trine).
+- `aspect_movement`: `"Applying"`, `"Separating"`, or `"Static"`.
 
 ## Aspect Utilities
 
@@ -169,13 +172,13 @@ movement = calculate_aspect_movement(
     point_one_speed=1.0,   # Moving forward
     point_two_speed=0.5    # Moving slower forward
 )
-# Returns "Separating" (Distance is 2° and increasing as faster planet is ahead)
+# Returns "Applying" (Point one at 120° is behind point two at 122° and catching up due to higher speed)
 ```
 
 **Expected Output:**
 
 ```text
-Separating
+Applying
 ```
 
 ### `get_aspect_from_two_points`
@@ -186,11 +189,11 @@ Low-level function to check if two points form an aspect.
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
 
 aspect = get_aspect_from_two_points(
-    point_one_abs_pos=0.0,
-    point_two_abs_pos=120.5,
-    aspects_settings=[{"name": "trine", "degree": 120, "orb": 8}]
+    [{"name": "trine", "degree": 120, "orb": 8}],
+    0.0,
+    120.5,
 )
-# Returns dict with aspect details if found, else None
+# Returns dict with aspect details if found, else verdict=False
 ```
 
 ### `get_active_points_list`
@@ -203,7 +206,7 @@ from kerykeion.aspects.aspects_utils import get_active_points_list
 points = get_active_points_list(
     subject=subject,
     active_points=["Sun", "Moon", "Mercury"],
-    planets_settings=settings.planets_settings
+    celestial_points=settings.celestial_points  # keyword-only
 )
 ```
 

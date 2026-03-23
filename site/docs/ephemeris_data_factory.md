@@ -12,20 +12,20 @@ The `EphemerisDataFactory` generates time-series astrological data (ephemerides)
 
 ## Basic Usage
 
-Initialize the factory with a start and end date to generate a list of planetary positions.
+Initialize the factory with a start and end `datetime` to generate a list of planetary positions.
 
 ```python
 from datetime import datetime
 from kerykeion import EphemerisDataFactory
 
-# 1. Define Range
+# 1. Define Range (must be datetime objects)
 start = datetime(2024, 1, 1)
 end = datetime(2024, 1, 31)
 
 # 2. Initialize Factory
 factory = EphemerisDataFactory(
-    start,
-    end,
+    start_datetime=start,
+    end_datetime=end,
     step_type="days", # "days", "hours", or "minutes"
     step=1, # Interval size
     lat=51.5074,
@@ -38,11 +38,17 @@ data = factory.get_ephemeris_data()
 print(f"Sun 1st Day: {data[0]['planets'][0]['abs_pos']:.2f}°")
 ```
 
+> **Note:** The constructor parameters are named `start_datetime` and `end_datetime` and must be Python `datetime` objects (not `date` objects).
+
 ## Methods
 
-### `get_ephemeris_data()`
+### `get_ephemeris_data(as_model=False)`
 
-Returns a list of dictionaries. Fast and lightweight. Best for raw data processing.
+Returns a list of dictionaries (or `EphemerisDictModel` instances if `as_model=True`). Fast and lightweight. Best for raw data processing.
+
+| Parameter  | Type   | Default | Description                                              |
+| :--------- | :----- | :------ | :------------------------------------------------------- |
+| `as_model` | `bool` | `False` | If `True`, returns `EphemerisDictModel` instances instead of dicts. |
 
 **Output Structure:**
 
@@ -53,15 +59,23 @@ Returns a list of dictionaries. Fast and lightweight. Best for raw data processi
     "planets": [
       { "name": "Sun", "abs_pos": 280.23, "sign": "Cap", ... },
       ...
+    ],
+    "houses": [
+      { "name": "First_House", "abs_pos": 15.42, "sign": "Ari", ... },
+      ...
     ]
   },
   ...
 ]
 ```
 
-### `get_ephemeris_data_as_astrological_subjects()`
+### `get_ephemeris_data_as_astrological_subjects(as_model=False)`
 
 Returns a list of full `AstrologicalSubjectModel` objects. Slower but provides full analysis capabilities (aspects, houses, etc.).
+
+| Parameter  | Type   | Default | Description                                              |
+| :--------- | :----- | :------ | :------------------------------------------------------- |
+| `as_model` | `bool` | `False` | Accepted for signature compatibility (currently unused). |
 
 ```python
 subjects = factory.get_ephemeris_data_as_astrological_subjects()

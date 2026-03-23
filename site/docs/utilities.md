@@ -17,7 +17,7 @@ Functions for handling circular degrees and zodiac positions.
 | Function                                           | Description                                               |
 | :------------------------------------------------- | :-------------------------------------------------------- |
 | `get_number_from_name(name)`                       | Converts point name (e.g., "Sun") to Swiss Ephemeris ID.  |
-| `get_kerykeion_point_from_degree(deg, name, type)` | Creates a full `KerykeionPointModel` from a degree.       |
+| `get_kerykeion_point_from_degree(deg, name, point_type, speed=None, declination=None, magnitude=None)` | Creates a full `KerykeionPointModel` from a degree. |
 | `circular_mean(pos1, pos2)`                        | Calculates mean of two angles, handling 0°/360° crossing. |
 | `is_point_between(start, end, point)`              | Checks if a degree lies between two others on a circle.   |
 | `circular_sort(degrees)`                           | Sorts degrees clockwise starting from the first element.  |

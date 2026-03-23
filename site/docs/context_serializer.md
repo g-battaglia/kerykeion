@@ -3,7 +3,7 @@ title: 'AI Context Serializer'
 description: 'Optimize your astrological data for Large Language Models. Learn how to use the AI Context Serializer to convert charts into precise, well-formed XML.'
 category: 'Integration'
 tags: ['docs', 'ai', 'context', 'kerykeion']
-order: 19
+order: 22
 ---
 
 # AI Context Serializer

@@ -36,9 +36,21 @@ print(f"Elements: {natal_data.element_distribution.fire_percentage}% Fire")
 print(f"Qualities: {natal_data.quality_distribution.cardinal_percentage}% Cardinal")
 ```
 
+#### Parameters
+
+| Parameter                    | Type                       | Default      | Description                                                                   |
+| :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
+| `subject`                    | `AstrologicalSubjectModel` | **Required** | The subject to create chart data for. Also accepts `CompositeSubjectModel` or `PlanetReturnModel`. |
+| `active_points`              | `List[str]`                | `None`       | Custom points list. If `None`, uses `DEFAULT_ACTIVE_POINTS`.                  |
+| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs. Each item: `{"name": "conjunction", "orb": 10}`. |
+| `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method: `"weighted"` or `"pure_count"`. Keyword-only. |
+| `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override individual point weights. Use `"__default__"` for fallback. Keyword-only. |
+
+> See [Element & Quality Distribution](/content/docs/element_quality_distribution) for details on distribution methods and custom weights.
+
 ### 2. `create_synastry_chart_data`
 
-Used for comparing two subjects. Includes relationship scoring.
+Used for comparing two subjects. Includes relationship scoring and house comparison.
 
 ```python
 subject_b = AstrologicalSubjectFactory.from_birth_data(
@@ -60,14 +72,16 @@ if synastry_data.relationship_score:
 
 #### Parameters
 
-| Parameter                    | Type                       | Default   | Description                    |
-| :--------------------------- | :------------------------- | :-------- | :----------------------------- |
-| `first_subject`              | `AstrologicalSubjectModel` | **Req**   | Primary subject.               |
-| `second_subject`             | `AstrologicalSubjectModel` | **Req**   | Partner subject.               |
-| `active_points`              | `List[str]`                | `None`    | Custom points list.            |
-| `active_aspects`             | `List[dict]`               | `Default` | Custom aspects list.           |
-| `include_house_comparison`   | `bool`                     | `True`    | Calculate house overlays.      |
-| `include_relationship_score` | `bool`                     | `True`    | Calculate compatibility score. |
+| Parameter                    | Type                       | Default      | Description                                                                   |
+| :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
+| `first_subject`              | `AstrologicalSubjectModel` | **Required** | Primary subject.                                                              |
+| `second_subject`             | `AstrologicalSubjectModel` | **Required** | Partner subject.                                                              |
+| `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
+| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs.                                                |
+| `include_house_comparison`   | `bool`                     | `True`       | Calculate house overlays.                                                     |
+| `include_relationship_score` | `bool`                     | `True`       | Calculate Ciro Discepolo compatibility score.                                 |
+| `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method. Keyword-only.                             |
+| `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
 
 ### 3. `create_transit_chart_data`
 
@@ -80,13 +94,15 @@ transit_data = ChartDataFactory.create_transit_chart_data(subject, now)
 
 #### Parameters
 
-| Parameter                  | Type                       | Default   | Description                               |
-| :------------------------- | :------------------------- | :-------- | :---------------------------------------- |
-| `natal_subject`            | `AstrologicalSubjectModel` | **Req**   | Birth chart.                              |
-| `transit_subject`          | `AstrologicalSubjectModel` | **Req**   | Current time chart.                       |
-| `active_points`            | `List[str]`                | `None`    | Custom points list.                       |
-| `active_aspects`           | `List[dict]`               | `Default` | Custom aspects list.                      |
-| `include_house_comparison` | `bool`                     | `True`    | Calculate natal points in transit houses. |
+| Parameter                    | Type                       | Default      | Description                                                                   |
+| :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
+| `natal_subject`              | `AstrologicalSubjectModel` | **Required** | Birth chart.                                                                  |
+| `transit_subject`            | `AstrologicalSubjectModel` | **Required** | Current time chart.                                                           |
+| `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
+| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list.                                                          |
+| `include_house_comparison`   | `bool`                     | `True`       | Calculate natal points in transit houses.                                     |
+| `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method. Keyword-only.                             |
+| `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
 
 ### 4. `create_composite_chart_data`
 
@@ -98,6 +114,16 @@ from kerykeion import CompositeSubjectFactory
 composite_subject = CompositeSubjectFactory(subject_a, subject_b).get_midpoint_composite_subject_model()
 composite_data = ChartDataFactory.create_composite_chart_data(composite_subject)
 ```
+
+#### Parameters
+
+| Parameter                    | Type                       | Default      | Description                                                                   |
+| :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
+| `composite_subject`          | `CompositeSubjectModel`    | **Required** | Composite subject from `CompositeSubjectFactory`.                             |
+| `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
+| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs.                                                |
+| `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method. Keyword-only.                             |
+| `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
 
 ### 5. `create_return_chart_data`
 
@@ -112,6 +138,18 @@ solar_return = return_factory.next_return_from_date(2024, 1, 1, return_type="Sol
 return_data = ChartDataFactory.create_return_chart_data(natal_subject, solar_return)
 ```
 
+#### Parameters
+
+| Parameter                    | Type                       | Default      | Description                                                                   |
+| :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
+| `natal_subject`              | `AstrologicalSubjectModel` | **Required** | The natal subject (inner wheel).                                              |
+| `return_subject`             | `PlanetReturnModel`        | **Required** | The return subject from `PlanetaryReturnFactory`.                             |
+| `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
+| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs.                                                |
+| `include_house_comparison`   | `bool`                     | `True`       | Calculate house overlays between natal and return.                            |
+| `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method. Keyword-only.                             |
+| `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
+
 ### 6. `create_single_wheel_return_chart_data`
 
 Creates a single-wheel view of a planetary return (return only, no natal overlay).
@@ -119,6 +157,41 @@ Creates a single-wheel view of a planetary return (return only, no natal overlay
 ```python
 single_return_data = ChartDataFactory.create_single_wheel_return_chart_data(solar_return)
 ```
+
+#### Parameters
+
+| Parameter                    | Type                       | Default      | Description                                                                   |
+| :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
+| `return_subject`             | `PlanetReturnModel`        | **Required** | The return subject.                                                           |
+| `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
+| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs.                                                |
+| `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method. Keyword-only.                             |
+| `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
+
+### 7. `create_chart_data` (Generic)
+
+The underlying generic method that all convenience methods delegate to. Use this when you need full control over the chart type.
+
+```python
+chart_data = ChartDataFactory.create_chart_data(
+    chart_type="Natal",
+    first_subject=subject,
+    distribution_method="pure_count"
+)
+```
+
+| Parameter                    | Type                       | Default      | Description                                                                   |
+| :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
+| `chart_type`                 | `ChartType`                | **Required** | `"Natal"`, `"Synastry"`, `"Transit"`, `"Composite"`, `"DualReturnChart"`, `"SingleReturnChart"`. |
+| `first_subject`              | Subject Model              | **Required** | Primary subject.                                                              |
+| `second_subject`             | Subject Model              | `None`       | Second subject (for dual-chart types).                                        |
+| `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
+| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs.                                                |
+| `include_house_comparison`   | `bool`                     | `True`       | Calculate house overlays (dual charts only).                                  |
+| `include_relationship_score` | `bool`                     | `False`      | Calculate compatibility score (synastry only).                                |
+| `axis_orb_limit`             | `float`                    | `None`       | Stricter orb for angles. Keyword-only.                                        |
+| `distribution_method`        | `str`                      | `"weighted"` | `"weighted"` or `"pure_count"`. Keyword-only.                                 |
+| `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
 
 ## Data Models
 

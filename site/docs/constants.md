@@ -3,7 +3,7 @@ title: 'Constants'
 category: 'Reference'
 description: 'Exhaustive lists of available celestial points, aspects, and configuration constants.'
 tags: ['docs', 'constants', 'planets', 'aspects', 'configuration']
-order: 18
+order: 19
 ---
 
 # Configuration Constants
@@ -70,12 +70,12 @@ When customizing `active_points`, you can use any of the following string identi
 
 -   `Pars_Fortunae` (Part of Fortune)
 -   `Pars_Spiritus` (Part of Spirit)
--   `Pars_Amoris` (Part of Eros)
+-   `Pars_Amoris` (Part of Love)
 -   `Pars_Fidei` (Part of Faith)
 
 ### Fixed Stars
 
-23 fixed stars including all 15 Behenian stars and the 4 Royal Stars of Persia.
+23 fixed stars including the 4 Royal Stars of Persia (which are a subset of the 15 Behenian stars).
 
 **Royal Stars:**
 
@@ -140,6 +140,10 @@ These lists are available for quick configuration.
 
 Main planets, Chiron, Mean Lilith, Nodes, and Angles (18 points).
 
+### `TRADITIONAL_ASTROLOGY_ACTIVE_POINTS`
+
+Classical planets only plus nodes: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, True North Lunar Node, True South Lunar Node (9 points). Suitable for traditional/Hellenistic astrology.
+
 ### `ALL_ACTIVE_POINTS`
 
 Every point listed above plus `Earth` (63 total).
@@ -148,11 +152,15 @@ Every point listed above plus `Earth` (63 total).
 
 ### `DEFAULT_ACTIVE_ASPECTS`
 
-Conjunction, Opposition, Trine, Square, Sextile, Quintile.
+Conjunction (orb: 10), Opposition (orb: 10), Trine (orb: 8), Sextile (orb: 6), Square (orb: 5), Quintile (orb: 1).
 
 ### `ALL_ACTIVE_ASPECTS`
 
-All major and minor aspects listed above.
+All major and minor aspects listed above, with minor aspects using 1° orbs.
+
+### `DISCEPOLO_SCORE_ACTIVE_ASPECTS`
+
+Aspect orbs configured for Ciro Discepolo's relationship scoring methodology: Conjunction (8), Opposition (8), Trine (7), Square (5), Sextile (4), Semi-sextile (2), Semi-square (2), Sesquiquadrate (2). Used internally by `RelationshipScoreFactory`.
 
 ---
 

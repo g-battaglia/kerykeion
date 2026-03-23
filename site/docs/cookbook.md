@@ -270,12 +270,12 @@ Moon,Sco,15.32,Third_House,False,13.1762,,
 
 ```python
 import pandas as pd
-from datetime import date
+from datetime import datetime
 from kerykeion.ephemeris_data_factory import EphemerisDataFactory
 
 ephemeris = EphemerisDataFactory(
-    start_date=date(2024, 1, 1),
-    end_date=date(2024, 1, 31),
+    start_datetime=datetime(2024, 1, 1),
+    end_datetime=datetime(2024, 1, 31),
     step_type="days",
     step=1,
     lng=-0.1276, lat=51.5074, tz_str="Europe/London"

@@ -169,6 +169,28 @@ aspect.orbit  # The actual deviation from exact
 
 ---
 
+## Dignities & Debilities
+
+### Domicile (Rulership)
+A planet in the sign it rules. The planet operates at full strength. For example, Mars in Aries or Venus in Taurus.
+
+### Exaltation
+A planet in the sign where it is considered especially powerful (though not its ruler). For example, the Sun is exalted in Aries, the Moon in Taurus.
+
+### Detriment
+A planet in the sign opposite its domicile. Considered weakened or challenged. For example, Mars in Libra (opposite Aries).
+
+### Fall
+A planet in the sign opposite its exaltation. Considered at its weakest dignity. For example, the Sun in fall in Libra (opposite Aries).
+
+### Peregrine
+A planet with no essential dignity in its current sign — not in domicile, exaltation, triplicity, term, or face. Sometimes described as "wandering."
+
+### Decanate (Decan)
+Each zodiac sign is divided into three 10° segments called decanates (or decans). The first decan spans 0°-10°, the second 10°-20°, the third 20°-30°. Each decan has its own sub-ruler, adding nuance to interpretation.
+
+---
+
 ## Technical Terms
 
 ### Ayanamsa
@@ -196,6 +218,16 @@ A continuous count of days since January 1, 4713 BCE. Used internally for astron
 ```python
 print(subject.julian_day)
 ```
+
+### Void-of-Course Moon
+The period after the Moon makes its last major aspect in a sign and before it enters the next sign. Traditionally considered an unfavorable time for initiating new actions. Duration varies from minutes to over a day.
+
+> **Note:** Kerykeion does not calculate void-of-course periods directly, but you can determine them by analyzing Moon aspects and sign ingresses using `EphemerisDataFactory` and `AspectsFactory`.
+
+### Progressed Chart
+A forecasting technique where each day after birth corresponds to one year of life (secondary progressions). For example, the planetary positions 30 days after birth represent the progressed chart for age 30.
+
+> **Note:** Kerykeion does not currently implement progressions. For progressed charts, calculate the date offset manually and create an `AstrologicalSubjectFactory` for that date.
 
 ---
 

@@ -30,6 +30,30 @@ subject = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 6, 15, 12, 0
 ReportGenerator(subject).print_report()
 ```
 
+**Example Output:**
+
+```text
++------------------------------+
+|         Birth Data           |
++------------------------------+
+| Name    : Alice              |
+| Date    : 1990-06-15         |
+| Time    : 12:00              |
+| Location: London, GB         |
++------------------------------+
+
++------------------------------------------+
+|          Celestial Points                |
++------------------------------------------+
+| Planet   | Sign | Position | House       |
++----------+------+----------+-------------+
+| Sun      | Gem  |  23.81°  | 10th House  |
+| Moon     | Pis  |   8.45°  |  7th House  |
+| Mercury  | Can  |   5.12°  | 10th House  |
+| ...                                      |
++------------------------------------------+
+```
+
 ### Generating a String
 
 Use `generate_report()` to return the string instead of printing it.
@@ -43,6 +67,23 @@ report_text = ReportGenerator(natal_data).generate_report(include_aspects=True)
 with open("report.txt", "w") as f:
     f.write(report_text)
 ```
+
+### Synastry / Transit Report
+
+You can also generate reports from dual-chart data models:
+
+```python
+subject_b = AstrologicalSubjectFactory.from_birth_data(
+    "Bob", 1992, 8, 20, 14, 30,
+    lng=-74.006, lat=40.7128, tz_str="America/New_York",
+    online=False
+)
+
+synastry_data = ChartDataFactory.create_synastry_chart_data(subject, subject_b)
+ReportGenerator(synastry_data).print_report(max_aspects=10)
+```
+
+The dual-chart report includes both subjects' birth data, inter-chart aspects, and house comparison tables (if available).
 
 ### Moon Phase Overview Report
 
