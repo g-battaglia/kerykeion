@@ -14,34 +14,16 @@
     <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
 </div>
 <p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
-&nbsp;
 
-Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects, and generates SVG charts — including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
+<p align="center">
+  <img src="docs/charts/classic_default_natal.svg" width="540" alt="John Lennon - Natal Chart">
+</p>
+
+Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects, and generates SVG charts, including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
 
 The main goal of this project is to offer a clean, data-driven approach to astrology, making it accessible and programmable.
 
 Kerykeion also integrates seamlessly with LLM and AI applications.
-
-Here are some examples of birth charts:
-
-<table>
-  <tr>
-    <td align="center"><strong>Classic Default</strong></td>
-    <td align="center"><strong>Classic Dark</strong></td>
-  </tr>
-  <tr>
-    <td><img src="docs/charts/classic_default_natal.svg" width="450" alt="Classic Default Natal Chart"></td>
-    <td><img src="docs/charts/classic_dark_natal.svg" width="450" alt="Classic Dark Natal Chart"></td>
-  </tr>
-  <tr>
-    <td align="center"><strong>Modern Default</strong></td>
-    <td align="center"><strong>Modern Dark</strong></td>
-  </tr>
-  <tr>
-    <td><img src="docs/charts/modern_default_natal.svg" width="450" alt="Modern Default Natal Chart"></td>
-    <td><img src="docs/charts/modern_dark_natal.svg" width="450" alt="Modern Dark Natal Chart"></td>
-  </tr>
-</table>
 
 ## **Web API**
 
@@ -1372,14 +1354,30 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 
 ## Themes
 
-Kerykeion provides several chart themes:
+<table>
+  <tr>
+    <td align="center"><strong>Classic</strong></td>
+    <td align="center"><strong>Dark</strong></td>
+    <td align="center"><strong>Dark High Contrast</strong></td>
+  </tr>
+  <tr>
+    <td><img src="docs/charts/classic_default_natal.svg" width="300" alt="Classic Natal Chart"></td>
+    <td><img src="docs/charts/classic_dark_natal.svg" width="300" alt="Dark Natal Chart"></td>
+    <td><img src="docs/charts/classic_dark_high_contrast_natal.svg" width="300" alt="Dark High Contrast Natal Chart"></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Light</strong></td>
+    <td align="center"><strong>Strawberry</strong></td>
+    <td align="center"><strong>Black & White</strong></td>
+  </tr>
+  <tr>
+    <td><img src="docs/charts/classic_light_natal.svg" width="300" alt="Light Natal Chart"></td>
+    <td><img src="docs/charts/classic_strawberry_natal.svg" width="300" alt="Strawberry Natal Chart"></td>
+    <td><img src="docs/charts/classic_black_and_white_natal.svg" width="300" alt="Black and White Natal Chart"></td>
+  </tr>
+</table>
 
-- **Classic** (default)
-- **Dark**
-- **Dark High Contrast**
-- **Light**
-- **Strawberry**
-- **Black & White** (optimized for monochrome printing)
+Kerykeion provides several chart themes: **Classic** (default), **Dark**, **Dark High Contrast**, **Light**, **Strawberry**, and **Black & White** (optimized for monochrome printing).
 
 Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables.
 
