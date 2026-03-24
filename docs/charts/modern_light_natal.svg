@@ -20,43 +20,43 @@
     --kerykeion-color-black: #000000;
     --kerykeion-color-white: #ffffff;
 
-    --kerykeion-color-neutral-content: #c8cbd0;
-    --kerykeion-color-base-content: #ccd0d4;
-    --kerykeion-color-primary: #38bdf8;
-    --kerykeion-color-secondary: #818cf8;
-    --kerykeion-color-accent: #f471b5;
-    --kerykeion-color-neutral: #1e293b;
-    --kerykeion-color-base-100: #0f172a;
+    --kerykeion-color-neutral-content: #333c4d;
+    --kerykeion-color-base-content: #333c4d;
+    --kerykeion-color-primary: #65cc8a;
+    --kerykeion-color-secondary: #367bfb;
+    --kerykeion-color-accent: #f68067;
+    --kerykeion-color-neutral: #333c4d;
+    --kerykeion-color-base-100: #ffffff;
 
     /* Modern Chart */
-    --kerykeion-modern-planet-ring: #1a2540;
-    --kerykeion-modern-planet-ring-outer: #162038;
-    --kerykeion-modern-house-ring: #243050;
-    --kerykeion-modern-stroke: #384a6b;
-    --kerykeion-modern-retrograde: #fb7085;
-    --kerykeion-modern-indicator: #4e607d;
-    --kerykeion-modern-zodiac-bg-0: #131c2e;
-    --kerykeion-modern-zodiac-bg-1: #1e293b;
-    --kerykeion-modern-zodiac-bg-2: #131c2e;
-    --kerykeion-modern-zodiac-bg-3: #1e293b;
-    --kerykeion-modern-zodiac-bg-4: #131c2e;
-    --kerykeion-modern-zodiac-bg-5: #1e293b;
-    --kerykeion-modern-zodiac-bg-6: #131c2e;
-    --kerykeion-modern-zodiac-bg-7: #1e293b;
-    --kerykeion-modern-zodiac-bg-8: #131c2e;
-    --kerykeion-modern-zodiac-bg-9: #1e293b;
-    --kerykeion-modern-zodiac-bg-10: #131c2e;
-    --kerykeion-modern-zodiac-bg-11: #1e293b;
-    --kerykeion-modern-zodiac-bg-opacity: 1;
-    --kerykeion-color-info: #0ca5e9;
+    --kerykeion-modern-planet-ring: #f4f4f5;
+    --kerykeion-modern-planet-ring-outer: #e8e8ed;
+    --kerykeion-modern-house-ring: #e4e4e7;
+    --kerykeion-modern-stroke: #d4d4d8;
+    --kerykeion-modern-retrograde: #ff5761;
+    --kerykeion-modern-indicator: #a1a1aa;
+    --kerykeion-modern-zodiac-bg-0: #d1d1d1;
+    --kerykeion-modern-zodiac-bg-1: rgb(113 113 122);
+    --kerykeion-modern-zodiac-bg-2: #d1d1d1;
+    --kerykeion-modern-zodiac-bg-3: rgb(113 113 122);
+    --kerykeion-modern-zodiac-bg-4: #d1d1d1;
+    --kerykeion-modern-zodiac-bg-5: rgb(113 113 122);
+    --kerykeion-modern-zodiac-bg-6: #d1d1d1;
+    --kerykeion-modern-zodiac-bg-7: rgb(113 113 122);
+    --kerykeion-modern-zodiac-bg-8: #d1d1d1;
+    --kerykeion-modern-zodiac-bg-9: rgb(113 113 122);
+    --kerykeion-modern-zodiac-bg-10: #d1d1d1;
+    --kerykeion-modern-zodiac-bg-11: rgb(113 113 122);
+    --kerykeion-modern-zodiac-bg-opacity: 0.5;
+    --kerykeion-color-info: #00b5ff;
     --kerykeion-color-info-content: #000000;
-    --kerykeion-color-success: #2dd4bf;
-    --kerykeion-color-warning: #f4bf50;
-    --kerykeion-color-error: #fb7085;
+    --kerykeion-color-success: #00a96e;
+    --kerykeion-color-warning: #ffbe00;
+    --kerykeion-color-error: #ff5761;
 
     /* Zodiac */
-    --kerykeion-color-base-200: #0a1020;
-    --kerykeion-color-base-300: #171f2c;
+    --kerykeion-color-base-200: #d1d1d1;
+    --kerykeion-color-base-300: rgb(113 113 122);
 
     /* ----------- */
     /* Chart Color */
@@ -140,6 +140,7 @@
     --kerykeion-chart-color-pallas: var(--kerykeion-color-primary);
     --kerykeion-chart-color-juno: var(--kerykeion-color-accent);
     --kerykeion-chart-color-vesta: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-pars-fortunae: var(--kerykeion-color-success);
     --kerykeion-chart-color-vertex: var(--kerykeion-color-secondary);
     --kerykeion-chart-color-east-point: var(--kerykeion-color-primary);
     --kerykeion-chart-color-eris: var(--kerykeion-color-error);

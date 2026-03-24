@@ -1356,28 +1356,29 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 
 <table>
   <tr>
+    <td></td>
     <td align="center"><strong>Classic</strong></td>
     <td align="center"><strong>Dark</strong></td>
-    <td align="center"><strong>Dark High Contrast</strong></td>
-  </tr>
-  <tr>
-    <td><img src="docs/charts/classic_default_natal.svg" width="300" alt="Classic Natal Chart"></td>
-    <td><img src="docs/charts/classic_dark_natal.svg" width="300" alt="Dark Natal Chart"></td>
-    <td><img src="docs/charts/classic_dark_high_contrast_natal.svg" width="300" alt="Dark High Contrast Natal Chart"></td>
-  </tr>
-  <tr>
     <td align="center"><strong>Light</strong></td>
-    <td align="center"><strong>Strawberry</strong></td>
     <td align="center"><strong>Black & White</strong></td>
   </tr>
   <tr>
-    <td><img src="docs/charts/classic_light_natal.svg" width="300" alt="Light Natal Chart"></td>
-    <td><img src="docs/charts/classic_strawberry_natal.svg" width="300" alt="Strawberry Natal Chart"></td>
-    <td><img src="docs/charts/classic_black_and_white_natal.svg" width="300" alt="Black and White Natal Chart"></td>
+    <td align="center"><strong>Classic Style</strong></td>
+    <td><img src="docs/charts/classic_default_natal.svg" width="220" alt="Classic Natal Chart"></td>
+    <td><img src="docs/charts/classic_dark_natal.svg" width="220" alt="Dark Natal Chart"></td>
+    <td><img src="docs/charts/classic_light_natal.svg" width="220" alt="Light Natal Chart"></td>
+    <td><img src="docs/charts/classic_black_and_white_natal.svg" width="220" alt="Black and White Natal Chart"></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Modern Style</strong></td>
+    <td><img src="docs/charts/modern_classic_natal.svg" width="220" alt="Modern Classic Natal Chart"></td>
+    <td><img src="docs/charts/modern_dark_natal.svg" width="220" alt="Modern Dark Natal Chart"></td>
+    <td><img src="docs/charts/modern_light_natal.svg" width="220" alt="Modern Light Natal Chart"></td>
+    <td><img src="docs/charts/modern_black_and_white_natal.svg" width="220" alt="Modern Black and White Natal Chart"></td>
   </tr>
 </table>
 
-Kerykeion provides several chart themes: **Classic** (default), **Dark**, **Dark High Contrast**, **Light**, **Strawberry**, and **Black & White** (optimized for monochrome printing).
+Kerykeion provides several chart themes: **Classic** (default), **Dark**, **Light**, and **Black & White** (optimized for monochrome printing). Each is available in both **classic** and **modern** chart styles.
 
 Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables.
 
