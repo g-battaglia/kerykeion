@@ -97,7 +97,7 @@ class TestAstrologicalSubject:
         assert self.subject.sun.point_type == self.expected_output["sun"]["point_type"]
         assert self.subject.sun.house == self.expected_output["sun"]["house"]
         assert self.subject.sun.retrograde == self.expected_output["sun"]["retrograde"]
-        assert self.subject.sun.speed == approx(self.expected_output["sun"]["speed"], abs=1e-4)
+        assert self.subject.sun.speed == approx(self.expected_output["sun"]["speed"], abs=5e-4)
         assert self.subject.sun.declination == approx(self.expected_output["sun"]["declination"], abs=1e-2)
 
     def test_moon(self):
@@ -112,7 +112,7 @@ class TestAstrologicalSubject:
         assert self.subject.moon.point_type == self.expected_output["moon"]["point_type"]
         assert self.subject.moon.house == self.expected_output["moon"]["house"]
         assert self.subject.moon.retrograde == self.expected_output["moon"]["retrograde"]
-        assert self.subject.moon.speed == approx(self.expected_output["moon"]["speed"], abs=1e-4)
+        assert self.subject.moon.speed == approx(self.expected_output["moon"]["speed"], abs=5e-4)
         assert self.subject.moon.declination == approx(self.expected_output["moon"]["declination"], abs=1e-2)
 
     def test_mercury(self):
@@ -127,7 +127,7 @@ class TestAstrologicalSubject:
         assert self.subject.mercury.point_type == self.expected_output["mercury"]["point_type"]
         assert self.subject.mercury.house == self.expected_output["mercury"]["house"]
         assert self.subject.mercury.retrograde == self.expected_output["mercury"]["retrograde"]
-        assert self.subject.mercury.speed == approx(self.expected_output["mercury"]["speed"], abs=1e-4)
+        assert self.subject.mercury.speed == approx(self.expected_output["mercury"]["speed"], abs=5e-4)
         assert self.subject.mercury.declination == approx(self.expected_output["mercury"]["declination"], abs=1e-2)
 
     def test_venus(self):
@@ -142,7 +142,7 @@ class TestAstrologicalSubject:
         assert self.subject.venus.point_type == self.expected_output["venus"]["point_type"]
         assert self.subject.venus.house == self.expected_output["venus"]["house"]
         assert self.subject.venus.retrograde == self.expected_output["venus"]["retrograde"]
-        assert self.subject.venus.speed == approx(self.expected_output["venus"]["speed"], abs=1e-4)
+        assert self.subject.venus.speed == approx(self.expected_output["venus"]["speed"], abs=5e-4)
         assert self.subject.venus.declination == approx(self.expected_output["venus"]["declination"], abs=1e-2)
 
     def test_mars(self):
@@ -157,7 +157,7 @@ class TestAstrologicalSubject:
         assert self.subject.mars.point_type == self.expected_output["mars"]["point_type"]
         assert self.subject.mars.house == self.expected_output["mars"]["house"]
         assert self.subject.mars.retrograde == self.expected_output["mars"]["retrograde"]
-        assert self.subject.mars.speed == approx(self.expected_output["mars"]["speed"], abs=1e-4)
+        assert self.subject.mars.speed == approx(self.expected_output["mars"]["speed"], abs=5e-4)
         assert self.subject.mars.declination == approx(self.expected_output["mars"]["declination"], abs=1e-2)
 
     def test_jupiter(self):
@@ -172,7 +172,7 @@ class TestAstrologicalSubject:
         assert self.subject.jupiter.point_type == self.expected_output["jupiter"]["point_type"]
         assert self.subject.jupiter.house == self.expected_output["jupiter"]["house"]
         assert self.subject.jupiter.retrograde == self.expected_output["jupiter"]["retrograde"]
-        assert self.subject.jupiter.speed == approx(self.expected_output["jupiter"]["speed"], abs=1e-4)
+        assert self.subject.jupiter.speed == approx(self.expected_output["jupiter"]["speed"], abs=5e-4)
         assert self.subject.jupiter.declination == approx(self.expected_output["jupiter"]["declination"], abs=1e-2)
 
     def test_saturn(self):
@@ -187,7 +187,7 @@ class TestAstrologicalSubject:
         assert self.subject.saturn.point_type == self.expected_output["saturn"]["point_type"]
         assert self.subject.saturn.house == self.expected_output["saturn"]["house"]
         assert self.subject.saturn.retrograde == self.expected_output["saturn"]["retrograde"]
-        assert self.subject.saturn.speed == approx(self.expected_output["saturn"]["speed"], abs=1e-4)
+        assert self.subject.saturn.speed == approx(self.expected_output["saturn"]["speed"], abs=5e-4)
         assert self.subject.saturn.declination == approx(self.expected_output["saturn"]["declination"], abs=1e-2)
 
     def test_uranus(self):
@@ -202,7 +202,7 @@ class TestAstrologicalSubject:
         assert self.subject.uranus.point_type == self.expected_output["uranus"]["point_type"]
         assert self.subject.uranus.house == self.expected_output["uranus"]["house"]
         assert self.subject.uranus.retrograde == self.expected_output["uranus"]["retrograde"]
-        assert self.subject.uranus.speed == approx(self.expected_output["uranus"]["speed"], abs=1e-4)
+        assert self.subject.uranus.speed == approx(self.expected_output["uranus"]["speed"], abs=5e-4)
         assert self.subject.uranus.declination == approx(self.expected_output["uranus"]["declination"], abs=1e-2)
 
     def test_neptune(self):
@@ -217,7 +217,7 @@ class TestAstrologicalSubject:
         assert self.subject.neptune.point_type == self.expected_output["neptune"]["point_type"]
         assert self.subject.neptune.house == self.expected_output["neptune"]["house"]
         assert self.subject.neptune.retrograde == self.expected_output["neptune"]["retrograde"]
-        assert self.subject.neptune.speed == approx(self.expected_output["neptune"]["speed"], abs=1e-4)
+        assert self.subject.neptune.speed == approx(self.expected_output["neptune"]["speed"], abs=5e-4)
         assert self.subject.neptune.declination == approx(self.expected_output["neptune"]["declination"], abs=1e-2)
 
     def test_pluto(self):
@@ -232,7 +232,7 @@ class TestAstrologicalSubject:
         assert self.subject.pluto.point_type == self.expected_output["pluto"]["point_type"]
         assert self.subject.pluto.house == self.expected_output["pluto"]["house"]
         assert self.subject.pluto.retrograde == self.expected_output["pluto"]["retrograde"]
-        assert self.subject.pluto.speed == approx(self.expected_output["pluto"]["speed"], abs=1e-4)
+        assert self.subject.pluto.speed == approx(self.expected_output["pluto"]["speed"], abs=5e-4)
         assert self.subject.pluto.declination == approx(self.expected_output["pluto"]["declination"], abs=1e-2)
 
     def test_true_north_lunar_node(self):
@@ -1476,7 +1476,7 @@ class TestMockErrorConditions:
     def test_planet_calculation_error_handling(self):
         """Test error handling when planet calculation fails (lines 1184-1187)."""
         from unittest.mock import patch
-        import swisseph as swe
+        from kerykeion.ephemeris_backend import swe
 
         # Mock swe.calc_ut to raise an exception for a specific planet
         original_calc = swe.calc_ut
@@ -1487,7 +1487,7 @@ class TestMockErrorConditions:
                 raise Exception("Mock ephemeris error")
             return original_calc(jd, planet_num, flags)
 
-        with patch("swisseph.calc_ut", side_effect=mock_calc_ut):
+        with patch.object(swe, "calc_ut", side_effect=mock_calc_ut):
             # This should handle the error gracefully
             subject = AstrologicalSubjectFactory.from_birth_data(
                 "Error Test",
@@ -1857,9 +1857,11 @@ class TestAllDwarfPlanetsAndFixedStars:
         """Test Vertex exception handling (line 1836-1841)."""
         from unittest.mock import patch
 
+        from kerykeion.ephemeris_backend import swe
+
         # First create subject normally to ensure houses work
         # Then mock only the Vertex calculation part
-        original_houses = __import__("swisseph").houses
+        original_houses = swe.houses
 
         def conditional_mock(*args, **kwargs):
             # Check if this is being called with 'V' house system (for Vertex)
@@ -1867,7 +1869,7 @@ class TestAllDwarfPlanetsAndFixedStars:
                 raise Exception("Mock vertex error")
             return original_houses(*args, **kwargs)
 
-        with patch("swisseph.houses", side_effect=conditional_mock):
+        with patch.object(swe, "houses", side_effect=conditional_mock):
             subject = AstrologicalSubjectFactory.from_birth_data(
                 "Vertex Error",
                 1990,

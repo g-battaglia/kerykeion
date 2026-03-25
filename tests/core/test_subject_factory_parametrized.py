@@ -130,13 +130,26 @@ def get_subject_data_by_id(subject_id: str) -> Optional[Dict[str, Any]]:
     return None
 
 
+def _default_position_tolerance() -> float:
+    """Return a backend-appropriate default tolerance for position comparisons.
+
+    libephemeris (JPL DE440/DE441) produces slightly different values than
+    swisseph, especially for the Moon (~0.0005°) and house cusps.
+    """
+    from kerykeion.ephemeris_backend import BACKEND_NAME
+
+    return 2e-3 if BACKEND_NAME != "swisseph" else 1e-4
+
+
 def assert_position_within_tolerance(
     actual: float,
     expected: float,
-    tolerance: float = 0.0001,
+    tolerance: float | None = None,
     message: str = "",
 ):
     """Assert that two position values are within tolerance."""
+    if tolerance is None:
+        tolerance = _default_position_tolerance()
     diff = abs(actual - expected)
     assert diff <= tolerance, f"{message}: Expected {expected}, got {actual}, diff={diff} > tolerance={tolerance}"
 
@@ -215,7 +228,7 @@ class TestHouseSystemConfigurations:
             assert_position_within_tolerance(
                 actual_house.abs_pos,
                 expected_house["abs_pos"],
-                tolerance=0.0001,
+                tolerance=_default_position_tolerance(),
                 message=f"{house} abs_pos for {subject_id} with house system {house_system}",
             )
 
@@ -242,7 +255,7 @@ class TestHouseSystemConfigurations:
         assert_position_within_tolerance(
             subject.ascendant.abs_pos,
             subject.first_house.abs_pos,
-            tolerance=0.0001,
+            tolerance=_default_position_tolerance(),
             message=f"ASC vs First House for system {house_system}",
         )
 
@@ -250,7 +263,7 @@ class TestHouseSystemConfigurations:
         assert_position_within_tolerance(
             subject.medium_coeli.abs_pos,
             subject.tenth_house.abs_pos,
-            tolerance=0.0001,
+            tolerance=_default_position_tolerance(),
             message=f"MC vs Tenth House for system {house_system}",
         )
 
@@ -327,7 +340,7 @@ class TestSiderealModeConfigurations:
             assert_position_within_tolerance(
                 actual_planet.abs_pos,
                 expected_planet["abs_pos"],
-                tolerance=0.0001,
+                tolerance=_default_position_tolerance(),
                 message=f"{planet} abs_pos for {subject_id} with sidereal mode {sidereal_mode}",
             )
 
@@ -437,7 +450,7 @@ class TestPerspectiveConfigurations:
             assert_position_within_tolerance(
                 actual_planet.abs_pos,
                 expected_planet["abs_pos"],
-                tolerance=0.0001,
+                tolerance=_default_position_tolerance(),
                 message=f"{planet} abs_pos for {subject_id} with perspective {perspective_type}",
             )
 
@@ -678,13 +691,13 @@ class TestCrossConfigurationConsistency:
             assert_position_within_tolerance(
                 placidus.abs_pos,
                 koch.abs_pos,
-                tolerance=0.0001,
+                tolerance=_default_position_tolerance(),
                 message=f"{planet} position differs between Placidus and Koch",
             )
             assert_position_within_tolerance(
                 placidus.abs_pos,
                 whole_sign.abs_pos,
-                tolerance=0.0001,
+                tolerance=_default_position_tolerance(),
                 message=f"{planet} position differs between Placidus and Whole Sign",
             )
 

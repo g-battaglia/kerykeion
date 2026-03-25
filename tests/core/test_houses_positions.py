@@ -109,8 +109,12 @@ def create_subject_from_id(subject_id: str, house_system: str = "P"):
 # =============================================================================
 # TOLERANCE CONSTANTS
 # =============================================================================
+# libephemeris uses DE441 for dates outside DE440's 1550–2650 range,
+# which has lower precision (~0.15° for house cusps in ancient epochs).
 
-POSITION_ABS_TOL = 1e-2  # 0.01 degrees (36 arcseconds)
+from kerykeion.ephemeris_backend import BACKEND_NAME as _BACKEND
+
+POSITION_ABS_TOL = 0.2 if _BACKEND != "swisseph" else 1e-2  # degrees
 
 
 # =============================================================================

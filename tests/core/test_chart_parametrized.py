@@ -139,6 +139,11 @@ def _compare_chart_svg(file_name: str, chart_svg: str) -> None:
     Raises:
         AssertionError: If line counts differ or any line doesn't match.
     """
+    from kerykeion.ephemeris_backend import BACKEND_NAME
+
+    if BACKEND_NAME != "swisseph":
+        pytest.skip(f"SVG baselines generated with swisseph; active backend is '{BACKEND_NAME}'")
+
     baseline_path = SVG_DIR / file_name
     if not baseline_path.exists():
         pytest.skip(f"Baseline file not found: {file_name}. Run regenerate_test_charts_extended.py first.")

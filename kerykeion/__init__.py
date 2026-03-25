@@ -87,6 +87,7 @@ from .schemas.kr_models import (
 # =============================================================================
 from .settings import KerykeionSettingsModel
 from .context_serializer import to_context
+from .ephemeris_backend import BACKEND_NAME
 
 # =============================================================================
 # LEGACY API (v4 backward compatibility)
@@ -128,6 +129,7 @@ __all__ = [
     # Settings and Utilities
     "KerykeionSettingsModel",
     "to_context",
+    "BACKEND_NAME",
     # Legacy API (v4 backward compatibility)
     "AstrologicalSubject",
     "KerykeionChartSVG",

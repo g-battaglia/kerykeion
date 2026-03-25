@@ -348,11 +348,12 @@ class TestFallbackPaths:
 
     def test_azalt_failure_defaults_to_diurnal(self, caplog):
         """If swe.azalt raises, default to diurnal."""
+        from kerykeion.ephemeris_backend import swe
 
         def mock_azalt(*args, **kwargs):
             raise RuntimeError("Mock azalt failure")
 
-        with patch("swisseph.azalt", side_effect=mock_azalt):
+        with patch.object(swe, "azalt", side_effect=mock_azalt):
             with caplog.at_level(logging.WARNING):
                 subject = _make_subject(12)
 
@@ -361,11 +362,12 @@ class TestFallbackPaths:
 
     def test_azalt_failure_at_night_also_defaults_to_diurnal(self, caplog):
         """When azalt fails at midnight, defaults to diurnal (conservative fallback)."""
+        from kerykeion.ephemeris_backend import swe
 
         def mock_azalt(*args, **kwargs):
             raise RuntimeError("Mock azalt failure")
 
-        with patch("swisseph.azalt", side_effect=mock_azalt):
+        with patch.object(swe, "azalt", side_effect=mock_azalt):
             with caplog.at_level(logging.WARNING):
                 midnight = _make_subject(0)
 
@@ -377,7 +379,7 @@ class TestFallbackPaths:
         This is expected: _ensure_point_calculated does not catch exceptions,
         and the caller (_calculate_planets) handles them at a higher level.
         """
-        import swisseph as swe
+        from kerykeion.ephemeris_backend import swe
 
         original_calc = swe.calc_ut
 
@@ -386,7 +388,7 @@ class TestFallbackPaths:
                 raise Exception("Mock: Sun calculation failed")
             return original_calc(jd, planet_num, flags)
 
-        with patch("swisseph.calc_ut", side_effect=mock_calc_ut):
+        with patch.object(swe, "calc_ut", side_effect=mock_calc_ut):
             with pytest.raises(Exception, match="Mock: Sun calculation failed"):
                 AstrologicalSubjectFactory.from_birth_data(
                     name="No Sun",
@@ -406,11 +408,12 @@ class TestFallbackPaths:
     def test_compute_is_diurnal_direct_defensive_path(self, caplog):
         """Test _compute_is_diurnal fallback when swe.calc_ut fails."""
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.ephemeris_backend import swe
 
         def mock_calc_ut(*args, **kwargs):
             raise RuntimeError("Mock calc_ut failure")
 
-        with patch("swisseph.calc_ut", side_effect=mock_calc_ut):
+        with patch.object(swe, "calc_ut", side_effect=mock_calc_ut):
             with caplog.at_level(logging.WARNING):
                 result = AstrologicalSubjectFactory._compute_is_diurnal(
                     julian_day=2448058.0,

@@ -70,7 +70,7 @@ License: AGPL-3.0
 
 import calendar
 import logging
-import swisseph as swe
+from kerykeion.ephemeris_backend import swe
 
 from datetime import datetime, timezone
 from typing import Union

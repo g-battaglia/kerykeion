@@ -4,7 +4,9 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 # TODO: Better documentation and unit tests
 
-from swisseph import difdeg2n
+from kerykeion.ephemeris_backend import swe as _swe
+
+difdeg2n = _swe.difdeg2n
 from typing import Optional, Union
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.schemas.kr_literals import AspectMovementType

@@ -84,6 +84,11 @@ def compare_svg_lines(
 
 def compare_chart_svg(file_name: str, chart_svg: str) -> None:
     """Compare generated SVG against a baseline file, skipping if missing."""
+    from kerykeion.ephemeris_backend import BACKEND_NAME
+
+    if BACKEND_NAME != "swisseph":
+        pytest.skip(f"SVG baselines generated with swisseph; active backend is '{BACKEND_NAME}'")
+
     baseline = SVG_DIR / file_name
     if not baseline.exists():
         pytest.skip(f"Baseline not found: {baseline}. Run: poe regenerate:charts")

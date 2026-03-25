@@ -31,7 +31,7 @@ License: AGPL-3.0
 """
 
 import pytz
-import swisseph as swe
+from kerykeion.ephemeris_backend import swe
 import logging
 import math
 from datetime import datetime
