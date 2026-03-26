@@ -6,6 +6,8 @@ _2026-03-18_
 
 **New Features:**
 
+- **Retrograde indicator on classic wheel (v5.12.7):** The ℞ (retrograde) symbol is now rendered next to retrograde planet glyphs directly on the classic style chart wheel. Previously, retrograde status was only visible in the sidebar grid and in modern style charts. The symbol appears at the bottom-right foot of each retrograde planet glyph on both inner-ring (natal) and outer-ring (transit/synastry) planets. A `kr:retrograde="true"` attribute is also added to the planet group elements for programmatic consumers.
+
 - **House cusp speeds (v5.12.1):** Replaced `swe.houses_ex()` with `swe.houses_ex2()` to expose cusp velocities. All 12 house cusps and the 4 angular points (ASC, MC, DSC, IC) now carry a `speed` field (degrees/day) representing the real rate of diurnal motion. Useful for primary directions and profection techniques.
 
 - **Expanded fixed stars (v5.12.2):** Grew the fixed star catalogue from 2 to 23 stars. The 21 new stars are: Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel, Achernar, Capella, Vega, Alcyone, Alphecca, Algorab, Deneb_Algedi, and Alkaid. The set now includes all 15 Behenian stars of the medieval/Hermetic tradition and the 4 Royal Stars of Persian/Hellenistic astrology (Regulus, Aldebaran, Antares, Fomalhaut). Each fixed star now also reports apparent visual magnitude via `swe.fixstar2_mag()` and equatorial declination.
