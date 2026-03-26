@@ -331,6 +331,7 @@ class ChartConfiguration:
     perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE
     custom_ayanamsa_t0: Optional[float] = None
     custom_ayanamsa_ayan_t0: Optional[float] = None
+    calculate_dignities: bool = False
 
     def __post_init__(self) -> None:
         self.validate()
@@ -606,6 +607,7 @@ class AstrologicalSubjectFactory:
         calculate_lunar_phase: bool = True,
         custom_ayanamsa_t0: Optional[float] = None,
         custom_ayanamsa_ayan_t0: Optional[float] = None,
+        calculate_dignities: bool = False,
         *,
         seconds: int = 0,
         suppress_geonames_warning: bool = False,
@@ -771,6 +773,7 @@ class AstrologicalSubjectFactory:
             perspective_type=perspective_type,
             custom_ayanamsa_t0=custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=custom_ayanamsa_ayan_t0,
+            calculate_dignities=calculate_dignities,
         )
 
         # Add configuration data to calculation data
@@ -873,6 +876,24 @@ class AstrologicalSubjectFactory:
             )
         else:
             calc_data["lunar_phase"] = None
+
+        # Calculate essential dignities (optional)
+        if config.calculate_dignities:
+            from kerykeion.dignities import calculate_essential_dignity
+
+            is_diurnal = calc_data.get("is_diurnal", True)
+            for point_key in list(calc_data.keys()):
+                point = calc_data.get(point_key)
+                if point is not None and hasattr(point, "point_type") and point.point_type == "AstrologicalPoint":
+                    dignity_data = calculate_essential_dignity(
+                        planet_name=point.name,
+                        sign=point.sign,
+                        element=point.element,
+                        position=point.position,
+                        is_diurnal=is_diurnal,
+                    )
+                    if dignity_data["essential_dignity"] is not None:
+                        calc_data[point_key] = point.model_copy(update=dignity_data)
 
         # Create and return the AstrologicalSubjectModel
         return AstrologicalSubjectModel(**calc_data)
