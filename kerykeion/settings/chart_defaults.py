@@ -526,6 +526,63 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS: Final[list[_CelestialPointSetting]] = [
         "element_points": 0,
         "label": "Alkaid",
     },
+    # Uranian / Hamburg School hypothetical planets
+    {
+        "id": 63,
+        "name": "Cupido",
+        "color": "var(--kerykeion-chart-color-cupido)",
+        "element_points": 0,
+        "label": "Cupido",
+    },
+    {
+        "id": 64,
+        "name": "Hades",
+        "color": "var(--kerykeion-chart-color-hades)",
+        "element_points": 0,
+        "label": "Hades",
+    },
+    {
+        "id": 65,
+        "name": "Zeus",
+        "color": "var(--kerykeion-chart-color-zeus)",
+        "element_points": 0,
+        "label": "Zeus",
+    },
+    {
+        "id": 66,
+        "name": "Kronos",
+        "color": "var(--kerykeion-chart-color-kronos)",
+        "element_points": 0,
+        "label": "Kronos",
+    },
+    {
+        "id": 67,
+        "name": "Apollon",
+        "color": "var(--kerykeion-chart-color-apollon)",
+        "element_points": 0,
+        "label": "Apollon",
+    },
+    {
+        "id": 68,
+        "name": "Admetos",
+        "color": "var(--kerykeion-chart-color-admetos)",
+        "element_points": 0,
+        "label": "Admetos",
+    },
+    {
+        "id": 69,
+        "name": "Vulkanus",
+        "color": "var(--kerykeion-chart-color-vulkanus)",
+        "element_points": 0,
+        "label": "Vulkanus",
+    },
+    {
+        "id": 70,
+        "name": "Poseidon",
+        "color": "var(--kerykeion-chart-color-poseidon)",
+        "element_points": 0,
+        "label": "Poseidon",
+    },
 ]
 
 

@@ -110,6 +110,15 @@ AstrologicalPoint: TypeAlias = Literal[
     "Algorab",
     "Deneb_Algedi",
     "Alkaid",
+    # Uranian / Hamburg School hypothetical planets
+    "Cupido",
+    "Hades",
+    "Zeus",
+    "Kronos",
+    "Apollon",
+    "Admetos",
+    "Vulkanus",
+    "Poseidon",
     # Arabic Parts
     "Pars_Fortunae",
     "Pars_Spiritus",
