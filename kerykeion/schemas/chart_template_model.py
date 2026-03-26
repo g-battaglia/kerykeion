@@ -378,6 +378,9 @@ class ChartTemplateModel(SubscriptableBaseModel):
     makeHouses: str
     """SVG markup for houses"""
 
+    makeGauquelinSectors: str = ""
+    """SVG markup for Gauquelin sector overlay (empty string when not active)"""
+
     makePlanets: str
     """SVG markup for planets"""
 

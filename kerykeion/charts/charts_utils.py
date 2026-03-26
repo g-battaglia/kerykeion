@@ -2259,3 +2259,92 @@ def calculate_synastry_quality_points(
         return {key: 0.0 for key in _QUALITY_KEYS}
 
     return {key: (combined_totals[key] / total_points) * 100.0 for key in _QUALITY_KEYS}
+
+
+# =============================================================================
+# GAUQUELIN SECTORS OVERLAY
+# =============================================================================
+
+
+def draw_gauquelin_sectors(
+    r: Union[int, float],
+    inner_r: Union[int, float],
+    seventh_house_degree_ut: float,
+    color: str = "var(--kerykeion-color-secondary)",
+    opacity: float = 0.35,
+) -> str:
+    """Draw 36 Gauquelin sector division lines as an overlay ring.
+
+    The sectors are drawn as thin radial lines between *inner_r* and *r*,
+    evenly spaced at 10° intervals. A bolder line marks the ASC (sector 1)
+    and a semi-bold line marks sector 10 (the MC plus zone).
+
+    Sector numbering follows the Gauquelin convention: clockwise from the
+    eastern horizon, with sector 1 at the Ascendant.
+
+    Args:
+        r: Outer radius of the Gauquelin ring.
+        inner_r: Inner radius of the Gauquelin ring.
+        seventh_house_degree_ut: Descendant degree (used for orientation).
+        color: CSS color for the sector lines.
+        opacity: Line opacity (0-1).
+
+    Returns:
+        SVG string containing 36 sector lines and sector numbers.
+    """
+    output = ""
+    sector_span = 10.0  # degrees per sector
+
+    for i in range(36):
+        angle_deg = i * sector_span
+        # Convert to chart coordinate system (offset from 7th house / Descendant)
+        offset = angle_deg - seventh_house_degree_ut
+
+        rad = math.radians(offset)
+        # Inner point
+        ix = inner_r + inner_r * math.cos(rad)
+        iy = inner_r - inner_r * math.sin(rad)
+        # Outer point
+        ox = r + (r - (r - inner_r)) * math.cos(rad)  # adjusted
+        oy = r - (r - (r - inner_r)) * math.sin(rad)
+
+        # Use standard sliceToX/Y for consistency with chart coordinate system
+        # The chart uses offset = -(7th_house_degree) + current_degree
+        chart_offset = -seventh_house_degree_ut + angle_deg
+        x1 = sliceToX(0, r - inner_r, chart_offset) + inner_r
+        y1 = sliceToY(0, r - inner_r, chart_offset) + inner_r
+        x2 = sliceToX(0, r, chart_offset)
+        y2 = sliceToY(0, r, chart_offset)
+
+        # Thicker line for ASC (sector 1 = 0°) and MC zone (sector 10 = 90°)
+        if i == 0:
+            stroke_width = 1.5
+            line_opacity = 0.8
+        elif i == 9 or i == 18 or i == 27:
+            stroke_width = 1.0
+            line_opacity = 0.6
+        else:
+            stroke_width = 0.4
+            line_opacity = opacity
+
+        output += (
+            f'<line x1="{x1:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}" '
+            f'style="stroke:{color}; stroke-width:{stroke_width}px; '
+            f'stroke-opacity:{line_opacity};" />\n'
+        )
+
+        # Add sector number at the midpoint of each sector (every 3rd sector for readability)
+        if i % 3 == 0:
+            mid_offset = chart_offset + sector_span / 2
+            text_radius = r - (r - inner_r) * 0.5
+            tx = sliceToX(0, text_radius, mid_offset) + (r - text_radius)
+            ty = sliceToY(0, text_radius, mid_offset) + (r - text_radius)
+            sector_num = i + 1
+            output += (
+                f'<text x="{tx:.2f}" y="{ty:.2f}" '
+                f'style="fill:{color}; font-size:6px; opacity:{opacity + 0.2}; '
+                f'text-anchor:middle; dominant-baseline:central;">'
+                f'{sector_num}</text>\n'
+            )
+
+    return output

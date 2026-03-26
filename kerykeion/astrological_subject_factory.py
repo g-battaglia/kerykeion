@@ -331,6 +331,7 @@ class ChartConfiguration:
     perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE
     custom_ayanamsa_t0: Optional[float] = None
     custom_ayanamsa_ayan_t0: Optional[float] = None
+    calculate_gauquelin: bool = False
 
     def __post_init__(self) -> None:
         self.validate()
@@ -606,6 +607,7 @@ class AstrologicalSubjectFactory:
         calculate_lunar_phase: bool = True,
         custom_ayanamsa_t0: Optional[float] = None,
         custom_ayanamsa_ayan_t0: Optional[float] = None,
+        calculate_gauquelin: bool = False,
         *,
         seconds: int = 0,
         suppress_geonames_warning: bool = False,
@@ -771,6 +773,7 @@ class AstrologicalSubjectFactory:
             perspective_type=perspective_type,
             custom_ayanamsa_t0=custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=custom_ayanamsa_ayan_t0,
+            calculate_gauquelin=calculate_gauquelin,
         )
 
         # Add configuration data to calculation data
@@ -873,6 +876,25 @@ class AstrologicalSubjectFactory:
             )
         else:
             calc_data["lunar_phase"] = None
+
+        # Calculate Gauquelin sectors (optional)
+        if config.calculate_gauquelin and calc_data.get("lng") and calc_data.get("lat"):
+            geopos = [calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0]
+            jd = calc_data["julian_day"]
+            for point_key in list(calc_data.keys()):
+                point = calc_data.get(point_key)
+                if point is not None and hasattr(point, "point_type") and point.point_type == "AstrologicalPoint":
+                    # Only calculate for planets with known SwissEph IDs
+                    try:
+                        from kerykeion.astrological_subject_factory import STANDARD_PLANETS
+                        pid = STANDARD_PLANETS.get(point.name)
+                        if pid is not None and pid <= 20:
+                            sector = swe.gauquelin_sector(jd, pid, 0, geopos)
+                            calc_data[point_key] = point.model_copy(
+                                update={"gauquelin_sector": round(sector, 4)}
+                            )
+                    except Exception:
+                        pass
 
         # Create and return the AstrologicalSubjectModel
         return AstrologicalSubjectModel(**calc_data)
