@@ -363,7 +363,7 @@ RelationshipScoreDescription: TypeAlias = Literal[
 """Literal type for Relationship Score Description"""
 
 
-CompositeChartType: TypeAlias = Literal["Midpoint"]
+CompositeChartType: TypeAlias = Literal["Midpoint", "Davison"]
 """Literal type for Composite Chart Types"""
 
 AspectName: TypeAlias = Literal[
