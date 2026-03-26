@@ -267,6 +267,84 @@ class TransitsTimeRangeFactory:
         )
 
 
+    def get_transit_events(self) -> "TransitEventsTimeRangeModel":
+        """Group transit moments into discrete transit events.
+
+        Unlike ``get_transit_moments()`` which returns raw snapshots, this
+        method identifies when aspects begin applying, reach exactness (minimum
+        orb), and finish separating — producing a timeline of transit events.
+
+        Algorithm:
+            1. Get all transit moments via get_transit_moments()
+            2. Track each unique (p1, p2, aspect) combination
+            3. Group consecutive occurrences into events
+            4. Find the moment with minimum orb as the "exact" moment
+            5. Calculate orb rate of change at exact moment
+
+        Returns:
+            TransitEventsTimeRangeModel with sorted transit events.
+        """
+        from kerykeion.schemas.kr_models import TransitEventModel, TransitEventsTimeRangeModel
+
+        transit_data = self.get_transit_moments()
+
+        # Track active aspects across time steps
+        # Key: (p1_name, p2_name, aspect) -> list of (date, orb, movement)
+        active_tracks: dict[tuple[str, str, str], list[tuple[str, float, str]]] = {}
+
+        for moment in transit_data.transits:
+            seen_keys = set()
+            for asp in moment.aspects:
+                key = (asp.p1_name, asp.p2_name, asp.aspect)
+                seen_keys.add(key)
+                if key not in active_tracks:
+                    active_tracks[key] = []
+                active_tracks[key].append((moment.date, asp.orbit, asp.aspect_movement))
+
+        # Convert tracks to events
+        events: list[TransitEventModel] = []
+
+        for (p1, p2, aspect_name), track in active_tracks.items():
+            if not track:
+                continue
+
+            # Find minimum orb moment (exact)
+            min_orb_idx = min(range(len(track)), key=lambda i: track[i][1])
+            exact_date = track[min_orb_idx][0]
+            min_orb = track[min_orb_idx][1]
+
+            # First and last dates
+            applying_start = track[0][0] if len(track) > 1 else None
+            separating_end = track[-1][0] if len(track) > 1 else None
+
+            # Estimate orb rate at exact moment
+            orb_rate = None
+            if min_orb_idx > 0 and min_orb_idx < len(track) - 1:
+                orb_before = track[min_orb_idx - 1][1]
+                orb_after = track[min_orb_idx + 1][1]
+                # Simple difference (degrees per step)
+                orb_rate = round(orb_after - orb_before, 6)
+
+            events.append(TransitEventModel(
+                p1_name=p1,
+                p2_name=p2,
+                aspect=aspect_name,
+                applying_start=applying_start,
+                exact_moment=exact_date,
+                separating_end=separating_end,
+                min_orb=round(min_orb, 6),
+                orb_rate=orb_rate,
+            ))
+
+        # Sort by exact_moment
+        events.sort(key=lambda e: e.exact_moment)
+
+        return TransitEventsTimeRangeModel(
+            events=events,
+            subject=self.natal_chart,
+        )
+
+
 if __name__ == "__main__":
     # Create a natal chart for the subject
     person = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 20, 15, "Owensboro", "US")
