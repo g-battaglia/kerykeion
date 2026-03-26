@@ -55,6 +55,11 @@ from .transits_time_range_factory import TransitsTimeRangeFactory
 from .moon_phase_details import MoonPhaseDetailsFactory
 
 # =============================================================================
+# STANDALONE FACTORIES
+# =============================================================================
+from .planetary_phenomena import PlanetaryPhenomenaFactory
+
+# =============================================================================
 # ANALYSIS FACTORIES
 # =============================================================================
 from .aspects import AspectsFactory
@@ -108,6 +113,8 @@ __all__ = [
     "EphemerisDataFactory",
     "TransitsTimeRangeFactory",
     "MoonPhaseDetailsFactory",
+    # Standalone Factories
+    "PlanetaryPhenomenaFactory",
     # Analysis Factories
     "AspectsFactory",
     "RelationshipScoreFactory",

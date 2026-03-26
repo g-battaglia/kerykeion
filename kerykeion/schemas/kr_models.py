@@ -1080,3 +1080,36 @@ class DualChartDataModel(SubscriptableBaseModel):
 
 # Union type for all chart data models
 ChartDataModel = Union[SingleChartDataModel, DualChartDataModel]
+
+
+# =============================================================================
+# PLANETARY PHENOMENA MODELS (v6.0)
+# =============================================================================
+
+
+class PlanetaryPhenomenaModel(SubscriptableBaseModel):
+    """Observational phenomena for a single planet at a specific moment.
+
+    Data comes from Swiss Ephemeris ``swe.pheno_ut()``.
+    """
+
+    name: str = Field(description="Planet name")
+    phase_angle: float = Field(description="Sun-planet-Earth angle in degrees")
+    phase: float = Field(description="Illuminated fraction of the disk (0.0-1.0)")
+    elongation: float = Field(description="Angular distance from the Sun in degrees")
+    apparent_diameter: float = Field(description="Angular size as seen from Earth in degrees")
+    apparent_magnitude: float = Field(description="Visual brightness (lower = brighter)")
+    is_morning_star: Optional[bool] = Field(
+        default=None, description="True if planet rises before the Sun (Mercury/Venus only)"
+    )
+    is_evening_star: Optional[bool] = Field(
+        default=None, description="True if planet sets after the Sun (Mercury/Venus only)"
+    )
+
+
+class PlanetaryPhenomenaCollectionModel(SubscriptableBaseModel):
+    """Collection of planetary phenomena for a specific datetime."""
+
+    iso_datetime: str = Field(description="ISO 8601 formatted datetime")
+    julian_day: float = Field(description="Julian Day number")
+    phenomena: List[PlanetaryPhenomenaModel] = Field(description="Phenomena for each planet")
