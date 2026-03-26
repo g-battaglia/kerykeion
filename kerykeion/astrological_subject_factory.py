@@ -256,6 +256,16 @@ def ephemeris_context(
 
     topo_used = False
 
+    # Planetocentric center body mapping
+    _PLANETOCENTRIC_CENTERS = {
+        "Selenocentric": swe.MOON,
+        "Mercurycentric": swe.MERCURY,
+        "Venuscentric": swe.VENUS,
+        "Marscentric": swe.MARS,
+        "Jupitercentric": swe.JUPITER,
+        "Saturncentric": swe.SATURN,
+    }
+
     # Perspective configuration
     if config.perspective_type == "True Geocentric":
         iflag |= swe.FLG_TRUEPOS
@@ -1380,6 +1390,7 @@ class AstrologicalSubjectFactory:
         point_type: PointType,
         calculated_planets: List[AstrologicalPoint],
         active_points: List[AstrologicalPoint],
+        center_body_id: Optional[int] = None,
     ) -> None:
         """
         Calculate a single celestial body's position with comprehensive error handling.
@@ -1424,10 +1435,20 @@ class AstrologicalSubjectFactory:
         """
         try:
             # Calculate planet position using Swiss Ephemeris (ecliptic coordinates)
-            planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
+            if center_body_id is not None and planet_id != center_body_id:
+                # Planetocentric: calculate position as seen from another planet
+                try:
+                    planet_calc = swe.calc_pctr(julian_day, planet_id, center_body_id, iflag)[0]
+                    planet_eq = swe.calc_pctr(julian_day, planet_id, center_body_id, iflag | swe.FLG_EQUATORIAL)[0]
+                except Exception:
+                    # Fallback to geocentric if planetary ephemeris not available
+                    planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
+                    planet_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
+            else:
+                planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
+                planet_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
 
             # Get declination from equatorial coordinates
-            planet_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
             declination = planet_eq[1]  # Declination from equatorial coordinates
 
             # Create Kerykeion point from degree
@@ -1734,6 +1755,14 @@ class AstrologicalSubjectFactory:
         # Track which planets are actually calculated
         calculated_planets: List[AstrologicalPoint] = []
 
+        # Determine planetocentric center body (if applicable)
+        _PCTR_MAP = {
+            "Selenocentric": swe.MOON, "Mercurycentric": swe.MERCURY,
+            "Venuscentric": swe.VENUS, "Marscentric": swe.MARS,
+            "Jupitercentric": swe.JUPITER, "Saturncentric": swe.SATURN,
+        }
+        center_body_id = _PCTR_MAP.get(data.get("perspective_type", ""), None)
+
         # =============================================================================
         # STANDARD PLANETS (using centralized mapping)
         # =============================================================================
@@ -1753,6 +1782,7 @@ class AstrologicalSubjectFactory:
                     point_type,
                     calculated_planets,
                     active_points,
+                    center_body_id=center_body_id,
                 )
 
                 # Special handling for lunar nodes: calculate declination
@@ -1815,6 +1845,7 @@ class AstrologicalSubjectFactory:
                         point_type,
                         calculated_planets,
                         active_points,
+                        center_body_id=center_body_id,
                     )
                 except Exception as e:
                     logging.warning(f"Could not calculate {tno_name} position: {e}")
