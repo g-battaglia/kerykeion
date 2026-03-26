@@ -20,9 +20,6 @@ from kerykeion.schemas.kr_models import (
     PlanetReturnModel,
     SingleChartAspectsModel,
     DualChartAspectsModel,
-    # Legacy aliases for backward compatibility
-    NatalAspectsModel,
-    SynastryAspectsModel,
 )
 from kerykeion.schemas.kr_literals import AstrologicalPoint, AspectMovementType
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
@@ -564,7 +561,7 @@ class AspectsFactory:
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: Optional[List[ActiveAspect]] = None,
         axis_orb_limit: Optional[float] = None,
-    ) -> NatalAspectsModel:
+    ) -> SingleChartAspectsModel:
         """
         Legacy method - use single_chart_aspects() instead.
 
@@ -586,7 +583,7 @@ class AspectsFactory:
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: Optional[List[ActiveAspect]] = None,
         axis_orb_limit: Optional[float] = None,
-    ) -> SynastryAspectsModel:
+    ) -> DualChartAspectsModel:
         """
         Legacy method - use dual_chart_aspects() instead.
 

@@ -244,8 +244,6 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-# Backward compatibility module uses import * intentionally
-"kerykeion/backword.py" = ["F405", "F403", "F401"]
 # Settings re-exports symbols intentionally
 "kerykeion/settings/__init__.py" = ["F401", "F403"]
 # Schemas re-exports for public API

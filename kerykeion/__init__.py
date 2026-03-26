@@ -30,7 +30,6 @@ Quick Start
 Main Classes
 ------------
 - AstrologicalSubjectFactory: Create astrological subjects (recommended)
-- AstrologicalSubject: Legacy wrapper for backward compatibility
 - ChartDrawer: Generate SVG chart visualizations
 - AspectsFactory: Calculate planetary aspects
 - RelationshipScoreFactory: Calculate compatibility scores
@@ -88,16 +87,6 @@ from .schemas.kr_models import (
 from .settings import KerykeionSettingsModel
 from .context_serializer import to_context
 
-# =============================================================================
-# LEGACY API (v4 backward compatibility)
-# =============================================================================
-from .backword import (
-    AstrologicalSubject,  # Legacy wrapper for AstrologicalSubjectFactory
-    KerykeionChartSVG,  # Legacy wrapper for ChartDrawer
-    NatalAspects,  # Legacy wrapper for AspectsFactory (natal)
-    SynastryAspects,  # Legacy wrapper for AspectsFactory (synastry)
-)
-
 
 __all__ = [
     # Core Factories
@@ -128,9 +117,4 @@ __all__ = [
     # Settings and Utilities
     "KerykeionSettingsModel",
     "to_context",
-    # Legacy API (v4 backward compatibility)
-    "AstrologicalSubject",
-    "KerykeionChartSVG",
-    "NatalAspects",
-    "SynastryAspects",
 ]

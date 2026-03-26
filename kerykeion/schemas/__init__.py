@@ -28,9 +28,7 @@ from .kr_literals import (
     RelationshipScoreDescription,
     CompositeChartType,
     AspectName,
-    # Deprecated aliases
-    Planet,
-    AxialCusps,
+    ReturnType,
 )
 from .kr_models import (
     SubscriptableBaseModel,
@@ -84,9 +82,7 @@ __all__ = [
     "RelationshipScoreDescription",
     "CompositeChartType",
     "AspectName",
-    # Deprecated aliases (for v4.x compatibility, will be removed in v6.0)
-    "Planet",
-    "AxialCusps",
+    "ReturnType",
     # Main Model Classes (from kr_models)
     "SubscriptableBaseModel",
     "LunarPhaseModel",
