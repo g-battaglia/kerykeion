@@ -70,6 +70,8 @@ License: AGPL-3.0
 
 import calendar
 import logging
+from pathlib import Path
+
 import swisseph as swe
 
 from datetime import datetime, timezone
@@ -737,6 +739,97 @@ class PlanetaryReturnFactory:
             stacklevel=2,
         )
         return self.next_return_from_date(year, month, 1, return_type=return_type)
+
+
+    def next_heliocentric_return(
+        self,
+        planet_name: str,
+        start_jd: float,
+    ) -> PlanetReturnModel:
+        """Find when a planet returns to its natal heliocentric longitude.
+
+        Uses ``swe.helio_cross_ut()`` to find the exact moment a planet
+        returns to its natal heliocentric position.
+
+        Args:
+            planet_name: Planet name (e.g. "Mars", "Jupiter", "Saturn").
+            start_jd: Julian Day to start searching from.
+
+        Returns:
+            PlanetReturnModel for the heliocentric return chart.
+        """
+        from kerykeion.astrological_subject_factory import STANDARD_PLANETS
+
+        planet_id = STANDARD_PLANETS.get(planet_name)
+        if planet_id is None:
+            raise KerykeionException(f"Unknown planet for heliocentric return: {planet_name}")
+
+        swe.set_ephe_path(str(Path(__file__).parent / "sweph"))
+
+        # Get natal heliocentric longitude
+        natal_data = swe.calc_ut(self.subject.julian_day, planet_id, swe.FLG_SWIEPH | swe.FLG_HELCTR)
+        natal_lon = natal_data[0][0]
+
+        # Find when it returns to that longitude
+        return_jd = swe.helio_cross_ut(planet_id, natal_lon, start_jd, swe.FLG_SWIEPH)
+
+        swe.close()
+
+        # Build return chart at that moment
+        return_model = self._build_return_chart(return_jd, "Heliocentric")
+        return return_model
+
+    def next_lunar_node_crossing(
+        self,
+        start_jd: float,
+    ) -> PlanetReturnModel:
+        """Find the next moment when the Moon crosses its own node.
+
+        Uses ``swe.mooncross_node_ut()`` to find when the Moon's
+        ecliptic latitude reaches zero (crossing the node).
+
+        Args:
+            start_jd: Julian Day to start searching from.
+
+        Returns:
+            PlanetReturnModel for the node crossing chart.
+        """
+        swe.set_ephe_path(str(Path(__file__).parent / "sweph"))
+        result = swe.mooncross_node_ut(start_jd, swe.FLG_SWIEPH)
+        crossing_jd = result[0]
+        swe.close()
+
+        return_model = self._build_return_chart(crossing_jd, "Lunar_Node_Crossing")
+        return return_model
+
+    def _build_return_chart(self, return_jd: float, return_type: str) -> PlanetReturnModel:
+        """Build a return chart at the given Julian Day."""
+        return_dt = julian_to_datetime(return_jd)
+
+        return_subject = AstrologicalSubjectFactory.from_birth_data(
+            name=f"{self.subject.name} {return_type} Return",
+            year=return_dt.year,
+            month=return_dt.month,
+            day=return_dt.day,
+            hour=return_dt.hour,
+            minute=return_dt.minute,
+            seconds=return_dt.second,
+            lng=self.lng,
+            lat=self.lat,
+            tz_str=self.tz_str,
+            city=self.city,
+            nation=self.nation,
+            online=False,
+            zodiac_type=self.subject.zodiac_type,
+            sidereal_mode=self.subject.sidereal_mode,
+            houses_system_identifier=self.subject.houses_system_identifier,
+            perspective_type=self.subject.perspective_type,
+            active_points=list(self.subject.active_points),
+        )
+
+        model_data = return_subject.model_dump()
+        model_data["return_type"] = return_type
+        return PlanetReturnModel(**model_data)
 
 
 if __name__ == "__main__":
