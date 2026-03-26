@@ -212,6 +212,7 @@ def draw_planets(
                     chart_type,
                     transit_ring_exclude_points,
                     adjusted_offset,
+                    second_subject_available_kerykeion_celestial_points,
                 )
             # Primary/inner points (natal planets)
             output = _draw_inner_point_indicators(
@@ -732,7 +733,8 @@ def _generate_point_svg(
     Generate SVG markup for a celestial point.
 
     Creates a group element containing the point symbol with proper
-    positioning, scaling, and metadata attributes.
+    positioning, scaling, and metadata attributes. If the point is
+    retrograde, a small retrograde symbol (℞) is rendered next to the glyph.
 
     Args:
         point_details: Model containing point data.
@@ -744,11 +746,25 @@ def _generate_point_svg(
     Returns:
         SVG markup string for the celestial point.
     """
+    is_retrograde = point_details["retrograde"] is True
+    retro_attr = ' kr:retrograde="true"' if is_retrograde else ""
+
     svg = f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" '
     svg += f'kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" '
-    svg += f'kr:signposition="{point_details["position"]}" kr:slug="{point_details["name"]}" '
+    svg += f'kr:signposition="{point_details["position"]}" kr:slug="{point_details["name"]}"{retro_attr} '
     svg += f'transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">'
     svg += f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{point_name}" />'
+
+    if is_retrograde:
+        # Position the retrograde symbol at the bottom-right foot of the planet glyph.
+        # Planet glyphs occupy ~24x24 units; x=+22 sits just past the right edge,
+        # y=+18 aligns the symbol with the glyph's baseline (foot).
+        retro_x = x * (1 / scale) + 22
+        retro_y = y * (1 / scale) + 18
+        svg += f'<g transform="translate({retro_x},{retro_y}) scale(0.55)">'
+        svg += '<use xlink:href="#retrograde" />'
+        svg += "</g>"
+
     svg += "</g>"
     return svg
 
@@ -941,12 +957,14 @@ def _draw_secondary_points(
     chart_type: str,
     exclude_points: list[str],
     main_offset: float,
+    celestial_points: Union[list[KerykeionPointModel], None] = None,
 ) -> str:
     """
     Draw secondary celestial points for transit/synastry charts.
 
     Renders the outer ring of planets (transit positions) with symbols,
-    connecting lines, and degree indicators.
+    connecting lines, and degree indicators. If a point is retrograde,
+    a small retrograde symbol (℞) is rendered next to the glyph.
 
     Args:
         output: Current SVG output.
@@ -959,6 +977,7 @@ def _draw_secondary_points(
         chart_type: Type of chart.
         exclude_points: Points to exclude from rendering.
         main_offset: Offset for connecting line drawing.
+        celestial_points: Celestial point models (used for retrograde detection).
 
     Returns:
         Updated SVG output with secondary points.
@@ -1007,10 +1026,23 @@ def _draw_secondary_points(
         # Draw point symbol
         point_x = sliceToX(0, radius - point_radius, point_offset) + point_radius
         point_y = sliceToY(0, radius - point_radius, point_offset) + point_radius
-        output += '<g class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)">'
-        output += (
-            f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{points_settings[point_idx]["name"]}" /></g></g>'
+        is_retrograde = (
+            celestial_points is not None
+            and point_idx < len(celestial_points)
+            and celestial_points[point_idx].retrograde is True
         )
+        retro_attr = ' kr:retrograde="true"' if is_retrograde else ""
+        output += f'<g class="transit-planet-name"{retro_attr} transform="translate(-6,-6)"><g transform="scale(0.5)">'
+        output += f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{points_settings[point_idx]["name"]}" />'
+        if is_retrograde:
+            # Same offset logic as _generate_point_svg: bottom-right foot of the glyph.
+            # Inner coordinate space is 2x due to scale(0.5) wrapper.
+            retro_x = point_x * 2 + 22
+            retro_y = point_y * 2 + 18
+            output += f'<g transform="translate({retro_x},{retro_y}) scale(0.55)">'
+            output += '<use xlink:href="#retrograde" />'
+            output += "</g>"
+        output += "</g></g>"
 
         # Draw indicator line
         x1 = sliceToX(0, radius + 3, point_offset) - 3
