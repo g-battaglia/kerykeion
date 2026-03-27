@@ -394,6 +394,74 @@ class CompositeSubjectFactory:
 
         return CompositeSubjectModel(**self.__dict__)
 
+    def get_davison_composite_subject_model(self) -> CompositeSubjectModel:
+        """Generate a Davison composite chart.
+
+        A Davison chart calculates the midpoint in **time** and **space**
+        between two birth moments, then casts a standard natal chart for
+        that derived moment and location.
+
+        Unlike the midpoint composite (which averages planetary positions),
+        the Davison chart is a real chart with valid astronomical positions
+        that actually occurred at the computed date and location.
+
+        Returns:
+            CompositeSubjectModel with composite_chart_type="Davison".
+        """
+        s1 = self.first_subject
+        s2 = self.second_subject
+
+        # Midpoint in time (Julian Day)
+        mid_jd = (s1.julian_day + s2.julian_day) / 2.0
+
+        # Midpoint in space (latitude/longitude)
+        mid_lat = (s1.lat + s2.lat) / 2.0
+        mid_lng = circular_mean(s1.lng + 180.0, s2.lng + 180.0) - 180.0
+
+        # Derive timezone from midpoint longitude (nearest hour offset)
+        tz_offset_hours = round(mid_lng / 15.0)
+        if tz_offset_hours >= 0:
+            tz_str = f"Etc/GMT-{tz_offset_hours}" if tz_offset_hours != 0 else "Etc/GMT"
+        else:
+            tz_str = f"Etc/GMT+{abs(tz_offset_hours)}"
+
+        # Convert midpoint JD to date components
+        import swisseph as swe
+        year, month, day, hour_frac = swe.revjul(mid_jd)
+        hour = int(hour_frac)
+        minute = int((hour_frac - hour) * 60)
+        seconds = int(((hour_frac - hour) * 60 - minute) * 60)
+
+        # Cast a real natal chart at the midpoint moment/location
+        davison_subject = AstrologicalSubjectFactory.from_birth_data(
+            name=self.name,
+            year=year,
+            month=month,
+            day=day,
+            hour=hour,
+            minute=minute,
+            seconds=seconds,
+            lng=mid_lng,
+            lat=mid_lat,
+            tz_str=tz_str,
+            city=f"Davison({s1.city}-{s2.city})",
+            nation=s1.nation,
+            online=False,
+            zodiac_type=self.zodiac_type,
+            sidereal_mode=self.sidereal_mode,
+            houses_system_identifier=self.houses_system_identifier,
+            perspective_type=self.perspective_type,
+            active_points=self.active_points,
+        )
+
+        # Build composite model from the Davison chart data
+        davison_data = davison_subject.model_dump()
+        davison_data["first_subject"] = s1
+        davison_data["second_subject"] = s2
+        davison_data["composite_chart_type"] = "Davison"
+
+        return CompositeSubjectModel(**davison_data)
+
 
 if __name__ == "__main__":
     first = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
