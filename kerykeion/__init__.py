@@ -61,6 +61,7 @@ from .eclipses import EclipseFactory
 from .planetary_nodes import PlanetaryNodesFactory
 from .heliacal import HeliacalFactory
 from .occultations import OccultationFactory
+from .relocated_chart_factory import RelocatedChartFactory
 
 # =============================================================================
 # ANALYSIS FACTORIES
@@ -112,6 +113,7 @@ __all__ = [
     "PlanetaryNodesFactory",
     "HeliacalFactory",
     "OccultationFactory",
+    "RelocatedChartFactory",
     # Analysis Factories
     "AspectsFactory",
     "RelationshipScoreFactory",
