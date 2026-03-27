@@ -398,6 +398,22 @@ class KerykeionPointModel(SubscriptableBaseModel):
     magnitude: Optional[float] = Field(
         default=None, description="Apparent visual magnitude (fixed stars only). Lower = brighter."
     )
+    # Essential Dignities (v6.0)
+    decan_number: Optional[int] = Field(
+        default=None, description="Decan number (1-3) within the sign, each spanning 10 degrees."
+    )
+    decan_ruler: Optional[str] = Field(
+        default=None, description="Ruling planet of the Chaldean decan."
+    )
+    term_ruler: Optional[str] = Field(
+        default=None, description="Ruling planet of the Egyptian term (bound)."
+    )
+    essential_dignity: Optional[str] = Field(
+        default=None, description="Highest active essential dignity (e.g. 'Domicile', 'Exaltation', 'Detriment', 'Fall', 'Peregrine')."
+    )
+    dignity_score: Optional[int] = Field(
+        default=None, description="Ptolemaic essential dignity score (-5 to +5)."
+    )
 
 
 class AstrologicalBaseModel(SubscriptableBaseModel):

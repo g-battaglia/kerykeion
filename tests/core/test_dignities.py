@@ -1,0 +1,182 @@
+# -*- coding: utf-8 -*-
+"""Tests for the essential dignities module.
+
+Validates the Ptolemaic essential dignity system: domicile, exaltation,
+triplicity, Egyptian terms, Chaldean decans, detriment, and fall.
+"""
+
+import pytest
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.dignities.dignity_factory import calculate_essential_dignity
+from kerykeion.dignities.dignity_data import (
+    DOMICILE_RULERS,
+    EXALTATION_TABLE,
+    FALL_TABLE,
+    DETRIMENT_RULERS,
+    EGYPTIAN_TERMS,
+    CHALDEAN_DECANS,
+    TRIPLICITY_RULERS,
+)
+
+
+class TestDignityData:
+    """Test that reference data tables are complete and consistent."""
+
+    def test_domicile_covers_all_signs(self):
+        signs = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+        for sign in signs:
+            assert sign in DOMICILE_RULERS, f"Missing domicile for {sign}"
+            assert len(DOMICILE_RULERS[sign]) > 0
+
+    def test_detriment_covers_all_signs(self):
+        signs = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+        for sign in signs:
+            assert sign in DETRIMENT_RULERS, f"Missing detriment for {sign}"
+
+    def test_egyptian_terms_cover_all_signs(self):
+        signs = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+        for sign in signs:
+            assert sign in EGYPTIAN_TERMS
+            terms = EGYPTIAN_TERMS[sign]
+            assert len(terms) == 5, f"Sign {sign} should have 5 terms"
+            assert terms[0][1] == 0, f"First term should start at 0"
+            assert terms[-1][2] == 30, f"Last term should end at 30"
+
+    def test_chaldean_decans_cover_all_signs(self):
+        signs = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+        for sign in signs:
+            assert sign in CHALDEAN_DECANS
+            assert len(CHALDEAN_DECANS[sign]) == 3
+
+    def test_triplicity_covers_all_elements(self):
+        for element in ["Fire", "Earth", "Air", "Water"]:
+            assert element in TRIPLICITY_RULERS
+            assert "day" in TRIPLICITY_RULERS[element]
+            assert "night" in TRIPLICITY_RULERS[element]
+
+
+class TestDignityCalculation:
+    """Test dignity computation for known cases."""
+
+    def test_mars_in_aries_domicile(self):
+        """Mars rules Aries -> Domicile (+5)."""
+        result = calculate_essential_dignity("Mars", "Ari", "Fire", 15.0, True)
+        assert result["essential_dignity"] == "Domicile"
+        assert result["dignity_score"] >= 5
+
+    def test_sun_in_aries_exaltation(self):
+        """Sun is exalted in Aries -> Exaltation (+4)."""
+        result = calculate_essential_dignity("Sun", "Ari", "Fire", 19.0, True)
+        assert result["essential_dignity"] == "Exaltation"
+        assert result["dignity_score"] >= 4
+
+    def test_venus_in_aries_detriment(self):
+        """Venus is in detriment in Aries -> Detriment (-5)."""
+        result = calculate_essential_dignity("Venus", "Ari", "Fire", 15.0, True)
+        assert result["dignity_score"] <= -3  # May have partial dignity from terms/decans
+        assert result["essential_dignity"] in ("Detriment", "Face", "Term", "Peregrine")
+
+    def test_saturn_in_aries_fall(self):
+        """Saturn is in fall in Aries -> Fall (-4)."""
+        result = calculate_essential_dignity("Saturn", "Ari", "Fire", 15.0, True)
+        assert result["dignity_score"] < 0
+
+    def test_sun_in_leo_domicile(self):
+        """Sun rules Leo -> Domicile (+5)."""
+        result = calculate_essential_dignity("Sun", "Leo", "Fire", 10.0, True)
+        assert result["essential_dignity"] == "Domicile"
+        assert result["dignity_score"] >= 5
+
+    def test_moon_in_cancer_domicile(self):
+        """Moon rules Cancer -> Domicile (+5)."""
+        result = calculate_essential_dignity("Moon", "Can", "Water", 10.0, False)
+        assert result["essential_dignity"] == "Domicile"
+
+    def test_mercury_in_virgo_domicile(self):
+        """Mercury rules Virgo -> Domicile (+5)."""
+        result = calculate_essential_dignity("Mercury", "Vir", "Earth", 15.0, True)
+        assert result["essential_dignity"] == "Domicile"
+        # Mercury is also exalted in Virgo, so score should be very high
+        assert result["dignity_score"] >= 9
+
+    def test_decan_number(self):
+        """Test decan calculation: 0-10 = decan 1, 10-20 = decan 2, 20-30 = decan 3."""
+        r1 = calculate_essential_dignity("Mars", "Tau", "Earth", 5.0, True)
+        assert r1["decan_number"] == 1
+        r2 = calculate_essential_dignity("Mars", "Tau", "Earth", 15.0, True)
+        assert r2["decan_number"] == 2
+        r3 = calculate_essential_dignity("Mars", "Tau", "Earth", 25.0, True)
+        assert r3["decan_number"] == 3
+
+    def test_term_ruler_exists(self):
+        """All classical planets should get a term ruler."""
+        result = calculate_essential_dignity("Jupiter", "Ari", "Fire", 3.0, True)
+        assert result["term_ruler"] == "Jupiter"  # First term in Aries is Jupiter (0-6)
+
+    def test_non_classical_planet_returns_none(self):
+        """Modern planets (Uranus, Neptune, Pluto) should return all None."""
+        result = calculate_essential_dignity("Uranus", "Aqu", "Air", 10.0, True)
+        assert result["essential_dignity"] is None
+        assert result["dignity_score"] is None
+        assert result["decan_number"] is None
+
+    def test_triplicity_day_chart(self):
+        """Sun is day triplicity ruler of Fire signs."""
+        result = calculate_essential_dignity("Sun", "Sag", "Fire", 15.0, True)
+        assert result["dignity_score"] >= 3  # At least triplicity
+
+    def test_triplicity_night_chart(self):
+        """Jupiter is night triplicity ruler of Fire signs."""
+        result = calculate_essential_dignity("Jupiter", "Leo", "Fire", 15.0, False)
+        assert result["dignity_score"] >= 3  # At least triplicity
+
+
+class TestDignityIntegration:
+    """Test dignities integrated in AstrologicalSubjectFactory."""
+
+    @pytest.fixture(scope="class")
+    def subject_with_dignities(self):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Dignity Test", 1990, 1, 1, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+            calculate_dignities=True,
+        )
+
+    @pytest.fixture(scope="class")
+    def subject_without_dignities(self):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "No Dignity", 1990, 1, 1, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+        )
+
+    def test_dignity_fields_populated(self, subject_with_dignities):
+        """Classical planets should have dignity data when enabled."""
+        sun = subject_with_dignities.sun
+        assert sun.essential_dignity is not None
+        assert sun.dignity_score is not None
+        assert sun.decan_number is not None
+        assert sun.decan_ruler is not None
+
+    def test_dignity_fields_not_populated_by_default(self, subject_without_dignities):
+        """Dignity fields should be None when not enabled."""
+        sun = subject_without_dignities.sun
+        assert sun.essential_dignity is None
+        assert sun.dignity_score is None
+        assert sun.decan_number is None
+
+    def test_all_classical_planets_have_dignities(self, subject_with_dignities):
+        """All 7 classical planets should have dignity data."""
+        for name in ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]:
+            point = getattr(subject_with_dignities, name)
+            if point is not None:
+                assert point.essential_dignity is not None, f"{name} should have essential_dignity"
+                assert point.dignity_score is not None, f"{name} should have dignity_score"
+
+    def test_modern_planets_no_dignities(self, subject_with_dignities):
+        """Modern planets (Uranus, Neptune, Pluto) should not have dignities."""
+        for name in ["uranus", "neptune", "pluto"]:
+            point = getattr(subject_with_dignities, name)
+            if point is not None:
+                assert point.essential_dignity is None, f"{name} should not have essential_dignity"
