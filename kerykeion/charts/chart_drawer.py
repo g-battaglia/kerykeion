@@ -3417,8 +3417,13 @@ class ChartDrawer:  # type: ignore[no-redef]
         )
 
     def _setup_gauquelin_sectors(self, template_dict: dict) -> None:
-        """Add Gauquelin sector overlay if any planet has gauquelin_sector data."""
-        # Check if any planet in the chart has gauquelin_sector set
+        """Replace house lines with 36 Gauquelin sectors when active.
+
+        When any planet has a gauquelin_sector value, the standard 12-house
+        cusp lines in ``makeHouses`` are replaced by 36 sector divisions.
+        The sectors use the same radii as houses so they occupy the same
+        visual ring.
+        """
         has_gauquelin = False
         for planet_setting in self.available_kerykeion_celestial_points:
             point = planet_setting.get("point")
@@ -3428,11 +3433,15 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         if has_gauquelin:
             from kerykeion.charts.charts_utils import draw_gauquelin_sectors
-            template_dict["makeGauquelinSectors"] = draw_gauquelin_sectors(
+            # Replace houses with Gauquelin sectors
+            template_dict["makeHouses"] = draw_gauquelin_sectors(
                 r=self.main_radius,
-                inner_r=self.third_circle_radius,
+                inner_r=self.first_circle_radius,
+                outer_r=self.third_circle_radius,
                 seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+                color=self.chart_colors_settings["houses_radix_line"],
             )
+            template_dict["makeGauquelinSectors"] = ""
         else:
             template_dict["makeGauquelinSectors"] = ""
 

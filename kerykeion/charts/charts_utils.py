@@ -2262,76 +2262,86 @@ def calculate_synastry_quality_points(
 
 
 # =============================================================================
-# GAUQUELIN SECTORS OVERLAY
+# GAUQUELIN SECTORS — replaces house cusp lines when active
 # =============================================================================
 
 
 def draw_gauquelin_sectors(
     r: Union[int, float],
     inner_r: Union[int, float],
+    outer_r: Union[int, float],
     seventh_house_degree_ut: float,
     color: str = "var(--kerykeion-color-secondary)",
-    opacity: float = 0.35,
 ) -> str:
-    """Draw 36 Gauquelin sector division lines as an overlay ring.
+    """Draw 36 Gauquelin sector divisions, replacing the 12-house system.
 
-    The sectors are drawn as thin radial lines between *inner_r* and *r*,
-    evenly spaced at 10° intervals. A bolder line marks the ASC (sector 1)
-    and a semi-bold line marks sector 10 (the MC plus zone).
+    The Gauquelin system divides the diurnal circle into 36 equal sectors
+    of 10° each, numbered clockwise from the Ascendant (east horizon).
+    This function replaces ``draw_houses_cusps_and_text_number`` when
+    Gauquelin mode is active.
 
-    Sector numbering follows the Gauquelin convention: clockwise from the
-    eastern horizon, with sector 1 at the Ascendant.
+    Sector 1 starts at the Ascendant (east). The "plus zones" (sectors
+    near the angles: 36, 1 near ASC; 9, 10 near MC; 18, 19 near DSC;
+    27, 28 near IC) are where Gauquelin found statistical correlations.
 
     Args:
-        r: Outer radius of the Gauquelin ring.
-        inner_r: Inner radius of the Gauquelin ring.
-        seventh_house_degree_ut: Descendant degree (used for orientation).
-        color: CSS color for the sector lines.
-        opacity: Line opacity (0-1).
+        r: Main chart radius (same as for house cusps).
+        inner_r: Inner radius offset (first_circle_radius — cusp lines
+            extend from here to outer_r).
+        outer_r: Outer radius offset (third_circle_radius — cusp lines
+            start from here toward inner_r).
+        seventh_house_degree_ut: Descendant degree for chart orientation.
+        color: CSS color for sector cusp lines.
 
     Returns:
-        SVG string containing 36 sector lines and sector numbers.
+        SVG string with 36 sector lines + sector numbers (replaces makeHouses).
     """
     output = ""
     sector_span = 10.0  # degrees per sector
 
     for i in range(36):
         angle_deg = i * sector_span
-        chart_offset = -seventh_house_degree_ut + angle_deg
-        x1 = sliceToX(0, r - inner_r, chart_offset) + inner_r
-        y1 = sliceToY(0, r - inner_r, chart_offset) + inner_r
-        x2 = sliceToX(0, r, chart_offset)
-        y2 = sliceToY(0, r, chart_offset)
+        # Chart coordinate offset (same system as house cusps)
+        offset = (-seventh_house_degree_ut) + angle_deg
 
-        # Thicker line for ASC (sector 1 = 0°) and MC zone (sector 10 = 90°)
-        if i == 0:
-            stroke_width = 1.5
-            line_opacity = 0.8
-        elif i == 9 or i == 18 or i == 27:
-            stroke_width = 1.0
-            line_opacity = 0.6
+        # Line endpoints — same geometry as draw_houses_cusps_and_text_number
+        x1 = sliceToX(0, (r - outer_r), offset) + outer_r
+        y1 = sliceToY(0, (r - outer_r), offset) + outer_r
+        x2 = sliceToX(0, r - inner_r, offset) + inner_r
+        y2 = sliceToY(0, r - inner_r, offset) + inner_r
+
+        # Angular sectors (every 9th = quadrant boundary) get bolder lines
+        is_quadrant = (i % 9 == 0)  # sectors 1, 10, 19, 28 (ASC, MC, DSC, IC)
+        if is_quadrant:
+            stroke_width = 1.8
+            stroke_opacity = 1.0
         else:
-            stroke_width = 0.4
-            line_opacity = opacity
+            stroke_width = 0.6
+            stroke_opacity = 0.7
 
         output += (
             f'<line x1="{x1:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}" '
             f'style="stroke:{color}; stroke-width:{stroke_width}px; '
-            f'stroke-opacity:{line_opacity};" />\n'
+            f'stroke-opacity:{stroke_opacity};" />\n'
         )
 
-        # Add sector number at the midpoint of each sector (every 3rd sector for readability)
-        if i % 3 == 0:
-            mid_offset = chart_offset + sector_span / 2
-            text_radius = r - (r - inner_r) * 0.5
-            tx = sliceToX(0, text_radius, mid_offset) + (r - text_radius)
-            ty = sliceToY(0, text_radius, mid_offset) + (r - text_radius)
-            sector_num = i + 1
-            output += (
-                f'<text x="{tx:.2f}" y="{ty:.2f}" '
-                f'style="fill:{color}; font-size:6px; opacity:{opacity + 0.2}; '
-                f'text-anchor:middle; dominant-baseline:central;">'
-                f'{sector_num}</text>\n'
-            )
+        # Sector number — placed in the middle of each sector arc
+        mid_offset = offset + sector_span / 2.0
+        # Position text between inner and outer radius
+        text_r_factor = (r - inner_r) + (inner_r - outer_r) * 0.5
+        tx = sliceToX(0, text_r_factor, mid_offset) + (r - text_r_factor)
+        ty = sliceToY(0, text_r_factor, mid_offset) + (r - text_r_factor)
+        sector_num = i + 1
+
+        # Font size: larger for quadrant sectors, smaller for others
+        font_size = 8 if is_quadrant else 6
+        font_weight = "bold" if is_quadrant else "normal"
+
+        output += (
+            f'<text x="{tx:.2f}" y="{ty:.2f}" '
+            f'style="fill:{color}; font-size:{font_size}px; font-weight:{font_weight}; '
+            f'opacity:0.9; text-anchor:middle; dominant-baseline:central;">'
+            f'{sector_num}</text>\n'
+        )
 
     return output

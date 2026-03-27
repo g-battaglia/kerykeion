@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kerykeion v6 — Visual Test Gallery</title>
+<style>
+body { background: #0a0a1a; color: #eee; font-family: system-ui, sans-serif; margin: 0; padding: 20px; }
+h1 { color: #e94560; border-bottom: 2px solid #e94560; padding-bottom: 10px; }
+h2 { color: #fff; background: #e94560; padding: 10px 20px; border-radius: 6px; margin-top: 40px; }
+.chart { margin: 16px 0; border: 1px solid #333; border-radius: 8px; overflow: hidden; background: #fff; }
+.chart object { width: 100%; display: block; }
+.chart-label { background: #16213e; padding: 8px 16px; font-weight: bold; font-size: 14px; }
+.chart-desc { background: #16213e; padding: 4px 16px 8px; font-size: 12px; color: #999; }
+.stats { background: #16213e; padding: 16px; border-radius: 8px; margin: 20px 0; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 1200px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<h1>Kerykeion v6.0 — Visual Test Gallery</h1>
+<div class="stats">
+<strong>Total charts:</strong> 33 |
+<strong>Generated from:</strong> <code>scripts/generate_v6_test_gallery.py</code> |
+<strong>Branch:</strong> <code>tentative/v6</code>
+</div>
+
+<h2>Gauquelin Sectors (10 charts)</h2>
+<div class="grid">
+<div class="chart">
+<div class="chart-label">Gauquelin - dark theme</div>
+<div class="chart-desc">36 sectors replacing 12 houses. Bold lines at quadrants (1,10,19,28).</div>
+<object data="gauquelin_dark.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Gauquelin - light theme</div>
+<div class="chart-desc">36 sectors replacing 12 houses. Bold lines at quadrants (1,10,19,28).</div>
+<object data="gauquelin_light.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Gauquelin - classic theme</div>
+<div class="chart-desc">36 sectors replacing 12 houses. Bold lines at quadrants (1,10,19,28).</div>
+<object data="gauquelin_classic.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Gauquelin - dark-high-contrast theme</div>
+<div class="chart-desc">36 sectors replacing 12 houses. Bold lines at quadrants (1,10,19,28).</div>
+<object data="gauquelin_dark-high-contrast.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Gauquelin - strawberry theme</div>
+<div class="chart-desc">36 sectors replacing 12 houses. Bold lines at quadrants (1,10,19,28).</div>
+<object data="gauquelin_strawberry.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Gauquelin - black-and-white theme</div>
+<div class="chart-desc">36 sectors replacing 12 houses. Bold lines at quadrants (1,10,19,28).</div>
+<object data="gauquelin_black-and-white.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Gauquelin - Modern Style</div>
+<div class="chart-desc">Gauquelin sectors with modern concentric ring layout.</div>
+<object data="gauquelin_modern.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Gauquelin - Wheel Only</div>
+<div class="chart-desc">Just the wheel with 36 sector divisions.</div>
+<object data="gauquelin_wheel_only.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Normal Houses (Control)</div>
+<div class="chart-desc">Standard 12-house Placidus — no Gauquelin.</div>
+<object data="normal_houses_control.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Gauquelin + ALL Points</div>
+<div class="chart-desc">36 sectors + Uranian planets + all fixed stars + Arabic parts.</div>
+<object data="gauquelin_all_points.svg" type="image/svg+xml"></object>
+</div>
+</div>
+
+<h2>Uranian Planets (4 charts)</h2>
+<div class="grid">
+<div class="chart">
+<div class="chart-label">Uranian Planets - dark</div>
+<div class="chart-desc">Cupido, Hades, Zeus, Kronos, Apollon, Admetos, Vulkanus, Poseidon</div>
+<object data="uranian_dark.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Uranian Planets - light</div>
+<div class="chart-desc">Cupido, Hades, Zeus, Kronos, Apollon, Admetos, Vulkanus, Poseidon</div>
+<object data="uranian_light.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Uranian Planets - classic</div>
+<div class="chart-desc">Cupido, Hades, Zeus, Kronos, Apollon, Admetos, Vulkanus, Poseidon</div>
+<object data="uranian_classic.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Uranian - Modern Style</div>
+<div class="chart-desc">8 Uranian planets in modern concentric layout.</div>
+<object data="uranian_modern.svg" type="image/svg+xml"></object>
+</div>
+</div>
+
+<h2>Full v6 Features (12 charts)</h2>
+<div class="grid">
+<div class="chart">
+<div class="chart-label">Full v6 - dark classic</div>
+<div class="chart-desc">All features: Gauquelin + Uranian + dignities + nakshatra</div>
+<object data="full_v6_dark_classic.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Full v6 - dark modern</div>
+<div class="chart-desc">All features: Gauquelin + Uranian + dignities + nakshatra</div>
+<object data="full_v6_dark_modern.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Full v6 - light classic</div>
+<div class="chart-desc">All features: Gauquelin + Uranian + dignities + nakshatra</div>
+<object data="full_v6_light_classic.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Full v6 - light modern</div>
+<div class="chart-desc">All features: Gauquelin + Uranian + dignities + nakshatra</div>
+<object data="full_v6_light_modern.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Full v6 - classic classic</div>
+<div class="chart-desc">All features: Gauquelin + Uranian + dignities + nakshatra</div>
+<object data="full_v6_classic_classic.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Full v6 - classic modern</div>
+<div class="chart-desc">All features: Gauquelin + Uranian + dignities + nakshatra</div>
+<object data="full_v6_classic_modern.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Full v6 - dark-high-contrast classic</div>
+<div class="chart-desc">All features: Gauquelin + Uranian + dignities + nakshatra</div>
+<object data="full_v6_dark-high-contrast_classic.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Full v6 - dark-high-contrast modern</div>
+<div class="chart-desc">All features: Gauquelin + Uranian + dignities + nakshatra</div>
+<object data="full_v6_dark-high-contrast_modern.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Full v6 - strawberry classic</div>
+<div class="chart-desc">All features: Gauquelin + Uranian + dignities + nakshatra</div>
+<object data="full_v6_strawberry_classic.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Full v6 - strawberry modern</div>
+<div class="chart-desc">All features: Gauquelin + Uranian + dignities + nakshatra</div>
+<object data="full_v6_strawberry_modern.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Full v6 - black-and-white classic</div>
+<div class="chart-desc">All features: Gauquelin + Uranian + dignities + nakshatra</div>
+<object data="full_v6_black-and-white_classic.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Full v6 - black-and-white modern</div>
+<div class="chart-desc">All features: Gauquelin + Uranian + dignities + nakshatra</div>
+<object data="full_v6_black-and-white_modern.svg" type="image/svg+xml"></object>
+</div>
+</div>
+
+<h2>Synastry / Composite / Return (6 charts)</h2>
+<div class="grid">
+<div class="chart">
+<div class="chart-label">Synastry Chart</div>
+<div class="chart-desc">John Lennon vs Paul McCartney</div>
+<object data="synastry_classic.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Synastry - Modern</div>
+<div class="chart-desc">Dual wheel modern style</div>
+<object data="synastry_modern.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Midpoint Composite</div>
+<div class="chart-desc">Traditional midpoint composite</div>
+<object data="composite_midpoint.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Davison Composite</div>
+<div class="chart-desc">Time-space midpoint composite (real chart)</div>
+<object data="composite_davison.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Transit Chart</div>
+<div class="chart-desc">John Lennon natal + transits</div>
+<object data="transit_chart.svg" type="image/svg+xml"></object>
+</div>
+<div class="chart">
+<div class="chart-label">Solar Return 2025</div>
+<div class="chart-desc">John Lennon solar return</div>
+<object data="solar_return.svg" type="image/svg+xml"></object>
+</div>
+</div>
+
+<h2>Sidereal (1 charts)</h2>
+<div class="grid">
+<div class="chart">
+<div class="chart-label">Sidereal Lahiri</div>
+<div class="chart-desc">Vedic sidereal with dignities + nakshatra</div>
+<object data="sidereal_lahiri.svg" type="image/svg+xml"></object>
+</div>
+</div>
+
+</body>
+</html>
