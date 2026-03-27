@@ -75,28 +75,37 @@ Branches that add fields to `KerykeionPointModel` or config flags to `ChartConfi
 | `test_transit_exactness.py` | 7 | PASSED |
 | **Total** | **171** | **ALL PASSED** |
 
-### Full Regression Suite: 1472 passed, 3 failed, 22 skipped
+### Full Regression Suite: 8409 passed, 0 failed, 60 skipped
 
-```
-FAILED tests/core/test_chart_drawer.py::TestNatalChart::test_natal_chart_classic
-FAILED tests/core/test_chart_drawer.py::TestCompositeChart::test_composite_chart
-FAILED tests/core/test_chart_parametrized.py::TestCrossCombinations::test_sidereal_theme_combinations[LAHIRI_strawberry]
-```
+All baselines (SVG charts, report golden files, minified charts) have been
+regenerated. **Zero failures.**
 
-### Failure Analysis
+### SVG Visual Verification
 
-All 3 failures are in **SVG golden-file line count assertions**. These tests compare the number of lines in generated SVGs against a hardcoded expected count. The count changed because:
+29 SVG files generated across all combinations:
+- 6 themes × 2 styles (classic/modern) natal charts = 12
+- 3 themes × 2 styles synastry charts = 6
+- 2 themes × 2 styles transit charts = 4
+- 2 composite (midpoint) charts
+- 2 solar return charts
+- 1 wheel-only, 1 aspect-grid-only
+- 1 no-gauquelin control
 
-1. **Uranian planet SVG symbols** added 80 lines to each SVG template (8 planets × 10 lines each)
-2. **Gauquelin sector placeholder** added ~4 lines to `chart.xml` and `wheel_only.xml`
+All 29 verified with `qlmanage -t` — zero rendering failures.
 
-**Impact:** None — these are test infrastructure issues, not functional regressions. The SVGs render correctly (verified with `qlmanage`).
+### Cross-Feature Integration
 
-**Fix:** Update the expected line counts in `test_chart_drawer.py` and `test_chart_parametrized.py` to reflect the new template sizes. This is a 3-line change.
-
-### Non-SVG tests: 1472 PASSED (100%)
-
-All calculation, aspect, model, serialization, and integration tests pass without any modification.
+Verified all 11 features working simultaneously on a single chart with
+`calculate_dignities=True`, `calculate_nakshatra=True`,
+`calculate_gauquelin=True`, and all Uranian planets active:
+- Sun has dignity, nakshatra, AND gauquelin sector populated
+- Cupido/Hades/Poseidon (Uranian) positions valid
+- PlanetaryPhenomenaFactory, EclipseFactory, PlanetaryNodesFactory all work
+- RelocatedChartFactory preserves planets, changes houses
+- Davison composite JD correctly between subjects
+- Heliocentric returns and lunar node crossing functional
+- HeliacalFactory and OccultationFactory return valid results
+- Transit exactness timeline groups events correctly
 
 ---
 
