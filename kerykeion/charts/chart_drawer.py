@@ -3541,19 +3541,33 @@ class ChartDrawer:  # type: ignore[no-redef]
         Populate template_dict with the main houses grid table.
 
         Creates the tabular display of house cusps for the primary subject.
-        Applies horizontal grid shift when multi-column planet grids would
-        overlap the chart wheel.
+        When Gauquelin sectors are active, replaces the 12-cusp table with
+        a sector table showing each planet's Gauquelin sector number (1-36).
 
         Args:
             template_dict: Dictionary to populate with grid SVG elements.
             houses_list: List of house data from the subject.
         """
-        template_dict["makeMainHousesGrid"] = draw_main_house_grid(
-            main_subject_houses_list=houses_list,
-            text_color=self.chart_colors_settings["paper_0"],
-            house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
-            x_position=self._MAIN_HOUSES_GRID_X + self._grid_x_shift,
+        # Check if Gauquelin sectors are active
+        has_gauquelin = any(
+            hasattr(p, "gauquelin_sector") and p.gauquelin_sector is not None
+            for p in self.available_kerykeion_celestial_points
         )
+
+        if has_gauquelin:
+            from kerykeion.charts.charts_utils import draw_gauquelin_sector_grid
+            template_dict["makeMainHousesGrid"] = draw_gauquelin_sector_grid(
+                celestial_points=self.available_kerykeion_celestial_points,
+                text_color=self.chart_colors_settings["paper_0"],
+                x_position=self._MAIN_HOUSES_GRID_X + self._grid_x_shift,
+            )
+        else:
+            template_dict["makeMainHousesGrid"] = draw_main_house_grid(
+                main_subject_houses_list=houses_list,
+                text_color=self.chart_colors_settings["paper_0"],
+                house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
+                x_position=self._MAIN_HOUSES_GRID_X + self._grid_x_shift,
+            )
 
     def _setup_main_planet_grid(self, template_dict: dict, subject_name: str, title: str = "") -> None:
         """

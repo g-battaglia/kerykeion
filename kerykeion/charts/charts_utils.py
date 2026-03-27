@@ -1391,6 +1391,60 @@ def draw_secondary_house_grid(
     return svg_output
 
 
+def draw_gauquelin_sector_grid(
+    celestial_points: list,
+    sector_label: str = "Sec",
+    text_color: str = "#000000",
+    x_position: int = 750,
+    y_position: int = 30,
+) -> str:
+    """Generate SVG for a Gauquelin sector grid replacing the house grid.
+
+    Shows each planet's Gauquelin sector number (1-36) in a compact table,
+    instead of the standard 12 house cusps.
+
+    Args:
+        celestial_points: List of KerykeionPointModel with gauquelin_sector set.
+        sector_label: Column header label.
+        text_color: Text fill color.
+        x_position: SVG X offset.
+        y_position: SVG Y offset.
+
+    Returns:
+        SVG string with the sector grid.
+    """
+    svg = f'<g transform="translate({x_position},{y_position})">'
+    svg += (
+        f'<text x="0" style="fill:{text_color}; font-size: 10px; font-weight:bold;">'
+        f'Gauquelin Sectors</text>'
+    )
+
+    line_y = 18
+    for point in celestial_points:
+        if not hasattr(point, "gauquelin_sector") or point.gauquelin_sector is None:
+            continue
+
+        sector_int = int(point.gauquelin_sector)
+        sector_frac = point.gauquelin_sector - sector_int
+        # Format: "Sun  ☉  Sec 12  (0.59)"
+        name_short = point.name.replace("_", " ")
+        if len(name_short) > 10:
+            name_short = name_short[:10]
+
+        svg += (
+            f'<g transform="translate(0,{line_y})">'
+            f'<text text-anchor="start" x="0" style="fill:{text_color}; font-size: 9px;">'
+            f'{name_short}</text>'
+            f'<text text-anchor="end" x="120" style="fill:{text_color}; font-size: 9px;">'
+            f'{sector_label} {sector_int}</text>'
+            f'</g>'
+        )
+        line_y += 12
+
+    svg += '</g>'
+    return svg
+
+
 # =============================================================================
 # SVG DRAWING FUNCTIONS - PLANET GRIDS
 # Functions for rendering planet information tables in the chart sidebar.
