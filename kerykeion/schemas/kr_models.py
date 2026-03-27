@@ -426,6 +426,10 @@ class KerykeionPointModel(SubscriptableBaseModel):
     )
     nakshatra_lord: Optional[str] = Field(
         default=None, description="Vimsottari Dasha lord of the Nakshatra."
+    gauquelin_sector: Optional[float] = Field(
+        default=None,
+        description="Gauquelin sector position (1-36). Sectors are numbered clockwise from the eastern horizon. "
+        "Sectors near 1 and 36 (the 'plus zones') are traditionally considered most powerful.",
     )
 
 

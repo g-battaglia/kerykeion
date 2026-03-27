@@ -589,6 +589,7 @@ class NatalChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, houses_list)
         template_dict["makeSecondaryHousesGrid"] = ""
         d._setup_single_wheel_houses(template_dict, houses_list)
+        d._setup_gauquelin_sectors(template_dict)
         d._setup_single_wheel_planets(template_dict)
         d._setup_main_planet_grid(
             template_dict,
@@ -663,6 +664,7 @@ class CompositeChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, houses_list)
         template_dict["makeSecondaryHousesGrid"] = ""
         d._setup_single_wheel_houses(template_dict, houses_list)
+        d._setup_gauquelin_sectors(template_dict)
         d._setup_single_wheel_planets(template_dict)
 
         # Combined subject name
@@ -822,6 +824,7 @@ class TransitChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, first_houses)
         template_dict["makeSecondaryHousesGrid"] = ""  # Transit doesn't show transit houses grid
         d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
+        template_dict["makeGauquelinSectors"] = ""  # Not rendered for dual-wheel charts
         d._setup_dual_wheel_planets(template_dict)
 
         # Planet grids with wheel labels
@@ -999,6 +1002,7 @@ class SynastryChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, first_houses)
         d._setup_secondary_houses_grid(template_dict, second_houses)
         d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
+        template_dict["makeGauquelinSectors"] = ""
         d._setup_dual_wheel_planets(template_dict)
 
         # Planet grids
@@ -1185,6 +1189,7 @@ class SingleReturnChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, houses_list)
         template_dict["makeSecondaryHousesGrid"] = ""
         d._setup_single_wheel_houses(template_dict, houses_list)
+        d._setup_gauquelin_sectors(template_dict)
         d._setup_single_wheel_planets(template_dict)
         d._setup_main_planet_grid(
             template_dict,
@@ -1306,6 +1311,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, first_houses)
         d._setup_secondary_houses_grid(template_dict, second_houses)
         d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
+        template_dict["makeGauquelinSectors"] = ""
         d._setup_dual_wheel_planets(template_dict)
 
         # Planet grid labels
@@ -3410,6 +3416,26 @@ class ChartDrawer:  # type: ignore[no-redef]
             external_view=self.external_view,
         )
 
+    def _setup_gauquelin_sectors(self, template_dict: dict) -> None:
+        """Add Gauquelin sector overlay if any planet has gauquelin_sector data."""
+        # Check if any planet in the chart has gauquelin_sector set
+        has_gauquelin = False
+        for planet_setting in self.available_kerykeion_celestial_points:
+            point = planet_setting.get("point")
+            if point and hasattr(point, "gauquelin_sector") and point.gauquelin_sector is not None:
+                has_gauquelin = True
+                break
+
+        if has_gauquelin:
+            from kerykeion.charts.charts_utils import draw_gauquelin_sectors
+            template_dict["makeGauquelinSectors"] = draw_gauquelin_sectors(
+                r=self.main_radius,
+                inner_r=self.third_circle_radius,
+                seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+            )
+        else:
+            template_dict["makeGauquelinSectors"] = ""
+
     def _setup_dual_wheel_houses(self, template_dict: dict, first_houses_list: list, second_houses_list: list) -> None:
         """
         Populate template_dict with house cusp drawing for dual-wheel charts.
@@ -3932,6 +3958,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         """
         # Initialize template dictionary
         template_dict: dict = {}
+        template_dict["makeGauquelinSectors"] = ""  # Default empty, populated if Gauquelin sectors present
 
         # -------------------------------------#
         #  COMMON SETTINGS FOR ALL CHART TYPES #

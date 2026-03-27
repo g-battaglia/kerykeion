@@ -116,6 +116,11 @@
                 $makeHouses
             </g>
 
+            <!-- Gauquelin Sectors Overlay -->
+            <g kr:node="Gauquelin_Sectors">
+                $makeGauquelinSectors
+            </g>
+
             <!-- Planets -->
             <g kr:node="Planets_Wheel">
                 $makePlanets
