@@ -59,6 +59,7 @@ from .moon_phase_details import MoonPhaseDetailsFactory
 from .planetary_phenomena import PlanetaryPhenomenaFactory
 from .eclipses import EclipseFactory
 from .planetary_nodes import PlanetaryNodesFactory
+from .heliacal import HeliacalFactory
 
 # =============================================================================
 # ANALYSIS FACTORIES
@@ -108,6 +109,7 @@ __all__ = [
     "PlanetaryPhenomenaFactory",
     "EclipseFactory",
     "PlanetaryNodesFactory",
+    "HeliacalFactory",
     # Analysis Factories
     "AspectsFactory",
     "RelationshipScoreFactory",
