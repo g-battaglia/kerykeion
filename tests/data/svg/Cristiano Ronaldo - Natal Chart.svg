@@ -123,6 +123,14 @@
     --kerykeion-chart-color-ixion: #556b2f;
     --kerykeion-chart-color-orcus: #2f4f4f;
     --kerykeion-chart-color-quaoar: #8a2be2;
+    --kerykeion-chart-color-cupido: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-hades: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-zeus: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-kronos: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-apollon: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-admetos: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-vulkanus: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-poseidon: var(--kerykeion-color-secondary);
     --kerykeion-chart-color-regulus: #ffd700;
     --kerykeion-chart-color-spica: #87ceeb;
     --kerykeion-chart-color-aldebaran: #ff6347;
@@ -283,6 +291,11 @@
             <!-- Houses -->
             <g kr:node='Houses_Wheel'>
                 <g kr:node='Cusp' kr:absoluteposition='273.2325401041598' kr:signposition='3.2325401041597956' kr:sing='Cap' kr:slug='First_House'><line x1='120.0' y1='240.0' x2='0.0' y2='239.99999999999997' style='stroke: var(--kerykeion-chart-color-chiron); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='53.389486855097175' y='299.1353673067654'>1</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='309.202716985951' kr:signposition='9.202716985950985' kr:sing='Aqu' kr:slug='Second_House'><line x1='142.9179606750063' y1='310.5342302750968' x2='45.83592135001261' y2='381.0684605501935' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='126.8733242205991' y='400.2771925034864'>2</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='347.58470791588667' kr:signposition='17.584707915886668' kr:sing='Pis' kr:slug='Third_House'><line x1='206.92351730196015' y1='355.35140351259827' x2='173.84703460392026' y2='470.70280702519653' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='236.99999999999994' y='435.0'>3</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='21.2476074631644' kr:signposition='21.2476074631644' kr:sing='Ari' kr:slug='Fourth_House'><line x1='277.08203932499373' y1='354.12678195541844' x2='314.1640786499874' y2='468.2535639108369' style='stroke: var(--kerykeion-chart-color-seventh-house); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='335.88731038273045' y='407.5761217348055'>4</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='48.26183836077257' kr:signposition='18.261838360772572' kr:sing='Tau' kr:slug='Fifth_House'><line x1='324.8528137423857' y1='324.8528137423857' x2='409.7056274847714' y2='409.7056274847714' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='396.175213930568' y='350.36503746638346'>5</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='71.12839987240335' kr:signposition='11.12839987240335' kr:sing='Gem' kr:slug='Sixth_House'><line x1='351.26206254801446' y1='284.95279120990944' x2='462.52412509602897' y2='329.90558241981887' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='425.4724192219515' y='279.63532711229664'>6</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='93.2325401041598' kr:signposition='3.2325401041597956' kr:sing='Can' kr:slug='Seventh_House'><line x1='360.0' y1='240.0' x2='480.0' y2='240.0' style='stroke: var(--kerykeion-chart-color-tenth-house); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='420.6105131449028' y='186.86463269323454'>7</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='129.20271698595099' kr:signposition='9.202716985950985' kr:sing='Leo' kr:slug='Eighth_House'><line x1='337.08203932499373' y1='169.46576972490323' x2='434.1640786499874' y2='98.93153944980645' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='347.12667577940084' y='85.72280749651358'>8</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='167.5847079158866' kr:signposition='17.58470791588661' kr:sing='Vir' kr:slug='Ninth_House'><line x1='273.07648269803985' y1='124.64859648740173' x2='306.15296539607976' y2='9.297192974803465' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='237.0' y='51.0'>9</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='201.24760746316437' kr:signposition='21.24760746316437' kr:sing='Lib' kr:slug='Tenth_House'><line x1='202.91796067500633' y1='125.87321804458156' x2='165.83592135001263' y2='11.746436089163126' style='stroke: var(--kerykeion-chart-color-first-house); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='138.11268961726958' y='78.42387826519443'>10</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='228.26183836077257' kr:signposition='18.261838360772572' kr:sing='Sco' kr:slug='Eleventh_House'><line x1='155.1471862576143' y1='155.1471862576143' x2='70.29437251522862' y2='70.29437251522859' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='77.82478606943201' y='135.6349625336166'>11</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='251.12839987240335' kr:signposition='11.12839987240335' kr:sing='Sag' kr:slug='Twelfth_House'><line x1='128.73793745198552' y1='195.04720879009054' x2='17.475874903971047' y2='150.09441758018107' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='48.52758077804854' y='206.36467288770336'>12</tspan></text></g>
+            </g>
+
+            <!-- Gauquelin Sectors Overlay -->
+            <g kr:node='Gauquelin_Sectors'>
+                
             </g>
 
             <!-- Planets -->
@@ -584,6 +597,86 @@
                     <path
                         d='M7.875 9.125 6 11 1 6l5-5 5 5-1.875 1.875M11 11 7.875 9.125 6 6l3.125 1.875'
                         style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-quaoar); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-dasharray: none; stroke-opacity: 1'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Cupido'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M3.5 3.5 6 1l2.5 2.5M1 6h10M6 6a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-cupido); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Hades'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M1 4h10M3 1v3M9 1v3'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-hades); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Zeus'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M1 4h10M3.5 1 6 4l2.5-3'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-zeus); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Kronos'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M3 4h6M1 1h10'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-kronos); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Apollon'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M1 6h10M3 3l6 6M9 3l-6 6'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-apollon); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Admetos'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M1 6h10M6 6a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-admetos); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Vulkanus'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M1 6h4M7 6h4'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-vulkanus); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Poseidon'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M1 4h10M1 4l2.5 3L6 4l2.5 3L11 4'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-poseidon); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
                     />
                 </g>
             </g>

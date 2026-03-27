@@ -24,7 +24,7 @@ Tokyo Subject — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448057.625000      |
-| Active Points Count | 63                  |
+| Active Points Count | 71                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
@@ -57,6 +57,14 @@ Tokyo Subject — Natal Chart Report
 | Pallas                | Gem ♊️ | 15.76°   | +0.5793°/d   | -1.14°  | -    | Ninth House    |
 | Juno                  | Sco ♏️ | 10.37°   | -0.1042°/d   | -0.49°  | R    | Second House   |
 | Vesta                 | Tau ♉️ | 4.66°    | +0.4043°/d   | +7.56°  | -    | Eighth House   |
+| Cupido                | Sco ♏️ | 19.01°   | -0.0161°/d   | -16.43° | R    | Second House   |
+| Hades                 | Gem ♊️ | 9.24°    | +0.0209°/d   | +20.83° | -    | Ninth House    |
+| Zeus                  | Vir ♍️ | 25.80°   | +0.0014°/d   | +1.67°  | -    | Twelfth House  |
+| Kronos                | Gem ♊️ | 21.32°   | +0.0166°/d   | +23.17° | -    | Ninth House    |
+| Apollon               | Lib ♎️ | 13.79°   | -0.0032°/d   | -5.44°  | R    | First House    |
+| Admetos               | Tau ♉️ | 14.64°   | +0.0118°/d   | +16.24° | -    | Eighth House   |
+| Vulkanus              | Can ♋️ | 14.84°   | +0.0130°/d   | +22.63° | -    | Tenth House    |
+| Poseidon              | Lib ♎️ | 28.76°   | -0.0055°/d   | -11.04° | R    | Second House   |
 | Eris                  | Ari ♈️ | 17.53°   | +0.0050°/d   | -9.10°  | -    | Seventh House  |
 | Sedna                 | Tau ♉️ | 11.31°   | +0.0092°/d   | +4.25°  | -    | Eighth House   |
 | Haumea                | Vir ♍️ | 26.04°   | +0.0015°/d   | +23.34° | -    | Twelfth House  |
@@ -123,20 +131,20 @@ Tokyo Subject — Natal Chart Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 6.3999999999999995 | 17.7%      |
-| Earth 🌍 | 9.899999999999999  | 27.3%      |
-| Air 💨   | 8.999999999999996  | 24.9%      |
-| Water 💧 | 10.899999999999995 | 30.1%      |
-| Total    | 36.19999999999999  | 100%       |
+| Fire 🔥  | 6.3999999999999995 | 14.5%      |
+| Earth 🌍 | 11.899999999999999 | 26.9%      |
+| Air 💨   | 12.999999999999996 | 29.4%      |
+| Water 💧 | 12.899999999999995 | 29.2%      |
+| Total    | 44.19999999999999  | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 8.799999999999997  | 24.3%      |
-| Fixed    | 8.299999999999999  | 22.9%      |
-| Mutable  | 19.099999999999998 | 52.8%      |
-| Total    | 36.19999999999999  | 100%       |
+| Cardinal | 11.799999999999997 | 26.7%      |
+| Fixed    | 10.299999999999999 | 23.3%      |
+| Mutable  | 22.099999999999998 | 50.0%      |
+| Total    | 44.19999999999999  | 100%       |
 +----------+--------------------+------------+
 
 +Active Celestial Points-----+
@@ -165,46 +173,54 @@ Tokyo Subject — Natal Chart Report
 | 21 | Pallas                |
 | 22 | Juno                  |
 | 23 | Vesta                 |
-| 24 | Eris                  |
-| 25 | Sedna                 |
-| 26 | Haumea                |
-| 27 | Makemake              |
-| 28 | Ixion                 |
-| 29 | Orcus                 |
-| 30 | Quaoar                |
-| 31 | Regulus               |
-| 32 | Spica                 |
-| 33 | Aldebaran             |
-| 34 | Antares               |
-| 35 | Sirius                |
-| 36 | Fomalhaut             |
-| 37 | Algol                 |
-| 38 | Betelgeuse            |
-| 39 | Canopus               |
-| 40 | Procyon               |
-| 41 | Arcturus              |
-| 42 | Pollux                |
-| 43 | Deneb                 |
-| 44 | Altair                |
-| 45 | Rigel                 |
-| 46 | Achernar              |
-| 47 | Capella               |
-| 48 | Vega                  |
-| 49 | Alcyone               |
-| 50 | Alphecca              |
-| 51 | Algorab               |
-| 52 | Deneb_Algedi          |
-| 53 | Alkaid                |
-| 54 | Pars_Fortunae         |
-| 55 | Pars_Spiritus         |
-| 56 | Pars_Amoris           |
-| 57 | Pars_Fidei            |
-| 58 | Vertex                |
-| 59 | Anti_Vertex           |
-| 60 | Ascendant             |
-| 61 | Medium_Coeli          |
-| 62 | Descendant            |
-| 63 | Imum_Coeli            |
+| 24 | Cupido                |
+| 25 | Hades                 |
+| 26 | Zeus                  |
+| 27 | Kronos                |
+| 28 | Apollon               |
+| 29 | Admetos               |
+| 30 | Vulkanus              |
+| 31 | Poseidon              |
+| 32 | Eris                  |
+| 33 | Sedna                 |
+| 34 | Haumea                |
+| 35 | Makemake              |
+| 36 | Ixion                 |
+| 37 | Orcus                 |
+| 38 | Quaoar                |
+| 39 | Regulus               |
+| 40 | Spica                 |
+| 41 | Aldebaran             |
+| 42 | Antares               |
+| 43 | Sirius                |
+| 44 | Fomalhaut             |
+| 45 | Algol                 |
+| 46 | Betelgeuse            |
+| 47 | Canopus               |
+| 48 | Procyon               |
+| 49 | Arcturus              |
+| 50 | Pollux                |
+| 51 | Deneb                 |
+| 52 | Altair                |
+| 53 | Rigel                 |
+| 54 | Achernar              |
+| 55 | Capella               |
+| 56 | Vega                  |
+| 57 | Alcyone               |
+| 58 | Alphecca              |
+| 59 | Algorab               |
+| 60 | Deneb_Algedi          |
+| 61 | Alkaid                |
+| 62 | Pars_Fortunae         |
+| 63 | Pars_Spiritus         |
+| 64 | Pars_Amoris           |
+| 65 | Pars_Fidei            |
+| 66 | Vertex                |
+| 67 | Anti_Vertex           |
+| 68 | Ascendant             |
+| 69 | Medium_Coeli          |
+| 70 | Descendant            |
+| 71 | Imum_Coeli            |
 +----+-----------------------+
 
 +----------------+---------+
@@ -256,6 +272,9 @@ Tokyo Subject — Natal Chart Report
 | Sun                   | conjunction ☌                 | Capella               | 2.05° | Separating ← |
 | Sun                   | trine △                       | Deneb Algedi          | 0.36° | Separating ← |
 | Sun                   | square □                      | Alkaid                | 3.03° | Applying →   |
+| Sun                   | square □                      | Zeus                  | 2.03° | Applying →   |
+| Sun                   | conjunction ☌                 | Kronos                | 2.45° | Separating ← |
+| Sun                   | trine △                       | Poseidon              | 4.99° | Applying →   |
 | Moon                  | semi-sextile semi-sextile     | Mars                  | 0.40° | Applying →   |
 | Moon                  | trine △                       | Jupiter               | 5.44° | Applying →   |
 | Moon                  | sextile ⚹                     | Uranus                | 2.19° | Separating ← |
@@ -284,6 +303,9 @@ Tokyo Subject — Natal Chart Report
 | Moon                  | conjunction ☌                 | Achernar              | 4.81° | Applying →   |
 | Moon                  | sextile ⚹                     | Vega                  | 4.83° | Applying →   |
 | Moon                  | trine △                       | Alphecca              | 1.80° | Applying →   |
+| Moon                  | square □                      | Hades                 | 1.13° | Separating ← |
+| Moon                  | sextile ⚹                     | Admetos               | 4.26° | Applying →   |
+| Moon                  | trine △                       | Vulkanus              | 4.47° | Applying →   |
 | Mercury               | sextile ⚹                     | Mars                  | 5.72° | Applying →   |
 | Mercury               | trine △                       | Mean North Lunar Node | 4.67° | Applying →   |
 | Mercury               | trine △                       | True North Lunar Node | 3.06° | Applying →   |
@@ -304,6 +326,8 @@ Tokyo Subject — Natal Chart Report
 | Mercury               | square □                      | Deneb                 | 0.15° | Applying →   |
 | Mercury               | trine △                       | Altair                | 3.40° | Separating ← |
 | Mercury               | conjunction ☌                 | Alcyone               | 5.19° | Separating ← |
+| Mercury               | conjunction ☌                 | Hades                 | 4.19° | Applying →   |
+| Mercury               | biquintile biquintile         | Poseidon              | 0.29° | Separating ← |
 | Venus                 | sextile ⚹                     | Jupiter               | 2.53° | Separating ← |
 | Venus                 | trine △                       | Saturn                | 5.72° | Applying →   |
 | Venus                 | trine △                       | Neptune               | 4.61° | Separating ← |
@@ -331,6 +355,10 @@ Tokyo Subject — Natal Chart Report
 | Venus                 | trine △                       | Vega                  | 3.14° | Separating ← |
 | Venus                 | opposition ☍                  | Alphecca              | 6.17° | Separating ← |
 | Venus                 | biquintile biquintile         | Algorab               | 0.99° | Applying →   |
+| Venus                 | opposition ☍                  | Cupido                | 0.67° | Applying →   |
+| Venus                 | trine △                       | Zeus                  | 7.46° | Applying →   |
+| Venus                 | conjunction ☌                 | Admetos               | 3.70° | Separating ← |
+| Venus                 | sextile ⚹                     | Vulkanus              | 3.50° | Separating ← |
 | Mars                  | square □                      | Uranus                | 2.59° | Separating ← |
 | Mars                  | square □                      | Neptune               | 2.95° | Applying →   |
 | Mars                  | sextile ⚹                     | Mean North Lunar Node | 1.05° | Separating ← |
@@ -355,6 +383,9 @@ Tokyo Subject — Natal Chart Report
 | Mars                  | sextile ⚹                     | Rigel                 | 5.92° | Applying →   |
 | Mars                  | square □                      | Vega                  | 4.43° | Applying →   |
 | Mars                  | opposition ☍                  | Algorab               | 2.55° | Applying →   |
+| Mars                  | sextile ⚹                     | Hades                 | 1.53° | Separating ← |
+| Mars                  | opposition ☍                  | Apollon               | 3.02° | Applying →   |
+| Mars                  | square □                      | Vulkanus              | 4.07° | Applying →   |
 | Jupiter               | opposition ☍                  | Saturn                | 8.25° | Applying →   |
 | Jupiter               | opposition ☍                  | Uranus                | 7.63° | Separating ← |
 | Jupiter               | opposition ☍                  | Neptune               | 2.08° | Separating ← |
@@ -380,6 +411,10 @@ Tokyo Subject — Natal Chart Report
 | Jupiter               | semi-square semi-square       | Alcyone               | 0.95° | Separating ← |
 | Jupiter               | trine △                       | Alphecca              | 3.64° | Separating ← |
 | Jupiter               | square □                      | Algorab               | 2.48° | Separating ← |
+| Jupiter               | trine △                       | Cupido                | 3.20° | Applying →   |
+| Jupiter               | square □                      | Apollon               | 2.02° | Separating ← |
+| Jupiter               | sextile ⚹                     | Admetos               | 1.17° | Separating ← |
+| Jupiter               | conjunction ☌                 | Vulkanus              | 0.97° | Separating ← |
 | Saturn                | opposition ☍                  | Chiron                | 8.03° | Applying →   |
 | Saturn                | trine △                       | Ascendant             | 4.11° | Separating ← |
 | Saturn                | sextile ⚹                     | Descendant            | 4.11° | Separating ← |
@@ -407,6 +442,11 @@ Tokyo Subject — Natal Chart Report
 | Saturn                | quintile Q                    | Alphecca              | 0.12° | Separating ← |
 | Saturn                | semi-sextile semi-sextile     | Deneb Algedi          | 0.64° | Applying →   |
 | Saturn                | trine △                       | Alkaid                | 2.75° | Separating ← |
+| Saturn                | sextile ⚹                     | Cupido                | 5.05° | Applying →   |
+| Saturn                | sesquiquadrate sesquiquadrate | Hades                 | 0.19° | Separating ← |
+| Saturn                | trine △                       | Zeus                  | 1.74° | Separating ← |
+| Saturn                | opposition ☍                  | Vulkanus              | 9.21° | Applying →   |
+| Saturn                | square □                      | Poseidon              | 4.71° | Separating ← |
 | Uranus                | conjunction ☌                 | Neptune               | 5.55° | Separating ← |
 | Uranus                | semi-sextile semi-sextile     | True North Lunar Node | 0.07° | Applying →   |
 | Uranus                | opposition ☍                  | Chiron                | 7.84° | Separating ← |
@@ -428,6 +468,8 @@ Tokyo Subject — Natal Chart Report
 | Uranus                | conjunction ☌                 | Vega                  | 7.02° | Separating ← |
 | Uranus                | sextile ⚹                     | Alphecca              | 3.99° | Separating ← |
 | Uranus                | semi-square semi-square       | Deneb Algedi          | 0.24° | Separating ← |
+| Uranus                | trine △                       | Admetos               | 6.46° | Separating ← |
+| Uranus                | opposition ☍                  | Vulkanus              | 6.66° | Separating ← |
 | Neptune               | sextile ⚹                     | Pluto                 | 1.68° | Separating ← |
 | Neptune               | opposition ☍                  | Chiron                | 2.30° | Separating ← |
 | Neptune               | sextile ⚹                     | Juno                  | 3.36° | Separating ← |
@@ -442,6 +484,10 @@ Tokyo Subject — Natal Chart Report
 | Neptune               | conjunction ☌                 | Vega                  | 1.47° | Separating ← |
 | Neptune               | sextile ⚹                     | Alphecca              | 1.56° | Applying →   |
 | Neptune               | square □                      | Algorab               | 0.40° | Applying →   |
+| Neptune               | sextile ⚹                     | Cupido                | 5.28° | Separating ← |
+| Neptune               | square □                      | Apollon               | 0.06° | Separating ← |
+| Neptune               | trine △                       | Admetos               | 0.91° | Separating ← |
+| Neptune               | opposition ☍                  | Vulkanus              | 1.12° | Separating ← |
 | Pluto                 | trine △                       | Chiron                | 0.61° | Separating ← |
 | Pluto                 | conjunction ☌                 | Mean Lilith           | 9.50° | Separating ← |
 | Pluto                 | sesquiquadrate sesquiquadrate | Earth                 | 0.41° | Applying →   |
@@ -461,6 +507,10 @@ Tokyo Subject — Natal Chart Report
 | Pluto                 | biquintile biquintile         | Capella               | 0.31° | Separating ← |
 | Pluto                 | sextile ⚹                     | Vega                  | 0.21° | Applying →   |
 | Pluto                 | conjunction ☌                 | Alphecca              | 3.24° | Applying →   |
+| Pluto                 | conjunction ☌                 | Cupido                | 3.60° | Separating ← |
+| Pluto                 | biquintile biquintile         | Kronos                | 0.09° | Applying →   |
+| Pluto                 | opposition ☍                  | Admetos               | 0.77° | Applying →   |
+| Pluto                 | trine △                       | Vulkanus              | 0.57° | Applying →   |
 | Mean North Lunar Node | conjunction ☌                 | True North Lunar Node | 1.60° | Applying →   |
 | Mean North Lunar Node | opposition ☍                  | True South Lunar Node | 1.60° | Applying →   |
 | Mean North Lunar Node | biquintile biquintile         | Pholus                | 0.71° | Applying →   |
@@ -477,6 +527,9 @@ Tokyo Subject — Natal Chart Report
 | Mean North Lunar Node | trine △                       | Rigel                 | 6.98° | Separating ← |
 | Mean North Lunar Node | square □                      | Alphecca              | 2.45° | Separating ← |
 | Mean North Lunar Node | trine △                       | Algorab               | 3.61° | Separating ← |
+| Mean North Lunar Node | trine △                       | Hades                 | 0.47° | Applying →   |
+| Mean North Lunar Node | trine △                       | Apollon               | 4.07° | Separating ← |
+| Mean North Lunar Node | square □                      | Admetos               | 4.92° | Separating ← |
 | True North Lunar Node | opposition ☍                  | Mean South Lunar Node | 1.60° | Separating ← |
 | True North Lunar Node | biquintile biquintile         | Pholus                | 0.89° | Separating ← |
 | True North Lunar Node | trine △                       | Pallas                | 7.65° | Separating ← |
@@ -492,6 +545,8 @@ Tokyo Subject — Natal Chart Report
 | True North Lunar Node | conjunction ☌                 | Altair                | 6.46° | Separating ← |
 | True North Lunar Node | square □                      | Alphecca              | 4.06° | Applying →   |
 | True North Lunar Node | trine △                       | Algorab               | 5.21° | Applying →   |
+| True North Lunar Node | trine △                       | Hades                 | 1.13° | Separating ← |
+| True North Lunar Node | trine △                       | Apollon               | 5.67° | Applying →   |
 | Chiron                | quintile Q                    | Ascendant             | 0.14° | Separating ← |
 | Chiron                | semi-sextile semi-sextile     | Pallas                | 0.26° | Applying →   |
 | Chiron                | trine △                       | Juno                  | 5.66° | Separating ← |
@@ -512,6 +567,10 @@ Tokyo Subject — Natal Chart Report
 | Chiron                | opposition ☍                  | Vega                  | 0.83° | Separating ← |
 | Chiron                | trine △                       | Alphecca              | 3.85° | Separating ← |
 | Chiron                | square □                      | Algorab               | 2.70° | Separating ← |
+| Chiron                | trine △                       | Cupido                | 2.98° | Applying →   |
+| Chiron                | square □                      | Apollon               | 2.24° | Separating ← |
+| Chiron                | sextile ⚹                     | Admetos               | 1.39° | Separating ← |
+| Chiron                | conjunction ☌                 | Vulkanus              | 1.18° | Separating ← |
 | Ascendant             | square □                      | Medium Coeli          | 0.19° | Static =     |
 | Ascendant             | square □                      | Imum Coeli            | 0.19° | Static =     |
 | Ascendant             | sextile ⚹                     | Mean Lilith           | 3.26° | Separating ← |
@@ -534,6 +593,8 @@ Tokyo Subject — Natal Chart Report
 | Ascendant             | trine △                       | Alcyone               | 1.69° | Applying →   |
 | Ascendant             | semi-square semi-square       | Alphecca              | 0.99° | Separating ← |
 | Ascendant             | conjunction ☌                 | Alkaid                | 1.36° | Separating ← |
+| Ascendant             | conjunction ☌                 | Zeus                  | 2.37° | Separating ← |
+| Ascendant             | semi-sextile semi-sextile     | Poseidon              | 0.60° | Applying →   |
 | Medium Coeli          | square □                      | Descendant            | 0.19° | Static =     |
 | Medium Coeli          | opposition ☍                  | True Lilith           | 9.46° | Separating ← |
 | Medium Coeli          | square □                      | Earth                 | 2.03° | Applying →   |
@@ -554,6 +615,9 @@ Tokyo Subject — Natal Chart Report
 | Medium Coeli          | sesquiquadrate sesquiquadrate | Alphecca              | 0.80° | Separating ← |
 | Medium Coeli          | trine △                       | Deneb Algedi          | 4.56° | Separating ← |
 | Medium Coeli          | square □                      | Alkaid                | 1.17° | Separating ← |
+| Medium Coeli          | square □                      | Zeus                  | 2.18° | Separating ← |
+| Medium Coeli          | conjunction ☌                 | Kronos                | 6.65° | Separating ← |
+| Medium Coeli          | trine △                       | Poseidon              | 0.79° | Applying →   |
 | Descendant            | square □                      | Imum Coeli            | 0.19° | Static =     |
 | Descendant            | trine △                       | Mean Lilith           | 3.26° | Separating ← |
 | Descendant            | conjunction ☌                 | Earth                 | 1.84° | Applying →   |
@@ -576,6 +640,9 @@ Tokyo Subject — Natal Chart Report
 | Descendant            | sextile ⚹                     | Alcyone               | 1.69° | Applying →   |
 | Descendant            | sesquiquadrate sesquiquadrate | Alphecca              | 0.99° | Separating ← |
 | Descendant            | opposition ☍                  | Alkaid                | 1.36° | Separating ← |
+| Descendant            | quintile Q                    | Hades                 | 0.92° | Separating ← |
+| Descendant            | opposition ☍                  | Zeus                  | 2.37° | Separating ← |
+| Descendant            | quincunx ⚻                    | Poseidon              | 0.60° | Applying →   |
 | Imum Coeli            | conjunction ☌                 | True Lilith           | 9.46° | Separating ← |
 | Imum Coeli            | square □                      | Earth                 | 2.03° | Applying →   |
 | Imum Coeli            | opposition ☍                  | Pholus                | 5.03° | Applying →   |
@@ -595,6 +662,9 @@ Tokyo Subject — Natal Chart Report
 | Imum Coeli            | semi-square semi-square       | Alphecca              | 0.80° | Separating ← |
 | Imum Coeli            | sextile ⚹                     | Deneb Algedi          | 4.56° | Separating ← |
 | Imum Coeli            | square □                      | Alkaid                | 1.17° | Separating ← |
+| Imum Coeli            | square □                      | Zeus                  | 2.18° | Separating ← |
+| Imum Coeli            | opposition ☍                  | Kronos                | 6.65° | Separating ← |
+| Imum Coeli            | sextile ⚹                     | Poseidon              | 0.79° | Applying →   |
 | Mean Lilith           | trine △                       | Earth                 | 5.09° | Applying →   |
 | Mean Lilith           | trine △                       | Ceres                 | 2.81° | Separating ← |
 | Mean Lilith           | sextile ⚹                     | Haumea                | 1.13° | Applying →   |
@@ -612,6 +682,8 @@ Tokyo Subject — Natal Chart Report
 | Mean Lilith           | opposition ☍                  | Alcyone               | 4.95° | Applying →   |
 | Mean Lilith           | square □                      | Deneb Algedi          | 1.49° | Separating ← |
 | Mean Lilith           | sextile ⚹                     | Alkaid                | 1.89° | Applying →   |
+| Mean Lilith           | conjunction ☌                 | Cupido                | 5.90° | Separating ← |
+| Mean Lilith           | sextile ⚹                     | Zeus                  | 0.89° | Applying →   |
 | Mean South Lunar Node | conjunction ☌                 | True South Lunar Node | 1.60° | Separating ← |
 | Mean South Lunar Node | square □                      | Juno                  | 0.65° | Applying →   |
 | Mean South Lunar Node | trine △                       | Eris                  | 7.81° | Applying →   |
@@ -626,6 +698,9 @@ Tokyo Subject — Natal Chart Report
 | Mean South Lunar Node | biquintile biquintile         | Achernar              | 0.54° | Separating ← |
 | Mean South Lunar Node | square □                      | Alphecca              | 2.45° | Applying →   |
 | Mean South Lunar Node | sextile ⚹                     | Algorab               | 3.61° | Applying →   |
+| Mean South Lunar Node | sextile ⚹                     | Hades                 | 0.47° | Separating ← |
+| Mean South Lunar Node | sextile ⚹                     | Apollon               | 4.07° | Applying →   |
+| Mean South Lunar Node | square □                      | Admetos               | 4.92° | Applying →   |
 | True South Lunar Node | square □                      | Juno                  | 2.25° | Applying →   |
 | True South Lunar Node | square □                      | Vesta                 | 3.46° | Applying →   |
 | True South Lunar Node | square □                      | Sedna                 | 3.19° | Separating ← |
@@ -638,6 +713,8 @@ Tokyo Subject — Natal Chart Report
 | True South Lunar Node | opposition ☍                  | Altair                | 6.46° | Applying →   |
 | True South Lunar Node | square □                      | Alphecca              | 4.06° | Separating ← |
 | True South Lunar Node | sextile ⚹                     | Algorab               | 5.21° | Separating ← |
+| True South Lunar Node | sextile ⚹                     | Hades                 | 1.13° | Separating ← |
+| True South Lunar Node | sextile ⚹                     | Apollon               | 5.67° | Separating ← |
 | True Lilith           | opposition ☍                  | Pallas                | 2.76° | Separating ← |
 | True Lilith           | trine △                       | Eris                  | 0.99° | Separating ← |
 | True Lilith           | sextile ⚹                     | Spica                 | 5.20° | Applying →   |
@@ -652,6 +729,10 @@ Tokyo Subject — Natal Chart Report
 | True Lilith           | opposition ☍                  | Capella               | 3.20° | Applying →   |
 | True Lilith           | sextile ⚹                     | Algorab               | 5.19° | Separating ← |
 | True Lilith           | sextile ⚹                     | Deneb Algedi          | 4.90° | Applying →   |
+| True Lilith           | semi-sextile semi-sextile     | Cupido                | 0.49° | Applying →   |
+| True Lilith           | opposition ☍                  | Hades                 | 9.27° | Separating ← |
+| True Lilith           | opposition ☍                  | Kronos                | 2.80° | Applying →   |
+| True Lilith           | sextile ⚹                     | Apollon               | 4.73° | Separating ← |
 | Earth                 | square □                      | Pholus                | 3.01° | Separating ← |
 | Earth                 | trine △                       | Ceres                 | 2.28° | Applying →   |
 | Earth                 | opposition ☍                  | Haumea                | 3.96° | Applying →   |
@@ -667,6 +748,8 @@ Tokyo Subject — Natal Chart Report
 | Earth                 | sextile ⚹                     | Altair                | 1.65° | Static =     |
 | Earth                 | sextile ⚹                     | Alcyone               | 0.14° | Static =     |
 | Earth                 | opposition ☍                  | Alkaid                | 3.20° | Static =     |
+| Earth                 | opposition ☍                  | Zeus                  | 4.20° | Applying →   |
+| Earth                 | semi-square semi-square       | Admetos               | 0.36° | Applying →   |
 | Pholus                | trine △                       | Juno                  | 7.36° | Applying →   |
 | Pholus                | sextile ⚹                     | Vesta                 | 1.65° | Separating ← |
 | Pholus                | sextile ⚹                     | Makemake              | 0.93° | Applying →   |
@@ -675,6 +758,8 @@ Tokyo Subject — Natal Chart Report
 | Pholus                | trine △                       | Fomalhaut             | 0.72° | Applying →   |
 | Pholus                | conjunction ☌                 | Betelgeuse            | 4.39° | Separating ← |
 | Pholus                | trine △                       | Deneb                 | 2.20° | Applying →   |
+| Pholus                | sesquiquadrate sesquiquadrate | Cupido                | 1.00° | Applying →   |
+| Pholus                | trine △                       | Poseidon              | 4.24° | Separating ← |
 | Ceres                 | sextile ⚹                     | Haumea                | 1.68° | Separating ← |
 | Ceres                 | trine △                       | Ixion                 | 4.59° | Separating ← |
 | Ceres                 | trine △                       | Quaoar                | 3.21° | Separating ← |
@@ -691,6 +776,8 @@ Tokyo Subject — Natal Chart Report
 | Ceres                 | opposition ☍                  | Altair                | 3.93° | Applying →   |
 | Ceres                 | sextile ⚹                     | Alcyone               | 2.14° | Applying →   |
 | Ceres                 | sextile ⚹                     | Alkaid                | 0.92° | Separating ← |
+| Ceres                 | sextile ⚹                     | Zeus                  | 1.92° | Separating ← |
+| Ceres                 | square □                      | Poseidon              | 1.04° | Applying →   |
 | Pallas                | biquintile biquintile         | Juno                  | 0.61° | Applying →   |
 | Pallas                | sextile ⚹                     | Eris                  | 1.77° | Applying →   |
 | Pallas                | sextile ⚹                     | Orcus                 | 5.68° | Separating ← |
@@ -707,6 +794,10 @@ Tokyo Subject — Natal Chart Report
 | Pallas                | quincunx ⚻                    | Vega                  | 0.56° | Separating ← |
 | Pallas                | trine △                       | Algorab               | 2.44° | Separating ← |
 | Pallas                | trine △                       | Deneb Algedi          | 7.66° | Applying →   |
+| Pallas                | conjunction ☌                 | Hades                 | 6.52° | Separating ← |
+| Pallas                | conjunction ☌                 | Kronos                | 5.56° | Applying →   |
+| Pallas                | trine △                       | Apollon               | 1.97° | Separating ← |
+| Pallas                | semi-sextile semi-sextile     | Vulkanus              | 0.92° | Separating ← |
 | Juno                  | opposition ☍                  | Vesta                 | 5.71° | Applying →   |
 | Juno                  | opposition ☍                  | Sedna                 | 0.94° | Separating ← |
 | Juno                  | semi-square semi-square       | Haumea                | 0.68° | Separating ← |
@@ -722,6 +813,10 @@ Tokyo Subject — Natal Chart Report
 | Juno                  | trine △                       | Achernar              | 4.82° | Separating ← |
 | Juno                  | sextile ⚹                     | Vega                  | 4.83° | Separating ← |
 | Juno                  | conjunction ☌                 | Alphecca              | 1.81° | Separating ← |
+| Juno                  | conjunction ☌                 | Cupido                | 8.64° | Separating ← |
+| Juno                  | semi-square semi-square       | Zeus                  | 0.43° | Separating ← |
+| Juno                  | opposition ☍                  | Admetos               | 4.27° | Separating ← |
+| Juno                  | trine △                       | Vulkanus              | 4.48° | Separating ← |
 | Vesta                 | conjunction ☌                 | Sedna                 | 6.65° | Applying →   |
 | Vesta                 | trine △                       | Makemake              | 0.72° | Separating ← |
 | Vesta                 | trine △                       | Regulus               | 4.96° | Separating ← |
@@ -732,6 +827,8 @@ Tokyo Subject — Natal Chart Report
 | Vesta                 | square □                      | Altair                | 3.01° | Separating ← |
 | Vesta                 | opposition ☍                  | Alphecca              | 7.51° | Applying →   |
 | Vesta                 | quintile Q                    | Deneb Algedi          | 0.76° | Applying →   |
+| Vesta                 | conjunction ☌                 | Admetos               | 9.98° | Applying →   |
+| Vesta                 | opposition ☍                  | Poseidon              | 5.89° | Separating ← |
 | Eris                  | biquintile biquintile         | Ixion                 | 0.40° | Separating ← |
 | Eris                  | trine △                       | Orcus                 | 7.45° | Applying →   |
 | Eris                  | biquintile biquintile         | Quaoar                | 0.98° | Applying →   |
@@ -748,6 +845,9 @@ Tokyo Subject — Natal Chart Report
 | Eris                  | square □                      | Vega                  | 2.33° | Separating ← |
 | Eris                  | opposition ☍                  | Algorab               | 4.20° | Separating ← |
 | Eris                  | sextile ⚹                     | Deneb Algedi          | 5.89° | Applying →   |
+| Eris                  | sextile ⚹                     | Kronos                | 3.79° | Separating ← |
+| Eris                  | opposition ☍                  | Apollon               | 3.74° | Separating ← |
+| Eris                  | square □                      | Vulkanus              | 2.68° | Applying →   |
 | Sedna                 | sesquiquadrate sesquiquadrate | Haumea                | 0.26° | Separating ← |
 | Sedna                 | trine △                       | Makemake              | 7.37° | Static =     |
 | Sedna                 | square □                      | Orcus                 | 1.23° | Applying →   |
@@ -759,6 +859,10 @@ Tokyo Subject — Natal Chart Report
 | Sedna                 | trine △                       | Vega                  | 3.89° | Applying →   |
 | Sedna                 | opposition ☍                  | Alphecca              | 0.86° | Applying →   |
 | Sedna                 | sesquiquadrate sesquiquadrate | Alkaid                | 0.50° | Applying →   |
+| Sedna                 | opposition ☍                  | Cupido                | 7.70° | Applying →   |
+| Sedna                 | sesquiquadrate sesquiquadrate | Zeus                  | 0.51° | Separating ← |
+| Sedna                 | conjunction ☌                 | Admetos               | 3.33° | Separating ← |
+| Sedna                 | sextile ⚹                     | Vulkanus              | 3.54° | Separating ← |
 | Haumea                | sextile ⚹                     | Ixion                 | 2.92° | Separating ← |
 | Haumea                | semi-square semi-square       | Orcus                 | 0.96° | Applying →   |
 | Haumea                | sextile ⚹                     | Quaoar                | 1.54° | Separating ← |
@@ -775,6 +879,9 @@ Tokyo Subject — Natal Chart Report
 | Haumea                | square □                      | Capella               | 4.32° | Separating ← |
 | Haumea                | trine △                       | Alcyone               | 3.81° | Applying →   |
 | Haumea                | conjunction ☌                 | Alkaid                | 0.76° | Applying →   |
+| Haumea                | conjunction ☌                 | Zeus                  | 0.24° | Static =     |
+| Haumea                | square □                      | Kronos                | 4.72° | Applying →   |
+| Haumea                | quintile Q                    | Vulkanus              | 0.80° | Separating ← |
 | Makemake              | conjunction ☌                 | Regulus               | 4.23° | Separating ← |
 | Makemake              | trine △                       | Pars Spiritus         | 7.63° | Applying →   |
 | Makemake              | opposition ☍                  | Fomalhaut             | 0.20° | Separating ← |
@@ -782,6 +889,8 @@ Tokyo Subject — Natal Chart Report
 | Makemake              | opposition ☍                  | Deneb                 | 1.27° | Applying →   |
 | Makemake              | quintile Q                    | Capella               | 0.21° | Separating ← |
 | Makemake              | square □                      | Alcyone               | 4.08° | Separating ← |
+| Makemake              | quintile Q                    | Kronos                | 0.61° | Applying →   |
+| Makemake              | sextile ⚹                     | Poseidon              | 5.17° | Separating ← |
 | Ixion                 | conjunction ☌                 | Quaoar                | 1.38° | Static =     |
 | Ixion                 | semi-sextile semi-sextile     | Spica                 | 0.59° | Separating ← |
 | Ixion                 | square □                      | Pars Amoris           | 0.39° | Applying →   |
@@ -797,6 +906,9 @@ Tokyo Subject — Natal Chart Report
 | Ixion                 | opposition ☍                  | Alcyone               | 6.73° | Separating ← |
 | Ixion                 | square □                      | Deneb Algedi          | 0.29° | Separating ← |
 | Ixion                 | sextile ⚹                     | Alkaid                | 3.68° | Separating ← |
+| Ixion                 | conjunction ☌                 | Cupido                | 4.12° | Static =     |
+| Ixion                 | sextile ⚹                     | Zeus                  | 2.68° | Separating ← |
+| Ixion                 | opposition ☍                  | Admetos               | 8.49° | Applying →   |
 | Orcus                 | sextile ⚹                     | Pars Fortunae         | 4.69° | Applying →   |
 | Orcus                 | sextile ⚹                     | Aldebaran             | 0.42° | Separating ← |
 | Orcus                 | trine △                       | Antares               | 0.44° | Separating ← |
@@ -804,6 +916,10 @@ Tokyo Subject — Natal Chart Report
 | Orcus                 | biquintile biquintile         | Achernar              | 0.90° | Separating ← |
 | Orcus                 | square □                      | Alphecca              | 2.09° | Applying →   |
 | Orcus                 | sextile ⚹                     | Algorab               | 3.25° | Applying →   |
+| Orcus                 | sextile ⚹                     | Hades                 | 0.83° | Applying →   |
+| Orcus                 | semi-square semi-square       | Zeus                  | 0.72° | Applying →   |
+| Orcus                 | sextile ⚹                     | Apollon               | 3.71° | Applying →   |
+| Orcus                 | square □                      | Admetos               | 4.56° | Applying →   |
 | Quaoar                | semi-sextile semi-sextile     | Spica                 | 0.79° | Applying →   |
 | Quaoar                | square □                      | Pars Amoris           | 1.77° | Applying →   |
 | Quaoar                | trine △                       | Pars Fidei            | 4.59° | Applying →   |
@@ -816,6 +932,9 @@ Tokyo Subject — Natal Chart Report
 | Quaoar                | opposition ☍                  | Alcyone               | 5.35° | Separating ← |
 | Quaoar                | square □                      | Deneb Algedi          | 1.09° | Applying →   |
 | Quaoar                | sextile ⚹                     | Alkaid                | 2.30° | Separating ← |
+| Quaoar                | conjunction ☌                 | Cupido                | 5.50° | Static =     |
+| Quaoar                | sextile ⚹                     | Zeus                  | 1.29° | Separating ← |
+| Quaoar                | opposition ☍                  | Admetos               | 9.87° | Applying →   |
 | Regulus               | sextile ⚹                     | Spica                 | 5.98° | Static =     |
 | Regulus               | conjunction ☌                 | Pars Amoris           | 6.97° | Static =     |
 | Regulus               | semi-square semi-square       | Sirius                | 0.75° | Static =     |
@@ -829,6 +948,9 @@ Tokyo Subject — Natal Chart Report
 | Regulus               | square □                      | Alcyone               | 0.16° | Static =     |
 | Regulus               | quintile Q                    | Alphecca              | 0.47° | Static =     |
 | Regulus               | opposition ☍                  | Deneb Algedi          | 6.28° | Static =     |
+| Regulus               | semi-square semi-square       | Apollon               | 0.91° | Separating ← |
+| Regulus               | semi-square semi-square       | Vulkanus              | 0.14° | Separating ← |
+| Regulus               | sextile ⚹                     | Poseidon              | 0.94° | Separating ← |
 | Spica                 | sextile ⚹                     | Pars Amoris           | 0.98° | Static =     |
 | Spica                 | quincunx ⚻                    | Vertex                | 0.22° | Static =     |
 | Spica                 | semi-sextile semi-sextile     | Anti Vertex           | 0.22° | Static =     |
@@ -842,6 +964,10 @@ Tokyo Subject — Natal Chart Report
 | Spica                 | trine △                       | Capella               | 1.99° | Static =     |
 | Spica                 | biquintile biquintile         | Alcyone               | 0.14° | Static =     |
 | Spica                 | trine △                       | Deneb Algedi          | 0.30° | Static =     |
+| Spica                 | sesquiquadrate sesquiquadrate | Hades                 | 0.53° | Separating ← |
+| Spica                 | trine △                       | Kronos                | 2.39° | Applying →   |
+| Spica                 | conjunction ☌                 | Apollon               | 9.93° | Separating ← |
+| Spica                 | conjunction ☌                 | Poseidon              | 5.05° | Applying →   |
 | Pars Fortunae         | conjunction ☌                 | Aldebaran             | 5.11° | Static =     |
 | Pars Fortunae         | opposition ☍                  | Antares               | 5.13° | Static =     |
 | Pars Fortunae         | semi-sextile semi-sextile     | Sirius                | 0.82° | Static =     |
@@ -851,6 +977,11 @@ Tokyo Subject — Natal Chart Report
 | Pars Fortunae         | conjunction ☌                 | Capella               | 6.96° | Static =     |
 | Pars Fortunae         | quincunx ⚻                    | Vega                  | 0.43° | Static =     |
 | Pars Fortunae         | trine △                       | Algorab               | 1.44° | Static =     |
+| Pars Fortunae         | conjunction ☌                 | Hades                 | 5.52° | Applying →   |
+| Pars Fortunae         | conjunction ☌                 | Kronos                | 6.56° | Separating ← |
+| Pars Fortunae         | trine △                       | Apollon               | 0.98° | Separating ← |
+| Pars Fortunae         | semi-sextile semi-sextile     | Admetos               | 0.13° | Applying →   |
+| Pars Fortunae         | semi-sextile semi-sextile     | Vulkanus              | 0.08° | Separating ← |
 | Pars Spiritus         | quintile Q                    | Vertex                | 0.37° | Static =     |
 | Pars Spiritus         | opposition ☍                  | Sirius                | 2.38° | Static =     |
 | Pars Spiritus         | sesquiquadrate sesquiquadrate | Algol                 | 0.53° | Static =     |
@@ -859,12 +990,18 @@ Tokyo Subject — Natal Chart Report
 | Pars Spiritus         | conjunction ☌                 | Vega                  | 3.63° | Static =     |
 | Pars Spiritus         | sextile ⚹                     | Alphecca              | 0.61° | Static =     |
 | Pars Spiritus         | square □                      | Algorab               | 1.76° | Static =     |
+| Pars Spiritus         | square □                      | Apollon               | 2.22° | Applying →   |
+| Pars Spiritus         | trine △                       | Admetos               | 3.07° | Separating ← |
+| Pars Spiritus         | opposition ☍                  | Vulkanus              | 3.28° | Separating ← |
+| Pars Spiritus         | quintile Q                    | Poseidon              | 0.80° | Separating ← |
 | Pars Amoris           | square □                      | Algol                 | 3.30° | Static =     |
 | Pars Amoris           | sextile ⚹                     | Betelgeuse            | 5.89° | Static =     |
 | Pars Amoris           | sextile ⚹                     | Arcturus              | 1.38° | Static =     |
 | Pars Amoris           | semi-sextile semi-sextile     | Pollux                | 0.35° | Static =     |
 | Pars Amoris           | sextile ⚹                     | Capella               | 1.01° | Static =     |
 | Pars Amoris           | opposition ☍                  | Deneb Algedi          | 0.68° | Static =     |
+| Pars Amoris           | square □                      | Cupido                | 3.72° | Separating ← |
+| Pars Amoris           | sextile ⚹                     | Kronos                | 1.41° | Applying →   |
 | Pars Fidei            | conjunction ☌                 | Vertex                | 4.02° | Static =     |
 | Pars Fidei            | opposition ☍                  | Anti Vertex           | 4.02° | Static =     |
 | Pars Fidei            | trine △                       | Sirius                | 5.97° | Static =     |
@@ -877,6 +1014,11 @@ Tokyo Subject — Natal Chart Report
 | Pars Fidei            | sextile ⚹                     | Vega                  | 4.72° | Static =     |
 | Pars Fidei            | trine △                       | Alphecca              | 7.75° | Static =     |
 | Pars Fidei            | opposition ☍                  | Alkaid                | 6.88° | Static =     |
+| Pars Fidei            | trine △                       | Cupido                | 0.91° | Separating ← |
+| Pars Fidei            | opposition ☍                  | Zeus                  | 5.88° | Separating ← |
+| Pars Fidei            | square □                      | Kronos                | 1.40° | Separating ← |
+| Pars Fidei            | sextile ⚹                     | Admetos               | 5.28° | Applying →   |
+| Pars Fidei            | trine △                       | Vulkanus              | 5.08° | Applying →   |
 | Vertex                | opposition ☍                  | Anti Vertex           | 0.00° | Static =     |
 | Vertex                | sextile ⚹                     | Algol                 | 2.10° | Static =     |
 | Vertex                | square □                      | Betelgeuse            | 4.68° | Static =     |
@@ -888,6 +1030,9 @@ Tokyo Subject — Natal Chart Report
 | Vertex                | sextile ⚹                     | Alcyone               | 5.92° | Static =     |
 | Vertex                | semi-sextile semi-sextile     | Deneb Algedi          | 0.52° | Static =     |
 | Vertex                | opposition ☍                  | Alkaid                | 2.87° | Static =     |
+| Vertex                | trine △                       | Cupido                | 4.93° | Separating ← |
+| Vertex                | opposition ☍                  | Zeus                  | 1.86° | Separating ← |
+| Vertex                | square □                      | Kronos                | 2.62° | Applying →   |
 | Anti Vertex           | trine △                       | Algol                 | 2.10° | Static =     |
 | Anti Vertex           | square □                      | Betelgeuse            | 4.68° | Static =     |
 | Anti Vertex           | sextile ⚹                     | Procyon               | 1.72° | Static =     |
@@ -899,6 +1044,9 @@ Tokyo Subject — Natal Chart Report
 | Anti Vertex           | trine △                       | Alcyone               | 5.92° | Static =     |
 | Anti Vertex           | quincunx ⚻                    | Deneb Algedi          | 0.52° | Static =     |
 | Anti Vertex           | conjunction ☌                 | Alkaid                | 2.87° | Static =     |
+| Anti Vertex           | sextile ⚹                     | Cupido                | 4.93° | Separating ← |
+| Anti Vertex           | conjunction ☌                 | Zeus                  | 1.86° | Separating ← |
+| Anti Vertex           | square □                      | Kronos                | 2.62° | Applying →   |
 | Aldebaran             | opposition ☍                  | Antares               | 0.02° | Static =     |
 | Aldebaran             | semi-square semi-square       | Procyon               | 1.00° | Static =     |
 | Aldebaran             | sesquiquadrate sesquiquadrate | Arcturus              | 0.55° | Static =     |
@@ -907,6 +1055,8 @@ Tokyo Subject — Natal Chart Report
 | Aldebaran             | biquintile biquintile         | Vega                  | 0.46° | Static =     |
 | Aldebaran             | conjunction ☌                 | Alcyone               | 9.80° | Static =     |
 | Aldebaran             | trine △                       | Algorab               | 3.67° | Static =     |
+| Aldebaran             | conjunction ☌                 | Hades                 | 0.41° | Applying →   |
+| Aldebaran             | trine △                       | Apollon               | 4.13° | Applying →   |
 | Antares               | biquintile biquintile         | Canopus               | 0.83° | Static =     |
 | Antares               | semi-square semi-square       | Arcturus              | 0.53° | Static =     |
 | Antares               | square □                      | Deneb                 | 4.43° | Static =     |
@@ -914,6 +1064,9 @@ Tokyo Subject — Natal Chart Report
 | Antares               | opposition ☍                  | Alcyone               | 9.78° | Static =     |
 | Antares               | sextile ⚹                     | Algorab               | 3.69° | Static =     |
 | Antares               | quintile Q                    | Alkaid                | 0.84° | Static =     |
+| Antares               | opposition ☍                  | Hades                 | 0.39° | Applying →   |
+| Antares               | sextile ⚹                     | Apollon               | 4.15° | Applying →   |
+| Antares               | biquintile biquintile         | Vulkanus              | 0.80° | Applying →   |
 | Sirius                | conjunction ☌                 | Canopus               | 0.86° | Static =     |
 | Sirius                | conjunction ☌                 | Pollux                | 9.14° | Static =     |
 | Sirius                | trine △                       | Achernar              | 1.23° | Static =     |
@@ -922,20 +1075,31 @@ Tokyo Subject — Natal Chart Report
 | Sirius                | trine △                       | Alphecca              | 1.78° | Static =     |
 | Sirius                | square □                      | Algorab               | 0.62° | Static =     |
 | Sirius                | quintile Q                    | Alkaid                | 0.86° | Static =     |
+| Sirius                | trine △                       | Cupido                | 5.06° | Applying →   |
+| Sirius                | quintile Q                    | Zeus                  | 0.15° | Applying →   |
+| Sirius                | square □                      | Apollon               | 0.16° | Separating ← |
+| Sirius                | sextile ⚹                     | Admetos               | 0.69° | Separating ← |
+| Sirius                | conjunction ☌                 | Vulkanus              | 0.89° | Separating ← |
 | Fomalhaut             | trine △                       | Betelgeuse            | 5.11° | Static =     |
 | Fomalhaut             | conjunction ☌                 | Deneb                 | 1.47° | Static =     |
 | Fomalhaut             | square □                      | Alcyone               | 3.87° | Static =     |
+| Fomalhaut             | trine △                       | Poseidon              | 4.97° | Separating ← |
 | Algol                 | sextile ⚹                     | Procyon               | 0.38° | Static =     |
 | Algol                 | sextile ⚹                     | Pollux                | 2.95° | Static =     |
 | Algol                 | trine △                       | Altair                | 5.62° | Static =     |
 | Algol                 | conjunction ☌                 | Alcyone               | 3.82° | Static =     |
 | Algol                 | square □                      | Deneb Algedi          | 2.62° | Static =     |
 | Algol                 | trine △                       | Alkaid                | 0.77° | Static =     |
+| Algol                 | opposition ☍                  | Cupido                | 7.03° | Separating ← |
+| Algol                 | trine △                       | Zeus                  | 0.23° | Applying →   |
 | Betelgeuse            | trine △                       | Arcturus              | 4.51° | Static =     |
 | Betelgeuse            | trine △                       | Deneb                 | 6.59° | Static =     |
 | Betelgeuse            | conjunction ☌                 | Capella               | 6.90° | Static =     |
 | Betelgeuse            | trine △                       | Deneb Algedi          | 5.20° | Static =     |
 | Betelgeuse            | square □                      | Alkaid                | 1.82° | Static =     |
+| Betelgeuse            | square □                      | Zeus                  | 2.82° | Applying →   |
+| Betelgeuse            | conjunction ☌                 | Kronos                | 7.30° | Applying →   |
+| Betelgeuse            | trine △                       | Poseidon              | 0.14° | Applying →   |
 | Canopus               | conjunction ☌                 | Pollux                | 8.27° | Static =     |
 | Canopus               | trine △                       | Achernar              | 0.37° | Static =     |
 | Canopus               | opposition ☍                  | Vega                  | 0.39° | Static =     |
@@ -943,36 +1107,95 @@ Tokyo Subject — Natal Chart Report
 | Canopus               | trine △                       | Alphecca              | 2.64° | Static =     |
 | Canopus               | square □                      | Algorab               | 1.49° | Static =     |
 | Canopus               | quintile Q                    | Alkaid                | 0.01° | Static =     |
+| Canopus               | trine △                       | Cupido                | 4.19° | Applying →   |
+| Canopus               | square □                      | Apollon               | 1.02° | Separating ← |
+| Canopus               | sextile ⚹                     | Admetos               | 0.17° | Applying →   |
+| Canopus               | conjunction ☌                 | Vulkanus              | 0.03° | Separating ← |
 | Procyon               | square □                      | Arcturus              | 1.55° | Static =     |
 | Procyon               | conjunction ☌                 | Pollux                | 2.57° | Static =     |
 | Procyon               | opposition ☍                  | Altair                | 6.00° | Static =     |
 | Procyon               | sextile ⚹                     | Alcyone               | 4.21° | Static =     |
 | Procyon               | sextile ⚹                     | Alkaid                | 1.15° | Static =     |
+| Procyon               | trine △                       | Cupido                | 6.65° | Separating ← |
+| Procyon               | sextile ⚹                     | Zeus                  | 0.15° | Separating ← |
+| Procyon               | quintile Q                    | Admetos               | 0.98° | Separating ← |
+| Procyon               | square □                      | Poseidon              | 3.11° | Applying →   |
 | Arcturus              | square □                      | Pollux                | 1.02° | Static =     |
 | Arcturus              | trine △                       | Rigel                 | 7.41° | Static =     |
 | Arcturus              | trine △                       | Capella               | 2.39° | Static =     |
 | Arcturus              | biquintile biquintile         | Alcyone               | 0.25° | Static =     |
 | Arcturus              | trine △                       | Deneb Algedi          | 0.69° | Static =     |
+| Arcturus              | sesquiquadrate sesquiquadrate | Hades                 | 0.14° | Separating ← |
+| Arcturus              | trine △                       | Kronos                | 2.79° | Applying →   |
+| Arcturus              | conjunction ☌                 | Poseidon              | 4.66° | Applying →   |
 | Pollux                | opposition ☍                  | Altair                | 8.57° | Static =     |
 | Pollux                | trine △                       | Achernar              | 7.90° | Static =     |
 | Pollux                | opposition ☍                  | Vega                  | 7.89° | Static =     |
 | Pollux                | quincunx ⚻                    | Deneb Algedi          | 0.33° | Static =     |
 | Pollux                | sextile ⚹                     | Alkaid                | 3.72° | Static =     |
+| Pollux                | trine △                       | Cupido                | 4.08° | Separating ← |
+| Pollux                | sextile ⚹                     | Zeus                  | 2.72° | Separating ← |
+| Pollux                | conjunction ☌                 | Vulkanus              | 8.24° | Applying →   |
 | Deneb                 | conjunction ☌                 | Achernar              | 9.98° | Static =     |
 | Deneb                 | trine △                       | Alphecca              | 6.97° | Static =     |
+| Deneb                 | square □                      | Hades                 | 4.04° | Separating ← |
+| Deneb                 | trine △                       | Poseidon              | 6.44° | Separating ← |
 | Altair                | sesquiquadrate sesquiquadrate | Rigel                 | 0.04° | Static =     |
 | Altair                | trine △                       | Alcyone               | 1.79° | Static =     |
 | Altair                | trine △                       | Alkaid                | 4.85° | Static =     |
+| Altair                | quintile Q                    | Cupido                | 0.64° | Separating ← |
+| Altair                | trine △                       | Hades                 | 7.59° | Separating ← |
+| Altair                | trine △                       | Zeus                  | 5.85° | Applying →   |
+| Altair                | square □                      | Poseidon              | 2.89° | Separating ← |
 | Rigel                 | square □                      | Achernar              | 1.51° | Static =     |
 | Rigel                 | conjunction ☌                 | Capella               | 5.03° | Static =     |
 | Rigel                 | trine △                       | Algorab               | 3.37° | Static =     |
 | Rigel                 | trine △                       | Deneb Algedi          | 6.72° | Static =     |
+| Rigel                 | conjunction ☌                 | Hades                 | 7.45° | Applying →   |
+| Rigel                 | conjunction ☌                 | Kronos                | 4.63° | Separating ← |
+| Rigel                 | trine △                       | Apollon               | 2.91° | Separating ← |
 | Achernar              | sextile ⚹                     | Vega                  | 0.02° | Static =     |
 | Achernar              | trine △                       | Alphecca              | 3.01° | Static =     |
+| Achernar              | trine △                       | Cupido                | 3.82° | Applying →   |
+| Achernar              | sextile ⚹                     | Admetos               | 0.54° | Applying →   |
+| Achernar              | trine △                       | Vulkanus              | 0.34° | Applying →   |
 | Capella               | trine △                       | Deneb Algedi          | 1.69° | Static =     |
+| Capella               | square □                      | Zeus                  | 4.08° | Separating ← |
+| Capella               | conjunction ☌                 | Kronos                | 0.40° | Applying →   |
+| Capella               | trine △                       | Apollon               | 7.93° | Separating ← |
+| Capella               | trine △                       | Poseidon              | 7.04° | Applying →   |
 | Vega                  | sesquiquadrate sesquiquadrate | Alcyone               | 0.34° | Static =     |
 | Vega                  | sextile ⚹                     | Alphecca              | 3.03° | Static =     |
 | Vega                  | square □                      | Algorab               | 1.87° | Static =     |
+| Vega                  | sextile ⚹                     | Cupido                | 3.81° | Applying →   |
+| Vega                  | biquintile biquintile         | Hades                 | 0.05° | Separating ← |
+| Vega                  | square □                      | Apollon               | 1.41° | Separating ← |
+| Vega                  | trine △                       | Admetos               | 0.56° | Applying →   |
+| Vega                  | opposition ☍                  | Vulkanus              | 0.36° | Applying →   |
 | Alcyone               | trine △                       | Alkaid                | 3.05° | Static =     |
+| Alcyone               | conjunction ☌                 | Hades                 | 9.39° | Separating ← |
+| Alcyone               | trine △                       | Zeus                  | 4.06° | Applying →   |
+| Alcyone               | semi-square semi-square       | Vulkanus              | 0.02° | Applying →   |
 | Alphecca              | semi-square semi-square       | Alkaid                | 0.37° | Static =     |
+| Alphecca              | conjunction ☌                 | Cupido                | 6.83° | Applying →   |
+| Alphecca              | opposition ☍                  | Admetos               | 2.47° | Separating ← |
+| Alphecca              | trine △                       | Vulkanus              | 2.67° | Separating ← |
+| Algorab               | trine △                       | Hades                 | 4.08° | Applying →   |
+| Algorab               | trine △                       | Kronos                | 8.00° | Separating ← |
+| Algorab               | conjunction ☌                 | Apollon               | 0.46° | Applying →   |
+| Algorab               | square □                      | Vulkanus              | 1.52° | Separating ← |
+| Deneb Algedi          | square □                      | Cupido                | 4.41° | Separating ← |
+| Deneb Algedi          | trine △                       | Kronos                | 2.09° | Applying →   |
+| Deneb Algedi          | trine △                       | Poseidon              | 5.35° | Applying →   |
+| Alkaid                | conjunction ☌                 | Zeus                  | 1.00° | Applying →   |
+| Alkaid                | quintile Q                    | Vulkanus              | 0.04° | Separating ← |
+| Cupido                | opposition ☍                  | Admetos               | 4.37° | Applying →   |
+| Cupido                | trine △                       | Vulkanus              | 4.16° | Applying →   |
+| Hades                 | trine △                       | Apollon               | 4.54° | Applying →   |
+| Zeus                  | square □                      | Kronos                | 4.48° | Applying →   |
+| Kronos                | trine △                       | Apollon               | 7.53° | Separating ← |
+| Kronos                | trine △                       | Poseidon              | 7.44° | Applying →   |
+| Apollon               | quincunx ⚻                    | Admetos               | 0.85° | Separating ← |
+| Apollon               | square □                      | Vulkanus              | 1.05° | Separating ← |
+| Admetos               | sextile ⚹                     | Vulkanus              | 0.21° | Separating ← |
 +-----------------------+-------------------------------+-----------------------+-------+--------------+

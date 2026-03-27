@@ -123,6 +123,14 @@
     --kerykeion-chart-color-ixion: #556b2f;
     --kerykeion-chart-color-orcus: #2f4f4f;
     --kerykeion-chart-color-quaoar: #8a2be2;
+    --kerykeion-chart-color-cupido: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-hades: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-zeus: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-kronos: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-apollon: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-admetos: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-vulkanus: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-poseidon: var(--kerykeion-color-secondary);
     --kerykeion-chart-color-regulus: #ffd700;
     --kerykeion-chart-color-spica: #87ceeb;
     --kerykeion-chart-color-aldebaran: #ff6347;
@@ -274,6 +282,11 @@
             <!-- Houses -->
             <g kr:node='Houses_Wheel'>
                 <g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .4; font-size: 14px'><tspan x='468.10532234021844' y='222.64490270168886'>1</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='190.7802259853562' kr:signposition='10.780225985356196' kr:sing='Lib' kr:slug='First_House'><line x1='441.5070235483372' y1='271.7949596742924' x2='477.06708652745556' y2='277.40583491093224' style='stroke: var(--kerykeion-chart-color-chiron); stroke-width: 1px; stroke-opacity:.3;'/></g><g kr:node='Cusp' kr:absoluteposition='19.746766239480017' kr:signposition='19.746766239480017' kr:sing='Ari' kr:slug='First_House'><line x1='160.0' y1='240.0' x2='72.0' y2='240.00000000000003' style='stroke: var(--kerykeion-chart-color-chiron); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='88.63518345795605' y='291.2066511224918'>1</tspan></text></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .4; font-size: 14px'><tspan x='430.8777231862382' y='115.58167929171091'>2</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='219.0600718237158' kr:signposition='9.060071823715788' kr:sing='Sco' kr:slug='Second_House'><line x1='432.51973109116835' y1='172.5303539316811' x2='466.49380128372746' y2='160.62394580197778' style='stroke: var(--kerykeion-chart-color-houses-transit-line); stroke-width: 1px; stroke-opacity:.3;'/></g><g kr:node='Cusp' kr:absoluteposition='56.49139382788953' kr:signposition='26.49139382788953' kr:sing='Tau' kr:slug='Second_House'><line x1='176.10915919621658' y1='288.14520185216384' x2='105.82923431205478' y2='341.10492388954407' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='132.6156254080181' y='358.9305927744735'>2</tspan></text></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .4; font-size: 14px'><tspan x='330.5784655305183' y='30.709937140351308'>3</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='247.95865377765327' kr:signposition='7.958653777653268' kr:sing='Sag' kr:slug='Third_House'><line x1='375.94106855174425' y1='87.89468818936672' x2='399.930668884405' y2='61.05257434043145' style='stroke: var(--kerykeion-chart-color-houses-transit-line); stroke-width: 1px; stroke-opacity:.3;'/></g><g kr:node='Cusp' kr:absoluteposition='80.0032888641515' kr:signposition='20.0032888641515' kr:sing='Gem' kr:slug='Third_House'><line x1='201.21523038029304' y1='309.96957657115166' x2='158.55198379861537' y2='386.93611079941854' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='181.09459987093317' y='388.63854653356344'>3</tspan></text></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .4; font-size: 14px'><tspan x='201.93510234450724' y='13.665194633675766'>4</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='284.43986758140613' kr:signposition='14.439867581406133' kr:sing='Cap' kr:slug='Fourth_House'><line x1='258.86805716711007' y1='36.87443189313004' x2='262.19771431424715' y2='1.0287434036823928' style='stroke: var(--kerykeion-chart-color-seventh-house); stroke-width: 1px; stroke-opacity:.3;'/></g><g kr:node='Cusp' kr:absoluteposition='97.07097895945401' kr:signposition='7.07097895945401' kr:sing='Can' kr:slug='Fourth_House'><line x1='223.36706473457926' y1='318.25180805870446' x2='205.07083594261647' y2='404.32879692327936' style='stroke: var(--kerykeion-chart-color-seventh-house); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='234.27742459578377' y='398.97624044439704'>4</tspan></text></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .4; font-size: 14px'><tspan x='93.09991964573499' y='61.019872310089646'>5</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='314.0818143254122' kr:signposition='14.08181432541221' kr:sing='Aqu' kr:slug='Fifth_House'><line x1='155.93735462342318' y1='54.12511828573531' x2='141.10277014520372' y2='21.32366857145331' style='stroke: var(--kerykeion-chart-color-houses-transit-line); stroke-width: 1px; stroke-opacity:.3;'/></g><g kr:node='Cusp' kr:absoluteposition='119.21047879911526' kr:signposition='29.210478799115265' kr:sing='Can' kr:slug='Fifth_House'><line x1='253.89185421335443' y1='318.78462024097666' x2='269.17289384804434' y2='405.447702506051' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='307.8225179593693' y='381.9970177733854'>5</tspan></text></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .4; font-size: 14px'><tspan x='24.114987506811534' y='150.78301969932548'>6</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='342.32559481176287' kr:signposition='12.325594811762869' kr:sing='Pis' kr:slug='Sixth_House'><line x1='77.9852126274766' y1='116.03545396914475' x2='49.39436779703129' y2='94.15935761075855' style='stroke: var(--kerykeion-chart-color-houses-transit-line); stroke-width: 1px; stroke-opacity:.3;'/></g><g kr:node='Cusp' kr:absoluteposition='153.5186086726835' kr:signposition='3.518608672683513' kr:sing='Vir' kr:slug='Sixth_House'><line x1='295.57266963671975' y1='297.5471840270921' x2='356.7026062371115' y2='360.84908645689336' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='380.5987571385807' y='303.95405604432665'>6</tspan></text></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .4; font-size: 14px'><tspan x='5.894677659781522' y='263.3550972983112'>7</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='10.780225985356196' kr:signposition='10.780225985356196' kr:sing='Ari' kr:slug='Seventh_House'><line x1='38.49297645166281' y1='208.20504032570764' x2='2.9329134725444828' y2='202.59416508906781' style='stroke: var(--kerykeion-chart-color-tenth-house); stroke-width: 1px; stroke-opacity:.3;'/></g><g kr:node='Cusp' kr:absoluteposition='199.74676623948002' kr:signposition='19.746766239480024' kr:sing='Lib' kr:slug='Seventh_House'><line x1='320.0' y1='240.0' x2='408.0' y2='240.0' style='stroke: var(--kerykeion-chart-color-tenth-house); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='385.36481654204397' y='194.7933488775082'>7</tspan></text></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .4; font-size: 14px'><tspan x='43.12227681376189' y='370.4183207082892'>8</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='39.060071823715816' kr:signposition='9.060071823715816' kr:sing='Tau' kr:slug='Eighth_House'><line x1='47.48026890883167' y1='307.469646068319' x2='13.506198716272548' y2='319.37605419802236' style='stroke: var(--kerykeion-chart-color-houses-transit-line); stroke-width: 1px; stroke-opacity:.3;'/></g><g kr:node='Cusp' kr:absoluteposition='236.49139382788954' kr:signposition='26.49139382788954' kr:sing='Sco' kr:slug='Eighth_House'><line x1='303.8908408037834' y1='191.85479814783614' x2='374.1707656879452' y2='138.89507611045588' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='341.3843745919819' y='127.0694072255265'>8</tspan></text></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .4; font-size: 14px'><tspan x='143.42153446948154' y='455.29006285964863'>9</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='67.95865377765324' kr:signposition='7.95865377765324' kr:sing='Gem' kr:slug='Ninth_House'><line x1='104.05893144825569' y1='392.1053118106332' x2='80.06933111559492' y2='418.9474256595685' style='stroke: var(--kerykeion-chart-color-houses-transit-line); stroke-width: 1px; stroke-opacity:.3;'/></g><g kr:node='Cusp' kr:absoluteposition='260.0032888641515' kr:signposition='20.0032888641515' kr:sing='Sag' kr:slug='Ninth_House'><line x1='278.784769619707' y1='170.03042342884834' x2='321.4480162013847' y2='93.06388920058151' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='292.9054001290669' y='97.36145346643653'>9</tspan></text></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .4; font-size: 14px'><tspan x='272.0648976554928' y='472.33480536632425'>10</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='104.4398675814061' kr:signposition='14.439867581406105' kr:sing='Can' kr:slug='Tenth_House'><line x1='221.13194283288988' y1='443.12556810686993' x2='217.8022856857528' y2='478.9712565963176' style='stroke: var(--kerykeion-chart-color-first-house); stroke-width: 1px; stroke-opacity:.3;'/></g><g kr:node='Cusp' kr:absoluteposition='277.070978959454' kr:signposition='7.07097895945401' kr:sing='Cap' kr:slug='Tenth_House'><line x1='256.63293526542077' y1='161.74819194129554' x2='274.92916405738356' y2='75.67120307672066' style='stroke: var(--kerykeion-chart-color-first-house); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='239.7225754042162' y='87.02375955560296'>10</tspan></text></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .4; font-size: 14px'><tspan x='380.9000803542649' y='424.98012768991043'>11</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='134.08181432541218' kr:signposition='14.081814325412182' kr:sing='Leo' kr:slug='Eleventh_House'><line x1='324.06264537657677' y1='425.8748817142647' x2='338.89722985479625' y2='458.67633142854675' style='stroke: var(--kerykeion-chart-color-houses-transit-line); stroke-width: 1px; stroke-opacity:.3;'/></g><g kr:node='Cusp' kr:absoluteposition='299.21047879911526' kr:signposition='29.210478799115265' kr:sing='Cap' kr:slug='Eleventh_House'><line x1='226.1081457866456' y1='161.21537975902336' x2='210.82710615195572' y2='74.55229749394906' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='166.1774820406307' y='104.0029822266146'>11</tspan></text></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .4; font-size: 14px'><tspan x='449.88501249318847' y='335.21698030067455'>12</tspan></text></g><g kr:node='Cusp' kr:absoluteposition='162.32559481176287' kr:signposition='12.325594811762869' kr:sing='Vir' kr:slug='Twelfth_House'><line x1='402.0147873725235' y1='363.9645460308552' x2='430.60563220296876' y2='385.8406423892414' style='stroke: var(--kerykeion-chart-color-houses-transit-line); stroke-width: 1px; stroke-opacity:.3;'/></g><g kr:node='Cusp' kr:absoluteposition='333.51860867268357' kr:signposition='3.5186086726835697' kr:sing='Pis' kr:slug='Twelfth_House'><line x1='184.42733036328025' y1='182.4528159729079' x2='123.2973937628885' y2='119.15091354310655' style='stroke: var(--kerykeion-chart-color-houses-radix-line); stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;'/></g><g kr:node='HouseNumber'><text style='fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px'><tspan x='93.40124286141933' y='182.04594395567324'>12</tspan></text></g>
+            </g>
+
+            <!-- Gauquelin Sectors Overlay -->
+            <g kr:node='Gauquelin_Sectors'>
+                
             </g>
 
             <!-- Planets -->
@@ -575,6 +588,86 @@
                     <path
                         d='M7.875 9.125 6 11 1 6l5-5 5 5-1.875 1.875M11 11 7.875 9.125 6 6l3.125 1.875'
                         style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-quaoar); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-dasharray: none; stroke-opacity: 1'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Cupido'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M3.5 3.5 6 1l2.5 2.5M1 6h10M6 6a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-cupido); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Hades'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M1 4h10M3 1v3M9 1v3'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-hades); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Zeus'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M1 4h10M3.5 1 6 4l2.5-3'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-zeus); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Kronos'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M3 4h6M1 1h10'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-kronos); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Apollon'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M1 6h10M3 3l6 6M9 3l-6 6'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-apollon); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Admetos'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M1 6h10M6 6a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-admetos); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Vulkanus'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M1 6h4M7 6h4'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-vulkanus); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
+                    />
+                </g>
+            </g>
+        </symbol>
+        <symbol id='Poseidon'>
+            <g transform='translate(2,2)'>
+                <g transform='scale(2)'>
+                    <path
+                        d='M6 1v10M1 4h10M1 4l2.5 3L6 4l2.5 3L11 4'
+                        style='clip-rule: nonzero; fill: none; stroke: var(--kerykeion-chart-color-poseidon); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 10; stroke-opacity: 1; stroke-dasharray: none'
                     />
                 </g>
             </g>
