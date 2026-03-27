@@ -1398,66 +1398,61 @@ def draw_gauquelin_sector_grid(
     y_position: int = 30,
     seventh_house_degree_ut: float = 0.0,
 ) -> str:
-    """Generate SVG grid listing all 36 Gauquelin sectors with their zodiac positions.
+    """Generate SVG grid showing each planet's Gauquelin sector, replacing cusps.
 
-    Replaces the 12-cusp house grid. The 36 sectors are arranged in
-    3 columns of 12 rows each to fit the same vertical space as the
-    standard house grid (~180px). Each sector shows its cusp degree
-    in the zodiac, just like house cusps do.
+    Instead of listing 36 equidistant sector cusps (which carry no real
+    information since every sector is exactly 10 degrees), this grid shows
+    each calculated planet with its sector number — the data that matters
+    for Gauquelin analysis.
 
-    Sectors are 10 degrees each, evenly dividing the 360 degree circle.
-    Sector 1 starts at the Ascendant (east horizon).
+    The layout matches the standard 12-cusp grid dimensions (~140px wide,
+    ~180px tall) so it fits in the same sidebar area without overlap.
 
     Args:
-        celestial_points: List of KerykeionPointModel (unused but kept for API compat).
+        celestial_points: List of KerykeionPointModel with gauquelin_sector set.
         text_color: Text fill color.
         x_position: SVG X offset.
         y_position: SVG Y offset.
-        seventh_house_degree_ut: Descendant degree for computing sector cusps.
+        seventh_house_degree_ut: Unused (kept for API compat).
 
     Returns:
-        SVG string with the 36-sector grid in 3 columns.
+        SVG string with the sector grid.
     """
-    # Compute the degree where each sector starts
-    # Sector 1 starts at ASC = DSC + 180
-    asc_degree = (seventh_house_degree_ut + 180.0) % 360.0
+    gauq_points = [
+        p for p in celestial_points
+        if hasattr(p, "gauquelin_sector") and p.gauquelin_sector is not None
+    ]
+    if not gauq_points:
+        return ""
+
+    _ABBREV = {
+        "True_North_Lunar_Node": "N.Node",
+        "True_South_Lunar_Node": "S.Node",
+        "Mean_North_Lunar_Node": "MN.Node",
+        "Mean_South_Lunar_Node": "MS.Node",
+        "Mean_Lilith": "Lilith",
+        "True_Lilith": "Lilith(T)",
+    }
 
     svg = f'<g transform="translate({x_position},{y_position})">'
 
-    col_width = 70  # px per column — 2 cols * 70 = 140px, fits in 890 - 750 = 140px
-    row_height = 10
-    rows_per_col = 18  # 2 columns of 18 rows = 36 sectors
-    font_size = 8
+    row_height = 14  # Same as standard house grid
+    line_y = 10
 
-    for sector in range(1, 37):
-        col = (sector - 1) // rows_per_col  # 0, 1, 2
-        row = (sector - 1) % rows_per_col
-        x_off = col * col_width
-        y_off = 10 + row * row_height
-
-        # Sector cusp degree in the zodiac
-        # Gauquelin sectors go clockwise from ASC, but zodiac degrees go counter-clockwise
-        # So sector N starts at ASC - (N-1)*10 degrees
-        sector_degree = (asc_degree - (sector - 1) * 10.0) % 360.0
-
-        # Convert to sign + degree
-        sign_index = int(sector_degree // 30)
-        sign_degree = sector_degree % 30
-        signs = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir",
-                 "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
-        sign = signs[sign_index]
-
-        # Format sector number with padding
-        sec_str = f"{sector:2d}"
+    for point in gauq_points:
+        sector_int = int(point.gauquelin_sector)
+        name = _ABBREV.get(point.name, point.name)
+        # Pad sector number for alignment
+        sec_str = f"&#160;{sector_int}" if sector_int < 10 else str(sector_int)
 
         svg += (
-            f'<g transform="translate({x_off},{y_off})">'
-            f'<text text-anchor="end" x="17" style="fill:{text_color}; font-size: {font_size}px;">{sec_str}</text>'
-            f'<g transform="translate(18,-7)"><use transform="scale(0.25)" xlink:href="#{sign}" /></g>'
-            f'<text x="28" style="fill:{text_color}; font-size: {font_size}px;">'
-            f'{convert_decimal_to_degree_string(sign_degree)}</text>'
+            f'<g transform="translate(0,{line_y})">'
+            f'<text text-anchor="end" x="50" style="fill:{text_color}; font-size: 10px;">{name}</text>'
+            f'<g transform="translate(52,-8)"><use transform="scale(0.3)" xlink:href="#{point.sign}" /></g>'
+            f'<text x="65" style="fill:{text_color}; font-size: 10px;">sec {sec_str}</text>'
             f'</g>'
         )
+        line_y += row_height
 
     svg += "</g>"
     return svg
