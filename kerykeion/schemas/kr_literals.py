@@ -337,7 +337,10 @@ Usually the standard is Placidus (P)
 """
 
 
-PerspectiveType: TypeAlias = Literal["Apparent Geocentric", "Heliocentric", "Topocentric", "True Geocentric"]
+PerspectiveType: TypeAlias = Literal[
+    "Apparent Geocentric", "Heliocentric", "Topocentric", "True Geocentric",
+    "Selenocentric", "Mercurycentric", "Venuscentric", "Marscentric", "Jupitercentric", "Saturncentric",
+]
 """
 Literal type for perspective types.
 - "Apparent Geocentric": Earth-centered, apparent positions.
