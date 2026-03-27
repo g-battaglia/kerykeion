@@ -135,6 +135,14 @@
     --kerykeion-chart-color-ixion: var(--kerykeion-color-secondary);
     --kerykeion-chart-color-orcus: var(--kerykeion-color-accent);
     --kerykeion-chart-color-quaoar: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-cupido: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-hades: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-zeus: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-kronos: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-apollon: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-admetos: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-vulkanus: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-poseidon: var(--kerykeion-color-secondary);
     --kerykeion-chart-color-regulus: var(--kerykeion-color-warning);
     --kerykeion-chart-color-spica: var(--kerykeion-color-accent);
     --kerykeion-chart-color-aldebaran: var(--kerykeion-color-error);

@@ -510,6 +510,16 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     orcus: Optional[KerykeionPointModel] = None
     quaoar: Optional[KerykeionPointModel] = None
 
+    # Uranian / Hamburg School hypothetical planets
+    cupido: Optional[KerykeionPointModel] = None
+    hades: Optional[KerykeionPointModel] = None
+    zeus: Optional[KerykeionPointModel] = None
+    kronos: Optional[KerykeionPointModel] = None
+    apollon: Optional[KerykeionPointModel] = None
+    admetos: Optional[KerykeionPointModel] = None
+    vulkanus: Optional[KerykeionPointModel] = None
+    poseidon: Optional[KerykeionPointModel] = None
+
     # Fixed Stars
     regulus: Optional[KerykeionPointModel] = None
     spica: Optional[KerykeionPointModel] = None

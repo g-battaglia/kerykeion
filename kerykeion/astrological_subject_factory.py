@@ -103,6 +103,15 @@ STANDARD_PLANETS: Dict[AstrologicalPoint, int] = {
     "Pallas": 18,
     "Juno": 19,
     "Vesta": 20,
+    # Uranian / Hamburg School hypothetical planets (SwissEph IDs 40-47)
+    "Cupido": 40,
+    "Hades": 41,
+    "Zeus": 42,
+    "Kronos": 43,
+    "Apollon": 44,
+    "Admetos": 45,
+    "Vulkanus": 46,
+    "Poseidon": 47,
 }
 
 # Trans-Neptunian Objects requiring AST_OFFSET

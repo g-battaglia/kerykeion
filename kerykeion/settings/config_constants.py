@@ -344,6 +344,15 @@ ALL_ACTIVE_POINTS: List[AstrologicalPoint] = [
     "Imum_Coeli",
     "Vertex",
     "Anti_Vertex",
+    # Uranian / Hamburg School hypothetical planets
+    "Cupido",
+    "Hades",
+    "Zeus",
+    "Kronos",
+    "Apollon",
+    "Admetos",
+    "Vulkanus",
+    "Poseidon",
     # Arabic Parts (Lots)
     "Pars_Fortunae",
     "Pars_Spiritus",
@@ -354,6 +363,22 @@ ALL_ACTIVE_POINTS: List[AstrologicalPoint] = [
 Full list of active points in the charts or aspects calculations.
 The full list of points is available in the `schemas.kr_literals.AstrologicalPoint` literal.
 """
+
+URANIAN_ACTIVE_POINTS: List[AstrologicalPoint] = [
+    "Cupido",
+    "Hades",
+    "Zeus",
+    "Kronos",
+    "Apollon",
+    "Admetos",
+    "Vulkanus",
+    "Poseidon",
+]
+"""
+Uranian / Hamburg School hypothetical trans-Neptunian planets (Alfred Witte).
+Use these alongside DEFAULT_ACTIVE_POINTS for Uranian astrology work.
+"""
+
 
 DEFAULT_ACTIVE_ASPECTS: List[ActiveAspect] = [
     {"name": "conjunction", "orb": 10},
