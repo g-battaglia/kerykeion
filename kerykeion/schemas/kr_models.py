@@ -911,6 +911,28 @@ class TransitsTimeRangeModel(SubscriptableBaseModel):
     dates: Optional[List[str]] = Field(description="ISO 8601 formatted dates of all transit moments.")
 
 
+class TransitEventModel(SubscriptableBaseModel):
+    """A single transit event — a grouped occurrence of an aspect between two points.
+
+    Groups consecutive transit moments where the same aspect is active into
+    a single event with applying start, exact moment, and separating end.
+    """
+    p1_name: str = Field(description="Transit planet name")
+    p2_name: str = Field(description="Natal planet name")
+    aspect: str = Field(description="Aspect name (e.g. 'conjunction')")
+    applying_start: Optional[str] = Field(default=None, description="ISO datetime when aspect starts applying")
+    exact_moment: str = Field(description="ISO datetime of closest approach (minimum orb)")
+    separating_end: Optional[str] = Field(default=None, description="ISO datetime when aspect finishes separating")
+    min_orb: float = Field(description="Minimum orb reached at exact_moment (degrees)")
+    orb_rate: Optional[float] = Field(default=None, description="Rate of orb change at exact moment (degrees/day)")
+
+
+class TransitEventsTimeRangeModel(SubscriptableBaseModel):
+    """Collection of transit events over a time range."""
+    events: List[TransitEventModel] = Field(description="Transit events, sorted by exact_moment")
+    subject: Optional[AstrologicalSubjectModel] = Field(default=None, description="Natal subject")
+
+
 class PointInHouseModel(SubscriptableBaseModel):
     """
     Represents an astrological point from one subject positioned within another subject's house.
