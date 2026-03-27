@@ -1393,55 +1393,73 @@ def draw_secondary_house_grid(
 
 def draw_gauquelin_sector_grid(
     celestial_points: list,
-    sector_label: str = "Sec",
     text_color: str = "#000000",
     x_position: int = 750,
     y_position: int = 30,
+    seventh_house_degree_ut: float = 0.0,
 ) -> str:
-    """Generate SVG for a Gauquelin sector grid replacing the house grid.
+    """Generate SVG grid listing all 36 Gauquelin sectors with their zodiac positions.
 
-    Shows each planet's Gauquelin sector number (1-36) in a compact table,
-    instead of the standard 12 house cusps.
+    Replaces the 12-cusp house grid. The 36 sectors are arranged in
+    3 columns of 12 rows each to fit the same vertical space as the
+    standard house grid (~180px). Each sector shows its cusp degree
+    in the zodiac, just like house cusps do.
+
+    Sectors are 10 degrees each, evenly dividing the 360 degree circle.
+    Sector 1 starts at the Ascendant (east horizon).
 
     Args:
-        celestial_points: List of KerykeionPointModel with gauquelin_sector set.
-        sector_label: Column header label.
+        celestial_points: List of KerykeionPointModel (unused but kept for API compat).
         text_color: Text fill color.
         x_position: SVG X offset.
         y_position: SVG Y offset.
+        seventh_house_degree_ut: Descendant degree for computing sector cusps.
 
     Returns:
-        SVG string with the sector grid.
+        SVG string with the 36-sector grid in 3 columns.
     """
+    # Compute the degree where each sector starts
+    # Sector 1 starts at ASC = DSC + 180
+    asc_degree = (seventh_house_degree_ut + 180.0) % 360.0
+
     svg = f'<g transform="translate({x_position},{y_position})">'
-    svg += (
-        f'<text x="0" style="fill:{text_color}; font-size: 10px; font-weight:bold;">'
-        f'Gauquelin Sectors</text>'
-    )
 
-    line_y = 18
-    for point in celestial_points:
-        if not hasattr(point, "gauquelin_sector") or point.gauquelin_sector is None:
-            continue
+    col_width = 70  # px per column — 2 cols * 70 = 140px, fits in 890 - 750 = 140px
+    row_height = 10
+    rows_per_col = 18  # 2 columns of 18 rows = 36 sectors
+    font_size = 8
 
-        sector_int = int(point.gauquelin_sector)
-        sector_frac = point.gauquelin_sector - sector_int
-        # Format: "Sun  ☉  Sec 12  (0.59)"
-        name_short = point.name.replace("_", " ")
-        if len(name_short) > 10:
-            name_short = name_short[:10]
+    for sector in range(1, 37):
+        col = (sector - 1) // rows_per_col  # 0, 1, 2
+        row = (sector - 1) % rows_per_col
+        x_off = col * col_width
+        y_off = 10 + row * row_height
+
+        # Sector cusp degree in the zodiac
+        # Gauquelin sectors go clockwise from ASC, but zodiac degrees go counter-clockwise
+        # So sector N starts at ASC - (N-1)*10 degrees
+        sector_degree = (asc_degree - (sector - 1) * 10.0) % 360.0
+
+        # Convert to sign + degree
+        sign_index = int(sector_degree // 30)
+        sign_degree = sector_degree % 30
+        signs = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir",
+                 "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+        sign = signs[sign_index]
+
+        # Format sector number with padding
+        sec_str = f"{sector:2d}"
 
         svg += (
-            f'<g transform="translate(0,{line_y})">'
-            f'<text text-anchor="start" x="0" style="fill:{text_color}; font-size: 9px;">'
-            f'{name_short}</text>'
-            f'<text text-anchor="end" x="120" style="fill:{text_color}; font-size: 9px;">'
-            f'{sector_label} {sector_int}</text>'
+            f'<g transform="translate({x_off},{y_off})">'
+            f'<text text-anchor="end" x="17" style="fill:{text_color}; font-size: {font_size}px;">{sec_str}</text>'
+            f'<g transform="translate(18,-7)"><use transform="scale(0.25)" xlink:href="#{sign}" /></g>'
+            f'<text x="28" style="fill:{text_color}; font-size: {font_size}px;">'
+            f'{convert_decimal_to_degree_string(sign_degree)}</text>'
             f'</g>'
         )
-        line_y += 12
 
-    svg += '</g>'
+    svg += "</g>"
     return svg
 
 

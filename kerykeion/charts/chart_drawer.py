@@ -3560,6 +3560,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 celestial_points=self.available_kerykeion_celestial_points,
                 text_color=self.chart_colors_settings["paper_0"],
                 x_position=self._MAIN_HOUSES_GRID_X + self._grid_x_shift,
+                seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
             )
         else:
             template_dict["makeMainHousesGrid"] = draw_main_house_grid(
