@@ -57,6 +57,7 @@ from .moon_phase_details import MoonPhaseDetailsFactory
 # STANDALONE FACTORIES
 # =============================================================================
 from .planetary_phenomena import PlanetaryPhenomenaFactory
+from .eclipses import EclipseFactory
 
 # =============================================================================
 # ANALYSIS FACTORIES
@@ -104,6 +105,7 @@ __all__ = [
     "MoonPhaseDetailsFactory",
     # Standalone Factories
     "PlanetaryPhenomenaFactory",
+    "EclipseFactory",
     # Analysis Factories
     "AspectsFactory",
     "RelationshipScoreFactory",
