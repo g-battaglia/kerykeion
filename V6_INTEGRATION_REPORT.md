@@ -147,12 +147,31 @@ assert s.cupido is not None
 
 ## Remaining Work Before Release
 
-1. **Update SVG golden-file line counts** in `test_chart_drawer.py` (3 test fixes)
-2. **Version bump:** `pyproject.toml` → `version = "6.0.0"`
-3. **CHANGELOG.md:** Add v6.0.0 entry
-4. **MIGRATION_V5_TO_V6.md:** Create migration guide
-5. **context_serializer.py:** Add XML serialization for new fields (dignity, nakshatra, gauquelin_sector)
-6. **ROADMAP.md:** Mark v5.13-v5.17 items as DONE
+1. ~~Update SVG golden-file line counts~~ DONE (baselines regenerated)
+2. ~~Lint cleanup~~ DONE (all ruff checks pass)
+3. **Version bump:** `pyproject.toml` → `version = "6.0.0"`
+4. **CHANGELOG.md:** Add v6.0.0 entry
+5. **MIGRATION_V5_TO_V6.md:** Create migration guide
+6. **context_serializer.py:** Add XML serialization for new fields (dignity, nakshatra, gauquelin_sector)
+7. **ROADMAP.md:** Mark v5.13-v5.17 items as DONE
+
+## Quality Assurance Summary
+
+| Check | Result |
+|-------|--------|
+| Merge conflict markers | 0 remaining |
+| Python syntax errors | 0 (22 files verified) |
+| Ruff lint warnings | 0 (all v6 code clean) |
+| Full test suite | 8409 passed, 0 failed, 60 skipped |
+| v6 feature tests | 171 passed, 0 failed |
+| SVG rendering (qlmanage) | 45/45 thumbnails produced (0 failures) |
+| Cross-feature integration | 36/37 checks passed (1 expected: mean/oscu identical with bundled ephemeris) |
+| Backward compat removed | Verified (6 imports correctly fail) |
+| New factories exported | 6/6 in `__init__.py` and `__all__` |
+| New model fields | 10/10 on KerykeionPointModel |
+| New config flags | 3/3 on ChartConfiguration |
+| Uranian in AstrologicalPoint | 8/8 literals present |
+| JSON serialization | Verified with exclude_none=True |
 
 ---
 
