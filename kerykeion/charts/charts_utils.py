@@ -2297,19 +2297,6 @@ def draw_gauquelin_sectors(
 
     for i in range(36):
         angle_deg = i * sector_span
-        # Convert to chart coordinate system (offset from 7th house / Descendant)
-        offset = angle_deg - seventh_house_degree_ut
-
-        rad = math.radians(offset)
-        # Inner point
-        ix = inner_r + inner_r * math.cos(rad)
-        iy = inner_r - inner_r * math.sin(rad)
-        # Outer point
-        ox = r + (r - (r - inner_r)) * math.cos(rad)  # adjusted
-        oy = r - (r - (r - inner_r)) * math.sin(rad)
-
-        # Use standard sliceToX/Y for consistency with chart coordinate system
-        # The chart uses offset = -(7th_house_degree) + current_degree
         chart_offset = -seventh_house_degree_ut + angle_deg
         x1 = sliceToX(0, r - inner_r, chart_offset) + inner_r
         y1 = sliceToY(0, r - inner_r, chart_offset) + inner_r

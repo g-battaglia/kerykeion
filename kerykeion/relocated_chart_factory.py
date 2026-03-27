@@ -12,14 +12,12 @@ Swiss Ephemeris function: ``swe.houses_armc(armc, lat, eps, hsys)``
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 from typing import Optional
 
 import swisseph as swe
 
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
-from kerykeion.schemas.kr_literals import AstrologicalPoint
+from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.utilities import get_kerykeion_point_from_degree, get_planet_house
 
 _EPHE_PATH = str(Path(__file__).parent / "sweph")
