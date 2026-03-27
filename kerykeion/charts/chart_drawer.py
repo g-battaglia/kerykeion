@@ -3425,9 +3425,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         visual ring.
         """
         has_gauquelin = False
-        for planet_setting in self.available_kerykeion_celestial_points:
-            point = planet_setting.get("point")
-            if point and hasattr(point, "gauquelin_sector") and point.gauquelin_sector is not None:
+        for point in self.available_kerykeion_celestial_points:
+            if hasattr(point, "gauquelin_sector") and point.gauquelin_sector is not None:
                 has_gauquelin = True
                 break
 
