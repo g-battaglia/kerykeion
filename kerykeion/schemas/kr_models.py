@@ -414,6 +414,19 @@ class KerykeionPointModel(SubscriptableBaseModel):
     dignity_score: Optional[int] = Field(
         default=None, description="Ptolemaic essential dignity score (-5 to +5)."
     )
+    # Nakshatra (Vedic lunar mansions, v6.0)
+    nakshatra: Optional[str] = Field(
+        default=None, description="Name of the Nakshatra (Vedic lunar mansion), e.g. 'Rohini'."
+    )
+    nakshatra_number: Optional[int] = Field(
+        default=None, description="Nakshatra number (1-27)."
+    )
+    nakshatra_pada: Optional[int] = Field(
+        default=None, description="Pada (quarter) within the Nakshatra (1-4), each spanning 3°20'."
+    )
+    nakshatra_lord: Optional[str] = Field(
+        default=None, description="Vimsottari Dasha lord of the Nakshatra."
+    )
 
 
 class AstrologicalBaseModel(SubscriptableBaseModel):

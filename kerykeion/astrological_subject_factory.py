@@ -341,6 +341,7 @@ class ChartConfiguration:
     custom_ayanamsa_t0: Optional[float] = None
     custom_ayanamsa_ayan_t0: Optional[float] = None
     calculate_dignities: bool = False
+    calculate_nakshatra: bool = False
 
     def __post_init__(self) -> None:
         self.validate()
@@ -617,6 +618,7 @@ class AstrologicalSubjectFactory:
         custom_ayanamsa_t0: Optional[float] = None,
         custom_ayanamsa_ayan_t0: Optional[float] = None,
         calculate_dignities: bool = False,
+        calculate_nakshatra: bool = False,
         *,
         seconds: int = 0,
         suppress_geonames_warning: bool = False,
@@ -783,6 +785,7 @@ class AstrologicalSubjectFactory:
             custom_ayanamsa_t0=custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=custom_ayanamsa_ayan_t0,
             calculate_dignities=calculate_dignities,
+            calculate_nakshatra=calculate_nakshatra,
         )
 
         # Add configuration data to calculation data
@@ -903,6 +906,16 @@ class AstrologicalSubjectFactory:
                     )
                     if dignity_data["essential_dignity"] is not None:
                         calc_data[point_key] = point.model_copy(update=dignity_data)
+
+        # Calculate Nakshatras (optional)
+        if config.calculate_nakshatra:
+            from kerykeion.vedic import calculate_nakshatra as calc_nak
+
+            for point_key in list(calc_data.keys()):
+                point = calc_data.get(point_key)
+                if point is not None and hasattr(point, "point_type") and point.point_type == "AstrologicalPoint":
+                    nak_data = calc_nak(point.abs_pos)
+                    calc_data[point_key] = point.model_copy(update=nak_data)
 
         # Create and return the AstrologicalSubjectModel
         return AstrologicalSubjectModel(**calc_data)
