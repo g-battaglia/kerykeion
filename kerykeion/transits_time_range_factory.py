@@ -118,9 +118,11 @@ class TransitsTimeRangeFactory:
 
         Custom configuration:
 
-        >>> from kerykeion.schemas import AstrologicalPoint, ActiveAspect
         >>> custom_points = ["Sun", "Moon"]
-        >>> custom_aspects = [ActiveAspect.CONJUNCTION, ActiveAspect.OPPOSITION]
+        >>> custom_aspects = [
+        ...     {"name": "conjunction", "degree": 0, "orb": 8},
+        ...     {"name": "opposition", "degree": 180, "orb": 8},
+        ... ]
         >>> factory = TransitsTimeRangeFactory(
         ...     natal_chart, ephemeris_data,
         ...     active_points=custom_points,

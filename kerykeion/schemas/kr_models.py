@@ -982,7 +982,7 @@ class TransitEventModel(SubscriptableBaseModel):
     exact_moment: str = Field(description="ISO datetime of closest approach (minimum orb)")
     separating_end: Optional[str] = Field(default=None, description="ISO datetime when aspect finishes separating")
     min_orb: float = Field(description="Minimum orb reached at exact_moment (degrees)")
-    orb_rate: Optional[float] = Field(default=None, description="Rate of orb change at exact moment (degrees/day)")
+    orb_rate: Optional[float] = Field(default=None, description="Rate of orb change at exact moment (degrees per 2 steps)")
 
 
 class TransitEventsTimeRangeModel(SubscriptableBaseModel):

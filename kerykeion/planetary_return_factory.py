@@ -19,7 +19,7 @@ Key Features:
 A planetary return occurs when a planet returns to the exact degree and minute
 it occupied at the time of birth. Solar returns happen approximately once per year
 and are widely used for annual forecasting, while Lunar returns occur roughly
-every 27-29 days and are used for monthly analysis and timing.
+every 27.3 days (sidereal month) and are used for monthly analysis and timing.
 
 The factory creates complete AstrologicalSubject instances for the calculated
 return moments, enabling full chart analysis including planetary positions,
@@ -473,12 +473,12 @@ class PlanetaryReturnFactory:
             ...     datetime.now().isoformat(),
             ...     "Solar"
             ... )
-            >>> # Access all planetary positions
-            >>> for planet in return_chart.planets_list:
-            ...     print(f"{planet.name}: {planet.abs_pos}° in {planet.sign}")
+            >>> # Access planetary positions
+            >>> print(f"Sun: {return_chart.sun.abs_pos}° in {return_chart.sun.sign}")
+            >>> print(f"Moon: {return_chart.moon.abs_pos}° in {return_chart.moon.sign}")
             >>> # Access house cusps
-            >>> for house in return_chart.houses_list:
-            ...     print(f"House {house.number}: {house.abs_pos}°")
+            >>> print(f"ASC: {return_chart.first_house.abs_pos}°")
+            >>> print(f"MC: {return_chart.tenth_house.abs_pos}°")
 
         Technical Notes:
             - Solar returns typically occur within 1-2 days of the natal birthday
