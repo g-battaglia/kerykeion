@@ -128,3 +128,36 @@ class TestUranianPlanetsSVG:
 
         svg_file = tmp_path / "uranian_modern.svg"
         assert svg_file.exists(), "Modern SVG file should be created"
+
+
+class TestUranianSweReference:
+    """Compare factory Uranian planet positions with direct swe.calc_ut() calls."""
+
+    URANIAN_SWE_IDS = {
+        "cupido": 40,
+        "hades": 41,
+        "poseidon": 47,
+    }
+
+    @pytest.mark.parametrize("attr,swe_id", [
+        ("cupido", 40),
+        ("hades", 41),
+        ("poseidon", 47),
+    ])
+    def test_uranian_longitude_matches_swe(self, subject_with_uranian, attr, swe_id):
+        """Factory Uranian abs_pos must match swe.calc_ut() longitude."""
+        import swisseph as swe
+        from pathlib import Path
+
+        swe.set_ephe_path(str(Path(__file__).parents[2] / "kerykeion" / "sweph"))
+
+        jd = subject_with_uranian.julian_day
+        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+
+        expected_lng = swe.calc_ut(jd, swe_id, iflag)[0][0]
+
+        point = getattr(subject_with_uranian, attr)
+        assert point is not None, f"{attr} should be calculated"
+        assert point.abs_pos == pytest.approx(expected_lng, abs=0.01), (
+            f"{attr} abs_pos {point.abs_pos} != swe longitude {expected_lng}"
+        )

@@ -68,3 +68,45 @@ class TestDavisonComposite:
         factory2 = CompositeSubjectFactory(s1, s2)
         davison = factory2.get_davison_composite_subject_model()
         assert davison.composite_chart_type == "Davison"
+
+
+class TestDavisonSweReference:
+    """Compare Davison factory Sun position with direct swe.calc_ut() at midpoint JD."""
+
+    def test_davison_sun_matches_swe_at_midpoint_jd(self, subjects):
+        """Davison Sun longitude must match swe.calc_ut(midpoint_jd, SUN)."""
+        import swisseph as swe
+        from pathlib import Path
+
+        swe.set_ephe_path(str(Path(__file__).parents[2] / "kerykeion" / "sweph"))
+
+        s1, s2 = subjects
+        factory = CompositeSubjectFactory(s1, s2)
+        davison = factory.get_davison_composite_subject_model()
+
+        midpoint_jd = (s1.julian_day + s2.julian_day) / 2.0
+        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+        expected_sun_lng = swe.calc_ut(midpoint_jd, swe.SUN, iflag)[0][0]
+
+        assert davison.sun.abs_pos == pytest.approx(expected_sun_lng, abs=0.01), (
+            f"Davison Sun {davison.sun.abs_pos} != swe Sun {expected_sun_lng}"
+        )
+
+    def test_davison_moon_matches_swe_at_midpoint_jd(self, subjects):
+        """Davison Moon longitude must match swe.calc_ut(midpoint_jd, MOON)."""
+        import swisseph as swe
+        from pathlib import Path
+
+        swe.set_ephe_path(str(Path(__file__).parents[2] / "kerykeion" / "sweph"))
+
+        s1, s2 = subjects
+        factory = CompositeSubjectFactory(s1, s2)
+        davison = factory.get_davison_composite_subject_model()
+
+        midpoint_jd = (s1.julian_day + s2.julian_day) / 2.0
+        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+        expected_moon_lng = swe.calc_ut(midpoint_jd, swe.MOON, iflag)[0][0]
+
+        assert davison.moon.abs_pos == pytest.approx(expected_moon_lng, abs=0.01), (
+            f"Davison Moon {davison.moon.abs_pos} != swe Moon {expected_moon_lng}"
+        )

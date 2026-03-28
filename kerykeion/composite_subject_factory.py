@@ -412,13 +412,6 @@ class CompositeSubjectFactory:
         mid_lat = (s1.lat + s2.lat) / 2.0
         mid_lng = circular_mean(s1.lng + 180.0, s2.lng + 180.0) - 180.0
 
-        # Derive timezone from midpoint longitude (nearest hour offset)
-        tz_offset_hours = round(mid_lng / 15.0)
-        if tz_offset_hours >= 0:
-            tz_str = f"Etc/GMT-{tz_offset_hours}" if tz_offset_hours != 0 else "Etc/GMT"
-        else:
-            tz_str = f"Etc/GMT+{abs(tz_offset_hours)}"
-
         # Convert midpoint JD to date components (UTC)
         import swisseph as swe
         year, month, day, hour_frac = swe.revjul(mid_jd)

@@ -50,3 +50,69 @@ class TestRelocatedChart:
             house = getattr(relocated, attr)
             assert house is not None
             assert 0 <= house.abs_pos < 360
+
+
+class TestRelocatedSweReference:
+    """Compare factory relocated ASC/MC with direct swe.houses_armc() output."""
+
+    def test_relocated_asc_mc_match_swe(self, natal):
+        """Factory relocated ASC and MC must match raw swe.houses_armc()."""
+        import swisseph as swe
+        from pathlib import Path
+
+        swe.set_ephe_path(str(Path(__file__).parents[2] / "kerykeion" / "sweph"))
+
+        new_lat = 40.7128
+        new_lng = -74.006
+        relocated = RelocatedChartFactory.relocate(natal, new_lat=new_lat, new_lng=new_lng, new_city="New York")
+
+        jd = natal.julian_day
+        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+        hsys = natal.houses_system_identifier.encode("ascii")
+
+        # Obliquity of ecliptic
+        eps = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
+
+        # ARMC for new location (same logic as factory)
+        armc_hours = swe.sidtime(jd)
+        local_st_hours = armc_hours + new_lng / 15.0
+        armc_degrees = (local_st_hours * 15.0) % 360.0
+
+        # Direct swe.houses_armc call
+        cusps, ascmc = swe.houses_armc(armc_degrees, new_lat, eps, hsys)
+        expected_asc = ascmc[0] % 360
+        expected_mc = ascmc[1] % 360
+
+        assert relocated.ascendant.abs_pos == pytest.approx(expected_asc, abs=0.01), (
+            f"Relocated ASC {relocated.ascendant.abs_pos} != swe ASC {expected_asc}"
+        )
+        assert relocated.medium_coeli.abs_pos == pytest.approx(expected_mc, abs=0.01), (
+            f"Relocated MC {relocated.medium_coeli.abs_pos} != swe MC {expected_mc}"
+        )
+
+    def test_relocated_tokyo_asc_mc_match_swe(self, natal):
+        """Same check for Tokyo to ensure generalisation across locations."""
+        import swisseph as swe
+        from pathlib import Path
+
+        swe.set_ephe_path(str(Path(__file__).parents[2] / "kerykeion" / "sweph"))
+
+        new_lat = 35.6895
+        new_lng = 139.6917
+        relocated = RelocatedChartFactory.relocate(natal, new_lat=new_lat, new_lng=new_lng, new_city="Tokyo")
+
+        jd = natal.julian_day
+        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+        hsys = natal.houses_system_identifier.encode("ascii")
+
+        eps = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
+        armc_hours = swe.sidtime(jd)
+        local_st_hours = armc_hours + new_lng / 15.0
+        armc_degrees = (local_st_hours * 15.0) % 360.0
+
+        cusps, ascmc = swe.houses_armc(armc_degrees, new_lat, eps, hsys)
+        expected_asc = ascmc[0] % 360
+        expected_mc = ascmc[1] % 360
+
+        assert relocated.ascendant.abs_pos == pytest.approx(expected_asc, abs=0.01)
+        assert relocated.medium_coeli.abs_pos == pytest.approx(expected_mc, abs=0.01)

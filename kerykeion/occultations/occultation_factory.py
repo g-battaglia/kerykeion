@@ -48,9 +48,9 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 _ECL_TYPE_LABELS = {
-    getattr(swe, "ECL_TOTAL", 1): "Total",
-    getattr(swe, "ECL_ANNULAR", 2): "Annular",
-    getattr(swe, "ECL_PARTIAL", 4): "Partial",
+    getattr(swe, "ECL_TOTAL", 4): "Total",
+    getattr(swe, "ECL_ANNULAR", 8): "Annular",
+    getattr(swe, "ECL_PARTIAL", 16): "Partial",
 }
 
 

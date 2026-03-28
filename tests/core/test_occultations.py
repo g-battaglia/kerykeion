@@ -112,3 +112,46 @@ class TestImports:
     def test_model_importable(self):
         from kerykeion.occultations import OccultationModel as OM
         assert OM is OccultationModel
+
+
+# ---------------------------------------------------------------------------
+# SWE reference tests
+# ---------------------------------------------------------------------------
+
+class TestSweReference:
+    """Compare factory results with direct swe.lun_occult_when_glob() calls."""
+
+    def test_venus_global_first_result_matches_swe(self, factory, start_jd):
+        """Factory search_global first result maximum_jd must match raw swe tret[0]."""
+        results = factory.search_global(start_jd, swe.VENUS, count=1)
+        assert len(results) >= 1
+
+        # Direct swe call with identical parameters
+        _retflags, tret = swe.lun_occult_when_glob(
+            start_jd,
+            swe.VENUS,
+            swe.FLG_SWIEPH,
+            0,
+            False,
+        )
+        expected_jd = tret[0]
+
+        assert results[0].maximum_jd == pytest.approx(expected_jd, abs=0.01), (
+            f"Factory JD {results[0].maximum_jd} != swe JD {expected_jd}"
+        )
+
+    def test_saturn_global_first_result_matches_swe(self, factory, start_jd):
+        """Same check for Saturn to ensure generalisation across planets."""
+        results = factory.search_global(start_jd, swe.SATURN, count=1)
+        assert len(results) >= 1
+
+        _retflags, tret = swe.lun_occult_when_glob(
+            start_jd,
+            swe.SATURN,
+            swe.FLG_SWIEPH,
+            0,
+            False,
+        )
+        expected_jd = tret[0]
+
+        assert results[0].maximum_jd == pytest.approx(expected_jd, abs=0.01)

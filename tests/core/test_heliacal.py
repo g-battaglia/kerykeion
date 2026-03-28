@@ -170,3 +170,58 @@ class TestDefaultConstants:
 
     def test_default_extinction(self):
         assert DEFAULT_EXTINCTION == 0.2
+
+
+# Tests: swe reference ---------------------------------------------------------
+
+class TestSweReference:
+    """Compare factory output with direct swe.heliacal_ut() calls."""
+
+    def test_venus_heliacal_rising_matches_swe(self, factory: HeliacalFactory):
+        """Factory next_heliacal_rising JD must equal raw swe.heliacal_ut dret[0]."""
+        from kerykeion.heliacal.heliacal_factory import DEFAULT_ATMO, DEFAULT_OBSERVER
+
+        event = factory.next_heliacal_rising(
+            julian_day=START_JD,
+            planet_name_or_star="Venus",
+            geopos=ROME_GEOPOS,
+        )
+
+        # Direct swe call with identical parameters
+        dret = swe.heliacal_ut(
+            START_JD,
+            ROME_GEOPOS,
+            DEFAULT_ATMO,
+            DEFAULT_OBSERVER,
+            "Venus",
+            swe.HELIACAL_RISING,
+            0,
+        )
+        expected_jd = dret[0]
+
+        assert event.julian_day == pytest.approx(expected_jd, abs=1e-6), (
+            f"Factory JD {event.julian_day} != swe JD {expected_jd}"
+        )
+
+    def test_mars_heliacal_rising_matches_swe(self, factory: HeliacalFactory):
+        """Same check for Mars to ensure it generalises across planets."""
+        from kerykeion.heliacal.heliacal_factory import DEFAULT_ATMO, DEFAULT_OBSERVER
+
+        event = factory.next_heliacal_rising(
+            julian_day=START_JD,
+            planet_name_or_star="Mars",
+            geopos=ROME_GEOPOS,
+        )
+
+        dret = swe.heliacal_ut(
+            START_JD,
+            ROME_GEOPOS,
+            DEFAULT_ATMO,
+            DEFAULT_OBSERVER,
+            "Mars",
+            swe.HELIACAL_RISING,
+            0,
+        )
+        expected_jd = dret[0]
+
+        assert event.julian_day == pytest.approx(expected_jd, abs=1e-6)

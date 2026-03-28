@@ -805,20 +805,14 @@ class PlanetaryReturnFactory:
     def _build_return_chart(self, return_jd: float, return_type: str) -> PlanetReturnModel:
         """Build a return chart at the given Julian Day."""
         return_dt = julian_to_datetime(return_jd)
+        utc_iso = return_dt.strftime("%Y-%m-%dT%H:%M:%S+00:00")
 
-        # julian_to_datetime returns UTC; use from_birth_data with Etc/GMT
-        # to avoid double timezone conversion.
-        return_subject = AstrologicalSubjectFactory.from_birth_data(
+        return_kwargs: dict = dict(
             name=f"{self.subject.name} {return_type} Return",
-            year=return_dt.year,
-            month=return_dt.month,
-            day=return_dt.day,
-            hour=return_dt.hour,
-            minute=return_dt.minute,
-            seconds=return_dt.second,
+            iso_utc_time=utc_iso,
             lng=self.lng,
             lat=self.lat,
-            tz_str="Etc/GMT",
+            tz_str=self.tz_str,
             city=self.city,
             nation=self.nation,
             online=False,
@@ -828,6 +822,14 @@ class PlanetaryReturnFactory:
             perspective_type=self.subject.perspective_type,
             active_points=list(self.subject.active_points),
         )
+
+        # Propagate USER-mode custom ayanamsa parameters if present
+        if hasattr(self, "custom_ayanamsa_t0") and self.custom_ayanamsa_t0 is not None:
+            return_kwargs["custom_ayanamsa_t0"] = self.custom_ayanamsa_t0
+        if hasattr(self, "custom_ayanamsa_ayan_t0") and self.custom_ayanamsa_ayan_t0 is not None:
+            return_kwargs["custom_ayanamsa_ayan_t0"] = self.custom_ayanamsa_ayan_t0
+
+        return_subject = AstrologicalSubjectFactory.from_iso_utc_time(**return_kwargs)
 
         model_data = return_subject.model_dump()
         model_data["return_type"] = return_type
