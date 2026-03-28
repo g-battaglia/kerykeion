@@ -140,6 +140,7 @@ directory = "htmlcov"
 "test:base" = "pytest tests/ --tier=base -m 'not online'"
 "test:medium" = "pytest tests/ --tier=medium -m 'not online'"
 "test:extended" = "pytest tests/ -m 'not online'"
+"test:all" = "pytest tests/ -m 'not online'"
 
 # Coverage — same tiers with coverage report (terminal + HTML in htmlcov/)
 "test:core:cov" = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py --cov --cov-report=term-missing --cov-report=html"
