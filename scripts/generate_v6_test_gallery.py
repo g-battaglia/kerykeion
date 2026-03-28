@@ -34,13 +34,23 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 THEMES = ["dark", "light", "classic", "dark-high-contrast", "strawberry", "black-and-white"]
 STYLES = ["classic", "modern"]
 
-charts = []  # (filename, title, description)
+charts = []  # (filename, title, description, aspect_ratio)
 
 
 def save(drawer, filename, style="classic", title="", desc=""):
     drawer.save_svg(output_path=str(OUTPUT_DIR), filename=filename, style=style)
-    charts.append((f"{filename}.svg", title or filename, desc))
-    print(f"  OK  {filename}.svg")
+    # Read viewBox to compute aspect ratio
+    import re
+    svg_path = OUTPUT_DIR / f"{filename}.svg"
+    svg_head = svg_path.read_text(encoding="utf-8")[:500]
+    vb_match = re.search(r"viewBox='(\d+)\s+([-\d]+)\s+(\d+)\s+(\d+)'", svg_head)
+    if vb_match:
+        w, h = int(vb_match.group(3)), int(vb_match.group(4))
+        aspect = f"{w}/{h}"
+    else:
+        aspect = "890/580"
+    charts.append((f"{filename}.svg", title or filename, desc, aspect))
+    print(f"  OK  {filename}.svg (viewBox {w}x{h})")
 
 
 # ===========================================================================
@@ -114,7 +124,7 @@ save(ChartDrawer(chart_data=cd, theme="dark"), "gauquelin_modern", "modern",
 # Gauquelin wheel only
 d = ChartDrawer(chart_data=cd, theme="dark")
 d.save_wheel_only_svg_file(output_path=str(OUTPUT_DIR), filename="gauquelin_wheel_only")
-charts.append(("gauquelin_wheel_only.svg", "Gauquelin - Wheel Only", "Just the wheel with 36 sector divisions."))
+charts.append(("gauquelin_wheel_only.svg", "Gauquelin - Wheel Only", "Just the wheel with 36 sector divisions.", "1/1"))
 print("  OK  gauquelin_wheel_only.svg")
 
 # Normal houses (control)
@@ -243,11 +253,11 @@ for section_name, section_charts in sections.items():
     if not section_charts:
         continue
     html += f'\n<h2>{section_name} ({len(section_charts)} charts)</h2>\n<div class="grid">\n'
-    for filename, title, desc in section_charts:
+    for filename, title, desc, aspect in section_charts:
         html += f"""<div class="chart">
 <div class="chart-label">{title}</div>
 <div class="chart-desc">{desc}</div>
-<object data="{filename}" type="image/svg+xml"></object>
+<object data="{filename}" type="image/svg+xml" style="aspect-ratio: {aspect};"></object>
 </div>\n"""
     html += "</div>\n"
 
