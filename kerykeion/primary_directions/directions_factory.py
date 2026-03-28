@@ -111,10 +111,7 @@ class PrimaryDirectionsFactory:
         iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
 
         # Get obliquity
-        try:
-            obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
-        except Exception:
-            obliquity = 23.4393
+        obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
 
         # Get RAMC (Right Ascension of the Medium Coeli)
         # Local sidereal time = Greenwich sidereal time + observer longitude

@@ -488,7 +488,7 @@ class TransitsTimeRangeFactory:
 
             return (best_date.isoformat(), round(best_orb, 6))
 
-        except Exception:
+        except (OSError, ValueError):
             return None
 
 

@@ -145,7 +145,7 @@ class HeliacalFactory:
         -------
         HeliacalEventModel
         """
-        return self._find_event(
+        result = self._find_event(
             julian_day=julian_day,
             planet_name_or_star=planet_name_or_star,
             geopos=geopos,
@@ -153,6 +153,8 @@ class HeliacalFactory:
             atmo=atmo,
             observer=observer,
         )
+        swe.close()
+        return result
 
     def search_events(
         self,
@@ -222,6 +224,7 @@ class HeliacalFactory:
 
         # Sort chronologically and trim to *count*.
         events.sort(key=lambda e: e.julian_day)
+        swe.close()
         return events[:count]
 
     # ------------------------------------------------------------------ #

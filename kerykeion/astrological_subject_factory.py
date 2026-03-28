@@ -819,7 +819,7 @@ class AstrologicalSubjectFactory:
         calc_data["perspective_type"] = config.perspective_type
 
         # Set up geonames username if needed
-        if geonames_username is None and online and (not lat or not lng or not tz_str):
+        if geonames_username is None and online and (lat is None or lng is None or not tz_str):
             geonames_username = _get_geonames_username()
             if geonames_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
                 logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)

@@ -168,6 +168,7 @@ class OccultationFactory:
             # Advance past this event for the next iteration.
             cursor = max_jd + 1.0
 
+        swe.close()
         return results
 
     # ------------------------------------------------------------------
@@ -233,4 +234,5 @@ class OccultationFactory:
             # Advance past this event for the next iteration.
             cursor = max_jd + 1.0
 
+        swe.close()
         return results
