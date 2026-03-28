@@ -17,7 +17,6 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import math
-import logging
 import swisseph as swe
 from pathlib import Path
 from typing import List, Optional, Dict, Literal
@@ -93,7 +92,6 @@ class AstroCartographyFactory:
         gst_hours = swe.sidtime(jd)  # Greenwich sidereal time in hours
 
         # Get planet ecliptic longitudes from the subject
-        from kerykeion.astrological_subject_factory import STANDARD_PLANETS
         planet_positions: Dict[str, float] = {}
         for pname in planets:
             point = getattr(subject, pname.lower(), None)

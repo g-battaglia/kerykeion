@@ -41,9 +41,6 @@ from kerykeion.schemas.settings_models import (
 ElementQualityDistributionMethod = Literal["pure_count", "weighted"]
 """Supported strategies for calculating element and modality distributions."""
 
-#: Type alias for numeric values (int or float) used in coordinate calculations.
-Number = Union[int, float]
-
 
 # =============================================================================
 # ZODIAC ELEMENT AND QUALITY MAPPINGS

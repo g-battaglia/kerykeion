@@ -16,6 +16,8 @@ from typing import List, Optional
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion.utilities import get_kerykeion_point_from_degree, get_planet_house
 
+logger = logging.getLogger(__name__)
+
 
 def _parse_star_names_from_catalog(catalog_path: str) -> List[str]:
     """Parse star names from the sefstars.txt catalog file.
@@ -36,7 +38,7 @@ def _parse_star_names_from_catalog(catalog_path: str) -> List[str]:
                 if name:
                     names.append(name)
     except Exception as e:
-        logging.warning(f"Could not parse star catalog: {e}")
+        logger.warning(f"Could not parse star catalog: {e}")
     return names
 
 
@@ -81,7 +83,7 @@ class FixedStarDiscoveryFactory:
 
         star_names = _parse_star_names_from_catalog(catalog_path)
         if not star_names:
-            logging.warning("No star names found in catalog")
+            logger.warning("No star names found in catalog")
             return []
 
         # Collect natal planet positions for conjunction check

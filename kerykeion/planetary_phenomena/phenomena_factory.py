@@ -26,6 +26,8 @@ from kerykeion.schemas.kr_models import (
     PlanetaryPhenomenaCollectionModel,
 )
 
+logger = logging.getLogger(__name__)
+
 _EPHE_PATH = str(Path(__file__).parent.parent / "sweph")
 
 # Planets for which phenomena are meaningful (not fixed stars, nodes, etc.)
@@ -153,7 +155,7 @@ class PlanetaryPhenomenaFactory:
                     )
                 )
             except Exception as e:
-                logging.warning(f"Could not calculate phenomena for {name}: {e}")
+                logger.warning(f"Could not calculate phenomena for {name}: {e}")
 
         swe.close()
 

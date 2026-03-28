@@ -27,6 +27,8 @@ from kerykeion.schemas.kr_models import (
 from kerykeion.utilities import get_kerykeion_point_from_degree
 from pydantic import Field
 
+logger = logging.getLogger(__name__)
+
 _EPHE_PATH = str(Path(__file__).parent.parent / "sweph")
 
 NODBIT_MEAN = getattr(swe, "NODBIT_MEAN", 1)
@@ -143,7 +145,7 @@ class PlanetaryNodesFactory:
                     ),
                 ))
             except Exception as e:
-                logging.warning(f"Could not calculate nodes for {name}: {e}")
+                logger.warning(f"Could not calculate nodes for {name}: {e}")
 
         swe.close()
         return PlanetaryNodesCollectionModel(

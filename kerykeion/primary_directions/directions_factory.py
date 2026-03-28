@@ -18,11 +18,9 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import math
-import logging
 import swisseph as swe
 from pathlib import Path
 from typing import List, Optional, Literal
-from dataclasses import dataclass
 from pydantic import BaseModel, Field
 
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel

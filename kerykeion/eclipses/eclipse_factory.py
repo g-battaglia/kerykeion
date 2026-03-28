@@ -22,6 +22,8 @@ import swisseph as swe
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from pydantic import Field
 
+logger = logging.getLogger(__name__)
+
 _EPHE_PATH = str(Path(__file__).parent.parent / "sweph")
 
 # Eclipse type constants (handle SE_ prefix variance across pyswisseph builds)
@@ -186,7 +188,7 @@ class EclipseFactory:
                 ))
                 jd = max_jd + 10  # Skip ahead
             except Exception as e:
-                logging.warning(f"Solar eclipse search error: {e}")
+                logger.warning(f"Solar eclipse search error: {e}")
                 break
         return results
 
@@ -209,7 +211,7 @@ class EclipseFactory:
                 ))
                 jd = max_jd + 10
             except Exception as e:
-                logging.warning(f"Global solar eclipse search error: {e}")
+                logger.warning(f"Global solar eclipse search error: {e}")
                 break
         return results
 
@@ -232,7 +234,7 @@ class EclipseFactory:
                 ))
                 jd = max_jd + 10
             except Exception as e:
-                logging.warning(f"Lunar eclipse search error: {e}")
+                logger.warning(f"Lunar eclipse search error: {e}")
                 break
         return results
 
@@ -253,6 +255,6 @@ class EclipseFactory:
                 ))
                 jd = max_jd + 10
             except Exception as e:
-                logging.warning(f"Global lunar eclipse search error: {e}")
+                logger.warning(f"Global lunar eclipse search error: {e}")
                 break
         return results
