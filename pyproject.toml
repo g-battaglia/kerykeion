@@ -111,6 +111,7 @@ omit = [
     "setup.py",
     "**/draw_planets_legacy.py",  # Legacy code, not used
     "kerykeion/charts/draw_planets_legacy.py",  # Legacy code, not used
+    "kerykeion/kr_types/*",  # Deprecated v4 backward compat, excluded from coverage
 ]
 
 [tool.coverage.report]
