@@ -1031,6 +1031,81 @@ def _draw_house_division_lines(
     return out
 
 
+def _draw_gauquelin_cusp_ring(
+    seventh_house_degree_ut: float,
+    show_zodiac_background_ring: bool = True,
+) -> str:
+    """Draw 36 Gauquelin sector lines in the cusp ring area (replaces houses)."""
+    out = ""
+    ring_outer = R_CUSP_OUTER
+    ring_inner = R_CUSP_INNER
+
+    # Background ring
+    out += (
+        f'<path d="{_annulus_path(ring_outer, ring_inner)}" '
+        f'fill="{COLOR_BACKGROUND}" fill-rule="evenodd" '
+        f'stroke="{COLOR_STROKE}" stroke-width="0.25"/>\n'
+    )
+
+    text_r = (ring_outer + ring_inner) / 2  # midpoint of ring for text
+
+    for i in range(36):
+        angle = i * 10.0
+        is_angular = (i % 9 == 0)
+        stroke_w = ANGULAR_STROKE_WIDTH if is_angular else 0.3
+
+        # Division line
+        out += (
+            f'<line x1="{CENTER}" y1="{CENTER - ring_outer}" '
+            f'x2="{CENTER}" y2="{CENTER - ring_inner}" '
+            f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
+            f'transform="rotate({angle:.6f} {CENTER} {CENTER})"/>\n'
+        )
+
+        # Sector number text — rotate to midpoint of sector, counter-rotate text
+        mid_angle = angle + 5.0
+        fs = 2.5 if is_angular else 1.8
+        fw = "bold" if is_angular else "normal"
+        out += (
+            f'<text x="{CENTER}" y="{CENTER - text_r}" '
+            f'font-size="{fs}" fill="{COLOR_TEXT}" font-weight="{fw}" '
+            f'text-anchor="middle" dominant-baseline="central" '
+            f'transform="rotate({mid_angle:.6f} {CENTER} {CENTER}) '
+            f'rotate({90 - mid_angle:.6f} {CENTER} {CENTER - text_r})">'
+            f'{i + 1}</text>\n'
+        )
+
+    return out
+
+
+def _draw_gauquelin_house_ring(
+    seventh_house_degree_ut: float,
+) -> str:
+    """Draw 36 Gauquelin sector markers in the house ring (replaces house numbers)."""
+    out = ""
+    # Draw ring background
+    out += (
+        f'<path d="{_annulus_path(R_HOUSE_OUTER, R_HOUSE_INNER)}" '
+        f'fill="{COLOR_HOUSE_RING}" fill-rule="evenodd" '
+        f'stroke="{COLOR_STROKE}" stroke-width="0.15"/>\n'
+    )
+
+    # 36 sector division lines
+    for i in range(36):
+        angle = i * 10.0
+        is_angular = (i % 9 == 0)
+        stroke_w = 0.5 if is_angular else 0.15
+
+        out += (
+            f'<line x1="{CENTER}" y1="{R_HOUSE_OUTER}" '
+            f'x2="{CENTER}" y2="{R_HOUSE_INNER}" '
+            f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
+            f'transform="rotate(-{angle:.6f} {CENTER} {CENTER})"/>\n'
+        )
+
+    return out
+
+
 # =============================================================================
 # RING 4: HOUSE RING (house numbers)
 # =============================================================================
@@ -1261,6 +1336,7 @@ def draw_modern_horoscope(
     planets_settings: list[dict],
     aspects_settings: list[dict],
     show_zodiac_background_ring: bool = True,
+    gauquelin_sectors: bool = False,
 ) -> str:
     """
     Generate the complete modern concentric-rings horoscope SVG content.
@@ -1302,10 +1378,16 @@ def draw_modern_horoscope(
     )
 
     # Draw rings from outside in
-    out += _draw_cusp_ring(houses, seventh_house_degree_ut, show_zodiac_background_ring)
+    if gauquelin_sectors:
+        out += _draw_gauquelin_cusp_ring(seventh_house_degree_ut, show_zodiac_background_ring)
+    else:
+        out += _draw_cusp_ring(houses, seventh_house_degree_ut, show_zodiac_background_ring)
     out += _draw_ruler_ring()
     out += _draw_planet_ring(planets, planets_settings, seventh_house_degree_ut, houses)
-    out += _draw_house_ring(houses, seventh_house_degree_ut)
+    if gauquelin_sectors:
+        out += _draw_gauquelin_house_ring(seventh_house_degree_ut)
+    else:
+        out += _draw_house_ring(houses, seventh_house_degree_ut)
     out += _draw_aspect_core(aspects_list, aspects_settings, seventh_house_degree_ut)
 
     if show_zodiac_background_ring:

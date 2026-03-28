@@ -4151,6 +4151,10 @@ class ChartDrawer:  # type: ignore[no-redef]
                 show_zodiac_background_ring=show_zodiac_background_ring,
             )
         else:
+            has_gauquelin = any(
+                hasattr(p, "gauquelin_sector") and p.gauquelin_sector is not None
+                for p in self.available_kerykeion_celestial_points
+            )
             return draw_modern_horoscope(
                 planets=self.available_kerykeion_celestial_points,
                 houses=houses_list,
@@ -4159,6 +4163,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 planets_settings=self.available_planets_setting,
                 aspects_settings=self.aspects_settings,
                 show_zodiac_background_ring=show_zodiac_background_ring,
+                gauquelin_sectors=has_gauquelin,
             )
 
     def _validate_chart_style(self, style: KerykeionChartStyle) -> None:

@@ -1460,12 +1460,13 @@ def draw_gauquelin_combined_table(
         fs = 8
         glyph_s = 0.22
 
-    # Column layout:  Name(80) | SignGlyph+Longitude(100) | Decl(80) | Sector(40) = ~300px
+    # Column layout — must fit within ~240px (viewBox 890 - planet_grid_x 645 = 245)
+    #   Name(65) | Sign+Long(75) | Decl(55) | Sector(40) = ~235px
     col_name = 0
-    col_sign = 85
-    col_long = 98
-    col_decl = 185
-    col_sector = 275
+    col_sign = 68
+    col_long = 80
+    col_decl = 150
+    col_sector = 205
 
     svg = f'<g transform="translate({x_position},{y_position})">'
 
@@ -1503,7 +1504,7 @@ def draw_gauquelin_combined_table(
 
         # Planet name
         svg += (
-            f'<text text-anchor="end" x="{col_name + 75}" '
+            f'<text text-anchor="end" x="{col_name + 62}" '
             f'style="fill:{text_color}; font-size:{fs}px;">{name}</text>'
         )
 
