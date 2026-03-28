@@ -432,6 +432,18 @@ class KerykeionPointModel(SubscriptableBaseModel):
         description="Gauquelin sector position (1-36). Sectors are numbered clockwise from the eastern horizon. "
         "Sectors near 1 and 36 (the 'plus zones') are traditionally considered most powerful.",
     )
+    # Local Space / Astro-Cartography (v6.0)
+    azimuth: Optional[float] = Field(
+        default=None,
+        description="Azimuth (compass bearing) in degrees from the observer's location. "
+        "0=South, 90=West, 180=North, 270=East (Swiss Ephemeris convention). "
+        "Populated when calculate_local_space=True. Added in v6.0.",
+    )
+    altitude_above_horizon: Optional[float] = Field(
+        default=None,
+        description="Altitude above the horizon in degrees from the observer's location. "
+        "Positive=above horizon, negative=below. Populated when calculate_local_space=True. Added in v6.0.",
+    )
     # Out of Bounds (v6.0)
     is_out_of_bounds: Optional[bool] = Field(
         default=None,

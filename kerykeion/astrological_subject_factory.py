@@ -356,6 +356,7 @@ class ChartConfiguration:
     calculate_nakshatra: bool = False
     calculate_gauquelin: bool = False
     calculate_nutation: bool = False
+    calculate_local_space: bool = False
     active_fixed_stars: Optional[List[str]] = None
 
     def __post_init__(self) -> None:
@@ -635,6 +636,7 @@ class AstrologicalSubjectFactory:
         calculate_dignities: bool = False,
         calculate_nakshatra: bool = False,
         calculate_gauquelin: bool = False,
+        calculate_local_space: bool = False,
         active_fixed_stars: Optional[List[str]] = None,
         *,
         seconds: int = 0,
@@ -804,6 +806,7 @@ class AstrologicalSubjectFactory:
             calculate_dignities=calculate_dignities,
             calculate_nakshatra=calculate_nakshatra,
             calculate_gauquelin=calculate_gauquelin,
+            calculate_local_space=calculate_local_space,
             active_fixed_stars=active_fixed_stars,
         )
 
@@ -977,6 +980,26 @@ class AstrologicalSubjectFactory:
                 calc_data[point_key] = point.model_copy(
                     update={"gauquelin_sector": round(sector, 4)}
                 )
+
+        # Calculate Local Space (azimuth/altitude) for all celestial points (v6.0)
+        if config.calculate_local_space and calc_data.get("lng") and calc_data.get("lat"):
+            ls_geopos = (calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0)
+            ls_jd = calc_data["julian_day"]
+            for point_key in list(calc_data.keys()):
+                point = calc_data.get(point_key)
+                if point is None or not hasattr(point, "point_type") or point.point_type != "AstrologicalPoint":
+                    continue
+                try:
+                    ecl_coords = (point.abs_pos, 0.0, 1.0)
+                    azalt_result = swe.azalt(ls_jd, swe.ECL2HOR, ls_geopos, 0, 0, ecl_coords)
+                    calc_data[point_key] = point.model_copy(
+                        update={
+                            "azimuth": round(azalt_result[0], 4),
+                            "altitude_above_horizon": round(azalt_result[1], 4),
+                        }
+                    )
+                except Exception as e:
+                    logging.debug(f"Could not compute azalt for {point_key}: {e}")
 
         # Calculate Out-of-Bounds status for all celestial points (v6.0)
         # A planet is OOB when |declination| > true obliquity of the ecliptic (~23.44 deg).
