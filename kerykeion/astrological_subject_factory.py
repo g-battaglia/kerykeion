@@ -356,6 +356,7 @@ class ChartConfiguration:
     calculate_nakshatra: bool = False
     calculate_gauquelin: bool = False
     calculate_nutation: bool = False
+    active_fixed_stars: Optional[List[str]] = None
 
     def __post_init__(self) -> None:
         self.validate()
@@ -634,6 +635,7 @@ class AstrologicalSubjectFactory:
         calculate_dignities: bool = False,
         calculate_nakshatra: bool = False,
         calculate_gauquelin: bool = False,
+        active_fixed_stars: Optional[List[str]] = None,
         *,
         seconds: int = 0,
         suppress_geonames_warning: bool = False,
@@ -802,6 +804,7 @@ class AstrologicalSubjectFactory:
             calculate_dignities=calculate_dignities,
             calculate_nakshatra=calculate_nakshatra,
             calculate_gauquelin=calculate_gauquelin,
+            active_fixed_stars=active_fixed_stars,
         )
 
         # Add configuration data to calculation data
@@ -881,7 +884,13 @@ class AstrologicalSubjectFactory:
                 altitude=calc_data.get("altitude") or 0,
             )
 
+            # Pass dynamic fixed stars config to _calculate_planets via calc_data
+            calc_data["_active_fixed_stars"] = config.active_fixed_stars
+
             AstrologicalSubjectFactory._calculate_planets(calc_data, active_points_list, calculated_axial_cusps)
+
+            # Clean up internal key before model creation
+            calc_data.pop("_active_fixed_stars", None)
 
             # Calculate ayanamsa value for sidereal charts (v5.12.4)
             if config.zodiac_type == "Sidereal":
@@ -1973,45 +1982,59 @@ class AstrologicalSubjectFactory:
                         active_points.remove(tno_name)
 
         # =============================================================================
-        # FIXED STARS (using centralized list)
+        # FIXED STARS (default 23 + dynamic extras via active_fixed_stars)
         # =============================================================================
-        # Fixed stars use different calculation method (swe.fixstar_ut)
+        # Fixed stars use different calculation method (swe.fixstar_ut).
+        # v6.0: Stars are also collected into the `fixed_stars` list on the model.
+        fixed_stars_list: list = []
+
+        # Helper to calculate a single fixed star and return the point model (or None)
+        def _calc_fixed_star(star_name: str, swe_name: str) -> "KerykeionPointModel | None":
+            try:
+                pos_ecl = swe.fixstar_ut(swe_name, julian_day, iflag)[0]
+                star_deg = pos_ecl[0]
+                star_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0
+                pos_eq = swe.fixstar_ut(swe_name, julian_day, iflag | swe.FLG_EQUATORIAL)[0]
+                star_dec = pos_eq[1] if len(pos_eq) > 1 else None
+                try:
+                    star_mag = swe.fixstar2_mag(swe_name)[0]
+                except Exception:
+                    star_mag = None
+                point = get_kerykeion_point_from_degree(
+                    star_deg, star_name, point_type=point_type,
+                    speed=star_speed, declination=star_dec, magnitude=star_mag,
+                )
+                point.house = get_planet_house(star_deg, houses_degree_ut)
+                point.retrograde = False
+                return point
+            except Exception as e:
+                logging.warning(f"Could not calculate {star_name} ({swe_name}) position: {e}")
+                return None
+
+        # --- Default 23 stars (controlled by active_points) ---
         for star_name in FIXED_STARS:
             if should_calculate(star_name):
-                try:
-                    # Use Swiss Ephemeris name if different from AstrologicalPoint name
-                    swe_name = FIXED_STAR_SWE_NAMES.get(star_name, star_name)
-                    # Ecliptic longitude for zodiac placement
-                    pos_ecl = swe.fixstar_ut(swe_name, julian_day, iflag)[0]
-                    star_deg = pos_ecl[0]
-                    star_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0
-                    # Equatorial coordinates for true declination
-                    pos_eq = swe.fixstar_ut(swe_name, julian_day, iflag | swe.FLG_EQUATORIAL)[0]
-                    star_dec = pos_eq[1] if len(pos_eq) > 1 else None
-
-                    # Apparent visual magnitude via fixstar2_mag
-                    try:
-                        star_mag = swe.fixstar2_mag(swe_name)[0]
-                    except Exception as e:
-                        logging.warning(f"Could not load fixed-star magnitude for {star_name} ({swe_name}): {e}")
-                        star_mag = None
-
-                    star_key = star_name.lower()
-                    data[star_key] = get_kerykeion_point_from_degree(
-                        star_deg,
-                        star_name,
-                        point_type=point_type,
-                        speed=star_speed,
-                        declination=star_dec,
-                        magnitude=star_mag,
-                    )
-                    data[star_key].house = get_planet_house(star_deg, houses_degree_ut)
-                    data[star_key].retrograde = False  # Fixed stars are never retrograde
+                swe_name = FIXED_STAR_SWE_NAMES.get(star_name, star_name)
+                point = _calc_fixed_star(star_name, swe_name)
+                if point is not None:
+                    data[star_name.lower()] = point
                     calculated_planets.append(star_name)
-                except Exception as e:
-                    logging.warning(f"Could not calculate {star_name} position: {e}")
-                    if star_name in active_points:
-                        active_points.remove(star_name)
+                    fixed_stars_list.append(point)
+                elif star_name in active_points:
+                    active_points.remove(star_name)
+
+        # --- Extra dynamic stars (controlled by config.active_fixed_stars, v6.0) ---
+        extra_fixed_stars = data.get("_active_fixed_stars") or []
+        already_calculated = {s.lower() for s in FIXED_STARS if s.lower() in data}
+        for star_name in extra_fixed_stars:
+            if star_name.lower() in already_calculated:
+                continue  # Already calculated as a default star
+            swe_name = star_name.replace("_", " ")
+            point = _calc_fixed_star(star_name, swe_name)
+            if point is not None:
+                fixed_stars_list.append(point)
+
+        data["fixed_stars"] = fixed_stars_list
 
         # =============================================================================
         # ARABIC PARTS / LOTS (using centralized configuration)

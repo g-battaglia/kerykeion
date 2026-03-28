@@ -377,7 +377,7 @@ class KerykeionPointModel(SubscriptableBaseModel):
             via ``swe.fixstar2_mag``. Added in v5.12.
     """
 
-    name: Union[AstrologicalPoint, Houses]
+    name: Union[AstrologicalPoint, Houses, str]
     quality: Quality
     element: Element
     sign: Sign
@@ -601,6 +601,16 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     algorab: Optional[KerykeionPointModel] = None
     deneb_algedi: Optional[KerykeionPointModel] = None
     alkaid: Optional[KerykeionPointModel] = None
+
+    # Dynamic Fixed Stars (v6.0)
+    # Unified list of ALL calculated fixed stars (both default 23 and user-specified extras).
+    # Replaces the need to access stars by individual field name for iteration.
+    fixed_stars: List[KerykeionPointModel] = Field(
+        default_factory=list,
+        description="List of all calculated fixed stars. Includes both default stars "
+        "(from active_points) and extra dynamic stars (from active_fixed_stars parameter). "
+        "Added in v6.0.",
+    )
 
     # Arabic Parts
     pars_fortunae: Optional[KerykeionPointModel] = None
