@@ -636,6 +636,7 @@ class AstrologicalSubjectFactory:
         calculate_dignities: bool = False,
         calculate_nakshatra: bool = False,
         calculate_gauquelin: bool = False,
+        calculate_nutation: bool = False,
         calculate_local_space: bool = False,
         active_fixed_stars: Optional[List[str]] = None,
         *,
@@ -806,6 +807,7 @@ class AstrologicalSubjectFactory:
             calculate_dignities=calculate_dignities,
             calculate_nakshatra=calculate_nakshatra,
             calculate_gauquelin=calculate_gauquelin,
+            calculate_nutation=calculate_nutation,
             calculate_local_space=calculate_local_space,
             active_fixed_stars=active_fixed_stars,
         )
